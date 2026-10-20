@@ -20,3 +20,6 @@
 @keyframes dmSwitchPulse{to{opacity:.25}}@media(prefers-reduced-motion:reduce){.is-loading .dm-account-end{animation:none}}@media(max-width:480px){#dmSwitchBackdrop{padding:12px}#dmSwitchDialog{border-radius:22px;max-height:calc(100dvh - 24px)}}
 
 #dmSwitchDialog .dm-switch-google{display:flex;align-items:center;justify-content:center;gap:12px;width:100%;min-height:52px;margin-top:16px;background:#fff;color:#202124;border:1px solid #dadce0;border-radius:12px;padding:12px;font:700 15px system-ui;cursor:pointer}#dmSwitchDialog .dm-switch-google img{width:22px;height:22px}#dmSwitchDialog .dm-switch-google:disabled{opacity:.6}
+
+#dmSwitchDialog #dmSwitchTitle{color:#203c63!important;-webkit-text-fill-color:#203c63!important;background:none!important;text-shadow:none!important}
+#dmSwitchDialog #dmSwitchSignup{display:block;width:100%;min-height:48px;margin-top:12px;padding:12px;border:1.5px solid #bcd6e5;border-radius:12px;background:#eff9ff;color:#244a70;font:800 14px Nunito,system-ui;cursor:pointer}

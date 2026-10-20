@@ -5,7 +5,7 @@ const Y=()=>typeof yo!=='undefined'&&yo?yo:null,who=()=>typeof aktifOgrenciAdi!=
 const img=(name,cls='')=>'<img class="'+cls+'" src="route-assets/'+name+'" alt="" decoding="async">';
 const art=(name,cls='')=>img(name+'.svg',cls);
 const tell=m=>window.yoToast?.(m);
-let preview=null,latest=null,epoch=0;
+let preview=null,latest=null,epoch=0,sceneOwner='';
 /* 1–8. sınıf öğrencileri Öğrenme Yolu'na seviye testinden sonra geçer (sunucu: startPath.learningRoute). */
 const learningNeedsTest=()=>window.dmProgression?.status?.()?.startPath?.learningRoute==='needs-test';
 function purpose(){if(preview)return preview;return Y()?.dmLearningPurpose==='independent'&&!learningNeedsTest()?'independent':'school';}
@@ -89,8 +89,8 @@ function missionsDialog(){
  view.el.addEventListener('click',e=>{const tab=e.target.closest('[data-mission-tab]');if(tab){view.el.querySelectorAll('[data-mission-tab]').forEach(b=>b.setAttribute('aria-selected',String(b===tab)));view.el.querySelectorAll('[data-mission-panel]').forEach(p=>p.hidden=p.dataset.missionPanel!==tab.dataset.missionTab);return;}const task=e.target.closest('[data-rt="task"]');if(task){view.close();runTask(task.dataset.event);}});
 }
 function runTask(ev){if(ev==='review')window.dmWrongWords?.review?.();else if(['game','oyun','yildiz3'].includes(ev))window.aktivitelerTamEkranAc?.();else if(ev==='ders')window.dersCalisTamEkranAc?.();else window.dmLearningRoute.continue();}
-function scene(o={}){latest=o;const steps=o.steps||[],current=Math.max(0,Math.min(steps.length-1,Number(o.current)||0)),learn=purpose()==='independent';return '<div class="rt-root '+(learn?'rt-english':'rt-school')+'" data-route-design="3">'+(learn?'<div class="rt-route-area" role="status">Öğrenme yolun hazırlanıyor…</div>':'')+(learn?'':pathMarkup(steps,current,false))+'</div>';}
-async function paintLearning(root,force=false){const owner=who(),turn=++epoch;try{const info=await window.dmStoryPath.overview({force});if(!root.isConnected||owner!==who()||turn!==epoch||purpose()!=='independent')return;if(!info?.chapters?.length)throw Error('Parkur içeriği henüz hazır değil.');const cur=Math.max(0,info.chapters.findIndex(c=>c.current));const area=root.querySelector('.rt-route-area');root.querySelectorAll('.rt-badge,.rt-banner,.rt-completion-count,.rt-path').forEach(el=>el.remove());const summary='';if(area)area.outerHTML=summary;else root.insertAdjacentHTML('afterbegin',summary);root.insertAdjacentHTML('beforeend',pathMarkup(info.chapters,cur,true));mountScrollable(root);}catch(e){const area=root.querySelector('.rt-route-area');if(area){area.innerHTML='<p>Öğrenme yolun yüklenemedi.</p><button type="button" data-rt="retry">Tekrar dene</button>';}}}
+function scene(o={}){latest=o;sceneOwner=who();const steps=o.steps||[],current=Math.max(0,Math.min(steps.length-1,Number(o.current)||0)),learn=purpose()==='independent';return '<div class="rt-root '+(learn?'rt-english':'rt-school')+'" data-route-design="3">'+(learn?'<div class="rt-route-area" role="status">Öğrenme yolun hazırlanıyor…</div>':'')+(learn?'':pathMarkup(steps,current,false))+'</div>';}
+async function paintLearning(root,force=false){const owner=who(),turn=++epoch;try{const info=await window.dmStoryPath.overview({force});if(!root.isConnected||owner!==who()||turn!==epoch||purpose()!=='independent')return;if(!info?.chapters?.length)throw Error('Parkur içeriği henüz hazır değil.');const cur=Math.max(0,info.chapters.findIndex(c=>c.current));const area=root.querySelector('.rt-route-area');root.querySelectorAll('.rt-badge,.rt-banner,.rt-completion-count,.rt-path').forEach(el=>el.remove());const summary='';if(area)area.outerHTML=summary;else root.insertAdjacentHTML('afterbegin',summary);root.insertAdjacentHTML('beforeend',pathMarkup(info.chapters,cur,true));mountScrollable(root);}catch(e){if(!root.isConnected||owner!==who()||turn!==epoch)return;const area=root.querySelector('.rt-route-area');if(area){area.innerHTML='<p>Öğrenme yolun yüklenemedi.</p><button type="button" data-rt="retry">Tekrar dene</button>';}}}
 let cardStamp='';if(typeof window.setInterval==='function')window.setInterval(()=>{if(document.hidden)return;paintChests();const stamp=JSON.stringify([Y()?.log,Y()?.haftaHedef,Y()?.lig?.xp,tasks()]);if(stamp!==cardStamp){cardStamp=stamp;refreshCards();}},1500);
 function refreshCards(){paintChests();document.querySelectorAll('.rt-week').forEach(el=>el.outerHTML=weekly());document.querySelectorAll('.rt-tasks').forEach(el=>el.outerHTML=tasks());}
 let routeSaveInProgress=false;
@@ -157,7 +157,20 @@ window.dmLearningRoute={purpose, set:setPurpose,preview:async p=>{preview=p;awai
 document.addEventListener('click',e=>{const b=e.target.closest('[data-rt-wallet]');if(b)(b.dataset.rtWallet==='gold'?window.magazaAc:window.dijiEnerjiPaneliAc)?.();});
 function refreshLearning(){if(purpose()!=='independent')return;document.querySelectorAll('.rt-root').forEach(root=>paintLearning(root,true));}
 document.addEventListener('dm:learning-progress',e=>{if(e.detail?.owner===who()){refreshLearning();refreshChests();}});document.addEventListener('dm:story-close',refreshLearning);
-document.addEventListener('dm:state',()=>{preview=null;refreshCards();});document.addEventListener('dm:login',()=>{weeklyClaimOwner='';weeklyError='';preview=null;latest=null;routeMap=null;mapResize?.disconnect();epoch++;});window.addEventListener('resize',fit);window.visualViewport?.addEventListener('resize',fit);
+let routeFrame=0;
+function reconcileVisibleRoute(){
+ if(routeFrame)return;
+ routeFrame=requestAnimationFrame(()=>{
+  routeFrame=0;const host=$('dmParkurScroll'),screen=$('tab-dunya'),root=host?.querySelector('.rt-root');
+  if(!root||!screen?.classList.contains('active')||!screen.getClientRects().length||sceneOwner!==who()||!latest)return;
+  const learn=purpose()==='independent';
+  if(root.classList.contains('rt-english')!==learn||!routeMap||root.querySelector('.rt-route-area')){
+   root.outerHTML=scene(latest);mount(host);
+  }else{fit();mountScrollable(root);}
+ });
+}
+document.addEventListener('dm:state',()=>{preview=null;refreshCards();reconcileVisibleRoute();});
+document.addEventListener('dm:login',()=>{weeklyClaimOwner='';weeklyError='';preview=null;if(sceneOwner!==who())latest=null;routeMap=null;mapResize?.disconnect();epoch++;reconcileVisibleRoute();});window.addEventListener('resize',fit);window.visualViewport?.addEventListener('resize',fit);
 // School route uses its own theme and expanded grade/unit navigator.
 if(typeof document!=='undefined'&&document.createElement&&document.head&&!document.querySelector('script[data-dm-school-journey]')){const loader=document.createElement('script');loader.src='school-journey.js?v=20261020-start-test-1';loader.defer=true;loader.dataset.dmSchoolJourney='1';document.head.append(loader);}
 })();

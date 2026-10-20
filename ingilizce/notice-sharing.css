@@ -18,3 +18,22 @@
 .dm-achievement-actions button:disabled{opacity:.5;cursor:wait}
 .dm-achievement-status{font-size:11px!important;line-height:1.4!important;margin:8px 0 0!important;color:#61766c!important}
 @media(max-height:740px){.bd-kutlama-kart{padding:16px!important}.bd-kutlama-rozet{width:110px!important;height:110px!important}.bd-kutlama-kart h2{font-size:20px!important}.bd-kutlama-papi{margin:9px 0!important}.bd-kutlama-papi img{height:55px!important}.bd-kutlama-devam{margin-top:10px!important}}
+
+/* Keep the announcement mascot in flow so long messages never run under it. */
+#duyuruOverlay .duy3-card{display:flex!important;flex-direction:column!important;align-items:stretch!important;gap:12px!important;padding:24px!important;box-sizing:border-box!important;width:min(100%,440px)!important;max-height:calc(100dvh - 32px)!important;overflow-y:auto!important;text-align:left!important}
+#duyuruOverlay .duy3-card .duy3-medal{position:static!important;inset:auto!important;transform:none!important;align-self:center!important;flex:none!important;width:82px!important;height:94px!important;margin:0!important}
+#duyuruOverlay .duy3-medal img{display:block!important;position:static!important;width:100%!important;height:100%!important;object-fit:contain!important}
+#duyuruOverlay .duy3-tag{align-self:flex-start;margin:0!important;max-width:calc(100% - 36px)}
+#duyuruOverlay .duy3-title{margin:0!important;font-size:clamp(19px,5vw,23px)!important;line-height:1.35!important;overflow-wrap:anywhere}
+#duyuruOverlay .duy3-msg{margin:0!important;line-height:1.65!important;white-space:pre-wrap;overflow-wrap:anywhere}
+#duyuruOverlay .duy3-btn{flex:none;position:static!important;margin:6px 0 0!important;width:100%!important}
+#duyuruOverlay .duy3-close{z-index:2;right:12px!important;top:12px!important}
+#duyuruOverlay .duy3-img{max-width:100%;height:auto;object-fit:contain}
+#duyuruOverlay .duy3-glow{pointer-events:none}
+#duyuruOverlay.dm-notice-theme-1 .duy3-card{background:#fff!important;color:#204e55!important}
+#duyuruOverlay.dm-notice-theme-3 .duy3-card{background:linear-gradient(135deg,#f3fffc,#f5f0ff)!important;color:#244659!important}
+#duyuruOverlay:is(.dm-notice-theme-1,.dm-notice-theme-3) :is(.duy3-title,.duy3-msg){color:#244659!important;-webkit-text-fill-color:#244659!important;text-shadow:none!important}
+#duyuruOverlay.dm-notice-theme-2 .duy3-card{background:linear-gradient(145deg,#303664,#17213c)!important;color:#fff2cb!important;border-color:#cfb567!important}
+#duyuruOverlay.dm-notice-theme-2 :is(.duy3-title,.duy3-msg){color:#fff2cb!important;-webkit-text-fill-color:#fff2cb!important;text-shadow:none!important}
+#duyuruOverlay.dm-notice-theme-2 .duy3-btn{background:#ffdc7b!important;color:#242349!important;-webkit-text-fill-color:#242349!important}
+#duyuruOverlay.dm-notice-theme-2 .duy3-close{background:#ffffff18!important;color:#fff2cb!important}

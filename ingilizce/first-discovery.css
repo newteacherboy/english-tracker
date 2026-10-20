@@ -137,3 +137,5 @@ body.dm-profile-open #tab-profil #dmForestActions .header-btn{font-size:clamp(10
 #dmDiscovery .fd-content>.fd-consent{font-size:14px;align-items:flex-start}#dmDiscovery .fd-consent input{margin:2px 0 0}
 #dmDiscovery .fd-content>.fd-note{color:#2b4d5d;font-weight:550}#dmDiscovery .fd-divider{background:#fffdf8;border-radius:10px;padding:9px}#dmDiscovery .fd-content>.fd-password-rules{background:#edf7fc}
 #dmDiscovery .fd-consent-optional small{display:block;color:#5b7083;margin-top:2px}
+
+#dmDiscovery .fd-actions .fd-link[data-action="success"]{width:100%;min-height:48px;margin:0;border:1px solid #c9dfdd;border-radius:17px;background:#fff;color:#153f58!important;-webkit-text-fill-color:#153f58!important;font-size:14px;font-weight:850;text-decoration:none;box-shadow:0 3px 0 #b8d8d2}

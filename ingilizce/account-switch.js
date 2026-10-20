@@ -20,8 +20,7 @@
  function close(){
   attempt?.abort();attempt=null;formControl?.abort();formControl=null;window.dmSwitchLoginSignal=null;
   $('dmSwitchGoogle')?.remove();
-  formControl?.abort();formControl=null;window.dmSwitchLoginSignal=null;
-  $('dmSwitchGoogle')?.remove();
+  $('dmSwitchSignup')?.remove();
   restoreForm();window.dmAccountSwitchPending=false;
   document.removeEventListener('keydown',keydown);
   const closed=dialog?.parentElement;closed?.remove();dialog=null;window.dmViewHistory?.leave(closed);
@@ -42,20 +41,23 @@
   if($('sifre'))$('sifre').value='';
   if($('girisBtn')){$('girisBtn').disabled=false;$('girisBtn').textContent='Giriş yap ve geç';}
   $('dmSwitchGoogle')?.remove();
+  $('dmSwitchSignup')?.remove();
   if(!window.dmAndroidUygulama){
    const google=document.createElement('button');google.id='dmSwitchGoogle';google.type='button';google.className='dm-switch-google';
    google.innerHTML='<img src="discovery-assets/google-g.svg?v=20261018-namespace" alt="" width="22" height="22"><span>Google ile Giriş Yap</span>';
    google.onclick=async()=>{if(typeof window.dmGoogleHesapDegistir!=='function'){message('Google bağlantısı yüklenemedi. Sayfayı yenileyip tekrar dene.');return;}google.disabled=true;try{const opened=await window.dmGoogleHesapDegistir();if(!opened)message('Google girişi başlatılmadı. Mevcut hesabın açık.');}finally{if(google.isConnected)google.disabled=false;}};
    target.append(google);
   }
+  const signup=document.createElement('button');signup.id='dmSwitchSignup';signup.type='button';signup.textContent='Üye Ol · Yeni hesap oluştur';
+  signup.onclick=()=>{window.dmSavedSessions?.remember();close();window.dmFirstDiscovery?.openRegistration();};target.append(signup);
   message(name?'Oturum sona ermiş. Şifrenle yeniden giriş yap.':'Mevcut hesabın açık kalacak.');
   (name?$('sifre'):$('ogrenci'))?.focus();
  }
  function accounts(){
   if(!dialog)return;
-  $('dmSwitchGoogle')?.remove();
   formControl?.abort();formControl=null;window.dmSwitchLoginSignal=null;
   $('dmSwitchGoogle')?.remove();
+  $('dmSwitchSignup')?.remove();
   restoreForm();window.dmAccountSwitchPending=false;
   $('dmSwitchForm').hidden=true;$('dmSwitchAccounts').hidden=false;$('dmSwitchAdd').hidden=false;$('dmSwitchManage').hidden=false;$('dmSwitchBack').hidden=true;
   const store=window.dmSavedSessions,area=$('dmSwitchAccounts');area.replaceChildren();store?.remember();const active=store?.current();

@@ -2671,7 +2671,7 @@ async function handle(req: Request) {
       const tTaban = num(body._taban, -1);
       if (tEski?.game_data && tTaban >= 0 && num(tEski.game_data.guncelleme) > tTaban) return json({ status: "eski", message: "Bu cihazdaki veri eski; sunucudaki yeniden yükleniyor." }, 409);
       await supabase.from("teachers").update({ game_data: tv, game_data_at: new Date().toISOString() }).eq("id", a.teacher_id);
-      return json({ status: "success" });
+      return json({ status: "success", yo: tv });
     }
     const s = await hedefOgrenci(a, name); if (!s) return bulunamadi();
     let value: any = {}; try { value = typeof body.deger === "string" ? JSON.parse(body.deger) : body.deger; } catch (_) { value = body.deger; }
@@ -2734,7 +2734,7 @@ async function handle(req: Request) {
       if (value.lig && typeof value.lig === "object") { const p = (s.profile && typeof s.profile === "object") ? { ...s.profile } : {}; p.lig = { ...(p.lig || {}), xp: num(value.lig.xp), hafta: value.lig.hafta }; patch.profile = p; }
       if (Object.keys(patch).length) await supabase.from("students").update(patch).eq("id", s.id);
     }
-    return json({ status: "success" });
+    return json({ status: "success", ...(key === "yo" ? { yo: value } : {}) });
   }
   if (op === "ekVeriOzet") {
     const deny = await requireTeacher(a); if (deny) return deny;

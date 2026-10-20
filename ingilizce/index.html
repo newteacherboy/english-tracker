@@ -25,7 +25,7 @@
 <script defer src="character-poses.js?v=20261016-flow-2"></script>
 <script defer src="character-builder.js?v=20261016-2"></script>
 <script src="progression-catalog.js?v=20261019-legends15"></script>
-<link rel="stylesheet" href="first-discovery.css?v=20261019-mail-consent-1">
+<link rel="stylesheet" href="first-discovery.css?v=20261020-member-flows-1">
 <script src="first-discovery-state.js?v=20261019-apple-1"></script>
 <link rel="preconnect" href="https://nxfqlutulxqzqgwewssd.supabase.co">
 <script src="vendor/supabase-2.118.0.js" integrity="sha384-UagCvVPT5XXA0Hx+nJYUAGBFseHT9zBgpJMSebsAxl9lciTwbT+39j5VfRjdP5Tp" crossorigin="anonymous"></script>
@@ -25997,6 +25997,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
   const DUELLO_ANAHTAR = () => 'diji_duello_gosterilen_' + kucuk(typeof aktifOgrenciAdi !== 'undefined' ? aktifOgrenciAdi : '');
   const orgFetch = window.fetch;
   window.fetch = async function (url, opt) {
+    const fetchOwner = kucuk(isimAl());
     let u = typeof url === 'string' ? url : (url && url.url) || '';
     let govde = null;
     if (opt && typeof opt.body === 'string' && opt.body[0] === '{') { try { govde = JSON.parse(opt.body); } catch (e) {} }
@@ -26310,6 +26311,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
   const isimAl = () => (typeof yoIsim !== 'undefined' && yoIsim) || '';
   const yoVar = () => typeof yo !== 'undefined' && yo && typeof yo === 'object';
   const benimsendi = new Set();          /* bu sayfada sunucudaki verisi kabul edilmiş kişiler */
+  const saveQueue = new Map();
   const taban = {};                      /* kişi → sunucudaki sürüm (guncelleme) */
   const zorlaBekleyen = new Set();
   let loadRetry = null;
@@ -26318,6 +26320,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
   /* ---------- Ağ katmanı ---------- */
   const orgFetch = window.fetch;
   window.fetch = async function (url, opt) {
+    const fetchOwner = kucuk(isimAl());
     let u = typeof url === 'string' ? url : (url && url.url) || '';
     let govde = null;
     if (opt && typeof opt.body === 'string' && opt.body.indexOf('"ekVeriKaydet"') !== -1) { try { govde = JSON.parse(opt.body); } catch (e) {} }
@@ -26325,26 +26328,43 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
     if (govde && govde.islem === 'ekVeriKaydet' && govde.anahtar === 'yo') {
       let ad = kucuk(govde.ogrenci);
       if (!benimsendi.has(ad)) return new Response(JSON.stringify({ status: 'bekliyor', message: 'Sunucudaki veri henüz yüklenmedi.' }), { status: 200, headers: { 'Content-Type': 'application/json' } });
+      const previousSave = saveQueue.get(ad) || Promise.resolve();
+      let releaseSave;
+      const queuedSave = new Promise(resolve => { releaseSave = resolve; });
+      saveQueue.set(ad, queuedSave);
+      await previousSave;
+      try {
+      if (!benimsendi.has(ad) || ad !== kucuk(isimAl())) throw new Error('Hesap verileri yeniden yükleniyor.');
       if (taban[ad] !== undefined) { govde._taban = taban[ad]; opt = Object.assign({}, opt, { body: JSON.stringify(govde) }); }
       let r = await orgFetch.call(this, url, opt);
       try {
         if (r.status === 409) { benimsendi.delete(ad); yenidenYukle(); }
-        else if (r.ok) { let v = JSON.parse(govde.deger); if (v && v.guncelleme) taban[ad] = v.guncelleme; }
+        else if (r.ok) {
+          const result = await r.clone().json();
+          if (result.status === 'success') {
+            const v = result.yo || JSON.parse(govde.deger);
+            taban[ad] = Math.max(Number(taban[ad])||0, Number(v?.guncelleme)||0);
+            if (ad === kucuk(isimAl()) && result.yo && yoVar()) {
+              for (const key of ['guncelleme','lig','xpGun']) if (v[key] !== undefined) yo[key] = v[key];
+            }
+          }
+        }
       } catch (e) {}
       return r;
+      } finally { releaseSave(); if (saveQueue.get(ad) === queuedSave) saveQueue.delete(ad); }
     }
     let r = await orgFetch.apply(this, arguments);
     /* Yükleme (sayfanın kendi yükleyicisi; "_=" içermeyen): ilk yüklemede sunucudaki veri mutlaka kabul edilsin */
     try {
       /* Server-side rewards advance the stored version; remember it so the next save is not rejected as stale. */
-      if(opt && typeof opt.body==='string' && /"(seviyeUrunAl|seviyeSandikAc|seviyeEkJokerAl|seviyeOyunOdulu|buyuSeviyeTamamla|storyAdvance|ekonomi|dersTestSonucKaydet)"/.test(opt.body) && r.ok){ const request=JSON.parse(opt.body),reward=await r.clone().json().catch(()=>null);const ver=Number(reward?.yo?.guncelleme)||0;const who=kucuk(request.ogrenci||aktifOgrenciAdi);if(ver&&who)taban[who]=Math.max(Number(taban[who])||0,ver); }
+      if(opt && typeof opt.body==='string' && r.ok){ const request=JSON.parse(opt.body),reward=await r.clone().json().catch(()=>null);const ver=Number((reward?.yo||reward?.reward?.yo)?.guncelleme)||0;const who=kucuk(request.ogrenci||fetchOwner);if(ver&&who)taban[who]=Math.max(Number(taban[who])||0,ver); }
       if (/[?&]islem=ekVeriGetir/.test(u) && /[?&]anahtar=yo(&|$)/.test(u) && !/[?&]_=/.test(u) && r.ok && !r.headers.get('X-Diji-Cevrimdisi')) {
         let ad = kucuk(decodeURIComponent((u.match(/[?&]ogrenci=([^&]*)/) || [])[1] || ''));
         let d = await r.clone().json().catch(() => undefined);
         if (d === undefined || (d && (d.hata || d.status === 'error'))) return r;
         if (d && d.deger) {
           let s = JSON.parse(d.deger);
-          taban[ad] = s.guncelleme || 0;
+          taban[ad] = Math.max(Number(taban[ad])||0, Number(s.guncelleme)||0);
           if (!benimsendi.has(ad)) {
             s.guncelleme = Date.now() + 60000;                   /* cihazdaki her şeyden "daha yeni" → kabul edilir */
             zorlaBekleyen.add(ad);
@@ -26505,7 +26525,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <link rel="stylesheet" href="activity-ui.css?v=20261016-rally-1">
 <script defer src="activity-ui.js?v=20261016-flow-2"></script>
 <script defer src="navigation-history.js?v=20261019-step-back-1"></script>
-<script defer src="bottom-nav.js?v=20261020-graduation-1"></script>
+<script defer src="bottom-nav.js?v=20261020-member-flows-1"></script>
 <link rel="stylesheet" href="weekly-ui.css?v=2">
 <script defer src="feature-catalog.js?v=20261013-catalog"></script>
 <script defer src="weekly-ui.js?v=20261019-purple-1"></script>
@@ -26571,7 +26591,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <link rel="stylesheet" href="goal-announcements.css?v=1"><script defer src="goal-announcements.js?v=3"></script>
 <link rel="stylesheet" href="progress-ui.css?v=1">
 <link rel="stylesheet" href="progression-ui.css?v=20261018-chest-1"><script defer src="progression-ui.js?v=20261020-start-test-1"></script>
-<link rel="stylesheet" href="game-feedback.css?v=1"><script defer src="game-feedback.js?v=20261020-graduation-1"></script>
+<link rel="stylesheet" href="game-feedback.css?v=1"><script defer src="game-feedback.js?v=20261020-member-flows-1"></script>
 <link rel="stylesheet" href="profile-forest.css?v=1">
 <script defer src="profile-forest.js?v=1"></script>
 <link rel="stylesheet" href="question-panels-v1.css?v=2">
@@ -26585,7 +26605,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <link rel="stylesheet" href="oyna-v2.css?v=20261016-layout-1">
 <script defer src="route-missions.js?v=20261019-offline-1"></script>
 <script defer src="papi-habit.js?v=20261019-2"></script>
-<script defer src="oyna-v2.js?v=20261020-start-test-3"></script>
+<script defer src="oyna-v2.js?v=20261020-member-flows-1"></script>
 <link rel="stylesheet" href="friends-ui.css?v=20261017-social-highlights-v2">
 <script defer src="friends-ui.js?v=20261017-social-highlights-v2"></script>
 <link rel="stylesheet" href="league-ui.css?v=20261019-1">
@@ -26611,15 +26631,15 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <link rel="stylesheet" href="member-polish.css?v=20261015-live-clock-1">
 <script src="active-time.js?v=chest-silent-20261016-flow-2"></script>
 <script src="member-polish.js?v=20261018-letter-sounds-1"></script>
-<link rel="stylesheet" href="notice-sharing.css?v=20261013-achievement-3">
+<link rel="stylesheet" href="notice-sharing.css?v=20261020-member-flows-1">
 <script src="notice-sharing.js?v=20261019-fit-1"></script>
 <link rel="stylesheet" href="papi-wallet.css?v=20261018-mobile-fit-1">
 <link rel="stylesheet" href="route-questions.css?v=20261018-feedback-2">
 <script defer src="route-questions.js?v=20261018-feedback-2"></script>
 <script defer src="harf-adasi.js?v=20261014-full-2"></script>
-<link rel="stylesheet" href="account-switch.css?v=20261015-member-fixes-2">
+<link rel="stylesheet" href="account-switch.css?v=20261020-member-flows-1">
 <script defer src="saved-sessions.js?v=20261015-reliable-2"></script>
-<script defer src="account-switch.js?v=20261019-step-back-1"></script>
+<script defer src="account-switch.js?v=20261020-member-flows-1"></script>
 <script defer src="demo-account.js?v=20261015-1"></script>
 <link rel="stylesheet" href="papi-chat.css?v=20261016-2">
 <script defer src="papi-chat.js?v=20261016-1"></script>
@@ -26636,7 +26656,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <script defer src="learning-dialogues.js?v=20261019-1"></script>
 <script defer src="learning-companion.js?v=20261020-design-three-1"></script>
 <link rel="stylesheet" href="parkur-purple.css?v=20261019-offline-1">
-<link rel="stylesheet" href="route-graduation.css?v=20261020-1"><script defer src="route-graduation.js?v=20261020-1"></script>
+<link rel="stylesheet" href="route-graduation.css?v=20261020-member-flows-1"><script defer src="route-graduation.js?v=20261020-member-flows-1"></script>
 <link rel="stylesheet" href="route-design-three.css?v=20261020-fixed-art-2">
 </body>      
         </html>
