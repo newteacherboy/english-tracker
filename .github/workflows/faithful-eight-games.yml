@@ -1,0 +1,42 @@
+name: Faithful Eight Games Layouts
+on:
+  pull_request:
+    paths:
+      - 'ingilizce/faithful-eight-games.*'
+      - 'ingilizce/game-scenes/**'
+      - 'ingilizce/index.html'
+      - 'tests/faithful-eight-games*'
+      - '.github/workflows/faithful-eight-games.yml'
+  push:
+    paths:
+      - 'ingilizce/faithful-eight-games.*'
+      - 'ingilizce/game-scenes/**'
+      - 'ingilizce/index.html'
+      - 'tests/faithful-eight-games*'
+      - '.github/workflows/faithful-eight-games.yml'
+permissions:
+  contents: read
+jobs:
+  mobile-ui:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validate selected assets and gameplay layout contract
+        run: node --test tests/faithful-eight-games.test.cjs tests/selected-eight-game-boards.test.cjs tests/harf-bahcesi-round-size.test.cjs
+      - name: Install UI test browser
+        run: |
+          npm install --prefix /tmp/faithful-ui --no-save playwright@1.62.1
+          /tmp/faithful-ui/node_modules/.bin/playwright install --with-deps chromium
+      - name: Inspect eight real game screens on mobile and tablet
+        env:
+          NODE_PATH: /tmp/faithful-ui/node_modules
+        run: node tests/faithful-eight-games-ui.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: approved-eight-game-ui-screenshots
+          path: /tmp/faithful-game-screens/*.png
