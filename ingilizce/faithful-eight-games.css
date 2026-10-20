@@ -1,0 +1,165 @@
+/* Diji-Medu · Faithful interpretations of the eight user-approved game mockups.
+ * All gameplay elements are still live HTML controls, never a screenshot overlay.
+ * Imported LAST, after existing game styles.
+ */
+:root{--fg-plum:#452575;--fg-lilac:#8d4be6;--fg-green:#23b869;--fg-red:#e44668}
+:is(#harfBahcesiOverlay,#jpOyunOverlay,#yagmurOyunOverlay,#kelimebulOyunOverlay,#esOyunOverlay,#trenOyunOverlay) button:focus-visible,
+#yoModal:is([data-dm-selected-game="dikte"],[data-dm-selected-game="cumle"]) button:focus-visible{
+ outline:4px solid #ffb833!important;outline-offset:3px!important}
+:is(#harfBahcesiOverlay,#jpOyunOverlay,#yagmurOyunOverlay,#kelimebulOyunOverlay,#esOyunOverlay,#trenOyunOverlay) button:active{transform:scale(.97)}
+.dm-designed-playing.game-modal-overlay{align-items:center!important;justify-content:center!important;padding:clamp(6px,2vw,12px)!important}
+.dm-designed-playing.game-modal-overlay>.game-modal-content{
+ position:relative!important;isolation:isolate;max-height:96dvh!important;max-width:530px!important;width:100%!important;
+ border-radius:34px!important;border:4px solid #fff9e6!important;box-shadow:0 16px 0 #2f1e674a,0 20px 60px #140f4359!important;
+ padding:clamp(10px,3vw,19px)!important;overflow-y:auto!important;overflow-x:hidden!important;scrollbar-width:thin}
+.dm-designed-playing.game-modal-overlay .game-title,.dm-designed-playing.game-modal-overlay .game-subtitle{display:none!important}
+.dm-designed-playing.game-modal-overlay .game-close-btn{
+ top:13px!important;left:12px!important;right:auto!important;z-index:11!important;
+ width:45px!important;height:45px!important;border-radius:50%!important;
+ background:#fff!important;border:3px solid #c6deea!important;color:#6944a2!important;
+ box-shadow:0 4px 0 #a9bac6!important;font-size:25px!important}
+.dm-designed-playing.game-modal-overlay .dm-game-clock{
+ display:table!important;position:relative!important;left:auto!important;top:auto!important;transform:none!important;
+ margin:4px auto 12px!important;background:#fffffff2!important;border:2px solid #d6e5e6!important;
+ border-radius:999px!important;padding:7px 17px!important;color:#314c56!important;font-size:12px!important}
+.fg-hero{position:relative;min-height:130px;margin:0 0 14px;padding:18px 19px 13px 58px;
+ display:flex;align-items:center;justify-content:space-between;gap:4px;
+ border-radius:23px;border:3px solid #ffffffbb;
+ box-shadow:0 5px 0 #52348723,0 8px 20px #42358029;overflow:hidden}
+.fg-hero::after{content:'✦   ✧   ✦';pointer-events:none;position:absolute;right:16px;top:6px;color:#ffea90;font-size:15px;letter-spacing:7px}
+.fg-hero-copy{position:relative;z-index:2;min-width:0;flex:1}
+.fg-hero-copy small{display:inline-block;letter-spacing:1px;font:900 10px Nunito,system-ui,sans-serif;
+ color:#5c4483;background:#fff9;border-radius:999px;padding:5px 9px}
+.fg-hero-copy h3{font:900 clamp(21px,5.8vw,30px)/1.08 Fredoka,Nunito,system-ui,sans-serif!important;
+ color:var(--fg-title,#fff)!important;-webkit-text-stroke:.2px #fff7;
+ text-shadow:0 2px 1px #40306955;margin:8px 0 5px!important;letter-spacing:.1px}
+.fg-hero-copy p{font:800 clamp(11px,2.85vw,13px)/1.4 Nunito,system-ui,sans-serif!important;
+ color:var(--fg-subtitle,#fff)!important;margin:0!important;max-width:285px}
+.fg-hero-papi{position:relative;z-index:2;object-fit:contain;flex:none;width:94px;height:108px;
+ filter:drop-shadow(0 5px 3px #27335938);margin:-13px -7px -13px 0;pointer-events:none}
+@media(max-width:375px){.fg-hero{padding:18px 8px 11px 51px;min-height:106px}.fg-hero-papi{width:67px;height:90px}}
+@media(max-height:720px){.fg-hero{min-height:88px;padding-top:10px;padding-bottom:9px;margin-bottom:8px}.fg-hero-papi{height:75px}}
+/* 1. HARF BAHÇESİ · selected B — floral greenhouse, wood letter box. */
+#harfBahcesiOverlay.hb-playing .hb-card{
+ background:linear-gradient(#fbf8eac9,#fcf3daae),url('game-scenes/garden.svg') center center/100% 100% no-repeat!important;
+ border:5px solid #acd98f!important;border-radius:32px!important;
+ box-shadow:0 12px 0 #6a9f65,0 20px 38px #23563e77!important;position:relative}
+#harfBahcesiOverlay.hb-playing .hb-card>header{
+ background:linear-gradient(165deg,#b6e7a3b0,#fff3d7e9) url('game-scenes/garden.svg') center top/cover!important;
+ border-bottom:3px solid #9fcf97!important}
+#harfBahcesiOverlay.hb-playing .hb-card header h2{
+ background:linear-gradient(#a867ed,#702ebe)!important;border:4px solid #eec8ff!important;
+ box-shadow:0 5px 0 #522787,0 9px 18px #5227875c!important;letter-spacing:.3px}
+#harfBahcesiOverlay.hb-playing .hb-meta>*{box-shadow:0 3px 0 #b8b5c4!important;background:#fff9f3f0!important;border-color:#e4d3b1!important}
+#harfBahcesiOverlay.hb-playing .hb-hints>div{background:linear-gradient(#fffdfb,#fcebd3)!important;
+ border:3px solid #d9a777!important;box-shadow:0 5px 0 #b98954!important;color:#7349a3!important}
+#harfBahcesiOverlay.hb-playing .hb-hints>div span{font-size:clamp(17px,4.3vw,23px);font-weight:900;color:#5f3a8c}
+#harfBahcesiOverlay.hb-playing .hb-grid{
+ border:9px ridge #d09a61!important;background:linear-gradient(#efd0a0,#ad734a)!important;
+ box-shadow:inset 0 6px 13px #83552e70,0 8px 0 #80502e!important;padding:10px!important;gap:6px!important}
+#harfBahcesiOverlay.hb-playing .hb-grid button{
+ background:linear-gradient(#fffdf7,#fbe1b4)!important;color:#3c6549!important;
+ border:2px solid #cf9b6c!important;border-radius:9px!important;
+ font:900 clamp(19px,5.7vw,29px) Fredoka,Nunito,system-ui!important;
+ box-shadow:inset 0 2px #fff,0 4px 0 #ba8553!important}
+#harfBahcesiOverlay.hb-playing .hb-grid button.hb-picked{
+ background:#d6b1fc!important;border-color:#8037cc!important;color:#55238c!important;box-shadow:0 0 0 2px #9e63dd!important}
+#harfBahcesiOverlay.hb-playing .hb-grid button.hb-found{
+ background:#bff3c1!important;border-color:#2baa61!important;color:#176b3e!important;box-shadow:0 4px 0 #72b878!important}
+#harfBahcesiOverlay.hb-playing .hb-actions .hb-primary{
+ background:linear-gradient(#b071ec,#7c3acb)!important;border-color:#7434bd!important;
+ box-shadow:0 5px 0 #523181!important;font-size:15px!important}
+#harfBahcesiOverlay.hb-playing .hb-selection{color:#5c2e85!important;text-shadow:0 2px #fff9}
+#harfBahcesiOverlay.hb-playing .hb-status{background:#fff5d8ec!important;font-weight:800}
+/* 2. RİSK BALONLARI · selected A — colorful carnival with numbered glossy balloons. */
+#jpOyunOverlay.dm-designed-playing>.game-modal-content{
+ background:linear-gradient(#f0faff92,#fff2dcc9),url('game-scenes/carnival.svg') center/100% 100% no-repeat!important;
+ border-color:#fff5d4!important}
+#jpOyunOverlay.dm-designed-playing #jpBalonEkrani>.dm-risk-hero{
+ background:linear-gradient(105deg,#fff8f3e9,#fff7f3ad)!important;box-shadow:0 5px 0 #e5bad0!important;
+ border:3px solid #f5cadb!important;min-height:96px;padding:15px 10px 11px 45px!important;border-radius:25px}
+#jpOyunOverlay.dm-designed-playing .dm-risk-hero h3{color:#e72d68!important;
+ font:900 clamp(23px,6vw,30px) Fredoka,Nunito,system-ui!important;letter-spacing:.2px}
+#jpOyunOverlay.dm-designed-playing .dm-risk-hero small{color:#af4880!important}
+#jpOyunOverlay.dm-designed-playing .dm-risk-hero img{width:94px!important;height:102px!important;filter:drop-shadow(0 6px 2px #66a8a950)}
+#jpOyunOverlay.dm-designed-playing .dm-risk-hud{background:#fffdf0f5!important;border:3px solid #e6ce9c!important;border-radius:17px!important;
+ box-shadow:0 4px 0 #d6ba8e!important;font-size:clamp(11px,3vw,14px)!important}
+#jpOyunOverlay.dm-designed-playing #jpBalonlarGrid{background:linear-gradient(#eefaff4d,#fff8e14d)!important;
+ margin:10px 0!important;padding:14px 4px 10px!important;gap:clamp(4px,1.6vw,9px) 1px!important;grid-template-columns:repeat(4,minmax(0,1fr))!important}
+#jpOyunOverlay.dm-designed-playing .dm-risk-balloon{min-height:clamp(102px,27vw,136px)!important}
+#jpOyunOverlay.dm-designed-playing .dm-balloon-body{width:clamp(56px,15.5vw,78px)!important;
+ height:clamp(72px,21vw,96px)!important;border:2px solid #fff8!important;
+ filter:drop-shadow(0 5px 3px #40435e48)}
+#jpOyunOverlay.dm-designed-playing .dm-balloon-body b{font-size:clamp(19px,5vw,26px)!important;color:#272260!important}
+#jpOyunOverlay.dm-designed-playing .dm-risk-rule{
+ border:2px solid #f1d8a6!important;background:#fff5d5ee!important;border-radius:17px!important;
+ color:#956a42!important;font-size:11px!important;font-weight:900!important}
+#jpOyunOverlay.dm-designed-playing #jpSoruEkrani{background:#fffbf1e8!important;padding:14px!important;
+ border:3px solid #e2cbaa!important;border-radius:23px!important}
+#jpOyunOverlay.dm-designed-playing #jpSoruEkrani>div:nth-child(2){background:#fff!important;
+ border:3px solid #e5b9d8!important;border-radius:20px!important;box-shadow:0 4px 0 #efcdde!important}
+#jpOyunOverlay.dm-designed-playing #jpSoruKelimeText{font:900 clamp(24px,6vw,31px) Fredoka,Nunito,system-ui!important;color:#472571!important}
+#jpOyunOverlay.dm-designed-playing #jpSeceneklerGrid{gap:11px!important}
+#jpOyunOverlay.dm-designed-playing .jp-sik-btn{background:#fff!important;border:3px solid #d5bfe6!important;
+ color:#492d7c!important;border-radius:17px!important;min-height:56px!important;font:900 14px Nunito,system-ui!important;
+ box-shadow:0 4px 0 #c9aed5!important}
+.fg-audio-button{display:inline-grid;place-items:center;border-radius:999px!important;background:#e5f7ff!important;
+ border:2px solid #b4ddfa!important;padding:7px 14px!important;margin:10px 0 0!important;color:#3f5586!important;font-weight:900!important}
+/* 3. HIZ FIRTINASI · selected B — bright energetic storm with lightning. */
+#yagmurOyunOverlay.dm-designed-playing>.game-modal-content{
+ background:linear-gradient(#e9f5ffb3,#f7faffd1),url('game-scenes/storm.svg') center/100% 100% no-repeat!important;
+ border-color:#9bc9ff!important}
+#yagmurOyunEkrani .fg-hero{--fg-title:#fff;--fg-subtitle:#edf9ff;
+ background:linear-gradient(100deg,#2635a0,#268de8 75%,#84cdff)!important;border-color:#eefaff!important;
+ box-shadow:0 6px 0 #655ba9!important}
+#yagmurOyunOverlay.dm-designed-playing #yagmurOyunEkrani>div:nth-child(2){
+ background:#eff9ffeb!important;border:2px solid #a5cdec!important;padding:10px!important;
+ border-radius:19px!important;color:#263a7b!important;font-size:12px!important}
+#yagmurOyunOverlay.dm-designed-playing #yagmurAlan{
+ min-height:clamp(180px,27vh,265px)!important;border:4px solid #79b9fc!important;border-radius:25px!important;
+ background:linear-gradient(#14459e96,#2c75d9ac),url('game-scenes/storm.svg') center/cover!important;
+ box-shadow:inset 0 5px 24px #16276c71,0 6px 0 #9bd3ff!important}
+#yagmurOyunOverlay.dm-designed-playing .yg-dusen-kelime{
+ background:linear-gradient(#fff,#f7f3ff)!important;border:4px solid #c8aff8!important;
+ border-radius:20px!important;color:#342177!important;box-shadow:0 7px 0 #6351a6,0 12px 20px #11327b6b!important;
+ padding:15px!important;font:900 clamp(19px,5.4vw,28px) Fredoka,Nunito,system-ui!important}
+#yagmurOyunOverlay.dm-designed-playing #yagmurSecenekler{gap:9px!important;margin-top:17px!important;grid-template-columns:repeat(2,minmax(0,1fr))!important}
+#yagmurOyunOverlay.dm-designed-playing #yagmurSecenekler .yg-secenek-btn{
+ background:#fff!important;color:#453180!important;border:3px solid #a68cea!important;border-radius:18px!important;
+ padding:12px 8px!important;min-height:59px!important;box-shadow:0 5px 0 #7865b5!important;
+ font:900 clamp(12px,3.6vw,17px) Nunito,system-ui!important;overflow-wrap:anywhere}
+#yagmurOyunOverlay.dm-designed-playing #yagmurSecenekler .yg-secenek-btn.dogru{
+ background:#d7fbe0!important;color:#176737!important;border-color:#32bb6a!important}
+#yagmurOyunOverlay.dm-designed-playing #yagmurSecenekler .yg-secenek-btn.yanlis{
+ background:#ffe1eb!important;color:#932944!important;border-color:#e44669!important}
+/* 4. ŞİFRE KIRICI · selected A — pastel lilac lock and clear answer box. */
+#kelimebulOyunOverlay.dm-designed-playing>.game-modal-content{
+ background:linear-gradient(#fbf4ffe3,#fcf4ffba),url('game-scenes/lock.svg') center/100% 100% no-repeat!important;
+ border:5px solid #dfc7f5!important}
+#kelimebulOyunEkrani .fg-hero{--fg-title:#50268e;--fg-subtitle:#9a528d;
+ background:linear-gradient(#ffffffdc,#e9d6ffdf)!important;
+ border-color:#e6d0f7!important;min-height:118px}
+#kelimebulOyunEkrani .fg-hero::before{content:'🔐';position:absolute;right:10px;bottom:4px;font-size:63px;
+ filter:drop-shadow(0 7px 4px #653f9666);pointer-events:none}
+#kelimebulOyunOverlay.dm-designed-playing #kelimebulOyunEkrani>div:nth-child(2){
+ display:flex!important;align-items:center;justify-content:space-between;gap:7px;
+ padding:11px 8px!important;background:#fffdf6f0!important;border:2px solid #e7d7ee!important;
+ border-radius:15px!important;margin-bottom:13px!important;color:#452774!important;
+ font-size:clamp(11px,2.8vw,14px)!important}
+#kelimebulOyunOverlay.dm-designed-playing #kbIpucu{
+ background:#fffafff7!important;border:3px dashed #baa2f0!important;border-radius:19px!important;
+ padding:14px!important;font:900 clamp(13px,3.8vw,17px) Nunito,system-ui!important;
+ color:#614b91!important;margin:13px 0!important}
+#kelimebulOyunOverlay.dm-designed-playing #kbSatirlar{margin:13px auto 19px!important;min-height:60px}
+#kelimebulOyunOverlay.dm-designed-playing .kb-box-v2{border-radius:12px!important;border:2px solid #c9b7e7!important;
+ background:#fff!important;color:#593884!important;box-shadow:0 3px 0 #c7b2dc!important;min-width:33px!important;font-weight:900!important}
+#kelimebulOyunOverlay.dm-designed-playing .kb-box-v2.yesil{background:#d6f9e0!important;border-color:#38c47a!important;color:#145b33!important}
+#kelimebulOyunOverlay.dm-designed-playing .kb-box-v2.gri{background:#ffe4e8!important;border-color:#ea879e!important;color:#a73558!important}
+#kelimebulOyunOverlay.dm-designed-playing #kbTahminInput{
+ border:3px solid #9968e9!important;border-radius:20px!important;
+ background:#fff!important;color:#51378d!important;box-shadow:0 0 0 4px #bb97f338!important;
+ font-size:clamp(16px,4.3vw,19px)!important;min-height:56px!important}
+#kelimebulOyunOverlay.dm-designed-playing #kbTahminInput+button{
+ min-height:59px!important;border-radius:19px!important;border:2px solid #a46ded!important;
+ background:linear-gradient(#aa6bff,#8b3cdb)!important;box-shadow:0 5px 0 #6f36b4!important;
+ padding:9px 19px!important;font-size:16px!important}
