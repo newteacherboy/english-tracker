@@ -3,13 +3,13 @@ const assert=require('node:assert/strict');
 const candidate=require('../ingilizce/thematic-v8-candidate.js');
 const curriculum=require('../ingilizce/thematic-curriculum.json');
 const core=require('../ingilizce/learning-core.js');
-test('all 240 proposed lessons have four distinct teaching stages and ten graded tasks',()=>{
- assert.equal(curriculum.chapters.length,240);
- assert.equal(new Set(curriculum.chapters.map(c=>c.id)).size,240);
+test('all 384 proposed lessons have four distinct teaching stages and ten graded tasks',()=>{
+ assert.equal(curriculum.chapters.length,384);
+ assert.equal(new Set(curriculum.chapters.map(c=>c.id)).size,384);
  let graded=0;
  for(const [i,chapter] of curriculum.chapters.entries()){
-  assert.equal(chapter.id,1000+i);
-  const tasks=candidate.build(chapter,curriculum.chapters[i-1]);
+  assert.equal(chapter.routeNumber,i+1);
+  const tasks=candidate.build(chapter,curriculum.chapters.find(x=>x.id===chapter.previousId));
   assert.equal(tasks.length,14);
   assert.deepEqual(tasks.slice(0,4).map(x=>x.kind),['teach','teach','teach','teach']);
   assert.deepEqual(tasks.slice(0,3).map(x=>x.cards[0].en),chapter.cards.map(x=>x.en));
@@ -20,7 +20,7 @@ test('all 240 proposed lessons have four distinct teaching stages and ten graded
    graded++;
   }
  }
- assert.equal(graded,2400);
+ assert.equal(graded,3840);
 });
 
 test('client and server v8 candidate compilers are identical',()=>{

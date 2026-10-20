@@ -45,11 +45,11 @@ export function thematicHandler(db:DB){
    if(!enrollment){const old=await db.select('papi_story_progress',{select:'chapter',actor_key:'eq.'+owner,chapter:'lt.80',completed:'eq.true',limit:'80'});await db.insert('dm_thematic_enrollment',{actor_key:owner,student_id:student?id:null,teacher_id:student?null:id,inherited_count:old.length},true);enrollment=(await db.select('dm_thematic_enrollment',{select:'inherited_count',actor_key:'eq.'+owner,limit:'1'}))[0];}
    const inherited=Number(enrollment?.inherited_count||0);
    if(b.action==='status'){
-    const rows=await db.select('papi_story_progress',{select:'chapter,cursor,completed,version',actor_key:'eq.'+owner,chapter:'gte.1000',order:'chapter',limit:'240'});
+    const rows=await db.select('papi_story_progress',{select:'chapter,cursor,completed,version',actor_key:'eq.'+owner,chapter:'gte.1000',order:'chapter',limit:String(chapters.length)});
     const map=new Map(rows.map(r=>[r.chapter,r]));for(let i=0;i<inherited;i++){const r=map.get(1000+i);map.set(1000+i,{...(r||{chapter:1000+i,cursor:10,version:0}),completed:true,inherited:true});}
-    return json({ok:true,version:5,progress:[...map.values()],inherited,total:240,wallet:await balance()});
+    return json({ok:true,version:5,progress:[...map.values()],inherited,total:chapters.length,wallet:await balance()});
    }
-   const n=Number(b.chapter),C=chapters[n-1000];if(!Number.isInteger(n)||!C||C.id!==n)return json({ok:false,mesaj:'Geçersiz bölüm.'},400);
+   const n=Number(b.chapter),C=chapters.find(c=>c.id===n);if(!Number.isInteger(n)||!C||C.id!==n)return json({ok:false,mesaj:'Geçersiz bölüm.'},400);
    // V8 can only be enabled after the atomic first-attempt/reward RPC migration.
    const v8Enabled=typeof Deno==='undefined'||Deno.env.get('DM_THEMATIC_V8_ENABLED')!=='false';
    if(b.deckVersion===8&&!v8Enabled)return json({ok:false,mesaj:'Yeni öğrenme sürümü henüz kullanıma açılmadı.'},409);
@@ -62,7 +62,8 @@ export function thematicHandler(db:DB){
     return rec&&!rec.completed&&!p.completed&&!p.replay?{...safe(p),needsRecovery:true,recovery:recoveryView(C,Number(rec.step))}:safe(p);
    };
    let record=await read();
-   if(n>1000&&n-1000>inherited){const prev=(await db.select('papi_story_progress',{select:'completed',actor_key:'eq.'+owner,chapter:'eq.'+(n-1),limit:'1'}))[0];if(!prev?.completed)return json({ok:false,mesaj:'Önce bir önceki bölümü tamamla.'},403);}
+   const position=chapters.findIndex(c=>c.id===n),previous=chapters[position-1];
+   if(previous&&!record&&n-1000>=inherited){const prev=(await db.select('papi_story_progress',{select:'completed',actor_key:'eq.'+owner,chapter:'eq.'+previous.id,limit:'1'}))[0];if(!prev?.completed&&previous.id-1000>=inherited)return json({ok:false,mesaj:'Önce bir önceki bölümü tamamla.'},403);}
    if(b.action==='open'){
     if(!record){await db.insert('papi_story_progress',{actor_key:owner,student_id:student?id:null,teacher_id:student?null:id,chapter:n,cursor:0,completed:false,reward_claimed:n-1000<inherited,replay:n-1000<inherited,version:0,deck_version:requestedVersion},true);record=await read();}
     else if(record.cursor>=stepCount(record.deck_version)){await db.update('papi_story_progress',{...filters,version:'eq.'+record.version},{cursor:0,deck_version:requestedVersion,replay:true,questions_seen:0,charged_cursor:-1,mistakes:0,last_reward:{},route_combo:0,version:record.version+1,updated_at:new Date().toISOString()});record=await read();}
@@ -92,7 +93,7 @@ export function thematicHandler(db:DB){
    if(!Number.isInteger(b.cursor)||!Number.isInteger(b.version)||b.cursor!==record.cursor||b.version!==record.version)return json({...await withRecovery(record),stale:true,wallet:await balance(record)});
    const recovery=await recoveryStatus();
    if(recovery&&!recovery.completed&&!record.completed&&!record.replay)return json({...await withRecovery(record),stale:true,wallet:await balance(record)});
-   const tasks=requestedVersion===8?V8.build(C,chapters[n-1001]):CORE.deck(C,chapters[n-1001],requestedVersion),task=tasks[record.cursor],grade=CORE.grade(task,b.answer);
+   const tasks=requestedVersion===8?V8.build(C,chapters.find(c=>c.id===C.previousId)):CORE.deck(C,chapters.find(c=>c.id===C.previousId),requestedVersion),task=tasks[record.cursor],grade=CORE.grade(task,b.answer);
    if(!grade.valid)return json({ok:false,mesaj:'Bu etkinlik için bir cevap seç.'},400);
    // The first-answer migration is installed and verified. This records only
    // the original graded attempt; old reward and progress transactions are unchanged.

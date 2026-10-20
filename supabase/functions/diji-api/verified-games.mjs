@@ -54,7 +54,19 @@ export function verifiedGamesAPI(db,json){
     const door=ctx.data.units.findIndex(row=>row.includes(stop)),unit=Math.floor((stop-200000)%10000/100),part=stop%100-51;
     if(door<0||classNo!==Math.floor((stop-200000)/10000)||units.length!==1||units[0]!==unit||part<0||part>48||ctx.data.level<[1,10,20,30][door]||door>0&&!ctx.data.complete[door-1])return fail('Geçersiz parkur durağı.',403);
     const pos=ctx.data.units[door].indexOf(stop);if(!ctx.data.done.includes(stop)&&pos>0&&!ctx.data.done.includes(ctx.data.units[door][pos-1]))return fail('Önce önceki durağı tamamla.',403);
-    words=[...new Map(available.map(w=>[key(w.en),w])).values()].sort((a,b)=>a.en.localeCompare(b.en,'en')).slice(part*4,part*4+4);
+    const baseWords=[...new Map(available.map(w=>[key(w.en),w])).values()].sort((a,b)=>a.en.localeCompare(b.en,'en')),baseCount=Math.ceil(baseWords.length/4);
+    if(part<baseCount)words=baseWords.slice(part*4,part*4+4);
+    else if([1,3,7,8].includes(classNo)&&part<baseCount*2){
+      const all=await db.from('word_bank').select('english,turkish,unit_no').eq('active',true).eq('class_no',classNo).order('unit_no').limit(5000);
+      if(all.error)return fail('Karışık kelimeler yüklenemedi.',503);
+      const rows=(all.data||[]).filter(w=>w.english?.trim()&&w.turkish?.trim()&&w.unit_no>0),ids=[...new Set(rows.map(w=>Number(w.unit_no)))].sort((a,b)=>a-b);
+      const banks=ids.map(id=>[...new Map(rows.filter(w=>Number(w.unit_no)===id).map(w=>[key(w.english),{en:w.english.trim(),tr:w.turkish.trim()}])).values()].sort((a,b)=>a.en.localeCompare(b.en,'en')));
+      const i=ids.filter(id=>id<unit).reduce((sum,id)=>sum+Math.ceil(banks[ids.indexOf(id)].length/4),0)+part-baseCount,seen=new Set();
+      for(let round=0;words.length<4&&round<100;round++)for(let j=0;j<banks.length&&words.length<4;j++){
+        const list=banks[(i+j)%banks.length],w=list[(Math.floor(i/banks.length)+round)%list.length];
+        if(w&&!seen.has(key(w.en))){words.push(w);seen.add(key(w.en));}
+      }
+    }
    }else{
     if(!Array.isArray(body.words)||body.words.length<1||body.words.length>32)return fail('Geçersiz soru listesi.',400);
     let eligible=available;

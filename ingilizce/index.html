@@ -24409,6 +24409,18 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
           const groups=Math.max(1,Math.ceil(words.length/PARKUR_KELIME_ADEDI));
           for(let part=0;part<groups;part++)l.push({sinif:sn,unite:un,parca:part+1,parcaToplam:groups,kelimeler:words.slice(part*PARKUR_KELIME_ADEDI,(part+1)*PARKUR_KELIME_ADEDI),legacyNo:200000+sn*10000+un*100+Math.floor(part/3)+1,no:200000+sn*10000+un*100+50+part+1});
         });
+        if ([1,3,7,8].includes(sn)) {
+          const base=l.filter(d=>d.sinif===sn);
+          const banks=u.map(un=>[...new Map(tum.filter(k=>Number(k.sinif)===sn&&Number(k.unite)===un).map(k=>[EN(k).trim().toLocaleLowerCase('en'),k])).values()].sort((a,b)=>EN(a).localeCompare(EN(b),'en')));
+          base.forEach((D,i)=>{
+            const selected=[],seen=new Set();
+            for(let round=0;selected.length<4&&round<100;round++)for(let j=0;j<banks.length&&selected.length<4;j++){
+              const bank=banks[(i+j)%banks.length],k=bank[(Math.floor(i/banks.length)+round)%bank.length];
+              if(k&&!seen.has(EN(k).toLowerCase())){selected.push(k);seen.add(EN(k).toLowerCase());}
+            }
+            l.push({...D,no:D.no+D.parcaToplam,legacyNo:null,karisik:true,kelimeler:selected,parca:i+1,parcaToplam:base.length});
+          });
+        }
       });
       return l;
     });
@@ -24430,7 +24442,7 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
   function aktar() {
     duraklariKur();
     tamam=new Set();
-    DURAK.flat().forEach(d=>{if(hamTamam.has(d.no)||hamTamam.has(d.legacyNo)||(d.parca<=3&&hamTamam.has(1000+d.sinif*100+d.unite)))tamam.add(d.no);});
+    DURAK.flat().forEach(d=>{if(hamTamam.has(d.no)||(!d.karisik&&hamTamam.has(d.legacyNo))||(!d.karisik&&d.parca<=3&&hamTamam.has(1000+d.sinif*100+d.unite)))tamam.add(d.no);});
     aktarimYildiz = {};
     let eski = [...hamTamam].filter(n => n > 0 && n < 1000), tum = havuzTum();
     if (!eski.length || !tum.length) return;
@@ -24440,7 +24452,7 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
       let y = (yoVar() && yo.baYildiz && yo.baYildiz[n]) || 1;
       tum.slice((n - 1) * 8, n * 8).forEach(k => { let a = Number(k.sinif) * 100 + Number(k.unite); kapsanan[a] = (kapsanan[a] || 0) + 1; yil[a] = Math.max(yil[a] || 0, y); });
     });
-    Object.keys(kapsanan).forEach(a => { if (kapsanan[a] >= toplam[a] / 2) { let no = 1000 + Number(a); DURAK.flat().filter(d=>d.parca<=3&&1000+d.sinif*100+d.unite===no).forEach(d=>{tamam.add(d.no);aktarimYildiz[d.no]=Math.min(3,yil[a]);}); } });
+    Object.keys(kapsanan).forEach(a => { if (kapsanan[a] >= toplam[a] / 2) { let no = 1000 + Number(a); DURAK.flat().filter(d=>!d.karisik&&d.parca<=3&&1000+d.sinif*100+d.unite===no).forEach(d=>{tamam.add(d.no);aktarimYildiz[d.no]=Math.min(3,yil[a]);}); } });
   }
   function aktarGerekirse() { let n = havuzTum().length; if (n !== aktarImza) { aktarImza = n; aktar(); } }
 
@@ -24554,7 +24566,7 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
     // Yalnızca etkin durağın yakın çevresi oluşturulur; ilerleme/ödül kayıtları değişmez.
     const progress=DURAK.map((list,section)=>({open:bolumAcik(section),next:siradakiDurak(section)}));
     const all=[];
-    DURAK.forEach((list,section)=>list.forEach((D,d)=>all.push({b:section,d,no:D.no,label:D.sinif+'. sınıf '+D.unite+'. ünite · '+D.parca+'/'+D.parcaToplam+' · '+D.kelimeler.length+' kelime',short:D.sinif+'. sınıf',done:tamam.has(D.no),available:progress[section].open&&d<=progress[section].next})));
+    DURAK.forEach((list,section)=>list.forEach((D,d)=>all.push({b:section,d,no:D.no,label:D.sinif+'. sınıf '+(D.karisik?'Karışık üniteler':D.unite+'. ünite')+' · '+D.parca+'/'+D.parcaToplam+' · '+D.kelimeler.length+' kelime',short:D.sinif+'. sınıf',done:tamam.has(D.no),available:progress[section].open&&d<=progress[section].next})));
     const focus=Math.max(0,all.findIndex(st=>st.b===b&&st.d===progress[b].next));
     const start=Math.max(0,focus-8),steps=all.slice(start,Math.min(all.length,start+24));
     const current=Math.max(0,focus-start);
@@ -24573,7 +24585,7 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
     const returnView=window.dmViewHistory?.capture();let k = document.createElement('div'); k.className = 'bz-alt'; k.setAttribute('role', 'dialog'); k.setAttribute('aria-modal', 'true');
     k.classList.add('sp-entry','sp-adventure-entry');
     const saved=checkpointRead(no);const possibleXp=bitti?0:192;
-    k.innerHTML = `<div class="bz-alt-kart sp-start-card"><button id="bzVazgec" class="sp-close" aria-label="Kapat">✕</button><img class="sp-entry-papi" src="study-assets/papi-celebrate.png" alt="Papi"><small>MACERA HARİTASI · ${d+1}. DURAK</small><h3>${kac(window.dmParkurDurakAdi(b,d))}</h3><p>${kac(durakAdi(b,d))}</p><div class="sp-prize"><span>Olası ödül</span><strong>⭐ ${bitti?'0': 'En çok '+possibleXp} XP</strong><small>🪙 ${bitti?'İlk geçiş ödülü alındı':'En çok 40 altın · Başarı ve süreye göre'}</small></div><p class="sp-entry-note">${ileride?'🔒 Önce sıradaki durağı tamamla':bitti?'⭐'.repeat(y)+' · En iyi sonucun':D.kelimeler.length+' kelime · Seviye '+D.parca+'/'+D.parcaToplam+' · 12 soru + kelime kartları'}</p><button class="bz-btn mor" id="bzOyna" ${ileride?'disabled':''}>${saved?'Kaldığın yerden devam et':bitti?'Tekrar başlat':'Başlat'} →</button></div>`;
+    k.innerHTML = `<div class="bz-alt-kart sp-start-card"><button id="bzVazgec" class="sp-close" aria-label="Kapat">✕</button><img class="sp-entry-papi" src="study-assets/papi-celebrate.png" alt="Papi"><small>MACERA HARİTASI · ${d+1}. DURAK</small><h3>${kac(window.dmParkurDurakAdi(b,d))}</h3><p>${D.sinif}. sınıf · ${D.karisik?'Karışık üniteler':D.unite+'. ünite'} · ${kac(durakAdi(b,d))}</p><div class="sp-prize"><span>Olası ödül</span><strong>⭐ ${bitti?'0': 'En çok '+possibleXp} XP</strong><small>🪙 ${bitti?'İlk geçiş ödülü alındı':'En çok 40 altın · Başarı ve süreye göre'}</small></div><p class="sp-entry-note">${ileride?'🔒 Önce sıradaki durağı tamamla':bitti?'⭐'.repeat(y)+' · En iyi sonucun':D.kelimeler.length+' kelime · Seviye '+D.parca+'/'+D.parcaToplam+' · 12 soru + kelime kartları'}</p><button class="bz-btn mor" id="bzOyna" ${ileride?'disabled':''}>${saved?'Kaldığın yerden devam et':bitti?'Tekrar başlat':'Başlat'} →</button></div>`;
     document.body.appendChild(k);
     const kap = () => {k.remove();window.dmViewHistory?.leave(k);};window.dmViewHistory?.track(k,{parent:returnView,close:kap});
     k.onclick = e => { if (e.target === k) kap(); };
@@ -26452,7 +26464,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <link rel="stylesheet" href="parkur-map-theme-v1.css?v=20261010-levelbadge-fix">
 <script defer src="parkur-map-theme-v1.js?v=3"></script>
 <link rel="stylesheet" href="papi-feedback.css?v=1"><script defer src="papi-feedback.js?v=3"></script><script defer src="papi-haptics.js?v=1"></script><script defer src="papi-wallet.js?v=20261018-mobile-fit-1"></script>
-<link rel="stylesheet" href="story-path.css?v=3"><script defer src="story-curriculum.js?v=2"></script><link rel="stylesheet" href="thematic-learning.css?v=20261017-sunny-academy-1"><script defer src="learning-core.js?v=20261017-learning-hud-letters-1"></script><script defer src="thematic-learning.js?v=20261019-step-back-1"></script><script defer src="story-path.js?v=20261019-step-back-1"></script>
+<link rel="stylesheet" href="story-path.css?v=3"><script defer src="story-curriculum.js?v=2"></script><link rel="stylesheet" href="thematic-learning.css?v=20261017-sunny-academy-1"><script defer src="learning-core.js?v=20261017-learning-hud-letters-1"></script><script defer src="thematic-learning.js?v=20261020-cefr-expansion"></script><script defer src="story-path.js?v=20261019-step-back-1"></script>
 <link rel="stylesheet" href="medupro.css?v=20261011-hud">
 <script defer src="medupro.js?v=20261018-safety-2"></script>
 <link rel="stylesheet" href="activity-ui.css?v=20261016-rally-1">
@@ -26538,7 +26550,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <link rel="stylesheet" href="oyna-v2.css?v=20261016-layout-1">
 <script defer src="route-missions.js?v=20261019-offline-1"></script>
 <script defer src="papi-habit.js?v=20261019-2"></script>
-<script defer src="oyna-v2.js?v=20261019-step-back-1"></script>
+<script defer src="oyna-v2.js?v=20261020-route-expansion"></script>
 <link rel="stylesheet" href="friends-ui.css?v=20261017-social-highlights-v2">
 <script defer src="friends-ui.js?v=20261017-social-highlights-v2"></script>
 <link rel="stylesheet" href="league-ui.css?v=20261019-1">
@@ -26553,7 +26565,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <link rel="stylesheet" href="day-night-theme.css?v=20261012-1">
 <link rel="stylesheet" href="member-experience.css?v=20261019-chat-compact-1">
 <script src="placement-bank.js?v=20261013-1"></script>
-<script src="member-experience.js?v=20261019-streak-shield-1"></script>
+<script src="member-experience.js?v=20261020-route-expansion"></script>
 <link rel="stylesheet" href="start-placement.css?v=20261018-readable-study-1">
 <script src="start-placement-bank.js?v=20261018-1"></script>
 <script src="start-placement.js?v=20261018-readable-study-1"></script>
