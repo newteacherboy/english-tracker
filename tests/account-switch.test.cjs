@@ -2,7 +2,7 @@
 const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm');
 test('daily task client gets fresh version and account switch UI is loaded',()=>{
  const html=fs.readFileSync('ingilizce/index.html','utf8');
- assert.match(html,/progression-ui\.js\?v=20261018-(?:open-tabs-2|chest-1|readable-study-1)/);
+ assert.match(html,/progression-ui\.js\?v=(?:20261018-(?:open-tabs-2|chest-1|readable-study-1)|20261020-start-path-1)/);
  assert.match(html,/profile-sections\.js\?v=20261015-member-fixes-2/);
  assert.match(html,/account-switch\.js\?v=20261019-step-back-1/);
  assert.match(html,/account-switch\.css\?v=20261015-member-fixes-2/);

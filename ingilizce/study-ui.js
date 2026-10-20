@@ -16,10 +16,12 @@
  function read(){try{return JSON.parse(localStorage.getItem(storage())||'{}');}catch{return {};}}
  function studyLevelOpen(code){
   const order=Object.keys(levels),index=order.indexOf(code);if(index<0)return false;
-  return true;
+  if(window.dmGuestMode||!actor()||actor()==='teacher')return true;
+  const access=window.dmProgression?.status?.()?.studyAccess;
+  return !access||access[code]!==false;
  }
  function studyStartTarget(rows,resume){
-  const order=Object.keys(levels),categories=Object.keys(cats),open=rows.filter(k=>studyLevelOpen(k.seviye)).slice().sort((a,b)=>order.indexOf(a.seviye)-order.indexOf(b.seviye)||categories.indexOf(a.kategori)-categories.indexOf(b.kategori)||(Number(a.siraNo)||0)-(Number(b.siraNo)||0));
+  const order=Object.keys(levels),categories=Object.keys(cats),start=Math.max(0,order.indexOf(window.dmProgression?.status?.()?.startPath?.startCefr)),place=code=>{const i=order.indexOf(code);return i>=start?i-start:order.length+start-i;},open=rows.filter(k=>studyLevelOpen(k.seviye)).slice().sort((a,b)=>place(a.seviye)-place(b.seviye)||categories.indexOf(a.kategori)-categories.indexOf(b.kategori)||(Number(a.siraNo)||0)-(Number(b.siraNo)||0));
   const saved=[resume?.level,resume?.category,resume?.topic].join('|');
   return open.find(k=>key(k)===saved&&k.durum!=='tamamlandi')||open.find(k=>k.durum!=='tamamlandi')||open[0];
  }
@@ -180,12 +182,12 @@
  }
  function renderLevels(){
   const rows=dcTumKonularCache||[],resume=read(),player=window.dmProgression?.level?.()||1,status=window.dmProgression?.status?.();
-  const signature=JSON.stringify([actor(),rows.map(k=>[key(k),k.durum]),resume,player,status?.lessons,status?.studyAccess,status?.studyPlacementLevel]);if(signature===levelSignature&&$('suLevels'))return;levelSignature=signature;
+  const signature=JSON.stringify([actor(),rows.map(k=>[key(k),k.durum]),resume,player,status?.lessons,status?.studyAccess,status?.studyPlacementLevel,status?.startPath]);if(signature===levelSignature&&$('suLevels'))return;levelSignature=signature;
   let panel=$('suLevels');if(!panel){panel=document.createElement('div');panel.id='suLevels';$('dcScreenLevels').append(panel);}
   const count=rows.filter(k=>k.durum==='tamamlandi').length,target=studyStartTarget(rows,resume),resuming=target&&key(target)===[resume?.level,resume?.category,resume?.topic].join('|')&&target.durum!=='tamamlandi';
   panel.innerHTML=`<div class="su-levels-heading"><h1>${ico('book')} Ders Çalış</h1></div><section class="su-levels-welcome"><div><h2>Bugün ne öğrenelim?</h2><p>Küçük adımlar, büyük keşifler.</p>${status?.studyPlacementLevel?`<p>Seviye testiyle <b>${esc(status.studyPlacementLevel)}</b> ve altındaki tüm konuların açık.</p>`:''}</div>${art('read')}</section><div class="su-levels-progress"><b>Öğrenme yolculuğun</b><span>${count} / ${rows.length} konu</span><div class="su-bar"><i style="width:${rows.length?count/rows.length*100:0}%"></i></div></div><div class="su-level-cards">${Object.entries(levels).map(([code,label],i)=>{
-   const lessons=rows.filter(k=>k.seviye===code),done=lessons.filter(k=>k.durum==='tamamlandi').length,need=[1,9,16,23][i],locked=!studyLevelOpen(code);
-   return `<button class="su-level-card ${locked?'su-level-locked':''}" data-su="level" data-level="${code}" aria-disabled="${!!locked}" style="--su-level-color:${['#dcfff1','#eee3ff','#fff0d8','#e1f2ff'][i]}"><img class="su-island" src="study-assets/island-${code.toLowerCase()}.png" alt="" decoding="async"><b>${code}</b><strong>${label}</strong><span class="su-level-count">${done} / ${lessons.length} konu</span><span class="su-level-bar"><i style="width:${lessons.length?done/lessons.length*100:0}%"></i></span><span class="su-level-action">${locked?ico('lock'):''}${locked?player<need?need+'. seviyede açılır':'Önce '+Object.keys(levels)[i-1]+'’i tamamla':'Konuları aç →'}</span></button>`;
+   const lessons=rows.filter(k=>k.seviye===code),done=lessons.filter(k=>k.durum==='tamamlandi').length,locked=!studyLevelOpen(code);
+   return `<button class="su-level-card ${locked?'su-level-locked':''}" data-su="level" data-level="${code}" aria-disabled="${!!locked}" style="--su-level-color:${['#dcfff1','#eee3ff','#fff0d8','#e1f2ff'][i]}"><img class="su-island" src="study-assets/island-${code.toLowerCase()}.png" alt="" decoding="async"><b>${code}</b><strong>${label}</strong><span class="su-level-count">${done} / ${lessons.length} konu</span><span class="su-level-bar"><i style="width:${lessons.length?done/lessons.length*100:0}%"></i></span><span class="su-level-action">${locked?ico('lock'):''}${locked?'Önce '+Object.keys(levels)[i-1]+'’i bitir veya testi çöz':'Konuları aç →'}</span></button>`;
   }).join('')}</div><p class="su-levels-steps">${ico('book')} Anlatım <span>→</span> ${ico('sound')} Örnekler <span>→</span> ${ico('check')} Test</p><button class="su-levels-resume" data-su="resume" ${target?'':'disabled'}>${resuming?'Kaldığın yerden devam et':'Öğrenmeye başla'} →</button>`;
  }
  function wordMeaning(w){const popup=$('dcHoverBalon');if(!popup)return;popup.innerHTML='<b>'+esc(w.textContent)+'</b> · '+esc(w.dataset.tr||'')+(w.dataset.alt?'<small>'+esc(w.dataset.alt)+'</small>':'');popup.style.display='block';const r=w.getBoundingClientRect(),width=Math.min(280,window.innerWidth-24);popup.style.width=width+'px';popup.style.left=Math.max(12,Math.min(r.left,window.innerWidth-width-12))+'px';popup.style.top=Math.max(12,Math.min(r.bottom+8,window.innerHeight-100))+'px';}
