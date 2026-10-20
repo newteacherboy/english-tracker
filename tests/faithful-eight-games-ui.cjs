@@ -63,13 +63,13 @@ const fs=require('node:fs'),path=require('node:path'),assert=require('node:asser
   const modal=document.getElementById('yoModal');modal.dataset.dmSelectedGame='dikte';modal.classList.add('acik');
   document.getElementById('yoGovde').innerHTML='<div class="yo-ust-bilgi">Kelime 1/12</div><div class="yo-dikte-dinle"><button type="button">🔊</button></div><input id="yoDikteInput">';
  });
- await page.waitForSelector('#yoModal .fg-listening-banner',{timeout:5000});
+ await page.waitForSelector('#yoModal .fg-listening-banner',{state:'attached',timeout:5000});
  assert(await page.locator('#yoModal .fg-listening-banner img').count()===1);
  await page.evaluate(()=>{
   const modal=document.getElementById('yoModal');modal.dataset.dmSelectedGame='cumle';
   document.getElementById('yoGovde').innerHTML='<div class="yo-soru"><small>Bu cümleyi İngilizce kur</small><b>Kalede fotoğraflar çekeriz.</b></div><div class="yo-cevap-alan"></div><div class="yo-havuz"><button class="yo-chip">castle</button></div>';
  });
- await page.waitForSelector('#yoModal .fg-sentence-banner',{timeout:5000});
+ await page.waitForSelector('#yoModal .fg-sentence-banner',{state:'attached',timeout:5000});
  assert.equal(await page.locator('#yoModal .yo-soru img').count(),0);
  assert.deepEqual(errors,[],'No browser JS errors');
  await browser.close();
