@@ -16,7 +16,7 @@ const {chromium}=require('playwright'),fs=require('node:fs'),path=require('node:
   return route.fulfill({contentType:'application/json',body:'[]'});
  });
  await page.addInitScript(()=>new MutationObserver(()=>document.querySelector('.kur-perde .kur-x')?.click()).observe(document,{childList:true,subtree:true}));
- await page.goto('https://diji.test/ingilizce/',{waitUntil:'load',timeout:60000});
+ await page.goto('https://diji.test/ingilizce/?giris=1',{waitUntil:'load',timeout:60000});
  await page.waitForFunction(()=>!!window.dmEightGameFullscreen,{timeout:15000});
  const games=[
   ['jpOyunOverlay','jpBalonEkrani'],['jpOyunOverlay','jpSoruEkrani'],
