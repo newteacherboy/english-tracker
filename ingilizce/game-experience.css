@@ -55,3 +55,189 @@
 
 /* Score clock occupies its own row; never float over question titles. */
 .dm-game-clock{position:relative!important;inset:auto!important;top:auto!important;left:auto!important;transform:none!important;display:table;max-width:calc(100% - 24px);width:max-content;margin:6px auto 10px;z-index:2!important;box-sizing:border-box;text-align:center}
+
+
+/* ============================================================
+ * Approved 2026-10-20 game designs (original choices, not reimagined).
+ * All selectors are scoped to a real playing game, never entry screens.
+ * Controls remain native interactive DOM; no image screenshot overlays.
+ * ============================================================ */
+.dm-designed-playing.game-modal-overlay{padding:8px!important;background:#221a3390!important;backdrop-filter:blur(5px)}
+body .dm-designed-playing.game-modal-overlay>.game-modal-content{
+ --dm-ink:#3e2b75;--dm-accent:#7142cd;--dm-edge:#d7c4f1;
+ box-sizing:border-box;width:min(100%,540px)!important;max-height:min(96dvh,950px)!important;overflow-y:auto!important;overflow-x:hidden!important;
+ border:4px solid var(--dm-edge)!important;border-radius:34px!important;
+ color:var(--dm-ink)!important;padding:14px clamp(12px,3vw,22px) 22px!important;
+ box-shadow:0 7px 0 #35226f,0 20px 46px #160d325a!important;
+ font-family:Nunito,system-ui,sans-serif!important;scrollbar-width:thin;
+}
+.dm-designed-playing .game-modal-content :is(button,input){font-family:Nunito,system-ui,sans-serif}
+.dm-designed-playing .game-modal-content .game-close-btn{
+ width:49px!important;height:49px!important;border:3px solid #c2eaf1!important;background:#fff!important;
+ color:#3e287b!important;border-radius:50%!important;box-shadow:0 5px 0 #b2d8dd!important;
+ font-size:32px!important;line-height:1!important;display:grid!important;place-items:center!important;
+}
+.dm-designed-playing .game-modal-content :is(button,.es-k){-webkit-tap-highlight-color:transparent;transition:filter .12s,border-color .15s,background .15s,transform .12s}
+.dm-designed-playing .game-modal-content :is(button,.es-k).dm-touch-picked{filter:brightness(.94);transform:scale(.98)}
+.dm-designed-playing .game-modal-content :is(button,.es-k,input).dm-answer-right{
+ background:#dcfce4!important;border-color:#1db559!important;color:#13692e!important;
+ box-shadow:0 0 0 3px #6fe09e77,0 4px 0 #59b778!important;
+}
+.dm-designed-playing .game-modal-content :is(button,.es-k,input).dm-answer-wrong{
+ background:#ffe2e6!important;border-color:#e13b60!important;color:#99213e!important;
+ box-shadow:0 0 0 3px #fa91a577,0 4px 0 #e3869a!important;
+}
+.dm-designed-playing .game-modal-content :is(.dogru,.correct,.is-correct,.es-dogru){
+ background:#def8e5!important;border-color:#34ba65!important;color:#16733c!important;
+}
+.dm-designed-playing .game-modal-content :is(.yanlis,.wrong,.incorrect,.is-wrong,.es-yanlis){
+ background:#ffe2e7!important;border-color:#e63d5c!important;color:#972640!important;
+}
+#dmSelectedAnswerCue{position:fixed;z-index:2147483000;left:50%;top:calc(63px + env(safe-area-inset-top,0px));
+ transform:translateX(-50%);pointer-events:none;min-width:160px;max-width:90vw;
+ padding:11px 21px;border:2px solid #70c391;border-radius:999px;color:#165f37;background:#e5ffe9;
+ box-shadow:0 5px 20px #27235440;font:900 17px Nunito,system-ui;text-align:center}
+#dmSelectedAnswerCue.dm-cue-wrong{border-color:#e49ba9;background:#ffe6eb;color:#9a213d}
+#dmSelectedAnswerCue[hidden]{display:none!important}
+
+/* Risk Balonları / selected design A: sunny carnival. */
+#jpOyunOverlay.dm-designed-playing>.game-modal-content{
+ --dm-ink:#63315b;--dm-edge:#c3daf2;
+ background:radial-gradient(ellipse at 12% 0,#fffafc 4%,transparent 52%),
+ linear-gradient(164deg,#93d9fa 0%,#e5f7fe 31%,#fff4e7 68%,#fff3d2 100%)!important;
+}
+#jpOyunOverlay.dm-designed-playing :is(.game-title,.dm-risk-hero h3){color:#bb2352!important;font:900 clamp(22px,6vw,30px) Fredoka,Nunito,system-ui!important;text-align:center}
+#jpOyunOverlay.dm-designed-playing .dm-risk-hero{background:linear-gradient(95deg,#ffffffcf,#ffffff8a);
+ padding:10px;border:2px solid #d1eafa;border-radius:22px}
+#jpOyunOverlay.dm-designed-playing .dm-risk-hero img{max-width:95px;max-height:110px}
+#jpOyunOverlay.dm-designed-playing .dm-risk-hud{background:#fffefa!important;border:2px solid #cae7ec!important;border-radius:17px;
+ padding:12px 6px!important;font-size:clamp(11px,3vw,14px)!important;box-shadow:0 4px 0 #c9e5ee}
+#jpOyunOverlay.dm-designed-playing #jpBalonlarGrid{background:linear-gradient(170deg,#a9e2ff7a,#fff4f9b0)!important;
+ grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:clamp(5px,2vw,12px) 4px!important;padding:15px 5px 3px!important}
+#jpOyunOverlay.dm-designed-playing .dm-balloon-body{width:clamp(55px,16vw,78px);height:clamp(73px,21vw,99px);
+ border:2px solid #ffffffb8;box-shadow:inset -6px -5px 11px #14115825,0 7px 12px #275b7f25}
+#jpOyunOverlay.dm-designed-playing .dm-risk-balloon{min-height:clamp(106px,27vw,138px)}
+#jpOyunOverlay.dm-designed-playing .dm-risk-balloon[data-color="0"]{--balloon-light:#bcf6ff;--balloon-mid:#46cce0;--balloon-dark:#1e90b7}
+#jpOyunOverlay.dm-designed-playing .dm-risk-balloon[data-color="1"]{--balloon-light:#e4cbff;--balloon-mid:#ab69df;--balloon-dark:#7546bc}
+#jpOyunOverlay.dm-designed-playing .dm-risk-balloon[data-color="2"]{--balloon-light:#fff3ad;--balloon-mid:#f8cc4b;--balloon-dark:#db9e1e}
+#jpOyunOverlay.dm-designed-playing .dm-risk-balloon[data-color="3"]{--balloon-light:#ffd6e7;--balloon-mid:#f28bb6;--balloon-dark:#cd5489}
+#jpOyunOverlay.dm-designed-playing .dm-risk-rule{background:#fff1d7;padding:10px;border-radius:18px;color:#8d5734;font-weight:800;text-align:center}
+#jpOyunOverlay.dm-designed-playing #jpSeceneklerGrid .jp-sik-btn{border:2px solid #ccd8ed!important;
+ background:white!important;color:#463273!important;min-height:54px!important}
+
+/* Hız Fırtınası / selected design B: lightning road, not rainy night. */
+#yagmurOyunOverlay.dm-designed-playing>.game-modal-content{
+ --dm-edge:#9fcaf1;
+ background:radial-gradient(ellipse at 85% 10%,#fff3a4b0,transparent 38%),
+ repeating-linear-gradient(115deg,transparent,transparent 75px,#ffffff2e 76px,#ffffff2e 79px),
+ linear-gradient(#f5fbff,#d2ecff 52%,#e9e4ff 100%)!important;
+}
+#yagmurOyunOverlay.dm-designed-playing .game-title{color:#322b81!important;text-shadow:0 2px #fff;font:900 clamp(22px,6vw,30px) Fredoka,Nunito,system-ui!important}
+#yagmurOyunOverlay.dm-designed-playing :is(.yg-oyun-alani,.yg-alan,.yg-game-area,.yg-soru-kutu){
+ border-radius:25px!important;border:2px solid #8db9f6!important;
+ background:radial-gradient(circle at 70% 20%,#f8e773b0,transparent 25%),
+ repeating-linear-gradient(105deg,transparent,transparent 42px,#b4e2ff64 43px,#b4e2ff64 45px),
+ linear-gradient(160deg,#0b348e,#3375d9 55%,#90bbff)!important;
+}
+#yagmurOyunOverlay.dm-designed-playing :is(.yg-kelime,.yg-kelime-kutu,.yg-soru){
+ padding:17px 12px!important;background:#fff!important;border:4px solid #4a378b!important;
+ border-radius:22px!important;color:#30216e!important;font:900 clamp(18px,5vw,27px) Fredoka,Nunito,system-ui!important;
+ box-shadow:0 5px 0 #c9c3ef}
+#yagmurOyunOverlay.dm-designed-playing .yg-secenek-btn{
+ background:#fff!important;color:#392c72!important;border:3px solid #7767c5!important;
+ min-height:56px!important;border-radius:20px!important;box-shadow:0 4px 0 #5c499c!important;
+ font:900 clamp(13px,3.4vw,17px) Nunito,system-ui}
+#yagmurOyunOverlay.dm-designed-playing .yg-secenek-btn.dm-answer-right{background:#d9fbe8!important;border-color:#1ab966!important}
+#yagmurOyunOverlay.dm-designed-playing .yg-secenek-btn.dm-answer-wrong{background:#ffe0e8!important;border-color:#e23557!important}
+
+/* Şifre Kırıcı / selected design A: lavender padlock. */
+#kelimebulOyunOverlay.dm-designed-playing>.game-modal-content{
+ --dm-edge:#d5bff2;
+ background:radial-gradient(ellipse at 55% 65%,#f4dfff,transparent 46%),
+ linear-gradient(170deg,#f8f1ff,#fff7ff 65%,#eee4ff)!important;
+}
+#kelimebulOyunOverlay.dm-designed-playing .game-title{color:#49258a!important;font:900 clamp(23px,6vw,30px) Fredoka,Nunito,system-ui!important}
+#kelimebulOyunOverlay.dm-designed-playing :is(#kbTahminInput,input[type=text]){
+ background:#fff!important;color:#3d287b!important;border:3px solid #ae85ed!important;
+ padding:13px!important;border-radius:19px!important;min-height:52px!important;font-size:18px!important}
+#kelimebulOyunOverlay.dm-designed-playing :is(.kb-ipucu,.kb-hint){border:2px dashed #c6a4f7!important;
+ background:#fcfaff!important;color:#6b5694!important;border-radius:17px!important;padding:12px!important}
+#kelimebulOyunOverlay.dm-designed-playing :is(.kb-btn,.kb-tahmin-btn){
+ background:linear-gradient(#a77aff,#8145da)!important;color:#fff!important;border-radius:17px!important;
+ box-shadow:0 4px 0 #5630aa!important}
+
+/* Eş Bul / selected design B: bright garden, two colored columns. */
+#esOyunOverlay.dm-designed-playing>.game-modal-content{
+ --dm-edge:#95d9ed;
+ background:radial-gradient(ellipse at 95% 7%,#fff9a9,transparent 29%),
+ linear-gradient(180deg,#a7e6ff 0%,#e3f8f7 34%,#fff9e8 90%)!important;
+}
+#esOyunOverlay.dm-designed-playing .game-title{font:900 clamp(23px,6vw,30px) Fredoka,Nunito,system-ui!important;color:#1661a9!important}
+#esOyunOverlay.dm-designed-playing .es-k{
+ border:2px solid #add4ed!important;border-radius:15px!important;background:#f7fbff!important;
+ color:#3c3481!important;font:900 clamp(12px,3.6vw,18px) Nunito,system-ui!important;
+ box-shadow:0 4px 0 #a8cfeb!important;min-height:54px!important;
+}
+#esOyunOverlay.dm-designed-playing .es-k.tr{background:#f2ffef!important;border-color:#a5d8b0!important;color:#25744d!important}
+#esOyunOverlay.dm-designed-playing .es-k.dm-answer-right{background:#d7f9e4!important;border-color:#18b459!important}
+#esOyunOverlay.dm-designed-playing .es-k.dm-answer-wrong{background:#ffe2e9!important;border-color:#e73e64!important}
+#esOyunOverlay.dm-designed-playing :is(.es-grid,.es-sutun,.es-panel){gap:9px!important}
+#esOyunOverlay.dm-designed-playing :is(.es-ilerleme,.es-sayac){border:2px solid #ebc179!important;background:#fff6d8!important;border-radius:18px!important}
+
+/* Kelime Treni / selected design B: scenic purple station. */
+#trenOyunOverlay.dm-designed-playing>.game-modal-content{
+ --dm-edge:#a4bafa;
+ background:radial-gradient(ellipse at 90% 12%,#fff4d7,transparent 36%),
+ linear-gradient(180deg,#a7cfff,#e5f0ff 37%,#e4f5e8 63%,#fff4eb 100%)!important;
+}
+#trenOyunOverlay.dm-designed-playing .game-title{font:900 clamp(23px,6vw,30px) Fredoka,Nunito,system-ui!important;color:#7e33ce!important}
+#trenOyunOverlay.dm-designed-playing :is(.tren-soru,.tren-cumle,.tr-soru){
+ background:linear-gradient(#fff,#fff9f0)!important;color:#3c2275!important;
+ border:3px solid #7b59c9!important;border-radius:22px!important;
+ font:900 clamp(17px,4.7vw,24px) Fredoka,Nunito,system-ui!important;
+ padding:15px!important;box-shadow:0 4px 0 #aaa2de!important}
+#trenOyunOverlay.dm-designed-playing :is(.tren-vagon,.tren-kelime,[class*="vagon-kart"],[class*="vagon-btn"]){
+ border:3px solid #e4a13c!important;border-radius:18px!important;background:linear-gradient(#ffefd1,#ffbd64)!important;
+ color:#653b25!important;box-shadow:0 5px 0 #b87237!important;font-weight:900!important;min-height:49px!important}
+#trenOyunOverlay.dm-designed-playing :is(.tren-ray,.tren-raylar,[class*="tren-ray"]){
+ border-radius:15px;background:repeating-linear-gradient(90deg,transparent 0 26px,#5d5548 26px 37px,transparent 37px 53px),
+ linear-gradient(180deg,transparent 35%,#55483f 35% 42%,transparent 42% 63%,#55483f 63% 71%,transparent 71%);
+}
+
+/* Kulak Dedektifi / design B: magnifying glass soundstage. */
+#yoModal[data-dm-selected-game="dikte"]{
+ --dm-audio-purple:#874fe3;background:linear-gradient(#f9f0ff,#fff6fb)!important;color:#493082!important}
+#yoModal[data-dm-selected-game="dikte"] :is(.yo-modal-content,.yo-icerik,.yo-card){
+ background:linear-gradient(160deg,#fdf8ff,#f2e2ff)!important;color:#48317a!important;
+ border:2px solid #d8baf5!important;border-radius:28px!important}
+#yoModal[data-dm-selected-game="dikte"] #yoDikteInput{
+ background:white!important;color:#523584!important;border:3px solid #b68cf4!important;
+ min-height:57px!important;border-radius:20px!important;font-size:19px!important}
+#yoModal[data-dm-selected-game="dikte"] :is(button[id*="Dikte"],[class*="dinle"],[class*="Dinle"]){
+ border-radius:22px!important}
+#yoModal[data-dm-selected-game="dikte"] :is(button[id*="Dikte"]:hover,button:focus-visible){outline-color:#8f50e2}
+
+/* Cümle Ustası / design B: wooden leafy board with text-only question. */
+#yoModal[data-dm-selected-game="cumle"]{
+ background:linear-gradient(160deg,#fff1d2,#eaf8df 75%,#fff9e9)!important;color:#4a2a75!important}
+#yoModal[data-dm-selected-game="cumle"] :is(.yo-modal-content,.yo-icerik,.yo-card){
+ border:3px solid #ca9d69!important;background:linear-gradient(#fffcf1,#f8e2b4)!important;
+ border-radius:24px!important;color:#4a2a75!important}
+#yoModal[data-dm-selected-game="cumle"] img,
+#yoModal[data-dm-selected-game="cumle"] :is(.yo-soru-gorsel,.yo-cumle-gorsel,.cumle-gorsel,[class*="sentence-image"]){display:none!important}
+#yoModal[data-dm-selected-game="cumle"] :is(.yo-cumle-soru,.cumle-soru,#yoCumleSoru){
+ background:#fffdf2!important;color:#40216d!important;border:3px solid #c7955e!important;
+ border-radius:22px!important;padding:16px!important;font-size:clamp(19px,4.8vw,26px)!important}
+#yoModal[data-dm-selected-game="cumle"] :is(.cumle-kelime,.yo-kelime,[class*="cumle-chip"],[class*="cumle-btn"]){
+ background:linear-gradient(#fffdf4,#f6e2bd)!important;color:#543967!important;
+ border:2px solid #c49a68!important;border-radius:15px!important;box-shadow:0 4px 0 #b58950!important;
+ min-height:44px!important}
+#yoModal[data-dm-selected-game="cumle"] :is(.cumle-kelime,.yo-kelime,[class*="cumle-chip"],[class*="cumle-btn"]).dm-answer-right{
+ background:#d9fce7!important;border-color:#21ba69!important}
+#yoModal[data-dm-selected-game="cumle"] :is(.cumle-kelime,.yo-kelime,[class*="cumle-chip"],[class*="cumle-btn"]).dm-answer-wrong{
+ background:#ffe0e7!important;border-color:#e3455e!important}
+@media(max-width:365px){.dm-designed-playing.game-modal-overlay>.game-modal-content{padding:10px!important;border-radius:26px!important}
+ #jpOyunOverlay.dm-designed-playing .dm-balloon-body{width:52px;height:71px}
+ #esOyunOverlay.dm-designed-playing .es-k{font-size:12px!important;padding:6px!important}
+}
+@media(prefers-reduced-motion:reduce){.dm-designed-playing.game-modal-overlay *{animation:none!important;transition:none!important}}
