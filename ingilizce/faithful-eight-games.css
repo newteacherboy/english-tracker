@@ -8,7 +8,7 @@
  outline:4px solid #ffb833!important;outline-offset:3px!important}
 :is(#harfBahcesiOverlay,#jpOyunOverlay,#yagmurOyunOverlay,#kelimebulOyunOverlay,#esOyunOverlay,#trenOyunOverlay) button:active{transform:scale(.97)}
 .dm-designed-playing.game-modal-overlay{align-items:center!important;justify-content:center!important;padding:clamp(6px,2vw,12px)!important}
-.dm-designed-playing.game-modal-overlay>.game-modal-content{
+.dm-designed-playing.game-modal-overlay .game-modal-content{
  position:relative!important;isolation:isolate;max-height:96dvh!important;max-width:530px!important;width:100%!important;
  border-radius:34px!important;border:4px solid #fff9e6!important;box-shadow:0 16px 0 #2f1e674a,0 20px 60px #140f4359!important;
  padding:clamp(10px,3vw,19px)!important;overflow-y:auto!important;overflow-x:hidden!important;scrollbar-width:thin}
@@ -72,7 +72,7 @@
 #harfBahcesiOverlay.hb-playing .hb-selection{color:#5c2e85!important;text-shadow:0 2px #fff9}
 #harfBahcesiOverlay.hb-playing .hb-status{background:#fff5d8ec!important;font-weight:800}
 /* 2. RİSK BALONLARI · selected A — colorful carnival with numbered glossy balloons. */
-#jpOyunOverlay.dm-designed-playing>.game-modal-content{
+#jpOyunOverlay.dm-designed-playing .game-modal-content{
  background:linear-gradient(#f0faff92,#fff2dcc9),url('game-scenes/carnival.svg') center/100% 100% no-repeat!important;
  border-color:#fff5d4!important}
 #jpOyunOverlay.dm-designed-playing #jpBalonEkrani>.dm-risk-hero{
@@ -106,7 +106,7 @@
 .fg-audio-button{display:inline-grid;place-items:center;border-radius:999px!important;background:#e5f7ff!important;
  border:2px solid #b4ddfa!important;padding:7px 14px!important;margin:10px 0 0!important;color:#3f5586!important;font-weight:900!important}
 /* 3. HIZ FIRTINASI · selected B — bright energetic storm with lightning. */
-#yagmurOyunOverlay.dm-designed-playing>.game-modal-content{
+#yagmurOyunOverlay.dm-designed-playing .game-modal-content{
  background:linear-gradient(#e9f5ffb3,#f7faffd1),url('game-scenes/storm.svg') center/100% 100% no-repeat!important;
  border-color:#9bc9ff!important}
 #yagmurOyunEkrani .fg-hero{--fg-title:#fff;--fg-subtitle:#edf9ff;
@@ -133,7 +133,7 @@
 #yagmurOyunOverlay.dm-designed-playing #yagmurSecenekler .yg-secenek-btn.yanlis{
  background:#ffe1eb!important;color:#932944!important;border-color:#e44669!important}
 /* 4. ŞİFRE KIRICI · selected A — pastel lilac lock and clear answer box. */
-#kelimebulOyunOverlay.dm-designed-playing>.game-modal-content{
+#kelimebulOyunOverlay.dm-designed-playing .game-modal-content{
  background:linear-gradient(#fbf4ffe3,#fcf4ffba),url('game-scenes/lock.svg') center/100% 100% no-repeat!important;
  border:5px solid #dfc7f5!important}
 #kelimebulOyunEkrani .fg-hero{--fg-title:#50268e;--fg-subtitle:#9a528d;
@@ -165,7 +165,7 @@
  padding:9px 19px!important;font-size:16px!important}
 
 /* 5. EŞ BUL · selected B — meadow, blue and mint matching columns, smiling Papi. */
-#esOyunOverlay.dm-designed-playing>.game-modal-content{
+#esOyunOverlay.dm-designed-playing .game-modal-content{
  background:linear-gradient(#c9fbf5b7,#f5fce2db),url('game-scenes/garden.svg') center/100% 100% no-repeat!important;
  border-color:#b8edc3!important}
 #esOyunEkrani .fg-hero{--fg-title:#2374b9;--fg-subtitle:#387a6b;
@@ -211,7 +211,7 @@
  border-color:#e3446a!important;box-shadow:0 3px 0 #dc8ca3!important}
 #esOyunOverlay.dm-designed-playing .es-k.hata::after{content:'✕';color:#e33b64;font-weight:900}
 /* 6. KELİME TRENİ · selected B — storybook station, visible sign and actual train wagons. */
-#trenOyunOverlay.dm-designed-playing>.game-modal-content{
+#trenOyunOverlay.dm-designed-playing .game-modal-content{
  background:linear-gradient(#eff5ffc0,#faf1ffe3 56%,#fff4d4d5),url('game-scenes/station.svg') center/100% 100% no-repeat!important;
  border:5px solid #b9b1ed!important}
 #trenOyunEkrani .fg-hero{--fg-title:#6837b5;--fg-subtitle:#7b669c;
