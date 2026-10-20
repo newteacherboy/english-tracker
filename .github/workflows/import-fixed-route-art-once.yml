@@ -1,0 +1,48 @@
+name: Import fixed approved route art (one-time)
+on:
+  push:
+    branches:
+      - feature/fixed-approved-art-scroll-only-20261020
+    paths:
+      - .github/workflows/import-fixed-route-art-once.yml
+permissions:
+  contents: write
+jobs:
+  import-assets:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feature/fixed-approved-art-scroll-only-20261020
+      - name: Fetch approved uploaded designs
+        run: |
+          curl --fail --location --retry 3 --connect-timeout 15 --max-time 90 -o /tmp/dijimedu-school.png "https://at.adobe.com/BkezjzuHcmBGC8jL"
+          curl --fail --location --retry 3 --connect-timeout 15 --max-time 90 -o /tmp/dijimedu-learning.png "https://at.adobe.com/96TpsA8S47wlfdqV"
+          file /tmp/dijimedu-school.png /tmp/dijimedu-learning.png
+      - name: Encode original artwork and register hashes
+        run: |
+          python3 -m pip install --quiet pillow
+          python3 - <<'PY'
+          from PIL import Image
+          import json,hashlib
+          from pathlib import Path
+          p=Path('docs/media-rights-manifest.json')
+          data=json.loads(p.read_text())
+          for name in ('school','learning'):
+            image=Image.open('/tmp/dijimedu-'+name+'.png').convert('RGB')
+            assert image.width>=300 and image.height>=400,(name,image.size)
+            target=Path('ingilizce/route-assets/'+name+'-fixed-approved-v1.webp')
+            image.save(target,'WEBP',quality=76,method=6)
+            record={'path':str(target),'sha256':hashlib.sha256(target.read_bytes()).hexdigest(),'bytes':target.stat().st_size,'status':'original-derived','source':'Original illustrated Diji-Medu design approved 2026-10-20; user-approved art cropped to remove static UI/stop labels. Fixed scenery, only route elements scroll.'}
+            data['assets']=[a for a in data['assets'] if a.get('path')!=str(target)]
+            data['assets'].append(record)
+            print(name, image.size,target.stat().st_size)
+          p.write_text(json.dumps(data,indent=2,ensure_ascii=False)+'\n')
+          PY
+      - name: Commit production artwork to feature branch
+        run: |
+          git config user.name 'Diji-Medu Asset Import'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add ingilizce/route-assets/school-fixed-approved-v1.webp ingilizce/route-assets/learning-fixed-approved-v1.webp docs/media-rights-manifest.json
+          git commit -m "Import user-approved fixed illustrated art for both route maps"
+          git push origin HEAD:feature/fixed-approved-art-scroll-only-20261020
