@@ -16,9 +16,7 @@
  function read(){try{return JSON.parse(localStorage.getItem(storage())||'{}');}catch{return {};}}
  function studyLevelOpen(code){
   const order=Object.keys(levels),index=order.indexOf(code);if(index<0)return false;
-  if(window.dmGuestMode||!actor()||actor()==='teacher')return true;
-  const status=window.dmProgression?.status?.();if(status?.studyAccess)return status.studyAccess[code]===true;
-  return (window.dmProgression?.level?.()||1)>=[1,9,16,23][index]&&(index===0||!!status?.lessons?.[code]);
+  return true;
  }
  function studyStartTarget(rows,resume){
   const order=Object.keys(levels),categories=Object.keys(cats),open=rows.filter(k=>studyLevelOpen(k.seviye)).slice().sort((a,b)=>order.indexOf(a.seviye)-order.indexOf(b.seviye)||categories.indexOf(a.kategori)-categories.indexOf(b.kategori)||(Number(a.siraNo)||0)-(Number(b.siraNo)||0));

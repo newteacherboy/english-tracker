@@ -52,7 +52,7 @@ export function verifiedGamesAPI(db,json){
    let words=[],stop=Number(body.stopNo)||0;
    if(game==='ba'){
     const door=ctx.data.units.findIndex(row=>row.includes(stop)),unit=Math.floor((stop-200000)%10000/100),part=stop%100-51;
-    if(door<0||classNo!==Math.floor((stop-200000)/10000)||units.length!==1||units[0]!==unit||part<0||part>48||ctx.data.level<[1,10,20,30][door]||door>0&&!ctx.data.complete[door-1])return fail('Geçersiz parkur durağı.',403);
+    if(door<0||classNo!==Math.floor((stop-200000)/10000)||units.length!==1||units[0]!==unit||part<0||part>48)return fail('Geçersiz parkur durağı.',403);
     const pos=ctx.data.units[door].indexOf(stop);if(!ctx.data.done.includes(stop)&&pos>0&&!ctx.data.done.includes(ctx.data.units[door][pos-1]))return fail('Önce önceki durağı tamamla.',403);
     const baseWords=[...new Map(available.map(w=>[key(w.en),w])).values()].sort((a,b)=>a.en.localeCompare(b.en,'en')),baseCount=Math.ceil(baseWords.length/4);
     if(part<baseCount)words=baseWords.slice(part*4,part*4+4);

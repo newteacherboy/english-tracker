@@ -24432,7 +24432,7 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
   const toplamDurak = () => { duraklariKur(); return DURAK.reduce((t, l) => t + l.length, 0); };
   let tamam = new Set(), hamTamam = new Set(), aktarimYildiz = {}, yuklendi = false, aktarImza = -1;
   const bolumTamam = b => { let n = 0; for (let d = 0; d < durakSayisi(b); d++) if (tamam.has(durakNo(b, d))) n++; return n; };
-  const bolumAcik = b => (!window.dmProgression || window.dmProgression.parkur(b)) && (b === 0 || bolumTamam(b - 1) >= durakSayisi(b - 1));
+  const bolumAcik = b => b >= 0;
   const yildiz = no => (yoVar() && yo.baYildiz && (yo.baYildiz[no] || (tamam.has(no)&&yo.baYildiz[Math.floor(no/100)*100+Math.floor((no%100-51)/3)+1]))) || aktarimYildiz[no] || (tamam.has(no) ? 1 : 0);
   const bolumYildiz = b => { let t = 0; for (let d = 0; d < durakSayisi(b); d++) t += yildiz(durakNo(b, d)); return t; };
   const siradakiDurak = b => { for (let d = 0; d < durakSayisi(b); d++) if (!tamam.has(durakNo(b, d))) return d; return durakSayisi(b) - 1; };
