@@ -1,7 +1,7 @@
 import DATA from './curriculum.json' with {type:'json'};
 import './learning-core.js';
 import './thematic-v8-candidate.js';
-import {computeStartPath,thematicChapterProblem} from './start-path.mjs';
+import {computeStartPath,thematicChapterProblem,placementLevel} from './start-path.mjs';
 const CORE=(globalThis as any).DMLearningCore;
 const V8=(globalThis as any).DMThematicV8Candidate;
 type DB={select:(table:string,params:any)=>Promise<any[]>,insert:(table:string,payload:any,ignore?:boolean)=>Promise<any[]>,update:(table:string,params:any,payload:any)=>Promise<any[]>,rpc:(name:string,payload:any)=>Promise<any>};
@@ -78,6 +78,10 @@ export function thematicHandler(db:DB){
    };
    let record=await read();
    // Already opened runs may resume; a new run needs an open CEFR level and, inside it, the previous stop.
+   // The starting-test requirement also covers chapters opened before the rule (cheap check on every step).
+   if(student){const cls=Number((await db.select('students',{select:'class_no',id:'eq.'+id,limit:'1'}))[0]?.class_no);
+    if(Number.isInteger(cls)&&cls>=1&&cls<=8){const test=(await db.select('extra_data',{select:'value',student_id:'eq.'+id,key_name:'eq.placement_start_v1',limit:'1'}))[0]?.value;
+     if(!placementLevel(test))return json({ok:false,needsTest:true,mesaj:'Öğrenme Yolu için önce 24 soruluk seviye testini çöz. Okul Yolum’da sınıfından devam edebilirsin.'},403);}}
    if(!record&&n-1000>=inherited){const {path,done}=await access();const problem=thematicChapterProblem(path,chapters,n,(x:number)=>done.has(x));if(problem)return json({ok:false,mesaj:problem},403);}
    if(b.action==='open'){
     if(!record){await db.insert('papi_story_progress',{actor_key:owner,student_id:student?id:null,teacher_id:student?null:id,chapter:n,cursor:0,completed:false,reward_claimed:n-1000<inherited,replay:n-1000<inherited,version:0,deck_version:requestedVersion},true);record=await read();}

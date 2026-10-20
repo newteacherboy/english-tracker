@@ -9,12 +9,20 @@ let preview=null,latest=null,epoch=0;
 /* 1–8. sınıf öğrencileri Öğrenme Yolu'na seviye testinden sonra geçer (sunucu: startPath.learningRoute). */
 const learningNeedsTest=()=>window.dmProgression?.status?.()?.startPath?.learningRoute==='needs-test';
 function purpose(){if(preview)return preview;return Y()?.dmLearningPurpose==='independent'&&!learningNeedsTest()?'independent':'school';}
+/* Öğrenme Yolu'nu önceden seçmiş ama testi olmayan sınıf öğrencilerine bir kez açıklama ve test daveti. */
+let learningNoticeOwner='';
+document.addEventListener('dm:progression-status',()=>{const owner=who();if(!owner||learningNoticeOwner===owner||Y()?.dmLearningPurpose!=='independent'||!learningNeedsTest())return;learningNoticeOwner=owner;
+ const {el,close}=dialog('Öğrenme Yolu için seviye testi','<p>Öğrenme Yolu artık dil seviyene göre ilerliyor. Sınıfın kayıtlı olduğu için devam etmeden önce 24 soruluk seviye testini çözmen gerekiyor.</p><p>Öğrenme Yolu’ndaki ilerlemen korunur; testten sonra kaldığın yerden devam edersin. Şimdilik Okul Yolum’da sınıfından devam ediyorsun.</p><div class="rt-choices"><button data-learning-test>Seviye testine başla · 24 soru</button><button data-learning-later>Şimdilik Okul Yolum’da kal</button></div>');
+ el.querySelector('[data-learning-later]').onclick=close;el.querySelector('[data-learning-test]').onclick=()=>{close();askLearningTest();};
+ window.dunyaAc?.();
+});
 function askLearningTest(){
+ // Zorunlu: Öğrenme Yolu'na geçmek isteyen sınıf öğrencisine doğrudan seviye testi açılır.
  const owner=who(),done=()=>{document.removeEventListener('dm:start-point-chosen',chosen);};
  const chosen=e=>{if(e.detail?.owner&&e.detail.owner!==owner)return;done();document.addEventListener('dm:progression-status',()=>{if(owner===who()&&!learningNeedsTest())setPurpose('independent');},{once:true});window.dmProgression?.refresh?.(true);};
- const {el,close}=dialog('Önce seviye testi','<p><b>Öğrenme Yolu</b> dil seviyene (A1–B2) göre ilerler. Okul ve sınıf seçtiğin için önce 24 soruluk seviye testini çözmen gerekiyor.</p><p>Testin sonucuna kadar olan seviyeler açılır; Öğrenme Yolu’na hangi seviyeden başlayacağını sen seçersin. Okul Yolum’daki ilerlemen korunur.</p><div class="rt-choices"><button data-learning-test>Seviye testine başla · 24 soru</button><button data-learning-later>Şimdilik Okul Yolum’da kal</button></div>');
- el.querySelector('[data-learning-later]').onclick=close;
- el.querySelector('[data-learning-test]').onclick=()=>{close();document.addEventListener('dm:start-point-chosen',chosen);const v=window.dmStartPlacement?.open?.({source:'learning-route'});if(!v){done();tell('Test şu an açılamadı. Profil › Seviye Testi’nden deneyebilirsin.');}};
+ document.addEventListener('dm:start-point-chosen',chosen);
+ const v=window.dmStartPlacement?.open?.({source:'learning-route'});
+ if(!v){done();tell('Öğrenme Yolu için önce seviye testini çözmen gerekiyor. Test şu an açılamadı; Profil › Seviye Testi’nden deneyebilirsin.');}
 }
 function week(){const d=new Date(Date.now()+10800000);d.setUTCDate(d.getUTCDate()-(d.getUTCDay()+6)%7);return d.toISOString().slice(0,10);}
 function heading(o={}){return '<header class="rt-top"><h1>'+ (purpose()==='school'?'Okul Yolum':'Öğrenme Yolum')+'</h1><div class="rt-wallet"><button type="button" data-rt-wallet="energy" aria-label="Enerji bilgileri">⚡ <b data-dm-energy>'+esc(o.energy??'–')+'</b></button><button type="button" data-rt-wallet="gold" aria-label="Mağaza ve altın">🪙 <b data-dm-gold>'+esc(o.gold??Y()?.altin??0)+'</b></button></div></header>';}
@@ -90,6 +98,11 @@ async function setPurpose(p,{save=true,reopen=true}={}){
  if(!['school','independent'].includes(p)||routeSaveInProgress)return false;
  const owner=who();
  if(!Y()||!owner){tell('Hesap bilgilerin hazırlanıyor, kısa süre sonra tekrar dene.');return false;}
+ if(p==='independent'&&window.dmProgression&&!window.dmProgression.status?.()){
+  // Başlangıç bilgisi henüz gelmediyse (açılışın ilk saniyeleri) karar vermeden önce bekle.
+  await new Promise(done=>{const t=setTimeout(done,4000);document.addEventListener('dm:progression-status',()=>{clearTimeout(t);done();},{once:true});window.dmProgression?.refresh?.(true);});
+  if(owner!==who())return false;
+ }
  if(p==='independent'&&learningNeedsTest()){askLearningTest();return false;}
  routeSaveInProgress=true;
  let state=null,previous=null,changed=false;
