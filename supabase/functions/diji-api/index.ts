@@ -1131,7 +1131,14 @@ async function iceAktar(body: any) {
 
 const onboarding = onboardingAPI({db:supabase,json,hash:sha256,studentByName,verifyPassword,attempts:denemeSay,audit:denemeYaz,sendQueued:kuyrukSatiriGonder,mailShell:mailKabugu,escape:hk,issueSession});
 
-async function handle(req: Request) {
+/* [20 Eki 2026, kullanıcı onaylı] "teacher" hesabı panelde her şeye erişir: yalnızca öğrenci
+   hesabıyla çalışan bir özellik öğretmeni "öğrenci oturumu/hesabı gerekli" diye reddederse, aynı
+   istek tam yetkili demo öğrenci kimliğiyle (dijimedu_demo) yeniden çalıştırılır. Demo kısıtları
+   (öğretmene mesaj, şifre, e-posta) geçerli kalır; öğretmen paneli işlemleri değişmez. */
+const authSeen = new WeakMap<Request, any>();
+const OGRENCI_GEREKLI = /öğrenci (oturumu|yetkisi|hesabı)|aktif öğrenci hesabı|öğrenciler içindir|önce giriş yapmalısın/i;
+const tamYetkiliOgretmen = (a: any) => a?.role === "teacher" && String(a.ogretmenKullanici || "").toLowerCase() === "teacher";
+async function handle(req: Request, proxy: any = null) {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
   if(!["GET","POST"].includes(req.method))return json({ok:false,mesaj:"İstek yöntemi desteklenmiyor."},405);
   const url = new URL(req.url);
@@ -1146,6 +1153,10 @@ async function handle(req: Request) {
     body=input.data;
   }
   const q = url.searchParams;
+  if (proxy) {
+    if (encName(String(body.ogrenci || "")) === "teacher") body.ogrenci = DEMO_USER;
+    if (encName(String(q.get("ogrenci") || "")) === "teacher") q.set("ogrenci", DEMO_USER);
+  }
   const op = String(body.islem || q.get("islem") || "").trim();
   const rate=async(scope:string,value:string,max:number,seconds:number)=>{
     const key="shield:"+await sha256(scope+"|"+value);
@@ -1305,7 +1316,8 @@ async function handle(req: Request) {
     }
     return iceAktar(body);
   }
-  const a = await auth(req, body, q);
+  const a = proxy || await auth(req, body, q);
+  authSeen.set(req, a);
   if(a?.student_id){
     for(const p of authenticatedBudgets(op,a.student_id,body)){
       const denied=await rate(p.scope,p.value,p.max,p.seconds);
@@ -2961,7 +2973,19 @@ async function handle(req: Request) {
 }
 
 Deno.serve(async (req) => {
-  try { return await handle(req); }
+  try {
+    const spare = req.method === "POST" ? req.clone() : null;
+    const res = await handle(req);
+    const a = authSeen.get(req);
+    if (tamYetkiliOgretmen(a) && (res.status === 401 || res.status === 403)) {
+      const d = await res.clone().json().catch(() => null);
+      if (d && OGRENCI_GEREKLI.test(String(d.mesaj || d.message || ""))) {
+        return await handle(spare || new Request(req.url, { method: req.method, headers: req.headers }),
+          { ...a, role: "student", student_id: DEMO_ID, teacherProxy: true });
+      }
+    }
+    return res;
+  }
   catch (e) { if(e instanceof PasswordPolicyError)return json({ok:false,status:"error",mesaj:e.message,message:e.message},e.status);console.error(e); return json({ status: "error", ok: false, mesaj: "Sunucu hatası, tekrar dene.", message: "Sunucu hatası" }, 500); }
 });
 
