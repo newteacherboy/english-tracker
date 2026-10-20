@@ -34,7 +34,7 @@ const fs=require('node:fs'),path=require('node:path'),assert=require('node:asser
    await page.evaluate(([r,p])=>{
     document.querySelectorAll('.game-modal-overlay').forEach(x=>x.style.display='none');
     const root=document.getElementById(r);document.body.appendChild(root);
-    root.style.display='flex';root.style.zIndex='2147483000';
+    root.style.setProperty('display','flex','important');root.style.setProperty('z-index','2147483000','important');
     for(const ch of root.querySelectorAll('[id$="GirisEkrani"],[id$="BitisEkrani"],[id$="OyunEkrani"]'))ch.style.display='none';
     document.getElementById(p).style.display='block';
     root.classList.add('dm-designed-playing');
