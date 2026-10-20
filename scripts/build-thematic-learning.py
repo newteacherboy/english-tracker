@@ -58,3 +58,5 @@ out={'version':5,'revision':'20261020-b1b2-50','levels':[{'code':level,'chapters
 for path in ['ingilizce/thematic-curriculum.json','supabase/functions/thematic-learning/curriculum.json']:
  (ROOT/path).write_text(json.dumps(out,ensure_ascii=False,separators=(',',':'))+'\n')
 print(f'{len(themes)} themes / {len(chapters)} chapters / {len(chapters)*10} graded questions in V8; {sum(bool(c.get("image")) for x in chapters for c in x["cards"])} illustrated cards')
+
+(ROOT/'supabase/functions/diji-api/graduation-catalog.json').write_text(json.dumps([{'id':c['id'],'cefr':c['cefr'],'themeId':c['themeId']} for c in chapters],separators=(',',':'))+'\n')

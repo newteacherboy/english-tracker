@@ -25171,6 +25171,7 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
     await window.dunyaAc();
   };
   window.buyuAkademisiYeniAc = window.baModuAc;
+  window.dmSchoolGraduationNext = async function (cls) { await window.dunyaAc(); goster('harita',Math.max(0,Math.min(3,Math.floor((Number(cls)-1)/2)))); };
   window.dmPapiStartAdventure = async function () {
     const owner=isim();
     if(!yuklendi)await ilerlemeYukle();
@@ -26464,13 +26465,13 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <link rel="stylesheet" href="parkur-map-theme-v1.css?v=20261010-levelbadge-fix">
 <script defer src="parkur-map-theme-v1.js?v=3"></script>
 <link rel="stylesheet" href="papi-feedback.css?v=1"><script defer src="papi-feedback.js?v=3"></script><script defer src="papi-haptics.js?v=1"></script><script defer src="papi-wallet.js?v=20261018-mobile-fit-1"></script>
-<link rel="stylesheet" href="story-path.css?v=3"><script defer src="story-curriculum.js?v=2"></script><link rel="stylesheet" href="thematic-learning.css?v=20261017-sunny-academy-1"><script defer src="learning-core.js?v=20261017-learning-hud-letters-1"></script><script defer src="thematic-learning.js?v=20261020-b1b2-50"></script><script defer src="story-path.js?v=20261019-step-back-1"></script>
+<link rel="stylesheet" href="story-path.css?v=3"><script defer src="story-curriculum.js?v=2"></script><link rel="stylesheet" href="thematic-learning.css?v=20261017-sunny-academy-1"><script defer src="learning-core.js?v=20261017-learning-hud-letters-1"></script><script defer src="thematic-learning.js?v=20261020-graduation-1"></script><script defer src="story-path.js?v=20261019-step-back-1"></script>
 <link rel="stylesheet" href="medupro.css?v=20261011-hud">
 <script defer src="medupro.js?v=20261018-safety-2"></script>
 <link rel="stylesheet" href="activity-ui.css?v=20261016-rally-1">
 <script defer src="activity-ui.js?v=20261016-flow-2"></script>
 <script defer src="navigation-history.js?v=20261019-step-back-1"></script>
-<script defer src="bottom-nav.js?v=20261019-chat-compact-1"></script>
+<script defer src="bottom-nav.js?v=20261020-graduation-1"></script>
 <link rel="stylesheet" href="weekly-ui.css?v=2">
 <script defer src="feature-catalog.js?v=20261013-catalog"></script>
 <script defer src="weekly-ui.js?v=20261019-purple-1"></script>
@@ -26536,7 +26537,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <link rel="stylesheet" href="goal-announcements.css?v=1"><script defer src="goal-announcements.js?v=3"></script>
 <link rel="stylesheet" href="progress-ui.css?v=1">
 <link rel="stylesheet" href="progression-ui.css?v=20261018-chest-1"><script defer src="progression-ui.js?v=20261018-readable-study-1"></script>
-<link rel="stylesheet" href="game-feedback.css?v=1"><script defer src="game-feedback.js?v=20261012-cleanup"></script>
+<link rel="stylesheet" href="game-feedback.css?v=1"><script defer src="game-feedback.js?v=20261020-graduation-1"></script>
 <link rel="stylesheet" href="profile-forest.css?v=1">
 <script defer src="profile-forest.js?v=1"></script>
 <link rel="stylesheet" href="question-panels-v1.css?v=2">
@@ -26601,5 +26602,6 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <script defer src="learning-dialogues.js?v=20261019-1"></script>
 <script defer src="learning-companion.js?v=20261019-papi-habit-1"></script>
 <link rel="stylesheet" href="parkur-purple.css?v=20261019-offline-1">
+<link rel="stylesheet" href="route-graduation.css?v=20261020-1"><script defer src="route-graduation.js?v=20261020-1"></script>
 </body>      
         </html>

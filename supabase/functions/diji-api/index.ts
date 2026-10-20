@@ -1,3 +1,5 @@
+import {routeGraduationsAPI} from './route-graduations.mjs';
+import graduationCatalog from './graduation-catalog.json' with {type:'json'};
 import {moderationIssue} from './content-moderation.mjs';
 import {socialSafetyAPI} from './social-safety.mjs';
 import {normalizeLearnerProfile,learnerClass,saveLearnerProfile} from './learner-profile.mjs';
@@ -1338,6 +1340,7 @@ async function handle(req: Request) {
     if(error)return json({ok:false,mesaj:'Satın alma hakları alınamadı.'},503);
     return json({ok:true,entitlements:data||[],checkoutEnabled:false});
   }
+  const graduationResponse=await routeGraduationsAPI(supabase,json,graduationCatalog).handle(op,body,a,req.method);if(graduationResponse)return graduationResponse;
   const safetyResponse=await socialSafety.handle(op,body,a,req.method);if(safetyResponse)return safetyResponse;
   const safetyDeny=await socialSafety.guard(op,body,q,a);if(safetyDeny)return safetyDeny;
   const memberResponse=await memberToolsAPI({db:supabase,json,welcome:onboarding.welcome,hash:sha256,teacherScope:kapsamda,useStreakShield:(sid:string)=>ekonomiGuncelle(sid,(y:any)=>{const d=Math.max(0,Math.floor(num(y.dondurucu)));if(d<1)return {hata:'Seri kalkanı yok.'};y.dondurucu=d-1;return {kalan:d-1};})}).handle(op,body,q,a,req.method);if(memberResponse)return memberResponse;

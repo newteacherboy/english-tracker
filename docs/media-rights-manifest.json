@@ -1858,6 +1858,30 @@
       "bytes": 188692,
       "status": "ai-generated",
       "source": "OpenAI ImageGen, 2026-10-11; generated from the user-approved Benim Dünyam design 1"
+    },
+    {
+      "path": "ingilizce/graduation-assets/school-portal.webp",
+      "sha256": "4d4a066df5452422cd31c49a755d261fd642017d459f67dd5e751301acb9c610",
+      "source": "OpenAI image generation; derived from user-approved Diji-Medu graduation mockups, 20 October 2026",
+      "status": "original_ai_generated"
+    },
+    {
+      "path": "ingilizce/graduation-assets/learning-portal.webp",
+      "sha256": "f644e0c630f494db5793638df070e6dae42141c61f6a87234e55439f067bb6f4",
+      "source": "OpenAI image generation; derived from user-approved Diji-Medu graduation mockups, 20 October 2026",
+      "status": "original_ai_generated"
+    },
+    {
+      "path": "ingilizce/graduation-assets/school-certificate.webp",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "OpenAI image generation; derived from user-approved Diji-Medu graduation mockups, 20 October 2026",
+      "status": "original_ai_generated"
+    },
+    {
+      "path": "ingilizce/graduation-assets/learning-certificate.webp",
+      "sha256": "29d36847fd20fc1bc8bebe232b808737042fd8e55ff8175da5c2a33c5980e09f",
+      "source": "OpenAI image generation; derived from user-approved Diji-Medu graduation mockups, 20 October 2026",
+      "status": "original_ai_generated"
     }
   ]
 }

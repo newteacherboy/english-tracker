@@ -1,0 +1,13 @@
+# Route graduations and certificates
+
+Two approved designs: School uses Papi's golden forest gate and colorful report card; Learning uses the navy/gold Light Gate and premium content-completion certificate. AI-generated backgrounds are derived from the user's approved mockups. All names, numbers, titles and dates are rendered dynamically. Art loads on demand; nothing is downloaded at sign-in.
+
+The authenticated `routeGraduations` endpoint verifies every stop in a class against `dm_progress_context`, or every CEFR chapter against persisted thematic progress, before creating an immutable `dm_route_graduations` snapshot. Inherited progress is respected. A unique owner/route/level key prevents duplicate issuance; server acknowledgements prevent repeated ceremonies across devices. The table is service-role only, with RLS enabled and no client grants. No new XP, gold, school enrolment, test result or CEFR placement is awarded or changed.
+
+A successful school reward or completed learning lesson checks eligibility. The ceremony waits until the current lesson/result dialog is dismissed. Three phases show the completed milestone, opening portal and final achievement panel. Reduced motion goes directly to the final panel. Audio is opt-in via the music button. Closing and skipping are always available. A1/A2/B1/B2 and classes 1–8 use the same templates; terminal levels show completion without inventing another level.
+
+Profile → Karnelerim ve Belgelerim lists earned documents. Opening this library can quietly backfill already earned documents without replaying historical celebrations. It supports A4 landscape PDF, a 2400×1600 PNG and native file sharing; unsupported native sharing falls back to a PNG download. Turkish text is rendered into the image before PDF embedding to preserve glyphs. The learning document explicitly identifies itself as content completion, not official language accreditation. Closing a document returns to its parent library.
+
+Deploy `supabase/route-graduations-20261020.sql`, then deploy diji-api preserving all unrelated live files and replacing only index.ts integration, route-graduations.mjs, graduation-catalog.json and security-guards.mjs. Publish frontend assets afterward. Certificate snapshots remain stable if content expands later.
+
+Checks: Node tests cover eligibility, forgery rejection, ownership, inactive accounts, quiet backfills, duplicate sync and inherited progress. Browser tests at 320, 390, 768 and horizontal 844 px cover both celebrations, native sharing, PNG dimensions, PDF page size, navigation, accessibility focus and all three animation phases. Screenshots and sample documents are uploaded by the Route graduations and certificates workflow.
