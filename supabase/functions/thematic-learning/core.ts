@@ -55,14 +55,14 @@ export function thematicHandler(db:DB){
     const cls=(await db.select('students',{select:'class_no',id:'eq.'+id,limit:'1'}))[0]?.class_no;
     let ctx:any={};try{ctx=await db.rpc('dm_progress_context',{actor:id})||{};}catch{ctx={};}
     const levelOf=(n:number)=>chapters.find((c:any)=>c.id===n)?.cefr;
-    const thematic={played:[...new Set(rows.map((r:any)=>levelOf(Number(r.chapter))).filter(Boolean))],complete:Object.fromEntries(['A1','A2','B1','B2'].map(c=>[c,chapters.filter((x:any)=>x.cefr===c).every((x:any)=>done.has(x.id))]))};
+    const thematic={played:[...new Set([...rows.map((r:any)=>levelOf(Number(r.chapter))).filter(Boolean),...(inherited>0?['A1']:[])])],complete:Object.fromEntries(['A1','A2','B1','B2'].map(c=>[c,chapters.filter((x:any)=>x.cefr===c).every((x:any)=>done.has(x.id))]))};
     return {path:computeStartPath({profile:value('learner_profile_v1'),classNo:cls,placement:value('placement_start_v1'),choice:value('start_point_v1'),lessons:ctx.lessons,done:ctx.done,units:ctx.units,thematic}),done};
    };
    if(b.action==='status'){
     const rows=await db.select('papi_story_progress',{select:'chapter,cursor,completed,version',actor_key:'eq.'+owner,chapter:'gte.1000',order:'chapter',limit:String(chapters.length)});
     const map=new Map(rows.map(r=>[r.chapter,r]));for(let i=0;i<inherited;i++){const r=map.get(1000+i);map.set(1000+i,{...(r||{chapter:1000+i,cursor:10,version:0}),completed:true,inherited:true});}
     const {path}=await access();
-    return json({ok:true,version:5,progress:[...map.values()],inherited,total:chapters.length,wallet:await balance(),access:{legacy:!!path.legacy,startCefr:path.startCefr,maxCefr:path.maxCefr}});
+    return json({ok:true,version:5,progress:[...map.values()],inherited,total:chapters.length,wallet:await balance(),access:{legacy:!!path.legacy,startCefr:path.startCefr,maxCefr:path.maxCefr,learningRoute:path.learningRoute||'open'}});
    }
    const n=Number(b.chapter),C=chapters.find(c=>c.id===n);if(!Number.isInteger(n)||!C||C.id!==n)return json({ok:false,mesaj:'Geçersiz bölüm.'},400);
    // V8 can only be enabled after the atomic first-attempt/reward RPC migration.

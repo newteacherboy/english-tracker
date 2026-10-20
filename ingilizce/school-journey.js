@@ -79,7 +79,7 @@ function open(rows,gradeHint){
  if(!currentRoute())return;
  steps=Array.isArray(rows)?rows:steps;visit++;
  const groups=group(steps);
- const first=steps.find(x=>x.available&&!x.done)||steps[0];
+ const first=steps.find(x=>x.current)||steps.find(x=>x.available&&!x.done)||steps[0];
  const active=Number(gradeHint)||parse(first).grade||1;
  const done=steps.filter(s=>s.done).length,total=steps.length,pct=Math.round(done/Math.max(total,1)*100);
  document.getElementById('mlThemeList')?.remove();

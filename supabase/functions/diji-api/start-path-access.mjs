@@ -4,7 +4,8 @@ import LEVELS from './thematic-levels.json' with {type:'json'};
 const CHAPTER_LEVEL=new Map(Object.entries(LEVELS).flatMap(([code,ids])=>ids.map(id=>[id,code])));
 export function thematicSummary(rows){
  const done=new Set(),played=new Set();
- for(const r of rows||[]){const code=CHAPTER_LEVEL.get(Number(r.chapter));if(!code)continue;played.add(code);if(r.completed)done.add(Number(r.chapter));}
+ for(const r of rows||[]){const n=Number(r.chapter);if(n>=0&&n<80){played.add('A1');continue;} // old story route counts as learning-route progress
+  const code=CHAPTER_LEVEL.get(n);if(!code)continue;played.add(code);if(r.completed)done.add(n);}
  return {played:[...played],complete:Object.fromEntries(Object.entries(LEVELS).map(([code,ids])=>[code,ids.every(id=>done.has(id))]))};
 }
 export async function loadStartPath(db,studentId,ctx){
