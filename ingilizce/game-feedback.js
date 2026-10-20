@@ -70,7 +70,7 @@ function applyRewardState(server,owner=name()){
  if(owner!==name()||typeof yo==='undefined'||!server)return false;
  const incoming=Number(server.dmRewardVersion||0),current=Number(yo.dmRewardVersion||0);
  if(incoming<current)return false;
- for(const k of ['altin','totalXp','guncelleme','dmRewardVersion','xpGun','log'])if(server[k]!==undefined)yo[k]=server[k];
+ for(const k of ['altin','totalXp','guncelleme','dmRewardVersion','xpGun','log','lig'])if(server[k]!==undefined)yo[k]=server[k];
  DijiProgressRules.migrate(yo);localStorage.setItem('ing_yo_'+owner,JSON.stringify(yo));
  window.yoArayuzTazele?.();window.dmProgressPanel?.paint?.();return true;
 }
