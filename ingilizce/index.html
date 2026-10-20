@@ -25997,7 +25997,6 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
   const DUELLO_ANAHTAR = () => 'diji_duello_gosterilen_' + kucuk(typeof aktifOgrenciAdi !== 'undefined' ? aktifOgrenciAdi : '');
   const orgFetch = window.fetch;
   window.fetch = async function (url, opt) {
-    const fetchOwner = kucuk(isimAl());
     let u = typeof url === 'string' ? url : (url && url.url) || '';
     let govde = null;
     if (opt && typeof opt.body === 'string' && opt.body[0] === '{') { try { govde = JSON.parse(opt.body); } catch (e) {} }
