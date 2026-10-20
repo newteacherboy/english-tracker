@@ -150,11 +150,11 @@ body #tab-dunya .rt-v3-map .rt-v3-art{
 }
 body #tab-dunya .rt-root.rt-school .rt-v3-art{
  background-color:#f9faee!important;
- background-image:url("route-assets/school-fixed-approved-v1.webp")!important;
+ background-image:url("route-assets/school-fixed-approved-v2.webp")!important;
 }
 body #tab-dunya .rt-root.rt-english .rt-v3-art{
  background-color:#f5f0ff!important;
- background-image:url("route-assets/learning-fixed-approved-v1.webp")!important;
+ background-image:url("route-assets/learning-fixed-approved-v2.webp")!important;
 }
 body #tab-dunya .rt-v3-map .rt-v3-scroll{
  z-index:1!important;background:transparent!important;
@@ -170,3 +170,11 @@ body #tab-dunya .rt-v3-map .rt-v3-stop .rt-stop-label{
 body #tab-dunya .rt-root.rt-english .rt-v3-stop .rt-stop-label{
  background:#f8f3ffdf!important;
 }
+
+/* Keep headings legible over the stationary illustration on both routes. */
+body #tab-dunya .rt-v3-map .rt-flow-theme{z-index:3;left:6px;width:27%;padding:6px 7px;border:1px solid #dedbe6;border-radius:9px;background:#fffdf9;color:#213d45;font:700 11px/1.35 system-ui,sans-serif;box-shadow:0 1px 4px #25214212}
+body #tab-dunya .rt-english .rt-flow-theme{background:#faf7ff;color:#493579;border-color:#dfd5f2}
+body #tab-dunya .rt-v3-map .rt-v3-stop .rt-stop-label{background:#fffdf9!important;color:#213d45!important;opacity:1!important;text-shadow:none!important;display:block!important;-webkit-line-clamp:unset;overflow:visible;overflow-wrap:anywhere;border:1px solid #e6e0d6!important;padding:4px 5px!important;box-shadow:0 1px 4px #2521420d}
+body #tab-dunya .rt-root.rt-english .rt-v3-stop .rt-stop-label{background:#faf7ff!important;color:#30274e!important;border-color:#e2d9f1!important}
+body #tab-dunya .rt-v3-map .rt-v3-stop.locked .rt-v3-number{color:#655e77}
+body #tab-dunya .rt-v3-map .rt-v3-level small,body #tab-dunya .rt-v3-map .rt-v3-tools>button small{color:#5d6075}

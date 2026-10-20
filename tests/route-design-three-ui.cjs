@@ -25,7 +25,7 @@ const {chromium}=require('playwright'),fs=require('node:fs'),path=require('node:
  await page.waitForSelector('.rt-v3-map');await page.waitForTimeout(50);
  const fixedArt=page.locator('.rt-v3-art');
  assert.equal(await fixedArt.count(),1,'there must be one fixed illustration per route');
- const artPath=route==='school'?'school-fixed-approved-v1.webp':'learning-fixed-approved-v1.webp';
+ const artPath=route==='school'?'school-fixed-approved-v2.webp':'learning-fixed-approved-v2.webp';
  assert((await fixedArt.evaluate(el=>getComputedStyle(el).backgroundImage)).includes(artPath),'correct scene must be selected');
  const artBoundsBefore=await fixedArt.boundingBox();
  const scrollerForArt=page.locator('.rt-v3-scroll');
