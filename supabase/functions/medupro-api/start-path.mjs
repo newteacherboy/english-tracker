@@ -65,13 +65,15 @@ export const cefrOpen=(path,code)=>rank(code)>=0&&rank(code)<=rank(path.maxCefr)
 export function studyAccess(path){return Object.fromEntries(CEFR.map(c=>[c,cefrOpen(path,c)]));}
 
 /* School route stop check: '' when allowed, otherwise a Turkish reason.
-   Inside a class stops stay in order; the first stop of an open class is free. */
+   Classes below the start class are fully open: any stop, any order.
+   From the start class up, stops stay in order; the first stop of an open class is free. */
 export function schoolStopProblem(path,ctx,stop){
  stop=Number(stop);
  const door=(ctx.units||[]).findIndex(row=>row.includes(stop));
  if(!Number.isInteger(stop)||door<0)return 'Geçerli parkur durağı gerekli.';
  const cls=stopClass(stop);
  if(cls>path.maxGrade)return cls+'. sınıf, '+path.maxGrade+'. sınıfın tüm durakları bitince açılır.';
+ if(cls<Number(path.startGrade||1))return '';
  const list=ctx.units[door],prev=list[list.indexOf(stop)-1],done=ctx.done||[];
  if(!done.includes(stop)&&prev!==undefined&&stopClass(prev)===cls&&!done.includes(prev))return 'Önce önceki durağı tamamla.';
  return '';

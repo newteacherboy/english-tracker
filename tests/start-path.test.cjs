@@ -42,3 +42,12 @@ test('nothing already played is locked again',()=>{
 test('high school and university learners get the whole school route and start by CEFR level',()=>{
  for(const stage of ['high','university']){const p=SP.computeStartPath({profile:{...independent({startChoice:'known',knownLevel:'A2'}),purpose:'school',educationStage:stage}});assert.deepEqual([p.maxGrade,p.startGrade,p.startCefr,p.maxCefr],[8,5,'A2','A2'],stage);}
 });
+
+test('classes below the start class are fully open; from the start class up stops stay in order',()=>{
+ const path={startGrade:3,maxGrade:3},ctx={units:[[210151,210152,220151,220152],[230151,230152,240151]],done:[]};
+ assert.equal(SP.schoolStopProblem(path,ctx,210152),'','second stop of class 1 without the first');
+ assert.equal(SP.schoolStopProblem(path,ctx,220152),'','class 2 in any order');
+ assert.equal(SP.schoolStopProblem(path,ctx,230151),'','first stop of the start class');
+ assert.match(SP.schoolStopProblem(path,ctx,230152),/önceki durağı/);
+ assert.match(SP.schoolStopProblem(path,ctx,240151),/4\. sınıf/);
+});

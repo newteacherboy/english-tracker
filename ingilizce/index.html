@@ -24453,7 +24453,8 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
     return siraOnbellek.harita;
   }
   const sinifSiradaki = (b, sn) => { const d = (siraHaritasi()[b] || {})[sn]; return d === undefined ? -1 : d; };
-  const durakAcik = (b, d) => { const D = (siraHaritasi(), DURAK[b] && DURAK[b][d]); if (!D || !sinifAcik(D.sinif)) return false; return tamam.has(D.no) || sinifSiradaki(b, D.sinif) === d; };
+  // Başlangıç sınıfının altındaki sınıflar tamamen serbest; başlangıç sınıfı ve üstünde duraklar sıralı.
+  const durakAcik = (b, d) => { const D = (siraHaritasi(), DURAK[b] && DURAK[b][d]); if (!D || !sinifAcik(D.sinif)) return false; const y = baslangicYolu(); if (y && D.sinif < (y.startGrade || 1)) return true; return tamam.has(D.no) || sinifSiradaki(b, D.sinif) === d; };
   const sinifSirasi = () => { const y = baslangicYolu(), bas = y ? y.startGrade : 1; return [bas, ...[1, 2, 3, 4, 5, 6, 7, 8].filter(sn => sn > bas), ...[1, 2, 3, 4, 5, 6, 7, 8].filter(sn => sn < bas).reverse()].filter(sinifAcik); };
   const yildiz = no => (yoVar() && yo.baYildiz && (yo.baYildiz[no] || (tamam.has(no)&&yo.baYildiz[Math.floor(no/100)*100+Math.floor((no%100-51)/3)+1]))) || aktarimYildiz[no] || (tamam.has(no) ? 1 : 0);
   const bolumYildiz = b => { let t = 0; for (let d = 0; d < durakSayisi(b); d++) t += yildiz(durakNo(b, d)); return t; };
@@ -24590,6 +24591,7 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
     const all=[];
     DURAK.forEach((list,section)=>list.forEach((D,d)=>all.push({b:section,d,no:D.no,label:D.sinif+'. sınıf '+(D.karisik?'Karışık üniteler':D.unite+'. ünite')+' · '+D.parca+'/'+D.parcaToplam+' · '+D.kelimeler.length+' kelime',short:D.sinif+'. sınıf',done:tamam.has(D.no),available:progress[section].open&&durakAcik(section,d)})));
     const focus=Math.max(0,all.findIndex(st=>st.b===b&&st.d===progress[b].next));
+    if(all[focus])all[focus].current=true; // Sınıflarım listesi başlangıç sınıfının sıradaki durağını açsın.
     const start=Math.max(0,focus-8),steps=all.slice(start,Math.min(all.length,start+24));
     const current=Math.max(0,focus-start);
     gorunum={ad:'harita',b};
