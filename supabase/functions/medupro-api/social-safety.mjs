@@ -115,7 +115,8 @@ export function socialSafetyAPI({db,json,hash,hashPassword,verifyPassword,queue}
    }
    if(a?.role!=='student'||!a.student_id)return json({ok:false,mesaj:'Öğrenci oturumu gerekli.'},401);
    const actor=a.student_id;
-   if(actor==='dcde2026-1015-4000-8000-000000000001'&&op!=='safetyStatus')return json({ok:false,mesaj:'Tanıtım hesabında güvenlik ayarları değiştirilemez.'},403);
+   /* Demo: bilgilendirme, duyuru ve bildirim ekranları açık; yalnızca veli kontrolü ayarları kapalı. */
+   if(actor==='dcde2026-1015-4000-8000-000000000001'&&['safetyParentRequest','safetyParentUnlock'].includes(op))return json({ok:false,mesaj:'Tanıtım hesabında veli kontrolü ayarları değiştirilemez.'},403);
    if(op==='safetyStudentNotices'){
     const r=await db.from('dm_teacher_student_notices').select('id,kind,message,created_at,appeal_allowed,appealed_at').eq('student_id',actor).is('acknowledged_at',null).order('created_at',{ascending:true}).limit(1);
     if(r.error)throw Error('Önemli duyuru alınamadı.');return json({ok:true,notices:r.data||[]});
