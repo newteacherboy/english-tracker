@@ -104,3 +104,8 @@ body.dm-parkur-open #bottomNavMobile#bottomNavMobile .bn-item.active .dm-nav-art
 }
 /* A stationary claim button stays easy to tap inside the task sheet. */
 #rtDialog .rt-claim{animation:none!important;transform:none!important}
+/* Legacy school maps position their buttons absolutely; concept 3 owns these coordinates. */
+body #tab-dunya .rt-v3-stop .rt-node{position:absolute!important;inset:0!important;transform:none!important;translate:none!important;scale:1!important;margin:0!important}
+body #tab-dunya .rt-v3-map .rt-start{position:static!important;inset:auto!important;transform:none!important;translate:none!important;max-width:none!important;align-self:stretch!important;margin:0!important}
+body #tab-dunya .rt-v3-stop .rt-node{z-index:1!important}
+.rt-v3-number{z-index:2}.rt-v3-check{z-index:3}
