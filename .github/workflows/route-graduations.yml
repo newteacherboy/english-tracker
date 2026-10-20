@@ -1,7 +1,7 @@
 name: Route graduations and certificates
 on:
   push:
-    paths: ['ingilizce/route-graduation*', 'ingilizce/graduation-assets/**', 'ingilizce/bottom-nav.js', 'supabase/functions/diji-api/route-graduations.mjs', 'supabase/functions/diji-api/graduation-catalog.json', 'tests/route-graduations*', '.github/workflows/route-graduations.yml']
+    paths: ['ingilizce/route-graduation*', 'ingilizce/index.html', 'ingilizce/thematic-learning.js', 'ingilizce/game-feedback.js', 'ingilizce/graduation-assets/**', 'ingilizce/bottom-nav.js', 'supabase/functions/diji-api/route-graduations.mjs', 'supabase/functions/diji-api/graduation-catalog.json', 'tests/route-graduations*', '.github/workflows/route-graduations.yml']
   pull_request:
     paths: ['ingilizce/route-graduation*', 'tests/route-graduations*']
 permissions:
@@ -15,7 +15,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
-      - run: node --check ingilizce/route-graduation.js && node --test tests/route-graduations.test.cjs tests/portal-integrity.test.cjs tests/api-security-guards.test.cjs
+      - run: node --check ingilizce/route-graduation.js && node --test tests/route-graduations.test.cjs tests/portal-integrity.test.cjs tests/api-security-guards.test.cjs tests/start-path.test.cjs
       - run: npm install --no-save --package-lock=false playwright@1.58.2
       - run: npx playwright install --with-deps chromium
       - run: node tests/route-graduations-ui.cjs
