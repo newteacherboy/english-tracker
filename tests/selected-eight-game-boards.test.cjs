@@ -46,3 +46,20 @@ test('correct and incorrect audio and tap cues are wired to native scoring',()=>
  assert(js.includes('dm-answer-wrong'));
  assert(js.includes('choice.classList.add(\'dm-touch-picked\')'));
 });
+
+
+test('Kelime Treni shows the entire Turkish question on a high-contrast station sign',()=>{
+ const css=read('ingilizce/game-experience.css');
+ const section=css.split('/* Kelime Treni readability fix:')[1];
+ assert(section,'Dedicated Turkish prompt legibility rules must remain');
+ assert(section.includes('#trenTabela.tr-tabela'),'Must target the original question element');
+ assert.match(section,/background:#fffdf3!important/);
+ assert.match(section,/color:#302154!important/);
+ assert.match(section,/white-space:normal!important/);
+ assert.match(section,/max-height:none!important/);
+ assert.match(section,/overflow-wrap:anywhere!important/);
+ const rgb=hex=>hex.match(/[0-9a-f]{2}/gi).map(x=>parseInt(x,16)/255).map(n=>n<=0.04045?n/12.92:((n+0.055)/1.055)**2.4);
+ const lum=hex=>{const [r,g,b]=rgb(hex);return .2126*r+.7152*g+.0722*b};
+ const light=lum('#fffdf3'),dark=lum('#302154'),ratio=(light+.05)/(dark+.05);
+ assert(ratio>=7,'Turkish question text must meet WCAG AAA normal-text contrast ratio');
+});
