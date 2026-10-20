@@ -62,7 +62,7 @@ function showGoal(holder){
 function mount(){
  scheduled=false;reset();if(!student())return;
  const map=$('tab-dunya'),root=map?.querySelector('.rt-root');
- if(root&&visible(map)){
+ if(root&&visible(map)&&root.dataset.routeDesign!=='3'){
   let plan=$('lcPlan');if(!plan){plan=document.createElement('section');plan.id='lcPlan';plan.className='lc-plan';plan.setAttribute('aria-label','Bugünkü çalışma planın');root.prepend(plan);paintPlan();}
   else if(plan.parentElement!==root)root.prepend(plan);
   goalCarousel(root);
@@ -189,7 +189,7 @@ async function teacherSummary(){
   }v.body.querySelector('select').onchange=paint;paint();
  }catch(e){if(v.alive())v.body.textContent=e.message;}
 }
-document.addEventListener('click',e=>{const b=e.target.closest('[data-lc]');if(!b||b.disabled)return;const id=b.dataset.lc;if(id==='toggle'){const steps=$('lcPlan')?.querySelector('.lc-plan-steps');if(steps){steps.hidden=!steps.hidden;b.setAttribute('aria-expanded',String(!steps.hidden));}return;}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-lc]');if(!b||b.disabled)return;const id=b.dataset.lc;if(id==='toggle'){const steps=b.closest('.lc-plan')?.querySelector('.lc-plan-steps');if(steps){steps.hidden=!steps.hidden;b.setAttribute('aria-expanded',String(!steps.hidden));}return;}
  const actions={start,repeat,route,dialogues,report,teacher:teacherSummary,'report-repeat':()=>repeat(),'report-story':()=>dialogues()};
  if(actions[id]){e.preventDefault();actions[id]();}
 });
@@ -215,6 +215,9 @@ document.addEventListener('visibilitychange',()=>{if(!document.hidden)schedule()
 // Observe screen switches and replaced map/profile content, not the full game tree.
 for(const id of ['tab-dunya','tab-derscalis','ogretmenMenuModal']){const el=$(id);if(el)new MutationObserver(schedule).observe(el,{childList:true,subtree:true,attributes:true,attributeFilter:['class']});}
 new MutationObserver(records=>{if(records.some(r=>[...r.addedNodes].some(n=>n.id==='rtProfileBackdrop')))schedule();}).observe(document.body,{childList:true});
-window.dmLearningCompanion={refresh:()=>load(true),report,dialogues,openStory,teacherSummary,mount,markRouteComplete:lessonDone};
+async function openPlan(){
+ try{await load(true);const view=sheet('Bugünkü Planım','<div class="lc-plan lc-plan-sheet">'+planMarkup()+'</div>','lcPlanSheet');if(view){const steps=view.el.querySelector('.lc-plan-steps');if(steps)steps.hidden=false;view.el.querySelector('[data-lc="toggle"]')?.setAttribute('aria-expanded','true');}}catch(e){window.yoToast?.(e.message);}
+}
+window.dmLearningCompanion={openPlan,refresh:()=>load(true),report,dialogues,openStory,teacherSummary,mount,markRouteComplete:lessonDone};
 schedule();
 })();

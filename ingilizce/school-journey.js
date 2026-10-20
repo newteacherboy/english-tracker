@@ -217,6 +217,7 @@ if(typeof scene==='function'){
   const info=parse((data.steps||[])[data.current||0]);lastContext={grade:info.grade||1,unit:info.unit||1,part:info.part||1};
  const grade=parse((data.steps||[])[data.current||0]).grade||1;
   const displayMascot=characters[(grade*3+(visit++))%characters.length];
+  if(html.includes('data-route-design="3"'))return html;
   const themed=html.replace(prefix,prefix+' data-school-appearance="'+theme()+'"')
     .replaceAll('src="route-assets/papi-school.webp"','src="learning-assets/characters/'+displayMascot+'.webp"');
   // Small theme control stays inside the banner, rather than taking an extra row.
