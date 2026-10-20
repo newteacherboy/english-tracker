@@ -14,6 +14,10 @@
  }
  function decorate(root){
   if(!root.classList.contains('dm-session-surface'))root.classList.add('dm-session-surface');
+  // These eight games have two DIFFERENT controls: the separate fullscreen
+  // left arrow (previous setup screen) and the native right X (quit game).
+  // Never rewrite the native X into a left-arrow session back button.
+  if(root.classList.contains('fg-fs-active'))return;
   if(root.id==='asmacaOyunOverlay'&&root.classList.contains('ia-playing')){root.querySelectorAll('.dm-session-back').forEach(b=>b.classList.remove('dm-session-back'));return;}
   let back=root.querySelector(nativeBack);
   // The rally pause/results controls are recreated during play; use its public close API.

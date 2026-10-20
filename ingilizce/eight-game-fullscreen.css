@@ -1,0 +1,302 @@
+/* Only the eight selected games in an ACTIVE round are full viewport.
+   Entry setup stays intact; the original scoring buttons remain live. */
+body.fg-game-locked{overflow:hidden!important;overscroll-behavior:none!important}
+html:has(body.fg-game-locked){overflow:hidden!important;overscroll-behavior:none!important}
+html body :is(#jpOyunOverlay,#yagmurOyunOverlay,#kelimebulOyunOverlay,#esOyunOverlay,#trenOyunOverlay).fg-fs-active{
+ position:fixed!important;inset:0!important;z-index:2147481000!important;display:flex!important;
+ align-items:stretch!important;justify-content:stretch!important;
+ width:100vw!important;height:100dvh!important;min-height:0!important;
+ margin:0!important;padding:0!important;border:0!important;overflow:hidden!important;
+ box-sizing:border-box!important;overscroll-behavior:contain!important}
+html body :is(#jpOyunOverlay,#yagmurOyunOverlay,#kelimebulOyunOverlay,#esOyunOverlay,#trenOyunOverlay).fg-fs-active .game-modal-content{
+ display:flex!important;flex-direction:column!important;position:relative!important;
+ box-sizing:border-box!important;flex:1 1 auto!important;
+ width:100vw!important;min-width:0!important;max-width:none!important;
+ height:100dvh!important;min-height:0!important;max-height:100dvh!important;
+ margin:0!important;border-radius:0!important;border-width:0!important;
+ padding:calc(env(safe-area-inset-top,0px) + 54px) clamp(9px,3vw,20px) calc(env(safe-area-inset-bottom,0px) + 9px)!important;
+ overflow:hidden!important;overflow-x:hidden!important;overflow-y:hidden!important;overscroll-behavior:contain!important;
+ background-position:center!important;background-size:cover!important}
+html body .fg-fs-active :is(.fg-fs-back,.game-close-btn,.yo-kapat,.hb-card header [data-close]){
+ display:grid!important;place-items:center!important;position:absolute!important;
+ top:calc(env(safe-area-inset-top,0px) + 8px)!important;bottom:auto!important;
+ width:42px!important;height:42px!important;min-width:42px!important;min-height:42px!important;
+ max-width:42px!important;max-height:42px!important;padding:0!important;
+ border:2px solid #c2daf1!important;border-radius:50%!important;
+ background:#fff!important;color:#4c2c88!important;box-shadow:0 3px 0 #9fafe1!important;
+ font:900 34px/1 system-ui!important;text-align:center!important;cursor:pointer!important;
+ z-index:2147483100!important;pointer-events:auto!important}
+html body .fg-fs-active .fg-fs-back{left:calc(env(safe-area-inset-left,0px) + 9px)!important;right:auto!important}
+html body .fg-fs-active :is(.game-close-btn,.yo-kapat,.hb-card header [data-close]){
+ left:auto!important;right:calc(env(safe-area-inset-right,0px) + 9px)!important}
+html body .fg-fs-active .fg-fs-back:focus-visible,
+html body .fg-fs-active :is(.game-close-btn,.yo-kapat,.hb-card header [data-close]):focus-visible{
+ outline:3px solid #7259e5!important;outline-offset:2px!important}
+html body .fg-fs-active .dm-session-back:not(.fg-fs-back){
+ left:auto!important;right:calc(env(safe-area-inset-right,0px) + 9px)!important}
+html body :is(#jpBalonEkrani,#jpSoruEkrani,#yagmurOyunEkrani,#kelimebulOyunEkrani,#esOyunEkrani,#trenOyunEkrani){
+ box-sizing:border-box!important;min-width:0!important}
+html body .fg-fs-active :is(#jpBalonEkrani,#jpSoruEkrani,#yagmurOyunEkrani,#kelimebulOyunEkrani,#esOyunEkrani,#trenOyunEkrani):not([style*="display: none"]){
+ display:flex!important;flex-direction:column!important;flex:1 1 0!important;min-height:0!important;
+ gap:clamp(4px,1dvh,9px)!important;overflow:hidden!important;max-height:100%!important}
+html body .fg-fs-active .fg-hero{
+ flex:0 0 auto!important;min-height:0!important;height:clamp(62px,12dvh,96px)!important;
+ box-sizing:border-box!important;margin:0!important;padding-top:4px!important;padding-bottom:4px!important;
+ overflow:hidden!important}
+html body .fg-fs-active .fg-hero-copy small{display:none!important}
+html body .fg-fs-active .fg-hero-copy h3{font-size:clamp(17px,4.6vw,24px)!important;line-height:1.08!important;margin:2px 0!important}
+html body .fg-fs-active .fg-hero-copy p{font-size:clamp(10px,2.55vw,12px)!important;line-height:1.17!important;margin:3px 0 0!important}
+html body .fg-fs-active .fg-hero-papi{height:clamp(52px,10dvh,81px)!important;width:clamp(51px,11vw,76px)!important;margin:0!important}
+html body .fg-fs-active :is(.dm-game-clock,.game-title,.game-subtitle){display:none!important}
+html body .fg-fs-active .fg-tight .fg-hero{height:57px!important}
+html body .fg-fs-active .fg-ultra-tight .fg-hero{height:47px!important}
+html body .fg-fs-active .fg-ultra-tight .fg-hero p{display:none!important}
+/* Hız Fırtınası: labels are separate non-interactive badges; the actual
+   answer string remains exactly btn.textContent for server-side verification. */
+html body #yagmurOyunOverlay.fg-fs-active #yagmurOyunEkrani #yagmurSecenekler{
+ display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;
+ grid-auto-rows:minmax(0,1fr)!important;align-items:stretch!important;
+ gap:clamp(5px,1.2dvh,10px)!important;margin:0!important;
+ flex:0 0 clamp(106px,24dvh,175px)!important;min-height:0!important;
+ padding:1px!important;box-sizing:border-box!important}
+html body #yagmurOyunOverlay.fg-fs-active #yagmurSecenekler .yg-secenek-btn{
+ position:relative!important;display:flex!important;flex-direction:row!important;
+ align-items:center!important;justify-content:flex-start!important;
+ gap:clamp(6px,1.5vw,11px)!important;min-width:0!important;min-height:0!important;
+ width:100%!important;height:100%!important;max-width:100%!important;
+ box-sizing:border-box!important;
+ padding:6px clamp(7px,2vw,13px)!important;
+ color:#362277!important;font:900 clamp(12px,3.3vw,17px)/1.22 Nunito,system-ui,sans-serif!important;
+ text-align:left!important;white-space:normal!important;text-overflow:clip!important;
+ overflow:visible!important;letter-spacing:normal!important}
+html body #yagmurOyunOverlay.fg-fs-active #yagmurSecenekler .yg-secenek-btn::before{
+ content:attr(data-fg-choice)!important;display:grid!important;place-items:center!important;
+ position:static!important;inset:auto!important;transform:none!important;float:none!important;
+ flex:0 0 27px!important;width:27px!important;min-width:27px!important;max-width:27px!important;
+ height:27px!important;border-radius:10px!important;background:#eee3ff!important;
+ color:#50318b!important;border:1px solid #c8a9e9!important;font:900 14px/1 Nunito,system-ui!important;
+ opacity:1!important;box-shadow:none!important;pointer-events:none!important}
+html body #yagmurOyunOverlay.fg-fs-active #yagmurSecenekler .yg-secenek-btn::after{content:none!important;display:none!important}
+html body #yagmurOyunOverlay.fg-fs-active #yagmurSecenekler .fg-choice-text{
+ position:static!important;flex:1 1 0%!important;display:block!important;min-width:0!important;
+ width:auto!important;max-width:100%!important;white-space:normal!important;
+ overflow-wrap:anywhere!important;word-break:normal!important;text-align:center!important;
+ color:inherit!important;line-height:1.23!important;overflow:visible!important;
+ text-indent:0!important;margin:0!important;padding:0!important;pointer-events:none!important}
+html body #yagmurOyunOverlay.fg-fs-active #yagmurSecenekler .yg-secenek-btn:nth-child(3){
+ grid-column:1 / -1!important;justify-self:center!important;max-width:100%!important}
+html body #yagmurOyunOverlay.fg-fs-active .yg-secenek-btn.dogru{background:#cef9de!important;color:#145e35!important;border-color:#2eb964!important}
+html body #yagmurOyunOverlay.fg-fs-active .yg-secenek-btn.yanlis{background:#ffe2e7!important;color:#972f4a!important;border-color:#df4b69!important}
+html body #yagmurOyunOverlay.fg-fs-active #yagmurOyunEkrani>div:nth-child(2){
+ flex:0 0 auto!important;padding:6px 10px!important;margin:0!important}
+html body #yagmurOyunOverlay.fg-fs-active #yagmurAlan{
+ flex:1 1 0%!important;min-height:0!important;height:auto!important;max-height:none!important;
+ box-sizing:border-box!important;margin:0!important}
+html body #yagmurOyunOverlay.fg-fs-active .fg-tight #yagmurSecenekler{flex-basis:110px!important}
+html body #yagmurOyunOverlay.fg-fs-active .fg-ultra-tight #yagmurSecenekler{flex-basis:96px!important}
+html body #yagmurOyunOverlay.fg-fs-active .fg-ultra-tight .yg-secenek-btn{font-size:12px!important}
+/* Risk Balonları: all 12 balloons and four answer choices fit on-screen. */
+html body #jpOyunOverlay.fg-fs-active #jpBalonEkrani .dm-risk-hero{
+ flex:0 0 clamp(65px,12dvh,100px)!important;min-height:0!important;margin:0!important;padding-top:5px!important;padding-bottom:5px!important}
+html body #jpOyunOverlay.fg-fs-active .dm-risk-hud{flex:0 0 auto!important;min-height:0!important;padding:7px 4px!important;margin:0!important}
+html body #jpOyunOverlay.fg-fs-active #jpBalonlarGrid{
+ display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;
+ grid-template-rows:repeat(3,minmax(0,1fr))!important;grid-auto-rows:minmax(0,1fr)!important;
+ gap:3px!important;align-items:center!important;justify-items:center!important;
+ flex:1 1 0%!important;min-height:0!important;min-width:0!important;
+ padding:3px!important;margin:0!important;overflow:hidden!important}
+html body #jpOyunOverlay.fg-fs-active #jpBalonlarGrid .dm-risk-balloon{
+ display:flex!important;flex-direction:column!important;align-items:center!important;
+ justify-content:center!important;min-height:0!important;max-height:100%!important;
+ width:100%!important;height:100%!important;padding:0!important;box-sizing:border-box!important}
+html body #jpOyunOverlay.fg-fs-active #jpBalonlarGrid .dm-balloon-body{
+ width:min(15vw,76px)!important;height:min(13dvh,94px)!important;max-height:76%!important;
+ flex-shrink:1!important;min-height:0!important}
+html body #jpOyunOverlay.fg-fs-active #jpBalonlarGrid .dm-balloon-string{height:20px!important;margin:0!important;flex-shrink:1!important}
+html body #jpOyunOverlay.fg-fs-active .dm-risk-rule{
+ flex:0 0 auto!important;padding:5px!important;margin:0!important;font-size:10px!important}
+html body #jpOyunOverlay.fg-fs-active #jpSoruEkrani{justify-content:center!important}
+html body #jpOyunOverlay.fg-fs-active #jpSoruEkrani>div:first-child{flex:0 0 auto!important;gap:5px!important;flex-wrap:wrap!important}
+html body #jpOyunOverlay.fg-fs-active #jpSoruEkrani>div:nth-child(2){flex:0 0 auto!important;padding:12px!important;margin:0!important}
+html body #jpOyunOverlay.fg-fs-active #jpSeceneklerGrid{
+ display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important;
+ flex:0 0 auto!important;margin:0!important}
+html body #jpOyunOverlay.fg-fs-active #jpSeceneklerGrid .jp-sik-btn{min-height:clamp(51px,10dvh,80px)!important;overflow-wrap:anywhere!important}
+html body #jpOyunOverlay.fg-fs-active .fg-audio-button{margin:5px auto 0!important}
+/* Şifre Kırıcı: status, hint, tried letters and input remain on a single page. */
+html body #kelimebulOyunOverlay.fg-fs-active #kelimebulOyunEkrani>div:nth-child(2){flex:0 0 auto!important;margin:0!important;padding:7px!important}
+html body #kelimebulOyunOverlay.fg-fs-active #kbIpucu{flex:0 0 auto!important;margin:1px 0!important;padding:9px!important}
+html body #kelimebulOyunOverlay.fg-fs-active #kbSatirlar{flex:1 1 0%!important;min-height:0!important;
+ overflow:hidden!important;margin:0!important;display:flex!important;flex-direction:column!important;
+ justify-content:center!important;gap:3px!important}
+html body #kelimebulOyunOverlay.fg-fs-active .kb-row-v2{margin:2px 0!important;gap:4px!important}
+html body #kelimebulOyunOverlay.fg-fs-active #kelimebulOyunEkrani>div:last-child{
+ flex:0 0 auto!important;margin:0!important;align-items:stretch!important;min-height:49px!important}
+html body #kelimebulOyunOverlay.fg-fs-active #kbTahminInput{min-width:0!important;min-height:48px!important}
+html body #kelimebulOyunOverlay.fg-fs-active #kbTahminInput+button{min-height:48px!important}
+/* Eş Bul: column labels + all live pairs share the available height. */
+html body #esOyunOverlay.fg-fs-active #esOyunEkrani .es-ust{flex:0 0 auto!important;margin:0!important;padding:7px!important}
+html body #esOyunOverlay.fg-fs-active #esOyunEkrani .es-bar{flex:0 0 auto!important;height:10px!important;margin:1px 0!important}
+html body #esOyunOverlay.fg-fs-active #esOyunEkrani .es-sutunlar{
+ display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;
+ align-items:stretch!important;flex:1 1 0%!important;min-height:0!important;
+ height:auto!important;overflow:hidden!important;gap:8px!important}
+html body #esOyunOverlay.fg-fs-active #esOyunEkrani .es-sutun{
+ display:flex!important;flex-direction:column!important;align-items:stretch!important;
+ justify-content:space-between!important;min-height:0!important;height:100%!important;
+ gap:4px!important;padding:5px!important;box-sizing:border-box!important;overflow:hidden!important}
+html body #esOyunOverlay.fg-fs-active #esOyunEkrani .es-sutun-baslik{
+ flex:0 0 auto!important;padding:3px 1px!important;font-size:clamp(11px,3vw,15px)!important}
+html body #esOyunOverlay.fg-fs-active #esOyunEkrani .es-k{
+ flex:1 1 0%!important;min-height:0!important;max-height:none!important;height:auto!important;
+ padding:3px!important;margin:0!important;font-size:clamp(11px,3.1vw,16px)!important;
+ line-height:1.13!important;overflow-wrap:anywhere!important}
+/* Kelime Treni: question never loses priority to decoration. */
+html body #trenOyunOverlay.fg-fs-active #trenOyunEkrani .tr-ust{flex:0 0 auto!important;padding:6px!important}
+html body #trenOyunOverlay.fg-fs-active #trenOyunEkrani .tr-gorev{
+ flex:0 0 auto!important;margin:0!important;padding:2px!important;font-size:clamp(12px,3vw,15px)!important}
+html body #trenOyunOverlay.fg-fs-active #trenOyunEkrani .tr-istasyon{
+ flex:0 0 auto!important;padding:6px!important;margin:0!important;min-height:0!important}
+html body #trenOyunOverlay.fg-fs-active #trenOyunEkrani #trenTabela{
+ padding:7px!important;min-height:0!important;font-size:clamp(15px,3.8vw,21px)!important;
+ line-height:1.25!important;overflow-wrap:anywhere!important}
+html body #trenOyunOverlay.fg-fs-active #trenOyunEkrani #trenTabela::before{margin-bottom:2px!important}
+html body #trenOyunOverlay.fg-fs-active #trenOyunEkrani .tr-hat{
+ flex:0 1 clamp(57px,14dvh,108px)!important;min-height:54px!important;
+ margin:0!important;padding:7px 7px 14px!important;overflow:hidden!important}
+html body #trenOyunOverlay.fg-fs-active #trenOyunEkrani .tr-havuz{
+ display:flex!important;flex-wrap:wrap!important;justify-content:center!important;align-content:center!important;
+ flex:1 1 0%!important;min-height:0!important;max-height:none!important;
+ margin:0!important;padding:6px!important;gap:5px!important;overflow:hidden!important}
+html body #trenOyunOverlay.fg-fs-active #trenOyunEkrani .tr-v{
+ min-height:0!important;font-size:clamp(11px,3vw,15px)!important;padding:5px 8px!important;
+ margin:0!important;box-shadow:0 2px 0 #a37750!important}
+html body #trenOyunOverlay.fg-fs-active #trenOyunEkrani .tr-alt{flex:0 0 auto!important;margin:0!important;padding:4px!important}
+html body #trenOyunOverlay.fg-fs-active #trenOyunEkrani .tr-ipucu{min-height:34px!important;font-size:12px!important}
+html body #trenOyunOverlay.fg-fs-active #trenOyunEkrani .tr-kontrol{
+ flex:0 0 auto!important;min-height:43px!important;font-size:14px!important;margin:0!important}
+html body #trenOyunOverlay.fg-fs-active #trenOyunEkrani .tr-panel.iyi,
+html body #trenOyunOverlay.fg-fs-active #trenOyunEkrani .tr-panel.kotu{
+ position:absolute!important;bottom:calc(env(safe-area-inset-bottom,0px) + 52px)!important;
+ left:10px!important;right:10px!important;z-index:6!important;max-height:50dvh!important;overflow:hidden!important}
+/* Harf Bahçesi: 4x6 live letter grid expands to all remaining room. */
+html body #harfBahcesiOverlay.fg-fs-active{
+ position:fixed!important;inset:0!important;width:100vw!important;height:100dvh!important;
+ display:flex!important;align-items:stretch!important;justify-content:stretch!important;
+ box-sizing:border-box!important;margin:0!important;padding:0!important;overflow:hidden!important}
+html body #harfBahcesiOverlay.fg-fs-active .hb-card{
+ display:flex!important;flex-direction:column!important;position:relative!important;
+ flex:1 1 0%!important;min-height:0!important;height:100dvh!important;max-height:100dvh!important;
+ width:100vw!important;max-width:none!important;margin:0!important;border:0!important;
+ border-radius:0!important;overflow:hidden!important;box-sizing:border-box!important}
+html body #harfBahcesiOverlay.fg-fs-active .hb-card>header{
+ flex:0 0 clamp(89px,17dvh,119px)!important;min-height:0!important;
+ padding:calc(env(safe-area-inset-top,0px) + 43px) 48px 4px!important;
+ box-sizing:border-box!important;overflow:hidden!important;border-radius:0!important}
+html body #harfBahcesiOverlay.fg-fs-active .hb-card header h2{
+ font-size:clamp(18px,5vw,25px)!important;padding:5px 8px!important;margin:2px 0!important}
+html body #harfBahcesiOverlay.fg-fs-active .hb-card header small{display:none!important}
+html body #harfBahcesiOverlay.fg-fs-active .hb-body{
+ display:flex!important;flex-direction:column!important;flex:1 1 0%!important;min-height:0!important;
+ overflow:hidden!important;gap:clamp(2px,.5dvh,5px)!important;
+ padding:8px clamp(8px,2.5vw,18px) calc(env(safe-area-inset-bottom,0px) + 7px)!important}
+html body #harfBahcesiOverlay.fg-fs-active .hb-meta{flex:0 0 auto!important;margin:0!important;gap:6px!important}
+html body #harfBahcesiOverlay.fg-fs-active .hb-meta>*{font-size:clamp(10px,2.6vw,14px)!important;padding:5px!important}
+html body #harfBahcesiOverlay.fg-fs-active .hb-card progress{flex:0 0 7px!important;margin:1px 0!important}
+html body #harfBahcesiOverlay.fg-fs-active .hb-hints{flex:0 0 auto!important;margin:3px 0!important}
+html body #harfBahcesiOverlay.fg-fs-active .hb-hints>div{padding:6px!important;font-size:clamp(13px,3.4vw,18px)!important}
+html body #harfBahcesiOverlay.fg-fs-active .hb-hints b{margin-top:2px!important;font-size:16px!important}
+html body #harfBahcesiOverlay.fg-fs-active .hb-grid{
+ display:grid!important;grid-template-columns:repeat(6,minmax(0,1fr))!important;
+ grid-template-rows:repeat(4,minmax(0,1fr))!important;
+ flex:1 1 0%!important;min-height:0!important;height:auto!important;
+ box-sizing:border-box!important;gap:clamp(3px,1vw,7px)!important;
+ margin:0!important;padding:clamp(5px,1.5vw,10px)!important}
+html body #harfBahcesiOverlay.fg-fs-active .hb-grid button{
+ width:100%!important;height:100%!important;min-height:0!important;
+ aspect-ratio:auto!important;padding:0!important;
+ font-size:clamp(17px,4.6vw,28px)!important;box-sizing:border-box!important}
+html body #harfBahcesiOverlay.fg-fs-active .hb-selection{
+ flex:0 0 auto!important;min-height:0!important;margin:0!important;
+ font-size:clamp(14px,3.8vw,18px)!important}
+html body #harfBahcesiOverlay.fg-fs-active .hb-actions{flex:0 0 auto!important;margin:0!important;gap:5px!important}
+html body #harfBahcesiOverlay.fg-fs-active .hb-actions button{
+ min-height:40px!important;padding:6px!important;font-size:clamp(11px,3vw,14px)!important}
+html body #harfBahcesiOverlay.fg-fs-active .hb-status{flex:0 0 auto!important;
+ min-height:0!important;margin:0!important;padding:5px!important;
+ font-size:clamp(10px,2.6vw,12px)!important;line-height:1.25!important}
+html body #harfBahcesiOverlay.fg-fs-active .hb-next:not([hidden]){
+ flex:0 0 auto!important;min-height:40px!important;margin:0!important;padding:5px!important}
+html body #harfBahcesiOverlay.fg-fs-active .fg-ultra-tight .hb-status{font-size:10px!important;padding:2px!important}
+html body #harfBahcesiOverlay.fg-fs-active .fg-ultra-tight .hb-hints>div{padding:3px!important}
+/* Kulak Dedektifi / Cümle Ustası: their native modal becomes fullscreen.
+   No extra modal close copies; keep native save/cleanup path. */
+html body #yoModal.fg-fs-active{
+ position:fixed!important;inset:0!important;width:100vw!important;height:100dvh!important;
+ max-width:none!important;max-height:100dvh!important;
+ display:flex!important;align-items:stretch!important;justify-content:stretch!important;
+ margin:0!important;padding:0!important;box-sizing:border-box!important;overflow:hidden!important;
+ z-index:2147481001!important}
+html body #yoModal.fg-fs-active .yo-kart{
+ transform:none!important;animation:none!important;transition:none!important;
+ display:flex!important;flex-direction:column!important;flex:1 1 0%!important;
+ width:100vw!important;max-width:none!important;min-width:0!important;
+ height:100dvh!important;max-height:100dvh!important;min-height:0!important;
+ margin:0!important;border:0!important;border-radius:0!important;
+ box-sizing:border-box!important;overflow:hidden!important;
+ padding:calc(env(safe-area-inset-top,0px) + 55px) clamp(9px,3vw,22px) calc(env(safe-area-inset-bottom,0px) + 8px)!important}
+html body #yoModal.fg-fs-active .yo-baslik{
+ flex:0 0 auto!important;min-height:0!important;margin:0 0 5px!important;
+ padding:9px 48px!important;font-size:clamp(17px,5vw,25px)!important;line-height:1.2!important}
+html body #yoModal.fg-fs-active #yoGovde{
+ display:flex!important;flex-direction:column!important;flex:1 1 0%!important;min-height:0!important;
+ min-width:0!important;max-height:100%!important;gap:clamp(3px,.7dvh,7px)!important;overflow:hidden!important}
+html body #yoModal.fg-fs-active #yoGovde .yo-ust-bilgi{flex:0 0 auto!important;margin:0!important;padding:3px!important}
+html body #yoModal.fg-fs-active #yoGovde .yo-ilerleme{flex:0 0 5px!important;margin:0!important}
+html body #yoModal.fg-fs-active #yoGovde .fg-listening-banner{
+ flex:0 0 auto!important;min-height:52px!important;margin:0!important;padding:5px 11px!important}
+html body #yoModal.fg-fs-active #yoGovde .fg-listening-banner img{
+ height:clamp(46px,8dvh,69px)!important;width:auto!important}
+html body #yoModal.fg-fs-active #yoGovde .yo-dikte-dinle{
+ flex:1 1 0%!important;min-height:0!important;margin:0!important;
+ padding:7px!important;box-sizing:border-box!important}
+html body #yoModal.fg-fs-active #yoGovde .yo-dikte-dinle button:first-child{
+ width:clamp(70px,15dvh,115px)!important;height:clamp(70px,15dvh,115px)!important;
+ flex:0 0 auto!important}
+html body #yoModal.fg-fs-active #yoGovde .yo-bos{flex:0 0 auto!important;margin:0!important;padding:3px!important}
+html body #yoModal.fg-fs-active #yoGovde #yoDikteInput{
+ flex:0 0 auto!important;min-height:46px!important;max-height:50px!important;margin:0!important}
+html body #yoModal.fg-fs-active #yoGovde .yo-btn{flex:0 0 auto!important;min-height:46px!important;margin:0!important}
+html body #yoModal.fg-fs-active #yoGovde #yoGB{flex:0 0 auto!important;margin:0!important;padding:5px!important}
+html body #yoModal.fg-fs-active #yoGovde .fg-sentence-banner{
+ flex:0 0 auto!important;margin:0!important;padding:5px!important;font-size:17px!important}
+html body #yoModal.fg-fs-active #yoGovde .yo-soru{
+ flex:0 0 auto!important;margin:0!important;padding:8px!important}
+html body #yoModal.fg-fs-active #yoGovde .yo-soru b{font-size:clamp(16px,4.4vw,23px)!important}
+html body #yoModal.fg-fs-active #yoGovde .yo-cevap-alan{
+ flex:0 0 auto!important;min-height:51px!important;margin:0!important;padding:7px!important}
+html body #yoModal.fg-fs-active #yoGovde .yo-havuz{
+ flex:1 1 0%!important;min-height:0!important;overflow:hidden!important;
+ align-content:center!important;margin:0!important;padding:6px!important;gap:5px!important}
+html body #yoModal.fg-fs-active #yoGovde .yo-chip{min-height:37px!important;padding:6px!important;font-size:clamp(12px,3.3vw,16px)!important}
+html body #yoModal.fg-fs-active .fg-tight .fg-listening-banner{min-height:43px!important}
+html body #yoModal.fg-fs-active .fg-ultra-tight .fg-listening-banner{display:none!important}
+html body #yoModal.fg-fs-active .fg-ultra-tight .yo-havuz .yo-chip{min-height:31px!important;padding:3px!important}
+@media(max-height:680px){
+ html body .fg-fs-active .fg-hero{height:59px!important}
+ html body #jpOyunOverlay.fg-fs-active #jpBalonEkrani .dm-risk-hero{flex-basis:62px!important}
+ html body #yagmurOyunOverlay.fg-fs-active #yagmurSecenekler{flex-basis:106px!important}
+ html body #harfBahcesiOverlay.fg-fs-active .hb-card>header{flex-basis:83px!important}
+ html body #harfBahcesiOverlay.fg-fs-active .hb-status{font-size:10px!important}
+ html body #yoModal.fg-fs-active #yoGovde .fg-listening-banner{display:none!important}
+ html body #yoModal.fg-fs-active #yoGovde .fg-sentence-banner{display:none!important}
+}
+@media(max-height:530px){
+ html body .fg-fs-active .fg-hero{height:39px!important}
+ html body .fg-fs-active .fg-hero p{display:none!important}
+ html body #harfBahcesiOverlay.fg-fs-active .hb-card>header{flex-basis:66px!important}
+ html body #yoModal.fg-fs-active .yo-baslik{padding-top:4px!important;padding-bottom:4px!important}
+}
+@media(prefers-reduced-motion:reduce){
+ html body .fg-fs-active *{scroll-behavior:auto!important;transition:none!important}
+}
