@@ -12,7 +12,12 @@
      A higher CEFR level opens when every lesson test or every learning-route
      stop of the current highest level is done, or when a new test result says so.
    - Accounts without a v1 learner profile (created before this rule) stay fully
-     open, and nothing a learner has already played is ever locked again. */
+     open, and nothing a learner has already played is ever locked again.
+   - Learners in classes 1–8 (school profile or a legacy account with a class)
+     reach the learning route only after the starting test (approved 20 Oct
+     2026, 15:16); anyone who already has learning-route progress keeps it.
+     After a test the learning route starts at the result unless the learner
+     chose a lower level. */
 export const CEFR=['A1','A2','B1','B2'];
 const rank=c=>CEFR.indexOf(c);
 export const gradeToCefr=g=>g>=5?'A2':'A1';
@@ -39,8 +44,8 @@ export function computeStartPath({profile,classNo,placement,choice,lessons,done,
  const playedGrade=Math.max(0,...[...doneSet].map(stopClass).filter(g=>g>=1&&g<=8));
  const playedCefr=Math.max(-1,...(thematic?.played||[]).map(rank));
  if(!p||p.version!==1){
-  const start=test||'A1';
-  return {legacy:true,mode:'open',startGrade:cls||1,maxGrade:8,startCefr:start,maxCefr:'B2',testLevel:test};
+  const start=rank(parse(choice)?.level)>=0&&rank(parse(choice)?.level)<=Math.max(rank(test),0)?parse(choice).level:test||'A1';
+  return {legacy:true,mode:'open',startGrade:cls||1,maxGrade:8,startCefr:start,maxCefr:'B2',testLevel:test,learningRoute:cls>0&&!test&&playedCefr<0?'needs-test':'open'};
  }
  const school=p.purpose==='school'&&cls>0,wholeRoute=p.purpose==='school'&&['high','university'].includes(p.educationStage);
  const mode=p.startChoice==='test'?'test':p.startChoice==='known'?'level':school?'grade':'level';
@@ -56,9 +61,10 @@ export function computeStartPath({profile,classNo,placement,choice,lessons,done,
  const maxCefr=CEFR[top];
  const chosen=parse(choice)?.level;
  const ceiling=mode==='test'?Math.max(rank(test),0):top;
- const startCefr=rank(chosen)>=0&&rank(chosen)<=ceiling?chosen:base;
+ const startCefr=rank(chosen)>=0&&rank(chosen)<=ceiling?chosen:test&&rank(test)<=ceiling?test:base;
  const startGrade=Math.min(maxGrade,school?cls:cefrToStartGrade(startCefr));
- return {legacy:false,mode,startGrade,maxGrade,startCefr,maxCefr,testLevel:test};
+ const learningRoute=school&&!test&&playedCefr<0?'needs-test':'open';
+ return {legacy:false,mode,startGrade,maxGrade,startCefr,maxCefr,testLevel:test,learningRoute};
 }
 
 export const cefrOpen=(path,code)=>rank(code)>=0&&rank(code)<=rank(path.maxCefr);
@@ -82,6 +88,7 @@ export function schoolStopProblem(path,ctx,stop){
 /* Learning route chapter check, given the chapters in route order with their cefr. */
 export function thematicChapterProblem(path,chapters,id,isDone){
  const i=chapters.findIndex(c=>c.id===id);if(i<0)return 'Geçersiz bölüm.';
+ if(path.learningRoute==='needs-test')return 'Öğrenme Yolu için önce 24 soruluk seviye testini çöz. Okul Yolum’da sınıfından devam edebilirsin.';
  const c=chapters[i],prev=chapters[i-1];
  if(!cefrOpen(path,c.cefr))return c.cefr+' bölümleri, '+path.maxCefr+' tamamlanınca veya başlangıç testiyle açılır.';
  if(prev&&prev.cefr===c.cefr&&!isDone(prev.id))return 'Önce bir önceki bölümü tamamla.';

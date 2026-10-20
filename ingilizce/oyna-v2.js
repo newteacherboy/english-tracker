@@ -6,7 +6,16 @@ const img=(name,cls='')=>'<img class="'+cls+'" src="route-assets/'+name+'" alt="
 const art=(name,cls='')=>img(name+'.svg',cls);
 const tell=m=>window.yoToast?.(m);
 let preview=null,latest=null,epoch=0;
-function purpose(){return preview||(Y()?.dmLearningPurpose==='independent'?'independent':'school');}
+/* 1–8. sınıf öğrencileri Öğrenme Yolu'na seviye testinden sonra geçer (sunucu: startPath.learningRoute). */
+const learningNeedsTest=()=>window.dmProgression?.status?.()?.startPath?.learningRoute==='needs-test';
+function purpose(){if(preview)return preview;return Y()?.dmLearningPurpose==='independent'&&!learningNeedsTest()?'independent':'school';}
+function askLearningTest(){
+ const owner=who(),done=()=>{document.removeEventListener('dm:start-point-chosen',chosen);};
+ const chosen=e=>{if(e.detail?.owner&&e.detail.owner!==owner)return;done();document.addEventListener('dm:progression-status',()=>{if(owner===who()&&!learningNeedsTest())setPurpose('independent');},{once:true});window.dmProgression?.refresh?.(true);};
+ const {el,close}=dialog('Önce seviye testi','<p><b>Öğrenme Yolu</b> dil seviyene (A1–B2) göre ilerler. Okul ve sınıf seçtiğin için önce 24 soruluk seviye testini çözmen gerekiyor.</p><p>Testin sonucuna kadar olan seviyeler açılır; Öğrenme Yolu’na hangi seviyeden başlayacağını sen seçersin. Okul Yolum’daki ilerlemen korunur.</p><div class="rt-choices"><button data-learning-test>Seviye testine başla · 24 soru</button><button data-learning-later>Şimdilik Okul Yolum’da kal</button></div>');
+ el.querySelector('[data-learning-later]').onclick=close;
+ el.querySelector('[data-learning-test]').onclick=()=>{close();document.addEventListener('dm:start-point-chosen',chosen);const v=window.dmStartPlacement?.open?.({source:'learning-route'});if(!v){done();tell('Test şu an açılamadı. Profil › Seviye Testi’nden deneyebilirsin.');}};
+}
 function week(){const d=new Date(Date.now()+10800000);d.setUTCDate(d.getUTCDate()-(d.getUTCDay()+6)%7);return d.toISOString().slice(0,10);}
 function heading(o={}){return '<header class="rt-top"><h1>'+ (purpose()==='school'?'Okul Yolum':'Öğrenme Yolum')+'</h1><div class="rt-wallet"><button type="button" data-rt-wallet="energy" aria-label="Enerji bilgileri">⚡ <b data-dm-energy>'+esc(o.energy??'–')+'</b></button><button type="button" data-rt-wallet="gold" aria-label="Mağaza ve altın">🪙 <b data-dm-gold>'+esc(o.gold??Y()?.altin??0)+'</b></button></div></header>';}
 let weeklyClaimOwner='',weeklyError='';
@@ -81,6 +90,7 @@ async function setPurpose(p,{save=true,reopen=true}={}){
  if(!['school','independent'].includes(p)||routeSaveInProgress)return false;
  const owner=who();
  if(!Y()||!owner){tell('Hesap bilgilerin hazırlanıyor, kısa süre sonra tekrar dene.');return false;}
+ if(p==='independent'&&learningNeedsTest()){askLearningTest();return false;}
  routeSaveInProgress=true;
  let state=null,previous=null,changed=false;
  try{
@@ -136,5 +146,5 @@ function refreshLearning(){if(purpose()!=='independent')return;document.querySel
 document.addEventListener('dm:learning-progress',e=>{if(e.detail?.owner===who()){refreshLearning();refreshChests();}});document.addEventListener('dm:story-close',refreshLearning);
 document.addEventListener('dm:state',()=>{preview=null;refreshCards();});document.addEventListener('dm:login',()=>{weeklyClaimOwner='';weeklyError='';preview=null;latest=null;routeMap=null;mapResize?.disconnect();epoch++;});window.addEventListener('resize',fit);window.visualViewport?.addEventListener('resize',fit);
 // School route uses its own theme and expanded grade/unit navigator.
-if(typeof document!=='undefined'&&document.createElement&&document.head&&!document.querySelector('script[data-dm-school-journey]')){const loader=document.createElement('script');loader.src='school-journey.js?v=20261020-design-three-1';loader.defer=true;loader.dataset.dmSchoolJourney='1';document.head.append(loader);}
+if(typeof document!=='undefined'&&document.createElement&&document.head&&!document.querySelector('script[data-dm-school-journey]')){const loader=document.createElement('script');loader.src='school-journey.js?v=20261020-start-test-1';loader.defer=true;loader.dataset.dmSchoolJourney='1';document.head.append(loader);}
 })();

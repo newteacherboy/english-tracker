@@ -24561,6 +24561,16 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
     if (tab && !tab.classList.contains('active') && typeof orgDunya === 'function') { parkurAcikTut = true; orgDunya(); }
     if (ad === 'koridor') koridor(); else harita(gorunum.b === null ? aktifBolum() : gorunum.b);
   }
+  /* Başlangıç yolu sunucudan harita çizildikten sonra gelebilir (uygulama açılışı). O zaman harita
+     varsayılan 1. sınıf sırasıyla çizilmiş olur; yol değişince haritayı başlangıç sınıfına göre yeniden çiz. */
+  let yolImza = '';
+  document.addEventListener('dm:progression-status', () => {
+    const y = baslangicYolu(), imza = y ? [y.startGrade, y.maxGrade, y.startCefr, y.maxCefr].join('|') : '';
+    if (imza === yolImza) return; yolImza = imza;
+    const k = $('bzParkur'), tab = $('tab-dunya');
+    if (!k || !k.querySelector('#dmParkurScroll') || !tab?.classList.contains('active') || (perde && perde.isConnected) || document.querySelector('.bz-alt')) return;
+    harita(aktifBolum());
+  });
   function aktifBolum() { aktarGerekirse(); duraklariKur(); for (const sn of sinifSirasi()) { const b = KAPI_SINIF.findIndex(k => k.includes(sn)); if (sinifSiradaki(b, sn) >= 0) return b; } for (let b = 3; b >= 0; b--) if (bolumAcik(b)) return b; return 0; }
   function kapat() { if(O&&!O.finished){checkpointSave();O.pauseElapsed=Math.max(0,Date.now()-O.bas);O.paused=true;}try { speechSynthesis.cancel(); } catch (e) {} if (zamanlayici) clearInterval(zamanlayici); if (perde) {const closed=perde;perde.remove();window.dmViewHistory?.leave(closed);} perde = null; document.querySelectorAll('.bz-alt').forEach(x => x.remove()); }
   function avatar(px) { try { let s = typeof karakterSvg === 'function' ? karakterSvg(isim(), px) : ''; if (s) return s; } catch (e) {} return `<span style="display:grid;place-items:center;width:100%;height:100%;font-size:${Math.round(px * .7)}px;line-height:1">🧙</span>`; }
@@ -26560,7 +26570,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <link rel="stylesheet" href="account-settings.css?v=1"><script defer src="account-settings.js?v=20261019-step-back-1"></script><script defer src="kisisel-bilgiler.js?v=20261020-start-path-2"></script><script defer src="student-management.js?v=20261018-delete-2"></script><script defer src="contact-policy.js?v=2"></script><script defer src="sifre-islem.js?v=1"></script><script defer src="ekonomi.js?v=20261019-offline-1"></script>
 <link rel="stylesheet" href="goal-announcements.css?v=1"><script defer src="goal-announcements.js?v=3"></script>
 <link rel="stylesheet" href="progress-ui.css?v=1">
-<link rel="stylesheet" href="progression-ui.css?v=20261018-chest-1"><script defer src="progression-ui.js?v=20261020-start-path-1"></script>
+<link rel="stylesheet" href="progression-ui.css?v=20261018-chest-1"><script defer src="progression-ui.js?v=20261020-start-test-1"></script>
 <link rel="stylesheet" href="game-feedback.css?v=1"><script defer src="game-feedback.js?v=20261020-graduation-1"></script>
 <link rel="stylesheet" href="profile-forest.css?v=1">
 <script defer src="profile-forest.js?v=1"></script>
@@ -26575,7 +26585,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <link rel="stylesheet" href="oyna-v2.css?v=20261016-layout-1">
 <script defer src="route-missions.js?v=20261019-offline-1"></script>
 <script defer src="papi-habit.js?v=20261019-2"></script>
-<script defer src="oyna-v2.js?v=20261020-fixed-art-1"></script>
+<script defer src="oyna-v2.js?v=20261020-start-test-1"></script>
 <link rel="stylesheet" href="friends-ui.css?v=20261017-social-highlights-v2">
 <script defer src="friends-ui.js?v=20261017-social-highlights-v2"></script>
 <link rel="stylesheet" href="league-ui.css?v=20261019-1">
@@ -26590,7 +26600,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <link rel="stylesheet" href="day-night-theme.css?v=20261012-1">
 <link rel="stylesheet" href="member-experience.css?v=20261019-chat-compact-1">
 <script src="placement-bank.js?v=20261013-1"></script>
-<script src="member-experience.js?v=20261020-b1b2-50"></script>
+<script src="member-experience.js?v=20261020-start-test-1"></script>
 <link rel="stylesheet" href="start-placement.css?v=20261020-start-path-2">
 <script src="start-placement-bank.js?v=20261018-1"></script>
 <script src="start-placement.js?v=20261020-start-path-2"></script>
