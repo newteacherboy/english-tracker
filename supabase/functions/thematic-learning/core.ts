@@ -1,6 +1,7 @@
 import DATA from './curriculum.json' with {type:'json'};
 import './learning-core.js';
 import './thematic-v8-candidate.js';
+import {computeStartPath,thematicChapterProblem} from './start-path.mjs';
 const CORE=(globalThis as any).DMLearningCore;
 const V8=(globalThis as any).DMThematicV8Candidate;
 type DB={select:(table:string,params:any)=>Promise<any[]>,insert:(table:string,payload:any,ignore?:boolean)=>Promise<any[]>,update:(table:string,params:any,payload:any)=>Promise<any[]>,rpc:(name:string,payload:any)=>Promise<any>};
@@ -44,10 +45,24 @@ export function thematicHandler(db:DB){
    let enrollment=(await db.select('dm_thematic_enrollment',{select:'inherited_count',actor_key:'eq.'+owner,limit:'1'}))[0];
    if(!enrollment){const old=await db.select('papi_story_progress',{select:'chapter',actor_key:'eq.'+owner,chapter:'lt.80',completed:'eq.true',limit:'80'});await db.insert('dm_thematic_enrollment',{actor_key:owner,student_id:student?id:null,teacher_id:student?null:id,inherited_count:old.length},true);enrollment=(await db.select('dm_thematic_enrollment',{select:'inherited_count',actor_key:'eq.'+owner,limit:'1'}))[0];}
    const inherited=Number(enrollment?.inherited_count||0);
+   // Where this learner may enter the route: lower CEFR levels open, higher ones locked (start-path.mjs).
+   const access=async()=>{
+    const rows=await db.select('papi_story_progress',{select:'chapter,completed',actor_key:'eq.'+owner,chapter:'gte.1000',limit:'1000'});
+    const done=new Set(rows.filter((r:any)=>r.completed).map((r:any)=>Number(r.chapter)));for(let i=0;i<inherited;i++)done.add(1000+i);
+    if(!student)return {path:{legacy:true,mode:'open',startCefr:'A1',maxCefr:'B2'},done};
+    const extra=await db.select('extra_data',{select:'key_name,value',student_id:'eq.'+id,key_name:'in.(learner_profile_v1,placement_start_v1,start_point_v1)'});
+    const value=(k:string)=>extra.find((r:any)=>r.key_name===k)?.value;
+    const cls=(await db.select('students',{select:'class_no',id:'eq.'+id,limit:'1'}))[0]?.class_no;
+    let ctx:any={};try{ctx=await db.rpc('dm_progress_context',{actor:id})||{};}catch{ctx={};}
+    const levelOf=(n:number)=>chapters.find((c:any)=>c.id===n)?.cefr;
+    const thematic={played:[...new Set(rows.map((r:any)=>levelOf(Number(r.chapter))).filter(Boolean))],complete:Object.fromEntries(['A1','A2','B1','B2'].map(c=>[c,chapters.filter((x:any)=>x.cefr===c).every((x:any)=>done.has(x.id))]))};
+    return {path:computeStartPath({profile:value('learner_profile_v1'),classNo:cls,placement:value('placement_start_v1'),choice:value('start_point_v1'),lessons:ctx.lessons,done:ctx.done,units:ctx.units,thematic}),done};
+   };
    if(b.action==='status'){
     const rows=await db.select('papi_story_progress',{select:'chapter,cursor,completed,version',actor_key:'eq.'+owner,chapter:'gte.1000',order:'chapter',limit:String(chapters.length)});
     const map=new Map(rows.map(r=>[r.chapter,r]));for(let i=0;i<inherited;i++){const r=map.get(1000+i);map.set(1000+i,{...(r||{chapter:1000+i,cursor:10,version:0}),completed:true,inherited:true});}
-    return json({ok:true,version:5,progress:[...map.values()],inherited,total:chapters.length,wallet:await balance()});
+    const {path}=await access();
+    return json({ok:true,version:5,progress:[...map.values()],inherited,total:chapters.length,wallet:await balance(),access:{legacy:!!path.legacy,startCefr:path.startCefr,maxCefr:path.maxCefr}});
    }
    const n=Number(b.chapter),C=chapters.find(c=>c.id===n);if(!Number.isInteger(n)||!C||C.id!==n)return json({ok:false,mesaj:'Geçersiz bölüm.'},400);
    // V8 can only be enabled after the atomic first-attempt/reward RPC migration.
@@ -62,8 +77,8 @@ export function thematicHandler(db:DB){
     return rec&&!rec.completed&&!p.completed&&!p.replay?{...safe(p),needsRecovery:true,recovery:recoveryView(C,Number(rec.step))}:safe(p);
    };
    let record=await read();
-   const position=chapters.findIndex(c=>c.id===n),previous=chapters[position-1];
-   if(previous&&!record&&n-1000>=inherited){const prev=(await db.select('papi_story_progress',{select:'completed',actor_key:'eq.'+owner,chapter:'eq.'+previous.id,limit:'1'}))[0];if(!prev?.completed&&previous.id-1000>=inherited)return json({ok:false,mesaj:'Önce bir önceki bölümü tamamla.'},403);}
+   // Already opened runs may resume; a new run needs an open CEFR level and, inside it, the previous stop.
+   if(!record&&n-1000>=inherited){const {path,done}=await access();const problem=thematicChapterProblem(path,chapters,n,(x:number)=>done.has(x));if(problem)return json({ok:false,mesaj:problem},403);}
    if(b.action==='open'){
     if(!record){await db.insert('papi_story_progress',{actor_key:owner,student_id:student?id:null,teacher_id:student?null:id,chapter:n,cursor:0,completed:false,reward_claimed:n-1000<inherited,replay:n-1000<inherited,version:0,deck_version:requestedVersion},true);record=await read();}
     else if(record.cursor>=stepCount(record.deck_version)){await db.update('papi_story_progress',{...filters,version:'eq.'+record.version},{cursor:0,deck_version:requestedVersion,replay:true,questions_seen:0,charged_cursor:-1,mistakes:0,last_reward:{},route_combo:0,version:record.version+1,updated_at:new Date().toISOString()});record=await read();}
