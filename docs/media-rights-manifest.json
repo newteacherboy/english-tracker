@@ -1893,6 +1893,20 @@
       "bytes": 125504,
       "source": "OpenAI ImageGen, 20 October 2026; exact Papi trophy finale derived from user-approved school graduation mockup",
       "status": "ai-generated"
+    },
+    {
+      "path": "ingilizce/route-assets/chest-three.svg",
+      "sha256": "b5270b4401a06cea0743f892cb506d26f7f38d61b3f12adb6ea431e737c6d0bb",
+      "bytes": 691,
+      "status": "original-vector",
+      "source": "Original SVG authored for the approved Diji Medu concept-3 route interface; no external artwork."
+    },
+    {
+      "path": "ingilizce/route-assets/nav-three.svg",
+      "sha256": "2fb24d856decd4be97b340a3b36470de78340c5d7dbfdd0aa007b1c77dedf502",
+      "bytes": 830,
+      "status": "original-vector",
+      "source": "Original SVG authored for the approved Diji Medu concept-3 route interface; no external artwork."
     }
   ]
 }
