@@ -238,6 +238,7 @@ html body #yoModal.fg-fs-active{
  margin:0!important;padding:0!important;box-sizing:border-box!important;overflow:hidden!important;
  z-index:2147481001!important}
 html body #yoModal.fg-fs-active .yo-kart{
+ transform:none!important;animation:none!important;transition:none!important;
  display:flex!important;flex-direction:column!important;flex:1 1 0%!important;
  width:100vw!important;max-width:none!important;min-width:0!important;
  height:100dvh!important;max-height:100dvh!important;min-height:0!important;
