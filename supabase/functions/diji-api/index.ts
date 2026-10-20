@@ -1,4 +1,5 @@
 import {routeGraduationsAPI} from './route-graduations.mjs';
+import {completeLessonAssignments} from './assignment-completion.mjs';
 import graduationCatalog from './graduation-catalog.json' with {type:'json'};
 import {moderationIssue} from './content-moderation.mjs';
 import {socialSafetyAPI} from './social-safety.mjs';
@@ -2667,8 +2668,10 @@ async function handle(req: Request, proxy: any = null) {
     const {data:award,error:awardError}=await supabase.rpc("dm_lesson_fair_award",{
       actor:s.id,cefr:level,category_name:category,topic,requested_tier:tier,historical:false
     });if(awardError)throw awardError;
+    // A passed lesson also completes the teacher's homework for this topic (the old browser hook no longer runs).
+    const odevler=a.role==="student"?await completeLessonAssignments(supabase,s,level,category,topic,(await yoneticiler()).ids):[];
     return json({ok:true,status:"success",firstCorrect,total:questions.length,tier,recovered:phase==="recovery",
-      xp:Number(award?.xp||0),gold:Number(award?.gold||0),yo:award?.yo||null,...energy});
+      xp:Number(award?.xp||0),gold:Number(award?.gold||0),yo:award?.yo||null,odevTamamlandi:odevler,...energy});
   }
 
   // ============================================================ EK VERİ (oyun ilerlemesi)
