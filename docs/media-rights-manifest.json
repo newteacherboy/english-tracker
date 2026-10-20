@@ -1886,6 +1886,13 @@
       "source": "OpenAI image generation; derived from user-approved Diji-Medu graduation mockups, 20 October 2026",
       "status": "original_ai_generated",
       "bytes": 266222
+    },
+    {
+      "path": "ingilizce/graduation-assets/school-finale.webp",
+      "sha256": "4097a4151e4189054f6f65eb087c3ac365a2720992144f256a4fa2dc1dd86d6f",
+      "bytes": 125504,
+      "source": "OpenAI ImageGen, 20 October 2026; exact Papi trophy finale derived from user-approved school graduation mockup",
+      "status": "ai-generated"
     }
   ]
 }
