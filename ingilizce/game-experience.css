@@ -333,3 +333,77 @@ body .dm-designed-playing.game-modal-overlay>.game-modal-content{
 #yoModal[data-dm-selected-game="cumle"] .yo-btn{background:linear-gradient(#ffcb4e,#ff8629)!important;color:#fff!important;
  border:2px solid #efb045!important;border-radius:21px!important;box-shadow:0 5px 0 #d46d22!important;min-height:54px!important}
 #yoModal[data-dm-selected-game="cumle"] .yo-geri-bildirim{font-weight:900!important;margin:10px 0!important}
+
+
+/* Kelime Treni readability fix: original dark-blue .tr-tabela had dark-purple
+   text from the approved B design override. Ensure the Turkish prompt remains
+   high contrast, wraps in full, and is clearly separated from answer wagons. */
+#trenOyunOverlay.dm-designed-playing #trenOyunEkrani .tr-gorev{
+  color:#382269!important;
+  font-size:clamp(14px,3.9vw,18px)!important;
+  line-height:1.45!important;
+  margin:12px 0 9px!important;
+}
+#trenOyunOverlay.dm-designed-playing #trenOyunEkrani .tr-istasyon{
+  display:flex!important;
+  align-items:stretch!important;
+  gap:10px!important;
+  width:100%!important;
+  min-width:0!important;
+  box-sizing:border-box!important;
+  padding:10px!important;
+  background:#f4edff!important;
+  border:3px solid #9d80d8!important;
+  border-radius:23px!important;
+  box-shadow:0 5px 0 #c5b3e8!important;
+}
+#trenOyunOverlay.dm-designed-playing #trenOyunEkrani .tr-istasyon > span[aria-hidden="true"]{
+  display:grid;
+  place-items:center;
+  flex:0 0 36px;
+}
+#trenOyunOverlay.dm-designed-playing #trenOyunEkrani #trenTabela.tr-tabela{
+  display:block!important;
+  flex:1 1 0%!important;
+  min-width:0!important;
+  width:auto!important;
+  height:auto!important;
+  min-height:88px!important;
+  box-sizing:border-box!important;
+  margin:0!important;
+  padding:13px 12px!important;
+  border:3px solid #d3b880!important;
+  border-radius:17px!important;
+  background:#fffdf3!important;
+  color:#302154!important;
+  font:900 clamp(17px,4.6vw,23px)/1.4 Nunito,system-ui,sans-serif!important;
+  text-align:center!important;
+  text-shadow:none!important;
+  letter-spacing:0!important;
+  white-space:normal!important;
+  overflow-wrap:anywhere!important;
+  overflow:visible!important;
+  max-height:none!important;
+  box-shadow:0 3px 0 #d6c9ac!important;
+}
+#trenOyunOverlay.dm-designed-playing #trenOyunEkrani #trenTabela.tr-tabela::before{
+  content:"TÜRKÇE CÜMLE";
+  display:block;
+  margin:0 0 6px;
+  color:#875c9a;
+  font:900 10px/1.4 Nunito,system-ui,sans-serif;
+  letter-spacing:.08em;
+}
+@media(max-width:380px){
+  #trenOyunOverlay.dm-designed-playing #trenOyunEkrani .tr-istasyon{
+    gap:7px!important;
+    padding:8px!important;
+  }
+  #trenOyunOverlay.dm-designed-playing #trenOyunEkrani .tr-istasyon > span[aria-hidden="true"]{
+    flex-basis:26px;
+  }
+  #trenOyunOverlay.dm-designed-playing #trenOyunEkrani #trenTabela.tr-tabela{
+    padding:12px 9px!important;
+    font-size:17px!important;
+  }
+}
