@@ -15,8 +15,9 @@
      open, and nothing a learner has already played is ever locked again.
    - Learners with a class 1–8 on their account (school profile or a legacy
      account) reach the learning route only after the starting test (approved
-     20 Oct 2026, 15:16 and 15:37). This applies even if they played it before;
-     their progress is kept and resumes after the test.
+     20 Oct 2026, 15:16 and 15:37). Only a test completed after the rule
+     started (LEARNING_TEST_FROM) counts; their earlier learning-route progress
+     was reset on 20 Oct 2026 while earned XP and gold stayed (17:18).
      After a test the learning route starts at the result unless the learner
      chose a lower level. */
 export const CEFR=['A1','A2','B1','B2'];
@@ -28,6 +29,8 @@ const parse=v=>{if(typeof v==='string'){try{return JSON.parse(v);}catch{return n
 const stopClass=stop=>Math.floor((Number(stop)-200000)/10000);
 const gradeOf=n=>{n=Number(n);return Number.isInteger(n)&&n>=1&&n<=8?n:0;};
 
+export const LEARNING_TEST_FROM='2026-10-20T12:37:00Z'; // 15:37 Europe/Istanbul
+export function learningTestValid(value){const r=parse(value);return !!placementLevel(value)&&Date.parse(r.completedAt)>=Date.parse(LEARNING_TEST_FROM);}
 export function placementLevel(value){
  const r=parse(value);
  if(!r||r.version!=='starting-point-20261018-v1'||r.total!==24||!Number.isFinite(Date.parse(r.completedAt)))return '';
@@ -41,12 +44,12 @@ export function placementLevel(value){
    done/units: school route progress from dm_progress_context;
    thematic: {complete:{A1:bool,...}, played:['A1',...]} from the learning route. */
 export function computeStartPath({profile,classNo,placement,choice,lessons,done,units,thematic}={}){
- const p=parse(profile),cls=gradeOf(classNo),test=placementLevel(placement),doneSet=new Set((done||[]).map(Number));
+ const p=parse(profile),cls=gradeOf(classNo),test=placementLevel(placement),freshTest=learningTestValid(placement),doneSet=new Set((done||[]).map(Number));
  const playedGrade=Math.max(0,...[...doneSet].map(stopClass).filter(g=>g>=1&&g<=8));
  const playedCefr=Math.max(-1,...(thematic?.played||[]).map(rank));
  if(!p||p.version!==1){
   const start=rank(parse(choice)?.level)>=0&&rank(parse(choice)?.level)<=Math.max(rank(test),0)?parse(choice).level:test||'A1';
-  return {legacy:true,mode:'open',startGrade:cls||1,maxGrade:8,startCefr:start,maxCefr:'B2',testLevel:test,learningRoute:cls>0&&!test?'needs-test':'open'};
+  return {legacy:true,mode:'open',startGrade:cls||1,maxGrade:8,startCefr:start,maxCefr:'B2',testLevel:test,learningRoute:cls>0&&!freshTest?'needs-test':'open'};
  }
  const school=p.purpose==='school'&&cls>0,wholeRoute=p.purpose==='school'&&['high','university'].includes(p.educationStage);
  const mode=p.startChoice==='test'?'test':p.startChoice==='known'?'level':school?'grade':'level';
@@ -64,7 +67,7 @@ export function computeStartPath({profile,classNo,placement,choice,lessons,done,
  const ceiling=mode==='test'?Math.max(rank(test),0):top;
  const startCefr=rank(chosen)>=0&&rank(chosen)<=ceiling?chosen:test&&rank(test)<=ceiling?test:base;
  const startGrade=Math.min(maxGrade,school?cls:cefrToStartGrade(startCefr));
- const learningRoute=school&&!test?'needs-test':'open';
+ const learningRoute=school&&!freshTest?'needs-test':'open';
  return {legacy:false,mode,startGrade,maxGrade,startCefr,maxCefr,testLevel:test,learningRoute};
 }
 

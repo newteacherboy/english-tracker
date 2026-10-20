@@ -61,7 +61,10 @@ test('class 1–8 learners need the starting test for the learning route, even i
  assert.equal(SP.computeStartPath({classNo:7,thematic:thematicSummary([{chapter:3,completed:true}])}).learningRoute,'needs-test','old story progress too');
  assert.equal(SP.computeStartPath({profile:independent(),thematic:thematicSummary([])}).learningRoute,'open','independent learners');
  assert.equal(SP.computeStartPath({profile:{...school,educationStage:'high'},thematic:thematicSummary([])}).learningRoute,'open','high school has no 1–8 class');
- const placement={version:'starting-point-20261018-v1',total:24,level:'B1',completedAt:'2026-10-20T10:00:00Z'};
+ const old={version:'starting-point-20261018-v1',total:24,level:'B1',completedAt:'2026-10-20T12:36:00Z'},placement={...old,completedAt:'2026-10-20T12:38:00Z'};
+ assert.equal(SP.computeStartPath({profile:school,classNo:7,placement:old}).learningRoute,'needs-test','a test from before the rule does not count');
+ assert.equal(SP.computeStartPath({classNo:7,placement:old}).learningRoute,'needs-test','legacy accounts too');
+ assert.equal(SP.computeStartPath({profile:school,classNo:7,placement:old}).maxCefr,'B1','an old test still opens its lessons');
  p=SP.computeStartPath({profile:school,classNo:7,placement,thematic:thematicSummary([])});
  assert.deepEqual([p.learningRoute,p.startCefr,p.maxCefr,p.startGrade],['open','B1','B1',7],'after the test the learning route starts at the result; the school route stays at the class');
  assert.equal(SP.computeStartPath({profile:school,classNo:7,placement,choice:{level:'A2'}}).startCefr,'A2','a lower chosen start wins');
