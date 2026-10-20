@@ -1907,20 +1907,6 @@
       "bytes": 830,
       "status": "original-vector",
       "source": "Original SVG authored for the approved Diji Medu concept-3 route interface; no external artwork."
-    },
-    {
-      "path": "ingilizce/route-assets/illustrated-learning-trail-v3.svg",
-      "sha256": "62fe5f56c120fb4e06018693e038a3185a116738cf67f4f18de3894df9fcb2a6",
-      "bytes": 6717,
-      "status": "original-vector",
-      "source": "Original vector illustration by OpenAI for user-approved Diji-Medu concept 3, 20 October 2026; school/space routes, including girl astronaut."
-    },
-    {
-      "path": "ingilizce/route-assets/illustrated-school-trail-v3.svg",
-      "sha256": "26ead38c3878ab473c28327482064560627871fad3dfa641d1607272463b2eea",
-      "bytes": 10848,
-      "status": "original-vector",
-      "source": "Original vector illustration by OpenAI for user-approved Diji-Medu concept 3, 20 October 2026; school/space routes, including girl astronaut."
     }
   ]
 }
