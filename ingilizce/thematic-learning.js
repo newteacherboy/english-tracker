@@ -145,8 +145,7 @@ function showComboReward(r){
  const gain=Number(r.comboGain),key=identity()+'|'+r.chapter+'|'+r.version;if(!Number.isFinite(gain)||gain<=0||key===lastComboReward)return;lastComboReward=key;
  const ticket=epoch,at=identity();queueMicrotask(()=>{if(ticket!==epoch||!modal||identity()!==at)return;
   if(typeof window.DMRouteQuestions?.celebrate==='function'){
-   window.DMRouteQuestions.celebrate(modal,gain);
-   const burst=modal.querySelector('.rq-combo-burst');if(burst){burst.setAttribute('aria-label',gain+' enerji kazandın! Beş doğru üst üste.');const label=burst.querySelector('.rq-bonus-streak');if(label)label.textContent='5 doğru üst üste!';}
+   window.DMRouteQuestions.celebrate(modal,gain,5);
   }else{const el=modal.querySelector('.ml-combo-toast');if(el){el.textContent='🪶 5 doğru! +'+gain+' enerji';setTimeout(()=>{if(ticket===epoch&&el.isConnected)el.textContent='';},3000);}}
  });
 }
@@ -159,7 +158,7 @@ function remember(r){
 }
 const hudIcons={energy:'<svg viewBox="0 0 32 38" aria-hidden="true"><path d="M20 2 4 22h11l-3 14L29 15H18Z" fill="#ffc642" stroke="#aa7b20" stroke-width="1.6"/></svg>',gold:'<svg viewBox="0 0 36 38" aria-hidden="true"><ellipse cx="18" cy="19" rx="14" ry="16" fill="#ffd461" stroke="#b68423" stroke-width="2"/><ellipse cx="18" cy="19" rx="10" ry="12" fill="none" stroke="#e7a924" stroke-width="2"/><path d="M15 12v14m6-14v14M12 16h12m-12 6h12" stroke="#ad7b1b" stroke-width="2"/></svg>',feather:'<svg viewBox="0 0 32 38" aria-hidden="true"><path d="M27 2C9 5 4 15 7 29 21 28 29 18 27 2Z" fill="#52c8d4" stroke="#c3a24d" stroke-width="1.5"/><path d="M4 36 25 5M9 27l10-1M12 22l11-2M16 16l9-2M13 23l-3-8m7 2-2-9" fill="none" stroke="#e6d09b" stroke-width="1"/></svg>'};
 function hudMarkup(){const energy=economy.energy??(typeof genelEnerjiKalan!=='undefined'?genelEnerjiKalan:'–'),gold=economy.gold??(typeof yo!=='undefined'?yo?.altin:0)??0,combo=Number(economy.combo)||0,count=combo>0&&combo%5===0?5:combo%5;return '<div class="ml-wallet" role="group" aria-label="Altın, enerji ve kombo"><div class="ml-wallet-chip" aria-label="Enerji">'+hudIcons.energy+'<b data-ml-energy>'+esc(energy)+'<small> / '+esc(economy.energyMax||30)+'</small></b></div><div class="ml-wallet-chip" aria-label="Altın">'+hudIcons.gold+'<b data-ml-gold>'+esc(gold)+'</b></div><div class="ml-wallet-chip" aria-label="Kuş tüyü kombo">'+hudIcons.feather+'<b data-ml-combo>'+count+'<small> / 5</small></b></div></div><div class="ml-combo-toast" role="status" aria-live="polite"></div>';}
-function paintHud(){const bar=modal?.querySelector('.ml-wallet');if(bar)bar.outerHTML=hudMarkup().split('<div class="ml-combo-toast"')[0];}
+function paintHud(){const bar=modal?.querySelector('.ml-wallet');if(!bar)return;const old=bar.querySelector('[data-ml-energy]'),before=Number(old?.firstChild?.nodeValue);bar.outerHTML=hudMarkup().split('<div class="ml-combo-toast"')[0];const now=modal.querySelector('[data-ml-energy]');if(window.dmRewardFx&&now&&Number.isFinite(before)&&Number(economy.energy)>before&&now.firstChild?.nodeType===3){now.firstChild.nodeValue=String(before);now.dataset.dmCounting='1';}}
 function wallet(r){
  if(r.wallet)economy={...economy,...r.wallet};
  if(r.enerjiKalan!=null)economy.energy=r.enerjiKalan;if(r.enerjiMax!=null)economy.energyMax=r.enerjiMax;if(r.combo!=null)economy.combo=r.combo;

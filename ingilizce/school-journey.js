@@ -252,7 +252,7 @@ if(!document.getElementById('dm-parkur-history-ui-css')){
 }
 // Loaded last so the calm single-frame question design wins over older layers.
 if(!document.getElementById('dm-school-question-v4-css')){
- const link=document.createElement('link');link.id='dm-school-question-v4-css';link.rel='stylesheet';link.href='school-question-v4.css?v=20261021-1';document.head.append(link);
+ const link=document.createElement('link');link.id='dm-school-question-v4-css';link.rel='stylesheet';link.href='school-question-v4.css?v=20261022-1';document.head.append(link);
 }
 window.dmSchoolJourney={open,preview,theme,themeSet,group,parse,launchStep};
 })();
