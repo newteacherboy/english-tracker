@@ -26,6 +26,7 @@ Dokunulmamış main üzerinde Node 22.21.1 ile çalıştırılan mevcut pakette 
 - Gerçek Chromium, 360×740: **1/1 uçtan uca test geçti**; altı görünümün hepsi sonuç ekranına ulaştı, XP durumunun mevcut yenileme fonksiyonuna aktarılması, misafir rozeti, klavye sekme geçişi, kilitli seviyeler, kalan hak, hesap değişimi ve taşma denetlendi. Sunucu yanıtları bu UI testinde kontrollü fixture'dır; production doğrulaması sayılmaz.
 - Mola Vakti mevcut DOM paketi: **14/14 geçti**.
 - Mevcut online/kapışma sekmesi klavye testi: **1/1 geçti**.
+- Son genel tarama: 671 geçen, 29 başarısız assertion; beş dosya süre sınırını aştı. Yeni PostgreSQL dosyası toplu yük altında süre sınırına takıldığı için ayrıca bağımsız çalıştırıldı ve 10/10 geçti. Bu sayılar tam yeşil paket anlamına gelmez.
 - Canlı DB konu anahtarları okundu ve snapshot ile eşlendi. Production üzerinde migration+test+rollback ön kontrolü `Invalid or expired requestState` araç hatası nedeniyle tamamlanamadı; uygulanmış kabul edilmedi.
 - Mevcut güvenlik danışmanı: “Leaked Password Protection Disabled” uyarısı migration öncesinde de var. RLS açık/politikasız tablolar service-role tasarımına ait INFO kayıtlarıdır. Görev dışındaki Auth ayarı değiştirilmedi.
 - Production oyun/70 XP kalıcılığı/dördüncü oyun kontrolü **yapılmadı**, çünkü yayın kapısı kapalı.
@@ -68,7 +69,7 @@ Değişen:
 
 ## Yeniden çalıştırma
 
-Test bağımlılıkları uygulamaya paketlenmez. CI tanımı gerekli Node 22 ve sabit sürümlü test araçlarını kurar.
+Test bağımlılıkları uygulamaya paketlenmez. CI tanımı gerekli Node 22 ve sabit sürümlü test araçlarını Ubuntu 24.04 üzerinde kurar. Ubuntu 26.04 ile eski Playwright arasındaki uyumsuzluk nedeniyle runner sürümü sabitlendi.
 
 ```sh
 npm install --prefix /tmp/topic-qa --no-save jsdom@26.1.0 @electric-sql/pglite@0.3.14 playwright@1.51.1
