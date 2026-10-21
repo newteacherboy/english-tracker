@@ -1,0 +1,2372 @@
+{
+  "node": "v22.23.3",
+  "baselineRef": "363dfbceea4103820ddfe9c891245519520dc664",
+  "baseline": [
+    {
+      "file": "account-actions-ui.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 5,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "account-deletion-sw.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 5,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "account-deletion.test.mjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 10,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "account-oauth.test.mjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 3,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "account-switch-dialog.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 3,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "account-switch.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 3,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "achievement-actions.test.cjs",
+      "code": 1,
+      "timeout": false,
+      "pass": 0,
+      "fail": 2,
+      "failures": [
+        "achievement dialog offers prepared PNG sharing and download directly",
+        "unsupported native sharing falls back to an actual PNG download"
+      ]
+    },
+    {
+      "file": "achievement-feed-cache.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 1,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "active-time-clock.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 3,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "api-security-guards.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 11,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "app-updates.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 3,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "assignment-completion.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 4,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "auto-notice-budget.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 1,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "bag-first-tap.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 3,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "classic-wordbank-rotation-smoke.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 1,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "classroom-authorization.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 1,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "client-rewards-to-server.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 2,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "content-moderation.test.mjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 4,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "daily-energy-bonus.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 4,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "daily-goals-cache-version.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 1,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "daily-goals-first-load.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 2,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "daily-mission-claim.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 5,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "daily-task-recovery.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 8,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "day-night-theme.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 5,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "dead-code-cleanup.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 1,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "demo-account.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 3,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "demo-privacy.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 4,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "dm-matches-12-rounds.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 4,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "dual-route.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 15,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "eight-game-fullscreen.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 3,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "email-help-15min-regression.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 4,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "evening-ui.test.cjs",
+      "code": null,
+      "timeout": true,
+      "pass": 0,
+      "fail": 0,
+      "failures": [
+        "weekly route card distinguishes progress, claimable reward, claimed reward and new week",
+        "online duo and Mola Vakti tabs preserve selection and keyboard movement"
+      ]
+    },
+    {
+      "file": "fair-progress-policy.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 8,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "fair-study.test.mjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 4,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "faithful-eight-games.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 4,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "first-discovery-state.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 8,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "first-tap-persistence.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 4,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "friends-daily-teacher-help.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 4,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "game-access.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 5,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "goal-carousel-layout.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 2,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "google-login.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 7,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "google-registration-steps.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 2,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "google-signup-frontend.test.cjs",
+      "code": 1,
+      "timeout": false,
+      "pass": 0,
+      "fail": 8,
+      "failures": [
+        "unlinked Google account can select new signup without changing legacy password login",
+        "signup posts guardian declaration and enters active portal session",
+        "unchecked declaration sends no signup and rejection creates no portal session",
+        "cancel restores legacy login and Google uses exact configured return URL",
+        "Play Store app hides Google login and skips the readiness requests",
+        "browser visitors still see Google login",
+        "login keeps Google visible when readiness reads fail; OAuth remains available",
+        "known unavailable Google configuration shows the button and explains on click without starting OAuth"
+      ]
+    },
+    {
+      "file": "google-signup.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 9,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "guest-retirement.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 2,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "harf-adasi-reward-sync.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 1,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "harf-adasi.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 4,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "harf-bahcesi-api.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 5,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "harf-bahcesi-energy.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 4,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "harf-bahcesi-round-size.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 1,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "harf-bahcesi.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 3,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "lazy-games-parallel.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 1,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "league-alltime.test.mjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 2,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "league-ui.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 2,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "learning-companion-session.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 2,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "learning-companion.test.mjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 8,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "legacy-micro-progress.test.cjs",
+      "code": 1,
+      "timeout": false,
+      "pass": 0,
+      "fail": 2,
+      "failures": [
+        "a legacy completed unit never marks every new micro-section completed",
+        "the server and UI both restrict legacy unit adoption to the first micro-section"
+      ]
+    },
+    {
+      "file": "listening-speech.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 6,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "medupro-edge.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 1,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "medupro-presence.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 1,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "member-fetch-stack.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 2,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "member-resume.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 3,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "member-tools.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 16,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "meteor-api.test.cjs",
+      "code": 1,
+      "timeout": false,
+      "pass": 0,
+      "fail": 4,
+      "failures": [
+        "complete unit deck, alternating directions, valid answer among options, no answer leak",
+        "first correct earns one award, stale opponent and duplicate clicks never award twice; wrong retry idempotent",
+        "single-player and early finish retain scores; resumed completed session cannot change",
+        "authentication, ownership and player validation enforced"
+      ]
+    },
+    {
+      "file": "meteor-dom.test.cjs",
+      "code": 1,
+      "timeout": false,
+      "pass": 1,
+      "fail": 3,
+      "failures": [
+        "three tab keyboard navigation and persistent category assignment",
+        "two-player names, safe rendering, first correct and early result save, followed by solo",
+        "wrong answer preserves both meteor fields and immediately queued opponent can win"
+      ]
+    },
+    {
+      "file": "mola-vakti-dom.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 14,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "mola-vakti.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 7,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "notice-coordinator.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 1,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "notice-mail-center-regression.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 5,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "offline-reward-outbox.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 7,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "onboarding-api.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 6,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "onboarding-registration.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 9,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "original-reading-library.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 2,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "oyna-carousel.test.cjs",
+      "code": 1,
+      "timeout": false,
+      "pass": 0,
+      "fail": 1,
+      "failures": [
+        "tests/oyna-carousel.test.cjs"
+      ]
+    },
+    {
+      "file": "papi-cards-api.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 4,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "papi-cards-dom.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 4,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "papi-chat-ui.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 3,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "papi-chat.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 7,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "papi-onboarding-policy.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 1,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "papi-startup.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 3,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "parkur-learning.test.cjs",
+      "code": 1,
+      "timeout": false,
+      "pass": 5,
+      "fail": 2,
+      "failures": [
+        "stop chunks preserve selected grade/unit and cover its complete word bank without repeats",
+        "four words stay on one level, while five, eight and twelve words unlock separate levels"
+      ]
+    },
+    {
+      "file": "parkur-network-recovery.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 3,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "parkur-reward-claim.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 1,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "password-security.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 2,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "placement-skipped-answers.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 3,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "portal-bootstrap.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 9,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "portal-extracted-css.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 1,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "portal-integrity.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 1,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "portal-log-cleanup.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 1,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "portal-session.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 7,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "post-login-defer.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 1,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "profile-account-switch.test.cjs",
+      "code": 1,
+      "timeout": false,
+      "pass": 1,
+      "fail": 1,
+      "failures": [
+        "active mobile profile menu exposes and opens account switching"
+      ]
+    },
+    {
+      "file": "profile-return-poses.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 2,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "progress-economy.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 11,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "progression-api.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 26,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "rally-api.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 9,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "request-budget.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 13,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "reward-state.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 1,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "route-expansion.test.cjs",
+      "code": 1,
+      "timeout": false,
+      "pass": 4,
+      "fail": 2,
+      "failures": [
+        "all legacy question decks retain exact answer and cursor meanings after route reordering",
+        "all 384 published lessons keep their exact v5-v8 decks after the advanced extension"
+      ]
+    },
+    {
+      "file": "route-graduations.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 6,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "route-missions.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 2,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "runtime-cleanup.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 6,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "save-version-after-rewards.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 5,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "saved-sessions.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 7,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "security-hardening.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 5,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "selected-eight-game-boards.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 5,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "server-reward-ledger.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 5,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "session-handoff.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 4,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "social-safety-ui.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 9,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "social-safety.test.mjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 16,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "social-school-improvements.test.cjs",
+      "code": 1,
+      "timeout": false,
+      "pass": 8,
+      "fail": 1,
+      "failures": [
+        "school homepage preserves the existing three-stop map and displays goal/tasks"
+      ]
+    },
+    {
+      "file": "speed-scoring.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 4,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "start-path.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 8,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "story-api.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 4,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "story-v4-api.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 2,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "student-management-api.test.cjs",
+      "code": 1,
+      "timeout": false,
+      "pass": 9,
+      "fail": 2,
+      "failures": [
+        "frozen students blocked across features but personal repair routes stay open",
+        "frozen state is reread so contact completion unlocks immediately"
+      ]
+    },
+    {
+      "file": "study-search-focus.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 4,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "sw-versioned-cache.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 4,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "teacher-important-notices.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 3,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "teacher-oral-api.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 3,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "teacher-oral-selection.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 1,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "thematic-learning-mascots.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 7,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "thematic-learning.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 17,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "thematic-v8-browser-flow.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 2,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "thematic-v8-candidate.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 3,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "thematic-v8-sql-preflight.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 2,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "three-step-performance.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 2,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "topic-games-db.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 10,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "topic-games-ui.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 1,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "topic-games.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 402,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "unified-parkur.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 4,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "universal-learning.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 6,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "universal-onboarding-ui.test.cjs",
+      "code": 1,
+      "timeout": false,
+      "pass": 9,
+      "fail": 2,
+      "failures": [
+        "signup can take and save all 24 questions before entering a member session",
+        "first Study visit invites once, deferral explains Profile > Seviye Testi and another account is independent"
+      ]
+    },
+    {
+      "file": "verified-games.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 6,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "weekly-goal-once.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 4,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "weekly-release-api.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 1,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "word-bank-rotation.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 3,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "word-wheel-api.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 7,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "word-wheel-dom.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 9,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "word-wheel-timer.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 6,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "world-retirement.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 5,
+      "fail": 0,
+      "failures": []
+    }
+  ],
+  "branch": [
+    {
+      "file": "account-actions-ui.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 5,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "account-deletion-sw.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 5,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "account-deletion.test.mjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 10,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "account-oauth.test.mjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 3,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "account-switch-dialog.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 3,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "account-switch.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 3,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "achievement-actions.test.cjs",
+      "code": 1,
+      "timeout": false,
+      "pass": 0,
+      "fail": 2,
+      "failures": [
+        "achievement dialog offers prepared PNG sharing and download directly",
+        "unsupported native sharing falls back to an actual PNG download"
+      ]
+    },
+    {
+      "file": "achievement-feed-cache.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 1,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "active-time-clock.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 3,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "api-security-guards.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 11,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "app-updates.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 3,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "assignment-completion.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 4,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "auto-notice-budget.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 1,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "bag-first-tap.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 3,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "classic-wordbank-rotation-smoke.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 1,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "classroom-authorization.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 1,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "client-rewards-to-server.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 2,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "content-moderation.test.mjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 4,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "daily-energy-bonus.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 4,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "daily-goals-cache-version.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 1,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "daily-goals-first-load.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 2,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "daily-mission-claim.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 5,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "daily-task-recovery.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 8,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "day-night-theme.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 5,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "dead-code-cleanup.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 1,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "demo-account.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 3,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "demo-privacy.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 4,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "dm-matches-12-rounds.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 4,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "dual-route.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 15,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "eight-game-fullscreen.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 3,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "email-help-15min-regression.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 4,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "evening-ui.test.cjs",
+      "code": null,
+      "timeout": true,
+      "pass": 0,
+      "fail": 0,
+      "failures": [
+        "weekly route card distinguishes progress, claimable reward, claimed reward and new week",
+        "online duo and Mola Vakti tabs preserve selection and keyboard movement"
+      ]
+    },
+    {
+      "file": "fair-progress-policy.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 8,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "fair-study.test.mjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 4,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "faithful-eight-games.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 4,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "first-discovery-state.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 8,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "first-tap-persistence.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 4,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "friends-daily-teacher-help.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 4,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "game-access.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 5,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "goal-carousel-layout.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 2,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "google-login.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 7,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "google-registration-steps.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 2,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "google-signup-frontend.test.cjs",
+      "code": 1,
+      "timeout": false,
+      "pass": 0,
+      "fail": 8,
+      "failures": [
+        "unlinked Google account can select new signup without changing legacy password login",
+        "signup posts guardian declaration and enters active portal session",
+        "unchecked declaration sends no signup and rejection creates no portal session",
+        "cancel restores legacy login and Google uses exact configured return URL",
+        "Play Store app hides Google login and skips the readiness requests",
+        "browser visitors still see Google login",
+        "login keeps Google visible when readiness reads fail; OAuth remains available",
+        "known unavailable Google configuration shows the button and explains on click without starting OAuth"
+      ]
+    },
+    {
+      "file": "google-signup.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 9,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "guest-retirement.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 2,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "harf-adasi-reward-sync.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 1,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "harf-adasi.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 4,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "harf-bahcesi-api.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 5,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "harf-bahcesi-energy.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 4,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "harf-bahcesi-round-size.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 1,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "harf-bahcesi.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 3,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "lazy-games-parallel.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 1,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "league-alltime.test.mjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 2,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "league-ui.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 2,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "learning-companion-session.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 2,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "learning-companion.test.mjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 8,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "legacy-micro-progress.test.cjs",
+      "code": 1,
+      "timeout": false,
+      "pass": 0,
+      "fail": 2,
+      "failures": [
+        "a legacy completed unit never marks every new micro-section completed",
+        "the server and UI both restrict legacy unit adoption to the first micro-section"
+      ]
+    },
+    {
+      "file": "listening-speech.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 6,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "medupro-edge.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 1,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "medupro-presence.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 1,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "member-fetch-stack.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 2,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "member-resume.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 3,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "member-tools.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 16,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "meteor-api.test.cjs",
+      "code": 1,
+      "timeout": false,
+      "pass": 0,
+      "fail": 4,
+      "failures": [
+        "complete unit deck, alternating directions, valid answer among options, no answer leak",
+        "first correct earns one award, stale opponent and duplicate clicks never award twice; wrong retry idempotent",
+        "single-player and early finish retain scores; resumed completed session cannot change",
+        "authentication, ownership and player validation enforced"
+      ]
+    },
+    {
+      "file": "meteor-dom.test.cjs",
+      "code": 1,
+      "timeout": false,
+      "pass": 1,
+      "fail": 3,
+      "failures": [
+        "three tab keyboard navigation and persistent category assignment",
+        "two-player names, safe rendering, first correct and early result save, followed by solo",
+        "wrong answer preserves both meteor fields and immediately queued opponent can win"
+      ]
+    },
+    {
+      "file": "mola-vakti-dom.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 14,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "mola-vakti.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 7,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "notice-coordinator.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 1,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "notice-mail-center-regression.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 5,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "offline-reward-outbox.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 7,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "onboarding-api.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 6,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "onboarding-registration.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 9,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "original-reading-library.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 2,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "oyna-carousel.test.cjs",
+      "code": 1,
+      "timeout": false,
+      "pass": 0,
+      "fail": 1,
+      "failures": [
+        "tests/oyna-carousel.test.cjs"
+      ]
+    },
+    {
+      "file": "papi-cards-api.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 4,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "papi-cards-dom.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 4,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "papi-chat-ui.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 3,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "papi-chat.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 7,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "papi-onboarding-policy.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 1,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "papi-startup.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 3,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "parkur-learning.test.cjs",
+      "code": 1,
+      "timeout": false,
+      "pass": 5,
+      "fail": 2,
+      "failures": [
+        "stop chunks preserve selected grade/unit and cover its complete word bank without repeats",
+        "four words stay on one level, while five, eight and twelve words unlock separate levels"
+      ]
+    },
+    {
+      "file": "parkur-network-recovery.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 3,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "parkur-reward-claim.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 1,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "password-security.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 2,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "placement-skipped-answers.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 3,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "portal-bootstrap.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 9,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "portal-extracted-css.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 1,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "portal-integrity.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 1,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "portal-log-cleanup.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 1,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "portal-session.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 7,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "post-login-defer.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 1,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "profile-account-switch.test.cjs",
+      "code": 1,
+      "timeout": false,
+      "pass": 1,
+      "fail": 1,
+      "failures": [
+        "active mobile profile menu exposes and opens account switching"
+      ]
+    },
+    {
+      "file": "profile-return-poses.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 2,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "progress-economy.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 11,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "progression-api.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 26,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "rally-api.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 9,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "request-budget.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 13,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "reward-state.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 1,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "route-expansion.test.cjs",
+      "code": 1,
+      "timeout": false,
+      "pass": 4,
+      "fail": 2,
+      "failures": [
+        "all legacy question decks retain exact answer and cursor meanings after route reordering",
+        "all 384 published lessons keep their exact v5-v8 decks after the advanced extension"
+      ]
+    },
+    {
+      "file": "route-graduations.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 6,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "route-missions.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 2,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "runtime-cleanup.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 6,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "save-version-after-rewards.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 5,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "saved-sessions.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 7,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "security-hardening.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 5,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "selected-eight-game-boards.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 5,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "server-reward-ledger.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 5,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "session-handoff.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 4,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "social-safety-ui.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 9,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "social-safety.test.mjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 16,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "social-school-improvements.test.cjs",
+      "code": 1,
+      "timeout": false,
+      "pass": 8,
+      "fail": 1,
+      "failures": [
+        "school homepage preserves the existing three-stop map and displays goal/tasks"
+      ]
+    },
+    {
+      "file": "speed-scoring.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 4,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "start-path.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 8,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "story-api.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 4,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "story-v4-api.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 2,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "student-management-api.test.cjs",
+      "code": 1,
+      "timeout": false,
+      "pass": 9,
+      "fail": 2,
+      "failures": [
+        "frozen students blocked across features but personal repair routes stay open",
+        "frozen state is reread so contact completion unlocks immediately"
+      ]
+    },
+    {
+      "file": "study-search-focus.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 4,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "sw-versioned-cache.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 4,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "teacher-important-notices.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 3,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "teacher-oral-api.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 3,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "teacher-oral-selection.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 1,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "thematic-learning-mascots.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 7,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "thematic-learning.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 17,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "thematic-v8-browser-flow.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 2,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "thematic-v8-candidate.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 3,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "thematic-v8-sql-preflight.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 2,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "three-step-performance.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 2,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "topic-games-a2-ui.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 1,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "topic-games-a2.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 47,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "topic-games-db.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 10,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "topic-games-ui.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 1,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "topic-games.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 402,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "unified-parkur.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 4,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "universal-learning.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 6,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "universal-onboarding-ui.test.cjs",
+      "code": 1,
+      "timeout": false,
+      "pass": 9,
+      "fail": 2,
+      "failures": [
+        "signup can take and save all 24 questions before entering a member session",
+        "first Study visit invites once, deferral explains Profile > Seviye Testi and another account is independent"
+      ]
+    },
+    {
+      "file": "verified-games.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 6,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "weekly-goal-once.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 4,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "weekly-release-api.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 1,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "word-bank-rotation.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 3,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "word-wheel-api.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 7,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "word-wheel-dom.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 9,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "word-wheel-timer.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 6,
+      "fail": 0,
+      "failures": []
+    },
+    {
+      "file": "world-retirement.test.cjs",
+      "code": 0,
+      "timeout": false,
+      "pass": 5,
+      "fail": 0,
+      "failures": []
+    }
+  ],
+  "newFailures": [],
+  "changedTestsPassed": true
+}
