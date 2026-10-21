@@ -1,0 +1,31 @@
+name: A1 Topic Games
+on:
+  pull_request:
+    paths:
+      - 'ingilizce/konu-oyunlari*'
+      - 'ingilizce/topic-games-core.mjs'
+      - 'ingilizce/activity-ui.*'
+      - 'supabase/functions/diji-api/topic-games*'
+      - 'supabase/functions/diji-api/konu-oyunlari-a1.js'
+      - 'supabase/migrations/*konu_oyunlari_a1.sql'
+      - 'tests/topic-games*'
+      - '.github/workflows/topic-games-a1.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  topic-games:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Test dependencies only (not shipped in application)
+        run: npm install --prefix /tmp/topic-qa --no-save jsdom@26.1.0 @electric-sql/pglite@0.3.14 playwright@1.51.1
+      - name: Browser
+        run: node /tmp/topic-qa/node_modules/playwright/cli.js install --with-deps chromium
+      - name: Content, API, PostgreSQL and browser tests
+        env:
+          NODE_PATH: /tmp/topic-qa/node_modules
+        run: node --test tests/topic-games.test.cjs tests/topic-games-db.test.cjs tests/topic-games-ui.test.cjs

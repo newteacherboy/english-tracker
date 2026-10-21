@@ -12,6 +12,7 @@ import { FEATURES } from './feature-catalog.ts';
 import { memberToolsAPI } from './member-tools-api.ts';
 import { storyAPI } from './story-api.ts';
 import { meteorAPI } from './meteor-api.ts';
+import { topicGamesAPI } from './topic-games-api.ts';
 import { breakGamesAPI } from './break-games-api.ts';
 import { wordWheelAPI } from './word-wheel-api.ts';
 import './score-rules.js';
@@ -48,6 +49,7 @@ const verifiedGames=verifiedGamesAPI(supabase,json);
 const story = storyAPI(supabase,json);
 const meteor = meteorAPI(supabase,json);
 const wordWheel = wordWheelAPI(supabase,json);
+const topicGames = topicGamesAPI(supabase,json);
 const breakGames = breakGamesAPI(supabase,json);
 const papiCards = papiCardsAPI(supabase,json);
 const release = releaseAPI(supabase,json);
@@ -1173,6 +1175,7 @@ async function handle(req: Request, proxy: any = null) {
     }
     return null;
   };
+  if(['konuOyunBaslat','konuOyunBitir'].includes(op)){const denied=await rate('ip:'+op,istemciIp(req),op==='konuOyunBaslat'?60:80,300);if(denied)return denied;}
   const guestIdentity=String(body.ogrenci||body.ogrenciAdi||body.kullanici||body.kullaniciAdi||"");
   for(const p of anonymousBudgets(op,istemciIp(req),guestIdentity)){
     const denied=await rate(p.scope,p.value,p.max,p.seconds);
@@ -1321,6 +1324,7 @@ async function handle(req: Request, proxy: any = null) {
   }
   const a = proxy || await auth(req, body, q);
   authSeen.set(req, a);
+  if(['konuOyunBaslat','konuOyunBitir'].includes(op)&&a){const denied=await rate('account:'+op,a.student_id||a.teacher_id,op==='konuOyunBaslat'?30:40,300);if(denied)return denied;}
   if(a?.student_id){
     for(const p of authenticatedBudgets(op,a.student_id,body)){
       const denied=await rate(p.scope,p.value,p.max,p.seconds);
@@ -1369,6 +1373,7 @@ async function handle(req: Request, proxy: any = null) {
   const progressionResult=await progression.handle(op,body,q,a);if(progressionResult)return progressionResult;
   const storyResult=await story.handle(op,body,a,req.method);if(storyResult)return storyResult;
   const meteorResult=await meteor.handle(op,body,q,a,req.method);if(meteorResult)return meteorResult;
+  const topicResult=await topicGames.handle(op,body,q,a,req.method);if(topicResult)return topicResult;
   const breakResult=await breakGames.handle(op,body,q,a,req.method);if(breakResult)return breakResult;
   const wheelResult=await wordWheel.handle(op,body,q,a,req.method);if(wheelResult)return wheelResult;
   const papiResult=await papiCards.handle(op,body,q,a,req.method);if(papiResult)return papiResult;

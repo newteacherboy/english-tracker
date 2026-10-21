@@ -1,0 +1,31 @@
+// Shared pure question construction, also used for guest practice. No storage or network.
+export function shuffle(list,random=Math.random){const a=list.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+const sentence=(item,word)=>[item.before,word,item.after].filter(Boolean).join(' ').replace(/\s+([.,!?])/g,'$1').replace(/\s+(['’]s|s')/g,'$1').replace(/^\p{L}/u,c=>c.toUpperCase());
+export function buildQuestions(topic,game,random=Math.random){
+ if(!topic?.games.includes(game))throw Error('Geçersiz konu oyunu.');
+ const pick=(items,n)=>shuffle(items,random).slice(0,n);
+ let rows;
+ if(topic.type==='vocab')rows=pick(topic.items,game==='kova'?10:8).map(item=>({
+  kind:game,en:item.en,tr:item.tr,icon:item.icon,color:item.color,
+  options:shuffle([item,...pick(topic.items.filter(x=>x.en!==item.en),3)],random).map(x=>({id:x.en,label:game==='kova'?x.tr:x.en,icon:x.icon,color:x.color})),correct:item.en,
+  // The wheel uses the same stable eight slices for all turns of this run.
+ }));
+ if(topic.type==='grammar')rows=pick(topic.items,10).map((item,i)=>{
+  const falseCard=game==='dy'&&i%2===1;
+  const shown=falseCard?pick(topic.options.filter(x=>x!==item.answer),1)[0]:item.answer;
+  return {kind:game,before:item.before,after:item.after,en:sentence(item,item.answer),tr:item.tr,
+   sentence:sentence(item,shown),shown,answer:item.answer,rule:topic.rules[item.answer],
+   options:game==='dy'?shuffle([{id:'false',label:'✗ Yanlış'},{id:'true',label:'✓ Doğru'}],random):shuffle(topic.options.map((label,i)=>({id:label,label,palette:i})),random),correct:game==='dy'?String(!falseCard):item.answer};
+ });
+ if(topic.type==='comm')rows=(game==='sohbet'?topic.chat.turns:pick(topic.situations,8)).map(item=>({
+  ...item,kind:game,en:item.right,tr:game==='sohbet'?item.tr:item.rightTr,sceneTr:item.tr,
+  options:shuffle([item.right,...item.wrong],random).map(label=>({id:label,label})),correct:item.right,
+ }));
+ if(game==='cark'){
+  const chosen=rows.map(q=>topic.items.find(x=>x.en===q.en));
+  rows.forEach(q=>{q.slices=chosen;q.slice=chosen.findIndex(x=>x.en===q.en);});
+ }
+ return rows;
+}
+export function answerKey(rows){return rows.map(q=>({correct:q.correct,allowed:q.options.map(o=>o.id)}));}
+export function validPicks(key,picks){return Array.isArray(picks)&&picks.length===key.length&&picks.every((p,i)=>typeof p==='string'&&key[i].allowed.includes(p));}
