@@ -196,3 +196,6 @@ body:has(#tab-aktiviteler.active .gg-page) .yb-fw{display:none!important}
 @media(min-width:640px){#tab-aktiviteler .gg-tabs [role=tab]{flex-direction:row;gap:8px;min-height:58px!important}}
 
 .rr-hub-art.gg-art{background:linear-gradient(140deg,#78d9fa,#1b83bb);display:flex;align-items:center;justify-content:center}.rr-hub-art.gg-art img{display:block;width:95%;height:95%;object-fit:contain;filter:drop-shadow(0 5px 2px #16416766)}
+
+/* Topic practice adds a fifth equally sized category. */
+#tab-aktiviteler .gg-tabs:has(#ggKonuTab){grid-template-columns:repeat(5,minmax(0,1fr))!important}

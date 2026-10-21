@@ -1,0 +1,260 @@
+[
+  {
+    "level": "A1",
+    "category": "comm",
+    "topic_name": "Greetings and introductions — Selamlaşma ve Tanışma",
+    "sort_no": 1
+  },
+  {
+    "level": "A1",
+    "category": "comm",
+    "topic_name": "Talking about yourself and others — Kendinden ve Başkalarından Bahsetme",
+    "sort_no": 2
+  },
+  {
+    "level": "A1",
+    "category": "comm",
+    "topic_name": "Asking and giving personal information — Kişisel Bilgi Sorma ve Verme",
+    "sort_no": 3
+  },
+  {
+    "level": "A1",
+    "category": "comm",
+    "topic_name": "Describing people and things — İnsanları ve Nesneleri Betimleme",
+    "sort_no": 4
+  },
+  {
+    "level": "A1",
+    "category": "comm",
+    "topic_name": "Talking about daily routines — Günlük Rutinlerden Bahsetme",
+    "sort_no": 5
+  },
+  {
+    "level": "A1",
+    "category": "comm",
+    "topic_name": "Making simple requests — Basit Ricalarda Bulunma",
+    "sort_no": 6
+  },
+  {
+    "level": "A1",
+    "category": "comm",
+    "topic_name": "Talking about likes and dislikes — Beğeniler ve Hoşlanılmayanlardan Bahsetme",
+    "sort_no": 7
+  },
+  {
+    "level": "A1",
+    "category": "comm",
+    "topic_name": "Giving and following simple instructions — Basit Talimatlar Verme ve Uygulama",
+    "sort_no": 8
+  },
+  {
+    "level": "A1",
+    "category": "comm",
+    "topic_name": "Basic social expressions (e.g. thank you, sorry) — Temel Sosyal İfadeler (Teşekkürler, Özür dilerim vb.)",
+    "sort_no": 9
+  },
+  {
+    "level": "A1",
+    "category": "grammar",
+    "topic_name": "Alphabet and spelling — Alfabe ve Heceleme",
+    "sort_no": 1
+  },
+  {
+    "level": "A1",
+    "category": "grammar",
+    "topic_name": "Be (am / is / are) — Olmak Fiili (Am, Is, Are)",
+    "sort_no": 2
+  },
+  {
+    "level": "A1",
+    "category": "grammar",
+    "topic_name": "Have got (have / has) — Sahiplik Bildirme (Have Got / Has Got)",
+    "sort_no": 3
+  },
+  {
+    "level": "A1",
+    "category": "grammar",
+    "topic_name": "Subject, object and possessive pronouns — Özne, Nesne ve İyelik Zamirleri",
+    "sort_no": 4
+  },
+  {
+    "level": "A1",
+    "category": "grammar",
+    "topic_name": "Possessive adjectives — İyelik Sıfatları",
+    "sort_no": 5
+  },
+  {
+    "level": "A1",
+    "category": "grammar",
+    "topic_name": "Articles (a / an) — Belgisiz Tanımlıklar (A / An)",
+    "sort_no": 6
+  },
+  {
+    "level": "A1",
+    "category": "grammar",
+    "topic_name": "Singular and plural nouns — Tekil ve Çoğul İsimler",
+    "sort_no": 7
+  },
+  {
+    "level": "A1",
+    "category": "grammar",
+    "topic_name": "This / that / these / those — İşaret Zamirleri (This, That, These, Those)",
+    "sort_no": 8
+  },
+  {
+    "level": "A1",
+    "category": "grammar",
+    "topic_name": "There is / there are — Varlık Bildirme (There Is / There Are)",
+    "sort_no": 9
+  },
+  {
+    "level": "A1",
+    "category": "grammar",
+    "topic_name": "Prepositions of place (in, on, under, etc.) — Yer Edatları (In, On, Altında vb.)",
+    "sort_no": 10
+  },
+  {
+    "level": "A1",
+    "category": "grammar",
+    "topic_name": "Present simple (positive, negative, questions) — Geniş Zaman (Olumlu, Olumsuz, Soru)",
+    "sort_no": 11
+  },
+  {
+    "level": "A1",
+    "category": "grammar",
+    "topic_name": "Present continuous — Şimdiki Zaman",
+    "sort_no": 12
+  },
+  {
+    "level": "A1",
+    "category": "grammar",
+    "topic_name": "Can / can't (ability) — Yetenek Bildirme (Can / Can't)",
+    "sort_no": 13
+  },
+  {
+    "level": "A1",
+    "category": "grammar",
+    "topic_name": "Imperatives (giving instructions) — Emir Cümleleri ve Talimatlar",
+    "sort_no": 14
+  },
+  {
+    "level": "A1",
+    "category": "grammar",
+    "topic_name": "Wh- questions (what, where, when, who, why, how) — Soru Kelimeleriyle Soru Sorma (Wh- Soruları)",
+    "sort_no": 15
+  },
+  {
+    "level": "A1",
+    "category": "grammar",
+    "topic_name": "Countable and uncountable nouns — Sayılabilen ve Sayılamayan İsimler",
+    "sort_no": 16
+  },
+  {
+    "level": "A1",
+    "category": "grammar",
+    "topic_name": "Some / any — Miktar Belirteçleri (Some / Any)",
+    "sort_no": 17
+  },
+  {
+    "level": "A1",
+    "category": "grammar",
+    "topic_name": "Possessive 's (e.g. my friend's) — Sahiplik Takısı Apostrof 's",
+    "sort_no": 18
+  },
+  {
+    "level": "A1",
+    "category": "grammar",
+    "topic_name": "Adverbs of frequency (always, usually, often, etc.) — Sıklık Zarfları",
+    "sort_no": 19
+  },
+  {
+    "level": "A1",
+    "category": "grammar",
+    "topic_name": "Basic conjunctions (and, but, or) — Temel Bağlaçlar (And, But, Or)",
+    "sort_no": 20
+  },
+  {
+    "level": "A1",
+    "category": "grammar",
+    "topic_name": "Numbers, dates and times — Sayılar, Tarihler ve Saatler",
+    "sort_no": 21
+  },
+  {
+    "level": "A1",
+    "category": "grammar",
+    "topic_name": "Basic question forms and short answers — Temel Soru Biçimleri ve Kısa Yanıtlar",
+    "sort_no": 22
+  },
+  {
+    "level": "A1",
+    "category": "vocab",
+    "topic_name": "Personal information — Kişisel Bilgiler",
+    "sort_no": 1
+  },
+  {
+    "level": "A1",
+    "category": "vocab",
+    "topic_name": "Family and friends — Aile ve Arkadaşlar",
+    "sort_no": 2
+  },
+  {
+    "level": "A1",
+    "category": "vocab",
+    "topic_name": "School and classroom objects — Okul ve Sınıf Eşyaları",
+    "sort_no": 3
+  },
+  {
+    "level": "A1",
+    "category": "vocab",
+    "topic_name": "Colours, numbers, days and months — Renkler, Sayılar, Günler ve Aylar",
+    "sort_no": 4
+  },
+  {
+    "level": "A1",
+    "category": "vocab",
+    "topic_name": "Food and drinks — Yiyecekler ve İçecekler",
+    "sort_no": 5
+  },
+  {
+    "level": "A1",
+    "category": "vocab",
+    "topic_name": "Animals and pets — Hayvanlar ve Evcil Hayvanlar",
+    "sort_no": 6
+  },
+  {
+    "level": "A1",
+    "category": "vocab",
+    "topic_name": "House and furniture — Ev ve Mobilyalar",
+    "sort_no": 7
+  },
+  {
+    "level": "A1",
+    "category": "vocab",
+    "topic_name": "Clothes — Giysiler ve Kıyafetler",
+    "sort_no": 8
+  },
+  {
+    "level": "A1",
+    "category": "vocab",
+    "topic_name": "Daily routines — Günlük Rutinler",
+    "sort_no": 9
+  },
+  {
+    "level": "A1",
+    "category": "vocab",
+    "topic_name": "Hobbies and free time — Hobiler ve Boş Zaman Aktiviteleri",
+    "sort_no": 10
+  },
+  {
+    "level": "A1",
+    "category": "vocab",
+    "topic_name": "Places in town — Şehirdeki Yerler",
+    "sort_no": 11
+  },
+  {
+    "level": "A1",
+    "category": "vocab",
+    "topic_name": "Weather and seasons — Hava Durumu ve Mevsimler",
+    "sort_no": 12
+  }
+]
