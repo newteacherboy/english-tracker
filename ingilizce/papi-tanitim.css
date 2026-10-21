@@ -1,0 +1,73 @@
+/* Papi ilk tanıtımı: alttaki menü ışıkla gösterilir, Papi kartı tek cümleyle anlatır. */
+#dmPapiTour.dm-intro{
+ position:fixed;inset:0;z-index:2147483100;font-family:Nunito,system-ui,sans-serif;color:#2a2433;
+ -webkit-tap-highlight-color:transparent;
+}
+#dmPapiTour .dm-intro-dim{position:absolute;inset:0;background:rgba(24,20,34,.62)}
+#dmPapiTour .dm-intro-dim[hidden],#dmPapiTour .dm-intro-ring[hidden]{display:none}
+#dmPapiTour .dm-intro-ring{
+ position:fixed;border-radius:18px;pointer-events:none;
+ box-shadow:0 0 0 3px #f2a65a,0 0 0 9999px rgba(24,20,34,.62);
+ transition:left .28s ease,top .28s ease,width .28s ease,height .28s ease;
+ animation:dmIntroGlow 1.6s ease-in-out infinite;
+}
+#dmPapiTour .dm-intro-card{
+ position:fixed;left:max(14px,calc(50% - 220px));right:max(14px,calc(50% - 220px));
+ display:flex;flex-direction:column;gap:10px;box-sizing:border-box;padding:16px 16px 14px;
+ border-radius:24px;background:#fff;box-shadow:0 16px 40px rgba(20,16,30,.35);
+ animation:dmIntroRise .24s ease-out;
+}
+#dmPapiTour.is-center .dm-intro-card{
+ top:50%;bottom:auto!important;transform:translateY(-50%);align-items:center;text-align:center;
+ padding:26px 22px 18px;border-radius:30px;animation:dmIntroPop .26s ease-out;
+}
+#dmPapiTour .dm-intro-hero{width:min(150px,38vw);height:min(150px,38vw);object-fit:contain}
+#dmPapiTour .dm-intro-head{display:flex;align-items:center;gap:12px}
+#dmPapiTour .dm-intro-head img{width:54px;height:54px;flex:0 0 54px;object-fit:contain;border-radius:50%;background:#ffefe4}
+#dmPapiTour .dm-intro-head small{display:block;font-size:12px;font-weight:800;color:#6a6372}
+#dmPapiTour h2{margin:0;font-size:20px;font-weight:900;line-height:1.2;color:#2a2433}
+#dmPapiTour.is-center h2{font-size:26px}
+#dmPapiTour p{margin:0;font-size:15px;font-weight:700;line-height:1.45;color:#4a4452}
+#dmPapiTour.is-center p{font-size:16px}
+#dmPapiTour .dm-intro-tip{align-self:flex-start;padding:6px 10px;border-radius:10px;background:#fff1d6;color:#6b4700;font-size:13px;font-weight:800}
+#dmPapiTour.is-center .dm-intro-tip{align-self:center}
+#dmPapiTour .dm-intro-foot{display:flex;align-items:center;gap:8px;margin-top:2px}
+#dmPapiTour .dm-intro-dots{display:flex;gap:5px;flex:1}
+#dmPapiTour.is-center .dm-intro-dots{justify-content:center;flex:0 0 auto;margin-top:4px}
+#dmPapiTour .dm-intro-dots i{width:6px;height:6px;border-radius:3px;background:#ede4da;transition:width .2s ease}
+#dmPapiTour .dm-intro-dots i.is-done{background:#f2a65a}
+#dmPapiTour .dm-intro-dots i.is-current{width:18px;background:#f2a65a}
+#dmPapiTour button{font-family:inherit;cursor:pointer}
+#dmPapiTour .dm-intro-primary{
+ min-height:46px;padding:0 20px;border:0;border-radius:14px;background:#f2a65a;box-shadow:0 3px 0 #c97d35;
+ color:#3a1f06;font-size:16px;font-weight:900;
+}
+#dmPapiTour.is-center .dm-intro-primary{width:100%;min-height:56px;margin-top:6px;border-radius:18px;font-size:18px;box-shadow:0 4px 0 #c97d35}
+#dmPapiTour .dm-intro-primary:active{transform:translateY(2px);box-shadow:0 1px 0 #c97d35}
+#dmPapiTour .dm-intro-link{min-height:44px;padding:0 12px;border:0;background:transparent;color:#5e5868;font-size:15px;font-weight:800}
+#dmPapiTour :is(button):focus-visible{outline:3px solid #5b34c9;outline-offset:2px}
+@keyframes dmIntroGlow{0%,100%{box-shadow:0 0 0 3px #f2a65a,0 0 0 9999px rgba(24,20,34,.62)}50%{box-shadow:0 0 0 6px #f2a65a99,0 0 0 9999px rgba(24,20,34,.62)}}
+@keyframes dmIntroRise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@keyframes dmIntroPop{from{opacity:0;transform:translateY(-50%) scale(.94)}to{opacity:1;transform:translateY(-50%)}}
+@media(prefers-reduced-motion:reduce){#dmPapiTour *{animation:none!important;transition:none!important}}
+
+/* Tur adımı hazırlanırken (sekme açılırken) kart gizli kalır. */
+#dmPapiTour.is-busy .dm-intro-card{visibility:hidden}
+#dmPapiTour.is-busy .dm-intro-ring{display:none}
+
+/* Sonraki oturumlarda gelen sayfa turu önerisi. */
+#dmPapiPageOffer.dm-page-offer{
+ position:fixed;left:max(12px,calc(50% - 220px));right:max(12px,calc(50% - 220px));bottom:calc(96px + env(safe-area-inset-bottom,0px));
+ z-index:2147483000;display:flex;gap:12px;align-items:flex-start;box-sizing:border-box;padding:14px 14px 12px;
+ border-radius:22px;background:#fff;box-shadow:0 14px 36px rgba(20,16,30,.28);font-family:Nunito,system-ui,sans-serif;color:#2a2433;
+ animation:dmIntroRise .24s ease-out;
+}
+#dmPapiPageOffer img{width:52px;height:52px;flex:0 0 52px;object-fit:contain;border-radius:50%;background:#ffefe4}
+#dmPapiPageOffer>div{flex:1;min-width:0}
+#dmPapiPageOffer b{display:block;font-size:17px;font-weight:900;line-height:1.2}
+#dmPapiPageOffer p{margin:3px 0 0;font-size:14px;font-weight:700;line-height:1.4;color:#4a4452}
+#dmPapiPageOffer .dm-page-offer-actions{display:flex;justify-content:flex-end;gap:6px;margin-top:8px}
+#dmPapiPageOffer button{font-family:inherit;cursor:pointer}
+#dmPapiPageOffer .dm-intro-primary{min-height:44px;padding:0 20px;border:0;border-radius:14px;background:#f2a65a;box-shadow:0 3px 0 #c97d35;color:#3a1f06;font-size:16px;font-weight:900}
+#dmPapiPageOffer .dm-intro-link{min-height:44px;padding:0 12px;border:0;background:transparent;color:#5e5868;font-size:15px;font-weight:800}
+#dmPapiPageOffer button:focus-visible{outline:3px solid #5b34c9;outline-offset:2px}

@@ -15301,6 +15301,7 @@ function avatarSVG(s, stil, px, cins) {
         if(owner!==aktifOgrenciAdi)return;
         yoKaydet();window.yoAvatarUygula();
         window.yoToast?.('✓ Karakter seçimin kaydedildi. Mağazadan istediğin zaman değiştirebilirsin.');
+        if(!previous?.cins)document.dispatchEvent(new CustomEvent('dm:first-character-chosen'));
         if(sonra)sonra();window.dmCharacterBuilder?.open();
       }catch(e){if(owner===aktifOgrenciAdi){if(changed)yo.karakter=previous;window.yoToast?.(e.message||'Seçimin kaydedilemedi. Yeniden dene.');}}
       finally{saving=false;kap.querySelectorAll('.ka-cins').forEach(x=>x.disabled=false);}
@@ -18055,7 +18056,7 @@ body.pk-sekmeli #dunyaAlan { padding-top:78px !important; }
 @media (prefers-reduced-motion: reduce) { .mik-dalga i, .pk-sekmeler i, .pk-sekmeler button::after, .ba-sik-btn, .tr-delik, .tr-el, .bk-kart .i { animation:none !important; } .tr-delik, .tr-balon, .bk-kart { transition:none !important; } }
 </style>
 <div class="mik-durum" id="mikDurum" role="status" aria-live="polite"><span class="mik-dalga"><i></i><i></i><i></i><i></i></span><span id="mikDurumMetin">Dinliyorum…</span></div>
-<script src="papi-guide-content.js?v=20261015-members-only-1"></script>
+<script src="papi-guide-content.js?v=20261022-yardim-1"></script>
 <style>
 .yd-level-scroll{overflow-x:auto}.yd-level-table{width:100%;border-collapse:collapse;text-align:left;font-size:13px}.yd-level-table caption{font-weight:900;padding:10px}.yd-level-table th,.yd-level-table td{padding:8px;border-bottom:1px solid #ddd;vertical-align:top}.yd-level-table thead{background:#eee7fb;color:#302447}
 .t2-balon p{max-height:38vh;overflow-y:auto;overscroll-behavior:contain}.t2-noktalar{flex-wrap:wrap;max-height:30px;overflow-y:auto}.t2-adim-sayisi{display:block;text-align:center;font-size:12px;font-weight:800;color:#574077;margin:5px 0}.t2-balon{max-height:calc(100dvh - 24px);overflow-y:auto}
@@ -18157,7 +18158,7 @@ body.pk-sekmeli #dunyaAlan { padding-top:78px !important; }
   function yardimHtml(q) {
     q = kucuk(q);
     let l = YARDIM.filter(y => !q || kucuk(y[1] + ' ' + y[2].replace(/<[^>]+>/g, ' ')).includes(q));
-    return `<div class="yd-arama-sonuc"><button class="yd-tur-btn" id="ydTur">🧭 Uygulama turunu tekrar başlat</button>${l.map((y, i) => `<details class="yd-bolum"${q || i === 0 ? ' open' : ''}><summary>${y[0]} ${y[1]}</summary><div class="yd-ic">${y[2]}</div></details>`).join('') || '<p style="text-align:center;color:#8a78b8;font-weight:800">Sonuç bulunamadı.</p>'}</div>`;
+    return `<div class="yd-arama-sonuc">${l.map((y, i) => `<details class="yd-bolum"${q || i === 0 ? ' open' : ''}><summary>${y[0]} ${y[1]}</summary><div class="yd-ic">${y[2]}</div></details>`).join('') || '<p style="text-align:center;color:#8a78b8;font-weight:800">Sonuç bulunamadı.</p>'}</div>`;
   }
   window.yardimIcerikCiz = function (q) {
     let m = $('yardimModal'); if (!m) return;
@@ -26628,7 +26629,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <link rel="stylesheet" href="day-night-theme.css?v=20261012-1">
 <link rel="stylesheet" href="member-experience.css?v=20261019-chat-compact-1">
 <script src="placement-bank.js?v=20261013-1"></script>
-<script src="member-experience.js?v=20261020-start-test-2"></script>
+<script src="member-experience.js?v=20261022-papi-intro-1"></script><link rel="stylesheet" href="papi-tanitim.css?v=20261022-2"><script defer src="papi-tanitim.js?v=20261022-3"></script><script defer src="papi-sayfa-turlari.js?v=20261022-1"></script>
 <link rel="stylesheet" href="start-placement.css?v=20261020-start-test-2">
 <script src="start-placement-bank.js?v=20261018-1"></script>
 <script src="start-placement.js?v=20261020-start-test-2"></script>
