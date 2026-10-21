@@ -20,8 +20,30 @@ export function adminStudentsAPI(db: any, json: any, hashPassword: any, security
       if (r.error) return json({ok:false,mesaj:r.error.code==='23505'?'Bir kullanıcı adı zaten kayıtlı. Bu gruptaki öğrenciler eklenmedi; adları kontrol et.':'Öğrenciler eklenemedi.'},r.error.code==='23505'?409:500);
       return json({ok:true,ogrenciler:r.data,mesaj:'Öğrenciler doğrudan sana bağlı olarak kaydedildi.'});
     }
-    if (!['yoneticiOgrenciler','yoneticiOgrenciKaydet','yoneticiOgrenciSil'].includes(op)) return null;
+    if (!['yoneticiOgrenciler','yoneticiOgrenciKaydet','yoneticiOgrenciSil','yoneticiIletisimListesi'].includes(op)) return null;
     if (!allowed(a)) return json({ok:false,mesaj:'Bu bölüm yalnızca uygulama yöneticisine açık.'},403);
+    if (op === 'yoneticiIletisimListesi') {
+      // Bulk contact list (e-mail + phone) of every student account, admin only.
+      const search = String(body.arama ?? q.get('arama') ?? '').trim().slice(0,80);
+      const classNo = Number(body.sinif ?? q.get('sinif') ?? 0);
+      const all: any[] = [];
+      for (let from = 0; from < 20000; from += 1000) {
+        let query = db.from('students').select('id,username,school,class_no,branch,status,email,phone,email_verified_at,created_at')
+          .eq('role','student').neq('id','dcde2026-1015-4000-8000-000000000001');
+        if (search) query = query.ilike('username','%' + escapeLike(search) + '%');
+        if (Number.isInteger(classNo) && classNo >= 1 && classNo <= 8) query = query.eq('class_no',classNo);
+        const r = await query.order('username').order('id').range(from,from+999);
+        if (r.error) return json({ok:false,mesaj:'İletişim listesi alınamadı.'},503);
+        all.push(...(r.data || []));
+        if (!r.data || r.data.length < 1000) break;
+      }
+      const liste = all.map((s: any) => ({
+        kullanici: s.username, okul: s.school || '', sinif: s.class_no ?? null, sube: s.branch || '', durum: s.status,
+        email: String(s.email || '').trim().toLowerCase(), emailOnayli: !!s.email_verified_at,
+        telefon: String(s.phone || '').trim(), kayit: s.created_at,
+      }));
+      return json({ok:true,liste,toplam:liste.length,emailSayisi:liste.filter(x=>x.email).length,telefonSayisi:liste.filter(x=>x.telefon).length});
+    }
     if (op === 'yoneticiOgrenciSil') {
       if (method !== 'POST') return json({ok:false,mesaj:'POST gerekli.'},405);
       const id=String(body.id||'').toLowerCase(), password=String(body.mevcutSifre||'');
