@@ -15301,6 +15301,7 @@ function avatarSVG(s, stil, px, cins) {
         if(owner!==aktifOgrenciAdi)return;
         yoKaydet();window.yoAvatarUygula();
         window.yoToast?.('✓ Karakter seçimin kaydedildi. Mağazadan istediğin zaman değiştirebilirsin.');
+        if(!previous?.cins)document.dispatchEvent(new CustomEvent('dm:first-character-chosen'));
         if(sonra)sonra();window.dmCharacterBuilder?.open();
       }catch(e){if(owner===aktifOgrenciAdi){if(changed)yo.karakter=previous;window.yoToast?.(e.message||'Seçimin kaydedilemedi. Yeniden dene.');}}
       finally{saving=false;kap.querySelectorAll('.ka-cins').forEach(x=>x.disabled=false);}
@@ -26628,7 +26629,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <link rel="stylesheet" href="day-night-theme.css?v=20261012-1">
 <link rel="stylesheet" href="member-experience.css?v=20261019-chat-compact-1">
 <script src="placement-bank.js?v=20261013-1"></script>
-<script src="member-experience.js?v=20261020-start-test-2"></script>
+<script src="member-experience.js?v=20261022-papi-intro-1"></script><link rel="stylesheet" href="papi-tanitim.css?v=20261022-1"><script defer src="papi-tanitim.js?v=20261022-1"></script>
 <link rel="stylesheet" href="start-placement.css?v=20261020-start-test-2">
 <script src="start-placement-bank.js?v=20261018-1"></script>
 <script src="start-placement.js?v=20261020-start-test-2"></script>
