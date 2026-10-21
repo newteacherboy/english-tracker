@@ -47,14 +47,14 @@ html body #bzPerde#bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game .dm-school
  min-width:0!important;min-height:0!important;height:auto!important;margin:0!important;padding:0!important;
  background:none!important;border:0!important;box-shadow:none!important;color:var(--q-muted)!important;
 }
-html body #bzPerde#bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game .dm-school-lesson-head .rq-progress>span{
+html body #bzPerde#bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game .dm-school-lesson-head .rq-progress>span:not(.rq-streak){
  position:absolute!important;width:1px!important;height:1px!important;overflow:hidden!important;clip:rect(0 0 0 0)!important;white-space:nowrap!important;
 }
 html body #bzPerde#bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game .dm-school-lesson-head .rq-progress>div{
  flex:1 1 auto!important;height:10px!important;min-height:10px!important;border-radius:6px!important;
  background:var(--q-track)!important;overflow:hidden!important;margin:0!important;border:0!important;box-shadow:none!important;
 }
-html body #bzPerde#bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game .dm-school-lesson-head .rq-progress i{
+html body #bzPerde#bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game .dm-school-lesson-head .rq-progress>div>i{
  display:block!important;height:100%!important;border-radius:6px!important;background:var(--q-good)!important;
  box-shadow:none!important;transition:width .45s cubic-bezier(.2,.8,.2,1)!important;
 }
@@ -332,6 +332,18 @@ html body #bzPerde#bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game #bzAlan .d
   background:var(--q-good-soft)!important;border:2px solid var(--q-good)!important;box-shadow:none!important;color:var(--q-good-ink)!important;opacity:1!important;
  }
 }
+
+/* Kombo B: ilerleme çizgisinin altında üç seri noktası. */
+html body #bzPerde#bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game .dm-school-lesson-head .rq-progress{flex-wrap:wrap!important;row-gap:5px!important}
+html body #bzPerde#bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game .dm-school-lesson-head .rq-progress>div{order:1;flex:1 1 0!important;width:auto!important;min-width:40px!important;grid-column:auto!important}
+html body #bzPerde#bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game .dm-school-lesson-head .rq-review{order:0}
+html body #bzPerde#bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game .dm-school-lesson-head .rq-streak{order:2;display:flex!important;gap:5px;flex:0 0 100%;padding-left:0;box-sizing:border-box}
+html body #bzPerde#bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game .dm-school-lesson-head .rq-progress:has(.rq-review:not(:disabled)) .rq-streak{padding-left:40px}
+html body #bzPerde#bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game .dm-school-lesson-head .rq-streak i{display:block!important;flex:0 0 8px!important;width:8px!important;height:8px!important;margin:0!important;border-radius:4px!important;background:var(--q-track)!important;box-shadow:none!important;animation:none}
+html body #bzPerde#bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game .dm-school-lesson-head .rq-streak i.is-on{background:var(--q-good)!important}
+html body #bzPerde#bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game .dm-school-lesson-head .rq-streak i.is-on.is-hot{background:#f59a3b!important}
+html body #bzPerde#bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game .dm-school-lesson-head .rq-streak i.is-new{animation:dmStreakPop .4s ease both!important}
+@keyframes dmStreakPop{0%{transform:scale(.4)}60%{transform:scale(1.5)}100%{transform:scale(1)}}
 
 @keyframes dmq-shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
 @keyframes dmq-pop{0%{transform:scale(.85);opacity:.4}100%{transform:scale(1);opacity:1}}

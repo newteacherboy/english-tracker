@@ -1,0 +1,36 @@
+/* Ödül uçuşu (Ödül A) ve kompakt kombo şeridi (Kombo B). */
+#dmRewardLayer{position:fixed;inset:0;pointer-events:none;z-index:2147483200;overflow:hidden}
+#dmRewardLayer .dm-reward-icon{position:fixed;width:24px;height:24px;animation:dmRewardFly .85s cubic-bezier(.55,0,.45,1) both;will-change:transform,opacity}
+#dmRewardLayer .dm-reward-icon svg{display:block;width:100%;height:100%;filter:drop-shadow(0 2px 3px rgba(0,0,0,.18))}
+#dmRewardLayer .dm-reward-plus{position:fixed;font:900 13px/1 Nunito,system-ui,sans-serif;color:#b07800;text-shadow:0 1px 0 #fff;animation:dmRewardPlus .9s ease-out both}
+.dm-reward-pulse{animation:dmRewardPulse .6s ease!important}
+@keyframes dmRewardFly{
+ 0%{transform:translate(0,0) scale(.3);opacity:0}
+ 18%{transform:translate(var(--sx),var(--sy)) scale(1.15);opacity:1}
+ 30%{transform:translate(var(--sx),var(--sy)) scale(1);opacity:1}
+ 100%{transform:translate(var(--dx),var(--dy)) scale(.5);opacity:0}
+}
+@keyframes dmRewardPulse{0%{transform:scale(1)}35%{transform:scale(1.18);filter:brightness(1.1)}100%{transform:scale(1)}}
+@keyframes dmRewardPlus{0%{transform:translateY(6px);opacity:0}25%{opacity:1}100%{transform:translateY(-18px);opacity:0}}
+
+.dm-combo-strip{
+ position:fixed;left:50%;z-index:2147483150;display:flex;align-items:center;gap:8px;box-sizing:border-box;
+ height:36px;max-width:calc(100vw - 32px);padding:0 14px;border-radius:12px;background:#2a2433;color:#fff;
+ font:800 14px/1 Nunito,system-ui,sans-serif;white-space:nowrap;box-shadow:0 8px 20px rgba(20,16,30,.25);
+ pointer-events:none;animation:dmComboStrip 1.8s ease both;
+}
+.dm-combo-strip svg{width:16px;height:16px;flex:0 0 16px;fill:#f59a3b}
+.dm-combo-strip b{color:#ffd27a;font-weight:900}
+@keyframes dmComboStrip{0%{opacity:0;transform:translate(-50%,-10px)}12%,82%{opacity:1;transform:translate(-50%,0)}100%{opacity:0;transform:translate(-50%,-6px)}}
+
+/* Tek parıltı: Macera Parkuru ve Öğrenme Yolu ilerleme çizgisi. */
+#bzPerde.dm-combo-glow .rq-progress>div{position:relative!important;overflow:hidden!important}
+#bzPerde.dm-combo-glow .rq-progress>div::after{content:'';position:absolute;top:0;bottom:0;left:0;width:40%;background:linear-gradient(90deg,rgba(255,255,255,0),rgba(255,255,255,.85),rgba(255,255,255,0));animation:dmComboSweep .9s ease-in-out both}
+#bzPerde.dm-combo-glow .rq-progress>div>i{background:linear-gradient(90deg,#2e9c8c,#f59a3b)!important}
+#dmStoryLesson.dm-combo-glow .ml-progress progress{animation:dmComboGlow 1.1s ease both}
+@keyframes dmComboSweep{from{transform:translateX(-100%)}to{transform:translateX(260%)}}
+@keyframes dmComboGlow{0%,100%{box-shadow:none;filter:none}40%{box-shadow:0 0 0 3px rgba(245,154,59,.45);filter:brightness(1.15)}}
+
+/* Seri noktaları yalnızca sade Okul Yolum üst çubuğunda görünür. */
+.rq-streak{display:none}
+@media(prefers-reduced-motion:reduce){#dmRewardLayer *,.dm-combo-strip,.dm-reward-pulse,#bzPerde.dm-combo-glow *,#dmStoryLesson.dm-combo-glow *{animation:none!important}}
