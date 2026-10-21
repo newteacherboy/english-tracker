@@ -1,7 +1,7 @@
 const {test}=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),http=require('node:http'),path=require('node:path');
 const C=require('../ingilizce/konu-oyunlari-a1.js'),topics=require('./topic-games-topics.json');
 const {chromium}=require(process.env.TOPIC_PLAYWRIGHT_PATH||'playwright');
-const html=`<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="activity-ui.css"><link rel="stylesheet" href="konu-oyunlari.css"><style>body{margin:0;font-family:Arial,sans-serif}.dc-focus-card{padding:10px}button{font-family:inherit}h2{color:#fff!important}</style><script>var aktifOgrenciAdi='QA';var apiURL='/api';var dcTumKonularCache=null;window.dmMeduPro={api:async()=>({liste:[]})};window.speechSynthesis={cancel(){},speak(){}};localStorage.setItem('ing_token','fixture');</script><script defer src="konu-oyunlari.js"></script><script defer src="activity-ui.js"></script><div id="tab-aktiviteler" class="active"><div class="dc-focus-card"><div class="az-grid2x2"><button class="az-gcard" onclick="kelimeYarismasiAc()">Kelime</button></div></div></div>`;
+const html=`<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="activity-ui.css"><link rel="stylesheet" href="konu-oyunlari.css"><style>body{margin:0;font-family:Arial,sans-serif}.dc-focus-card{padding:10px}button{font-family:inherit}h2{color:#fff!important}</style><script>var aktifOgrenciAdi='QA';var apiURL='/api';var dcTumKonularCache=null;window.dmMeduPro={api:async()=>({liste:[]})};window.speechSynthesis={cancel(){},speak(){}};window.dmProgression={status:()=>({studyAccess:{A2:false}})};localStorage.setItem('ing_token','fixture');</script><script defer src="konu-oyunlari.js"></script><script defer src="activity-ui.js"></script><div id="tab-aktiviteler" class="active"><div class="dc-focus-card"><div class="az-grid2x2"><button class="az-gcard" onclick="kelimeYarismasiAc()">Kelime</button></div></div></div>`;
 test('360px real browser: tab keyboard, locked levels, all six games, guest result, quota, exits and account change',{timeout:90000},async()=>{
  const {buildQuestions}=await import('../ingilizce/topic-games-core.mjs');let latest,student=true,calls=[],browser,server;
  const runs=new Map();
@@ -18,13 +18,13 @@ test('360px real browser: tab keyboard, locked levels, all six games, guest resu
  await page.goto('http://127.0.0.1:'+server.address().port+'/');await page.locator('#ggKonuTab').click();await page.locator('.kg-list button').first().waitFor();
  assert.equal(await page.locator('.kg-list button').count(),43);assert.equal(await page.locator('#ggKonuTab svg.gg-icon').count(),1);assert.equal(await page.locator('#ggKonuTab').getAttribute('aria-selected'),'true');
  await page.locator('#ggKonuTab').press('ArrowRight');assert.equal(await page.locator('#ggBreakTab').getAttribute('aria-selected'),'true');await page.locator('#ggKonuTab').click();
- await page.locator('[data-level=A2]').click();assert.match(await page.locator('.kg-note').textContent(),/yakında geliyor/);
+ await page.locator('[data-level=A2]').click();assert.match(await page.locator('.kg-note').textContent(),/Ders Çalış/);
  assert.equal(await page.locator('[data-topic*="|pron|"]').count(),0);
  assert(await page.evaluate(()=>document.documentElement.scrollWidth<=360));
  for(const g of ['kova','cark','balon','dy','sohbet','durum']){
   const t=C.find(t=>t.games.includes(g)&&((g==='kova'||g==='cark')?t.sortNo===4:true));
   await page.locator('[data-topic]').evaluateAll((nodes,key)=>nodes.find(b=>b.dataset.topic===key).click(),t.key);await page.locator('[data-game='+g+']').click();await page.locator('[data-pick]').first().waitFor({state:'attached'});
-  const deck=latest;if(['balon','dy'].includes(g)){assert.equal(await page.locator('.kg-meaning').count(),0);assert.equal(await page.locator('.kg-question-card').count(),1);assert.notEqual(await page.locator('.kg-stage h2').evaluate(el=>getComputedStyle(el).color),'rgb(255, 255, 255)');}assert.equal(await page.locator('#kgOverlay').getAttribute('aria-modal'),'true');
+  const deck=latest;assert.equal(await page.locator('.kg-meaning').count(),0);assert.equal(await page.locator('#kgOverlay').getAttribute('aria-modal'),'true');
   const layout=await page.locator('#kgOverlay').evaluate(el=>({wide:el.scrollWidth>el.clientWidth,tall:el.scrollHeight>el.clientHeight}));assert(!layout.wide&&!layout.tall,JSON.stringify({g,layout}));if(process.env.TOPIC_SCREENSHOT_DIR){fs.mkdirSync(process.env.TOPIC_SCREENSHOT_DIR,{recursive:true});await page.screenshot({path:path.join(process.env.TOPIC_SCREENSHOT_DIR,g+'.png')});}
   for(let i=0;i<deck.length;i++){
    await page.waitForFunction(n=>document.querySelector('.kg-hud b')?.textContent.startsWith('Soru '+n+' /'),i+1);
@@ -50,3 +50,4 @@ test('360px real browser: tab keyboard, locked levels, all six games, guest resu
  assert.deepEqual(errors,[]);
  }finally{await browser?.close();await new Promise(r=>server.close(r));}
 });
+

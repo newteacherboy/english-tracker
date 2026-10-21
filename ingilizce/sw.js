@@ -7,7 +7,7 @@
    - Supabase istekleri: bu dosya karışmaz (sayfadaki katman yönetir)
    Sayfayı güncellediğinizde SURUM değerini artırın (v2, v3…).
    ===================================================================== */
-const SURUM = 'diji-v214-konu-a1-visual-20261021';
+const SURUM = 'diji-v214-konu-a2-release-20261021';
 const SAYFA = 'sayfa-' + SURUM, KAYNAK = 'kaynak-' + SURUM;
 const DIS_KAYNAK = /^https:\/\/(fonts\.googleapis\.com|fonts\.gstatic\.com|cdn\.jsdelivr\.net|cdnjs\.cloudflare\.com)\//;
 /* Ana sayfanın çevrimdışı kopyasını ASLA değiştirmemesi gereken sayfalar:
@@ -15,7 +15,7 @@ const DIS_KAYNAK = /^https:\/\/(fonts\.googleapis\.com|fonts\.gstatic\.com|cdn\.
 const AYRI_SAYFA = /\/(?:veli-kontrolu|hesap-sil|hesap-dondur|hesap-ac|gizlilik|telif|lisanslar|kullanim-kosullari|kelime-atolyesi|misafir|hesap-dogrula|sifre-yenile)\.html$|\/[^/]*-(?:preview(?:-inner)?|comparison|onizleme)\.html$/;
 
 self.addEventListener('install', e => {
-  e.waitUntil(caches.open(SAYFA).then(c => c.addAll(['./'])).catch(() => {}).then(() => self.skipWaiting()));
+  e.waitUntil(caches.open(SAYFA).then(c => c.addAll(['./','konu-oyunlari-a2.js?v=20261021-konu-a2-1'])).catch(() => {}).then(() => self.skipWaiting()));
 });
 self.addEventListener('activate', e => {
   e.waitUntil(caches.keys().then(l => Promise.all(l.filter(k => /^(sayfa|kaynak)-diji-/.test(k) && k !== SAYFA && k !== KAYNAK).map(k => caches.delete(k)))).then(() => self.clients.claim()));
@@ -72,3 +72,4 @@ async function boundedNetwork(event, request, bucket, key, budget) {
     ]);
   } finally {clearTimeout(timer);}
 }
+

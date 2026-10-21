@@ -1,0 +1,260 @@
+[
+  {
+    "level": "A2",
+    "category": "comm",
+    "topic_name": "Talking about past experiences — Geçmiş Deneyimlerden Bahsetme",
+    "sort_no": 1
+  },
+  {
+    "level": "A2",
+    "category": "comm",
+    "topic_name": "Making plans and arrangements — Plan ve Düzenlemeler Yapma",
+    "sort_no": 2
+  },
+  {
+    "level": "A2",
+    "category": "comm",
+    "topic_name": "Describing past and future events — Geçmiş ve Gelecek Olayları Betimleme",
+    "sort_no": 3
+  },
+  {
+    "level": "A2",
+    "category": "comm",
+    "topic_name": "Giving opinions and reasons — Fikir ve Gerekçe Bildirme",
+    "sort_no": 4
+  },
+  {
+    "level": "A2",
+    "category": "comm",
+    "topic_name": "Asking for and giving advice — Tavsiye İsteme ve Verme",
+    "sort_no": 5
+  },
+  {
+    "level": "A2",
+    "category": "comm",
+    "topic_name": "Talking about likes, dislikes and preferences — Beğeniler, Hoşlanılmayanlar ve Tercihler",
+    "sort_no": 6
+  },
+  {
+    "level": "A2",
+    "category": "comm",
+    "topic_name": "Making comparisons — Karşılaştırma Yapma",
+    "sort_no": 7
+  },
+  {
+    "level": "A2",
+    "category": "comm",
+    "topic_name": "Dealing with everyday situations (shops, travel, etc.) — Günlük Durumlarla Başa Çıkma",
+    "sort_no": 8
+  },
+  {
+    "level": "A2",
+    "category": "comm",
+    "topic_name": "Writing simple personal messages and emails — Basit Kişisel Mesajlar ve E-postalar Yazma",
+    "sort_no": 9
+  },
+  {
+    "level": "A2",
+    "category": "grammar",
+    "topic_name": "Review of A1 structures — A1 Dil Bilgisi Yapılarının Tekrarı",
+    "sort_no": 1
+  },
+  {
+    "level": "A2",
+    "category": "grammar",
+    "topic_name": "Past simple (regular and irregular verbs) — Geçmiş Zaman (Düzenli ve Düzensiz Fiiller)",
+    "sort_no": 2
+  },
+  {
+    "level": "A2",
+    "category": "grammar",
+    "topic_name": "Past continuous — Sürekli Geçmiş Zaman",
+    "sort_no": 3
+  },
+  {
+    "level": "A2",
+    "category": "grammar",
+    "topic_name": "Used to — Geçmişteki Alışkanlıklar",
+    "sort_no": 4
+  },
+  {
+    "level": "A2",
+    "category": "grammar",
+    "topic_name": "Be going to (plans and intentions) — Gelecek Planları ve Niyetler",
+    "sort_no": 5
+  },
+  {
+    "level": "A2",
+    "category": "grammar",
+    "topic_name": "Will / won't (predictions, offers, decisions) — Anlık Kararlar, Tahminler ve Teklifler",
+    "sort_no": 6
+  },
+  {
+    "level": "A2",
+    "category": "grammar",
+    "topic_name": "Present perfect (basic) — Yakın Geçmiş Zaman (Present Perfect)",
+    "sort_no": 7
+  },
+  {
+    "level": "A2",
+    "category": "grammar",
+    "topic_name": "Present perfect vs past simple (basic) — Present Perfect ve Past Simple Farkı",
+    "sort_no": 8
+  },
+  {
+    "level": "A2",
+    "category": "grammar",
+    "topic_name": "Comparatives and superlatives — Karşılaştırma ve Üstünlük Sıfatları",
+    "sort_no": 9
+  },
+  {
+    "level": "A2",
+    "category": "grammar",
+    "topic_name": "Modals: can, could, must, have to, should — Yetenek, Zorunluluk ve Tavsiye Kipleri",
+    "sort_no": 10
+  },
+  {
+    "level": "A2",
+    "category": "grammar",
+    "topic_name": "Modals for advice, obligation and permission — Tavsiye, Zorunluluk ve İzin Kipleri",
+    "sort_no": 11
+  },
+  {
+    "level": "A2",
+    "category": "grammar",
+    "topic_name": "Infinitive and gerund (basic) — İsim-Fiil Yapıları (Infinitive ve Gerund)",
+    "sort_no": 12
+  },
+  {
+    "level": "A2",
+    "category": "grammar",
+    "topic_name": "Too and enough — Aşırılık ve Yeterlilik (Too ve Enough)",
+    "sort_no": 13
+  },
+  {
+    "level": "A2",
+    "category": "grammar",
+    "topic_name": "Indefinite pronouns (somebody, anything, etc.) — Belgisiz Zamirler",
+    "sort_no": 14
+  },
+  {
+    "level": "A2",
+    "category": "grammar",
+    "topic_name": "Relative clauses (who, which, that) — İlgi Cümlecikleri",
+    "sort_no": 15
+  },
+  {
+    "level": "A2",
+    "category": "grammar",
+    "topic_name": "First conditional (if ... will) — Birinci Koşul Cümlesi (First Conditional)",
+    "sort_no": 16
+  },
+  {
+    "level": "A2",
+    "category": "grammar",
+    "topic_name": "Quantifiers (much, many, a lot of, etc.) — Miktar Belirteçleri",
+    "sort_no": 17
+  },
+  {
+    "level": "A2",
+    "category": "grammar",
+    "topic_name": "Adverbs and adverbial phrases — Zarflar ve Zarf Öbekleri",
+    "sort_no": 18
+  },
+  {
+    "level": "A2",
+    "category": "grammar",
+    "topic_name": "Prepositions of time and movement — Zaman ve Hareket Edatları",
+    "sort_no": 19
+  },
+  {
+    "level": "A2",
+    "category": "grammar",
+    "topic_name": "Common phrasal verbs — Yaygın Deyimsel Fiiller (Phrasal Verbs)",
+    "sort_no": 20
+  },
+  {
+    "level": "A2",
+    "category": "grammar",
+    "topic_name": "Question tags (isn't it?, don't you?, etc.) — Onay Soruları (Question Tags)",
+    "sort_no": 21
+  },
+  {
+    "level": "A2",
+    "category": "grammar",
+    "topic_name": "Conjunctions (because, so, although, etc.) — Bağlaçlar (Because, So, Although vb.)",
+    "sort_no": 22
+  },
+  {
+    "level": "A2",
+    "category": "vocab",
+    "topic_name": "Daily life and routines — Günlük Yaşam ve Rutinler",
+    "sort_no": 1
+  },
+  {
+    "level": "A2",
+    "category": "vocab",
+    "topic_name": "Health and the body — Sağlık ve Vücut",
+    "sort_no": 2
+  },
+  {
+    "level": "A2",
+    "category": "vocab",
+    "topic_name": "At the shop and shopping — Mağazada ve Alışveriş",
+    "sort_no": 3
+  },
+  {
+    "level": "A2",
+    "category": "vocab",
+    "topic_name": "Holidays and travel — Tatiller ve Seyahat",
+    "sort_no": 4
+  },
+  {
+    "level": "A2",
+    "category": "vocab",
+    "topic_name": "Jobs and places of work — Meslekler ve Çalışma Yerleri",
+    "sort_no": 5
+  },
+  {
+    "level": "A2",
+    "category": "vocab",
+    "topic_name": "Education and future plans — Eğitim ve Gelecek Planları",
+    "sort_no": 6
+  },
+  {
+    "level": "A2",
+    "category": "vocab",
+    "topic_name": "Technology and the Internet — Teknoloji ve İnternet",
+    "sort_no": 7
+  },
+  {
+    "level": "A2",
+    "category": "vocab",
+    "topic_name": "Environment and nature — Çevre ve Doğa",
+    "sort_no": 8
+  },
+  {
+    "level": "A2",
+    "category": "vocab",
+    "topic_name": "Entertainment (films, music, etc.) — Eğlence (Filmler, Müzik vb.)",
+    "sort_no": 9
+  },
+  {
+    "level": "A2",
+    "category": "vocab",
+    "topic_name": "Feelings and personality — Duygular ve Kişilik",
+    "sort_no": 10
+  },
+  {
+    "level": "A2",
+    "category": "vocab",
+    "topic_name": "Transport — Ulaşım ve Taşımacılık",
+    "sort_no": 11
+  },
+  {
+    "level": "A2",
+    "category": "vocab",
+    "topic_name": "Services (bank, post office, etc.) — Hizmetler (Banka, PTT vb.)",
+    "sort_no": 12
+  }
+]
