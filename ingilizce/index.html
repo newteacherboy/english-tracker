@@ -14879,9 +14879,9 @@ setInterval(async () => {
         <div class="ust"><div class="gosterge"><div class="yb-ic">${enerjiHtml(d)}</div></div>
         <div><h3>⚡ Enerjin</h3><div class="buyuk-sayi" style="color:${r === '#ffd166' ? '#b7791f' : r}">${d.e !== undefined ? d.e : '--'} / ${d.m || '--'}</div></div></div>
         <div class="bar"><i style="width:${Math.round(d.p * 100)}%; background:${r}"></i></div>
-        <div class="not">Her saat +2 enerji dolar (en fazla ${d.m || 20}). 3 gün üst üste girip 3 seviye geçersen ya da bir mini oyunda günün ilk 10'una girersen, o gün limitin 25 olur.</div>
+        <div class="not">Her 15 dakikada +1 enerji dolar (en fazla ${d.m || 30}). Günlük hediye ve mağazadaki paketlerle de enerji alabilirsin.</div>
         <div class="altin-satir"><span>🪙 Altının</span><span>${d.a}</span></div>
-        <div class="not">Her doğru cevap 1 altın kazandırır.</div>
+        <div class="not">Altını ders, oyun ve görevleri tamamlayarak kazanırsın.</div>
         <button class="btn" id="ybMagazaBtn">🛍️ Mağazaya git</button></div>
       <button class="yb-kapat">Kapat</button>`;
     $('ybMagazaBtn').onclick = () => { perdeKapat(); if (typeof meduAkisAc === 'function') { maSekme = 'magaza'; meduAkisAc(); } };
@@ -18056,7 +18056,7 @@ body.pk-sekmeli #dunyaAlan { padding-top:78px !important; }
 @media (prefers-reduced-motion: reduce) { .mik-dalga i, .pk-sekmeler i, .pk-sekmeler button::after, .ba-sik-btn, .tr-delik, .tr-el, .bk-kart .i { animation:none !important; } .tr-delik, .tr-balon, .bk-kart { transition:none !important; } }
 </style>
 <div class="mik-durum" id="mikDurum" role="status" aria-live="polite"><span class="mik-dalga"><i></i><i></i><i></i><i></i></span><span id="mikDurumMetin">Dinliyorum…</span></div>
-<script src="papi-guide-content.js?v=20261022-yardim-1"></script>
+<script src="papi-guide-content.js?v=20261022-kural-1"></script>
 <style>
 .yd-level-scroll{overflow-x:auto}.yd-level-table{width:100%;border-collapse:collapse;text-align:left;font-size:13px}.yd-level-table caption{font-weight:900;padding:10px}.yd-level-table th,.yd-level-table td{padding:8px;border-bottom:1px solid #ddd;vertical-align:top}.yd-level-table thead{background:#eee7fb;color:#302447}
 .t2-balon p{max-height:38vh;overflow-y:auto;overscroll-behavior:contain}.t2-noktalar{flex-wrap:wrap;max-height:30px;overflow-y:auto}.t2-adim-sayisi{display:block;text-align:center;font-size:12px;font-weight:800;color:#574077;margin:5px 0}.t2-balon{max-height:calc(100dvh - 24px);overflow-y:auto}
@@ -24732,7 +24732,7 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
       let altin = yoVar() ? (yo.altin || 0) : 0;
       p.innerHTML = `<div class="bz-panel-kart"><h3>🛒 Joker Dükkânı</h3><p>Altının: 🪙 ${altin} · Aldıkların çantana eklenir, bütün oyunlarda geçerli.</p>
         <div class="bz-dukkan">${urunler.map((j, i) => `<div><span class="e">${j.e}</span><span>${kac(j.ad)}<small>${kac(j.ac || '')} · çantanda ${canta()[j.tur] || 0}</small></span><button type="button" data-u="${i}" ${altin >= j.f ? '' : 'disabled style="opacity:.5"'}>${j.f} 🪙</button></div>`).join('') || '<div>Dükkân şu an yüklenemedi.</div>'}
-        <div><span class="e">⚡</span><span>Enerji paketleri<small>5 enerji 100 🪙 · 10 enerji 130 🪙 · 15 enerji 180 🪙 (sunucu fiyat güncellemesi gerekir)</small></span><button type="button" id="bzEnerjiAl">Paketleri incele</button></div></div>
+        <div><span class="e">⚡</span><span>Enerji paketleri<small>5 enerji 100 🪙 · 10 enerji 130 🪙 · 15 enerji 180 🪙</small></span><button type="button" id="bzEnerjiAl">Paketleri incele</button></div></div>
         <button class="bz-btn" id="bzDukkanKapat" style="background:#f5f3ff;color:#6d28d9;box-shadow:none">Oyuna dön</button></div>`;
       p.querySelectorAll('[data-u]').forEach(b => b.onclick = () => {
         let j = urunler[+b.dataset.u]; if (!yoVar() || (yo.altin || 0) < j.f) return;
