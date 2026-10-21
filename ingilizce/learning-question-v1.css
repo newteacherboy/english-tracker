@@ -1,0 +1,359 @@
+/* Öğrenme Yolu soru ekranı v1 ("çalışma kartı").
+   Okul Yolum'dan ayrı, kendine özgü bir dil: serin mavi-gri zemin, soru beyaz
+   bir kartta, şıklar A/B/C/D rozetli satırlar, segmentli ilerleme ve koyu
+   lacivert ana düğme. Yalnızca görünüm katmanıdır; thematic-learning.js'in
+   ürettiği yapıyı ve sunucu doğrulamalı cevap akışını değiştirmez.
+   Giriş ekranı (.ml-entry) ve hikâye dersleri bu katmanın dışında kalır. */
+
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry){
+ --l-bg:#f2f4fa;--l-ink:#1f2340;--l-muted:#565d80;--l-card:#ffffff;--l-line:#e1e5f2;--l-track:#e3e7f3;
+ --l-accent:#4453c9;--l-accent-soft:#eaedfd;--l-accent-line:#9aa5ee;
+ --l-good:#1c8f62;--l-good-soft:#e1f5ec;--l-good-ink:#11593c;
+ --l-bad:#cf4a43;--l-bad-soft:#fdecea;--l-bad-ink:#8a2722;
+ --l-cta:#1f2340;--l-cta-ink:#ffffff;--l-cta-shadow:#0b0d1f;
+ --l-energy:#8a5a00;--l-feather:#16766b;--l-shadow:0 1px 2px #1f234014,0 8px 24px #1f23400d;
+ --l-ico-speaker:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M11 5 6 9H3v6h3l5 4z'/%3E%3Cpath d='M15.5 8.5a5 5 0 0 1 0 7'/%3E%3Cpath d='M18.5 5.5a9 9 0 0 1 0 13'/%3E%3C/svg%3E");
+ --l-ico-mute:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M11 5 6 9H3v6h3l5 4z'/%3E%3Cpath d='M22 9l-6 6'/%3E%3Cpath d='M16 9l6 6'/%3E%3C/svg%3E");
+ --l-ico-history:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 12a9 9 0 1 0 3-6.7L3 8'/%3E%3Cpath d='M3 3v5h5'/%3E%3Cpath d='M12 7v5l3 2'/%3E%3C/svg%3E");
+ --l-ico-book:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z'/%3E%3Cpath d='M4 19V5'/%3E%3C/svg%3E");
+ background:var(--l-bg)!important;color:var(--l-ink)!important;font-family:Nunito,system-ui,sans-serif!important;
+}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry)[data-appearance="night"]{
+ --l-bg:#12142a;--l-ink:#eef0ff;--l-muted:#a9aecb;--l-card:#1c1f3a;--l-line:#2e3359;--l-track:#272b4d;
+ --l-accent:#a3adff;--l-accent-soft:#2a2f5c;--l-accent-line:#6d78d8;
+ --l-good:#4cc79a;--l-good-soft:#173a2f;--l-good-ink:#bff0dc;
+ --l-bad:#ff8a80;--l-bad-soft:#43252a;--l-bad-ink:#ffd6d1;
+ --l-cta:#eef0ff;--l-cta-ink:#12142a;--l-cta-shadow:#8f96c8;
+ --l-energy:#ffd27a;--l-feather:#7edccb;--l-shadow:0 1px 2px #0006,0 8px 24px #0004;
+ background:var(--l-bg)!important;
+}
+
+/* ---------- İskelet: tek satırlık üst çubuk + soru alanı ---------- */
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-shell{
+ display:grid!important;
+ grid-template-columns:40px minmax(0,1fr) auto 40px!important;
+ grid-template-rows:auto minmax(0,1fr)!important;
+ grid-template-areas:"back prog hud voice" "board board board board"!important;
+ align-items:center!important;column-gap:8px!important;row-gap:8px!important;
+ width:min(100%,640px)!important;max-width:640px!important;height:100%!important;min-height:0!important;max-height:100%!important;margin:0 auto!important;
+ padding:max(10px,env(safe-area-inset-top,0px)) 14px max(14px,env(safe-area-inset-bottom,0px))!important;
+ background:none!important;box-sizing:border-box!important;
+}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry).ml-scroll-fallback .ml-shell{height:auto!important;max-height:none!important;min-height:100%!important}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-header{display:contents!important}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-header>div,
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-header>[data-lesson-theme],
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-arena-title,
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-shell>footer{display:none!important}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-header>:is([data-back],[data-voice]){
+ width:40px!important;min-width:40px!important;height:40px!important;min-height:40px!important;padding:0!important;margin:0!important;
+ border:0!important;border-radius:12px!important;background:transparent!important;box-shadow:none!important;
+ color:transparent!important;font-size:0!important;position:relative!important;display:block!important;
+}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-header>[data-back]{grid-area:back!important}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-header>[data-back]::after{
+ content:'✕';position:absolute;inset:0;display:grid;place-items:center;color:var(--l-muted);font:900 21px/1 Nunito,system-ui,sans-serif;
+}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-header>[data-voice]{grid-area:voice!important;background:var(--l-card)!important;box-shadow:var(--l-shadow)!important}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-header>[data-voice]::after{
+ content:'';position:absolute;inset:10px;background:var(--l-ink);-webkit-mask:var(--l-ico-speaker) center/contain no-repeat;mask:var(--l-ico-speaker) center/contain no-repeat;
+}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-header>[data-voice][aria-pressed="false"]::after{
+ background:var(--l-muted);-webkit-mask-image:var(--l-ico-mute);mask-image:var(--l-ico-mute);
+}
+
+/* Segmentli ilerleme: her öğrenme kartı ve soru ayrı bir çizgi. */
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-progress{
+ grid-area:prog!important;display:flex!important;align-items:center!important;gap:6px!important;
+ min-width:0!important;min-height:0!important;margin:0!important;padding:0!important;background:none!important;border:0!important;box-shadow:none!important;
+}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-progress>span{
+ position:absolute!important;width:1px!important;height:1px!important;overflow:hidden!important;clip:rect(0 0 0 0)!important;white-space:nowrap!important;
+}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-progress progress{
+ flex:1 1 auto!important;order:2;width:auto!important;min-width:0!important;height:8px!important;margin:0!important;border:0!important;border-radius:4px!important;
+ -webkit-appearance:none!important;appearance:none!important;background:var(--l-track)!important;overflow:hidden!important;
+}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-progress progress::-webkit-progress-bar{background:var(--l-track)!important;border-radius:4px!important}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-progress progress::-webkit-progress-value{background:var(--l-accent)!important;border-radius:4px!important;transition:width .4s ease}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-progress progress::-moz-progress-bar{background:var(--l-accent)!important}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-question-history{order:1;display:flex!important;gap:0!important;margin:0!important;padding:0!important;width:auto!important}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-question-history button:last-child{display:none!important}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-question-history [data-ml-review-open]{
+ width:30px!important;min-width:30px!important;height:30px!important;min-height:30px!important;padding:0!important;border:0!important;border-radius:9px!important;
+ background:var(--l-track)!important;color:transparent!important;font-size:0!important;position:relative!important;box-shadow:none!important;
+}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-question-history [data-ml-review-open]::after{
+ content:'';position:absolute;inset:7px;background:var(--l-muted);-webkit-mask:var(--l-ico-history) center/contain no-repeat;mask:var(--l-ico-history) center/contain no-repeat;
+}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-question-history [data-ml-review-open]:disabled{display:none!important}
+
+/* Cüzdan: enerji ve tüy; altın ders sırasında gizli. */
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-wallet{
+ grid-area:hud!important;display:flex!important;align-items:center!important;gap:8px!important;width:auto!important;min-height:0!important;height:auto!important;
+ margin:0!important;padding:0!important;background:none!important;border:0!important;box-shadow:none!important;grid-template-columns:none!important;
+}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-wallet-chip[aria-label="Altın"],
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-wallet-chip small{display:none!important}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-wallet-chip{
+ display:flex!important;align-items:center!important;gap:3px!important;min-width:0!important;min-height:0!important;height:auto!important;
+ padding:0!important;margin:0!important;border:0!important;border-radius:0!important;background:none!important;box-shadow:none!important;
+}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-wallet-chip svg{width:17px!important;height:20px!important;flex:0 0 17px!important}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-wallet-chip b{font:900 16px/1 Nunito,system-ui,sans-serif!important;color:var(--l-ink)!important}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-wallet-chip[aria-label="Enerji"] b{color:var(--l-energy)!important}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-wallet-chip[aria-label="Kuş tüyü kombo"] b{color:var(--l-feather)!important}
+/* ---------- Soru alanı ---------- */
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-board{
+ grid-area:board!important;align-self:stretch!important;display:flex!important;flex-direction:column!important;justify-content:flex-start!important;
+ min-height:0!important;height:100%!important;margin:0!important;padding:4px 0 0!important;overflow:visible!important;
+ background:none!important;border:0!important;border-radius:0!important;box-shadow:none!important;
+}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-stage{
+ display:flex!important;flex-direction:column!important;gap:12px!important;width:100%!important;min-height:100%!important;
+}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-task{
+ display:flex!important;flex-direction:column!important;gap:12px!important;margin:0!important;padding:0!important;
+ background:none!important;border:0!important;box-shadow:none!important;min-height:0!important;
+}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-eyebrow{
+ display:flex!important;align-items:center!important;gap:8px!important;align-self:flex-start!important;margin:4px 0 0!important;padding:0!important;
+ background:none!important;border:0!important;box-shadow:none!important;
+ color:var(--l-accent)!important;font:900 12px/1.2 Nunito,system-ui,sans-serif!important;letter-spacing:.08em!important;text-transform:uppercase!important;
+}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-eyebrow::before{content:'';width:8px;height:8px;border-radius:50%;background:currentColor;flex:0 0 8px}
+
+/* Soru kartı: beyaz kart, maskot sağ üstte küçük. */
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-arena-hero{
+ display:grid!important;grid-template-columns:minmax(0,1fr) 58px!important;align-items:start!important;gap:12px!important;
+ margin:0!important;padding:18px 16px 18px 20px!important;min-height:0!important;
+ background:var(--l-card)!important;border:0!important;border-radius:24px!important;box-shadow:var(--l-shadow)!important;
+}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-arena-hero::before,
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-arena-hero::after{display:none!important;content:none!important}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-arena-papi{
+ grid-column:2!important;grid-row:1!important;width:58px!important;height:58px!important;max-width:none!important;max-height:none!important;
+ margin:0!important;padding:4px!important;box-sizing:border-box!important;object-fit:contain!important;object-position:center bottom!important;
+ border-radius:18px!important;background:var(--l-accent-soft)!important;filter:none!important;transform:none!important;position:static!important;
+}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-speech{
+ grid-column:1!important;grid-row:1!important;display:flex!important;flex-direction:column!important;align-items:flex-start!important;gap:6px!important;
+ min-width:0!important;margin:0!important;padding:0!important;background:none!important;border:0!important;border-radius:0!important;box-shadow:none!important;
+ text-align:left!important;color:var(--l-ink)!important;
+}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-speech::before,
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-speech::after{display:none!important;content:none!important}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-speech h2{
+ margin:0!important;color:var(--l-ink)!important;-webkit-text-fill-color:currentColor!important;text-align:left!important;
+ font:900 clamp(22px,7vw,30px)/1.18 Nunito,system-ui,sans-serif!important;overflow-wrap:anywhere;
+}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-speech :is(p,.ml-support){
+ margin:0!important;color:var(--l-muted)!important;font:700 15px/1.35 Nunito,system-ui,sans-serif!important;text-align:left!important;
+}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-speech small{
+ color:var(--l-muted)!important;font:900 11px/1 Nunito,system-ui,sans-serif!important;letter-spacing:.08em!important;
+}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-speaker{
+ display:inline-flex!important;align-items:center!important;gap:6px!important;min-height:38px!important;margin:4px 6px 0 0!important;padding:6px 14px 6px 10px!important;
+ border:0!important;border-radius:999px!important;background:var(--l-accent-soft)!important;box-shadow:none!important;
+ color:var(--l-accent)!important;-webkit-text-fill-color:currentColor!important;font:900 14px/1 Nunito,system-ui,sans-serif!important;
+}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-arena-hero .ml-art{width:84px!important;height:84px!important;margin-top:4px!important;border-radius:16px!important}
+
+/* ---------- Şıklar: A/B/C/D rozetli satırlar ---------- */
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-choices{
+ counter-reset:mlopt;display:flex!important;flex-direction:column!important;gap:10px!important;margin:0!important;padding:0!important;grid-template-columns:none!important;
+}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-choices>button{
+ counter-increment:mlopt;display:flex!important;align-items:center!important;justify-content:flex-start!important;gap:14px!important;
+ width:100%!important;min-height:58px!important;margin:0!important;padding:10px 16px 10px 12px!important;text-align:left!important;
+ border:1.5px solid var(--l-line)!important;border-radius:16px!important;background:var(--l-card)!important;box-shadow:0 1px 2px #1f23400f!important;
+ color:var(--l-ink)!important;-webkit-text-fill-color:currentColor!important;font:800 18px/1.25 Nunito,system-ui,sans-serif!important;opacity:1!important;
+ transition:transform .08s ease,border-color .15s ease,background-color .15s ease!important;
+}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-choices>button::before{
+ content:counter(mlopt,upper-alpha);flex:0 0 32px;width:32px;height:32px;border-radius:10px;display:grid;place-items:center;
+ background:var(--l-accent-soft);color:var(--l-accent);font:900 14px/1 Nunito,system-ui,sans-serif;
+}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-choices>button:active:not(:disabled){transform:scale(.985)!important;border-color:var(--l-accent-line)!important}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-choices>button:disabled:not(.is-correct):not(.is-wrong){opacity:.5!important}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-choices>button.is-correct{
+ background:var(--l-good-soft)!important;border-color:var(--l-good)!important;color:var(--l-good-ink)!important;opacity:1!important;
+}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-choices>button.is-correct::before{content:'✓';background:var(--l-good);color:#fff}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-choices>button.is-wrong{
+ background:var(--l-bad-soft)!important;border-color:var(--l-bad)!important;color:var(--l-bad-ink)!important;opacity:1!important;animation:mlq-shake .3s ease!important;
+}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-choices>button.is-wrong::before{content:'✕';background:var(--l-bad);color:#fff}
+/* Resimli şıklar: iki sütunlu kartlar, harf rozeti köşede. */
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-choices.ml-image-choices{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-choices.ml-image-choices>button{
+ position:relative!important;justify-content:center!important;min-height:112px!important;padding:12px!important;
+}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-choices.ml-image-choices>button::before{position:absolute;top:8px;left:8px;width:26px;height:26px;font-size:12px}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-choices.ml-image-choices .ml-art{width:84px!important;height:84px!important}
+
+/* ---------- Eşleştir ---------- */
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-matches{
+ display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important;margin:0!important;padding:0!important;background:none!important;border:0!important;
+}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-matches>div{display:flex!important;flex-direction:column!important;gap:10px!important;margin:0!important;padding:0!important}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-matches button{
+ display:flex!important;align-items:center!important;justify-content:center!important;width:100%!important;min-height:60px!important;margin:0!important;padding:10px!important;
+ border:1.5px solid var(--l-line)!important;border-radius:16px!important;background:var(--l-card)!important;box-shadow:0 1px 2px #1f23400f!important;
+ color:var(--l-ink)!important;-webkit-text-fill-color:currentColor!important;font:800 17px/1.2 Nunito,system-ui,sans-serif!important;text-align:center!important;opacity:1!important;
+}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-matches>div:first-child button{color:var(--l-accent)!important}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-matches>div button.is-selected{
+ background:var(--l-accent)!important;border-color:var(--l-accent)!important;color:#fff!important;box-shadow:0 4px 12px #4453c933!important;
+}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry)[data-appearance="night"] .ml-matches>div button.is-selected{color:#12142a!important}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-matches>div button.is-correct{
+ background:var(--l-good-soft)!important;border-color:transparent!important;color:var(--l-good-ink)!important;box-shadow:none!important;opacity:.7!important;
+}
+
+/* ---------- Cümle kur ---------- */
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-sentence{
+ display:flex!important;flex-wrap:wrap!important;align-items:center!important;gap:8px!important;min-height:60px!important;margin:4px 0 0!important;padding:8px 2px!important;
+ background:none!important;border:0!important;border-bottom:2px dashed var(--l-accent-line)!important;border-radius:0!important;box-shadow:none!important;
+ color:var(--l-muted)!important;font:700 15px/1.3 Nunito,system-ui,sans-serif!important;text-align:left!important;
+}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-sentence-token{
+ min-height:46px!important;margin:0!important;padding:0 14px!important;border-radius:12px!important;
+ border:1.5px solid var(--l-accent-line)!important;background:var(--l-accent-soft)!important;box-shadow:none!important;
+ color:var(--l-accent)!important;-webkit-text-fill-color:currentColor!important;font:900 18px/1 Nunito,system-ui,sans-serif!important;animation:mlq-pop .18s ease-out;
+}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-sentence-token.ml-live-wrong{
+ border-color:var(--l-bad)!important;background:var(--l-bad-soft)!important;color:var(--l-bad-ink)!important;
+}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) :is(.ml-tokens,.ml-letter-bank){
+ display:flex!important;flex-wrap:wrap!important;justify-content:center!important;gap:10px!important;margin:14px 0 0!important;padding:0!important;background:none!important;border:0!important;
+}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) :is(.ml-tokens,.ml-letter-bank) button{
+ min-width:52px!important;min-height:52px!important;margin:0!important;padding:0 16px!important;
+ border:1.5px solid var(--l-line)!important;border-radius:14px!important;background:var(--l-card)!important;box-shadow:0 2px 0 var(--l-line)!important;
+ color:var(--l-ink)!important;-webkit-text-fill-color:currentColor!important;font:900 19px/1 Nunito,system-ui,sans-serif!important;text-transform:none!important;opacity:1!important;
+}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) :is(.ml-tokens,.ml-letter-bank) button:active:not(:disabled){transform:translateY(2px)!important;box-shadow:none!important}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) :is(.ml-tokens,.ml-letter-bank) button:disabled{
+ background:var(--l-track)!important;border-color:transparent!important;box-shadow:none!important;color:transparent!important;-webkit-text-fill-color:transparent!important;
+}
+
+/* ---------- Eksik harfler ---------- */
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-letter-puzzle{
+ display:flex!important;flex-direction:column!important;gap:12px!important;margin:0!important;padding:0!important;background:none!important;border:0!important;box-shadow:none!important;
+}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-letter-line{
+ display:flex!important;flex-wrap:wrap!important;justify-content:center!important;align-items:center!important;gap:10px 14px!important;margin:6px 0 0!important;padding:16px 8px!important;
+ background:var(--l-card)!important;border:0!important;border-radius:20px!important;box-shadow:var(--l-shadow)!important;
+}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-letter-word{display:inline-flex!important;align-items:center!important;gap:3px!important}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-letter-fixed{
+ min-width:0!important;padding:0 1px!important;background:none!important;border:0!important;color:var(--l-ink)!important;font:900 26px/1 Nunito,system-ui,sans-serif!important;
+}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-letter-gap{
+ width:36px!important;min-width:36px!important;height:46px!important;margin:0 1px!important;padding:0!important;
+ border:2px dashed var(--l-accent-line)!important;border-radius:10px!important;background:var(--l-accent-soft)!important;box-shadow:none!important;
+ color:var(--l-accent)!important;-webkit-text-fill-color:currentColor!important;font:900 24px/1 Nunito,system-ui,sans-serif!important;
+}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-letter-gap:not(.is-filled){color:transparent!important;-webkit-text-fill-color:transparent!important}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-letter-gap.is-filled{border-style:solid!important}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-letter-gap.ml-live-correct{border-color:var(--l-good)!important;background:var(--l-good-soft)!important;color:var(--l-good-ink)!important}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-letter-gap.ml-live-wrong{border-color:var(--l-bad)!important;background:var(--l-bad-soft)!important;color:var(--l-bad-ink)!important}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) :is(.ml-question-instruction,.ml-hint){
+ margin:0!important;padding:0!important;background:none!important;border:0!important;color:var(--l-muted)!important;font:700 14px/1.35 Nunito,system-ui,sans-serif!important;text-align:center!important;
+}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-letter-puzzle .ml-hint{display:none!important}
+
+/* ---------- Dinle ve öğren: iki sütunlu kelime kartları ---------- */
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-teach{
+ display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important;margin:0!important;padding:0!important;background:none!important;border:0!important;
+}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-teach>button{
+ position:relative!important;display:flex!important;flex-direction:column!important;align-items:flex-start!important;justify-content:flex-end!important;gap:2px!important;
+ min-height:96px!important;margin:0!important;padding:14px!important;text-align:left!important;
+ border:0!important;border-radius:18px!important;background:var(--l-card)!important;box-shadow:var(--l-shadow)!important;color:var(--l-ink)!important;
+}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-teach>button b{font:900 19px/1.15 Nunito,system-ui,sans-serif!important;color:var(--l-ink)!important;overflow-wrap:anywhere}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-teach>button span:not(.ml-art){font:800 14px/1.2 Nunito,system-ui,sans-serif!important;color:var(--l-accent)!important}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-teach>button small{
+ position:absolute!important;top:10px!important;right:10px!important;width:32px!important;height:32px!important;border-radius:10px!important;
+ background:var(--l-accent-soft)!important;font-size:0!important;color:transparent!important;
+}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-teach>button small::after{
+ content:'';position:absolute;inset:8px;background:var(--l-accent);-webkit-mask:var(--l-ico-speaker) center/contain no-repeat;mask:var(--l-ico-speaker) center/contain no-repeat;
+}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-teach .ml-art{width:52px!important;height:52px!important;margin-bottom:6px!important;border-radius:12px!important}
+
+/* ---------- Son tekrar kartları ---------- */
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-final-review{
+ display:flex!important;flex-direction:column!important;gap:12px!important;margin:0!important;padding:0!important;background:none!important;border:0!important;box-shadow:none!important;
+}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-review-count{
+ margin:0!important;color:var(--l-muted)!important;font:900 12px/1 Nunito,system-ui,sans-serif!important;letter-spacing:.08em!important;text-transform:uppercase!important;text-align:left!important;
+}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-review-track{display:flex!important;gap:6px!important;margin:0!important;justify-content:flex-start!important}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-review-track span{
+ width:22px!important;height:6px!important;border-radius:3px!important;background:var(--l-track)!important;font-size:0!important;color:transparent!important;
+}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-review-track span.is-done{background:var(--l-good)!important}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-review-track span.is-current{background:var(--l-accent)!important;width:34px!important}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-final-review .ml-question-instruction{text-align:left!important}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-review-note{margin:0!important;color:var(--l-muted)!important;font:800 14px/1.3 Nunito,system-ui,sans-serif!important;text-align:center!important}
+
+/* Öğrenme kartlarına göz at: küçük, sakin bir bağlantı. */
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-reference-controls{
+ display:flex!important;justify-content:center!important;gap:8px!important;margin:0!important;padding:0!important;background:none!important;border:0!important;
+}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-stage:has(.ml-feedback.is-correct) .ml-reference-controls{display:none!important}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-reference-toggle{
+ min-height:36px!important;padding:6px 12px!important;border:0!important;border-radius:999px!important;background:transparent!important;box-shadow:none!important;
+ color:var(--l-muted)!important;font:800 13px/1 Nunito,system-ui,sans-serif!important;text-decoration:underline;text-underline-offset:3px;text-decoration-color:var(--l-line);
+}
+
+/* ---------- Geri bildirim ve ana düğme ---------- */
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-feedback{
+ margin:0!important;padding:14px 16px!important;border:0!important;border-radius:16px!important;box-shadow:none!important;
+ background:var(--l-bad-soft)!important;color:var(--l-bad-ink)!important;font:800 15px/1.4 Nunito,system-ui,sans-serif!important;text-align:left!important;
+ animation:mlq-rise .2s ease-out!important;
+}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-feedback::before{display:none!important;content:none!important}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-feedback:empty{display:none!important}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-feedback:not(:empty){margin-top:auto!important}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-feedback:not(:empty) ~ .ml-actions{margin-top:0!important}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-feedback.is-correct{background:var(--l-good-soft)!important;color:var(--l-good-ink)!important}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry)[aria-busy="true"] .ml-feedback{background:var(--l-track)!important;color:var(--l-muted)!important}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-actions{
+ display:flex!important;gap:10px!important;margin:auto 0 0!important;padding:4px 0 0!important;background:none!important;border:0!important;
+}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-actions:empty{display:none!important}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-actions button{
+ flex:0 0 auto!important;min-height:56px!important;margin:0!important;padding:0 18px!important;
+ border:1.5px solid var(--l-line)!important;border-radius:18px!important;background:var(--l-card)!important;box-shadow:none!important;
+ color:var(--l-ink)!important;-webkit-text-fill-color:currentColor!important;font:800 16px/1.2 Nunito,system-ui,sans-serif!important;text-shadow:none!important;
+}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-actions .ml-primary{
+ flex:1 1 auto!important;border:0!important;background:var(--l-cta)!important;box-shadow:0 4px 0 var(--l-cta-shadow)!important;
+ color:var(--l-cta-ink)!important;font:900 18px/1.2 Nunito,system-ui,sans-serif!important;transition:transform .08s ease,box-shadow .08s ease!important;
+}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-actions .ml-primary:active:not(:disabled){transform:translateY(3px)!important;box-shadow:0 1px 0 var(--l-cta-shadow)!important}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-actions .ml-primary:disabled{background:var(--l-track)!important;box-shadow:none!important;color:var(--l-muted)!important;opacity:1!important}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-feedback.is-correct ~ .ml-actions .ml-primary{background:var(--l-good)!important;box-shadow:0 4px 0 #11593c!important;color:#fff!important}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry)[data-appearance="night"] .ml-feedback.is-correct ~ .ml-actions .ml-primary{color:#12142a!important;box-shadow:0 4px 0 #2e8a68!important}
+
+@keyframes mlq-shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+@keyframes mlq-pop{0%{transform:scale(.85);opacity:.4}100%{transform:scale(1);opacity:1}}
+@keyframes mlq-rise{0%{transform:translateY(10px);opacity:0}100%{transform:translateY(0);opacity:1}}
+
+@media(max-height:700px){
+ html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-arena-hero{padding:14px 12px 14px 16px!important;grid-template-columns:minmax(0,1fr) 46px!important}
+ html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-arena-papi{width:46px!important;height:46px!important}
+ html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-speech h2{font-size:clamp(19px,6vw,24px)!important}
+ html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) :is(.ml-choices>button,.ml-matches button){min-height:48px!important;font-size:16px!important}
+ html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-choices>button::before{flex-basis:28px;width:28px;height:28px}
+ html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-teach>button{min-height:76px!important;padding:10px!important}
+ html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-actions button{min-height:50px!important}
+}
+@media(prefers-reduced-motion:reduce){
+ html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) *{animation:none!important;transition:none!important}
+}
