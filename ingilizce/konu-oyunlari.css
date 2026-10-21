@@ -28,3 +28,5 @@
 @media(prefers-color-scheme:dark){.kg-hub .kg-chips{background:#243844;border-color:#47616d}.kg-hub .kg-chips button,.kg-hub .kg-list>button{background:#223746;color:#edf4fa;border-color:#496173}.kg-hub .kg-chips [aria-pressed=true]{background:#087f85;color:#fff}.kg-hub .kg-list small{color:#bbd0dd}}
 
 #kgOverlay .kg-position-hint{width:150px;max-height:110px;flex:none}#kgOverlay .kg-english-clue{color:var(--kg-text);font-weight:700;background:var(--kg-card);padding:8px 16px;border-radius:14px}
+
+#kgOverlay .kg-card[class*="kg-scene-"] h2{color:inherit!important}
