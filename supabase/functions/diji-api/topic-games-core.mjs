@@ -7,8 +7,8 @@ export function buildQuestions(topic,game,random=Math.random){
  const pick=(items,n)=>shuffle(items,random).slice(0,n);
  let rows;
  if(topic.type==='vocab')rows=pick(topic.items,game==='kova'?10:8).map(item=>({
-  kind:game,en:item.en,tr:item.tr,icon:item.icon,color:item.color,
-  options:shuffle([item,...pick(topic.items.filter(x=>x.en!==item.en),3)],random).map(x=>({id:x.en,label:game==='kova'?x.tr:x.en,icon:x.icon,color:x.color})),correct:item.en,
+  kind:game,en:item.en,tr:item.tr,icon:item.icon,color:item.color,definition:item.definition,
+  options:shuffle([item,...pick(topic.items.filter(x=>x.en!==item.en),3)],random).map(x=>({id:x.en,label:game==='kova'&&!item.definition?x.tr:x.en,icon:x.icon,color:x.color})),correct:item.en,
   // The wheel uses the same stable eight slices for all turns of this run.
  }));
  if(topic.type==='grammar')rows=pick(topic.items,10).map((item,i)=>{

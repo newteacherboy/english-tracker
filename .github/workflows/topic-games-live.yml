@@ -4,6 +4,7 @@ on:
     branches: [main]
     paths:
       - 'ingilizce/konu-oyunlari-a2.js'
+      - 'ingilizce/konu-oyunlari-b1.js'
       - 'tests/topic-games-live.cjs'
   workflow_dispatch:
 permissions:
@@ -19,10 +20,10 @@ jobs:
           node-version: '22'
       - run: npm install --prefix /tmp/topic-live-qa --no-save playwright@1.51.1
       - run: node /tmp/topic-live-qa/node_modules/playwright/cli.js install --with-deps chromium
-      - name: Wait for public A2 catalog
+      - name: Wait for public B1 catalog
         run: |
           for i in $(seq 1 40); do
-            if curl -fsS -o /tmp/topic-public.js 'https://app.dijimedu.com/ingilizce/konu-oyunlari-a2.js' && grep -q DijiTopicGamesA2 /tmp/topic-public.js; then exit 0; fi
+            if curl -fsS -o /tmp/topic-public.js 'https://app.dijimedu.com/ingilizce/konu-oyunlari-b1.js' && grep -q DijiTopicGamesB1 /tmp/topic-public.js; then exit 0; fi
             sleep 5
           done
           exit 1
@@ -33,5 +34,5 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: topic-a2-live
+          name: topic-b1-live
           path: /tmp/topic-live

@@ -29,3 +29,13 @@ test('no scores or feed events were produced; no privileged RPC or table access 
 test('existing reward and wallet triggers still run outside topic-game transactions',async()=>{await db.query("insert into dm_game_reward_runs(student_id,run_id,game_key,class_no,units,xp,gold) values($1,'legacy-control','ky',2,array[1],10,0)",[actor]);assert.equal((await db.query('select count(*) n from feed_events')).rows[0].n,1);});
 
 test('topic receipts do not consume other games daily multipliers',async()=>{assert.equal((await db.query('select public.dm_rally_finish($1,$2) n',[actor,crypto.randomUUID()])).rows[0].n,1);});
+
+test('B1 actual Postgres: three 70 XP receipts, fourth daily_limit, unchanged gold',async()=>{
+ await db.exec("create or replace function public.dm_game_xp_cap() returns int language sql as 'select 172'");
+ const topic=require('../ingilizce/konu-oyunlari-b1.js').find(t=>t.type==='grammar'&&t.sortNo===3).key;
+ const before=(await db.query("select value from extra_data where student_id=$1 and key_name='yo'",[actor])).rows[0].value;
+ const rounds=[];for(let i=0;i<4;i++)rounds.push(await call(await run({topic,game:'balon'})));
+ assert.deepEqual(rounds.map(r=>r.xp),[70,70,70,0]);assert.equal(rounds[3].sebep,'daily_limit');
+ assert.equal(rounds[3].yo.totalXp,before.totalXp+210);assert.equal(rounds[3].yo.altin,before.altin);
+ const receipts=(await db.query('select count(*)::int n,sum(xp)::int xp,sum(gold)::int gold from dm_game_reward_runs where student_id=$1 and topic_key=$2',[actor,topic])).rows[0];assert.deepEqual(receipts,{n:3,xp:210,gold:0});
+});
