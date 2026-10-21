@@ -1,0 +1,2114 @@
+[
+  {
+    "topic": 1,
+    "item": 0,
+    "falseSentence": "Ece usually going to school on foot.",
+    "reason": "Geniş zamanda yardımcı fiilsiz -ing yüklem."
+  },
+  {
+    "topic": 1,
+    "item": 1,
+    "falseSentence": "The children is playing in the garden.",
+    "reason": "Çoğul özneyle is."
+  },
+  {
+    "topic": 1,
+    "item": 2,
+    "falseSentence": "Yesterday Ali has visit his grandmother.",
+    "reason": "Has sonrasında V3 yerine visit."
+  },
+  {
+    "topic": 1,
+    "item": 3,
+    "falseSentence": "We was having dinner when the phone rang.",
+    "reason": "We ile was."
+  },
+  {
+    "topic": 1,
+    "item": 4,
+    "falseSentence": "There isn't many milk left in the fridge.",
+    "reason": "Sayılamayan milk ile many."
+  },
+  {
+    "topic": 1,
+    "item": 5,
+    "falseSentence": "This bag is heaviest than that one.",
+    "reason": "Than ile en üstünlük."
+  },
+  {
+    "topic": 1,
+    "item": 6,
+    "falseSentence": "Of all three routes, this is the shorter.",
+    "reason": "Üç güzergâhta karşılaştırma biçimi."
+  },
+  {
+    "topic": 1,
+    "item": 7,
+    "falseSentence": "If it rains tomorrow, we will stayed indoors.",
+    "reason": "Will sonrasında stayed."
+  },
+  {
+    "topic": 1,
+    "item": 8,
+    "falseSentence": "You mustn't to run in the library.",
+    "reason": "Mustn’t sonrasında to."
+  },
+  {
+    "topic": 1,
+    "item": 9,
+    "falseSentence": "Have you finish your project yet?",
+    "reason": "Hasn’t sonrasında yalın finish."
+  },
+  {
+    "topic": 1,
+    "item": 10,
+    "falseSentence": "Deniz enjoys to read comics after school.",
+    "reason": "Enjoy sonrasında to-infinitive."
+  },
+  {
+    "topic": 1,
+    "item": 11,
+    "falseSentence": "We decided visiting the museum on Saturday.",
+    "reason": "Decide sonrasında -ing."
+  },
+  {
+    "topic": 1,
+    "item": 12,
+    "falseSentence": "How much apples do we need?",
+    "reason": "Sayılabilir çoğul apples ile much."
+  },
+  {
+    "topic": 1,
+    "item": 13,
+    "falseSentence": "She have lived here since 2020.",
+    "reason": "She ile have."
+  },
+  {
+    "topic": 1,
+    "item": 14,
+    "falseSentence": "The book was wrote by a Turkish author in 2018.",
+    "reason": "Was sonrasında wrote yerine written gerekir."
+  },
+  {
+    "topic": 1,
+    "item": 15,
+    "falseSentence": "I couldn't to swim when I was five.",
+    "reason": "Couldn’t sonrasında to."
+  },
+  {
+    "topic": 2,
+    "item": 0,
+    "falseSentence": "I have saw Ece yesterday.",
+    "reason": "Have + saw yerine seen."
+  },
+  {
+    "topic": 2,
+    "item": 1,
+    "falseSentence": "We have visited Ankara in 2019.",
+    "reason": "Yesterday benzeri bitmiş in 2019 ile present perfect."
+  },
+  {
+    "topic": 2,
+    "item": 2,
+    "falseSentence": "Ali has lose his bag two hours ago.",
+    "reason": "Has sonrasında lose yerine lost."
+  },
+  {
+    "topic": 2,
+    "item": 3,
+    "falseSentence": "She has wrote three emails so far today.",
+    "reason": "Has + wrote yerine written."
+  },
+  {
+    "topic": 2,
+    "item": 4,
+    "falseSentence": "Did you ever ridden a horse?",
+    "reason": "Did + ridden yerine yalın ride."
+  },
+  {
+    "topic": 2,
+    "item": 5,
+    "falseSentence": "Deniz hasn't finish his homework yet.",
+    "reason": "Hasn’t finish yerine finished."
+  },
+  {
+    "topic": 2,
+    "item": 6,
+    "falseSentence": "I has lived here since 2021.",
+    "reason": "I ile has."
+  },
+  {
+    "topic": 2,
+    "item": 7,
+    "falseSentence": "Last summer, we have stay in a small village.",
+    "reason": "Have + stay yerine stayed."
+  },
+  {
+    "topic": 2,
+    "item": 8,
+    "falseSentence": "Ebru have just arrived at the station.",
+    "reason": "Ebru ile have."
+  },
+  {
+    "topic": 2,
+    "item": 9,
+    "falseSentence": "My parents has already bought the tickets.",
+    "reason": "Parents ile has."
+  },
+  {
+    "topic": 2,
+    "item": 10,
+    "falseSentence": "When have you start school?",
+    "reason": "Have + start yerine started."
+  },
+  {
+    "topic": 2,
+    "item": 11,
+    "falseSentence": "I has never tried this dish before.",
+    "reason": "I ile has."
+  },
+  {
+    "topic": 2,
+    "item": 12,
+    "falseSentence": "We have watched the film last night.",
+    "reason": "Bitmiş last night ile present perfect."
+  },
+  {
+    "topic": 2,
+    "item": 13,
+    "falseSentence": "She has lose her keys.",
+    "reason": "Has + lose yerine lost."
+  },
+  {
+    "topic": 2,
+    "item": 14,
+    "falseSentence": "How many pages has you read so far?",
+    "reason": "You ile has."
+  },
+  {
+    "topic": 2,
+    "item": 15,
+    "falseSentence": "He has repair his bike five minutes ago.",
+    "reason": "Has + repair yerine repaired."
+  },
+  {
+    "topic": 3,
+    "item": 0,
+    "falseSentence": "Ece has being painting a picture all morning.",
+    "reason": "Has being yerine has been."
+  },
+  {
+    "topic": 3,
+    "item": 1,
+    "falseSentence": "Ece have painted three pictures so far today.",
+    "reason": "Tekil özneyle have."
+  },
+  {
+    "topic": 3,
+    "item": 2,
+    "falseSentence": "Ali has being repairing a bicycle all morning.",
+    "reason": "Has being yerine has been."
+  },
+  {
+    "topic": 3,
+    "item": 3,
+    "falseSentence": "Ali have repaired two bicycles so far today.",
+    "reason": "Tekil özneyle have."
+  },
+  {
+    "topic": 3,
+    "item": 4,
+    "falseSentence": "Deniz has being practising the piano all morning.",
+    "reason": "Has being yerine has been."
+  },
+  {
+    "topic": 3,
+    "item": 5,
+    "falseSentence": "Deniz have learnt three piano pieces so far today.",
+    "reason": "Tekil özneyle have."
+  },
+  {
+    "topic": 3,
+    "item": 6,
+    "falseSentence": "Ebru has being writing a story all morning.",
+    "reason": "Has being yerine has been."
+  },
+  {
+    "topic": 3,
+    "item": 7,
+    "falseSentence": "Ebru have written four stories so far today.",
+    "reason": "Tekil özneyle have."
+  },
+  {
+    "topic": 3,
+    "item": 8,
+    "falseSentence": "Mert has being studying English all morning.",
+    "reason": "Has being yerine has been."
+  },
+  {
+    "topic": 3,
+    "item": 9,
+    "falseSentence": "Mert have completed five English exercises so far today.",
+    "reason": "Tekil özneyle have."
+  },
+  {
+    "topic": 3,
+    "item": 10,
+    "falseSentence": "Zeynep has being making a model all morning.",
+    "reason": "Has being yerine has been."
+  },
+  {
+    "topic": 3,
+    "item": 11,
+    "falseSentence": "Zeynep have made two models so far today.",
+    "reason": "Tekil özneyle have."
+  },
+  {
+    "topic": 3,
+    "item": 12,
+    "falseSentence": "Can has being cleaning the kitchen all morning.",
+    "reason": "Has being yerine has been."
+  },
+  {
+    "topic": 3,
+    "item": 13,
+    "falseSentence": "Can have cleaned all six shelves so far today.",
+    "reason": "Tekil özneyle have."
+  },
+  {
+    "topic": 3,
+    "item": 14,
+    "falseSentence": "Elif has being reading a novel all morning.",
+    "reason": "Has being yerine has been."
+  },
+  {
+    "topic": 3,
+    "item": 15,
+    "falseSentence": "Elif have read three novels so far today.",
+    "reason": "Tekil özneyle have."
+  },
+  {
+    "topic": 4,
+    "item": 0,
+    "falseSentence": "By the time I arrived yesterday, Ece have already left.",
+    "reason": "Tekil özneyle have."
+  },
+  {
+    "topic": 4,
+    "item": 1,
+    "falseSentence": "Ece has left before the meeting started yesterday.",
+    "reason": "Bitmiş geçmiş öncesinde geçmiş bağlamla present perfect uyuşmaz."
+  },
+  {
+    "topic": 4,
+    "item": 2,
+    "falseSentence": "By the time I arrived yesterday, Ali have already arrived.",
+    "reason": "Tekil özneyle have."
+  },
+  {
+    "topic": 4,
+    "item": 3,
+    "falseSentence": "Ali has arrived before the meeting started yesterday.",
+    "reason": "Bitmiş geçmiş öncesinde geçmiş bağlamla present perfect uyuşmaz."
+  },
+  {
+    "topic": 4,
+    "item": 4,
+    "falseSentence": "By the time I arrived yesterday, Deniz have already finished dinner.",
+    "reason": "Tekil özneyle have."
+  },
+  {
+    "topic": 4,
+    "item": 5,
+    "falseSentence": "Deniz has finished dinner before the meeting started yesterday.",
+    "reason": "Bitmiş geçmiş öncesinde geçmiş bağlamla present perfect uyuşmaz."
+  },
+  {
+    "topic": 4,
+    "item": 6,
+    "falseSentence": "By the time I arrived yesterday, Ebru have already packed her bag.",
+    "reason": "Tekil özneyle have."
+  },
+  {
+    "topic": 4,
+    "item": 7,
+    "falseSentence": "Ebru has packed her bag before the meeting started yesterday.",
+    "reason": "Bitmiş geçmiş öncesinde geçmiş bağlamla present perfect uyuşmaz."
+  },
+  {
+    "topic": 4,
+    "item": 8,
+    "falseSentence": "By the time I arrived yesterday, Mert have already closed the shop.",
+    "reason": "Tekil özneyle have."
+  },
+  {
+    "topic": 4,
+    "item": 9,
+    "falseSentence": "Mert has closed the shop before the meeting started yesterday.",
+    "reason": "Bitmiş geçmiş öncesinde geçmiş bağlamla present perfect uyuşmaz."
+  },
+  {
+    "topic": 4,
+    "item": 10,
+    "falseSentence": "By the time I arrived yesterday, Zeynep have already written the email.",
+    "reason": "Tekil özneyle have."
+  },
+  {
+    "topic": 4,
+    "item": 11,
+    "falseSentence": "Zeynep has written the email before the meeting started yesterday.",
+    "reason": "Bitmiş geçmiş öncesinde geçmiş bağlamla present perfect uyuşmaz."
+  },
+  {
+    "topic": 4,
+    "item": 12,
+    "falseSentence": "By the time I arrived yesterday, Can have already gone home.",
+    "reason": "Tekil özneyle have."
+  },
+  {
+    "topic": 4,
+    "item": 13,
+    "falseSentence": "Can has gone home before the meeting started yesterday.",
+    "reason": "Bitmiş geçmiş öncesinde geçmiş bağlamla present perfect uyuşmaz."
+  },
+  {
+    "topic": 4,
+    "item": 14,
+    "falseSentence": "By the time I arrived yesterday, Elif have already taken the bus.",
+    "reason": "Tekil özneyle have."
+  },
+  {
+    "topic": 4,
+    "item": 15,
+    "falseSentence": "Elif has taken the bus before the meeting started yesterday.",
+    "reason": "Bitmiş geçmiş öncesinde geçmiş bağlamla present perfect uyuşmaz."
+  },
+  {
+    "topic": 5,
+    "item": 0,
+    "falseSentence": "I will to answer it.",
+    "reason": "Will to answer."
+  },
+  {
+    "topic": 5,
+    "item": 1,
+    "falseSentence": "It is going rain.",
+    "reason": "Is going rain: to eksik."
+  },
+  {
+    "topic": 5,
+    "item": 2,
+    "falseSentence": "Our train leave at 08:15 tomorrow.",
+    "reason": "Tekil train ile leave."
+  },
+  {
+    "topic": 5,
+    "item": 3,
+    "falseSentence": "We are have dinner there tonight.",
+    "reason": "Are have: -ing eksik."
+  },
+  {
+    "topic": 5,
+    "item": 4,
+    "falseSentence": "I will to carry that bag for you.",
+    "reason": "Will to carry."
+  },
+  {
+    "topic": 5,
+    "item": 5,
+    "falseSentence": "It going to break.",
+    "reason": "Going to: be eksik."
+  },
+  {
+    "topic": 5,
+    "item": 6,
+    "falseSentence": "The museum open at ten tomorrow.",
+    "reason": "Tekil museum ile open."
+  },
+  {
+    "topic": 5,
+    "item": 7,
+    "falseSentence": "She is fly to Ankara on Friday.",
+    "reason": "Is fly: -ing eksik."
+  },
+  {
+    "topic": 5,
+    "item": 8,
+    "falseSentence": "I will to get some now.",
+    "reason": "Will to get."
+  },
+  {
+    "topic": 5,
+    "item": 9,
+    "falseSentence": "The tower going to fall.",
+    "reason": "Going to: be eksik."
+  },
+  {
+    "topic": 5,
+    "item": 10,
+    "falseSentence": "The concert start at seven.",
+    "reason": "Tekil concert ile start."
+  },
+  {
+    "topic": 5,
+    "item": 11,
+    "falseSentence": "We are meet her at six.",
+    "reason": "Are meet: -ing eksik."
+  },
+  {
+    "topic": 5,
+    "item": 12,
+    "falseSentence": "I will to close the window now.",
+    "reason": "Will to close."
+  },
+  {
+    "topic": 5,
+    "item": 13,
+    "falseSentence": "It is going fall.",
+    "reason": "Is going fall: to eksik."
+  },
+  {
+    "topic": 5,
+    "item": 14,
+    "falseSentence": "The bus depart at nine tomorrow.",
+    "reason": "Tekil bus ile depart."
+  },
+  {
+    "topic": 5,
+    "item": 15,
+    "falseSentence": "We are hold a workshop there tomorrow.",
+    "reason": "Are hold: -ing eksik."
+  },
+  {
+    "topic": 6,
+    "item": 0,
+    "falseSentence": "This time tomorrow, Ece will been studying.",
+    "reason": "Will been yerine will be."
+  },
+  {
+    "topic": 6,
+    "item": 1,
+    "falseSentence": "By six tomorrow, Ece will has finished her homework.",
+    "reason": "Will has yerine will have."
+  },
+  {
+    "topic": 6,
+    "item": 2,
+    "falseSentence": "This time tomorrow, Ali will been travelling.",
+    "reason": "Will been yerine will be."
+  },
+  {
+    "topic": 6,
+    "item": 3,
+    "falseSentence": "By six tomorrow, Ali will has reached Ankara.",
+    "reason": "Will has yerine will have."
+  },
+  {
+    "topic": 6,
+    "item": 4,
+    "falseSentence": "This time tomorrow, Deniz will been working.",
+    "reason": "Will been yerine will be."
+  },
+  {
+    "topic": 6,
+    "item": 5,
+    "falseSentence": "By six tomorrow, Deniz will has completed the project.",
+    "reason": "Will has yerine will have."
+  },
+  {
+    "topic": 6,
+    "item": 6,
+    "falseSentence": "This time tomorrow, Ebru will been reading.",
+    "reason": "Will been yerine will be."
+  },
+  {
+    "topic": 6,
+    "item": 7,
+    "falseSentence": "By six tomorrow, Ebru will has read the whole novel.",
+    "reason": "Will has yerine will have."
+  },
+  {
+    "topic": 6,
+    "item": 8,
+    "falseSentence": "This time tomorrow, Mert will been cooking.",
+    "reason": "Will been yerine will be."
+  },
+  {
+    "topic": 6,
+    "item": 9,
+    "falseSentence": "By six tomorrow, Mert will has prepared dinner.",
+    "reason": "Will has yerine will have."
+  },
+  {
+    "topic": 6,
+    "item": 10,
+    "falseSentence": "This time tomorrow, Zeynep will been painting.",
+    "reason": "Will been yerine will be."
+  },
+  {
+    "topic": 6,
+    "item": 11,
+    "falseSentence": "By six tomorrow, Zeynep will has painted the wall.",
+    "reason": "Will has yerine will have."
+  },
+  {
+    "topic": 6,
+    "item": 12,
+    "falseSentence": "This time tomorrow, Can will been practising.",
+    "reason": "Will been yerine will be."
+  },
+  {
+    "topic": 6,
+    "item": 13,
+    "falseSentence": "By six tomorrow, Can will has learnt the song.",
+    "reason": "Will has yerine will have."
+  },
+  {
+    "topic": 6,
+    "item": 14,
+    "falseSentence": "This time tomorrow, Elif will been packing.",
+    "reason": "Will been yerine will be."
+  },
+  {
+    "topic": 6,
+    "item": 15,
+    "falseSentence": "By six tomorrow, Elif will has packed both bags.",
+    "reason": "Will has yerine will have."
+  },
+  {
+    "topic": 7,
+    "item": 0,
+    "falseSentence": "This notebook must belongs to Ece.",
+    "reason": "Must + belongs."
+  },
+  {
+    "topic": 7,
+    "item": 1,
+    "falseSentence": "He can't to be here.",
+    "reason": "Can’t to be."
+  },
+  {
+    "topic": 7,
+    "item": 2,
+    "falseSentence": "Deniz might joins us.",
+    "reason": "Might + joins."
+  },
+  {
+    "topic": 7,
+    "item": 3,
+    "falseSentence": "This shirt must is cotton.",
+    "reason": "Must is."
+  },
+  {
+    "topic": 7,
+    "item": 4,
+    "falseSentence": "There can't is a book inside.",
+    "reason": "Can’t is."
+  },
+  {
+    "topic": 7,
+    "item": 5,
+    "falseSentence": "It might rains.",
+    "reason": "Might rains."
+  },
+  {
+    "topic": 7,
+    "item": 6,
+    "falseSentence": "The shop must to be closed.",
+    "reason": "Must to be."
+  },
+  {
+    "topic": 7,
+    "item": 7,
+    "falseSentence": "It can't has four sides.",
+    "reason": "Can’t has."
+  },
+  {
+    "topic": 7,
+    "item": 8,
+    "falseSentence": "She might chooses art.",
+    "reason": "Might chooses."
+  },
+  {
+    "topic": 7,
+    "item": 9,
+    "falseSentence": "The ticket must has cost fifty lira.",
+    "reason": "Must has."
+  },
+  {
+    "topic": 7,
+    "item": 10,
+    "falseSentence": "It can't using electricity now.",
+    "reason": "Can’t using: be eksik."
+  },
+  {
+    "topic": 7,
+    "item": 11,
+    "falseSentence": "The bus might arrives soon.",
+    "reason": "Might arrives."
+  },
+  {
+    "topic": 7,
+    "item": 12,
+    "falseSentence": "They must are his.",
+    "reason": "Must are."
+  },
+  {
+    "topic": 7,
+    "item": 13,
+    "falseSentence": "Ece can't studying inside it now.",
+    "reason": "Can’t studying: be eksik."
+  },
+  {
+    "topic": 7,
+    "item": 14,
+    "falseSentence": "Elif might visits tomorrow.",
+    "reason": "Might visits."
+  },
+  {
+    "topic": 7,
+    "item": 15,
+    "falseSentence": "The parcel must has arrived.",
+    "reason": "Must has."
+  },
+  {
+    "topic": 8,
+    "item": 0,
+    "falseSentence": "You must to wear a helmet.",
+    "reason": "Must to wear."
+  },
+  {
+    "topic": 8,
+    "item": 1,
+    "falseSentence": "You don't have wear a helmet.",
+    "reason": "Have wear: to eksik."
+  },
+  {
+    "topic": 8,
+    "item": 2,
+    "falseSentence": "You mustn't to wear a helmet here.",
+    "reason": "Mustn’t to wear."
+  },
+  {
+    "topic": 8,
+    "item": 3,
+    "falseSentence": "We had wear a helmet yesterday.",
+    "reason": "Had wear: to eksik."
+  },
+  {
+    "topic": 8,
+    "item": 4,
+    "falseSentence": "You must to wear a name badge.",
+    "reason": "Must to wear."
+  },
+  {
+    "topic": 8,
+    "item": 5,
+    "falseSentence": "You don't have wear a name badge.",
+    "reason": "Have wear: to eksik."
+  },
+  {
+    "topic": 8,
+    "item": 6,
+    "falseSentence": "You mustn't to wear a name badge here.",
+    "reason": "Mustn’t to wear."
+  },
+  {
+    "topic": 8,
+    "item": 7,
+    "falseSentence": "We had wear a name badge yesterday.",
+    "reason": "Had wear: to eksik."
+  },
+  {
+    "topic": 8,
+    "item": 8,
+    "falseSentence": "You must to wear a seat belt.",
+    "reason": "Must to wear."
+  },
+  {
+    "topic": 8,
+    "item": 9,
+    "falseSentence": "You don't have wear a seat belt.",
+    "reason": "Have wear: to eksik."
+  },
+  {
+    "topic": 8,
+    "item": 10,
+    "falseSentence": "You mustn't to wear a seat belt here.",
+    "reason": "Mustn’t to wear."
+  },
+  {
+    "topic": 8,
+    "item": 11,
+    "falseSentence": "We had wear a seat belt yesterday.",
+    "reason": "Had wear: to eksik."
+  },
+  {
+    "topic": 8,
+    "item": 12,
+    "falseSentence": "You must to wear a uniform.",
+    "reason": "Must to wear."
+  },
+  {
+    "topic": 8,
+    "item": 13,
+    "falseSentence": "You don't have wear a uniform.",
+    "reason": "Have wear: to eksik."
+  },
+  {
+    "topic": 8,
+    "item": 14,
+    "falseSentence": "You mustn't to wear a uniform here.",
+    "reason": "Mustn’t to wear."
+  },
+  {
+    "topic": 8,
+    "item": 15,
+    "falseSentence": "We had wear a uniform yesterday.",
+    "reason": "Had wear: to eksik."
+  },
+  {
+    "topic": 9,
+    "item": 0,
+    "falseSentence": "If I were you, I would to visit Ankara.",
+    "reason": "Would to visit."
+  },
+  {
+    "topic": 9,
+    "item": 1,
+    "falseSentence": "If Ece had a free weekend, she would visits Ankara.",
+    "reason": "Would visits."
+  },
+  {
+    "topic": 9,
+    "item": 2,
+    "falseSentence": "If I were you, I would to visit İzmir.",
+    "reason": "Would to visit."
+  },
+  {
+    "topic": 9,
+    "item": 3,
+    "falseSentence": "If Ece had a free weekend, she would visits İzmir.",
+    "reason": "Would visits."
+  },
+  {
+    "topic": 9,
+    "item": 4,
+    "falseSentence": "If I were you, I would to visit Samsun.",
+    "reason": "Would to visit."
+  },
+  {
+    "topic": 9,
+    "item": 5,
+    "falseSentence": "If Ece had a free weekend, she would visits Samsun.",
+    "reason": "Would visits."
+  },
+  {
+    "topic": 9,
+    "item": 6,
+    "falseSentence": "If I were you, I would to visit Bursa.",
+    "reason": "Would to visit."
+  },
+  {
+    "topic": 9,
+    "item": 7,
+    "falseSentence": "If Ece had a free weekend, she would visits Bursa.",
+    "reason": "Would visits."
+  },
+  {
+    "topic": 9,
+    "item": 8,
+    "falseSentence": "If I were you, I would to visit Ereğli.",
+    "reason": "Would to visit."
+  },
+  {
+    "topic": 9,
+    "item": 9,
+    "falseSentence": "If Ece had a free weekend, she would visits Ereğli.",
+    "reason": "Would visits."
+  },
+  {
+    "topic": 9,
+    "item": 10,
+    "falseSentence": "If I were you, I would to visit Eskişehir.",
+    "reason": "Would to visit."
+  },
+  {
+    "topic": 9,
+    "item": 11,
+    "falseSentence": "If Ece had a free weekend, she would visits Eskişehir.",
+    "reason": "Would visits."
+  },
+  {
+    "topic": 9,
+    "item": 12,
+    "falseSentence": "If I were you, I would to visit Antalya.",
+    "reason": "Would to visit."
+  },
+  {
+    "topic": 9,
+    "item": 13,
+    "falseSentence": "If Ece had a free weekend, she would visits Antalya.",
+    "reason": "Would visits."
+  },
+  {
+    "topic": 9,
+    "item": 14,
+    "falseSentence": "If I were you, I would to visit Trabzon.",
+    "reason": "Would to visit."
+  },
+  {
+    "topic": 9,
+    "item": 15,
+    "falseSentence": "If Ece had a free weekend, she would visits Trabzon.",
+    "reason": "Would visits."
+  },
+  {
+    "topic": 10,
+    "item": 0,
+    "falseSentence": "The museum was build in 1990.",
+    "reason": "Was build yerine built."
+  },
+  {
+    "topic": 10,
+    "item": 1,
+    "falseSentence": "These rooms is cleaned every morning.",
+    "reason": "Çoğul rooms ile is."
+  },
+  {
+    "topic": 10,
+    "item": 2,
+    "falseSentence": "The bridge will opened next year.",
+    "reason": "Will opened: be eksik."
+  },
+  {
+    "topic": 10,
+    "item": 3,
+    "falseSentence": "The windows are wash right now.",
+    "reason": "Are wash: being washed gerekir."
+  },
+  {
+    "topic": 10,
+    "item": 4,
+    "falseSentence": "The invitations has already been sent.",
+    "reason": "Çoğul invitations ile has."
+  },
+  {
+    "topic": 10,
+    "item": 5,
+    "falseSentence": "The cake were decorated when I entered.",
+    "reason": "Tekil cake ile were."
+  },
+  {
+    "topic": 10,
+    "item": 6,
+    "falseSentence": "The door had being locked.",
+    "reason": "Had being yerine been."
+  },
+  {
+    "topic": 10,
+    "item": 7,
+    "falseSentence": "The form must be complete before Friday.",
+    "reason": "Must be complete: completed gerekir."
+  },
+  {
+    "topic": 10,
+    "item": 8,
+    "falseSentence": "This book was wrote by Ece last year.",
+    "reason": "Was wrote yerine written."
+  },
+  {
+    "topic": 10,
+    "item": 9,
+    "falseSentence": "Tea is grow in this region.",
+    "reason": "Is grow yerine grown."
+  },
+  {
+    "topic": 10,
+    "item": 10,
+    "falseSentence": "The results will be announce tomorrow.",
+    "reason": "Be announce yerine announced."
+  },
+  {
+    "topic": 10,
+    "item": 11,
+    "falseSentence": "A new school are being built at the moment.",
+    "reason": "Tekil school ile are."
+  },
+  {
+    "topic": 10,
+    "item": 12,
+    "falseSentence": "The report has just being checked.",
+    "reason": "Has being yerine been."
+  },
+  {
+    "topic": 10,
+    "item": 13,
+    "falseSentence": "The chairs was being moved when we came in.",
+    "reason": "Çoğul chairs ile was."
+  },
+  {
+    "topic": 10,
+    "item": 14,
+    "falseSentence": "The project had being finished before the holiday.",
+    "reason": "Had being yerine been."
+  },
+  {
+    "topic": 10,
+    "item": 15,
+    "falseSentence": "These books can be borrow from the library.",
+    "reason": "Be borrow yerine borrowed."
+  },
+  {
+    "topic": 11,
+    "item": 0,
+    "falseSentence": "Ece said that they was tired that day.",
+    "reason": "They ile was."
+  },
+  {
+    "topic": 11,
+    "item": 1,
+    "falseSentence": "Ece asked where did I live.",
+    "reason": "Dolaylı soruda did I soru sırası."
+  },
+  {
+    "topic": 11,
+    "item": 2,
+    "falseSentence": "Ece said they had finish it the day before.",
+    "reason": "Had finish yerine finished."
+  },
+  {
+    "topic": 11,
+    "item": 3,
+    "falseSentence": "Ece asked me closing the door.",
+    "reason": "Ask someone closing yerine to close."
+  },
+  {
+    "topic": 11,
+    "item": 4,
+    "falseSentence": "Ali said that they was tired that day.",
+    "reason": "They ile was."
+  },
+  {
+    "topic": 11,
+    "item": 5,
+    "falseSentence": "Ali asked where did I live.",
+    "reason": "Dolaylı soruda did I soru sırası."
+  },
+  {
+    "topic": 11,
+    "item": 6,
+    "falseSentence": "Ali said they had finish it the day before.",
+    "reason": "Had finish yerine finished."
+  },
+  {
+    "topic": 11,
+    "item": 7,
+    "falseSentence": "Ali asked me closing the door.",
+    "reason": "Ask someone closing yerine to close."
+  },
+  {
+    "topic": 11,
+    "item": 8,
+    "falseSentence": "Deniz said that they was tired that day.",
+    "reason": "They ile was."
+  },
+  {
+    "topic": 11,
+    "item": 9,
+    "falseSentence": "Deniz asked where did I live.",
+    "reason": "Dolaylı soruda did I soru sırası."
+  },
+  {
+    "topic": 11,
+    "item": 10,
+    "falseSentence": "Deniz said they had finish it the day before.",
+    "reason": "Had finish yerine finished."
+  },
+  {
+    "topic": 11,
+    "item": 11,
+    "falseSentence": "Deniz asked me closing the door.",
+    "reason": "Ask someone closing yerine to close."
+  },
+  {
+    "topic": 11,
+    "item": 12,
+    "falseSentence": "Ebru said that they was tired that day.",
+    "reason": "They ile was."
+  },
+  {
+    "topic": 11,
+    "item": 13,
+    "falseSentence": "Ebru asked where did I live.",
+    "reason": "Dolaylı soruda did I soru sırası."
+  },
+  {
+    "topic": 11,
+    "item": 14,
+    "falseSentence": "Ebru said they had finish it the day before.",
+    "reason": "Had finish yerine finished."
+  },
+  {
+    "topic": 11,
+    "item": 15,
+    "falseSentence": "Ebru asked me closing the door.",
+    "reason": "Ask someone closing yerine to close."
+  },
+  {
+    "topic": 12,
+    "item": 0,
+    "falseSentence": "The teacher which live next door is very friendly.",
+    "reason": "İlgi cümlesinde tekil özneyle live."
+  },
+  {
+    "topic": 12,
+    "item": 1,
+    "falseSentence": "This is the school where the teacher work.",
+    "reason": "Tekil özneyle work."
+  },
+  {
+    "topic": 12,
+    "item": 2,
+    "falseSentence": "The bag who the teacher bought is blue.",
+    "reason": "Nesne bag için who."
+  },
+  {
+    "topic": 12,
+    "item": 3,
+    "falseSentence": "The student who mother is a teacher won the prize.",
+    "reason": "Who mother yerine whose mother."
+  },
+  {
+    "topic": 12,
+    "item": 4,
+    "falseSentence": "The doctor which live next door is very friendly.",
+    "reason": "İlgi cümlesinde tekil özneyle live."
+  },
+  {
+    "topic": 12,
+    "item": 5,
+    "falseSentence": "This is the school where the doctor work.",
+    "reason": "Tekil özneyle work."
+  },
+  {
+    "topic": 12,
+    "item": 6,
+    "falseSentence": "The bag who the doctor bought is blue.",
+    "reason": "Nesne bag için who."
+  },
+  {
+    "topic": 12,
+    "item": 7,
+    "falseSentence": "The student who mother is a doctor won the prize.",
+    "reason": "Who mother yerine whose mother."
+  },
+  {
+    "topic": 12,
+    "item": 8,
+    "falseSentence": "The artist which live next door is very friendly.",
+    "reason": "İlgi cümlesinde tekil özneyle live."
+  },
+  {
+    "topic": 12,
+    "item": 9,
+    "falseSentence": "This is the school where the artist work.",
+    "reason": "Tekil özneyle work."
+  },
+  {
+    "topic": 12,
+    "item": 10,
+    "falseSentence": "The bag who the artist bought is blue.",
+    "reason": "Nesne bag için who."
+  },
+  {
+    "topic": 12,
+    "item": 11,
+    "falseSentence": "The student who mother is a artist won the prize.",
+    "reason": "Who mother yerine whose mother."
+  },
+  {
+    "topic": 12,
+    "item": 12,
+    "falseSentence": "The pilot which live next door is very friendly.",
+    "reason": "İlgi cümlesinde tekil özneyle live."
+  },
+  {
+    "topic": 12,
+    "item": 13,
+    "falseSentence": "This is the school where the pilot work.",
+    "reason": "Tekil özneyle work."
+  },
+  {
+    "topic": 12,
+    "item": 14,
+    "falseSentence": "The bag who the pilot bought is blue.",
+    "reason": "Nesne bag için who."
+  },
+  {
+    "topic": 12,
+    "item": 15,
+    "falseSentence": "The student who mother is a pilot won the prize.",
+    "reason": "Who mother yerine whose mother."
+  },
+  {
+    "topic": 13,
+    "item": 0,
+    "falseSentence": "Ece enjoys to read after lunch.",
+    "reason": "Enjoy to read."
+  },
+  {
+    "topic": 13,
+    "item": 1,
+    "falseSentence": "Ece avoids to drive after lunch.",
+    "reason": "Avoid to drive."
+  },
+  {
+    "topic": 13,
+    "item": 2,
+    "falseSentence": "Ece finished to pack after lunch.",
+    "reason": "Finish to pack."
+  },
+  {
+    "topic": 13,
+    "item": 3,
+    "falseSentence": "Ece decided studying after lunch.",
+    "reason": "Decide studying."
+  },
+  {
+    "topic": 13,
+    "item": 4,
+    "falseSentence": "Ece wants learning after lunch.",
+    "reason": "Want learning."
+  },
+  {
+    "topic": 13,
+    "item": 5,
+    "falseSentence": "Ece promised helping after lunch.",
+    "reason": "Promise helping."
+  },
+  {
+    "topic": 13,
+    "item": 6,
+    "falseSentence": "Ece suggested to walk after lunch.",
+    "reason": "Suggest to walk."
+  },
+  {
+    "topic": 13,
+    "item": 7,
+    "falseSentence": "Ece agreed waiting after lunch.",
+    "reason": "Agree waiting."
+  },
+  {
+    "topic": 13,
+    "item": 8,
+    "falseSentence": "Ali enjoys to read after lunch.",
+    "reason": "Enjoy to read."
+  },
+  {
+    "topic": 13,
+    "item": 9,
+    "falseSentence": "Ali avoids to drive after lunch.",
+    "reason": "Avoid to drive."
+  },
+  {
+    "topic": 13,
+    "item": 10,
+    "falseSentence": "Ali finished to pack after lunch.",
+    "reason": "Finish to pack."
+  },
+  {
+    "topic": 13,
+    "item": 11,
+    "falseSentence": "Ali decided studying after lunch.",
+    "reason": "Decide studying."
+  },
+  {
+    "topic": 13,
+    "item": 12,
+    "falseSentence": "Ali wants learning after lunch.",
+    "reason": "Want learning."
+  },
+  {
+    "topic": 13,
+    "item": 13,
+    "falseSentence": "Ali promised helping after lunch.",
+    "reason": "Promise helping."
+  },
+  {
+    "topic": 13,
+    "item": 14,
+    "falseSentence": "Ali suggested to walk after lunch.",
+    "reason": "Suggest to walk."
+  },
+  {
+    "topic": 13,
+    "item": 15,
+    "falseSentence": "Ali agreed waiting after lunch.",
+    "reason": "Agree waiting."
+  },
+  {
+    "topic": 14,
+    "item": 0,
+    "falseSentence": "I saw an dog in the park.",
+    "reason": "An dog."
+  },
+  {
+    "topic": 14,
+    "item": 1,
+    "falseSentence": "An book has a blue cover.",
+    "reason": "An book."
+  },
+  {
+    "topic": 14,
+    "item": 2,
+    "falseSentence": "I ate a apple after lunch.",
+    "reason": "A apple."
+  },
+  {
+    "topic": 14,
+    "item": 3,
+    "falseSentence": "This is an university in Ankara.",
+    "reason": "An university."
+  },
+  {
+    "topic": 14,
+    "item": 4,
+    "falseSentence": "We waited for a hour.",
+    "reason": "A hour."
+  },
+  {
+    "topic": 14,
+    "item": 5,
+    "falseSentence": "There is many milk in the jug.",
+    "reason": "Many milk."
+  },
+  {
+    "topic": 14,
+    "item": 6,
+    "falseSentence": "There are not much biscuits left.",
+    "reason": "Much biscuits."
+  },
+  {
+    "topic": 14,
+    "item": 7,
+    "falseSentence": "An sun is shining brightly today.",
+    "reason": "An sun."
+  },
+  {
+    "topic": 14,
+    "item": 8,
+    "falseSentence": "She plays an violin in the school orchestra.",
+    "reason": "An violin."
+  },
+  {
+    "topic": 14,
+    "item": 9,
+    "falseSentence": "I need a umbrella.",
+    "reason": "A umbrella."
+  },
+  {
+    "topic": 14,
+    "item": 10,
+    "falseSentence": "Ali has an useful idea.",
+    "reason": "An useful."
+  },
+  {
+    "topic": 14,
+    "item": 11,
+    "falseSentence": "We visited an Eiffel Tower in Paris.",
+    "reason": "An Eiffel Tower."
+  },
+  {
+    "topic": 14,
+    "item": 12,
+    "falseSentence": "There is a few rice in this bowl.",
+    "reason": "A few rice."
+  },
+  {
+    "topic": 14,
+    "item": 13,
+    "falseSentence": "Do you have much questions?",
+    "reason": "Much questions."
+  },
+  {
+    "topic": 14,
+    "item": 14,
+    "falseSentence": "This is a honest answer.",
+    "reason": "A honest."
+  },
+  {
+    "topic": 14,
+    "item": 15,
+    "falseSentence": "Please close an door we opened earlier.",
+    "reason": "An door."
+  },
+  {
+    "topic": 15,
+    "item": 0,
+    "falseSentence": "How many water do we need?",
+    "reason": "Many water."
+  },
+  {
+    "topic": 15,
+    "item": 1,
+    "falseSentence": "How much students are in the room?",
+    "reason": "Much students."
+  },
+  {
+    "topic": 15,
+    "item": 2,
+    "falseSentence": "There is very few time left.",
+    "reason": "Few time."
+  },
+  {
+    "topic": 15,
+    "item": 3,
+    "falseSentence": "Only a little people came to the meeting.",
+    "reason": "A little people."
+  },
+  {
+    "topic": 15,
+    "item": 4,
+    "falseSentence": "There is a few milk left.",
+    "reason": "A few milk."
+  },
+  {
+    "topic": 15,
+    "item": 5,
+    "falseSentence": "We have too much bags to carry.",
+    "reason": "Much bags."
+  },
+  {
+    "topic": 15,
+    "item": 6,
+    "falseSentence": "There is too many noise here.",
+    "reason": "Many noise."
+  },
+  {
+    "topic": 15,
+    "item": 7,
+    "falseSentence": "Neither answer are a corrects answer.",
+    "reason": "A corrects answer: sıfat çoğul eki alamaz."
+  },
+  {
+    "topic": 15,
+    "item": 8,
+    "falseSentence": "Both of the two teams has arrived.",
+    "reason": "Both ile has."
+  },
+  {
+    "topic": 15,
+    "item": 9,
+    "falseSentence": "Every students has a pencil.",
+    "reason": "Every students."
+  },
+  {
+    "topic": 15,
+    "item": 10,
+    "falseSentence": "There are very little chairs left.",
+    "reason": "Little chairs."
+  },
+  {
+    "topic": 15,
+    "item": 11,
+    "falseSentence": "We need many information before deciding.",
+    "reason": "Many information."
+  },
+  {
+    "topic": 15,
+    "item": 12,
+    "falseSentence": "How many homework have you got today?",
+    "reason": "Many homework."
+  },
+  {
+    "topic": 15,
+    "item": 13,
+    "falseSentence": "How much sandwiches should I make?",
+    "reason": "Much sandwiches."
+  },
+  {
+    "topic": 15,
+    "item": 14,
+    "falseSentence": "There is not many space for another table.",
+    "reason": "Many space."
+  },
+  {
+    "topic": 15,
+    "item": 15,
+    "falseSentence": "You can to choose either route.",
+    "reason": "Can to choose."
+  },
+  {
+    "topic": 16,
+    "item": 0,
+    "falseSentence": "Please looks after my cat while I am away.",
+    "reason": "Emirde looks."
+  },
+  {
+    "topic": 16,
+    "item": 1,
+    "falseSentence": "Use a dictionary to looks up this word.",
+    "reason": "To looks."
+  },
+  {
+    "topic": 16,
+    "item": 2,
+    "falseSentence": "I am look for my keys.",
+    "reason": "Am look."
+  },
+  {
+    "topic": 16,
+    "item": 3,
+    "falseSentence": "Please turning on the light.",
+    "reason": "Emirde turning."
+  },
+  {
+    "topic": 16,
+    "item": 4,
+    "falseSentence": "Nobody is watch TV. Turn it off.",
+    "reason": "Is watch."
+  },
+  {
+    "topic": 16,
+    "item": 5,
+    "falseSentence": "The music are too loud. Turn it down.",
+    "reason": "Music are."
+  },
+  {
+    "topic": 16,
+    "item": 6,
+    "falseSentence": "The sound are too quiet. Turn it up.",
+    "reason": "Sound are."
+  },
+  {
+    "topic": 16,
+    "item": 7,
+    "falseSentence": "Please takes off your muddy shoes.",
+    "reason": "Emirde takes."
+  },
+  {
+    "topic": 16,
+    "item": 8,
+    "falseSentence": "It are cold outside. Put on your coat.",
+    "reason": "It are."
+  },
+  {
+    "topic": 16,
+    "item": 9,
+    "falseSentence": "She get up at seven every morning.",
+    "reason": "She get."
+  },
+  {
+    "topic": 16,
+    "item": 10,
+    "falseSentence": "Do not gives up; keep trying!",
+    "reason": "Do not gives."
+  },
+  {
+    "topic": 16,
+    "item": 11,
+    "falseSentence": "Please fills in this form.",
+    "reason": "Emirde fills."
+  },
+  {
+    "topic": 16,
+    "item": 12,
+    "falseSentence": "Let us gets on.",
+    "reason": "Let us gets."
+  },
+  {
+    "topic": 16,
+    "item": 13,
+    "falseSentence": "We need get off the bus.",
+    "reason": "Need get: to eksik."
+  },
+  {
+    "topic": 16,
+    "item": 14,
+    "falseSentence": "They call it off yesterday.",
+    "reason": "Yesterday ile call yerine called."
+  },
+  {
+    "topic": 16,
+    "item": 15,
+    "falseSentence": "Please speaks up.",
+    "reason": "Emirde speaks."
+  },
+  {
+    "topic": 17,
+    "item": 0,
+    "falseSentence": "They can makes a mistake.",
+    "reason": "Can sonrası üçüncü tekil -s eki."
+  },
+  {
+    "topic": 17,
+    "item": 1,
+    "falseSentence": "They can dos homework.",
+    "reason": "Can sonrası üçüncü tekil -s eki."
+  },
+  {
+    "topic": 17,
+    "item": 2,
+    "falseSentence": "They can takes a photo.",
+    "reason": "Can sonrası üçüncü tekil -s eki."
+  },
+  {
+    "topic": 17,
+    "item": 3,
+    "falseSentence": "They can pays attention.",
+    "reason": "Can sonrası üçüncü tekil -s eki."
+  },
+  {
+    "topic": 17,
+    "item": 4,
+    "falseSentence": "They can makes a decision.",
+    "reason": "Can sonrası üçüncü tekil -s eki."
+  },
+  {
+    "topic": 17,
+    "item": 5,
+    "falseSentence": "They can takes a break.",
+    "reason": "Can sonrası üçüncü tekil -s eki."
+  },
+  {
+    "topic": 17,
+    "item": 6,
+    "falseSentence": "They can dos the dishes.",
+    "reason": "Can sonrası üçüncü tekil -s eki."
+  },
+  {
+    "topic": 17,
+    "item": 7,
+    "falseSentence": "They can makes a promise.",
+    "reason": "Can sonrası üçüncü tekil -s eki."
+  },
+  {
+    "topic": 17,
+    "item": 8,
+    "falseSentence": "They can catchs a bus.",
+    "reason": "Can sonrası üçüncü tekil -s eki."
+  },
+  {
+    "topic": 17,
+    "item": 9,
+    "falseSentence": "They can saves time.",
+    "reason": "Can sonrası üçüncü tekil -s eki."
+  },
+  {
+    "topic": 17,
+    "item": 10,
+    "falseSentence": "They can makes an effort.",
+    "reason": "Can sonrası üçüncü tekil -s eki."
+  },
+  {
+    "topic": 17,
+    "item": 11,
+    "falseSentence": "They can dos exercise.",
+    "reason": "Can sonrası üçüncü tekil -s eki."
+  },
+  {
+    "topic": 17,
+    "item": 12,
+    "falseSentence": "They can asks a question.",
+    "reason": "Can sonrası üçüncü tekil -s eki."
+  },
+  {
+    "topic": 17,
+    "item": 13,
+    "falseSentence": "They can tells a story.",
+    "reason": "Can sonrası üçüncü tekil -s eki."
+  },
+  {
+    "topic": 17,
+    "item": 14,
+    "falseSentence": "They can tells the truth.",
+    "reason": "Can sonrası üçüncü tekil -s eki."
+  },
+  {
+    "topic": 17,
+    "item": 15,
+    "falseSentence": "They can speaks a language.",
+    "reason": "Can sonrası üçüncü tekil -s eki."
+  },
+  {
+    "topic": 18,
+    "item": 0,
+    "falseSentence": "Ece is here, isn't her?",
+    "reason": "Özne she yerine nesne her."
+  },
+  {
+    "topic": 18,
+    "item": 1,
+    "falseSentence": "Ali can swim, can't him?",
+    "reason": "Özne he yerine him."
+  },
+  {
+    "topic": 18,
+    "item": 2,
+    "falseSentence": "They went home, didn't them?",
+    "reason": "Özne they yerine them."
+  },
+  {
+    "topic": 18,
+    "item": 3,
+    "falseSentence": "You haven't finished, has you?",
+    "reason": "Has you."
+  },
+  {
+    "topic": 18,
+    "item": 4,
+    "falseSentence": "She doesn't like tea, do she?",
+    "reason": "Do she."
+  },
+  {
+    "topic": 18,
+    "item": 5,
+    "falseSentence": "We are late, isn't we?",
+    "reason": "Isn’t we."
+  },
+  {
+    "topic": 18,
+    "item": 6,
+    "falseSentence": "He will help, won't him?",
+    "reason": "Özne he yerine him."
+  },
+  {
+    "topic": 18,
+    "item": 7,
+    "falseSentence": "You were there, wasn't you?",
+    "reason": "Wasn’t you."
+  },
+  {
+    "topic": 18,
+    "item": 8,
+    "falseSentence": "They do not live here, does they?",
+    "reason": "Does they."
+  },
+  {
+    "topic": 18,
+    "item": 9,
+    "falseSentence": "Ebru has left, haven't she?",
+    "reason": "Haven’t she."
+  },
+  {
+    "topic": 18,
+    "item": 10,
+    "falseSentence": "He likes music, don't he?",
+    "reason": "Don’t he."
+  },
+  {
+    "topic": 18,
+    "item": 11,
+    "falseSentence": "They cannot come, can them?",
+    "reason": "Özne they yerine them."
+  },
+  {
+    "topic": 18,
+    "item": 12,
+    "falseSentence": "I am next, isn't I?",
+    "reason": "Isn’t I."
+  },
+  {
+    "topic": 18,
+    "item": 13,
+    "falseSentence": "Let us start, shall us?",
+    "reason": "Özne we yerine us."
+  },
+  {
+    "topic": 18,
+    "item": 14,
+    "falseSentence": "She has never been here, have she?",
+    "reason": "Have she."
+  },
+  {
+    "topic": 18,
+    "item": 15,
+    "falseSentence": "There is a cafe nearby, aren't there?",
+    "reason": "Aren’t there: there is ile uyumsuz."
+  },
+  {
+    "topic": 19,
+    "item": 0,
+    "falseSentence": "It was raining; because of we stayed indoors.",
+    "reason": "Because of + tam cümle."
+  },
+  {
+    "topic": 19,
+    "item": 1,
+    "falseSentence": "Although the bag is small, but it holds many books.",
+    "reason": "Although ile but birlikte."
+  },
+  {
+    "topic": 19,
+    "item": 2,
+    "falseSentence": "In addition to it has a large cupboard.",
+    "reason": "In addition to + tam cümle."
+  },
+  {
+    "topic": 19,
+    "item": 3,
+    "falseSentence": "Despite it was raining, we walked to school.",
+    "reason": "Despite + tam cümle."
+  },
+  {
+    "topic": 19,
+    "item": 4,
+    "falseSentence": "Although the rain, we walked to school.",
+    "reason": "Although + fiilsiz isim öbeği."
+  },
+  {
+    "topic": 19,
+    "item": 5,
+    "falseSentence": "We stayed home because the heavy snow.",
+    "reason": "Because + fiilsiz isim öbeği."
+  },
+  {
+    "topic": 19,
+    "item": 6,
+    "falseSentence": "We stayed home because of it was snowing heavily.",
+    "reason": "Because of + tam cümle."
+  },
+  {
+    "topic": 19,
+    "item": 7,
+    "falseSentence": "Take a coat despite you get cold.",
+    "reason": "Despite + tam cümle."
+  },
+  {
+    "topic": 19,
+    "item": 8,
+    "falseSentence": "The bus broke down; because of we arrived late.",
+    "reason": "Because of + tam cümle."
+  },
+  {
+    "topic": 19,
+    "item": 9,
+    "falseSentence": "Although the task was difficult, but Ece completed it.",
+    "reason": "Although ile but birlikte."
+  },
+  {
+    "topic": 19,
+    "item": 10,
+    "falseSentence": "In addition to it includes speaking practice.",
+    "reason": "In addition to + tam cümle."
+  },
+  {
+    "topic": 19,
+    "item": 11,
+    "falseSentence": "Despite he was tired, Ali finished the model.",
+    "reason": "Despite + tam cümle."
+  },
+  {
+    "topic": 19,
+    "item": 12,
+    "falseSentence": "Although feeling tired, but Ali finished the model.",
+    "reason": "Although ile but birlikte."
+  },
+  {
+    "topic": 19,
+    "item": 13,
+    "falseSentence": "The match was delayed because the wet pitch.",
+    "reason": "Because + isim öbeği."
+  },
+  {
+    "topic": 19,
+    "item": 14,
+    "falseSentence": "The match was delayed because of the pitch was wet.",
+    "reason": "Because of + tam cümle."
+  },
+  {
+    "topic": 19,
+    "item": 15,
+    "falseSentence": "Save a copy despite you lose the original.",
+    "reason": "Despite + tam cümle."
+  },
+  {
+    "topic": 20,
+    "item": 0,
+    "falseSentence": "Her happy made everyone smile.",
+    "reason": "İsim gereken yerde sıfat."
+  },
+  {
+    "topic": 20,
+    "item": 1,
+    "falseSentence": "She smiled happy.",
+    "reason": "Fiili niteleyen yerde sıfat."
+  },
+  {
+    "topic": 20,
+    "item": 2,
+    "falseSentence": "This is a correctly answer.",
+    "reason": "İsim öncesinde zarf."
+  },
+  {
+    "topic": 20,
+    "item": 3,
+    "falseSentence": "Please answer correct.",
+    "reason": "Fiili niteleyen yerde sıfat."
+  },
+  {
+    "topic": 20,
+    "item": 4,
+    "falseSentence": "We admired her creative.",
+    "reason": "İsim gereken yerde sıfat."
+  },
+  {
+    "topic": 20,
+    "item": 5,
+    "falseSentence": "She is an creative artist.",
+    "reason": "An creative: ünsüz sesi öncesinde a gerekir."
+  },
+  {
+    "topic": 20,
+    "item": 6,
+    "falseSentence": "He spoke polite.",
+    "reason": "Fiili niteleyen yerde sıfat."
+  },
+  {
+    "topic": 20,
+    "item": 7,
+    "falseSentence": "His polite impressed the visitors.",
+    "reason": "İyelik sonrası isim yerine sıfat."
+  },
+  {
+    "topic": 20,
+    "item": 8,
+    "falseSentence": "The instructions were helpfully.",
+    "reason": "Be sonrası sıfat yerine zarf."
+  },
+  {
+    "topic": 20,
+    "item": 9,
+    "falseSentence": "Thank you for your kind.",
+    "reason": "İyelik sonrası isim yerine sıfat."
+  },
+  {
+    "topic": 20,
+    "item": 10,
+    "falseSentence": "The child waited patient.",
+    "reason": "Fiili niteleyen yerde sıfat."
+  },
+  {
+    "topic": 20,
+    "item": 11,
+    "falseSentence": "Learning needs patient.",
+    "reason": "Nesne isim yerine sıfat."
+  },
+  {
+    "topic": 20,
+    "item": 12,
+    "falseSentence": "They completed the task successful.",
+    "reason": "Fiili niteleyen yerde sıfat."
+  },
+  {
+    "topic": 20,
+    "item": 13,
+    "falseSentence": "The project was a great successful.",
+    "reason": "A great sonrası isim yerine sıfat."
+  },
+  {
+    "topic": 20,
+    "item": 14,
+    "falseSentence": "The chair is very comfortably.",
+    "reason": "Be sonrası sıfat yerine zarf."
+  },
+  {
+    "topic": 20,
+    "item": 15,
+    "falseSentence": "Sit comfortable and enjoy the film.",
+    "reason": "Fiili niteleyen yerde sıfat."
+  },
+  {
+    "topic": 21,
+    "item": 0,
+    "falseSentence": "If you heat ice, it melt.",
+    "reason": "It ile yalın melt/boil."
+  },
+  {
+    "topic": 21,
+    "item": 1,
+    "falseSentence": "If Ece finishes early tomorrow, we will goes to the park.",
+    "reason": "Will goes."
+  },
+  {
+    "topic": 21,
+    "item": 2,
+    "falseSentence": "If I were you, I would to ask Ece for help.",
+    "reason": "Would to ask."
+  },
+  {
+    "topic": 21,
+    "item": 3,
+    "falseSentence": "If Ece had more time, they would learns the violin.",
+    "reason": "Would learns."
+  },
+  {
+    "topic": 21,
+    "item": 4,
+    "falseSentence": "If you heat water to 100°C at sea level, it boil.",
+    "reason": "It ile yalın melt/boil."
+  },
+  {
+    "topic": 21,
+    "item": 5,
+    "falseSentence": "If Ali finishes early tomorrow, we will goes to the park.",
+    "reason": "Will goes."
+  },
+  {
+    "topic": 21,
+    "item": 6,
+    "falseSentence": "If I were you, I would to ask Ali for help.",
+    "reason": "Would to ask."
+  },
+  {
+    "topic": 21,
+    "item": 7,
+    "falseSentence": "If Ali had more time, they would learns the violin.",
+    "reason": "Would learns."
+  },
+  {
+    "topic": 21,
+    "item": 8,
+    "falseSentence": "If you heat chocolate, it melt.",
+    "reason": "It ile yalın melt/boil."
+  },
+  {
+    "topic": 21,
+    "item": 9,
+    "falseSentence": "If Deniz finishes early tomorrow, we will goes to the park.",
+    "reason": "Will goes."
+  },
+  {
+    "topic": 21,
+    "item": 10,
+    "falseSentence": "If I were you, I would to ask Deniz for help.",
+    "reason": "Would to ask."
+  },
+  {
+    "topic": 21,
+    "item": 11,
+    "falseSentence": "If Deniz had more time, they would learns the violin.",
+    "reason": "Would learns."
+  },
+  {
+    "topic": 21,
+    "item": 12,
+    "falseSentence": "If you heat butter, it melt.",
+    "reason": "It ile yalın melt/boil."
+  },
+  {
+    "topic": 21,
+    "item": 13,
+    "falseSentence": "If Ebru finishes early tomorrow, we will goes to the park.",
+    "reason": "Will goes."
+  },
+  {
+    "topic": 21,
+    "item": 14,
+    "falseSentence": "If I were you, I would to ask Ebru for help.",
+    "reason": "Would to ask."
+  },
+  {
+    "topic": 21,
+    "item": 15,
+    "falseSentence": "If Ebru had more time, they would learns the violin.",
+    "reason": "Would learns."
+  },
+  {
+    "topic": 22,
+    "item": 0,
+    "falseSentence": "Ece were reading when the doorbell rang.",
+    "reason": "Tekil isim ile were."
+  },
+  {
+    "topic": 22,
+    "item": 1,
+    "falseSentence": "While Ece was reading, I have open the window.",
+    "reason": "Have open yerine opened."
+  },
+  {
+    "topic": 22,
+    "item": 2,
+    "falseSentence": "When Ece arrived yesterday, we has already finished dinner.",
+    "reason": "We ile has."
+  },
+  {
+    "topic": 22,
+    "item": 3,
+    "falseSentence": "We was talking when Ece entered the room yesterday.",
+    "reason": "We ile was."
+  },
+  {
+    "topic": 22,
+    "item": 4,
+    "falseSentence": "Ali were cooking when the doorbell rang.",
+    "reason": "Tekil isim ile were."
+  },
+  {
+    "topic": 22,
+    "item": 5,
+    "falseSentence": "While Ali was cooking, I have open the window.",
+    "reason": "Have open yerine opened."
+  },
+  {
+    "topic": 22,
+    "item": 6,
+    "falseSentence": "When Ali arrived yesterday, we has already finished dinner.",
+    "reason": "We ile has."
+  },
+  {
+    "topic": 22,
+    "item": 7,
+    "falseSentence": "We was talking when Ali entered the room yesterday.",
+    "reason": "We ile was."
+  },
+  {
+    "topic": 22,
+    "item": 8,
+    "falseSentence": "Deniz were studying when the doorbell rang.",
+    "reason": "Tekil isim ile were."
+  },
+  {
+    "topic": 22,
+    "item": 9,
+    "falseSentence": "While Deniz was studying, I have open the window.",
+    "reason": "Have open yerine opened."
+  },
+  {
+    "topic": 22,
+    "item": 10,
+    "falseSentence": "When Deniz arrived yesterday, we has already finished dinner.",
+    "reason": "We ile has."
+  },
+  {
+    "topic": 22,
+    "item": 11,
+    "falseSentence": "We was talking when Deniz entered the room yesterday.",
+    "reason": "We ile was."
+  },
+  {
+    "topic": 22,
+    "item": 12,
+    "falseSentence": "Ebru were painting when the doorbell rang.",
+    "reason": "Tekil isim ile were."
+  },
+  {
+    "topic": 22,
+    "item": 13,
+    "falseSentence": "While Ebru was painting, I have open the window.",
+    "reason": "Have open yerine opened."
+  },
+  {
+    "topic": 22,
+    "item": 14,
+    "falseSentence": "When Ebru arrived yesterday, we has already finished dinner.",
+    "reason": "We ile has."
+  },
+  {
+    "topic": 22,
+    "item": 15,
+    "falseSentence": "We was talking when Ebru entered the room yesterday.",
+    "reason": "We ile was."
+  }
+]

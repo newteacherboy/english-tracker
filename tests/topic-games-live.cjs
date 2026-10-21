@@ -2,11 +2,11 @@
 const fs=require('fs'),assert=require('assert/strict'),{chromium}=require(process.env.TOPIC_PLAYWRIGHT_PATH||'playwright');
 const API='https://nxfqlutulxqzqgwewssd.supabase.co/functions/v1/diji-api',SITE='https://app.dijimedu.com/ingilizce/';
 const source=fs.readFileSync('supabase/functions/diji-api/demo-account.ts','utf8'),user=source.match(/DEMO_USER='([^']+)'/)[1],password=source.match(/şifre:\s*(\d+)/)[1];
-const catalogs={A1:require('../ingilizce/konu-oyunlari-a1.js'),A2:require('../ingilizce/konu-oyunlari-a2.js')};let token;
+const catalogs={A1:require('../ingilizce/konu-oyunlari-a1.js'),A2:require('../ingilizce/konu-oyunlari-a2.js'),B1:require('../ingilizce/konu-oyunlari-b1.js')};const target=process.env.TOPIC_LIVE_LEVEL||'B1';let token;
 async function api(islem,data={}){const r=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({islem,...data,...(token?{t:token}:{})})});const d=await r.json();assert(r.ok&&d?.ok!==false,d?.mesaj||'API failure');return d;}
 (async()=>{
  const login=await api('giris',{ogrenci:user,sifre:password});token=login.token;assert(token);
- const topic=catalogs.A2.find(t=>t.type==='grammar'&&t.sortNo===2),rounds=[];
+ const topic=catalogs[target].find(t=>t.type==='grammar'&&t.sortNo===(target==='B1'?3:2)),rounds=[];
  for(let i=0;i<4;i++){const run=await api('konuOyunBaslat',{topicKey:topic.key,game:'balon'});assert(run.runId);if(run.bugunXpHakki>0)await new Promise(r=>setTimeout(r,16000));const d=await api('konuOyunBitir',{runId:run.runId,picks:run.sorular.map(q=>q.correct)});rounds.push({xp:d.xp,reason:d.sebep,total:d.yo?.totalXp});if(i===0&&run.bugunXpHakki===3)assert.equal(d.xp,70);if(i===3){assert.equal(d.xp,0);assert.equal(d.sebep,'daily_limit');}}
  console.log('TOPIC_REWARD_JSON='+JSON.stringify({rounds}));
  let browser,page,expectedXp=rounds.at(-1).total;const decks=[],frequencies=new Set();let ttsCalls=0;
@@ -27,12 +27,13 @@ async function api(islem,data={}){const r=await fetch(API,{method:'POST',headers
    for(let i=0;i<questions.length;i++){await page.locator('#kgOverlay .kg-hud b').filter({hasText:'Soru '+(i+1)+' /'}).waitFor({state:'visible'});if(g==='cark')await page.locator('#kgOverlay [data-spin]').click();await page.locator('#kgOverlay .kg-options:not([hidden]) [data-pick]').first().waitFor({state:'visible'});assert.equal(await page.locator('#kgOverlay .kg-meaning').count(),0);if(g==='sohbet')assert.equal(await page.locator('#kgOverlay .kg-message small').count(),0);if(i===0)await page.screenshot({path:'/tmp/topic-live/'+level+'-'+g+'-question.png'});await page.waitForTimeout(600);const q=questions[i],wrong=level==='A1'&&(g==='kova'||g==='balon'&&i===0),pick=q.options.findIndex(o=>wrong?o.id!==q.correct:o.id===q.correct);await page.locator('#kgOverlay [data-pick="'+pick+'"]').click();}
    const d=await(await resultResponse).json();await page.locator('#kgOverlay .kg-result').waitFor({state:'visible'});assert.equal(await page.locator('#kgOverlay .kg-result h2').textContent(),'%'+d.yuzde);assert(d.ok);if(d.yo)expectedXp=d.yo.totalXp;decks.push({level,game:g,accuracy:d.yuzde,xp:d.xp,reason:d.sebep});await page.screenshot({path:'/tmp/topic-live/'+level+'-'+g+'-result.png'});await close();
   }
-  await selectLevel('A1');for(const g of ['kova','cark','balon','dy','sohbet','durum'])await play(catalogs.A1.find(t=>t.games.includes(g)),g,'A1');
-  await selectLevel('A2');await play(topic,'balon','A2');
-  const feeling=catalogs.A2.find(t=>t.type==='vocab'&&t.sortNo===10);await open(feeling,'cark');const wheel=await page.locator('#kgOverlay .kg-wheel-wrap').boundingBox();assert(wheel.width>=400);await page.screenshot({path:'/tmp/topic-live/a2-wheel-dark.png'});await close();
-  const comm=catalogs.A2.find(t=>t.type==='comm'&&t.sortNo===8);await open(comm,'sohbet');await page.locator('#kgOverlay .kg-message b').waitFor();assert.equal(await page.locator('#kgOverlay .kg-message small').count(),0);await page.screenshot({path:'/tmp/topic-live/a2-chat-dark.png'});await close();
-  for(const hz of [660,880,220,165,1047,392])assert(frequencies.has(hz),'Missing native audio frequency '+hz);assert(ttsCalls>0);
+  if(target==='A2'){await selectLevel('A1');for(const g of ['kova','cark','balon','dy','sohbet','durum'])await play(catalogs.A1.find(t=>t.games.includes(g)),g,'A1');
+  }
+  await selectLevel(target);await play(topic,'balon',target);
+  const feeling=catalogs[target].find(t=>t.type==='vocab'&&t.sortNo===10);await open(feeling,'cark');const wheel=await page.locator('#kgOverlay .kg-wheel-wrap').boundingBox();assert(wheel.width>=400);await page.screenshot({path:'/tmp/topic-live/'+target+'-wheel-dark.png'});if(target==='B1'){await page.setViewportSize({width:360,height:740});const fit=await page.locator('#kgOverlay .kg-content').evaluate(e=>({h:e.scrollHeight,ch:e.clientHeight,w:e.scrollWidth,cw:e.clientWidth}));assert(fit.h<=fit.ch+2&&fit.w<=fit.cw+2);await page.screenshot({path:'/tmp/topic-live/b1-wheel-mobile.png'});await page.setViewportSize({width:1440,height:900});}await close();
+  const comm=catalogs[target].find(t=>t.type==='comm'&&t.sortNo===8);await open(comm,'sohbet');await page.locator('#kgOverlay .kg-message b').waitFor();assert.equal(await page.locator('#kgOverlay .kg-message small').count(),0);await page.screenshot({path:'/tmp/topic-live/'+target+'-chat-dark.png'});await close();
+  for(const hz of (target==='B1'?[660,880,1047]:[660,880,220,165,1047,392]))assert(frequencies.has(hz),'Missing native audio frequency '+hz);assert(ttsCalls>0);
   await page.reload();await ready();const formatted=expectedXp.toLocaleString('tr-TR');await page.locator('.dm-papi-wallet [data-pw=xp][aria-label*="'+formatted+' XP"]').waitFor({state:'visible',timeout:30000});const label=await page.locator('.dm-papi-wallet [data-pw=xp]').getAttribute('aria-label'),restored=Number(label.match(/· ([\d.]+) XP/)[1].replaceAll('.',''));assert.equal(restored,expectedXp);
-  console.log('TOPIC_LIVE_JSON='+JSON.stringify({rounds,decks,wheel,restored,audioFrequencies:[...frequencies],ttsCalls,ui:true,colorScheme:'dark'}));
+  const summary={rounds,decks,wheel,restored,audioFrequencies:[...frequencies],ttsCalls,ui:true,colorScheme:'dark'};fs.writeFileSync('/tmp/topic-live/summary.json',JSON.stringify(summary,null,2));console.log('TOPIC_LIVE_JSON='+JSON.stringify(summary));
  }catch(e){if(page){fs.mkdirSync('/tmp/topic-live',{recursive:true});await page.screenshot({path:'/tmp/topic-live/failure.png'}).catch(()=>{});}throw e;}finally{await browser?.close();}
 })().catch(e=>{console.error(e.message);process.exitCode=1;});

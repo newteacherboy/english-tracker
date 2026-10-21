@@ -1,4 +1,4 @@
-name: A1 and A2 Topic Games
+name: A1, A2 and B1 Topic Games
 on:
   pull_request:
     paths:
@@ -6,7 +6,7 @@ on:
       - 'ingilizce/topic-games-core.mjs'
       - 'ingilizce/activity-ui.*'
       - 'supabase/functions/diji-api/topic-games*'
-      - 'supabase/functions/diji-api/konu-oyunlari-a*.js'
+      - 'supabase/functions/diji-api/konu-oyunlari-*.js'
       - 'supabase/migrations/*konu_oyunlari_a1.sql'
       - 'tests/topic-games*'
       - '.github/workflows/topic-games-a1.yml'
@@ -29,20 +29,20 @@ jobs:
         env:
           NODE_PATH: /tmp/topic-qa/node_modules
           TOPIC_SCREENSHOT_DIR: /tmp/topic-screenshots
-        run: node --test tests/topic-games.test.cjs tests/topic-games-db.test.cjs tests/topic-games-ui.test.cjs tests/topic-games-a2.test.cjs tests/topic-games-a2-ui.test.cjs
+        run: node --test tests/topic-games.test.cjs tests/topic-games-db.test.cjs tests/topic-games-ui.test.cjs tests/topic-games-a2.test.cjs tests/topic-games-a2-ui.test.cjs tests/topic-games-b1.test.cjs tests/topic-games-b1-ui.test.cjs
 
       - uses: actions/checkout@v4
         with:
-          ref: '363dfbceea4103820ddfe9c891245519520dc664'
+          ref: '650bfec5c287fd9daf3d31751a96bf7468ce5f16'
           path: .topic-baseline
       - name: Compare complete test suites against main
         env:
           NODE_PATH: /tmp/topic-qa/node_modules
-        run: node tests/topic-games-regression.cjs "$PWD/.topic-baseline" "$PWD" /tmp/konu-oyunlari-a2-regresyon.json
+        run: node tests/topic-games-regression.cjs "$PWD/.topic-baseline" "$PWD" /tmp/konu-oyunlari-b1-regresyon.json
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: topic-a2-validation
+          name: topic-b1-validation
           path: |
-            /tmp/konu-oyunlari-a2-regresyon.json
+            /tmp/konu-oyunlari-b1-regresyon.json
             /tmp/topic-screenshots

@@ -1,0 +1,260 @@
+[
+  {
+    "level": "B1",
+    "category": "comm",
+    "topic_name": "Giving and explaining opinions — Fikir Verme ve Gerekçelendirme",
+    "sort_no": 1
+  },
+  {
+    "level": "B1",
+    "category": "comm",
+    "topic_name": "Agreeing and disagreeing — Aynı Fikirde Olma ve Karşı Çıkma",
+    "sort_no": 2
+  },
+  {
+    "level": "B1",
+    "category": "comm",
+    "topic_name": "Discussing advantages and disadvantages — Avantaj ve Dezavantajları Tartışma",
+    "sort_no": 3
+  },
+  {
+    "level": "B1",
+    "category": "comm",
+    "topic_name": "Making suggestions and recommendations — Öneri ve Tavsiyelerde Bulunma",
+    "sort_no": 4
+  },
+  {
+    "level": "B1",
+    "category": "comm",
+    "topic_name": "Discussing experiences and events — Deneyim ve Olayları Tartışma",
+    "sort_no": 5
+  },
+  {
+    "level": "B1",
+    "category": "comm",
+    "topic_name": "Talking about hopes and ambitions — Umut ve Hedeflerden Bahsetme",
+    "sort_no": 6
+  },
+  {
+    "level": "B1",
+    "category": "comm",
+    "topic_name": "Handling most situations while travelling — Seyahat Ederken Durumlarla Başa Çıkma",
+    "sort_no": 7
+  },
+  {
+    "level": "B1",
+    "category": "comm",
+    "topic_name": "Participating in conversations on familiar topics — Tanıdık Konularda Sohbetlere Katılma",
+    "sort_no": 8
+  },
+  {
+    "level": "B1",
+    "category": "comm",
+    "topic_name": "Writing clear, detailed texts (emails, reviews, stories) — Net ve Detaylı Metinler Yazma",
+    "sort_no": 9
+  },
+  {
+    "level": "B1",
+    "category": "grammar",
+    "topic_name": "Review of A2 structures — A2 Dil Bilgisi Yapılarının Tekrarı",
+    "sort_no": 1
+  },
+  {
+    "level": "B1",
+    "category": "grammar",
+    "topic_name": "Present perfect vs past simple (in more detail) — Present Perfect ve Past Simple (İleri Düzey Farklar)",
+    "sort_no": 2
+  },
+  {
+    "level": "B1",
+    "category": "grammar",
+    "topic_name": "Present perfect continuous — Sürekli Yakın Geçmiş Zaman",
+    "sort_no": 3
+  },
+  {
+    "level": "B1",
+    "category": "grammar",
+    "topic_name": "Past perfect (basic) — Geçmişin Öncesi (Past Perfect)",
+    "sort_no": 4
+  },
+  {
+    "level": "B1",
+    "category": "grammar",
+    "topic_name": "Future forms (will, be going to, present continuous, present simple for the future) — Gelecek Zaman Formları",
+    "sort_no": 5
+  },
+  {
+    "level": "B1",
+    "category": "grammar",
+    "topic_name": "Future continuous and future perfect (basic) — Gelecekte Süreklilik ve Tamamlanma",
+    "sort_no": 6
+  },
+  {
+    "level": "B1",
+    "category": "grammar",
+    "topic_name": "Modals of deduction (must, might, can't) — Çıkarım Kipleri",
+    "sort_no": 7
+  },
+  {
+    "level": "B1",
+    "category": "grammar",
+    "topic_name": "Modals of obligation, permission and advice (advanced use) — İleri Düzey Zorunluluk, İzin ve Tavsiye Kipleri",
+    "sort_no": 8
+  },
+  {
+    "level": "B1",
+    "category": "grammar",
+    "topic_name": "Second conditional (if I were ...) — İkinci Koşul Cümlesi (Second Conditional)",
+    "sort_no": 9
+  },
+  {
+    "level": "B1",
+    "category": "grammar",
+    "topic_name": "Passive voice (all tenses) — Edilgen Çatı (Tüm Zamanlar)",
+    "sort_no": 10
+  },
+  {
+    "level": "B1",
+    "category": "grammar",
+    "topic_name": "Reported speech (statements, questions, requests) — Dolaylı Anlatım",
+    "sort_no": 11
+  },
+  {
+    "level": "B1",
+    "category": "grammar",
+    "topic_name": "Defining relative clauses — Tanımlayıcı İlgi Cümlecikleri",
+    "sort_no": 12
+  },
+  {
+    "level": "B1",
+    "category": "grammar",
+    "topic_name": "Gerunds and infinitives (verb patterns) — İleri Düzey Fiil Kalıpları (Gerund ve Infinitive)",
+    "sort_no": 13
+  },
+  {
+    "level": "B1",
+    "category": "grammar",
+    "topic_name": "Articles and determiners (a, the, some, any, etc.) — Tanımlıklar ve Belirteçler",
+    "sort_no": 14
+  },
+  {
+    "level": "B1",
+    "category": "grammar",
+    "topic_name": "Quantifiers and expressions of quantity — İleri Düzey Miktar İfadeleri",
+    "sort_no": 15
+  },
+  {
+    "level": "B1",
+    "category": "grammar",
+    "topic_name": "Phrasal verbs (common) — Yaygın Deyimsel Fiiller (B1)",
+    "sort_no": 16
+  },
+  {
+    "level": "B1",
+    "category": "grammar",
+    "topic_name": "Collocations — Dil Birliktelikleri ve Kalıplaşmış İfadeler",
+    "sort_no": 17
+  },
+  {
+    "level": "B1",
+    "category": "grammar",
+    "topic_name": "Question tags and short responses — İleri Düzey Soru Ekleri ve Kısa Yanıtlar",
+    "sort_no": 18
+  },
+  {
+    "level": "B1",
+    "category": "grammar",
+    "topic_name": "Discourse linkers (however, therefore, in addition, etc.) — Söylem Bağlaçları",
+    "sort_no": 19
+  },
+  {
+    "level": "B1",
+    "category": "grammar",
+    "topic_name": "Word formation (nouns, adjectives, adverbs) — Kelime Türetme (İsim, Sıfat, Zarf)",
+    "sort_no": 20
+  },
+  {
+    "level": "B1",
+    "category": "grammar",
+    "topic_name": "Conditionals review (zero, first, second) — Koşul Cümlelerinin Tekrarı (Zero, First, Second)",
+    "sort_no": 21
+  },
+  {
+    "level": "B1",
+    "category": "grammar",
+    "topic_name": "Narrative tenses (for stories) — Hikaye Anlatımı Zamanları",
+    "sort_no": 22
+  },
+  {
+    "level": "B1",
+    "category": "vocab",
+    "topic_name": "People and relationships — İnsanlar ve İlişkiler",
+    "sort_no": 1
+  },
+  {
+    "level": "B1",
+    "category": "vocab",
+    "topic_name": "Work and careers — İş ve Kariyer",
+    "sort_no": 2
+  },
+  {
+    "level": "B1",
+    "category": "vocab",
+    "topic_name": "Education and learning — Eğitim ve Öğrenme",
+    "sort_no": 3
+  },
+  {
+    "level": "B1",
+    "category": "vocab",
+    "topic_name": "Travel and tourism — Seyahat ve Turizm",
+    "sort_no": 4
+  },
+  {
+    "level": "B1",
+    "category": "vocab",
+    "topic_name": "Media and communication — Medya ve İletişim",
+    "sort_no": 5
+  },
+  {
+    "level": "B1",
+    "category": "vocab",
+    "topic_name": "Society and social issues — Toplum ve Sosyal Sorunlar",
+    "sort_no": 6
+  },
+  {
+    "level": "B1",
+    "category": "vocab",
+    "topic_name": "Science and technology — Bilim ve Teknoloji",
+    "sort_no": 7
+  },
+  {
+    "level": "B1",
+    "category": "vocab",
+    "topic_name": "The environment — Çevre ve Ekoloji",
+    "sort_no": 8
+  },
+  {
+    "level": "B1",
+    "category": "vocab",
+    "topic_name": "Culture and the arts — Kültür ve Sanat",
+    "sort_no": 9
+  },
+  {
+    "level": "B1",
+    "category": "vocab",
+    "topic_name": "Health and lifestyle — Sağlık ve Yaşam Tarzı",
+    "sort_no": 10
+  },
+  {
+    "level": "B1",
+    "category": "vocab",
+    "topic_name": "Crime and law — Suç ve Hukuk",
+    "sort_no": 11
+  },
+  {
+    "level": "B1",
+    "category": "vocab",
+    "topic_name": "Abstract nouns (opportunity, change, etc.) — Soyut İsimler",
+    "sort_no": 12
+  }
+]
