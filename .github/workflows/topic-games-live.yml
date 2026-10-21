@@ -1,0 +1,37 @@
+name: Topic games production demo smoke
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'ingilizce/konu-oyunlari-a2.js'
+      - 'tests/topic-games-live.cjs'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  demo:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm install --prefix /tmp/topic-live-qa --no-save playwright@1.51.1
+      - run: node /tmp/topic-live-qa/node_modules/playwright/cli.js install --with-deps chromium
+      - name: Wait for public A2 catalog
+        run: |
+          for i in $(seq 1 40); do
+            if curl -fsS -o /tmp/topic-public.js 'https://app.dijimedu.com/ingilizce/konu-oyunlari-a2.js' && grep -q DijiTopicGamesA2 /tmp/topic-public.js; then exit 0; fi
+            sleep 5
+          done
+          exit 1
+      - name: Demo reward quota, persistent XP and dark desktop UI
+        env:
+          NODE_PATH: /tmp/topic-live-qa/node_modules
+        run: node tests/topic-games-live.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: topic-a2-live
+          path: /tmp/topic-live

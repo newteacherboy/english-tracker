@@ -16,7 +16,7 @@ export function buildQuestions(topic,game,random=Math.random){
   const falseCard=game==='dy'&&i%2===1;
   const shown=falseCard?pick(options.filter(x=>x!==item.answer),1)[0]:item.answer;
   return {kind:game,before:item.before,after:item.after,joinBefore:!!item.joinBefore,meaningRequired:!!item.meaningRequired,en:sentence(item,item.answer),tr:item.tr,
-   sentence:sentence(item,shown),shown,answer:item.answer,rule:topic.rules[item.answer],
+   context:item.context||'',sentence:falseCard&&item.falseSentence?item.falseSentence:sentence(item,shown),shown,answer:item.answer,rule:topic.rules[item.answer],
    options:game==='dy'?shuffle([{id:'false',label:'✗ Yanlış'},{id:'true',label:'✓ Doğru'}],random):shuffle(options.map(label=>({id:label,label,palette:wordPalette(topic,label)})),random),correct:game==='dy'?String(!falseCard):item.answer};
  });
  if(topic.type==='comm')rows=(game==='sohbet'?topic.chat.turns:pick(topic.situations,8)).map(item=>({
@@ -31,3 +31,4 @@ export function buildQuestions(topic,game,random=Math.random){
 }
 export function answerKey(rows){return rows.map(q=>({correct:q.correct,allowed:q.options.map(o=>o.id)}));}
 export function validPicks(key,picks){return Array.isArray(picks)&&picks.length===key.length&&picks.every((p,i)=>typeof p==='string'&&key[i].allowed.includes(p));}
+

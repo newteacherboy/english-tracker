@@ -7,8 +7,10 @@
    - Supabase istekleri: bu dosya karışmaz (sayfadaki katman yönetir)
    Sayfayı güncellediğinizde SURUM değerini artırın (v2, v3…).
    ===================================================================== */
-const SURUM = 'diji-v214-konu-a1-visual-20261021';
+const SURUM = 'diji-v215-konu-a2-release-20261021';
 const SAYFA = 'sayfa-' + SURUM, KAYNAK = 'kaynak-' + SURUM;
+// Cached on first use; never download the A2 catalog at startup.
+const LAZY_TOPIC_FILES = new Set(['konu-oyunlari-a1.js','konu-oyunlari-a2.js','topic-games-core.mjs']);
 const DIS_KAYNAK = /^https:\/\/(fonts\.googleapis\.com|fonts\.gstatic\.com|cdn\.jsdelivr\.net|cdnjs\.cloudflare\.com)\//;
 /* Ana sayfanın çevrimdışı kopyasını ASLA değiştirmemesi gereken sayfalar:
    hukuki / hesap sayfaları, deneme ve doğrulama akışları, şifre yenileme ve tüm tasarım önizlemeleri. */
@@ -34,7 +36,7 @@ self.addEventListener('fetch', e => {
     e.respondWith(boundedNetwork(e, r, SAYFA, './', 1200));
     return;
   }
-  if (url.origin === self.location.origin && /\.(?:js|css|json)$/.test(url.pathname)) {
+  if (url.origin === self.location.origin && (LAZY_TOPIC_FILES.has(url.pathname.split('/').at(-1)) || /\.(?:js|css|json)$/.test(url.pathname))) {
     e.respondWith(boundedNetwork(e, r, KAYNAK, r, 600));
     return;
   }
@@ -72,3 +74,4 @@ async function boundedNetwork(event, request, bucket, key, budget) {
     ]);
   } finally {clearTimeout(timer);}
 }
+
