@@ -1,0 +1,40 @@
+# Okul ağları (MEB) GitHub Pages'i "github-base" kategorisinde engelliyor.
+# Bu iş, siteyi her main gönderiminde Firebase Hosting'e de yayınlar.
+# GitHub Pages yayını aynen devam eder; ikisi hep aynı sürümde kalır.
+#
+# Gerekenler (repo Settings → Secrets and variables → Actions):
+#   Secret   FIREBASE_SERVICE_ACCOUNT  → Firebase hizmet hesabı JSON anahtarı
+#   Variable FIREBASE_PROJECT_ID       → Firebase proje kimliği (ör. dijimedu)
+# Bunlar yoksa iş sessizce atlanır.
+name: firebase-hosting
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: firebase-hosting
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      HAS_KEY: ${{ secrets.FIREBASE_SERVICE_ACCOUNT != '' && vars.FIREBASE_PROJECT_ID != '' }}
+    steps:
+      - name: Kurulum kontrolü
+        if: env.HAS_KEY != 'true'
+        run: echo "FIREBASE_SERVICE_ACCOUNT veya FIREBASE_PROJECT_ID tanımlı değil; Firebase yayını atlandı."
+      - uses: actions/checkout@v4
+        if: env.HAS_KEY == 'true'
+      - uses: FirebaseExtended/action-hosting-deploy@v0
+        if: env.HAS_KEY == 'true'
+        with:
+          repoToken: ${{ secrets.GITHUB_TOKEN }}
+          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          projectId: ${{ vars.FIREBASE_PROJECT_ID }}
+          channelId: live
