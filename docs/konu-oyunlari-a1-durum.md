@@ -4,9 +4,9 @@
 
 ## Yayın durumu
 
-**Yayınlanmadı.** Görevdeki “tüm testler yeşil olmadan yayınlama” şartı nedeniyle main, production migration ve Edge Function değiştirilmedi. Çalışma ayrı bir dalda incelemeye hazırdır.
+**Yayın hazırlığı güncellendi.** Yeni şart: yeni testler yeşil ve main’e göre yeni başarısızlık yok. Main ile dalın tam paketleri aynı Node 22 ortamında karşılaştırıldı; aynı 32 başarısızlık görüldü, yeni başarısızlık yok. Migration production’a uygulandı; yalnızca diji-api version 184, verify_jwt=false ile deploy edildi. Frontend merge ve canlı XP kontrolü bu raporun sonraki durum güncellemesinde tamamlanacaktır.
 
-Dokunulmamış main üzerinde Node 22.21.1 ile çalıştırılan mevcut pakette 32 başarısız assertion doğrulandı. Örnek alanlar: Google kayıt ekranı, eski mikro bölüm ilerlemesi, Meteor, parkur içerik uyumluluğu, profil hesap değiştirme, öğrenci yönetimi, haftalık görev kartı. Bazı arayüz test dosyaları açık zamanlayıcıları nedeniyle ayrıca süre sınırına takılıyor. Bu hataları gizlemek için testler atlanmadı veya ilgisiz uygulama davranışları değiştirilmedi. Yalnızca yeni beşinci sekmenin gerektirdiği iki mevcut kategori testi güncellendi.
+Dokunulmamış main üzerinde Node 22.21.1 ile çalıştırılan mevcut pakette 32 başarısız assertion doğrulandı. Örnek alanlar: Google kayıt ekranı, eski mikro bölüm ilerlemesi, Meteor, parkur içerik uyumluluğu, profil hesap değiştirme, öğrenci yönetimi, haftalık görev kartı. Bazı arayüz test dosyaları açık zamanlayıcıları nedeniyle ayrıca süre sınırına takılıyor. Mevcut 32 hata kapsam dışında bırakıldı; bunları gizlemek için testler atlanmadı veya ilgisiz uygulama davranışları değiştirilmedi. Yalnızca yeni beşinci sekmenin gerektirdiği iki mevcut kategori testi güncellendi.
 
 ## Eklenen davranış
 
@@ -81,4 +81,8 @@ NODE_PATH=/tmp/topic-qa/node_modules node --test tests/topic-games.test.cjs test
 
 ## İçerik notu
 
-Görselle tek anlamlı gösterilemeyen “surname” gibi soyut kişisel bilgi kelimeleri kullanılmadı. Kişisel Bilgiler havuzu görselle seçilebilen kişiler/mesleklerden oluşur. Renkler konusunun kova/çark havuzu ayırt edilebilir 14 renk tonu içerir; gün ve ay adları görsel şıklarına zorlanmadı. Sayılar, tarihler ve saatler dil bilgisi setinde ayrıca yer alır. Kelime/bağlaç/edat gibi anlamı bağlama bağlı sorularda Türkçe anlam açıkça gösterilir; Doğru/Yanlış yönergesi cümlenin bu anlamla eşleşmesini sorar.
+Görselle tek anlamlı gösterilemeyen “surname” gibi soyut kişisel bilgi kelimeleri kullanılmadı. Kişisel Bilgiler havuzu meslek içermez: boy, girl, man, woman, baby, name, birthday, address, phone number, email, country, city, street ve family. Age için tek anlamlı görsel olmadığı için kullanılmadı. Renkler konusunun kova/çark havuzu ayırt edilebilir 14 renk tonu içerir; gün ve ay adları görsel şıklarına zorlanmadı. Sayılar, tarihler ve saatler dil bilgisi setinde ayrıca yer alır. Kelime/bağlaç/edat gibi anlamı bağlama bağlı sorularda Türkçe anlam açıkça gösterilir; Doğru/Yanlış yönergesi cümlenin bu anlamla eşleşmesini sorar.
+
+## İçerik düzeltmeleri · yayın öncesi
+
+352 dil bilgisi sorusu tek tek gözden geçirildi. Tekil/çoğul ve geniş zaman setlerinde soru bazında item.options kullanılır. Balon rengi kelimeye göre sabittir. Çoğul iyelik kaldırıldı; tekil ’s/s/is seçeneklerinde ek kelimeye bitişik gösterilir. Anlama dayalı sorular meaningRequired olarak işaretlidir; bütün dil bilgisi görünümlerinde Türkçe anlam İngilizceden önce, büyük ve kalın gösterilir. Her soru için İngilizce uyum/sayı veya Türkçe anlamdan bağımsız çıkarılan cevap denetimi eklendi.

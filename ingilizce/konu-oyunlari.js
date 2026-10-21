@@ -1,6 +1,6 @@
 /* Topic practice is intentionally ephemeral. No scores, feed, assignments, or local result history. */
 (()=>{'use strict';
-const version='20261021-konu-1',cats={grammar:['Dil Bilgisi','📘'],vocab:['Kelimeler','☀️'],comm:['İletişim','💬']};
+const version='20261021-konu-2',cats={grammar:['Dil Bilgisi','📘'],vocab:['Kelimeler','☀️'],comm:['İletişim','💬']};
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const who=()=>String(typeof aktifOgrenciAdi==='undefined'?'':aktifOgrenciAdi||'');
 const guest=()=>!!window.dmGuestMode||!who();
@@ -56,8 +56,9 @@ async function start(g){stop();game=g;picks=[];index=0;correct=0;streak=0;run=nu
 function wheel(q){const slices=q.slices,N=slices.length,r=100,center=110;return '<div class="kg-wheel-wrap"><span class="kg-arrow" aria-hidden="true">▼</span><svg class="kg-wheel" viewBox="0 0 220 220" aria-label="Konu çarkı">'+slices.map((x,i)=>{const a=(i/N*360-90)*Math.PI/180,b=((i+1)/N*360-90)*Math.PI/180,mid=(a+b)/2;return '<path d="M110 110 L'+(center+r*Math.cos(a))+' '+(center+r*Math.sin(a))+' A100 100 0 0 1 '+(center+r*Math.cos(b))+' '+(center+r*Math.sin(b))+'Z" fill="'+(x.color||['#fae2ba','#dcf3db','#d7eaff','#f8d9e8'][i%4])+'" stroke="white" stroke-width="2"/>'+(!x.color?'<text x="'+(center+69*Math.cos(mid))+'" y="'+(center+69*Math.sin(mid)+6)+'" text-anchor="middle" font-size="25">'+esc(x.icon)+'</text>':'');}).join('')+'</svg></div><button type="button" class="kg-primary" data-spin>Çarkı çevir</button>';}
 function kova(q){return '<p>Bu kelimeyi kovada bul</p><h2 lang="en">'+esc(q.en)+'</h2>';}
 function cark(q){return wheel(q)+'<h2 data-wheel-question hidden>Bu hangisi?</h2>';}
-function balon(q){return '<p>Türkçe anlama göre cümleyi tamamla</p><h2 class="kg-sentence" lang="en">'+esc(q.before)+' <span class="kg-blank">___</span> '+esc(q.after)+'</h2><p>'+esc(q.tr)+'</p>';}
-function dy(q){return '<p>Bu cümle Türkçe anlamıyla eşleşiyor mu?</p><article class="kg-card"><h2 lang="en">'+esc(q.sentence)+'</h2><p>'+esc(q.tr)+'</p></article><div class="kg-streak" aria-live="polite">'+(streak>=2?'🔥 '+streak+' seri':'')+'</div>';}
+function meaning(q){return '<div class="kg-meaning" lang="tr"><small>TÜRKÇESİ</small><strong>'+esc(q.tr)+'</strong></div>';}
+function balon(q){return '<p>Türkçe anlama göre cümleyi tamamla</p>'+meaning(q)+'<h2 class="kg-sentence" lang="en">'+esc(q.before)+(q.joinBefore?'':' ')+'<span class="kg-blank">___</span> '+esc(q.after)+'</h2>';}
+function dy(q){return '<p>Bu cümle Türkçe anlamıyla eşleşiyor mu?</p><article class="kg-card">'+meaning(q)+'<h2 lang="en">'+esc(q.sentence)+'</h2></article><div class="kg-streak" aria-live="polite">'+(streak>=2?'🔥 '+streak+' seri':'')+'</div>';}
 function sohbet(q){return '<div class="kg-chat-head"><span>'+esc(topic.chat.name[0])+'</span><b>'+esc(topic.chat.name)+'<small>çevrimiçi</small></b></div><div class="kg-chat"><div class="kg-message kg-typing" role="status">… yazıyor</div></div>';}
 function durum(q){const icons={sabah:'☀️',ogle:'🌤️',aksam:'🌆',gece:'☾',insan:'👋'};return '<article class="kg-card kg-scene-'+esc(q.scene)+'"><span class="kg-scene-icon" aria-hidden="true">'+(icons[q.scene]||'💬')+'</span>'+(q.time?'<small>'+esc(q.time)+'</small>':'')+'<h2>'+esc(q.sceneTr)+'</h2><p>Ne dersin?</p><div class="kg-time"><i></i></div></article>';}
 function choice(o){if(game==='kova')return '<span class="kg-bucket" '+(o.color?'style="--paint:'+esc(o.color)+'"':'')+'><span aria-hidden="true">'+esc(o.icon||'')+'</span><svg viewBox="0 0 100 90" aria-hidden="true"><path d="M22 24Q50 -8 78 24" fill="none" stroke="currentColor" stroke-width="5"/><path d="M14 24H86L77 82H23Z" fill="'+(o.color||'#b3dcf5')+'" stroke="currentColor" stroke-width="3"/><ellipse cx="50" cy="24" rx="36" ry="7" fill="'+(o.color||'#e9f6ff')+'" stroke="currentColor" stroke-width="3"/></svg></span>';
@@ -74,7 +75,7 @@ function play(){clearTimeout(timer);if(index>=questions.length){finish();return;
 function answer(id){if(!root||picks.length!==index)return;const q=questions[index],good=id===q.correct,token=epoch,box=root.querySelector('.kg-content');picks.push(id);if(good){correct++;streak++;}else streak=0;
  box.querySelectorAll('[data-pick]').forEach(b=>{b.disabled=true;const option=q.options[+b.dataset.pick];b.classList.toggle('kg-right',option.id===q.correct);b.classList.toggle('kg-wrong',option.id===id&&!good);});
  if(game==='balon')box.querySelector('.kg-blank').textContent=q.answer;
- if(game==='dy'&&q.shown!==q.answer){box.querySelector('.kg-card h2').innerHTML=esc(q.before)+' <del>'+esc(q.shown)+'</del> '+esc(q.after);}
+ if(game==='dy'&&q.shown!==q.answer){box.querySelector('.kg-card h2').innerHTML=esc(q.before)+(q.joinBefore?'':' ')+'<del>'+esc(q.shown)+'</del> '+esc(q.after);}
  if(game==='dy'&&streak>=2)box.querySelector('.kg-streak').textContent='🔥 '+streak+' seri';
  if(game==='sohbet'){const msg=document.createElement('div');msg.className='kg-message kg-mine';msg.innerHTML='<b lang="en">'+esc(q.correct)+'</b><small>'+esc(q.rightTr)+(good?'':' · Doğru cevap buydu')+'</small>';box.querySelector('.kg-chat').append(msg);}
  const late=game==='durum'&&performance.now()-Number(box.dataset.questionAt)>8000;

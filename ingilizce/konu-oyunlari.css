@@ -4,3 +4,8 @@
 @media(prefers-color-scheme:dark){.kg-overlay{--kg-bg:#172531;--kg-card:#223746;--kg-text:#edf4fa}.kg-hub{color:inherit}.kg-hub button{background:var(--card-bg,#223746);color:inherit}.kg-chips [aria-pressed=true]{background:#285840;color:#edf8ef}.kg-card{border-color:#496173}}
 [data-theme=dark] .kg-overlay,body.dark .kg-overlay{--kg-bg:#172531;--kg-card:#223746;--kg-text:#edf4fa}
 @media(prefers-reduced-motion:reduce){.kg-overlay *{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important}.kg-wheel{transition-duration:80ms!important}}
+
+/* The meaning stays above every grammar sentence, including truth cards. */
+.kg-meaning{width:100%;padding:12px 14px;border:2px solid #82a8df;border-radius:16px;background:#e4efff;color:#183b67;text-align:center;line-height:1.35}.kg-meaning small{display:block;font-size:11px;letter-spacing:.06em;margin-bottom:4px}.kg-meaning strong{display:block;font-weight:800;font-size:clamp(18px,4.8vw,23px)}
+@media(prefers-color-scheme:dark){.kg-meaning{background:#25435e;color:#f3f8ff;border-color:#7ba9db}}
+[data-theme=dark] .kg-meaning,body.dark .kg-meaning{background:#25435e;color:#f3f8ff;border-color:#7ba9db}

@@ -57,3 +57,50 @@ test('two game API endpoints use perimeter budgets; no score, feed or assignment
  assert(index.includes("rate('ip:'+op"));assert(index.includes("rate('account:'+op"));assert(client.includes('dmApplyRewardState'));
  assert(!fs.readFileSync('ingilizce/index.html','utf8').includes('src="konu-oyunlari-a1.js'));
 });
+
+// Reviewed against English agreement/number and the displayed Turkish cue, not
+// against the same answer key used by the question builder.
+const meaningTopics=new Set([1,5,8,10,13,14,15,17,19,20,21]);
+function auditedGrammarAnswer(t,x,i){
+ const b=x.before.toLowerCase(),a=x.after.toLowerCase(),tr=x.tr.toLocaleLowerCase('tr');
+ const be=()=>b==='i'?'am':/^(you|we|they|the cats|my books|my friends|leo and mia)$/.test(b)?'are':'is';
+ switch(t.sortNo){
+  case 1:return b[0];
+  case 2:case 12:return be();
+  case 3:return /^(i|you|we|they|my friends|the children)$/.test(b)?'have got':'has got';
+  case 4:return /^(am|like|can)\b/.test(a)?'I':/^(sister|name|dad|bag)\b/.test(a)?'my':/\bis$/.test(b)?'mine':'me';
+  case 5:return ['my','his','her','our'][i%4];
+  case 6:return /^[aeiou]/.test(a)?'an':'a';
+  case 7:{const pair=x.options;assert.deepEqual(pair,/^cat/.test(x.answer)?['cat','cats']:['box','boxes']);return /\b(one|a)$|^(this|that)$/.test(b)?pair[0]:pair[1];}
+  case 8:{const near=/\bhere\b|next to me|in my hands?/.test(a),plural=a.startsWith('are ');return plural?(near?'these':'those'):(near?'this':'that');}
+  case 9:return /^an? /.test(a)?'is':'are';
+  case 10:return tr.includes('içinde')?'in':tr.includes('üstünde')?'on':tr.includes('altında')?'under':'behind';
+  case 11:{if(!b){assert.deepEqual(x.options,['do','does']);return /^(she|he|sam|your sister)\b/.test(a)?'does':'do';}assert.deepEqual(x.options,['play','plays']);return /^(she|he|ali|elif)$/.test(b)?'plays':'play';}
+  case 13:return tr.includes('bil')?'can':"can't";
+  case 14:return tr.includes('aç')?'open':tr.includes('kapat')?'close':tr.includes('otur')?'sit down':'stand up';
+  case 15:return tr.includes('ne zaman')?'when':tr.includes('nerede')?'where':tr.includes('kim')?'who':'what';
+  case 16:return /^(water|milk|rice|bread|juice|cheese|sugar|soup)\b/.test(a)?'much':'many';
+  case 17:return tr.includes('hiç')?'any':'some';
+  case 18:assert(x.joinBefore);return "'s";
+  case 19:return tr.includes('her zaman')?'always':tr.includes('genellikle')?'usually':tr.includes('bazen')?'sometimes':'never';
+  case 20:return /\bve\b/.test(tr)?'and':/\bama\b/.test(tr)?'but':'or';
+  case 21:{const two=/\biki\b/.test(tr),ordinal=b.endsWith('the');return ordinal?(two?'second':'first'):(two?'two':'one');}
+  case 22:return b.startsWith('do ')?'do':b.startsWith('is ')?'is':b.endsWith('yes, i')?'am':'are';
+  default:throw Error('Unreviewed grammar topic '+t.key);
+ }
+}
+for(const t of C.filter(t=>t.type==='grammar'))for(const [i,x] of t.items.entries())test('grammar review '+t.sortNo+'.'+(i+1)+': '+x.before+' ___ '+x.after,()=>{
+ const options=x.options||t.options;assert.equal(new Set(options).size,options.length);assert(options.length>=2&&options.length<=4);
+ const expected=auditedGrammarAnswer(t,x,i);assert.equal(x.answer,expected);assert.equal(options.filter(o=>o===expected).length,1);
+ assert.equal(x.meaningRequired,meaningTopics.has(t.sortNo));assert(x.tr.trim());
+});
+test('personal information has no professions or ambiguous age icon; singular possessive contains no plural ownership',()=>{
+ const t=C.find(t=>t.type==='vocab'&&t.sortNo===1);assert.equal(t.items.length,14);assert(t.items.every(x=>!['teacher','doctor','cook','farmer','artist','singer','pilot','scientist','firefighter','astronaut','age'].includes(x.en)));
+ for(const word of ['boy','girl','man','woman','baby','name','birthday','address','phone number','email','country','city','street'])assert(t.items.some(x=>x.en===word));
+ const p=C.find(t=>t.type==='grammar'&&t.sortNo===18);assert.deepEqual(p.options,["'s",'s','is']);assert(p.items.every(x=>x.answer==="'s"&&x.joinBefore&&!x.tr.includes('ların')&&!x.tr.includes('lerin')));
+});
+test('item choices control both balloon and truth-card generation and word colors stay fixed',async()=>{
+ const {buildQuestions,sentence}=await core();const p=C.find(t=>t.type==='grammar'&&t.sortNo===7),colors=new Map();
+ for(let k=0;k<20;k++){for(const q of buildQuestions(p,'balon')){const item=p.items.find(x=>x.before===q.before&&x.after===q.after&&x.tr===q.tr);assert.deepEqual(q.options.map(o=>o.id).sort(),item.options.slice().sort());for(const o of q.options){if(colors.has(o.id))assert.equal(o.palette,colors.get(o.id));colors.set(o.id,o.palette);}}for(const q of buildQuestions(p,'dy')){const item=p.items.find(x=>x.before===q.before&&x.after===q.after&&x.tr===q.tr);assert(item.options.includes(q.shown));}}
+ const s=C.find(t=>t.type==='grammar'&&t.sortNo===18);for(const item of s.items){assert(sentence(item,item.answer).includes(item.before+"'s"));assert(!/\s+'s/.test(sentence(item,item.answer)));}
+});
