@@ -1705,7 +1705,7 @@ async function handle(req: Request, proxy: any = null) {
   if (op === "sosyalOgrencilerGetir") {
     const deny = await requireStudent(a, ""); if (deny) return deny;
     const [{ data: st }, { data: yo }, { data: bd }, { data: days }] = await Promise.all([
-      supabase.from("students").select("id,username,class_no,points,xp,gold,streak,profile,teacher_id").eq("status", "approved").neq("id",DEMO_ID).order("username"),
+      supabase.from("students").select("id,username,class_no,points,xp,gold,streak,profile,teacher_id").eq("status", "approved").is("frozen_at", null).neq("id",DEMO_ID).order("username"),
       supabase.from("extra_data").select("student_id,totalXp:value->totalXp,karakter:value->karakter,takili:value->takili,seviye:value->seviye,lig:value->lig,profilKrk:value->profilKrk").eq("key_name", "yo"),
       supabase.from("badges").select("name,required_points,emoji,student_name").order("id"),
       supabase.rpc("dm_public_login_day_totals")
