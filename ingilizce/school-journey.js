@@ -146,7 +146,7 @@ function decorateQuestion(){
  let header=modal.querySelector('.dm-school-lesson-head');
  if(!header){
   header=document.createElement('header');header.className='dm-school-lesson-head';
-  header.innerHTML='<button type="button" class="dm-school-back" data-school-exit aria-label="Macera haritasına dön">‹</button>'+
+  header.innerHTML='<button type="button" class="dm-school-back" data-school-exit aria-label="Macera haritasına dön">✕</button>'+
    '<div class="dm-school-lesson-title"><small>'+esc(lastContext.grade)+'. Sınıf · '+esc(lastContext.unit)+'. Ünite · '+esc(lastContext.part)+'. Durak</small><strong>Macera Parkuru</strong></div>'+
    '<button type="button" data-school-theme class="dm-school-head-theme" aria-label="Görünümü değiştir">'+(theme()==='night'?'☀️':'🌙')+'</button>';
   modal.prepend(header);
@@ -160,12 +160,18 @@ function decorateQuestion(){
   movement.querySelector('[data-school-previous]').onclick=()=>{const review=modal.querySelector('#bzInceleme');if(review&&review.style.display!=='none')review.querySelector('#bzIncOnce:not(:disabled)')?.click();else modal.querySelector('#bzGeriSoru:not(:disabled)')?.click();};
   movement.querySelector('[data-school-next]').onclick=()=>{const review=modal.querySelector('#bzInceleme');if(review&&review.style.display!=='none')review.querySelector('#bzIncSonra:not(:disabled)')?.click();else modal.querySelector('#bzAlan .bz-btn.mor:not(:disabled)')?.click();};
  }
+ // V4 single top bar: close · progress · energy · feather. Only existing nodes
+ // move (their ids and click handlers stay intact); gold is hidden by CSS.
+ const freshProgress=modal.querySelector('#bzAlan>.rq-progress');
+ if(freshProgress){header.querySelectorAll('.rq-progress').forEach(x=>{if(x!==freshProgress)x.remove();});header.querySelector('.dm-school-back')?.after(freshProgress);}
+ const wallet=modal.querySelector(':scope>.rq-hud');
+ if(wallet)header.append(wallet);
  const review=modal.querySelector('#bzInceleme'),reviewVisible=!!(review&&review.style.display!=='none');
  movement.querySelector('[data-school-previous]').disabled=reviewVisible?!review.querySelector('#bzIncOnce:not(:disabled)'):!modal.querySelector('#bzGeriSoru:not(:disabled)');
  movement.querySelector('[data-school-next]').disabled=reviewVisible?!review.querySelector('#bzIncSonra:not(:disabled)'):!modal.querySelector('#bzAlan .bz-geri-bildirim ~ .bz-btn.mor:not(:disabled),#bzAlan .bz-btn.mor:not(:disabled)');
  const area=modal.querySelector('#bzAlan'),board=area?.querySelector('.sp-question-board');
  if(!area)return;
- const progress=area.querySelector('.rq-progress span')?.textContent||'';
+ const progress=modal.querySelector('.rq-progress span')?.textContent||'';
  const title=area.querySelector('.bz-etiket')?.textContent||'';
  const signature=progress+'|'+title;
  if(area.dataset.dmSchoolQuestion!==signature){
@@ -243,6 +249,10 @@ if(!document.getElementById('dm-school-adventure-v2-css')){
 }
 if(!document.getElementById('dm-parkur-history-ui-css')){
  const link=document.createElement('link');link.id='dm-parkur-history-ui-css';link.rel='stylesheet';link.href='parkur-question-parity.css?v=20261017-lesson-2';document.head.append(link);
+}
+// Loaded last so the calm single-frame question design wins over older layers.
+if(!document.getElementById('dm-school-question-v4-css')){
+ const link=document.createElement('link');link.id='dm-school-question-v4-css';link.rel='stylesheet';link.href='school-question-v4.css?v=20261021-1';document.head.append(link);
 }
 window.dmSchoolJourney={open,preview,theme,themeSet,group,parse,launchStep};
 })();

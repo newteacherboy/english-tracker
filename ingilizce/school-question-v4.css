@@ -1,0 +1,355 @@
+/* Okul Yolum · Macera Parkuru soru paneli v4 ("sade tek çerçeve").
+   Yalnızca görünüm katmanıdır: soru üretimi, cevap doğrulama, enerji ve ödül
+   akışına dokunmaz. Diğer parkur stillerinden sonra yüklenir ve onları ezer.
+   Üst çubuk: kapat · ilerleme · enerji · tüy. Altın ve gezinme satırı soru
+   sırasında gizlenir; inceleme modu açıldığında gezinme yeniden görünür. */
+
+html body #bzPerde#bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game{
+ --q-bg:#fbf7f2;--q-ink:#2a2433;--q-muted:#5e5868;--q-card:#ffffff;--q-line:#eae2d8;--q-track:#ede4da;
+ --q-accent:#5b34c9;--q-accent-soft:#f1ecfd;--q-accent-line:#8b6ce8;
+ --q-good:#2e9c8c;--q-good-shadow:#1e7a6d;--q-good-soft:#e3f5ef;--q-good-ink:#155c52;
+ --q-bad:#e0564b;--q-bad-shadow:#b2392e;--q-bad-soft:#fce8e5;--q-bad-ink:#8e2a21;
+ --q-cta:#f2a65a;--q-cta-shadow:#c97d35;--q-cta-ink:#3a1f06;
+ --q-energy:#8a5a00;--q-feather:#1e7a6d;
+ --q-listen:#2a8fa8;--q-listen-shadow:#1e6f86;--q-listen-ring:#d6eef2;--q-mascot-bg:#e7f3ef;
+ --q-ico-speaker:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M11 5 6 9H3v6h3l5 4z'/%3E%3Cpath d='M15.5 8.5a5 5 0 0 1 0 7'/%3E%3Cpath d='M18.5 5.5a9 9 0 0 1 0 13'/%3E%3C/svg%3E");
+ --q-ico-history:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 12a9 9 0 1 0 3-6.7L3 8'/%3E%3Cpath d='M3 3v5h5'/%3E%3Cpath d='M12 7v5l3 2'/%3E%3C/svg%3E");
+ background:var(--q-bg)!important;color:var(--q-ink)!important;
+ gap:0!important;align-items:center!important;
+ padding:max(10px,env(safe-area-inset-top,0px)) 16px max(14px,env(safe-area-inset-bottom,0px))!important;
+ font-family:Nunito,system-ui,sans-serif!important;
+}
+html body #bzPerde#bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game[data-school-appearance="night"]{
+ --q-bg:#1b1824;--q-ink:#f3eff8;--q-muted:#b4adc2;--q-card:#24202f;--q-line:#3a3448;--q-track:#2f2a3d;
+ --q-accent:#c9b6ff;--q-accent-soft:#3a3350;--q-accent-line:#9c85f0;
+ --q-good:#4fc3b0;--q-good-shadow:#2e8f80;--q-good-soft:#1f3b37;--q-good-ink:#c4f2e8;
+ --q-bad:#f07a6f;--q-bad-shadow:#b9483e;--q-bad-soft:#43262a;--q-bad-ink:#ffd6d1;
+ --q-cta:#ffc46b;--q-cta-shadow:#c9923f;--q-cta-ink:#2a1a00;
+ --q-energy:#ffd27a;--q-feather:#7edccb;
+ --q-listen:#3aa6c0;--q-listen-shadow:#257a8f;--q-listen-ring:#2b4650;--q-mascot-bg:#2a2636;
+ background:var(--q-bg)!important;
+}
+
+/* ---------- Üst çubuk: kapat · ilerleme · enerji · tüy ---------- */
+html body #bzPerde#bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game>.dm-school-lesson-head{
+ flex:0 0 auto!important;display:flex!important;align-items:center!important;gap:12px!important;
+ width:min(100%,640px)!important;min-height:48px!important;height:auto!important;margin:0 0 4px!important;
+ padding:0 46px 0 0!important;color:var(--q-ink)!important;
+}
+html body #bzPerde#bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game>.dm-school-lesson-head :is(.dm-school-lesson-title,.dm-school-head-theme){display:none!important}
+html body #bzPerde#bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game>.dm-school-lesson-head .dm-school-back{
+ order:0;flex:0 0 40px!important;width:40px!important;min-width:40px!important;height:40px!important;
+ border:0!important;border-radius:50%!important;background:transparent!important;box-shadow:none!important;
+ color:var(--q-muted)!important;font:900 22px/1 Nunito,system-ui,sans-serif!important;
+}
+html body #bzPerde#bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game .dm-school-lesson-head .rq-progress{
+ order:1;flex:1 1 auto!important;display:flex!important;align-items:center!important;gap:8px!important;
+ min-width:0!important;min-height:0!important;height:auto!important;margin:0!important;padding:0!important;
+ background:none!important;border:0!important;box-shadow:none!important;color:var(--q-muted)!important;
+}
+html body #bzPerde#bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game .dm-school-lesson-head .rq-progress>span{
+ position:absolute!important;width:1px!important;height:1px!important;overflow:hidden!important;clip:rect(0 0 0 0)!important;white-space:nowrap!important;
+}
+html body #bzPerde#bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game .dm-school-lesson-head .rq-progress>div{
+ flex:1 1 auto!important;height:10px!important;min-height:10px!important;border-radius:6px!important;
+ background:var(--q-track)!important;overflow:hidden!important;margin:0!important;border:0!important;box-shadow:none!important;
+}
+html body #bzPerde#bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game .dm-school-lesson-head .rq-progress i{
+ display:block!important;height:100%!important;border-radius:6px!important;background:var(--q-good)!important;
+ box-shadow:none!important;transition:width .45s cubic-bezier(.2,.8,.2,1)!important;
+}
+html body #bzPerde#bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game .dm-school-lesson-head .rq-close{display:none!important}
+html body #bzPerde#bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game .dm-school-lesson-head .rq-review{
+ flex:0 0 32px!important;width:32px!important;min-width:32px!important;height:32px!important;padding:0!important;
+ border:0!important;border-radius:10px!important;background:var(--q-track)!important;box-shadow:none!important;
+ color:transparent!important;font-size:0!important;position:relative!important;
+}
+html body #bzPerde#bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game .dm-school-lesson-head .rq-review::after{
+ content:'';position:absolute;inset:7px;background:var(--q-muted);-webkit-mask:var(--q-ico-history) center/contain no-repeat;mask:var(--q-ico-history) center/contain no-repeat;
+}
+html body #bzPerde#bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game .dm-school-lesson-head .rq-review:disabled{display:none!important}
+html body #bzPerde#bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game .dm-school-lesson-head .rq-hud{
+ order:2;flex:0 0 auto!important;display:flex!important;align-items:center!important;gap:10px!important;
+ width:auto!important;max-width:none!important;height:auto!important;min-height:0!important;margin:0!important;padding:0!important;
+ background:none!important;border:0!important;box-shadow:none!important;position:static!important;grid-template-columns:none!important;
+}
+html body #bzPerde#bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game .dm-school-lesson-head .rq-hud .rq-papi,
+html body #bzPerde#bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game .dm-school-lesson-head .rq-hud .rq-wallet[aria-label="Altın"],
+html body #bzPerde#bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game .dm-school-lesson-head .rq-hud .rq-wallet small{display:none!important}
+html body #bzPerde#bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game .dm-school-lesson-head .rq-hud .rq-wallet{
+ display:flex!important;align-items:center!important;gap:2px!important;min-width:0!important;min-height:0!important;height:auto!important;
+ padding:0!important;margin:0!important;border:0!important;border-radius:0!important;background:none!important;box-shadow:none!important;
+}
+html body #bzPerde#bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game .dm-school-lesson-head .rq-hud .rq-wallet [class^="rq-icon-"]{width:20px!important;height:22px!important;flex:0 0 20px!important}
+html body #bzPerde#bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game .dm-school-lesson-head .rq-hud .rq-wallet b{
+ font:900 16px/1 Nunito,system-ui,sans-serif!important;color:var(--q-ink)!important;-webkit-text-fill-color:currentColor!important;
+}
+html body #bzPerde#bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game .dm-school-lesson-head .rq-hud .rq-wallet[aria-label="Enerji"] b{color:var(--q-energy)!important}
+html body #bzPerde#bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game .dm-school-lesson-head .rq-hud .rq-wallet[aria-label="Tüy kombosu"] b{color:var(--q-feather)!important}
+/* Gezinme satırı yalnızca inceleme modunda görünür (yanıtlananlar yine incelenebilir). */
+html body #bzPerde#bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game>.dm-school-question-nav{display:none!important}
+html body #bzPerde#bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game:has(#bzInceleme:not([style*="none"]))>.dm-school-question-nav{
+ display:flex!important;width:min(100%,640px)!important;margin:0 0 8px!important;color:var(--q-muted)!important;
+}
+html body #bzPerde#bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game>.rq-hud{display:none!important}
+/* Müzik düğmesi soru sırasında üst çubuğun sağ ucunda küçük bir ikon olur; alttaki ana düğmeyi kapatmaz. */
+html body:has(#bzPerde.dm-school-game>.dm-school-lesson-head) #dmMusicToggle{
+ top:calc(max(10px,env(safe-area-inset-top,0px)) + 4px)!important;bottom:auto!important;left:auto!important;right:12px!important;
+ width:40px!important;min-width:40px!important;max-width:40px!important;height:40px!important;min-height:40px!important;max-height:40px!important;
+ padding:0!important;border-radius:50%!important;font-size:0!important;line-height:0!important;overflow:hidden!important;
+ display:grid!important;place-items:center!important;
+}
+html body:has(#bzPerde.dm-school-game>.dm-school-lesson-head) #dmMusicToggle::before{content:'♫';font:900 18px/1 Nunito,system-ui,sans-serif}
+html body:has(#bzPerde.dm-school-game>.dm-school-lesson-head) #dmMusicToggle[aria-pressed="false"]{opacity:.5!important}
+
+/* ---------- Soru alanı: çerçevesiz, tek sütun ---------- */
+html body #bzPerde#bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game #bzAlan{
+ flex:1 1 auto!important;display:flex!important;flex-direction:column!important;align-items:stretch!important;justify-content:flex-start!important;
+ width:min(100%,640px)!important;max-width:640px!important;min-height:0!important;max-height:none!important;
+ margin:0!important;padding:4px 2px 2px!important;gap:14px!important;
+ background:transparent!important;border:0!important;border-radius:0!important;box-shadow:none!important;
+ overflow-x:hidden!important;overflow-y:auto!important;color:var(--q-ink)!important;
+}
+html body #bzPerde#bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game #bzAlan .sp-question-board{
+ display:grid!important;grid-template-columns:64px minmax(0,1fr)!important;grid-auto-rows:min-content!important;
+ align-items:center!important;align-content:center!important;gap:2px 14px!important;
+ flex:0 0 auto!important;width:100%!important;min-height:0!important;height:auto!important;max-height:none!important;
+ margin:0!important;padding:14px 0 6px!important;background:none!important;border:0!important;border-radius:0!important;box-shadow:none!important;
+}
+html body #bzPerde#bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game #bzAlan .sp-question-board::before{
+ content:''!important;display:block!important;position:static!important;grid-column:1!important;grid-row:1/span 6!important;
+ width:64px!important;height:64px!important;max-height:64px!important;border-radius:50%!important;align-self:center!important;
+ background:var(--dm-school-question-art) center 75%/88% no-repeat,var(--q-mascot-bg)!important;filter:none!important;
+}
+html body #bzPerde#bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game #bzAlan .sp-question-board>*{grid-column:2!important;max-width:100%!important;margin:0!important}
+html body #bzPerde#bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game #bzAlan .bz-etiket{
+ display:block!important;justify-self:start!important;width:auto!important;margin:0!important;padding:0!important;
+ background:none!important;border:0!important;border-radius:0!important;box-shadow:none!important;
+ color:var(--q-muted)!important;-webkit-text-fill-color:currentColor!important;
+ font:800 12px/1.3 Nunito,system-ui,sans-serif!important;letter-spacing:.06em!important;text-transform:uppercase!important;text-align:left!important;
+}
+html body #bzPerde#bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game #bzAlan .bz-soru{
+ margin:0!important;padding:0!important;background:none!important;border:0!important;border-radius:0!important;box-shadow:none!important;
+ color:var(--q-ink)!important;-webkit-text-fill-color:currentColor!important;
+ font:900 clamp(23px,7.4vw,32px)/1.15 Nunito,system-ui,sans-serif!important;text-align:left!important;overflow-wrap:anywhere;
+}
+html body #bzPerde#bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game #bzAlan .bz-tr-anlam{
+ margin:2px 0 0!important;padding:0!important;background:none!important;border:0!important;border-radius:0!important;box-shadow:none!important;
+ color:var(--q-accent)!important;-webkit-text-fill-color:currentColor!important;font:800 17px/1.25 Nunito,system-ui,sans-serif!important;text-align:left!important;
+}
+html body #bzPerde#bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game #bzAlan .sp-question-board .dm-school-teach-message{
+ margin:0!important;padding:0!important;background:none!important;border:0!important;border-radius:0!important;box-shadow:none!important;text-align:left!important;
+}
+html body #bzPerde#bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game #bzAlan .dm-school-teach-message h2{
+ margin:0!important;color:var(--q-ink)!important;font:900 clamp(23px,7vw,30px)/1.15 Nunito,system-ui,sans-serif!important;
+}
+html body #bzPerde#bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game #bzAlan .dm-school-teach-message p{
+ margin:3px 0 0!important;color:var(--q-muted)!important;opacity:1!important;font:700 14px/1.35 Nunito,system-ui,sans-serif!important;
+}
+
+/* ---------- Dinle ve öğren: tek kart içinde liste ---------- */
+html body #bzPerde#bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game #bzAlan .dm-school-words{
+ display:flex!important;flex-direction:column!important;gap:0!important;flex:0 0 auto!important;margin:0!important;
+ padding:2px 16px!important;border-radius:20px!important;background:var(--q-card)!important;box-shadow:0 1px 2px #2a24330f!important;
+}
+html body #bzPerde#bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game #bzAlan .dm-school-word{
+ display:flex!important;flex-direction:row!important;align-items:center!important;justify-content:space-between!important;gap:12px!important;
+ width:100%!important;min-height:66px!important;padding:12px 0!important;margin:0!important;
+ border:0!important;border-bottom:1px solid var(--q-line)!important;border-radius:0!important;background:none!important;box-shadow:none!important;
+ color:var(--q-ink)!important;text-align:left!important;
+}
+html body #bzPerde#bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game #bzAlan .dm-school-word:last-child{border-bottom:0!important}
+html body #bzPerde#bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game #bzAlan .dm-school-word strong{font:800 19px/1.2 Nunito,system-ui,sans-serif!important;color:var(--q-ink)!important}
+html body #bzPerde#bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game #bzAlan .dm-school-word small{font:800 15px/1.2 Nunito,system-ui,sans-serif!important;color:var(--q-accent)!important;opacity:1!important}
+html body #bzPerde#bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game #bzAlan .dm-school-word-listen{
+ flex:0 0 44px!important;width:44px!important;height:44px!important;border-radius:50%!important;background:var(--q-accent-soft)!important;
+ font-size:0!important;color:transparent!important;position:relative!important;
+}
+html body #bzPerde#bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game #bzAlan .dm-school-word-listen::after{
+ content:'';position:absolute;inset:12px;background:var(--q-accent);-webkit-mask:var(--q-ico-speaker) center/contain no-repeat;mask:var(--q-ico-speaker) center/contain no-repeat;
+}
+
+/* ---------- Şıklar: tam genişlik, tek sütun ---------- */
+html body #bzPerde#bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game #bzAlan :is(.bz-secenekler,.rq-speech-fallback){
+ display:flex!important;flex-direction:column!important;gap:12px!important;flex:0 0 auto!important;margin:0!important;grid-template-columns:none!important;
+}
+html body #bzPerde#bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game #bzAlan .rq-speech-fallback[hidden]{display:none!important}
+html body #bzPerde#bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game #bzAlan :is(.bz-sec,.dm-match-option){
+ width:100%!important;min-height:58px!important;margin:0!important;padding:13px 18px!important;
+ display:flex!important;align-items:center!important;justify-content:flex-start!important;text-align:left!important;
+ border:2px solid var(--q-line)!important;border-radius:18px!important;background:var(--q-card)!important;
+ box-shadow:0 3px 0 var(--q-line)!important;color:var(--q-ink)!important;-webkit-text-fill-color:currentColor!important;
+ font:800 18px/1.25 Nunito,system-ui,sans-serif!important;opacity:1!important;cursor:pointer;
+ transition:transform .08s ease,box-shadow .08s ease,background-color .15s ease!important;
+}
+html body #bzPerde#bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game #bzAlan :is(.bz-sec,.dm-match-option):active:not(:disabled){transform:translateY(2px)!important;box-shadow:0 1px 0 var(--q-line)!important}
+html body #bzPerde#bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game #bzAlan :is(.bz-sec,.dm-match-option):disabled:not(.dogru):not(.yanlis):not(.dm-right){opacity:.55!important}
+html body #bzPerde#bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game #bzAlan :is(.bz-sec.dogru,.bz-sec.dogru:disabled){
+ background:var(--q-good-soft)!important;border-color:var(--q-good)!important;box-shadow:0 3px 0 var(--q-good)!important;color:var(--q-good-ink)!important;opacity:1!important;
+}
+html body #bzPerde#bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game #bzAlan .bz-sec.yanlis{
+ background:var(--q-bad-soft)!important;border-color:var(--q-bad)!important;box-shadow:0 3px 0 var(--q-bad)!important;color:var(--q-bad-ink)!important;opacity:1!important;
+ animation:dmq-shake .3s ease!important;
+}
+
+/* ---------- Anlamları eşleştir ---------- */
+html body #bzPerde#bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game #bzAlan .dm-match-grid{
+ display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:12px!important;flex:0 0 auto!important;margin:0!important;
+}
+html body #bzPerde#bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game #bzAlan :is(#bzMatchEn,#bzMatchTr){display:flex!important;flex-direction:column!important;gap:12px!important}
+html body #bzPerde#bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game #bzAlan .dm-match-option{justify-content:center!important;text-align:center!important;min-height:62px!important;font-size:17px!important;padding:10px!important}
+html body #bzPerde#bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game #bzAlan #bzMatchStatus{
+ margin:0!important;text-align:center!important;color:var(--q-muted)!important;font:800 14px/1.3 Nunito,system-ui,sans-serif!important;min-height:18px;
+}
+
+/* ---------- Dinle ve seç / Dinle ve söyle ---------- */
+html body #bzPerde#bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game #bzAlan .bz-ses.rq-listen{
+ display:flex!important;flex-direction:column!important;align-items:center!important;gap:8px!important;flex:0 0 auto!important;
+ margin:6px auto 2px!important;padding:0!important;background:none!important;border:0!important;box-shadow:none!important;min-height:0!important;
+}
+html body #bzPerde#bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game #bzAlan .rq-listen::before,
+html body #bzPerde#bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game #bzAlan .rq-listen::after{display:none!important;content:none!important}
+html body #bzPerde#bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game #bzAlan .rq-listen>.rq-speaker-disc{
+ position:relative!important;display:block!important;width:92px!important;height:92px!important;border-radius:50%!important;
+ border:8px solid var(--q-listen-ring)!important;background:var(--q-listen)!important;box-shadow:0 5px 0 var(--q-listen-shadow)!important;
+}
+html body #bzPerde#bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game #bzAlan .rq-listen>.rq-speaker-disc::after{
+ content:''!important;position:absolute!important;inset:22px!important;background:#fff!important;
+ -webkit-mask:var(--q-ico-speaker) center/contain no-repeat!important;mask:var(--q-ico-speaker) center/contain no-repeat!important;
+}
+html body #bzPerde#bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game #bzAlan .rq-listen>small{
+ color:var(--q-muted)!important;-webkit-text-fill-color:currentColor!important;font:800 14px/1.2 Nunito,system-ui,sans-serif!important;
+}
+html body #bzPerde#bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game #bzAlan .rq-microphone{
+ display:block!important;flex:0 0 auto!important;align-self:center!important;margin:12px auto 0!important;
+ width:108px!important;height:108px!important;border-radius:50%!important;border:8px solid var(--q-listen-ring)!important;
+ background:var(--q-listen)!important;box-shadow:0 6px 0 var(--q-listen-shadow)!important;color:#fff!important;font-size:40px!important;
+}
+html body #bzPerde#bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game #bzAlan .rq-microphone.listening{animation:dmq-pulse 1.1s ease-in-out infinite!important}
+html body #bzPerde#bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game #bzAlan .rq-mic-status{
+ margin:0!important;text-align:center!important;color:var(--q-muted)!important;font:700 15px/1.35 Nunito,system-ui,sans-serif!important;
+}
+
+/* ---------- Kelime / ifade sıralama ve harflerle kurma ---------- */
+html body #bzPerde#bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game #bzAlan .rq-built{
+ display:flex!important;flex-wrap:wrap!important;align-items:center!important;gap:8px!important;flex:0 0 auto!important;
+ min-height:66px!important;margin:6px 0 0!important;padding:6px 0!important;
+ background:none!important;border:0!important;border-bottom:2px solid var(--q-track)!important;border-radius:0!important;box-shadow:none!important;
+}
+html body #bzPerde#bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game #bzAlan .rq-token-correct{
+ display:inline-flex!important;align-items:center!important;height:50px!important;padding:0 16px!important;margin:0!important;
+ border:2px solid var(--q-accent-line)!important;border-radius:14px!important;background:var(--q-accent-soft)!important;box-shadow:0 3px 0 var(--q-accent-line)!important;
+ color:var(--q-accent)!important;font:900 20px/1 Nunito,system-ui,sans-serif!important;text-transform:none!important;
+ animation:dmq-pop .18s ease-out;
+}
+html body #bzPerde#bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game #bzAlan :is(.rq-token-pool,.bz-harfler){
+ display:flex!important;flex-wrap:wrap!important;justify-content:center!important;gap:10px!important;flex:0 0 auto!important;margin:18px 0 0!important;
+ background:none!important;border:0!important;padding:0!important;
+}
+html body #bzPerde#bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game #bzAlan :is(.rq-token-pool,.bz-harfler) .bz-cip2{
+ min-width:52px!important;height:54px!important;padding:0 16px!important;margin:0!important;
+ border:2px solid var(--q-line)!important;border-radius:14px!important;background:var(--q-card)!important;box-shadow:0 3px 0 var(--q-line)!important;
+ color:var(--q-ink)!important;-webkit-text-fill-color:currentColor!important;font:900 21px/1 Nunito,system-ui,sans-serif!important;text-transform:none!important;
+}
+html body #bzPerde#bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game #bzAlan :is(.rq-token-pool,.bz-harfler) .bz-cip2:active:not(:disabled){transform:translateY(2px)!important;box-shadow:0 1px 0 var(--q-line)!important}
+html body #bzPerde#bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game #bzAlan :is(.rq-token-pool .bz-cip2:disabled,.bz-harfler .bz-cip2.bos){
+ background:var(--q-track)!important;border-color:transparent!important;box-shadow:none!important;color:transparent!important;-webkit-text-fill-color:transparent!important;opacity:1!important;
+}
+html body #bzPerde#bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game #bzAlan :is(.rq-token-pool,.bz-harfler) .bz-cip2:is(.yanlis,.dm-wrong){
+ background:var(--q-bad-soft)!important;border-color:var(--q-bad)!important;box-shadow:0 3px 0 var(--q-bad)!important;color:var(--q-bad-ink)!important;animation:dmq-shake .3s ease!important;
+}
+
+/* ---------- Eksik harfi tamamla ---------- */
+html body #bzPerde#bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game #bzAlan .bz-slotlar{
+ display:flex!important;flex-wrap:wrap!important;justify-content:center!important;gap:6px!important;flex:0 0 auto!important;margin:18px 0 0!important;
+}
+html body #bzPerde#bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game #bzAlan .bz-slot{
+ width:clamp(30px,9vw,42px)!important;height:52px!important;margin:0!important;padding:0!important;display:grid!important;place-items:center!important;
+ border-radius:12px!important;color:var(--q-ink)!important;-webkit-text-fill-color:currentColor!important;
+ font:900 25px/1 Nunito,system-ui,sans-serif!important;text-transform:none!important;box-shadow:none!important;
+}
+html body #bzPerde#bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game #bzAlan .bz-slot.sabit{background:none!important;border:0!important}
+html body #bzPerde#bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game #bzAlan button.bz-slot{background:var(--q-card)!important;border:2px dashed var(--q-accent-line)!important}
+html body #bzPerde#bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game #bzAlan button.bz-slot.dolu{
+ border-style:solid!important;background:var(--q-accent-soft)!important;color:var(--q-accent)!important;
+}
+html body #bzPerde#bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game #bzAlan .bz-harfler .bz-cip2{width:58px!important;min-width:58px!important;height:58px!important;padding:0!important}
+
+/* ---------- Ana düğme her zaman en altta ---------- */
+html body #bzPerde#bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game #bzAlan .bz-btn{
+ flex:0 0 auto!important;width:100%!important;min-height:56px!important;margin:0!important;padding:12px 16px!important;
+ border:0!important;border-radius:18px!important;background:var(--q-cta)!important;box-shadow:0 4px 0 var(--q-cta-shadow)!important;
+ color:var(--q-cta-ink)!important;-webkit-text-fill-color:currentColor!important;font:900 18px/1.2 Nunito,system-ui,sans-serif!important;text-shadow:none!important;
+ transition:transform .08s ease,box-shadow .08s ease!important;
+}
+html body #bzPerde#bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game #bzAlan .bz-btn:active:not(:disabled){transform:translateY(3px)!important;box-shadow:0 1px 0 var(--q-cta-shadow)!important}
+html body #bzPerde#bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game #bzAlan .bz-btn:disabled{
+ background:var(--q-track)!important;box-shadow:none!important;color:var(--q-muted)!important;opacity:1!important;
+}
+html body #bzPerde#bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game #bzAlan>.bz-btn:not(.bz-geri-bildirim ~ .bz-btn),
+html body #bzPerde#bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game #bzAlan>.bz-geri-bildirim{margin-top:auto!important}
+html body #bzPerde#bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game #bzAlan>.bz-btn+.bz-btn{margin-top:10px!important}
+/* Cevaplandıktan sonra eski "Kontrol et" kalkar; yalnızca geri bildirim ve Devam kalır. */
+html body #bzPerde#bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game #bzAlan:has(>.bz-geri-bildirim)>.bz-btn:not(.bz-geri-bildirim ~ .bz-btn){display:none!important}
+
+/* ---------- Geri bildirim: altta renkli kart ---------- */
+html body #bzPerde#bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game #bzAlan .bz-geri-bildirim{
+ flex:0 0 auto!important;padding:16px 18px!important;border:0!important;border-radius:20px!important;box-shadow:none!important;
+ font:900 17px/1.4 Nunito,system-ui,sans-serif!important;text-align:left!important;animation:dmq-rise .22s ease-out!important;
+}
+html body #bzPerde#bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game #bzAlan .bz-geri-bildirim.iyi{background:var(--q-good-soft)!important;color:var(--q-good-ink)!important}
+html body #bzPerde#bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game #bzAlan .bz-geri-bildirim.kotu{background:var(--q-bad-soft)!important;color:var(--q-bad-ink)!important}
+html body #bzPerde#bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game #bzAlan .bz-geri-bildirim.iyi ~ .bz-btn.mor{
+ background:var(--q-good)!important;box-shadow:0 4px 0 var(--q-good-shadow)!important;color:#fff!important;
+}
+html body #bzPerde#bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game #bzAlan .bz-geri-bildirim.kotu ~ .bz-btn.mor{
+ background:var(--q-bad)!important;box-shadow:0 4px 0 var(--q-bad-shadow)!important;color:#fff!important;
+}
+html body #bzPerde#bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game[data-school-appearance="night"] #bzAlan .bz-geri-bildirim:is(.iyi,.kotu) ~ .bz-btn.mor{color:#1b1824!important}
+
+/* ---------- İnceleme ve kelime kartları ---------- */
+html body #bzPerde#bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game #bzInceleme:not([style*="none"]){
+ width:min(100%,640px)!important;max-width:640px!important;background:var(--q-card)!important;border:0!important;color:var(--q-ink)!important;
+}
+html body #bzPerde#bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game #bzAlan .dm-final-card{
+ background:var(--q-card)!important;border:0!important;border-radius:24px!important;box-shadow:0 10px 28px #5b34c91a!important;color:var(--q-ink)!important;
+}
+
+/* route-questions.css bu durumları "route-interactions" katmanında !important ile
+   verir; katmanlı !important katmansızı yendiği için aynı katmanda, daha özgül
+   seçicilerle eziyoruz. */
+@layer route-interactions {
+ html body #bzPerde#bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game #bzAlan .dm-match-option.selected{
+  background:var(--q-accent-soft)!important;border:2px solid var(--q-accent-line)!important;box-shadow:0 3px 0 var(--q-accent-line)!important;color:var(--q-accent)!important;opacity:1!important;
+ }
+ html body #bzPerde#bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game #bzAlan .dm-match-option.dm-right{
+  background:var(--q-track)!important;border:2px solid transparent!important;box-shadow:none!important;color:var(--q-muted)!important;opacity:.6!important;
+ }
+ html body #bzPerde#bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game #bzAlan :is(.dm-match-option.dm-wrong,.bz-cip2.dm-wrong,.bz-slot.dm-wrong){
+  background:var(--q-bad-soft)!important;border:2px solid var(--q-bad)!important;box-shadow:0 3px 0 var(--q-bad)!important;color:var(--q-bad-ink)!important;opacity:1!important;
+ }
+ html body #bzPerde#bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game #bzAlan .bz-slot.dm-right{
+  background:var(--q-good-soft)!important;border:2px solid var(--q-good)!important;box-shadow:none!important;color:var(--q-good-ink)!important;opacity:1!important;
+ }
+}
+
+@keyframes dmq-shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+@keyframes dmq-pop{0%{transform:scale(.85);opacity:.4}100%{transform:scale(1);opacity:1}}
+@keyframes dmq-rise{0%{transform:translateY(12px);opacity:0}100%{transform:translateY(0);opacity:1}}
+@keyframes dmq-pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+
+@media(max-height:700px){
+ html body #bzPerde#bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game #bzAlan{gap:10px!important}
+ html body #bzPerde#bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game #bzAlan .sp-question-board{grid-template-columns:52px minmax(0,1fr)!important;padding:6px 0 2px!important}
+ html body #bzPerde#bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game #bzAlan .sp-question-board::before{width:52px!important;height:52px!important}
+ html body #bzPerde#bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game #bzAlan .bz-soru{font-size:clamp(20px,6.4vw,26px)!important}
+ html body #bzPerde#bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game #bzAlan :is(.bz-sec,.dm-match-option){min-height:48px!important;padding:9px 14px!important;font-size:16px!important}
+ html body #bzPerde#bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game #bzAlan .dm-school-word{min-height:52px!important;padding:8px 0!important}
+ html body #bzPerde#bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game #bzAlan .rq-listen>.rq-speaker-disc{width:72px!important;height:72px!important;border-width:6px!important}
+ html body #bzPerde#bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game #bzAlan .rq-listen>.rq-speaker-disc::after{inset:16px!important}
+ html body #bzPerde#bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game #bzAlan .rq-microphone{width:84px!important;height:84px!important;font-size:30px!important}
+ html body #bzPerde#bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game #bzAlan .bz-btn{min-height:50px!important}
+}
+@media(prefers-reduced-motion:reduce){
+ html body #bzPerde#bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game *{animation:none!important;transition:none!important}
+}
