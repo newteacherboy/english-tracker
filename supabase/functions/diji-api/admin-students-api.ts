@@ -37,12 +37,29 @@ export function adminStudentsAPI(db: any, json: any, hashPassword: any, security
         all.push(...(r.data || []));
         if (!r.data || r.data.length < 1000) break;
       }
+      // Mail consent: progress-mail recipient rows (opted in, not unsubscribed) plus the signup checkbox record.
+      const consent = new Map<string,string>();
+      const ids = all.map((s: any) => s.id);
+      for (let i = 0; i < ids.length; i += 200) {
+        const part = ids.slice(i,i+200);
+        const [pref, box] = await Promise.all([
+          db.from('dm_progress_mail_preferences').select('student_id,email,opted_in_at,unsubscribed_at').in('student_id',part),
+          db.from('extra_data').select('student_id,value').eq('key_name','progress_mail_consent_v1').in('student_id',part),
+        ]);
+        if (pref.error || box.error) return json({ok:false,mesaj:'Mail izin bilgisi alınamadı.'},503);
+        for (const b of box.data || []) { const e = String(b.value?.email || '').trim().toLowerCase(); if (e) consent.set(b.student_id + '|' + e, 'var'); }
+        for (const p of pref.data || []) {
+          const k = p.student_id + '|' + String(p.email || '').trim().toLowerCase();
+          if (p.unsubscribed_at) consent.set(k, 'cikti'); else if (p.opted_in_at && consent.get(k) !== 'cikti') consent.set(k, 'var');
+        }
+      }
       const liste = all.map((s: any) => ({
         kullanici: s.username, okul: s.school || '', sinif: s.class_no ?? null, sube: s.branch || '', durum: s.status,
         email: String(s.email || '').trim().toLowerCase(), emailOnayli: !!s.email_verified_at,
         telefon: String(s.phone || '').trim(), kayit: s.created_at,
-      }));
-      return json({ok:true,liste,toplam:liste.length,emailSayisi:liste.filter(x=>x.email).length,telefonSayisi:liste.filter(x=>x.telefon).length});
+        mailIzni: consent.get(s.id + '|' + String(s.email || '').trim().toLowerCase()) || 'yok',
+      })).map((x: any) => x.email ? x : {...x, mailIzni: 'yok'});
+      return json({ok:true,liste,toplam:liste.length,emailSayisi:liste.filter(x=>x.email).length,telefonSayisi:liste.filter(x=>x.telefon).length,izinliSayisi:liste.filter(x=>x.mailIzni==='var').length});
     }
     if (op === 'yoneticiOgrenciSil') {
       if (method !== 'POST') return json({ok:false,mesaj:'POST gerekli.'},405);

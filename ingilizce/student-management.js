@@ -85,8 +85,9 @@
     await list();
   }
   async function openContacts(){
-    const m=modal('Yönetici · Üye iletişim listesi',`<p>Tüm öğrenci hesaplarının e-posta ve telefonlarını toplu görebilir, kopyalayabilir veya Excel için indirebilirsin. Bu bilgiler kişisel veridir; yalnızca uygulama işleri için kullan, toplu tanıtım e-postası/SMS'i yalnızca izin veren üyelere gönder.</p><div class="sm-pair"><label>Kullanıcı adı ara<input id="scSearch" type="search" placeholder="Boş = hepsi"></label><label>Sınıf<select id="scClass"><option value="0">Tüm sınıflar</option>${[1,2,3,4,5,6,7,8].map(n=>`<option value="${n}">${n}. sınıf</option>`).join('')}</select></label></div><div class="sm-actions"><button type="button" id="scLoad">Listele</button><button type="button" id="scCopyMail" disabled>📧 E-postaları kopyala</button><button type="button" id="scCopyPhone" disabled>📱 Telefonları kopyala</button><button type="button" id="scCsv" disabled>⬇️ Excel (CSV) indir</button></div><p id="scSummary"></p><div id="scTable" style="overflow:auto"></div>`);
-    let rows=[];
+    const m=modal('Yönetici · Üye iletişim listesi',`<p>Tüm öğrenci hesaplarının e-posta ve telefonlarını toplu görebilir, kopyalayabilir veya Excel için indirebilirsin. Bu bilgiler kişisel veridir; yalnızca uygulama işleri için kullan, toplu e-posta yalnızca kayıtta izin veren (✉️ İzinli) üyelere gönderilmeli.</p><label style="display:flex;align-items:center;gap:8px;font-weight:800"><input id="scOnlyConsent" type="checkbox" style="width:auto;margin:0"> Sadece mail izni olanları göster</label><div class="sm-pair"><label>Kullanıcı adı ara<input id="scSearch" type="search" placeholder="Boş = hepsi"></label><label>Sınıf<select id="scClass"><option value="0">Tüm sınıflar</option>${[1,2,3,4,5,6,7,8].map(n=>`<option value="${n}">${n}. sınıf</option>`).join('')}</select></label></div><div class="sm-actions"><button type="button" id="scLoad">Listele</button><button type="button" id="scCopyMail" disabled>📧 İzinli e-postaları kopyala</button><button type="button" id="scCopyPhone" disabled>📱 Telefonları kopyala</button><button type="button" id="scCsv" disabled>⬇️ Excel (CSV) indir</button></div><p id="scSummary"></p><div id="scTable" style="overflow:auto"></div>`);
+    let rows=[],allRows=[];
+    const consentLabel=v=>v==='var'?'✉️ İzinli':v==='cikti'?'🚫 Abonelikten çıktı':'— İzin yok';
     const uniq=a=>[...new Set(a.filter(Boolean))];
     async function copy(text,btn,label){
       try{await navigator.clipboard.writeText(text);}catch{const t=document.createElement('textarea');t.value=text;document.body.appendChild(t);t.select();document.execCommand('copy');t.remove();}
@@ -97,19 +98,22 @@
       const r=await request({islem:'yoneticiIletisimListesi',arama:m.$('#scSearch').value.trim(),sinif:Number(m.$('#scClass').value)});
       b.disabled=false;if(!m.p.isConnected)return;
       if(!r.ok){m.message(r.mesaj||'Liste alınamadı.');return;}
-      m.message('');rows=r.liste||[];
-      m.$('#scSummary').textContent=`${r.toplam} öğrenci · ${r.emailSayisi} e-posta · ${r.telefonSayisi} telefon`;
+      m.message('');allRows=r.liste||[];m.$('#scSummary').textContent=`${r.toplam} öğrenci · ${r.emailSayisi} e-posta (${r.izinliSayisi} izinli) · ${r.telefonSayisi} telefon`;render();
+    }
+    function render(){
+      rows=m.$('#scOnlyConsent').checked?allRows.filter(x=>x.mailIzni==='var'):allRows;
       ['#scCopyMail','#scCopyPhone','#scCsv'].forEach(x=>m.$(x).disabled=!rows.length);
-      m.$('#scTable').innerHTML=rows.length?`<table style="width:100%;border-collapse:collapse;font-size:13px"><thead><tr style="text-align:left;border-bottom:2px solid #cde3db"><th style="padding:6px">Kullanıcı</th><th style="padding:6px">Sınıf</th><th style="padding:6px">E-posta</th><th style="padding:6px">Telefon</th></tr></thead><tbody>${rows.map(x=>`<tr style="border-bottom:1px solid #e0e9dd"><td style="padding:6px"><b>${esc(x.kullanici)}</b>${x.okul?`<br><small>${esc(x.okul)}</small>`:''}</td><td style="padding:6px">${esc(x.sinif||'—')}/${esc(x.sube||'—')}</td><td style="padding:6px;word-break:break-all">${x.email?`<a href="mailto:${esc(x.email)}">${esc(x.email)}</a>${x.emailOnayli?' ✓':''}`:'—'}</td><td style="padding:6px;white-space:nowrap">${x.telefon?`<a href="tel:${esc(x.telefon)}">${esc(x.telefon)}</a>`:'—'}</td></tr>`).join('')}</tbody></table><p><small>✓ = e-posta doğrulanmış</small></p>`:'<p>Öğrenci bulunamadı.</p>';
+      m.$('#scTable').innerHTML=rows.length?`<table style="width:100%;border-collapse:collapse;font-size:13px"><thead><tr style="text-align:left;border-bottom:2px solid #cde3db"><th style="padding:6px">Kullanıcı</th><th style="padding:6px">Sınıf</th><th style="padding:6px">E-posta</th><th style="padding:6px">Mail izni</th><th style="padding:6px">Telefon</th></tr></thead><tbody>${rows.map(x=>`<tr style="border-bottom:1px solid #e0e9dd"><td style="padding:6px"><b>${esc(x.kullanici)}</b>${x.okul?`<br><small>${esc(x.okul)}</small>`:''}</td><td style="padding:6px">${esc(x.sinif||'—')}/${esc(x.sube||'—')}</td><td style="padding:6px;word-break:break-all">${x.email?`<a href="mailto:${esc(x.email)}">${esc(x.email)}</a>${x.emailOnayli?' ✓':''}`:'—'}</td><td style="padding:6px;white-space:nowrap">${x.email?consentLabel(x.mailIzni):'—'}</td><td style="padding:6px;white-space:nowrap">${x.telefon?`<a href="tel:${esc(x.telefon)}">${esc(x.telefon)}</a>`:'—'}</td></tr>`).join('')}</tbody></table><p><small>✓ = e-posta doğrulanmış</small></p>`:'<p>Öğrenci bulunamadı.</p>';
     }
     m.$('#scLoad').onclick=load;
+    m.$('#scOnlyConsent').onchange=render;
     m.$('#scSearch').onkeydown=e=>{if(e.key==='Enter')load();};
-    m.$('#scCopyMail').onclick=e=>copy(uniq(rows.map(x=>x.email)).join(', '),e.target,'E-postalar');
+    m.$('#scCopyMail').onclick=e=>copy(uniq(rows.filter(x=>x.mailIzni==='var').map(x=>x.email)).join(', '),e.target,'İzinli e-postalar');
     m.$('#scCopyPhone').onclick=e=>copy(uniq(rows.map(x=>x.telefon)).join('\n'),e.target,'Telefonlar');
     m.$('#scCsv').onclick=()=>{
       const c=v=>{let t=String(v??'');if(/^[=+\-@]/.test(t))t="'"+t;return '"'+t.replace(/"/g,'""')+'"';};
-      const lines=[['Kullanıcı adı','Okul','Sınıf','Şube','Durum','E-posta','E-posta doğrulandı','Telefon','Kayıt tarihi'].map(c).join(';')]
-        .concat(rows.map(x=>[x.kullanici,x.okul,x.sinif,x.sube,x.durum,x.email,x.emailOnayli?'Evet':'Hayır',x.telefon,(x.kayit||'').slice(0,10)].map(c).join(';')));
+      const lines=[['Kullanıcı adı','Okul','Sınıf','Şube','Durum','E-posta','E-posta doğrulandı','Mail izni','Telefon','Kayıt tarihi'].map(c).join(';')]
+        .concat(rows.map(x=>[x.kullanici,x.okul,x.sinif,x.sube,x.durum,x.email,x.emailOnayli?'Evet':'Hayır',x.mailIzni==='var'?'Var':x.mailIzni==='cikti'?'Abonelikten çıktı':'Yok',x.telefon,(x.kayit||'').slice(0,10)].map(c).join(';')));
       const blob=new Blob(['﻿'+lines.join('\r\n')],{type:'text/csv;charset=utf-8'});
       const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`dijimedu-uye-iletisim-${new Date().toISOString().slice(0,10)}.csv`;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1000);
     };
