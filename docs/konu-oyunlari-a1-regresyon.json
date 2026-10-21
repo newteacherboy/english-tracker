@@ -224,9 +224,9 @@
     },
     {
       "file": "tests/evening-ui.test.cjs",
-      "code": 1,
-      "passed": 2,
-      "failed": 1,
+      "code": 124,
+      "passed": 0,
+      "failed": 0,
       "failures": [
         "weekly route card distinguishes progress, claimable reward, claimed reward and new week"
       ]
@@ -993,12 +993,10 @@
     },
     {
       "file": "tests/word-wheel-dom.test.cjs",
-      "code": 1,
-      "passed": 8,
-      "failed": 1,
-      "failures": [
-        "two independent clocks keep their deadlines when the other player times out"
-      ]
+      "code": 0,
+      "passed": 9,
+      "failed": 0,
+      "failures": []
     },
     {
       "file": "tests/word-wheel-timer.test.cjs",
@@ -1238,9 +1236,9 @@
     },
     {
       "file": "tests/evening-ui.test.cjs",
-      "code": 1,
-      "passed": 2,
-      "failed": 1,
+      "code": 124,
+      "passed": 0,
+      "failed": 0,
       "failures": [
         "weekly route card distinguishes progress, claimable reward, claimed reward and new week"
       ]
@@ -1825,7 +1823,7 @@
     {
       "file": "tests/social-school-improvements.test.cjs",
       "code": 1,
-      "passed": 7,
+      "passed": 8,
       "failed": 1,
       "failures": [
         "school homepage preserves the existing three-stop map and displays goal/tasks"
@@ -1963,7 +1961,7 @@
     {
       "file": "tests/topic-games.test.cjs",
       "code": 0,
-      "passed": 366,
+      "passed": 402,
       "failed": 0,
       "failures": []
     },
@@ -2049,10 +2047,5 @@
     }
   ],
   "new_failures": [],
-  "removed_failures": [
-    {
-      "file": "tests/word-wheel-dom.test.cjs",
-      "test": "two independent clocks keep their deadlines when the other player times out"
-    }
-  ]
+  "removed_failures": []
 }
