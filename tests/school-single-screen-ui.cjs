@@ -9,7 +9,7 @@ const fs=require('node:fs'),path=require('node:path'),assert=require('node:asser
   const u=new URL(r.request().url());
   if(u.pathname==='/')return r.fulfill({contentType:'text/html',body:
    '<!doctype html><html lang="tr"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><style>*{box-sizing:border-box}body{margin:0}'+inline+'</style>'+
-   ['selected-play.css','route-questions.css','route-forest-reference.css','school-adventure-v2.css','parkur-question-parity.css'].map(f=>'<link rel="stylesheet" href="/'+f+'">').join('')+'<body><div id="bzPerde" class="sp-adventure rq-approved dm-school-game" data-school-appearance="day" style="--dm-school-question-art:url(/learning-assets/characters/kori.webp)">'+
+   ['selected-play.css','route-questions.css','route-forest-reference.css','school-adventure-v2.css','parkur-question-parity.css','school-question-v4.css'].map(f=>'<link rel="stylesheet" href="/'+f+'">').join('')+'<body><div id="bzPerde" class="sp-adventure rq-approved dm-school-game" data-school-appearance="day" style="--dm-school-question-art:url(/learning-assets/characters/kori.webp)">'+
    '<header class="dm-school-lesson-head"><button class="dm-school-back">‹</button><div class="dm-school-lesson-title"><small>2. Sınıf · 1. Ünite · 11. Durak</small><strong>Macera Parkuru</strong></div><button class="dm-school-head-theme">☾</button></header>'+
    '<header class="rq-hud"><span class="rq-wallet">⚡ <b>14</b><small>/30</small></span><span class="rq-wallet">🪙 <b>906</b></span><span class="rq-wallet">🪶 <b>1</b><small>/3</small></span></header>'+
    '<nav class="dm-school-question-nav"><button disabled>← Önceki</button><span>Yanıtlananları incele</span><button disabled>Sonraki →</button></nav>'+
@@ -27,10 +27,10 @@ const fs=require('node:fs'),path=require('node:path'),assert=require('node:asser
   const m=await page.evaluate(()=>{
    const container=document.querySelector('#bzAlan'),card=document.querySelector('.dm-school-start-questions'),box=document.querySelector('.sp-question-board'),words=[...document.querySelectorAll('.dm-school-word')],viewport=innerHeight;
    const r=card.getBoundingClientRect(),b=box.getBoundingClientRect();
-   return {viewport,ctaTop:r.top,ctaBottom:r.bottom,cardHeight:b.height,containerHeight:container.clientHeight,containerScroll:container.scrollHeight,cardCount:words.length,columns:getComputedStyle(words[0].parentElement).gridTemplateColumns.split(' ').length,pageWidth:document.documentElement.scrollWidth};
+   return {viewport,ctaTop:r.top,ctaBottom:r.bottom,cardHeight:b.height,containerHeight:container.clientHeight,containerScroll:container.scrollHeight,cardCount:words.length,stacked:words[1].getBoundingClientRect().top>=words[0].getBoundingClientRect().bottom-1,pageWidth:document.documentElement.scrollWidth};
   });
   assert.equal(m.cardCount,4,'all 4 words displayed');
-  assert.equal(m.columns,2,'two-column word grid');
+  assert.equal(m.stacked,true,'v4: words form one calm single-column list');
   assert(m.cardHeight<190,'mascot and question are adjacent, without an empty half-page: '+JSON.stringify({size,m}));
   assert(m.pageWidth<=size.width+2,'horizontal viewport overflow: '+JSON.stringify({size,m}));
   if(size.width>=390){
@@ -40,7 +40,7 @@ const fs=require('node:fs'),path=require('node:path'),assert=require('node:asser
   console.log('PASS school layout',size.width+'x'+size.height,m);
  }
  await page.evaluate(()=>document.querySelector('#bzPerde').dataset.schoolAppearance='night');
- assert.notEqual(await page.locator('#bzPerde').evaluate(e=>getComputedStyle(e).backgroundImage),'none');
+ assert.equal(await page.locator('#bzPerde').evaluate(e=>getComputedStyle(e).backgroundColor),'rgb(27, 24, 36)','v4 night uses the calm dark surface');
  assert.deepEqual(errors,[]);
  await browser.close();
 })().catch(e=>{console.error(e);process.exit(1)});

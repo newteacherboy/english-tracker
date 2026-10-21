@@ -70,7 +70,7 @@ function renderTask(s,area,c){
  const phrase=sentence(s.k,c.targetPool||pool,en),full=en(phrase),translation=tr(phrase);if(s.tip.startsWith('pattern')||s.tip==='wordOrder'){area.dataset.rqEn=full;area.dataset.rqTr=translation;}
  if(s.tip==='wordOrder'||s.tip==='patternOrder'){
   const multi=full.trim().split(/\s+/).filter(Boolean),letters=multi.length<2,tokens=letters?Array.from(full):multi,join=letters?'':' ';let picked=[];
-  put('<div class="bz-soru">'+esc(translation)+'</div><div class="rq-built" aria-live="polite"></div><div class="rq-token-pool"></div>');
+  put('<div class="bz-soru">'+esc(translation)+'</div><div class="rq-built" lang="en" aria-live="polite"></div><div class="rq-token-pool" lang="en"></div>');
   if(letters)area.querySelector('.bz-etiket').textContent='Harflerle kelimeyi kur';
   const built=area.querySelector('.rq-built'),tray=area.querySelector('.rq-token-pool');shuffle(tokens.map((value,id)=>({value,id}))).forEach(t=>tray.append(button(t.value,b=>{if(norm(t.value)!==norm(tokens[picked.length])){c.record?.([...picked,t.value].join(join));b.classList.add('yanlis');c.feedback(false);setTimeout(()=>b.classList.remove('yanlis'),450);return}picked.push(t.value);b.disabled=true;const tile=document.createElement('span');tile.className='rq-token-correct';tile.textContent=t.value;built.append(tile);c.feedback(true);if(picked.length===tokens.length)answer(true,picked.join(join),picked.join(join))},'bz-cip2')));return true;
  }
@@ -97,7 +97,7 @@ function offerEnergyAfterAnswer(route,area){
  if(!area.querySelector('.bz-geri-bildirim'))return;
  if(!next.dataset.rqOriginal)next.dataset.rqOriginal=next.textContent;
  if(next.textContent!=='⚡ Enerji al ve devam et')next.textContent='⚡ Enerji al ve devam et';
- const step=area.querySelector('.rq-progress span')?.textContent.trim()||'';
+ const step=route.querySelector('.rq-progress span')?.textContent.trim()||'';
  const question=area.querySelector('.bz-soru')?.textContent.trim()||'';
  const key=step+'|'+question;
  if(route.dataset.rqEnergyOffered===key)return;
