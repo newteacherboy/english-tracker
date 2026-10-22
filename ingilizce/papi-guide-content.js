@@ -43,7 +43,7 @@ const sections=[
   'Enerjin en fazla 30 olur ve her 15 dakikada 1 dolar.',
   'Parkurda öğrenme adımı ve ilk soru ücretsizdir; sonraki her soru 1 enerji harcar. Seviye testi ve Kelime Tekrarı enerji harcamaz.',
   'Macera Haritası’nda üst üste 3 doğru cevap bonus enerji kazandırabilir.',
-  'Enerjin biterse Mağaza › Enerji al bölümünden altınla paket alabilirsin; günde en fazla 3 kez enerji satın alınabilir.'
+  'Enerjin biterse Mağaza › Enerji al bölümünden altınla paket alabilirsin: 5 enerji 100, 10 enerji 130, 15 enerji 180 altın. Paket, enerji kapasiteni aşacaksa alınamaz.'
  ]),
  S('currency','🪙','Altın, XP ve seviye','ana','#dmLevelBadge',[
   '**XP** seviye atlamanı sağlar ve haftalık ligde sıralamanı belirler. **Altın** Mağaza’da harcanır. Ders çalıştıkça, oynadıkça ve görev tamamladıkça ikisini de kazanırsın.',
