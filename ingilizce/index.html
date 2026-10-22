@@ -116,8 +116,6 @@ window.supabaseClient=supabaseClient;
         <meta property="og:locale" content="tr_TR">
             <link rel="icon" type="image/png" href="papi-app-icon-v3.png">
             <link rel="apple-touch-icon" sizes="512x512" href="papi-welcome-v2.png">
-            <link rel="preconnect" href="https://fonts.googleapis.com">
-            <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
             
             <!-- Chart.js: grafikliCiz() yükler (açılışı yavaşlatmasın) -->
             <link rel="stylesheet" href="portal-base-extracted.css?v=20261015-perf1">
@@ -1488,6 +1486,8 @@ document.getElementById('dmBootRetry').onclick=()=>location.reload();
                     <div class="site-footer-links">
                         <a href="gizlilik.html">🔒 Gizlilik Politikası & KVKK</a>
                         <a href="javascript:void(0)" onclick="kullanimKosullariModaliniAc()">📄 Kullanım Koşulları</a>
+                        <a href="cerez.html">🍪 Çerez ve Yerel Depolama</a>
+                        <a href="hakkinda.html">🦜 Hakkında</a>
                     </div>
                     <div class="site-footer-copy">© 2026-2027 Diji-Medu. Tüm hakları saklıdır. Bu platformun tasarımı, kodu ve içeriği izinsiz kopyalanamaz.</div>
                 </div>
@@ -11469,9 +11469,10 @@ function ozellikSecDoldur() {
             <div class="rubric-content legal-modal-content">
                 <button class="game-close-btn" aria-label="Gizlilik bilgisini kapat" onclick="document.getElementById('gizlilikModal').style.display='none'">✕</button>
                 <h3>Gizlilik Politikası ve KVKK Aydınlatma Metni</h3>
-                <p><b>Diji-Medu İngilizce</b><br>Veri sorumlusu: Diji-Medu<br>Son güncelleme: 8 Ekim 2026</p>
+                <p><b>Diji-Medu İngilizce</b><br>Veri sorumlusu: Diji-Medu<br>Son güncelleme: 22 Ekim 2026 · Sürüm 1.4</p>
                 <p>Hesap, veli iletişimi ve öğrenme bilgileri eğitim hizmeti için işlenir. Öğretmenler/yöneticiler yetkileri kapsamında kayıtları görebilir. Sosyal profil, sınıf, başarı göstergeleri ve paylaşımlar diğer uygulama kullanıcılarına görünebilir.</p>
                 <p>Veritabanı Supabase'in Almanya bölgesindedir; web barındırma, e-posta, konuşma tanıma ve dış etkinlik hizmetleri başka ülkelerde de veri işleyebilir. Konuşma alıştırmasındaki ham ses Diji-Medu sunucusunda saklanmaz; tarayıcının tanıma sağlayıcısı sesi işleyebilir.</p>
+                <p>Google veya Apple ile girişte kimlik doğrulama ilgili sağlayıcıyla yapılır; parolan bize iletilmez. İlerleme e-postaları yalnız seçersen gönderilir ve her e-postadan çıkabilirsin. Reklam veya izleme çerezi kullanılmaz.</p>
                 <p>Bu bilgilendirmeyi okumak açık rıza vermek değildir. Ayrı izin gerektiren işlemler için ilgili tercihin ayrıca alınması gerekir.</p>
                 <p><a href="gizlilik.html" target="_blank" rel="noopener noreferrer" style="font-weight:800;">Tam gizlilik politikasını oku ↗</a><br>İşlenen veriler, hukuki sebepler, sağlayıcılar, saklama süreleri, çocuk verileri ve başvuru hakları tam metinde açıklanır.</p>
                 <p><a href="hesap-sil.html" target="_blank" rel="noopener noreferrer">İngilizce hesabımı sil ↗</a><br>Gizlilik ve veli talepleri: <a href="mailto:official.dijimedu@gmail.com">official.dijimedu@gmail.com</a>. KVKK başvuruları en geç 30 gün içinde cevaplanır.</p>
@@ -11481,19 +11482,10 @@ function ozellikSecDoldur() {
             <div class="rubric-content legal-modal-content">
                 <button class="game-close-btn" onclick="document.getElementById('kullanimKosullariModal').style.display='none'">✕</button>
                 <h3 style="color:#1e293b; font-size:15px; font-weight:900; margin-bottom:4px;">📄 Kullanım Koşulları</h3>
-                <h4>1. Platform Hakkında</h4>
-                <p>Diji-Medu İngilizce Portalı, Diji-Medu tarafından geliştirilmiş ve işletilmekte olan, İngilizce öğrenimini desteklemeye yönelik bir eğitim platformudur.</p>
-                <h4>2. Fikri Mülkiyet</h4>
-                <p>Bu platformun tüm tasarımı, kaynak kodu, içeriği, oyun mekanikleri ve grafikleri Diji-Medu'ya aittir. İzinsiz kopyalanması, çoğaltılması veya ticari amaçla kullanılması yasaktır.</p>
-                <h4>3. Hesap Sorumluluğu</h4>
-                <p>Kullanıcı adı ve şifre bilgilerinin güvenliğinden hesap sahibi (öğrenci/veli) sorumludur. Şüpheli bir durum fark edilmesi halinde derhal öğretmenle iletişime geçilmesi önerilir.</p>
-                <h4>4. Sorumluluk Sınırı</h4>
-                <p>Platform "olduğu gibi" sunulmaktadır. Teknik aksaklıklar, geçici erişim kesintileri veya üçüncü taraf servislerden (Google, internet servis sağlayıcıları vb.) kaynaklanan sorunlardan Diji-Medu sorumlu tutulamaz.</p>
-                <h4>5. Değişiklikler</h4>
-                <p>Bu koşullar ve platformun özellikleri önceden haber verilmeksizin güncellenebilir.</p>
-                <h4>6. İletişim</h4>
-                <p>Sorularınız için: official.dijimedu@gmail.com</p>
-                <div class="legal-last-updated">Son güncelleme: 2026.</div>
+                <p>Diji-Medu İngilizce, İngilizce öğrenimini destekleyen bir eğitim platformudur. Kısaca:</p>
+                <ul><li>Puan, XP, enerji ve altın uygulama içi ilerleme göstergeleridir; para veya resmî not değildir. Uygulamada gerçek parayla satın alma yoktur.</li><li>Parolanı ve doğrulama bağlantını paylaşma; sosyal alanlarda takma ad kullan, adres veya telefon yazma.</li><li>Zorbalık, hakaret, uygunsuz içerik ve başkasının bilgisini paylaşmak yasaktır; ⋯ → Bildir ile yöneticilere bildirebilirsin.</li><li>Diji-Medu’nun tasarımı, kodu ve çizimleri izinsiz kopyalanamaz.</li><li>Hesabını dondurabilir veya silebilirsin.</li></ul>
+                <p><a href="kullanim-kosullari.html" target="_blank" rel="noopener noreferrer" style="font-weight:800;">Kullanım koşullarının tamamını oku ↗</a> · <a href="cerez.html" target="_blank" rel="noopener noreferrer">Çerez ve yerel depolama ↗</a> · <a href="hakkinda.html" target="_blank" rel="noopener noreferrer">Hakkında ↗</a></p>
+                <div class="legal-last-updated">Son güncelleme: 22 Ekim 2026 · Sürüm 1.1</div>
             </div>
         </div>
         <div class="game-modal-overlay" id="etkinliklerModal">
