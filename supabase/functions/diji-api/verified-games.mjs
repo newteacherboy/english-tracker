@@ -26,6 +26,8 @@ export function grade(task,answer,game){
   return {valid,complete:true,correct:valid&&new Set(answer.map(x=>norm(x.en))).size===task.pairs.length&&task.pairs.every(p=>answer.some(x=>norm(x.en)===norm(p.en)&&norm(x.tr)===norm(p.tr)))};
  }
  if(typeof answer!=='string'||answer.length>1000)return {valid:false,correct:false,complete:false};
+ // Konuşma sorusunu mikrofon yerine seçenekle geçmek ilerletir ama doğru sayılmaz (ödül ve kombo yok).
+ if(task.kind==='soyle'&&answer.startsWith('~yardim~'))return {valid:true,correct:false,complete:true,assisted:true};
  const expected=task.expected||(task.kind==='tr'?task.tr:task.en);
  const candidates=game==='kp'||task.kind==='soyle'?answer.split('|'):[answer];
  if(candidates.length>3)return {valid:false,correct:false,complete:false};

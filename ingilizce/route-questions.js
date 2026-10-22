@@ -27,8 +27,18 @@ function matchingWords(target,pool,en,tr,shuffle,owner,count=4){
  try{root.localStorage?.setItem(key,JSON.stringify(history))}catch{}
  return result;
 }
-function choices(word,pool,read,shuffle,count=3){return shuffle([read(word),...shuffle(pool.filter(x=>norm(read(x))!==norm(read(word)))).map(read).filter((x,i,a)=>a.indexOf(x)===i).slice(0,count-1)]);}
+// Seviye testinden B1 veya B2 alan öğrenciler için seçmeli sorular zorlaşır: 4 seçenek ve
+// doğru cevaba uzunluk/ilk harf olarak benzeyen çeldiriciler.
+function advancedLearner(){const s=root.dmProgression?.status?.();return ['B1','B2'].includes(String(s?.studyPlacementLevel||s?.startPath?.testLevel||'').toUpperCase());}
+function choices(word,pool,read,shuffle,count){
+ const hard=advancedLearner();count=count||(hard?4:3);const target=read(word),t=norm(target);
+ let others=shuffle(pool.filter(x=>norm(read(x))!==t)).map(read).filter((x,i,a)=>a.indexOf(x)===i);
+ if(hard){const score=x=>Math.abs(x.length-target.length)+(norm(x)[0]===t[0]?0:3);others=others.map((x,i)=>[x,score(x)+i*0.01]).sort((a,b)=>a[1]-b[1]).map(x=>x[0]);}
+ return shuffle([target,...others.slice(0,count-1)]);
+}
 function sentence(word,pool,read){const target=norm(read(word));return pool.find(x=>norm(read(x)).split(' ').length>1&&(' '+norm(read(x))+' ').includes(' '+target+' '))||word;}
+// Konuşma sorusunda mikrofon yerine seçenekten verilen cevabın işareti (sunucu bunu ödülsüz sayar).
+const ASSISTED='~yardim~';
 function renderTask(s,area,c){
  area._rqSpeakEnglish=c.speak;
  if(s.tip==='eslestir')area.addEventListener('click',event=>{const b=event.target.closest?.('#bzMatchEn .dm-match-option');if(b&&!b.disabled&&c.current())c.speak(b.textContent.trim());},true);
@@ -60,8 +70,8 @@ function renderTask(s,area,c){
   put('<div class="bz-soru" lang="en">'+esc(text)+'</div><div class="bz-tr-anlam">'+esc(meaning)+'</div>');area.append(audio(text));
   const status=document.createElement('p');status.className='rq-mic-status';status.setAttribute('role','status');status.textContent='Mikrofona dokun ve söyle.';
   const fallback=document.createElement('div');fallback.className='rq-speech-fallback';fallback.hidden=true;
-  const values=choices(s.k,pool,en,shuffle);values.forEach(value=>fallback.append(button(value,()=>{if(norm(value)===norm(text)){cancelSpeech();answer(true,text,value)}else{c.record?.(value);c.feedback(false);status.textContent='Tekrar dene.'}},'bz-sec')));
-  const fail=message=>{if(!current())return;cancelSpeech();mic.disabled=false;mic.classList.remove('listening');fallback.hidden=false;status.textContent=message+' Aşağıdan duyduğun kelimeyi seç.';};
+  const values=choices(s.k,pool,en,shuffle);values.forEach(value=>fallback.append(button(value,()=>{if(norm(value)===norm(text)){cancelSpeech();/* Seçerek geçilen konuşma sorusu ilerletir ama ödül ve kombo vermez; kelime Hatırlama Zamanı'na girer. */root.dmWrongWords?.add?.({en:text,tr:meaning,source:'konusma-yardim'});answer(true,text,ASSISTED+value)}else{c.record?.(value);c.feedback(false);status.textContent='Tekrar dene.'}},'bz-sec')));
+  const fail=message=>{if(!current())return;cancelSpeech();mic.disabled=false;mic.classList.remove('listening');fallback.hidden=false;status.textContent=message+' Tekrar söyleyebilir ya da aşağıdan seçebilirsin; sesli söylersen tam ödül alırsın.';};
   const mic=button('🎤',()=>{cancelSpeech();const SR=root.SpeechRecognition||root.webkitSpeechRecognition;if(!SR)return fail('Mikrofon desteklenmiyor.');mic.disabled=true;mic.classList.add('listening');status.textContent='Seni dinliyorum…';let received=false;const r=recognition=new SR();r.lang='en-US';r.continuous=false;r.interimResults=false;r.maxAlternatives=3;
    r.onresult=e=>{if(!current())return;received=true;const results=Array.from(e.results?.[0]||[]).map(x=>x.transcript);if(results.some(v=>norm(v)===norm(text))){cancelSpeech();answer(true,text,results.join('|'))}else{c.record?.(results.join('|'));c.feedback(false);fail('Duyduğum kelime eşleşmedi.')}};
    r.onerror=()=>{received=true;fail('Ses alınamadı.')};r.onend=()=>{if(!received)fail('Ses algılanmadı.')};try{r.start();recognitionTimer=setTimeout(()=>fail('Dinleme süresi doldu.'),8000)}catch{fail('Mikrofon açılamadı.')}
@@ -143,5 +153,5 @@ function celebrate(root,gain,streak=3){
  window.yoToast?.(streak+' doğru üst üste! +'+amount+' enerji');
 }
 function storyHud(modal,combo,close){modal.classList.add('rq-approved');watchLayout(modal);const header=modal.querySelector('.ds-lesson-header');if(!header)return;let hud=header.querySelector('.rq-hud');if(!hud){hud=document.createElement('div');hud.className='rq-hud';header.prepend(hud)}hud.innerHTML=hudHTML(combo,window.genelEnerjiKalan??'–',typeof yo!=='undefined'?yo.altin||0:0,window.genelEnerjiMax||30);let x=header.querySelector('.rq-close');if(!x){x=document.createElement('button');x.type='button';x.className='rq-close';x.setAttribute('aria-label','Kapat');x.textContent='✕';x.onclick=close;header.append(x)}x.disabled=!!window.dmPapiFirstPractice?.locked('independent');}
-root.DMRouteQuestions={TYPES,titles,matchingWords,renderTask,mountSchool,updateSchool,celebrate,cancelSpeech};root.dmSelectedStoryHud=storyHud;
+root.DMRouteQuestions={ASSISTED,advancedLearner,TYPES,titles,matchingWords,renderTask,mountSchool,updateSchool,celebrate,cancelSpeech};root.dmSelectedStoryHud=storyHud;
 })(typeof window!=='undefined'?window:globalThis);
