@@ -48,3 +48,9 @@ test('after reload, unacknowledged evidence resumes with the same event ID befor
  await ctx.fetch('/api',{method:'POST',body:JSON.stringify({islem:'seviyeOyunOdulu',runId:'resume-run-123456'})});
  assert.deepEqual(calls.map(x=>x.islem),['verifiedGameStatus','verifiedGameAnswer','seviyeOyunOdulu']);assert.equal(calls[1].eventId,'resume-event-123456');assert.equal(storage.size,0);
 });
+test('speaking answered by choosing (assisted) advances but is not counted correct',async()=>{
+ const core=await load();const task=core.compile('ba',words).find(t=>t.kind==='soyle');
+ assert.deepEqual(core.grade(task,task.expected,'ba'),{valid:true,complete:true,correct:true});
+ const assisted=core.grade(task,'~yardim~'+task.expected,'ba');assert.equal(assisted.valid,true);assert.equal(assisted.complete,true);assert.equal(assisted.correct,false);assert.equal(assisted.assisted,true);
+ assert.equal(core.grade({...task,kind:'hatirla'},'~yardim~'+task.expected,'ba').correct,false);
+});
