@@ -75,13 +75,18 @@ function routeGroup(s,learn){const info=schoolInfo(s);return learn?(s.theme||s.c
 let routeMap=null,mapSerial=0,mapResize=null;
 const ROW=144,TOP=78;
 function mapX(i,learn){return (learn?[40,30,40,42,40]:[49,39,49,59,49])[i%5];}
+/* Her durağın üstünde başarıya göre 3 yıldız: Okul Yolum yo.baYildiz[durak no], Öğrenme Yolum yo.mlYildiz[bölüm id].
+   Kaydı olmayan eski tamamlanmış duraklar en az 1 yıldız gösterir; tamamlanmamış duraklarda yıldızlar boştur. */
+function stopStars(step,learn){const y=typeof yo!=='undefined'&&yo?yo:null,saved=Number(learn?y?.mlYildiz?.[step.id]:y?.baYildiz?.[step.no])||0;return step.done?Math.max(1,Math.min(3,saved)):0;}
+function starsMarkup(step,learn){const n=stopStars(step,learn);return '<span class="rt-v3-stars'+(n?' is-earned':'')+'" role="img" aria-label="'+n+' / 3 yıldız">'+[0,1,2].map(i=>'<i class="'+(i<n?'on':'')+'">★</i>').join('')+'</span>';}
+if(typeof document!=='undefined'&&typeof document.createElement==='function'&&document.head&&!document.getElementById('rtStopStarStyle')){const st=document.createElement('style');st.id='rtStopStarStyle';st.textContent='body #tab-dunya .rt-v3-stop .rt-v3-stars{position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);display:flex;gap:1px;pointer-events:none;z-index:3}body #tab-dunya .rt-v3-stop .rt-v3-stars i{font-style:normal;font-size:12px;line-height:1;color:#d9d6e3;text-shadow:0 1px 0 #fff}body #tab-dunya .rt-v3-stop .rt-v3-stars i.on{color:#f5b301;text-shadow:0 1px 0 #b7790033}body #tab-dunya .rt-v3-stop .rt-v3-stars i:nth-child(2){transform:translateY(-3px)}';document.head.append(st);}
 function mapRows(map,from,to){
  const {steps,current,learn}=map,visible=steps.slice(from,to),point=i=>[mapX(i,learn),TOP+i*ROW];
  const first=Math.max(0,from-1),last=Math.min(steps.length,to+1);
  const curve=Array.from({length:last-first},(_,k)=>first+k).map((i,k)=>{const [x,y]=point(i),[px,py]=point(i-1);return k?'C'+px+' '+(py+ROW/2)+' '+x+' '+(y-ROW/2)+' '+x+' '+y:'M'+x+' '+y;}).join(' ');
  return '<svg class="rt-flow-trail" viewBox="0 0 100 '+map.height+'" preserveAspectRatio="none" aria-hidden="true"><path d="'+curve+'"/></svg>'+visible.map((step,k)=>{
   const i=from+k,state=step.done?'done':i===current?'current':step.available?'open':'locked',prev=steps[i-1],group=routeGroup(step,learn),boundary=!prev||group!==routeGroup(prev,learn);
-  return (boundary?'<div class="rt-flow-theme" style="top:'+(TOP+i*ROW-61)+'px"><b>'+esc(group)+'</b></div>':'')+'<div class="rt-stop rt-v3-stop '+state+'" data-route-index="'+i+'" style="--x:'+mapX(i,learn)+'%;--y:'+(TOP+i*ROW)+'px">'+node(step,i,current,learn)+(learn?'<span class="rt-v3-number" aria-hidden="true">'+routeNumber(step,i,true)+'</span>':'')+(step.done?'<span class="rt-v3-check" aria-hidden="true">✓</span>':'')+'<span class="rt-stop-label">'+esc(routeTitle(step,learn))+'</span>'+(i===current?'<img class="rt-flow-papi" src="route-assets/'+(learn?'papi-english.webp':'papi-school.webp')+'" alt="Papi">':'')+'</div>';
+  return (boundary?'<div class="rt-flow-theme" style="top:'+(TOP+i*ROW-61)+'px"><b>'+esc(group)+'</b></div>':'')+'<div class="rt-stop rt-v3-stop '+state+'" data-route-index="'+i+'" style="--x:'+mapX(i,learn)+'%;--y:'+(TOP+i*ROW)+'px">'+node(step,i,current,learn)+(learn?'<span class="rt-v3-number" aria-hidden="true">'+routeNumber(step,i,true)+'</span>':'')+(step.done?'<span class="rt-v3-check" aria-hidden="true">✓</span>':'')+starsMarkup(step,learn)+'<span class="rt-stop-label">'+esc(routeTitle(step,learn))+'</span>'+(i===current?'<img class="rt-flow-papi" src="route-assets/'+(learn?'papi-english.webp':'papi-school.webp')+'" alt="Papi">':'')+'</div>';
  }).join('');
 }
 function pathMarkup(steps,current,learn){
