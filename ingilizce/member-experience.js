@@ -35,6 +35,21 @@ function chooseRoute(change=false){
  view.el.addEventListener('dm:sheet-close',()=>{dismissedRoute=true;if(ready()&&![...document.querySelectorAll('.dc-fullscreen-overlay.active')].some(x=>x.getClientRects().length))window.dunyaAc?.();});const close=view.close;view.el.querySelector('.dm-member-close').onclick=()=>{dismissedRoute=true;close();};
  view.el.querySelectorAll('[data-route]').forEach(b=>b.onclick=async()=>{if(b.dataset.route===current){close();return;}if(b.dataset.route==='independent'&&(needsTest||!window.dmProgression?.status?.())){dismissedRoute=true;close();if(await window.dmLearningRoute.set('independent',{reopen:false})){if(!current)document.dispatchEvent(new CustomEvent('dm:first-route-chosen'));await window.dunyaAc?.();}return;}view.el.querySelectorAll('[data-route]').forEach(x=>x.disabled=true);try{if(owner!==who())return close();const ok=await window.dmLearningRoute.set(b.dataset.route,{reopen:false});if(!ok)throw Error('Seçimin kaydedilemedi. Tekrar dene.');if(owner!==who())return close();dismissedRoute=true;close();if(!current)document.dispatchEvent(new CustomEvent('dm:first-route-chosen'));await window.dunyaAc?.();}catch(e){view.body.querySelector('.dm-member-status').textContent=e.message;view.el.querySelectorAll('[data-route]').forEach(x=>x.disabled=false);}});
 }
+/* Accounts without a saved route (older or teacher-created class accounts): a 1–8 class student is
+   placed on Macera Haritası automatically and saved, so the chooser never reappears at each login.
+   Others pick a route only when they open Parkur themselves. */
+let autoRouteBusy=false;
+async function autoRoute(){
+ if(autoRouteBusy||chosen()||!ready())return;
+ const sp=window.dmProgression?.status?.()?.startPath,p=window.dmMemberBadgeStatus?.learnerProfile;
+ const classStudent=sp?.learningRoute==='needs-test'||(p?.purpose==='school'&&['primary','middle'].includes(p?.educationStage));
+ if(!classStudent)return;
+ const owner=who();autoRouteBusy=true;
+ try{if(await window.dmLearningRoute?.set('school',{reopen:false})&&owner===who()){$('dmRouteChoice')?.remove();document.dispatchEvent(new CustomEvent('dm:first-route-chosen'));}}
+ catch(e){console.warn('[Parkur otomatik seçimi]',e.message);}finally{autoRouteBusy=false;}
+}
+document.addEventListener('dm:progression-status',()=>autoRoute());
+document.addEventListener('dm:member-status',()=>autoRoute());
 document.addEventListener('click',e=>{const b=e.target.closest('[data-ekran="tab-dunya"],[data-nav="parkur"],.rt-start');if(b&&ready()&&!chosen()) {e.preventDefault();e.stopImmediatePropagation();chooseRoute();}},true);
 function banner(){
  if(!status||status.emailVerified||!ready()){$('dmEmailVerifyBanner')?.remove();if(status?.emailVerified){$('dmEmailVerification')?.querySelector('.dm-member-close')?.click();window.dmEmailGuide?.close();}return;}
@@ -60,7 +75,7 @@ async function check(force=false,quiet=false){
  const owner=actor;busy=true;
  try{
   if(force||!status||Date.now()-lastRead>120000){const d=await api('memberStatus');if(owner!==who())return;status=d;if(Number.isInteger(d.loginStreak)){localStorage.setItem('ing_girisSerisiSayisi',String(d.loginStreak));localStorage.setItem('dm_login_streak:'+owner.toLowerCase(),String(d.loginStreak));const streak=$('headerStreakNum');if(streak)streak.textContent='🔥 '+d.loginStreak;}streakNotice(d,owner);window.dmMemberBadgeStatus={...d,owner};if(d.welcomeEligible&&!d.welcomeEarned&&welcomeOwner!==owner){clearTimeout(welcomeTimer);welcomeOwner=owner;const delay=Math.max(1000,120000-(Date.parse(d.serverNow)-Date.parse(d.memberFirstSeenAt)));welcomeTimer=setTimeout(()=>{if(who()===owner)check(true,true);},delay);}document.dispatchEvent(new Event('dm:member-status'));lastRead=Date.now();banner();}if(quiet)return;
-  if(!chosen()&&!dismissedRoute){chooseRoute();return;}
+  if(!chosen())autoRoute(); // never force the route sheet at login; class students get Macera Haritası silently
   if(window.dmPapiNotices?.blocked()||document.querySelector('#dmRouteChoice,#dmPlacementExam,#dmStartPlacement,#dmStartingChoice,#dmEmailVerification,#dmPlacementInvite'))return;
   // Email verification is triggered by the Games tab; repeats only on safe screens after 10 minutes.
   if(!status.hasPlacement&&Date.now()>=examAt&&window.dmAutoNotices?.can()){const d=await api('memberReminderClaim',{kind:'placement'});if(owner!==who())return;examAt=Date.now()+600000+Math.random()*600000;if(d.show&&window.dmAutoNotices?.take()){const v=sheet('İngilizce seviyeni keşfet','<div class="dm-exam-invite-art"><img src="papi-welcome-v2.png" alt="Papi"><span>SEVİYENİ KEŞFET</span></div><p>Okuma, dinleme ve dil kullanımı sorularıyla sana uygun başlangıcı belirleyelim. Bu sınav enerji harcamaz.</p><button type="button" class="dm-member-primary" data-exam>Seviye sınavını aç</button><button type="button" data-later>Sonra</button>','dmPlacementInvite');v.el.querySelector('[data-exam]').onclick=()=>{v.close();placement();};v.el.querySelector('[data-later]').onclick=v.close;}}
