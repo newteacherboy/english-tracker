@@ -1,0 +1,40 @@
+/* Date class is set synchronously in <head>, before the first visible frame. */
+html.dm-holiday-active :is(#splashEkrani,#dmBootSplash,#oturumYuklemeOverlay){
+ background:linear-gradient(135deg,#164d75,#f3d6b3)!important;
+ overflow:hidden!important;isolation:isolate;
+}
+html.dm-holiday-active :is(#splashEkrani,#dmBootSplash,#oturumYuklemeOverlay) .dm-papi-halo,
+html.dm-holiday-active :is(#splashEkrani,#dmBootSplash,#oturumYuklemeOverlay) .dm-brand-line{
+ display:none!important;
+}
+html.dm-holiday-active :is(#splashEkrani,#dmBootSplash,#oturumYuklemeOverlay)::before{
+ content:"";position:absolute;inset:0;z-index:0;
+ background-image:var(--dm-holiday-art);background-position:center;background-size:contain;background-repeat:no-repeat;
+ pointer-events:none;
+}
+html.dm-holiday-active .dm-holiday-art{
+ position:absolute;z-index:1;inset:0;margin:auto;width:min(100vw,56.3vh);
+ max-width:100%;height:auto;aspect-ratio:941/1672;pointer-events:none;
+}
+html.dm-holiday-active :is(#splashEkrani,#dmBootSplash,#oturumYuklemeOverlay) .dm-papi-loading{position:relative;z-index:2;pointer-events:none}
+html.dm-holiday-active #dmBootText{display:none!important}
+.dm-holiday-progress{display:none}
+html.dm-holiday-active .dm-holiday-progress{
+ position:absolute;z-index:3;display:block;bottom:max(6%,env(safe-area-inset-bottom));
+ left:50%;transform:translateX(-50%);width:min(38vw,250px);height:8px;
+ border-radius:99px;background:rgba(255,255,255,.87);border:1px solid rgba(255,255,255,.9);
+ box-shadow:0 2px 8px rgba(0,0,0,.25);overflow:hidden;pointer-events:none
+}
+.dm-holiday-progress-fill{width:var(--dm-papi-progress,0%);height:100%;background:linear-gradient(90deg,#f54345,#f8bf31);border-radius:inherit;transition:width .2s ease-out;animation:dmHolidayFill 2s ease-out forwards}
+[style*="--dm-papi-progress"]>.dm-holiday-progress>.dm-holiday-progress-fill{animation:none}
+@keyframes dmHolidayFill{from{width:0}to{width:91%}}
+/* Actual public-domain portrait overlay, only three specifically approved retouches. */
+.dm-holiday-historic{position:absolute;overflow:hidden;border-radius:8px;
+ mask-image:radial-gradient(ellipse 71% 76% at 50% 50%,#000 65%,transparent 100%);
+ -webkit-mask-image:radial-gradient(ellipse 71% 76% at 50% 50%,#000 65%,transparent 100%);
+}
+.dm-holiday-historic img{width:100%;height:100%;object-fit:cover;object-position:center 19%;filter:grayscale(1) sepia(.16) contrast(.96)}
+.dm-holiday-historic.photo-may-1{top:8%;right:1%;width:25%;height:35%}
+.dm-holiday-historic.photo-may-2{top:32%;left:13%;width:30%;height:27%}
+.dm-holiday-historic.photo-kasim-2{top:1%;right:0%;width:28%;height:36%}
+@media(prefers-reduced-motion:reduce){.dm-holiday-progress-fill{animation:none;transition:none}}

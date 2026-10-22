@@ -1,0 +1,21 @@
+name: Holiday splash QA
+on:
+  push:
+    paths:
+      - 'ingilizce/holiday-splashes/**'
+      - 'tests/holiday-splash.test.cjs'
+      - 'index.html'
+      - 'ingilizce/index.html'
+  pull_request:
+    paths:
+      - 'ingilizce/holiday-splashes/**'
+      - 'tests/holiday-splash.test.cjs'
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node --test tests/holiday-splash.test.cjs

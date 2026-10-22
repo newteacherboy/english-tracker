@@ -1,0 +1,33 @@
+name: Holiday calendar and original Atatürk photo
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '21 3 1 * *'
+  push:
+    paths:
+      - 'scripts/refresh-holiday-calendar.py'
+      - '.github/workflows/holiday-calendar.yml'
+permissions:
+  contents: write
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install beautifulsoup4==4.12.3 pillow==11.3.0
+      - name: Update official dates and archival portraits
+        run: python scripts/refresh-holiday-calendar.py
+      - name: Commit changed dated data and actual historical photo edits
+        run: |
+          git config user.name "diji-calendar-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add ingilizce/holiday-splashes/dates.* ingilizce/holiday-splashes/19-mayis-1.jpg ingilizce/holiday-splashes/19-mayis-2.jpg ingilizce/holiday-splashes/10-kasim-2.jpg ingilizce/holiday-splashes/.archive-photo-2026-applied
+          if ! git diff --cached --quiet; then
+            git commit -m "chore: refresh official religious dates and archive photo art"
+            git push
+          fi
