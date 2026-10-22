@@ -144,6 +144,26 @@ function bugunBasi() {
 function trBugun() {
   return new Date(Date.now() + 3 * 3600000).toISOString().slice(0, 10);   // İstanbul tarihi
 }
+/* İstemcinin istediği küçük ödüller (odulTalep, "hediye" enerjisi) yalnız öğrenci bugün
+   sunucunun doğruladığı bir öğrenme etkinliği yaptıysa verilir: doğrulanmış oyun ödülü,
+   ders sonucu, parkur sorusu ya da seviye tamamlama. */
+async function bugunOgrendiMi(sid: string): Promise<boolean> {
+  const bas = trBugun() + "T00:00:00+03:00";
+  const say = async (tablo: string, zaman: string, ek?: (q: any) => any) => {
+    let q = supabase.from(tablo).select("student_id", { count: "exact", head: true }).eq("student_id", sid).gte(zaman, bas);
+    if (ek) q = ek(q);
+    const { count, error } = await q;
+    return !error && (count || 0) > 0;
+  };
+  return (await say("dm_parkur_question_ledger", "created_at", q => q.eq("answered", true)))
+    || (await say("dm_game_reward_runs", "created_at"))
+    || (await say("dm_lesson_fair_runs", "created_at"))
+    || (await say("level_completions", "completed_at"))
+    || await (async () => {   // Öğrenme Yolum ilk cevapları öğrenciyi "s:<id>" anahtarıyla tutar
+      const { count, error } = await supabase.from("dm_thematic_first_answers").select("actor_key", { count: "exact", head: true }).eq("actor_key", "s:" + sid).gte("created_at", bas);
+      return !error && (count || 0) > 0;
+    })();
+}
 
 // ---------------------------------------------------------------------
 // Deneme sınırı (kaba kuvvet koruması): audit_logs üzerinden sayılır
@@ -1523,6 +1543,11 @@ async function handle(req: Request, proxy: any = null) {
         sohbet:[150,15,6], oyun_sonu:[150,15,20], duello:[20,0,10], lig:[50,25,4], enerji_altin:[0,25,4], ders_tekrar:[100,30,10], genel:[20,5,5]
       };
       const neden=Object.hasOwn(KURAL,String(body.neden||""))?String(body.neden):"genel";
+      /* Uygulama bugün yalnız "genel" nedenini gönderiyor (sandık ve küçük ödüller). Diğer nedenler istemcinin
+         beyanıyla ödül veriyordu ve sunucuda doğrulanamıyordu; oyun ve ders ödülleri kendi doğrulanmış
+         işlemleriyle ödendiği için kapatıldı. "genel" de ancak bugün doğrulanmış bir öğrenme etkinliği varsa ödenir. */
+      if(neden!=="genel")return json({ok:true,eklenen:0,xp:0,kapali:true,ekonomi:ekonomiCevap((await yoOku(sid)).y)});
+      if(!await bugunOgrendiMi(sid))return json({ok:true,eklenen:0,xp:0,etkinlikYok:true,ekonomi:ekonomiCevap((await yoOku(sid)).y)});
       const [xpTavan,altinTavan,gunTavan]=KURAL[neden];
       const istenenXp=Math.max(0,Math.min(xpTavan,Math.floor(num(body.xp)))),istenenAltin=Math.max(0,Math.min(altinTavan,Math.floor(num(body.altin))));
       const anahtar=temizMetin(String(body.anahtar||""),80);
@@ -2493,9 +2518,12 @@ async function handle(req: Request, proxy: any = null) {
       } else if (sebep === "ders") {
         return json({ok:false,mesaj:"Ders enerjisi başarılı ilk test kaydında verilir."},403);
       } else if (sebep === "hediye") {
-        fark = Math.max(0, Math.min(fark, 5, 15 - topla("hediye"))); tavan = max + 10;
+        /* Sandık, seviye bonusu ve düello hediyesi: yalnız bugün doğrulanmış öğrenme etkinliği varsa */
+        if (!await bugunOgrendiMi(s.id)) { fark = 0; mesaj = "Hediye enerjisi için önce bugün bir ders ya da oyun tamamla."; }
+        else { fark = Math.max(0, Math.min(fark, 5, 15 - topla("hediye"))); tavan = max + 10; }
       } else {
-        fark = Math.max(0, Math.min(fark, 3, 6 - topla("diger")));
+        /* Bilinmeyen nedenle enerji kazanma kapatıldı (istemci beyanı doğrulanamıyordu). */
+        fark = 0;
       }
     }
     if (hb) fark = -3;
