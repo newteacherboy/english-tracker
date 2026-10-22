@@ -1,0 +1,37 @@
+/* 29 Ekim — temporary opening only, activated by republic-day-splash.js. */
+html.dm-republic-2026 :is(#splashEkrani,#dmBootSplash,#oturumYuklemeOverlay){
+ background:linear-gradient(175deg,#ee2133 4%,#d50c24 62%,#b3061c 100%)!important;
+ overflow:hidden!important;isolation:isolate;
+}
+html.dm-republic-2026 :is(#splashEkrani,#dmBootSplash,#oturumYuklemeOverlay)::before{
+ content:"";position:absolute;z-index:0;top:0;left:50%;transform:translateX(-50%);
+ --dm-republic-width:min(100vw,calc((100dvh - 154px)*.7528),620px);
+ width:var(--dm-republic-width);aspect-ratio:941/1250;
+ background:url("republic-day-2026.jpg") center top/100% auto no-repeat;
+ pointer-events:none;
+}
+html.dm-republic-2026 :is(#splashEkrani,#dmBootSplash,#oturumYuklemeOverlay) :is(.dm-papi-halo,.dm-brand-line){display:none!important}
+html.dm-republic-2026 :is(#splashEkrani,#dmBootSplash,#oturumYuklemeOverlay) .dm-papi-loading{position:relative;z-index:1}
+.dm-republic-footer{display:none}
+html.dm-republic-2026 :is(#splashEkrani,#dmBootSplash,#oturumYuklemeOverlay) .dm-republic-footer{
+ position:absolute;z-index:2;display:flex;flex-direction:column;align-items:center;gap:14px;
+ left:50%;transform:translateX(-50%);bottom:max(25px,env(safe-area-inset-bottom));
+ width:min(84vw,440px);box-sizing:border-box;color:white;
+ font-family:system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+ text-shadow:0 2px 5px rgba(70,0,12,.4);pointer-events:none;
+}
+.dm-republic-bar{position:relative;width:100%;height:27px;box-sizing:border-box;
+ background:rgba(255,255,255,.95);border:3px solid white;border-radius:999px;overflow:hidden;
+ box-shadow:0 4px 16px rgba(94,0,12,.28);isolation:isolate;
+}
+.dm-republic-bar-fill{position:absolute;inset:0 auto 0 0;width:var(--dm-papi-progress,0%);
+ background:linear-gradient(90deg,#e5172c,#ff5b5b);border-radius:999px;transition:width .18s ease-out}
+.dm-republic-percent{position:absolute;z-index:1;right:11px;top:50%;transform:translateY(-50%);
+ color:#870c1c;text-shadow:none;font-size:13px;font-weight:800}
+.dm-republic-loading{font-size:clamp(15px,3.5vw,18px);font-weight:800;letter-spacing:.01em;line-height:1.25}
+@media(max-height:620px){
+ html.dm-republic-2026 :is(#splashEkrani,#dmBootSplash,#oturumYuklemeOverlay)::before{--dm-republic-width:min(75vw,calc((100dvh - 115px)*.7528),420px)}
+ html.dm-republic-2026 :is(#splashEkrani,#dmBootSplash,#oturumYuklemeOverlay) .dm-republic-footer{gap:6px;bottom:10px}
+ .dm-republic-bar{height:20px}
+}
+@media(prefers-reduced-motion:reduce){.dm-republic-bar-fill{transition:none}}
