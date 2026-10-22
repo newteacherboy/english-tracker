@@ -19,11 +19,12 @@ function mount(kind,title,detail){
  if(kind==='energy'){const close=document.createElement('button');close.type='button';close.className='dm-papi-feedback-close';close.textContent='Anladım';close.addEventListener('click',remove,{once:true});card.append(close);close.focus();}
  return card;
 }
-function correct({detail='',anchor=null,duration=1000}={}){
+function correct({detail='',anchor=null,duration=1000,card=true}={}){
  if(window.dmPapiTour?.active?.())return;
  const at=Date.now();if(at-lastCorrectAt<450)return;lastCorrectAt=at;
  window.dmAnswerFeedback?.(true);
  anchor?.classList.add('dm-papi-correct-pulse');if(anchor)setTimeout(()=>anchor.classList.remove('dm-papi-correct-pulse'),650);
+ if(!card)return; // Parkurlar kendi alt geri bildirimini gösterir; Papi kartı tekrar çıkmasın.
  mount('correct','Harika!',detail||'Doğru cevap!');
  timer=setTimeout(remove,Math.max(650,Math.min(duration,1800)));
 }
