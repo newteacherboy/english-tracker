@@ -10,7 +10,7 @@
     root.classList.add('dm-approved-board');
     const content=root.querySelector('.game-modal-content');
     const hero=document.createElement('header');hero.className='ab-hero ab-'+key;
-    const image=document.createElement('img');image.src='games-assets/approved-'+art+'-v1.webp';image.alt='';image.className='ab-mascot';
+    const image=document.createElement('img');image.loading='lazy';image.decoding='async';image.src='games-assets/approved-'+art+'-v1.webp';image.alt='';image.className='ab-mascot';
     const heading=document.createElement('h2');heading.textContent=title;
     const subtitle=document.createElement('p');subtitle.textContent=description;
     hero.append(heading,subtitle,image);content.prepend(hero);
@@ -19,7 +19,7 @@
     if(key==='hafiza'){
       const turn=document.createElement('p');turn.id='abMemoryTurn';turn.className='ab-memory-turn';turn.setAttribute('role','status');game.querySelector('#hafizaKartGrid').before(turn);
       const footer=document.createElement('footer');footer.className='ab-guide';
-      footer.innerHTML='<img src="games-assets/approved-boy-v1.webp" alt=""><p>Eşleşen kartları bul,<br>tüm çiftleri tamamla!</p>';
+      footer.innerHTML='<img src="games-assets/approved-boy-v1.webp" alt="" loading="lazy" decoding="async"><p>Eşleşen kartları bul,<br>tüm çiftleri tamamla!</p>';
       game.append(footer);const drawer=document.createElement('section');drawer.className='ab-jokers';drawer.setAttribute('aria-label','Jokerlerim');drawer.innerHTML='<strong>Jokerlerim</strong>';game.append(drawer);
     }
     const close=content.querySelector('.game-close-btn');close.textContent='‹';close.setAttribute('aria-label','Oyundan çık');

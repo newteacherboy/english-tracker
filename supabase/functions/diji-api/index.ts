@@ -1620,6 +1620,9 @@ async function handle(req: Request, proxy: any = null) {
       const { y } = await yoOku(sid);
       return json({ ok:true, duplicate:!!bought.duplicate, eklenen:bought.added, enerjiKalan:bought.energy, altin:bought.gold, fiyat:bought.price, ekonomi:ekonomiCevap(y) });
     } else if (is === "enerjiAl") {
+      /* Eski paket yolu (5 enerji 15 altın, tam dolum 60 altın) uygulamada artık kullanılmıyor;
+         açık kalınca API'yi doğrudan çağıran biri mağaza fiyatlarını (100/130/180) atlayabiliyordu. */
+      return hataVer("Enerji paketleri yenilendi. Mağazadan paket seç.", 410);
       let { data: st } = await supabase.from("students").select("*").eq("id", sid).maybeSingle();
       if (!st) return bulunamadi();
       st = await enerjiYenile(st);
