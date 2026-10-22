@@ -8,9 +8,9 @@ const app=scope.module.exports;
 const cal=JSON.parse(fs.readFileSync('ingilizce/holiday-splashes/dates.json','utf8'));
 const at=(s)=>app.resolve(s+'T12:00:00+03:00',cal);
 test('odd years show first art, even years second',()=>{
- assert.equal(at('2027-04-23').file,'23-nisan-1.jpg');
- assert.equal(at('2028-04-23').file,'23-nisan-2.jpg');
- assert.equal(at('2029-04-23').file,'23-nisan-1.jpg');
+ assert.equal(at('2027-10-29').file,'29-ekim-1.jpg');
+ assert.equal(at('2028-10-29').file,'29-ekim-2.jpg');
+ assert.equal(at('2029-10-29').file,'29-ekim-1.jpg');
 });
 test('keeps existing 2026 Republic splash until November 2 ends',()=>{
  assert.equal(app.resolve('2026-11-02T20:59:59Z',cal),null);
@@ -45,7 +45,7 @@ test('head scripts execute before visible splash; assets are local and CSS block
  for(const [path,prefix] of [['index.html','ingilizce/'],['ingilizce/index.html','']]){
   const html=fs.readFileSync(path,'utf8');
   const head=html.split('</head>')[0],marker=head.indexOf(prefix+'holiday-splashes/splash.js');
-  assert(marker>=0&&marker<head.indexOf('</head>'));
+  assert(marker>=0);
   assert(head.includes(prefix+'holiday-splashes/dates.js'));
   assert(head.includes(prefix+'holiday-splashes/splash.css'));
   assert(marker<head.indexOf(prefix+'holiday-splashes/splash.css'));

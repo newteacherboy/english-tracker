@@ -58,11 +58,7 @@
    doc.documentElement.dataset.dmHoliday=chosen.id;
    doc.documentElement.dataset.dmHolidayVariant=String(chosen.variant);
    const preload=doc.createElement('link');preload.rel='preload';preload.as='image';preload.href=image;doc.head.appendChild(preload);
-   // Correct the three Atatürk statue/portrait regions using an authentic archival photograph.
-   // Original compositions remain untouched. A hosted local copy replaces this fallback when available.
-   const fixes={'19-mayis-1':'photo-may-1','19-mayis-2':'photo-may-2','10-kasim-2':'photo-kasim-2'};
-   const fix=fixes[chosen.file.replace('.jpg','')];
-   if(fix)doc.documentElement.dataset.dmHolidayPhoto=fix;
+   // The three approved originals now contain the genuine archival Atatürk photograph.
   }
   const current=win.DM_HOLIDAY_DATES?.verified||'';
   function syncRemote(){
@@ -79,17 +75,13 @@
     }).catch(()=>{win.localStorage.removeItem(key);});
    }catch(_){}
   }
-  const photoUrl='https://upload.wikimedia.org/wikipedia/commons/a/a8/Ataturk1930s.jpg';
+
   function attach(){
    for(const id of ['splashEkrani','dmBootSplash','oturumYuklemeOverlay']){
     const screen=doc.getElementById(id);
     if(!screen||!chosen||screen.querySelector?.('.dm-holiday-art'))continue;
     const frame=doc.createElement('div');frame.className='dm-holiday-art';
     frame.setAttribute('aria-label','Diji Medu '+chosen.id+' özel giriş tasarımı');
-    const photo=doc.documentElement.dataset.dmHolidayPhoto;
-    if(photo){const holder=doc.createElement('div');holder.className='dm-holiday-historic '+photo;
-      const img=doc.createElement('img');img.alt='Mustafa Kemal Atatürk, 1932 tarihli gerçek arşiv fotoğrafı';
-      img.src=photoUrl;img.loading='eager';holder.appendChild(img);frame.appendChild(holder);}
     screen.insertBefore(frame,screen.firstChild);
     const bar=doc.createElement('div');bar.className='dm-holiday-progress';bar.setAttribute('aria-hidden','true');
     bar.innerHTML='<div class="dm-holiday-progress-fill"></div>';
