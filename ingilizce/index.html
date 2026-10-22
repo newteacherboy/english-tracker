@@ -5282,14 +5282,14 @@ yagmurHavuz = OC.kelimeSec('yagmur', yagmurHavuz, OC.SORU); OC.basla('yagmur');
                 function govdeKaybolanIcerikleriKurtar() {
                     let panelAlani = document.getElementById('panel-alani');
                     if (!panelAlani) return;
-                    let govdeCocuklari = Array.from(document.body.children);
-                    govdeCocuklari.forEach(function(el) {
-                        if (el.id === 'login-container' || el.id === 'panel-alani' || el.id === 'oturumYuklemeOverlay') return;
-                        if (el.tagName === 'SCRIPT' || el.tagName === 'STYLE') return;
-                        let konum = window.getComputedStyle(el).position;
-                        if (konum === 'fixed') return; // sabit konumlu modal/pencere ise dokunma, olduğu yerde kalsın
-                        panelAlani.appendChild(el);
+                    // Önce tüm konumları oku, sonra taşı: okuma/yazma iç içe olunca her
+                    // öğe için stil yeniden hesaplanıyor ve açılış saniyelerce uzuyordu.
+                    let tasinacaklar = Array.from(document.body.children).filter(function(el) {
+                        if (el.id === 'login-container' || el.id === 'panel-alani' || el.id === 'oturumYuklemeOverlay') return false;
+                        if (el.tagName === 'SCRIPT' || el.tagName === 'STYLE') return false;
+                        return window.getComputedStyle(el).position !== 'fixed'; // sabit konumlu modal/pencere ise dokunma
                     });
+                    tasinacaklar.forEach(function(el) { panelAlani.appendChild(el); });
                 }
                 document.addEventListener('DOMContentLoaded', govdeKaybolanIcerikleriKurtar);
 
@@ -10321,7 +10321,7 @@ function ozellikSecDoldur() {
             wrap.innerHTML = `
                 <div class="gek-battery-row">
                     <div class="gek-battery"><div class="gek-fill"></div></div>
-                    <div class="gek-mascot"><img src="papi-reward-v2.png" class="dm-panel-mascot" width="1145" height="1374" alt="Başarını kutlayan Diji-Medu papağanı"></div>
+                    <div class="gek-mascot"><img src="papi-reward-v2.png" class="dm-panel-mascot" width="1145" height="1374" alt="Başarını kutlayan Diji-Medu papağanı" loading="lazy" decoding="async"></div>
                     <div class="gek-spark" style="top:10%; right:-6px; --sx:14px; --sy:-14px;">✨</div>
                     <div class="gek-spark" style="top:70%; right:-2px; --sx:10px; --sy:16px; animation-delay:.1s;">⭐</div>
                 </div>
@@ -11259,7 +11259,7 @@ function ozellikSecDoldur() {
             let wrap = document.getElementById('kpCardWrap');
             let el = document.createElement('div');
             el.className = 'kp-bonus-parrot';
-            el.innerHTML = '<img src="papi-reward-v2.png" class="dm-panel-mascot" width="1145" height="1374" alt="Başarını kutlayan Diji-Medu papağanı"><span class="kp-bonus-parrot-txt">+1 ⚡ Enerji!</span>';
+            el.innerHTML = '<img src="papi-reward-v2.png" class="dm-panel-mascot" width="1145" height="1374" alt="Başarını kutlayan Diji-Medu papağanı" loading="lazy" decoding="async"><span class="kp-bonus-parrot-txt">+1 ⚡ Enerji!</span>';
             wrap.appendChild(el);
             setTimeout(() => el.remove(), 1800);
         }
@@ -18210,7 +18210,7 @@ body.pk-sekmeli #dunyaAlan { padding-top:78px !important; }
 })();
 </script>
 <link rel="stylesheet" href="papi-onboarding.css?v=3">
-<script src="papi-flow.js?v=20261013-activity-2"></script>
+<script src="papi-flow.js?v=20261022-hiz-1"></script>
 <script src="papi-onboarding.js?v=20261013-member-1"></script>
 <script>
 (function () {
@@ -26527,11 +26527,11 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <link rel="stylesheet" href="konu-oyunlari.css?v=20261021-konu-a2-1">
 <script defer src="konu-oyunlari.js?v=20261021-konu-a2-1"></script>
 <link rel="stylesheet" href="activity-ui.css?v=20261021-konu-3">
-<script defer src="activity-ui.js?v=20261021-topic-a2"></script>
+<script defer src="activity-ui.js?v=20261022-hiz-1"></script>
 <link rel="stylesheet" href="mola-vakti.css?v=20261021-chapters-1">
 <script defer src="mola-chapters.js?v=20261021-chapters-1"></script>
 <script defer src="mola-core.js?v=20261021-chapters-1"></script>
-<script defer src="mola-vakti.js?v=20261021-chapters-1"></script>
+<script defer src="mola-vakti.js?v=20261022-hiz-1"></script>
 <script defer src="navigation-history.js?v=20261019-step-back-1"></script>
 <script defer src="bottom-nav.js?v=20261020-member-flows-1"></script>
 <link rel="stylesheet" href="weekly-ui.css?v=2">
@@ -26544,7 +26544,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <link rel="stylesheet" href="kelime-rallisi.css?v=20261020-slow">
 <script defer src="lazy-games.js?v=20261016-flow-2"></script>
 <link rel="stylesheet" href="game-experience.css?v=20261011-wordmode">
-<script defer src="game-experience.js?v=20261019-step-back-1"></script>
+<script defer src="game-experience.js?v=20261022-hiz-1"></script>
 <script defer src="game-access.js?v=20261020-1"></script>
 <script defer src="onboarding-ui.js?v=20261015-members-only-1"></script>
 <script defer src="first-discovery.js?v=20261020-start-path-2"></script>
@@ -26620,7 +26620,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <link rel="stylesheet" href="league-ui.css?v=20261019-1">
 <script defer src="league-ui.js?v=20261019-1"></script>
 <link rel="stylesheet" href="study-ui.css?v=20261019-learn-play-1">
-<script defer src="study-ui.js?v=20261020-homework-1"></script>
+<script defer src="study-ui.js?v=20261022-hiz-1"></script>
 <link rel="stylesheet" href="storefront.css?v=20261015-shopping-1">
 <script defer src="boutique-art.js?v=20261014-legend-1"></script>
 <script defer src="bag-inventory.js?v=20261019-first-tap-4"></script>
@@ -26653,7 +26653,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <link rel="stylesheet" href="papi-chat.css?v=20261016-2">
 <script defer src="papi-chat.js?v=20261016-1"></script>
 <link rel="stylesheet" href="approved-game-boards.css?v=20261018-fixed-jokers-3">
-<script defer src="approved-game-boards.js?v=20261018-fixed-jokers-3"></script>
+<script defer src="approved-game-boards.js?v=20261022-hiz-1"></script>
 <link rel="stylesheet" href="play-navigation.css?v=20261018-1">
 <script defer src="play-navigation.js?v=20261018-harf-2"></script>
 <link rel="stylesheet" href="email-guide.css?v=20261018-compact-2">
