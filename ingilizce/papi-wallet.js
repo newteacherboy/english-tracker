@@ -10,7 +10,23 @@ const selectors=['#tab-dunya .rt-top','#tab-aktiviteler .gg-brand','#tab-meduaki
 const finite=n=>Number.isFinite(Number(n))?Math.max(0,Math.floor(Number(n))):0;
 const format=n=>finite(n).toLocaleString('tr-TR');
 const compact=n=>finite(n)>=10000?new Intl.NumberFormat('tr-TR',{notation:'compact',maximumFractionDigits:1}).format(finite(n)):format(n);
-let seen={owner:''};
+let seen={owner:''},clearSince=0;
+// Ödüller, gösterge gerçekten görünürken uçar: sonuç ekranı, panel ya da başka bir katman göstergenin
+// üstündeyse kazanımlar bekletilir ve ekran kapanınca hepsi birden göstergeye uçar.
+// Göstergenin üstündeki eleman büyük bir katmana (sonuç ekranı, panel, modal) aitse gösterge kapalı sayılır.
+// Küçük rozetler ya da aynı başlığın parçaları sayılmaz; değerler orada takılı kalmasın.
+function coveredBy(hit){
+ for(let e=hit;e&&e!==document.body&&e!==document.documentElement;e=e.parentElement){
+  if(e===hud||e.contains(hud))return false;
+  const r=e.getBoundingClientRect();if(r.width>=innerWidth*.6&&r.height>=innerHeight*.4)return true;
+ }
+ return false;
+}
+function onTop(){
+ if(!visible(hud))return false;
+ return Object.values(buttons).every(e=>{const r=e.getBoundingClientRect(),x=r.left+r.width/2,y=r.top+r.height/2;
+  if(x<0||y<0||x>innerWidth||y>innerHeight)return false;return !coveredBy(document.elementFromPoint(x,y));});
+}
 function detach(){hud.parentElement?.classList.remove('dm-has-wallet');hud.remove();}
 function run(){
  if(typeof aktifOgrenciAdi==='undefined'||!aktifOgrenciAdi){detach();return;}
@@ -23,9 +39,15 @@ function run(){
  const owner=String(aktifOgrenciAdi),raw={energy:energy==null?null:finite(energy),gold:finite(y.altin),xp:finite(y.totalXp)};
  // Ödül A: when a value grows while the strip is on screen, icons fly in and the number counts up.
  if(seen.owner!==owner){seen={owner};}
- for(const key of ['energy','gold','xp']){const before=seen[key],now=raw[key];if(now==null)continue;seen[key]=now;
-  if(before!=null&&now>before&&window.dmRewardFx&&visible(hud)){const e=buttons[key],text=e.querySelector('[data-pw-value]');window.dmRewardFx.fly({kind:key,amount:now-before,target:e,counter:text,fromValue:before,toValue:now,format:key==='energy'?format:compact});}}
- for(const [key,value] of Object.entries(values)){const e=buttons[key],text=e.querySelector('[data-pw-value]');if(text.dataset.dmCounting)continue;if(text.textContent!==value)text.textContent=value;if(e.getAttribute('aria-label')!==labels[key]){e.setAttribute('aria-label',labels[key]);e.title=labels[key];}}
+ const ready=onTop();
+ if(!ready)clearSince=0;else if(!clearSince){clearSince=performance.now();setTimeout(schedule,380);}
+ const settled=ready&&performance.now()-clearSince>=350; // kapanış geçişi bitsin, kullanıcı uçuşu görsün
+ const shown={};
+ for(const key of ['energy','gold','xp']){const before=seen[key],now=raw[key];if(now==null)continue;
+  if(before!=null&&now>before&&!settled){shown[key]=before;continue;} // göstergede eski değer kalsın, artış sonra uçarak gelsin
+  seen[key]=now;
+  if(before!=null&&now>before&&window.dmRewardFx){const e=buttons[key],text=e.querySelector('[data-pw-value]');window.dmRewardFx.fly({kind:key,amount:now-before,target:e,counter:text,fromValue:before,toValue:now,format:key==='energy'?format:compact});}}
+ for(const [key,value0] of Object.entries(values)){const e=buttons[key],text=e.querySelector('[data-pw-value]');if(text.dataset.dmCounting)continue;const value=key in shown?(key==='energy'?format:compact)(shown[key]):value0;if(text.textContent!==value)text.textContent=value;if(e.getAttribute('aria-label')!==labels[key]){e.setAttribute('aria-label',labels[key]);e.title=labels[key];}}
  const minutes=compact(finite(time.seconds)/60)+' dk',small=buttons.time.querySelector('[data-pw-minutes]');if(small.textContent!==minutes)small.textContent=minutes;
 }
 let queued=false;function schedule(){if(queued||document.hidden)return;queued=true;requestAnimationFrame(()=>{queued=false;run();});}
