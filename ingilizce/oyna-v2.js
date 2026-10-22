@@ -46,7 +46,25 @@ function node(s,i,current,learn){
 }
 function chestReady(){return Object.values(window.dmProgression?.status?.()?.chests||{}).some(state=>state==='ready');}
 function chestMarkup(){const ready=chestReady();return '<button type="button" class="rt-map-chest'+(ready?' is-ready':'')+'" data-rt="chests" aria-label="'+(ready?'Kazandığın sandığı aç':'Parkur sandıklarını göster')+'">'+img('chest-three.svg','rt-chest-art')+'<span class="rt-v3-chest-label">Sandık</span><span class="rt-chest-open"'+(ready?'':' hidden')+'>AÇ</span></button>';}
-function paintChests(){const ready=chestReady();document.querySelectorAll('.rt-map-chest').forEach(b=>{b.classList.toggle('is-ready',ready);b.setAttribute('aria-label',ready?'Kazandığın sandığı aç':'Parkur sandıklarını göster');const label=b.querySelector('.rt-chest-open');if(label)label.hidden=!ready;});}
+/* Harita yan kartlarındaki rozetler: Planım bitmediyse kırmızı 1, Görevler bitmediyse kırmızı nokta,
+   alınacak görev ödülü varsa yeşil sayı, açılacak sandık varsa yeşil sayı. */
+function toolBadge(button,kind,text,label){if(!button)return;let b=button.querySelector(':scope>.rt-tool-badge');if(!kind){b?.remove();button.removeAttribute('data-badge');return;}
+ if(!b){b=document.createElement('span');b.className='rt-tool-badge';button.append(b);}b.className='rt-tool-badge is-'+kind+(text?'':' is-dot');b.textContent=text;b.setAttribute('aria-label',label);b.setAttribute('role','status');button.dataset.badge=kind;}
+function paintToolBadges(){
+ const plan=window.dmLearningCompanion?.planState?.(),missions=window.dmRouteMissions?.badge?.(),chests=Object.values(window.dmProgression?.status?.()?.chests||{}).filter(state=>state==='ready').length;
+ document.querySelectorAll('.rt-v3-tools').forEach(tools=>{
+  const p=tools.querySelector('[data-rt="plan"]'),m=tools.querySelector('[data-rt="missions"]'),c=tools.querySelector('[data-rt="chests"]');
+  toolBadge(p,plan&&plan.done<plan.total?'red':'',plan&&plan.done<plan.total?'1':'','Bugünkü planın tamamlanmadı');
+  if(missions?.claimable)toolBadge(m,'green',String(missions.claimable),missions.claimable+' görev ödülü alınmayı bekliyor');
+  else toolBadge(m,missions?.open?'red':'','','Tamamlanmamış görevlerin var');
+  toolBadge(c,chests?'green':'',chests?String(chests):'',chests+' sandık açılmayı bekliyor');
+  const open=c?.querySelector('.rt-chest-open');if(open)open.hidden=true;
+ });
+}
+if(typeof document!=='undefined'&&typeof document.createElement==='function'&&document.head&&!document.getElementById('rtToolBadgeStyle')){const st=document.createElement('style');st.id='rtToolBadgeStyle';st.textContent='body #tab-dunya .rt-v3-tools>button .rt-tool-badge{position:absolute;top:-7px;right:6px;min-width:22px;height:22px;padding:0 6px;box-sizing:border-box;border-radius:11px;display:flex;align-items:center;justify-content:center;font:800 12px/1 system-ui,sans-serif;color:#fff;border:2px solid #fff;box-shadow:0 2px 5px rgba(0,0,0,.18);z-index:2;pointer-events:none}body #tab-dunya .rt-v3-tools>button .rt-tool-badge.is-red{background:#e5484d}body #tab-dunya .rt-v3-tools>button .rt-tool-badge.is-green{background:#1f9d55}body #tab-dunya .rt-v3-tools>button .rt-tool-badge.is-dot{min-width:14px;width:14px;height:14px;padding:0;top:-4px;right:10px}';document.head.append(st);}
+if(typeof setInterval==='function')setInterval(()=>{if(!document.hidden&&document.querySelector('.rt-v3-tools'))paintToolBadges();},2000);
+window.dmPaintToolBadges=paintToolBadges;
+function paintChests(){const ready=chestReady();document.querySelectorAll('.rt-map-chest').forEach(b=>{b.classList.toggle('is-ready',ready);b.setAttribute('aria-label',ready?'Kazandığın sandığı aç':'Parkur sandıklarını göster');const label=b.querySelector('.rt-chest-open');if(label)label.hidden=true;});paintToolBadges();}
 async function refreshChests(){await window.dmProgression?.refresh?.(true);paintChests();}
 function routeTitle(s,learn){
  if(learn)return String(s?.title||'Öğrenme durağı').replace(/^\d+\.\s*Durak\s*·\s*/i,'');
