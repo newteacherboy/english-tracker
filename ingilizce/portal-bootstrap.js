@@ -83,6 +83,3 @@ window.dmOpenPortalSession=function({student,seconds=0,refreshProfile=false,prof
  })();pending={owner,task};task.finally(()=>{if(pending?.task===task)pending=null;});return task;
 };
 })();
-
-// Add the dated holiday visual without changing the session activation pipeline.
-if(typeof document!=='undefined'&&typeof document.createElement==='function'&&document.head){const holiday=document.createElement('script');holiday.src='republic-day-splash.js?v=20261022-2';holiday.async=true;document.head.appendChild(holiday);}

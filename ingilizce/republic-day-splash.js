@@ -1,14 +1,6 @@
 /* Special 29 Ekim opening theme. Automatically ends 2026-11-03 00:00 Europe/Istanbul. */
 (()=>{'use strict';
  const ids=['splashEkrani','dmBootSplash','oturumYuklemeOverlay'];
- const source=document.currentScript?.src||window.location.href;
- if(activeDateForCss()){
-  const link=document.createElement('link');
-  link.rel='stylesheet';link.href=new URL('republic-day-splash.css?v=20261022-3',source).href;
-  link.setAttribute('data-dm-republic-style','');
-  document.head?.appendChild(link);
- }
- function activeDateForCss(){try{const d=new Intl.DateTimeFormat('sv-SE',{timeZone:'Europe/Istanbul',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());return d>='2026-10-22'&&d<='2026-11-02';}catch(_){return false;}}
 
  const end=Date.parse('2026-11-02T21:00:00Z'); // 03 November, 00:00 in Türkiye
  const observers=new Map();
