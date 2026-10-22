@@ -75,6 +75,8 @@ function claimRow(period){
 
 window.dmRouteMissions={
  finished(period){return (period==='daily'||period==='weekly')&&done(period)&&claimed(period);},
+ /* Harita kartındaki rozet: alınmayı bekleyen ödül sayısı ve bitmemiş görev var mı */
+ badge(){if(!member()||owner!==who()||!value){askForData();return null;}const periods=['daily','weekly'];return {claimable:periods.filter(p=>done(p)&&!claimed(p)).length,open:!done('daily')};},
  data(period){return owner&&owner===who()?(value?.[period]||null):null;},
  set(data,name){if(name!==who())return;owner=name;value=data||null;window.dmRefreshRouteCards?.();},
  markup(period){
