@@ -2510,11 +2510,15 @@ async function nihaiSorguKapat() {
     } catch(e) { console.log("Seviye kaydı tamamlandı."); }
 }
 
+// İletişim talepleri yayımlanan kurumsal adrese e-postayla gider (kişisel telefon numarası sayfada yer almaz).
+function iletisimEpostasiAc(konu, mesaj) {
+    const metin = String(mesaj || "").replace(/\*/g, "");
+    window.location.href = "mailto:official.dijimedu@gmail.com?subject=" + encodeURIComponent("Diji-Medu · " + konu) + "&body=" + encodeURIComponent(metin);
+}
+
 function testSonucundanDersTalebiGonder() {
     const mesaj = `Merhabalar Hocam,\nBen seviye tespit sınavını tamamladım.\n\n👤 *Adım Soyadım:* ${ogrenciIsmi}\n📊 *Sınav Sonucum:* ${nihaiDogruSayisi} Doğru / ${nihaiYanlisSayisi} Yanlış\n🎯 *Seviyem:* ${nihaiSeviyeSonucu}\n\nİngilizcemi daha da ilerletmek ve bireysel özel ders planlaması yapmak için bilgi istiyorum.`;
-    const numara = "905369937089";
-    const wpLink = `https://api.whatsapp.com/send?phone=${numara}&text=${encodeURIComponent(mesaj)}`;
-    window.open(wpLink, '_blank');
+    iletisimEpostasiAc("Özel ders talebi", mesaj);
 }
 
 function whatsappKutusuToggle() {
@@ -2534,10 +2538,7 @@ function whatsapplaGonder() {
 
     let ogrenciBilgisi = typeof activeStudent !== 'undefined' && activeStudent ? `Öğrenci: ${activeStudent}` : "Web Sitesi Ziyaretçisi";
     const tamMesaj = `🤖 *DİJİMUALLİM - CANLI SORU HATTI*\n\n👤 ${ogrenciBilgisi}\n\n📝 *Soru / Mesaj:*\n${mesaj}`;
-    const telefonNumarasi = "905369937089"; 
-    const waUrl = `https://api.whatsapp.com/send?phone=${telefonNumarasi}&text=${encodeURIComponent(tamMesaj)}`;
-     
-    window.open(waUrl, '_blank');
+    iletisimEpostasiAc("Canlı soru hattı", tamMesaj);
     mesajInput.value = "";
     whatsappKutusuToggle();
 }
@@ -2908,10 +2909,7 @@ async function sagAltDersTalebiGonder() {
                   `📞 *Veli Tel:* ${veliTel}\n\n` +
                   `En Kısa Sürede Dönüş Yapılacaktır`;
 
-    const hocamizinNumarasi = "905369937089";
-    const wpUrl = `https://api.whatsapp.com/send?phone=${hocamizinNumarasi}&text=${encodeURIComponent(mesaj)}`;
-     
-    window.open(wpUrl, '_blank');
+    iletisimEpostasiAc("Yeni ders talebi", mesaj);
 
     setTimeout(() => {
         if (btn) {
