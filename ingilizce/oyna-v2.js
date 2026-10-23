@@ -98,6 +98,7 @@ function pathMarkup(steps,current,learn){
 }
 function mountScrollable(root){
  const el=root?.querySelector?.('[data-route-map]');if(!el?.querySelector||!routeMap||Number(el.dataset.routeMap)!==routeMap.key)return;
+ window.dmRouteExploration?.mount(el,{steps:routeMap.steps,current:routeMap.current,learn:routeMap.learn});
  const map=routeMap,scroll=el.querySelector('.rt-v3-scroll'),world=el.querySelector('.rt-flow-world');if(!scroll||scroll.dataset.bound)return;
  scroll.dataset.bound='1';let queued=false;
  function draw(){queued=false;if(!el.isConnected||map!==routeMap)return;const from=Math.max(0,Math.floor((scroll.scrollTop-TOP)/ROW)-4),to=Math.min(map.steps.length,Math.ceil((scroll.scrollTop+scroll.clientHeight)/ROW)+5);if(from!==map.from||to!==map.to){map.from=from;map.to=to;world.innerHTML=mapRows(map,from,to);}}

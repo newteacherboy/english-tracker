@@ -1,3 +1,4 @@
+import {routeExplorationAPI} from './route-exploration.mjs';
 import {routeGraduationsAPI} from './route-graduations.mjs';
 import {completeLessonAssignments} from './assignment-completion.mjs';
 import graduationCatalog from './graduation-catalog.json' with {type:'json'};
@@ -1379,6 +1380,7 @@ async function handle(req: Request, proxy: any = null) {
     if(error)return json({ok:false,mesaj:'Satın alma hakları alınamadı.'},503);
     return json({ok:true,entitlements:data||[],checkoutEnabled:false});
   }
+  const explorationResponse=await routeExplorationAPI(supabase,json,graduationCatalog,isDemo).handle(op,body,a,req.method);if(explorationResponse)return explorationResponse;
   const graduationResponse=await routeGraduationsAPI(supabase,json,graduationCatalog).handle(op,body,a,req.method);if(graduationResponse)return graduationResponse;
   const safetyResponse=await socialSafety.handle(op,body,a,req.method);if(safetyResponse)return safetyResponse;
   const safetyDeny=await socialSafety.guard(op,body,q,a);if(safetyDeny)return safetyDeny;

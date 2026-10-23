@@ -1,0 +1,31 @@
+/* Loaded after legacy route styles. These overrides are scoped to mounted 3D. */
+body #tab-dunya .rt-path:has(.rx-world){display:flex!important;flex-direction:column!important;min-height:350px!important}
+body #tab-dunya .rt-path:has(.rx-world) .rt-v3-canvas{position:relative!important;flex:1!important;min-height:300px!important;overflow:hidden!important;background:#c8e9dd!important}
+body #tab-dunya .rt-path:has(.rx-world) .rt-v3-art,body #tab-dunya .rt-path:has(.rx-world) .rt-v3-scroll{display:none!important}
+body #tab-dunya .rt-path:has(.rx-world) .rt-v3-tools{z-index:5!important;right:8px!important;top:65px!important;transform:none!important;pointer-events:auto!important}
+body #tab-dunya .rt-path:has(.rx-world) .rt-continue[hidden]{display:none!important}
+.rx-world{position:absolute;inset:0;isolation:isolate;overflow:hidden;font-family:system-ui,sans-serif;color:#183f40;background:#8ad4d5}
+.rx-world>canvas{width:100%;height:100%;display:block;touch-action:none;outline-offset:-4px}
+.rx-world button{font-family:inherit;cursor:pointer;touch-action:manipulation}
+.rx-top{position:absolute;top:10px;left:12px;right:12px;pointer-events:none;display:flex;justify-content:space-between;align-items:start;gap:8px}
+.rx-title{padding:9px 13px;border-radius:16px;background:#fff9e9ed;box-shadow:0 4px 12px #214d4930;font-size:15px;font-weight:900;line-height:1.2}
+.rx-title small{display:block;font-size:10px;margin-top:3px;color:#375b58;font-weight:700}
+.rx-count{background:#153f40eF;color:#fff;border-radius:20px;padding:8px 10px;font-size:11px;font-weight:800}
+.rx-bottom{position:absolute;bottom:max(12px,env(safe-area-inset-bottom));left:12px;right:12px;display:flex;align-items:end;justify-content:space-between;gap:8px;pointer-events:none}
+.rx-joystick{width:86px;height:86px;border:2px solid #ffffffa8;background:#123e4355;border-radius:50%;position:relative;pointer-events:auto;touch-action:none;flex-shrink:0;box-shadow:0 3px 12px #16403d25}
+.rx-thumb{position:absolute;width:35px;height:35px;left:23px;top:23px;border-radius:50%;background:#fff5d9;border:2px solid white;box-shadow:0 4px 8px #16403d55;pointer-events:none}
+.rx-hint{max-width:220px;padding:9px 12px;border-radius:14px;background:#fff8e9ed;font-size:11px;font-weight:750;line-height:1.4;box-shadow:0 3px 10px #23493620}
+.rx-actions{display:flex;flex-direction:column;gap:6px;max-width:65%;align-items:flex-end;pointer-events:auto}
+.rx-enter{border:2px solid #fff!important;border-radius:16px!important;padding:11px 15px!important;min-height:44px;background:#0f725e!important;color:#fff!important;font-size:12px!important;font-weight:900!important;box-shadow:0 4px 0 #064b42!important}
+.rx-enter:disabled{background:#425960!important;box-shadow:none!important;cursor:default}
+.rx-skip{border:0;background:#fff8e9ee;color:#244941;border-radius:12px;padding:8px 11px;font-size:11px;font-weight:800;min-height:36px}
+.rx-status{position:absolute;left:50%;top:62px;transform:translateX(-50%);max-width:75%;background:#173f40f2;color:white;border-radius:14px;padding:8px 12px;font-size:12px;font-weight:750;text-align:center;pointer-events:none}
+.rx-world :focus-visible{outline:3px solid #5c35d0;outline-offset:3px}
+.rx-world [hidden]{display:none!important}
+@media(max-height:700px){.rx-joystick{width:70px;height:70px}.rx-thumb{left:15px;top:15px}.rx-title{font-size:12px}.rx-bottom{bottom:8px}.rx-hint{font-size:10px;padding:6px 9px}}
+/* Keep the original plan/mission/chest actions without covering the scenery. */
+body #tab-dunya .rt-path:has(.rx-world) .rt-v3-tools{display:flex!important;flex-direction:row!important;width:auto!important;max-width:none!important;gap:5px!important;top:63px!important}
+body #tab-dunya .rt-path:has(.rx-world) .rt-v3-tools>button{width:40px!important;height:40px!important;min-height:40px!important;padding:7px!important;border-radius:12px!important;display:flex!important;align-items:center!important;justify-content:center!important}
+body #tab-dunya .rt-path:has(.rx-world) .rt-v3-tools>button>span:not(.rt-tool-badge),body #tab-dunya .rt-path:has(.rx-world) .rt-v3-tools>button>small{display:none!important}
+body #tab-dunya .rt-path:has(.rx-world) .rt-v3-tools>button>svg,body #tab-dunya .rt-path:has(.rx-world) .rt-v3-tools>button>img{position:static!important;width:24px!important;height:24px!important;object-fit:contain!important;transform:none!important}
+.rx-title{font-size:13px;white-space:nowrap}.rx-count{font-size:10px;white-space:nowrap;padding:8px}
