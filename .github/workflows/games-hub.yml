@@ -3,10 +3,10 @@ on:
   push:
     paths: ['ingilizce/activity-ui.*', 'ingilizce/games-assets/**', 'tests/games-design-selected-1.test.cjs', 'tests/games-hub-ui.cjs', 'tests/games-hub-integration.cjs', '.github/workflows/games-hub.yml']
   pull_request:
-    paths: ['ingilizce/activity-ui.*', 'ingilizce/games-assets/**', 'tests/games-hub-ui.cjs', 'tests/games-hub-integration.cjs', '.github/workflows/games-hub.yml']
+    paths: ['ingilizce/activity-ui.*', 'ingilizce/games-assets/**', 'tests/games-design-selected-1.test.cjs', 'tests/games-hub-ui.cjs', 'tests/games-hub-integration.cjs', '.github/workflows/games-hub.yml']
 jobs:
   games:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
