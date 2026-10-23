@@ -3,8 +3,8 @@
       alttaki menüde her sayfayı ışıkla gösterip tek cümleyle anlatır.
    2) Ortak tur motoru (window.dmPapiIntro.run): papi-sayfa-turlari.js sayfa turlarını
       bununla çalıştırır. Adım, hedefi ışıkla gösterir; hedef yoksa ortada kart açar.
-   Ekonomiye ve sunucuya dokunmaz. Tetikleyiciler: member-experience.js
-   "dm:first-route-chosen", index.html karakter seçimi "dm:first-character-chosen". */
+   Ekonomiye ve sunucuya dokunmaz. Tetikleyici: index.html karakter seçimi
+   "dm:first-character-chosen" / "dm:first-character-skipped". */
 (()=>{'use strict';
 if(window.dmPapiIntro)return;
 const ROOT_ID='dmPapiTour';
@@ -138,24 +138,34 @@ function place(){
  else card.style.bottom=Math.max(12,vh-navTop+12)+'px';
 }
 
-/* ---------- İlk tanıtım: tetikleme ---------- */
+/* ---------- İlk tanıtım: tetikleme ----------
+   Yeni üye karakter cinsiyetini seçip kaydettiği (ya da "Sonra seçerim" dediği) anda açılır.
+   Parkur seçimine bağlı değildir: yol üyelikte belirlenir. Bekleyen tanıtım cihaza kalıcı
+   yazılır; uygulama kapanıp açılsa da kaçmaz. Tanıtım açıkken papi-flow.js diğer tüm
+   bildirimleri bekletir, bitince sırayla gösterir. */
+const pendingKey=o=>'dm_papi_tanitim_bekliyor:'+o.toLowerCase();
+const pending=o=>store.get(pendingKey(o))==='1'||store.get(candidateKey(o),sessionStorage)==='1';
+const ONLY_FIRST='.ka-perde,#dmCharacterBuilder';
 let timer=0;
 function introEligible(){
- const o=who();if(!o)return false;
- if(store.get(seenKey(o))==='1'||store.get(candidateKey(o),sessionStorage)!=='1')return false;
- const y=Y();if(!y||!['school','independent'].includes(y.dmLearningPurpose))return false;
- if(!(y.karakter?.cins||store.get('ing_ka_soruldu',sessionStorage)==='1'))return false;
- return idle();
+ const o=who();if(!o||store.get(seenKey(o))==='1'||!pending(o))return false;
+ if(o.toLowerCase()==='teacher'||window.dmGuestMode)return false;
+ if(typeof siniftaOynananOgrenci!=='undefined'&&siniftaOynananOgrenci)return false;
+ if(!Y()||(window.yoHazirMi&&!window.yoHazirMi())||isOpen())return false;
+ return ![...document.querySelectorAll(ONLY_FIRST)].some(visible);
 }
 function poll(){if(introEligible())startIntro();}
-function arm(){const o=who();if(!o)return;store.set(candidateKey(o),'1',sessionStorage);clearInterval(timer);timer=setInterval(poll,1500);}
-document.addEventListener('dm:first-route-chosen',arm);
+function arm(){const o=who();if(!o||store.get(seenKey(o))==='1')return;store.set(pendingKey(o),'1');clearInterval(timer);timer=setInterval(poll,250);setTimeout(poll,0);}
 document.addEventListener('dm:first-character-chosen',arm);
-if(who()&&store.get(candidateKey(who()),sessionStorage)==='1')timer=setInterval(poll,1500);
+document.addEventListener('dm:first-character-skipped',arm);
+if(who()&&pending(who())&&store.get(seenKey(who()))!=='1')timer=setInterval(poll,250);
+document.addEventListener('dm:login',()=>{clearInterval(timer);timer=0;setTimeout(()=>{const o=who();if(o&&pending(o)&&store.get(seenKey(o))!=='1')timer=setInterval(poll,250);},500);});
 function startIntro(){
  const o=who();if(!o)return;
  clearInterval(timer);timer=0;
  store.set(seenKey(o),'1'); // Once per account on this device, even if closed mid-way.
+ try{localStorage.removeItem(pendingKey(o));}catch{}
+ store.set(candidateKey(o),'1',sessionStorage); // papi-sayfa-turlari: bu oturum 1. oturum sayılır.
  run(introSteps(),{label:'Papi ile uygulama tanıtımı',onClose:()=>document.dispatchEvent(new CustomEvent('dm:papi-intro-done'))});
 }
 window.dmPapiIntro={run,active:isOpen,idle,close:()=>close('api'),seen:o=>store.get(seenKey(String(o||who())))==='1',start:()=>{const o=who();if(o)store.set(candidateKey(o),'1',sessionStorage);startIntro();}};
