@@ -135,7 +135,8 @@ function calm(page){
 function start(tour,{fromTab=false}={}){
  markDone(tour.id);
  let steps=tour.steps();
- if(fromTab&&steps[0]?.before)steps=[{...steps[0],before:undefined},...steps.slice(1)]; // Sekme zaten açık.
+ // Sekmeden gelince giriş kartı ("Başlayalım / Geç") atlanır; doğrudan ilk bölüm gösterilir.
+ if(fromTab&&steps[0]?.center)steps=steps.slice(1);
  window.dmPapiIntro?.run(steps,{label:'Papi ile '+tour.title+' tanıtımı',onClose:()=>{try{tour.after?.();}catch{}}});
 }
 let owner='',last=null,candidate=null,since=0;
