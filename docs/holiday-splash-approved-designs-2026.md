@@ -1,6 +1,6 @@
 # Diji Medu approved yearly holiday splash system
 
-Mobile assets retain the originally selected artwork and logo. Dynamic styling and data are scoped to the three existing startup overlays. 2026 October 29 existing design runs through 2026-11-02.
+Mobile assets retain the originally selected artwork and logo. Dynamic styling and data are scoped to the three existing startup overlays. The 2026 October 29 celebration uses the newly approved second design from October 22 through November 2 inclusive, replacing the earlier legacy splash.
 
 The fixed dates use Europe/Istanbul and inclusive windows (usually minus/plus three days; November 10 uses -2/+1; July 15 uses -2/+2). 2027 uses variant 1, 2028 variant 2. Ramadan runs from its official first day to last day, and Bayram selection takes precedence from three days before Bayram through three days after. Kurban also takes precedence over 19 Mayıs when they overlap.
 

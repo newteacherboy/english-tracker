@@ -13,17 +13,22 @@ html.dm-holiday-active :is(#splashEkrani,#dmBootSplash,#oturumYuklemeOverlay)::b
  pointer-events:none;
 }
 html.dm-holiday-active .dm-holiday-art{
- position:absolute;z-index:1;inset:0;margin:auto;width:min(100vw,56.3vh);
- max-width:100%;height:auto;aspect-ratio:941/1672;pointer-events:none;
+ position:absolute;z-index:1;top:50%;left:50%;transform:translate(-50%,-50%);
+ width:min(100vw,56.3dvh);max-width:100%;height:auto;aspect-ratio:941/1672;
+ pointer-events:none;
 }
 html.dm-holiday-active :is(#splashEkrani,#dmBootSplash,#oturumYuklemeOverlay) .dm-papi-loading{position:relative;z-index:2;pointer-events:none}
 html.dm-holiday-active #dmBootText{display:none!important}
 .dm-holiday-progress{display:none}
-html.dm-holiday-active .dm-holiday-progress{
- position:absolute;z-index:3;display:block;bottom:max(6%,env(safe-area-inset-bottom));
- left:50%;transform:translateX(-50%);width:min(38vw,250px);height:8px;
- border-radius:99px;background:rgba(255,255,255,.87);border:1px solid rgba(255,255,255,.9);
- box-shadow:0 2px 8px rgba(0,0,0,.25);overflow:hidden;pointer-events:none
+html.dm-holiday-active .dm-holiday-art>.dm-holiday-progress{
+ position:absolute;z-index:3;display:block;top:83.55%;left:22.3%;
+ width:55%;height:3.4%;box-sizing:border-box;
+ border-radius:999px;background:#ffffff;border:2px solid #fff;
+ box-shadow:0 2px 8px rgba(0,0,0,.19);overflow:hidden;pointer-events:none;
+}
+/* The four later designs originate from a compact approved contact sheet. */
+html.dm-holiday-active:is([data-dm-holiday="15-temmuz"],[data-dm-holiday="ramazan-ayi"],[data-dm-holiday="ramazan-bayrami"],[data-dm-holiday="kurban-bayrami"]) .dm-holiday-art>.dm-holiday-progress{
+ top:90%;left:19%;width:62%;height:2.8%;
 }
 .dm-holiday-progress-fill{width:var(--dm-papi-progress,0%);height:100%;background:linear-gradient(90deg,#f54345,#f8bf31);border-radius:inherit;transition:width .2s ease-out;animation:dmHolidayFill 2s ease-out forwards}
 [style*="--dm-papi-progress"]>.dm-holiday-progress>.dm-holiday-progress-fill{animation:none}

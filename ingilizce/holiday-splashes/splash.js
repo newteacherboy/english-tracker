@@ -26,8 +26,11 @@
  }
  function resolve(date,calendar){
   const today=turkeyDate(date), year=+today.slice(0,4);
-  // Keep the 2026 29 Ekim screen already live through November 2.
-  if(today>='2026-10-22'&&today<=end2026)return null;
+  // 2026 is an intentionally extended 29 Ekim campaign (22 Oct–2 Nov);
+  // display the user's approved variant 2, not the superseded legacy splash.
+  if(today>='2026-10-22'&&today<=end2026){
+   return {id:'29-ekim',year:2026,variant:2,priority:60,file:'29-ekim-2.jpg',today};
+  }
   let best=null;
   for(const rule of holidays){
    for(const [from,to] of periodsFor(calendar,rule,year)){
@@ -85,7 +88,7 @@
     screen.insertBefore(frame,screen.firstChild);
     const bar=doc.createElement('div');bar.className='dm-holiday-progress';bar.setAttribute('aria-hidden','true');
     bar.innerHTML='<div class="dm-holiday-progress-fill"></div>';
-    screen.appendChild(bar);
+    frame.appendChild(bar);
    }
   }
   if(doc.readyState==='loading')doc.addEventListener('DOMContentLoaded',attach,{once:true});else attach();

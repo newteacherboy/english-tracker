@@ -12,8 +12,10 @@ test('odd years show first art, even years second',()=>{
  assert.equal(at('2028-10-29').file,'29-ekim-2.jpg');
  assert.equal(at('2029-10-29').file,'29-ekim-1.jpg');
 });
-test('keeps existing 2026 Republic splash until November 2 ends',()=>{
- assert.equal(app.resolve('2026-11-02T20:59:59Z',cal),null);
+test('2026 29 Ekim approved variant 2 replaces superseded splash, through 2 November',()=>{
+ assert.equal(at('2026-10-23').file,'29-ekim-2.jpg');
+ assert.equal(at('2026-10-29').variant,2);
+ assert.equal(app.resolve('2026-11-02T20:59:59Z',cal).file,'29-ekim-2.jpg');
  assert.equal(app.resolve('2026-11-02T21:00:00Z',cal),null);
 });
 test('Ramadan whole month, Bayram priority and end',()=>{
@@ -40,6 +42,16 @@ test('15 Temmuz two days before and after',()=>{
 });
 test('Türkiye midnight boundary independent of device time zone',()=>{
  assert.equal(app.turkeyDate('2027-04-22T21:00:00Z'),'2027-04-23');
+});
+test('no competing legacy 2026 theme or double-rendered progress bars',()=>{
+ for(const file of ['index.html','ingilizce/index.html']){
+  const html=fs.readFileSync(file,'utf8');
+  assert(!html.includes('dm-republic-2026-prepaint'));
+  assert(!html.includes('republic-day-splash.css'));
+  assert(!html.includes('republic-day-splash.js'));
+ }
+ assert(code.includes('frame.appendChild(bar)'));
+ assert(!code.includes('screen.appendChild(bar)'));
 });
 test('head scripts execute before visible splash; assets are local and CSS blocks painting',()=>{
  for(const [path,prefix] of [['index.html','ingilizce/'],['ingilizce/index.html','']]){
