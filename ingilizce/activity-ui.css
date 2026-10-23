@@ -199,3 +199,123 @@ body:has(#tab-aktiviteler.active .gg-page) .yb-fw{display:none!important}
 
 /* Topic practice adds a fifth equally sized category. */
 #tab-aktiviteler .gg-tabs:has(#ggKonuTab){grid-template-columns:repeat(5,minmax(0,1fr))!important}
+
+
+/* Approved Games landing design 1 (23 Oct 2026):
+   compact five-col illustration tabs + short Papi learning banner.
+   Scoped to Games only, never alter the global lower navigation. */
+#tab-aktiviteler#tab-aktiviteler .gg-page .gg-title{display:block!important;margin-bottom:8px!important}
+#tab-aktiviteler#tab-aktiviteler .gg-page .gg-title h1{
+ font:900 clamp(27px,6.2vw,34px)/1.1 'Baloo 2',Nunito,system-ui,sans-serif!important;
+ color:#382316!important;margin:3px 1px 11px!important;
+}
+#tab-aktiviteler#tab-aktiviteler .gg-page .gg-tabs{
+ display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr))!important;
+ gap:6px!important;padding:5px!important;margin:0!important;
+ width:100%!important;box-sizing:border-box!important;
+ border:1px solid #ede1cf!important;border-radius:22px!important;
+ background:#fffaf0!important;box-shadow:0 3px 12px #60412a0b!important;
+}
+#tab-aktiviteler#tab-aktiviteler .gg-page .gg-tabs [role=tab]{
+ --gg-tint:#e8f7f2;--gg-ink:#167d76;--gg-strong:#079f91;
+ display:flex!important;flex-direction:column!important;align-items:center!important;
+ justify-content:center!important;gap:7px!important;
+ min-width:0!important;min-height:104px!important;
+ padding:8px 2px 9px!important;margin:0!important;
+ border:1px solid color-mix(in srgb,var(--gg-strong),white 74%)!important;
+ border-radius:18px!important;background:var(--gg-tint)!important;
+ color:var(--gg-ink)!important;
+ box-shadow:0 3px 0 color-mix(in srgb,var(--gg-strong),white 77%)!important;
+ font:900 clamp(10px,2.55vw,13px)/1.13 Nunito,system-ui,sans-serif!important;
+ text-align:center!important;white-space:normal!important;
+ overflow-wrap:normal!important;word-break:normal!important;
+ transition:transform .15s ease,background-color .15s ease,box-shadow .15s ease!important;
+}
+#tab-aktiviteler#tab-aktiviteler .gg-page .gg-tabs [data-gg-party=duo]{--gg-tint:#e9f3ff;--gg-ink:#2d6bb9;--gg-strong:#3d8fe9}
+#tab-aktiviteler#tab-aktiviteler .gg-page .gg-tabs [data-gg-party=free]{--gg-tint:#fff0eb;--gg-ink:#c4543d;--gg-strong:#e57a5d}
+#tab-aktiviteler#tab-aktiviteler .gg-page .gg-tabs [data-gg-party=konu]{--gg-tint:#f4efff;--gg-ink:#8257b9;--gg-strong:#9e70e4}
+#tab-aktiviteler#tab-aktiviteler .gg-page .gg-tabs [data-gg-party=break]{--gg-tint:#fff5df;--gg-ink:#ad7426;--gg-strong:#f1b64c}
+#tab-aktiviteler#tab-aktiviteler .gg-page .gg-tabs [role=tab][aria-selected=true]{
+ color:#fff!important;border-color:var(--gg-strong)!important;
+ background:linear-gradient(160deg,color-mix(in srgb,var(--gg-strong),white 21%),var(--gg-strong))!important;
+ box-shadow:0 4px 0 color-mix(in srgb,var(--gg-strong),black 22%),0 6px 12px #45311e16!important;
+ transform:translateY(-1px);
+}
+#tab-aktiviteler#tab-aktiviteler .gg-page .gg-tabs [role=tab] .gg-icon{
+ display:block!important;flex:none!important;
+ box-sizing:border-box!important;width:45px!important;height:45px!important;
+ padding:9px!important;border-radius:15px!important;
+ background:linear-gradient(145deg,color-mix(in srgb,var(--gg-strong),white 18%),var(--gg-strong))!important;
+ color:#fff!important;fill:none!important;stroke:none!important;
+ filter:drop-shadow(0 2px 1px #5e433526)!important;
+ box-shadow:inset 0 2px 0 #ffffff59,0 3px 8px #4a2e2822!important;
+}
+#tab-aktiviteler#tab-aktiviteler .gg-page .gg-tabs [role=tab][aria-selected=true] .gg-icon{
+ background:#ffffffeb!important;color:var(--gg-strong)!important;
+ box-shadow:0 3px 8px #164e482e!important;
+}
+#tab-aktiviteler#tab-aktiviteler .gg-page .gg-tabs [role=tab] .gg-icon :is(path,circle){
+ stroke:currentColor; /* SVG shapes use their own fill/stroke rules */
+}
+#tab-aktiviteler#tab-aktiviteler .gg-page .gg-tabs [role=tab] span{
+ display:block!important;font:inherit!important;line-height:1.13!important;
+ max-width:100%!important;word-break:normal!important;text-wrap:balance;
+}
+#tab-aktiviteler#tab-aktiviteler .gg-page .gg-tabs [role=tab]:focus-visible{
+ outline:3px solid #1975bd!important;outline-offset:2px;
+}
+#tab-aktiviteler#tab-aktiviteler .gg-page .gg-banner{
+ display:flex!important;align-items:center!important;
+ min-height:84px!important;height:auto!important;
+ margin:11px 0 10px!important;padding:7px 12px 7px 7px!important;
+ gap:8px!important;border-radius:19px!important;
+ border:1px solid #ffe39b!important;
+ background:linear-gradient(125deg,#ffe18a 0%,#fff1be 64%,#fff8dd 100%)!important;
+ overflow:hidden!important;box-shadow:inset 0 1px 0 #fff8df!important;
+}
+#tab-aktiviteler#tab-aktiviteler .gg-page .gg-banner img{
+ position:static!important;flex:none!important;
+ width:86px!important;max-width:27%!important;
+ height:84px!important;object-fit:contain!important;
+ transform:none!important;filter:drop-shadow(0 3px 3px #c17e3151)!important;
+}
+#tab-aktiviteler#tab-aktiviteler .gg-page .gg-banner>div{
+ min-width:0!important;flex:1 1 auto!important;
+}
+#tab-aktiviteler#tab-aktiviteler .gg-page .gg-banner h2{
+ margin:0 0 3px!important;
+ font:900 clamp(16px,4.2vw,22px)/1.12 'Baloo 2',Nunito,system-ui,sans-serif!important;
+ color:#54331e!important;text-wrap:balance!important;
+}
+#tab-aktiviteler#tab-aktiviteler .gg-page .gg-banner p{
+ margin:0!important;font:700 clamp(11px,2.8vw,13px)/1.34 Nunito,system-ui,sans-serif!important;
+ color:#82583d!important;
+}
+#tab-aktiviteler#tab-aktiviteler .gg-page .gg-filters{margin-bottom:9px!important}
+@media(max-width:360px){
+ #tab-aktiviteler#tab-aktiviteler .gg-page .gg-tabs{gap:3px!important;padding:4px!important}
+ #tab-aktiviteler#tab-aktiviteler .gg-page .gg-tabs [role=tab]{
+  min-height:100px!important;padding:7px 1px 7px!important;gap:5px!important;
+  border-radius:13px!important;font-size:9px!important;
+ }
+ #tab-aktiviteler#tab-aktiviteler .gg-page .gg-tabs [role=tab] .gg-icon{
+  width:39px!important;height:39px!important;padding:8px!important;border-radius:12px!important;
+ }
+ #tab-aktiviteler#tab-aktiviteler .gg-page .gg-banner{min-height:76px!important}
+ #tab-aktiviteler#tab-aktiviteler .gg-page .gg-banner img{width:72px!important;height:76px!important}
+}
+@media(min-width:700px){
+ #tab-aktiviteler#tab-aktiviteler .gg-page .gg-tabs [role=tab]{
+  min-height:98px!important;gap:7px!important;
+ }
+ #tab-aktiviteler#tab-aktiviteler .gg-page .gg-tabs [role=tab] .gg-icon{
+  width:49px!important;height:49px!important;
+ }
+ #tab-aktiviteler#tab-aktiviteler .gg-page .gg-banner{
+  min-height:96px!important;padding:9px 16px!important;
+ }
+ #tab-aktiviteler#tab-aktiviteler .gg-page .gg-banner img{width:104px!important;height:96px!important}
+}
+@media(prefers-reduced-motion:reduce){
+ #tab-aktiviteler#tab-aktiviteler .gg-page .gg-tabs [role=tab]{transition:none!important;transform:none!important}
+}

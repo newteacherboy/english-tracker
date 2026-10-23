@@ -1,7 +1,7 @@
 name: Games hub
 on:
   push:
-    paths: ['ingilizce/activity-ui.*', 'ingilizce/games-assets/**', 'tests/games-hub-ui.cjs', 'tests/games-hub-integration.cjs', '.github/workflows/games-hub.yml']
+    paths: ['ingilizce/activity-ui.*', 'ingilizce/games-assets/**', 'tests/games-design-selected-1.test.cjs', 'tests/games-hub-ui.cjs', 'tests/games-hub-integration.cjs', '.github/workflows/games-hub.yml']
   pull_request:
     paths: ['ingilizce/activity-ui.*', 'ingilizce/games-assets/**', 'tests/games-hub-ui.cjs', 'tests/games-hub-integration.cjs', '.github/workflows/games-hub.yml']
 jobs:
@@ -13,6 +13,7 @@ jobs:
         with:
           node-version: '22'
       - run: node --check ingilizce/activity-ui.js
+      - run: node --test tests/games-design-selected-1.test.cjs
       - run: npm install --no-save --package-lock=false playwright@1.58.2
       - run: npx playwright install --with-deps chromium
       - run: node tests/games-hub-ui.cjs
