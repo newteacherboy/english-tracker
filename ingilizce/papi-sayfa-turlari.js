@@ -1,9 +1,7 @@
-/* Papi sayfa turları: ilk tanıtımı görmüş hesaplara sonraki oturumlarda birer sayfayı
-   ayrıntılı tanıtır. Sıra: 2. oturum Parkur, 3. Arkadaşlar, 4. Oyunlar, 5. Mağaza ve
-   Çantam, 6. Ders Çalış, 7. Profil. Her oturumda en fazla bir öneri gelir; "Sonra"
-   denirse aynı tur bir sonraki oturuma kalır, "Göster" ya da "Geç" ile bitmiş sayılır.
-   Oturum: hesabın açık olduğu bir tarayıcı oturumu (sekme/uygulama yeniden açılışı).
-   Sayfayı açmak için alttaki menü düğmesine basılır; ekonomiye dokunulmaz. */
+/* Papi sayfa turları: ilk tanıtımı görmüş hesaplarda, öğrenci bir sekmeye (Parkur,
+   Arkadaşlar, Oyunlar, Mağaza ve Çantam, Ders Çalış, Profil) ilk kez geçtiğinde o sayfayı
+   ayrıntılı tanıtır. Sıra şartı yoktur; her sayfa hesap başına bir kez gösterilir ve
+   yarıda "Geç" denirse de bitmiş sayılır. Ekonomiye dokunulmaz. */
 (()=>{'use strict';
 if(window.dmPapiPageTours)return;
 const who=()=>typeof aktifOgrenciAdi==='undefined'?'':String(aktifOgrenciAdi||'');
@@ -101,56 +99,66 @@ const TOURS=[
  },after:()=>{document.querySelector('#rtProfileBackdrop .rt-close')?.click();}}
 ];
 
-/* ---------- Oturum sayacı ve öneri ---------- */
-function countSession(){
- const o=who();if(!o||o.toLowerCase()==='teacher'||window.dmGuestMode)return 0;
- if(!window.dmPapiIntro?.seen?.(o))return 0; // Only accounts that went through the first intro.
- const mark='dm_papi_oturum_sayildi:'+o.toLowerCase();
- let n=Number(store.get(key('oturum',o)))||0;
- if(store.get(mark,sessionStorage)!=='1'){
-  store.set(mark,'1',sessionStorage);
-  // The session that showed the first intro is session 1.
-  n=n?n+1:(store.get('dm_papi_tanitim_aday:'+o.toLowerCase(),sessionStorage)==='1'?1:2);
-  store.set(key('oturum',o),String(n));
- }
- return n;
+/* ---------- Sekmeye ilk giriş ----------
+   Öğrenci bir sekmeye başka bir sekmeden geçerek ilk kez girdiğinde o sekmenin turu
+   doğrudan başlar. Uygulamanın açıldığı ilk ekran sayılmaz (ilk tanıtım orada biter).
+   "Görüldü" bilgisi hesapta (yo.dmPapiSayfaTurlari, sunucuya kaydedilir) ve cihazda tutulur. */
+const PAGES=[ // Öncelik sırası: üstte açılan katmanlar önce, Parkur haritası en son.
+ {id:'profil',sel:'#rtProfileBackdrop',allow:'.rt-profile-backdrop'},
+ {id:'magaza',sel:'.ds-home',allow:'#dmBagPage'},
+ {id:'derscalis',sel:'#dcScreenLevels',allow:'.dc-fullscreen-overlay.active'},
+ {id:'oyunlar',sel:'.gg-tabs',allow:'.game-modal-overlay,.dc-fullscreen-overlay.active'},
+ {id:'arkadaslar',sel:'.fr-home',allow:''},
+ {id:'parkur',sel:'.rt-v3-map',allow:''}
+];
+const BLOCKERS='#dmRouteChoice,#dmCharacterBuilder,.ka-perde,#dmPlacementExam,#dmStartPlacement,#dmStartingChoice,#dmPlacementInvite,#dmEmailVerification,#dmEmailGuide,#bzPerde,#dmStoryLesson,#mlThemeList,.game-modal-overlay,.dc-fullscreen-overlay.active,#yoModal.acik,#genelSonucOverlay.acik,.sa-perde,.rt-profile-backdrop,#dmBagPage,#yardimModal[style*="flex"]';
+function done(id,o=who()){const y=Y();return store.get(key(id,o))==='1'||!!y?.dmPapiSayfaTurlari?.[id];}
+function markDone(id){
+ const o=who();store.set(key(id,o),'1');
+ const y=Y();if(!y)return;
+ y.dmPapiSayfaTurlari=Object.assign({},y.dmPapiSayfaTurlari,{[id]:Date.now()});
+ try{window.yoKaydet?.();}catch{}
 }
-function pending(){
- const o=who(),n=Number(store.get(key('oturum',o)))||0;
- if(n<2)return null;
- if(store.get(key('teklif',o),sessionStorage)==='1')return null; // One offer per session.
- const done=TOURS.filter(t=>store.get(key(t.id,o))==='1').length;
- const tour=TOURS.find(t=>store.get(key(t.id,o))!=='1');
- if(!tour)return null;
- // Tour k (0-based) waits for session k+2, so pages are spread over sessions 2..7.
- return n>=TOURS.indexOf(tour)+2&&done===TOURS.indexOf(tour)?tour:null;
+function eligibleAccount(){
+ const o=who();if(!o||o.toLowerCase()==='teacher'||window.dmGuestMode)return false;
+ if(typeof siniftaOynananOgrenci!=='undefined'&&siniftaOynananOgrenci)return false;
+ if(!Y()||(window.yoHazirMi&&!window.yoHazirMi()))return false;
+ // Yalnızca ilk Papi tanıtımını görmüş hesaplar (bu cihazda ya da hesapta).
+ return !!(window.dmPapiIntro?.seen?.(o)||Y()?.dmPapiIlkTanitim);
 }
-let offerEl=null,since=0;
-function homeVisible(){return [...document.querySelectorAll('.rt-v3-map')].some(visible);}
-function offer(tour){
- const o=who();store.set(key('teklif',o),'1',sessionStorage);
- offerEl?.remove();
- const el=document.createElement('aside');el.id='dmPapiPageOffer';el.className='dm-page-offer';el.setAttribute('role','dialog');el.setAttribute('aria-label','Papi önerisi');
- el.innerHTML='<img src="discovery-assets/papi-merhaba.webp" alt="" decoding="async"><div><b>'+esc(tour.title)+'</b><p>'+esc(tour.ask)+'</p><div class="dm-page-offer-actions"><button type="button" class="dm-intro-link" data-later>Sonra</button><button type="button" class="dm-intro-primary" data-go>Göster</button></div></div>';
- document.body.append(el);offerEl=el;
- el.querySelector('[data-later]').onclick=()=>{el.remove();offerEl=null;};
- el.querySelector('[data-go]').onclick=()=>{el.remove();offerEl=null;start(tour);};
- el.querySelector('[data-go]').focus({preventScroll:true});
+function currentPage(){for(const p of PAGES){if([...document.querySelectorAll(p.sel)].some(visible))return p;}return null;}
+function calm(page){
+ if(document.hidden||window.dmPapiIntro?.active?.()||document.getElementById('dmPapiTour'))return false;
+ const allowed=page.allow?[...document.querySelectorAll(page.allow)]:[];
+ return ![...document.querySelectorAll(BLOCKERS)].some(e=>visible(e)&&!allowed.some(a=>a===e||a.contains(e)||e.contains(a)));
 }
-function start(tour){
- const o=who();store.set(key(tour.id,o),'1');
- window.dmPapiIntro?.run(tour.steps(),{label:'Papi ile '+tour.title+' tanıtımı',onClose:()=>{try{tour.after?.();}catch{}}});
+function start(tour,{fromTab=false}={}){
+ markDone(tour.id);
+ let steps=tour.steps();
+ if(fromTab&&steps[0]?.before)steps=[{...steps[0],before:undefined},...steps.slice(1)]; // Sekme zaten açık.
+ window.dmPapiIntro?.run(steps,{label:'Papi ile '+tour.title+' tanıtımı',onClose:()=>{try{tour.after?.();}catch{}}});
 }
+let owner='',last=null,candidate=null,since=0;
 function tick(){
- if(offerEl?.isConnected)return;
- if(!window.dmPapiIntro?.idle?.()||!homeVisible()){since=0;return;}
- countSession();
- const tour=pending();if(!tour){since=0;return;}
- if(!since){since=Date.now();return;}
- if(Date.now()-since<3000)return; // Settle for a moment on the home screen first.
- since=0;offer(tour);
+ const o=who();
+ if(o!==owner){owner=o;last=null;candidate=null;since=0;}
+ if(!eligibleAccount())return;
+ if(window.dmPapiIntro?.active?.()){candidate=null;since=0;return;}
+ const page=currentPage(),id=page?.id||null;
+ if(!id)return; // Geçiş anı: önceki sayfayı ve bekleyen turu unutma.
+ if(id!==last){
+  // Yalnızca gerçek sekme geçişi tetikler; uygulamanın açıldığı ilk sayfa sayılmaz.
+  candidate=last!==null&&id&&!done(id)?page:null;since=Date.now();last=id;return;
+ }
+ if(!candidate||candidate.id!==id)return;
+ if(!calm(candidate)){since=Date.now();return;}
+ if(Date.now()-since<700)return; // Sayfa çizilsin.
+ const tour=TOURS.find(t=>t.id===candidate.id);candidate=null;
+ if(tour&&!done(tour.id))start(tour,{fromTab:true});
 }
-setInterval(tick,1500);
-document.addEventListener('dm:papi-intro-done',()=>countSession());
-window.dmPapiPageTours={tours:TOURS.map(t=>t.id),start:id=>{const t=TOURS.find(x=>x.id===id);if(t)start(t);},session:()=>Number(store.get(key('oturum')))||0};
+setInterval(tick,350);
+// İlk tanıtım bittiğinde öğrenci o an hangi sayfadaysa o sayfa "ilk açılış" sayılır.
+document.addEventListener('dm:papi-intro-done',()=>{last=currentPage()?.id||null;candidate=null;});
+document.addEventListener('dm:login',()=>{owner='';});
+window.dmPapiPageTours={tours:TOURS.map(t=>t.id),start:id=>{const t=TOURS.find(x=>x.id===id);if(t)start(t);},done:id=>done(id)};
 })();

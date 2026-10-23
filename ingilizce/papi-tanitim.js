@@ -164,9 +164,10 @@ function startIntro(){
  const o=who();if(!o)return;
  clearInterval(timer);timer=0;
  store.set(seenKey(o),'1'); // Once per account on this device, even if closed mid-way.
+ const y=Y();if(y&&!y.dmPapiIlkTanitim){y.dmPapiIlkTanitim=Date.now();try{window.yoKaydet?.();}catch{}}
  try{localStorage.removeItem(pendingKey(o));}catch{}
  store.set(candidateKey(o),'1',sessionStorage); // papi-sayfa-turlari: bu oturum 1. oturum sayılır.
  run(introSteps(),{label:'Papi ile uygulama tanıtımı',onClose:()=>document.dispatchEvent(new CustomEvent('dm:papi-intro-done'))});
 }
-window.dmPapiIntro={run,active:isOpen,idle,close:()=>close('api'),seen:o=>store.get(seenKey(String(o||who())))==='1',start:()=>{const o=who();if(o)store.set(candidateKey(o),'1',sessionStorage);startIntro();}};
+window.dmPapiIntro={run,active:isOpen,idle,close:()=>close('api'),seen:o=>store.get(seenKey(String(o||who())))==='1'||(!!Y()?.dmPapiIlkTanitim&&String(o||who()).toLowerCase()===who().toLowerCase()),start:()=>{const o=who();if(o)store.set(candidateKey(o),'1',sessionStorage);startIntro();}};
 })();
