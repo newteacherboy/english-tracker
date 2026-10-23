@@ -1,6 +1,8 @@
-# 3D parkur keşfi — yayın öncesi hazırlık
+# 3D parkur keşfi — yayın kaydı
 
-**Durum: yayınlanmadı. Kullanıcı açıkça yayından önce onay istiyor.** Main'e birleştirme, SQL'i production'da çalıştırma veya Edge Function yayınlama işlemleri bu onay olmadan yapılmamalı.
+**Durum: 23 Ekim 2026 tarihinde kullanıcı onayıyla yayınlandı.** PR #170 main'e birleştirildi (`8eb332a`); diji-api sürüm 190 ACTIVE. SQL migration uygulandı. Canlı ön yüz dosyaları HTTP 200; anonim API isteği 401, demo durum isteği 200. Canlı veritabanında tekrar ödül kontrolü transaction içinde doğrulanıp geri alındı; demo cüzdanında test ödülü bırakılmadı.
+
+Geri almak için **“3D parkuru geri al”** demek yeterlidir. [Geri alma kaydı](../deployment/route-exploration-rollback.md), önceki `05ed77d` sürümünü ve korunan dalı içerir. İlerleme ve ödüller korunur.
 
 ## Hazırlanan davranış
 
