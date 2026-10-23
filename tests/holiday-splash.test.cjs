@@ -67,3 +67,17 @@ test('head scripts execute before visible splash; assets are local and CSS block
   for(const file of files)assert(fs.statSync('ingilizce/holiday-splashes/'+file).size>10000,'Missing '+file);
  }
 });
+
+test('approved mobile art fills viewport and progress overlays just its preprinted track',()=>{
+ const style=fs.readFileSync('ingilizce/holiday-splashes/splash.css','utf8');
+ assert.match(style,/background-size:cover/);
+ assert.match(style,/width:max\(100vw,56\.28dvh\)/);
+ assert.match(style,/width:min\(100vw,56\.28dvh\)/);
+ assert.match(style,/left:23\.5%;top:85\.5%/);
+ assert.match(style,/width:46\.7%;height:3\.0%/);
+ assert.match(style,/animation:none!important/);
+ assert(!style.includes('dmHolidayFill'));
+ for(const [file,expectedLink] of [['index.html','ingilizce/holiday-splashes/splash.css?v=20261023-fullscreen-1'],['ingilizce/index.html','holiday-splashes/splash.css?v=20261023-fullscreen-1']]){
+  assert(fs.readFileSync(file,'utf8').includes(expectedLink));
+ }
+});

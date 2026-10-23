@@ -1,45 +1,61 @@
-/* Date class is set synchronously in <head>, before the first visible frame. */
+/* First paint is a full-screen celebration. Holiday images include their
+   original illustrated loading bar; overlay ONLY its inner colored track. */
 html.dm-holiday-active :is(#splashEkrani,#dmBootSplash,#oturumYuklemeOverlay){
- background:linear-gradient(135deg,#164d75,#f3d6b3)!important;
- overflow:hidden!important;isolation:isolate;
-}
-html.dm-holiday-active :is(#splashEkrani,#dmBootSplash,#oturumYuklemeOverlay) .dm-papi-halo,
-html.dm-holiday-active :is(#splashEkrani,#dmBootSplash,#oturumYuklemeOverlay) .dm-brand-line{
- display:none!important;
+ background:#132c52!important;overflow:hidden!important;isolation:isolate;
+ height:100dvh!important;min-height:100dvh!important;
 }
 html.dm-holiday-active :is(#splashEkrani,#dmBootSplash,#oturumYuklemeOverlay)::before{
- content:"";position:absolute;inset:0;z-index:0;
- background-image:var(--dm-holiday-art);background-position:center;background-size:contain;background-repeat:no-repeat;
- pointer-events:none;
+ content:"";position:absolute;inset:0;z-index:0;pointer-events:none;
+ background-image:var(--dm-holiday-art);background-position:center center;
+ background-repeat:no-repeat;background-size:cover;
 }
-html.dm-holiday-active .dm-holiday-art{
- position:absolute;z-index:1;top:50%;left:50%;transform:translate(-50%,-50%);
- width:min(100vw,56.3dvh);max-width:100%;height:auto;aspect-ratio:941/1672;
- pointer-events:none;
+html.dm-holiday-active :is(#splashEkrani,#dmBootSplash,#oturumYuklemeOverlay) :is(.dm-papi-halo,.dm-brand-line){display:none!important}
+html.dm-holiday-active :is(#splashEkrani,#dmBootSplash,#oturumYuklemeOverlay) .dm-papi-loading{
+ position:relative;z-index:3;pointer-events:none;
 }
-html.dm-holiday-active :is(#splashEkrani,#dmBootSplash,#oturumYuklemeOverlay) .dm-papi-loading{position:relative;z-index:2;pointer-events:none}
 html.dm-holiday-active #dmBootText{display:none!important}
+html.dm-holiday-active .dm-holiday-art{
+ position:absolute;z-index:2;top:50%;left:50%;transform:translate(-50%,-50%);
+ width:max(100vw,56.28dvh);height:auto;aspect-ratio:941/1672;
+ pointer-events:none;
+}
 .dm-holiday-progress{display:none}
 html.dm-holiday-active .dm-holiday-art>.dm-holiday-progress{
- position:absolute;z-index:3;display:block;top:83.55%;left:22.3%;
- width:55%;height:3.4%;box-sizing:border-box;
- border-radius:999px;background:#ffffff;border:2px solid #fff;
- box-shadow:0 2px 8px rgba(0,0,0,.19);overflow:hidden;pointer-events:none;
+ position:absolute;z-index:3;display:block;left:23.5%;top:85.5%;
+ width:46.7%;height:3.0%;box-sizing:border-box;border-radius:999px;
+ border:0;background:#fff2e9;overflow:hidden;pointer-events:none;
+ box-shadow:0 0 2px rgba(150,26,20,.25);
 }
-/* The four later designs originate from a compact approved contact sheet. */
+html.dm-holiday-active .dm-holiday-progress-fill{
+ width:var(--dm-papi-progress,0%);height:100%;border-radius:inherit;
+ background:linear-gradient(90deg,#ed1027,#ff4c40);
+ transition:width .18s ease-out;animation:none!important;
+}
+/* Later approved collage art has a different aspect ratio and a lower bar. */
+html.dm-holiday-active:is([data-dm-holiday="15-temmuz"],[data-dm-holiday="ramazan-ayi"],[data-dm-holiday="ramazan-bayrami"],[data-dm-holiday="kurban-bayrami"]) .dm-holiday-art{
+ width:max(100vw,72.82dvh);aspect-ratio:750/1030;
+}
 html.dm-holiday-active:is([data-dm-holiday="15-temmuz"],[data-dm-holiday="ramazan-ayi"],[data-dm-holiday="ramazan-bayrami"],[data-dm-holiday="kurban-bayrami"]) .dm-holiday-art>.dm-holiday-progress{
- top:90%;left:19%;width:62%;height:2.8%;
+ left:21%;top:91%;width:58%;height:2.9%;background:#e4edf6;
 }
-.dm-holiday-progress-fill{width:var(--dm-papi-progress,0%);height:100%;background:linear-gradient(90deg,#f54345,#f8bf31);border-radius:inherit;transition:width .2s ease-out;animation:dmHolidayFill 2s ease-out forwards}
-[style*="--dm-papi-progress"]>.dm-holiday-progress>.dm-holiday-progress-fill{animation:none}
-@keyframes dmHolidayFill{from{width:0}to{width:91%}}
-/* Actual public-domain portrait overlay, only three specifically approved retouches. */
-.dm-holiday-historic{position:absolute;overflow:hidden;border-radius:8px;
- mask-image:radial-gradient(ellipse 71% 76% at 50% 50%,#000 65%,transparent 100%);
- -webkit-mask-image:radial-gradient(ellipse 71% 76% at 50% 50%,#000 65%,transparent 100%);
+html.dm-holiday-active:is([data-dm-holiday="15-temmuz"],[data-dm-holiday="ramazan-ayi"],[data-dm-holiday="ramazan-bayrami"],[data-dm-holiday="kurban-bayrami"]) .dm-holiday-progress-fill{
+ background:linear-gradient(90deg,#159dec,#00c4fd);
 }
-.dm-holiday-historic img{width:100%;height:100%;object-fit:cover;object-position:center 19%;filter:grayscale(1) sepia(.16) contrast(.96)}
-.dm-holiday-historic.photo-may-1{top:8%;right:1%;width:25%;height:35%}
-.dm-holiday-historic.photo-may-2{top:32%;left:13%;width:30%;height:27%}
-.dm-holiday-historic.photo-kasim-2{top:1%;right:0%;width:28%;height:36%}
-@media(prefers-reduced-motion:reduce){.dm-holiday-progress-fill{animation:none;transition:none}}
+/* Wider screens: blurred edge-fill + complete portrait, never flat bars. */
+@media(min-aspect-ratio:941/1672){
+ html.dm-holiday-active :is(#splashEkrani,#dmBootSplash,#oturumYuklemeOverlay)::before{
+  filter:blur(18px) brightness(.84);transform:scale(1.07);
+ }
+ html.dm-holiday-active :is(#splashEkrani,#dmBootSplash,#oturumYuklemeOverlay)::after{
+  content:"";position:absolute;inset:0;z-index:1;pointer-events:none;
+  background-image:var(--dm-holiday-art);background-position:center;
+  background-repeat:no-repeat;background-size:contain;
+ }
+ html.dm-holiday-active .dm-holiday-art{width:min(100vw,56.28dvh)}
+ html.dm-holiday-active:is([data-dm-holiday="15-temmuz"],[data-dm-holiday="ramazan-ayi"],[data-dm-holiday="ramazan-bayrami"],[data-dm-holiday="kurban-bayrami"]) .dm-holiday-art{
+  width:min(100vw,72.82dvh);
+ }
+}
+@media(prefers-reduced-motion:reduce){
+ html.dm-holiday-active .dm-holiday-progress-fill{transition:none}
+}
