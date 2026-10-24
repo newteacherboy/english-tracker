@@ -13,7 +13,7 @@ export function teacherPortalAPI(d){
  const fail=(mesaj,status=400)=>json({ok:false,mesaj},status),portal='https://app.dijimedu.com/ingilizce/';
  const byStudent=async id=>{const r=await db.from('teacher_portal_access').select('*').eq('student_id',id).maybeSingle();if(r.error)throw r.error;return r.data;};
  const digest=code=>hash(codeKey+'|teacher-portal|'+code);
- function randomCode(){const a=[];while(a.length<12){for(const n of crypto.getRandomValues(new Uint8Array(20)))if(n<250&&a.length<12)a.push(String(n%10));}return a.join('');}
+ function randomCode(){const a=[];while(a.length<6){for(const n of crypto.getRandomValues(new Uint8Array(20)))if(n<250&&a.length<6)a.push(String(n%10));}return a.join('');}
  async function codeMail(r,code,reset=null,initial=false){
   const text='Öğretmen platformu giriş kodun: '+code+'. Bu kodu kimseyle paylaşma. Öğrenci bağlama kodun farklıdır.';
   const out=await db.rpc('dm_teacher_portal_code',{grant_id:r.id,new_digest:await digest(code),mail_title:'Diji-Medu · Özel öğretmen giriş kodun',mail_html:mailShell('Öğretmen erişimin hazır',`<p>${escape(text)}</p><p><a href="${portal}?ogretmenGiris=1">Öğretmen girişini aç</a></p>`),mail_text:text,expected_version:r.version,reset_digest:reset,initial_only:initial});if(out.error)throw out.error;return out.data===true;
@@ -24,7 +24,7 @@ export function teacherPortalAPI(d){
  return {ensureCode,async apply(studentId,teacherId=null){const r=await db.from('teacher_portal_access').upsert({student_id:studentId,...(teacherId?{teacher_id:teacherId}:{})},{onConflict:'student_id',ignoreDuplicates:true});if(r.error)throw r.error;},async handle(op,b,a,method){
   if(!portalOps.has(op))return null;if(method!=='POST')return fail('POST gerekli.',405);
   if(op==='teacherPortalLogin'){
-   if(!/^\d{12}$/.test(String(b.code||'')))return fail('12 haneli öğretmen giriş kodunu yaz.');
+   if(!/^\d{6}$/.test(String(b.code||'')))return fail('6 haneli öğretmen giriş kodunu yaz.');
    const r=await db.from('teacher_portal_access').select('*').eq('code_digest',await digest(b.code)).eq('state','approved').maybeSingle();if(r.error)throw r.error;
    if(!r.data)return fail('Kod geçersiz veya öğretmen erişimi kapatılmış.',401);
    const t=await db.from('teachers').select('id,username,active,frozen_at').eq('id',r.data.teacher_id).maybeSingle();
@@ -42,7 +42,7 @@ export function teacherPortalAPI(d){
    await queue({student_id:s.data.id,to_email:s.data.email,kind:'kayit',subject:'Diji-Medu · Öğretmen kodunu yenile',html:mailShell('Öğretmen kodunu yenile',`<p><a href="${link}">Yeni giriş kodu belirle</a></p><p>Bağlantı 1 saat geçerlidir ve tek kullanımlıktır. Bu isteği sen yapmadıysan işlem yapmana gerek yok.</p>`),text_body:link});return json(generic);
   }
   if(op==='teacherPortalReset'){
-   if(!/^[a-f\d-]{72}$/i.test(String(b.resetToken||''))||!/^\d{12}$/.test(String(b.code||'')))return fail('Geçerli bağlantı ve 12 haneli kod gerekli.');
+   if(!/^[a-f\d-]{72}$/i.test(String(b.resetToken||''))||!/^\d{6}$/.test(String(b.code||'')))return fail('Geçerli bağlantı ve 6 haneli kod gerekli.');
    const token=await hash(b.resetToken),t=await db.from('teacher_portal_resets').select('access_id').eq('digest',token).is('used_at',null).gt('expires_at',new Date().toISOString()).maybeSingle();
    if(!t.data)return fail('Bağlantı kullanılmış veya süresi dolmuş.');
    const r=await db.from('teacher_portal_access').select('*').eq('id',t.data.access_id).maybeSingle();
@@ -70,7 +70,7 @@ export function teacherPortalAPI(d){
   }
   const r=await grant(a);if(!r)return fail('Kodla öğretmen girişi gerekli.',403);
   if(op==='teacherPortalChangeCode'){
-   if(!/^\d{12}$/.test(String(b.code||''))||!/^\d{12}$/.test(String(b.currentCode||''))||await digest(b.currentCode)!==r.code_digest)return fail('Mevcut kod ve 12 haneli yeni kod gerekli.',403);
+   if(!/^\d{6}$/.test(String(b.code||''))||!/^\d{6}$/.test(String(b.currentCode||''))||await digest(b.currentCode)!==r.code_digest)return fail('Mevcut kod ve 6 haneli yeni kod gerekli.',403);
    if(b.code===b.currentCode)return fail('Yeni kod mevcut koddan farklı olmalı.');
    return await codeMail(r,b.code)?json({ok:true,mesaj:'Kodun değiştirildi. Yeni kodla tekrar giriş yap.'}):fail('Kod değiştirilemedi.',409);
   }
