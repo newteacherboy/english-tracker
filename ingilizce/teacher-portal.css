@@ -156,3 +156,8 @@ html.dm-teacher-portal body #tpTeacherDock>button.active{background:#c6f5e6!impo
 html.dm-teacher-portal body #tpTeacherDock>button:focus-visible{outline:3px solid #148f86!important}
 html.dm-teacher-portal body #tpTeacherHome.is-visible{bottom:78px!important}
 html.dm-teacher-portal body #tpDashboard.is-visible{bottom:78px!important}
+
+/* Four promoted actions, no duplicated legacy launcher */
+#tpDashboard .tp-dash-tiles{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+#tpDashboard .tp-dash-main .tp-dash-legacy{display:none!important}
+@media(max-width:520px){#tpDashboard .tp-dash-tiles{grid-template-columns:repeat(2,minmax(0,1fr))}}
