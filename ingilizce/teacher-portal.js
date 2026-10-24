@@ -35,6 +35,21 @@
  async function decorate(){statusButton();const menu=document.getElementById('ogretmenMenuModal');if(!menu)return;const token=sessionStorage.getItem('ing_ogr_token')||'';if(!token)return;if(checkedToken!==token){checkedToken=token;canManage=false;try{const d=await api('ogretmenBilgim',{},token);canManage=d.kullanici==='teacher'&&d.yonetici===true;}catch{}}if(canManage&&!menu.querySelector('[data-tp-manage]')){const b=document.createElement('button');b.type='button';b.className='ogretmen-menu-btn';b.dataset.tpManage='1';b.textContent='🔐 Öğretmen Erişim Onayları';b.onclick=management;menu.querySelector('.rubric-content')?.append(b);}}
 
  // Private teacher home: separate from the learner home and onboarding tours.
+ // A private teacher login already requires the linked teacher's verified email.
+ // Guest-preview prompts must not impersonate the teacher's personal account.
+ function suppressPreviewPrompts(){
+  if(!mode)return;
+  for(const e of document.querySelectorAll('body [role="dialog"],body [aria-modal="true"],body .dm-first-character,body .character-choice-overlay')){
+   if(e.closest('#tpTeacherHome,#tpDashboard,.tp-shade'))continue;
+   const heading=e.querySelector('h1,h2,h3')?.textContent?.trim()||'';
+   if(/karakterini seç/i.test(heading)){e.style.display='none';e.setAttribute('aria-hidden','true');}
+  }
+  for(const e of document.querySelectorAll('body section,body aside')){
+   if(e.closest('#tpTeacherHome,#tpDashboard,.tp-shade'))continue;
+   const title=e.querySelector('h2,h3,strong')?.textContent?.trim()||'';
+   if(/e.postanı henüz doğrulamadın/i.test(title)&&e.textContent.length<600)e.style.display='none';
+  }
+ }
  function teacherHome(){
   if(!mode)return;
   let home=document.getElementById('tpTeacherHome');
@@ -119,7 +134,7 @@
  if(document.body.dataset.teacherReset==='1'){resetPage();return;}
  if(mode){document.body.classList.add('dm-teacher-portal');window.cikisYap=window.dmTeacherPortalExit;window.siniftaOyunModuAc=()=>{document.getElementById('ogretmenMenuModal')?.style.setProperty('display','none');window.aktivitelerTamEkranAc?.();};}
  let scheduled=false;const observe=()=>{if(scheduled)return;scheduled=true;requestAnimationFrame(()=>{scheduled=false;decorate();});};new MutationObserver(observe).observe(document.body,{childList:true,subtree:true});decorate();wrapGames();
- document.addEventListener('dm:state',wrapGames);document.addEventListener('dm:login',wrapGames);if(mode)document.addEventListener('click',()=>{if(window.tpHomeInitialized)teacherHome();}, {capture:false});
- let opened=false;const timer=setInterval(()=>{wrapGames();if(mode&&!opened&&document.getElementById('panel-alani')?.style.display==='block'){opened=true;teacherHome();setTimeout(runPending,300);}if(opened)clearInterval(timer);},500);setTimeout(()=>clearInterval(timer),30000);
+ document.addEventListener('dm:state',wrapGames);document.addEventListener('dm:login',wrapGames);if(mode)document.addEventListener('click',()=>{if(window.tpHomeInitialized){teacherHome();suppressPreviewPrompts();}}, {capture:false});
+ let opened=false;const timer=setInterval(()=>{wrapGames();if(mode&&!opened&&document.getElementById('panel-alani')?.style.display==='block'){opened=true;teacherHome();suppressPreviewPrompts();setTimeout(runPending,300);}if(opened)clearInterval(timer);},500);setTimeout(()=>clearInterval(timer),30000);
  if(new URLSearchParams(location.search).get('ogretmenGiris')==='1'){window.dmFirstDiscovery?.openLogin?.();openLogin();}
 })();
