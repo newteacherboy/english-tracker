@@ -1,6 +1,7 @@
 <!DOCTYPE html>
         <html lang="tr">
         <head>
+<script src="teacher-portal-boot.js?v=20261024-1"></script>
 <script src="holiday-splashes/dates.js?v=20261023-2"></script>
 <script src="holiday-splashes/splash.js?v=20261023-fullscreen-1"></script>
 <link rel="stylesheet" href="holiday-splashes/splash.css?v=20261023-fullscreen-1">
@@ -65,7 +66,7 @@ window.supabaseClient=supabaseClient;
   window.fetch = function (url, opt) {
     var u = typeof url === 'string' ? url : (url && url.url) || '';
     if (!API.test(u)) return orgFetch(url, opt);
-    var tok = OGRT() || TOKEN(), usedToken = '';
+    var tok = window.dmTeacherRequestToken?.(u,opt) || OGRT() || TOKEN(), usedToken = '';
     opt = Object.assign({}, opt || {});
     if (opt.method && String(opt.method).toUpperCase() === 'POST' && typeof opt.body === 'string') {
       try { var b = JSON.parse(opt.body); if (tok && !b.t) b.t = tok; usedToken = b.t || ''; opt.body = JSON.stringify(b); } catch (e) {}
@@ -26681,5 +26682,6 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <!-- Eight selected mini-games: fullscreen responsive layout and separate back/X controls. -->
 <link rel="stylesheet" href="eight-game-fullscreen.css?v=20261020-fit-v1">
 <script defer src="eight-game-fullscreen.js?v=20261020-fit-v1"></script>
+<link rel="stylesheet" href="teacher-portal.css?v=20261024-1"><script defer src="teacher-portal.js?v=20261024-1"></script>
 </body>      
         </html>

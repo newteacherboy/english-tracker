@@ -23,7 +23,7 @@ export function papiChatHandler({db,env,fetch:request}:{db:any,env:(s:string)=>s
    if(Number(req.headers.get('content-length')||0)>8192)return fail('invalid',413);const raw=await req.text();if(new TextEncoder().encode(raw).length>8192)return fail('invalid',413);let b:any;try{b=JSON.parse(raw);}catch{return fail('invalid');}
    if(!b||typeof b!=='object'||Array.isArray(b))return fail('invalid');
    const token=String(req.headers.get('x-diji-token')||b.t||'');if(!token||token.length>512)return fail('auth',401);
-   const s=await db.from('portal_sessions').select('role,student_id,expires_at').eq('token_hash',await hash(token)).maybeSingle();if(s.error||s.data?.role!=='student'||!s.data.student_id||Date.parse(s.data.expires_at)<=Date.now()||!Number.isFinite(Date.parse(s.data.expires_at)))return fail('auth',401);actor=s.data.student_id;
+   const s=await db.from('portal_sessions').select('role,student_id,expires_at,teacher_portal_access_id').eq('token_hash',await hash(token)).maybeSingle();if(s.error||s.data?.role!=='student'||s.data?.teacher_portal_access_id||!s.data.student_id||Date.parse(s.data.expires_at)<=Date.now()||!Number.isFinite(Date.parse(s.data.expires_at)))return fail('auth',401);actor=s.data.student_id;
    const status=await rpc(actor,'status');if(!status?.ok)return fail(status?.code||'auth',403);
    if(b.action==='status')return json({...status,available:configured(),provider:'Cloudflare Workers AI'});
    if(b.action!=='send')return fail('invalid');if(!configured())return fail('unavailable',503);

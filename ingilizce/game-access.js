@@ -9,7 +9,7 @@
 const C=n=>Math.floor((Number(n)-200000)/10000),U=n=>Math.floor(Number(n)%10000/100);
 const who=()=>typeof aktifOgrenciAdi==='undefined'?'':String(aktifOgrenciAdi||'').trim();
 const classroom=()=>typeof siniftaOynananOgrenci!=='undefined'&&siniftaOynananOgrenci?String(siniftaOynananOgrenci).trim():'';
-const free=()=>{const n=who().toLowerCase();return !n||n==='teacher'||n==='dijimedu_demo';};
+const free=()=>{if(window.dmTeacherPortalMode)return true;const n=who().toLowerCase();return !n||n==='teacher'||n==='dijimedu_demo';};
 const cache=()=>{try{return typeof globalDataCache!=='undefined'&&Array.isArray(globalDataCache)?globalDataCache:[];}catch(_){return [];}};
 const ownClass=name=>{const u=cache().find(x=>String(x.ogrenci||'').trim().toLowerCase()===String(name||'').trim().toLowerCase());const n=Number(u?.Sinif);return Number.isInteger(n)&&n>=1&&n<=8?n:0;};
 const route=()=>{try{const p=window.dmLearningRoute?.purpose?.();if(p)return p;}catch(_){}return typeof yo!=='undefined'&&yo?.dmLearningPurpose==='independent'?'independent':'school';};

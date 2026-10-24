@@ -58,7 +58,7 @@ function shell(label){if(root){window.dmViewHistory?.leave(root);root.remove();}
  root.addEventListener('keydown',e=>{if(e.key==='Escape'){e.preventDefault();if(root.classList.contains('kg-sheet'))close();else showSheet();}if(e.key==='Tab'){const bs=[...root.querySelectorAll('button:not(:disabled)')].filter(x=>x.getClientRects().length);if(e.shiftKey&&document.activeElement===bs[0]){e.preventDefault();bs.at(-1)?.focus();}else if(!e.shiftKey&&document.activeElement===bs.at(-1)){e.preventDefault();bs[0]?.focus();}}});
  document.body.append(root);document.body.classList.add('kg-active');window.dmPapiNotices?.pause?.();window.dmViewHistory?.track(root,{parent:returnView,close:()=>close(),back:()=>showSheet()});root.querySelector('[data-back]').focus();
  return root.querySelector('.kg-content');}
-function openTopic(t){if(root)close(true);owner=who();topic=t;origin=document.activeElement;returnView=window.dmViewHistory?.capture();navKey=crypto.randomUUID();history.pushState({...history.state,dmTopic:navKey},'');showSheet();watch=setInterval(()=>{if(owner!==who())close();},500);}
+async function openTopic(t){if(window.dmTeacherPortalMode&&!await window.dmTeacherPortal?.beforeGame('topic',[t]))return;if(root)close(true);owner=who();topic=t;origin=document.activeElement;returnView=window.dmViewHistory?.capture();navKey=crypto.randomUUID();history.pushState({...history.state,dmTopic:navKey},'');showSheet();watch=setInterval(()=>{if(owner!==who())close();},500);}
 function showSheet(){epoch++;stop();activeRequest?.abort();const box=shell(title(topic));root.classList.add('kg-sheet');box.innerHTML='<p>Konuyu oynayarak pekiştir.</p>'+topic.games.map(g=>{const left=quota.get(quotaKey(topic,g));return '<button type="button" class="kg-game-card" data-game="'+g+'"><b>'+esc(topic.titles[g])+'</b><span>'+esc(desc[g])+'</span><small>'+(practice()?(guest()?'XP kazanmak için giriş yap':'Öğretmen için alıştırma · XP yok'):left===undefined?'Günde en fazla 3 XP hakkı · kalan hak oyun açılırken kontrol edilir':'Bugün '+left+' XP hakkın kaldı')+'</small><strong>Oyna ›</strong></button>';}).join('')+'<p class="kg-prize">%80 ve üzeri → +70 XP</p>';
  box.querySelectorAll('[data-game]').forEach(b=>b.onclick=()=>start(b.dataset.game));}
 async function start(g){stop();game=g;picks=[];index=0;correct=0;streak=0;run=null;questions=[];const token=++epoch;const box=shell(topic.titles[game]);box.innerHTML='<p role="status">Sorular hazırlanıyor…</p>';
@@ -105,6 +105,6 @@ async function finish(){clearTimeout(timer);const token=epoch,box=root.querySele
  }catch(e){if(token!==epoch||!root)return;box.innerHTML='<p role="alert">'+esc(e.message)+'</p><p>XP doğrulanamadı. Konulara dönüp yeniden oynayabilirsin.</p><button type="button">Konulara dön</button>';box.querySelector('button').onclick=()=>close();}
 }
 window.addEventListener('popstate',()=>{if(root)close(true);});document.addEventListener('dm:login',()=>{if(root)close();quota.clear();readSound();level='A1';catalog=catalogs.A1;document.querySelectorAll('.kg-hub[data-loaded]').forEach(drawList);});
-window.dmTopicGames={mount,close};
+window.dmTopicGames={mount,close,openTopic};
 })();
 

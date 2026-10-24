@@ -1,0 +1,48 @@
+// Run with PGLITE_MODULE pointing to @electric-sql/pglite's installed entrypoint.
+const assert=require('node:assert/strict'),fs=require('node:fs');
+const {PGlite}=require(process.env.PGLITE_MODULE||'@electric-sql/pglite');
+(async()=>{
+ const db=new PGlite();await db.exec(`create role anon;create role authenticated;create role service_role;
+ create table teachers(id uuid primary key default gen_random_uuid(),username text unique,password_hash text,full_name text,email text,phone text,school text,invite_code text unique,active boolean default true,is_admin boolean default false,frozen_at timestamptz);
+ create table students(id uuid primary key default gen_random_uuid(),username text unique,password_hash text,full_name text,status text default 'approved',role text default 'student',email text,email_verified_at timestamptz,frozen_at timestamptz,teacher_id uuid references teachers(id),phone text,school text,email_verification_required boolean,profile jsonb,energy int default 30,energy_max int default 30,energy_updated_at timestamptz default now());
+ create table portal_sessions(id uuid primary key default gen_random_uuid(),token_hash text,student_id uuid,teacher_id uuid,role text,expires_at timestamptz);
+ create table mail_queue(id serial primary key,student_id uuid,to_email text,kind text,subject text,html text,text_body text,priority int);
+ create table audit_logs(actor_role text,operation text,target text,payload jsonb);
+ create table extra_data(student_id uuid,key_name text,value jsonb,updated_at timestamptz,primary key(student_id,key_name));
+ create table energy_transactions(student_id uuid,change_amount int,balance_after int,reason text);
+ `);
+ const rally=fs.readFileSync('supabase/migrations/20261016061521_kelime_rallisi.sql','utf8');await db.exec(rally.slice(0,rally.indexOf('create function public.dm_rally_start')));
+ await db.exec(fs.readFileSync('supabase/migrations/20261024141820_teacher_portal_access.sql','utf8'));
+ const row=async(sql,args=[]) => (await db.query(sql,args)).rows[0];
+ const owner=(await row("insert into teachers(username,is_admin) values('teacher',true) returning id")).id;
+ const admin=(await row("insert into teachers(username,is_admin) values('another-admin',true) returning id")).id;
+ const learner=(await row("insert into students(username,password_hash,email,full_name) values('teacherOne','hash','t@example.test','Test Teacher') returning id")).id;
+ const access=(await row('insert into teacher_portal_access(student_id) values($1) returning *',[learner]));
+ await assert.rejects(db.query("select dm_teacher_portal_decide($1,$2,'approved')",[admin,access.id]),/Yalnızca teacher/);
+ await db.query("select dm_teacher_portal_decide($1,$2,'approved')",[owner,access.id]);
+ let grant=await row('select * from teacher_portal_access where id=$1',[access.id]);assert.equal(grant.state,'approved');assert.ok(grant.teacher_id);
+ const initial=async(digest,version=grant.version)=>row("select dm_teacher_portal_code($1,$2,'title','html','text',$3,null,true) result",[grant.id,digest,version]);
+ assert.equal((await initial('digest-first')).result,false,'unverified account gets no code');
+ await db.query('update students set email_verified_at=now() where id=$1',[learner]);
+ const issued=await Promise.all([initial('digest-first'),initial('digest-racing')]);assert.equal(issued.filter(x=>x.result).length,1);
+ assert.equal((await row('select count(*)::int n from mail_queue')).n,1,'parallel issuance produces one mail');
+ grant=await row('select * from teacher_portal_access where id=$1',[access.id]);
+ await db.query("insert into portal_sessions(student_id,teacher_portal_access_id,teacher_portal_version) values($1,$2,$3)",[learner,grant.id,grant.version]);
+ await db.query("insert into teacher_portal_resets values('reset', $1,now()+interval '1 hour',null,$2)",[grant.id,grant.version]);
+ assert.equal((await row("select dm_teacher_portal_code($1,'new-digest','title','html','text',$2,'reset',false) result",[grant.id,grant.version])).result,true);
+ assert.equal((await row("select dm_teacher_portal_code($1,'replayed','title','html','text',$2,'reset',false) result",[grant.id,grant.version])).result,false);
+ assert.equal((await row('select count(*)::int n from portal_sessions')).n,0,'code rotation revokes sessions');
+ grant=await row('select * from teacher_portal_access where id=$1',[access.id]);assert.equal(grant.code_digest,'new-digest');
+ const guest=await row("select dm_teacher_portal_guest($1,'Ada',false,'secret') id",[grant.id]);
+ assert.equal((await row("select dm_teacher_portal_guest($1,'Ada',false,'other') id",[grant.id])).id,guest.id,'guest identity is stable per teacher');
+ const preview=await row("select dm_teacher_portal_guest($1,'Ada',true,'secret') id",[grant.id]);assert.notEqual(preview.id,guest.id);
+ assert.equal((await row("select value->>'totalXp' xp from extra_data where student_id=$1 and key_name='yo'",[guest.id])).xp,'0');
+ // Full scoring-only game integration is exercised in teacher-ranking-only-db.cjs.
+ const personal=await row('select energy from students where id=$1',[learner]);assert.equal(personal.energy,30,'teacher personal wallet untouched');
+ await db.query("select dm_teacher_portal_decide($1,$2,'revoked')",[owner,grant.id]);
+ assert.equal((await initial('after-revoke',grant.version)).result,false);
+ assert.equal((await row('select code_digest from teacher_portal_access where id=$1',[grant.id])).code_digest,null);
+ assert.equal((await row("select has_table_privilege('anon','teacher_portal_access','SELECT') allowed")).allowed,false);
+ assert.equal((await row("select has_function_privilege('authenticated','dm_teacher_portal_decide(uuid,uuid,text)','EXECUTE') allowed")).allowed,false);
+ console.log('PASS: approval ownership, verification, concurrent mail/code issuance, one-use reset, revocation, guest identity, personal wallet isolation, private grants');await db.close();
+})().catch(e=>{console.error(e.message);process.exit(1)});

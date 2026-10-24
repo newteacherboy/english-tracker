@@ -28,8 +28,9 @@ export function thematicHandler(db:DB){
    if(!['status','open','advance','recover'].includes(b.action))return json({ok:false,mesaj:'Geçersiz işlem.'},400);
    const token=String(b.t||'');if(!token||token.length>512)return json({ok:false,mesaj:'Öğrenme yoluna devam etmek için giriş yap.'},401);
    const hash=Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(token)))).map(x=>x.toString(16).padStart(2,'0')).join('');
-   const a=(await db.select('portal_sessions',{select:'student_id,teacher_id,role,expires_at',token_hash:'eq.'+hash,limit:'1'}))[0];
+   const a=(await db.select('portal_sessions',{select:'student_id,teacher_id,role,expires_at,teacher_portal_access_id',token_hash:'eq.'+hash,limit:'1'}))[0];
    if(!a||!['student','teacher'].includes(a.role)||!Number.isFinite(Date.parse(a.expires_at))||Date.parse(a.expires_at)<=Date.now())return json({ok:false,mesaj:'Oturumun sona erdi. Yeniden giriş yap.'},401);
+   if(a.teacher_portal_access_id)return json({ok:false,mesaj:'Parkur için kişisel hesabına geç.'},403);
    const student=a.role==='student',id=student?a.student_id:a.teacher_id;if(!id)return json({ok:false,mesaj:'Geçerli hesap gerekli.'},401);
    const person=(await db.select(student?'students':'teachers',{select:student?'id,status,role,energy,energy_max,energy_updated_at':'id,active',id:'eq.'+id,limit:'1'}))[0];
    if(!person||(student?(person.status!=='approved'||person.role!=='student'):person.active===false))return json({ok:false,mesaj:'Aktif hesap gerekli.'},403);

@@ -19,6 +19,7 @@ export function onboardingAPI(d:any){
    // Only the identity returned by the one-use verification RPC can open a session.
    const verified=await studentByName(String(data.ogrenci||''));
    if(!verified?.email_verified_at||verified.status!=='approved')return json({ok:false,mesaj:'E-posta doğrulandı. Uygulamaya giriş ekranından devam et.'},409);
+   try{await d.afterVerified?.(verified.id);}catch(e){console.error('teacher code queue',e);}
    const token=await issueSession('student',verified.id);
    return json({...data,token,ogrenci:verified.username,emailVerified:true});
   }

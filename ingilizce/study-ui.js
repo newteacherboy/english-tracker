@@ -15,6 +15,7 @@
  const storage=()=> 'dm-study-resume-v1:'+actor();
  function read(){try{return JSON.parse(localStorage.getItem(storage())||'{}');}catch{return {};}}
  function studyLevelOpen(code){
+  if(window.dmTeacherPortalMode)return true;
   const order=Object.keys(levels),index=order.indexOf(code);if(index<0)return false;
   if(window.dmGuestMode||!actor()||actor()==='teacher')return true;
   const access=window.dmProgression?.status?.()?.studyAccess;

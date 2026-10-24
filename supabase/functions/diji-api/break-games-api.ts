@@ -25,7 +25,10 @@ export function breakGamesAPI(db:any,json:any){
    if(!['week','all'].includes(b.period))return json({ok:false,mesaj:'Geçersiz sıralama.'},400);
    args.period=b.period;fn='dm_break_ranking';
   }
+  if(a.teacher_portal_access_id&&['dm_break_start','dm_break_finish','dm_break_checkpoint'].includes(fn))fn=fn.replace('dm_','dm_teacher_');
   const {data,error}=await db.rpc(fn,args);
+  if(a.teacher_portal_access_id&&data?.games){for(const g of Object.values(data.games) as any[]){g.remaining=999;g.unlocked=10;}data.rankingOnly=true;data.gold=0;}
+
   if(error){
    // Only deliberate policy errors are safe to display; never expose database internals.
    const msg=String(error.message||'');

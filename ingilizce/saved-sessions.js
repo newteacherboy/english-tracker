@@ -1,3 +1,4 @@
+if(!window.dmTeacherPortalMode){
 /* Device-local portal sessions. Passwords and personal profile data are never stored here. */
 (()=>{'use strict';
  const KEY='dm_saved_sessions_v1';
@@ -45,3 +46,5 @@
  window.dmSavedSessions={remember,current,forget,list:read,activate,remove,queue,verifyLogin:(body,signal)=>request({islem:'giris',...body},signal)};
  remember();document.addEventListener('dm:login',()=>remember());
 })();
+
+}

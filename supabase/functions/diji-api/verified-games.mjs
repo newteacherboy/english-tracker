@@ -47,7 +47,7 @@ export function verifiedGamesAPI(db,json){
    if(!games.has(game)||!Number.isInteger(classNo)||classNo<1||classNo>8||!units.length||units.length>20||units.some(u=>!Number.isInteger(u)||u<1||u>100))return fail('Geçersiz oyun kapsamı.',400);
    const code=({ky:'oyun_kelime',jp:'oyun_jeopardy',kp:'kelime_modu',ba:'parkur'})[game]||'oyun_'+game;
    const ctx=await db.rpc('dm_progress_context',{actor:a.student_id});if(ctx.error)return fail('Seviye doğrulanamadı.',503);
-   const C=globalThis.DijiProgressionCatalog;if(!C?.gates[code]||ctx.data.level<C.gates[code])return fail('Bu oyun henüz açılmadı.',403);
+   const C=globalThis.DijiProgressionCatalog;if(!C?.gates[code]||!a.teacher_portal_access_id&&ctx.data.level<C.gates[code])return fail('Bu oyun henüz açılmadı.',403);
    let bankQuery=db.from('word_bank').select('english,turkish,class_no,unit_no').eq('active',true);
    bankQuery=game==='kp'?bankQuery.in('class_no',[1,2,3,4,5,6,7,8]):bankQuery.eq('class_no',classNo);
    const bank=await bankQuery.in('unit_no',units).limit(5000);
@@ -86,7 +86,7 @@ export function verifiedGamesAPI(db,json){
    }
    if(!words.length)return fail('Bu bölümde soru bulunamadı.',400);
    const deck=compile(game,words);
-   const r=await db.rpc('dm_verified_start',{actor:a.student_id,run_key:run,game_code:game,cls:classNo,unit_ids:units,stop_id:stop,tasks:deck});
+   const r=await db.rpc(a.teacher_portal_access_id?'dm_teacher_verified_start':'dm_verified_start',{actor:a.student_id,run_key:run,game_code:game,cls:classNo,unit_ids:units,stop_id:stop,tasks:deck});
    if(r.error)return fail('Oyun oturumu kaydedilemedi.',409);
    return json({ok:true,total:deck.length,words,slots:deck.map((w,i)=>({slot:i,en:w.en,kind:w.kind,pairs:w.pairs})),...r.data});
   }

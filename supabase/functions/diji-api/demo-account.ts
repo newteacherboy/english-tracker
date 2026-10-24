@@ -29,5 +29,5 @@ export async function prepareDemo(db:any,passwordHash:string){
 export function publicParticipant(row:any){
  const r=row||{},ids=[r.id,r.student_id,r.sender_student_id,r.receiver_student_id,r.target_student_id,r.player_a,r.player_b];
  const names=[r.username,r.student_name,r.ogrenci,r.isim,r.name,r.sender?.username,r.receiver?.username,r.students?.username,r.a?.username,r.b?.username,r.payload?.target_name,r.payload?.student_name];
- return !ids.includes(DEMO_ID)&&r.actor_key!=='s:'+DEMO_ID&&!names.some(x=>String(x||'').trim().toLowerCase()===DEMO_USER);
+ return !r.profile?.teacher_preview&&!names.some(x=>/ · Öğretmen Denemesi [a-f0-9]{8}$/.test(String(x||'')))&&!ids.includes(DEMO_ID)&&r.actor_key!=='s:'+DEMO_ID&&!names.some(x=>String(x||'').trim().toLowerCase()===DEMO_USER);
 }

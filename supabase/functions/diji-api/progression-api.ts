@@ -9,9 +9,9 @@ const C=(globalThis as any).DijiProgressionCatalog;
 export function progressionAPI(db:any,json:any){
  const value=(body:any,q:URLSearchParams,k:string)=>body[k]??q.get(k)??'';
  async function context(a:any,includeStudy=false){
-  const {data,error}=await db.rpc('dm_progress_context',{actor:a.student_id});if(error)throw error;if(!includeStudy)return data;
+  const {data,error}=await db.rpc('dm_progress_context',{actor:a.student_id});if(error)throw error;if(!includeStudy)return a.teacher_portal_access_id?{...data,level:40}:data;
   const startPath=await loadStartPath(db,a.student_id,data);
-  return {...data,startPath,studyAccess:studyAccess(startPath),studyPlacementLevel:startPath.testLevel};
+  return {...data,level:a.teacher_portal_access_id?40:data.level,startPath,studyAccess:a.teacher_portal_access_id?{A1:true,A2:true,B1:true,B2:true}:studyAccess(startPath),studyPlacementLevel:startPath.testLevel};
  }
  const deny=(n:any)=>json({ok:false,status:'kilitli',mesaj:typeof n==='number'?`Bu özellik ${n}. seviyede açılır.`:n},403);
  async function handle(op:string,body:any,q:URLSearchParams,a:any){
@@ -41,6 +41,12 @@ export function progressionAPI(db:any,json:any){
        expected_step:Number(body.step),selected:String(body.answer||'')});
     if(error)return json({ok:false,mesaj:error.message},400);
     return json(data);
+  }
+  if(op==='seviyeOyunOdulu'&&a.teacher_portal_access_id){
+   const checked=await db.from('dm_verified_runs').select('ranking_only').eq('student_id',a.student_id).eq('run_id',String(body.runId||'')).maybeSingle();
+   if(checked.error||!checked.data?.ranking_only)return json({ok:false,mesaj:'Öğretmen oyun oturumu gerekli.'},409);
+   const wallet=await db.from('extra_data').select('value').eq('student_id',a.student_id).eq('key_name','yo').maybeSingle();
+   return json({ok:true,rankingOnly:true,xp:0,gold:0,reason:'ranking_only',yo:wallet.data?.value||{}});
   }
   if(op==='seviyeOyunOdulu'){
    const ctx=await context(a,body.game==='ba'),game=String(body.game||''),code=({ky:'oyun_kelime',jp:'oyun_jeopardy',kp:'kelime_modu',ba:'parkur',harfbahcesi:'oyun_harfbahcesi',eslestirme:'oyun_eslestirme'} as any)[game]||'oyun_'+game;
@@ -97,6 +103,7 @@ export function progressionAPI(db:any,json:any){
   const {data,error}=await db.rpc('dm_progress_purchase',{actor:a.student_id,item_key:item.id,is_showcase:!!showcase});if(error)return deny(error.message);return json({ok:true,...data});
  }
  async function guard(op:string,body:any,q:URLSearchParams,a:any){
+  if(a?.teacher_portal_access_id&&op!=='ekVeriKaydet')return null;
   if(a?.role!=='student'||!a.student_id)return null;
   if(['dersKonulariGetir','akisTumu'].includes(op))return null;
   let code=C.features.find((f:any)=>f.ops.includes(op))?.code;
@@ -109,7 +116,7 @@ export function progressionAPI(db:any,json:any){
   const lesson=['dersKonuDetayGetir','dersTestSonucKaydet','dersBilmiyordumToggle'].includes(op);
   const save=op==='ekVeriKaydet'&&body.anahtar==='yo';
   if(!code&&!lesson&&!save&&op!=='buyuSeviyeTamamla')return null;
-  const ctx=await context(a,lesson||op==='buyuSeviyeTamamla'),l=ctx.level;
+  const ctx=await context(save?{...a,teacher_portal_access_id:null}:a,lesson||op==='buyuSeviyeTamamla'),l=ctx.level;
   if(code==='akis'&&!ctx.feed)return deny('Akış, ana parkurda 3. durağa ulaşınca açılır.');
   if(code&&l<(C.gates[code]||1))return deny(C.gates[code]);
   if(op==='buyuSeviyeTamamla'){const supplied=Number(body.seviyeNo),no=supplied>=1000&&supplied<2000?200000+Math.floor((supplied-1000)/100)*10000+((supplied-1000)%100)*100+1:supplied,door=ctx.units.findIndex((d:any[])=>d.includes(no));if(door<0)return deny('Geçerli parkur durağı gerekli.');const problem=schoolStopProblem(ctx.startPath,ctx,no);if(problem)return deny(problem);

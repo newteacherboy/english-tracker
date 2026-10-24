@@ -30,8 +30,13 @@ export function raceHandler(db:DB){
    const raw=await req.text();if(raw.length>8192)return json({ok:false,mesaj:'İstek çok büyük.'},413);let b:any;try{b=JSON.parse(raw);}catch{return json({ok:false,mesaj:'Geçersiz istek.'},400);}
    const token=String(b.t||req.headers.get('x-diji-token')||'');if(!token||token.length>512)return json({ok:false,mesaj:'Öğrenci hesabına giriş yap.'},401);
    const hash=Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(token)))).map(x=>x.toString(16).padStart(2,'0')).join('');
-   const sessions=await db.select('portal_sessions',{select:'student_id,teacher_id,role,expires_at',token_hash:'eq.'+hash,limit:'1'}),a=sessions[0];
+   const sessions=await db.select('portal_sessions',{select:'student_id,teacher_id,role,expires_at,teacher_portal_access_id,teacher_portal_version',token_hash:'eq.'+hash,limit:'1'}),a=sessions[0];
    if(!a||!['student','teacher'].includes(a.role)||!Number.isFinite(Date.parse(a.expires_at))||Date.parse(a.expires_at)<=Date.now())return json({ok:false,mesaj:'Geçerli oturum gerekli.'},401);
+   if(a.teacher_portal_access_id){
+    const [g]=await db.select('teacher_portal_access',{select:'teacher_id,state,version',id:'eq.'+a.teacher_portal_access_id,limit:'1'});
+    const [pupil]=await db.select('students',{select:'teacher_id,status,frozen_at',id:'eq.'+a.student_id,limit:'1'});
+    if(a.role!=='student'||!g||g.state!=='approved'||g.version!==a.teacher_portal_version||!pupil||pupil.teacher_id!==g.teacher_id||pupil.status!=='approved'||pupil.frozen_at)return json({ok:false,mesaj:'Öğretmen erişimi sona erdi.'},403);
+   }
    const teacher=a.role==='teacher';let student:any;
    if(teacher){
     const rows=a.teacher_id?await db.select('teachers',{select:'id,active',id:'eq.'+a.teacher_id,limit:'1'}):[];
@@ -44,7 +49,7 @@ export function raceHandler(db:DB){
     if(!student||student.status!=='approved'||student.role!=='student')return json({ok:false,mesaj:'Aktif öğrenci hesabı gerekli.'},403);
     const balances=await db.select('extra_data',{select:'value',student_id:'eq.'+student.id,key_name:'eq.yo',limit:'1'});
     const level=await db.rpc('dm_student_level',{x:Number(balances[0]?.value?.totalXp||0)});
-    if(Number(level)<15)return json({ok:false,mesaj:'Kelime Rallisi 15. seviyede açılır.'},403);
+    if(!a.teacher_portal_access_id&&Number(level)<15)return json({ok:false,mesaj:'Kelime Rallisi 15. seviyede açılır.'},403);
     if(b.action==='practice')return json({ok:false,mesaj:'Öğretmen hesabı gerekli.'},403);
    }
    const op=String(b.action||''),cls=Number(b.classNo||student.selected_class||student.class_no||1),units=Array.isArray(b.units)?[...new Set(b.units.map(Number))].sort((x:any,y:any)=>x-y):[];
@@ -75,7 +80,7 @@ export function raceHandler(db:DB){
     const difficulty=['easy','normal','hard'].includes(b.difficulty)?b.difficulty:'normal';
     const rows=await db.select('word_bank',{select:'english,turkish',active:'eq.true',class_no:'eq.'+cls,unit_no:'in.('+units.join(',')+')',limit:'6000'});
     const previous=await db.select('dm_rally_runs',{select:'deck',student_id:'eq.'+student.id,class_no:'eq.'+cls,order:'created_at.desc',limit:'50'});
-    return json(await view(await db.rpc('dm_rally_start',{actor:student.id,run_key:b.runId,class_id:cls,unit_ids:units,question_deck:buildRaceDeck(rows,previous),pace:difficulty})));
+    return json(await view(await db.rpc(a.teacher_portal_access_id?'dm_teacher_rally_start':'dm_rally_start',{...(a.teacher_portal_access_id?{grant_id:a.teacher_portal_access_id}:{}),actor:student.id,run_key:b.runId,class_id:cls,unit_ids:units,question_deck:buildRaceDeck(rows,previous),pace:difficulty})));
    }
    if(op==='state'){const rows=await db.select('dm_rally_runs',{select:'*',id:'eq.'+b.runId,student_id:'eq.'+student.id,limit:'1'});return rows[0]?json(b.twoChoices?twoChoiceRace(rows[0],publicRace(rows[0])):publicRace(rows[0])):json({ok:false,mesaj:'Yarış bulunamadı.'},404);}
    if(op==='answer'){
@@ -84,7 +89,7 @@ export function raceHandler(db:DB){
     // slow: the learner slowed the road for this question; the database pays less for it.
     return json(await view(await db.rpc('dm_rally_answer',{actor:student.id,run_key:b.runId,round_no:b.round,lane,...(b.slow===true?{slowed:true}:{})})));
    }
-   if(op==='finish')return json(await db.rpc('dm_rally_finish',{actor:student.id,run_key:b.runId}));
+   if(op==='finish')return json(await db.rpc(a.teacher_portal_access_id?'dm_teacher_rally_finish':'dm_rally_finish',{actor:student.id,run_key:b.runId}));
    return json({ok:false,mesaj:'Geçersiz yarış işlemi.'},400);
   }catch(e){const message=String((e as any)?.message||'');const known=/enerji|seviyede|kelime|ünite|kapısına|yarış.*bulunamadı|kısa bir süre|hesap bilgileri/i.test(message);return json({ok:false,mesaj:known?message:'Yarış bağlantısı tamamlanamadı. Tekrar dene.'},known?400:503);}
  };
