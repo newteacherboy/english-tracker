@@ -47,24 +47,54 @@
   const nav=document.getElementById('bottomNavMobile');
   if(nav&&!nav.querySelector('[data-tp-home-nav]')){
    const b=document.createElement('button');b.type='button';b.className='bn-item tp-home-nav';b.dataset.tpHomeNav='1';b.innerHTML='<span class="tp-nav-home-icon">🏠</span><span class="bn-label">Ana Sayfa</span>';b.onclick=()=>teacherHomeShow();nav.prepend(b);
-   nav.addEventListener('click',e=>{if(e.target.closest('.bn-item:not([data-tp-home-nav])'))teacherHomeHide();},true);
+   nav.addEventListener('click',e=>{const target=e.target.closest('.bn-item:not([data-tp-home-nav])');if(!target)return;
+    if(target.dataset.ekran==='tab-profile-menu'){e.preventDefault();e.stopImmediatePropagation();teacherDashboardShow();return;}
+    teacherHomeHide();teacherDashboardHide();
+   },true);
   }
   if(!window.tpHomeInitialized){window.tpHomeInitialized=true;teacherHomeShow();}
  }
+
+ function teacherDashboardShow(){
+  if(!mode)return;
+  teacherHomeHide();
+  let panel=document.getElementById('tpDashboard');
+  if(!panel){
+   panel=document.createElement('main');panel.id='tpDashboard';panel.setAttribute('aria-label','Öğretmen Paneli');
+   panel.innerHTML='<div class="tp-dash-wrap"><header class="tp-dash-hero"><img src="discovery-assets/ogretmen.webp" alt="Öğretmen maskotu"><div><h1>Öğretmen Paneli</h1><p>Sınıflarını yönet, etkinlik oluştur ve öğrenci gelişimini takip et.</p></div><button type="button" data-dash="home">⌂ Ana Sayfa</button></header><section class="tp-dash-metrics"><div>👥 <b data-dash-students>—</b><small>Öğrenci</small></div><div>🏫 <b data-dash-classes>—</b><small>Sınıf</small></div><div>🎮 <b>Oyunlar</b><small>Sınıf etkinlikleri</small></div><div>📋 <b>Ödevler</b><small>Öğrenci çalışmaları</small></div></section><div class="tp-dash-layout"><nav class="tp-dash-menu" aria-label="Öğretmen araçları"><button data-dash="students">👥 Sınıflarım</button><button data-dash="homework">📋 Ödevler</button><button data-dash="games">🎮 Sınıf Oyunları</button><button data-dash="oral">🎙️ Sözlü Yap</button><button data-dash="reports">📊 Raporlar</button><button data-dash="library">📚 İçerik Kütüphanesi</button><button data-dash="settings">⚙️ Ayarlar</button></nav><section class="tp-dash-main"><h2>Bugün ne yapmak istersiniz?</h2><p>Öğretmen araçlarına tek dokunuşla ulaşın.</p><div class="tp-dash-tiles"><button data-dash="students">👥<strong>Sınıflarımı Yönet</strong><small>Öğrenci ve sınıf listesi</small></button><button data-dash="homework">📝<strong>Ödev Ver</strong><small>Yeni çalışma oluştur</small></button><button data-dash="games">🎮<strong>Sınıf Oyunları</strong><small>Birlikte oyun başlat</small></button><button data-dash="oral">🎤<strong>Sözlü Yap</strong><small>Sözlü sınav oluştur</small></button><button data-dash="reports">📊<strong>Raporlar</strong><small>İlerlemeleri incele</small></button><button data-dash="library">📖<strong>İçerik Kütüphanesi</strong><small>Konu anlatımına geç</small></button></div></section></div></div>';
+   document.body.append(panel);
+   panel.addEventListener('click',e=>{const b=e.target.closest('[data-dash]');if(b)teacherDashboardAction(b.dataset.dash);});
+  }
+  panel.classList.add('is-visible');document.body.classList.add('tp-dash-active');
+  document.querySelector('[data-tp-home-nav]')?.classList.remove('active');
+  document.querySelector('#bottomNavMobile [data-ekran="tab-profile-menu"]')?.classList.add('active');
+ }
+ function teacherDashboardHide(){document.getElementById('tpDashboard')?.classList.remove('is-visible');document.body.classList.remove('tp-dash-active');}
+ function teacherDashboardAction(action){
+  if(action==='home'){teacherDashboardHide();teacherHomeShow();return;}
+  if(action==='oral'){window.dmTeacherOral?.open?.();return;}
+  if(action==='games'||action==='library'){teacherDashboardHide();teacherDestination(action==='games'?'games':'study');return;}
+  // Use the existing, permission-checked teacher management functions.
+  const menu=document.getElementById('ogretmenMenuModal');
+  if(menu){menu.style.display='flex';const candidates=[...menu.querySelectorAll('button')];const pattern=({students:/öğrenci|sınıf|liste/i,homework:/ödev/i,reports:/rapor|istatistik/i,settings:/ayar/i})[action];const target=candidates.find(b=>pattern?.test(b.textContent||''));if(target)target.click();else window.yoToast?.('Öğretmen panelindeki ilgili aracı seç.');}
+ }
+
  function teacherHomeShow(){
+  teacherDashboardHide();
   if(!mode)return;document.getElementById('tpTeacherHome')?.classList.add('is-visible');
   document.body.classList.add('tp-home-active');
   document.querySelector('[data-tp-home-nav]')?.classList.add('active');
  }
  function teacherHomeHide(){document.getElementById('tpTeacherHome')?.classList.remove('is-visible');document.body.classList.remove('tp-home-active');document.querySelector('[data-tp-home-nav]')?.classList.remove('active');}
  function teacherDestination(action){
+  if(action==='panel'){teacherDashboardShow();return;}
   teacherHomeHide();
   if(action==='oral'){window.dmTeacherOral?.open?.();return;}
   const id=action==='study'?'tab-derscalis':action==='games'?'tab-aktiviteler':'tab-profile-menu';
   const button=document.querySelector('#bottomNavMobile [data-ekran="'+id+'"]');
   if(button)button.click();
   else ({study:window.dersCalisTamEkranAc,games:window.aktivitelerTamEkranAc,panel:window.dmProfileMenuAc})[action]?.();
-  if(action==='panel')setTimeout(()=>document.getElementById('ogretmenMenuModal')?.style.setProperty('display','flex'),80);
+
  }
 
  window.dmTeacherPortal={openLogin,openProfile,beforeGame,management};
