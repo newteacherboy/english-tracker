@@ -108,11 +108,9 @@
    for(const item of nav.querySelectorAll('.bn-item')){
     if(/öğretmen paneli/i.test(item.textContent||'')){
      item.dataset.tpPanelNav='1';
-     // The existing nav uses a sprite sheet which hides plain text in .bn-icon.
-     // Replace its art with a dedicated always-visible icon.
-     const icon=item.querySelector('.bn-icon');
-     if(icon){icon.replaceChildren();icon.classList.add('tp-panel-icon');icon.textContent='🎓';}
-     else if(!item.querySelector('.tp-panel-icon')){const i=document.createElement('span');i.className='tp-panel-icon';i.textContent='🎓';item.insertBefore(i,item.querySelector('.bn-label'));}
+     const oldIcon=item.querySelector('.bn-icon');if(oldIcon)oldIcon.style.setProperty('display','none','important');
+     let badge=item.querySelector(':scope > .tp-panel-visible-icon');
+     if(!badge){badge=document.createElement('span');badge.className='tp-panel-visible-icon';badge.setAttribute('aria-hidden','true');badge.textContent='🎓';item.insertBefore(badge,item.querySelector('.bn-label'));}
 
     }
    }
