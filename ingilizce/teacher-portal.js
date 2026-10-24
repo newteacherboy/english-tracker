@@ -35,6 +35,21 @@
  async function decorate(){statusButton();const menu=document.getElementById('ogretmenMenuModal');if(!menu)return;const token=sessionStorage.getItem('ing_ogr_token')||'';if(!token)return;if(checkedToken!==token){checkedToken=token;canManage=false;try{const d=await api('ogretmenBilgim',{},token);canManage=d.kullanici==='teacher'&&d.yonetici===true;}catch{}}if(canManage&&!menu.querySelector('[data-tp-manage]')){const b=document.createElement('button');b.type='button';b.className='ogretmen-menu-btn';b.dataset.tpManage='1';b.textContent='🔐 Öğretmen Erişim Onayları';b.onclick=management;menu.querySelector('.rubric-content')?.append(b);}}
 
  // Private teacher home: separate from the learner home and onboarding tours.
+ // A private teacher login already requires the linked teacher's verified email.
+ // Guest-preview prompts must not impersonate the teacher's personal account.
+ function suppressPreviewPrompts(){
+  if(!mode)return;
+  for(const e of document.querySelectorAll('body [role="dialog"],body [aria-modal="true"],body .dm-first-character,body .character-choice-overlay')){
+   if(e.closest('#tpTeacherHome,#tpDashboard,.tp-shade'))continue;
+   const heading=e.querySelector('h1,h2,h3')?.textContent?.trim()||'';
+   if(/karakterini seç/i.test(heading)&&e.style.display!=='none'){e.style.display='none';e.setAttribute('aria-hidden','true');}
+  }
+  for(const e of document.querySelectorAll('body section,body aside')){
+   if(e.closest('#tpTeacherHome,#tpDashboard,.tp-shade'))continue;
+   const title=e.querySelector('h2,h3,strong')?.textContent?.trim()||'';
+   if(/e.postanı henüz doğrulamadın/i.test(title)&&e.textContent.length<600&&e.style.display!=='none')e.style.display='none';
+  }
+ }
  function teacherHome(){
   if(!mode)return;
   let home=document.getElementById('tpTeacherHome');
@@ -45,16 +60,21 @@
    home.addEventListener('click',e=>{const b=e.target.closest('[data-tp-action]');if(b)teacherDestination(b.dataset.tpAction);});
   }
   const nav=document.getElementById('bottomNavMobile');
+  if(nav&&nav.parentElement!==document.body)document.body.append(nav);
   if(nav&&!nav.querySelector('[data-tp-home-nav]')){
    const b=document.createElement('button');b.type='button';b.className='bn-item tp-home-nav';b.dataset.tpHomeNav='1';b.innerHTML='<span class="tp-nav-home-icon">🏠</span><span class="bn-label">Ana Sayfa</span>';b.onclick=()=>teacherHomeShow();nav.prepend(b);
    nav.addEventListener('click',e=>{const target=e.target.closest('.bn-item:not([data-tp-home-nav])');if(!target)return;
-    if(target.dataset.ekran==='tab-profile-menu'){e.preventDefault();e.stopImmediatePropagation();teacherDashboardShow();return;}
+    if(target.dataset.ekran==='tab-profile-menu'){e.preventDefault();e.stopImmediatePropagation();teacherProfileShow();return;}
     teacherHomeHide();teacherDashboardHide();
    },true);
   }
   if(!window.tpHomeInitialized){window.tpHomeInitialized=true;teacherHomeShow();}
  }
 
+ function teacherProfileShow(){
+  teacherHomeHide();teacherDashboardHide();
+  openProfile();
+ }
  function teacherDashboardShow(){
   if(!mode)return;
   teacherHomeHide();
@@ -64,6 +84,19 @@
    panel.innerHTML='<div class="tp-dash-wrap"><header class="tp-dash-hero"><img src="discovery-assets/ogretmen.webp" alt="Öğretmen maskotu"><div><h1>Öğretmen Paneli</h1><p>Sınıflarını yönet, etkinlik oluştur ve öğrenci gelişimini takip et.</p></div><button type="button" data-dash="home">⌂ Ana Sayfa</button></header><section class="tp-dash-metrics"><div>👥 <b data-dash-students>—</b><small>Öğrenci</small></div><div>🏫 <b data-dash-classes>—</b><small>Sınıf</small></div><div>🎮 <b>Oyunlar</b><small>Sınıf etkinlikleri</small></div><div>📋 <b>Ödevler</b><small>Öğrenci çalışmaları</small></div></section><div class="tp-dash-layout"><nav class="tp-dash-menu" aria-label="Öğretmen araçları"><button data-dash="students">👥 Sınıflarım</button><button data-dash="homework">📋 Ödevler</button><button data-dash="games">🎮 Sınıf Oyunları</button><button data-dash="oral">🎙️ Sözlü Yap</button><button data-dash="reports">📊 Raporlar</button><button data-dash="library">📚 İçerik Kütüphanesi</button><button data-dash="settings">⚙️ Ayarlar</button></nav><section class="tp-dash-main"><h2>Bugün ne yapmak istersiniz?</h2><p>Öğretmen araçlarına tek dokunuşla ulaşın.</p><div class="tp-dash-tiles"><button data-dash="students">👥<strong>Sınıflarımı Yönet</strong><small>Öğrenci ve sınıf listesi</small></button><button data-dash="homework">📝<strong>Ödev Ver</strong><small>Yeni çalışma oluştur</small></button><button data-dash="games">🎮<strong>Sınıf Oyunları</strong><small>Birlikte oyun başlat</small></button><button data-dash="oral">🎤<strong>Sözlü Yap</strong><small>Sözlü sınav oluştur</small></button><button data-dash="reports">📊<strong>Raporlar</strong><small>İlerlemeleri incele</small></button><button data-dash="library">📖<strong>İçerik Kütüphanesi</strong><small>Konu anlatımına geç</small></button></div></section></div></div>';
    document.body.append(panel);
    panel.addEventListener('click',e=>{const b=e.target.closest('[data-dash]');if(b)teacherDashboardAction(b.dataset.dash);});
+  }
+  const legacy=document.querySelector('#ogretmenMenuModal .rubric-content');
+  const tools=panel.querySelector('.tp-dash-main');
+  if(legacy&&tools){
+   let list=tools.querySelector('.tp-dash-legacy');
+   if(!list){list=document.createElement('section');list.className='tp-dash-legacy';list.innerHTML='<h2>Tüm öğretmen araçları</h2><div class="tp-dash-tool-grid"></div>';tools.append(list);}
+   const grid=list.querySelector('.tp-dash-tool-grid');grid.replaceChildren();
+   for(const original of legacy.querySelectorAll('button.ogretmen-menu-btn')){
+    if(original.disabled||!original.textContent.trim())continue;
+    const b=document.createElement('button');b.type='button';b.textContent=original.textContent.trim();
+    b.onclick=()=>{original.click();};
+    grid.append(b);
+   }
   }
   panel.classList.add('is-visible');document.body.classList.add('tp-dash-active');
   document.querySelector('[data-tp-home-nav]')?.classList.remove('active');
@@ -76,7 +109,7 @@
   if(action==='games'||action==='library'){teacherDashboardHide();teacherDestination(action==='games'?'games':'study');return;}
   // Use the existing, permission-checked teacher management functions.
   const menu=document.getElementById('ogretmenMenuModal');
-  if(menu){menu.style.display='flex';const candidates=[...menu.querySelectorAll('button')];const pattern=({students:/öğrenci|sınıf|liste/i,homework:/ödev/i,reports:/rapor|istatistik/i,settings:/ayar/i})[action];const target=candidates.find(b=>pattern?.test(b.textContent||''));if(target)target.click();else window.yoToast?.('Öğretmen panelindeki ilgili aracı seç.');}
+  if(menu){menu.style.display='flex';const candidates=[...menu.querySelectorAll('button')];const pattern=({students:/öğrenci|sınıf|liste/i,homework:/ödev/i,reports:/rapor|istatistik/i,settings:/ayar/i})[action];const target=candidates.find(b=>pattern?.test(b.textContent||''));if(target)target.click();else window.yoToast?.('Bu işlem için öğretmen panelindeki ilgili aracı seç.');}
  }
 
  function teacherHomeShow(){
@@ -100,8 +133,8 @@
  window.dmTeacherPortal={openLogin,openProfile,beforeGame,management};
  if(document.body.dataset.teacherReset==='1'){resetPage();return;}
  if(mode){document.body.classList.add('dm-teacher-portal');window.cikisYap=window.dmTeacherPortalExit;window.siniftaOyunModuAc=()=>{document.getElementById('ogretmenMenuModal')?.style.setProperty('display','none');window.aktivitelerTamEkranAc?.();};}
- let scheduled=false;const observe=()=>{if(scheduled)return;scheduled=true;requestAnimationFrame(()=>{scheduled=false;decorate();});};new MutationObserver(observe).observe(document.body,{childList:true,subtree:true});decorate();wrapGames();
- document.addEventListener('dm:state',wrapGames);document.addEventListener('dm:login',wrapGames);if(mode)document.addEventListener('click',()=>{if(window.tpHomeInitialized)teacherHome();}, {capture:false});
- let opened=false;const timer=setInterval(()=>{wrapGames();if(mode&&!opened&&document.getElementById('panel-alani')?.style.display==='block'){opened=true;teacherHome();setTimeout(runPending,300);}if(opened)clearInterval(timer);},500);setTimeout(()=>clearInterval(timer),30000);
+ let scheduled=false;const observe=()=>{if(scheduled)return;scheduled=true;requestAnimationFrame(()=>{scheduled=false;decorate();if(mode)suppressPreviewPrompts();});};new MutationObserver(observe).observe(document.body,{childList:true,subtree:true});decorate();wrapGames();
+ document.addEventListener('dm:state',wrapGames);document.addEventListener('dm:login',wrapGames);if(mode)document.addEventListener('click',()=>{if(window.tpHomeInitialized){teacherHome();suppressPreviewPrompts();}}, {capture:false});
+ let opened=false;const timer=setInterval(()=>{wrapGames();if(mode&&!opened&&document.getElementById('panel-alani')?.style.display==='block'){opened=true;teacherHome();suppressPreviewPrompts();setTimeout(runPending,300);}if(opened)clearInterval(timer);},500);setTimeout(()=>clearInterval(timer),30000);
  if(new URLSearchParams(location.search).get('ogretmenGiris')==='1'){window.dmFirstDiscovery?.openLogin?.();openLogin();}
 })();
