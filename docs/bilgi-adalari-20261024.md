@@ -12,3 +12,7 @@ The user explicitly approved publishing this reviewed version to `newteacherboy/
 ## Asset provenance
 
 Built-in image generation produced nine independent transparent icons. Common brief: one centered isolated object, soft rounded 3D educational-app illustration, clear silhouette at 40px, transparent margins, no backdrop, labels or UI tiles. Subjects: folded green map with coral location pin; two school friends; purple controller; open book and pencil; coral-awning shop; blue/yellow bird head; coral-binding calendar; clipboard with green checks; golden treasure chest. Final assets are in `ingilizce/route-assets/bilgi-icons/`. The four resource SVGs extend the existing native icon system.
+
+## Release verification
+
+Published application commit: `c84c61074a1a423fcdfd824f5c610adac2f1fe10`. GitHub Pages deployment and the Social feed and school route, Dual route navigation, and Service worker performance cache workflows succeeded. General repository failures also existed on the preceding `73a5602` commit. A baseline run reproduced the same two parkur-learning failures (stop chunk expectations: 8 vs 4 and 2 vs 1). New Bilgi Adaları media have complete source/hash records; 11 unrelated legacy media-record warnings remain. No unrelated progression or game logic is changed as part of this release.

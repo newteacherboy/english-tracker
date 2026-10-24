@@ -1921,6 +1921,118 @@
       "bytes": 12184,
       "status": "original-derived",
       "source": "Original approved Diji-Medu 20 October 2026 concept 3; UI artifacts removed, fixed illustrated scenery, live scrolling route elements."
+    },
+    {
+      "path": "ingilizce/route-assets/bilgi-background.webp",
+      "sha256": "2f813cc836a313dea12e95f48614b7758b2a5cc085a837a1d90b38cc6d30ce72",
+      "bytes": 471926,
+      "status": "ai-generated",
+      "source": "Generated with OpenAI image generation for the user-approved Bilgi Adaları design on 2026-10-24; prompt provenance in docs/bilgi-adalari-20261024.md."
+    },
+    {
+      "path": "ingilizce/route-assets/bilgi-mascot.webp",
+      "sha256": "973757f98305e9830ae7611a894fd0cf33a742a9dc2d19b3695357bbe37005d0",
+      "bytes": 206004,
+      "status": "ai-generated",
+      "source": "Generated with OpenAI image generation for the user-approved Bilgi Adaları design on 2026-10-24; prompt provenance in docs/bilgi-adalari-20261024.md."
+    },
+    {
+      "path": "ingilizce/route-assets/bilgi-reference.webp",
+      "sha256": "1d7f03364a2f75540c8992ed2e1444722ba154638f6232bdc04763e9fe2b2a46",
+      "bytes": 474900,
+      "status": "ai-generated",
+      "source": "Generated with OpenAI image generation for the user-approved Bilgi Adaları design on 2026-10-24; prompt provenance in docs/bilgi-adalari-20261024.md."
+    },
+    {
+      "path": "ingilizce/route-assets/bilgi-icons/calendar.webp",
+      "sha256": "a3db6e71ff73540c231532c21b5c82f6b368f0ec4bda145415f91e1dd7710add",
+      "bytes": 107696,
+      "status": "ai-generated",
+      "source": "Generated with OpenAI image generation for the user-approved Bilgi Adaları design on 2026-10-24; prompt provenance in docs/bilgi-adalari-20261024.md."
+    },
+    {
+      "path": "ingilizce/route-assets/bilgi-icons/chest.webp",
+      "sha256": "b01a7a8df7ed87fe17f6e3cdeb1dc58c33250b77933535a364e5dfb150033014",
+      "bytes": 177700,
+      "status": "ai-generated",
+      "source": "Generated with OpenAI image generation for the user-approved Bilgi Adaları design on 2026-10-24; prompt provenance in docs/bilgi-adalari-20261024.md."
+    },
+    {
+      "path": "ingilizce/route-assets/bilgi-icons/energy.svg",
+      "sha256": "aa5993aaa5c4eabb19f586f263be3a6fc078723f691f5134a247a61e8f913c15",
+      "bytes": 565,
+      "status": "original-vector",
+      "source": "Original Diji-Medu Bilgi Adaları interface asset, created in this project with native SVG"
+    },
+    {
+      "path": "ingilizce/route-assets/bilgi-icons/friends.webp",
+      "sha256": "f18764ad092c6f0a926bc63d8a1592f700bc8accb550dbd0c406e4e4cc4ae5d1",
+      "bytes": 316328,
+      "status": "ai-generated",
+      "source": "Generated with OpenAI image generation for the user-approved Bilgi Adaları design on 2026-10-24; prompt provenance in docs/bilgi-adalari-20261024.md."
+    },
+    {
+      "path": "ingilizce/route-assets/bilgi-icons/games.webp",
+      "sha256": "1278df8d4f0356e585083be916c8880ee99fd29f6f7a422797f6f5527fce7730",
+      "bytes": 128072,
+      "status": "ai-generated",
+      "source": "Generated with OpenAI image generation for the user-approved Bilgi Adaları design on 2026-10-24; prompt provenance in docs/bilgi-adalari-20261024.md."
+    },
+    {
+      "path": "ingilizce/route-assets/bilgi-icons/gold.svg",
+      "sha256": "6e98bb7177ca3b6910f74da1e75ca125abd92ee8a476eae9f7dcda2daebc7601",
+      "bytes": 738,
+      "status": "original-vector",
+      "source": "Original Diji-Medu Bilgi Adaları interface asset, created in this project with native SVG"
+    },
+    {
+      "path": "ingilizce/route-assets/bilgi-icons/map.webp",
+      "sha256": "25b91b7410392c627ec5704aa95e65a12ca38f4e06043ee1469c4af31c9ddecf",
+      "bytes": 152522,
+      "status": "ai-generated",
+      "source": "Generated with OpenAI image generation for the user-approved Bilgi Adaları design on 2026-10-24; prompt provenance in docs/bilgi-adalari-20261024.md."
+    },
+    {
+      "path": "ingilizce/route-assets/bilgi-icons/profile.webp",
+      "sha256": "bc0ed43518df94dd6f4cd61a7f53989feea714b0d7543c4fda9362d3e10d98a2",
+      "bytes": 218732,
+      "status": "ai-generated",
+      "source": "Generated with OpenAI image generation for the user-approved Bilgi Adaları design on 2026-10-24; prompt provenance in docs/bilgi-adalari-20261024.md."
+    },
+    {
+      "path": "ingilizce/route-assets/bilgi-icons/store.webp",
+      "sha256": "b214b5a08699ad84e7409261fc08c4ed8982852db94acd6fc925bfab33bc2e5d",
+      "bytes": 138610,
+      "status": "ai-generated",
+      "source": "Generated with OpenAI image generation for the user-approved Bilgi Adaları design on 2026-10-24; prompt provenance in docs/bilgi-adalari-20261024.md."
+    },
+    {
+      "path": "ingilizce/route-assets/bilgi-icons/study.webp",
+      "sha256": "35da10752cd5911301d0b9265c4240ec8aa072f7cbe0e5a9f3933a623a0d422a",
+      "bytes": 114320,
+      "status": "ai-generated",
+      "source": "Generated with OpenAI image generation for the user-approved Bilgi Adaları design on 2026-10-24; prompt provenance in docs/bilgi-adalari-20261024.md."
+    },
+    {
+      "path": "ingilizce/route-assets/bilgi-icons/tasks.webp",
+      "sha256": "aa61021c41abf6ff289360f7dd24403adeb732bfeb99147445034cd06d8f8bd9",
+      "bytes": 90318,
+      "status": "ai-generated",
+      "source": "Generated with OpenAI image generation for the user-approved Bilgi Adaları design on 2026-10-24; prompt provenance in docs/bilgi-adalari-20261024.md."
+    },
+    {
+      "path": "ingilizce/route-assets/bilgi-icons/time.svg",
+      "sha256": "371d143c3874563c0e7e2c624df3968d50da8e165a30076ab2cc58e61550a7ad",
+      "bytes": 583,
+      "status": "original-vector",
+      "source": "Original Diji-Medu Bilgi Adaları interface asset, created in this project with native SVG"
+    },
+    {
+      "path": "ingilizce/route-assets/bilgi-icons/xp.svg",
+      "sha256": "2811612e8d14268a93e4535c5a99412fa090f5843b7c1c2f36636bc103238ee3",
+      "bytes": 686,
+      "status": "original-vector",
+      "source": "Original Diji-Medu Bilgi Adaları interface asset, created in this project with native SVG"
     }
   ]
 }
