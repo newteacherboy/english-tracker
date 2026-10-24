@@ -144,7 +144,7 @@ function paint(){
    '<p>'+esc(step.text)+'</p>'+(step.tip?'<span class="dm-intro-tip">'+esc(step.tip)+'</span>':'')+
    '<div class="dm-intro-foot"><div class="dm-intro-dots" aria-hidden="true">'+dots+'</div><button type="button" class="dm-intro-link" data-intro-skip>Geç</button><button type="button" class="dm-intro-primary" data-intro-next>'+esc(nextLabel)+'</button></div>';
  }
- card.querySelector('[data-intro-next]').onclick=()=>next(index);
+ card.querySelector('[data-intro-next]').onclick=()=>{cue('select');next(index);};
  card.querySelector('[data-intro-skip]').onclick=()=>close('skip');
  place();
  card.querySelector('[data-intro-next]').focus({preventScroll:true});
