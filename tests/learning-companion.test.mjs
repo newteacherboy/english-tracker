@@ -6,7 +6,8 @@ import {due,nextReview,reviewStats} from '../supabase/functions/diji-api/review-
 const BANK=globalThis.DMLearningDialogues,at=Date.parse('2026-10-18T22:00:00Z');
 function fixture({postgresTimestamps=false}={}){
  const tables={students:[{id:'a',username:'Ada',class_no:6,branch:'A',teacher_id:'t1',status:'approved',role:'student'},{id:'b',username:'Bora',class_no:6,branch:'A',teacher_id:'t2',status:'approved',role:'student'}],extra_data:[]};
- const db={rpc:async(name,args)=>({data:{daily:{route:0,game:0,review:0},weekly:{route:0,game:0,days:0}},error:null}),from(table){let filters=[],action='',payload,opts={},single=false,start=0,end=Infinity;
+ const missions={daily:{route:0,game:0,review:0},weekly:{route:0,game:0,days:0}},rewardCalls=[];
+ const db={rpc:async(name,args)=>{if(name==='dm_companion_reward'){rewardCalls.push(args);return {data:{claimed:true,xp:args.reward_kind==='plan'?120:50,gold:args.reward_kind==='plan'?50:20,energy:args.reward_kind==='plan'?0:2},error:null};}return {data:missions,error:null};},from(table){let filters=[],action='',payload,opts={},single=false,start=0,end=Infinity;
   const q={select(){return this;},eq(k,v){filters.push(r=>r[k]===v);return this;},in(k,v){filters.push(r=>v.includes(r[k]));return this;},like(k,v){filters.push(r=>r[k].startsWith(v.replace(/%$/,'')));return this;},order(){return this;},limit(n){end=n;return this;},range(a,b){start=a;end=b+1;return this;},maybeSingle(){single=true;return this;},upsert(p,o){action='upsert';payload=p;opts=o;return this;},update(p){action='update';payload=p;return this;},then(resolve,reject){return run().then(resolve,reject);}};
   async function run(){let rows=tables[table]||[],selected=rows.filter(r=>filters.every(f=>f(r))).slice(start,end);
    if(action==='upsert'){const old=rows.find(r=>r.student_id===payload.student_id&&r.key_name===payload.key_name);if(!old){rows.push(structuredClone(payload));}else if(!opts.ignoreDuplicates)Object.assign(old,structuredClone(payload));}
@@ -16,7 +17,7 @@ function fixture({postgresTimestamps=false}={}){
   }return q;
  }};
  const handler=learningCompanionAPI({db,json:(data,status=200)=>({data,status}),teacherScope:(a,s)=>a.yonetici||a.teacher_id===s.teacher_id,now:()=>at});
- return {tables,call:(op,b={},a={role:'student',student_id:'a'},method='POST')=>handler.handle(op,b,a,method)};
+ return {tables,missions,rewardCalls,call:(op,b={},a={role:'student',student_id:'a'},method='POST')=>handler.handle(op,b,a,method)};
 }
 test('review schedule lengthens only after spaced successes and resets without losing history',()=>{
  let w={en:'apple',tr:'elma'};const gaps=[1,3,7,14,30];let n=at;
@@ -54,7 +55,7 @@ test('concurrent tabs can record each dialogue question only once',async()=>{
  const s=(await f.call('companionSummary')).data;assert.equal(s.skills.reading.total,1);
 });
 test('planner checkbox is account-bound and never changes game progress or rewards',async()=>{
- const f=fixture();assert.equal((await f.call('companionPlanStep',{step:'gold'})).status,400);await f.call('companionPlanStep',{step:'route',student_id:'b'});assert.equal((await f.call('companionSummary')).data.routeDone,true);assert.equal((await f.call('companionSummary',{}, {role:'student',student_id:'b'})).data.routeDone,false);assert.equal(f.tables.extra_data.length,1);
+ const f=fixture();assert.equal((await f.call('companionPlanStep',{step:'gold'})).status,400);await f.call('companionPlanStep',{step:'route',student_id:'b'});f.missions.daily.route=1;assert.equal((await f.call('companionSummary')).data.routeDone,true);f.missions.daily.route=0;assert.equal((await f.call('companionSummary',{}, {role:'student',student_id:'b'})).data.routeDone,false);assert.equal(f.tables.extra_data.length,1);
 });
 
 test('Postgres timestamp representation allows all three consecutive answers without reopening',async()=>{
@@ -65,4 +66,25 @@ test('Postgres timestamp representation allows all three consecutive answers wit
   assert.equal(state.cursor,index+1);assert.equal(state.version,f.tables.extra_data[0].updated_at,'Version is the stored database token');
  }
  assert.equal((await f.call('companionSummary')).data.dialogueDone,true);
+});
+
+test('completion credits only through the fixed server RPC after every answer, and retries recover the reward',async()=>{
+ const f=fixture();let state=(await f.call('companionDialogueOpen',{story:'weather'})).data;
+ for(const [index,answer] of ['Bulutlu ve yağmurlu','Kapının yanında','umbrella'].entries()){
+  state=(await f.call('companionDialogueAnswer',{story:'weather',index,version:state.version,answer,audioPlayed:true})).data;
+  assert.equal(f.rewardCalls.length,index===2?1:0);
+ }
+ assert.deepEqual(f.rewardCalls[0],{actor:'a',reward_kind:'story',story_key:'weather'});
+ assert.equal(state.reward.energy,2);assert.equal(state.reward.xp,50);assert.equal(state.reward.gold,20);
+ const reopened=(await f.call('companionDialogueOpen',{story:'weather'})).data;
+ assert.equal(reopened.cursor,3);assert.equal(f.rewardCalls.length,2);
+});
+test('daily plan reward ignores client amounts and actor and requires an authenticated student',async()=>{
+ const f=fixture();const r=await f.call('companionPlanClaim',{student_id:'b',xp:99999,gold:99999});
+ assert.deepEqual(f.rewardCalls,[{actor:'a',reward_kind:'plan',story_key:null}]);assert.equal(r.data.reward.xp,120);assert.equal(r.data.reward.gold,50);
+ assert.equal((await f.call('companionPlanClaim',{},null)).status,401);
+ assert.equal((await f.call('companionPlanClaim',{}, {role:'teacher',teacher_id:'t'})).status,403);
+});
+test('a client planner checkbox alone is never server evidence for a completed route',async()=>{
+ const f=fixture();await f.call('companionPlanStep',{step:'route'});assert.equal((await f.call('companionSummary')).data.routeDone,false);
 });

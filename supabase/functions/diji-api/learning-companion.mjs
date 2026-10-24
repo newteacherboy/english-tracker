@@ -1,7 +1,7 @@
 import './learning-dialogues.js';
 import {due,reviewStats} from './review-schedule.mjs';
 const BANK=globalThis.DMLearningDialogues;
-export const companionOps=new Set(['companionSummary','companionDialogueOpen','companionDialogueAnswer','companionPlanStep','teacherLearningSummary']);
+export const companionOps=new Set(['companionSummary','companionDialogueOpen','companionDialogueAnswer','companionPlanStep','companionPlanClaim','teacherLearningSummary']);
 const parse=v=>{try{return typeof v==='string'?JSON.parse(v):v||{};}catch{return {};}};
 const day=now=>new Date(now+10800000).toISOString().slice(0,10);
 const norm=v=>String(v||'').normalize('NFKC').toLocaleLowerCase('en').replace(/[.,!?]+$/,'').trim();
@@ -30,18 +30,20 @@ export function learningCompanionAPI({db,json,teacherScope,now=Date.now}){
     }
     if(a.role!=='student'||!a.student_id)return fail('Öğrenci oturumu gerekli.',403);
     const sid=a.student_id,stamp=now(),today=day(stamp),iso=new Date(stamp).toISOString();
+    async function reward(kind,story=null){const r=await db.rpc('dm_companion_reward',{actor:sid,reward_kind:kind,story_key:story});if(r.error)throw r.error;return r.data;}
+    if(op==='companionPlanClaim')return json({ok:true,reward:await reward('plan')});
     if(op==='companionSummary'){
-      const [r,stories,plan,missions]=await Promise.all([
-        reviews([sid]),db.from('extra_data').select('key_name,value,updated_at').eq('student_id',sid).like('key_name','practice_dialogue:%').order('updated_at',{ascending:false}).limit(100),get(sid,'practice_plan:'+today),db.rpc('dm_mission_summary',{actor:sid})
-      ]);if(stories.error)throw stories.error;if(missions.error)throw missions.error;
+      const [r,stories,plan,missions,planClaim,completed]=await Promise.all([
+        reviews([sid]),db.from('extra_data').select('key_name,value,updated_at').eq('student_id',sid).like('key_name','practice_dialogue:%').order('updated_at',{ascending:false}).limit(100),get(sid,'practice_plan:'+today),db.rpc('dm_mission_summary',{actor:sid}),get(sid,'practice_reward:plan:'+today),db.from('extra_data').select('key_name').eq('student_id',sid).like('key_name','practice_reward:story:%').limit(200)
+      ]);if(stories.error)throw stories.error;if(missions.error)throw missions.error;if(completed.error)throw completed.error;
       const words=r.rows.map(x=>({id:x.key_name,...parse(x.value),version:x.updated_at}));
       const skills={reading:{correct:0,total:0},listening:{correct:0,total:0},writing:{correct:0,total:0}};
       for(const row of stories.data||[])for(const answer of Object.values(parse(row.value).answers||{})){if(skills[answer.skill]){skills[answer.skill].total++;skills[answer.skill].correct+=Number(answer.correct);}}
       return json({ok:true,day:today,missions:missions.data,limited:r.limited,review:reviewStats(r.rows,stamp),skills,
         reviewDone:!words.some(w=>due(w,stamp))||words.filter(w=>w.lastReviewedAt&&day(Date.parse(w.lastReviewedAt))===today).length>=3,
         dialogueDone:(stories.data||[]).some(x=>x.key_name.endsWith(':'+today)&&parse(x.value).cursor>=3),
-        routeDone:!!parse(plan?.value).route,
-        dialogueIds:(stories.data||[]).filter(x=>parse(x.value).cursor>=3).map(x=>x.key_name.split(':')[1]),
+        routeDone:Number(missions.data?.daily?.route||0)>0,planClaimed:!!planClaim,
+        dialogueIds:[...new Set([...(stories.data||[]).filter(x=>parse(x.value).cursor>=3).map(x=>x.key_name.split(':')[1]),...(completed.data||[]).map(x=>x.key_name.split(':')[2])])],
         nextWords:words.filter(w=>due(w,stamp)).slice(0,3).map(w=>({en:w.en,tr:w.tr}))});
     }
     if(op==='companionPlanStep'){
@@ -53,12 +55,12 @@ export function learningCompanionAPI({db,json,teacherScope,now=Date.now}){
     const key='practice_dialogue:'+story.id+':'+today;
     if(op==='companionDialogueOpen'){
       const r=await db.from('extra_data').upsert({student_id:sid,key_name:key,value:{cursor:0,answers:{}},updated_at:iso},{onConflict:'student_id,key_name',ignoreDuplicates:true});if(r.error)throw r.error;
-      const record=await get(sid,key);return json({ok:true,...parse(record.value),version:record.updated_at});
+      const record=await get(sid,key),state=parse(record.value);return json({ok:true,...state,version:record.updated_at,...(state.cursor>=3?{reward:await reward('story',story.id)}:{})});
     }
     const record=await get(sid,key);if(!record)return fail('Önce diyaloğu aç.');
     const state=parse(record.value),index=Number(b.index),q=story.questions[index];
     if(!Number.isInteger(index)||!q||String(b.answer||'').length>180)return fail('Geçersiz cevap.');
-    if(state.answers?.[index])return json({ok:true,...state.answers[index],cursor:state.cursor,version:record.updated_at,repeated:true});
+    if(state.answers?.[index])return json({ok:true,...state.answers[index],cursor:state.cursor,version:record.updated_at,repeated:true,...(state.cursor>=3?{reward:await reward('story',story.id)}:{})});
     if(index!==state.cursor||b.version!==record.updated_at)return fail('İlerlemen başka ekranda değişti; diyaloğu yeniden aç.',409);
     const answer=String(b.answer||'').trim();if(!answer||(q.options&&!q.options.includes(answer)))return fail('Bir cevap seç.');
     const skill=q.skill==='listening'&&b.audioPlayed!==true?'reading':q.skill;
@@ -68,6 +70,6 @@ export function learningCompanionAPI({db,json,teacherScope,now=Date.now}){
     const updated=new Date(Math.max(stamp,Date.parse(record.updated_at)+1)).toISOString();
     const r=await db.from('extra_data').update({value,updated_at:updated}).eq('student_id',sid).eq('key_name',key).eq('updated_at',record.updated_at).select('key_name,updated_at');if(r.error)throw r.error;
     if(!r.data?.length)return fail('İlerlemen başka ekranda değişti; diyaloğu yeniden aç.',409);
-    return json({ok:true,...result,cursor:index+1,version:r.data[0].updated_at});
+    return json({ok:true,...result,cursor:index+1,version:r.data[0].updated_at,...(index+1===story.questions.length?{reward:await reward('story',story.id)}:{})});
   }};
 }

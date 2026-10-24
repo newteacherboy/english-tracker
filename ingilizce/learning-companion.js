@@ -31,10 +31,11 @@ function sheet(title,html,id){
 const action=(label,id,extra='')=>'<button type="button" class="lc-button" data-lc="'+id+'" '+extra+'>'+label+'</button>';
 function planMarkup(){
  const d=summary,reviewDone=d?.reviewDone||d?.review?.total>0&&d.review.due===0;
- const state=[reviewDone,!!d?.routeDone,!!d?.dialogueDone],steps=[['repeat',d?.review?.due?Math.min(3,d.review.due)+' kelimeyi hatırla':d?'Bugünkü tekrarın tamam':'Kelimelerini tekrar et'],['route','Bölümüne devam et'],['dialogues','Kısa bir diyalog çalış']];
- return '<div class="lc-plan-head"><span class="lc-plan-mark" aria-hidden="true">✦</span><div><h2>Bugünkü Planım</h2><small>Senin hızında · '+state.filter(Boolean).length+' / 3 adım</small></div>'+action('⌄','toggle','aria-label="Plan adımlarını göster" aria-expanded="false"')+'</div><div class="lc-plan-steps" hidden>'+steps.map(([id,label],i)=>action((state[i]?'✓ ':'')+label,id)).join('')+'<small>Haritadan doğrudan da devam edebilirsin.</small></div><div class="lc-plan-foot"><span>'+(d?d?.review?.due?'Bugün '+d.review.due+' kelimenin tekrar zamanı.':'Küçük bir adımla öğrenmeye devam et.':'Planın hazırlanıyor…')+'</span>'+action(state.every(Boolean)?'Yeniden çalış':'Planıma Başla','start')+'</div>';
+ const state=[reviewDone,!!d?.routeDone,!!d?.dialogueDone],steps=[['repeat',d?.review?.due?Math.min(3,d.review.due)+' kelimeyi hatırla':d?'Bugünkü tekrarın tamam':'Kelimelerini tekrar et'],['route','Bölümüne devam et'],['next-dialogue','Kısa bir diyalog çalış']];
+ return '<div class="lc-plan-head"><span class="lc-plan-mark" aria-hidden="true">✦</span><div><h2>Bugünkü Planım</h2><small>Senin hızında · '+state.filter(Boolean).length+' / 3 adım</small></div>'+action('⌄','toggle','aria-label="Plan adımlarını göster" aria-expanded="false"')+'</div><div class="lc-plan-steps" hidden>'+steps.map(([id,label],i)=>action((state[i]?'✓ ':'')+label,id)).join('')+'<small>Haritadan doğrudan da devam edebilirsin.</small></div><div class="lc-plan-foot"><span>'+(d?d?.review?.due?'Bugün '+d.review.due+' kelimenin tekrar zamanı.':'Küçük bir adımla öğrenmeye devam et.':'Planın hazırlanıyor…')+'</span>'+action(state.every(Boolean)?'Yeniden çalış':'Planıma Başla','start')+'</div><div class="lc-plan-reward">'+(d?.planClaimed?'<p role="status">✓ Bugünkü plan ödülün alındı · 120 XP + 50 altın</p>':action('Ödülü al · 120 XP + 50 altın','claim-plan',state.every(Boolean)?'':'disabled'))+'</div>';
 }
-function paintPlan(){const el=$('lcPlan');if(!el)return;const sig=JSON.stringify([owner,summary?.day,summary?.review,summary?.reviewDone,summary?.routeDone,summary?.dialogueDone]);if(el.dataset.signature===sig)return;const expanded=el.querySelector('[data-lc="toggle"]')?.getAttribute('aria-expanded')==='true';el.innerHTML=planMarkup();el.dataset.signature=sig;if(expanded){el.querySelector('.lc-plan-steps').hidden=false;el.querySelector('[data-lc="toggle"]').setAttribute('aria-expanded','true');}}
+function paintPlan(){const sig=JSON.stringify([owner,summary?.day,summary?.review,summary?.reviewDone,summary?.routeDone,summary?.dialogueDone,summary?.planClaimed]);document.querySelectorAll('#lcPlan,#lcPlanSheet .lc-plan').forEach(el=>{if(el.dataset.signature===sig)return;const expanded=el.querySelector('[data-lc="toggle"]')?.getAttribute('aria-expanded')==='true';el.innerHTML=planMarkup();el.dataset.signature=sig;if(expanded){el.querySelector('.lc-plan-steps').hidden=false;el.querySelector('[data-lc="toggle"]').setAttribute('aria-expanded','true');}});}
+
 
 // The goal and daily tasks occupy one place; only their presentation is changed.
 let goalTimer=null,goalPauseUntil=0,goalSlide=1;
@@ -103,8 +104,8 @@ async function repeat(){
  try{refresh();await window.dmWrongWords?.review({limit:3,onComplete:()=>{observer.disconnect();load(true).catch(()=>{});}});}
  catch(e){observer.disconnect();throw e;}
 }
-async function route(){routePending=true;const p=window.dmLearningRoute?.purpose?.();if(p==='independent')return window.dmThematicLearning?.continueRoute();const current=document.querySelector('#tab-dunya .rt-start');if(current)return current.click();await window.dunyaAc?.();return document.querySelector('#tab-dunya .rt-start')?.click();}
-async function start(){const b=$('lcPlan')?.querySelector('[data-lc="start"]');if(b)b.disabled=true;try{const d=await load(true);if(!d)return;if(d.review?.due&&!d.reviewDone)return repeat();if(!d.routeDone)return route();if(!d.dialogueDone)return dialogues();window.yoToast?.('Bugünkü planın tamamlandı! Yeni görevler için yarın tekrar gel.');return;}catch(e){window.yoToast?.(e.message);}finally{if(b?.isConnected)b.disabled=false;}}
+async function route(){routePending=true;const p=window.dmLearningRoute?.purpose?.();if(p==='independent')return window.dmThematicLearning?.continueRoute();const current=document.querySelector('#tab-dunya .bi-continue,#tab-dunya .rt-start');if(current)return current.click();await window.dunyaAc?.();return document.querySelector('#tab-dunya .bi-continue,#tab-dunya .rt-start')?.click();}
+async function start(){const b=$('lcPlan')?.querySelector('[data-lc="start"]');if(b)b.disabled=true;try{const d=await load(true);if(!d)return;if(d.review?.due&&!d.reviewDone)return repeat();if(!d.routeDone)return route();if(!d.dialogueDone)return nextDialogue();window.yoToast?.('Bugünkü planın tamamlandı! Yeni görevler için yarın tekrar gel.');return;}catch(e){window.yoToast?.(e.message);}finally{if(b?.isConnected)b.disabled=false;}}
 // Fallback only when the app-wide correct/wrong audio handler is unavailable.
 function companionAnswerSound(correct){
  if(typeof window.dmAnswerFeedback==='function'){window.dmAnswerFeedback(correct);return;}
@@ -143,11 +144,26 @@ function bindStories(root,close){
 function dialogues(){
  if(!student())return;const v=sheet('Hikâye ve Diyalog','<p class="lc-muted">Günlük hayattan kısa konuşmalar · Enerji harcanmaz</p>'+storyGroups(),'lcDialogues');if(v)bindStories(v.body,window.dmViewHistory?undefined:()=>v.close());
 }
+async function nextDialogue(){
+ try{const at=identity(),d=await load(true);if(!d||at!==identity())return;const completed=new Set(d.dialogueIds||[]),choices=bank.filter(s=>s.type!=='story');const next=choices.find(s=>!completed.has(s.id));if(next)return openStory(next.id);window.yoToast?.('Tüm diyalogları tamamladın! Dilediğini tekrar çalışabilirsin.');return dialogues();}catch(e){window.yoToast?.(e.message);}
+}
+function applyCompanionReward(r,at){
+ if(!r||identity()!==at)return;
+ if(r.yo)window.dmApplyRewardState?.(r.yo,who());
+ if(r.enerjiKalan!=null){window.genelEnerjiKalan=r.enerjiKalan;window.headerEnerjiGoster?.(r.enerjiKalan,r.enerjiMax);}
+ window.DijiMeduPapiWallet?.refresh();window.dmProgression?.refresh(true);
+}
+let planClaiming=false;
+async function claimPlan(button){
+ if(planClaiming||!student())return;planClaiming=true;const at=identity();if(button)button.disabled=true;
+ try{const r=await api('companionPlanClaim');if(at!==identity())return;applyCompanionReward(r.reward,at);window.yoToast?.(r.reward?.claimed?'🎁 Plan tamamlandı! +120 XP ve +50 altın kazandın.':'Bugünkü plan ödülünü zaten aldın.');await load(true);document.querySelectorAll('#lcPlanSheet .lc-plan').forEach(el=>{el.innerHTML=planMarkup();el.querySelector('.lc-plan-steps')?.removeAttribute('hidden');});}catch(e){if(at===identity())window.yoToast?.(e.message);}finally{planClaiming=false;if(button?.isConnected)button.disabled=false;}
+}
 function say(text,rate,finished,failed){
  try{if(!window.speechSynthesis||!window.SpeechSynthesisUtterance)throw Error('Ses desteklenmiyor.');speechSynthesis.cancel();const utterance=new SpeechSynthesisUtterance(text);utterance.lang='en-GB';utterance.rate=rate;utterance.onend=finished;utterance.onerror=failed;speechSynthesis.speak(utterance);}catch(e){failed(e);}
 }
 async function openStory(id){
  const story=bank.find(s=>s.id===id);if(!story||!student())return;
+ const account=identity();
  const v=sheet(story.title,'<p role="status">Metin yükleniyor…</p>','lcStory');if(!v)return;
  let state=null,played=false,audioBusy=false,slow=false,answering=false;
  const transcript=()=>'<details class="lc-transcript-panel" open><summary>'+(story.type==='story'?'Hikâye metni':'Konuşma metni')+'</summary><div class="lc-transcript">'+story.lines.map(([person,text])=>'<p><small>'+esc(person)+'</small><span>'+esc(text)+'</span></p>').join('')+'</div></details>';
@@ -159,7 +175,7 @@ async function openStory(id){
  }
  function render(){
   if(!v.alive())return;played=false;audioBusy=false;
-  if(state.cursor>=story.questions.length){const results=Object.values(state.answers||{}),count=results.filter(r=>r.correct).length;v.body.innerHTML='<div class="lc-complete">'+papi+'<h3>Bir metni daha tamamladın!</h3><p>'+count+' / '+story.questions.length+' doğru · Bugünkü çalışman kayıtlı.</p></div>'+transcript()+'<div class="lc-word-chips">'+story.words.map(w=>'<span>'+esc(w.en)+' · '+esc(w.tr)+'</span>').join('')+'</div>'+action('Başka bir diyalog seç','another')+action('Parkuruma dön','back-route');v.body.querySelector('[data-lc="another"]').onclick=()=>{v.close();if(!$('lcDialogues'))dialogues();};v.body.querySelector('[data-lc="back-route"]').onclick=()=>{window.dmViewHistory?.clear();v.close();window.dunyaAc?.();};load(true).catch(()=>{});return;}
+  if(state.cursor>=story.questions.length){const results=Object.values(state.answers||{}),count=results.filter(r=>r.correct).length;v.body.innerHTML='<div class="lc-complete">'+papi+'<h3>Bir metni daha tamamladın!</h3><p>'+count+' / '+story.questions.length+' doğru · Bugünkü çalışman kayıtlı.</p>'+(state.reward?'<p class="lc-earned" role="status">'+(state.reward.claimed?'🎁 +2 enerji · +50 XP · +20 altın':'✓ Bu içeriğin tamamlama ödülü daha önce alındı.')+'</p>':'')+'</div>'+transcript()+'<div class="lc-word-chips">'+story.words.map(w=>'<span>'+esc(w.en)+' · '+esc(w.tr)+'</span>').join('')+'</div>'+action('Başka bir diyalog seç','another')+action('Parkuruma dön','back-route');v.body.querySelector('[data-lc="another"]').onclick=()=>{v.close();if(!$('lcDialogues'))dialogues();};v.body.querySelector('[data-lc="back-route"]').onclick=()=>{window.dmViewHistory?.clear();v.close();window.dunyaAc?.();};load(true).catch(()=>{});return;}
   const i=state.cursor,q=story.questions[i],listening=q.skill==='listening';
   v.body.innerHTML='<div class="lc-story-kicker"><span>'+story.icon+' '+story.level+' · '+({reading:'Okuma',listening:'Dinleme',writing:'Kısa yazma'}[q.skill])+'</span><b>'+(i+1)+' / '+story.questions.length+'</b></div><progress class="lc-story-progress" max="'+story.questions.length+'" value="'+i+'"></progress>'+audio()+(listening?'<div data-transcript hidden>'+transcript()+'</div>':transcript())+'<h3 class="lc-question">'+esc(q.prompt)+'</h3>'+(q.options?'<div class="lc-options">'+q.options.map(text=>'<button type="button" data-option="'+esc(text)+'" '+(listening?'disabled':'')+'>'+esc(text)+'</button>').join('')+'</div>':'<form class="lc-writing"><label>İngilizce cevabın<input name="answer" maxlength="140" autocomplete="off" autocapitalize="none" spellcheck="false" required></label><button class="lc-button" type="submit">Kontrol et</button></form>')+'<div class="lc-answer-note" role="status" aria-live="polite"></div>'+(listening?action('Ses olmadan metinle çalış','read-instead'):'');
   bindAudio();
@@ -167,7 +183,7 @@ async function openStory(id){
   async function answer(text,button){
    if(answering||!v.alive())return;answering=true;v.body.querySelectorAll('[data-option],.lc-writing button').forEach(x=>x.disabled=true);const note=v.body.querySelector('.lc-answer-note');note.textContent='Kontrol ediliyor…';
    try{const r=await api('companionDialogueAnswer',{story:id,index:i,version:state.version,answer:text,audioPlayed:played});if(!v.alive())return;
-    state={...state,cursor:r.cursor,version:r.version,answers:{...state.answers,[i]:r}};button?.classList.add(r.correct?'lc-correct':'lc-wrong');
+    applyCompanionReward(r.reward,account);state={...state,reward:r.reward||state.reward,cursor:r.cursor,version:r.version,answers:{...state.answers,[i]:r}};button?.classList.add(r.correct?'lc-correct':'lc-wrong');
     v.body.querySelectorAll('[data-option]').forEach(x=>{if(x.dataset.option===r.answer)x.classList.add('lc-correct');});
     companionAnswerSound(r.correct);v.body.querySelectorAll('.lc-transcript-panel').forEach(x=>x.open=false);note.className='lc-answer-note '+(r.correct?'lc-correct-note':'lc-explain');note.innerHTML='<b>'+(r.correct?'✓ Doğru!':'Birlikte düzeltelim')+'</b><p>'+esc(r.explanation)+'</p>'+(!r.correct?'<p>Doğru cevap: <strong>'+esc(r.answer)+'</strong></p>':'');
     const next=document.createElement('button');next.type='button';next.className='lc-button';next.textContent=i===story.questions.length-1?'Çalışmayı tamamla':'Sonraki adım →';next.onclick=render;v.body.append(next);next.focus();
@@ -175,7 +191,7 @@ async function openStory(id){
   }
   v.body.querySelectorAll('[data-option]').forEach(b=>b.onclick=()=>answer(b.dataset.option,b));v.body.querySelector('form')?.addEventListener('submit',e=>{e.preventDefault();answer(new FormData(e.target).get('answer'),e.target.querySelector('button'));});
  }
- try{state=await api('companionDialogueOpen',{story:id});if(v.alive())render();}catch(e){if(v.alive())v.body.textContent=e.message;}
+ try{state=await api('companionDialogueOpen',{story:id});if(v.alive()){applyCompanionReward(state.reward,account);render();}}catch(e){if(v.alive())v.body.textContent=e.message;}
 }
 async function teacherSummary(){
  const v=sheet('Sınıfımın Öğrenme Özeti','<p role="status">Sınıfların yükleniyor…</p>','lcTeacherSummary');if(!v)return;v.el.classList.add('dm-teacher-child');
@@ -190,7 +206,7 @@ async function teacherSummary(){
  }catch(e){if(v.alive())v.body.textContent=e.message;}
 }
 document.addEventListener('click',e=>{const b=e.target.closest('[data-lc]');if(!b||b.disabled)return;const id=b.dataset.lc;if(id==='toggle'){const steps=b.closest('.lc-plan')?.querySelector('.lc-plan-steps');if(steps){steps.hidden=!steps.hidden;b.setAttribute('aria-expanded',String(!steps.hidden));}return;}
- const actions={start,repeat,route,dialogues,report,teacher:teacherSummary,'report-repeat':()=>repeat(),'report-story':()=>dialogues()};
+ const actions={start,repeat,route,dialogues,'next-dialogue':nextDialogue,'claim-plan':()=>claimPlan(b),report,teacher:teacherSummary,'report-repeat':()=>repeat(),'report-story':()=>dialogues()};
  if(actions[id]){e.preventDefault();actions[id]();}
 });
 let completionInFlight='';
@@ -220,6 +236,6 @@ async function openPlan(){
 }
 function planState(){if(!summary||owner!==identity())return null;const d=summary,reviewDone=d.reviewDone||d.review?.total>0&&d.review.due===0;const state=[!!reviewDone,!!d.routeDone,!!d.dialogueDone];return {done:state.filter(Boolean).length,total:state.length};}
 function reviewDue(){return summary&&owner===identity()?Number(summary.review?.due)||0:null;}
-window.dmLearningCompanion={openPlan,planState,reviewDue,refresh:()=>load(true),report,dialogues,openStory,teacherSummary,mount,markRouteComplete:lessonDone};
+window.dmLearningCompanion={openPlan,planState,reviewDue,refresh:()=>load(true),report,dialogues,openStory,nextDialogue,teacherSummary,mount,markRouteComplete:lessonDone};
 schedule();
 })();
