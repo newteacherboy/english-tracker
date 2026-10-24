@@ -127,3 +127,9 @@ html.dm-teacher-portal #bottomNavMobile .bn-item[data-ekran="tab-profile-menu"]:
 .tp-bulk-defaults label{display:grid;gap:5px}
 .tp-card textarea[name="ogrenciler"]{box-sizing:border-box;width:100%;min-height:155px;resize:vertical;padding:10px;border:1px solid #a8d4d6;border-radius:12px;font:13px/1.5 monospace}
 @media(max-width:650px){#tpDashboard .tp-teacher-pair{min-width:95px}#tpDashboard .tp-teacher-pair img{width:62px;height:78px}#tpDashboard .tp-teacher-male{width:36px;height:65px;font-size:34px}.tp-bulk-defaults{grid-template-columns:1fr}}
+
+/* HOTFIX: the parkur error surface may use a higher stacking context.
+   Private teacher landing/dashboard must always take precedence. */
+html.dm-teacher-portal body #tpTeacherHome.is-visible{display:block!important;position:fixed!important;inset:0 0 78px!important;z-index:2147483000!important;visibility:visible!important;opacity:1!important}
+html.dm-teacher-portal body #tpDashboard.is-visible{display:block!important;position:fixed!important;inset:0 0 78px!important;z-index:2147483001!important;visibility:visible!important}
+html.dm-teacher-portal body #bottomNavMobile{z-index:2147483640!important}
