@@ -101,13 +101,15 @@
   }
   const nav=document.getElementById('bottomNavMobile');
   // Profile settings are now under the Teacher Panel sidebar.
-  nav?.querySelectorAll('.bn-item').forEach(item=>{if((/profil/i.test(item.textContent||'')||item.dataset.ekran==='tab-profil')&&!/öğretmen paneli/i.test(item.textContent||'')&&!item.dataset.tpHomeNav)item.remove();});
+  nav?.querySelectorAll('.bn-item').forEach(item=>{if((/profil/i.test(item.textContent||'')||item.dataset.ekran==='tab-profil'||item.dataset.ekran==='tab-profile-menu')&&!/öğretmen paneli/i.test(item.textContent||'')&&!item.dataset.tpHomeNav)item.remove();});
   if(nav&&nav.parentElement!==document.body)document.body.append(nav);
   if(nav&&!nav.querySelector('[data-tp-home-nav]')){
    const b=document.createElement('button');b.type='button';b.className='bn-item tp-home-nav';b.dataset.tpHomeNav='1';b.innerHTML='<span class="tp-nav-home-icon">🏠</span><span class="bn-label">Ana Sayfa</span>';b.onclick=()=>teacherHomeShow();nav.prepend(b);
    nav.addEventListener('click',e=>{const target=e.target.closest('.bn-item:not([data-tp-home-nav])');if(!target)return;
     if(/öğretmen paneli/i.test(target.textContent||'')||target.dataset.tpPanelNav==='1'){e.preventDefault();e.stopImmediatePropagation();teacherDashboardShow();return;}
-    if(target.dataset.ekran==='tab-profile-menu'){e.preventDefault();e.stopImmediatePropagation();teacherProfileShow();return;}
+    if(target.dataset.ekran==='tab-profile-menu'){e.preventDefault();e.stopImmediatePropagation();teacherDashboardShow();return;}
+    if(/oyun/i.test(target.textContent||'')){e.preventDefault();e.stopImmediatePropagation();teacherDestination('games');return;}
+    if(/ders çalış/i.test(target.textContent||'')){e.preventDefault();e.stopImmediatePropagation();teacherDestination('study');return;}
     teacherHomeHide();teacherDashboardHide();
    },true);
   }
@@ -135,7 +137,7 @@
   let panel=document.getElementById('tpDashboard');
   if(!panel){
    panel=document.createElement('main');panel.id='tpDashboard';panel.setAttribute('aria-label','Öğretmen Paneli');
-   panel.innerHTML='<div class="tp-dash-wrap"><header class="tp-dash-hero"><img src="discovery-assets/ogretmen.webp" alt="Öğretmen maskotu"><div><h1>Öğretmen Paneli</h1><p>Sınıflarını yönet, etkinlik oluştur ve öğrenci gelişimini takip et.</p></div><button type="button" data-dash="home">⌂ Ana Sayfa</button></header><section class="tp-dash-metrics"><div>👥 <b data-dash-students>—</b><small>Öğrenci</small></div><div>🏫 <b data-dash-classes>—</b><small>Sınıf</small></div><div>🎮 <b>Oyunlar</b><small>Sınıf etkinlikleri</small></div><div>📋 <b>Ödevler</b><small>Öğrenci çalışmaları</small></div></section><div class="tp-dash-layout"><nav class="tp-dash-menu" aria-label="Öğretmen araçları"><button data-dash="students">👥 Sınıflarım</button><button data-dash="homework">📋 Ödevler</button><button data-dash="games">🎮 Sınıf Oyunları</button><button data-dash="oral">🎙️ Sözlü Yap</button><button data-dash="reports">📊 Raporlar</button><button data-dash="library">📚 İçerik Kütüphanesi</button><button data-dash="appearance">🎨 Karakterimi Düzenle</button><button data-dash="code">🔐 Giriş Kodumu Değiştir</button><button data-dash="settings">⚙️ Ayarlar</button><button data-dash="logout" class="tp-dash-logout">🚪 Çıkış Yap</button></nav><section class="tp-dash-main"><h2>Bugün ne yapmak istersiniz?</h2><p>Öğretmen araçlarına tek dokunuşla ulaşın.</p><div class="tp-dash-tiles"><button data-dash="students">👥<strong>Sınıflarımı Yönet</strong><small>Öğrenci ve sınıf listesi</small></button><button data-dash="homework">📝<strong>Ödev Ver</strong><small>Yeni çalışma oluştur</small></button><button data-dash="games">🎮<strong>Sınıf Oyunları</strong><small>Birlikte oyun başlat</small></button><button data-dash="oral">🎤<strong>Sözlü Yap</strong><small>Sözlü sınav oluştur</small></button><button data-dash="reports">📊<strong>Raporlar</strong><small>İlerlemeleri incele</small></button><button data-dash="library">📖<strong>İçerik Kütüphanesi</strong><small>Konu anlatımına geç</small></button></div></section></div></div>';
+   panel.innerHTML='<div class="tp-dash-wrap"><header class="tp-dash-hero"><span class="tp-teacher-pair"><img src="discovery-assets/ogretmen.webp" alt="Kadın öğretmen"><span class="tp-teacher-male" role="img" aria-label="Erkek öğretmen">👨‍🏫</span></span><div><h1>Öğretmen Paneli</h1><p>Sınıflarını yönet, etkinlik oluştur ve öğrenci gelişimini takip et.</p></div><button type="button" data-dash="home">⌂ Ana Sayfa</button></header><section class="tp-dash-metrics"><div>👥 <b data-dash-students>—</b><small>Öğrenci</small></div><div>🏫 <b data-dash-classes>—</b><small>Sınıf</small></div><div>🎮 <b>Oyunlar</b><small>Sınıf etkinlikleri</small></div><div>📋 <b>Ödevler</b><small>Öğrenci çalışmaları</small></div></section><div class="tp-dash-layout"><nav class="tp-dash-menu" aria-label="Öğretmen araçları"><button data-dash="students">👥 Öğrencini Üye Yap</button><button data-dash="homework">📋 Ödevler</button><button data-dash="games">🎮 Sınıf Oyunları</button><button data-dash="oral">🎙️ Sözlü Yap</button><button data-dash="reports">📊 Raporlar</button><button data-dash="library">📚 İçerik Kütüphanesi</button><button data-dash="code">🔐 Giriş Kodumu Değiştir</button><button data-dash="settings">⚙️ Ayarlar</button><button data-dash="logout" class="tp-dash-logout">🚪 Çıkış Yap</button></nav><section class="tp-dash-main"><h2>Bugün ne yapmak istersiniz?</h2><p>Öğretmen araçlarına tek dokunuşla ulaşın.</p><div class="tp-dash-tiles"><button data-dash="students">👥<strong>Öğrencini Üye Yap</strong><small>Öğrenci ve sınıf listesi</small></button><button data-dash="homework">📝<strong>Ödev Ver</strong><small>Yeni çalışma oluştur</small></button><button data-dash="games">🎮<strong>Sınıf Oyunları</strong><small>Birlikte oyun başlat</small></button><button data-dash="oral">🎤<strong>Sözlü Yap</strong><small>Sözlü sınav oluştur</small></button><button data-dash="reports">📊<strong>Raporlar</strong><small>İlerlemeleri incele</small></button><button data-dash="library">📖<strong>İçerik Kütüphanesi</strong><small>Konu anlatımına geç</small></button></div></section></div></div>';
    document.body.append(panel);
    panel.addEventListener('click',e=>{const b=e.target.closest('[data-dash]');if(b)teacherDashboardAction(b.dataset.dash);});
   }
@@ -148,7 +150,7 @@
    for(const original of legacy.querySelectorAll('button.ogretmen-menu-btn')){
     if(original.disabled||!original.textContent.trim())continue;
     const b=document.createElement('button');b.type='button';b.textContent=original.textContent.trim();
-    b.onclick=()=>{document.body.classList.add('tp-legacy-inline');original.click();};
+    b.onclick=()=>{original.click();};
     grid.append(b);
    }
   }
@@ -166,50 +168,28 @@
   document.querySelector('#bottomNavMobile [data-tp-panel-nav]')?.classList.add('active');
  }
  function teacherDashboardHide(){document.body.classList.remove('tp-legacy-inline');document.getElementById('ogretmenMenuModal')?.style.setProperty('display','none');document.getElementById('tpDashboard')?.classList.remove('is-visible');document.body.classList.remove('tp-dash-active');}
- function openTeacherLooks(){
-  const names=['Klasik Öğretmen','Bilim Rehberi','Modern Eğitmen','Kitap Dostu','Sınıf Lideri','Sanat Öğretmeni','Doğa Rehberi','Dil Ustası','Teknoloji Eğitmeni','Yıldız Öğretmen'];
-  const clothes=['👔','🥼','🧥','📚','🎓','🎨','🌿','🗣️','💻','⭐'];
-  const root=document.createElement('div');root.className='tp-looks-overlay';
-  root.innerHTML='<section class="tp-looks-dialog" role="dialog" aria-modal="true"><button type="button" data-close class="tp-looks-close">✕</button><h2>🎨 Öğretmen Karakterim</h2><p>10 hazır kombin arasından seç. Saç ve ten rengini kişiselleştir.</p><label>Cinsiyet <select data-gender><option value="k">Kadın</option><option value="e">Erkek</option></select></label><label>Saç rengi <input type="color" data-hair value="#654321"></label><label>Ten rengi <input type="color" data-skin value="#e6ac80"></label><div class="tp-looks-grid"></div><p role="status" class="tp-looks-status"></p></section>';
-  document.body.append(root);
-  const grid=root.querySelector('.tp-looks-grid');
-  const render=()=>{
-   grid.replaceChildren();
-   const gender=root.querySelector('[data-gender]').value,hair=root.querySelector('[data-hair]').value,skin=root.querySelector('[data-skin]').value;
-   names.forEach((name,i)=>{
-    const b=document.createElement('button');b.type='button';b.className='tp-look-choice';
-    const art=document.createElement('span');art.className='tp-look-art';
-    art.innerHTML='<svg viewBox="0 0 100 110" width="86" height="89" role="img" aria-label="'+name+'"><rect width="100" height="110" rx="16" fill="#e8f8f6"/><path d="M15 104 Q16 70 50 70 Q84 70 85 104Z" fill="'+['#276d83','#e9e4da','#9c537a','#34558a','#257868','#c28a31','#5f9757','#804b87','#387bb3','#9e654d'][i]+'"/><ellipse cx="50" cy="48" rx="24" ry="30" fill="'+skin+'"/><path d="M26 47 Q18 7 50 13 Q82 7 74 47 L70 31 Q50 14 30 32Z" fill="'+hair+'"/><circle cx="41" cy="49" r="2.3" fill="#263640"/><circle cx="59" cy="49" r="2.3" fill="#263640"/><path d="M43 60 Q50 67 57 60" fill="none" stroke="#8f4a42" stroke-width="2.4" stroke-linecap="round"/><text x="76" y="89" font-size="21">'+clothes[i]+'</text></svg>';
-    const label=document.createElement('strong');label.textContent=name;
-    b.append(art,label);b.onclick=async()=>{
-     b.disabled=true;
-     try{
-       const profile=await api('teacherPortalAppearance');
-       const old=profile.appearance||{},appearance={cins:gender,s:{...(old.s||{}),ten:skin,sacRenk:hair,ogretmenKombin:String(i)}};
-       await api('teacherPortalAppearance',{save:true,appearance});
-       if(typeof yo!=='undefined'&&yo)yo.karakter={...(yo.karakter||{}),...appearance};
-       const hero=document.querySelector('#tpDashboard .tp-dash-hero .tp-look-art, #tpDashboard .tp-dash-hero img');
-       if(hero){hero.replaceWith(art.cloneNode(true));}
-       root.remove();
-     }catch(e){root.querySelector('.tp-looks-status').textContent=e.message;b.disabled=false;}
-    };
-    grid.append(b);
-   });
-  };
-  root.querySelector('[data-close]').onclick=()=>root.remove();
-  root.querySelectorAll('select,input').forEach(el=>el.addEventListener('input',render));
-  render();
+ function openBulkStudents(){
+  const v=sheet('👥 Öğrencini Üye Yap','<p>En fazla 50 öğrenciyi aynı anda ekleyebilirsin. Kullanıcı adı gerçek isim içermeyen bir takma ad olmalıdır. Başlangıç şifresi hesap güvenliği için en az 8 karakterdir. Öğrenciler girişten sonra e-posta, telefon ve e-posta doğrulama işlemlerini normal üyelik kurallarıyla tamamlar.</p><div class="tp-bulk-defaults"><label>Varsayılan sınıf<select name="sinif">'+Array.from({length:8},(_,i)=>'<option value="'+(i+1)+'">'+(i+1)+'. sınıf</option>').join('')+'</select></label><label>Varsayılan şube<input name="sube" value="A" required maxlength="10"></label></div><label>Okul (isteğe bağlı)<input name="okul" maxlength="120"></label><label>Öğrenciler (her satır: kullanıcı_adı,şifre)<textarea name="ogrenciler" rows="9" required placeholder="ogrenci101,Guvenli2026!\nogrenci102,Guvenli2026!"></textarea></label><p>⚠️ Şifreleri güvenli şekilde paylaş; bu alanda kalıcı olarak saklanmaz. Yeni hesaplar aynı öğretmenin sınıfına bağlanır.</p><button class="tp-primary" type="submit">Öğrencileri kaydet</button>');
+  submit(v,async f=>{
+   const cls=Number(f.get('sinif')),branch=String(f.get('sube')||'').trim(),school=String(f.get('okul')||'').trim();
+   const rows=String(f.get('ogrenciler')||'').trim().split(/\r?\n/).filter(Boolean);
+   if(!rows.length||rows.length>50)throw Error('1–50 öğrenci gir.');
+   const ogrenciler=rows.map((line,i)=>{const cut=line.indexOf(',');if(cut<1)throw Error((i+1)+'. satırda kullanıcı adı ve şifreyi virgülle ayır.');const kullanici=line.slice(0,cut).trim(),sifre=line.slice(cut+1).trim();if(sifre.length<8||sifre.length>64)throw Error((i+1)+'. satır şifresi 8–64 karakter olmalı.');return {kullanici,sifre,sinif:cls,sube:branch,okul:school};});
+   const result=await api('ogretmenOgrenciOlustur',{ogrenciler});
+   v.form.replaceChildren();const msg=document.createElement('p');msg.textContent=result.mesaj||ogrenciler.length+' öğrenci kaydedildi.';v.form.append(msg);
+  });
  }
  function teacherDashboardAction(action){
   if(action==='home'){teacherDashboardHide();teacherHomeShow();return;}
+  if(action==='students'){openBulkStudents();return;}
   if(action==='logout'){window.dmTeacherPortalExit?.();return;}
-  if(action==='appearance'){openTeacherLooks();return;}
+ 
   if(action==='code'||action==='settings'){openProfile();return;}
   if(action==='oral'){window.dmTeacherOral?.open?.();return;}
   if(action==='games'||action==='library'){teacherDashboardHide();teacherDestination(action==='games'?'games':'study');return;}
   // Use the existing, permission-checked teacher management functions.
   const menu=document.getElementById('ogretmenMenuModal');
-  if(menu){document.body.classList.add('tp-legacy-inline');menu.style.display='flex';const candidates=[...menu.querySelectorAll('button')];const pattern=({students:/öğrenci|sınıf|liste/i,homework:/ödev/i,reports:/rapor|istatistik/i,settings:/ayar/i})[action];const target=candidates.find(b=>pattern?.test(b.textContent||''));if(target)target.click();else window.yoToast?.('Bu işlem için öğretmen panelindeki ilgili aracı seç.');}
+  if(menu){const candidates=[...menu.querySelectorAll('button')];const pattern=({students:/öğrenci|sınıf|liste/i,homework:/ödev/i,reports:/rapor|istatistik/i,settings:/ayar/i})[action];const target=candidates.find(b=>pattern?.test(b.textContent||''));if(target)target.click();else window.yoToast?.('Bu işlem için öğretmen panelindeki ilgili aracı seç.');}
  }
 
  function teacherHomeShow(){
@@ -224,9 +204,8 @@
   teacherHomeHide();
   if(action==='oral'){window.dmTeacherOral?.open?.();return;}
   const id=action==='study'?'tab-derscalis':action==='games'?'tab-aktiviteler':'tab-profile-menu';
-  const button=document.querySelector('#bottomNavMobile [data-ekran="'+id+'"]');
-  if(button)button.click();
-  else ({study:window.dersCalisTamEkranAc,games:window.aktivitelerTamEkranAc,panel:window.dmProfileMenuAc})[action]?.();
+  const launch=action==='study'?window.dersCalisTamEkranAc:window.aktivitelerTamEkranAc;
+  if(typeof launch==='function')launch();else document.querySelector('#bottomNavMobile [data-ekran="'+id+'"]')?.click();
 
  }
 
