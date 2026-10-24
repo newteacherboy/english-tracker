@@ -84,7 +84,7 @@ export function teacherPortalAPI(d){
    if(b.preview===true||b.guestName){
     const alias=b.preview===true?'Önizleme':String(b.guestName||'').trim().replace(/\s+/g,' ');
     if(!/^[\p{L}\p{N} ._-]{2,32}$/u.test(alias))return fail('İsim 2–32 karakter olmalı; harf ve rakam kullan.');
-    const result=await db.rpc('dm_teacher_portal_guest',{grant_id:r.id,guest_alias:alias,is_preview:b.preview===true,secret_hash:await hashPassword(crypto.randomUUID()+crypto.randomUUID())});if(result.error)throw result.error;sid=result.data;
+    const result=await db.rpc('dm_teacher_portal_guest',{grant_id:r.id,guest_alias:alias,is_preview:b.preview===true,secret_hash:await hashPassword(crypto.randomUUID())});if(result.error)throw result.error;sid=result.data;
    }
    const pupil=await db.from('students').select('id,username,status,teacher_id,frozen_at').eq('id',String(sid||'')).maybeSingle();
    if(!pupil.data||pupil.data.status!=='approved'||pupil.data.frozen_at||pupil.data.teacher_id!==r.teacher_id)return fail('Yalnızca sana bağlı öğrencileri seçebilirsin.',403);
