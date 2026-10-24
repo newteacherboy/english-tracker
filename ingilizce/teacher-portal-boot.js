@@ -17,7 +17,8 @@
   for(const k of Object.keys(ss))if(k.startsWith('dm_tp_data:'))ss.removeItem(k);
   const old=ss.getItem('dm_tp_previous_teacher');if(old)ss.setItem('ing_ogr_token',old);else ss.removeItem('ing_ogr_token');
   for(const k of ['dm_tp_previous_teacher_saved','dm_tp_previous_teacher','dm_tp_session','dm_tp_pending'])ss.removeItem(k);
-  location.assign('./');
+  // Return to the fresh welcome/sign-up entry, not the previous in-app screen.
+  location.replace('./?baslangic=1');
  };
  window.dmTeacherRequestToken=(url,opt)=>{
   let op='';try{op=opt?.body?JSON.parse(opt.body).islem||'':new URL(url,location.href).searchParams.get('islem')||'';}catch{}
