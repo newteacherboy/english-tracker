@@ -71,3 +71,14 @@ html.dm-teacher-portal #bottomNavMobile .tp-panel-icon{
 }
 html.dm-teacher-portal #bottomNavMobile [data-tp-panel-nav] .tp-panel-icon::before{content:none!important}
 html.dm-teacher-portal #bottomNavMobile [data-tp-panel-nav] .dm-nav-art{display:none!important}
+
+/* Independent fifth dock icon: avoids .bn-icon sprite's font-size:0 and image hiding. */
+html.dm-teacher-portal body #bottomNavMobile#bottomNavMobile .bn-item[data-tp-panel-nav="1"]>.bn-icon{display:none!important}
+html.dm-teacher-portal body #bottomNavMobile#bottomNavMobile .bn-item[data-tp-panel-nav="1"]>.tp-panel-visible-icon{
+ display:flex!important;align-items:center!important;justify-content:center!important;
+ position:relative!important;flex:0 0 42px!important;width:44px!important;height:42px!important;
+ font-family:"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif!important;
+ font-size:31px!important;line-height:42px!important;color:#164c58!important;
+ opacity:1!important;visibility:visible!important;background:transparent!important;
+ text-indent:0!important;transform:none!important;overflow:visible!important;
+}
