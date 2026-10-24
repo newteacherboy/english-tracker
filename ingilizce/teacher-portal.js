@@ -77,6 +77,11 @@
    catch(error){console.warn('[Öğretmen karakteri kaydı]',error);}
   },400);
  },true);
+ function hideTeacherHeader(){
+  for(const el of document.querySelectorAll('body button,body a')){
+   if(/^(çık|çıkış)$/i.test((el.textContent||'').trim())&&/öğretmen modu/i.test(el.parentElement?.textContent||''))el.parentElement.style.display='none';
+  }
+ }
  function addPersonalSwitch(){
   if(!mode)return;
   const badge=[...document.querySelectorAll('body button,body a')].find(e=>/^(Çık|Çıkış)$/.test(e.textContent.trim())&&e.closest('.tp-participant,[class*="teacher-mode"],[class*="teacher-banner"]'));
@@ -96,7 +101,7 @@
   }
   const nav=document.getElementById('bottomNavMobile');
   // Profile settings are now under the Teacher Panel sidebar.
-  nav?.querySelectorAll('.bn-item').forEach(item=>{if(/profilim/i.test(item.textContent||'')&&!item.dataset.tpHomeNav)item.remove();});
+  nav?.querySelectorAll('.bn-item').forEach(item=>{if((/profil/i.test(item.textContent||'')||item.dataset.ekran==='tab-profil')&&!/öğretmen paneli/i.test(item.textContent||'')&&!item.dataset.tpHomeNav)item.remove();});
   if(nav&&nav.parentElement!==document.body)document.body.append(nav);
   if(nav&&!nav.querySelector('[data-tp-home-nav]')){
    const b=document.createElement('button');b.type='button';b.className='bn-item tp-home-nav';b.dataset.tpHomeNav='1';b.innerHTML='<span class="tp-nav-home-icon">🏠</span><span class="bn-label">Ana Sayfa</span>';b.onclick=()=>teacherHomeShow();nav.prepend(b);
@@ -152,10 +157,44 @@
   document.querySelector('#bottomNavMobile [data-tp-panel-nav]')?.classList.add('active');
  }
  function teacherDashboardHide(){document.body.classList.remove('tp-legacy-inline');document.getElementById('ogretmenMenuModal')?.style.setProperty('display','none');document.getElementById('tpDashboard')?.classList.remove('is-visible');document.body.classList.remove('tp-dash-active');}
+ function openTeacherLooks(){
+  const names=['Klasik Öğretmen','Bilim Rehberi','Modern Eğitmen','Kitap Dostu','Sınıf Lideri','Sanat Öğretmeni','Doğa Rehberi','Dil Ustası','Teknoloji Eğitmeni','Yıldız Öğretmen'];
+  const clothes=['👔','🥼','🧥','📚','🎓','🎨','🌿','🗣️','💻','⭐'];
+  const root=document.createElement('div');root.className='tp-looks-overlay';
+  root.innerHTML='<section class="tp-looks-dialog" role="dialog" aria-modal="true"><button type="button" data-close class="tp-looks-close">✕</button><h2>🎨 Öğretmen Karakterim</h2><p>10 hazır kombin arasından seç. Saç ve ten rengini kişiselleştir.</p><label>Cinsiyet <select data-gender><option value="k">Kadın</option><option value="e">Erkek</option></select></label><label>Saç rengi <input type="color" data-hair value="#654321"></label><label>Ten rengi <input type="color" data-skin value="#e6ac80"></label><div class="tp-looks-grid"></div><p role="status" class="tp-looks-status"></p></section>';
+  document.body.append(root);
+  const grid=root.querySelector('.tp-looks-grid');
+  const render=()=>{
+   grid.replaceChildren();
+   const gender=root.querySelector('[data-gender]').value,hair=root.querySelector('[data-hair]').value,skin=root.querySelector('[data-skin]').value;
+   names.forEach((name,i)=>{
+    const b=document.createElement('button');b.type='button';b.className='tp-look-choice';
+    const art=document.createElement('span');art.className='tp-look-art';
+    art.textContent=(gender==='k'?'👩':'👨')+clothes[i];art.style.background='linear-gradient(140deg,'+skin+'55,'+hair+'55)';
+    const label=document.createElement('strong');label.textContent=name;
+    b.append(art,label);b.onclick=async()=>{
+     b.disabled=true;
+     try{
+       const profile=await api('teacherPortalAppearance');
+       const old=profile.appearance||{},appearance={cins:gender,s:{...(old.s||{}),ten:skin,sacRenk:hair,ogretmenKombin:String(i)}};
+       await api('teacherPortalAppearance',{save:true,appearance});
+       if(typeof yo!=='undefined'&&yo)yo.karakter={...(yo.karakter||{}),...appearance};
+       const hero=document.querySelector('#tpDashboard .tp-dash-hero img');
+       if(hero){hero.replaceWith(art.cloneNode(true));}
+       root.remove();
+     }catch(e){root.querySelector('.tp-looks-status').textContent=e.message;b.disabled=false;}
+    };
+    grid.append(b);
+   });
+  };
+  root.querySelector('[data-close]').onclick=()=>root.remove();
+  root.querySelectorAll('select,input').forEach(el=>el.addEventListener('input',render));
+  render();
+ }
  function teacherDashboardAction(action){
   if(action==='home'){teacherDashboardHide();teacherHomeShow();return;}
   if(action==='logout'){window.dmTeacherPortalExit?.();return;}
-  if(action==='appearance'){window.dmCharacterBuilder?.open?.();return;}
+  if(action==='appearance'){openTeacherLooks();return;}
   if(action==='code'||action==='settings'){openProfile();return;}
   if(action==='oral'){window.dmTeacherOral?.open?.();return;}
   if(action==='games'||action==='library'){teacherDashboardHide();teacherDestination(action==='games'?'games':'study');return;}
@@ -184,8 +223,8 @@
 
  window.dmTeacherPortal={openLogin,openProfile,beforeGame,management};
  if(document.body.dataset.teacherReset==='1'){resetPage();return;}
- if(mode){document.body.classList.add('dm-teacher-portal');document.documentElement.classList.add('tp-home-starting');window.cikisYap=window.dmTeacherPortalExit;window.siniftaOyunModuAc=()=>{document.getElementById('ogretmenMenuModal')?.style.setProperty('display','none');window.aktivitelerTamEkranAc?.();};}
- let scheduled=false;const observe=()=>{if(scheduled)return;scheduled=true;requestAnimationFrame(()=>{scheduled=false;decorate();if(mode){suppressPreviewPrompts();addPersonalSwitch();}});};new MutationObserver(observe).observe(document.body,{childList:true,subtree:true});decorate();wrapGames();
+ if(mode){document.body.classList.add('dm-teacher-portal');document.documentElement.classList.add('dm-teacher-portal');document.documentElement.classList.add('tp-home-starting');window.cikisYap=window.dmTeacherPortalExit;window.siniftaOyunModuAc=()=>{document.getElementById('ogretmenMenuModal')?.style.setProperty('display','none');window.aktivitelerTamEkranAc?.();};}
+ let scheduled=false;const observe=()=>{if(scheduled)return;scheduled=true;requestAnimationFrame(()=>{scheduled=false;decorate();if(mode){suppressPreviewPrompts();hideTeacherHeader();const n=document.getElementById('bottomNavMobile');n?.querySelectorAll('.bn-item').forEach(i=>{if((i.dataset.ekran==='tab-profil'||/^(profil|profilim)$/i.test((i.textContent||'').trim())))i.remove();});}});};new MutationObserver(observe).observe(document.body,{childList:true,subtree:true});decorate();wrapGames();
  document.addEventListener('dm:state',wrapGames);document.addEventListener('dm:login',wrapGames);if(mode)document.addEventListener('click',()=>{if(window.tpHomeInitialized){teacherHome();suppressPreviewPrompts();}}, {capture:false});
  let opened=false;const timer=setInterval(()=>{wrapGames();if(mode&&!opened&&document.getElementById('bottomNavMobile')){opened=true;teacherHome();suppressPreviewPrompts();prepareTeacherAppearance();sessionStorage.removeItem('dm_tp_pending');}if(opened)clearInterval(timer);},500);setTimeout(()=>clearInterval(timer),30000);
  if(new URLSearchParams(location.search).get('ogretmenGiris')==='1'){window.dmFirstDiscovery?.openLogin?.();openLogin();}
