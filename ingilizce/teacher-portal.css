@@ -112,3 +112,18 @@ html.dm-teacher-portal #bottomNavMobile#bottomNavMobile{grid-template-columns:re
 .tp-look-choice strong{font-size:11px;color:#153b52}.tp-look-art{display:grid;place-items:center;font-size:33px;width:100%;min-height:65px;border-radius:11px}
 .tp-looks-status{color:#ae3030}
 @media(max-width:520px){.tp-looks-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+/* Private teacher dashboard is the parent of every legacy sub-tool.
+   Closing the child must reveal the dashboard, never the old launcher. */
+html.dm-teacher-portal body.tp-dash-active #ogretmenMenuModal,
+html.dm-teacher-portal body.tp-dash-active #ogretmenMenuModal.dm-teacher-open{display:none!important;visibility:hidden!important}
+html.dm-teacher-portal #bottomNavMobile#bottomNavMobile{grid-template-columns:repeat(4,minmax(0,1fr))!important}
+html.dm-teacher-portal #bottomNavMobile .bn-item[data-ekran="tab-profil"],
+html.dm-teacher-portal #bottomNavMobile .bn-item[data-ekran="tab-profile-menu"]:not([data-tp-panel-nav="1"]){display:none!important}
+#tpDashboard .tp-teacher-pair{display:flex;flex:0 0 auto;align-items:center;gap:2px;min-width:145px}
+#tpDashboard .tp-teacher-pair img{width:90px;height:115px;object-fit:contain}
+#tpDashboard .tp-teacher-male{display:grid;place-items:center;width:64px;height:87px;font-size:53px;border-radius:12px;background:#e5f9f61e}
+.tp-bulk-defaults{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.tp-bulk-defaults label{display:grid;gap:5px}
+.tp-card textarea[name="ogrenciler"]{box-sizing:border-box;width:100%;min-height:155px;resize:vertical;padding:10px;border:1px solid #a8d4d6;border-radius:12px;font:13px/1.5 monospace}
+@media(max-width:650px){#tpDashboard .tp-teacher-pair{min-width:95px}#tpDashboard .tp-teacher-pair img{width:62px;height:78px}#tpDashboard .tp-teacher-male{width:36px;height:65px;font-size:34px}.tp-bulk-defaults{grid-template-columns:1fr}}
