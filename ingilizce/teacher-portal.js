@@ -151,7 +151,7 @@
   let panel=document.getElementById('tpDashboard');
   if(!panel){
    panel=document.createElement('main');panel.id='tpDashboard';panel.setAttribute('aria-label','Öğretmen Paneli');
-   panel.innerHTML='<div class="tp-dash-wrap"><header class="tp-dash-hero"><span class="tp-teacher-pair"><img src="discovery-assets/ogretmen.webp" alt="Kadın öğretmen"><span class="tp-teacher-male" role="img" aria-label="Erkek öğretmen">👨‍🏫</span></span><div><h1>Öğretmen Paneli</h1><p>Sınıflarını yönet, etkinlik oluştur ve öğrenci gelişimini takip et.</p></div><button type="button" data-dash="home">⌂ Ana Sayfa</button></header><section class="tp-dash-metrics"><div>👥 <b data-dash-students>—</b><small>Öğrenci</small></div><div>🏫 <b data-dash-classes>—</b><small>Sınıf</small></div><div>🎮 <b>Oyunlar</b><small>Sınıf etkinlikleri</small></div><div>📋 <b>Ödevler</b><small>Öğrenci çalışmaları</small></div></section><div class="tp-dash-layout"><nav class="tp-dash-menu" aria-label="Öğretmen araçları"><button data-dash="students">👥 Öğrencini Üye Yap</button><button data-dash="homework">📋 Ödevler</button><button data-dash="games">🎮 Sınıf Oyunları</button><button data-dash="oral">🎙️ Sözlü Yap</button><button data-dash="reports">📊 Raporlar</button><button data-dash="library">📚 İçerik Kütüphanesi</button><button data-dash="code">🔐 Giriş Kodumu Değiştir</button><button data-dash="settings">⚙️ Ayarlar</button><button data-dash="logout" class="tp-dash-logout">🚪 Çıkış Yap</button></nav><section class="tp-dash-main"><h2>Bugün ne yapmak istersiniz?</h2><p>Öğretmen araçlarına tek dokunuşla ulaşın.</p><div class="tp-dash-tiles"><button data-dash="students">👥<strong>Öğrencini Üye Yap</strong><small>Öğrenci ve sınıf listesi</small></button><button data-dash="homework">📝<strong>Ödev Ver</strong><small>Yeni çalışma oluştur</small></button><button data-dash="games">🎮<strong>Sınıf Oyunları</strong><small>Birlikte oyun başlat</small></button><button data-dash="oral">🎤<strong>Sözlü Yap</strong><small>Sözlü sınav oluştur</small></button><button data-dash="reports">📊<strong>Raporlar</strong><small>İlerlemeleri incele</small></button><button data-dash="library">📖<strong>İçerik Kütüphanesi</strong><small>Konu anlatımına geç</small></button></div></section></div></div>';
+   panel.innerHTML='<div class="tp-dash-wrap"><header class="tp-dash-hero"><span class="tp-teacher-pair"><img src="discovery-assets/ogretmen.webp" alt="Kadın öğretmen"><span class="tp-teacher-male" role="img" aria-label="Erkek öğretmen">👨‍🏫</span></span><div><h1>Öğretmen Paneli</h1><p>Sınıflarını yönet, etkinlik oluştur ve öğrenci gelişimini takip et.</p></div><button type="button" data-dash="home">⌂ Ana Sayfa</button></header><section class="tp-dash-metrics"><div>👥 <b data-dash-students>—</b><small>Öğrenci</small></div><div>🏫 <b data-dash-classes>—</b><small>Sınıf</small></div><div>🎮 <b>Oyunlar</b><small>Sınıf etkinlikleri</small></div><div>📋 <b>Ödevler</b><small>Öğrenci çalışmaları</small></div></section><div class="tp-dash-layout"><nav class="tp-dash-menu" aria-label="Öğretmen araçları"><button data-dash="performance">🏫 Ders İçi Performans</button><button data-dash="individual">📊 Öğrenci Bireysel Raporları</button><button data-dash="weak">🎯 Sınıfın Zayıf Noktaları</button><button data-dash="parent">🗓️ Haftalık Veli Özetleri</button><button data-dash="messages">💬 Öğrenci Mesajları</button><button data-dash="announcements">📢 Duyuru Oluştur</button><button data-dash="rubric">📋 Özel Ders Rubrik Değerlendirme</button><button data-dash="studentDetails">🔐 Öğrenci Bilgilerini Değiştir</button><button data-dash="code">🔑 Giriş Kodunu Değiştir</button><button data-dash="settings">⚙️ Ayarlar</button><button data-dash="logout" class="tp-dash-logout">🚪 Çıkış Yap</button><section class="tp-dash-main"><h2>Bugün ne yapmak istersiniz?</h2><p>Öğretmen araçlarına tek dokunuşla ulaşın.</p><div class="tp-dash-tiles"><button data-dash="students">👥<strong>Öğrencini Üye Yap</strong><small>Öğrenci ve sınıf listesi</small></button><button data-dash="homework">📝<strong>Ödev Ver</strong><small>Yeni çalışma oluştur</small></button><button data-dash="games">🎮<strong>Sınıf Oyunları</strong><small>Birlikte oyun başlat</small></button><button data-dash="oral">🎤<strong>Sözlü Yap</strong><small>Sözlü sınav oluştur</small></button><button data-dash="reports">📊<strong>Raporlar</strong><small>İlerlemeleri incele</small></button><button data-dash="library">📖<strong>İçerik Kütüphanesi</strong><small>Konu anlatımına geç</small></button></div></section></div></div>';
    document.body.append(panel);
    panel.addEventListener('click',e=>{const b=e.target.closest('[data-dash]');if(b)teacherDashboardAction(b.dataset.dash);});
   }
@@ -193,17 +193,47 @@
    v.form.replaceChildren();const msg=document.createElement('p');msg.textContent=result.mesaj||ogrenciler.length+' öğrenci kaydedildi.';v.form.append(msg);
   });
  }
+ function legacyTool(pattern){
+  const menu=document.getElementById('ogretmenMenuModal');
+  const buttons=[...(menu?.querySelectorAll('button.ogretmen-menu-btn')||[])];
+  const target=buttons.find(b=>pattern.test(b.textContent||''));
+  if(!target){const v=sheet('Bu araç kullanılamıyor','<p>İlgili öğretmen aracı şu anda yüklenemedi. Lütfen tekrar dene.</p>');return;}
+  target.click();
+  // Legacy launcher itself must not remain on top after the child closes.
+  if(menu)menu.style.setProperty('display','none');
+ }
+ async function chooseTeacherStudent(title,next){
+  const v=sheet(title,'<p>Yalnızca hesabına bağlı öğrencileri seçebilirsin.</p><label>Sınıf<select name="grade"><option value="">Tüm sınıflar</option>'+Array.from({length:8},(_,i)=>'<option value="'+(i+1)+'">'+(i+1)+'. sınıf</option>').join('')+'</select></label><label>Öğrenci<select name="studentId" required><option value="">Öğrenci seç</option></select></label><button class="tp-primary">Devam Et</button>');
+  let data=[];
+  try{const r=await api('teacherPortalStudents');data=r.items||[];}catch(e){v.error(e.message);}
+  const select=v.form.elements.studentId,fill=()=>{const grade=v.form.elements.grade.value;select.replaceChildren(new Option('Öğrenci seç',''));data.filter(x=>!grade||String(x.class_no||'')===grade).forEach(x=>select.add(new Option((x.full_name||x.username)+' · '+(x.class_no||'?')+'. sınıf',x.id)));};
+  v.form.elements.grade.onchange=fill;fill();
+  submit(v,async form=>{const student=data.find(x=>x.id===form.get('studentId'));if(!student)throw Error('Bağlı bir öğrenci seç.');v.close();await next(student);});
+ }
  function teacherDashboardAction(action){
   if(action==='home'){teacherDashboardHide();teacherHomeShow();return;}
-  if(action==='students'){openBulkStudents();return;}
   if(action==='logout'){window.dmTeacherPortalExit?.();return;}
- 
   if(action==='code'||action==='settings'){openProfile();return;}
-  if(action==='oral'){window.dmTeacherOral?.open?.();return;}
+  if(action==='students'){openBulkStudents();return;}
   if(action==='games'||action==='library'){teacherDashboardHide();teacherDestination(action==='games'?'games':'study');return;}
-  // Use the existing, permission-checked teacher management functions.
-  const menu=document.getElementById('ogretmenMenuModal');
-  if(menu){const candidates=[...menu.querySelectorAll('button')];const pattern=({students:/öğrenci|sınıf|liste/i,homework:/ödev/i,reports:/rapor|istatistik/i,settings:/ayar/i})[action];const target=candidates.find(b=>pattern?.test(b.textContent||''));if(target)target.click();else window.yoToast?.('Bu işlem için öğretmen panelindeki ilgili aracı seç.');}
+  if(action==='oral'){window.dmTeacherOral?.open?.();return;}
+  if(action==='individual'){
+   chooseTeacherStudent('Öğrenci Bireysel Raporları',async student=>{
+    // Never impersonate the student's personal session.
+    const v=sheet('Öğrenci Bireysel Raporları','<p>Seçilen öğrenci: <strong data-student></strong></p><p>Öğrencinin kişisel İlerlemem sayfası gizlilik nedeniyle onun oturumunda açılır. Öğretmen olarak mevcut öğrenci raporlarını kendi yetkinle görüntüleyebilirsin.</p><button type="button" data-reports>Öğrenci raporlarına git</button>');
+    v.shade.querySelector('[data-student]').textContent=student.full_name||student.username;
+    v.shade.querySelector('[data-reports]').onclick=()=>{v.close();legacyTool(/bireysel|rapor|performans/i);};
+   });return;
+  }
+  if(action==='studentDetails'){
+   chooseTeacherStudent('Öğrenci Bilgilerini Değiştir',async student=>{
+    const v=sheet('Öğrenci Bilgilerini Değiştir','<p>Seçilen öğrenci: <strong data-student></strong></p><p>Öğrenci hesap bilgileri yalnızca yetkili işlemlerle değiştirilebilir. E-posta doğrulamasını öğrenci kendi hesabından yapar. Güvenlik nedeniyle doğrulanmış adresler ve giriş bilgileri izinsiz değiştirilemez.</p><button type="button" data-reset>Öğrenci şifresi ve hesap yönetimi</button>');
+    v.shade.querySelector('[data-student]').textContent=student.full_name||student.username;
+    v.shade.querySelector('[data-reset]').onclick=()=>{v.close();legacyTool(/şifre|hesap|öğrenci/i);};
+   });return;
+  }
+  const patterns={performance:/ders içi performans/i,weak:/zayıf noktalar/i,parent:/haftalık veli/i,messages:/öğrenci sohbetleri|öğrenci mesajları/i,announcements:/duyurular|duyuru oluştur/i,rubric:/rubrik/i,homework:/ödev ver/i,reports:/rapor/i};
+  if(patterns[action])legacyTool(patterns[action]);
  }
 
  function teacherHomeShow(){
