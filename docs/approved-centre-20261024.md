@@ -31,3 +31,7 @@ Centre primary actions remain existing handlers. Eight account actions are group
 - Browser QA used the production styles and runtime modules with deterministic account/API fixtures. All eight primary and eight account dispatch targets were clicked and verified. No real messages or account logout were performed.
 - Profile checked at 320×568, 360×740, 390×844, 430×932, 768×1024, 844×390 and 1440×900. Plan and games checked at 320×568, 390×844, 768×1024 and 844×390. No horizontal content overflow in tested panels; short panels scroll vertically.
 - Visual inspection of loaded phone artwork completed. Authenticated production walkthrough is outside the fixture checks; publication is separately verified using Pages status and deployed file hashes.
+
+## Owner correction: full-screen profile and natural image proportions
+
+Profile now fills the viewport behind the persistent dock. Its main destinations and the account/support pane use bounded grid rows with no scrolling. Supplemental descriptions disappear on short screens while all action labels remain. Verified on 320×568, 360×640, 390×744, 430×832, 768×1024 and 844×390, including all account buttons within the panel bounds. The native 4×4 game atlas uses square display cells; the approved wide atlas retains its natural 2:1 cells. This fixes vertical compression in Kelime Laboratuvarı and Hafıza Sandığı without cropping the artwork or changing game actions.
