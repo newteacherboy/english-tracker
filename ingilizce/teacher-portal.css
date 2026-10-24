@@ -133,3 +133,26 @@ html.dm-teacher-portal #bottomNavMobile .bn-item[data-ekran="tab-profile-menu"]:
 html.dm-teacher-portal body #tpTeacherHome.is-visible{display:block!important;position:fixed!important;inset:0 0 78px!important;z-index:2147483000!important;visibility:visible!important;opacity:1!important}
 html.dm-teacher-portal body #tpDashboard.is-visible{display:block!important;position:fixed!important;inset:0 0 78px!important;z-index:2147483001!important;visibility:visible!important}
 html.dm-teacher-portal body #bottomNavMobile{z-index:2147483640!important}
+
+/* Self-contained teacher navigation: not affected by learner sprite, profile tab or route canvas. */
+html.dm-teacher-portal body #bottomNavMobile#bottomNavMobile{display:none!important}
+html.dm-teacher-portal body #tpTeacherDock{
+ position:fixed!important;bottom:0!important;left:0!important;right:0!important;
+ height:78px!important;padding:5px max(12px,calc((100vw - 650px)/2)) max(6px,env(safe-area-inset-bottom))!important;
+ box-sizing:border-box!important;background:#e8f7f6!important;z-index:2147483640!important;
+ display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:3px!important;
+ box-shadow:0 -3px 15px #163e4840!important;
+}
+html.dm-teacher-portal body #tpTeacherDock>button{
+ border:0!important;border-radius:14px!important;background:transparent!important;color:#064453!important;
+ display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;
+ font:800 11px/1.2 system-ui,sans-serif!important;cursor:pointer!important;
+}
+html.dm-teacher-portal body #tpTeacherDock>button>span{
+ display:block!important;font:normal 29px/1.2 "Segoe UI Emoji","Apple Color Emoji",sans-serif!important;
+ width:auto!important;height:auto!important;color:inherit!important;
+}
+html.dm-teacher-portal body #tpTeacherDock>button.active{background:#c6f5e6!important}
+html.dm-teacher-portal body #tpTeacherDock>button:focus-visible{outline:3px solid #148f86!important}
+html.dm-teacher-portal body #tpTeacherHome.is-visible{bottom:78px!important}
+html.dm-teacher-portal body #tpDashboard.is-visible{bottom:78px!important}
