@@ -8,7 +8,7 @@
  window.dmTeacherPortalMode=true;window.dmTeacherPortalSession=state;
  document.documentElement.classList.add('dm-teacher-portal');
  const ss=window.sessionStorage;const prefix=()=>{try{return 'dm_tp_data:'+JSON.parse(ss.getItem('dm_tp_session')||'{}').participant.name+':';}catch{return 'dm_tp_data:preview:';}};
- const isolated={getItem:k=>ss.getItem(prefix()+k),setItem:(k,v)=>ss.setItem(prefix()+k,String(v)),removeItem:k=>ss.removeItem(prefix()+k),clear(){for(const k of Object.keys(ss))if(k.startsWith(prefix()))ss.removeItem(k);},key:i=>Object.keys(ss).filter(k=>k.startsWith(prefix()))[i]?.slice(prefix.length)||null,get length(){return Object.keys(ss).filter(k=>k.startsWith(prefix())).length;}};
+ const isolated={getItem:k=>ss.getItem(prefix()+k),setItem:(k,v)=>ss.setItem(prefix()+k,String(v)),removeItem:k=>ss.removeItem(prefix()+k),clear(){for(const k of Object.keys(ss))if(k.startsWith(prefix()))ss.removeItem(k);},key:i=>Object.keys(ss).filter(k=>k.startsWith(prefix()))[i]?.slice(prefix().length)||null,get length(){return Object.keys(ss).filter(k=>k.startsWith(prefix())).length;}};
  Object.defineProperty(window,'localStorage',{value:isolated,configurable:true});
  isolated.setItem('ing_token',state.participant.token);isolated.setItem('ing_oturumAcik','true');isolated.setItem('ing_aktifOgrenci',state.participant.name);isolated.setItem('ing_toplamSaniye','0');
  if(!ss.getItem('dm_tp_previous_teacher_saved')){ss.setItem('dm_tp_previous_teacher',ss.getItem('ing_ogr_token')||'');ss.setItem('dm_tp_previous_teacher_saved','1');}
