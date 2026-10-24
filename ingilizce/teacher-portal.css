@@ -99,3 +99,16 @@ html.dm-teacher-portal #bottomNavMobile .bn-item{flex:1 1 25%!important}
 #tpDashboard .tp-dash-menu .tp-dash-logout{margin-top:8px;background:#ffe9e7;color:#952b31;border:1px solid #ffb5b7;font-weight:900}
 #tpDashboard .tp-dash-menu .tp-dash-logout:hover,#tpDashboard .tp-dash-menu .tp-dash-logout:focus-visible{background:#ffd2d2;color:#8a1d27}
 @media(max-width:700px){#tpDashboard .tp-dash-menu{flex-wrap:wrap;overflow-x:visible;white-space:normal}#tpDashboard .tp-dash-menu button{flex:1 0 auto}}
+
+html.dm-teacher-portal #bottomNavMobile .bn-item[data-ekran="tab-profil"],
+html.dm-teacher-portal #bottomNavMobile .bn-item[data-ekran="tab-profile"]{display:none!important}
+html.dm-teacher-portal #bottomNavMobile#bottomNavMobile{grid-template-columns:repeat(4,minmax(0,1fr))!important}
+.tp-looks-overlay{position:fixed;inset:0 0 76px;z-index:2147483620;background:#102a43c9;display:grid;place-items:center;padding:12px;box-sizing:border-box}
+.tp-looks-dialog{position:relative;box-sizing:border-box;background:#f8ffff;border-radius:22px;padding:22px;width:min(700px,100%);max-height:calc(100dvh - 100px);overflow-y:auto;color:#173d4c;font:15px system-ui}
+.tp-looks-dialog h2{font-size:23px;margin:0 35px 8px 0}.tp-looks-dialog label{display:inline-flex;align-items:center;gap:8px;margin:10px 15px 15px 0;font-weight:700}
+.tp-looks-close{position:absolute;right:15px;top:12px;border:0;background:#e8f8f5;border-radius:9px;padding:10px;cursor:pointer}
+.tp-looks-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
+.tp-look-choice{border:1px solid #b7d8dc;border-radius:14px;background:#edfaf7;min-width:0;padding:8px 4px;display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer}
+.tp-look-choice strong{font-size:11px;color:#153b52}.tp-look-art{display:grid;place-items:center;font-size:33px;width:100%;min-height:65px;border-radius:11px}
+.tp-looks-status{color:#ae3030}
+@media(max-width:520px){.tp-looks-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
