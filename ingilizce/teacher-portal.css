@@ -57,3 +57,17 @@ html.dm-teacher-portal .tp-shade{bottom:82px!important;z-index:2147483638!import
 .dm-teacher-portal.tp-legacy-inline #bottomNavMobile{z-index:2147483640!important}
 .dm-teacher-portal #bottomNavMobile [data-tp-panel-nav] .bn-icon{font-size:25px!important;line-height:33px!important}
 .dm-teacher-portal #bottomNavMobile [data-tp-panel-nav] .bn-label{font-size:10px!important}
+
+/* Teacher home titles: explicit contrast against very light background. */
+html.dm-teacher-portal #tpTeacherHome .tp-home-inner>h2,
+html.dm-teacher-portal #tpTeacherHome .tp-home-inner>h2.tp-quick-title{
+ color:#073b4c!important;-webkit-text-fill-color:#073b4c!important;opacity:1!important;text-shadow:none!important;
+}
+html.dm-teacher-portal #bottomNavMobile .tp-panel-icon{
+ display:flex!important;align-items:center!important;justify-content:center!important;
+ width:37px!important;height:34px!important;font:normal 27px/1 system-ui,sans-serif!important;
+ color:#075665!important;background:none!important;-webkit-text-fill-color:#075665!important;
+ filter:none!important;opacity:1!important;
+}
+html.dm-teacher-portal #bottomNavMobile [data-tp-panel-nav] .tp-panel-icon::before{content:none!important}
+html.dm-teacher-portal #bottomNavMobile [data-tp-panel-nav] .dm-nav-art{display:none!important}
