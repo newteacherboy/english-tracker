@@ -1218,9 +1218,10 @@ async function handle(req: Request, proxy: any = null) {
     if(denied)return denied;
   }
   if(portalOps.has(op)){
+    if(op==='teacherPortalLogin'){const globalDeny=await rate('teacher-portal-global-login','all',120,900);if(globalDeny)return globalDeny;}
     const key=op==='teacherPortalLogin'?String(body.code||''):String(body.username||body.t||istemciIp(req));
-    const denied=await rate('teacher-portal:'+op,istemciIp(req)+'|'+await sha256(key),op==='teacherPortalLogin'?8:op==='teacherPortalResetRequest'?3:60,900);if(denied)return denied;
-    if(['teacherPortalLogin','teacherPortalResetRequest','teacherPortalReset'].includes(op)){const ipDeny=await rate('teacher-portal-ip:'+op,istemciIp(req),op==='teacherPortalLogin'?60:20,900);if(ipDeny)return ipDeny;}
+    const denied=await rate('teacher-portal:'+op,istemciIp(req)+'|'+await sha256(key),op==='teacherPortalLogin'?4:op==='teacherPortalResetRequest'?3:60,900);if(denied)return denied;
+    if(['teacherPortalLogin','teacherPortalResetRequest','teacherPortalReset'].includes(op)){const ipDeny=await rate('teacher-portal-ip:'+op,istemciIp(req),op==='teacherPortalLogin'?6:20,900);if(ipDeny)return ipDeny;}
   }
   if(op === "okumaGrubu") return readBatch(req,body,handle,json);
 
