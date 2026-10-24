@@ -95,6 +95,8 @@
    home.addEventListener('click',e=>{const b=e.target.closest('[data-tp-action]');if(b)teacherDestination(b.dataset.tpAction);});
   }
   const nav=document.getElementById('bottomNavMobile');
+  // Profile settings are now under the Teacher Panel sidebar.
+  nav?.querySelectorAll('.bn-item').forEach(item=>{if(/profilim/i.test(item.textContent||'')&&!item.dataset.tpHomeNav)item.remove();});
   if(nav&&nav.parentElement!==document.body)document.body.append(nav);
   if(nav&&!nav.querySelector('[data-tp-home-nav]')){
    const b=document.createElement('button');b.type='button';b.className='bn-item tp-home-nav';b.dataset.tpHomeNav='1';b.innerHTML='<span class="tp-nav-home-icon">🏠</span><span class="bn-label">Ana Sayfa</span>';b.onclick=()=>teacherHomeShow();nav.prepend(b);
@@ -128,7 +130,7 @@
   let panel=document.getElementById('tpDashboard');
   if(!panel){
    panel=document.createElement('main');panel.id='tpDashboard';panel.setAttribute('aria-label','Öğretmen Paneli');
-   panel.innerHTML='<div class="tp-dash-wrap"><header class="tp-dash-hero"><img src="discovery-assets/ogretmen.webp" alt="Öğretmen maskotu"><div><h1>Öğretmen Paneli</h1><p>Sınıflarını yönet, etkinlik oluştur ve öğrenci gelişimini takip et.</p></div><button type="button" data-dash="home">⌂ Ana Sayfa</button></header><section class="tp-dash-metrics"><div>👥 <b data-dash-students>—</b><small>Öğrenci</small></div><div>🏫 <b data-dash-classes>—</b><small>Sınıf</small></div><div>🎮 <b>Oyunlar</b><small>Sınıf etkinlikleri</small></div><div>📋 <b>Ödevler</b><small>Öğrenci çalışmaları</small></div></section><div class="tp-dash-layout"><nav class="tp-dash-menu" aria-label="Öğretmen araçları"><button data-dash="students">👥 Sınıflarım</button><button data-dash="homework">📋 Ödevler</button><button data-dash="games">🎮 Sınıf Oyunları</button><button data-dash="oral">🎙️ Sözlü Yap</button><button data-dash="reports">📊 Raporlar</button><button data-dash="library">📚 İçerik Kütüphanesi</button><button data-dash="settings">⚙️ Ayarlar</button></nav><section class="tp-dash-main"><h2>Bugün ne yapmak istersiniz?</h2><p>Öğretmen araçlarına tek dokunuşla ulaşın.</p><div class="tp-dash-tiles"><button data-dash="students">👥<strong>Sınıflarımı Yönet</strong><small>Öğrenci ve sınıf listesi</small></button><button data-dash="homework">📝<strong>Ödev Ver</strong><small>Yeni çalışma oluştur</small></button><button data-dash="games">🎮<strong>Sınıf Oyunları</strong><small>Birlikte oyun başlat</small></button><button data-dash="oral">🎤<strong>Sözlü Yap</strong><small>Sözlü sınav oluştur</small></button><button data-dash="reports">📊<strong>Raporlar</strong><small>İlerlemeleri incele</small></button><button data-dash="library">📖<strong>İçerik Kütüphanesi</strong><small>Konu anlatımına geç</small></button></div></section></div></div>';
+   panel.innerHTML='<div class="tp-dash-wrap"><header class="tp-dash-hero"><img src="discovery-assets/ogretmen.webp" alt="Öğretmen maskotu"><div><h1>Öğretmen Paneli</h1><p>Sınıflarını yönet, etkinlik oluştur ve öğrenci gelişimini takip et.</p></div><button type="button" data-dash="home">⌂ Ana Sayfa</button></header><section class="tp-dash-metrics"><div>👥 <b data-dash-students>—</b><small>Öğrenci</small></div><div>🏫 <b data-dash-classes>—</b><small>Sınıf</small></div><div>🎮 <b>Oyunlar</b><small>Sınıf etkinlikleri</small></div><div>📋 <b>Ödevler</b><small>Öğrenci çalışmaları</small></div></section><div class="tp-dash-layout"><nav class="tp-dash-menu" aria-label="Öğretmen araçları"><button data-dash="students">👥 Sınıflarım</button><button data-dash="homework">📋 Ödevler</button><button data-dash="games">🎮 Sınıf Oyunları</button><button data-dash="oral">🎙️ Sözlü Yap</button><button data-dash="reports">📊 Raporlar</button><button data-dash="library">📚 İçerik Kütüphanesi</button><button data-dash="appearance">🎨 Karakterimi Düzenle</button><button data-dash="code">🔐 Giriş Kodumu Değiştir</button><button data-dash="settings">⚙️ Ayarlar</button><button data-dash="logout" class="tp-dash-logout">🚪 Çıkış Yap</button></nav><section class="tp-dash-main"><h2>Bugün ne yapmak istersiniz?</h2><p>Öğretmen araçlarına tek dokunuşla ulaşın.</p><div class="tp-dash-tiles"><button data-dash="students">👥<strong>Sınıflarımı Yönet</strong><small>Öğrenci ve sınıf listesi</small></button><button data-dash="homework">📝<strong>Ödev Ver</strong><small>Yeni çalışma oluştur</small></button><button data-dash="games">🎮<strong>Sınıf Oyunları</strong><small>Birlikte oyun başlat</small></button><button data-dash="oral">🎤<strong>Sözlü Yap</strong><small>Sözlü sınav oluştur</small></button><button data-dash="reports">📊<strong>Raporlar</strong><small>İlerlemeleri incele</small></button><button data-dash="library">📖<strong>İçerik Kütüphanesi</strong><small>Konu anlatımına geç</small></button></div></section></div></div>';
    document.body.append(panel);
    panel.addEventListener('click',e=>{const b=e.target.closest('[data-dash]');if(b)teacherDashboardAction(b.dataset.dash);});
   }
@@ -147,11 +149,14 @@
   }
   panel.classList.add('is-visible');document.body.classList.add('tp-dash-active');
   document.querySelector('[data-tp-home-nav]')?.classList.remove('active');
-  document.querySelector('#bottomNavMobile [data-ekran="tab-profile-menu"]')?.classList.add('active');
+  document.querySelector('#bottomNavMobile [data-tp-panel-nav]')?.classList.add('active');
  }
  function teacherDashboardHide(){document.body.classList.remove('tp-legacy-inline');document.getElementById('ogretmenMenuModal')?.style.setProperty('display','none');document.getElementById('tpDashboard')?.classList.remove('is-visible');document.body.classList.remove('tp-dash-active');}
  function teacherDashboardAction(action){
   if(action==='home'){teacherDashboardHide();teacherHomeShow();return;}
+  if(action==='logout'){window.dmTeacherPortalExit?.();return;}
+  if(action==='appearance'){window.dmCharacterBuilder?.open?.();return;}
+  if(action==='code'||action==='settings'){openProfile();return;}
   if(action==='oral'){window.dmTeacherOral?.open?.();return;}
   if(action==='games'||action==='library'){teacherDashboardHide();teacherDestination(action==='games'?'games':'study');return;}
   // Use the existing, permission-checked teacher management functions.
