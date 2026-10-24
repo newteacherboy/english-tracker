@@ -82,3 +82,13 @@ html.dm-teacher-portal body #bottomNavMobile#bottomNavMobile .bn-item[data-tp-pa
  opacity:1!important;visibility:visible!important;background:transparent!important;
  text-indent:0!important;transform:none!important;overflow:visible!important;
 }
+
+/* The private teacher landing screen must never expose the learner's failed route.
+   Hide route behind the teacher home while the dashboard is bootstrapping. */
+html.dm-teacher-portal #rtRouteError,
+html.dm-teacher-portal #dmRouteError,
+html.dm-teacher-portal #rt-v3-error,
+html.dm-teacher-portal #parkurHata{display:none!important}
+html.dm-teacher-portal.tp-home-starting #panel-alani{visibility:hidden!important}
+html.dm-teacher-portal.tp-home-active #panel-alani{visibility:hidden!important}
+html.dm-teacher-portal #tpTeacherHome.is-visible{z-index:90002!important}
