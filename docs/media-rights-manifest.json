@@ -2033,6 +2033,13 @@
       "bytes": 686,
       "status": "original-vector",
       "source": "Original Diji-Medu Bilgi Adaları interface asset, created in this project with native SVG"
+    },
+    {
+      "path": "ingilizce/route-assets/sky-academy-background.webp",
+      "sha256": "d3e7ad2416de21000d01039cb73960da988a053dcca31358510b24a72bc9f54a",
+      "bytes": 351624,
+      "status": "ai-generated",
+      "source": "docs/sky-academy-20261024.md"
     }
   ]
 }

@@ -47,3 +47,28 @@ test('class learners without the test are asked for it and stay on the school ro
 test('the gate waits for the start path when it has not arrived yet',async()=>{const {c}=gated(null);assert.equal(await c.dmLearningRoute.set('independent'),false,'status arrives as needs-test');assert.equal(c.yo.dmLearningPurpose,'school');});
 test('learners with the test or existing progress switch normally; a stale independent choice shows school while the test is needed',async()=>{let {c}=gated({startPath:{learningRoute:'open'}});assert.equal(await c.dmLearningRoute.set('independent'),true);assert.equal(c.yo.dmLearningPurpose,'independent');({c}=gated({startPath:{learningRoute:'needs-test'}}));c.yo.dmLearningPurpose='independent';assert.equal(c.dmLearningRoute.purpose(),'school');});
 test('learners on the learning route without a valid test are moved to the school route on entry',async()=>{const {c}=gated({startPath:{learningRoute:'needs-test'}});c.yo.dmLearningPurpose='independent';const toasts=[];c.yoToast=m=>toasts.push(m);c.document.dispatchEvent(new c.CustomEvent('dm:progression-status',{}));await new Promise(r=>setTimeout(r,20));assert.equal(c.yo.dmLearningPurpose,'school');assert.equal(c.saved,1);assert.equal(c.opened,1,'parkur opened');assert(toasts.some(t=>/seviye testini/.test(t)));});
+
+test('sky academy uses real chapter identities at both ends, with one active mascot and a switch below its chest',async()=>{
+ for(const focus of [0,1,14,79]){
+  const c=fixture();c.yo.dmLearningPurpose='independent';
+  c.dmStoryPath={overview:async()=>({chapters:Array.from({length:80},(_,i)=>({id:1001+i,title:(i+1)+'. Daily Life',cefr:'A1',current:i===focus,done:i<focus,available:i<=focus}))})};
+  const root={isConnected:true,html:'',querySelectorAll:()=>[],querySelector:()=>({outerHTML:''}),insertAdjacentHTML(_,h){this.html+=h;}};
+  c.dmParkurMapMount({dataset:{rtBound:'1'},querySelector:()=>root});await new Promise(r=>setImmediate(r));
+  assert.match(root.html,/bi-scene bi-sky/);assert.match(root.html,/Gökyüzü Akademisi/);
+  assert.equal((root.html.match(/class="bi-stop /g)||[]).length,4);assert.equal((root.html.match(/class="bi-mascot"/g)||[]).length,1);
+  assert.match(root.html,new RegExp('data-chapter="'+(1001+focus)+'"[^>]*aria-current="step"'));
+  assert.match(root.html,new RegExp('<progress value="'+focus+'" max="80"'));
+  assert(root.html.indexOf('data-rt="other-route"')>root.html.indexOf('data-rt="chests"'));
+  assert(!root.html.includes('data-rt="school-stop"'));
+ }
+});
+test('new route-switch control delegates to saved route selection and preserves progression',async()=>{
+ const c=fixture();let handler;const root={isConnected:true,querySelectorAll:()=>[],querySelector:()=>null};
+ c.dmParkurMapMount({dataset:{},querySelector:()=>root,addEventListener:(_,fn)=>handler=fn});
+ c.yo.baYildiz={210101:3};c.yo.storyProgress=[1,2];
+ const b={dataset:{rt:'other-route'},disabled:false,isConnected:true};
+ handler({target:{closest:()=>b},preventDefault(){},stopPropagation(){}});
+ assert.equal(b.disabled,true);await new Promise(r=>setImmediate(r));
+ assert.equal(c.yo.dmLearningPurpose,'independent');assert.equal(c.opened,1);assert.equal(b.disabled,false);
+ assert.equal(c.yo.altin,25);assert.deepEqual(c.yo.storyProgress,[1,2]);assert.equal(c.yo.baYildiz[210101],3);
+});
