@@ -151,7 +151,7 @@
   let panel=document.getElementById('tpDashboard');
   if(!panel){
    panel=document.createElement('main');panel.id='tpDashboard';panel.setAttribute('aria-label','Öğretmen Paneli');
-   panel.innerHTML='<div class="tp-dash-wrap"><header class="tp-dash-hero"><span class="tp-teacher-pair"><img src="discovery-assets/ogretmen.webp" alt="Kadın öğretmen"><span class="tp-teacher-male" role="img" aria-label="Erkek öğretmen">👨‍🏫</span></span><div><h1>Öğretmen Paneli</h1><p>Sınıflarını yönet, etkinlik oluştur ve öğrenci gelişimini takip et.</p></div><button type="button" data-dash="home">⌂ Ana Sayfa</button></header><section class="tp-dash-metrics"><div>👥 <b data-dash-students>—</b><small>Öğrenci</small></div><div>🏫 <b data-dash-classes>—</b><small>Sınıf</small></div><div>🎮 <b>Oyunlar</b><small>Sınıf etkinlikleri</small></div><div>📋 <b>Ödevler</b><small>Öğrenci çalışmaları</small></div></section><div class="tp-dash-layout"><nav class="tp-dash-menu" aria-label="Öğretmen araçları"><button data-dash="performance">🏫 Ders İçi Performans</button><button data-dash="individual">📊 Öğrenci Bireysel Raporları</button><button data-dash="weak">🎯 Sınıfın Zayıf Noktaları</button><button data-dash="parent">🗓️ Haftalık Veli Özetleri</button><button data-dash="messages">💬 Öğrenci Mesajları</button><button data-dash="announcements">📢 Duyuru Oluştur</button><button data-dash="rubric">📋 Özel Ders Rubrik Değerlendirme</button><button data-dash="studentDetails">🔐 Öğrenci Bilgilerini Değiştir</button><button data-dash="code">🔑 Giriş Kodunu Değiştir</button><button data-dash="settings">⚙️ Ayarlar</button><button data-dash="logout" class="tp-dash-logout">🚪 Çıkış Yap</button></nav><section class="tp-dash-main"><h2>Bugün ne yapmak istersiniz?</h2><p>Öğretmen araçlarına tek dokunuşla ulaşın.</p><div class="tp-dash-tiles"><button data-dash="students">👥<strong>Öğrencini Üye Yap</strong><small>Öğrenci hesaplarını oluştur</small></button><button data-dash="homework">📝<strong>Ödev Ver</strong><small>Yeni çalışma oluştur</small></button><button data-dash="reports">📊<strong>Raporlar</strong><small>Öğrenci ilerlemelerini incele</small></button><button data-dash="library">📖<strong>İçerik Kütüphanesi</strong><small>Konu anlatımına geç</small></button></div></section></div></div>';
+   panel.innerHTML='<div class="tp-dash-wrap"><header class="tp-dash-hero"><span class="tp-teacher-pair"><img src="discovery-assets/ogretmen.webp" alt="Kadın öğretmen"><span class="tp-teacher-male" role="img" aria-label="Erkek öğretmen">👨‍🏫</span></span><div><h1>Öğretmen Paneli</h1><p>Sınıflarını yönet, etkinlik oluştur ve öğrenci gelişimini takip et.</p></div><div class="tp-dash-header-actions"><button type="button" data-dash="sync">🔄 Verileri Otomatik Çek</button><button type="button" data-dash="home">⌂ Ana Sayfa</button></div></header><section class="tp-dash-metrics"><div>👥 <b data-dash-students>—</b><small>Öğrenci</small></div><div>🏫 <b data-dash-classes>—</b><small>Sınıf</small></div><div>🎮 <b>Oyunlar</b><small>Sınıf etkinlikleri</small></div><div>📋 <b>Ödevler</b><small>Öğrenci çalışmaları</small></div></section><div class="tp-dash-layout"><nav class="tp-dash-menu" aria-label="Öğretmen araçları"><button data-dash="performance">🏫 Ders İçi Performans</button><button data-dash="individual">📊 Öğrenci Bireysel Raporları</button><button data-dash="weak">🎯 Sınıfın Zayıf Noktaları</button><button data-dash="parent">🗓️ Haftalık Veli Özetleri</button><button data-dash="messages">💬 Öğrenci Mesajları</button><button data-dash="announcements">📢 Duyuru Oluştur</button><button data-dash="rubric">📋 Özel Ders Rubrik Değerlendirme</button><button data-dash="studentDetails">🔐 Öğrenci Bilgilerini Değiştir</button><button data-dash="code">🔑 Giriş Kodunu Değiştir</button><button data-dash="settings">⚙️ Ayarlar</button><button data-dash="logout" class="tp-dash-logout">🚪 Çıkış Yap</button></nav><section class="tp-dash-main"><h2>Bugün ne yapmak istersiniz?</h2><p>Öğretmen araçlarına tek dokunuşla ulaşın.</p><div class="tp-dash-tiles"><button data-dash="students">👥<strong>Öğrencini Üye Yap</strong><small>Öğrenci hesaplarını oluştur</small></button><button data-dash="homework">📝<strong>Ödev Ver</strong><small>Yeni çalışma oluştur</small></button><button data-dash="summary">🏫<strong>Sınıfımın Öğrenme Özeti</strong><small>Sınıfının genel gelişimini incele</small></button><button data-dash="exams">📈<strong>Seviye Sınavı Sonuçları</strong><small>Öğrencilerin seviye sonuçlarını gör</small></button></div></section></div></div>';
    document.body.append(panel);
    panel.addEventListener('click',e=>{const b=e.target.closest('[data-dash]');if(b)teacherDashboardAction(b.dataset.dash);});
   }
@@ -164,7 +164,7 @@
     hero.replaceWith(badge);
    }
   }
-  panel.classList.add('is-visible');document.body.classList.add('tp-dash-active');teacherDock();
+  panel.classList.add('is-visible');document.body.classList.add('tp-dash-active');teacherDock();refreshTeacherStats();
   document.querySelector('[data-tp-home-nav]')?.classList.remove('active');
   document.querySelector('#bottomNavMobile [data-tp-panel-nav]')?.classList.add('active');
  }
@@ -197,8 +197,28 @@
   v.form.elements.grade.onchange=fill;fill();
   submit(v,async form=>{const student=data.find(x=>x.id===form.get('studentId'));if(!student)throw Error('Bağlı bir öğrenci seç.');v.close();await next(student);});
  }
+ async function refreshTeacherStats(){
+  const panel=document.getElementById('tpDashboard');if(!panel)return;
+  try{const result=await api('teacherPortalStudents');const students=result.items||[];
+   panel.querySelector('[data-dash-students]').textContent=String(students.length);
+   panel.querySelector('[data-dash-classes]').textContent=String(new Set(students.map(s=>s.class_no).filter(Boolean)).size);
+  }catch(e){console.warn('[Teacher panel summary]',e);}
+ }
+ function openTeacherCodeSync(){
+  const v=sheet('🔄 Verileri Otomatik Çek','<p>Öğrencilerin öğretmenine bağlanırken kullandığı öğretmen kodunu gir. Yalnızca senin doğrulanmış öğretmen hesabına ait kod kabul edilir.</p><label>Öğretmen bağlantı kodu<input name="teacherCode" autocomplete="off" required maxlength="32" placeholder="Öğretmen kodun"></label><button type="submit" class="tp-primary">Kodumu Doğrula ve Verileri Çek</button>');
+  submit(v,async values=>{
+   const code=String(values.get('teacherCode')||'').trim();if(!code)throw Error('Öğretmen bağlantı kodunu gir.');
+   const result=await api('teacherPortalSyncStudents',{code});
+   v.form.replaceChildren();
+   const p=document.createElement('p');p.textContent=(result.count||0)+' bağlı öğrenci bulundu. Öğretmen paneli verileri güncellendi.';v.form.append(p);
+   await refreshTeacherStats();
+  });
+ }
  function teacherDashboardAction(action){
   if(action==='home'){teacherDashboardHide();teacherHomeShow();return;}
+  if(action==='sync'){openTeacherCodeSync();return;}
+  if(action==='summary'){legacyTool(/sınıfımın öğrenme özeti|öğrenme özeti/i);return;}
+  if(action==='exams'){legacyTool(/seviye sınavı sonuçları/i);return;}
   if(action==='logout'){window.dmTeacherPortalExit?.();return;}
   if(action==='code'||action==='settings'){openProfile();return;}
   if(action==='students'){openBulkStudents();return;}

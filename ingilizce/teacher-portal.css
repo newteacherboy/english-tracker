@@ -161,3 +161,8 @@ html.dm-teacher-portal body #tpDashboard.is-visible{bottom:78px!important}
 #tpDashboard .tp-dash-tiles{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
 #tpDashboard .tp-dash-main .tp-dash-legacy{display:none!important}
 @media(max-width:520px){#tpDashboard .tp-dash-tiles{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+#tpDashboard .tp-dash-header-actions{display:flex;align-items:center;gap:9px;margin-left:auto;flex-wrap:wrap;justify-content:flex-end}
+#tpDashboard .tp-dash-header-actions button{border:1px solid #8ec2cd;border-radius:18px;background:#17364c;color:#fff;padding:10px 12px;font:700 12px system-ui;cursor:pointer;white-space:nowrap}
+#tpDashboard .tp-dash-header-actions button:first-child{background:#14786b;border-color:#4fd3b5}
+@media(max-width:650px){#tpDashboard .tp-dash-header-actions{gap:5px}#tpDashboard .tp-dash-header-actions button{padding:7px;font-size:10px;white-space:normal}}
