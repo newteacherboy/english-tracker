@@ -51,3 +51,9 @@ html.dm-teacher-portal .tp-shade{bottom:82px!important;z-index:2147483638!import
 #tpDashboard .tp-dash-tool-grid button{border:1px solid #a3d1e044;background:#edf9ff;color:#143d50;text-align:left;border-radius:11px;padding:11px;font:700 12px/1.4 system-ui;cursor:pointer;min-height:44px}
 #tpDashboard .tp-dash-tool-grid button:focus-visible{outline:3px solid #8febdf}
 @media(max-width:700px){#tpDashboard .tp-dash-tool-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+/* Embedded management surface keeps teacher dashboard and permanent dock visible. */
+.dm-teacher-portal.tp-legacy-inline #ogretmenMenuModal.dm-teacher-open{position:fixed!important;top:88px!important;bottom:83px!important;left:50%!important;transform:translateX(-50%)!important;width:min(1050px,96vw)!important;max-height:calc(100dvh - 171px)!important;z-index:95000!important;border-radius:19px!important;box-shadow:0 12px 40px #03192666!important;overflow-y:auto!important}
+.dm-teacher-portal.tp-legacy-inline #bottomNavMobile{z-index:2147483640!important}
+.dm-teacher-portal #bottomNavMobile [data-tp-panel-nav] .bn-icon{font-size:25px!important;line-height:33px!important}
+.dm-teacher-portal #bottomNavMobile [data-tp-panel-nav] .bn-label{font-size:10px!important}
