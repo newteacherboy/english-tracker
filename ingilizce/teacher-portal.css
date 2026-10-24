@@ -42,3 +42,12 @@
 
 /* Classroom guest identity is server-managed; never launch the learner's first-character wizard. */
 .dm-teacher-portal #dmCharacterBuilder,.dm-teacher-portal .dm-character-builder,.dm-teacher-portal [data-first-character-choice]{display:none!important}
+
+/* Teacher dock must remain visible above all teacher page layers. */
+html.dm-teacher-portal #bottomNavMobile#bottomNavMobile{display:grid!important;visibility:visible!important;opacity:1!important;position:fixed!important;bottom:0!important;left:0!important;right:0!important;z-index:2147483640!important}
+html.dm-teacher-portal .tp-shade{bottom:82px!important;z-index:2147483638!important}
+#tpDashboard .tp-dash-legacy{margin-top:16px;border-top:1px solid #ffffff30;padding-top:12px}
+#tpDashboard .tp-dash-tool-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:10px}
+#tpDashboard .tp-dash-tool-grid button{border:1px solid #a3d1e044;background:#edf9ff;color:#143d50;text-align:left;border-radius:11px;padding:11px;font:700 12px/1.4 system-ui;cursor:pointer;min-height:44px}
+#tpDashboard .tp-dash-tool-grid button:focus-visible{outline:3px solid #8febdf}
+@media(max-width:700px){#tpDashboard .tp-dash-tool-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
