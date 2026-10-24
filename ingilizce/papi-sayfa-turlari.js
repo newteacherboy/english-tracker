@@ -129,7 +129,7 @@ function eligibleAccount(){
 function currentPage(){for(const p of PAGES){if([...document.querySelectorAll(p.sel)].some(visible))return p;}return null;}
 function calm(page){
  // A study overlay may be allowed for the tour, but announcements never are.
- if([...document.querySelectorAll('#duyuruOverlay,#duyuruGecmisModal,#dmGoalAnnouncement,#dmWeeklyPanel,#dmLevelUp,#dmNudge,.od-perde,.kr-perde,.dv-perde,.cb-kart,.bk-kart,.yo-davet,.tv-kart,.sa-perde,.cog-perde,[role="dialog"],[aria-modal="true"]')].some(e=>visible(e)&&!e.classList.contains('dm-papi-held')))return false;
+ if([...document.querySelectorAll('#duyuruOverlay,#duyuruGecmisModal,#dmGoalAnnouncement,#dmWeeklyPanel,#dmLevelUp,#dmNudge,.od-perde,.kr-perde,.dv-perde,.cb-kart,.bk-kart,.yo-davet,.tv-kart,.sa-perde,.cog-perde')].some(e=>visible(e)&&!e.classList.contains('dm-papi-held')))return false;
  if(window.dmPapiNotices?.blocked?.())return false;
  if(document.hidden||window.dmPapiIntro?.active?.()||document.getElementById('dmPapiTour'))return false;
  const allowed=page.allow?[...document.querySelectorAll(page.allow)]:[];
