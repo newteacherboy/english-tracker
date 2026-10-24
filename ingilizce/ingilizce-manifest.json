@@ -17,25 +17,25 @@
   ],
   "icons": [
     {
-      "src": "app-icons/papi-192.png",
+      "src": "app-icons/papagan-192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "app-icons/papi-512.png",
+      "src": "app-icons/papagan-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "app-icons/papi-maskable-512.png",
+      "src": "app-icons/papagan-maskable-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
     },
     {
-      "src": "papi-app-icon-v3.png",
+      "src": "papagan-app-icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
