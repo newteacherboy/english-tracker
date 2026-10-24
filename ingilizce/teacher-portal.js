@@ -69,6 +69,14 @@
    catch(error){console.warn('[Öğretmen karakteri kaydı]',error);}
   },400);
  },true);
+ function addPersonalSwitch(){
+  if(!mode)return;
+  const badge=[...document.querySelectorAll('body button,body a')].find(e=>/^(Çık|Çıkış)$/.test(e.textContent.trim())&&e.closest('.tp-participant,[class*="teacher-mode"],[class*="teacher-banner"]'));
+  if(badge&&!badge.dataset.tpPersonal){
+    badge.dataset.tpPersonal='1';badge.textContent='Kişisel hesabıma geç';
+    badge.onclick=e=>{e.preventDefault();e.stopImmediatePropagation();window.dmTeacherPortalExit?.();};
+  }
+ }
  function teacherHome(){
   if(!mode)return;
   let home=document.getElementById('tpTeacherHome');
@@ -87,6 +95,16 @@
     if(target.dataset.ekran==='tab-profile-menu'){e.preventDefault();e.stopImmediatePropagation();teacherProfileShow();return;}
     teacherHomeHide();teacherDashboardHide();
    },true);
+  }
+  if(nav){
+   for(const item of nav.querySelectorAll('.bn-item')){
+    if(/öğretmen paneli/i.test(item.textContent||'')){
+     item.dataset.tpPanelNav='1';
+     const icon=item.querySelector('.bn-icon');
+     if(icon){icon.textContent='🎓';icon.style.fontSize='26px';}
+     else if(!item.querySelector('.tp-panel-icon')){const label=item.querySelector('.bn-label');const i=document.createElement('span');i.className='tp-panel-icon';i.textContent='🎓';i.style.fontSize='26px';item.insertBefore(i,label);}
+    }
+   }
   }
   if(!window.tpHomeInitialized){window.tpHomeInitialized=true;teacherHomeShow();}
  }
@@ -114,7 +132,7 @@
    for(const original of legacy.querySelectorAll('button.ogretmen-menu-btn')){
     if(original.disabled||!original.textContent.trim())continue;
     const b=document.createElement('button');b.type='button';b.textContent=original.textContent.trim();
-    b.onclick=()=>{original.click();};
+    b.onclick=()=>{document.body.classList.add('tp-legacy-inline');original.click();};
     grid.append(b);
    }
   }
@@ -122,14 +140,14 @@
   document.querySelector('[data-tp-home-nav]')?.classList.remove('active');
   document.querySelector('#bottomNavMobile [data-ekran="tab-profile-menu"]')?.classList.add('active');
  }
- function teacherDashboardHide(){document.getElementById('tpDashboard')?.classList.remove('is-visible');document.body.classList.remove('tp-dash-active');}
+ function teacherDashboardHide(){document.body.classList.remove('tp-legacy-inline');document.getElementById('ogretmenMenuModal')?.style.setProperty('display','none');document.getElementById('tpDashboard')?.classList.remove('is-visible');document.body.classList.remove('tp-dash-active');}
  function teacherDashboardAction(action){
   if(action==='home'){teacherDashboardHide();teacherHomeShow();return;}
   if(action==='oral'){window.dmTeacherOral?.open?.();return;}
   if(action==='games'||action==='library'){teacherDashboardHide();teacherDestination(action==='games'?'games':'study');return;}
   // Use the existing, permission-checked teacher management functions.
   const menu=document.getElementById('ogretmenMenuModal');
-  if(menu){menu.style.display='flex';const candidates=[...menu.querySelectorAll('button')];const pattern=({students:/öğrenci|sınıf|liste/i,homework:/ödev/i,reports:/rapor|istatistik/i,settings:/ayar/i})[action];const target=candidates.find(b=>pattern?.test(b.textContent||''));if(target)target.click();else window.yoToast?.('Bu işlem için öğretmen panelindeki ilgili aracı seç.');}
+  if(menu){document.body.classList.add('tp-legacy-inline');menu.style.display='flex';const candidates=[...menu.querySelectorAll('button')];const pattern=({students:/öğrenci|sınıf|liste/i,homework:/ödev/i,reports:/rapor|istatistik/i,settings:/ayar/i})[action];const target=candidates.find(b=>pattern?.test(b.textContent||''));if(target)target.click();else window.yoToast?.('Bu işlem için öğretmen panelindeki ilgili aracı seç.');}
  }
 
  function teacherHomeShow(){
@@ -153,7 +171,7 @@
  window.dmTeacherPortal={openLogin,openProfile,beforeGame,management};
  if(document.body.dataset.teacherReset==='1'){resetPage();return;}
  if(mode){document.body.classList.add('dm-teacher-portal');window.cikisYap=window.dmTeacherPortalExit;window.siniftaOyunModuAc=()=>{document.getElementById('ogretmenMenuModal')?.style.setProperty('display','none');window.aktivitelerTamEkranAc?.();};}
- let scheduled=false;const observe=()=>{if(scheduled)return;scheduled=true;requestAnimationFrame(()=>{scheduled=false;decorate();if(mode)suppressPreviewPrompts();});};new MutationObserver(observe).observe(document.body,{childList:true,subtree:true});decorate();wrapGames();
+ let scheduled=false;const observe=()=>{if(scheduled)return;scheduled=true;requestAnimationFrame(()=>{scheduled=false;decorate();if(mode){suppressPreviewPrompts();addPersonalSwitch();}});};new MutationObserver(observe).observe(document.body,{childList:true,subtree:true});decorate();wrapGames();
  document.addEventListener('dm:state',wrapGames);document.addEventListener('dm:login',wrapGames);if(mode)document.addEventListener('click',()=>{if(window.tpHomeInitialized){teacherHome();suppressPreviewPrompts();}}, {capture:false});
  let opened=false;const timer=setInterval(()=>{wrapGames();if(mode&&!opened&&document.getElementById('panel-alani')?.style.display==='block'){opened=true;teacherHome();suppressPreviewPrompts();prepareTeacherAppearance();setTimeout(runPending,300);}if(opened)clearInterval(timer);},500);setTimeout(()=>clearInterval(timer),30000);
  if(new URLSearchParams(location.search).get('ogretmenGiris')==='1'){window.dmFirstDiscovery?.openLogin?.();openLogin();}
