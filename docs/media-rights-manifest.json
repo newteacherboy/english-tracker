@@ -2040,6 +2040,55 @@
       "bytes": 351624,
       "status": "ai-generated",
       "source": "docs/sky-academy-20261024.md"
+    },
+    {
+      "path": "ingilizce/route-assets/approved/account-icons.webp",
+      "sha256": "d2a724611bac2e8e59e0e58a5db365387d10872cb6fab2690270f537cfbb1ab5",
+      "bytes": 200634,
+      "status": "ai-generated",
+      "source": "docs/approved-centre-20261024.md"
+    },
+    {
+      "path": "ingilizce/route-assets/approved/center-hero.webp",
+      "sha256": "a2b541d9fe5c4f82ff1d93afc5c8a6a835bc749eaeacd4c8778cb0b885383978",
+      "bytes": 51422,
+      "status": "ai-generated",
+      "source": "docs/approved-centre-20261024.md"
+    },
+    {
+      "path": "ingilizce/route-assets/approved/center-icons.webp",
+      "sha256": "b1493a9dcf7d4dc8f297cb87f9a35c3abc6a82403eb7ef056c9f88575eba9321",
+      "bytes": 253920,
+      "status": "ai-generated",
+      "source": "docs/approved-centre-20261024.md"
+    },
+    {
+      "path": "ingilizce/route-assets/approved/game-icons.webp",
+      "sha256": "31e6c65c14dbc8cb4a3420f891ebeb1c556c66ab6fbfa4f5eb253c471abb7f1e",
+      "bytes": 262598,
+      "status": "ai-generated",
+      "source": "docs/approved-centre-20261024.md"
+    },
+    {
+      "path": "ingilizce/route-assets/approved/game-thumbs.webp",
+      "sha256": "c96d25d9e1660bec9e7a01c295f9bbf3251704d6e4d80af0a8feec5e0316b4ff",
+      "bytes": 274574,
+      "status": "ai-generated",
+      "source": "docs/approved-centre-20261024.md"
+    },
+    {
+      "path": "ingilizce/route-assets/approved/passport-hero.webp",
+      "sha256": "149f0b88a11c808fefe8a8fefb78344453e2da8fb59509f44bfbef41fc1253e6",
+      "bytes": 106488,
+      "status": "ai-generated",
+      "source": "docs/approved-centre-20261024.md"
+    },
+    {
+      "path": "ingilizce/route-assets/approved/passport-icons.webp",
+      "sha256": "ee10f785c810d8fe77f5dd1901a6ab280bda8348a84772baa4f130a880c8ace8",
+      "bytes": 149038,
+      "status": "ai-generated",
+      "source": "docs/approved-centre-20261024.md"
     }
   ]
 }
