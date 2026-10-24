@@ -73,7 +73,14 @@ function claimRow(period){
   :'<button type="button" class="rt-claim" data-rt="claim-mission" data-period="'+period+'">🎁 Ödülünü Al <small>+'+p.gold+' 🪙 +'+p.xp+' XP</small></button>';
 }
 
+const passportArt=(kind)=>kind==='game'?'<i class="mp-game-art" aria-hidden="true"></i>':kind==='days'?'<img src="route-assets/bilgi-icons/calendar.webp" alt="">':'<i class="au-art au-passport-icons" style="--au-x:'+(kind==='route'?'100%':'0%')+';--au-y:0%" aria-hidden="true"></i>';
+function passport(period){
+ const p=PERIOD[period],data=owner===who()?value?.[period]:null;if(!data)askForData();
+ const complete=goals[period].map(([event,,target])=>!!data&&Number(data[event])>=target),count=complete.filter(Boolean).length;
+ return '<div class="mp-passport"><header class="ap-hero"><h2>'+(period==='daily'?'Günlük Görevlerim':'Haftalık Görevlerim')+'</h2><span class="ap-book-title">GÖREV<br>PASAPORTU<br>◎</span><div class="ap-stamps">'+goals[period].map(([event],i)=>'<button type="button" data-rt="task" data-event="'+event+'" aria-label="'+(period==='daily'?PERIOD.daily.chips[i]:PERIOD.weekly.chips[i])+'">'+passportArt(event)+(complete[i]?'<em>✓</em>':'')+'</button>').join('')+'</div></header><div class="ap-progress"><b>'+count+' / 3 <small>tamamlandı</small></b><progress max="3" value="'+count+'" aria-label="Görev ilerlemesi"></progress></div><div class="mp-task-list">'+goals[period].map(([event,label,target],i)=>{const n=data?Math.min(target,Math.max(0,Number(data[event])||0)):null;return '<button type="button" class="mp-task '+(complete[i]?'is-done':'')+'" data-rt="task" data-event="'+event+'">'+passportArt(event)+'<span><b>'+label+'</b><progress max="'+target+'" value="'+(n||0)+'" aria-label="'+label+' ilerlemesi"></progress></span><strong>'+(n===null?'…':n+'/'+target)+'</strong><em aria-hidden="true">'+(complete[i]?'✓':'›')+'</em></button>';}).join('')+'</div><section class="mp-reward"><i class="au-art au-passport-icons" style="--au-x:100%;--au-y:100%" aria-hidden="true"></i><div><h3>'+(period==='daily'?'Günlük':'Haftalık')+' görev ödülün</h3><div class="ap-prizes"><span><i class="ap-resource ap-gold" aria-hidden="true"></i><b>'+p.gold+'</b> Altın</span><span><i class="ap-resource ap-xp" aria-hidden="true"></i><b>'+p.xp+'</b> XP</span></div>'+(claimed(period)?'<p role="status">✓ Ödül alındı</p>':'<button type="button" class="mp-claim" data-rt="claim-mission" data-period="'+period+'" '+(complete.every(Boolean)?'':'disabled')+'>Ödülü al</button>')+'</div></section></div>';
+}
 window.dmRouteMissions={
+ passport,
  finished(period){return (period==='daily'||period==='weekly')&&done(period)&&claimed(period);},
  /* Harita kartındaki rozet: alınmayı bekleyen ödül sayısı ve bitmemiş görev var mı */
  badge(){if(!member()||owner!==who()||!value){askForData();return null;}const periods=['daily','weekly'];return {claimable:periods.filter(p=>done(p)&&!claimed(p)).length,open:!done('daily')};},
