@@ -1,0 +1,5 @@
+/* Tablet-only visual test. Does not affect phones. */
+@media (min-width: 700px) and (pointer: coarse) {
+  body.dm-parkur-open #bzParkur>.bz-ic { width: min(100%, 850px); max-width: 850px; margin-inline: auto; box-sizing: border-box; }
+  body.dm-parkur-open .dm-parkur-scroll { min-width: 0; }
+}
