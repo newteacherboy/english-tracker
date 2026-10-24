@@ -175,6 +175,7 @@ const pending=o=>store.get(pendingKey(o))==='1'||store.get(candidateKey(o),sessi
 const ONLY_FIRST='.ka-perde,#dmCharacterBuilder';
 let timer=0;
 function introEligible(){
+ if(window.dmTeacherPortalMode)return false;
  const o=who();if(!o||store.get(seenKey(o))==='1'||!pending(o))return false;
  if(o.toLowerCase()==='teacher'||window.dmGuestMode)return false;
  if(typeof siniftaOynananOgrenci!=='undefined'&&siniftaOynananOgrenci)return false;

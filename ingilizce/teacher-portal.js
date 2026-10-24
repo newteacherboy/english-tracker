@@ -33,11 +33,45 @@
  async function statusButton(){if(mode)return;const menu=document.getElementById('rtProfileBackdrop');if(!menu||menu.querySelector('[data-tp-access]'))return;const grid=menu.querySelector('.rt-profile-grid');if(!grid)return;const name=typeof aktifOgrenciAdi==='undefined'?'':String(aktifOgrenciAdi);if(name==='teacher')return;const b=menu.querySelector('[data-profile=teacher]');if(!b)return;b.dataset.tpAccess='1';b.addEventListener('click',async e=>{e.preventDefault();e.stopPropagation();const v=sheet('Öğretmen Platformuna Erişim','<p>Durum yükleniyor…</p>');try{const r=await api('teacherPortalStatus',{},localStorage.getItem('ing_token')||'');v.form.textContent=({none:'Özel öğretmen platformu için başvuru yapabilirsin.',pending:'Başvurun teacher hesabının onayını bekliyor.',approved:r.codeSent?'Giriş kodun e-posta kuyruğuna alındı.':'Onayın var. E-posta adresini doğruladığında kodun gönderilecek.',rejected:'Başvurun reddedildi.',revoked:'Öğretmen platformu erişimin kaldırıldı.'})[r.state];if(r.state==='none'){const apply=document.createElement('button');apply.type='button';apply.className='tp-primary';apply.textContent='Öğretmen erişimi iste';apply.onclick=async()=>{try{await api('teacherPortalApply',{},localStorage.getItem('ing_token')||'');v.form.textContent='Başvurun teacher hesabının onayına gönderildi.';}catch(e){v.error(e.message);}};v.form.append(apply);}const login=document.createElement('button');login.type='button';login.textContent='Kodla Öğretmen Girişi';login.onclick=openLogin;v.form.append(login);}catch(e){v.error(e.message);}},true);}
  let checkedToken='',canManage=false;
  async function decorate(){statusButton();const menu=document.getElementById('ogretmenMenuModal');if(!menu)return;const token=sessionStorage.getItem('ing_ogr_token')||'';if(!token)return;if(checkedToken!==token){checkedToken=token;canManage=false;try{const d=await api('ogretmenBilgim',{},token);canManage=d.kullanici==='teacher'&&d.yonetici===true;}catch{}}if(canManage&&!menu.querySelector('[data-tp-manage]')){const b=document.createElement('button');b.type='button';b.className='ogretmen-menu-btn';b.dataset.tpManage='1';b.textContent='🔐 Öğretmen Erişim Onayları';b.onclick=management;menu.querySelector('.rubric-content')?.append(b);}}
+
+ // Private teacher home: separate from the learner home and onboarding tours.
+ function teacherHome(){
+  if(!mode)return;
+  let home=document.getElementById('tpTeacherHome');
+  if(!home){
+   home=document.createElement('main');home.id='tpTeacherHome';home.setAttribute('aria-label','Öğretmen Ana Sayfa');
+   home.innerHTML='<div class="tp-home-inner"><section class="tp-home-hero"><div><h1>Merhaba Öğretmenim! 👋</h1><p>Diji Medu ile sınıfınızda öğrenmeyi daha eğlenceli ve etkili hale getirin.</p></div><img src="discovery-assets/papi-merhaba.webp" alt="Papi öğretmen maskotu"></section><h2>Bugün ne yapmak istersiniz?</h2><p class="tp-home-sub">Aşağıdaki seçeneklerden birini seçerek hemen başlayın.</p><div class="tp-home-actions"><button data-tp-action="study" class="tp-home-card tp-mint"><span class="tp-home-art">📖💡</span><strong>Yeni bir konu anlat</strong><small>Konuyu anlat, örnekleri paylaş ve alıştırmalarla pekiştir.</small><span class="tp-home-arrow">›</span></button><button data-tp-action="games" class="tp-home-card tp-lilac"><span class="tp-home-art">🎮✨</span><strong>Öğrencilerle oyun oyna</strong><small>Konu oyunlarıyla öğrenmeyi daha eğlenceli hale getir.</small><span class="tp-home-arrow">›</span></button><button data-tp-action="oral" class="tp-home-card tp-cream"><span class="tp-home-art">🎙️💬</span><strong>Sözlü yap</strong><small>Öğrencilerine sözlü sorular sor ve anında değerlendir.</small><span class="tp-home-arrow">›</span></button><button data-tp-action="panel" class="tp-home-card tp-blue"><span class="tp-home-art">📊⚙️</span><strong>Öğretmen paneline git</strong><small>Sınıfını yönet, ilerlemeleri gör ve raporları incele.</small><span class="tp-home-arrow">›</span></button></div><h2 class="tp-quick-title">⚡ Hızlı başlangıç</h2><div class="tp-home-shortcuts"><button data-tp-action="panel">👥 <span><strong>Öğrencilerini yönet</strong><small>Öğrenci ekle, listeni düzenle.</small></span> ›</button><button data-tp-action="study">📋 <span><strong>Hazır içerikleri keşfet</strong><small>Sınıfına uygun içerikleri bul.</small></span> ›</button></div></div>';
+   document.body.append(home);
+   home.addEventListener('click',e=>{const b=e.target.closest('[data-tp-action]');if(b)teacherDestination(b.dataset.tpAction);});
+  }
+  const nav=document.getElementById('bottomNavMobile');
+  if(nav&&!nav.querySelector('[data-tp-home-nav]')){
+   const b=document.createElement('button');b.type='button';b.className='bn-item tp-home-nav';b.dataset.tpHomeNav='1';b.innerHTML='<span class="tp-nav-home-icon">🏠</span><span class="bn-label">Ana Sayfa</span>';b.onclick=()=>teacherHomeShow();nav.prepend(b);
+   nav.addEventListener('click',e=>{if(e.target.closest('.bn-item:not([data-tp-home-nav])'))teacherHomeHide();},true);
+  }
+  if(!window.tpHomeInitialized){window.tpHomeInitialized=true;teacherHomeShow();}
+ }
+ function teacherHomeShow(){
+  if(!mode)return;document.getElementById('tpTeacherHome')?.classList.add('is-visible');
+  document.body.classList.add('tp-home-active');
+  document.querySelector('[data-tp-home-nav]')?.classList.add('active');
+ }
+ function teacherHomeHide(){document.getElementById('tpTeacherHome')?.classList.remove('is-visible');document.body.classList.remove('tp-home-active');document.querySelector('[data-tp-home-nav]')?.classList.remove('active');}
+ function teacherDestination(action){
+  teacherHomeHide();
+  if(action==='oral'){window.dmTeacherOral?.open?.();return;}
+  const id=action==='study'?'tab-derscalis':action==='games'?'tab-aktiviteler':'tab-profile-menu';
+  const button=document.querySelector('#bottomNavMobile [data-ekran="'+id+'"]');
+  if(button)button.click();
+  else ({study:window.dersCalisTamEkranAc,games:window.aktivitelerTamEkranAc,panel:window.dmProfileMenuAc})[action]?.();
+  if(action==='panel')setTimeout(()=>document.getElementById('ogretmenMenuModal')?.style.setProperty('display','flex'),80);
+ }
+
  window.dmTeacherPortal={openLogin,openProfile,beforeGame,management};
  if(document.body.dataset.teacherReset==='1'){resetPage();return;}
  if(mode){document.body.classList.add('dm-teacher-portal');window.cikisYap=window.dmTeacherPortalExit;window.siniftaOyunModuAc=()=>{document.getElementById('ogretmenMenuModal')?.style.setProperty('display','none');window.aktivitelerTamEkranAc?.();};}
  let scheduled=false;const observe=()=>{if(scheduled)return;scheduled=true;requestAnimationFrame(()=>{scheduled=false;decorate();});};new MutationObserver(observe).observe(document.body,{childList:true,subtree:true});decorate();wrapGames();
- document.addEventListener('dm:state',wrapGames);document.addEventListener('dm:login',wrapGames);
- let opened=false;const timer=setInterval(()=>{wrapGames();if(mode&&!opened&&document.getElementById('panel-alani')?.style.display==='block'){opened=true;window.aktivitelerTamEkranAc?.();setTimeout(runPending,300);}if(opened)clearInterval(timer);},500);setTimeout(()=>clearInterval(timer),30000);
+ document.addEventListener('dm:state',wrapGames);document.addEventListener('dm:login',wrapGames);if(mode)document.addEventListener('click',()=>{if(window.tpHomeInitialized)teacherHome();}, {capture:false});
+ let opened=false;const timer=setInterval(()=>{wrapGames();if(mode&&!opened&&document.getElementById('panel-alani')?.style.display==='block'){opened=true;teacherHome();setTimeout(runPending,300);}if(opened)clearInterval(timer);},500);setTimeout(()=>clearInterval(timer),30000);
  if(new URLSearchParams(location.search).get('ogretmenGiris')==='1'){window.dmFirstDiscovery?.openLogin?.();openLogin();}
 })();

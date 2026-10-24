@@ -120,6 +120,7 @@ function markDone(id){
  try{window.yoKaydet?.();}catch{}
 }
 function eligibleAccount(){
+ if(window.dmTeacherPortalMode)return false;
  const o=who();if(!o||o.toLowerCase()==='teacher'||window.dmGuestMode)return false;
  if(typeof siniftaOynananOgrenci!=='undefined'&&siniftaOynananOgrenci)return false;
  if(!Y()||(window.yoHazirMi&&!window.yoHazirMi()))return false;
