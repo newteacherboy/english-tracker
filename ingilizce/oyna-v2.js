@@ -136,12 +136,24 @@ function missionsDialog(){
  view.el.addEventListener('click',e=>{const tab=e.target.closest('[data-mission-tab]');if(tab){view.el.querySelectorAll('[data-mission-tab]').forEach(b=>b.setAttribute('aria-selected',String(b===tab)));view.el.querySelectorAll('[data-mission-panel]').forEach(p=>p.hidden=p.dataset.missionPanel!==tab.dataset.missionTab);return;}const task=e.target.closest('[data-rt="task"]');if(task){view.close();runTask(task.dataset.event);}});
 }
 function runTask(ev){if(ev==='review')window.dmWrongWords?.review?.();else if(['game','oyun','yildiz3'].includes(ev))window.aktivitelerTamEkranAc?.();else if(ev==='ders')window.dersCalisTamEkranAc?.();else window.dmLearningRoute.continue();}
-function scene(o={}){latest=o;sceneOwner=who();const steps=o.steps||[],current=Math.max(0,Math.min(steps.length-1,Number(o.current)||0)),learn=purpose()==='independent';return '<div class="rt-root '+(learn?'rt-english':'rt-school')+'" data-route-design="3">'+(learn?'<div class="rt-route-area" role="status">Öğrenme yolun hazırlanıyor…</div>':'')+(learn?'':islandMarkup(steps,current))+'</div>';}
+function scene(o={}){latest=o;sceneOwner=who();const steps=o.steps||[],learn=purpose()==='independent',grade=chosenSchoolGrade(),requested=grade&&!learn?(o.allSteps||steps).findIndex(x=>schoolInfo(x).grade===grade&&x.available&&!x.done):-1,current=Math.max(0,Math.min(steps.length-1,requested>=0?steps.findIndex(x=>x.b===(o.allSteps||steps)[requested].b&&x.d===(o.allSteps||steps)[requested].d):Number(o.current)||0));return '<div class="rt-root '+(learn?'rt-english':'rt-school')+'" data-route-design="3">'+(learn?'<div class="rt-route-area" role="status">Öğrenme yolun hazırlanıyor…</div>':'')+(learn?'':islandMarkup(steps,current))+'</div>';}
 async function paintLearning(root,force=false){const owner=who(),turn=++epoch;try{const info=await window.dmStoryPath.overview({force});if(!root.isConnected||owner!==who()||turn!==epoch||purpose()!=='independent')return;if(!info?.chapters?.length)throw Error('Parkur içeriği henüz hazır değil.');const cur=Math.max(0,info.chapters.findIndex(c=>c.current));const area=root.querySelector('.rt-route-area');root.querySelectorAll('.rt-badge,.rt-banner,.rt-completion-count,.rt-path,.bi-sky').forEach(el=>el.remove());const summary='';if(area)area.outerHTML=summary;else root.insertAdjacentHTML('afterbegin',summary);root.insertAdjacentHTML('beforeend',islandMarkup(info.chapters,cur,true));mountScrollable(root);}catch(e){if(!root.isConnected||owner!==who()||turn!==epoch)return;const area=root.querySelector('.rt-route-area');if(area){area.innerHTML='<p>Öğrenme yolun yüklenemedi.</p><button type="button" data-rt="retry">Tekrar dene</button>';}}}
 let cardStamp='';if(typeof window.setInterval==='function')window.setInterval(()=>{if(document.hidden)return;paintChests();const stamp=JSON.stringify([Y()?.log,Y()?.haftaHedef,Y()?.lig?.xp,tasks()]);if(stamp!==cardStamp){cardStamp=stamp;refreshCards();}},1500);
 function refreshCards(){paintChests();document.querySelectorAll('.mp-missions [data-mission-panel]').forEach(p=>{p.innerHTML=window.dmRouteMissions?.passport(p.dataset.missionPanel)||'';});document.querySelectorAll('.rt-week').forEach(el=>el.outerHTML=weekly());document.querySelectorAll('.rt-tasks').forEach(el=>el.outerHTML=tasks());}
 let routeSaveInProgress=false;
-async function setPurpose(p,{save=true,reopen=true}={}){
+function chosenSchoolGrade(){const n=Number(Y()?.dmSchoolStartGrade);return Number.isInteger(n)&&n>=1&&n<=8?n:0;}
+function selectSchoolGrade(){
+ return new Promise(resolve=>{
+  const {el,close}=dialog('Okul Yolum · Sınıfını seç','<p>Hangi sınıftan başlamak istersin? Seçimin diğer parkurdaki ilerlemeni ve ödüllerini silmez.</p><div class="rt-choices rt-grade-choices">'+Array.from({length:8},(_,i)=>'<button type="button" data-school-grade="'+(i+1)+'">'+(i+1)+'. Sınıf</button>').join('')+'</div><p class="rt-status">Sınıfını daha sonra Parkur Değiştir bölümünden değiştirebilirsin.</p>');
+  let finished=false;
+  const finish=n=>{if(finished)return;finished=true;close();resolve(n);};
+  el.querySelectorAll('[data-school-grade]').forEach(b=>b.onclick=()=>finish(Number(b.dataset.schoolGrade)));
+  el.querySelector('.rt-close').addEventListener('click',()=>finish(null));
+  el.addEventListener('click',e=>{if(e.target===el)finish(null);});
+  el.addEventListener('keydown',e=>{if(e.key==='Escape')finish(null);});
+ });
+}
+async function setPurpose(p,{save=true,reopen=true,schoolGrade=null}={}){
  if(!['school','independent'].includes(p)||routeSaveInProgress)return false;
  const owner=who();
  if(!Y()||!owner){tell('Hesap bilgilerin hazırlanıyor, kısa süre sonra tekrar dene.');return false;}
