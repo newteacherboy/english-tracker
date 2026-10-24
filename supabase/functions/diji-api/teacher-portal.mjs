@@ -1,5 +1,5 @@
 // Every grant is tied to a normal learner; neither role claims nor invite codes grant access.
-export const portalOps=new Set(['teacherPortalApply','teacherPortalStatus','teacherPortalList','teacherPortalDecide','teacherPortalLogin','teacherPortalResetRequest','teacherPortalReset','teacherPortalChangeCode','teacherPortalStudents','teacherPortalParticipant']);
+export const portalOps=new Set(['teacherPortalApply','teacherPortalStatus','teacherPortalList','teacherPortalDecide','teacherPortalIssueCode','teacherPortalLogin','teacherPortalResetRequest','teacherPortalReset','teacherPortalChangeCode','teacherPortalStudents','teacherPortalParticipant']);
 export function portalOperationAllowed(op,b={}) {
  if(['','oturumBilgisi','cikis','sonGirisGuncelle','iletisimDurumu','memberStatus','wordReviewList','wordReviewAnswer','seviyeDurumu','sosyalOgrencilerGetir','kelimeleriGetir','kelimeHavuzuGetir','tumKelimeleriGetir','seviyeOyunOdulu','enerjiDurumuGetir','kelimelerGetir','kategorileriGetir','dogruYanlisSorulariGetir','etkinlikTanimlariGetir','konusmaEsAnlamlarGetir','companionDialogueOpen','companionDialogueAnswer','enerjiDegistir','okumaHiziKaydet','okumaGecmisGetir','dersKonulariGetir','dersKonuDetayGetir','dersTestSonucKaydet','dersBilmiyordumToggle','companionSummary','companionDialogues','dialogueList','dialogueStart','dialogueAnswer','dialogueComplete','reviewList','reviewAnswer','companionReview','companionDialogue','companionDialogueComplete'].includes(op))return true;
  if(op==='ekVeriGetir')return ['yo','seviye','oyun'].includes(b.anahtar);
@@ -18,7 +18,7 @@ export function teacherPortalAPI(d){
   const text='Öğretmen platformu giriş kodun: '+code+'. Bu kodu kimseyle paylaşma. Öğrenci bağlama kodun farklıdır.';
   const out=await db.rpc('dm_teacher_portal_code',{grant_id:r.id,new_digest:await digest(code),mail_title:'Diji-Medu · Özel öğretmen giriş kodun',mail_html:mailShell('Öğretmen erişimin hazır',`<p>${escape(text)}</p><p><a href="${portal}?ogretmenGiris=1">Öğretmen girişini aç</a></p>`),mail_text:text,expected_version:r.version,reset_digest:reset,initial_only:initial});if(out.error)throw out.error;return out.data===true;
  }
- async function ensureCode(studentId){const r=await byStudent(studentId);if(!r||r.state!=='approved'||r.code_digest)return;await codeMail(r,randomCode(),null,true);}
+ async function ensureCode(studentId,{returnCode=false}={}){const r=await byStudent(studentId);if(!r||r.state!=='approved'||r.code_digest)return null;const code=randomCode();const sent=await codeMail(r,code,null,true);return sent&&returnCode?code:null;}
  async function grant(a){if(a?.role!=='teacher'||!a.teacher_portal_access_id)return null;const r=await db.from('teacher_portal_access').select('*').eq('id',a.teacher_portal_access_id).eq('state','approved').maybeSingle();if(r.error)throw r.error;return r.data;}
  async function session(r,role,sid){const token=await issueSession(role,sid,role==='teacher'?r.teacher_id:undefined,{teacher_portal_access_id:r.id,teacher_portal_version:r.version});return token;}
  return {ensureCode,async apply(studentId,teacherId=null){const r=await db.from('teacher_portal_access').upsert({student_id:studentId,...(teacherId?{teacher_id:teacherId}:{})},{onConflict:'student_id',ignoreDuplicates:true});if(r.error)throw r.error;},async handle(op,b,a,method){
@@ -48,10 +48,18 @@ export function teacherPortalAPI(d){
    const r=await db.from('teacher_portal_access').select('*').eq('id',t.data.access_id).maybeSingle();
    return r.data&&await codeMail(r.data,b.code,token)?json({ok:true,mesaj:'Kodun yenilendi. Yeni kod e-postana da gönderilecek.'}):fail('Bağlantı geçersiz veya erişim kapalı.');
   }
-  if(op==='teacherPortalList'||op==='teacherPortalDecide'){
+  if(op==='teacherPortalList'||op==='teacherPortalDecide'||op==='teacherPortalIssueCode'){
    if(!ownerTeacher(a))return fail('Bu bölüm yalnızca teacher hesabına aittir.',403);
    if(op==='teacherPortalDecide'){
-    const r=await db.rpc('dm_teacher_portal_decide',{owner_id:a.teacher_id,grant_id:String(b.id||''),decision:String(b.decision||'')});if(r.error)return fail('Karar kaydedilemedi.',409);await ensureCode(r.data.studentId);return json({ok:true});
+    const r=await db.rpc('dm_teacher_portal_decide',{owner_id:a.teacher_id,grant_id:String(b.id||''),decision:String(b.decision||'')});if(r.error)return fail('Karar kaydedilemedi.',409);const issuedCode=await ensureCode(r.data.studentId,{returnCode:true});return json({ok:true,...(issuedCode?{issuedCode,mailQueued:true}:{})});
+   }
+   if(op==='teacherPortalIssueCode'){
+    const r=await db.from('teacher_portal_access').select('*,students!student_id(email_verified_at)').eq('id',String(b.id||'')).maybeSingle();
+    if(r.error)throw r.error;
+    if(!r.data||r.data.state!=='approved')return fail('Öğretmen onaylı değil.',403);
+    if(!r.data.students?.email_verified_at)return fail('Öğretmen e-posta adresini doğrulamalı.',409);
+    const code=randomCode(),queued=await codeMail(r.data,code);
+    return queued?json({ok:true,issuedCode:code,mailQueued:true}):fail('Kod oluşturulamadı; tekrar deneyebilirsin.',409);
    }
    const r=await db.from('teacher_portal_access').select('id,state,requested_at,code_sent_at,student_id,students!student_id(username,full_name,email,email_verified_at)').order('requested_at',{ascending:false});if(r.error)throw r.error;return json({ok:true,items:r.data});
   }
