@@ -36,18 +36,18 @@ body #tab-dunya .bz-ic:has(.bi-scene)>.rt-top{position:absolute!important;top:ma
 body #tab-dunya .bz-ic:has(.bi-scene)>.rt-top>h1,body #tab-dunya .bz-ic:has(.bi-scene)>.rt-top>.rt-wallet{display:none!important}
 body #tab-dunya .dm-unified-wallet.dm-papi-wallet{display:grid!important;grid-template-columns:34px repeat(4,minmax(0,1fr))!important;gap:1px!important;align-items:center!important;width:100%!important;max-width:100%!important;margin:0!important;padding:4px!important;border:1.5px solid #ffffffc9!important;border-radius:26px!important;background:#dbfaffb5!important;box-shadow:inset 0 2px 4px #fffc,0 3px 10px #126d8530!important;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
 body #tab-dunya .dm-unified-wallet.dm-papi-wallet>button{display:flex!important;align-items:center!important;justify-content:center!important;min-width:0!important;min-height:36px!important;height:36px!important;margin:0!important;padding:2px!important;gap:3px!important;border:0!important;border-radius:20px!important;background:none!important;box-shadow:none!important;color:#073d51!important;font:900 clamp(10px,2.6vw,15px)/1 Nunito,system-ui!important;overflow:visible!important}
-body #tab-dunya .dm-unified-wallet .dm-pw-art{width:25px!important;height:25px!important;flex:none!important;background-size:contain!important;background-position:center!important;background-repeat:no-repeat!important}
-body #tab-dunya .dm-unified-wallet .dm-pw-papi{width:34px!important;height:34px!important;background-image:url('route-assets/bilgi-icons/profile.webp')!important}
-body #tab-dunya .dm-unified-wallet .dm-pw-energy{background-image:url('route-assets/bilgi-icons/energy.svg')!important}
-body #tab-dunya .dm-unified-wallet .dm-pw-gold{background-image:url('route-assets/bilgi-icons/gold.svg')!important}
-body #tab-dunya .dm-unified-wallet .dm-pw-xp{background-image:url('route-assets/bilgi-icons/xp.svg')!important}
-body #tab-dunya .dm-unified-wallet .dm-pw-time{background-image:url('route-assets/bilgi-icons/time.svg')!important}
+body #tab-dunya .dm-unified-wallet .dm-pw-art{width:25px!important;height:25px!important;flex:none!important;background-size:500% auto!important;background-position:0% 50%!important;background-repeat:no-repeat!important}
+body #tab-dunya .dm-unified-wallet .dm-pw-papi{width:34px!important;height:34px!important;background-image:url('route-assets/compact-wallet-atlas-v1.webp')!important;background-position:0% 50%!important}
+body #tab-dunya .dm-unified-wallet .dm-pw-energy{background-image:url('route-assets/compact-wallet-atlas-v1.webp')!important;background-position:25% 50%!important}
+body #tab-dunya .dm-unified-wallet .dm-pw-gold{background-image:url('route-assets/compact-wallet-atlas-v1.webp')!important;background-position:50% 50%!important}
+body #tab-dunya .dm-unified-wallet .dm-pw-xp{background-image:url('route-assets/compact-wallet-atlas-v1.webp')!important;background-position:75% 50%!important}
+body #tab-dunya .dm-unified-wallet .dm-pw-time{background-image:url('route-assets/compact-wallet-atlas-v1.webp')!important;background-position:100% 50%!important}
 body #tab-dunya .dm-unified-wallet .dm-pw-copy{display:flex!important;min-width:0!important;align-items:center!important;justify-content:center!important;padding:0!important;gap:0!important}
 body #tab-dunya .dm-unified-wallet [data-pw-value]{font:inherit!important;letter-spacing:-.3px!important;white-space:nowrap!important}
 body #tab-dunya .dm-unified-wallet [data-pw-minutes]{display:none!important}
 body #tab-dunya .dm-unified-wallet [data-pw=energy]::after,body #tab-dunya .dm-unified-wallet [data-pw=gold]::after{content:'+';display:grid;place-items:center;flex:none;width:12px;height:12px;border:1px solid #bcffe1;border-radius:50%;background:#13ad70;color:white;font:900 11px/1 system-ui}
 /* Six actual destination buttons; independent icon files can never reveal neighbouring pixels. */
-body:has(#tab-dunya.active .bi-scene) #bottomNavMobile#bottomNavMobile.bottom-nav-mobile{position:fixed!important;display:flex!important;left:50%!important;right:auto!important;bottom:max(10px,var(--bi-safe-bottom))!important;transform:translateX(-50%)!important;width:min(calc(100% - 20px),640px)!important;max-width:640px!important;height:74px!important;min-height:74px!important;margin:0!important;padding:4px!important;gap:2px!important;border:1.5px solid #ffffffe8!important;border-radius:25px!important;background:linear-gradient(110deg,#d7ffe5b3,#c7f7ffb3)!important;box-shadow:inset 0 2px 5px #fffc,0 5px 16px #0b596e30!important;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);z-index:10002!important}
+body:has(#tab-dunya.active .bi-scene) #bottomNavMobile#bottomNavMobile.bottom-nav-mobile{position:fixed!important;display:flex!important;left:50%!important;right:auto!important;bottom:max(10px,var(--bi-safe-bottom))!important;transform:translateX(-50%)!important;width:min(calc(100% - 20px),640px)!important;max-width:640px!important;height:74px!important;min-height:74px!important;margin:0!important;padding:4px!important;gap:2px!important;border:1.5px solid #ffffffe8!important;border-radius:25px!important;background:linear-gradient(110deg,#d7ffe5b3,#c7f7ffb3)!important;box-shadow:inset 0 2px 5px #fffc,0 5px 16px #0b596e30!important;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);z-index:100000020!important}
 body:has(#tab-dunya.active .bi-scene) #bottomNavMobile#bottomNavMobile .bn-item{flex:1!important;display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;min-width:0!important;height:62px!important;min-height:62px!important;padding:2px!important;margin:0!important;gap:2px!important;border:1px solid transparent!important;border-radius:18px!important;background:none!important;box-shadow:none!important;transform:none!important;color:#073d51!important}
 body:has(#tab-dunya.active .bi-scene) #bottomNavMobile#bottomNavMobile .bn-item.active{background:#c0ffe4ac!important;border-color:#a5fff4!important;box-shadow:inset 0 1px 3px #fff,0 0 9px #6bffdd90!important}
 body:has(#tab-dunya.active .bi-scene) #bottomNavMobile#bottomNavMobile .bn-icon{display:block!important;width:42px!important;height:42px!important;animation:none!important;transform:none!important}
@@ -76,7 +76,7 @@ body:has(#tab-dunya.active .bi-scene) #bottomNavMobile#bottomNavMobile .bn-icon{
 @media(max-height:650px) and (min-aspect-ratio:1/1){@layer bilgiIslands{
 body #tab-dunya .bz-ic:has(.bi-scene)>.rt-top{left:14px!important;transform:none!important;width:min(270px,34vw)!important}
 body #tab-dunya .dm-unified-wallet.dm-papi-wallet{grid-template-columns:24px repeat(4,minmax(0,1fr))!important;padding:3px!important}
-body #tab-dunya .dm-unified-wallet .dm-pw-papi{width:24px!important;height:24px!important}
+body #tab-dunya .dm-unified-wallet .dm-pw-papi{width:24px!important;height:24px!important;background-position:0% 50%!important}
 body #tab-dunya .dm-unified-wallet .dm-pw-art:not(.dm-pw-papi){width:18px!important;height:18px!important}
 body #tab-dunya .dm-unified-wallet.dm-papi-wallet>button{font-size:10px!important;gap:1px!important}
 body #tab-dunya .dm-unified-wallet [data-pw=energy]::after,body #tab-dunya .dm-unified-wallet [data-pw=gold]::after{display:none}
@@ -91,7 +91,7 @@ body:has(#tab-dunya.active .bi-scene) #bottomNavMobile#bottomNavMobile .bn-label
 }
 @media(max-width:360px){@layer bilgiIslands{
 body #tab-dunya .dm-unified-wallet.dm-papi-wallet{grid-template-columns:28px repeat(4,minmax(0,1fr))!important}
-body #tab-dunya .dm-unified-wallet .dm-pw-papi{width:28px!important;height:28px!important}
+body #tab-dunya .dm-unified-wallet .dm-pw-papi{width:28px!important;height:28px!important;background-position:0% 50%!important}
 body #tab-dunya .dm-unified-wallet .dm-pw-art:not(.dm-pw-papi){width:21px!important;height:21px!important}
 body #tab-dunya .dm-unified-wallet [data-pw=energy]::after,body #tab-dunya .dm-unified-wallet [data-pw=gold]::after{display:none}
 }}
@@ -102,3 +102,6 @@ body #tab-dunya .dm-unified-wallet [data-pw-value]{font-size:9px!important}
 @media(max-height:650px) and (max-aspect-ratio:1/1){@layer bilgiIslands{
 .bi-scene{--bi-world-top:calc(var(--bi-safe-top) + 12px)}
 }}
+
+/* Profile drawer retains its established dock layer; quizzes stay above the dock. */
+@layer bilgiIslands { body:has(#tab-dunya.active .bi-scene):has(#rtProfileBackdrop) #bottomNavMobile#bottomNavMobile.bottom-nav-mobile{z-index:2147483550!important} }
