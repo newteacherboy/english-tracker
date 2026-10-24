@@ -128,16 +128,20 @@ function eligibleAccount(){
 }
 function currentPage(){for(const p of PAGES){if([...document.querySelectorAll(p.sel)].some(visible))return p;}return null;}
 function calm(page){
+ // A study overlay may be allowed for the tour, but announcements never are.
+ if([...document.querySelectorAll('#duyuruOverlay,#duyuruGecmisModal,#dmGoalAnnouncement,#dmWeeklyPanel,#dmLevelUp,#dmNudge,.od-perde,.kr-perde,.dv-perde,.cb-kart,.bk-kart,.yo-davet,.tv-kart,.sa-perde,.cog-perde,[role="dialog"],[aria-modal="true"]')].some(e=>visible(e)&&!e.classList.contains('dm-papi-held')))return false;
+ if(window.dmPapiNotices?.blocked?.())return false;
  if(document.hidden||window.dmPapiIntro?.active?.()||document.getElementById('dmPapiTour'))return false;
  const allowed=page.allow?[...document.querySelectorAll(page.allow)]:[];
  return ![...document.querySelectorAll(BLOCKERS)].some(e=>visible(e)&&!allowed.some(a=>a===e||a.contains(e)||e.contains(a)));
 }
 function start(tour,{fromTab=false}={}){
- markDone(tour.id);
  let steps=tour.steps();
  // Sekmeden gelince giriş kartı ("Başlayalım / Geç") atlanır; doğrudan ilk bölüm gösterilir.
  if(fromTab&&steps[0]?.center)steps=steps.slice(1);
- window.dmPapiIntro?.run(steps,{label:'Papi ile '+tour.title+' tanıtımı',onClose:()=>{try{tour.after?.();}catch{}}});
+ const started=window.dmPapiIntro?.run(steps,{label:'Papi ile '+tour.title+' tanıtımı',onClose:()=>{try{tour.after?.();}catch{}}});
+ if(started)markDone(tour.id);
+ return !!started;
 }
 let owner='',last=null,candidate=null,since=0;
 function tick(){
@@ -155,7 +159,7 @@ function tick(){
  if(!calm(candidate)){since=Date.now();return;}
  if(Date.now()-since<700)return; // Sayfa çizilsin.
  const tour=TOURS.find(t=>t.id===candidate.id);candidate=null;
- if(tour&&!done(tour.id))start(tour,{fromTab:true});
+ if(tour&&!done(tour.id)&&!start(tour,{fromTab:true})){candidate=page;since=Date.now();}
 }
 setInterval(tick,350);
 // İlk tanıtım bittiğinde öğrenci o an hangi sayfadaysa o sayfa "ilk açılış" sayılır.
