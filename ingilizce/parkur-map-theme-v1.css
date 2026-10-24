@@ -444,3 +444,23 @@ body.dm-parkur-open #bzParkur .dm-parkur-top-status .dm-adventure-level{min-widt
 body.dm-parkur-open #bzParkur .dm-parkur-top-status .dm-adventure-level>span{display:block;white-space:nowrap!important;overflow:visible!important;font-variant-numeric:tabular-nums;letter-spacing:0!important;font-size:clamp(12px,3vw,16px)!important;line-height:1.15!important}
 body.dm-parkur-open #bzParkur .dm-adventure-profile{flex:0 0 30px}
 @media(max-width:390px){body.dm-parkur-open #bzParkur .dm-adventure-brand-row{gap:3px!important}body.dm-parkur-open #bzParkur .dm-parkur-brand{font-size:clamp(15px,4vw,20px)!important}body.dm-parkur-open #bzParkur .dm-parkur-top-status .dm-adventure-level{min-width:70px!important;padding:4px 5px!important}body.dm-parkur-open #bzParkur .dm-parkur-top-status button{font-size:11px!important}}
+
+
+/* DIJI_TABLET_LAYOUT_20261024 */
+/* Tablet only: preserve phone layout and existing artwork. */
+@media (min-width:700px) and (max-width:1366px) and (pointer:coarse) {
+ body.dm-parkur-open #bzParkur>.bz-ic {
+  box-sizing:border-box; width:min(100%,900px); max-width:900px;
+  margin-inline:auto; min-width:0;
+ }
+ body.dm-parkur-open #bzParkur .dm-parkur-head,
+ body.dm-parkur-open #bzParkur .dm-parkur-scroll {min-width:0;max-width:100%}
+ body.dm-parkur-open #bzParkur .dm-parkur-wallet button {min-width:0}
+ body.dm-parkur-open #bzParkur .dm-parchment-map {max-width:100%}
+ body.dm-parkur-gates #bzParkur>.bz-ic {box-sizing:border-box;max-width:900px;margin-inline:auto}
+}
+@media (min-width:700px) and (max-width:1366px) and (pointer:coarse) and (orientation:landscape) {
+ body.dm-parkur-open #bzParkur>.bz-ic {max-width:min(94vw,1040px)}
+ body.dm-parkur-open #bzParkur .dm-parkur-head {padding-top:6px}
+}
+/* END_DIJI_TABLET_LAYOUT_20261024 */
