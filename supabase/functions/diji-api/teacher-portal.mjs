@@ -1,6 +1,6 @@
 // Every grant is tied to a normal learner; neither role claims nor invite codes grant access.
 // Private teacher codes use six digits and rate-limited authentication; prior codes require rotation.
-export const portalOps=new Set(['teacherPortalApply','teacherPortalStatus','teacherPortalList','teacherPortalDecide','teacherPortalIssueCode','teacherPortalLogin','teacherPortalResetRequest','teacherPortalReset','teacherPortalChangeCode','teacherPortalStudents','teacherPortalParticipant']);
+export const portalOps=new Set(['teacherPortalApply','teacherPortalStatus','teacherPortalList','teacherPortalDecide','teacherPortalIssueCode','teacherPortalLogin','teacherPortalResetRequest','teacherPortalReset','teacherPortalChangeCode','teacherPortalAppearance','teacherPortalStudents','teacherPortalParticipant']);
 export function portalOperationAllowed(op,b={}) {
  if(['','oturumBilgisi','cikis','sonGirisGuncelle','iletisimDurumu','memberStatus','wordReviewList','wordReviewAnswer','seviyeDurumu','sosyalOgrencilerGetir','kelimeleriGetir','kelimeHavuzuGetir','tumKelimeleriGetir','seviyeOyunOdulu','enerjiDurumuGetir','kelimelerGetir','kategorileriGetir','dogruYanlisSorulariGetir','etkinlikTanimlariGetir','konusmaEsAnlamlarGetir','companionDialogueOpen','companionDialogueAnswer','enerjiDegistir','okumaHiziKaydet','okumaGecmisGetir','dersKonulariGetir','dersKonuDetayGetir','dersTestSonucKaydet','dersBilmiyordumToggle','companionSummary','companionDialogues','dialogueList','dialogueStart','dialogueAnswer','dialogueComplete','reviewList','reviewAnswer','companionReview','companionDialogue','companionDialogueComplete'].includes(op))return true;
  if(op==='ekVeriGetir')return ['yo','seviye','oyun'].includes(b.anahtar);
@@ -74,6 +74,23 @@ export function teacherPortalAPI(d){
    if(!/^\d{6}$/.test(String(b.code||''))||!/^\d{6}$/.test(String(b.currentCode||''))||await digest(b.currentCode)!==r.code_digest)return fail('Mevcut kod ve 6 haneli yeni kod gerekli.',403);
    if(b.code===b.currentCode)return fail('Yeni kod mevcut koddan farklı olmalı.');
    return await codeMail(r,b.code)?json({ok:true,mesaj:'Kodun değiştirildi. Yeni kodla tekrar giriş yap.'}):fail('Kod değiştirilemedi.',409);
+  }
+  if(op==='teacherPortalAppearance'){
+   // Personal avatar only. Never grant the preview student access to the teacher's wallet or learning data.
+   const record=await db.from('extra_data').select('value').eq('student_id',r.student_id).eq('key_name','yo').maybeSingle();
+   if(record.error)throw record.error;
+   let profile=record.data?.value||{};
+   if(typeof profile==='string'){try{profile=JSON.parse(profile);}catch{profile={};}}
+   if(!profile||typeof profile!=='object'||Array.isArray(profile))profile={};
+   if(b.save!==true)return json({ok:true,appearance:profile.karakter||null,emailVerified:true});
+   const incoming=b.appearance;
+   if(!incoming||typeof incoming!=='object'||Array.isArray(incoming)||!['k','e'].includes(incoming.cins)||!incoming.s||typeof incoming.s!=='object'||Array.isArray(incoming.s)||JSON.stringify(incoming.s).length>4000)return fail('Geçerli karakter seçimi gerekli.',400);
+   const safe={};for(const [key,val] of Object.entries(incoming.s)){if(!/^[a-zA-Z0-9_-]{1,40}$/.test(key))continue;if(typeof val==='string'&&val.length<=120)safe[key]=val;}
+   const old=profile.karakter&&typeof profile.karakter==='object'?profile.karakter:{};
+   profile.karakter={...old,cins:incoming.cins,s:{...(old.s||{}),...safe}};
+   const up=await db.from('extra_data').upsert({student_id:r.student_id,key_name:'yo',value:profile,updated_at:new Date().toISOString()},{onConflict:'student_id,key_name'});
+   if(up.error)throw up.error;
+   return json({ok:true,appearance:profile.karakter});
   }
   if(op==='teacherPortalStudents'){
    const out=await db.from('students').select('id,username,full_name,class_no').eq('teacher_id',r.teacher_id).eq('status','approved').is('frozen_at',null).order('username');if(out.error)throw out.error;
