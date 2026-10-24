@@ -1,6 +1,6 @@
 // Every grant is tied to a normal learner; neither role claims nor invite codes grant access.
 // Private teacher codes use six digits and rate-limited authentication; prior codes require rotation.
-export const portalOps=new Set(['teacherPortalApply','teacherPortalStatus','teacherPortalList','teacherPortalDecide','teacherPortalIssueCode','teacherPortalLogin','teacherPortalResetRequest','teacherPortalReset','teacherPortalChangeCode','teacherPortalAppearance','teacherPortalStudents','teacherPortalParticipant']);
+export const portalOps=new Set(['teacherPortalApply','teacherPortalStatus','teacherPortalList','teacherPortalDecide','teacherPortalIssueCode','teacherPortalLogin','teacherPortalResetRequest','teacherPortalReset','teacherPortalChangeCode','teacherPortalAppearance','teacherPortalSyncStudents','teacherPortalStudents','teacherPortalParticipant']);
 export function portalOperationAllowed(op,b={}) {
  if(['','oturumBilgisi','cikis','sonGirisGuncelle','iletisimDurumu','memberStatus','wordReviewList','wordReviewAnswer','seviyeDurumu','sosyalOgrencilerGetir','kelimeleriGetir','kelimeHavuzuGetir','tumKelimeleriGetir','seviyeOyunOdulu','enerjiDurumuGetir','kelimelerGetir','kategorileriGetir','dogruYanlisSorulariGetir','etkinlikTanimlariGetir','konusmaEsAnlamlarGetir','companionDialogueOpen','companionDialogueAnswer','enerjiDegistir','okumaHiziKaydet','okumaGecmisGetir','dersKonulariGetir','dersKonuDetayGetir','dersTestSonucKaydet','dersBilmiyordumToggle','companionSummary','companionDialogues','dialogueList','dialogueStart','dialogueAnswer','dialogueComplete','reviewList','reviewAnswer','companionReview','companionDialogue','companionDialogueComplete'].includes(op))return true;
  if(op==='ekVeriGetir')return ['yo','seviye','oyun'].includes(b.anahtar);
@@ -91,6 +91,16 @@ export function teacherPortalAPI(d){
    const up=await db.from('extra_data').upsert({student_id:r.student_id,key_name:'yo',value:profile,updated_at:new Date().toISOString()},{onConflict:'student_id,key_name'});
    if(up.error)throw up.error;
    return json({ok:true,appearance:profile.karakter});
+  }
+  if(op==='teacherPortalSyncStudents'){
+   const code=String(b.code||'').trim().toUpperCase();
+   if(!/^[A-Z0-9]{1,10}$/.test(code))return fail('Geçerli öğretmen bağlantı kodunu gir.',400);
+   const teacher=await db.from('teachers').select('id,invite_code,active').eq('id',r.teacher_id).maybeSingle();
+   if(teacher.error)throw teacher.error;
+   if(!teacher.data?.active||String(teacher.data.invite_code||'').toUpperCase()!==code)return fail('Bu kod giriş yaptığın öğretmen hesabına ait değil.',403);
+   const linked=await db.from('students').select('id').eq('teacher_id',r.teacher_id).eq('role','student').eq('status','approved').is('frozen_at',null);
+   if(linked.error)throw linked.error;
+   return json({ok:true,count:(linked.data||[]).length});
   }
   if(op==='teacherPortalStudents'){
    const out=await db.from('students').select('id,username,full_name,class_no').eq('teacher_id',r.teacher_id).eq('status','approved').is('frozen_at',null).order('username');if(out.error)throw out.error;
