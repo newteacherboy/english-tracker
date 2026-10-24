@@ -16,3 +16,12 @@ test('Preview supports tablet orientations',()=>{
  for(const screen of ['768,1024','1024,768','800,1280','1280,800'])
   assert.ok(html.includes('size('+screen+')'),screen);
 });
+
+test('Production parkur CSS scopes tablet override to coarse devices',()=>{
+ const css=fs.readFileSync(path.join(base,'parkur-map-theme-v1.css'),'utf8');
+ const block=css.split('/* DIJI_TABLET_LAYOUT_20261024 */')[1]?.split('/* END_DIJI_TABLET_LAYOUT_20261024 */')[0];
+ assert.ok(block,'tablet block must exist');
+ assert.match(block, /pointer:coarse/);
+ assert.match(block, /min-width:700px/);
+ assert.ok(!block.includes('display:none'),'do not hide controls');
+});
