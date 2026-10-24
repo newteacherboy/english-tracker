@@ -90,6 +90,19 @@
     badge.onclick=e=>{e.preventDefault();e.stopImmediatePropagation();window.dmTeacherPortalExit?.();};
   }
  }
+ function teacherDock(){
+  if(!mode)return;
+  const native=document.getElementById('bottomNavMobile');
+  if(native)native.style.setProperty('display','none','important');
+  let dock=document.getElementById('tpTeacherDock');
+  if(!dock){
+   dock=document.createElement('nav');dock.id='tpTeacherDock';dock.setAttribute('aria-label','Öğretmen menüsü');
+   dock.innerHTML='<button type="button" data-route="home"><span>🏠</span>Ana Sayfa</button><button type="button" data-route="games"><span>🎮</span>Oyunlar</button><button type="button" data-route="study"><span>📖</span>Ders Çalış</button><button type="button" data-route="panel"><span>🎓</span>Öğretmen Paneli</button>';
+   document.body.append(dock);
+   dock.addEventListener('click',e=>{const b=e.target.closest('[data-route]');if(!b)return;e.preventDefault();const route=b.dataset.route;if(route==='home')teacherHomeShow();else if(route==='panel')teacherDashboardShow();else teacherDestination(route);});
+  }
+  dock.querySelectorAll('[data-route]').forEach(b=>b.classList.toggle('active',b.dataset.route===(document.body.classList.contains('tp-dash-active')?'panel':document.body.classList.contains('tp-home-active')?'home':'other')));
+ }
  function teacherHome(){
   if(!mode)return;
   let home=document.getElementById('tpTeacherHome');
@@ -99,6 +112,7 @@
    document.body.append(home);
    home.addEventListener('click',e=>{const b=e.target.closest('[data-tp-action]');if(b)teacherDestination(b.dataset.tpAction);});
   }
+  teacherDock();
   const nav=document.getElementById('bottomNavMobile');
   // Profile settings are now under the Teacher Panel sidebar.
   nav?.querySelectorAll('.bn-item').forEach(item=>{if((/profil/i.test(item.textContent||'')||item.dataset.ekran==='tab-profil'||item.dataset.ekran==='tab-profile-menu')&&!/öğretmen paneli/i.test(item.textContent||'')&&!item.dataset.tpHomeNav)item.remove();});
@@ -163,7 +177,7 @@
     hero.replaceWith(badge);
    }
   }
-  panel.classList.add('is-visible');document.body.classList.add('tp-dash-active');
+  panel.classList.add('is-visible');document.body.classList.add('tp-dash-active');teacherDock();
   document.querySelector('[data-tp-home-nav]')?.classList.remove('active');
   document.querySelector('#bottomNavMobile [data-tp-panel-nav]')?.classList.add('active');
  }
@@ -195,13 +209,13 @@
  function teacherHomeShow(){
   teacherDashboardHide();
   if(!mode)return;document.getElementById('tpTeacherHome')?.classList.add('is-visible');
-  document.body.classList.add('tp-home-active');document.documentElement.classList.remove('tp-home-starting');
+  document.body.classList.add('tp-home-active');document.documentElement.classList.remove('tp-home-starting');teacherDock();
   document.querySelector('[data-tp-home-nav]')?.classList.add('active');
  }
  function teacherHomeHide(){document.getElementById('tpTeacherHome')?.classList.remove('is-visible');document.body.classList.remove('tp-home-active');document.querySelector('[data-tp-home-nav]')?.classList.remove('active');}
  function teacherDestination(action){
   if(action==='panel'){teacherDashboardShow();return;}
-  teacherHomeHide();
+  teacherHomeHide();teacherDock();
   if(action==='oral'){window.dmTeacherOral?.open?.();return;}
   const id=action==='study'?'tab-derscalis':action==='games'?'tab-aktiviteler':'tab-profile-menu';
   const launch=action==='study'?window.dersCalisTamEkranAc:window.aktivitelerTamEkranAc;
@@ -219,6 +233,6 @@
   const bootHome=()=>{try{teacherHome();if(!document.body.classList.contains('tp-dash-active'))teacherHomeShow();}catch(err){console.error('[Teacher home]',err);}};
   if(document.body)bootHome();else document.addEventListener('DOMContentLoaded',bootHome,{once:true});
  }
- let opened=false;const timer=setInterval(()=>{wrapGames();if(mode&&!opened&&document.body){opened=true;teacherHome();suppressPreviewPrompts();prepareTeacherAppearance();sessionStorage.removeItem('dm_tp_pending');}if(opened)clearInterval(timer);},500);setTimeout(()=>clearInterval(timer),30000);
+ let opened=false;const timer=setInterval(()=>{wrapGames();if(mode&&!opened&&document.body){opened=true;teacherHome();teacherDock();suppressPreviewPrompts();prepareTeacherAppearance();sessionStorage.removeItem('dm_tp_pending');}if(opened)clearInterval(timer);},500);setTimeout(()=>clearInterval(timer),30000);
  if(new URLSearchParams(location.search).get('ogretmenGiris')==='1'){window.dmFirstDiscovery?.openLogin?.();openLogin();}
 })();
