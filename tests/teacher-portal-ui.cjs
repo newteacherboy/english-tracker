@@ -7,7 +7,7 @@ const fs=require('fs'),http=require('http'),path=require('path'),assert=require(
   const context=await browser.newContext({viewport:{width,height},serviceWorkers:'block'}),page=await context.newPage(),errors=[];page.on('pageerror',e=>errors.push(e.message));let loginCalls=0;
   await context.route('https://**/*',async route=>{const req=route.request(),u=new URL(req.url());if(!u.hostname.includes('supabase.co'))return route.abort();const b=JSON.parse(req.postData()||'{}'),actor=(b.t||u.searchParams.get('t'))==='alice-secret'?'Alice':'Önizleme · Öğretmen Denemesi a1b2c3d4',op=b.islem||u.searchParams.get('islem')||'';let d={ok:true};
    if(u.pathname.endsWith('/settings'))d={external:{google:false}};
-   else if(op==='teacherPortalLogin'){assert.equal(b.code,'123456789012');loginCalls++;d={ok:true,token:'teacher-secret',name:'TeacherOne'};}
+   else if(op==='teacherPortalLogin'){assert.equal(b.code,'123456');loginCalls++;d={ok:true,token:'teacher-secret',name:'TeacherOne'};}
    else if(op==='teacherPortalParticipant'){assert.equal(b.t,'teacher-secret');d=b.preview?{ok:true,token:'preview-secret',name:'Önizleme · Öğretmen Denemesi a1b2c3d4',preview:true}:{ok:true,token:'alice-secret',name:'Alice',preview:false};}
    else if(op==='oturumBilgisi')d={ok:true,rol:'ogrenci',ogrenci:actor,expiresAt:'2099-01-01'};
    else if(op==='memberStatus')d={ok:true,emailVerified:true,hasPlacement:true};
@@ -33,7 +33,7 @@ const fs=require('fs'),http=require('http'),path=require('path'),assert=require(
   const dialog=page.locator('.tp-card');await dialog.getByLabel('Öğretmen giriş kodun').fill('123');await dialog.getByRole('button',{name:'Giriş Yap',exact:true}).click();assert.equal(loginCalls,0,'incomplete code cannot submit');
   await dialog.getByRole('button',{name:'Kodumu Unuttum'}).click();await page.getByLabel('Kayıtlı e-posta adresin').waitFor();await page.locator('.tp-close').click();await teacher.waitFor({state:'visible'});
   await page.evaluate(()=>{localStorage.setItem('ing_token','personal-secret');localStorage.setItem('ing_aktifOgrenci','PersonalOwner');localStorage.setItem('personal-wallet','unchanged');});
-  await page.evaluate(()=>window.dmTeacherPortal.openLogin());await page.getByLabel('Öğretmen giriş kodun').fill('123456789012');await page.getByRole('button',{name:'Giriş Yap',exact:true}).click();await page.waitForURL('**/?ogretmen=1');
+  await page.evaluate(()=>window.dmTeacherPortal.openLogin());await page.getByLabel('Öğretmen giriş kodun').fill('123456');await page.getByRole('button',{name:'Giriş Yap',exact:true}).click();await page.waitForURL('**/?ogretmen=1');
   await page.waitForFunction(()=>window.dmTeacherPortalMode===true);assert.equal(await page.evaluate(()=>localStorage.getItem('ing_token')),'preview-secret');
   const check=await context.newPage();await check.goto(origin+'/ingilizce/ogretmen-kod-yenile.html#token=x');assert.equal(await check.evaluate(()=>localStorage.getItem('ing_token')),'personal-secret');assert.equal(await check.evaluate(()=>localStorage.getItem('personal-wallet')),'unchanged');await check.close();
   await page.waitForFunction(()=>document.querySelectorAll('#bottomNavMobile .bn-item').length===4,{timeout:20000});
