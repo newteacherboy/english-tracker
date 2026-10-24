@@ -19,6 +19,33 @@ const store={
 const esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const visible=e=>!!e&&e.isConnected&&e.getClientRects().length>0&&getComputedStyle(e).visibility!=='hidden'&&getComputedStyle(e).display!=='none';
 const wait=ms=>new Promise(r=>setTimeout(r,ms));
+/* Small synthesized cues: no external sound files, downloads or reward side effects. */
+let audioCtx=null,activeVoices=[];
+function soundAllowed(){
+ try{return window.dmSoundEnabled!==false&&window.dmSesAcik!==false&&localStorage.getItem('dm_sound_muted')!=='1'&&localStorage.getItem('sesKapali')!=='1';}
+ catch{return true;}
+}
+function cue(kind){
+ if(!soundAllowed()||document.hidden)return;
+ const C=window.AudioContext||window.webkitAudioContext;if(!C)return;
+ try{
+  if(!audioCtx)audioCtx=new C();
+  if(audioCtx.state==='suspended')audioCtx.resume().catch(()=>{});
+  if(audioCtx.state!=='running')return; // respect mobile autoplay restrictions
+  activeVoices.forEach(v=>{try{v.stop();}catch{}});activeVoices=[];
+  const notes=kind==='welcome'?[523,659,784]:kind==='finish'?[523,659,784,1047]:kind==='back'?[520,390]:kind==='select'?[660,880]:kind==='discovery'?[440,587,740]:[620,790];
+  const t=audioCtx.currentTime;
+  notes.forEach((hz,i)=>{
+   const osc=audioCtx.createOscillator(),gain=audioCtx.createGain(),start=t+i*.065;
+   osc.type=kind==='discovery'?'sine':'triangle';osc.frequency.setValueAtTime(hz,start);
+   gain.gain.setValueAtTime(.0001,start);gain.gain.exponentialRampToValueAtTime(.035,start+.012);
+   gain.gain.exponentialRampToValueAtTime(.0001,start+.145);
+   osc.connect(gain).connect(audioCtx.destination);osc.start(start);osc.stop(start+.15);activeVoices.push(osc);
+   osc.onended=()=>{activeVoices=activeVoices.filter(v=>v!==osc);osc.disconnect();gain.disconnect();};
+  });
+ }catch{} // audio must never block onboarding
+}
+function stepCue(step,i){return step.sound|| (i===0?'welcome':i===list.length-1?'finish':/Parkur|Oyunlar|Mağaza/.test(step.title||'')?'discovery':'next');}
 const BLOCKERS='#dmRouteChoice,#dmCharacterBuilder,.ka-perde,#dmPlacementExam,#dmStartPlacement,#dmStartingChoice,#dmPlacementInvite,#dmEmailVerification,#dmEmailGuide,#bzPerde,#dmStoryLesson,#mlThemeList,.game-modal-overlay,.dc-fullscreen-overlay.active,#yoModal.acik,#genelSonucOverlay.acik,.sa-perde,.rt-profile-backdrop,#dmBagPage,#yardimModal[style*="flex"]';
 const tab=id=>'#bottomNavMobile [data-ekran="'+id+'"]';
 
@@ -65,7 +92,7 @@ function run(steps,opts={}){
 }
 function close(reason){
  if(!root)return;removeEventListener('resize',place);visualViewport?.removeEventListener('resize',place);
- root.remove();root=null;serial++;
+ activeVoices.forEach(v=>{try{v.stop();}catch{}});activeVoices=[];root.remove();root=null;serial++;
  const done=options.onClose;options={};
  try{done?.(reason);}catch(e){console.warn('[Papi tanıtım]',e);}
  if(!document.querySelector('.rt-profile-backdrop'))before?.focus?.({preventScroll:true});
@@ -87,14 +114,14 @@ async function show(i){
   if(!el&&step.optional!==false){list.splice(i,1);return i<list.length?show(i):finish(list[i-1]);}
   el?.scrollIntoView?.({block:'center',inline:'nearest'});await wait(260);if(mine!==serial||!isOpen())return;
  }
- root.classList.remove('is-busy');paint();
+ root.classList.remove('is-busy');paint();cue(stepCue(step,i));
 }
 function next(i){
  const n=i+1;if(n>=list.length)return finish(list[i]);
  show(n);
 }
 function finish(step){
- const action=step?.finishAction;close('done');
+ const action=step?.finishAction;close('done');cue('finish');
  if(action==='start'){const go=[...document.querySelectorAll('.rt-start')].find(visible);if(go)go.click();else window.dunyaAc?.();}
 }
 function paint(){
@@ -117,7 +144,7 @@ function paint(){
    '<p>'+esc(step.text)+'</p>'+(step.tip?'<span class="dm-intro-tip">'+esc(step.tip)+'</span>':'')+
    '<div class="dm-intro-foot"><div class="dm-intro-dots" aria-hidden="true">'+dots+'</div><button type="button" class="dm-intro-link" data-intro-skip>Geç</button><button type="button" class="dm-intro-primary" data-intro-next>'+esc(nextLabel)+'</button></div>';
  }
- card.querySelector('[data-intro-next]').onclick=()=>next(index);
+ card.querySelector('[data-intro-next]').onclick=()=>{cue('select');next(index);};
  card.querySelector('[data-intro-skip]').onclick=()=>close('skip');
  place();
  card.querySelector('[data-intro-next]').focus({preventScroll:true});
