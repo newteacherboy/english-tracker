@@ -1,5 +1,5 @@
-/* Isolated Diji-Medu tablet layout test. Import AFTER normal styles. */
-@media (min-width:700px) and (pointer:coarse) {
+/* ISOLATED preview branch only. Desktop browsers can emulate tablet sizes. Do not merge into production without target validation. */
+@media (min-width:700px) and (max-width:1366px) {
  body.dm-parkur-open #bzParkur,
  body.dm-parkur-gates #bzParkur {width:100%;min-width:0}
  body.dm-parkur-open #bzParkur>.bz-ic,
@@ -20,7 +20,7 @@
   transform:translateX(-50%)!important
  }
 }
-@media (min-width:700px) and (max-height:850px) and (pointer:coarse){
+@media (min-width:700px) and (max-width:1366px) and (max-height:850px){
  body.dm-parkur-open .dm-parkur-head {padding-top:6px}
  body.dm-parkur-open .dm-map-controls {padding-top:2px!important;padding-bottom:5px!important}
  body.dm-parkur-open .dm-parkur-scroll {min-height:0}
