@@ -1,3 +1,4 @@
+import {teacherPortalAPI,portalOps,portalOperationAllowed} from './teacher-portal.mjs';
 import {routeExplorationAPI} from './route-exploration.mjs';
 import {routeGraduationsAPI} from './route-graduations.mjs';
 import {completeLessonAssignments} from './assignment-completion.mjs';
@@ -195,12 +196,24 @@ async function auth(req: Request, body: any, q: URLSearchParams) {
   if (!token) return null;
   const th = await sha256(token);
   const { data } = await supabase.from("portal_sessions")
-    .select("id,role,student_id,teacher_id,expires_at,last_seen_at")
+    .select("id,role,student_id,teacher_id,expires_at,last_seen_at,teacher_portal_access_id,teacher_portal_version")
     .eq("token_hash", th).maybeSingle();
   if (!data) return null;
   if (new Date(data.expires_at).getTime() <= Date.now()) {
     await supabase.from("portal_sessions").delete().eq("id", data.id);
     return null;
+  }
+  if(data.teacher_portal_access_id){
+    const grant=await supabase.from('teacher_portal_access').select('id,teacher_id,state,version,student_id').eq('id',data.teacher_portal_access_id).maybeSingle();
+    if(grant.error||grant.data?.state!=='approved'||grant.data.version!==data.teacher_portal_version)return null;
+    const own=await supabase.from('students').select('email_verified_at,status,frozen_at').eq('id',grant.data.student_id).maybeSingle();
+    const teacher=await supabase.from('teachers').select('active,frozen_at').eq('id',grant.data.teacher_id).maybeSingle();
+    if(!own.data?.email_verified_at||own.data.status!=='approved'||own.data.frozen_at||!teacher.data?.active||teacher.data.frozen_at)return null;
+    if(data.role==='teacher'&&data.teacher_id!==grant.data.teacher_id)return null;
+    if(data.role==='student'){
+      const pupil=await supabase.from('students').select('teacher_id').eq('id',data.student_id).maybeSingle();
+      if(pupil.data?.teacher_id!==grant.data.teacher_id)return null;
+    }
   }
   // [YAMA 3] her istekte yazmak yerine 5 dakikada bir güncelle
   if (!data.last_seen_at || Date.now() - new Date(data.last_seen_at).getTime() > 5 * 60000) {
@@ -219,6 +232,7 @@ async function auth(req: Request, body: any, q: URLSearchParams) {
   if (data.role === "teacher" && data.teacher_id) {
     const { data: t } = await supabase.from("teachers").select("username,full_name,email,is_admin,active,frozen_at").eq("id", data.teacher_id).maybeSingle();
     if (!t || t.frozen_at || t.active === false) return null;
+    if(t.username!=="teacher"&&!data.teacher_portal_access_id)return null;
     return { ...data, token, yonetici: !!t.is_admin, ogretmenAdi: t.full_name || t.username, ogretmenKullanici: t.username };
   }
   return { ...data, token };
@@ -244,12 +258,12 @@ async function sorumluEpostalar(s: any) {
   if(owner?.email&&/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(owner.email))return [owner.email];
   return (await yoneticiler()).epostalar;
 }
-async function issueSession(role: "student" | "teacher", studentId?: string, teacherId?: string) {
+async function issueSession(role: "student" | "teacher", studentId?: string, teacherId?: string, portalContext: any = {}) {
   const token = crypto.randomUUID() + "-" + crypto.randomUUID();
   const th = await sha256(token);
-  const ms = role === "teacher" ? OGRETMEN_OTURUM_SAAT * 3600000 : OGRENCI_OTURUM_GUN * 86400000;
+  const ms = role === "teacher" || portalContext.teacher_portal_access_id ? OGRETMEN_OTURUM_SAAT * 3600000 : OGRENCI_OTURUM_GUN * 86400000;
   const {error} = await supabase.from("portal_sessions").insert({
-    token_hash: th, role, student_id: studentId || null, teacher_id: teacherId || null,
+    token_hash: th, role, student_id: studentId || null, teacher_id: teacherId || null, ...portalContext,
     expires_at: new Date(Date.now() + ms).toISOString()
   });
   if(error)throw error;
@@ -489,7 +503,7 @@ async function leaderboardSave(op: string, body: any, a: any) {
   };
   const ins = await supabase.from("game_scores").insert(row);
   if (ins.error) { console.error("leaderboardSave", ins.error); return json({ status: "error", message: "Skor kaydedilemedi." }, 500); }
-  if (row.student_id) await supabase.from("feed_events").insert({
+  if (row.student_id&&!a?.teacher_portal_access_id) await supabase.from("feed_events").insert({
     student_id: row.student_id, event_type: "game_score",
     payload: { game_name: key, game_key: key, score: row.score, unit_name: row.unit_name, icon: key === "konusma" ? "🗣️" : key === "eslestirme" ? "🧩" : key === "tren" ? "🚂" : "🎮", student_name: row.student_name }
   });
@@ -1155,7 +1169,8 @@ async function iceAktar(body: any) {
   return json({ ok: true, ...r });
 }
 
-const onboarding = onboardingAPI({db:supabase,json,hash:sha256,studentByName,verifyPassword,attempts:denemeSay,audit:denemeYaz,sendQueued:kuyrukSatiriGonder,mailShell:mailKabugu,escape:hk,issueSession});
+const teacherPortal=teacherPortalAPI({db:supabase,json,hash:sha256,hashPassword,verifyPassword,issueSession,mailShell:mailKabugu,escape:hk,queue:kuyrugaEkle,codeKey:adminKey});
+const onboarding = onboardingAPI({db:supabase,json,hash:sha256,studentByName,verifyPassword,attempts:denemeSay,audit:denemeYaz,sendQueued:kuyrukSatiriGonder,mailShell:mailKabugu,escape:hk,issueSession,afterVerified:(sid:string)=>teacherPortal.ensureCode(sid)});
 
 /* [20 Eki 2026, kullanıcı onaylı] "teacher" hesabı panelde her şeye erişir: yalnızca öğrenci
    hesabıyla çalışan bir özellik öğretmeni "öğrenci oturumu/hesabı gerekli" diye reddederse, aynı
@@ -1201,6 +1216,11 @@ async function handle(req: Request, proxy: any = null) {
   for(const p of anonymousBudgets(op,istemciIp(req),guestIdentity)){
     const denied=await rate(p.scope,p.value,p.max,p.seconds);
     if(denied)return denied;
+  }
+  if(portalOps.has(op)){
+    const key=op==='teacherPortalLogin'?String(body.code||''):String(body.username||body.t||istemciIp(req));
+    const denied=await rate('teacher-portal:'+op,istemciIp(req)+'|'+await sha256(key),op==='teacherPortalLogin'?8:op==='teacherPortalResetRequest'?3:60,900);if(denied)return denied;
+    if(['teacherPortalLogin','teacherPortalResetRequest','teacherPortalReset'].includes(op)){const ipDeny=await rate('teacher-portal-ip:'+op,istemciIp(req),op==='teacherPortalLogin'?60:20,900);if(ipDeny)return ipDeny;}
   }
   if(op === "okumaGrubu") return readBatch(req,body,handle,json);
 
@@ -1344,6 +1364,8 @@ async function handle(req: Request, proxy: any = null) {
     return iceAktar(body);
   }
   const a = proxy || await auth(req, body, q);
+  const portalResponse=await teacherPortal.handle(op,body,a,req.method);if(portalResponse)return portalResponse;
+  if(a?.teacher_portal_access_id&&a.role==="student"&&!portalOperationAllowed(op,{...Object.fromEntries(q),...body}))return json({ok:false,mesaj:"Bu işlem için kişisel hesabına geç."},403);
   authSeen.set(req, a);
   if(['konuOyunBaslat','konuOyunBitir'].includes(op)&&a){const denied=await rate('account:'+op,a.student_id||a.teacher_id,op==='konuOyunBaslat'?30:40,300);if(denied)return denied;}
   if(a?.student_id){
@@ -1361,6 +1383,17 @@ async function handle(req: Request, proxy: any = null) {
     return json({ok:true,rol:'ogrenci',ogrenci:s.username,expiresAt:a.expires_at});
   }
 
+  // Private classroom play only records verified game rankings: no wallet mutation.
+  if(a?.teacher_portal_access_id&&a.role==='student'){
+    const st=(await supabase.from('students').select('energy,energy_max').eq('id',a.student_id).maybeSingle()).data;
+    if(['enerjiDegistir','enerjiDurumuGetir'].includes(op))return json({ok:true,status:'success',rankingOnly:true,eklenen:0,eklenenEnerji:0,enerjiKalan:st?.energy||0,enerjiMax:st?.energy_max||30});
+    if(op==='iletisimDurumu')return json({ok:true,eksik:false,uyari:false,donuk:false});
+    if(op==='ekonomi'||op==='ekVeriKaydet'){
+      const row=await supabase.from('extra_data').select('value').eq('student_id',a.student_id).eq('key_name','yo').maybeSingle();if(row.error)throw row.error;
+      let value=row.data?.value||{};if(typeof value==='string')try{value=JSON.parse(value);}catch{value={};}
+      return json({ok:true,status:'success',rankingOnly:true,xp:0,gold:0,eklenen:0,yo:value,ekonomi:ekonomiCevap(value)});
+    }
+  }
   if(isDemo(a)&&DEMO_BLOCKED.has(op))return json({ok:false,hata:'demo_readonly',mesaj:'Demo hesabında bu işlem kapalı.'},403);
   if(isDemo(a)&&op==='iletisimDurumu')return json({ok:true,eksik:false,donuk:false,uyari:false});
   if(isDemo(a)&&op==='memberStatus')return json({ok:true,emailVerified:true,email:'',hasPlacement:true,teacherLinked:false,demo:true});
@@ -1387,7 +1420,7 @@ async function handle(req: Request, proxy: any = null) {
   const memberResponse=await memberToolsAPI({db:supabase,json,welcome:onboarding.welcome,hash:sha256,teacherScope:kapsamda,useStreakShield:(sid:string)=>ekonomiGuncelle(sid,(y:any)=>{const d=Math.max(0,Math.floor(num(y.dondurucu)));if(d<1)return {hata:'Seri kalkanı yok.'};y.dondurucu=d-1;return {kalan:d-1};})}).handle(op,body,q,a,req.method);if(memberResponse)return memberResponse;
   if(op==='iletisimDurumu' && !a)return json({ok:false,hata:'oturum',mesaj:'Öğrenci oturumu gerekli.'},401);
   if(op==='iletisimDurumu' && a.role!=='student')return json({ok:true,uygulanmaz:true,eksik:false,donuk:false,uyari:false});
-  const contactDeny=isDemo(a)?null:await contacts.guard(op,a);if(contactDeny)return contactDeny;
+  const contactDeny=isDemo(a)||a?.teacher_portal_access_id?null:await contacts.guard(op,a);if(contactDeny)return contactDeny;
   const myWorldResult=await myWorld.handle(op,body,q,a);if(myWorldResult)return myWorldResult;
   const managementResult=await studentManagement.handle(op,body,q,a,req.method);if(managementResult)return managementResult;
   const verifiedResponse=await verifiedGames.handle(op,body,a,req.method);if(verifiedResponse)return verifiedResponse;
@@ -2094,6 +2127,19 @@ async function handle(req: Request, proxy: any = null) {
     const { data: ogrt } = await supabase.from("teachers").select("*").ilike("username", likeKacir(username)).limit(2);
     if (ogrt && ogrt.length === 1) {
       const t = ogrt[0];
+      if(t.username!=="teacher"){
+        const grant=await supabase.from('teacher_portal_access').select('student_id').eq('teacher_id',t.id).maybeSingle();
+        let learner=grant.data?(await supabase.from('students').select('*').eq('id',grant.data.student_id).maybeSingle()).data:null;
+        if(!learner){
+          if(!await verifyPassword(password,t.password_hash)){await hataYaz();return json({ok:false,mesaj:'Hatalı kullanıcı adı veya şifre.'},401);}
+          if(await studentByNameGenel(t.username))return json({ok:false,mesaj:'Kişisel hesap eşleştirmesi için destek gerekiyor.'},409);
+          const inserted=await supabase.from('students').insert({username:t.username,password_hash:t.password_hash,full_name:t.full_name,email:t.email,phone:t.phone,school:t.school,status:'approved',email_verification_required:true}).select('*').single();
+          if(inserted.error)throw inserted.error;learner=inserted.data;await teacherPortal.apply(learner.id,t.id);await onboarding.welcome(learner);
+        }
+        if(!await verifyPassword(password,learner.password_hash)){await hataYaz();return json({ok:false,mesaj:'Hatalı kullanıcı adı veya şifre.'},401);}
+        if(learner.status!=='approved'||learner.frozen_at)return json({ok:false,mesaj:'Kişisel hesabın aktif değil.'},403);
+        return json({ok:true,token:await issueSession('student',learner.id),rol:'ogrenci',ogrenci:learner.username});
+      }
       const dogru = await verifyPassword(password, t.password_hash);
       if(dogru && t.frozen_at)return json({ok:false,hesapDonuk:true,mesaj:"Hesabın dondurulmuş. Giriş ekranındaki Hesabımı yeniden aç bağlantısını kullan."},403);
       if (dogru && t.active === false) return json({ ok: false, mesaj: "Öğretmen hesabın henüz aktif değil. Yönetici onayından sonra giriş yapabilirsin." });
@@ -2260,6 +2306,7 @@ async function handle(req: Request, proxy: any = null) {
     const saved = existing ? await supabase.from("students").update(payload).eq("id",existing.id).select("id,username,email").single() : await supabase.from("students").insert(payload).select("id,username,email").single();
     if(saved.error||!saved.data)return json({status:"error",message:"Kayıt oluşturulamadı. Biraz sonra tekrar dene."},503);
     await saveLearnerProfile(supabase,saved.data.id,learnerProfile);
+    if(body.requestTeacherAccess===true)await teacherPortal.apply(saved.data.id);
     /* Optional, unticked registration checkbox (never a condition of registration): weekly progress / Papi news e-mail. */
     if(body.ilerlemeMailOnay===true){try{const e=String(saved.data.email||"").trim().toLowerCase();if(/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(e)){const at=new Date().toISOString();const r=await supabase.from("extra_data").upsert({student_id:saved.data.id,key_name:"progress_mail_consent_v1",value:{at,source:"registration_checkbox",email:e},updated_at:at},{onConflict:"student_id,key_name"});if(r?.error)console.error("progress mail consent",r.error.message);}}catch(err){console.error("progress mail consent",err);}}
     await yeniOgrenciYoneticiBildirimi(saved.data,"normal");
@@ -2651,6 +2698,10 @@ async function handle(req: Request, proxy: any = null) {
     let questions:any[];try{questions=Array.isArray(source)?source:JSON.parse(String(source||"[]"));}catch{questions=[];}
     if(questions.length<2||questions.length>40)return json({ok:false,mesaj:"Bu dersin soruları güncellenmeli."},409);
     const submitted=body.answers;
+    if(a?.teacher_portal_access_id){
+      const graded=gradeStudyQuiz(questions,submitted);if(!graded)return json({ok:false,mesaj:'Tüm cevapları gönder.'},400);
+      return json({ok:true,status:'success',rankingOnly:true,firstCorrect:graded.correct,total:questions.length,tier:studyTier(graded.correct,questions.length),xp:0,gold:0,eklenenEnerji:0});
+    }
     const {data:existing,error:readError}=await supabase.from("dm_lesson_fair_runs").select("*").eq("student_id",s.id).eq("run_id",runId).maybeSingle();
     if(readError)throw readError;
     if(existing&&(existing.level!==level||existing.category!==category||existing.topic_name!==topic))return json({ok:false,mesaj:"Etkinlik anahtarı başka derse ait."},409);

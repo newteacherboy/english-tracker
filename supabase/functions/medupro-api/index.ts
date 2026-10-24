@@ -21,8 +21,16 @@ async function studentByNameGenel(name:string){const n=String(name).trim().repla
 async function session(req:Request,body:any,q:URLSearchParams){
  const token=String(body.t||q.get("t")||req.headers.get("x-diji-token")||"");if(!token)return null;
  const hash=Array.from(new Uint8Array(await crypto.subtle.digest("SHA-256",new TextEncoder().encode(token)))).map(x=>x.toString(16).padStart(2,"0")).join("");
- const {data,error}=await supabase.from("portal_sessions").select("id,role,student_id,teacher_id,expires_at,last_seen_at").eq("token_hash",hash).maybeSingle();if(error)throw error;
+ const {data,error}=await supabase.from("portal_sessions").select("id,role,student_id,teacher_id,expires_at,last_seen_at,teacher_portal_access_id,teacher_portal_version").eq("token_hash",hash).maybeSingle();if(error)throw error;
  if(!data||Date.parse(data.expires_at)<=Date.now())return null;
+ if(data.teacher_portal_access_id){
+  const allowed=new Set(['takipDavetListesi','oyunEslesmeOlustur','oyunEslesmeDurum','oyunEslesmeHazir','oyunEslesmeCevap','oyunEslesmelerim']);
+  if(data.role!=='student'||!allowed.has(String(val(body,q,'islem'))))return null;
+  const g=await supabase.from('teacher_portal_access').select('teacher_id,state,version').eq('id',data.teacher_portal_access_id).maybeSingle();
+  const pupil=await supabase.from('students').select('teacher_id,class_no,status,frozen_at').eq('id',data.student_id).maybeSingle();
+  if(g.error||g.data?.state!=='approved'||g.data.version!==data.teacher_portal_version||pupil.data?.teacher_id!==g.data.teacher_id||pupil.data?.status!=='approved'||pupil.data.frozen_at)return null;
+  return {...data,classroomTeacher:g.data.teacher_id,classroomGrade:pupil.data.class_no};
+ }
  if(data.role==='teacher'){
   const allowed=new Set(['takipDavetListesi','oyunEslesmeOlustur','oyunEslesmeDurum','oyunEslesmeHazir','oyunEslesmeCevap','oyunEslesmelerim']);
   if(!allowed.has(String(val(body,q,'islem')))||!data.teacher_id||!body.classroomStudent)return null;
@@ -94,7 +102,7 @@ async function dmExtension(op:string,body:any,q:URLSearchParams,a:any){
  let r:any;
  if(op.startsWith('oyunEslesme')){
   const action={oyunEslesmeOlustur:'create',oyunEslesmeDurum:'state',oyunEslesmeHazir:'ready',oyunEslesmeCevap:'answer'}[op];
-  r=await supabase.rpc('dm_match_action',{actor,match_id:op==='oyunEslesmeOlustur'?null:String(val(body,q,'id')),action,arg:{target:target?.id,game:val(body,q,'oyun'),mode:val(body,q,'mod'),index:body.index,choice:body.choice}});
+  r=await supabase.rpc(a.teacher_portal_access_id?'dm_teacher_match_action':'dm_match_action',{actor,match_id:op==='oyunEslesmeOlustur'?null:String(val(body,q,'id')),action,arg:{target:target?.id,game:val(body,q,'oyun'),mode:val(body,q,'mod'),index:body.index,choice:body.choice}});
  }else{
   const action={sosyalDurum:'status',ogrenciEngelle:'block',ogrenciEngelKaldir:'unblock',hazirMesajGonder:'message',aksesuarHediye:'gift'}[op];
   r=await supabase.rpc('dm_social_action',{actor,target:target.id,action,arg:String(val(body,q,op==='hazirMesajGonder'?'mesajId':'item'))});

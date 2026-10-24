@@ -1,0 +1,78 @@
+[
+  {
+    "name": "audit_logs",
+    "columns": "id uuid default gen_random_uuid(), actor_role text, actor_id uuid, operation text, target text, payload jsonb default '{}'::jsonb, created_at timestamp with time zone default now()"
+  },
+  {
+    "name": "dm_break_chapters",
+    "columns": "game text, chapter integer, title text, theme text, goal integer"
+  },
+  {
+    "name": "dm_break_checkpoints",
+    "columns": "run_id uuid, chapter integer, score integer, seconds integer, created_at timestamp with time zone default now()"
+  },
+  {
+    "name": "dm_break_progress",
+    "columns": "student_id uuid, game text, unlocked_chapter integer default 1, completed_all boolean default false, updated_at timestamp with time zone default now()"
+  },
+  {
+    "name": "dm_break_runs",
+    "columns": "id uuid, student_id uuid, game text, day text, score integer default 0, gold integer default 0, status text default 'playing'::text, created_at timestamp with time zone default now(), finished_at timestamp with time zone, start_chapter integer default 1, chapter integer default 1, highest_chapter integer default 1, chapter_start_score integer default 0, checkpoint_score integer default 0, checkpoint_seconds integer default 0, completed_all boolean default false"
+  },
+  {
+    "name": "dm_game_reward_runs",
+    "columns": "student_id uuid, run_id text, game_key text, class_no integer, units integer[], xp integer, gold integer, created_at timestamp with time zone default now(), topic_key text"
+  },
+  {
+    "name": "dm_matches",
+    "columns": "id uuid default gen_random_uuid(), player_a uuid, player_b uuid, game text, mode text, status text default 'waiting'::text, class_no integer, questions jsonb, ready_a boolean default false, ready_b boolean default false, start_a timestamp with time zone, start_b timestamp with time zone, answers_a jsonb default '{}'::jsonb, answers_b jsonb default '{}'::jsonb, result_a jsonb, result_b jsonb, created_at timestamp with time zone default now(), expires_at timestamp with time zone default (now() + '24:00:00'::interval)"
+  },
+  {
+    "name": "dm_rally_runs",
+    "columns": "id uuid, student_id uuid, class_no integer, units integer[], difficulty text, deck jsonb, state jsonb default '{\"combo\": 0, \"index\": 0, \"score\": 0, \"wrong\": 0, \"hearts\": 2, \"answers\": [], \"correct\": 0, \"elapsed\": 0, \"bestCombo\": 0}'::jsonb, status text default 'playing'::text, reward jsonb, created_at timestamp with time zone default now(), round_at timestamp with time zone default now(), finished_at timestamp with time zone"
+  },
+  {
+    "name": "dm_topic_game_runs",
+    "columns": "run_id uuid, student_id uuid, topic_key text, game text, answer_key jsonb, question_count integer, started_at timestamp with time zone default now(), expires_at timestamp with time zone default (now() + '00:30:00'::interval)"
+  },
+  {
+    "name": "dm_verified_runs",
+    "columns": "student_id uuid, run_id text, game text, class_no integer, units integer[], stop_no integer default 0, deck jsonb, answers jsonb default '{}'::jsonb, events jsonb default '{}'::jsonb, created_at timestamp with time zone default clock_timestamp(), expires_at timestamp with time zone default (clock_timestamp() + '24:00:00'::interval)"
+  },
+  {
+    "name": "energy_transactions",
+    "columns": "id uuid default gen_random_uuid(), student_id uuid, change_amount integer, balance_after integer, reason text, created_at timestamp with time zone default now()"
+  },
+  {
+    "name": "extra_data",
+    "columns": "id uuid default gen_random_uuid(), student_id uuid, key_name text, value jsonb default '{}'::jsonb, updated_at timestamp with time zone default now()"
+  },
+  {
+    "name": "feed_events",
+    "columns": "id uuid default gen_random_uuid(), student_id uuid, event_type text, target_student_id uuid, payload jsonb default '{}'::jsonb, created_at timestamp with time zone default now(), safety_hidden boolean default false"
+  },
+  {
+    "name": "game_scores",
+    "columns": "id uuid default gen_random_uuid(), game_key text, student_id uuid, student_name text, class_no integer, unit_no integer, unit_name text, score numeric default 0, correct_count integer default 0, wrong_count integer default 0, duration_seconds integer default 0, detail text, played_on date default CURRENT_DATE, created_at timestamp with time zone default now(), extra jsonb default '{}'::jsonb"
+  },
+  {
+    "name": "mail_queue",
+    "columns": "id bigint default nextval('mail_queue_id_seq'::regclass), student_id uuid, to_email text, subject text, html text, text_body text, kind text default 'bilgi'::text, report_date date, send_after timestamp with time zone default now(), created_at timestamp with time zone default now(), sent_at timestamp with time zone, attempts integer default 0, error text, priority integer default 0"
+  },
+  {
+    "name": "notifications",
+    "columns": "id uuid default gen_random_uuid(), recipient_student_id uuid, sender_student_id uuid, type text, title text, message text, payload jsonb default '{}'::jsonb, read_at timestamp with time zone, created_at timestamp with time zone default now()"
+  },
+  {
+    "name": "portal_sessions",
+    "columns": "id uuid default gen_random_uuid(), token_hash text, student_id uuid, teacher_id uuid, role text, created_at timestamp with time zone default now(), expires_at timestamp with time zone, last_seen_at timestamp with time zone default now()"
+  },
+  {
+    "name": "students",
+    "columns": "id uuid default gen_random_uuid(), username text, password_hash text, phone text, class_no integer, branch text, email text, status text default 'pending'::text, role text default 'student'::text, kvkk_approved_at timestamp with time zone, created_at timestamp with time zone default now(), updated_at timestamp with time zone default now(), last_login_at timestamp with time zone, selected_class integer, total_seconds integer default 0, energy integer default 30, energy_max integer default 30, streak integer default 0, points numeric(6,2) default 0, gold numeric default 0, xp numeric default 0, profile jsonb default '{}'::jsonb, energy_updated_at timestamp with time zone default now(), teacher_id uuid, email_verification_required boolean default false, email_verified_at timestamp with time zone, full_name text, school text, contact_deadline timestamp with time zone, contact_notice_day date, frozen_at timestamp with time zone"
+  },
+  {
+    "name": "teachers",
+    "columns": "id uuid default gen_random_uuid(), username text, password_hash text, display_name text default 'Diji-Medu'::text, active boolean default true, created_at timestamp with time zone default now(), last_login_at timestamp with time zone, email text, full_name text, school text, invite_code text, is_admin boolean default false, game_data jsonb, game_data_at timestamp with time zone, phone text, frozen_at timestamp with time zone"
+  }
+]

@@ -30,7 +30,7 @@ export function learningCompanionAPI({db,json,teacherScope,now=Date.now}){
     }
     if(a.role!=='student'||!a.student_id)return fail('Öğrenci oturumu gerekli.',403);
     const sid=a.student_id,stamp=now(),today=day(stamp),iso=new Date(stamp).toISOString();
-    async function reward(kind,story=null){const r=await db.rpc('dm_companion_reward',{actor:sid,reward_kind:kind,story_key:story});if(r.error)throw r.error;return r.data;}
+    async function reward(kind,story=null){if(a?.teacher_portal_access_id)return {claimed:false,xp:0,gold:0,energy:0,rankingOnly:true};const r=await db.rpc('dm_companion_reward',{actor:sid,reward_kind:kind,story_key:story});if(r.error)throw r.error;return r.data;}
     if(op==='companionPlanClaim')return json({ok:true,reward:await reward('plan')});
     if(op==='companionSummary'){
       const [r,stories,plan,missions,planClaim,completed]=await Promise.all([
@@ -52,7 +52,7 @@ export function learningCompanionAPI({db,json,teacherScope,now=Date.now}){
       return json({ok:true}); // A planner checkbox, never a reward or proficiency record.
     }
     const story=BANK.find(s=>s.id===b.story);if(!story)return fail('Diyalog bulunamadı.',404);
-    const key='practice_dialogue:'+story.id+':'+today;
+    const key=(a?.teacher_portal_access_id?'teacher_dialogue:'+a.teacher_portal_access_id+':':'practice_dialogue:')+story.id+':'+today;
     if(op==='companionDialogueOpen'){
       const r=await db.from('extra_data').upsert({student_id:sid,key_name:key,value:{cursor:0,answers:{}},updated_at:iso},{onConflict:'student_id,key_name',ignoreDuplicates:true});if(r.error)throw r.error;
       const record=await get(sid,key),state=parse(record.value);return json({ok:true,...state,version:record.updated_at,...(state.cursor>=3?{reward:await reward('story',story.id)}:{})});
