@@ -92,3 +92,10 @@ html.dm-teacher-portal #parkurHata{display:none!important}
 html.dm-teacher-portal.tp-home-starting #panel-alani{visibility:hidden!important}
 html.dm-teacher-portal.tp-home-active #panel-alani{visibility:hidden!important}
 html.dm-teacher-portal #tpTeacherHome.is-visible{z-index:90002!important}
+
+/* Four permanent teacher destinations; profile settings live in the sidebar. */
+html.dm-teacher-portal #bottomNavMobile#bottomNavMobile{grid-template-columns:repeat(4,minmax(0,1fr))!important}
+html.dm-teacher-portal #bottomNavMobile .bn-item{flex:1 1 25%!important}
+#tpDashboard .tp-dash-menu .tp-dash-logout{margin-top:8px;background:#ffe9e7;color:#952b31;border:1px solid #ffb5b7;font-weight:900}
+#tpDashboard .tp-dash-menu .tp-dash-logout:hover,#tpDashboard .tp-dash-menu .tp-dash-logout:focus-visible{background:#ffd2d2;color:#8a1d27}
+@media(max-width:700px){#tpDashboard .tp-dash-menu{flex-wrap:wrap;overflow-x:visible;white-space:normal}#tpDashboard .tp-dash-menu button{flex:1 0 auto}}
