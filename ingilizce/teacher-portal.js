@@ -44,6 +44,14 @@
    const heading=e.querySelector('h1,h2,h3')?.textContent?.trim()||'';
    if(/karakterini seç/i.test(heading)&&e.style.display!=='none'){e.style.display='none';e.setAttribute('aria-hidden','true');}
   }
+  // Suppress the preview pupil's generic notices, but keep teacher-manager announcements.
+  for(const id of ['dmEmailVerifyBanner','dmEmailVerification','dmGoalAnnouncement','dmWeeklyPanel','dmLevelUp','dmNudge','dmPlacementInvite']){
+   const e=document.getElementById(id);if(e&&e.style.display!=='none'){e.style.display='none';e.setAttribute('aria-hidden','true');}
+  }
+  const studentAnnouncement=document.getElementById('duyuruOverlay');
+  if(studentAnnouncement&&!studentAnnouncement.dataset.teacherAdminAnnouncement&&studentAnnouncement.style.display!=='none'){
+   studentAnnouncement.style.display='none';studentAnnouncement.setAttribute('aria-hidden','true');
+  }
   for(const e of document.querySelectorAll('body section,body aside')){
    if(e.closest('#tpTeacherHome,#tpDashboard,.tp-shade'))continue;
    const title=e.querySelector('h2,h3,strong')?.textContent?.trim()||'';
@@ -176,6 +184,6 @@
  if(mode){document.body.classList.add('dm-teacher-portal');window.cikisYap=window.dmTeacherPortalExit;window.siniftaOyunModuAc=()=>{document.getElementById('ogretmenMenuModal')?.style.setProperty('display','none');window.aktivitelerTamEkranAc?.();};}
  let scheduled=false;const observe=()=>{if(scheduled)return;scheduled=true;requestAnimationFrame(()=>{scheduled=false;decorate();if(mode){suppressPreviewPrompts();addPersonalSwitch();}});};new MutationObserver(observe).observe(document.body,{childList:true,subtree:true});decorate();wrapGames();
  document.addEventListener('dm:state',wrapGames);document.addEventListener('dm:login',wrapGames);if(mode)document.addEventListener('click',()=>{if(window.tpHomeInitialized){teacherHome();suppressPreviewPrompts();}}, {capture:false});
- let opened=false;const timer=setInterval(()=>{wrapGames();if(mode&&!opened&&document.getElementById('panel-alani')?.style.display==='block'){opened=true;teacherHome();suppressPreviewPrompts();prepareTeacherAppearance();setTimeout(runPending,300);}if(opened)clearInterval(timer);},500);setTimeout(()=>clearInterval(timer),30000);
+ let opened=false;const timer=setInterval(()=>{wrapGames();if(mode&&!opened&&document.getElementById('bottomNavMobile')){opened=true;teacherHome();suppressPreviewPrompts();prepareTeacherAppearance();setTimeout(runPending,300);}if(opened)clearInterval(timer);},500);setTimeout(()=>clearInterval(timer),30000);
  if(new URLSearchParams(location.search).get('ogretmenGiris')==='1'){window.dmFirstDiscovery?.openLogin?.();openLogin();}
 })();

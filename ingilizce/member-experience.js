@@ -52,6 +52,7 @@ document.addEventListener('dm:progression-status',()=>autoRoute());
 document.addEventListener('dm:member-status',()=>autoRoute());
 document.addEventListener('click',e=>{const b=e.target.closest('[data-ekran="tab-dunya"],[data-nav="parkur"],.rt-start');if(b&&ready()&&!chosen()) {e.preventDefault();e.stopImmediatePropagation();chooseRoute();}},true);
 function banner(){
+ if(window.dmTeacherPortalMode){$('dmEmailVerifyBanner')?.remove();return;}
  if(!status||status.emailVerified||!ready()){$('dmEmailVerifyBanner')?.remove();if(status?.emailVerified){$('dmEmailVerification')?.querySelector('.dm-member-close')?.click();window.dmEmailGuide?.close();}return;}
  let el=$('dmEmailVerifyBanner');if(!el){
   el=document.createElement('aside');el.id='dmEmailVerifyBanner';el.className='dm-email-banner';
@@ -62,6 +63,7 @@ function banner(){
  }
 }
 function emailPrompt(){
+ if(window.dmTeacherPortalMode)return;
  if(!ready()||status?.emailVerified)return;
  emailNextAt=Date.now()+600000;
  gamesEmailShown=true;
@@ -70,6 +72,7 @@ function emailPrompt(){
  view.el.querySelector('[data-checked]').onclick=async()=>{try{const d=await api('memberStatus');if(owner!==who())return view.close();status=d;if(Number.isInteger(d.loginStreak)){localStorage.setItem('ing_girisSerisiSayisi',String(d.loginStreak));localStorage.setItem('dm_login_streak:'+owner.toLowerCase(),String(d.loginStreak));const streak=$('headerStreakNum');if(streak)streak.textContent='🔥 '+d.loginStreak;}streakNotice(d,owner);window.dmMemberBadgeStatus={...d,owner};if(d.welcomeEligible&&!d.welcomeEarned&&welcomeOwner!==owner){clearTimeout(welcomeTimer);welcomeOwner=owner;const delay=Math.max(1000,120000-(Date.parse(d.serverNow)-Date.parse(d.memberFirstSeenAt)));welcomeTimer=setTimeout(()=>{if(who()===owner)check(true,true);},delay);}document.dispatchEvent(new Event('dm:member-status'));lastRead=Date.now();banner();if(d.emailVerified)view.close();else view.body.querySelector('[role=status]').textContent='Henüz doğrulanmadı. E-postadaki bağlantıya dokunup tekrar kontrol et.';}catch(e){view.body.querySelector('[role=status]').textContent=e.message;}};
 }
 async function check(force=false,quiet=false){
+ if(window.dmTeacherPortalMode){$('dmEmailVerifyBanner')?.remove();$('dmEmailVerification')?.remove();return;}
  if(!ready()||document.hidden||navigator.onLine===false)return;if(busy){if(force)refreshPending=true;return;}
  if(actor!==who()){actor=who();status=null;lastRead=0;started=Date.now();examAt=started+120000+Math.random()*480000;dismissedRoute=false;}
  const owner=actor;busy=true;
