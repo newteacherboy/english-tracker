@@ -125,10 +125,7 @@ body #bottomNavMobile .bn-icon:has(.dm-nav-art)>img{display:none!important}
 .bi-sky .bi-world{left:50%!important;transform:translateX(-50%)!important}
 }}
 
-/* Fill the viewport with crisp academy art, including the safe-area edges. */
-@layer bilgiIslands {
-.bi-sky::before{inset:0;filter:none;opacity:1}
-}
+/* Keep the academy backdrop blurred like the school route; the central art stays sharp. */
 @media(min-height:651px) and (max-aspect-ratio:3/5){@layer bilgiIslands{
 .bi-sky{--bi-world-top:0px;--bi-world-w:max(100vw,calc(100dvh * var(--bi-ratio)));--bi-world-left:calc((100vw - var(--bi-world-w))/2)}
 }}

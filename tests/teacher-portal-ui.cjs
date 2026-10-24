@@ -26,9 +26,12 @@ const fs=require('fs'),http=require('http'),path=require('path'),assert=require(
   await page.goto(origin+'/ingilizce/',{waitUntil:'domcontentloaded'});
   const teacher=page.getByRole('button',{name:'Öğretmen Girişi',exact:true});await teacher.waitFor({state:'visible',timeout:20000});
   const box=await teacher.boundingBox();assert.ok(box.y>=0&&box.y+box.height<=height,'teacher entry fits viewport');
+  await page.getByRole('button',{name:'Öğrenci Girişi',exact:true}).waitFor();
   await page.screenshot({path:'/tmp/teacher-welcome-'+width+'.png'});await teacher.click();
+  await page.locator('.tp-close').click();await teacher.waitFor({state:'visible'});
+  await teacher.click();await page.keyboard.press('Escape');await teacher.waitFor({state:'visible'});await teacher.click();
   const dialog=page.locator('.tp-card');await dialog.getByLabel('Öğretmen giriş kodun').fill('123');await dialog.getByRole('button',{name:'Giriş Yap',exact:true}).click();assert.equal(loginCalls,0,'incomplete code cannot submit');
-  await dialog.getByRole('button',{name:'Kodumu Unuttum'}).click();await page.getByLabel('Kayıtlı e-posta adresin').waitFor();await page.locator('.tp-close').click();
+  await dialog.getByRole('button',{name:'Kodumu Unuttum'}).click();await page.getByLabel('Kayıtlı e-posta adresin').waitFor();await page.locator('.tp-close').click();await teacher.waitFor({state:'visible'});
   await page.evaluate(()=>{localStorage.setItem('ing_token','personal-secret');localStorage.setItem('ing_aktifOgrenci','PersonalOwner');localStorage.setItem('personal-wallet','unchanged');});
   await page.evaluate(()=>window.dmTeacherPortal.openLogin());await page.getByLabel('Öğretmen giriş kodun').fill('123456789012');await page.getByRole('button',{name:'Giriş Yap',exact:true}).click();await page.waitForURL('**/?ogretmen=1');
   await page.waitForFunction(()=>window.dmTeacherPortalMode===true);assert.equal(await page.evaluate(()=>localStorage.getItem('ing_token')),'preview-secret');
