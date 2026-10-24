@@ -153,7 +153,7 @@ function selectSchoolGrade(){
   el.addEventListener('keydown',e=>{if(e.key==='Escape')finish(null);});
  });
 }
-async function setPurpose(p,{save=true,reopen=true,schoolGrade=null}={}){
+async function setPurpose(p,{save=true,reopen=true,schoolGrade=null,chooseGrade=false}={}){
  if(!['school','independent'].includes(p)||routeSaveInProgress)return false;
  const owner=who();
  if(!Y()||!owner){tell('Hesap bilgilerin hazırlanıyor, kısa süre sonra tekrar dene.');return false;}
@@ -212,7 +212,7 @@ function fit(){const host=$('dmParkurScroll');if(!host?.querySelector('.rt-root'
 function removeLegacyTopTabs(){const screen=document.getElementById('tab-dunya');if(!screen)return;screen.querySelectorAll('.dm-parkur-tabs,#pkSekmeler').forEach(el=>el.remove());}
 const oldTabScreen=document.getElementById('tab-dunya');if(oldTabScreen){removeLegacyTopTabs();new MutationObserver(removeLegacyTopTabs).observe(oldTabScreen,{childList:true,subtree:true});}
 window.dmRefreshRouteCards=refreshCards;window.dmParkurBaslik=heading;window.dmParkurSahne=scene;window.dmParkurMapMount=mount;
-window.dmLearningRoute={purpose, set:setPurpose,preview:async p=>{preview=p;await window.dunyaAc?.();},continue:()=>purpose()==='independent'?window.dmStoryPath.continueRoute():document.querySelector('.bi-continue,.rt-start')?.click(),settings:()=>{const {el,close}=dialog('Öğrenme Yolum','<p>Yolunu değiştirsen de iki parkurdaki ilerlemen korunur.</p><div class="rt-choices"><button data-purpose="school">'+art('book')+'Okul Yolum<small>1. sınıftan 8. sınıfa</small></button><button data-purpose="independent">'+art('path')+'İngilizce Yolum<small>Tematik günlük İngilizce</small></button></div>');el.querySelectorAll('[data-purpose]').forEach(b=>{b.setAttribute('aria-pressed',String(purpose()===b.dataset.purpose));b.onclick=async()=>{close();await setPurpose(b.dataset.purpose);};});}};
+window.dmLearningRoute={purpose, set:setPurpose,preview:async p=>{preview=p;await window.dunyaAc?.();},continue:()=>purpose()==='independent'?window.dmStoryPath.continueRoute():document.querySelector('.bi-continue,.rt-start')?.click(),settings:()=>{const {el,close}=dialog('Öğrenme Yolum','<p>Yolunu değiştirsen de iki parkurdaki ilerlemen korunur.</p><div class="rt-choices"><button data-purpose="school">'+art('book')+'Okul Yolum<small>1. sınıftan 8. sınıfa</small></button><button data-purpose="independent">'+art('path')+'İngilizce Yolum<small>Tematik günlük İngilizce</small></button></div>');el.querySelectorAll('[data-purpose]').forEach(b=>{b.setAttribute('aria-pressed',String(purpose()===b.dataset.purpose));b.onclick=async()=>{close();await setPurpose(b.dataset.purpose,{chooseGrade:b.dataset.purpose==='school'});};});}};
 document.addEventListener('click',e=>{const b=e.target.closest('[data-rt-wallet]');if(b)(b.dataset.rtWallet==='gold'?window.magazaAc:window.dijiEnerjiPaneliAc)?.();});
 function refreshLearning(){if(purpose()!=='independent')return;document.querySelectorAll('.rt-root').forEach(root=>paintLearning(root,true));}
 document.addEventListener('dm:learning-progress',e=>{if(e.detail?.owner===who()){refreshLearning();refreshChests();}});document.addEventListener('dm:story-close',refreshLearning);
