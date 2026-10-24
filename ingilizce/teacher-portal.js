@@ -96,6 +96,16 @@
     teacherHomeHide();teacherDashboardHide();
    },true);
   }
+  if(nav){
+   for(const item of nav.querySelectorAll('.bn-item')){
+    if(/öğretmen paneli/i.test(item.textContent||'')){
+     item.dataset.tpPanelNav='1';
+     const icon=item.querySelector('.bn-icon');
+     if(icon){icon.textContent='🎓';icon.style.fontSize='26px';}
+     else if(!item.querySelector('.tp-panel-icon')){const label=item.querySelector('.bn-label');const i=document.createElement('span');i.className='tp-panel-icon';i.textContent='🎓';i.style.fontSize='26px';item.insertBefore(i,label);}
+    }
+   }
+  }
   if(!window.tpHomeInitialized){window.tpHomeInitialized=true;teacherHomeShow();}
  }
 
