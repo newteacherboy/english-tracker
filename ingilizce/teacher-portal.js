@@ -152,6 +152,15 @@
     grid.append(b);
    }
   }
+  if(typeof yo!=='undefined'&&yo?.karakter?.s?.ogretmenKombin!=null){
+   const i=Number(yo.karakter.s.ogretmenKombin);
+   const hero=panel.querySelector('.tp-dash-hero img,.tp-dash-hero .tp-look-art');
+   if(hero&&Number.isInteger(i)&&i>=0&&i<10){
+    const badge=document.createElement('span');badge.className='tp-look-art';
+    badge.textContent=(yo.karakter.cins==='k'?'👩':'👨')+['👔','🥼','🧥','📚','🎓','🎨','🌿','🗣️','💻','⭐'][i];
+    hero.replaceWith(badge);
+   }
+  }
   panel.classList.add('is-visible');document.body.classList.add('tp-dash-active');
   document.querySelector('[data-tp-home-nav]')?.classList.remove('active');
   document.querySelector('#bottomNavMobile [data-tp-panel-nav]')?.classList.add('active');
@@ -170,7 +179,7 @@
    names.forEach((name,i)=>{
     const b=document.createElement('button');b.type='button';b.className='tp-look-choice';
     const art=document.createElement('span');art.className='tp-look-art';
-    art.textContent=(gender==='k'?'👩':'👨')+clothes[i];art.style.background='linear-gradient(140deg,'+skin+'55,'+hair+'55)';
+    art.innerHTML='<svg viewBox="0 0 100 110" width="86" height="89" role="img" aria-label="'+name+'"><rect width="100" height="110" rx="16" fill="#e8f8f6"/><path d="M15 104 Q16 70 50 70 Q84 70 85 104Z" fill="'+['#276d83','#e9e4da','#9c537a','#34558a','#257868','#c28a31','#5f9757','#804b87','#387bb3','#9e654d'][i]+'"/><ellipse cx="50" cy="48" rx="24" ry="30" fill="'+skin+'"/><path d="M26 47 Q18 7 50 13 Q82 7 74 47 L70 31 Q50 14 30 32Z" fill="'+hair+'"/><circle cx="41" cy="49" r="2.3" fill="#263640"/><circle cx="59" cy="49" r="2.3" fill="#263640"/><path d="M43 60 Q50 67 57 60" fill="none" stroke="#8f4a42" stroke-width="2.4" stroke-linecap="round"/><text x="76" y="89" font-size="21">'+clothes[i]+'</text></svg>';
     const label=document.createElement('strong');label.textContent=name;
     b.append(art,label);b.onclick=async()=>{
      b.disabled=true;
@@ -179,7 +188,7 @@
        const old=profile.appearance||{},appearance={cins:gender,s:{...(old.s||{}),ten:skin,sacRenk:hair,ogretmenKombin:String(i)}};
        await api('teacherPortalAppearance',{save:true,appearance});
        if(typeof yo!=='undefined'&&yo)yo.karakter={...(yo.karakter||{}),...appearance};
-       const hero=document.querySelector('#tpDashboard .tp-dash-hero img');
+       const hero=document.querySelector('#tpDashboard .tp-dash-hero .tp-look-art, #tpDashboard .tp-dash-hero img');
        if(hero){hero.replaceWith(art.cloneNode(true));}
        root.remove();
      }catch(e){root.querySelector('.tp-looks-status').textContent=e.message;b.disabled=false;}
