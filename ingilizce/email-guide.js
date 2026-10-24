@@ -125,6 +125,7 @@
   screen.querySelector('.deg-close').focus({preventScroll:true});
  }
  async function resend(){
+   if(window.dmTeacherPortalMode){status('Öğretmen koduyla giriş için kişisel e-posta adresin zaten doğrulanmış. Yeniden doğrulama e-postası gerekmez.','success');return;}
   if(resending||!signedIn()){status('Önce öğrenci hesabına giriş yapman gerekiyor.','error');return;}
   resending=true;const a=account();const list=[...screen.querySelectorAll('[data-eg-resend]')];list.forEach(b=>b.disabled=true);
   status('Doğrulama bağlantısı isteniyor…','info');
@@ -137,6 +138,7 @@
   finally{resending=false;list.forEach(b=>{if(b.isConnected)b.disabled=false;});}
  }
  async function check(){
+   if(window.dmTeacherPortalMode){status('Öğretmen hesabının e-posta doğrulaması tamamlanmış.','success');return;}
   if(checking||!signedIn()){status('Önce hesabına giriş yap.','info');return;}
   checking=true;const name=account();status('Doğrulama durumu kontrol ediliyor…','info');
   try{const d=await api('memberStatus');if(name!==account())return close();
