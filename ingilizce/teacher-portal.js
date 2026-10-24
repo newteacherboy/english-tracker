@@ -45,16 +45,21 @@
    home.addEventListener('click',e=>{const b=e.target.closest('[data-tp-action]');if(b)teacherDestination(b.dataset.tpAction);});
   }
   const nav=document.getElementById('bottomNavMobile');
+  if(nav&&nav.parentElement!==document.body)document.body.append(nav);
   if(nav&&!nav.querySelector('[data-tp-home-nav]')){
    const b=document.createElement('button');b.type='button';b.className='bn-item tp-home-nav';b.dataset.tpHomeNav='1';b.innerHTML='<span class="tp-nav-home-icon">🏠</span><span class="bn-label">Ana Sayfa</span>';b.onclick=()=>teacherHomeShow();nav.prepend(b);
    nav.addEventListener('click',e=>{const target=e.target.closest('.bn-item:not([data-tp-home-nav])');if(!target)return;
-    if(target.dataset.ekran==='tab-profile-menu'){e.preventDefault();e.stopImmediatePropagation();teacherDashboardShow();return;}
+    if(target.dataset.ekran==='tab-profile-menu'){e.preventDefault();e.stopImmediatePropagation();teacherProfileShow();return;}
     teacherHomeHide();teacherDashboardHide();
    },true);
   }
   if(!window.tpHomeInitialized){window.tpHomeInitialized=true;teacherHomeShow();}
  }
 
+ function teacherProfileShow(){
+  teacherHomeHide();teacherDashboardHide();
+  openProfile();
+ }
  function teacherDashboardShow(){
   if(!mode)return;
   teacherHomeHide();
