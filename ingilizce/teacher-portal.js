@@ -70,6 +70,19 @@
    document.body.append(panel);
    panel.addEventListener('click',e=>{const b=e.target.closest('[data-dash]');if(b)teacherDashboardAction(b.dataset.dash);});
   }
+  const legacy=document.querySelector('#ogretmenMenuModal .rubric-content');
+  const tools=panel.querySelector('.tp-dash-main');
+  if(legacy&&tools){
+   let list=tools.querySelector('.tp-dash-legacy');
+   if(!list){list=document.createElement('section');list.className='tp-dash-legacy';list.innerHTML='<h2>Tüm öğretmen araçları</h2><div class="tp-dash-tool-grid"></div>';tools.append(list);}
+   const grid=list.querySelector('.tp-dash-tool-grid');grid.replaceChildren();
+   for(const original of legacy.querySelectorAll('button.ogretmen-menu-btn')){
+    if(original.disabled||!original.textContent.trim())continue;
+    const b=document.createElement('button');b.type='button';b.textContent=original.textContent.trim();
+    b.onclick=()=>{original.click();};
+    grid.append(b);
+   }
+  }
   panel.classList.add('is-visible');document.body.classList.add('tp-dash-active');
   document.querySelector('[data-tp-home-nav]')?.classList.remove('active');
   document.querySelector('#bottomNavMobile [data-ekran="tab-profile-menu"]')?.classList.add('active');
@@ -81,7 +94,7 @@
   if(action==='games'||action==='library'){teacherDashboardHide();teacherDestination(action==='games'?'games':'study');return;}
   // Use the existing, permission-checked teacher management functions.
   const menu=document.getElementById('ogretmenMenuModal');
-  if(menu){menu.style.display='flex';const candidates=[...menu.querySelectorAll('button')];const pattern=({students:/öğrenci|sınıf|liste/i,homework:/ödev/i,reports:/rapor|istatistik/i,settings:/ayar/i})[action];const target=candidates.find(b=>pattern?.test(b.textContent||''));if(target)target.click();else window.yoToast?.('Öğretmen panelindeki ilgili aracı seç.');}
+  if(menu){menu.style.display='flex';const candidates=[...menu.querySelectorAll('button')];const pattern=({students:/öğrenci|sınıf|liste/i,homework:/ödev/i,reports:/rapor|istatistik/i,settings:/ayar/i})[action];const target=candidates.find(b=>pattern?.test(b.textContent||''));if(target)target.click();else window.yoToast?.('Bu işlem için öğretmen panelindeki ilgili aracı seç.');}
  }
 
  function teacherHomeShow(){
