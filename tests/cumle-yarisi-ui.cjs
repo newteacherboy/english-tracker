@@ -10,7 +10,8 @@ const words=Array.from({length:30},(_,i)=>({ingilizce:'item'+i,turkce:'anlam '+i
  try{
   for(const [width,height] of [[1440,900],[768,1024],[390,844]]){
    const page=await browser.newPage({viewport:{width,height},reducedMotion:'reduce'});
-   await page.setContent('<!doctype html><html lang="tr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head><body><button id="open">Kapışma</button></body></html>');
+  await page.route('https://games.test/games-assets/cumle-yarisi-cover.svg',route=>route.fulfill({contentType:'image/svg+xml',body:fs.readFileSync(path.join(base,'games-assets/cumle-yarisi-cover.svg'),'utf8')}));
+   await page.setContent('<!doctype html><html lang="tr"><head><base href="https://games.test/"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head><body><button id="open">Kapışma</button></body></html>');
    await page.evaluate(w=>{window.masterKelimeHavuzu=w;},words);
    await page.addStyleTag({content:css});
    await page.addScriptTag({content:js});
