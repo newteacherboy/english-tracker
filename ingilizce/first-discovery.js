@@ -1,5 +1,6 @@
 /* Papi first discovery. No member economy is awarded by the six-question demo. */
 (()=>{'use strict';
+ if(window.dmTeacherPortalMode)return;
  const ctx=window.dmDiscoveryContext;if(!ctx)return;
  const oauthProvider=new URLSearchParams(location.search).get('kesifKayit')==='apple'?'apple':'google';
  const A='discovery-assets/',DRAFT='dm_discovery_draft_v1',SUMMARY='dm_discovery_summary_v1';

@@ -247,3 +247,12 @@ html.dm-teacher-portal body #tpTeacherHome,html.dm-teacher-portal body #tpDashbo
 @media(max-height:760px){#tpTeacherHome .tp-home-card small,#tpTeacherHome .tp-home-sub{display:none}#tpDashboard .tp-real-tools button small{display:none}#tpDashboard .tp-real-tools button>span{font-size:18px}#tpDashboard .tp-dash-metrics{display:none}#tpDashboard .tp-dash-main>h2{font-size:14px}#tpDashboard .tp-dash-wrap{gap:5px;padding:7px}#tpTeacherHome .tp-home-hero p{font-size:11px}}
 /* Preserve access on unusually short viewports and with enlarged accessibility text. */
 @media(max-height:500px){html.dm-teacher-portal body #tpTeacherHome,html.dm-teacher-portal body #tpDashboard{overflow:auto!important}#tpTeacherHome .tp-home-inner,#tpDashboard .tp-dash-wrap{min-height:460px}}
+
+/* A compact card keeps its title beside the icon, never below its row. */
+@layer bilgiIslands {
+html.dm-teacher-portal body #tpDashboard .tp-real-tools>button{display:grid!important;grid-template-columns:22px minmax(0,1fr)!important;grid-template-rows:1fr!important;align-items:center!important;align-content:center!important;gap:7px!important;overflow:hidden!important;min-width:0!important;min-height:0!important;height:100%!important;box-sizing:border-box!important;color:#143c50!important;-webkit-text-fill-color:#143c50!important;background:#edf8fc!important;font:700 12px/1.2 system-ui!important;text-align:left!important}
+html.dm-teacher-portal body #tpDashboard .tp-real-tools>button>span{font-size:20px!important;line-height:1!important;align-self:center!important;min-height:0!important}
+html.dm-teacher-portal body #tpDashboard .tp-real-tools>button>strong{display:block!important;position:static!important;min-width:0!important;white-space:normal!important;overflow-wrap:break-word!important;font:800 12px/1.2 system-ui!important;color:#143c50!important;-webkit-text-fill-color:#143c50!important;margin:0!important}
+html.dm-teacher-portal body #tpDashboard .tp-real-tools>button>small{display:none!important}
+html.dm-teacher-portal body #tpDashboard .tp-real-tools>button[hidden]{display:none!important}
+}

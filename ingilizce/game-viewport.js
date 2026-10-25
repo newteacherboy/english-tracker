@@ -4,7 +4,7 @@
  const modern={rallyGame:'dmRally',wordWheel:'dmWordWheel',papiCards:'dmPapiCards',meteorGame:'dmMeteor',mvOverlay:'dmMola',kgOverlay:'dmTopicGames'};
  const selector='.game-modal-overlay,#harfBahcesiOverlay,#dmGameIntro,#yoModal.acik[data-dm-selected-game],#rallyGame,#wordWheel,#papiCards,#meteorGame,#mvOverlay,#kgOverlay,#onlineMatch,#dmArenaOverlay,#dmMatchOverlay,#genelSonucOverlay.acik,#dyOyunOverlay,.dm-garden-match,.kart-oyun-overlay,.kp-shell,.ba-shell';
  const nativeSelector='.game-close-btn,.yo-kapat,.hb-card header [data-close],.mt-exit,.ww-close,.pc-close,.mv-close,.kg-close,[data-exit],[data-close],.kp-close-x,.ba-close,.kart-oyun-kapat,.dm-x,[data-ia-close],#gsoDevamBtn';
- const shown=e=>!!e?.isConnected&&!e.hidden&&e.getClientRects().length>0&&getComputedStyle(e).display!=='none'&&getComputedStyle(e).visibility!=='hidden';
+ const shown=e=>!!e?.isConnected&&e.style.display!=='none'&&!e.hidden&&e.getClientRects().length>0&&getComputedStyle(e).display!=='none'&&getComputedStyle(e).visibility!=='hidden';
  function native(root){return root.querySelector(nativeSelector);}
  function closeNative(root){if(root.id==='genelSonucOverlay'&&typeof window.genelSonucKapat==='function')return window.genelSonucKapat('devam');const name=classics[root.id]?.[0],object=modern[root.id];if(name&&typeof window[name]==='function')return window[name]();if(object&&typeof window[object]?.close==='function')return window[object].close();return native(root)?.click();}
  async function navigate(root,back){

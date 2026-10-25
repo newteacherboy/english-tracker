@@ -1,3 +1,4 @@
+import {memberStudents,isClassroomGuest} from './classroom-identity.mjs';
 // Every grant is tied to a normal learner; neither role claims nor invite codes grant access.
 // Private teacher codes use rate-limited authentication; owner credentials stay server-side.
 export const portalOps=new Set(['teacherPortalApply','teacherPortalStatus','teacherPortalList','teacherPortalDecide','teacherPortalIssueCode','teacherPortalLogin','teacherPortalResetRequest','teacherPortalReset','teacherPortalChangeCode','teacherPortalAppearance','teacherPortalSyncStudents','teacherPortalStudentReport','teacherPortalClassAnalytics','teacherPortalAnnouncement','teacherPortalRubric','teacherPortalPerformance','teacherPortalStudentContact','teacherPortalStudents','teacherPortalParticipant']);
@@ -113,14 +114,14 @@ export function teacherPortalAPI(d){
    const teacher=await db.from('teachers').select('id,invite_code,active').eq('id',r.teacher_id).maybeSingle();
    if(teacher.error)throw teacher.error;
    if(!teacher.data?.active||String(teacher.data.invite_code||'').toUpperCase()!==code)return fail('Bu kod giriş yaptığın öğretmen hesabına ait değil.',403);
-   const linked=await db.from('students').select('id').eq('teacher_id',r.teacher_id).eq('role','student').eq('status','approved').is('frozen_at',null);
+   const linked=await memberStudents(db.from('students').select('id')).eq('teacher_id',r.teacher_id).eq('role','student').eq('status','approved').is('frozen_at',null);
    if(linked.error)throw linked.error;
    return json({ok:true,count:(linked.data||[]).length});
   }
   if(op==='teacherPortalStudentReport'){
    const sid=String(b.studentId||'');
    if(!/^[a-f0-9-]{36}$/i.test(sid))return fail('Geçerli öğrenci seç.',400);
-   const student=await db.from('students').select('id,username,full_name,class_no,teacher_id,xp,points,streak').eq('id',sid).eq('teacher_id',r.teacher_id).eq('status','approved').is('frozen_at',null).maybeSingle();
+   const student=await memberStudents(db.from('students').select('id,username,full_name,class_no,teacher_id,xp,points,streak')).eq('id',sid).eq('teacher_id',r.teacher_id).eq('status','approved').is('frozen_at',null).maybeSingle();
    if(student.error)throw student.error;if(!student.data)return fail('Öğrenci sana bağlı değil.',403);
    const [reports,games]=await Promise.all([
     db.from('teacher_reports').select('report_date,reading_score,writing_score,vocabulary_score,speaking_score,grammar_score,genel_score,exam_score').eq('student_id',sid).order('report_date',{ascending:false}).limit(30),
@@ -132,7 +133,7 @@ export function teacherPortalAPI(d){
   }
 
   if(['teacherPortalClassAnalytics','teacherPortalAnnouncement','teacherPortalRubric','teacherPortalPerformance','teacherPortalStudentContact'].includes(op)){
-   const pupils=await db.from('students').select('id,username,full_name,class_no,branch,email,phone,points,xp,email_verified_at').eq('teacher_id',r.teacher_id).eq('status','approved').is('frozen_at',null);
+   const pupils=await memberStudents(db.from('students').select('id,username,full_name,class_no,branch,email,phone,points,xp,email_verified_at')).eq('teacher_id',r.teacher_id).eq('status','approved').is('frozen_at',null);
    if(pupils.error)throw pupils.error;
    const all=pupils.data||[],sid=String(b.studentId||''),pupil=all.find(x=>x.id===sid);
    if(op==='teacherPortalStudentContact'){
@@ -189,7 +190,7 @@ export function teacherPortalAPI(d){
    return json({ok:true,students:selected.map(p=>({id:p.id,name:p.full_name||p.username,xp:p.xp,points:p.points,plays:rows.filter(g=>g.student_id===p.id).length,email:p.email||'',phone:p.phone||''})),inactive:selected.filter(p=>!active.has(p.id)).map(p=>p.full_name||p.username),summary,rubrics:reports.data||[]});
   }
   if(op==='teacherPortalStudents'){
-   let query=db.from('students').select('id,username,full_name,class_no').eq('role','student').eq('status','approved').is('frozen_at',null);if(!ownerTeacher(a))query=query.eq('teacher_id',r.teacher_id);const out=await query.order('username');if(out.error)throw out.error;
+   let query=memberStudents(db.from('students').select('id,username,full_name,class_no')).eq('role','student').eq('status','approved').is('frozen_at',null);if(!ownerTeacher(a))query=query.eq('teacher_id',r.teacher_id);const out=await query.order('username');if(out.error)throw out.error;
    const guests=await db.from('teacher_portal_guests').select('student_id').eq('access_id',r.id);if(guests.error)throw guests.error;const ids=new Set((guests.data||[]).map(x=>x.student_id));return json({ok:true,items:out.data.filter(s=>!ids.has(s.id))});
   }
   if(op==='teacherPortalParticipant'){
@@ -199,7 +200,8 @@ export function teacherPortalAPI(d){
     if([...alias].length<3)return fail('En az 3 harf girin.');if(!/^[\p{L}\p{N} ._-]{3,32}$/u.test(alias))return fail('İsim 3–32 karakter olmalı; harf ve rakam kullan.');
     const result=await db.rpc('dm_teacher_portal_guest',{grant_id:r.id,guest_alias:alias,is_preview:b.preview===true,secret_hash:await hashPassword(crypto.randomUUID())});if(result.error)throw result.error;sid=result.data;
    }
-   const pupil=await db.from('students').select('id,username,status,teacher_id,frozen_at').eq('id',String(sid||'')).maybeSingle();
+   const pupil=await db.from('students').select('id,username,status,teacher_id,frozen_at,profile').eq('id',String(sid||'')).maybeSingle();
+   if(!b.guestName&&b.preview!==true&&isClassroomGuest(pupil.data))return fail('Misafir adını oyun için yeniden gir.',403);
    if(!pupil.data||pupil.data.status!=='approved'||pupil.data.frozen_at||(!ownerTeacher(a)&&pupil.data.teacher_id!==r.teacher_id))return fail('Yalnızca sana bağlı öğrencileri seçebilirsin.',403);
    return json({ok:true,token:await session(r,'student',pupil.data.id),name:pupil.data.username,preview:b.preview===true});
   }

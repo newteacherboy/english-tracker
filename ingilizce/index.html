@@ -15594,16 +15594,8 @@ function avatarSVG(s, stil, px, cins) {
   setInterval(ligOdulKontrol, 60000);
   setTimeout(ligOdulKontrol, 15000);
 
-  /* ---------- Bugün limit 25 oldu ---------- */
-  let boostGosterildi = '';
-  setInterval(() => {
-    if (!girisli() || !yoVar()) return;
-    if (window.genelEnerjiMax === 25 && boostGosterildi !== yoBugun() && localStorage.getItem('ing_boost_gun') !== yoBugun()) {
-      boostGosterildi = yoBugun();
-      try { localStorage.setItem('ing_boost_gun', yoBugun()); } catch (e) {}
-      odulGoster({ ikon: '🔋', baslik: 'Enerji limitin bugün 25!', alt: 'Çok çalıştın! Bugün bataryan 20 yerine 25 enerji alabiliyor.', btn: 'Oynamaya git! 🚀' });
-    }
-  }, 3000);
+  // Energy capacity is permanently 25; there is no daily capacity-boost notice.
+
 })();
 </script>
 <style>
@@ -16684,6 +16676,7 @@ function odulUret(k, o) {
   /* ================= DÜNYA PARKURU (Büyü Akademisi) ================= */
   const RUTBELER = ['🥚 Çırak', '🪄 Büyü Öğrencisi', '📜 Büyücü', '🔮 Başbüyücü', '🐉 Ejder Ustası', '🌟 Efsane Büyücü'];
   window.dunyaAc = async function () {
+    if(window.dmTeacherPortalMode)return;
     dcTumTamEkranlariKapat();
     let el = $('tab-dunya');
     el.classList.add('active');
@@ -25177,6 +25170,7 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
     let t = $('tab-dunya'); (t || document.body).appendChild(b);
   }
   window.dunyaAc = async function () {
+    if(window.dmTeacherPortalMode)return;
     if (eskiGorunum()) { let r = orgDunya && orgDunya.apply(this, arguments); setTimeout(yeniDonDugmesi, 300); return r; }
     parkurAlani();   /* DÜZELTME: bz-yeni sınıfını en başta ekle; eski Gökyüzü Kulesi tasarımı hiç görünmesin */
     if (!parkurAcikTut && typeof orgDunya === 'function') orgDunya.apply(this, arguments);   /* sekmeyi açar, alt menüyü günceller */
@@ -26549,7 +26543,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <script defer src="game-experience.js?v=20261025-game-fit-1"></script>
 <script defer src="game-access.js?v=20261020-1"></script>
 <script defer src="onboarding-ui.js?v=20261015-members-only-1"></script>
-<script defer src="first-discovery.js?v=20261020-start-path-2"></script>
+<script defer src="first-discovery.js?v=20261025-teacher-fixes-1"></script>
 <script defer src="rights-ui.js?v=1"></script>
 <style>/* Distinct Diji-Medu clue colors: do not rely on color alone. */ .bz-wordle .h{border-radius:15px 5px!important}.bz-wordle .h.g{background:#257b8a!important}.bz-wordle .h.s{background:#a36cb2!important}.bz-wordle .h.x{background:#607d83!important}
 /* Adventure questions: preserve spaces/punctuation and foreground keyboard fallback. */
@@ -26674,9 +26668,9 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <link rel="stylesheet" href="faithful-eight-games.css?v=20261020-selected-art-1">
 <script defer src="faithful-eight-games.js?v=20261025-game-fit-1"></script>
 <!-- Eight selected mini-games: fullscreen responsive layout and separate back/X controls. -->
-<link rel="stylesheet" href="game-viewport.css?v=20261025-fit-1"><script defer src="game-viewport.js?v=20261025-fit-1"></script>
+<link rel="stylesheet" href="game-viewport.css?v=20261025-fit-2"><script defer src="game-viewport.js?v=20261025-fit-2"></script>
 <link rel="stylesheet" href="eight-game-fullscreen.css?v=20261020-fit-v1">
-<script defer src="eight-game-fullscreen.js?v=20261020-fit-v1"></script>
-<link rel="stylesheet" href="teacher-portal.css?v=20261025-device-fit-1"><script defer src="teacher-portal.js?v=20261025-game-fit-1"></script>
+<script defer src="eight-game-fullscreen.js?v=20261025-close-1"></script>
+<link rel="stylesheet" href="teacher-portal.css?v=20261025-teacher-fixes-1"><script defer src="teacher-portal.js?v=20261025-teacher-fixes-1"></script>
 </body>      
         </html>

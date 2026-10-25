@@ -1,3 +1,4 @@
+import {isClassroomGuest,memberStudents} from './classroom-identity.mjs';
 import {teacherPortalAPI,portalOps,portalOperationAllowed} from './teacher-portal.mjs';
 import {routeExplorationAPI} from './route-exploration.mjs';
 import {routeGraduationsAPI} from './route-graduations.mjs';
@@ -226,8 +227,8 @@ async function auth(req: Request, body: any, q: URLSearchParams) {
   if (data.role === "student") {
     if (!data.student_id) return null;
     const {data:student,error:studentError}=await supabase.from("students")
-      .select("id,status,role,frozen_at").eq("id",data.student_id).maybeSingle();
-    if(studentError||!student||student.frozen_at||student.status!=="approved"||student.role!=="student"){
+      .select("id,status,role,frozen_at,profile").eq("id",data.student_id).maybeSingle();
+    if(studentError||!student||student.frozen_at||student.status!=="approved"||student.role!=="student"||isClassroomGuest(student)&&!data.teacher_portal_access_id){
       if(!studentError)await supabase.from("portal_sessions").delete().eq("id",data.id);
       return null;
     }
@@ -301,7 +302,7 @@ async function hedefOgrenci(a: any, name: string) {
     return data;
   }
   const s = await studentByName(name);
-  return publicParticipant(s) && kapsamda(a, s) ? s : null;
+  return publicParticipant(s) && !isClassroomGuest(s) && kapsamda(a, s) ? s : null;
 }
 const studentByNameGenel = studentByName;
 // [v3.1] Supabase tek istekte en fazla 1000 satır verir; hepsini sayfa sayfa al
@@ -548,7 +549,7 @@ async function rootData(a: any) {
   if (!a) return json([]);
   const o = await ortakVeri();
   if (a.role === "teacher") {
-    let sorgu = supabase.from("students").select("*").neq("id",DEMO_ID).order("username");
+    let sorgu = memberStudents(supabase.from("students").select("*").neq("id",DEMO_ID)).order("username");
     if (!a.yonetici) sorgu = sorgu.eq("teacher_id", a.teacher_id);
     const { data } = await sorgu;
     const b = await baglamYukle(null);
@@ -675,7 +676,7 @@ async function odevOtomasyonu(deneme: boolean) {
   const simdi = Date.now(), gunMs = 86400000, periyot = ODEV_CEZA_GUN * gunMs;
   const ozet: any = { deneme, cezaGun: ODEV_CEZA_GUN, cezaPuan: ODEV_CEZA_PUAN, tatilSayisi: ODEV_TATILLER.length, bekleyenOdev: 0, yeniCeza: 0, cezaAlanOgrenci: 0, hatirlatmaMaili: 0, epostasiOlmayan: 0, detay: [] as any[] };
   const [ogr, sa, sv, eskiCeza] = await Promise.all([
-    hepsiniGetir(() => supabase.from("students").select("id,username,email,points,class_no,branch,teacher_id,created_at").eq("status", "approved").order("username")),
+    hepsiniGetir(() => memberStudents(supabase.from("students").select("id,username,email,points,class_no,branch,teacher_id,created_at")).eq("status", "approved").order("username")),
     hepsiniGetir(() => supabase.from("student_activities").select("id,student_id,status,assigned_at,activities(display_name,active)").neq("status", "completed").order("id")),
     hepsiniGetir(() => supabase.from("student_videos").select("id,student_id,watched_at,assigned_at,videos(title,active)").is("watched_at", null).order("id")),
     hepsiniGetir(() => supabase.from("points_transactions").select("auto_key").like("auto_key", "odev:%").order("auto_key"))
@@ -1320,7 +1321,7 @@ async function handle(req: Request, proxy: any = null) {
       if (await denemeSay("giris_hata", target, 15) >= 5)
         return json({ ok: false, mesaj: "Çok fazla hatalı deneme. 15 dakika sonra tekrar dene." }, 429);
       const student = await studentByNameGenel(username);
-      if (!student || !(await verifyPassword(password, student.password_hash))) {
+      if (!student || isClassroomGuest(student) || !(await verifyPassword(password, student.password_hash))) {
         await denemeYaz("giris_hata", target);
         return json({ ok: false, mesaj: "Hatalı kullanıcı adı veya şifre." }, 401);
       }
@@ -1439,7 +1440,7 @@ async function handle(req: Request, proxy: any = null) {
   const releaseResult=await release.handle(op,body,q,a);if(releaseResult)return releaseResult;
   const releaseDeny=await release.guard(op,body,q,a);if(releaseDeny)return releaseDeny;
   /* [v4.0] Bu istekte öğrenci aramaları öğretmenin kapsamıyla sınırlı (yönetici herkesi görür) */
-  const studentByName = async (n: string) => { const s = await studentByNameGenel(n); const demoOwner=s?.id===DEMO_ID&&(op==='giris'||a?.student_id===DEMO_ID);return (publicParticipant(s)||demoOwner)&&kapsamda(a,s)?s:null; };
+  const studentByName = async (n: string) => { const s = await studentByNameGenel(n); const demoOwner=s?.id===DEMO_ID&&(op==='giris'||a?.student_id===DEMO_ID);return (publicParticipant(s)||demoOwner)&&(!isClassroomGuest(s)||a?.teacher_portal_access_id&&a?.student_id===s?.id)&&kapsamda(a,s)?s:null; };
   const ogrFiltre = (sorgu: any) => yoneticiOlmayan(a) ? sorgu.eq("teacher_id", a.teacher_id) : sorgu;
   if (!op) return rootData(a);
 
@@ -1751,7 +1752,7 @@ async function handle(req: Request, proxy: any = null) {
   if (op === "ekVeriTumu") {
     const deny = await requireTeacher(a); if (deny) return deny;
     const key = String(val(body, q, "anahtar") || "yo");
-    const [{ data: ev }, { data: st }] = await Promise.all([supabase.from("extra_data").select("student_id,value").eq("key_name", key), ogrFiltre(supabase.from("students").select("id,username"))]);
+    const [{ data: ev }, { data: st }] = await Promise.all([supabase.from("extra_data").select("student_id,value").eq("key_name", key), ogrFiltre(memberStudents(supabase.from("students").select("id,username")))]);
     const ad = new Map((st || []).map((x: any) => [x.id, x.username]));
     return json((ev || []).filter((x: any) => ad.has(x.student_id)).map((x: any) => ({ ogrenci: ad.get(x.student_id), anahtar: key, deger: metinVer(x.value) })));
   }
@@ -1772,7 +1773,7 @@ async function handle(req: Request, proxy: any = null) {
   if (op === "sosyalOgrencilerGetir") {
     const deny = await requireStudent(a, ""); if (deny) return deny;
     const [{ data: st }, { data: yo }, { data: bd }, { data: days }] = await Promise.all([
-      supabase.from("students").select("id,username,class_no,points,xp,gold,streak,profile,teacher_id").eq("status", "approved").is("frozen_at", null).neq("id",DEMO_ID).order("username"),
+      memberStudents(supabase.from("students").select("id,username,class_no,points,xp,gold,streak,profile,teacher_id")).eq("status", "approved").is("frozen_at", null).neq("id",DEMO_ID).order("username"),
       supabase.from("extra_data").select("student_id,totalXp:value->totalXp,karakter:value->karakter,takili:value->takili,seviye:value->seviye,lig:value->lig,profilKrk:value->profilKrk").eq("key_name", "yo"),
       supabase.from("badges").select("name,required_points,emoji,student_name").order("id"),
       supabase.rpc("dm_public_login_day_totals")
@@ -1865,7 +1866,7 @@ async function handle(req: Request, proxy: any = null) {
   }
   if (op === "bekleyenKayitlariGetir") {
     const deny = await requireTeacher(a); if (deny) return deny;
-    const { data } = await ogrFiltre(supabase.from("students").select("username,full_name,phone,class_no,branch,email,created_at,teacher_id").eq("status", "pending").order("created_at"));
+    const { data } = await ogrFiltre(memberStudents(supabase.from("students").select("username,full_name,phone,class_no,branch,email,created_at,teacher_id")).eq("status", "pending").order("created_at"));
     return json({ liste: (data || []).map((x: any) => ({ ogrenciAdi: x.username, adSoyad: x.full_name || "", sinif: x.class_no || "", sube: x.branch || "", telefon: x.phone || "", email: x.email || "", tarih: x.created_at, bagimsiz: !x.teacher_id })) });
   }
   if (op === "duyuruListesiGetir") {
@@ -1916,7 +1917,7 @@ async function handle(req: Request, proxy: any = null) {
   }
   if (op === "ogretmenSohbetListesi") {
     const deny = await requireTeacher(a); if (deny) return deny;
-    const [{ data }, { data: st }] = await Promise.all([supabase.from("chat_messages").select("student_id,created_at,message,sender_role,read_at").order("created_at", { ascending: false }).limit(800), ogrFiltre(supabase.from("students").select("id,username,teacher_id"))]);
+    const [{ data }, { data: st }] = await Promise.all([supabase.from("chat_messages").select("student_id,created_at,message,sender_role,read_at").order("created_at", { ascending: false }).limit(800), ogrFiltre(memberStudents(supabase.from("students").select("id,username,teacher_id")))]);
     const ad = new Map((st || []).filter((x:any)=>x.teacher_id===a.teacher_id||(a.yonetici&&!x.teacher_id)).map((x: any) => [x.id, x.username])), son = new Map<string, any>(), say = new Map<string, number>();
     for (const m of data || []) { if (!son.has(m.student_id)) son.set(m.student_id, m); if (m.sender_role === "student" && !m.read_at) say.set(m.student_id, (say.get(m.student_id) || 0) + 1); }
     return json([...son.values()].filter((m: any) => ad.has(m.student_id)).map((m: any) => ({ ogrenci: ad.get(m.student_id), sonMesaj: m.message, mesaj: m.message, tarih: m.created_at, okunmamis: say.get(m.student_id) || 0 })));
@@ -1928,7 +1929,7 @@ async function handle(req: Request, proxy: any = null) {
     const [{ data }, { data: at }, { data: st }] = await Promise.all([
       video ? supabase.from("videos").select("*").eq("active", true).order("title") : supabase.from("activities").select("*").eq("active", true).order("display_name"),
       video ? supabase.from("student_videos").select("student_id,video_id") : supabase.from("student_activities").select("student_id,activity_id"),
-      ogrFiltre(supabase.from("students").select("id,username"))
+      ogrFiltre(memberStudents(supabase.from("students").select("id,username")))
     ]);
     const ad = new Map((st || []).map((x: any) => [x.id, encName(x.username)])), atanan = new Map<string, string[]>();
     for (const r of at || []) { const k = video ? r.video_id : r.activity_id; if (!atanan.has(k)) atanan.set(k, []); if (ad.has(r.student_id)) atanan.get(k)!.push(String(ad.get(r.student_id))); }
@@ -2156,7 +2157,7 @@ async function handle(req: Request, proxy: any = null) {
       return json({ ok: false, mesaj: "Hatalı kullanıcı adı veya şifre." });
     }
     const s = await studentByName(username);
-    if (!s || !(await verifyPassword(password, s.password_hash))) {
+    if (!s || isClassroomGuest(s) || !(await verifyPassword(password, s.password_hash))) {
       await hataYaz();
       return json({ ok: false, mesaj: "Hatalı kullanıcı adı veya şifre." });
     }
@@ -2233,13 +2234,13 @@ async function handle(req: Request, proxy: any = null) {
   if (op === "ogretmenBilgim") {
     const deny = await requireTeacher(a); if (deny) return deny;
     const [{ data: t }, { count }] = await Promise.all([supabase.from("teachers").select("username,full_name,email,school,invite_code,is_admin").eq("id", a.teacher_id).maybeSingle(),
-      ogrFiltre(supabase.from("students").select("id", { count: "exact", head: true }).eq("status", "approved"))]);
+      ogrFiltre(memberStudents(supabase.from("students").select("id", { count: "exact", head: true })).eq("status", "approved"))]);
     return json({ ok: true, kullanici: t?.username, adSoyad: t?.full_name, email: t?.email, kurum: t?.school, kod: t?.invite_code, yonetici: !!t?.is_admin, ogrenciYonetimi: studentManagement.allowed(a), ogrenciSayisi: count || 0 });
   }
   if (op === "ogretmenleriGetir") {
     const deny = await requireTeacher(a); if (deny) return deny;
     if (!a.yonetici) return json({ ok: false, mesaj: "Sadece yönetici." }, 403);
-    const [{ data: tl }, { data: st }] = await Promise.all([supabase.from("teachers").select("id,username,full_name,email,school,invite_code,is_admin,active,created_at,last_login_at").order("created_at"), supabase.from("students").select("teacher_id").eq("status", "approved")]);
+    const [{ data: tl }, { data: st }] = await Promise.all([supabase.from("teachers").select("id,username,full_name,email,school,invite_code,is_admin,active,created_at,last_login_at").order("created_at"), memberStudents(supabase.from("students").select("teacher_id")).eq("status", "approved")]);
     const say = new Map<string, number>(); (st || []).forEach((x: any) => say.set(x.teacher_id || "-", (say.get(x.teacher_id || "-") || 0) + 1));
     return json({ ok: true, bagimsiz: say.get("-") || 0, liste: (tl || []).map((t: any) => ({ id: t.id, kullanici: t.username, adSoyad: t.full_name, email: t.email, kurum: t.school, kod: t.invite_code, yonetici: !!t.is_admin, aktif: t.active !== false, ogrenci: say.get(t.id) || 0, kayit: t.created_at, sonGiris: t.last_login_at })) });
   }
@@ -2401,7 +2402,7 @@ async function handle(req: Request, proxy: any = null) {
   const ODEV_OYUN: Record<string, string> = { ky: "Kelime Laboratuvarı", jp: "Risk Balonları", bosluk: "Eksik Harf", hafiza: "Hafıza Sandığı", yagmur: "Hız Fırtınası", asmaca: "Harf Avı", kelimebul: "Şifre Kırıcı", eslestirme: "Eş Bul", tren: "Kelime Treni", dikte: "Kulak Dedektifi", cumle: "Cümle Ustası" };
   for(const f of FEATURES as any[]){const k=f.assignmentKey||(f.code.startsWith('oyun_')?f.code.slice(5):'');if(k&&!ODEV_OYUN[k])ODEV_OYUN[k]=f.name;}
   const hedefOgrenciler = async (sinifNo: number, sube: string) => {
-    const { data } = await ogrFiltre(supabase.from("students").select("id,username,branch,class_no").eq("status", "approved").eq("class_no", sinifNo));
+    const { data } = await ogrFiltre(memberStudents(supabase.from("students").select("id,username,branch,class_no")).eq("status", "approved").eq("class_no", sinifNo));
     return (data || []).filter((x: any) => !sube || encName(x.branch) === encName(sube));
   };
   if (op === "odevVer") {
@@ -2429,7 +2430,7 @@ async function handle(req: Request, proxy: any = null) {
     const { data: odevler } = await ogrFiltre(supabase.from("assignments").select("*").eq("active", true).order("created_at", { ascending: false }).limit(150));
     const ids = (odevler || []).map((x: any) => x.id);
     const { data: durum } = ids.length ? await supabase.from("assignment_status").select("assignment_id,student_id,stars").in("assignment_id", ids) : { data: [] };
-    const { data: ogr } = await ogrFiltre(supabase.from("students").select("id,username,branch,class_no,teacher_id").eq("status", "approved"));
+    const { data: ogr } = await ogrFiltre(memberStudents(supabase.from("students").select("id,username,branch,class_no,teacher_id")).eq("status", "approved"));
     const Yo = await yoneticiler();
     const yapan = new Map<string, any>(); (durum || []).forEach((x: any) => yapan.set(x.assignment_id + "|" + x.student_id, x));
     return json({ ok: true, liste: (odevler || []).map((o: any) => {
@@ -2988,7 +2989,7 @@ async function handle(req: Request, proxy: any = null) {
   if (op === "raporMail") {
     const deny = await requireTeacher(a); if (deny) return deny;
     const metin = String(body.metin || ""), tel = String(body.telefon || "").replace(/\D/g, "").slice(-10);
-    const { data: st } = await ogrFiltre(supabase.from("students").select("id,username,phone,email").eq("status", "approved"));
+    const { data: st } = await ogrFiltre(memberStudents(supabase.from("students").select("id,username,phone,email")).eq("status", "approved"));
     let s: any = (st || []).find((x: any) => String(body.ogrenci || "") && encName(x.username) === encName(body.ogrenci));
     if (!s && tel.length === 10) s = (st || []).find((x: any) => String(x.phone || "").replace(/\D/g, "").slice(-10) === tel);
     if (!s) { const k = metin.toLocaleLowerCase("tr"); s = (st || []).filter((x: any) => x.username && x.username.length > 2 && k.includes(String(x.username).toLocaleLowerCase("tr"))).sort((x: any, y: any) => y.username.length - x.username.length)[0]; }

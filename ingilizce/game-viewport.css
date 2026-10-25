@@ -1,5 +1,8 @@
 /* The first important cascade layer owns viewport geometry over legacy game skins. */
 @layer bilgiIslands {
+/* Native close sets inline display:none; fullscreen classes must never override it. */
+html body :is(.dm-vp-root,.fg-fs-active)[style*="display: none"],html body :is(.dm-vp-root,.fg-fs-active)[style*="display:none"]{display:none!important}
+
 html:has(body.dm-game-viewport),html body.dm-game-viewport{overflow:hidden!important;overscroll-behavior:none!important}
 html body.dm-game-viewport :is(#tpTeacherDock,#bottomNavMobile,.bottom-nav-mobile,.bottom-nav-desktop){display:none!important;visibility:hidden!important;pointer-events:none!important}
 html body .dm-vp-root{position:fixed!important;inset:0!important;top:var(--dm-game-top,0px)!important;width:100%!important;height:var(--dm-game-height,100dvh)!important;max-width:none!important;max-height:var(--dm-game-height,100dvh)!important;box-sizing:border-box!important;padding:0!important;margin:0!important;overflow:hidden!important;align-items:stretch!important;justify-content:stretch!important;z-index:2147483641!important;transform:none!important;animation:none!important;transition:none!important}

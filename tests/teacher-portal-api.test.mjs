@@ -3,7 +3,7 @@ import {teacherPortalAPI,portalOperationAllowed,ownerTeacher} from '../supabase/
 const hash=async s=>Buffer.from(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s))).toString('hex');
 async function fixture(){const digest=await hash('server-secret|teacher-portal|123456'),calls=[];
  const tables={teacher_portal_access:[{id:'grant',student_id:'personal',teacher_id:'teacher-one',state:'approved',version:3,code_digest:digest}],teachers:[{id:'teacher-one',username:'TeacherOne',active:true}],students:[{id:'personal',username:'TeacherOne',email:'one@example.test',email_verified_at:'2026-10-24',status:'approved'},{id:'alice',username:'Alice',teacher_id:'teacher-one',status:'approved'},{id:'bob',username:'Bob',teacher_id:'teacher-two',status:'approved'}],teacher_portal_guests:[]};
- const db={from(table){const filters=[];const result=single=>({data:single?(tables[table]||[]).find(x=>filters.every(f=>f(x)))||null:(tables[table]||[]).filter(x=>filters.every(f=>f(x)))});const q={select(){return this},eq(k,v){filters.push(x=>x[k]===v);return this},is(k,v){filters.push(x=>(x[k]??null)===v);return this},gt(){return this},order(){return this},maybeSingle(){return Promise.resolve(result(true))},then(r,j){return Promise.resolve(result(false)).then(r,j)}};return q;},async rpc(name,args){calls.push({name,args});return {data:true};}};
+ const db={from(table){const filters=[];const result=single=>({data:single?(tables[table]||[]).find(x=>filters.every(f=>f(x)))||null:(tables[table]||[]).filter(x=>filters.every(f=>f(x)))});const q={select(){return this},or(){filters.push(x=>x.profile?.teacher_portal_guest!==true);return this},eq(k,v){filters.push(x=>x[k]===v);return this},is(k,v){filters.push(x=>(x[k]??null)===v);return this},gt(){return this},order(){return this},maybeSingle(){return Promise.resolve(result(true))},then(r,j){return Promise.resolve(result(false)).then(r,j)}};return q;},async rpc(name,args){calls.push({name,args});return {data:true};}};
  const api=teacherPortalAPI({db,json:(d,status=200)=>new Response(JSON.stringify(d),{status}),hash,hashPassword:async s=>'hash:'+s,verifyPassword:async()=>false,issueSession:async(...args)=>{calls.push({session:args});return 'signed-session'},mailShell:(_,html)=>html,escape:s=>s,queue:async m=>calls.push({mail:m}),codeKey:'server-secret'});
  const teacher={role:'teacher',teacher_id:'teacher-one',teacher_portal_access_id:'grant',teacher_portal_version:3};
  return {api,calls,tables,teacher,async run(op,b={},a=null){const r=await api.handle(op,b,a,'POST');return {status:r.status,data:await r.json()};}};
@@ -30,4 +30,10 @@ test('a null-linked grant never upgrades a regular teacher to owner',async()=>{
 test('short guest names return the exact three-letter guidance before any account is created',async()=>{
  for(const guestName of ['A','Al','  Al  ']){const f=await fixture(),r=await f.run('teacherPortalParticipant',{guestName},f.teacher);assert.equal(r.status,400);assert.equal(r.data.mesaj,'En az 3 harf girin.');assert.equal(f.calls.length,0);}
  const f=await fixture();await f.run('teacherPortalParticipant',{guestName:'Ali'},f.teacher);assert.equal(f.calls[0]?.name,'dm_teacher_portal_guest');
+});
+
+test('guest participants from every teacher stay outside member selectors and cannot be selected as pupils',async()=>{
+ const f=await fixture();f.tables.students.push({id:'guest',username:'Ali · Misafir a1b2c3d4',profile:{teacher_portal_guest:true},teacher_id:'teacher-one',status:'approved',role:'student'});f.tables.students[1].role='student';
+ const list=await f.run('teacherPortalStudents',{},f.teacher);assert(!list.data.items.some(s=>s.id==='guest'));assert(list.data.items.some(s=>s.id==='alice'));
+ const denied=await f.run('teacherPortalParticipant',{studentId:'guest'},f.teacher);assert.equal(denied.status,403);assert.equal(f.calls.length,0);
 });

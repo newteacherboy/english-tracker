@@ -154,7 +154,7 @@
  }
  function paginateDashboard(){
   const panel=document.getElementById('tpDashboard'),tiles=panel?.querySelector('.tp-real-tools');if(!tiles)return;
-  const buttons=[...tiles.children].filter(x=>x.tagName==='BUTTON'),size=window.innerWidth>900?12:10,pages=Math.max(1,Math.ceil(buttons.length/size)),page=Math.min(Number(panel.dataset.toolPage)||0,pages-1);
+  const buttons=[...tiles.children].filter(x=>x.tagName==='BUTTON'),columns=window.innerWidth>900?3:2,available=tiles.clientHeight,size=available>0?Math.max(columns,Math.min(window.innerWidth>900?12:10,Math.floor((available+7)/58)*columns)):(window.innerWidth>900?12:10),pages=Math.max(1,Math.ceil(buttons.length/size)),page=Math.min(Number(panel.dataset.toolPage)||0,pages-1);
   panel.dataset.toolPage=page;buttons.forEach((b,i)=>b.hidden=Math.floor(i/size)!==page);
   tiles.style.setProperty('--tp-tool-rows',Math.ceil(Math.min(size,buttons.length-page*size)/(window.innerWidth>900?3:2)));
   let pager=panel.querySelector('.tp-tools-pager');if(!pager){pager=document.createElement('nav');pager.className='tp-tools-pager';pager.setAttribute('aria-label','Öğretmen araç sayfaları');tiles.after(pager);}
@@ -236,12 +236,12 @@
      const title=String(target.dataset.dmTeacherTitle||target.querySelector('.dm-teacher-card-title')?.textContent||target.textContent).trim();
      if(existing.some(key=>patterns[key]?.test(title.toLocaleLowerCase('tr-TR'))))continue;
      if([...tiles.querySelectorAll('[data-native-title]')].some(b=>b.dataset.nativeTitle===title))continue;
-     const b=document.createElement('button');b.type='button';b.dataset.nativeTitle=title;b.textContent=title;b.onclick=()=>{window.dmTeacherToolsActive=true;target.click();observeTeacherChildren();};tiles.append(b);
+     const b=document.createElement('button');b.type='button';b.dataset.nativeTitle=title;const icon=document.createElement('span'),label=document.createElement('strong');icon.textContent='⚙️';icon.setAttribute('aria-hidden','true');label.textContent=title;b.append(icon,label);b.onclick=()=>{window.dmTeacherToolsActive=true;target.click();observeTeacherChildren();};tiles.append(b);
     }
    }
    const slot=document.querySelector('[data-teacher-identity]'),card=document.getElementById('cogOgretmenKart');if(slot&&card&&card.parentElement!==slot)slot.replaceChildren(card);
    const status=document.querySelector('.tp-dash-status');if(status)status.textContent=rows.length+' öğrenci · Öğretmen araçları hazır.';
-   paginateDashboard();return rows;
+   paginateDashboard();requestAnimationFrame(paginateDashboard);return rows;
   })();
   try{return await preparingTools;}finally{preparingTools=null;}
  }

@@ -13,7 +13,7 @@ test('root teacher data and another pupil report are scoped to tools; gameplay k
 });
 function prepareFixture(response,identity=()=>({teacherToken:'owner-token'})){
  const s=fs.readFileSync('ingilizce/teacher-portal.js','utf8'),start=s.indexOf(' async function prepareTeacherTools(){'),end=s.indexOf(' async function legacyTool(',start),saved=new Map();
- const ctx={paginateDashboard(){},preparingTools:null,globalDataCache:[{ogrenci:'stale'}],state:identity,api:response,window:{},sessionStorage:{setItem:(k,v)=>saved.set(k,v)},document:{querySelector:()=>null,getElementById:()=>null}};
+ const ctx={requestAnimationFrame:f=>f(),paginateDashboard(){},preparingTools:null,globalDataCache:[{ogrenci:'stale'}],state:identity,api:response,window:{},sessionStorage:{setItem:(k,v)=>saved.set(k,v)},document:{querySelector:()=>null,getElementById:()=>null}};
  vm.runInNewContext(s.slice(start,end),ctx);return {ctx,saved};
 }
 test('fresh teacher lists replace preview data and an empty teacher list clears previous pupils',async()=>{

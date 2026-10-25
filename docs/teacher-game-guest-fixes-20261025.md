@@ -1,0 +1,9 @@
+# Teacher startup, readable tools and classroom guest isolation
+
+Native game exits set inline display:none. The older fullscreen class used display:flex!important, overriding native close and leaving the game on screen. Visibility checks now respect explicit inline close, and the first important CSS layer enforces it. Regression UI clicks the real train back and X repeatedly through the complete teacher page scripts, without replacing native close or forcing click.
+
+Teacher startup skips both learner route initializers and first-discovery focus trapping. The permanently-25 energy cap no longer triggers an obsolete daily boost announcement. Teacher tool titles sit beside compact icons; the number of tool rows adapts to available height and hidden pages stay hidden.
+
+Existing and future classroom guests retain internal participant/history records for verified game FKs. These are not personal memberships: regular password and Google linking reject them, and unscoped sessions are rejected. Member lists, teacher counts, class selectors, homework recipients, management analytics and social discovery exclude the persisted teacher_portal_guest marker for every teacher. Existing scores and real members are preserved; no database deletion or schema change is needed. Teacher selection by pupil ID also rejects guest identities; the guest-name path remains available for games.
+
+Validation: focused Node/DOM tests cover account continuity, teacher scope, participant isolation and native exits. Complete teacher-page browser fixtures check contained/readable tool titles and hidden pages at 360×640, 390×844, 768×1024 and 1440×900, no learner discovery or parkur error at boot, and repeated native train back/X. Layout fixtures for the eight games are retained; their close stubs now use ordinary inline display:none so fullscreen cascade regressions cannot be masked by a test-only important priority.
