@@ -204,3 +204,27 @@ body.dm-sr-active{overflow:hidden!important}
  .dm-sr-finishing .dm-sr-car{transition-duration:0s!important}
  .dm-sr-finish-banner{animation:none!important}
 }
+
+/* October 26 mobile polish: keep all setup controls and the start button inside
+   one viewport even when a curriculum class contains many units. */
+.dm-sr-setup-body .dm-sr-unit-setting{min-height:0}
+.dm-sr-setup-body .dm-sr-units{
+ min-height:0;max-height:100%;overflow-y:auto;overscroll-behavior:contain;
+ scrollbar-width:thin;scrollbar-color:#53a7df #e4f5ff;
+ align-content:start;
+}
+.dm-sr-setup-body .dm-sr-units:focus-visible{outline:3px solid #1064c5;outline-offset:2px}
+@media(max-width:690px){
+ .dm-sr-setup-body{min-height:0}
+ .dm-sr-setup-body .dm-sr-unit-setting{min-height:0;overflow:hidden}
+ .dm-sr-setup-body .dm-sr-units{height:100%;max-height:100%;overflow-y:auto;align-content:start}
+ .dm-sr-setup-body .dm-sr-status{overflow-wrap:anywhere}
+ .dm-sr-setup-body .dm-sr-primary{flex-shrink:0;touch-action:manipulation}
+}
+@media(max-width:690px) and (max-height:700px){
+ .dm-sr-setup>.dm-sr-header{min-height:43px;padding:3px 7px}
+ .dm-sr-setup>.dm-sr-header p{display:none}
+ .dm-sr-setup .dm-sr-hero{flex-basis:55px}
+ .dm-sr-setup .dm-sr-setup-body{grid-template-rows:auto minmax(32px,1fr) auto auto auto auto;min-height:0}
+ .dm-sr-setup-body .dm-sr-unit{min-height:25px;padding:2px 5px}
+}
