@@ -1,12 +1,12 @@
 /* Isolated race API; portal sessions and all wallet writes remain server-owned. */
 type DB={select:(table:string,params:Record<string,string>)=>Promise<any[]>,rpc:(name:string,body:any)=>Promise<any>};
 const normalize=(v:string)=>v.trim().toLocaleLowerCase('tr').replace(/\s+/g,' ');
-export function buildRaceDeck(rows:any[],previous:any[]=[]){
+export function buildRaceDeck(rows:any[],previous:any[]=[],questionCount:12|15=15){
  const seen=new Set<string>(),words=rows.map(r=>({en:String(r.english||'').trim(),tr:String(r.turkish||'').trim()})).filter(w=>{const k=w.en.toLocaleLowerCase('en');if(!w.en||!w.tr||w.en.length>48||w.tr.length>90||seen.has(k))return false;seen.add(k);return true;});
- if(words.length<12)throw Error('Seçtiğin ünitelerde en az 12 farklı kelime gerekli. Bir ünite daha seç.');
+ if(words.length<questionCount)throw Error('Seçtiğin ünitelerde en az '+questionCount+' farklı kelime gerekli. Bir ünite daha seç.');
  const shuffle=<T>(items:T[])=>{const a=items.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
  const counts=new Map<string,number>();for(const run of previous)for(const w of run.deck||[])counts.set(w.en,(counts.get(w.en)||0)+1);
- const selected=shuffle(words).sort((a,b)=>(counts.get(a.en)||0)-(counts.get(b.en)||0)).slice(0,12);
+ const selected=shuffle(words).sort((a,b)=>(counts.get(a.en)||0)-(counts.get(b.en)||0)).slice(0,questionCount);
  return selected.map((w,i)=>{
   const direction=i%2?'tr-en':'en-tr',field=direction==='en-tr'?'tr':'en',answer=w[field];
   const parts=(s:string)=>normalize(s).split(/[,;/]/).map(x=>x.trim());
@@ -63,7 +63,7 @@ export function raceHandler(db:DB){
    if(op==='practice'){
     const flags=await db.select('dm_release_flags',{select:'code,enabled',code:'in.(aktiviteler,tek_kisilik,oyun_ralli)'});if(flags.some(f=>f.enabled===false))return json({ok:false,mesaj:'Kelime Rallisi şu anda kapalı.'},403);
     const rows=await db.select('word_bank',{select:'english,turkish',active:'eq.true',class_no:'eq.'+cls,unit_no:'in.('+units.join(',')+')',limit:'6000'});
-    const deck=buildRaceDeck(rows).map(q=>{if(!b.twoChoices)return q;const lanes=twoChoiceLanes(q);return {...q,options:lanes.map(i=>q.options[i]),answer:lanes.indexOf(q.answer)};});return json({ok:true,practice:true,deck,classNo:cls,units,difficulty:['easy','normal','hard'].includes(b.difficulty)?b.difficulty:'normal'});
+    const deck=buildRaceDeck(rows,[],b.twelveWords===true?12:15).map(q=>{if(!b.twoChoices)return q;const lanes=twoChoiceLanes(q);return {...q,options:lanes.map(i=>q.options[i]),answer:lanes.indexOf(q.answer)};});return json({ok:true,practice:true,deck,classNo:cls,units,difficulty:['easy','normal','hard'].includes(b.difficulty)?b.difficulty:'normal'});
    }
    if(op==='ranking'){
     const rows=await db.select('dm_rally_runs',{select:'student_id,state,finished_at',status:'eq.finished',student_id:'neq.dcde2026-1015-4000-8000-000000000001',class_no:'eq.'+cls,units:'eq.{'+units.join(',')+'}',order:'finished_at.desc',limit:'1000'});
@@ -80,7 +80,7 @@ export function raceHandler(db:DB){
     const difficulty=['easy','normal','hard'].includes(b.difficulty)?b.difficulty:'normal';
     const rows=await db.select('word_bank',{select:'english,turkish',active:'eq.true',class_no:'eq.'+cls,unit_no:'in.('+units.join(',')+')',limit:'6000'});
     const previous=await db.select('dm_rally_runs',{select:'deck',student_id:'eq.'+student.id,class_no:'eq.'+cls,order:'created_at.desc',limit:'50'});
-    return json(await view(await db.rpc(a.teacher_portal_access_id?'dm_teacher_rally_start':'dm_rally_start',{...(a.teacher_portal_access_id?{grant_id:a.teacher_portal_access_id}:{}),actor:student.id,run_key:b.runId,class_id:cls,unit_ids:units,question_deck:buildRaceDeck(rows,previous),pace:difficulty})));
+    return json(await view(await db.rpc(a.teacher_portal_access_id?'dm_teacher_rally_start':'dm_rally_start',{...(a.teacher_portal_access_id?{grant_id:a.teacher_portal_access_id}:{}),actor:student.id,run_key:b.runId,class_id:cls,unit_ids:units,question_deck:buildRaceDeck(rows,previous,b.twelveWords===true?12:15),pace:difficulty})));
    }
    if(op==='state'){const rows=await db.select('dm_rally_runs',{select:'*',id:'eq.'+b.runId,student_id:'eq.'+student.id,limit:'1'});return rows[0]?json(b.twoChoices?twoChoiceRace(rows[0],publicRace(rows[0])):publicRace(rows[0])):json({ok:false,mesaj:'Yarış bulunamadı.'},404);}
    if(op==='answer'){
