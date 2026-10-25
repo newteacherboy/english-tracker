@@ -319,3 +319,6 @@ body:has(#tab-aktiviteler.active .gg-page) .yb-fw{display:none!important}
 @media(prefers-reduced-motion:reduce){
  #tab-aktiviteler#tab-aktiviteler .gg-page .gg-tabs [role=tab]{transition:none!important;transform:none!important}
 }
+
+/* The code teacher portal exposes the three classroom game categories. */
+html.dm-teacher-portal #tab-aktiviteler#tab-aktiviteler .gg-page .gg-tabs{grid-template-columns:repeat(3,minmax(0,1fr))!important}
