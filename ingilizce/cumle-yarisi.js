@@ -23,7 +23,51 @@ function questionPool(items){
   var tip=kind===0?'Doğru İngilizce ifadeyi seç':'Doğru Türkçe anlamı seç';
   out.push({id:w.cl+'-'+w.unit+'-'+w.en+'-'+kind,prompt:prompt,tip:tip,answer:answer,choices:shuffle([answer].concat(wrongs)),kind:kind});
  }
- for(var i=0;i<words.length;i++){make(words[i],0);make(words[i],1);}
+ function contextual(w){
+  if(w.en.split(' ').length!==1)return;
+  var en=w.en.toLocaleLowerCase('en'),line='',answers=[];
+  var forms={
+    has:['She ___ a dog.','have','having'],
+    have:['I ___ a pencil.','has','having'],
+    go:['They ___ to school every day.','goes','going'],
+    is:['She ___ a student.','am','are'],
+    are:['They ___ students.','is','am'],
+    am:['I ___ a student.','is','are'],
+    like:['I ___ music.','likes','liking'],
+    can:['I ___ swim.','cans','can to'],
+    plays:['She ___ football after school.','play','playing'],
+    play:['We ___ football after school.','plays','playing'],
+    likes:['He ___ reading.','like','liking'],
+    goes:['She ___ to school by bus.','go','going'],
+    eats:['He ___ breakfast every morning.','eat','eating'],
+    eat:['I ___ breakfast every morning.','eats','eating'],
+    drink:['I ___ water every day.','drinks','drinking'],
+    read:['I ___ books every day.','reads','reading'],
+    write:['I ___ a letter.','writes','writing']
+  };
+  if(forms[en]){line=forms[en][0];answers=forms[en].slice(1);}
+  else{
+    var animals=new Set(['bird','cat','cow','dog','duck','elephant','fish','horse','lion','rabbit','sheep','turtle','monkey','bear','tiger','giraffe','zebra','penguin']);
+    var stationery=new Set(['pen','pencil','ruler','book','notebook','eraser','desk','chair','bag','backpack','computer','table','dictionary']);
+    var food=new Set(['apple','banana','orange','peach','pear','carrot','egg','lemon','grape']);
+    var verbs=new Set(['run','walk','jump','swim','sing','dance','sleep','draw','listen','watch','open','close']);
+    var feelings=new Set(['happy','sad','angry','tired','hungry','thirsty','scared','excited']);
+    var colors=new Set(['red','blue','green','yellow','black','white','purple','pink','brown','orange']);
+    var article=/^[aeiou]/.test(en)?'an':'a';
+    if(animals.has(en))line='I can see '+article+' ___ in the picture.';
+    else if(stationery.has(en))line='There is '+article+' ___ in the classroom.';
+    else if(food.has(en))line='There is '+article+' ___ on the table.';
+    else if(verbs.has(en))line='I can ___ in my free time.';
+    else if(feelings.has(en))line='I feel ___ today.';
+    else if(colors.has(en))line='The ball is ___.';
+  }
+  if(!line)return;
+  var other=words.map(function(x){return x.en;}).filter(function(x){return x!==w.en&&!x.includes(' ');});
+  if(!answers.length)answers=shuffle([...new Set(other)]).slice(0,2);
+  if(answers.length<2)return;
+  out.push({id:w.cl+'-'+w.unit+'-'+w.en+'-2',prompt:line+'  ('+w.tr+')',tip:'Cümlede boşluğu tamamla',answer:w.en,choices:shuffle([w.en].concat(answers)),kind:2});
+ }
+ for(var i=0;i<words.length;i++){make(words[i],0);make(words[i],1);contextual(words[i]);}
  return shuffle(out);
 }
 function makeDeck(items){
