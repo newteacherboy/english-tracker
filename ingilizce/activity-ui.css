@@ -325,3 +325,13 @@ html.dm-teacher-portal #tab-aktiviteler#tab-aktiviteler .gg-page .gg-tabs{grid-t
 
 /* New classroom race uses its own bright racing card. */
 #tab-aktiviteler .dm-sr-hub-art{display:grid;place-items:center;background:linear-gradient(135deg,#0c96ea,#ffd0ed);font-size:clamp(23px,3.5vw,40px);white-space:nowrap;aspect-ratio:1.3;width:100%;border-radius:12px}
+
+/* Cümle Yarışı · approved Papi racing artwork matching the other three large cards. */
+#tab-aktiviteler#tab-aktiviteler .gg-page .az-grid2x2 > #sentenceRaceActivity .dm-sr-hub-art {
+ display:block!important;width:100%!important;aspect-ratio:1/1!important;
+ background-image:url('games-assets/cumle-yarisi-cover.svg')!important;
+ background-repeat:no-repeat!important;background-position:center center!important;background-size:cover!important;
+ border-radius:11px!important;filter:none!important;box-shadow:none!important;
+}
+#tab-aktiviteler#tab-aktiviteler .gg-page[data-gg-party="free"] #sentenceRaceActivity .dm-sr-hub-art{height:auto!important;max-height:none!important}
+#tab-aktiviteler#tab-aktiviteler .gg-page[data-gg-party="free"] #sentenceRaceActivity .gg-copy{min-width:0}
