@@ -1,23 +1,23 @@
-if(!window.dmTeacherPortalMode){
 /* Device-local portal sessions. Passwords and personal profile data are never stored here. */
 (()=>{'use strict';
- const KEY='dm_saved_sessions_v1';
- const read=()=>{try{const list=JSON.parse(localStorage.getItem(KEY)||'[]');return Array.isArray(list)?list.filter(x=>x&&typeof x.token==='string'&&x.token&&typeof x.name==='string'&&['ogrenci','ogretmen'].includes(x.role)):[];}catch{return [];}};
- const write=list=>{try{localStorage.setItem(KEY,JSON.stringify(list));return true;}catch{return false;}};
- const current=()=>({name:localStorage.getItem('ing_aktifOgrenci')||'',token:localStorage.getItem('ing_token')||'',role:sessionStorage.getItem('ing_ogr_token')===localStorage.getItem('ing_token')?'ogretmen':'ogrenci',google:localStorage.getItem('ing_google_auth')==='true'});
+ const KEY='dm_saved_sessions_v1',storage=window.dmTeacherDevice?.storage||localStorage;
+ const read=()=>{try{const list=JSON.parse(storage.getItem(KEY)||'[]');return Array.isArray(list)?list.filter(x=>x&&typeof x.token==='string'&&x.token&&typeof x.name==='string'&&['ogrenci','ogretmen'].includes(x.role)):[];}catch{return [];}};
+ const write=list=>{try{storage.setItem(KEY,JSON.stringify(list));return true;}catch{return false;}};
+ const teacherCurrent=()=>{try{return window.dmTeacherPortalMode?JSON.parse(sessionStorage.getItem('dm_tp_session')||'null'):null;}catch{return null;}};
+ const current=()=>teacherCurrent()?{name:teacherCurrent().name,token:teacherCurrent().teacherToken,role:'ogretmen-kod',portal:teacherCurrent()}:({name:storage.getItem('ing_aktifOgrenci')||'',token:storage.getItem('ing_token')||'',role:sessionStorage.getItem('ing_ogr_token')===storage.getItem('ing_token')?'ogretmen':'ogrenci',google:storage.getItem('ing_google_auth')==='true'});
  function remember(entry=current()){
-  if(!entry.name||!entry.token)return;
+  if(!entry.name||!entry.token)return;if(entry.role==='ogretmen-kod'){window.dmTeacherDevice?.remember(entry.portal,false);return;}
   const list=read().filter(x=>x.name.toLocaleLowerCase('tr')!==entry.name.toLocaleLowerCase('tr')||x.role!==entry.role);
   list.unshift({name:entry.name,token:entry.token,role:entry.role,google:!!entry.google});write(list);
  }
  function forget(token){write(read().filter(x=>x.token!==token));}
- function queue(selected,previous=localStorage.getItem('ing_token')||''){
+ function queue(selected,previous=storage.getItem('ing_token')||''){
   if(!selected.name||!selected.token||!['ogrenci','ogretmen'].includes(selected.role))throw Error('Hesap bilgileri doğrulanamadı. Yeniden giriş yap.');
   remember();remember(selected);
   try{sessionStorage.setItem('dm_session_handoff_v1',JSON.stringify({...selected,previous,at:Date.now()}));}
   catch{throw Error('Tarayıcı oturumu kaydedemiyor. Depolama iznini kontrol et.');}
   // Do not change the active token until next startup: pagehide must save the outgoing owner.
-  window.location.reload();
+  if(window.dmTeacherPortalMode){window.dmTeacherDevice.leave();window.location.assign('./?hesap=1');}else{window.dmTeacherDevice?.personal();window.location.reload();}
  }
  async function request(body,signal){
   const controller=new AbortController();
@@ -30,21 +30,20 @@ if(!window.dmTeacherPortalMode){
   finally{clearTimeout(timeout);signal?.removeEventListener('abort',cancel);}
  }
  async function activate(entry,{signal}={}){
-  const before=localStorage.getItem('ing_token')||'';
+  if(entry.role==='ogretmen-kod'){const {response,data:d}=await request({islem:'oturumBilgisi',t:entry.token},signal);if(signal?.aborted)throw Object.assign(Error('Hesap geçişi iptal edildi.'),{cancelled:true});if(!response.ok||!d.ok||d.rol!=='ogretmen'){if([401,403].includes(response.status))window.dmTeacherDevice?.forget(entry.token);throw Object.assign(Error('Öğretmen oturumu sona ermiş. Kodla tekrar giriş yap.'),{expired:[401,403].includes(response.status),teacher:true});}window.dmTeacherDevice.activate(entry.portal);return;}
+  const before=storage.getItem('ing_token')||'';
   const {response,data:d}=await request({islem:'oturumBilgisi',t:entry.token},signal);
   if(signal?.aborted)throw Object.assign(Error('Hesap geçişi iptal edildi.'),{cancelled:true});
   if(!response.ok||!d.ok){const expired=response.status===401||response.status===403;if(expired)forget(entry.token);throw Object.assign(Error(d.mesaj||'Oturum kontrol edilemedi. Tekrar dene.'),{expired});}
-  if((localStorage.getItem('ing_token')||'')!==before)throw Error('Başka bir sekmede hesap değişti. Listeyi yeniden aç.');
+  if((storage.getItem('ing_token')||'')!==before)throw Error('Başka bir sekmede hesap değişti. Listeyi yeniden aç.');
   queue({name:d.ogrenci,token:entry.token,role:d.rol,google:entry.google},before);
  }
  async function remove(entry){
   // Explicit removal means sign out this saved session; other device sessions are untouched.
   const {response:r,data}=await request({islem:'cikis',t:entry.token});
   if(!r.ok||data.ok===false)throw Error('Hesap kaldırılamadı. Bağlantını kontrol et.');
-  forget(entry.token);
+  if(entry.role==='ogretmen-kod'){window.dmTeacherDevice?.forget(entry.token);return;}forget(entry.token);
  }
- window.dmSavedSessions={remember,current,forget,list:read,activate,remove,queue,verifyLogin:(body,signal)=>request({islem:'giris',...body},signal)};
+ window.dmSavedSessions={remember,current,forget,list:()=>[...read(),...(window.dmTeacherDevice?.list()||[]).map(portal=>({name:portal.name,token:portal.teacherToken,role:'ogretmen-kod',portal}))],activate,remove,queue,verifyLogin:(body,signal)=>request({islem:'giris',...body},signal)};
  remember();document.addEventListener('dm:login',()=>remember());
 })();
-
-}

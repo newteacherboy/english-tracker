@@ -96,3 +96,12 @@ html body #hafizaOyunOverlay.ab-playing .ab-jokers .jk-daire{width:28px!importan
 html body #hafizaOyunOverlay.ab-playing .ab-jokers .jk-alt{font-size:10px!important;margin-top:3px!important;line-height:1.1!important}
 html body #hafizaOyunOverlay.ab-playing .ab-jokers .jk-mesaj:empty{display:none!important}
 }
+
+/* One word uses the whole question board, with larger readable letter targets. */
+html body #boslukOyunOverlay.ab-playing #boslukSatirlarContainer{grid-template-rows:minmax(0,1fr)!important}
+html body #boslukOyunOverlay.ab-playing #boslukSatirlarContainer .dm-letter-word{gap:clamp(12px,3dvh,28px)!important;padding:24px 14px!important}
+html body #boslukOyunOverlay.ab-playing #boslukSatirlarContainer .dm-letter-word>strong{font-size:clamp(23px,5vw,34px)!important;line-height:1.25!important}
+html body #boslukOyunOverlay.ab-playing #boslukSatirlarContainer .dm-letter-slots{gap:5px!important}
+html body #boslukOyunOverlay.ab-playing #boslukSatirlarContainer .dm-letter-slots>:is(span,button){flex:0 1 46px!important;max-width:52px!important;min-width:20px!important;height:clamp(38px,7dvh,58px)!important;font-size:clamp(23px,5vw,34px)!important}
+html body #boslukOyunOverlay.ab-playing #boslukSatirlarContainer .dm-letter-options button{flex:0 1 46px!important;max-width:50px!important;height:clamp(40px,7dvh,52px)!important;font-size:26px!important}
+html body #boslukOyunOverlay.ab-playing #boslukSatirlarContainer .dm-letter-word>small{height:auto!important;min-height:20px!important;line-height:1.35!important;white-space:normal!important;font-size:13px!important;text-align:center}

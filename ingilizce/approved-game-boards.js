@@ -31,7 +31,7 @@
       const seconds=current&&!current.bitti?OC.sure():0;
       hud.querySelector('[data-ab-time]').textContent=seconds.toFixed(1)+' sn';
       hud.querySelector('[data-ab-score]').textContent=(current?OC.puan():0)+' puan';
-      hud.querySelector('[data-ab-progress]').textContent=key==='hafiza'?document.getElementById('hafizaKalanInfo').textContent:document.getElementById('boslukSayacInfo').textContent.replace(' · Üç kelimelik tur','');
+      hud.querySelector('[data-ab-progress]').textContent=key==='hafiza'?document.getElementById('hafizaKalanInfo').textContent:document.getElementById('boslukSayacInfo').textContent.replace(' · Tek kelimelik tur','');
     };
     new MutationObserver(update).observe(game,{attributes:true,attributeFilter:['style']});
     setInterval(update,200);update();

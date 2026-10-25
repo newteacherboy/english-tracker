@@ -1,7 +1,7 @@
 <!DOCTYPE html>
         <html lang="tr">
         <head>
-<script src="teacher-portal-boot.js?v=20261025-tools-2"></script>
+<script src="teacher-portal-boot.js?v=20261025-device-fit-1"></script>
 <script src="holiday-splashes/dates.js?v=20261023-2"></script>
 <script src="holiday-splashes/splash.js?v=20261023-fullscreen-1"></script>
 <link rel="stylesheet" href="holiday-splashes/splash.css?v=20261023-fullscreen-1">
@@ -8802,7 +8802,7 @@ setTimeout(() => {
         }
         function boslukTurCiz(){
             const state=boslukRound,box=document.getElementById('boslukSatirlarContainer');box.replaceChildren();box.className='dm-letter-round';
-            const batch=state.words.slice(state.index,state.index+3);let completed=0;
+            const batch=state.words.slice(state.index,state.index+1);let completed=0;
             for(const [n,w] of batch.entries()){
                 const row=document.createElement('section');row.className='dm-letter-word';row.dataset.word=w.en;const title=document.createElement('strong');title.textContent=w.tr;const number=document.createElement('span');number.className='dm-letter-number';number.textContent=state.index+n+1;row.append(number,title);
                 const word=document.createElement('div');word.className='dm-letter-slots';row.append(word);
@@ -8813,7 +8813,7 @@ setTimeout(() => {
                     window.dmVerifiedGames?.record(w.en,{letter:c,index:Number(chosen.dataset.position)});
                     if(c!==chosen.dataset.answer){hadWrong=true;state.wrong++;OC.yanlis(false);chosen.textContent=c;chosen.classList.add('wrong');note.textContent='Yanlış harf. Geri alıp yeniden seçebilirsin.';window.dmLetterFeedback?.('wrong');return;}
                     chosen.textContent=c;chosen.disabled=true;chosen.classList.remove('wrong','selected');chosen.classList.add('correct');remaining--;window.dmLetterFeedback?.('letter');note.textContent='✓ Doğru harf';
-                    const next=[...word.querySelectorAll('button')].find(x=>!x.disabled);if(next)pick(next);else{options.replaceChildren();completed++;setTimeout(()=>{if(row.isConnected&&document.getElementById('boslukOyunEkrani').style.display!=='none')window.dmLetterFeedback?.('word');},150);state.results.push({kelime:w.en,turkce:w.tr,dogruMu:!hadWrong});window.dmVerifiedGames?.record(w.en,[...word.children].map(x=>x.textContent).join(''));OC.dogru(hadWrong?.5:1);document.getElementById('boslukSayacInfo').textContent=(state.index+completed)+' / '+state.words.length+' · Üç kelimelik tur';state.combo++;row.classList.add('complete');
+                    const next=[...word.querySelectorAll('button')].find(x=>!x.disabled);if(next)pick(next);else{options.replaceChildren();completed++;setTimeout(()=>{if(row.isConnected&&document.getElementById('boslukOyunEkrani').style.display!=='none')window.dmLetterFeedback?.('word');},150);state.results.push({kelime:w.en,turkce:w.tr,dogruMu:!hadWrong});window.dmVerifiedGames?.record(w.en,[...word.children].map(x=>x.textContent).join(''));OC.dogru(hadWrong?.5:1);document.getElementById('boslukSayacInfo').textContent=(state.index+completed)+' / '+state.words.length+' · Tek kelimelik tur';state.combo++;row.classList.add('complete');
                        if(completed===batch.length&&!state.advancing){state.advancing=true;const turn=state.turn;setTimeout(()=>{if(boslukRound?.turn!==turn||document.getElementById('boslukOyunEkrani').style.display==='none')return;state.index+=batch.length;state.advancing=false;if(state.index<state.words.length)boslukTurCiz();else{window.boslukSonucDetaylari=state.results;window.boslukSonKombo=state.combo;boslukOyunuBitir(state.results.filter(x=>x.dogruMu).length,state.results.filter(x=>!x.dogruMu).length);}},650);}
                     }
                 };options.append(b);}const undo=document.createElement('button');undo.type='button';undo.textContent='⤨';undo.setAttribute('aria-label','Seçilen harfi geri al');undo.onclick=()=>{if(chosen&&!chosen.disabled){chosen.textContent='_';chosen.classList.remove('wrong');note.textContent='Bir harf seç.';}};options.append(undo);}
@@ -8821,7 +8821,7 @@ setTimeout(() => {
                 if(!remaining){completed++;state.results.push({kelime:w.en,turkce:w.tr,dogruMu:true});window.dmVerifiedGames?.record(w.en,w.en);OC.dogru(1);}else pick(word.querySelector('button'));
                 box.append(row);
             }
-            document.getElementById('boslukSayacInfo').textContent=state.index+' / '+state.words.length+' · Üç kelimelik tur';
+            document.getElementById('boslukSayacInfo').textContent=state.index+' / '+state.words.length+' · Tek kelimelik tur';
         }
         function boslukKontrolEt(){/* Each letter is now checked immediately. */}
 
@@ -11792,6 +11792,7 @@ function ozellikSecDoldur() {
             let fn = tip === 'tekrar' ? gsoAktif.tekrarFn : gsoAktif.devamFn;
             gsoAktif = null;
             if (typeof fn === 'function') fn();
+            if(window.dmTeacherPortalMode&&tip!=='tekrar')queueMicrotask(()=>window.dmTeacherPortal?.returnToGames());
         }
         </script>
         <style>
@@ -26660,13 +26661,13 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <script defer src="route-questions.js?v=20261022-zorluk-1"></script>
 <script defer src="harf-adasi.js?v=20261020-exit"></script>
 <link rel="stylesheet" href="account-switch.css?v=20261020-member-flows-1">
-<script defer src="saved-sessions.js?v=20261015-reliable-2"></script>
-<script defer src="account-switch.js?v=20261020-member-flows-1"></script>
+<script defer src="saved-sessions.js?v=20261025-device-fit-1"></script>
+<script defer src="account-switch.js?v=20261025-device-fit-1"></script>
 <script defer src="demo-account.js?v=20261020-open"></script>
 <link rel="stylesheet" href="papi-chat.css?v=20261016-2">
 <script defer src="papi-chat.js?v=20261016-1"></script>
-<link rel="stylesheet" href="approved-game-boards.css?v=20261018-fixed-jokers-3">
-<script defer src="approved-game-boards.js?v=20261022-hiz-1"></script>
+<link rel="stylesheet" href="approved-game-boards.css?v=20261025-device-fit-1">
+<script defer src="approved-game-boards.js?v=20261025-device-fit-1"></script>
 <link rel="stylesheet" href="play-navigation.css?v=20261018-1">
 <script defer src="play-navigation.js?v=20261018-harf-2"></script>
 <link rel="stylesheet" href="email-guide.css?v=20261018-compact-2">
@@ -26686,6 +26687,6 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <!-- Eight selected mini-games: fullscreen responsive layout and separate back/X controls. -->
 <link rel="stylesheet" href="eight-game-fullscreen.css?v=20261020-fit-v1">
 <script defer src="eight-game-fullscreen.js?v=20261020-fit-v1"></script>
-<link rel="stylesheet" href="teacher-portal.css?v=20261025-energy-menu-1"><script defer src="teacher-portal.js?v=20261025-energy-menu-1"></script>
+<link rel="stylesheet" href="teacher-portal.css?v=20261025-device-fit-1"><script defer src="teacher-portal.js?v=20261025-device-fit-1"></script>
 </body>      
         </html>

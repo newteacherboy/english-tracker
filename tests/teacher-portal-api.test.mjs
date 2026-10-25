@@ -27,3 +27,7 @@ test('a null-linked grant never upgrades a regular teacher to owner',async()=>{
  const f=await fixture();f.tables.teacher_portal_access[0].student_id=null;
  assert.equal((await f.run('teacherPortalAppearance',{},f.teacher)).status,403);
 });
+test('short guest names return the exact three-letter guidance before any account is created',async()=>{
+ for(const guestName of ['A','Al','  Al  ']){const f=await fixture(),r=await f.run('teacherPortalParticipant',{guestName},f.teacher);assert.equal(r.status,400);assert.equal(r.data.mesaj,'En az 3 harf girin.');assert.equal(f.calls.length,0);}
+ const f=await fixture();await f.run('teacherPortalParticipant',{guestName:'Ali'},f.teacher);assert.equal(f.calls[0]?.name,'dm_teacher_portal_guest');
+});

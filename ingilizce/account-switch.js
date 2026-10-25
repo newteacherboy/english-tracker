@@ -30,6 +30,7 @@
  function message(text){const node=$('dmSwitchStatus');if(node)node.textContent=text;}
  function addAccount(name=''){
   if(!dialog)return;
+  if(window.dmTeacherPortalMode){sessionStorage.setItem('dm_add_personal_account','1');window.dmTeacherDevice.leave();location.assign('./?hesap=1');return;}
   attempt?.abort();attempt=null;
   $('dmSwitchAccounts').hidden=true;$('dmSwitchAdd').hidden=true;$('dmSwitchManage').hidden=true;
   $('dmSwitchBack').hidden=false;
@@ -68,13 +69,13 @@
    const avatar=document.createElement('span');avatar.className='dm-account-initial';avatar.setAttribute('aria-hidden','true');avatar.textContent=entry.name.trim().slice(0,1).toLocaleUpperCase('tr');
    const label=document.createElement('span');label.className='dm-account-label';
    const name=document.createElement('strong');name.textContent=entry.name;
-   const info=document.createElement('small');info.textContent=current?'Şu an bu hesaptasın':entry.role==='ogretmen'?'Öğretmen hesabı':'Öğrenci hesabı';label.append(name,info);
+   const info=document.createElement('small');info.textContent=current?'Şu an bu hesaptasın':entry.role==='ogretmen-kod'?'Kodlu öğretmen hesabı':entry.role==='ogretmen'?'Öğretmen hesabı':'Öğrenci hesabı';label.append(name,info);
    const end=document.createElement('span');end.className='dm-account-end';end.textContent=current?'✓':'›';end.setAttribute('aria-hidden','true');button.append(avatar,label,end);
    button.onclick=async()=>{
     if(attempt)return;attempt=new AbortController();const run=attempt;
     area.querySelectorAll('button').forEach(b=>b.disabled=true);button.classList.add('is-loading');end.textContent='…';message(entry.name+' hesabı açılıyor…');
     try{await store.activate(entry,{signal:run.signal});}
-    catch(error){if(dialog&&attempt===run){attempt=null;if(error.expired)addAccount(entry.name);else{accounts();message(error.message);}}}
+    catch(error){if(dialog&&attempt===run){attempt=null;if(error.teacher&&error.expired){close();window.dmTeacherPortal?.openLogin();}else if(error.expired)addAccount(entry.name);else{accounts();message(error.message);}}}
    };
    row.append(button);
    if(managing&&!current){const remove=document.createElement('button');remove.type='button';remove.className='dm-account-remove';remove.textContent='Kaldır';remove.setAttribute('aria-label',entry.name+' hesabından bu cihazda çıkış yap');remove.onclick=async()=>{remove.disabled=true;try{await store.remove(entry);if(dialog)accounts();}catch(error){if(dialog){remove.disabled=false;message(error.message);}}};row.append(remove);}
@@ -95,5 +96,5 @@
  }
  function install(){if($('dmAccountSwitchButton'))return;const exit=document.querySelector('.header-btn.btn-cikis');if(!exit)return;const button=document.createElement('button');button.id='dmAccountSwitchButton';button.type='button';button.className=exit.className;button.textContent='⇄ Hesap Değiştir';button.onclick=open;exit.before(button);}
  window.dmHesapDegistirAc=open;
- document.addEventListener('DOMContentLoaded',install);if(document.readyState!=='loading')install();
+ document.addEventListener('DOMContentLoaded',()=>{install();if(sessionStorage.getItem('dm_add_personal_account')==='1'){sessionStorage.removeItem('dm_add_personal_account');open();addAccount();}});if(document.readyState!=='loading')install();
 })();
