@@ -1,0 +1,80 @@
+/* DijiMedu Cumle Yarisi: independent classroom two-team race. */
+body.dm-sr-active{overflow:hidden!important}
+.dm-sr-overlay{position:fixed;inset:0;z-index:2147483000;background:#0c255be8;display:grid;place-items:center;padding:clamp(5px,1.2vw,14px);font-family:Nunito,system-ui,sans-serif;color:#173262;overscroll-behavior:contain}
+.dm-sr-overlay *, .dm-sr-overlay *:before,.dm-sr-overlay *:after{box-sizing:border-box}
+.dm-sr-overlay [hidden]{display:none!important}
+.dm-sr-shell{position:relative;width:min(100%,1500px);max-height:calc(100dvh - 14px);overflow:auto;border:4px solid #fff;box-shadow:0 26px 80px #06194699,0 0 0 4px #183d73;border-radius:28px;background:linear-gradient(#a8e2ff 0%,#e7f8ff 57%,#fffdf4 58%);padding:clamp(9px,1.5vw,22px)}
+.dm-sr-header{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:7px 13px 10px;border-radius:18px;background:linear-gradient(120deg,#114394,#168acf 74%,#4ec6ff);color:white;box-shadow:0 5px 0 #0e3474}
+.dm-sr-header small{font-size:clamp(10px,1.1vw,15px);font-weight:900;letter-spacing:.05em;color:#f9e189}
+.dm-sr-header h2{font:1000 clamp(22px,3vw,42px)/1.1 'Baloo 2',Nunito,sans-serif;margin:0;text-shadow:2px 3px 0 #0a326f}
+.dm-sr-header p{font-size:clamp(11px,1.2vw,15px);font-weight:800;margin:3px 0 0}
+.dm-sr-close{width:45px;height:45px;flex:0 0 45px;border:2px solid #fff;border-radius:14px;background:#f44772;color:#fff;font-size:30px;font-weight:900;cursor:pointer;display:grid;place-items:center;box-shadow:0 4px 0 #b01849}
+.dm-sr-overlay button:focus-visible,.dm-sr-overlay select:focus-visible{outline:4px solid #ffda4f;outline-offset:3px}
+.dm-sr-setup{max-width:860px;background:linear-gradient(150deg,#c1ecff,#f4fcff 50%,#fff1dc)}
+.dm-sr-intro{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 2px}
+.dm-sr-mini-car{border-radius:19px;background:#b9eaff;border:2px solid #44a5e9;color:#1451a1;font-size:34px;text-align:center;padding:13px}
+.dm-sr-mini-car+div{background:#ffd8ed;border-color:#f08bbc;color:#a3195e}
+.dm-sr-mini-car span{font-size:16px;font-weight:1000;display:block}
+.dm-sr-setup-body{background:#fffdfae8;border:2px solid #fff;border-radius:20px;padding:clamp(13px,2vw,20px);display:grid;gap:13px}
+.dm-sr-setup-body label{font-size:15px;font-weight:900;display:grid;gap:7px}
+.dm-sr-setup-body select{width:100%;min-height:46px;padding:8px 14px;border:2px solid #7bb4ec;border-radius:12px;background:white;color:#163a65;font-size:16px;font-weight:850}
+.dm-sr-setup-body fieldset{border:2px solid #bedcf4;border-radius:14px;padding:10px}
+.dm-sr-setup-body legend{padding:0 5px;font-weight:900;font-size:15px}
+.dm-sr-units{display:flex;gap:7px;flex-wrap:wrap}
+.dm-sr-unit{min-height:41px;padding:8px 14px;border:2px solid #aac1d7;border-radius:12px;color:#153b6b;background:#fff;font-weight:850;cursor:pointer}
+.dm-sr-unit.selected{border-color:#1c89d0;background:#176fc0;color:white;box-shadow:0 3px 0 #134e90}
+.dm-sr-rule{padding:12px 15px;background:#fff3cf;border:2px solid #edcb60;border-radius:13px;color:#5d420c;font-size:14px;line-height:1.5}
+.dm-sr-rule p{margin:4px 0}.dm-sr-status{margin:0;min-height:23px;font-size:14px;font-weight:850}
+.dm-sr-primary,.dm-sr-secondary{min-height:54px;border:0;border-radius:15px;background:linear-gradient(#47d89e,#0eaa65);box-shadow:0 5px 0 #086f47;color:white;font-size:19px;font-weight:1000;cursor:pointer;padding:11px 25px}
+.dm-sr-primary:disabled{opacity:.5;cursor:not-allowed;filter:grayscale(.7)}
+.dm-sr-secondary{background:#ebf5ff;color:#244d76;box-shadow:0 4px 0 #91b9e1}
+.dm-sr-play{background:linear-gradient(#80d4ff,#e0f6ff 49%,#e2ffe2 49%,#fffee7 100%);height:min(98dvh,900px);display:grid;grid-template-rows:auto minmax(128px,25%) minmax(0,1fr) auto;gap:clamp(7px,1vw,12px);overflow:hidden}
+.dm-sr-game-head{padding:5px 14px}.dm-sr-game-meta{display:flex;align-items:center;gap:15px;font-size:clamp(10px,1.1vw,15px)}
+.dm-sr-track{position:relative;display:flex;align-items:center;gap:6px;padding:9px 12px;border:3px solid #185892;border-radius:19px;background:linear-gradient(#4a525e,#383f4e);box-shadow:0 4px 0 #1f3c67;min-height:128px}
+.dm-sr-startflag,.dm-sr-finishflag{flex:none;width:clamp(58px,9vw,110px);font-size:clamp(9px,1vw,15px);font-weight:1000;color:white;text-align:center}
+.dm-sr-track-lanes{flex:1;min-width:0;height:100%;display:flex;flex-direction:column;justify-content:center;gap:7px}
+.dm-sr-lane{position:relative;display:flex;align-items:center;gap:8px;min-height:48px;padding:3px 5px;background:#303d51;border-radius:12px;border:1px dashed #ffffff77}
+.dm-sr-lane-label{flex:0 0 clamp(75px,12vw,155px);padding:7px 4px;border-radius:12px;color:white;background:#1374bd;font-weight:950;text-align:center;font-size:clamp(10px,1.3vw,16px)}
+.dm-sr-pink .dm-sr-lane-label{background:#d6378c}
+.dm-sr-track-line{position:relative;height:14px;background:repeating-linear-gradient(90deg,#d7dce3 0 28px,#677486 28px 55px);border-radius:8px;flex:1;min-width:0}
+.dm-sr-car{position:absolute;left:0;top:50%;transform:translateY(-50%);font-size:clamp(27px,3.6vw,53px);line-height:1;filter:drop-shadow(2px 4px 1px #15273a);transition:left .65s cubic-bezier(.21,.85,.22,1)}
+.dm-sr-blue .dm-sr-car{filter:drop-shadow(2px 4px 1px #102a66) hue-rotate(150deg)}
+.dm-sr-finishflag{border:3px solid #fff;border-radius:9px;background:#1b477e;padding:10px 2px}
+.dm-sr-dual{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(6px,1vw,14px);min-height:0}
+.dm-sr-side{display:flex;min-height:0;flex-direction:column;gap:clamp(7px,.9vw,12px);padding:clamp(8px,1.4vw,18px);border-radius:23px;background:linear-gradient(#d0efff,#f5fdff);border:4px solid #379ee9;box-shadow:0 6px 0 #1859a6;overflow:hidden}
+.dm-sr-side-pink{background:linear-gradient(#ffd6ed,#fff7fb);border-color:#ed70ba;box-shadow:0 6px 0 #ac287a}
+.dm-sr-side>header{display:flex;align-items:center;justify-content:space-between;gap:8px;background:#086dbf;color:white;padding:9px 13px;border-radius:13px}
+.dm-sr-side-pink>header{background:#c51d7c}
+.dm-sr-side h3{font:1000 clamp(16px,2vw,27px)/1.1 'Baloo 2',Nunito,sans-serif;margin:0}
+.dm-sr-side>header b{font-size:clamp(13px,1.5vw,20px);white-space:nowrap}
+.dm-sr-side-meta{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:clamp(12px,1.2vw,17px);font-weight:950}
+.dm-sr-side-meta strong{border-radius:999px;background:#ffd04b;color:#733710;border:2px solid #d59624;padding:4px 15px;min-width:85px;text-align:center;font-size:clamp(14px,1.5vw,20px)}
+.dm-sr-side-meta strong.urgent{background:#f94159;color:#fff;animation:dm-sr-bump .8s ease-in-out infinite}
+.dm-sr-time-track{width:100%;height:9px;overflow:hidden;background:#c1cbd9;border-radius:10px}
+.dm-sr-time-track>div{height:100%;width:100%;background:#23af72;transition:width .1s linear}
+.dm-sr-time-track>div.urgent{background:#ed4262}
+.dm-sr-question{flex:1;min-height:65px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;gap:6px;padding:clamp(9px,1.2vw,15px);border-radius:18px;background:white;box-shadow:0 4px 0 #add8f4;border:2px solid #b4daf4}
+.dm-sr-side-pink .dm-sr-question{border-color:#f8b9dc;box-shadow:0 4px 0 #e7b4d2}
+.dm-sr-question small{font-size:clamp(10px,1.2vw,15px);color:#376e92;font-weight:900}
+.dm-sr-question p{font:1000 clamp(16px,2.5vw,36px)/1.2 'Baloo 2',Nunito,sans-serif;margin:0;overflow-wrap:anywhere}
+.dm-sr-choices{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(5px,.65vw,10px)}
+.dm-sr-choices button{min-height:clamp(49px,7vh,86px);border:3px solid #3d92cf;border-radius:16px;background:linear-gradient(#fff,#dcefff);box-shadow:0 4px 0 #1a6aa8;color:#12396d;font:950 clamp(13px,1.6vw,23px)/1.1 Nunito,system-ui,sans-serif;overflow-wrap:anywhere;cursor:pointer;padding:8px 4px}
+.dm-sr-side-pink .dm-sr-choices button{border-color:#d55ca0;background:linear-gradient(#fff,#ffe0ef);box-shadow:0 4px 0 #b23174;color:#772551}
+.dm-sr-choices button.correct,.dm-sr-side-pink .dm-sr-choices button.correct{background:#c6f9cb;border-color:#2da95f;color:#12512c}
+.dm-sr-choices button.incorrect,.dm-sr-side-pink .dm-sr-choices button.incorrect{background:#ffd0d6;border-color:#f04c63;color:#941d39}
+.dm-sr-choices button:disabled{cursor:default;opacity:.85}
+.dm-sr-feedback{font-size:clamp(10px,1.1vw,15px);font-weight:950;line-height:1.2;min-height:17px;margin:0}
+.dm-sr-counts{font-size:clamp(11px,1.15vw,15px);font-weight:900;text-align:center;display:flex;justify-content:space-around;gap:4px}
+.dm-sr-game-footer{text-align:center;margin:0;color:#1a4c70;font-weight:850;font-size:clamp(10px,1.1vw,13px)}
+.dm-sr-done{flex:1;display:flex;justify-content:center;flex-direction:column;align-items:center;gap:12px;text-align:center;font-size:clamp(14px,1.4vw,22px);font-weight:900}.dm-sr-done h4,.dm-sr-done p{margin:0}.dm-sr-done h4{font-size:clamp(19px,2.2vw,30px)}
+.dm-sr-final{max-width:800px;background:linear-gradient(#d1edff,#fff4cf);text-align:center;padding:clamp(16px,3vw,40px)}
+.dm-sr-final-close{position:absolute;right:15px;top:15px}.dm-sr-trophy{font-size:clamp(50px,11vw,115px);margin:10px 0}
+.dm-sr-final h2{font:1000 clamp(27px,4vw,49px)/1.2 'Baloo 2',Nunito,sans-serif;color:#123d76;margin:0}
+.dm-sr-final>p{font-size:14px;font-weight:800}.dm-sr-final-grid{display:grid;grid-template-columns:1fr 1fr;gap:15px;margin:26px 0}
+.dm-sr-final-team{padding:16px;border:3px solid #308dde;border-radius:20px;background:#d4f1ff}.dm-sr-final-team.pink{border-color:#ef6faf;background:#ffe1f1}
+.dm-sr-final-team h3{margin:0}.dm-sr-final-team strong{display:block;font-size:32px}.dm-sr-final-team p{font-size:13px;font-weight:850}
+.dm-sr-final-actions{display:flex;flex-wrap:wrap;justify-content:center;gap:16px;margin:14px 0}
+@keyframes dm-sr-bump{50%{transform:scale(1.08)}}
+@media(max-height:730px) and (min-width:700px){.dm-sr-play{grid-template-rows:auto minmax(105px,24%) minmax(0,1fr) auto;gap:6px}.dm-sr-side{gap:5px;padding:7px}.dm-sr-question{min-height:47px;padding:5px}.dm-sr-track{min-height:103px;padding:5px}.dm-sr-lane{min-height:38px}.dm-sr-choices button{min-height:45px}.dm-sr-header{padding:4px 10px}.dm-sr-header h2{font-size:25px}}
+@media(max-width:690px){.dm-sr-overlay{padding:3px}.dm-sr-shell{border-width:2px;border-radius:15px;max-height:99dvh;padding:6px}.dm-sr-play{overflow:auto;height:99dvh;grid-template-rows:auto auto auto auto}.dm-sr-track{min-height:110px}.dm-sr-dual{grid-template-columns:1fr}.dm-sr-side{min-height:300px}.dm-sr-question{min-height:90px}.dm-sr-choices button{min-height:55px}.dm-sr-header small{font-size:10px}.dm-sr-header h2{font-size:22px}.dm-sr-startflag,.dm-sr-finishflag{width:54px;font-size:8px}.dm-sr-lane-label{flex-basis:75px;font-size:10px}.dm-sr-final-grid{gap:7px}.dm-sr-final-team{padding:8px}.dm-sr-final-team strong{font-size:22px}}
+@media(prefers-reduced-motion:reduce){.dm-sr-overlay *, .dm-sr-overlay *:before,.dm-sr-overlay *:after{transition:none!important;animation:none!important}}

@@ -114,10 +114,10 @@
 
 /* Kapışma Oyunları: whitelist only the three Papi cards.
    Selector matches active tab itself, independent of legacy party attributes. */
-#tab-aktiviteler:has(#dmFreeTab[aria-selected="true"]) .az-grid2x2 > :not(#papiCardsActivity):not(#meteorActivity):not(#wordWheelActivity){
+#tab-aktiviteler:has(#dmFreeTab[aria-selected="true"]) .az-grid2x2 > :not(#papiCardsActivity):not(#meteorActivity):not(#wordWheelActivity):not(#sentenceRaceActivity){
   display:none!important;
 }
-#tab-aktiviteler:has(#dmFreeTab[aria-selected="true"]) .az-grid2x2 > :is(#papiCardsActivity,#meteorActivity,#wordWheelActivity){
+#tab-aktiviteler:has(#dmFreeTab[aria-selected="true"]) .az-grid2x2 > :is(#papiCardsActivity,#meteorActivity,#wordWheelActivity,#sentenceRaceActivity){
   display:grid!important;
 }
 /* Approved DijiMedu cream game hub. Existing game engines and dock remain intact. */
@@ -151,7 +151,7 @@
 #tab-aktiviteler#tab-aktiviteler .gg-page .az-grid2x2>.gg-game[hidden],
 #tab-aktiviteler#tab-aktiviteler .gg-page .gg-game>:not(.gg-art):not(.gg-copy),
 #tab-aktiviteler#tab-aktiviteler .gg-page .gg-game :is(.ak-acik,.ak-etiket,.dm-game-picture,.dm-play-visual){display:none!important}
-#tab-aktiviteler#tab-aktiviteler .gg-page[data-gg-party=free] .az-grid2x2>:not(#papiCardsActivity):not(#meteorActivity):not(#wordWheelActivity){display:none!important}
+#tab-aktiviteler#tab-aktiviteler .gg-page[data-gg-party=free] .az-grid2x2>:not(#papiCardsActivity):not(#meteorActivity):not(#wordWheelActivity):not(#sentenceRaceActivity){display:none!important}
 #tab-aktiviteler#tab-aktiviteler .gg-page .az-grid2x2{padding-bottom:0!important}
 #tab-aktiviteler#tab-aktiviteler .gg-friends{flex-wrap:wrap;overflow:visible}
 #tab-aktiviteler#tab-aktiviteler .gg-friends>span{line-height:1.35;color:#80513b}
@@ -322,3 +322,6 @@ body:has(#tab-aktiviteler.active .gg-page) .yb-fw{display:none!important}
 
 /* The code teacher portal exposes the three classroom game categories. */
 html.dm-teacher-portal #tab-aktiviteler#tab-aktiviteler .gg-page .gg-tabs{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+
+/* New classroom race uses its own bright racing card. */
+#tab-aktiviteler .dm-sr-hub-art{display:grid;place-items:center;background:linear-gradient(135deg,#0c96ea,#ffd0ed);font-size:clamp(23px,3.5vw,40px);white-space:nowrap;aspect-ratio:1.3;width:100%;border-radius:12px}
