@@ -1,7 +1,7 @@
 name: Thematic learning 240 lessons
 on:
   push:
-    paths: ['ingilizce/thematic-*', 'ingilizce/learning-*', 'supabase/functions/thematic-learning/**', 'tests/thematic-learning*', 'tests/thematic-grouped-teach*', 'tests/thematic-mint*', 'tests/school-shared*', 'tests/activity-notices*', 'ingilizce/school-*', 'ingilizce/papi-flow.js', 'ingilizce/verified-games.js', 'content/thematic-*', 'scripts/*thematic*', '.github/workflows/thematic-learning.yml']
+    paths: ['ingilizce/thematic-*', 'ingilizce/learning-*', 'supabase/functions/thematic-learning/**', 'tests/thematic-learning*', 'tests/thematic-grouped-teach*', 'tests/thematic-mint*', 'tests/school-shared*', 'tests/activity-notices*', 'tests/final-review-retry*', 'ingilizce/school-*', 'ingilizce/papi-flow.js', 'ingilizce/verified-games.js', 'content/thematic-*', 'scripts/*thematic*', '.github/workflows/thematic-learning.yml']
   pull_request:
     paths: ['ingilizce/thematic-*', 'ingilizce/learning-*', 'supabase/functions/thematic-learning/**', 'tests/thematic-learning*', 'tests/thematic-grouped-teach*', 'tests/thematic-mint*']
 permissions:
@@ -25,6 +25,7 @@ jobs:
       - run: node tests/thematic-mint-ui.cjs
       - run: node tests/school-shared-ui.cjs
       - run: node tests/activity-notices-ui.cjs
+      - run: node tests/final-review-retry-ui.cjs
       - run: python scripts/check-media-rights.py
       - uses: actions/upload-artifact@v4
         if: always()

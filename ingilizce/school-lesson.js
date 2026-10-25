@@ -31,7 +31,7 @@
      const task=tasks[state.cursor];if(!task)return view({accepted:true});
      if(action==='comboReset'&&task.kind==='teach')return view();
      const answer=action==='comboReset'?{mistake:true}:payload.answer,g=window.DMSchoolCurriculum.grade(task,answer);if(!g.valid)throw Error('Bu soru için bir cevap seç.');
-     await charge();if(!current())throw Error('Hesap değişti.');
+     if(action!=='comboReset')await charge();if(!current())throw Error('Hesap değişti.');
      let result;if(practice){const old=state.answers[state.cursor]||{misses:0};result={correct:g.correct,complete:g.complete,firstCorrect:g.correct&&!old.misses};state.answers[state.cursor]={...result,misses:old.misses+(g.correct?0:1)};}
      else{window.dmVerifiedGames.record(state.cursor,answer,state.runId);result=await window.dmVerifiedGames.flush(state.runId);if(!current())throw Error('Hesap değişti.');if(result.duplicate){const fresh=await window.dmVerifiedGames.start('ba',state.runId,{classNo:D.sinif,units:[D.unite],stopNo:D.no,schoolVersion:9},words);result={...result,...fresh.answers[state.cursor]};}const old=state.answers[state.cursor]||{misses:0};state.answers[state.cursor]={complete:result.complete,correct:result.correct,firstCorrect:result.firstCorrect,misses:old.misses+(result.correct?0:1)};}
      const accepted=!!result.complete;if(accepted){if(state.cursor>=2&&window.OC){if(result.firstCorrect)OC.dogru(1);else OC.yanlis(false);}state.cursor++;state.version++;}persist();return view({accepted,correct:result.correct,comboGain:result.eklenen||0});
