@@ -27,3 +27,5 @@
 @media(prefers-reduced-motion:reduce){.dm-notice-managed .dm-notice-panel{animation:none!important}.dm-notice-progress>i{transition:none!important}}
 
 .dm-notice-copy .deg-hero{position:static!important;background:transparent!important;display:block!important;padding:0!important;min-height:0!important}.dm-notice-copy .deg-hero>img{display:none!important}.dm-notice-copy .deg-scroll{padding:0!important;overflow:visible!important;max-height:none!important}
+
+.dm-notice-copy :is(.cb-ikon,.tv-ikon,.dv-kilic,.dm-nudge-progress){display:none!important}.dm-notice-copy :is(.dm-nudge-time,.m,.i){position:static!important;inset:auto!important;transform:none!important;float:none!important;max-width:100%!important;white-space:normal!important}.dm-notice-copy .dm-nudge-time{display:block!important;font-size:12px!important;color:#607d86!important}.dm-notice-copy .dm-habit-actions{flex-wrap:wrap!important}

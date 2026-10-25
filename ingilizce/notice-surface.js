@@ -3,7 +3,7 @@
 (()=>{'use strict';
 const SELECTOR='#duyuruOverlay,#dmWeeklyPanel,#dmNudge,#dmPlacementInvite,#dmEmailVerification,#dmEmailGuide,#dmLeagueMomentum,#dmHabitGreet,#dmHabitBreak,#dmWeekDone,.dm-notification,.cb-kart,.tv-kart,.bk-kart,.yo-davet,.dv-perde,#dmInlineNotice,.yo-toast,.uy-serit,.dm-leader-bonus,#medu-offline-notice,#cpBanner,#dm-app-update,.dm-papi-feedback.is-energy,.dm-friends-welcome,[data-papi-notice]';
 const PANEL='.duy3-card,.dm-weekly-card,.dm-nudge-card,.dm-member-sheet,.dm-momentum-panel,.wd-card,.dm-papi-feedback-card,.dm-safety-card,.deg-dialog,.dv-kart';
-const CLOSE='.duy3-close,.dm-member-close,.dm-final-close,.dm-momentum-close,.dm-habit-x,.dm-notif-close,.dm-nudge-x,.dm-safety-close,.deg-close,.cb-x,.tv-x,[data-notice-close],button[aria-label="Kapat"],button[aria-label="Duyuruyu kapat"]';
+const CLOSE='.duy3-close,.dm-member-close,.dm-final-close,.dm-momentum-close,.dm-habit-x,.dm-notif-close,.dm-nudge-x,.dm-safety-close,.deg-close,.cb-x,.tv-x,[data-notice-close],button[aria-label="Kapat"],button[aria-label="Duyuruyu kapat"],button[aria-label*="kapat"]';
 const actor=()=>window.dmTeacherPortalSession?.teacherToken||localStorage.getItem('ing_token')||sessionStorage.getItem('ing_ogr_token')||'';
 const records=new Map();let disposed=false;let active=null,owner=actor(),sequence=0,nextAt=0,scheduled=false,audio=null,unlocked=false,lastSound=0;
 const visible=e=>!!e?.isConnected&&!e.hidden&&e.getClientRects().length>0&&getComputedStyle(e).display!=='none'&&getComputedStyle(e).visibility!=='hidden';
@@ -67,7 +67,7 @@ function pump(){
 }
 function schedule(){if(disposed||scheduled||!records.size&&!active)return;scheduled=true;requestAnimationFrame(pump);}
 function isVisible(el){return active===el&&requested(el)&&!document.hidden&&!blocked(el)&&!el.classList.contains('dm-papi-held')&&visible(el);}
-function later(el,run,delay){let left=Math.max(0,delay),last=Date.now();const tick=()=>{if(disposed||!el.isConnected)return;const now=Date.now(),delta=Math.min(500,now-last);last=now;if(records.has(el)?isVisible(el):visible(el)&&!document.hidden&&!window.dmPapiNotices?.inActivity?.())left-=delta;if(left<=0){run();return;}setTimeout(tick,100);};return setTimeout(tick,100);}
+function later(el,run,delay){let left=Math.max(0,delay),last=Date.now();const tick=()=>{if(disposed||!el.isConnected)return;const now=Date.now(),delta=Math.min(500,now-last);last=now;if(records.has(el)?isVisible(el):visible(el)&&!document.hidden&&!window.dmPapiNotices?.inActivity?.())left-=delta;if(records.has(el))progress(el,left/Math.max(1,delay));if(left<=0){run();return;}setTimeout(tick,100);};return setTimeout(tick,100);}
 function progress(el,ratio){const r=records.get(el);if(r)r.progress.firstChild.style.width=Math.max(0,Math.min(1,ratio))*100+'%';}
 function notify(message,{title='Papi’den bildirim',edge='top',duration=10000}={}){
  const text=String(message??'').trim();if(!text)return null;
