@@ -8,7 +8,7 @@ async function choose(page,team,correct){
  const panel=page.locator('[data-side="'+team+'"]'),prompt=await panel.locator('.dm-sr-question p').innerText();
  const w=words.find(x=>prompt.includes('“'+x.turkce+'”'));
  assert(w,'Question must be grounded in selected word bank: '+prompt);
- const options=panel.locator('[data-answer]'),idx=await options.evaluateAll((buttons,ans)=>buttons.findIndex(b=>correct?b.textContent===ans:b.textContent!==ans),w.ingilizce);
+ const options=panel.locator('[data-answer]'),idx=await options.evaluateAll((buttons,{ans,correct})=>buttons.findIndex(b=>correct?b.textContent===ans:b.textContent!==ans),{ans:w.ingilizce,correct});
  assert(idx>=0,'an answer option must exist');
  await options.nth(idx).click();
 }
