@@ -177,3 +177,11 @@ html.dm-teacher-portal body #tpDashboard.is-visible{bottom:78px!important}
    The dashboard is restored when the existing tool closes. */
 html.dm-teacher-portal body.tp-legacy-child-open #tpDashboard.is-visible{visibility:hidden!important;pointer-events:none!important}
 html.dm-teacher-portal body.tp-legacy-child-open #tpTeacherDock{pointer-events:none!important}
+
+/* Original legacy teaching modules, presented as clear actions in the modern panel. */
+#tpDashboard .tp-real-tools{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+#tpDashboard .tp-real-tools button{min-height:112px}
+#tpDashboard .tp-real-tools button>span{font-size:27px;line-height:1.15}
+#tpDashboard .tp-real-tools button strong{font-size:15px}
+#tpDashboard .tp-real-tools button small{font-size:12px}
+@media(max-width:600px){#tpDashboard .tp-real-tools{grid-template-columns:1fr 1fr;gap:8px}#tpDashboard .tp-real-tools button{min-height:100px;padding:10px}}
