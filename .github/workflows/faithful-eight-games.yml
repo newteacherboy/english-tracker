@@ -4,6 +4,8 @@ on:
     paths:
       - 'ingilizce/faithful-eight-games.*'
       - 'ingilizce/eight-game-fullscreen.*'
+      - 'ingilizce/game-viewport.*'
+      - 'tests/game-viewport*'
       - 'ingilizce/play-navigation.js'
       - 'tests/eight-game-fullscreen*'
       - 'ingilizce/game-scenes/**'
@@ -14,6 +16,8 @@ on:
     paths:
       - 'ingilizce/faithful-eight-games.*'
       - 'ingilizce/eight-game-fullscreen.*'
+      - 'ingilizce/game-viewport.*'
+      - 'tests/game-viewport*'
       - 'ingilizce/play-navigation.js'
       - 'tests/eight-game-fullscreen*'
       - 'ingilizce/game-scenes/**'
