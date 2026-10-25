@@ -129,16 +129,22 @@ function openNoticeMailCenter(){
  nav.firstElementChild.click();shade.append(panel);document.body.append(shade);shade.addEventListener('click',e=>{if(e.target===shade)shade.remove()});
 }
 
+function installWorkspaceTools(menu){
+ if(!$('dmPlacementTeacherButton')){const b=document.createElement('button');b.id='dmPlacementTeacherButton';b.className='ogretmen-menu-btn';b.textContent='📋 Seviye sınavı sonuçları ve örnekler';b.onclick=teacherPlacements;menu.querySelector('.rubric-content').append(b);}
+ if(!$('dmTeacherRallyButton')){const b=document.createElement('button');b.id='dmTeacherRallyButton';b.className='ogretmen-menu-btn';b.textContent='🏎️ Kelime Rallisi · Öğretmen Denemesi';b.onclick=async()=>{try{await window.dmLazyGames?.ready();window.ralliOyunAc?.();}catch(e){window.yoToast?.(e.message);}};menu.querySelector('.rubric-content').append(b);}
+ if(!$('dmNoticeMailCenterButton')){const b=document.createElement('button');b.id='dmNoticeMailCenterButton';b.className='ogretmen-menu-btn';b.textContent='📣 Duyuru ve Mail Yönetim Merkezi';b.onclick=openNoticeMailCenter;menu.querySelector('.rubric-content').append(b);}
+ if(!$('dmTeacherOralButton')){const b=document.createElement('button');b.id='dmTeacherOralButton';b.className='ogretmen-menu-btn';b.textContent='🎙️ Sözlü Yap · Kelime sor, 100 XP kazandır';b.onclick=()=>window.dmTeacherOral?.open();menu.querySelector('.rubric-content').append(b);}
+}
 function maintain(){
  const menu=$('ogretmenMenuModal');if(!menu)return;if(!token()){active=false;menuSeen=false;return;}
  if(visible(menu))active=true;
  // Move child dialogs out of hidden legacy containers and above every workspace layer.
  if(!active)return;
- if(menu.parentElement!==document.body)document.body.append(menu);menu.classList.add('dm-teacher-open');const dialogs=children();menu.classList.toggle('dm-teacher-obscured',dialogs.length>0);const display=dialogs.length?'none':'flex';if(menu.style.display!==display)menu.style.display=display;if(!$('dmPlacementTeacherButton')){const b=document.createElement('button');b.id='dmPlacementTeacherButton';b.className='ogretmen-menu-btn';b.textContent='📋 Seviye sınavı sonuçları ve örnekler';b.onclick=teacherPlacements;menu.querySelector('.rubric-content').append(b);}
+ if(menu.parentElement!==document.body)document.body.append(menu);menu.classList.add('dm-teacher-open');installWorkspaceTools(menu);const dialogs=children();menu.classList.toggle('dm-teacher-obscured',dialogs.length>0);const display=window.dmTeacherPortalMode?'none':dialogs.length?'none':'flex';if(menu.style.display!==display)menu.style.display=display;
  for(const el of dialogs){if(el.parentElement!==document.body)document.body.append(el);if(!el.classList.contains('dm-teacher-child'))el.classList.add('dm-teacher-child');if(el.style.getPropertyValue('z-index')!=='2147483620')el.style.setProperty('z-index','2147483620','important');}
- if(!$('dmTeacherRallyButton')){const b=document.createElement('button');b.id='dmTeacherRallyButton';b.className='ogretmen-menu-btn';b.textContent='🏎️ Kelime Rallisi · Öğretmen Denemesi';b.onclick=async()=>{try{await window.dmLazyGames?.ready();window.ralliOyunAc?.();}catch(e){window.yoToast?.(e.message);}};menu.querySelector('.rubric-content').append(b);}
- if(!$('dmNoticeMailCenterButton')){const b=document.createElement('button');b.id='dmNoticeMailCenterButton';b.className='ogretmen-menu-btn';b.textContent='📣 Duyuru ve Mail Yönetim Merkezi';b.onclick=openNoticeMailCenter;menu.querySelector('.rubric-content').append(b);}
- if(!$('dmTeacherOralButton')){const b=document.createElement('button');b.id='dmTeacherOralButton';b.className='ogretmen-menu-btn';b.textContent='🎙️ Sözlü Yap · Kelime sor, 100 XP kazandır';b.onclick=()=>window.dmTeacherOral?.open();menu.querySelector('.rubric-content').append(b);}
+
+
+
  if(!menuSeen){menuSeen=true;api('teacherNotificationRead').then(()=>refresh(true)).catch(()=>{});}
  decorateWorkspace(menu);paintBadge();
 }
@@ -154,7 +160,7 @@ function installCatalog(){
  $('dmStudyPracticeCatalog')?.remove();
  const help=$('yardimIcerikAlani');if(visible($('yardimModal'))&&help){const sig=items.map(x=>x.code+'|'+x.name+'|'+x.description).join(';');let box=$('dmFeatureHelp');if(!box){box=document.createElement('section');box.id='dmFeatureHelp';box.className='dm-catalog-help';help.prepend(box);helpSignature='';}if(sig!==helpSignature){helpSignature=sig;box.replaceChildren();for(const f of items){const a=document.createElement('article'),h=document.createElement('strong'),p=document.createElement('p');h.textContent=f.name;p.textContent=f.description||f.howTo||guide[f.code]||(f.group==='Oyunlar'?'Oyunlar sekmesinden '+f.name+' oyununu aç; varsa sınıf ve ünite seçip başlat.':f.group+' bölümündeki '+f.name+' özelliğini kullan.');a.append(h,p);box.append(a);}}const q=String($('yardimAramaInput')?.value||'').toLocaleLowerCase('tr');for(const a of box.children)a.hidden=!!q&&!a.textContent.toLocaleLowerCase('tr').includes(q);}
 }
-window.dmTeacherWorkspace={paintBadge,refresh};
+window.dmTeacherWorkspace={paintBadge,refresh,prepare(){const menu=$('ogretmenMenuModal');if(menu){installWorkspaceTools(menu);decorateWorkspace(menu);}}};
 const watcher=new MutationObserver(()=>{if(active)maintain();});for(const el of document.querySelectorAll('.rubric-modal,.sm-overlay,.yo-modal,.yo-perde,#yoModalPerde,#odModal,#omSifreModal'))watcher.observe(el,{attributes:true,attributeFilter:['style']});
 new MutationObserver(ms=>{if(active&&ms.some(m=>[...m.addedNodes,...m.removedNodes].some(n=>n.nodeType===1&&(n.matches?.(childSelector)||n.querySelector?.(childSelector)))))maintain();}).observe(document.body,{childList:true});
 const report=$('yoModal');if(report)watcher.observe(report,{attributes:true,attributeFilter:['class','style']});

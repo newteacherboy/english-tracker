@@ -31,6 +31,7 @@ function detach(){hud.parentElement?.classList.remove('dm-has-wallet');hud.remov
 function run(){
  if(typeof aktifOgrenciAdi==='undefined'||!aktifOgrenciAdi){detach();return;}
  if([...document.querySelectorAll(activity)].some(visible)){detach();return;}
+ if(visible(document.getElementById('tab-meduakis'))){detach();return;}
  const host=selectors.flatMap(s=>[...document.querySelectorAll(s)]).find(visible);if(!host){detach();return;}
  if(hud.parentElement!==host){detach();host.prepend(hud);host.classList.add('dm-has-wallet');window.dispatchEvent(new Event('resize'));}
  const y=typeof yo==='undefined'?{}:yo||{},time=window.dmActiveTime?.summary()||{stars:0,seconds:0},level=window.dmProgression?.level?.()||1;

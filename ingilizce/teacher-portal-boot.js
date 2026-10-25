@@ -1,3 +1,8 @@
+/* Same API roles as password login; server still enforces teacher/student scope. */
+(function(g){
+ const teacherPrefix=/^(teacherPortal|teacherNotification|teacherLearning|teacherPlacement|ogretmen|ogrenciSifre|bekleyenKayit|kayitOnayla|kayitReddet|rubrik|rapor|odevVer|odevSil|odevListesiOgretmen|duyuruEkle|duyuruSil|duyuruAktif|duyuruListesiGetir|sinifIci|ozellikIzni|communication|adminStudent)/;
+ g.DMTeacherRequestPolicy={isTeacher(op,args={},context={}){return teacherPrefix.test(op)||['ekVeriTumu','ekVeriOzet','haftalikVeliRaporu','etkinlikTanimlariGetir','tumVideolariGetir','ozellikListesiGetir','etkinlikAta','disLinkEtkinlikAta','videoOgrenciEkle','planTikGuncelle'].includes(op)||!op&&!!context.tools||op==='ekVeriGetir'&&!!context.tools&&args.ogrenci&&args.ogrenci!==context.participant;}};
+})(typeof window!=='undefined'?window:globalThis);
 /* Isolate classroom storage in this tab; personal learner storage is never overwritten. */
 (()=>{'use strict';
  const params=new URLSearchParams(location.search);if(params.get('ogretmen')!=='1')return;
@@ -20,9 +25,10 @@
   // Return to the fresh welcome/sign-up entry, not the previous in-app screen.
   location.replace('./?baslangic=1');
  };
- window.dmTeacherRequestToken=(url,opt)=>{
-  let op='';try{op=opt?.body?JSON.parse(opt.body).islem||'':new URL(url,location.href).searchParams.get('islem')||'';}catch{}
-  const teacher=/^(teacherPortal|teacherNotification|teacherLearning|teacherPlacement|ogretmen|ogrenciSifre|bekleyenKayit|kayitOnayla|kayitReddet|rubrik|rapor|odevVer|odevSil|odevListesiOgretmen|duyuruEkle|duyuruSil|duyuruAktif|sinifIci|ozellikIzni|communication|adminStudent)/.test(op)||!op&&document.getElementById('ogretmenMenuModal')?.style.display==='flex';
-  const current=JSON.parse(ss.getItem('dm_tp_session')||'null')||state;return teacher?current.teacherToken:current.participant.token;
+ window.dmTeacherRequestRole=(url,opt)=>{
+  let args={};try{args=Object.fromEntries(new URL(url,location.href).searchParams);if(typeof opt?.body==='string')args={...args,...JSON.parse(opt.body)};}catch{}
+  const current=JSON.parse(ss.getItem('dm_tp_session')||'null')||state;
+  return window.DMTeacherRequestPolicy.isTeacher(args.islem||'',args,{tools:window.dmTeacherToolsActive,participant:current.participant.name})?'teacher':'participant';
  };
+ window.dmTeacherRequestToken=(url,opt)=>{const current=JSON.parse(ss.getItem('dm_tp_session')||'null')||state;return window.dmTeacherRequestRole(url,opt)==='teacher'?current.teacherToken:current.participant.token;};
 })();

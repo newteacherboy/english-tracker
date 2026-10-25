@@ -60,3 +60,8 @@ test('public content cache coalesces loads, provides versions and discards faile
  const ctx=server(),cache=ctx.cache(json);let loads=0;const load=async()=>{loads++;return {text:'lesson'};};const a=await cache(new Request(API),'topic',load),version=a.headers.get('X-Diji-Content-Version');assert.equal(version.length,64);await cache(new Request(API),'topic',load);assert.equal(loads,1);assert.equal((await cache(new Request(API+'?_contentVersion='+version),'topic',load)).status,304);
  await assert.rejects(cache(new Request(API),'bad',()=>{throw Error('failed')}));await cache(new Request(API),'bad',load);assert.equal(loads,2);
 });
+test('private teacher and preview reads cannot share cached data while the selected pupil stays the same',async()=>{
+ const f=fixture();let role='preview-token';f.window.dmTeacherPortalMode=true;f.window.dmTeacherRequestToken=()=>role;
+ await f.get('KOK');role='teacher-token';await f.get('KOK');assert.equal(f.calls.length,2);
+ role='preview-token';await f.get('KOK');assert.equal(f.calls.length,2);
+});

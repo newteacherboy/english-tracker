@@ -3,7 +3,12 @@
  const state=()=>{try{return JSON.parse(sessionStorage.getItem('dm_tp_session')||'null');}catch{return null;}};
  // Direct calls keep owner, participant and personal tokens explicit.
  const nativeFetch=window.fetch.bind(window);
- async function api(islem,data={},token){const response=await nativeFetch(endpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({islem,...data,t:token??(mode?state()?.teacherToken:sessionStorage.getItem('ing_ogr_token')||localStorage.getItem('ing_token')||'')})});const d=await response.json();if(!response.ok||d.ok===false||d.status==='error')throw Error(d.mesaj||d.message||'İşlem tamamlanamadı.');return d;}
+ async function api(islem,data={},token){
+  const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),20000);
+  try{const response=await nativeFetch(endpoint,{method:'POST',headers:{'Content-Type':'application/json'},signal:controller.signal,body:JSON.stringify({islem,...data,t:token??(mode?state()?.teacherToken:sessionStorage.getItem('ing_ogr_token')||localStorage.getItem('ing_token')||'')})});const d=await response.json();if(!response.ok||d.ok===false||d.status==='error'||d.hata)throw Error(d.mesaj||d.message||'İşlem tamamlanamadı.');return d;}
+  catch(e){if(e.name==='AbortError')throw Error('Bağlantı gecikti. Verileri yenileyerek tekrar dene.');throw e;}finally{clearTimeout(timeout);}
+ }
+
  function sheet(title,html){document.querySelector('.tp-shade')?.remove();const shade=document.createElement('div');shade.className='tp-shade';shade.innerHTML='<section class="tp-card" role="dialog" aria-modal="true" tabindex="-1"><button class="tp-close" aria-label="Kapat">×</button><h1></h1><form>'+html+'<p class="tp-error" role="status" aria-live="polite"></p></form></section>';shade.querySelector('h1').textContent=title;const before=document.activeElement;const close=()=>{shade.remove();before?.focus?.();};shade.querySelector('.tp-close').onclick=close;shade.addEventListener('keydown',e=>{if(e.key==='Escape'){e.preventDefault();close();}if(e.key==='Tab'){const items=[...shade.querySelectorAll('input,select,button,a[href]')].filter(x=>!x.disabled),first=items[0],last=items.at(-1);if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}}});document.body.append(shade);shade.querySelector('input,select,button').focus();return {shade,close,form:shade.querySelector('form'),error:m=>shade.querySelector('.tp-error').textContent=m};}
  const codeField=(name,label)=>'<label>'+label+'<input name="'+name+'" type="password" inputmode="numeric" pattern="[0-9]{6}" minlength="6" maxlength="6" autocomplete="off" required></label>';
  function submit(v,fn){v.form.onsubmit=async e=>{e.preventDefault();if(!v.form.reportValidity())return;const buttons=[...v.form.querySelectorAll('button')];buttons.forEach(b=>b.disabled=true);v.error('');try{await fn(new FormData(v.form));}catch(e){v.error(e.message);}finally{buttons.forEach(b=>b.disabled=false);}};}
@@ -146,12 +151,13 @@
   openProfile();
  }
  function teacherDashboardShow(){
+  window.dmTeacherToolsActive=true;
   if(!mode)return;
   teacherHomeHide();
   let panel=document.getElementById('tpDashboard');
   if(!panel){
    panel=document.createElement('main');panel.id='tpDashboard';panel.setAttribute('aria-label','Öğretmen Paneli');
-   panel.innerHTML='<div class="tp-dash-wrap"><header class="tp-dash-hero"><span class="tp-teacher-pair"><img src="discovery-assets/ogretmen.webp" alt="Kadın öğretmen"><span class="tp-teacher-male" role="img" aria-label="Erkek öğretmen">👨‍🏫</span></span><div><h1>Öğretmen Paneli</h1><p>Sınıflarını yönet, etkinlik oluştur ve öğrenci gelişimini takip et.</p></div><div class="tp-dash-header-actions"><button type="button" data-dash="sync">🔄 Verileri Otomatik Çek</button><button type="button" data-dash="home">⌂ Ana Sayfa</button></div></header><section class="tp-dash-metrics"><div>👥 <b data-dash-students>—</b><small>Öğrenci</small></div><div>🏫 <b data-dash-classes>—</b><small>Sınıf</small></div><div>🎮 <b>Oyunlar</b><small>Sınıf etkinlikleri</small></div><div>📋 <b>Ödevler</b><small>Öğrenci çalışmaları</small></div></section><div class="tp-dash-layout"><nav class="tp-dash-menu" aria-label="Öğretmen araçları"><button data-dash="performance">🏫 Ders İçi Performans</button><button data-dash="individual">📊 Öğrenci Bireysel Raporları</button><button data-dash="weak">🎯 Sınıfın Zayıf Noktaları</button><button data-dash="parent">🗓️ Haftalık Veli Özetleri</button><button data-dash="messages">💬 Öğrenci Mesajları</button><button data-dash="announcements">📢 Duyuru Oluştur</button><button data-dash="rubric">📋 Özel Ders Rubrik Değerlendirme</button><button data-dash="studentDetails">🔐 Öğrenci Bilgilerini Değiştir</button><button data-dash="code">🔑 Giriş Kodunu Değiştir</button><button data-dash="settings">⚙️ Ayarlar</button><button data-dash="logout" class="tp-dash-logout">🚪 Çıkış Yap</button></nav><section class="tp-dash-main"><h2>Bugün ne yapmak istersiniz?</h2><p>Öğretmen araçlarına tek dokunuşla ulaşın.</p><div class="tp-dash-tiles tp-real-tools"><button type="button" data-dash="homework"><span aria-hidden="true">📝</span><strong>Ödev Ver</strong><small>Sınıf ve şube ödevleri</small></button><button type="button" data-dash="rubric"><span aria-hidden="true">📊</span><strong>Rubrik Paneli</strong><small>Öğrenci değerlendirmeleri</small></button><button type="button" data-dash="performance"><span aria-hidden="true">🏫</span><strong>Ders İçi Performans</strong><small>Sınıf puanları ve katılım</small></button><button type="button" data-dash="announcements"><span aria-hidden="true">📣</span><strong>Duyurular</strong><small>Bağlı öğrencilere duyuru</small></button><button type="button" data-dash="messages"><span aria-hidden="true">💬</span><strong>Öğrenci Sohbetleri</strong><small>Öğrenci mesajlarını yanıtla</small></button><button type="button" data-dash="weak"><span aria-hidden="true">🎯</span><strong>Sınıfın Zayıf Noktaları</strong><small>Sınıfın gelişim alanları</small></button><button type="button" data-dash="parent"><span aria-hidden="true">👨‍👩‍👧</span><strong>Haftalık Veli Özetleri</strong><small>Haftalık öğrenci raporları</small></button><button type="button" data-dash="studentDetails"><span aria-hidden="true">🔑</span><strong>Öğrenci Şifresi Sıfırla</strong><small>Öğrenci hesabı yönetimi</small></button><button type="button" data-dash="exams"><span aria-hidden="true">📑</span><strong>Seviye Sınavı Sonuçları</strong><small>Seviye sınavı kayıtları</small></button><button type="button" data-dash="oral"><span aria-hidden="true">🎤</span><strong>Sözlü Yap</strong><small>Kelime sözlü uygulaması</small></button></div></section></div></div>';
+   panel.innerHTML='<div class="tp-dash-wrap"><header class="tp-dash-hero"><span class="tp-teacher-pair"><img src="discovery-assets/ogretmen.webp" alt="Kadın öğretmen"><span class="tp-teacher-male" role="img" aria-label="Erkek öğretmen">👨‍🏫</span></span><div><h1>Öğretmen Paneli</h1><p>Sınıflarını yönet, etkinlik oluştur ve öğrenci gelişimini takip et.</p></div><div class="tp-dash-header-actions"><button type="button" data-dash="sync">🔄 Verileri yenile</button><button type="button" data-dash="home">⌂ Ana Sayfa</button></div></header><section class="tp-dash-identity" aria-label="Öğretmen hesabı ve sınıf kodu"><p role="status" class="tp-dash-status">Öğretmen bilgileri yükleniyor…</p><div data-teacher-identity></div></section><section class="tp-dash-metrics"><div>👥 <b data-dash-students>—</b><small>Öğrenci</small></div><div>🏫 <b data-dash-classes>—</b><small>Sınıf</small></div><div>🎮 <b>Oyunlar</b><small>Sınıf etkinlikleri</small></div><div>📋 <b>Ödevler</b><small>Öğrenci çalışmaları</small></div></section><div class="tp-dash-layout"><nav class="tp-dash-menu" aria-label="Öğretmen araçları"><button data-dash="performance">🏫 Ders İçi Performans</button><button data-dash="individual">📊 Öğrenci Bireysel Raporları</button><button data-dash="weak">🎯 Sınıfın Zayıf Noktaları</button><button data-dash="parent">🗓️ Haftalık Veli Özetleri</button><button data-dash="messages">💬 Öğrenci Mesajları</button><button data-dash="announcements">📢 Duyuru Oluştur</button><button data-dash="rubric">📋 Özel Ders Rubrik Değerlendirme</button><button data-dash="studentDetails">🔑 Öğrenci Şifresi Sıfırla</button><button data-dash="code">🔑 Giriş Kodunu Değiştir</button><button data-dash="settings">⚙️ Ayarlar</button><button data-dash="logout" class="tp-dash-logout">🚪 Çıkış Yap</button></nav><section class="tp-dash-main"><h2>Bugün ne yapmak istersiniz?</h2><p>Öğretmen araçlarına tek dokunuşla ulaşın.</p><div class="tp-dash-tiles tp-real-tools"><button type="button" data-dash="homework"><span aria-hidden="true">📝</span><strong>Ödev Ver</strong><small>Sınıf ve şube ödevleri</small></button><button type="button" data-dash="rubric"><span aria-hidden="true">📊</span><strong>Rubrik Paneli</strong><small>Öğrenci değerlendirmeleri</small></button><button type="button" data-dash="performance"><span aria-hidden="true">🏫</span><strong>Ders İçi Performans</strong><small>Sınıf puanları ve katılım</small></button><button type="button" data-dash="announcements"><span aria-hidden="true">📣</span><strong>Duyurular</strong><small>Bağlı öğrencilere duyuru</small></button><button type="button" data-dash="messages"><span aria-hidden="true">💬</span><strong>Öğrenci Sohbetleri</strong><small>Öğrenci mesajlarını yanıtla</small></button><button type="button" data-dash="weak"><span aria-hidden="true">🎯</span><strong>Sınıfın Zayıf Noktaları</strong><small>Sınıfın gelişim alanları</small></button><button type="button" data-dash="parent"><span aria-hidden="true">👨‍👩‍👧</span><strong>Haftalık Veli Özetleri</strong><small>Haftalık öğrenci raporları</small></button><button type="button" data-dash="studentDetails"><span aria-hidden="true">🔑</span><strong>Öğrenci Şifresi Sıfırla</strong><small>Öğrenci hesabı yönetimi</small></button><button type="button" data-dash="exams"><span aria-hidden="true">📑</span><strong>Seviye Sınavı Sonuçları</strong><small>Seviye sınavı kayıtları</small></button><button type="button" data-dash="oral"><span aria-hidden="true">🎤</span><strong>Sözlü Yap</strong><small>Kelime sözlü uygulaması</small></button></div></section></div></div>';
    document.body.append(panel);
    panel.addEventListener('click',e=>{const b=e.target.closest('[data-dash]');if(b)teacherDashboardAction(b.dataset.dash);});
   }
@@ -164,11 +170,11 @@
     hero.replaceWith(badge);
    }
   }
-  panel.classList.add('is-visible');document.body.classList.add('tp-dash-active');teacherDock();refreshTeacherStats();
+  panel.classList.add('is-visible');document.body.classList.add('tp-dash-active');teacherDock();void prepareTeacherTools().catch(showTeacherToolError);
   document.querySelector('[data-tp-home-nav]')?.classList.remove('active');
   document.querySelector('#bottomNavMobile [data-tp-panel-nav]')?.classList.add('active');
  }
- function teacherDashboardHide(){document.body.classList.remove('tp-legacy-inline');document.getElementById('ogretmenMenuModal')?.style.setProperty('display','none');document.getElementById('tpDashboard')?.classList.remove('is-visible');document.body.classList.remove('tp-dash-active');}
+ function teacherDashboardHide(){window.dmTeacherToolsActive=false;document.body.classList.remove('tp-legacy-inline');document.getElementById('ogretmenMenuModal')?.style.setProperty('display','none');document.getElementById('tpDashboard')?.classList.remove('is-visible');document.body.classList.remove('tp-dash-active');}
  function openBulkStudents(){
   const v=sheet('👥 Öğrencini Üye Yap','<p>En fazla 50 öğrenciyi aynı anda ekleyebilirsin. Kullanıcı adı gerçek isim içermeyen bir takma ad olmalıdır. Başlangıç şifresi hesap güvenliği için en az 8 karakterdir. Öğrenciler girişten sonra e-posta, telefon ve e-posta doğrulama işlemlerini normal üyelik kurallarıyla tamamlar.</p><div class="tp-bulk-defaults"><label>Varsayılan sınıf<select name="sinif">'+Array.from({length:8},(_,i)=>'<option value="'+(i+1)+'">'+(i+1)+'. sınıf</option>').join('')+'</select></label><label>Varsayılan şube<input name="sube" value="A" required maxlength="10"></label></div><label>Okul (isteğe bağlı)<input name="okul" maxlength="120"></label><label>Öğrenciler (her satır: kullanıcı_adı,şifre)<textarea name="ogrenciler" rows="9" required placeholder="ogrenci101,Guvenli2026!\nogrenci102,Guvenli2026!"></textarea></label><p>⚠️ Şifreleri güvenli şekilde paylaş; bu alanda kalıcı olarak saklanmaz. Yeni hesaplar aynı öğretmenin sınıfına bağlanır.</p><button class="tp-primary" type="submit">Öğrencileri kaydet</button>');
   submit(v,async f=>{
@@ -180,19 +186,50 @@
    v.form.replaceChildren();const msg=document.createElement('p');msg.textContent=result.mesaj||ogrenciler.length+' öğrenci kaydedildi.';v.form.append(msg);
   });
  }
- function legacyTool(pattern){
-  const menu=document.getElementById('ogretmenMenuModal');
-  // Use existing wired legacy buttons: cloning them would lose event listeners.
-  const originals=[...(menu?.querySelectorAll('button.ogretmen-menu-btn')||[])];
-  const target=originals.find(b=>pattern.test(b.dataset.dmTeacherTitle||b.querySelector('.dm-teacher-card-title')?.textContent||b.textContent||''));
-  if(!target){sheet('Araç açılamadı','<p>Eski öğretmen panelindeki ilgili araç henüz yüklenmedi. Hesabınla tekrar giriş yap.</p>');return;}
-  const modalBefore=[...document.querySelectorAll('.rubric-modal,.cog-perde,.sm-overlay,.dm-member-overlay,.dm-account-overlay,.dm-perde,.yo-modal,.yo-perde,#yoModalPerde,#omSifreModal,#odModal,.game-modal-overlay,.gso-overlay')].filter(e=>e.getClientRects().length);
-  try{target.click();}catch(error){console.error('[Legacy teacher tool]',error);sheet('Araç açılamadı','<p>Öğretmen aracı açılırken hata oluştu.</p>');return;}
-  if(menu){menu.classList.remove('dm-teacher-open');menu.style.setProperty('display','none');}
-  // Restore dashboard when the existing dialog is closed; don't block its event handlers.
-  const visible=()=>[...document.querySelectorAll('.rubric-modal,.cog-perde,.sm-overlay,.dm-member-overlay,.dm-account-overlay,.dm-perde,.yo-modal,.yo-perde,#yoModalPerde,#omSifreModal,#odModal,.game-modal-overlay,.gso-overlay')].some(el=>el.isConnected&&el.getClientRects().length&&getComputedStyle(el).visibility!=='hidden'&&getComputedStyle(el).display!=='none');
-  requestAnimationFrame(()=>document.body.classList.toggle('tp-legacy-child-open',visible()));
-  if(!window.tpLegacyToolObserver){let queued=false;window.tpLegacyToolObserver=new MutationObserver(()=>{if(queued)return;queued=true;requestAnimationFrame(()=>{queued=false;document.body.classList.toggle('tp-legacy-child-open',visible());});});window.tpLegacyToolObserver.observe(document.body,{subtree:true,childList:true,attributes:true,attributeFilter:['style','class','hidden']});}
+ let preparingTools=null;
+ const teacherChildren='.rubric-modal,.cog-perde,.sm-overlay,.dm-member-overlay,.dm-account-overlay,.dm-perde,.yo-modal,.yo-perde,#yoModalPerde,#omSifreModal,#odModal,.game-modal-overlay,.gso-overlay,#dmTeacherOral,.dm-teacher-child';
+ function teacherToolVisible(){return [...document.querySelectorAll(teacherChildren)].some(el=>el.id!=='ogretmenMenuModal'&&el.id!=='sifreModal'&&el.getClientRects().length&&getComputedStyle(el).display!=='none');}
+ function showTeacherToolError(error){const status=document.querySelector('.tp-dash-status');if(status)status.textContent='Öğretmen verileri yüklenemedi: '+(error.message||'Bağlantıyı kontrol edip Verileri yenile düğmesine bas.');}
+ async function prepareTeacherTools(){
+  if(preparingTools)return preparingTools;
+  const token=state()?.teacherToken;if(!token)throw Error('Öğretmen oturumu bulunamadı. Kodla tekrar giriş yap.');
+  preparingTools=(async()=>{
+   const [info,rows]=await Promise.all([api('ogretmenBilgim',{},token),api('',{},token)]);
+   if(token!==state()?.teacherToken)throw Error('Öğretmen hesabı değişti. Paneli yeniden aç.');
+   if(!Array.isArray(rows))throw Error('Öğrenci listesi alınamadı. Verileri yenileyerek tekrar dene.');
+   // Use the exact legacy dataset and selection controls, including the empty-list case.
+   globalDataCache=rows;
+   const pupils=rows.filter(x=>x.ogrenci&&String(x.ogrenci).toLowerCase()!=='teacher');
+   const studentsCount=document.querySelector('[data-dash-students]'),classesCount=document.querySelector('[data-dash-classes]');
+   if(studentsCount)studentsCount.textContent=String(pupils.length);
+   if(classesCount)classesCount.textContent=String(new Set(pupils.map(x=>String(x.Sinif||x.sinif||'')+'|'+String(x.Sube||x.sube||'')).filter(x=>x!=='|')).size);
+   sessionStorage.setItem('ing_ogr_token',token);
+   sessionStorage.setItem('ing_ogr_ad',info.adSoyad||info.kullanici||'');
+   sessionStorage.setItem('ing_ogr_yonetici',info.yonetici?'1':'');
+   window.ogretmenSelectDoldur?.();window.yoOgretmenButonlariEkle?.();window.dmTeacherWorkspace?.prepare?.();
+   await window.dmRefreshTeacherIdentity?.(info);
+   const slot=document.querySelector('[data-teacher-identity]'),card=document.getElementById('cogOgretmenKart');if(slot&&card&&card.parentElement!==slot)slot.replaceChildren(card);
+   const status=document.querySelector('.tp-dash-status');if(status)status.textContent=rows.length+' öğrenci · Öğretmen araçları hazır.';
+   return rows;
+  })();
+  try{return await preparingTools;}finally{preparingTools=null;}
+ }
+ async function legacyTool(pattern){
+  if(window.dmTeacherToolOpening)return;
+  window.dmTeacherToolOpening=true;window.dmTeacherToolsActive=true;
+  const buttons=[...document.querySelectorAll('#tpDashboard [data-dash]')];buttons.forEach(b=>b.disabled=true);
+  try{
+   await prepareTeacherTools();
+   const menu=document.getElementById('ogretmenMenuModal');
+   const target=[...(menu?.querySelectorAll('button.ogretmen-menu-btn')||[])].find(b=>pattern.test(String(b.dataset.dmTeacherTitle||b.querySelector('.dm-teacher-card-title')?.textContent||b.textContent||'').toLocaleLowerCase('tr-TR')));
+   if(!target)throw Error('İlgili öğretmen aracı henüz hazır değil. Verileri yenileyerek tekrar dene.');
+   target.click();
+   if(menu){menu.classList.remove('dm-teacher-open');menu.style.setProperty('display','none');}
+   const sync=()=>{const visible=teacherToolVisible();document.body.classList.toggle('tp-legacy-child-open',visible);if(!visible&&menu?.style.display==='flex')menu.style.display='none';};
+   requestAnimationFrame(sync);
+   if(!window.tpLegacyToolObserver){let queued=false;window.tpLegacyToolObserver=new MutationObserver(()=>{if(queued)return;queued=true;requestAnimationFrame(()=>{queued=false;sync();});});window.tpLegacyToolObserver.observe(document.body,{subtree:true,childList:true,attributes:true,attributeFilter:['style','class','hidden']});}
+  }catch(error){showTeacherToolError(error);}
+  finally{window.dmTeacherToolOpening=false;buttons.forEach(b=>b.disabled=false);}
  }
  async function chooseTeacherStudent(title,next){
   const v=sheet(title,'<p>Yalnızca hesabına bağlı öğrencileri seçebilirsin.</p><label>Sınıf<select name="grade"><option value="">Tüm sınıflar</option>'+Array.from({length:8},(_,i)=>'<option value="'+(i+1)+'">'+(i+1)+'. sınıf</option>').join('')+'</select></label><label>Öğrenci<select name="studentId" required><option value="">Öğrenci seç</option></select></label><button class="tp-primary">Devam Et</button>');
@@ -269,14 +306,26 @@
    submit(v,async form=>{const r=await api('teacherPortalStudentContact',{studentId:student.id,save:true,phone:form.get('phone')});v.form.textContent=r.mesaj;});
   });
  }
+ function individualReport(){
+  chooseTeacherStudent('Öğrenci Bireysel Raporları',async student=>{
+   const v=sheet('Öğrenci Bireysel Raporu','<p>Rapor yükleniyor…</p>');
+   try{const report=await api('teacherPortalStudentReport',{studentId:student.id});if(!v.shade.isConnected)return;
+    v.form.replaceChildren();const heading=document.createElement('h2');heading.textContent=report.student.fullName||report.student.username;v.form.append(heading);
+    const stats=document.createElement('div');stats.className='tp-report-stats';
+    for(const [label,value]of [['XP',report.student.xp],['Genel puan',report.student.points],['Çalışma serisi',report.student.streak],['Oyun',report.totals.plays],['Doğru',report.totals.correct],['Yanlış',report.totals.wrong]]){const box=document.createElement('div'),b=document.createElement('b'),small=document.createElement('small');b.textContent=String(value??0);small.textContent=label;box.append(b,small);stats.append(box);}v.form.append(stats);
+    const history=document.createElement('div');history.className='tp-report-history';for(const row of report.reports){const p=document.createElement('p');p.textContent=(window.DMTime?.format(row.report_date)||row.report_date)+' · Okuma: '+(row.reading_score??'—')+' · Yazma: '+(row.writing_score??'—')+' · Kelime: '+(row.vocabulary_score??'—')+' · Konuşma: '+(row.speaking_score??'—')+' · Dil bilgisi: '+(row.grammar_score??'—');history.append(p);}if(!history.children.length)history.textContent='Henüz rubrik değerlendirmesi yok.';v.form.append(history);
+   }catch(e){v.error(e.message);}
+  });
+ }
  function teacherDashboardAction(action){
   if(action==='home'){teacherDashboardHide();teacherHomeShow();return;}
-  if(action==='sync'){openTeacherCodeSync();return;}
+  if(action==='sync'){void prepareTeacherTools().catch(showTeacherToolError);return;}
   if(action==='logout'){window.dmTeacherPortalExit?.();return;}
   if(action==='code'||action==='settings'){openProfile();return;}
   if(action==='students'){openBulkStudents();return;}
+  if(action==='individual'){individualReport();return;}
   if(action==='games'||action==='library'){teacherDashboardHide();teacherDestination(action==='games'?'games':'study');return;}
-  if(action==='oral'){legacyTool(/sözlü yap/i);return;}
+  if(action==='oral'){void legacyTool(/sözlü yap/i);return;}
   const map={
    performance:/ders içi performans/i,
    individual:/bireysel rapor|öğrenci ilerleme|öğrenci rapor/i,
@@ -288,6 +337,7 @@
    studentDetails:/öğrenci şifresi sıfırla|öğrenci bilgileri/i,
    summary:/sınıfımın öğrenme özeti|öğrenme özeti/i,
    exams:/seviye sınavı sonuçları/i,
+   registrations:/bekleyen kayıt/i,
    homework:/ödev ver/i,
    reports:/rapor/i
   };
@@ -311,7 +361,7 @@
 
  }
 
- window.dmTeacherPortal={openLogin,openProfile,beforeGame,management};
+ window.dmTeacherPortal={openLogin,openProfile,beforeGame,management,prepareTools:prepareTeacherTools};
  if(document.body.dataset.teacherReset==='1'){resetPage();return;}
  if(mode){document.body.classList.add('dm-teacher-portal');document.documentElement.classList.add('dm-teacher-portal');document.documentElement.classList.add('tp-home-starting');window.cikisYap=window.dmTeacherPortalExit;window.siniftaOyunModuAc=()=>{document.getElementById('ogretmenMenuModal')?.style.setProperty('display','none');window.aktivitelerTamEkranAc?.();};}
  let scheduled=false;const observe=()=>{if(scheduled)return;scheduled=true;requestAnimationFrame(()=>{scheduled=false;decorate();if(mode){suppressPreviewPrompts();hideTeacherHeader();const n=document.getElementById('bottomNavMobile');n?.querySelectorAll('.bn-item').forEach(i=>{if((i.dataset.ekran==='tab-profil'||/^(profil|profilim)$/i.test((i.textContent||'').trim())))i.remove();});}});};new MutationObserver(observe).observe(document.body,{childList:true,subtree:true});decorate();wrapGames();

@@ -37,3 +37,12 @@ test('valid teacher is outside the student contact policy, invalid session still
   const run=a=>vm.runInNewContext('(function(){'+guards+'return "student";})()',{op:'iletisimDurumu',a,json:(body,status=200)=>({body,status})});
   assert.equal(run(null).status,401);assert.equal(run({role:'teacher'}).body.eksik,false);assert.equal(run({role:'teacher'}).status,200);assert.equal(run({role:'student'}),'student');
 });
+test('private teacher tools replace an accidentally supplied preview token in POST and GET',async()=>{
+ const s=setup('preview','teacher');s.window.dmTeacherPortalMode=true;s.window.dmTeacherRequestRole=()=> 'teacher';s.window.dmTeacherRequestToken=()=> 'teacher';
+ s.window.fetch(API,{method:'POST',body:JSON.stringify({islem:'haftalikVeliRaporu',t:'preview'})});assert.equal(JSON.parse(s.requests[0].opt.body).t,'teacher');
+ s.window.fetch(API+'?islem=duyuruListesiGetir&t=preview');assert.equal(new URL(s.requests[1].url).searchParams.get('t'),'teacher');
+ await s.respond(0,{ok:true});await s.respond(1,{ok:true});
+});
+test('permission denial is not session expiration and does not discard a valid teacher login',async()=>{
+ const s=setup('preview','teacher');s.window.fetch(API);await s.respond(0,{hata:'yetki',mesaj:'Öğretmen yetkisi gerekli.'});assert.equal(s.sessionStorage.getItem('ing_ogr_token'),'teacher');assert.equal(s.alerts.length,0);
+});

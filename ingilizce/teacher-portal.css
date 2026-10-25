@@ -185,3 +185,15 @@ html.dm-teacher-portal body.tp-legacy-child-open #tpTeacherDock{pointer-events:n
 #tpDashboard .tp-real-tools button strong{font-size:15px}
 #tpDashboard .tp-real-tools button small{font-size:12px}
 @media(max-width:600px){#tpDashboard .tp-real-tools{grid-template-columns:1fr 1fr;gap:8px}#tpDashboard .tp-real-tools button{min-height:100px;padding:10px}}
+
+/* The original teacher identity card retains its native wired buttons. */
+.tp-dash-identity{background:#f2fcfa;color:#154753;border:1px solid #b3ded9;border-radius:18px;padding:14px;margin:12px 0}
+.tp-dash-identity .cog-ogretmen-kart{margin:0;background:#e7f7f3;color:#154753}
+.tp-dash-identity .cog-ogretmen-kart>div{display:flex;flex-wrap:wrap;gap:7px}
+.tp-dash-identity button{min-height:40px;border:1px solid #b0d6cf;border-radius:10px;padding:8px 12px;color:#174b53;background:white;cursor:pointer}
+.tp-dash-status{color:#205764;font-weight:700;margin:0 0 8px}
+#tpDashboard button:disabled{opacity:.6;cursor:wait}
+html.dm-teacher-portal body.tp-legacy-child-open .dm-teacher-child{visibility:visible!important}
+
+html.dm-teacher-portal .ka-perde{display:none!important}
+html.dm-teacher-portal body #tpDashboard .tp-dash-identity .cog-ogretmen-kart button{background:#fff!important;color:#123f4b!important;border:1px solid #8fbfb8!important;font-weight:800!important;box-shadow:none!important}

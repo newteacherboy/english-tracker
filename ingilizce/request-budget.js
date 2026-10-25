@@ -35,11 +35,11 @@
     const method=String(opt?.method||'GET').toUpperCase();if(!['GET','POST'].includes(method))return null;
     let args=Object.fromEntries(url.searchParams);if(method==='POST'){if(typeof opt?.body!=='string')return null;try{args={...args,...JSON.parse(opt.body)};}catch{return null;}}
     const op=String(args.islem||'KOK');
-    const roleToken=actor().split('|')[0];
+    const roleToken=window.dmTeacherPortalMode?window.dmTeacherRequestToken?.(input,opt)||actor().split('|')[0]:args.t||actor().split('|')[0];
     // Headers/tokens are part of identity. Never share one account's response.
     const headers=Array.from(new Headers(opt?.headers||{}).entries()).sort();
-    const key=url.pathname+'|'+(args.t||roleToken)+'|'+actor()+'|'+JSON.stringify(headers)+'|'+JSON.stringify(Object.entries(args).filter(([k])=>!['t','_','_contentVersion'].includes(k)).map(([k,v])=>[k,typeof v==='object'?v:String(v)]).sort());
-    return {input,opt,url,args,op,key,bypass:!!(opt?.signal||opt?.keepalive||opt?.cache==='no-store'),token:args.t||roleToken,force:'_' in args||opt?.cache==='reload'};
+    const key=url.pathname+'|'+roleToken+'|'+actor()+'|'+JSON.stringify(headers)+'|'+JSON.stringify(Object.entries(args).filter(([k])=>!['t','_','_contentVersion'].includes(k)).map(([k,v])=>[k,typeof v==='object'?v:String(v)]).sort());
+    return {input,opt,url,args,op,key,bypass:!!(opt?.signal||opt?.keepalive||opt?.cache==='no-store'),token:roleToken,force:'_' in args||opt?.cache==='reload'};
   }
   function direct(d,old){
     let input=d.input;
