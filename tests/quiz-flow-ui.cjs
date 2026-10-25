@@ -51,7 +51,7 @@ const fs=require('node:fs'),path=require('node:path'),assert=require('node:asser
  assert(await page.locator('#genelSonucOverlay #gsoDevamBtn').isVisible());await page.locator('#genelSonucOverlay #gsoDevamBtn').click();
  console.log('PASS listening selected-unit scope, guest lexical identity, native completion and shared result');
  await page.evaluate(()=>{window.dmGameReopeningSetup=true;cumleAc();});await page.locator('#dmIntroClasses [data-class="2"]').click();await page.locator('#dmGameIntro [data-start]').click();await page.waitForSelector('#yoModal.acik');
- assert.deepEqual(await page.evaluate(()=>OC.aktif.rewardScope.units),[1,2,3]);
+ assert.equal(await page.locator('#dmIntroUnits .unite-chip').count(),1);assert.equal(await page.locator('#dmIntroUnits .unite-chip').first().textContent(),'3.Ü');assert.deepEqual(await page.evaluate(()=>OC.aktif.rewardScope.units),[3]);
  await page.evaluate(()=>{for(const c of cml.liste){dmVerifiedGames.record(c[0],c[0]);OC.dogru(1);}cml.d=cml.liste.length;cml.i=cml.liste.length;cumleSoru();});
  await page.waitForSelector('#genelSonucOverlay.acik');assert.equal(await page.locator('#yoModal.acik').count(),0);await page.locator('#genelSonucOverlay #gsoDevamBtn').click();
  console.log('PASS sentence completion surfaces results directly, valid class units and no teacher reward claim');

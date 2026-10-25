@@ -53,14 +53,35 @@
       overlay.querySelector('h2').textContent=title;overlay.querySelector('.hb-intro p').textContent=description;overlay.querySelector('.dm-entry-rules').textContent=ruleText;
       const parent=window.dmViewHistory?.capture(),state={key,classNo:1,units:[1]},previous=document.activeElement;
       function close(){overlay.remove();window.dmViewHistory?.leave(overlay);previous?.focus?.();}
-      function choose(n){state.classNo=n;overlay.querySelectorAll('[data-class]').forEach(b=>b.classList.toggle('active',Number(b.dataset.class)===n));genericSinifGuncelle(n,'dmIntroUnits',u=>{state.units=u;for(const chip of overlay.querySelectorAll('#dmIntroUnits .unite-chip'))chip.setAttribute('aria-pressed',String(chip.classList.contains('selected')));if(key==='dikte')overlay.querySelector('.hb-status').textContent=u.length?'Seçilen üniteler: '+u.join(', '):'En az bir ünite seç.';});}
+      function choose(n){
+        state.classNo=n;overlay.querySelectorAll('[data-class]').forEach(b=>b.classList.toggle('active',Number(b.dataset.class)===n));
+        const setUnits=u=>{state.units=u;for(const chip of overlay.querySelectorAll('#dmIntroUnits .unite-chip'))chip.setAttribute('aria-pressed',String(chip.classList.contains('selected')));overlay.querySelector('.hb-status').textContent=u.length?'Seçilen üniteler: '+u.join(', '):key==='cumle'?'Bu sınıfta cümle kurulabilecek kelime grubu bulunamadı.':'En az bir ünite seç.';overlay.querySelector('[data-start]').disabled=!u.length;};
+        if(key==='cumle'){
+          // Sentence game uses word_bank phrases, not individual vocabulary entries.
+          // Only offer units that really contain 3–9 word sentences in this class.
+          const counts=new Map();
+          for(const item of window.masterKelimeHavuzu||[]){
+            const en=String(item.ingilizce||'').trim(),unit=Number(item.unite);
+            if(Number(item.sinif)!==n||!item.turkce||!Number.isInteger(unit)||unit<1||en.split(/\s+/).length<3||en.split(/\s+/).length>9)continue;
+            counts.set(unit,(counts.get(unit)||0)+1);
+          }
+          const box=overlay.querySelector('#dmIntroUnits');box.replaceChildren();
+          const available=[...counts.keys()].sort((a,b)=>a-b);
+          for(const [i,unit] of available.entries()){
+            const chip=document.createElement('button');chip.type='button';chip.className='unite-chip'+(i===0?' selected':'');
+            chip.textContent=unit+'.Ü';chip.title=counts.get(unit)+' cümle';chip.setAttribute('aria-pressed',String(i===0));
+            chip.onclick=()=>{chip.classList.toggle('selected');setUnits([...box.querySelectorAll('.unite-chip.selected')].map(b=>Number(b.dataset.unit)));};
+            chip.dataset.unit=unit;box.append(chip);
+          }
+          setUnits(available.slice(0,1));return;
+        }
+        genericSinifGuncelle(n,'dmIntroUnits',setUnits);
+      }
       for(let n=1;n<=8;n++){const b=document.createElement('button');b.className='sinif-btn';b.dataset.class=n;b.textContent=n+'. Sınıf';b.onclick=()=>choose(n);overlay.querySelector('.hb-classes').append(b);}
-      // Sentence bank is level-based, so only show the class selection it actually supports.
-      if(key==='cumle'){overlay.querySelector('[data-units]').hidden=true;overlay.querySelector('.hb-intro p').textContent+=' Cümleler seçtiğin sınıfın seviyesine göre gelir.';}
       document.body.append(overlay);window.dmViewHistory?.track(overlay,{parent,close});sinifGridKisitlamaUygula('dmIntroClasses',n=>state.classNo=n,choose);
       overlay.querySelector('[data-close]').onclick=close;
       overlay.onkeydown=e=>{if(e.key==='Escape')close();if(e.key==='Tab'){const f=[...overlay.querySelectorAll('button:not(:disabled)')].filter(x=>x.getClientRects().length);if(e.shiftKey&&document.activeElement===f[0]){e.preventDefault();f.at(-1).focus();}else if(!e.shiftKey&&document.activeElement===f.at(-1)){e.preventDefault();f[0].focus();}}};
-      overlay.querySelector('[data-start]').onclick=()=>{if(key==='dikte'&&(!state.units.length||!oyunHavuzGetir(state.classNo,state.units).some(k=>/^[a-zA-Z]{3,10}$/.test(k.ingilizce||k.en||'')&&(k.turkce||k.tr)))){overlay.querySelector('.hb-status').textContent=state.units.length?'Seçili ünitelerde bu oyuna uygun kelime yok. Başka bir ünite seç.':'En az bir ünite seç.';return;}window.dmSelectedIntro=state;if(!window.dmViewHistory)close();try{original();const child=document.getElementById('yoModal');if(child?.classList.contains('acik'))child.dataset.dmSelectedGame=key;if(child?.classList.contains('acik'))window.dmViewHistory?.track(child,{parent:window.dmViewHistory.capture(),close:()=>window.yoModalKapat?.()});}finally{window.dmSelectedIntro=null;}};
+      overlay.querySelector('[data-start]').onclick=()=>{if(key==='cumle'&&!state.units.length){overlay.querySelector('.hb-status').textContent='Cümle Ustası için en az bir uygun ünite seç.';return;}if(key==='dikte'&&(!state.units.length||!oyunHavuzGetir(state.classNo,state.units).some(k=>/^[a-zA-Z]{3,10}$/.test(k.ingilizce||k.en||'')&&(k.turkce||k.tr)))){overlay.querySelector('.hb-status').textContent=state.units.length?'Seçili ünitelerde bu oyuna uygun kelime yok. Başka bir ünite seç.':'En az bir ünite seç.';return;}window.dmSelectedIntro=state;if(!window.dmViewHistory)close();try{original();const child=document.getElementById('yoModal');if(child?.classList.contains('acik'))child.dataset.dmSelectedGame=key;if(child?.classList.contains('acik'))window.dmViewHistory?.track(child,{parent:window.dmViewHistory.capture(),close:()=>window.yoModalKapat?.()});}finally{window.dmSelectedIntro=null;}};
       overlay.querySelector('[data-close]').focus();
     };
   }
