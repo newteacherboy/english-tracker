@@ -1,7 +1,7 @@
 name: Thematic learning 240 lessons
 on:
   push:
-    paths: ['ingilizce/thematic-*', 'ingilizce/learning-*', 'supabase/functions/thematic-learning/**', 'tests/thematic-learning*', 'tests/thematic-grouped-teach*', 'tests/thematic-mint*', 'content/thematic-*', 'scripts/*thematic*', '.github/workflows/thematic-learning.yml']
+    paths: ['ingilizce/thematic-*', 'ingilizce/learning-*', 'supabase/functions/thematic-learning/**', 'tests/thematic-learning*', 'tests/thematic-grouped-teach*', 'tests/thematic-mint*', 'tests/school-shared*', 'tests/activity-notices*', 'ingilizce/school-*', 'ingilizce/papi-flow.js', 'ingilizce/verified-games.js', 'content/thematic-*', 'scripts/*thematic*', '.github/workflows/thematic-learning.yml']
   pull_request:
     paths: ['ingilizce/thematic-*', 'ingilizce/learning-*', 'supabase/functions/thematic-learning/**', 'tests/thematic-learning*', 'tests/thematic-grouped-teach*', 'tests/thematic-mint*']
 permissions:
@@ -19,10 +19,12 @@ jobs:
       - run: git diff --exit-code -- ingilizce/thematic-curriculum.json supabase/functions/thematic-learning/curriculum.json
       - run: node --check ingilizce/thematic-learning.js && node --test tests/thematic-learning.test.cjs tests/thematic-learning-mascots.test.cjs tests/portal-integrity.test.cjs tests/story-api.test.cjs
       - run: npm install --no-save --package-lock=false playwright@1.58.2 jsdom@26.1.0
-      - run: node --test tests/thematic-grouped-teach.test.cjs
+      - run: node --test tests/thematic-grouped-teach.test.cjs tests/school-shared-curriculum.test.cjs
       - run: npx playwright install --with-deps chromium
       - run: node tests/thematic-learning-ui.cjs
       - run: node tests/thematic-mint-ui.cjs
+      - run: node tests/school-shared-ui.cjs
+      - run: node tests/activity-notices-ui.cjs
       - run: python scripts/check-media-rights.py
       - uses: actions/upload-artifact@v4
         if: always()
@@ -31,3 +33,4 @@ jobs:
           path: |
             /tmp/thematic-learning-qa/*.png
             /tmp/thematic-mint-qa/*.png
+            /tmp/school-shared-qa/*.png

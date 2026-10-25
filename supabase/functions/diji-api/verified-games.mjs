@@ -1,3 +1,4 @@
+import './school-curriculum.js';
 // Authoritative grading: only bank-backed tasks are persisted, no client correctness flags.
 import {loadStartPath} from './start-path-access.mjs';
 import {schoolStopProblem} from './start-path.mjs';
@@ -14,6 +15,7 @@ export function compile(game,words){
  });
 }
 export function grade(task,answer,game){
+ if(task.schoolVersion===9)return globalThis.DMSchoolCurriculum.grade(task,answer);
  if(answer===null)return {valid:true,correct:false,complete:true}; // explicit skip
  if(task.kind==='teach')return {valid:answer===true,correct:answer===true,complete:true};
  if(answer&&typeof answer==='object'&&!Array.isArray(answer)&&typeof answer.letter==='string'&&answer.letter.length===1){
@@ -85,14 +87,14 @@ export function verifiedGamesAPI(db,json){
     const seen=new Set();for(const requested of body.words){const w=eligible.find(w=>key(w.en)===key(requested.en)&&norm(w.tr)===norm(requested.tr));if(!w||seen.has(key(w.en)))return fail('Sorular etkin kelime havuzuyla uyuşmuyor.',400);seen.add(key(w.en));words.push(w);}
    }
    if(!words.length)return fail('Bu bölümde soru bulunamadı.',400);
-   const deck=compile(game,words);
+   const deck=game==='ba'&&body.schoolVersion===9?globalThis.DMSchoolCurriculum.build(words,available,stop):compile(game,words);
    const r=await db.rpc(a.teacher_portal_access_id?'dm_teacher_verified_start':'dm_verified_start',{actor:a.student_id,run_key:run,game_code:game,cls:classNo,unit_ids:units,stop_id:stop,tasks:deck});
    if(r.error)return fail('Oyun oturumu kaydedilemedi.',409);
-   return json({ok:true,total:deck.length,words,slots:deck.map((w,i)=>({slot:i,en:w.en,kind:w.kind,pairs:w.pairs})),...r.data});
+   return json({ok:true,total:deck.length,words,...(body.schoolVersion===9?{tasks:deck}:{}),slots:deck.map((w,i)=>({slot:i,en:w.en,kind:w.kind,pairs:w.pairs})),...r.data});
   }
   const r=await db.from('dm_verified_runs').select('game,class_no,units,stop_no,deck,answers,expires_at').eq('student_id',a.student_id).eq('run_id',run).maybeSingle();
   if(r.error)return fail('Cevap doğrulanamadı.',503);if(!r.data||Date.parse(r.data.expires_at)<Date.now())return fail('Oyun oturumu sona erdi. Yeniden başlat.');
-  if(op==='verifiedGameStatus')return json({ok:true,game:r.data.game,classNo:r.data.class_no,units:r.data.units,stopNo:r.data.stop_no,slots:r.data.deck.map((t,slot)=>({slot,en:t.en,kind:t.kind,pairs:t.pairs}))});
+  if(op==='verifiedGameStatus')return json({ok:true,...(r.data.deck[0]?.schoolVersion===9?{tasks:r.data.deck,words:r.data.deck[0].cards,answers:r.data.answers}:{}),game:r.data.game,classNo:r.data.class_no,units:r.data.units,stopNo:r.data.stop_no,slots:r.data.deck.map((t,slot)=>({slot,en:t.en,kind:t.kind,pairs:t.pairs}))});
   const slot=Number(body.slot),task=r.data.deck[slot];if(!Number.isInteger(slot)||!task)return fail('Geçersiz soru.',400);
   const g=grade(task,body.answer,r.data.game);if(!g.valid)return fail('Geçersiz cevap biçimi.',400);
   const result=await db.rpc('dm_verified_answer',{actor:a.student_id,run_key:run,slot_no:slot,event_key:String(body.eventId||''),is_correct:g.correct,is_complete:g.complete});

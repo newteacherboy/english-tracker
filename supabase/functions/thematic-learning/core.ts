@@ -25,7 +25,7 @@ export function thematicHandler(db:DB){
   try{
    const raw=await req.text();if(raw.length>8192)return json({ok:false,mesaj:'İstek çok büyük.'},413);
    let b:any;try{b=JSON.parse(raw);}catch{return json({ok:false,mesaj:'Geçersiz istek.'},400);}
-   if(!['status','open','advance','recover'].includes(b.action))return json({ok:false,mesaj:'Geçersiz işlem.'},400);
+   if(!['status','open','advance','recover','comboReset'].includes(b.action))return json({ok:false,mesaj:'Geçersiz işlem.'},400);
    const token=String(b.t||'');if(!token||token.length>512)return json({ok:false,mesaj:'Öğrenme yoluna devam etmek için giriş yap.'},401);
    const hash=Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(token)))).map(x=>x.toString(16).padStart(2,'0')).join('');
    const a=(await db.select('portal_sessions',{select:'student_id,teacher_id,role,expires_at,teacher_portal_access_id',token_hash:'eq.'+hash,limit:'1'}))[0];
@@ -111,6 +111,10 @@ export function thematicHandler(db:DB){
      return json(out);
    }
    if(!Number.isInteger(b.cursor)||!Number.isInteger(b.version)||b.cursor!==record.cursor||b.version!==record.version)return json({...await withRecovery(record),stale:true,wallet:await balance(record)});
+   if(b.action==='comboReset'){
+    await db.update('papi_story_progress',{...filters,cursor:'eq.'+record.cursor,version:'eq.'+record.version},{route_combo:0});
+    record=await read();return json({...safe(record),wallet:await balance(record)});
+   }
    const recovery=await recoveryStatus();
    if(recovery&&!recovery.completed&&!record.completed&&!record.replay)return json({...await withRecovery(record),stale:true,wallet:await balance(record)});
    const tasks=requestedVersion===8?V8.build(C,chapters.find(c=>c.id===C.previousId)):CORE.deck(C,chapters.find(c=>c.id===C.previousId),requestedVersion),task=tasks[record.cursor],grade=CORE.grade(task,b.answer);

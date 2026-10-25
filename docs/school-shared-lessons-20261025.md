@@ -1,0 +1,11 @@
+# Shared school and thematic lesson view
+
+New School Route runs use the approved mint lesson renderer, including one teaching screen, the same ordered ten graded question forms, viewport fitting, answer history, audio and feather HUD. The canonical school deck is built on the server from the authorized stop and unit's active word bank. The browser/server compiler is byte-identical. Real phrases are used where available; single words use word construction instead of an invented sentence.
+
+Two sequential free teaching acknowledgements preserve the existing twelve-slot verified answer/reward ledger, while showing only one teaching page and ten questions. Existing unfinished legacy runs retain their original deck. New sessions have a separate account/stop resume key and refresh their verified answers when reopened. Wrong answers retry the same question. Every intermediate matching, letter, word-order or review mistake breaks the combo; already-missed questions cannot restore that first-answer streak. Only graded answers count toward the new five-correct energy bonus. Legacy runs keep their existing economy. Existing server reward, first-clear and final-completion gates remain in use.
+
+Thematic intermediate mistakes use an authenticated, cursor/version-guarded combo-only update. It cannot advance a question, change a score or award anything. Normal wrong submissions retain their authoritative handling.
+
+Announcements are deferred on the route map, route lists, games catalogue and game overlays, including break/topic games. Late-mounted recurring notices are held even when their text mentions energy. In-question feedback, user-opened reference panels and actual connection/energy errors remain usable. Queues retain account isolation and resume after the activity closes.
+
+Validation includes compiler/grade parity, one-to-four-word decks, first-answer resets, old-session regression, a synthetic database transaction rolled back after checking both five-answer bonuses and duplicate prevention, and full browser journeys. School and learning screens are checked at 320×568, 360×640, 390×844, 768×1024, 1440×900 and 844×390, including long four-card school phrases. Notice checks cover the map, catalogue and each game overlay.

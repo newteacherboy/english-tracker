@@ -14,6 +14,7 @@ async function api(op,body,owner){if(who()!==owner)throw Error('Hesap değişti.
 function deck(game,words){decks.set(game,words);}
 async function start(game,runId,scope,words){
  if(practice())return null;
+ if(runs.has(runId)&&game==='ba'&&scope?.schoolVersion===9){await flush(runId);return api('verifiedGameStatus',{runId},who());}
  if(runs.has(runId)){
   try{return await runs.get(runId).ready;}
   catch{runs.delete(runId);}
@@ -24,7 +25,7 @@ async function start(game,runId,scope,words){
  const cls=Number(scope?.classNo||resolved[0]?.sinif||resolved[0]?.class_no||resolved[0]?.[3]);
  const scopedUnits=scope?.units?.map(Number).filter(u=>u>=1)||[];
  const units=[...new Set((scopedUnits.length?scopedUnits:resolved.map(w=>Number(w.unite??w.unit_no??w[4]))).map(Number))].sort((a,b)=>a-b);
- const state={owner:who(),runId,game,events:pending(who(),runId),acked:0,slots:[],last:{},payload:{runId,game,classNo:cls,units,stopNo:scope?.stopNo||0,words:words.map(w=>({en:en(w),tr:tr(w)}))}};
+ const state={owner:who(),runId,game,events:pending(who(),runId),acked:0,slots:[],last:{},payload:{runId,game,classNo:cls,units,stopNo:scope?.stopNo||0,schoolVersion:scope?.schoolVersion,words:words.map(w=>({en:en(w),tr:tr(w)}))}};
  runs.set(runId,state);
  if(window.OC?.aktif?.runId===runId)window.OC.aktif.rewardScope={classNo:cls,units,stopNo:scope?.stopNo||0};
  state.ready=api('verifiedGameStart',state.payload,state.owner).then(d=>{state.slots=d.slots;return d;});state.ready.catch(()=>{});
