@@ -18,7 +18,7 @@ test('classroom race engine parses and is registered in original Kapışma tab',
  assert.match(hub,/window\.dmSentenceRace\.open\(\)/);
  assert.match(hubCss,/#sentenceRaceActivity/);
  assert.match(index,/cumle-yarisi\.js\?v=20261026-final2/);
- assert.match(index,/cumle-yarisi\.css\?v=20261026-final2/);
+ assert.match(index,/cumle-yarisi\.css\?v=20261026-mobile3/);
  assert.match(index,/activity-ui\.js\?v=20261026-final2/);
  assert.match(css,/dm-sr-dual/);
  assert.match(css,/grid-template-columns:repeat\(2,minmax\(0,1fr\)\)/);

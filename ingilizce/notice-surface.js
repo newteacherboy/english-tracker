@@ -1,9 +1,9 @@
 /* Shared Papi notice surfaces: one visible item across both screen edges.
    Existing nodes/handlers are retained; account state and read receipts stay with their owner. */
 (()=>{'use strict';
-const SELECTOR='#duyuruOverlay,#dmWeeklyPanel,#dmNudge,#dmPlacementInvite,#dmEmailVerification,#dmEmailGuide,#dmLeagueMomentum,#dmHabitGreet,#dmHabitBreak,#dmWeekDone,.dm-notification,#dmInlineNotice,.yo-toast,.uy-serit,.dm-leader-bonus,#medu-offline-notice,#cpBanner,#dm-app-update,.dm-papi-feedback.is-energy,.dm-friends-welcome,[data-papi-notice]';
-const PANEL='.duy3-card,.dm-weekly-card,.dm-nudge-card,.dm-member-sheet,.dm-momentum-panel,.wd-card,.dm-papi-feedback-card,.dm-safety-card,.deg-dialog';
-const CLOSE='.duy3-close,.dm-member-close,.dm-final-close,.dm-momentum-close,.dm-habit-x,.dm-notif-close,.dm-nudge-x,.dm-safety-close,.deg-close,[data-notice-close],button[aria-label="Kapat"],button[aria-label="Duyuruyu kapat"]';
+const SELECTOR='#duyuruOverlay,#dmWeeklyPanel,#dmNudge,#dmPlacementInvite,#dmEmailVerification,#dmEmailGuide,#dmLeagueMomentum,#dmHabitGreet,#dmHabitBreak,#dmWeekDone,.dm-notification,.cb-kart,.tv-kart,.bk-kart,.yo-davet,.dv-perde,#dmInlineNotice,.yo-toast,.uy-serit,.dm-leader-bonus,#medu-offline-notice,#cpBanner,#dm-app-update,.dm-papi-feedback.is-energy,.dm-friends-welcome,[data-papi-notice]';
+const PANEL='.duy3-card,.dm-weekly-card,.dm-nudge-card,.dm-member-sheet,.dm-momentum-panel,.wd-card,.dm-papi-feedback-card,.dm-safety-card,.deg-dialog,.dv-kart';
+const CLOSE='.duy3-close,.dm-member-close,.dm-final-close,.dm-momentum-close,.dm-habit-x,.dm-notif-close,.dm-nudge-x,.dm-safety-close,.deg-close,.cb-x,.tv-x,[data-notice-close],button[aria-label="Kapat"],button[aria-label="Duyuruyu kapat"]';
 const actor=()=>window.dmTeacherPortalSession?.teacherToken||localStorage.getItem('ing_token')||sessionStorage.getItem('ing_ogr_token')||'';
 const records=new Map();let active=null,owner=actor(),sequence=0,nextAt=0,scheduled=false,audio=null,unlocked=false,lastSound=0;
 const visible=e=>!!e?.isConnected&&!e.hidden&&e.getClientRects().length>0&&getComputedStyle(e).display!=='none'&&getComputedStyle(e).visibility!=='hidden';
@@ -18,7 +18,7 @@ function sound(kind){
  (kind==='open'?[660,880]:[660,520]).forEach((frequency,i)=>{const osc=audio.createOscillator(),gain=audio.createGain(),at=now+i*.075;osc.type='sine';osc.frequency.setValueAtTime(frequency,at);gain.gain.setValueAtTime(.0001,at);gain.gain.exponentialRampToValueAtTime(.025,at+.012);gain.gain.exponentialRampToValueAtTime(.0001,at+.105);osc.connect(gain);gain.connect(audio.destination);osc.start(at);osc.stop(at+.12);osc.onended=()=>{osc.disconnect();gain.disconnect();};});
  }catch{/* Audio availability never blocks the notice. */}
 }
-function edge(el){return el.dataset.noticeEdge|| (el.matches('.dm-notification,#dmInlineNotice,.yo-toast,.uy-serit,.dm-leader-bonus,#medu-offline-notice,#cpBanner,#dm-app-update,#dmHabitGreet')?'top':'bottom');}
+function edge(el){return el.dataset.noticeEdge|| (el.matches('.dm-notification,.cb-kart,.tv-kart,.bk-kart,.yo-davet,.dv-perde,#dmInlineNotice,.yo-toast,.uy-serit,.dm-leader-bonus,#medu-offline-notice,#cpBanner,#dm-app-update,#dmHabitGreet')?'top':'bottom');}
 function decorate(el){
  if(el.dataset.noticeSurface==='papi-v2'){const panel=el.querySelector('.dm-notice-panel');if(panel)return {panel,close:panel.querySelector('.dm-notice-close'),progress:panel.querySelector('.dm-notice-progress')};}
  let panel=el.querySelector(PANEL);
@@ -36,7 +36,7 @@ function decorate(el){
  const progress=document.createElement('div');progress.className='dm-notice-progress';progress.setAttribute('aria-hidden','true');progress.append(document.createElement('i'));panel.append(progress);
  el.classList.add('dm-notice-managed','dm-notice-edge-'+edge(el));
  el.dataset.noticeSurface='papi-v2';
- el.addEventListener('click',event=>{const b=event.target.closest?.('button');if(active===el&&b&&!b.disabled&&(b===close||b.matches('.dm-final-ready,.dm-nudge-skip,.dm-momentum-later,.dm-habit-x,.cp-dismiss')||/^(tamam|anladım|okudum|şimdilik kapat|kapat|[×✕x])/i.test((b.textContent||'').trim())))sound('close');},true);
+ el.addEventListener('click',event=>{const b=event.target.closest?.('button');if(active===el&&b&&!b.disabled&&(b===close||b.matches('.dm-final-ready,.dm-nudge-skip,.dm-momentum-later,.dm-habit-x,.cp-dismiss,.dv-vaz,#yoDavetHayir')||/^(tamam|anladım|okudum|şimdilik kapat|kapat|[×✕x])/i.test((b.textContent||'').trim())))sound('close');},true);
  return {panel,close,progress};
 }
 function adopt(el){
