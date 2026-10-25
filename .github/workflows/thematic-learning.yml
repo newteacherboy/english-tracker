@@ -27,7 +27,7 @@ jobs:
       - run: node tests/activity-notices-ui.cjs
       - run: node tests/meteor-viewport-ui.cjs
       - run: node tests/teacher-game-regressions-ui.cjs
-      - run: node tests/teacher-papi-cards-ui.cjs
+      - run: node --test tests/teacher-word-wheel-api.test.mjs
       - run: node --test tests/teacher-online-session.test.cjs tests/teacher-online-auth.test.cjs tests/medupro-presence.test.cjs tests/meteor-api.test.cjs
       - run: node tests/final-review-retry-ui.cjs
       - run: python scripts/check-media-rights.py

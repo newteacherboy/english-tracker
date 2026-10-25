@@ -1,7 +1,7 @@
 /* Same API roles as password login; server still enforces teacher/student scope. */
 (function(g){
  const teacherPrefix=/^(teacherPortal|teacherNotification|teacherLearning|teacherPlacement|ogretmen|ogrenciSifre|bekleyenKayit|kayitOnayla|kayitReddet|rubrik|rapor|odevVer|odevSil|odevListesiOgretmen|duyuruEkle|duyuruSil|duyuruAktif|duyuruListesiGetir|sinifIci|ozellikIzni|communication|adminStudent)/;
- g.DMTeacherRequestPolicy={isTeacher(op,args={},context={}){return context.self===true&&['papiKartSonucKaydet','papiKartSiralamaGetir'].includes(op)||teacherPrefix.test(op)||['ekVeriTumu','ekVeriOzet','haftalikVeliRaporu','etkinlikTanimlariGetir','tumVideolariGetir','ozellikListesiGetir','etkinlikAta','disLinkEtkinlikAta','videoOgrenciEkle','planTikGuncelle'].includes(op)||!op&&!!context.tools||op==='ekVeriGetir'&&!!context.tools&&args.ogrenci&&args.ogrenci!==context.participant;}};
+ g.DMTeacherRequestPolicy={isTeacher(op,args={},context={}){return teacherPrefix.test(op)||['ekVeriTumu','ekVeriOzet','haftalikVeliRaporu','etkinlikTanimlariGetir','tumVideolariGetir','ozellikListesiGetir','etkinlikAta','disLinkEtkinlikAta','videoOgrenciEkle','planTikGuncelle'].includes(op)||!op&&!!context.tools||op==='ekVeriGetir'&&!!context.tools&&args.ogrenci&&args.ogrenci!==context.participant;}};
 })(typeof window!=='undefined'?window:globalThis);
 /* Device account registry uses the real storage before classroom isolation. No code is saved. */
 (()=>{'use strict';
@@ -58,7 +58,7 @@
  window.dmTeacherRequestRole=(url,opt)=>{
   let args={};try{args=Object.fromEntries(new URL(url,location.href).searchParams);if(typeof opt?.body==='string')args={...args,...JSON.parse(opt.body)};}catch{}
   const current=JSON.parse(ss.getItem('dm_tp_session')||'null')||state;
-  return window.DMTeacherRequestPolicy.isTeacher(args.islem||'',args,{tools:window.dmTeacherToolsActive,participant:current.participant.name,self:current.playAsSelf!==false})?'teacher':'participant';
+  return window.DMTeacherRequestPolicy.isTeacher(args.islem||'',args,{tools:window.dmTeacherToolsActive,participant:current.participant.name})?'teacher':'participant';
  };
  window.dmTeacherRequestToken=(url,opt)=>{const current=JSON.parse(ss.getItem('dm_tp_session')||'null')||state;return window.dmTeacherRequestRole(url,opt)==='teacher'?current.teacherToken:current.participant.token;};
 })();
