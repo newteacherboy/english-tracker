@@ -27,3 +27,5 @@ test('failed or stale teacher data never replaces the current account list',asyn
  const p=f.ctx.prepareTeacherTools();owner='new-owner';release([{ogrenci:'OldOwnerPupil'}]);await assert.rejects(p,/hesabı değişti/);assert.equal(f.ctx.globalDataCache[0].ogrenci,'stale');assert.equal(f.saved.size,0);
  const g=prepareFixture(async()=>{throw Error('offline');});await assert.rejects(g.ctx.prepareTeacherTools(),/offline/);assert.equal(g.ctx.globalDataCache[0].ogrenci,'stale');assert.equal(g.ctx.preparingTools,null);
 });
+
+test('Papi Cards uses the teacher session for self-play and participant session for chosen-pupil play',()=>{for(const op of ['papiKartSonucKaydet','papiKartSiralamaGetir']){assert.equal(policy().isTeacher(op,{}, {self:true}),true);assert.equal(policy().isTeacher(op,{}, {self:false}),false);}assert.equal(policy().isTeacher('verifiedGameStart',{}, {self:true}),false);});
