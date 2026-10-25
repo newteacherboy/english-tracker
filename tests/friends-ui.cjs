@@ -54,12 +54,12 @@ const feed=['Elif','Ege','Zeynep','Cemre'].map((ogr,i)=>({k:'event'+i,ogr,ad:ogr
   await page.evaluate(()=>dmProgression.refresh(true));
   await page.evaluate(()=>meduAkisAc());await page.waitForSelector('.fr-home .akis-kart');await page.waitForTimeout(800);
   assert.equal(await page.locator('.fr-home').count(),1);
-  assert.equal(await page.locator('.fr-summaries .fr-summary').count(),0);
-  assert.equal(await page.locator('.fr-feed .akis-kart').count(),4);
+  assert.equal(await page.locator('.fr-summaries .fr-summary').count(),2);
+  assert.equal(await page.locator('.fr-feed .akis-kart').count(),2);
   assert(await page.locator('#maSegment').isHidden());
   assert.equal(await page.locator('#maSegment button').count(),3);
   assert.equal(await page.locator('#maSegment [data-s="parkur"],#maSegment [data-s="kesfet"]').count(),0);
-  assert.equal(await page.locator('#tab-meduakis .fr-podium-mini button').count(),0);
+  assert.equal(await page.locator('#tab-meduakis .fr-podium-mini button').count(),3);
   const navBefore=await page.locator('#bottomNavMobile').innerHTML();
   for(const [w,h] of [[320,667],[390,844],[768,1024],[1180,820]]){
     await page.setViewportSize({width:w,height:h});await page.waitForTimeout(200);
@@ -68,14 +68,23 @@ const feed=['Elif','Ege','Zeynep','Cemre'].map((ogr,i)=>({k:'event'+i,ogr,ad:ogr
     // The last action can always be scrolled above the original dock.
     await page.evaluate(()=>{const e=document.getElementById('tab-meduakis');e.scrollTop=e.scrollHeight;});
     const dockTop=await page.locator('#bottomNavMobile').evaluate(e=>e.getBoundingClientRect().top);
-    const lastBottom=await page.locator('.fr-invitation').evaluate(e=>e.getBoundingClientRect().bottom);
+    const lastBottom=await page.locator('.fr-matches').evaluate(e=>e.getBoundingClientRect().bottom);
     assert(lastBottom<dockTop,'last action fits above dock '+w);
     await page.evaluate(()=>document.getElementById('tab-meduakis').scrollTop=0);
     if(w===390)await page.screenshot({path:'/tmp/friends-home-mobile.png'});
     console.log('PASS layout '+w+'x'+h);
   }
   await page.setViewportSize({width:390,height:844});
+  assert.equal(await page.locator('#maAkisListe .akis-kart').count(),2);
+  assert.equal(await page.locator('.club-hero').count(),0);
+  await page.locator('[data-friend-action="akis"]').click();
+  await page.waitForSelector('.fr-club-view .club-hero');
   assert.equal(await page.locator('#maAkisListe .akis-kart').count(),4);
+  await page.locator('.club-back').click();
+  await page.waitForSelector('.fr-home-view .fr-summaries');
+  assert.equal(await page.locator('#maAkisListe .akis-kart').count(),2);
+  await page.locator('[data-friend-action="akis"]').click();
+  await page.waitForSelector('.fr-club-view .club-hero');
   await page.locator('[data-filter="online"]').click();await page.waitForTimeout(300);assert.equal(await page.locator('#maAkisListe .akis-kart').count(),3);
   await page.locator('[data-filter="herkes"]').click();
   await page.locator('.aksiyon button').first().click();assert(writes.some(x=>x.islem==='akisOlayToggle'&&x.tur==='tebrik'));

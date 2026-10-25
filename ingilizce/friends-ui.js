@@ -62,13 +62,18 @@
     if (!d) return '';
     return `<aside class="fr-invitation" role="status">${avatar(d.gonderen,36)}<span><b>${esc(d.gonderen)}</b> seni oyuna davet ediyor<small>${esc(window.dmMeduPro?.games?.[d.oyun]?.[0]||d.oyun)}</small></span><button data-friend-action="accept" data-invite-id="${esc(d.id)}" data-friends-gate="duello">Kabul et</button><button data-friend-action="dismiss" data-invite-id="${esc(d.id)}" aria-label="Daveti şimdilik gizle">×</button></aside>`;
   }
-  function clubHeader(){return `<header class="club-hero"><h2>Arkadaşlar</h2><button type="button" data-friend-action="find" aria-label="Arkadaş ekle">＋</button></header>`;}
+  function clubHeader(){return `<header class="club-hero"><button type="button" class="club-back" data-friend-action="home" aria-label="Arkadaşlar ana ekranına dön">‹</button><h2>Arkadaş akışı</h2><button type="button" data-friend-action="find" aria-label="Arkadaş ekle">＋</button></header>`;}
   function homeHtml() {
+    const o = mine();
+    return `<div class="fr-home"><section class="fr-welcome">${art('papi-friends','fr-welcome-papi')}<p>Birlikte öğren, birlikte yüksel! <span>♥</span></p><button class="fr-add" data-friend-action="find">${icon('add')} Arkadaş ekle</button></section><section class="fr-friends fr-card"><div class="fr-section-head"><h3>${icon('people')} Arkadaşlarım</h3><button class="fr-link fr-invite-link" data-friend-action="friends" data-mode="invite">Davet et ${icon('chevron')}</button></div><div class="fr-people">${peopleHtml()}</div></section><div class="fr-summaries">${showcaseSummary(o)}${leagueSummary()}</div><section class="fr-feed fr-card"><div class="fr-section-head"><h3>${icon('people')} Arkadaş akışı</h3><button class="fr-link" data-friend-action="akis">Tümünü gör ${icon('chevron')}</button></div>${filters()}<div id="maAkisListe">${window.maAkisListeHtml()}</div></section><div id="frInvitation">${invitationHtml()}</div><button class="fr-matches" data-friend-action="matches" data-friends-gate="duello">⚔️ Karşılaşmalarım ${icon('chevron')}</button></div>`;
+  }
+  function fullFeedHtml() {
     return `<div class="fr-home">${clubHeader()}<nav class="club-shortcuts" aria-label="Arkadaşlar kısayolları"><button data-friend-action="find">Arkadaş ekle</button><button data-friend-action="vitrin">Vitrinim</button><button data-friend-action="lig">Ligim</button><button data-friend-action="matches">Karşılaşmalarım</button></nav>${filters()}<section class="fr-feed" aria-label="Arkadaş akışı"><div id="maAkisListe">${window.maAkisListeHtml()}</div></section><div id="frInvitation">${invitationHtml()}</div></div>`;
   }
   function viewHeader() {
     const home = maSekme === 'hub' && !maProfilId;
     root.classList.toggle('fr-home-view',home);
+    root.classList.toggle('fr-club-view',maSekme==='akis'&&!maProfilId);
     root.dataset.friendsView = maProfilId ? 'profile' : maSekme;
     const back = root.querySelector('.fr-back'); if(back) back.hidden=home;
     root.querySelectorAll('#maSegment button').forEach(b=>{b.setAttribute('aria-selected',String(b.dataset.s===maSekme));b.classList.toggle('aktif',b.dataset.s===maSekme);});
@@ -102,11 +107,6 @@
   }
   function decorateDetail() {
     viewHeader();
-    if(maSekme==='akis'&&!maProfilId&&!$('frFeedHero')){
-      const hero=document.createElement('section');hero.id='frFeedHero';hero.className='fr-welcome fr-detail-welcome';
-      hero.innerHTML=art('papi-friends','fr-welcome-papi')+'<p>Birlikte öğren,<br>birlikte yüksel!</p><button class="fr-add" data-friend-action="find">'+icon('add')+' Arkadaş ekle</button>';
-      $('maEkran').querySelector('.ma-gir')?.prepend(hero);
-    }
     if(maSekme==='lig'&&!maProfilId){
       const card=root.querySelector('.ml-ben');
       if(card&&!card.querySelector('.fr-league-papi'))card.insertAdjacentHTML('beforeend',art('papi-league','fr-league-papi'));
@@ -117,11 +117,11 @@
     }
     paintLocks();
   }
-  window.maAkisHtml=function(){return filters()+`<div id="maAkisListe">${window.maAkisListeHtml()}</div>`;};
+  window.maAkisHtml=function(){return fullFeedHtml();};
   window.maAkisListeHtml=function(){
     const saved=maAkisVeri, filter=maFiltre;
     let rows=window.DMFriendsFeed.select(saved).filter(e=>filter==='takip'?maTakip.has(e.ogr):filter==='online'?online(e.ogr):true);
-    if(maSekme==='hub'&&!maProfilId)rows=rows.slice(0,20);
+    if(maSekme==='hub'&&!maProfilId)rows=rows.slice(0,2);
     let html;
     try{maAkisVeri=rows;maFiltre='herkes';html=originalFeed.call(this);}finally{maAkisVeri=saved;maFiltre=filter;}
     if(!rows.length&&saved.length)html='<div class="ma-bos">'+(filter==='online'?'Şu anda çevrimiçi arkadaşlarından bir paylaşım yok.':filter==='takip'?'Takip ettiklerinden henüz bir paylaşım yok.':'Henüz bir paylaşım yok.')+'</div>';
@@ -134,7 +134,7 @@
       const event=rows.find(x=>String(x.k)===card.dataset.safetyEvent),meta=event?.club;if(!meta)return;
       if(sentence)sentence.innerHTML=esc(sentence.textContent)+'<button type="button" class="club-content-link" data-club-open="'+esc(event.k)+'">'+esc(meta.label)+' ›</button>';
       card.querySelectorAll('[onclick*="maBegen"]').forEach(b=>b.remove());
-      const stamp=document.createElement('i');stamp.className='club-event-badge';stamp.setAttribute('aria-hidden','true');stamp.style.backgroundPosition=(meta.badge%3*50)+'% '+Math.floor(meta.badge/3)*50+'%';if(meta.kind==='game'&&meta.game[1]!=='hafizaOyunAc'){const atlas={kelimeYarismasiAc:0,jpOyunAc:5,boslukOyunAc:3,yagmurOyunAc:6,asmacaOyunAc:4,kelimebulOyunAc:7,esOyunAc:8,trenOyunAc:9,dikteAc:10,cumleAc:11,harfBahcesiAc:15}[meta.game[1]];if(atlas!==undefined){stamp.style.backgroundImage="url('games-assets/game-atlas-v1.webp')";stamp.style.backgroundSize='400% 400%';stamp.style.backgroundPosition=(atlas%4*100/3)+'% '+Math.floor(atlas/4)*100/3+'%';stamp.style.borderRadius='20px';}}card.append(stamp);
+      const stamp=document.createElement('i');stamp.className='club-event-badge';stamp.setAttribute('aria-hidden','true');stamp.style.backgroundPosition=(meta.badge%3*50)+'% '+Math.floor(meta.badge/3)*50+'%';if(meta.kind==='game'&&meta.game[1]!=='hafizaOyunAc'){const atlas={kelimeYarismasiAc:0,jpOyunAc:5,boslukOyunAc:3,yagmurOyunAc:6,asmacaOyunAc:4,kelimebulOyunAc:7,esOyunAc:8,trenOyunAc:9,dikteAc:10,cumleAc:11,harfBahcesiAc:15}[meta.game[1]];if(atlas!==undefined){stamp.style.backgroundImage="url('games-assets/game-atlas-v1.webp')";stamp.style.backgroundSize='400% 400%';stamp.style.backgroundPosition=(atlas%4*100/3)+'% '+Math.floor(atlas/4)*100/3+'%';stamp.style.borderRadius='20px';}}if(maSekme==='akis'&&!maProfilId)card.append(stamp);
       const time=row.querySelector('small');if(time)time.textContent=window.DMTime.format(event.t);
       const person=typeof maTumListe!=='undefined'?maTumListe.find(x=>norm(x.id)===norm(id)):null;
       const n=row.querySelector('b');

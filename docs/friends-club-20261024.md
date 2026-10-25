@@ -23,3 +23,7 @@ Converted to WebP quality 90/method 6, preserving the full image and transparenc
 23 focused Node tests passed: feed selection, dates, notification action/matching policy, dialogue selection/account isolation, mission claims, route changes and existing school/social behavior. All changed runtime JavaScript and 62 classic inline scripts parse.
 
 Cloud browser QA used actual production rendering, styles and notification/action modules with mocked students/API writes. Checked 320, 390, 768 and 1180 widths, no horizontal overflow, eligible/locked invitations, route/game links, congratulation, correct invitation game, unread retention/explicit read, exact and malformed date display, accepted/rejected duel results, failed reply retry controls and gift/message navigation. No real student messages, gifts, rewards or duel replies were sent during QA. Authenticated production account behavior was not exercised.
+
+## Navigation correction — 25 October 2026
+
+Restored the existing Friends hub (friends strip, showcase, league, two-item compact feed). Only “Tümünü gör” opens the new illustrated full feed. Club-specific styles are scoped to the feed detail view. The explicit back button returns to the original hub and selecting Friends from the dock always opens the hub. The same notification count/actions and six-tab navigation are retained. Browser fixtures verified hub → full feed → hub, two versus three useful fixture cards and no horizontal overflow at 390px.
