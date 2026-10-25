@@ -29,3 +29,6 @@ test('selecting a saved code teacher validates its own token and keeps personal 
 test('network errors never erase the remembered teacher session',async()=>{
  const native=storage();page(native).w.dmTeacherDevice.remember(portal);const opened=page(native,storage(),'',{status:503,ok:false,data:{ok:false}});await new Promise(r=>setImmediate(r));assert.equal(opened.w.dmTeacherDevice.list().length,1);assert(!opened.calls.some(c=>c[0]==='replace'));
 });
+test('personal-account return is a switch and retains the teacher for the account picker',()=>{
+ const native=storage({ing_token:'personal-token'});page(native).w.dmTeacherDevice.remember(portal);const opened=page(native);opened.w.dmTeacherPortalPersonal();assert.equal(opened.w.dmTeacherDevice.list().length,1);assert.equal(opened.session.getItem('dm_tp_session'),null);assert.equal(page(native).w.dmTeacherPortalMode,undefined);assert.equal(native.getItem('ing_token'),'personal-token');
+});

@@ -41,6 +41,7 @@
  isolated.setItem('ing_token',state.participant.token);isolated.setItem('ing_oturumAcik','true');isolated.setItem('ing_aktifOgrenci',state.participant.name);isolated.setItem('ing_toplamSaniye','0');
  if(!ss.getItem('dm_tp_previous_teacher_saved')){ss.setItem('dm_tp_previous_teacher',ss.getItem('ing_ogr_token')||'');ss.setItem('dm_tp_previous_teacher_saved','1');}
  ss.setItem('ing_ogr_token',state.teacherToken);
+ window.dmTeacherPortalPersonal=()=>{window.dmTeacherDevice.leave();location.assign('./?hesap=1');};
  window.dmTeacherPortalExit=()=>{
   const current=JSON.parse(ss.getItem('dm_tp_session')||'null');if(current)window.dmTeacherDevice.forget(current.teacherToken);window.dmTeacherDevice.personal();
   for(const k of Object.keys(ss))if(k.startsWith('dm_tp_data:'))ss.removeItem(k);
