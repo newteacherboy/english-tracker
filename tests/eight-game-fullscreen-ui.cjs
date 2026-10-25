@@ -36,7 +36,7 @@ const {chromium}=require('playwright'),fs=require('node:fs'),path=require('node:
     'kelimebulGirisEkrani','kelimebulBitisEkrani','kelimebulOyunEkrani',
     'esGirisEkrani','esBitisEkrani','esOyunEkrani',
     'trenGirisEkrani','trenBitisEkrani','trenOyunEkrani']){
-   const element=root.querySelector('#'+id);if(element)element.style.display='none';
+   const element=root.querySelector('#'+id);if(element)element.setAttribute('style','display:none;');
   }
   stage.style.display='block';
   if(stageId==='jpBalonEkrani'){
@@ -85,6 +85,10 @@ const {chromium}=require('playwright'),fs=require('node:fs'),path=require('node:
        spanWhiteSpace:span?getComputedStyle(span).whiteSpace:''};
      })};
    },game);
+   if(game[0]==='jpOyunOverlay'){
+    const inactive=game[1]==='jpBalonEkrani'?'jpSoruEkrani':'jpBalonEkrani';
+    assert.equal(await page.locator('#'+inactive).isVisible(),false,'inactive balloon screen stays hidden with original inline markup');
+   }
    assert(m.bodyLocked&&m.active,'not fullscreen '+JSON.stringify({v,game,m}));
    assert(Math.abs(m.card.height-v.height)<3&&Math.abs(m.card.width-v.width)<3,'viewport '+JSON.stringify({v,game,m}));
    assert(m.scroll.cardHeight<=m.scroll.cardClient+4&&m.scroll.stageHeight<=m.scroll.stageClient+8,

@@ -36,7 +36,7 @@ html body .fg-fs-active .dm-session-back:not(.fg-fs-back){
  left:auto!important;right:calc(env(safe-area-inset-right,0px) + 9px)!important}
 html body :is(#jpBalonEkrani,#jpSoruEkrani,#yagmurOyunEkrani,#kelimebulOyunEkrani,#esOyunEkrani,#trenOyunEkrani){
  box-sizing:border-box!important;min-width:0!important}
-html body .fg-fs-active :is(#jpBalonEkrani,#jpSoruEkrani,#yagmurOyunEkrani,#kelimebulOyunEkrani,#esOyunEkrani,#trenOyunEkrani):not([style*="display: none"]){
+html body .fg-fs-active :is(#jpBalonEkrani,#jpSoruEkrani,#yagmurOyunEkrani,#kelimebulOyunEkrani,#esOyunEkrani,#trenOyunEkrani):not([style*="display: none"]):not([style*="display:none"]){
  display:flex!important;flex-direction:column!important;flex:1 1 0!important;min-height:0!important;
  gap:clamp(4px,1dvh,9px)!important;overflow:hidden!important;max-height:100%!important}
 html body .fg-fs-active .fg-hero{
