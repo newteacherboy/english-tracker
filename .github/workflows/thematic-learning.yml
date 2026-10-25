@@ -8,7 +8,7 @@ permissions:
   contents: read
 jobs:
   thematic:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 12
     steps:
       - uses: actions/checkout@v4
@@ -19,8 +19,8 @@ jobs:
       - run: git diff --exit-code -- ingilizce/thematic-curriculum.json supabase/functions/thematic-learning/curriculum.json
       - run: node --check ingilizce/thematic-learning.js && node --test tests/thematic-learning.test.cjs tests/thematic-learning-mascots.test.cjs tests/portal-integrity.test.cjs tests/story-api.test.cjs
       - run: npm install --no-save --package-lock=false playwright@1.58.2 jsdom@26.1.0
-      - run: npx playwright install --with-deps chromium
       - run: node --test tests/thematic-grouped-teach.test.cjs
+      - run: npx playwright install --with-deps chromium
       - run: node tests/thematic-learning-ui.cjs
       - run: node tests/thematic-mint-ui.cjs
       - run: python scripts/check-media-rights.py
