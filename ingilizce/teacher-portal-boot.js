@@ -61,4 +61,18 @@
   return window.DMTeacherRequestPolicy.isTeacher(args.islem||'',args,{tools:window.dmTeacherToolsActive,participant:current.participant.name})?'teacher':'participant';
  };
  window.dmTeacherRequestToken=(url,opt)=>{const current=JSON.parse(ss.getItem('dm_tp_session')||'null')||state;return window.dmTeacherRequestRole(url,opt)==='teacher'?current.teacherToken:current.participant.token;};
+
+ // If a deferred teacher script fails to load, leave usable recovery actions
+ // instead of a permanently hidden learner shell and an empty screen.
+ const showTeacherRecovery=()=>{
+  if(window.tpHomeInitialized||document.querySelector('#tpTeacherHome.is-visible,#tpDashboard.is-visible,#tpTeacherEmergency'))return;
+  const main=document.createElement('main');main.id='tpTeacherEmergency';
+  main.setAttribute('role','alert');
+  main.style.cssText='position:fixed;inset:0;z-index:2147483630;display:grid;place-items:center;padding:20px;box-sizing:border-box;background:#f1fcfc;font:16px/1.5 system-ui,sans-serif;color:#163e50;';
+  main.innerHTML='<div style="width:min(460px,100%);padding:24px;border:2px solid #afdcd5;border-radius:22px;background:white;text-align:center"><h1 style="font-size:23px;margin:0 0 12px">Öğretmen ekranı açılamadı</h1><p style="margin:0 0 18px">Öğretmen hesabın korunuyor. Sayfayı yeniden açabilir veya giriş ekranına dönebilirsin.</p><button type="button" data-tp-retry style="padding:12px;margin:5px;border:0;border-radius:12px;background:#087c72;color:white;font-weight:800">Yeniden dene</button><button type="button" data-tp-exit style="padding:12px;margin:5px;border:1px solid #aac9c6;border-radius:12px;background:white;color:#164d55;font-weight:800">Öğretmen girişine dön</button></div>';
+  document.body.append(main);
+  main.querySelector('[data-tp-retry]').onclick=()=>location.reload();
+  main.querySelector('[data-tp-exit]').onclick=()=>{if(typeof window.dmTeacherPortalExit==='function')window.dmTeacherPortalExit();else{window.dmTeacherDevice.leave();location.replace('./?ogretmenGiris=1');}};
+ };
+ document.addEventListener('DOMContentLoaded',()=>{setTimeout(showTeacherRecovery,4000);},{once:true});
 })();
