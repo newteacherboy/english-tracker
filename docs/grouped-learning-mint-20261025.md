@@ -1,0 +1,9 @@
+# Grouped teaching and the approved mint card layout
+
+Learning Route shows every new expression in the chapter together on one teaching screen. Each card keeps its own audio and Turkish meaning. Example sentences and the topic dictionary remain available through the existing reference controls. The single Start Questions button acknowledges the unchanged leading teaching stages with the current cursor/version, then renders the original first graded question. No curriculum deck or backend question, energy, combo or reward rule changes.
+
+A partially completed teaching phase shows the complete expression collection and acknowledges only remaining teaching cursors. Requests run sequentially, double-clicks are blocked, account/close changes stop further requests, and failed acknowledgements reconcile from the persisted server cursor.
+
+The user selected concept 1: mint background, white rounded cards, teal actions and large readable expression cards. Choice/listening, matching, sentence construction, missing-letter and final review share this visual language. The HUD shows energy beside the feather combo with a visible 0/5 counter; the existing five-correct reward/animation is preserved. The layout uses the visible viewport and adapts for narrow portrait and short landscape screens. Existing font scaling fallback remains available for accessibility.
+
+Validation: 41 focused Node tests cover teaching batching/resume/double-click/interruption/close, curriculum/compiler parity, original graded tasks, session rules, energy and combo. Browser fixtures render every mechanic for A1 and the longest B2 expression chapter, verify complete visible text and clickable/non-overlapping controls, and use 320×568, 360×640, 390×844, 768×1024, 1440×900 and 844×390. No production learner data is written. Both generated design concepts were previews; production UI uses existing approved Papi artwork and native HTML/CSS.
