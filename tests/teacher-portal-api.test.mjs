@@ -13,3 +13,17 @@ test('login uses a keyed digest, rejects invalid/inactive/unverified identities 
 test('participant selection binds only the owned pupil and never trusts supplied actor, role or teacher ID',async()=>{const f=await fixture();const bad=await f.run('teacherPortalParticipant',{studentId:'bob',teacher_id:'teacher-two',role:'teacher'},f.teacher);assert.equal(bad.status,403);assert.equal(f.calls.length,0);const ok=await f.run('teacherPortalParticipant',{studentId:'alice',actor:'bob'},f.teacher);assert.equal(ok.data.name,'Alice');assert.equal(f.calls[0].session[1],'alice');assert.equal(f.calls[0].session[3].teacher_portal_access_id,'grant');});
 test('code changes need the current secret and never return a plaintext code',async()=>{const f=await fixture();assert.equal((await f.run('teacherPortalChangeCode',{currentCode:'000000',code:'999999'},f.teacher)).status,403);assert.equal(f.calls.length,0);const ok=await f.run('teacherPortalChangeCode',{currentCode:'123456',code:'999999'},f.teacher);assert.equal(ok.status,200);assert.equal(f.calls[0].name,'dm_teacher_portal_code');assert.equal(f.calls[0].args.new_digest,await hash('server-secret|teacher-portal|999999'));assert.ok(!JSON.stringify(ok.data).includes('999999'));});
 test('classroom participant operations cannot modify personal accounts, admin access, shops or parkur',()=>{for(const [op,b]of [['kisiselBilgiGuncelle',{}],['sifreGuncelle',{}],['teacherPortalDecide',{}],['buyuSeviyeTamamla',{}],['ekonomi',{is:'karakterAl'}],['ekVeriKaydet',{anahtar:'placement_start_v1'}]])assert.equal(portalOperationAllowed(op,b),false,op);for(const [op,b]of [['verifiedGameStart',{}],['seviyeOyunOdulu',{}],['enerjiDegistir',{}],['companionDialogueAnswer',{}],['dersKonuDetayGetir',{}],['ekVeriKaydet',{anahtar:'yo'}]])assert.equal(portalOperationAllowed(op,b),true,op);});
+test('owner code uses a private salted digest and requires the active exact owner',async()=>{
+ const f=await fixture(),g={id:'owner-grant',student_id:null,teacher_id:'owner',state:'approved',version:1};
+ g.code_digest='owner:'+await hash(g.id+'|teacher-portal-owner|'+'87654321');f.tables.teacher_portal_access.push(g);
+ const owner={id:'owner',username:'teacher',is_admin:true,active:true};f.tables.teachers.push(owner);
+ assert.equal((await f.run('teacherPortalLogin',{code:'87654321'})).status,200);
+ assert.equal(f.calls[0].session[2],'owner');assert.equal(f.calls[0].session[3].teacher_portal_access_id,'owner-grant');
+ assert.equal((await f.run('teacherPortalLogin',{code:'87654320'})).status,401);
+ owner.is_admin=false;assert.equal((await f.run('teacherPortalLogin',{code:'87654321'})).status,401);
+ owner.is_admin=true;owner.frozen_at='2026-10-25';assert.equal((await f.run('teacherPortalLogin',{code:'87654321'})).status,401);
+});
+test('a null-linked grant never upgrades a regular teacher to owner',async()=>{
+ const f=await fixture();f.tables.teacher_portal_access[0].student_id=null;
+ assert.equal((await f.run('teacherPortalAppearance',{},f.teacher)).status,403);
+});

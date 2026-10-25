@@ -45,5 +45,6 @@ async function panel(){
 }
 setInterval(()=>{const now=performance.now(),delta=Math.min(2000,now-last);last=now;if(owner!==who()){chestView?.close();chestView=null;earnedChest=0;owner=who();state=null;pending=0;request=null;initialized=false;seq=0;touch();if(ready())flush();}if(active()&&initialized)pending+=delta;if(ready()&&navigator.onLine!==false&&(!initialized||pending>=30000)&&!document.hidden)flush();paintTime();},1000);
 document.addEventListener('dm:login',()=>{chestView?.close();chestView=null;earnedChest=0;initialized=false;state=null;pending=0;request=null;touch();flush()});
-window.dmActiveTime={summary,panel,active,flush};
+function unclaimed(){const d=state;if(!d||owner!==who())return [];const items=[];for(let i=Number(d.baseChest||0)+1;i<=Number(d.chestCount||0);i++)if(!(d.claimed||[]).includes(i))items.push(i);return items;}
+window.dmActiveTime={summary,panel,active,flush,unclaimed,openChest:chestCeremony};
 })();

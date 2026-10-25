@@ -6,7 +6,7 @@ function streakNotice(d,owner){try{const today=new Date(Date.now()+10800000).toI
  if(saved.length){const free=saved.some(x=>x.source==='free'),paid=saved.some(x=>x.source==='paid');text='🧊 '+(free&&!paid?'Haftalık ücretsiz kalkanın':paid&&!free?'Seri kalkanın':'Kalkanların')+' '+d.loginStreak+' günlük serini korudu!';}
  else if(d.loginStreak===1&&Number(d.maxLoginStreak)>=3)text='🔥 En uzun serin '+d.maxLoginStreak+' gün. Bugün yeniden başlıyoruz, Papi seninle!';
  if(!text)return;localStorage.setItem(key,today);setTimeout(()=>window.yoToast?.(text),2500);}catch{}}
-if(typeof document!=='undefined'&&!document.getElementById('dm-route-feedback-profile-style')){const link=document.createElement('link');link.id='dm-route-feedback-profile-style';link.rel='stylesheet';link.href='route-feedback-profile.css?v=20261015-member-fixes-2';document.head.append(link);}
+if(typeof document!=='undefined'&&!document.getElementById('dm-route-feedback-profile-style')){const link=document.createElement('link');link.id='dm-route-feedback-profile-style';link.rel='stylesheet';link.href='route-feedback-profile.css?v=20261025-review-title-1';document.head.append(link);}
 const $=id=>document.getElementById(id),Y=()=>typeof yo!=='undefined'?yo:null;
 const who=()=>typeof aktifOgrenciAdi==='undefined'?'':String(aktifOgrenciAdi||'');
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -109,8 +109,9 @@ async function review(settings={}){
    answered=false;const w=words[i];const candidates=[...words,...(window.masterKelimeHavuzu||[])].map(x=>({en:String(x.en||x.ingilizce||''),tr:String(x.tr||x.turkce||'')})).filter(x=>x.en&&x.en.toLowerCase()!==w.en.toLowerCase()&&x.tr.toLowerCase()!==w.tr.toLowerCase());const wrong=candidates[Math.floor(Math.random()*candidates.length)]?.en||'I do not know';const options=Math.random()<.5?[w.en,wrong]:[wrong,w.en];
    v.body.innerHTML='<p class="lc-free-note">Enerji harcamadan tekrar et · Kelimeler farklı günlerde yeniden gelir.</p>'+hud()+'<div class="dm-review-progress"><small>Kelime '+(i+1)+' / '+words.length+'</small><progress value="'+i+'" max="'+words.length+'"></progress></div><div class="dm-review-question"><small>İNGİLİZCE KARŞILIĞINI SEÇ</small><h3>'+esc(w.tr)+'</h3></div><div class="dm-review-options">'+options.map(x=>'<button type="button" data-answer="'+esc(x)+'">'+esc(x)+'</button>').join('')+'</div><p class="dm-review-feedback" role="status" aria-live="polite"></p><button type="button" class="dm-member-primary" data-next hidden>Sonraki kelime →</button>';
    v.el.querySelectorAll('[data-answer]').forEach(b=>b.onclick=async()=>{
-    if(answered)return;answered=true;v.el.querySelectorAll('[data-answer]').forEach(x=>x.disabled=true);
+    if(answered)return;prepareFeedbackAudio();answered=true;v.el.querySelectorAll('[data-answer]').forEach(x=>x.disabled=true);
     try{const result=await api('wordReviewAnswer',{id:w.id,version:w.version,answer:b.dataset.answer});if(owner!==who())return v.close();if(!v.el.isConnected)return;
+     if(!result.stale)playPlacementFeedback(result.correct);
      const feedback=v.body.querySelector('[role=status]');feedback.classList.add(result.correct?'correct':'wrong');feedback.textContent=result.stale?'Bu kelimenin kaydı başka ekranda güncellendi.':result.correct?'✓ Doğru! '+w.en+' — '+w.tr+'. Sonraki tekrar: '+new Date(result.dueAt).toLocaleDateString('tr-TR'):'Birlikte hatırlayalım: '+result.answer+' — '+w.tr+'. Yarın yeniden deneyelim.';
      v.el.querySelectorAll('[data-answer]').forEach(x=>{if(x.dataset.answer.toLocaleLowerCase('en')===String(result.answer||w.en).toLocaleLowerCase('en')){x.classList.add('dm-answer-correct');x.textContent='✓ '+x.textContent;}else if(x===b&&!result.correct){x.classList.add('dm-answer-wrong');x.textContent='✕ '+x.textContent;}});
      if(result.correct&&!result.stale){known++;if(Y()?.zk){delete Y().zk[w.en.toLowerCase()];window.yoKaydet?.();}}else if(!result.stale)wrongCount++;
@@ -124,15 +125,18 @@ async function review(settings={}){
 
 
 // Short feedback tones, generated locally; no external audio files or permissions.
+let feedbackAudio=null;
+function prepareFeedbackAudio(){
+ try{const Audio=window.AudioContext||window.webkitAudioContext;if(!Audio)return null;if(!feedbackAudio||feedbackAudio.state==='closed')feedbackAudio=new Audio();feedbackAudio.resume?.().catch(()=>{});return feedbackAudio;}catch{return null;}
+}
 window.dmAnswerFeedback=playPlacementFeedback;
 function playPlacementFeedback(correct){
  try{
   if(window.dmSoundEnabled===false||window.dmSesAcik===false||localStorage.getItem('dm_sound_muted')==='1')return;
-  const Audio=window.AudioContext||window.webkitAudioContext;if(!Audio)return;
-  const ctx=new Audio();ctx.resume?.().catch(()=>{});const now=ctx.currentTime;
+  const ctx=prepareFeedbackAudio();if(!ctx)return;const now=ctx.currentTime;
   const notes=correct?[660,880]:[330,220];
   notes.forEach((hz,i)=>{const oscillator=ctx.createOscillator(),gain=ctx.createGain(),at=now+i*.115;oscillator.type=correct?'sine':'triangle';oscillator.frequency.setValueAtTime(hz,at);gain.gain.setValueAtTime(.0001,at);gain.gain.exponentialRampToValueAtTime(.075,at+.015);gain.gain.exponentialRampToValueAtTime(.0001,at+.105);oscillator.connect(gain);gain.connect(ctx.destination);oscillator.start(at);oscillator.stop(at+.11);});
-  setTimeout(()=>ctx.close().catch(()=>{}),500);
+
  }catch(e){console.warn('Seviye testi sesi kullanılamadı:',e.message);}
 }
 

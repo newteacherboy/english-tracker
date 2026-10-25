@@ -206,13 +206,16 @@ async function auth(req: Request, body: any, q: URLSearchParams) {
   if(data.teacher_portal_access_id){
     const grant=await supabase.from('teacher_portal_access').select('id,teacher_id,state,version,student_id').eq('id',data.teacher_portal_access_id).maybeSingle();
     if(grant.error||grant.data?.state!=='approved'||grant.data.version!==data.teacher_portal_version)return null;
-    const own=await supabase.from('students').select('email_verified_at,status,frozen_at').eq('id',grant.data.student_id).maybeSingle();
-    const teacher=await supabase.from('teachers').select('active,frozen_at').eq('id',grant.data.teacher_id).maybeSingle();
-    if(!own.data?.email_verified_at||own.data.status!=='approved'||own.data.frozen_at||!teacher.data?.active||teacher.data.frozen_at)return null;
+    const teacher=await supabase.from('teachers').select('active,frozen_at,username,is_admin').eq('id',grant.data.teacher_id).maybeSingle();
+    if(!teacher.data?.active||teacher.data.frozen_at)return null;
+    if(grant.data.student_id){
+      const own=await supabase.from('students').select('email_verified_at,status,frozen_at').eq('id',grant.data.student_id).maybeSingle();
+      if(!own.data?.email_verified_at||own.data.status!=='approved'||own.data.frozen_at)return null;
+    }else if(teacher.data.username!=='teacher'||teacher.data.is_admin!==true)return null;
     if(data.role==='teacher'&&data.teacher_id!==grant.data.teacher_id)return null;
     if(data.role==='student'){
       const pupil=await supabase.from('students').select('teacher_id').eq('id',data.student_id).maybeSingle();
-      if(pupil.data?.teacher_id!==grant.data.teacher_id)return null;
+      if(pupil.data?.teacher_id!==grant.data.teacher_id&&!(teacher.data.username==='teacher'&&teacher.data.is_admin===true))return null;
     }
   }
   // [YAMA 3] her istekte yazmak yerine 5 dakikada bir güncelle
@@ -818,9 +821,9 @@ async function otomasyonIslem(req: Request, body: any) {
 // =====================================================================
 // [v3.6] ENERJİ: tavan 30, her 15 dakikada +1 (sunucu hesaplar)
 // =====================================================================
-const ENERJI_TAVAN = 30, ENERJI_DOLUM_DK = 15;
+const ENERJI_TAVAN = 25, ENERJI_DOLUM_DK = 15;
 async function enerjiYenile(s: any) {
-  const max = Number(s.energy_max || ENERJI_TAVAN), simdi = Date.now(), adimMs = ENERJI_DOLUM_DK * 60000;
+  const max = Number(ENERJI_TAVAN), simdi = Date.now(), adimMs = ENERJI_DOLUM_DK * 60000;
   const son = s.energy_updated_at ? Date.parse(s.energy_updated_at) : simdi;
   if (Number(s.energy) >= max) {
     if (!s.energy_updated_at || simdi - son > adimMs) {
@@ -906,7 +909,7 @@ async function ekonomiGuncelle(sid: string, fn: (y: any) => any, surumArttir = t
   return { hata: "Şu anda işlem yapılamadı, tekrar dene.", y: {} };
 }
 function dolumBilgi(s: any) {
-  const max = Number(s.energy_max || ENERJI_TAVAN);
+  const max = Number(ENERJI_TAVAN);
   if (Number(s.energy) >= max) return { sonrakiDk: 0, sonrakiSn: 0, dolumDk: ENERJI_DOLUM_DK };
   const son = s.energy_updated_at ? Date.parse(s.energy_updated_at) : Date.now();
   const kalanMs = Math.max(0, son + ENERJI_DOLUM_DK * 60000 - Date.now());
@@ -1387,7 +1390,7 @@ async function handle(req: Request, proxy: any = null) {
   // Private classroom play only records verified game rankings: no wallet mutation.
   if(a?.teacher_portal_access_id&&a.role==='student'){
     const st=(await supabase.from('students').select('energy,energy_max').eq('id',a.student_id).maybeSingle()).data;
-    if(['enerjiDegistir','enerjiDurumuGetir'].includes(op))return json({ok:true,status:'success',rankingOnly:true,eklenen:0,eklenenEnerji:0,enerjiKalan:st?.energy||0,enerjiMax:st?.energy_max||30});
+    if(['enerjiDegistir','enerjiDurumuGetir'].includes(op))return json({ok:true,status:'success',rankingOnly:true,eklenen:0,eklenenEnerji:0,enerjiKalan:st?.energy||0,enerjiMax:25});
     if(op==='iletisimDurumu')return json({ok:true,eksik:false,uyari:false,donuk:false});
     if(op==='ekonomi'||op==='ekVeriKaydet'){
       const row=await supabase.from('extra_data').select('value').eq('student_id',a.student_id).eq('key_name','yo').maybeSingle();if(row.error)throw row.error;
@@ -1687,7 +1690,7 @@ async function handle(req: Request, proxy: any = null) {
       let { data: st } = await supabase.from("students").select("*").eq("id", sid).maybeSingle();
       if (!st) return bulunamadi();
       st = await enerjiYenile(st);
-      const max = Number(st.energy_max || ENERJI_TAVAN), once = Number(st.energy || 0);
+      const max = Number(ENERJI_TAVAN), once = Number(st.energy || 0);
       if (once >= max) return hataVer("Enerjin zaten dolu!");
       const { count } = await supabase.from("energy_transactions").select("id", { count: "exact", head: true }).eq("student_id", sid).eq("reason", "satin").gte("created_at", bugunBasi());
       if ((count || 0) >= ENERJI_SATIN_GUNLUK) return hataVer(`Bugün en fazla ${ENERJI_SATIN_GUNLUK} kez enerji alabilirsin. Yarın yine gel!`);
@@ -2550,7 +2553,7 @@ async function handle(req: Request, proxy: any = null) {
     const IZINLI_SEBEP = ["gunluk", "satin", "ders", "hediye"];
     const sebepHam = String(body.sebep || (bool(body.hediye) ? "hediye" : (fark < 0 ? "oyun" : ""))).toLowerCase().slice(0, 20);
     const sebep = fark > 0 && !IZINLI_SEBEP.includes(sebepHam) ? "diger" : sebepHam;
-    const max = Number(s.energy_max || ENERJI_TAVAN);
+    const max = Number(ENERJI_TAVAN);
     let tavan = max, mesaj = "";
     /* [v3.6] Öğrenci enerjiyi sadece tanımlı yollardan kazanabilir; her yolun kendi günlük sınırı var */
     if (a.role === "student" && fark > 0) {
@@ -2561,7 +2564,7 @@ async function handle(req: Request, proxy: any = null) {
       const say = (r: string) => h.filter((x: any) => x.reason === r).length;
       if (sebep === "gunluk") {
         if (say("gunluk") > 0) { fark = 0; mesaj = "Günlük hediyeni bugün zaten aldın."; }
-        else { const seri = Number(s.streak || 0); fark = seri > 0 && seri % 7 === 0 ? 10 : 5; tavan = max + 10; }
+        else { const seri = Number(s.streak || 0); fark = seri > 0 && seri % 7 === 0 ? 10 : 5; tavan = max; }
       } else if (sebep === "satin") {
         /* [v4.8] Enerji paketi artık "ekonomi" işlemiyle alınıyor (altın sunucuda düşülüyor) */
         return json({ ok: false, status: "error", mesaj: "Enerji paketleri yenilendi. Sayfayı yenileyip tekrar dene.", enerjiKalan: s.energy, enerjiMax: max, ...dolumBilgi(s) }, 410);
@@ -2570,7 +2573,7 @@ async function handle(req: Request, proxy: any = null) {
       } else if (sebep === "hediye") {
         /* Sandık, seviye bonusu ve düello hediyesi: yalnız bugün doğrulanmış öğrenme etkinliği varsa */
         if (!await bugunOgrendiMi(s.id)) { fark = 0; mesaj = "Hediye enerjisi için önce bugün bir ders ya da oyun tamamla."; }
-        else { fark = Math.max(0, Math.min(fark, 5, 15 - topla("hediye"))); tavan = max + 10; }
+        else { fark = Math.max(0, Math.min(fark, 5, 15 - topla("hediye"))); tavan = max; }
       } else {
         /* Bilinmeyen nedenle enerji kazanma kapatıldı (istemci beyanı doğrulanamıyordu). */
         fark = 0;

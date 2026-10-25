@@ -197,3 +197,5 @@ html.dm-teacher-portal body.tp-legacy-child-open .dm-teacher-child{visibility:vi
 
 html.dm-teacher-portal .ka-perde{display:none!important}
 html.dm-teacher-portal body #tpDashboard .tp-dash-identity .cog-ogretmen-kart button{background:#fff!important;color:#123f4b!important;border:1px solid #8fbfb8!important;font-weight:800!important;box-shadow:none!important}
+
+html.dm-teacher-portal body #ogretmenMenuModal,html.dm-teacher-portal body #ogretmenMenuModal.dm-teacher-open{display:none!important;visibility:hidden!important}

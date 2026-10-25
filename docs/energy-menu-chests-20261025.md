@@ -1,0 +1,9 @@
+# Energy, chest and account navigation fixes
+
+Energy is fixed at 25 by a database trigger, defaults and a check constraint. Existing accounts are normalized. Daily/lesson bonus calculations and their transaction ledgers now stop at capacity; API and HUD use the same ceiling. The owner has a private null-linked portal grant; only the active `teacher` administrator can authenticate it. The code is stored as a per-grant salted hash and never committed. Regular teachers retain their verified personal-account check. Owner sessions retain the existing administrator authorization and expose original native tool handlers in the private dashboard.
+
+Active-time chests use the same server claim endpoint in both the time screen and route chest inventory. The route badge includes unclaimed confirmed time chests and updates on claims. Low-level learners can open earned time chests without bypassing route chest locks. Profile review feedback uses an audio context unlocked on the answer gesture. Privacy is a child reader with a return button; help closes back to the pending account menu. Help content was shortened and updated. Private teacher navigation permanently suppresses the obsolete launcher; seven marked duplicate sidebar tools were removed.
+
+Operational changes: existing real student records were linked to Kabalı without changing their other data; portal guests and teacher personal accounts were excluded. Owner credential provisioning was separate from source code and did not send email.
+
+Validation: 70 focused Node/DOM tests passed; changed scripts and all 62 classic inline scripts parse. A transaction-scoped database check verified that an attempted 1000/1000 energy update is normalized to 25/25 and rolled it back. No account exceeds 25. Authenticated production UI interactions were not exercised; code authentication, authorization and DOM flows were covered with fixtures.

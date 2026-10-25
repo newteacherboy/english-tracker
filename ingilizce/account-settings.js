@@ -9,6 +9,11 @@
   document.addEventListener('keydown',key);window.dmViewHistory?.track(overlay,{parent,close});overlay.querySelector('.dm-account-close').onclick=close;overlay.onclick=e=>{if(e.target===overlay)close();};
   overlay.querySelector('[data-is="bilgi"]').onclick=()=>{window.kisiselBilgilerAc?.();};
   overlay.querySelector('[data-is="sifre"]').onclick=()=>{window.sifreDegistirAc?.();};
+  overlay.querySelector('a[href="gizlilik.html"]').onclick=e=>{
+   e.preventDefault();const privacy=document.createElement('div');privacy.className='dm-account-overlay';privacy.id='dmAccountPrivacy';
+   privacy.innerHTML='<section class="dm-account-card dm-privacy-reader" role="dialog" aria-modal="true" aria-label="Gizlilik ve kişisel veriler"><button type="button" class="dm-account-password">‹ Ayarlara geri dön</button><iframe src="gizlilik.html" title="Gizlilik ve kişisel veriler"></iframe></section>';
+   const back=()=>{privacy.remove();overlay.querySelector('a[href="gizlilik.html"]').focus();};privacy.querySelector('button').onclick=back;privacy.onkeydown=e=>{if(e.key==='Escape'){e.stopPropagation();back();}};document.body.append(privacy);privacy.querySelector('button').focus();
+  };
   overlay.querySelector('.dm-account-close').focus();
  };
 })();

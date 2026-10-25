@@ -8,3 +8,5 @@
 .dm-account-card small{display:block;text-align:center;font-size:11px;line-height:1.5;color:#5b7279}
 .dm-account-card button:focus-visible,.dm-account-card a:focus-visible{outline:3px solid #168997;outline-offset:3px}
 .dm-account-card h2{color:#194f59!important;text-shadow:none!important}
+
+.dm-privacy-reader{width:min(900px,96vw)!important;height:90dvh;display:flex;flex-direction:column;overflow:hidden!important}.dm-privacy-reader iframe{flex:1;min-height:0;width:100%;border:0;background:#fff}.dm-privacy-reader>button{flex:none}

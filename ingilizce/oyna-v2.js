@@ -44,14 +44,14 @@ function node(s,i,current,learn){
  const visual=learn?(state==='current'?icon('play'):icon(['book','chat','bulb','atom','leaf'][i%5])):'<b class="rt-tile-number">'+routeNumber(s,i,false)+'</b>'+(state==='locked'?'<i class="rt-tile-lock">'+icon('lock')+'</i>':'');
  return '<button type="button" class="rt-node '+state+(learn?'':' dm-adventure-node')+'" '+attrs+' aria-label="'+esc((label||'Bölüm')+(state==='done'?', tamamlandı':state==='current'?', sıradaki':state==='locked'?', kilitli':', açık'))+'" '+(!s.available?'disabled':'')+' '+(state==='current'?'aria-current="step"':'')+'><span class="rt-tile-art" aria-hidden="true">'+visual+'</span></button>';
 }
-function chestReady(){return Object.values(window.dmProgression?.status?.()?.chests||{}).some(state=>state==='ready');}
+function chestReady(){return (window.dmActiveTime?.unclaimed?.().length||0)>0||Object.values(window.dmProgression?.status?.()?.chests||{}).some(state=>state==='ready');}
 function chestMarkup(){const ready=chestReady();return '<button type="button" class="rt-map-chest'+(ready?' is-ready':'')+'" data-rt="chests" aria-label="'+(ready?'Kazandığın sandığı aç':'Parkur sandıklarını göster')+'">'+img('chest-three.svg','rt-chest-art')+'<span class="rt-v3-chest-label">Sandık</span><span class="rt-chest-open"'+(ready?'':' hidden')+'>AÇ</span></button>';}
 /* Harita yan kartlarındaki rozetler: Planım bitmediyse kırmızı 1, Görevler bitmediyse kırmızı nokta,
    alınacak görev ödülü varsa yeşil sayı, açılacak sandık varsa yeşil sayı. */
 function toolBadge(button,kind,text,label){if(!button)return;let b=button.querySelector(':scope>.rt-tool-badge');if(!kind){b?.remove();button.removeAttribute('data-badge');return;}
  if(!b){b=document.createElement('span');b.className='rt-tool-badge';button.append(b);}b.className='rt-tool-badge is-'+kind+(text?'':' is-dot');b.textContent=text;b.setAttribute('aria-label',label);b.setAttribute('role','status');button.dataset.badge=kind;}
 function paintToolBadges(){
- const plan=window.dmLearningCompanion?.planState?.(),missions=window.dmRouteMissions?.badge?.(),chests=Object.values(window.dmProgression?.status?.()?.chests||{}).filter(state=>state==='ready').length;
+ const plan=window.dmLearningCompanion?.planState?.(),missions=window.dmRouteMissions?.badge?.(),chests=Object.values(window.dmProgression?.status?.()?.chests||{}).filter(state=>state==='ready').length+(window.dmActiveTime?.unclaimed?.().length||0);
  document.querySelectorAll('.rt-v3-tools').forEach(tools=>{
   const p=tools.querySelector('[data-rt="plan"]'),m=tools.querySelector('[data-rt="missions"]'),c=tools.querySelector('[data-rt="chests"]');
   toolBadge(p,plan&&plan.done<plan.total?'red':'',plan&&plan.done<plan.total?'1':'','Bugünkü planın tamamlanmadı');
@@ -65,6 +65,7 @@ if(typeof document!=='undefined'&&typeof document.createElement==='function'&&do
 if(typeof setInterval==='function')setInterval(()=>{if(!document.hidden&&document.querySelector('.rt-v3-tools'))paintToolBadges();},2000);
 window.dmPaintToolBadges=paintToolBadges;
 function paintChests(){const ready=chestReady();document.querySelectorAll('.rt-map-chest').forEach(b=>{b.classList.toggle('is-ready',ready);b.setAttribute('aria-label',ready?'Kazandığın sandığı aç':'Parkur sandıklarını göster');const label=b.querySelector('.rt-chest-open');if(label)label.hidden=true;});paintToolBadges();}
+document.addEventListener('dm:time',paintChests);
 async function refreshChests(){await window.dmProgression?.refresh?.(true);paintChests();}
 function routeTitle(s,learn){
  if(learn)return String(s?.title||'Öğrenme durağı').replace(/^\d+\.\s*Durak\s*·\s*/i,'');
