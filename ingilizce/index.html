@@ -12907,9 +12907,10 @@ const YO_SOHBET = [
           if (!yoHazirMi()) return;
           let s = window.dmSelectedIntro?.key === 'cumle' ? window.dmSelectedIntro.classNo : Number(yoSinif(yoIsim)) || 0;
           let seviyeler = !s ? ['A1','A2','B1'] : s <= 4 ? ['A1'] : s <= 6 ? ['A1','A2'] : ['A2','B1'];
-          let bank = (window.masterKelimeHavuzu || []).filter(k => Number(k.sinif) === Number(s) && typeof k.ingilizce === 'string' && k.ingilizce.trim().split(/\s+/).length >= 3 && k.ingilizce.trim().split(/\s+/).length <= 9 && k.turkce).map(k => [k.ingilizce.trim(), k.turkce.trim(), 'word_bank', Number(k.sinif), Number(k.unite)]);
+          const selectedUnits = window.dmSelectedIntro?.key === 'cumle' ? window.dmSelectedIntro.units : null;
+          let bank = (window.masterKelimeHavuzu || []).filter(k => Number(k.sinif) === Number(s) && (!Array.isArray(selectedUnits) || selectedUnits.includes(Number(k.unite))) && typeof k.ingilizce === 'string' && k.ingilizce.trim().split(/\s+/).length >= 3 && k.ingilizce.trim().split(/\s+/).length <= 9 && k.turkce).map(k => [k.ingilizce.trim(), k.turkce.trim(), 'word_bank', Number(k.sinif), Number(k.unite)]);
           let liste = OC.kelimeSec('cumle', bank, OC.SORU, { anahtar: c => c[0], zk: false });
-          if (!liste.length) { alert('Bu sınıf için cümle oluşturabilecek yeterli kalıp bulunamadı.'); return; }
+          if (!liste.length) { yoToast('Bu sınıfın seçilen ünitelerinde cümle kurulabilecek kalıp yok. Başka bir ünite seç.'); return; }
           if (!yoEnerjiKontrol()) return;
           cml = { liste, i:0, d:0, y:0, bas:Date.now() }; OC.basla('cumle');
           yoModalAc('🧱 Cümle Ustası', '');
