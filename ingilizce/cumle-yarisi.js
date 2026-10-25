@@ -73,19 +73,16 @@ function questionPool(items){
 function makeDeck(items){
  var q=questionPool(items);
  if(q.length<TOTAL*2)return null;
- var a=[],b=[],seenA=new Set(),seenB=new Set();
- // Prefer separate target words for the two teams when at least 24 words exist.
- var distinct=new Map();q.forEach(function(c){var k=c.id.replace(/-[01]$/,'');if(!distinct.has(k))distinct.set(k,[]);distinct.get(k).push(c);});
+ var distinct=new Map();q.forEach(function(c){var k=c.id.replace(/-[012]$/,'');if(!distinct.has(k))distinct.set(k,[]);distinct.get(k).push(c);});
  var keys=shuffle([...distinct.keys()]);
- if(keys.length>=24){
-  keys.slice(0,12).forEach(function(k){a.push(shuffle(distinct.get(k))[0]);});
-  keys.slice(12,24).forEach(function(k){b.push(shuffle(distinct.get(k))[0]);});
- }else{
-  var available=q.slice();
-  for(var j=0;j<12;j++){var k=available.shift();if(k){a.push(k);seenA.add(k.id);}}
-  for(var n=0;n<12;n++){var next=available.shift();if(next){b.push(next);seenB.add(next.id);}}
- }
- return a.length===12&&b.length===12?[a,b]:null;
+ // Each team gets 12 distinct targets. When content has 24+ words no targets overlap.
+ if(keys.length<12)return null;
+ var aKeys=keys.slice(0,12),bKeys=keys.length>=24?keys.slice(12,24):keys.slice(-12);
+ var a=aKeys.map(function(k){return shuffle(distinct.get(k))[0];});
+ var ids=new Set(a.map(function(c){return c.id;}));
+ var b=bKeys.map(function(k){return shuffle(distinct.get(k)).find(function(c){return !ids.has(c.id);});});
+ if(b.some(function(c){return !c;}))return null;
+ return [shuffle(a),shuffle(b)];
 }
 function root(html){if(!overlay)return;overlay.innerHTML=html;overlay.querySelectorAll('[data-close]').forEach(function(b){b.addEventListener('click',close);});}
 function status(message){var p=overlay&&overlay.querySelector('[data-status]');if(p)p.textContent=message;}
@@ -104,7 +101,7 @@ function setup(){
  function update(){
   unitsEl.querySelectorAll('button').forEach(function(b){var chosen=selected.has(Number(b.dataset.unit));b.classList.toggle('selected',chosen);b.setAttribute('aria-pressed',String(chosen));});
   var words=scope(values,Number(selector.value),[...selected]),usable=questionPool(words);
-  var ready=usable.length>=TOTAL*2;
+  var ready=words.length>=TOTAL&&usable.length>=TOTAL*2;
   overlay.querySelector('[data-start]').disabled=!ready;
   status(!values.length?'Kelime havuzu henüz yüklenmedi. Oyunlar sayfasını yenileyip tekrar deneyin.':!selected.size?'Başlamak için en az bir ünite seç.':ready?'Hazır: '+words.length+' kelime / '+usable.length+' farklı soru. Her takım 12 soru çözecek.':'En az 12 farklı kelime/ifade gerekiyor. Başka üniteler de seç ('+words.length+' kelime).');
  }
