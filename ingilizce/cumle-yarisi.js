@@ -16,11 +16,11 @@ function questionPool(items){
  if(english.length<3||turkish.length<3)return [];
  var out=[];
  function make(w,kind){
-  var answer=kind===0?w.en:w.tr,source=kind===0?words.map(function(x){return x.en;}):words.map(function(x){return x.tr;});
-  var wrongs=shuffle([...new Set(source.filter(function(x){return x.toLocaleLowerCase(kind===0?'en':'tr')!==answer.toLocaleLowerCase(kind===0?'en':'tr');}))]).slice(0,2);
+  var answer=w.en,source=words.map(function(x){return x.en;});
+  var wrongs=shuffle([...new Set(source.filter(function(x){return x.toLocaleLowerCase('en')!==answer.toLocaleLowerCase('en');}))]).slice(0,2);
   if(wrongs.length<2)return;
-  var prompt=kind===0?'In English, “'+w.tr+'” is ___.':'In Turkish, “'+w.en+'” means ___.';
-  var tip=kind===0?'Doğru İngilizce ifadeyi seç':'Doğru Türkçe anlamı seç';
+  var prompt=kind===0?'In English, “'+w.tr+'” is ___.':'I learned that “'+w.tr+'” means ___ in English.';
+  var tip=kind===0?'Doğru İngilizce ifadeyi seç':'İngilizce cümlede boşluğu tamamla';
   out.push({id:w.cl+'-'+w.unit+'-'+w.en+'-'+kind,prompt:prompt,tip:tip,answer:answer,choices:shuffle([answer].concat(wrongs)),kind:kind});
  }
  function contextual(w){
