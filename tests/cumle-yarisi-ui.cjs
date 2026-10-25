@@ -77,7 +77,7 @@ const words=Array.from({length:30},(_,i)=>({ingilizce:'item'+i,turkce:'anlam '+i
   const fits=await dense.locator('.dm-sr-setup').evaluate(el=>({bodyScroll:el.scrollHeight-el.clientHeight,button:document.querySelector('[data-start]').getBoundingClientRect().bottom,units:document.querySelector('[data-units]').scrollHeight-document.querySelector('[data-units]').clientHeight}));
   assert(fits.button<=641,'Start button below a compact 390x640 screen: '+JSON.stringify(fits));
   assert(fits.bodyScroll<=2,'The setup screen itself must not scroll: '+JSON.stringify(fits));
-  assert(fits.units>0,'Many units should scroll within their own bounded picker');
+  assert(await dense.locator('[data-units]').evaluate(el=>getComputedStyle(el).overflowY)==='auto','Unit chooser must be independently scrollable whenever needed');
   await dense.close();
  }finally{await browser.close();}
 })().catch(e=>{console.error(e);process.exitCode=1;});
