@@ -129,7 +129,7 @@ let feedbackAudio=null;
 function prepareFeedbackAudio(){
  try{const Audio=window.AudioContext||window.webkitAudioContext;if(!Audio)return null;if(!feedbackAudio||feedbackAudio.state==='closed')feedbackAudio=new Audio();feedbackAudio.resume?.().catch(()=>{});return feedbackAudio;}catch{return null;}
 }
-window.dmAnswerFeedback=playPlacementFeedback;
+window.dmAnswerFeedback=window.dmAnswerFeedback||playPlacementFeedback;
 function playPlacementFeedback(correct){
  try{
   if(window.dmSoundEnabled===false||window.dmSesAcik===false||localStorage.getItem('dm_sound_muted')==='1')return;

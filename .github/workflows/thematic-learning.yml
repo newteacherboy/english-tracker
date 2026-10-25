@@ -19,7 +19,7 @@ jobs:
       - run: git diff --exit-code -- ingilizce/thematic-curriculum.json supabase/functions/thematic-learning/curriculum.json
       - run: node --check ingilizce/thematic-learning.js && node --test tests/thematic-learning.test.cjs tests/thematic-learning-mascots.test.cjs tests/portal-integrity.test.cjs tests/story-api.test.cjs
       - run: npm install --no-save --package-lock=false playwright@1.58.2 jsdom@26.1.0
-      - run: node --test tests/thematic-grouped-teach.test.cjs tests/school-shared-curriculum.test.cjs
+      - run: node --test tests/thematic-grouped-teach.test.cjs tests/school-shared-curriculum.test.cjs tests/answer-audio.test.cjs
       - run: npx playwright install --with-deps chromium
       - run: node tests/thematic-learning-ui.cjs
       - run: node tests/thematic-mint-ui.cjs

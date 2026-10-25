@@ -194,16 +194,16 @@ export function teacherPortalAPI(d){
    const guests=await db.from('teacher_portal_guests').select('student_id').eq('access_id',r.id);if(guests.error)throw guests.error;const ids=new Set((guests.data||[]).map(x=>x.student_id));return json({ok:true,items:out.data.filter(s=>!ids.has(s.id))});
   }
   if(op==='teacherPortalParticipant'){
-   let sid=b.studentId;
-   if(b.preview===true||b.guestName){
-    const alias=b.preview===true?'Önizleme':String(b.guestName||'').trim().replace(/\s+/g,' ');
+   let sid=b.studentId;const self=b.self===true;let selfName='';if(self){const owner=await db.from('teachers').select('username').eq('id',r.teacher_id).maybeSingle();if(owner.error)throw owner.error;selfName=String(owner.data?.username||'Öğretmen').slice(0,32);if(selfName.length<3)selfName='Öğretmen '+selfName;}
+   if(self||b.preview===true||b.guestName){
+    const alias=self?selfName:b.preview===true?'Önizleme':String(b.guestName||'').trim().replace(/\s+/g,' ');
     if([...alias].length<3)return fail('En az 3 harf girin.');if(!/^[\p{L}\p{N} ._-]{3,32}$/u.test(alias))return fail('İsim 3–32 karakter olmalı; harf ve rakam kullan.');
-    const result=await db.rpc('dm_teacher_portal_guest',{grant_id:r.id,guest_alias:alias,is_preview:b.preview===true,secret_hash:await hashPassword(crypto.randomUUID())});if(result.error)throw result.error;sid=result.data;
+    const result=await db.rpc('dm_teacher_portal_guest',{grant_id:r.id,guest_alias:alias,is_preview:self||b.preview===true,secret_hash:await hashPassword(crypto.randomUUID())});if(result.error)throw result.error;sid=result.data;
    }
    const pupil=await db.from('students').select('id,username,status,teacher_id,frozen_at,profile').eq('id',String(sid||'')).maybeSingle();
-   if(!b.guestName&&b.preview!==true&&isClassroomGuest(pupil.data))return fail('Misafir adını oyun için yeniden gir.',403);
+   if(!self&&!b.guestName&&b.preview!==true&&isClassroomGuest(pupil.data))return fail('Misafir adını oyun için yeniden gir.',403);
    if(!pupil.data||pupil.data.status!=='approved'||pupil.data.frozen_at||(!ownerTeacher(a)&&pupil.data.teacher_id!==r.teacher_id))return fail('Yalnızca sana bağlı öğrencileri seçebilirsin.',403);
-   return json({ok:true,token:await session(r,'student',pupil.data.id),name:pupil.data.username,preview:b.preview===true});
+   return json({ok:true,token:await session(r,'student',pupil.data.id),name:pupil.data.username,preview:self||b.preview===true,self,displayName:self?selfName:undefined});
   }
   return fail('İşlem desteklenmiyor.');
  }};

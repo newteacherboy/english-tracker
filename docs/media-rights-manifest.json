@@ -2103,6 +2103,13 @@
       "bytes": 398740,
       "status": "ai-generated",
       "source": "docs/friends-club-20261024.md"
+    },
+    {
+      "path": "ingilizce/school-assets/soft-cards-approved.png",
+      "sha256": "570263c103e76b325f0fb51ccb67d3f3d67b61cdce985623c94bf92779ae45d5",
+      "bytes": 1340058,
+      "status": "ai-generated",
+      "source": "docs/school-soft-cards-20261025.md"
     }
   ]
 }

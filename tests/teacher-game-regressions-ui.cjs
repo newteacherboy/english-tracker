@@ -9,7 +9,7 @@ const fs=require('node:fs'),path=require('node:path'),assert=require('node:asser
  await page.route('**/*',async route=>{
   const u=new URL(route.request().url()),p=u.pathname;
   if(u.hostname==='cdn.jsdelivr.net'&&p.includes('supabase'))return route.fulfill({contentType:'application/javascript',body:'window.supabase={createClient:()=>({auth:{getSession:async()=>({data:{session:null}}),onAuthStateChange:()=>({data:{subscription:{unsubscribe(){}}}})},from:()=>({select:async()=>({data:[],error:null})})})};'});
-  if(u.hostname.includes('supabase.co')){const b=JSON.parse(route.request().postData()||'{}'),op=b.islem||u.searchParams.get('islem')||'';let data={ok:true};if(!op)data=[{ogrenci:'Önizleme',Sinif:1}];if(op==='ogretmenBilgim')data={kullanici:'TeacherOne',yonetici:false};if(op==='teacherPortalStudents')data={items:[]};if(op==='seviyeDurumu')data={ok:true,level:40,units:[],done:[]};if(op==='ekVeriGetir')data={deger:'{}'};if(/KelimeleriGetir|KelimeHavuzuGetir/.test(op))data=[];return route.fulfill({json:data});}
+  if(u.hostname.includes('supabase.co')){const b=JSON.parse(route.request().postData()||'{}'),op=b.islem||u.searchParams.get('islem')||'';let data={ok:true};if(!op)data=[{ogrenci:'Önizleme',Sinif:1}];if(op==='ogretmenBilgim')data={kullanici:'TeacherOne',yonetici:false};if(op==='teacherPortalParticipant')data={ok:true,token:'self-token',name:'TeacherOne · Öğretmen Denemesi',self:true,preview:true};if(op==='teacherPortalStudents')data={items:[]};if(op==='seviyeDurumu')data={ok:true,level:40,units:[],done:[]};if(op==='ekVeriGetir')data={deger:'{}'};if(/KelimeleriGetir|KelimeHavuzuGetir/.test(op))data=[];return route.fulfill({json:data});}
   if(u.hostname==='diji.test'){
    const name=p.replace(/^\/ingilizce\//,'')||'index.html';
    const filename=path.join(__dirname,'../ingilizce',name);
@@ -24,6 +24,7 @@ const fs=require('node:fs'),path=require('node:path'),assert=require('node:asser
  assert.equal(await page.evaluate(()=>window.dmFaithfulEightGames.scenes.length),4);
 
 
+
  await page.waitForSelector('#tpDashboard.is-visible');
  for(const size of [{width:360,height:640},{width:390,height:844},{width:768,height:1024},{width:1440,height:900}]){
   await page.setViewportSize(size);await page.waitForTimeout(250);
@@ -35,6 +36,7 @@ const fs=require('node:fs'),path=require('node:path'),assert=require('node:asser
  assert.equal(await page.locator('#dmDiscovery').count(),0,'teacher never enters learner discovery or its inert focus trap');
  await page.evaluate(async()=>{await dunyaAc();});
  assert.equal(await page.getByText('Parkur yüklenemedi',{exact:true}).count(),0,'teacher boot never starts learner route loading');
+  assert.equal(await page.evaluate(()=>dmTeacherPortal.beforeGame('test')),true);assert.equal(await page.evaluate(()=>localStorage.getItem('ing_token')),'self-token');assert.equal(await page.getByRole('heading',{name:'Bu oyunu kim oynayacak?'}).count(),0);
  async function playing(){await page.evaluate(async()=>{window.dmGameReopeningSetup=true;try{await trenOyunAc();}finally{window.dmGameReopeningSetup=false;}document.getElementById('trenGirisEkrani').style.display='none';document.getElementById('trenOyunEkrani').style.display='block';dmGameViewport.sync();});await page.waitForTimeout(100);}
  for(let i=0;i<2;i++){
   await playing();await page.locator('#trenOyunOverlay>.dm-vp-back').click();

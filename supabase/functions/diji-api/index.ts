@@ -1390,13 +1390,13 @@ async function handle(req: Request, proxy: any = null) {
 
   // Private classroom play only records verified game rankings: no wallet mutation.
   if(a?.teacher_portal_access_id&&a.role==='student'){
-    const st=(await supabase.from('students').select('energy,energy_max').eq('id',a.student_id).maybeSingle()).data;
-    if(['enerjiDegistir','enerjiDurumuGetir'].includes(op))return json({ok:true,status:'success',rankingOnly:true,eklenen:0,eklenenEnerji:0,enerjiKalan:st?.energy||0,enerjiMax:25});
+    const classroomAllowance={enerjiKalan:25,enerjiMax:25,energy:25,energyMax:25,charged:0};
+    if(['enerjiDegistir','enerjiDurumuGetir'].includes(op))return json({ok:true,status:'success',rankingOnly:true,eklenen:0,eklenenEnerji:0,...classroomAllowance});
     if(op==='iletisimDurumu')return json({ok:true,eksik:false,uyari:false,donuk:false});
     if(op==='ekonomi'||op==='ekVeriKaydet'){
       const row=await supabase.from('extra_data').select('value').eq('student_id',a.student_id).eq('key_name','yo').maybeSingle();if(row.error)throw row.error;
       let value=row.data?.value||{};if(typeof value==='string')try{value=JSON.parse(value);}catch{value={};}
-      return json({ok:true,status:'success',rankingOnly:true,xp:0,gold:0,eklenen:0,yo:value,ekonomi:ekonomiCevap(value)});
+      return json({ok:true,status:'success',rankingOnly:true,...classroomAllowance,xp:0,gold:0,eklenen:0,yo:value,ekonomi:ekonomiCevap(value)});
     }
   }
   if(isDemo(a)&&DEMO_BLOCKED.has(op))return json({ok:false,hata:'demo_readonly',mesaj:'Demo hesabında bu işlem kapalı.'},403);
