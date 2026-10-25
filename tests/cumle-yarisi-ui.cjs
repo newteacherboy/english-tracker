@@ -26,9 +26,9 @@ const words=Array.from({length:30},(_,i)=>({ingilizce:'item'+i,turkce:'anlam '+i
    assert.notEqual(left,right,'Two panels must show different questions');
    const board=await page.locator('.dm-sr-shell').boundingBox();
    assert(board.x>=-1&&board.x+board.width<=width+1,'Board overflows horizontal viewport '+width);
-   const answer=words.find(w=>left.startsWith('In English')?left.includes('“'+w.turkce+'”'):left.includes('“'+w.ingilizce+'”'));
+   const answer=words.find(w=>left.includes('“'+w.turkce+'”'));
    assert(answer,'Question must be from selected class and units');
-   const correct=left.startsWith('In English')?answer.ingilizce:answer.turkce;
+   const correct=answer.ingilizce;
    const leftButtons=page.locator('[data-side="0"] [data-answer]'),rightButtons=page.locator('[data-side="1"] [data-answer]');
    const correctIndex=await leftButtons.evaluateAll((els,answer)=>els.findIndex(el=>el.textContent===answer),correct);
    assert(correctIndex>=0);await leftButtons.nth(correctIndex).click();
@@ -36,8 +36,8 @@ const words=Array.from({length:30},(_,i)=>({ingilizce:'item'+i,turkce:'anlam '+i
    assert(Number((await page.locator('[data-side="0"] [data-score]').innerText()).split(' ')[0])>=100);
    assert.equal(await page.locator('[data-car="0"]').evaluate(e=>parseFloat(e.style.left)>0),true);
    const rightPrompt=right;
-   const other=words.find(w=>rightPrompt.startsWith('In English')?rightPrompt.includes('“'+w.turkce+'”'):rightPrompt.includes('“'+w.ingilizce+'”'));
-   const correctRight=rightPrompt.startsWith('In English')?other.ingilizce:other.turkce;
+   const other=words.find(w=>rightPrompt.includes('“'+w.turkce+'”'));
+   const correctRight=other.ingilizce;
    const wrongIndex=await rightButtons.evaluateAll((els,answer)=>els.findIndex(el=>el.textContent!==answer),correctRight);
    assert(wrongIndex>=0);await rightButtons.nth(wrongIndex).click();
    assert.match(await page.locator('[data-side="1"] [data-feedback]').innerText(),/−40 puan/);
