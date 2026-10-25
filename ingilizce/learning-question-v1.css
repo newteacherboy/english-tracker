@@ -207,7 +207,7 @@ html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not
 }
 html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry)[data-appearance="night"] .ml-matches>div button.is-selected{color:#12142a!important}
 html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-matches>div button.is-correct{
- background:var(--l-good-soft)!important;border-color:transparent!important;color:var(--l-good-ink)!important;box-shadow:none!important;opacity:.7!important;
+ background:#d6f4df!important;border-color:#269653!important;color:#125c30!important;box-shadow:none!important;opacity:1!important;
 }
 
 /* ---------- Cümle kur ---------- */

@@ -40,7 +40,7 @@
   localStorage.setItem('ing_token',participant.token);localStorage.setItem('ing_aktifOgrenci',participant.name);
   // The legacy games use a global lexical binding, not the window property.
   try{aktifOgrenciAdi=participant.name;}catch{}window.aktifOgrenciAdi=participant.name;
-  try{siniftaOynananOgrenci='';}catch{}window.dmGuestMode=false;window.dmTeacherToolsActive=false;
+  try{siniftaOynananOgrenci='';}catch{}window.dmGuestMode=false;window.dmTeacherToolsActive=false;window.dmClassroomOnlineOwner=null;
   try{if(typeof globalDataCache!=='undefined'&&Array.isArray(globalDataCache)&&!globalDataCache.some(x=>x.ogrenci===participant.name))globalDataCache.push({ogrenci:participant.name,Sinif:1,SinifSube:'',genelPuan:0});}catch{}
   window.yoHazirla?.(participant.name);
   if(changed)document.dispatchEvent(new Event('dm:login'));

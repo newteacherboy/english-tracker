@@ -25,8 +25,8 @@
  window.dmSocialPresence={isOnline,refresh};
  window.dmInviteAc=async function(game){
   if(!['ucus','rota'].includes(game))return;
-  const s=m.sheet(m.games[game][0]+' · Arkadaşını seç',window.dmClassroomOnlineOwner?'Seçilen öğrenci: '+window.dmClassroomOnlineOwner+'. Kendi sınıfından bir rakip seç; rakibi kendi cihazından daveti kabul eder. Çevrimiçi oyunların standart enerji kuralı geçerlidir.':'Takip ettiğin bir arkadaşına doğrudan oyun daveti gönder.');
-  s.body.innerHTML='<p role="status">Takip ettiğin kişiler yükleniyor…</p>';
+  const s=m.sheet(m.games[game][0]+' · Arkadaşını seç',window.dmTeacherPortalMode?'Öğretmen oyunu · Enerji harcanmaz. Bir rakip seç; daveti kendi cihazından kabul eder.':window.dmClassroomOnlineOwner?'Seçilen öğrenci: '+window.dmClassroomOnlineOwner+'. Kendi sınıfından bir rakip seç; rakibi kendi cihazından daveti kabul eder. Çevrimiçi oyunların standart enerji kuralı geçerlidir.':'Takip ettiğin bir arkadaşına doğrudan oyun daveti gönder.');
+  s.body.innerHTML='<p role="status">'+(window.dmTeacherPortalMode?'Öğrenciler yükleniyor…':'Takip ettiğin kişiler yükleniyor…')+'</p>';
   let stopped=false;s.p._close=()=>{stopped=true;};
   try{
    const d=await m.api('takipDavetListesi');if(stopped)return;skew=Date.parse(d.serverNow)-Date.now();d.liste.forEach(p=>stamp.set(p.ad,p));

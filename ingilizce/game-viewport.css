@@ -77,3 +77,44 @@ html body #asmacaOyunOverlay.dm-vp-root #asmacaKlavye button{min-width:0!importa
 html body .dm-vp-root .dm-garden-entry{min-height:0!important;overflow-y:auto!important;max-height:100%!important}
 @media(max-height:700px){html body .dm-vp-root :is(.fg-hero,.ab-hero){flex-basis:42px!important;height:42px!important;max-height:42px!important}html body .dm-vp-root :is(.fg-hero p,.ab-hero p){display:none!important}html body .dm-vp-root .jk-daire{height:29px!important;width:29px!important;font-size:20px!important}html body .dm-vp-root .jk-btn{font-size:9px!important}html body #trenOyunOverlay.dm-vp-root #trenHavuz{min-height:80px!important}html body #trenOyunOverlay.dm-vp-root .tr-v{min-height:36px!important;font-size:13px!important;padding:5px 7px!important}html body #boslukOyunOverlay.dm-vp-root .dm-letter-word{gap:7px!important;padding:10px!important}}
 }
+
+/* Meteor setup and play share the available visual viewport, including iPhone safe areas. */
+@layer bilgiIslands {
+html body #meteorGame .mt-shell{height:100%!important;min-height:0!important;max-height:100%!important;display:grid!important;grid-template-rows:auto auto minmax(0,1fr) auto auto!important;gap:6px!important;padding:calc(52px + env(safe-area-inset-top,0px)) 10px calc(6px + env(safe-area-inset-bottom,0px))!important;box-sizing:border-box!important}
+html body #meteorGame .mt-top{padding:6px 10px!important;gap:6px!important;min-height:36px!important;flex-wrap:wrap!important;border-radius:14px!important}
+html body #meteorGame .mt-brand{font-size:20px!important}
+html body #meteorGame .mt-category{font-size:11px!important}
+html body #meteorGame.dm-vp-root .mt-exit{display:none!important}
+html body #meteorGame .mt-scope:empty{display:none!important}
+html body #meteorGame .mt-audio{margin-left:auto!important;gap:4px!important}
+html body #meteorGame .mt-audio button{padding:5px 7px!important;font-size:10px!important;min-height:28px!important}
+html body #meteorGame .mt-title{min-width:0!important;width:min(620px,95%)!important;max-width:100%!important;font-size:clamp(18px,3vw,30px)!important;line-height:1.15!important;padding:12px 24px!important;margin:0!important;box-sizing:border-box!important}
+html body #meteorGame .mt-body{min-height:0!important;overflow:hidden!important}
+html body #meteorGame .mt-setup{height:100%!important;min-height:0!important;max-height:100%!important;margin:0 auto!important;padding:10px 16px!important;display:flex!important;flex-direction:column!important;gap:5px!important;box-sizing:border-box!important;box-shadow:none!important;position:relative!important}
+html body #meteorGame .mt-setup>img{height:clamp(36px,7dvh,64px)!important;flex:none!important}
+html body #meteorGame .mt-setup h2{font-size:18px!important;line-height:1.15!important;margin:0!important}
+html body #meteorGame .mt-setup form{display:flex!important;flex-direction:column!important;gap:6px!important;min-height:0!important;flex:1!important}
+html body #meteorGame .mt-modes{margin:0!important;gap:8px!important}
+html body #meteorGame .mt-modes button{font-size:14px!important;min-height:38px!important;padding:7px!important}
+html body #meteorGame .mt-fields{gap:6px 10px!important}
+html body #meteorGame .mt-fields label{font-size:12px!important;line-height:1.15!important;min-width:0!important}
+html body #meteorGame .mt-fields input,html body #meteorGame .mt-fields select{font-size:16px!important;min-height:38px!important;height:38px!important;padding:6px 8px!important;margin-top:3px!important;border-radius:10px!important;box-sizing:border-box!important}
+html body #meteorGame .mt-count{font-size:12px!important;line-height:1.2!important;margin:0!important}
+html body #meteorGame .mt-help{font-size:12px!important;text-align:left!important;flex:none!important}
+html body #meteorGame .mt-help summary{cursor:pointer!important;min-height:28px!important;display:flex!important;align-items:center!important;justify-content:center!important;border:1px solid #a6ced9!important;border-radius:9px!important;background:#e9f7fc!important}
+html body #meteorGame .mt-help[open]{position:absolute!important;inset:8px!important;z-index:12!important;overflow:auto!important;background:#fff!important;padding:12px!important;border:2px solid #3995b3!important;border-radius:18px!important}
+html body #meteorGame .mt-help[open] summary::after{content:' · Kapat'!important;font-weight:900!important}
+html body #meteorGame .mt-start{margin-top:auto!important;flex:none!important;min-height:44px!important;padding:8px!important;font-size:17px!important;line-height:1.2!important;box-shadow:none!important}
+html body #meteorGame :is(.mt-history,.mt-resume){margin:0!important;padding:6px!important;min-height:30px!important;font-size:12px!important;line-height:1.2!important}
+html body #meteorGame .mt-meta{font-size:10px!important;line-height:1.15!important;margin:0!important}
+html body #meteorGame .mt-footer{font-size:10px!important;line-height:1.2!important;padding:4px!important;min-height:0!important}
+html body #meteorGame .mt-arenas{height:100%!important;min-height:0!important;max-height:100%!important;box-sizing:border-box!important}
+html body #meteorGame .mt-rain{min-height:0!important}
+html body #meteorGame .mt-setup .mt-ranking{position:absolute!important;inset:8px!important;z-index:10!important;margin:0!important;overflow:auto!important}
+@media(max-height:700px){html body #meteorGame .mt-setup>img{display:none!important}html body #meteorGame .mt-top{padding:4px 8px!important}html body #meteorGame .mt-title{padding:8px 20px!important;font-size:18px!important}html body #meteorGame .mt-setup{padding:7px 10px!important;gap:4px!important}html body #meteorGame .mt-setup form{gap:4px!important}html body #meteorGame .mt-setup h2{font-size:16px!important}html body #meteorGame .mt-fields label{font-size:11px!important}html body #meteorGame .mt-modes button{min-height:34px!important;padding:5px!important}}
+@media(max-height:500px) and (min-width:650px){html body #meteorGame .mt-shell{grid-template-columns:1fr 2fr!important;grid-template-rows:auto minmax(0,1fr) auto!important;padding-top:52px!important}html body #meteorGame .mt-top{grid-column:1/-1!important}html body #meteorGame .mt-title{grid-column:1!important;grid-row:2!important;align-self:center!important}html body #meteorGame .mt-body{grid-column:2!important;grid-row:2!important}html body #meteorGame:has(.mt-arenas) .mt-title{display:none!important}html body #meteorGame:has(.mt-arenas) .mt-body{grid-column:1/-1!important}html body #meteorGame .mt-footer{grid-column:1/-1!important}html body #meteorGame .mt-setup h2,html body #meteorGame .mt-meta{display:none!important}html body #meteorGame .mt-fields{grid-template-columns:repeat(4,minmax(0,1fr))!important}html body #meteorGame .mt-fields label{font-size:10px!important}html body #meteorGame .mt-count{font-size:10px!important}}
+}
+@layer bilgiIslands {
+@media(max-width:360px){html body #meteorGame .mt-category{display:none!important}html body #meteorGame .mt-title{font-size:15px!important;padding:8px 18px!important}html body #meteorGame .mt-brand{font-size:18px!important}html body #meteorGame .mt-audio button{font-size:9px!important;padding:4px!important}}
+@media(max-height:500px) and (min-width:650px){html body #meteorGame .mt-setup form{display:grid!important;grid-template-columns:1fr 1fr!important;grid-template-rows:auto auto auto minmax(40px,1fr)!important;align-content:start!important;gap:4px!important}html body #meteorGame .mt-fields{grid-column:1/-1!important;grid-row:1!important}html body #meteorGame .mt-modes{grid-column:1!important;grid-row:2!important}html body #meteorGame .mt-count{grid-column:2!important;grid-row:2!important;align-self:center!important}html body #meteorGame .mt-help{grid-column:1!important;grid-row:3!important}html body #meteorGame .mt-history{grid-column:2!important;grid-row:3!important}html body #meteorGame .mt-start{grid-column:1/-1!important;grid-row:4!important;align-self:end!important;margin:0!important}}
+}

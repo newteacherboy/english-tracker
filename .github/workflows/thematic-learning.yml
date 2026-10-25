@@ -25,6 +25,9 @@ jobs:
       - run: node tests/thematic-mint-ui.cjs
       - run: node tests/school-shared-ui.cjs
       - run: node tests/activity-notices-ui.cjs
+      - run: node tests/meteor-viewport-ui.cjs
+      - run: node tests/teacher-game-regressions-ui.cjs
+      - run: node --test tests/teacher-online-session.test.cjs tests/teacher-online-auth.test.cjs tests/medupro-presence.test.cjs tests/meteor-api.test.cjs
       - run: node tests/final-review-retry-ui.cjs
       - run: python scripts/check-media-rights.py
       - uses: actions/upload-artifact@v4

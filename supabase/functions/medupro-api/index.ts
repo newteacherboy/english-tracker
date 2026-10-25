@@ -29,7 +29,7 @@ async function session(req:Request,body:any,q:URLSearchParams){
   const g=await supabase.from('teacher_portal_access').select('teacher_id,state,version').eq('id',data.teacher_portal_access_id).maybeSingle();
   const pupil=await supabase.from('students').select('teacher_id,class_no,status,frozen_at').eq('id',data.student_id).maybeSingle();
   if(g.error||g.data?.state!=='approved'||g.data.version!==data.teacher_portal_version||pupil.data?.teacher_id!==g.data.teacher_id||pupil.data?.status!=='approved'||pupil.data.frozen_at)return null;
-  return {...data,classroomTeacher:g.data.teacher_id,classroomGrade:pupil.data.class_no};
+  const teacher=await supabase.from('teachers').select('username,is_admin,active,frozen_at').eq('id',g.data.teacher_id).maybeSingle();if(teacher.error||!teacher.data||teacher.data.active===false||teacher.data.frozen_at)return null;return {...data,classroomTeacher:g.data.teacher_id,classroomGrade:pupil.data.class_no,classroomOwner:teacher.data.username==='teacher'&&teacher.data.is_admin===true};
  }
  if(data.role==='teacher'){
   const allowed=new Set(['takipDavetListesi','oyunEslesmeOlustur','oyunEslesmeDurum','oyunEslesmeHazir','oyunEslesmeCevap','oyunEslesmelerim']);
@@ -52,7 +52,7 @@ async function dmPresence(op:string,body:any,a:any){
  const {data:blocks,error:be}=await supabase.from('student_blocks').select('blocker_id,blocked_id').or('blocker_id.eq.'+actor+',blocked_id.eq.'+actor);if(be)throw be;
  const blocked=new Set((blocks||[]).map((b:any)=>b.blocker_id===actor?b.blocked_id:b.blocker_id));
  let students:any[]=[];
- if(op==='takipDavetListesi'&&a.classroomTeacher){const {data,error}=await supabase.from('students').select('id,username,class_no').eq('teacher_id',a.classroomTeacher).eq('status','approved').eq('class_no',a.classroomGrade);if(error)throw error;students=(data||[]).filter((s:any)=>s.id!==actor&&!blocked.has(s.id));}
+ if(op==='takipDavetListesi'&&a.classroomTeacher){let query=supabase.from('students').select('id,username,class_no,profile').eq('status','approved');if(!a.classroomOwner)query=query.eq('teacher_id',a.classroomTeacher);if(Number.isInteger(a.classroomGrade)&&a.classroomGrade>=1&&a.classroomGrade<=8)query=query.eq('class_no',a.classroomGrade);const {data,error}=await query;if(error)throw error;students=(data||[]).filter((s:any)=>s.id!==actor&&!blocked.has(s.id)&&s.profile?.teacher_portal_guest!==true);}
  else if(op==='takipDavetListesi'){
   const {data:follows,error}=await supabase.from('feed_events').select('target_student_id').eq('student_id',actor).eq('event_type','takip').limit(1000);if(error)throw error;
   const ids=[...new Set((follows||[]).map((f:any)=>f.target_student_id).filter((id:any)=>id&&id!==actor&&!blocked.has(id)))];
@@ -97,7 +97,7 @@ async function dmExtension(op:string,body:any,q:URLSearchParams,a:any){
  let target:any=null;
  if(['sosyalDurum','ogrenciEngelle','ogrenciEngelKaldir','hazirMesajGonder','aksesuarHediye','oyunEslesmeOlustur'].includes(op)){
   target=await studentByNameGenel(String(val(body,q,'alici')));if(!target)return json({ok:false,mesaj:'Öğrenci bulunamadı.'},404);
-  if(a.classroomTeacher&&target.teacher_id!==a.classroomTeacher)return json({ok:false,mesaj:'Sınıf oyununda yalnızca kendi öğrencilerini seçebilirsin.'},403);
+  if(a.classroomTeacher&&!a.classroomOwner&&target.teacher_id!==a.classroomTeacher)return json({ok:false,mesaj:'Sınıf oyununda yalnızca kendi öğrencilerini seçebilirsin.'},403);
  }
  let r:any;
  if(op.startsWith('oyunEslesme')){
