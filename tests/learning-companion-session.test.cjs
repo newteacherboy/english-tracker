@@ -31,7 +31,7 @@ test('a late response must not refresh a different signed-in account',async()=>{
 });
 
 function nextHarness({completed=['cafe'],all=false,late=false}={}){
- const source=fs.readFileSync(require('node:path').join(__dirname,'../ingilizce/learning-companion.js'),'utf8'),start=source.indexOf('async function nextDialogue(){'),end=source.indexOf('function applyCompanionReward',start);
+ const source=fs.readFileSync(require('node:path').join(__dirname,'../ingilizce/learning-companion.js'),'utf8'),start=source.indexOf('async function nextDialogue('),end=source.indexOf('function applyCompanionReward',start);
  let current='a',finish,opened=[],libraries=0;const ctx={student:()=>true,identity:()=>current,bank:[{id:'cafe',type:'dialogue'},{id:'a-story',type:'story'},{id:'weather',type:'dialogue'}],load:()=>late?new Promise(r=>finish=r):Promise.resolve({dialogueIds:all?['cafe','weather']:completed}),openStory:id=>opened.push(id),dialogues:()=>libraries++,window:{yoToast(){}}};
  vm.runInNewContext(source.slice(start,end)+';globalThis.next=nextDialogue',ctx);
  return {ctx,opened,get libraries(){return libraries},change:()=>current='b',finish:()=>finish({dialogueIds:[]})};

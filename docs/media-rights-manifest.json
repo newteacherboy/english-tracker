@@ -2089,6 +2089,20 @@
       "bytes": 149038,
       "status": "ai-generated",
       "source": "docs/approved-centre-20261024.md"
+    },
+    {
+      "path": "ingilizce/friends-assets/club-hero-v1.webp",
+      "sha256": "0771cce7773724570c8b7fed071db252d3e2862435687a315bafbc258f9276a0",
+      "bytes": 164178,
+      "status": "ai-generated",
+      "source": "docs/friends-club-20261024.md"
+    },
+    {
+      "path": "ingilizce/friends-assets/club-badges-v1.webp",
+      "sha256": "bc2b60bd26a36aee7bfd38a958c0f9afd074b9d132c782b1682a98ad550fc90d",
+      "bytes": 398740,
+      "status": "ai-generated",
+      "source": "docs/friends-club-20261024.md"
     }
   ]
 }

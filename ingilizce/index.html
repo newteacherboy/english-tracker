@@ -9,8 +9,9 @@
 <meta charset="UTF-8">
 <!-- First cascade layer wins important rules over legacy dock layers. -->
 <style>@layer bilgiIslands;</style>
+<script src="friends-feed-model.js?v=20261024-club-1"></script>
 <link rel="stylesheet" href="bilgi-islands.css?v=20261024-sky-5">
-<link rel="stylesheet" href="approved-centre.css?v=20261024-missions-3">
+<link rel="stylesheet" href="approved-centre.css?v=20261025-club-3">
 <link rel="preload" as="image" href="papi-loading.webp" fetchpriority="high">
 <script defer src="verified-games.js?v=20261017-1"></script>
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; connect-src 'self' https://nxfqlutulxqzqgwewssd.supabase.co https://raw.githubusercontent.com; frame-src https:; object-src 'none'; worker-src 'self' blob:; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
@@ -14332,17 +14333,7 @@ async function maAkisYukle() {
 
     return maAkisSoz;
 }
-function maZamanOnce(e) {
-    if (e.g) {
-        let g = Math.round((new Date().setHours(0,0,0,0) - new Date(e.t).setHours(0,0,0,0)) / 86400000);
-        return g <= 0 ? 'bugün' : g === 1 ? 'dün' : g + ' gün önce';
-    }
-    let s = Math.max(0, Math.round((Date.now() - e.t) / 1000));
-    if (s < 60) return 'az önce';
-    if (s < 3600) return Math.floor(s / 60) + ' dk önce';
-    if (s < 86400) return Math.floor(s / 3600) + ' saat önce';
-    return Math.floor(s / 86400) + ' gün önce';
-}
+function maZamanOnce(e) { return window.DMTime.format(e.t); }
 function maAkisHtml() {
     let ust = `<div class="filtre"><button class="${maFiltre === 'herkes' ? 'aktif' : ''}" onclick="maFiltre='herkes'; maCiz()">Herkes</button><button class="${maFiltre === 'takip' ? 'aktif' : ''}" onclick="maFiltre='takip'; maCiz()">Takip ettiklerim (${maTakip.size})</button><span class="ma-canli">● Canlı</span></div>`;
     return ust + `<div id="maAkisListe">${maAkisListeHtml()}</div>`;
@@ -15829,8 +15820,8 @@ const seriCarpani = () => seri() >= 7 ? 2 : (seri() >= 3 ? 1.5 : 1);
   function krBildirimHtml() {
     if (!krBildirim || !krBildirim.length) return '';
     let s = krBildirim.slice(0, 5).map(b => {
-           let ikon = { tebrik:'🎉', enerji:'⚡', takip:'👋', duello:'⚔️' }[b.tur] || '❤️';
-      let fiil = { tebrik:'seni tebrik etti', enerji:'sana 2 enerji gönderdi', takip:'seni takip etmeye başladı', duello:'seni düelloya çağırdı' }[b.tur] || 'paylaşımını beğendi';
+           let ikon = { tebrik:'🎉', enerji:'⚡', takip:'👋', duello:'⚔️' }[b.tur] || '🔔';
+      let fiil = { tebrik:'seni tebrik etti', enerji:'sana 2 enerji gönderdi', takip:'seni takip etmeye başladı', duello:'seni düelloya çağırdı' }[b.tur] || String(b.metin||'yeni bir bildirim gönderdi');
       return `<div class="kr-dl">${ikon} <span><b>${guvenliMetin(b.gonderen)}</b> ${fiil}</span></div>`;
     }).join('');
     return `<div class="kr-bolum"><h4>🔔 Bildirimlerin (${krBildirim.length})</h4>${s}</div>`;
@@ -15908,7 +15899,7 @@ const seriCarpani = () => seri() >= 7 ? 2 : (seri() >= 3 ? 1.5 : 1);
     window[ad] = function (id) {
       let once = kume().has(id);
       let r = org.apply(this, arguments);
-      if (!once && kume().has(id)) window.maBildirimGonder(String(id).replace(/^akis-/, ''), tur);
+      // The original reaction function owns notification dispatch.
       return r;
     };
   });
@@ -15937,34 +15928,42 @@ const seriCarpani = () => seri() >= 7 ? 2 : (seri() >= 3 ? 1.5 : 1);
     tebrik: ['🎉', b => `${b.gonderen} seni tebrik etti`],
     takip: ['👋', b => `${b.gonderen} seni takip etmeye başladı`],
     enerji: ['⚡', b => `${b.gonderen} sana 2 enerji gönderdi`],
-    duello: ['⚔️', b => `${b.gonderen} seni düelloya çağırdı`]
+    duello: ['⚔️', b => `${b.gonderen} seni düelloya çağırdı`],
+    hediye: ['🎁', b => `${b.gonderen} sana hediye gönderdi`],
+    mesaj: ['💬', b => `${b.gonderen} sana mesaj gönderdi`],
+    oyunDavet: ['🎮', b => `${b.gonderen} seni karşılaşmaya davet etti`]
   };
   const turMetin = b => (TUR[b.tur] || ['🔔', x => `${x.gonderen||'DijiMedu'}: ${x.metin||x.mesaj||x.message||x.icerik||'Yeni bildirimin var.'}`])[1](b);
   const turIkon = b => (TUR[b.tur] || ['🔔'])[0];
 
+  async function unreadCount(list,owner){
+    let extra=0;try{const r=await fetch(apiURL+'?islem=duyurulariGetir&ogrenci='+enc(owner)),d=await r.json();if(d?.id&&String(d.mesaj||'').trim()&&localStorage.getItem('dm_notice_seen:'+kucuk(owner))!==String(d.id))extra=1;}catch{}
+    return list.length+extra;
+  }
   /* ---- Girişte bildirimleri karşılama paneline ver ---- */
   let girisBakildi = '';
   setInterval(async () => {
     if (!girisli() || girisBakildi === kucuk(aktifOgrenciAdi)) return;
-    girisBakildi = kucuk(aktifOgrenciAdi);
+    girisBakildi = kucuk(aktifOgrenciAdi);const notifyOwner=girisBakildi;
     try {
       let r = await fetch(`${apiURL}?islem=bildirimlerim&ogrenci=${enc(aktifOgrenciAdi)}`);
-      let d = await r.json(), liste = (d && d.liste) || [];
-      zilSayi = liste.length; zilCiz();
+      let d = await r.json(), liste = ((d && d.liste) || []).filter(b=>b.tur!=='begeni');
+      if(notifyOwner!==kucuk(aktifOgrenciAdi))return;
+      zilSayi = await unreadCount(liste,notifyOwner);if(notifyOwner!==kucuk(aktifOgrenciAdi))return;zilCiz();
       if (!liste.length) return;
-      let yaz = () => { if (typeof window.karsilamaBildirim === 'function') window.karsilamaBildirim(liste.map(b => Object.assign({}, b, { tur: TUR[b.tur] ? b.tur : 'begeni' }))); };
+      let yaz = () => { if(notifyOwner!==kucuk(aktifOgrenciAdi))return;if (typeof window.karsilamaBildirim === 'function') window.karsilamaBildirim(liste); };
       yaz(); setTimeout(yaz, 4000);
-      fetch(`${apiURL}?islem=bildirimOkundu&ogrenci=${enc(aktifOgrenciAdi)}&satirlar=${enc(liste.map(b => b.sat).join(','))}`).catch(() => {});
-      setTimeout(() => { zilSayi = 0; zilCiz(); }, 6000);
+      // Opening the notification centre, rather than login, marks items read.
     } catch (e) {}
   }, 1500);
 
   /* ---- Arkadaşlar: 🔔 bildirim merkezi ---- */
   let zilSayi = 0, zilFiltre = 'hepsi';
   function zilCiz() {
-    let h2 = document.querySelector('#tab-meduakis .akis-baslik h2');
+    let h2 = document.querySelector('#tab-meduakis .club-hero') || document.querySelector('#tab-meduakis .akis-baslik h2');
     if (!h2) return;
     let b = $('zlBtn');
+    if(b&&b.parentElement!==h2)h2.appendChild(b);
     if (!b) {
       b = document.createElement('button');
       b.id = 'zlBtn'; b.className = 'zl-btn'; b.setAttribute('aria-label', 'Bildirimler');
@@ -15972,23 +15971,23 @@ const seriCarpani = () => seri() >= 7 ? 2 : (seri() >= 3 ? 1.5 : 1);
       h2.style.width = '100%';
       h2.appendChild(b);
     }
+    b.setAttribute('aria-label','Bildirimler · '+zilSayi+' okunmamış');
     b.innerHTML = '🔔' + (zilSayi ? `<span class="zl-rozet">${zilSayi > 99 ? '99+' : zilSayi}</span>` : '');
   }
   setInterval(zilCiz, 1500);
+  document.addEventListener('dm:login',()=>{girisBakildi='';zilSayi=0;zilCiz();});
   setInterval(async () => {
     if (!girisli() || document.hidden) return;
+    const notifyOwner=kucuk(aktifOgrenciAdi);
     try {
       let r = await fetch(`${apiURL}?islem=bildirimlerim&ogrenci=${enc(aktifOgrenciAdi)}`);
-      let d = await r.json(), n = ((d && d.liste) || []).length;
+      let d = await r.json(), n = await unreadCount(((d && d.liste) || []).filter(b=>b.tur!=='begeni'),notifyOwner);
+      if(notifyOwner!==kucuk(aktifOgrenciAdi))return;
       if (n > zilSayi) { let b = $('zlBtn'); if (b) { b.classList.remove('sallan'); void b.offsetWidth; b.classList.add('sallan'); } }
       zilSayi = n; zilCiz();
     } catch (e) {}
- }, 300000);
-  function zamanOnce(t) {
-    let s = Math.max(0, Math.round((Date.now() - t) / 1000));
-    if (s < 60) return 'az önce'; if (s < 3600) return Math.floor(s / 60) + ' dk önce';
-    if (s < 86400) return Math.floor(s / 3600) + ' saat önce'; return Math.floor(s / 86400) + ' gün önce';
-  }
+ }, 30000);
+  function zamanOnce(t) { return window.DMTime.format(t); }
   window.dmNotifications={open:()=>zilAc()};
   async function zilAc() {
     let p = document.createElement('div');
@@ -15999,38 +15998,40 @@ const seriCarpani = () => seri() >= 7 ? 2 : (seri() >= 3 ? 1.5 : 1);
     let kapat = () => {document.removeEventListener('click',navigation,true);p.remove();};document.addEventListener('click',navigation,true);
     p.querySelector('#zlKapat').onclick = kapat;
     p.addEventListener('click', e => { if (e.target === p) kapat(); });
+    const notifyOwner=kucuk(aktifOgrenciAdi);
     let sosyal = [];
     try {
       let r = await fetch(`${apiURL}?islem=bildirimlerim&tumu=1&ogrenci=${enc(aktifOgrenciAdi)}`);
-      let d = await r.json(); sosyal = (d && d.liste) || [];
+      let d = await r.json(); sosyal = ((d && d.liste) || []).filter(b=>b.tur!=='begeni');
     } catch (e) {}
     if (typeof maAkisYukle === 'function') await maAkisYukle();
     let benim = (typeof maAkisVeri !== 'undefined' ? maAkisVeri : []).filter(e => kucuk(e.ogr) === kucuk(aktifOgrenciAdi)).map(e => ({ tarih: e.t, tur: 'kazanc', ikon: e.ikon, metin: e.metin, yeni: false }));
-    let sosyalS = sosyal.map(b => ({ tarih: b.tarih, tur: b.tur, gonderen: b.gonderen, ikon: turIkon(b), metin: turMetin(b) + ((b.metin||b.mesaj||b.message||b.icerik) && TUR[b.tur] && b.tur !== 'takip' && b.tur !== 'duello' ? ` · “${b.metin||b.mesaj||b.message||b.icerik}”` : ''), yeni: !b.okundu, sat: b.sat }));
-    let duyuru = [];
+    let sosyalS = sosyal.map(b => ({ source:b, tarih: b.tarih, tur: b.tur, gonderen: b.gonderen, ikon: turIkon(b), metin: turMetin(b) + ((b.metin||b.mesaj||b.message||b.icerik) && TUR[b.tur] && b.tur !== 'takip' && b.tur !== 'duello' ? ` · “${b.metin||b.mesaj||b.message||b.icerik}”` : ''), yeni: !b.okundu, sat: b.sat }));
+    let duyuru = [],announcementId='';
     try {
       const response=await fetch(apiURL+'?islem=duyurulariGetir&ogrenci='+enc(aktifOgrenciAdi));
       const current=await response.json();
-      if(current?.id && String(current.mesaj||'').trim())duyuru.push({tarih:Date.parse(current.tarih)||Date.now(),tur:'duyuru',ikon:'📢',metin:String(current.baslik||'Duyuru')+' · '+String(current.mesaj),yeni:false});
+      if(current?.id && String(current.mesaj||'').trim()){announcementId=String(current.id);duyuru.push({tarih:current.tarih,tur:'duyuru',ikon:'📢',metin:String(current.baslik||'Duyuru')+' · '+String(current.mesaj),yeni:localStorage.getItem('dm_notice_seen:'+notifyOwner)!==String(current.id)});}
     } catch(e) {
       const dm=$('duyuruMesaj'),title=$('duyuruBaslik');
-      if(dm&&title&&title.innerText.trim()!=='Başlık'&&dm.innerText.trim()!=='Mesaj'&&dm.innerText.trim())duyuru.push({tarih:Date.now(),tur:'duyuru',ikon:'📢',metin:title.innerText.trim()+' · '+dm.innerText.trim(),yeni:false});
+      if(dm&&title&&title.innerText.trim()!=='Başlık'&&dm.innerText.trim()!=='Mesaj'&&dm.innerText.trim())duyuru.push({tarih:null,tur:'duyuru',ikon:'📢',metin:title.innerText.trim()+' · '+dm.innerText.trim(),yeni:false});
     }
-    let hepsi = [...sosyalS, ...benim, ...duyuru].sort((a, b) => b.tarih - a.tarih);
+    let hepsi = [...sosyalS, ...duyuru].sort((a, b) => (window.DMTime.parse(b.tarih)||0) - (window.DMTime.parse(a.tarih)||0));
     zilFiltre='hepsi';const FILTRELER = [['hepsi','Hepsi'],['duyuru','📢 Duyuru']];
-    function ciz() {
+    async function ciz() {
       $('zlFiltre').innerHTML = FILTRELER.map(([k, t]) => `<button class="${k === zilFiltre ? 'aktif' : ''}" data-f="${k}">${t}</button>`).join('');
       $('zlFiltre').querySelectorAll('button').forEach(b => b.onclick = () => { zilFiltre = b.dataset.f; ciz(); });
       let l = hepsi.filter(x => zilFiltre === 'hepsi' || (zilFiltre === 'sosyal' ? TUR[x.tur] : x.tur === zilFiltre));
       $('zlListe').innerHTML = l.length ? l.map((x, i) => {
         let av = x.gonderen && typeof karakterSvg === 'function' ? karakterSvg(x.gonderen, 38) : '';
-        return `<div class="zl-satir${x.yeni ? ' yeni' : ''}" style="animation-delay:${Math.min(i, 12) * 0.03}s"><div class="zl-ikon">${av || x.ikon}</div><div class="zl-metin">${av ? x.ikon + ' ' : ''}${guvenliMetin(x.metin)}<small>${zamanOnce(x.tarih)}</small></div></div>`;
+        return `<div class="zl-satir${x.yeni ? ' yeni' : ''}" style="animation-delay:${Math.min(i, 12) * 0.03}s"><div class="zl-ikon">${av || x.ikon}</div><div class="zl-metin" data-notification-index="${i}">${av ? x.ikon + ' ' : ''}${guvenliMetin(x.metin)}<small>${zamanOnce(x.tarih)}</small></div></div>`;
       }).join('') : '<div style="text-align:center;padding:30px;color:#8a78b8;font-weight:800">Burada henüz bir şey yok.</div>';
+      await window.DMNotificationActions?.mount(p.querySelector('#zlListe'),l.map(x=>x.source||x),{owner:notifyOwner,currentOwner:()=>aktifOgrenciAdi,onNavigate:kapat});
     }
-    ciz();
+    if(notifyOwner!==kucuk(aktifOgrenciAdi)){kapat();return;}
+    await ciz();
     let okunmamis = sosyal.filter(b => !b.okundu).map(b => b.sat);
-    if (okunmamis.length) fetch(`${apiURL}?islem=bildirimOkundu&ogrenci=${enc(aktifOgrenciAdi)}&satirlar=${enc(okunmamis.join(','))}`).catch(() => {});
-    zilSayi = 0; zilCiz();
+    try{if(okunmamis.length){const ack=await fetch(`${apiURL}?islem=bildirimOkundu&ogrenci=${enc(notifyOwner)}&satirlar=${enc(okunmamis.join(','))}`);if(!ack.ok)throw Error('read failed');}if(notifyOwner!==kucuk(aktifOgrenciAdi))return;if(announcementId)localStorage.setItem('dm_notice_seen:'+notifyOwner,announcementId);zilSayi=0;zilCiz();}catch{/* Failed acknowledgement leaves the unread count intact. */}
   }
 })();
 </script>
@@ -16995,6 +16996,7 @@ let adaRenk = adaRenkleri[
   }
   async function bildirimYokla() {
     if (!girisli() || document.hidden) return;
+    const notifyOwner=kucuk(aktifOgrenciAdi);
     try {
       let r = await fetch(`${apiURL}?islem=bildirimlerim&ogrenci=${enc(aktifOgrenciAdi)}`);
       let d = await r.json(), liste = ((d && d.liste) || []).slice().reverse();
@@ -26531,7 +26533,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <link rel="stylesheet" href="papi-feedback.css?v=1"><script defer src="papi-feedback.js?v=4"></script><script defer src="papi-haptics.js?v=1"></script><script defer src="papi-wallet.js?v=20261022-odul-2"></script>
 <link rel="stylesheet" href="story-path.css?v=3"><script defer src="story-curriculum.js?v=2"></script><link rel="stylesheet" href="thematic-learning.css?v=20261017-sunny-academy-1"><link rel="stylesheet" href="learning-question-v1.css?v=20261022-1"><script defer src="learning-core.js?v=20261017-learning-hud-letters-1"></script><script defer src="thematic-learning.js?v=20261022-yildiz-1"></script><script defer src="story-path.js?v=20261022-no-papi-card"></script>
 <link rel="stylesheet" href="medupro.css?v=20261011-hud">
-<script defer src="medupro.js?v=20261018-safety-2"></script>
+<script defer src="medupro.js?v=20261024-unread-2"></script>
 <link rel="stylesheet" href="konu-oyunlari.css?v=20261021-konu-a2-1">
 <script defer src="konu-oyunlari.js?v=20261021-konu-a2-1"></script>
 <link rel="stylesheet" href="activity-ui.css?v=20261023-approved-1">
@@ -26623,9 +26625,10 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <link rel="stylesheet" href="oyna-v2.css?v=20261016-layout-1">
 <script defer src="route-missions.js?v=20261024-passport-3"></script>
 <script defer src="papi-habit.js?v=20261019-2"></script>
-<script defer src="oyna-v2.js?v=20261024-mission-panel-1"></script>
+<script defer src="oyna-v2.js?v=20261024-club-2"></script>
 <link rel="stylesheet" href="friends-ui.css?v=20261017-social-highlights-v2">
-<script defer src="friends-ui.js?v=20261017-social-highlights-v2"></script>
+<script defer src="notification-actions.js?v=20261025-actions-1"></script>
+<script defer src="friends-ui.js?v=20261025-club-3"></script>
 <link rel="stylesheet" href="league-ui.css?v=20261019-1">
 <script defer src="league-ui.js?v=20261019-1"></script>
 <link rel="stylesheet" href="study-ui.css?v=20261019-learn-play-1">
@@ -26672,7 +26675,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <script defer src="apple-login.js?v=20261019-1"></script>
 <link rel="stylesheet" href="learning-companion.css?v=20261024-rewards-2">
 <script defer src="learning-dialogues.js?v=20261019-1"></script>
-<script defer src="learning-companion.js?v=20261024-passport-3"></script>
+<script defer src="learning-companion.js?v=20261024-club-2"></script>
 <link rel="stylesheet" href="parkur-purple.css?v=20261019-offline-1">
 <link rel="stylesheet" href="route-graduation.css?v=20261020-member-flows-1"><script defer src="route-graduation.js?v=20261020-member-flows-1"></script>
 <link rel="stylesheet" href="route-design-three.css?v=20261020-fixed-art-2">

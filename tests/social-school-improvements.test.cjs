@@ -55,13 +55,11 @@ test('school route uses 8 learning-style accordion grades and different mascots'
  assert(image(html)&&image(again)&&image(html)!==image(again),'changing map character each revisit');
  assert(schoolSource.includes('Sınıflarım')&&schoolSource.includes('renderGrade(g,active)'),'grade accordion remains in secondary explorer');
 });
-test('feed phrases gain escaped color accents, untrusted HTML remains text',()=>{
- const body=friendsSource.slice(friendsSource.indexOf('  function feedHighlights('),friendsSource.indexOf('  const norm ='));
- assert(body.includes('strong class="fr-feed-key'));
- const c={};vm.createContext(c);
- vm.runInContext("const esc=x=>String(x??'').replace(/[&<>\"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;',\"'\":'&#39;'}[c]));"+body+"this.render=feedHighlights;",c);
- const result=c.render('Macera Haritası · 3. sınıf, 2. ünite tamamladı! <img src=x onerror=alert(1)>');
- assert.match(result,/fr-feed-key/);assert.match(result,/&lt;img/);assert.doesNotMatch(result,/<img/);
+test('feed copy remains escaped plain text with a separate action link',()=>{
+ assert.doesNotMatch(friendsSource,/function feedHighlights/);
+ assert.match(friendsSource,/esc\(sentence.textContent\)/);
+ assert.match(friendsSource,/class="club-content-link"/);
+ assert.match(friendsSource,/maBegen/);
 });
 test('purchase and school event triggers are server-backed, not client-made awards',()=>{
  assert.match(sql,/new\.class_no not between 1 and 8/);

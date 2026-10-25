@@ -6,25 +6,6 @@
   const $ = id => document.getElementById(id);
   const esc = x => String(x ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const who = () => typeof aktifOgrenciAdi === 'undefined' ? '' : String(aktifOgrenciAdi || '');
-  // Highlight meaningful facts without trusting feed text as HTML.
-  function feedHighlights(raw) {
-    const content = String(raw ?? '');
-    const important = /(?:\d+(?:[.,]\d+)?\.\s*(?:sınıf|ünite|durak|durağı|bölüm|sıra|sıradan|sıraya)|\d+(?:[.,]\d+)?\s*(?:XP|altın|enerji|puan)|Macera Haritası|Öğrenme Yolu|Şampiyonlar Ligi|Süper Lig|Yerel Lig|yeni bir (?:kıyafet|karakter|aksesuar|çanta|tişört|pantolon|rozet)|satın aldı|tamamladı|yükseldi|kazandı|koleksiyonuna kattı|tebrik etti|seni geçti)/giu;
-    const hits = [...content.matchAll(important)].filter(m => m[0]);
-    if (!hits.length) {
-      const prefix = /^.{1,32}?(?=\s|$)/u.exec(content)?.[0] || '';
-      return prefix ? '<strong class="fr-feed-key fr-feed-key-1">' + esc(prefix) + '</strong>' + esc(content.slice(prefix.length)) : esc(content);
-    }
-    let out = '', cursor = 0;
-    hits.forEach((m, i) => {
-      if (m.index < cursor) return;
-      out += esc(content.slice(cursor, m.index));
-      out += '<strong class="fr-feed-key fr-feed-key-' + (i % 4 + 1) + '">' + esc(m[0]) + '</strong>';
-      cursor = m.index + m[0].length;
-    });
-    return out + esc(content.slice(cursor));
-  }
-
   const norm = x => String(x || '').trim().toLocaleLowerCase('tr');
   const icon = (name, cls = '') => `<svg class="fr-icon ${cls}" aria-hidden="true"><use href="friends-assets/icons.svg#${name}"></use></svg>`;
   const art = (name, cls = '') => `<img class="${cls}" src="friends-assets/${name}.png" alt="" decoding="async">`;
@@ -81,9 +62,9 @@
     if (!d) return '';
     return `<aside class="fr-invitation" role="status">${avatar(d.gonderen,36)}<span><b>${esc(d.gonderen)}</b> seni oyuna davet ediyor<small>${esc(window.dmMeduPro?.games?.[d.oyun]?.[0]||d.oyun)}</small></span><button data-friend-action="accept" data-invite-id="${esc(d.id)}" data-friends-gate="duello">Kabul et</button><button data-friend-action="dismiss" data-invite-id="${esc(d.id)}" aria-label="Daveti şimdilik gizle">×</button></aside>`;
   }
+  function clubHeader(){return `<header class="club-hero"><h2>Arkadaşlar</h2><button type="button" data-friend-action="find" aria-label="Arkadaş ekle">＋</button></header>`;}
   function homeHtml() {
-    const o = mine();
-    return `<div class="fr-home"><section class="fr-welcome">${art('papi-friends','fr-welcome-papi')}<p>Birlikte öğren, birlikte yüksel! <span>♥</span></p><button class="fr-add" data-friend-action="find">${icon('add')} Arkadaş ekle</button></section><section class="fr-friends fr-card"><div class="fr-section-head"><h3>${icon('people')} Arkadaşlarım</h3><button class="fr-link fr-invite-link" data-friend-action="friends" data-mode="invite">Davet et ${icon('chevron')}</button></div><div class="fr-people">${peopleHtml()}</div></section><div class="fr-summaries">${showcaseSummary(o)}${leagueSummary()}</div><section class="fr-feed fr-card"><div class="fr-section-head"><h3>${icon('people')} Arkadaş akışı</h3><button class="fr-link" data-friend-action="akis">Tümünü gör ${icon('chevron')}</button></div>${filters()}<div id="maAkisListe">${window.maAkisListeHtml()}</div></section><div id="frInvitation">${invitationHtml()}</div><button class="fr-matches" data-friend-action="matches" data-friends-gate="duello">⚔️ Karşılaşmalarım ${icon('chevron')}</button></div>`;
+    return `<div class="fr-home">${clubHeader()}<nav class="club-shortcuts" aria-label="Arkadaşlar kısayolları"><button data-friend-action="find">Arkadaş ekle</button><button data-friend-action="vitrin">Vitrinim</button><button data-friend-action="lig">Ligim</button><button data-friend-action="matches">Karşılaşmalarım</button></nav>${filters()}<section class="fr-feed" aria-label="Arkadaş akışı"><div id="maAkisListe">${window.maAkisListeHtml()}</div></section><div id="frInvitation">${invitationHtml()}</div></div>`;
   }
   function viewHeader() {
     const home = maSekme === 'hub' && !maProfilId;
@@ -139,8 +120,8 @@
   window.maAkisHtml=function(){return filters()+`<div id="maAkisListe">${window.maAkisListeHtml()}</div>`;};
   window.maAkisListeHtml=function(){
     const saved=maAkisVeri, filter=maFiltre;
-    let rows=saved.filter(e=>filter==='takip'?maTakip.has(e.ogr):filter==='online'?online(e.ogr):true);
-    if(maSekme==='hub'&&!maProfilId)rows=rows.slice(0,2);
+    let rows=window.DMFriendsFeed.select(saved).filter(e=>filter==='takip'?maTakip.has(e.ogr):filter==='online'?online(e.ogr):true);
+    if(maSekme==='hub'&&!maProfilId)rows=rows.slice(0,20);
     let html;
     try{maAkisVeri=rows;maFiltre='herkes';html=originalFeed.call(this);}finally{maAkisVeri=saved;maFiltre=filter;}
     if(!rows.length&&saved.length)html='<div class="ma-bos">'+(filter==='online'?'Şu anda çevrimiçi arkadaşlarından bir paylaşım yok.':filter==='takip'?'Takip ettiklerinden henüz bir paylaşım yok.':'Henüz bir paylaşım yok.')+'</div>';
@@ -150,7 +131,11 @@
       card.dataset.person=id;
       card.querySelector('.akis-ikon')?.remove();
       const sentence = card.querySelector('.akis-metin');
-      if (sentence) sentence.innerHTML = feedHighlights(sentence.textContent);
+      const event=rows.find(x=>String(x.k)===card.dataset.safetyEvent),meta=event?.club;if(!meta)return;
+      if(sentence)sentence.innerHTML=esc(sentence.textContent)+'<button type="button" class="club-content-link" data-club-open="'+esc(event.k)+'">'+esc(meta.label)+' ›</button>';
+      card.querySelectorAll('[onclick*="maBegen"]').forEach(b=>b.remove());
+      const stamp=document.createElement('i');stamp.className='club-event-badge';stamp.setAttribute('aria-hidden','true');stamp.style.backgroundPosition=(meta.badge%3*50)+'% '+Math.floor(meta.badge/3)*50+'%';if(meta.kind==='game'&&meta.game[1]!=='hafizaOyunAc'){const atlas={kelimeYarismasiAc:0,jpOyunAc:5,boslukOyunAc:3,yagmurOyunAc:6,asmacaOyunAc:4,kelimebulOyunAc:7,esOyunAc:8,trenOyunAc:9,dikteAc:10,cumleAc:11,harfBahcesiAc:15}[meta.game[1]];if(atlas!==undefined){stamp.style.backgroundImage="url('games-assets/game-atlas-v1.webp')";stamp.style.backgroundSize='400% 400%';stamp.style.backgroundPosition=(atlas%4*100/3)+'% '+Math.floor(atlas/4)*100/3+'%';stamp.style.borderRadius='20px';}}card.append(stamp);
+      const time=row.querySelector('small');if(time)time.textContent=window.DMTime.format(event.t);
       const person=typeof maTumListe!=='undefined'?maTumListe.find(x=>norm(x.id)===norm(id)):null;
       const n=row.querySelector('b');
       const ownLevel=norm(id)===norm(who())?level():person?.playerLevel;
@@ -158,7 +143,7 @@
       row.querySelector('.dm-avatar-level')?.classList.add('fr-feed-avatar');
       if(n){n.innerHTML=`${esc(n.textContent)}${ownLevel?` <span class="fr-level">Sv. ${ownLevel}</span>`:''}${badge(id)}`;}
       const menu=document.createElement('button');menu.className='fr-more';menu.dataset.friendAction='profile';menu.dataset.person=id;menu.setAttribute('aria-label',id+' profil ve iletişim seçenekleri');menu.textContent='⋮';card.append(menu);
-      if(norm(id)!==norm(who())&&maTakip.has(id))card.querySelector('.aksiyon')?.insertAdjacentHTML('beforeend',`<button class="fr-card-invite" data-friend-action="invite" data-person="${esc(id)}" data-friends-gate="duello">Davet et</button>`);
+      if(meta.kind==='game'&&meta.game[3]&&permitted('duello')&&norm(id)!==norm(who()))card.querySelector('.aksiyon')?.insertAdjacentHTML('beforeend',`<button class="fr-card-invite" data-friend-action="invite" data-person="${esc(id)}" data-game="${esc(meta.game[3])}" data-friends-gate="duello">Davet et</button>`);
     });return box.innerHTML;
   };
   window.maCiz=async function(){
@@ -204,10 +189,12 @@
       draw();sheet.body.querySelector('input').oninput=e=>draw(e.target.value);sheet.body.querySelector('input').focus();
     }catch(e){if(!closed)sheet.body.textContent='Arkadaşlar yüklenemedi. Lütfen tekrar dene.';}
   }
-  function openInvite(id){
+  function openInvite(id,game){
     if(!requireFeature('duello'))return;
     window.maProfilAc(id);
-    requestAnimationFrame(()=>root.querySelector('.dm-social')?.scrollIntoView({block:'start',behavior:'smooth'}));
+    const inviteOwner=who();
+    const apply=()=>{if(who()!==inviteOwner)return true;const panel=[...root.querySelectorAll('.dm-social')].find(x=>x.dataset.person===id);if(!panel)return false;const select=panel.querySelector('.dm-game');if(select&&game&&[...select.options].some(o=>o.value===game)){select.value=game;select.dispatchEvent(new Event('change',{bubbles:true}));}panel.scrollIntoView({block:'start',behavior:'smooth'});return true;};
+    if(!apply()){const observer=new MutationObserver(()=>{if(apply())observer.disconnect();});observer.observe(root,{childList:true,subtree:true});setTimeout(()=>observer.disconnect(),5000);}
   }
   async function acceptInvite(id,btn){
     if(!requireFeature('duello'))return;
@@ -221,13 +208,15 @@
     }catch(e){window.maToast?.(e.message||'Davet kabul edilemedi.');btn.disabled=false;}
   }
   root.addEventListener('click',e=>{
+    const link=e.target.closest('[data-club-open]');if(link){const event=maAkisVeri.find(x=>String(x.k)===link.dataset.clubOpen),meta=event&&window.DMFriendsFeed.classify(event);if(!meta)return;if(meta.kind==='game'){if(!requireFeature(meta.game[2]))return;const fn=window[meta.game[1]]||(meta.game[1]==='kelimebulOyunAc'?window.kelimeBulOyunAc:null);if(typeof fn==='function')fn();else window.aktivitelerTamEkranAc?.();}else if(meta.kind==='route')window.dmLearningRoute?.continue?.();else if(meta.kind==='story'){if(/hikâye|hikaye/i.test(event.metin))window.dmLearningCompanion?.nextStory?.();else window.dmLearningCompanion?.nextDialogue?.();}else if(meta.kind==='mission')window.dmLearningCompanion?.openMissions?.(/hafta/i.test(event.metin)?'weekly':'daily');else if(meta.kind==='league')window.maSekmeSec('lig');else if(meta.kind==='badge')window.dmBasarilarimAc?.();else if(meta.kind==='streak')window.dmLearningCompanion?.report?.();else window.dmIlerlememAc?.();return;}
+
     const b=e.target.closest('[data-friend-action]');if(!b)return;
     const action=b.dataset.friendAction;
     if(['home','akis','vitrin','lig'].includes(action)){window.maSekmeSec(action==='home'?'hub':action);return;}
     if(action==='find')return void findFriends(false);
     if(action==='friends')return void findFriends(true);
     if(action==='profile'){window.maAkisKisiAc?.(b.dataset.person);return;}
-    if(action==='invite')return openInvite(b.dataset.person);
+    if(action==='invite')return openInvite(b.dataset.person,b.dataset.game);
     if(action==='matches'){if(requireFeature('duello'))window.dmArenaAc?.();return;}
     if(action==='filter'){
       maFiltre=b.dataset.filter;

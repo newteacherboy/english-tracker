@@ -52,14 +52,14 @@ const feed=['Elif','Ege','Zeynep','Cemre'].map((ogr,i)=>({k:'event'+i,ogr,ad:ogr
     document.getElementById('panel-alani').style.display='block';
   });
   await page.evaluate(()=>dmProgression.refresh(true));
-  await page.evaluate(()=>meduAkisAc());await page.waitForSelector('.fr-home .fr-person');await page.waitForTimeout(800);
+  await page.evaluate(()=>meduAkisAc());await page.waitForSelector('.fr-home .akis-kart');await page.waitForTimeout(800);
   assert.equal(await page.locator('.fr-home').count(),1);
-  assert.equal(await page.locator('.fr-summaries .fr-summary').count(),2);
-  assert.equal(await page.locator('.fr-feed .akis-kart').count(),2);
+  assert.equal(await page.locator('.fr-summaries .fr-summary').count(),0);
+  assert.equal(await page.locator('.fr-feed .akis-kart').count(),4);
   assert(await page.locator('#maSegment').isHidden());
   assert.equal(await page.locator('#maSegment button').count(),3);
   assert.equal(await page.locator('#maSegment [data-s="parkur"],#maSegment [data-s="kesfet"]').count(),0);
-  assert.equal(await page.locator('#tab-meduakis .fr-podium-mini button').count(),3);
+  assert.equal(await page.locator('#tab-meduakis .fr-podium-mini button').count(),0);
   const navBefore=await page.locator('#bottomNavMobile').innerHTML();
   for(const [w,h] of [[320,667],[390,844],[768,1024],[1180,820]]){
     await page.setViewportSize({width:w,height:h});await page.waitForTimeout(200);
@@ -68,21 +68,19 @@ const feed=['Elif','Ege','Zeynep','Cemre'].map((ogr,i)=>({k:'event'+i,ogr,ad:ogr
     // The last action can always be scrolled above the original dock.
     await page.evaluate(()=>{const e=document.getElementById('tab-meduakis');e.scrollTop=e.scrollHeight;});
     const dockTop=await page.locator('#bottomNavMobile').evaluate(e=>e.getBoundingClientRect().top);
-    const lastBottom=await page.locator('.fr-matches').evaluate(e=>e.getBoundingClientRect().bottom);
+    const lastBottom=await page.locator('.fr-invitation').evaluate(e=>e.getBoundingClientRect().bottom);
     assert(lastBottom<dockTop,'last action fits above dock '+w);
     await page.evaluate(()=>document.getElementById('tab-meduakis').scrollTop=0);
-    if(w===390)await page.screenshot({path:'/workspace/scratch/2bd974b09515/friends-home-mobile.png'});
+    if(w===390)await page.screenshot({path:'/tmp/friends-home-mobile.png'});
     console.log('PASS layout '+w+'x'+h);
   }
   await page.setViewportSize({width:390,height:844});
-  await page.locator('[data-friend-action="akis"]').click();await page.waitForTimeout(300);
-  assert.equal(await page.locator('.fr-home').count(),0);assert.equal(await page.locator('#maAkisListe .akis-kart').count(),4);assert(await page.locator('#frFeedHero').isVisible());assert(await page.locator('#maSegment').isVisible());
+  assert.equal(await page.locator('#maAkisListe .akis-kart').count(),4);
   await page.locator('[data-filter="online"]').click();await page.waitForTimeout(300);assert.equal(await page.locator('#maAkisListe .akis-kart').count(),3);
   await page.locator('[data-filter="herkes"]').click();
-  await page.locator('.aksiyon button').first().click();assert(writes.some(x=>x.islem==='akisOlayToggle'&&x.tur==='begeni'));
-  await page.locator('.fr-back').click();assert(await page.locator('.fr-home').isVisible());
-  await page.locator('[data-friend-action="vitrin"]').click();await page.waitForTimeout(300);assert(await page.locator('.sahne').isVisible());assert.equal(await page.locator('.fr-vitrin-papi').count(),1);await page.screenshot({path:'/workspace/scratch/2bd974b09515/friends-vitrin-mobile.png'});
-  await page.locator('.fr-back').click();await page.locator('[data-friend-action="lig"]').click();await page.waitForTimeout(300);assert.equal(await page.locator('.ml-satir').count(),5);assert.equal(await page.locator('.fr-league-papi').count(),1);await page.screenshot({path:'/workspace/scratch/2bd974b09515/friends-lig-mobile.png'});
+  await page.locator('.aksiyon button').first().click();assert(writes.some(x=>x.islem==='akisOlayToggle'&&x.tur==='tebrik'));
+  await page.locator('[data-friend-action="vitrin"]').click();await page.waitForTimeout(300);assert(await page.locator('.sahne').isVisible());assert.equal(await page.locator('.fr-vitrin-papi').count(),1);await page.screenshot({path:'/tmp/friends-vitrin-mobile.png'});
+  await page.locator('.fr-back').click();await page.locator('[data-friend-action="lig"]').click();await page.waitForTimeout(300);assert.equal(await page.locator('.ml-satir').count(),5);assert.equal(await page.locator('.fr-league-papi').count(),1);await page.screenshot({path:'/tmp/friends-lig-mobile.png'});
   await page.locator('.fr-back').click();await page.locator('[data-friend-action="find"]').first().click();await page.waitForSelector('.fr-search');await page.locator('.fr-search').fill('Elif');assert.equal(await page.locator('.fr-search-person').count(),1);await Promise.all([page.waitForResponse(r=>{try{return r.request().postDataJSON()?.islem==='akisOlayToggle';}catch{return false;}}),page.locator('.fr-search-follow').click()]);await page.waitForTimeout(100);assert(writes.some(x=>x.islem==='akisOlayToggle'&&x.hedef==='Elif'));await page.keyboard.press('Escape');assert.equal(await page.locator('.fr-friend-sheet').count(),0);
   await page.locator('.fr-card-invite').first().click();await page.waitForTimeout(400);assert.equal(await page.locator('.dm-social').count(),1,'direct invitation opens real profile with game picker');assert(await page.locator('.dm-game').isVisible());
   await page.evaluate(()=>meduAkisAc());await page.waitForTimeout(300);assert(await page.locator('.fr-home').isVisible(),'re-entering from dock always shows hub');

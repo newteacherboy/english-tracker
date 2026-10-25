@@ -145,8 +145,8 @@ function bindStories(root,close){
 function dialogues(){
  if(!student())return;const v=sheet('Hikâye ve Diyalog','<p class="lc-muted">Günlük hayattan kısa konuşmalar · Enerji harcanmaz</p>'+storyGroups(),'lcDialogues');if(v)bindStories(v.body,window.dmViewHistory?undefined:()=>v.close());
 }
-async function nextDialogue(){
- try{const at=identity(),d=await load(true);if(!d||at!==identity())return;const completed=new Set(d.dialogueIds||[]),choices=bank.filter(s=>s.type!=='story');const next=choices.find(s=>!completed.has(s.id));if(next)return openStory(next.id);window.yoToast?.('Tüm diyalogları tamamladın! Dilediğini tekrar çalışabilirsin.');return dialogues();}catch(e){window.yoToast?.(e.message);}
+async function nextDialogue(type='dialogue'){
+ try{const at=identity(),d=await load(true);if(!d||at!==identity())return;const completed=new Set(d.dialogueIds||[]),choices=bank.filter(s=>type==='story'?s.type==='story':s.type!=='story');const next=choices.find(s=>!completed.has(s.id));if(next)return openStory(next.id);window.yoToast?.(type==='story'?'Tüm hikâyeleri tamamladın! Dilediğini tekrar çalışabilirsin.':'Tüm diyalogları tamamladın! Dilediğini tekrar çalışabilirsin.');return dialogues();}catch(e){window.yoToast?.(e.message);}
 }
 function applyCompanionReward(r,at){
  if(!r||identity()!==at)return;
@@ -237,6 +237,6 @@ async function openPlan(){
 }
 function planState(){if(!summary||owner!==identity())return null;const d=summary,reviewDone=d.reviewDone||d.review?.total>0&&d.review.due===0;const state=[!!reviewDone,!!d.routeDone,!!d.dialogueDone];return {done:state.filter(Boolean).length,total:state.length};}
 function reviewDue(){return summary&&owner===identity()?Number(summary.review?.due)||0:null;}
-window.dmLearningCompanion={openPlan,planState,reviewDue,refresh:()=>load(true),report,dialogues,openStory,nextDialogue,teacherSummary,mount,markRouteComplete:lessonDone};
+window.dmLearningCompanion={openPlan,planState,reviewDue,refresh:()=>load(true),report,dialogues,openStory,nextDialogue,nextStory:()=>nextDialogue('story'),openMissions:period=>window.dmOpenMissions?.(period),teacherSummary,mount,markRouteComplete:lessonDone};
 schedule();
 })();
