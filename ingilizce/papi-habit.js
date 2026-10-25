@@ -3,7 +3,7 @@
    never during an open activity, and never uses guilt or countdown language. */
 (()=>{'use strict';
 const who=()=>typeof aktifOgrenciAdi==='undefined'?'':String(aktifOgrenciAdi||'').trim();
-const member=()=>{const n=who();return !!n&&n.toLowerCase()!=='teacher'&&!window.dmGuestMode;};
+const member=()=>{const n=who();return !!n&&n.toLowerCase()!=='teacher'&&!window.dmGuestMode&&!window.dmTeacherPortalMode;};
 const dayOf=t=>new Date(t+10800000).toISOString().slice(0,10);
 const today=()=>dayOf(Date.now());
 const weekKey=()=>{const d=new Date(Date.now()+10800000);d.setUTCDate(d.getUTCDate()-(d.getUTCDay()+6)%7);return d.toISOString().slice(0,10);};
