@@ -186,8 +186,20 @@
   const target=buttons.find(b=>pattern.test(b.textContent||''));
   if(!target){const v=sheet('Bu araç kullanılamıyor','<p>İlgili öğretmen aracı şu anda yüklenemedi. Lütfen tekrar dene.</p>');return;}
   // Keep legacy command's event wiring, then close only the launcher after child creation.
+  // The old tool owns the entire form and its event handlers. Keep only the new
+  // dashboard as the launcher, not a second implementation of the tool.
+  const before=[...document.querySelectorAll('.rubric-modal,.cog-perde,.sm-overlay,.dm-member-overlay,.dm-account-overlay,.dm-perde,.yo-modal,.yo-perde,#yoModalPerde,#omSifreModal,#odModal,.game-modal-overlay,.gso-overlay')];
   target.click();
+  const isOpen=el=>{if(!el||!el.isConnected)return false;const st=getComputedStyle(el);return st.display!=='none'&&st.visibility!=='hidden'&&el.getClientRects().length>0;};
+  const allTools=()=>[...document.querySelectorAll('.rubric-modal,.cog-perde,.sm-overlay,.dm-member-overlay,.dm-account-overlay,.dm-perde,.yo-modal,.yo-perde,#yoModalPerde,#omSifreModal,#odModal,.game-modal-overlay,.gso-overlay')].filter(isOpen);
+  const refresh=()=>{const visible=allTools().some(el=>!el.contains(menu));document.body.classList.toggle('tp-legacy-child-open',visible);};
   if(menu){menu.classList.remove('dm-teacher-open');menu.style.setProperty('display','none');}
+  requestAnimationFrame(refresh);
+  if(!window.tpLegacyToolObserver){
+    let queued=false;
+    window.tpLegacyToolObserver=new MutationObserver(()=>{if(queued)return;queued=true;requestAnimationFrame(()=>{queued=false;refresh();});});
+    window.tpLegacyToolObserver.observe(document.body,{subtree:true,childList:true,attributes:true,attributeFilter:['style','class','hidden','aria-hidden']});
+  }
  }
  async function chooseTeacherStudent(title,next){
   const v=sheet(title,'<p>Yalnızca hesabına bağlı öğrencileri seçebilirsin.</p><label>Sınıf<select name="grade"><option value="">Tüm sınıflar</option>'+Array.from({length:8},(_,i)=>'<option value="'+(i+1)+'">'+(i+1)+'. sınıf</option>').join('')+'</select></label><label>Öğrenci<select name="studentId" required><option value="">Öğrenci seç</option></select></label><button class="tp-primary">Devam Et</button>');
