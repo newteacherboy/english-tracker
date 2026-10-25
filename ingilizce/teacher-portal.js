@@ -214,10 +214,60 @@
    await refreshTeacherStats();
   });
  }
+
+ async function pickClass(title,done){
+  const v=sheet(title,'<label>Sınıf<select name="grade">'+Array.from({length:8},(_,i)=>'<option value="'+(i+1)+'">'+(i+1)+'. sınıf</option>').join('')+'</select></label><button type="submit" class="tp-primary">Raporu Göster</button>');
+  submit(v,async f=>{const grade=Number(f.get('grade'));v.close();await done(grade);});
+ }
+ function showClassAnalytics(title,grade,report){
+  const v=sheet(title,'<div class="tp-class-analytics"><p data-summary></p><h3>En çok yanlış yapılan oyun türleri</h3><div data-games></div><h3>Bu hafta oyun çalışması olmayan öğrenciler</h3><div data-inactive></div><h3>Öğrencilerin haftalık gelişimi</h3><div data-students></div><button type="button" data-copy>Haftalık özeti kopyala</button></div>');
+  const summary='Sınıf '+grade+' · Oyunlar: '+report.summary.plays+' · Doğru: '+report.summary.correct+' · Yanlış: '+report.summary.wrong+' · Ortalama toplam XP: '+report.summary.averageXp;
+  v.shade.querySelector('[data-summary]').textContent=summary;
+  const games=v.shade.querySelector('[data-games]');(report.summary.wrongByGame||[]).forEach(([key,count])=>{const p=document.createElement('p');p.textContent=key+' — '+count+' yanlış';games.append(p);});
+  if(!games.childNodes.length)games.textContent='Bu hafta oyun verisi bulunamadı.';
+  v.shade.querySelector('[data-inactive]').textContent=report.inactive.length?report.inactive.join(', '):'Tüm öğrenciler bu hafta oyun çalışması yapmış.';
+  const list=v.shade.querySelector('[data-students]');
+  report.students.forEach(st=>{const p=document.createElement('p');p.textContent=st.name+' · XP: '+(st.xp||0)+' · Oyun: '+st.plays;list.append(p);});
+  v.shade.querySelector('[data-copy]').onclick=()=>{const text=[summary,'Yanlış yapılan oyunlar: '+(report.summary.wrongByGame||[]).map(x=>x.join(': ')).join(', '),'Çalışma yapmayanlar: '+report.inactive.join(', '),...report.students.map(x=>x.name+': '+x.plays+' oyun, '+x.xp+' XP')].join('\n');navigator.clipboard?.writeText(text);};
+ }
+ function classroom(action){
+  pickClass(action==='parent'?'Haftalık Veli Özetleri':'Sınıfımın Öğrenme Özeti',async grade=>{
+   try{const report=await api('teacherPortalClassAnalytics',{grade});showClassAnalytics(action==='parent'?'Haftalık Veli Özetleri':'Sınıfımın Öğrenme Özeti',grade,report);}
+   catch(e){sheet('Rapor alınamadı','<p>'+String(e.message).replace(/[<>&]/g,'')+'</p>');}
+  });
+ }
+ function teacherPerformance(){
+  chooseTeacherStudent('Ders İçi Performans',async student=>{
+   const v=sheet('Ders İçi Performans','<h3 data-name></h3><p>Öğrencinin ders içi performansını değerlendir.</p><div class="tp-score-buttons"><button type="button" data-score="0.3">+ Katılım (+0,3)</button><button type="button" data-score="-2">− Performans (−2)</button></div><p role="status" data-result></p>');
+   v.shade.querySelector('[data-name]').textContent=student.full_name||student.username;
+   v.shade.querySelectorAll('[data-score]').forEach(button=>button.onclick=async()=>{button.disabled=true;try{const r=await api('teacherPortalPerformance',{studentId:student.id,delta:Number(button.dataset.score)});v.shade.querySelector('[data-result]').textContent='Güncel puan: '+r.points;}catch(e){v.shade.querySelector('[data-result]').textContent=e.message;}finally{button.disabled=false;}});
+  });
+ }
+ function teacherRubric(){
+  chooseTeacherStudent('Özel Ders Rubrik Değerlendirme',async student=>{
+   const fields=[['reading_score','Okuma'],['writing_score','Yazma'],['vocabulary_score','Kelime'],['speaking_score','Konuşma'],['grammar_score','Dil bilgisi']];
+   const html='<h3>'+String(student.username).replace(/[<>&]/g,'')+'</h3>'+fields.map(([k,label])=>'<label>'+label+' (0–100)<input type="number" name="'+k+'" min="0" max="100" required value="70"></label>').join('')+'<button class="tp-primary" type="submit">Rubriği Kaydet</button>';
+   const v=sheet('Özel Ders Rubrik Değerlendirme',html);
+   submit(v,async form=>{const values={studentId:student.id};fields.forEach(([k])=>values[k]=Number(form.get(k)));const r=await api('teacherPortalRubric',values);v.form.textContent='Değerlendirme kaydedildi. Genel ortalama: '+r.average;});
+  });
+ }
+ function teacherAnnouncement(){
+  const v=sheet('📢 Duyuru Oluştur','<p>Yalnızca sana bağlı öğrencilere gösterilir. Tüm platform duyurusu gönderilemez.</p><label>Başlık<input name="title" maxlength="120" required></label><label>Duyuru<textarea name="message" maxlength="2000" required rows="5"></textarea></label><button class="tp-primary" type="submit">Duyuruyu Yayınla</button>');
+  submit(v,async form=>{await api('teacherPortalAnnouncement',{title:form.get('title'),message:form.get('message')});v.form.textContent='Duyuru öğrencilerine gönderildi.';});
+ }
+ function teacherStudentDetails(){
+  chooseTeacherStudent('Öğrenci Bilgilerini Değiştir',async student=>{
+   const info=await api('teacherPortalStudentContact',{studentId:student.id});
+   const v=sheet('Öğrenci Bilgilerini Değiştir','<p data-name></p><p>E-posta doğrulama, parola ve öğretmen değişikliği öğrencinin güvenli hesap işlemleriyle yapılır. Öğretmen yalnızca telefon bilgisini güncelleyebilir.</p><label>E-posta (salt okunur)<input name="email" readonly></label><label>Telefon<input name="phone" inputmode="tel" maxlength="12"></label><button type="submit" class="tp-primary">Telefonu Kaydet</button>');
+   v.shade.querySelector('[data-name]').textContent=student.username;
+   v.form.elements.email.value=info.student.email||'';v.form.elements.phone.value=info.student.phone||'';
+   submit(v,async form=>{const r=await api('teacherPortalStudentContact',{studentId:student.id,save:true,phone:form.get('phone')});v.form.textContent=r.mesaj;});
+  });
+ }
  function teacherDashboardAction(action){
   if(action==='home'){teacherDashboardHide();teacherHomeShow();return;}
   if(action==='sync'){openTeacherCodeSync();return;}
-  if(action==='summary'){legacyTool(/sınıfımın öğrenme özeti|öğrenme özeti/i);return;}
+  if(action==='summary'){classroom('summary');return;}
   if(action==='exams'){legacyTool(/seviye sınavı sonuçları/i);return;}
   if(action==='logout'){window.dmTeacherPortalExit?.();return;}
   if(action==='code'||action==='settings'){openProfile();return;}
@@ -237,15 +287,13 @@
     if(!data.reports.length)history.textContent='Henüz rubrik değerlendirmesi bulunmuyor.';
    });return;
   }
-  if(action==='studentDetails'){
-   chooseTeacherStudent('Öğrenci Bilgilerini Değiştir',async student=>{
-    const v=sheet('Öğrenci Bilgilerini Değiştir','<p>Seçilen öğrenci: <strong data-student></strong></p><p>Öğrenci hesap bilgileri yalnızca yetkili işlemlerle değiştirilebilir. E-posta doğrulamasını öğrenci kendi hesabından yapar. Güvenlik nedeniyle doğrulanmış adresler ve giriş bilgileri izinsiz değiştirilemez.</p><button type="button" data-reset>Öğrenci şifresi ve hesap yönetimi</button>');
-    v.shade.querySelector('[data-student]').textContent=student.full_name||student.username;
-    v.shade.querySelector('[data-reset]').onclick=()=>{v.close();legacyTool(/şifre|hesap|öğrenci/i);};
-   });return;
-  }
+  if(action==='studentDetails'){teacherStudentDetails();return;}
   const patterns={performance:/ders içi performans/i,weak:/zayıf noktalar/i,parent:/haftalık veli/i,messages:/öğrenci sohbetleri|öğrenci mesajları/i,announcements:/duyurular|duyuru oluştur/i,rubric:/rubrik/i,homework:/ödev ver/i,reports:/rapor/i};
-  if(action==='performance'){legacyTool(/ders içi performans/i);return;}
+  if(action==='performance'){teacherPerformance();return;}
+  if(action==='weak'){classroom('weak');return;}
+  if(action==='parent'){classroom('parent');return;}
+  if(action==='rubric'){teacherRubric();return;}
+  if(action==='announcements'){teacherAnnouncement();return;}
   if(patterns[action])legacyTool(patterns[action]);
  }
 

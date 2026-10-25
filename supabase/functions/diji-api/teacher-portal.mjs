@@ -1,6 +1,6 @@
 // Every grant is tied to a normal learner; neither role claims nor invite codes grant access.
 // Private teacher codes use six digits and rate-limited authentication; prior codes require rotation.
-export const portalOps=new Set(['teacherPortalApply','teacherPortalStatus','teacherPortalList','teacherPortalDecide','teacherPortalIssueCode','teacherPortalLogin','teacherPortalResetRequest','teacherPortalReset','teacherPortalChangeCode','teacherPortalAppearance','teacherPortalSyncStudents','teacherPortalStudentReport','teacherPortalStudents','teacherPortalParticipant']);
+export const portalOps=new Set(['teacherPortalApply','teacherPortalStatus','teacherPortalList','teacherPortalDecide','teacherPortalIssueCode','teacherPortalLogin','teacherPortalResetRequest','teacherPortalReset','teacherPortalChangeCode','teacherPortalAppearance','teacherPortalSyncStudents','teacherPortalStudentReport','teacherPortalClassAnalytics','teacherPortalAnnouncement','teacherPortalRubric','teacherPortalPerformance','teacherPortalStudentContact','teacherPortalStudents','teacherPortalParticipant']);
 export function portalOperationAllowed(op,b={}) {
  if(['','oturumBilgisi','cikis','sonGirisGuncelle','iletisimDurumu','memberStatus','wordReviewList','wordReviewAnswer','seviyeDurumu','sosyalOgrencilerGetir','kelimeleriGetir','kelimeHavuzuGetir','tumKelimeleriGetir','seviyeOyunOdulu','enerjiDurumuGetir','kelimelerGetir','kategorileriGetir','dogruYanlisSorulariGetir','etkinlikTanimlariGetir','konusmaEsAnlamlarGetir','companionDialogueOpen','companionDialogueAnswer','enerjiDegistir','okumaHiziKaydet','okumaGecmisGetir','dersKonulariGetir','dersKonuDetayGetir','dersTestSonucKaydet','dersBilmiyordumToggle','companionSummary','companionDialogues','dialogueList','dialogueStart','dialogueAnswer','dialogueComplete','reviewList','reviewAnswer','companionReview','companionDialogue','companionDialogueComplete'].includes(op))return true;
  if(op==='ekVeriGetir')return ['yo','seviye','oyun'].includes(b.anahtar);
@@ -114,6 +114,64 @@ export function teacherPortalAPI(d){
    if(reports.error)throw reports.error;if(games.error)throw games.error;
    const totals=(games.data||[]).reduce((o,g)=>({plays:o.plays+1,correct:o.correct+Number(g.correct_count||0),wrong:o.wrong+Number(g.wrong_count||0)}),{plays:0,correct:0,wrong:0});
    return json({ok:true,student:{username:student.data.username,fullName:student.data.full_name,classNo:student.data.class_no,xp:student.data.xp,points:student.data.points,streak:student.data.streak},totals,reports:reports.data||[]});
+  }
+
+  if(['teacherPortalClassAnalytics','teacherPortalAnnouncement','teacherPortalRubric','teacherPortalPerformance','teacherPortalStudentContact'].includes(op)){
+   const pupils=await db.from('students').select('id,username,full_name,class_no,branch,email,phone,points,xp,email_verified_at').eq('teacher_id',r.teacher_id).eq('status','approved').is('frozen_at',null);
+   if(pupils.error)throw pupils.error;
+   const all=pupils.data||[],sid=String(b.studentId||''),pupil=all.find(x=>x.id===sid);
+   if(op==='teacherPortalStudentContact'){
+    if(!pupil)return fail('Bağlı öğrenciyi seç.',403);
+    if(b.save!==true)return json({ok:true,student:{username:pupil.username,email:pupil.email||'',phone:pupil.phone||'',verified:!!pupil.email_verified_at}});
+    const phone=String(b.phone??'').replace(/\D/g,'');
+    if(phone&& !/^(05\d{9}|5\d{9})$/.test(phone))return fail('Telefon 05XX XXX XX XX biçiminde olmalı.');
+    // Do not allow a teacher portal code to reset a minor's login or verified email.
+    const update=await db.from('students').update({phone:phone?(phone.length===10?'0'+phone:phone):null}).eq('id',sid).eq('teacher_id',r.teacher_id);
+    if(update.error)throw update.error;
+    return json({ok:true,mesaj:'Telefon güncellendi. E-posta ve şifre için öğrenci hesap doğrulaması gerekir.'});
+   }
+   if(op==='teacherPortalPerformance'){
+    if(!pupil)return fail('Bağlı öğrenciyi seç.',403);
+    const delta=Number(b.delta);
+    if(![0.3,-2].includes(delta))return fail('Geçerli puan işlemi seç.',400);
+    const next=Math.max(0,Math.min(100,Math.round((Number(pupil.points||0)+delta)*10)/10));
+    const up=await db.from('students').update({points:next}).eq('id',sid).eq('teacher_id',r.teacher_id);
+    if(up.error)throw up.error;
+    const history=await db.from('points_transactions').insert({student_id:sid,change_amount:next-Number(pupil.points||0),balance_after:next,reason:'Ders içi performans'});
+    if(history.error)throw history.error;
+    return json({ok:true,points:next});
+   }
+   if(op==='teacherPortalRubric'){
+    if(!pupil)return fail('Bağlı öğrenciyi seç.',403);
+    const scores=['reading_score','writing_score','vocabulary_score','speaking_score','grammar_score'].map(k=>Number(b[k]));
+    if(scores.some(v=>!Number.isFinite(v)||v<0||v>100))return fail('Rubrik puanları 0–100 olmalı.');
+    const average=Math.round(scores.reduce((a,v)=>a+v,0)/5);
+    const record={student_id:sid,teacher_id:r.teacher_id,report_date:new Date().toISOString().slice(0,10),reading_score:scores[0],writing_score:scores[1],vocabulary_score:scores[2],speaking_score:scores[3],grammar_score:scores[4],genel_score:average};
+    const previous=await db.from('teacher_reports').select('id').eq('student_id',sid).eq('report_date',record.report_date).maybeSingle();
+    if(previous.error)throw previous.error;
+    const saved=previous.data?await db.from('teacher_reports').update(record).eq('id',previous.data.id):await db.from('teacher_reports').insert(record);
+    if(saved.error)throw saved.error;
+    return json({ok:true,average});
+   }
+   if(op==='teacherPortalAnnouncement'){
+    const title=String(b.title||'').trim(),message=String(b.message||'').trim();
+    if(title.length<3||title.length>120||message.length<3||message.length>2000)return fail('Başlık 3–120, duyuru 3–2000 karakter olmalı.');
+    const saved=await db.from('announcements').insert({title,message,target_type:'ogretmen',target_list:[],active:true,teacher_id:r.teacher_id});
+    if(saved.error)throw saved.error;
+    return json({ok:true});
+   }
+   const grade=Number(b.grade);if(!Number.isInteger(grade)||grade<1||grade>8)return fail('1–8 arası sınıf seç.',400);
+   const selected=all.filter(p=>Number(p.class_no)===grade),ids=selected.map(p=>p.id),since=new Date(Date.now()-7*86400000).toISOString();
+   if(!ids.length)return json({ok:true,students:[],inactive:[],summary:{plays:0,correct:0,wrong:0,averageXp:0},rubrics:[]});
+   const [games,reports]=await Promise.all([
+    db.from('game_scores').select('student_id,game_key,correct_count,wrong_count,played_on').in('student_id',ids).gte('played_on',since).limit(1000),
+    db.from('teacher_reports').select('student_id,report_date,reading_score,writing_score,vocabulary_score,speaking_score,grammar_score,genel_score').in('student_id',ids).order('report_date',{ascending:false}).limit(500)
+   ]);
+   if(games.error)throw games.error;if(reports.error)throw reports.error;
+   const rows=games.data||[],active=new Set(rows.map(g=>g.student_id)),wrongByGame={};
+   for(const g of rows){const key=String(g.game_key||'Bilinmeyen oyun').slice(0,60);wrongByGame[key]=(wrongByGame[key]||0)+Number(g.wrong_count||0);}
+   const summary={plays:rows.length,correct:rows.reduce((n,g)=>n+Number(g.correct_count||0),0),wrong:rows.reduce((n,g)=>n+Number(g.wrong_count||0),0),averageXp:Math.round(selected.reduce((n,x)=>n+Number(x.xp||0),0)/selected.length),wrongByGame:Object.entries(wrongByGame).sort((a,b)=>b[1]-a[1]).slice(0,8)};
+   return json({ok:true,students:selected.map(p=>({id:p.id,name:p.full_name||p.username,xp:p.xp,points:p.points,plays:rows.filter(g=>g.student_id===p.id).length,email:p.email||'',phone:p.phone||''})),inactive:selected.filter(p=>!active.has(p.id)).map(p=>p.full_name||p.username),summary,rubrics:reports.data||[]});
   }
   if(op==='teacherPortalStudents'){
    const out=await db.from('students').select('id,username,full_name,class_no').eq('teacher_id',r.teacher_id).eq('status','approved').is('frozen_at',null).order('username');if(out.error)throw out.error;
