@@ -2,6 +2,12 @@ name: Communication notice regression
 on:
   pull_request:
     paths:
+      - 'ingilizce/announcements.js'
+      - 'ingilizce/teacher-portal-boot.js'
+      - 'ingilizce/papi-flow.js'
+      - 'ingilizce/index.html'
+      - 'supabase/functions/diji-api/announcements-api.mjs'
+      - 'tests/announcements-*'
       - 'ingilizce/member-experience.js'
       - 'ingilizce/league-momentum.js'
       - 'ingilizce/friends-ui.js'
@@ -22,4 +28,4 @@ jobs:
       - run: node --check ingilizce/league-momentum.js
       - run: node --check ingilizce/friends-ui.js
       - run: node --check ingilizce/teacher-workspace.js
-      - run: node --test tests/notice-mail-center-regression.test.cjs
+      - run: node --test tests/notice-mail-center-regression.test.cjs tests/announcements-api.test.mjs tests/announcements-ui.test.cjs tests/teacher-request-policy.test.cjs tests/auto-notice-budget.test.cjs
