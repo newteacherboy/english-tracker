@@ -36,4 +36,4 @@ jobs:
       - run: node --check ingilizce/account-switch.js
       - run: node --check ingilizce/saved-sessions.js
       - run: node --check ingilizce/session-handoff.js
-      - run: node --test tests/session-handoff.test.cjs tests/saved-sessions.test.cjs tests/account-switch.test.cjs tests/account-switch-dialog.test.cjs tests/daily-goals-cache-version.test.cjs tests/daily-goals-first-load.test.cjs
+      - run: node --test tests/session-handoff.test.cjs tests/saved-sessions.test.cjs tests/account-switch.test.cjs tests/account-switch-dialog.test.cjs tests/daily-goals-cache-version.test.cjs tests/daily-goals-first-load.test.cjs tests/teacher-device-continuity.test.cjs
