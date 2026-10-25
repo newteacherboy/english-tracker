@@ -1,0 +1,25 @@
+name: Cümle Yarışı classroom smoke tests
+on:
+  push:
+    paths:
+      - 'ingilizce/cumle-yarisi.*'
+      - 'ingilizce/activity-ui.*'
+      - 'ingilizce/index.html'
+      - 'tests/cumle-yarisi.test.cjs'
+      - '.github/workflows/cumle-yarisi.yml'
+  pull_request:
+    paths:
+      - 'ingilizce/cumle-yarisi.*'
+      - 'ingilizce/activity-ui.*'
+      - 'ingilizce/index.html'
+      - 'tests/cumle-yarisi.test.cjs'
+      - '.github/workflows/cumle-yarisi.yml'
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node --test tests/cumle-yarisi.test.cjs
