@@ -16,7 +16,8 @@ async function choose(page,team,correct){
  const browser=await chromium.launch({args:['--no-sandbox']});
  try{
   const page=await browser.newPage({viewport:{width:1440,height:900}});
-  await page.setContent('<!doctype html><html lang="tr"><head><meta name="viewport" content="width=device-width,initial-scale=1"></head><body><button id="open">Oyunu Aç</button></body></html>');
+  await page.route('https://games.test/games-assets/cumle-yarisi-cover.svg',route=>route.fulfill({contentType:'image/svg+xml',body:fs.readFileSync(path.join(base,'games-assets/cumle-yarisi-cover.svg'),'utf8')}));
+  await page.setContent('<!doctype html><html lang="tr"><head><base href="https://games.test/"><meta name="viewport" content="width=device-width,initial-scale=1"></head><body><button id="open">Oyunu Aç</button></body></html>');
   await page.evaluate(w=>{
     window.masterKelimeHavuzu=w;window.__toneStarts=0;
     window.AudioContext=class {
