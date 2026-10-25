@@ -159,7 +159,12 @@
     }
    }
   }
-  if(!window.tpHomeInitialized){window.tpHomeInitialized=true;const route=state()?.route||'home';if(route==='panel')teacherDashboardShow();else if(['games','study'].includes(route))teacherDestination(route);else teacherHomeShow();}
+  if(!window.tpHomeInitialized){
+   // Game and study routes depend on scripts loaded later. Start on a stable page.
+   const route=state()?.route||'home';
+   try{if(route==='panel')teacherDashboardShow();else teacherHomeShow();window.tpHomeInitialized=true;}
+   catch(error){window.tpHomeInitialized=false;console.error('[Teacher route]',error);teacherHomeShow();}
+  }
  }
 
  function teacherProfileShow(){
@@ -197,7 +202,7 @@
     hero.replaceWith(badge);
    }
   }
-  panel.classList.add('is-visible');document.body.classList.add('tp-dash-active');observeTeacherChildren();teacherDock();void prepareTeacherTools().catch(showTeacherToolError);
+  document.documentElement.classList.remove('tp-home-starting');document.getElementById('tpTeacherEmergency')?.remove();document.body.classList.remove('tp-legacy-child-open');panel.classList.add('is-visible');document.body.classList.add('tp-dash-active');observeTeacherChildren();teacherDock();void prepareTeacherTools().catch(showTeacherToolError);
   document.querySelector('[data-tp-home-nav]')?.classList.remove('active');
   document.querySelector('#bottomNavMobile [data-tp-panel-nav]')?.classList.add('active');
  }
@@ -215,9 +220,15 @@
  }
  let preparingTools=null;
  const teacherChildren='.rubric-modal,.cog-perde,.sm-overlay,.dm-member-overlay,.dm-account-overlay,.dm-perde,.yo-modal,.yo-perde,#yoModalPerde,#omSifreModal,#odModal,.game-modal-overlay,.gso-overlay,#dmTeacherOral,.dm-teacher-child';
- function teacherToolVisible(){return [...document.querySelectorAll(teacherChildren)].some(el=>el.id!=='ogretmenMenuModal'&&el.id!=='sifreModal'&&el.getClientRects().length&&getComputedStyle(el).display!=='none');}
+ function teacherToolVisible(){
+  return [...document.querySelectorAll(teacherChildren)].some(el=>{
+   if(el.id==='ogretmenMenuModal'||el.id==='sifreModal'||el.hidden||el.closest('[hidden],[aria-hidden="true"],.tp-shade'))return false;
+   const style=getComputedStyle(el),rect=el.getBoundingClientRect();
+   return style.display!=='none'&&style.visibility==='visible'&&Number(style.opacity)>0&&rect.width>0&&rect.height>0&&rect.bottom>0&&rect.right>0&&rect.top<innerHeight&&rect.left<innerWidth;
+  });
+ }
  function observeTeacherChildren(){
-  const sync=()=>{const visible=teacherToolVisible();document.body.classList.toggle('tp-legacy-child-open',visible);const menu=document.getElementById('ogretmenMenuModal');if(menu?.style.display==='flex')menu.style.display='none';};
+  const sync=()=>{const visible=document.body.classList.contains('tp-dash-active')&&teacherToolVisible();document.body.classList.toggle('tp-legacy-child-open',visible);const menu=document.getElementById('ogretmenMenuModal');if(menu?.style.display==='flex')menu.style.display='none';};
   requestAnimationFrame(sync);
   if(window.tpLegacyToolObserver)return;
   let queued=false;window.tpLegacyToolObserver=new MutationObserver(()=>{if(queued)return;queued=true;requestAnimationFrame(()=>{queued=false;sync();});});
@@ -390,7 +401,7 @@
 
  function teacherHomeShow(){
   teacherDashboardHide();
-  if(!mode)return;rememberRoute('home');document.getElementById('tpTeacherHome')?.classList.add('is-visible');
+  if(!mode)return;rememberRoute('home');document.getElementById('tpTeacherEmergency')?.remove();document.getElementById('tpTeacherHome')?.classList.add('is-visible');
   document.body.classList.add('tp-home-active');document.documentElement.classList.remove('tp-home-starting');teacherDock();
   document.querySelector('[data-tp-home-nav]')?.classList.add('active');
  }
@@ -398,10 +409,16 @@
  function teacherDestination(action){
   if(action==='panel'){teacherDashboardShow();return;}
   rememberRoute(action);teacherHomeHide();teacherDashboardHide();teacherDock();
-  if(action==='oral'){window.dmTeacherOral?.open?.();return;}
+  if(action==='oral'){if(typeof window.dmTeacherOral?.open==='function')window.dmTeacherOral.open();else{teacherHomeShow();window.yoToast?.('Sözlü ekranı henüz hazır değil. Ana sayfaya döndün.');}return;}
   const id=action==='study'?'tab-derscalis':action==='games'?'tab-aktiviteler':'tab-profile-menu';
   const launch=action==='study'?window.dersCalisTamEkranAc:window.aktivitelerTamEkranAc;
-  if(typeof launch==='function')launch();else document.querySelector('#bottomNavMobile [data-ekran="'+id+'"]')?.click();
+  const target=document.querySelector('#bottomNavMobile [data-ekran="'+id+'"]');
+  const recover=error=>{console.error('[Teacher navigation]',error);teacherHomeShow();window.yoToast?.('Bu ekran açılamadı. Öğretmen ana sayfasına döndün.');};
+  try{
+   if(typeof launch!=='function'&&!target)throw Error('Hedef ekran henüz yüklenmedi.');
+   const result=typeof launch==='function'?launch():target.click();
+   if(result&&typeof result.then==='function')result.catch(recover);
+  }catch(error){recover(error);}
 
  }
 
@@ -412,7 +429,11 @@
  document.addEventListener('dm:state',wrapGames);document.addEventListener('dm:login',wrapGames);if(mode)document.addEventListener('click',()=>{if(window.tpHomeInitialized){teacherHome();suppressPreviewPrompts();}}, {capture:false});
  // First paint must be the private teacher home even if the learner route fails.
  if(mode){
-  const bootHome=()=>{try{teacherHome();}catch(err){console.error('[Teacher home]',err);}};
+  const bootHome=()=>{try{teacherHome();if(!window.tpHomeInitialized)throw Error('Öğretmen sayfası başlatılamadı.');}catch(err){
+   console.error('[Teacher home]',err);document.documentElement.classList.remove('tp-home-starting');
+   const home=document.getElementById('tpTeacherHome');
+   if(home){home.classList.add('is-visible');document.body.classList.add('tp-home-active');}
+  }};
   if(document.body)bootHome();else document.addEventListener('DOMContentLoaded',bootHome,{once:true});
  }
  let opened=false;const timer=setInterval(()=>{wrapGames();if(mode&&!opened&&document.body){opened=true;teacherHome();teacherDock();suppressPreviewPrompts();prepareTeacherAppearance();sessionStorage.removeItem('dm_tp_pending');}if(opened)clearInterval(timer);},500);setTimeout(()=>clearInterval(timer),30000);
