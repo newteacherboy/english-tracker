@@ -136,7 +136,7 @@ function setup(){
  clearInterval(ticker);ticker=null;session=null;
  var values=bank(),classes=shuffle([...new Set(values.map(function(w){return w.cl;}).sort(function(a,b){return a-b;}) )]).sort(function(a,b){return a-b;});
  root('<section class="dm-sr-shell dm-sr-setup"><header class="dm-sr-header"><div><small>🏁 DİJİ MEDU · SINIF İÇİ KAPIŞMA</small><h2>Cümle Yarışı</h2><p>İki takım · farklı sorular · 12 tur</p></div><button type="button" data-close class="dm-sr-close" aria-label="Oyunu kapat">×</button></header>'+
- '<div class="dm-sr-hero"><img src="games-assets/cumle-yarisi-cover.webp" alt="Papi kırmızı ve mavi yarış arabalarıyla" onerror="this.src=\'papi-welcome-v2.png\'"><div><strong>🏎️🏁 Yarışa hazır mısın?</strong><small>Hızlı cevapla · Arabanı öne geçir!</small></div></div>'+
+ '<div class="dm-sr-hero"><img src="games-assets/cumle-yarisi-cover.svg" alt="Papi kırmızı ve mavi yarış arabalarıyla" onerror="this.src=\'papi-welcome-v2.png\'"><div><strong>🏎️🏁 Yarışa hazır mısın?</strong><small>Hızlı cevapla · Arabanı öne geçir!</small></div></div>'+
  '<div class="dm-sr-setup-body"><label class="dm-sr-setting">🎓 Sınıf<select data-class aria-label="Sınıf seç">'+classes.map(function(n){return '<option value="'+n+'">'+n+'. Sınıf</option>';}).join('')+'</select></label>'+
  '<fieldset class="dm-sr-setting dm-sr-unit-setting"><legend>📚 Ünite / Tema</legend><div data-units class="dm-sr-units"></div></fieldset>'+
  '<label class="dm-sr-setting">⏱️ Soru Süresi<select data-duration aria-label="Her soru için süre"><option value="10">10 saniye</option><option value="15" selected>15 saniye</option><option value="20">20 saniye</option></select></label>'+
