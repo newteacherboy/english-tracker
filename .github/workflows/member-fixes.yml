@@ -1,9 +1,9 @@
 name: Member flow regression checks
 on:
   push:
-    paths: ['ingilizce/**', 'supabase/functions/diji-api/member-tools-api.ts', 'supabase/functions/medupro-api/**', 'tests/member-fixes-ui.cjs', 'tests/classroom-authorization.test.cjs', '.github/workflows/member-fixes.yml']
+    paths: ['ingilizce/**', 'supabase/functions/diji-api/member-tools-api.ts', 'supabase/functions/medupro-api/**', 'tests/member-fixes-ui.cjs', 'tests/contact-exit.test.cjs', 'tests/classroom-authorization.test.cjs', '.github/workflows/member-fixes.yml']
   pull_request:
-    paths: ['ingilizce/**', 'supabase/functions/diji-api/member-tools-api.ts', 'supabase/functions/medupro-api/**', 'tests/member-fixes-ui.cjs', 'tests/classroom-authorization.test.cjs']
+    paths: ['ingilizce/**', 'supabase/functions/diji-api/member-tools-api.ts', 'supabase/functions/medupro-api/**', 'tests/member-fixes-ui.cjs', 'tests/contact-exit.test.cjs', 'tests/classroom-authorization.test.cjs']
 permissions:
   contents: read
 concurrency:
@@ -19,6 +19,6 @@ jobs:
         with:
           node-version: '24'
       - run: npm install --no-save --package-lock=false --ignore-scripts jsdom@26.1.0
-      - run: node --test --test-timeout=60000 tests/active-time-clock.test.cjs tests/achievement-feed-cache.test.cjs tests/member-fixes-ui.cjs tests/member-tools.test.cjs tests/classroom-authorization.test.cjs tests/app-updates.test.cjs tests/portal-integrity.test.cjs tests/account-deletion-sw.test.cjs tests/sw-versioned-cache.test.cjs
+      - run: node --test --test-timeout=60000 tests/contact-exit.test.cjs tests/active-time-clock.test.cjs tests/achievement-feed-cache.test.cjs tests/member-fixes-ui.cjs tests/member-tools.test.cjs tests/classroom-authorization.test.cjs tests/app-updates.test.cjs tests/portal-integrity.test.cjs tests/account-deletion-sw.test.cjs tests/sw-versioned-cache.test.cjs
       - run: node tests/world-badges-ui.cjs
       - run: node tests/medupro-edge.test.cjs

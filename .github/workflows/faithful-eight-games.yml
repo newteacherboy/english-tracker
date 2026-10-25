@@ -6,6 +6,9 @@ on:
       - 'ingilizce/eight-game-fullscreen.*'
       - 'ingilizce/game-viewport.*'
       - 'tests/game-viewport*'
+      - 'tests/quiz-flow-ui.cjs'
+      - 'tests/contact-exit*'
+      - 'tests/harf-bahcesi-start*'
       - 'tests/teacher-game-regressions*'
       - 'ingilizce/teacher-portal.*'
       - 'ingilizce/play-navigation.js'
@@ -20,6 +23,9 @@ on:
       - 'ingilizce/eight-game-fullscreen.*'
       - 'ingilizce/game-viewport.*'
       - 'tests/game-viewport*'
+      - 'tests/quiz-flow-ui.cjs'
+      - 'tests/contact-exit*'
+      - 'tests/harf-bahcesi-start*'
       - 'tests/teacher-game-regressions*'
       - 'ingilizce/teacher-portal.*'
       - 'ingilizce/play-navigation.js'
@@ -48,7 +54,7 @@ jobs:
       - name: Inspect eight real game screens on mobile and tablet
         env:
           NODE_PATH: /tmp/faithful-ui/node_modules
-        run: node tests/faithful-eight-games-ui.cjs && node tests/eight-game-fullscreen-ui.cjs && node tests/game-viewport-ui.cjs && node tests/teacher-game-regressions-ui.cjs && node --test tests/game-viewport.test.cjs tests/teacher-portal-api.test.mjs tests/classroom-identity.test.mjs
+        run: node tests/faithful-eight-games-ui.cjs && node tests/eight-game-fullscreen-ui.cjs && node tests/game-viewport-ui.cjs && node tests/teacher-game-regressions-ui.cjs && node tests/quiz-flow-ui.cjs && node tests/contact-exit-ui.cjs && node --test tests/game-viewport.test.cjs tests/teacher-portal-api.test.mjs tests/classroom-identity.test.mjs tests/contact-exit.test.cjs tests/harf-bahcesi-start.test.cjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -57,3 +63,5 @@ jobs:
             /tmp/faithful-game-screens/*.png
             /tmp/eight-game-fullscreen/*.png
             /tmp/diji-game-viewport/*.png
+            /tmp/contact-exit-screens/*.png
+            /tmp/quiz-flow-*.png

@@ -70,7 +70,7 @@ window.supabaseClient=supabaseClient;
     var tok = window.dmTeacherRequestToken?.(u,opt) || OGRT() || TOKEN(), usedToken = '';
     opt = Object.assign({}, opt || {});
     if (opt.method && String(opt.method).toUpperCase() === 'POST' && typeof opt.body === 'string') {
-      try { var b = JSON.parse(opt.body); if (tok && (!b.t || window.dmTeacherPortalMode&&window.dmTeacherRequestRole?.(u,opt)==='teacher')) b.t = tok; usedToken = b.t || ''; opt.body = JSON.stringify(b); } catch (e) {}
+      try { var b = JSON.parse(opt.body); if (tok && (!b.t || window.dmTeacherPortalMode&&!['oturumBilgisi','cikis'].includes(b.islem))) b.t = tok; usedToken = b.t || ''; opt.body = JSON.stringify(b); } catch (e) {}
     } else {
       if(tok&&typeof url==='string'&&window.dmTeacherPortalMode&&window.dmTeacherRequestRole?.(u,opt)==='teacher'){const requestURL=new URL(u,location.href);requestURL.searchParams.set('t',tok);url=requestURL.href;}
       if (tok && typeof url === 'string' && !/[?&]t=/.test(url)) url = u + (u.indexOf('?') === -1 ? '?' : '&') + 't=' + encodeURIComponent(tok);
@@ -11706,6 +11706,10 @@ function ozellikSecDoldur() {
         let gsoAktif = null; // { isim, oyunKey, devamFn, tekrarFn }
 
         function genelSonucEkraniGoster(o) {
+            const resultRoot=document.getElementById('genelSonucOverlay');
+            document.body.appendChild(resultRoot);
+            for(const root of document.querySelectorAll('.game-modal-overlay'))root.style.display='none';
+            const quiz=document.getElementById('yoModal');if(quiz?.dataset.dmSelectedGame)quiz.classList.remove('acik');
             let dogru = Number(o.dogru) || 0;
             let yanlis = Number(o.yanlis) || 0;
             let toplam = dogru + yanlis;
@@ -12657,6 +12661,7 @@ const YO_SOHBET = [
           else { yoToast(`${o.dogru} doğru, ${o.yanlis} yanlış`); if (o.devamFn) o.devamFn(); }
         }
         function yoEnerjiKontrol() {
+          if(window.dmTeacherPortalMode)return true;
           if (typeof siniftaOynananOgrenci !== 'undefined' && siniftaOynananOgrenci) return true;
           if (window.dmOdevEnerjiMuaf && window.dmOdevEnerjiMuaf()) return true;   /* ödev oyunu enerji harcamaz */
           let k = window.genelEnerjiKalan;
@@ -12853,7 +12858,7 @@ const YO_SOHBET = [
         function dikteAc() {
           if (!yoHazirMi()) return;
           let havuz = yoOrnekKelimeHavuzu(/^[a-zA-Z]{3,10}$/);
-          if (havuz.length < 5) { yoToast('Kelime havuzu henüz yüklenmedi, birkaç saniye sonra dene.'); return; }
+          if (!havuz.length) { yoToast('Seçili ünitelerde dinleme için uygun kelime yok. Başka bir ünite seç.'); return; }
           if (!yoEnerjiKontrol()) return;
           dkt = { liste: OC.kelimeSec('dikte', havuz, OC.SORU), i:0, d:0, y:0, bas:Date.now() }; OC.basla('dikte');
           yoModalAc('🎧 Kulak Dedektifi', '');
@@ -26538,9 +26543,9 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <script defer src="experience-ui.js?v=20261013-member-122"></script>
 <link rel="stylesheet" href="harf-bahcesi.css?v=1">
 <link rel="stylesheet" href="kelime-rallisi.css?v=20261020-slow">
-<script defer src="lazy-games.js?v=20261016-flow-2"></script>
+<script defer src="lazy-games.js?v=20261025-results-1"></script>
 <link rel="stylesheet" href="game-experience.css?v=20261011-wordmode">
-<script defer src="game-experience.js?v=20261025-game-fit-1"></script>
+<script defer src="game-experience.js?v=20261025-results-1"></script>
 <script defer src="game-access.js?v=20261020-1"></script>
 <script defer src="onboarding-ui.js?v=20261015-members-only-1"></script>
 <script defer src="first-discovery.js?v=20261025-teacher-fixes-1"></script>
@@ -26592,11 +26597,11 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 @media(min-width:750px){#bzPerde:has(> .bz-oyun.dm-question-panel)>#bzAlan{width:min(90%,700px)!important;max-width:700px!important}}
 @media(max-height:680px){#bzPerde:has(> .bz-oyun.dm-question-panel) #bzAlan .bz-kart2{height:clamp(44px,9vh,65px)!important}#bzPerde:has(> .bz-oyun.dm-question-panel) #bzAlan .bz-ipucu{margin:2px 0 5px!important}#bzPerde:has(> .bz-oyun.dm-question-panel)>#bzJokerler .bz-jk{padding:2px!important}}
 </style>
-<link rel="stylesheet" href="account-settings.css?v=20261025-energy-menu-1"><script defer src="account-settings.js?v=20261025-energy-menu-1"></script><script defer src="kisisel-bilgiler.js?v=20261020-start-path-2"></script><script defer src="student-management.js?v=20261021-contacts-2"></script><script defer src="contact-policy.js?v=2"></script><script defer src="sifre-islem.js?v=1"></script><script defer src="ekonomi.js?v=20261019-offline-1"></script>
+<link rel="stylesheet" href="account-settings.css?v=20261025-energy-menu-1"><script defer src="account-settings.js?v=20261025-energy-menu-1"></script><script defer src="kisisel-bilgiler.js?v=20261025-contact-exit-1"></script><script defer src="student-management.js?v=20261021-contacts-2"></script><script defer src="contact-policy.js?v=20261025-contact-exit-1"></script><script defer src="sifre-islem.js?v=1"></script><script defer src="ekonomi.js?v=20261019-offline-1"></script>
 <link rel="stylesheet" href="goal-announcements.css?v=1"><script defer src="goal-announcements.js?v=3"></script>
 <link rel="stylesheet" href="progress-ui.css?v=1">
 <link rel="stylesheet" href="progression-ui.css?v=20261018-chest-1"><script defer src="progression-ui.js?v=20261025-energy-menu-1"></script>
-<link rel="stylesheet" href="game-feedback.css?v=1"><script defer src="game-feedback.js?v=20261022-kombo-1"></script>
+<link rel="stylesheet" href="game-feedback.css?v=1"><script defer src="game-feedback.js?v=20261025-results-1"></script>
 <link rel="stylesheet" href="profile-forest.css?v=1">
 <script defer src="profile-forest.js?v=1"></script>
 <link rel="stylesheet" href="question-panels-v1.css?v=2">
@@ -26668,9 +26673,9 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <link rel="stylesheet" href="faithful-eight-games.css?v=20261020-selected-art-1">
 <script defer src="faithful-eight-games.js?v=20261025-game-fit-1"></script>
 <!-- Eight selected mini-games: fullscreen responsive layout and separate back/X controls. -->
-<link rel="stylesheet" href="game-viewport.css?v=20261025-fit-2"><script defer src="game-viewport.js?v=20261025-fit-2"></script>
+<link rel="stylesheet" href="game-viewport.css?v=20261025-results-1"><script defer src="game-viewport.js?v=20261025-fit-2"></script>
 <link rel="stylesheet" href="eight-game-fullscreen.css?v=20261020-fit-v1">
 <script defer src="eight-game-fullscreen.js?v=20261025-close-1"></script>
-<link rel="stylesheet" href="teacher-portal.css?v=20261025-teacher-fixes-1"><script defer src="teacher-portal.js?v=20261025-teacher-fixes-1"></script>
+<link rel="stylesheet" href="teacher-portal.css?v=20261025-teacher-fixes-1"><script defer src="teacher-portal.js?v=20261025-results-1"></script>
 </body>      
         </html>

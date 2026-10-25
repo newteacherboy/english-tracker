@@ -8,14 +8,18 @@
   const API = "https://nxfqlutulxqzqgwewssd.supabase.co/functions/v1/diji-api";
 
   const css = `
-  .kb-perde{position:fixed;inset:0;z-index:100000;background:rgba(30,20,60,.55);display:flex;align-items:flex-end;justify-content:center;padding:0;font-family:inherit}
+  .kb-perde{box-sizing:border-box;position:fixed;inset:0;z-index:100000;background:rgba(30,20,60,.55);display:flex;align-items:flex-end;justify-content:center;padding:0;font-family:inherit}
   @media(min-width:640px){.kb-perde{align-items:center;padding:20px}}
-  .kb-kutu{background:#fff;width:100%;max-width:460px;height:min(92dvh,920px);max-height:92dvh;display:flex;flex-direction:column;min-height:0;overflow:hidden;border-radius:22px 22px 0 0;padding:20px 18px calc(18px + env(safe-area-inset-bottom,0px));color:#2d2350;box-shadow:0 -8px 30px rgba(60,30,120,.25)}
+  .kb-kutu{box-sizing:border-box;background:#fff;width:100%;max-width:460px;height:min(92dvh,920px);max-height:92dvh;display:flex;flex-direction:column;min-height:0;overflow:hidden;border-radius:22px 22px 0 0;padding:20px 18px calc(18px + env(safe-area-inset-bottom,0px));color:#2d2350;box-shadow:0 -8px 30px rgba(60,30,120,.25)}
   @media(min-width:640px){.kb-kutu{border-radius:22px}}
   .kb-icerik{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding-bottom:12px}
   .kb-altbar{flex:0 0 auto;position:relative;z-index:5;background:#fff;padding:10px 0 max(8px,env(safe-area-inset-bottom,0px));box-shadow:0 -10px 16px #fff}
   .kb-bas{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:4px;flex:0 0 auto}
   .kb-ustbar{flex:0 0 auto;display:flex;flex-direction:column;gap:5px;padding:8px 0;background:#fff;position:relative;z-index:8;border-bottom:1px solid #ece6ff}
+  .kb-actions{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px}
+  .kb-actions>button{box-sizing:border-box;min-width:0;width:100%}
+  .kb-cikis{border:2px solid #9bbdb4;background:#edf6f2;color:#174839;border-radius:14px;padding:10px;font:800 15px system-ui;min-height:48px;cursor:pointer;touch-action:manipulation}
+  .kb-perde button[hidden]{display:none!important}
   .kb-ustbar .kb-mesaj{margin:0;min-height:0}
   .kb-ustbar .kb-mesaj:empty{display:none}
   .kb-ustbar .kb-kaydet{margin:0!important;min-height:48px;box-shadow:none!important}
@@ -60,15 +64,20 @@
   };
 
   window.kisiselBilgilerAc = async function (secenek = {}) {
+    const ownerToken=localStorage.getItem('ing_token')||'';
     const returnView=window.dmViewHistory?.capture();stilEkle();
     document.querySelectorAll(".kb-perde").forEach(x => x.remove());
     const perde = document.createElement("div");
     perde.className = "kb-perde";
     if(secenek.zorunlu) perde.style.zIndex='100000001';
     perde.setAttribute("role", "dialog"); perde.setAttribute("aria-modal", "true"); perde.setAttribute("aria-labelledby", "kbBaslik");
-    perde.innerHTML = `<div class="kb-kutu"><div class="kb-bas"><h3 id="kbBaslik">👤 Kişisel bilgiler</h3><button class="kb-x" aria-label="Kapat">✕</button></div><div class="kb-yukleniyor">Bilgilerin yükleniyor…</div></div>`;
+    perde.innerHTML = `<div class="kb-kutu"><div class="kb-bas"><h3 id="kbBaslik">👤 Kişisel bilgiler</h3><button class="kb-cikis" type="button">Çıkış yap</button><button class="kb-x" aria-label="Kapat">✕</button></div><div class="kb-yukleniyor">Bilgilerin yükleniyor…</div></div>`;
     document.body.appendChild(perde);
-    const kapat = () => { if(secenek.zorunlu && window.dmContactFrozen)return; perde.remove();window.dmViewHistory?.leave(perde); document.removeEventListener("keydown", esc); };
+    const kapat = (force=false) => { if(force!==true && secenek.zorunlu && window.dmContactFrozen)return; perde.remove();window.dmViewHistory?.leave(perde); document.removeEventListener("keydown", esc);document.removeEventListener('dm:contact-exit',forceClose); };
+    const forceClose=()=>kapat(true);
+    const logout=()=>{if((localStorage.getItem('ing_token')||'')!==ownerToken){forceClose();return;}if(!window.dmContactPolicy?.logout(ownerToken))window.cikisYap?.();};
+    document.addEventListener('dm:contact-exit',forceClose);
+    perde.querySelector('.kb-cikis').onclick=logout;
     const esc = e => { if (e.key === "Escape") kapat(); if(e.key==='Tab' && secenek.zorunlu && window.dmContactFrozen){const list=[...perde.querySelectorAll('button:not([hidden]):not([disabled]),input:not([readonly]),select')];const first=list[0],last=list[list.length-1];if(e.shiftKey&&document.activeElement===first){e.preventDefault();last?.focus();}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first?.focus();}} };
     window.dmViewHistory?.track(perde,{parent:returnView,close:kapat});document.addEventListener("keydown", esc);
     perde.addEventListener("click", e => { if (e.target === perde) kapat(); });
@@ -76,6 +85,7 @@
     if(secenek.zorunlu)perde.querySelector('.kb-x').hidden=true;
 
     const d = await istek({ islem: "kisiselBilgilerim" });
+    if(!perde.isConnected||(localStorage.getItem('ing_token')||'')!==ownerToken)return;
     const kutu = perde.querySelector(".kb-kutu");
     if (!d.ok) { kutu.querySelector(".kb-yukleniyor").textContent = d.mesaj || "Bilgiler alınamadı."; const tekrar=document.createElement('button');tekrar.className='kb-kaydet';tekrar.textContent='Tekrar dene';tekrar.onclick=()=>window.kisiselBilgilerAc(secenek);kutu.appendChild(tekrar);return; }
 
@@ -128,7 +138,9 @@
     while(kutu.firstChild)body.appendChild(kutu.firstChild);
     header.remove();
     kutu.appendChild(header);
-    topbar.appendChild(saveButton);
+    const actions=document.createElement('div');actions.className='kb-actions';
+    const exitButton=document.createElement('button');exitButton.type='button';exitButton.className='kb-cikis';exitButton.textContent='Çıkış yap';exitButton.onclick=logout;
+    actions.append(saveButton,exitButton);topbar.appendChild(actions);
     topbar.appendChild(feedback);
     kutu.appendChild(topbar);
     kutu.appendChild(body);
@@ -174,6 +186,7 @@
 
     const mesaj = (t, tur) => { const m = $("kbMesaj"); m.textContent = t || ""; m.className = "kb-mesaj" + (tur ? " " + tur : ""); };
     $("kbKaydet").onclick = async () => {
+      if((localStorage.getItem('ing_token')||'')!==ownerToken){forceClose();return;}
       const govde = {
         islem: "kisiselBilgiGuncelle",
         adSoyad: $("kbAd").value.trim(), okul: $("kbOkul").value.trim(),
@@ -191,6 +204,7 @@
       }
       const b = $("kbKaydet"); b.disabled = true; b.textContent = "Kaydediliyor…"; mesaj("");
       const r = await istek(govde);
+      if(!perde.isConnected||(localStorage.getItem('ing_token')||'')!==ownerToken)return;
       b.disabled = false; b.textContent = "Kaydet";
       if (!r.ok) { if (r.sifreGerekli) { $("kbSifre").value = ""; sifreIste(); } return mesaj(r.mesaj || "Kaydedilemedi.", "hata"); }
       const oldPurpose=mevcut.learnerProfile?.purpose,oldStage=mevcut.learnerProfile?.educationStage;

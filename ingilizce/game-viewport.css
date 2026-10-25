@@ -1,5 +1,13 @@
 /* The first important cascade layer owns viewport geometry over legacy game skins. */
 @layer bilgiIslands {
+html body #genelSonucOverlay.acik{z-index:2147483644!important}
+html body #dmGameIntro.dm-vp-root .hb-card{display:flex!important;flex-direction:column!important;padding-top:50px!important}
+html body #dmGameIntro.dm-vp-root .hb-body{flex:1 1 auto!important;min-height:0!important;overflow-y:auto!important}
+html body #dmIntroUnits .unite-chip{min-height:44px!important;min-width:52px!important;cursor:pointer!important;touch-action:manipulation}
+html body #dmIntroUnits .unite-chip.selected{background:#087c72!important;color:white!important;border:2px solid #07594f!important}
+/* Classic game summaries are replaced by the shared result card. */
+html body .game-modal-overlay [id$="BitisEkrani"]{display:none!important}
+
 /* Native close sets inline display:none; fullscreen classes must never override it. */
 html body :is(.dm-vp-root,.fg-fs-active)[style*="display: none"],html body :is(.dm-vp-root,.fg-fs-active)[style*="display:none"]{display:none!important}
 

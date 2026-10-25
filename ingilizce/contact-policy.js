@@ -10,17 +10,30 @@
     document.querySelectorAll('[data-cp-inert]').forEach(el=>{el.inert=false;el.removeAttribute('data-cp-inert');});
     if(focusBefore?.isConnected)focusBefore.focus();focusBefore=null;
   }
+  function logout(expectedToken=studentToken()){
+    // A blocked account must be able to leave even when profile requests are offline.
+    const current=studentToken();if(!current||current!==expectedToken)return false;
+    try{window.dmSavedSessions?.forget(current);}catch{}
+    for(const key of ['ing_token','ing_oturumAcik','ing_aktifOgrenci','ing_toplamSaniye'])localStorage.removeItem(key);
+    sessionStorage.removeItem('dm_session_handoff_v1');
+    token='';document.dispatchEvent(new Event('dm:contact-exit'));clear();
+    try{void fetch(API,{method:'POST',keepalive:true,headers:{'Content-Type':'application/json'},body:JSON.stringify({islem:'cikis',t:current})}).catch(()=>{});}catch{}
+    // No pending save or revoke request may keep the learner trapped on this screen.
+    window.location.replace('./?baslangic=1');return true;
+  }
+  window.dmContactPolicy={logout};
   function freeze(){
     if(!studentToken())return clear();
     styles();remove('cpBanner');window.dmContactFrozen=true;
     if(document.getElementById('cpBlock'))return;
     focusBefore=document.activeElement;
     const p=document.createElement('div');p.id='cpBlock';p.className='cp-block';p.setAttribute('role','dialog');p.setAttribute('aria-modal','true');p.setAttribute('aria-label','İletişim bilgilerini tamamla');
-    p.innerHTML='<div class="cp-card"><img src="papi-app-icon-v3.png" alt="Medu"><h2>Hesap bilgilerini tamamla</h2><p>15 günlük süren doldu. Devam etmek için hesap bilgilerine geçerli bir telefon ve e-posta adresi ekle. Bilgilerin kaydedilince uygulama yeniden açılır.</p><button type="button" id="cpComplete">Hesap bilgilerimi aç</button></div>';
+    p.innerHTML='<div class="cp-card"><img src="papi-app-icon-v3.png" alt="Medu"><h2>Hesap bilgilerini tamamla</h2><p>15 günlük süren doldu. Devam etmek için hesap bilgilerine geçerli bir telefon ve e-posta adresi ekle. Bilgilerin kaydedilince uygulama yeniden açılır.</p><button type="button" id="cpComplete">Hesap bilgilerimi aç</button><button type="button" id="cpLogout">Çıkış yap</button></div>';
     document.body.appendChild(p);
     // Background controls cannot receive taps or keyboard focus while the account is frozen.
     [...document.body.children].forEach(el=>{if(!el.inert && el!==p && !el.classList.contains('kb-perde') && !['SCRIPT','STYLE','LINK'].includes(el.tagName)){el.inert=true;el.setAttribute('data-cp-inert','1');}});
     p.querySelector('button').onclick=()=>window.kisiselBilgilerAc?.({zorunlu:true});
+    p.querySelector('#cpLogout').onclick=()=>logout();
     p.querySelector('button').focus();
     window.kisiselBilgilerAc?.({zorunlu:true});
   }
