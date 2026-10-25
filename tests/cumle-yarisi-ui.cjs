@@ -30,14 +30,16 @@ const words=Array.from({length:30},(_,i)=>({ingilizce:'item'+i,turkce:'anlam '+i
    assert(answer,'Question must be from selected class and units');
    const correct=left.startsWith('In English')?answer.ingilizce:answer.turkce;
    const leftButtons=page.locator('[data-side="0"] [data-answer]'),rightButtons=page.locator('[data-side="1"] [data-answer]');
-   await leftButtons.filter({hasText:correct}).click();
+   const correctIndex=await leftButtons.evaluateAll((els,answer)=>els.findIndex(el=>el.textContent===answer),correct);
+   assert(correctIndex>=0);await leftButtons.nth(correctIndex).click();
    assert.match(await page.locator('[data-side="0"] [data-feedback]').innerText(),/\+.+puan/);
    assert(Number((await page.locator('[data-side="0"] [data-score]').innerText()).split(' ')[0])>=100);
    assert.equal(await page.locator('[data-car="0"]').evaluate(e=>parseFloat(e.style.left)>0),true);
    const rightPrompt=right;
    const other=words.find(w=>rightPrompt.startsWith('In English')?rightPrompt.includes('“'+w.turkce+'”'):rightPrompt.includes('“'+w.ingilizce+'”'));
    const correctRight=rightPrompt.startsWith('In English')?other.ingilizce:other.turkce;
-   await rightButtons.filter({hasNotText:correctRight}).first().click();
+   const wrongIndex=await rightButtons.evaluateAll((els,answer)=>els.findIndex(el=>el.textContent!==answer),correctRight);
+   assert(wrongIndex>=0);await rightButtons.nth(wrongIndex).click();
    assert.match(await page.locator('[data-side="1"] [data-feedback]').innerText(),/−40 puan/);
    await page.waitForTimeout(1000);
    assert.match(await page.locator('[data-side="0"] .dm-sr-side-meta').innerText(),/Soru 2\s*\/\s*12/);
