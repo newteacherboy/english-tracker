@@ -1,9 +1,9 @@
 name: Games hub
 on:
   push:
-    paths: ['ingilizce/activity-ui.*', 'ingilizce/games-assets/**', 'tests/games-design-selected-1.test.cjs', 'tests/games-hub-ui.cjs', 'tests/games-hub-integration.cjs', 'tests/cumle-yarisi-ui.cjs', 'ingilizce/cumle-yarisi.*', '.github/workflows/games-hub.yml']
+    paths: ['ingilizce/activity-ui.*', 'ingilizce/games-assets/**', 'tests/games-design-selected-1.test.cjs', 'tests/games-hub-ui.cjs', 'tests/games-hub-integration.cjs', 'tests/cumle-yarisi-ui.cjs', 'tests/cumle-yarisi-finish-ui.cjs', 'ingilizce/cumle-yarisi.*', '.github/workflows/games-hub.yml']
   pull_request:
-    paths: ['ingilizce/activity-ui.*', 'ingilizce/games-assets/**', 'tests/games-design-selected-1.test.cjs', 'tests/games-hub-ui.cjs', 'tests/games-hub-integration.cjs', 'tests/cumle-yarisi-ui.cjs', 'ingilizce/cumle-yarisi.*', '.github/workflows/games-hub.yml']
+    paths: ['ingilizce/activity-ui.*', 'ingilizce/games-assets/**', 'tests/games-design-selected-1.test.cjs', 'tests/games-hub-ui.cjs', 'tests/games-hub-integration.cjs', 'tests/cumle-yarisi-ui.cjs', 'tests/cumle-yarisi-finish-ui.cjs', 'ingilizce/cumle-yarisi.*', '.github/workflows/games-hub.yml']
 jobs:
   games:
     runs-on: ubuntu-24.04
@@ -24,5 +24,8 @@ jobs:
         env:
           CODEX_PRIMARY_RUNTIME_NODE_MODULES: ${{ github.workspace }}/node_modules
       - run: node tests/cumle-yarisi-ui.cjs
+        env:
+          CODEX_PRIMARY_RUNTIME_NODE_MODULES: ${{ github.workspace }}/node_modules
+      - run: node tests/cumle-yarisi-finish-ui.cjs
         env:
           CODEX_PRIMARY_RUNTIME_NODE_MODULES: ${{ github.workspace }}/node_modules
