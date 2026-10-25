@@ -2,6 +2,14 @@ name: Communication notice regression
 on:
   pull_request:
     paths:
+      - 'ingilizce/notice-surface.*'
+      - 'tests/notice-surface*'
+      - 'ingilizce/papi-feedback.js'
+      - 'ingilizce/papi-habit.js'
+      - 'ingilizce/medupro.js'
+      - 'ingilizce/experience-ui.js'
+      - 'ingilizce/social-safety.js'
+      - 'ingilizce/notice-sharing.js'
       - 'ingilizce/announcements.js'
       - 'ingilizce/teacher-portal-boot.js'
       - 'ingilizce/papi-flow.js'
@@ -18,12 +26,22 @@ on:
   workflow_dispatch:
 jobs:
   notice-regression:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+      - run: node --check ingilizce/notice-surface.js
+      - run: npm install --prefix /tmp/notice-qa --no-audit --no-fund jsdom@26.1.0 playwright@1.58.2
+      - run: NODE_PATH=/tmp/notice-qa/node_modules node --test tests/notice-surface.test.cjs
+      - run: /tmp/notice-qa/node_modules/.bin/playwright install --with-deps chromium
+      - run: NODE_PATH=/tmp/notice-qa/node_modules node tests/notice-surface-ui.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: papi-notice-surfaces
+          path: /tmp/papi-notice-ui/*.png
       - run: node --check ingilizce/member-experience.js
       - run: node --check ingilizce/league-momentum.js
       - run: node --check ingilizce/friends-ui.js
