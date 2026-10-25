@@ -1,3 +1,4 @@
+import {announcementsAPI} from './announcements-api.mjs';
 import {isClassroomGuest,memberStudents} from './classroom-identity.mjs';
 import {teacherPortalAPI,portalOps,portalOperationAllowed} from './teacher-portal.mjs';
 import {routeExplorationAPI} from './route-exploration.mjs';
@@ -60,6 +61,7 @@ const progression = progressionAPI(supabase,json);
 const cachedContent = contentCache(json);
 const studentManagement = adminStudentsAPI(supabase,json,hashPassword,{verifyPassword,hash:sha256,attempts:denemeSay,audit:denemeYaz});
 const contacts = contactPolicyAPI(supabase,json);
+const announcements=announcementsAPI(supabase,json);
 const myWorld = myWorldAPI(supabase,json);
 const socialSafety=socialSafetyAPI({db:supabase,json,hash:sha256,hashPassword,verifyPassword,queue:kuyrugaEkle});
 
@@ -1426,6 +1428,7 @@ async function handle(req: Request, proxy: any = null) {
   if(op==='iletisimDurumu' && !a)return json({ok:false,hata:'oturum',mesaj:'Öğrenci oturumu gerekli.'},401);
   if(op==='iletisimDurumu' && a.role!=='student')return json({ok:true,uygulanmaz:true,eksik:false,donuk:false,uyari:false});
   const contactDeny=isDemo(a)||a?.teacher_portal_access_id?null:await contacts.guard(op,a);if(contactDeny)return contactDeny;
+  const announcementResponse=await announcements.handle(op,body,a,req.method);if(announcementResponse)return announcementResponse;
   const myWorldResult=await myWorld.handle(op,body,q,a);if(myWorldResult)return myWorldResult;
   const managementResult=await studentManagement.handle(op,body,q,a,req.method);if(managementResult)return managementResult;
   const verifiedResponse=await verifiedGames.handle(op,body,a,req.method);if(verifiedResponse)return verifiedResponse;

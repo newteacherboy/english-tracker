@@ -1,7 +1,7 @@
 /* Same API roles as password login; server still enforces teacher/student scope. */
 (function(g){
  const teacherPrefix=/^(teacherPortal|teacherNotification|teacherLearning|teacherPlacement|ogretmen|ogrenciSifre|bekleyenKayit|kayitOnayla|kayitReddet|rubrik|rapor|odevVer|odevSil|odevListesiOgretmen|duyuruEkle|duyuruSil|duyuruAktif|duyuruListesiGetir|sinifIci|ozellikIzni|communication|adminStudent)/;
- g.DMTeacherRequestPolicy={isTeacher(op,args={},context={}){return teacherPrefix.test(op)||['ekVeriTumu','ekVeriOzet','haftalikVeliRaporu','etkinlikTanimlariGetir','tumVideolariGetir','ozellikListesiGetir','etkinlikAta','disLinkEtkinlikAta','videoOgrenciEkle','planTikGuncelle'].includes(op)||!op&&!!context.tools||op==='ekVeriGetir'&&!!context.tools&&args.ogrenci&&args.ogrenci!==context.participant;}};
+ g.DMTeacherRequestPolicy={isTeacher(op,args={},context={}){return teacherPrefix.test(op)||['yoneticiOgrenciler','yoneticiOgrenciKaydet','yoneticiOgrenciSil','yoneticiIletisimListesi','announcementInbox','announcementRead','ekVeriTumu','ekVeriOzet','haftalikVeliRaporu','etkinlikTanimlariGetir','tumVideolariGetir','ozellikListesiGetir','etkinlikAta','disLinkEtkinlikAta','videoOgrenciEkle','planTikGuncelle'].includes(op)||!op&&!!context.tools||op==='ekVeriGetir'&&!!context.tools&&args.ogrenci&&args.ogrenci!==context.participant;}};
 })(typeof window!=='undefined'?window:globalThis);
 /* Device account registry uses the real storage before classroom isolation. No code is saved. */
 (()=>{'use strict';

@@ -2,7 +2,7 @@ const {test}=require('node:test'),assert=require('node:assert/strict'),fs=requir
 const code=fs.readFileSync('ingilizce/teacher-portal-boot.js','utf8');
 function policy(){const c={URLSearchParams,location:{search:''}};vm.runInNewContext(code,c);return c.DMTeacherRequestPolicy;}
 test('legacy teacher operations use the teacher session including missing report/announcement endpoints',()=>{
- const p=policy();for(const op of ['ogretmenBilgim','teacherPlacementResults','ogretmenSohbetListesi','ogretmenCevapGonder','bekleyenKayitlariGetir','kayitOnayla','rubrikKaydet','sinifIciPuanVer','odevVer','odevSil','odevListesiOgretmen','duyuruListesiGetir','duyuruEkle','duyuruSil','etkinlikAta','disLinkEtkinlikAta','etkinlikTanimlariGetir','tumVideolariGetir','videoOgrenciEkle','planTikGuncelle','ozellikListesiGetir','ekVeriTumu','haftalikVeliRaporu','raporMail','ogrenciSifreSifirla'])assert.equal(p.isTeacher(op),true,op);
+ const p=policy();for(const op of ['yoneticiOgrenciler','yoneticiOgrenciKaydet','yoneticiOgrenciSil','yoneticiIletisimListesi','announcementInbox','announcementRead','ogretmenBilgim','teacherPlacementResults','ogretmenSohbetListesi','ogretmenCevapGonder','bekleyenKayitlariGetir','kayitOnayla','rubrikKaydet','sinifIciPuanVer','odevVer','odevSil','odevListesiOgretmen','duyuruListesiGetir','duyuruEkle','duyuruSil','etkinlikAta','disLinkEtkinlikAta','etkinlikTanimlariGetir','tumVideolariGetir','videoOgrenciEkle','planTikGuncelle','ozellikListesiGetir','ekVeriTumu','haftalikVeliRaporu','raporMail','ogrenciSifreSifirla'])assert.equal(p.isTeacher(op),true,op);
 });
 test('root teacher data and another pupil report are scoped to tools; gameplay keeps participant session',()=>{
  const p=policy(),ctx={tools:true,participant:'Preview'};
