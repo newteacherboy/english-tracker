@@ -10,7 +10,7 @@ function fixture(){
  w.AudioContext=class{constructor(){this.state='running';this.currentTime=0;this.destination={};}createOscillator(){return {frequency:{setValueAtTime(){}},connect(){},start(){sounds.push('tone')},stop(){},disconnect(){}}}createGain(){return {gain:{setValueAtTime(){},exponentialRampToValueAtTime(){}},connect(){},disconnect(){}}}};
  w.eval(source);
  const flush=async()=>{for(let i=0;i<4;i++)await Promise.resolve();};
- return {w,dom,sounds,flush,setActivity:v=>activity=v,async step(ms=250){now+=ms;for(const t of [...timers])if(t.interval)t.fn();else if(t.at<=now){t.at=Infinity;t.fn();}await flush();},close:()=>w.close()};
+ return {w,dom,sounds,flush,setActivity:v=>activity=v,async step(ms=250){now+=ms;for(const t of [...timers])if(t.interval)t.fn();else if(t.at<=now){t.at=Infinity;t.fn();}await flush();},close:()=>{w.dmNoticeSurface.destroy();w.close();}};
 }
 test('top and bottom notices share one queue, actions retain their native handlers',async()=>{
  const f=fixture();try{const {w}=f;let clicked=0;
@@ -38,4 +38,11 @@ test('sound waits for interaction, plays once when presented, respects mute and 
 });
 test('external dialogs hold the next notice, typing does not block its own buttons',async()=>{
  const f=fixture();try{const {w}=f;const dialog=w.document.createElement('div');dialog.setAttribute('role','dialog');w.document.body.append(dialog);const el=w.dmNoticeSurface.notify('Sıradaki');await f.flush();assert(!w.dmNoticeSurface.isVisible(el));dialog.remove();await f.step();assert(w.dmNoticeSurface.isVisible(el));}finally{f.close();}
+});
+
+test('dismissal does not bubble into a legacy card navigation action',async()=>{
+ const f=fixture();try{let navigated=0;const el=f.w.document.createElement('div');el.className='bk-kart';el.textContent='Mağaza önerisi';el.onclick=()=>navigated++;f.w.document.body.append(el);await f.flush();el.querySelector('.dm-notice-done').click();assert.equal(navigated,0);assert(!el.isConnected);}finally{f.close();}
+});
+test('typing an appeal inside the active notice does not hide it',async()=>{
+ const f=fixture();try{const el=f.w.dmNoticeSurface.notify('Öğretmen uyarısı',{edge:'bottom'});await f.flush();const area=f.w.document.createElement('textarea');el.querySelector('.dm-notice-copy').append(area);area.focus();await f.step();assert(f.w.dmNoticeSurface.isVisible(el));}finally{f.close();}
 });
