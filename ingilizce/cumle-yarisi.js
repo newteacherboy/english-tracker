@@ -3,8 +3,52 @@
 'use strict';
 if(window.dmSentenceRace)return;
 var TOTAL=12, BASE=100, WRONG=40, DEFAULT_TIME=15;
-var overlay=null,session=null,ticker=null,previousFocus=null;
+var overlay=null,session=null,ticker=null,previousFocus=null,finalTimer=null,soundEnabled=true,audioContext=null;
 function safe(v){return String(v==null?'':v).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+
+function carMarkup(team){
+ var red=team===0,body=red?'#f52240':'#1685ee',dark=red?'#9d172d':'#0755a6',wing=red?'#e93645':'#259ff6';
+ return '<svg viewBox="0 0 174 97" role="img" aria-label="'+(red?'Kırmızı':'Mavi')+' takım yarış arabası" xmlns="http://www.w3.org/2000/svg">'+
+  '<ellipse cx="85" cy="89" rx="73" ry="8" fill="#18325a" opacity=".2"/>'+
+  '<path d="M59 42Q55 16 76 7Q95-1 110 14Q121 25 112 44" fill="'+wing+'" stroke="'+dark+'" stroke-width="3"/>'+
+  '<path d="M80 13l-8-12 16 7 4-8 7 12" fill="'+(red?'#ffd73a':'#ffd53e')+'"/>'+
+  '<circle cx="89" cy="26" r="21" fill="'+(red?'#fa544c':'#41b7ff')+'" stroke="'+dark+'" stroke-width="3"/>'+
+  '<path d="M88 20Q107 18 106 35Q98 49 86 42" fill="#ffe7ab"/>'+
+  '<circle cx="92" cy="23" r="7" fill="white"/><circle cx="94" cy="22" r="3.3" fill="#132543"/>'+
+  '<path d="M106 31l15 4-15 8" fill="#ffc836" stroke="#b96817" stroke-width="2"/>'+
+  '<path d="M13 59Q15 43 46 42H130Q155 45 164 61L159 77H12Z" fill="'+body+'" stroke="'+dark+'" stroke-width="5"/>'+
+  '<path d="M59 42l13-19h35l16 19" fill="#c9f3ff" stroke="'+dark+'" stroke-width="4"/>'+
+  '<path d="M69 37l7-11h24l8 11" fill="#79d6ff"/>'+
+  '<ellipse cx="89" cy="58" rx="23" ry="17" fill="#fff5e4" stroke="'+dark+'" stroke-width="3"/>'+
+  '<text x="89" y="65" text-anchor="middle" fill="'+dark+'" font-size="22" font-family="sans-serif" font-weight="900">'+(team+1)+'</text>'+
+  '<circle cx="44" cy="75" r="17" fill="#20293e" stroke="#f5f8ff" stroke-width="4"/><circle cx="44" cy="75" r="6" fill="#b7ccde"/>'+
+  '<circle cx="139" cy="75" r="17" fill="#20293e" stroke="#f5f8ff" stroke-width="4"/><circle cx="139" cy="75" r="6" fill="#b7ccde"/>'+
+  '<path d="M13 52h14l-3 13H9Z" fill="#ffe35c"/><path d="M153 51h11l6 13h-15Z" fill="#fff0aa"/>'+
+  '</svg>';
+}
+function playSound(type,team){
+ if(!soundEnabled)return;
+ try{
+  var C=window.AudioContext||window.webkitAudioContext;if(!C)return;
+  if(!audioContext)audioContext=new C();
+  if(audioContext.state==='suspended')audioContext.resume().catch(function(){});
+  var start=audioContext.currentTime,notes=type==='right'?[660,880,1090]:type==='wrong'?[360,270]:[523,659,784,1046];
+  notes.forEach(function(f,i){
+   var osc=audioContext.createOscillator(),gain=audioContext.createGain();
+   var pan=audioContext.createStereoPanner?audioContext.createStereoPanner():null;
+   osc.type=type==='wrong'?'triangle':'sine';osc.frequency.setValueAtTime(f,start+i*.085);
+   gain.gain.setValueAtTime(.0001,start+i*.085);gain.gain.exponentialRampToValueAtTime(.045,start+i*.085+.015);
+   gain.gain.exponentialRampToValueAtTime(.0001,start+i*.085+.19);
+   osc.connect(gain);if(pan){pan.pan.value=team===0?-.35:.35;gain.connect(pan);pan.connect(audioContext.destination);}else gain.connect(audioContext.destination);
+   osc.start(start+i*.085);osc.stop(start+i*.085+.21);
+  });
+ }catch(_){/* Safari / muted browsers do not block answers */ }
+}
+function soundToggle(){
+ var b=overlay?.querySelector('[data-audio-toggle]');
+ if(b){b.setAttribute('aria-pressed',String(soundEnabled));b.textContent=soundEnabled?'🔊 Ses Açık':'🔇 Ses Kapalı';}
+}
+
 function clean(v){return String(v==null?'':v).replace(/\s+/g,' ').trim();}
 function shuffle(input){var a=input.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var tmp=a[i];a[i]=a[j];a[j]=tmp;}return a;}
 function bank(){return (Array.isArray(window.masterKelimeHavuzu)?window.masterKelimeHavuzu:[]).map(function(w){return {en:clean(w.ingilizce||w.english||w.en),tr:clean(w.turkce||w.turkish||w.tr),cl:Number(w.sinif||w.class_no),unit:Number(w.unite||w.unit_no)};}).filter(function(w){return w.en&&w.tr&&w.cl>=1&&w.cl<=8&&Number.isInteger(w.unit)&&w.unit>=1&&w.unit<=25&&w.en.length<=100&&w.tr.length<=100&&/^[a-zA-Z]/.test(w.en);});}
@@ -86,12 +130,18 @@ function makeDeck(items){
 }
 function root(html){if(!overlay)return;overlay.innerHTML=html;overlay.querySelectorAll('[data-close]').forEach(function(b){b.addEventListener('click',close);});}
 function status(message){var p=overlay&&overlay.querySelector('[data-status]');if(p)p.textContent=message;}
-function close(){clearInterval(ticker);ticker=null;session=null;if(overlay){overlay.remove();overlay=null;}document.body.classList.remove('dm-sr-active');window.dmPapiNotices?.resume?.();if(previousFocus&&document.contains(previousFocus))previousFocus.focus({preventScroll:true});}
+function close(){clearInterval(ticker);clearTimeout(finalTimer);finalTimer=null;ticker=null;session=null;if(overlay){overlay.remove();overlay=null;}document.body.classList.remove('dm-sr-active');window.dmPapiNotices?.resume?.();if(previousFocus&&document.contains(previousFocus))previousFocus.focus({preventScroll:true});}
 function open(){if(overlay)return;previousFocus=document.activeElement;overlay=document.createElement('div');overlay.className='dm-sr-overlay';overlay.setAttribute('role','dialog');overlay.setAttribute('aria-modal','true');overlay.setAttribute('aria-label','Cümle Yarışı');document.body.appendChild(overlay);document.body.classList.add('dm-sr-active');window.dmPapiNotices?.pause?.();overlay.addEventListener('keydown',function(e){if(e.key==='Escape'){e.preventDefault();close();}if(e.key==='Tab'){var f=[...overlay.querySelectorAll('button:not([disabled]),select:not([disabled])')].filter(function(el){return el.getClientRects().length;});if(!f.length)return;var at=f.indexOf(document.activeElement);if(e.shiftKey&&at===0){e.preventDefault();f[f.length-1].focus();}else if(!e.shiftKey&&at===f.length-1){e.preventDefault();f[0].focus();}}});setup();}
 function setup(){
  clearInterval(ticker);ticker=null;session=null;
  var values=bank(),classes=shuffle([...new Set(values.map(function(w){return w.cl;}).sort(function(a,b){return a-b;}) )]).sort(function(a,b){return a-b;});
- root('<section class="dm-sr-shell dm-sr-setup"><header class="dm-sr-header"><div><small>🏁 DİJİ MEDU · SINIF İÇİ KAPIŞMA</small><h2>Cümle Yarışı <span>🏎️</span></h2><p>İki takım · iki farklı soru havuzu · 12’şer soru</p></div><button type="button" data-close class="dm-sr-close" aria-label="Oyunu kapat">×</button></header><div class="dm-sr-intro"><div class="dm-sr-mini-car">🏎️ <span>🔵 MAVİ TAKIM</span></div><div class="dm-sr-mini-car">🏎️ <span>🌸 PEMBE TAKIM</span></div></div><div class="dm-sr-setup-body"><label>Sınıf<select data-class aria-label="Sınıf seç">'+classes.map(function(n){return '<option value="'+n+'">'+n+'. Sınıf</option>';}).join('')+'</select></label><fieldset><legend>Üniteler / temalar (birden fazla seçilebilir)</legend><div data-units class="dm-sr-units"></div></fieldset><label>Soru başına süre<select data-duration><option value="10">10 saniye · Hızlı</option><option value="15" selected>15 saniye · Normal</option><option value="20">20 saniye · Rahat</option></select></label><div class="dm-sr-rule"><b>🏆 Puanlama</b><p>Doğru cevap: +100 puan + kalan saniye × 10. Yanlış veya süre bitimi: −40 puan. Süreler iki takım için bağımsız işler. Yüksek puanlı araç daha çok yol alır.</p><p>Bu sınıf oyununda enerji, altın ve XP etkilenmez.</p></div><p data-status role="status" class="dm-sr-status"></p><button class="dm-sr-primary" type="button" data-start>🏁 Yarışı Başlat</button></div></section>');
+ root('<section class="dm-sr-shell dm-sr-setup"><header class="dm-sr-header"><div><small>🏁 DİJİ MEDU · SINIF İÇİ KAPIŞMA</small><h2>Cümle Yarışı</h2><p>İki takım · farklı sorular · 12 tur</p></div><button type="button" data-close class="dm-sr-close" aria-label="Oyunu kapat">×</button></header>'+
+ '<div class="dm-sr-hero"><img src="games-assets/cumle-yarisi-cover.svg" alt="Papi kırmızı ve mavi yarış arabalarıyla" onerror="this.onerror=null;this.src=\'papi-welcome-v2.png\'"><div><strong>🏎️🏁 Yarışa hazır mısın?</strong><small>Hızlı cevapla · Arabanı öne geçir!</small></div></div>'+
+ '<div class="dm-sr-setup-body"><label class="dm-sr-setting">🎓 Sınıf<select data-class aria-label="Sınıf seç">'+classes.map(function(n){return '<option value="'+n+'">'+n+'. Sınıf</option>';}).join('')+'</select></label>'+
+ '<fieldset class="dm-sr-setting dm-sr-unit-setting"><legend>📚 Ünite / Tema</legend><div data-units class="dm-sr-units"></div></fieldset>'+
+ '<label class="dm-sr-setting">⏱️ Soru Süresi<select data-duration aria-label="Her soru için süre"><option value="10">10 saniye</option><option value="15" selected>15 saniye</option><option value="20">20 saniye</option></select></label>'+
+ '<div class="dm-sr-setup-extras"><label class="dm-sr-sound-option"><input type="checkbox" data-sound checked> 🔊 Doğru / yanlış sesleri</label><span>✅ Doğru +100 + süre bonusu &nbsp; ❌ Yanlış −40</span></div>'+
+ '<p data-status role="status" class="dm-sr-status"></p><button class="dm-sr-primary" type="button" data-start>▶ Yarışı Başlat</button></div></section>');
  var selector=overlay.querySelector('[data-class]'),unitsEl=overlay.querySelector('[data-units]'),selected=new Set();
  function fill(){
   unitsEl.innerHTML='';selected.clear();var classNo=Number(selector.value),units=[...new Set(values.filter(function(w){return w.cl===classNo;}).map(function(w){return w.unit;}))].sort(function(a,b){return a-b;});
@@ -106,22 +156,26 @@ function setup(){
   status(!values.length?'Kelime havuzu henüz yüklenmedi. Oyunlar sayfasını yenileyip tekrar deneyin.':!selected.size?'Başlamak için en az bir ünite seç.':ready?'Hazır: '+words.length+' kelime / '+usable.length+' farklı soru. Her takım 12 soru çözecek.':'En az 12 farklı kelime/ifade gerekiyor. Başka üniteler de seç ('+words.length+' kelime).');
  }
  selector.onchange=fill;
- overlay.querySelector('[data-start]').onclick=function(){var units=[...selected];var words=scope(bank(),Number(selector.value),units);var decks=makeDeck(words);if(!decks){status('Soru hazırlanamıyor; başka üniteler ekle.');return;}start(decks,Number(overlay.querySelector('[data-duration]').value),Number(selector.value),units);};
+ overlay.querySelector('[data-start]').onclick=function(){var units=[...selected];var words=scope(bank(),Number(selector.value),units);var decks=makeDeck(words);if(!decks){status('Soru hazırlanamıyor; başka üniteler ekle.');return;}soundEnabled=!!overlay.querySelector('[data-sound]')?.checked;start(decks,Number(overlay.querySelector('[data-duration]').value),Number(selector.value),units);};
  fill();overlay.querySelector('[data-close]')?.focus();
 }
 function start(decks,duration,cl,units){
  session={duration:duration,classNo:cl,units:units,started:performance.now(),finished:false,teams:decks.map(function(deck,i){return {deck:deck,index:0,score:0,correct:0,wrong:0,timeout:0,deadline:performance.now()+duration*1000,locked:false,last:null,team:i};})};
- root('<section class="dm-sr-shell dm-sr-play"><header class="dm-sr-header dm-sr-game-head"><div><small>🏁 DİJİ MEDU · 12 SORULUK KAPIŞMA</small><h2>Cümle Yarışı</h2></div><div class="dm-sr-game-meta"><b>'+safe(cl)+'. Sınıf · '+units.map(safe).join(', ')+'. Ünite</b><button type="button" data-close aria-label="Yarışı kapat" class="dm-sr-close">×</button></div></header><div class="dm-sr-track"><span class="dm-sr-startflag">BAŞLANGIÇ</span><div class="dm-sr-track-lanes"><div class="dm-sr-lane dm-sr-blue"><span class="dm-sr-lane-label">Mavi Takım</span><div class="dm-sr-track-line"><div data-car="0" class="dm-sr-car">🚙</div></div></div><div class="dm-sr-lane dm-sr-pink"><span class="dm-sr-lane-label">Pembe Takım</span><div class="dm-sr-track-line"><div data-car="1" class="dm-sr-car">🚗</div></div></div></div><span class="dm-sr-finishflag">🏁 BİTİŞ</span></div><div class="dm-sr-dual"><section class="dm-sr-side dm-sr-side-blue" data-side="0"></section><section class="dm-sr-side dm-sr-side-pink" data-side="1"></section></div><p class="dm-sr-game-footer">⚡ Doğru ve hızlı cevap arabanı ilerletir · ❌ Yanlış veya süre bitimi −40 puan</p></section>');
+ root('<section class="dm-sr-shell dm-sr-play"><header class="dm-sr-header dm-sr-game-head"><div><small>🏁 DİJİ MEDU · 12 SORULUK KAPIŞMA</small><h2>Cümle Yarışı</h2></div><div class="dm-sr-game-meta"><span>'+safe(cl)+'. Sınıf · '+units.map(safe).join(', ')+'. Ünite</span><button type="button" data-audio-toggle aria-pressed="true" class="dm-sr-audio">🔊 Ses Açık</button><button type="button" data-close aria-label="Yarışı kapat" class="dm-sr-close">×</button></div></header>'+
+ '<div class="dm-sr-track"><span class="dm-sr-startflag">BAŞLA</span><div class="dm-sr-track-lanes"><div class="dm-sr-lane dm-sr-red"><span class="dm-sr-lane-label">Kırmızı Takım</span><div class="dm-sr-track-line"><div data-car="0" class="dm-sr-car">'+carMarkup(0)+'</div></div></div><div class="dm-sr-lane dm-sr-blue"><span class="dm-sr-lane-label">Mavi Takım</span><div class="dm-sr-track-line"><div data-car="1" class="dm-sr-car">'+carMarkup(1)+'</div></div></div></div><span class="dm-sr-finishflag">🏁 BİTİŞ</span><div class="dm-sr-finish-banner" data-finish-banner hidden></div></div>'+
+ '<div class="dm-sr-scoreline"><b class="red">🔴 Kırmızı <strong data-live-score="0">0</strong></b><span>🏁 12 TUR</span><b class="blue">🔵 Mavi <strong data-live-score="1">0</strong></b></div>'+
+ '<div class="dm-sr-dual"><section class="dm-sr-side dm-sr-side-red" data-side="0"></section><section class="dm-sr-side dm-sr-side-blue" data-side="1"></section></div><p class="dm-sr-game-footer">✅ Doğru: +100 + kalan süre × 10 &nbsp; ❌ Yanlış: −40</p></section>');
+ var audioButton=overlay.querySelector('[data-audio-toggle]');audioButton.onclick=function(){soundEnabled=!soundEnabled;soundToggle();};soundToggle();
  session.teams.forEach(function(t){drawTeam(t);});drawCars();
  ticker=setInterval(tick,100);
 }
 function drawTeam(team){
  if(!overlay||!session)return;
  var side=overlay.querySelector('[data-side="'+team.team+'"]');if(!side)return;
- var name=team.team?'Pembe Takım':'Mavi Takım',label=team.team?'🌸':'🔵';
+ var name=team.team?'Mavi Takım':'Kırmızı Takım',label=team.team?'🔵':'🔴';
  if(team.index>=TOTAL){side.innerHTML='<header><h3>'+label+' '+name+'</h3><b>'+team.score+' puan</b></header><div class="dm-sr-done">🏁<h4>12 soru tamamlandı!</h4><p>✅ '+team.correct+' doğru · ❌ '+team.wrong+' yanlış · ⌛ '+team.timeout+' süre doldu</p><p>Diğer takımın bitirmesi bekleniyor.</p></div>';return;}
  var q=team.deck[team.index];
- side.innerHTML='<header><h3>'+label+' '+name+'</h3><b data-score>'+team.score+' puan</b></header><div class="dm-sr-side-meta"><span>Soru '+(team.index+1)+' / '+TOTAL+'</span><strong data-clock aria-label="Kalan süre">'+session.duration+' sn</strong></div><div class="dm-sr-time-track"><div data-time-bar></div></div><div class="dm-sr-question"><small>'+safe(q.tip)+'</small><p>'+safe(q.prompt)+'</p></div><div class="dm-sr-choices">'+q.choices.map(function(c,i){return '<button type="button" data-answer="'+i+'">'+safe(c)+'</button>';}).join('')+'</div><p class="dm-sr-feedback" data-feedback role="status" aria-live="polite"></p><div class="dm-sr-counts">✅ '+team.correct+' doğru <span>❌ '+team.wrong+' yanlış</span> <span>⌛ '+team.timeout+' süre</span></div>';
+ side.innerHTML='<header><h3><img class="dm-sr-team-papi" src="papi-help-v2.png" alt="">'+label+' '+name+'</h3><b data-score>'+team.score+' puan</b></header><div class="dm-sr-side-meta"><span>Soru '+(team.index+1)+' / '+TOTAL+'</span><strong data-clock aria-label="Kalan süre">'+session.duration+' sn</strong></div><div class="dm-sr-time-track"><div data-time-bar></div></div><div class="dm-sr-question"><small>'+safe(q.tip)+'</small><p>'+safe(q.prompt)+'</p></div><div class="dm-sr-choices">'+q.choices.map(function(c,i){return '<button type="button" data-answer="'+i+'">'+safe(c)+'</button>';}).join('')+'</div><p class="dm-sr-feedback" data-feedback role="status" aria-live="polite"></p><div class="dm-sr-counts">✅ '+team.correct+' doğru <span>❌ '+team.wrong+' yanlış</span> <span>⌛ '+team.timeout+' süre</span></div>';
  side.querySelectorAll('[data-answer]').forEach(function(btn){btn.onclick=function(){answer(team,q.choices[Number(btn.dataset.answer)]);};});
 }
 function grade(remaining,correct){return correct?BASE+Math.max(0,Math.ceil(remaining/1000))*10:-WRONG;}
@@ -139,21 +193,42 @@ function finishQuestion(team,value,timedOut){
  team.locked=true;
  var side=overlay.querySelector('[data-side="'+team.team+'"]');if(side){
   side.querySelectorAll('[data-answer]').forEach(function(btn){btn.disabled=true;var text=btn.textContent;if(text===q.answer)btn.classList.add('correct');else if(text===value)btn.classList.add('incorrect');});
-  var fb=side.querySelector('[data-feedback]');if(fb)fb.textContent=correct?'✅ +'+grade(left,true)+' puan!':timedOut?'⌛ Süre doldu · −40 puan. Doğru cevap: '+q.answer:'❌ −40 puan. Doğru cevap: '+q.answer;
+  var fb=side.querySelector('[data-feedback]');if(fb){fb.textContent=correct?'✅ Harika! +'+grade(left,true)+' puan!':timedOut?'⌛ Süre doldu · −40 puan. Doğru: '+q.answer:'❌ Yanlış! −40 puan. Doğru: '+q.answer;fb.classList.add(correct?'right':'wrong');side.classList.add(correct?'dm-sr-answered-right':'dm-sr-answered-wrong');}
+  playSound(correct?'right':'wrong',team.team);
+  var total=overlay.querySelector('[data-live-score="'+team.team+'"]');if(total)total.textContent=team.score;
   var num=side.querySelector('[data-score]');if(num)num.textContent=team.score+' puan';
  }
  drawCars();
  // Match all animations to the current round. Cleanup is guarded on close/restart.
  var current=session;
- setTimeout(function(){if(!session||session!==current)return;team.index++;team.locked=false;team.deadline=performance.now()+current.duration*1000;drawTeam(team);if(current.teams.every(function(t){return t.index>=TOTAL;}))result();},850);
+ setTimeout(function(){if(!session||session!==current)return;team.index++;team.locked=false;team.deadline=performance.now()+current.duration*1000;drawTeam(team);if(current.teams.every(function(t){return t.index>=TOTAL;}))result();},1050);
 }
-function drawCars(){if(!session||!overlay)return;var max=TOTAL*(BASE+session.duration*10);session.teams.forEach(function(team){var car=overlay.querySelector('[data-car="'+team.team+'"]');if(car)car.style.left=Math.min(91,Math.round(team.score/max*91))+'%';});}
+function drawCars(){if(!session||!overlay||session.finished)return;var max=TOTAL*(BASE+session.duration*10);session.teams.forEach(function(team){var car=overlay.querySelector('[data-car="'+team.team+'"]');if(!car)return;var length=Math.max(0,car.parentElement.clientWidth-car.offsetWidth);car.style.left=Math.round(length*Math.min(.87,team.score/max*.87))+'px';});}
 function tick(){if(!session||session.finished||!overlay)return;var now=performance.now();session.teams.forEach(function(team){if(team.index>=TOTAL||team.locked)return;var remain=team.deadline-now;if(remain<=0){finishQuestion(team,null,true);return;}var side=overlay.querySelector('[data-side="'+team.team+'"]');if(!side)return;var seconds=Math.ceil(remain/1000),clock=side.querySelector('[data-clock]'),bar=side.querySelector('[data-time-bar]');if(clock){clock.textContent=seconds+' sn';clock.classList.toggle('urgent',seconds<=5);}if(bar){bar.style.width=Math.max(0,remain/session.duration/10)+'%';bar.classList.toggle('urgent',seconds<=5);}});}
 function result(){
- if(!session||session.finished)return;session.finished=true;clearInterval(ticker);ticker=null;
- var a=session.teams[0],b=session.teams[1],win=a.score===b.score?'Berabere!':a.score>b.score?'🏆 Mavi Takım Kazandı!':'🏆 Pembe Takım Kazandı!';
- var rows=session.teams.map(function(t){return '<div class="dm-sr-final-team '+(t.team?'pink':'blue')+'"><h3>'+(t.team?'🌸 Pembe Takım':'🔵 Mavi Takım')+'</h3><strong>'+t.score+' puan</strong><p>✅ '+t.correct+' doğru · ❌ '+t.wrong+' yanlış · ⌛ '+t.timeout+' süre doldu</p></div>';}).join('');
- root('<section class="dm-sr-shell dm-sr-final"><button data-close class="dm-sr-close dm-sr-final-close" aria-label="Kapat">×</button><div class="dm-sr-trophy">🏆</div><h2>'+win+'</h2><p>12 soruluk yarış tamamlandı</p><div class="dm-sr-final-grid">'+rows+'</div><div class="dm-sr-final-actions"><button type="button" data-again class="dm-sr-primary">🔄 Yeniden Yarış</button><button type="button" data-close class="dm-sr-secondary">Oyunlara Dön</button></div><p>Bu karşılaşma yalnızca sınıf içinde oynandı; öğrenci puanlarına ve sıralamalara aktarılmadı.</p></section>');
+ if(!session||session.finished)return;
+ session.finished=true;clearInterval(ticker);ticker=null;
+ var current=session,a=session.teams[0],b=session.teams[1],tie=a.score===b.score,winner=tie?-1:(a.score>b.score?0:1);
+ var banner=overlay.querySelector('[data-finish-banner]'),track=overlay.querySelector('.dm-sr-track');
+ if(track)track.classList.add('dm-sr-finishing');
+ current.teams.forEach(function(team){
+  var car=overlay.querySelector('[data-car="'+team.team+'"]');if(!car)return;
+  var length=Math.max(0,car.parentElement.clientWidth-car.offsetWidth);
+  var currentFraction=team.score/(TOTAL*(BASE+current.duration*10))*.87;
+  var targetFraction=(tie||winner===team.team)?1:Math.min(.9,Math.max(currentFraction,.4+team.score/(Math.max(1,a.score+b.score))*.25));
+  car.style.left=Math.round(length*targetFraction)+'px';
+  if(tie||winner===team.team)car.classList.add('dm-sr-winner-car');
+ });
+ if(banner){banner.hidden=false;banner.textContent=tie?'🏁 BERABERE!':winner===0?'🏆 KIRMIZI TAKIM KAZANDI!':'🏆 MAVİ TAKIM KAZANDI!';}
+ playSound('finish',winner===-1?0:winner);
+ clearTimeout(finalTimer);
+ finalTimer=setTimeout(function(){if(session===current&&overlay)showResult(current,tie,winner);},window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches?400:1950);
+}
+function showResult(current,tie,winner){
+ if(!session||current!==session)return;
+ var win=tie?'🏁 Berabere!':winner===0?'🏆 Kırmızı Takım Kazandı!':'🏆 Mavi Takım Kazandı!';
+ var rows=current.teams.map(function(t){return '<div class="dm-sr-final-team '+(t.team?'blue':'red')+'"><h3>'+(t.team?'🔵 Mavi Takım':'🔴 Kırmızı Takım')+'</h3><strong>'+t.score+' puan</strong><p>✅ '+t.correct+' doğru · ❌ '+t.wrong+' yanlış · ⌛ '+t.timeout+' süre doldu</p></div>';}).join('');
+ root('<section class="dm-sr-shell dm-sr-final"><button data-close class="dm-sr-close dm-sr-final-close" aria-label="Kapat">×</button><div class="dm-sr-trophy">🏆</div><h2>'+win+'</h2><p>12 soruluk yarış tamamlandı · Kazanan araç bitiş çizgisine ulaştı!</p><div class="dm-sr-final-grid">'+rows+'</div><div class="dm-sr-final-actions"><button type="button" data-again class="dm-sr-primary">🔄 Yeniden Yarış</button><button type="button" data-close class="dm-sr-secondary">Oyunlara Dön</button></div><p>Bu karşılaşma yalnızca sınıf içinde oynandı; öğrenci puanlarına ve sıralamalara aktarılmadı.</p></section>');
  overlay.querySelector('[data-again]').onclick=setup;
 }
 window.dmSentenceRace={open:open,close:close,questionPool:questionPool,makeDeck:makeDeck,grade:grade,scope:scope,bank:bank};
