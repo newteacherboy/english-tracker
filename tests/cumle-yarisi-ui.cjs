@@ -67,5 +67,17 @@ const words=Array.from({length:30},(_,i)=>({ingilizce:'item'+i,turkce:'anlam '+i
    console.log('PASS sentence race '+width+'x'+height+' two independent decks, clocks, scoring, viewport and close');
    await page.close();
   }
+  // A curriculum with many units must scroll only inside the unit picker,
+  // never hide the large Start button below the phone viewport.
+  const dense=await browser.newPage({viewport:{width:390,height:640},reducedMotion:'reduce'});
+  await dense.setContent('<!doctype html><html lang="tr"><head><meta name="viewport" content="width=device-width,initial-scale=1"></head><body></body></html>');
+  await dense.evaluate(w=>{window.masterKelimeHavuzu=w;},Array.from({length:80},(_,i)=>({ingilizce:'term'+i,turkce:'anlam '+i,sinif:5,unite:1+Math.floor(i/4)})));
+  await dense.addStyleTag({content:css});await dense.addScriptTag({content:js});
+  await dense.evaluate(()=>window.dmSentenceRace.open());
+  const fits=await dense.locator('.dm-sr-setup').evaluate(el=>({bodyScroll:el.scrollHeight-el.clientHeight,button:document.querySelector('[data-start]').getBoundingClientRect().bottom,units:document.querySelector('[data-units]').scrollHeight-document.querySelector('[data-units]').clientHeight}));
+  assert(fits.button<=641,'Start button below a compact 390x640 screen: '+JSON.stringify(fits));
+  assert(fits.bodyScroll<=2,'The setup screen itself must not scroll: '+JSON.stringify(fits));
+  assert(fits.units>0,'Many units should scroll within their own bounded picker');
+  await dense.close();
  }finally{await browser.close();}
 })().catch(e=>{console.error(e);process.exitCode=1;});
