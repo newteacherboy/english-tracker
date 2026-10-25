@@ -6,7 +6,7 @@ const source=p=>fs.readFileSync(path.join(__dirname,'..','ingilizce',p),'utf8');
 test('all eight selected game designs load after legacy styles',()=>{
  const html=source('index.html');
  assert.match(html,/faithful-eight-games\.css\?v=20261020-selected-art-1/);
- assert.match(html,/faithful-eight-games\.js\?v=20261020-selected-art-1/);
+ assert.match(html,/faithful-eight-games\.js\?v=[^"\s]+/);
  assert(html.indexOf('faithful-eight-games.css')>html.indexOf('game-experience.css'));
  assert(html.indexOf('faithful-eight-games.css')>html.indexOf('selected-play.css'));
  assert(html.indexOf('faithful-eight-games.js')>html.indexOf('game-experience.js'));

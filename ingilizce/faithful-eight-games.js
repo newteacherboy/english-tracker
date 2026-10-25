@@ -77,7 +77,7 @@
   const root=document.getElementById(rootId),card=root?.querySelector('.game-modal-content');
   if(!root||!card)continue;
   const apply=()=>{
-   if(root.classList.contains('dm-designed-playing')){
+   if(root.classList.contains('dm-designed-playing')&&!(rootId==='trenOyunOverlay'&&root.classList.contains('dm-vp-root'))){
     card.style.setProperty('background-image',
      'linear-gradient(180deg,#fffaf0a6,#fff6e7c2),url("game-scenes/'+scene+'.svg")','important');
     card.style.setProperty('background-size','100% 100%,100% 100%','important');

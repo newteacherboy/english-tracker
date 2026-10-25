@@ -4970,18 +4970,7 @@ yagmurHavuz = OC.kelimeSec('yagmur', yagmurHavuz, OC.SORU); OC.basla('yagmur');
 
                                let liderlikKapatDenemeSayaci = {};
                 function liderlikKilitliMiKontrolEt(oyunKey, bitisEkraniId) {
-                    let bitisEl = document.getElementById(bitisEkraniId);
-                    let bitisGorunuyorMu = bitisEl && window.getComputedStyle(bitisEl).display !== 'none';
-                    if (bitisGorunuyorMu && liderlikKilitAktif[oyunKey]) {
-                        liderlikKapatDenemeSayaci[oyunKey] = (liderlikKapatDenemeSayaci[oyunKey] || 0) + 1;
-                        if (liderlikKapatDenemeSayaci[oyunKey] >= 2) {
-                            liderlikKilitAktif[oyunKey] = false;
-                            liderlikKapatDenemeSayaci[oyunKey] = 0;
-                            return false;
-                        }
-                        liderlikKilitliUyariGoster();
-                        return true;
-                    }
+                    // Ranking requests may continue in the background; exits never wait for them.
                     liderlikKapatDenemeSayaci[oyunKey] = 0;
                     return false;
                 }
@@ -19966,7 +19955,7 @@ function trBilgi() {
 }
 function trCiz() {
   let hat = trEl('trenHat'), havuz = trEl('trenHavuz');
-  hat.innerHTML = '<span class="tr-lok" aria-hidden="true">🚂</span>';
+  hat.innerHTML = trenCevap.length ? '' : '<span class="tr-empty">Cümleyi kurmak için aşağıdaki kelimelere dokun.</span>';
   trenCevap.forEach((v, sira) => {
     let b = document.createElement('button'); b.type = 'button'; b.className = 'tr-v'; b.innerText = v.k;
     b.setAttribute('aria-label', v.k + ' vagonunu çöz');
@@ -26557,7 +26546,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <link rel="stylesheet" href="kelime-rallisi.css?v=20261020-slow">
 <script defer src="lazy-games.js?v=20261016-flow-2"></script>
 <link rel="stylesheet" href="game-experience.css?v=20261011-wordmode">
-<script defer src="game-experience.js?v=20261022-hiz-1"></script>
+<script defer src="game-experience.js?v=20261025-game-fit-1"></script>
 <script defer src="game-access.js?v=20261020-1"></script>
 <script defer src="onboarding-ui.js?v=20261015-members-only-1"></script>
 <script defer src="first-discovery.js?v=20261020-start-path-2"></script>
@@ -26669,7 +26658,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <link rel="stylesheet" href="approved-game-boards.css?v=20261025-device-fit-1">
 <script defer src="approved-game-boards.js?v=20261025-device-fit-1"></script>
 <link rel="stylesheet" href="play-navigation.css?v=20261018-1">
-<script defer src="play-navigation.js?v=20261018-harf-2"></script>
+<script defer src="play-navigation.js?v=20261025-game-fit-1"></script>
 <link rel="stylesheet" href="email-guide.css?v=20261018-compact-2">
 <link rel="stylesheet" href="panel-fixes.css?v=20261018-1">
 <link rel="stylesheet" href="social-safety.css?v=20261018-readable-study-1">
@@ -26683,10 +26672,11 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <link rel="stylesheet" href="route-design-three.css?v=20261020-fixed-art-2">
 <!-- Selected interactive game screens: loaded after all legacy style layers. -->
 <link rel="stylesheet" href="faithful-eight-games.css?v=20261020-selected-art-1">
-<script defer src="faithful-eight-games.js?v=20261020-selected-art-1"></script>
+<script defer src="faithful-eight-games.js?v=20261025-game-fit-1"></script>
 <!-- Eight selected mini-games: fullscreen responsive layout and separate back/X controls. -->
+<link rel="stylesheet" href="game-viewport.css?v=20261025-fit-1"><script defer src="game-viewport.js?v=20261025-fit-1"></script>
 <link rel="stylesheet" href="eight-game-fullscreen.css?v=20261020-fit-v1">
 <script defer src="eight-game-fullscreen.js?v=20261020-fit-v1"></script>
-<link rel="stylesheet" href="teacher-portal.css?v=20261025-device-fit-1"><script defer src="teacher-portal.js?v=20261025-device-fit-3"></script>
+<link rel="stylesheet" href="teacher-portal.css?v=20261025-device-fit-1"><script defer src="teacher-portal.js?v=20261025-game-fit-1"></script>
 </body>      
         </html>

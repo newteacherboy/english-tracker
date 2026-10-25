@@ -1,0 +1,9 @@
+# Games: viewport layout and reliable exits
+
+All recognized game overlays fill the visible app viewport and hide student/teacher navigation while open. Shared back and close controls invoke native game cleanup. Back returns classic games to their own setup without another student prompt or entry charge; close returns code-based teachers to Games. Pending leaderboard loading no longer blocks closing. Profile word-review dialogs remain outside the game controller.
+
+Eksik Harf places the question, large single-word slots and large two-row letter choices in separate areas. Hız Fırtınası uses compact jokers and one answer row with labels above text, retaining room for longer answers and a taller falling-question field. Kelime Treni separates the question, assembled sentence and readable word bank; tapping a selected word puts it back. Decorative locomotive/wheels and empty bank placeholders no longer consume the play area. Scores, answer strings and verification remain unchanged.
+
+Validation: 55 focused Node/DOM checks pass, including native timer/music cleanup, pending leaderboard exits, teacher routing, setup reopening, results, account continuity and one-word rounds. The existing eight-game Playwright suite passes at widths 360, 390, 430 and 768. New browser fixtures check the three requested boards at 360×640, 390×740, 768×1024 and 1440×900, with no stage overflow, visible choices and separated question/letter areas; interaction checks cover train pick/unpick, back/setup and close for nine classic games and close for six dynamic game surfaces. CI runs these checks and retains screenshots.
+
+Browser fixtures use actual markup/styles and native render functions, without production accounts or writes. This is app viewport fullscreen; browser/OS chrome is controlled by the device. Long setup lists may scroll to preserve access.

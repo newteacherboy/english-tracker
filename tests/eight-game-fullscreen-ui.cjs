@@ -60,7 +60,7 @@ const {chromium}=require('playwright'),fs=require('node:fs'),path=require('node:
   }
   if(stageId==='kelimebulOyunEkrani')document.getElementById('kbSatirlar').innerHTML=
    Array.from({length:4},()=>'<div class="kb-row-v2">'+Array.from({length:7},()=>'<div class="kb-box-v2">A</div>').join('')+'</div>').join('');
-  window.dmEightGameFullscreen.sync();
+  window.dmEightGameFullscreen.sync();window.dmGameViewport?.sync();
  };
  fs.mkdirSync('/tmp/eight-game-fullscreen',{recursive:true});
  for(const v of [{width:360,height:640},{width:390,height:844},{width:430,height:932},{width:768,height:1024}]){
@@ -81,7 +81,7 @@ const {chromium}=require('playwright'),fs=require('node:fs'),path=require('node:
      answers:[...document.querySelectorAll('#yagmurSecenekler .yg-secenek-btn')].map(b=>{
       const span=b.querySelector('.fg-choice-text');
       return {text:b.textContent,expected:b.dataset.testAnswer,label:b.dataset.fgChoice,
-       badge:getComputedStyle(b,'::before').content,btn:r(b),answer:r(span),
+       badge:getComputedStyle(b,'::before').content,badgeHeight:parseFloat(getComputedStyle(b,'::before').height),direction:getComputedStyle(b).flexDirection,btn:r(b),answer:r(span),
        spanWhiteSpace:span?getComputedStyle(span).whiteSpace:''};
      })};
    },game);
@@ -96,7 +96,8 @@ const {chromium}=require('playwright'),fs=require('node:fs'),path=require('node:
     for(let i=0;i<3;i++){
      const x=m.answers[i];
      assert.equal(x.label,'ABC'[i]);
-     assert(x.answer.left-x.btn.left>=29,'answer overlapped badge '+JSON.stringify({v,x}));
+     assert(x.direction==='column'?x.answer.top-x.btn.top>=x.badgeHeight+5:x.answer.left-x.btn.left>=29,'answer overlapped badge '+JSON.stringify({v,x}));
+     assert(x.answer.bottom<=x.btn.bottom+2,'answer extends below choice '+JSON.stringify({v,x}));
      assert(x.answer.right<=x.btn.right+2,'answer extends past choice '+JSON.stringify({v,x}));
      assert(x.spanWhiteSpace==='normal','choice needs wrapping');
      assert(x.text&&!x.text.startsWith('ABC'[i]),'label must NOT modify server answer '+x.text);
