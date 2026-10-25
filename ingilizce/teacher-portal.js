@@ -170,7 +170,7 @@
     hero.replaceWith(badge);
    }
   }
-  panel.classList.add('is-visible');document.body.classList.add('tp-dash-active');teacherDock();void prepareTeacherTools().catch(showTeacherToolError);
+  panel.classList.add('is-visible');document.body.classList.add('tp-dash-active');observeTeacherChildren();teacherDock();void prepareTeacherTools().catch(showTeacherToolError);
   document.querySelector('[data-tp-home-nav]')?.classList.remove('active');
   document.querySelector('#bottomNavMobile [data-tp-panel-nav]')?.classList.add('active');
  }
@@ -189,6 +189,13 @@
  let preparingTools=null;
  const teacherChildren='.rubric-modal,.cog-perde,.sm-overlay,.dm-member-overlay,.dm-account-overlay,.dm-perde,.yo-modal,.yo-perde,#yoModalPerde,#omSifreModal,#odModal,.game-modal-overlay,.gso-overlay,#dmTeacherOral,.dm-teacher-child';
  function teacherToolVisible(){return [...document.querySelectorAll(teacherChildren)].some(el=>el.id!=='ogretmenMenuModal'&&el.id!=='sifreModal'&&el.getClientRects().length&&getComputedStyle(el).display!=='none');}
+ function observeTeacherChildren(){
+  const sync=()=>{const visible=teacherToolVisible();document.body.classList.toggle('tp-legacy-child-open',visible);const menu=document.getElementById('ogretmenMenuModal');if(menu?.style.display==='flex')menu.style.display='none';};
+  requestAnimationFrame(sync);
+  if(window.tpLegacyToolObserver)return;
+  let queued=false;window.tpLegacyToolObserver=new MutationObserver(()=>{if(queued)return;queued=true;requestAnimationFrame(()=>{queued=false;sync();});});
+  window.tpLegacyToolObserver.observe(document.body,{subtree:true,childList:true,attributes:true,attributeFilter:['style','class','hidden']});
+ }
  function showTeacherToolError(error){const status=document.querySelector('.tp-dash-status');if(status)status.textContent='Öğretmen verileri yüklenemedi: '+(error.message||'Bağlantıyı kontrol edip Verileri yenile düğmesine bas.');}
  async function prepareTeacherTools(){
   if(preparingTools)return preparingTools;
@@ -225,9 +232,7 @@
    if(!target)throw Error('İlgili öğretmen aracı henüz hazır değil. Verileri yenileyerek tekrar dene.');
    target.click();
    if(menu){menu.classList.remove('dm-teacher-open');menu.style.setProperty('display','none');}
-   const sync=()=>{const visible=teacherToolVisible();document.body.classList.toggle('tp-legacy-child-open',visible);if(!visible&&menu?.style.display==='flex')menu.style.display='none';};
-   requestAnimationFrame(sync);
-   if(!window.tpLegacyToolObserver){let queued=false;window.tpLegacyToolObserver=new MutationObserver(()=>{if(queued)return;queued=true;requestAnimationFrame(()=>{queued=false;sync();});});window.tpLegacyToolObserver.observe(document.body,{subtree:true,childList:true,attributes:true,attributeFilter:['style','class','hidden']});}
+   observeTeacherChildren();
   }catch(error){showTeacherToolError(error);}
   finally{window.dmTeacherToolOpening=false;buttons.forEach(b=>b.disabled=false);}
  }
