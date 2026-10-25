@@ -187,7 +187,7 @@
   if(!target){const v=sheet('Bu araç kullanılamıyor','<p>İlgili öğretmen aracı şu anda yüklenemedi. Lütfen tekrar dene.</p>');return;}
   // Keep legacy command's event wiring, then close only the launcher after child creation.
   target.click();
-  if(menu){requestAnimationFrame(()=>{if(document.body.classList.contains('tp-dash-active'))menu.style.setProperty('display','none');});}
+  if(menu){menu.classList.remove('dm-teacher-open');menu.style.setProperty('display','none');}
  }
  async function chooseTeacherStudent(title,next){
   const v=sheet(title,'<p>Yalnızca hesabına bağlı öğrencileri seçebilirsin.</p><label>Sınıf<select name="grade"><option value="">Tüm sınıflar</option>'+Array.from({length:8},(_,i)=>'<option value="'+(i+1)+'">'+(i+1)+'. sınıf</option>').join('')+'</select></label><label>Öğrenci<select name="studentId" required><option value="">Öğrenci seç</option></select></label><button class="tp-primary">Devam Et</button>');
@@ -267,34 +267,26 @@
  function teacherDashboardAction(action){
   if(action==='home'){teacherDashboardHide();teacherHomeShow();return;}
   if(action==='sync'){openTeacherCodeSync();return;}
-  if(action==='summary'){classroom('summary');return;}
-  if(action==='exams'){legacyTool(/seviye sınavı sonuçları/i);return;}
   if(action==='logout'){window.dmTeacherPortalExit?.();return;}
   if(action==='code'||action==='settings'){openProfile();return;}
   if(action==='students'){openBulkStudents();return;}
   if(action==='games'||action==='library'){teacherDashboardHide();teacherDestination(action==='games'?'games':'study');return;}
   if(action==='oral'){window.dmTeacherOral?.open?.();return;}
-  if(action==='individual'){
-   chooseTeacherStudent('Öğrenci Bireysel Raporları',async student=>{
-    const data=await api('teacherPortalStudentReport',{studentId:student.id});
-    const v=sheet('📊 Öğrenci Bireysel Raporu','<div class="tp-report-view"><h3 data-report-name></h3><div class="tp-report-stats"></div><h4>Rubrik değerlendirmeleri</h4><div class="tp-report-history"></div></div>');
-    v.shade.querySelector('[data-report-name]').textContent=data.student.fullName||data.student.username;
-    const pairs=[['Toplam XP',data.student.xp||0],['Ders puanı',data.student.points||0],['Oyun sayısı',data.totals.plays],['Doğru',data.totals.correct],['Yanlış',data.totals.wrong],['Seri',data.student.streak||0]];
-    const stats=v.shade.querySelector('.tp-report-stats');
-    pairs.forEach(([label,value])=>{const el=document.createElement('div');const b=document.createElement('b');b.textContent=String(value);const small=document.createElement('small');small.textContent=label;el.append(b,small);stats.append(el);});
-    const history=v.shade.querySelector('.tp-report-history');
-    for(const r of data.reports){const el=document.createElement('p');el.textContent=r.report_date+' · Genel: '+(r.genel_score??'—')+' · Okuma: '+(r.reading_score??'—')+' · Yazma: '+(r.writing_score??'—')+' · Kelime: '+(r.vocabulary_score??'—')+' · Konuşma: '+(r.speaking_score??'—');history.append(el);}
-    if(!data.reports.length)history.textContent='Henüz rubrik değerlendirmesi bulunmuyor.';
-   });return;
-  }
-  if(action==='studentDetails'){teacherStudentDetails();return;}
-  const patterns={performance:/ders içi performans/i,weak:/zayıf noktalar/i,parent:/haftalık veli/i,messages:/öğrenci sohbetleri|öğrenci mesajları/i,announcements:/duyurular|duyuru oluştur/i,rubric:/rubrik/i,homework:/ödev ver/i,reports:/rapor/i};
-  if(action==='performance'){teacherPerformance();return;}
-  if(action==='weak'){classroom('weak');return;}
-  if(action==='parent'){classroom('parent');return;}
-  if(action==='rubric'){teacherRubric();return;}
-  if(action==='announcements'){teacherAnnouncement();return;}
-  if(patterns[action])legacyTool(patterns[action]);
+  const map={
+   performance:/ders içi performans/i,
+   individual:/bireysel rapor|öğrenci ilerleme|öğrenci rapor/i,
+   weak:/sınıfın zayıf noktaları|zayıf noktalar/i,
+   parent:/haftalık veli özetleri|veli özetleri/i,
+   messages:/öğrenci sohbetleri|öğrenci mesajları/i,
+   announcements:/duyurular|duyuru oluştur/i,
+   rubric:/rubrik/i,
+   studentDetails:/öğrenci şifresi sıfırla|öğrenci bilgileri/i,
+   summary:/sınıfımın öğrenme özeti|öğrenme özeti/i,
+   exams:/seviye sınavı sonuçları/i,
+   homework:/ödev ver/i,
+   reports:/rapor/i
+  };
+  if(map[action])legacyTool(map[action]);
  }
 
  function teacherHomeShow(){
