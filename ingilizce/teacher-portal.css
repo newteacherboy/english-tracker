@@ -172,3 +172,8 @@ html.dm-teacher-portal body #tpDashboard.is-visible{bottom:78px!important}
 .tp-report-stats b{font-size:20px;color:#124353}.tp-report-stats small{color:#637e89}
 .tp-report-history{max-height:280px;overflow:auto}.tp-report-history p{border-bottom:1px solid #d4e8e7;padding:8px 3px}
 @media(max-width:480px){.tp-report-stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+/* When a genuine legacy teacher tool is open, hide the modern launcher behind it.
+   The dashboard is restored when the existing tool closes. */
+html.dm-teacher-portal body.tp-legacy-child-open #tpDashboard.is-visible{visibility:hidden!important;pointer-events:none!important}
+html.dm-teacher-portal body.tp-legacy-child-open #tpTeacherDock{pointer-events:none!important}
