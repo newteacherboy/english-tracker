@@ -185,9 +185,9 @@
   const buttons=[...(menu?.querySelectorAll('button.ogretmen-menu-btn')||[])];
   const target=buttons.find(b=>pattern.test(b.textContent||''));
   if(!target){const v=sheet('Bu araç kullanılamıyor','<p>İlgili öğretmen aracı şu anda yüklenemedi. Lütfen tekrar dene.</p>');return;}
+  // Keep legacy command's event wiring, then close only the launcher after child creation.
   target.click();
-  // Legacy launcher itself must not remain on top after the child closes.
-  if(menu)menu.style.setProperty('display','none');
+  if(menu){requestAnimationFrame(()=>{if(document.body.classList.contains('tp-dash-active'))menu.style.setProperty('display','none');});}
  }
  async function chooseTeacherStudent(title,next){
   const v=sheet(title,'<p>Yalnızca hesabına bağlı öğrencileri seçebilirsin.</p><label>Sınıf<select name="grade"><option value="">Tüm sınıflar</option>'+Array.from({length:8},(_,i)=>'<option value="'+(i+1)+'">'+(i+1)+'. sınıf</option>').join('')+'</select></label><label>Öğrenci<select name="studentId" required><option value="">Öğrenci seç</option></select></label><button class="tp-primary">Devam Et</button>');
@@ -226,10 +226,15 @@
   if(action==='oral'){window.dmTeacherOral?.open?.();return;}
   if(action==='individual'){
    chooseTeacherStudent('Öğrenci Bireysel Raporları',async student=>{
-    // Never impersonate the student's personal session.
-    const v=sheet('Öğrenci Bireysel Raporları','<p>Seçilen öğrenci: <strong data-student></strong></p><p>Öğrencinin kişisel İlerlemem sayfası gizlilik nedeniyle onun oturumunda açılır. Öğretmen olarak mevcut öğrenci raporlarını kendi yetkinle görüntüleyebilirsin.</p><button type="button" data-reports>Öğrenci raporlarına git</button>');
-    v.shade.querySelector('[data-student]').textContent=student.full_name||student.username;
-    v.shade.querySelector('[data-reports]').onclick=()=>{v.close();legacyTool(/bireysel|rapor|performans/i);};
+    const data=await api('teacherPortalStudentReport',{studentId:student.id});
+    const v=sheet('📊 Öğrenci Bireysel Raporu','<div class="tp-report-view"><h3 data-report-name></h3><div class="tp-report-stats"></div><h4>Rubrik değerlendirmeleri</h4><div class="tp-report-history"></div></div>');
+    v.shade.querySelector('[data-report-name]').textContent=data.student.fullName||data.student.username;
+    const pairs=[['Toplam XP',data.student.xp||0],['Ders puanı',data.student.points||0],['Oyun sayısı',data.totals.plays],['Doğru',data.totals.correct],['Yanlış',data.totals.wrong],['Seri',data.student.streak||0]];
+    const stats=v.shade.querySelector('.tp-report-stats');
+    pairs.forEach(([label,value])=>{const el=document.createElement('div');const b=document.createElement('b');b.textContent=String(value);const small=document.createElement('small');small.textContent=label;el.append(b,small);stats.append(el);});
+    const history=v.shade.querySelector('.tp-report-history');
+    for(const r of data.reports){const el=document.createElement('p');el.textContent=r.report_date+' · Genel: '+(r.genel_score??'—')+' · Okuma: '+(r.reading_score??'—')+' · Yazma: '+(r.writing_score??'—')+' · Kelime: '+(r.vocabulary_score??'—')+' · Konuşma: '+(r.speaking_score??'—');history.append(el);}
+    if(!data.reports.length)history.textContent='Henüz rubrik değerlendirmesi bulunmuyor.';
    });return;
   }
   if(action==='studentDetails'){
