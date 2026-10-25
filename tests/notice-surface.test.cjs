@@ -8,7 +8,7 @@ function fixture(){
  w.setInterval=(fn,ms)=>{timers.push({fn,ms,interval:true});return timers.length;};w.setTimeout=(fn,ms)=>{timers.push({fn,ms,at:now+ms});return timers.length;};
  w.dmPapiNotices={inActivity:()=>activity};
  w.AudioContext=class{constructor(){this.state='running';this.currentTime=0;this.destination={};}createOscillator(){return {frequency:{setValueAtTime(){}},connect(){},start(){sounds.push('tone')},stop(){},disconnect(){}}}createGain(){return {gain:{setValueAtTime(){},exponentialRampToValueAtTime(){}},connect(){},disconnect(){}}}};
- w.eval(source);
+ w.requestAnimationFrame=fn=>w.queueMicrotask(fn);w.eval(source);
  const flush=async()=>{for(let i=0;i<4;i++)await Promise.resolve();};
  return {w,dom,sounds,flush,setActivity:v=>activity=v,async step(ms=250){now+=ms;for(const t of [...timers])if(t.interval)t.fn();else if(t.at<=now){t.at=Infinity;t.fn();}await flush();},close:()=>{w.dmNoticeSurface.destroy();w.close();}};
 }

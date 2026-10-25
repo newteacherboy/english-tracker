@@ -65,7 +65,7 @@ function pump(){
  // Do not take focus from typing or gameplay; bottom panels behave as dialogs.
  if(edge(active)==='bottom'){active.setAttribute('role','dialog');active.setAttribute('aria-modal','true');if(!active.contains(document.activeElement))candidate.close.focus({preventScroll:true});}
 }
-function schedule(){if(scheduled)return;scheduled=true;queueMicrotask(pump);}
+function schedule(){if(disposed||scheduled||!records.size&&!active)return;scheduled=true;requestAnimationFrame(pump);}
 function isVisible(el){return active===el&&requested(el)&&!document.hidden&&!blocked(el)&&!el.classList.contains('dm-papi-held')&&visible(el);}
 function later(el,run,delay){let left=Math.max(0,delay),last=Date.now();const tick=()=>{if(disposed||!el.isConnected)return;const now=Date.now(),delta=Math.min(500,now-last);last=now;if(records.has(el)?isVisible(el):visible(el)&&!document.hidden&&!window.dmPapiNotices?.inActivity?.())left-=delta;if(left<=0){run();return;}setTimeout(tick,100);};return setTimeout(tick,100);}
 function progress(el,ratio){const r=records.get(el);if(r)r.progress.firstChild.style.width=Math.max(0,Math.min(1,ratio))*100+'%';}
@@ -79,7 +79,7 @@ function scan(node){if(node.nodeType!==1)return;adopt(node);for(const el of node
 const observer=new MutationObserver(ms=>{for(const m of ms){if(m.type==='childList')for(const node of m.addedNodes)scan(node);else if(m.target.matches?.(SELECTOR))adopt(m.target);}schedule();});observer.observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['class','style','hidden']});
 function destroy(){disposed=true;observer.disconnect();clearInterval(pulse);records.clear();active=null;}
 window.dmNoticeSurface={adopt,notify,isVisible,later,progress,reset,destroy,busy:()=>!!active};
-function install(){for(const name of ['maToast','dcToastGoster'])if(typeof window[name]==='function'&&!window[name].dmNoticeWrapped){const fn=message=>notify(message);fn.dmNoticeWrapped=true;window[name]=fn;}scan(document.body);}
+function install(){if(disposed)return;for(const name of ['maToast','dcToastGoster'])if(typeof window[name]==='function'&&!window[name].dmNoticeWrapped){const fn=message=>notify(message);fn.dmNoticeWrapped=true;window[name]=fn;}scan(document.body);}
 document.addEventListener('pointerdown',unlock,{capture:true,passive:true});document.addEventListener('keydown',unlock,true);
 document.addEventListener('keydown',e=>{if(e.key!=='Escape'||!active)return;const r=records.get(active);if(r?.close&&!r.close.disabled){e.preventDefault();e.stopImmediatePropagation();r.close.click();}},true);
 document.addEventListener('dm:login',()=>{if(owner!==actor())reset();install();});document.addEventListener('DOMContentLoaded',install,{once:true});document.addEventListener('visibilitychange',schedule);install();const pulse=setInterval(pump,250);window.addEventListener('pagehide',e=>{if(!e.persisted)destroy();});
