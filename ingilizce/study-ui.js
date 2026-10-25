@@ -103,6 +103,7 @@
  }
  function decorateDetail(){
   if(!$('suLessonHero')){const hero=document.createElement('div');hero.id='suLessonHero';hero.className='su-lesson-hero';hero.innerHTML=art('explain')+'<p>Hadi bu konuyu<br>birlikte keşfedelim!</p>';$('dcAnlatimIcerik').before(hero);}
+  if(!$('suRewardHint')&&!window.dmTeacherPortalMode){const hint=document.createElement('p');hint.id='suRewardHint';hint.className='su-word-hint';hint.textContent='İlk başarılı tamamlamada en fazla 300 XP + 80 altın. Ödül, ilk cevap başarına göre hesaplanır.';$('suLessonHero').after(hint);}
   if(!$('suWordHint')){const hint=document.createElement('p');hint.id='suWordHint';hint.className='su-word-hint';hint.textContent='Kelimeye dokun, anlamını öğren.';$('dcAnlatimIcerik').after(hint);}
   root.querySelectorAll('.dc-word').forEach(w=>{w.tabIndex=0;w.setAttribute('role','button');w.setAttribute('aria-label',w.textContent+': '+(w.dataset.tr||'anlamını öğren'));});
   decorateExamples();refreshView();

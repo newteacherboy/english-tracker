@@ -20,7 +20,7 @@ const feed=['Elif','Ege','Zeynep','Cemre'].map((ogr,i)=>({k:'event'+i,ogr,ad:ogr
     if(op){let d={ok:true};
       if(op==='dersKonulariGetir')d=topics;
       else if(op==='dersKonuDetayGetir')d=detail;
-      else if(op==='dersTestSonucKaydet'){writes.push(body);if(failNextSave){failNextSave=false;return r.fulfill({status:503,json:{status:'error',message:'Fixture offline'}});}const answers=body.answers||[],firstCorrect=Number(answers[0]==='goes')+Number(answers[1]==='I wake up');d=firstCorrect===2?{ok:true,status:'success',firstCorrect,total:2,tier:100,xp:80,gold:25,eklenenEnerji:body.konuAdi==='Saatler'?0:2,enerjiKalan:32,enerjiMax:30}:{ok:true,status:'needs_recovery',firstCorrect,total:2,tier:0,recoveryIndices:[0]};}
+      else if(op==='dersTestSonucKaydet'){writes.push(body);if(failNextSave){failNextSave=false;return r.fulfill({status:503,json:{status:'error',message:'Fixture offline'}});}const answers=body.answers||[],firstCorrect=Number(answers[0]==='goes')+Number(answers[1]==='I wake up');d=firstCorrect===2?{ok:true,status:'success',firstCorrect,total:2,tier:100,xp:300,gold:80,eklenenEnerji:body.konuAdi==='Saatler'?0:2,enerjiKalan:32,enerjiMax:30}:{ok:true,status:'needs_recovery',firstCorrect,total:2,tier:0,recoveryIndices:[0]};}
       else if(op==='seviyeDurumu')d={ok:true,level:placementB2?1:30,feed:true,lessons:{},chests:{},...(placementB2?{studyAccess:{A1:true,A2:true,B1:true,B2:true},studyPlacementLevel:'B2'}:{})};
       else if(op==='seviyeLigListesi')d={ok:true,liste:league};
       else if(op==='sosyalOgrencilerGetir')d=people;
@@ -97,7 +97,7 @@ const feed=['Elif','Ege','Zeynep','Cemre'].map((ogr,i)=>({k:'event'+i,ogr,ad:ogr
   assert(await page.locator('#dcAnlatimIcerik').isVisible());
   await page.locator('[data-tab="ornek"]').click({force:true});assert(await page.locator('#dcTab-anlatim').isVisible(),'reading gate preserved');
   await page.locator('.dc-word').first().click();assert(await page.locator('#dcHoverBalon').isVisible());assert((await page.locator('#dcHoverBalon').innerText()).includes('uyanmak'));await page.keyboard.press('Escape');
-  await page.screenshot({path:path.join(artifacts,'study-anlatim-mobile.png')});
+  assert.match(await page.locator('#suRewardHint').textContent(),/300 XP \+ 80 altın/);await page.screenshot({path:path.join(artifacts,'study-anlatim-mobile.png')});
   // Advance the existing reading timer rather than bypass the confirmation handler.
   await page.evaluate(()=>{dcAnlatimBaslangicZamani=Date.now()-31000;});await page.waitForTimeout(400);
   await page.locator('#dcOkudumBtn').click();assert(await page.locator('#dcTab-ornek').isVisible());
@@ -117,7 +117,7 @@ const feed=['Elif','Ege','Zeynep','Cemre'].map((ogr,i)=>({k:'event'+i,ogr,ad:ogr
 
   assert(await page.locator('#suQuizNext').isEnabled());
   await page.locator('#suQuizNext').click();await page.waitForSelector('#suStudyResult');assert.equal(await page.evaluate(()=>dcAktifKonuTamamlanmisMi),true);
-  assert(await page.evaluate(()=>dmStudyUI.lastResult.correct===2&&dmStudyUI.lastResult.xp===80&&dmStudyUI.lastResult.gold===25&&dmStudyUI.lastResult.energy===2));
+  assert(await page.evaluate(()=>dmStudyUI.lastResult.correct===2&&dmStudyUI.lastResult.xp===300&&dmStudyUI.lastResult.gold===80&&dmStudyUI.lastResult.energy===2));
   assert(writes.some(x=>x.islem==='dersTestSonucKaydet'&&x.konuAdi==='Günlük Rutinler'));
   const saveCount=writes.filter(x=>x.islem==='dersTestSonucKaydet').length;await page.evaluate(()=>dcTestiBitir(2));assert.equal(writes.filter(x=>x.islem==='dersTestSonucKaydet').length,saveCount,'single run cannot award twice');
   await page.screenshot({path:path.join(artifacts,'study-result-mobile.png')});
