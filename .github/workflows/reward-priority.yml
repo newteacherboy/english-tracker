@@ -1,0 +1,26 @@
+name: Ranked learning rewards
+on:
+  push:
+    paths:
+      - 'supabase/migrations/*ranked_learning_rewards.sql'
+      - 'ingilizce/reward-policy.json'
+      - 'ingilizce/konu-oyunlari.js'
+      - 'tests/reward-priority-*'
+      - '.github/workflows/reward-priority.yml'
+  pull_request:
+    paths:
+      - 'supabase/migrations/*ranked_learning_rewards.sql'
+      - 'ingilizce/reward-policy.json'
+      - 'ingilizce/konu-oyunlari.js'
+      - 'tests/reward-priority-*'
+      - '.github/workflows/reward-priority.yml'
+jobs:
+  rewards:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm install --no-save --package-lock=false @electric-sql/pglite@0.5.11
+      - run: node tests/reward-priority-db.cjs
