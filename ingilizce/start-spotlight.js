@@ -115,22 +115,27 @@ function musicOff(){want=null;try{player.pause();player.currentTime=0;}catch{}}
 /* ---------- Hangi buton aktif? ---------- */
 let active=null;const pressed=new Set();
 const shown=b=>!b.disabled&&!b.closest('[hidden]')&&(b.checkVisibility?b.checkVisibility({opacityProperty:true,visibilityProperty:true}):b.getClientRects().length>0);
-function release(){if(!active)return;pressed.add(active);active.classList.remove('dmss-halo','dmss-hop');active.removeEventListener('pointerdown',release);layerOff();musicOff();active=null;}
+function release(markPressed=true){if(!active)return;if(markPressed)pressed.add(active);active.classList.remove('dmss-halo','dmss-hop');active.removeEventListener('pointerdown',release);layerOff();musicOff();active=null;}
 function scan(){
  frame=0;
- if(document.hidden){release();return;}
+ if(document.hidden){release(false);return;}
  pressed.forEach(b=>{if(!b.isConnected||!shown(b))pressed.delete(b);});
  const list=[...document.querySelectorAll(SEL)].filter(b=>!pressed.has(b)&&shown(b));
  const pick=list.find(isParkur)||list[list.length-1]||null;
  if(pick===active){if(active&&!want&&!muted())musicOn(isParkur(active)?'parkur':'game');return;}
- release();if(!pick)return;
+ release(false);if(!pick)return;
  active=pick;const parkur=isParkur(pick);
  pick.classList.add(parkur?'dmss-halo':'dmss-hop');layerOn(pick,parkur);
  pick.addEventListener('pointerdown',release,{once:true});
  musicOn(parkur?'parkur':'game');
 }
 let frame=0;const schedule=()=>{if(!frame)frame=setTimeout(scan,120);};
-new MutationObserver(list=>{if(list.some(m=>!(layer&&layer.contains(m.target))))schedule();}).observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['hidden','disabled','class','style','open']});
+// Text counters, coin art and notice progress bars cannot change a start button.
+// Check only changed subtrees; ancestor visibility/disabled changes still rescan.
+const touchesStart=node=>node.nodeType===1&&(node.matches(SEL)||node.closest(SEL)||node.querySelector(SEL));
+new MutationObserver(list=>{
+ if(list.some(m=>!(layer&&layer.contains(m.target))&&(m.type==='attributes'?touchesStart(m.target):m.target.closest?.(SEL)||[...m.addedNodes,...m.removedNodes].some(touchesStart))))schedule();
+}).observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['hidden','disabled','class','style','open']});
 document.addEventListener('visibilitychange',schedule);
 document.addEventListener('click',e=>{if(active&&e.target.closest?.(SEL)===active)release();},true);
 window.dmStartSpotlight={stop:release,refresh:schedule,playing:()=>!player.paused&&!!player.dataset.kind&&player.dataset.kind};

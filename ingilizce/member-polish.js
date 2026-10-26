@@ -12,9 +12,28 @@ const transport=window.fetch;window.fetch=function(url,opt){let body;try{body=JS
 function install(){for(const [name,correct] of [['dogru',true],['yanlis',false]]){const old=window.OC?.[name];if(typeof old!=='function'||old.dmSharedFeedback)return;const fn=function(){const result=old.apply(this,arguments);if(window.OC?.aktif?.oyun!=='bosluk')window.dmAnswerFeedback(correct);return result;};fn.dmSharedFeedback=true;window.OC[name]=fn;}}
 install();setInterval(install,1500);
 function coins(root){if(!root||root.nodeType!==1||root.closest('script,style,textarea,option'))return;const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);const nodes=[];while(walker.nextNode())if(walker.currentNode.data.includes('🪙')&&!walker.currentNode.parentElement.closest('script,style,textarea,option'))nodes.push(walker.currentNode);for(const node of nodes){const fragment=document.createDocumentFragment(),parts=node.data.split('🪙');parts.forEach((part,i)=>{if(i){const image=document.createElement('img');image.className='dm-gold-icon';image.src='route-assets/coin.svg';image.alt='Altın';fragment.append(image);}fragment.append(document.createTextNode(part));});node.replaceWith(fragment);}}
-function letterTitles(){document.querySelectorAll('.dm-letter-word>strong:not([data-centered])').forEach(el=>{el.dataset.centered='1';const match=el.textContent.match(/^(\d+)\.\s*(.*)$/);if(!match)return;el.textContent='';const number=document.createElement('span');number.className='dm-letter-number';number.textContent=match[1];const meaning=document.createElement('span');meaning.textContent=match[2];el.append(number,meaning);});}
-letterTitles();new MutationObserver(letterTitles).observe(document.body,{childList:true,subtree:true});
-coins(document.body);new MutationObserver(ms=>{for(const m of ms){if(m.type==='childList')for(const node of m.addedNodes){if(node.nodeType===1)coins(node);else if(node.nodeType===3&&node.data.includes('🪙'))coins(node.parentElement);}else if(m.target.data.includes('🪙'))coins(m.target.parentElement);}}).observe(document.body,{childList:true,subtree:true,characterData:true});
+function letterTitles(root=document){const selector='.dm-letter-word>strong:not([data-centered])';const titles=[...(root.matches?.(selector)?[root]:[]),...root.querySelectorAll(selector)];titles.forEach(el=>{el.dataset.centered='1';const match=el.textContent.match(/^(\d+)\.\s*(.*)$/);if(!match)return;el.textContent='';const number=document.createElement('span');number.className='dm-letter-number';number.textContent=match[1];const meaning=document.createElement('span');meaning.textContent=match[2];el.append(number,meaning);});}
+// Initial decoration runs once. Timer ticks and unrelated screen changes must not
+// rescan the entire document (including all hidden games and teacher panels).
+letterTitles();coins(document.body);
+new MutationObserver(records=>{
+ const roots=new Set();
+ for(const record of records){
+  if(record.type==='characterData'){
+   if(record.target.data.includes('🪙'))roots.add(record.target.parentElement);
+  }else for(const node of record.addedNodes){
+   if(node.nodeType===1)roots.add(node);
+   else if(node.nodeType===3&&node.data.includes('🪙'))roots.add(node.parentElement);
+  }
+ }
+ for(const root of roots){
+  if(!root?.isConnected)continue;
+  // If a parent and child were inserted in the same batch, walk only the parent.
+  let parent=root.parentElement;while(parent&&!roots.has(parent))parent=parent.parentElement;
+  if(parent)continue;
+  letterTitles(root);coins(root);
+ }
+}).observe(document.body,{childList:true,subtree:true,characterData:true});
 })();
 
 /* Weekly goal counts all earned XP; view checkpoints contain no credentials. */
