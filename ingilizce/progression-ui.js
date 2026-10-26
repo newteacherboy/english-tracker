@@ -66,28 +66,44 @@ function primeLevelSound(){
 document.addEventListener('pointerdown',primeLevelSound,true);
 document.addEventListener('keydown',primeLevelSound,true);
 function levelSound(kind){
- if(!levelSoundAllowed())return;
+ if(!levelSoundAllowed())return false;
  primeLevelSound();
- const audio=levelSoundContext;if(!audio||audio.state!=='running')return;
- const notes=kind==='fly'?[392,523.25,659.25,783.99]:
+ const audio=levelSoundContext;if(!audio||audio.state!=='running')return false;
+ const fly=kind==='fly';
+ // Bright but brief nonverbal flight: a soft rising whoosh under a five-note chime.
+ // Browsers may decline autoplay; never force audio or bypass mute controls.
+ const notes=fly?[392,523.25,659.25,783.99,1046.5]:
   kind==='number'?[523.25,783.99,1046.5]:
   [659.25,880];
- const gap=kind==='fly'?.105:kind==='number'?.087:.055;
- const volume=kind==='unlock'?.026:.036;
+ const gap=fly?.11:kind==='number'?.087:.055;
+ const volume=fly?.075:kind==='unlock'?.026:.036;
  try{
   const now=audio.currentTime;
+  if(fly){
+   const swoosh=audio.createOscillator(),envelope=audio.createGain();
+   swoosh.type='triangle';
+   swoosh.frequency.setValueAtTime(170,now);
+   swoosh.frequency.exponentialRampToValueAtTime?.(610,now+.5);
+   envelope.gain.setValueAtTime(.0001,now);
+   envelope.gain.exponentialRampToValueAtTime(.046,now+.07);
+   envelope.gain.exponentialRampToValueAtTime(.0001,now+.53);
+   swoosh.connect(envelope);envelope.connect(audio.destination);
+   swoosh.start(now);swoosh.stop(now+.55);
+   swoosh.onended=()=>{try{swoosh.disconnect();envelope.disconnect();}catch{}};
+  }
   notes.forEach((hz,i)=>{
    const osc=audio.createOscillator(),gain=audio.createGain(),t=now+i*gap;
-   osc.type=kind==='fly'?'triangle':'sine';
+   osc.type=fly?'triangle':'sine';
    osc.frequency.setValueAtTime(hz,t);
    gain.gain.setValueAtTime(.0001,t);
-   gain.gain.exponentialRampToValueAtTime(volume,t+.015);
-   gain.gain.exponentialRampToValueAtTime(.0001,t+.15);
+   gain.gain.exponentialRampToValueAtTime(volume,t+.02);
+   gain.gain.exponentialRampToValueAtTime(.0001,t+(fly?.24:.15));
    osc.connect(gain);gain.connect(audio.destination);
-   osc.start(t);osc.stop(t+.17);
+   osc.start(t);osc.stop(t+(fly?.26:.17));
    osc.onended=()=>{try{osc.disconnect();gain.disconnect();}catch{}};
   });
- }catch{} // audio is enhancement only
+  return true;
+ }catch{return false;} // audio must never block reward flow
 }
 function celebrate(from,to){
  if(document.getElementById('dmLevelUp')||!C.levels[to-1])return;
@@ -126,12 +142,17 @@ function celebrate(from,to){
   timers.forEach(clearTimeout);
   el.remove();prior?.focus?.();
  };
- el.querySelector('.dm-papi-reveal').onclick=()=>reveal(true);
+ let flightSoundPlayed=false;
+ el.querySelector('.dm-papi-reveal').onclick=()=>{
+  // iOS/WebKit may require a user gesture. Retry only if arrival was silent.
+  if(!flightSoundPlayed)flightSoundPlayed=levelSound('fly');
+  reveal(true);
+ };
  continueButton.onclick=close;
  el.querySelector('.dm-level-skip').onclick=close;
  dialogKeys(el,close);
  el.querySelector('.dm-papi-reveal').focus();
- levelSound('fly');
+ flightSoundPlayed=levelSound('fly');
  if(reduced){reveal(false);}
  else{
   later(()=>levelSound('number'),1100);
