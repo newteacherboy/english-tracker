@@ -44,7 +44,7 @@ const SCHOOL=require('../ingilizce/school-curriculum.js');
   if(t.kind==='order'){for(let j=0;j<t.tokens.length;j++)await page.locator('[data-token="'+j+'"]').click();await page.locator('[data-check]').click();}
   if(t.kind==='letters'){const used=[];for(const pos of t.missing){const j=t.tokens.findIndex((ch,j)=>ch===t.en[pos]&&!used.includes(j));used.push(j);await page.locator('[data-letter-token="'+j+'"]').click();}await page.locator('[data-letter-check]').click();}
   if(t.kind==='review'){for(let j=0;j<t.cards.length;j++){await page.waitForFunction(j=>document.querySelector('.ml-review-count')?.textContent==='Kart '+(j+1)+' / 4',j);await page.locator('[data-review-choice="'+t.cards[j].options.indexOf(t.cards[j].tr)+'"]').click();}}
-  if(t.kind!=='review'){await page.waitForSelector('[data-next]');await page.locator('[data-next]').click();}
+  if(t.kind!=='review'){assert.equal(await page.locator('.ml-actions [data-next]').count(),0,'correct route answers advance without Continue');}
  }
  await page.waitForFunction(()=>!!window.finished);assert.equal(await page.evaluate(()=>finished.dogru),10);assert.equal(await page.locator('#dmStoryLesson').count(),0);assert.deepEqual(events.filter(e=>e.islem==='verifiedGameAnswer').map(e=>e.slot),Array.from({length:12},(_,i)=>i));assert.deepEqual(errors,[]);await browser.close();console.log('PASS complete school journey and result callback');
 })().catch(e=>{console.error(e);process.exit(1)});
