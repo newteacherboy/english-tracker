@@ -34,6 +34,15 @@ function decorate(el){
  if(!content.querySelector('h2,h3,strong,b')){const title=document.createElement('h2');title.textContent=el.dataset.noticeTitle||'Papi’den bildirim';content.prepend(title);}
  if(!content.querySelector('button')){const done=document.createElement('button');done.type='button';done.className='dm-notice-done';done.textContent='Tamam';done.onclick=event=>{event.stopPropagation();close.click();};content.append(done);}
  const progress=document.createElement('div');progress.className='dm-notice-progress';progress.setAttribute('aria-hidden','true');progress.append(document.createElement('i'));panel.append(progress);
+ if(edge(el)==='top'){
+  // Compact, high-contrast golden ribbon: mascot / wrapping text / timer + X.
+  const mascotIcon=document.createElement('span');mascotIcon.className='dm-notice-emblem';mascotIcon.setAttribute('aria-hidden','true');
+  mascotIcon.textContent=/parkur|seviye|başar|ödül|altın|xp|görev|tebrik/i.test((el.textContent||'').slice(0,350))?'🏆':'🔔';
+  content.prepend(mascotIcon);
+  const controls=document.createElement('div');controls.className='dm-notice-controls';
+  const timer=document.createElement('span');timer.className='dm-notice-timer';timer.textContent='5 sn';timer.setAttribute('aria-label','5 saniye sonra kapanır');
+  controls.append(timer,close,progress);panel.append(controls);
+ }
  el.classList.add('dm-notice-managed','dm-notice-edge-'+edge(el));
  el.dataset.noticeSurface='papi-v2';
  el.addEventListener('click',event=>{const b=event.target.closest?.('button');if(active===el&&b&&!b.disabled&&(b===close||b.matches('.dm-final-ready,.dm-nudge-skip,.dm-momentum-later,.dm-habit-x,.cp-dismiss,.dv-vaz,#yoDavetHayir')||/^(tamam|anladım|okudum|şimdilik kapat|kapat|[×✕x])/i.test((b.textContent||'').trim())))sound('close');},true);
@@ -43,10 +52,18 @@ function adopt(el){
  if(!el?.matches?.(SELECTOR)||records.has(el)||!requested(el))return;
  const r={...decorate(el),el,owner:actor(),order:sequence++,started:false,priority:el.matches('.dm-papi-feedback.is-energy')?0:el.id==='duyuruOverlay'?1:el.dataset.noticePriority==='0'?0:operational(el)?2:3};records.set(el,r);
  el.classList.add('dm-notice-waiting');el.setAttribute('aria-hidden','true');schedule();
+ if(edge(el)==='top'){
+  // Time is counted only while the ribbon is actually visible; game/background pauses it.
+  const requestedMs=Number(el.dataset.noticeLifetime),lifetime=requestedMs>0?Math.min(5000,requestedMs):5000;
+  r.lifetime=lifetime;
+  later(el,()=>{if(records.has(el)){if(r.close?.isConnected&&!r.close.disabled)r.close.click();else el.remove();}},lifetime);
+ }
 }
 function externalDialog(el){return [...document.querySelectorAll('[role="dialog"],[aria-modal="true"],.rubric-modal,.rubric-overlay,.kb-perde,#dmEmailGuide')].some(d=>!d.closest('.dm-notice-managed')&&!el.contains(d)&&visible(d));}
 function blocked(el){
  if(document.hidden||window.dmPapiTour?.active?.()||window.dmRoutePracticeFlight?.active?.()||window.dmContactFrozen)return true;
+ // No top banners during any live game, route or parkur exercise, even urgent ones.
+ if(edge(el)==='top'&&(window.dmPapiNotices?.inActivity?.()||document.body.classList.contains('dm-game-viewport')||document.body.classList.contains('fg-game-locked')||document.body.classList.contains('dm-play-session')))return true;
  const urgent=operational(el);
  if(!urgent&&(window.dmPapiNotices?.inActivity?.()||[...document.querySelectorAll('input:focus,textarea:focus,select:focus')].some(input=>!el.contains(input))))return true;
  if(!el.matches('.dm-papi-feedback.is-energy')&&!(urgent&&window.dmPapiNotices?.inActivity?.())&&externalDialog(el))return true;
@@ -69,12 +86,13 @@ function pump(){
 function schedule(){if(disposed||scheduled||!records.size&&!active)return;scheduled=true;requestAnimationFrame(pump);}
 function isVisible(el){return active===el&&requested(el)&&!document.hidden&&!blocked(el)&&!el.classList.contains('dm-papi-held')&&visible(el);}
 function later(el,run,delay){let left=Math.max(0,delay),last=Date.now();const tick=()=>{if(disposed||!el.isConnected)return;const now=Date.now(),delta=Math.min(500,now-last);last=now;if(records.has(el)?isVisible(el):visible(el)&&!document.hidden&&!window.dmPapiNotices?.inActivity?.())left-=delta;if(records.has(el))progress(el,left/Math.max(1,delay));if(left<=0){run();return;}setTimeout(tick,100);};return setTimeout(tick,100);}
-function progress(el,ratio){const r=records.get(el);if(r)r.progress.firstChild.style.width=Math.max(0,Math.min(1,ratio))*100+'%';}
-function notify(message,{title='Papi’den bildirim',edge='top',duration=10000}={}){
+function progress(el,ratio){const r=records.get(el);if(!r)return;const fraction=Math.max(0,Math.min(1,ratio));r.progress.firstChild.style.width=fraction*100+'%';const timer=r.panel.querySelector('.dm-notice-timer');if(timer){const seconds=Math.max(0,Math.ceil(fraction*(r.lifetime||5000)/1000));timer.textContent=seconds+' sn';}}
+function notify(message,{title='Papi’den bildirim',edge='top',duration=5000}={}){
  const text=String(message??'').trim();if(!text)return null;
  const duplicate=[...records.keys()].find(e=>e.dataset.noticeMessage===text);if(duplicate)return duplicate;
  const el=document.createElement('aside');el.dataset.papiNotice='';el.dataset.noticeMessage=text;el.dataset.noticeTitle=title;el.dataset.noticeEdge=edge;el.setAttribute('role','status');
- const p=document.createElement('p');p.textContent=text;el.append(p);document.body.append(el);adopt(el);if(duration>0)later(el,()=>el.remove(),duration);return el;
+ if(edge==='top')el.dataset.noticeLifetime=String(duration>0?Math.min(5000,duration):5000);
+ const p=document.createElement('p');p.textContent=text;el.append(p);document.body.append(el);adopt(el);if(edge!=='top'&&duration>0)later(el,()=>el.remove(),duration);return el;
 }
 function scan(node){if(node.nodeType!==1)return;adopt(node);for(const el of node.querySelectorAll(SELECTOR))adopt(el);}
 const observer=new MutationObserver(ms=>{for(const m of ms){if(m.type==='childList')for(const node of m.addedNodes)scan(node);else if(m.target.matches?.(SELECTOR))adopt(m.target);}schedule();});observer.observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['class','style','hidden']});
