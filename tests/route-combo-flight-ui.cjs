@@ -18,7 +18,7 @@ const CORE=require('../ingilizce/learning-core.js'),DATA=require('../ingilizce/t
   await open();
   for(let i=0;i<5;i++){
    const task=tasks[start+i];if(task.kind==='choice')await page.locator('[data-answer="'+task.options.indexOf(task.answer)+'"]').click();else if(task.kind==='match')for(let j=0;j<task.pairs.length;j++){await page.locator('[data-left="'+j+'"]').click();await page.locator('[data-right="'+j+'"]').click();}else throw Error('unsupported fixture task');
-   await page.waitForSelector('[data-next]');if(i<4){assert.equal(await page.locator('.dm-route-flight-combo').count(),0);await page.locator('[data-next]').click();}
+   assert.equal(await page.locator('.ml-actions [data-next]').count(),0,'correct answers auto advance');if(i<4){await page.waitForFunction(n=>Number(document.querySelector('.ml-progress progress')?.value)>n,start+i);assert.equal(await page.locator('.dm-route-flight-combo').count(),0);}
   }
   await page.waitForSelector('.dm-route-flight-combo');assert.equal(correct,5);assert.match(await page.locator('[data-ml-energy]').textContent(),/^21/);
   const full=await page.locator('.dm-route-flight-combo').boundingBox();assert.equal(full.width,width);assert.equal(full.height,height);

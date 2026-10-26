@@ -811,3 +811,48 @@
  #dmStoryLesson#dmStoryLesson.ml-entry .ml-entry-start{min-height:46px!important;margin-top:7px!important}
 }
 @media(prefers-reduced-motion:reduce){#dmStoryLesson#dmStoryLesson.ml-entry .ml-entry-card{animation:none!important}}
+
+
+/* Shared Okul Yolum + Öğrenme Yolu answer policy, both day and night:
+   correct = brief confirmation then automatic step; wrong = correction + manual continue. */
+#dmStoryLesson#dmStoryLesson .ml-feedback.is-answer-wrong{
+ display:block!important;box-sizing:border-box!important;
+ margin:7px 0 3px!important;padding:12px 14px 12px 42px!important;
+ max-height:min(24dvh,165px);overflow-y:auto;overflow-wrap:anywhere;
+ border:2px solid #df926d!important;border-radius:16px!important;
+ background:#fff2dd!important;color:#713716!important;
+ box-shadow:0 5px 16px #8e502b1c!important;font-size:clamp(12px,3vw,15px)!important;
+ line-height:1.4!important;text-align:left!important;
+}
+#dmStoryLesson#dmStoryLesson .ml-feedback.is-answer-wrong:before{
+ content:'✕'!important;position:absolute!important;left:14px!important;top:11px!important;
+ color:#bb4b29!important;font-size:20px!important;
+}
+#dmStoryLesson#dmStoryLesson .ml-feedback.is-correct{margin:7px 0!important;padding-top:10px!important;padding-bottom:10px!important}
+#dmStoryLesson#dmStoryLesson .ml-actions:has([data-next]){margin-top:7px!important}
+#dmStoryLesson#dmStoryLesson .ml-actions [data-next],
+#dmStoryLesson#dmStoryLesson .ml-actions [data-review-continue]{
+ min-height:44px!important;flex:1 1 auto;touch-action:manipulation;
+}
+#dmStoryLesson#dmStoryLesson .ml-review-note{overflow-wrap:anywhere}
+@media(max-height:650px){
+ #dmStoryLesson#dmStoryLesson .ml-feedback.is-answer-wrong{max-height:17dvh!important;padding:8px 11px 8px 36px!important;line-height:1.24!important}
+ #dmStoryLesson#dmStoryLesson .ml-feedback.is-answer-wrong:before{left:11px!important;top:7px!important}
+}
+
+
+/* The same single-board exercise must fit even on a 390px-high landscape tablet.
+   Release unused space above action buttons; keep the original portrait spacing. */
+@media(max-height:420px) and (min-width:700px){
+ #dmStoryLesson#dmStoryLesson .ml-actions{margin-top:1px!important;gap:5px!important}
+ #dmStoryLesson#dmStoryLesson .ml-actions button{padding-block:8px!important;min-height:36px!important}
+}
+
+/* On very short landscape screens the final-review choices can extend beneath
+   the footer. Always keep the manual acknowledgement above disabled choices. */
+@media(max-height:420px) and (min-width:700px){
+ #dmStoryLesson#dmStoryLesson .ml-actions{position:relative!important;z-index:30!important}
+ #dmStoryLesson#dmStoryLesson .ml-task{position:relative!important;z-index:1!important}
+ #dmStoryLesson#dmStoryLesson .ml-actions [data-review-continue],
+ #dmStoryLesson#dmStoryLesson .ml-actions [data-next]{position:relative!important;z-index:31!important}
+}
