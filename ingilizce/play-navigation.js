@@ -2,7 +2,16 @@
 (()=>{'use strict';
  const surfaces='.game-modal-overlay,#bzPerde,#dmStoryLesson,#mlThemeList,#meteorGame,#wordWheel,#papiCards,#rallyGame,#dmGameIntro,#seviyeHaritaOverlay,#yoModal.acik,.dm-garden-match,.kp-shell,.ba-shell,.kart-oyun-overlay,#dyOyunOverlay,#genelSonucOverlay,.bz-alt:has(.sp-start-card)';
  const nativeBack='.game-close-btn,#bzCik,#bzKapat,#bzVazgec,.rq-close,.ds-back,.ml-header [data-back],.ml-entry-card [data-back],.mt-exit,.ww-close,.pc-close,.yo-kapat,.seviye-harita-kapat,.kp-close-x,.ba-close,[data-ia-close],.dm-x,.hb-card>header>[data-close],.hb-card>header>button,.kart-oyun-kapat,.pomodoro-close-btn';
- const shown=el=>!!el?.isConnected&&el.getClientRects().length>0&&(el.checkVisibility?el.checkVisibility({checkOpacity:true,checkVisibilityCSS:true}):getComputedStyle(el).visibility!=='hidden');
+ // A finished game can leave its shell in the DOM. Only on-screen, interactive
+ // surfaces are allowed to hide the main navigation dock.
+ const shown=el=>{
+  if(!el?.isConnected||el.hidden||el.closest('[inert],[aria-hidden="true"],[data-dm-nav-suspended]'))return false;
+  const style=getComputedStyle(el);
+  if(style.display==='none'||style.visibility==='hidden'||style.visibility==='collapse'||style.pointerEvents==='none'||Number(style.opacity)<0.05)return false;
+  const rect=el.getBoundingClientRect(),viewportHeight=window.visualViewport?.height||window.innerHeight;
+  if(rect.width<=0||rect.height<=0||rect.bottom<=0||rect.right<=0||rect.left>=window.innerWidth||rect.top>=viewportHeight)return false;
+  return !el.checkVisibility||el.checkVisibility({checkOpacity:true,checkVisibilityCSS:true});
+ };
  function fallback(root){
   if(root.id==='genelSonucOverlay')return ()=>root.querySelector('#gsoDevamBtn')?.click();
   if(root.id==='dyTebrikOverlay')return ()=>root.querySelector('.btn-giris')?.click();
@@ -30,11 +39,19 @@
   if(back.getAttribute('aria-label')!=='Geri dön ve çık')back.setAttribute('aria-label','Geri dön ve çık');
   if(back.title!=='Geri dön')back.title='Geri dön';
  }
- let frame=0;
- function sync(){frame=0;let any=false;for(const root of document.querySelectorAll(surfaces)){if(!shown(root))continue;any=true;decorate(root);}document.body.classList.toggle('dm-play-session',any);}
+ let frame=0,recheck=0;
+ function sync(){
+  frame=0;let any=false;
+  for(const root of document.querySelectorAll(surfaces)){if(!shown(root))continue;any=true;decorate(root);}
+  document.body.classList.toggle('dm-play-session',any);
+  // CSS exits and transition-only closures may not mutate the DOM. Recheck until
+  // the last live game closes, then restore the normal six-tab navigation.
+  if(recheck){clearTimeout(recheck);recheck=0;}
+  if(any)recheck=setTimeout(schedule,1200);
+ }
  function schedule(){if(!frame)frame=requestAnimationFrame(sync);}
  const relevant=n=>n.nodeType===1&&(n.matches(surfaces+',button')||!!n.querySelector(surfaces+',button'));
- const observer=new MutationObserver(records=>{if(records.some(r=>r.type==='childList'?[...r.addedNodes,...r.removedNodes].some(relevant):r.target===document.body||r.target.matches(surfaces+',#gsoDevamBtn')||!!r.target.querySelector(surfaces)))schedule();});observer.observe(document.body,{subtree:true,childList:true,attributes:true,attributeFilter:['class','style','hidden','disabled']});
- window.addEventListener('resize',schedule);document.addEventListener('transitionend',schedule);sync();
+ const observer=new MutationObserver(records=>{if(records.some(r=>r.type==='childList'?[...r.addedNodes,...r.removedNodes].some(relevant):r.target===document.body||r.target.matches(surfaces+',#gsoDevamBtn')||!!r.target.querySelector(surfaces)))schedule();});observer.observe(document.body,{subtree:true,childList:true,attributes:true,attributeFilter:['class','style','hidden','disabled','aria-hidden','inert','data-dm-nav-suspended']});
+ window.addEventListener('resize',schedule);window.addEventListener('pageshow',schedule);document.addEventListener('transitionend',schedule);document.addEventListener('animationend',schedule,true);sync();
  window.dmPlayNavigation={sync};
 })();
