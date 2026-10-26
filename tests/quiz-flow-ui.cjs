@@ -49,6 +49,11 @@ const fs=require('node:fs'),path=require('node:path'),assert=require('node:asser
  await page.evaluate(()=>{for(const w of dkt.liste){dmVerifiedGames.record(w,w.ingilizce);OC.dogru(1);}dkt.d=dkt.liste.length;dkt.i=dkt.liste.length;dikteSoru();});
  await page.waitForSelector('#genelSonucOverlay.acik');assert.equal(await page.locator('#yoModal.acik').count(),0);
  assert(await page.locator('#genelSonucOverlay #gsoDevamBtn').isVisible());await page.locator('#genelSonucOverlay #gsoDevamBtn').click();
+ await page.waitForTimeout(350);
+ console.log('GAME EXIT NAV DIAGNOSTIC',JSON.stringify(await page.evaluate(()=>{
+   const n=document.getElementById('bottomNavMobile');
+   return {body:document.body.className,nav:n&&{display:getComputedStyle(n).display,visibility:getComputedStyle(n).visibility},blockers:[...document.querySelectorAll('.game-modal-overlay,#bzPerde,#dmStoryLesson,#mlThemeList,#meteorGame,#wordWheel,#papiCards,#rallyGame,#dmGameIntro,#seviyeHaritaOverlay,#yoModal.acik,.dm-garden-match,.kp-shell,.ba-shell,.kart-oyun-overlay,#dyOyunOverlay,#genelSonucOverlay,.bz-alt:has(.sp-start-card)')].filter(el=>el.getClientRects().length>0).map(el=>({id:el.id,classes:String(el.className).slice(0,120),inline:el.style.display,display:getComputedStyle(el).display})).slice(0,20)};
+ })));
  console.log('PASS listening selected-unit scope, guest lexical identity, native completion and shared result');
  await page.evaluate(()=>{window.dmGameReopeningSetup=true;cumleAc();});await page.locator('#dmIntroClasses [data-class="2"]').click();await page.locator('#dmGameIntro [data-start]').click();await page.waitForSelector('#yoModal.acik');
  assert.equal(await page.locator('#dmIntroUnits .unite-chip').count(),1);assert.equal(await page.locator('#dmIntroUnits .unite-chip').first().textContent(),'3.Ü');assert.deepEqual(await page.evaluate(()=>OC.aktif.rewardScope.units),[3]);
