@@ -47,29 +47,96 @@ async function extraJoker(){if(!requireFeature('iki_kisilik'))return;try{await s
 function badges(l){return C.levels.slice(0,l).filter(x=>x.benefits.some(b=>b.includes('rozeti')));}
 function panel(){if(!ready()){toast('Seviye bilgilerin yükleniyor. Birazdan tekrar dene.');return;}document.getElementById('dmProgressOverlay')?.remove();const p=R.progress(R.migrate(yo)),info=C.levels[p.level-1],el=document.createElement('div');el.id='dmProgressOverlay';el.className='dm-progress-overlay';el.innerHTML='<section class="dm-progress-sheet" role="dialog" aria-modal="true" aria-labelledby="dmProgressTitle"><button class="dm-progress-close" aria-label="Kapat">×</button>'+sprite(p.level)+'<h2 id="dmProgressTitle">'+info.name+'</h2><p class="dm-progress-caption-v2">Kalıcı seviyen öğrenme yolculuğunu gösterir. XP biriktirdikçe yeni özellikler açılır.</p><b>Seviye '+p.level+' · '+p.xp.toLocaleString('tr-TR')+' XP</b><div class="dm-progress-numbers"><span><b>'+p.xp.toLocaleString('tr-TR')+'</b>Toplam kazanılan XP</span><span><b>'+(p.next===null?'✓':p.remaining)+'</b>Sonraki seviyeye kalan XP</span></div><div class="dm-progress-track"><i style="width:'+p.ratio*100+'%"></i></div><p>'+(p.next===null?'Yolculuğun zirvesindesin!':p.remaining+' XP sonra '+(p.level+1)+'. seviye')+'</p><div class="dm-next-unlocks">'+(p.next===null?'🏆 Efsane Papağan':['Bir sonraki seviyede açılacaklar'].concat(C.levels[p.level].benefits).map(x=>'<p>🔓 '+x+'</p>').join(''))+'</div><details class="dm-earned-badges"><summary>🪶 Kazandığın seviye rozetleri</summary><small>Tüyler, ulaştığın özel seviyelerin hatıra rozetleridir. Harcanmaz ve XP yerine geçmez.</small>'+badges(p.level).map(x=>'<p>'+x.prop+' '+x.name+'</p>').join('')+'</details><p class="dm-mystery">'+(p.next===null?'':Array.from({length:Math.min(4,39-p.level)},()=>'<span>🔒 ?</span>').join(''))+'</p><p class="dm-mystery-caption">Daha sonraki seviyelerin sürprizleri şimdilik gizli.</p><button class="dm-progress-go">Sandıklarım</button></section>';document.body.append(el);const prior=document.activeElement;const close=()=>{el.remove();prior?.focus?.();};el.querySelector('.dm-progress-close').onclick=close;el.querySelector('.dm-progress-go').onclick=()=>{close();chests();};dialogKeys(el,close);el.querySelector('button').focus();}
 function dialogKeys(el,close){el.addEventListener('keydown',e=>{if(e.key==='Escape')close();if(e.key==='Tab'){const b=[...el.querySelectorAll('button:not([hidden]):not(:disabled)')],i=b.indexOf(document.activeElement);e.preventDefault();b[(i+(e.shiftKey?-1:1)+b.length)%b.length].focus();}});}
+/* Native WebAudio notes: never call TTS, never download narration or run a soundtrack.
+   Prime on a real interaction for iOS; auto celebration remains gracefully silent
+   when the browser forbids playback. Respect both app-level mute preferences. */
+let levelSoundContext=null;
+function levelSoundAllowed(){
+ try{return !document.hidden&&window.dmSoundEnabled!==false&&window.dmSesAcik!==false&&localStorage.getItem('dm_sound_muted')!=='1'&&localStorage.getItem('sesKapali')!=='1';}
+ catch{return !document.hidden&&window.dmSoundEnabled!==false&&window.dmSesAcik!==false;}
+}
+function primeLevelSound(){
+ if(!levelSoundAllowed())return;
+ const Audio=window.AudioContext||window.webkitAudioContext;if(!Audio)return;
+ try{
+  if(!levelSoundContext)levelSoundContext=new Audio();
+  if(levelSoundContext.state==='suspended')void levelSoundContext.resume().catch(()=>{});
+ }catch{} // browser restrictions must not block progression
+}
+document.addEventListener('pointerdown',primeLevelSound,true);
+document.addEventListener('keydown',primeLevelSound,true);
+function levelSound(kind){
+ if(!levelSoundAllowed())return;
+ primeLevelSound();
+ const audio=levelSoundContext;if(!audio||audio.state!=='running')return;
+ const notes=kind==='fly'?[392,523.25,659.25,783.99]:
+  kind==='number'?[523.25,783.99,1046.5]:
+  [659.25,880];
+ const gap=kind==='fly'?.105:kind==='number'?.087:.055;
+ const volume=kind==='unlock'?.026:.036;
+ try{
+  const now=audio.currentTime;
+  notes.forEach((hz,i)=>{
+   const osc=audio.createOscillator(),gain=audio.createGain(),t=now+i*gap;
+   osc.type=kind==='fly'?'triangle':'sine';
+   osc.frequency.setValueAtTime(hz,t);
+   gain.gain.setValueAtTime(.0001,t);
+   gain.gain.exponentialRampToValueAtTime(volume,t+.015);
+   gain.gain.exponentialRampToValueAtTime(.0001,t+.15);
+   osc.connect(gain);gain.connect(audio.destination);
+   osc.start(t);osc.stop(t+.17);
+   osc.onended=()=>{try{osc.disconnect();gain.disconnect();}catch{}};
+  });
+ }catch{} // audio is enhancement only
+}
 function celebrate(from,to){
  if(document.getElementById('dmLevelUp')||!C.levels[to-1])return;
  const previous=Math.max(1,Math.min(from,to-1)),info=C.levels[to-1],el=document.createElement('div');
+ const unlocked=C.levels.slice(Math.max(0,from),to).flatMap(x=>(x.benefits||[]).map(benefit=>({level:x.level,name:x.name,prop:x.prop,benefit})));
  el.id='dmLevelUp';el.className='dm-level-up dm-flight-celebration';
- el.innerHTML='<section class="dm-flight-layout" role="dialog" aria-modal="true" aria-labelledby="dmLevelUpTitle" aria-describedby="dmLevelUpSubtitle"><div class="dm-flight-stars" aria-hidden="true">✦　✧　✦　✧　✦</div><button type="button" class="dm-level-skip" aria-label="Kutlamayı geç">Geç</button><header class="dm-flight-heading"><h2 id="dmLevelUpTitle">Yuhuuu!</h2><p id="dmLevelUpSubtitle">Yeni seviyeye ulaştın!</p></header><button type="button" class="dm-papi-reveal" aria-label="Papi’ye dokun, açılan özellikleri gör"><span class="dm-flight-papi" role="img" aria-label="Uçarak gelen Papi papağan"></span></button><div class="dm-flight-number" aria-label="Seviye '+to+'"><span class="dm-flight-old" aria-hidden="true">'+previous+'</span><span class="dm-flight-new" aria-hidden="true">'+to+'</span></div><span class="dm-flight-label">SEVİYE</span><h3 class="dm-flight-name">'+info.name+'</h3><p class="dm-reveal-hint">Papi’ye dokun, yeni özelliklerini keşfet!</p><div class="dm-unlock-cards" hidden></div><button type="button" class="dm-level-continue" hidden>Yolculuğa devam et</button></section>';
- const prior=document.activeElement;
+ el.innerHTML='<section class="dm-flight-layout" role="dialog" aria-modal="true" aria-labelledby="dmLevelUpTitle"><div class="dm-flight-stars" aria-hidden="true">✦　✧　✦　✧　✦</div><button type="button" class="dm-level-skip" aria-label="Kutlamayı geç">Geç</button><h2 id="dmLevelUpTitle" class="dm-flight-sr-only">Seviye '+to+'</h2><button type="button" class="dm-papi-reveal" aria-label="Papi’ye dokun, açılan özellikleri sırayla gör"><span class="dm-flight-papi" role="img" aria-label="Uçarak gelen Papi papağan"></span></button><div class="dm-flight-number" aria-label="Seviye '+to+'"><span class="dm-flight-old" aria-hidden="true">'+previous+'</span><span class="dm-flight-new" aria-hidden="true">'+to+'</span></div><span class="dm-flight-label">SEVİYE</span><h3 class="dm-flight-name">'+info.name+'</h3><p class="dm-reveal-hint">Yeni özelliklerin açılıyor</p><div class="dm-unlock-cards" role="list" aria-label="Yeni açılan özellikler" hidden></div><button type="button" class="dm-level-continue" hidden>Yolculuğa devam et</button></section>';
+ const prior=document.activeElement,timers=[],reduced=!!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+ const later=(fn,ms)=>{timers.push(setTimeout(()=>{if(el.isConnected)fn();},ms));};
  document.body.append(el);
- let timer=0;
+ const cards=el.querySelector('.dm-unlock-cards'),continueButton=el.querySelector('.dm-level-continue');
+ let started=false;
+ const finish=()=>{continueButton.hidden=false;el.classList.add('dm-unlocks-finished');};
  const reveal=(byUser=false)=>{
-  if(!el.isConnected)return;
-  const cards=el.querySelector('.dm-unlock-cards');if(!cards.hidden)return;
-  cards.innerHTML=C.levels.slice(from,to).map(x=>'<article><span>'+x.prop+'</span><div><b>'+x.level+'. seviye · '+x.name+'</b><p>'+x.benefits.join(' · ')+'</p></div></article>').join('');
-  cards.hidden=false;el.querySelector('.dm-reveal-hint').hidden=true;
-  el.querySelector('.dm-level-continue').hidden=false;el.classList.add('revealed');
-  if(byUser)el.querySelector('.dm-level-continue').focus();
+  if(started||!el.isConnected)return;
+  started=true;
+  cards.innerHTML=unlocked.map(x=>'<article role="listitem" hidden><span>'+x.prop+'</span><div><b>'+x.benefit+'</b><p>'+x.level+'. seviye · '+x.name+'</p></div></article>').join('');
+  cards.hidden=false;el.querySelector('.dm-reveal-hint').hidden=true;el.classList.add('revealed');
+  if(!unlocked.length){finish();return;}
+  const rows=[...cards.querySelectorAll('article')];
+  if(reduced){
+   rows.forEach(row=>row.hidden=false);
+   levelSound('unlock');finish();
+   if(byUser)continueButton.focus();
+   return;
+  }
+  rows.forEach((row,i)=>later(()=>{
+   row.hidden=false;row.classList.add('dm-unlock-entry');
+   // Keep the newest item visible inside the bounded mobile card list.
+   cards.scrollTop=Math.max(0,row.offsetTop-cards.offsetTop-cards.clientHeight+row.clientHeight+12);
+   levelSound('unlock');
+   if(i===rows.length-1)finish();
+  },200+i*430));
  };
- const close=()=>{clearTimeout(timer);el.remove();prior?.focus?.();};
+ const close=()=>{
+  timers.forEach(clearTimeout);
+  el.remove();prior?.focus?.();
+ };
  el.querySelector('.dm-papi-reveal').onclick=()=>reveal(true);
- el.querySelector('.dm-level-continue').onclick=close;
+ continueButton.onclick=close;
  el.querySelector('.dm-level-skip').onclick=close;
  dialogKeys(el,close);
  el.querySelector('.dm-papi-reveal').focus();
- if(!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches)timer=setTimeout(()=>reveal(false),5500);
+ levelSound('fly');
+ if(reduced){reveal(false);}
+ else{
+  later(()=>levelSound('number'),1100);
+  later(()=>reveal(false),2450);
+ }
 }
 function chestReward(gold){
  document.getElementById('dmChestReward')?.remove();

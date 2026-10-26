@@ -70,3 +70,15 @@
 @keyframes dmFlightTwinkle{from{opacity:.3;transform:scale(.97)}to{opacity:.85;transform:scale(1.03)}}
 @media(max-height:700px){.dm-level-up.dm-flight-celebration .dm-flight-layout{min-height:0;padding:40px 0 12px;gap:2px}.dm-level-up.dm-flight-celebration .dm-papi-reveal{width:min(28dvh,170px);height:min(28dvh,170px)}.dm-flight-celebration .dm-flight-heading h2{font-size:27px}.dm-flight-celebration .dm-flight-number{height:65px;width:76px}.dm-flight-celebration .dm-flight-number span{font-size:39px}.dm-flight-celebration .dm-unlock-cards{max-height:25dvh}.dm-flight-celebration.revealed .dm-papi-reveal{width:min(16dvh,100px);height:min(16dvh,100px)}}
 @media(prefers-reduced-motion:reduce){.dm-flight-celebration .dm-flight-old{display:none!important}.dm-flight-celebration .dm-flight-new{opacity:1!important;transform:none!important}.dm-flight-celebration .dm-flight-papi{background-position:50% 50%!important}}
+
+
+/* Approved quiet day theme: only mascot, level number and individually unlocked features.
+   Keep the semantic dialog title for screen readers, never show a "Yuhuuu" heading. */
+.dm-flight-celebration .dm-flight-sr-only{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;border:0!important;overflow:hidden!important;clip-path:inset(50%)!important;white-space:nowrap!important}
+.dm-flight-celebration .dm-unlock-cards article[hidden]{display:none!important}
+.dm-flight-celebration .dm-unlock-cards article.dm-unlock-entry{animation:dmUnlockCardIn .3s ease-out both}
+.dm-flight-celebration .dm-unlock-cards article.dm-unlock-entry>span{animation:dmUnlockShine .32s ease-in-out both}
+.dm-flight-celebration .dm-unlock-cards article{scroll-margin-block-end:12px}
+.dm-flight-celebration .dm-level-continue:not([hidden]){animation:dmUnlockCardIn .22s ease-out both}
+@keyframes dmUnlockCardIn{from{opacity:0;transform:translateY(10px) scale(.97)}to{opacity:1;transform:none}}
+@keyframes dmUnlockShine{0%{filter:brightness(1)}50%{filter:brightness(1.35) drop-shadow(0 0 7px #f7da68)}100%{filter:brightness(1)}}
