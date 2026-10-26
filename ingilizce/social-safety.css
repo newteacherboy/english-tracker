@@ -44,3 +44,6 @@
 .dm-friends-welcome .dm-safety-primary[data-ack]{position:sticky;bottom:0;z-index:2;min-height:48px;margin:12px 0 4px!important;box-shadow:0 0 0 7px #f4fbf7,0 3px 0 #075b55}
 .dm-friends-welcome .dm-safety-status{flex:0 0 auto;margin:0}
 @media(max-height:680px){.dm-friends-welcome .dm-safety-card{max-height:calc(100dvh - 18px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px))}.dm-friends-welcome .dm-safety-card header h2{font-size:18px}}
+
+/* The acknowledgement sits outside the scrollable advice body. */
+.dm-friends-welcome .dm-safety-primary[data-ack]{flex:0 0 auto;position:static;bottom:auto;z-index:auto;margin:10px 0 4px!important}
