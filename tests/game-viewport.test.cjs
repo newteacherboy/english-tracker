@@ -16,3 +16,28 @@ test('back reopens setup without changing the selected classroom participant or 
 test('ordinary profile sheets stay outside the game shell while game result exits use native completion',async()=>{
  const f=shell('<div id="yoModal" class="acik" style="display:flex"><button class="yo-kapat"></button></div><div id="genelSonucOverlay" class="acik" style="display:flex"><button id="gsoDevamBtn"></button></div>'),w=f.w;assert(!w.document.getElementById('yoModal').classList.contains('dm-vp-root'));let action;w.genelSonucKapat=tip=>{action=tip;w.document.getElementById('genelSonucOverlay').style.display='none';};await w.dmGameViewport.navigate(w.document.getElementById('genelSonucOverlay'),false);assert.equal(action,'devam');f.dom.window.close();
 });
+
+
+test('native result Continue clears fullscreen lock when active class is removed without deleting the node',async()=>{
+ const dom=new JSDOM('<div id="genelSonucOverlay" class="acik" style="display:flex"><button id="gsoDevamBtn">Devam</button></div>',{runScripts:'outside-only',pretendToBeVisual:true}),w=dom.window;
+ w.HTMLElement.prototype.getClientRects=function(){return this.isConnected&&this.style.display!=='none'?[{width:360,height:640}]:[]};
+ w.requestAnimationFrame=fn=>{w.queueMicrotask(fn);return 1;};
+ w.eval(fs.readFileSync('ingilizce/game-viewport.js','utf8'));
+ assert.equal(w.document.body.classList.contains('dm-game-viewport'),true,'the result initially locks the menu');
+ w.document.getElementById('genelSonucOverlay').classList.remove('acik');
+ for(let i=0;i<8;i++)await new Promise(resolve=>setImmediate(resolve));
+ assert.equal(w.document.body.classList.contains('dm-game-viewport'),false,'the result exit must unlock the menu even when its node remains mounted');
+ assert.equal(w.document.getElementById('genelSonucOverlay').classList.contains('dm-vp-root'),false);
+ w.close();
+});
+test('closing listening game and keeping inactive fullscreen tab never traps navigation',async()=>{
+ const dom=new JSDOM('<div id="yoModal" class="acik" data-dm-selected-game="dikte" style="display:flex"><button class="yo-kapat"></button></div><section class="dc-fullscreen-overlay" id="tab-konusmapratigi"><div class="kp-shell"><button class="kp-close-x">X</button></div></section>',{runScripts:'outside-only',pretendToBeVisual:true}),w=dom.window;
+ w.HTMLElement.prototype.getClientRects=function(){return this.isConnected&&this.style.display!=='none'?[{width:360,height:640}]:[]};
+ w.requestAnimationFrame=fn=>{w.queueMicrotask(fn);return 1;};
+ w.eval(fs.readFileSync('ingilizce/game-viewport.js','utf8'));
+ assert.equal(w.document.body.classList.contains('dm-game-viewport'),true);
+ w.document.getElementById('yoModal').classList.remove('acik');
+ for(let i=0;i<8;i++)await new Promise(resolve=>setImmediate(resolve));
+ assert.equal(w.document.body.classList.contains('dm-game-viewport'),false,'deactivated listening game must release the dock');
+ w.close();
+});
