@@ -255,6 +255,13 @@ async function submit(answer,clicked,{guided=false}={}){
    }
    return;
   }
+  // School's final review can advance with an incorrect answer while preserving
+  // the truthful first-attempt score. Show the explanation; never label it correct.
+  if(r.correct===false){
+   window.dmAnswerFeedback?.(false);
+   pauseForCorrection(task,()=>render());
+   return;
+  }
   accepted=true;
   if(task.kind==='teach'||task.kind==='review'){
    saveAnsweredSnapshot(answeredCursor);
