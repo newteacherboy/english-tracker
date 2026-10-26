@@ -33,3 +33,40 @@
 @media(max-height:560px){#dmProgressOverlay .dm-papi-stage{height:64px}#dmProgressOverlay .dm-papi-stage i{transform:translateX(-50%) scale(.26)}#dmProgressOverlay .dm-progress-caption-v2{margin:3px 0}}
 
 .dm-chest-reward{z-index:2147483100;background:radial-gradient(circle,#285b76ed,#111d3cf5)}.dm-chest-reward .dm-progress-sheet{position:relative;overflow:hidden;text-align:center;padding:38px 24px;background:linear-gradient(145deg,#fffdf2,#fff0c2);border:3px solid #ffdf79;border-radius:28px;box-shadow:0 0 70px #ffdc6655}.dm-chest-prize{font-size:88px;animation:dmChestPop .65s ease both}.dm-chest-reward.is-open .dm-chest-prize{animation:dmChestPop .7s ease both;filter:drop-shadow(0 0 22px #ffc72e)}.dm-chest-gold{font-size:32px;font-weight:900;color:#8c5100;animation:dmLevelIn .6s ease both}.dm-chest-rays{font-size:38px;color:#c98b00;letter-spacing:16px;animation:dmSparkle 1s ease both}@keyframes dmChestPop{0%{transform:scale(.4) rotate(-15deg);opacity:0}65%{transform:scale(1.18) rotate(8deg)}100%{transform:scale(1);opacity:1}}@media(prefers-reduced-motion:reduce){.dm-chest-reward *{animation:none!important}}
+
+
+/* 2026-10-26 Papi full-screen flight celebration */
+.dm-level-up.dm-flight-celebration{isolation:isolate;box-sizing:border-box;min-height:100dvh;min-height:100svh;padding:max(12px,env(safe-area-inset-top)) max(12px,env(safe-area-inset-right)) max(12px,env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left));background:linear-gradient(175deg,#9debe0 0%,#c5f4e8 50%,#f6fbe8 100%);color:#164c51;overflow-x:hidden;overflow-y:auto;overscroll-behavior:contain}
+.dm-level-up.dm-flight-celebration .dm-flight-layout{position:relative;box-sizing:border-box;width:min(520px,100%);max-width:100%;min-height:min(640px,95dvh);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:35px 0 14px;margin:auto;z-index:1}
+.dm-flight-celebration .dm-flight-stars{position:absolute;inset:7% -20px auto;max-width:100%;pointer-events:none;white-space:nowrap;letter-spacing:min(4vw,20px);font-size:26px;color:#fffef7;opacity:.75;animation:dmFlightTwinkle 2.5s ease-in-out infinite alternate;overflow:hidden}
+.dm-flight-celebration .dm-level-skip{position:absolute;top:2px;right:2px;z-index:2;border:1px solid #529c9a55;border-radius:999px;background:#fff9;color:#256e6d;padding:8px 16px;min-height:38px;font:700 13px inherit;cursor:pointer}
+.dm-flight-celebration .dm-flight-heading{z-index:1}
+.dm-flight-celebration .dm-flight-heading h2{font-size:clamp(29px,6vw,40px);margin:0 0 3px;color:#126f6a;letter-spacing:-.5px;text-shadow:0 1px #fff8}
+.dm-flight-celebration .dm-flight-heading p{margin:0;color:#276b67;font-size:clamp(13px,3.5vw,17px);font-weight:700}
+.dm-level-up.dm-flight-celebration .dm-papi-reveal{position:relative;z-index:1;box-sizing:border-box;width:min(48vw,245px);height:min(48vw,245px);padding:0;margin:8px auto 0;border:0;border-radius:50%;background:transparent;animation:dmPapiFlyIn 1.45s cubic-bezier(.15,.75,.28,1.08) both;filter:drop-shadow(0 17px 19px #2b8c842b)}
+.dm-flight-celebration .dm-papi-reveal:focus-visible,.dm-flight-celebration .dm-level-skip:focus-visible{outline:3px solid #176f7a;outline-offset:3px}
+.dm-flight-celebration .dm-flight-papi{display:block;width:100%;height:100%;background:url('route-assets/papi-practice-flight.webp') no-repeat 0% 50%;background-size:300% 100%;animation:dmPapiFlyingWings .72s step-end infinite}
+.dm-flight-celebration .dm-flight-number{position:relative;flex:none;box-sizing:border-box;width:94px;height:84px;margin:-8px auto 1px;border:2px solid #f1dc8a;border-radius:20px;background:#fffef5;box-shadow:0 9px 28px #39968624;overflow:hidden}
+.dm-flight-celebration .dm-flight-number span{position:absolute;inset:0;display:grid;place-items:center;font-size:49px;line-height:1;font-weight:950;font-variant-numeric:tabular-nums}
+.dm-flight-celebration .dm-flight-old{color:#72a49a;animation:dmFlightOldLevel 1.8s ease-in both}
+.dm-flight-celebration .dm-flight-new{color:#148774;animation:dmFlightNewLevel 2.1s cubic-bezier(.2,.8,.3,1) both}
+.dm-flight-celebration .dm-flight-label{font-size:11px;line-height:1.2;letter-spacing:1.8px;font-weight:900;color:#31736b}
+.dm-flight-celebration .dm-flight-name{font-size:clamp(15px,4vw,20px);line-height:1.22;margin:1px 0;color:#17594e;font-weight:900}
+.dm-flight-celebration .dm-reveal-hint{margin:7px 0 0;font-size:13px;color:#387e76}
+.dm-flight-celebration .dm-unlock-cards{box-sizing:border-box;width:min(410px,100%);max-height:min(29dvh,215px);overflow-y:auto;overscroll-behavior:contain;margin:5px auto;gap:6px}
+.dm-flight-celebration .dm-unlock-cards article{background:#fffe;box-shadow:0 4px 12px #25796718;border:1px solid #a0dfcb;text-align:left;padding:9px 11px}
+.dm-flight-celebration .dm-unlock-cards b{color:#176e62}
+.dm-flight-celebration .dm-unlock-cards p{color:#32635c}
+.dm-flight-celebration .dm-level-continue{background:#168e79;color:white;box-shadow:0 4px 12px #337e742e;padding:13px 25px}
+.dm-flight-celebration.revealed .dm-papi-reveal{width:min(27vw,130px);height:min(27vw,130px);margin:1px auto 0;animation:none;filter:drop-shadow(0 9px 12px #2b8c842b)}
+.dm-flight-celebration.revealed .dm-flight-number{height:66px;width:78px;margin:0}
+.dm-flight-celebration.revealed .dm-flight-number span{font-size:39px}
+.dm-flight-celebration.revealed .dm-flight-old{display:none}
+.dm-flight-celebration.revealed .dm-flight-new{animation:none;opacity:1;transform:none}
+@keyframes dmPapiFlyIn{0%{transform:translate(-95vw,25vh) rotate(-19deg) scale(.65);opacity:.2}65%{transform:translate(2vw,-2vh) rotate(7deg) scale(1.08);opacity:1}100%{transform:none;opacity:1}}
+@keyframes dmPapiFlyingWings{0%,100%{background-position:0 50%}33%{background-position:50% 50%}66%{background-position:100% 50%}}
+@keyframes dmFlightOldLevel{0%,50%{opacity:1;transform:none}70%,100%{opacity:0;transform:translateY(-90%)}}
+@keyframes dmFlightNewLevel{0%,53%{opacity:0;transform:translateY(105%) scale(.7)}80%{opacity:1;transform:translateY(-8%) scale(1.08)}100%{opacity:1;transform:none}}
+@keyframes dmFlightTwinkle{from{opacity:.3;transform:scale(.97)}to{opacity:.85;transform:scale(1.03)}}
+@media(max-height:700px){.dm-level-up.dm-flight-celebration .dm-flight-layout{min-height:0;padding:40px 0 12px;gap:2px}.dm-level-up.dm-flight-celebration .dm-papi-reveal{width:min(28dvh,170px);height:min(28dvh,170px)}.dm-flight-celebration .dm-flight-heading h2{font-size:27px}.dm-flight-celebration .dm-flight-number{height:65px;width:76px}.dm-flight-celebration .dm-flight-number span{font-size:39px}.dm-flight-celebration .dm-unlock-cards{max-height:25dvh}.dm-flight-celebration.revealed .dm-papi-reveal{width:min(16dvh,100px);height:min(16dvh,100px)}}
+@media(prefers-reduced-motion:reduce){.dm-flight-celebration .dm-flight-old{display:none!important}.dm-flight-celebration .dm-flight-new{opacity:1!important;transform:none!important}.dm-flight-celebration .dm-flight-papi{background-position:50% 50%!important}}
