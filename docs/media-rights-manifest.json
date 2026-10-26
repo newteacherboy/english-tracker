@@ -2117,6 +2117,41 @@
       "bytes": 153560,
       "status": "ai-generated",
       "source": "docs/route-flight-generation.json"
+    },
+    {
+      "path": "ingilizce/games-assets/arena-v1/blue-car.webp",
+      "sha256": "db2ae60ecff549e35303a3cfd586de6b250f5f9ef30f0e39769f5308749a860d",
+      "bytes": 24948,
+      "status": "ai-generated",
+      "source": "docs/race-arena-generation.json"
+    },
+    {
+      "path": "ingilizce/games-assets/arena-v1/blue-mascot.webp",
+      "sha256": "a5c6ea3846cb9a83b40784188e3099636691732480f8bae46baadaa7c90247d1",
+      "bytes": 34414,
+      "status": "ai-generated",
+      "source": "docs/race-arena-generation.json"
+    },
+    {
+      "path": "ingilizce/games-assets/arena-v1/red-car.webp",
+      "sha256": "2e9ca22db579a867a7eba3aa7c3ad379a0010475634c7c4571e112bea0e1929f",
+      "bytes": 26558,
+      "status": "ai-generated",
+      "source": "docs/race-arena-generation.json"
+    },
+    {
+      "path": "ingilizce/games-assets/arena-v1/red-mascot.webp",
+      "sha256": "1cacabf73fc559c3712dce12a92d7c6e037ee7e6bfaa2ecada01d1a94a26ff41",
+      "bytes": 28902,
+      "status": "ai-generated",
+      "source": "docs/race-arena-generation.json"
+    },
+    {
+      "path": "ingilizce/games-assets/arena-v1/stadium.webp",
+      "sha256": "38b980c3c1a88be24e78209b22b1e0770c30b7c316e2b7f1ff69af9d4b3d8e66",
+      "bytes": 89356,
+      "status": "ai-generated",
+      "source": "docs/race-arena-generation.json"
     }
   ]
 }
