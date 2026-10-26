@@ -1,12 +1,12 @@
 const {chromium}=require('playwright'),fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict');
-const DATA=require('../ingilizce/thematic-curriculum.json'),V8=require('../ingilizce/thematic-v8-candidate.js'),SCHOOL=require('../ingilizce/school-curriculum.js');
+const CORE=require('../ingilizce/learning-core.js'),DATA=require('../ingilizce/thematic-curriculum.json'),V8=require('../ingilizce/thematic-v8-candidate.js'),SCHOOL=require('../ingilizce/school-curriculum.js');
 (async()=>{const browser=await chromium.launch({headless:true});fs.mkdirSync('/tmp/route-papi-flight',{recursive:true});try{
  for(const kind of ['learning','school'])for(const [width,height]of [[320,568],[390,844],[768,1024]]){
   const page=await browser.newPage({viewport:{width,height}}),errors=[],requests=[];page.on('pageerror',e=>errors.push(e.message));
   const words=[{en:'book',tr:'kitap'},{en:'good morning',tr:'günaydın'},{en:'classroom',tr:'derslik'},{en:'Friday',tr:'Cuma'}];
   const tasks=kind==='learning'?V8.build(DATA.chapters[0],null):SCHOOL.build(words,words,220151),start=kind==='learning'?4:2;let cursor=start,version=start,correct=0;
   const state=()=>({ok:true,chapter:kind==='learning'?1000:220151,deckVersion:kind==='learning'?8:9,cursor,version,accepted:true,finished:false,comboGain:correct===5?1:0,wallet:{energy:20+(correct===5?1:0),energyMax:25,gold:0,combo:correct},progress:[]});
-  const advance=b=>{requests.push(b);if(b.action==='advance'){assert.equal(b.cursor,cursor);const g=(kind==='learning'?V8:SCHOOL).grade(tasks[cursor],b.answer);assert(g.correct);cursor++;version++;correct++;}return state();};
+  const advance=b=>{requests.push(b);if(b.action==='advance'){assert.equal(b.cursor,cursor);const g=(kind==='learning'?CORE:SCHOOL).grade(tasks[cursor],b.answer);assert(g.correct);cursor++;version++;correct++;}return state();};
   await page.exposeFunction('schoolRequest',(action,payload)=>advance({action,...payload}));
   await page.route('https://route.test/**',async r=>{
    const u=new URL(r.request().url());if(u.pathname.endsWith('/thematic-learning'))return r.fulfill({json:advance(r.request().postDataJSON())});
