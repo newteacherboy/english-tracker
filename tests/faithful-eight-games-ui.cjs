@@ -50,7 +50,7 @@ const fs=require('node:fs'),path=require('node:path'),assert=require('node:asser
       rootClass:root.className,rootDisplay:getComputedStyle(root).display,playDisplay:getComputedStyle(document.getElementById(root.id.replace('Overlay','')+'Ekrani')||board||root).display,cssLoaded:[...document.styleSheets].some(st=>st.href?.includes('faithful-eight-games.css')),matches:el.matches('#jpOyunOverlay.dm-designed-playing .game-modal-content'),styleRules:[...document.styleSheets].filter(st=>st.href?.includes('faithful-eight-games.css')).flatMap(st=>[...st.cssRules]).filter(q=>q.selectorText?.includes('#jpOyunOverlay.dm-designed-playing')).slice(0,4).map(q=>({sel:q.selectorText,background:q.style?.background})),parentClass:el.parentElement?.className,heading:!!board?.querySelector('.fg-hero'),
       sign:sign?{height:sign.getBoundingClientRect().height,wrap:getComputedStyle(sign).whiteSpace,color:getComputedStyle(sign).color}:null};
    });
-   if(rootId==='trenOyunOverlay')assert.equal(metrics.background,'none','train keeps its readable plain board');
+   if(rootId==='trenOyunOverlay')assert(metrics.background.includes('station.svg'),'train keeps its approved station illustration');
    else assert(metrics.background.includes('game-scenes/'+scene+'.svg'),JSON.stringify({rootId,size,metrics}));
    assert(metrics.width<=size.width+2,JSON.stringify({rootId,size,metrics}));
    assert(metrics.scroll<=metrics.client+4,JSON.stringify({rootId,size,metrics}));

@@ -29,7 +29,7 @@ const fs=require('node:fs'),path=require('node:path'),assert=require('node:asser
   return route.fulfill({contentType:'application/json',body:'[]'});
  });
  await page.addInitScript(()=>new MutationObserver(()=>document.querySelector('.kur-perde .kur-x')?.click()).observe(document,{childList:true,subtree:true}));
- await page.addInitScript(()=>{sessionStorage.setItem('dm_tp_session',JSON.stringify({teacherToken:'teacher-token',name:'TeacherOne',participant:{token:'preview-token',name:'Önizleme'},route:'panel'}));});
+ await page.addInitScript(()=>{sessionStorage.setItem('dm_tp_session',JSON.stringify({teacherToken:'teacher-token',name:'TeacherOne',participant:{token:'preview-token',name:'Önizleme'},playAsSelf:false,route:'panel'}));});
  await page.goto('https://diji.test/ingilizce/?ogretmen=1',{waitUntil:'load',timeout:60000});
  await page.waitForFunction(()=>!!window.dmFaithfulEightGames,{timeout:15000});
  assert.equal(await page.evaluate(()=>window.dmFaithfulEightGames.scenes.length),4);

@@ -22,6 +22,13 @@ uncompressed, external requests were mocked/blocked, and one run per variant is
 insufficient for timing conclusions. Backend latency and signed-in memory usage
 were not measured.
 
+## Additional correctness fix
+
+The full quiz-flow browser check exposed a real sentence-game scope bug: selected
+questions came from unit 3, but the run scope included every unit in the class.
+Both listening and sentence games now retain exactly the selected class/units.
+A focused scope regression and the full classroom quiz-flow test pass.
+
 ## Verification repairs
 
 - Pin the 13 browser/Lighthouse workflows still using `ubuntu-latest` to the
@@ -30,6 +37,12 @@ were not measured.
 - Update stale tests to preserve the existing product decisions: the new-version
   prompt stays until confirmed refresh, the Friends feed has no wallet, and
   closing account-entry first returns to the saved-account list.
+- Repair older verification assumptions without changing gameplay: distinguish
+  base unit stops from mixed review stops; check the documented chapter export
+  after leading comments; check 10 practice questions separately from final
+  cards; use the approved passport/station styles and current viewport exits.
+  The entry-panel test waits for restored-session navigation before opening a
+  game. The eight-game workflow now shares its browser path with every command.
 - Add history/hash records for 16 previously unrecorded repository assets.
   Their original creation/licensing evidence remains explicitly unverified;
   recording their presence is not rights clearance. The new WebP record points
