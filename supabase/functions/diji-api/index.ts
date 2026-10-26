@@ -72,7 +72,7 @@ const OGRETMEN_OTURUM_SAAT = 8;           // [YAMA 1] öğretmen oturumu 30 gün
 const GUNLUK_ALTIN_TAVAN = Number(Deno.env.get("GUNLUK_ALTIN_TAVAN") || 2000);       // öğrencinin bir günde kazanabileceği en fazla altın
 const GUNLUK_XP_TAVAN = Number(Deno.env.get("GUNLUK_XP_TAVAN") || 10000);            // bir günde kazanılabilecek en fazla lig XP'si
 const LIDERLIK_BONUS_GUNLUK = Number(Deno.env.get("LIDERLIK_BONUS_GUNLUK") || 3);    // liderlik bonusuyla günde en fazla kaç ders puanı
-const OGRENCI_SIFRE_MIN = 8;
+const OGRENCI_SIFRE_MIN = 6;
 
 function json(data: unknown, status = 200) {
   return new Response(JSON.stringify(data), {
@@ -1359,7 +1359,7 @@ async function handle(req: Request, proxy: any = null) {
     if (beklenen.length < 20 || !gelen || gelen !== beklenen) return json({ ok: false, mesaj: "Aktarım kapalı ya da anahtar geçersiz." }, 403);
     if (body.islem2 === "ogretmenSifre") {
       const yeni = String(body.yeniSifre || "");
-      if (yeni.length < 8) return json({ ok: false, mesaj: "Şifre en az 8 karakter olmalı." }, 400);
+      if (yeni.length < 6) return json({ ok: false, mesaj: "Şifre en az 6 karakter olmalı." }, 400);
       const { data: t } = await supabase.from("teachers").select("id").eq("username", "teacher").maybeSingle();
       if (!t) return json({ ok: false, mesaj: "Öğretmen hesabı bulunamadı." }, 404);
       const up = await supabase.from("teachers").update({ password_hash: await hashPassword(yeni), active: true }).eq("id", t.id);
@@ -2209,7 +2209,7 @@ async function handle(req: Request, proxy: any = null) {
     if (!/^[A-Za-zÇĞİÖŞÜçğıöşü0-9 ._-]{3,40}$/.test(kullanici)) return json({ ok: false, mesaj: "Kullanıcı adı 3-40 karakter olmalı (harf, rakam, boşluk, . _ -)." });
     if (!adSoyad || adSoyad.length < 3) return json({ ok: false, mesaj: "Adını ve soyadını yaz." });
     if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(eposta)) return json({ ok: false, mesaj: "Geçerli bir e-posta adresi yaz. Öğrenci bildirimleri bu adrese gelecek." });
-    if (sifre.length < 8 || sifre.length > 64) return json({ ok: false, mesaj: "Öğretmen şifresi en az 8 karakter olmalı." });
+    if (sifre.length < 6 || sifre.length > 64) return json({ ok: false, mesaj: "Öğretmen şifresi en az 6 karakter olmalı." });
     const otHam = String(body.telefon || "").replace(/\D/g, "");
     const oTel = otHam.length === 10 && otHam[0] === "5" ? "0" + otHam : otHam.length === 11 && otHam.startsWith("05") ? otHam : otHam.length === 12 && otHam.startsWith("905") ? "0" + otHam.slice(2) : "";
     if (!oTel) return json({ ok: false, mesaj: "Geçerli bir cep telefonu yaz (05XX XXX XX XX)." });

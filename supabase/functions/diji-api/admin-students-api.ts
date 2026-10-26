@@ -13,7 +13,7 @@ export function adminStudentsAPI(db: any, json: any, hashPassword: any, security
         /* [v5.0] Herkese görünen kullanıcı adı takma ad olmalı: boşluksuz, 3-20 karakter */
         if (!/^[A-Za-z0-9çğıöşüÇĞİÖŞÜ._-]{3,20}$/.test(username)) return json({ok:false,mesaj:`${i+1}. satır: kullanıcı adı takma ad olmalı (3-20 karakter, boşluksuz; harf, rakam, nokta, alt çizgi, tire). Öğrencinin gerçek adını yazma.`},400);
         const branch=String(x.sube||'').trim().toLocaleUpperCase('tr'), school=String(x.okul||'').trim();
-        if (username.length<3 || username.length>50 || /[<>\x00-\x1f]/.test(username) || seen.has(username.toLowerCase()) || password.length<8 || password.length>64 || !Number.isInteger(classNo) || classNo<1 || classNo>8 || !branch || branch.length>10 || /[<>\x00-\x1f]/.test(branch) || (school && school.length<3) || school.length>120 || /[<>\x00-\x1f]/.test(school)) return json({ok:false,mesaj:`${i+1}. satır geçersiz: kullanıcı 3–50, şifre 8–64 karakter; sınıf 1–8 ve şube gerekli. Aynı kullanıcı iki kez eklenemez.`},400);
+        if (username.length<3 || username.length>50 || /[<>\x00-\x1f]/.test(username) || seen.has(username.toLowerCase()) || password.length<6 || password.length>64 || !Number.isInteger(classNo) || classNo<1 || classNo>8 || !branch || branch.length>10 || /[<>\x00-\x1f]/.test(branch) || (school && school.length<3) || school.length>120 || /[<>\x00-\x1f]/.test(school)) return json({ok:false,mesaj:`${i+1}. satır geçersiz: kullanıcı 3–50, şifre 6–64 karakter; sınıf 1–8 ve şube gerekli. Aynı kullanıcı iki kez eklenemez.`},400);
         seen.add(username.toLowerCase()); rows.push({username,password_hash:await hashPassword(password),class_no:classNo,branch,school:school||null});
       }
       const r=await db.rpc('teacher_students_create',{p_actor:a.teacher_id,p_rows:rows});
@@ -109,7 +109,7 @@ export function adminStudentsAPI(db: any, json: any, hashPassword: any, security
     if (username.length<3 || username.length>50 || /[<>\x00-\x1f]/.test(username) || username.toLowerCase()==='teacher') return json({ok:false,mesaj:'Kullanıcı adı 3–50 karakter olmalı.'},400);
     if ((school && school.length<3) || school.length>120 || /[<>\x00-\x1f]/.test(school)) return json({ok:false,mesaj:'Okul adı 3–120 karakter olmalı; boş bırakılabilir.'},400);
     if (!Number.isInteger(classNo) || classNo<1 || classNo>8 || !branch || branch.length>10 || /[<>\x00-\x1f]/.test(branch)) return json({ok:false,mesaj:'Sınıf 1–8, şube 1–10 karakter olmalı.'},400);
-    if (password && (password.length<8 || password.length>64)) return json({ok:false,mesaj:'Yeni şifre 8–64 karakter olmalı.'},400);
+    if (password && (password.length<6 || password.length>64)) return json({ok:false,mesaj:'Yeni şifre 6–64 karakter olmalı.'},400);
     if (!body.sonGuncelleme || Number.isNaN(Date.parse(body.sonGuncelleme))) return json({ok:false,mesaj:'Öğrenci bilgilerini yeniden yükle.'},409);
     const patch: any = {username,school:school || null,class_no:classNo,branch};
     if (password) patch.password_hash = await hashPassword(password);

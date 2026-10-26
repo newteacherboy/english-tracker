@@ -6,7 +6,7 @@
    ===================================================================== */
 (function () {
   const API = "https://nxfqlutulxqzqgwewssd.supabase.co/functions/v1/diji-api";
-  const MIN = 8;
+  const MIN = 6;
   const MAX = 64;
   const css = `
   .si-perde{position:fixed;inset:0;z-index:2147483647!important;isolation:isolate;box-sizing:border-box;background:rgba(30,20,60,.55);display:flex;align-items:flex-end;justify-content:center;font-family:inherit}

@@ -26118,7 +26118,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
       <div class="cog-alan"><label for="cogEposta">E-posta (öğrenci bildirimleri buraya gelir)</label><input id="cogEposta" type="email" autocomplete="email" placeholder="ornek@okul.k12.tr"></div>
       <div class="cog-alan"><label for="cogTel">Cep telefonu</label><input id="cogTel" type="tel" inputmode="tel" autocomplete="tel" placeholder="05XX XXX XX XX"></div>
       <div class="cog-alan"><label for="cogKurum">Okul / kurum (isteğe bağlı)</label><input id="cogKurum" placeholder="Örn: Atatürk İlkokulu"></div>
-      <div class="cog-alan"><label for="cogS1">Şifre (en az 8 karakter)</label><input id="cogS1" type="password" autocomplete="new-password"></div>
+      <div class="cog-alan"><label for="cogS1">Şifre (en az 6 karakter)</label><input id="cogS1" type="password" autocomplete="new-password"></div>
       <div class="cog-alan"><label for="cogS2">Şifre (tekrar)</label><input id="cogS2" type="password" autocomplete="new-password"></div>
       <label class="cog-onay"><input type="checkbox" id="cogOnay"><span>Öğrencilerimin bilgilerini yalnızca eğitim amacıyla, KVKK'ya uygun olarak kullanacağımı kabul ediyorum.</span></label>
       <button type="button" class="cog-btn" id="cogGonder">Öğretmen hesabımı aç</button><div class="cog-mesaj" id="cogMesaj" role="alert"></div>`);
@@ -26128,7 +26128,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
       if (!ad || !kul || !ep || !s1 || !tel) return hata('Ad soyad, kullanıcı adı, e-posta, telefon ve şifre zorunlu.');
       if (!/^[^@\s]+@[^@\s]+\.[^@\s]{2,}$/.test(ep)) return hata('Geçerli bir e-posta adresi yaz.');
       if (!/^(0?5\d{9}|905\d{9})$/.test(tel.replace(/\D/g, ''))) return hata('Geçerli bir cep telefonu yaz (05XX XXX XX XX).');
-      if (s1.length < 8) return hata('Şifre en az 8 karakter olmalı.');
+      if (s1.length < 6) return hata('Şifre en az 6 karakter olmalı.');
       if (s1 !== s2) return hata('Şifreler birbiriyle uyuşmuyor.');
       if (!$('cogOnay').checked) return hata('Devam etmek için onay kutusunu işaretle.');
       let b = $('cogGonder'); b.disabled = true; b.textContent = 'Hesap açılıyor…';
@@ -26563,7 +26563,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <script defer src="game-experience.js?v=20261025-sentence-units-1"></script>
 <script defer src="game-access.js?v=20261020-1"></script>
 <script defer src="onboarding-ui.js?v=20261015-members-only-1"></script>
-<script defer src="first-discovery.js?v=20261025-teacher-fixes-1"></script>
+<script defer src="first-discovery.js?v=20261027-password-6"></script>
 <script defer src="rights-ui.js?v=1"></script>
 <style>/* Distinct Diji-Medu clue colors: do not rely on color alone. */ .bz-wordle .h{border-radius:15px 5px!important}.bz-wordle .h.g{background:#257b8a!important}.bz-wordle .h.s{background:#a36cb2!important}.bz-wordle .h.x{background:#607d83!important}
 /* Adventure questions: preserve spaces/punctuation and foreground keyboard fallback. */
@@ -26612,7 +26612,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 @media(min-width:750px){#bzPerde:has(> .bz-oyun.dm-question-panel)>#bzAlan{width:min(90%,700px)!important;max-width:700px!important}}
 @media(max-height:680px){#bzPerde:has(> .bz-oyun.dm-question-panel) #bzAlan .bz-kart2{height:clamp(44px,9vh,65px)!important}#bzPerde:has(> .bz-oyun.dm-question-panel) #bzAlan .bz-ipucu{margin:2px 0 5px!important}#bzPerde:has(> .bz-oyun.dm-question-panel)>#bzJokerler .bz-jk{padding:2px!important}}
 </style>
-<link rel="stylesheet" href="account-settings.css?v=20261025-energy-menu-1"><script defer src="account-settings.js?v=20261025-energy-menu-1"></script><script defer src="kisisel-bilgiler.js?v=20261025-contact-exit-1"></script><script defer src="student-management.js?v=20261021-contacts-2"></script><script defer src="contact-policy.js?v=20261025-contact-exit-1"></script><script defer src="sifre-islem.js?v=1"></script><script defer src="ekonomi.js?v=20261019-offline-1"></script>
+<link rel="stylesheet" href="account-settings.css?v=20261025-energy-menu-1"><script defer src="account-settings.js?v=20261025-energy-menu-1"></script><script defer src="kisisel-bilgiler.js?v=20261025-contact-exit-1"></script><script defer src="student-management.js?v=20261021-contacts-2"></script><script defer src="contact-policy.js?v=20261025-contact-exit-1"></script><script defer src="sifre-islem.js?v=20261027-password-6"></script><script defer src="ekonomi.js?v=20261019-offline-1"></script>
 <link rel="stylesheet" href="goal-announcements.css?v=1"><script defer src="goal-announcements.js?v=3"></script>
 <link rel="stylesheet" href="progress-ui.css?v=1">
 <link rel="stylesheet" href="progression-ui.css?v=20261018-chest-1"><script defer src="progression-ui.js?v=20261025-soft-teacher-1"></script>
@@ -26691,7 +26691,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <link rel="stylesheet" href="game-viewport.css?v=20261025-classroom-quiet-2"><script defer src="game-viewport.js?v=20261025-fit-2"></script>
 <link rel="stylesheet" href="eight-game-fullscreen.css?v=20261020-fit-v1">
 <script defer src="eight-game-fullscreen.js?v=20261025-close-1"></script>
-<link rel="stylesheet" href="teacher-portal.css?v=20261025-teacher-fixes-1"><script defer src="teacher-portal.js?v=20261025-blank-recovery-1"></script>
+<link rel="stylesheet" href="teacher-portal.css?v=20261025-teacher-fixes-1"><script defer src="teacher-portal.js?v=20261027-password-6"></script>
 <script defer src="announcements.js?v=20261026-papi-surfaces-1"></script>
 </body>      
         </html>
