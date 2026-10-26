@@ -54,7 +54,7 @@ jobs:
       - name: Inspect eight real game screens on mobile and tablet
         env:
           NODE_PATH: /tmp/faithful-ui/node_modules
-        run: node tests/faithful-eight-games-ui.cjs && node tests/eight-game-fullscreen-ui.cjs && node tests/game-viewport-ui.cjs && node tests/teacher-game-regressions-ui.cjs && node tests/quiz-flow-ui.cjs && node tests/contact-exit-ui.cjs && node --test tests/game-viewport.test.cjs tests/teacher-portal-api.test.mjs tests/classroom-identity.test.mjs tests/contact-exit.test.cjs tests/harf-bahcesi-start.test.cjs
+        run: CODEX_PRIMARY_RUNTIME_NODE_MODULES=/tmp/faithful-ui/node_modules node tests/play-navigation-ui.cjs && node tests/faithful-eight-games-ui.cjs && node tests/eight-game-fullscreen-ui.cjs && node tests/game-viewport-ui.cjs && node tests/teacher-game-regressions-ui.cjs && node tests/quiz-flow-ui.cjs && node tests/contact-exit-ui.cjs && node --test tests/game-viewport.test.cjs tests/teacher-portal-api.test.mjs tests/classroom-identity.test.mjs tests/contact-exit.test.cjs tests/harf-bahcesi-start.test.cjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:
