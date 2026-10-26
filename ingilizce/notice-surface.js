@@ -54,6 +54,8 @@ function decorate(el){
 }
 function adopt(el){
  if(!el?.matches?.(SELECTOR)||records.has(el)||!requested(el))return;
+ // Top notices belong to the app viewport, never to a tab's hidden/stacked tree.
+ if(edge(el)==='top'&&el.parentElement!==document.body)document.body.append(el);
  const r={...decorate(el),el,owner:actor(),order:sequence++,started:false,priority:el.matches('.dm-papi-feedback.is-energy')?0:el.id==='duyuruOverlay'?1:el.dataset.noticePriority==='0'?0:operational(el)?2:3};records.set(el,r);
  el.classList.add('dm-notice-waiting');el.setAttribute('aria-hidden','true');schedule();
  if(edge(el)==='top'&&el.id!=='dm-app-update'){
