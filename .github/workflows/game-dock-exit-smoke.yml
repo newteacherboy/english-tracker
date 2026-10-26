@@ -1,0 +1,25 @@
+name: Game dock exit smoke
+on:
+  push:
+    paths:
+      - 'ingilizce/game-viewport.js'
+      - 'ingilizce/play-navigation.js'
+      - 'ingilizce/play-navigation.css'
+      - 'tests/game-viewport.test.cjs'
+      - 'tests/play-navigation-ui.cjs'
+      - '.github/workflows/game-dock-exit-smoke.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  restore:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node --check ingilizce/game-viewport.js && node --check ingilizce/play-navigation.js
+      - run: npm install --prefix /tmp/game-nav-qa --no-audit --no-fund jsdom@26.1.0
+      - run: NODE_PATH=/tmp/game-nav-qa/node_modules node --test tests/game-viewport.test.cjs
