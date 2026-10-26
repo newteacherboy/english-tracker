@@ -32,5 +32,27 @@ const {chromium}=require(process.env.CODEX_PRIMARY_RUNTIME_NODE_MODULES+'/playwr
  await page.waitForFunction(()=>document.querySelectorAll('.dm-session-back').length===2);await page.locator('#inner .dm-session-back').click();assert.equal(await page.locator('#bottomNavMobile').isVisible(),false);await page.locator('#outer .dm-session-back').click();await page.waitForFunction(()=>!document.body.classList.contains('dm-play-session'));assert(await page.locator('#bottomNavMobile').isVisible());
  assert.equal(await page.evaluate(()=>window.nativeExits),13);
  for(const id of ['rallyGame','dmStoryLesson']){await page.evaluate(id=>{const r=document.createElement('section');r.id=id;r.className='surface'+(id==='dmStoryLesson'?' ml-lesson':'');r.textContent='Yükleniyor';document.body.append(r);const api={close:()=>r.remove()};if(id==='rallyGame')window.dmRally=api;else window.dmThematicLearning=api;},id);await page.waitForSelector('#'+id+' .dm-session-back');assert.equal(await page.locator('#bottomNavMobile').isVisible(),false);await page.locator('#'+id+' .dm-session-back').click();await page.waitForFunction(()=>!document.body.classList.contains('dm-play-session'));}
- await page.evaluate(()=>{const r=document.createElement('section');r.id='genelSonucOverlay';r.className='surface';r.innerHTML='<button id="gsoDevamBtn" disabled>DEVAM ET</button>';r.querySelector('button').onclick=()=>r.remove();document.body.append(r);});await page.waitForSelector('#genelSonucOverlay .dm-session-back');assert(await page.locator('#genelSonucOverlay .dm-session-back').isDisabled());await page.evaluate(()=>document.getElementById('gsoDevamBtn').disabled=false);await page.waitForFunction(()=>!document.querySelector('#genelSonucOverlay .dm-session-back').disabled);await page.locator('#genelSonucOverlay .dm-session-back').click();await page.waitForFunction(()=>!document.body.classList.contains('dm-play-session'));assert(await page.locator('#bottomNavMobile').isVisible());assert.deepEqual(errors,[]);await browser.close();console.log('PASS: 13 native game/route exits, rally/loading fallbacks, result lock, top-left placement, menu restoration and nested sessions.');
+ await page.evaluate(()=>{const r=document.createElement('section');r.id='genelSonucOverlay';r.className='surface acik';r.innerHTML='<button id="gsoDevamBtn" disabled>DEVAM ET</button>';r.querySelector('button').onclick=()=>r.remove();document.body.append(r);});await page.waitForSelector('#genelSonucOverlay .dm-session-back');assert(await page.locator('#genelSonucOverlay .dm-session-back').isDisabled());await page.evaluate(()=>document.getElementById('gsoDevamBtn').disabled=false);await page.waitForFunction(()=>!document.querySelector('#genelSonucOverlay .dm-session-back').disabled);await page.locator('#genelSonucOverlay .dm-session-back').click();await page.waitForFunction(()=>!document.body.classList.contains('dm-play-session'));assert(await page.locator('#bottomNavMobile').isVisible());// Regression: an inactive result may stay in the DOM after finishing.
+ await page.evaluate(()=>{const el=document.createElement('div');el.id='genelSonucOverlay';el.className='surface';el.textContent='Eski sonuç';document.body.append(el);});
+ await page.waitForTimeout(180);
+ assert.equal(await page.locator('#bottomNavMobile').isVisible(),true,'inactive result must not hide the menu');
+ await page.evaluate(()=>document.getElementById('genelSonucOverlay').classList.add('acik'));
+ await page.waitForFunction(()=>document.body.classList.contains('dm-play-session'));
+ assert.equal(await page.locator('#bottomNavMobile').isVisible(),false,'active result should hide the menu');
+ await page.evaluate(()=>document.getElementById('genelSonucOverlay').classList.remove('acik'));
+ await page.waitForFunction(()=>!document.body.classList.contains('dm-play-session'));
+ assert.equal(await page.locator('#bottomNavMobile').isVisible(),true,'finishing result restores the menu');
+ await page.evaluate(()=>document.getElementById('genelSonucOverlay').remove());
+ // Display-important CSS can override native style.display='none'.
+ await page.addStyleTag({content:'.game-modal-overlay.test-stale{display:flex!important}'});
+ await page.evaluate(()=>{const el=document.createElement('section');el.id='staleGame';el.className='game-modal-overlay test-stale surface';el.style.display='none';document.body.append(el);});
+ await page.waitForTimeout(180);
+ assert.equal(await page.locator('#bottomNavMobile').isVisible(),true,'closed CSS-overridden game must not lock menu');
+ await page.evaluate(()=>document.getElementById('staleGame').remove());
+ // Old activity shells within inactive fullscreen tabs are not game sessions.
+ await page.evaluate(()=>{const el=document.createElement('section');el.id='tab-konusmapratigi';el.className='dc-fullscreen-overlay';el.innerHTML='<div class="kp-shell">Eski etkinlik</div>';document.body.append(el);});
+ await page.waitForTimeout(180);
+ assert.equal(await page.locator('#bottomNavMobile').isVisible(),true,'inactive fullscreen tab must not lock menu');
+ await page.evaluate(()=>document.getElementById('tab-konusmapratigi').remove());
+ assert.deepEqual(errors,[]);await browser.close();console.log('PASS: 13 native game/route exits, rally/loading fallbacks, result lock, top-left placement, menu restoration and nested sessions.');
 })().catch(e=>{console.error(e);process.exit(1)});
