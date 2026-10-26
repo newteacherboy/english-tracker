@@ -1,0 +1,36 @@
+name: Papi level-flight UI
+on:
+  pull_request:
+    paths:
+      - 'ingilizce/progression-ui.js'
+      - 'ingilizce/progression-ui.css'
+      - 'tests/progression-ui.cjs'
+      - '.github/workflows/papi-level-flight.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: node --check ingilizce/progression-ui.js && node --check tests/progression-ui.cjs
+      - run: npm install --prefix /tmp/papi-level-qa --no-audit --no-fund playwright@1.58.2
+      - run: /tmp/papi-level-qa/node_modules/.bin/playwright install chromium
+      - name: Set up existing progression browser fixture
+        run: |
+          mkdir -p /tmp/diji-browser/lib
+          NODE_PATH=/tmp/papi-level-qa/node_modules node -e "const fs=require('fs');const p=require('playwright').chromium.executablePath();fs.symlinkSync(p,'/tmp/diji-browser/chromium')"
+      - name: Verify level popup, no replay, unlocks, currency and mobile fit
+        run: CODEX_PRIMARY_RUNTIME_NODE_MODULES=/tmp/papi-level-qa/node_modules node tests/progression-ui.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: papi-level-flight-screenshots
+          path: |
+            /tmp/diji-level-up-mobile.png
+            /tmp/diji-papi-mobile.png
