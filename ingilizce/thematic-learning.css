@@ -839,3 +839,11 @@
  #dmStoryLesson#dmStoryLesson .ml-feedback.is-answer-wrong{max-height:17dvh!important;padding:8px 11px 8px 36px!important;line-height:1.24!important}
  #dmStoryLesson#dmStoryLesson .ml-feedback.is-answer-wrong:before{left:11px!important;top:7px!important}
 }
+
+
+/* The same single-board exercise must fit even on a 390px-high landscape tablet.
+   Release unused space above action buttons; keep the original portrait spacing. */
+@media(max-height:420px) and (min-width:700px){
+ #dmStoryLesson#dmStoryLesson .ml-actions{margin-top:1px!important;gap:5px!important}
+ #dmStoryLesson#dmStoryLesson .ml-actions button{padding-block:8px!important;min-height:36px!important}
+}
