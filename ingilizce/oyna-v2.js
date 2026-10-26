@@ -37,7 +37,8 @@ async function claimWeekly(){const owner=who();if(!owner||weeklyClaimOwner)retur
 
 function tasks(){return window.dmRouteMissions?.markup('daily')||'<section class="rt-tasks rt-card"><p>Günlük görevler hazırlanıyor…</p></section>';}
 
-function schoolInfo(s){const label=String(s?.label||''),grade=/(\d+)\.\s*sınıf/i.exec(label),unit=/(\d+)\.\s*ünite/i.exec(label),part=/·\s*(\d+)\s*\/\s*(\d+)/.exec(label);return {grade:Number(grade?.[1]||1),unit:unit?.[1]||'Karışık',part:Number(part?.[1]||1),count:Number(part?.[2]||1)};}
+function schoolInfo(s){const label=String(s?.label||'').toLocaleLowerCase('tr').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/ı/g,'i'),grade=/(\d+)\.\s*sinif/.exec(label),unit=/(\d+)\.\s*unite/.exec(label),part=/·\s*(\d+)\s*\/\s*(\d+)/.exec(label);const explicit=Number(s?.classNo??s?.sinif??s?.grade),parsed=Number(grade?.[1]),encoded=Math.floor((Number(s?.no)-200000)/10000);return {grade:[explicit,parsed,encoded].find(n=>Number.isInteger(n)&&n>=1&&n<=8)||1,unit:s?.unitNo??s?.unite??unit?.[1]??'Karışık',part:Number(s?.part??part?.[1]??1),count:Number(part?.[2]||1)};}
+
 function node(s,i,current,learn){
  const state=s.done?'done':s.current||i===current?'current':s.available?'open':'locked',label=learn?s.cefr+' · '+s.title:s.label;
  const attrs=learn?'data-rt="chapter" data-chapter="'+s.id+'"':'data-rt="school-stop" data-b="'+s.b+'" data-d="'+s.d+'"';
@@ -140,12 +141,27 @@ function missionsDialog(period='daily'){
 function runTask(ev){if(ev==='review')window.dmWrongWords?.review?.();else if(['game','oyun','yildiz3'].includes(ev))window.aktivitelerTamEkranAc?.();else if(ev==='ders')window.dersCalisTamEkranAc?.();else window.dmLearningRoute.continue();}
 let lastRenderedSchoolGrade=0;
 document.addEventListener('dm:progression-status',e=>{const grade=Number(e.detail?.startPath?.startGrade);if(!who()||e.detail?.owner&&e.detail.owner!==who()||!Number.isInteger(grade)||grade<1||grade>8||lastRenderedSchoolGrade===grade||purpose()!=='school'||!document.querySelector('#dmParkurScroll .rt-root'))return;lastRenderedSchoolGrade=grade;window.dunyaAc?.();});
-function scene(o={}){latest=o;sceneOwner=who();if(purpose()==='school')lastRenderedSchoolGrade=chosenSchoolGrade();const steps=o.steps||[],learn=purpose()==='independent',grade=chosenSchoolGrade(),requested=grade&&!learn?(o.allSteps||steps).findIndex(x=>schoolInfo(x).grade===grade&&x.available&&!x.done):-1,current=Math.max(0,Math.min(steps.length-1,requested>=0?steps.findIndex(x=>x.b===(o.allSteps||steps)[requested].b&&x.d===(o.allSteps||steps)[requested].d):Number(o.current)||0));return '<div class="rt-root '+(learn?'rt-english':'rt-school')+'" data-route-design="3">'+(learn?'<div class="rt-route-area" role="status">Öğrenme yolun hazırlanıyor…</div>':'')+(learn?'':islandMarkup(steps,current))+'</div>';}
+function scene(o={}){
+ latest=o;sceneOwner=who();const learn=purpose()==='independent',grade=chosenSchoolGrade();if(!learn)lastRenderedSchoolGrade=grade;
+ const steps=learn?(o.steps||[]):(o.allSteps?.length?o.allSteps:o.steps||[]);
+ const original=(o.steps||[])[Number(o.current)||0];
+ let current=steps.findIndex(x=>x.b===original?.b&&x.d===original?.d);
+ if(!learn&&grade){
+  let requested=steps.findIndex(x=>schoolInfo(x).grade>=grade&&x.available&&!x.done);
+  if(requested<0){for(let i=steps.length-1;i>=0;i--)if(schoolInfo(steps[i]).grade===grade&&steps[i].available){requested=i;break;}}
+  if(requested<0)requested=steps.findIndex(x=>schoolInfo(x).grade===grade);
+  if(requested>=0)current=requested;
+ }
+ current=Math.max(0,Math.min(steps.length-1,current));
+ return '<div class="rt-root '+(learn?'rt-english':'rt-school')+'" data-route-design="3">'+(learn?'<div class="rt-route-area" role="status">Öğrenme yolun hazırlanıyor…</div>':'')+(learn?'':islandMarkup(steps,current))+'</div>';
+}
+
 async function paintLearning(root,force=false){const owner=who(),turn=++epoch;try{const info=await window.dmStoryPath.overview({force});if(!root.isConnected||owner!==who()||turn!==epoch||purpose()!=='independent')return;if(!info?.chapters?.length)throw Error('Parkur içeriği henüz hazır değil.');const cur=Math.max(0,info.chapters.findIndex(c=>c.current));const area=root.querySelector('.rt-route-area');root.querySelectorAll('.rt-badge,.rt-banner,.rt-completion-count,.rt-path,.bi-sky').forEach(el=>el.remove());const summary='';if(area)area.outerHTML=summary;else root.insertAdjacentHTML('afterbegin',summary);root.insertAdjacentHTML('beforeend',islandMarkup(info.chapters,cur,true));mountScrollable(root);}catch(e){if(!root.isConnected||owner!==who()||turn!==epoch)return;const area=root.querySelector('.rt-route-area');if(area){area.innerHTML='<p>Öğrenme yolun yüklenemedi.</p><button type="button" data-rt="retry">Tekrar dene</button>';}}}
 let cardStamp='';if(typeof window.setInterval==='function')window.setInterval(()=>{if(document.hidden)return;paintChests();const stamp=JSON.stringify([Y()?.log,Y()?.haftaHedef,Y()?.lig?.xp,tasks()]);if(stamp!==cardStamp){cardStamp=stamp;refreshCards();}},1500);
 function refreshCards(){paintChests();document.querySelectorAll('.mp-missions [data-mission-panel]').forEach(p=>{p.innerHTML=window.dmRouteMissions?.passport(p.dataset.missionPanel)||'';});document.querySelectorAll('.rt-week').forEach(el=>el.outerHTML=weekly());document.querySelectorAll('.rt-tasks').forEach(el=>el.outerHTML=tasks());}
 let routeSaveInProgress=false;
-function chosenSchoolGrade(){const sp=window.dmProgression?.status?.()?.startPath;const authoritative=Number(sp?.startGrade);const enrolled=sp?.mode==='grade'||sp?.learningRoute==='needs-test'||window.dmMemberBadgeStatus?.learnerProfile?.purpose==='school';if(enrolled&&Number.isInteger(authoritative)&&authoritative>=1&&authoritative<=8)return authoritative;const remembered=Number(Y()?.dmSchoolStartGrade);return Number.isInteger(remembered)&&remembered>=1&&remembered<=8?remembered:0;}
+function chosenSchoolGrade(){const sp=window.dmProgression?.status?.()?.startPath;const authoritative=Number(sp?.startGrade);if(Number.isInteger(authoritative)&&authoritative>=1&&authoritative<=8)return authoritative;const remembered=Number(Y()?.dmSchoolStartGrade);return Number.isInteger(remembered)&&remembered>=1&&remembered<=8?remembered:0;}
+
 function selectSchoolGrade(){
  return new Promise(resolve=>{
   const {el,close}=dialog('Okul Yolum · Sınıfını seç','<p>Hangi sınıftan başlamak istersin? Seçimin diğer parkurdaki ilerlemeni ve ödüllerini silmez.</p><div class="rt-choices rt-grade-choices">'+Array.from({length:8},(_,i)=>'<button type="button" data-school-grade="'+(i+1)+'">'+(i+1)+'. Sınıf</button>').join('')+'</div><p class="rt-status">Sınıfını daha sonra Parkur Değiştir bölümünden değiştirebilirsin.</p>');
@@ -233,7 +249,7 @@ function reconcileVisibleRoute(){
  });
 }
 document.addEventListener('dm:state',()=>{preview=null;refreshCards();reconcileVisibleRoute();});
-document.addEventListener('dm:login',()=>{weeklyClaimOwner='';weeklyError='';preview=null;if(sceneOwner!==who())latest=null;routeMap=null;mapResize?.disconnect();epoch++;reconcileVisibleRoute();});window.addEventListener('resize',fit);window.visualViewport?.addEventListener('resize',fit);
+document.addEventListener('dm:login',()=>{weeklyClaimOwner='';weeklyError='';preview=null;lastRenderedSchoolGrade=0;if(sceneOwner!==who())latest=null;routeMap=null;mapResize?.disconnect();epoch++;reconcileVisibleRoute();});window.addEventListener('resize',fit);window.visualViewport?.addEventListener('resize',fit);
 // School route uses its own theme and expanded grade/unit navigator.
 if(typeof document!=='undefined'&&document.createElement&&document.head&&!document.querySelector('script[data-dm-school-journey]')){const loader=document.createElement('script');loader.src='school-journey.js?v=20261022-kombo-1';loader.defer=true;loader.dataset.dmSchoolJourney='1';document.head.append(loader);}
 })();
