@@ -1,11 +1,15 @@
 /* Session navigation uses native close handlers so timers, saves and exits still run. */
 (()=>{'use strict';
- const surfaces='.game-modal-overlay,#bzPerde,#dmStoryLesson,#mlThemeList,#meteorGame,#wordWheel,#papiCards,#rallyGame,#dmGameIntro,#seviyeHaritaOverlay,#yoModal.acik,.dm-garden-match,.kp-shell,.ba-shell,.kart-oyun-overlay,#dyOyunOverlay,#genelSonucOverlay,.bz-alt:has(.sp-start-card)';
+ const surfaces='.game-modal-overlay,#bzPerde,#dmStoryLesson,#mlThemeList,#meteorGame,#wordWheel,#papiCards,#rallyGame,#dmGameIntro,#seviyeHaritaOverlay,#yoModal.acik,.dm-garden-match,.kp-shell,.ba-shell,.kart-oyun-overlay,#dyOyunOverlay,#genelSonucOverlay.acik,.bz-alt:has(.sp-start-card)';
  const nativeBack='.game-close-btn,#bzCik,#bzKapat,#bzVazgec,.rq-close,.ds-back,.ml-header [data-back],.ml-entry-card [data-back],.mt-exit,.ww-close,.pc-close,.yo-kapat,.seviye-harita-kapat,.kp-close-x,.ba-close,[data-ia-close],.dm-x,.hb-card>header>[data-close],.hb-card>header>button,.kart-oyun-kapat,.pomodoro-close-btn';
  // A finished game can leave its shell in the DOM. Only on-screen, interactive
  // surfaces are allowed to hide the main navigation dock.
  const shown=el=>{
-  if(!el?.isConnected||el.hidden||el.closest('[inert],[aria-hidden="true"],[data-dm-nav-suspended]'))return false;
+  if(!el?.isConnected||el.hidden||el.style.display==='none'||el.closest('[inert],[aria-hidden="true"],[data-dm-nav-suspended]'))return false;
+  // CSS layers can override native style.display='none' with !important;
+  // an inactive result/legacy panel must never keep the dock hidden.
+  const parentPage=el.closest('.dc-fullscreen-overlay');
+  if(parentPage&&!parentPage.classList.contains('active'))return false;
   const style=getComputedStyle(el);
   if(style.display==='none'||style.visibility==='hidden'||style.visibility==='collapse'||style.pointerEvents==='none'||Number(style.opacity)<0.05)return false;
   const rect=el.getBoundingClientRect(),viewportHeight=window.visualViewport?.height||window.innerHeight;
@@ -53,5 +57,10 @@
  const relevant=n=>n.nodeType===1&&(n.matches(surfaces+',button')||!!n.querySelector(surfaces+',button'));
  const observer=new MutationObserver(records=>{if(records.some(r=>r.type==='childList'?[...r.addedNodes,...r.removedNodes].some(relevant):r.target===document.body||r.target.matches(surfaces+',#gsoDevamBtn')||!!r.target.querySelector(surfaces)))schedule();});observer.observe(document.body,{subtree:true,childList:true,attributes:true,attributeFilter:['class','style','hidden','disabled','aria-hidden','inert','data-dm-nav-suspended']});
  window.addEventListener('resize',schedule);window.addEventListener('pageshow',schedule);document.addEventListener('transitionend',schedule);document.addEventListener('animationend',schedule,true);sync();
- window.dmPlayNavigation={sync};
+ // Read-only on-device diagnostics for real exits; never contains user data.
+ window.dmPlayNavigation={sync,diagnostics:()=>({
+  menuDisplay:getComputedStyle(document.getElementById('bottomNavMobile')||document.body).display,
+  locked:document.body.classList.contains('dm-play-session'),
+  visibleSurfaces:[...document.querySelectorAll(surfaces)].filter(shown).map(e=>e.id||e.className).slice(0,20)
+ })};
 })();
