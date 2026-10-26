@@ -24618,6 +24618,8 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
     if (!bolumAcik(b)) return toast('🔒 Bu sınıflar, önceki sınıfın tüm durakları bitince açılır.');
     let B = BOLUM[b], D = durakBilgi(b, d), no = D.no, N = durakSayisi(b), bitti = tamam.has(no), y = yildiz(no), n = bolumTamam(b);
     let ileride = !durakAcik(b, d), kapaliSinif = !sinifAcik(D.sinif);
+    // The shared lesson entry is the only start sheet for current school sessions.
+    if(!ileride&&window.dmSchoolLesson&&!checkpointRead(no)){void oyunBaslat(b,d);return;}
     const returnView=window.dmViewHistory?.capture();let k = document.createElement('div'); k.className = 'bz-alt'; k.setAttribute('role', 'dialog'); k.setAttribute('aria-modal', 'true');
     k.classList.add('sp-entry','sp-adventure-entry');
     const saved=checkpointRead(no);const possibleXp=bitti?0:192;
@@ -24665,7 +24667,7 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
     // Telaffuz ve yazma doğrulaması yalnızca word_bank İngilizce alanına dayanır.
     if(ownerAtStart!==isim())return;
     if(window.dmSchoolLesson&&!checkpointRead(D.no)){
-      try{await window.dmSchoolLesson.start({D,b,d,pool:tum,onFinish:state=>{O=state;bitir();}});}catch(e){console.warn('[Okul Yolum]',e.message);}
+      try{await window.dmSchoolLesson.start({D,b,d,pool:tum,entryMeta:{title:window.dmParkurDurakAdi(b,d),completed:tamam.has(D.no)},onFinish:state=>{O=state;bitir();}});}catch(e){console.warn('[Okul Yolum]',e.message);}
       return;
     }
     // İlk 12 görev mevcut 12 ayrı mekaniği kullanır; final yalnızca hedef kelimeleri sorar.
@@ -26529,7 +26531,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <link rel="stylesheet" href="parkur-map-theme-v1.css?v=20261010-levelbadge-fix">
 <script defer src="parkur-map-theme-v1.js?v=3"></script>
 <link rel="stylesheet" href="papi-feedback.css?v=1"><script defer src="papi-feedback.js?v=20261026-papi-surfaces-1"></script><script defer src="papi-haptics.js?v=1"></script><script defer src="papi-wallet.js?v=20261025-no-feed-hud-1"></script>
-<link rel="stylesheet" href="story-path.css?v=3"><script defer src="story-curriculum.js?v=2"></script><link rel="stylesheet" href="thematic-learning.css?v=20261017-sunny-academy-1"><link rel="stylesheet" href="learning-question-v1.css?v=20261025-classroom-quiet-2"><script defer src="learning-core.js?v=20261017-learning-hud-letters-1"></script><link rel="stylesheet" href="route-practice-flight.css?v=20261026-combo-1"><script defer src="route-practice-flight.js?v=20261026-combo-1"></script><script defer src="thematic-learning.js?v=20261026-combo-1"></script><script defer src="school-curriculum.js?v=20261025-1"></script><script defer src="school-word-art.js?v=20261025-soft-1"></script><script defer src="school-lesson.js?v=20261025-soft-3"></script><link rel="stylesheet" href="school-soft-cards.css?v=20261025-soft-1"><script defer src="story-path.js?v=20261022-no-papi-card"></script>
+<link rel="stylesheet" href="story-path.css?v=3"><script defer src="story-curriculum.js?v=2"></script><link rel="stylesheet" href="thematic-learning.css?v=20261026-entry-sheet-1"><link rel="stylesheet" href="learning-question-v1.css?v=20261025-classroom-quiet-2"><script defer src="learning-core.js?v=20261017-learning-hud-letters-1"></script><link rel="stylesheet" href="route-practice-flight.css?v=20261026-combo-1"><script defer src="route-practice-flight.js?v=20261026-combo-1"></script><script defer src="thematic-learning.js?v=20261026-entry-sheet-1"></script><script defer src="school-curriculum.js?v=20261025-1"></script><script defer src="school-word-art.js?v=20261025-soft-1"></script><script defer src="school-lesson.js?v=20261026-entry-sheet-1"></script><link rel="stylesheet" href="school-soft-cards.css?v=20261025-soft-1"><script defer src="story-path.js?v=20261022-no-papi-card"></script>
 <link rel="stylesheet" href="medupro.css?v=20261011-hud">
 <script defer src="medupro.js?v=20261026-papi-surfaces-1"></script>
 <link rel="stylesheet" href="konu-oyunlari.css?v=20261021-konu-a2-1">

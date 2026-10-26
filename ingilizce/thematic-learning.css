@@ -784,3 +784,30 @@
 #dmStoryLesson .ml-recovery-choices button{min-height:46px;font-weight:900}
 #dmStoryLesson .ml-result-fair{display:block;margin:9px auto;padding:8px 12px;width:fit-content;border:1px solid #72c5bc;border-radius:12px;background:#163e4c;color:#eafff6;font-size:13px;font-weight:900;text-align:center}
 #dmStoryLesson[data-appearance="day"] .ml-result-fair{background:#e5f6ed;color:#174e40;-webkit-text-fill-color:#174e40}
+
+/* One bottom start sheet for both routes. Content comes from the selected stop. */
+#dmStoryLesson#dmStoryLesson.ml-entry{display:flex!important;align-items:flex-end!important;justify-content:center!important;padding:12px 12px calc(12px + env(safe-area-inset-bottom,0px))!important;overflow:hidden!important}
+#dmStoryLesson#dmStoryLesson.ml-entry .ml-entry-card{display:flex;flex-direction:column;align-items:center;flex:0 1 430px;width:100%;max-height:calc(100dvh - 24px - env(safe-area-inset-bottom,0px));margin:0!important;padding:20px 20px 22px!important;overflow:auto!important;overscroll-behavior:contain;border-radius:28px!important;background:linear-gradient(165deg,#f2e7ff,#fff 75%)!important;box-shadow:0 6px 0 #d9c3eb,0 18px 48px #2e164b3b!important;animation:mlEntryRise .28s ease-out}
+#dmStoryLesson#dmStoryLesson.ml-entry .ml-entry-journey{display:none!important}
+#dmStoryLesson#dmStoryLesson.ml-entry .ml-entry-papi{position:static!important;transform:none!important;flex-shrink:0;width:132px!important;height:132px!important;max-width:none!important;margin:0 0 10px!important}
+#dmStoryLesson#dmStoryLesson.ml-entry .ml-entry-close{top:10px!important;right:10px!important;left:auto!important;width:34px!important;height:34px!important;min-height:34px!important;font-size:23px!important;box-shadow:none!important}
+#dmStoryLesson#dmStoryLesson.ml-entry .ml-entry-badge{font-size:10px;letter-spacing:.07em;max-width:100%;box-sizing:border-box;overflow-wrap:anywhere;flex-shrink:0}
+#dmStoryLesson#dmStoryLesson.ml-entry .ml-entry-card h2{font-size:clamp(23px,5vw,29px)!important;line-height:1.14;margin:12px 0 5px!important;overflow-wrap:anywhere;flex-shrink:0}
+#dmStoryLesson#dmStoryLesson.ml-entry .ml-entry-theme{margin:3px 0 10px!important;font-size:13px!important;line-height:1.35;flex-shrink:0}
+#dmStoryLesson#dmStoryLesson.ml-entry .ml-entry-prize{width:100%;box-sizing:border-box;display:block!important;text-align:center;margin:8px 0 10px!important;padding:12px!important;flex-shrink:0}
+#dmStoryLesson#dmStoryLesson.ml-entry .ml-prize-art{display:none}
+#dmStoryLesson#dmStoryLesson.ml-entry .ml-prize-copy{gap:5px}
+#dmStoryLesson#dmStoryLesson.ml-entry .ml-prize-copy strong{font-size:22px}
+#dmStoryLesson#dmStoryLesson.ml-entry .ml-prize-copy strong:before{content:'⭐ ';font-size:20px}
+#dmStoryLesson#dmStoryLesson.ml-entry .ml-entry-stats{width:100%;margin:4px 0 6px!important;flex-shrink:0}
+#dmStoryLesson#dmStoryLesson.ml-entry .ml-entry-resume{width:100%;box-sizing:border-box;flex-shrink:0}
+#dmStoryLesson#dmStoryLesson.ml-entry .ml-entry-start{flex-shrink:0;min-height:50px!important;border-radius:19px!important;margin-top:10px!important;background:linear-gradient(110deg,#ff9666,#f05784)!important;border-color:#ffba9a!important;box-shadow:0 5px 0 #c54572!important;font-size:15px!important}
+@keyframes mlEntryRise{from{transform:translateY(60px);opacity:0}to{transform:translateY(0);opacity:1}}
+@media(max-height:650px){
+ #dmStoryLesson#dmStoryLesson.ml-entry .ml-entry-card{padding:12px 16px 17px!important}
+ #dmStoryLesson#dmStoryLesson.ml-entry .ml-entry-papi{width:86px!important;height:86px!important;margin-bottom:6px!important}
+ #dmStoryLesson#dmStoryLesson.ml-entry .ml-entry-prize{padding:9px!important;margin:6px 0!important}
+ #dmStoryLesson#dmStoryLesson.ml-entry .ml-entry-card h2{font-size:23px!important;margin:8px 0 4px!important}
+ #dmStoryLesson#dmStoryLesson.ml-entry .ml-entry-start{min-height:46px!important;margin-top:7px!important}
+}
+@media(prefers-reduced-motion:reduce){#dmStoryLesson#dmStoryLesson.ml-entry .ml-entry-card{animation:none!important}}

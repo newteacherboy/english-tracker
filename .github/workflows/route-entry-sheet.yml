@@ -1,0 +1,25 @@
+name: Single bottom route entry
+on:
+  pull_request:
+    paths: ['ingilizce/index.html', 'ingilizce/thematic-learning.*', 'ingilizce/school-lesson.js', 'tests/route-entry-*', '.github/workflows/route-entry-sheet.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  entry:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: npm install --prefix /tmp/entry-qa --no-audit --no-fund jsdom@26.1.0 playwright@1.58.2
+      - run: NODE_PATH=/tmp/entry-qa/node_modules node --test tests/thematic-grouped-teach.test.cjs tests/school-shared-curriculum.test.cjs tests/route-combo-reward.test.cjs tests/portal-integrity.test.cjs
+      - run: /tmp/entry-qa/node_modules/.bin/playwright install chromium
+      - run: NODE_PATH=/tmp/entry-qa/node_modules node tests/route-entry-sheet-ui.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: route-entry-sheets
+          path: /tmp/route-papi-flight/*entry.png
