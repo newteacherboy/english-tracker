@@ -30,6 +30,9 @@ const {chromium}=require('playwright'),fs=require('node:fs'),path=require('node:
   if(width===390&&theme===3)await page.screenshot({path:'/tmp/diji-member-ui/duyuru.png'});
  }
  await page.evaluate(()=>{document.getElementById('duyuruOverlay').remove();const el=document.createElement('div');el.id='dmDiscovery';el.innerHTML='<footer class="fd-actions"><button class="fd-link" data-action="success">Şimdi uygulamaya devam et</button></footer>';document.body.append(el);});
- assert.equal(await page.locator('[data-action="success"]').evaluate(e=>getComputedStyle(e).backgroundColor),'rgb(255, 255, 255)');
+ const finalAction=await page.locator('[data-action="success"]').evaluate(e=>{const s=getComputedStyle(e);return {image:s.backgroundImage,color:s.color,minHeight:parseFloat(s.minHeight)};});
+ assert(finalAction.image.includes('gradient'),'final continue button uses a high-contrast primary gradient');
+ assert.equal(finalAction.color,'rgb(255, 255, 255)');
+ assert(finalAction.minHeight>=56,'final continue button has a touch-friendly hit area');
  assert.deepEqual(errors,[]);await browser.close();console.log('PASS login map race, account signup/session preservation, report library and three readable notice themes at mobile/tablet widths');
 })().catch(e=>{console.error(e);process.exit(1);});

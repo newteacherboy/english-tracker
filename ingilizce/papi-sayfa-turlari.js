@@ -161,7 +161,8 @@ function tick(){
  const tour=TOURS.find(t=>t.id===candidate.id);candidate=null;
  if(tour&&!done(tour.id)&&!start(tour,{fromTab:true})){candidate=page;since=Date.now();}
 }
-setInterval(tick,350);
+// The page tours remain available on explicit request; automatic popups obscured study pages.
+if(window.dmPapiAutomaticToursEnabled===true)setInterval(tick,350);
 // İlk tanıtım bittiğinde öğrenci o an hangi sayfadaysa o sayfa "ilk açılış" sayılır.
 document.addEventListener('dm:papi-intro-done',()=>{last=currentPage()?.id||null;candidate=null;});
 document.addEventListener('dm:login',()=>{owner='';});

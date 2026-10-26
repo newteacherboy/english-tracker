@@ -156,7 +156,7 @@
       const pref=x.learnerProfile||{purpose:x.sinif?'school':'independent',educationStage:Number(x.sinif)<=4?'primary':Number(x.sinif)<=8?'middle':'high',ageBand:'',goal:'daily'};
       $("kbPurpose").value=pref.purpose;$("kbAge").value=pref.ageBand||'';$("kbGoal").value=pref.goal||'daily';$("kbStage").value=pref.educationStage||'';
       $("kbSinif").value=String(x.sinif||''); education(false);
-      $("kbSube").value = x.sube || "";$("kbTeacherCode").value="";$("kbTeacherStatus").textContent=x.ogretmenBagli?"Bir öğretmene bağlısın. Öğrenme amacını değiştirmek bu bağlantıyı kaldırmaz.":"Bağımsız öğreniyorsun; öğretmen kodu zorunlu değil.";
+      $("kbSube").value = String(x.sube || "").toLocaleUpperCase("tr-TR");$("kbTeacherCode").value="";$("kbTeacherStatus").textContent=x.ogretmenBagli?"Bir öğretmene bağlısın. Öğrenme amacını değiştirmek bu bağlantıyı kaldırmaz.":"Bağımsız öğreniyorsun; öğretmen kodu zorunlu değil.";
       $("kbTel").value = telGoster(x.telefon);
       $("kbMail").value = x.email || "";
       $("kbSifre").value = "";
@@ -190,7 +190,7 @@
       const govde = {
         islem: "kisiselBilgiGuncelle",
         adSoyad: $("kbAd").value.trim(), okul: $("kbOkul").value.trim(),
-        ...($("kbPurpose").value==='school'?{sinif:!$("kbStage").value||$("kbStage").value==='university'||!$("kbSinif").value?null:Number($("kbSinif").value),sube:$("kbSube").value.trim()}:{}),
+        ...($("kbPurpose").value==='school'?{sinif:!$("kbStage").value||$("kbStage").value==='university'||!$("kbSinif").value?null:Number($("kbSinif").value),sube:$("kbSube").value.trim().toLocaleUpperCase("tr-TR")}:{}),
         learnerProfile:{version:1,purpose:$("kbPurpose").value,ageBand:$("kbAge").value,educationStage:$("kbPurpose").value==='school'?$("kbStage").value:'',goal:$("kbGoal").value,startChoice:mevcut.learnerProfile?.startChoice||'new',knownLevel:mevcut.learnerProfile?.knownLevel||'A1'},
         ogretmenKodu: $("kbTeacherCode").value.trim(),telefon: $("kbTel").value.trim(), email: $("kbMail").value.trim()
       };

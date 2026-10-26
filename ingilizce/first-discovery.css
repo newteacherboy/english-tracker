@@ -139,3 +139,8 @@ body.dm-profile-open #tab-profil #dmForestActions .header-btn{font-size:clamp(10
 #dmDiscovery .fd-consent-optional small{display:block;color:#5b7083;margin-top:2px}
 
 #dmDiscovery .fd-actions .fd-link[data-action="success"]{width:100%;min-height:48px;margin:0;border:1px solid #c9dfdd;border-radius:17px;background:#fff;color:#153f58!important;-webkit-text-fill-color:#153f58!important;font-size:14px;font-weight:850;text-decoration:none;box-shadow:0 3px 0 #b8d8d2}
+
+/* First entry: the final continue action is primary and safe-area aware. */
+#dmDiscovery .fd-actions .fd-link[data-action="success"]{display:flex;align-items:center;justify-content:center;min-height:56px;border:2px solid #086d82;border-radius:18px;background:linear-gradient(145deg,#03bdbb,#007da3);color:#fff!important;-webkit-text-fill-color:#fff!important;font-size:clamp(15px,4vw,18px);font-weight:900;box-shadow:0 5px 0 #065a75,0 9px 16px #08647b33;text-decoration:none}
+#dmDiscovery .fd-actions .fd-link[data-action="success"]:active{transform:translateY(2px);box-shadow:0 2px 0 #065a75}
+#dmDiscovery .fd-actions{padding-bottom:max(4px,env(safe-area-inset-bottom,0px))}
