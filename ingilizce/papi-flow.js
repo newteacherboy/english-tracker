@@ -6,7 +6,7 @@ const visible=e=>!!e&&e.isConnected&&!e.classList.contains('dm-papi-held')&&e.ge
 let queue=[],actor=who(),pending=false,executing='',nextAt=0,held=[],practice=null;
 const activitySelector='.dm-vp-root,#rallyGame,#harfBahcesiOverlay,#dmGameIntro,#onlineMatch,#dmArenaOverlay,#dmMatchOverlay,#dyOyunOverlay,.dm-garden-match,.kp-shell,.ba-shell,.kart-oyun-overlay,#tab-dunya,#tab-aktiviteler,.bz-parkur,.rt-root,.rt-school-modal,.sp-adventure-entry,#mlThemeList,#tpGameSetup,#tpGamePlayer,#mvOverlay,#kgOverlay,#dmStoryLesson,.bz-oyun,#bzAlan,#baOyunEkrani,#kpKelimeOyunEkrani,#seviyeDisLinkOverlay,#dcScreenDetail,#dcScreenTest,#yoModal.acik,.game-modal-overlay,.km-perde,.t2-perde,#meteorGame,#wordWheel,#papiCards,#genelSonucOverlay.acik';
 const exercise=()=>[...document.querySelectorAll(activitySelector)].some(visible)||!!practice;
-const holding=()=>!!window.dmPapiTour?.active()||exercise();
+const holding=()=>!!window.dmPapiTour?.active()||!!window.dmRoutePracticeFlight?.active?.()||exercise();
 const tourHolding=()=>!!window.dmPapiTour?.active();
 const criticalNotice=e=>!!e&&(e.matches('.uy-serit,.yo-toast,[role="alert"],[aria-live="assertive"]')||/enerji|energy|hata|error|başarısız|yetersiz|bağlantı/i.test((e.textContent||'').slice(0,350)));
 // Critical notices must escape game setup overlays instead of waiting behind them.

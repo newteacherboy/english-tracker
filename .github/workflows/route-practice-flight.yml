@@ -1,0 +1,24 @@
+name: Route Papi practice flight
+on:
+  pull_request:
+    paths: ['ingilizce/route-practice-flight.*', 'ingilizce/route-assets/papi-practice-flight.webp', 'ingilizce/thematic-learning.js', 'tests/route-practice-flight*', '.github/workflows/route-practice-flight.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: npm install --prefix /tmp/route-qa --no-audit --no-fund jsdom@26.1.0 playwright@1.58.2
+      - run: NODE_PATH=/tmp/route-qa/node_modules node --test tests/route-practice-flight.test.cjs tests/thematic-grouped-teach.test.cjs tests/auto-notice-budget.test.cjs tests/notice-coordinator.test.cjs
+      - run: /tmp/route-qa/node_modules/.bin/playwright install --with-deps chromium
+      - run: NODE_PATH=/tmp/route-qa/node_modules node tests/route-practice-flight-ui.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: route-papi-flight
+          path: /tmp/route-papi-flight/*.png

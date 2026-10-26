@@ -2110,6 +2110,13 @@
       "bytes": 1340058,
       "status": "ai-generated",
       "source": "docs/school-soft-cards-20261025.md"
+    },
+    {
+      "path": "ingilizce/route-assets/papi-practice-flight.webp",
+      "sha256": "1f7097c799ea9ec80285c0d4792ffe0eb055860ddcaf18b8a982a0008ba02182",
+      "bytes": 153560,
+      "status": "ai-generated",
+      "source": "docs/route-flight-generation.json"
     }
   ]
 }

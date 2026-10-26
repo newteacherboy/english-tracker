@@ -1,0 +1,17 @@
+.dm-route-flight{position:fixed;inset:0;z-index:2147483646;overflow:hidden;background:linear-gradient(#9ae8f1,#ebffea);color:#084c52;font-family:system-ui,-apple-system,sans-serif;isolation:isolate;height:100dvh}
+.dm-route-flight-canvas{position:absolute;inset:0;display:block;width:100%;height:100%;pointer-events:none}
+.dm-route-flight-copy{position:absolute;top:70%;left:16px;right:16px;text-align:center;opacity:0;pointer-events:none}
+.dm-route-flight-copy h2{font:900 clamp(28px,5.8vh,64px)/1.12 system-ui,sans-serif;letter-spacing:-1px;color:#084c52;margin:0 0 18px;text-shadow:0 2px 0 #ffffff50}
+.dm-route-flight-copy p{font:500 clamp(14px,2.1vh,25px)/1.5 system-ui,sans-serif;color:#4e8b85;margin:0;overflow-wrap:anywhere}
+.dm-route-flight-exit,.dm-route-flight-skip{position:absolute;z-index:1;border:1px solid #ffffffc0;border-radius:24px;background:#ffffffb8;color:#175b61;font:800 15px/1.3 system-ui,sans-serif;min-height:44px;padding:10px 16px;cursor:pointer}
+.dm-route-flight-exit{top:calc(14px + env(safe-area-inset-top,0px));right:14px;width:44px;padding:0;font-size:28px}
+.dm-route-flight-skip{bottom:calc(15px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%);white-space:nowrap}
+.dm-route-flight-fallback{position:absolute;left:50%;top:40%;transform:translate(-50%,-50%);width:min(72vw,44vh,540px);height:auto}.dm-route-flight-fallback[hidden]{display:none}
+.dm-route-flight button:focus-visible{outline:3px solid #127b9f;outline-offset:3px}
+@layer dmNoticeSurface {
+#dmStoryLesson .ml-teach [data-learn].is-listened{background:linear-gradient(135deg,#e5fae9,#d4f6e2)!important;border-color:#35bc76!important;box-shadow:0 0 0 2px #35bc7626!important;color:#155b3c!important}
+#dmStoryLesson .ml-teach [data-learn].is-listened :is(b,span,small){color:#155b3c!important}
+#dmStoryLesson .ml-teach [data-learn].is-listened small{font-weight:800!important}
+#dmStoryLesson .ml-teach [data-learn].is-listened small{font-size:18px!important;display:grid!important;place-items:center!important} #dmStoryLesson .ml-teach [data-learn].is-listened small::after{display:none!important}
+}
+@media(prefers-reduced-motion:reduce){.dm-route-flight *{animation:none!important;transition:none!important}}
