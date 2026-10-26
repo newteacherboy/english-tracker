@@ -69,3 +69,12 @@ test('compact top ribbon wraps text, hides during play and closes after five vis
   assert(!el.isConnected,'auto-dismisses after five seconds of visible time');
  }finally{f.close();}
 });
+
+test('new-version banner survives its old timeout and Escape until refresh',async()=>{
+ const f=fixture();try{const el=f.w.document.createElement('aside');el.id='dm-app-update';el.innerHTML='<span>Yeni sürüm hazır! Uygun olduğunda yenile.</span><button>Yenile</button>';let refresh=0;el.querySelector('button').onclick=()=>refresh++;f.w.document.body.append(el);await f.flush();
+ for(let i=0;i<40;i++)await f.step(250);
+ assert(el.isConnected);assert(f.w.dmNoticeSurface.isVisible(el));assert.equal(el.querySelector('.dm-notice-controls'),null);
+ f.w.document.dispatchEvent(new f.w.KeyboardEvent('keydown',{key:'Escape'}));assert(el.isConnected);
+ el.querySelector('.dm-notice-copy button').click();assert.equal(refresh,1);
+ }finally{f.close();}
+});

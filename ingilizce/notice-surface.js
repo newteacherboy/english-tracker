@@ -43,6 +43,10 @@ function decorate(el){
   const timer=document.createElement('span');timer.className='dm-notice-timer';timer.textContent='5 sn';timer.setAttribute('aria-label','5 saniye sonra kapanır');
   controls.append(timer,close,progress);panel.append(controls);
  }
+ if(el.id==='dm-app-update'){
+  close.disabled=true;close.hidden=true;
+  panel.querySelector('.dm-notice-controls')?.remove();
+ }
  el.classList.add('dm-notice-managed','dm-notice-edge-'+edge(el));
  el.dataset.noticeSurface='papi-v2';
  el.addEventListener('click',event=>{const b=event.target.closest?.('button');if(active===el&&b&&!b.disabled&&(b===close||b.matches('.dm-final-ready,.dm-nudge-skip,.dm-momentum-later,.dm-habit-x,.cp-dismiss,.dv-vaz,#yoDavetHayir')||/^(tamam|anladım|okudum|şimdilik kapat|kapat|[×✕x])/i.test((b.textContent||'').trim())))sound('close');},true);
@@ -52,7 +56,7 @@ function adopt(el){
  if(!el?.matches?.(SELECTOR)||records.has(el)||!requested(el))return;
  const r={...decorate(el),el,owner:actor(),order:sequence++,started:false,priority:el.matches('.dm-papi-feedback.is-energy')?0:el.id==='duyuruOverlay'?1:el.dataset.noticePriority==='0'?0:operational(el)?2:3};records.set(el,r);
  el.classList.add('dm-notice-waiting');el.setAttribute('aria-hidden','true');schedule();
- if(edge(el)==='top'){
+ if(edge(el)==='top'&&el.id!=='dm-app-update'){
   // Time is counted only while the ribbon is actually visible; game/background pauses it.
   const requestedMs=Number(el.dataset.noticeLifetime),lifetime=requestedMs>0?Math.min(5000,requestedMs):5000;
   r.lifetime=lifetime;

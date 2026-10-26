@@ -164,3 +164,21 @@ html body .dm-notice-managed.dm-notice-edge-top .dm-notice-progress>i {
  to{opacity:1;transform:translateY(0) scale(1)}
 }
 }
+
+/* Keep titles, wrapping copy and actions in separate rows, including inline source nodes. */
+@layer dmNoticeSurface {
+html body .dm-notice-managed.dm-notice-edge-top .dm-notice-copy {
+ display:flex!important;flex-direction:column!important;align-items:stretch!important;gap:5px!important;
+ line-height:1.4!important;
+}
+html body .dm-notice-managed.dm-notice-edge-top .dm-notice-copy > * {
+ flex-shrink:0!important;float:none!important;min-width:0!important;
+}
+html body .dm-notice-managed.dm-notice-edge-top .dm-notice-copy .dm-notice-emblem {display:none!important}
+html body .dm-notice-managed.dm-notice-edge-top .dm-notice-copy > button {align-self:flex-start!important;margin:2px 0 0!important}
+html body #dm-app-update.dm-notice-managed .dm-notice-panel {grid-template-columns:clamp(42px,12vw,64px) minmax(0,1fr)!important}
+html body #dm-app-update.dm-notice-managed .dm-notice-copy > span {display:block!important;line-height:1.4!important}
+html body #dm-app-update.dm-notice-managed .dm-notice-close,
+html body #dm-app-update.dm-notice-managed .dm-notice-controls,
+html body #dm-app-update.dm-notice-managed .dm-notice-progress {display:none!important}
+}
