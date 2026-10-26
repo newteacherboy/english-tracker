@@ -3,7 +3,7 @@
  const who=()=>(typeof aktifOgrenciAdi==='undefined'?'':String(aktifOgrenciAdi||'')),identity=()=>who()+'|'+localStorage.getItem('ing_token');
  let active=null;
  const storageKey=(owner,no)=>'dm_school_shared_v1:'+owner+':'+no;
- async function start({D,b,d,pool,onFinish}){
+ async function start({D,b,d,pool,onFinish,entryMeta={}}){
   if(active)return;const owner=who(),at=identity(),key=storageKey(owner,D.no);let saved;
   try{saved=JSON.parse(localStorage.getItem(key)||'null');}catch{}
   const state={runId:saved?.expires>Date.now()?saved.runId:crypto.randomUUID(),owner,at,D,b,d,started:saved?.expires>Date.now()?saved.started:Date.now(),answers:{},cursor:0,version:0};active=state;
@@ -23,6 +23,7 @@
    const view=(extra={})=>({ok:true,chapter:D.no,deckVersion:9,cursor:state.cursor,version:state.version,finished:state.cursor>=tasks.length,replay:false,wallet:{energy:window.genelEnerjiKalan??25,energyMax:25,gold:typeof yo!=='undefined'?yo.altin||0:0,combo:combo()},...extra});
    const charge=async()=>{if(practice)return;const r=await fetch(apiURL,{method:'POST',body:JSON.stringify({islem:'ekonomi',is:'parkurAdim',ogrenci:owner,runId:state.runId,soru:state.cursor+1,dogru:null})}),j=await r.json();if(!r.ok||!j.ok)throw Object.assign(Error(j.mesaj||'Enerji doğrulanamadı.'),{energyEmpty:/enerji|energy/i.test(j.mesaj||''),enerjiKalan:window.genelEnerjiKalan,enerjiMax:25});if(Number.isFinite(j.enerjiKalan))window.genelEnerjiKalan=j.enerjiKalan;};
    const bridge={
+    entryMeta:{title:entryMeta.title||'Okul Yolum',completed:!!entryMeta.completed,part:D.parca,total:D.parcaToplam},
     chapter:{id:D.no,number:D.no,routeNumber:d+1,cefr:D.sinif+'. Sınıf',theme:D.unite+'. Ünite',topicTitle:'Okul Yolum',title:'Okul Yolum',part:1,cards:words.map(w=>({...w,image:window.DMSchoolWordArt?.[w.en.toLowerCase()]})),examples:[],schoolTasks:tasks},session:view(),
     async request(action,payload){
      if(!current())throw Error('Hesap değişti.');if(action==='open'){if(!practice){const fresh=await window.dmVerifiedGames.start('ba',state.runId,{classNo:D.sinif,units:[D.unite],stopNo:D.no,schoolVersion:9},words);if(!current())throw Error('Hesap değişti.');state.answers=fresh.answers||{};state.cursor=0;while(state.answers[state.cursor]?.complete&&state.cursor<tasks.length)state.cursor++;state.version++;}return view();}
