@@ -15,3 +15,15 @@
 #dmStoryLesson .ml-teach [data-learn].is-listened small{font-size:18px!important;display:grid!important;place-items:center!important} #dmStoryLesson .ml-teach [data-learn].is-listened small::after{display:none!important}
 }
 @media(prefers-reduced-motion:reduce){.dm-route-flight *{animation:none!important;transition:none!important}}
+
+/* Combo #1 uses the approved mint sky, soft feathers and a foreground reward. */
+.dm-route-flight-combo{background:linear-gradient(#a1ece1,#f4ffe0)}
+.dm-route-flight-combo .dm-route-flight-copy{top:4.2%}
+.dm-route-flight-combo .dm-route-flight-copy h2{font-size:clamp(28px,5.1vh,65px);color:#086e50;margin:0 0 12px;letter-spacing:0}
+.dm-route-flight-combo .dm-route-flight-copy p{color:#417f67}
+.dm-route-flight-energy{position:absolute;left:50%;top:61.3%;width:min(89%,50vh);box-sizing:border-box;display:flex;align-items:center;justify-content:space-evenly;gap:12px;padding:clamp(12px,2.4vh,28px);border:3px solid #eabe3e;border-radius:clamp(26px,5.1vh,65px);background:#fffcef;box-shadow:0 0 36px #f7c73330;color:#087a57;opacity:0;transform:translate(-50%,-50%) scale(.45);pointer-events:none}
+.dm-route-flight-bolt{display:grid;place-items:center;width:clamp(66px,12.5vh,160px);aspect-ratio:1;border-radius:50%;background:#fff0a0;border:2px solid #ffdc5f;flex-shrink:0}
+.dm-route-flight-bolt svg{width:66%;height:66%}
+.dm-route-flight-energy b{display:block;text-align:center;font-size:clamp(48px,6.8vh,87px);line-height:1.1;font-weight:900}
+.dm-route-flight-energy small{display:block;text-align:center;margin-top:8px;font-size:clamp(17px,2.5vh,32px);font-weight:800;color:#557852}
+.dm-route-flight-energy-caption{position:absolute;top:79%;left:16px;right:16px;margin:0;text-align:center;font-size:clamp(17px,2.5vh,32px);font-weight:800;color:#0f6f50;opacity:0;pointer-events:none}

@@ -8,7 +8,7 @@ let data=null,loading=null,progress=[],inherited=0,access=null,owner='',statusPr
 const core=window.DMLearningCore;
 const v8Enabled=()=>window.DM_THEMATIC_V8_ENABLED!==false;
 let teachingHeard=new Set(),teachingSpeech=0,flightShown=false;
-let schoolBridge=null,comboBreakPromise=Promise.resolve(),finalReviewDraft=null;
+let schoolBridge=null,comboBreakPromise=Promise.resolve(),comboRewardPromise=Promise.resolve(),finalReviewDraft=null;
 const questionsFor=()=>schoolBridge?10:session?.deckVersion===8?10:stepsFor()-1;
 const stepsFor=()=>session?.deckVersion===8?14:session?.deckVersion===6?11:session?.deckVersion===5?10:12;
 const taskDeck=(c,previous,version)=>c.schoolTasks|| (version===8?window.DMThematicV8Candidate?.build(c,previous):core.deck(c,previous,version));
@@ -91,7 +91,7 @@ async function openAll(){
  }
  paint();
 }
-function close(force=false){const wasOpen=!!modal;if(!force&&window.dmPapiFirstPractice?.locked('independent'))return;window.dmRoutePracticeFlight?.cancel();teachingHeard.clear();teachingSpeech++;flightShown=false;if(!force)window.dmPapiFirstPractice?.complete('independent');epoch++;layoutObserver?.disconnect();layoutObserver=null;if(fitFrame)cancelAnimationFrame(fitFrame);fitFrame=0;try{speechSynthesis.cancel();}catch{}const closed=modal;modal?.remove();modal=null;window.dmViewHistory?.leave(closed);busy=false;accepted=false;document.body.classList.remove('dm-story-open');if(wasOpen)document.dispatchEvent(new CustomEvent('dm:story-close'));const bridge=schoolBridge;schoolBridge=null;comboBreakPromise=Promise.resolve();finalReviewDraft=null;bridge?.onClose?.();origin?.focus?.();origin=null;}
+function close(force=false){const wasOpen=!!modal;if(!force&&window.dmPapiFirstPractice?.locked('independent'))return;window.dmRoutePracticeFlight?.cancel();teachingHeard.clear();teachingSpeech++;flightShown=false;if(!force)window.dmPapiFirstPractice?.complete('independent');epoch++;layoutObserver?.disconnect();layoutObserver=null;if(fitFrame)cancelAnimationFrame(fitFrame);fitFrame=0;try{speechSynthesis.cancel();}catch{}const closed=modal;modal?.remove();modal=null;window.dmViewHistory?.leave(closed);busy=false;accepted=false;document.body.classList.remove('dm-story-open');if(wasOpen)document.dispatchEvent(new CustomEvent('dm:story-close'));const bridge=schoolBridge;schoolBridge=null;comboBreakPromise=Promise.resolve();comboRewardPromise=Promise.resolve();finalReviewDraft=null;bridge?.onClose?.();origin?.focus?.();origin=null;}
 // School Route supplies its bank-backed tasks and verified session; the view is shared.
 async function openSchool(bridge){
  close(true);schoolBridge=bridge;chapter=bridge.chapter;session=bridge.session;owner=identity();origin=document.activeElement;reviewSnapshots.clear();reviewScope=owner+'|school|'+chapter.id;
@@ -156,11 +156,13 @@ function watchLessonLayout(){
 }
 function showComboReward(r){
  const gain=Number(r.comboGain),key=identity()+'|'+r.chapter+'|'+r.version;if(!Number.isFinite(gain)||gain<=0||key===lastComboReward)return;lastComboReward=key;
- const ticket=epoch,at=identity();queueMicrotask(()=>{if(ticket!==epoch||!modal||identity()!==at)return;
-  if(typeof window.DMRouteQuestions?.celebrate==='function'){
+ const ticket=epoch,at=identity();comboRewardPromise=new Promise(resolve=>queueMicrotask(async()=>{try{if(ticket!==epoch||!modal||identity()!==at)return;
+  if(typeof window.dmRoutePracticeFlight?.playCombo==='function'){
+   await window.dmRoutePracticeFlight.playCombo({gain,isCurrent:()=>ticket===epoch&&!!modal&&identity()===at,onExit:()=>close(true),sound:voice});
+  }else if(typeof window.DMRouteQuestions?.celebrate==='function'){
    window.DMRouteQuestions.celebrate(modal,gain,5);
   }else{const el=modal.querySelector('.ml-combo-toast');if(el){el.textContent='🪶 5 doğru! +'+gain+' enerji';setTimeout(()=>{if(ticket===epoch&&el.isConnected)el.textContent='';},3000);}}
- });
+ }catch{}finally{resolve();}}));
 }
 
 function feedback(text,correct=false){const el=modal?.querySelector('.ml-feedback');if(el){el.textContent=text;el.classList.toggle('is-correct',correct);}}
@@ -178,7 +180,7 @@ function wallet(r){
  if(r.enerjiKalan!=null)economy.energy=r.enerjiKalan;if(r.enerjiMax!=null)economy.energyMax=r.enerjiMax;if(r.combo!=null)economy.combo=r.combo;
  if(economy.energy!=null){window.genelEnerjiKalan=economy.energy;window.headerEnerjiGoster?.(economy.energy,economy.energyMax);}
  const state=r.yo||(!r.stale&&!r.alreadyCompleted&&r.finished&&!r.replay?r.reward?.yo:null);if(state)window.dmApplyRewardState?.(state,who());paintHud();
- if(r.comboGain>0&&!r.stale&&!r.alreadyCompleted)showComboReward(r);
+ if(r.comboGain>0&&r.accepted!==false&&!r.stale&&!r.alreadyCompleted&&!r.replay)showComboReward(r);
  if(r.finished){window.dmProgression?.refresh?.(true);window.dmPapiFirstPractice?.complete('independent');}
 }
 async function reconcileLesson(ticket,at,error){
@@ -195,7 +197,7 @@ async function reconcileLesson(ticket,at,error){
   feedback('Bağlantı kurulamadı. İlerlemen sunucuda saklanıyor; aynı bölümden tekrar devam edebilirsin. '+error.message);
  }
 }
-async function submit(answer,clicked){if(busy||accepted||!modal)return;const submitEpoch=epoch;try{await comboBreakPromise;}catch{breakCombo();try{await comboBreakPromise;}catch{return;}}if(submitEpoch!==epoch||busy||accepted||!modal)return;const ticket=epoch,at=identity(),answeredCursor=session.cursor,task=taskDeck(chapter,data?.chapters.find(c=>c.id===chapter.previousId),session.deckVersion)[session.cursor];busy=true;modal.setAttribute('aria-busy','true');modal.querySelectorAll('.ml-task button,.ml-actions button').forEach(b=>b.disabled=true);feedback('Kontrol ediliyor…');try{const r=await api('advance',{chapter:chapter.id,cursor:session.cursor,version:session.version,answer});if(ticket!==epoch||!modal||identity()!==at)return;session=r;busy=false;modal.removeAttribute('aria-busy');remember(r);wallet(r);if(r.stale){render();feedback('Diğer ekranındaki ilerlemen yüklendi.');return;}if(r.needsRecovery){render();feedback('Papi ile üç kısa pekiştirme sorusu çözelim.');return;}if(!r.accepted){economy.combo=0;paintHud();window.dmAnswerFeedback?.(false);const word=[...chapter.cards,...(chapter.usage||[])].find(w=>core.norm(w.en)===core.norm(task.prompt)||core.norm(w.tr)===core.norm(task.prompt));if(word)window.dmWrongWords?.add({...word,source:'ogrenme-yolu'});render();feedback('Birlikte düzeltelim. '+(task.explanation||r.explanation||'Öğrenme kartlarına tekrar bakabilirsin.'));return;}accepted=true;if(task.kind==='teach'||task.kind==='review'){saveAnsweredSnapshot(answeredCursor);render();return;}window.dmAnswerFeedback?.(true);clicked?.classList.add('is-correct');feedback(r.explanation||'Doğru!',true);saveAnsweredSnapshot(answeredCursor);const back=modal.querySelector('[data-ml-review-open]');if(back)back.disabled=false;const nextNav=modal.querySelector('.ml-question-history button:last-child');if(nextNav){nextNav.disabled=false;nextNav.onclick=()=>modal.querySelector('.ml-actions .ml-primary[data-next]')?.click();}const actions=modal.querySelector('.ml-actions');actions.innerHTML='<button type="button" class="ml-primary" data-next>'+(r.finished?'Bölümü tamamla':'Devam et →')+'</button>';actions.querySelector('button').onclick=render;actions.querySelector('button').focus();}catch(e){if(e.energyEmpty){busy=false;modal?.removeAttribute('aria-busy');wallet(e);render();feedback(e.message);window.DijiMeduPapiFeedback?.energy();}else await reconcileLesson(ticket,at,e);}}
+async function submit(answer,clicked){if(busy||accepted||!modal)return;window.dmRoutePracticeFlight?.prepare();const submitEpoch=epoch;try{await comboBreakPromise;}catch{breakCombo();try{await comboBreakPromise;}catch{return;}}if(submitEpoch!==epoch||busy||accepted||!modal)return;const ticket=epoch,at=identity(),answeredCursor=session.cursor,task=taskDeck(chapter,data?.chapters.find(c=>c.id===chapter.previousId),session.deckVersion)[session.cursor];busy=true;modal.setAttribute('aria-busy','true');modal.querySelectorAll('.ml-task button,.ml-actions button').forEach(b=>b.disabled=true);feedback('Kontrol ediliyor…');try{const r=await api('advance',{chapter:chapter.id,cursor:session.cursor,version:session.version,answer});if(ticket!==epoch||!modal||identity()!==at)return;session=r;busy=false;modal.removeAttribute('aria-busy');remember(r);wallet(r);if(r.stale){render();feedback('Diğer ekranındaki ilerlemen yüklendi.');return;}if(r.needsRecovery){render();feedback('Papi ile üç kısa pekiştirme sorusu çözelim.');return;}if(!r.accepted){economy.combo=0;paintHud();window.dmAnswerFeedback?.(false);const word=[...chapter.cards,...(chapter.usage||[])].find(w=>core.norm(w.en)===core.norm(task.prompt)||core.norm(w.tr)===core.norm(task.prompt));if(word)window.dmWrongWords?.add({...word,source:'ogrenme-yolu'});render();feedback('Birlikte düzeltelim. '+(task.explanation||r.explanation||'Öğrenme kartlarına tekrar bakabilirsin.'));return;}accepted=true;if(task.kind==='teach'||task.kind==='review'){saveAnsweredSnapshot(answeredCursor);if(task.kind==='review'){await comboRewardPromise;if(ticket!==epoch||!modal||identity()!==at)return;}render();return;}window.dmAnswerFeedback?.(true);clicked?.classList.add('is-correct');feedback(r.explanation||'Doğru!',true);saveAnsweredSnapshot(answeredCursor);const back=modal.querySelector('[data-ml-review-open]');if(back)back.disabled=false;const nextNav=modal.querySelector('.ml-question-history button:last-child');if(nextNav){nextNav.disabled=false;nextNav.onclick=()=>modal.querySelector('.ml-actions .ml-primary[data-next]')?.click();}const actions=modal.querySelector('.ml-actions');actions.innerHTML='<button type="button" class="ml-primary" data-next>'+(r.finished?'Bölümü tamamla':'Devam et →')+'</button>';actions.querySelector('button').onclick=render;actions.querySelector('button').focus();}catch(e){if(e.energyEmpty){busy=false;modal?.removeAttribute('aria-busy');wallet(e);render();feedback(e.message);window.DijiMeduPapiFeedback?.energy();}else await reconcileLesson(ticket,at,e);}}
 // One teaching screen acknowledges the existing consecutive teaching steps in order.
 // The deck, graded questions, cursor/version checks and rewards stay server-owned.
 async function startQuestions(){
