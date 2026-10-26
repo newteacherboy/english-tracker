@@ -41,7 +41,7 @@ function decorate(el){
 }
 function adopt(el){
  if(!el?.matches?.(SELECTOR)||records.has(el)||!requested(el))return;
- const r={...decorate(el),el,owner:actor(),order:sequence++,started:false,priority:el.id==='duyuruOverlay'?1:el.dataset.noticePriority==='0'?0:operational(el)?2:3};records.set(el,r);
+ const r={...decorate(el),el,owner:actor(),order:sequence++,started:false,priority:el.matches('.dm-papi-feedback.is-energy')?0:el.id==='duyuruOverlay'?1:el.dataset.noticePriority==='0'?0:operational(el)?2:3};records.set(el,r);
  el.classList.add('dm-notice-waiting');el.setAttribute('aria-hidden','true');schedule();
 }
 function externalDialog(el){return [...document.querySelectorAll('[role="dialog"],[aria-modal="true"],.rubric-modal,.rubric-overlay,.kb-perde,#dmEmailGuide')].some(d=>!d.closest('.dm-notice-managed')&&!el.contains(d)&&visible(d));}
@@ -49,7 +49,7 @@ function blocked(el){
  if(document.hidden||window.dmPapiTour?.active?.()||window.dmRoutePracticeFlight?.active?.()||window.dmContactFrozen)return true;
  const urgent=operational(el);
  if(!urgent&&(window.dmPapiNotices?.inActivity?.()||[...document.querySelectorAll('input:focus,textarea:focus,select:focus')].some(input=>!el.contains(input))))return true;
- if(!(urgent&&window.dmPapiNotices?.inActivity?.())&&externalDialog(el))return true;
+ if(!el.matches('.dm-papi-feedback.is-energy')&&!(urgent&&window.dmPapiNotices?.inActivity?.())&&externalDialog(el))return true;
  return false;
 }
 function hide(el){el.classList.remove('dm-notice-visible');el.classList.add('dm-notice-waiting');el.setAttribute('aria-hidden','true');}
@@ -57,6 +57,7 @@ function reset(){for(const [el]of records){if(el.id==='duyuruOverlay'){el.style.
 function pump(){
  if(disposed)return;scheduled=false;if(owner!==actor()){reset();return;}
  for(const [el]of records)if(!requested(el)){if(active===el){active=null;nextAt=Date.now()+600;}el.classList.remove('dm-notice-visible','dm-notice-waiting');el.removeAttribute('aria-hidden');records.delete(el);}
+ if(active&&!active.matches('.dm-papi-feedback.is-energy')&&[...records.keys()].some(e=>e.matches('.dm-papi-feedback.is-energy')&&requested(e)&&!blocked(e))){hide(active);active=null;}
  if(active){if(blocked(active)||active.classList.contains('dm-papi-held')){hide(active);active=null;}else return;}
  if(Date.now()<nextAt)return;
  const candidate=[...records.values()].filter(r=>r.owner===owner&&!blocked(r.el)&&!r.el.classList.contains('dm-papi-held')).sort((a,b)=>a.priority-b.priority||a.order-b.order)[0];

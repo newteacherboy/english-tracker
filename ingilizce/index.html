@@ -8173,6 +8173,8 @@ setTimeout(() => {
             window._kpEnerjiCache = { enerjiKalan: kalan, enerjiMax: max };
             window.genelEnerjiKalan = kalan;
             window.genelEnerjiMax = max;
+            const priorEnergy=window.dmLastEnergyValue??onceki;window.dmLastEnergyValue=kalan;
+            if(priorEnergy>0&&kalan===0&&!window.dmTeacherPortalMode&&(typeof aktifOgrenciAdi==='undefined'||String(aktifOgrenciAdi).toLowerCase()!=='teacher')&&!(typeof siniftaOynananOgrenci!=='undefined'&&siniftaOynananOgrenci)&&!window.dmOdevEnerjiMuaf?.())window.DijiMeduPapiFeedback?.energy();
         }
         function ozellikGorunurlukAyarla(elementId, aciksaGoster) {
             let el = document.getElementById(elementId);
@@ -17846,6 +17848,7 @@ body.pk-sekmeli .seviye-harita-overlay { padding-top:62px !important; }
   }
   window.enerjiPaketiAl = enerjiPaketiAl;
   window.dmEnerjiPaketPaneli = function(){
+    if(window.DijiMeduPapiFeedback?.energy)return window.DijiMeduPapiFeedback.energy();
     if(document.querySelector('.sa-perde'))return;
     const bg=document.createElement('div');bg.className='sa-perde';bg.setAttribute('role','dialog');bg.setAttribute('aria-modal','true');bg.setAttribute('aria-label','Enerji paketleri');
     bg.innerHTML='<div class="sa-kart"><div class="sa-gorsel">🦜⚡</div><h3>Papi Enerji Mağazası</h3><p>Altınlarınla enerji alabilir veya enerjinin yenilenmesini bekleyebilirsin.</p><div style="display:grid;gap:9px;margin:15px 0">'+[[5,100],[10,130],[15,180]].map(([n,price])=>`<button type="button" class="dm-energy-buy" data-amount="${n}" style="padding:12px;border-radius:12px;border:1px solid #b8ebc9;background:#eefdf3;color:#155e40;font-weight:800">⚡ ${n} enerji — 🪙 ${price} altın</button>`).join('')+'</div><div class="sa-btn"><button type="button" class="sa-hayir">Şimdi değil</button></div></div>';
@@ -18208,9 +18211,9 @@ body.pk-sekmeli #dunyaAlan { padding-top:78px !important; }
 })();
 </script>
 <link rel="stylesheet" href="papi-onboarding.css?v=3">
-<script src="papi-flow.js?v=20261026-flight-1"></script>
+<script src="papi-flow.js?v=20261026-energy-entry-1"></script>
 <link rel="stylesheet" href="notice-surface.css?v=20261026-papi-surfaces-1">
-<script src="notice-surface.js?v=20261026-flight-1"></script>
+<script src="notice-surface.js?v=20261026-energy-entry-1"></script>
 <script src="papi-onboarding.js?v=20261013-member-1"></script>
 <script>
 (function () {
@@ -26530,8 +26533,8 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <script defer src="google-login.js?v=20261019-apple-1"></script>
 <link rel="stylesheet" href="parkur-map-theme-v1.css?v=20261010-levelbadge-fix">
 <script defer src="parkur-map-theme-v1.js?v=3"></script>
-<link rel="stylesheet" href="papi-feedback.css?v=1"><script defer src="papi-feedback.js?v=20261026-papi-surfaces-1"></script><script defer src="papi-haptics.js?v=1"></script><script defer src="papi-wallet.js?v=20261025-no-feed-hud-1"></script>
-<link rel="stylesheet" href="story-path.css?v=3"><script defer src="story-curriculum.js?v=2"></script><link rel="stylesheet" href="thematic-learning.css?v=20261026-entry-sheet-1"><link rel="stylesheet" href="learning-question-v1.css?v=20261025-classroom-quiet-2"><script defer src="learning-core.js?v=20261017-learning-hud-letters-1"></script><link rel="stylesheet" href="route-practice-flight.css?v=20261026-combo-1"><script defer src="route-practice-flight.js?v=20261026-combo-1"></script><script defer src="thematic-learning.js?v=20261026-entry-sheet-1"></script><script defer src="school-curriculum.js?v=20261025-1"></script><script defer src="school-word-art.js?v=20261025-soft-1"></script><script defer src="school-lesson.js?v=20261026-entry-sheet-1"></script><link rel="stylesheet" href="school-soft-cards.css?v=20261025-soft-1"><script defer src="story-path.js?v=20261022-no-papi-card"></script>
+<link rel="stylesheet" href="papi-feedback.css?v=1"><script defer src="papi-feedback.js?v=20261026-energy-entry-1"></script><script defer src="papi-haptics.js?v=1"></script><script defer src="papi-wallet.js?v=20261025-no-feed-hud-1"></script>
+<link rel="stylesheet" href="story-path.css?v=3"><script defer src="story-curriculum.js?v=2"></script><link rel="stylesheet" href="thematic-learning.css?v=20261026-entry-sheet-1"><link rel="stylesheet" href="learning-question-v1.css?v=20261025-classroom-quiet-2"><script defer src="learning-core.js?v=20261017-learning-hud-letters-1"></script><link rel="stylesheet" href="route-practice-flight.css?v=20261026-combo-1"><script defer src="route-practice-flight.js?v=20261026-combo-1"></script><script defer src="thematic-learning.js?v=20261026-energy-entry-1"></script><script defer src="school-curriculum.js?v=20261025-1"></script><script defer src="school-word-art.js?v=20261025-soft-1"></script><script defer src="school-lesson.js?v=20261026-entry-sheet-1"></script><link rel="stylesheet" href="school-soft-cards.css?v=20261025-soft-1"><script defer src="story-path.js?v=20261022-no-papi-card"></script>
 <link rel="stylesheet" href="medupro.css?v=20261011-hud">
 <script defer src="medupro.js?v=20261026-papi-surfaces-1"></script>
 <link rel="stylesheet" href="konu-oyunlari.css?v=20261021-konu-a2-1">
@@ -26639,7 +26642,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <script defer src="boutique-art.js?v=20261014-legend-1"></script>
 <script defer src="bag-inventory.js?v=20261019-first-tap-4"></script>
 <script defer src="storefront.js?v=20261019-first-tap-4"></script>
-<link rel="stylesheet" href="selected-play.css?v=20261011-simple-resume"><script defer src="selected-play.js?v=20261019-step-back-1"></script><script defer src="start-spotlight.js?v=20261022-2"></script>
+<link rel="stylesheet" href="selected-play.css?v=20261011-simple-resume"><script defer src="selected-play.js?v=20261019-step-back-1"></script><script defer src="start-spotlight.js?v=20261026-energy-entry-1"></script>
 <link rel="stylesheet" href="day-night-theme.css?v=20261012-1">
 <link rel="stylesheet" href="member-experience.css?v=20261019-chat-compact-1">
 <script src="placement-bank.js?v=20261013-1"></script>

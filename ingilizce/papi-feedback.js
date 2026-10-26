@@ -8,6 +8,7 @@ function successSound(){try{const Audio=window.AudioContext||window.webkitAudioC
 function remove(){if(timer)clearTimeout(timer);timer=null;root?.remove();root=null;}
 function mount(kind,title,detail){
  if(window.dmPapiTour?.active?.()){return null;}
+ if(kind!=='energy'&&root?.isConnected&&root.classList.contains('is-energy'))return null;
  remove();root=document.createElement('div');root.className='dm-papi-feedback '+(kind==='energy'?'is-energy':kind==='wrong'?'is-wrong':'is-success');root.setAttribute('role',kind==='energy'?'dialog':'status');if(kind==='energy')root.setAttribute('aria-modal','true');
  const card=document.createElement('div');card.className='dm-papi-feedback-card';
  if(kind!=='energy'){root.style.cssText='position:fixed!important;left:50%!important;top:auto!important;bottom:calc(env(safe-area-inset-bottom, 0px) + 76px)!important;transform:translateX(-50%)!important;max-width:min(92vw,340px)!important;width:max-content!important;pointer-events:none!important;z-index:2147483000!important';card.style.cssText='max-width:min(92vw,340px)!important;padding:8px 14px!important;min-height:0!important';}
@@ -25,17 +26,20 @@ function correct({detail='',anchor=null,duration=1000,card=true}={}){
  window.dmAnswerFeedback?.(true);
  anchor?.classList.add('dm-papi-correct-pulse');if(anchor)setTimeout(()=>anchor.classList.remove('dm-papi-correct-pulse'),650);
  if(!card)return; // Parkurlar kendi alt geri bildirimini gösterir; Papi kartı tekrar çıkmasın.
- mount('correct','Harika!',detail||'Doğru cevap!');
+ if(!mount('correct','Harika!',detail||'Doğru cevap!'))return;
  timer=setTimeout(remove,Math.max(650,Math.min(duration,1800)));
 }
-function wrong({detail='Tekrar dene!',duration=1100}={}){window.dmAnswerFeedback?.(false);if(window.dmPapiTour?.active?.())return;mount('wrong','Bir daha deneyelim!',detail);timer=setTimeout(remove,Math.max(700,Math.min(duration,1800)));}
+function wrong({detail='Tekrar dene!',duration=1100}={}){window.dmAnswerFeedback?.(false);if(window.dmPapiTour?.active?.())return;if(!mount('wrong','Bir daha deneyelim!',detail))return;timer=setTimeout(remove,Math.max(700,Math.min(duration,1800)));}
 function energy(){
- const card=mount('energy','Papi ile enerji molası!','İlerlemen güvende. Altınlarınla enerji alabilir veya ders çalışabilirsin.');if(!card)return;
+ if(root?.isConnected&&root.classList.contains('is-energy')){window.dmNoticeSurface?.adopt(root);return root.querySelector('.dm-papi-feedback-card');}
+ window.dmStartSpotlight?.stop();
+ const card=mount('energy','Papi ile enerji molası!','İlerlemen güvende. Altınlarınla enerji alabilir veya ders çalışabilirsin.');if(!card)return;root.dataset.noticePriority='0';root.dataset.noticeEdge='bottom';
  const options=document.createElement('div');options.className='dm-energy-options';
  for(const [amount,price] of [[5,100],[10,130],[15,180]]){const b=document.createElement('button');b.type='button';b.textContent='⚡ '+amount+' enerji · '+price+' altın';b.onclick=async()=>{options.querySelectorAll('button').forEach(x=>x.disabled=true);try{const bought=await window.enerjiPaketiAl?.(amount);if(bought)remove();}finally{if(options.isConnected)options.querySelectorAll('button').forEach(x=>x.disabled=false);}};options.append(b);}
- const study=document.createElement('button');study.type='button';study.className='dm-energy-study';study.textContent='📚 Ders Çalış’a git';study.onclick=()=>{remove();window.dmStoryPath?.close(true);for(const name of ['kelimeYarismasiKapat','jpOyunKapat','boslukOyunKapat','hafizaOyunKapat','yagmurOyunKapat','asmacaOyunKapat','kelimebulOyunKapat','esOyunKapat','trenOyunKapat'])window[name]?.();document.querySelector('#bzCik')?.click();window.dersCalisTamEkranAc?.();};
- card.append(options,study);card.querySelector('button')?.focus();
+ const study=document.createElement('button');study.type='button';study.className='dm-energy-study';study.textContent='📚 Ders Çalış’a git';study.onclick=()=>{remove();window.dmThematicLearning?.close(true);window.dmStoryPath?.close(true);for(const name of ['kelimeYarismasiKapat','jpOyunKapat','boslukOyunKapat','hafizaOyunKapat','yagmurOyunKapat','asmacaOyunKapat','kelimebulOyunKapat','esOyunKapat','trenOyunKapat'])window[name]?.();document.querySelector('#bzCik')?.click();window.dersCalisTamEkranAc?.();};
+ card.append(options,study);window.dmNoticeSurface?.adopt(root);card.querySelector('button')?.focus();
 }
 function notice(message){const text=String(message||'').slice(0,500);if(/bugünün keşif görevleri|günlük hedefini tamamladın|yeni karakter|karakter açtın|bu haftanın hedefi/i.test(text))return;if(/enerji.*(bitti|yetersiz|gerekli|yok)|yeterli.*enerji/i.test(text)){energy();return;}if(window.dmNoticeSurface){window.dmNoticeSurface.notify(text);return;}document.getElementById('dmInlineNotice')?.remove();const el=document.createElement('div');el.id='dmInlineNotice';el.className='dm-inline-notice';el.setAttribute('role','status');el.textContent=text;document.body.append(el);setTimeout(()=>el.remove(),3500);}
+document.addEventListener('dm:login',()=>{window.dmLastEnergyValue=undefined;remove();});
 window.DijiMeduPapiFeedback={correct,wrong,energy,notice,close:remove};
 })();

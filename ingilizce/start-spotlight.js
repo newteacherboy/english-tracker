@@ -6,7 +6,7 @@
    Ekran kapanınca, buton gizlenince/devre dışı kalınca, Başla'ya basılınca ya da uygulama arka plana geçince durur.
    Müzik kodla üretilip <audio> ile çalınır (iPhone sessiz modunda Web Audio susar; <audio> çalar). Ses ayarına uyar. */
 (()=>{'use strict';
-const PARKUR=['.sp-adventure-entry #bzOyna','.sp-learning-entry .sp-start'];
+const PARKUR=['#dmStoryLesson.ml-entry .ml-entry-start','.sp-adventure-entry #bzOyna','.sp-learning-entry .sp-start'];
 const GAME=[
  '.rr-main[data-start]',            // Kelime Rallisi
  '.mt-start',                       // Meteor
