@@ -1,0 +1,40 @@
+name: Route answer flow regression
+on:
+  pull_request:
+    paths:
+      - 'ingilizce/thematic-learning.js'
+      - 'ingilizce/thematic-learning.css'
+      - 'tests/school-shared-ui.cjs'
+      - 'tests/thematic-learning-ui.cjs'
+      - 'tests/route-combo-flight-ui.cjs'
+      - 'tests/final-review-retry-ui.cjs'
+      - '.github/workflows/route-answer-flow.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Syntax checks
+        run: |
+          node --check ingilizce/thematic-learning.js
+          node --check tests/school-shared-ui.cjs
+          node --check tests/thematic-learning-ui.cjs
+          node --check tests/route-combo-flight-ui.cjs
+          node --check tests/final-review-retry-ui.cjs
+      - run: npm install --prefix /tmp/route-answer-qa --no-audit --no-fund playwright@1.58.2
+      - run: /tmp/route-answer-qa/node_modules/.bin/playwright install --with-deps chromium
+      - name: School route wrong and auto-right
+        run: NODE_PATH=/tmp/route-answer-qa/node_modules node tests/school-shared-ui.cjs
+      - name: Final card manual continuation
+        run: NODE_PATH=/tmp/route-answer-qa/node_modules node tests/final-review-retry-ui.cjs
+      - name: Combo and auto right
+        run: NODE_PATH=/tmp/route-answer-qa/node_modules node tests/route-combo-flight-ui.cjs
+      - name: Learning path screens and feedback
+        run: NODE_PATH=/tmp/route-answer-qa/node_modules node tests/thematic-learning-ui.cjs
