@@ -1,0 +1,40 @@
+name: Scoped UI performance
+on:
+  pull_request:
+    paths:
+      - 'ingilizce/member-polish.js'
+      - 'ingilizce/selected-play.js'
+      - 'ingilizce/start-spotlight.js'
+      - 'ingilizce/story-path.js'
+      - 'tests/legacy-curriculum-lazy.test.cjs'
+      - 'ingilizce/game-feedback.js'
+      - 'tests/selected-game-scope.test.cjs'
+      - 'tests/scoped-ui-performance.test.cjs'
+      - '.github/workflows/scoped-ui-performance.yml'
+  push:
+    paths:
+      - 'ingilizce/member-polish.js'
+      - 'ingilizce/selected-play.js'
+      - 'ingilizce/start-spotlight.js'
+      - 'ingilizce/story-path.js'
+      - 'tests/legacy-curriculum-lazy.test.cjs'
+      - 'ingilizce/game-feedback.js'
+      - 'tests/selected-game-scope.test.cjs'
+      - 'tests/scoped-ui-performance.test.cjs'
+      - '.github/workflows/scoped-ui-performance.yml'
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm install --prefix /tmp/dm-perf-qa --no-audit --no-fund jsdom@26.1.0
+      - run: |
+          node --check ingilizce/member-polish.js
+          node --check ingilizce/selected-play.js
+          node --check ingilizce/start-spotlight.js
+      - run: NODE_PATH=/tmp/dm-perf-qa/node_modules node --test tests/scoped-ui-performance.test.cjs tests/legacy-curriculum-lazy.test.cjs tests/selected-game-scope.test.cjs tests/notice-surface.test.cjs tests/runtime-cleanup.test.cjs tests/answer-audio.test.cjs

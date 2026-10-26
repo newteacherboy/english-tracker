@@ -1,2 +1,2 @@
-// The approved concept-3 layouts supersede the illustrated three-stop maps.
+// Verify the current island/sky layouts rather than the retired fixed-scroll maps.
 require('./route-design-three-ui.cjs');

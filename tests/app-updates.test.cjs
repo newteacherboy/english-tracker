@@ -19,4 +19,4 @@ test('checks bypass cache periodically, updates do not force reload',async()=>{
 });
 test('first install does not display update banner',()=>{const f=fixture(false);f.events.controllerchange();assert.equal(f.nodes.length,0);assert.equal(f.reloads,0);});
 
-test('update notice can be dismissed without a reload or reappearing in the same tab',()=>{const f=fixture();f.events.controllerchange();const box=f.nodes[0];assert.equal(box.children[2].textContent,'×');box.children[2].click();assert(box.removed);assert.equal(f.reloads,0);f.events.controllerchange();assert.equal(f.nodes.length,1);});
+test('update notice stays until an explicit confirmed refresh; repeated controller changes do not duplicate it',()=>{const f=fixture();f.events.controllerchange();const box=f.nodes[0];assert.equal(box.children.length,2);assert.equal(box.children[1].textContent,'Yenile');f.events.controllerchange();assert.equal(f.nodes.length,1);f.context.window.confirm=()=>false;box.children[1].click();assert.equal(f.reloads,0);assert(!box.removed);f.context.window.confirm=()=>true;box.children[1].click();assert.equal(f.reloads,1);});

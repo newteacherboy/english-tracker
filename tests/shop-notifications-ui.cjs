@@ -41,8 +41,9 @@ for(const width of [320,390,768]){
  assert(geometry.head.w<=geometry.mini.w+1&&geometry.head.h<=geometry.mini.h+1,'hair preview never cropped');
 }
 await page.setViewportSize({width:390,height:844});
-console.log('BOUTIQUE_SCREENSHOT_BASE64:'+ (await page.screenshot({type:'jpeg',quality:48})).toString('base64'));
+await page.screenshot({path:'/tmp/boutique-notifications.png'});
 await page.addScriptTag({url:'/storefront.js'});await page.evaluate(()=>magazaAc());assert.equal(await page.locator('.ds-opportunity .ds-product-preview svg').count(),1);
+await page.addScriptTag({url:'/friends-feed-model.js'});
 const notifications=scripts.find(s=>s.includes('/* ---- Arkadaşlar: 🔔 bildirim merkezi ---- */'));assert(notifications);await page.addScriptTag({content:notifications});
 await page.evaluate(()=>dmNotifications.open());assert.equal(await page.locator('#zlListe .zl-satir').count(),0,'placeholder message never appears');await page.locator('#zlKapat').click();
 announcement={id:'test',baslik:'Yarınki etkinlik',mesaj:'Kitabını yanında getir. <img src=x onerror=alert(1)>',tarih:'2026-10-13T07:00:00Z'};
