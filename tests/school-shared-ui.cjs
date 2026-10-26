@@ -35,6 +35,23 @@ const SCHOOL=require('../ingilizce/school-curriculum.js');
  // A committed answer with a lost HTTP response resumes at the persisted next question.
  words=banks[0];tasks=SCHOOL.build(words,words,220151);answers={0:{complete:true,correct:true,firstCorrect:true,misses:0},1:{complete:true,correct:true,firstCorrect:true,misses:0}};events=[];failOnce=true;
  await page.evaluate(async words=>{localStorage.removeItem('dm_school_shared_v1:Ada:220151');await dmSchoolLesson.start({D:{no:220151,sinif:2,unite:1,kelimeler:words},b:0,d:0,pool:words,onFinish:s=>window.finished=s});},words);await page.locator('.ml-entry-start').click();await page.locator('[data-answer="'+tasks[2].options.indexOf(tasks[2].answer)+'"]').click();await page.waitForFunction(()=>document.querySelector('.ml-progress span')?.textContent==='2 / 10 soru');await page.evaluate(()=>dmThematicLearning.close(true));assert.equal(answers[2].complete,true);console.log('PASS school network reconciliation after committed answer');
+ // Incorrect school-route choice stays on screen with answer/meaning; Continue
+ // records a guided correction without upgrading the original score to first-correct.
+ words=banks[0];tasks=SCHOOL.build(words,words,220151);answers={};events=[];
+ await page.evaluate(async words=>{localStorage.removeItem('dm_school_shared_v1:Ada:220151');await dmSchoolLesson.start({D:{no:220151,sinif:2,unite:1,kelimeler:words},b:0,d:0,pool:words,onFinish:s=>window.finished=s});},words);
+ await page.locator('.ml-entry-start').click();await page.locator('.ml-actions .ml-primary').click();
+ const wrongIndex=tasks[2].options.findIndex(choice=>choice!==tasks[2].answer);
+ assert(wrongIndex>=0);await page.locator('[data-answer="'+wrongIndex+'"]').click();
+ await page.locator('.ml-feedback.is-answer-wrong').waitFor();
+ assert.match(await page.locator('.ml-feedback').innerText(),/Yanlış cevap.*Doğrusu:/);
+ assert((await page.locator('.ml-feedback').innerText()).includes(tasks[2].answer),'real correct answer is explained');
+ assert.equal(await page.locator('.ml-progress span').innerText(),'1 / 10 soru','wrong result remains until Continue');
+ assert(await page.locator('.ml-actions [data-next]').isVisible());
+ await page.locator('.ml-actions [data-next]').click();
+ await page.waitForFunction(()=>document.querySelector('.ml-progress span')?.textContent==='2 / 10 soru');
+ assert.equal(answers[2].firstCorrect,false,'server-backed first attempt remains wrong');
+ assert.equal(events.filter(e=>e.islem==='verifiedGameAnswer'&&e.slot===2).length,2,'guided completion is acknowledged by server');
+ await page.evaluate(()=>dmThematicLearning.close(true));
  // Real complete journey through the adapter, including review and existing result callback.
  words=banks[0];tasks=SCHOOL.build(words,words,220151);answers={};events=[];await page.setViewportSize({width:390,height:844});
  await page.evaluate(async words=>{localStorage.removeItem('dm_school_shared_v1:Ada:220151');await dmSchoolLesson.start({D:{no:220151,sinif:2,unite:1,kelimeler:words},b:0,d:0,pool:words,onFinish:s=>window.finished=s});},words);await page.locator('.ml-entry-start').click();await page.locator('.ml-actions .ml-primary').click();
