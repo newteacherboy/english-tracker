@@ -13,10 +13,10 @@ async function choose(page,team,correct){
  await options.nth(idx).click();
 }
 (async()=>{
- const browser=await chromium.launch({args:['--no-sandbox']});
+ const browser=await chromium.launch({executablePath:process.env.CHROMIUM_PATH||undefined,args:['--no-sandbox','--disable-dev-shm-usage','--disable-gpu']});
  try{
   const page=await browser.newPage({viewport:{width:1440,height:900}});
-  await page.route('https://games.test/games-assets/cumle-yarisi-cover.svg',route=>route.fulfill({contentType:'image/svg+xml',body:fs.readFileSync(path.join(base,'games-assets/cumle-yarisi-cover.svg'),'utf8')}));
+  await page.route('https://games.test/**',route=>{const file=path.join(base,new URL(route.request().url()).pathname);if(fs.existsSync(file))return route.fulfill({contentType:file.endsWith('.webp')?'image/webp':file.endsWith('.css')?'text/css':'image/svg+xml',body:fs.readFileSync(file)});return route.abort();});
   await page.setContent('<!doctype html><html lang="tr"><head><base href="https://games.test/"><meta name="viewport" content="width=device-width,initial-scale=1"></head><body><button id="open">Oyunu Aç</button></body></html>');
   await page.evaluate(w=>{
     window.masterKelimeHavuzu=w;window.__toneStarts=0;
@@ -29,7 +29,7 @@ async function choose(page,team,correct){
   },words);
   await page.addStyleTag({content:css});await page.addScriptTag({content:code});
   await page.locator('#open').evaluate(b=>b.onclick=()=>window.dmSentenceRace.open());
-  await page.locator('#open').click();await page.locator('[data-start]').click();
+  await page.locator('#open').click();await page.locator('[data-unit]').first().click();await page.locator('[data-start]').click();
   for(let i=0;i<12;i++){
     await choose(page,0,true);
     await choose(page,1,false);
