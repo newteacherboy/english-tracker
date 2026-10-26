@@ -1,0 +1,35 @@
+{
+  "before": {
+    "resourceCount": 217,
+    "decodedResourceBytes": 4286300,
+    "navigationMs": [
+      {
+        "dom": 762.5999999999767,
+        "load": 875.7000000000698
+      }
+    ],
+    "longTaskMs": [
+      65,
+      168
+    ],
+    "pageErrors": [],
+    "missingResources": []
+  },
+  "optimized": {
+    "resourceCount": 216,
+    "decodedResourceBytes": 3822248,
+    "navigationMs": [
+      {
+        "dom": 682.6000000000931,
+        "load": 854.2000000001863
+      }
+    ],
+    "longTaskMs": [
+      66,
+      163
+    ],
+    "pageErrors": [],
+    "missingResources": []
+  },
+  "method": "Local Chromium 143 desktop engine, 390x844 mobile viewport, static HTTP server without compression; external API/font/calendar requests mocked or blocked; signed-out page. Single runs illustrate payload, not production speed or backend latency."
+}

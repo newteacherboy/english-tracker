@@ -15,6 +15,7 @@ for(const width of [320,390,768,1280])for(const theme of ['day','night']){
 await page.setViewportSize({width,height:844});await page.evaluate(theme=>document.documentElement.dataset.dmTheme=theme,theme);
 for(const [id] of screens){
 await page.evaluate(id=>{for(const e of document.querySelectorAll('.fixture')){e.hidden=e.id!==id;e.classList.toggle('active',e.id===id);}DijiMeduPapiWallet.refresh();},id);
+if(id==='tab-meduakis'){assert.equal(await page.locator('.dm-unified-wallet').count(),0,'Friends feed has no wallet by design');continue;}
 assert.equal(await page.locator('.dm-unified-wallet').count(),1,id);
 assert.equal(await page.locator('#'+id+' .dm-unified-wallet').count(),1,id);
 assert.deepEqual(await page.locator('[data-pw-value]').allTextContents(),['31','422','5.106','45']);

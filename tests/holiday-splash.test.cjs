@@ -7,6 +7,20 @@ const scope={module:{exports:{}},Intl,Date,URL};vm.runInNewContext(code,scope);
 const app=scope.module.exports;
 const cal=JSON.parse(fs.readFileSync('ingilizce/holiday-splashes/dates.json','utf8'));
 const at=(s)=>app.resolve(s+'T12:00:00+03:00',cal);
+test('approved 29 Ekim art uses one smaller WebP URL for both preload and display',()=>{
+ const preloads=[],styles={};
+ const fixed={module:{exports:{}},Intl,URL,Date:class extends Date{constructor(...args){super(...(args.length?args:['2026-10-26T12:00:00Z']));}}};
+ vm.runInNewContext(code,fixed);
+ const doc={baseURI:'https://app.test/ingilizce/',currentScript:{src:'https://app.test/ingilizce/holiday-splashes/splash.js'},readyState:'complete',
+  documentElement:{classList:{add(){}},dataset:{},style:{setProperty:(key,value)=>styles[key]=value}},
+  createElement:()=>({}),head:{appendChild:node=>preloads.push(node)},getElementById:()=>null};
+ fixed.module.exports.install({document:doc,DM_HOLIDAY_DATES:cal,localStorage:{getItem:()=>null},requestIdleCallback(){},setInterval(){}});
+ assert.equal(preloads.length,1);assert.equal(preloads[0].href,'https://app.test/ingilizce/holiday-splashes/29-ekim-2.webp');
+ assert(styles['--dm-holiday-art'].includes(preloads[0].href));
+ const image=fs.readFileSync('ingilizce/holiday-splashes/29-ekim-2.webp');
+ assert.equal(image.toString('ascii',0,4),'RIFF');assert.equal(image.toString('ascii',8,12),'WEBP');
+ assert(image.length<fs.statSync('ingilizce/holiday-splashes/29-ekim-2.jpg').size*.6);
+});
 test('odd years show first art, even years second',()=>{
  assert.equal(at('2027-10-29').file,'29-ekim-1.jpg');
  assert.equal(at('2028-10-29').file,'29-ekim-2.jpg');

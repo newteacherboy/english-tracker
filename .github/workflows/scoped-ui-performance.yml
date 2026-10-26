@@ -5,6 +5,8 @@ on:
       - 'ingilizce/member-polish.js'
       - 'ingilizce/selected-play.js'
       - 'ingilizce/start-spotlight.js'
+      - 'ingilizce/story-path.js'
+      - 'tests/legacy-curriculum-lazy.test.cjs'
       - 'tests/scoped-ui-performance.test.cjs'
       - '.github/workflows/scoped-ui-performance.yml'
   push:
@@ -12,6 +14,8 @@ on:
       - 'ingilizce/member-polish.js'
       - 'ingilizce/selected-play.js'
       - 'ingilizce/start-spotlight.js'
+      - 'ingilizce/story-path.js'
+      - 'tests/legacy-curriculum-lazy.test.cjs'
       - 'tests/scoped-ui-performance.test.cjs'
       - '.github/workflows/scoped-ui-performance.yml'
 permissions:
@@ -29,4 +33,4 @@ jobs:
           node --check ingilizce/member-polish.js
           node --check ingilizce/selected-play.js
           node --check ingilizce/start-spotlight.js
-      - run: NODE_PATH=/tmp/dm-perf-qa/node_modules node --test tests/scoped-ui-performance.test.cjs tests/notice-surface.test.cjs tests/runtime-cleanup.test.cjs tests/answer-audio.test.cjs
+      - run: NODE_PATH=/tmp/dm-perf-qa/node_modules node --test tests/scoped-ui-performance.test.cjs tests/legacy-curriculum-lazy.test.cjs tests/notice-surface.test.cjs tests/runtime-cleanup.test.cjs tests/answer-audio.test.cjs

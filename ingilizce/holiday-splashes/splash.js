@@ -55,7 +55,9 @@
   }catch(_){}
   const chosen=resolve(new Date(),calendar);
   if(chosen){
-   const image=new URL(chosen.file,base).href;
+   // Same approved art and dimensions, encoded as WebP to reduce the cold download.
+   const file=chosen.file==='29-ekim-2.jpg'?'29-ekim-2.webp':chosen.file;
+   const image=new URL(file,base).href;
    doc.documentElement.classList.add('dm-holiday-active');
    doc.documentElement.style.setProperty('--dm-holiday-art','url("'+image+'")');
    doc.documentElement.dataset.dmHoliday=chosen.id;

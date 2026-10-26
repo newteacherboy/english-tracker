@@ -2152,6 +2152,126 @@
       "bytes": 89356,
       "status": "ai-generated",
       "source": "docs/race-arena-generation.json"
+    },
+    {
+      "path": "ingilizce/app-icons/papagan-192.png",
+      "sha256": "62cd577183075d37cd2a352c74fa140af52863e1985b2286a31f153decf2a482",
+      "bytes": 86714,
+      "status": "repository-existing-unverified",
+      "source": "Repository history: commit 75d1e0a9dd2fe68d400935529325cd5e76d4fac5; original creation/licensing evidence has not been recorded."
+    },
+    {
+      "path": "ingilizce/app-icons/papagan-512.png",
+      "sha256": "5f2cd03c2c1add274de348c504f52990c8b54d7e051acd93ff2ab81943480f0b",
+      "bytes": 482413,
+      "status": "repository-existing-unverified",
+      "source": "Repository history: commit 75d1e0a9dd2fe68d400935529325cd5e76d4fac5; original creation/licensing evidence has not been recorded."
+    },
+    {
+      "path": "ingilizce/app-icons/papagan-maskable-512.png",
+      "sha256": "ab098609763176ca0de95c5edb4a0ddf535556021a3e8f4f604ddcaa6f056a53",
+      "bytes": 304277,
+      "status": "repository-existing-unverified",
+      "source": "Repository history: commit 75d1e0a9dd2fe68d400935529325cd5e76d4fac5; original creation/licensing evidence has not been recorded."
+    },
+    {
+      "path": "ingilizce/game-scenes/carnival.svg",
+      "sha256": "1766f23a5e0de7a7d682410d3e681b8ff8e80e45ec2e94240f49066183b581c3",
+      "bytes": 1754,
+      "status": "repository-existing-unverified",
+      "source": "Repository history: commit 240d994347d5b7b6d7333d1c9f4f157961a48da3; original creation/licensing evidence has not been recorded."
+    },
+    {
+      "path": "ingilizce/game-scenes/detective.svg",
+      "sha256": "d8f4667bbe96cedd7fa1efea9456ae272d519ad729136537f153fcdcdc84267f",
+      "bytes": 1188,
+      "status": "repository-existing-unverified",
+      "source": "Repository history: commit 240d994347d5b7b6d7333d1c9f4f157961a48da3; original creation/licensing evidence has not been recorded."
+    },
+    {
+      "path": "ingilizce/game-scenes/garden.svg",
+      "sha256": "d83860d74e9b654f30cf144043f77661570098ce64dda62b0ab6a742634b8598",
+      "bytes": 2218,
+      "status": "repository-existing-unverified",
+      "source": "Repository history: commit 240d994347d5b7b6d7333d1c9f4f157961a48da3; original creation/licensing evidence has not been recorded."
+    },
+    {
+      "path": "ingilizce/game-scenes/lock.svg",
+      "sha256": "778bfacd88d5fd68e0470fe8ee2bec3008f5b57832191fdee1b11c253ea70655",
+      "bytes": 1114,
+      "status": "repository-existing-unverified",
+      "source": "Repository history: commit 240d994347d5b7b6d7333d1c9f4f157961a48da3; original creation/licensing evidence has not been recorded."
+    },
+    {
+      "path": "ingilizce/game-scenes/station.svg",
+      "sha256": "6b0fe00c1ff30c4b6b1c92e5f88c31cb7e917e86ed6c54eea384f1564f5b1b7a",
+      "bytes": 1699,
+      "status": "repository-existing-unverified",
+      "source": "Repository history: commit 240d994347d5b7b6d7333d1c9f4f157961a48da3; original creation/licensing evidence has not been recorded."
+    },
+    {
+      "path": "ingilizce/game-scenes/storm.svg",
+      "sha256": "9266ed727e03b888b68378b61af45416a5d9643c421e295216b57088df6c81f0",
+      "bytes": 1213,
+      "status": "repository-existing-unverified",
+      "source": "Repository history: commit 240d994347d5b7b6d7333d1c9f4f157961a48da3; original creation/licensing evidence has not been recorded."
+    },
+    {
+      "path": "ingilizce/games-assets/cumle-yarisi-cover.svg",
+      "sha256": "443217dedf41e232fa2600905037e147c44967e625cec57278a81bafdb2696fe",
+      "bytes": 6358,
+      "status": "repository-existing-unverified",
+      "source": "Repository history: commit c0d0d950fa82770d99dcb03fb6adf4130ff4c895; original creation/licensing evidence has not been recorded."
+    },
+    {
+      "path": "ingilizce/mola-assets/kosu-scene.svg",
+      "sha256": "e5586ec93ef11c098c64b0ea7f8354efbcd8d628a6c5f3c89ea7f4a1d3b3eb1b",
+      "bytes": 1198,
+      "status": "repository-existing-unverified",
+      "source": "Repository history: commit d86615eeb1ecee5c63ab11d3edaca860f396d66e; original creation/licensing evidence has not been recorded."
+    },
+    {
+      "path": "ingilizce/mola-assets/patlat-scene.svg",
+      "sha256": "149246a65a49e8be1d99466252dfc2fbb2116053fc8a52699299b3491157f381",
+      "bytes": 1526,
+      "status": "repository-existing-unverified",
+      "source": "Repository history: commit d86615eeb1ecee5c63ab11d3edaca860f396d66e; original creation/licensing evidence has not been recorded."
+    },
+    {
+      "path": "ingilizce/mola-assets/zipla-scene.svg",
+      "sha256": "9b70dc34839e5d73a712454ee5edb6e810ea4e77616aa556098560fe74fc6aa1",
+      "bytes": 1086,
+      "status": "repository-existing-unverified",
+      "source": "Repository history: commit d86615eeb1ecee5c63ab11d3edaca860f396d66e; original creation/licensing evidence has not been recorded."
+    },
+    {
+      "path": "ingilizce/papagan-app-icon-512.png",
+      "sha256": "5f2cd03c2c1add274de348c504f52990c8b54d7e051acd93ff2ab81943480f0b",
+      "bytes": 482413,
+      "status": "repository-existing-unverified",
+      "source": "Repository history: commit 788b3ffdf8dd3a4f89b051f390e21a48f78ec1ff; original creation/licensing evidence has not been recorded."
+    },
+    {
+      "path": "ingilizce/route-assets/learning-fixed-approved-v2.webp",
+      "sha256": "efd90327b6bdd98ecd45ea4542e741f6db043b44aff23a93db339d4eb172d200",
+      "bytes": 84862,
+      "status": "repository-existing-unverified",
+      "source": "Repository history: commit 6357de60769c77982a11d4d368d55c43b7bcf665; original creation/licensing evidence has not been recorded."
+    },
+    {
+      "path": "ingilizce/route-assets/school-fixed-approved-v2.webp",
+      "sha256": "1c37d40761d126c50b5cf3bdde2c74075c4a0ec3123c9aca1515c7aae8f2d7a3",
+      "bytes": 110344,
+      "status": "repository-existing-unverified",
+      "source": "Repository history: commit 6357de60769c77982a11d4d368d55c43b7bcf665; original creation/licensing evidence has not been recorded."
+    },
+    {
+      "path": "ingilizce/holiday-splashes/29-ekim-2.webp",
+      "sha256": "1b9411afc71fae07e0d4cf92b8ab4f27664fc1ea3b7e58eeafdced0b058c397d",
+      "bytes": 325846,
+      "status": "original-derived",
+      "source": "WebP quality 90 re-encoding of repository ingilizce/holiday-splashes/29-ekim-2.jpg; same 941x1672 dimensions and composition. No new authorship/licensing claim.",
+      "derived_from": "ingilizce/holiday-splashes/29-ekim-2.jpg"
     }
   ]
 }
