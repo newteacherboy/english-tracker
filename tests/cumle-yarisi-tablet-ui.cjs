@@ -1,0 +1,10 @@
+const {chromium}=require(process.env.CODEX_PRIMARY_RUNTIME_NODE_MODULES+'/playwright');
+const fs=require('node:fs'),assert=require('node:assert/strict');
+(async()=>{const browser=await chromium.launch({executablePath:process.env.CHROMIUM_PATH||undefined,args:['--no-sandbox','--disable-dev-shm-usage','--disable-gpu']});try{
+ for(const [width,height] of [[768,1024],[820,1180],[1024,600],[1024,768],[1180,700],[1366,650],[390,640],[320,568]]){
+ const page=await browser.newPage({viewport:{width,height},hasTouch:true});await page.setContent('<!doctype html><html><head><meta name="viewport" content="width=device-width,initial-scale=1"></head><body style="margin:0"></body></html>');
+ await page.evaluate(()=>window.masterKelimeHavuzu=Array.from({length:120},(_,i)=>({sinif:5,unite:1+Math.floor(i/6),ingilizce:'word'+i,turkce:'anlam '+i})));await page.addStyleTag({content:fs.readFileSync('ingilizce/cumle-yarisi.css','utf8')});await page.addScriptTag({content:fs.readFileSync('ingilizce/cumle-yarisi.js','utf8')});await page.evaluate(()=>dmSentenceRace.open());
+ const fit=await page.locator('[data-start]').evaluate(b=>{const r=b.getBoundingClientRect();return {top:r.top,bottom:r.bottom,width:r.width,footer:b.parentElement.className};});assert(fit.top>=0&&fit.bottom<=height&&fit.width>100,JSON.stringify({width,height,fit}));assert.equal(fit.footer,'dm-sr-setup-footer');
+ await page.locator('[data-unit]').nth(0).click();await page.locator('[data-unit]').nth(1).click();assert(await page.locator('[data-start]').isEnabled());const hit=await page.locator('[data-start]').evaluate(b=>{const r=b.getBoundingClientRect();return b.contains(document.elementFromPoint(r.x+r.width/2,r.y+r.height/2));});assert(hit,'Start must be tappable at '+width+'x'+height);await page.screenshot({path:'/tmp/tablet-start-'+width+'x'+height+'.png'});await page.locator('[data-start]').tap();assert(await page.locator('.dm-sr-play').isVisible());await page.close();console.log('PASS visible and tappable Start '+width+'x'+height);
+ }
+ }finally{await browser.close();}})().catch(e=>{console.error(e);process.exitCode=1;});

@@ -125,6 +125,7 @@ function setup(){
  '<label class="dm-sr-setting">⏱️ Soru Süresi<select data-duration aria-label="Her soru için süre"><option value="10">10 saniye</option><option value="15" selected>15 saniye</option><option value="20">20 saniye</option></select></label>'+
  '<div class="dm-sr-setup-extras"><label class="dm-sr-sound-option"><input type="checkbox" data-sound checked> 🔊 Doğru / yanlış sesleri</label><span>✅ Doğru +100 + süre bonusu &nbsp; ❌ Yanlış −40</span></div>'+
  '<p data-status role="status" class="dm-sr-status"></p><button class="dm-sr-primary" type="button" data-start>▶ Yarışı Başlat</button></div></section>');
+ var footer=document.createElement('footer');footer.className='dm-sr-setup-footer';footer.append(overlay.querySelector('[data-status]'),overlay.querySelector('[data-start]'));overlay.querySelector('.dm-sr-setup').append(footer);
  var selector=overlay.querySelector('[data-class]'),unitsEl=overlay.querySelector('[data-units]'),selected=new Set();
  function fill(){
   unitsEl.innerHTML='';selected.clear();var classNo=Number(selector.value),units=[...new Set(values.filter(function(w){return w.cl===classNo;}).map(function(w){return w.unit;}))].sort(function(a,b){return a-b;});
