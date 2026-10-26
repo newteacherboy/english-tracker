@@ -17,3 +17,13 @@ for(const kind of ['learning','school'])test(kind+': only a new server-confirmed
  w.aktifOgrenciAdi='Bora';assert.equal(flights[0].isCurrent(),false);
  }finally{w.close();}
 });
+test('the tenth school combo finishes its flight before the lesson result closes the route',async()=>{
+ const dom=new JSDOM('<body></body>',{url:'https://route.test/',runScripts:'outside-only',pretendToBeVisual:true}),w=dom.window;let finish=0,release,flights=0;
+ try{
+ const originalTimer=w.setTimeout.bind(w);w.setTimeout=(f,ms,...args)=>originalTimer(f,ms===750||ms===1800?0:ms,...args);w.DMLearningCore=CORE;w.requestAnimationFrame=()=>1;w.cancelAnimationFrame=()=>{};w.matchMedia=()=>({matches:false});w.aktifOgrenciAdi='Ada';w.localStorage.setItem('ing_token','one');w.dmRoutePracticeFlight={prepare(){},cancel(){},playCombo(){flights++;return new Promise(r=>release=r);}};
+ const words=[{en:'book',tr:'kitap'},{en:'good morning',tr:'günaydın'},{en:'classroom',tr:'derslik'},{en:'Friday',tr:'Cuma'}],tasks=SCHOOL.build(words,words,220151),task=tasks[11];
+ w.eval(fs.readFileSync('ingilizce/thematic-learning.js','utf8'));await w.dmThematicLearning.openSchool({chapter:{id:220151,routeNumber:1,cefr:'2. Sınıf',theme:'1. Ünite',title:'Okul Yolum',cards:words,examples:[],schoolTasks:tasks},session:{deckVersion:9,cursor:11,version:11},request:async()=>({ok:true,chapter:220151,deckVersion:9,cursor:12,version:12,accepted:true,finished:true,comboGain:1,wallet:{energy:21,combo:10}}),finish(){finish++;w.dmThematicLearning.close(true);}});w.document.querySelector('.ml-entry-start').click();
+ for(let i=0;i<task.cards.length;i++){w.document.querySelector('[data-review-choice="'+task.cards[i].options.indexOf(task.cards[i].tr)+'"]').click();await new Promise(r=>setTimeout(r,10));}
+ assert.equal(flights,1);assert.equal(finish,0);assert(w.document.getElementById('dmStoryLesson'));release(true);await new Promise(r=>setImmediate(r));assert.equal(finish,1);assert(!w.document.getElementById('dmStoryLesson'));
+ }finally{w.close();}
+});
