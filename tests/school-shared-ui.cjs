@@ -27,7 +27,17 @@ const SCHOOL=require('../ingilizce/school-curriculum.js');
    for(const b of m.buttons)assert(b.x>=-1&&b.y>=0&&b.right<=size.width+1&&b.bottom<=size.height+2&&b.overflow<=3&&b.hit,JSON.stringify({size,step,b}));
    if(step===0){if(size.width===390&&bank===banks[0])await page.screenshot({path:path.join(out,'school-teach-approved.png')});assert.equal(await page.locator('[data-learn]').count(),4);await page.locator('.ml-actions .ml-primary').click();await page.waitForSelector('[data-answer]');assert.deepEqual(events.filter(e=>e.islem==='verifiedGameAnswer').map(e=>e.slot),[0,1]);}
    if(size.width===390&&bank===banks[0])await page.screenshot({path:path.join(out,'school-'+step+'.png')});
-   if(step===5){await page.locator('[data-left="0"]').click();await page.locator('[data-right="1"]').click();await page.waitForFunction(()=>document.querySelector('[data-ml-combo]').textContent.trim().startsWith('0'));await page.waitForTimeout(70);assert(events.some(e=>e.islem==='verifiedGameAnswer'&&e.answer?.mistake));await page.locator('[data-left="0"]').click();await page.locator('[data-right="0"]').click();await page.locator('[data-left="1"]').click();await page.waitForTimeout(250);for(const side of ['left','right']){const color=await page.locator('[data-'+side+'="0"]').evaluate(e=>({background:getComputedStyle(e).backgroundColor,opacity:getComputedStyle(e).opacity,disabled:e.disabled}));assert.deepEqual(color,{background:'rgb(214, 244, 223)',opacity:'1',disabled:true});}}
+    if(step===5){
+     await page.locator('[data-left="0"]').click();await page.locator('[data-right="1"]').click();
+     await page.locator('.ml-feedback.is-answer-wrong').waitFor();
+     assert.match(await page.locator('.ml-feedback').innerText(),/Yanlış cevap.*Doğrusu:/);
+     await page.waitForFunction(()=>document.querySelector('[data-ml-combo]').textContent.trim().startsWith('0'));
+     assert(events.some(e=>e.islem==='verifiedGameAnswer'&&e.answer?.mistake),'wrong pair is recorded before guided completion');
+     assert(await page.locator('.ml-actions [data-next]').isVisible(),'wrong matching waits for Continue');
+     await page.locator('.ml-actions [data-next]').click();
+     await page.waitForFunction(()=>document.querySelector('.ml-progress span')?.textContent==='5 / 10 soru');
+     assert.equal(answers[5]?.firstCorrect,false,'matching correction does not erase the first mistake');
+    }
    await page.evaluate(()=>dmThematicLearning.close(true));
   }
   assert.equal(parrots.size,10,'each question uses a different parrot');console.log('PASS school forms, grouped teaching and one viewport',size);
