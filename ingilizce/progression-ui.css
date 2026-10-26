@@ -39,7 +39,7 @@
 .dm-level-up.dm-flight-celebration{isolation:isolate;box-sizing:border-box;min-height:100dvh;min-height:100svh;padding:max(12px,env(safe-area-inset-top)) max(12px,env(safe-area-inset-right)) max(12px,env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left));background:linear-gradient(175deg,#9debe0 0%,#c5f4e8 50%,#f6fbe8 100%);color:#164c51;overflow-x:hidden;overflow-y:auto;overscroll-behavior:contain}
 .dm-level-up.dm-flight-celebration .dm-flight-layout{position:relative;box-sizing:border-box;width:min(520px,100%);max-width:100%;min-height:min(640px,95dvh);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:35px 0 14px;margin:auto;z-index:1}
 .dm-flight-celebration .dm-flight-stars{position:absolute;inset:7% -20px auto;max-width:100%;pointer-events:none;white-space:nowrap;letter-spacing:min(4vw,20px);font-size:26px;color:#fffef7;opacity:.75;animation:dmFlightTwinkle 2.5s ease-in-out infinite alternate;overflow:hidden}
-.dm-flight-celebration .dm-level-skip{position:absolute;top:2px;right:2px;z-index:2;border:1px solid #529c9a55;border-radius:999px;background:#fff9;color:#256e6d;padding:8px 16px;min-height:38px;font:700 13px inherit;cursor:pointer}
+.dm-flight-celebration .dm-level-skip{position:absolute;top:2px;right:2px;z-index:2;border:1px solid #529c9a55;border-radius:999px;background:#fff9;color:#256e6d;padding:8px 16px;min-height:38px;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer}
 .dm-flight-celebration .dm-flight-heading{z-index:1}
 .dm-flight-celebration .dm-flight-heading h2{font-size:clamp(29px,6vw,40px);margin:0 0 3px;color:#126f6a;letter-spacing:-.5px;text-shadow:0 1px #fff8}
 .dm-flight-celebration .dm-flight-heading p{margin:0;color:#276b67;font-size:clamp(13px,3.5vw,17px);font-weight:700}
@@ -58,7 +58,7 @@
 .dm-flight-celebration .dm-unlock-cards b{color:#176e62}
 .dm-flight-celebration .dm-unlock-cards p{color:#32635c}
 .dm-flight-celebration .dm-level-continue{background:#168e79;color:white;box-shadow:0 4px 12px #337e742e;padding:13px 25px}
-.dm-flight-celebration.revealed .dm-papi-reveal{width:min(27vw,130px);height:min(27vw,130px);margin:1px auto 0;animation:none;filter:drop-shadow(0 9px 12px #2b8c842b)}
+.dm-flight-celebration.revealed .dm-papi-reveal{display:block;width:min(27vw,130px);height:min(27vw,130px);margin:1px auto 0;animation:none;filter:drop-shadow(0 9px 12px #2b8c842b)}
 .dm-flight-celebration.revealed .dm-flight-number{height:66px;width:78px;margin:0}
 .dm-flight-celebration.revealed .dm-flight-number span{font-size:39px}
 .dm-flight-celebration.revealed .dm-flight-old{display:none}
