@@ -1,5 +1,11 @@
 name: Communication notice regression
 on:
+  push:
+    paths:
+      - 'ingilizce/notice-surface.*'
+      - 'ingilizce/announcements.js'
+      - 'tests/notice-surface*'
+      - '.github/workflows/communication-notice-regression.yml'
   pull_request:
     paths:
       - 'ingilizce/notice-surface.*'
