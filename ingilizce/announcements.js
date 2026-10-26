@@ -23,7 +23,7 @@ function present(d,t){
  if(window.dmPapiNotices?.defer('announcement:'+d.id,()=>present(d,t)))return;
  const el=overlay();if(!el)return;
  // Teacher shell suppresses learner promotions, but allows these real-account notices.
- el.dataset.teacherAdminAnnouncement='true';nativeShow(d);
+ el.dataset.teacherAdminAnnouncement='true';nativeShow(d);window.dmNoticeSurface?.adopt(el);
  if(el.style.display!=='flex')return;
  shown=d;elapsed=0;clock=Date.now();seen.add(d.id);queue=queue.filter(x=>x.id!==d.id);
 }
@@ -44,7 +44,7 @@ window.dmAnnouncements={check:poll};
 setInterval(()=>{
  const now=Date.now(),delta=Math.min(1000,now-clock);clock=now;
  if(owner!==account())reset();
- if(shown){const el=overlay();if(!document.hidden&&!el?.classList.contains('dm-papi-held')&&el?.style.display==='flex'&&!window.dmPapiNotices?.inActivity()){elapsed+=delta;if(elapsed>=10000)window.duyuruKapat();}}
+ if(shown){const el=overlay();if(window.dmNoticeSurface?window.dmNoticeSurface.isVisible(el):!document.hidden&&!el?.classList.contains('dm-papi-held')&&el?.style.display==='flex'&&!window.dmPapiNotices?.inActivity()){elapsed+=delta;window.dmNoticeSurface?.progress(el,1-elapsed/10000);if(elapsed>=10000)window.duyuruKapat();}}
  else if(queue.length)present(queue[0],owner);
  void poll();
 },500);

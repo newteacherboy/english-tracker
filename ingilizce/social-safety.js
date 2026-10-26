@@ -57,7 +57,7 @@
    if(account!==studentToken()||owner!==who()||view)return;
    const n=d.notices?.[0];if(!n||n.id===noticeShown&&noticeAccount===account)return;
    noticeShown=n.id;noticeAccount=account;
-   const v=sheet('Öğretmen Uyarısı');
+   const v=sheet('Öğretmen Uyarısı');v.el.dataset.papiNotice='';v.el.dataset.noticePriority='0';
    const heading=document.createElement('h3');heading.textContent=n.kind==='discipline'?'Öğretmen bilgilendirmesi':'Öğretmen uyarısı';
    const para=document.createElement('p');para.textContent=n.message;
    const note=document.createElement('p');note.className='dm-safety-note';note.textContent='Bu mesaj yalnızca hesabına gönderildi. Soruların varsa öğretmeninle görüşebilirsin.';

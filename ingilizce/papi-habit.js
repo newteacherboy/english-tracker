@@ -36,7 +36,7 @@ function card(id,img,title,text,actions=[],autoHideMs=12000){
  const close=()=>el.remove();
  el.querySelector('.dm-habit-x').onclick=close;
  el.querySelectorAll('[data-i]').forEach(b=>b.onclick=()=>{close();actions[+b.dataset.i].run?.();});
- document.body.append(el);if(autoHideMs)later(()=>{if(el.isConnected&&!el.matches(':hover,:focus-within'))close();},autoHideMs);
+ document.body.append(el);if(autoHideMs)(window.dmPapiNotices?.later||((node,fn,ms)=>later(fn,ms)))(el,()=>{if(el.isConnected&&!el.matches(':hover,:focus-within'))close();},autoHideMs);
  return el;
 }
 
