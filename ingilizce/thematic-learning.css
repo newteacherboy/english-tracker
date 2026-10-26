@@ -847,3 +847,12 @@
  #dmStoryLesson#dmStoryLesson .ml-actions{margin-top:1px!important;gap:5px!important}
  #dmStoryLesson#dmStoryLesson .ml-actions button{padding-block:8px!important;min-height:36px!important}
 }
+
+/* On very short landscape screens the final-review choices can extend beneath
+   the footer. Always keep the manual acknowledgement above disabled choices. */
+@media(max-height:420px) and (min-width:700px){
+ #dmStoryLesson#dmStoryLesson .ml-actions{position:relative!important;z-index:30!important}
+ #dmStoryLesson#dmStoryLesson .ml-task{position:relative!important;z-index:1!important}
+ #dmStoryLesson#dmStoryLesson .ml-actions [data-review-continue],
+ #dmStoryLesson#dmStoryLesson .ml-actions [data-next]{position:relative!important;z-index:31!important}
+}
