@@ -242,7 +242,11 @@ async function submit(answer,clicked,{guided=false}={}){
   session=r;busy=false;modal.removeAttribute('aria-busy');remember(r);wallet(r);
   if(r.stale){render();feedback('Diğer ekranındaki ilerlemen yüklendi.');return;}
   if(r.needsRecovery){
-   render();feedback('Papi ile üç kısa pekiştirme sorusu çözelim.');return;
+   if(r.correct===false&&task.kind!=='teach'){
+    window.dmAnswerFeedback?.(false);
+    pauseForCorrection(task,()=>{render();feedback('Papi ile üç kısa pekiştirme sorusu çözelim.');});
+   }else{render();feedback('Papi ile üç kısa pekiştirme sorusu çözelim.');}
+   return;
   }
   if(!r.accepted){
    economy.combo=0;paintHud();window.dmAnswerFeedback?.(false);
