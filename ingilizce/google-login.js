@@ -1,6 +1,7 @@
 /* Optional Google student login. Legacy login remains the default and fallback. */
 (function () {
   'use strict';
+  document.addEventListener('input',e=>{if(e.target?.id==='googleYeniSube')e.target.value=e.target.value.toLocaleUpperCase('tr-TR');});
   const $ = id => document.getElementById(id);
   let linking = false;
   // Play Store (TWA) içinde Google girişi gösterilmez: Aileler politikası çocuklara yönelik uygulamada OAuth girişini kısıtlıyor.
@@ -257,7 +258,7 @@
     try {
       const result = await googleRequest('googleKayit', {
         ogrenciAdi: $('googleYeniKullanici').value.trim(), adSoyad: $('googleYeniAd').value.trim(), ogrenimTuru: $('googleYeniOgrenim').value, sinif: $('googleYeniOgrenim').value === 'independent' ? null : $('googleYeniSinif').value,
-        sube: $('googleYeniOgrenim').value === 'independent' ? null : $('googleYeniSube').value.trim(), telefon: $('googleYeniTelefon').value.trim(),
+        sube: $('googleYeniOgrenim').value === 'independent' ? null : $('googleYeniSube').value.trim().toLocaleUpperCase('tr-TR'), telefon: $('googleYeniTelefon').value.trim(),
         email: $('googleYeniEmail').value.trim(), ogretmenKodu: $('googleYeniKod').value.trim(),
         kvkkOnay: $('googleYeniOnay').checked
       });
