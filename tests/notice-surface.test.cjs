@@ -46,3 +46,26 @@ test('dismissal does not bubble into a legacy card navigation action',async()=>{
 test('typing an appeal inside the active notice does not hide it',async()=>{
  const f=fixture();try{const el=f.w.dmNoticeSurface.notify('Öğretmen uyarısı',{edge:'bottom'});await f.flush();const area=f.w.document.createElement('textarea');el.querySelector('.dm-notice-copy').append(area);area.focus();await f.step();assert(f.w.dmNoticeSurface.isVisible(el));}finally{f.close();}
 });
+
+
+test('compact top ribbon wraps text, hides during play and closes after five visible seconds',async()=>{
+ const f=fixture();try{
+  const {w}=f;
+  const el=w.dmNoticeSurface.notify('Ali parkurda yeni bir durak geçti. Bu metin küçük cihazlarda alt satıra sarılmalı.',{title:'Yeni başarı'});
+  await f.flush();
+  assert(el.classList.contains('dm-notice-edge-top'));
+  assert(el.classList.contains('dm-notice-visible'));
+  assert.equal(el.querySelectorAll('.dm-notice-hero').length,1);
+  assert.equal(el.querySelectorAll('.dm-notice-controls').length,1);
+  assert.equal(el.querySelector('.dm-notice-timer').textContent,'5 sn');
+  assert.equal(el.querySelector('.dm-notice-emblem').textContent,'🏆');
+  f.setActivity(true);await f.step();
+  assert(!w.dmNoticeSurface.isVisible(el),'no banner while playing');
+  for(let i=0;i<14;i++)await f.step(500);
+  assert(el.isConnected,'hidden activity time does not consume its lifetime');
+  f.setActivity(false);await f.step();
+  assert(w.dmNoticeSurface.isVisible(el),'banner resumes after gameplay');
+  for(let i=0;i<14;i++)await f.step(500);
+  assert(!el.isConnected,'auto-dismisses after five seconds of visible time');
+ }finally{f.close();}
+});
