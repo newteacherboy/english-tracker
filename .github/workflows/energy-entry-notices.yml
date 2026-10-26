@@ -1,0 +1,25 @@
+name: Energy entry notices
+on:
+  pull_request:
+    paths: ['ingilizce/index.html', 'ingilizce/papi-feedback.js', 'ingilizce/papi-flow.js', 'ingilizce/notice-surface.js', 'ingilizce/start-spotlight.js', 'tests/energy-entry-*', '.github/workflows/energy-entry-notices.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: npm install --prefix /tmp/energy-qa --no-audit --no-fund jsdom@26.1.0 playwright@1.58.2
+      - run: NODE_PATH=/tmp/energy-qa/node_modules node --test tests/notice-surface.test.cjs tests/auto-notice-budget.test.cjs tests/portal-integrity.test.cjs tests/thematic-grouped-teach.test.cjs tests/route-combo-reward.test.cjs
+      - run: /tmp/energy-qa/node_modules/.bin/playwright install chromium
+      - run: NODE_PATH=/tmp/energy-qa/node_modules node tests/energy-entry-notices-ui.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: energy-entry-qa
+          path: /tmp/energy-entry-qa/*.png

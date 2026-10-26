@@ -39,3 +39,6 @@ test('listened cards stay green and four completed expressions automatically pla
  for(let i=0;i<3;i++){cards[i].click();await flush();assert(cards[i].classList.contains('is-listened'));assert.equal(cards[i].getAttribute('aria-pressed'),'true');assert.equal(flights,0);}
  cards[3].click();await settle(f);assert.equal(flights,1);assert.equal(f.cursor(),4);assert.equal(f.calls.filter(b=>b.action==='advance').length,4);
 });
+test('a depleted route start opens energy options without entering or submitting; teacher portal remains exempt',async()=>{
+ const f=await fixture();let notices=0;f.w.DijiMeduPapiFeedback={energy(){notices++;}};await f.w.dmThematicLearning.open(DATA.chapters[0].id,{intro:true});f.w.genelEnerjiKalan=0;f.w.document.querySelector('.ml-entry-start').click();assert.equal(notices,1);assert(f.w.document.querySelector('.ml-entry'));assert.equal(f.calls.filter(c=>c.action==='advance').length,0);f.w.dmTeacherPortalMode=true;f.w.document.querySelector('.ml-entry-start').click();assert(!f.w.document.querySelector('.ml-entry'));f.w.close();
+});

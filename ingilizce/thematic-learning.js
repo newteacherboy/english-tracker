@@ -113,7 +113,7 @@ function entry(){
  if(schoolBridge){modal.querySelector('.ml-entry-badge').textContent='OKUL YOLUM · '+chapter.cefr+' · '+chapter.routeNumber+'. DURAK';modal.querySelector('[data-back]').setAttribute('aria-label','Okul yoluna dön');}
  bindMascotFallback(modal);
  modal.querySelector('[data-back]').onclick=back;dialogKeys(modal,back);
- const ticket=epoch,at=identity();modal.querySelector('.ml-entry-start').onclick=()=>{if(ticket!==epoch||identity()!==at||!modal||!modal.classList.contains('ml-entry'))return;modal.classList.remove('ml-entry');render();modal.querySelector('[data-back]')?.focus();};
+ const ticket=epoch,at=identity();modal.querySelector('.ml-entry-start').onclick=()=>{if(ticket!==epoch||identity()!==at||!modal||!modal.classList.contains('ml-entry'))return;if(typeof window.genelEnerjiKalan==='number'&&window.genelEnerjiKalan<=0&&!window.dmTeacherPortalMode&&who().toLowerCase()!=='teacher'&&!(typeof siniftaOynananOgrenci!=='undefined'&&siniftaOynananOgrenci)&&!window.dmOdevEnerjiMuaf?.()){window.DijiMeduPapiFeedback?.energy();return;}modal.classList.remove('ml-entry');render();modal.querySelector('[data-back]')?.focus();};
  modal.querySelector('.ml-entry-start').focus({preventScroll:true});
 }
 // Approved DijiMedu discovery crew: one character per question, stable for retries.
