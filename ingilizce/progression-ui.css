@@ -82,3 +82,30 @@
 .dm-flight-celebration .dm-level-continue:not([hidden]){animation:dmUnlockCardIn .22s ease-out both}
 @keyframes dmUnlockCardIn{from{opacity:0;transform:translateY(10px) scale(.97)}to{opacity:1;transform:none}}
 @keyframes dmUnlockShine{0%{filter:brightness(1)}50%{filter:brightness(1.35) drop-shadow(0 0 7px #f7da68)}100%{filter:brightness(1)}}
+
+
+/* Larger approved Papi flight mascot, with safe responsive sizing for phones/tablets.
+   Scope to level celebrations so other mascot/parkur designs remain unchanged. */
+.dm-level-up.dm-flight-celebration .dm-papi-reveal{
+ width:min(78vw,335px,39dvh);
+ height:min(78vw,335px,39dvh);
+ max-width:calc(100vw - 32px);
+ flex:0 0 auto;
+ margin:5px auto 0;
+}
+.dm-level-up.dm-flight-celebration.revealed .dm-papi-reveal{
+ display:block;
+ width:min(43vw,184px,24dvh);
+ height:min(43vw,184px,24dvh);
+ margin:1px auto 0;
+}
+@media(max-height:700px){
+ .dm-level-up.dm-flight-celebration .dm-papi-reveal{
+  width:min(70vw,270px,40dvh);
+  height:min(70vw,270px,40dvh);
+ }
+ .dm-level-up.dm-flight-celebration.revealed .dm-papi-reveal{
+  width:min(40vw,158px,24dvh);
+  height:min(40vw,158px,24dvh);
+ }
+}
