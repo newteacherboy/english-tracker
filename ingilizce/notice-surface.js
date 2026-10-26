@@ -46,7 +46,7 @@ function adopt(el){
 }
 function externalDialog(el){return [...document.querySelectorAll('[role="dialog"],[aria-modal="true"],.rubric-modal,.rubric-overlay,.kb-perde,#dmEmailGuide')].some(d=>!d.closest('.dm-notice-managed')&&!el.contains(d)&&visible(d));}
 function blocked(el){
- if(document.hidden||window.dmPapiTour?.active?.()||window.dmContactFrozen)return true;
+ if(document.hidden||window.dmPapiTour?.active?.()||window.dmRoutePracticeFlight?.active?.()||window.dmContactFrozen)return true;
  const urgent=operational(el);
  if(!urgent&&(window.dmPapiNotices?.inActivity?.()||[...document.querySelectorAll('input:focus,textarea:focus,select:focus')].some(input=>!el.contains(input))))return true;
  if(!(urgent&&window.dmPapiNotices?.inActivity?.())&&externalDialog(el))return true;

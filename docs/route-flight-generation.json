@@ -1,0 +1,8 @@
+{
+  "date": "2026-10-26",
+  "asset": "ingilizce/route-assets/papi-practice-flight.webp",
+  "method": "Generated with imagegen from the existing Papi mascot reference; three flying wing poses, converted to WebP.",
+  "reference": "ingilizce/papi-welcome-v2.png",
+  "purpose": "User-approved flight preview 1, shared by both routes.",
+  "layout": "Three equal square transparent frames; upstroke, horizontal wings, downstroke."
+}
