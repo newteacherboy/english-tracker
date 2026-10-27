@@ -70,23 +70,30 @@
   // [Kota 27 Eki 2026] Bildirim ve duyuru, Edge Function yerine doğrudan veritabanı fonksiyonundan okunur.
   // Sunucu aynı kuralları uygular; yalnız sıradan öğrenci oturumunu cevaplar, diğer her durumda
   // {fallback:true} döner ve istek eski diji-api yoluna gider. Hata/ağ sorununda da eski yol kullanılır.
-  const rpcReads={bildirimlerim:'dm_read_bildirimler',duyurulariGetir:'dm_read_duyuru'};
+  const rpcReads={
+    bildirimlerim:{fn:'dm_read_bildirimler',body:a=>({p_ogrenci:String(a.ogrenci??''),p_tumu:String(a.tumu??'')==='1'})},
+    duyurulariGetir:{fn:'dm_read_duyuru',body:a=>({p_ogrenci:String(a.ogrenci??'')})},
+    seviyeLigListesi:{fn:'dm_read_lig',body:a=>({p_kapsam:String(a.kapsam??'')})},
+    ekVeriGetir:{fn:'dm_read_ekveri',body:a=>({p_ogrenci:String(a.ogrenci??''),p_anahtar:String(a.anahtar??'')}),
+      out:(x,a)=>window.dmRpcReadTransforms?.ekVeri?window.dmRpcReadTransforms.ekVeri(x,String(a.anahtar??''),String(a.anahtar??'')==='yo'&&String(a.tanitim??'')==='1'):undefined}
+  };
   let rpcDisabled=false;
   async function viaRpc(d){
-    const fn=rpcReads[d.op];
-    if(!fn||rpcDisabled||window.dmTeacherPortalMode||!d.url.pathname.endsWith('/diji-api')||!d.token)return null;
+    const spec=rpcReads[d.op];
+    if(!spec||rpcDisabled||window.dmTeacherPortalMode||!d.url.pathname.endsWith('/diji-api')||!d.token)return null;
+    if(spec.out&&!window.dmRpcReadTransforms)return null;
     let key='';try{key=typeof SUPABASE_ANON_KEY!=='undefined'?SUPABASE_ANON_KEY:'';}catch{}
     if(!key)return null;
-    const body={p_t:d.token,p_ogrenci:String(d.args.ogrenci??'')};
-    if(fn==='dm_read_bildirimler')body.p_tumu=String(d.args.tumu??'')==='1';
     try{
-      const r=await native(endpoint.replace('/functions/v1/','/rest/v1/rpc/')+fn,{method:'POST',headers:{'Content-Type':'application/json',apikey:key},body:JSON.stringify(body),signal:d.opt?.signal});
+      const r=await native(endpoint.replace('/functions/v1/','/rest/v1/rpc/')+spec.fn,{method:'POST',headers:{'Content-Type':'application/json',apikey:key},body:JSON.stringify({p_t:d.token,...spec.body(d.args)}),signal:d.opt?.signal});
       if(r.status===404){rpcDisabled=true;return null;}
       if(!r.ok)return null;
       const out=await r.json();
       if(!out||out.fallback||!('data' in out))return null;
+      const value=spec.out?spec.out(out.data,d.args):out.data;
+      if(value===undefined)return null;
       stats.rpc=(stats.rpc||0)+1;
-      return {text:JSON.stringify(out.data),status:200,headers:[['Content-Type','application/json']],at:Date.now()};
+      return {text:JSON.stringify(value),status:200,headers:[['Content-Type','application/json']],at:Date.now()};
     }catch(e){if(d.opt?.signal?.aborted)throw e;return null;}
   }
   function enqueue(d){

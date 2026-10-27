@@ -14,19 +14,22 @@ sql(`
 do $$begin if not exists(select 1 from pg_roles where rolname='anon') then create role anon; end if; if not exists(select 1 from pg_roles where rolname='authenticated') then create role authenticated; end if; end$$;
 create schema dm_private;
 create table public.teachers(id uuid primary key, is_admin boolean, active boolean, username text);
-create table public.students(id uuid primary key, username text, status text, role text, frozen_at timestamptz, profile jsonb, phone text, email text, class_no int, branch text, teacher_id uuid);
+create table public.students(id uuid primary key, username text, status text, role text, frozen_at timestamptz, profile jsonb, phone text, email text, class_no int, branch text, teacher_id uuid, created_at timestamptz default now());
 create table public.portal_sessions(id uuid primary key default gen_random_uuid(), token_hash text unique, role text, student_id uuid, teacher_id uuid, expires_at timestamptz, last_seen_at timestamptz, teacher_portal_access_id uuid, teacher_portal_version int);
 create table public.notifications(id uuid primary key, recipient_student_id uuid, sender_student_id uuid, type text, title text, message text, payload jsonb, read_at timestamptz, created_at timestamptz);
 create table public.announcements(id uuid primary key, title text, message text, image_link text, target_type text, target_list jsonb, display_limit int, theme text, active boolean, created_at timestamptz, teacher_id uuid);
 create table public.announcement_reads(id uuid primary key default gen_random_uuid(), announcement_id uuid, student_id uuid, seen_at timestamptz);
 create table public.dm_social_controls(student_id uuid primary key, guardian_email text, pin_hash text, verified_at timestamptz, social_enabled boolean, profile_visible boolean, messages_enabled boolean, duels_enabled boolean, gifts_enabled boolean, suspended_until timestamptz, notice_seen_at timestamptz, updated_at timestamptz);
 create table public.student_blocks(blocker_id uuid, blocked_id uuid, created_at timestamptz);
+create table public.dm_release_flags(code text primary key, enabled boolean, updated_at timestamptz);
+do $$begin if not exists(select 1 from pg_roles where rolname='service_role') then create role service_role; end if; end$$;
+create function public.dm_progress_league() returns jsonb language sql stable set search_path to '' as $f$ select coalesce(jsonb_agg(jsonb_build_object('id',id,'name',username,'xp',0) order by username,id),'[]') from public.students where status='approved' $f$;
 create table public.extra_data(id bigserial primary key, student_id uuid, key_name text, value jsonb, updated_at timestamptz, unique(student_id,key_name));
 CREATE FUNCTION public.student_contacts_complete(p_phone text, p_email text) RETURNS boolean LANGUAGE sql IMMUTABLE SET search_path TO '' AS $f$
  select coalesce(regexp_replace(p_phone,'[^0-9]','','g') ~ '^(05[0-9]{9}|905[0-9]{9})$',false)
     and coalesce(trim(p_email) ~ '^[^@[:space:]]+@[^@[:space:]]+\\.[^@[:space:]]+$',false); $f$;
 `);
-sqlFile(process.argv[2]);
+for(const f of process.argv[2].split(','))sqlFile(f);
 
 // ---------- rastgele veri ----------
 let seed=Number(process.argv[3]||7);const rnd=()=>{seed=(seed*1103515245+12345)%2147483648;return seed/2147483648;};
@@ -113,4 +116,58 @@ for(const s of DB.students){
 const priv=sql(`select string_agg(p.proname||':'||has_function_privilege('anon',p.oid,'execute'),',' order by p.proname) from pg_proc p join pg_namespace n on n.oid=p.pronamespace where (n.nspname='dm_private') or p.proname in ('dm_read_bildirimler','dm_read_duyuru')`).trim();
 console.log('anon yetkileri:',priv);
 checks++;if(!/dm_read_bildirimler:true/.test(priv)||!/dm_read_duyuru:true/.test(priv)||/(bildirim_liste|duyuru_icin|rpc_ogrenci|sosyal_izin|tr_ad):true/.test(priv)){fails++;console.log('YETKI FARKI');}
+
+// ---------- lig, ek veri, sosyal görünürlük ----------
+const filterStudents=(rows,viewer)=>{const v=visibility(rows.map(x=>x.id),viewer);return rows.filter(x=>x.id===viewer||allowed(v.controls.get(x.id),'profile')&&!v.blocked.has(x.id));};
+// yeni edge visibility(): tek RPC sonucundan aynı Map/Set
+function fromRpc(r,viewer){return {controls:new Map([...(r.controls||[]).map(c=>[c.student_id,c]),...(r.frozen||[]).map(id=>[id,{social_enabled:false}])]),blocked:new Set(viewer?(r.blocks||[]).map(x=>x.blocker_id===viewer?x.blocked_id:x.blocker_id):[])};}
+const ser=v=>({controls:[...v.controls.entries()].sort((a,b)=>a[0]<b[0]?-1:1).map(([k,c])=>[k,{social_enabled:c.social_enabled,profile_visible:c.profile_visible,messages_enabled:c.messages_enabled,duels_enabled:c.duels_enabled,gifts_enabled:c.gifts_enabled,suspended_until:c.suspended_until??undefined}]),blocked:[...v.blocked].sort()});
+for(let i=0;i<60;i++){
+ const subset=DB.students.filter(()=>maybe(.4)).map(s=>s.id),viewer=maybe(.85)?pick(ids):null;
+ if(!subset.length)continue;
+ const r=json(`select public.dm_social_visibility(array[${subset.map(x=>`'${x}'`).join(',')}]::uuid[],${viewer?`'${viewer}'`:'null'})`);
+ const refV=visibility(subset,viewer);
+ // edge Map'te sadece kontrolleri karşılaştır (sıra önemsiz); suspended_until biçimini Date ile eşitle
+ const norm=v=>{const o=ser(v);o.controls=o.controls.map(([k,c])=>[k,{...c,suspended_until:c.suspended_until?Date.parse(c.suspended_until):undefined}]);return o;};
+ same('gorunurluk '+i,norm(fromRpc(r,viewer)),norm(refV));
+}
+const DEMO_ID_LIG=DEMO_ID;
+const league=json(`select public.dm_progress_league()`);
+const gw=json(`select coalesce(json_agg(x),'[]') from public.extra_data x`);
+// ek veri satırları: farklı biçimler
+for(const s of DB.students){
+ if(maybe(.6))sql(`insert into public.extra_data(student_id,key_name,value,updated_at) values('${s.id}','yo',$J$${JSON.stringify(pick([{altin:5,haftaHedef:{h:'2026-10-12',xp:1000}},{altin:1,'2':'x',a:{b:[1,2.5,'ç']}},{totalXp:12.0},{},{haftaHedef:null},{haftaHedef:{h:'2026-10-26'}}]))}$J$,now()-interval '${Math.floor(rnd()*99)} minutes') on conflict (student_id,key_name) do update set value=excluded.value`);
+ if(maybe(.5))sql(`insert into public.extra_data(student_id,key_name,value) values('${s.id}','weekly_target',$J$${JSON.stringify(pick([{h:'2026-10-19',xp:1500},{h:'2026-10-05'},{h:''},{xp:1}]))}$J$) on conflict (student_id,key_name) do update set value=excluded.value`);
+ if(maybe(.4))sql(`insert into public.extra_data(student_id,key_name,value) values('${s.id}','seviye',$J$${JSON.stringify(pick([{n:3},'metin',[1,2],5,null]))}$J$) on conflict (student_id,key_name) do update set value=excluded.value`);
+}
+const ED=json(`select coalesce(json_agg(x),'[]') from public.extra_data x`);
+const metinVer=v=>v==null?"":typeof v==="string"?v:JSON.stringify(v);
+function refEkVeri(s,key,tanitim){ // index.ts ekVeriGetir
+ const row=ED.find(r=>r.student_id===s.id&&r.key_name===key);let data=row?{value:row.value,updated_at:row.updated_at}:null;
+ if(key==='yo'){const goal=ED.find(r=>r.student_id===s.id&&r.key_name==='weekly_target');
+  if(goal?.value?.h){let state=data?.value||{};if(typeof state==='string'){try{state=JSON.parse(state);}catch{state={};}}
+   if(!state.haftaHedef||goal.value.h>=state.haftaHedef.h)state={...state,haftaHedef:goal.value};data={value:state,updated_at:data?.updated_at||null};}}
+ if(key==='yo'&&tanitim)return {deger:data?metinVer(data.value):null,guncelleme:data?.updated_at||null,kayitTarihi:s.created_at||null};
+ return data?{deger:metinVer(data.value),guncelleme:data.updated_at}:null;
+}
+const clientEkVeri=require(process.env.EKVERI_JS);
+for(const s of DB.students){
+ const tok='tok-'+crypto.randomUUID()+'-'+crypto.randomUUID();
+ sql(`insert into public.portal_sessions(token_hash,role,student_id,expires_at) values(encode(sha256(convert_to('${tok}','UTF8')),'hex'),'student','${s.id}',now()+interval '1 hour')`);
+ const sFull=json(`select row_to_json(x) from public.students x where id='${s.id}'`);
+ const lig=json(`select public.dm_read_lig('${tok}','')`);
+ const vc=DB.controls.find(c=>c.student_id===s.id);
+ if(lig.data){checks++;if(!allowed(vc,'social')){fails++;console.log('LIG sosyal kapalı ama cevaplandı',s.username);}
+  same('lig '+s.username,lig.data,{ok:true,liste:filterStudents(league,s.id)});}
+ checks++;if(!json(`select public.dm_read_lig('${tok}','alltime')`).fallback){fails++;console.log('alltime fallback degil');}
+ for(const [key,tan] of [['yo',false],['yo',true],['seviye',false],['yok',false],['',false]]){
+  const r=json(`select public.dm_read_ekveri('${tok}',$N$${s.username}$N$,'${key}')`);
+  if(r.fallback)continue;
+  same('ekveri '+key+tan+' '+s.username,clientEkVeri(r.data,key,tan),refEkVeri(sFull,key,tan));
+ }
+}
+sql(`insert into public.dm_release_flags(code,enabled) values('duyurular',false)`);
+{const s=DB.students.find(x=>x.status==='approved'&&x.role==='student'&&!x.frozen_at&&complete(x.phone,x.email)&&!guest(x));
+ if(s){const tok='tok-'+crypto.randomUUID()+'-'+crypto.randomUUID();sql(`insert into public.portal_sessions(token_hash,role,student_id,expires_at) values(encode(sha256(convert_to('${tok}','UTF8')),'hex'),'student','${s.id}',now()+interval '1 hour')`);
+  checks++;if(!json(`select public.dm_read_duyuru('${tok}','')`).fallback){fails++;console.log('duyuru bayragi uygulanmadi');}}}
 console.log(`kontrol: ${checks}, fark: ${fails}`);process.exit(fails?1:0);
