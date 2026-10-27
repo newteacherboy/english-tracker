@@ -2,7 +2,7 @@
 (()=>{'use strict';
  let busy=false,lastToken='',lastCheck=0;
  const endpoint='https://nxfqlutulxqzqgwewssd.supabase.co/functions/v1/diji-api';
- function token(){if(window.dmTeacherPortalMode){try{return JSON.parse(sessionStorage.getItem('dm_tp_session')||'null')?.teacherToken||'';}catch{return '';}}return sessionStorage.getItem('ing_ogr_token')||localStorage.getItem('ing_token')||'';}
+ function token(){if(window.dmTeacherPortalMode){try{return JSON.parse(sessionStorage.getItem('dm_tp_session')||'null')?.teacherToken||'';}catch{return '';}}return sessionStorage.getItem('ing_ogr_token')||'';}
  function show(d,key){
   const shade=document.createElement('div');shade.id='dmTeacherMessageNotice';shade.setAttribute('role','dialog');shade.setAttribute('aria-modal','true');shade.setAttribute('aria-labelledby','dmTeacherMessageTitle');
   shade.style.cssText='position:fixed;inset:0;z-index:2147482000;background:#10244999;display:flex;align-items:center;justify-content:center;padding:18px';
@@ -16,7 +16,7 @@
   card.append(title,list,open,later);shade.append(card);shade.addEventListener('keydown',e=>{if(e.key==='Escape'){e.preventDefault();close();}if(e.key==='Tab'){e.preventDefault();(document.activeElement===open?later:open).focus();}});document.body.append(shade);sessionStorage.setItem(key,JSON.stringify(d.messageSenders));open.focus();
  }
  async function check(){
-  const t=token();if(!t||busy||document.hidden||document.getElementById('dmTeacherMessageNotice'))return;
+  const t=token();if(!t||busy||document.hidden||window.dmPapiNotices?.inActivity?.()||document.getElementById('dmTeacherMessageNotice'))return;
   if(t===lastToken&&Date.now()-lastCheck<60000)return;lastToken=t;lastCheck=Date.now();busy=true;
   try{const r=await fetch(endpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({islem:'teacherNotificationSummary',t}),signal:AbortSignal.timeout(10000)});if(!r.ok)return;const d=await r.json();if(t!==token()||!d.ok||!d.messageSenders?.length)return;
    const key='dm_teacher_message_notice:'+d.teacherId;if(sessionStorage.getItem(key)!==JSON.stringify(d.messageSenders))show(d,key);

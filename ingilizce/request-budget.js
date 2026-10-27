@@ -6,27 +6,32 @@
   const reads=new Set(['bildirimlerim','ilerlemeOzet','enerjiDurumuGetir','duyurulariGetir',
     'sosyalOgrencilerGetir','ekVeriGetir','seviyeDurumu','seviyeLigListesi',
     'yayinOzellikleri','dersKonulariGetir','akisTumu','duellolarim','sosyalDurum',
-    'aksesuarKatalog','oyunEslesmelerim','takipDavetListesi','kategorileriGetir','KOK']);
+    'aksesuarKatalog','oyunEslesmelerim','takipDavetListesi','kategorileriGetir','KOK','announcementInbox','teacherNotificationSummary','safetyStatus',
+    'memberStatus','ogretmenBilgim','ogretmenSohbetListesi','sohbetGetir','benimIstatistik',
+    'akisOlaylariGetir','odevlerim','etkinlikleriGetir','videolariGetir','buyuSeviyeIlerlemeGetir']);
   const liveReads=new Set(['oyunEslesmeDurum','aktifDurum']);
   // Requests that change nothing other cached reads depend on: send them, but keep the cache.
-  const passive=new Set(['kaydet','benimIstatistik','iletisimDurumu','yeniPuanBildirimleriGetir','sonGirisGuncelle']);
+  const passive=new Set(['kaydet','iletisimDurumu','yeniPuanBildirimleriGetir','sonGirisGuncelle']);
   const batchable=new Set(['bildirimlerim','ilerlemeOzet','enerjiDurumuGetir','duyurulariGetir',
     'sosyalOgrencilerGetir','ekVeriGetir','seviyeDurumu','seviyeLigListesi','yayinOzellikleri','dersKonulariGetir']);
   const ttl={bildirimlerim:55000,ilerlemeOzet:30000,enerjiDurumuGetir:15000,
     duyurulariGetir:60000,sosyalOgrencilerGetir:60000,seviyeDurumu:30000,
     seviyeLigListesi:60000,yayinOzellikleri:30000,akisTumu:15000,KOK:20000,
-    sosyalDurum:30000,takipDavetListesi:30000,oyunEslesmelerim:10000,aksesuarKatalog:300000};
+    sosyalDurum:30000,takipDavetListesi:30000,oyunEslesmelerim:10000,aksesuarKatalog:300000,announcementInbox:55000,teacherNotificationSummary:55000,
+    safetyStatus:55000,memberStatus:30000,ogretmenBilgim:60000,ogretmenSohbetListesi:15000,
+    sohbetGetir:10000,benimIstatistik:60000,akisOlaylariGetir:30000,odevlerim:60000,
+    etkinlikleriGetir:60000,videolariGetir:60000,buyuSeviyeIlerlemeGetir:30000};
   const memory=new Map(),pending=new Map(),failures=new Map(),queues=new Map();
   const stats={network:0,cacheHits:0,joined:0,batches:0,batchItems:0,backoffHits:0};
   let generation=0,identity='',batchDisabled=false;
-  const storagePrefix='dm_content_budget_v1:';
+  const storagePrefix='dm_content_budget_v2:';
   function actor(){try{return (sessionStorage.getItem('ing_ogr_token')||localStorage.getItem('ing_token')||'')+'|'+(localStorage.getItem('ing_aktifOgrenci')||'');}catch{return '';}}
-  function clear(){generation++;memory.clear();pending.clear();failures.clear();}
+  function clear(){generation++;for(const [key,s] of memory)if(!s.publicContent)memory.delete(key);pending.clear();failures.clear();}
   function snapshot(r,text){return {text,status:r.status,headers:Array.from(r.headers.entries()),at:Date.now()};}
   function response(s){return new Response(s.text,{status:s.status,headers:s.headers});}
   function good(s){if(s.status!==200)return false;try{const d=JSON.parse(s.text);return !d||Array.isArray(d)||(d.ok!==false&&d.status!=='error'&&!d.hata);}catch{return false;}}
   function persistentKey(d){return storagePrefix+d.url.pathname+'|'+JSON.stringify(Object.entries(d.args).filter(([k])=>!['t','_','_contentVersion'].includes(k)).sort());}
-  function stored(d){if(!content.has(d.op))return null;try{const s=JSON.parse(localStorage.getItem(persistentKey(d))||'null');return s&&s.status===200&&Date.now()-s.at<86400000?s:null;}catch{return null;}}
+  function stored(d){if(!content.has(d.op))return null;try{const s=JSON.parse(localStorage.getItem(persistentKey(d))||'null');return s&&s.status===200&&Date.now()-s.at<30*86400000?s:null;}catch{return null;}}
   function persist(d,s){if(!content.has(d.op)||s.text.length>1500000)return;try{const keys=[];for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&k.startsWith(storagePrefix))keys.push(k);}if(keys.length>=40&&!keys.includes(persistentKey(d)))localStorage.removeItem(keys[0]);localStorage.setItem(persistentKey(d),JSON.stringify(s));}catch{}}
   function describe(input,opt){
     // Preserve Request objects, custom cancellation and uncommon fetch semantics.
@@ -39,16 +44,21 @@
     // Headers/tokens are part of identity. Never share one account's response.
     const headers=Array.from(new Headers(opt?.headers||{}).entries()).sort();
     const key=url.pathname+'|'+roleToken+'|'+actor()+'|'+JSON.stringify(headers)+'|'+JSON.stringify(Object.entries(args).filter(([k])=>!['t','_','_contentVersion'].includes(k)).map(([k,v])=>[k,typeof v==='object'?v:String(v)]).sort());
-    return {input,opt,url,args,op,key,bypass:!!(opt?.signal||opt?.keepalive||opt?.cache==='no-store'),token:roleToken,force:'_' in args||opt?.cache==='reload'};
+    return {input,opt,url,args,op,key,bypass:!!(opt?.keepalive||opt?.cache==='no-store'),isolated:!!opt?.signal,token:roleToken,force:'_' in args||opt?.cache==='reload'};
   }
   function direct(d,old){
-    let input=d.input;
+    let input=d.input,opt=d.opt;
+    if(d.op==='kelimelerGetir'){
+      if(String(opt?.method||'GET').toUpperCase()==='POST'){opt={...opt,body:JSON.stringify({...d.args,compact:'1'})};}
+      else{const u=new URL(input,location.href);u.searchParams.set('compact','1');input=u.href;}
+    }
     if(old&&d.op!=='KOK'&&content.has(d.op)&&String(d.opt?.method||'GET').toUpperCase()==='GET'){
       const version=new Headers(old.headers).get('X-Diji-Content-Version');
       if(version){const u=new URL(input,location.href);u.searchParams.set('_contentVersion',version);input=u.href;}
     }
+    if(String(opt?.method||'GET').toUpperCase()==='POST'){const u=new URL(input,location.href);u.searchParams.set('islem',d.op);input=u.href;}
     stats.network++;
-    return native(input,d.opt).then(async r=>{
+    return native(input,opt).then(async r=>{
       if(r.status===304&&old)return {...old,at:Date.now()};
       return snapshot(r,await r.text());
     });
@@ -66,7 +76,7 @@
       if(part.length===1||batchDisabled){part.forEach(x=>direct(x.d).then(x.resolve,x.reject));continue;}
       try{
         stats.network++;stats.batches++;stats.batchItems+=part.length;
-        const base=part[0].d,u=new URL(base.url);u.search='';
+        const base=part[0].d,u=new URL(base.url);u.search='';u.searchParams.set('islem','okumaGrubu');
         const headers=new Headers(base.opt?.headers||{});headers.set('Content-Type','application/json');
         const items=part.map(({d})=>Object.fromEntries(Object.entries(d.args).filter(([k])=>!['t','_','_contentVersion'].includes(k))));
         const r=await native(u.href,{method:'POST',headers,body:JSON.stringify({islem:'okumaGrubu',t:base.token,istekler:items})});
@@ -90,29 +100,31 @@
       clear();try{return await native(input,opt);}finally{clear();}
     }
     if(d.bypass)return native(input,opt);
+    if(d.opt?.signal?.aborted)throw d.opt.signal.reason||new Error('Request aborted');
     const old=memory.get(d.key)||stored(d),age=old?Date.now()-old.at:Infinity;
-    const duration=content.has(d.op)?300000:(ttl[d.op]||0);
+    const duration=content.has(d.op)?86400000:(ttl[d.op]||0);
     if(!d.force&&old&&(age<duration||document.hidden&&Object.hasOwn(ttl,d.op))){stats.cacheHits++;return response(old);}
     const failed=failures.get(d.key);
     if(!d.force&&failed&&Date.now()<failed.until){stats.backoffHits++;if(failed.snapshot)return response(failed.snapshot);throw failed.error;}
-    if(!d.force&&pending.has(d.key)){stats.joined++;return response(await pending.get(d.key));}
+    if(!d.force&&!d.isolated&&pending.has(d.key)){stats.joined++;return response(await pending.get(d.key));}
     const version=generation;
     const task=(async()=>{
       try{
-        if(document.hidden&&!d.force&&Object.hasOwn(ttl,d.op))await new Promise(resolve=>{const resume=()=>{if(!document.hidden){document.removeEventListener('visibilitychange',resume);resolve();}};document.addEventListener('visibilitychange',resume);});
-        const s=await (!d.force&&!batchDisabled&&d.url.pathname.endsWith('/diji-api')&&batchable.has(d.op)?enqueue(d):direct(d,old));
-        if(version===generation){
-          if(good(s)){if(memory.size>=300)memory.delete(memory.keys().next().value);memory.set(d.key,s);persist(d,s);failures.delete(d.key);}
+        if(document.hidden&&!d.force&&Object.hasOwn(ttl,d.op))await new Promise((resolve,reject)=>{const signal=d.opt?.signal;const cleanup=()=>{document.removeEventListener('visibilitychange',resume);signal?.removeEventListener('abort',abort);};const resume=()=>{if(!document.hidden){cleanup();resolve();}};const abort=()=>{cleanup();reject(signal.reason||new Error('Request aborted'));};document.addEventListener('visibilitychange',resume);signal?.addEventListener('abort',abort,{once:true});if(signal?.aborted)abort();});
+        const s=await (!d.force&&!d.isolated&&!batchDisabled&&d.url.pathname.endsWith('/diji-api')&&batchable.has(d.op)?enqueue(d):direct(d,old));
+        if(version===generation||content.has(d.op)){
+          if(good(s)){s.publicContent=content.has(d.op);if(memory.size>=300)memory.delete(memory.keys().next().value);memory.set(d.key,s);persist(d,s);failures.delete(d.key);}
           else if([200,401,403,429].includes(s.status)||s.status>=500){const count=(failed?.count||0)+1;failures.set(d.key,{count,until:Date.now()+Math.min(60000,15000*2**(count-1)),snapshot:s});}
         }
         return s;
-      }catch(e){if(version===generation)failures.set(d.key,{count:(failed?.count||0)+1,until:Date.now()+30000,error:e});throw e;}
+      }catch(e){if(version===generation&&!d.opt?.signal?.aborted)failures.set(d.key,{count:(failed?.count||0)+1,until:Date.now()+30000,error:e});throw e;}
     })();
-    if(!d.force)pending.set(d.key,task);
+    if(!d.force&&!d.isolated)pending.set(d.key,task);
     try{return response(await task);}finally{if(pending.get(d.key)===task)pending.delete(d.key);}
   };
   // Debug counters contain no user names, tokens, payloads or balances.
   window.dmRequestBudget={stats,clear};
-  document.addEventListener('visibilitychange',()=>{if(!document.hidden)clear();});
+  // Fresh TTLs remain useful after returning to a tab; identity changes still clear private data.
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden)failures.clear();});
   window.addEventListener('storage',()=>{if(actor()!==identity){identity=actor();clear();}});
 })();

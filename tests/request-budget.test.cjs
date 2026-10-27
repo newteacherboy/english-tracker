@@ -26,7 +26,7 @@ test('account/token switch and explicit refresh bypass a previous account cache'
 });
 test('content persists, revalidates its version, and a 304 restores original JSON',async()=>{
  const f=fixture((u)=>u.includes('_contentVersion=one')?new Response(null,{status:304}):new Response('[{"word":"cat"}]',{headers:{'X-Diji-Content-Version':'one'}}));
- assert.equal((await (await f.get('kelimelerGetir')).json())[0].word,'cat');f.window.dmRequestBudget.clear();await f.get('kelimelerGetir');assert.equal(f.calls.length,1);f.advance(300001);const r=await f.get('kelimelerGetir');assert.equal(r.status,200);assert.equal((await r.json())[0].word,'cat');assert.equal(f.calls.length,2);
+ assert.equal((await (await f.get('kelimelerGetir')).json())[0].word,'cat');f.window.dmRequestBudget.clear();await f.get('kelimelerGetir');assert.equal(f.calls.length,1);f.advance(86400001);const r=await f.get('kelimelerGetir');assert.equal(r.status,200);assert.equal((await r.json())[0].word,'cat');assert.equal(f.calls.length,2);
 });
 test('failed polls back off without delaying mutations',async()=>{
  const f=fixture(()=>new Response('{"ok":false}',{status:500}));await f.get('bildirimlerim');await f.get('bildirimlerim');assert.equal(f.calls.length,1);await f.post('enerjiGonder');assert.equal(f.calls.length,2);f.advance(60001);await f.get('bildirimlerim');assert.equal(f.calls.length,3);
@@ -46,7 +46,7 @@ test('an in-flight read cannot restore a stale cache after a write',async()=>{
  const first=f.get('enerjiDurumuGetir');await new Promise(r=>setTimeout(r,40));await f.post('ekVeriKaydet');finish(new Response('{"ok":true,"energy":1}'));await first;
  const second=f.get('enerjiDurumuGetir');await new Promise(r=>setTimeout(r,40));assert.equal(f.calls.length,3);finish(new Response('{"ok":true,"energy":2}'));await second;
 });
-function server(){const ctx={Set,Map,Date,Request,Response,Headers,URL,TextEncoder,Uint8Array,crypto,JSON,Promise};let s=stripTypeScriptTypes(fs.readFileSync('supabase/functions/diji-api/request-budget.ts','utf8'),{mode:'transform'}).replace(/export /g,'');vm.runInNewContext(s+';globalThis.batch=readBatch;globalThis.cache=contentCache;',ctx);return ctx;}
+function server(){const ctx={Set,Map,Date,Request,Response,Headers,URL,TextEncoder,Uint8Array,crypto,JSON,Promise,CompressionStream,DecompressionStream};let s=stripTypeScriptTypes(fs.readFileSync('supabase/functions/diji-api/request-budget.ts','utf8'),{mode:'transform'}).replace(/export /g,'');vm.runInNewContext(s+';globalThis.batch=readBatch;globalThis.cache=contentCache;',ctx);return ctx;}
 const json=(d,status=200)=>new Response(JSON.stringify(d),{status});
 test('server validates all batch operations/credentials before running any handler',async()=>{
  const ctx=server();let ran=0;for(const args of [[{islem:'seviyeOyunOdulu'}],[{islem:'bildirimlerim',t:'forged'}],Array(9).fill({islem:'bildirimlerim'})]){const r=await ctx.batch(new Request(API,{method:'POST'}),{istekler:args},()=>ran++,json);assert.equal(r.status,400);}assert.equal(ran,0);
@@ -65,3 +65,19 @@ test('private teacher and preview reads cannot share cached data while the selec
  await f.get('KOK');role='teacher-token';await f.get('KOK');assert.equal(f.calls.length,2);
  role='preview-token';await f.get('KOK');assert.equal(f.calls.length,2);
 });
+test('timeout-enabled repeated announcement reads cache without invalidating balances',async()=>{
+ const f=fixture();await f.get('enerjiDurumuGetir');
+ for(let i=0;i<3;i++)await f.window.fetch(API,{method:'POST',signal:new AbortController().signal,body:JSON.stringify({islem:'announcementInbox',t:'first-token'})});
+ await f.get('enerjiDurumuGetir');assert.equal(f.calls.length,2);
+});
+test('public content survives writes and visibility changes; new clients negotiate compact words',async()=>{
+ const f=fixture(()=>new Response('[{"ingilizce":"cat"}]'));await f.get('kelimelerGetir');assert.equal(new URL(f.calls[0].u).searchParams.get('compact'),'1');await f.post('seviyeOyunOdulu');f.visible();await f.get('kelimelerGetir');assert.equal(f.calls.length,2);
+});
+test('abort signals remain independent; cancelled reads do not poison the shared cache',async()=>{
+ const f=fixture((_u,o)=>{if(o?.signal?.aborted)throw o.signal.reason;return new Response('{"ok":true}');});
+ const c=new AbortController();c.abort(new Error('cancelled'));await assert.rejects(f.window.fetch(API+'?islem=announcementInbox',{signal:c.signal}),/cancelled/);assert.equal(f.calls.length,0);await f.get('announcementInbox');assert.equal(f.calls.length,1);
+});
+test('newly classified read operations do not repeatedly flush each other',async()=>{const f=fixture();for(let i=0;i<5;i++){await f.get('enerjiDurumuGetir');await f.get('teacherNotificationSummary');await f.get('safetyStatus');await f.get('ogretmenBilgim');}assert.equal(f.calls.length,4);});
+test('hidden timeout-enabled polls abort without leaving a delayed network request',async()=>{const f=fixture();f.document.hidden=true;const c=new AbortController();const request=f.window.fetch(API+'?islem=announcementInbox',{signal:c.signal});c.abort(new Error('timed out'));await assert.rejects(request,/timed out/);f.visible();await new Promise(r=>setTimeout(r,30));assert.equal(f.calls.length,0);await f.get('announcementInbox');assert.equal(f.calls.length,1);});
+test('POST read observability exposes only the operation in URL, never credentials or message bodies',async()=>{const f=fixture();await f.post('teacherNotificationSummary');const u=new URL(f.calls[0].u);assert.equal(u.searchParams.get('islem'),'teacherNotificationSummary');assert.equal(u.searchParams.has('t'),false);assert.equal(JSON.parse(f.calls[0].o.body).t,'first-token');});
+test('large public content uses cached gzip only when negotiated and round-trips exactly',async()=>{const ctx=server(),cache=ctx.cache(json),data=Array.from({length:1000},(_,i)=>({word:'word'+i,translation:'kelime '+i}));let loads=0;const load=async()=>{loads++;return data};const a=await cache(new Request(API,{headers:{'accept-encoding':'gzip'}}),'words',load);assert.equal(a.headers.get('content-encoding'),'gzip');const compressed=await a.arrayBuffer();assert.ok(compressed.byteLength<JSON.stringify(data).length/2);const plain=await new Response(new Response(compressed).body.pipeThrough(new DecompressionStream('gzip'))).json();assert.deepEqual(plain,data);for(const encoding of ['identity','gzip;q=0, *;q=1']){const b=await cache(new Request(API,{headers:{'accept-encoding':encoding}}),'words',load);assert.equal(b.headers.get('content-encoding'),null);assert.deepEqual(await b.json(),data);}assert.equal(loads,1);});

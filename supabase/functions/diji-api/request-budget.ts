@@ -23,6 +23,11 @@ export async function readBatch(req:Request,body:any,handle:any,json:any){
   return json({ok:true,results,...(sessionFailure?{hata:'oturum'}:{})});
 }
 
+function acceptsGzip(req:Request){
+ const items=(req.headers.get('accept-encoding')||'').toLowerCase().split(',').map(item=>{const [name,...params]=item.trim().split(';');const q=params.find(x=>x.trim().startsWith('q='));return {name,q:q?Number(q.trim().slice(2)):1};});
+ return (items.find(x=>x.name==='gzip')??items.find(x=>x.name==='*'))?.q>0;
+}
+
 // Bounded, short-lived cache for public words/lesson text, never progress,
 // balances, sessions, students or permission decisions.
 export function contentCache(json:any){
@@ -35,17 +40,27 @@ export function contentCache(json:any){
         const data=await load(),body=JSON.stringify(data);
         const hash=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(body));
         const version=Array.from(new Uint8Array(hash)).map(n=>n.toString(16).padStart(2,'0')).join('');
-        return {data,version};
+        // Compress public content once per cache version, rather than on every response.
+        let gzip:Uint8Array|null=null;
+        if(new TextEncoder().encode(body).byteLength>=16384&&typeof CompressionStream==='function'){
+          try{gzip=new Uint8Array(await new Response(new Response(body).body!.pipeThrough(new CompressionStream('gzip'))).arrayBuffer());}catch{gzip=null;}
+        }
+        return {data,version,gzip};
       })()};entries.set(key,entry);
     }
     try{
-      const {data,version}=await entry.promise;
+      const {data,version,gzip}=await entry.promise;
       const response=json(data);
       response.headers.set('X-Diji-Content-Version',version);
       response.headers.set('Access-Control-Expose-Headers','X-Diji-Content-Version');
       response.headers.set('Cache-Control','private, no-store');
       if(new URL(req.url).searchParams.get('_contentVersion')===version)
         return new Response(null,{status:304,headers:response.headers});
+      response.headers.set('Vary','Accept-Encoding');
+      if(gzip&&acceptsGzip(req)){
+        response.headers.set('Content-Encoding','gzip');response.headers.set('Content-Length',String(gzip.byteLength));
+        return new Response(gzip,{status:response.status,headers:response.headers});
+      }
       return response;
     }catch(e){if(entries.get(key)===entry)entries.delete(key);throw e;}
   };

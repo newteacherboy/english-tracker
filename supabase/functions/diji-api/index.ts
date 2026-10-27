@@ -1,3 +1,4 @@
+import {wordPayload} from './word-payload.mjs';
 import {teacherChatAPI} from './teacher-chat.mjs';
 import {announcementsAPI} from './announcements-api.mjs';
 import {isClassroomGuest,memberStudents} from './classroom-identity.mjs';
@@ -2475,9 +2476,10 @@ async function handle(req: Request, proxy: any = null) {
     return json({ok:true,entries});
   }
   if (op === "kelimelerGetir") {
-    return cachedContent(req,"words",async()=>{
+    const compact=String(val(body,q,"compact"))==="1";
+    return cachedContent(req,compact?"words:compact-v1":"words",async()=>{
       const data = await hepsiniGetir(() => supabase.from("word_bank").select("class_no,unit_no,english,turkish,extra").eq("active", true).order("class_no").order("unit_no").order("english"));
-      return (data || []).map(x => ({ sinif: x.class_no, unite: x.unit_no, ingilizce: x.english, turkce: x.turkish, ...(x.extra || {}) }));
+      return wordPayload(data,compact);
     });
   }
   if (op === "ozellikListesiGetir") {

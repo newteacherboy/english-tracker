@@ -8,7 +8,7 @@ export function releaseAPI(db:any,json:any){
  }
  async function on(code:string,depth=0):Promise<boolean>{const s=await state();if(s[code]===false)return false;const f=FEATURES.find(f=>f.code===code);return f?.parent&&depth<5?on(f.parent,depth+1):true;}
  async function handle(op:string,body:any,q:URLSearchParams,a:any){
-  if(op==='yayinOzellikleri')return json({ok:true,flags:await state(true),admin:!!a?.yonetici});
+  if(op==='yayinOzellikleri')return json({ok:true,flags:await state(),admin:!!a?.yonetici});
   if(op==='yayinOzellikKaydet'){
    if(a?.role!=='teacher'||!a.yonetici)return json({ok:false,mesaj:'Bu bölüm yalnızca yöneticiye ait.'},403);
    const list=body.degisiklikler;

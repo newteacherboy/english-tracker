@@ -1,0 +1,23 @@
+name: Egress efficiency and cache safety
+on:
+  push:
+    paths:
+      - 'ingilizce/request-budget.js'
+      - 'supabase/functions/diji-api/word-payload.mjs'
+      - 'supabase/functions/diji-api/request-budget.ts'
+      - 'supabase/functions/diji-api/release-api.ts'
+      - 'tests/request-budget.test.cjs'
+      - 'tests/word-payload.test.mjs'
+      - 'tests/release-read-cache.test.cjs'
+      - '.github/workflows/egress-efficiency.yml'
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: node --test tests/request-budget.test.cjs tests/word-payload.test.mjs tests/release-read-cache.test.cjs tests/weekly-release-api.test.cjs tests/api-security-guards.test.cjs tests/password-security.test.cjs tests/classroom-authorization.test.cjs tests/teacher-chat-routing.test.mjs
