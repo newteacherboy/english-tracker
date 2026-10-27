@@ -59,7 +59,7 @@
       const version=new Headers(old.headers).get('X-Diji-Content-Version');
       if(version){const u=new URL(input,location.href);u.searchParams.set('_contentVersion',version);input=u.href;}
     }
-    if(String(opt?.method||'GET').toUpperCase()==='POST'){const u=new URL(input,location.href);u.searchParams.set('islem',d.op);input=u.href;}
+    if(String(opt?.method||'GET').toUpperCase()==='POST'){const u=new URL(input,location.href);if(d.op!=='KOK')u.searchParams.set('islem',d.op);input=u.href;}
     stats.network++;
     return native(input,opt).then(async r=>{
       if(r.status===304&&old)return {...old,at:Date.now()};

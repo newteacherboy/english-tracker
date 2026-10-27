@@ -1223,7 +1223,9 @@ async function handle(req: Request, proxy: any = null) {
     if (encName(String(body.ogrenci || "")) === "teacher") body.ogrenci = DEMO_USER;
     if (encName(String(q.get("ogrenci") || "")) === "teacher") q.set("ogrenci", DEMO_USER);
   }
-  const op = String(body.islem || q.get("islem") || "").trim();
+  // KOK was an internal cache label accidentally sent by older clients.
+  const requestedOp = String(body.islem || q.get("islem") || "").trim();
+  const op = requestedOp === "KOK" ? "" : requestedOp;
   const rate=async(scope:string,value:string,max:number,seconds:number)=>{
     const key="shield:"+await sha256(scope+"|"+value);
     const {data,error}=await supabase.rpc("dm_security_rate_check",

@@ -82,3 +82,14 @@ test('hidden timeout-enabled polls abort without leaving a delayed network reque
 test('POST read observability exposes only the operation in URL, never credentials or message bodies',async()=>{const f=fixture();await f.post('teacherNotificationSummary');const u=new URL(f.calls[0].u);assert.equal(u.searchParams.get('islem'),'teacherNotificationSummary');assert.equal(u.searchParams.has('t'),false);assert.equal(JSON.parse(f.calls[0].o.body).t,'first-token');});
 test('large public content uses cached gzip only when negotiated and round-trips exactly',async()=>{const ctx=server(),cache=ctx.cache(json),data=Array.from({length:1000},(_,i)=>({word:'word'+i,translation:'kelime '+i}));let loads=0;const load=async()=>{loads++;return data};const a=await cache(new Request(API,{headers:{'accept-encoding':'gzip'}}),'words',load);assert.equal(a.headers.get('content-encoding'),'gzip');const compressed=await a.arrayBuffer();assert.ok(compressed.byteLength<JSON.stringify(data).length/2);const plain=await new Response(new Response(compressed).body.pipeThrough(new DecompressionStream('gzip'))).json();assert.deepEqual(plain,data);for(const encoding of ['identity','gzip;q=0, *;q=1']){const b=await cache(new Request(API,{headers:{'accept-encoding':encoding}}),'words',load);assert.equal(b.headers.get('content-encoding'),null);assert.deepEqual(await b.json(),data);}assert.equal(loads,1);});
 test('public CDN failure falls back to the compatible live API, while a validated CDN hit avoids full API transfer',async()=>{const f=fixture(()=>new Response('[{"ingilizce":"live"}]'));f.window.dmPublicCatalog={get:async()=>{throw Error('CDN offline')}};assert.equal((await (await f.get('kelimelerGetir')).json())[0].ingilizce,'live');assert.equal(f.calls.length,1);const g=fixture();g.window.dmPublicCatalog={get:async()=>new Response('[{"ingilizce":"CDN"}]',{headers:{'X-Diji-Content-Version':'hash'}})};assert.equal((await (await g.get('kelimelerGetir')).json())[0].ingilizce,'CDN');assert.equal(g.calls.length,0);});
+
+test('root POST keeps empty operation instead of transmitting the internal KOK label',async()=>{
+ const f=fixture();await f.post('');const call=f.calls[0];assert.equal(new URL(call.u).searchParams.get('islem'),null);assert.equal(JSON.parse(call.o.body).islem,'');
+});
+test('server maps legacy root label before authentication and operation dispatch',()=>{
+ const source=fs.readFileSync('supabase/functions/diji-api/index.ts','utf8');
+ const match=source.match(/const requestedOp =[^;]+;\s*const op =[^;]+;/);assert.ok(match);
+ for(const [input,expected] of [['KOK',''],['',''],['ogretmenBilgim','ogretmenBilgim'],['unknown','unknown']]){
+ const context={body:{islem:input},q:new URLSearchParams(),String};vm.runInNewContext(match[0]+';globalThis.actual=op;',context);assert.equal(context.actual,expected);
+ }
+});
