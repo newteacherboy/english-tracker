@@ -14,7 +14,7 @@ test('verification reminder belongs to Games and uses safe visible modal checks'
  const member=read('ingilizce/member-experience.js');
  const server=read('supabase/functions/diji-api/member-tools-api.ts');
  assert(member.includes('[data-ekran="tab-aktiviteler"]'));
- assert(member.includes('emailNextAt=Date.now()+600000'));
+ assert(member.includes('emailNextAt=Date.now()+3600000'));
  assert(member.includes('getComputedStyle(el)'));
  assert(member.includes('status.emailVerified'));
  assert(server.includes("kind==='email'?10*60000:30*60000"));

@@ -35,7 +35,7 @@ window.duyuruKapat=()=>{
 };
 async function poll(){
  if(owner!==account())reset();
- const t=owner;if(!t||!ready()||document.hidden||loading||Date.now()-since<3500||lastPoll&&Date.now()-lastPoll<30000)return;
+ const t=owner;if(!t||!ready()||document.hidden||loading||Date.now()-since<3500||lastPoll)return;   /* [28 Eki 2026] duyuru kutusu yalnız uygulama açılışında (ve bir duyuru kapatılınca) sorulur */
  loading=true;lastPoll=Date.now();
  try{await saveReceipts(t);const d=await request('announcementInbox',t);if(t!==owner||t!==account())return;queue=(d.liste||[]).filter(x=>!seen.has(x.id));}catch(e){console.warn('[Duyurular]',e.message);}finally{if(t===owner)loading=false;}
 }
