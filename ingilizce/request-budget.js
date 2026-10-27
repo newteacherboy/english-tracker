@@ -67,6 +67,28 @@
       return snapshot(r,await r.text());
     });
   }
+  // [Kota 27 Eki 2026] Bildirim ve duyuru, Edge Function yerine doğrudan veritabanı fonksiyonundan okunur.
+  // Sunucu aynı kuralları uygular; yalnız sıradan öğrenci oturumunu cevaplar, diğer her durumda
+  // {fallback:true} döner ve istek eski diji-api yoluna gider. Hata/ağ sorununda da eski yol kullanılır.
+  const rpcReads={bildirimlerim:'dm_read_bildirimler',duyurulariGetir:'dm_read_duyuru'};
+  let rpcDisabled=false;
+  async function viaRpc(d){
+    const fn=rpcReads[d.op];
+    if(!fn||rpcDisabled||window.dmTeacherPortalMode||!d.url.pathname.endsWith('/diji-api')||!d.token)return null;
+    let key='';try{key=typeof SUPABASE_ANON_KEY!=='undefined'?SUPABASE_ANON_KEY:'';}catch{}
+    if(!key)return null;
+    const body={p_t:d.token,p_ogrenci:String(d.args.ogrenci??'')};
+    if(fn==='dm_read_bildirimler')body.p_tumu=String(d.args.tumu??'')==='1';
+    try{
+      const r=await native(endpoint.replace('/functions/v1/','/rest/v1/rpc/')+fn,{method:'POST',headers:{'Content-Type':'application/json',apikey:key},body:JSON.stringify(body),signal:d.opt?.signal});
+      if(r.status===404){rpcDisabled=true;return null;}
+      if(!r.ok)return null;
+      const out=await r.json();
+      if(!out||out.fallback||!('data' in out))return null;
+      stats.rpc=(stats.rpc||0)+1;
+      return {text:JSON.stringify(out.data),status:200,headers:[['Content-Type','application/json']],at:Date.now()};
+    }catch(e){if(d.opt?.signal?.aborted)throw e;return null;}
+  }
   function enqueue(d){
     const group=d.url.pathname+'|'+d.token+'|'+actor()+'|'+JSON.stringify(Array.from(new Headers(d.opt?.headers||{}).entries()).sort());
     return new Promise((resolve,reject)=>{
@@ -115,7 +137,7 @@
     const task=(async()=>{
       try{
         if(document.hidden&&!d.force&&Object.hasOwn(ttl,d.op))await new Promise((resolve,reject)=>{const signal=d.opt?.signal;const cleanup=()=>{document.removeEventListener('visibilitychange',resume);signal?.removeEventListener('abort',abort);};const resume=()=>{if(!document.hidden){cleanup();resolve();}};const abort=()=>{cleanup();reject(signal.reason||new Error('Request aborted'));};document.addEventListener('visibilitychange',resume);signal?.addEventListener('abort',abort,{once:true});if(signal?.aborted)abort();});
-        const s=await (!d.force&&!d.isolated&&!batchDisabled&&d.url.pathname.endsWith('/diji-api')&&batchable.has(d.op)?enqueue(d):direct(d,old));
+        const s=await viaRpc(d)||await (!d.force&&!d.isolated&&!batchDisabled&&d.url.pathname.endsWith('/diji-api')&&batchable.has(d.op)?enqueue(d):direct(d,old));
         if(version===generation||content.has(d.op)){
           if(good(s)){s.publicContent=content.has(d.op);if(memory.size>=300)memory.delete(memory.keys().next().value);memory.set(d.key,s);persist(d,s);failures.delete(d.key);}
           else if([200,401,403,429].includes(s.status)||s.status>=500){const count=(failed?.count||0)+1;failures.set(d.key,{count,until:Date.now()+Math.min(60000,15000*2**(count-1)),snapshot:s});}
