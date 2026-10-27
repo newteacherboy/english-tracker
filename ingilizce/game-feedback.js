@@ -76,7 +76,14 @@ function applyRewardState(server,owner=name()){
  window.yoArayuzTazele?.();window.dmProgressPanel?.paint?.();return true;
 }
 window.dmApplyRewardState=applyRewardState;
-async function claim(o){if(!student()||inflight.has(o.runId))return;inflight.add(o.runId);const owner=name();try{const r=await fetch(apiURL,{method:'POST',body:JSON.stringify({islem:'seviyeOyunOdulu',ogrenci:owner,t:localStorage.getItem('ing_token')||'',...o}),keepalive:true});const d=await r.json();if(!r.ok||!d.ok)throw Error(d.mesaj||'Ödül kaydedilemedi');if(owner!==name())return;remove(o.runId);if(d.reason==='needs_recovery'){rememberRecovery(o);if(activeRun===o.runId)renderRecovery(o,d);else recoveryReminder();}else if(d.reason!=='incomplete'&&d.reason!=='practice_unavailable')clearRecovery(o);if(d.yo){applyRewardState(d.yo,owner);window.dmProgression?.refresh(true);}showReward(d,o.runId);document.dispatchEvent(new CustomEvent('dm:reward-result',{detail:{runId:o.runId,game:o.game,stopNo:o.stopNo,ok:true,xp:d.xp,gold:d.gold,reason:d.reason}}));}catch(e){document.dispatchEvent(new CustomEvent('dm:reward-result',{detail:{runId:o.runId,ok:false,error:e.message}}));console.warn('[Ödül kaydı]',o.game,o.stopNo||'',e.message);if(activeRun===o.runId)resultStatus('Ödül kaydedilemedi: '+e.message+'. Kaydın saklandı; tekrar denenecek.');}finally{inflight.delete(o.runId);}}
+/* [Kota 27 Eki 2026] Başarısız ödül istekleri her 15 sn'de sonsuza dek tekrar gönderilmesin:
+   ağ/sunucu hatalarında artan bekleme (15 sn → en fazla 10 dk); sunucunun kesin reddinde (400/403/404/409/422)
+   3 denemeden sonra bekleyen kayıt bırakılır. */
+const claimFails=new Map();
+function claimDue(o){const f=claimFails.get(o.runId);return !f||Date.now()>=f.next;}
+function claimFailed(o,status){const f=claimFails.get(o.runId)||{n:0,next:0};f.n++;f.next=Date.now()+Math.min(600000,15000*2**(f.n-1));claimFails.set(o.runId,f);
+ if([400,403,404,409,422].includes(status)&&f.n>=3){remove(o.runId);claimFails.delete(o.runId);return true;}return false;}
+async function claim(o){if(!student()||inflight.has(o.runId))return;inflight.add(o.runId);const owner=name();let httpStatus=0;try{const r=await fetch(apiURL,{method:'POST',body:JSON.stringify({islem:'seviyeOyunOdulu',ogrenci:owner,t:localStorage.getItem('ing_token')||'',...o}),keepalive:true});httpStatus=r.status;const d=await r.json();if(!r.ok||!d.ok)throw Error(d.mesaj||'Ödül kaydedilemedi');claimFails.delete(o.runId);if(owner!==name())return;remove(o.runId);if(d.reason==='needs_recovery'){rememberRecovery(o);if(activeRun===o.runId)renderRecovery(o,d);else recoveryReminder();}else if(d.reason!=='incomplete'&&d.reason!=='practice_unavailable')clearRecovery(o);if(d.yo){applyRewardState(d.yo,owner);window.dmProgression?.refresh(true);}showReward(d,o.runId);document.dispatchEvent(new CustomEvent('dm:reward-result',{detail:{runId:o.runId,game:o.game,stopNo:o.stopNo,ok:true,xp:d.xp,gold:d.gold,reason:d.reason}}));}catch(e){const dropped=claimFailed(o,httpStatus);document.dispatchEvent(new CustomEvent('dm:reward-result',{detail:{runId:o.runId,ok:false,error:e.message,dropped}}));console.warn('[Ödül kaydı]',o.game,o.stopNo||'',e.message);if(activeRun===o.runId)resultStatus('Ödül kaydedilemedi: '+e.message+(dropped?'.':'. Kaydın saklandı; tekrar denenecek.'));}finally{inflight.delete(o.runId);}}
 window.ocOdulVer=function(o){if(!student()||!o?.runId||o.puanSurum!==3)return null;
 // Harf Adasi replaces the old letter-click handlers. Legacy result wrappers can
 // overwrite its correct/incorrect counts with zero, so use the authoritative
@@ -139,5 +146,5 @@ window.dmListen=function(text,slow=false){
  window.speechSynthesis.cancel();window.speechSynthesis.speak(u);
 };
 
-window.addEventListener('online',()=>read().forEach(claim));window.addEventListener('dm:story-close',recoveryReminder);setTimeout(recoveryReminder,3000);setInterval(()=>{if(navigator.onLine&&student())read().forEach(claim);},15000);
+window.addEventListener('online',()=>read().forEach(claim));window.addEventListener('dm:story-close',recoveryReminder);setTimeout(recoveryReminder,3000);setInterval(()=>{if(navigator.onLine&&student())read().filter(claimDue).forEach(claim);},15000);
 })();
