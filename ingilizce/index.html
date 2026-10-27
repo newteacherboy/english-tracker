@@ -9980,14 +9980,7 @@ function ozellikSecDoldur() {
 
                 async function anaPanelDuyuruBildirimleriYukle(){const pa=document.getElementById("panel-alani");if(!pa)return;let box=document.getElementById("anaPanelSosyalOzet");if(!box){box=document.createElement("div");box.id="anaPanelSosyalOzet";const ref=pa.querySelector(".tabs-container");if(ref)pa.insertBefore(box,ref);else pa.prepend(box);}try{const dr=await fetch(apiURL+"?islem=duyurulariGetir&ogrenci="+encodeURIComponent(aktifOgrenciAdi||"")).then(r=>r.json()).catch(()=>null);const nr=await fetch(apiURL+"?islem=bildirimlerim&ogrenci="+encodeURIComponent(aktifOgrenciAdi||"")+"&tumu=1").then(r=>r.json()).catch(()=>({liste:[]}));const d=dr&&dr.baslik?dr:null,n=(nr&&nr.liste)||[];const duyuru=d?'<div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:14px;padding:12px 14px"><div style="font-weight:900;color:#334155">📢 '+guvenliMetin(d.baslik)+'</div><div style="font-size:12px;color:#64748b;margin-top:5px;line-height:1.45">'+guvenliMetin(d.mesaj||"")+'</div></div>':'<div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:14px;padding:12px 14px;color:#64748b">📢 Şu anda duyuru yok.</div>';const bild=n.slice(0,5).map(x=>'<div style="padding:7px 0;border-bottom:1px solid #f1f5f9;font-size:12px;color:#475569"><b>'+guvenliMetin(x.gonderen||"Diji-Medu")+'</b> '+guvenliMetin(x.metin||"Yeni bildirimin var")+'</div>').join("");box.innerHTML='<div style="display:grid;grid-template-columns:minmax(0,1.5fr) minmax(260px,1fr);gap:10px;margin:0 0 12px">'+duyuru+'<div style="background:#fff;border:1px solid #e2e8f0;border-radius:14px;padding:10px 14px"><div style="font-weight:900;color:#334155;margin-bottom:5px">🔔 Bildirimlerin</div>'+(bild||'<div style="font-size:12px;color:#94a3b8;padding:6px 0">Yeni bildirim yok.</div>')+'</div></div>';}catch(e){box.innerHTML="";}}function duyuruKontrolEt() {
                     if (!aktifOgrenciAdi || aktifOgrenciAdi.toLowerCase() === "teacher") return;
-                    fetch(`${apiURL}?islem=duyurulariGetir&ogrenci=${encodeURIComponent(aktifOgrenciAdi)}`)
-                    .then(res => res.json())
-                    .then(duyuru => {
-                        if (duyuru && duyuru.id) {
-                            setTimeout(() => duyuruGoster(duyuru), 700);
-                        }
-                    })
-                    .catch(() => {});
+                    /* [27 Eki 2026] Eski duyuru sistemi kaldırıldı; duyurular yeni duyuru kutusundan (announcements.js) gösterilir. */
                 }
 
                         function duyuruGoster(duyuru) {
@@ -15927,8 +15920,7 @@ const seriCarpani = () => seri() >= 7 ? 2 : (seri() >= 3 ? 1.5 : 1);
   const turIkon = b => (TUR[b.tur] || ['🔔'])[0];
 
   async function unreadCount(list,owner){
-    let extra=0;try{const r=await fetch(apiURL+'?islem=duyurulariGetir&ogrenci='+enc(owner)),d=await r.json();if(d?.id&&String(d.mesaj||'').trim()&&localStorage.getItem('dm_notice_seen:'+kucuk(owner))!==String(d.id))extra=1;}catch{}
-    return list.length+extra;
+    return list.length;   /* [27 Eki 2026] eski duyuru sayımı kaldırıldı */
   }
   /* ---- Girişte bildirimleri karşılama paneline ver ---- */
   let girisBakildi = '';
@@ -15998,16 +15990,9 @@ const seriCarpani = () => seri() >= 7 ? 2 : (seri() >= 3 ? 1.5 : 1);
     let benim = (typeof maAkisVeri !== 'undefined' ? maAkisVeri : []).filter(e => kucuk(e.ogr) === kucuk(aktifOgrenciAdi)).map(e => ({ tarih: e.t, tur: 'kazanc', ikon: e.ikon, metin: e.metin, yeni: false }));
     let sosyalS = sosyal.map(b => ({ source:b, tarih: b.tarih, tur: b.tur, gonderen: b.gonderen, ikon: turIkon(b), metin: turMetin(b) + ((b.metin||b.mesaj||b.message||b.icerik) && TUR[b.tur] && b.tur !== 'takip' && b.tur !== 'duello' ? ` · “${b.metin||b.mesaj||b.message||b.icerik}”` : ''), yeni: !b.okundu, sat: b.sat }));
     let duyuru = [],announcementId='';
-    try {
-      const response=await fetch(apiURL+'?islem=duyurulariGetir&ogrenci='+enc(aktifOgrenciAdi));
-      const current=await response.json();
-      if(current?.id && String(current.mesaj||'').trim()){announcementId=String(current.id);duyuru.push({tarih:current.tarih,tur:'duyuru',ikon:'📢',metin:String(current.baslik||'Duyuru')+' · '+String(current.mesaj),yeni:localStorage.getItem('dm_notice_seen:'+notifyOwner)!==String(current.id)});}
-    } catch(e) {
-      const dm=$('duyuruMesaj'),title=$('duyuruBaslik');
-      if(dm&&title&&title.innerText.trim()!=='Başlık'&&dm.innerText.trim()!=='Mesaj'&&dm.innerText.trim())duyuru.push({tarih:null,tur:'duyuru',ikon:'📢',metin:title.innerText.trim()+' · '+dm.innerText.trim(),yeni:false});
-    }
+    /* [27 Eki 2026] Eski duyuru sistemi kaldırıldı; duyurular yeni duyuru kutusunda gösterilir. */
     let hepsi = [...sosyalS, ...duyuru].sort((a, b) => (window.DMTime.parse(b.tarih)||0) - (window.DMTime.parse(a.tarih)||0));
-    zilFiltre='hepsi';const FILTRELER = [['hepsi','Hepsi'],['duyuru','📢 Duyuru']];
+    zilFiltre='hepsi';const FILTRELER = [['hepsi','Hepsi']];
     async function ciz() {
       $('zlFiltre').innerHTML = FILTRELER.map(([k, t]) => `<button class="${k === zilFiltre ? 'aktif' : ''}" data-f="${k}">${t}</button>`).join('');
       $('zlFiltre').querySelectorAll('button').forEach(b => b.onclick = () => { zilFiltre = b.dataset.f; ciz(); });
