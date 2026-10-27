@@ -240,7 +240,7 @@
   dockSpace();viewHeader();
   // League movement is account-bound and deduplicated across reloads.
   if (!document.querySelector('script[data-dm-league-momentum]')) {
-    const boost = document.createElement('script'); boost.src = 'league-momentum.js?v=20261017-1'; boost.defer = true;
+    const boost = document.createElement('script'); boost.src = 'league-momentum.js?v=20261028-2gun-1'; boost.defer = true;
     boost.dataset.dmLeagueMomentum = '1'; document.head.append(boost);
   }
 })();

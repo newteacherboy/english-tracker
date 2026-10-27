@@ -43,10 +43,13 @@ function show(payload,owner){
  overlay.querySelector('.dm-momentum-close').focus({preventScroll:true});
  return true;
 }
+// [28 Eki 2026] Lig sıralaması kontrolü ve duyurusu bir hesapta en fazla 2 günde bir (sunucu isteği de o zaman yapılır).
+const EVERY=2*86400000,LAST='dm.league.momentum.lastCheck:';
 async function check(force=false){
  if(!allowed()||document.hidden||busy)return;
  if(!force&&Date.now()-lastCheck<60000)return;
  const owner=normalize(who()),turn=epoch,key=KEY+owner;
+ const prev=Number(store.read(LAST+owner)||0);if(Date.now()-prev<EVERY)return;
  busy=true;lastCheck=Date.now();
  try{
    await window.maTumGetir?.();
@@ -69,7 +72,7 @@ async function check(force=false){
        if(!current.seen.includes(id))current.pending={id,from:before.rank,to:current.rank,person:other?.ad||''};
      }
    }
-   store.write(key,current);
+   store.write(key,current);store.write(LAST+owner,Date.now());
    queued=current.pending?{owner,key}:null;
    if(queued)displayPending();
  }catch(e){console.warn('[Lig sıralaması]',e?.message||e)}

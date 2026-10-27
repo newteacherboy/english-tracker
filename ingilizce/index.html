@@ -24470,7 +24470,10 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
   }
   function aktarGerekirse() { let n = havuzTum().length; if (n !== aktarImza) { aktarImza = n; aktar(); } }
 
+  /* [28 Eki 2026] Sekme görünmezken okuma istekleri bekletilir (request-budget); süre sınırı ancak sayfa görünürken başlasın. */
+  function gorununceDevam() { return document.hidden ? new Promise(r => { const f = () => { if (!document.hidden) { document.removeEventListener('visibilitychange', f); r(); } }; document.addEventListener('visibilitychange', f); }) : Promise.resolve(); }
   async function ilerlemeYukle() {
+    await gorununceDevam();
     const statusReady=Promise.resolve().then(()=>window.dmProgression?.refresh(true));
     // Handle rejection immediately while the independent request is in flight.
     const statusResult=statusReady.then(value=>({value}),error=>({error}));
@@ -25182,7 +25185,7 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
     if (!yuklendi) {
       const parkurYuklemeZamani = null;
       if(!parkurAlani().querySelector('.bz-harita'))harita(gorunum.b === null ? aktifBolum() : gorunum.b);
-      try { await ilerlemeYukle(); clearTimeout(parkurYuklemeZamani); } catch (e) {
+      try { try { await ilerlemeYukle(); } catch (ilk) { await new Promise(r => setTimeout(r, 1500)); await ilerlemeYukle(); } clearTimeout(parkurYuklemeZamani); } catch (e) {   /* [28 Eki 2026] bir kez sessizce yeniden dene */
         clearTimeout(parkurYuklemeZamani);
         if (!parkurAlani().querySelector('.dm-papi-loading')) parkurAlani().innerHTML = '<div class="bz-ic dm-parkur-loading"><div class="dm-papi-loading"><strong>Parkur yüklenemedi</strong><p></p><button type="button" class="dm-parkur-retry">Tekrar dene</button></div></div>';
         const host=$('bzParkur'), message=host?.querySelector('.dm-papi-loading p'), retry=host?.querySelector('.dm-parkur-retry');
@@ -26619,7 +26622,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <script defer src="oyna-v2.js?v=20261025-energy-menu-1"></script>
 <link rel="stylesheet" href="friends-ui.css?v=20261017-social-highlights-v2">
 <script defer src="notification-actions.js?v=20261025-actions-1"></script>
-<script defer src="friends-ui.js?v=20261025-feed-detail-1"></script>
+<script defer src="friends-ui.js?v=20261028-2gun-1"></script>
 <link rel="stylesheet" href="league-ui.css?v=20261019-1">
 <script defer src="league-ui.js?v=20261027-kota-2"></script>
 <link rel="stylesheet" href="study-ui.css?v=20261019-learn-play-1">
