@@ -2684,7 +2684,8 @@ async function handle(req: Request, proxy: any = null) {
     await supabase.from("level_completions").upsert(kayit, { onConflict: "student_id,mode,class_no,unit_no,level_no" });
     let eklenen = 0, enerjiKalan: number | undefined, enerjiMax: number | undefined;
     let stageReward:any={gold:0};
-    if (!(vardi && vardi.length) && a.role==='student' && kayit.mode==='buyu') {
+    /* [28 Eki 2026, kullanıcı kararı] Durak hediyesi kaldırıldı: dm_progress_award_stop artık çağrılmaz. */
+    if (false && !(vardi && vardi.length) && a.role==='student' && kayit.mode==='buyu') {
       const onceAltin = ekonomiAl((await yoOku(s.id)).y).altin;
       const reward=await supabase.rpc('dm_progress_award_stop',{actor:s.id,stop:kayit.level_no});if(reward.error)throw reward.error;stageReward=reward.data;
       /* [v4.8] Parkur hediyesi altını sunucudaki kayda yazılmadıysa ekle (iki kez eklenmez) */

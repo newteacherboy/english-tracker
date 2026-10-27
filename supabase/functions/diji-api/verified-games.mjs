@@ -40,7 +40,7 @@ export function verifiedGamesAPI(db,json){
  const fail=(message,status=409)=>json({ok:false,mesaj:message},status);
  async function required(){const r=await db.rpc('dm_verified_required');return !!r.error||r.data!==false;}
  return {required,async handle(op,body,a,method){
-  if(!['verifiedGameStart','verifiedGameAnswer','verifiedGameStatus'].includes(op))return null;
+  if(!['verifiedGameStart','verifiedGameAnswer','verifiedGameAnswers','verifiedGameStatus'].includes(op))return null;
   if(method!=='POST')return fail('POST gerekli.',405);
   if(a?.role!=='student'||!a.student_id)return fail('Öğrenci oturumu gerekli.',401);
   const run=String(body.runId||'');if(!/^[a-zA-Z0-9_-]{16,100}$/.test(run))return fail('Geçersiz oyun oturumu.',400);
@@ -95,6 +95,22 @@ export function verifiedGamesAPI(db,json){
   const r=await db.from('dm_verified_runs').select('game,class_no,units,stop_no,deck,answers,expires_at').eq('student_id',a.student_id).eq('run_id',run).maybeSingle();
   if(r.error)return fail('Cevap doğrulanamadı.',503);if(!r.data||Date.parse(r.data.expires_at)<Date.now())return fail('Oyun oturumu sona erdi. Yeniden başlat.');
   if(op==='verifiedGameStatus')return json({ok:true,...(r.data.deck[0]?.schoolVersion===9?{tasks:r.data.deck,words:r.data.deck[0].cards,answers:r.data.answers}:{}),game:r.data.game,classNo:r.data.class_no,units:r.data.units,stopNo:r.data.stop_no,slots:r.data.deck.map((t,slot)=>({slot,en:t.en,kind:t.kind,pairs:t.pairs}))});
+  /* [Kota 28 Eki 2026] Toplu cevap: tek istekte sıralı birden çok cevap. Her cevap tek cevaptaki gibi sunucuda
+     puanlanır ve dm_verified_answer ile kaydedilir (parkurda enerji de orada düşer). İlk hatada durur; o ana kadar
+     işlenenler results içinde döner, istemci kalanları kuyrukta tutar. */
+  if(op==='verifiedGameAnswers'){
+   const list=Array.isArray(body.answers)?body.answers:[];
+   if(!list.length||list.length>64)return fail('Geçersiz cevap paketi.',400);
+   const results=[],stop=(mesaj,status,extra={})=>json({ok:false,mesaj,results,processed:results.length,...extra},status);
+   for(const item of list){
+    const slot=Number(item?.slot),task=r.data.deck[slot];if(!Number.isInteger(slot)||!task)return stop('Geçersiz soru.',400);
+    const g=grade(task,item?.answer,r.data.game);if(!g.valid)return stop('Geçersiz cevap biçimi.',400);
+    const res=await db.rpc('dm_verified_answer',{actor:a.student_id,run_key:run,slot_no:slot,event_key:String(item?.eventId||''),is_correct:g.correct,is_complete:g.complete});
+    if(res.error){const m=String(res.error.message||'Cevap kaydedilemedi.');return stop(m,409,/enerji yetersiz/i.test(m)?{energyEmpty:true}:{});}
+    results.push(res.data);
+   }
+   return json({ok:true,results,processed:results.length});
+  }
   const slot=Number(body.slot),task=r.data.deck[slot];if(!Number.isInteger(slot)||!task)return fail('Geçersiz soru.',400);
   const g=grade(task,body.answer,r.data.game);if(!g.valid)return fail('Geçersiz cevap biçimi.',400);
   const result=await db.rpc('dm_verified_answer',{actor:a.student_id,run_key:run,slot_no:slot,event_key:String(body.eventId||''),is_correct:g.correct,is_complete:g.complete});

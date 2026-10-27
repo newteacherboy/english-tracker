@@ -3,51 +3,55 @@ const SCHOOL=require('../ingilizce/school-curriculum.js');
 (async()=>{
  const browser=await chromium.launch({headless:true,args:['--no-sandbox','--disable-dev-shm-usage']}),page=await browser.newPage(),errors=[];page.on('pageerror',e=>errors.push(e.message));
  const banks=[[{en:'book',tr:'kitap'},{en:'good morning',tr:'günaydın'},{en:'classroom',tr:'derslik'},{en:'Friday',tr:'Cuma'}],[{en:'Pay attention to your teacher.',tr:'Öğretmenini dikkatle dinle.'},{en:'May I come in, please?',tr:'İçeri girebilir miyim, lütfen?'},{en:'Keep your classroom clean.',tr:'Sınıfını temiz tut.'},{en:'Raise your hand to speak.',tr:'Konuşmak için elini kaldır.'}]];
- let words=banks[0],tasks=SCHOOL.build(words,words,220151),answers={},events=[],energy=25,finished,failOnce=false;
+ let words=banks[0],tasks=SCHOOL.build(words,words,220151),answers={},events=[],answerLog=[],energy=25,finished,failOnce=false;
  await page.route('**/*',async route=>{const u=new URL(route.request().url());if(u.pathname==='/api'){
   const b=route.request().postDataJSON();events.push(b);let d={ok:true};
   if(['verifiedGameStart','verifiedGameStatus'].includes(b.islem))d={...d,words,tasks,answers,slots:tasks.map((t,slot)=>({slot,kind:t.kind,en:t.en}))};
-  if(b.islem==='verifiedGameAnswer'){const g=SCHOOL.grade(tasks[b.slot],b.answer),old=answers[b.slot]||{misses:0},a={correct:g.correct,complete:g.complete,firstCorrect:g.correct&&!old.misses,misses:old.misses+(g.correct?0:1)};answers[b.slot]=a;if(failOnce){failOnce=false;return route.abort();}d={...d,...a,energy:{energy,max:25,gain:0}};}
+  const one=it=>{answerLog.push(it);const g=SCHOOL.grade(tasks[it.slot],it.answer),old=answers[it.slot]||{misses:0},a={correct:g.correct,complete:g.complete,firstCorrect:g.correct&&!old.misses,misses:old.misses+(g.correct?0:1)};answers[it.slot]=a;return {ok:true,...a,energy:{energy,max:25,gain:0}};};
+  if(b.islem==='verifiedGameAnswer'){const r=one(b);if(failOnce){failOnce=false;return route.abort();}d={...d,...r};}
+  // [Kota 28 Eki 2026] Durak cevapları tek pakette gider.
+  if(b.islem==='verifiedGameAnswers'){const rs=(b.answers||[]).filter(it=>!(answers[it.slot]?.complete&&it.answer&&!it.answer.mistake&&answerLog.some(x=>x.eventId===it.eventId))).map(one);if(failOnce){failOnce=false;return route.abort();}d={ok:true,results:rs.length===(b.answers||[]).length?rs:(b.answers||[]).map(it=>({ok:true,...answers[it.slot],duplicate:true}))};}
   if(b.islem==='ekonomi')d={...d,enerjiKalan:energy,enerjiMax:25};
   return route.fulfill({json:d});
  }
  if(u.hostname!=='school.test')return route.abort();
  if(u.pathname==='/')return route.fulfill({contentType:'text/html',body:'<!doctype html><html lang="tr"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><style>body{margin:0;font-family:system-ui}.dm-papi-held{display:none!important}</style><link rel="stylesheet" href="thematic-learning.css"><link rel="stylesheet" href="learning-question-v1.css"><link rel="stylesheet" href="school-soft-cards.css"><body><script>let aktifOgrenciAdi="Ada";var apiURL="https://school.test/api",genelEnerjiKalan=25,yo={altin:10};localStorage.setItem("ing_token","fixture");window.OC={basla(){this.aktif={}},dogru(){},yanlis(){}};</script>'+['learning-core.js','verified-games.js','thematic-learning.js','school-curriculum.js','school-word-art.js','school-lesson.js','papi-flow.js'].map(f=>'<script src="'+f+'"></script>').join('')+'</body></html>'});const f=path.resolve('ingilizce','.'+u.pathname);return f.startsWith(path.resolve('ingilizce')+path.sep)&&fs.existsSync(f)?route.fulfill({path:f}):route.fulfill({status:404,body:''});});
  await page.goto('https://school.test/');
+ const flushNow=()=>page.evaluate(()=>{const s=JSON.parse(localStorage.getItem('dm_school_shared_v1:Ada:220151')||'null');return dmVerifiedGames.flush(s?.runId);});
  const out='/tmp/school-shared-qa';fs.mkdirSync(out,{recursive:true});
  for(const size of [{width:320,height:568},{width:360,height:640},{width:390,height:844},{width:768,height:1024},{width:1440,height:900},{width:844,height:390}]){
   await page.setViewportSize(size);
   const parrots=new Set();for(const bank of banks)for(const step of [0,2,3,4,5,6,7,8,9,10,11]){
-   words=bank;tasks=SCHOOL.build(words,words,220151);answers=Object.fromEntries(Array.from({length:step},(_,i)=>[i,{complete:true,correct:true,firstCorrect:true,misses:0}]));events=[];
+   words=bank;tasks=SCHOOL.build(words,words,220151);answers=Object.fromEntries(Array.from({length:step},(_,i)=>[i,{complete:true,correct:true,firstCorrect:true,misses:0}]));events=[];answerLog=[];
    await page.evaluate(async words=>{localStorage.removeItem('dm_school_shared_v1:Ada:220151');await dmSchoolLesson.start({D:{no:220151,sinif:2,unite:1,kelimeler:words},b:0,d:0,pool:words,onFinish:s=>window.finished=s});},words);await page.locator('.ml-entry-start').click();await page.waitForTimeout(100);
    if(bank===banks[0]&&step>=2&&step<=11)parrots.add(await page.locator('[data-ml-character=school-parrot]').getAttribute('src'));
    if(step===8){for(const button of await page.locator('[data-token]').all())await button.click();}
    const m=await page.locator('#dmStoryLesson').evaluate(root=>{const stage=root.querySelector('.ml-stage'),r=stage.getBoundingClientRect();return {scroll:root.scrollHeight-root.clientHeight,fallback:root.classList.contains('ml-scroll-fallback'),bottom:r.bottom,combo:root.querySelector('[data-ml-combo]').textContent,buttons:[...root.querySelectorAll('.ml-task button,.ml-actions button')].filter(b=>b.getClientRects().length).map(b=>{const r=b.getBoundingClientRect();return {text:b.textContent,x:r.x,y:r.y,right:r.right,bottom:r.bottom,overflow:b.scrollHeight-b.clientHeight,hit:b.disabled||b.contains(document.elementFromPoint(r.x+r.width/2,r.y+r.height/2))};})};});
    assert(m.scroll<=3&&!m.fallback&&m.bottom<=size.height+2,JSON.stringify({size,step,m}));assert(m.combo.includes('/ 5'));
    for(const b of m.buttons)assert(b.x>=-1&&b.y>=0&&b.right<=size.width+1&&b.bottom<=size.height+2&&b.overflow<=3&&b.hit,JSON.stringify({size,step,b}));
-   if(step===0){if(size.width===390&&bank===banks[0])await page.screenshot({path:path.join(out,'school-teach-approved.png')});assert.equal(await page.locator('[data-learn]').count(),4);await page.locator('.ml-actions .ml-primary').click();await page.waitForSelector('[data-answer]');assert.deepEqual(events.filter(e=>e.islem==='verifiedGameAnswer').map(e=>e.slot),[0,1]);}
+   if(step===0){if(size.width===390&&bank===banks[0])await page.screenshot({path:path.join(out,'school-teach-approved.png')});assert.equal(await page.locator('[data-learn]').count(),4);await page.locator('.ml-actions .ml-primary').click();await page.waitForSelector('[data-answer]');assert.equal(events.filter(e=>/^verifiedGameAnswers?$/.test(e.islem)).length,0,'no request per answer');await flushNow();assert.deepEqual(answerLog.map(e=>e.slot),[0,1]);}
    if(size.width===390&&bank===banks[0])await page.screenshot({path:path.join(out,'school-'+step+'.png')});
     if(step===5){
      await page.locator('[data-left="0"]').click();await page.locator('[data-right="1"]').click();
      await page.locator('.ml-feedback.is-answer-wrong').waitFor();
      assert.match(await page.locator('.ml-feedback').innerText(),/Yanlış cevap.*Doğrusu:/);
      await page.waitForFunction(()=>document.querySelector('[data-ml-combo]').textContent.trim().startsWith('0'));
-     assert(events.some(e=>e.islem==='verifiedGameAnswer'&&e.answer?.mistake),'wrong pair is recorded before guided completion');
+     await flushNow();assert(answerLog.some(e=>e.answer?.mistake),'wrong pair is recorded before guided completion');
      assert(await page.locator('.ml-actions [data-next]').isVisible(),'wrong matching waits for Continue');
      await page.locator('.ml-actions [data-next]').click();
      await page.waitForFunction(()=>document.querySelector('.ml-progress span')?.textContent==='5 / 10 soru');
-     assert.equal(answers[5]?.firstCorrect,false,'matching correction does not erase the first mistake');
+     await flushNow();assert.equal(answers[5]?.firstCorrect,false,'matching correction does not erase the first mistake');
     }
    await page.evaluate(()=>dmThematicLearning.close(true));
   }
   assert.equal(parrots.size,10,'each question uses a different parrot');console.log('PASS school forms, grouped teaching and one viewport',size);
  }
  // A committed answer with a lost HTTP response resumes at the persisted next question.
- words=banks[0];tasks=SCHOOL.build(words,words,220151);answers={0:{complete:true,correct:true,firstCorrect:true,misses:0},1:{complete:true,correct:true,firstCorrect:true,misses:0}};events=[];failOnce=true;
- await page.evaluate(async words=>{localStorage.removeItem('dm_school_shared_v1:Ada:220151');await dmSchoolLesson.start({D:{no:220151,sinif:2,unite:1,kelimeler:words},b:0,d:0,pool:words,onFinish:s=>window.finished=s});},words);await page.locator('.ml-entry-start').click();await page.locator('[data-answer="'+tasks[2].options.indexOf(tasks[2].answer)+'"]').click();await page.waitForFunction(()=>document.querySelector('.ml-progress span')?.textContent==='2 / 10 soru');await page.evaluate(()=>dmThematicLearning.close(true));assert.equal(answers[2].complete,true);console.log('PASS school network reconciliation after committed answer');
+ words=banks[0];tasks=SCHOOL.build(words,words,220151);answers={0:{complete:true,correct:true,firstCorrect:true,misses:0},1:{complete:true,correct:true,firstCorrect:true,misses:0}};events=[];answerLog=[];failOnce=true;
+ await page.evaluate(async words=>{localStorage.removeItem('dm_school_shared_v1:Ada:220151');await dmSchoolLesson.start({D:{no:220151,sinif:2,unite:1,kelimeler:words},b:0,d:0,pool:words,onFinish:s=>window.finished=s});},words);await page.locator('.ml-entry-start').click();await page.locator('[data-answer="'+tasks[2].options.indexOf(tasks[2].answer)+'"]').click();await page.waitForFunction(()=>document.querySelector('.ml-progress span')?.textContent==='2 / 10 soru');await assert.rejects(flushNow());await flushNow();await page.evaluate(()=>dmThematicLearning.close(true));assert.equal(answers[2].complete,true);console.log('PASS school network reconciliation after committed answer');
  // Incorrect school-route choice stays on screen with answer/meaning; Continue
  // records a guided correction without upgrading the original score to first-correct.
- words=banks[0];tasks=SCHOOL.build(words,words,220151);answers={};events=[];
+ words=banks[0];tasks=SCHOOL.build(words,words,220151);answers={};events=[];answerLog=[];
  await page.evaluate(async words=>{localStorage.removeItem('dm_school_shared_v1:Ada:220151');await dmSchoolLesson.start({D:{no:220151,sinif:2,unite:1,kelimeler:words},b:0,d:0,pool:words,onFinish:s=>window.finished=s});},words);
  await page.locator('.ml-entry-start').click();await page.locator('.ml-actions .ml-primary').click();
  const wrongIndex=tasks[2].options.findIndex(choice=>choice!==tasks[2].answer);
@@ -59,11 +63,11 @@ const SCHOOL=require('../ingilizce/school-curriculum.js');
  assert(await page.locator('.ml-actions [data-next]').isVisible());
  await page.locator('.ml-actions [data-next]').click();
  await page.waitForFunction(()=>document.querySelector('.ml-progress span')?.textContent==='2 / 10 soru');
- assert.equal(answers[2].firstCorrect,false,'server-backed first attempt remains wrong');
- assert.equal(events.filter(e=>e.islem==='verifiedGameAnswer'&&e.slot===2).length,2,'guided completion is acknowledged by server');
+ await flushNow();assert.equal(answers[2].firstCorrect,false,'server-backed first attempt remains wrong');
+ assert.equal(answerLog.filter(e=>e.slot===2).length,2,'guided completion is acknowledged by server');
  await page.evaluate(()=>dmThematicLearning.close(true));
  // Real complete journey through the adapter, including review and existing result callback.
- words=banks[0];tasks=SCHOOL.build(words,words,220151);answers={};events=[];await page.setViewportSize({width:390,height:844});
+ words=banks[0];tasks=SCHOOL.build(words,words,220151);answers={};events=[];answerLog=[];await page.setViewportSize({width:390,height:844});
  await page.evaluate(async words=>{localStorage.removeItem('dm_school_shared_v1:Ada:220151');await dmSchoolLesson.start({D:{no:220151,sinif:2,unite:1,kelimeler:words},b:0,d:0,pool:words,onFinish:s=>window.finished=s});},words);await page.locator('.ml-entry-start').click();await page.locator('.ml-actions .ml-primary').click();
  for(let i=2;i<12;i++){const t=tasks[i];await page.waitForFunction(i=>document.querySelector('.ml-progress span')?.textContent===(i-1)+' / 10 soru',i);
   if(t.kind==='choice')await page.locator('[data-answer="'+t.options.indexOf(t.answer)+'"]').click();
@@ -73,5 +77,5 @@ const SCHOOL=require('../ingilizce/school-curriculum.js');
   if(t.kind==='review'){for(let j=0;j<t.cards.length;j++){await page.waitForFunction(j=>document.querySelector('.ml-review-count')?.textContent==='Kart '+(j+1)+' / 4',j);await page.locator('[data-review-choice="'+t.cards[j].options.indexOf(t.cards[j].tr)+'"]').click();}}
   if(t.kind!=='review'){assert.equal(await page.locator('.ml-actions [data-next]').count(),0,'correct route answers advance without Continue');}
  }
- await page.waitForFunction(()=>!!window.finished);assert.equal(await page.evaluate(()=>finished.dogru),10);assert.equal(await page.locator('#dmStoryLesson').count(),0);assert.deepEqual(events.filter(e=>e.islem==='verifiedGameAnswer').map(e=>e.slot),Array.from({length:12},(_,i)=>i));assert.deepEqual(errors,[]);await browser.close();console.log('PASS complete school journey and result callback');
+ await page.waitForFunction(()=>!!window.finished);assert.equal(await page.evaluate(()=>finished.dogru),10);assert.equal(await page.locator('#dmStoryLesson').count(),0);await page.evaluate(()=>dmVerifiedGames.flush(finished.runId));assert.deepEqual(answerLog.map(e=>e.slot),Array.from({length:12},(_,i)=>i));assert.equal(events.filter(e=>e.islem==='ekonomi').length,0,'energy rides with the answers');assert.deepEqual(errors,[]);await browser.close();console.log('PASS complete school journey and result callback');
 })().catch(e=>{console.error(e);process.exit(1)});

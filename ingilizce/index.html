@@ -14,7 +14,7 @@
 <link rel="stylesheet" href="bilgi-islands.css?v=20261024-sky-5">
 <link rel="stylesheet" href="approved-centre.css?v=20261025-feed-detail-1">
 <link rel="preload" as="image" href="papi-loading.webp" fetchpriority="high">
-<script defer src="verified-games.js?v=20261025-school-1"></script>
+<script defer src="verified-games.js?v=20261028-batch-1"></script>
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; connect-src 'self' https://nxfqlutulxqzqgwewssd.supabase.co https://raw.githubusercontent.com; frame-src https:; object-src 'none'; worker-src 'self' blob:; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
 <meta name="referrer" content="no-referrer">
 <script id="dm-account-oauth-return">
@@ -24493,6 +24493,10 @@ button.bz-kapi,.bz-tas,.bz-btn,.bz-sec,.bz-cip2,.bz-kart2{font-family:inherit}
   function ilerlemeKaydet(no) {
     tamam.add(no); hamTamam.add(no);
     const owner=isim(); let anahtar = 'bz_bekleyen_' + owner.toLowerCase();
+    /* [28 Eki 2026] Öğrencide durağın tamamlandığını sunucudaki ödül işlemi zaten yazıyor (7+ doğru) ve durak hediyesi
+       kaldırıldı; ayrı "durağı tamamla" isteği gönderilmez. Öğretmen/sınıf denemesinde ödül işlemi olmadığı için gönderilir. */
+    const denemeModu = !owner || owner.toLowerCase() === 'teacher' || (typeof siniftaOynananOgrenci !== 'undefined' && !!siniftaOynananOgrenci);
+    if (!denemeModu) { window.dmProgression?.refresh(true); return; }
     fetch(apiURL, { method: 'POST', body: JSON.stringify({ islem: 'buyuSeviyeTamamla', ogrenci: isim(), seviyeNo: no }) })
       .then(async r => { if (!r.ok) throw 0; const d = await r.json(); bekleyenSil(anahtar, no); if(owner!==isim())return; if(d.yo)window.dmApplyRewardState?.(d.yo,owner); if(d.gold>0) toast(`🎁 Parkur hediyesi: +${d.gold} altın`); window.dmProgression?.refresh(true); })
       .catch(() => { try { let l = JSON.parse(localStorage.getItem(anahtar) || '[]'); if (!l.includes(no)) l.push(no); localStorage.setItem(anahtar, JSON.stringify(l)); } catch (e) {} });
@@ -26523,7 +26527,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <link rel="stylesheet" href="parkur-map-theme-v1.css?v=20261010-levelbadge-fix">
 <script defer src="parkur-map-theme-v1.js?v=3"></script>
 <link rel="stylesheet" href="papi-feedback.css?v=1"><script defer src="papi-feedback.js?v=20261026-energy-entry-1"></script><script defer src="papi-haptics.js?v=1"></script><script defer src="papi-wallet.js?v=20261025-no-feed-hud-1"></script>
-<link rel="stylesheet" href="story-path.css?v=3"><script defer src="story-curriculum.js?v=2"></script><link rel="stylesheet" href="thematic-learning.css?v=20261026-entry-sheet-1"><link rel="stylesheet" href="learning-question-v1.css?v=20261025-classroom-quiet-2"><script defer src="learning-core.js?v=20261017-learning-hud-letters-1"></script><link rel="stylesheet" href="route-practice-flight.css?v=20261026-combo-1"><script defer src="route-practice-flight.js?v=20261026-combo-1"></script><script defer src="thematic-learning.js?v=20261026-energy-entry-1"></script><script defer src="school-curriculum.js?v=20261025-1"></script><script defer src="school-word-art.js?v=20261025-soft-1"></script><script defer src="school-lesson.js?v=20261026-entry-sheet-1"></script><link rel="stylesheet" href="school-soft-cards.css?v=20261025-soft-1"><script defer src="story-path.js?v=20261022-no-papi-card"></script>
+<link rel="stylesheet" href="story-path.css?v=3"><script defer src="story-curriculum.js?v=2"></script><link rel="stylesheet" href="thematic-learning.css?v=20261026-entry-sheet-1"><link rel="stylesheet" href="learning-question-v1.css?v=20261025-classroom-quiet-2"><script defer src="learning-core.js?v=20261017-learning-hud-letters-1"></script><link rel="stylesheet" href="route-practice-flight.css?v=20261026-combo-1"><script defer src="route-practice-flight.js?v=20261026-combo-1"></script><script defer src="thematic-learning.js?v=20261026-energy-entry-1"></script><script defer src="school-curriculum.js?v=20261025-1"></script><script defer src="school-word-art.js?v=20261025-soft-1"></script><script defer src="school-lesson.js?v=20261028-batch-1"></script><link rel="stylesheet" href="school-soft-cards.css?v=20261025-soft-1"><script defer src="story-path.js?v=20261022-no-papi-card"></script>
 <link rel="stylesheet" href="medupro.css?v=20261011-hud">
 <script defer src="medupro.js?v=20261027-kota-2"></script>
 <link rel="stylesheet" href="konu-oyunlari.css?v=20261021-konu-a2-1">
