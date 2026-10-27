@@ -1426,11 +1426,11 @@ async function handle(req: Request, proxy: any = null) {
   const safetyResponse=await socialSafety.handle(op,body,a,req.method);if(safetyResponse)return safetyResponse;
   const safetyDeny=await socialSafety.guard(op,body,q,a);if(safetyDeny)return safetyDeny;
   const chat=teacherChatAPI({db:supabase,json,memberStudents,clean:temizMetin,queue:kuyrugaEkle,mailShell:mailKabugu,html:metniHtmlYap,escape:hk});
-  const chatResponse=await chat.handle(op,body,q,a,req.method);if(chatResponse)return chatResponse;
   const memberResponse=await memberToolsAPI({db:supabase,json,chat,welcome:onboarding.welcome,hash:sha256,teacherScope:kapsamda,useStreakShield:(sid:string)=>ekonomiGuncelle(sid,(y:any)=>{const d=Math.max(0,Math.floor(num(y.dondurucu)));if(d<1)return {hata:'Seri kalkanı yok.'};y.dondurucu=d-1;return {kalan:d-1};})}).handle(op,body,q,a,req.method);if(memberResponse)return memberResponse;
   if(op==='iletisimDurumu' && !a)return json({ok:false,hata:'oturum',mesaj:'Öğrenci oturumu gerekli.'},401);
   if(op==='iletisimDurumu' && a.role!=='student')return json({ok:true,uygulanmaz:true,eksik:false,donuk:false,uyari:false});
   const contactDeny=isDemo(a)||a?.teacher_portal_access_id?null:await contacts.guard(op,a);if(contactDeny)return contactDeny;
+  const chatResponse=await chat.handle(op,body,q,a,req.method);if(chatResponse)return chatResponse;
   const announcementResponse=await announcements.handle(op,body,a,req.method);if(announcementResponse)return announcementResponse;
   const myWorldResult=await myWorld.handle(op,body,q,a);if(myWorldResult)return myWorldResult;
   const managementResult=await studentManagement.handle(op,body,q,a,req.method);if(managementResult)return managementResult;
