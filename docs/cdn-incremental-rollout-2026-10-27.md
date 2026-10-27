@@ -17,7 +17,7 @@ Public words and individual public lesson explanations are served from versioned
 
 ## Verification
 
-100 targeted tests passed locally before rollout: CDN integrity/outage/stale-version behavior, per-topic file loading, source API fallback, profile merge/removal, feed reaction/removal, account isolation, chat cursor precision, read receipts, rewards, onboarding and cache cancellation. A public source export validated the 3,421-word and 183-topic snapshot without modifying user accounts or sending test messages/emails.
+101 targeted tests passed locally before rollout: CDN integrity/outage/stale-version behavior, per-topic file loading, source API fallback, profile merge/removal, feed reaction/removal, account isolation, chat cursor precision, read receipts, rewards, onboarding and cache cancellation. A public source export validated the 3,421-word and 183-topic snapshot without modifying user accounts or sending test messages/emails.
 
 A synthetic profile with 100 historical rows required 3,342 JSON bytes for a full response; an energy-only patch required 199 bytes. This is a controlled example, not an overall billing prediction. Actual savings depend on repeat reads and unchanged data.
 
