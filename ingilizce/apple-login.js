@@ -1,5 +1,7 @@
 /* Enable Apple only after the provider configuration actually becomes available. */
 (()=>{'use strict';
+ // iOS uygulamasında Google girişi gösterilmediği için Apple girişine de gerek yok (Apple 4.8 yalnızca üçüncü taraf giriş varsa ister).
+ let native=false;try{native=!!window.Capacitor?.isNativePlatform?.();}catch(_){}
  let enabled=false,busy=false;
  const label='Apple ile giriş yap';
  async function start(){if(!enabled||busy||!window.supabaseClient?.auth)return;busy=true;try{
@@ -9,7 +11,7 @@
  function mount(){
   const login=document.getElementById('login-container');
   if(login&&!login.querySelector('[data-reactivate]')){const link=document.createElement('a');link.dataset.reactivate='';link.href='hesap-ac.html';link.textContent='Dondurulan hesabımı yeniden aç';link.style.cssText='display:block;text-align:center;margin-top:16px;color:#126573;font-size:14px';login.append(link);}
-  if(!enabled)return;
+  if(!enabled||native)return;
   for(const target of [login?.querySelector('.dm-login-actions'),...document.querySelectorAll('#dmDiscovery [data-action="google"]')].filter(Boolean)){
    const host=target.matches('[data-action="google"]')?target.parentElement:target;
    if(host.querySelector('[data-apple-login]'))continue;

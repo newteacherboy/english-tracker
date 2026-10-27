@@ -1,0 +1,9 @@
+{
+  "name": "dijimedu-ios",
+  "private": true,
+  "description": "Diji Medu iOS kabuğu (Capacitor). Uygulama içeriği canlı siteden (app.dijimedu.com/ingilizce/) gelir.",
+  "scripts": {
+    "kur": "sh kur-ios.sh",
+    "ac": "npx cap sync ios && npx cap open ios"
+  }
+}
