@@ -14,12 +14,13 @@
   const passive=new Set(['kaydet','iletisimDurumu','yeniPuanBildirimleriGetir','sonGirisGuncelle']);
   const batchable=new Set(['bildirimlerim','ilerlemeOzet','enerjiDurumuGetir','duyurulariGetir',
     'sosyalOgrencilerGetir','ekVeriGetir','seviyeDurumu','seviyeLigListesi','yayinOzellikleri','dersKonulariGetir']);
-  const ttl={bildirimlerim:55000,ilerlemeOzet:30000,enerjiDurumuGetir:15000,
-    duyurulariGetir:60000,sosyalOgrencilerGetir:60000,seviyeDurumu:30000,
+  // [Kota 27 Eki 2026] Bildirim/duyuru yoklaması seyreltildi: her dakika yerine ~2 dk (bildirim) ve 5 dk (duyuru).
+  const ttl={bildirimlerim:110000,ilerlemeOzet:30000,enerjiDurumuGetir:15000,
+    duyurulariGetir:300000,sosyalOgrencilerGetir:60000,seviyeDurumu:30000,
     seviyeLigListesi:60000,yayinOzellikleri:30000,akisTumu:15000,KOK:20000,
-    sosyalDurum:30000,takipDavetListesi:30000,oyunEslesmelerim:10000,aksesuarKatalog:300000,announcementInbox:55000,teacherNotificationSummary:55000,
-    safetyStatus:55000,memberStatus:30000,ogretmenBilgim:60000,ogretmenSohbetListesi:15000,
-    sohbetGetir:10000,benimIstatistik:60000,akisOlaylariGetir:30000,odevlerim:60000,
+    sosyalDurum:30000,takipDavetListesi:30000,oyunEslesmelerim:10000,aksesuarKatalog:300000,announcementInbox:300000,teacherNotificationSummary:110000,
+    safetyStatus:300000,memberStatus:30000,ogretmenBilgim:60000,ogretmenSohbetListesi:15000,
+    sohbetGetir:10000,benimIstatistik:60000,akisOlaylariGetir:60000,odevlerim:60000,
     etkinlikleriGetir:60000,videolariGetir:60000,buyuSeviyeIlerlemeGetir:30000};
   const memory=new Map(),pending=new Map(),failures=new Map(),queues=new Map();
   const stats={network:0,cacheHits:0,joined:0,batches:0,batchItems:0,backoffHits:0};

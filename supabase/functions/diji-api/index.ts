@@ -216,10 +216,16 @@ async function auth(req: Request, body: any, q: URLSearchParams) {
   const token = body?.t || q.get("t") || req.headers.get("x-diji-token") || "";
   if (!token) return null;
   const th = await sha256(token);
-  const { data } = await supabase.from("portal_sessions")
-    .select("id,role,student_id,teacher_id,expires_at,last_seen_at,teacher_portal_access_id,teacher_portal_version")
+  /* [Kota 27 Eki 2026] Oturum, öğrenci ve öğretmen satırı tek sorguda gelir (eskiden her istekte 2-3 ayrı sorgu).
+     Gömülü okuma başarısız olursa eski tek tablo sorgusuna dönülür; kontroller aynen sürer. */
+  const OTURUM_ALAN = "id,role,student_id,teacher_id,expires_at,last_seen_at,teacher_portal_access_id,teacher_portal_version";
+  let { data: ham, error: oturumHata } = await supabase.from("portal_sessions")
+    .select(OTURUM_ALAN + ",ogr:students!portal_sessions_student_id_fkey(id,status,role,frozen_at,profile,username,email,phone,teacher_id),ogrt:teachers!portal_sessions_teacher_id_fkey(username,full_name,email,is_admin,active,frozen_at)")
     .eq("token_hash", th).maybeSingle();
-  if (!data) return null;
+  if (oturumHata) ({ data: ham } = await supabase.from("portal_sessions").select(OTURUM_ALAN).eq("token_hash", th).maybeSingle());
+  if (!ham) return null;
+  const ogrGeldi = Object.prototype.hasOwnProperty.call(ham, "ogr"), ogrtGeldi = Object.prototype.hasOwnProperty.call(ham, "ogrt");
+  const { ogr: onOgr, ogrt: onOgrt, ...data } = ham as any;
   if (new Date(data.expires_at).getTime() <= Date.now()) {
     await supabase.from("portal_sessions").delete().eq("id", data.id);
     return null;
@@ -235,7 +241,7 @@ async function auth(req: Request, body: any, q: URLSearchParams) {
     }else if(teacher.data.username!=='teacher'||teacher.data.is_admin!==true)return null;
     if(data.role==='teacher'&&data.teacher_id!==grant.data.teacher_id)return null;
     if(data.role==='student'){
-      const pupil=await supabase.from('students').select('teacher_id').eq('id',data.student_id).maybeSingle();
+      const pupil=ogrGeldi?{data:onOgr}:await supabase.from('students').select('teacher_id').eq('id',data.student_id).maybeSingle();
       if(pupil.data?.teacher_id!==grant.data.teacher_id&&!(teacher.data.username==='teacher'&&teacher.data.is_admin===true))return null;
     }
   }
@@ -246,20 +252,23 @@ async function auth(req: Request, body: any, q: URLSearchParams) {
   // A suspended or rejected learner cannot keep using an old 30-day session.
   if (data.role === "student") {
     if (!data.student_id) return null;
-    const {data:student,error:studentError}=await supabase.from("students")
-      .select("id,status,role,frozen_at,profile").eq("id",data.student_id).maybeSingle();
+    const {data:student,error:studentError}=ogrGeldi?{data:onOgr,error:null}:await supabase.from("students")
+      .select("id,status,role,frozen_at,profile,username,email,phone,teacher_id").eq("id",data.student_id).maybeSingle();
     if(studentError||!student||student.frozen_at||student.status!=="approved"||student.role!=="student"||isClassroomGuest(student)&&!data.teacher_portal_access_id){
       if(!studentError)await supabase.from("portal_sessions").delete().eq("id",data.id);
       return null;
     }
   }
   if (data.role === "teacher" && data.teacher_id) {
-    const { data: t } = await supabase.from("teachers").select("username,full_name,email,is_admin,active,frozen_at").eq("id", data.teacher_id).maybeSingle();
+    const { data: t } = ogrtGeldi ? { data: onOgrt } : await supabase.from("teachers").select("username,full_name,email,is_admin,active,frozen_at").eq("id", data.teacher_id).maybeSingle();
     if (!t || t.frozen_at || t.active === false) return null;
     if(t.username!=="teacher"&&!data.teacher_portal_access_id)return null;
     return { ...data, token, yonetici: !!t.is_admin, ogretmenAdi: t.full_name || t.username, ogretmenKullanici: t.username };
   }
-  return { ...data, token };
+  const sonuc: any = { ...data, token };
+  /* Aynı istekte tekrar okunmasın diye doğrulanan öğrenci satırı saklanır (yanıtlara ve kopyalara geçmez). */
+  if (data.role === "student" && ogrGeldi && onOgr) Object.defineProperty(sonuc, "_ogr", { value: onOgr, enumerable: false });
+  return sonuc;
 }
 /* [v4.0] ÇOK ÖĞRETMEN: öğretmen sadece kendi öğrencilerine erişir; yönetici herkese */
 const kapsamda = (a: any, s: any) => !a || a.role !== "teacher" || !!a.yonetici || (!!s && !!a.teacher_id && s.teacher_id === a.teacher_id);
@@ -299,7 +308,7 @@ async function requireStudent(a: any, requested: string) {
   if (a.role === "teacher") return null;
   if (a.role !== "student" || !a.student_id) return json({ hata: "yetki", mesaj: "Öğrenci yetkisi gerekli." }, 403);
   if (requested && requested !== a.student_id) {
-    const { data } = await supabase.from("students").select("id,username").eq("id", a.student_id).maybeSingle();
+    const data = a._ogr?.username !== undefined ? a._ogr : (await supabase.from("students").select("id,username").eq("id", a.student_id).maybeSingle()).data;
     if (!data || encName(data.username) !== encName(requested)) return json({ hata: "yetki", mesaj: "Bu öğrenciye erişim yok." }, 403);
   }
   return null;
