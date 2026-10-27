@@ -23,22 +23,8 @@
   }
   stage.prepend(hero);
  }
- // Keep the live balloon question fully visible; pronunciation never interferes with the answer.
- const question=document.getElementById('jpSoruKelimeText');
- if(question&&!document.getElementById('fgBalloonSpeak')){
-  const speak=document.createElement('button');
-  speak.type='button';speak.id='fgBalloonSpeak';speak.className='fg-audio-button';
-  speak.textContent='🔊 Dinle';speak.setAttribute('aria-label','Sorudaki kelimeyi sesli dinle');
-  speak.onclick=()=>{
-   if(!('speechSynthesis'in window)||typeof SpeechSynthesisUtterance==='undefined')return;
-   try{const u=new SpeechSynthesisUtterance(question.textContent.trim());
-    const label=document.getElementById('jpSoruYonEtiket')?.textContent||'';
-    u.lang=label.includes('Türkçe')?'en-US':'tr-TR';u.rate=.86;
-    speechSynthesis.cancel();speechSynthesis.speak(u);
-   }catch{}
-  };
-  question.after(speak);
- }
+ // Seslendirme yalnızca Kulak Dedektifi'nde: Risk Balonları'nda Dinle düğmesi yok.
+ document.getElementById('fgBalloonSpeak')?.remove();
  const yo=document.getElementById('yoGovde'),modal=document.getElementById('yoModal');
  if(yo&&modal){
   const update=()=>{

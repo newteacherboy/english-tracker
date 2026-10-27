@@ -87,7 +87,7 @@
     return '<footer class="ia-tools"><div class="ia-boosters">'+
       '<button type="button" class="ia-booster" data-ia-boost="reveal"><span aria-hidden="true">💡</span>Harf Göster</button>'+
       '<button type="button" class="ia-booster eraser" data-ia-boost="erase"><span aria-hidden="true">🧽</span>Yanlışları Sil</button>'+
-      '<button type="button" class="ia-booster audio" data-ia-boost="speak"><span aria-hidden="true">🔊</span>Sesli İpucu</button></div>'+
+      '</div>'+
       '<div class="ia-bottomline" data-ia-boost-count>🃏 Kalan joker: '+(maxBoosts-usedBoosts)+'/'+maxBoosts+'</div>'+
       '<button type="button" class="ia-skip" data-ia-skip disabled>» Kelimeyi geç</button>'+
       '<p class="ia-message" role="status" aria-live="polite">Doğru harfleri seçerek Papi’yi sandığa ulaştır!</p></footer>';

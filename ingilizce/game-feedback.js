@@ -112,11 +112,27 @@ function englishVoice(){
  try{const voices=window.speechSynthesis.getVoices();return voices.find(v=>/^en[-_]US/i.test(v.lang)&&v.localService)||voices.find(v=>/^en/i.test(v.lang)&&v.localService)||voices.find(v=>/^en[-_]US/i.test(v.lang))||voices.find(v=>/^en/i.test(v.lang))||null;}catch{return null;}
 }
 if('speechSynthesis'in window){englishVoice();window.speechSynthesis.addEventListener?.('voiceschanged',englishVoice);}
+// Kural (28 Ekim 2026): oyunlarda seslendirme yalnızca Kulak Dedektifi'nde var.
+// Diğer bütün oyunlar açıkken İngilizce kelime/cümle okuması yapılmaz; ses efektleri ve müzik etkilenmez.
+const VOICE_FREE_GAME_ROOTS=['kelimeYarismaOverlay','jpOyunOverlay','boslukOyunOverlay','hafizaOyunOverlay','yagmurOyunOverlay','asmacaOyunOverlay','kelimebulOyunOverlay','esOyunOverlay','trenOyunOverlay','baOyunEkrani','rallyGame','kgOverlay','mvOverlay','harfBahcesiOverlay'];
+function gameShown(el){if(!el||!el.getClientRects().length)return false;const s=getComputedStyle(el);return s.display!=='none'&&s.visibility!=='hidden';}
+window.dmGameVoiceBlocked=function(){
+ try{
+  const yo=document.getElementById('yoModal');
+  if(yo?.classList.contains('acik')&&gameShown(yo)){
+   const active=window.OC?.aktif,game=yo.dataset.dmSelectedGame||(active&&!active.bitti?active.oyun:'');
+   if(game==='dikte')return false;
+   if(game==='cumle')return true;
+  }
+  return VOICE_FREE_GAME_ROOTS.some(id=>gameShown(document.getElementById(id)));
+ }catch{return false;}
+};
 // All existing cards, games and lessons use this shared native speech path.
 if('speechSynthesis'in window&&typeof window.SpeechSynthesisUtterance==='function'){
  const synth=window.speechSynthesis,nativeSpeak=window.dmNativeSpeechSpeak||synth.speak.bind(synth);
  synth.speak=function(u){
   if(!u||!String(u.text||'').trim())return;
+  if(window.dmGameVoiceBlocked())return;
   voiceGeneration++;clearTimeout(speechTimer);const ticket=voiceGeneration;
   try{
    synth.resume();
