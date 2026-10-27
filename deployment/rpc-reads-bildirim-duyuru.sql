@@ -29,7 +29,9 @@ begin
  end if;
  -- auth() ile aynı: son görülme en fazla 5 dakikada bir yazılır
  if ses.last_seen_at is null or ses.last_seen_at < now()-interval '5 minutes' then
-  update public.portal_sessions set last_seen_at=now() where id=ses.id;
+  -- aynı anda gelen okumalar birbirini beklemesin (kilitliyse atla, diğeri yazıyor)
+  update public.portal_sessions set last_seen_at=now()
+  where id in (select p.id from public.portal_sessions p where p.id=ses.id and (p.last_seen_at is null or p.last_seen_at < now()-interval '5 minutes') for update skip locked);
  end if;
  return s;
 end $$;
