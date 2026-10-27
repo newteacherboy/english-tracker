@@ -1,0 +1,28 @@
+name: Delete test Edge Functions
+# Tek seferlik, elle çalıştırılır. Kullanıcı onayıyla (27 Eki 2026) canlıdaki test/canary fonksiyonlarını siler.
+on:
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: 'Type DELETE to remove the test functions'
+        required: true
+permissions:
+  contents: read
+jobs:
+  delete:
+    if: ${{ github.event.inputs.confirm == 'DELETE' }}
+    runs-on: ubuntu-latest
+    env:
+      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+      PROJECT_REF: nxfqlutulxqzqgwewssd
+    steps:
+      - uses: supabase/setup-cli@v1
+        with:
+          version: latest
+      - name: Delete
+        run: |
+          test -n "$SUPABASE_ACCESS_TOKEN" || { echo "::error::SUPABASE_ACCESS_TOKEN secret is missing"; exit 1; }
+          for f in papi-lig-one-time-test papi-mascot-mail-test papi-official-email-test papi-bimi-single-recipient-test diji-api-v3-canary diji-story-v2-validation; do
+            echo "Deleting $f"
+            supabase functions delete "$f" --project-ref "$PROJECT_REF" || echo "::warning::$f could not be deleted"
+          done

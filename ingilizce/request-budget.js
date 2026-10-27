@@ -17,7 +17,7 @@
   // [Kota 27 Eki 2026] Bildirim/duyuru yoklaması seyreltildi: her dakika yerine ~2 dk (bildirim) ve 5 dk (duyuru).
   const ttl={bildirimlerim:110000,ilerlemeOzet:30000,enerjiDurumuGetir:15000,
     duyurulariGetir:300000,sosyalOgrencilerGetir:60000,seviyeDurumu:30000,
-    seviyeLigListesi:60000,yayinOzellikleri:30000,akisTumu:15000,KOK:20000,
+    seviyeLigListesi:60000,yayinOzellikleri:300000,akisTumu:15000,KOK:20000,
     sosyalDurum:30000,takipDavetListesi:30000,oyunEslesmelerim:10000,aksesuarKatalog:300000,announcementInbox:300000,teacherNotificationSummary:110000,
     safetyStatus:300000,memberStatus:30000,ogretmenBilgim:60000,ogretmenSohbetListesi:15000,
     sohbetGetir:10000,benimIstatistik:60000,akisOlaylariGetir:60000,odevlerim:60000,

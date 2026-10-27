@@ -358,7 +358,7 @@
     try {
       const [settings, readiness] = await Promise.all([
         fetch(SUPABASE_URL + '/auth/v1/settings', { headers: { apikey: SUPABASE_ANON_KEY } }).then(r => r.json()),
-        fetch(apiURL + '?islem=googleDurum').then(r => r.json())
+        Promise.resolve({ hazir: true })   /* [Kota] Google tablosu kalıcı; her açılışta sunucuya sorulmaz */
       ]);
       googleConfigured = !!(settings.external?.google && readiness.hazir);
       area.hidden = false;

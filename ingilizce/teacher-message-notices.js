@@ -17,10 +17,10 @@
  }
  async function check(){
   const t=token();if(!t||busy||document.hidden||window.dmPapiNotices?.inActivity?.()||document.getElementById('dmTeacherMessageNotice'))return;
-  if(t===lastToken&&Date.now()-lastCheck<60000)return;lastToken=t;lastCheck=Date.now();busy=true;
+  if(t===lastToken&&Date.now()-lastCheck<110000)return;lastToken=t;lastCheck=Date.now();busy=true;
   try{const r=await fetch(endpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({islem:'teacherNotificationSummary',t}),signal:AbortSignal.timeout(10000)});if(!r.ok)return;const d=await r.json();if(t!==token()||!d.ok||!d.messageSenders?.length)return;
    const key='dm_teacher_message_notice:'+d.teacherId;if(sessionStorage.getItem(key)!==JSON.stringify(d.messageSenders))show(d,key);
   }catch{}finally{busy=false;}
  }
- document.addEventListener('dm:login',check);document.addEventListener('visibilitychange',check);setTimeout(check,2500);setInterval(check,60000);
+ document.addEventListener('dm:login',check);document.addEventListener('visibilitychange',check);setTimeout(check,2500);setInterval(check,120000);
 })();

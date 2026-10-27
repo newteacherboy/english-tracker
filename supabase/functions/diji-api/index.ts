@@ -3082,6 +3082,14 @@ Deno.serve(async (req) => {
           { ...a, role: "student", student_id: DEMO_ID, teacherProxy: true });
       }
     }
+    /* [Kota 27 Eki 2026] Reddedilen tekrarlı istekleri bulmak için: yalnız 403/409'da tek satır iz (içerik/kimlik yok). */
+    if (res.status === 403 || res.status === 409) {
+      try {
+        const op = req.method === "POST" && spare ? String((await spare.clone().json().catch(() => ({})))?.islem || "") : String(new URL(req.url).searchParams.get("islem") || "");
+        const d = await res.clone().json().catch(() => null);
+        console.warn("kota-red", res.status, op || "KOK", a?.role || "anon", a?.teacher_portal_access_id ? "sinif" : "-", String(d?.hata || d?.mesaj || d?.message || "").slice(0, 50));
+      } catch (_) {}
+    }
     return res;
   }
   catch (e) { if(e instanceof PasswordPolicyError)return json({ok:false,status:"error",mesaj:e.message,message:e.message},e.status);console.error(e); return json({ status: "error", ok: false, mesaj: "Sunucu hatası, tekrar dene.", message: "Sunucu hatası" }, 500); }

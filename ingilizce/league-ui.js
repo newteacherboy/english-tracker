@@ -66,6 +66,6 @@ root.addEventListener('click',e=>{
 document.addEventListener('dm:login',()=>{owner='';reset();});
 document.addEventListener('dm:state',()=>{for(const state of Object.values(states))state.at=0;if(onScreen())void load();});
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&onScreen())void load();});
-setInterval(()=>{if(!document.hidden&&onScreen())void load();},60000);
+setInterval(()=>{if(!document.hidden&&onScreen())void load();},180000); // [Kota] 1 dk -> 3 dk
 window.dmLeagueUI={refresh:()=>load(true),render};
 })();
