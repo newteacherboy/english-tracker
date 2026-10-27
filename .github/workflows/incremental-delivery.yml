@@ -1,0 +1,23 @@
+name: Public CDN and incremental transfer safety
+on:
+  push:
+    paths:
+      - 'supabase/functions/diji-api/**'
+      - 'ingilizce/public-catalog.js'
+      - 'ingilizce/incremental-reads.js'
+      - 'scripts/build-public-catalog.mjs'
+      - 'tests/*delta*'
+      - 'tests/*incremental*'
+      - 'tests/public-catalog.test.cjs'
+      - '.github/workflows/incremental-delivery.yml'
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: node --test tests/delta-reads.test.mjs tests/incremental-client.test.cjs tests/public-catalog.test.cjs tests/request-budget.test.cjs tests/teacher-chat-routing.test.mjs tests/api-security-guards.test.cjs tests/word-payload.test.mjs tests/weekly-release-api.test.cjs

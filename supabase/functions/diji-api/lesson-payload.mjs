@@ -1,0 +1,1 @@
+export function lessonPayload(content){const c=content||{},text=v=>v==null?'':typeof v==='string'?v:JSON.stringify(v);return {...c,anlatimHTML:c.anlatimHTML||'',gorselLink:c.gorselLink||'',kelimeSozlugu:text(c.kelimeSozlugu)||'{}',ornekler:text(c.ornekler)||'[]',testJSON:text(c.testJSON??c.test)||'[]',uygulamaJSON:text(c.uygulamaJSON??c.uygulama)||'[]'};}

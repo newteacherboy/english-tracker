@@ -108,7 +108,9 @@ window.supabaseClient=supabaseClient;
 
 
 </script>
-<script src="request-budget.js?v=20261027-egress-1"></script>
+<script src="public-catalog.js?v=20261027-1"></script>
+<script src="request-budget.js?v=20261027-cdn-delta-1"></script>
+<script src="incremental-reads.js?v=20261027-1"></script>
 
             <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
             <title>İngilizce Portal Giriş - Diji-Medu</title>
@@ -3248,8 +3250,7 @@ setInterval(() => {
                     if (!ogrenciAdi) return;
 
                     try {
-                        let res = await fetch(`${apiURL}?islem=sohbetGetir&ogrenci=${encodeURIComponent(ogrenciAdi)}`);
-                        let cevap = await res.json();
+                        let cevap = window.dmIncrementalReads ? await window.dmIncrementalReads.chat("sohbetGetir",ogrenciAdi) : await (await fetch(`${apiURL}?islem=sohbetGetir&ogrenci=${encodeURIComponent(ogrenciAdi)}`)).json();
 let mesajlar = Array.isArray(cevap)
     ? cevap
     : (cevap.messages || []);
@@ -3400,8 +3401,7 @@ if (!liste || liste.length === 0) {
                     if (!ogretmenAktifSohbetOgrenci) return;
                     let mesajAlani = document.getElementById('ogretmenSohbetMesajAlani');
                     try {
-                       let res = await fetch(`${apiURL}?islem=ogretmenSohbetAc&ogrenci=${encodeURIComponent(ogretmenAktifSohbetOgrenci)}`);
-let cevap = await res.json();
+                       let cevap = window.dmIncrementalReads ? await window.dmIncrementalReads.chat("ogretmenSohbetAc",ogretmenAktifSohbetOgrenci) : await (await fetch(`${apiURL}?islem=ogretmenSohbetAc&ogrenci=${encodeURIComponent(ogretmenAktifSohbetOgrenci)}`)).json();
 let mesajlar = Array.isArray(cevap)
     ? cevap
     : (cevap.messages || []);
@@ -7491,10 +7491,7 @@ setTimeout(() => {
         let zamanAsimi = setTimeout(() => kontrol.abort(), 20000);
 
         try {
-            let res = await fetch(apiURL, {
-                signal: kontrol.signal,
-                cache: 'no-store'
-            });
+            let res = window.dmIncrementalReads ? new Response(JSON.stringify(await window.dmIncrementalReads.profile({signal:kontrol.signal}))) : await fetch(apiURL,{signal:kontrol.signal,cache:'no-store'});
 
             if (!res.ok) {
                 throw new Error('HTTP ' + res.status);
@@ -14215,10 +14212,8 @@ async function dijiAkisSunucudanGuncelle() {
     try {
 
 
-        const r =
-            await fetch(
-                `${apiURL}?islem=akisTumu`
-            );
+        const merged=window.dmIncrementalReads?await window.dmIncrementalReads.feed():null;
+        const r=merged?new Response(JSON.stringify(merged)):await fetch(`${apiURL}?islem=akisTumu`);
 
         if (!r.ok) {
             throw new Error(
@@ -26531,7 +26526,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
   };
 })();
 </script>
-<script defer src="portal-bootstrap.js?v=20261018-parallel-startup-3"></script>
+<script defer src="portal-bootstrap.js?v=cdn-delta-1-20261018-parallel-startup-3"></script>
 <script defer src="google-login.js?v=20261019-apple-1"></script>
 <link rel="stylesheet" href="parkur-map-theme-v1.css?v=20261010-levelbadge-fix">
 <script defer src="parkur-map-theme-v1.js?v=3"></script>

@@ -41,7 +41,7 @@ window.dmOpenPortalSession=function({student,seconds=0,refreshProfile=false,prof
    if(profileReady)await profileReady;
    if(refreshProfile){
     const controller=new AbortController(),deadline=setTimeout(()=>controller.abort(),12000);
-    try{const r=await fetch(apiURL,{cache:'no-store',signal:controller.signal}),rows=await r.json();if(r.ok&&Array.isArray(rows)&&turn===epoch&&name()===owner){globalDataCache=rows;safe(window.dijiGlobalCacheYaz,rows);}}catch(e){console.warn('Giriş profil bilgileri yenilenemedi',e);}finally{clearTimeout(deadline);}
+    try{const r=window.dmIncrementalReads?new Response(JSON.stringify(await window.dmIncrementalReads.profile({signal:controller.signal}))):await fetch(apiURL,{cache:'no-store',signal:controller.signal}),rows=await r.json();if(r.ok&&Array.isArray(rows)&&turn===epoch&&name()===owner){globalDataCache=rows;safe(window.dijiGlobalCacheYaz,rows);}}catch(e){console.warn('Giriş profil bilgileri yenilenemedi',e);}finally{clearTimeout(deadline);}
    }
    if(turn!==epoch||name()!==owner)return false;
    dmSetProgress(55);

@@ -48,6 +48,9 @@
   }
   function direct(d,old){
     let input=d.input,opt=d.opt;
+    if(!d.skipCDN&&content.has(d.op)&&window.dmPublicCatalog){
+      return window.dmPublicCatalog.get(d.op,d.args,{signal:opt?.signal,force:d.force}).catch(e=>{if(opt?.signal?.aborted)throw e;return null;}).then(async r=>r?snapshot(r,await r.text()):direct({...d,skipCDN:true},old));
+    }
     if(d.op==='kelimelerGetir'){
       if(String(opt?.method||'GET').toUpperCase()==='POST'){opt={...opt,body:JSON.stringify({...d.args,compact:'1'})};}
       else{const u=new URL(input,location.href);u.searchParams.set('compact','1');input=u.href;}
@@ -102,7 +105,7 @@
     if(d.bypass)return native(input,opt);
     if(d.opt?.signal?.aborted)throw d.opt.signal.reason||new Error('Request aborted');
     const old=memory.get(d.key)||stored(d),age=old?Date.now()-old.at:Infinity;
-    const duration=content.has(d.op)?86400000:(ttl[d.op]||0);
+    const duration=content.has(d.op)?(window.dmPublicCatalog?300000:86400000):(ttl[d.op]||0);
     if(!d.force&&old&&(age<duration||document.hidden&&Object.hasOwn(ttl,d.op))){stats.cacheHits++;return response(old);}
     const failed=failures.get(d.key);
     if(!d.force&&failed&&Date.now()<failed.until){stats.backoffHits++;if(failed.snapshot)return response(failed.snapshot);throw failed.error;}

@@ -3,6 +3,7 @@ export function teacherChatAPI({db,json,memberStudents,clean,queue,mailShell,htm
  const ops=new Set(['sohbetGetir','sohbetMesajGonder','ogretmenSohbetAc','ogretmenSohbetListesi','ogretmenCevapGonder']);
  const checked=r=>{if(r.error)throw r.error;return r.data;};
  async function allRows(query){const rows=[];for(let offset=0;;offset+=500){const page=checked(await query().range(offset,offset+499))||[];rows.push(...page);if(page.length<500)return rows;}}
+ const micros=t=>{const ms=Date.parse(t)||0,part=String(t||'').match(/\.(\d+)/)?.[1]||'';return ms*1000+Number(part.padEnd(6,'0').slice(3,6));};
  const owner=a=>a?.role==='teacher'&&a.ogretmenKullanici==='teacher'&&a.yonetici===true;
  async function copies(){return new Set((await allRows(()=>db.from('teacher_chat_admin_copies').select('student_id'))).map(x=>x.student_id));}
  async function pupils(a){
@@ -11,11 +12,11 @@ export function teacherChatAPI({db,json,memberStudents,clean,queue,mailShell,htm
   const mirrored=await copies(),active=new Set((checked(await db.from('teachers').select('id').eq('active',true).is('frozen_at',null))||[]).map(t=>t.id));return all.filter(s=>!s.teacher_id||!active.has(s.teacher_id)||s.teacher_id===a.teacher_id||mirrored.has(s.id));
  }
  async function messages(ids){if(!ids.length)return [];return allRows(()=>db.from('chat_messages').select('*').in('student_id',ids).order('created_at',{ascending:false}).order('id',{ascending:false}));}
- async function receipts(a){return new Map((await allRows(()=>db.from('teacher_chat_receipts').select('student_id,read_through').eq('teacher_id',a.teacher_id))).map(x=>[x.student_id,Date.parse(x.read_through)||0]));}
+ async function receipts(a){return new Map((await allRows(()=>db.from('teacher_chat_receipts').select('student_id,read_through').eq('teacher_id',a.teacher_id))).map(x=>[x.student_id,micros(x.read_through)]));}
  async function inbox(a){
   const students=await pupils(a),names=new Map(students.map(s=>[s.id,s.username]));
   const [rows,marks]=await Promise.all([messages([...names.keys()]),receipts(a)]),last=new Map(),counts=new Map();
-  for(const m of rows){if(!last.has(m.student_id))last.set(m.student_id,m);if(m.sender_role==='student'&&Date.parse(m.created_at)>(marks.get(m.student_id)||0))counts.set(m.student_id,(counts.get(m.student_id)||0)+1);}
+  for(const m of rows){if(!last.has(m.student_id))last.set(m.student_id,m);if(m.sender_role==='student'&&micros(m.created_at)>(marks.get(m.student_id)||0))counts.set(m.student_id,(counts.get(m.student_id)||0)+1);}
   return [...last.values()].map(m=>({ogrenci:names.get(m.student_id),sonMesaj:m.message,mesaj:m.message,tarih:m.created_at,okunmamis:counts.get(m.student_id)||0}));
  }
  async function summary(a){const items=await inbox(a);return {messages:items.reduce((n,x)=>n+x.okunmamis,0),messageSenders:items.filter(x=>x.okunmamis).map(x=>({student:x.ogrenci,count:x.okunmamis,at:x.tarih}))};}
@@ -44,13 +45,16 @@ export function teacherChatAPI({db,json,memberStudents,clean,queue,mailShell,htm
   }
   if(!s)return json({ok:false,mesaj:'Bu sohbete erişim iznin yok.'},403);
   if(!sending){
-   const rows=await allRows(()=>db.from('chat_messages').select('*').eq('student_id',s.id).order('created_at').order('id'));
+   const delta=String(b.delta??q.get('delta'))==='1',cursor=b.cursor||null;
+   if(delta&&cursor&&(!/^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i.test(String(cursor.id))||!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,6})?(?:Z|\+00:00)$/.test(String(cursor.at))||!Number.isFinite(Date.parse(cursor.at))))return json({ok:false,mesaj:'Geçersiz mesaj imleci.'},400);
+   const rows=await allRows(()=>{let query=db.from('chat_messages').select('*').eq('student_id',s.id).order('created_at').order('id');if(delta&&cursor){const at=cursor.at;query=query.or('created_at.gt.'+at+',and(created_at.eq.'+at+',id.gt.'+cursor.id+')');}return query;});
    if(op==='ogretmenSohbetAc'&&rows.length){
-    const latest=rows.reduce((v,m)=>Date.parse(m.created_at)>Date.parse(v)?m.created_at:v,rows[0].created_at);
+    const latest=rows.at(-1).created_at;
     checked(await db.from('teacher_chat_receipts').upsert({student_id:s.id,teacher_id:a.teacher_id,read_through:latest},{onConflict:'student_id,teacher_id'}));
     checked(await db.from('chat_messages').update({read_at:new Date().toISOString()}).eq('student_id',s.id).eq('sender_role','student').is('read_at',null));
    }
-   return json(rows.map(m=>({gonderen:m.sender_role==='teacher'?'ogretmen':'ogrenci',mesaj:m.message,tarih:m.created_at,okundu:!!m.read_at})));
+   const messages=rows.map(m=>({...(delta?{id:m.id}:{}),gonderen:m.sender_role==='teacher'?'ogretmen':'ogrenci',mesaj:m.message,tarih:m.created_at,okundu:!!m.read_at}));
+   return json(delta?{delta:true,replace:!cursor,messages,cursor:rows.length?{at:rows.at(-1).created_at,id:rows.at(-1).id}:cursor}:messages);
   }
   const text=clean(b.mesaj??q.get('mesaj'),op==='sohbetMesajGonder'?1000:2000);if(!text)return json({ok:false,status:'error',mesaj:'Boş mesaj.'},400);
   if(op==='sohbetMesajGonder'){

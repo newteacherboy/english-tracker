@@ -1,3 +1,5 @@
+import {lessonPayload} from './lesson-payload.mjs';
+import {deltaReads} from './delta-reads.mjs';
 import {wordPayload} from './word-payload.mjs';
 import {teacherChatAPI} from './teacher-chat.mjs';
 import {announcementsAPI} from './announcements-api.mjs';
@@ -61,6 +63,20 @@ const papiCards = papiCardsAPI(supabase,json);
 const release = releaseAPI(supabase,json);
 const progression = progressionAPI(supabase,json);
 const cachedContent = contentCache(json);
+const transferDelta=deltaReads();
+const transferScope=(a:any)=>[a.role,a.student_id||a.teacher_id,a.teacher_portal_access_id||''].join(':');
+async function publicWords(req:Request,compact:boolean){
+ return cachedContent(req,compact?'words:compact-v1':'words',async()=>{
+  const data=await hepsiniGetir(()=>supabase.from('word_bank').select('class_no,unit_no,english,turkish,extra').eq('active',true).order('class_no').order('unit_no').order('english'));
+  return wordPayload(data,compact);
+ });
+}
+async function publicLesson(req:Request,level:string,category:string,topic:string){
+ return cachedContent(req,JSON.stringify([level,category,topic]),async()=>{
+  const {data,error}=await supabase.from('lesson_topics').select('content').eq('level',level).eq('category',category).eq('topic_name',topic).maybeSingle();if(error)throw error;
+  return lessonPayload(data?.content);
+ });
+}
 const studentManagement = adminStudentsAPI(supabase,json,hashPassword,{verifyPassword,hash:sha256,attempts:denemeSay,audit:denemeYaz});
 const contacts = contactPolicyAPI(supabase,json);
 const announcements=announcementsAPI(supabase,json);
@@ -549,7 +565,8 @@ async function leaderboardGet(op: string, body: any, q: URLSearchParams) {
   return json(rows.map(scoreRow));
 }
 
-async function rootData(a: any) {
+async function rootData(a: any,delta=false,version="") {
+  const send=async(rows:any[])=>json(delta?await transferDelta("profile",transferScope(a),version,rows):rows);
   if (!a) return json([]);
   const o = await ortakVeri();
   if (a.role === "teacher") {
@@ -557,12 +574,12 @@ async function rootData(a: any) {
     if (!a.yonetici) sorgu = sorgu.eq("teacher_id", a.teacher_id);
     const { data } = await sorgu;
     const b = await baglamYukle(null);
-    return json((data || []).map(s => profileFor(s, o, b)));
+    return send((data || []).map(s => profileFor(s, o, b)));
   }
   const { data } = await supabase.from("students").select("*").eq("id", a.student_id).maybeSingle();
   if (!data) return json([]);
   const b = await baglamYukle([a.student_id]);
-  return json([profileFor(data, o, b)]);
+  return send([profileFor(data, o, b)]);
 }
 
 const PUBLIC_BADGES: any[] = [];
@@ -1449,7 +1466,7 @@ async function handle(req: Request, proxy: any = null) {
   /* [v4.0] Bu istekte öğrenci aramaları öğretmenin kapsamıyla sınırlı (yönetici herkesi görür) */
   const studentByName = async (n: string) => { const s = await studentByNameGenel(n); const demoOwner=s?.id===DEMO_ID&&(op==='giris'||a?.student_id===DEMO_ID);return (publicParticipant(s)||demoOwner)&&(!isClassroomGuest(s)||a?.teacher_portal_access_id&&a?.student_id===s?.id)&&kapsamda(a,s)?s:null; };
   const ogrFiltre = (sorgu: any) => yoneticiOlmayan(a) ? sorgu.eq("teacher_id", a.teacher_id) : sorgu;
-  if (!op) return rootData(a);
+  if (!op) return rootData(a,String(val(body,q,"profileDelta"))==="1",String(val(body,q,"version")));
 
   // [v4.5] KİŞİSEL BİLGİLER: öğrenci kendi bilgilerini görür ve günceller.
   // Kullanıcı adı değişmez. Telefon ve e-posta silinemez, değiştirmek için mevcut şifre gerekir.
@@ -1947,13 +1964,9 @@ async function handle(req: Request, proxy: any = null) {
   }
   if (op === "dersKonuDetayGetir") {
     const level=String(val(body,q,"seviye")),category=String(val(body,q,"kategori")),topic=String(val(body,q,"konu"));
-    return cachedContent(req,JSON.stringify([level,category,topic]),async()=>{
-      const { data,error } = await supabase.from("lesson_topics").select("content").eq("level",level).eq("category",category).eq("topic_name",topic).maybeSingle();
-      if(error)throw error;
-      const c:any=(data&&data.content)||{};
-      return { ...c, anlatimHTML: c.anlatimHTML || "", gorselLink: c.gorselLink || "", kelimeSozlugu: metinVer(c.kelimeSozlugu) || "{}", ornekler: metinVer(c.ornekler) || "[]", testJSON: metinVer(c.testJSON ?? c.test) || "[]", uygulamaJSON: metinVer(c.uygulamaJSON ?? c.uygulama) || "[]" };
-    });
+    return publicLesson(req,level,category,topic);
   }
+
   if (op === "dersBilmiyordumToggle") {
     const name = String(body.ogrenci || ""); const deny = await requireStudent(a, name); if (deny) return deny;
     const s = await hedefOgrenci(a, name); if (!s) return bulunamadi();
@@ -1978,7 +1991,7 @@ async function handle(req: Request, proxy: any = null) {
       liste.push({ k: e.id, t: Date.parse(e.created_at), ogr: ad, ad, tur: e.event_type === "energy_loss" ? "eksi" : "arti", ikon, metin, g: false });
     }
     liste.forEach(x => { x.b = b.get(x.k) || 0; x.tb = tb.get(x.k) || 0; });
-    return json({ liste });
+    return json(String(val(body,q,"delta"))==="1"?await transferDelta("feed",transferScope(a),String(val(body,q,"version")),liste):{liste});
   }
   if (op === "akisOlaylariGetir") {
     const name = String(val(body, q, "ogrenci")); const deny = await requireStudent(a, name); if (deny) return deny;
@@ -2475,13 +2488,19 @@ async function handle(req: Request, proxy: any = null) {
     }
     return json({ok:true,entries});
   }
-  if (op === "kelimelerGetir") {
-    const compact=String(val(body,q,"compact"))==="1";
-    return cachedContent(req,compact?"words:compact-v1":"words",async()=>{
-      const data = await hepsiniGetir(() => supabase.from("word_bank").select("class_no,unit_no,english,turkish,extra").eq("active", true).order("class_no").order("unit_no").order("english"));
-      return wordPayload(data,compact);
-    });
+  if(op==='publicCatalogIndex')return cachedContent(req,'public-catalog-index',async()=>{
+    const headers=new Headers(req.headers);headers.set('accept-encoding','identity');const words=await publicWords(new Request(req.url,{headers}),true);
+    const {data,error}=await supabase.from('lesson_topics').select('level,category,topic_name,content').eq('active',true).order('sort_no');if(error)throw error;
+    return {wordsVersion:words.headers.get('X-Diji-Content-Version'),lessons:await Promise.all((data||[]).map(async(x:any)=>({level:x.level,category:x.category,topic:x.topic_name,key:JSON.stringify([x.level,x.category,x.topic_name]),version:await sha256(JSON.stringify(lessonPayload(x.content)))})))};
+  });
+  if(op==='publicCatalogVersion'){
+    const kind=String(val(body,q,'kind')),headers=new Headers(req.headers);headers.set('accept-encoding','identity');
+    const plainRequest=new Request(req.url,{headers});
+    const response=kind==='words'?await publicWords(plainRequest,true):kind==='lesson'?await publicLesson(plainRequest,String(val(body,q,'seviye')),String(val(body,q,'kategori')),String(val(body,q,'konu'))):null;
+    if(!response)return json({ok:false},400);
+    return json({ok:true,version:response.headers.get('X-Diji-Content-Version')});
   }
+  if(op==='kelimelerGetir')return publicWords(req,String(val(body,q,'compact'))==='1');
   if (op === "ozellikListesiGetir") {
     const deny = await requireTeacher(a); if (deny) return deny;   /* [v5.0] öğrenci adları içerebilir */
     const { data } = await supabase.from("feature_flags").select("code,name,target_type,target_value,enabled").order("name");
