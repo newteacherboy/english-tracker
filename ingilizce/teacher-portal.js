@@ -422,7 +422,7 @@
 
  }
 
- window.dmTeacherPortal={openLogin,openProfile,beforeGame,management,prepareTools:prepareTeacherTools,returnToGames:()=>{if(!mode||state()?.route!=='games')return;window.dmViewHistory?.clear?.();teacherDestination('games');}};
+ window.dmTeacherPortal={openMessages:()=>teacherDashboardAction('messages'),openLogin,openProfile,beforeGame,management,prepareTools:prepareTeacherTools,returnToGames:()=>{if(!mode||state()?.route!=='games')return;window.dmViewHistory?.clear?.();teacherDestination('games');}};
  if(document.body.dataset.teacherReset==='1'){resetPage();return;}
  if(mode){document.body.classList.add('dm-teacher-portal');document.documentElement.classList.add('dm-teacher-portal');document.documentElement.classList.add('tp-home-starting');window.cikisYap=window.dmTeacherPortalExit;window.siniftaOyunModuAc=()=>{document.getElementById('ogretmenMenuModal')?.style.setProperty('display','none');window.aktivitelerTamEkranAc?.();};}
  let scheduled=false;const observe=()=>{if(scheduled)return;scheduled=true;requestAnimationFrame(()=>{scheduled=false;decorate();if(mode){suppressPreviewPrompts();hideTeacherHeader();const n=document.getElementById('bottomNavMobile');n?.querySelectorAll('.bn-item').forEach(i=>{if((i.dataset.ekran==='tab-profil'||/^(profil|profilim)$/i.test((i.textContent||'').trim())))i.remove();});}});};new MutationObserver(observe).observe(document.body,{childList:true,subtree:true});decorate();wrapGames();

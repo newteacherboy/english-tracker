@@ -3285,11 +3285,13 @@ let mesajlar = Array.isArray(cevap)
                     input.value = "";
 
                     try {
-                        let url = `${apiURL}?islem=sohbetMesajGonder&ogrenci=${encodeURIComponent(ogrenciAdi)}&mesaj=${encodeURIComponent(txt)}`;
-                        let response = await fetch(url);
+                        let response = await fetch(apiURL, {method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({islem:"sohbetMesajGonder",ogrenci:ogrenciAdi,mesaj:txt})});
                         let data = await response.json();
 
-                        if (data.status === "limit_doldu") {
+                        if (data.ok === false || data.status === "error") {
+                            input.value = txt;
+                            body.innerHTML += `<div class="ai-msg bot">${guvenliMetin(data.mesaj || data.message || "Mesaj gönderilemedi.")}</div>`;
+                        } else if (data.status === "limit_doldu") {
                             input.value = txt;
                             body.innerHTML += `<div class="ai-msg bot" style="color:#b91c1c; background:#fee2e2;">⚠️ Bugünlük mesaj hakkını doldurdun (günlük limit: ${data.limit}). Yarın tekrar deneyebilir ya da rozet kazanarak hakkını artırabilirsin!</div>`;
                         } else if (data.status === "cooldown") {
@@ -3300,7 +3302,7 @@ let mesajlar = Array.isArray(cevap)
                             body.innerHTML += `<div class="ai-msg bot" style="color:#b91c1c; background:#fee2e2;">⚠️ Anlamsız veya rastgele karakterler algılandı, mesajın Diji Medu'ya iletilmedi. Lütfen düzgün bir mesaj yaz.</div>`;
                         } else {
                             body.innerHTML += `<div class="ai-msg user">${guvenliMetin(txt)}</div>`;
-                            body.innerHTML += `<div class="ai-msg bot">✅ Sorunuz Diji Medu'ya iletildi, en kısa sürede buradan size dönüş sağlayacaktır. Arada girip sohbet kutusunu kontrol edin!</div>`;
+                            body.innerHTML += `<div class="ai-msg bot">✅ Mesajın öğretmenine iletildi, en kısa sürede buradan size dönüş sağlayacaktır. Arada girip sohbet kutusunu kontrol edin!</div>`;
                         }
                         body.scrollTop = body.scrollHeight;
                     } catch (err) {
@@ -26691,7 +26693,8 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <link rel="stylesheet" href="game-viewport.css?v=20261025-classroom-quiet-2"><script defer src="game-viewport.js?v=20261025-fit-2"></script>
 <link rel="stylesheet" href="eight-game-fullscreen.css?v=20261020-fit-v1">
 <script defer src="eight-game-fullscreen.js?v=20261025-close-1"></script>
-<link rel="stylesheet" href="teacher-portal.css?v=20261025-teacher-fixes-1"><script defer src="teacher-portal.js?v=20261027-password-6"></script>
+<link rel="stylesheet" href="teacher-portal.css?v=20261025-teacher-fixes-1"><script defer src="teacher-portal.js?v=20261027-chat-routing-1"></script>
 <script defer src="announcements.js?v=20261026-papi-surfaces-1"></script>
+<script defer src="teacher-message-notices.js?v=20261027-chat-routing-1"></script>
 </body>      
         </html>

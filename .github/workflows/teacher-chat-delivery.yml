@@ -1,0 +1,30 @@
+name: Teacher message routing and notices
+on:
+  push:
+    paths:
+      - 'supabase/functions/diji-api/**'
+      - 'supabase/migrations/*teacher_chat_delivery*'
+      - 'ingilizce/teacher-message-notices.js'
+      - 'tests/teacher-chat*'
+      - 'tests/teacher-message-notices*'
+      - '.github/workflows/teacher-chat-delivery.yml'
+  pull_request:
+    paths:
+      - 'supabase/functions/diji-api/**'
+      - 'supabase/migrations/*teacher_chat_delivery*'
+      - 'ingilizce/teacher-message-notices.js'
+      - 'tests/teacher-chat*'
+      - 'tests/teacher-message-notices*'
+      - '.github/workflows/teacher-chat-delivery.yml'
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: npm install --prefix /tmp/chat-qa --no-audit --no-fund --ignore-scripts @electric-sql/pglite@0.3.14 jsdom@26.1.0
+      - run: NODE_PATH=/tmp/chat-qa/node_modules node --test tests/teacher-chat-routing.test.mjs tests/teacher-chat-migration.test.cjs tests/teacher-message-notices.test.cjs tests/member-tools.test.cjs tests/teacher-portal-api.test.mjs tests/api-security-guards.test.cjs tests/onboarding-registration.test.cjs tests/portal-integrity.test.cjs

@@ -3,7 +3,7 @@ import {due,nextReview} from './review-schedule.mjs';
 import {placementStudyAccess} from './study-placement-access.mjs';
 import './placement-bank.js'; import './start-placement-bank.js';
 /* Authenticated support tools. Records live in existing per-student extra_data. */
-export function memberToolsAPI({db,json,welcome,hash,teacherScope,useStreakShield}:any){
+export function memberToolsAPI({db,json,welcome,hash,teacherScope,useStreakShield,chat}:any){
  const ops=new Set(['memberStatus','memberReminderClaim','memberEmailResend','wordReviewAdd','wordReviewList','wordReviewAnswer','placementSave','startPlacementSave','startPointChoose','startPlacementFollowup','studyPlacementInvite','teacherNotificationSummary','teacherNotificationRead','teacherPlacementResults','communicationRulesList','communicationRulesSave','communicationStats','communicationNoticePolicy']);
  const fail=(message:string,status=400)=>json({ok:false,mesaj:message},status);
  const day=()=>new Date(Date.now()+10800000).toISOString().slice(0,10);
@@ -72,8 +72,9 @@ export function memberToolsAPI({db,json,welcome,hash,teacherScope,useStreakShiel
    if(op==='teacherNotificationRead'){const ins=await db.from('audit_logs').insert({actor_role:'teacher',actor_id:a.teacher_id,operation:op,target:a.teacher_id,payload:{}});if(ins.error)throw ins.error;return json({ok:true});}
    const last=Date.parse(marks?.[0]?.created_at||'')||Date.now()-7*86400000;
    const registration=pupils.filter((s:any)=>s.status==='pending'||Date.parse(s.created_at)>last).length;
-   let unread=0;if(ids.length){const r=await db.from('chat_messages').select('id',{count:'exact',head:true}).in('student_id',ids).eq('sender_role','student').is('read_at',null);if(r.error)throw r.error;unread=r.count||0;}
-   return json({ok:true,total:registration+unread,registrations:registration,messages:unread});
+   let unread=0;if(!chat&&ids.length){const r=await db.from('chat_messages').select('id',{count:'exact',head:true}).in('student_id',ids).eq('sender_role','student').is('read_at',null);if(r.error)throw r.error;unread=r.count||0;}
+   const messageSummary=chat?await chat.summary(a):{messages:unread,messageSenders:[]};
+   return json({ok:true,teacherId:a.teacher_id,...messageSummary,total:registration+messageSummary.messages,registrations:registration});
   }
   if(a.role!=='student'||!a.student_id)return fail('Öğrenci hesabı gerekli.',403);
   const {data:s,error}=await db.from('students').select('id,username,status,email,email_verified_at,email_verification_required,teacher_id,created_at').eq('id',a.student_id).maybeSingle();

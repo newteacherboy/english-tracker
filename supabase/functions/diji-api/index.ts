@@ -1,3 +1,4 @@
+import {teacherChatAPI} from './teacher-chat.mjs';
 import {announcementsAPI} from './announcements-api.mjs';
 import {isClassroomGuest,memberStudents} from './classroom-identity.mjs';
 import {teacherPortalAPI,portalOps,portalOperationAllowed} from './teacher-portal.mjs';
@@ -1424,7 +1425,9 @@ async function handle(req: Request, proxy: any = null) {
   const graduationResponse=await routeGraduationsAPI(supabase,json,graduationCatalog).handle(op,body,a,req.method);if(graduationResponse)return graduationResponse;
   const safetyResponse=await socialSafety.handle(op,body,a,req.method);if(safetyResponse)return safetyResponse;
   const safetyDeny=await socialSafety.guard(op,body,q,a);if(safetyDeny)return safetyDeny;
-  const memberResponse=await memberToolsAPI({db:supabase,json,welcome:onboarding.welcome,hash:sha256,teacherScope:kapsamda,useStreakShield:(sid:string)=>ekonomiGuncelle(sid,(y:any)=>{const d=Math.max(0,Math.floor(num(y.dondurucu)));if(d<1)return {hata:'Seri kalkanı yok.'};y.dondurucu=d-1;return {kalan:d-1};})}).handle(op,body,q,a,req.method);if(memberResponse)return memberResponse;
+  const chat=teacherChatAPI({db:supabase,json,memberStudents,clean:temizMetin,queue:kuyrugaEkle,mailShell:mailKabugu,html:metniHtmlYap,escape:hk});
+  const chatResponse=await chat.handle(op,body,q,a,req.method);if(chatResponse)return chatResponse;
+  const memberResponse=await memberToolsAPI({db:supabase,json,chat,welcome:onboarding.welcome,hash:sha256,teacherScope:kapsamda,useStreakShield:(sid:string)=>ekonomiGuncelle(sid,(y:any)=>{const d=Math.max(0,Math.floor(num(y.dondurucu)));if(d<1)return {hata:'Seri kalkanı yok.'};y.dondurucu=d-1;return {kalan:d-1};})}).handle(op,body,q,a,req.method);if(memberResponse)return memberResponse;
   if(op==='iletisimDurumu' && !a)return json({ok:false,hata:'oturum',mesaj:'Öğrenci oturumu gerekli.'},401);
   if(op==='iletisimDurumu' && a.role!=='student')return json({ok:true,uygulanmaz:true,eksik:false,donuk:false,uyari:false});
   const contactDeny=isDemo(a)||a?.teacher_portal_access_id?null:await contacts.guard(op,a);if(contactDeny)return contactDeny;
@@ -1904,26 +1907,6 @@ async function handle(req: Request, proxy: any = null) {
     };
     const d = (data || []).find((x: any) => !gordu.has(x.id) && hedefte(x));
     return json(d ? { id: d.id, baslik: d.title, mesaj: d.message, hedefTipi: d.target_type, gosterimSinir: d.display_limit || 0, tema: d.theme || "mavi", aktif: "evet", tarih: d.created_at, gorselLink: d.image_link || "" } : null);
-  }
-  const sohbetSatiri = (m: any) => ({ gonderen: m.sender_role === "teacher" ? "ogretmen" : "ogrenci", mesaj: m.message, tarih: m.created_at, okundu: !!m.read_at });
-  if (op === "sohbetGetir") {
-    const name = String(val(body, q, "ogrenci")); const deny = await requireStudent(a, name); if (deny) return deny;
-    const s = await hedefOgrenci(a, name); if (!s) return json([]);
-    const { data } = await supabase.from("chat_messages").select("*").eq("student_id", s.id).order("created_at");
-    return json((data || []).map(sohbetSatiri));
-  }
-  if (op === "ogretmenSohbetAc") {
-    const deny = await requireTeacher(a); if (deny) return deny; const s = await studentByName(String(val(body, q, "ogrenci"))); if (!s) return json([]);
-    const { data } = await supabase.from("chat_messages").select("*").eq("student_id", s.id).order("created_at");
-    await supabase.from("chat_messages").update({ read_at: new Date().toISOString() }).eq("student_id", s.id).eq("sender_role", "student").is("read_at", null);
-    return json((data || []).map(sohbetSatiri));
-  }
-  if (op === "ogretmenSohbetListesi") {
-    const deny = await requireTeacher(a); if (deny) return deny;
-    const [{ data }, { data: st }] = await Promise.all([supabase.from("chat_messages").select("student_id,created_at,message,sender_role,read_at").order("created_at", { ascending: false }).limit(800), ogrFiltre(memberStudents(supabase.from("students").select("id,username,teacher_id")))]);
-    const ad = new Map((st || []).filter((x:any)=>x.teacher_id===a.teacher_id||(a.yonetici&&!x.teacher_id)).map((x: any) => [x.id, x.username])), son = new Map<string, any>(), say = new Map<string, number>();
-    for (const m of data || []) { if (!son.has(m.student_id)) son.set(m.student_id, m); if (m.sender_role === "student" && !m.read_at) say.set(m.student_id, (say.get(m.student_id) || 0) + 1); }
-    return json([...son.values()].filter((m: any) => ad.has(m.student_id)).map((m: any) => ({ ogrenci: ad.get(m.student_id), sonMesaj: m.message, mesaj: m.message, tarih: m.created_at, okunmamis: say.get(m.student_id) || 0 })));
   }
   if (op === "etkinlikTanimlariGetir" || op === "tumVideolariGetir") {
     /* [v5.0] Öğretmen paneli içindir: atanan öğrenci adları içerdiği için oturumsuz çağrılamaz; öğretmen sadece kendi öğrencilerini görür */
@@ -3024,26 +3007,6 @@ async function handle(req: Request, proxy: any = null) {
     }
     await supabase.from("feature_flags").upsert({ code: body.ozellikKodu, name: body.ozellikKodu, target_type: body.hedefTipi, target_value: body.hedefDegeri || "", enabled: bool(body.durum), updated_at: new Date().toISOString() }, { onConflict: "code,target_type,target_value" });
     return json({ status: "success" });
-  }
-
-  // ============================================================ MESAJLAŞMA
-  if (op === "sohbetMesajGonder") {
-    const name = String(val(body, q, "ogrenci")); const deny = await requireStudent(a, name); if (deny) return deny;
-    const s = await hedefOgrenci(a, name); if (!s) return bulunamadi();
-    const mesaj = temizMetin(val(body, q, "mesaj"), 1000); if (!mesaj) return json({ status: "error", message: "Boş mesaj." });
-    const { count } = await supabase.from("chat_messages").select("id", { count: "exact", head: true }).eq("student_id", s.id).gte("created_at", new Date(Date.now() - 86400000).toISOString());
-    if ((count || 0) >= 50) return json({ status: "limit_doldu", limit: 50 });
-    await supabase.from("chat_messages").insert({ student_id: s.id, sender_role: "student", message: mesaj });
-    try {
-      const { data: yakin } = await supabase.from("mail_queue").select("id").eq("student_id", s.id).eq("kind", "mesaj").gte("created_at", new Date(Date.now() - 30 * 60000).toISOString()).limit(1);
-      if (!yakin || !yakin.length) for (const e of await sorumluEpostalar(s)) await kuyrugaEkle({ student_id: s.id, to_email: e, kind: "mesaj", subject: `💬 ${s.username} sana mesaj gönderdi`,
-        html: mailKabugu("Yeni Öğrenci Mesajı", `<p><b>${hk(s.username)}</b> portaldan mesaj gönderdi:</p><blockquote style="margin:10px 0;padding:10px 14px;background:#faf7ff;border-left:4px solid #7c3aed;border-radius:8px">${metniHtmlYap(mesaj)}</blockquote><p>Cevaplamak için portalda <b>Öğretmen Paneli → Mesajlar</b> bölümüne gir. (Aynı öğrenciden 30 dakika içinde gelen diğer mesajlar için ayrıca e-posta gönderilmez.)</p>`) });
-    } catch (e) { console.error("mesaj e-postası", e); }
-    return json({ status: "success" });
-  }
-  if (op === "ogretmenCevapGonder") {
-    const deny = await requireTeacher(a); if (deny) return deny; const s = await studentByName(String(val(body, q, "ogrenci"))); if (!s) return json({ status: "error" });
-    await supabase.from("chat_messages").insert({ student_id: s.id, sender_role: "teacher", message: temizMetin(val(body, q, "mesaj"), 2000) }); return json({ status: "success" });
   }
 
   // ============================================================ DÜELLO
