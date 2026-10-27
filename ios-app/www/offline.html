@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Bağlantı yok</title>
+<style>
+:root{--bg:#FAF8F5;--ink:#1f2a2e;--muted:#5b6b70;--brand:#1D9E75}
+@media (prefers-color-scheme:dark){:root{--bg:#141a1c;--ink:#eef3f2;--muted:#a3b2b5}}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font-family:-apple-system,system-ui,sans-serif}
+main{min-height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 24px calc(32px + env(safe-area-inset-bottom));text-align:center}
+.papi{font-size:72px;line-height:1;margin-bottom:18px;animation:bob 2.4s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(-8px)}}
+h1{font-size:22px;margin:0 0 10px}
+p{font-size:16px;line-height:1.5;color:var(--muted);margin:0 0 28px;max-width:320px}
+button{min-height:52px;min-width:220px;border:0;border-radius:14px;background:var(--brand);color:#fff;font:700 17px -apple-system,system-ui,sans-serif}
+button:active{transform:scale(.97)}
+small{display:block;margin-top:14px;color:var(--muted);font-size:13px;min-height:18px}
+</style>
+</head>
+<body>
+<main>
+  <div class="papi" aria-hidden="true">🦜</div>
+  <h1>İnternet bağlantısı yok</h1>
+  <p>Papi derslerini getirmek için internete ihtiyaç duyuyor. Wi-Fi'ı ya da mobil veriyi açıp tekrar dene.</p>
+  <button id="retry" type="button">Tekrar dene</button>
+  <small id="note" role="status"></small>
+</main>
+<script>
+(function(){
+  var APP='https://app.dijimedu.com/ingilizce/';
+  var note=document.getElementById('note');
+  function go(){
+    note.textContent='Bağlanılıyor…';
+    fetch(APP+'?ping='+Date.now(),{cache:'no-store',mode:'no-cors'})
+      .then(function(){location.replace(APP);})
+      .catch(function(){note.textContent='Hâlâ bağlantı yok. Biraz sonra tekrar dene.';});
+  }
+  document.getElementById('retry').addEventListener('click',go);
+  window.addEventListener('online',go);
+})();
+</script>
+</body>
+</html>

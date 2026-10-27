@@ -6,6 +6,8 @@
   let linking = false;
   // Play Store (TWA) içinde Google girişi gösterilmez: Aileler politikası çocuklara yönelik uygulamada OAuth girişini kısıtlıyor.
   const androidUygulama = (() => {
+    // App Store (iOS) uygulamasında da aynı kural: Google, uygulama içi tarayıcıdan girişi zaten engelliyor.
+    try { if (window.Capacitor?.isNativePlatform?.()) return true; } catch (_) {}
     try {
       if (document.referrer.startsWith('android-app://') || new URLSearchParams(location.search).get('kaynak') === 'android') sessionStorage.setItem('dm_android_uygulama', '1');
       // A previous TWA visit must never hide Google login in a normal browser tab.

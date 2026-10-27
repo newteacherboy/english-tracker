@@ -1,0 +1,19 @@
+{
+  "appId": "com.dijimedu.ingilizce",
+  "appName": "Diji Medu",
+  "webDir": "www",
+  "server": {
+    "url": "https://app.dijimedu.com/ingilizce/",
+    "errorPath": "offline.html",
+    "allowNavigation": ["app.dijimedu.com"]
+  },
+  "ios": {
+    "contentInset": "never",
+    "backgroundColor": "#FAF8F5"
+  },
+  "plugins": {
+    "LocalNotifications": {
+      "iconColor": "#1D9E75"
+    }
+  }
+}
