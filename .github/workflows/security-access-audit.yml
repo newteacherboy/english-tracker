@@ -1,0 +1,40 @@
+name: Security access and revocation checks
+on:
+  pull_request:
+    paths:
+      - 'supabase/functions/thematic-learning/**'
+      - 'supabase/functions/teacher-oral/**'
+      - 'supabase/functions/kelime-rallisi/**'
+      - 'supabase/functions/papi-chat/**'
+      - 'supabase/functions/diji-api-v3-canary/**'
+      - 'supabase/migrations/*revoke_unused_speech_ingest*'
+      - 'tests/*security*'
+      - 'tests/account-revocation-edge.test.cjs'
+      - 'tests/edge-body-limit.test.cjs'
+      - 'tests/speech-rpc-permissions.test.cjs'
+      - '.github/workflows/security-access-audit.yml'
+  push:
+    paths:
+      - 'supabase/functions/thematic-learning/**'
+      - 'supabase/functions/teacher-oral/**'
+      - 'supabase/functions/kelime-rallisi/**'
+      - 'supabase/functions/papi-chat/**'
+      - 'supabase/functions/diji-api-v3-canary/**'
+      - 'supabase/migrations/*revoke_unused_speech_ingest*'
+      - 'tests/*security*'
+      - 'tests/account-revocation-edge.test.cjs'
+      - 'tests/edge-body-limit.test.cjs'
+      - 'tests/speech-rpc-permissions.test.cjs'
+      - '.github/workflows/security-access-audit.yml'
+permissions:
+  contents: read
+jobs:
+  security:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: npm install --prefix /tmp/security-qa --no-audit --no-fund @electric-sql/pglite@0.3.14
+      - run: NODE_PATH=/tmp/security-qa/node_modules node --test tests/account-revocation-edge.test.cjs tests/edge-body-limit.test.cjs tests/retired-edge-security.test.cjs tests/speech-rpc-permissions.test.cjs tests/papi-chat.test.cjs tests/teacher-oral-api.test.cjs tests/rally-api.test.cjs tests/thematic-learning.test.cjs tests/security-hardening.test.cjs tests/api-security-guards.test.cjs tests/password-security.test.cjs tests/teacher-portal-api.test.mjs tests/classroom-identity.test.mjs tests/classroom-authorization.test.cjs tests/teacher-online-auth.test.cjs
