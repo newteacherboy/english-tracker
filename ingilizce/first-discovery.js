@@ -45,6 +45,8 @@
  function ensureGoogleLogin(){
   const panel=$('login-container'),form=$('loginForm');if(!panel||!form)return;
   let fallback=$('dmDiscoveryGoogleFallback');
+  // Play Store ve App Store uygulamalarında Google girişi kapalı: yedek buton da gösterilmez.
+  if(window.dmAndroidUygulama){fallback?.remove();return;}
   const original=panel.querySelector('#dmGoogleLoginArea .dm-google-login');
   if(original&&original.getClientRects().length&&!original.closest('[hidden]')){fallback?.remove();return;}
   if(fallback)return;
