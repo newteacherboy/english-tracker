@@ -4,7 +4,7 @@
  const esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
  const who=()=>typeof aktifOgrenciAdi!=='undefined'?aktifOgrenciAdi:'';
  const logged=()=>who()&&who().toLowerCase()!=='teacher'&&(!!localStorage.getItem('ing_token')||window.dmPreviewFixtures===true);
- const stamp=new Map();let skew=0,currentAccount='',fetching=false,lastRefresh=0,scheduled;
+ const stamp=new Map();let skew=0,currentAccount='',fetching=false,lastRefresh=0,scheduled,failCount=0,retryAt=0;
  function isOnline(p){const s=stamp.get(p);return !!s?.online&&!!s.seenAt&&Date.now()+skew-Date.parse(s.seenAt)<=300000;}
  function badge(p,compact=false){const b=document.createElement('span');b.className='dm-online-badge'+(compact?' compact':'');b.dataset.onlinePerson=p;return b;}
  function paint(){document.querySelectorAll('[data-online-person]').forEach(b=>{const on=isOnline(b.dataset.onlinePerson),known=stamp.has(b.dataset.onlinePerson);b.classList.toggle('online',on);const t=on?'Çevrimiçi':known?'Çevrimdışı':'Durum kontrol ediliyor…';if(b.textContent!==t)b.textContent=t;b.setAttribute('aria-label',t);b.title=on?'Şu an veya son 5 dakika içinde aktif':'Son 5 dakika içinde etkinlik yok';});}
@@ -15,13 +15,14 @@
   if(!logged()||document.hidden||fetching||window.dmFeatureEnabled?.('cevrimici')===false)return;
   const owner=who(),names=[...new Set([...document.querySelectorAll('[data-online-person]')].map(b=>b.dataset.onlinePerson))].slice(0,120);
   if(!force&&Date.now()-lastRefresh<30000&&names.every(p=>stamp.has(p)))return;
-  fetching=true;try{const d=await m.api('aktifDurum',{isimler:names});if(owner!==who())return;skew=Date.parse(d.serverNow)-Date.now();for(const p of names)stamp.set(p,{online:false});for(const p of d.liste)stamp.set(p.ad,p);lastRefresh=Date.now();paint();}catch(e){}finally{fetching=false;}
+  if(Date.now()<retryAt)return;
+  fetching=true;try{const d=await m.api('aktifDurum',{isimler:names});if(owner!==who())return;skew=Date.parse(d.serverNow)-Date.now();for(const p of names)stamp.set(p,{online:false});for(const p of d.liste)stamp.set(p.ad,p);lastRefresh=Date.now();failCount=0;paint();}catch(e){/* [Kota 29 Eki 2026] Hatada sayfa değiştikçe tekrar tekrar sorulmaz: artan bekleme (1 → 30 dk). */failCount++;retryAt=Date.now()+Math.min(1800000,60000*2**(failCount-1));}finally{fetching=false;}
  }
  function queue(){clearTimeout(scheduled);scheduled=setTimeout(()=>{attach();refresh();},200);}
  attach();
  const profile=document.getElementById('tab-meduakis');if(profile)new MutationObserver(queue).observe(profile,{childList:true,subtree:true});
  document.addEventListener('visibilitychange',()=>{if(!document.hidden){lastRefresh=0;refresh(true);}});
- setInterval(()=>{if(currentAccount!==who()){currentAccount=who();stamp.clear();lastRefresh=0;}attach();refresh();},60000);setTimeout(()=>refresh(true),2000);
+ setInterval(()=>{if(currentAccount!==who()){currentAccount=who();stamp.clear();lastRefresh=0;failCount=0;retryAt=0;}attach();refresh();},60000);setTimeout(()=>refresh(true),2000);
  window.dmSocialPresence={isOnline,refresh};
  window.dmInviteAc=async function(game){
   if(!['ucus','rota'].includes(game))return;
