@@ -31,15 +31,7 @@
     '#dmNetBand{position:fixed;left:12px;right:12px;top:calc(env(safe-area-inset-top,0px) + 8px);z-index:2147483000;' +
     'padding:10px 14px;border-radius:12px;background:#2b2f33;color:#fff;font:600 14px/1.35 -apple-system,system-ui,sans-serif;' +
     'text-align:center;box-shadow:0 6px 20px rgba(0,0,0,.25);transform:translateY(-140%);transition:transform .25s ease}' +
-    '#dmNetBand.on{transform:none}' +
-    '#dmRemindSheet{position:fixed;inset:0;z-index:2147483001;display:flex;align-items:flex-end;justify-content:center;background:rgba(0,0,0,.35)}' +
-    '#dmRemindSheet>div{width:100%;max-width:480px;background:#fff;color:#1f2a2e;border-radius:22px 22px 0 0;' +
-    'padding:22px 20px calc(20px + env(safe-area-inset-bottom,0px));font-family:-apple-system,system-ui,sans-serif;text-align:center;' +
-    'animation:dmUp .25s ease}' +
-    '@keyframes dmUp{from{transform:translateY(100%)}}' +
-    '#dmRemindSheet h2{margin:6px 0 8px;font-size:19px}#dmRemindSheet p{margin:0 0 18px;font-size:15px;line-height:1.45;color:#5b6b70}' +
-    '#dmRemindSheet button{display:block;width:100%;min-height:50px;border-radius:14px;font:700 16px -apple-system,system-ui,sans-serif;border:0}' +
-    '#dmRemindSheet .ok{background:#1D9E75;color:#fff}#dmRemindSheet .no{background:none;color:#5b6b70;margin-top:6px}';
+    '#dmNetBand.on{transform:none}';
   (document.head || document.documentElement).appendChild(style);
 
   /* ---------- Titreşim ---------- */
@@ -124,35 +116,96 @@
     }).catch(function () {});
   }
 
+  /* Hatırlatıcı kartı: uygulamanın stilleri bozmasın diye Shadow DOM içinde. */
+  var CARD_CSS =
+    ':host{all:initial}' +
+    '*{box-sizing:border-box;margin:0}' +
+    '.bg{position:fixed;inset:0;z-index:2147483647;display:flex;align-items:center;justify-content:center;' +
+    'padding:24px 18px calc(24px + env(safe-area-inset-bottom,0px));background:rgba(14,38,34,.42);' +
+    '-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);animation:fade .25s ease both;' +
+    'font-family:system-ui,-apple-system,BlinkMacSystemFont,Arial,sans-serif;-webkit-tap-highlight-color:transparent}' +
+    '.bg.out{animation:fade .2s ease reverse both}' +
+    '.card{position:relative;width:100%;max-width:350px;padding:84px 22px 16px;border-radius:30px;text-align:center;' +
+    'background:linear-gradient(180deg,#E3F5EE 0,#F7FCFA 42%,#fff 100%);color:#12343B;' +
+    'box-shadow:0 24px 60px rgba(8,40,32,.30),inset 0 0 0 1px rgba(29,158,117,.10);animation:pop .42s cubic-bezier(.2,1.3,.4,1) both}' +
+    '.papi{position:absolute;left:50%;top:-58px;width:178px;margin-left:-89px;filter:drop-shadow(0 10px 14px rgba(8,60,50,.22));' +
+    'animation:float 3.2s ease-in-out infinite;pointer-events:none}' +
+    'h2{font-size:22px;line-height:1.2;font-weight:800;letter-spacing:-.2px;color:#12343B}' +
+    '.sub{margin-top:6px;font-size:15px;line-height:1.4;color:#4E6A6F}' +
+    '.note{display:flex;gap:11px;align-items:center;margin:18px 0 6px;padding:11px 12px;border-radius:18px;text-align:left;' +
+    'background:rgba(255,255,255,.92);box-shadow:0 8px 22px rgba(18,52,59,.12),0 0 0 1px rgba(18,52,59,.06);' +
+    'animation:slide .5s .25s cubic-bezier(.2,1.2,.4,1) both}' +
+    '.note img{flex:none;width:38px;height:38px;border-radius:10px}' +
+    '.note div{min-width:0;flex:1}' +
+    '.meta{display:flex;justify-content:space-between;font-size:11.5px;font-weight:600;color:#8A9A9D;text-transform:uppercase;letter-spacing:.3px}' +
+    '.note b{display:block;margin-top:2px;font-size:14.5px;color:#12343B}' +
+    '.note span.t{display:block;font-size:13.5px;line-height:1.3;color:#3E5559}' +
+    '.quiet{font-size:12.5px;color:#7A8D90;margin-bottom:18px}' +
+    'button{display:block;width:100%;border:0;outline:0;font:inherit;cursor:pointer;touch-action:manipulation}' +
+    'button:focus-visible{outline:3px solid rgba(29,158,117,.45);outline-offset:3px}' +
+    '.ok{min-height:54px;border-radius:17px;font-size:17px;font-weight:800;color:#fff;' +
+    'background:linear-gradient(180deg,#25B585,#1D9E75);box-shadow:0 4px 0 #157A5A,0 10px 20px rgba(29,158,117,.28);' +
+    'transition:transform .08s,box-shadow .08s}' +
+    '.ok:active{transform:translateY(3px);box-shadow:0 1px 0 #157A5A,0 4px 10px rgba(29,158,117,.25)}' +
+    '.no{min-height:46px;margin-top:8px;background:none;font-size:15px;font-weight:600;color:#6B8084}' +
+    '@keyframes fade{from{opacity:0}}' +
+    '@keyframes pop{from{opacity:0;transform:translateY(24px) scale(.94)}}' +
+    '@keyframes slide{from{opacity:0;transform:translateY(-10px) scale(.96)}}' +
+    '@keyframes float{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-8px) rotate(2deg)}}' +
+    '@media (prefers-reduced-motion:reduce){*{animation:none!important}}';
+
+  function openReminderCard(done) {
+    var host = document.createElement('div');
+    host.id = 'dmRemindHost';
+    var shadow = host.attachShadow ? host.attachShadow({ mode: 'open' }) : host;
+    var asset = function (path) { try { return new URL(path, document.baseURI).href; } catch (_) { return path; } };
+    shadow.innerHTML = '<style>' + CARD_CSS + '</style>' +
+      '<div class="bg"><div class="card" role="dialog" aria-modal="true" aria-labelledby="t">' +
+      '<img class="papi" alt="" src="' + asset('discovery-assets/papi-mektup.webp') + '">' +
+      '<h2 id="t">Papi sana hatırlatsın mı?</h2>' +
+      '<p class="sub">Serini kaybetmemen için her akşam kısa bir not gönderir.</p>' +
+      '<div class="note" aria-hidden="true"><img alt="" src="' + asset('papagan-app-icon-512.png') + '">' +
+      '<div><span class="meta"><span>Diji Medu</span><span>19:00</span></span>' +
+      '<b>Papi seni bekliyor 🦜</b><span class="t">Serini korumak için bugün kısa bir ders yeter!</span></div></div>' +
+      '<p class="quiet">O gün ders yaptıysan sessiz kalır.</p>' +
+      '<button type="button" class="ok">Evet, hatırlat</button>' +
+      '<button type="button" class="no">Şimdi değil</button>' +
+      '</div></div>';
+    document.body.appendChild(host);
+    var bg = shadow.querySelector('.bg');
+    var finished = false;
+    function close(accepted) {
+      if (finished) return;
+      finished = true;
+      bg.classList.add('out');
+      setTimeout(function () { host.remove(); }, 200);
+      done(accepted);
+    }
+    shadow.querySelector('.ok').onclick = function () { close(true); };
+    shadow.querySelector('.no').onclick = function () { close(false); };
+    bg.addEventListener('click', function (e) { if (e.target === bg) close(false); });
+  }
+
   function loginVisible() {
     var el = document.getElementById('login-container');
     return !!(el && el.offsetParent !== null);
   }
 
   function offerReminder() {
-    if (!Notes || store(PREF) || document.getElementById('dmRemindSheet')) return;
+    if (!Notes || store(PREF) || document.getElementById('dmRemindHost')) return;
+    var root = document.documentElement.classList;
+    if (root.contains('dm-teacher-portal') || root.contains('dm-teacher-child')) return;
     if (loginVisible() || document.hidden) return;
     Notes.checkPermissions().then(function (p) {
       if (p && p.display === 'granted') { store(PREF, 'acik'); reschedule(); return; }
       if (p && p.display === 'denied') { store(PREF, 'kapali'); return; }
-      var sheet = document.createElement('div');
-      sheet.id = 'dmRemindSheet';
-      sheet.innerHTML = '<div role="dialog" aria-modal="true" aria-labelledby="dmRemindTitle">' +
-        '<div style="font-size:44px" aria-hidden="true">🦜🔔</div>' +
-        '<h2 id="dmRemindTitle">Papi sana hatırlatsın mı?</h2>' +
-        '<p>Serini kaybetmemen için her akşam 19:00\'da kısa bir hatırlatma gönderir. O gün uygulamayı açtıysan rahatsız etmez.</p>' +
-        '<button type="button" class="ok">Evet, hatırlat</button>' +
-        '<button type="button" class="no">Şimdi değil</button></div>';
-      document.body.appendChild(sheet);
-      function close() { sheet.remove(); }
-      sheet.querySelector('.no').onclick = function () { store(PREF, 'kapali'); close(); };
-      sheet.querySelector('.ok').onclick = function () {
-        close();
+      openReminderCard(function (accepted) {
+        if (!accepted) { store(PREF, 'kapali'); return; }
         Notes.requestPermissions().then(function (r) {
           store(PREF, r && r.display === 'granted' ? 'acik' : 'kapali');
           reschedule();
         }).catch(function () { store(PREF, 'kapali'); });
-      };
+      });
     }).catch(function () {});
   }
 
