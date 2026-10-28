@@ -11,7 +11,7 @@
   const panels={istatistik:{id:'tab-ilerlemem',title:'İlerlemem',content:'<div id="bdIstat"></div><details class="bd-teacher"><summary>👥 Öğretmen değerlendirmeleri <span>⌄</span></summary><p>Genel puan ve deneme sonuçların · Dönem filtresinden bağımsız</p><div id="bdGelisim"></div></details>'},rozetler:{id:'tab-basarilarim',title:'Başarılarım',content:'<div id="bdRozet"></div>'},karakter:{id:'tab-dolabim',title:'Dolabım',content:'<div id="bdKarakterUst"></div><div id="bdKarakterAlan"></div><div id="bdKoleksiyon"></div>'}};
   let beceriler=null, beceriKisi='', beceriYukleniyor=false, beceriHata=false, beceriZaman=0;
   let sekme='', aralik='hafta', istat=null, istatZaman=0, istatYukleniyor=false;
-  let rozetKisi='', istatDeneme=0, yenileT=null, rozetSirasi=[], kutlama=null;
+  let istatOyunSonu=0, rozetKisi='', istatDeneme=0, yenileT=null, rozetSirasi=[], kutlama=null;
   const activePanel=()=>document.getElementById(panels[sekme]?.id);
   function ensurePanel(key){
     const config=panels[key];let el=$(config.id);if(el)return el;
@@ -204,6 +204,8 @@
           if (!r.ok || kisi !== rozetKisi) return;
           const d = await r.clone().json();
           if (d?.ok === false || d?.hata) return;
+          /* [Kota 29 Eki 2026] Oyun sonu istatistik/rozet yenilemesi en fazla 5 dakikada bir (rozet kutlaması en çok 5 dk gecikebilir). */
+          if (Date.now() - istatOyunSonu < 300000) return; istatOyunSonu = Date.now();
           clearTimeout(yenileT); yenileT = setTimeout(() => { yenileT = null; if (kisi === rozetKisi) istatGetir(true); }, 1200);
         }).catch(() => {});
       }

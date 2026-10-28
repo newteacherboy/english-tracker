@@ -14,7 +14,7 @@
 <link rel="stylesheet" href="bilgi-islands.css?v=20261024-sky-5">
 <link rel="stylesheet" href="approved-centre.css?v=20261025-feed-detail-1">
 <link rel="preload" as="image" href="papi-loading.webp" fetchpriority="high">
-<script defer src="verified-games.js?v=20261029-claim-1"></script>
+<script defer src="verified-games.js?v=20261029-claim-2"></script>
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; connect-src 'self' https://nxfqlutulxqzqgwewssd.supabase.co https://raw.githubusercontent.com; frame-src https:; object-src 'none'; worker-src 'self' blob:; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
 <meta name="referrer" content="no-referrer">
 <script id="dm-account-oauth-return">
@@ -25793,11 +25793,12 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
      =================================================================== */
   let odevler = [], odevZaman = 0, odevKisi = '', odevIstek = null;
   const ogrenciAdi = () => (typeof aktifOgrenciAdi !== 'undefined' && aktifOgrenciAdi) || '';
-  async function odevleriYukle(zorla) {
+  /* [Kota 29 Eki 2026] Oyun sonu ödev otomatik tamamlama kontrolü 10 dk'lık listeyi kullanır (her oyunda yeni istek yok). */
+  async function odevleriYukle(zorla, sure = 30000) {
     const kisi = ogrenciAdi();
     if (kisi !== odevKisi) { odevKisi = kisi; odevler = []; odevZaman = 0; odevIstek = null; $('odoKart')?.remove(); }
     if (!kisi || kucuk(kisi) === 'teacher') return [];
-    if (!zorla && Date.now() - odevZaman < 30000) return odevler;
+    if (!zorla && Date.now() - odevZaman < sure) return odevler;
     if (odevIstek) return odevIstek;
     const istek = (async () => {
       try {
@@ -25928,14 +25929,14 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
       if (d && d.ok) { o.yapildi = true; o.yildiz = yildiz || 0; toast(`✅ Ödev tamamlandı: ${o.baslik}`); if (typeof odulGoster === 'function') setTimeout(() => odulGoster({ ikon: '📝', baslik: 'Ödevini tamamladın!', alt: o.baslik }), 2800); kartCiz(); }
     } catch (e) {}
   }
-  window.dmGameAssignmentResult=async ({oyunKey,puan=0,yildiz=0,sinif,unite})=>{const list=await odevleriYukle();for(const o of list){if(!o.yapildi&&o.tur==='oyun'&&o.veri?.oyun===oyunKey&&yildiz>=(o.veri.hedefYildiz||1)&&(!sinif||Number(o.veri.sinif)===Number(sinif))&&(!o.veri.uniteler?.length||o.veri.uniteler.includes(Number(unite))))await tamamla(o,puan,yildiz);}};
+  window.dmGameAssignmentResult=async ({oyunKey,puan=0,yildiz=0,sinif,unite})=>{const list=await odevleriYukle(false,600000);for(const o of list){if(!o.yapildi&&o.tur==='oyun'&&o.veri?.oyun===oyunKey&&yildiz>=(o.veri.hedefYildiz||1)&&(!sinif||Number(o.veri.sinif)===Number(sinif))&&(!o.veri.uniteler?.length||o.veri.uniteler.includes(Number(unite))))await tamamla(o,puan,yildiz);}};
   /* Ders Çalış: konu geçilince */
   let orgDc = window.dcOdulVer;
   if (typeof orgDc === 'function') window.dcOdulVer = function () {
     let r = orgDc.apply(this, arguments);
     try {
       let sv = typeof dcAktifSeviye !== 'undefined' ? dcAktifSeviye : '', kt = typeof dcAktifKategori !== 'undefined' ? dcAktifKategori : '', kn = typeof dcAktifKonu !== 'undefined' ? dcAktifKonu : '';
-      odevleriYukle().then(l => l.filter(o => !o.yapildi && o.tur === 'ders' && o.veri && o.veri.konu === kn && (!o.veri.seviye || o.veri.seviye === sv) && (!o.veri.kategori || o.veri.kategori === kt)).forEach(o => tamamla(o, 0, 0)));
+      odevleriYukle(false, 600000).then(l => l.filter(o => !o.yapildi && o.tur === 'ders' && o.veri && o.veri.konu === kn && (!o.veri.seviye || o.veri.seviye === sv) && (!o.veri.kategori || o.veri.kategori === kt)).forEach(o => tamamla(o, 0, 0)));
     } catch (e) {}
     return r;
   };
@@ -25946,7 +25947,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
       let r = orgGso.apply(this, arguments);
       try {
         let key = o && o.oyunKey, s = key && window.OC ? OC.sonuc(key) : null;
-        if (key && s && s.yildiz) odevleriYukle().then(l => l.filter(x => !x.yapildi && x.tur === 'oyun' && x.veri && x.veri.oyun === key && s.yildiz >= (x.veri.hedefYildiz || 1)).forEach(x => tamamla(x, s.puan, s.yildiz)));
+        if (key && s && s.yildiz) odevleriYukle(false, 600000).then(l => l.filter(x => !x.yapildi && x.tur === 'oyun' && x.veri && x.veri.oyun === key && s.yildiz >= (x.veri.hedefYildiz || 1)).forEach(x => tamamla(x, s.puan, s.yildiz)));
       } catch (e) {}
       return r;
     };
@@ -26625,7 +26626,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <link rel="stylesheet" href="ders-vadi.css?v=6"><script defer src="ders-vadi.js?v=4"></script>
 <link rel="stylesheet" href="ders-test.css?v=2"><script defer src="ders-test.js?v=3"></script>
 <link rel="stylesheet" href="papi-cards.css?v=2">
-<link rel="stylesheet" href="profile-sections.css?v=20261015-1"><script defer src="profile-sections.js?v=20261015-member-fixes-2"></script>
+<link rel="stylesheet" href="profile-sections.css?v=20261015-1"><script defer src="profile-sections.js?v=20261029-kota-1"></script>
 <link rel="stylesheet" href="meteor.css?v=20261012-independent">
 <link rel="stylesheet" href="word-wheel.css?v=20261016-ten-seconds">
 <link rel="stylesheet" href="oyna-v2.css?v=20261016-layout-1">

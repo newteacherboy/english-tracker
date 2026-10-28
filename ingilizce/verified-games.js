@@ -10,7 +10,7 @@ const queueKey=(owner,runId)=>'dm_verified_events:'+owner+':'+runId;
 function pending(owner,runId){try{const d=JSON.parse(localStorage.getItem(queueKey(owner,runId))||'null');return d?.owner===owner&&d.createdAt>Date.now()-86400000&&Array.isArray(d.events)?d.events.slice(0,2000):[];}catch{return [];}}
 function persist(s){try{const rest=s.events.slice(s.acked);if(rest.length)localStorage.setItem(queueKey(s.owner,s.runId),JSON.stringify({owner:s.owner,createdAt:Date.now(),events:rest}));else localStorage.removeItem(queueKey(s.owner,s.runId));}catch{}}
 const originalFetch=window.fetch;
-async function api(op,body,owner){if(who()!==owner)throw Object.assign(Error('Hesap değişti. Oyunu yeniden başlat.'),{status:409});const r=await originalFetch(apiURL,{method:'POST',body:JSON.stringify({islem:op,ogrenci:owner,...body})});const d=await r.json();if(!r.ok||d.ok===false||d.status==='error')throw Error(d.mesaj||d.message||'Cevap kaydedilemedi. Bağlantını kontrol et.');return d;}
+async function api(op,body,owner){if(who()!==owner)throw Object.assign(Error('Hesap değişti. Oyunu yeniden başlat.'),{status:409});const r=await originalFetch(apiURL,{method:'POST',body:JSON.stringify({islem:op,ogrenci:owner,...body})});let d={};try{d=await r.json();}catch{}if(!r.ok||d.ok===false||d.status==='error')throw Object.assign(Error(d.mesaj||d.message||'Cevap kaydedilemedi. Bağlantını kontrol et.'),{status:r.status});return d;}/* [Kota 29 Eki 2026] durum kodu taşınır: süresi dolmuş oturumun ödülü (409) 3 denemede bırakılır, sonsuza dek denenmez. */
 function deck(game,words){decks.set(game,words);}
 /* [Kota 29 Eki 2026] Ödül cevabıyla gelen sıradaki durak oturumu: 15 dk içinde o durak açılırsa başlatma isteği gönderilmez. */
 const prefetched=new Map();
