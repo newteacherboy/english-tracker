@@ -68,15 +68,8 @@ export function progressionAPI(db:any,json:any){
          class_id:Number(body.classNo),stop_no:units[0],seconds:Number(body.seconds)})
       :await db.rpc('dm_solo_fair_claim',{actor:a.student_id,run_key:String(body.runId||''),game_code:game,class_id:Number(body.classNo),unit_ids:units,right_count:Number(body.correct),wrong_count:Number(body.wrong),duration_seconds:Number(body.seconds),boost_factor:[2,3,4].includes(Number(body.boost))?Number(body.boost):1});
    if(error)return json({ok:false,mesaj:error.message},400);
-   if(fair&&data?.ok&&['awarded','duplicate'].includes(String(data.reason||''))){
-     // Idempotent existing three-stop gift; retrying a completed claim may
-     // finish this independent gift if an earlier response was interrupted.
-     const stopGift=await db.rpc('dm_progress_award_stop',{actor:a.student_id,stop:units[0]});
-     if(stopGift.error)return json({ok:false,mesaj:'Durak ödülü kaydedilemedi. Yeniden dene.'},503);
-     const gift=Number(stopGift.data?.gold||0);
-     return json({...data,gold:Number(data.gold||0)+gift,yo:stopGift.data?.yo||data.yo,
-       stopGiftGold:gift});
-   }
+   /* [28 Eki 2026, kullanıcı kararı] Durak hediyesi (her 3 durakta altın, dm_progress_award_stop) kaldırıldı. */
+   if(fair&&data?.ok)return json({...data,stopGiftGold:0});
    return json(data);
   }
   if(op==='seviyeDurumu')return json({ok:true,...await context(a,true)});

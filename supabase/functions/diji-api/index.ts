@@ -1465,7 +1465,21 @@ async function handle(req: Request, proxy: any = null) {
   const managementResult=await studentManagement.handle(op,body,q,a,req.method);if(managementResult)return managementResult;
   const verifiedResponse=await verifiedGames.handle(op,body,a,req.method);if(verifiedResponse)return verifiedResponse;
   const progressionDeny=await progression.guard(op,body,q,a);if(progressionDeny)return progressionDeny;
-  const progressionResult=await progression.handle(op,body,q,a);if(progressionResult)return progressionResult;
+  const progressionResult=await progression.handle(op,body,q,a);
+  /* [Kota 29 Eki 2026] Ödül cevabına ek bilgiler: kaç cevabın kaydedildiği ve (parkurda) sıradaki durağın hazır oturumu.
+     Böylece öğrenci sıradaki durağa geçince ayrı başlatma isteği gerekmez. */
+  if(progressionResult&&op==='seviyeOyunOdulu'&&(Number.isInteger(body?.__answersAck)||body?.nextStart)){
+   try{
+    const d=await progressionResult.clone().json(),extra:any={};
+    if(Number.isInteger(body.__answersAck))extra.answersAck=body.__answersAck;
+    const n=body.nextStart;
+    if(d?.ok&&progressionResult.status===200&&n&&typeof n==='object'&&String(body.game)==='ba'&&n.game==='ba'&&n.schoolVersion===9&&n.runId!==body.runId){
+     try{const started=await verifiedGames.handle('verifiedGameStart',{runId:n.runId,game:'ba',classNo:n.classNo,units:n.units,stopNo:n.stopNo,schoolVersion:9},a,'POST');const sd=await started?.json();if(started?.status===200&&sd?.ok)extra.nextStart={...sd,runId:n.runId,stopNo:Number(n.stopNo)};}catch{}
+    }
+    return json({...d,...extra},progressionResult.status);
+   }catch{}
+  }
+  if(progressionResult)return progressionResult;
   const storyResult=await story.handle(op,body,a,req.method);if(storyResult)return storyResult;
   const meteorResult=await meteor.handle(op,body,q,a,req.method);if(meteorResult)return meteorResult;
   const topicResult=await topicGames.handle(op,body,q,a,req.method);if(topicResult)return topicResult;

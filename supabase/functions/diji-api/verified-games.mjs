@@ -38,8 +38,34 @@ export function grade(task,answer,game){
 }
 export function verifiedGamesAPI(db,json){
  const fail=(message,status=409)=>json({ok:false,mesaj:message},status);
+ /* Sıralı cevap paketi: her cevap sunucuda puanlanır ve dm_verified_answer ile kaydedilir (parkurda enerji de orada
+    düşer). İlk hatada durur; o ana kadar işlenenler results içinde döner. */
+ async function applyAnswers(a,run,data,list){
+  const results=[],stop=(mesaj,status,extra={})=>({ok:false,mesaj,status,results,processed:results.length,...extra});
+  if(!Array.isArray(list)||!list.length||list.length>64)return stop('Geçersiz cevap paketi.',400);
+  for(const item of list){
+   const slot=Number(item?.slot),task=data.deck[slot];if(!Number.isInteger(slot)||!task)return stop('Geçersiz soru.',400);
+   const g=grade(task,item?.answer,data.game);if(!g.valid)return stop('Geçersiz cevap biçimi.',400);
+   const res=await db.rpc('dm_verified_answer',{actor:a.student_id,run_key:run,slot_no:slot,event_key:String(item?.eventId||''),is_correct:g.correct,is_complete:g.complete});
+   if(res.error){const m=String(res.error.message||'Cevap kaydedilemedi.');return stop(m,409,/enerji yetersiz/i.test(m)?{energyEmpty:true}:{});}
+   results.push(res.data);
+  }
+  return {ok:true,results,processed:results.length};
+ }
  async function required(){const r=await db.rpc('dm_verified_required');return !!r.error||r.data!==false;}
  return {required,async handle(op,body,a,method){
+  /* [Kota 29 Eki 2026] Cevaplar ödül isteğiyle birlikte gelebilir: önce cevaplar kaydedilir, sonra ödül işlenir
+     (ayrı cevap paketi isteği gerekmez). Cevaplardan biri reddedilirse ödül işlenmez, hata döner. */
+  if(op==='seviyeOyunOdulu'&&Array.isArray(body?.verifiedAnswers)&&body.verifiedAnswers.length){
+   if(method!=='POST')return fail('POST gerekli.',405);
+   if(a?.role!=='student'||!a.student_id)return fail('Öğrenci oturumu gerekli.',401);
+   const run=String(body.runId||'');if(!/^[a-zA-Z0-9_-]{16,100}$/.test(run))return fail('Geçersiz oyun oturumu.',400);
+   const r=await db.from('dm_verified_runs').select('game,deck,expires_at').eq('student_id',a.student_id).eq('run_id',run).maybeSingle();
+   if(r.error)return fail('Cevap doğrulanamadı.',503);if(!r.data||Date.parse(r.data.expires_at)<Date.now())return fail('Oyun oturumu sona erdi. Yeniden başlat.');
+   const out=await applyAnswers(a,run,r.data,body.verifiedAnswers);
+   if(!out.ok){const {status,...rest}=out;return json({...rest,answersInClaim:true},status);}
+   body.__answersAck=out.processed;delete body.verifiedAnswers;return null;
+  }
   if(!['verifiedGameStart','verifiedGameAnswer','verifiedGameAnswers','verifiedGameStatus'].includes(op))return null;
   if(method!=='POST')return fail('POST gerekli.',405);
   if(a?.role!=='student'||!a.student_id)return fail('Öğrenci oturumu gerekli.',401);
@@ -90,27 +116,15 @@ export function verifiedGamesAPI(db,json){
    const deck=game==='ba'&&body.schoolVersion===9?globalThis.DMSchoolCurriculum.build(words,available,stop):compile(game,words);
    const r=await db.rpc(a.teacher_portal_access_id?'dm_teacher_verified_start':'dm_verified_start',{actor:a.student_id,run_key:run,game_code:game,cls:classNo,unit_ids:units,stop_id:stop,tasks:deck});
    if(r.error)return fail('Oyun oturumu kaydedilemedi.',409);
-   return json({ok:true,total:deck.length,words,...(body.schoolVersion===9?{tasks:deck}:{}),slots:deck.map((w,i)=>({slot:i,en:w.en,kind:w.kind,pairs:w.pairs})),...r.data});
+   return json({ok:true,answersInClaim:true,total:deck.length,words,...(body.schoolVersion===9?{tasks:deck}:{}),slots:deck.map((w,i)=>({slot:i,en:w.en,kind:w.kind,pairs:w.pairs})),...r.data});
   }
   const r=await db.from('dm_verified_runs').select('game,class_no,units,stop_no,deck,answers,expires_at').eq('student_id',a.student_id).eq('run_id',run).maybeSingle();
   if(r.error)return fail('Cevap doğrulanamadı.',503);if(!r.data||Date.parse(r.data.expires_at)<Date.now())return fail('Oyun oturumu sona erdi. Yeniden başlat.');
-  if(op==='verifiedGameStatus')return json({ok:true,...(r.data.deck[0]?.schoolVersion===9?{tasks:r.data.deck,words:r.data.deck[0].cards,answers:r.data.answers}:{}),game:r.data.game,classNo:r.data.class_no,units:r.data.units,stopNo:r.data.stop_no,slots:r.data.deck.map((t,slot)=>({slot,en:t.en,kind:t.kind,pairs:t.pairs}))});
+  if(op==='verifiedGameStatus')return json({ok:true,answersInClaim:true,...(r.data.deck[0]?.schoolVersion===9?{tasks:r.data.deck,words:r.data.deck[0].cards,answers:r.data.answers}:{}),game:r.data.game,classNo:r.data.class_no,units:r.data.units,stopNo:r.data.stop_no,slots:r.data.deck.map((t,slot)=>({slot,en:t.en,kind:t.kind,pairs:t.pairs}))});
   /* [Kota 28 Eki 2026] Toplu cevap: tek istekte sıralı birden çok cevap. Her cevap tek cevaptaki gibi sunucuda
      puanlanır ve dm_verified_answer ile kaydedilir (parkurda enerji de orada düşer). İlk hatada durur; o ana kadar
      işlenenler results içinde döner, istemci kalanları kuyrukta tutar. */
-  if(op==='verifiedGameAnswers'){
-   const list=Array.isArray(body.answers)?body.answers:[];
-   if(!list.length||list.length>64)return fail('Geçersiz cevap paketi.',400);
-   const results=[],stop=(mesaj,status,extra={})=>json({ok:false,mesaj,results,processed:results.length,...extra},status);
-   for(const item of list){
-    const slot=Number(item?.slot),task=r.data.deck[slot];if(!Number.isInteger(slot)||!task)return stop('Geçersiz soru.',400);
-    const g=grade(task,item?.answer,r.data.game);if(!g.valid)return stop('Geçersiz cevap biçimi.',400);
-    const res=await db.rpc('dm_verified_answer',{actor:a.student_id,run_key:run,slot_no:slot,event_key:String(item?.eventId||''),is_correct:g.correct,is_complete:g.complete});
-    if(res.error){const m=String(res.error.message||'Cevap kaydedilemedi.');return stop(m,409,/enerji yetersiz/i.test(m)?{energyEmpty:true}:{});}
-    results.push(res.data);
-   }
-   return json({ok:true,results,processed:results.length});
-  }
+  if(op==='verifiedGameAnswers'){const out=await applyAnswers(a,run,r.data,body.answers);if(!out.ok){const {status,...rest}=out;return json(rest,status);}return json(out);}
   const slot=Number(body.slot),task=r.data.deck[slot];if(!Number.isInteger(slot)||!task)return fail('Geçersiz soru.',400);
   const g=grade(task,body.answer,r.data.game);if(!g.valid)return fail('Geçersiz cevap biçimi.',400);
   const result=await db.rpc('dm_verified_answer',{actor:a.student_id,run_key:run,slot_no:slot,event_key:String(body.eventId||''),is_correct:g.correct,is_complete:g.complete});

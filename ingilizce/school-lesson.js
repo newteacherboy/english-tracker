@@ -6,7 +6,8 @@
  async function start({D,b,d,pool,onFinish,entryMeta={}}){
   if(active)return;const owner=who(),at=identity(),key=storageKey(owner,D.no);let saved;
   try{saved=JSON.parse(localStorage.getItem(key)||'null');}catch{}
-  const state={runId:saved?.expires>Date.now()?saved.runId:crypto.randomUUID(),owner,at,D,b,d,started:saved?.expires>Date.now()?saved.started:Date.now(),answers:{},cursor:0,version:0};active=state;
+  const practiceMode=!owner||owner.toLowerCase()==='teacher'||typeof siniftaOynananOgrenci!=='undefined'&&!!siniftaOynananOgrenci;
+  const state={runId:saved?.expires>Date.now()?saved.runId:(!practiceMode&&window.dmVerifiedGames?.nextRun?.(D.no))||crypto.randomUUID(),owner,at,D,b,d,started:saved?.expires>Date.now()?saved.started:Date.now(),answers:{},cursor:0,version:0};active=state;
   const current=()=>active===state&&identity()===at;
   const persist=()=>{if(current())try{localStorage.setItem(key,JSON.stringify({runId:state.runId,started:state.started,expires:state.started+20*60*1000}));}catch{}};
   const practice=!owner||owner.toLowerCase()==='teacher'||typeof siniftaOynananOgrenci!=='undefined'&&!!siniftaOynananOgrenci;

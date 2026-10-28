@@ -215,6 +215,8 @@ async function lessonDone(){
  if(!student())return;
  const account=identity(),day=today(),key=account+'|'+day;
  if(completionInFlight===key)return;
+ /* [Kota 29 Eki 2026] Günlük plandaki parkur adımı gün içinde bir kez işaretlenir; sonraki duraklarda istek gönderilmez. */
+ if(summary&&summary.day===day&&summary.routeDone&&owner===account)return;
  completionInFlight=key;
  routePending=false;
  try{

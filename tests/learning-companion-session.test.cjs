@@ -13,7 +13,7 @@ function harness(){
   let pending=gate();
   const context={student:()=>true,identity:()=>current,today:()=> '2026-10-19',
     api:async()=>{calls++;await pending;},load:async()=>{refreshes++;},
-    routePending:true};
+    routePending:true,summary:null,owner:''};
   vm.runInNewContext(source.slice(start,end)+';globalThis.complete=lessonDone',context);
   return {context,change:id=>{current=id},resolve:()=>resolve(),newGate:()=>{pending=gate()},get calls(){return calls},get refreshes(){return refreshes}};
 }
@@ -39,3 +39,8 @@ function nextHarness({completed=['cafe'],all=false,late=false}={}){
 test('plan dialogue shortcut skips completed dialogues and story content',async()=>{const h=nextHarness();await h.ctx.next();assert.deepEqual(h.opened,['weather']);assert.equal(h.libraries,0);});
 test('completed dialogue bank opens the library instead of silently replaying a rewarded item',async()=>{const h=nextHarness({all:true});await h.ctx.next();assert.equal(h.opened.length,0);assert.equal(h.libraries,1);});
 test('next dialogue does not open for a different account after a delayed summary',async()=>{const h=nextHarness({late:true});const pending=h.ctx.next();h.change();h.finish();await pending;assert.equal(h.opened.length,0);});
+test('after the route step is done today, later stops send no plan request',async()=>{
+ const h=harness();h.context.summary={day:'2026-10-19',routeDone:true};h.context.owner='account-A';
+ await h.context.complete();assert.equal(h.calls,0);assert.equal(h.refreshes,0);
+ h.context.summary={day:'2026-10-18',routeDone:true};const p=h.context.complete();assert.equal(h.calls,1,'yeni günde yine işaretlenir');h.resolve();await p;
+});

@@ -12,6 +12,10 @@ function persist(s){try{const rest=s.events.slice(s.acked);if(rest.length)localS
 const originalFetch=window.fetch;
 async function api(op,body,owner){if(who()!==owner)throw Object.assign(Error('Hesap değişti. Oyunu yeniden başlat.'),{status:409});const r=await originalFetch(apiURL,{method:'POST',body:JSON.stringify({islem:op,ogrenci:owner,...body})});const d=await r.json();if(!r.ok||d.ok===false||d.status==='error')throw Error(d.mesaj||d.message||'Cevap kaydedilemedi. Bağlantını kontrol et.');return d;}
 function deck(game,words){decks.set(game,words);}
+/* [Kota 29 Eki 2026] Ödül cevabıyla gelen sıradaki durak oturumu: 15 dk içinde o durak açılırsa başlatma isteği gönderilmez. */
+const prefetched=new Map();
+function prefetch(owner,d){if(!d?.runId||!d.stopNo||!Array.isArray(d.tasks))return;prefetched.set(owner+'|'+d.stopNo,{at:Date.now(),data:d});}
+function nextRun(stopNo){const p=prefetched.get(who()+'|'+stopNo);if(!p)return null;if(Date.now()-p.at>15*60000){prefetched.delete(who()+'|'+stopNo);return null;}return p.data.runId;}
 async function start(game,runId,scope,words){
  if(practice())return null;
  if(runs.has(runId)&&game==='ba'&&scope?.schoolVersion===9){await flush(runId);return api('verifiedGameStatus',{runId},who());}
@@ -30,7 +34,8 @@ async function start(game,runId,scope,words){
  if(window.OC?.aktif?.runId===runId)window.OC.aktif.rewardScope={classNo:cls,units,stopNo:scope?.stopNo||0};
  early.delete(runId);const carried=state.events.length;
  // [Kota 28 Eki 2026] Önceki açılıştan kalmış gönderilmemiş cevaplar varsa önce onları gönder, sonra güncel cevapları al.
- state.ready=api('verifiedGameStart',state.payload,state.owner).then(async d=>{state.slots=d.slots;
+ const pre=prefetched.get(state.owner+'|'+(scope?.stopNo||0));if(pre?.data.runId===runId){prefetched.delete(state.owner+'|'+scope.stopNo);if(Date.now()-pre.at<=15*60000&&carried===0){state.slots=pre.data.slots;state.inClaim=!!pre.data.answersInClaim;state.ready=Promise.resolve(pre.data);return state.ready;}}
+ state.ready=api('verifiedGameStart',state.payload,state.owner).then(async d=>{state.slots=d.slots;state.inClaim=!!d.answersInClaim;
   if(carried>0&&state.events.length>state.acked){try{await send(state);if(game==='ba'){const st=await api('verifiedGameStatus',{runId},state.owner);if(st?.answers)d={...d,answers:st.answers};}}catch{}}
   return d;});state.ready.catch(()=>{});
  return state.ready;
@@ -63,10 +68,10 @@ async function send(s){
  }
 }
 async function flush(runId){
- let s=runs.get(runId);if(!s){if(practice())return {};const owner=who(),d=await api('verifiedGameStatus',{runId},owner);s={owner,runId,game:d.game,slots:d.slots,events:pending(owner,runId),acked:0,last:{},ready:Promise.resolve(d)};runs.set(runId,s);}
+ let s=runs.get(runId);if(!s){if(practice())return {};const owner=who(),d=await api('verifiedGameStatus',{runId},owner);s={owner,runId,game:d.game,slots:d.slots,inClaim:!!d.answersInClaim,events:pending(owner,runId),acked:0,last:{},ready:Promise.resolve(d)};runs.set(runId,s);}
  if(s.sending)return s.sending;
  s.sending=(async()=>{
-  try{await s.ready;}catch{s.ready=api('verifiedGameStart',s.payload,s.owner).then(d=>{s.slots=d.slots;return d;});await s.ready;}
+  try{await s.ready;}catch{s.ready=api('verifiedGameStart',s.payload,s.owner).then(d=>{s.slots=d.slots;s.inClaim=!!d.answersInClaim;return d;});await s.ready;}
   await send(s);
   const e=s.last.energy||{};return {...s.last,enerjiKalan:e.energy,enerjiMax:e.max,eklenen:e.gain||0};
  })();
@@ -91,9 +96,29 @@ function flushAll(){for(const [runId,s] of runs)if(s.events.length>s.acked&&!s.s
 if(typeof document!=='undefined'&&document.addEventListener)document.addEventListener('visibilitychange',()=>{if(document.hidden)flushAll();});
 if(typeof addEventListener==='function')addEventListener('pagehide',flushAll);
 const C=window.OC;if(C){const choose=C.kelimeSec,begin=C.basla;C.kelimeSec=function(game,...args){const words=choose.call(this,game,...args);deck(game,words);return words;};C.basla=function(game){const r=begin.call(this,game);if(game!=='ba'&&!practice()){const a=C.aktif;start(game,a.runId,a.rewardScope).catch(e=>window.yoToast?.(e.message));}return r;};}
+/* [Kota 29 Eki 2026] Ödül isteği gönderilmemiş cevapları da taşır: sunucu önce cevapları kaydeder, sonra ödülü işler
+   (ayrı cevap paketi isteği yok). Sunucu bunu desteklemiyorsa ya da cevaplar eşlenemiyorsa eski yol: önce paket, sonra ödül. */
+async function claimWithAnswers(s,b,opt,self,args){
+ try{await s.ready;}catch{await flush(s.runId);return originalFetch.apply(self,args);}
+ const part=s.events.slice(s.acked),answers=[];
+ for(const event of part){let slot=event.slot;if(slot===undefined)slot=s.slots.findIndex(x=>key(x.en)===key(event.target));if(slot<0)throw Object.assign(Error('Cevap bu oyun oturumuna ait değil.'),{status:409});answers.push({slot,eventId:event.eventId,answer:event.answer});}
+ if(who()!==s.owner)throw Object.assign(Error('Hesap değişti. Oyunu yeniden başlat.'),{status:409});
+ const r=await originalFetch.call(self,args[0],{...opt,body:JSON.stringify({...b,verifiedAnswers:answers})});
+ let d=null;try{d=await r.clone().json();}catch{}
+ if(d&&Number.isInteger(d.answersAck)){s.acked+=Math.min(d.answersAck,answers.length);persist(s);return r;}
+ if(d?.answersInClaim){
+  s.acked+=Math.min(Number(d.processed)||0,answers.length);persist(s);
+  if(d.energyEmpty){window.genelEnerjiKalan=0;window.headerEnerjiGoster?.(0,25);}
+  throw Object.assign(Error(d.mesaj||'Cevap kaydedilemedi.'),{status:r.status,energyEmpty:!!d.energyEmpty});
+ }
+ return r;
+}
 window.fetch=async function(url,opt){
- if(typeof opt?.body==='string')try{const b=JSON.parse(opt.body);if(b.islem==='seviyeOyunOdulu'||/LiderlikKaydet$/.test(b.islem||'')){if(!practice()&&b.runId)await flush(b.runId);}}catch(e){/* Ağ/sunucu hatası veya enerji eksiği: ödül kaybolmasın, sonra tekrar denensin (503). */const kesin=!e.energyEmpty&&e.status>=400&&e.status<500&&e.status!==401&&e.status!==429;return new Response(JSON.stringify({ok:false,status:'error',mesaj:e.message}),{status:kesin?409:503,headers:{'Content-Type':'application/json'}});}
+ if(typeof opt?.body==='string')try{const b=JSON.parse(opt.body);if(b.islem==='seviyeOyunOdulu'||/LiderlikKaydet$/.test(b.islem||'')){if(!practice()&&b.runId){
+   const s=runs.get(b.runId),left=s?s.events.length-s.acked:0;
+   if(b.islem==='seviyeOyunOdulu'&&s&&s.inClaim&&!s.sending&&!batchUnsupported&&left>0&&left<=MAX_PACK)return await claimWithAnswers(s,b,opt,this,arguments);
+   await flush(b.runId);}}}catch(e){/* Ağ/sunucu hatası veya enerji eksiği: ödül kaybolmasın, sonra tekrar denensin (503). */const kesin=!e.energyEmpty&&e.status>=400&&e.status<500&&e.status!==401&&e.status!==429;return new Response(JSON.stringify({ok:false,status:'error',mesaj:e.message}),{status:kesin?409:503,headers:{'Content-Type':'application/json'}});}
  return originalFetch.apply(this,arguments);
 };
-window.dmVerifiedGames={deck,start,record,flush,pendingCount};
+window.dmVerifiedGames={deck,start,record,flush,pendingCount,prefetch,nextRun};
 })();

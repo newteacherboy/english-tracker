@@ -122,3 +122,67 @@ test('server batch grades each answer in order, stops at the first failure and r
  r=await api.handle('verifiedGameAnswers',{runId:'batch-run-1234567',answers:[]},a,'POST');assert.equal(r.status,400);
  r=await api.handle('verifiedGameAnswers',{runId:'batch-run-1234567',answers},{role:'teacher'},'POST');assert.equal(r.status,401,'yalnız öğrenci');
 });
+test('answers ride inside the reward claim when the server supports it (no separate answer pack)',async()=>{
+ // [Kota 29 Eki 2026] Ödül isteği gönderilmemiş cevapları taşır.
+ const calls=[],storage=new Map();let failClaim=true;
+ const ctx={console,Response,structuredClone,crypto,localStorage:{getItem:k=>storage.get(k)||null,setItem:(k,v)=>storage.set(k,v),removeItem:k=>storage.delete(k)},aktifOgrenciAdi:'learner',apiURL:'/api',masterKelimeHavuzu:words.map(w=>({ingilizce:w.en,turkce:w.tr,sinif:2,unite:1})),
+ fetch:async(url,opt)=>{const b=JSON.parse(opt.body);calls.push(b);if(b.islem==='verifiedGameStart')return Response.json({ok:true,answersInClaim:true,slots:words.map((w,slot)=>({en:w.en,slot}))});
+ if(b.islem==='seviyeOyunOdulu'){if(failClaim){failClaim=false;throw TypeError('network');}return Response.json({ok:true,xp:10,answersAck:b.verifiedAnswers?.length||0});}return Response.json({ok:true});},
+ OC:{kelimeSec:(game,pool)=>pool,basla(game){this.aktif={oyun:game,runId:'claim-run-1234567',rewardScope:{classNo:2,units:[1]}}},aktif:null}};
+ ctx.window=ctx;vm.createContext(ctx);vm.runInContext(fs.readFileSync('ingilizce/verified-games.js','utf8'),ctx);
+ ctx.OC.kelimeSec('ky',ctx.masterKelimeHavuzu);ctx.OC.basla('ky');
+ for(let i=0;i<3;i++)ctx.dmVerifiedGames.record(words[i].en,words[i].tr);
+ await new Promise(r=>setTimeout(r,10));
+ const first=await ctx.fetch('/api',{method:'POST',body:JSON.stringify({islem:'seviyeOyunOdulu',runId:'claim-run-1234567'})});
+ assert.equal(first.status,503,'ağ hatasında ödül silinmez, sonra denenir');assert.equal(ctx.dmVerifiedGames.pendingCount('claim-run-1234567'),3);
+ const r=await ctx.fetch('/api',{method:'POST',body:JSON.stringify({islem:'seviyeOyunOdulu',runId:'claim-run-1234567'})});
+ assert.equal((await r.json()).xp,10);
+ const claims=calls.filter(x=>x.islem==='seviyeOyunOdulu');
+ assert.equal(calls.some(x=>/^verifiedGameAnswers?$/.test(x.islem)),false,'ayrı cevap isteği yok');
+ assert.equal(claims[1].verifiedAnswers.length,3);assert.equal(claims[0].verifiedAnswers[0].eventId,claims[1].verifiedAnswers[0].eventId,'aynı olay kimlikleri');
+ assert.equal(ctx.dmVerifiedGames.pendingCount('claim-run-1234567'),0);assert.equal(storage.size,0);
+});
+test('a rejected answer inside the claim keeps the rest queued and the reward is retried later',async()=>{
+ const calls=[],storage=new Map();
+ const ctx={console,Response,structuredClone,crypto,localStorage:{getItem:k=>storage.get(k)||null,setItem:(k,v)=>storage.set(k,v),removeItem:k=>storage.delete(k)},aktifOgrenciAdi:'learner',apiURL:'/api',genelEnerjiKalan:2,masterKelimeHavuzu:words.map(w=>({ingilizce:w.en,turkce:w.tr,sinif:2,unite:1})),
+ fetch:async(url,opt)=>{const b=JSON.parse(opt.body);calls.push(b);if(b.islem==='verifiedGameStart')return Response.json({ok:true,answersInClaim:true,slots:words.map((w,slot)=>({en:w.en,slot}))});
+ if(b.islem==='seviyeOyunOdulu')return Response.json({ok:false,mesaj:'Enerji yetersiz',energyEmpty:true,answersInClaim:true,results:[{}],processed:1},{status:409});return Response.json({ok:true});},
+ OC:{kelimeSec:(game,pool)=>pool,basla(game){this.aktif={oyun:game,runId:'claim-run-7654321',rewardScope:{classNo:2,units:[1]}}},aktif:null}};
+ ctx.window=ctx;vm.createContext(ctx);vm.runInContext(fs.readFileSync('ingilizce/verified-games.js','utf8'),ctx);
+ ctx.OC.kelimeSec('ky',ctx.masterKelimeHavuzu);ctx.OC.basla('ky');
+ for(let i=0;i<3;i++)ctx.dmVerifiedGames.record(words[i].en,words[i].tr);
+ await new Promise(r=>setTimeout(r,10));
+ const r=await ctx.fetch('/api',{method:'POST',body:JSON.stringify({islem:'seviyeOyunOdulu',runId:'claim-run-7654321'})});
+ assert.equal(r.status,503,'enerji eksiğinde ödül silinmez');assert.equal(ctx.genelEnerjiKalan,0);
+ assert.equal(ctx.dmVerifiedGames.pendingCount('claim-run-7654321'),2);
+});
+test('server records answers sent with the reward claim, then lets the claim continue',async()=>{
+ const c=await load(),deck=c.compile('ky',words),calls=[];let failAt=-1;
+ const db={rpc:async(name,args)=>{calls.push(args);if(calls.length-1===failAt)return {error:{message:'Enerji yetersiz'}};return {data:{correct:args.is_correct}};},
+  from(){return {select(){return this},eq(){return this},maybeSingle:async()=>({data:{game:'ky',deck,expires_at:new Date(Date.now()+3600e3).toISOString()}})}}};
+ const api=c.verifiedGamesAPI(db,(data,status=200)=>({data,status})),a={role:'student',student_id:'sid'};
+ const verifiedAnswers=[0,1].map(slot=>({slot,eventId:'evt-'+slot+'-123456789012',answer:'x'}));
+ let body={runId:'claim-run-1234567',verifiedAnswers};
+ assert.equal(await api.handle('seviyeOyunOdulu',body,a,'POST'),null,'ödül işlenmeye devam eder');
+ assert.equal(body.__answersAck,2);assert.equal(body.verifiedAnswers,undefined);assert.equal(calls.length,2);
+ calls.length=0;failAt=1;body={runId:'claim-run-1234567',verifiedAnswers};
+ const r=await api.handle('seviyeOyunOdulu',body,a,'POST');
+ assert.equal(r.status,409);assert.equal(r.data.answersInClaim,true);assert.equal(r.data.energyEmpty,true);assert.equal(r.data.processed,1);
+ assert.equal(await api.handle('seviyeOyunOdulu',{runId:'claim-run-1234567'},a,'POST'),null,'cevapsız ödül isteğine dokunmaz');
+});
+test('the next stop prepared with the reward starts without a separate start request',async()=>{
+ const calls=[],storage=new Map();
+ const ctx={console,Response,structuredClone,crypto,localStorage:{getItem:k=>storage.get(k)||null,setItem:(k,v)=>storage.set(k,v),removeItem:k=>storage.delete(k)},aktifOgrenciAdi:'learner',apiURL:'/api',
+ fetch:async(url,opt)=>{const b=JSON.parse(opt.body);calls.push(b);return Response.json({ok:true,answersInClaim:true,slots:[],tasks:[],words:[]});}};
+ ctx.window=ctx;vm.createContext(ctx);vm.runInContext(fs.readFileSync('ingilizce/verified-games.js','utf8'),ctx);
+ const next={ok:true,answersInClaim:true,runId:'next-run-1234567890',stopNo:220152,tasks:[{kind:'teach'}],words:[{en:'a',tr:'b'}],slots:[{slot:0}],answers:{}};
+ ctx.dmVerifiedGames.prefetch('learner',next);
+ assert.equal(ctx.dmVerifiedGames.nextRun(220152),'next-run-1234567890');assert.equal(ctx.dmVerifiedGames.nextRun(220153),null);
+ const d=await ctx.dmVerifiedGames.start('ba','next-run-1234567890',{classNo:2,units:[1],stopNo:220152,schoolVersion:9},[]);
+ assert.equal(d.tasks.length,1);assert.equal(calls.length,0,'başlatma isteği yok');
+ assert.equal(ctx.dmVerifiedGames.nextRun(220152),null,'bir kez kullanılır');
+ ctx.aktifOgrenciAdi='other';ctx.dmVerifiedGames.prefetch('learner',next);assert.equal(ctx.dmVerifiedGames.nextRun(220152),null,'başka hesaba verilmez');
+ ctx.aktifOgrenciAdi='learner';ctx.dmVerifiedGames.record(0,true,'next-run-1234567890');
+ await ctx.fetch('/api',{method:'POST',body:JSON.stringify({islem:'seviyeOyunOdulu',runId:'next-run-1234567890'})});
+ assert.equal(calls.at(-1).verifiedAnswers.length,1,'hazır oturumda da cevaplar ödülle gider');
+});
