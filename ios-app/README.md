@@ -20,6 +20,10 @@ sh kur-ios.sh
 Xcode açılınca: sol üstte **App** → **Signing & Capabilities** → Team: developer hesabın.
 Ek bir capability eklemen gerekmez; yerel bildirimler "Push Notifications" istemez.
 
+## İzin metinleri
+`izinler.sh` mikrofon ve konuşma tanıma izin metinlerini, şifreleme beyanını ve ana ekran adını
+`Info.plist`'e yazar (`kur-ios.sh` bunu otomatik çalıştırır). Konuşma alıştırmaları bu izinler olmadan çöker.
+
 ## Sonraki açılışlar
 ```sh
 cd english-tracker && git pull && cd ios-app && npm run ac

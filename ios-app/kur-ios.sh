@@ -24,6 +24,7 @@ npx @capacitor/assets generate --ios --iconBackgroundColor '#1E88E5' --splashBac
   echo "⚠️ İkon üretilemedi; Xcode'da Assets → AppIcon'a resources/icon.png'yi elle sürükleyebilirsin."
 
 npx cap sync ios
+sh izinler.sh
 
 echo "✅ Hazır. Xcode açılıyor…"
 npx cap open ios
