@@ -115,7 +115,7 @@ function englishVoice(){
 if('speechSynthesis'in window){englishVoice();window.speechSynthesis.addEventListener?.('voiceschanged',englishVoice);}
 // Kural (28 Ekim 2026): oyunlarda seslendirme yalnızca Kulak Dedektifi'nde var.
 // Diğer bütün oyunlar açıkken İngilizce kelime/cümle okuması yapılmaz; ses efektleri ve müzik etkilenmez.
-const VOICE_FREE_GAME_ROOTS=['kelimeYarismaOverlay','jpOyunOverlay','boslukOyunOverlay','hafizaOyunOverlay','yagmurOyunOverlay','asmacaOyunOverlay','kelimebulOyunOverlay','esOyunOverlay','trenOyunOverlay','baOyunEkrani','rallyGame','kgOverlay','mvOverlay','harfBahcesiOverlay'];
+const VOICE_FREE_GAME_ROOTS=['kelimeGolu','kelimeYarismaOverlay','jpOyunOverlay','boslukOyunOverlay','hafizaOyunOverlay','yagmurOyunOverlay','asmacaOyunOverlay','kelimebulOyunOverlay','esOyunOverlay','trenOyunOverlay','baOyunEkrani','rallyGame','kgOverlay','mvOverlay','harfBahcesiOverlay'];
 function gameShown(el){if(!el||!el.getClientRects().length)return false;const s=getComputedStyle(el);return s.display!=='none'&&s.visibility!=='hidden';}
 window.dmGameVoiceBlocked=function(){
  try{

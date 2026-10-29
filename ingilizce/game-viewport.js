@@ -1,7 +1,7 @@
 /* One viewport and two explicit exits. Native game cleanup remains authoritative. */
 (()=>{'use strict';
  const classics={kelimeYarismaOverlay:['kelimeYarismasiKapat','kelimeYarismasiAc'],jpOyunOverlay:['jpOyunKapat','jpOyunAc'],boslukOyunOverlay:['boslukOyunKapat','boslukOyunAc'],hafizaOyunOverlay:['hafizaOyunKapat','hafizaOyunAc'],yagmurOyunOverlay:['yagmurOyunKapat','yagmurOyunAc'],asmacaOyunOverlay:['asmacaOyunKapat','asmacaOyunAc'],kelimebulOyunOverlay:['kelimebulOyunKapat','kelimebulOyunAc'],esOyunOverlay:['esOyunKapat','esOyunAc'],trenOyunOverlay:['trenOyunKapat','trenOyunAc']};
- const modern={rallyGame:'dmRally',wordWheel:'dmWordWheel',papiCards:'dmPapiCards',meteorGame:'dmMeteor',mvOverlay:'dmMola',kgOverlay:'dmTopicGames'};
+ const modern={kelimeGolu:'dmKelimeGolu',rallyGame:'dmRally',wordWheel:'dmWordWheel',papiCards:'dmPapiCards',meteorGame:'dmMeteor',mvOverlay:'dmMola',kgOverlay:'dmTopicGames'};
  const selector='.game-modal-overlay,#harfBahcesiOverlay,#dmGameIntro,#yoModal.acik[data-dm-selected-game],#rallyGame,#wordWheel,#papiCards,#meteorGame,#mvOverlay,#kgOverlay,#onlineMatch,#dmArenaOverlay,#dmMatchOverlay,#genelSonucOverlay.acik,#dyOyunOverlay,.dm-garden-match,.kart-oyun-overlay,.kp-shell,.ba-shell';
  // Observe the base IDs as well: when .acik is removed the element no longer
  // matches the active selector, so watching only active selectors leaves the
@@ -24,6 +24,7 @@
   finally{window.dmGameExitIntent='';delete root.dataset.vpClosing;queueMicrotask(()=>{sync();if(!back&&window.dmTeacherPortalMode)window.dmTeacherPortal?.returnToGames?.();});}
  }
  function decorate(root){
+  if(root.id==='kelimeGolu'){if(!root.classList.contains('dm-vp-root'))root.classList.add('dm-vp-root');return;}
   if(!native(root)&&!classics[root.id]&&!modern[root.id])return;
   if(!root.classList.contains('dm-vp-root'))root.classList.add('dm-vp-root');
   for(const [kind,label,text] of [['back','Oyun başlangıcına geri dön','‹'],['exit','Oyunu kapat','×']]){
