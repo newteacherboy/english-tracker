@@ -24101,6 +24101,8 @@ body.dc-ada .ma-klasik-don{display:none}
   /* ---------- 1) Seviyeler: ada haritası ---------- */
   function haritaCiz() {
     let k = kap('dcScreenLevels', 'maHarita'); if (!k) return;
+    // Keep the live accent controls before replacing the map that currently owns them.
+    const ses = document.querySelector('#dcScreenLevels .dc-voice-toggle');
     let toplamY = liste().reduce((t, x) => t + yildiz(x), 0), veriVar = liste().length > 0;
     let hedef = SEV.findIndex(([s]) => { let l = konular(s); return l.length && l.some(x => !bitti(x)); }); if (hedef < 0) hedef = 0;
     let yol = ADA_YER.map(([x, y]) => `${x * 4.8},${y * 5.4}`).join(' ');
@@ -24115,7 +24117,7 @@ body.dc-ada .ma-klasik-don{display:none}
       <span class="ma-tekne" style="left:${ADA_YER[hedef][0] + 12}%;top:${ADA_YER[hedef][1] - 9}%" aria-hidden="true">⛵</span></div>
       <div class="ma-alt"><button type="button" class="ma-klasik" id="maKlasik">📋 Klasik görünüm</button></div>`;
     /* ABD/İngiliz ses seçimi haritaya taşınır (aynı düğmeler, aynı işlev) */
-    let ses = document.querySelector('#dcScreenLevels .dc-voice-toggle'); if (ses) $('maSesYeri').appendChild(ses);
+    if (ses) $('maSesYeri').appendChild(ses);
     k.querySelectorAll('.ma-ada').forEach(b => b.onclick = () => dcSeviyeSec(b.dataset.s, b.dataset.ad));
     $('maKlasik').onclick = () => {
       localStorage.setItem('dc_tema', 'klasik'); document.body.classList.remove('dc-ada');
