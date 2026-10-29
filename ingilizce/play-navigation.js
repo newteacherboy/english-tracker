@@ -1,7 +1,7 @@
 /* Session navigation uses native close handlers so timers, saves and exits still run. */
 (()=>{'use strict';
- const surfaces='.game-modal-overlay,#bzPerde,#dmStoryLesson,#mlThemeList,#meteorGame,#wordWheel,#papiCards,#rallyGame,#dmGameIntro,#seviyeHaritaOverlay,#yoModal.acik,.dm-garden-match,.kp-shell,.ba-shell,.kart-oyun-overlay,#dyOyunOverlay,#genelSonucOverlay.acik,.bz-alt:has(.sp-start-card)';
- const nativeBack='.game-close-btn,#bzCik,#bzKapat,#bzVazgec,.rq-close,.ds-back,.ml-header [data-back],.ml-entry-card [data-back],.mt-exit,.ww-close,.pc-close,.yo-kapat,.seviye-harita-kapat,.kp-close-x,.ba-close,[data-ia-close],.dm-x,.hb-card>header>[data-close],.hb-card>header>button,.kart-oyun-kapat,.pomodoro-close-btn';
+ const surfaces='.game-modal-overlay,#kelimeGolu,#bzPerde,#dmStoryLesson,#mlThemeList,#meteorGame,#wordWheel,#papiCards,#rallyGame,#dmGameIntro,#seviyeHaritaOverlay,#yoModal.acik,.dm-garden-match,.kp-shell,.ba-shell,.kart-oyun-overlay,#dyOyunOverlay,#genelSonucOverlay.acik,.bz-alt:has(.sp-start-card)';
+ const nativeBack='.kg-back,.game-close-btn,#bzCik,#bzKapat,#bzVazgec,.rq-close,.ds-back,.ml-header [data-back],.ml-entry-card [data-back],.mt-exit,.ww-close,.pc-close,.yo-kapat,.seviye-harita-kapat,.kp-close-x,.ba-close,[data-ia-close],.dm-x,.hb-card>header>[data-close],.hb-card>header>button,.kart-oyun-kapat,.pomodoro-close-btn';
  // A finished game can leave its shell in the DOM. Only on-screen, interactive
  // surfaces are allowed to hide the main navigation dock.
  const shown=el=>{
@@ -26,6 +26,7 @@
   return null;
  }
  function decorate(root){
+  if(root.id==='kelimeGolu')return;
   if(!root.classList.contains('dm-session-surface'))root.classList.add('dm-session-surface');
   // These eight games have two DIFFERENT controls: the separate fullscreen
   // left arrow (previous setup screen) and the native right X (quit game).

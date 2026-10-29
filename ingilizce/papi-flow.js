@@ -5,7 +5,7 @@ const noticeSelector='#duyuruOverlay,#duyuruGecmisModal,#dmGoalAnnouncement,#dmW
 const visible=e=>!!e&&e.isConnected&&!e.classList.contains('dm-papi-held')&&e.getClientRects().length>0&&getComputedStyle(e).visibility!=='hidden'&&getComputedStyle(e).display!=='none';
 let queue=[],actor=who(),pending=false,executing='',nextAt=0,held=[],practice=null;
 // Catalogue, route maps and study browsing are normal pages, not live exercises.
-const activitySelector='.dm-vp-root,#rallyGame,#harfBahcesiOverlay,#dmGameIntro,#onlineMatch,#dmArenaOverlay,#dmMatchOverlay,#dyOyunOverlay,.dm-garden-match,.kart-oyun-overlay,.rt-school-modal,.sp-adventure-entry,#tpGameSetup,#tpGamePlayer,#mvOverlay,#kgOverlay,#dmStoryLesson,.bz-oyun,#bzAlan,#baOyunEkrani,#kpKelimeOyunEkrani,#seviyeDisLinkOverlay,#dcScreenTest,#yoModal.acik,.game-modal-overlay,.km-perde,.t2-perde,#meteorGame,#wordWheel,#papiCards,#genelSonucOverlay.acik';
+const activitySelector='#kelimeGolu,.dm-vp-root,#rallyGame,#harfBahcesiOverlay,#dmGameIntro,#onlineMatch,#dmArenaOverlay,#dmMatchOverlay,#dyOyunOverlay,.dm-garden-match,.kart-oyun-overlay,.rt-school-modal,.sp-adventure-entry,#tpGameSetup,#tpGamePlayer,#mvOverlay,#kgOverlay,#dmStoryLesson,.bz-oyun,#bzAlan,#baOyunEkrani,#kpKelimeOyunEkrani,#seviyeDisLinkOverlay,#dcScreenTest,#yoModal.acik,.game-modal-overlay,.km-perde,.t2-perde,#meteorGame,#wordWheel,#papiCards,#genelSonucOverlay.acik';
 const exercise=()=>[...document.querySelectorAll(activitySelector)].some(visible)||!!practice;
 const holding=()=>!!window.dmPapiTour?.active()||!!window.dmRoutePracticeFlight?.active?.()||exercise();
 const tourHolding=()=>!!window.dmPapiTour?.active();
