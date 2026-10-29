@@ -347,8 +347,9 @@ document.getElementById('dmBootRetry').onclick=()=>location.reload();
                         <div class="ogretmen-sohbet-mesaj-alani" id="ogretmenSohbetMesajAlani"></div>
                         <div class="ogretmen-cevap-satir">
                             <input type="text" id="ogretmenCevapInput" placeholder="Cevabınızı yazın..." onkeypress="if(event.key==='Enter') ogretmenCevapGonder()">
-                            <button onclick="ogretmenCevapGonder()">Gönder</button>
+                            <button type="button" id="ogretmenCevapButton" onclick="ogretmenCevapGonder()">Gönder</button>
                         </div>
+                        <p id="ogretmenCevapDurum" role="status" aria-live="polite" style="margin:6px 0;font-size:12px;"></p>
                     </div>
                 </div>
             </div>
@@ -3427,19 +3428,40 @@ mesajlar.forEach(m => {
                 }
 
                 async function ogretmenCevapGonder() {
-                    let input = document.getElementById('ogretmenCevapInput');
-                    let mesaj = input.value.trim();
-                    if (!mesaj || !ogretmenAktifSohbetOgrenci) return;
-
-                    let mesajAlani = document.getElementById('ogretmenSohbetMesajAlani');
-                    mesajAlani.innerHTML += `<div class="ai-msg user">${guvenliMetin(mesaj)}</div>`;
-                    mesajAlani.scrollTop = mesajAlani.scrollHeight;
-                    input.value = "";
-
+                    const input = document.getElementById('ogretmenCevapInput');
+                    const mesaj = input.value.trim();
+                    if (!mesaj || !ogretmenAktifSohbetOgrenci || ogretmenCevapGonder.pending) return;
+                    const ogrenci = ogretmenAktifSohbetOgrenci;
+                    const draft = input.value;
+                    const button = document.getElementById('ogretmenCevapButton');
+                    const status = document.getElementById('ogretmenCevapDurum');
+                    ogretmenCevapGonder.pending = true;
+                    button.disabled = true;
+                    status.textContent = 'Gönderiliyor…';
                     try {
-                        await fetch(`${apiURL}?islem=ogretmenCevapGonder&ogrenci=${encodeURIComponent(ogretmenAktifSohbetOgrenci)}&mesaj=${encodeURIComponent(mesaj)}`);
+                        const response = await fetch(apiURL, {
+                            method: 'POST',
+                            headers: {'Content-Type': 'application/json'},
+                            body: JSON.stringify({islem: 'ogretmenCevapGonder', ogrenci, mesaj}),
+                            signal: AbortSignal.timeout(15000)
+                        });
+                        const result = await response.json();
+                        if (!response.ok || result.ok !== true || result.status !== 'success') {
+                            throw Error(result.mesaj || result.message || 'Mesaj gönderilemedi. Tekrar deneyin.');
+                        }
+                        if (ogretmenAktifSohbetOgrenci === ogrenci) {
+                            if (input.value === draft) input.value = '';
+                            status.textContent = 'Mesaj gönderildi.';
+                            await ogretmenSohbetMesajlariYenile();
+                        }
                     } catch (err) {
+                        if (ogretmenAktifSohbetOgrenci === ogrenci) {
+                            status.textContent = 'Gönderim doğrulanamadı: ' + (err.message || 'Bağlantıyı kontrol edin.');
+                        }
                         console.error(err);
+                    } finally {
+                        ogretmenCevapGonder.pending = false;
+                        button.disabled = false;
                     }
                 }
 
