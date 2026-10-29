@@ -122,7 +122,12 @@
    document.body.append(dock);
    dock.addEventListener('click',e=>{const b=e.target.closest('[data-route]');if(!b)return;e.preventDefault();e.stopPropagation();const route=b.dataset.route;if(route==='home')teacherHomeShow();else if(route==='panel')teacherDashboardShow();else teacherDestination(route);});
   }
-  dock.querySelectorAll('[data-route]').forEach(b=>b.classList.toggle('active',b.dataset.route===(document.body.classList.contains('tp-dash-active')?'panel':document.body.classList.contains('tp-home-active')?'home':'other')));
+  const route=document.body.classList.contains('tp-dash-active')?'panel':document.body.classList.contains('tp-home-active')?'home':state()?.route;
+  dock.querySelectorAll('[data-route]').forEach(b=>{
+   const selected=b.dataset.route===route;
+   b.classList.toggle('active',selected);
+   if(selected)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');
+  });
  }
  function teacherHome(){
   if(!mode)return;
