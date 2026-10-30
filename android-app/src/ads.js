@@ -29,7 +29,7 @@ export function createTestAds(admob, win, events) {
         await admob.prepareRewardVideoAd({ adId: 'ca-app-pub-3940256099942544/5224354917', isTesting: true });
         if (teacherMode(win)) throw new Error('Öğretmen modunda reklam gösterilmez.');
         timer = setTimeout(() => finish.reject(new Error('Reklam yanıt vermedi. Yeniden deneyebilirsin.')), 180000);
-        await admob.showRewardVideoAd();
+        await Promise.race([admob.showRewardVideoAd(), closed]);
         await closed;
         // Test ads must never change live student balances or call a reward endpoint.
         return { completed: reward, test: true, energyGranted: 0 };
