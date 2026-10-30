@@ -1,0 +1,8 @@
+{
+  "appId": "com.dijimedu.ingilizce",
+  "appName": "Diji Medu",
+  "webDir": "www",
+  "server": {"androidScheme": "https", "appStartPath": "/ingilizce/"},
+  "android": {"backgroundColor": "#FAF8F5", "allowMixedContent": false, "webContentsDebuggingEnabled": false},
+  "plugins": {"SplashScreen": {"launchAutoHide": true}}
+}

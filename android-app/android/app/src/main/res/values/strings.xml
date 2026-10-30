@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Diji Medu</string>
+    <string name="title_activity_main">Diji Medu</string>
+    <string name="package_name">com.dijimedu.ingilizce</string>
+    <string name="custom_url_scheme">com.dijimedu.ingilizce</string>
+</resources>

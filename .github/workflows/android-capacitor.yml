@@ -1,0 +1,45 @@
+name: Diji Medu Android Capacitor
+on:
+  push:
+    paths: ['android-app/**', '.github/workflows/android-capacitor.yml']
+  pull_request:
+    paths: ['android-app/**', '.github/workflows/android-capacitor.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: android-capacitor-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  test-apk:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    defaults:
+      run:
+        working-directory: android-app
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: android-app/package-lock.json
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: android-actions/setup-android@v3
+      - run: npm ci
+      - run: npm test
+      - run: npm run sync
+      - name: Build installable preview APK
+        run: |
+          chmod +x android/gradlew
+          cd android
+          ./gradlew --no-daemon assembleDebug
+      - uses: actions/upload-artifact@v4
+        with:
+          name: DijiMedu-Capacitor-Test-APK
+          path: android-app/android/app/build/outputs/apk/debug/*.apk
+          if-no-files-found: error
+          retention-days: 30
