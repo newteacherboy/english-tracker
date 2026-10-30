@@ -2,12 +2,12 @@ import './school-curriculum.js';
 // Authoritative grading: only bank-backed tasks are persisted, no client correctness flags.
 import {loadStartPath} from './start-path-access.mjs';
 import {schoolStopProblem} from './start-path.mjs';
-export const games=new Set(['ky','jp','bosluk','hafiza','yagmur','asmaca','kelimebul','eslestirme','tren','harfbahcesi','kp','dikte','cumle','ba']);
+export const games=new Set(['ky','jp','bosluk','hafiza','yagmur','asmaca','kelimebul','eslestirme','tren','harfbahcesi','canavar','kule','kp','dikte','cumle','ba']);
 export const norm=v=>String(v??'').normalize('NFKC').toLocaleLowerCase('en').replace(/[’‘`]/g,"'").replace(/[^\p{L}\p{N}]+/gu,' ').trim();
 const key=v=>String(v??'').trim().toLocaleLowerCase('en');
 export const types=['teach','hatirla','soyle','dinleSec','eslestir','eksik','lab','wordOrder','patternOrder','patternComplete','patternListen','patternTranslate'];
 export function compile(game,words){
- if(game!=='ba')return words.map(w=>({...w,kind:['ky','jp','kp'].includes(game)?'either':['hafiza','eslestirme','yagmur'].includes(game)?'tr':'en'}));
+ if(game!=='ba')return words.map(w=>({...w,kind:['ky','jp','kp'].includes(game)?'either':['hafiza','eslestirme','yagmur','kule'].includes(game)?'tr':'en'}));
  return types.map((kind,i)=>{
   const w=words[i%words.length],phrase=words.find(x=>norm(x.en).split(' ').length>1&&(' '+norm(x.en)+' ').includes(' '+norm(w.en)+' '))||w;
   const expected=kind==='lab'?w.tr:kind==='patternComplete'?phrase.en.trim().split(/\s+/).at(-1):['wordOrder','patternOrder','patternListen','patternTranslate'].includes(kind)?phrase.en:w.en;
@@ -34,7 +34,7 @@ export function grade(task,answer,game){
  const candidates=game==='kp'||task.kind==='soyle'?answer.split('|'):[answer];
  if(candidates.length>3)return {valid:false,correct:false,complete:false};
  const correct=candidates.some(x=>norm(x)===norm(expected)||task.kind==='either'&&norm(x)===norm(task.tr));
- return {valid:true,complete:correct||game==='ba'||['ky','yagmur','dikte','cumle'].includes(game),correct};
+ return {valid:true,complete:correct||game==='ba'||['ky','yagmur','dikte','cumle','canavar','kule'].includes(game),correct};
 }
 export function verifiedGamesAPI(db,json){
  const fail=(message,status=409)=>json({ok:false,mesaj:message},status);
@@ -114,8 +114,8 @@ export function verifiedGamesAPI(db,json){
    }
    if(!words.length)return fail('Bu bölümde soru bulunamadı.',400);
    const deck=game==='ba'&&body.schoolVersion===9?globalThis.DMSchoolCurriculum.build(words,available,stop):compile(game,words);
-   const r=await db.rpc(a.teacher_portal_access_id?'dm_teacher_verified_start':'dm_verified_start',{actor:a.student_id,run_key:run,game_code:game,cls:classNo,unit_ids:units,stop_id:stop,tasks:deck});
-   if(r.error)return fail('Oyun oturumu kaydedilemedi.',409);
+   const r=await db.rpc(a.teacher_portal_access_id?'dm_teacher_verified_start':['canavar','kule'].includes(game)?'dm_arcade_verified_start':'dm_verified_start',{actor:a.student_id,run_key:run,game_code:game,cls:classNo,unit_ids:units,stop_id:stop,tasks:deck});
+   if(r.error)return fail(['canavar','kule'].includes(game)?r.error.message:'Oyun oturumu kaydedilemedi.',409);
    return json({ok:true,answersInClaim:true,total:deck.length,words,...(body.schoolVersion===9?{tasks:deck}:{}),slots:deck.map((w,i)=>({slot:i,en:w.en,kind:w.kind,pairs:w.pairs})),...r.data});
   }
   const r=await db.from('dm_verified_runs').select('game,class_no,units,stop_no,deck,answers,expires_at').eq('student_id',a.student_id).eq('run_id',run).maybeSingle();

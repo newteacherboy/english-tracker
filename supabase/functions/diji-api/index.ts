@@ -475,11 +475,13 @@ async function audit(a: any, operation: string, target: string, payload: any = {
 // [YAMA 5] Öğrencinin skor kaydı her seferinde 403 "Oyuncu uyuşmuyor" dönüyordu
 // ---------------------------------------------------------------------
 const leaderboardKey: Record<string, string> = {
+  canavarLiderlikKaydet: "canavar", kuleLiderlikKaydet: "kule",
   kelimeLiderlikKaydet: "kelime", hafizaLiderlikKaydet: "hafiza", yagmurLiderlikKaydet: "yagmur",
   asmacaLiderlikKaydet: "asmaca", kelimebulLiderlikKaydet: "kelimebul", jeopardyLiderlikKaydet: "jeopardy",
   boslukLiderlikKaydet: "bosluk", konusmaLiderlikKaydet: "konusma", eslestirmeLiderlikKaydet: "eslestirme", trenLiderlikKaydet: "tren", harfBahcesiLiderlikKaydet: "harfbahcesi", dikteLiderlikKaydet: "dikte", cumleLiderlikKaydet: "cumle"
 };
 const leaderboardGetKey: Record<string, string> = {
+  canavarLiderlikTumunuGetir: "canavar", kuleLiderlikTumunuGetir: "kule",
   kelimeLiderlikTumunuGetir: "kelime", hafizaLiderlikTumunuGetir: "hafiza", yagmurLiderlikTumunuGetir: "yagmur",
   asmacaLiderlikTumunuGetir: "asmaca", kelimebulLiderlikTumunuGetir: "kelimebul", jeopardyLiderlikTumunuGetir: "jeopardy",
   boslukLiderlikTumunuGetir: "bosluk", konusmaLiderlikTumunuGetir: "konusma", eslestirmeLiderlikTumunuGetir: "eslestirme", trenLiderlikTumunuGetir: "tren", harfBahcesiLiderlikTumunuGetir: "harfbahcesi", dikteLiderlikTumunuGetir: "dikte", cumleLiderlikTumunuGetir: "cumle"
@@ -544,7 +546,7 @@ async function leaderboardSave(op: string, body: any, a: any) {
 }
 // [v3.5] Adil puanlama: 9 oyun 1000'lik ölçekte. Sıralama: puan ↓, süre ↑, tarih ↑.
 // Her öğrencinin sadece en iyi skoru listelenir. donem=hafta → bu pazartesiden beri.
-const ADIL_OYUNLAR = new Set(["kelime", "jeopardy", "bosluk", "hafiza", "yagmur", "asmaca", "kelimebul", "eslestirme", "tren", "harfbahcesi", "konusma", "dikte", "cumle"]);
+const ADIL_OYUNLAR = new Set(["canavar", "kule", "kelime", "jeopardy", "bosluk", "hafiza", "yagmur", "asmaca", "kelimebul", "eslestirme", "tren", "harfbahcesi", "konusma", "dikte", "cumle"]);
 function haftaBasi() {
   const tr = new Date(Date.now() + 3 * 3600000);               // İstanbul saati
   const gun = (tr.getUTCDay() + 6) % 7;                         // pazartesi = 0

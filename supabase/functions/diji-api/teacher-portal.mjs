@@ -8,7 +8,7 @@ export function portalOperationAllowed(op,b={}) {
  if(op==='ekVeriGetir')return ['yo','seviye','oyun'].includes(b.anahtar);
  if(op==='ekVeriKaydet')return b.anahtar==='yo';
  if(op==='ekonomi')return ['durum','odulTalep','oyunGiris','enerjiHarca','jokerKullan'].includes(b.is);
- return /^(verifiedGame(Start|Answer|Status)|mola(Durum|Baslat|Bitir|Siralama|BolumGec)|konuOyun(Baslat|Cevap|Bitir|Durum|Siralama)|papi(Kart|Cards)|meteor|wheel|papiWheel|papiMeteor|ralli)/.test(op)||/^(kelime|jeopardy|bosluk|hafiza|yagmur|asmaca|kelimebul|eslestirme|tren|dikte|cumle|harfBahcesi|konusma).*(LiderlikKaydet|LiderlikGetir|LiderlikTumunuGetir|Liderlik)$/.test(op);
+ return /^(verifiedGame(Start|Answer|Status)|mola(Durum|Baslat|Bitir|Siralama|BolumGec)|konuOyun(Baslat|Cevap|Bitir|Durum|Siralama)|papi(Kart|Cards)|meteor|wheel|papiWheel|papiMeteor|ralli)/.test(op)||/^(kelime|jeopardy|bosluk|hafiza|yagmur|asmaca|kelimebul|eslestirme|tren|dikte|cumle|harfBahcesi|canavar|kule|konusma).*(LiderlikKaydet|LiderlikGetir|LiderlikTumunuGetir|Liderlik)$/.test(op);
 }
 export const ownerTeacher=a=>a?.role==='teacher'&&a.ogretmenKullanici==='teacher'&&a.yonetici===true;
 export function teacherPortalAPI(d){

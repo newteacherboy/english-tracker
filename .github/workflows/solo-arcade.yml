@@ -1,0 +1,18 @@
+name: Solo Arcade Games
+on:
+  push:
+    paths: ['ingilizce/solo-arcade.*', 'ingilizce/progression-catalog.js', 'supabase/functions/diji-api/verified-games.mjs', 'tests/solo-arcade.test.cjs', '.github/workflows/solo-arcade.yml']
+  pull_request:
+    paths: ['ingilizce/solo-arcade.*', 'ingilizce/progression-catalog.js', 'supabase/functions/diji-api/verified-games.mjs', 'tests/solo-arcade.test.cjs', '.github/workflows/solo-arcade.yml']
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: npm install --prefix /tmp/arcade-test jsdom@26.1.0
+      - run: node --test tests/solo-arcade.test.cjs tests/verified-games.test.cjs tests/teacher-game-return-single-word.test.cjs
+        env:
+          NODE_PATH: /tmp/arcade-test/node_modules

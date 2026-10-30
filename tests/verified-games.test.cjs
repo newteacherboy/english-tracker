@@ -5,7 +5,7 @@ test('all 13 classic games grade actual answers, never a boolean or submitted sc
  const core=await load();for(const game of core.games){if(game==='ba')continue;const task=core.compile(game,words)[0];
  assert.equal(core.grade(task,true,game).valid,false,game+' cannot submit true');
  assert.equal(core.grade(task,'WRONG',game).correct,false,game);
- assert.equal(core.grade(task,['hafiza','eslestirme','yagmur'].includes(game)?words[0].tr:words[0].en,game).correct,true,game);
+ assert.equal(core.grade(task,['hafiza','eslestirme','yagmur','kule'].includes(game)?words[0].tr:words[0].en,game).correct,true,game);
  }
 });
 test('main path compiles all 12 fixed mechanics and grades choice, order, missing word and matching',async()=>{
