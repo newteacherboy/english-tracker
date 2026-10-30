@@ -4,6 +4,7 @@ import { createAdPolicy, SOLO_GAMES } from './ad-policy.js';
 // All IDs are Google's test units. Real units remain disabled until account setup is complete.
 const IDS = { banner:'ca-app-pub-3940256099942544/6300978111', interstitial:'ca-app-pub-3940256099942544/1033173712' };
 export function createPlacements({ admob, ads, win, interstitialEvents, bannerEvents }) {
+  const ids=ads.units||IDS, isTesting=ads.mode!=='production';
   let active=true, ready=false, preparing=false, policy, owner='', busy=false, preloadRetryAt=0, bannerRetryAt=0;
   let banner=false, bannerWanted=false, bannerEpoch=0, bannerQueue=Promise.resolve(), initialized=false;
   let pending=null, sequence=0, closing=false;
@@ -34,7 +35,7 @@ export function createPlacements({ admob, ads, win, interstitialEvents, bannerEv
       try {
         await ads.ensureInitialized();
         if(ticket!==bannerEpoch || !bannerWanted || !allowed() || busy || ads.busy)return;
-        await admob.showBanner({adId:IDS.banner,adSize:'ADAPTIVE_BANNER',position:'BOTTOM_CENTER',margin:0,isTesting:true});
+        await admob.showBanner({adId:ids.banner,adSize:'ADAPTIVE_BANNER',position:'BOTTOM_CENTER',margin:0,isTesting,npa:true});
         banner=true;
         if(ticket!==bannerEpoch || !bannerWanted || !allowed() || busy || ads.busy) {
           await admob.removeBanner().catch(()=>{});banner=false;reserved(0);return;
@@ -48,7 +49,7 @@ export function createPlacements({ admob, ads, win, interstitialEvents, bannerEv
     currentPolicy();
     if(!allowed() || ready || preparing || busy || ads.busy || Date.now()<preloadRetryAt)return;
     preparing=true;const at=owner;
-    try { await ads.ensureInitialized();await admob.prepareInterstitial({adId:IDS.interstitial,isTesting:true});if(at===identity()&&allowed())ready=true; }
+    try { await ads.ensureInitialized();await admob.prepareInterstitial({adId:ids.interstitial,isTesting,npa:true});if(at===identity()&&allowed())ready=true; }
     catch { ready=false;preloadRetryAt=Date.now()+30000; }
     finally { preparing=false; }
   }

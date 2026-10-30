@@ -1,0 +1,9 @@
+import {test} from 'node:test';
+import assert from 'node:assert/strict';
+import {verifyCallback,derToRaw} from './ssv.mjs';
+function der(raw){const parts=[raw.slice(0,32),raw.slice(32)].map(n=>{while(n[0]===0&&n.length>1)n=n.slice(1);if(n[0]&128)n=Uint8Array.from([0,...n]);return [2,n.length,...n];}).flat();return Uint8Array.from([48,parts.length,...parts]);}
+async function fixture(){const pair=await crypto.subtle.generateKey({name:'ECDSA',namedCurve:'P-256'},false,['sign','verify']);const q='ad_network=123&ad_unit=2306894202&custom_data=opaque%2Bintent&reward_amount=3&reward_item=Reward&timestamp=1793350000000&transaction_id=deadbeef';const sig=der(new Uint8Array(await crypto.subtle.sign({name:'ECDSA',hash:'SHA-256'},pair.privateKey,new TextEncoder().encode(q))));return {url:'https://example.test/ssv?'+q+'&signature='+Buffer.from(sig).toString('base64url')+'&key_id=123',key:async()=>pair.publicKey};}
+test('Google format ECDSA signature validates the original encoded query',async()=>{const f=await fixture();const p=await verifyCallback(f.url,f.key);assert.equal(p.get('custom_data'),'opaque+intent');});
+test('tampering with reward amount fails signature verification',async()=>{const f=await fixture();await assert.rejects(verifyCallback(f.url.replace('reward_amount=3','reward_amount=100'),f.key),/Invalid signature/);});
+test('duplicate fields and unsigned suffix are rejected',async()=>{const f=await fixture();await assert.rejects(verifyCallback(f.url+'&reward_amount=100',f.key),/Duplicate/);await assert.rejects(verifyCallback(f.url+'&extra=1',f.key),/layout/);});
+test('bad DER and unknown key fail closed',async()=>{assert.throws(()=>derToRaw(new Uint8Array([48,0])),/integer/);const f=await fixture();await assert.rejects(verifyCallback(f.url,async()=>{throw Error('Unknown key');}),/Unknown key/);});

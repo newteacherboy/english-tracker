@@ -1,9 +1,9 @@
 name: Diji Medu Android Capacitor
 on:
   push:
-    paths: ['android-app/**', '.github/workflows/android-capacitor.yml']
+    paths: ['android-app/**', 'supabase/functions/ad-rewards/**', '.github/workflows/android-capacitor.yml']
   pull_request:
-    paths: ['android-app/**', '.github/workflows/android-capacitor.yml']
+    paths: ['android-app/**', 'supabase/functions/ad-rewards/**', '.github/workflows/android-capacitor.yml']
   workflow_dispatch:
 permissions:
   contents: read
@@ -34,6 +34,7 @@ jobs:
           log-accepted-android-sdk-licenses: false
       - run: npm ci
       - run: npm test
+      - run: node --test ../supabase/functions/ad-rewards/ssv.test.mjs
       - run: npm run sync
       - name: Build installable preview APK
         run: |

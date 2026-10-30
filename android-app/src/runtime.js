@@ -1,3 +1,6 @@
+import adConfig from '../admob.config.json';
+import { createRewardClient } from './reward-client.js';
+const production=typeof DM_PRODUCTION_ADS!=='undefined' && DM_PRODUCTION_ADS;
 import { Capacitor } from '@capacitor/core';
 import { App } from '@capacitor/app';
 import { Browser } from '@capacitor/browser';
@@ -12,13 +15,13 @@ import { createPlacements } from './ad-placements.js';
 import { REWARDS, goldOfferEligible, isTeacherSession } from './reward-offers.js';
 
 if (Capacitor.isNativePlatform() && Capacitor.getPlatform() === 'android') {
-  window.dmAndroidShell = { version: 3, ads: 'test', rewards: REWARDS };
+  window.dmAndroidShell = { version: 4, ads: production?'production':'test', rewards: REWARDS };
   window.dmAndroidIsTeacher = () => { try { return isTeacherSession({ portal: !!window.dmTeacherPortalMode, classroomPlayer: typeof siniftaOynananOgrenci !== 'undefined' && siniftaOynananOgrenci, name: typeof aktifOgrenciAdi === 'undefined' ? '' : aktifOgrenciAdi }); } catch { return true; } };
   window.dmAndroidStudentName = () => { try { return typeof aktifOgrenciAdi === 'undefined' ? '' : String(aktifOgrenciAdi || ''); } catch { return ''; } };
   window.dmAndroidGoldBalance = () => { try { return typeof yo !== 'undefined' && yo ? Number(yo.altin) : NaN; } catch { return NaN; } };
   window.dmNativeServices = { App, Browser, Haptics, Network };
   installSpeech(window, SpeechRecognition, TextToSpeech);
-  const ads = createTestAds(AdMob, window, RewardAdPluginEvents);
+  const ads = createTestAds(AdMob, window, RewardAdPluginEvents,{production,units:adConfig.units,rewardClient:createRewardClient(window,adConfig.ssvCallbackUrl.replace(/\/ssv$/, ''))});
   window.dmAndroidAds = ads;
   const placements = createPlacements({admob:AdMob,ads,win:window,interstitialEvents:InterstitialAdPluginEvents,bannerEvents:BannerAdPluginEvents});
   window.dmAndroidPlacements = placements;
@@ -57,12 +60,19 @@ if (Capacitor.isNativePlatform() && Capacitor.getPlatform() === 'android') {
       button.type = 'button'; button.dataset.dmTestAd = kind;
       button.style.cssText = 'display:block;width:100%;min-height:44px;margin-top:10px;padding:10px 12px;border:1px solid #09858c;border-radius:12px;background:#eefafa;color:#07535b;font:700 13px/1.4 system-ui';
       const noun = kind === 'gold' ? 'altın' : 'enerji';
-      button.textContent = '▶ ' + REWARDS[kind] + ' ' + noun + ' reklamını dene · ödül verilmez';
+      button.textContent = production ? '▶ Reklam izle · '+REWARDS[kind]+' '+noun+' kazan' : '▶ ' + REWARDS[kind] + ' ' + noun + ' reklamını dene · ödül verilmez';
       button.onclick = async () => {
         button.disabled = true;
         try {
           const result = await ads.show(kind);
-          button.textContent = result.completed ? '✓ ' + noun + ' reklam testi tamamlandı · ödül verilmedi' : 'Reklam kapatıldı · ödül verilmedi';
+          if(!result.test){
+            if(result.claimed){
+              if(typeof headerEnerjiGoster==='function')headerEnerjiGoster(result.energy,25);
+              if(typeof yo!=='undefined' && yo){yo.altin=result.gold;yo.guncelleme=Date.now();try{localStorage.setItem('ing_yo_'+window.dmAndroidStudentName(),JSON.stringify(yo));}catch{}}
+              if(typeof yoArayuzTazele==='function')yoArayuzTazele();
+              button.textContent='✓ '+result.added+' '+noun+' hesabına eklendi';
+            }else button.textContent=result.pending?'Ödül doğrulanıyor · hesaba otomatik yansıyacak':'Reklam kapatıldı · ödül verilmedi';
+          }else button.textContent = result.completed ? '✓ ' + noun + ' reklam testi tamamlandı · ödül verilmedi' : 'Reklam kapatıldı · ödül verilmedi';
         } catch (error) { button.textContent = error.message || 'Test reklamı yüklenemedi.'; }
         finally { button.disabled = false; }
       };

@@ -6,6 +6,9 @@ import path from 'node:path';
 import { build } from 'esbuild';
 const root = fileURLToPath(new URL('../..', import.meta.url));
 const app = path.join(root, 'android-app');
+const adConfig=JSON.parse(await readFile(path.join(app,'admob.config.json'),'utf8'));
+const production=process.env.DM_PRODUCTION_ADS==='1';
+if(production && !adConfig.productionEnabled)throw Error('Production ads blocked: verify SSV, consent, signing and device tests before enabling.');
 const out = path.join(app, 'www');
 await rm(out, { recursive: true, force: true });
 await mkdir(out, { recursive: true });
@@ -14,7 +17,7 @@ for (const dir of ['ingilizce', 'content', 'dersler', 'araba']) {
 }
 // Keep the original /ingilizce/ URL shape so relative game/content assets still resolve.
 await writeFile(path.join(out, 'index.html'), '<!doctype html><html lang="tr"><head><meta charset="utf-8"><meta http-equiv="refresh" content="0;url=/ingilizce/"><title>Diji Medu</title></head><body><a href="/ingilizce/">Diji Medu’yu aç</a></body></html>');
-await build({ entryPoints: [path.join(app, 'src/runtime.js')], outfile: path.join(out, 'ingilizce/android-runtime.js'), bundle: true, format: 'iife', platform: 'browser', target: ['chrome110'], minify: true });
+await build({ entryPoints: [path.join(app, 'src/runtime.js')], outfile: path.join(out, 'ingilizce/android-runtime.js'), define:{DM_PRODUCTION_ADS:JSON.stringify(production)}, bundle: true, format: 'iife', platform: 'browser', target: ['chrome110'], minify: true });
 const htmlPath = path.join(out, 'ingilizce/index.html');
 let html = await readFile(htmlPath, 'utf8');
 html = html.replace('<meta charset="UTF-8">', '<meta charset="UTF-8">\n<script src="android-runtime.js"></script>');

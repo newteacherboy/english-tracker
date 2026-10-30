@@ -38,9 +38,9 @@ Bu bir test adayıdır; üretime hazır olarak gösterilmez. `bundleRelease`/`as
 
 1. Play Console'daki mevcut yükleme anahtarı (.jks/.keystore), alias ve ilgili gizli bilgiler güvenli imzalama ortamına bağlanmalı. Anahtar veya parola repoya konulmamalı. Play App Signing kullanılıyorsa Google'ın uygulama imzalama anahtarı yerine mevcut upload key ile AAB imzalanır.
 2. Son Play sürümünden büyük `ANDROID_VERSION_CODE` belirlenmeli; varsayılan 2'nin uygun olduğu varsayılmamalı.
-3. AdMob **uygulama kimliği** (`ca-app-pub-…~…`) ve **ödüllü reklam birimi kimliği** (`ca-app-pub-…/…`) alınmalı. `app-ads.txt` içindeki `pub-…` bu iki kimliğin yerine kullanılamaz.
+3. Dört reklam biriminin adları/kimlikleri ekran görüntüleriyle doğrulandı ve `admob.config.json` dosyasına kaydedildi. Üretim manifesti ve imzalama ancak yayın kontrolleri tamamlanınca açılmalı.
 4. AdMob uygulama doğrulaması, çocuk kitle ayarları, gerekli UMP izin mesajları, reklam SDK veri açıklamaları ve Play Console reklam/veri güvenliği beyanları tamamlanmalı. Web gizlilik metni şu an reklamsız sürümü anlatır; canlı reklamlı sürüm için güncellenmeli.
-5. Gerçek reklam ödülü, AdMob SSV imzasını doğrulayan ve işlem kimliğini tekilleştiren sunucu endpoint'i üzerinden verilmeli. İstemcinin “izledim” demesi enerji vermek için yeterli değildir. Günlük ödül limiti ve mevcut 25 enerji tavanı sunucuda uygulanmalı. Bu test paketinde canlı ödül endpoint'i yoktur.
+5. Gerçek reklam ödülü, AdMob SSV imzasını doğrulayan ve işlem kimliğini tekilleştiren sunucu endpoint'i üzerinden verilmeli. İstemcinin “izledim” demesi enerji vermek için yeterli değildir. Günlük ödül limiti ve mevcut 25 enerji tavanı sunucuda uygulanmalı. SSV endpoint'i kuruldu; AdMob panelinde iki ödüllü birime de aşağıdaki adres eklenip Google testi yapılmalı. Önizleme bu endpoint'i çağırmaz.
 6. Gerçek Android cihazında giriş, hesap değiştirme/çıkış, öğrenci ilerlemesi, tüm oyunlar, mikrofon reddi/kabulü, ses, geri tuşu, çevrimdışı durum, reklamdan dönüş, telefon/tablet ve mevcut Play sürümünden imzalı güncelleme test edilmeli.
 7. Önce Play Console dahili testine yüklenmeli. Fiziksel cihaz testi tamamlanmadan üretime geçilmemeli.
 
@@ -63,3 +63,25 @@ Gerçek uygulama kimliği `admob.config.json` içinde kayıtlıdır. Ekran gör�
 - Ödüllü reklamın yanında banner veya geçiş reklamı açılmaz. Reklam yükleme hatalarında 30 saniye yeniden deneme aralığı vardır.
 
 Bu aday Google test reklamı kimlikleri kullanır ve gerçek hesaba enerji/altın yazmaz. Günlük sayaçlar bu adayda cihaz üzerinde deneyim kontrolüdür; üretimde sunucu doğrulaması ve limitleri gerekir. AdMob'da ayrıca bir **Geçiş** ve bir **Banner** reklam birimi oluşturulmalıdır. Kimlikler ve enerji/altın eşlemesi doğrulanmadan üretim açılmaz. Canlı web güncelleme sistemi bu test paketinde henüz yoktur; yayın mimarisinde ayrıca tamamlanmalıdır.
+
+
+## Doğrulanmış reklam kimlikleri ve SSV
+
+| Birim | Kimlik sonu | Davranış |
+|---|---|---|
+| Enerji Kazan | 2306894202 | 3 enerji, günde en fazla 5 tamamlanan reklam |
+| Altın Kazan | 7589517182 | 100 altın, günde en fazla 3 tamamlanan reklam |
+| Mağaza ve Oyunlar | 1536290907 | Liste ekranlarında banner |
+| Oyun Sonu | 6094930122 | Her 3 biten tek kişilik oyunda, en az 5 dk tam ekran aralığı |
+
+İki ödüllü birimde Gelişmiş ayarlar → Sunucu tarafı doğrulama adresi:
+`https://nxfqlutulxqzqgwewssd.supabase.co/functions/v1/ad-rewards/ssv`
+Google panelindeki test ve kaydet adımları ayrıca tamamlanmalı. `Reward` adı doğrulamayı engellemez; miktarlar 3 ve 100 kalmalı. Banner/geçiş birimlerine SSV eklenmez.
+
+`ad-rewards` Edge Function kendi portal oturum doğrulamasını ve Google ECDSA imza doğrulamasını yapar. Bu nedenle platform JWT kontrolü kapalıdır; istemci işlemleri `x-diji-token` olmadan 401 döner. Google callback'inde sadece rastgele intent UUID'si vardır; öğrenci ismi, e-posta veya oturum anahtarı Google'a gönderilmez.
+
+Yeni tablolar özel `dm_ad_rewards` şemasındadır; RLS açıktır, genel rollerin erişimi yoktur. RPC'ler `SECURITY INVOKER` ve yalnızca `service_role` erişimlidir. Günlük limitler İstanbul gününe göre kilitli işlem içinde uygulanır; işlem kimliği tektir. Altın mevcut `extra_data.yo.altin` cüzdanı ve `students.gold` ile aynı işlemde güncellenir. Enerji 25'i aşmaz. Mevcut cüzdanın diğer istemci senkronizasyonları ayrıca cihaz testinde sınanmalı; tüm eski ekonomi uçlarının güvenliği bu değişikliğin kapsamı değildir.
+
+Yerel testler: `npm test` (Android), `node --test supabase/functions/ad-rewards/ssv.test.mjs` (repo kökünden). Veritabanında çift ödeme, 3/gün altın sınırı ve rol izinleri işlemler geri alınarak doğrulandı. Gerçek Google callback'i için AdMob panel testi ve gerçek cihaz testi hâlâ gerekir.
+
+Üretim kaynak yolu UMP `canRequestAds` kontrolü ve sunucu tarafından doğrulanmış bakiye döndürür. Derleme varsayılanı örnek reklamdır. `DM_PRODUCTION_ADS=1` ayrıca `productionEnabled` kapısı açılmadan hata verir; release Gradle kapısı da imzalama/doğrulama tamamlanana kadar kapalıdır.

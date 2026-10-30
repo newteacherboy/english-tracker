@@ -72,3 +72,18 @@ test('gold demo completion never credits live gold or energy', async () => {
   assert.equal(result.test, true); assert.equal(result.energyGranted, 0);
   assert.equal('goldGranted' in result, false);
 });
+
+test('production consent failure never initializes or requests an ad', async()=>{
+ let initialized=false,created=false;
+ const win={sessionStorage:{getItem:()=>null},document:{documentElement:{matches:()=>false},body:{classList:{contains:()=>false}}}};
+ const native={requestConsentInfo:async()=>({canRequestAds:false}),initialize:async()=>{initialized=true;}};
+ const ads=createTestAds(native,win,{}, {production:true,units:{energy:'energy',gold:'gold'},rewardClient:{create:async()=>{created=true;}}});
+ await assert.rejects(ads.show(),/izni/);assert.equal(initialized,false);assert.equal(created,false);
+});
+test('production passes opaque SSV intent and returns server balances only',async()=>{
+ const handlers={};let prepared;
+ const win={sessionStorage:{getItem:()=>null},document:{documentElement:{matches:()=>false},body:{classList:{contains:()=>false}}}};
+ const native={requestConsentInfo:async()=>({canRequestAds:true}),initialize:async o=>assert.equal(o.initializeForTesting,false),addListener:async(n,fn)=>{handlers[n]=fn;return{remove:async()=>{}};},prepareRewardVideoAd:async o=>{prepared=o;},showRewardVideoAd:async()=>{handlers.reward();handlers.dismiss();}};
+ const ads=createTestAds(native,win,{Rewarded:'reward',Dismissed:'dismiss',FailedToShow:'fail'}, {production:true,units:{energy:'energy',gold:'gold'},rewardClient:{create:async()=>({id:'opaque-intent'}),settle:async()=>({claimed:true,added:3,energy:10,gold:50})}});
+ const r=await ads.show();assert.equal(prepared.ssv.customData,'opaque-intent');assert.equal(prepared.isTesting,false);assert.equal(r.energy,10);assert.equal(r.added,3);assert.equal(r.test,false);
+});

@@ -1,21 +1,17 @@
 {
   "appId": "ca-app-pub-5025780881593375~6878236592",
   "units": {
-    "energy": null,
-    "gold": null,
-    "interstitial": null,
-    "banner": null
+    "energy": "ca-app-pub-5025780881593375/2306894202",
+    "gold": "ca-app-pub-5025780881593375/7589517182",
+    "banner": "ca-app-pub-5025780881593375/1536290907",
+    "interstitial": "ca-app-pub-5025780881593375/6094930122"
   },
-  "unassignedUnitIds": [
-    "ca-app-pub-5025780881593375/2306894202",
-    "ca-app-pub-5025780881593375/7589517182"
-  ],
   "rewards": {
     "energy": 3,
     "gold": 100
   },
   "productionEnabled": false,
-  "note": "Both screenshots hide the ad-unit name. Confirm energy/gold mapping before enabling production. Test APK uses Google sample IDs and grants no balances.",
+  "note": "IDs confirmed from named AdMob units. Preview uses sample ads and never credits live balances. Production stays disabled until SSV callback, consent and existing Play signing are verified.",
   "placements": {
     "gamesPerInterstitial": 3,
     "minimumFullscreenGapSeconds": 300,
@@ -28,5 +24,6 @@
       "gold": 3
     },
     "teacherAds": false
-  }
+  },
+  "ssvCallbackUrl": "https://nxfqlutulxqzqgwewssd.supabase.co/functions/v1/ad-rewards/ssv"
 }
