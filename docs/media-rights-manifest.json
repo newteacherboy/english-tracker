@@ -2152,6 +2152,34 @@
       "bytes": 89356,
       "status": "ai-generated",
       "source": "docs/race-arena-generation.json"
+    },
+    {
+      "path": "ingilizce/arcade-assets/monsters.webp",
+      "sha256": "be4195ae7e181f955faad2bbea8c3bd779e7d8c6000134f11b34c0e6096ad37d",
+      "bytes": 167840,
+      "status": "ai-generated",
+      "source": "docs/solo-arcade-assets.json"
+    },
+    {
+      "path": "ingilizce/arcade-assets/forest.webp",
+      "sha256": "677f9b34f94e9d8fc990ddd9fb3608d091f90a7b186be9a605fc8e103eb0f266",
+      "bytes": 176826,
+      "status": "ai-generated",
+      "source": "docs/solo-arcade-assets.json"
+    },
+    {
+      "path": "ingilizce/arcade-assets/city.webp",
+      "sha256": "37183cc160cc501a671b3a68bbce133e753777e958bda588fea1a38e7260676f",
+      "bytes": 83382,
+      "status": "ai-generated",
+      "source": "docs/solo-arcade-assets.json"
+    },
+    {
+      "path": "ingilizce/arcade-assets/floor.webp",
+      "sha256": "0c06ff7d3bf42d30804b30884044bc5c5215f0a03def1aa596531ea7bf3791b8",
+      "bytes": 16460,
+      "status": "ai-generated",
+      "source": "docs/solo-arcade-assets.json"
     }
   ]
 }
