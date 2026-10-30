@@ -47,3 +47,9 @@ Bu bir test adayıdır; üretime hazır olarak gösterilmez. `bundleRelease`/`as
 ## Güncelleme
 
 Web dosyaları pakette olduğu için web kodundaki değişiklikler `npm run sync` + yeni Android sürümü gerektirir. Sunucudan okunan veriler ve ders kayıtları mevcut sunucudan gelmeye devam eder. Eski tarayıcı/TWA localStorage alanı bu WebView'e otomatik taşınmaz; sunucuyla eşitlenmemiş yerel verilerin aktarılmış olduğu iddia edilmez.
+
+## Altın reklamı adayı (30 Ekim 2026)
+
+İki isteğe bağlı teklif vardır: 3 enerji ve 100 altın. Altın teklifi bakiye 100'ün altındayken veya seçilen enerji paketine yetmediğinde enerji/mağaza panelinde görünür. Her iki seçenek de test reklamıdır, canlı bakiyeyi değiştirmez. Reklam otomatik açılmaz. Öğretmen oturumları engellenir.
+
+Gerçek uygulama kimliği `admob.config.json` içinde kayıtlıdır. Ekran görüntülerindeki iki reklam biriminin adı gösterilmediğinden enerji/altın eşlemesi doğrulanana kadar `units` alanları boştur; üretim kapalıdır. Bu dosya test manifestindeki Google örnek uygulama kimliğini değiştirmez.

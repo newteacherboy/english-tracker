@@ -52,3 +52,23 @@ test('native dismissal resolves even when SDK show promise waits forever for a r
   const ads = createTestAds(admob, win, { Rewarded:'reward', Dismissed:'dismiss', FailedToShow:'fail' });
   const result = await ads.show(); assert.equal(result.completed, false);
 });
+
+import { goldOfferEligible, isTeacherSession } from '../src/reward-offers.js';
+test('gold offer appears below 100 or when the requested energy pack costs more', () => {
+  assert.equal(goldOfferEligible({balance: 99}), true);
+  assert.equal(goldOfferEligible({balance: 100}), false);
+  assert.equal(goldOfferEligible({balance: 120, requestedPrice: 130}), true);
+  assert.equal(goldOfferEligible({balance: 130, requestedPrice: 130}), false);
+  assert.equal(goldOfferEligible({balance: NaN}), false);
+});
+test('normal student wallet is not a teacher session', () => {
+  assert.equal(isTeacherSession({name:'elif', wallet:{altin:50}}), false);
+  assert.equal(isTeacherSession({name:'teacher'}), true);
+  assert.equal(isTeacherSession({name:'elif', portal:true}), true);
+  assert.equal(isTeacherSession({name:'elif', classroomPlayer:'misafir'}), true);
+});
+test('gold demo completion never credits live gold or energy', async () => {
+  const s = setup(); const result = await s.ads.show('gold');
+  assert.equal(result.test, true); assert.equal(result.energyGranted, 0);
+  assert.equal('goldGranted' in result, false);
+});

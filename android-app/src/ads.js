@@ -9,7 +9,8 @@ export function createTestAds(admob, win, events) {
   let busy = false, initialized = false;
   return {
     mode: 'test',
-    async show() {
+    async show(kind = 'energy') {
+      if (!['energy', 'gold'].includes(kind)) throw new Error('Geçersiz reklam ödülü.');
       if (teacherMode(win)) throw new Error('Öğretmen modunda reklam gösterilmez.');
       if (busy) throw new Error('Reklam zaten hazırlanıyor.');
       busy = true;

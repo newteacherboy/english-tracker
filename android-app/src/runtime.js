@@ -8,10 +8,12 @@ import { TextToSpeech } from '@capacitor-community/text-to-speech';
 import { AdMob, RewardAdPluginEvents } from '@capacitor-community/admob';
 import { installSpeech } from './speech.js';
 import { createTestAds, teacherMode } from './ads.js';
+import { REWARDS, goldOfferEligible, isTeacherSession } from './reward-offers.js';
 
 if (Capacitor.isNativePlatform() && Capacitor.getPlatform() === 'android') {
-  window.dmAndroidShell = { version: 1, ads: 'test' };
-  window.dmAndroidIsTeacher = () => { try { return (typeof yo !== 'undefined' && !!yo) || (typeof siniftaOynananOgrenci !== 'undefined' && !!siniftaOynananOgrenci) || (typeof aktifOgrenciAdi !== 'undefined' && String(aktifOgrenciAdi).toLowerCase() === 'teacher'); } catch { return true; } };
+  window.dmAndroidShell = { version: 2, ads: 'test', rewards: REWARDS };
+  window.dmAndroidIsTeacher = () => { try { return isTeacherSession({ portal: window.dmTeacherPortalMode === true, classroomPlayer: typeof siniftaOynananOgrenci !== 'undefined' && siniftaOynananOgrenci, name: typeof aktifOgrenciAdi === 'undefined' ? '' : aktifOgrenciAdi }); } catch { return true; } };
+  window.dmAndroidGoldBalance = () => { try { return typeof yo !== 'undefined' && yo ? Number(yo.altin) : NaN; } catch { return NaN; } };
   window.dmNativeServices = { App, Browser, Haptics, Network };
   installSpeech(window, SpeechRecognition, TextToSpeech);
   const ads = createTestAds(AdMob, window, RewardAdPluginEvents);
@@ -40,25 +42,46 @@ if (Capacitor.isNativePlatform() && Capacitor.getPlatform() === 'android') {
   void App.addListener('appStateChange', ({ isActive }) => {
     if (!isActive) window.speechSynthesis?.cancel(); // Do not cancel Android's own recognition permission/dialog activity.
   });
-  // Offer only an explicitly labeled demo on the energy panel, never an automatic ad.
+  // Both choices are opt-in. The preview never credits the real student's wallet.
   document.addEventListener('DOMContentLoaded', () => {
-    function attach() {
-      const card = document.querySelector('#ybPerde.acik[data-tur="enerji"] .yb-en-kart,.dm-papi-feedback.is-energy .dm-papi-feedback-card');
-      if (!card || card.querySelector('[data-dm-test-ad]') || teacherMode(window)) return;
+    let lastBalance;
+    const selector = '#ybPerde.acik[data-tur="enerji"] .yb-en-kart,.dm-papi-feedback.is-energy .dm-papi-feedback-card,#dsEnergy';
+    function addButton(card, kind) {
       const button = document.createElement('button');
-      button.type = 'button'; button.dataset.dmTestAd = '';
-      button.textContent = '▶ Test reklamını dene · enerji verilmez';
+      button.type = 'button'; button.dataset.dmTestAd = kind;
+      button.style.cssText = 'display:block;width:100%;min-height:44px;margin-top:10px;padding:10px 12px;border:1px solid #09858c;border-radius:12px;background:#eefafa;color:#07535b;font:700 13px/1.4 system-ui';
+      const noun = kind === 'gold' ? 'altın' : 'enerji';
+      button.textContent = '▶ ' + REWARDS[kind] + ' ' + noun + ' reklamını dene · ödül verilmez';
       button.onclick = async () => {
         button.disabled = true;
         try {
-          const result = await ads.show();
-          button.textContent = result.completed ? '✓ Test tamamlandı · enerji verilmedi' : 'Reklam kapatıldı · enerji verilmedi';
+          const result = await ads.show(kind);
+          button.textContent = result.completed ? '✓ ' + noun + ' reklam testi tamamlandı · ödül verilmedi' : 'Reklam kapatıldı · ödül verilmedi';
         } catch (error) { button.textContent = error.message || 'Test reklamı yüklenemedi.'; }
         finally { button.disabled = false; }
       };
       card.append(button);
     }
+    function attach() {
+      const teacher = teacherMode(window), balance = window.dmAndroidGoldBalance();
+      for (const card of document.querySelectorAll(selector)) {
+        if (teacher) { card.querySelectorAll('[data-dm-test-ad]').forEach(button => button.remove()); continue; }
+        if (!card.getClientRects().length) continue;
+        if (!card.querySelector('[data-dm-test-ad="energy"]')) addButton(card, 'energy');
+        const requestedPrice = Math.max(100, ...[...card.querySelectorAll('[data-pack][disabled]')].map(button => {
+          const amount = Number(button.dataset.pack), capacity = Number(window.genelEnerjiMax || 25), current = Number(window.genelEnerjiKalan || 0);
+          return current + amount <= capacity ? ({5:100,10:130,15:180}[amount] || 100) : 100;
+        }));
+        const gold = card.querySelector('[data-dm-test-ad="gold"]');
+        if (goldOfferEligible({ balance, requestedPrice })) { if (!gold) addButton(card, 'gold'); }
+        else if (gold) gold.remove();
+      }
+      lastBalance = balance;
+    }
     new MutationObserver(attach).observe(document.body, { subtree: true, childList: true });
+    // Wallet values are lexical portal state; re-check when they change even if no panel is repainted.
+    setInterval(() => { if (!document.hidden && !Object.is(lastBalance, window.dmAndroidGoldBalance())) attach(); }, 1000);
+    document.addEventListener('dm:login', attach);
     attach();
   }, { once: true });
 }
