@@ -46,4 +46,4 @@ for (const [density, size] of [['mdpi',48],['hdpi',72],['xhdpi',96],['xxhdpi',14
   await sharp({create:{width:total,height:total,channels:4,background:'#FAF8F5'}}).composite([{input:image,gravity:'center'}]).png().toFile(path.join(dir,'ic_launcher_foreground.png'));
 }
 // Use the Gradle wrapper delivered by the pinned official Capacitor CLI package.
-execFileSync('tar', ['-xzf', path.join(app,'node_modules/@capacitor/cli/assets/android-template.tar.gz'), '-C', path.join(app,'android'), 'gradle/wrapper/gradle-wrapper.jar']);
+await writeFile(path.join(app,'android/gradle/wrapper/gradle-wrapper.jar'), execFileSync('tar', ['-xOzf', path.join(app,'node_modules/@capacitor/cli/assets/android-template.tar.gz'), 'gradle/wrapper/gradle-wrapper.jar']));
