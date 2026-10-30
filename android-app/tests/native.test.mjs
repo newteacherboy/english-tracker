@@ -9,7 +9,7 @@ test('microphone denied: reports error and ends without starting recording', asy
   const SR = recognitionClass({ available: async () => ({ available: true }), checkPermissions: async () => ({ speechRecognition: 'denied' }), requestPermissions: async () => ({ speechRecognition: 'denied' }), start: async () => { started = true; } });
   const r = new SR(), events = [];
   r.onerror = () => events.push('error'); r.onend = () => events.push('end');
-  r.start(); await tick(); assert.equal(started, false); assert.deepEqual(events, ['error', 'end']);
+  r.start(); await tick(); assert.equal(started, false); assert.deepEqual(events, ['error', 'end']); assert.throws(() => r.start(), /yeniden denemek/);
 });
 test('native recognition preserves alternatives expected by route games', async () => {
   const SR = recognitionClass({ available: async () => ({ available: true }), checkPermissions: async () => ({ speechRecognition: 'granted' }), start: async () => ({ matches: ['apple', 'apples'] }) });

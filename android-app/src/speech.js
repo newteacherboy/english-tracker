@@ -3,7 +3,7 @@ export function recognitionClass(plugin, EventTargetClass = EventTarget) {
   let current = null;
   return class NativeRecognition extends EventTargetClass {
     lang = 'en-US'; continuous = false; interimResults = false; maxAlternatives = 3;
-    active = false; cancelled = false;
+    active = false; cancelled = false; blocked = false;
     emit(type, extra = {}) {
       const event = new Event(type);
       Object.assign(event, extra);
@@ -27,10 +27,12 @@ export function recognitionClass(plugin, EventTargetClass = EventTarget) {
           this.emit('result', { resultIndex: 0, results: [alternatives] });
         }
       } catch (error) {
+        this.blocked = true; // Legacy continuous handlers retry on end; do not loop permission prompts.
         if (!this.cancelled) this.emit('error', { error: 'audio-capture', message: error.message });
       } finally { this.finish(); }
     }
     start() {
+      if (this.blocked) throw new Error('Mikrofonu yeniden denemek için düğmeye tekrar dokun.');
       if (this.active || current) throw new Error('Mikrofon zaten kullanılıyor.');
       this.active = true; this.cancelled = false; current = this;
       void this.run();
