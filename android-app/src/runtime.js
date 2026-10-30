@@ -27,6 +27,8 @@ if (Capacitor.isNativePlatform() && Capacitor.getPlatform() === 'android') {
     catch { window.DijiMeduPapiFeedback?.notice('Bağlantı açılamadı. Yeniden deneyebilirsin.'); }
   });
   void App.addListener('backButton', ({ canGoBack }) => {
+    const energyClose = document.querySelector('#ybPerde.acik[data-tur="enerji"] .yb-kapat,.dm-papi-feedback.is-energy .dm-papi-feedback-close');
+    if (energyClose) { energyClose.click(); return; }
     if (window.dmViewHistory?.back?.()) return;
     const visible = el => el && el.getClientRects().length && !el.inert;
     const game = [...document.querySelectorAll('.dm-session-surface')].filter(visible).at(-1);
@@ -41,7 +43,7 @@ if (Capacitor.isNativePlatform() && Capacitor.getPlatform() === 'android') {
   // Offer only an explicitly labeled demo on the energy panel, never an automatic ad.
   document.addEventListener('DOMContentLoaded', () => {
     function attach() {
-      const card = document.querySelector('.dm-papi-feedback.is-energy .dm-papi-feedback-card');
+      const card = document.querySelector('#ybPerde.acik[data-tur="enerji"] .yb-en-kart,.dm-papi-feedback.is-energy .dm-papi-feedback-card');
       if (!card || card.querySelector('[data-dm-test-ad]') || teacherMode(window)) return;
       const button = document.createElement('button');
       button.type = 'button'; button.dataset.dmTestAd = '';
