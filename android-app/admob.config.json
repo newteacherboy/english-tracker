@@ -1,11 +1,32 @@
 {
   "appId": "ca-app-pub-5025780881593375~6878236592",
-  "units": { "energy": null, "gold": null },
+  "units": {
+    "energy": null,
+    "gold": null,
+    "interstitial": null,
+    "banner": null
+  },
   "unassignedUnitIds": [
     "ca-app-pub-5025780881593375/2306894202",
     "ca-app-pub-5025780881593375/7589517182"
   ],
-  "rewards": { "energy": 3, "gold": 100 },
+  "rewards": {
+    "energy": 3,
+    "gold": 100
+  },
   "productionEnabled": false,
-  "note": "Both screenshots hide the ad-unit name. Confirm energy/gold mapping before enabling production. Test APK uses Google sample IDs and grants no balances."
+  "note": "Both screenshots hide the ad-unit name. Confirm energy/gold mapping before enabling production. Test APK uses Google sample IDs and grants no balances.",
+  "placements": {
+    "gamesPerInterstitial": 3,
+    "minimumFullscreenGapSeconds": 300,
+    "bannerTabs": [
+      "games",
+      "store"
+    ],
+    "dailyRewardedLimits": {
+      "energy": 5,
+      "gold": 3
+    },
+    "teacherAds": false
+  }
 }

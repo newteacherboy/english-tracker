@@ -6,21 +6,26 @@ export function teacherMode(win) {
 }
 
 export function createTestAds(admob, win, events) {
-  let busy = false, initialized = false;
+  let busy = false, initialization = null;
+  function ensureInitialized() {
+    if (!initialization) initialization = admob.initialize({ initializeForTesting: true, tagForChildDirectedTreatment: true, tagForUnderAgeOfConsent: true, maxAdContentRating: 'General' }).catch(error=>{initialization=null;throw error;});
+    return initialization;
+  }
   return {
     mode: 'test',
+    ensureInitialized,
+    get busy() { return busy; },
     async show(kind = 'energy') {
       if (!['energy', 'gold'].includes(kind)) throw new Error('Geçersiz reklam ödülü.');
       if (teacherMode(win)) throw new Error('Öğretmen modunda reklam gösterilmez.');
-      if (busy) throw new Error('Reklam zaten hazırlanıyor.');
+      if (busy || win.dmAndroidFullscreenBusy) throw new Error('Reklam zaten hazırlanıyor.');
+      if (win.dmAndroidPlacements?.rewardAllowed(kind) === false) throw new Error('Bugünkü reklam hakkın tamamlandı.');
       busy = true;
       let reward = false, finish, timer;
       const listeners = [];
       try {
-        if (!initialized) {
-          await admob.initialize({ initializeForTesting: true, tagForChildDirectedTreatment: true, tagForUnderAgeOfConsent: true, maxAdContentRating: 'General' });
-          initialized = true;
-        }
+        await win.dmAndroidPlacements?.hideBanner();
+        await ensureInitialized();
         const closed = new Promise((resolve, reject) => { finish = { resolve, reject }; });
         closed.catch(() => {}); // Native failure events can arrive before show resolves.
         // Attach before preparing/showing; dismissal is never treated as a reward.
@@ -32,12 +37,14 @@ export function createTestAds(admob, win, events) {
         timer = setTimeout(() => finish.reject(new Error('Reklam yanıt vermedi. Yeniden deneyebilirsin.')), 180000);
         await Promise.race([admob.showRewardVideoAd(), closed]);
         await closed;
+        win.dmAndroidPlacements?.rewardClosed(kind,reward);
         // Test ads must never change live student balances or call a reward endpoint.
         return { completed: reward, test: true, energyGranted: 0 };
       } finally {
         clearTimeout(timer);
         await Promise.allSettled(listeners.map(listener => listener.remove()));
         busy = false;
+        win.dmAndroidPlacements?.sync();
       }
     }
   };

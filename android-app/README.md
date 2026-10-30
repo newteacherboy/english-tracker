@@ -53,3 +53,13 @@ Web dosyaları pakette olduğu için web kodundaki değişiklikler `npm run sync
 İki isteğe bağlı teklif vardır: 3 enerji ve 100 altın. Altın teklifi bakiye 100'ün altındayken veya seçilen enerji paketine yetmediğinde enerji/mağaza panelinde görünür. Her iki seçenek de test reklamıdır, canlı bakiyeyi değiştirmez. Reklam otomatik açılmaz. Öğretmen oturumları engellenir.
 
 Gerçek uygulama kimliği `admob.config.json` içinde kayıtlıdır. Ekran görüntülerindeki iki reklam biriminin adı gösterilmediğinden enerji/altın eşlemesi doğrulanana kadar `units` alanları boştur; üretim kapalıdır. Bu dosya test manifestindeki Google örnek uygulama kimliğini değiştirmez.
+
+## Reklam yerleşimleri (30 Ekim 2026)
+
+- Ödüllü enerji: öğrencinin dokunuşuyla, günlük en fazla 5 tamamlanan reklam.
+- Ödüllü 100 altın: altın 100'ün altındayken veya ürün/enerji paketine yetmediğinde isteğe bağlı teklif, günlük en fazla 3 tamamlanan reklam.
+- Geçiş: ortak sonuç ekranını kullanan tamamlanmış tek kişilik oyunlarda her 3 oyundan sonra sonuçtan çıkarken; herhangi bir tam ekran reklamdan sonra en az 5 dakika ara. Yarım bırakılan oyunlar, parkur, öğretmen/sınıf oyunları sayılmaz. Hazır olmayan reklam için çıkış bekletilmez ve sonraki sayfada gecikmiş reklam açılmaz.
+- Banner: yalnızca mağaza ve oyunlar listesinde. Oyun, sonuç, soru, iletişim kutusu, arka plan ve öğretmen modunda kaldırılır. Alt menü için ek boşluk ayrılır; gerçek telefon/tablet üzerinde konum testi hâlâ gereklidir.
+- Ödüllü reklamın yanında banner veya geçiş reklamı açılmaz. Reklam yükleme hatalarında 30 saniye yeniden deneme aralığı vardır.
+
+Bu aday Google test reklamı kimlikleri kullanır ve gerçek hesaba enerji/altın yazmaz. Günlük sayaçlar bu adayda cihaz üzerinde deneyim kontrolüdür; üretimde sunucu doğrulaması ve limitleri gerekir. AdMob'da ayrıca bir **Geçiş** ve bir **Banner** reklam birimi oluşturulmalıdır. Kimlikler ve enerji/altın eşlemesi doğrulanmadan üretim açılmaz. Canlı web güncelleme sistemi bu test paketinde henüz yoktur; yayın mimarisinde ayrıca tamamlanmalıdır.

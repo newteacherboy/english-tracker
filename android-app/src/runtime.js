@@ -5,19 +5,23 @@ import { Haptics } from '@capacitor/haptics';
 import { Network } from '@capacitor/network';
 import { SpeechRecognition } from '@capacitor-community/speech-recognition';
 import { TextToSpeech } from '@capacitor-community/text-to-speech';
-import { AdMob, RewardAdPluginEvents } from '@capacitor-community/admob';
+import { AdMob, RewardAdPluginEvents, InterstitialAdPluginEvents, BannerAdPluginEvents } from '@capacitor-community/admob';
 import { installSpeech } from './speech.js';
 import { createTestAds, teacherMode } from './ads.js';
+import { createPlacements } from './ad-placements.js';
 import { REWARDS, goldOfferEligible, isTeacherSession } from './reward-offers.js';
 
 if (Capacitor.isNativePlatform() && Capacitor.getPlatform() === 'android') {
-  window.dmAndroidShell = { version: 2, ads: 'test', rewards: REWARDS };
-  window.dmAndroidIsTeacher = () => { try { return isTeacherSession({ portal: window.dmTeacherPortalMode === true, classroomPlayer: typeof siniftaOynananOgrenci !== 'undefined' && siniftaOynananOgrenci, name: typeof aktifOgrenciAdi === 'undefined' ? '' : aktifOgrenciAdi }); } catch { return true; } };
+  window.dmAndroidShell = { version: 3, ads: 'test', rewards: REWARDS };
+  window.dmAndroidIsTeacher = () => { try { return isTeacherSession({ portal: !!window.dmTeacherPortalMode, classroomPlayer: typeof siniftaOynananOgrenci !== 'undefined' && siniftaOynananOgrenci, name: typeof aktifOgrenciAdi === 'undefined' ? '' : aktifOgrenciAdi }); } catch { return true; } };
+  window.dmAndroidStudentName = () => { try { return typeof aktifOgrenciAdi === 'undefined' ? '' : String(aktifOgrenciAdi || ''); } catch { return ''; } };
   window.dmAndroidGoldBalance = () => { try { return typeof yo !== 'undefined' && yo ? Number(yo.altin) : NaN; } catch { return NaN; } };
   window.dmNativeServices = { App, Browser, Haptics, Network };
   installSpeech(window, SpeechRecognition, TextToSpeech);
   const ads = createTestAds(AdMob, window, RewardAdPluginEvents);
   window.dmAndroidAds = ads;
+  const placements = createPlacements({admob:AdMob,ads,win:window,interstitialEvents:InterstitialAdPluginEvents,bannerEvents:BannerAdPluginEvents});
+  window.dmAndroidPlacements = placements;
   // The portal's API tokens stay in its own WebView. Do not copy browser cookies/tokens.
   document.addEventListener('click', async event => {
     const anchor = event.target.closest?.('a[href]');
@@ -40,12 +44,14 @@ if (Capacitor.isNativePlatform() && Capacitor.getPlatform() === 'android') {
     if (confirm('Diji Medu’dan çıkmak istiyor musun?')) void App.exitApp();
   });
   void App.addListener('appStateChange', ({ isActive }) => {
+    placements.setActive(isActive);
     if (!isActive) window.speechSynthesis?.cancel(); // Do not cancel Android's own recognition permission/dialog activity.
   });
   // Both choices are opt-in. The preview never credits the real student's wallet.
   document.addEventListener('DOMContentLoaded', () => {
+    placements.start();
     let lastBalance;
-    const selector = '#ybPerde.acik[data-tur="enerji"] .yb-en-kart,.dm-papi-feedback.is-energy .dm-papi-feedback-card,#dsEnergy';
+    const selector = '#ybPerde.acik[data-tur="enerji"] .yb-en-kart,.dm-papi-feedback.is-energy .dm-papi-feedback-card,#dsEnergy,.ds-offer,.ds-joker,.ds-pack';
     function addButton(card, kind) {
       const button = document.createElement('button');
       button.type = 'button'; button.dataset.dmTestAd = kind;
@@ -67,13 +73,16 @@ if (Capacitor.isNativePlatform() && Capacitor.getPlatform() === 'android') {
       for (const card of document.querySelectorAll(selector)) {
         if (teacher) { card.querySelectorAll('[data-dm-test-ad]').forEach(button => button.remove()); continue; }
         if (!card.getClientRects().length) continue;
-        if (!card.querySelector('[data-dm-test-ad="energy"]')) addButton(card, 'energy');
-        const requestedPrice = Math.max(100, ...[...card.querySelectorAll('[data-pack][disabled]')].map(button => {
+        const purchaseCard = card.matches('.ds-offer,.ds-joker,.ds-pack');
+        if (!purchaseCard && !card.querySelector('[data-dm-test-ad="energy"]')) addButton(card, 'energy');
+        let requestedPrice = Math.max(100, ...[...card.querySelectorAll('[data-pack][disabled]')].map(button => {
           const amount = Number(button.dataset.pack), capacity = Number(window.genelEnerjiMax || 25), current = Number(window.genelEnerjiKalan || 0);
           return current + amount <= capacity ? ({5:100,10:130,15:180}[amount] || 100) : 100;
         }));
+        if(purchaseCard) requestedPrice=Number((card.querySelector('.ds-price')?.textContent||'').replace(/\D/g,''));
+        const shortage = !purchaseCard || (/Altın eksik/i.test(card.querySelector('.ds-buy')?.textContent||'') && requestedPrice>balance);
         const gold = card.querySelector('[data-dm-test-ad="gold"]');
-        if (goldOfferEligible({ balance, requestedPrice })) { if (!gold) addButton(card, 'gold'); }
+        if (shortage && goldOfferEligible({ balance, requestedPrice })) { if (!gold) addButton(card, 'gold'); }
         else if (gold) gold.remove();
       }
       lastBalance = balance;
