@@ -1,0 +1,26 @@
+name: Teacher splash controls QA
+on:
+  push:
+    paths:
+      - 'ingilizce/teacher-splash-control.*'
+      - 'ingilizce/holiday-splashes/splash.js'
+      - 'supabase/functions/splash-settings/**'
+      - 'tests/teacher-splash-controls.test.cjs'
+      - '.github/workflows/teacher-splash-controls.yml'
+  pull_request:
+    paths:
+      - 'ingilizce/teacher-splash-control.*'
+      - 'ingilizce/holiday-splashes/splash.js'
+      - 'supabase/functions/splash-settings/**'
+      - 'tests/teacher-splash-controls.test.cjs'
+jobs:
+  test:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node --check ingilizce/holiday-splashes/splash.js
+      - run: node --check ingilizce/teacher-splash-control.js
+      - run: node --test tests/teacher-splash-controls.test.cjs tests/holiday-splash.test.cjs
