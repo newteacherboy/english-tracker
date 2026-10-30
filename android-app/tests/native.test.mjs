@@ -44,3 +44,11 @@ test('dismissal before reward is not counted as completion', async () => {
 test('no-fill removes listeners, unlocks and permits a retry', async () => {
   const s = setup({ fail: true }); await assert.rejects(s.ads.show(), /no fill/); await assert.rejects(s.ads.show(), /no fill/); assert.equal(s.prepared, 2); assert.equal(s.removed, 6);
 });
+
+test('native dismissal resolves even when SDK show promise waits forever for a reward', async () => {
+  const callbacks = {};
+  const win = { sessionStorage: { getItem: () => null }, document: { documentElement: { matches: () => false }, body: { classList: { contains: () => false } } } };
+  const admob = { initialize: async () => {}, addListener: async (name, fn) => { callbacks[name] = fn; return { remove: async () => {} }; }, prepareRewardVideoAd: async () => {}, showRewardVideoAd: () => { queueMicrotask(() => callbacks.dismiss()); return new Promise(() => {}); } };
+  const ads = createTestAds(admob, win, { Rewarded:'reward', Dismissed:'dismiss', FailedToShow:'fail' });
+  const result = await ads.show(); assert.equal(result.completed, false);
+});
