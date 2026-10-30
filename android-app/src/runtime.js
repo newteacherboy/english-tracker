@@ -36,7 +36,7 @@ if (Capacitor.isNativePlatform() && Capacitor.getPlatform() === 'android') {
     if (confirm('Diji Medu’dan çıkmak istiyor musun?')) void App.exitApp();
   });
   void App.addListener('appStateChange', ({ isActive }) => {
-    if (!isActive) { window.speechSynthesis?.cancel(); void SpeechRecognition.stop().catch(() => {}); }
+    if (!isActive) window.speechSynthesis?.cancel(); // Do not cancel Android's own recognition permission/dialog activity.
   });
   // Offer only an explicitly labeled demo on the energy panel, never an automatic ad.
   document.addEventListener('DOMContentLoaded', () => {
