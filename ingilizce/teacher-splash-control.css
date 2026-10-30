@@ -1,0 +1,19 @@
+.dm-splash-shade{position:fixed;inset:0;z-index:2147483647;background:#092c43c9;display:flex;align-items:center;justify-content:center;padding:14px;box-sizing:border-box;font-family:Nunito,system-ui,sans-serif}
+.dm-splash-panel{position:relative;width:min(620px,100%);max-height:92dvh;overflow:auto;background:#fffefa;color:#243c4a;border-radius:24px;padding:22px;box-sizing:border-box;box-shadow:0 20px 65px #051f3e50}
+.dm-splash-panel h2{font-size:24px;margin:0 40px 8px 0}.dm-splash-panel h3{margin:18px 0 5px;font-size:19px}
+.dm-splash-panel button,.dm-splash-panel select{font:inherit;cursor:pointer}.dm-splash-close{position:absolute;right:14px;top:10px;background:#fff;border:1px solid #d7e6e9;border-radius:12px;width:42px;height:42px;font-size:25px}
+.dm-splash-note{color:#627784;font-size:13px;margin:6px 0 12px}.dm-splash-feedback{min-height:24px;font-size:13px;color:#00775d;font-weight:800}
+.dm-splash-modes{display:grid;gap:12px;padding:12px;border:1px solid #d6e7e8;border-radius:14px}.dm-splash-modes legend{font-weight:900}
+.dm-splash-modes label{display:flex;align-items:center;gap:9px;font-weight:800;font-size:14px}
+.dm-splash-panel input[type=radio],.dm-splash-panel input[type=checkbox]{width:19px;height:19px;accent-color:#087f79;flex-shrink:0}
+.dm-splash-manual{display:grid;gap:5px;font-size:13px;font-weight:800;margin-top:12px}.dm-splash-manual[hidden]{display:none}
+.dm-splash-manual select{width:100%;min-height:45px;border:1px solid #afcecb;border-radius:11px;padding:9px;background:#fff}
+.dm-splash-preview{margin:12px auto;width:min(165px,45vw);height:165px;display:grid;place-items:center;background:#edf5f3;border-radius:13px;overflow:hidden}
+.dm-splash-preview img{height:100%;width:100%;object-fit:contain}
+.dm-splash-choices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.dm-splash-row{display:flex;flex-wrap:wrap;gap:7px;align-items:center;padding:10px;border:1px solid #dce9e7;border-radius:12px;background:#f7faf7;font-weight:800;font-size:13px}
+.dm-splash-row small{width:100%;margin-left:27px;color:#678184;font-size:10px;font-weight:600}
+.dm-splash-save{width:100%;margin-top:18px;min-height:49px;background:#078b81;color:white;border:0;border-radius:13px;font-weight:900!important}
+.dm-splash-save:disabled{opacity:.6}
+#tpDashboard .tp-dash-menu [data-dm-splash-open]{background:#e5f6ff;border:1px solid #9dcfec;color:#154e80;font-weight:900}
+@media(max-width:420px){.dm-splash-panel{padding:16px}.dm-splash-choices{grid-template-columns:1fr}.dm-splash-preview{height:130px}}

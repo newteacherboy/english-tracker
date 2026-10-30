@@ -44,6 +44,18 @@
   }
   return best;
  }
+const defaultPreference={mode:'auto',disabled:[],manual:null};
+ function prefResolve(now,cal,pref){
+  if(pref?.mode==='normal')return null;
+  if(pref?.mode==='manual'){
+   const m=pref.manual;
+   const map={'23-nisan':['1','2'],'19-mayis':['1','2'],'30-agustos':['1','2'],'29-ekim':['1','2'],'10-kasim':['1','2'],'15-temmuz':['1'],'ramazan-ayi':['2'],'ramazan-bayrami':['1'],'kurban-bayrami':['2']};
+   if(!m||!map[m.id]?.some(v=>m.file===m.id+'-'+v+'.jpg'))return null;
+   return {id:m.id,file:m.file,year:+turkeyDate(now).slice(0,4),variant:1,priority:200,today:turkeyDate(now)};
+  }
+  const result=resolve(now,cal);
+  return result&&Array.isArray(pref?.disabled)&&pref.disabled.includes(result.id)?null:result;
+ }
  function install(win){
   const doc=win.document;
   const src=doc.currentScript?.src||new URL('holiday-splash.js',doc.baseURI).href;
@@ -53,16 +65,41 @@
    const saved=JSON.parse(win.localStorage.getItem('dm-holiday-calendar'));
    if(saved?.periods&&Number(saved?.verified?.replace(/-/g,''))>Number(calendar.verified?.replace(/-/g,'')))calendar=saved;
   }catch(_){}
-  const chosen=resolve(new Date(),calendar);
-  if(chosen){
-   const image=new URL(chosen.file,base).href;
-   doc.documentElement.classList.add('dm-holiday-active');
-   doc.documentElement.style.setProperty('--dm-holiday-art','url("'+image+'")');
-   doc.documentElement.dataset.dmHoliday=chosen.id;
-   doc.documentElement.dataset.dmHolidayVariant=String(chosen.variant);
-   const preload=doc.createElement('link');preload.rel='preload';preload.as='image';preload.href=image;doc.head.appendChild(preload);
-   // The three approved originals now contain the genuine archival Atatürk photograph.
+  let prefs=defaultPreference;
+  try{const cached=JSON.parse(win.localStorage.getItem('dm-splash-preferences')||'null');if(cached&&['auto','normal','manual'].includes(cached.mode))prefs=cached;}catch(_){}
+  let chosen=prefResolve(new Date(),calendar,prefs);
+  function updateArtwork(next){
+   const root=doc.documentElement,active=!!next;
+   root.classList.toggle('dm-holiday-active',active);
+   if(active){
+    const image=new URL(next.file,base).href;
+    root.style.setProperty('--dm-holiday-art','url("'+image+'")');
+    root.dataset.dmHoliday=next.id;
+    root.dataset.dmHolidayVariant=String(next.variant);
+    const preload=doc.createElement('link');preload.rel='preload';preload.as='image';preload.href=image;doc.head.appendChild(preload);
+   }else{
+    root.style.removeProperty('--dm-holiday-art');
+    delete root.dataset.dmHoliday;delete root.dataset.dmHolidayVariant;
+    doc.querySelectorAll('.dm-holiday-art').forEach(el=>el.remove());
+   }
+   chosen=next;
+   if(active&&doc.readyState!=='loading')attach();
   }
+  updateArtwork(chosen);
+  // Server-managed global selection: read asynchronously after immediate cached first paint.
+  function refreshPreferences(){
+   if(typeof win.fetch!=='function')return;
+   win.fetch('https://nxfqlutulxqzqgwewssd.supabase.co/functions/v1/splash-settings',{cache:'no-store'})
+    .then(r=>{if(!r.ok)throw Error('settings unavailable');return r.json();})
+    .then(data=>{
+     if(!data.ok||!data.config)return;
+     prefs=data.config;
+     try{win.localStorage.setItem('dm-splash-preferences',JSON.stringify(prefs));}catch(_){}
+     const next=prefResolve(new Date(),calendar,prefs);
+     if(next?.file!==chosen?.file)updateArtwork(next);
+    }).catch(()=>{});
+  }
+  if(doc.readyState==='loading')doc.addEventListener('DOMContentLoaded',refreshPreferences,{once:true});else refreshPreferences();
   const current=win.DM_HOLIDAY_DATES?.verified||'';
   function syncRemote(){
    try{
@@ -94,10 +131,10 @@
   if(doc.readyState==='loading')doc.addEventListener('DOMContentLoaded',attach,{once:true});else attach();
   if(typeof win.requestIdleCallback==='function')win.requestIdleCallback(syncRemote);else win.addEventListener('load',syncRemote,{once:true});
   // In long-running single-page sessions, re-evaluate at local midnight.
-  if(chosen&&typeof win.setInterval==='function')win.setInterval(()=>{
-   const next=resolve(new Date(),calendar);
+  if(typeof win.setInterval==='function')win.setInterval(()=>{
+   const next=prefResolve(new Date(),calendar,prefs);
    if((next?.file||'')!==(chosen?.file||''))win.location.reload();
   },60*60*1000);
  }
- return {resolve,turkeyDate,addDays,holidays,install};
+ return {resolve,prefResolve,turkeyDate,addDays,holidays,install};
 });
