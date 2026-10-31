@@ -1,0 +1,11 @@
+{
+  "name": "dijimedu-ios-ad-tests",
+  "private": true,
+  "scripts": {
+    "test": "cd ../.. && node --test tests/ios-admob.test.cjs"
+  },
+  "devDependencies": {
+    "@electric-sql/pglite": "0.3.14",
+    "jsdom": "26.1.0"
+  }
+}

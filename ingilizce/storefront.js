@@ -15,7 +15,7 @@
   const allowed = code => window.dmProgression?.allowed(code) !== false;
   const jokerPrice = j => Number(j.f || 0);
   const jokers = () => window.JOKER_MAGAZA || [];
-  function button(label, attrs = '', disabled = false) { return `<button type="button" class="ds-buy" ${attrs} ${disabled ? 'disabled' : ''}>${label}</button>`; }
+  function button(label, attrs = '', disabled = false) { return `<button type="button" class="ds-buy" ${attrs} ${disabled && !(label === 'Altın eksik' && window.DijiReklam?.reklamGosterilsinMi()) ? 'disabled' : ''} ${label === 'Altın eksik' ? 'data-ad-shortage' : ''}>${label}</button>`; }
   function header() {
     return `<header class="ds-header"><div class="ds-heading">${art('bag')}<div><h1>Mağaza</h1><p>Karakterini giydir, enerjini al, macerana renk kat!</p></div></div><button type="button" class="ds-wallet" data-ds="energy" aria-label="Altın bakiyen ${gold()} · enerji paketlerine git">${money(gold())}<span class="ds-plus">+</span></button></header>`;
   }
@@ -93,6 +93,7 @@
   }
   async function purchase(btn, action) {
     if (pending || btn.disabled) return;
+    if(btn.hasAttribute('data-ad-shortage') && window.DijiReklam?.reklamGosterilsinMi()){const urun=btn.dataset.item?{tip:'kiyafet',id:btn.dataset.item}:btn.dataset.joker?{tip:'joker',id:btn.dataset.joker}:{tip:'enerji',id:btn.dataset.pack};window.DijiReklam.altinEksik(urun);return;}
     pending = true; const old = btn.textContent; btn.disabled = true; btn.textContent = 'Alınıyor…';
     try { await action(); }
     catch (e) { toast(e.message || 'Satın alma tamamlanamadı.'); }

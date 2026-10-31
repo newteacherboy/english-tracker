@@ -8,6 +8,7 @@ const guest=()=>!!window.dmGuestMode||!who();
 const practice=()=>guest()||who().toLowerCase()==='teacher';
 const title=t=>t.key.split('|').slice(2).join('|').split(' — ').at(-1);
 const reduced=()=>window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+let reklamSonuc=null;
 let level='A1',catalogs={},catalog,core,loading,rows,category='all',root=null,owner='',topic,game,run,questions=[],picks=[],index=0,correct=0,streak=0,epoch=0,timer,watch,origin,navKey='',returnView,quota=new Map(),quotaDay='',activeRequest;
 const desc={kova:'Kelimeyi oku, doğru görselin kovasına dokun.',cark:'Çarkı çevir, görselin İngilizcesini seç.',balon:'Cümleyi tamamlayan balonu patlat.',dy:'Cümle dil bilgisi açısından doğru mu? Karar ver.',sohbet:'Bir arkadaşınla konuş, doğru cevabı seç.',durum:'Günlük durumlarda ne söyleyeceğini keşfet.'};
 function quotaKey(t,g){const day=new Intl.DateTimeFormat('en-CA',{timeZone:'Europe/Istanbul',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());if(day!==quotaDay){quota.clear();quotaDay=day;}return who()+'|'+t.key+'|'+g;}
@@ -51,7 +52,7 @@ function drawList(hub){hub.innerHTML='<div class="kg-chips" aria-label="Dil sevi
 function speak(text){try{if(!soundOn()||!window.speechSynthesis||!window.SpeechSynthesisUtterance)return;window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang='en-US';u.rate=.87;u.onerror=()=>{};window.speechSynthesis.speak(u);}catch{}}
 function stop(){clearTimeout(timer);clearTimeout(speechTimer);try{window.speechSynthesis?.cancel();}catch{}}
 function clearRoot(){epoch++;stop();activeRequest?.abort();clearInterval(watch);if(!root)return;window.dmViewHistory?.leave(root);root.remove();root=null;document.body.classList.remove('kg-active');window.dmPapiNotices?.resume?.();}
-function close(fromPop=false){const key=navKey;clearRoot();navKey='';origin?.focus?.({preventScroll:true});if(!fromPop&&history.state?.dmTopic===key)history.back();}
+function close(fromPop=false){const ad=reklamSonuc;reklamSonuc=null;const key=navKey;clearRoot();navKey='';origin?.focus?.({preventScroll:true});if(!fromPop&&history.state?.dmTopic===key)history.back();window.DijiReklam?.sonucKapandi(ad,true);}
 function shell(label){if(root){window.dmViewHistory?.leave(root);root.remove();}root=document.createElement('section');root.id='kgOverlay';root.className='kg-overlay';root.setAttribute('role','dialog');root.setAttribute('aria-modal','true');root.setAttribute('aria-label',label);
  root.innerHTML='<div class="kg-shell"><header><button type="button" data-back aria-label="Önceki ekrana dön">‹</button><strong>'+esc(label)+'</strong><button type="button" data-sound aria-label="Sesi kapat">🔊</button><button type="button" data-close aria-label="Konu oyununu kapat">×</button></header><div class="kg-content"></div></div>';
  readSound();const sound=root.querySelector('[data-sound]');const sync=()=>{sound.innerHTML=soundIcon(enabled);sound.setAttribute('aria-label',enabled?'Sesi kapat':'Sesi aç');sound.setAttribute('aria-pressed',String(enabled));};sync();sound.onclick=()=>{enabled=!enabled;try{localStorage.setItem(soundKey(),enabled?'on':'off');}catch{}if(enabled)unlockAudio();else{clearTimeout(speechTimer);try{window.speechSynthesis?.cancel();audio?.suspend()?.catch?.(()=>{});}catch{}}sync();};root.addEventListener('pointerdown',unlockAudio,{capture:true});root.addEventListener('keydown',unlockAudio,{capture:true});
@@ -99,10 +100,10 @@ async function finish(){clearTimeout(timer);const token=epoch,box=root.querySele
  try{let d;if(run){d=await api('konuOyunBitir',{runId:run,picks});}else{d={dogru:correct,toplam:questions.length,yuzde:Math.round(correct/questions.length*100),xp:0,sebep:guest()?'guest':'practice'};}
  if(token!==epoch||owner!==who()||!root)return;if(d.yo)window.dmApplyRewardState?.(d.yo,owner);
  if(d.xpHakkiKaldi!==undefined)quota.set(quotaKey(topic,game),d.xpHakkiKaldi);
- effect(d.yuzde>=80?'win':'finish');
+ effect(d.yuzde>=80?'win':'finish');reklamSonuc=window.DijiReklam?.sonucHazir({oyunKey:'konu',runId:run,dogru:d.dogru,yanlis:d.toplam-d.dogru});
  const labels={guest:'XP kazanmak için giriş yap',practice:'Öğretmen için alıştırma · XP yok',accuracy:'XP kazanmak için en az %80 gerekli',daily_limit:'Bu oyundan bugünkü XP hakkın doldu, yarın yine kazanabilirsin',too_fast:'Oyun çok hızlı tamamlandı. Öğrenmek için biraz zaman ayır; bu tur XP yok.'};
  box.innerHTML='<section class="kg-result"><div class="kg-trophy" aria-hidden="true">'+(d.yuzde>=80?'🏆':'😊')+'</div><h2>%'+d.yuzde+'</h2><p>'+d.dogru+' / '+d.toplam+' doğru</p><b class="kg-prize">'+(d.xp>0?'+'+d.xp+' XP kazandın':esc(labels[d.sebep]||'Bu tur XP yok.'))+'</b><button type="button" class="kg-primary" data-again>Tekrar oyna</button><button type="button" data-other>Diğer oyun</button><button type="button" data-topics>Konulara dön</button></section>';
- box.querySelector('[data-again]').onclick=()=>start(game);box.querySelector('[data-other]').onclick=()=>start(topic.games.find(g=>g!==game));box.querySelector('[data-topics]').onclick=()=>close();box.querySelector('[data-again]').focus();
+ const replay=g=>{window.DijiReklam?.sonucKapandi(reklamSonuc,false);reklamSonuc=null;start(g);};box.querySelector('[data-again]').onclick=()=>replay(game);box.querySelector('[data-other]').onclick=()=>replay(topic.games.find(g=>g!==game));box.querySelector('[data-topics]').onclick=()=>close();box.querySelector('[data-again]').focus();
  }catch(e){if(token!==epoch||!root)return;box.innerHTML='<p role="alert">'+esc(e.message)+'</p><p>XP doğrulanamadı. Konulara dönüp yeniden oynayabilirsin.</p><button type="button">Konulara dön</button>';box.querySelector('button').onclick=()=>close();}
 }
 window.addEventListener('popstate',()=>{if(root)close(true);});document.addEventListener('dm:login',()=>{if(root)close();quota.clear();readSound();level='A1';catalog=catalogs.A1;document.querySelectorAll('.kg-hub[data-loaded]').forEach(drawList);});
