@@ -43,16 +43,17 @@ function open(options={}){
  view.body.querySelector('[data-start]').onclick=render;view.body.querySelector('[data-skip]').onclick=()=>leave('skip');const detail=view.body.querySelector('[data-detail]');if(detail)detail.onclick=()=>{leave();(window.dmDetailedPlacement||oldPlacement)?.();};return view;
 }
 async function followup(){const status=window.dmMemberBadgeStatus,owner=who(),key=owner+'|'+(status?.startingPoint?.completedAt||'');if(!status?.startingPoint||followupDone===key||followupBusy)return;followupBusy=true;try{const d=await api('startPlacementFollowup');if(owner!==who()||d.pending)return;followupDone=key;window.dmStartingPointCheck=d;document.dispatchEvent(new CustomEvent('dm:starting-point-check',{detail:d}));}catch{}finally{followupBusy=false;}}
-let upperPendingOpened='';
+let upperPendingOpened='',upperCharacterEvent=false;
 function afterCharacterPlacement(){
  let pending;try{pending=JSON.parse(localStorage.getItem('dm_independent_upper_after_character')||'null');}catch{}
  if(!pending||!who()||pending.owner?.toLowerCase()!==who().toLowerCase()||!Y()||!window.dmMemberUI)return;
+ if(!upperCharacterEvent&&!Y().karakter)return;
  if(Date.now()-Number(pending.at)>30*24*3600000){localStorage.removeItem('dm_independent_upper_after_character');return;}
  if(upperPendingOpened===who()||document.getElementById('dmStartPlacement')||document.getElementById('dmCharacterBuilder')||document.getElementById('dmRouteChoice'))return;
  if(window.dmMemberBadgeStatus?.startingPoint?.completedAt){localStorage.removeItem('dm_independent_upper_after_character');return;}
  upperPendingOpened=who();open({source:'upper-required'});
 }
-for(const event of ['dm:first-character-chosen','dm:first-character-skipped'])document.addEventListener(event,()=>setTimeout(afterCharacterPlacement,100));
+for(const event of ['dm:first-character-chosen','dm:first-character-skipped'])document.addEventListener(event,()=>{upperCharacterEvent=true;setTimeout(afterCharacterPlacement,100);});
 function initialize(){const s=window.dmMemberBadgeStatus;if(s?.learnerProfile){window.dmLearnerProfile=s.learnerProfile;}let pending;try{pending=JSON.parse(localStorage.getItem('dm_start_placement_pending')||'null');}catch{}if(pending?.owner===who()&&openedFor!==who()&&!document.getElementById('dmRouteChoice')&&Y()){openedFor=who();if(pending.choice==='test')open();else{const v=window.dmMemberUI.sheet('İngilizce yolculuğun hazır',art+'<p>İstersen kısa testle başlangıç önerisi alabilir, istersen doğrudan başlayabilirsin.</p><button class="dm-member-primary" type="button" data-test>Başlangıç seviyemi bul</button><button class="sp-skip" type="button" data-skip>Şimdilik geç · Doğrudan başla</button>','dmStartingChoice');v.el.querySelector('[data-test]').onclick=()=>{v.close();open();};v.el.querySelector('[data-skip]').onclick=()=>{localStorage.removeItem('dm_start_placement_pending');v.close();};}}afterCharacterPlacement();followup();}
 // Claim this invitation once per authenticated account, across devices.
 let studyInviteBusy=false,studyInviteOwner='',studyInvitePending='',studyWatchReady=false;
