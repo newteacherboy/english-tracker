@@ -53,7 +53,8 @@ export function computeStartPath({profile,classNo,placement,choice,lessons,done,
  }
  const school=p.purpose==='school'&&cls>0,wholeRoute=p.purpose==='school'&&['high','university'].includes(p.educationStage);
  const mode=p.startChoice==='test'?'test':p.startChoice==='known'?'level':school?'grade':'level';
- const base=mode==='test'?(test||'A1'):p.startChoice==='known'&&rank(p.knownLevel)>=0?p.knownLevel:school?gradeToCefr(cls):'A1';
+ const verifiedUpper=p.purpose==='independent'&&p.placementPolicy==='verified-upper';
+ const base=mode==='test'?(test||'A1'):p.startChoice==='known'&&rank(p.knownLevel)>=0&&(!verifiedUpper||rank(p.knownLevel)===0)?p.knownLevel:school?gradeToCefr(cls):'A1';
  let top=Math.max(rank(base),rank(test),playedCefr,0);
  const levelDone=i=>!!lessons?.[CEFR[i+1]]||!!thematic?.complete?.[CEFR[i]];
  while(top<3&&levelDone(top))top++;
