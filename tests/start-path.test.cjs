@@ -70,3 +70,16 @@ test('class 1–8 learners need the starting test for the learning route, even i
  assert.equal(SP.computeStartPath({profile:school,classNo:7,placement,choice:{level:'A2'}}).startCefr,'A2','a lower chosen start wins');
  assert.equal(SP.computeStartPath({classNo:7,placement,choice:{level:'A2'}}).startCefr,'A2','legacy accounts honour the chosen start too');
 });
+
+
+test('new independent upper-level claims must be verified, without affecting older accounts',()=>{
+ const newer=independent({startChoice:'known',knownLevel:'B2',placementPolicy:'verified-upper'});
+ const old=independent({startChoice:'known',knownLevel:'B2'});
+ assert.equal(SP.computeStartPath({profile:newer}).maxCefr,'A1');
+ assert.equal(SP.computeStartPath({profile:old}).maxCefr,'B2');
+ const verified={version:'starting-point-20261018-v1',total:24,level:'B1',completedAt:'2026-10-31T12:00:00Z'};
+ const p=SP.computeStartPath({profile:newer,placement:verified});
+ assert.equal(p.maxCefr,'B1');
+ assert.equal(p.startCefr,'B1');
+ assert.equal(SP.computeStartPath({profile:independent({startChoice:'new',placementPolicy:'verified-upper'})}).maxCefr,'A1');
+});
