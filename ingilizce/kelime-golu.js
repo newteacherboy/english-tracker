@@ -19,14 +19,14 @@ const timers=new Set();
 function later(fn,ms){const ticket=epoch;const id=setTimeout(()=>{timers.delete(id);if(ticket===epoch&&root)fn();},ms);timers.add(id);}
 // A goal needs its own stadium cue, not the generic correct-answer ping.
 let audioContext=null;
-function goalSound(){
+function goalSound(delay=0){
  if(!soundOn)return;
  try{
   const Audio=window.AudioContext||window.webkitAudioContext;
   if(!Audio){window.genelSesEfektiCal?.('dogru');return;}
   audioContext=audioContext||new Audio();
   if(audioContext.state==='suspended')audioContext.resume().catch(()=>{});
-  const start=audioContext.currentTime+0.02;
+  const start=audioContext.currentTime+Math.max(0,delay)+0.02;
   // Three celebratory horn notes with a soft crowd-like noise layer.
   [392,494,587,784].forEach((frequency,i)=>{
    const t=start+i*.105,osc=audioContext.createOscillator(),gain=audioContext.createGain();
@@ -110,7 +110,7 @@ function shoot(i,n){const s=session,p=s?.players[i];if(!s||s.phase!=='play'||!p|
  p.locked=true;const word=p.words[p.index],answer=n===null?null:p.options[n],good=answer!==null&&norm(answer)===norm(tr(word));
  const panel=root.querySelector(`[data-player="${i}"]`),pitch=panel.querySelector('.kg-pitch'),ball=panel.querySelector('.kg-ball');
  // Unlock the audio context synchronously in the shot click gesture.
- if(good&&soundOn){try{const Audio=window.AudioContext||window.webkitAudioContext;if(Audio){audioContext=audioContext||new Audio();if(audioContext.state==='suspended')audioContext.resume().catch(()=>{});}}catch(e){}}
+ if(good&&soundOn)goalSound(.55); // Schedule while the direct user tap still grants iOS audio permission.
  panel.querySelectorAll('[data-target]').forEach(b=>b.disabled=true);
  if(s.mode==='solo'){window.dmVerifiedGames.record(word,answer,s.runId);if(good){OC.dogru(1);p.correct++;}else{OC.yanlis(false);p.wrong++;window.dmWrongWords?.add(word);}p.score=OC.puan();}
  else{p.score+=good?10:-5;good?p.correct++:p.wrong++;}
@@ -127,7 +127,7 @@ function shoot(i,n){const s=session,p=s?.players[i];if(!s||s.phase!=='play'||!p|
  if(n!==null){const target=panel.querySelector(`[data-target="${n}"]`),a=ball.getBoundingClientRect(),b=target.getBoundingClientRect();ball.classList.add('kg-flying');ball.style.transform=`translate(${b.left+b.width/2-a.left-a.width/2}px,${b.top+b.height/2-a.top-a.height/2}px) scale(.24) rotate(300deg)`;}
  later(()=>{
   if(session!==s)return;
-  effect(good);pitch.classList.toggle('kg-goal',good);
+  if(!good)effect(false);pitch.classList.toggle('kg-goal',good);
   panel.querySelectorAll('[data-target]').forEach((b,j)=>{b.classList.toggle('kg-correct',norm(p.options[j])===norm(tr(word)));b.classList.toggle('kg-wrong',j===n&&!good);});
   
   panel.querySelector('[data-score]').textContent=p.score+' PUAN';

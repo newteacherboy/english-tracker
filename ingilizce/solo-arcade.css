@@ -64,3 +64,7 @@
 .sa-stack .sa-floor:last-child{bottom:calc(var(--i)*12cqh + 10cqh)}
 .sa-drop .sa-floor:last-child{animation:sa-floor-land .7s forwards}
 @keyframes sa-floor-land{to{bottom:calc(var(--i)*12cqh);transform:rotate(0)}}
+
+/* Dengesiz Kule: center every preview level on one vertical axis on iPad/mobile. */
+.sa-kule .sa-demo-tower{position:relative;left:auto;right:auto;margin-inline:auto}
+.sa-kule .sa-demo-tower .sa-floor{left:50%!important;transform:translateX(-50%);width:min(100%,160px);max-width:100%;object-position:center;}
