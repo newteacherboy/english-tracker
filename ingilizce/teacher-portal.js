@@ -61,9 +61,11 @@
   const current=typeof aktifOgrenciAdi==='undefined'?'':String(aktifOgrenciAdi||'');
   if(current.toLocaleLowerCase('tr-TR')!==String(notice.student).toLocaleLowerCase('tr-TR'))return;
   if(!localStorage.getItem('ing_token'))return;
+  const hasCharacter=typeof yo!=='undefined'&&!!yo?.karakter?.cins;
+  if(!hasCharacter&&!sessionStorage.getItem('dm_teacher_notice_character_ready'))return;
   const isVisible=el=>!!el&&el.isConnected&&el.getClientRects().length>0&&getComputedStyle(el).visibility!=='hidden';
   if(document.querySelector('.tp-shade')||[...document.querySelectorAll('#duyuruOverlay,.dm-announcement-overlay,.dm-urgent-announcement,[data-urgent-announcement],.dm-first-character,[role="dialog"][aria-modal="true"]')].some(isVisible))return;
-  sessionStorage.removeItem('dm_teacher_application_notice');
+  sessionStorage.removeItem('dm_teacher_application_notice');sessionStorage.removeItem('dm_teacher_notice_character_ready');
   const v=sheet('👩‍🏫 Özel Öğretmen Paneli Başvurun','<p>Öğretmen hesabın oluşturuldu. Başvuru durumun kontrol ediliyor…</p>');
   api('teacherPortalStatus',{},localStorage.getItem('ing_token')||'').then(r=>{
    if(!v.shade.isConnected)return;
@@ -76,7 +78,7 @@
    if(r.state==='approved'&&r.codeSent){const button=document.createElement('button');button.type='button';button.className='tp-primary';button.textContent='Özel öğretmen girişi';button.onclick=()=>{v.close();openLogin();};v.form.append(button);}
   }).catch(e=>v.error(e.message||'Başvuru durumu alınamadı.'));
  }
- if(!mode){let noticeChecks=0;const checkNotice=()=>{teacherApplicationNotice();if(++noticeChecks>120)clearInterval(noticeTimer);};window.addEventListener('dm:first-character-chosen',()=>setTimeout(checkNotice,700));window.addEventListener('dm:first-character-skipped',()=>setTimeout(checkNotice,700));const noticeTimer=setInterval(checkNotice,1500);}
+ if(!mode){let noticeChecks=0;const checkNotice=()=>{teacherApplicationNotice();if(++noticeChecks>120)clearInterval(noticeTimer);};const characterReady=()=>{sessionStorage.setItem('dm_teacher_notice_character_ready','1');setTimeout(checkNotice,700);};window.addEventListener('dm:first-character-chosen',characterReady);window.addEventListener('dm:first-character-skipped',characterReady);const noticeTimer=setInterval(checkNotice,1500);}
  let checkedToken='',canManage=false;
  async function decorate(){statusButton();const menu=document.getElementById('ogretmenMenuModal');if(!menu)return;const token=sessionStorage.getItem('ing_ogr_token')||'';if(!token)return;if(checkedToken!==token){checkedToken=token;canManage=false;try{const d=await api('ogretmenBilgim',{},token);canManage=d.kullanici==='teacher'&&d.yonetici===true;}catch{}}if(canManage&&!menu.querySelector('[data-tp-manage]')){const b=document.createElement('button');b.type='button';b.className='ogretmen-menu-btn';b.dataset.tpManage='1';b.textContent='🔐 Öğretmen Erişim Onayları';b.onclick=management;menu.querySelector('.rubric-content')?.append(b);}}
 
