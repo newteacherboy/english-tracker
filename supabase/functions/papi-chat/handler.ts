@@ -12,6 +12,19 @@ export function parseReply(raw:string){
  const output:any={};for(const k of ['reply','correction','explanation','translation']){if(value[k]!=null&&typeof value[k]!=='string')throw Error('invalid_reply');output[k]=String(value[k]||'').trim();if(output[k].length>700)throw Error('invalid_reply');}
  if(/https?:\/\/|www\.|[\w.+-]+@[\w.-]+\.[a-z]{2,}|\d{5,}/i.test(Object.values(output).join(' ')))throw Error('invalid_reply');return output;
 }
+// Stop reading at the byte limit instead of buffering an unbounded request first.
+async function readSmallJson(req:Request,maxBytes:number){
+ if(Number(req.headers.get('content-length')||0)>maxBytes)return {ok:false,status:413};
+ if(!req.body)return {ok:false,status:400};
+ const reader=req.body.getReader(),chunks:Uint8Array[]=[];let size=0;
+ try{for(;;){const {value,done}=await reader.read();if(done)break;size+=value.byteLength;
+  if(size>maxBytes){void reader.cancel().catch(()=>{});return {ok:false,status:413};}chunks.push(value);
+ }}finally{reader.releaseLock();}
+ const bytes=new Uint8Array(size);let offset=0;for(const chunk of chunks){bytes.set(chunk,offset);offset+=chunk.byteLength;}
+ try{const data=JSON.parse(await new Response(bytes).text());if(!data||typeof data!=='object'||Array.isArray(data))return {ok:false,status:400};return {ok:true,data};}
+ catch{return {ok:false,status:400};}
+}
+
 export function papiChatHandler({db,env,fetch:request}:{db:any,env:(s:string)=>string|undefined,fetch:typeof fetch}){
  const configured=()=>env('PAPI_CHAT_ENABLED')==='true'&&env('PAPI_CHAT_FREE_ONLY')==='true'&&/^[a-f0-9]{32}$/i.test(env('CLOUDFLARE_ACCOUNT_ID')||'')&&!!env('CLOUDFLARE_AI_TOKEN');
  const rpc=async(actor:string,action:string,arg={})=>{const {data,error}=await db.rpc('dm_papi_chat',{actor,action,arg});if(error)throw Error('storage');return data;};
@@ -20,10 +33,11 @@ export function papiChatHandler({db,env,fetch:request}:{db:any,env:(s:string)=>s
   if(req.method==='OPTIONS')return new Response('ok',{headers:cors});if(req.method!=='POST')return fail('invalid',405);
   let actor='',rid='',reserved=false;
   try{
-   if(Number(req.headers.get('content-length')||0)>8192)return fail('invalid',413);const raw=await req.text();if(new TextEncoder().encode(raw).length>8192)return fail('invalid',413);let b:any;try{b=JSON.parse(raw);}catch{return fail('invalid');}
-   if(!b||typeof b!=='object'||Array.isArray(b))return fail('invalid');
+   const input=await readSmallJson(req,8192);if(!input.ok)return fail('invalid',input.status);const b:any=input.data;
    const token=String(req.headers.get('x-diji-token')||b.t||'');if(!token||token.length>512)return fail('auth',401);
    const s=await db.from('portal_sessions').select('role,student_id,expires_at,teacher_portal_access_id').eq('token_hash',await hash(token)).maybeSingle();if(s.error||s.data?.role!=='student'||s.data?.teacher_portal_access_id||!s.data.student_id||Date.parse(s.data.expires_at)<=Date.now()||!Number.isFinite(Date.parse(s.data.expires_at)))return fail('auth',401);actor=s.data.student_id;
+   const account=await db.from('students').select('id,role,status,frozen_at').eq('id',actor).maybeSingle();
+   if(account.error||!account.data||account.data.role!=='student'||account.data.status!=='approved'||account.data.frozen_at)return fail('auth',403);
    const status=await rpc(actor,'status');if(!status?.ok)return fail(status?.code||'auth',403);
    if(b.action==='status')return json({...status,available:configured(),provider:'Cloudflare Workers AI'});
    if(b.action!=='send')return fail('invalid');if(!configured())return fail('unavailable',503);

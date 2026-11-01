@@ -16,6 +16,19 @@ const recoveryTask=(chapter:any,step:number)=>{
 };
 const recoveryView=(chapter:any,step:number)=>{const q=recoveryTask(chapter,step);return {step,total:3,label:q.label,prompt:q.prompt,support:q.support,options:q.options};};
 const safe=(r:any)=>({ok:true,chapter:r.chapter,cursor:r.cursor,completed:r.completed,finished:r.cursor>=stepCount(r.deck_version),version:r.version,replay:!!r.replay,mistakes:r.mistakes||0,combo:Number(r.route_combo||0),reward:r.last_reward||{},deckVersion:r.deck_version||5});
+// Stop reading at the byte limit instead of buffering an unbounded request first.
+async function readSmallJson(req:Request,maxBytes:number){
+ if(Number(req.headers.get('content-length')||0)>maxBytes)return {ok:false,status:413};
+ if(!req.body)return {ok:false,status:400};
+ const reader=req.body.getReader(),chunks:Uint8Array[]=[];let size=0;
+ try{for(;;){const {value,done}=await reader.read();if(done)break;size+=value.byteLength;
+  if(size>maxBytes){void reader.cancel().catch(()=>{});return {ok:false,status:413};}chunks.push(value);
+ }}finally{reader.releaseLock();}
+ const bytes=new Uint8Array(size);let offset=0;for(const chunk of chunks){bytes.set(chunk,offset);offset+=chunk.byteLength;}
+ try{const data=JSON.parse(await new Response(bytes).text());if(!data||typeof data!=='object'||Array.isArray(data))return {ok:false,status:400};return {ok:true,data};}
+ catch{return {ok:false,status:400};}
+}
+
 export function thematicHandler(db:DB){
  const headers={'Access-Control-Allow-Origin':'*','Access-Control-Allow-Headers':'content-type,authorization,apikey,x-diji-token','Access-Control-Allow-Methods':'POST,OPTIONS','Content-Type':'application/json','Cache-Control':'no-store'};
  const json=(d:any,status=200)=>new Response(JSON.stringify(d),{status,headers});
@@ -23,8 +36,7 @@ export function thematicHandler(db:DB){
   if(req.method==='OPTIONS')return new Response('ok',{headers});
   if(req.method!=='POST')return json({ok:false,mesaj:'POST gerekli.'},405);
   try{
-   const raw=await req.text();if(raw.length>8192)return json({ok:false,mesaj:'İstek çok büyük.'},413);
-   let b:any;try{b=JSON.parse(raw);}catch{return json({ok:false,mesaj:'Geçersiz istek.'},400);}
+   const input=await readSmallJson(req,8192);if(!input.ok)return json({ok:false,mesaj:input.status===413?'İstek çok büyük.':'Geçersiz istek.'},input.status);const b:any=input.data;
    if(!['status','open','advance','recover','comboReset'].includes(b.action))return json({ok:false,mesaj:'Geçersiz işlem.'},400);
    const token=String(b.t||'');if(!token||token.length>512)return json({ok:false,mesaj:'Öğrenme yoluna devam etmek için giriş yap.'},401);
    const hash=Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(token)))).map(x=>x.toString(16).padStart(2,'0')).join('');
@@ -32,8 +44,8 @@ export function thematicHandler(db:DB){
    if(!a||!['student','teacher'].includes(a.role)||!Number.isFinite(Date.parse(a.expires_at))||Date.parse(a.expires_at)<=Date.now())return json({ok:false,mesaj:'Oturumun sona erdi. Yeniden giriş yap.'},401);
    if(a.teacher_portal_access_id)return json({ok:false,mesaj:'Parkur için kişisel hesabına geç.'},403);
    const student=a.role==='student',id=student?a.student_id:a.teacher_id;if(!id)return json({ok:false,mesaj:'Geçerli hesap gerekli.'},401);
-   const person=(await db.select(student?'students':'teachers',{select:student?'id,status,role,energy,energy_max,energy_updated_at':'id,active',id:'eq.'+id,limit:'1'}))[0];
-   if(!person||(student?(person.status!=='approved'||person.role!=='student'):person.active===false))return json({ok:false,mesaj:'Aktif hesap gerekli.'},403);
+   const person=(await db.select(student?'students':'teachers',{select:student?'id,status,role,frozen_at,energy,energy_max,energy_updated_at':'id,active,frozen_at',id:'eq.'+id,limit:'1'}))[0];
+   if(!person||person.frozen_at||(student?(person.status!=='approved'||person.role!=='student'):person.active===false))return json({ok:false,mesaj:'Aktif hesap gerekli.'},403);
    const owner=(student?'s:':'t:')+id;
    const balance=async(p:any={})=>{
     if(!student)return {energy:null,energyMax:30,gold:null,combo:Number(p.route_combo||0)};
