@@ -17,7 +17,28 @@ const pupil=()=>typeof siniftaOynananOgrenci!=='undefined'&&siniftaOynananOgrenc
 let root=null,session=null,tick=null,origin=null,epoch=0,soundOn=true;
 const timers=new Set();
 function later(fn,ms){const ticket=epoch;const id=setTimeout(()=>{timers.delete(id);if(ticket===epoch&&root)fn();},ms);timers.add(id);}
-function effect(good){if(soundOn)window.genelSesEfektiCal?.(good?'dogru':'yanlis');}
+// A goal needs its own stadium cue, not the generic correct-answer ping.
+let audioContext=null;
+function goalSound(){
+ if(!soundOn)return;
+ try{
+  const Audio=window.AudioContext||window.webkitAudioContext;
+  if(!Audio){window.genelSesEfektiCal?.('dogru');return;}
+  audioContext=audioContext||new Audio();
+  if(audioContext.state==='suspended')audioContext.resume().catch(()=>{});
+  const start=audioContext.currentTime+0.02;
+  // Three celebratory horn notes with a soft crowd-like noise layer.
+  [392,494,587,784].forEach((frequency,i)=>{
+   const t=start+i*.105,osc=audioContext.createOscillator(),gain=audioContext.createGain();
+   osc.type='triangle';osc.frequency.setValueAtTime(frequency,t);
+   gain.gain.setValueAtTime(.0001,t);gain.gain.exponentialRampToValueAtTime(.12,t+.018);
+   gain.gain.exponentialRampToValueAtTime(.0001,t+.23);
+   osc.connect(gain);gain.connect(audioContext.destination);osc.start(t);osc.stop(t+.24);
+  });
+ }catch(e){window.genelSesEfektiCal?.('dogru');}
+}
+function effect(good){if(!soundOn)return;if(good)goalSound();else window.genelSesEfektiCal?.('yanlis');}
+const keeperMarkup=()=>`<svg viewBox="0 0 140 160" aria-hidden="true"><ellipse cx="68" cy="151" rx="49" ry="7" fill="#052b20" opacity=".35"/><g stroke="#12304b" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M52 105 33 143M84 105 109 143"/><path d="M48 66 20 89 9 79M90 66 118 41 131 48"/></g><g fill="#fff4dd" stroke="#173453" stroke-width="3"><circle cx="9" cy="79" r="11"/><circle cx="131" cy="48" r="11"/><circle cx="70" cy="30" r="21"/></g><path d="M47 58 Q70 52 94 60 L94 109 Q69 123 45 108Z" fill="#ffca39" stroke="#133a59" stroke-width="4"/><path d="M55 73 85 73M70 65 70 102" stroke="#fff" stroke-width="5" opacity=".7"/><path d="M46 109 44 129 96 129 94 109" fill="#183c78"/><path d="M33 143 20 151M109 143 123 151" stroke="#101d36" stroke-width="12" stroke-linecap="round"/></svg>`;
 function cleanup(){epoch++;clearInterval(tick);tick=null;for(const id of timers)clearTimeout(id);timers.clear();}
 function close(){const s=session;cleanup();root?.remove();root=null;session=null;if(s?.mode==='solo'&&s.runId&&window.OC?.aktif?.runId===s.runId&&!OC.aktif.bitti)OC.aktif.bitti=true;window.dmPlayNavigation?.sync?.();window.dmGameViewport?.sync?.();origin?.focus?.();}
 function status(text){const el=root?.querySelector('[data-status]');if(el)el.textContent=text;}
@@ -75,28 +96,40 @@ async function start(){const s=session;if(!s||s.starting||s.phase!=='setup')retu
  finally{if(session===s)s.starting=false;}
 }
 const ballMarkup=()=>`<svg viewBox="0 0 120 120" aria-hidden="true"><defs><radialGradient id="kgBallShade"><stop offset="0" stop-color="#fff"/><stop offset=".7" stop-color="#f3f5fb"/><stop offset="1" stop-color="#9caec6"/></radialGradient></defs><circle cx="60" cy="60" r="58" fill="url(#kgBallShade)" stroke="#d4e0eb" stroke-width="2"/><g fill="#153d78" stroke="#617eac" stroke-width="1.5"><path d="m49 3 22 0 9 17-20 13-20-13zM4 39l16-6 9 21-10 23L3 71zM100 33l16 6 1 32-16 6-10-23zM29 94l24 8 2 15-28-9-13-13zM67 102l24-8 15 1-13 13-28 9z"/></g><path d="m40 20-20 13m60-13 20 13M19 77l10 17m72-17-10 17M53 102l14 0" stroke="#bcc9d9" stroke-width="2" fill="none"/></svg>`;
-function play(){root.classList.toggle('kg-duo',session.mode==='duo');root.querySelector('.kg-main').innerHTML=`<div class="kg-pitches">${session.players.map((p,i)=>`<section class="kg-player" data-player="${i}"><div class="kg-player-head"><b>${esc(p.name)}</b><strong data-score>0 PUAN</strong><span data-progress></span><span data-clock></span></div><div class="kg-pitch"><div class="kg-goal-targets">${[0,1,2,3].map(n=>`<button type="button" class="kg-target kg-target-${n}" data-target="${n}"></button>`).join('')}</div><div class="kg-shot-glove" hidden>🧤</div><div class="kg-ball">${ballMarkup()}<b lang="en" data-word></b></div><div class="kg-feedback" role="status" aria-live="polite"></div></div><div class="kg-help">Doğru anlamın olduğu köşeye dokun!</div></section>`).join('')}</div>`;
+function play(){root.classList.toggle('kg-duo',session.mode==='duo');root.querySelector('.kg-main').innerHTML=`<div class="kg-pitches">${session.players.map((p,i)=>`<section class="kg-player" data-player="${i}"><div class="kg-player-head"><b>${esc(p.name)}</b><strong data-score>0 PUAN</strong><span data-progress></span><span data-clock></span></div><div class="kg-pitch"><div class="kg-goal-targets">${[0,1,2,3].map(n=>`<button type="button" class="kg-target kg-target-${n}" data-target="${n}"></button>`).join('')}</div><div class="kg-goalkeeper" hidden>${keeperMarkup()}</div><div class="kg-ball">${ballMarkup()}<b lang="en" data-word></b></div><div class="kg-feedback" role="status" aria-live="polite"></div></div><div class="kg-help">Doğru anlamın olduğu köşeye dokun!</div></section>`).join('')}</div>`;
  session.players.forEach((p,i)=>{root.querySelectorAll(`[data-player="${i}"] [data-target]`).forEach(b=>b.onclick=()=>shoot(i,Number(b.dataset.target)));question(i);});update();
 }
 function question(i){const s=session,p=s.players[i],panel=root.querySelector(`[data-player="${i}"]`);
  if(p.index>=p.words.length){p.finished=true;panel.querySelectorAll('[data-target]').forEach(b=>b.disabled=true);panel.querySelector('.kg-ball').hidden=true;panel.querySelector('.kg-feedback').textContent='🏁 Şutların tamamlandı!';if(s.players.every(x=>x.finished))finish();return;}
  p.options=options(p.words[p.index],s.bank);p.locked=false;p.deadline=Date.now()+15000;
  panel.querySelectorAll('[data-target]').forEach((b,n)=>{b.textContent=p.options[n];b.disabled=false;b.classList.remove('kg-correct','kg-wrong');});
- const ball=panel.querySelector('.kg-ball');ball.style.transform='';ball.classList.remove('kg-flying');ball.hidden=false;panel.querySelector('[data-word]').textContent=en(p.words[p.index]);panel.querySelector('.kg-feedback').textContent='';panel.querySelector('.kg-shot-glove').hidden=true;panel.querySelector('.kg-pitch').classList.remove('kg-goal');
+ const ball=panel.querySelector('.kg-ball');ball.style.transform='';ball.classList.remove('kg-flying');ball.hidden=false;panel.querySelector('[data-word]').textContent=en(p.words[p.index]);panel.querySelector('.kg-feedback').textContent='';const keeper=panel.querySelector('.kg-goalkeeper');keeper.hidden=true;keeper.classList.remove('kg-diving');keeper.style.removeProperty('--kg-dive-x');keeper.style.removeProperty('--kg-dive-y');panel.querySelector('.kg-pitch').classList.remove('kg-goal');
  panel.querySelector('[data-progress]').textContent=`Şut ${p.index+1}/${p.words.length}`;
 }
 function shoot(i,n){const s=session,p=s?.players[i];if(!s||s.phase!=='play'||!p||p.locked||p.finished||s.owner!==who())return;
  p.locked=true;const word=p.words[p.index],answer=n===null?null:p.options[n],good=answer!==null&&norm(answer)===norm(tr(word));
  const panel=root.querySelector(`[data-player="${i}"]`),pitch=panel.querySelector('.kg-pitch'),ball=panel.querySelector('.kg-ball');
+ // Unlock the audio context synchronously in the shot click gesture.
+ if(good&&soundOn){try{const Audio=window.AudioContext||window.webkitAudioContext;if(Audio){audioContext=audioContext||new Audio();if(audioContext.state==='suspended')audioContext.resume().catch(()=>{});}}catch(e){}}
  panel.querySelectorAll('[data-target]').forEach(b=>b.disabled=true);
  if(s.mode==='solo'){window.dmVerifiedGames.record(word,answer,s.runId);if(good){OC.dogru(1);p.correct++;}else{OC.yanlis(false);p.wrong++;window.dmWrongWords?.add(word);}p.score=OC.puan();}
  else{p.score+=good?10:-5;good?p.correct++:p.wrong++;}
+ if(!good&&n!==null){
+  const keeper=panel.querySelector('.kg-goalkeeper'),target=panel.querySelector(`[data-target="${n}"]`);
+  const pitchRect=pitch.getBoundingClientRect(),t=target.getBoundingClientRect();
+  const startX=pitchRect.width*.5,startY=pitchRect.height*.43;
+  keeper.style.left=startX+'px';keeper.style.top=startY+'px';
+  keeper.style.setProperty('--kg-dive-x',(t.left+t.width/2-pitchRect.left-startX)+'px');
+  keeper.style.setProperty('--kg-dive-y',(t.top+t.height/2-pitchRect.top-startY)+'px');
+  keeper.style.setProperty('--kg-dive-rotate',(n%2===0?'-28deg':'28deg'));
+  keeper.hidden=false;keeper.classList.add('kg-diving');
+ }
  if(n!==null){const target=panel.querySelector(`[data-target="${n}"]`),a=ball.getBoundingClientRect(),b=target.getBoundingClientRect();ball.classList.add('kg-flying');ball.style.transform=`translate(${b.left+b.width/2-a.left-a.width/2}px,${b.top+b.height/2-a.top-a.height/2}px) scale(.24) rotate(300deg)`;}
  later(()=>{
   if(session!==s)return;
   effect(good);pitch.classList.toggle('kg-goal',good);
   panel.querySelectorAll('[data-target]').forEach((b,j)=>{b.classList.toggle('kg-correct',norm(p.options[j])===norm(tr(word)));b.classList.toggle('kg-wrong',j===n&&!good);});
-  if(!good&&n!==null){const glove=panel.querySelector('.kg-shot-glove');const t=panel.querySelector(`[data-target="${n}"]`),a=pitch.getBoundingClientRect(),b=t.getBoundingClientRect();glove.style.left=b.left+b.width/2-a.left+'px';glove.style.top=b.top+b.height/2-a.top+'px';glove.hidden=false;}
+  
   panel.querySelector('[data-score]').textContent=p.score+' PUAN';
   panel.querySelector('.kg-feedback').textContent=good?(s.mode==='duo'?'GOOOL! +10':'GOOOL! ⚽'):(n===null?'Süre doldu! ':s.mode==='duo'?'Kurtarış! −5 · ':'Kurtarış! ')+en(word)+' = '+tr(word);
   later(()=>{p.index++;question(i);},good?750:1600);
