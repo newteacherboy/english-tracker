@@ -1,7 +1,7 @@
 import {memberStudents,isClassroomGuest} from './classroom-identity.mjs';
 // Every grant is tied to a normal learner; neither role claims nor invite codes grant access.
 // Private teacher codes use rate-limited authentication; owner credentials stay server-side.
-export const portalOps=new Set(['teacherPortalApply','teacherPortalStatus','teacherPortalList','teacherPortalDecide','teacherPortalIssueCode','teacherPortalLogin','teacherPortalResetRequest','teacherPortalReset','teacherPortalChangeCode','teacherPortalAppearance','teacherPortalSyncStudents','teacherPortalStudentReport','teacherPortalClassAnalytics','teacherPortalAnnouncement','teacherPortalRubric','teacherPortalPerformance','teacherPortalStudentContact','teacherPortalStudents','teacherPortalParticipant']);
+export const portalOps=new Set(['teacherPortalApply','teacherPortalStatus','teacherPortalAdminCreate','teacherPortalList','teacherPortalDecide','teacherPortalIssueCode','teacherPortalLogin','teacherPortalResetRequest','teacherPortalReset','teacherPortalChangeCode','teacherPortalAppearance','teacherPortalSyncStudents','teacherPortalStudentReport','teacherPortalClassAnalytics','teacherPortalAnnouncement','teacherPortalRubric','teacherPortalPerformance','teacherPortalStudentContact','teacherPortalStudents','teacherPortalParticipant']);
 export function portalOperationAllowed(op,b={}) {
  if(['kelimeCarkiBaslat','kelimeCarkiCevir','kelimeCarkiCevap','kelimeCarkiBitir','kelimeCarkiDurum','kelimeCarkiSiralama'].includes(op))return true;
  if(['','oturumBilgisi','cikis','sonGirisGuncelle','iletisimDurumu','memberStatus','wordReviewList','wordReviewAnswer','seviyeDurumu','sosyalOgrencilerGetir','kelimeleriGetir','kelimeHavuzuGetir','tumKelimeleriGetir','seviyeOyunOdulu','enerjiDurumuGetir','publicCatalogVersion','kelimelerGetir','kategorileriGetir','dogruYanlisSorulariGetir','etkinlikTanimlariGetir','konusmaEsAnlamlarGetir','companionDialogueOpen','companionDialogueAnswer','enerjiDegistir','okumaHiziKaydet','okumaGecmisGetir','dersKonulariGetir','dersKonuDetayGetir','dersTestSonucKaydet','dersBilmiyordumToggle','companionSummary','companionDialogues','dialogueList','dialogueStart','dialogueAnswer','dialogueComplete','reviewList','reviewAnswer','companionReview','companionDialogue','companionDialogueComplete'].includes(op))return true;
@@ -57,6 +57,16 @@ export function teacherPortalAPI(d){
    if(!t.data)return fail('Bağlantı kullanılmış veya süresi dolmuş.');
    const r=await db.from('teacher_portal_access').select('*').eq('id',t.data.access_id).maybeSingle();
    return r.data&&await codeMail(r.data,b.code,token)?json({ok:true,mesaj:'Kodun yenilendi. Yeni kod e-postana da gönderilecek.'}):fail('Bağlantı geçersiz veya erişim kapalı.');
+  }
+  if(op==='teacherPortalAdminCreate'){
+   if(!ownerTeacher(a))return fail('Bu işlem yalnızca teacher yöneticisine açıktır.',403);
+   const username=String(b.username||'').trim(),name=String(b.fullName||'').trim(),email=String(b.email||'').trim().toLowerCase(),password=String(b.password||'');
+   if(!/^[A-Za-z0-9çğıöşüÇĞİÖŞÜ._-]{3,20}$/.test(username)||name.length<3||name.length>80||!/^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$/.test(email)||email.length>254||password.length<6||password.length>64)return fail('Kullanıcı adı (3–20), ad soyad, geçerli e-posta ve 6–64 karakterli başlangıç şifresi gerekli.');
+   const account=await db.from('students').insert({username,full_name:name,email,password_hash:await hashPassword(password),role:'student',status:'approved',email_verification_required:true}).select('id').single();
+   if(account.error)return fail(account.error.code==='23505'?'Bu kullanıcı adı veya e-posta zaten kayıtlı.':'Kişisel hesap oluşturulamadı.',account.error.code==='23505'?409:503);
+   try{await this.apply(account.data.id);}catch(e){return fail('Hesap oluşturuldu fakat başvuru açılamadı. Tekrar hesap oluşturma; mevcut hesabın başvurusunu kontrol et.',503);}
+   // Administrator creates a pending grant, never a verified teacher session.
+   return json({ok:true,studentId:account.data.id,mesaj:'Kişisel hesap oluşturuldu; e-posta doğrulaması ve öğretmen erişim onayı gerekli.'});
   }
   if(op==='teacherPortalList'||op==='teacherPortalDecide'||op==='teacherPortalIssueCode'){
    if(!ownerTeacher(a))return fail('Bu bölüm yalnızca teacher hesabına aittir.',403);
