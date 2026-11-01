@@ -197,6 +197,14 @@
    panel.querySelectorAll('.tp-dash-menu [data-dash]').forEach(b=>{if(['performance','individual','weak','parent','messages','announcements','rubric'].includes(b.dataset.dash))b.remove();});
    document.body.append(panel);
    panel.addEventListener('click',e=>{const b=e.target.closest('[data-dash]');if(b)teacherDashboardAction(b.dataset.dash);});
+   // Existing admin student-management controls use the same class-creation workspace.
+   panel.addEventListener('click',e=>{
+    const button=e.target.closest('button');if(!button||button.closest('[data-dash]'))return;
+    const label=String(button.textContent||'').trim().toLocaleLowerCase('tr-TR');
+    if(/öğrenci hesaplarını yönet|öğrenci hesabı ekle/.test(label)){
+     e.preventDefault();e.stopPropagation();openBulkStudents();
+    }
+   },true);
   }
   if(typeof yo!=='undefined'&&yo?.karakter?.s?.ogretmenKombin!=null){
    const i=Number(yo.karakter.s.ogretmenKombin);
