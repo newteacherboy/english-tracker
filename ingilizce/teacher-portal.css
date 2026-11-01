@@ -256,3 +256,22 @@ html.dm-teacher-portal body #tpDashboard .tp-real-tools>button>strong{display:bl
 html.dm-teacher-portal body #tpDashboard .tp-real-tools>button>small{display:none!important}
 html.dm-teacher-portal body #tpDashboard .tp-real-tools>button[hidden]{display:none!important}
 }
+
+
+/* Teacher class creation: one pupil per row; tablet and phone friendly. */
+.tp-shade .tp-card{max-height:min(92dvh,920px);overflow-y:auto}
+.tp-pupil-heading{font-size:1.12rem;margin:16px 0 10px;font-weight:800;color:#16473e}
+.tp-pupil-rows{display:grid;gap:10px}
+.tp-pupil-row{display:grid;grid-template-columns:26px minmax(0,1fr) minmax(0,1fr) 32px;align-items:end;gap:8px;padding:10px;border:1px solid #d6eae4;border-radius:12px;background:#f6fffc}
+.tp-pupil-row label{min-width:0;font-weight:700;font-size:12px}
+.tp-pupil-row input{box-sizing:border-box;min-width:0;width:100%;padding:11px 9px;border:1px solid #b6d8cf;border-radius:9px;background:#fff;font-size:15px}
+.tp-pupil-num{align-self:center;font-weight:800;color:#27685b}
+.tp-pupil-remove{align-self:end;min-height:41px;border:0;border-radius:8px;background:#fff1ef;color:#9d3434;font-size:20px;cursor:pointer}
+.tp-pupil-remove:disabled{opacity:.3}
+.tp-pupil-actions{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
+.tp-pupil-actions button{background:#e4f8ee;border:1px solid #a4ddc3;color:#096a50;border-radius:10px;padding:10px 12px;font-weight:800;cursor:pointer}
+.tp-pupil-common{display:flex!important;align-items:center;gap:8px;margin:12px 0;font-weight:700}
+.tp-pupil-common input{width:auto!important;min-width:18px;height:18px}
+.tp-pupil-shared[hidden]{display:none!important}
+.tp-pupil-hint{font-size:13px;color:#526963;line-height:1.5}
+@media(max-width:540px){.tp-pupil-row{grid-template-columns:22px minmax(0,1fr) minmax(0,1fr) 28px;gap:5px;padding:8px 5px}.tp-pupil-row input{font-size:13px;padding:10px 5px}.tp-pupil-row label{font-size:11px}.tp-pupil-actions button{flex:1;min-width:90px}}
