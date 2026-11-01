@@ -16,8 +16,8 @@
    - Learners with a class 1–8 on their account (school profile or a legacy
      account) reach the learning route only after the starting test (approved
      20 Oct 2026, 15:16 and 15:37). Only a test completed after the rule
-     started (LEARNING_TEST_FROM) counts; their earlier learning-route progress
-     was reset on 20 Oct 2026 while earned XP and gold stayed (17:18).
+     started (LEARNING_TEST_FROM) counts. Earlier learning-route progress is
+     kept and resumes after the test (reset was considered and dropped, 18:07).
      After a test the learning route starts at the result unless the learner
      chose a lower level. */
 export const CEFR=['A1','A2','B1','B2'];
