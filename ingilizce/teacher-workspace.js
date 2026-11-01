@@ -182,37 +182,67 @@ function dmReportDialog(){
 function dmHome(){
  const heading=[...document.querySelectorAll('h1,h2,h3')].find(h=>dmKey(h.textContent).includes('merhaba öğretmenim'));
  if(!heading||!visible(heading))return;
- const cards=[...document.querySelectorAll('button,a,[role="button"],article,div')].filter(el=>el.children.length<12&&dmKey(el.textContent).includes('yeni bir konu anlat')&&dmKey(el.textContent).length<180);
- const sample=cards.sort((a,b)=>a.querySelectorAll('*').length-b.querySelectorAll('*').length)[0];
- if(!sample)return;
- const grid=sample.parentElement;
- if(!grid||!['DIV','SECTION','MAIN'].includes(grid.tagName)||grid.children.length>12)return;
- const home=heading.closest('section,main,article')||heading.parentElement?.parentElement;
- if(home&&!home.closest('#ogretmenMenuModal')){
-  home.classList.add('dm-purple-teacher-home');
-  grid.classList.add('dm-purple-home-grid');
-  if(!home.querySelector('.dm-purple-welcome')){
-   const banner=document.createElement('section');banner.className='dm-purple-welcome';
-   banner.innerHTML='<div><small>🎓 DİJİ MEDU ÖĞRETMEN PANELİ</small><h2>Sınıfın kontrolünde,<br>gelişim hep takibinde! 🚀</h2><p>Ödev, duyuru, rapor ve öğrencilerinle ilgili işlemler tek yerde.</p></div><img src="papi-help-v2.png" alt="Papi maskotu">';
-   heading.before(banner);
-  }
-  if(!home.querySelector('.dm-purple-sidebar')){
-   const side=document.createElement('nav');side.className='dm-purple-sidebar';side.setAttribute('aria-label','Öğretmen hızlı erişim');
-   const links=[['🏠','Ana Sayfa',()=>home.scrollIntoView({behavior:'smooth',block:'start'})],['📝','Ödevler',()=>dmUseTool('ödev ver')],['📣','Duyurular',()=>dmUseTool('duyurular')],['💬','Sohbetler',()=>dmUseTool('öğrenci sohbetleri')],['📊','Raporlar',dmReportDialog],['🎤','Sözlü Yap',()=>dmUseTool('sözlü yap')],['⚙️','Ayarlar',()=>window.ogretmenPaneliAc?.()]];
-   for(const [icon,label,callback] of links){const button=document.createElement('button');button.type='button';button.innerHTML='<span aria-hidden="true">'+icon+'</span><span>'+label+'</span>';button.addEventListener('click',callback);side.append(button);}
-   home.prepend(side);
-  }
+ const originalCards=[...document.querySelectorAll('button,a,[role="button"],article,div')]
+  .filter(el=>el.children.length<12&&dmKey(el.textContent).includes('yeni bir konu anlat')&&dmKey(el.textContent).length<180)
+  .sort((a,b)=>a.querySelectorAll('*').length-b.querySelectorAll('*').length);
+ const sample=originalCards[0];if(!sample)return;
+ const oldGrid=sample.parentElement;
+ if(!oldGrid||oldGrid.closest('#ogretmenMenuModal'))return;
+ // Find only the shared home content container, never the full document or mobile dock.
+ let container=heading.parentElement;
+ while(container&&!container.contains(oldGrid))container=container.parentElement;
+ if(!container||container===document.body||container===document.documentElement||container.contains(document.getElementById('bottomNavMobile')))return;
+ if(container.querySelector(':scope > #dmTeacherDesignV2'))return;
+ const findCard=term=>[...oldGrid.querySelectorAll('button,a,[role="button"]')].find(x=>dmKey(x.textContent).includes(dmKey(term)));
+ const original={study:findCard('yeni bir konu anlat'),game:findCard('öğrencilerle oyun oyna'),oral:findCard('sözlü yap'),teacher:findCard('öğretmen paneline git'),classroom:findCard('sınıf oluştur')};
+ const openOriginal=key=>{const card=original[key];if(card)card.click();else if(key==='teacher')window.ogretmenPaneliAc?.();else if(key==='oral')dmUseTool('sözlü yap');};
+ const board=document.createElement('section');board.id='dmTeacherDesignV2';board.className='dm-v2-dashboard';
+ board.innerHTML=`<nav class="dm-v2-sidebar" aria-label="Öğretmen araçları">
+  <strong class="dm-v2-logo">🎓<span>Diji Medu</span></strong>
+  <div data-v2-nav></div>
+ </nav><main class="dm-v2-content">
+  <header class="dm-v2-banner"><div><small>DİJİ MEDU · ÖĞRETMEN PANELİ</small><h2>Sınıfın kontrolünde,<br>gelişim hep takibinde! 🚀</h2><p>Ödev, duyuru ve raporlar tek bir yerde.</p></div><img src="papi-help-v2.png" alt="Papi"></header>
+  <div class="dm-v2-stats" aria-label="Öğretmen özeti">
+    <div>👥 <b data-v2-students>—</b><small>Öğrenci</small></div>
+    <div>🏫 <b data-v2-classes>—</b><small>Sınıf</small></div>
+    <div>🎮 <b>Oyunlar</b><small>Sınıf etkinlikleri</small></div>
+    <div>📝 <b>Ödevler</b><small>Öğrenci çalışmaları</small></div>
+  </div>
+  <h3>⚡ Hızlı İşlemler</h3>
+  <div class="dm-v2-actions" data-v2-actions></div>
+  <div class="dm-v2-secondary" data-v2-secondary></div>
+  <h3>✨ Hızlı Erişim</h3>
+  <div class="dm-v2-quick" data-v2-quick></div>
+ </main>`;
+ const add=(target,label,emoji,description,run,cls='')=>{
+  const button=document.createElement('button');button.type='button';button.className='dm-v2-action '+cls;
+  button.innerHTML='<span aria-hidden="true">'+emoji+'</span><strong>'+label+'</strong><small>'+description+'</small><i aria-hidden="true">›</i>';
+  button.addEventListener('click',run);target.append(button);
+ };
+ const actions=board.querySelector('[data-v2-actions]');
+ add(actions,'Ödev Ver','📋','Sınıfına yeni ödev gönder',()=>dmUseTool('ödev ver'),'v2-mint');
+ add(actions,'Duyurular','📣','Öğrencilerini bilgilendir',()=>dmUseTool('duyurular'),'v2-peach');
+ add(actions,'Öğrenci Sohbetleri','💬','Mesajları oku ve yanıtla',()=>dmUseTool('öğrenci sohbetleri'),'v2-pink');
+ const secondary=board.querySelector('[data-v2-secondary]');
+ add(secondary,'Raporlar Merkezi','📊','Performans, zayıf noktalar, veli özetleri ve sınav sonuçları',dmReportDialog,'v2-lavender');
+ add(secondary,'Rubrik Paneli','📋','Özel ders değerlendirme rubriklerini yönet',()=>dmUseTool('rubrik'),'v2-green');
+ const quick=board.querySelector('[data-v2-quick]');
+ add(quick,'Sınıf Oyun Modu','🎮','Sınıf etkinlikleri',()=>dmUseTool('sınıf oyun'));
+ add(quick,'Öğrenciler','👥','Hesapları yönet',()=>openOriginal('teacher'));
+ add(quick,'Sınıf Oluştur','🏫','Yeni sınıf oluştur',()=>openOriginal('classroom'));
+ add(quick,'Sözlü Yap','🎤','Sözlü değerlendirme',()=>openOriginal('oral'));
+ const nav=board.querySelector('[data-v2-nav]');
+ for(const [icon,title,run] of [['⌂','Ana Sayfa',()=>board.scrollIntoView({behavior:'smooth'})],['👥','Öğrenciler',()=>openOriginal('teacher')],['🏫','Sınıflar',()=>openOriginal('classroom')],['📋','Ödevler',()=>dmUseTool('ödev ver')],['📣','Duyurular',()=>dmUseTool('duyurular')],['📊','Raporlar',dmReportDialog],['📈','Rubrik',()=>dmUseTool('rubrik')],['⚙','Öğretmen Paneli',()=>openOriginal('teacher')]]){
+  const button=document.createElement('button');button.type='button';button.innerHTML='<span>'+icon+'</span>'+title;button.addEventListener('click',run);nav.append(button);
  }
-
- if(grid.closest('#ogretmenMenuModal'))return;
- for(const [title,emoji,description,target] of dmHomeActions){
-  if(grid.querySelector('[data-dm-home-action="'+dmKey(title)+'"]'))continue;
-  const card=document.createElement('button');card.type='button';card.className=sample.className||'';
-  card.dataset.dmHomeAction=dmKey(title);card.classList.add('dm-home-shortcut');
-  card.innerHTML='<span class="dm-home-shortcut-icon">'+emoji+'</span><strong>'+title+'</strong><small>'+description+'</small><span class="dm-home-shortcut-arrow" aria-hidden="true">›</span>';
-  card.addEventListener('click',()=>target?dmUseTool(target):dmReportDialog());
-  grid.append(card);
- }
+ const dashboardText=container.textContent||'';
+ const students=dashboardText.match(/(\\d+)\\s*öğrenci/i);const classes=dashboardText.match(/(\\d+)\\s*sınıf/i);
+ if(students)board.querySelector('[data-v2-students]').textContent=students[1];
+ if(classes)board.querySelector('[data-v2-classes]').textContent=classes[1];
+ // Preserve original live handlers and content in the DOM, but remove it from layout.
+ const shell=document.createElement('div');shell.className='dm-v2-legacy';shell.hidden=true;
+ while(container.firstChild)shell.append(container.firstChild);
+ container.append(board,shell);container.classList.add('dm-v2-host');
 }
 function dmHideOldActions(menu){
  if(!document.querySelector('[data-dm-home-action="raporlar"]'))return;
