@@ -187,6 +187,23 @@ function dmHome(){
  if(!sample)return;
  const grid=sample.parentElement;
  if(!grid||!['DIV','SECTION','MAIN'].includes(grid.tagName)||grid.children.length>12)return;
+ const home=heading.closest('section,main,article')||heading.parentElement?.parentElement;
+ if(home&&!home.closest('#ogretmenMenuModal')){
+  home.classList.add('dm-purple-teacher-home');
+  grid.classList.add('dm-purple-home-grid');
+  if(!home.querySelector('.dm-purple-welcome')){
+   const banner=document.createElement('section');banner.className='dm-purple-welcome';
+   banner.innerHTML='<div><small>🎓 DİJİ MEDU ÖĞRETMEN PANELİ</small><h2>Sınıfın kontrolünde,<br>gelişim hep takibinde! 🚀</h2><p>Ödev, duyuru, rapor ve öğrencilerinle ilgili işlemler tek yerde.</p></div><img src="papi-help-v2.png" alt="Papi maskotu">';
+   heading.before(banner);
+  }
+  if(!home.querySelector('.dm-purple-sidebar')){
+   const side=document.createElement('nav');side.className='dm-purple-sidebar';side.setAttribute('aria-label','Öğretmen hızlı erişim');
+   const links=[['🏠','Ana Sayfa',()=>home.scrollIntoView({behavior:'smooth',block:'start'})],['📝','Ödevler',()=>dmUseTool('ödev ver')],['📣','Duyurular',()=>dmUseTool('duyurular')],['💬','Sohbetler',()=>dmUseTool('öğrenci sohbetleri')],['📊','Raporlar',dmReportDialog],['🎤','Sözlü Yap',()=>dmUseTool('sözlü yap')],['⚙️','Ayarlar',()=>window.ogretmenPaneliAc?.()]];
+   for(const [icon,label,callback] of links){const button=document.createElement('button');button.type='button';button.innerHTML='<span aria-hidden="true">'+icon+'</span><span>'+label+'</span>';button.addEventListener('click',callback);side.append(button);}
+   home.prepend(side);
+  }
+ }
+
  if(grid.closest('#ogretmenMenuModal'))return;
  for(const [title,emoji,description,target] of dmHomeActions){
   if(grid.querySelector('[data-dm-home-action="'+dmKey(title)+'"]'))continue;
