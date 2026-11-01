@@ -61,7 +61,7 @@ function decorateWorkspace(menu){
   }
   cardIndex++;
   const show=!query||b.dataset.dmTeacherTitle.toLocaleLowerCase('tr').includes(query);
-  b.hidden=!show;if(show)count++;
+  b.hidden=!show||b.dataset.dmHomeRelocated==='1';if(show&&!b.hidden)count++;
  }
  hero.querySelector('.dm-teacher-no-results').hidden=count>0;
 }
@@ -129,9 +129,90 @@ function openNoticeMailCenter(){
  nav.firstElementChild.click();shade.append(panel);document.body.append(shade);shade.addEventListener('click',e=>{if(e.target===shade)shade.remove()});
 }
 
+
+/* Teacher home shortcuts reuse the existing working panel actions. */
+const dmHomeActions=[
+ ['Ödev Ver','📝','Sınıfına ödev ve etkinlik gönder','ödev ver'],
+ ['Duyurular','📣','Öğrencilerine duyuru gönder','duyurular'],
+ ['Öğrenci Sohbetleri','💬','Öğrencilerinden gelen mesajları yanıtla','öğrenci sohbetleri'],
+ ['Raporlar','📊','Sınıfın ve öğrencilerin gelişimini takip et',null]
+];
+const dmReportActions=[
+ ['Ders İçi Performans','📈','ders içi performans'],
+ ['Sınıfın Zayıf Noktaları','🎯','sınıfın zayıf noktaları'],
+ ['Haftalık Veli Özetleri','👨‍👩‍👧','haftalık veli özetleri'],
+ ['Seviye Sınavı Sonuçları','📑','seviye sınavı sonuçları']
+];
+const dmKey=x=>String(x||'').toLocaleLowerCase('tr').replace(/[^a-z0-9çğıöşü]+/g,' ').trim();
+function dmOriginalTool(label){
+ const menu=$('ogretmenMenuModal');if(!menu)return null;
+ const key=dmKey(label);
+ return [...menu.querySelectorAll('.ogretmen-menu-btn')].find(b=>
+   dmKey(b.dataset.dmTeacherTitle||b.textContent).includes(key));
+}
+function dmUseTool(label){
+ const launch=()=>{
+  const btn=dmOriginalTool(label);
+  if(!btn){window.yoToast?.('Bu öğretmen aracı henüz hazır değil: '+label);return;}
+  btn.click();
+ };
+ if(!token()){window.yoToast?.('Öğretmen oturumu gerekli.');return;}
+ // The panel must be prepared first so existing handlers and teacher authorization remain intact.
+ if(!dmOriginalTool(label))window.dmTeacherWorkspace?.prepare?.();
+ if(!dmOriginalTool(label)&&typeof window.ogretmenPaneliAc==='function'){
+  window.ogretmenPaneliAc();setTimeout(launch,100);return;
+ }
+ launch();
+}
+function dmReportDialog(){
+ document.getElementById('dmHomeReportDialog')?.remove();
+ const dialog=document.createElement('div');dialog.id='dmHomeReportDialog';dialog.className='dm-teacher-child';
+ dialog.setAttribute('role','dialog');dialog.setAttribute('aria-modal','true');dialog.setAttribute('aria-label','Raporlar');
+ dialog.innerHTML='<section class="dm-home-report-panel"><header><h2>📊 Raporlar</h2><button type="button" data-report-close aria-label="Kapat">✕</button></header><p>Görüntülemek istediğin raporu seç.</p><div class="dm-home-report-list"></div></section>';
+ for(const [title,emoji,target] of dmReportActions){
+  const btn=document.createElement('button');btn.type='button';
+  btn.textContent=emoji+'  '+title;btn.addEventListener('click',()=>{dialog.remove();dmUseTool(target);});
+  dialog.querySelector('.dm-home-report-list').append(btn);
+ }
+ dialog.querySelector('[data-report-close]').onclick=()=>dialog.remove();
+ dialog.addEventListener('click',e=>{if(e.target===dialog)dialog.remove();});
+ dialog.addEventListener('keydown',e=>{if(e.key==='Escape'){e.stopPropagation();dialog.remove();}});
+ document.body.append(dialog);dialog.querySelector('[data-report-close]').focus();
+}
+function dmHome(){
+ const heading=[...document.querySelectorAll('h1,h2,h3')].find(h=>dmKey(h.textContent).includes('merhaba öğretmenim'));
+ if(!heading||!visible(heading))return;
+ const cards=[...document.querySelectorAll('button,a,[role="button"],article,div')].filter(el=>el.children.length<12&&dmKey(el.textContent).includes('yeni bir konu anlat')&&dmKey(el.textContent).length<180);
+ const sample=cards.sort((a,b)=>a.querySelectorAll('*').length-b.querySelectorAll('*').length)[0];
+ if(!sample)return;
+ const grid=sample.parentElement;
+ if(!grid||!['DIV','SECTION','MAIN'].includes(grid.tagName)||grid.children.length>12)return;
+ if(grid.closest('#ogretmenMenuModal'))return;
+ for(const [title,emoji,description,target] of dmHomeActions){
+  if(grid.querySelector('[data-dm-home-action="'+dmKey(title)+'"]'))continue;
+  const card=document.createElement('button');card.type='button';card.className=sample.className||'';
+  card.dataset.dmHomeAction=dmKey(title);card.classList.add('dm-home-shortcut');
+  card.innerHTML='<span class="dm-home-shortcut-icon">'+emoji+'</span><strong>'+title+'</strong><small>'+description+'</small><span class="dm-home-shortcut-arrow" aria-hidden="true">›</span>';
+  card.addEventListener('click',()=>target?dmUseTool(target):dmReportDialog());
+  grid.append(card);
+ }
+}
+function dmHideOldActions(menu){
+ if(!document.querySelector('[data-dm-home-action="raporlar"]'))return;
+ // Show relocated actions only on the teacher home page, not as duplicates in the tools grid.
+ for(const [title,, ,target] of dmHomeActions){
+  if(!target)continue;
+  const b=dmOriginalTool(target);if(b){b.dataset.dmHomeRelocated='1';b.hidden=true;}
+ }
+ for(const [title,,target] of dmReportActions){
+  const b=dmOriginalTool(target);if(b){b.dataset.dmHomeRelocated='1';b.hidden=true;}
+ }
+ $('dmTeacherRallyButton')?.remove();
+}
+
 function installWorkspaceTools(menu){
  if(!$('dmPlacementTeacherButton')){const b=document.createElement('button');b.id='dmPlacementTeacherButton';b.className='ogretmen-menu-btn';b.textContent='📋 Seviye sınavı sonuçları ve örnekler';b.onclick=teacherPlacements;menu.querySelector('.rubric-content').append(b);}
- if(!$('dmTeacherRallyButton')){const b=document.createElement('button');b.id='dmTeacherRallyButton';b.className='ogretmen-menu-btn';b.textContent='🏎️ Kelime Rallisi · Öğretmen Denemesi';b.onclick=async()=>{try{await window.dmLazyGames?.ready();window.ralliOyunAc?.();}catch(e){window.yoToast?.(e.message);}};menu.querySelector('.rubric-content').append(b);}
+
  if(!$('dmNoticeMailCenterButton')){const b=document.createElement('button');b.id='dmNoticeMailCenterButton';b.className='ogretmen-menu-btn';b.textContent='📣 Duyuru ve Mail Yönetim Merkezi';b.onclick=openNoticeMailCenter;menu.querySelector('.rubric-content').append(b);}
  if(!$('dmTeacherOralButton')){const b=document.createElement('button');b.id='dmTeacherOralButton';b.className='ogretmen-menu-btn';b.textContent='🎙️ Sözlü Yap · Kelime sor, 100 XP kazandır';b.onclick=()=>window.dmTeacherOral?.open();menu.querySelector('.rubric-content').append(b);}
 }
@@ -146,7 +227,7 @@ function maintain(){
 
 
  if(!menuSeen){menuSeen=true;api('teacherNotificationRead').then(()=>refresh(true)).catch(()=>{});}
- decorateWorkspace(menu);paintBadge();
+ decorateWorkspace(menu);dmHideOldActions(menu);paintBadge();
 }
 window.dmOpenMeteor=()=>window.dmMeteor?.open();window.dmOpenWordWheel=()=>window.dmWordWheel?.open();window.dmOpenPapiCards=()=>window.dmPapiCards?.open();
 // One catalog drives help, study practice links and teacher assignments.
@@ -164,7 +245,7 @@ window.dmTeacherWorkspace={paintBadge,refresh,prepare(){const menu=$('ogretmenMe
 const watcher=new MutationObserver(()=>{if(active)maintain();});for(const el of document.querySelectorAll('.rubric-modal,.sm-overlay,.yo-modal,.yo-perde,#yoModalPerde,#odModal,#omSifreModal'))watcher.observe(el,{attributes:true,attributeFilter:['style']});
 new MutationObserver(ms=>{if(active&&ms.some(m=>[...m.addedNodes,...m.removedNodes].some(n=>n.nodeType===1&&(n.matches?.(childSelector)||n.querySelector?.(childSelector)))))maintain();}).observe(document.body,{childList:true});
 const report=$('yoModal');if(report)watcher.observe(report,{attributes:true,attributeFilter:['class','style']});
-setInterval(()=>{if(document.hidden)return;maintain();refresh();installCatalog();},1200);
+setInterval(()=>{if(document.hidden)return;maintain();dmHome();refresh();installCatalog();},1200);
 document.addEventListener('dm:login',()=>{total=0;lastRead=0;active=false;menuSeen=false;refresh(true);});
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)refresh(true);});
 refresh(true);
