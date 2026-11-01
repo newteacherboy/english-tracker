@@ -34,3 +34,17 @@ html body #ogretmenMenuModal.dm-teacher-open .ogretmen-menu-btn[hidden]{display:
  html body #ogretmenMenuModal.dm-teacher-open .dm-teacher-card-title{font-size:12.5px!important}
  html body #ogretmenMenuModal.dm-teacher-open .ogretmen-menu-btn>small{font-size:11px!important}
 }
+
+/* Teacher home: additional first-class cards match the existing large-card grid. */
+.dm-home-shortcut{display:flex!important;position:relative;flex-direction:column;justify-content:center;align-items:flex-start;text-align:left;gap:10px;min-height:160px;width:100%;padding:22px!important;border:1px solid #d4e8e9!important;border-radius:22px!important;background:linear-gradient(130deg,#e2f9ee,#def4ff)!important;color:#113e50!important;cursor:pointer;box-sizing:border-box}
+.dm-home-shortcut:nth-child(even){background:linear-gradient(130deg,#f0e9ff,#fff0df)!important}
+.dm-home-shortcut-icon{font-size:37px;line-height:1.15}.dm-home-shortcut strong{font:800 clamp(17px,2vw,23px)/1.2 Nunito,system-ui,sans-serif}.dm-home-shortcut small{font:500 14px/1.4 Nunito,system-ui,sans-serif;color:#52687a}
+.dm-home-shortcut-arrow{position:absolute;bottom:12px;right:14px;font-size:30px;color:#166779}
+#dmHomeReportDialog{position:fixed;inset:0;z-index:2147483630;display:grid;place-items:center;background:#092639b8;padding:16px;box-sizing:border-box}
+.dm-home-report-panel{max-height:min(85dvh,720px);overflow:auto;width:min(520px,100%);box-sizing:border-box;border-radius:23px;padding:20px;background:#f6fcff;color:#133c52;box-shadow:0 15px 55px #06243775;font-family:Nunito,system-ui,sans-serif}
+.dm-home-report-panel header{display:flex;align-items:center;justify-content:space-between;gap:16px}
+.dm-home-report-panel h2{font-size:24px;margin:0}.dm-home-report-panel header button{border:0;border-radius:10px;padding:10px 14px;background:#e1edf3;color:#174459;font-size:20px}
+.dm-home-report-panel p{color:#617585}.dm-home-report-list{display:grid;gap:10px}
+.dm-home-report-list button{border:1px solid #d1e5ec;background:white;color:#184057;text-align:left;padding:17px;border-radius:14px;font:800 16px Nunito,system-ui,sans-serif;cursor:pointer}
+.dm-home-report-list button:focus-visible,.dm-home-shortcut:focus-visible{outline:3px solid #ffbc35;outline-offset:3px}
+@media(max-width:640px){.dm-home-shortcut{min-height:140px;padding:15px!important}.dm-home-shortcut-icon{font-size:30px}.dm-home-shortcut small{font-size:12px}}
