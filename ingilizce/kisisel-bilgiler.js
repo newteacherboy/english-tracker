@@ -103,7 +103,7 @@
         <div class="kb-alan"><label for="kbGoal">Öğrenme hedefim</label><select id="kbGoal"><option value="daily">Günlük yaşam</option><option value="travel">Seyahat</option><option value="school">Derslerime destek</option><option value="exam">Sınava hazırlık</option></select></div>
         <button type="button" class="kb-placement">Başlangıç seviyemi bul</button><p class="kb-ipucu">Test isteğe bağlıdır; Şimdilik geç ile doğrudan başlayabilirsin.</p>
       </div>
-      <div class="kb-grup"><h4>Öğretmen bağlantım</h4><p id="kbTeacherStatus" class="kb-ipucu"></p><div class="kb-alan"><label for="kbTeacherCode">Öğretmen kodu (isteğe bağlı)</label><input id="kbTeacherCode" maxlength="10" autocapitalize="characters" placeholder="Bir öğretmene bağlanmak istersen"></div></div>
+      <div class="kb-grup kb-teacher-link"><h4>👩‍🏫 Öğretmenim</h4><p id="kbTeacherStatus" class="kb-ipucu" role="status"></p><p class="kb-ipucu">Öğretmeninin öğrenci davet kodunu gir. Kendi öğretmen paneli giriş şifresini değil, öğrencilere verdiği kodu kullan.</p><div class="kb-alan"><label for="kbTeacherCode">Öğretmen davet kodu</label><input id="kbTeacherCode" maxlength="10" autocapitalize="characters" autocomplete="off" placeholder="Öğretmenimin kodu"></div><button type="button" id="kbTeacherConnect" class="kb-kaydet" style="margin-top:10px;background:#087f73">Öğretmenime bağlan</button></div>
       <div class="kb-grup" id="kbEducation"><h4>Eğitim bilgilerim</h4>
         <div class="kb-alan"><label for="kbStage">Eğitim kademem</label><select id="kbStage"><option value="">Seç</option><option value="primary">İlkokul</option><option value="middle">Ortaokul</option><option value="high">Lise</option><option value="university">Üniversite</option></select></div>
         <div class="kb-alan"><label for="kbOkul">Okul adı <span style="font-weight:600;color:#8a7cb8">(isteğe bağlı)</span></label><input id="kbOkul" maxlength="120"></div>
@@ -185,6 +185,13 @@
     doldur(d);
 
     const mesaj = (t, tur) => { const m = $("kbMesaj"); m.textContent = t || ""; m.className = "kb-mesaj" + (tur ? " " + tur : ""); };
+    $("kbTeacherConnect").onclick = () => {
+      const code=$("kbTeacherCode").value.trim().toUpperCase();
+      if(!/^[A-Z0-9]{1,10}$/.test(code))return mesaj("Öğretmen davet kodunu kontrol et.", "hata");
+      if(mevcut.ogretmenBagli)return mesaj("Zaten bir öğretmene bağlısın. Öğretmen değişikliği için destek al.", "hata");
+      $("kbTeacherCode").value=code;
+      $("kbKaydet").click();
+    };
     $("kbKaydet").onclick = async () => {
       if((localStorage.getItem('ing_token')||'')!==ownerToken){forceClose();return;}
       const govde = {
