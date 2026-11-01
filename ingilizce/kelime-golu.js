@@ -109,6 +109,8 @@ function question(i){const s=session,p=s.players[i],panel=root.querySelector(`[d
 function shoot(i,n){const s=session,p=s?.players[i];if(!s||s.phase!=='play'||!p||p.locked||p.finished||s.owner!==who())return;
  p.locked=true;const word=p.words[p.index],answer=n===null?null:p.options[n],good=answer!==null&&norm(answer)===norm(tr(word));
  const panel=root.querySelector(`[data-player="${i}"]`),pitch=panel.querySelector('.kg-pitch'),ball=panel.querySelector('.kg-ball');
+ // Unlock the audio context synchronously in the shot click gesture.
+ if(good&&soundOn){try{const Audio=window.AudioContext||window.webkitAudioContext;if(Audio){audioContext=audioContext||new Audio();if(audioContext.state==='suspended')audioContext.resume().catch(()=>{});}}catch(e){}}
  panel.querySelectorAll('[data-target]').forEach(b=>b.disabled=true);
  if(s.mode==='solo'){window.dmVerifiedGames.record(word,answer,s.runId);if(good){OC.dogru(1);p.correct++;}else{OC.yanlis(false);p.wrong++;window.dmWrongWords?.add(word);}p.score=OC.puan();}
  else{p.score+=good?10:-5;good?p.correct++:p.wrong++;}
