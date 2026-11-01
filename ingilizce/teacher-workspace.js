@@ -5,7 +5,7 @@ const $=id=>document.getElementById(id),token=()=>sessionStorage.getItem('ing_og
 let active=false,total=0,registrations=0,messages=0,reading=false,lastRead=0,menuSeen=false;
 async function api(op,data={}){const r=await fetch(apiURL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({islem:op,t:token(),...data})});const d=await r.json();if(!r.ok||!d.ok)throw Error(d.mesaj||'Bildirimler alınamadı.');return d;}
 function paintBadge(){for(const b of document.querySelectorAll('[data-profile="teacher"]')){let badge=b.querySelector('.dm-teacher-count');if(!badge){badge=document.createElement('span');badge.className='dm-teacher-count';b.append(badge);}badge.textContent=String(total);badge.hidden=total===0;b.setAttribute('aria-label','Öğretmen Paneli'+(total?' · '+total+' bildirim':''));}}
-async function refresh(force=false){if(!token()||reading||document.hidden||!force&&Date.now()-lastRead<60000)return;reading=true;try{const d=await api('teacherNotificationSummary');total=d.total||0;registrations=d.registrations||0;messages=d.messages||0;lastRead=Date.now();paintBadge();}catch(e){console.warn('[Öğretmen bildirimleri]',e.message);}finally{reading=false;}}
+async function refresh(force=false){if(!token()||reading||document.hidden||!force&&Date.now()-lastRead<60000)return;reading=true;try{const d=await api('teacherNotificationSummary');total=d.total||0;registrations=d.registrations||0;messages=d.messages||0;lastRead=Date.now();paintBadge();const board=$('dmTeacherDesignV2');if(board){const badge=board.querySelector('[data-v2-chat-count]');if(badge){badge.textContent=String(messages);badge.hidden=!messages;}}}catch(e){console.warn('[Öğretmen bildirimleri]',e.message);}finally{reading=false;}}
 function visible(el){return !!el&&el.getClientRects().length>0&&(el.checkVisibility?el.checkVisibility({checkOpacity:true,checkVisibilityCSS:true}):getComputedStyle(el).visibility!=='hidden');}
 const childSelector='.rubric-modal,.cog-perde,.sm-overlay,.dm-member-overlay,.dm-account-overlay,.dm-perde,.yo-modal,.yo-perde,#yoModalPerde,#omSifreModal,#odModal,.game-modal-overlay,.seviye-harita-overlay,#rallyGame,#meteorGame,#wordWheel,#papiCards,#dmTeacherOral,#mlThemeList,#dmStoryLesson,.gso-overlay';
 function children(){return [...document.querySelectorAll(childSelector)].filter(x=>x.id!=='ogretmenMenuModal'&&x.id!=='sifreModal'&&(visible(x)||x.closest('#ogretmenMenuModal')&&['flex','block','grid'].includes(x.style.display)));}
@@ -179,6 +179,61 @@ function dmReportDialog(){
  dialog.addEventListener('keydown',e=>{if(e.key==='Escape'){e.stopPropagation();dialog.remove();}});
  document.body.append(dialog);dialog.querySelector('[data-report-close]').focus();
 }
+
+// Read only students scoped to the authenticated teacher portal.
+let dmRosterCache=null,dmRosterAt=0;
+async function dmRoster(force=false){
+ if(!force&&dmRosterCache&&Date.now()-dmRosterAt<60000)return dmRosterCache;
+ const result=await api('teacherPortalStudents');
+ dmRosterCache=Array.isArray(result.items)?result.items:Array.isArray(result.students)?result.students:[];
+ dmRosterAt=Date.now();return dmRosterCache;
+}
+function dmStudentList(){
+ document.getElementById('dmV2StudentsDialog')?.remove();
+ const dialog=document.createElement('div');dialog.id='dmV2StudentsDialog';dialog.className='dm-teacher-child';
+ dialog.setAttribute('role','dialog');dialog.setAttribute('aria-modal','true');dialog.setAttribute('aria-label','Öğrencilerim');
+ dialog.innerHTML='<section class="dm-v2-student-panel"><header><h2>👥 Öğrencilerim</h2><button type="button" aria-label="Kapat">✕</button></header><p data-roster-status>Öğrenciler yükleniyor…</p><div data-roster-list></div></section>';
+ dialog.querySelector('header button').onclick=()=>dialog.remove();
+ dialog.addEventListener('click',e=>{if(e.target===dialog)dialog.remove();});
+ dialog.addEventListener('keydown',e=>{if(e.key==='Escape'){e.stopPropagation();dialog.remove();}});
+ document.body.append(dialog);
+ dmRoster(true).then(items=>{
+  if(!dialog.isConnected)return;
+  dialog.querySelector('[data-roster-status]').textContent=items.length?items.length+' bağlı öğrenci':'Henüz bağlı öğrenci bulunmuyor.';
+  const list=dialog.querySelector('[data-roster-list]');
+  for(const item of items){
+   const row=document.createElement('article');row.className='dm-v2-student-row';
+   const name=document.createElement('strong');name.textContent=item.username||item.name||item.student||'Öğrenci';
+   const details=document.createElement('span');
+   const cls=item.class_no??item.classNo??item.sinif;
+   const branch=item.branch??item.sube;
+   const progress=item.progress?.percent??item.progress_percent??item.progressPercent;
+   details.textContent=[cls?'Sınıf: '+cls+(branch?' / '+branch:''):'Sınıf bilgisi yok',Number.isFinite(Number(progress))&&progress!==undefined&&progress!==null?'İlerleme: %'+Number(progress):'İlerleme verisi yok'].join(' · ');
+   row.append(name,details);list.append(row);
+  }
+ }).catch(e=>{if(dialog.isConnected)dialog.querySelector('[data-roster-status]').textContent='Öğrenciler yüklenemedi: '+e.message;});
+ dialog.querySelector('header button').focus();
+}
+async function dmUpdateTeacherDashboard(board){
+ if(!board?.isConnected||!token())return;
+ try{
+  const items=await dmRoster();if(!board.isConnected)return;
+  const classes=new Set(items.map(x=>[x.class_no??x.classNo??x.sinif,x.branch??x.sube??''].join('/')).filter(x=>!x.startsWith('/')));
+  board.querySelector('[data-v2-students]').textContent=String(items.length);
+  board.querySelector('[data-v2-classes]').textContent=String(classes.size);
+ }catch(e){
+  board.querySelector('[data-v2-students]').textContent='—';
+  board.querySelector('[data-v2-classes]').textContent='—';
+  board.querySelector('[data-v2-students]').title=e.message;
+ }
+ const badge=board.querySelector('[data-v2-chat-count]');
+ if(badge){badge.textContent=String(messages);badge.hidden=!messages;}
+}
+function dmRemoveTeacherBottomTab(){
+ if(!window.dmTeacherPortalMode)return;
+ const nav=document.getElementById('bottomNavMobile');
+ nav?.querySelectorAll('[data-ekran="tab-teacher-portal"]').forEach(x=>{x.hidden=true;x.style.display='none';});
+}
 function dmHome(){
  const heading=[...document.querySelectorAll('h1,h2,h3')].find(h=>dmKey(h.textContent).includes('merhaba öğretmenim'));
  if(!heading||!visible(heading))return;
@@ -192,7 +247,7 @@ function dmHome(){
  let container=heading.parentElement;
  while(container&&!container.contains(oldGrid))container=container.parentElement;
  if(!container||container===document.body||container===document.documentElement||container.contains(document.getElementById('bottomNavMobile')))return;
- if(container.querySelector(':scope > #dmTeacherDesignV2'))return;
+ if(container.querySelector(':scope > #dmTeacherDesignV2')){dmUpdateTeacherDashboard(container.querySelector('#dmTeacherDesignV2'));dmRemoveTeacherBottomTab();return;}
  const findCard=term=>[...oldGrid.querySelectorAll('button,a,[role="button"]')].find(x=>dmKey(x.textContent).includes(dmKey(term)));
  const original={study:findCard('yeni bir konu anlat'),game:findCard('öğrencilerle oyun oyna'),oral:findCard('sözlü yap'),teacher:findCard('öğretmen paneline git'),classroom:findCard('sınıf oluştur')};
  const openOriginal=key=>{const card=original[key];if(card)card.click();else if(key==='teacher')window.ogretmenPaneliAc?.();else if(key==='oral')dmUseTool('sözlü yap');};
@@ -223,16 +278,19 @@ function dmHome(){
  add(actions,'Ödev Ver','📋','Sınıfına yeni ödev gönder',()=>dmUseTool('ödev ver'),'v2-mint');
  add(actions,'Duyurular','📣','Öğrencilerini bilgilendir',()=>dmUseTool('duyurular'),'v2-peach');
  add(actions,'Öğrenci Sohbetleri','💬','Mesajları oku ve yanıtla',()=>dmUseTool('öğrenci sohbetleri'),'v2-pink');
+ const chatBadge=document.createElement('span');chatBadge.className='dm-v2-chat-badge';chatBadge.dataset.v2ChatCount='';chatBadge.hidden=true;actions.lastElementChild.append(chatBadge);
  const secondary=board.querySelector('[data-v2-secondary]');
  add(secondary,'Raporlar Merkezi','📊','Performans, zayıf noktalar, veli özetleri ve sınav sonuçları',dmReportDialog,'v2-lavender');
- add(secondary,'Rubrik Paneli','📋','Özel ders değerlendirme rubriklerini yönet',()=>dmUseTool('rubrik'),'v2-green');
+ add(secondary,'Oyun Oyna','🎮','Oyunlar sekmesine geç ve sınıfınla eğlen',()=>openOriginal('game'),'v2-green v2-feature');
+ add(secondary,'Haydi Yeni Ders Çalış','📚','Yeni konuyu anlat, birlikte öğren',()=>openOriginal('study'),'v2-feature v2-peach');
  const quick=board.querySelector('[data-v2-quick]');
- add(quick,'Sınıf Oyun Modu','🎮','Sınıf etkinlikleri',()=>dmUseTool('sınıf oyun'));
- add(quick,'Öğrenciler','👥','Hesapları yönet',()=>openOriginal('teacher'));
+ add(quick,'Artı Eksi Ver','➕','Ders içi performans puanları',()=>dmUseTool('ders içi performans'));
+
+ 
  add(quick,'Sınıf Oluştur','🏫','Yeni sınıf oluştur',()=>openOriginal('classroom'));
  add(quick,'Sözlü Yap','🎤','Sözlü değerlendirme',()=>openOriginal('oral'));
  const nav=board.querySelector('[data-v2-nav]');
- for(const [icon,title,run] of [['⌂','Ana Sayfa',()=>board.scrollIntoView({behavior:'smooth'})],['👥','Öğrenciler',()=>openOriginal('teacher')],['🏫','Sınıflar',()=>openOriginal('classroom')],['📋','Ödevler',()=>dmUseTool('ödev ver')],['📣','Duyurular',()=>dmUseTool('duyurular')],['📊','Raporlar',dmReportDialog],['📈','Rubrik',()=>dmUseTool('rubrik')],['⚙','Öğretmen Paneli',()=>openOriginal('teacher')]]){
+ for(const [icon,title,run] of [['⌂','Ana Sayfa',()=>board.scrollIntoView({behavior:'smooth'})],['👥','Öğrenciler',dmStudentList],['🏫','Sınıflar',()=>openOriginal('classroom')],['📋','Ödevler',()=>dmUseTool('ödev ver')],['📣','Duyurular',()=>dmUseTool('duyurular')],['📊','Raporlar',dmReportDialog],['📈','Rubrik',()=>dmUseTool('rubrik')],['⚙','Öğretmen Paneli',()=>openOriginal('teacher')]]){
   const button=document.createElement('button');button.type='button';button.innerHTML='<span>'+icon+'</span>'+title;button.addEventListener('click',run);nav.append(button);
  }
  const dashboardText=container.textContent||'';
@@ -242,7 +300,7 @@ function dmHome(){
  // Preserve original live handlers and content in the DOM, but remove it from layout.
  const shell=document.createElement('div');shell.className='dm-v2-legacy';shell.hidden=true;
  while(container.firstChild)shell.append(container.firstChild);
- container.append(board,shell);container.classList.add('dm-v2-host');
+ container.append(board,shell);container.classList.add('dm-v2-host');dmUpdateTeacherDashboard(board);dmRemoveTeacherBottomTab();
 }
 function dmHideOldActions(menu){
  if(!document.querySelector('[data-dm-home-action="raporlar"]'))return;
@@ -292,7 +350,7 @@ window.dmTeacherWorkspace={paintBadge,refresh,prepare(){const menu=$('ogretmenMe
 const watcher=new MutationObserver(()=>{if(active)maintain();});for(const el of document.querySelectorAll('.rubric-modal,.sm-overlay,.yo-modal,.yo-perde,#yoModalPerde,#odModal,#omSifreModal'))watcher.observe(el,{attributes:true,attributeFilter:['style']});
 new MutationObserver(ms=>{if(active&&ms.some(m=>[...m.addedNodes,...m.removedNodes].some(n=>n.nodeType===1&&(n.matches?.(childSelector)||n.querySelector?.(childSelector)))))maintain();}).observe(document.body,{childList:true});
 const report=$('yoModal');if(report)watcher.observe(report,{attributes:true,attributeFilter:['class','style']});
-setInterval(()=>{if(document.hidden)return;maintain();dmHome();refresh();installCatalog();},1200);
+setInterval(()=>{if(document.hidden)return;maintain();dmHome();dmRemoveTeacherBottomTab();refresh();installCatalog();},1200);
 document.addEventListener('dm:login',()=>{total=0;lastRead=0;active=false;menuSeen=false;refresh(true);});
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)refresh(true);});
 refresh(true);
