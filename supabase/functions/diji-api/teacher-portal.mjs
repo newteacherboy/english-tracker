@@ -66,7 +66,8 @@ export function teacherPortalAPI(d){
    if(account.error)return fail(account.error.code==='23505'?'Bu kullanıcı adı veya e-posta zaten kayıtlı.':'Kişisel hesap oluşturulamadı.',account.error.code==='23505'?409:503);
    try{await this.apply(account.data.id);}catch(e){return fail('Hesap oluşturuldu fakat başvuru açılamadı. Tekrar hesap oluşturma; mevcut hesabın başvurusunu kontrol et.',503);}
    // Administrator creates a pending grant, never a verified teacher session.
-   return json({ok:true,studentId:account.data.id,mesaj:'Kişisel hesap oluşturuldu; e-posta doğrulaması ve öğretmen erişim onayı gerekli.'});
+   try{await queue({student_id:account.data.id,to_email:email,kind:'kayit',subject:'Diji-Medu · Öğretmen hesabın oluşturuldu',html:mailShell('Öğretmen hesabın hazır',`<p>Hesabın oluşturuldu. Kullanıcı adın: <strong>${escape(username)}</strong>.</p><p><a href="${portal}">Diji-Medu hesabına giriş yap</a> ve hesap ayarlarından e-posta doğrulamanı tamamla. Özel öğretmen paneli erişimi için ayrıca yönetici onayı gerekir.</p>`),text_body:'Diji-Medu hesabın oluşturuldu. Kullanıcı adın: '+username+'. '+portal+' adresinden giriş yap ve e-posta doğrulamanı tamamla. Özel panel erişimi için yönetici onayı gerekir.'});}catch(err){return json({ok:true,studentId:account.data.id,mailQueued:false,mesaj:'Kişisel hesap ve başvuru oluşturuldu. Bilgilendirme e-postası kuyruğa alınamadı; kişisel hesabından doğrulamaya devam et.'});}
+   return json({ok:true,studentId:account.data.id,mailQueued:true,mesaj:'Kişisel hesap oluşturuldu; e-posta doğrulaması ve öğretmen erişim onayı gerekli.'});
   }
   if(op==='teacherPortalList'||op==='teacherPortalDecide'||op==='teacherPortalIssueCode'){
    if(!ownerTeacher(a))return fail('Bu bölüm yalnızca teacher hesabına aittir.',403);
