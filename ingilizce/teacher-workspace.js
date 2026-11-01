@@ -186,8 +186,8 @@ function dmHome(){
  const sample=cards.sort((a,b)=>a.querySelectorAll('*').length-b.querySelectorAll('*').length)[0];
  if(!sample)return;
  const grid=sample.parentElement;
- if(!grid||!['DIV','SECTION','MAIN'].includes(grid.tagName))return;
- if(!grid.contains(heading)&&!heading.compareDocumentPosition(grid))return;
+ if(!grid||!['DIV','SECTION','MAIN'].includes(grid.tagName)||grid.children.length>12)return;
+ if(grid.closest('#ogretmenMenuModal'))return;
  for(const [title,emoji,description,target] of dmHomeActions){
   if(grid.querySelector('[data-dm-home-action="'+dmKey(title)+'"]'))continue;
   const card=document.createElement('button');card.type='button';card.className=sample.className||'';
@@ -198,6 +198,7 @@ function dmHome(){
  }
 }
 function dmHideOldActions(menu){
+ if(!document.querySelector('[data-dm-home-action="raporlar"]'))return;
  // Show relocated actions only on the teacher home page, not as duplicates in the tools grid.
  for(const [title,, ,target] of dmHomeActions){
   if(!target)continue;
