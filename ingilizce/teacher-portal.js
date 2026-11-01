@@ -52,6 +52,33 @@
  const gameFunctions=['kelimeGoluAc','kelimeYarismasiAc','jpOyunAc','boslukOyunAc','hafizaOyunAc','yagmurOyunAc','asmacaOyunAc','kelimebulOyunAc','esOyunAc','trenOyunAc','dikteAc','cumleAc','harfBahcesiAc','ralliOyunAc','dmArenaAc','dmMatchAc','dmInviteAc'];
  function wrapGames(){if(!mode)return;for(const name of gameFunctions){const old=window[name];if(typeof old!=='function'||old.__tp)continue;const fn=async function(...args){if(await beforeGame(name,args))return old.apply(this,args);};Object.assign(fn,old);fn.__tp=true;window[name]=fn;}}
  async function statusButton(){if(mode)return;const menu=document.getElementById('rtProfileBackdrop');if(!menu||menu.querySelector('[data-tp-access]'))return;const grid=menu.querySelector('.rt-profile-grid');if(!grid)return;const name=typeof aktifOgrenciAdi==='undefined'?'':String(aktifOgrenciAdi);if(name==='teacher')return;const b=menu.querySelector('[data-profile=teacher]');if(!b)return;b.dataset.tpAccess='1';b.addEventListener('click',async e=>{e.preventDefault();e.stopPropagation();const v=sheet('Öğretmen Platformuna Erişim','<p>Durum yükleniyor…</p>');try{const r=await api('teacherPortalStatus',{},localStorage.getItem('ing_token')||'');v.form.textContent=({none:'Özel öğretmen platformu için başvuru yapabilirsin.',pending:'Başvurun teacher hesabının onayını bekliyor.',approved:r.codeSent?'Giriş kodun e-posta kuyruğuna alındı.':'Onayın var. E-posta adresini doğruladığında kodun gönderilecek.',rejected:'Başvurun reddedildi.',revoked:'Öğretmen platformu erişimin kaldırıldı.'})[r.state];if(r.state==='none'){const apply=document.createElement('button');apply.type='button';apply.className='tp-primary';apply.textContent='Öğretmen erişimi iste';apply.onclick=async()=>{try{await api('teacherPortalApply',{},localStorage.getItem('ing_token')||'');v.form.textContent='Başvurun teacher hesabının onayına gönderildi.';}catch(e){v.error(e.message);}};v.form.append(apply);}const login=document.createElement('button');login.type='button';login.textContent='Kodla Öğretmen Girişi';login.onclick=openLogin;v.form.append(login);}catch(e){v.error(e.message);}},true);}
+
+ // One-time follow-up to a teacher-role signup. Never interrupt emergency announcements.
+ function teacherApplicationNotice(){
+  if(mode)return;
+  let notice;try{notice=JSON.parse(sessionStorage.getItem('dm_teacher_application_notice')||'null');}catch{return;}
+  if(!notice||!notice.student||Date.now()-notice.at>7*86400000){sessionStorage.removeItem('dm_teacher_application_notice');return;}
+  const current=typeof aktifOgrenciAdi==='undefined'?'':String(aktifOgrenciAdi||'');
+  if(current.toLocaleLowerCase('tr-TR')!==String(notice.student).toLocaleLowerCase('tr-TR'))return;
+  if(!localStorage.getItem('ing_token'))return;
+  const hasCharacter=typeof yo!=='undefined'&&!!yo?.karakter?.cins;
+  if(!hasCharacter&&!sessionStorage.getItem('dm_teacher_notice_character_ready'))return;
+  const isVisible=el=>!!el&&el.isConnected&&el.getClientRects().length>0&&getComputedStyle(el).visibility!=='hidden';
+  if(document.querySelector('.tp-shade')||[...document.querySelectorAll('#duyuruOverlay,.dm-announcement-overlay,.dm-urgent-announcement,[data-urgent-announcement],.dm-first-character,[role="dialog"][aria-modal="true"]')].some(isVisible))return;
+  sessionStorage.removeItem('dm_teacher_application_notice');sessionStorage.removeItem('dm_teacher_notice_character_ready');
+  const v=sheet('👩‍🏫 Özel Öğretmen Paneli Başvurun','<p>Öğretmen hesabın oluşturuldu. Başvuru durumun kontrol ediliyor…</p>');
+  api('teacherPortalStatus',{},localStorage.getItem('ing_token')||'').then(r=>{
+   if(!v.shade.isConnected)return;
+   v.form.replaceChildren();
+   const info=document.createElement('p');
+   info.textContent=({none:'Öğretmen paneli erişimi için başvuru yapabilirsin.',pending:'Özel öğretmen paneli başvurun alındı. Yönetici onayı bekleniyor.',approved:r.codeSent?'Başvurun onaylandı. Özel panel giriş kodun doğrulanmış e-posta adresine gönderilmek üzere sıraya alındı.':'Başvurun onaylandı. E-postanı doğruladığında özel giriş kodun oluşturulup gönderilecek.',rejected:'Başvurun reddedildi. Destek ekibiyle görüşebilirsin.',revoked:'Öğretmen paneli erişimin kaldırıldı.'})[r.state]||'Başvuru durumu alınamadı.';
+   v.form.append(info);
+   const description=document.createElement('p');description.textContent='Öğrencilerinle paylaşacağın davet kodu, özel öğretmen paneli giriş kodundan farklıdır.';v.form.append(description);
+   if(r.state==='none'){const button=document.createElement('button');button.type='button';button.className='tp-primary';button.textContent='Öğretmen paneline başvur';button.onclick=async()=>{button.disabled=true;try{await api('teacherPortalApply',{},localStorage.getItem('ing_token')||'');info.textContent='Başvurun alındı. Yönetici onayı bekleniyor.';button.remove();}catch(e){button.disabled=false;v.error(e.message);}};v.form.append(button);}
+   if(r.state==='approved'&&r.codeSent){const button=document.createElement('button');button.type='button';button.className='tp-primary';button.textContent='Özel öğretmen girişi';button.onclick=()=>{v.close();openLogin();};v.form.append(button);}
+  }).catch(e=>v.error(e.message||'Başvuru durumu alınamadı.'));
+ }
+ if(!mode){let noticeChecks=0;const checkNotice=()=>{teacherApplicationNotice();if(++noticeChecks>120)clearInterval(noticeTimer);};const characterReady=()=>{sessionStorage.setItem('dm_teacher_notice_character_ready','1');setTimeout(checkNotice,700);};window.addEventListener('dm:first-character-chosen',characterReady);window.addEventListener('dm:first-character-skipped',characterReady);const noticeTimer=setInterval(checkNotice,1500);}
  let checkedToken='',canManage=false;
  async function decorate(){statusButton();const menu=document.getElementById('ogretmenMenuModal');if(!menu)return;const token=sessionStorage.getItem('ing_ogr_token')||'';if(!token)return;if(checkedToken!==token){checkedToken=token;canManage=false;try{const d=await api('ogretmenBilgim',{},token);canManage=d.kullanici==='teacher'&&d.yonetici===true;}catch{}}if(canManage&&!menu.querySelector('[data-tp-manage]')){const b=document.createElement('button');b.type='button';b.className='ogretmen-menu-btn';b.dataset.tpManage='1';b.textContent='🔐 Öğretmen Erişim Onayları';b.onclick=management;menu.querySelector('.rubric-content')?.append(b);}}
 
