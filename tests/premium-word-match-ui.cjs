@@ -1,7 +1,7 @@
 const assert=require('node:assert/strict');
 const fs=require('node:fs');
 const path=require('node:path');
-const {chromium}=require('playwright');
+const {chromium,webkit}=require('playwright');
 const raw=[
 ['hi','merhaba',1,1],['hello','merhaba',1,1],['bye','hoşça kal',1,1],['goodbye','güle güle',1,1],
 ['good night','iyi geceler',1,1],['thank you','teşekkürler',1,1],['welcome','hoş geldin',1,1],['please','lütfen',1,1],
@@ -9,9 +9,10 @@ const raw=[
 ].map(([ingilizce,turkce,sinif,unite])=>({ingilizce,turkce,sinif,unite}));
 (async()=>{
  const base=path.resolve(__dirname,'../ingilizce');
- const browser=await chromium.launch({headless:true,args:['--no-sandbox']});
+ for(const [engine,name,widths] of [[chromium,'Chromium',[360,390,768]],[webkit,'WebKit',[360,390]]]){
+ const browser=await engine.launch({headless:true,...(name==='Chromium'?{args:['--no-sandbox']}:{})});
  try{
-  for(const width of [360,390,768]){
+  for(const width of widths){
    const page=await browser.newPage({viewport:{width,height:844},hasTouch:true,isMobile:width<600});
    const errors=[];
    page.on('pageerror',e=>errors.push(e.message));
@@ -62,8 +63,9 @@ const raw=[
    const metrics=await page.evaluate(()=>({overflow:document.documentElement.scrollWidth-innerWidth,board:document.querySelector('.pwm-board').getBoundingClientRect().width}));
    assert(metrics.overflow<=2,'horizontal overflow: '+JSON.stringify(metrics));
    assert.equal(errors.length,0,'page errors: '+JSON.stringify(errors));
-   console.log('PASS premium word match swipe and mobile '+width+'px',score);
+   console.log('PASS premium word match swipe '+name+' '+width+'px',score);
    await page.close();
   }
  }finally{await browser.close();}
+ }
 })().catch(e=>{console.error(e);process.exit(1);});
