@@ -16,7 +16,8 @@ for (const dir of ['ingilizce', 'content', 'dersler', 'araba']) {
   await cp(path.join(root, dir), path.join(out, dir), { recursive: true });
 }
 // Keep the original /ingilizce/ URL shape so relative game/content assets still resolve.
-await writeFile(path.join(out, 'index.html'), '<!doctype html><html lang="tr"><head><meta charset="utf-8"><meta http-equiv="refresh" content="0;url=/ingilizce/"><title>Diji Medu</title></head><body><a href="/ingilizce/">Diji Medu’yu aç</a></body></html>');
+// Kök sayfa uygulamayı hemen /ingilizce/ yoluna taşır. Meta yenileme bazı WebView'larda çalışmadığı için JS ile de yönlendirilir.
+await writeFile(path.join(out, 'index.html'), '<!doctype html><html lang="tr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Diji Medu</title><script>location.replace("/ingilizce/index.html")</script><meta http-equiv="refresh" content="0;url=/ingilizce/index.html"><style>body{margin:0;background:#FAF8F5;font:16px system-ui;display:flex;align-items:center;justify-content:center;height:100vh}a{color:#07535b}</style></head><body><a href="/ingilizce/index.html">Diji Medu’yu aç</a></body></html>');
 await build({ entryPoints: [path.join(app, 'src/runtime.js')], outfile: path.join(out, 'ingilizce/android-runtime.js'), define:{DM_PRODUCTION_ADS:JSON.stringify(production)}, bundle: true, format: 'iife', platform: 'browser', target: ['chrome110'], minify: true });
 const htmlPath = path.join(out, 'ingilizce/index.html');
 let html = await readFile(htmlPath, 'utf8');
