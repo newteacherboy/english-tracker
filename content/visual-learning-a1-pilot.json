@@ -220,7 +220,7 @@
       "theme": null,
       "topic": null,
       "existingImageTag": null,
-      "assetStatus": "supplementary-local-sprite",
+      "assetStatus": "existing-static-atlas",
       "questionTypes": [
         "picture-to-word",
         "word-to-picture",
@@ -234,7 +234,7 @@
       "theme": "Evim ve Eşyalarım",
       "topic": "Evimi Tanıtıyorum",
       "existingImageTag": null,
-      "assetStatus": "local-emoji-fallback",
+      "assetStatus": "original-static-svg",
       "questionTypes": [
         "picture-to-word",
         "word-to-picture",
@@ -248,7 +248,7 @@
       "theme": null,
       "topic": null,
       "existingImageTag": null,
-      "assetStatus": "local-emoji-fallback",
+      "assetStatus": "original-static-svg",
       "questionTypes": [
         "picture-to-word",
         "word-to-picture",
@@ -276,7 +276,7 @@
       "theme": null,
       "topic": null,
       "existingImageTag": null,
-      "assetStatus": "supplementary-local-sprite",
+      "assetStatus": "existing-static-atlas",
       "questionTypes": [
         "picture-to-word",
         "word-to-picture",
@@ -285,6 +285,6 @@
       "visualPractice": "additional-item-in-matching-topic"
     }
   ],
-  "delivery": "Existing WebP atlas + emoji fallback. No per-question network requests.",
+  "delivery": "Existing WebP sprite atlases plus original static SVG illustrations; no server-side image operations.",
   "behaviour": "Optional local mini visual exercises in topic part 1; no extra rewards, no server grading changes."
 }
