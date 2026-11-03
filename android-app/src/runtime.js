@@ -1,7 +1,7 @@
 import adConfig from '../admob.config.json';
 import { createRewardClient } from './reward-client.js';
 const production=typeof DM_PRODUCTION_ADS!=='undefined' && DM_PRODUCTION_ADS;
-import { Capacitor } from '@capacitor/core';
+import { Capacitor, registerPlugin } from '@capacitor/core';
 import { App } from '@capacitor/app';
 import { Browser } from '@capacitor/browser';
 import { Haptics } from '@capacitor/haptics';
@@ -13,6 +13,7 @@ import { installSpeech } from './speech.js';
 import { createTestAds, teacherMode } from './ads.js';
 import { createPlacements } from './ad-placements.js';
 import { REWARDS, goldOfferEligible, isTeacherSession } from './reward-offers.js';
+import { createBilling } from './billing.js';
 
 if (Capacitor.isNativePlatform() && Capacitor.getPlatform() === 'android') {
   window.dmAndroidShell = { version: 4, ads: production?'production':'test', rewards: REWARDS };
@@ -25,6 +26,9 @@ if (Capacitor.isNativePlatform() && Capacitor.getPlatform() === 'android') {
   window.dmAndroidAds = ads;
   const placements = createPlacements({admob:AdMob,ads,win:window,interstitialEvents:InterstitialAdPluginEvents,bannerEvents:BannerAdPluginEvents});
   window.dmAndroidPlacements = placements;
+  const billing = createBilling({ plugin: registerPlugin('DmBilling'), win: window, endpoint: adConfig.ssvCallbackUrl.replace(/\/ad-rewards\/ssv$/, '/billing') });
+  window.dmAndroidBilling = billing;
+  window.dmAndroidOpenPlans = source => billing.open(source);
   // The portal's API tokens stay in its own WebView. Do not copy browser cookies/tokens.
   document.addEventListener('click', async event => {
     const anchor = event.target.closest?.('a[href]');
@@ -36,6 +40,7 @@ if (Capacitor.isNativePlatform() && Capacitor.getPlatform() === 'android') {
     catch { window.DijiMeduPapiFeedback?.notice('Bağlantı açılamadı. Yeniden deneyebilirsin.'); }
   });
   void App.addListener('backButton', ({ canGoBack }) => {
+    if (billing.isOpen()) { billing.close(); return; }
     const energyClose = document.querySelector('#ybPerde.acik[data-tur="enerji"] .yb-kapat,.dm-papi-feedback.is-energy .dm-papi-feedback-close');
     if (energyClose) { energyClose.click(); return; }
     if (window.dmViewHistory?.back?.()) return;
@@ -53,6 +58,11 @@ if (Capacitor.isNativePlatform() && Capacitor.getPlatform() === 'android') {
   // Both choices are opt-in. The preview never credits the real student's wallet.
   document.addEventListener('DOMContentLoaded', () => {
     placements.start();
+    // Plan sunucudan okunur; cihazdaki abonelik varsa sessizce yeniden doğrulanır.
+    const syncPlan = () => billing.refresh().then(() => billing.restore()).then(n => n && attach()).catch(() => {});
+    document.addEventListener('dm:login', () => setTimeout(syncPlan, 500));
+    syncPlan();
+    window.addEventListener('dm:plan', () => attach());
     let lastBalance;
     const selector = '#ybPerde.acik[data-tur="enerji"] .yb-en-kart,.dm-papi-feedback.is-energy .dm-papi-feedback-card,#dsEnergy,.ds-offer,.ds-joker,.ds-pack';
     function addButton(card, kind) {
@@ -67,7 +77,7 @@ if (Capacitor.isNativePlatform() && Capacitor.getPlatform() === 'android') {
           const result = await ads.show(kind);
           if(!result.test){
             if(result.claimed){
-              if(typeof headerEnerjiGoster==='function')headerEnerjiGoster(result.energy,25);
+              if(typeof headerEnerjiGoster==='function')headerEnerjiGoster(result.energy,Number(window.dmAndroidPlan?.limits?.energyMax||25));
               if(typeof yo!=='undefined' && yo){yo.altin=result.gold;yo.guncelleme=Date.now();try{localStorage.setItem('ing_yo_'+window.dmAndroidStudentName(),JSON.stringify(yo));}catch{}}
               if(typeof yoArayuzTazele==='function')yoArayuzTazele();
               button.textContent='✓ '+result.added+' '+noun+' hesabına eklendi';
@@ -78,13 +88,26 @@ if (Capacitor.isNativePlatform() && Capacitor.getPlatform() === 'android') {
       };
       card.append(button);
     }
+    function addPlanOffer(card) {
+      const button = document.createElement('button');
+      button.type = 'button'; button.dataset.dmPlanOffer = '1';
+      button.style.cssText = 'display:block;width:100%;min-height:44px;margin-top:8px;padding:10px 12px;border:0;border-radius:12px;background:#f2a516;color:#3b2500;font:800 13px/1.4 system-ui';
+      button.textContent = '⭐ Pro ile günde 40 enerji, reklamsız';
+      button.onclick = () => billing.open('enerji');
+      card.append(button);
+    }
     function attach() {
       const teacher = teacherMode(window), balance = window.dmAndroidGoldBalance();
       for (const card of document.querySelectorAll(selector)) {
         if (teacher) { card.querySelectorAll('[data-dm-test-ad]').forEach(button => button.remove()); continue; }
         if (!card.getClientRects().length) continue;
         const purchaseCard = card.matches('.ds-offer,.ds-joker,.ds-pack');
-        if (!purchaseCard && !card.querySelector('[data-dm-test-ad="energy"]')) addButton(card, 'energy');
+        const unlimited = window.dmAndroidPlan?.limits?.unlimitedEnergy === true, energyAd = card.querySelector('[data-dm-test-ad="energy"]');
+        if (!purchaseCard && !unlimited && !energyAd) addButton(card, 'energy');
+        else if (unlimited && energyAd) energyAd.remove();
+        const plan = window.dmAndroidPlan?.plan || 'free', upsell = card.querySelector('[data-dm-plan-offer]');
+        if (!purchaseCard && plan === 'free' && !upsell) addPlanOffer(card);
+        else if (plan !== 'free' && upsell) upsell.remove();
         let requestedPrice = Math.max(100, ...[...card.querySelectorAll('[data-pack][disabled]')].map(button => {
           const amount = Number(button.dataset.pack), capacity = Number(window.genelEnerjiMax || 25), current = Number(window.genelEnerjiKalan || 0);
           return current + amount <= capacity ? ({5:100,10:130,15:180}[amount] || 100) : 100;

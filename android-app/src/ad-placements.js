@@ -11,7 +11,8 @@ export function createPlacements({ admob, ads, win, interstitialEvents, bannerEv
   const seenObjects=new WeakMap();
   const visible = el => !!el && !el.hidden && el.getClientRects().length>0 && !el.closest('[inert],[aria-hidden="true"],[data-dm-nav-suspended]');
   function identity() { return String(win.dmAndroidStudentName?.() || ''); }
-  function allowed() { return active && !win.document.hidden && !!identity() && !!win.localStorage.getItem('ing_token') && !teacherMode(win); }
+  // Pro ve Premium Pro'da banner ve geçiş reklamı yok; ödüllü reklam isteğe bağlı kalır.
+  function allowed() { return active && !win.document.hidden && !!identity() && !!win.localStorage.getItem('ing_token') && !teacherMode(win) && win.dmAndroidPlan?.ads !== false; }
   function currentPolicy() {
     const next=identity();
     if (!policy || next!==owner) { owner=next;policy=createAdPolicy({storage:win.localStorage,owner:next||'preview'});ready=false;pending=null; }

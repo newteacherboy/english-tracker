@@ -155,14 +155,17 @@ function trialPopup(){
 }
 
 function comingSoon(){
+ // Android uygulamasında abonelik satılır; web ve iOS'ta eski "yakında" ekranı kalır.
+ const shop=!!window.dmAndroidBilling?.available, plan=window.dmAndroidPlan?.plan||'free';
  view='soon';$('.pwm-stage').innerHTML='';
  const c=modal(`<img class="pwm-soon-art" src="${A}yakinda-art.webp" alt="Büyücü kız taçlı sandığa bakıyor">
-  <h2 class="pwm-ribbon-title">Premium çok yakında!</h2>
-  <p>3 ücretsiz oyun hakkını kullandın. Premium paket açıldığında <b>Kelime Eşleştirme</b> ve tüm premium oyunları <b>sınırsız</b> oynayabileceksin.</p>
+  <h2 class="pwm-ribbon-title">${shop?(plan==='pro'?'Bugünkü hakkın bitti':'Premium Oyunlar açılsın mı?'):'Premium çok yakında!'}</h2>
+  <p>${plan==='pro'?'Pro ile bugünkü 5 bölümünü oynadın. Yarın yeniden açılır, <b>Premium Pro</b> ile hemen <b>sınırsız</b> oynayabilirsin.':shop?'3 ücretsiz oyun hakkını kullandın. <b>Pro</b> ile günde 5 bölüm, <b>Premium Pro</b> ile <b>sınırsız</b> oynayabilirsin.':'3 ücretsiz oyun hakkını kullandın. Premium paket açıldığında <b>Kelime Eşleştirme</b> ve tüm premium oyunları <b>sınırsız</b> oynayabileceksin.'}</p>
   <ul class="pwm-soon-list"><li>✦ 100 bölüm, 5 büyülü dünya</li><li>✦ Oyunlar arasında en yüksek ödül</li><li>✦ Her bölümde yeni kelimeler</li></ul>
   <p class="pwm-muted">Bu sırada diğer oyunlarla XP ve altın kazanmaya devam edebilirsin.</p>
-  <div class="pwm-actions"><button type="button" class="pwm-btn gold" data-x>Tamam</button></div>`,'soon');
+  <div class="pwm-actions">${shop?'<button type="button" class="pwm-btn gold big" data-plans>Planları gör</button><button type="button" class="pwm-btn ghost" data-x>Tamam</button>':'<button type="button" class="pwm-btn gold" data-x>Tamam</button>'}</div>`,'soon');
  c.querySelector('[data-x]').onclick=()=>close();
+ c.querySelector('[data-plans]')?.addEventListener('click',()=>{close();window.dmAndroidBilling.open('premium-oyunlar');});
 }
 
 /* ---------- bölüm haritası ---------- */
