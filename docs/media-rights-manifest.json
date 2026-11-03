@@ -2222,6 +2222,216 @@
       "bytes": 629,
       "status": "original-programmatic-vector",
       "source": "docs/visual-learning-pilot-assets.md"
+    },
+    {
+      "path": "ingilizce/learning-assets/visual-pilot/a1-hello.svg",
+      "sha256": "dc17c6642fdf18833d310c12a680a7e2a0ea2b6e3b852569cfa50dabae2ab5ad",
+      "bytes": 1850,
+      "status": "original-programmatic-vector",
+      "source": "docs/a1-thirty-visual-assets.md"
+    },
+    {
+      "path": "ingilizce/learning-assets/visual-pilot/a1-good-morning.svg",
+      "sha256": "bb70eb13885af2bcc8e108b949eb2c8046e0050f4389bcc4fac33d0654cd83ea",
+      "bytes": 1965,
+      "status": "original-programmatic-vector",
+      "source": "docs/a1-thirty-visual-assets.md"
+    },
+    {
+      "path": "ingilizce/learning-assets/visual-pilot/a1-good-evening.svg",
+      "sha256": "c4e3340c2580bdca16d553a8fe461248e2315a3df8549145f9ec76bce453e98a",
+      "bytes": 1710,
+      "status": "original-programmatic-vector",
+      "source": "docs/a1-thirty-visual-assets.md"
+    },
+    {
+      "path": "ingilizce/learning-assets/visual-pilot/a1-please.svg",
+      "sha256": "634c253d46ef76e455ad909c06520d2fa91b89c09708ae0a00dbc6a998db590d",
+      "bytes": 1419,
+      "status": "original-programmatic-vector",
+      "source": "docs/a1-thirty-visual-assets.md"
+    },
+    {
+      "path": "ingilizce/learning-assets/visual-pilot/a1-thank-you.svg",
+      "sha256": "c38b7c27a10ed33ba4e1204c541bdc28f31f35c01174318667695e5bfd587634",
+      "bytes": 1498,
+      "status": "original-programmatic-vector",
+      "source": "docs/a1-thirty-visual-assets.md"
+    },
+    {
+      "path": "ingilizce/learning-assets/visual-pilot/a1-goodbye.svg",
+      "sha256": "b10bef1129ecad4e90ce1df1a9b9b37dd3952fd0004c52434da3ef28f6f3e5db",
+      "bytes": 1779,
+      "status": "original-programmatic-vector",
+      "source": "docs/a1-thirty-visual-assets.md"
+    },
+    {
+      "path": "ingilizce/learning-assets/visual-pilot/a1-mother.svg",
+      "sha256": "8b5ec54bd6431c1ff65f9b8627447a71b00737ac63cbed40e7dc2ed47a9530b4",
+      "bytes": 1500,
+      "status": "original-programmatic-vector",
+      "source": "docs/a1-thirty-visual-assets.md"
+    },
+    {
+      "path": "ingilizce/learning-assets/visual-pilot/a1-father.svg",
+      "sha256": "7fcee47caf4567d1206119dd2e01d04802da6da0d8aa3a81f4e4c587d1df4788",
+      "bytes": 1655,
+      "status": "original-programmatic-vector",
+      "source": "docs/a1-thirty-visual-assets.md"
+    },
+    {
+      "path": "ingilizce/learning-assets/visual-pilot/a1-sister.svg",
+      "sha256": "d24759751f2ea75506e89a9ecc4afab3a2eb9ca0e138032bae883a82839dc198",
+      "bytes": 1519,
+      "status": "original-programmatic-vector",
+      "source": "docs/a1-thirty-visual-assets.md"
+    },
+    {
+      "path": "ingilizce/learning-assets/visual-pilot/a1-friend.svg",
+      "sha256": "660a1eefcf3ff01436f217dd15d479040efdb1709874842becd05b9de93c45b6",
+      "bytes": 2456,
+      "status": "original-programmatic-vector",
+      "source": "docs/a1-thirty-visual-assets.md"
+    },
+    {
+      "path": "ingilizce/learning-assets/visual-pilot/a1-neighbour.svg",
+      "sha256": "733536b0dcad305d9a0f005381ee3629f6bd0a0b1fea812eb25ca1ade5ade09b",
+      "bytes": 1782,
+      "status": "original-programmatic-vector",
+      "source": "docs/a1-thirty-visual-assets.md"
+    },
+    {
+      "path": "ingilizce/learning-assets/visual-pilot/a1-classmate.svg",
+      "sha256": "f2a8792f2d0b3829c170bda9aac38dac2264a30db6bbff117b2849c70ce03dff",
+      "bytes": 2684,
+      "status": "original-programmatic-vector",
+      "source": "docs/a1-thirty-visual-assets.md"
+    },
+    {
+      "path": "ingilizce/learning-assets/visual-pilot/a1-hand.svg",
+      "sha256": "025e5ce563aa7af48114e33f301cc0faff1ec27f6e32ddc072932a20ee99232b",
+      "bytes": 470,
+      "status": "original-programmatic-vector",
+      "source": "docs/a1-thirty-visual-assets.md"
+    },
+    {
+      "path": "ingilizce/learning-assets/visual-pilot/a1-arm.svg",
+      "sha256": "55d3b57cd7926de5df759bc3288516a76c633cdf9a03a64237798ed0c8ea43ab",
+      "bytes": 1568,
+      "status": "original-programmatic-vector",
+      "source": "docs/a1-thirty-visual-assets.md"
+    },
+    {
+      "path": "ingilizce/learning-assets/visual-pilot/a1-leg.svg",
+      "sha256": "aa9ccaca9164e9b7d625ba2f9523968a9d9d765624dd1f868494107e530b9a01",
+      "bytes": 546,
+      "status": "original-programmatic-vector",
+      "source": "docs/a1-thirty-visual-assets.md"
+    },
+    {
+      "path": "ingilizce/learning-assets/visual-pilot/a1-eye.svg",
+      "sha256": "15695edd499d4495523ccf03e905c5c3785c4ba71d26453be5a857d758ce048d",
+      "bytes": 617,
+      "status": "original-programmatic-vector",
+      "source": "docs/a1-thirty-visual-assets.md"
+    },
+    {
+      "path": "ingilizce/learning-assets/visual-pilot/a1-ear.svg",
+      "sha256": "4dc73092c7779e689befad0ab252878f49b87bf2dbbc244e90073b275f689571",
+      "bytes": 470,
+      "status": "original-programmatic-vector",
+      "source": "docs/a1-thirty-visual-assets.md"
+    },
+    {
+      "path": "ingilizce/learning-assets/visual-pilot/a1-nose.svg",
+      "sha256": "13039bbd8cd5e9c19bf24ccf3e7e7eac752455efbfb7f1e20c222523b72b29d3",
+      "bytes": 616,
+      "status": "original-programmatic-vector",
+      "source": "docs/a1-thirty-visual-assets.md"
+    },
+    {
+      "path": "ingilizce/learning-assets/visual-pilot/a1-happy.svg",
+      "sha256": "c4d8038aaa75ffdb77ebfb69a361e12939d65233644f3433b2e62e20b1f143d5",
+      "bytes": 1852,
+      "status": "original-programmatic-vector",
+      "source": "docs/a1-thirty-visual-assets.md"
+    },
+    {
+      "path": "ingilizce/learning-assets/visual-pilot/a1-sad.svg",
+      "sha256": "6eaf2ca747b6cf82ab772399eae36ab3e58e72ac1247b0e9926f9906091a908f",
+      "bytes": 1484,
+      "status": "original-programmatic-vector",
+      "source": "docs/a1-thirty-visual-assets.md"
+    },
+    {
+      "path": "ingilizce/learning-assets/visual-pilot/a1-excited.svg",
+      "sha256": "044d8554c5e90dc7a949c4da2bd4e6edaf0aa79e4cad76e5d57eb8932feb6f1d",
+      "bytes": 1736,
+      "status": "original-programmatic-vector",
+      "source": "docs/a1-thirty-visual-assets.md"
+    },
+    {
+      "path": "ingilizce/learning-assets/visual-pilot/a1-hungry.svg",
+      "sha256": "da7a5d13beb3c7756b24a5853786fabde8d17555402a6ba8066d1451c6c61b5e",
+      "bytes": 1682,
+      "status": "original-programmatic-vector",
+      "source": "docs/a1-thirty-visual-assets.md"
+    },
+    {
+      "path": "ingilizce/learning-assets/visual-pilot/a1-thirsty.svg",
+      "sha256": "1e8f8f3c4c71f278f9075d431895ddb6be91e8e04301c0595f44c1fe0a0d664c",
+      "bytes": 1589,
+      "status": "original-programmatic-vector",
+      "source": "docs/a1-thirty-visual-assets.md"
+    },
+    {
+      "path": "ingilizce/learning-assets/visual-pilot/a1-full.svg",
+      "sha256": "69151ad9cad30caf642c9dd0883306ba609711ddc6d7662aa05aaa6392c1e8d5",
+      "bytes": 1755,
+      "status": "original-programmatic-vector",
+      "source": "docs/a1-thirty-visual-assets.md"
+    },
+    {
+      "path": "ingilizce/learning-assets/visual-pilot/a1-in.svg",
+      "sha256": "f7e473d855937520568a8e61cef9e2e24521c57b7894382b8a95523f877bec37",
+      "bytes": 691,
+      "status": "original-programmatic-vector",
+      "source": "docs/a1-thirty-visual-assets.md"
+    },
+    {
+      "path": "ingilizce/learning-assets/visual-pilot/a1-on.svg",
+      "sha256": "5c56b06e0c19b6c7a12024c2c25ad214c2ad3adda66bc7c34c2f61eae5fd6fd4",
+      "bytes": 692,
+      "status": "original-programmatic-vector",
+      "source": "docs/a1-thirty-visual-assets.md"
+    },
+    {
+      "path": "ingilizce/learning-assets/visual-pilot/a1-under.svg",
+      "sha256": "fd268f3e700440bb34babc1b275a042361f7c61f3368982e8dbb8cfbfa9026b9",
+      "bytes": 692,
+      "status": "original-programmatic-vector",
+      "source": "docs/a1-thirty-visual-assets.md"
+    },
+    {
+      "path": "ingilizce/learning-assets/visual-pilot/a1-wake-up.svg",
+      "sha256": "f953f9e2edc6ff1b65dd6bd2f829b0f7f5057f28fd347bf97eb233a9d7a863d2",
+      "bytes": 2180,
+      "status": "original-programmatic-vector",
+      "source": "docs/a1-thirty-visual-assets.md"
+    },
+    {
+      "path": "ingilizce/learning-assets/visual-pilot/a1-have-breakfast.svg",
+      "sha256": "8c6a25b27f7ccc14881f3e6867bb8cfe5035f2e906ca6854360d38f14c0fc905",
+      "bytes": 2073,
+      "status": "original-programmatic-vector",
+      "source": "docs/a1-thirty-visual-assets.md"
+    },
+    {
+      "path": "ingilizce/learning-assets/visual-pilot/a1-go-to-bed.svg",
+      "sha256": "1f2d372d5862140e1162b20886295c0c7726a7b025882482a3d7a8d8dcf615bb",
+      "bytes": 1823,
+      "status": "original-programmatic-vector",
+      "source": "docs/a1-thirty-visual-assets.md"
     }
   ]
 }

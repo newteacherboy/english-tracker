@@ -69,11 +69,43 @@ const pilotAtlas=Object.freeze({
  tree:[2,33],sun:[2,30],sunny:[2,30]
 });
 const pilotVectors=Object.freeze({house:'house',flat:'flat',garden:'garden',school:'school',park:'park',shop:'shop'});
+const a1ThirtyVectors=Object.freeze({
+ 'hello!':'a1-hello',
+ 'good morning!':'a1-good-morning',
+ 'good evening!':'a1-good-evening',
+ 'please.':'a1-please',
+ 'thank you.':'a1-thank-you',
+ 'goodbye!':'a1-goodbye',
+ 'mother':'a1-mother',
+ 'father':'a1-father',
+ 'sister':'a1-sister',
+ 'friend':'a1-friend',
+ 'neighbour':'a1-neighbour',
+ 'classmate':'a1-classmate',
+ 'hand':'a1-hand',
+ 'arm':'a1-arm',
+ 'leg':'a1-leg',
+ 'eye':'a1-eye',
+ 'ear':'a1-ear',
+ 'nose':'a1-nose',
+ 'happy':'a1-happy',
+ 'sad':'a1-sad',
+ 'excited':'a1-excited',
+ 'hungry':'a1-hungry',
+ 'thirsty':'a1-thirsty',
+ 'full':'a1-full',
+ 'in':'a1-in',
+ 'on':'a1-on',
+ 'under':'a1-under',
+ 'wake up':'a1-wake-up',
+ 'have breakfast':'a1-have-breakfast',
+ 'go to bed':'a1-go-to-bed',
+});
 const pilotEmoji=Object.freeze({hospital:'🏥',office:'🏢'});
 function pilotImage(card){
  if(!card||card.image)return card;
  const key=String(card.en||'').trim().toLowerCase();
- const sprite=pilotAtlas[key],vector=pilotVectors[key],emoji=pilotEmoji[key];
+ const sprite=pilotAtlas[key],vector=a1ThirtyVectors[key]||pilotVectors[key],emoji=pilotEmoji[key];
  return sprite?{...card,image:{type:'sprite',sheet:sprite[0],index:sprite[1]}}:vector?{...card,image:{type:'static-svg',value:vector}}:emoji?{...card,image:{type:'emoji',value:emoji}}:card;
 }
 function mountPilotExercise(area,lesson,cards,task){
@@ -107,6 +139,14 @@ function mountPilotExercise(area,lesson,cards,task){
  };
  root.querySelector('[data-pilot-next]').onclick=()=>{index++;paint();};
  paint();
+}
+/* Presentation-only visual choices: the server keeps the unchanged option strings and grades normally. */
+function visualizeGradedChoice(task,lesson){
+ if(schoolBridge||lesson?.cefr!=='A1'||task?.kind!=='choice'||task.images||!['Dinle ve bul','İngilizcesini bul'].includes(task.label))return task;
+ const words=lesson.cards.map(pilotImage);
+ const mapped=task.options.map(s=>words.find(c=>c.en===s));
+ if(mapped.some(c=>!c?.image)||mapped.length<2||!mapped.some(c=>c.en===task.answer))return task;
+ return {...task,images:mapped};
 }
 function art(card,hidden=false){const im=pilotImage(card)?.image;if(!im)return '';let style='',inner='';if(im.type==='sprite')style='background-image:url(learning-assets/objects-0'+im.sheet+'.webp);background-size:600% 600%;background-position:'+(im.index%6*20)+'% '+(Math.floor(im.index/6)*20)+'%';if(im.type==='color')style='--ml-color:'+({red:'#ed4040',blue:'#3288df',yellow:'#f9cb31',green:'#36ad68',black:'#253041',white:'#fff'}[im.value]||'#888');if(im.type==='school-soft')return '<span class="ml-art ml-art-soft ml-art-soft-'+esc(im.value)+'" role="img" aria-label="'+esc(card.tr||card.en)+'"></span>';if(im.type==='static-svg')style='background-image:url(learning-assets/visual-pilot/'+im.value+'.svg);background-size:contain;background-position:center';if(im.type==='emoji')inner=esc(im.value);if(im.type==='number')inner=esc(im.value);if(im.type==='shape')inner='<span class="ml-shape-'+esc(im.value)+'"></span>';return '<span class="ml-art ml-art-'+esc(im.type)+'" style="'+style+'" '+(hidden?'aria-hidden="true"':'role="img" aria-label="'+esc(card.tr||card.en)+'"')+'>'+inner+'</span>';}
 function dialogKeys(el,close){el.addEventListener('keydown',e=>{if(e.defaultPrevented)return;if(e.key==='Escape'){e.preventDefault();e.stopPropagation();close();}if(e.key==='Tab'){const all=[...el.querySelectorAll('button:not(:disabled),summary')].filter(x=>x.getClientRects().length),i=all.indexOf(document.activeElement);if(all.length){e.preventDefault();all[(i+(e.shiftKey?-1:1)+all.length)%all.length].focus();}}});}
@@ -391,7 +431,7 @@ function renderRecovery(){
  actions.querySelector('button').onclick=()=>openReference(chapter.cards,'Pekiştirme için öğrenme kartları');
  scheduleLessonFit();
 }
-function render(){if(!modal)return;accepted=false;if(session?.needsRecovery&&!session.finished){renderRecovery();return;}shell();if(session.finished||session.cursor>=taskDeck(chapter,data?.chapters.find(c=>c.id===chapter.previousId),session.deckVersion).length){finish();return;}const tasks=taskDeck(chapter,data?.chapters.find(c=>c.id===chapter.previousId),session.deckVersion),task=tasks[session.cursor],area=modal.querySelector('.ml-task'),actions=modal.querySelector('.ml-actions');modal.dataset.taskKind=task.kind;modal.dataset.schoolShort=String((task.prompt||'').length<=16);area.innerHTML='<p class="ml-eyebrow">'+esc(task.label)+'</p>';
+function render(){if(!modal)return;accepted=false;if(session?.needsRecovery&&!session.finished){renderRecovery();return;}shell();if(session.finished||session.cursor>=taskDeck(chapter,data?.chapters.find(c=>c.id===chapter.previousId),session.deckVersion).length){finish();return;}const tasks=taskDeck(chapter,data?.chapters.find(c=>c.id===chapter.previousId),session.deckVersion),task=visualizeGradedChoice(tasks[session.cursor],chapter),area=modal.querySelector('.ml-task'),actions=modal.querySelector('.ml-actions');modal.dataset.taskKind=task.kind;modal.dataset.schoolShort=String((task.prompt||'').length<=16);area.innerHTML='<p class="ml-eyebrow">'+esc(task.label)+'</p>';
  const speaker=(text,lang='en-US',label='Dinle')=>{const b=document.createElement('button');b.type='button';b.className='ml-speaker';b.textContent='🔊 '+label;b.onclick=()=>speech(text,lang);return b;};
  if(task.kind==='teach'){
   const cards=teachingCards(task);
