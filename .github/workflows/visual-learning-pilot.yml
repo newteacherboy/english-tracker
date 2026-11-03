@@ -1,0 +1,19 @@
+name: Visual learning A1 pilot
+on:
+  pull_request:
+    paths:
+      - 'ingilizce/thematic-learning.js'
+      - 'content/visual-learning-a1-pilot.json'
+      - 'tests/visual-learning-pilot.test.cjs'
+      - '.github/workflows/visual-learning-pilot.yml'
+  workflow_dispatch:
+jobs:
+  visual-pilot:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify visual pilot without server or reward changes
+        run: node --test tests/visual-learning-pilot.test.cjs

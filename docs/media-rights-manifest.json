@@ -2180,6 +2180,48 @@
       "bytes": 16460,
       "status": "ai-generated",
       "source": "docs/solo-arcade-assets.json"
+    },
+    {
+      "path": "ingilizce/learning-assets/visual-pilot/house.svg",
+      "sha256": "352e7733f55c70f68dbb7b8cf690b03b2876004f9e27c6372fc97d280ad936f3",
+      "bytes": 567,
+      "status": "original-programmatic-vector",
+      "source": "docs/visual-learning-pilot-assets.md"
+    },
+    {
+      "path": "ingilizce/learning-assets/visual-pilot/school.svg",
+      "sha256": "e65f3349ec970b47e634c6cfa1c74485a3654e57aef905631ff1f2dc2411d928",
+      "bytes": 757,
+      "status": "original-programmatic-vector",
+      "source": "docs/visual-learning-pilot-assets.md"
+    },
+    {
+      "path": "ingilizce/learning-assets/visual-pilot/flat.svg",
+      "sha256": "733c6528580f46d2addb3ea9e3444307294714a59338083d46e2a5ae127acc17",
+      "bytes": 950,
+      "status": "original-programmatic-vector",
+      "source": "docs/visual-learning-pilot-assets.md"
+    },
+    {
+      "path": "ingilizce/learning-assets/visual-pilot/garden.svg",
+      "sha256": "512b6680e684f7e1aab962c5cf34248319b43c49a840c21f43c7d2f0f92f6b21",
+      "bytes": 631,
+      "status": "original-programmatic-vector",
+      "source": "docs/visual-learning-pilot-assets.md"
+    },
+    {
+      "path": "ingilizce/learning-assets/visual-pilot/park.svg",
+      "sha256": "2493c76848e2084789afb9bfde76cf74913402e8042aee1925e2bc402ddd7d2c",
+      "bytes": 527,
+      "status": "original-programmatic-vector",
+      "source": "docs/visual-learning-pilot-assets.md"
+    },
+    {
+      "path": "ingilizce/learning-assets/visual-pilot/shop.svg",
+      "sha256": "6daabddac0b628901f4b6dddce1a87c665ac52398abd8f68a97418b533f098c3",
+      "bytes": 629,
+      "status": "original-programmatic-vector",
+      "source": "docs/visual-learning-pilot-assets.md"
     }
   ]
 }
