@@ -197,6 +197,7 @@ function gradeUnit(){
 }
 async function setup(){
  if(!overlay||!state)return;
+ const active=state;
  state.phase='setup';state.busy=false;
  $('[data-wm-result]',overlay).hidden=true;$('[data-wm-stage]',overlay).hidden=true;
  const intro=$('[data-wm-intro]',overlay);intro.hidden=false;
@@ -204,8 +205,8 @@ async function setup(){
  gradeUnit();
  const startBtn=$('[data-wm-start]',intro);
  startBtn.onclick=start;
- try{const rights=await access('check');if(!overlay||state.phase!=='setup')return;state.rights=rights;$('[data-wm-remaining]',intro).textContent=trialMsg(rights);startBtn.disabled=!rights.allowed;if(!rights.allowed)alertText('Üç ücretsiz oyun hakkın doldu. Sınırsız oyun için Premium üyelik gerekir.');}
- catch(e){if(!overlay||state.phase!=='setup')return;startBtn.disabled=true;$('[data-wm-remaining]',intro).textContent='Hak kontrolü başarısız';alertText(e.message);}
+ try{const rights=await access('check');if(!overlay||state!==active||state.phase!=='setup')return;state.rights=rights;$('[data-wm-remaining]',intro).textContent=trialMsg(rights);startBtn.disabled=!rights.allowed;if(!rights.allowed)alertText('Üç ücretsiz oyun hakkın doldu. Sınırsız oyun için Premium üyelik gerekir.');}
+ catch(e){if(!overlay||state!==active||state.phase!=='setup')return;startBtn.disabled=true;$('[data-wm-remaining]',intro).textContent='Hak kontrolü başarısız';alertText(e.message);}
 }
 async function start(){
  if(!overlay||!state||state.busy||state.phase!=='setup')return;
@@ -214,20 +215,20 @@ async function start(){
  try{state.words=pickWords();}catch(e){return alertText(e.message);}
  state.busy=true;
  const startBtn=$('[data-wm-start]',overlay);startBtn.disabled=true;alertText('Oyun hazırlanıyor…');
- const runId=typeof crypto.randomUUID==='function'?crypto.randomUUID():null;
+ const active=state;const runId=state.startRunId||(state.startRunId=typeof crypto.randomUUID==='function'?crypto.randomUUID():null);
  try{
   const rights=await access('start',runId);
-  if(!overlay||state.phase!=='setup')return;
+  if(!overlay||state!==active||state.phase!=='setup')return;
   if(!rights.allowed){state.busy=false;startBtn.disabled=true;$('[data-wm-remaining]',overlay).textContent=trialMsg(rights);return alertText('Ücretsiz oynama hakların bitti. Premium üyelik gerekli.');}
   state.rights=rights;state.phase='playing';state.busy=false;state.runId=runId;state.score=0;state.moves=MOVES;state.goals=state.words.slice(0,3).map(w=>w.en);state.goalsDone={};state.boosterMode=null;state.boosters={shuffle:1,swap:1,row:1,color:1};
   state.board=freshBoard();
   $('[data-wm-intro]',overlay).hidden=true;$('[data-wm-stage]',overlay).hidden=false;
   boardDraw();drawHeads();alertText('Aynı kelimelerden 3 veya daha fazlasını eşleştir!');
- }catch(e){if(!overlay)return;state.busy=false;startBtn.disabled=false;alertText(e.message);}
+ }catch(e){if(!overlay||state!==active)return;state.busy=false;startBtn.disabled=false;alertText(e.message);}
 }
 function open(){
  close();loadStyle();prior=document.activeElement;
- state={phase:'setup',grade:1,unit:1,busy:false,rights:null};
+ state={phase:'setup',grade:Number(window.dmGameAccess?.rule?.()?.cls)||1,unit:1,busy:false,rights:null,startRunId:null};
  overlay=document.createElement('section');overlay.id='premiumWordMatchOverlay';overlay.className='pwm-overlay game-modal-overlay';overlay.setAttribute('role','dialog');overlay.setAttribute('aria-modal','true');overlay.setAttribute('aria-label','Premium İngilizce Kelime Eşleştirme');
  overlay.innerHTML='<div class="pwm-shell"><header class="pwm-header"><button type="button" data-wm-close aria-label="Oyundan çık">‹</button><div><small>✨ DİJİ MEDU • PREMIUM OYUNLAR ✨</small><h1>İngilizce Kelime Eşleştirme</h1></div><span>👑</span></header><div class="pwm-content"><div data-wm-intro></div><div data-wm-stage hidden><div class="pwm-hud"><span>PUAN <strong data-wm-score>0</strong></span><span>HAMLE <strong data-wm-moves>20</strong></span><span class="pwm-level" data-wm-level></span></div><div class="pwm-starbar"><i data-wm-progress></i><b>⭐</b><b>⭐</b><b>⭐</b></div><div class="pwm-goals" data-wm-goals></div><div class="pwm-board-box"><div class="pwm-combo" data-wm-combo hidden></div><div class="pwm-board" data-wm-board></div></div><div class="pwm-meaning" data-wm-meaning aria-live="polite"><span>3 kelimeyi eşleştir, anlamını öğren!</span></div><p class="pwm-message" data-wm-status role="status"></p><div class="pwm-boosters" data-wm-boosters><button type="button" data-booster="shuffle"><span>🔀</span>Karıştır<small>×1</small></button><button type="button" data-booster="swap"><span>🔁</span>Yer Değiştir<small>×1</small></button><button type="button" data-booster="row"><span>⚡</span>Satır Patlat<small>×1</small></button><button type="button" data-booster="color"><span>🧪</span>Kelime Patlat<small>×1</small></button></div><div class="pwm-game-note">Büyük Eşleşme = Büyük Ödül! 3’lü +100 • 4’lü +250 • 5’li +500</div></div><div data-wm-result class="pwm-result" hidden></div></div></div>';
  document.body.append(overlay);
