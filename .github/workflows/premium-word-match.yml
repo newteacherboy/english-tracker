@@ -1,0 +1,19 @@
+name: Premium word match
+on:
+  push:
+    paths: ['ingilizce/premium-word-match*', 'ingilizce/lazy-games.js', 'ingilizce/premium-assets/**', 'tests/premium-word-match*', 'supabase/migrations/20261103193000_premium_word_match_v2.sql', '.github/workflows/premium-word-match.yml']
+  pull_request:
+    paths: ['ingilizce/premium-word-match*', 'ingilizce/lazy-games.js', 'ingilizce/premium-assets/**', 'tests/premium-word-match*', 'supabase/migrations/20261103193000_premium_word_match_v2.sql', '.github/workflows/premium-word-match.yml']
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node --check ingilizce/premium-word-match.js && node --check ingilizce/premium-word-match-core.js && node --check ingilizce/lazy-games.js
+      - run: node --test tests/premium-word-match-core.test.cjs
+      - run: npm install --no-save --package-lock=false playwright@1.58.2
+      - run: npx playwright install --with-deps chromium webkit
+      - run: PWM_ENGINES=chromium,webkit node tests/premium-word-match-ui.cjs

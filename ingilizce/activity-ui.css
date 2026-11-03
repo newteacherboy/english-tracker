@@ -335,3 +335,14 @@ html.dm-teacher-portal #tab-aktiviteler#tab-aktiviteler .gg-page .gg-tabs{grid-t
 }
 #tab-aktiviteler#tab-aktiviteler .gg-page[data-gg-party="free"] #sentenceRaceActivity .dm-sr-hub-art{height:auto!important;max-height:none!important}
 #tab-aktiviteler#tab-aktiviteler .gg-page[data-gg-party="free"] #sentenceRaceActivity .gg-copy{min-width:0}
+
+/* Premium Oyunlar: altıncı sekme. Dar ekranda tek satır, kısa etiketler. */
+#tab-aktiviteler#tab-aktiviteler .gg-tabs:has(#ggPremiumTab){grid-template-columns:repeat(6,minmax(0,1fr))!important;gap:3px!important;padding:4px!important}
+#tab-aktiviteler#tab-aktiviteler .gg-tabs:has(#ggPremiumTab) [role=tab]{padding:6px 1px!important;min-height:64px!important;font-size:clamp(9px,2.4vw,14px)!important}
+#tab-aktiviteler#tab-aktiviteler .gg-page #ggPremiumTab{background:linear-gradient(#fff3c4,#ffd76a)!important;color:#6a2cb0!important}
+#tab-aktiviteler#tab-aktiviteler .gg-page #ggPremiumTab[aria-selected=true]{background:linear-gradient(#a24ad8,#6a1fa5)!important;color:#fff2a8!important;box-shadow:0 3px 0 #3c1170!important}
+#tab-aktiviteler .gg-tabs .au-game-icon.gg-premium-icon{width:26px!important;height:26px!important}
+#tab-aktiviteler .gg-page .gg-premium-art{display:block;overflow:hidden;background:#3d1f6b}
+#tab-aktiviteler .gg-page .gg-premium-art img{width:100%;height:100%;object-fit:cover;display:block}
+#tab-aktiviteler .gg-page .au-game-icon.gg-premium-icon{background:url(premium-assets/kelime-eslestirme/icon-crown.webp) center/contain no-repeat!important}
+@media(max-width:590px){#tab-aktiviteler .gg-title{flex-wrap:wrap!important}#tab-aktiviteler .gg-title h1{width:100%!important}}
