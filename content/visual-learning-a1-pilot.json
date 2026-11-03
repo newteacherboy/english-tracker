@@ -1,0 +1,268 @@
+{
+  "version": 1,
+  "status": "pilot-candidate-only",
+  "description": "A1 visual vocabulary pilot. Not wired to runtime; do not assume an image exists until resolved against existing atlas and validated.",
+  "source": "content/thematic-topics.txt",
+  "words": [
+    {
+      "en": "apple",
+      "tr": "elma",
+      "theme": "Yiyecek ve İçecekler",
+      "topic": "Meyveler",
+      "existingImageTag": "apple",
+      "assetStatus": "verify-in-existing-atlas",
+      "questionTypes": [
+        "picture-to-word",
+        "word-to-picture",
+        "listening-to-picture"
+      ]
+    },
+    {
+      "en": "banana",
+      "tr": "muz",
+      "theme": "Yiyecek ve İçecekler",
+      "topic": "Meyveler",
+      "existingImageTag": "banana",
+      "assetStatus": "verify-in-existing-atlas",
+      "questionTypes": [
+        "picture-to-word",
+        "word-to-picture",
+        "listening-to-picture"
+      ]
+    },
+    {
+      "en": "bread",
+      "tr": "ekmek",
+      "theme": "Yiyecek ve İçecekler",
+      "topic": "Yiyecek İsteme",
+      "existingImageTag": "bread",
+      "assetStatus": "verify-in-existing-atlas",
+      "questionTypes": [
+        "picture-to-word",
+        "word-to-picture",
+        "listening-to-picture"
+      ]
+    },
+    {
+      "en": "milk",
+      "tr": "süt",
+      "theme": "Yiyecek ve İçecekler",
+      "topic": "İçecekler",
+      "existingImageTag": "milk",
+      "assetStatus": "verify-in-existing-atlas",
+      "questionTypes": [
+        "picture-to-word",
+        "word-to-picture",
+        "listening-to-picture"
+      ]
+    },
+    {
+      "en": "cat",
+      "tr": "kedi",
+      "theme": "Hayvanlar Dünyası",
+      "topic": "Evcil Hayvanlar",
+      "existingImageTag": "cat",
+      "assetStatus": "verify-in-existing-atlas",
+      "questionTypes": [
+        "picture-to-word",
+        "word-to-picture",
+        "listening-to-picture"
+      ]
+    },
+    {
+      "en": "dog",
+      "tr": "köpek",
+      "theme": "Hayvanlar Dünyası",
+      "topic": "Evcil Hayvanlar",
+      "existingImageTag": "dog",
+      "assetStatus": "verify-in-existing-atlas",
+      "questionTypes": [
+        "picture-to-word",
+        "word-to-picture",
+        "listening-to-picture"
+      ]
+    },
+    {
+      "en": "bird",
+      "tr": "kuş",
+      "theme": "Hayvanlar Dünyası",
+      "topic": "Hayvanlar Ne Yapabilir?",
+      "existingImageTag": "bird",
+      "assetStatus": "verify-in-existing-atlas",
+      "questionTypes": [
+        "picture-to-word",
+        "word-to-picture",
+        "listening-to-picture"
+      ]
+    },
+    {
+      "en": "fish",
+      "tr": "balık",
+      "theme": "Hayvanlar Dünyası",
+      "topic": "Hayvanlar Ne Yapabilir?",
+      "existingImageTag": "fish",
+      "assetStatus": "verify-in-existing-atlas",
+      "questionTypes": [
+        "picture-to-word",
+        "word-to-picture",
+        "listening-to-picture"
+      ]
+    },
+    {
+      "en": "book",
+      "tr": "kitap",
+      "theme": null,
+      "topic": null,
+      "existingImageTag": null,
+      "assetStatus": "needs-content-audit",
+      "questionTypes": [
+        "picture-to-word",
+        "word-to-picture",
+        "listening-to-picture"
+      ]
+    },
+    {
+      "en": "pencil",
+      "tr": "kurşun kalem",
+      "theme": null,
+      "topic": null,
+      "existingImageTag": null,
+      "assetStatus": "needs-content-audit",
+      "questionTypes": [
+        "picture-to-word",
+        "word-to-picture",
+        "listening-to-picture"
+      ]
+    },
+    {
+      "en": "bag",
+      "tr": "çanta",
+      "theme": null,
+      "topic": null,
+      "existingImageTag": null,
+      "assetStatus": "needs-content-audit",
+      "questionTypes": [
+        "picture-to-word",
+        "word-to-picture",
+        "listening-to-picture"
+      ]
+    },
+    {
+      "en": "chair",
+      "tr": "sandalye",
+      "theme": "Evim ve Eşyalarım",
+      "topic": "Mobilyalar",
+      "existingImageTag": "chair",
+      "assetStatus": "verify-in-existing-atlas",
+      "questionTypes": [
+        "picture-to-word",
+        "word-to-picture",
+        "listening-to-picture"
+      ]
+    },
+    {
+      "en": "car",
+      "tr": "araba",
+      "theme": null,
+      "topic": null,
+      "existingImageTag": null,
+      "assetStatus": "needs-content-audit",
+      "questionTypes": [
+        "picture-to-word",
+        "word-to-picture",
+        "listening-to-picture"
+      ]
+    },
+    {
+      "en": "bicycle",
+      "tr": "bisiklet",
+      "theme": null,
+      "topic": null,
+      "existingImageTag": null,
+      "assetStatus": "needs-content-audit",
+      "questionTypes": [
+        "picture-to-word",
+        "word-to-picture",
+        "listening-to-picture"
+      ]
+    },
+    {
+      "en": "bus",
+      "tr": "otobüs",
+      "theme": null,
+      "topic": null,
+      "existingImageTag": null,
+      "assetStatus": "needs-content-audit",
+      "questionTypes": [
+        "picture-to-word",
+        "word-to-picture",
+        "listening-to-picture"
+      ]
+    },
+    {
+      "en": "plane",
+      "tr": "uçak",
+      "theme": null,
+      "topic": null,
+      "existingImageTag": null,
+      "assetStatus": "needs-content-audit",
+      "questionTypes": [
+        "picture-to-word",
+        "word-to-picture",
+        "listening-to-picture"
+      ]
+    },
+    {
+      "en": "house",
+      "tr": "ev",
+      "theme": "Evim ve Eşyalarım",
+      "topic": "Evimi Tanıtıyorum",
+      "existingImageTag": null,
+      "assetStatus": "needs-content-audit",
+      "questionTypes": [
+        "picture-to-word",
+        "word-to-picture",
+        "listening-to-picture"
+      ]
+    },
+    {
+      "en": "school",
+      "tr": "okul",
+      "theme": null,
+      "topic": null,
+      "existingImageTag": null,
+      "assetStatus": "needs-content-audit",
+      "questionTypes": [
+        "picture-to-word",
+        "word-to-picture",
+        "listening-to-picture"
+      ]
+    },
+    {
+      "en": "tree",
+      "tr": "ağaç",
+      "theme": "Doğa ve Hava",
+      "topic": "Bitkiler",
+      "existingImageTag": null,
+      "assetStatus": "needs-content-audit",
+      "questionTypes": [
+        "picture-to-word",
+        "word-to-picture",
+        "listening-to-picture"
+      ]
+    },
+    {
+      "en": "sun",
+      "tr": "güneş",
+      "theme": null,
+      "topic": null,
+      "existingImageTag": null,
+      "assetStatus": "needs-content-audit",
+      "questionTypes": [
+        "picture-to-word",
+        "word-to-picture",
+        "listening-to-picture"
+      ]
+    }
+  ]
+}
