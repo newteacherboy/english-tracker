@@ -172,7 +172,7 @@ function finish(success){
  $('[data-wm-stage]',overlay).hidden=true;
  const done=$('[data-wm-result]',overlay);done.hidden=false;
  done.innerHTML='<div class="pwm-result-medal">🏆</div><h2>'+(success?'Kelime Ustası!':'Oyun tamamlandı!')+'</h2><p>Toplam puan</p><strong>'+state.score.toLocaleString('tr-TR')+'</strong><p>'+state.grade+'. sınıf · '+state.unit+'. ünite kelimelerini çalıştın.</p><button class="pwm-btn" type="button" data-new>Yeniden Oyna</button><button class="pwm-btn pwm-secondary" type="button" data-home>Oyunlara Dön</button>';
- $('[data-new]',done).onclick=()=>{state.phase='setup';setup();};
+ $('[data-new]',done).onclick=()=>{state.startRunId=null;state.phase='setup';setup();};
  $('[data-home]',done).onclick=close;
 }
 function close(){
