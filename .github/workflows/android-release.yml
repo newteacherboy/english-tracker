@@ -4,8 +4,9 @@ name: Diji Medu Android release (AAB)
 #   ANDROID_KEYSTORE_BASE64  (signing.keystore dosyasının base64 hâli)
 #   ANDROID_KEYSTORE_PASSWORD, ANDROID_KEY_ALIAS, ANDROID_KEY_PASSWORD  (signing-key-info.txt içindeki değerler)
 on:
-  # Etiketle de başlar (dal birleşmeden çalışabilsin): git tag android-v1.1.0-2 && git push origin android-v1.1.0-2
+  # Dal birleşmeden de çalışabilsin: release/android-* veya claude/android-release-* dalına push edince başlar.
   push:
+    branches: ['release/android-*', 'claude/android-release-*']
     tags: ['android-v*']
   workflow_dispatch:
     inputs:
