@@ -1,0 +1,17 @@
+name: Premium word match
+on:
+  push:
+    paths: ['ingilizce/premium-word-match.*', 'ingilizce/lazy-games.js', 'tests/premium-word-match.test.cjs', '.github/workflows/premium-word-match.yml']
+  pull_request:
+    paths: ['ingilizce/premium-word-match.*', 'ingilizce/lazy-games.js', 'tests/premium-word-match.test.cjs', '.github/workflows/premium-word-match.yml']
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node --check ingilizce/premium-word-match.js
+      - run: node --check ingilizce/lazy-games.js
+      - run: node --test tests/premium-word-match.test.cjs
