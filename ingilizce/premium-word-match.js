@@ -5,7 +5,7 @@
    - iPhone belleği için: tek canvas, şeker+kelime görüntüleri önbellekte, ağır CSS filtresi yok. */
 (()=>{'use strict';
 if(window.dmPwm)return;
-const V='20261103-v2-1',A='premium-assets/kelime-eslestirme/';
+const V='20261103-v2-2',A='premium-assets/kelime-eslestirme/';
 const API=(typeof apiURL!=='undefined'?apiURL:'https://nxfqlutulxqzqgwewssd.supabase.co/functions/v1/diji-api').replace(/diji-api.*$/,'premium-games');
 const WORLDS=['Büyü Kütüphanesi','Kristal Mağara','Gökyüzü Şatosu','Büyülü Bahçe','Yıldız Kulesi'];
 const BGS=['bg-1-buyu-kutuphanesi','bg-2-kristal-magara','bg-3-gokyuzu-satosu','bg-4-buyulu-bahce','bg-5-yildiz-kulesi'];
@@ -138,7 +138,7 @@ async function open(){
   if(!isPremium()&&remaining()<=0)return comingSoon();
   home();
   if(!isPremium()&&!store.get('dm_pwm_trial_seen:'+owner.toLowerCase()))trialPopup();
- }catch(e){if(ticket===epoch&&root){$('.pwm-stage').innerHTML='';const c=modal('<h2>Oyun açılamadı</h2><p>'+esc(e.message)+'</p><div class="pwm-actions"><button type="button" class="pwm-btn" data-retry>Tekrar dene</button><button type="button" class="pwm-btn ghost" data-x>Çık</button></div>');c.querySelector('[data-retry]').onclick=()=>{close();open();};c.querySelector('[data-x]').onclick=()=>close();}}
+ }catch(e){if(ticket===epoch&&root){$('.pwm-stage').innerHTML='';const c=modal('<h2 class="pwm-ribbon-title">Oyun açılamadı</h2><p>'+esc(e.message)+'</p><div class="pwm-actions"><button type="button" class="pwm-btn" data-retry>Tekrar dene</button><button type="button" class="pwm-btn ghost" data-x>Çık</button></div>');c.querySelector('[data-retry]').onclick=()=>{close();open();};c.querySelector('[data-x]').onclick=()=>close();}}
 }
 
 function trialPopup(){
