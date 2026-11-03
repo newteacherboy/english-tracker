@@ -10,8 +10,8 @@ const pilot=JSON.parse(fs.readFileSync(path.join(root,'content/visual-learning-a
 
 test('visual pilot is syntactically valid and uses local assets with no extra API call',()=>{
  new vm.Script(source,{filename:'thematic-learning.js'});
- assert.match(source,/function mountPilotExercise\(area,lesson,cards\)/);
- assert.match(source,/mountPilotExercise\(area,chapter,cards\)/);
+ assert.match(source,/function mountPilotExercise\(area,lesson,cards,task\)/);
+ assert.match(source,/mountPilotExercise\(area,chapter,cards,task\)/);
  assert.match(source,/const pilotAtlas=Object\.freeze/);
  assert.match(source,/const pilotEmoji=Object\.freeze/);
  const fragment=source.slice(source.indexOf('function mountPilotExercise('),source.indexOf('function art(card,'));
