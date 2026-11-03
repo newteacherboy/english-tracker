@@ -42,3 +42,5 @@ test('existing curriculum and grading remain unchanged by pilot',()=>{
  assert.ok(data.chapters.some(c=>c.cards.some(x=>x.en==='house')));
  assert.ok(data.chapters.some(c=>c.cards.some(x=>x.en==='school')));
 });
+
+test('vector image files have exact manifest provenance',()=>{ const crypto=require('node:crypto');const manifest=JSON.parse(fs.readFileSync(path.join(root,'docs/media-rights-manifest.json'),'utf8'));for(const key of ['house','school','flat','garden','park','shop']){const name='ingilizce/learning-assets/visual-pilot/'+key+'.svg',source=fs.readFileSync(path.join(root,name)),record=manifest.assets.find(x=>x.path===name);assert.ok(record,'Missing media manifest: '+name);assert.equal(record.sha256,crypto.createHash('sha256').update(source).digest('hex'));assert.match(source.toString('utf8'),/<svg[^>]*viewBox=/);}});
