@@ -1,6 +1,5 @@
 /* Optional games initialize once, when their tab or public opener is used. */
 (()=>{'use strict';
-  const premiumFile='premium-word-match.js?v=20261103-3';
   const files=['solo-arcade.js?v=20261029-1','harf-bahcesi.js?v=20261025-results-1','papi-cards.js?v=20261013-review','meteor.js?v=20261025-viewport-2','word-wheel.js?v=20261016-ten-seconds','kelime-rallisi.js?v=20261028-voice-1'];
   const loaded=new Set();let pending=null,readyDone=false;
   function script(src){return new Promise((resolve,reject)=>{
@@ -23,19 +22,6 @@
       const fn=read();if(fn===proxy||typeof fn!=='function')throw Error('Oyun açılamadı. Tekrar dene.');return fn(...args);
     }catch(e){window.yoToast?.(e.message);}
   };return proxy;}
-  // Premium's own module loads on demand. Never wait for unrelated games to parse.
-  // This reduces peak CPU/memory usage when opening the candy board on iOS.
-  const premiumProxy=async (...args)=>{
-    const owner=typeof aktifOgrenciAdi==='undefined'?'':aktifOgrenciAdi;
-    try{
-      await script(premiumFile);
-      if(owner!==(typeof aktifOgrenciAdi==='undefined'?'':aktifOgrenciAdi))return;
-      const fn=window.premiumKelimeEslestirmeAc;
-      if(fn===premiumProxy||typeof fn!=='function')throw Error('Kelime Eşleştirme açılamadı.');
-      return fn(...args);
-    }catch(e){window.yoToast?.(e.message||'Oyun yüklenemedi.');}
-  };
-  window.premiumKelimeEslestirmeAc=premiumProxy;
   window.canavarAvcisiAc=opener(()=>window.canavarAvcisiAc);
   window.dengesizKuleAc=opener(()=>window.dengesizKuleAc);
   window.harfBahcesiAc=opener(()=>window.harfBahcesiAc);
