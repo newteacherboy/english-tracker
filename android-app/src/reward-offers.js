@@ -1,4 +1,4 @@
-export const REWARDS = Object.freeze({ energy: 3, gold: 100 });
+export const REWARDS = Object.freeze({ energy: 7, gold: 100 });
 export function isTeacherSession({ portal = false, name = '', classroomPlayer = false } = {}) {
   return portal === true || String(name).trim().toLowerCase() === 'teacher' || !!classroomPlayer;
 }

@@ -50,7 +50,7 @@ Web dosyaları pakette olduğu için web kodundaki değişiklikler `npm run sync
 
 ## Altın reklamı adayı (30 Ekim 2026)
 
-İki isteğe bağlı teklif vardır: 3 enerji ve 100 altın. Altın teklifi bakiye 100'ün altındayken veya seçilen enerji paketine yetmediğinde enerji/mağaza panelinde görünür. Her iki seçenek de test reklamıdır, canlı bakiyeyi değiştirmez. Reklam otomatik açılmaz. Öğretmen oturumları engellenir.
+İki isteğe bağlı teklif vardır: 7 enerji ve 100 altın. Altın teklifi bakiye 100'ün altındayken veya seçilen enerji paketine yetmediğinde enerji/mağaza panelinde görünür. Her iki seçenek de test reklamıdır, canlı bakiyeyi değiştirmez. Reklam otomatik açılmaz. Öğretmen oturumları engellenir.
 
 Gerçek uygulama kimliği `admob.config.json` içinde kayıtlıdır. Ekran görüntülerindeki iki reklam biriminin adı gösterilmediğinden enerji/altın eşlemesi doğrulanana kadar `units` alanları boştur; üretim kapalıdır. Bu dosya test manifestindeki Google örnek uygulama kimliğini değiştirmez.
 
@@ -69,14 +69,14 @@ Bu aday Google test reklamı kimlikleri kullanır ve gerçek hesaba enerji/altı
 
 | Birim | Kimlik sonu | Davranış |
 |---|---|---|
-| Enerji Kazan | 2306894202 | 3 enerji, günde en fazla 5 tamamlanan reklam |
+| Enerji Kazan | 2306894202 | 7 enerji, günde en fazla 5 tamamlanan reklam |
 | Altın Kazan | 7589517182 | 100 altın, günde en fazla 3 tamamlanan reklam |
 | Mağaza ve Oyunlar | 1536290907 | Liste ekranlarında banner |
 | Oyun Sonu | 6094930122 | Her 3 biten tek kişilik oyunda, en az 5 dk tam ekran aralığı |
 
 İki ödüllü birimde Gelişmiş ayarlar → Sunucu tarafı doğrulama adresi:
 `https://nxfqlutulxqzqgwewssd.supabase.co/functions/v1/ad-rewards/ssv`
-Google panelindeki test ve kaydet adımları ayrıca tamamlanmalı. `Reward` adı doğrulamayı engellemez; miktarlar 3 ve 100 kalmalı. Banner/geçiş birimlerine SSV eklenmez.
+Google panelindeki test ve kaydet adımları ayrıca tamamlanmalı. `Reward` adı doğrulamayı engellemez; miktarlar 7 ve 100 olmalı (geçişte 3 de kabul edilir). Banner/geçiş birimlerine SSV eklenmez.
 
 `ad-rewards` Edge Function kendi portal oturum doğrulamasını ve Google ECDSA imza doğrulamasını yapar. Bu nedenle platform JWT kontrolü kapalıdır; istemci işlemleri `x-diji-token` olmadan 401 döner. Google callback'inde sadece rastgele intent UUID'si vardır; öğrenci ismi, e-posta veya oturum anahtarı Google'a gönderilmez.
 
@@ -85,3 +85,7 @@ Yeni tablolar özel `dm_ad_rewards` şemasındadır; RLS açıktır, genel rolle
 Yerel testler: `npm test` (Android), `node --test supabase/functions/ad-rewards/ssv.test.mjs` (repo kökünden). Veritabanında çift ödeme, 3/gün altın sınırı ve rol izinleri işlemler geri alınarak doğrulandı. Gerçek Google callback'i için AdMob panel testi ve gerçek cihaz testi hâlâ gerekir.
 
 Üretim kaynak yolu UMP `canRequestAds` kontrolü ve sunucu tarafından doğrulanmış bakiye döndürür. Derleme varsayılanı örnek reklamdır. `DM_PRODUCTION_ADS=1` ayrıca `productionEnabled` kapısı açılmadan hata verir; release Gradle kapısı da imzalama/doğrulama tamamlanana kadar kapalıdır.
+
+## Abonelikler (4 Kasım 2026)
+
+Google Play abonelikleri (Pro, Premium Pro; öğretmen planları ekranda "Yakında") `DmBillingPlugin` (Play Billing 8) ve `supabase/functions/billing` ile çalışır. Ücretli planlarda banner ve geçiş reklamı kapanır. Kurulum ve yayın adımları: [docs/ABONELIK_KURULUMU.md](../docs/ABONELIK_KURULUMU.md).

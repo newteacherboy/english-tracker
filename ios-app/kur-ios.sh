@@ -10,9 +10,10 @@ xcode-select -p >/dev/null 2>&1 || { echo "❌ Xcode bulunamadı. App Store'dan 
 
 echo "📦 Paketler kuruluyor (birkaç dakika sürebilir)…"
 npm install --no-audit --no-fund \
-  @capacitor/core@latest @capacitor/ios@latest \
-  @capacitor/haptics@latest @capacitor/local-notifications@latest @capacitor/network@latest
-npm install --no-audit --no-fund --save-dev @capacitor/cli@latest @capacitor/assets@latest
+  @capacitor/core@8.6.0 @capacitor/ios@8.6.0 \
+  @capacitor-community/admob@8.3.0 \
+  @capacitor/haptics@8 @capacitor/local-notifications@8 @capacitor/network@8
+npm install --no-audit --no-fund --save-dev @capacitor/cli@8.6.0 @capacitor/assets@latest
 
 if [ ! -d ios ]; then
   echo "📱 iOS projesi oluşturuluyor…"

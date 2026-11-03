@@ -13,7 +13,7 @@ Deno.serve(async req=>{
   try{p=await verifyCallback(req.url,googleKey);}catch{return reply({verified:false},400);}
   if(!uuid(p.get('custom_data')))return reply({verified:true,credited:false}); // AdMob dashboard test, no student grant.
   const stamp=Number(p.get('timestamp')), amount=Number(p.get('reward_amount'));
-  if(!Number.isSafeInteger(stamp)||stamp<1e12||stamp>1e14||!Number.isInteger(amount)||![3,100].includes(amount))return reply({verified:true,credited:false});
+  if(!Number.isSafeInteger(stamp)||stamp<1e12||stamp>1e14||!Number.isInteger(amount)||![3,7,100].includes(amount))return reply({verified:true,credited:false});
   const {data,error}=await db.rpc('dm_ad_claim',{p_id:p.get('custom_data'),p_transaction:p.get('transaction_id'),p_unit:p.get('ad_unit'),p_amount:amount,p_event_at:new Date(stamp).toISOString()});
   if(error)return reply({error:'Reward verification temporarily unavailable'},503);
   return reply({verified:true,...data});
