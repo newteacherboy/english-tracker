@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "status": "pilot-candidate-only",
+  "status": "implemented-in-learning-teach-screen-pending-ci-and-review",
   "description": "A1 visual vocabulary pilot. Not wired to runtime; do not assume an image exists until resolved against existing atlas and validated.",
   "source": "content/thematic-topics.txt",
   "words": [
@@ -10,12 +10,13 @@
       "theme": "Yiyecek ve İçecekler",
       "topic": "Meyveler",
       "existingImageTag": "apple",
-      "assetStatus": "verify-in-existing-atlas",
+      "assetStatus": "existing-static-atlas",
       "questionTypes": [
         "picture-to-word",
         "word-to-picture",
         "listening-to-picture"
-      ]
+      ],
+      "visualPractice": "topic-teach-card-and-visual-practice"
     },
     {
       "en": "banana",
@@ -23,12 +24,13 @@
       "theme": "Yiyecek ve İçecekler",
       "topic": "Meyveler",
       "existingImageTag": "banana",
-      "assetStatus": "verify-in-existing-atlas",
+      "assetStatus": "existing-static-atlas",
       "questionTypes": [
         "picture-to-word",
         "word-to-picture",
         "listening-to-picture"
-      ]
+      ],
+      "visualPractice": "topic-teach-card-and-visual-practice"
     },
     {
       "en": "bread",
@@ -36,12 +38,13 @@
       "theme": "Yiyecek ve İçecekler",
       "topic": "Yiyecek İsteme",
       "existingImageTag": "bread",
-      "assetStatus": "verify-in-existing-atlas",
+      "assetStatus": "existing-static-atlas",
       "questionTypes": [
         "picture-to-word",
         "word-to-picture",
         "listening-to-picture"
-      ]
+      ],
+      "visualPractice": "topic-teach-card-and-visual-practice"
     },
     {
       "en": "milk",
@@ -49,12 +52,13 @@
       "theme": "Yiyecek ve İçecekler",
       "topic": "İçecekler",
       "existingImageTag": "milk",
-      "assetStatus": "verify-in-existing-atlas",
+      "assetStatus": "existing-static-atlas",
       "questionTypes": [
         "picture-to-word",
         "word-to-picture",
         "listening-to-picture"
-      ]
+      ],
+      "visualPractice": "topic-teach-card-and-visual-practice"
     },
     {
       "en": "cat",
@@ -62,12 +66,13 @@
       "theme": "Hayvanlar Dünyası",
       "topic": "Evcil Hayvanlar",
       "existingImageTag": "cat",
-      "assetStatus": "verify-in-existing-atlas",
+      "assetStatus": "existing-static-atlas",
       "questionTypes": [
         "picture-to-word",
         "word-to-picture",
         "listening-to-picture"
-      ]
+      ],
+      "visualPractice": "topic-teach-card-and-visual-practice"
     },
     {
       "en": "dog",
@@ -75,12 +80,13 @@
       "theme": "Hayvanlar Dünyası",
       "topic": "Evcil Hayvanlar",
       "existingImageTag": "dog",
-      "assetStatus": "verify-in-existing-atlas",
+      "assetStatus": "existing-static-atlas",
       "questionTypes": [
         "picture-to-word",
         "word-to-picture",
         "listening-to-picture"
-      ]
+      ],
+      "visualPractice": "topic-teach-card-and-visual-practice"
     },
     {
       "en": "bird",
@@ -88,12 +94,13 @@
       "theme": "Hayvanlar Dünyası",
       "topic": "Hayvanlar Ne Yapabilir?",
       "existingImageTag": "bird",
-      "assetStatus": "verify-in-existing-atlas",
+      "assetStatus": "existing-static-atlas",
       "questionTypes": [
         "picture-to-word",
         "word-to-picture",
         "listening-to-picture"
-      ]
+      ],
+      "visualPractice": "topic-teach-card-and-visual-practice"
     },
     {
       "en": "fish",
@@ -101,12 +108,13 @@
       "theme": "Hayvanlar Dünyası",
       "topic": "Hayvanlar Ne Yapabilir?",
       "existingImageTag": "fish",
-      "assetStatus": "verify-in-existing-atlas",
+      "assetStatus": "existing-static-atlas",
       "questionTypes": [
         "picture-to-word",
         "word-to-picture",
         "listening-to-picture"
-      ]
+      ],
+      "visualPractice": "topic-teach-card-and-visual-practice"
     },
     {
       "en": "book",
@@ -114,12 +122,13 @@
       "theme": null,
       "topic": null,
       "existingImageTag": null,
-      "assetStatus": "needs-content-audit",
+      "assetStatus": "existing-static-atlas",
       "questionTypes": [
         "picture-to-word",
         "word-to-picture",
         "listening-to-picture"
-      ]
+      ],
+      "visualPractice": "topic-teach-card-and-visual-practice"
     },
     {
       "en": "pencil",
@@ -127,12 +136,13 @@
       "theme": null,
       "topic": null,
       "existingImageTag": null,
-      "assetStatus": "needs-content-audit",
+      "assetStatus": "existing-static-atlas",
       "questionTypes": [
         "picture-to-word",
         "word-to-picture",
         "listening-to-picture"
-      ]
+      ],
+      "visualPractice": "topic-teach-card-and-visual-practice"
     },
     {
       "en": "bag",
@@ -140,12 +150,13 @@
       "theme": null,
       "topic": null,
       "existingImageTag": null,
-      "assetStatus": "needs-content-audit",
+      "assetStatus": "existing-static-atlas",
       "questionTypes": [
         "picture-to-word",
         "word-to-picture",
         "listening-to-picture"
-      ]
+      ],
+      "visualPractice": "topic-teach-card-and-visual-practice"
     },
     {
       "en": "chair",
@@ -153,12 +164,13 @@
       "theme": "Evim ve Eşyalarım",
       "topic": "Mobilyalar",
       "existingImageTag": "chair",
-      "assetStatus": "verify-in-existing-atlas",
+      "assetStatus": "existing-static-atlas",
       "questionTypes": [
         "picture-to-word",
         "word-to-picture",
         "listening-to-picture"
-      ]
+      ],
+      "visualPractice": "topic-teach-card-and-visual-practice"
     },
     {
       "en": "car",
@@ -166,12 +178,13 @@
       "theme": null,
       "topic": null,
       "existingImageTag": null,
-      "assetStatus": "needs-content-audit",
+      "assetStatus": "existing-static-atlas",
       "questionTypes": [
         "picture-to-word",
         "word-to-picture",
         "listening-to-picture"
-      ]
+      ],
+      "visualPractice": "topic-teach-card-and-visual-practice"
     },
     {
       "en": "bicycle",
@@ -179,12 +192,13 @@
       "theme": null,
       "topic": null,
       "existingImageTag": null,
-      "assetStatus": "needs-content-audit",
+      "assetStatus": "existing-static-atlas",
       "questionTypes": [
         "picture-to-word",
         "word-to-picture",
         "listening-to-picture"
-      ]
+      ],
+      "visualPractice": "topic-teach-card-and-visual-practice"
     },
     {
       "en": "bus",
@@ -192,12 +206,13 @@
       "theme": null,
       "topic": null,
       "existingImageTag": null,
-      "assetStatus": "needs-content-audit",
+      "assetStatus": "existing-static-atlas",
       "questionTypes": [
         "picture-to-word",
         "word-to-picture",
         "listening-to-picture"
-      ]
+      ],
+      "visualPractice": "topic-teach-card-and-visual-practice"
     },
     {
       "en": "plane",
@@ -205,12 +220,13 @@
       "theme": null,
       "topic": null,
       "existingImageTag": null,
-      "assetStatus": "needs-content-audit",
+      "assetStatus": "supplementary-local-sprite",
       "questionTypes": [
         "picture-to-word",
         "word-to-picture",
         "listening-to-picture"
-      ]
+      ],
+      "visualPractice": "additional-item-in-matching-topic"
     },
     {
       "en": "house",
@@ -218,12 +234,13 @@
       "theme": "Evim ve Eşyalarım",
       "topic": "Evimi Tanıtıyorum",
       "existingImageTag": null,
-      "assetStatus": "needs-content-audit",
+      "assetStatus": "local-emoji-fallback",
       "questionTypes": [
         "picture-to-word",
         "word-to-picture",
         "listening-to-picture"
-      ]
+      ],
+      "visualPractice": "topic-teach-card-and-visual-practice"
     },
     {
       "en": "school",
@@ -231,12 +248,13 @@
       "theme": null,
       "topic": null,
       "existingImageTag": null,
-      "assetStatus": "needs-content-audit",
+      "assetStatus": "local-emoji-fallback",
       "questionTypes": [
         "picture-to-word",
         "word-to-picture",
         "listening-to-picture"
-      ]
+      ],
+      "visualPractice": "topic-teach-card-and-visual-practice"
     },
     {
       "en": "tree",
@@ -244,12 +262,13 @@
       "theme": "Doğa ve Hava",
       "topic": "Bitkiler",
       "existingImageTag": null,
-      "assetStatus": "needs-content-audit",
+      "assetStatus": "existing-static-atlas",
       "questionTypes": [
         "picture-to-word",
         "word-to-picture",
         "listening-to-picture"
-      ]
+      ],
+      "visualPractice": "topic-teach-card-and-visual-practice"
     },
     {
       "en": "sun",
@@ -257,12 +276,15 @@
       "theme": null,
       "topic": null,
       "existingImageTag": null,
-      "assetStatus": "needs-content-audit",
+      "assetStatus": "supplementary-local-sprite",
       "questionTypes": [
         "picture-to-word",
         "word-to-picture",
         "listening-to-picture"
-      ]
+      ],
+      "visualPractice": "additional-item-in-matching-topic"
     }
-  ]
+  ],
+  "delivery": "Existing WebP atlas + emoji fallback. No per-question network requests.",
+  "behaviour": "Optional local mini visual exercises in topic part 1; no extra rewards, no server grading changes."
 }
