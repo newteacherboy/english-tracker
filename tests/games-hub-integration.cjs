@@ -21,14 +21,11 @@ const compact=await page.evaluate(()=>{
  const nav=[...document.querySelectorAll('.gg-tabs [role=tab]')].map(el=>el.getBoundingClientRect());
  return {bannerHeight:b.height,cards:nav.map(r=>({height:r.height,width:r.width})),fits:nav.every(r=>r.x>=-1&&r.right<=innerWidth+1)};
 });
-assert.equal(compact.cards.length,6);
+assert.equal(compact.cards.length,5);
 assert(compact.bannerHeight <= 200,'Games header not compact: '+JSON.stringify(compact));
 assert(compact.cards.every(c=>c.height<=125&&c.width>35),'Game category overflow: '+JSON.stringify(compact));
 assert(compact.fits,'Category buttons extend beyond the viewport');
-assert(await page.locator('#ggPremiumTab').count()===1,'Premium Oyunlar tab must be visible');
-await page.locator('#ggPremiumTab').click();
-assert.deepEqual(await page.locator('.az-grid2x2>.az-gcard:visible').evaluateAll(a=>a.map(e=>e.id)),['premiumWordMatchActivity']);
-await page.locator('#ggSoloTab').click();
+assert.equal(await page.locator('#ggPremiumTab,#premiumWordMatchActivity').count(),0,'Premium game and tab must be absent');
 assert.equal(await page.locator('.gg-heading').evaluate(e=>getComputedStyle(e).color),'rgb(56, 35, 22)');
 assert.equal(await page.locator('.yb-fw:visible').count(),0,'Floating shortcuts obscure the hub');
 await page.evaluate(()=>{for(const [id,title] of [['papiCardsActivity','Papi Kartları'],['meteorActivity','Papi’nin Meteor Düellosu'],['wordWheelActivity','Papi’nin Kelime Çarkı']]){const b=document.createElement('button');b.className='az-gcard';b.id=id;b.innerHTML='<div class="az-gcard-title">'+title+'</div>';document.querySelector('.az-grid2x2').append(b);}});
