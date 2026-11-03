@@ -133,3 +133,21 @@
 .pwm-intro-panel .pwm-btn{margin-top:10px}
 @media(max-width:375px){.pwm-shell{padding:6px 8px}.pwm-board{gap:3px;padding:3px}.pwm-tile{border-width:1px!important}.pwm-tile b{font-size:10px!important}.pwm-tile.pwm-long b{font-size:9px!important}.pwm-hud span{min-height:47px}.pwm-goals span{font-size:10px}}
 @media(max-height:680px){.pwm-content{padding-top:4px}.pwm-hud span{min-height:39px}.pwm-boosters{margin:5px 0}.pwm-goals{margin:5px 0}}
+
+/* iOS WebKit stability: fewer simultaneous compositing layers per 36-tile board. */
+@supports (-webkit-touch-callout: none){
+ .pwm-overlay{isolation:auto!important;-webkit-overflow-scrolling:auto!important;overscroll-behavior:contain;background:linear-gradient(150deg,#371164,#702a9c 47%,#230d50)!important}
+ .pwm-shell{background:linear-gradient(158deg,#3d176a,#712b9d 48%,#351264)!important;box-shadow:none!important}
+ .pwm-shell::after,.pwm-shell:before,.pwm-tile::after{display:none!important}
+ .pwm-board-box{box-shadow:inset 0 0 0 2px #ffeafa,0 5px 0 #2d1156!important}
+ .pwm-tile{filter:none!important;box-shadow:inset 0 3px 2px #ffffffa6,inset 0 -4px 4px #3b00554b,0 2px 0 #2c0b51!important}
+ .pwm-tile::before{background:#ffffff60!important}
+ .pwm-tile.pwm-c0{background:linear-gradient(155deg,#ffb6dc,#fc3e9d 52%,#b20c7a)!important}
+ .pwm-tile.pwm-c1{background:linear-gradient(155deg,#d2f5ff,#329bfd 52%,#1754b7)!important}
+ .pwm-tile.pwm-c2{background:linear-gradient(155deg,#d4ffbe,#4ace5b 52%,#138d46)!important}
+ .pwm-tile.pwm-c3{background:linear-gradient(155deg,#fff4bb,#ffad35 52%,#d96307)!important}
+ .pwm-tile.pwm-c4{background:linear-gradient(155deg,#ffe8d7,#f65d79 52%,#b21b5f)!important}
+ .pwm-tile.pwm-c5{background:linear-gradient(155deg,#f6deff,#b865ed 52%,#7027b4)!important}
+ .pwm-tile.pwm-c6{background:linear-gradient(155deg,#d9fff6,#32cabd 52%,#087f92)!important}
+ .pwm-tile.pwm-c7{background:linear-gradient(155deg,#fff0b6,#ff9b48 52%,#b83b3d)!important}
+}
