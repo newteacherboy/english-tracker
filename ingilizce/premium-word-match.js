@@ -39,7 +39,7 @@ async function access(action,runId){
   return result;
  }finally{clearTimeout(timeout);}
 }
-function alertText(msg){const node=$('[data-wm-status]',overlay);if(node)node.textContent=msg;}
+function alertText(msg){const stage=state?.phase==='playing'?$('[data-wm-stage]',overlay):null;const node=(stage&&$('[data-wm-status]',stage))||$('[data-wm-status]',overlay);if(node)node.textContent=msg;}
 function sound(type){
  if(window.dmSesAcik===false||window.dmSoundEnabled===false)return;
  try{window.genelSesEfektiCal?.(type==='good'?'dogru':'yanlis');}catch(_){}
@@ -214,7 +214,7 @@ async function start(){
  try{state.words=pickWords();}catch(e){return alertText(e.message);}
  state.busy=true;
  const startBtn=$('[data-wm-start]',overlay);startBtn.disabled=true;alertText('Oyun hazırlanıyor…');
- const runId=crypto.randomUUID?crypto.randomUUID():null;
+ const runId=typeof crypto.randomUUID==='function'?crypto.randomUUID():null;
  try{
   const rights=await access('start',runId);
   if(!overlay||state.phase!=='setup')return;
