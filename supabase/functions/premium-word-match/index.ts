@@ -19,9 +19,16 @@ Deno.serve(async(req:Request)=>{
   if(!session||session.role!=='student'||!session.student_id||Date.parse(session.expires_at)<=Date.now())return reply(req,{ok:false,message:'Oturum sona erdi. Tekrar giriş yap.'},401);
   const student=(await db('students?id=eq.'+session.student_id+'&select=id,status,frozen_at&limit=1'))?.[0];
   if(!student||student.status!=='approved'||student.frozen_at)return reply(req,{ok:false,message:'Hesap etkin değil.'},403);
-  const action=body.action==='start'?'start':'check',run=action==='start'?String(body.runId||''):null;
-  if(action==='start'&&!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(run||''))return reply(req,{ok:false,message:'Geçersiz oyun oturumu.'},400);
+  const action=body.action==='complete'?'complete':body.action==='start'?'start':'check',run=action!=='check'?String(body.runId||''):null;
+  if(action!=='check'&&!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(run||''))return reply(req,{ok:false,message:'Geçersiz oyun oturumu.'},400);
+  if(action==='complete'){
+   const level=Number(body.level),score=Number(body.score);
+   if(!Number.isInteger(level)||level<1||level>300||!Number.isInteger(score)||score<0||score>100000)return reply(req,{ok:false,message:'Geçersiz seviye veya puan.'},400);
+   const result=await db('rpc/dm_premium_match_complete',{method:'POST',body:JSON.stringify({p_student:session.student_id,p_run:run,p_level:level,p_score:score})});
+   return reply(req,{...result,ok:result.ok===true},result.ok===true?200:409);
+  }
   const status=await db('rpc/dm_premium_match_access',{method:'POST',body:JSON.stringify({p_student:session.student_id,p_run:run,p_check:action==='check'})});
-  return reply(req,{ok:true,...status});
+  const rows=await db('dm_premium_match_usage?student_id=eq.'+session.student_id+'&select=level_no&limit=1');
+  return reply(req,{ok:true,...status,level:Math.max(1,Math.min(300,Number(rows?.[0]?.level_no)||1))});
  }catch(err){console.error('premium-word-match:',err instanceof Error?err.message:'error');return reply(req,{ok:false,message:'Oyun hakkı kontrol edilemedi. Tekrar dene.'},503);}
 });
