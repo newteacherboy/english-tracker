@@ -15,25 +15,32 @@ const isTeacher=()=>window.dmTeacherPortalMode||currentName().toLowerCase()==='t
 const en=w=>String(w.ingilizce??w.english??w.en??'').trim();
 const tr=w=>String(w.turkce??w.turkish??w.tr??'').trim();
 let overlay=null,state=null,prior=null,eventsBound=false,pointerStart=null;
+let bankSource=null,bankSnapshot=[],levelSnapshot=null;
 const still=s=>!!overlay&&state===s&&overlay.isConnected;
 function loadStyle(){if(document.getElementById('pwmStyle'))return;const l=document.createElement('link');l.id='pwmStyle';l.rel='stylesheet';l.href='premium-word-match.css?v=20261103-2';document.head.append(l);}
 function bank(){
  const list=Array.isArray(window.masterKelimeHavuzu)?window.masterKelimeHavuzu:[];
+ if(bankSource===list)return bankSnapshot;
+ bankSource=list;levelSnapshot=null;
  const seen=new Set();
- return list.map(w=>({en:en(w),tr:tr(w),grade:Number(w.sinif??w.class_no),unit:Number(w.unite??w.unit_no)})).filter(w=>{
+ const normalized=list.map(w=>({en:en(w),tr:tr(w),grade:Number(w.sinif??w.class_no),unit:Number(w.unite??w.unit_no)})).filter(w=>{
   const key=norm(w.en);
   if(!w.en||!w.tr||w.en.length>12||!Number.isInteger(w.grade)||w.grade<1||w.grade>8||!Number.isInteger(w.unit)||w.unit<1||seen.has(w.grade+':'+w.unit+':'+key))return false;
   seen.add(w.grade+':'+w.unit+':'+key);return true;
  });
+ bankSnapshot=normalized;
+ return bankSnapshot;
 }
 function levelList(){
+ bank();if(levelSnapshot)return levelSnapshot;
  const pairs=new Map();
  for(const word of bank()){const id=word.grade+':'+word.unit;if(!pairs.has(id))pairs.set(id,[]);
   pairs.get(id).push(word);
  }
- return [...pairs.entries()].filter(([,words])=>new Set(words.map(w=>norm(w.en))).size>=5)
+ levelSnapshot=[...pairs.entries()].filter(([,words])=>new Set(words.map(w=>norm(w.en))).size>=5)
    .map(([id])=>{const [grade,unit]=id.split(':').map(Number);return {grade,unit};})
    .sort((a,b)=>a.grade-b.grade||a.unit-b.unit);
+ return levelSnapshot;
 }
 function setLevel(level){
  const list=levelList();
@@ -254,7 +261,7 @@ async function finish(success){
 
 function close(){
  if(!overlay)return;const old=overlay;overlay=null;state=null;pointerStart=null;
- old.remove();window.dmViewHistory?.leave(old);window.dmGameViewport?.sync();prior?.focus?.({preventScroll:true});
+ old.remove();prior?.focus?.({preventScroll:true});
 }
 async function setup(replay=false){
  if(!overlay||!state)return;
@@ -303,7 +310,7 @@ async function start(){
 function open(){
  close();loadStyle();prior=document.activeElement;
  state={phase:'setup',level:1,grade:1,unit:1,busy:false,rights:null,startRunId:null};
- overlay=document.createElement('section');overlay.id='premiumWordMatchOverlay';overlay.className='pwm-overlay game-modal-overlay';overlay.setAttribute('role','dialog');overlay.setAttribute('aria-modal','true');overlay.setAttribute('aria-label','Premium İngilizce Kelime Eşleştirme');
+ overlay=document.createElement('section');overlay.id='premiumWordMatchOverlay';overlay.className='pwm-overlay';overlay.setAttribute('role','dialog');overlay.setAttribute('aria-modal','true');overlay.setAttribute('aria-label','Premium İngilizce Kelime Eşleştirme');
  overlay.innerHTML='<div class="pwm-shell"><header class="pwm-header"><button type="button" data-wm-close aria-label="Oyundan çık">‹</button><div><small>✨ DİJİ MEDU • PREMIUM OYUNLAR ✨</small><h1>İngilizce Kelime Eşleştirme</h1></div><span>👑</span></header><div class="pwm-content"><div data-wm-intro></div><div data-wm-stage hidden><div class="pwm-hud"><span>PUAN <strong data-wm-score>0</strong></span><span>HAMLE <strong data-wm-moves>22</strong></span><span class="pwm-level" data-wm-level></span></div><div class="pwm-starbar"><i data-wm-progress></i><b>⭐</b><b>⭐</b><b>⭐</b></div><p class="pwm-target" data-wm-target>0 / 1200 puan</p><div class="pwm-goals" data-wm-goals></div><div class="pwm-board-box"><div class="pwm-combo" data-wm-combo hidden></div><div class="pwm-board" data-wm-board></div></div><div class="pwm-meaning" data-wm-meaning aria-live="polite"><span>3 kelimeyi eşleştir, anlamını öğren!</span></div><p class="pwm-message" data-wm-status role="status"></p><div class="pwm-boosters" data-wm-boosters><button type="button" data-booster="shuffle"><span>🔀</span>Karıştır<small>×1</small></button><button type="button" data-booster="swap"><span>🔁</span>Yer Değiştir<small>×1</small></button><button type="button" data-booster="row"><span>⚡</span>Satır Patlat<small>×1</small></button><button type="button" data-booster="color"><span>🧪</span>Kelime Patlat<small>×1</small></button></div><div class="pwm-game-note">Büyük Eşleşme = Büyük Ödül! 3’lü +100 • 4’lü +250 • 5’li +500</div></div><div data-wm-result class="pwm-result" hidden></div></div></div>';
  document.body.append(overlay);
  const board=$('[data-wm-board]',overlay);
@@ -316,7 +323,7 @@ function open(){
  overlay.querySelectorAll('[data-booster]').forEach(b=>b.onclick=()=>boost(b.dataset.booster));
  overlay.addEventListener('keydown',e=>{if(e.key==='Escape'){e.preventDefault();close();}});
  if(!eventsBound){document.addEventListener('dm:login',close);eventsBound=true;}
- setup();window.dmGameViewport?.sync();
+ setup();
 }
 window.premiumKelimeEslestirmeAc=open;
 window.dmPremiumWordMatch={open,close,potential,matches,pointFor,targetFor,levelList};
