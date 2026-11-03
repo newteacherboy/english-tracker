@@ -25,7 +25,7 @@ test('20 initial illustrated terms exist, image assets resolved in static pilot 
  const words=pilot.words.map(c=>c.en);
  assert.equal(new Set(words).size,20);
  for(const word of words){
-  const pattern=new RegExp('(?:^|[,\\s])'+word+'\\s*:', 'm');
+  const pattern=new RegExp('(?:^|[,{\\s])'+word+'\\s*:', 'm');
   assert.match(source,pattern,'Missing visual mapping: '+word);
  }
 });
