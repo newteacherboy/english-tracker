@@ -37,7 +37,7 @@ jobs:
       - name: Deploy
         run: |
           test -n "$SUPABASE_ACCESS_TOKEN" || { echo "::error::SUPABASE_ACCESS_TOKEN secret is missing"; exit 1; }
-          supabase functions deploy premium-games --project-ref "$PROJECT_REF" --no-verify-jwt --use-api
+          supabase functions deploy premium-games --project-ref "$PROJECT_REF" --no-verify-jwt --use-api --yes
       - name: Smoke check
         run: |
           code=$(curl -s -o /dev/null -w '%{http_code}' -X OPTIONS "https://$PROJECT_REF.supabase.co/functions/v1/premium-games")
