@@ -27,13 +27,17 @@ hediye güçlendirici, yöneticiyle iletişim, haftalık veli raporu, profil roz
    - `diji_pro`: 45 TL / 380 TL — `diji_premium_pro`: 79 TL / 700 TL
    - `teacher_pro`: 59 TL / 490 TL — `teacher_premium_pro`: 149 TL / 1.190 TL (şimdilik taslak kalabilir)
    - Yıllık planlara 7 günlük ücretsiz deneme teklifi (yeni müşteriler için) ekle.
-2. **Google Cloud servis hesabı:** Play Console → Kullanıcılar ve izinler → servis hesabını davet et,
-   "Finansal verileri görüntüleme" ve "Siparişleri ve abonelikleri yönetme" izinlerini ver. JSON anahtarını indir.
-3. **Supabase gizli değerleri:** `GOOGLE_PLAY_SERVICE_ACCOUNT` (JSON'un tamamı) ve `PLAY_RTDN_SECRET`
-   (en az 24 karakter rastgele metin).
-4. **Gerçek zamanlı bildirimler (RTDN):** Google Cloud Pub/Sub'da bir konu ve push aboneliği aç. Push adresi:
-   `https://nxfqlutulxqzqgwewssd.supabase.co/functions/v1/billing/rtdn?secret=<PLAY_RTDN_SECRET>`.
-   Play Console → Para kazanma ayarları → konuyu bağla, "Test bildirimi gönder".
+2. **Google Cloud (yapıldı, 4 Kas):** proje `project-ca6bc8db-2969-4bca-8b2`, Google Play Android Developer API açık,
+   servis hesabı `diji-medu-play-billing@project-ca6bc8db-2969-4bca-8b2.iam.gserviceaccount.com`,
+   Pub/Sub konusu `play-rtdn` (Google Play bildirim hesabına Publisher izni verildi) ve push aboneliği
+   `play-rtdn-supabase` → `https://nxfqlutulxqzqgwewssd.supabase.co/functions/v1/billing/rtdn`.
+   - Kalan: Play Console → Kullanıcılar ve izinler → servis hesabını davet et, "Finansal verileri görüntüleme" ve
+     "Siparişleri ve abonelikleri yönetme" izinlerini ver.
+3. **Servis hesabı anahtarı:** Cloud → IAM → Servis hesapları → diji-medu-play-billing → Anahtarlar → JSON anahtar oluştur.
+   İndirilen dosyanın tamamını Supabase → Edge Functions → Secrets'a `GOOGLE_PLAY_SERVICE_ACCOUNT` adıyla ekle.
+   (Kuruluş politikası anahtar oluşturmayı engellerse `iam.disableServiceAccountKeyCreation` bu proje için kapatılmalı.)
+4. **Play bildirimleri:** Play Console → Para kazanma ayarları → Gerçek zamanlı geliştirici bildirimleri →
+   konu: `projects/project-ca6bc8db-2969-4bca-8b2/topics/play-rtdn` → "Test bildirimi gönder".
 5. **AdMob:** "Enerji Kazan" biriminde ödül miktarını 3'ten 7'ye çek (sunucu geçiş süresince ikisini de kabul eder).
 6. **Veritabanı:** migration'ı uygula. Sonra kontrol: `select public.dm_plan('<öğrenci id>','student');` → `free`.
 7. **PR'ı birleştir:** `billing` ve `premium-games` fonksiyonları main'e girince otomatik yayınlanır.

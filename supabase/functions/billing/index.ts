@@ -2,7 +2,7 @@
 //   POST {action:'status'}                       → plan, sınırlar, ürünler, hesap referansı
 //   POST {action:'verify', productId, purchaseToken} → Google'dan doğrula, onayla (acknowledge), hakkı yaz
 //   POST /rtdn?secret=…                            → Play gerçek zamanlı bildirimleri (yenileme, iptal, iade)
-// Gizli değerler: GOOGLE_PLAY_SERVICE_ACCOUNT (JSON), PLAY_RTDN_SECRET.
+// Gizli değer: GOOGLE_PLAY_SERVICE_ACCOUNT (JSON). İsteğe bağlı: PLAY_RTDN_SECRET.
 import { createClient } from 'npm:@supabase/supabase-js@2.118.0';
 import { PACKAGE_NAME, PRODUCTS, productsFor, accountRef, tokenKey, interpret, serviceJwt, parseRtdn } from './play.mjs';
 
@@ -99,8 +99,10 @@ Deno.serve(async req => {
   const url = new URL(req.url);
   try {
     if (url.pathname.endsWith('/rtdn')) {
+      // Bildirim yalnızca bir token'ı yeniden sorgulatır; durum her zaman Google'dan okunur, gövdeye güvenilmez.
+      // PLAY_RTDN_SECRET tanımlıysa ek olarak ?secret= de istenir.
       const secret = Deno.env.get('PLAY_RTDN_SECRET') || '';
-      if (secret.length < 24 || url.searchParams.get('secret') !== secret) return reply({ error: 'forbidden' }, 403);
+      if (secret && url.searchParams.get('secret') !== secret) return reply({ error: 'forbidden' }, 403);
       const n = parseRtdn(await req.json().catch(() => null));
       if (!n?.purchaseToken) return reply({ ok: true, ignored: true });
       if (n.eventId) {
