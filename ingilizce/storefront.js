@@ -47,12 +47,28 @@
     const list=window._krkListe?.()||[],count=list.filter(k=>k.acik).length;
     return `<button type="button" class="ds-chests ds-collection" data-ds="collection"><span class="ds-collection-symbol" aria-hidden="true">🎭</span><span><b>Karakter koleksiyonum</b><small>${list.length?count+' / '+list.length+' karakter açıldı':'Yeni karakterleri keşfet'} · Tüm seviyelere açık</small></span>${arrow}</button>`;
   }
+  // Premium Kelime Eşleştirme güçlendiricileri: altınla alınır, sayıları sunucuda (premium-games) tutulur.
+  const premiumBoosters = [['karistir','Karıştır','Karışık düzen','booster-karistir',40],['degistir','Yer Değiştir','2 şekli değiştir','booster-yer-degistir',60],['satir','Satır Patlat','Tüm satırı temizle','booster-satir-patlat',80],['renk','Renk Patlat','Aynı renklerin hepsi','booster-renk-patlat',120]];
+  function premiumBoosterSection() {
+    return `<section class="ds-pwm" aria-label="Premium oyun güçlendiricileri"><div class="ds-pwm-head"><img src="premium-assets/kelime-eslestirme/icon-crown.webp" alt=""><div><h2>Güçlendiriciler</h2><p>Premium Kelime Eşleştirme oyununda kullan!</p></div></div><div class="ds-pwm-grid">${premiumBoosters.map(([k, n, s, icon, price]) => `<article class="ds-pwm-item"><img src="premium-assets/kelime-eslestirme/${icon}.webp" alt="" loading="lazy" decoding="async"><b>${n}</b><small>${s}</small>${button(money(price), `data-pwm-buy="${k}"`, gold() < price)}</article>`).join('')}</div></section>`;
+  }
+  async function buyPremiumBooster(kind) {
+    const user = typeof aktifOgrenciAdi === 'undefined' ? '' : String(aktifOgrenciAdi || '');
+    const t = user.toLowerCase() === 'teacher' ? (sessionStorage.getItem('ing_ogr_token') || localStorage.getItem('ing_token') || '') : (localStorage.getItem('ing_token') || '');
+    const url = (typeof apiURL !== 'undefined' ? apiURL : '').replace(/diji-api.*$/, 'premium-games');
+    const r = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ op: 'buy', kind, t }), cache: 'no-store' });
+    const d = await r.json().catch(() => null);
+    if (!r.ok || !d || d.ok === false) throw Error(d?.mesaj || 'Satın alma tamamlanamadı.');
+    if (d.yo) window.dmApplyRewardState?.(d.yo, user);
+    const item = premiumBoosters.find(x => x[0] === kind);
+    toast(`${item ? item[1] : 'Güçlendirici'} eklendi! Sende ${d.boosters?.[kind] ?? ''} tane var.`); window.yoSes?.('dogru');
+  }
   function home() {
     const offers = wardrobe()?.offers() || [];
     const character = wardrobe()?.character(240) || '<img src="profile-assets/papi-selam.png" alt="Papi">';
     const ready = wardrobe()?.ready();
     const featureJokers = [jokers().find(j => j.tur === 'cift'), jokers().find(j => j.id === 'xp-tilsimi')];
-    return `<main class="ds-home">${header()}<section class="ds-room" aria-label="Karakterinin giyinme odası"><div class="ds-wardrobe-shortcuts"><button type="button" data-category="sapka" aria-label="Şapka ve gözlükleri incele">🧢</button><button type="button" data-category="ust" aria-label="Üst giyimi incele">🧥</button><button type="button" data-category="aks" aria-label="Aksesuarları incele">🎒</button></div><div class="ds-character">${character}</div><div class="ds-character-actions"><button type="button" class="ds-character-label" data-ds="builder"><b>${ready ? 'Karakterin' : 'Papi seni bekliyor'}</b><span>✎ ${ready ? 'Tipimi tasarla' : 'Karakterini oluştur'}</span></button><button type="button" class="ds-shop-cta" data-ds="clothing" aria-label="Alışveriş Yap: karakterin için kıyafet ve aksesuarları aç"><span aria-hidden="true">🛍️</span><span>Alışveriş Yap</span><span aria-hidden="true">›</span></button></div></section>${energy()}<section class="ds-offers" aria-label="Sana önerilen ürünler">${offers.length ? offers.map(offerCard).join('') : `<article class="ds-offer ds-outfit"><h2>Sana özel kombin</h2><p>Önce karakterini oluştur.</p>${button('Giyime git','data-ds="clothing"')}</article><article class="ds-offer ds-opportunity"><h2>Günün fırsatı</h2><p>Giyim koleksiyonunu keşfet!</p>${button('Ürünleri incele','data-ds="clothing"')}</article>`}</section><section class="ds-jokers"><div class="ds-joker-intro"><button type="button" data-ds="jokers"><h2>Jokerler ${arrow}</h2></button><p>Oyunlarında sana<br>özel güçler!</p></div>${featureJokers.map(jokerCard).join('')}</section><section class="ds-discover-grid" aria-label="Sandıklar ve karakter koleksiyonu"><button type="button" class="ds-chests" data-ds="chests">${art('chest')}<span><b>Sandıklar</b><small>Sürpriz ödüllerini keşfet!</small></span>${arrow}</button>${collectionCard()}</section></main>`;
+    return `<main class="ds-home">${header()}<section class="ds-room" aria-label="Karakterinin giyinme odası"><div class="ds-wardrobe-shortcuts"><button type="button" data-category="sapka" aria-label="Şapka ve gözlükleri incele">🧢</button><button type="button" data-category="ust" aria-label="Üst giyimi incele">🧥</button><button type="button" data-category="aks" aria-label="Aksesuarları incele">🎒</button></div><div class="ds-character">${character}</div><div class="ds-character-actions"><button type="button" class="ds-character-label" data-ds="builder"><b>${ready ? 'Karakterin' : 'Papi seni bekliyor'}</b><span>✎ ${ready ? 'Tipimi tasarla' : 'Karakterini oluştur'}</span></button><button type="button" class="ds-shop-cta" data-ds="clothing" aria-label="Alışveriş Yap: karakterin için kıyafet ve aksesuarları aç"><span aria-hidden="true">🛍️</span><span>Alışveriş Yap</span><span aria-hidden="true">›</span></button></div></section>${energy()}<section class="ds-offers" aria-label="Sana önerilen ürünler">${offers.length ? offers.map(offerCard).join('') : `<article class="ds-offer ds-outfit"><h2>Sana özel kombin</h2><p>Önce karakterini oluştur.</p>${button('Giyime git','data-ds="clothing"')}</article><article class="ds-offer ds-opportunity"><h2>Günün fırsatı</h2><p>Giyim koleksiyonunu keşfet!</p>${button('Ürünleri incele','data-ds="clothing"')}</article>`}</section><section class="ds-jokers"><div class="ds-joker-intro"><button type="button" data-ds="jokers"><h2>Jokerler ${arrow}</h2></button><p>Oyunlarında sana<br>özel güçler!</p></div>${featureJokers.map(jokerCard).join('')}</section>${premiumBoosterSection()}<section class="ds-discover-grid" aria-label="Sandıklar ve karakter koleksiyonu"><button type="button" class="ds-chests" data-ds="chests">${art('chest')}<span><b>Sandıklar</b><small>Sürpriz ödüllerini keşfet!</small></span>${arrow}</button>${collectionCard()}</section></main>`;
   }
   function root() {
     const overlay = $('tab-magaza'), cap = overlay?.querySelector('.mg-kap');
@@ -108,6 +124,7 @@
     r.querySelectorAll('[data-category]').forEach(btn => btn.onclick = () => showDetail('clothing', btn.dataset.category));
     r.querySelectorAll('[data-pack]').forEach(btn => btn.onclick = () => purchase(btn, () => window.enerjiPaketiAl(Number(btn.dataset.pack))));
     r.querySelectorAll('[data-item]').forEach(btn => btn.onclick = () => purchase(btn, () => wardrobe().buy(btn.dataset.item)));
+    r.querySelectorAll('[data-pwm-buy]').forEach(btn => btn.onclick = () => purchase(btn, () => buyPremiumBooster(btn.dataset.pwmBuy)));
     r.querySelectorAll('[data-joker]').forEach(btn => btn.onclick = () => purchase(btn, async () => {
       if (!window.dmProgression?.require('joker_magaza')) return;
       const j = jokers().find(x => x.id === btn.dataset.joker); if (!j) throw Error('Ürün bulunamadı.');

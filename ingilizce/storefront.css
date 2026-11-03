@@ -95,3 +95,13 @@
 .ds-shop-cta>span:first-child{font-size:18px}.ds-shop-cta>span:last-child{font-size:21px;line-height:1}.ds-shop-cta:hover{filter:brightness(1.05)}.ds-shop-cta:active{transform:translateY(2px);box-shadow:0 1px 0 #bd761e}.ds-character-actions button:focus-visible{outline:3px solid #0b9f9b;outline-offset:3px}
 @media(max-width:360px){.ds-character-actions{gap:5px}.ds-character-actions .ds-character-label{padding:5px 7px;gap:5px;font-size:10px}.ds-character-actions .ds-character-label span{padding-left:5px;font-size:9px}.ds-shop-cta{font-size:11px;padding:6px 8px;gap:5px}}
 @media(max-width:560px){.ds-character-actions .ds-character-label{flex-direction:column;gap:1px;padding:4px 10px}.ds-character-actions .ds-character-label span{border-left:0;padding-left:0}}
+
+/* Premium oyun güçlendiricileri */
+.ds-pwm{padding:10px;border-radius:23px;background:linear-gradient(135deg,#5b1f99,#3a0f6e);color:#fff;border:3px solid #f6c453}
+.ds-pwm-head{display:flex;align-items:center;gap:8px;margin-bottom:8px}.ds-pwm-head img{width:40px;height:40px}.ds-pwm-head h2{margin:0;font-size:clamp(17px,3vw,24px);color:#fff2a8}.ds-pwm-head p{margin:0;font-size:12px;color:#ead7ff}
+.ds-pwm-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+.ds-pwm-item{display:flex;flex-direction:column;align-items:center;gap:2px;text-align:center;background:rgba(255,255,255,.1);border-radius:16px;padding:6px 4px;min-width:0}
+.ds-pwm-item img{width:clamp(40px,11vw,60px);height:auto;aspect-ratio:1}
+.ds-pwm-item b{font-size:12px;line-height:1.1}.ds-pwm-item small{font-size:10px;color:#ead7ff;line-height:1.1;min-height:22px}
+.ds-pwm-item .ds-buy{width:100%;display:flex;align-items:center;justify-content:center;gap:2px;font-size:12px;padding:5px 2px}
+.ds-pwm-item .ds-buy .ds-art{width:16px;height:16px}
