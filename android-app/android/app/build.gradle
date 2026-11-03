@@ -1,5 +1,7 @@
 apply plugin: 'com.android.application'
 
+def signingReady = ['ANDROID_KEYSTORE_PATH','ANDROID_KEYSTORE_PASSWORD','ANDROID_KEY_ALIAS','ANDROID_KEY_PASSWORD'].every { System.getenv(it) }
+
 android {
     namespace = "com.dijimedu.ingilizce"
     compileSdk = rootProject.ext.compileSdkVersion
@@ -17,6 +19,17 @@ android {
             ignoreAssetsPattern = '!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~'
         }
     }
+    // Yükleme anahtarı yalnızca CI gizli değerlerinden gelir; repoda anahtar veya şifre yok.
+    signingConfigs {
+        release {
+            if (signingReady) {
+                storeFile file(System.getenv("ANDROID_KEYSTORE_PATH"))
+                storePassword System.getenv("ANDROID_KEYSTORE_PASSWORD")
+                keyAlias System.getenv("ANDROID_KEY_ALIAS")
+                keyPassword System.getenv("ANDROID_KEY_PASSWORD")
+            }
+        }
+    }
     buildTypes {
         debug {
             applicationIdSuffix ".preview"
@@ -24,6 +37,7 @@ android {
             manifestPlaceholders = [appLabel: "Diji Medu Test"]
         }
         release {
+            if (signingReady) signingConfig signingConfigs.release
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
@@ -61,9 +75,9 @@ try {
 }
 
 tasks.configureEach { task ->
-    if (task.name == 'bundleRelease' || task.name == 'assembleRelease') {
+    if ((task.name == 'bundleRelease' || task.name == 'assembleRelease') && !signingReady) {
         task.doFirst {
-            throw new GradleException('Production release is not configured: supply the existing Play upload signing key, real AdMob app/ad-unit IDs, consent configuration and server-verified energy rewards before publishing. Use assembleDebug for the test APK.')
+            throw new GradleException('Release signing is not configured: run the "Diji Medu Android release (AAB)" workflow with the Play upload key secrets. Use assembleDebug for the test APK.')
         }
     }
 }
