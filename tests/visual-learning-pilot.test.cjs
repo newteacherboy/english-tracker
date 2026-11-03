@@ -18,7 +18,7 @@ test('visual pilot is syntactically valid and uses local assets with no extra AP
  assert.doesNotMatch(fragment,/\bfetch\s*\(|\bapi\s*\(|supabase/i);
  assert.match(fragment,/lesson\.part!==1/);
  assert.match(fragment,/data-pilot-feedback aria-live="polite"/);
- assert.match(fragment,/button\.disabled=true/);
+ assert.match(fragment,/b\.disabled=true/);
 });
 test('20 initial illustrated terms exist, image assets resolved in static pilot code',()=>{
  assert.equal(pilot.words.length,20);
