@@ -174,12 +174,15 @@ function showMeaning(word,bonus,combo){
 }
 function delay(ms){return new Promise(resolve=>setTimeout(resolve,ms));}
 async function explode(groups,chain=1){
+ const session=state;
+ if(!still(session))return;
  const unique=new Set(groups.flatMap(g=>g.indices)),main=groups.reduce((a,b)=>!a||b.indices.length>a.indices.length?b:a,null);
  for(const idx of unique){const el=$('[data-idx="'+idx+'"]',overlay);el?.classList.add('pwm-burst');}
  let reward=0;groups.forEach(g=>{reward+=pointFor(g.indices.length)*chain;state.goalsDone[g.word]=(Number(state.goalsDone[g.word])||0)+1;});
  state.score+=reward;drawHeads();showMeaning(main.word,reward,chain);
  sound('good');await delay(390);
- for(const idx of unique)state.board[idx]=null;cascadeFill();boardDraw();
+ if(!still(session))return;
+ for(const idx of unique)session.board[idx]=null;cascadeFill();boardDraw();
 }
 async function resolveMatches(groups){
  const session=state;let chain=1;
@@ -214,16 +217,18 @@ async function swap(a,b){
 }
 
 async function useBlast(i){
- const mode=state.boosterMode;if(!mode||state.boosters[mode]<=0)return;
+ if(!state||state.busy||state.phase!=='playing')return;
+ const session=state,mode=session.boosterMode;if(!mode||session.boosters[mode]<=0)return;
  state.boosterMode=null;state.boosters[mode]--;state.moves--;state.busy=true;
  const indices=mode==='row'?Array.from({length:SIZE},(_,j)=>Math.floor(i/SIZE)*SIZE+j):state.board.map((w,j)=>w===state.board[i]?j:-1).filter(j=>j>=0);
- const groups=[{word:state.board[i],indices}];await explode(groups,1);
- await resolveMatches(matches(state.board));drawHeads();
+ const groups=[{word:session.board[i],indices}];await explode(groups,1);
+ if(!still(session))return;
+ await resolveMatches(matches(session.board));if(still(session))drawHeads();
 }
 function boost(which){
  if(!state||state.phase!=='playing'||state.busy||!state.boosters[which])return;
  if(which==='shuffle'){state.boosters.shuffle--;state.board=freshBoard();boardDraw();drawHeads();alertText('Şekerlerin yeri değişti!');return;}
- state.boosterMode=which;boardDraw();alertText(which==='swap'?'Yer değiştireceğin iki şekeri seç.':which==='row'?'Patlatmak istediğin satırdan bir şekere dokun.':'Patlatacağın kelimeye dokun.');
+ state.boosterMode=which;boardDraw();alertText(which==='swap'?'İstediğin iki şekeri kaydırarak yer değiştir.':which==='row'?'Patlatmak istediğin satırdan bir şekere dokun.':'Patlatacağın kelimeye dokun.');
 }
 async function finish(success){
  const finished=state;if(!still(finished))return;
@@ -260,7 +265,7 @@ async function setup(replay=false){
  const intro=$('[data-wm-intro]',overlay);intro.hidden=false;
  intro.innerHTML='<div class="pwm-hero"><img src="papi-welcome-v2.png" alt="Papi"><div class="pwm-cauldron">✦<span>📖</span>✦</div></div><div class="pwm-intro-panel"><div class="pwm-crown">👑 PREMIUM OYUN</div><h2>Kelime Şekerleri</h2><p>3 seferlik ücretsiz oynama hakkı; sonrasında Premium üyelere sınırsız oynama.</p><strong data-wm-remaining>Oyun hazırlanıyor…</strong><p class="pwm-rules">Şekerleri parmağınla kaydır; aynı kelimeden üç veya fazlasını birleştir!</p><p class="pwm-small" data-wm-status role="status">Word Bank kelimeleri yükleniyor.</p><button type="button" class="pwm-btn" data-wm-start hidden>Tekrar dene</button></div>';
  const retry=$('[data-wm-start]',intro);
- retry.onclick=()=>{current.startRunId=null;setup();};
+ retry.onclick=()=>{if(current.startRunId&&current.words?.length)start();else setup();};
  try{
   const rights=await access('check');
   if(!still(current)||current.phase!=='setup')return;
@@ -282,8 +287,8 @@ async function start(){
   if(!still(current)||current.phase!=='setup')return;
   if(!rights.allowed){current.busy=false;return alertText('Ücretsiz oyun hakkı doldu. Premium üyelik gerekli.');}
   current.rights=rights;setLevel(Number(rights.level)||current.level);
-  // Start and check resolve the same server-side level; protect against changed sessions.
-  current.words=pickWords();
+  // Avoid consuming a second Word Bank deck on the same game start.
+  if(current.grade!==rights.grade&&Number.isInteger(rights.grade))current.words=pickWords();
   current.phase='playing';current.busy=false;current.runId=runId;
   current.score=0;current.moves=MOVES;
   current.goals=current.words.slice(0,3).map(w=>w.en);
