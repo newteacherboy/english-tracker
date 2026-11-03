@@ -3,6 +3,9 @@ on:
   pull_request:
     paths:
       - 'ingilizce/thematic-learning.js'
+      - 'ingilizce/learning-assets/visual-pilot/**'
+      - 'docs/media-rights-manifest.json'
+      - 'tests/a1-thirty-visuals.test.cjs'
       - 'content/visual-learning-a1-pilot.json'
       - 'tests/visual-learning-pilot.test.cjs'
       - '.github/workflows/visual-learning-pilot.yml'
@@ -16,4 +19,4 @@ jobs:
         with:
           node-version: '22'
       - name: Verify visual pilot without server or reward changes
-        run: node --test tests/visual-learning-pilot.test.cjs
+        run: node --test tests/visual-learning-pilot.test.cjs tests/a1-thirty-visuals.test.cjs
