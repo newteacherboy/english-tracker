@@ -7,7 +7,7 @@
    - Supabase istekleri: bu dosya karışmaz (sayfadaki katman yönetir)
    Sayfayı güncellediğinizde SURUM değerini artırın (v2, v3…).
    ===================================================================== */
-const SURUM = 'diji-v291-premium-word-match-swipe-20261103';
+const SURUM = 'diji-v292-premium-game-webkit-crash-20261103';
 const SAYFA = 'sayfa-' + SURUM, KAYNAK = 'kaynak-' + SURUM;
 // Cached on first use; never download the A2 catalog at startup.
 const LAZY_TOPIC_FILES = new Set(['konu-oyunlari-a1.js','konu-oyunlari-a2.js','topic-games-core.mjs']);
@@ -27,6 +27,11 @@ self.addEventListener('fetch', e => {
   if (r.method !== 'GET') return;
   const url = new URL(r.url);
   if (url.hostname.endsWith('supabase.co')) return;                 /* API: dokunma */
+  // Premium game requires a live account check. Never serve a stale JS/CSS bundle,
+  // especially while a prior iPhone WebKit renderer is recovering.
+  if (/\/(?:premium-word-match\.(?:js|css)|lazy-games\.js)$/.test(url.pathname)) {
+    e.respondWith(fetch(r,{cache:'no-store'}));return;
+  }
   if (AYRI_SAYFA.test(url.pathname)) return;                        /* Ayrı sayfalar ana sayfa önbelleğine karışmasın */
   if (url.searchParams.get('misafir') === '1') return;              /* Deneme oturumu ana sayfanın çevrimdışı kopyası değildir. */
 
