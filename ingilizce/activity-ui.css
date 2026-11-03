@@ -335,3 +335,10 @@ html.dm-teacher-portal #tab-aktiviteler#tab-aktiviteler .gg-page .gg-tabs{grid-t
 }
 #tab-aktiviteler#tab-aktiviteler .gg-page[data-gg-party="free"] #sentenceRaceActivity .dm-sr-hub-art{height:auto!important;max-height:none!important}
 #tab-aktiviteler#tab-aktiviteler .gg-page[data-gg-party="free"] #sentenceRaceActivity .gg-copy{min-width:0}
+
+/* Premium Oyunlar category: six tabs fit safely at 320px–desktop. */
+#tab-aktiviteler .gg-page .gg-tabs{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:4px!important;border-radius:16px!important}
+#tab-aktiviteler .gg-page .gg-tabs button{min-width:0!important;white-space:normal!important;line-height:1.12!important;padding:7px 3px!important}
+#tab-aktiviteler .gg-page #ggPremiumTab[aria-selected=true]{background:linear-gradient(#ffe691,#f2a436)!important;color:#5a277b!important;box-shadow:0 2px 0 #9862bd!important}
+#tab-aktiviteler .gg-page .gg-premium-art{display:flex;align-items:center;justify-content:center;background:radial-gradient(#fff4ac,#efa4ef 60%,#7f33b2);font-size:35px}
+@media(max-width:590px){#tab-aktiviteler .gg-title{flex-wrap:wrap!important}#tab-aktiviteler .gg-title h1{width:100%!important}}
