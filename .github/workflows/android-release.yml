@@ -13,11 +13,11 @@ on:
       version_code:
         description: 'Play sürüm kodu (son yüklenenden büyük olmalı)'
         required: true
-        default: '3'
+        default: '4'
       version_name:
         description: 'Sürüm adı'
         required: true
-        default: '1.1.1'
+        default: '1.2.0'
 permissions:
   contents: read
 concurrency:
@@ -55,14 +55,17 @@ jobs:
           test -n "$KEYSTORE_B64" || { echo "::error::ANDROID_KEYSTORE_BASE64 secret is missing"; exit 1; }
           echo "$KEYSTORE_B64" | base64 -d > "$RUNNER_TEMP/upload.keystore"
           echo "ANDROID_KEYSTORE_PATH=$RUNNER_TEMP/upload.keystore" >> "$GITHUB_ENV"
-      - run: npm run sync
+      - name: Bundle web assets with live AdMob units
+        env:
+          DM_PRODUCTION_ADS: '1'
+        run: npm run sync
       - name: Build signed AAB
         env:
           ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
           ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
           ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
-          ANDROID_VERSION_CODE: ${{ github.event.inputs.version_code || '3' }}
-          ANDROID_VERSION_NAME: ${{ github.event.inputs.version_name || '1.1.1' }}
+          ANDROID_VERSION_CODE: ${{ github.event.inputs.version_code || '4' }}
+          ANDROID_VERSION_NAME: ${{ github.event.inputs.version_name || '1.2.0' }}
         run: |
           chmod +x android/gradlew
           cd android
@@ -72,7 +75,7 @@ jobs:
         run: rm -f "$RUNNER_TEMP/upload.keystore"
       - uses: actions/upload-artifact@v4
         with:
-          name: DijiMedu-${{ github.event.inputs.version_name || '1.1.1' }}-${{ github.event.inputs.version_code || '3' }}-AAB
+          name: DijiMedu-${{ github.event.inputs.version_name || '1.2.0' }}-${{ github.event.inputs.version_code || '4' }}-AAB
           path: android-app/android/app/build/outputs/bundle/release/*.aab
           if-no-files-found: error
           retention-days: 14

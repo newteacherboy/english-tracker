@@ -7,7 +7,7 @@ android {
     compileSdk = rootProject.ext.compileSdkVersion
     defaultConfig {
         applicationId "com.dijimedu.ingilizce"
-        manifestPlaceholders = [appLabel: "Diji Medu"]
+        manifestPlaceholders = [appLabel: "Diji Medu", admobAppId: "ca-app-pub-3940256099942544~3347511713"]
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode Integer.parseInt(System.getenv("ANDROID_VERSION_CODE") ?: "2")
@@ -34,10 +34,12 @@ android {
         debug {
             applicationIdSuffix ".preview"
             versionNameSuffix "-preview"
-            manifestPlaceholders = [appLabel: "Diji Medu Test"]
+            // Önizleme Google'ın örnek AdMob uygulama kimliğini kullanır.
+            manifestPlaceholders = [appLabel: "Diji Medu Test", admobAppId: "ca-app-pub-3940256099942544~3347511713"]
         }
         release {
             if (signingReady) signingConfig signingConfigs.release
+            manifestPlaceholders = [appLabel: "Diji Medu", admobAppId: "ca-app-pub-5025780881593375~6878236592"]
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }

@@ -10,7 +10,7 @@
     "energy": 7,
     "gold": 100
   },
-  "productionEnabled": false,
+  "productionEnabled": true,
   "note": "IDs confirmed from named AdMob units. Preview uses sample ads and never credits live balances. Production stays disabled until SSV callback, consent and existing Play signing are verified.",
   "placements": {
     "gamesPerInterstitial": 3,
