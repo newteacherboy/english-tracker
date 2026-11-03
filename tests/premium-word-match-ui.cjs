@@ -26,7 +26,7 @@ const raw=[
     const pathname=new URL(route.request().url()).pathname;
     if(pathname==='/premium-word-match.css')return route.fulfill({contentType:'text/css',body:fs.readFileSync(path.join(base,'premium-word-match.css'),'utf8')});
     if(pathname==='/premium-word-match.js')return route.fulfill({contentType:'application/javascript',body:fs.readFileSync(path.join(base,'premium-word-match.js'),'utf8')});
-    const html='<!doctype html><html><head><meta name="viewport" content="width=device-width, initial-scale=1"></head><body><script>'
+    const html='<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"></head><body><script>'
      +'window.aktifOgrenciAdi="demo";window.dmSoundEnabled=false;window.masterKelimeHavuzu='+JSON.stringify(raw)+';'
      +'localStorage.setItem("ing_token","x".repeat(90));'
      +'</script><script src="/premium-word-match.js"></script><script>premiumKelimeEslestirmeAc()</script></body></html>';
