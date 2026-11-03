@@ -16,5 +16,5 @@ jobs:
       - run: node --check ingilizce/lazy-games.js
       - run: node --test tests/premium-word-match.test.cjs
       - run: npm install --no-save --package-lock=false playwright@1.58.2
-      - run: npx playwright install --with-deps chromium
+      - run: npx playwright install --with-deps chromium webkit
       - run: node tests/premium-word-match-ui.cjs
