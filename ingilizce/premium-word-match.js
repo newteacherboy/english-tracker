@@ -17,7 +17,7 @@ const tr=w=>String(w.turkce??w.turkish??w.tr??'').trim();
 let overlay=null,state=null,prior=null,eventsBound=false,pointerStart=null;
 let bankSource=null,bankSnapshot=[],levelSnapshot=null;
 const still=s=>!!overlay&&state===s&&overlay.isConnected;
-function loadStyle(){if(document.getElementById('pwmStyle'))return;const l=document.createElement('link');l.id='pwmStyle';l.rel='stylesheet';l.href='premium-word-match.css?v=20261103-2';document.head.append(l);}
+function loadStyle(){if(document.getElementById('pwmStyle'))return;const l=document.createElement('link');l.id='pwmStyle';l.rel='stylesheet';l.href='premium-word-match.css?v=20261103-3';document.head.append(l);}
 function bank(){
  const list=Array.isArray(window.masterKelimeHavuzu)?window.masterKelimeHavuzu:[];
  if(bankSource===list)return bankSnapshot;
