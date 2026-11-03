@@ -1,3 +1,5 @@
+import {iosAdRewards} from './ios-ad-rewards.mjs';
+import iosAdItems from './progression-shop.json' with {type:'json'};
 import {lessonPayload} from './lesson-payload.mjs';
 import {deltaReads} from './delta-reads.mjs';
 import {wordPayload} from './word-payload.mjs';
@@ -1421,6 +1423,9 @@ async function handle(req: Request, proxy: any = null) {
     if(!s||s.status!=='approved')return json({ok:false,mesaj:'Bu hesap artık aktif değil.'},403);
     return json({ok:true,rol:'ogrenci',ogrenci:s.username,expiresAt:a.expires_at});
   }
+
+  const iosAdResponse=['reklamHakki','reklamOdulu'].includes(op)?await iosAdRewards({db:supabase,json,isDemo,jokers:JOKER_KATALOG,characters:KARAKTER_SIRA,items:iosAdItems,catalog:(globalThis as any).DijiProgressionCatalog}).handle(op,body,a,req.method):null;
+  if(iosAdResponse)return iosAdResponse;
 
   // Private classroom play only records verified game rankings: no wallet mutation.
   if(a?.teacher_portal_access_id&&a.role==='student'){

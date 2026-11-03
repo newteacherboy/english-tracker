@@ -118,7 +118,7 @@ export function createPlacements({ admob, ads, win, interstitialEvents, bannerEv
     new win.MutationObserver(()=>{if(!queued){queued=true;win.requestAnimationFrame(()=>{queued=false;installResults();sync();});}}).observe(win.document.body,{subtree:true,childList:true,attributes:true,attributeFilter:['class','hidden','style','aria-hidden','inert']});
     win.addEventListener('resize',sync);win.document.addEventListener('visibilitychange',sync);
     win.document.addEventListener('dm:login',()=>{pending=null;ready=false;currentPolicy();sync();});
-    win.document.addEventListener('click',()=>{if(banner)void setBanner(false);},true);
+    // Keep banner visible during ordinary list taps; sync() removes it on navigation or overlays.
     installResults();sync();
   }
   return {
@@ -126,6 +126,6 @@ export function createPlacements({ admob, ads, win, interstitialEvents, bannerEv
     setActive(value) { active=!!value;if(!active)void setBanner(false);else sync(); },
     rewardAllowed:kind=>currentPolicy().rewardAllowed(kind),
     rewardClosed(kind,completed){currentPolicy().rewardClosed(kind,completed);sync();},
-    diagnostics:()=>({test:true,banner,interstitialReady:ready,busy,gamesSinceAd:currentPolicy().snapshot().games})
+    diagnostics:()=>({test:isTesting,banner,interstitialReady:ready,busy,gamesSinceAd:currentPolicy().snapshot().games})
   };
 }

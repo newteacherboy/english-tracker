@@ -8,6 +8,7 @@
 
 <meta charset="UTF-8">
 <script src="native-app.js?v=20261028-ios-2"></script>
+<script defer src="odullu-reklam.js?v=1.1"></script>
 <!-- First cascade layer wins important rules over legacy dock layers. -->
 <style>@layer dmNoticeSurface,bilgiIslands;</style>
 <script src="friends-feed-model.js?v=20261024-club-1"></script>
@@ -11752,7 +11753,7 @@ function ozellikSecDoldur() {
             document.getElementById('gsoSiralama').style.display = o.siralamaYok ? 'none' : '';
             document.getElementById('gsoSiralama').innerHTML = '<div class="gso-sira-bos">Sıralama yükleniyor...</div>';
 
-            gsoAktif = { isim: o.isim || '', oyunKey: o.oyunKey, devamFn: o.devamFn, tekrarFn: o.tekrarFn };
+            gsoAktif = { reklamSonuc: window.DijiReklam?.sonucHazir(o), isim: o.isim || '', oyunKey: o.oyunKey, devamFn: o.devamFn, tekrarFn: o.tekrarFn };
             let overlay = document.getElementById('genelSonucOverlay');
             let kart = overlay.querySelector('.gso-kart');
             // Animasyonları her açılışta baştan oynat
@@ -11802,9 +11803,11 @@ function ozellikSecDoldur() {
             document.getElementById('genelSonucOverlay').classList.remove('acik');
             if (!gsoAktif) return;
             if (gsoAktif.oyunKey && typeof liderlikKilitAktif !== 'undefined') liderlikKilitAktif[gsoAktif.oyunKey] = false;
+            const reklamSonuc = gsoAktif.reklamSonuc;
             let fn = tip === 'tekrar' ? gsoAktif.tekrarFn : gsoAktif.devamFn;
             gsoAktif = null;
             if (typeof fn === 'function') fn();
+            window.DijiReklam?.sonucKapandi(reklamSonuc, tip !== 'tekrar');
             if(window.dmTeacherPortalMode&&tip!=='tekrar')queueMicrotask(()=>window.dmTeacherPortal?.returnToGames());
         }
         </script>
@@ -17844,7 +17847,7 @@ body.pk-sekmeli .seviye-harita-overlay { padding-top:62px !important; }
     const price = ({5:100,10:130,15:180})[pack];
     const current = Number(window.genelEnerjiKalan || 0), capacity=Number(window.genelEnerjiMax || 30);
     if(current+pack>capacity){toast('⚡ Bu paket enerji kapasiteni aşar.');return false;}
-    if(Number(yo.altin||0)<price){toast(`🪙 ${price-Number(yo.altin||0)} altın daha gerekiyor.`);return false;}
+    if(Number(yo.altin||0)<price){window.DijiReklam?.altinEksik({tip:'enerji',id:String(pack)});toast(`🪙 ${price-Number(yo.altin||0)} altın daha gerekiyor.`);return false;}
     const key = 'paket_' + Date.now() + '_' + Math.random().toString(36).slice(2,12);
     const d=await window.dmEkonomi.islem('enerjiPaketAl',{miktar:pack,islemKimligi:key});
     if(!d || !d.ok){toast(d?.mesaj||'Enerji satın alınamadı.');return false;}
@@ -17875,6 +17878,7 @@ body.pk-sekmeli .seviye-harita-overlay { padding-top:62px !important; }
       <div class="sa-fiyat">🪙 ${o.fiyat}</div><div class="sa-kalan">${o.alt ? o.alt + ' · ' : ''}Altının: ${altin}${yeter ? ` → ${altin - o.fiyat}` : ` · ${o.fiyat - altin} altın daha lazım`}</div>
       <div class="sa-btn"><button class="sa-hayir">${o.hayir || 'Vazgeç'}</button><button class="sa-evet" ${yeter ? '' : 'disabled'}>${o.evet || 'Satın al'}</button></div></div>`;
     document.body.appendChild(p);
+    if (!yeter) window.DijiReklam?.teklif(p.querySelector('.sa-kart'), 'altin', o.urun);
     let kapat = () => p.remove();
     p.addEventListener('click', e => { if (e.target === p) kapat(); });
     p.querySelector('.sa-hayir').onclick = () => { kapat(); if (o.vazgec) o.vazgec(); };
@@ -17899,7 +17903,7 @@ body.pk-sekmeli .seviye-harita-overlay { padding-top:62px !important; }
   window.krkSatinAl = function (k) {
     if (!yoVar()) return;
     let f = typeof krkFiyat === 'function' ? krkFiyat(k) : 50;
-    onayKarti({ gorsel: krkGorsel(k), baslik: k.ad, metin: `Bu karakteri hemen açmak ister misin? (${k.sv}. seviyeye ulaşınca zaten bedava açılacak.)`, fiyat: f, evet: '🎭 Satın al',
+    onayKarti({ urun:{tip:'karakter',id:k.ad}, gorsel: krkGorsel(k), baslik: k.ad, metin: `Bu karakteri hemen açmak ister misin? (${k.sv}. seviyeye ulaşınca zaten bedava açılacak.)`, fiyat: f, evet: '🎭 Satın al',
       al: () => {
         window.dmEkonomi.islem('karakterAl', { ad: k.ad }).then(d => {
           if (!d.ok) { toast(d.mesaj || 'Satın alma tamamlanamadı.'); return; }
@@ -17967,7 +17971,7 @@ body.pk-sekmeli .seviye-harita-overlay { padding-top:62px !important; }
       else if (/Joker/.test(s)) {
         let J = window.JOKER_MAGAZA || [], E = yo.jokerEnv || {}, bos = !Object.values(E).some(v => v > 0);
         let j = J.filter(x => x.f <= Math.max(altin, 10)).sort((a, b) => b.f - a.f)[0] || J[0];
-        if (j) tavsiye({ ikon: j.e, metin: bos ? 'Çantan boş! Oyunlarda seni kurtaracak bir joker al.' : `${j.ad}: ${j.ac}`, alt: `🪙 ${j.f} · Altının: ${altin}`, btn: 'Al', fn: () => onayKarti({ gorsel: j.e, baslik: j.ad, metin: j.ac, fiyat: j.f, evet: 'Çantama ekle', al: () => { document.querySelector(`.jm-al[data-id="${j.id}"]`)?.click(); } }) }, true);
+        if (j) tavsiye({ ikon: j.e, metin: bos ? 'Çantan boş! Oyunlarda seni kurtaracak bir joker al.' : `${j.ad}: ${j.ac}`, alt: `🪙 ${j.f} · Altının: ${altin}`, btn: 'Al', fn: () => onayKarti({ urun:{tip:'joker',id:j.id}, gorsel: j.e, baslik: j.ad, metin: j.ac, fiyat: j.f, evet: 'Çantama ekle', al: () => { document.querySelector(`.jm-al[data-id="${j.id}"]`)?.click(); } }) }, true);
       } else if (/Atölye/.test(s) && altin >= 30) tavsiye({ ikon: '🎨', metin: `${altin} altının var! Karakterine yeni bir şapka ya da kıyafet dene.`, alt: 'Önce dene, beğenirsen al' }, true);
     }
     sonSekme = s;
@@ -17995,7 +17999,7 @@ body.pk-sekmeli .seviye-harita-overlay { padding-top:62px !important; }
     let aday = J.filter(j => turler.includes(j.tur) && j.kad === 1 && j.f <= (yo.altin || 0));
     if (!aday.length) return;
     let j = aday[Math.floor(Math.random() * aday.length)];
-    if (hepsiBitti && Math.random() < 0.6) { buOyunOneri = true; tavsiye({ ikon: j.e, metin: 'Jokerlerin bitti! 🎒', alt: `${j.ad} · 🪙 ${j.f} — ${j.ac}`, btn: 'Al', fn: () => onayKarti({ gorsel: j.e, baslik: j.ad, metin: j.ac + ' Hemen kullanabilirsin.', fiyat: j.f, evet: 'Al ve kullan', al: () => { window.dmEkonomi.islem('jokerAl', { id: j.id }).then(d => { if (!d.ok) { toast(d.mesaj || 'Satın alma tamamlanamadı.'); return; } if (typeof jokerBarCiz === 'function') jokerBarCiz(); toast(`${j.e} ${j.ad} çantanda!`); }); } }) }); }
+    if (hepsiBitti && Math.random() < 0.6) { buOyunOneri = true; tavsiye({ ikon: j.e, metin: 'Jokerlerin bitti! 🎒', alt: `${j.ad} · 🪙 ${j.f} — ${j.ac}`, btn: 'Al', fn: () => onayKarti({ urun:{tip:'joker',id:j.id}, gorsel: j.e, baslik: j.ad, metin: j.ac + ' Hemen kullanabilirsin.', fiyat: j.f, evet: 'Al ve kullan', al: () => { window.dmEkonomi.islem('jokerAl', { id: j.id }).then(d => { if (!d.ok) { toast(d.mesaj || 'Satın alma tamamlanamadı.'); return; } if (typeof jokerBarCiz === 'function') jokerBarCiz(); toast(`${j.e} ${j.ad} çantanda!`); }); } }) }); }
     else if (!hepsiBitti && oyunNo % 4 === 0 && Math.random() < 0.15) { buOyunOneri = true; tavsiye({ ikon: j.e, metin: `İpucu: ${j.ad} bu oyunda çok işe yarar!`, alt: `🪙 ${j.f} · Mağaza › Jokerler` }); }
   }, 3000);
 })();
@@ -21169,7 +21173,7 @@ window.ocEnerjiHarca = async function (n) {
         (o.parca || [o]).forEach(p => giy(kk().s, p)); yo.profilKrk = '';
         window.yoKaydet?.(); window.yoAvatarUygula?.(); toast('✓ Görünümün kaydedildi!'); return true;
       }
-      if (Number(yo.altin || 0) < fiyatHesapla(o, !!o.parca).f) throw Error('Bu ürün için yeterli altının yok.');
+      if (Number(yo.altin || 0) < fiyatHesapla(o, !!o.parca).f) {window.DijiReklam?.altinEksik({tip:'kiyafet',id:o.id});throw Error('Bu ürün için yeterli altının yok.');}
       await window.dmProgression.sync();
       const r = await fetch(apiURL, { method: 'POST', body: JSON.stringify({ islem: 'seviyeUrunAl', ogrenci: aktifOgrenciAdi, t: localStorage.getItem('ing_token') || '', item: o.id }) });
       const result = await r.json(); if (!r.ok || !result.ok) throw Error(result.mesaj || 'Satın alma tamamlanamadı.');
