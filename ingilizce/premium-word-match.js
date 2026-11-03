@@ -4,36 +4,53 @@
  */
 (()=>{'use strict';
 const API='https://nxfqlutulxqzqgwewssd.supabase.co/functions/v1/premium-word-match';
-const SIZE=7,MOVES=20,FREE=3;
+const SIZE=6,MOVES=22,FREE=3;
 const $=(sel,root=document)=>root.querySelector(sel);
 const esc=v=>String(v==null?'':v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const norm=v=>String(v==null?'':v).normalize('NFKC').trim().toLocaleLowerCase('en');
+const targetFor=level=>Math.min(3000,1200+Math.max(0,level-1)*150);
 const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
 const currentName=()=>typeof aktifOgrenciAdi==='undefined'?'':String(aktifOgrenciAdi||'');
 const isTeacher=()=>window.dmTeacherPortalMode||currentName().toLowerCase()==='teacher';
 const en=w=>String(w.ingilizce??w.english??w.en??'').trim();
 const tr=w=>String(w.turkce??w.turkish??w.tr??'').trim();
-let overlay=null,state=null,selected=null,prior=null,eventsBound=false;
-function loadStyle(){if(document.getElementById('pwmStyle'))return;const l=document.createElement('link');l.id='pwmStyle';l.rel='stylesheet';l.href='premium-word-match.css?v=20261103-1';document.head.append(l);}
+let overlay=null,state=null,prior=null,eventsBound=false,pointerStart=null;
+const still=s=>!!overlay&&state===s&&overlay.isConnected;
+function loadStyle(){if(document.getElementById('pwmStyle'))return;const l=document.createElement('link');l.id='pwmStyle';l.rel='stylesheet';l.href='premium-word-match.css?v=20261103-2';document.head.append(l);}
 function bank(){
  const list=Array.isArray(window.masterKelimeHavuzu)?window.masterKelimeHavuzu:[];
  const seen=new Set();
  return list.map(w=>({en:en(w),tr:tr(w),grade:Number(w.sinif??w.class_no),unit:Number(w.unite??w.unit_no)})).filter(w=>{
   const key=norm(w.en);
-  if(!w.en||!w.tr||w.en.length>11||!Number.isInteger(w.grade)||w.grade<1||w.grade>8||!Number.isInteger(w.unit)||w.unit<1||seen.has(w.grade+':'+w.unit+':'+key))return false;
+  if(!w.en||!w.tr||w.en.length>12||!Number.isInteger(w.grade)||w.grade<1||w.grade>8||!Number.isInteger(w.unit)||w.unit<1||seen.has(w.grade+':'+w.unit+':'+key))return false;
   seen.add(w.grade+':'+w.unit+':'+key);return true;
  });
 }
+function levelList(){
+ const pairs=new Map();
+ for(const word of bank()){const id=word.grade+':'+word.unit;if(!pairs.has(id))pairs.set(id,[]);
+  pairs.get(id).push(word);
+ }
+ return [...pairs.entries()].filter(([,words])=>new Set(words.map(w=>norm(w.en))).size>=5)
+   .map(([id])=>{const [grade,unit]=id.split(':').map(Number);return {grade,unit};})
+   .sort((a,b)=>a.grade-b.grade||a.unit-b.unit);
+}
+function setLevel(level){
+ const list=levelList();
+ if(!list.length)throw Error('Word Bank kelimeleri henüz yüklenmedi. Sayfayı yenileyip tekrar dene.');
+ state.level=Math.max(1,Math.min(list.length,Number(level)||1));
+ const item=list[state.level-1];state.grade=item.grade;state.unit=item.unit;
+}
 function scope(){return bank().filter(w=>w.grade===state.grade&&w.unit===state.unit);}
-function units(){return [...new Set(bank().filter(w=>w.grade===state.grade).map(w=>w.unit))].sort((a,b)=>a-b);}
+
 function trialMsg(data){if(isTeacher())return 'Öğretmen ön izlemesi · ödülsüz';if(!data)return '3 seferlik ücretsiz oynama hakkı';return data.premium?'👑 Premium üye · sınırsız oynama':'🎁 Kalan ücretsiz oyun: '+data.remaining+' / '+FREE;}
-async function access(action,runId){
- if(isTeacher())return {ok:true,allowed:true,premium:true,remaining:3};
+async function access(action,runId,extras={}){
+ if(isTeacher())return {ok:true,allowed:true,premium:true,remaining:3,level:Number(state?.level)||1};
  const token=localStorage.getItem('ing_token');
  if(!token)throw Error('Oyuna başlamak için hesabına giriş yapmalısın.');
  const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),12000);
  try{
-  const r=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({t:token,action,runId}),signal:controller.signal,cache:'no-store'});
+  const r=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({t:token,action,runId,...extras}),signal:controller.signal,cache:'no-store'});
   const result=await r.json();
   if(!r.ok||!result.ok)throw Error(result.message||'Oyun hakkı doğrulanamadı.');
   return result;
@@ -48,7 +65,7 @@ function say(word){if(!word||window.dmSoundEnabled===false)return;try{const utte
 function pickWords(){
  const pool=scope();const seen=new Map(pool.map(w=>[norm(w.en),w]));
  const available=[...seen.values()];
- if(available.length<5)throw Error('Bu ünitede en az 5 kısa ve farklı kelime gerekli. Başka bir ünite seç.');
+ if(available.length<5)throw Error('Bu seviyenin kelime havuzu yeterli değil. Oyunu tekrar aç.');
  const memKey='dm_wm_recent:'+currentName()+':'+state.grade+':'+state.unit;
  let old=[];try{old=JSON.parse(sessionStorage.getItem(memKey)||'[]');}catch(_){}
  const fresh=shuffle(available.filter(w=>!old.includes(norm(w.en))));
@@ -93,25 +110,61 @@ function cascadeFill(){
 function pointFor(n){return n>=5?500+100*(n-5):n===4?250:100;}
 function tileHtml(word,i){
  const idx=state.words.findIndex(w=>w.en===word);
- const shape=['✦','♥','★','✿','◆','✧','●','✺'][idx%8];
- return '<button type="button" class="pwm-tile pwm-c'+(idx%8)+(selected===i?' chosen':'')+'" data-idx="'+i+'" aria-label="'+esc(word)+'"><i aria-hidden="true">'+shape+'</i><b>'+esc(word)+'</b></button>';
+ const shape=['♥','★','✿','◆','✦','●','✧','✺'][Math.max(0,idx)%8];
+ const label=esc(word).replace(/\s+/g,'<wbr> ');
+ const two=word.length>8?' pwm-long':'';
+ return '<button type="button" class="pwm-tile pwm-c'+(Math.max(0,idx)%8)+two+'" data-idx="'+i+'" aria-label="'+esc(word)+'" title="'+esc(word)+'"><i aria-hidden="true">'+shape+'</i><b>'+label+'</b></button>';
 }
 function boardDraw(){
- const board=$('[data-wm-board]',overlay);if(!board)return;
+ const board=$('[data-wm-board]',overlay);if(!board||!state)return;
  board.innerHTML=state.board.map(tileHtml).join('');
- board.querySelectorAll('[data-idx]').forEach(el=>el.onclick=()=>tap(Number(el.dataset.idx)));
 }
+function swipeStart(e){
+ const tile=e.target.closest?.('[data-idx]');
+ if(!tile||!state||state.phase!=='playing'||state.busy)return;
+ if(state.boosterMode==='row'||state.boosterMode==='color')return;
+ pointerStart={id:e.pointerId,index:Number(tile.dataset.idx),x:e.clientX,y:e.clientY};
+ try{tile.setPointerCapture(e.pointerId);}catch(_){}
+}
+function swipeEnd(e){
+ const p=pointerStart;if(!p||e.pointerId!==p.id)return;
+ pointerStart=null;
+ if(!state||state.phase!=='playing'||state.busy)return;
+ const dx=e.clientX-p.x,dy=e.clientY-p.y;
+ if(Math.max(Math.abs(dx),Math.abs(dy))<18)return;
+ const horizontal=Math.abs(dx)>Math.abs(dy),n=p.index+(horizontal?(dx>0?1:-1):(dy>0?SIZE:-SIZE));
+ if(n<0||n>=SIZE*SIZE||(horizontal&&Math.floor(n/SIZE)!==Math.floor(p.index/SIZE)))return;
+ e.preventDefault();swap(p.index,n);
+}
+function boardClick(e){
+ const tile=e.target.closest?.('[data-idx]');if(!tile||!state||state.phase!=='playing'||state.busy)return;
+ if(state.boosterMode==='row'||state.boosterMode==='color')useBlast(Number(tile.dataset.idx));
+}
+function boardKeyboard(e){
+ const tile=e.target.closest?.('[data-idx]');if(!tile||!state||state.phase!=='playing'||state.busy)return;
+ const dirs={ArrowLeft:-1,ArrowRight:1,ArrowUp:-SIZE,ArrowDown:SIZE};
+ if(!(e.key in dirs))return;
+ e.preventDefault();
+ const p=Number(tile.dataset.idx),n=p+dirs[e.key];
+ if(n<0||n>=SIZE*SIZE||(Math.abs(dirs[e.key])===1&&Math.floor(p/SIZE)!==Math.floor(n/SIZE)))return;
+ swap(p,n);
+}
+
 function drawHeads(){
+ if(!overlay||!state)return;
  $('[data-wm-score]',overlay).textContent=state.score.toLocaleString('tr-TR');
  $('[data-wm-moves]',overlay).textContent=state.moves;
- $('[data-wm-level]',overlay).textContent=state.grade+'. Sınıf · '+state.unit+'. Ünite';
- $('[data-wm-progress]',overlay).style.width=Math.min(100,state.score/6000*100)+'%';
+ $('[data-wm-level]',overlay).textContent='Seviye '+state.level+' · '+state.grade+'. Sınıf '+state.unit+'. Ünite';
+ const target=targetFor(state.level),track=$('[data-wm-progress]',overlay);
+ track.style.width=Math.min(100,100*state.score/target)+'%';
+ const amount=$('[data-wm-target]',overlay);if(amount)amount.textContent=state.score.toLocaleString('tr-TR')+' / '+target.toLocaleString('tr-TR')+' puan';
  const goals=$('[data-wm-goals]',overlay);
- goals.innerHTML=state.goals.map(w=>'<span class="'+(state.goalsDone[w]>=3?'done':'')+'">'+esc(w)+' <b>'+Math.min(3,state.goalsDone[w])+'/3</b></span>').join('');
+ goals.innerHTML=state.goals.map(w=>{const count=Math.max(0,Number(state.goalsDone[w])||0);return '<span class="'+(count>=3?'done':'')+'">'+esc(w)+' <b>'+Math.min(3,count)+'/3</b></span>';}).join('');
  $('[data-wm-boosters]',overlay).querySelectorAll('[data-booster]').forEach(b=>{
   const n=state.boosters[b.dataset.booster]||0;b.disabled=state.busy||n===0;b.querySelector('small').textContent='×'+n;
  });
 }
+
 function showMeaning(word,bonus,combo){
  const w=state.words.find(x=>x.en===word),panel=$('[data-wm-meaning]',overlay);
  panel.innerHTML='<strong>'+esc(w?.en||word)+'</strong><span>= '+esc(w?.tr||'')+'</span><b>+'+bonus.toLocaleString('tr-TR')+' puan</b>';
@@ -123,115 +176,137 @@ function delay(ms){return new Promise(resolve=>setTimeout(resolve,ms));}
 async function explode(groups,chain=1){
  const unique=new Set(groups.flatMap(g=>g.indices)),main=groups.reduce((a,b)=>!a||b.indices.length>a.indices.length?b:a,null);
  for(const idx of unique){const el=$('[data-idx="'+idx+'"]',overlay);el?.classList.add('pwm-burst');}
- let reward=0;groups.forEach(g=>{reward+=pointFor(g.indices.length)*chain;state.goalsDone[g.word]=(state.goalsDone[g.word]||0)+1;});
+ let reward=0;groups.forEach(g=>{reward+=pointFor(g.indices.length)*chain;state.goalsDone[g.word]=(Number(state.goalsDone[g.word])||0)+1;});
  state.score+=reward;drawHeads();showMeaning(main.word,reward,chain);
  sound('good');await delay(390);
  for(const idx of unique)state.board[idx]=null;cascadeFill();boardDraw();
 }
 async function resolveMatches(groups){
- let chain=1;
- while(groups.length&&chain<=14){
-  await explode(groups,chain);groups=matches(state.board);chain++;
+ const session=state;let chain=1;
+ while(still(session)&&groups.length&&chain<=12){
+  await explode(groups,chain);
+  if(!still(session))return;
+  groups=matches(session.board);chain++;
  }
- if(!potential(state.board)){state.board=freshBoard();boardDraw();alertText('Yeni hamleler için şekerler karıştırıldı!');}
- const complete=state.goals.every(w=>state.goalsDone[w]>=3);
- if(state.moves<=0||complete){finish(complete);return;}
- state.busy=false;drawHeads();
+ if(!still(session))return;
+ if(groups.length||!potential(session.board)){session.board=freshBoard();boardDraw();alertText('Yeni hamleler için şekerler karıştırıldı!');}
+ const reached=session.score>=targetFor(session.level);
+ if(session.moves<=0||reached){await finish(reached);return;}
+ session.busy=false;drawHeads();
 }
 async function swap(a,b){
- if(state.busy||state.phase!=='playing'||a===b)return;
+ if(!state||state.busy||state.phase!=='playing'||a===b)return;
+ const session=state;
  const nearby=Math.abs(a-b)===SIZE||(Math.floor(a/SIZE)===Math.floor(b/SIZE)&&Math.abs(a-b)===1);
- if(!nearby&&state.boosterMode!=='swap'){alertText('Yan yana iki şekeri yer değiştir!');selected=null;boardDraw();return;}
- if(state.board[a]===state.board[b]){selected=null;boardDraw();return;}
- state.busy=true;const x=state.board[a];state.board[a]=state.board[b];state.board[b]=x;selected=null;boardDraw();
- await delay(150);const g=matches(state.board);
- if(!g.length){const z=state.board[a];state.board[a]=state.board[b];state.board[b]=z;boardDraw();state.busy=false;alertText('Bu hamle eşleşme oluşturmadı.');return;}
- if(state.boosterMode==='swap'){state.boosters.swap--;state.boosterMode=null;}
- state.moves--;await resolveMatches(g);
+ if(!nearby&&session.boosterMode!=='swap')return;
+ if(session.board[a]===session.board[b])return;
+ session.busy=true;drawHeads();
+ const x=session.board[a];session.board[a]=session.board[b];session.board[b]=x;boardDraw();
+ await delay(125);if(!still(session))return;
+ const groups=matches(session.board);
+ if(!groups.length){
+  const old=session.board[a];session.board[a]=session.board[b];session.board[b]=old;
+  boardDraw();session.busy=false;drawHeads();alertText('Bu kaydırma eşleşme oluşturmadı.');
+  return;
+ }
+ if(session.boosterMode==='swap'){session.boosters.swap--;session.boosterMode=null;}
+ session.moves--;await resolveMatches(groups);
 }
-function tap(i){
- if(!state||state.phase!=='playing'||state.busy)return;
- if(state.boosterMode==='row'||state.boosterMode==='color'){useBlast(i);return;}
- if(selected==null){selected=i;boardDraw();return;}
- const prev=selected;swap(prev,i);
-}
+
 async function useBlast(i){
  const mode=state.boosterMode;if(!mode||state.boosters[mode]<=0)return;
- state.boosterMode=null;state.boosters[mode]--;state.moves--;state.busy=true;selected=null;
+ state.boosterMode=null;state.boosters[mode]--;state.moves--;state.busy=true;
  const indices=mode==='row'?Array.from({length:SIZE},(_,j)=>Math.floor(i/SIZE)*SIZE+j):state.board.map((w,j)=>w===state.board[i]?j:-1).filter(j=>j>=0);
  const groups=[{word:state.board[i],indices}];await explode(groups,1);
  await resolveMatches(matches(state.board));drawHeads();
 }
 function boost(which){
  if(!state||state.phase!=='playing'||state.busy||!state.boosters[which])return;
- if(which==='shuffle'){state.boosters.shuffle--;state.board=freshBoard();selected=null;boardDraw();drawHeads();alertText('Şekerlerin yeri değişti!');return;}
- state.boosterMode=which;selected=null;boardDraw();alertText(which==='swap'?'Yer değiştireceğin iki şekeri seç.':which==='row'?'Patlatmak istediğin satırdan bir şekere dokun.':'Patlatacağın kelimeye dokun.');
+ if(which==='shuffle'){state.boosters.shuffle--;state.board=freshBoard();boardDraw();drawHeads();alertText('Şekerlerin yeri değişti!');return;}
+ state.boosterMode=which;boardDraw();alertText(which==='swap'?'Yer değiştireceğin iki şekeri seç.':which==='row'?'Patlatmak istediğin satırdan bir şekere dokun.':'Patlatacağın kelimeye dokun.');
 }
-function finish(success){
- state.phase='finished';state.busy=false;
- $('[data-wm-stage]',overlay).hidden=true;
- const done=$('[data-wm-result]',overlay);done.hidden=false;
- done.innerHTML='<div class="pwm-result-medal">🏆</div><h2>'+(success?'Kelime Ustası!':'Oyun tamamlandı!')+'</h2><p>Toplam puan</p><strong>'+state.score.toLocaleString('tr-TR')+'</strong><p>'+state.grade+'. sınıf · '+state.unit+'. ünite kelimelerini çalıştın.</p><button class="pwm-btn" type="button" data-new>Yeniden Oyna</button><button class="pwm-btn pwm-secondary" type="button" data-home>Oyunlara Dön</button>';
- $('[data-new]',done).onclick=()=>{state.startRunId=null;state.phase='setup';setup();};
+async function finish(success){
+ const finished=state;if(!still(finished))return;
+ finished.phase='finished';finished.busy=true;
+ const done=$('[data-wm-result]',overlay);
+ $('[data-wm-stage]',overlay).hidden=true;done.hidden=false;
+ done.innerHTML='<div class="pwm-result-medal">'+(success?'👑':'⭐')+'</div><h2>'+(success?'SEVİYE TAMAMLANDI!':'Oyun tamamlandı!')+'</h2><p>Kazanılan oyun puanı</p><strong>'+finished.score.toLocaleString('tr-TR')+'</strong><p>'+finished.grade+'. sınıf · '+finished.unit+'. ünite</p><p data-wm-save aria-live="polite"></p><button class="pwm-btn" type="button" data-new disabled>'+(success?'Sonraki seviyeye geç':'Yeniden oyna')+'</button><button class="pwm-btn pwm-secondary" type="button" data-home>Oyunlardan Çık</button>';
  $('[data-home]',done).onclick=close;
+ const next=$('[data-new]',done),msg=$('[data-wm-save]',done);
+ if(success){
+  msg.textContent='Yeni seviye hesabına kaydediliyor…';
+  try{
+   const saved=await access('complete',finished.runId,{level:finished.level,score:finished.score});
+   if(!still(finished))return;
+   if(!saved.unlocked)throw Error('Seviye kaydedilemedi.');
+   finished.level=Number(saved.level)||finished.level+1;
+   msg.textContent='✨ Yeni seviye açıldı! Kaydedildi.';
+  }catch(err){if(!still(finished))return;msg.textContent='⚠️ '+err.message+' · Tekrar dene.';next.textContent='Kaydı tekrar dene';next.disabled=false;next.onclick=()=>finish(true);return;}
+ }else msg.textContent='Bu turu tekrar oynayabilirsin.';
+ if(!still(finished))return;next.disabled=false;
+ next.onclick=()=>{if(!still(finished))return;finished.phase='setup';finished.startRunId=null;setup(true);};
 }
+
 function close(){
- if(!overlay)return;const old=overlay;overlay=null;state=null;selected=null;
+ if(!overlay)return;const old=overlay;overlay=null;state=null;pointerStart=null;
  old.remove();window.dmViewHistory?.leave(old);window.dmGameViewport?.sync();prior?.focus?.({preventScroll:true});
 }
-function gradeUnit(){
- const grades=$('[data-wm-grade]',overlay),un=$('[data-wm-unit]',overlay);
- grades.innerHTML='';
- for(let i=1;i<=8;i++){const o=document.createElement('option');o.value=i;o.textContent=i+'. Sınıf';o.disabled=!!window.dmGameAccess?.reason(i);grades.append(o);}
- grades.value=String(state.grade);
- if(grades.selectedOptions[0]?.disabled)grades.value=String([...grades.options].find(o=>!o.disabled)?.value||1);
- state.grade=Number(grades.value);
- const update=()=>{
-  state.grade=Number(grades.value);const n=units();un.innerHTML='';
-  n.forEach(unit=>{const o=document.createElement('option');o.value=unit;o.textContent=unit+'. Ünite';o.disabled=!!window.dmGameAccess?.reason(state.grade,unit);un.append(o);});
-  const chosen=[...un.options].find(o=>!o.disabled);un.value=String(chosen?.value||'');state.unit=Number(un.value||0);
-  const num=scope().length;
-  alertText(chosen?'Seçilen ünite kelimeleri hazır.':'Bu sınıfta oynanabilecek ünite henüz bulunamadı.');
- };
- grades.onchange=update;un.onchange=()=>{state.unit=Number(un.value);alertText('');};update();
-}
-async function setup(){
+async function setup(replay=false){
  if(!overlay||!state)return;
- const active=state;
+ const current=state;
  state.phase='setup';state.busy=false;
- $('[data-wm-result]',overlay).hidden=true;$('[data-wm-stage]',overlay).hidden=true;
+ $('[data-wm-result]',overlay).hidden=true;
+ $('[data-wm-stage]',overlay).hidden=true;
  const intro=$('[data-wm-intro]',overlay);intro.hidden=false;
- intro.innerHTML='<div class="pwm-hero"><img src="papi-welcome-v2.png" alt="Papi" onerror="this.style.display=\'none\'"><div class="pwm-cauldron">✦<span>📖</span>✦</div></div><div class="pwm-intro-panel"><div class="pwm-crown">👑 PREMIUM OYUN</div><h2>İngilizce Kelime Eşleştirme</h2><p>3 seferlik ücretsiz oynama hakkı. Sonrasında premium üyelere sınırsız oynama.</p><p class="pwm-rules">Aynı kelimelerden en az üçünü yan yana getir, şekerleri patlat ve Türkçe anlamlarını keşfet! Art arda eşleşmelerle süper kombolar kazan.</p><strong data-wm-remaining>Oyun hakkı kontrol ediliyor…</strong><div class="pwm-select"><label>Sınıf seç<select data-wm-grade></select></label><label>Ünite seç<select data-wm-unit></select></label></div><div class="pwm-rates"><span>3’lü +100</span><span>4’lü +250</span><span>5’li +500</span></div><button type="button" class="pwm-btn" data-wm-start>▶ OYUNA BAŞLA</button><p class="pwm-small" data-wm-status role="status">Kelimeler Word Bank’ten rastgele seçilir.</p></div>';
- gradeUnit();
- const startBtn=$('[data-wm-start]',intro);
- startBtn.onclick=start;
- try{const rights=await access('check');if(!overlay||state!==active||state.phase!=='setup')return;state.rights=rights;$('[data-wm-remaining]',intro).textContent=trialMsg(rights);startBtn.disabled=!rights.allowed;if(!rights.allowed)alertText('Üç ücretsiz oyun hakkın doldu. Sınırsız oyun için Premium üyelik gerekir.');}
- catch(e){if(!overlay||state!==active||state.phase!=='setup')return;startBtn.disabled=true;$('[data-wm-remaining]',intro).textContent='Hak kontrolü başarısız';alertText(e.message);}
+ intro.innerHTML='<div class="pwm-hero"><img src="papi-welcome-v2.png" alt="Papi"><div class="pwm-cauldron">✦<span>📖</span>✦</div></div><div class="pwm-intro-panel"><div class="pwm-crown">👑 PREMIUM OYUN</div><h2>Kelime Şekerleri</h2><p>3 seferlik ücretsiz oynama hakkı; sonrasında Premium üyelere sınırsız oynama.</p><strong data-wm-remaining>Oyun hazırlanıyor…</strong><p class="pwm-rules">Şekerleri parmağınla kaydır; aynı kelimeden üç veya fazlasını birleştir!</p><p class="pwm-small" data-wm-status role="status">Word Bank kelimeleri yükleniyor.</p><button type="button" class="pwm-btn" data-wm-start hidden>Tekrar dene</button></div>';
+ const retry=$('[data-wm-start]',intro);
+ retry.onclick=()=>{current.startRunId=null;setup();};
+ try{
+  const rights=await access('check');
+  if(!still(current)||current.phase!=='setup')return;
+  current.rights=rights;setLevel(Number(rights.level)||current.level||1);
+  $('[data-wm-remaining]',intro).textContent=trialMsg(rights)+' · Seviye '+current.level;
+  if(!rights.allowed){alertText('Ücretsiz 3 oyun hakkın doldu. Premium üyelikle sınırsız oynayabilirsin.');return;}
+  await start();
+ }catch(err){if(!still(current)||current.phase!=='setup')return;alertText(err.message);retry.hidden=false;}
 }
 async function start(){
- if(!overlay||!state||state.busy||state.phase!=='setup')return;
- if(!state.unit)return alertText('Önce bir ünite seç.');
- const why=window.dmGameAccess?.reason(state.grade,state.unit);if(why)return alertText(why);
- try{state.words=pickWords();}catch(e){return alertText(e.message);}
- state.busy=true;
- const startBtn=$('[data-wm-start]',overlay);startBtn.disabled=true;alertText('Oyun hazırlanıyor…');
- const active=state;const runId=state.startRunId||(state.startRunId=typeof crypto.randomUUID==='function'?crypto.randomUUID():null);
+ if(!state||!overlay||state.busy||state.phase!=='setup')return;
+ const current=state;
+ try{current.words=pickWords();}catch(err){alertText(err.message);return;}
+ current.busy=true;
+ const runId=current.startRunId||(current.startRunId=crypto.randomUUID());
+ alertText('Kelime şekerleri hazırlanıyor…');
  try{
   const rights=await access('start',runId);
-  if(!overlay||state!==active||state.phase!=='setup')return;
-  if(!rights.allowed){state.busy=false;startBtn.disabled=true;$('[data-wm-remaining]',overlay).textContent=trialMsg(rights);return alertText('Ücretsiz oynama hakların bitti. Premium üyelik gerekli.');}
-  state.rights=rights;state.phase='playing';state.busy=false;state.runId=runId;state.score=0;state.moves=MOVES;state.goals=state.words.slice(0,3).map(w=>w.en);state.goalsDone={};state.boosterMode=null;state.boosters={shuffle:1,swap:1,row:1,color:1};
-  state.board=freshBoard();
+  if(!still(current)||current.phase!=='setup')return;
+  if(!rights.allowed){current.busy=false;return alertText('Ücretsiz oyun hakkı doldu. Premium üyelik gerekli.');}
+  current.rights=rights;setLevel(Number(rights.level)||current.level);
+  // Start and check resolve the same server-side level; protect against changed sessions.
+  current.words=pickWords();
+  current.phase='playing';current.busy=false;current.runId=runId;
+  current.score=0;current.moves=MOVES;
+  current.goals=current.words.slice(0,3).map(w=>w.en);
+  current.goalsDone=Object.fromEntries(current.goals.map(w=>[w,0]));
+  current.boosterMode=null;current.boosters={shuffle:1,swap:1,row:1,color:1};
+  current.board=freshBoard();
   $('[data-wm-intro]',overlay).hidden=true;$('[data-wm-stage]',overlay).hidden=false;
-  boardDraw();drawHeads();alertText('Aynı kelimelerden 3 veya daha fazlasını eşleştir!');
- }catch(e){if(!overlay||state!==active)return;state.busy=false;startBtn.disabled=false;alertText(e.message);}
+  boardDraw();drawHeads();alertText('Şekeri parmağınla kaydır! Aynı kelimeden 3 veya fazlasını birleştir.');
+ }catch(err){if(!still(current))return;current.busy=false;alertText(err.message);const retry=$('[data-wm-start]',overlay);if(retry)retry.hidden=false;}
 }
+
 function open(){
  close();loadStyle();prior=document.activeElement;
- state={phase:'setup',grade:Number(window.dmGameAccess?.rule?.()?.cls)||1,unit:1,busy:false,rights:null,startRunId:null};
+ state={phase:'setup',level:1,grade:1,unit:1,busy:false,rights:null,startRunId:null};
  overlay=document.createElement('section');overlay.id='premiumWordMatchOverlay';overlay.className='pwm-overlay game-modal-overlay';overlay.setAttribute('role','dialog');overlay.setAttribute('aria-modal','true');overlay.setAttribute('aria-label','Premium İngilizce Kelime Eşleştirme');
- overlay.innerHTML='<div class="pwm-shell"><header class="pwm-header"><button type="button" data-wm-close aria-label="Oyundan çık">‹</button><div><small>✨ DİJİ MEDU • PREMIUM OYUNLAR ✨</small><h1>İngilizce Kelime Eşleştirme</h1></div><span>👑</span></header><div class="pwm-content"><div data-wm-intro></div><div data-wm-stage hidden><div class="pwm-hud"><span>PUAN <strong data-wm-score>0</strong></span><span>HAMLE <strong data-wm-moves>20</strong></span><span class="pwm-level" data-wm-level></span></div><div class="pwm-starbar"><i data-wm-progress></i><b>⭐</b><b>⭐</b><b>⭐</b></div><div class="pwm-goals" data-wm-goals></div><div class="pwm-board-box"><div class="pwm-combo" data-wm-combo hidden></div><div class="pwm-board" data-wm-board></div></div><div class="pwm-meaning" data-wm-meaning aria-live="polite"><span>3 kelimeyi eşleştir, anlamını öğren!</span></div><p class="pwm-message" data-wm-status role="status"></p><div class="pwm-boosters" data-wm-boosters><button type="button" data-booster="shuffle"><span>🔀</span>Karıştır<small>×1</small></button><button type="button" data-booster="swap"><span>🔁</span>Yer Değiştir<small>×1</small></button><button type="button" data-booster="row"><span>⚡</span>Satır Patlat<small>×1</small></button><button type="button" data-booster="color"><span>🧪</span>Kelime Patlat<small>×1</small></button></div><div class="pwm-game-note">Büyük Eşleşme = Büyük Ödül! 3’lü +100 • 4’lü +250 • 5’li +500</div></div><div data-wm-result class="pwm-result" hidden></div></div></div>';
+ overlay.innerHTML='<div class="pwm-shell"><header class="pwm-header"><button type="button" data-wm-close aria-label="Oyundan çık">‹</button><div><small>✨ DİJİ MEDU • PREMIUM OYUNLAR ✨</small><h1>İngilizce Kelime Eşleştirme</h1></div><span>👑</span></header><div class="pwm-content"><div data-wm-intro></div><div data-wm-stage hidden><div class="pwm-hud"><span>PUAN <strong data-wm-score>0</strong></span><span>HAMLE <strong data-wm-moves>22</strong></span><span class="pwm-level" data-wm-level></span></div><div class="pwm-starbar"><i data-wm-progress></i><b>⭐</b><b>⭐</b><b>⭐</b></div><p class="pwm-target" data-wm-target>0 / 1200 puan</p><div class="pwm-goals" data-wm-goals></div><div class="pwm-board-box"><div class="pwm-combo" data-wm-combo hidden></div><div class="pwm-board" data-wm-board></div></div><div class="pwm-meaning" data-wm-meaning aria-live="polite"><span>3 kelimeyi eşleştir, anlamını öğren!</span></div><p class="pwm-message" data-wm-status role="status"></p><div class="pwm-boosters" data-wm-boosters><button type="button" data-booster="shuffle"><span>🔀</span>Karıştır<small>×1</small></button><button type="button" data-booster="swap"><span>🔁</span>Yer Değiştir<small>×1</small></button><button type="button" data-booster="row"><span>⚡</span>Satır Patlat<small>×1</small></button><button type="button" data-booster="color"><span>🧪</span>Kelime Patlat<small>×1</small></button></div><div class="pwm-game-note">Büyük Eşleşme = Büyük Ödül! 3’lü +100 • 4’lü +250 • 5’li +500</div></div><div data-wm-result class="pwm-result" hidden></div></div></div>';
  document.body.append(overlay);
+ const board=$('[data-wm-board]',overlay);
+ board.addEventListener('pointerdown',swipeStart);
+ board.addEventListener('pointerup',swipeEnd);
+ board.addEventListener('pointercancel',()=>{pointerStart=null;});
+ board.addEventListener('click',boardClick);
+ board.addEventListener('keydown',boardKeyboard);
  $('[data-wm-close]',overlay).onclick=close;
  overlay.querySelectorAll('[data-booster]').forEach(b=>b.onclick=()=>boost(b.dataset.booster));
  overlay.addEventListener('keydown',e=>{if(e.key==='Escape'){e.preventDefault();close();}});
@@ -239,6 +314,6 @@ function open(){
  setup();window.dmGameViewport?.sync();
 }
 window.premiumKelimeEslestirmeAc=open;
-window.dmPremiumWordMatch={open,close,potential,matches,pointFor};
+window.dmPremiumWordMatch={open,close,potential,matches,pointFor,targetFor,levelList};
 loadStyle();
 })();
