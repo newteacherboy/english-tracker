@@ -54,16 +54,16 @@ export function createBilling({ plugin, win, endpoint }) {
   // ---------------------------------------------------------------- arayüz
   let sheet;
   const css = `.dmb-veil{position:fixed;inset:0;z-index:2147483000;background:rgba(15,23,42,.55);display:flex;align-items:flex-end;justify-content:center}
-.dmb-sheet{width:min(560px,100%);max-height:92vh;overflow:auto;background:#FAF8F5;border-radius:22px 22px 0 0;padding:18px 16px calc(18px + env(safe-area-inset-bottom,0px));font:15px/1.45 system-ui;color:#1f2937}
+.dmb-sheet{width:min(560px,100%);max-height:92vh;overflow:auto;background:#fffefa;border:1px solid #b7ece4;border-bottom:0;border-radius:32px 32px 0 0;padding:18px 16px calc(18px + env(safe-area-inset-bottom,0px));font:600 15px/1.45 system-ui;color:#114952}
 .dmb-head{display:flex;align-items:center;justify-content:space-between;gap:8px}.dmb-head h2{margin:0;font-size:20px}
 .dmb-x{border:0;background:#ece7df;border-radius:50%;width:36px;height:36px;font-size:18px}
 .dmb-toggle{display:flex;background:#ece7df;border-radius:12px;padding:3px;margin:14px 0}.dmb-toggle button{flex:1;border:0;background:none;border-radius:10px;padding:9px;font-weight:700;color:#475569}
 .dmb-toggle button[aria-pressed=true]{background:#fff;color:#07535b;box-shadow:0 1px 3px rgba(0,0,0,.12)}
-.dmb-card{background:#fff;border:2px solid #e7e1d8;border-radius:16px;padding:14px;margin-bottom:12px}.dmb-card.is-current{border-color:#09858c}.dmb-card.is-best{border-color:#f2a516}
+.dmb-card{background:#fff;border:2px solid #e7e1d8;border-radius:16px;padding:14px;margin-bottom:12px}.dmb-card.is-current{border-color:#09858c}.dmb-card.is-best{border-color:#f5ad3d}.dmb-card{border-radius:20px!important}
 .dmb-top{display:flex;justify-content:space-between;align-items:baseline;gap:8px}.dmb-top h3{margin:0;font-size:17px}.dmb-price{font-weight:800;font-size:18px;color:#07535b}.dmb-price small{font-weight:600;color:#64748b}
 .dmb-tag{display:inline-block;margin-top:4px;font-size:12px;font-weight:700;color:#8a5a00;background:#fff3d6;border-radius:999px;padding:2px 8px}
 .dmb-card ul{margin:10px 0;padding-left:18px}.dmb-card li{margin:3px 0}
-.dmb-btn{display:block;width:100%;min-height:46px;border:0;border-radius:12px;background:#09858c;color:#fff;font:700 15px system-ui}.dmb-btn[disabled]{background:#cbd5e1;color:#475569}
+.dmb-btn{display:block;width:100%;min-height:48px;border:0;border-radius:16px;background:#0aa3ab;color:#fff;font:800 15px system-ui;border-bottom:4px solid #077a80}.dmb-btn[disabled]{background:#cbd5e1;color:#475569}
 .dmb-link{border:0;background:none;color:#07535b;font-weight:700;text-decoration:underline;padding:8px 0}
 .dmb-note{font-size:12px;color:#64748b}.dmb-msg{margin:10px 0;padding:10px 12px;border-radius:12px;background:#eefafa;color:#07535b;font-weight:600}.dmb-msg.err{background:#fdecec;color:#9b1c1c}
 .dmb-gate input{width:100%;box-sizing:border-box;font-size:20px;padding:10px;border-radius:12px;border:2px solid #e7e1d8;margin:10px 0}`;

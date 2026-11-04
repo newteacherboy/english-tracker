@@ -8180,7 +8180,8 @@ setTimeout(() => {
             setTimeout(() => el.remove(), 1000);
         }
         function headerEnerjiGoster(kalan, max) {
-            max = 25; kalan = Math.max(0, Math.min(25, Number(kalan) || 0));
+            // Plan kapasitesi sunucudan gelir: Free 25, Pro 40, Premium Pro 60 (sınırsız).
+            max = [25,40,60].includes(Number(max)) ? Number(max) : 25; kalan = Math.max(0, Math.min(max, Number(kalan) || 0));
             let pct = max > 0 ? Math.round((kalan / max) * 100) : 0;
             let bar = document.getElementById('headerEnerjiBar');
             let onceki = window.genelEnerjiKalan;
@@ -8193,7 +8194,7 @@ setTimeout(() => {
                 }
             }
             let num = document.getElementById('headerEnerjiNum');
-            if (num) num.innerText = kalan + '/' + max;
+            if (num) num.innerText = max === 60 ? '∞' : kalan + '/' + max;
             window._kpEnerjiCache = { enerjiKalan: kalan, enerjiMax: max };
             window.genelEnerjiKalan = kalan;
             window.genelEnerjiMax = max;
