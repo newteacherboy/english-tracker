@@ -52,7 +52,7 @@
     screen.setAttribute('aria-label', 'Papizzle');
     screen.innerHTML = `
       <main>
-        <header><span>★ PREMİUM</span><button type="button" data-sound aria-label="Sesi kapat">🔊</button><button type="button" data-close aria-label="Kapat">×</button></header>
+        <header><span>★ PREMİUM</span><button type="button" data-sound aria-label="Sesi kapat"></button><button type="button" data-close aria-label="Kapat">×</button></header>
         <h1>Papizzle</h1>
         <section data-panel></section>
         <section data-game hidden>
@@ -102,7 +102,8 @@
 
     function paintSound() {
       const button = $('[data-sound]');
-      button.textContent = muted ? '🔇' : '🔊';
+      const waves = muted ? 'M16 9l5 6m0-6-5 6' : 'M16 9a4 4 0 0 1 0 6m2-8a7 7 0 0 1 0 10';
+      button.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9h4l5-4v14l-5-4H3z ${waves}"/></svg>`;
       button.setAttribute('aria-label', muted ? 'Sesi aç' : 'Sesi kapat');
     }
 

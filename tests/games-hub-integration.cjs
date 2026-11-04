@@ -27,7 +27,7 @@ assert(compact.cards.every(c=>c.height<=125&&c.width>35),'Game category overflow
 assert(compact.fits,'Category buttons extend beyond the viewport');
 assert(await page.locator('#ggPremiumTab').count()===1,'Premium Oyunlar tab must be visible');
 await page.locator('#ggPremiumTab').click();
-assert.deepEqual(await page.locator('.az-grid2x2>.az-gcard:visible').evaluateAll(a=>a.map(e=>e.id)),['premiumWordMatchActivity']);
+assert.deepEqual(await page.locator('.az-grid2x2>.az-gcard:visible').evaluateAll(a=>a.map(e=>e.id)),['premiumWordMatchActivity','premiumCloudFlightActivity','premiumWordBlocksActivity','papizzleActivity']);
 await page.locator('#ggSoloTab').click();
 assert.equal(await page.locator('.gg-heading').evaluate(e=>getComputedStyle(e).color),'rgb(56, 35, 22)');
 assert.equal(await page.locator('.yb-fw:visible').count(),0,'Floating shortcuts obscure the hub');
