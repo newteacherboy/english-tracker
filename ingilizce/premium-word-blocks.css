@@ -1,0 +1,88 @@
+.dm-blocks {
+  position: fixed; inset: 0; margin: auto; padding: 0; border: 0; box-sizing: border-box;
+  width: min(100%, 480px); height: 100dvh; max-width: none; max-height: none;
+  background: #12484b url("premium-assets/kelime-bloklari/atolye.webp") center / cover;
+  color: #fff0cd; overflow: hidden; font: 750 15px/1.2 system-ui,sans-serif;
+}
+.dm-blocks::backdrop { background: #062c2f; }
+.dm-blocks [hidden] { display: none !important; }
+.dm-blocks button { font: inherit; color: #242013; cursor: pointer; }
+.dm-blocks button:focus-visible { outline: 3px solid #fff; outline-offset: 2px; }
+.dm-blocks-world {
+  height: 100%; box-sizing: border-box; padding: max(8px,env(safe-area-inset-top)) 12px max(8px,env(safe-area-inset-bottom));
+  display: flex; flex-direction: column; gap: 7px; align-items: center;
+}
+.dm-blocks-world header {
+  display: grid; width: 100%; grid-template-columns: auto 1fr auto; gap: 4px; align-items: center; text-align: center;
+}
+.dm-blocks-world header h2 {
+  position: relative; margin: 0; padding: 4px 6px 4px 37px; color: #fff1bd; font-size: clamp(16px,6vw,29px); line-height: 1;
+  text-shadow: 0 2px #533015, 0 3px 7px #321608; border: 2px solid #ffa855; border-radius: 16px;
+  background: linear-gradient(165deg,#ba6f33,#824019); box-shadow: 0 3px #51280f, inset 0 0 0 3px #ecaa605e;
+}
+.dm-blocks-world header button, .dm-blocks-world header span,
+.dm-blocks-hud span, .dm-blocks-answers button, .dm-blocks-controls button, .dm-blocks-overlay button {
+  border: 1px solid #f6c67a; background: linear-gradient(#fff2c9,#ffc97b);
+  border-radius: 12px; box-shadow: 0 3px #70401c; color: #392611;
+}
+.dm-blocks-world header button { min-width: 40px; min-height: 42px; }
+.dm-blocks-world header span { padding: 5px; font-size: 10px; }
+.dm-blocks-hud { width: 100%; display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 4px; text-align: center; }
+.dm-blocks-hud span { padding: 5px 1px; font-size: clamp(10px,3.1vw,15px); white-space: nowrap; }
+.dm-blocks-frame {
+  flex: 1 1 auto; min-height: 0; width: min(100%, 345px); box-sizing: border-box; padding: 10px;
+  display: flex; flex-direction: column; gap: 6px; border: 2px solid #e6a260; border-radius: 21px;
+  background: repeating-linear-gradient(94deg,#b97442 0 12px,#b56c39 15px 17px,#ba7948 20px 28px);
+  box-shadow: 0 5px 0 #603019, inset 0 0 0 4px #f1b16b94, 0 12px 20px #1c110c7a;
+}
+.dm-blocks-board {
+  flex: 1 1 auto; min-height: 0; position: relative; overflow: hidden; touch-action: none;
+  border: 2px solid #593621; border-radius: 11px; background-color: #0a3b41;
+  background-image: linear-gradient(to right,#93d6ca47 1px,transparent 1px),linear-gradient(to bottom,#93d6ca47 1px,transparent 1px);
+  background-size: calc(100% / 3) 12.5%; box-shadow: inset 0 0 18px #061c22;
+}
+.dm-blocks-stack i, .dm-blocks-piece {
+  position: absolute; left: calc(var(--x) * 100% / 3 + 2px); top: calc(var(--y) * 12.5% + 2px);
+  width: calc(var(--width, 1) * 100% / 3 - 4px); height: calc(var(--height, 1) * 12.5% - 4px);
+  box-sizing: border-box; border-radius: 10px; border: 1px solid #ffffff80;
+  background: linear-gradient(155deg,var(--tile-light),var(--tile-dark));
+  box-shadow: inset 0 3px #ffffff5c,inset 0 -4px #46251042,0 2px 3px #08262a;
+}
+.dm-blocks [data-color="0"] { --tile-light:#ffab95; --tile-dark:#ef5e56; }
+.dm-blocks [data-color="1"] { --tile-light:#93efd0; --tile-dark:#43bf91; }
+.dm-blocks [data-color="2"] { --tile-light:#ffe183; --tile-dark:#eda827; }
+.dm-blocks [data-color="3"] { --tile-light:#8ddcff; --tile-dark:#35a5d5; }
+.dm-blocks-piece {
+  z-index: 2; display: grid; place-items: center; padding: 2px 4px; text-align: center; overflow-wrap: anywhere;
+  font-size: clamp(11px,3.8vw,19px); color: #222013; text-shadow: 0 1px #ffffff7a;
+}
+.dm-blocks-fx i {
+  position: absolute; z-index: 3; top: calc(var(--y) * 12.5%); width: 100%; height: 12.5%;
+  background: radial-gradient(circle at 13% 27%,white 1%,transparent 3%),radial-gradient(circle at 43% 70%,white 1%,transparent 3%),radial-gradient(circle at 86% 18%,white 1%,transparent 3%),linear-gradient(transparent,#fff4b0,white,#fff4b0,transparent);
+  filter: drop-shadow(0 0 9px #ffb420); animation: dm-blocks-clear .45s ease-out both; pointer-events: none;
+}
+@keyframes dm-blocks-clear { to { opacity: 0; transform: scaleY(.35); } }
+.dm-blocks-answers, .dm-blocks-controls { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0,1fr); gap: 5px; }
+.dm-blocks-answers button { min-height: 34px; padding: 2px; overflow-wrap: anywhere; font-size: clamp(11px,3.4vw,16px); }
+.dm-blocks-answers [aria-pressed="true"] { outline: 2px solid #ffedab; background: #fff4ce; }
+.dm-blocks-controls { width: min(100%, 345px); margin-top: 2px; }
+.dm-blocks-controls button { min-height: clamp(32px,7dvh,56px); background: linear-gradient(#bff4dc,#61c49b); font-size: 24px; }
+.dm-blocks-controls [data-drop] { background: linear-gradient(#ffed9e,#f3b943); }
+.dm-blocks-feedback { margin: 0; min-height: 1.2em; text-shadow: 0 2px 3px #322117; color: #ffc5b4; }
+.dm-blocks-feedback[data-good="true"] { color: #beffcd; }
+.dm-blocks-overlay {
+  position: absolute; inset: 0; display: grid; place-items: center; box-sizing: border-box; padding: 16px;
+  background: #082c2cb8;
+}
+.dm-blocks-overlay section {
+  width: min(100%,365px); max-height: 100%; overflow: auto; box-sizing: border-box; padding: 16px;
+  text-align: center; border: 3px solid #eca96b; border-radius: 23px; background: linear-gradient(#275652,#123637);
+  box-shadow: 0 9px 25px #0917149c;
+}
+.dm-blocks-overlay img { width: 100%; height: min(28dvh,180px); object-fit: cover; object-position: center 80%; border-radius: 10px; }
+.dm-blocks-overlay h2 { margin: 8px 0; color: #ffde98; font-size: clamp(22px,6vw,31px); }
+.dm-blocks-overlay p { margin: 8px 0; }
+.dm-blocks-overlay button { display: block; width: 100%; margin-top: 9px; min-height: 42px; }
+.dm-blocks-overlay button:first-of-type { background: linear-gradient(#ffdf84,#f3ac36); }
+
+.dm-blocks-world header h2 img { position: absolute; left: 1px; bottom: 0; width: 36px; height: 100%; object-fit: contain; }

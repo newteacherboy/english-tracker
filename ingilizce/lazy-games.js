@@ -46,6 +46,15 @@
     }catch(error){window.yoToast?.(error.message);}
   };
   window.premiumBulutUcusuAc=flightProxy;
+  let blocksLoading;
+  const blocksProxy=async ()=>{
+    const owner=typeof aktifOgrenciAdi==='undefined'?'':aktifOgrenciAdi;
+    try{
+      await (blocksLoading??=script('premium-word-blocks.js?v=1').catch(error=>{blocksLoading=null;throw error;}));
+      if(owner===(typeof aktifOgrenciAdi==='undefined'?'':aktifOgrenciAdi)&&window.premiumKelimeBloklariAc!==blocksProxy)await window.premiumKelimeBloklariAc();
+    }catch(error){window.yoToast?.(error.message);}
+  };
+  window.premiumKelimeBloklariAc=blocksProxy;
   window.canavarAvcisiAc=opener(()=>window.canavarAvcisiAc);
   window.dengesizKuleAc=opener(()=>window.dengesizKuleAc);
   window.harfBahcesiAc=opener(()=>window.harfBahcesiAc);
