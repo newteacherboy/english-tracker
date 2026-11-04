@@ -3,7 +3,8 @@
   const assets = 'premium-assets/bulut-ucusu/';
   const endpoint = (typeof apiURL === 'string' ? apiURL :
     'https://nxfqlutulxqzqgwewssd.supabase.co/functions/v1/diji-api').replace(/diji-api.*$/, 'premium-games');
-  const waveMs = 4200;
+  const waveMs = 3650;
+  const mistakeLimit = 5;
   const lanes = [17, 50, 83];
   const owner = () => typeof aktifOgrenciAdi === 'undefined' ? '' : aktifOgrenciAdi;
   let opening = false;
@@ -15,7 +16,9 @@
   ];
 
   function flightAudio() {
-    let context, bus, engine, muted = localStorage.getItem('dm_cloud_muted') === '1';
+    const melody = [523, 0, 659, 784, 659, 0, 587, 659, 440, 0, 523, 659, 587, 0, 392, 0];
+    let context, bus, engine, music, musicTimer, beat = 0;
+    let muted = localStorage.getItem('dm_cloud_muted') === '1';
     function unlock() {
       if (muted) return;
       try {
@@ -24,6 +27,9 @@
           context = new Audio();
           bus = context.createGain();
           bus.connect(context.destination);
+          music = context.createGain();
+          music.gain.value = 0;
+          music.connect(bus);
           engine = context.createGain();
           engine.gain.value = 0;
           const filter = context.createBiquadFilter();
@@ -41,26 +47,44 @@
         context?.resume().catch(() => {});
       } catch { /* Sound is optional on devices without Web Audio. */ }
     }
+    function note(frequency, at, duration, volume, destination, type = 'sine') {
+      const oscillator = context.createOscillator(), gain = context.createGain();
+      oscillator.type = type;
+      oscillator.frequency.value = frequency;
+      gain.gain.setValueAtTime(.001, at);
+      gain.gain.exponentialRampToValueAtTime(volume, at + .014);
+      gain.gain.exponentialRampToValueAtTime(.001, at + duration);
+      oscillator.connect(gain).connect(destination);
+      oscillator.start(at);
+      oscillator.stop(at + duration + .01);
+      oscillator.onended = () => { oscillator.disconnect(); gain.disconnect(); };
+    }
+    function playBeat() {
+      const at = context.currentTime + .015;
+      const pitch = melody[beat];
+      if (pitch) note(pitch, at, .17, .024, music, 'triangle');
+      if (beat % 4 === 0) note([131, 165, 110, 98][beat / 4], at, .25, .034, music);
+      beat = (beat + 1) % melody.length;
+    }
     function flying(active) {
-      if (!engine) return;
-      engine.gain.setTargetAtTime(active && !document.hidden ? .032 : 0, context.currentTime, .08);
+      if (!engine || !music) return;
+      const audible = active && !document.hidden && !muted;
+      engine.gain.setTargetAtTime(audible ? .032 : 0, context.currentTime, .08);
+      music.gain.setTargetAtTime(audible ? 1 : 0, context.currentTime, .08);
+      if (audible && !musicTimer) {
+        playBeat();
+        musicTimer = setInterval(playBeat, 245);
+      }
+      if (!audible) {
+        clearInterval(musicTimer);
+        musicTimer = undefined;
+      }
     }
     function effect(kind) {
       if (!context || muted || document.hidden) return;
       const notes = kind === 'correct' ? [587, 784, 1047] : kind === 'wrong' ? [294, 196] : [118, 74];
-      notes.forEach((frequency, index) => {
-        const at = context.currentTime + index * .08;
-        const oscillator = context.createOscillator(), gain = context.createGain();
-        oscillator.type = kind === 'impact' ? 'triangle' : 'sine';
-        oscillator.frequency.value = frequency;
-        gain.gain.setValueAtTime(.001, at);
-        gain.gain.exponentialRampToValueAtTime(.065, at + .014);
-        gain.gain.exponentialRampToValueAtTime(.001, at + .16);
-        oscillator.connect(gain).connect(bus);
-        oscillator.start(at);
-        oscillator.stop(at + .17);
-        oscillator.onended = () => { oscillator.disconnect(); gain.disconnect(); };
-      });
+      notes.forEach((frequency, index) =>
+        note(frequency, context.currentTime + index * .08, .16, .065, bus, kind === 'impact' ? 'triangle' : 'sine'));
     }
     return {
       unlock, flying, effect, get muted() { return muted; },
@@ -71,7 +95,7 @@
         if (bus) bus.gain.setTargetAtTime(muted ? 0 : 1, context.currentTime, .035);
         flying(active);
       },
-      close() { context?.close().catch(() => {}); }
+      close() { clearInterval(musicTimer); context?.close().catch(() => {}); }
     };
   }
 
@@ -99,7 +123,7 @@
         style ||= document.createElement('link');
         style.id = 'dm-flight-style';
         style.rel = 'stylesheet';
-        style.href = 'premium-cloud-flight.css?v=2';
+        style.href = 'premium-cloud-flight.css?v=3';
         style.onload = resolve;
         style.onerror = () => { style.remove(); reject(new Error('Oyun görünümü yüklenemedi.')); };
         document.head.append(style);
@@ -124,7 +148,7 @@
           <span data-count></span><progress max="20" value="0" aria-label="Bölüm ilerlemesi"></progress>
           <b data-score></b><button data-sound type="button"></button>
         </div>
-        <div class="dm-flight-plan" data-plan></div>
+        <div class="dm-flight-badges"><div class="dm-flight-plan" data-plan></div><div class="dm-flight-lives" data-lives></div></div>
         <div class="dm-flight-word" data-word lang="en"></div>
         <div class="dm-flight-wave">${lanes.map(x => `<div class="dm-flight-cloud" style="--lane:${x}%"><span></span></div>`).join('')}</div>
         <div class="dm-flight-hazard" hidden><i aria-hidden="true"></i><span></span></div>
@@ -147,6 +171,7 @@
     let state = initial;
     let game = null;
     let frame = 0;
+    let resultTimer;
     let runId;
     let pending = false;
     let pointer = null;
@@ -154,6 +179,7 @@
     function close() {
       cancelAnimationFrame(frame);
       clearInterval(watch);
+      clearTimeout(resultTimer);
       sound.close();
       document.removeEventListener('visibilitychange', syncSound);
       screen.close();
@@ -187,7 +213,7 @@
       syncSound();
       panel.querySelector('button')?.focus({preventScroll: true});
     }
-    function syncSound() { sound.flying(!world.hidden && overlay.hidden); }
+    function syncSound() { sound.flying(!world.hidden && overlay.hidden && !game?.ending); }
     function paintSound() {
       const button = $('[data-sound]');
       const waves = sound.muted ? '<path d="m16 9 6 6m0-6-6 6"/>' : '<path d="M16 9a4 4 0 0 1 0 6m2-8a7 7 0 0 1 0 10"/>';
@@ -209,6 +235,38 @@
       }
       panel.insertBefore(grid, panel.querySelector('button'));
     }
+    function route(level, completed, last = false) {
+      const path = document.createElement('ol');
+      path.className = 'dm-flight-route';
+      path.setAttribute('aria-label', 'Bölüm rotası');
+      for (let number = Math.max(1, level - 3); number <= level + (last ? 0 : 2); number++) {
+        const stop = document.createElement('li');
+        const done = number < level || number === level && completed;
+        stop.textContent = done ? `✓ ${number}` : String(number);
+        stop.dataset.stop = done ? 'done' : number === level ? 'current' : 'locked';
+        stop.setAttribute('aria-label', `Bölüm ${number}, ${done ? 'geçildi' : number === level ? 'açık' : 'kilitli'}`);
+        path.append(stop);
+      }
+      const action = panel.querySelector('button');
+      panel.insertBefore(path, action);
+      const earlier = level - 4;
+      if (earlier > 0) {
+        const history = document.createElement('details');
+        const label = document.createElement('summary');
+        label.textContent = 'Önceki geçilen bölümler';
+        const stops = document.createElement('ol');
+        stops.className = 'dm-flight-route';
+        for (let number = 1; number <= earlier; number++) {
+          const stop = document.createElement('li');
+          stop.dataset.stop = 'done';
+          stop.textContent = `✓ ${number}`;
+          stop.setAttribute('aria-label', `Bölüm ${number}, geçildi`);
+          stops.append(stop);
+        }
+        history.append(label, stops);
+        panel.insertBefore(history, action);
+      }
+    }
     function apply(data) {
       state = {...state, ...data};
       if (data.energyMax) window.headerEnerjiGoster?.(data.energy, data.energyMax);
@@ -217,18 +275,19 @@
     function home(error) {
       world.hidden = true;
       const plan = state.premium ? 'Premium ∞' : `Ücretsiz: ${state.remaining} hak`;
-      const actions = state.remaining > 0 ? [[`Bölüm ${state.level} · ⚡ 5`, start]] : [];
+      const actions = !state.completed && state.remaining > 0 ? [[`Bölüm ${state.level} · ⚡ 5`, start]] : [];
       actions.push(['Oyunlara dön', close]);
       openPanel('Papi’nin Bulut Uçuşu', [
-        error || (state.remaining > 0 ? 'Doğru anlamın yazdığı buluta uç, gökyüzündeki engellerden sıyrıl.' : 'Üç ücretsiz denemeni kullandın. Premium ile sınırsız uçabilirsin.')
+        error || (state.completed ? 'Tüm uçuş rotasını tamamladın!' : state.remaining > 0 ? 'Doğru anlamın yazdığı buluta uç, gökyüzündeki engellerden sıyrıl.' : 'Üç ücretsiz denemeni kullandın. Premium ile sınırsız uçabilirsin.')
       ], actions, 'hangar');
-      if (!error && state.remaining > 0) {
+      if (!error && !state.completed && state.remaining > 0) {
         const rules = document.createElement('p');
         rules.className = 'dm-flight-rules';
-        rules.textContent = '✓ Doğru +20   ·   ✗ Yanlış −10';
+        rules.textContent = '✓ Doğru +20 · ✗ Yanlış −10 · 5 hatada düşüş';
         panel.insertBefore(rules, panel.querySelector('button'));
       }
-      stats([[`Bölüm ${state.level}`, 'Gece rotası'], [`${state.energy} / ${state.energyMax}`, 'Enerji'], [plan, 'Uçuş hakkı']]);
+      route(state.level, state.completed, state.completed);
+      stats([[`Bölüm ${state.level}`, state.words ? `${state.words} kelime` : 'Gece rotası'], [`${state.energy} / ${state.energyMax}`, 'Enerji'], [plan, 'Uçuş hakkı']]);
     }
     async function start() {
       if (pending) return;
@@ -240,8 +299,10 @@
         const data = await request(token, 'start', {runId});
         if (!screen.isConnected) return;
         apply(data);
-        game = {rounds: data.rounds, level: data.playedLevel, picks: [], score: 0,
+        game = {rounds: data.rounds, level: data.playedLevel, picks: [], score: 0, wrong: 0,
           x: 50, target: 50, elapsed: 0, last: null, paused: false, obstacle: null, stumble: 0};
+        plane.classList.remove('dm-flight-crash');
+        wave.hidden = false;
         world.hidden = false;
         overlay.hidden = true;
         syncSound();
@@ -256,6 +317,7 @@
       }
     }
     function paintScore() {
+      $('[data-lives]').textContent = `Hata ${game.wrong} / ${mistakeLimit}`;
       $('[data-score]').textContent = `★ ${game.score}`;
       $('[data-count]').textContent = `${game.picks.length} / ${game.rounds.length}`;
       const bar = $('progress');
@@ -302,6 +364,17 @@
         ], {duration: 550, easing: 'ease-out'});
       }
     }
+    function wrongCloud(pick) {
+      const impact = clouds[pick].cloneNode(true);
+      impact.classList.add('dm-flight-wrong-cloud');
+      impact.setAttribute('aria-hidden', 'true');
+      const cross = document.createElement('b');
+      cross.textContent = '✕';
+      impact.append(cross);
+      world.append(impact);
+      impact.addEventListener('animationend', () => impact.remove(), {once: true});
+      stumble();
+    }
     function tick(now) {
       if (game.paused) return;
       const dt = game.last === null ? 0 : Math.min(now - game.last, 50);
@@ -337,20 +410,33 @@
         const correct = pick === game.rounds[game.picks.length].answer;
         game.picks.push(pick);
         game.score += correct ? 20 : pick < 0 ? 0 : -10;
-        if (pick >= 0) {
+        if (correct) {
           const burst = document.createElement('div');
           burst.className = 'dm-flight-burst';
           burst.style.left = `${lanes[pick]}%`;
-          burst.dataset.correct = String(correct);
           world.append(burst);
           burst.addEventListener('animationend', () => burst.remove(), {once: true});
         }
         if (pick >= 0) sound.effect(correct ? 'correct' : 'wrong');
-        if (pick >= 0 && !correct) stumble();
+        if (pick >= 0 && !correct) {
+          game.wrong++;
+          wrongCloud(pick);
+        }
         showFeedback(correct ? 'Doğru +20' : pick < 0 ? 'Bulut geçildi' : 'Yanlış −10', correct);
-        if (game.picks.length === game.rounds.length) {
+        const crashed = game.wrong === mistakeLimit;
+        if (crashed || game.picks.length === game.rounds.length) {
           paintScore();
-          void finish();
+          game.ending = true;
+          syncSound();
+          if (crashed) {
+            wave.hidden = true;
+            hazard.hidden = true;
+            plane.classList.add('dm-flight-crash');
+            showFeedback('Uçak düşüyor! −10', false);
+            sound.effect('impact');
+            resultTimer = setTimeout(finish, 820);
+          } else if (pick >= 0 && !correct) resultTimer = setTimeout(finish, 560);
+          else void finish();
           return;
         }
         game.elapsed -= waveMs;
@@ -365,24 +451,25 @@
         if (!screen.isConnected) return;
         apply(result);
         runId = undefined;
-        const next = result.hasMore && result.remaining > 0;
-        openPanel(`Bölüm ${result.playedLevel} tamamlandı`, [
-          !result.hasMore ? 'Tüm kelimeleri tamamladın!' : `Açılan bölüm ${result.level}`
-        ], [...(next ? [[`Sonraki bölüm · ⚡ 5`, start]] : []), ['Oyunlara dön', close]], 'results');
+        const next = (result.crashed || result.hasMore) && result.remaining > 0;
+        openPanel(result.crashed ? 'Uçuş sona erdi' : `Bölüm ${result.playedLevel} tamamlandı`, [
+          result.crashed ? `5 hata yaptın. Bölüm ${result.playedLevel} tamamlanmadı.` : !result.hasMore ? 'Tüm kelimeleri tamamladın!' : `Açılan bölüm ${result.level}`
+        ], [...(next ? [[result.crashed ? 'Tekrar uç · ⚡ 5' : 'Sonraki bölüm · ⚡ 5', start]] : []), ['Oyunlara dön', close]], 'results');
         const stars = document.createElement('div');
         stars.className = 'dm-flight-stars';
         stars.textContent = '★'.repeat(result.stars) + '☆'.repeat(3 - result.stars);
         stars.setAttribute('aria-label', `${result.stars} yıldız`);
         panel.prepend(stars);
+        route(result.level, !!result.completed, !!result.completed);
         stats([[result.score, 'Uçuş puanı'], [`${result.correct} / ${result.total}`, 'Doğru'],
-          [result.wrong, 'Yanlış'], [result.total - result.correct - result.wrong, 'Boş'],
+          [result.wrong, 'Yanlış'], [(result.played ?? result.total) - result.correct - result.wrong, 'Boş'],
           [`+${result.xp}`, 'XP'], [`+${result.gold}`, 'Altın']]);
       } catch (error) {
         if (screen.isConnected) openPanel('Sonuç kaydediliyor', [error.message], [['Tekrar dene', finish]]);
       }
     }
     function pause() {
-      if (!game || game.paused || !overlay.hidden) return;
+      if (!game || game.ending || game.paused || !overlay.hidden) return;
       game.paused = true;
       pointer = null;
       cancelAnimationFrame(frame);
@@ -411,7 +498,7 @@
     world.onpointermove = event => { if (event.pointerId === pointer) move(event); };
     world.onlostpointercapture = () => { pointer = null; };
     $('[data-pause]').onclick = pause;
-    $('[data-sound]').onclick = () => { sound.toggle(overlay.hidden); paintSound(); };
+    $('[data-sound]').onclick = () => { sound.toggle(overlay.hidden && !game?.ending); paintSound(); };
     document.addEventListener('visibilitychange', syncSound);
     paintSound();
     screen.addEventListener('cancel', event => {
