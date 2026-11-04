@@ -2,11 +2,54 @@
   'use strict';
   const api = (typeof apiURL === 'string' ? apiURL :
     'https://nxfqlutulxqzqgwewssd.supabase.co/functions/v1/diji-api').replace(/diji-api.*$/, 'premium-games');
-  const styles = 'premium-word-blocks.css?v=1';
+  const styles = 'premium-word-blocks.css?v=2';
   const assets = 'premium-assets/kelime-bloklari/';
   const rows = 8;
   const player = () => typeof aktifOgrenciAdi === 'undefined' ? '' : aktifOgrenciAdi;
   let opening = false;
+
+  function workshopSound() {
+    const melody = [523, 659, 784, 659, 587, 0, 659, 0, 440, 523, 659, 523, 392, 0, 494, 0];
+    let context, timer, step = 0;
+    let muted = localStorage.getItem('dm_blocks_mute') === '1';
+    function tone(freq, volume, offset = 0) {
+      if (!context || muted || document.hidden || !freq) return;
+      const at = context.currentTime + offset;
+      const note = context.createOscillator(), volumeNode = context.createGain();
+      note.type = 'sine';
+      note.frequency.value = freq;
+      volumeNode.gain.setValueAtTime(.001, at);
+      volumeNode.gain.exponentialRampToValueAtTime(volume, at + .025);
+      volumeNode.gain.exponentialRampToValueAtTime(.001, at + .18);
+      note.connect(volumeNode).connect(context.destination);
+      note.start(at);
+      note.stop(at + .2);
+      note.onended = () => { note.disconnect(); volumeNode.disconnect(); };
+    }
+    return {
+      unlock() {
+        if (muted) return;
+        try {
+          const Audio = window.AudioContext || window.webkitAudioContext;
+          if (Audio) context ||= new Audio();
+          context?.resume().catch(() => {});
+        } catch { /* Audio is optional. */ }
+      },
+      music(active) {
+        clearInterval(timer);
+        if (active && context && !muted && !document.hidden) {
+          timer = setInterval(() => tone(melody[step++ % melody.length], .026), 280);
+        }
+      },
+      effect(correct, bonus) {
+        (bonus ? [660, 880, 1175] : correct ? [587, 784] : [392, 330])
+          .forEach((freq, index) => tone(freq, .085, index * .085));
+      },
+      get muted() { return muted; },
+      toggle() { muted = !muted; localStorage.setItem('dm_blocks_mute', muted ? '1' : '0'); this.unlock(); },
+      close() { clearInterval(timer); context?.close().catch(() => {}); }
+    };
+  }
 
   async function call(token, op, payload = {}) {
     const response = await fetch(api, {
@@ -47,7 +90,7 @@
     dialog.setAttribute('aria-label', 'Papi’nin Kelime Blokları');
     dialog.innerHTML = `
       <div class="dm-blocks-world" hidden>
-        <header><button data-pause aria-label="Duraklat">Ⅱ</button><h2><img src="${assets}papi.webp" alt="">Papi’nin<br>Kelime Blokları</h2><span data-plan></span></header>
+        <header><button data-pause aria-label="Duraklat">Ⅱ</button><h2><img src="${assets}papi.webp" alt="">Papi’nin<br>Kelime Blokları</h2><div class="dm-blocks-tools"><span data-plan></span><button data-sound aria-label="Sesi kapat">♫</button></div></header>
         <div class="dm-blocks-hud"><span data-level></span><span data-progress></span><span data-score></span><span data-errors></span></div>
         <div class="dm-blocks-frame"><div class="dm-blocks-board" aria-label="Blok tahtası">
           <div class="dm-blocks-stack"></div><div class="dm-blocks-fx"></div><div class="dm-blocks-piece" lang="en"></div>
@@ -63,6 +106,7 @@
     const $ = key => dialog.querySelector(key);
     const world = $('.dm-blocks-world'), overlay = $('.dm-blocks-overlay');
     const panel = overlay.firstElementChild, board = $('.dm-blocks-board'), piece = $('.dm-blocks-piece');
+    const sound = workshopSound();
     const answers = [...dialog.querySelectorAll('[data-lane]')];
     let state = initial, game, runId, frame, resultTimer, busy = false;
 
@@ -70,6 +114,8 @@
       cancelAnimationFrame(frame);
       clearInterval(watch);
       clearTimeout(resultTimer);
+      document.removeEventListener('visibilitychange', syncMusic);
+      sound.close();
       dialog.close();
       dialog.remove();
     }
@@ -90,8 +136,10 @@
         panel.append(button);
       }
       overlay.hidden = false;
+      syncMusic();
       panel.querySelector('button')?.focus();
     }
+    function syncMusic() { sound.music(active()); }
     function update(data) {
       state = {...state, ...data};
       if (data.energyMax) window.headerEnerjiGoster?.(data.energy, data.energyMax);
@@ -115,16 +163,18 @@
     async function start() {
       if (busy) return;
       busy = true;
+      sound.unlock();
       runId ||= crypto.randomUUID();
       show('Atölye hazırlanıyor…', [], []);
       try {
         const data = await call(token, 'start', {runId});
         if (!dialog.isConnected) return;
         update(data);
-        game = {rounds: data.rounds, level: data.playedLevel, picks: [], grid: Array(rows).fill(0), colors: Array.from({length: rows}, () => []),
+        game = {rounds: data.rounds, level: data.playedLevel, picks: [], grid: Array(rows).fill(0), cells: Array.from({length: rows}, () => []),
           score: 0, wrong: 0, ended: false};
         world.hidden = false;
         overlay.hidden = true;
+        syncMusic();
         $('[data-plan]').textContent = data.premium ? 'Premium ∞' : `${data.remaining} hak`;
         $('.dm-blocks-feedback').textContent = '';
         paintStack();
@@ -151,7 +201,7 @@
       game.last = null;
       piece.hidden = false;
       piece.textContent = round.en;
-      piece.dataset.color = game.picks.length % 4;
+      piece.dataset.color = round.color ?? game.picks.length % 4;
       answers.forEach((answer, i) => { answer.textContent = round.options[i]; });
       $('[data-rotate]').hidden = !game.double;
       hud();
@@ -182,7 +232,11 @@
         for (let x = 0; x < 3; x++) {
           if (!(mask & (1 << x))) continue;
           const tile = document.createElement('i');
-          tile.dataset.color = game.colors[y][x];
+          const cell = game.cells[y][x];
+          tile.dataset.color = cell.color;
+          tile.textContent = cell.word;
+          tile.lang = 'en';
+          tile.title = cell.word;
           tile.style.setProperty('--x', x);
           tile.style.setProperty('--y', rows - y - 1);
           stack.append(tile);
@@ -195,8 +249,8 @@
         if (game.grid[y] !== 7) continue;
         game.grid.splice(y, 1);
         game.grid.push(0);
-        game.colors.splice(y, 1);
-        game.colors.push([]);
+        game.cells.splice(y, 1);
+        game.cells.push([]);
         const spark = document.createElement('i');
         spark.style.setProperty('--y', rows - y - 1);
         fx.append(spark);
@@ -217,16 +271,31 @@
     function drop() {
       if (!active()) return;
       const {mask, height, bottom} = footprint();
-      const correct = game.lane === game.rounds[game.picks.length].answer;
+      const round = game.rounds[game.picks.length];
+      const correct = game.lane === round.answer;
       game.picks.push(game.lane + (game.horizontal ? 3 : 0));
       game.score += correct ? 20 : -10;
       if (!correct) game.wrong++;
       const full = bottom + height > rows;
+      let sameWord = false, sameColor = false;
       if (!full) {
+        const cell = {word: round.en, color: piece.dataset.color, correct};
+        if (correct && round.color !== undefined) {
+          for (let y = bottom; y < bottom + height; y++) {
+            for (let x = 0; x < 3; x++) {
+              if (!(mask & (1 << x))) continue;
+              for (const neighbor of [game.cells[y][x - 1], game.cells[y][x + 1]]) {
+                if (!neighbor?.correct) continue;
+                sameWord ||= neighbor.word.toLowerCase() === round.en.toLowerCase();
+                sameColor ||= neighbor.color === cell.color;
+              }
+            }
+          }
+        }
         for (let i = 0; i < height; i++) {
           game.grid[bottom + i] |= mask;
           for (let x = 0; x < 3; x++) {
-            if (mask & (1 << x)) game.colors[bottom + i][x] = piece.dataset.color;
+            if (mask & (1 << x)) game.cells[bottom + i][x] = cell;
           }
         }
         clearRows();
@@ -234,12 +303,16 @@
       }
       const feedback = $('.dm-blocks-feedback');
       feedback.dataset.good = String(correct);
-      feedback.textContent = correct ? 'Doğru +20' : 'Yanlış −10';
+      const bonus = (sameWord ? 15 : 0) + (sameColor ? 5 : 0);
+      game.score += bonus;
+      sound.effect(correct, bonus);
+      feedback.textContent = bonus ? `Doğru +20 · ${sameWord ? 'Kelime +15' : ''}${sameWord && sameColor ? ' · ' : ''}${sameColor ? 'Renk +5' : ''}` : correct ? 'Doğru +20' : 'Yanlış −10';
       if (!correct && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
         board.animate([{transform:'translateX(0)'},{transform:'translateX(-5px)'},{transform:'translateX(5px)'},{transform:'translateX(0)'}], {duration:240});
       }
       if (full || game.wrong === 5 || game.picks.length === game.rounds.length) {
         game.ended = true;
+        syncMusic();
         piece.hidden = true;
         hud();
         cancelAnimationFrame(frame);
@@ -265,6 +338,7 @@
         show(data.crashed ? 'Tur sona erdi' : `Bölüm ${data.playedLevel} tamamlandı`, [
           `${'★'.repeat(data.stars)}${'☆'.repeat(3 - data.stars)} · ${data.score} puan`,
           `Doğru ${data.correct} · Yanlış ${data.wrong} · Temizlenen satır ${data.rows}`,
+          ...(data.bonus ? [`Bonus +${data.bonus} puan`] : []),
           `+${data.xp} XP · +${data.gold} altın`,
           data.crashed ? (data.wrong === 5 ? 'Beş hata yaptın.' : 'Bloklar tahtanın tepesine ulaştı.') :
             data.hasMore ? `✓ Bölüm ${data.playedLevel} geçildi · Bölüm ${data.level} açıldı` : 'Tüm atölye rotasını tamamladın!'
@@ -278,11 +352,20 @@
       cancelAnimationFrame(frame);
       show('Atölye duraklatıldı', [], [['Devam et', () => {
         overlay.hidden = true;
+        syncMusic();
         game.last = null;
         frame = requestAnimationFrame(tick);
       }], ['Oyunlara dön', close]]);
     }
     $('[data-pause]').onclick = pause;
+    const soundButton = $('[data-sound]');
+    function paintSound() {
+      soundButton.textContent = sound.muted ? '♪̸' : '♫';
+      soundButton.setAttribute('aria-label', sound.muted ? 'Sesi aç' : 'Sesi kapat');
+    }
+    soundButton.onclick = () => { sound.toggle(); paintSound(); syncMusic(); };
+    paintSound();
+    document.addEventListener('visibilitychange', syncMusic);
     $('[data-left]').onclick = () => { if (active()) move(game.lane - 1); };
     $('[data-right]').onclick = () => { if (active()) move(game.lane + 1); };
     $('[data-drop]').onclick = drop;
