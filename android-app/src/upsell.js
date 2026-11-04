@@ -2,7 +2,7 @@ import { createUpsellPolicy } from './upsell-policy.js';
 
 // Duyuru panosu (notice-surface) diliyle: krem zemin, dalgalı nane-mavi başlık, büyük Papi.
 const CSS = `
-.dmu-veil{position:fixed;inset:0;z-index:2147483000;background:rgba(13,49,55,.45);display:flex;align-items:flex-end;justify-content:center}
+.dmu-veil{position:fixed;inset:0;z-index:2147483643;background:rgba(13,49,55,.45);display:flex;align-items:flex-end;justify-content:center}
 .dmu-sheet{width:min(100%,520px);background:#fffefa;border:1px solid #b7ece4;border-bottom:0;border-radius:32px 32px 0 0;overflow:hidden;text-align:center;color:#114952;font:600 15px/1.45 system-ui,-apple-system,sans-serif;padding-bottom:env(safe-area-inset-bottom,0px);animation:dmuUp .34s cubic-bezier(.2,.7,.25,1)}
 .dmu-hero{position:relative;height:128px;background:radial-gradient(ellipse at 4% 85%,#fffdf2 0 16%,transparent 17%),radial-gradient(ellipse at 100% 95%,#e4fff1 0 20%,transparent 21%),linear-gradient(125deg,#c7f8ee,#87dbf8 60%,#c2f2f0);border-radius:0 0 46% 9% / 0 0 18% 6%;overflow:hidden}
 .dmu-hero img{position:absolute;left:50%;bottom:-12%;transform:translateX(-50%);height:118%;filter:drop-shadow(0 6px 5px #23627422)}
