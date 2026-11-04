@@ -20,7 +20,7 @@ concurrency:
 jobs:
   deploy:
     if: ${{ github.event_name == 'push' || github.event.inputs.confirm == 'DEPLOY' }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     env:
       SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
       PROJECT_REF: nxfqlutulxqzqgwewssd
@@ -31,7 +31,7 @@ jobs:
           node-version: '22'
       - name: Pre-deploy checks
         run: |
-          node --test tests/delta-reads.test.mjs tests/incremental-client.test.cjs tests/public-catalog.test.cjs tests/request-budget.test.cjs tests/word-payload.test.mjs tests/release-read-cache.test.cjs tests/teacher-chat-routing.test.mjs tests/announcements-api.test.mjs tests/member-tools.test.cjs tests/api-security-guards.test.cjs tests/daily-mission-claim.test.cjs tests/onboarding-registration.test.cjs tests/server-reward-ledger.test.cjs supabase/functions/diji-api/class-code.test.mjs
+          node --test tests/delta-reads.test.mjs tests/incremental-client.test.cjs tests/public-catalog.test.cjs tests/request-budget.test.cjs tests/word-payload.test.mjs tests/release-read-cache.test.cjs tests/teacher-chat-routing.test.mjs tests/announcements-api.test.mjs tests/member-tools.test.cjs tests/api-security-guards.test.cjs tests/daily-mission-claim.test.cjs tests/onboarding-registration.test.cjs tests/server-reward-ledger.test.cjs supabase/functions/diji-api/class-code.test.mjs tests/google-signup.test.cjs
       - uses: supabase/setup-cli@v1
         with:
           version: latest

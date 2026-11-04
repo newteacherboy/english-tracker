@@ -20,7 +20,7 @@ on:
       - '.github/workflows/verified-games.yml'
 jobs:
   security:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 12
     steps:
       - uses: actions/checkout@v4

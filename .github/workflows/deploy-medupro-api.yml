@@ -20,7 +20,7 @@ concurrency:
 jobs:
   deploy:
     if: ${{ github.event_name == 'push' || github.event.inputs.confirm == 'DEPLOY' }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     env:
       SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
       PROJECT_REF: nxfqlutulxqzqgwewssd

@@ -6,7 +6,7 @@ on:
     paths: ['ingilizce/oyna-v2.*', 'ingilizce/oyna-assets/**', 'tests/oyna-carousel*', '.github/workflows/oyna-carousel.yml']
 jobs:
   carousel:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4

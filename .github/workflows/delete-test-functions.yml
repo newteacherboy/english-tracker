@@ -11,7 +11,7 @@ permissions:
 jobs:
   delete:
     if: ${{ github.event.inputs.confirm == 'DELETE' }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     env:
       SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
       PROJECT_REF: nxfqlutulxqzqgwewssd

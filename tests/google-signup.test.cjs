@@ -1,7 +1,7 @@
 const {test}=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs');
 const source=fs.readFileSync(require('node:path').join(__dirname,'../supabase/functions/diji-api/index.ts'),'utf8');
 const block=source.slice(source.indexOf('  // Google Auth is an additional'),source.indexOf('  // [YAMA 7]'));
-const helpers=fs.readFileSync('supabase/functions/diji-api/learner-profile.mjs','utf8').replace(/export /g,'');
+const helpers=fs.readFileSync('supabase/functions/diji-api/learner-profile.mjs','utf8').replace(/export /g,'')+fs.readFileSync('supabase/functions/diji-api/class-code.mjs','utf8').replace(/export /g,'')+'const kodlaOgretmen=async(kod,alan)=>!kod?{ogretmen:null,sinif:null}:kod==="GNWGVVE"?{ogretmen:{id:"t1",active:true},sinif:{teacherId:"t1",classNo:5,branch:"B"}}:{ogretmen:(await supabase.from("teachers").select(alan).ilike("invite_code",kod).limit(1)).data?.[0]||null,sinif:null};';
 const stripped=helpers+block;
 const run=new (Object.getPrototypeOf(async function(){}).constructor)('req','body','q','supabase','json','studentByNameGenel','verifyPassword','issueSession','denemeSay','denemeYaz','encName','temizMetin','likeKacir','hashPassword','crypto','sorumluEpostalar','kuyrugaEkle','mailKabugu','hk','onboarding','yeniOgrenciYoneticiBildirimi','const op=body.islem;const TAKMA_AD=/^[A-Za-z0-9çğıöşüÇĞİÖŞÜ._-]{3,20}$/,AD_SOYAD=/^[A-Za-zÇĞİÖŞÜçğıöşüÂâÎîÛû .\'-]{3,60}$/,sadeHarf=v=>String(v||"").toLocaleLowerCase("tr").replace(/[çğıöşüâîû]/g,c=>({"ç":"c","ğ":"g","ı":"i","ö":"o","ş":"s","ü":"u","â":"a","î":"i","û":"u"})[c]).replace(/[^a-z]/g,"");\n'+stripped);
 const valid={islem:'googleKayit',ogrenciAdi:'yildiz_42',adSoyad:'Yeni Öğrenci',telefon:'05551234567',email:'parent@example.test',sinif:'5',sube:'A',kvkkOnay:true};
@@ -26,3 +26,10 @@ test('GET registration is forbidden',async()=>{const f=fixture();assert.equal((a
 test('Google signup supports all-age profiles with optional class for high school/university and optional phone',async()=>{{const f=fixture(),r=await f.call({...valid,telefon:'',sinif:'',sube:'',learnerProfile:{version:1,purpose:'school',ageBand:'teen'}});assert.notEqual(r.data.kayitOlustu,true,'school learners must name their stage');}for(const profile of [{purpose:'independent',ageBand:'adult'},{purpose:'school',educationStage:'high',ageBand:'teen'},{purpose:'school',educationStage:'university',ageBand:'adult'}]){const f=fixture(),r=await f.call({...valid,telefon:'',sinif:'',sube:'',learnerProfile:{version:1,...profile}});assert.equal(r.data.kayitOlustu,true,JSON.stringify(r));assert.equal(f.payload().class_no,null);assert.equal(f.payload().phone,'');}});
 
 test('Apple registration requires Apple identity, while Google cannot authorize the Apple route',async()=>{const apple={...valid,islem:'appleKayit'};const f=fixture({provider:'apple'});assert.equal((await f.call(apple)).data.token,'portal-token');assert.equal((await fixture().call(apple)).status,401);assert.equal((await fixture({provider:'apple'}).call(valid)).status,401);});
+
+test('class code joins the class branch when the chosen grade matches, and rejects a different grade',async()=>{
+ const ok=fixture(),r=await ok.call({...valid,sube:'A',ogretmenKodu:'GNWGVVE'});
+ assert.equal(r.data.kayitOlustu,true);assert.equal(ok.payload().teacher_id,'t1');assert.equal(ok.payload().branch,'B');assert.equal(ok.payload().class_no,5);
+ const bad=fixture(),b=await bad.call({...valid,sinif:'6',ogretmenKodu:'GNWGVVE'});
+ assert.equal(b.status,400);assert.match(b.data.mesaj,/5\. sınıf/);assert.deepEqual(bad.counts(),{inserts:0,sessions:0});
+});
