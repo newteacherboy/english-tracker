@@ -2481,6 +2481,41 @@
       "bytes": 73106,
       "status": "ai-generated",
       "source": "Generated with ChatGPT (OpenAI) by the owner for the Premium Kelime Eslestirme game; added in commit aa062a0 (2026-11-03), whose message records them as ChatGPT images."
+    },
+    {
+      "path": "ingilizce/app-icons/papagan-192.png",
+      "sha256": "ade6b44bb94874bc0450ed9d7fb332271b14536e3cf73546b2212a9c01aec71d",
+      "bytes": 55109,
+      "status": "owner-supplied",
+      "source": "Supplied by the owner in chat on 2026-11-04 as the new Diji Medu app logo (Papi head portrait), chosen from images made for the app. Resized copies serve as web, PWA and Android launcher icons."
+    },
+    {
+      "path": "ingilizce/app-icons/papagan-512.png",
+      "sha256": "cd329ee6ad18650d69bef70f2338d4515f2621d92f74a97e73e9c558aadc8302",
+      "bytes": 316331,
+      "status": "owner-supplied",
+      "source": "Supplied by the owner in chat on 2026-11-04 as the new Diji Medu app logo (Papi head portrait), chosen from images made for the app. Resized copies serve as web, PWA and Android launcher icons."
+    },
+    {
+      "path": "ingilizce/app-icons/papagan-maskable-512.png",
+      "sha256": "cd329ee6ad18650d69bef70f2338d4515f2621d92f74a97e73e9c558aadc8302",
+      "bytes": 316331,
+      "status": "owner-supplied",
+      "source": "Supplied by the owner in chat on 2026-11-04 as the new Diji Medu app logo (Papi head portrait), chosen from images made for the app. Resized copies serve as web, PWA and Android launcher icons."
+    },
+    {
+      "path": "ingilizce/papagan-app-icon-512.png",
+      "sha256": "cd329ee6ad18650d69bef70f2338d4515f2621d92f74a97e73e9c558aadc8302",
+      "bytes": 316331,
+      "status": "owner-supplied",
+      "source": "Supplied by the owner in chat on 2026-11-04 as the new Diji Medu app logo (Papi head portrait), chosen from images made for the app. Resized copies serve as web, PWA and Android launcher icons."
+    },
+    {
+      "path": "ingilizce/app-icons/papi-logo-1024.png",
+      "sha256": "8509f3006203b0643362e40e42263fba737663ba175a9ad9b25694891df84871",
+      "bytes": 1075596,
+      "status": "owner-supplied",
+      "source": "Supplied by the owner in chat on 2026-11-04 as the new Diji Medu app logo (Papi head portrait), chosen from images made for the app. Resized copies serve as web, PWA and Android launcher icons."
     }
   ]
 }
