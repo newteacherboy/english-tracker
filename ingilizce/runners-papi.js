@@ -23,7 +23,7 @@
     return styles ??= new Promise((resolve, reject) => {
       const link = document.createElement('link');
       link.rel = 'stylesheet';
-      link.href = 'runners-papi.css?v=1';
+      link.href = 'runners-papi.css?v=2';
       link.onload = resolve;
       link.onerror = () => {
         styles = null;
@@ -65,7 +65,7 @@
         <div class="rp-hud"><b data-level></b><b data-flock></b><b data-best></b></div>
         <progress aria-label="Kapıya kalan süre" max="1" value="1"></progress>
         <div class="rp-prompt"><small data-bonus></small><strong data-word lang="en"></strong></div>
-        <div class="rp-track" aria-hidden="true"></div>
+        <div class="rp-trail" aria-hidden="true"></div>
         <div class="rp-gates" aria-label="Türkçe anlam kapıları"></div>
         <div class="rp-flock" aria-hidden="true"></div>
       </section>
@@ -101,7 +101,6 @@
     function selectLane(index, focus = false) {
       if (!gates.children[index]) return;
       lane = index;
-      gates.style.setProperty('--lane', String(index));
       $('.rp-flock').style.setProperty('--lane', String(index));
       [...gates.children].forEach((button, i) => button.classList.toggle('rp-selected', i === index));
       if (focus) gates.children[index].focus({preventScroll: true});
@@ -113,6 +112,7 @@
       menu.hidden = true;
       run.hidden = false;
       message.textContent = '';
+      gates.style.setProperty('--approach', '0');
       gates.replaceChildren();
       const options = state.question.options;
       screen.style.setProperty('--lanes', String(options.length));
@@ -124,17 +124,20 @@
       options.forEach((option, index) => {
         const button = document.createElement('button');
         button.type = 'button';
-        button.textContent = option;
+        const label = document.createElement('span');
+        label.textContent = option;
+        button.append(label);
         button.onclick = () => { selectLane(index); answer(index); };
         gates.append(button);
       });
       steered = false;
-      selectLane(Math.floor((options.length - 1) / 2));
+      lane = Math.floor((options.length - 1) / 2);
+      $('.rp-flock').style.setProperty('--lane', String((options.length - 1) / 2));
       const flock = $('.rp-flock');
       flock.replaceChildren();
       for (let i = 0; i < Math.min(18, state.flock); i++) {
         const image = document.createElement('img');
-        image.src = 'papi-welcome-v2.png';
+        image.src = 'premium-assets/runners-parrot.webp';
         image.alt = '';
         flock.append(image);
       }
@@ -148,6 +151,7 @@
         if (!document.hidden && elapsed < 300) remaining -= elapsed;
         previous = now;
         progress.value = Math.max(0, remaining / duration);
+        gates.style.setProperty('--approach', String(1 - progress.value));
         if (remaining <= 0) answer(steered ? lane : -1);
         else frame = requestAnimationFrame(tick);
       }
@@ -178,6 +182,7 @@
     function answer(choice) {
       cancelAnimationFrame(frame);
       [...gates.children].forEach(button => { button.disabled = true; });
+      gates.style.setProperty('--approach', '1');
       const payload = {runId: state.runId, gate: state.gate, choice};
       send('answer', payload, () => {
         const feedback = state.feedback;
@@ -185,6 +190,10 @@
         message.textContent = feedback.correct ? `Doğru! +${feedback.change} papağan` :
           `${choice === -1 ? 'Süre doldu' : 'Yanlış kapı'} · ${feedback.meaning} · ${feedback.change} papağan`;
         screen.dataset.outcome = feedback.correct ? 'correct' : 'wrong';
+        if (choice >= 0) {
+          gates.children[choice]?.setAttribute('data-outcome', screen.dataset.outcome);
+          $('.rp-trail').style.setProperty('--lane', String(choice));
+        }
         transition = setTimeout(() => {
           delete screen.dataset.outcome;
           if (!state.question) message.textContent = '';
