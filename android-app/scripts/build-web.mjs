@@ -41,13 +41,15 @@ await writeFile(navPath, nav);
 const res = path.join(app, 'android/app/src/main/res');
 for (const [density, size] of [['mdpi',48],['hdpi',72],['xhdpi',96],['xxhdpi',144],['xxxhdpi',192]]) {
   const dir = path.join(res, 'mipmap-' + density); await mkdir(dir, { recursive: true });
-  for (const name of ['ic_launcher','ic_launcher_round']) {
-    await sharp(path.join(root,'ingilizce/app-icons/papagan-512.png')).resize(size,size).png().toFile(path.join(dir,name+'.png'));
-  }
-  // Adaptive icons need space around the face to survive device-specific masks.
-  const total = Math.round(size * 2.25), inner = Math.round(total * 0.62);
-  const image = await sharp(path.join(root,'ingilizce/app-icons/papagan-512.png')).resize(inner,inner).png().toBuffer();
-  await sharp({create:{width:total,height:total,channels:4,background:'#FAF8F5'}}).composite([{input:image,gravity:'center'}]).png().toFile(path.join(dir,'ic_launcher_foreground.png'));
+  await sharp(path.join(root,'ingilizce/app-icons/papi-logo-1024.png')).resize(size,size).png().toFile(path.join(dir,'ic_launcher.png'));
+  // Eski Android'lerdeki yuvarlak simge: köşeleri şeffaf daire.
+  const circle = Buffer.from(`<svg width="${size}" height="${size}"><circle cx="${size/2}" cy="${size/2}" r="${size/2}" fill="#fff"/></svg>`);
+  await sharp(path.join(root,'ingilizce/app-icons/papi-logo-1024.png')).resize(size,size).ensureAlpha().composite([{input:circle,blend:'dest-in'}]).png().toFile(path.join(dir,'ic_launcher_round.png'));
+  // Uyarlanabilir simge: logo kenarına kadar dolu bir çizim; maske yalnız ortadaki %66'yı gösterir.
+  // Çizim katmanın %70'ine yerleşir, kenarları maskenin dışında kalır; arka plan logonun yeşili (#A5DBA9).
+  const total = Math.round(size * 2.25), inner = Math.round(total * 0.70);
+  const image = await sharp(path.join(root,'ingilizce/app-icons/papi-logo-1024.png')).resize(inner,inner).png().toBuffer();
+  await sharp({create:{width:total,height:total,channels:4,background:'#A5DBA9'}}).composite([{input:image,gravity:'center'}]).png().toFile(path.join(dir,'ic_launcher_foreground.png'));
 }
 // Use the Gradle wrapper delivered by the pinned official Capacitor CLI package.
 await writeFile(path.join(app,'android/gradle/wrapper/gradle-wrapper.jar'), execFileSync('tar', ['-xOzf', path.join(app,'node_modules/@capacitor/cli/assets/android-template.tar.gz'), 'gradle/wrapper/gradle-wrapper.jar']));

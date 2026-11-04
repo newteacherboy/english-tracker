@@ -29,6 +29,11 @@ Deno.serve(async req=>{
  const {data:s,error:sessionError}=await db.from('portal_sessions').select('student_id,role,expires_at,teacher_portal_access_id').eq('token_hash',hash).maybeSingle();
  if(sessionError)return reply({error:'Session verification unavailable'},503);
  if(!s||s.role!=='student'||!s.student_id||s.teacher_portal_access_id||!Number.isFinite(Date.parse(s.expires_at))||Date.parse(s.expires_at)<=Date.now())return reply({error:'Öğrenci oturumu gerekli'},401);
+ if(body.action==='policy'){
+  const {data,error}=await db.rpc('dm_ad_policy',{p_student:s.student_id});
+  if(error)return reply({error:'Ayarlar şu an okunamadı'},503);
+  return reply(data);
+ }
  if(!['create','status','cancel'].includes(body.action)||(body.action==='create'? !['energy','gold'].includes(body.kind)||!uuid(body.requestKey):!uuid(body.id)))return reply({error:'Invalid action'},400);
  const {data,error}=await db.rpc('dm_ad_intent',{p_actor:s.student_id,p_action:body.action,p_kind:body.kind||null,p_id:body.id||null,p_request:body.requestKey||null});
  if(error)return reply({error:error.code==='P0001'?error.message:'İşlem şu an tamamlanamadı'},error.code==='P0001'?409:503);

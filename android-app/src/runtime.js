@@ -8,16 +8,19 @@ import { Haptics } from '@capacitor/haptics';
 import { Network } from '@capacitor/network';
 import { SpeechRecognition } from '@capacitor-community/speech-recognition';
 import { TextToSpeech } from '@capacitor-community/text-to-speech';
+import { PushNotifications } from '@capacitor/push-notifications';
 import { AdMob, RewardAdPluginEvents, InterstitialAdPluginEvents, BannerAdPluginEvents } from '@capacitor-community/admob';
 import { installSpeech } from './speech.js';
 import { createTestAds, teacherMode } from './ads.js';
 import { createPlacements } from './ad-placements.js';
+import { createAdRemote } from './ad-remote.js';
 import { REWARDS, goldOfferEligible, isTeacherSession } from './reward-offers.js';
 import { createBilling } from './billing.js';
 import { createUpsell } from './upsell.js';
+import { createPush } from './push.js';
 
 if (Capacitor.isNativePlatform() && Capacitor.getPlatform() === 'android') {
-  window.dmAndroidShell = { version: 4, ads: production?'production':'test', rewards: REWARDS };
+  window.dmAndroidShell = { version: 5, ads: production?'production':'test', rewards: REWARDS };
   window.dmAndroidIsTeacher = () => { try { return isTeacherSession({ portal: !!window.dmTeacherPortalMode, classroomPlayer: typeof siniftaOynananOgrenci !== 'undefined' && siniftaOynananOgrenci, name: typeof aktifOgrenciAdi === 'undefined' ? '' : aktifOgrenciAdi }); } catch { return true; } };
   window.dmAndroidStudentName = () => { try { return typeof aktifOgrenciAdi === 'undefined' ? '' : String(aktifOgrenciAdi || ''); } catch { return ''; } };
   window.dmAndroidGoldBalance = () => { try { return typeof yo !== 'undefined' && yo ? Number(yo.altin) : NaN; } catch { return NaN; } };
@@ -25,13 +28,17 @@ if (Capacitor.isNativePlatform() && Capacitor.getPlatform() === 'android') {
   installSpeech(window, SpeechRecognition, TextToSpeech);
   const ads = createTestAds(AdMob, window, RewardAdPluginEvents,{production,units:adConfig.units,rewardClient:createRewardClient(window,adConfig.ssvCallbackUrl.replace(/\/ssv$/, ''))});
   window.dmAndroidAds = ads;
-  const placements = createPlacements({admob:AdMob,ads,win:window,interstitialEvents:InterstitialAdPluginEvents,bannerEvents:BannerAdPluginEvents});
+  const adRemote = createAdRemote({ win: window, endpoint: adConfig.ssvCallbackUrl.replace(/\/ssv$/, '') });
+  window.dmAndroidAdSettings = adRemote;
+  const placements = createPlacements({admob:AdMob,ads,win:window,interstitialEvents:InterstitialAdPluginEvents,bannerEvents:BannerAdPluginEvents,remote:adRemote});
   window.dmAndroidPlacements = placements;
   const billing = createBilling({ plugin: registerPlugin('DmBilling'), win: window, endpoint: adConfig.ssvCallbackUrl.replace(/\/ad-rewards\/ssv$/, '/billing') });
   window.dmAndroidBilling = billing;
   window.dmAndroidOpenPlans = source => billing.open(source);
   const upsell = createUpsell({ win: window, billing, isTeacher: () => teacherMode(window), watch: kind => window.dmAndroidWatchReward(kind) });
   window.dmAndroidUpsell = upsell;
+  const push = createPush({ plugin: PushNotifications, win: window, endpoint: adConfig.ssvCallbackUrl.replace(/\/ad-rewards\/ssv$/, '/push'), isTeacher: () => teacherMode(window) });
+  window.dmAndroidPush = push;
   // The portal's API tokens stay in its own WebView. Do not copy browser cookies/tokens.
   document.addEventListener('click', async event => {
     const anchor = event.target.closest?.('a[href]');
@@ -57,12 +64,18 @@ if (Capacitor.isNativePlatform() && Capacitor.getPlatform() === 'android') {
   });
   void App.addListener('appStateChange', ({ isActive }) => {
     placements.setActive(isActive);
+    if (isActive) void adRemote.refresh();
     if (!isActive) window.speechSynthesis?.cancel(); // Do not cancel Android's own recognition permission/dialog activity.
   });
   // Both choices are opt-in. The preview never credits the real student's wallet.
   document.addEventListener('DOMContentLoaded', () => {
     placements.start();
     upsell.start();
+    push.start();
+    // Reklam ayarları: açılışta, girişte ve 15 dakikada bir sunucudan.
+    void adRemote.refresh(true);
+    document.addEventListener('dm:login', () => void adRemote.refresh(true));
+    setInterval(() => { if (!document.hidden) void adRemote.refresh(); }, 60000);
     // Plan sunucudan okunur; cihazdaki abonelik varsa sessizce yeniden doğrulanır.
     const syncPlan = () => billing.refresh().then(() => billing.restore()).then(n => n && attach()).catch(() => {});
     document.addEventListener('dm:login', () => setTimeout(syncPlan, 500));
@@ -96,7 +109,7 @@ if (Capacitor.isNativePlatform() && Capacitor.getPlatform() === 'android') {
       };
       return button;
     }
-    function addButton(card, kind) { upsell.ensureStyle(); card.append(rewardButton(kind, card.matches('.ds-offer,.ds-joker,.ds-pack'))); }
+    function addButton(card, kind) { if (!placements.rewardEnabled()) return; upsell.ensureStyle(); card.append(rewardButton(kind, card.matches('.ds-offer,.ds-joker,.ds-pack'))); }
     function addPlanOffer(card) {
       upsell.ensureStyle();
       const button = document.createElement('button');
@@ -108,7 +121,7 @@ if (Capacitor.isNativePlatform() && Capacitor.getPlatform() === 'android') {
     function attach() {
       const teacher = teacherMode(window), balance = window.dmAndroidGoldBalance();
       for (const card of document.querySelectorAll(selector)) {
-        if (teacher) { card.querySelectorAll('[data-dm-test-ad]').forEach(button => button.remove()); continue; }
+        if (teacher || !placements.rewardEnabled()) { card.querySelectorAll('[data-dm-test-ad]').forEach(button => button.remove()); if (teacher) continue; }
         if (!card.getClientRects().length) continue;
         const purchaseCard = card.matches('.ds-offer,.ds-joker,.ds-pack');
         const unlimited = window.dmAndroidPlan?.limits?.unlimitedEnergy === true, energyAd = card.querySelector('[data-dm-test-ad="energy"]');
@@ -133,6 +146,7 @@ if (Capacitor.isNativePlatform() && Capacitor.getPlatform() === 'android') {
     // Wallet values are lexical portal state; re-check when they change even if no panel is repainted.
     setInterval(() => { if (!document.hidden && !Object.is(lastBalance, window.dmAndroidGoldBalance())) attach(); }, 1000);
     document.addEventListener('dm:login', attach);
+    window.addEventListener('dm:ad-settings', attach);
     attach();
   }, { once: true });
 }

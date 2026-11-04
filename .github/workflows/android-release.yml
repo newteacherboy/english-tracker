@@ -13,11 +13,11 @@ on:
       version_code:
         description: 'Play sürüm kodu (son yüklenenden büyük olmalı)'
         required: true
-        default: '5'
+        default: '8'
       version_name:
         description: 'Sürüm adı'
         required: true
-        default: '1.2.1'
+        default: '1.2.3'
 permissions:
   contents: read
 concurrency:
@@ -45,7 +45,8 @@ jobs:
         with:
           packages: 'platform-tools platforms;android-36 build-tools;36.0.0'
           log-accepted-android-sdk-licenses: false
-      - run: npm ci
+      # Bildirim eklentisi kilit dosyasına CI içinde eklenir (yerelde npm kayıt defterine erişim yok).
+      - run: npm install --no-audit --no-fund
       - run: npm test
       - run: node --test ../supabase/functions/billing/play.test.mjs
       - name: Restore upload key
@@ -64,8 +65,8 @@ jobs:
           ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
           ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
           ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
-          ANDROID_VERSION_CODE: ${{ github.event.inputs.version_code || '5' }}
-          ANDROID_VERSION_NAME: ${{ github.event.inputs.version_name || '1.2.1' }}
+          ANDROID_VERSION_CODE: ${{ github.event.inputs.version_code || '8' }}
+          ANDROID_VERSION_NAME: ${{ github.event.inputs.version_name || '1.2.3' }}
         run: |
           chmod +x android/gradlew
           cd android
@@ -75,7 +76,7 @@ jobs:
         run: rm -f "$RUNNER_TEMP/upload.keystore"
       - uses: actions/upload-artifact@v4
         with:
-          name: DijiMedu-${{ github.event.inputs.version_name || '1.2.1' }}-${{ github.event.inputs.version_code || '5' }}-AAB
+          name: DijiMedu-${{ github.event.inputs.version_name || '1.2.3' }}-${{ github.event.inputs.version_code || '8' }}-AAB
           path: android-app/android/app/build/outputs/bundle/release/*.aab
           if-no-files-found: error
           retention-days: 14
