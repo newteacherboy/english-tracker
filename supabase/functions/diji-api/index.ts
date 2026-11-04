@@ -1,5 +1,6 @@
 import {iosAdRewards} from './ios-ad-rewards.mjs';
 import iosAdItems from './progression-shop.json' with {type:'json'};
+import {isClassCode,classCodeCheck} from './class-code.mjs';
 import {lessonPayload} from './lesson-payload.mjs';
 import {deltaReads} from './delta-reads.mjs';
 import {wordPayload} from './word-payload.mjs';
@@ -155,6 +156,18 @@ function arr(v: any) {
 }
 function encName(v: string) {
   return String(v || "").trim().toLocaleLowerCase("tr");
+}
+// Çoklu sınıf: önce sınıf kodu, yoksa eski öğretmen kodu. Sınıf tablosu yoksa/hata verirse eski akış aynen sürer.
+async function kodlaOgretmen(kod: string, alan = "id,email,full_name,username,active"): Promise<{ ogretmen: any; sinif: any }> {
+  if (!kod) return { ogretmen: null, sinif: null };
+  if (isClassCode(kod)) {
+    const r = await supabase.rpc("dm_class_resolve_code", { p_code: kod });
+    if (!r.error && r.data?.teacherId) {
+      const t = (await supabase.from("teachers").select(alan).eq("id", r.data.teacherId).maybeSingle()).data;
+      if (t) return { ogretmen: t, sinif: r.data };
+    }
+  }
+  return { ogretmen: (await supabase.from("teachers").select(alan).ilike("invite_code", kod).limit(1)).data?.[0] || null, sinif: null };
 }
 // [YAMA 2] ilike içinde % ve _ joker karakterdir; kullanıcı adında kaçırılmalı
 function likeKacir(s: string) {
@@ -1321,12 +1334,14 @@ async function handle(req: Request, proxy: any = null) {
       const { data: ayniOgrt } = await supabase.from("teachers").select("id").ilike("username", likeKacir(username)).limit(1);
       if (ayniOgrt?.length) return json({ ok: false, mesaj: "Bu kullanıcı adı zaten kayıtlı." }, 409);
       const kod = String(body.ogretmenKodu || "").trim().toUpperCase().replace(/[^A-Z0-9]/g, "");
-      const ogretmen = kod ? (await supabase.from("teachers").select("id,email,full_name,username,active").ilike("invite_code", kod).limit(1)).data?.[0] || null : null;
+      const { ogretmen, sinif: kodSinif } = await kodlaOgretmen(kod);
       if (!learnerProfile.version && independentLearner && kod) return json({ok:false,mesaj:"Öğretmen kodunu kullanmak için okul hesabı seç."},400);
       if (kod && (!ogretmen || ogretmen.active === false))
         return json({ ok: false, mesaj: "Öğretmen kodu bulunamadı. Kodu kontrol et veya boş bırak." }, 400);
+      const sinifKontrol = classCodeCheck(kodSinif, sinif);
+      if (!sinifKontrol.ok) return json({ ok: false, mesaj: sinifKontrol.mesaj }, 400);
       const payload = { username, password_hash: await hashPassword((crypto.randomUUID() + crypto.randomUUID()).replace(/-/g, "")),
-        phone: tel, class_no: independentLearner ? null : sinif, branch: independentLearner ? null : sube, email, teacher_id: ogretmen?.id || null };
+        phone: tel, class_no: independentLearner ? null : sinif, branch: independentLearner ? null : (sinifKontrol.branch || sube), email, teacher_id: ogretmen?.id || null };
       // One transaction: failure to bind the Google identity rolls back the new student.
       const { data: createdId, error: createError } = await supabase.rpc("register_google_student", { p_auth_user_id: user.id, p_payload: payload });
       if (createError || !createdId) return json({ ok: false, mesaj: createError?.code === "23505"
@@ -1545,10 +1560,11 @@ async function handle(req: Request, proxy: any = null) {
     }
     if(String(body.ogretmenKodu||'').trim()){
       const code=String(body.ogretmenKodu).trim().toUpperCase();if(!/^[A-Z0-9]{1,10}$/.test(code))return hata("Öğretmen kodunu kontrol et.");
-      const teacher=await supabase.from("teachers").select("id,active").ilike("invite_code",code).limit(1);if(teacher.error)throw teacher.error;
-      const found=teacher.data?.[0];if(!found||found.active===false)return hata("Öğretmen kodu bulunamadı.");
+      const {ogretmen:found,sinif:kodSinif}=await kodlaOgretmen(code,"id,active");if(!found||found.active===false)return hata("Öğretmen kodu bulunamadı.");
       if(s.teacher_id&&s.teacher_id!==found.id)return hata("Mevcut öğretmen bağlantını değiştirmek için destek al.");
+      const sinifKontrol=classCodeCheck(kodSinif,patch.class_no!==undefined?patch.class_no:s.class_no);if(!sinifKontrol.ok)return hata(sinifKontrol.mesaj);
       if(!s.teacher_id){patch.teacher_id=found.id;degisen.push("öğretmen bağlantısı");}
+      if(sinifKontrol.branch&&encName(sinifKontrol.branch)!==encName(patch.branch!==undefined?patch.branch:s.branch)){patch.branch=sinifKontrol.branch;if(!degisen.includes("şube"))degisen.push("şube");}
     }
     let telDegisti = false, mailDegisti = false;
     if (isDemo(a) && ((var_("email") && String(body.email).trim().toLowerCase() !== String(s.email || "").trim().toLowerCase()) || (var_("telefon") && String(body.telefon).replace(/\D/g, "") !== String(s.phone || "").replace(/\D/g, "")))) return hata("Demo hesabında e-posta ve telefon değiştirilemez.");
@@ -2296,9 +2312,11 @@ async function handle(req: Request, proxy: any = null) {
     const s = await hedefOgrenci(a, name); if (!s) return bulunamadi();
     if (s.teacher_id) return json({ ok: false, mesaj: "Zaten bir öğretmene bağlısın." });
     const kod = String(body.kod || "").trim().toUpperCase().replace(/[^A-Z0-9]/g, "");
-    const t = kod ? (await supabase.from("teachers").select("id,full_name,username,email,active").ilike("invite_code", kod).limit(1)).data?.[0] : null;
+    const { ogretmen: t, sinif: kodSinif } = await kodlaOgretmen(kod, "id,full_name,username,email,active");
     if (!t || t.active === false) return json({ ok: false, mesaj: "Öğretmen kodu bulunamadı." });
-    await supabase.from("students").update({ teacher_id: t.id }).eq("id", s.id);
+    const sinifKontrol = classCodeCheck(kodSinif, s.class_no);
+    if (!sinifKontrol.ok) return json({ ok: false, mesaj: sinifKontrol.mesaj });
+    await supabase.from("students").update(sinifKontrol.branch ? { teacher_id: t.id, branch: sinifKontrol.branch } : { teacher_id: t.id }).eq("id", s.id);
     if (/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(String(t.email || "").trim())) await kuyrugaEkle({ to_email: String(t.email).trim(), kind: "kayit", student_id: s.id, subject: `${s.username} artık senin öğrencin`,
       html: mailKabugu("Yeni Öğrenci", `<p><b>${hk(s.username)}</b> öğretmen kodunu girerek sana bağlandı. Artık onun değerlendirmelerini, mesajlarını ve ödevlerini sen yönetiyorsun.</p>`) });
     return json({ ok: true, ogretmen: t.full_name || t.username });
@@ -2328,14 +2346,17 @@ async function handle(req: Request, proxy: any = null) {
     /* [v4.0] İsteğe bağlı öğretmen kodu: girilirse o öğretmene bağlanır, boşsa bağımsız */
     const kod = String(body.ogretmenKodu || "").trim().toUpperCase().replace(/[^A-Z0-9]/g, "");
     let ogretmen: any = null;
+    const kodBul = kod ? await kodlaOgretmen(kod) : { ogretmen: null, sinif: null };
     if (kod) {
-      ogretmen = (await supabase.from("teachers").select("id,email,full_name,username,active").ilike("invite_code", kod).limit(1)).data?.[0] || null;
+      ogretmen = kodBul.ogretmen;
       if (!ogretmen || ogretmen.active === false) return json({ status: "error", message: "Öğretmen kodu bulunamadı. Kodu kontrol et ya da boş bırakıp bağımsız kayıt ol." });
     }
+    const sinifKontrol = classCodeCheck(kodBul.sinif, selectedClass);
+    if (!sinifKontrol.ok) return json({ status: "error", message: sinifKontrol.mesaj });
     if (body.kvkkOnay!==true || !body.kvkkOnayTarihi || (!learnerProfile.version&&learnerProfile.purpose!=="independent"&&(!Number.isInteger(Number(body.sinif)) || Number(body.sinif)<1 || Number(body.sinif)>8 || !String(body.sube||"").trim()))) return json({status:"error",message:"Sınıf, şube ve veli bilgilendirme beyanı gerekli."},400);
     const payload = {
       username, full_name: adSoyad, school: temizMetin(body.okul || "",120).replace(/\s+/g,' ').trim() || null, password_hash: await hashPassword(password), phone: tel || null,
-      class_no: selectedClass, branch: temizMetin(body.sube, 10) || null,
+      class_no: selectedClass, branch: sinifKontrol.branch || temizMetin(body.sube, 10) || null,
       email: String(body.email || "").trim().slice(0, 120), status: "approved", email_verification_required:true, email_verified_at:null,
       kvkk_approved_at: body.kvkkOnayTarihi || new Date().toISOString()
     };
