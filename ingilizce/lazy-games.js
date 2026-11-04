@@ -50,7 +50,7 @@
   const blocksProxy=async ()=>{
     const owner=typeof aktifOgrenciAdi==='undefined'?'':aktifOgrenciAdi;
     try{
-      await (blocksLoading??=script('premium-word-blocks.js?v=1').catch(error=>{blocksLoading=null;throw error;}));
+      await (blocksLoading??=script('premium-word-blocks.js?v=2').catch(error=>{blocksLoading=null;throw error;}));
       if(owner===(typeof aktifOgrenciAdi==='undefined'?'':aktifOgrenciAdi)&&window.premiumKelimeBloklariAc!==blocksProxy)await window.premiumKelimeBloklariAc();
     }catch(error){window.yoToast?.(error.message);}
   };
