@@ -59,7 +59,7 @@
   const runnersProxy=async ()=>{
     const owner=typeof aktifOgrenciAdi==='undefined'?'':aktifOgrenciAdi;
     try{
-      await (runnersLoading??=script('runners-papi.js?v=1').catch(error=>{runnersLoading=null;throw error;}));
+      await (runnersLoading??=script('runners-papi.js?v=2').catch(error=>{runnersLoading=null;throw error;}));
       if(owner===(typeof aktifOgrenciAdi==='undefined'?'':aktifOgrenciAdi)&&window.runnersPapiAc!==runnersProxy)await window.runnersPapiAc();
     }catch{window.yoToast?.('Runners Papi yüklenemedi.');}
   };
