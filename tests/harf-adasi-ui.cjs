@@ -20,7 +20,8 @@ const {chromium}=require('playwright');
  await page.locator('.ia-screen').waitFor();
  assert.equal(await page.locator('.ia-slot').count(),3);
  assert.equal(await page.locator('[data-ia-letter]').count(),12);
- assert.equal(await page.locator('.ia-booster').count(),3);
+ // 28 Eki 2026 (818d1f4): Sesli İpucu jokeri kaldırıldı; seslendirme yalnız Kulak Dedektifi'nde.
+ assert.equal(await page.locator('.ia-booster').count(),2);assert.equal(await page.locator('[data-ia-boost="speak"]').count(),0);
  assert.equal(await page.locator('[data-ia-boost-count]').textContent(),'🃏 Kalan joker: 3/3');
  assert(await page.locator('[data-ia-skip]').isDisabled());
  if(width===390)await page.screenshot({path:'/tmp/harf-adasi-initial.png',fullPage:false});

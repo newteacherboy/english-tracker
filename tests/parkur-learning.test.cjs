@@ -42,7 +42,9 @@ test('stop chunks preserve selected grade/unit and cover its complete word bank 
  const words=Array.from({length:13},(_,i)=>({sinif:1,unite:1,en:'word'+i,tr:'kelime'+i}));
  const ctx={window:{masterKelimeHavuzu:[...words,{sinif:1,unite:2,en:'other',tr:'başka'},{sinif:2,unite:1,en:'second',tr:'ikinci'}]},KAPI_SINIF:[[1,2],[3,4],[5,6],[7,8]],VARSAYILAN_UNITE:{1:8,2:8,3:10,4:10,5:8,6:8,7:8,8:8},EN:k=>k.en,TR:k=>k.tr};
  vm.runInNewContext(script.slice(a,b)+';duraklariKur();globalThis.stops=DURAK;',ctx);
- const stops=ctx.stops.flat().filter(d=>d.sinif===1&&d.unite===1);
+ const all=ctx.stops.flat().filter(d=>d.sinif===1&&d.unite===1),stops=all.filter(d=>!d.karisik),mixed=all.filter(d=>d.karisik);
+ // 1, 3, 7 ve 8. sınıflarda normal durakların ardından karışık tekrar durakları gelir (20 Eki 2026).
+ assert.equal(mixed.length,stops.length);assert(mixed.every(d=>d.kelimeler.length<=4&&new Set(d.kelimeler.map(k=>k.en.toLowerCase())).size===d.kelimeler.length&&d.legacyNo===null));
  assert.equal(stops.length,4);assert.deepEqual(Array.from(stops,s=>s.kelimeler.length),[4,4,4,1]);
  assert.deepEqual(new Set(stops.flatMap(d=>d.kelimeler)),new Set(words));
  assert.equal(stops[0].parcaToplam,4);assert.equal(stops[0].legacyNo,210101);assert.equal(stops[2].legacyNo,210101);assert.equal(stops[3].legacyNo,210102);assert.equal(stops[0].no,210151);assert.notEqual(stops[0].no,stops[1].no);
@@ -53,7 +55,7 @@ test('four words stay on one level, while five, eight and twelve words unlock se
  for(const count of [4,5,8,12]){
   const words=Array.from({length:count},(_,i)=>({sinif:1,unite:1,en:'word'+i,tr:'kelime'+i}));
   const ctx={window:{masterKelimeHavuzu:words},KAPI_SINIF:[[1,2],[3,4],[5,6],[7,8]],VARSAYILAN_UNITE:{1:8,2:8,3:10,4:10,5:8,6:8,7:8,8:8},EN:k=>k.en,TR:k=>k.tr};
-  vm.runInNewContext(script.slice(a,b)+';duraklariKur();globalThis.stops=DURAK[0].filter(d=>d.sinif===1&&d.unite===1);',ctx);
+  vm.runInNewContext(script.slice(a,b)+';duraklariKur();globalThis.stops=DURAK[0].filter(d=>d.sinif===1&&d.unite===1&&!d.karisik);',ctx);
   assert.equal(ctx.stops.length,Math.ceil(count/4));assert(ctx.stops.every(d=>d.kelimeler.length<=4));
   assert.deepEqual(new Set(ctx.stops.flatMap(d=>d.kelimeler)),new Set(words));
  }

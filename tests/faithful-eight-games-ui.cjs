@@ -34,6 +34,8 @@ const fs=require('node:fs'),path=require('node:path'),assert=require('node:asser
    await page.evaluate(([r,p])=>{
     document.querySelectorAll('.game-modal-overlay').forEach(x=>x.style.display='none');
     const root=document.getElementById(r);document.body.appendChild(root);
+    // Oturumsuz ziyaretçide ilk tanışma ekranı (first-discovery) sayfayı inert yapar; zorla gösterilen oyun etkileşimli kalmalı.
+    root.inert=false;root.removeAttribute('aria-hidden');
     root.style.setProperty('display','flex','important');root.style.setProperty('z-index','2147483000','important');
     for(const ch of root.querySelectorAll('[id$="GirisEkrani"],[id$="BitisEkrani"],[id$="OyunEkrani"]'))ch.style.display='none';
     document.getElementById(p).style.display='block';

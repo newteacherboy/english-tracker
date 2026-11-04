@@ -19,4 +19,5 @@ test('checks bypass cache periodically, updates do not force reload',async()=>{
 });
 test('first install does not display update banner',()=>{const f=fixture(false);f.events.controllerchange();assert.equal(f.nodes.length,0);assert.equal(f.reloads,0);});
 
-test('update notice can be dismissed without a reload or reappearing in the same tab',()=>{const f=fixture();f.events.controllerchange();const box=f.nodes[0];assert.equal(box.children[2].textContent,'×');box.children[2].click();assert(box.removed);assert.equal(f.reloads,0);f.events.controllerchange();assert.equal(f.nodes.length,1);});
+// 26 Eki 2026 (79463fc): sürüm bildirimi yenilenene kadar kalır; kapatma düğmesi yoktur.
+test('update notice stays until refresh: no dismiss button, no duplicate, no forced reload',()=>{const f=fixture();f.events.controllerchange();const box=f.nodes[0];assert.equal(box.children.length,2);assert.equal(box.children[1].textContent,'Yenile');assert(!box.children.some(n=>n.textContent==='×'));f.events.controllerchange();assert.equal(f.nodes.length,1);assert(!box.removed);assert.equal(f.reloads,0);});
