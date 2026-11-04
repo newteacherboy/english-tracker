@@ -1,4 +1,4 @@
-/* Premium Oyunlar · İngilizce Kelime Eşleştirme (v2, 3 Kas 2026).
+/* Premium Oyunlar · Candy Papiş (v2, 3 Kas 2026).
    - Şekerlerin üstünde Word Bank kelimeleri yazar; eşleşince Türkçesi belirir.
    - 100 bölüm / 5 dünya. Her bölüm 5 enerji. Premium olmayanların 3 ücretsiz denemesi var.
    - Hak, enerji, ödül, bölüm ilerlemesi ve güçlendiriciler sunucuda (premium-games) tutulur.
@@ -91,11 +91,11 @@ let G=null; // aktif oyun
 const $=s=>root?.querySelector(s);
 function shell(){
  origin=document.activeElement;parent=window.dmViewHistory?.capture?.();
- root=document.createElement('section');root.id='pwmRoot';root.className='pwm';root.setAttribute('role','dialog');root.setAttribute('aria-modal','true');root.setAttribute('aria-label','İngilizce Kelime Eşleştirme');
+ root=document.createElement('section');root.id='pwmRoot';root.className='pwm';root.setAttribute('role','dialog');root.setAttribute('aria-modal','true');root.setAttribute('aria-label','Candy Papiş');
  root.innerHTML=`<div class="pwm-bg" aria-hidden="true"></div>
  <header class="pwm-top">
   <button type="button" class="pwm-round" data-back aria-label="Oyunlardan çık"><svg viewBox="0 0 24 24"><path d="M15 5 8 12l7 7"/></svg></button>
-  <div class="pwm-title"><img class="pwm-title-book" src="${A}icon-books.webp" alt=""><div><b>İngilizce</b><strong>Kelime Eşleştirme</strong></div><small>✦ Kelimeleri Eşleştir, Öğren, Puan Kazan! ✦</small></div>
+  <div class="pwm-title"><img class="pwm-title-book" src="${A}icon-books.webp" alt=""><div><b>Premium Oyun</b><strong>Candy Papiş</strong></div><small>✦ Kelimeleri Eşleştir, Öğren, Puan Kazan! ✦</small></div>
   <div class="pwm-top-right"><span class="pwm-energy" title="Enerji"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg><b data-energy>–</b></span><button type="button" class="pwm-round" data-sound aria-label="Sesi aç veya kapat"></button></div>
  </header>
  <img class="pwm-witch" src="${A}char-witch-idle.webp" alt="" aria-hidden="true">
