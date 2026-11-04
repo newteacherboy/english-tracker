@@ -60,7 +60,7 @@
     const classes = d.classes.map(c => `<div class="dmc-card" data-class="${c.id}">
  <div class="dmc-head"><span class="dmc-badge">${esc(label(c))}</span><span class="dmc-meta"><b>${esc(c.name || label(c) + ' sınıfı')}</b><small>${c.students.length} öğrenci</small><br>
  <span class="dmc-code" data-copy="${esc(c.code)}" title="Kopyala">${esc(c.code)} <span aria-hidden="true">📋</span></span></span></div>
- <div class="dmc-acts"><button class="dmc-b" data-toggle="${c.id}">${openId === c.id ? 'Öğrencileri gizle' : 'Öğrenciler'}</button><button class="dmc-b" data-rename="${c.id}">Adlandır</button><button class="dmc-b" data-newcode="${c.id}">Yeni kod</button><button class="dmc-b red" data-archive="${c.id}">Arşivle</button></div>
+ <div class="dmc-acts"><button class="dmc-b" data-report="${c.id}">📈 Rapor</button><button class="dmc-b" data-toggle="${c.id}">${openId === c.id ? 'Öğrencileri gizle' : 'Öğrenciler'}</button><button class="dmc-b" data-rename="${c.id}">Adlandır</button><button class="dmc-b" data-newcode="${c.id}">Yeni kod</button><button class="dmc-b red" data-archive="${c.id}">Arşivle</button></div>
  ${openId === c.id ? `<ul class="dmc-list">${c.students.length ? c.students.map(s => `<li><span>${esc(s.username)}${s.fullName ? ` <small style="color:#7aa3a8">· ${esc(s.fullName)}</small>` : ''}</span>${moveSelect(s, c.id)}</li>`).join('') : '<li class="dmc-empty">Bu sınıfta henüz öğrenci yok. Kodu öğrencilerinle paylaş.</li>'}</ul>` : ''}
 </div>`).join('') || '<p class="dmc-empty">Henüz sınıfın yok. Aşağıdan ilk sınıfını oluştur.</p>';
     const un = d.unassigned || [];
@@ -103,6 +103,7 @@ ${unassigned}
     const t = e.target.closest('button,[data-copy]'); if (!t && e.target !== veil) return;
     if (e.target === veil || t.matches('[data-close]')) return close();
     if (t.dataset.copy) return render((await copy(t.dataset.copy)) ? `${t.dataset.copy} kopyalandı. Öğrencilerinle paylaşabilirsin.` : `Kod: ${t.dataset.copy}`);
+    if (t.dataset.report) { const id = t.dataset.report; close(); return window.dmTeacherReportsOpen?.(id); }
     if (t.dataset.toggle) { openId = openId === t.dataset.toggle ? null : t.dataset.toggle; return render(); }
     if (t.matches('[data-plans]')) { close(); return window.dmAndroidBilling?.open?.('ogretmen-siniflar'); }
     if (t.dataset.newcode) { if (!twoTap(t, 'Eski kod geçersiz olur. Tekrar dokun')) return; return act({ action: 'update', classId: t.dataset.newcode, newCode: true }, r => `Yeni kod: ${r.result?.code}`, t); }
