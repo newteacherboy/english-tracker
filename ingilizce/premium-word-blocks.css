@@ -86,3 +86,9 @@
 .dm-blocks-overlay button:first-of-type { background: linear-gradient(#ffdf84,#f3ac36); }
 
 .dm-blocks-world header h2 img { position: absolute; left: 1px; bottom: 0; width: 36px; height: 100%; object-fit: contain; }
+.dm-blocks-tools { display: grid; gap: 5px; justify-items: center; }
+.dm-blocks-world header .dm-blocks-tools button { min-width: 32px; min-height: 26px; }
+.dm-blocks-stack i {
+  display: grid; place-items: center; padding: 2px 3px; color: #201a11; text-align: center;
+  overflow-wrap: anywhere; overflow: hidden; font: 750 clamp(10px,3vw,14px)/1.05 system-ui,sans-serif;
+}
