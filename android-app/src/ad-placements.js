@@ -1,9 +1,10 @@
 import { teacherMode } from './ads.js';
 import { createAdPolicy, SOLO_GAMES } from './ad-policy.js';
 
-// All IDs are Google's test units. Real units remain disabled until account setup is complete.
+// Google'ın test birimleri; canlı sürümde ads.units (admob.config.json) kullanılır.
 const IDS = { banner:'ca-app-pub-3940256099942544/6300978111', interstitial:'ca-app-pub-3940256099942544/1033173712' };
-export function createPlacements({ admob, ads, win, interstitialEvents, bannerEvents }) {
+export function createPlacements({ admob, ads, win, interstitialEvents, bannerEvents, remote }) {
+  const settings=()=>remote?.get?.()||{enabled:true,banner:true,bannerTabs:['games','store','lessons']};
   const ids=ads.units||IDS, isTesting=ads.mode!=='production';
   let active=true, ready=false, preparing=false, policy, owner='', busy=false, preloadRetryAt=0, bannerRetryAt=0;
   let banner=false, bannerWanted=false, bannerEpoch=0, bannerQueue=Promise.resolve(), initialized=false;
@@ -15,7 +16,7 @@ export function createPlacements({ admob, ads, win, interstitialEvents, bannerEv
   function allowed() { return active && !win.document.hidden && !!identity() && !!win.localStorage.getItem('ing_token') && !teacherMode(win) && win.dmAndroidPlan?.ads !== false; }
   function currentPolicy() {
     const next=identity();
-    if (!policy || next!==owner) { owner=next;policy=createAdPolicy({storage:win.localStorage,owner:next||'preview'});ready=false;pending=null; }
+    if (!policy || next!==owner) { owner=next;policy=createAdPolicy({storage:win.localStorage,owner:next||'preview',settings,accountAgeHours:()=>remote?.accountAgeHours?.()??null});ready=false;pending=null; }
     return policy;
   }
   function reserved(height) {
@@ -48,7 +49,7 @@ export function createPlacements({ admob, ads, win, interstitialEvents, bannerEv
   }
   async function preload() {
     currentPolicy();
-    if(!allowed() || ready || preparing || busy || ads.busy || Date.now()<preloadRetryAt)return;
+    if(!allowed() || ready || preparing || busy || ads.busy || Date.now()<preloadRetryAt || !policy.interstitialPossible())return;
     preparing=true;const at=owner;
     try { await ads.ensureInitialized();await admob.prepareInterstitial({adId:ids.interstitial,isTesting,npa:true});if(at===identity()&&allowed())ready=true; }
     catch { ready=false;preloadRetryAt=Date.now()+30000; }
@@ -76,8 +77,11 @@ export function createPlacements({ admob, ads, win, interstitialEvents, bannerEv
   function sync() {
     currentPolicy();
     const doc=win.document;
-    // Banner: Mağaza, Oyunlar ve Ders Çalış'ta açılan konu (anlatım, örnekler, test) ekranları.
-    const destination=[...doc.querySelectorAll('#tab-magaza.active,#tab-aktiviteler.active,#tab-derscalis.active #dcScreenDetail.active')].some(visible);
+    // Banner: sunucudaki ayara göre Mağaza, Oyunlar ve Ders Çalış konu anlatımı/örnekler. Test ekranında asla yok.
+    const c=settings(), tabs=c.bannerTabs||[];
+    const selectors=[tabs.includes('store')&&'#tab-magaza.active',tabs.includes('games')&&'#tab-aktiviteler.active',tabs.includes('lessons')&&'#tab-derscalis.active #dcScreenDetail.active'].filter(Boolean);
+    const inTest=doc.querySelectorAll('#tab-derscalis.active #dcScreenDetail.active #dcTab-test.active').length>0;
+    const destination=c.enabled!==false&&c.banner!==false&&selectors.length>0&&!inTest&&[...doc.querySelectorAll(selectors.join(','))].some(visible);
     const obstruction=doc.body.classList.contains('dm-play-session') || [...doc.querySelectorAll('[role="dialog"],.dm-session-surface,#yoModal.acik')].some(visible);
     const want=destination&&!obstruction&&allowed()&&!busy&&!ads.busy;
     if(want!==bannerWanted || (want&&!banner&&Date.now()>=bannerRetryAt))void setBanner(want);
@@ -91,7 +95,7 @@ export function createPlacements({ admob, ads, win, interstitialEvents, bannerEv
         const p=currentPolicy();
         if(allowed()&&data&&SOLO_GAMES.has(data.oyunKey)&&!data.stopNo&&!data.parkur&&!data.intro) {
           let id=data.runId||seenObjects.get(data);if(!id){id='result-'+Date.now()+'-'+(++sequence);seenObjects.set(data,id);}
-          if(p.complete({id:String(id),game:data.oyunKey,answered:Number(data.dogru||0)+Number(data.yanlis||0)}))pending={owner:identity(),id:String(id)};
+          if(p.complete({id:String(id),game:data.oyunKey,answered:Number(data.dogru||0)+Number(data.yanlis||0),seconds:Number(data.sureSaniye)}))pending={owner:identity(),id:String(id)};
           void preload();
         }
         return returned;
@@ -120,6 +124,8 @@ export function createPlacements({ admob, ads, win, interstitialEvents, bannerEv
     new win.MutationObserver(()=>{if(!queued){queued=true;win.requestAnimationFrame(()=>{queued=false;installResults();sync();});}}).observe(win.document.body,{subtree:true,childList:true,attributes:true,attributeFilter:['class','hidden','style','aria-hidden','inert']});
     win.addEventListener('resize',sync);win.document.addEventListener('visibilitychange',sync);
     win.document.addEventListener('dm:login',()=>{pending=null;ready=false;currentPolicy();sync();});
+    // Yönetici reklamları kapatınca banner hemen kalkar, geçiş reklamı bekletilmez.
+    win.addEventListener('dm:ad-settings',()=>{const c=settings();if(c.enabled===false){pending=null;}sync();});
     // Keep banner visible during ordinary list taps; sync() removes it on navigation or overlays.
     installResults();sync();
   }
@@ -128,6 +134,7 @@ export function createPlacements({ admob, ads, win, interstitialEvents, bannerEv
     setActive(value) { active=!!value;if(!active)void setBanner(false);else sync(); },
     rewardAllowed:kind=>currentPolicy().rewardAllowed(kind),
     rewardClosed(kind,completed){currentPolicy().rewardClosed(kind,completed);sync();},
-    diagnostics:()=>({test:isTesting,banner,interstitialReady:ready,busy,gamesSinceAd:currentPolicy().snapshot().games})
+    rewardEnabled:()=>settings().enabled!==false&&settings().rewarded!==false,
+    diagnostics:()=>({test:isTesting,banner,interstitialReady:ready,busy,gamesSinceAd:currentPolicy().snapshot().games,interstitialsToday:currentPolicy().snapshot().interstitials,settings:settings()})
   };
 }

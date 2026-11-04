@@ -162,7 +162,7 @@ export function createUpsell({ win, billing, watch, isTeacher }) {
   function tick() {
     const p = plan(), e = energy();
     profileCard(); shopGift();
-    if (!busy() && Number.isFinite(lastEnergy) && current().canDrop({ energy: e, previous: lastEnergy, plan: p })) energyDrop();
+    if (!busy() && win.dmAndroidPlacements?.rewardAllowed('energy') !== false && Number.isFinite(lastEnergy) && current().canDrop({ energy: e, previous: lastEnergy, plan: p })) energyDrop();
     if (Number.isFinite(e)) lastEnergy = e;
   }
   // Sonuç ekranı kapandıktan sonra: önce olası geçiş reklamının bitmesi beklenir.
@@ -170,7 +170,8 @@ export function createUpsell({ win, billing, watch, isTeacher }) {
     setTimeout(() => {
       if (busy()) return;
       const p = plan(), e = energy(), pol = current();
-      if (pol.canSheet({ energy: e, plan: p })) energySheet();
+      // Video hakkı yoksa (günlük sınır ya da reklamlar kapalı) enerji panosu açılmaz.
+      if (win.dmAndroidPlacements?.rewardAllowed('energy') !== false && pol.canSheet({ energy: e, plan: p })) energySheet();
       else if (Number.isFinite(e) && e >= 5 && pol.canSuccess({ plan: p })) successCard();
     }, 1500);
   }

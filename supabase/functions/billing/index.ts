@@ -5,6 +5,7 @@
 // Gizli değer: GOOGLE_PLAY_SERVICE_ACCOUNT (JSON). İsteğe bağlı: PLAY_RTDN_SECRET.
 import { createClient } from 'npm:@supabase/supabase-js@2.118.0';
 import { PACKAGE_NAME, PRODUCTS, productsFor, accountRef, tokenKey, interpret, serviceJwt, parseRtdn } from './play.mjs';
+import { AD_DEFAULTS, normalizeAdSettings } from './ad-settings.mjs';
 
 const key = JSON.parse(Deno.env.get('SUPABASE_SECRET_KEYS') || '{}').default || Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
 const db = createClient(Deno.env.get('SUPABASE_URL')!, key!, { auth: { persistSession: false, autoRefreshToken: false } });
@@ -120,6 +121,17 @@ async function admin(acct: { role: string; id: string }, body: any): Promise<[un
     const { error } = await db.from('dm_gift_settings').upsert(row, { onConflict: 'key' }); if (error) return fail(error);
     const { data: list } = await db.rpc('dm_gift_list');
     return [{ ok: true, ...(list || {}) }, 200];
+  }
+  // Android reklam ayarları ve tek tuşla kapatma anahtarı (uygulama açılışta okur).
+  if (body.action === 'adminAdsGet' || body.action === 'adminAdsSet') {
+    if (body.action === 'adminAdsSet') {
+      const settings = normalizeAdSettings(body.settings);
+      const { error } = await db.from('dm_ad_settings').upsert({ key: 'android', settings, updated_at: new Date().toISOString(), updated_by: t.username }, { onConflict: 'key' });
+      if (error) return fail(error);
+    }
+    const { data, error } = await db.from('dm_ad_settings').select('settings,updated_at').eq('key', 'android').maybeSingle();
+    if (error) return fail(error);
+    return [{ ok: true, settings: normalizeAdSettings(data?.settings), defaults: AD_DEFAULTS, updatedAt: data?.updated_at || null }, 200];
   }
   return [{ ok: false, mesaj: 'Geçersiz işlem.' }, 400];
 }
