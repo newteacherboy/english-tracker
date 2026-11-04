@@ -10258,7 +10258,10 @@ function ozellikSecDoldur() {
 
                     function dersCalisTamEkranAc() {
             dcTumTamEkranlariKapat();
-            document.getElementById('tab-derscalis').classList.add('active');
+            const dcPanel = document.getElementById('tab-derscalis');
+            // Kapatırken bırakılmış satır içi gizleme yeniden açılışta boş ekran bırakıyordu (4 Kas 2026).
+            dcPanel.style.removeProperty('display');
+            dcPanel.classList.add('active');
             dersCalisBaslat();
             dcBottomNavSenkronize();
         }
@@ -10268,7 +10271,7 @@ function ozellikSecDoldur() {
     let dersCalisPanel = document.getElementById('tab-derscalis');
     if (dersCalisPanel) {
         dersCalisPanel.classList.remove('active');
-        dersCalisPanel.style.display = 'none'; // Kesin gizle
+        dersCalisPanel.style.removeProperty('display'); // active sınıfı kalkınca gizlenir; satır içi gizleme yeniden açılışı bozuyordu
     }
 
     // Test içeriğini ve aramayı tamamen temizle
@@ -26685,7 +26688,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <script defer src="email-guide.js?v=20261018-compact-2"></script>
 <link rel="stylesheet" href="teacher-oral.css?v=20261016-flow-2">
 <script defer src="teacher-oral.js?v=20261016-flow-2"></script>
-<script src="teacher-workspace.js?v=20261025-tools-2"></script>
+<script src="teacher-workspace.js?v=20261104-siniflar-1"></script>
 <link rel="stylesheet" href="member-polish.css?v=20261015-live-clock-1">
 <script src="active-time.js?v=20261029-kota-1"></script>
 <script src="member-polish.js?v=20261025-soft-teacher-1"></script>
