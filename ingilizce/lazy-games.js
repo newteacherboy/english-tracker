@@ -55,6 +55,15 @@
     }catch(error){window.yoToast?.(error.message);}
   };
   window.premiumKelimeBloklariAc=blocksProxy;
+  let papizzleLoading;
+  const papizzleProxy=async ()=>{
+    const owner=typeof aktifOgrenciAdi==='undefined'?'':aktifOgrenciAdi;
+    try{
+      await (papizzleLoading??=script('papizzle.js?v=1').catch(error=>{papizzleLoading=null;throw error;}));
+      if(owner===(typeof aktifOgrenciAdi==='undefined'?'':aktifOgrenciAdi)&&window.papizzleAc!==papizzleProxy)await window.papizzleAc();
+    }catch(error){window.yoToast?.(error.message);}
+  };
+  window.papizzleAc=papizzleProxy;
   window.canavarAvcisiAc=opener(()=>window.canavarAvcisiAc);
   window.dengesizKuleAc=opener(()=>window.dengesizKuleAc);
   window.harfBahcesiAc=opener(()=>window.harfBahcesiAc);
