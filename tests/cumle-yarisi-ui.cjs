@@ -45,9 +45,11 @@ const words=Array.from({length:30},(_,i)=>({ingilizce:'item'+i,turkce:'anlam '+i
    assert(fit.scroll<=2&&fit.bottom<=height+1,'All choices must fit '+JSON.stringify({width,height,fit}));
    const board=await page.locator('.dm-sr-shell').boundingBox();
    assert(board.x>=-1&&board.x+board.width<=width+1,'Board overflows horizontal viewport '+width);
-   const answer=words.find(w=>left.includes('“'+w.turkce+'”'));
-   assert(answer,'Question must be from selected class and units');
-   const correct=answer.ingilizce;
+   // Soru Türkçe ifadeyi (cevap İngilizce) ya da İngilizce ifadeyi (cevap Türkçe) doğrudan sorar (4 Kas 2026).
+   const pick=t=>{const tr=words.find(w=>t.includes('“'+w.turkce+'”'));if(tr)return {w:tr,ans:tr.ingilizce};const en=words.find(w=>t.includes('“'+w.ingilizce+'”'));return en?{w:en,ans:en.turkce}:null;};
+   const leftQ=pick(left);
+   assert(leftQ,'Question must be from selected class and units');
+   const correct=leftQ.ans;
    const leftButtons=page.locator('[data-side="0"] [data-answer]'),rightButtons=page.locator('[data-side="1"] [data-answer]');
    const correctIndex=await leftButtons.evaluateAll((els,answer)=>els.findIndex(el=>el.textContent===answer),correct);
    assert(correctIndex>=0);await leftButtons.nth(correctIndex).click();
@@ -55,8 +57,9 @@ const words=Array.from({length:30},(_,i)=>({ingilizce:'item'+i,turkce:'anlam '+i
    assert(Number((await page.locator('[data-side="0"] [data-score]').innerText()).split(' ')[0])>=100);
    assert.equal(await page.locator('[data-car="0"]').evaluate(e=>parseFloat(e.style.left)>0),true,JSON.stringify(await page.locator('.dm-sr-track-lanes,.dm-sr-lane,.dm-sr-track-line,.dm-sr-car').evaluateAll(es=>es.map(e=>({cl:e.className,w:e.clientWidth,h:e.clientHeight,rect:e.getBoundingClientRect().toJSON(),css:getComputedStyle(e).cssText})))));
    const rightPrompt=right;
-   const other=words.find(w=>rightPrompt.includes('“'+w.turkce+'”'));
-   const correctRight=other.ingilizce;
+   const otherQ=pick(rightPrompt);
+   assert(otherQ,'Question must be from selected class and units');
+   const correctRight=otherQ.ans;
    const wrongIndex=await rightButtons.evaluateAll((els,answer)=>els.findIndex(el=>el.textContent!==answer),correctRight);
    assert(wrongIndex>=0);await rightButtons.nth(wrongIndex).click();
    assert.match(await page.locator('[data-side="1"] [data-feedback]').innerText(),/−40 puan/);

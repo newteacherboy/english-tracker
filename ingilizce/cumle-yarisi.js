@@ -43,11 +43,13 @@ function questionPool(items){
  if(english.length<3||turkish.length<3)return [];
  var out=[];
  function make(w,kind){
-  var answer=w.en,source=words.map(function(x){return x.en;});
-  var wrongs=shuffle([...new Set(source.filter(function(x){return x.toLocaleLowerCase('en')!==answer.toLocaleLowerCase('en');}))]).slice(0,2);
+  // Doğrudan soru (4 Kas 2026): 0 = Türkçe ifade → İngilizcesi, 1 = İngilizce ifade → Türkçesi.
+  // Eski "I learned that “…” means ___ in English." kalıbı sınıfta kafa karıştırıyordu.
+  var en=kind===1,loc=en?'tr':'en',answer=en?w.tr:w.en,source=words.map(function(x){return en?x.tr:x.en;});
+  var wrongs=shuffle([...new Set(source.filter(function(x){return x.toLocaleLowerCase(loc)!==answer.toLocaleLowerCase(loc);}))]).slice(0,2);
   if(wrongs.length<2)return;
-  var prompt=kind===0?'In English, “'+w.tr+'” is ___.':'I learned that “'+w.tr+'” means ___ in English.';
-  var tip=kind===0?'Doğru İngilizce ifadeyi seç':'İngilizce cümlede boşluğu tamamla';
+  var prompt='“'+(en?w.en:w.tr)+'”';
+  var tip=en?'Türkçesi hangisi?':'İngilizcesi hangisi?';
   out.push({id:w.cl+'-'+w.unit+'-'+w.en+'-'+kind,prompt:prompt,tip:tip,answer:answer,choices:shuffle([answer].concat(wrongs)),kind:kind});
  }
  function contextual(w){

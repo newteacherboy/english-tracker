@@ -18,7 +18,7 @@
     return j;
   }
 
-  const CSS = `.dmc-veil{position:fixed;inset:0;z-index:2147483000;background:rgba(13,49,55,.45);display:flex;align-items:flex-end;justify-content:center}
+  const CSS = `.dmc-veil{position:fixed;inset:0;z-index:2147483643;background:rgba(13,49,55,.45);display:flex;align-items:flex-end;justify-content:center}
 .dmc-sheet{width:min(100%,640px);max-height:94vh;overflow:auto;background:#fffefa;border:1px solid #b7ece4;border-bottom:0;border-radius:32px 32px 0 0;color:#114952;font:600 15px/1.45 system-ui,-apple-system,sans-serif;padding-bottom:env(safe-area-inset-bottom,0px);animation:dmcUp .34s cubic-bezier(.2,.7,.25,1)}
 .dmc-hero{position:relative;padding:22px 20px 18px;background:radial-gradient(ellipse at 4% 85%,#fffdf2 0 16%,transparent 17%),radial-gradient(ellipse at 100% 95%,#e4fff1 0 20%,transparent 21%),linear-gradient(125deg,#c7f8ee,#87dbf8 60%,#c2f2f0);border-radius:0 0 28px 28px}
 .dmc-hero h2{margin:0;font:800 22px/1.2 system-ui}.dmc-hero p{margin:4px 0 0;color:#2d6b74;font:600 13px/1.4 system-ui}

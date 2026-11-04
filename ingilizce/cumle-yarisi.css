@@ -361,3 +361,8 @@ body.dm-sr-active{overflow:hidden!important}
  .dm-sr-overlay .dm-sr-setup-footer .dm-sr-primary{min-height:42px;font-size:18px}
  .dm-sr-overlay .dm-sr-setup-footer .dm-sr-status{font-size:10px}
 }
+
+/* Doğrudan soru (4 Kas 2026): "İngilizcesi hangisi?" / "Türkçesi hangisi?" sorunun kendisi; her ekranda görünür ve okunaklı. */
+.dm-sr-overlay .dm-sr-play .dm-sr-question small,.dm-sr-overlay .dm-sr-question small{display:inline-block!important;font:900 clamp(13px,1.5vw,20px)/1.2 'Baloo 2',Nunito,system-ui,sans-serif!important;color:#0b5f87!important;background:#e3f4ff;border-radius:999px;padding:3px 14px;margin:0 auto 8px}
+.dm-sr-overlay .dm-sr-play .dm-sr-question p{font-size:clamp(20px,2.6vw,38px)}
+@media(max-width:690px){.dm-sr-overlay .dm-sr-play .dm-sr-question small{font-size:12px!important;padding:2px 10px;margin-bottom:4px}}

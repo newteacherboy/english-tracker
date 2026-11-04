@@ -17,7 +17,7 @@ test('classroom race engine parses and is registered in original Kapışma tab',
  assert.match(hub,/card\.id='sentenceRaceActivity'/);
  assert.match(hub,/window\.dmSentenceRace\.open\(\)/);
  assert.match(hubCss,/#sentenceRaceActivity/);
- assert.match(index,/cumle-yarisi\.js\?v=20261026-final2/);
+ assert.match(index,/cumle-yarisi\.js\?v=[\w.-]+/);
  assert.match(index,/cumle-yarisi\.css\?v=20261026-mobile3/);
  assert.match(index,/activity-ui\.js\?v=[\w.-]+/);
  assert.match(css,/dm-sr-dual/);
@@ -52,4 +52,13 @@ test('timing adds points only for correct answers; wrong or time-outs deduct 40'
 test('classroom result never writes energy, XP, profile score or remote leaderboards',()=>{
  assert.doesNotMatch(source,/fetch\s*\(|\.api\s*\(|localStorage\.(?:setItem|removeItem)\s*\(/);
  assert.match(source,/öğrenci puanlarına ve sıralamalara aktarılmadı/);
+});
+test('questions ask the word or phrase directly in both directions, without the confusing sentence frame',()=>{
+ const f=api(),pool=f.questionPool(fixtures);
+ assert(pool.every(q=>!/I learned that|In English, “/.test(q.prompt)));
+ const toEn=pool.filter(q=>q.kind===0),toTr=pool.filter(q=>q.kind===1);
+ assert(toEn.length&&toTr.length);
+ const en=new Set(fixtures.map(w=>w.en)),tr=new Set(fixtures.map(w=>w.tr));
+ toEn.forEach(q=>{assert.equal(q.tip,'İngilizcesi hangisi?');assert(tr.has(q.prompt.slice(1,-1)));assert(q.choices.every(c=>en.has(c)));});
+ toTr.forEach(q=>{assert.equal(q.tip,'Türkçesi hangisi?');assert(en.has(q.prompt.slice(1,-1)));assert(q.choices.every(c=>tr.has(c)));});
 });
