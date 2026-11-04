@@ -3,6 +3,7 @@
 //   POST {action:'create', classNo, branch, name?}         → yeni sınıf + katılım kodu (plan sınırı: Free 1, Pro 5, Premium Pro sınırsız)
 //   POST {action:'update', classId, name?, newCode?, archive?}
 //   POST {action:'move', studentId, classId}               → öğrenciyi kendi sınıflarından birine taşı
+//   POST {action:'report', classId, days:7|30}           → sınıf raporu (Free planda her zaman 7 gün)
 import { createClient } from 'npm:@supabase/supabase-js@2.118.0';
 import { classError, cleanName, isUuid } from './rules.mjs';
 
@@ -39,6 +40,12 @@ Deno.serve(async req => {
     if (!id) return reply({ ok: false, mesaj: 'Öğretmen olarak giriş yapmalısın.' }, 401);
 
     if (body.action === 'list') return reply(await list(id));
+    if (body.action === 'report') {
+      if (!isUuid(body.classId)) return reply({ ok: false, mesaj: 'Sınıf seçilmedi.' }, 400);
+      const r = await db.rpc('dm_class_report', { p_teacher: id, p_class: body.classId, p_days: Number(body.days) === 30 ? 30 : 7 });
+      if (r.error) { const e = classError(r.error); return reply({ ok: false, ...e }, 400); }
+      return reply({ ok: true, ...r.data });
+    }
     let r;
     if (body.action === 'create') {
       r = await db.rpc('dm_class_create', { p_teacher: id, p_class_no: Math.floor(Number(body.classNo)), p_branch: String(body.branch || '').slice(0, 20), p_name: cleanName(body.name) });
