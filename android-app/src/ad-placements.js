@@ -76,7 +76,8 @@ export function createPlacements({ admob, ads, win, interstitialEvents, bannerEv
   function sync() {
     currentPolicy();
     const doc=win.document;
-    const destination=[...doc.querySelectorAll('#tab-magaza.active,#tab-aktiviteler.active')].some(visible);
+    // Banner: Mağaza, Oyunlar ve Ders Çalış'ta açılan konu (anlatım, örnekler, test) ekranları.
+    const destination=[...doc.querySelectorAll('#tab-magaza.active,#tab-aktiviteler.active,#tab-derscalis.active #dcScreenDetail.active')].some(visible);
     const obstruction=doc.body.classList.contains('dm-play-session') || [...doc.querySelectorAll('[role="dialog"],.dm-session-surface,#yoModal.acik')].some(visible);
     const want=destination&&!obstruction&&allowed()&&!busy&&!ads.busy;
     if(want!==bannerWanted || (want&&!banner&&Date.now()>=bannerRetryAt))void setBanner(want);
@@ -111,7 +112,7 @@ export function createPlacements({ admob, ads, win, interstitialEvents, bannerEv
   function start() {
     if(initialized)return;initialized=true;
     const style=win.document.createElement('style');
-    style.textContent='.dm-native-banner-visible #bottomNavMobile{bottom:calc(var(--dm-native-banner-height) + 12px + env(safe-area-inset-bottom,0px))!important}.dm-native-banner-visible #tab-magaza,.dm-native-banner-visible #tab-aktiviteler{padding-bottom:calc(var(--dm-native-banner-height) + 130px)!important}';
+    style.textContent='.dm-native-banner-visible #bottomNavMobile{bottom:calc(var(--dm-native-banner-height) + 12px + env(safe-area-inset-bottom,0px))!important}.dm-native-banner-visible #tab-magaza,.dm-native-banner-visible #tab-aktiviteler{padding-bottom:calc(var(--dm-native-banner-height) + 130px)!important}.dm-native-banner-visible #tab-derscalis.dc-fullscreen-overlay{padding-bottom:calc(var(--dm-native-banner-height) + 100px + env(safe-area-inset-bottom,0px))!important}';
     win.document.head.append(style);
     void admob.addListener(bannerEvents.SizeChanged,size=>{if(banner&&bannerWanted)reserved(Math.min(120,Math.max(50,Number(size.height)||60)));});
     void admob.addListener(bannerEvents.FailedToLoad,()=>{banner=false;bannerRetryAt=Date.now()+30000;reserved(0);});
