@@ -14,6 +14,7 @@ import { createTestAds, teacherMode } from './ads.js';
 import { createPlacements } from './ad-placements.js';
 import { REWARDS, goldOfferEligible, isTeacherSession } from './reward-offers.js';
 import { createBilling } from './billing.js';
+import { createUpsell } from './upsell.js';
 
 if (Capacitor.isNativePlatform() && Capacitor.getPlatform() === 'android') {
   window.dmAndroidShell = { version: 4, ads: production?'production':'test', rewards: REWARDS };
@@ -29,6 +30,8 @@ if (Capacitor.isNativePlatform() && Capacitor.getPlatform() === 'android') {
   const billing = createBilling({ plugin: registerPlugin('DmBilling'), win: window, endpoint: adConfig.ssvCallbackUrl.replace(/\/ad-rewards\/ssv$/, '/billing') });
   window.dmAndroidBilling = billing;
   window.dmAndroidOpenPlans = source => billing.open(source);
+  const upsell = createUpsell({ win: window, billing, isTeacher: () => teacherMode(window), watch: kind => window.dmAndroidWatchReward(kind) });
+  window.dmAndroidUpsell = upsell;
   // The portal's API tokens stay in its own WebView. Do not copy browser cookies/tokens.
   document.addEventListener('click', async event => {
     const anchor = event.target.closest?.('a[href]');
@@ -41,6 +44,7 @@ if (Capacitor.isNativePlatform() && Capacitor.getPlatform() === 'android') {
   });
   void App.addListener('backButton', ({ canGoBack }) => {
     if (billing.isOpen()) { billing.close(); return; }
+    if (document.querySelector('.dmu-veil')) { upsell.close(); return; }
     const energyClose = document.querySelector('#ybPerde.acik[data-tur="enerji"] .yb-kapat,.dm-papi-feedback.is-energy .dm-papi-feedback-close');
     if (energyClose) { energyClose.click(); return; }
     if (window.dmViewHistory?.back?.()) return;
@@ -58,6 +62,7 @@ if (Capacitor.isNativePlatform() && Capacitor.getPlatform() === 'android') {
   // Both choices are opt-in. The preview never credits the real student's wallet.
   document.addEventListener('DOMContentLoaded', () => {
     placements.start();
+    upsell.start();
     // Plan sunucudan okunur; cihazdaki abonelik varsa sessizce yeniden doğrulanır.
     const syncPlan = () => billing.refresh().then(() => billing.restore()).then(n => n && attach()).catch(() => {});
     document.addEventListener('dm:login', () => setTimeout(syncPlan, 500));
@@ -65,34 +70,38 @@ if (Capacitor.isNativePlatform() && Capacitor.getPlatform() === 'android') {
     window.addEventListener('dm:plan', () => attach());
     let lastBalance;
     const selector = '#ybPerde.acik[data-tur="enerji"] .yb-en-kart,.dm-papi-feedback.is-energy .dm-papi-feedback-card,#dsEnergy,.ds-offer,.ds-joker,.ds-pack';
-    function addButton(card, kind) {
+    // Ödüllü video: göster, sunucu doğrulamasını bekle, cüzdanı ve üst göstergeyi güncelle.
+    async function watchReward(kind) {
+      const noun = kind === 'gold' ? 'altın' : 'enerji';
+      const result = await ads.show(kind);
+      if (result.test) return { ok: result.completed, message: result.completed ? 'Test videosu tamamlandı (ödül verilmez).' : 'Video kapatıldı, ödül verilmedi.' };
+      if (!result.claimed) return { ok: false, message: result.pending ? 'Ödül doğrulanıyor, birazdan hesabına geçecek.' : 'Video kapatıldı, ödül verilmedi.' };
+      if (typeof headerEnerjiGoster === 'function') headerEnerjiGoster(result.energy, Number(window.dmAndroidPlan?.limits?.energyMax || 25));
+      if (typeof yo !== 'undefined' && yo) { yo.altin = result.gold; yo.guncelleme = Date.now(); try { localStorage.setItem('ing_yo_' + window.dmAndroidStudentName(), JSON.stringify(yo)); } catch {} }
+      if (typeof yoArayuzTazele === 'function') yoArayuzTazele();
+      return { ok: true, message: '+' + result.added + ' ' + noun + ' hesabına eklendi!' };
+    }
+    window.dmAndroidWatchReward = watchReward;
+    function rewardButton(kind, compact) {
       const button = document.createElement('button');
       button.type = 'button'; button.dataset.dmTestAd = kind;
-      button.style.cssText = 'display:block;width:100%;min-height:44px;margin-top:10px;padding:10px 12px;border:1px solid #09858c;border-radius:12px;background:#eefafa;color:#07535b;font:700 13px/1.4 system-ui';
-      const noun = kind === 'gold' ? 'altın' : 'enerji';
-      button.textContent = production ? '▶ Reklam izle · '+REWARDS[kind]+' '+noun+' kazan' : '▶ ' + REWARDS[kind] + ' ' + noun + ' reklamını dene · ödül verilmez';
+      button.className = compact ? 'dmu-mini' : 'dmu-video';
+      const label = kind === 'gold' ? '▶ Video izle, +100 altın' : '▶ Video izle, 7 enerji al';
+      button.textContent = production ? label : label + ' (test)';
       button.onclick = async () => {
         button.disabled = true;
-        try {
-          const result = await ads.show(kind);
-          if(!result.test){
-            if(result.claimed){
-              if(typeof headerEnerjiGoster==='function')headerEnerjiGoster(result.energy,Number(window.dmAndroidPlan?.limits?.energyMax||25));
-              if(typeof yo!=='undefined' && yo){yo.altin=result.gold;yo.guncelleme=Date.now();try{localStorage.setItem('ing_yo_'+window.dmAndroidStudentName(),JSON.stringify(yo));}catch{}}
-              if(typeof yoArayuzTazele==='function')yoArayuzTazele();
-              button.textContent='✓ '+result.added+' '+noun+' hesabına eklendi';
-            }else button.textContent=result.pending?'Ödül doğrulanıyor · hesaba otomatik yansıyacak':'Reklam kapatıldı · ödül verilmedi';
-          }else button.textContent = result.completed ? '✓ ' + noun + ' reklam testi tamamlandı · ödül verilmedi' : 'Reklam kapatıldı · ödül verilmedi';
-        } catch (error) { button.textContent = error.message || 'Test reklamı yüklenemedi.'; }
+        try { const r = await watchReward(kind); button.textContent = r.ok ? '✓ ' + r.message : r.message; }
+        catch (error) { button.textContent = error.message || 'Video açılamadı.'; }
         finally { button.disabled = false; }
       };
-      card.append(button);
+      return button;
     }
+    function addButton(card, kind) { upsell.ensureStyle(); card.append(rewardButton(kind, card.matches('.ds-offer,.ds-joker,.ds-pack'))); }
     function addPlanOffer(card) {
+      upsell.ensureStyle();
       const button = document.createElement('button');
-      button.type = 'button'; button.dataset.dmPlanOffer = '1';
-      button.style.cssText = 'display:block;width:100%;min-height:44px;margin-top:8px;padding:10px 12px;border:0;border-radius:12px;background:#f2a516;color:#3b2500;font:800 13px/1.4 system-ui';
-      button.textContent = '⭐ Pro ile günde 40 enerji, reklamsız';
+      button.type = 'button'; button.dataset.dmPlanOffer = '1'; button.className = 'dmu-pro';
+      button.textContent = '👑 Pro ile günde 40 enerji';
       button.onclick = () => billing.open('enerji');
       card.append(button);
     }
@@ -105,9 +114,9 @@ if (Capacitor.isNativePlatform() && Capacitor.getPlatform() === 'android') {
         const unlimited = window.dmAndroidPlan?.limits?.unlimitedEnergy === true, energyAd = card.querySelector('[data-dm-test-ad="energy"]');
         if (!purchaseCard && !unlimited && !energyAd) addButton(card, 'energy');
         else if (unlimited && energyAd) energyAd.remove();
-        const plan = window.dmAndroidPlan?.plan || 'free', upsell = card.querySelector('[data-dm-plan-offer]');
-        if (!purchaseCard && plan === 'free' && !upsell) addPlanOffer(card);
-        else if (plan !== 'free' && upsell) upsell.remove();
+        const plan = window.dmAndroidPlan?.plan || 'free', offer = card.querySelector('[data-dm-plan-offer]');
+        if (!purchaseCard && plan === 'free' && !offer) addPlanOffer(card);
+        else if (plan !== 'free' && offer) offer.remove();
         let requestedPrice = Math.max(100, ...[...card.querySelectorAll('[data-pack][disabled]')].map(button => {
           const amount = Number(button.dataset.pack), capacity = Number(window.genelEnerjiMax || 25), current = Number(window.genelEnerjiKalan || 0);
           return current + amount <= capacity ? ({5:100,10:130,15:180}[amount] || 100) : 100;
