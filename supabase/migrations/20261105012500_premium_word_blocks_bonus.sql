@@ -12,7 +12,7 @@ begin
     insert into public.dm_blocks_progress(student_id) values(actor) on conflict do nothing;
     select * into u from public.dm_blocks_progress where student_id=actor;
     if u.completed then raise exception 'Geçersiz bölüm. Tüm uçuş rotası tamamlandı.'; end if;
-    batch_size:=least(19,public.dm_cloud_level_size(u.level_no));
+    batch_size:=public.dm_cloud_level_size(u.level_no)-case when u.level_no>=2 then 1 else 0 end;
     prem:=public.dm_pwm_is_premium(actor);
     if not prem and u.free_used>=3 then raise exception 'Ücretsiz 3 oyun hakkın bitti.'; end if;
     available:=public.dm_pwm_energy(st);
