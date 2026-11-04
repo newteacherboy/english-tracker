@@ -140,7 +140,7 @@
   function mount(account, token, initial) {
     const screen = document.createElement('dialog');
     screen.className = 'dm-flight';
-    screen.setAttribute('aria-label', 'Papi’nin Bulut Uçuşu');
+    screen.setAttribute('aria-label', 'Kaptan Pilot Papi');
     screen.innerHTML = `
       <div class="dm-flight-world" hidden>
         <div class="dm-flight-hud">
@@ -277,7 +277,7 @@
       const plan = state.premium ? 'Premium ∞' : `Ücretsiz: ${state.remaining} hak`;
       const actions = !state.completed && state.remaining > 0 ? [[`Bölüm ${state.level} · ⚡ 5`, start]] : [];
       actions.push(['Oyunlara dön', close]);
-      openPanel('Papi’nin Bulut Uçuşu', [
+      openPanel('Kaptan Pilot Papi', [
         error || (state.completed ? 'Tüm uçuş rotasını tamamladın!' : state.remaining > 0 ? 'Doğru anlamın yazdığı buluta uç, gökyüzündeki engellerden sıyrıl.' : 'Üç ücretsiz denemeni kullandın. Premium ile sınırsız uçabilirsin.')
       ], actions, 'hangar');
       if (!error && !state.completed && state.remaining > 0) {

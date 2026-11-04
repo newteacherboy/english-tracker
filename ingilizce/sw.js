@@ -7,7 +7,7 @@
    - Supabase istekleri: bu dosya karışmaz (sayfadaki katman yönetir)
    Sayfayı güncellediğinizde SURUM değerini artırın (v2, v3…).
    ===================================================================== */
-const SURUM = 'diji-v296-papizzle-20261105';
+const SURUM = 'diji-v297-runners-20261105';
 const SAYFA = 'sayfa-' + SURUM, KAYNAK = 'kaynak-' + SURUM;
 // Cached on first use; never download the A2 catalog at startup.
 const LAZY_TOPIC_FILES = new Set(['konu-oyunlari-a1.js','konu-oyunlari-a2.js','topic-games-core.mjs']);
@@ -29,7 +29,7 @@ self.addEventListener('fetch', e => {
   if (url.hostname.endsWith('supabase.co')) return;                 /* API: dokunma */
   // Premium game requires a live account check. Never serve a stale JS/CSS bundle,
   // especially while a prior iPhone WebKit renderer is recovering.
-  if (/\/(?:premium-(?:word-match(?:-core)?|cloud-flight|word-blocks)\.(?:js|css)|papizzle\.(?:js|css)|lazy-games\.js)$/.test(url.pathname)) {
+  if (/\/(?:premium-(?:word-match(?:-core)?|cloud-flight|word-blocks)\.(?:js|css)|(?:papizzle|runners-papi)\.(?:js|css)|lazy-games\.js)$/.test(url.pathname)) {
     e.respondWith(fetch(r,{cache:'no-store'}));return;
   }
   if (AYRI_SAYFA.test(url.pathname)) return;                        /* Ayrı sayfalar ana sayfa önbelleğine karışmasın */

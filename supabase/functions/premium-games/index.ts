@@ -33,6 +33,18 @@ Deno.serve(async(req:Request)=>{
   const s=(await db('portal_sessions?token_hash=eq.'+await sha256(token)+'&select=student_id,role,expires_at,teacher_portal_access_id&limit=1'))?.[0];
   if(!s||s.role!=='student'||!s.student_id||Date.parse(s.expires_at)<=Date.now())return reply(req,{ok:false,mesaj:'Oturumun sona erdi. Tekrar giriş yap.'},401);
   const op=String(b.op||'status');
+  if(b.game==='runners-papi'){
+   if(s.teacher_portal_access_id)return reply(req,{ok:false,mesaj:'Bu oyun için öğrenci hesabına giriş yap.'},403);
+   const validAnswer=op==='answer'&&Number.isSafeInteger(b.gate)&&b.gate>=0
+     &&Number.isInteger(b.choice)&&b.choice>=-1&&b.choice<=2;
+   if(op!=='status'&&(!UUID.test(String(b.runId||''))||(op!=='start'&&!validAnswer))){
+    return reply(req,{ok:false,mesaj:'Geçersiz oyun işlemi.'},400);
+   }
+   return reply(req,await db('rpc/dm_runners_play',{
+    actor:s.student_id,action:op,run_key:op==='status'?null:b.runId,
+    gate_no:validAnswer?b.gate:null,choice:validAnswer?b.choice:null
+   }));
+  }
   if(b.game==='papizzle'){
    const actor=s.student_id;
    if(s.teacher_portal_access_id)return reply(req,{ok:false,mesaj:'Papizzle için öğrenci hesabına giriş yap.'},403);
