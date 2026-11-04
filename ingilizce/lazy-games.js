@@ -36,6 +36,16 @@
     }catch(e){window.yoToast?.(e.message||'Oyun yüklenemedi.');}
   };
   window.premiumKelimeEslestirmeAc=premiumProxy;
+  let flightLoading;
+  const flightProxy=async ()=>{
+    const owner=typeof aktifOgrenciAdi==='undefined'?'':aktifOgrenciAdi;
+    try{
+      await (flightLoading??=script('premium-cloud-flight.js?v=1').catch(error=>{flightLoading=null;throw error;}));
+      if(owner!==(typeof aktifOgrenciAdi==='undefined'?'':aktifOgrenciAdi))return;
+      if(window.premiumBulutUcusuAc!==flightProxy)await window.premiumBulutUcusuAc();
+    }catch(error){window.yoToast?.(error.message);}
+  };
+  window.premiumBulutUcusuAc=flightProxy;
   window.canavarAvcisiAc=opener(()=>window.canavarAvcisiAc);
   window.dengesizKuleAc=opener(()=>window.dengesizKuleAc);
   window.harfBahcesiAc=opener(()=>window.harfBahcesiAc);
