@@ -10,7 +10,7 @@ android {
         manifestPlaceholders = [appLabel: "Diji Medu", admobAppId: "ca-app-pub-3940256099942544~3347511713"]
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode Integer.parseInt(System.getenv("ANDROID_VERSION_CODE") ?: "7")
+        versionCode Integer.parseInt(System.getenv("ANDROID_VERSION_CODE") ?: "8")
         versionName (System.getenv("ANDROID_VERSION_NAME") ?: "1.2.3")
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         aaptOptions {
