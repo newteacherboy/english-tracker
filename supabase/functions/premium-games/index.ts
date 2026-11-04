@@ -33,6 +33,18 @@ Deno.serve(async(req:Request)=>{
   const s=(await db('portal_sessions?token_hash=eq.'+await sha256(token)+'&select=student_id,role,expires_at,teacher_portal_access_id&limit=1'))?.[0];
   if(!s||s.role!=='student'||!s.student_id||Date.parse(s.expires_at)<=Date.now())return reply(req,{ok:false,mesaj:'Oturumun sona erdi. Tekrar giriş yap.'},401);
   const op=String(b.op||'status');
+  if(b.game==='cloud-flight'){
+   const actor=s.student_id;
+   if(s.teacher_portal_access_id)return reply(req,{ok:false,mesaj:'Bulut Uçuşu için öğrenci hesabına giriş yap.'},403);
+   if(op==='status')return reply(req,await db('rpc/dm_cloud_status',{actor}));
+   if(!UUID.test(String(b.runId||'')))return reply(req,{ok:false,mesaj:'Geçersiz oyun.'},400);
+   if(op==='start')return reply(req,await db('rpc/dm_cloud_start',{actor,run_key:b.runId}));
+   if(op==='finish'&&Array.isArray(b.selections)&&b.selections.length<=20
+      &&b.selections.every((pick:unknown)=>typeof pick==='number'&&Number.isInteger(pick)&&pick>=-1&&pick<=2)){
+    return reply(req,await db('rpc/dm_cloud_finish',{actor,run_key:b.runId,selections:b.selections}));
+   }
+   return reply(req,{ok:false,mesaj:'Geçersiz oyun sonucu.'},400);
+  }
   // Öğretmen portalında oyun sınıfta gösterilir: hak, enerji ve ödül işlenmez.
   if(s.teacher_portal_access_id){
    const st=await db('rpc/dm_pwm_status',{actor:s.student_id}).catch(()=>({}));

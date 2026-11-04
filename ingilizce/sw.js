@@ -29,7 +29,7 @@ self.addEventListener('fetch', e => {
   if (url.hostname.endsWith('supabase.co')) return;                 /* API: dokunma */
   // Premium game requires a live account check. Never serve a stale JS/CSS bundle,
   // especially while a prior iPhone WebKit renderer is recovering.
-  if (/\/(?:premium-word-match(?:-core)?\.(?:js|css)|lazy-games\.js)$/.test(url.pathname)) {
+  if (/\/(?:premium-(?:word-match(?:-core)?|cloud-flight)\.(?:js|css)|lazy-games\.js)$/.test(url.pathname)) {
     e.respondWith(fetch(r,{cache:'no-store'}));return;
   }
   if (AYRI_SAYFA.test(url.pathname)) return;                        /* Ayrı sayfalar ana sayfa önbelleğine karışmasın */
