@@ -2180,6 +2180,307 @@
       "bytes": 16460,
       "status": "ai-generated",
       "source": "docs/solo-arcade-assets.json"
+    },
+    {
+      "path": "ingilizce/premium-assets/kelime-eslestirme/bg-1-buyu-kutuphanesi.webp",
+      "sha256": "31eef201eb47e7c57d912f2b27f205cf0ed4093a1c0ba5133b9adc75af533cf9",
+      "bytes": 193898,
+      "status": "ai-generated",
+      "source": "Generated with ChatGPT (OpenAI) by the owner for the Premium Kelime Eslestirme game; added in commit aa062a0 (2026-11-03), whose message records them as ChatGPT images."
+    },
+    {
+      "path": "ingilizce/premium-assets/kelime-eslestirme/bg-2-kristal-magara.webp",
+      "sha256": "6d4d807971cf5acfc29aef5175145dd7739fc33ea9f296907aa4778b13f42890",
+      "bytes": 176760,
+      "status": "ai-generated",
+      "source": "Generated with ChatGPT (OpenAI) by the owner for the Premium Kelime Eslestirme game; added in commit aa062a0 (2026-11-03), whose message records them as ChatGPT images."
+    },
+    {
+      "path": "ingilizce/premium-assets/kelime-eslestirme/bg-3-gokyuzu-satosu.webp",
+      "sha256": "292b6fc9409552673eeda975ac16f747043398c9c34e902977f5bbf2c7c17b5c",
+      "bytes": 133738,
+      "status": "ai-generated",
+      "source": "Generated with ChatGPT (OpenAI) by the owner for the Premium Kelime Eslestirme game; added in commit aa062a0 (2026-11-03), whose message records them as ChatGPT images."
+    },
+    {
+      "path": "ingilizce/premium-assets/kelime-eslestirme/bg-4-buyulu-bahce.webp",
+      "sha256": "e00aecc799869d949c7f7437be5951aedf92296fd8ed28bf36e9312186343c75",
+      "bytes": 213388,
+      "status": "ai-generated",
+      "source": "Generated with ChatGPT (OpenAI) by the owner for the Premium Kelime Eslestirme game; added in commit aa062a0 (2026-11-03), whose message records them as ChatGPT images."
+    },
+    {
+      "path": "ingilizce/premium-assets/kelime-eslestirme/bg-5-yildiz-kulesi.webp",
+      "sha256": "634a897856d02e11a5f392805c5391492ccafed00a5278b1907c65aa380a0665",
+      "bytes": 197932,
+      "status": "ai-generated",
+      "source": "Generated with ChatGPT (OpenAI) by the owner for the Premium Kelime Eslestirme game; added in commit aa062a0 (2026-11-03), whose message records them as ChatGPT images."
+    },
+    {
+      "path": "ingilizce/premium-assets/kelime-eslestirme/booster-karistir.webp",
+      "sha256": "7f5bb8fd0eabf995c7c8049bb234a0428bc112d29ae50f6587abab802e936407",
+      "bytes": 13252,
+      "status": "ai-generated",
+      "source": "Generated with ChatGPT (OpenAI) by the owner for the Premium Kelime Eslestirme game; added in commit aa062a0 (2026-11-03), whose message records them as ChatGPT images."
+    },
+    {
+      "path": "ingilizce/premium-assets/kelime-eslestirme/booster-renk-patlat.webp",
+      "sha256": "176b5d84f07a3998b5074867a8db3c9dabf3881e7a1d248f5772585947aaa698",
+      "bytes": 13580,
+      "status": "ai-generated",
+      "source": "Generated with ChatGPT (OpenAI) by the owner for the Premium Kelime Eslestirme game; added in commit aa062a0 (2026-11-03), whose message records them as ChatGPT images."
+    },
+    {
+      "path": "ingilizce/premium-assets/kelime-eslestirme/booster-satir-patlat.webp",
+      "sha256": "7afbd74769748c85dc1d6b037faac1acb79f21863a168404c40374be34babb0f",
+      "bytes": 13956,
+      "status": "ai-generated",
+      "source": "Generated with ChatGPT (OpenAI) by the owner for the Premium Kelime Eslestirme game; added in commit aa062a0 (2026-11-03), whose message records them as ChatGPT images."
+    },
+    {
+      "path": "ingilizce/premium-assets/kelime-eslestirme/booster-yer-degistir.webp",
+      "sha256": "c018b67ff7ce2b722a0ea324670ac90fef603062ff89180b1b3f2b193d0ce338",
+      "bytes": 15454,
+      "status": "ai-generated",
+      "source": "Generated with ChatGPT (OpenAI) by the owner for the Premium Kelime Eslestirme game; added in commit aa062a0 (2026-11-03), whose message records them as ChatGPT images."
+    },
+    {
+      "path": "ingilizce/premium-assets/kelime-eslestirme/candy-blue-star.webp",
+      "sha256": "6a4fa281d6da4b441a1502c9424071872c6ce5557b168460420a15cea8b2ef14",
+      "bytes": 16580,
+      "status": "ai-generated",
+      "source": "Generated with ChatGPT (OpenAI) by the owner for the Premium Kelime Eslestirme game; added in commit aa062a0 (2026-11-03), whose message records them as ChatGPT images."
+    },
+    {
+      "path": "ingilizce/premium-assets/kelime-eslestirme/candy-green-heart.webp",
+      "sha256": "c433af505f3f8fbb1ebf721f2866d462c83fd88178909569cb08a1ce74d6a022",
+      "bytes": 13160,
+      "status": "ai-generated",
+      "source": "Generated with ChatGPT (OpenAI) by the owner for the Premium Kelime Eslestirme game; added in commit aa062a0 (2026-11-03), whose message records them as ChatGPT images."
+    },
+    {
+      "path": "ingilizce/premium-assets/kelime-eslestirme/candy-orange-cloud.webp",
+      "sha256": "106d90c0bd17f7ca35737d0bc31271aa18d8abc8e5235006fd5bed2b916dee40",
+      "bytes": 7830,
+      "status": "ai-generated",
+      "source": "Generated with ChatGPT (OpenAI) by the owner for the Premium Kelime Eslestirme game; added in commit aa062a0 (2026-11-03), whose message records them as ChatGPT images."
+    },
+    {
+      "path": "ingilizce/premium-assets/kelime-eslestirme/candy-pink-oval.webp",
+      "sha256": "5061e77538a374f7a6ad7db5aebe2953b3e57c95e3c0d351668d8c501f0cbd48",
+      "bytes": 10264,
+      "status": "ai-generated",
+      "source": "Generated with ChatGPT (OpenAI) by the owner for the Premium Kelime Eslestirme game; added in commit aa062a0 (2026-11-03), whose message records them as ChatGPT images."
+    },
+    {
+      "path": "ingilizce/premium-assets/kelime-eslestirme/candy-purple-square.webp",
+      "sha256": "fdd2cdd26c8b26f08e8a00418aec64bba87c8c84b384f37eafcd763b085fd6e6",
+      "bytes": 7708,
+      "status": "ai-generated",
+      "source": "Generated with ChatGPT (OpenAI) by the owner for the Premium Kelime Eslestirme game; added in commit aa062a0 (2026-11-03), whose message records them as ChatGPT images."
+    },
+    {
+      "path": "ingilizce/premium-assets/kelime-eslestirme/candy-rainbow-bomb.webp",
+      "sha256": "6a35a1e25a17f238000f6e49e95091e86cf0d2d58bdee7d01772eb5147928d3a",
+      "bytes": 10276,
+      "status": "ai-generated",
+      "source": "Generated with ChatGPT (OpenAI) by the owner for the Premium Kelime Eslestirme game; added in commit aa062a0 (2026-11-03), whose message records them as ChatGPT images."
+    },
+    {
+      "path": "ingilizce/premium-assets/kelime-eslestirme/candy-red-flower.webp",
+      "sha256": "54dcca5361bf6b2f692cb1c449249a713178a4af0cf44fb1567a78f0ad0f1812",
+      "bytes": 16106,
+      "status": "ai-generated",
+      "source": "Generated with ChatGPT (OpenAI) by the owner for the Premium Kelime Eslestirme game; added in commit aa062a0 (2026-11-03), whose message records them as ChatGPT images."
+    },
+    {
+      "path": "ingilizce/premium-assets/kelime-eslestirme/candy-yellow-drop.webp",
+      "sha256": "e0b4004ec34a6ea3ae29c0ade395e160993f8b77807bc3711e17bba539464719",
+      "bytes": 11288,
+      "status": "ai-generated",
+      "source": "Generated with ChatGPT (OpenAI) by the owner for the Premium Kelime Eslestirme game; added in commit aa062a0 (2026-11-03), whose message records them as ChatGPT images."
+    },
+    {
+      "path": "ingilizce/premium-assets/kelime-eslestirme/card-cover.webp",
+      "sha256": "d3ae66aeb04dbffb2d40ebadd19cdefc46a85b2fae3a16bb50aa9be7613589d8",
+      "bytes": 53914,
+      "status": "ai-generated",
+      "source": "Generated with ChatGPT (OpenAI) by the owner for the Premium Kelime Eslestirme game; added in commit aa062a0 (2026-11-03), whose message records them as ChatGPT images."
+    },
+    {
+      "path": "ingilizce/premium-assets/kelime-eslestirme/char-cat.webp",
+      "sha256": "798ec38f8e532d43dcef453f8f75f1c94db83d847154e250a2a441f89812d61b",
+      "bytes": 20924,
+      "status": "ai-generated",
+      "source": "Generated with ChatGPT (OpenAI) by the owner for the Premium Kelime Eslestirme game; added in commit aa062a0 (2026-11-03), whose message records them as ChatGPT images."
+    },
+    {
+      "path": "ingilizce/premium-assets/kelime-eslestirme/char-witch-cheer.webp",
+      "sha256": "ab49913d663e2e0252e2bbc23e776233614143732a02bd537189c4516957cf9f",
+      "bytes": 64834,
+      "status": "ai-generated",
+      "source": "Generated with ChatGPT (OpenAI) by the owner for the Premium Kelime Eslestirme game; added in commit aa062a0 (2026-11-03), whose message records them as ChatGPT images."
+    },
+    {
+      "path": "ingilizce/premium-assets/kelime-eslestirme/char-witch-idle.webp",
+      "sha256": "9eae315e67e72789b5cc0b0c55e029076e53cb5ab08350fb8e420adc72e1dadd",
+      "bytes": 68320,
+      "status": "ai-generated",
+      "source": "Generated with ChatGPT (OpenAI) by the owner for the Premium Kelime Eslestirme game; added in commit aa062a0 (2026-11-03), whose message records them as ChatGPT images."
+    },
+    {
+      "path": "ingilizce/premium-assets/kelime-eslestirme/char-witch-sad.webp",
+      "sha256": "6942f5a80a44110577373cd3b3cda97c0dd9e1fb397dce9df6803bf0528cd90e",
+      "bytes": 56114,
+      "status": "ai-generated",
+      "source": "Generated with ChatGPT (OpenAI) by the owner for the Premium Kelime Eslestirme game; added in commit aa062a0 (2026-11-03), whose message records them as ChatGPT images."
+    },
+    {
+      "path": "ingilizce/premium-assets/kelime-eslestirme/deco-potion.webp",
+      "sha256": "5739d9069cdfe093d50d863e3b13039b370e6ee02e85ace360fdc01a237bff23",
+      "bytes": 4618,
+      "status": "ai-generated",
+      "source": "Generated with ChatGPT (OpenAI) by the owner for the Premium Kelime Eslestirme game; added in commit aa062a0 (2026-11-03), whose message records them as ChatGPT images."
+    },
+    {
+      "path": "ingilizce/premium-assets/kelime-eslestirme/deco-vocabulary-book.webp",
+      "sha256": "0a0ccd6ee379a967447ca09863570ee4da6cf2b93be50fee4a25cd0937c415a6",
+      "bytes": 3484,
+      "status": "ai-generated",
+      "source": "Generated with ChatGPT (OpenAI) by the owner for the Premium Kelime Eslestirme game; added in commit aa062a0 (2026-11-03), whose message records them as ChatGPT images."
+    },
+    {
+      "path": "ingilizce/premium-assets/kelime-eslestirme/fx-burst.webp",
+      "sha256": "6c42138652c458b8032a7a59475345ee24513c5e81d3950ecf793148cce32200",
+      "bytes": 37342,
+      "status": "ai-generated",
+      "source": "Generated with ChatGPT (OpenAI) by the owner for the Premium Kelime Eslestirme game; added in commit aa062a0 (2026-11-03), whose message records them as ChatGPT images."
+    },
+    {
+      "path": "ingilizce/premium-assets/kelime-eslestirme/fx-sparkle.webp",
+      "sha256": "ccdf65151612d51baead5c0d24ca315d21a001387cdf2b180963c07a28ad17ef",
+      "bytes": 1242,
+      "status": "ai-generated",
+      "source": "Generated with ChatGPT (OpenAI) by the owner for the Premium Kelime Eslestirme game; added in commit aa062a0 (2026-11-03), whose message records them as ChatGPT images."
+    },
+    {
+      "path": "ingilizce/premium-assets/kelime-eslestirme/fx-stripe-h.webp",
+      "sha256": "54b3447a95d407da1ad60edf9d00922a407b7b70d7e805b05c6316d706ef79f3",
+      "bytes": 680,
+      "status": "ai-generated",
+      "source": "Generated with ChatGPT (OpenAI) by the owner for the Premium Kelime Eslestirme game; added in commit aa062a0 (2026-11-03), whose message records them as ChatGPT images."
+    },
+    {
+      "path": "ingilizce/premium-assets/kelime-eslestirme/fx-stripe-v.webp",
+      "sha256": "c69e26c224d2a699d27976a92ccab02c1913fe84cce5c793e96a40706dc32863",
+      "bytes": 550,
+      "status": "ai-generated",
+      "source": "Generated with ChatGPT (OpenAI) by the owner for the Premium Kelime Eslestirme game; added in commit aa062a0 (2026-11-03), whose message records them as ChatGPT images."
+    },
+    {
+      "path": "ingilizce/premium-assets/kelime-eslestirme/icon-books.webp",
+      "sha256": "b4adc63f227c91f27747e1f31ec891d0b0e2f9c9bc124b9e8ae441a2def5a933",
+      "bytes": 13512,
+      "status": "ai-generated",
+      "source": "Generated with ChatGPT (OpenAI) by the owner for the Premium Kelime Eslestirme game; added in commit aa062a0 (2026-11-03), whose message records them as ChatGPT images."
+    },
+    {
+      "path": "ingilizce/premium-assets/kelime-eslestirme/icon-chest-closed.webp",
+      "sha256": "805c69dae21515c267d20e0ad7d656d2049277963b798c2506f3006419bec6cc",
+      "bytes": 13480,
+      "status": "ai-generated",
+      "source": "Generated with ChatGPT (OpenAI) by the owner for the Premium Kelime Eslestirme game; added in commit aa062a0 (2026-11-03), whose message records them as ChatGPT images."
+    },
+    {
+      "path": "ingilizce/premium-assets/kelime-eslestirme/icon-chest-open.webp",
+      "sha256": "1e89f0e7398914972f34ccc4ea294a1b1a0fec765fb44afc88f48e17056b2bcd",
+      "bytes": 19630,
+      "status": "ai-generated",
+      "source": "Generated with ChatGPT (OpenAI) by the owner for the Premium Kelime Eslestirme game; added in commit aa062a0 (2026-11-03), whose message records them as ChatGPT images."
+    },
+    {
+      "path": "ingilizce/premium-assets/kelime-eslestirme/icon-crown.webp",
+      "sha256": "fca19df8498e78f85129a05b0b90d0af1c44264c0f33c8844f625869fdb6daf6",
+      "bytes": 14148,
+      "status": "ai-generated",
+      "source": "Generated with ChatGPT (OpenAI) by the owner for the Premium Kelime Eslestirme game; added in commit aa062a0 (2026-11-03), whose message records them as ChatGPT images."
+    },
+    {
+      "path": "ingilizce/premium-assets/kelime-eslestirme/icon-dice.webp",
+      "sha256": "d8eff8703782fbd94b5f7d5bdd9140a48f47ae176e7b208f5ebc312795b8b8e6",
+      "bytes": 14018,
+      "status": "ai-generated",
+      "source": "Generated with ChatGPT (OpenAI) by the owner for the Premium Kelime Eslestirme game; added in commit aa062a0 (2026-11-03), whose message records them as ChatGPT images."
+    },
+    {
+      "path": "ingilizce/premium-assets/kelime-eslestirme/icon-gift.webp",
+      "sha256": "c65717c00cce851f53ca91d703a072db3c3ad854ca1e0ebd7332b6ddcc96904f",
+      "bytes": 14162,
+      "status": "ai-generated",
+      "source": "Generated with ChatGPT (OpenAI) by the owner for the Premium Kelime Eslestirme game; added in commit aa062a0 (2026-11-03), whose message records them as ChatGPT images."
+    },
+    {
+      "path": "ingilizce/premium-assets/kelime-eslestirme/icon-infinity.webp",
+      "sha256": "e6dbb5d23eeaf990fadecf4422e2ae566960e51c741492ace79d835ae993919c",
+      "bytes": 14738,
+      "status": "ai-generated",
+      "source": "Generated with ChatGPT (OpenAI) by the owner for the Premium Kelime Eslestirme game; added in commit aa062a0 (2026-11-03), whose message records them as ChatGPT images."
+    },
+    {
+      "path": "ingilizce/premium-assets/kelime-eslestirme/icon-lock.webp",
+      "sha256": "d44e958e5f1af78b15ce52cff7798cc7588a68263dbdfd8cfcfcda6d2cc20109",
+      "bytes": 13904,
+      "status": "ai-generated",
+      "source": "Generated with ChatGPT (OpenAI) by the owner for the Premium Kelime Eslestirme game; added in commit aa062a0 (2026-11-03), whose message records them as ChatGPT images."
+    },
+    {
+      "path": "ingilizce/premium-assets/kelime-eslestirme/icon-star-empty.webp",
+      "sha256": "f7dbb5b0d176f0b2993df70fdc250d9a8e3b9a1ffd7768c52aad0eac96a7fc5b",
+      "bytes": 14254,
+      "status": "ai-generated",
+      "source": "Generated with ChatGPT (OpenAI) by the owner for the Premium Kelime Eslestirme game; added in commit aa062a0 (2026-11-03), whose message records them as ChatGPT images."
+    },
+    {
+      "path": "ingilizce/premium-assets/kelime-eslestirme/icon-star-full.webp",
+      "sha256": "2125ba249a06dace4ce507481a857c6dfb2be840d8609de0b854730b9f37b7b8",
+      "bytes": 14474,
+      "status": "ai-generated",
+      "source": "Generated with ChatGPT (OpenAI) by the owner for the Premium Kelime Eslestirme game; added in commit aa062a0 (2026-11-03), whose message records them as ChatGPT images."
+    },
+    {
+      "path": "ingilizce/premium-assets/kelime-eslestirme/tile-chain.webp",
+      "sha256": "c559448deb32a5c292cb7dd153ffd4fd37d678383605df15eefb159791ff791c",
+      "bytes": 2580,
+      "status": "ai-generated",
+      "source": "Generated with ChatGPT (OpenAI) by the owner for the Premium Kelime Eslestirme game; added in commit aa062a0 (2026-11-03), whose message records them as ChatGPT images."
+    },
+    {
+      "path": "ingilizce/premium-assets/kelime-eslestirme/tile-ice.webp",
+      "sha256": "1a86cfa92304547d6514c7c5858dad2b58983f7b6fd5e87323837358b425f7dc",
+      "bytes": 3520,
+      "status": "ai-generated",
+      "source": "Generated with ChatGPT (OpenAI) by the owner for the Premium Kelime Eslestirme game; added in commit aa062a0 (2026-11-03), whose message records them as ChatGPT images."
+    },
+    {
+      "path": "ingilizce/premium-assets/kelime-eslestirme/ui-ribbon.webp",
+      "sha256": "dd5706cd62d6310f9607cc6da7990e8e16111c1c59f8faa9edb1a911f09aac3a",
+      "bytes": 4810,
+      "status": "ai-generated",
+      "source": "Generated with ChatGPT (OpenAI) by the owner for the Premium Kelime Eslestirme game; added in commit aa062a0 (2026-11-03), whose message records them as ChatGPT images."
+    },
+    {
+      "path": "ingilizce/premium-assets/kelime-eslestirme/ui-title-plaque.webp",
+      "sha256": "58684775013ca0408a7cce40b7f62de2ec7246a44791fdbf82c012df4b3fed06",
+      "bytes": 6352,
+      "status": "ai-generated",
+      "source": "Generated with ChatGPT (OpenAI) by the owner for the Premium Kelime Eslestirme game; added in commit aa062a0 (2026-11-03), whose message records them as ChatGPT images."
+    },
+    {
+      "path": "ingilizce/premium-assets/kelime-eslestirme/yakinda-art.webp",
+      "sha256": "81d70de77813f4a3c3ee2d3a5d7871de6b39d83162ba0811581494429ff1619a",
+      "bytes": 73106,
+      "status": "ai-generated",
+      "source": "Generated with ChatGPT (OpenAI) by the owner for the Premium Kelime Eslestirme game; added in commit aa062a0 (2026-11-03), whose message records them as ChatGPT images."
     }
   ]
 }

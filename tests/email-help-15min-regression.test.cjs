@@ -5,7 +5,9 @@ test('registration immediately offers visible illustrated guide and helpful pass
  assert(js.includes("dmEmailGuide?.open('signup')"));
  assert(js.includes('Görselli doğrulama rehberini aç'));
  assert(js.includes('sızdırılmış şifreleri kullanma'));
- assert(js.includes('En az 8 karakter'));
+ // Arayüzdeki en kısa şifre sunucudaki OGRENCI_SIFRE_MIN ile aynı olmalı (27 Eki 2026'da 6'ya indi).
+ const min=/const OGRENCI_SIFRE_MIN = (\d+);/.exec(read('supabase/functions/diji-api/index.ts'))[1];
+ assert(js.includes(`En az ${min} karakter`));
  assert(css.includes('.fd-password-rules'));
  assert(css.includes('clamp(14px'));
 });
