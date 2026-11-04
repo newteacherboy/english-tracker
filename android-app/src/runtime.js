@@ -8,6 +8,7 @@ import { Haptics } from '@capacitor/haptics';
 import { Network } from '@capacitor/network';
 import { SpeechRecognition } from '@capacitor-community/speech-recognition';
 import { TextToSpeech } from '@capacitor-community/text-to-speech';
+import { PushNotifications } from '@capacitor/push-notifications';
 import { AdMob, RewardAdPluginEvents, InterstitialAdPluginEvents, BannerAdPluginEvents } from '@capacitor-community/admob';
 import { installSpeech } from './speech.js';
 import { createTestAds, teacherMode } from './ads.js';
@@ -16,9 +17,10 @@ import { createAdRemote } from './ad-remote.js';
 import { REWARDS, goldOfferEligible, isTeacherSession } from './reward-offers.js';
 import { createBilling } from './billing.js';
 import { createUpsell } from './upsell.js';
+import { createPush } from './push.js';
 
 if (Capacitor.isNativePlatform() && Capacitor.getPlatform() === 'android') {
-  window.dmAndroidShell = { version: 4, ads: production?'production':'test', rewards: REWARDS };
+  window.dmAndroidShell = { version: 5, ads: production?'production':'test', rewards: REWARDS };
   window.dmAndroidIsTeacher = () => { try { return isTeacherSession({ portal: !!window.dmTeacherPortalMode, classroomPlayer: typeof siniftaOynananOgrenci !== 'undefined' && siniftaOynananOgrenci, name: typeof aktifOgrenciAdi === 'undefined' ? '' : aktifOgrenciAdi }); } catch { return true; } };
   window.dmAndroidStudentName = () => { try { return typeof aktifOgrenciAdi === 'undefined' ? '' : String(aktifOgrenciAdi || ''); } catch { return ''; } };
   window.dmAndroidGoldBalance = () => { try { return typeof yo !== 'undefined' && yo ? Number(yo.altin) : NaN; } catch { return NaN; } };
@@ -35,6 +37,8 @@ if (Capacitor.isNativePlatform() && Capacitor.getPlatform() === 'android') {
   window.dmAndroidOpenPlans = source => billing.open(source);
   const upsell = createUpsell({ win: window, billing, isTeacher: () => teacherMode(window), watch: kind => window.dmAndroidWatchReward(kind) });
   window.dmAndroidUpsell = upsell;
+  const push = createPush({ plugin: PushNotifications, win: window, endpoint: adConfig.ssvCallbackUrl.replace(/\/ad-rewards\/ssv$/, '/push'), isTeacher: () => teacherMode(window) });
+  window.dmAndroidPush = push;
   // The portal's API tokens stay in its own WebView. Do not copy browser cookies/tokens.
   document.addEventListener('click', async event => {
     const anchor = event.target.closest?.('a[href]');
@@ -67,6 +71,7 @@ if (Capacitor.isNativePlatform() && Capacitor.getPlatform() === 'android') {
   document.addEventListener('DOMContentLoaded', () => {
     placements.start();
     upsell.start();
+    push.start();
     // Reklam ayarları: açılışta, girişte ve 15 dakikada bir sunucudan.
     void adRemote.refresh(true);
     document.addEventListener('dm:login', () => void adRemote.refresh(true));
