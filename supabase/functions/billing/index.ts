@@ -93,6 +93,37 @@ async function record(purchaseToken: string, sub: any, account?: { role: string;
   return { ok: true, state: info.state, productId: info.productId, validUntil: info.validUntil, test: info.test };
 }
 
+// Yönetici paneli: hediye üyelik verme/geri alma ve yeni öğretmenlere otomatik hediye anahtarı.
+async function admin(acct: { role: string; id: string }, body: any): Promise<[unknown, number]> {
+  if (acct.role !== 'teacher') return [{ ok: false, mesaj: 'Yönetici oturumu gerekli.' }, 403];
+  const { data: t } = await db.from('teachers').select('username,is_admin,active,frozen_at').eq('id', acct.id).maybeSingle();
+  if (!t || !t.is_admin || !t.active || t.frozen_at || String(t.username).toLowerCase() !== 'teacher') return [{ ok: false, mesaj: 'Bu işlem yalnız yönetici hesabına açık.' }, 403];
+  const products = ['teacher_premium_pro', 'teacher_pro', 'diji_premium_pro', 'diji_pro'];
+  const campaign = typeof body.campaign === 'string' && /^[a-z0-9-]{3,40}$/.test(body.campaign) ? body.campaign : 'ogretmenler-gunu-2026';
+  const months = Math.max(1, Math.min(24, Math.floor(Number(body.months) || 6)));
+  const fail = (e: any) => [{ ok: false, mesaj: e?.code === 'P0001' ? e.message : 'İşlem tamamlanamadı.' }, 400] as [unknown, number];
+  if (body.action === 'adminList') {
+    const { data, error } = await db.rpc('dm_gift_list'); if (error) return fail(error); return [{ ok: true, ...data }, 200];
+  }
+  if (body.action === 'adminGift' || body.action === 'adminRevoke') {
+    const username = String(body.username || '').trim();
+    if (!username || username.length > 80 || !products.includes(body.product)) return [{ ok: false, mesaj: 'Kullanıcı adı ve ürün gerekli.' }, 400];
+    const { data, error } = body.action === 'adminGift'
+      ? await db.rpc('dm_gift_plan', { p_username: username, p_product: body.product, p_months: months, p_campaign: campaign })
+      : await db.rpc('dm_gift_revoke', { p_username: username, p_product: body.product });
+    if (error) return fail(error);
+    const { data: list } = await db.rpc('dm_gift_list');
+    return [{ ok: true, result: data, ...(list || {}) }, 200];
+  }
+  if (body.action === 'adminAuto') {
+    const row = { key: 'new_teachers', enabled: body.enabled === true, product_key: products.includes(body.product) ? body.product : 'teacher_premium_pro', months, campaign, updated_at: new Date().toISOString() };
+    const { error } = await db.from('dm_gift_settings').upsert(row, { onConflict: 'key' }); if (error) return fail(error);
+    const { data: list } = await db.rpc('dm_gift_list');
+    return [{ ok: true, ...(list || {}) }, 200];
+  }
+  return [{ ok: false, mesaj: 'Geçersiz işlem.' }, 400];
+}
+
 Deno.serve(async req => {
   if (req.method === 'OPTIONS') return new Response(null, { status: 204, headers: cors });
   if (req.method !== 'POST') return reply({ error: 'Method not allowed' }, 405);
@@ -120,6 +151,7 @@ Deno.serve(async req => {
     const acct = await session(req);
     if (!acct) return reply({ ok: false, mesaj: 'Giriş yapmalısın.' }, 401);
     if (body.action === 'status') return reply(await status(acct));
+    if (typeof body.action === 'string' && body.action.startsWith('admin')) return reply(...await admin(acct, body));
     if (body.action === 'verify') {
       if (!acct.canBuy) return reply({ ok: false, mesaj: 'Bu hesapla satın alma yapılamaz.' }, 403);
       const productId = String(body.productId || ''), purchaseToken = String(body.purchaseToken || '');
