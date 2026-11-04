@@ -40,7 +40,7 @@
   const flightProxy=async ()=>{
     const owner=typeof aktifOgrenciAdi==='undefined'?'':aktifOgrenciAdi;
     try{
-      await (flightLoading??=script('premium-cloud-flight.js?v=2').catch(error=>{flightLoading=null;throw error;}));
+      await (flightLoading??=script('premium-cloud-flight.js?v=3').catch(error=>{flightLoading=null;throw error;}));
       if(owner!==(typeof aktifOgrenciAdi==='undefined'?'':aktifOgrenciAdi))return;
       if(window.premiumBulutUcusuAc!==flightProxy)await window.premiumBulutUcusuAc();
     }catch(error){window.yoToast?.(error.message);}
