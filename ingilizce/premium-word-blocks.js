@@ -87,7 +87,7 @@
   function mount(account, token, initial) {
     const dialog = document.createElement('dialog');
     dialog.className = 'dm-blocks';
-    dialog.setAttribute('aria-label', 'Papi’nin Kelime Blokları');
+    dialog.setAttribute('aria-label', 'Block Papi');
     dialog.innerHTML = `
       <div class="dm-blocks-world" hidden>
         <header><button data-pause aria-label="Duraklat">Ⅱ</button><h2><img src="${assets}papi.webp" alt="">Papi’nin<br>Kelime Blokları</h2><div class="dm-blocks-tools"><span data-plan></span><button data-sound aria-label="Sesi kapat">♫</button></div></header>
@@ -148,7 +148,7 @@
     function home(error) {
       world.hidden = true;
       const ready = !state.completed && state.remaining > 0;
-      show('Papi’nin Kelime Blokları', [
+      show('Block Papi', [
         error || 'Düşen İngilizce bloğu doğru anlamın üstüne indir. Üç sütun dolunca satır temizlenir.',
         `Bölüm ${state.level} · ${state.words} kelime · ⚡ ${state.energy} / ${state.energyMax}`,
         state.premium ? 'Premium ∞' : `Ücretsiz: ${state.remaining} hak`,
