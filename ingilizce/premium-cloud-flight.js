@@ -8,6 +8,73 @@
   const owner = () => typeof aktifOgrenciAdi === 'undefined' ? '' : aktifOgrenciAdi;
   let opening = false;
 
+  const hazards = [
+    {kind: 'storm', icon: 'ϟ', label: 'Fırtına bulutu'},
+    {kind: 'balloon', icon: '◈', label: 'Hava balonu'},
+    {kind: 'wind', icon: '≋', label: 'Rüzgâr girdabı'}
+  ];
+
+  function flightAudio() {
+    let context, bus, engine, muted = localStorage.getItem('dm_cloud_muted') === '1';
+    function unlock() {
+      if (muted) return;
+      try {
+        const Audio = window.AudioContext || window.webkitAudioContext;
+        if (!context && Audio) {
+          context = new Audio();
+          bus = context.createGain();
+          bus.connect(context.destination);
+          engine = context.createGain();
+          engine.gain.value = 0;
+          const filter = context.createBiquadFilter();
+          filter.type = 'lowpass';
+          filter.frequency.value = 200;
+          engine.connect(filter).connect(bus);
+          for (const [type, frequency] of [['triangle', 54], ['sine', 81]]) {
+            const motor = context.createOscillator();
+            motor.type = type;
+            motor.frequency.value = frequency;
+            motor.connect(engine);
+            motor.start();
+          }
+        }
+        context?.resume().catch(() => {});
+      } catch { /* Sound is optional on devices without Web Audio. */ }
+    }
+    function flying(active) {
+      if (!engine) return;
+      engine.gain.setTargetAtTime(active && !document.hidden ? .032 : 0, context.currentTime, .08);
+    }
+    function effect(kind) {
+      if (!context || muted || document.hidden) return;
+      const notes = kind === 'correct' ? [587, 784, 1047] : kind === 'wrong' ? [294, 196] : [118, 74];
+      notes.forEach((frequency, index) => {
+        const at = context.currentTime + index * .08;
+        const oscillator = context.createOscillator(), gain = context.createGain();
+        oscillator.type = kind === 'impact' ? 'triangle' : 'sine';
+        oscillator.frequency.value = frequency;
+        gain.gain.setValueAtTime(.001, at);
+        gain.gain.exponentialRampToValueAtTime(.065, at + .014);
+        gain.gain.exponentialRampToValueAtTime(.001, at + .16);
+        oscillator.connect(gain).connect(bus);
+        oscillator.start(at);
+        oscillator.stop(at + .17);
+        oscillator.onended = () => { oscillator.disconnect(); gain.disconnect(); };
+      });
+    }
+    return {
+      unlock, flying, effect, get muted() { return muted; },
+      toggle(active) {
+        muted = !muted;
+        localStorage.setItem('dm_cloud_muted', muted ? '1' : '0');
+        unlock();
+        if (bus) bus.gain.setTargetAtTime(muted ? 0 : 1, context.currentTime, .035);
+        flying(active);
+      },
+      close() { context?.close().catch(() => {}); }
+    };
+  }
+
   async function request(token, op, data = {}) {
     const response = await fetch(endpoint, {
       method: 'POST',
@@ -32,7 +99,7 @@
         style ||= document.createElement('link');
         style.id = 'dm-flight-style';
         style.rel = 'stylesheet';
-        style.href = 'premium-cloud-flight.css?v=1';
+        style.href = 'premium-cloud-flight.css?v=2';
         style.onload = resolve;
         style.onerror = () => { style.remove(); reject(new Error('Oyun görünümü yüklenemedi.')); };
         document.head.append(style);
@@ -55,11 +122,12 @@
         <div class="dm-flight-hud">
           <button data-pause aria-label="Duraklat">Ⅱ</button><b data-level></b>
           <span data-count></span><progress max="20" value="0" aria-label="Bölüm ilerlemesi"></progress>
-          <b data-score></b>
+          <b data-score></b><button data-sound type="button"></button>
         </div>
         <div class="dm-flight-plan" data-plan></div>
         <div class="dm-flight-word" data-word lang="en"></div>
         <div class="dm-flight-wave">${lanes.map(x => `<div class="dm-flight-cloud" style="--lane:${x}%"><span></span></div>`).join('')}</div>
+        <div class="dm-flight-hazard" hidden><i aria-hidden="true"></i><span></span></div>
         <div class="dm-flight-plane"><img src="${assets}papi-ucak.webp" alt=""></div>
         <div class="dm-flight-feedback" aria-live="polite"></div>
         <div class="dm-flight-hint">↔ Uçağı kaydır</div>
@@ -72,6 +140,8 @@
     const panel = overlay.querySelector('section');
     const wave = $('.dm-flight-wave');
     const plane = $('.dm-flight-plane');
+    const hazard = $('.dm-flight-hazard');
+    const sound = flightAudio();
     const feedback = $('.dm-flight-feedback');
     const clouds = [...wave.children];
     let state = initial;
@@ -84,14 +154,24 @@
     function close() {
       cancelAnimationFrame(frame);
       clearInterval(watch);
+      sound.close();
+      document.removeEventListener('visibilitychange', syncSound);
       screen.close();
       screen.remove();
     }
-    function openPanel(title, details, actions) {
+    function openPanel(title, details, actions, variant = '') {
+      panel.dataset.variant = variant;
       panel.replaceChildren();
       const heading = document.createElement('h2');
       heading.textContent = title;
       panel.append(heading);
+      if (variant === 'hangar') {
+        const art = document.createElement('img');
+        art.className = 'dm-flight-hero';
+        art.src = assets + 'papi-ucak.webp';
+        art.alt = '';
+        heading.before(art);
+      }
       details.forEach(line => {
         const p = document.createElement('p');
         p.textContent = line;
@@ -104,7 +184,30 @@
         panel.append(button);
       });
       overlay.hidden = false;
+      syncSound();
       panel.querySelector('button')?.focus({preventScroll: true});
+    }
+    function syncSound() { sound.flying(!world.hidden && overlay.hidden); }
+    function paintSound() {
+      const button = $('[data-sound]');
+      const waves = sound.muted ? '<path d="m16 9 6 6m0-6-6 6"/>' : '<path d="M16 9a4 4 0 0 1 0 6m2-8a7 7 0 0 1 0 10"/>';
+      button.innerHTML = `<svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9h4l5-4v14l-5-4H3z"/>${waves}</svg>`;
+      button.setAttribute('aria-label', sound.muted ? 'Sesi aç' : 'Sesi kapat');
+      button.setAttribute('aria-pressed', String(!sound.muted));
+    }
+    function stats(items) {
+      const grid = document.createElement('div');
+      grid.className = 'dm-flight-stats';
+      for (const [value, label] of items) {
+        const tile = document.createElement('div');
+        const number = document.createElement('b');
+        const caption = document.createElement('small');
+        number.textContent = value;
+        caption.textContent = label;
+        tile.append(number, caption);
+        grid.append(tile);
+      }
+      panel.insertBefore(grid, panel.querySelector('button'));
     }
     function apply(data) {
       state = {...state, ...data};
@@ -117,13 +220,20 @@
       const actions = state.remaining > 0 ? [[`Bölüm ${state.level} · ⚡ 5`, start]] : [];
       actions.push(['Oyunlara dön', close]);
       openPanel('Papi’nin Bulut Uçuşu', [
-        plan, `Enerji ${state.energy} / ${state.energyMax}`,
-        error || (state.remaining > 0 ? 'Uçağı kaydır ve İngilizce kelimenin Türkçe anlamına uç.' : 'Üç ücretsiz denemeni kullandın. Premium ile sınırsız uçabilirsin.')
-      ], actions);
+        error || (state.remaining > 0 ? 'Doğru anlamın yazdığı buluta uç, gökyüzündeki engellerden sıyrıl.' : 'Üç ücretsiz denemeni kullandın. Premium ile sınırsız uçabilirsin.')
+      ], actions, 'hangar');
+      if (!error && state.remaining > 0) {
+        const rules = document.createElement('p');
+        rules.className = 'dm-flight-rules';
+        rules.textContent = '✓ Doğru +20   ·   ✗ Yanlış −10';
+        panel.insertBefore(rules, panel.querySelector('button'));
+      }
+      stats([[`Bölüm ${state.level}`, 'Gece rotası'], [`${state.energy} / ${state.energyMax}`, 'Enerji'], [plan, 'Uçuş hakkı']]);
     }
     async function start() {
       if (pending) return;
       pending = true;
+      sound.unlock();
       runId ||= crypto.randomUUID();
       openPanel('Uçuş hazırlanıyor…', [], []);
       try {
@@ -131,9 +241,10 @@
         if (!screen.isConnected) return;
         apply(data);
         game = {rounds: data.rounds, level: data.playedLevel, picks: [], score: 0,
-          x: 50, target: 50, elapsed: 0, last: null, paused: false};
+          x: 50, target: 50, elapsed: 0, last: null, paused: false, obstacle: null, stumble: 0};
         world.hidden = false;
         overlay.hidden = true;
+        syncSound();
         $('[data-plan]').textContent = data.premium ? '👑 Premium ∞' : `Ücretsiz: ${data.remaining} hak`;
         $('[data-level]').textContent = `Bölüm ${game.level}`;
         loadRound();
@@ -155,18 +266,72 @@
       const round = game.rounds[game.picks.length];
       $('[data-word]').textContent = round.en;
       round.options.forEach((word, index) => { clouds[index].firstChild.textContent = word; });
+      const index = game.picks.length;
+      const obstacleIndex = Math.floor(index / 3) + game.level - 1;
+      const kind = hazards[obstacleIndex % hazards.length];
+      game.obstacle = index % 3 === 2 ? {lane: lanes[(obstacleIndex + index) % lanes.length], kind: kind.kind, passed: false} : null;
+      hazard.hidden = !game.obstacle;
+      if (game.obstacle) {
+        hazard.dataset.kind = kind.kind;
+        hazard.firstElementChild.textContent = kind.icon;
+        hazard.lastElementChild.textContent = kind.label;
+        hazard.style.left = `${game.obstacle.lane}%`;
+        hazard.style.setProperty('--hazard-y', '29%');
+        hazard.style.setProperty('--hazard-size', '.56');
+      }
       paintScore();
+    }
+    function showFeedback(label, correct) {
+      feedback.textContent = label;
+      feedback.dataset.correct = String(correct);
+      feedback.getAnimations().forEach(animation => animation.cancel());
+      feedback.animate([{opacity: 1, transform: 'translateY(0)'}, {opacity: 0, transform: 'translateY(-20px)'}],
+        {duration: 720, fill: 'both'});
+    }
+    function stumble() {
+      game.stumble = 560;
+      const sprite = plane.querySelector('img');
+      sprite.getAnimations().forEach(animation => animation.cancel());
+      if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        sprite.animate([
+          {transform: 'translateX(0) rotate(0)'},
+          {transform: 'translateX(-9%) rotate(-18deg)'},
+          {transform: 'translateX(8%) rotate(14deg)'},
+          {transform: 'translateX(-4%) rotate(-7deg)'},
+          {transform: 'translateX(0) rotate(0)'}
+        ], {duration: 550, easing: 'ease-out'});
+      }
     }
     function tick(now) {
       if (game.paused) return;
       const dt = game.last === null ? 0 : Math.min(now - game.last, 50);
       game.last = now;
       game.elapsed += dt;
-      game.x += (game.target - game.x) * (1 - Math.exp(-dt / 80));
+      game.stumble = Math.max(0, game.stumble - dt);
+      plane.style.setProperty('--bank', `${Math.max(-13, Math.min(13, (game.target - game.x) * .55))}deg`);
+      game.x += (game.target - game.x) * (1 - Math.exp(-dt / (game.stumble ? 200 : 80)));
       plane.style.left = `${game.x}%`;
       const depth = Math.min(1, game.elapsed / waveMs);
       wave.style.setProperty('--y', `${40 + depth * depth * 30}%`);
       wave.style.setProperty('--scale', 0.85 + depth * 0.15);
+      const obstacle = game.obstacle;
+      if (obstacle && !obstacle.passed) {
+        const approach = Math.min(1, depth / .65);
+        const sway = obstacle.kind === 'balloon' ? 10 : obstacle.kind === 'wind' ? 16 : 0;
+        const hazardX = obstacle.lane + Math.sin(approach * 5) * sway;
+        hazard.style.left = `${hazardX}%`;
+        hazard.style.setProperty('--hazard-y', `${29 + 41 * approach ** 1.6}%`);
+        hazard.style.setProperty('--hazard-size', .56 + .62 * approach);
+        if (approach === 1) {
+          obstacle.passed = true;
+          hazard.hidden = true;
+          if (Math.abs(hazardX - game.x) <= 13) {
+            sound.effect('impact');
+            stumble();
+            showFeedback('Türbülans!', false);
+          }
+        }
+      }
       if (game.elapsed >= waveMs) {
         const pick = lanes.findIndex(lane => Math.abs(lane - game.x) <= 13);
         const correct = pick === game.rounds[game.picks.length].answer;
@@ -180,11 +345,9 @@
           world.append(burst);
           burst.addEventListener('animationend', () => burst.remove(), {once: true});
         }
-        feedback.textContent = correct ? '+20' : pick < 0 ? 'Bulut geçildi' : '−10';
-        feedback.dataset.correct = String(correct);
-        feedback.getAnimations().forEach(animation => animation.cancel());
-        feedback.animate([{opacity: 1, transform: 'translateY(0)'}, {opacity: 0, transform: 'translateY(-20px)'}],
-          {duration: 720, fill: 'both'});
+        if (pick >= 0) sound.effect(correct ? 'correct' : 'wrong');
+        if (pick >= 0 && !correct) stumble();
+        showFeedback(correct ? 'Doğru +20' : pick < 0 ? 'Bulut geçildi' : 'Yanlış −10', correct);
         if (game.picks.length === game.rounds.length) {
           paintScore();
           void finish();
@@ -204,11 +367,16 @@
         runId = undefined;
         const next = result.hasMore && result.remaining > 0;
         openPanel(`Bölüm ${result.playedLevel} tamamlandı`, [
-          `Doğru ${result.correct} / ${result.total} · Yanlış ${result.wrong} · Boş ${result.total - result.correct - result.wrong}`,
-          `Puan ${result.score} · ${result.stars} yıldız`,
-          `+${result.xp} XP · +${result.gold} altın`,
           !result.hasMore ? 'Tüm kelimeleri tamamladın!' : `Açılan bölüm ${result.level}`
-        ], [...(next ? [[`Sonraki bölüm · ⚡ 5`, start]] : []), ['Oyunlara dön', close]]);
+        ], [...(next ? [[`Sonraki bölüm · ⚡ 5`, start]] : []), ['Oyunlara dön', close]], 'results');
+        const stars = document.createElement('div');
+        stars.className = 'dm-flight-stars';
+        stars.textContent = '★'.repeat(result.stars) + '☆'.repeat(3 - result.stars);
+        stars.setAttribute('aria-label', `${result.stars} yıldız`);
+        panel.prepend(stars);
+        stats([[result.score, 'Uçuş puanı'], [`${result.correct} / ${result.total}`, 'Doğru'],
+          [result.wrong, 'Yanlış'], [result.total - result.correct - result.wrong, 'Boş'],
+          [`+${result.xp}`, 'XP'], [`+${result.gold}`, 'Altın']]);
       } catch (error) {
         if (screen.isConnected) openPanel('Sonuç kaydediliyor', [error.message], [['Tekrar dene', finish]]);
       }
@@ -223,6 +391,8 @@
           overlay.hidden = true;
           game.paused = false;
           game.last = null;
+          sound.unlock();
+          syncSound();
           frame = requestAnimationFrame(tick);
         }],
         ['Uçuştan çık', close]
@@ -241,6 +411,9 @@
     world.onpointermove = event => { if (event.pointerId === pointer) move(event); };
     world.onlostpointercapture = () => { pointer = null; };
     $('[data-pause]').onclick = pause;
+    $('[data-sound]').onclick = () => { sound.toggle(overlay.hidden); paintSound(); };
+    document.addEventListener('visibilitychange', syncSound);
+    paintSound();
     screen.addEventListener('cancel', event => {
       event.preventDefault();
       if (overlay.hidden) pause();

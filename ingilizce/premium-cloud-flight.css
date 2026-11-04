@@ -11,7 +11,7 @@
 .dm-flight-world { touch-action: none; user-select: none; }
 .dm-flight-hud {
   position: absolute; z-index: 2; inset: max(12px, env(safe-area-inset-top)) 2% auto;
-  display: grid; grid-template-columns: auto auto auto minmax(0, 1fr) auto;
+  display: grid; grid-template-columns: auto auto auto minmax(0, 1fr) auto auto;
   gap: clamp(4px, 1.25vw, 10px); align-items: center;
   padding: 5px 9px 5px 5px; background: #041a3ce8; border: 1px solid #42c9ff;
   border-radius: 999px; box-shadow: inset 0 0 14px #1a8fff80, 0 4px 12px #0005;
@@ -32,7 +32,7 @@
   border-radius: 20px; box-shadow: 0 0 13px #00dcff, inset 0 0 0 3px #fff;
   text-transform: uppercase; overflow-wrap: anywhere; font-size: clamp(23px, 8vw, 42px);
 }
-.dm-flight-wave { position: absolute; width: 100%; top: var(--y, 34%); }
+.dm-flight-wave { position: absolute; z-index: 1; width: 100%; top: var(--y, 34%); }
 .dm-flight-cloud {
   position: absolute; left: var(--lane); width: 30%; min-height: 54px; aspect-ratio: 1.65;
   display: grid; place-items: center; text-align: center; padding: 8px 5px; box-sizing: border-box;
@@ -69,3 +69,72 @@
   from { transform: translate(-50%, -50%) scale(.5); opacity: .95; }
   to { transform: translate(-50%, -50%) scale(1.9); opacity: 0; }
 }
+.dm-flight-hud button[data-sound] { min-width: 34px; padding: 0 4px; font-size: 15px; }
+.dm-flight-plane { transform: translate(-50%,-21%) rotate(var(--bank, 0deg)); }
+.dm-flight-hazard {
+  position: absolute; top: var(--hazard-y); width: 29%; pointer-events: none;
+  transform: translate(-50%, -50%) scale(var(--hazard-size)); text-align: center;
+}
+.dm-flight-hazard i {
+  display: grid; place-items: center; width: 66%; aspect-ratio: 1.2; margin: auto;
+  color: #ffe695; font: 900 clamp(26px, 8vw, 52px)/1 system-ui;
+  text-shadow: 0 0 9px currentColor;
+}
+.dm-flight-hazard span {
+  display: inline-block; padding: 3px 6px; border-radius: 8px; color: #fff0bd;
+  background: #241639; font-size: clamp(11px, 3.4vw, 17px); white-space: nowrap;
+}
+.dm-flight-hazard[data-kind="storm"] i {
+  border-radius: 42% 53% 34% 40%; background: radial-gradient(ellipse at 45% 28%, #526caa, #242344 71%);
+  box-shadow: -14px 3px 0 -5px #33345d, 14px 4px 0 -5px #28264f, 0 0 17px #bb8cff75;
+}
+.dm-flight-hazard[data-kind="balloon"] i {
+  position: relative; width: 54%; aspect-ratio: 1; border-radius: 52% 52% 45% 45%;
+  background: radial-gradient(ellipse at 38% 28%, #fff3be, transparent 29%),
+    repeating-linear-gradient(90deg, #fd726d 0 19%, #7a3cbb 19% 38%);
+  border: 2px solid #ffb67f; margin-bottom: 8px;
+}
+.dm-flight-hazard[data-kind="balloon"] i::after {
+  content: ""; position: absolute; bottom: -9px; left: 40%; width: 20%; height: 8px; background: #db975d;
+}
+.dm-flight-hazard[data-kind="wind"] i {
+  color: #a5fff5; border: 3px dashed #7adff0; border-radius: 50%; background: #164977c9;
+  box-shadow: 0 0 16px #5ef4df88; animation: dm-flight-vortex 1.3s linear infinite;
+}
+@keyframes dm-flight-vortex { to { rotate: 1turn; } }
+.dm-flight-overlay section[data-variant] { max-height: 100%; overflow: auto; }
+.dm-flight-overlay section[data-variant="hangar"],
+.dm-flight-overlay section[data-variant="results"] {
+  width: min(100%, 410px); padding: clamp(16px, 5vw, 28px);
+  background: radial-gradient(ellipse at 50% 0, #1c5d8f 0, #122e59 42%, #09162e 100%);
+  border: 1px solid #71e9ff; box-shadow: 0 0 34px #16cdff54, inset 0 0 0 4px #a2f1ff12;
+}
+.dm-flight-overlay section[data-variant="hangar"] h2,
+.dm-flight-overlay section[data-variant="results"] h2 {
+  margin: 6px 0 10px; color: #f1fbff; font-size: clamp(24px, 6vw, 34px); text-shadow: 0 3px 15px #018adf;
+}
+.dm-flight-hero {
+  display: block; width: min(80%, 270px); max-height: 24dvh; object-fit: contain; margin: 0 auto 10px;
+  filter: drop-shadow(0 12px 18px #00d9ff83); animation: dm-flight-hero 2.8s ease-in-out infinite alternate;
+}
+@keyframes dm-flight-hero { to { transform: translateY(-7px) rotate(3deg); } }
+.dm-flight-stats { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 7px; margin: 14px 0; }
+.dm-flight-stats div { display: grid; align-content: center; gap: 5px; min-height: 56px; padding: 5px 3px; background: #061a39bf; border: 1px solid #71dfff63; border-radius: 11px; }
+.dm-flight-stats b { font-size: clamp(13px, 3.5vw, 17px); color: #88f0ff; }
+.dm-flight-stats small { font-size: 11px; color: #c6d9f2; }
+.dm-flight-stars {
+  font-size: clamp(32px, 11vw, 60px); letter-spacing: .12em; color: #ffdd78; text-shadow: 0 0 18px #ffa930;
+  animation: dm-flight-stars .5s ease-out both;
+}
+@keyframes dm-flight-stars { from { scale: .7; opacity: .3; } }
+.dm-flight-overlay section[data-variant="hangar"] button,
+.dm-flight-overlay section[data-variant="results"] button { width: 100%; min-height: 42px; }
+.dm-flight-overlay section[data-variant="hangar"] button:first-of-type,
+.dm-flight-overlay section[data-variant="results"] button:first-of-type {
+  background: linear-gradient(#8ef7ff,#2dc5f0); box-shadow: 0 4px 14px #24d3ff4b;
+}
+@media (prefers-reduced-motion: reduce) {
+  .dm-flight-plane::after, .dm-flight-hero, .dm-flight-stars, .dm-flight-hazard[data-kind="wind"] i { animation: none; }
+}
+
+.dm-flight-overlay .dm-flight-rules { color: #a0f0ff; font-size: 13px; }
