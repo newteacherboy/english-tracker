@@ -53,7 +53,7 @@ export function createBilling({ plugin, win, endpoint }) {
 
   // ---------------------------------------------------------------- arayüz
   let sheet;
-  const css = `.dmb-veil{position:fixed;inset:0;z-index:2147483000;background:rgba(15,23,42,.55);display:flex;align-items:flex-end;justify-content:center}
+  const css = `.dmb-veil{position:fixed;inset:0;z-index:2147483643;background:rgba(15,23,42,.55);display:flex;align-items:flex-end;justify-content:center}
 .dmb-sheet{width:min(560px,100%);max-height:92vh;overflow:auto;background:#fffefa;border:1px solid #b7ece4;border-bottom:0;border-radius:32px 32px 0 0;padding:18px 16px calc(18px + env(safe-area-inset-bottom,0px));font:600 15px/1.45 system-ui;color:#114952}
 .dmb-head{display:flex;align-items:center;justify-content:space-between;gap:8px}.dmb-head h2{margin:0;font-size:20px}
 .dmb-x{border:0;background:#ece7df;border-radius:50%;width:36px;height:36px;font-size:18px}

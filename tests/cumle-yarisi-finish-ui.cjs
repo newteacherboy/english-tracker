@@ -6,9 +6,11 @@ const code=fs.readFileSync(path.join(base,'cumle-yarisi.js'),'utf8'),css=fs.read
 const words=Array.from({length:30},(_,i)=>({ingilizce:'item'+i,turkce:'anlam '+i,sinif:5,unite:i<15?1:2}));
 async function choose(page,team,correct){
  const panel=page.locator('[data-side="'+team+'"]'),prompt=await panel.locator('.dm-sr-question p').innerText();
- const w=words.find(x=>prompt.includes('“'+x.turkce+'”'));
+ // Soru Türkçe ifadeyi (cevap İngilizce) ya da İngilizce ifadeyi (cevap Türkçe) doğrudan sorar.
+ const tr=words.find(x=>prompt.includes('“'+x.turkce+'”')),en=words.find(x=>prompt.includes('“'+x.ingilizce+'”')),w=tr||en;
  assert(w,'Question must be grounded in selected word bank: '+prompt);
- const options=panel.locator('[data-answer]'),idx=await options.evaluateAll((buttons,{ans,correct})=>buttons.findIndex(b=>correct?b.textContent===ans:b.textContent!==ans),{ans:w.ingilizce,correct});
+ const ans=tr?w.ingilizce:w.turkce;
+ const options=panel.locator('[data-answer]'),idx=await options.evaluateAll((buttons,{ans,correct})=>buttons.findIndex(b=>correct?b.textContent===ans:b.textContent!==ans),{ans,correct});
  assert(idx>=0,'an answer option must exist');
  await options.nth(idx).click();
 }

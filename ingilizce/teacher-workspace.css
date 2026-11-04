@@ -118,3 +118,33 @@ html body #ogretmenMenuModal.dm-teacher-open .ogretmen-menu-btn[hidden]{display:
 .dm-v2-quick{grid-template-columns:repeat(3,minmax(0,1fr))!important}
 #bottomNavMobile [data-ekran="tab-teacher-portal"][hidden]{display:none!important}
 @media(max-width:680px){.dm-v2-secondary{grid-template-columns:1fr!important}.dm-v2-quick{grid-template-columns:repeat(3,minmax(0,1fr))!important}}
+
+/* Mobil (4 Kas 2026): masaüstü düzeninin ölçekli hâli — solda dar menü şeridi, 4'lü özet, 3'lü kart ızgaraları. */
+@media(max-width:750px){
+ #dmTeacherDesignV2{grid-template-columns:62px minmax(0,1fr)!important;min-height:0!important;border-radius:18px!important}
+ #dmTeacherDesignV2 .dm-v2-sidebar{padding:10px 4px!important;gap:8px!important}
+ #dmTeacherDesignV2 .dm-v2-logo{display:block!important;font-size:18px!important}#dmTeacherDesignV2 .dm-v2-logo span{font-size:9px!important;line-height:1.1}
+ #dmTeacherDesignV2 .dm-v2-sidebar [data-v2-nav]{display:grid!important;overflow:visible!important;gap:3px!important}
+ #dmTeacherDesignV2 .dm-v2-sidebar button{flex:none!important;min-height:50px!important;padding:5px 1px!important;border-radius:12px!important;font:800 9px/1.1 Nunito,system-ui,sans-serif!important;overflow-wrap:anywhere;text-align:center}
+ #dmTeacherDesignV2 .dm-v2-sidebar button span{font-size:18px!important}
+ #dmTeacherDesignV2 .dm-v2-content{padding:9px!important}
+ #dmTeacherDesignV2 .dm-v2-banner{min-height:0!important;padding:12px 12px!important;border-radius:16px!important;gap:6px!important}
+ #dmTeacherDesignV2 .dm-v2-banner small{font-size:8px!important;letter-spacing:.5px}
+ #dmTeacherDesignV2 .dm-v2-banner h2{font-size:15px!important;margin:4px 0!important}
+ #dmTeacherDesignV2 .dm-v2-banner p{font-size:10.5px!important}
+ #dmTeacherDesignV2 .dm-v2-banner img{width:60px!important;height:70px!important}
+ #dmTeacherDesignV2 .dm-v2-stats{grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:4px!important;margin:9px 0 10px!important}
+ #dmTeacherDesignV2 .dm-v2-stats>div{padding:7px 2px!important;border-radius:12px!important;font-size:11px}
+ #dmTeacherDesignV2 .dm-v2-stats b{font-size:13px!important}#dmTeacherDesignV2 .dm-v2-stats small{font-size:8.5px!important;line-height:1.15}
+ #dmTeacherDesignV2 .dm-v2-content h3{font-size:15px!important;margin:10px 0 7px!important}
+ #dmTeacherDesignV2 .dm-v2-actions,#dmTeacherDesignV2 .dm-v2-secondary,#dmTeacherDesignV2 .dm-v2-quick{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:6px!important}
+ #dmTeacherDesignV2 .dm-v2-secondary{margin-top:6px!important}
+ #dmTeacherDesignV2 .dm-v2-action{min-height:96px!important;padding:9px 7px 16px!important;border-radius:14px!important;gap:3px!important}
+ #dmTeacherDesignV2 .dm-v2-action>span{font-size:22px!important}
+ #dmTeacherDesignV2 .dm-v2-action strong{font-size:11.5px!important;line-height:1.15!important}
+ #dmTeacherDesignV2 .dm-v2-action small{font-size:9px!important;line-height:1.25!important;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+ #dmTeacherDesignV2 .dm-v2-action i{font-size:15px!important;bottom:4px!important;right:7px!important}
+ #dmTeacherDesignV2 .dm-v2-quick .dm-v2-action{min-height:62px!important;padding:7px 4px!important}
+ #dmTeacherDesignV2 .dm-v2-quick .dm-v2-action>span{font-size:19px!important}#dmTeacherDesignV2 .dm-v2-quick .dm-v2-action strong{font-size:10.5px!important}
+ #dmTeacherDesignV2 .dm-v2-chat-badge:not([hidden]){min-width:18px;height:18px;font-size:10px;right:6px;top:5px}
+}

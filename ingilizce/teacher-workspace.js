@@ -1,6 +1,6 @@
 /* Keep the teacher workspace open while child screens come and go. */
 (()=>{'use strict';
-const style=document.createElement('link');style.rel='stylesheet';style.href='teacher-workspace.css?v=20261018-cards-3';document.head.append(style);
+const style=document.createElement('link');style.rel='stylesheet';style.href='teacher-workspace.css?v=20261104-mobil-1';document.head.append(style);
 const $=id=>document.getElementById(id),token=()=>sessionStorage.getItem('ing_ogr_token')||'';
 let active=false,total=0,registrations=0,messages=0,reading=false,lastRead=0,menuSeen=false;
 async function api(op,data={}){const r=await fetch(apiURL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({islem:op,t:token(),...data})});const d=await r.json();if(!r.ok||!d.ok)throw Error(d.mesaj||'Bildirimler alınamadı.');return d;}
@@ -289,8 +289,12 @@ function dmHome(){
  
  add(quick,'Sınıf Oluştur','🏫','Yeni sınıf oluştur',()=>openOriginal('classroom'));
  add(quick,'Sözlü Yap','🎤','Sözlü değerlendirme',()=>openOriginal('oral'));
+ // Çoklu sınıf ve sınıf raporları (4 Kas 2026); yönetici için hediye üyelik.
+ if(window.dmTeacherClassesOpen)add(quick,'Sınıflarım','🗂️','Sınıf kodları ve öğrenci taşıma',()=>window.dmTeacherClassesOpen());
+ if(window.dmTeacherReportsOpen)add(quick,'Sınıf Raporları','📈','Süre, doğruluk, zor kelimeler',()=>window.dmTeacherReportsOpen());
+ try{if(window.dmAdminGiftOpen&&sessionStorage.getItem('ing_ogr_yonetici')==='1')add(quick,'Hediye Üyelik','🎁','Plan hediye et',()=>window.dmAdminGiftOpen());}catch{}
  const nav=board.querySelector('[data-v2-nav]');
- for(const [icon,title,run] of [['⌂','Ana Sayfa',()=>board.scrollIntoView({behavior:'smooth'})],['👥','Öğrenciler',dmStudentList],['🏫','Sınıflar',()=>openOriginal('classroom')],['📋','Ödevler',()=>dmUseTool('ödev ver')],['📣','Duyurular',()=>dmUseTool('duyurular')],['📊','Raporlar',dmReportDialog],['📈','Rubrik',()=>dmUseTool('rubrik')],['⚙','Öğretmen Paneli',()=>openOriginal('teacher')]]){
+ for(const [icon,title,run] of [['⌂','Ana Sayfa',()=>board.scrollIntoView({behavior:'smooth'})],['👥','Öğrenciler',dmStudentList],['🏫','Sınıflar',()=>window.dmTeacherClassesOpen?window.dmTeacherClassesOpen():openOriginal('classroom')],['📋','Ödevler',()=>dmUseTool('ödev ver')],['📣','Duyurular',()=>dmUseTool('duyurular')],['📊','Raporlar',dmReportDialog],['📈','Rubrik',()=>dmUseTool('rubrik')],['⚙','Öğretmen Paneli',()=>openOriginal('teacher')]]){
   const button=document.createElement('button');button.type='button';button.innerHTML='<span>'+icon+'</span>'+title;button.addEventListener('click',run);nav.append(button);
  }
  const dashboardText=container.textContent||'';

@@ -19,7 +19,7 @@
     return j;
   }
 
-  const CSS = `.dmg-veil{position:fixed;inset:0;z-index:2147483001;background:rgba(13,49,55,.45);display:flex;align-items:flex-end;justify-content:center}
+  const CSS = `.dmg-veil{position:fixed;inset:0;z-index:2147483643;background:rgba(13,49,55,.45);display:flex;align-items:flex-end;justify-content:center}
 .dmg-sheet{width:min(100%,620px);max-height:92vh;overflow:auto;background:#fffefa;border-radius:22px 22px 0 0;padding:18px 18px 24px;font:15px/1.45 system-ui,sans-serif;color:#17363b;box-shadow:0 -10px 40px rgba(0,0,0,.2)}
 .dmg-sheet h2{margin:0 0 4px;font-size:20px}.dmg-sheet small{color:#5b7377}
 .dmg-box{border:1px solid #cfe9e4;border-radius:14px;padding:12px;margin-top:12px;background:#fff}

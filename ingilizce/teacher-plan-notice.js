@@ -15,7 +15,7 @@
     [...doc.querySelectorAll('.dm-notice-managed.dm-notice-visible,.dm-session-surface,[role="dialog"],#genelSonucOverlay.acik,.dmb-veil,.dmu-veil')].some(visible);
   const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
 
-  const CSS = `.dmt-veil{position:fixed;inset:0;z-index:2147483000;background:rgba(13,49,55,.45);display:flex;align-items:flex-end;justify-content:center}
+  const CSS = `.dmt-veil{position:fixed;inset:0;z-index:2147483643;background:rgba(13,49,55,.45);display:flex;align-items:flex-end;justify-content:center}
 .dmt-sheet{width:min(100%,560px);max-height:92vh;overflow:auto;background:#fffefa;border:1px solid #b7ece4;border-bottom:0;border-radius:32px 32px 0 0;text-align:center;color:#114952;font:600 15px/1.45 system-ui,-apple-system,sans-serif;padding-bottom:env(safe-area-inset-bottom,0px);animation:dmtUp .34s cubic-bezier(.2,.7,.25,1)}
 .dmt-hero{position:relative;height:130px;background:radial-gradient(ellipse at 4% 85%,#fffdf2 0 16%,transparent 17%),radial-gradient(ellipse at 100% 95%,#e4fff1 0 20%,transparent 21%),linear-gradient(125deg,#c7f8ee,#87dbf8 60%,#c2f2f0);border-radius:0 0 46% 9% / 0 0 18% 6%;overflow:hidden}
 .dmt-hero img{position:absolute;left:50%;bottom:-6%;transform:translateX(-50%);height:112%}
