@@ -33,6 +33,18 @@ Deno.serve(async(req:Request)=>{
   const s=(await db('portal_sessions?token_hash=eq.'+await sha256(token)+'&select=student_id,role,expires_at,teacher_portal_access_id&limit=1'))?.[0];
   if(!s||s.role!=='student'||!s.student_id||Date.parse(s.expires_at)<=Date.now())return reply(req,{ok:false,mesaj:'Oturumun sona erdi. Tekrar giriş yap.'},401);
   const op=String(b.op||'status');
+  if(b.game==='papizzle'){
+   const actor=s.student_id;
+   if(s.teacher_portal_access_id)return reply(req,{ok:false,mesaj:'Papizzle için öğrenci hesabına giriş yap.'},403);
+   if(op==='status')return reply(req,await db('rpc/dm_papizzle_status',{actor}));
+   if(!UUID.test(String(b.runId||'')))return reply(req,{ok:false,mesaj:'Geçersiz oyun.'},400);
+   if(op==='start')return reply(req,await db('rpc/dm_papizzle_start',{actor,run_key:b.runId}));
+   if(op==='finish'&&Array.isArray(b.selections)&&b.selections.length>=1&&b.selections.length<=256
+      &&b.selections.every((pick:unknown)=>typeof pick==='number'&&Number.isInteger(pick)&&pick>=0&&pick<16)){
+    return reply(req,await db('rpc/dm_papizzle_finish',{actor,run_key:b.runId,selections:b.selections}));
+   }
+   return reply(req,{ok:false,mesaj:'Geçersiz oyun sonucu.'},400);
+  }
   if(b.game==='cloud-flight'||b.game==='word-blocks'){
    const rpc=b.game==='word-blocks'?'dm_blocks':'dm_cloud';
    const actor=s.student_id;

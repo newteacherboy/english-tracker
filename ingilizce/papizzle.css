@@ -1,0 +1,80 @@
+.papizzle {
+  width: 100%; max-width: none; height: 100dvh; max-height: none; margin: 0;
+  border: 0; padding: 0; overflow: auto; color: white; background:
+    radial-gradient(ellipse at 50% 18%, #aa39e7 0%, transparent 60%),
+    linear-gradient(155deg, #5d12a0, #320d62);
+}
+.papizzle main {
+  width: min(100%, 610px); min-height: 100%; margin: auto; padding:
+    max(10px, env(safe-area-inset-top)) 12px max(14px, env(safe-area-inset-bottom));
+  box-sizing: border-box;
+}
+.papizzle [hidden] { display: none !important; }
+.papizzle header { display: flex; align-items: center; gap: 8px; }
+.papizzle header span {
+  margin-right: auto; border-radius: 999px; background: #ffdc55; color: #441447;
+  padding: 6px 13px; font-weight: 950;
+}
+.papizzle button { cursor: pointer; font: inherit; touch-action: manipulation; }
+.papizzle button:focus-visible { outline: 3px solid white; outline-offset: 2px; }
+.papizzle header button {
+  min-width: 44px; min-height: 44px; border: 1px solid #efc0ff; border-radius: 14px;
+  color: white; background: #51127c; font-size: 22px;
+}
+.papizzle h1 {
+  color: #ffde52; text-align: center; margin: 3px 0 13px; font-size: clamp(42px, 11vw, 76px);
+  font-weight: 1000; line-height: 1.08; letter-spacing: -.05em;
+  text-shadow: 0 3px #a7480b, 0 6px #ca1279, 0 9px #460d71;
+}
+.pz-hud { display: flex; align-items: center; gap: 10px; border-radius: 999px; padding: 7px 11px; background: #f4d0ff; color: #34104e; }
+.pz-hud progress { flex: 1; min-width: 0; height: 12px; accent-color: #812ac0; }
+.pz-prompt {
+  display: flex; align-items: center; gap: 8px; min-height: 90px; margin: 10px 0 0;
+  border: 4px solid #ffcf48; border-radius: 24px; color: #351052; background: #fff2df;
+  box-shadow: 0 5px #a95c22, inset 0 0 16px #ffd79e;
+}
+.pz-prompt img { width: clamp(66px, 20vw, 112px); height: clamp(66px, 20vw, 112px); object-fit: contain; }
+.pz-prompt div { min-width: 0; flex: 1; text-align: center; padding: 7px 9px 7px 0; }
+.pz-prompt b { display: block; text-transform: uppercase; font-size: clamp(23px, 6vw, 44px); line-height: 1.12; overflow-wrap: anywhere; }
+.pz-prompt small { display: inline-block; margin-top: 4px; color: #572370; font-weight: 800; }
+.pz-feedback { display: flex; justify-content: space-between; align-items: center; gap: 8px; min-height: 34px; padding: 0 4px; font-weight: 850; }
+.pz-board { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 9px; }
+.pz-board:has(> :nth-child(13)) { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.pz-board button {
+  --tile: #ff65c0; --base: #c12580; color: #250d36;
+  min-height: clamp(47px, 10dvh, 77px); padding: 5px 3px;
+  background: linear-gradient(#ffffff62, transparent 42%), var(--tile);
+  border: 2px solid #ffffff66; border-radius: clamp(10px, 4vw, 20px);
+  box-shadow: 0 4px var(--base), inset 0 0 6px #ffffff60, 0 6px 9px #25084690;
+  font-weight: 950; font-size: clamp(12px, 3.5vw, 22px); line-height: 1.1; overflow-wrap: anywhere;
+  animation: pz-drop .34s var(--pz-delay) both;
+}
+.pz-board button:nth-child(3n + 2) { --tile: #44f6d6; --base: #168b91; }
+.pz-board button:nth-child(3n + 3) { --tile: #ffe75a; --base: #c78614; }
+.pz-board button:nth-child(5n) { --tile: #bfa3ff; --base: #6d42bc; }
+.pz-board button.pz-wrong { animation: pz-shake .29s; }
+.pz-board button.pz-cleared { animation: pz-pop .28s forwards; pointer-events: none; }
+.papizzle [data-panel] {
+  margin-top: 26px; padding: 20px; border: 3px solid #ffd657; border-radius: 24px;
+  text-align: center; color: #34104e; background: #fff2df; box-shadow: 0 5px #ae6322;
+}
+.papizzle [data-panel] h2 { color: inherit; margin: 0 0 10px; }
+.papizzle [data-panel] p { margin: 8px 0; font-weight: 700; }
+.papizzle [data-panel] button {
+  display: block; width: 100%; min-height: 48px; margin-top: 12px; border: 0; border-radius: 15px;
+  color: #351052; background: #43f3d2; box-shadow: 0 4px #168b91; font-weight: 950;
+}
+.papizzle [data-panel] button + button { background: #ead0ff; box-shadow: 0 4px #b484dc; }
+.papizzle [data-panel] button:focus-visible { outline-color: #521078; }
+@keyframes pz-drop { from { opacity: 0; transform: translateY(-12px); } }
+@keyframes pz-pop { 30% { filter: brightness(1.5); transform: scale(1.12); } to { opacity: 0; transform: scale(.3); } }
+@keyframes pz-shake { 25%, 75% { transform: translateX(4px); background: #ff585c; } 50% { transform: translateX(-4px); } }
+@media (max-height: 680px) {
+  .pz-board button { min-height: clamp(44px, 8.5dvh, 56px); }
+  .pz-prompt img { width: 64px; height: 64px; }
+  .pz-prompt { min-height: 68px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pz-board button, .pz-board button.pz-wrong, .pz-board button.pz-cleared { animation: none; }
+  .pz-board button.pz-cleared { visibility: hidden; }
+}
