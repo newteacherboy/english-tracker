@@ -1,7 +1,7 @@
 const {test}=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),{stripTypeScriptTypes}=require('node:module');
 const src=fs.readFileSync(__dirname+'/../supabase/functions/diji-api/index.ts','utf8'),Async=Object.getPrototypeOf(async function(){}).constructor;
 const block=src.slice(src.indexOf('  if (op === "kayitOl")'),src.indexOf('  if (op === "sifreDegistir")')).replace('ogretmen: any','ogretmen').replace('(payload as any)','payload');
-const helpers=fs.readFileSync('supabase/functions/diji-api/learner-profile.mjs','utf8').replace(/export /g,'');
+const helpers=fs.readFileSync('supabase/functions/diji-api/learner-profile.mjs','utf8').replace(/export /g,'')+fs.readFileSync('supabase/functions/diji-api/class-code.mjs','utf8').replace(/export /g,'')+'const kodlaOgretmen=async kod=>kod==="GNWGVVE"?{ogretmen:{id:"t1",active:true},sinif:{teacherId:"t1",classNo:6,branch:"B"}}:{ogretmen:(await supabase.from("teachers").select("id").ilike("invite_code",kod).limit(1)).data?.[0]||null,sinif:null};';
 const run=new Async('body','supabase','json','studentByName','denemeSay','denemeYaz','likeKacir','hashPassword','num','temizMetin','onboarding','encName','yeniOgrenciYoneticiBildirimi','issueSession','const op="kayitOl";const OGRENCI_SIFRE_MIN=6;const sadeHarf=v=>String(v||"").toLocaleLowerCase("tr").replace(/[çğıöşüâîû]/g,c=>({"ç":"c","ğ":"g","ı":"i","ö":"o","ş":"s","ü":"u","â":"a","î":"i","û":"u"})[c]).replace(/[^a-z]/g,"");'+helpers+block);
 function fixture(fail=false){const mails=[],writes=[],upserts=[];const db={from(t){return {select(){return this},ilike(){return this},eq(){return this},limit:async()=>({data:[]}),insert(p){writes.push(p);return this},upsert(p){upserts.push(p);return Promise.resolve({data:p,error:null})},single:async()=>({data:fail?null:{id:'new',username:'Yeni Öğrenci',email:'parent@example.test'},error:fail?{}:null})}}};return {mails,writes,upserts,call:b=>run(b,db,(data,status=200)=>({data,status}),async()=>null,async()=>0,async()=>{},s=>s,async()=> 'hash',Number,s=>s,{welcome:async s=>mails.push(s)},s=>String(s).toLocaleLowerCase('tr'),async()=>{},async()=> 'student-session-token')};}
 const valid={ogrenciAdi:'yildiz_12',adSoyad:'Yeni Öğrenci',sifre:'secret',telefon:'05551234567',email:'parent@example.test',sinif:3,sube:'A',kvkkOnay:true,kvkkOnayTarihi:'2026-10-04T00:00:00Z'};
@@ -33,4 +33,11 @@ test('progress e-mail consent is optional: recorded only when the unticked box i
  const f=fixture(),r=await f.call({...valid,ilerlemeMailOnay:true});assert.equal(r.data.status,'success');
  const c=f.upserts.filter(u=>u.key_name==='progress_mail_consent_v1');assert.equal(c.length,1);assert.equal(c[0].student_id,'new');assert.equal(c[0].value.email,'parent@example.test');assert.equal(c[0].value.source,'registration_checkbox');
  for(const v of [undefined,false,'true']){const g=fixture(),s=await g.call({...valid,ilerlemeMailOnay:v});assert.equal(s.data.status,'success','registration never depends on the checkbox');assert.equal(g.upserts.filter(u=>u.key_name==='progress_mail_consent_v1').length,0);}
+});
+
+test('class code joins the teacher and branch only when the chosen grade matches',async()=>{
+ const wrong=fixture(),bad=await wrong.call({...valid,sinif:3,ogretmenKodu:'GNWGVVE'});
+ assert.equal(bad.data.status,'error');assert.match(bad.data.message,/6\. sınıf/);assert.equal(wrong.writes.length,0);
+ const right=fixture(),ok=await right.call({...valid,sinif:6,sube:'A',ogretmenKodu:'gnwgvve'});
+ assert.equal(ok.data.status,'success');assert.equal(right.writes[0].teacher_id,'t1');assert.equal(right.writes[0].branch,'B');assert.equal(right.writes[0].class_no,6);
 });

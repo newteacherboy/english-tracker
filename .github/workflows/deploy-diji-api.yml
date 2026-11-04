@@ -31,14 +31,14 @@ jobs:
           node-version: '22'
       - name: Pre-deploy checks
         run: |
-          node --test tests/delta-reads.test.mjs tests/incremental-client.test.cjs tests/public-catalog.test.cjs tests/request-budget.test.cjs tests/word-payload.test.mjs tests/release-read-cache.test.cjs tests/teacher-chat-routing.test.mjs tests/announcements-api.test.mjs tests/member-tools.test.cjs tests/api-security-guards.test.cjs tests/daily-mission-claim.test.cjs tests/onboarding-registration.test.cjs tests/server-reward-ledger.test.cjs
+          node --test tests/delta-reads.test.mjs tests/incremental-client.test.cjs tests/public-catalog.test.cjs tests/request-budget.test.cjs tests/word-payload.test.mjs tests/release-read-cache.test.cjs tests/teacher-chat-routing.test.mjs tests/announcements-api.test.mjs tests/member-tools.test.cjs tests/api-security-guards.test.cjs tests/daily-mission-claim.test.cjs tests/onboarding-registration.test.cjs tests/server-reward-ledger.test.cjs supabase/functions/diji-api/class-code.test.mjs
       - uses: supabase/setup-cli@v1
         with:
           version: latest
       - name: Deploy
         run: |
           test -n "$SUPABASE_ACCESS_TOKEN" || { echo "::error::SUPABASE_ACCESS_TOKEN secret is missing"; exit 1; }
-          supabase functions deploy diji-api --project-ref "$PROJECT_REF" --no-verify-jwt --use-api
+          supabase functions deploy diji-api --project-ref "$PROJECT_REF" --no-verify-jwt --use-api --yes
       - name: Smoke check
         run: |
           code=$(curl -s -o /dev/null -w '%{http_code}' -X OPTIONS "https://$PROJECT_REF.supabase.co/functions/v1/diji-api")
