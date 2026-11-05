@@ -38,7 +38,7 @@
     opening = true;
     try {
       const [state] = await Promise.all([request(token, 'status'), loadStyle()]);
-      if (name === account() && token === localStorage.getItem('ing_token')) mount(name, token, state);
+      if (name === account() && token === ((window.dmTeacherPortalMode ? sessionStorage.getItem('ing_ogr_token') : '') || localStorage.getItem('ing_token') || '')) mount(name, token, state);
     } catch (error) {
       window.yoToast?.(error.message);
     } finally {
@@ -70,7 +70,7 @@
     let pending = false;
     let audio;
     let muted = localStorage.getItem('papizzle-muted') === '1';
-    const sameAccount = () => name === account() && token === localStorage.getItem('ing_token');
+    const sameAccount = () => name === account() && token === ((window.dmTeacherPortalMode ? sessionStorage.getItem('ing_ogr_token') : '') || localStorage.getItem('ing_token') || '');
 
     function close() {
       clearInterval(watch);
