@@ -30,15 +30,17 @@ function decorate(el){
  let close=content.querySelector(CLOSE);
  if(!close){close=document.createElement('button');close.type='button';close.textContent='×';close.dataset.noticeClose='';close.onclick=event=>{event.stopPropagation();if(el.id==='duyuruOverlay')window.duyuruKapat?.();else el.remove();};}
  close.classList.add('dm-notice-close');close.setAttribute('aria-label','Duyuruyu kapat');panel.append(close);
- // A plain text status gets a separate title and action, never interpreted as HTML.
- if(!content.querySelector('h2,h3,strong,b')){const title=document.createElement('h2');title.textContent=el.dataset.noticeTitle||'Papi’den bildirim';content.prepend(title);}
+ const top=edge(el)==='top';
+ // Keep the original heading node and its event handlers when the source provides one.
+ let title=content.querySelector(top?':scope > :is(h1,h2,h3,strong,b)':'h2,h3,strong,b');
+ if(!title){title=document.createElement('h2');title.textContent=el.dataset.noticeTitle||'Papi’den bildirim';content.prepend(title);}
  if(!content.querySelector('button')){const done=document.createElement('button');done.type='button';done.className='dm-notice-done';done.textContent='Tamam';done.onclick=event=>{event.stopPropagation();close.click();};content.append(done);}
  const progress=document.createElement('div');progress.className='dm-notice-progress';progress.setAttribute('aria-hidden','true');progress.append(document.createElement('i'));panel.append(progress);
- if(edge(el)==='top'){
-  // Compact, high-contrast golden ribbon: mascot / wrapping text / timer + X.
+ if(top){
   const mascotIcon=document.createElement('span');mascotIcon.className='dm-notice-emblem';mascotIcon.setAttribute('aria-hidden','true');
   mascotIcon.textContent=/parkur|seviye|başar|ödül|altın|xp|görev|tebrik/i.test((el.textContent||'').slice(0,350))?'🏆':'🔔';
-  content.prepend(mascotIcon);
+  const heading=document.createElement('div');heading.className='dm-notice-heading';
+  title.before(heading);heading.append(mascotIcon,title);
   const controls=document.createElement('div');controls.className='dm-notice-controls';
   const timer=document.createElement('span');timer.className='dm-notice-timer';timer.textContent='5 sn';timer.setAttribute('aria-label','5 saniye sonra kapanır');
   controls.append(timer,close,progress);panel.append(controls);
