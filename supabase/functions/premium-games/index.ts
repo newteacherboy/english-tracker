@@ -34,6 +34,7 @@ Deno.serve(async(req:Request)=>{
   if(!s||!['student','teacher'].includes(s.role)||Date.parse(s.expires_at)<=Date.now())return reply(req,{ok:false,mesaj:'Oturumun sona erdi. Tekrar giriş yap.'},401);
   const op=String(b.op||'status');
   const game=String(b.game||'word-match');
+  if(game==='runners-papi')return reply(req,{ok:false,mesaj:'Runners Papi yayından kaldırıldı.'},410);
   const teacherGame=s.role==='teacher';
   let actor=s.student_id;
   if(teacherGame){
@@ -70,18 +71,6 @@ Deno.serve(async(req:Request)=>{
     return await gameReply(result);
   }
   // Await the dispatch helpers here so rejected RPCs reach the HTTP error handler.
-  if(b.game==='runners-papi'){
-   if(s.role==='student'&&s.teacher_portal_access_id)return reply(req,{ok:false,mesaj:'Bu oyun için öğrenci hesabına giriş yap.'},403);
-   const validAnswer=op==='answer'&&Number.isSafeInteger(b.gate)&&b.gate>=0
-     &&Number.isInteger(b.choice)&&b.choice>=-1&&b.choice<=2;
-   if(op!=='status'&&(!UUID.test(String(b.runId||''))||(op!=='start'&&!validAnswer))){
-    return reply(req,{ok:false,mesaj:'Geçersiz oyun işlemi.'},400);
-   }
-   const payload={actor,action:op,run_key:op==='status'?null:b.runId,
-    gate_no:validAnswer?b.gate:null,choice:validAnswer?b.choice:null};
-   if(op==='start')return await startGame('rpc/dm_runners_play',payload);
-   return await gameReply(await db('rpc/dm_runners_play',payload));
-  }
   if(b.game==='papizzle'){
    if(s.role==='student'&&s.teacher_portal_access_id)return reply(req,{ok:false,mesaj:'Papizzle için öğrenci hesabına giriş yap.'},403);
    if(op==='status')return await gameReply(await db('rpc/dm_papizzle_status',{actor}));

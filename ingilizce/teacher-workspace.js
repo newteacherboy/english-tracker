@@ -135,8 +135,7 @@ const dmTeacherPremiumGames=[
  ['Candy Papiş','🍬','premiumKelimeEslestirmeAc'],
  ['Kaptan Pilot Papi','✈️','premiumBulutUcusuAc'],
  ['Block Papi','🧱','premiumKelimeBloklariAc'],
- ['Papizzle','💎','papizzleAc'],
- ['Runners Papi','🦜','runnersPapiAc']
+ ['Papizzle','💎','papizzleAc']
 ];
 function dmOpenTeacherPremium(fn){
  if(!token()){window.yoToast?.('Öğretmen oturumu gerekli.');return;}
