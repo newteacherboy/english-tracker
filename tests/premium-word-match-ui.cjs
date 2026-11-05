@@ -10,7 +10,7 @@ for(const engine of (process.env.PWM_ENGINES||'chromium').split(',')){
  const st={ok:true,premium:false,freeUsed:0,remaining:3,level:1,stars:{},boosters:{karistir:1,degistir:1,satir:1,renk:1},energy:40,energyMax:50,gold:500};const calls=[];
  await page.route('**/functions/v1/premium-games',async r=>{const b=JSON.parse(r.request().postData());calls.push(b.op);let d={...st};
   if(b.op==='start'){if(st.remaining<=0)return r.fulfill({status:400,json:{ok:false,mesaj:'Ücretsiz 3 oyun hakkın bitti.',hata:'hak'}});st.freeUsed++;st.remaining=3-st.freeUsed;st.energy-=5;d={...st,runId:b.runId};}
-  if(b.op==='finish'){assert.equal(typeof b.won,'boolean');if(b.won){st.stars[st.level]=3;st.level++;}d={...st,won:b.won,stars:3,xp:b.won?172:10,gold:b.won?35:2};}
+  if(b.op==='finish'){assert.equal(typeof b.won,'boolean');if(b.won){st.stars[st.level]=3;st.level++;}d={...st,won:b.won,stars:3,xp:b.won?20:10,gold:b.won?5:2};}
   if(b.op==='use'){st.boosters[b.kind]--;d={...st};}
   return r.fulfill({json:d});});
  await page.route('https://pwm.test/**',r=>{const file=new URL(r.request().url()).pathname.slice(1);if(file)return r.fulfill({path:path.join(base,decodeURIComponent(file))});
@@ -36,7 +36,7 @@ for(const engine of (process.env.PWM_ENGINES||'chromium').split(',')){
  await page.evaluate(()=>window.dmPwm.state().goals.forEach(g=>g.have=g.need));
  await drag(await page.evaluate(()=>window.dmPwm.hint()));
  await page.waitForSelector('.pwm-modal.result [data-next]',{timeout:25000});
- assert.match(await page.textContent('.pwm-modal.result'),/\+172/);
+ assert.match(await page.textContent('.pwm-modal.result'),/\+20/);
  assert(calls.includes('finish'));
  await page.click('[data-map]');
  st.remaining=0;st.freeUsed=3;
