@@ -106,51 +106,76 @@ function pathMarkup(steps,current,learn){
  const map={steps:all,current:focus,learn,key:++mapSerial,height:Math.max(300,TOP+all.length*ROW),from:Math.max(0,focus-5),to:Math.min(all.length,focus+9)};routeMap=map;
  return '<section class="rt-path rt-v3-map" data-route-map="'+map.key+'" aria-label="'+esc(level)+' · Öğrenme durakları"><header class="rt-v3-summary"><button type="button" class="rt-v3-level" data-rt="all" aria-label="'+(learn?'Öğrenme Yolum':'Okul Yolum')+' tüm durakları göster">'+icon('book')+'<span><b>'+esc(level)+(learn?'':' · Ünite '+info.unit)+'</b><small>'+done+' / '+total+' durak tamamlandı</small><progress value="'+done+'" max="'+Math.max(1,total)+'" aria-label="'+esc(level)+' ilerlemesi"></progress></span></button><button type="button" class="rt-v3-switch" data-rt="switch-route" aria-label="Parkur değiştir">'+icon('switch')+'</button></header><div class="rt-v3-canvas"><div class="rt-v3-art" aria-hidden="true"></div><div class="rt-v3-scroll" tabindex="0" role="region" aria-label="'+(learn?'Öğrenme Yolu':'Okul Yolum')+' · tüm durakları kaydırarak keşfet"><div class="rt-flow-world" style="height:'+map.height+'px">'+mapRows(map,map.from,map.to)+'</div></div><aside class="rt-v3-tools" aria-label="Parkur araçları"><button type="button" data-rt="plan">'+icon('calendar')+'<span>Planım</span><small>Bugünün dersleri</small></button><button type="button" data-rt="missions">'+icon('tasks')+'<span>Görevler</span><small>Günlük ve haftalık</small></button>'+chestMarkup()+'</aside></div><div class="rt-continue">'+(active?.available?'<button type="button" class="rt-start '+(learn?'':'dm-map-continue')+'" '+(learn?'data-rt="continue"':'data-rt="school-stop" data-b="'+active.b+'" data-d="'+active.d+'"')+'>'+icon('play')+' Devam et</button>':'<span class="rt-v3-empty">Parkurun hazırlanıyor…</span>')+'</div></section>';
 }
+const medalParrot='<svg class="rt-medal-parrot" viewBox="0 0 64 64" aria-hidden="true"><path class="rt-medal-feather" d="M19 24c-7-3-6-9 3-10l9 1c-9-5-5-13 4-11 7 2 13 7 14 14-3 5-11 7-19 8z"/><path class="rt-medal-head" d="M47 20c-10-4-24 1-32 9l-7 9 8-1c-5 6-6 15 0 20l5-3c6 7 19 9 29 3l-4-7 5-14c3-7 1-12-4-16z"/><path class="rt-medal-cheek" d="M43 35c-6 2-8 7-7 12 1 6 5 9 10 12l4-2-4-8 7-10z"/><path class="rt-medal-beak" d="M50 32c9-1 14 7 11 15l-3 7c-2-5-6-7-13-7-2-6 0-12 5-15z"/><circle cx="34" cy="36" r="6"/><circle class="rt-medal-eye" cx="35" cy="36" r="1.4" fill="currentColor" stroke="none"/></svg>';
+function medalRow(map,step,i){
+ const {current,learn,top,row}=map;
+ const active=i===current,locked=!step.available,start=active&&!locked,n=routeNumber(step,i,learn);
+ const offset=i-current,lanes=[47,33,31,43,60,62,52,36],x=lanes[(offset%lanes.length+lanes.length)%lanes.length];
+ const y=top+i*row+(i>current?30:i<current?-35:0);
+ const action=learn?'data-rt="chapter" data-chapter="'+step.id+'"':'data-rt="school-stop" data-b="'+step.b+'" data-d="'+step.d+'"';
+ const caption=step.done?'Tekrar et':'Devam et';
+ const label=n+'. Durak · '+routeTitle(step,learn)+(locked?' · Kilitli':step.done?' · '+stopStars(step,learn)+' yıldız':'');
+ const disc=locked?icon('lock'):medalParrot;
+ return '<div class="rt-medal-row'+(active?' is-current':'')+(i===map.celebrate?' is-celebrating':'')+'" style="--stop-x:'+x+'%;--stop-y:'+y+'px">'+
+  '<button type="button" class="rt-medal-stop'+(start?' rt-medal-start':'')+(locked?' is-locked':step.done?' is-done':'')+'" '+
+  (start&&learn?'data-rt="continue" data-chapter="'+step.id+'"':action)+(locked?' disabled':'')+(active?' aria-current="step"':'')+
+  ' aria-label="'+esc((start?caption+' · ':'')+label)+'">'+
+  (step.done?starsMarkup(step,learn):'')+'<span class="rt-medal-disc">'+disc+'</span>'+
+  (start?'<span class="rt-medal-start-label">'+caption+' <span aria-hidden="true">›</span></span>':'')+'</button>'+
+  (active?img('papi-medal.webp','rt-medal-papi'):'')+'</div>';
+}
 function medalRows(map,from,to){
- const {steps,current,height,learn}=map, x=i=>i%2===current%2?24:61, y=i=>map.top+i*map.row;
- const first=Math.max(0,from-1),last=Math.min(steps.length,to+1);
- const curve=Array.from({length:last-first},(_,k)=>{const i=first+k;return k?'C'+x(i-1)+' '+(y(i)-map.row/2)+' '+x(i)+' '+(y(i)-map.row/2)+' '+x(i)+' '+y(i):'M'+x(i)+' '+y(i);}).join(' ');
- const ready=chestReady(),chestIndex=current>0?current-1:Math.min(1,steps.length-1),showChest=chestIndex>=from&&chestIndex<to;
- const chestY=y(chestIndex)+(chestIndex===current?65:0);
- const chestPath=showChest?' M'+x(chestIndex)+' '+y(chestIndex)+' L84 '+chestY:'';
- return '<svg class="rt-medal-trail" viewBox="0 0 100 '+height+'" preserveAspectRatio="none" aria-hidden="true"><path d="'+curve+chestPath+'"/></svg>'+
- steps.slice(from,to).map((step,k)=>{
-  const i=from+k, active=i===current, locked=!step.available, n=routeNumber(step,i,learn);
-  const action=learn?'data-rt="chapter" data-chapter="'+step.id+'"':'data-rt="school-stop" data-b="'+step.b+'" data-d="'+step.d+'"';
-  const stars=step.done?starsMarkup(step,learn):'';
-  const start=active&&!locked,caption=step.done?'Tekrar et':'Devam et';
-  const label=n+'. Durak · '+routeTitle(step,learn)+(locked?' · Kilitli':step.done?' · '+stopStars(step,learn)+' yıldız':'');
-  return '<div class="rt-medal-row'+(active?' is-current':'')+'" style="--stop-x:'+x(i)+'%;--stop-y:'+y(i)+'px">'+
-   '<button type="button" class="rt-medal-stop'+(start?' rt-medal-start':'')+(locked?' is-locked':step.done?' is-done':'')+'" '+
-   (start&&learn?'data-rt="continue" data-chapter="'+step.id+'"':action)+(locked?' disabled':'')+(active?' aria-current="step"':'')+
-   ' aria-label="'+esc((start?caption+' · ':'')+label)+'">'+
-   '<span class="rt-medal-disc">'+(locked?icon('lock'):stars)+'<b>'+n+'</b></span>'+
-   (start?'<span class="rt-medal-start-label">'+caption+' <span aria-hidden="true">›</span></span>':'')+'</button>'+
-   (active?img('papi-medal.webp','rt-medal-papi'):'')+'</div>';
- }).join('')+
- (showChest?'<button type="button" class="rt-medal-chest'+(ready?' is-ready':'')+'" data-rt="chests" style="top:'+chestY+'px">'+img('bilgi-icons/chest.webp')+'<span>'+(ready?'Ödülü al':'Sandık')+'</span></button>':'');
+ return map.steps.slice(from,to).map((step,k)=>from+k===map.current?'':medalRow(map,step,from+k)).join('');
 }
 function medalRouteMarkup(steps,current,learn){
  const active=steps[current],title=learn?'Öğrenme Yolum':'Okul Yolum',info=schoolInfo(active);
  const subtitle=learn?[active?.cefr,active?.theme].filter(Boolean).join(' · '):active?info.grade+'. Sınıf · '+(Number(info.unit)?info.unit+'. Ünite':info.unit):'';
- const map={steps,current,learn,key:++mapSerial,top:current===0?126:74,row:76,from:Math.max(0,current-5),to:Math.min(steps.length,current+9),renderRows:medalRows};
- map.height=map.top+steps.length*map.row;
+ const previous=routeMap,owner=who(),prior=previous?.steps[previous.current];
+ const sameStop=(a,b)=>a&&b&&(learn?a.id===b.id:a.b===b.b&&a.d===b.d);
+ const completed=previous?.learn===learn&&previous.owner===owner&&prior&&!prior.done
+  ?steps.findIndex(step=>step.done&&sameStop(step,prior)):-1;
+ const map={steps,current,learn,owner,key:++mapSerial,top:current===0?125:82,row:94,from:Math.max(0,current-5),to:Math.min(steps.length,current+9),renderRows:medalRows,celebrate:completed};
+ map.height=map.top+steps.length*map.row+55;
  routeMap=map;
+ const ready=chestReady(),chestY=map.top+current*map.row;
+ const chest='<button type="button" class="rt-medal-chest'+(ready?' is-ready':'')+'" data-rt="chests" style="top:'+chestY+'px">'+img('bilgi-icons/chest.webp')+'<span>'+(ready?'Ödülü al':'Sandık')+'</span></button>';
  const tools=[['all','book','Kütüphane'],['plan','calendar','Plan'],['missions','tasks','Görevler']];
  return '<section class="bi-scene rt-medal-route'+(learn?'':' rt-medal-school')+'" data-route-map="'+map.key+'" aria-label="'+title+'">'+
   '<header class="rt-medal-header"><div class="rt-medal-unit"><div><h1>'+title+'</h1><p>'+esc(subtitle)+'</p></div><button type="button" data-rt="switch-route" aria-label="Parkur değiştir">'+icon('route')+'<span>Rota değiştir</span><span aria-hidden="true">›</span></button></div>'+
   '<div class="rt-medal-tools" aria-label="Parkur araçları">'+tools.map(([action,symbol,label])=>'<button type="button" data-rt="'+action+'">'+icon(symbol)+'<span>'+label+'</span></button>').join('')+'</div></header>'+
-  (steps.length?'<div class="rt-medal-scroll" tabindex="0" role="region" aria-label="Öğrenme durakları, diğer duraklar için kaydır"><div class="rt-medal-world" style="height:'+map.height+'px">'+medalRows(map,map.from,map.to)+'</div></div>':'<p role="status">Parkurun hazırlanıyor…</p>')+'</section>';
+  (steps.length?'<div class="rt-medal-scroll" tabindex="0" role="region" aria-label="Öğrenme durakları, diğer duraklar için kaydır"><div class="rt-medal-world" style="height:'+map.height+'px"><div class="rt-medal-window">'+medalRows(map,map.from,current)+'</div>'+medalRow(map,active,current)+'<div class="rt-medal-window">'+medalRows(map,current+1,map.to)+'</div>'+chest+'</div></div>'+
+  '<button type="button" class="rt-medal-return" hidden aria-label="Güncel durağa dön"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20V4m-7 7 7-7 7 7"/></svg></button>':'<p role="status">Parkurun hazırlanıyor…</p>')+'</section>';
 }
 function mountScrollable(root){
  const el=root?.querySelector?.('[data-route-map]');if(!el?.querySelector||!routeMap||Number(el.dataset.routeMap)!==routeMap.key)return;
  const map=routeMap,scroll=el.querySelector('.rt-v3-scroll,.rt-medal-scroll'),world=el.querySelector('.rt-flow-world,.rt-medal-world');if(!scroll||scroll.dataset.bound)return;
  const row=map.row||ROW,top=map.top||TOP,renderRows=map.renderRows||mapRows;
+ const back=el.querySelector('.rt-medal-return'),currentTile=el.querySelector('[aria-current="step"] .rt-medal-disc'),windows=world.querySelectorAll('.rt-medal-window');
  scroll.dataset.bound='1';let queued=false;
- function draw(){queued=false;if(!el.isConnected||map!==routeMap)return;const from=Math.max(0,Math.floor((scroll.scrollTop-top)/row)-4),to=Math.min(map.steps.length,Math.ceil((scroll.scrollTop+scroll.clientHeight)/row)+5);if(from!==map.from||to!==map.to){map.from=from;map.to=to;world.innerHTML=renderRows(map,from,to);}}
+ function draw(){
+  queued=false;if(!el.isConnected||map!==routeMap)return;
+  const from=Math.max(0,Math.floor((scroll.scrollTop-top)/row)-4),to=Math.min(map.steps.length,Math.ceil((scroll.scrollTop+scroll.clientHeight)/row)+5);
+  if(from!==map.from||to!==map.to){
+   map.from=from;map.to=to;
+   if(windows.length){
+    windows[0].innerHTML=renderRows(map,from,Math.min(to,map.current));
+    windows[1].innerHTML=renderRows(map,Math.max(from,map.current+1),to);
+   }else world.innerHTML=renderRows(map,from,to);
+  }
+  if(back&&currentTile){
+   const bounds=scroll.getBoundingClientRect(),tile=currentTile.getBoundingClientRect();
+   back.hidden=tile.bottom>bounds.top&&tile.top<bounds.bottom;
+   back.classList.toggle('is-below',tile.top>=bounds.bottom);
+  }
+ }
  function schedule(){if(queued)return;queued=true;requestAnimationFrame(draw);}
  scroll.addEventListener('scroll',schedule,{passive:true});
- const focus=()=>{if(!el.isConnected||map!==routeMap)return;scroll.scrollTop=Math.max(0,top+map.current*row-scroll.clientHeight*(map.renderRows ? .4 : .45));draw();};
+ const destination=()=>Math.max(0,top+map.current*row-scroll.clientHeight*(back ? .34 : .45));
+ const focus=()=>{if(!el.isConnected||map!==routeMap)return;scroll.scrollTop=destination();draw();map.celebrate=-1;};
+ if(back)back.onclick=()=>{
+  scroll.scrollTo({top:destination(),behavior:window.matchMedia?.('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});
+  currentTile?.closest('button')?.focus({preventScroll:true});
+ };
  requestAnimationFrame(focus);mapResize?.disconnect();if(typeof ResizeObserver==='function'){mapResize=new ResizeObserver(schedule);mapResize.observe(scroll);}
 }
 function icon(name){const paths={play:'M8 4l12 8-12 8z',lock:'M6 11h12v10H6zM8 11V7a4 4 0 0 1 8 0v4',chat:'M3 4h18v13H9l-6 4zM7 8h10M7 12h6',bulb:'M9 18h6M9 21h6M8 14a7 7 0 1 1 8 0l-1 4H9z',atom:'M12 10v4M10 12h4M3 7c4-7 22 4 18 10S-1 13 3 7M3 17C-1 11 17 0 21 7S7 24 3 17',leaf:'M4 20C1 7 10 2 21 3c0 11-5 19-17 17zM4 20L17 7',book:'M3 4h6l3 2 3-2h6v15h-6l-3 2-3-2H3zM12 6v15',map:'M3 5l6-2 6 3 6-2v15l-6 2-6-3-6 2zM9 3v15M15 6v15',route:'M5 18c-3-4-3-7 0-7s3 3 0 7zm14-8c-3-4-3-7 0-7s3 3 0 7zM5 18h3a4 4 0 0 0 4-4 4 4 0 0 1 4-4h3',switch:'M4 7h16l-4-4M20 17H4l4 4',calendar:'M5 5h14v16H5zM8 3v4M16 3v4M5 10h14M9 14h2M14 14h2M9 17h2',tasks:'M9 5H5v16h14V5h-4M9 3h6v5H9zM8 14l2 2 5-5'};return '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="'+paths[name]+'"/></svg>';}

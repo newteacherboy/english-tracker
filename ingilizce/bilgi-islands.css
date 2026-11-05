@@ -136,18 +136,19 @@ body:has(#tab-dunya.active .rt-medal-school) #bzParkur{background:#151f42!import
 .rt-medal-route{
  --medal-surface:#1d583f;--medal-border:#497e63;--medal-ink:#f0fff7;--medal-active:#87efbb;
  --medal-bg:#0b3527;--medal-bg-dark:#082b21;--medal-secondary:#2a654e;--medal-route-button:#164b37;
- --medal-muted:#c9e6d5;--medal-trail:#abcabc;--medal-disc-light:#639885;--medal-disc:#316e59;--medal-disc-edge:#204d3c;
+ --medal-muted:#c9e6d5;--medal-disc-light:#639885;--medal-disc:#316e59;--medal-disc-edge:#204d3c;
  --medal-active-light:#abf7d1;--medal-active-edge:#29b883;--medal-active-ink:#073829;
- --medal-size:clamp(68px,21vw,85px);--medal-current-size:clamp(87px,27vw,111px);
+ --medal-size:clamp(62px,19vw,78px);--medal-current-size:clamp(72px,23vw,92px);
 
  display:flex;flex-direction:column;align-items:center;
- padding:4px 12px calc(max(10px,env(safe-area-inset-bottom,0px)) + var(--bi-nav-h) + 6px)!important;
+ --medal-dock-space:calc(max(10px,env(safe-area-inset-bottom,0px)) + var(--bi-nav-h) + 6px);
+ padding:4px 12px var(--medal-dock-space)!important;
  box-sizing:border-box;background:linear-gradient(155deg,var(--medal-bg),var(--medal-bg-dark));color:var(--medal-ink)
 }
 .rt-medal-school{
  --medal-surface:#2c4174;--medal-border:#566d9e;--medal-ink:#f1f6ff;--medal-active:#55c4ff;
  --medal-bg:#172345;--medal-bg-dark:#101936;--medal-secondary:#2d4273;--medal-route-button:#22355d;
- --medal-muted:#ccd8ed;--medal-trail:#b4c7ec;--medal-disc-light:#7388b6;--medal-disc:#425581;--medal-disc-edge:#2b3b61;
+ --medal-muted:#ccd8ed;--medal-disc-light:#7388b6;--medal-disc:#425581;--medal-disc-edge:#2b3b61;
  --medal-active-light:#8de0ff;--medal-active-edge:#138ed2;--medal-active-ink:#082649
 }
 .rt-medal-route::before{content:none}
@@ -193,8 +194,6 @@ body #tab-dunya .bz-ic:has(.rt-medal-route) .dm-unified-wallet.dm-papi-wallet :i
  overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:#4f7969 transparent
 }
 .rt-medal-world{position:relative;width:100%;min-height:100%}
-.rt-medal-trail{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
-.rt-medal-trail path{fill:none;stroke:var(--medal-trail);stroke-width:2;stroke-dasharray:4 7;stroke-linecap:round;vector-effect:non-scaling-stroke}
 .rt-medal-row{position:absolute;left:var(--stop-x);top:var(--stop-y);width:0;height:0}
 .rt-medal-stop{
  position:absolute;left:0;top:0;transform:translate(calc(var(--medal-size) / -2),-50%);
@@ -202,53 +201,74 @@ body #tab-dunya .bz-ic:has(.rt-medal-route) .dm-unified-wallet.dm-papi-wallet :i
 }
 .rt-medal-disc{
  box-sizing:border-box;position:relative;display:grid;place-content:center;justify-items:center;gap:3px;
- width:var(--medal-size);height:var(--medal-size);border:3px solid var(--medal-disc-light);border-radius:50%;
+ width:var(--medal-size);height:var(--medal-size);border:3px solid var(--medal-disc-light);border-radius:19px;
  background:radial-gradient(ellipse at 30% 15%,#fff5,transparent 50%),linear-gradient(155deg,var(--medal-disc-light),var(--medal-disc) 72%);
  box-shadow:0 7px 0 var(--medal-disc-edge),0 10px 13px #0006,inset 0 2px 3px #fff6,inset 0 -5px 7px #0002;
  font-size:24px;line-height:1
 }
-.rt-medal-stop.is-locked{opacity:1;filter:saturate(.62) brightness(.85);cursor:default}
-.rt-medal-stop svg{width:13px;height:13px}
-.rt-medal-stop .rt-v3-stars{display:flex;gap:2px}
-.rt-medal-stop .rt-v3-stars i{font:800 15px/1 system-ui;color:var(--medal-muted)}
+.rt-medal-stop.is-locked{opacity:1;filter:saturate(.36) brightness(.72);cursor:default}
+.rt-medal-disc svg{width:26px;height:26px}
+.rt-medal-disc .rt-medal-parrot{width:36px;height:36px;stroke-width:2.6}
+.rt-medal-start .rt-medal-parrot{width:53px;height:53px;stroke-width:2.5}
+.rt-medal-stop.is-done .rt-medal-parrot{color:#fff3d9}
+.rt-medal-stop.is-done .rt-medal-feather{fill:#148eef}
+.rt-medal-stop.is-done .rt-medal-head{fill:#4ab9ff}
+.rt-medal-stop.is-done .rt-medal-cheek{fill:#ffd858}
+.rt-medal-stop.is-done .rt-medal-beak{fill:#ffae28}
+.rt-medal-row.is-celebrating .rt-medal-parrot path{animation:rt-medal-color-in .65s ease-out both}
+.rt-medal-stop .rt-v3-stars{position:absolute;top:5px;left:50%;transform:translateX(-50%);display:flex;gap:2px;z-index:2;pointer-events:none}
+.rt-medal-stop.is-done .rt-medal-disc{padding-top:12px!important}
+.rt-medal-stop .rt-v3-stars i{font:800 12px/1 system-ui;color:var(--medal-muted)}
 .rt-medal-stop .rt-v3-stars i.on{color:#ffcf57}
-.rt-medal-stop .rt-v3-stars i:nth-child(2){transform:translateY(-2px)}
-.rt-medal-row.is-current{z-index:1}
+.rt-medal-row.is-current{z-index:1;animation:rt-medal-bob 3.2s ease-in-out infinite}
 .rt-medal-start{
- display:flex;align-items:center;transform:translate(calc(var(--medal-current-size) / -2),-50%);
- border-radius:999px;color:var(--medal-active-ink)
+ display:flex;flex-direction:column;align-items:center;gap:7px;
+ transform:translate(-50%,calc(var(--medal-current-size) / -2));
+ border-radius:20px;color:var(--medal-active-ink)
 }
 .rt-medal-start .rt-medal-disc{
- z-index:1;width:var(--medal-current-size);height:var(--medal-current-size);
- background:radial-gradient(ellipse at 28% 15%,#fff9,transparent 52%),linear-gradient(155deg,var(--medal-active-light),var(--medal-active) 60%,var(--medal-active-edge));
- border:4px solid var(--medal-active-edge);
- box-shadow:0 7px 0 var(--medal-active-edge),0 0 19px color-mix(in srgb,var(--medal-active) 40%,transparent),inset 0 2px 6px #fffd,inset 0 -6px 9px #0002;font-size:clamp(33px,11vw,46px)
+ width:var(--medal-current-size);height:var(--medal-current-size);color:#fff;
+ background:radial-gradient(ellipse at 28% 15%,#fff8,transparent 54%),linear-gradient(155deg,var(--medal-active),var(--medal-active-edge));
+ border:3px solid #effff6;
+ box-shadow:0 5px 0 var(--medal-active-edge),0 0 20px color-mix(in srgb,var(--medal-active) 45%,transparent),inset 0 2px 6px #fff9;
 }
-.rt-medal-start .rt-medal-disc::after{content:"";position:absolute;inset:4px;border:3px dashed var(--medal-active-light);border-radius:inherit;pointer-events:none}
+.rt-medal-start .rt-medal-disc::after{content:"";position:absolute;inset:-7px;border:2px solid var(--medal-active);border-radius:23px;opacity:.35;pointer-events:none}
 .rt-medal-start-label{
- display:flex;align-items:center;gap:7px;min-height:46px;white-space:nowrap;
- margin-left:-22px!important;padding:8px 16px 8px 34px!important;
- border:1px solid var(--medal-active-light);border-radius:999px;
- background:linear-gradient(var(--medal-active-light),var(--medal-active));box-shadow:0 5px 0 var(--medal-active-edge),inset 0 2px 3px #fff8;
- font-size:clamp(14px,4.4vw,18px)
+ display:flex;align-items:center;justify-content:center;gap:6px;min-height:31px;white-space:nowrap;
+ padding:3px 11px!important;border:1px solid var(--medal-active-light);border-radius:999px;
+ background:linear-gradient(var(--medal-active-light),var(--medal-active));box-shadow:0 3px 0 var(--medal-active-edge);
+ font-size:clamp(12px,3.6vw,15px);font-weight:900
 }
 .rt-medal-papi{
  position:absolute;left:0;bottom:calc(var(--medal-current-size) * .31);
- width:calc(var(--medal-current-size) * 1.16);height:auto;transform:translateX(-61%);pointer-events:none;z-index:2
+ width:calc(var(--medal-current-size) * 1.05);height:auto;transform:translateX(-82%);pointer-events:none;z-index:2
 }
 .rt-medal-chest{
- position:absolute;left:84%;transform:translate(-50%,-48%);display:grid;justify-items:center;gap:2px;
- min-width:54px;min-height:48px;padding:3px;border:0;border-radius:14px;
- background:var(--medal-bg);color:var(--medal-muted);z-index:2
+ position:absolute;left:81%;transform:translate(-50%,-45%);display:grid;justify-items:center;gap:3px;
+ min-width:56px;min-height:48px;padding:3px;border:0;background:none;color:var(--medal-muted);z-index:2
 }
-.rt-medal-chest img{width:clamp(51px,16vw,70px);height:clamp(44px,14vw,60px);object-fit:contain;transform:scale(1.13)}
-.rt-medal-chest span{font:900 10px/1.15 Nunito,system-ui}
-.rt-medal-chest.is-ready img{animation:rt-medal-chest-hop 2.6s ease-in-out infinite}
+.rt-medal-chest img{
+ width:clamp(62px,21vw,90px);height:clamp(54px,17vw,72px);object-fit:contain;transform:scale(1.13);
+ filter:grayscale(1) brightness(.83);opacity:.72;transition:filter .28s ease,opacity .28s ease
+}
+.rt-medal-chest span{font:900 11px/1.15 Nunito,system-ui}
+.rt-medal-chest.is-ready img{filter:none;opacity:1;animation:rt-medal-chest-hop 2.6s ease-in-out infinite}
 .rt-medal-chest.is-ready span{background:#ffd56a;color:#332102;border-radius:12px;padding:4px 6px!important}
+.rt-medal-return{
+ position:absolute;right:max(15px,calc((100% - 620px) / 2 + 8px));bottom:calc(var(--medal-dock-space) + 13px);
+ display:grid;place-items:center;width:49px;height:47px;z-index:3;border-radius:15px;
+ border:1px solid var(--medal-active-light);background:linear-gradient(var(--medal-active-light),var(--medal-active));
+ box-shadow:0 4px 0 var(--medal-active-edge),0 7px 14px #0005;color:var(--medal-active-ink)
+}
+.rt-medal-return[hidden]{display:none!important}
+.rt-medal-return svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.rt-medal-return.is-below svg{transform:rotate(180deg)}
 .rt-medal-route button:focus-visible,.rt-medal-scroll:focus-visible{outline:3px solid #ffd56a;outline-offset:2px}
 @media(max-height:650px){.rt-medal-route{--bi-nav-h:62px}}
-@media(prefers-reduced-motion:reduce){.rt-medal-chest.is-ready img{animation:none}}
+@media(prefers-reduced-motion:reduce){.rt-medal-row.is-current,.rt-medal-row.is-celebrating .rt-medal-parrot path,.rt-medal-chest.is-ready img{animation:none}}
 }
+@keyframes rt-medal-bob{0%,18%,45%,100%{transform:translateY(0)}30%{transform:translateY(-5px)}}
+@keyframes rt-medal-color-in{from{fill:transparent}}
 @keyframes rt-medal-chest-hop {
  0%,34%,100%{transform:scale(1.13)}
  8%{transform:scale(1.19,1.05)}
