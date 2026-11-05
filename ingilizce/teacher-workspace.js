@@ -130,6 +130,21 @@ function openNoticeMailCenter(){
 }
 
 
+
+const dmTeacherPremiumGames=[
+ ['Candy Papiş','🍬','premiumKelimeEslestirmeAc'],
+ ['Kaptan Pilot Papi','✈️','premiumBulutUcusuAc'],
+ ['Block Papi','🧱','premiumKelimeBloklariAc'],
+ ['Papizzle','💎','papizzleAc'],
+ ['Runners Papi','🦜','runnersPapiAc']
+];
+function dmOpenTeacherPremium(fn){
+ if(!token()){window.yoToast?.('Öğretmen oturumu gerekli.');return;}
+ const open=window[fn];
+ if(typeof open==='function')open();
+ else window.yoToast?.('Oyun yüklenemedi. Tekrar dene.');
+}
+
 /* Teacher home shortcuts reuse the existing working panel actions. */
 const dmHomeActions=[
  ['Ödev Ver','📝','Sınıfına ödev ve etkinlik gönder','ödev ver'],
@@ -268,6 +283,8 @@ function dmHome(){
   <div class="dm-v2-secondary" data-v2-secondary></div>
   <h3>✨ Hızlı Erişim</h3>
   <div class="dm-v2-quick" data-v2-quick></div>
+  <h3>👑 Premium Oyunlar</h3>
+  <div class="dm-v2-quick" data-v2-premium aria-label="Premium öğretmen oyunları"></div>
  </main>`;
  const add=(target,label,emoji,description,run,cls='')=>{
   const button=document.createElement('button');button.type='button';button.className='dm-v2-action '+cls;
@@ -289,6 +306,9 @@ function dmHome(){
  
  add(quick,'Sınıf Oluştur','🏫','Yeni sınıf oluştur',()=>openOriginal('classroom'));
  add(quick,'Sözlü Yap','🎤','Sözlü değerlendirme',()=>openOriginal('oral'));
+ const premiumBoard=board.querySelector('[data-v2-premium]');
+ for(const [title,emoji,fn] of dmTeacherPremiumGames)
+   add(premiumBoard,title,emoji,'Premium oyun · paket hakların geçerli',()=>dmOpenTeacherPremium(fn));
  // Çoklu sınıf ve sınıf raporları (4 Kas 2026); yönetici için hediye üyelik.
  if(window.dmTeacherClassesOpen)add(quick,'Sınıflarım','🗂️','Sınıf kodları ve öğrenci taşıma',()=>window.dmTeacherClassesOpen());
  if(window.dmTeacherReportsOpen)add(quick,'Sınıf Raporları','📈','Süre, doğruluk, zor kelimeler',()=>window.dmTeacherReportsOpen());
@@ -326,6 +346,14 @@ function installWorkspaceTools(menu){
 
  if(!$('dmNoticeMailCenterButton')){const b=document.createElement('button');b.id='dmNoticeMailCenterButton';b.className='ogretmen-menu-btn';b.textContent='📣 Duyuru ve Mail Yönetim Merkezi';b.onclick=openNoticeMailCenter;menu.querySelector('.rubric-content').append(b);}
  if(!$('dmTeacherOralButton')){const b=document.createElement('button');b.id='dmTeacherOralButton';b.className='ogretmen-menu-btn';b.textContent='🎙️ Sözlü Yap · Kelime sor, 100 XP kazandır';b.onclick=()=>window.dmTeacherOral?.open();menu.querySelector('.rubric-content').append(b);}
+ for(const [title,emoji,fn] of dmTeacherPremiumGames){
+   const id='dmTeacherPremium'+fn;
+   if($(id))continue;
+   const b=document.createElement('button');b.id=id;b.type='button';b.className='ogretmen-menu-btn';
+   b.textContent=emoji+' '+title;
+   b.onclick=()=>dmOpenTeacherPremium(fn);
+   menu.querySelector('.rubric-content')?.append(b);
+ }
 }
 function maintain(){
  const menu=$('ogretmenMenuModal');if(!menu)return;if(!token()){active=false;menuSeen=false;return;}
