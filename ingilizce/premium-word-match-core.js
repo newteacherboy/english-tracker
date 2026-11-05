@@ -11,26 +11,26 @@ function mulberry(seed){let a=seed>>>0;return()=>{a=a+0x6D2B79F5|0;let t=Math.im
 function starScore(level,star){const L=Math.max(1,Math.min(100,level|0)),base=(L<=4?8000:L<=49?6500:5500)+L*20;return Math.floor(base*[0.5,1,1.3][Math.max(1,Math.min(3,star))-1]);}
 function levelConfig(level){
  const L=Math.max(1,Math.min(100,level|0)),rng=mulberry(L*7919);
- const types=L<=4?5:L<=49?6:7;
+ const types=5;
  const moves=Math.max(22,27-Math.floor(L/20));
  const hasIce=L>=6&&(L%4===2||L%4===3||L>=40&&L%2===0),hasLock=!hasIce&&L>=21&&L%5!==0&&L%3===0;
  const goalTypes=L<=2?1:(L<40||hasIce||hasLock)?2:3;
- const per=Math.min(15,9+Math.floor(L/9))+(goalTypes===1?4:0)-(hasIce?2:0)-(hasLock?1:0);
+ const per=Math.min(11,6+Math.floor(L/16))+(goalTypes===1?4:0)-(hasIce||hasLock?1:0);
  const goals=[];const pick=[...Array(types).keys()];
  for(let i=0;i<goalTypes;i++){const j=Math.floor(rng()*pick.length);goals.push({type:pick.splice(j,1)[0],need:per});}
- const ice=[],locks=[];const R=7,C=7;
+ const ice=[],locks=[];const R=5,C=5;
  if(hasIce){
-  const pattern=(L>>1)%4;const count=Math.min(8,4+Math.floor(L/20));
+  const pattern=(L>>1)%4;const count=Math.min(5,3+Math.floor(L/35));
   const cells=[];
   for(let r=0;r<R;r++)for(let c=0;c<C;c++){
-   const ok=pattern===0?(r>=R-3):pattern===1?(r>=R-2||r>=2&&r<=4&&c>=2&&c<=4):pattern===2?((r+c)%2===0&&r>=2):(Math.abs(r-3)+Math.abs(c-3)<=2);
+   const ok=pattern===0?(r>=R-3):pattern===1?(r>=R-2||r>=1&&r<=3&&c>=1&&c<=3):pattern===2?((r+c)%2===0&&r>=2):(Math.abs(r-2)+Math.abs(c-2)<=2);
    if(ok)cells.push([r,c]);
   }
   // Buzlar dağınık değil, kümeli: merkeze yakın hücreler önce.
-  cells.sort((a,b)=>(Math.abs(a[0]-4)+Math.abs(a[1]-3))-(Math.abs(b[0]-4)+Math.abs(b[1]-3))+(rng()-.5)*.8);
+  cells.sort((a,b)=>(Math.abs(a[0]-3)+Math.abs(a[1]-2))-(Math.abs(b[0]-3)+Math.abs(b[1]-2))+(rng()-.5)*.8);
   ice.push(...cells.slice(0,count));
  }
- if(hasLock){const n=Math.min(6,3+Math.floor(L/25));for(let i=0;i<n;i++){const r=1+Math.floor(rng()*(R-2)),c=Math.floor(rng()*C);if(!locks.some(x=>x[0]===r&&x[1]===c))locks.push([r,c]);}}
+ if(hasLock){const n=Math.min(4,2+Math.floor(L/40));for(let i=0;i<n;i++){const r=1+Math.floor(rng()*(R-2)),c=Math.floor(rng()*C);if(!locks.some(x=>x[0]===r&&x[1]===c))locks.push([r,c]);}}
  if(ice.length)goals.push({type:'ice',need:ice.length});
  if(locks.length)goals.push({type:'lock',need:locks.length});
  return {level:L,world:Math.ceil(L/20),rows:R,cols:C,types,moves,goals,ice,locks,stars:[1,2,3].map(s=>starScore(L,s))};
@@ -203,9 +203,10 @@ function shuffle(st){
   if(!findGroups(st).length&&findMove(st))return;
  }
  // Çok nadir: tahtayı baştan diz (özel parçalar korunmaz).
- const locks=[];st.board.forEach((row,r)=>row.forEach((p,c)=>{if(p?.lock)locks.push([r,c]);}));fillNoMatch(st);locks.forEach(([r,c])=>st.board[r][c].lock=true);ensureMove(st);
+ const locks=[];st.board.forEach((row,r)=>row.forEach((p,c)=>{if(p?.lock)locks.push([r,c]);}));
+ do{fillNoMatch(st);locks.forEach(([r,c])=>st.board[r][c].lock=true);}while(!findMove(st));
 }
-function ensureMove(st){let n=0;while(!findMove(st)&&n++<40){fillNoMatch(st);}}
+function ensureMove(st){if(!findMove(st))shuffle(st);}
 
 /* Güçlendiriciler (hamle harcamaz). */
 function boosterRow(st,r){const steps=[];const cells=[];for(let c=0;c<st.cols;c++)cells.push([r,c]);resolve(st,steps,[],{cells,score:300});after(st,steps);return steps;}
