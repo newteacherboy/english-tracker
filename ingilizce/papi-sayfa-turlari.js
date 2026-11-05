@@ -29,14 +29,14 @@ const TOURS=[
  {id:'parkur',tab:'tab-dunya',title:'Parkur',ask:'Bugün sana Parkur sayfasını yakından göstereyim mi?',steps:()=>{
   const school=Y()?.dmLearningPurpose==='school',klass=window.dmProgression?.status?.()?.startPath?.learningRoute==='needs-test';
   return [
-   {center:true,before:()=>openTab('tab-dunya','.rt-v3-map'),title:'Parkur’u yakından tanıyalım',text:school?'Macera Haritası, okuldaki sınıf ve ünite sırasıyla ilerler. Bölümlerine tek tek bakalım.':'Öğrenme Yolu, seviyene göre temalar ve derslerle ilerler. Bölümlerine tek tek bakalım.',noDots:true,next:'Başlayalım'},
-   {target:'.rt-v3-level',title:school?'Sınıfın ve ünite':'Seviyen ve bölüm',text:'Nerede olduğunu ve kaç durak bitirdiğini burada görürsün. Dokunursan tüm durakların listesi açılır.'},
-   {target:'.rt-v3-scroll',title:'Durak haritası',text:'Kaydırarak durakları gez. Bitirdiğin duraklar işaretlenir, sıradaki durak öne çıkar, kilitli duraklar sırası gelince açılır.'},
-   {target:'.rt-continue .rt-start',title:'Devam et',text:'Kaldığın duraktan başlar. Her durakta önce yeni kelimeleri dinleyip öğrenir, sonra soruları çözersin.',tip:'İlk soru ücretsiz, sonraki her soru 1 enerji.'},
+   {center:true,before:()=>openTab('tab-dunya','.rt-medal-route'),title:'Parkur’u yakından tanıyalım',text:school?'Macera Haritası, okuldaki sınıf ve ünite sırasıyla ilerler. Bölümlerine tek tek bakalım.':'Öğrenme Yolu, seviyene göre temalar ve derslerle ilerler. Bölümlerine tek tek bakalım.',noDots:true,next:'Başlayalım'},
+   {target:'.rt-medal-unit',title:school?'Sınıfın ve ünite':'Seviyen ve bölüm',text:'Nerede olduğunu burada görürsün. Tüm duraklara ve ilerlemene Kütüphane’den bakabilirsin.'},
+   {target:'.rt-medal-scroll',title:'Durak haritası',text:'Kaydırarak durakları gez. Bitirdiğin duraklar işaretlenir, sıradaki durak öne çıkar, kilitli duraklar sırası gelince açılır.'},
+   {target:'.rt-medal-start',title:'Devam et',text:'Kaldığın duraktan başlar. Her durakta önce yeni kelimeleri dinleyip öğrenir, sonra soruları çözersin.',tip:'İlk soru ücretsiz, sonraki her soru 1 enerji.'},
    {target:'[data-rt="plan"]',title:'Planım',text:'Bugün çalışman önerilen dersleri gösterir. Ne yapacağını bilmiyorsan buradan başla.'},
    {target:'[data-rt="missions"]',title:'Görevler',text:'Günlük ve haftalık görevlerin burada. Tamamladıkça ödül kazanırsın.'},
-   {target:'.rt-map-chest',title:'Sandık',text:'Seviye atlayıp parkurda ilerledikçe sandıklar açılır. Sandık hazır olunca üzerinde AÇ yazar.',tip:lockTip(5,'İlk sandık')},
-   {target:'.rt-v3-switch',title:'Parkur değiştir',text:school?'Buradan Öğrenme Yolu’na geçebilirsin. Öğrenme Yolu sınıf yerine İngilizce seviyene (A1, A2…) göre ilerler. İki yoldaki ilerlemen de korunur.':'Buradan Macera Haritası’na geçebilirsin. Macera Haritası okuldaki sınıf ve ünite sırasını izler. İki yoldaki ilerlemen de korunur.',tip:school&&klass?'Öğrenme Yolu’na geçmeden önce seviye testini çözmen gerekir.':''},
+   {target:'.rt-medal-chest',title:'Sandık',text:'Seviye atlayıp parkurda ilerledikçe sandıklar açılır. Sandık hazır olunca üzerinde Ödülü al yazar.',tip:lockTip(5,'İlk sandık')},
+   {target:'.rt-medal-unit [data-rt="switch-route"]',title:'Parkur değiştir',text:school?'Buradan Öğrenme Yolu’na geçebilirsin. Öğrenme Yolu sınıf yerine İngilizce seviyene (A1, A2…) göre ilerler. İki yoldaki ilerlemen de korunur.':'Buradan Macera Haritası’na geçebilirsin. Macera Haritası okuldaki sınıf ve ünite sırasını izler. İki yoldaki ilerlemen de korunur.',tip:school&&klass?'Öğrenme Yolu’na geçmeden önce seviye testini çözmen gerekir.':''},
    {center:true,img:'papi-mektup',title:'Seviye testi',text:'Profil › Seviye Testi’nden İngilizce seviyeni ölçebilirsin. Okuma, dinleme ve dil kullanımı soruları var; yaklaşık 20–25 dakika sürer ve enerji harcamaz. Sonuca göre sana uygun başlangıç önerilir.',noDots:true,next:'Anladım',secondary:'Kapat'}
   ];
  }},
@@ -109,7 +109,7 @@ const PAGES=[ // Öncelik sırası: üstte açılan katmanlar önce, Parkur hari
  {id:'derscalis',sel:'#dcScreenLevels',allow:'.dc-fullscreen-overlay.active'},
  {id:'oyunlar',sel:'.gg-tabs',allow:'.game-modal-overlay,.dc-fullscreen-overlay.active'},
  {id:'arkadaslar',sel:'.fr-home',allow:''},
- {id:'parkur',sel:'.rt-v3-map',allow:''}
+ {id:'parkur',sel:'.rt-medal-route',allow:''}
 ];
 const BLOCKERS='#dmRouteChoice,#dmCharacterBuilder,.ka-perde,#dmPlacementExam,#dmStartPlacement,#dmStartingChoice,#dmPlacementInvite,#dmEmailVerification,#dmEmailGuide,#bzPerde,#dmStoryLesson,#mlThemeList,.game-modal-overlay,.dc-fullscreen-overlay.active,#yoModal.acik,#genelSonucOverlay.acik,.sa-perde,.rt-profile-backdrop,#dmBagPage,#yardimModal[style*="flex"]';
 function done(id,o=who()){const y=Y();return store.get(key(id,o))==='1'||!!y?.dmPapiSayfaTurlari?.[id];}

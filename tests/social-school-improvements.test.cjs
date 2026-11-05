@@ -90,12 +90,12 @@ test('school launch and quiz styles use separate day/night palettes and changing
  assert.match(schoolSource,/window\.dmSchoolStopOpen\(Number\(step\.b\),Number\(step\.d\)\)/);
 });
 
-test('school homepage uses Bilgi Adaları and preserves goal/tasks',()=>{
+test('school homepage uses the medal route and preserves goal/tasks',()=>{
  const html=routeSource;
  assert.match(html,/function pathMarkup\(steps,current,learn\)/);
- assert.match(html,/function islandMarkup/);
- assert.match(html,/bi-progress[^]*data-rt="all"/);
- assert.match(html,/bi-mascot/);
+ assert.match(html,/function medalRouteMarkup/);
+ assert.match(html,/rt-medal-tools[^]*data-rt="all"/);
+ assert.match(html,/rt-medal-papi/);
  assert.match(html,/function weekly\(/);
  assert.match(html,/function tasks\(/);
  const css=fs.readFileSync('ingilizce/school-adventure-v2.css','utf8');
