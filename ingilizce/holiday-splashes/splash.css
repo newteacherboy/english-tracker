@@ -1,5 +1,3 @@
-/* First paint is a full-screen celebration. Holiday images include their
-   original illustrated loading bar; overlay ONLY its inner colored track. */
 html.dm-holiday-active :is(#splashEkrani,#dmBootSplash,#oturumYuklemeOverlay){
  background:#132c52!important;overflow:hidden!important;isolation:isolate;
  height:100dvh!important;min-height:100dvh!important;
@@ -14,33 +12,8 @@ html.dm-holiday-active :is(#splashEkrani,#dmBootSplash,#oturumYuklemeOverlay) .d
  position:relative;z-index:3;pointer-events:none;
 }
 html.dm-holiday-active #dmBootText{display:none!important}
-html.dm-holiday-active .dm-holiday-art{
- position:absolute;z-index:2;top:50%;left:50%;transform:translate(-50%,-50%);
- width:max(100vw,56.28dvh);height:auto;aspect-ratio:941/1672;
- pointer-events:none;
-}
-.dm-holiday-progress{display:none}
-html.dm-holiday-active .dm-holiday-art>.dm-holiday-progress{
- position:absolute;z-index:3;display:block;left:23.5%;top:85.5%;
- width:46.7%;height:3.0%;box-sizing:border-box;border-radius:999px;
- border:0;background:#fff2e9;overflow:hidden;pointer-events:none;
- box-shadow:0 0 2px rgba(150,26,20,.25);
-}
-html.dm-holiday-active .dm-holiday-progress-fill{
- width:var(--dm-papi-progress,0%);height:100%;border-radius:inherit;
- background:linear-gradient(90deg,#ed1027,#ff4c40);
- transition:width .18s ease-out;animation:none!important;
-}
-/* Later approved collage art has a different aspect ratio and a lower bar. */
-html.dm-holiday-active:is([data-dm-holiday="15-temmuz"],[data-dm-holiday="ramazan-ayi"],[data-dm-holiday="ramazan-bayrami"],[data-dm-holiday="kurban-bayrami"]) .dm-holiday-art{
- width:max(100vw,72.82dvh);aspect-ratio:750/1030;
-}
-html.dm-holiday-active:is([data-dm-holiday="15-temmuz"],[data-dm-holiday="ramazan-ayi"],[data-dm-holiday="ramazan-bayrami"],[data-dm-holiday="kurban-bayrami"]) .dm-holiday-art>.dm-holiday-progress{
- left:21%;top:91%;width:58%;height:2.9%;background:#e4edf6;
-}
-html.dm-holiday-active:is([data-dm-holiday="15-temmuz"],[data-dm-holiday="ramazan-ayi"],[data-dm-holiday="ramazan-bayrami"],[data-dm-holiday="kurban-bayrami"]) .dm-holiday-progress-fill{
- background:linear-gradient(90deg,#159dec,#00c4fd);
-}
+/* Hide the legacy overlay during cache transitions. The artwork already has a bar. */
+html.dm-holiday-active .dm-holiday-progress{display:none!important}
 /* Wider screens: blurred edge-fill + complete portrait, never flat bars. */
 @media(min-aspect-ratio:941/1672){
  html.dm-holiday-active :is(#splashEkrani,#dmBootSplash,#oturumYuklemeOverlay)::before{
@@ -51,11 +24,4 @@ html.dm-holiday-active:is([data-dm-holiday="15-temmuz"],[data-dm-holiday="ramaza
   background-image:var(--dm-holiday-art);background-position:center;
   background-repeat:no-repeat;background-size:contain;
  }
- html.dm-holiday-active .dm-holiday-art{width:min(100vw,56.28dvh)}
- html.dm-holiday-active:is([data-dm-holiday="15-temmuz"],[data-dm-holiday="ramazan-ayi"],[data-dm-holiday="ramazan-bayrami"],[data-dm-holiday="kurban-bayrami"]) .dm-holiday-art{
-  width:min(100vw,72.82dvh);
- }
-}
-@media(prefers-reduced-motion:reduce){
- html.dm-holiday-active .dm-holiday-progress-fill{transition:none}
 }
