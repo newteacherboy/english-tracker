@@ -87,9 +87,12 @@ html body .dm-notice-managed.dm-notice-edge-top .dm-notice-copy {
   overflow-wrap:anywhere!important;word-wrap:break-word!important;word-break:normal!important;
   white-space:normal!important;scrollbar-width:thin!important;
 }
-html body .dm-notice-managed.dm-notice-edge-top .dm-notice-copy .dm-notice-emblem {
-  float:left!important;display:inline-block!important;margin:0 5px 0 0!important;
-  font-size:clamp(17px,4.7vw,23px)!important;line-height:1.13!important;
+html body .dm-notice-managed.dm-notice-edge-top .dm-notice-heading {
+  display:flex!important;align-items:center!important;gap:5px!important;
+}
+html body .dm-notice-managed.dm-notice-edge-top .dm-notice-heading .dm-notice-emblem {
+  flex:none!important;display:block!important;margin:0!important;
+  font-size:clamp(14px,4vw,19px)!important;line-height:1!important;
 }
 html body .dm-notice-managed.dm-notice-edge-top .dm-notice-copy :is(h1,h2,h3,.duy3-title,strong,b) {
   position:static!important;inset:auto!important;display:block!important;transform:none!important;
@@ -165,19 +168,31 @@ html body .dm-notice-managed.dm-notice-edge-top .dm-notice-progress>i {
 }
 }
 
-/* Keep titles, wrapping copy and actions in separate rows, including inline source nodes. */
+/* A compact header above the copy. The update action sits beside both rows. */
 @layer dmNoticeSurface {
 html body .dm-notice-managed.dm-notice-edge-top .dm-notice-copy {
- display:flex!important;flex-direction:column!important;align-items:stretch!important;gap:5px!important;
+ display:flex!important;flex-direction:column!important;align-items:stretch!important;gap:4px!important;
  line-height:1.4!important;
 }
 html body .dm-notice-managed.dm-notice-edge-top .dm-notice-copy > * {
  flex-shrink:0!important;float:none!important;min-width:0!important;
 }
-html body .dm-notice-managed.dm-notice-edge-top .dm-notice-copy .dm-notice-emblem {display:none!important}
 html body .dm-notice-managed.dm-notice-edge-top .dm-notice-copy > button {align-self:flex-start!important;margin:2px 0 0!important}
 html body #dm-app-update.dm-notice-managed .dm-notice-panel {grid-template-columns:clamp(42px,12vw,64px) minmax(0,1fr)!important}
-html body #dm-app-update.dm-notice-managed .dm-notice-copy > span {display:block!important;line-height:1.4!important}
+html body #dm-app-update.dm-notice-managed .dm-notice-copy {
+ display:grid!important;grid-template-columns:minmax(0,1fr) auto!important;
+ align-items:center!important;column-gap:clamp(6px,2.5vw,14px)!important;
+}
+html body #dm-app-update.dm-notice-managed .dm-notice-heading {grid-column:1!important;grid-row:1!important}
+html body #dm-app-update.dm-notice-managed .dm-notice-copy > span {
+ grid-column:1!important;grid-row:2!important;display:block!important;
+}
+html body #dm-app-update.dm-notice-managed .dm-notice-copy > button {
+ grid-column:2!important;grid-row:1 / 3!important;align-self:center!important;justify-content:center!important;
+ margin:0!important;padding:7px 10px!important;min-height:44px!important;
+ background:#ffa425!important;border-color:#d97b00!important;color:#281604!important;
+ -webkit-text-fill-color:#281604!important;white-space:nowrap!important;
+}
 html body #dm-app-update.dm-notice-managed .dm-notice-close,
 html body #dm-app-update.dm-notice-managed .dm-notice-controls,
 html body #dm-app-update.dm-notice-managed .dm-notice-progress {display:none!important}
