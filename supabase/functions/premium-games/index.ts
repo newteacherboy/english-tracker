@@ -99,11 +99,10 @@ Deno.serve(async(req:Request)=>{
    }
    return reply(req,{ok:false,mesaj:'Geçersiz oyun sonucu.'},400);
   }
-  // Öğretmen portalında oyun sınıfta gösterilir: hak, enerji ve ödül işlenmez.
-  if(s.role==='student'&&s.teacher_portal_access_id){
-   const st=await db('rpc/dm_pwm_status',{actor:s.student_id}).catch(()=>({}));
-   return reply(req,{...st,ok:true,practice:true,premium:true,remaining:999,level:100,xp:0,gold:0,won:!!b.won,stars:0});
-  }
+  // A pupil's classroom token must never grant unlimited premium game access.
+  // Teacher personal access uses a separately verified teacher session and profile.
+  if(s.role==='student'&&s.teacher_portal_access_id)
+    return reply(req,{ok:false,mesaj:'Premium oyun için öğretmen veya kişisel hesabınla giriş yap.'},403);
   if(op==='status')return gameReply(await db('rpc/dm_pwm_status',{actor}));
   if(op==='start'){
    const level=Number(b.level);
