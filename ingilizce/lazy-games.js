@@ -40,7 +40,7 @@
   const flightProxy=async ()=>{
     const owner=typeof aktifOgrenciAdi==='undefined'?'':aktifOgrenciAdi;
     try{
-      await (flightLoading??=script('premium-cloud-flight.js?v=4').catch(error=>{flightLoading=null;throw error;}));
+      await (flightLoading??=script('premium-cloud-flight.js?v=5').catch(error=>{flightLoading=null;throw error;}));
       if(owner!==(typeof aktifOgrenciAdi==='undefined'?'':aktifOgrenciAdi))return;
       if(window.premiumBulutUcusuAc!==flightProxy)await window.premiumBulutUcusuAc();
     }catch(error){window.yoToast?.(error.message);}
@@ -59,7 +59,7 @@
   const runnersProxy=async ()=>{
     const owner=typeof aktifOgrenciAdi==='undefined'?'':aktifOgrenciAdi;
     try{
-      await (runnersLoading??=script('runners-papi.js?v=3').catch(error=>{runnersLoading=null;throw error;}));
+      await (runnersLoading??=script('runners-papi.js?v=4').catch(error=>{runnersLoading=null;throw error;}));
       if(owner===(typeof aktifOgrenciAdi==='undefined'?'':aktifOgrenciAdi)&&window.runnersPapiAc!==runnersProxy)await window.runnersPapiAc();
     }catch{window.yoToast?.('Runners Papi yüklenemedi.');}
   };

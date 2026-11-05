@@ -1,61 +1,49 @@
 .rp-game {
-  --gold:#ffe199;
-  box-sizing:border-box; position:fixed; inset:0; margin:auto;
-  width:min(100vw,530px); max-width:100vw; height:min(100dvh,830px); max-height:100dvh; padding:0;
-  border:1px solid #bd9552; border-radius:22px; color:#fff9db;
-  background:#173825 url("premium-assets/runners-bridge.webp") center/100% 100% no-repeat;
-  font:600 1rem/1.3 system-ui,sans-serif; overflow:hidden; isolation:isolate;
+  --ink:#342054;
+  box-sizing:border-box;position:fixed;inset:0;margin:auto;
+  width:min(100vw,530px);max-width:100vw;height:min(100dvh,830px);max-height:100dvh;padding:0;
+  border:1px solid #aedcf9;border-radius:22px;color:var(--ink);
+  background:#a7dafa url("premium-assets/runners-city.webp") center/100% 100% no-repeat;
+  font:650 1rem/1.3 system-ui,sans-serif;overflow:hidden;isolation:isolate;
 }
-.rp-game::backdrop {background:#06140ee8}
+.rp-game::backdrop {background:#231939e8}
 .rp-game [hidden] {display:none!important}
-.rp-game header,.rp-hud {display:flex;justify-content:space-between;align-items:center;gap:.45rem}
-.rp-game header {position:relative;z-index:3;padding:.45rem .75rem;color:var(--gold);text-shadow:0 2px 4px #102519;background:linear-gradient(#102519e8,#10251930)}
+.rp-game header,.rp-hud {display:flex;justify-content:space-between;align-items:center;gap:.3rem}
+.rp-game header {position:relative;z-index:4;padding:.35rem .65rem;color:#36235a}
+.rp-game header b {background:#f7efff;border-radius:999px;padding:.25rem .65rem;font-size:.72rem}
 .rp-game button {font:inherit;cursor:pointer}
-.rp-game header button,.rp-menu button,.rp-game [data-retry] {color:#23150a;background:#ffe199;border:1px solid #8d5d2e;border-radius:12px;padding:.48rem .8rem}
+.rp-game header button,.rp-menu button,.rp-game [data-retry] {color:white;background:#7438b8;border:1px solid #f9e7ff;border-radius:14px;padding:.4rem .65rem}
 .rp-game button:disabled {cursor:default}
-.rp-game button:focus-visible {outline:3px solid #fff;outline-offset:2px}
-.rp-menu {display:grid;justify-items:center;align-content:center;text-align:center;position:absolute;inset:0;padding:4rem 1rem;background:linear-gradient(#10251920,#152710ed)}
-.rp-menu h1 {margin:0;font-size:clamp(2.3rem,9vw,4rem);line-height:1;color:var(--gold);text-shadow:0 4px #3e240d}
-.rp-menu img {width:min(36vw,146px);max-height:23dvh;object-fit:contain;margin:.5rem}
-.rp-menu p {margin:.28rem 0;text-shadow:0 2px 3px #102519}
-.rp-menu button {margin-top:.7rem}
+.rp-game button:focus-visible {outline:3px solid #53297f;outline-offset:2px}
+.rp-menu {display:grid;justify-items:center;align-content:center;text-align:center;position:absolute;inset:0;padding:3rem 1rem;background:linear-gradient(#e6f3ff40,#f7e1ffef)}
+.rp-menu h1 {margin:0;font-size:clamp(2.3rem,9vw,4rem);line-height:1;color:#552780;text-shadow:0 3px #fff}
+.rp-menu img {width:min(33vw,132px);height:22dvh;object-fit:contain;margin:.4rem}
+.rp-menu p {margin:.25rem 0}
+.rp-menu button {margin-top:.6rem}
 .rp-menu button:disabled {opacity:.65}
-.rp-run {position:absolute;inset:0;padding-top:46px;touch-action:none;overflow:hidden}
-.rp-hud {position:relative;z-index:2;padding:.4rem .7rem;font-size:clamp(.72rem,3vw,.9rem)}
-.rp-hud b {background:#173524eb;border:1px solid #ebbd67;border-radius:20px;padding:.25rem .5rem}
-.rp-run progress {display:block;position:relative;z-index:2;width:86%;height:.55rem;margin:0 auto;accent-color:#ffe199}
-.rp-prompt {position:relative;z-index:2;text-align:center;margin:.55rem auto;width:max-content;max-width:88%;padding:.25rem 1rem .4rem;color:#462818;background:linear-gradient(175deg,#fff0be,#e6aa5d);border:3px solid #9a572e;border-radius:15px 12px 16px 12px;box-shadow:0 4px 0 #4d2e19, inset 0 1px #fff3c3}
+.rp-run {position:absolute;inset:0;padding-top:44px;touch-action:none;overflow:hidden}
+.rp-hud {position:relative;z-index:3;padding:.25rem .65rem;font-size:clamp(.68rem,3vw,.9rem)}
+.rp-hud b {background:#f8edff;border-radius:20px;padding:.22rem .45rem}
+.rp-run progress {display:block;position:relative;z-index:3;width:86%;height:.42rem;margin:0 auto;accent-color:#813aca}
+.rp-prompt {position:relative;z-index:3;text-align:center;margin:.5rem auto;width:max-content;max-width:88%;padding:.25rem .85rem .4rem;background:#fff3d9;border:2px solid #fff8ee;border-radius:16px;box-shadow:0 3px 0 #ab74c077}
 .rp-prompt small,.rp-prompt strong {display:block}
-.rp-prompt small {font-size:.64rem;letter-spacing:.08em}
-.rp-prompt strong {font-size:clamp(1.3rem,5vw,2.05rem);line-height:1.15;overflow-wrap:anywhere}
-.rp-gates {position:absolute;z-index:1;top:calc(36% + 12% * var(--approach,0));width:76%;left:12%;display:grid;grid-template-columns:repeat(var(--lanes),minmax(0,1fr));gap:1%;transform:scale(calc(.82 + .18 * var(--approach,0)));transform-origin:50% 80%}
-.rp-gates button {position:relative;display:grid;justify-items:center;align-content:start;aspect-ratio:1/1.08;width:100%;padding:11% 11% 0;border:0;border-radius:18%;background:transparent url("premium-assets/runners-gate.webp") center/100% 100% no-repeat;color:#342011;filter:drop-shadow(0 4px 3px #27180485)}
-.rp-gates span {display:grid;place-items:center;min-height:2.2em;width:100%;padding:.08em .12em;font-size:clamp(.72rem,3.4vw,1.08rem);line-height:1.08;overflow-wrap:anywhere;font-weight:900;text-shadow:0 1px #fff1b8}
-.rp-gates .rp-selected {filter:drop-shadow(0 0 8px #ffe181) drop-shadow(0 4px 3px #27180485)}
-.rp-trail {display:none;position:absolute;z-index:1;top:55%;bottom:12%;left:calc(12% + (76% / var(--lanes)) * (var(--lane,0) + .5));width:8%;transform:translateX(-50%);background:linear-gradient(transparent,#d8ff74 30%,#65ec4f 66%,transparent);clip-path:polygon(45% 0,55% 0,100% 100%,0 100%);opacity:.8;pointer-events:none}
-.rp-game[data-outcome=correct] .rp-trail {display:block}
-.rp-flock {position:absolute;z-index:2;bottom:16%;left:calc(12% + (76% / var(--lanes)) * (var(--lane) + .5));transform:translateX(-50%);width:36%;display:flex;flex-wrap:wrap;justify-content:center;align-content:end;transition:left .22s ease-out;pointer-events:none}
-.rp-flock img {width:30%;margin:-5% -3%;aspect-ratio:1;object-fit:contain;filter:drop-shadow(0 4px 2px #342413ba);animation:rp-bob .33s ease-in-out infinite alternate}
-.rp-flock img:first-child {width:57%;margin-inline:23%}
-.rp-flock img:nth-child(even) {animation-delay:-.17s}
-@keyframes rp-bob {to{transform:translateY(-5px) rotate(3deg)}}
-@keyframes rp-shake {35%{transform:translateX(calc(-50% + 5px))} 70%{transform:translateX(calc(-50% - 4px))}}
-.rp-message {position:absolute;z-index:3;bottom:2%;left:5%;right:5%;margin:0;text-align:center;padding:.4rem;border-radius:12px;background:#102519ed}
+.rp-prompt small {font-size:.67rem}
+.rp-prompt strong {font-size:clamp(1.32rem,5.5vw,2.05rem);line-height:1.15;overflow-wrap:anywhere}
+.rp-gates {position:absolute;z-index:1;bottom:48%;width:82%;left:9%;display:grid;grid-template-columns:repeat(var(--lanes,2),minmax(0,1fr));gap:3%}
+.rp-gates button {position:relative;display:grid;justify-items:center;align-content:start;aspect-ratio:1/1;width:100%;padding:10% 12% 0;border:0;border-radius:20%;background:transparent url("premium-assets/runners-city-gate.webp") center/100% 100% no-repeat;color:#44244d;filter:drop-shadow(0 4px 3px #572f6666)}
+.rp-gates span {display:grid;place-items:center;min-height:2em;width:100%;padding:.08em .12em;font-size:clamp(.68rem,3.35vw,1.07rem);line-height:1.04;overflow-wrap:anywhere;font-weight:900}
+.rp-gates .rp-selected {filter:drop-shadow(0 0 6px #fff087) drop-shadow(0 3px 2px #572f6655)}
+.rp-player {position:absolute;z-index:2;bottom:calc(10% + 37% * var(--run,0));left:calc(9% + (82% / var(--lanes,2)) * (var(--lane,.5) + .5));transform:translateX(-50%) scale(calc(1 - .58 * var(--run,0)));transform-origin:center bottom;width:clamp(64px,25%,127px);pointer-events:none;transition:left .14s ease-out}
+.rp-player img {display:block;width:100%;filter:drop-shadow(0 4px 2px #4f2e5b66);animation:rp-stride .22s ease-in-out infinite alternate}
+.rp-crossing .rp-player {transition:left .18s ease-out,bottom .24s ease-out,transform .24s ease-out}
+@keyframes rp-stride {to{transform:translateY(-5px) rotate(3deg)}}
+.rp-message {position:absolute;z-index:3;bottom:2%;left:5%;right:5%;margin:0;text-align:center;padding:.4rem;border-radius:12px;background:#422065;color:#fff}
 .rp-message:empty {display:none}
-.rp-game[data-outcome=correct] .rp-message {background:#16542e}
-.rp-game[data-outcome=wrong] .rp-message {background:#782e25}
-.rp-game [data-retry] {position:absolute;z-index:3;bottom:11%;left:50%;transform:translateX(-50%)}
-@media (prefers-reduced-motion:reduce) {
-  .rp-gates {top:43%;transform:none}
-  .rp-flock img {animation:none}
-  .rp-flock {transition:none}
-}
-.rp-surge {position:absolute;z-index:3;bottom:31%;left:0;right:0;text-align:center;pointer-events:none}
-.rp-surge span {display:inline-block;color:#eaffad;font-size:clamp(1.55rem,7vw,2.6rem);font-weight:950;text-shadow:0 3px 3px #183e10,0 0 12px #78db32}
-@media (prefers-reduced-motion:no-preference) {
-  .rp-flock img.rp-join {animation:rp-join .39s cubic-bezier(.16,.8,.32,1.2) var(--join-delay) both}
-  .rp-surge span {animation:rp-surge .7s ease-out both}
-  .rp-game[data-outcome=wrong] .rp-flock {animation:rp-shake .28s ease-out}
-  @keyframes rp-join {from{opacity:0;transform:translateY(30px) scale(.25)} to{opacity:1;transform:none}}
-  @keyframes rp-surge {0%{opacity:0;transform:translateY(12px) scale(.65)} 22%{opacity:1;transform:translateY(0) scale(1.12)} 75%{opacity:1} 100%{opacity:0;transform:translateY(-35px) scale(1)}}
+.rp-game[data-outcome=correct] .rp-message {background:#246b50}
+.rp-game[data-outcome=wrong] .rp-message {background:#a33555}
+.rp-game [data-retry] {position:absolute;z-index:4;bottom:11%;left:50%;transform:translateX(-50%)}
+@media(max-height:590px) {.rp-gates button{max-height:31dvh}.rp-player{width:clamp(62px,21%,110px)}}
+@media(prefers-reduced-motion:reduce) {
+ .rp-player,.rp-crossing .rp-player {transition:none;bottom:10%;transform:translateX(-50%)}
+ .rp-player img {animation:none}
 }

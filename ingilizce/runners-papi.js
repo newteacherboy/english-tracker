@@ -48,8 +48,8 @@
           beat++;
         }, 208);
       },
-      effect(correct, bonus) {
-        const tones = bonus ? [79, 84, 88, 91] : correct ? [79, 86] : [57, 50];
+      effect(correct) {
+        const tones = correct ? [79, 86] : [57, 50];
         tones.forEach((pitch, index) => note(pitch, .13, .19, correct ? 'sine' : 'triangle', index * .07));
       },
       toggle() {
@@ -72,7 +72,7 @@
       signal: AbortSignal.timeout(15000)
     });
     const data = await response.json();
-    if (!response.ok || !data.ok) throw Error(data.mesaj || 'Orman Köprüsü’ne bağlanılamadı.');
+    if (!response.ok || !data.ok) throw Error(data.mesaj || 'Şehir Parkuru’ne bağlanılamadı.');
     return data;
   }
 
@@ -85,7 +85,7 @@
       link.onerror = () => {
         styles = null;
         link.remove();
-        reject(Error('Orman Köprüsü yüklenemedi.'));
+        reject(Error('Şehir Parkuru yüklenemedi.'));
       };
       document.head.append(link);
     });
@@ -113,31 +113,30 @@
     screen.innerHTML = `
       <header><b>★ PREMİUM</b><div><button type="button" data-sound aria-label="Oyun sesi"></button> <button type="button" data-close aria-label="Oyunu kapat">×</button></div></header>
       <section class="rp-menu">
-        <p>ORMAN KÖPRÜSÜ</p><h1>Runners Papi</h1>
-        <img src="papi-welcome-v2.png" alt="">
+        <p>ŞEHİR PARKURU</p><h1>Runners Papi</h1>
+        <img src="premium-assets/runners-city-child.webp" alt="">
         <p data-summary></p><p data-access></p>
         <button type="button" data-start></button>
       </section>
       <section class="rp-run" hidden>
-        <div class="rp-hud"><b data-level></b><b data-flock></b><b data-best></b></div>
+        <div class="rp-hud"><b data-level></b><b data-lives></b><b data-score></b></div>
         <progress aria-label="Kapıya kalan süre" max="1" value="1"></progress>
-        <div class="rp-prompt"><small data-bonus></small><strong data-word lang="en"></strong></div>
-        <div class="rp-trail" aria-hidden="true"></div>
+        <div class="rp-prompt"><small>Türkçe anlamını bul</small><strong data-word lang="en"></strong></div>
         <div class="rp-gates" aria-label="Türkçe anlam kapıları"></div>
-        <div class="rp-flock" aria-hidden="true"></div><div class="rp-surge" aria-hidden="true"></div>
+        <div class="rp-player" aria-hidden="true"><img src="premium-assets/runners-city-child.webp" alt=""></div>
       </section>
       <p class="rp-message" role="status"></p><button type="button" data-retry hidden>Tekrar dene</button>`;
     const $ = selector => screen.querySelector(selector);
     const menu = $('.rp-menu'), run = $('.rp-run'), gates = $('.rp-gates');
     const start = $('[data-start]'), retry = $('[data-retry]'), message = $('.rp-message');
-    let busy = false, frame = 0, feedbackTimer = 0, startId, pointer;
+    let busy = false, frame = 0, feedbackTimer = 0, crossingTimer = 0, startId, pointer;
     const sameAccount = () => owner === account() && session === token();
     const active = () => screen.open && sameAccount();
     const number = new Intl.NumberFormat('tr-TR', {notation: 'compact', maximumFractionDigits: 1});
     let lane = 0, steered = false;
     const sound = runnerAudio();
     const syncMusic = () => sound.music(!run.hidden);
-    const soundButton = $('[data-sound]');
+    const soundButton = $('[data-sound]'), player = $('.rp-player');
 
     function paintSound() {
       soundButton.textContent = sound.muted ? '🔇' : '🔊';
@@ -150,6 +149,7 @@
       document.removeEventListener('visibilitychange', syncMusic);
       sound.close();
       clearInterval(watch);
+      clearTimeout(crossingTimer);
       screen.close();
       screen.remove();
     }
@@ -159,62 +159,53 @@
       syncMusic();
       menu.hidden = false;
       $('[data-summary]').textContent = (ended ? `Koşu bitti · Seviye ${state.level}. ` : '') +
-        `Rekor: ${number.format(state.best)} papağan · En iyi seviye: ${state.bestLevel || '—'}`;
-      $('[data-access]').textContent = state.flock > 0 ? 'Koşun kaydedildi. Kaldığın kapıdan devam et.' :
+        `Rekor: ${number.format(state.bestCorrect)} doğru · En iyi seviye: ${state.bestLevel || '—'}`;
+      $('[data-access]').textContent = state.lives > 0 ? 'Koşun kaydedildi. Kaldığın kapıdan devam et.' :
         `5 enerji · ${state.premium ? 'Premium sınırsız' : `${state.remaining} ücretsiz hak`}`;
-      start.textContent = state.flock > 0 ? 'Devam Et' : ended ? 'Yeniden Koş' : 'Koşuya Başla';
-      start.disabled = state.flock === 0 && ((!state.premium && !state.remaining) || state.energy < 5);
+      start.textContent = state.lives > 0 ? 'Devam Et' : ended ? 'Yeniden Koş' : 'Koşuya Başla';
+      start.disabled = state.lives === 0 && ((!state.premium && !state.remaining) || state.energy < 5);
     }
 
     function selectLane(index, focus = false) {
       if (!gates.children[index]) return;
       lane = index;
-      $('.rp-flock').style.setProperty('--lane', String(index));
+      player.style.setProperty('--lane', String(index));
       [...gates.children].forEach((button, i) => button.classList.toggle('rp-selected', i === index));
       if (focus) gates.children[index].focus({preventScroll: true});
     }
 
-    function playGate(feedback) {
+    function playGate() {
       if (!active()) return;
       if (!state.question) { showMenu(true); return; }
       menu.hidden = true;
       run.hidden = false;
-      gates.style.setProperty('--approach', '0');
-      gates.replaceChildren();
+      run.classList.remove('rp-crossing');
+      player.style.setProperty('--run', '0');
       const options = state.question.options;
       screen.style.setProperty('--lanes', String(options.length));
       $('[data-level]').textContent = `Seviye ${state.level}`;
-      $('[data-flock]').textContent = `🦜 ${number.format(state.flock)}`;
-      $('[data-best]').textContent = `🏆 ${number.format(state.best)}`;
+      $('[data-lives]').textContent = `${state.lives} can`;
+      $('[data-score]').textContent = `${number.format(state.correctCount)} doğru`;
       $('[data-word]').textContent = state.question.word;
-      $('[data-bonus]').textContent = state.question.bonus ? '×2 BONUS KAPISI' : 'TÜRKÇE ANLAMINI BUL';
+      // Keep the gates anchored. Only their signs change between questions.
+      while (gates.children.length > options.length) gates.lastElementChild.remove();
       options.forEach((option, index) => {
-        const button = document.createElement('button');
-        button.type = 'button';
-        const label = document.createElement('span');
-        label.textContent = option;
-        button.append(label);
-        button.onclick = () => { selectLane(index); answer(index); };
-        gates.append(button);
+        let button = gates.children[index];
+        if (!button) {
+          button = document.createElement('button');
+          button.type = 'button';
+          button.append(document.createElement('span'));
+          button.onclick = () => { selectLane(index); answer(index); };
+          gates.append(button);
+        }
+        button.firstElementChild.textContent = option;
+        button.disabled = false;
+        button.classList.remove('rp-selected');
       });
       steered = false;
-      lane = Math.floor((options.length - 1) / 2);
-      $('.rp-flock').style.setProperty('--lane', String((options.length - 1) / 2));
-      const flock = $('.rp-flock');
-      const count = Math.min(18, state.flock);
-      while (flock.children.length > count) flock.lastElementChild.remove();
-      for (let i = flock.children.length; i < count; i++) {
-        const image = document.createElement('img');
-        image.src = 'premium-assets/runners-parrot.webp';
-        image.alt = '';
-        if (feedback?.correct) {
-          image.className = 'rp-join';
-          image.style.setProperty('--join-delay', `${(i % 5) * 32}ms`);
-          image.onanimationend = () => image.classList.remove('rp-join');
-        }
-        flock.append(image);
-      }
-      const duration = Math.max(2700, 5100 - (state.level - 1) * 300);
+      lane = (options.length - 1) / 2;
+      player.style.setProperty('--lane', String(lane));
+      const duration = Math.max(2400, 4200 - (state.level - 1) * 225);
       let remaining = duration, previous = performance.now();
       const progress = $('progress');
       progress.value = 1;
@@ -224,7 +215,7 @@
         if (!document.hidden && elapsed < 300) remaining -= elapsed;
         previous = now;
         progress.value = Math.max(0, remaining / duration);
-        gates.style.setProperty('--approach', String(1 - progress.value));
+        player.style.setProperty('--run', String(.83 * (1 - progress.value)));
         if (remaining <= 0) answer(steered ? lane : -1);
         else frame = requestAnimationFrame(tick);
       }
@@ -257,37 +248,32 @@
       clearTimeout(feedbackTimer);
       delete screen.dataset.outcome;
       message.textContent = '';
-      $('.rp-surge').replaceChildren();
       [...gates.children].forEach(button => { button.disabled = true; });
-      gates.style.setProperty('--approach', '1');
       const payload = {runId: state.runId, gate: state.gate, choice};
-      const wasBonus = state.question.bonus;
-      send('answer', payload, () => {
+      const submit = () => send('answer', payload, () => {
         const feedback = state.feedback;
-        if (feedback?.gate !== payload.gate) { playGate(); return; }
-        // The next gate starts as soon as the server acknowledges the answer.
-        playGate(feedback);
-        sound.effect(feedback.correct, wasBonus && feedback.correct);
-        message.textContent = feedback.correct ? `Doğru! +${feedback.change} papağan` :
-          `${choice === -1 ? 'Süre doldu' : 'Yanlış kapı'} · ${feedback.meaning} · ${feedback.change} papağan`;
+        playGate();
+        if (feedback?.gate !== payload.gate) return;
+        sound.effect(feedback.correct);
+        message.textContent = feedback.correct ? 'Doğru!' :
+          `${choice === -1 ? 'Süre doldu' : 'Yanlış kapı'} · ${feedback.meaning} · −1 can`;
         screen.dataset.outcome = feedback.correct ? 'correct' : 'wrong';
-        if (feedback.correct) {
-          $('.rp-trail').style.setProperty('--lane', String(choice));
-          const burst = document.createElement('span');
-          burst.textContent = wasBonus ? `×2 · +${feedback.change}` : `+${feedback.change}`;
-          $('.rp-surge').append(burst);
-        }
         feedbackTimer = setTimeout(() => {
           delete screen.dataset.outcome;
           message.textContent = '';
-          $('.rp-surge').replaceChildren();
-        }, 720);
+        }, 650);
       });
+      if (choice < 0 || matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        submit();
+      } else {
+        run.classList.add('rp-crossing');
+        player.style.setProperty('--run', '1');
+        crossingTimer = setTimeout(submit, 240);
+      }
     }
 
     function begin() {
       clearTimeout(feedbackTimer);
-      $('.rp-surge').replaceChildren();
       delete screen.dataset.outcome;
       message.textContent = '';
       playGate();
@@ -296,7 +282,7 @@
 
     start.onclick = () => {
       sound.unlock();
-      if (state.flock > 0) { begin(); return; }
+      if (state.lives > 0) { begin(); return; }
       start.disabled = true;
       startId ??= crypto.randomUUID();
       send('start', {runId: startId}, () => { startId = null; begin(); });
@@ -311,7 +297,7 @@
       pointer = undefined;
       if (Math.abs(delta) > 32) {
         steered = true;
-        selectLane(Math.max(0, Math.min(gates.children.length - 1, lane + Math.sign(delta))));
+        selectLane(Math.max(0, Math.min(gates.children.length - 1, (delta < 0 ? Math.ceil(lane) - 1 : Math.floor(lane) + 1))));
       }
     });
     screen.addEventListener('keydown', event => {
@@ -319,7 +305,7 @@
       if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
         event.preventDefault();
         steered = true;
-        selectLane(Math.max(0, Math.min(gates.children.length - 1, lane + (event.key === 'ArrowLeft' ? -1 : 1))), true);
+        selectLane(Math.max(0, Math.min(gates.children.length - 1, (event.key === 'ArrowLeft' ? Math.ceil(lane) - 1 : Math.floor(lane) + 1))), true);
       }
     });
     $('[data-close]').onclick = close;
