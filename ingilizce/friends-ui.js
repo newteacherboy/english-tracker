@@ -9,6 +9,7 @@
   const norm = x => String(x || '').trim().toLocaleLowerCase('tr');
   const icon = (name, cls = '') => `<svg class="fr-icon ${cls}" aria-hidden="true"><use href="friends-assets/icons.svg#${name}"></use></svg>`;
   const art = (name, cls = '') => `<img class="${cls}" src="friends-assets/${name}.png" alt="" decoding="async">`;
+  root.querySelector('.akis-baslik')?.insertAdjacentHTML('beforebegin','<div class="fr-wallet-host"></div>');
   root.querySelector('.akis-baslik h2')?.insertAdjacentHTML('afterend',`<div class="fr-header-actions"><button type="button" class="fr-showcase-link" data-friend-action="vitrin" data-friends-gate="vitrin">${icon('star')} Vitrinim</button></div>`);
   const permitted = code => window.dmFeatureEnabled?.(code) !== false && window.dmProgression?.allowed?.(code) !== false;
   function requireFeature(code) {
@@ -282,9 +283,11 @@
     const rect=dock.getBoundingClientRect();
     root.style.setProperty('--fr-nav-space',Math.max(84,rect.height+18)+'px');
     if(root.classList.contains('active')){
-      const top=root.getBoundingClientRect().top;
-      const bottom=rect.height?rect.top:top+root.clientHeight;
-      root.style.setProperty('--fr-home-height',Math.max(0,bottom-top)+'px');
+      const bounds=root.getBoundingClientRect();
+      const viewport=window.visualViewport;
+      const viewportBottom=viewport?viewport.offsetTop+viewport.height:innerHeight;
+      const bottom=Math.min(bounds.bottom,viewportBottom,rect.height?rect.top:viewportBottom);
+      root.style.setProperty('--fr-home-height',Math.max(0,Math.floor(bottom-bounds.top))+'px');
     }
   }
   const viewport = document.querySelector('meta[name="viewport"]');
@@ -303,10 +306,12 @@
       previousChrome=undefined;
     }
   }
-  new MutationObserver(syncHomeChrome).observe(root,{attributes:true,attributeFilter:['class']});
-  window.addEventListener('pageshow',syncHomeChrome);
+  new MutationObserver(()=>{syncHomeChrome();dockSpace();}).observe(root,{attributes:true,attributeFilter:['class']});
+  window.addEventListener('pageshow',()=>{syncHomeChrome();dockSpace();});
   window.addEventListener('resize',dockSpace,{passive:true});
-  const dock=document.getElementById('bottomNavMobile');if(dock&&window.ResizeObserver)new ResizeObserver(dockSpace).observe(dock);
+  window.visualViewport?.addEventListener('resize',dockSpace,{passive:true});
+  window.visualViewport?.addEventListener('scroll',dockSpace,{passive:true});
+  const dock=document.getElementById('bottomNavMobile');if(dock&&window.ResizeObserver)new ResizeObserver(dockSpace).observe(dock,{box:'border-box'});
   dockSpace();viewHeader();
   // League movement is account-bound and deduplicated across reloads.
   if (!document.querySelector('script[data-dm-league-momentum]')) {

@@ -6,7 +6,7 @@ hud.innerHTML='<i class="dm-pw-art dm-pw-papi" aria-hidden="true"></i>'+['energy
 const buttons=Object.fromEntries([...hud.querySelectorAll('[data-pw]')].map(e=>[e.dataset.pw,e]));
 buttons.time.onclick=()=>window.dmActiveTime?.panel();buttons.energy.onclick=()=>window.dijiEnerjiPaneliAc?.();buttons.gold.onclick=()=>window.magazaAc?.();buttons.xp.onclick=()=>window.dmIlerlememAc?.();
 const activity='#dmStoryLesson,#bzPerde #bzAlan,.game-modal-overlay,#meteorGame,#wordWheel,#papiCards,#harfBahcesiOverlay,#baOyunEkrani,#kpKelimeOyunEkrani,#kmPanel .km-sec,#seviyeDisLinkOverlay';
-const selectors=['#tab-dunya .rt-top','#tab-aktiviteler .gg-brand','#tab-meduakis .akis-baslik','#tab-derscalis .su-levels-heading','#tab-magaza .ds-header','.dc-fullscreen-overlay.active header'];
+const selectors=['#tab-dunya .rt-top','#tab-aktiviteler .gg-brand','#tab-meduakis.active.fr-home-view .fr-wallet-host','#tab-derscalis .su-levels-heading','#tab-magaza .ds-header','.dc-fullscreen-overlay.active header'];
 const finite=n=>Number.isFinite(Number(n))?Math.max(0,Math.floor(Number(n))):0;
 const format=n=>finite(n).toLocaleString('tr-TR');
 const compact=n=>finite(n)>=10000?new Intl.NumberFormat('tr-TR',{notation:'compact',maximumFractionDigits:1}).format(finite(n)):format(n);
@@ -31,8 +31,9 @@ function detach(){hud.parentElement?.classList.remove('dm-has-wallet');hud.remov
 function run(){
  if(typeof aktifOgrenciAdi==='undefined'||!aktifOgrenciAdi){detach();return;}
  if([...document.querySelectorAll(activity)].some(visible)){detach();return;}
- if(visible(document.getElementById('tab-meduakis'))){detach();return;}
- const host=selectors.flatMap(s=>[...document.querySelectorAll(s)]).find(visible);if(!host){detach();return;}
+ const friends=document.getElementById('tab-meduakis');
+ const host=visible(friends)?friends.querySelector('.fr-wallet-host'):selectors.flatMap(s=>[...document.querySelectorAll(s)]).find(visible);
+ if(visible(friends)&&!friends.classList.contains('fr-home-view')){detach();return;}if(!host){detach();return;}
  if(hud.parentElement!==host){detach();host.prepend(hud);host.classList.add('dm-has-wallet');window.dispatchEvent(new Event('resize'));}
  const y=typeof yo==='undefined'?{}:yo||{},time=window.dmActiveTime?.summary()||{stars:0,seconds:0},level=window.dmProgression?.level?.()||1;
  const energy=window.genelEnerjiKalan,values={energy:energy==null?'—':format(energy),gold:compact(y.altin),xp:compact(y.totalXp),time:compact(time.stars)};
