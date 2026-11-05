@@ -76,7 +76,7 @@ ${unassigned}
 
   function limitCard(lim) {
     const android = !!window.dmAndroidBilling?.available;
-    return `<div class="dmc-limit"><b>Sınıf sınırına ulaştın (${lim} sınıf)</b><p style="margin:4px 0 8px;color:#8a5a12;font-size:13px">Pro ile 5, Premium Pro ile sınırsız sınıf açabilirsin. Mevcut sınıfların ve öğrencilerin olduğu gibi kalır.</p>${android ? '<button class="dmc-b main" data-plans>Planları gör</button>' : '<small style="color:#8a5a12">Öğretmen planları çok yakında web ve Android\'de.</small>'}</div>`;
+    return `<div class="dmc-limit"><b>Sınıf sınırına ulaştın (${lim} sınıf)</b><p style="margin:4px 0 8px;color:#8a5a12;font-size:13px">Pro ile 5, Premium Pro ile sınırsız sınıf açabilirsin. Mevcut sınıfların ve öğrencilerin olduğu gibi kalır.</p>${android ? '<button class="dmc-b main" data-plans>Planları gör</button>' : (window.dmIosUygulama ? '<small style="color:#8a5a12">Öğretmen planları çok yakında.</small>' : '<small style="color:#8a5a12">Öğretmen planları çok yakında web ve Android\'de.</small>')}</div>`;
   }
 
   async function act(body, okMsg, btn) {

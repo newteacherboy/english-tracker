@@ -2,7 +2,8 @@
 # iOS izin metinlerini ve App Store ayarlarını Info.plist'e yazar. Tekrar çalıştırmak güvenlidir.
 # Kullanım:  cd ios-app && sh izinler.sh
 set -e
-ADMOB_APP_ID="ca-app-pub-3940256099942544~1458002511"
+# AdMob iOS uygulama kimliği android-app/admob.config.json → ios.appId (tek yer).
+ADMOB_APP_ID="${ADMOB_APP_ID:-$(node -p "require('$(dirname "$0")/../android-app/admob.config.json').ios.appId" 2>/dev/null || echo ca-app-pub-3940256099942544~1458002511)}"
 cd "$(dirname "$0")"
 PLIST="ios/App/App/Info.plist"
 [ -f "$PLIST" ] || { echo "❌ $PLIST bulunamadı. Önce: sh kur-ios.sh"; exit 1; }

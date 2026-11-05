@@ -1,0 +1,103 @@
+name: Diji Medu iOS sürümü (TestFlight)
+# Mac gerekmeden iOS paketini GitHub'ın macOS makinesinde üretir.
+#  1) Her çalışmada önce imzasız simülatör derlemesiyle kodu doğrular.
+#  2) App Store Connect API anahtarı tanımlıysa imzalı arşivi üretip doğrudan App Store Connect'e (TestFlight) yükler.
+# Gerekli repo gizli değerleri (App Store Connect → Kullanıcılar ve Erişim → Entegrasyonlar → App Store Connect API, "Admin" yetkisi):
+#   ASC_KEY_ID, ASC_ISSUER_ID, ASC_KEY_P8 (.p8 dosyasının içeriği)
+# Repo değişkeni (gizli değil): APPLE_TEAM_ID
+on:
+  push:
+    branches: ['claude/ios-release-*', 'release/ios-*']
+    paths: ['ios-app/**', 'android-app/src/**', 'android-app/admob.config.json', '.github/workflows/ios-release.yml']
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Sürüm (App Store)'
+        required: true
+        default: '1.1'
+      build:
+        description: 'Derleme numarası (boşsa 100 + çalışma sayısı)'
+        required: false
+        default: ''
+      upload:
+        description: 'TestFlight’a yükle'
+        type: boolean
+        default: true
+permissions:
+  contents: read
+concurrency:
+  group: ios-release
+  cancel-in-progress: false
+jobs:
+  ios:
+    runs-on: macos-15
+    timeout-minutes: 60
+    env:
+      DM_PRODUCTION_ADS: '1'
+      VERSION: ${{ inputs.version || '1.1' }}
+      HAS_KEY: ${{ secrets.ASC_KEY_P8 != '' && 'yes' || 'no' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Xcode seç (App Store yüklemeleri için en yeni Xcode)
+        run: |
+          X=$(ls -d /Applications/Xcode_*.app | sort -V | tail -1)
+          sudo xcode-select -s "$X"
+          xcodebuild -version
+      - name: Derleme numarası
+        run: |
+          B="${{ inputs.build }}"; [ -n "$B" ] || B=$((100 + ${{ github.run_number }}))
+          echo "BUILD=$B" >> "$GITHUB_ENV"
+      - name: iOS projesini hazırla
+        working-directory: ios-app
+        run: sh scripts/hazirla.sh
+      - name: Kod doğrulaması (imzasız simülatör derlemesi)
+        working-directory: ios-app/ios/App
+        run: |
+          xcodebuild -project App.xcodeproj -scheme App -configuration Debug \
+            -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO build | tail -40
+          test "${PIPESTATUS[0]}" = 0
+          # Pakette yerel katman ve ödeme eklentisi gerçekten var mı?
+          APP=$(find ~/Library/Developer/Xcode/DerivedData -path '*Debug-iphonesimulator/App.app' -maxdepth 6 | head -1)
+          test -f "$APP/native-runtime.js" || { echo "::error::native-runtime.js pakette yok"; exit 1; }
+          grep -rqa DmBillingPlugin "$APP" || { echo "::error::DmBillingPlugin derlenmemiş"; exit 1; }
+          grep -rqa MainViewController "$APP" || { echo "::error::MainViewController derlenmemiş"; exit 1; }
+          echo "Paket içeriği doğrulandı: $(du -h "$APP/native-runtime.js" | cut -f1) yerel katman"
+        shell: bash
+      - name: İmzalı arşiv ve TestFlight yüklemesi
+        if: ${{ (github.event_name == 'push' || inputs.upload) && env.HAS_KEY == 'yes' }}
+        env:
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+          ASC_KEY_P8: ${{ secrets.ASC_KEY_P8 }}
+          TEAM: ${{ vars.APPLE_TEAM_ID }}
+        working-directory: ios-app/ios/App
+        shell: bash
+        run: |
+          set -eo pipefail
+          KEY="$RUNNER_TEMP/AuthKey_$ASC_KEY_ID.p8"; printf '%s\n' "$ASC_KEY_P8" > "$KEY"
+          AUTH=(-allowProvisioningUpdates -authenticationKeyPath "$KEY" -authenticationKeyID "$ASC_KEY_ID" -authenticationKeyIssuerID "$ASC_ISSUER_ID")
+          xcodebuild -project App.xcodeproj -scheme App -configuration Release -destination 'generic/platform=iOS' \
+            -archivePath "$RUNNER_TEMP/App.xcarchive" "${AUTH[@]}" \
+            DEVELOPMENT_TEAM="$TEAM" CODE_SIGN_STYLE=Automatic MARKETING_VERSION="$VERSION" CURRENT_PROJECT_VERSION="$BUILD" \
+            archive | tail -60
+          cat > "$RUNNER_TEMP/export.plist" <<EOF
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0"><dict>
+            <key>method</key><string>app-store-connect</string>
+            <key>destination</key><string>upload</string>
+            <key>teamID</key><string>$TEAM</string>
+            <key>signingStyle</key><string>automatic</string>
+            <key>manageAppVersionAndBuildNumber</key><false/>
+          </dict></plist>
+          EOF
+          xcodebuild -exportArchive -archivePath "$RUNNER_TEMP/App.xcarchive" -exportOptionsPlist "$RUNNER_TEMP/export.plist" \
+            -exportPath "$RUNNER_TEMP/export" "${AUTH[@]}" | tail -40
+          rm -f "$KEY"
+          echo "### iOS $VERSION ($BUILD) App Store Connect'e yüklendi; TestFlight işlemesi birkaç dakika sürer." >> "$GITHUB_STEP_SUMMARY"
+      - name: Anahtar yoksa not
+        if: ${{ env.HAS_KEY != 'yes' }}
+        run: echo "### Kod doğrulandı. Yükleme için ASC_KEY_ID, ASC_ISSUER_ID, ASC_KEY_P8 gizli değerleri ve APPLE_TEAM_ID değişkeni gerekli." >> "$GITHUB_STEP_SUMMARY"

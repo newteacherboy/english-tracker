@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { cleanText, validToken, fcmMessage, deadToken } from './rules.mjs';
+import { cleanText, validToken, fcmMessage, deadToken, apnsMessage, apnsDead } from './rules.mjs';
 test('text is trimmed, control chars removed, length capped', () => {
   assert.equal(cleanText('  Merhaba\n\tPapi  ', 60), 'Merhaba Papi');
   assert.equal(cleanText('x'.repeat(300), 200).length, 200);
@@ -21,4 +21,12 @@ test('dead tokens are detected', () => {
   assert.equal(deadToken(400, { error: { status: 'INVALID_ARGUMENT' } }), true);
   assert.equal(deadToken(400, { error: { details: [{ errorCode: 'UNREGISTERED' }] } }), true);
   assert.equal(deadToken(500, {}), false);
+});
+
+test('iPhone message keeps the tab next to aps; dead APNs tokens detected', () => {
+  const m = apnsMessage({ title: 'A', body: 'B', tab: 'magaza' });
+  assert.deepEqual(m.aps.alert, { title: 'A', body: 'B' }); assert.equal(m.tab, 'magaza');
+  assert.equal(apnsMessage({ title: 'A', body: 'B', tab: 'x' }).tab, undefined);
+  assert.equal(apnsDead(410, {}), true); assert.equal(apnsDead(400, { reason: 'BadDeviceToken' }), true); assert.equal(apnsDead(429, {}), false);
+  assert.equal(validToken('a'.repeat(64)), true);
 });

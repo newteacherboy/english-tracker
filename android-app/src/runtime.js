@@ -19,28 +19,34 @@ import { createBilling } from './billing.js';
 import { createUpsell } from './upsell.js';
 import { createPush } from './push.js';
 
-if (Capacitor.isNativePlatform() && Capacitor.getPlatform() === 'android') {
-  window.dmAndroidShell = { version: 5, ads: production?'production':'test', rewards: REWARDS };
+// Aynı katman iki platformda çalışır. iOS'ta yalnız DmBilling eklentisini taşıyan 1.1+ paketlerde açılır
+// (1.0 kabuğu bu dosyayı hiç yüklemez). Genel adlar (dmAndroid*) web kodu değişmesin diye korunur.
+const platform = Capacitor.getPlatform();
+const ios = platform === 'ios';
+if (Capacitor.isNativePlatform() && (platform === 'android' || (ios && Capacitor.isPluginAvailable('DmBilling'))) && !window.dmAndroidShell) {
+  const units = ios ? adConfig.ios.units : adConfig.units;
+  const live = production && (!ios || adConfig.ios.productionEnabled === true);
+  window.dmAndroidShell = { version: 6, platform, ads: live?'production':'test', rewards: REWARDS };
   window.dmAndroidIsTeacher = () => { try { return isTeacherSession({ portal: !!window.dmTeacherPortalMode, classroomPlayer: typeof siniftaOynananOgrenci !== 'undefined' && siniftaOynananOgrenci, name: typeof aktifOgrenciAdi === 'undefined' ? '' : aktifOgrenciAdi }); } catch { return true; } };
   window.dmAndroidStudentName = () => { try { return typeof aktifOgrenciAdi === 'undefined' ? '' : String(aktifOgrenciAdi || ''); } catch { return ''; } };
   window.dmAndroidGoldBalance = () => { try { return typeof yo !== 'undefined' && yo ? Number(yo.altin) : NaN; } catch { return NaN; } };
-  window.dmNativeServices = { App, Browser, Haptics, Network };
-  installSpeech(window, SpeechRecognition, TextToSpeech);
-  const ads = createTestAds(AdMob, window, RewardAdPluginEvents,{production,units:adConfig.units,rewardClient:createRewardClient(window,adConfig.ssvCallbackUrl.replace(/\/ssv$/, ''))});
+  // iOS'ta titreşim, ağ ve konuşma web tarafındaki native-app.js ile çalışır.
+  if (!ios) { window.dmNativeServices = { App, Browser, Haptics, Network }; installSpeech(window, SpeechRecognition, TextToSpeech); }
+  const ads = createTestAds(AdMob, window, RewardAdPluginEvents,{production:live,units,testUnits:ios?adConfig.ios.testUnits:null,rewardClient:createRewardClient(window,adConfig.ssvCallbackUrl.replace(/\/ssv$/, ''))});
   window.dmAndroidAds = ads;
   const adRemote = createAdRemote({ win: window, endpoint: adConfig.ssvCallbackUrl.replace(/\/ssv$/, '') });
   window.dmAndroidAdSettings = adRemote;
   const placements = createPlacements({admob:AdMob,ads,win:window,interstitialEvents:InterstitialAdPluginEvents,bannerEvents:BannerAdPluginEvents,remote:adRemote});
   window.dmAndroidPlacements = placements;
-  const billing = createBilling({ plugin: registerPlugin('DmBilling'), win: window, endpoint: adConfig.ssvCallbackUrl.replace(/\/ad-rewards\/ssv$/, '/billing') });
+  const billing = createBilling({ plugin: registerPlugin('DmBilling'), store: ios ? 'apple' : 'google', win: window, endpoint: adConfig.ssvCallbackUrl.replace(/\/ad-rewards\/ssv$/, '/billing') });
   window.dmAndroidBilling = billing;
   window.dmAndroidOpenPlans = source => billing.open(source);
   const upsell = createUpsell({ win: window, billing, isTeacher: () => teacherMode(window), watch: kind => window.dmAndroidWatchReward(kind) });
   window.dmAndroidUpsell = upsell;
-  const push = createPush({ plugin: PushNotifications, win: window, endpoint: adConfig.ssvCallbackUrl.replace(/\/ad-rewards\/ssv$/, '/push'), isTeacher: () => teacherMode(window) });
+  const push = createPush({ plugin: PushNotifications, platform, win: window, endpoint: adConfig.ssvCallbackUrl.replace(/\/ad-rewards\/ssv$/, '/push'), isTeacher: () => teacherMode(window) });
   window.dmAndroidPush = push;
   // The portal's API tokens stay in its own WebView. Do not copy browser cookies/tokens.
-  document.addEventListener('click', async event => {
+  if (!ios) document.addEventListener('click', async event => {
     const anchor = event.target.closest?.('a[href]');
     if (!anchor || anchor.hasAttribute('download')) return;
     const url = new URL(anchor.href, location.href);
@@ -49,7 +55,7 @@ if (Capacitor.isNativePlatform() && Capacitor.getPlatform() === 'android') {
     try { await Browser.open({ url: url.href }); }
     catch { window.DijiMeduPapiFeedback?.notice('Bağlantı açılamadı. Yeniden deneyebilirsin.'); }
   });
-  void App.addListener('backButton', ({ canGoBack }) => {
+  if (!ios) void App.addListener('backButton', ({ canGoBack }) => {
     if (billing.isOpen()) { billing.close(); return; }
     if (document.querySelector('.dmu-veil')) { upsell.close(); return; }
     const energyClose = document.querySelector('#ybPerde.acik[data-tur="enerji"] .yb-kapat,.dm-papi-feedback.is-energy .dm-papi-feedback-close');
@@ -64,11 +70,13 @@ if (Capacitor.isNativePlatform() && Capacitor.getPlatform() === 'android') {
   });
   void App.addListener('appStateChange', ({ isActive }) => {
     placements.setActive(isActive);
-    if (isActive) void adRemote.refresh();
+    if (isActive) { void adRemote.refresh(); void push.sync(); }
     if (!isActive) window.speechSynthesis?.cancel(); // Do not cancel Android's own recognition permission/dialog activity.
   });
   // Both choices are opt-in. The preview never credits the real student's wallet.
-  document.addEventListener('DOMContentLoaded', () => {
+  // iOS'ta bu dosya sayfa yüklendikten sonra da gelebilir.
+  const ready = fn => document.readyState === 'loading' ? document.addEventListener('DOMContentLoaded', fn, { once: true }) : fn();
+  ready(() => {
     placements.start();
     upsell.start();
     push.start();
@@ -100,7 +108,7 @@ if (Capacitor.isNativePlatform() && Capacitor.getPlatform() === 'android') {
       button.type = 'button'; button.dataset.dmTestAd = kind;
       button.className = compact ? 'dmu-mini' : 'dmu-video';
       const label = kind === 'gold' ? '▶ Video izle, +100 altın' : '▶ Video izle, 7 enerji al';
-      button.textContent = production ? label : label + ' (test)';
+      button.textContent = live ? label : label + ' (test)';
       button.onclick = async () => {
         button.disabled = true;
         try { const r = await watchReward(kind); button.textContent = r.ok ? '✓ ' + r.message : r.message; }
@@ -148,5 +156,5 @@ if (Capacitor.isNativePlatform() && Capacitor.getPlatform() === 'android') {
     document.addEventListener('dm:login', attach);
     window.addEventListener('dm:ad-settings', attach);
     attach();
-  }, { once: true });
+  });
 }

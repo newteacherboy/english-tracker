@@ -41,7 +41,7 @@
     if (!doc.getElementById('dma-css')) { const st = doc.createElement('style'); st.id = 'dma-css'; st.textContent = CSS; doc.head.appendChild(st); }
     const veil = doc.createElement('div'); veil.className = 'dma-veil';
     veil.innerHTML = `<div class="dma-sheet" role="dialog" aria-modal="true" aria-label="Reklam ayarları">
-<h2>📺 Reklam Ayarları</h2><small>Android uygulaması bu ayarları sürüm beklemeden okur (en geç 15 dakikada, uygulamayı yeniden açınca hemen).</small>
+<h2>📺 Reklam Ayarları</h2><small>Android ve iPhone uygulamaları bu ayarları sürüm beklemeden okur (en geç 15 dakikada, uygulamayı yeniden açınca hemen).</small>
 <div class="dma-box dma-kill"><div><div class="dma-state" data-state>Yükleniyor…</div><small>Kapatınca banner, geçiş ve ödüllü videoların hepsi durur.</small></div><button class="dma-btn" data-kill disabled>…</button></div>
 <div class="dma-box"><b>Reklam türleri</b><div class="dma-checks">
  <label><input type="checkbox" data-k="banner"> Banner</label><label><input type="checkbox" data-k="interstitial"> Geçiş reklamı</label><label><input type="checkbox" data-k="rewarded"> Ödüllü video</label></div>

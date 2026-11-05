@@ -1,11 +1,14 @@
-// Diji Medu abonelikleri (Google Play). Plan yalnızca Google'dan doğrulanan satın almadan doğar.
+// Diji Medu abonelikleri (Google Play ve App Store). Plan yalnızca mağazadan doğrulanan satın almadan doğar.
 //   POST {action:'status'}                       → plan, sınırlar, ürünler, hesap referansı
 //   POST {action:'verify', productId, purchaseToken} → Google'dan doğrula, onayla (acknowledge), hakkı yaz
 //   POST /rtdn?secret=…                            → Play gerçek zamanlı bildirimleri (yenileme, iptal, iade)
+//   POST {action:'verifyApple', signedTransaction}  → StoreKit 2 imzalı işlemi Apple zinciriyle doğrula, hakkı yaz
+//   POST /apple                                    → App Store Server Notifications V2 (imzalı; gizli değer gerekmez)
 // Gizli değer: GOOGLE_PLAY_SERVICE_ACCOUNT (JSON). İsteğe bağlı: PLAY_RTDN_SECRET.
 import { createClient } from 'npm:@supabase/supabase-js@2.118.0';
 import { PACKAGE_NAME, PRODUCTS, productsFor, accountRef, tokenKey, interpret, serviceJwt, parseRtdn } from './play.mjs';
 import { AD_DEFAULTS, normalizeAdSettings } from './ad-settings.mjs';
+import { verifyAppleJws, interpretApple, appleTokenFor } from './apple.mjs';
 
 const key = JSON.parse(Deno.env.get('SUPABASE_SECRET_KEYS') || '{}').default || Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
 const db = createClient(Deno.env.get('SUPABASE_URL')!, key!, { auth: { persistSession: false, autoRefreshToken: false } });
@@ -94,6 +97,30 @@ async function record(purchaseToken: string, sub: any, account?: { role: string;
   return { ok: true, state: info.state, productId: info.productId, validUntil: info.validUntil, test: info.test };
 }
 
+// App Store işlemini deftere yazar. Abonelik zinciri originalTransactionId ile tek satırdır (yenileme, yükseltme aynı satır).
+async function recordApple(tx: any, account?: { role: string; id: string }) {
+  const info = interpretApple(tx);
+  if (info.state === 'invalid') return { ok: false, reason: 'unknown_product' };
+  const ref = 'apple:' + info.originalTransactionId;
+  const { data: existing } = await db.from('dm_payment_transactions').select('id,account_id,account_role').eq('provider', 'apple').eq('provider_transaction_id', ref).maybeSingle();
+  const owner = account || (existing?.account_id ? { role: existing.account_role, id: existing.account_id } : null);
+  if (!owner) return { ok: false, reason: 'unknown_purchase' };
+  if (existing?.account_id && account && (existing.account_id !== account.id || existing.account_role !== account.role)) return { ok: false, reason: 'other_account' };
+  if (PRODUCTS[info.productId!].role !== owner.role) return { ok: false, reason: 'wrong_role' };
+  if (info.appAccountToken && info.appAccountToken !== await appleTokenFor(owner.role, owner.id)) return { ok: false, reason: 'other_account' };
+  const row = { account_id: owner.id, account_role: owner.role, provider: 'apple', provider_transaction_id: ref, product_key: info.productId, state: info.state,
+    verified_at: info.state === 'verified' ? new Date().toISOString() : null, valid_until: info.validUntil };
+  const { data: saved, error } = await db.from('dm_payment_transactions').upsert(row, { onConflict: 'provider,provider_transaction_id' }).select('id').single();
+  if (error) throw Error('ledger_unavailable');
+  // Aynı abonelik zincirindeki başka ürün (Pro → Premium Pro yükseltmesi) kapanır.
+  await db.from('dm_entitlements').update({ state: 'expired', updated_at: new Date().toISOString() }).eq('provider', 'apple').eq('transaction_id', saved.id).neq('product_key', info.productId);
+  const ent = { account_id: owner.id, account_role: owner.role, product_key: info.productId, provider: 'apple', transaction_id: saved.id,
+    state: info.state === 'verified' ? 'active' : info.state === 'revoked' ? 'revoked' : 'expired', valid_until: info.validUntil, updated_at: new Date().toISOString() };
+  const { error: e2 } = await db.from('dm_entitlements').upsert(ent, { onConflict: 'account_id,account_role,product_key' });
+  if (e2) throw Error('entitlement_unavailable');
+  return { ok: true, state: info.state, productId: info.productId, validUntil: info.validUntil, test: info.test };
+}
+
 // Yönetici paneli: hediye üyelik verme/geri alma ve yeni öğretmenlere otomatik hediye anahtarı.
 async function admin(acct: { role: string; id: string }, body: any): Promise<[unknown, number]> {
   if (acct.role !== 'teacher') return [{ ok: false, mesaj: 'Yönetici oturumu gerekli.' }, 403];
@@ -157,8 +184,24 @@ Deno.serve(async req => {
       if (n.eventId) await db.from('dm_payment_events').update({ processed_at: new Date().toISOString() }).eq('provider', 'google').eq('event_id', n.eventId);
       return reply(result);
     }
+    if (url.pathname.endsWith('/apple')) {
+      // Apple bildirimi kendi imzasını taşır: yük ve içindeki işlem ayrı ayrı doğrulanır.
+      const raw = await req.text();
+      if (raw.length > 60000) return reply({ error: 'Request too large' }, 413);
+      let note: any;
+      try { note = await verifyAppleJws(JSON.parse(raw).signedPayload); } catch { return reply({ error: 'invalid_signature' }, 400); }
+      const id = String(note.notificationUUID || '');
+      if (id) {
+        const { error } = await db.from('dm_payment_events').insert({ provider: 'apple', event_id: id });
+        if (error?.code === '23505') return reply({ ok: true, duplicate: true });
+      }
+      let result: unknown = { ok: true, ignored: true };
+      if (note.data?.signedTransactionInfo) result = await recordApple(await verifyAppleJws(note.data.signedTransactionInfo));
+      if (id) await db.from('dm_payment_events').update({ processed_at: new Date().toISOString() }).eq('provider', 'apple').eq('event_id', id);
+      return reply(result);
+    }
     const raw = await req.text();
-    if (raw.length > 8192) return reply({ error: 'Request too large' }, 413);
+    if (raw.length > 32768) return reply({ error: 'Request too large' }, 413);
     let body: any; try { body = JSON.parse(raw || '{}'); } catch { return reply({ error: 'Invalid request' }, 400); }
     const acct = await session(req);
     if (!acct) return reply({ ok: false, mesaj: 'Giriş yapmalısın.' }, 401);
@@ -171,6 +214,15 @@ Deno.serve(async req => {
       const sub = await fetchSubscription(purchaseToken);
       if (!sub) return reply({ ok: false, mesaj: 'Satın alma Google Play\'de bulunamadı.' }, 404);
       const result = await record(purchaseToken, sub, acct);
+      if (!result.ok) return reply({ ok: false, mesaj: result.reason === 'other_account' ? 'Bu satın alma başka bir Diji Medu hesabına ait.' : 'Satın alma doğrulanamadı.', reason: result.reason }, 409);
+      return reply({ ...result, ...(await status(acct)) });
+    }
+    if (body.action === 'verifyApple') {
+      if (!acct.canBuy) return reply({ ok: false, mesaj: 'Bu hesapla satın alma yapılamaz.' }, 403);
+      let tx;
+      try { tx = await verifyAppleJws(String(body.signedTransaction || '')); }
+      catch { return reply({ ok: false, mesaj: 'Satın alma Apple tarafından doğrulanamadı.' }, 400); }
+      const result = await recordApple(tx, acct);
       if (!result.ok) return reply({ ok: false, mesaj: result.reason === 'other_account' ? 'Bu satın alma başka bir Diji Medu hesabına ait.' : 'Satın alma doğrulanamadı.', reason: result.reason }, 409);
       return reply({ ...result, ...(await status(acct)) });
     }

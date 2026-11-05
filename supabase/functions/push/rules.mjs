@@ -17,3 +17,14 @@ export function deadToken(status, json) {
   const code = json?.error?.details?.find?.(d => d.errorCode)?.errorCode || json?.error?.status;
   return status === 404 || code === 'UNREGISTERED' || (status === 400 && code === 'INVALID_ARGUMENT');
 }
+
+// iPhone (APNs, doğrudan Apple). Jeton cihazın 64 haneli onaltılık APNs jetonudur.
+export const IOS_TOPIC = 'com.dijimedu.ingilizce';
+export function apnsMessage({ title, body, tab }) {
+  const m = { aps: { alert: { title, body }, sound: 'default' }, kaynak: 'dm' };
+  if (TABS.includes(tab)) m.tab = tab;
+  return m;
+}
+export function apnsDead(status, json) {
+  return status === 410 || (status === 400 && ['BadDeviceToken', 'DeviceTokenNotForTopic', 'Unregistered'].includes(json?.reason));
+}

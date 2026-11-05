@@ -1,7 +1,8 @@
 import { planCards, parentGate, gatePassed } from './billing-core.js';
 
 // Google Play abonelikleri: plan ekranı, veli kapısı, satın alma → sunucu doğrulaması → plan yenileme.
-export function createBilling({ plugin, win, endpoint }) {
+export function createBilling({ plugin, store = 'google', win, endpoint }) {
+  const apple = store === 'apple';
   const doc = win.document;
   let status = null, storeProducts = [], loadingProducts = null, busy = false, period = 'aylik';
 
@@ -36,7 +37,8 @@ export function createBilling({ plugin, win, endpoint }) {
   async function verify(purchase) {
     if (!purchase?.purchaseToken || purchase.state !== 'purchased') return null;
     const productId = (purchase.products || [])[0];
-    const result = await call({ action: 'verify', productId, purchaseToken: purchase.purchaseToken });
+    // Apple: StoreKit 2'nin imzalı işlemi (JWS); sunucu Apple sertifika zincirini doğrular.
+    const result = await call(apple ? { action: 'verifyApple', productId, signedTransaction: purchase.purchaseToken } : { action: 'verify', productId, purchaseToken: purchase.purchaseToken });
     apply(result);
     return result;
   }
@@ -80,19 +82,21 @@ export function createBilling({ plugin, win, endpoint }) {
     const cards = planCards({ role: status.role, plan: status.plan, products: status.products, storeProducts, period });
     const body = sheet.querySelector('.dmb-body');
     body.innerHTML = cards.map(c => `<div class="dmb-card${c.current ? ' is-current' : ''}${c.plan === 'premium_pro' ? ' is-best' : ''}">
-      <div class="dmb-top"><h3>${esc(c.name)}</h3><span class="dmb-price">${esc(c.price.text)}${c.price.per ? ` <small>/ ${c.price.per}</small>` : ''}</span></div>
+      <div class="dmb-top"><h3>${esc(c.name)}</h3><span class="dmb-price">${apple && c.action === 'soon' ? '' : esc(c.price.text)}${c.price.per && !(apple && c.action === 'soon') ? ` <small>/ ${c.price.per}</small>` : ''}</span></div>
       ${c.saving ? `<span class="dmb-tag">%${c.saving} tasarruf</span>` : ''}${c.price.trialDays && c.action === 'buy' ? ` <span class="dmb-tag">${c.price.trialDays} gün ücretsiz dene</span>` : ''}
       <ul>${c.features.map(f => `<li>${esc(f)}</li>`).join('')}</ul>
       ${c.action === 'buy' ? `<button class="dmb-btn" data-buy="${esc(c.id)}">${status.plan === 'free' ? 'Seç' : 'Yükselt'}</button>`
         : c.action === 'current' ? `<button class="dmb-btn" disabled>Şu anki planın</button>`
         : c.action === 'soon' ? `<button class="dmb-btn" disabled>Yakında</button>`
         : c.action === 'unavailable' ? `<button class="dmb-btn" disabled>Şu an satışta değil</button>` : ''}
-    </div>`).join('') + `<p class="dmb-note">Ödeme Google Play hesabından alınır. Abonelik, dönem bitmeden en az 24 saat önce iptal edilmezse aynı süreyle yenilenir. İptal ve ödeme yöntemi Google Play &gt; Abonelikler bölümünden yönetilir.</p>
+    </div>`).join('') + (apple ? `<p class="dmb-note">Ödeme onaylandığında Apple Kimliği hesabından alınır. Abonelik, dönem bitmeden en az 24 saat önce iptal edilmezse aynı süre ve fiyatla otomatik yenilenir; yenileme ücreti dönem bitmeden önceki 24 saat içinde alınır. Aboneliği satın aldıktan sonra Ayarlar &gt; Apple Kimliği &gt; Abonelikler bölümünden yönetebilir veya iptal edebilirsin.</p>
+      <p class="dmb-note"><a href="https://www.apple.com/legal/internet-services/itunes/dev/stdeula/" target="_blank" rel="noopener">Kullanım Koşulları (EULA)</a> · <a href="https://app.dijimedu.com/ingilizce/gizlilik.html" target="_blank" rel="noopener">Gizlilik Politikası</a></p>`
+      : `<p class="dmb-note">Ödeme Google Play hesabından alınır. Abonelik, dönem bitmeden en az 24 saat önce iptal edilmezse aynı süreyle yenilenir. İptal ve ödeme yöntemi Google Play &gt; Abonelikler bölümünden yönetilir.</p>`) + `
       <button class="dmb-link" data-restore>Satın alımları geri yükle</button> ${status.plan !== 'free' ? '<button class="dmb-link" data-manage>Aboneliği yönet</button>' : ''}`;
     for (const b of sheet.querySelectorAll('[data-buy]')) b.onclick = () => gateThen(() => buy(b.dataset.buy));
     sheet.querySelector('[data-restore]').onclick = async () => {
       message('Kontrol ediliyor…');
-      try { const n = await restore({ quiet: false }); await refresh(); render(); message(n ? 'Aboneliğin hesabına bağlandı.' : 'Bu Google hesabında etkin abonelik bulunamadı.'); }
+      try { const n = await restore({ quiet: false }); await refresh(); render(); message(n ? 'Aboneliğin hesabına bağlandı.' : (apple ? 'Bu Apple Kimliğinde' : 'Bu Google hesabında') + ' etkin abonelik bulunamadı.'); }
       catch (e) { message(e.message, true); }
     };
     const manage = sheet.querySelector('[data-manage]');
@@ -109,11 +113,11 @@ export function createBilling({ plugin, win, endpoint }) {
     body.querySelector('[data-ok]').onclick = () => { if (gatePassed(gate, input.value)) next(); else { render(); message('Cevap doğru değil. Satın alma için veline danış.', true); } };
   }
   async function buy(productId) {
-    if (busy) return; busy = true; render(); message('Google Play açılıyor…');
+    if (busy) return; busy = true; render(); message(apple ? 'App Store açılıyor…' : 'Google Play açılıyor…');
     try {
       const current = (status.entitlements || []).find(e => e.provider === 'google');
       let oldPurchaseToken = null;
-      if (current) { const { purchases = [] } = await plugin.restore().catch(() => ({})); oldPurchaseToken = purchases.find(p => (p.products || []).includes(current.product_key))?.purchaseToken || null; }
+      if (current && !apple) { const { purchases = [] } = await plugin.restore().catch(() => ({})); oldPurchaseToken = purchases.find(p => (p.products || []).includes(current.product_key))?.purchaseToken || null; }
       const result = await plugin.purchase({ productId, basePlanId: period, accountRef: status.accountRef, ...(oldPurchaseToken ? { oldPurchaseToken } : {}) });
       if (result.canceled) { message(''); return; }
       if (result.alreadyOwned) { await restore({ quiet: false }); render(); message('Bu abonelik zaten senin. Hesabına bağlandı.'); return; }

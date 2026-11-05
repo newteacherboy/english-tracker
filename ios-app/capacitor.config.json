@@ -5,7 +5,9 @@
   "server": {
     "url": "https://app.dijimedu.com/ingilizce/",
     "errorPath": "offline.html",
-    "allowNavigation": ["app.dijimedu.com"]
+    "allowNavigation": [
+      "app.dijimedu.com"
+    ]
   },
   "ios": {
     "contentInset": "never",
@@ -14,6 +16,13 @@
   "plugins": {
     "LocalNotifications": {
       "iconColor": "#1D9E75"
+    },
+    "PushNotifications": {
+      "presentationOptions": [
+        "badge",
+        "sound",
+        "alert"
+      ]
     }
   }
 }

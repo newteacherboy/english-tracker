@@ -7,6 +7,8 @@
     gecis: 'ca-app-pub-3940256099942544/4411468910'
   });
   if (!(window.Capacitor?.isNativePlatform?.() && window.Capacitor?.isPluginAvailable?.('AdMob'))) return;
+  // iOS 1.1+ paketleri reklamı uygulamayla gelen ortak katmanla (native-runtime.js) gösterir.
+  if (window.dmNativeRuntime || window.dmAndroidShell) return;
   const C = window.Capacitor;
   if (C.getPlatform?.() !== 'ios' || window.DijiReklam) return;
   const A = C.Plugins?.AdMob || C.registerPlugin?.('AdMob');
