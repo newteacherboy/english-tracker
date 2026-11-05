@@ -30,66 +30,94 @@ Deno.serve(async(req:Request)=>{
   const b=await req.json().catch(()=>({}));
   const token=String(b.t||'');
   if(token.length<20||token.length>400)return reply(req,{ok:false,mesaj:'Oyun için hesabına giriş yap.'},401);
-  const s=(await db('portal_sessions?token_hash=eq.'+await sha256(token)+'&select=student_id,role,expires_at,teacher_portal_access_id&limit=1'))?.[0];
-  if(!s||s.role!=='student'||!s.student_id||Date.parse(s.expires_at)<=Date.now())return reply(req,{ok:false,mesaj:'Oturumun sona erdi. Tekrar giriş yap.'},401);
+  const s=(await db('portal_sessions?token_hash=eq.'+await sha256(token)+'&select=student_id,teacher_id,role,expires_at,teacher_portal_access_id,teacher_portal_version&limit=1'))?.[0];
+  if(!s||!['student','teacher'].includes(s.role)||Date.parse(s.expires_at)<=Date.now())return reply(req,{ok:false,mesaj:'Oturumun sona erdi. Tekrar giriş yap.'},401);
   const op=String(b.op||'status');
+  const game=String(b.game||'word-match');
+  const teacherGame=s.role==='teacher';
+  let actor=s.student_id;
+  if(teacherGame){
+    if(!s.teacher_id||!s.teacher_portal_access_id)return reply(req,{ok:false,mesaj:'Öğretmen oturumu gerekli.'},403);
+    const grant=(await db('teacher_portal_access?id=eq.'+s.teacher_portal_access_id+'&select=id,teacher_id,state,version&limit=1'))?.[0];
+    const teacher=(await db('teachers?id=eq.'+s.teacher_id+'&select=id,active,frozen_at&limit=1'))?.[0];
+    if(!grant||grant.state!=='approved'||grant.teacher_id!==s.teacher_id||grant.version!==s.teacher_portal_version||!teacher?.active||teacher.frozen_at)
+      return reply(req,{ok:false,mesaj:'Öğretmen erişimi doğrulanamadı.'},403);
+    // The same teacher-only profile is reused across devices. Never play as a pupil.
+    actor=await db('rpc/dm_teacher_portal_guest',{grant_id:grant.id,guest_alias:'Premium Oyun',is_preview:true,secret_hash:crypto.randomUUID()});
+  }else if(!actor)return reply(req,{ok:false,mesaj:'Öğrenci oturumu gerekli.'},401);
+  // Server-validated teacher plan: Free 3/game, Pro 5/day/game, Premium Pro unlimited.
+  // Administrator override is exclusively in dm_plan(), tied to verified teachers.is_admin.
+  async function teacherQuota(reserve=false){
+    if(!teacherGame)return null;
+    return await db('rpc/dm_teacher_premium_quota',{
+      p_actor:actor,p_game:game,p_run:reserve?b.runId:null,p_reserve:reserve
+    });
+  }
+  async function gameReply(data:Record<string,unknown>){
+    const q=await teacherQuota(false);
+    return reply(req,q?{...data,plan:q.plan,teacherGame:true,
+      premium:q.plan==='premium_pro',
+      remaining:q.plan==='pro'?q.remaining:data.remaining}:data);
+  }
+  async function startGame(path:string,payload:Record<string,unknown>){
+    await teacherQuota(true);
+    return gameReply(await db(path,payload));
+  }
   if(b.game==='runners-papi'){
-   if(s.teacher_portal_access_id)return reply(req,{ok:false,mesaj:'Bu oyun için öğrenci hesabına giriş yap.'},403);
+   if(s.role==='student'&&s.teacher_portal_access_id)return reply(req,{ok:false,mesaj:'Bu oyun için öğrenci hesabına giriş yap.'},403);
    const validAnswer=op==='answer'&&Number.isSafeInteger(b.gate)&&b.gate>=0
      &&Number.isInteger(b.choice)&&b.choice>=-1&&b.choice<=2;
    if(op!=='status'&&(!UUID.test(String(b.runId||''))||(op!=='start'&&!validAnswer))){
     return reply(req,{ok:false,mesaj:'Geçersiz oyun işlemi.'},400);
    }
-   return reply(req,await db('rpc/dm_runners_play',{
+   if(op==='start')await teacherQuota(true);
+   return gameReply(await db('rpc/dm_runners_play',{
     actor:s.student_id,action:op,run_key:op==='status'?null:b.runId,
     gate_no:validAnswer?b.gate:null,choice:validAnswer?b.choice:null
    }));
   }
   if(b.game==='papizzle'){
-   const actor=s.student_id;
-   if(s.teacher_portal_access_id)return reply(req,{ok:false,mesaj:'Papizzle için öğrenci hesabına giriş yap.'},403);
-   if(op==='status')return reply(req,await db('rpc/dm_papizzle_status',{actor}));
+   if(s.role==='student'&&s.teacher_portal_access_id)return reply(req,{ok:false,mesaj:'Papizzle için öğrenci hesabına giriş yap.'},403);
+   if(op==='status')return gameReply(await db('rpc/dm_papizzle_status',{actor}));
    if(!UUID.test(String(b.runId||'')))return reply(req,{ok:false,mesaj:'Geçersiz oyun.'},400);
-   if(op==='start')return reply(req,await db('rpc/dm_papizzle_start',{actor,run_key:b.runId}));
+   if(op==='start')return startGame('rpc/dm_papizzle_start',{actor,run_key:b.runId});
    if(op==='finish'&&Array.isArray(b.selections)&&b.selections.length>=1&&b.selections.length<=256
       &&b.selections.every((pick:unknown)=>typeof pick==='number'&&Number.isInteger(pick)&&pick>=0&&pick<16)){
-    return reply(req,await db('rpc/dm_papizzle_finish',{actor,run_key:b.runId,selections:b.selections}));
+    return gameReply(await db('rpc/dm_papizzle_finish',{actor,run_key:b.runId,selections:b.selections}));
    }
    return reply(req,{ok:false,mesaj:'Geçersiz oyun sonucu.'},400);
   }
   if(b.game==='cloud-flight'||b.game==='word-blocks'){
    const rpc=b.game==='word-blocks'?'dm_blocks':'dm_cloud';
-   const actor=s.student_id;
-   if(s.teacher_portal_access_id)return reply(req,{ok:false,mesaj:'Bu oyun için öğrenci hesabına giriş yap.'},403);
-   if(op==='status')return reply(req,await db('rpc/'+rpc+'_status',{actor}));
+   if(s.role==='student'&&s.teacher_portal_access_id)return reply(req,{ok:false,mesaj:'Bu oyun için öğrenci hesabına giriş yap.'},403);
+   if(op==='status')return gameReply(await db('rpc/'+rpc+'_status',{actor}));
    if(!UUID.test(String(b.runId||'')))return reply(req,{ok:false,mesaj:'Geçersiz oyun.'},400);
-   if(op==='start')return reply(req,await db('rpc/'+rpc+'_start',{actor,run_key:b.runId}));
+   if(op==='start')return startGame('rpc/'+rpc+'_start',{actor,run_key:b.runId});
    if(op==='finish'&&Array.isArray(b.selections)&&b.selections.length<=20
       &&b.selections.every((pick:unknown)=>typeof pick==='number'&&Number.isInteger(pick)&&pick>=(b.game==='word-blocks'?0:-1)&&pick<=(b.game==='word-blocks'?5:2))){
-    return reply(req,await db('rpc/'+rpc+'_finish',{actor,run_key:b.runId,selections:b.selections}));
+    return gameReply(await db('rpc/'+rpc+'_finish',{actor,run_key:b.runId,selections:b.selections}));
    }
    return reply(req,{ok:false,mesaj:'Geçersiz oyun sonucu.'},400);
   }
   // Öğretmen portalında oyun sınıfta gösterilir: hak, enerji ve ödül işlenmez.
-  if(s.teacher_portal_access_id){
+  if(s.role==='student'&&s.teacher_portal_access_id){
    const st=await db('rpc/dm_pwm_status',{actor:s.student_id}).catch(()=>({}));
    return reply(req,{...st,ok:true,practice:true,premium:true,remaining:999,level:100,xp:0,gold:0,won:!!b.won,stars:0});
   }
-  const actor=s.student_id;
-  if(op==='status')return reply(req,await db('rpc/dm_pwm_status',{actor}));
+  if(op==='status')return gameReply(await db('rpc/dm_pwm_status',{actor}));
   if(op==='start'){
    const level=Number(b.level);
    if(!UUID.test(String(b.runId||''))||!Number.isInteger(level)||level<1||level>100)return reply(req,{ok:false,mesaj:'Geçersiz bölüm.'},400);
-   return reply(req,await db('rpc/dm_pwm_start',{actor,run_key:b.runId,p_level:level}));
+   return startGame('rpc/dm_pwm_start',{actor,run_key:b.runId,p_level:level});
   }
   if(op==='finish'){
    if(!UUID.test(String(b.runId||''))||![b.score,b.moves,b.seconds].every(v=>Number.isSafeInteger(v)&&v>=0)||typeof b.won!=='boolean')return reply(req,{ok:false,mesaj:'Geçersiz oyun sonucu.'},400);
-   return reply(req,await db('rpc/dm_pwm_finish',{actor,run_key:b.runId,p_score:b.score,p_won:b.won,p_moves:b.moves,p_seconds:b.seconds}));
+   return gameReply(await db('rpc/dm_pwm_finish',{actor,run_key:b.runId,p_score:b.score,p_won:b.won,p_moves:b.moves,p_seconds:b.seconds}));
   }
   if(op==='buy'||op==='use'){
    if(!BOOSTERS.has(String(b.kind)))return reply(req,{ok:false,mesaj:'Geçersiz güçlendirici.'},400);
    if(op==='use'&&!UUID.test(String(b.runId||'')))return reply(req,{ok:false,mesaj:'Oyun bulunamadı.'},400);
-   return reply(req,await db('rpc/dm_pwm_booster',{actor,kind:b.kind,op,run_key:op==='use'?b.runId:null}));
+   return gameReply(await db('rpc/dm_pwm_booster',{actor,kind:b.kind,op,run_key:op==='use'?b.runId:null}));
   }
   return reply(req,{ok:false,mesaj:'Geçersiz işlem.'},400);
  }catch(err){
