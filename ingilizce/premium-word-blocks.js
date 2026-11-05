@@ -64,7 +64,7 @@
   window.premiumKelimeBloklariAc = async () => {
     if (opening || document.querySelector('.dm-blocks')) return;
     opening = true;
-    const account = player(), token = localStorage.getItem('ing_token') || '';
+    const account = player(), token = (window.dmTeacherPortalMode ? sessionStorage.getItem('ing_ogr_token') : '') || localStorage.getItem('ing_token') || '';
     try {
       const style = document.querySelector('link[href="' + styles + '"]');
       if (!style?.sheet) await new Promise((resolve, reject) => {

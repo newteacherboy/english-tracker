@@ -3,7 +3,7 @@
   const endpoint = (typeof apiURL === 'string' ? apiURL :
     'https://nxfqlutulxqzqgwewssd.supabase.co/functions/v1/diji-api').replace(/diji-api.*$/, 'premium-games');
   const account = () => typeof aktifOgrenciAdi === 'undefined' ? '' : aktifOgrenciAdi;
-  const token = () => localStorage.getItem('ing_token') || '';
+  const token = () => (window.dmTeacherPortalMode ? sessionStorage.getItem('ing_ogr_token') : '') || localStorage.getItem('ing_token') || '';
   let opening = false;
   let styles;
 

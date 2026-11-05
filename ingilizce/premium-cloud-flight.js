@@ -114,7 +114,7 @@
   window.premiumBulutUcusuAc = async function () {
     if (opening || document.querySelector('.dm-flight')) return;
     const account = owner();
-    const token = localStorage.getItem('ing_token') || '';
+    const token = (window.dmTeacherPortalMode ? sessionStorage.getItem('ing_ogr_token') : '') || localStorage.getItem('ing_token') || '';
     opening = true;
     try {
       await new Promise((resolve, reject) => {

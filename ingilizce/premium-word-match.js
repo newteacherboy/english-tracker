@@ -36,7 +36,7 @@ function ready(i){return i.complete&&i.naturalWidth>0;}
 async function preload(names){await Promise.all(names.map(n=>{const i=img(n);return ready(i)?0:(i.decode?i.decode().catch(()=>0):new Promise(r=>{i.onload=i.onerror=r;}));}));}
 
 /* ---------- sunucu ---------- */
-function token(){return who().toLowerCase()==='teacher'?(sessionStorage.getItem('ing_ogr_token')||localStorage.getItem('ing_token')||''):(localStorage.getItem('ing_token')||'');}
+function token(){return (window.dmTeacherPortalMode ? sessionStorage.getItem('ing_ogr_token') : '') || localStorage.getItem('ing_token') || '';}
 async function api(op,data={}){
  const ctl=new AbortController(),timer=setTimeout(()=>ctl.abort(),15000);
  try{const r=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({op,...data,t:token()}),signal:ctl.signal,cache:'no-store'});
