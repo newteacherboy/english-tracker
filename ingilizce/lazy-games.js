@@ -68,7 +68,7 @@
   const papizzleProxy=async ()=>{
     const owner=typeof aktifOgrenciAdi==='undefined'?'':aktifOgrenciAdi;
     try{
-      await (papizzleLoading??=script('papizzle.js?v=1').catch(error=>{papizzleLoading=null;throw error;}));
+      await (papizzleLoading??=script('papizzle.js?v=2').catch(error=>{papizzleLoading=null;throw error;}));
       if(owner===(typeof aktifOgrenciAdi==='undefined'?'':aktifOgrenciAdi)&&window.papizzleAc!==papizzleProxy)await window.papizzleAc();
     }catch(error){window.yoToast?.(error.message);}
   };

@@ -7,15 +7,30 @@
   let opening = false;
 
   async function request(token, op, extra = {}) {
-    const response = await fetch(endpoint, {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({game: 'papizzle', t: token, op, ...extra}),
-      signal: AbortSignal.timeout(15000)
-    });
-    const data = await response.json();
-    if (!response.ok || !data.ok) throw Error(data.mesaj || 'Papizzle bağlantısı kurulamadı.');
-    return data;
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 15000);
+    try {
+      let response, data;
+      try {
+        response = await fetch(endpoint, {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({game: 'papizzle', t: token, op, ...extra}),
+          signal: controller.signal
+        });
+        data = await response.json();
+      } catch {
+        throw Error('Papizzle bağlantısı kurulamadı. Tekrar dene.');
+      }
+      if (!response.ok || !data?.ok) {
+        const error = Error(data?.mesaj || 'Papizzle bağlantısı kurulamadı. Tekrar dene.');
+        error.code = data?.hata;
+        throw error;
+      }
+      return data;
+    } finally {
+      clearTimeout(timer);
+    }
   }
 
   function loadStyle() {
@@ -129,11 +144,14 @@
     }
 
     function home(error) {
-      const actions = state.remaining > 0 ? [[`Seviye ${state.level} · ⚡ 5`, start]] : [];
+      const lowEnergy = !runId && state.energy < 5;
+      const actions = state.remaining > 0 && !lowEnergy ? [[`Seviye ${state.level} · ⚡ 5`, start]] : [['Durumu yenile', refresh]];
+      const message = error || (lowEnergy ? `Başlamak için 5 enerji gerekli. ${5 - state.energy} enerji daha lazım.` :
+        state.remaining <= 0 ? 'Oyun hakkın kalmadı.' : '');
       showPanel('Kelime duvarını temizle!', [
         'Üstteki İngilizce kelimenin anlamına dokun.',
         `⚡ ${state.energy}/${state.energyMax} · ${state.premium ? 'Premium sınırsız' : `${state.remaining} ücretsiz hak`}`,
-        error
+        message
       ], [...actions, ['Oyunlara dön', close]]);
     }
 
@@ -141,6 +159,19 @@
       state = {...state, ...data};
       window.headerEnerjiGoster?.(data.energy, data.energyMax);
       if (data.yo) window.dmApplyRewardState?.(data.yo, name);
+    }
+
+    async function refresh() {
+      if (pending) return;
+      pending = true;
+      try {
+        const data = await request(token, 'status');
+        if (screen.isConnected && sameAccount()) { apply(data); home(); }
+      } catch (error) {
+        if (screen.isConnected && sameAccount()) home(error.message);
+      } finally {
+        pending = false;
+      }
     }
 
     async function start() {
@@ -172,7 +203,15 @@
         paint();
         board.firstElementChild?.focus({preventScroll: true});
       } catch (error) {
-        if (screen.isConnected && sameAccount()) home(error.message);
+        if (screen.isConnected && sameAccount()) {
+          if (error.code === 'enerji' || error.code === 'hak') {
+            runId = undefined;
+            const data = await request(token, 'status').catch(() => null);
+            if (!screen.isConnected || !sameAccount()) return;
+            if (data) apply(data);
+          }
+          home(error.message);
+        }
       } finally {
         pending = false;
       }
