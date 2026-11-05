@@ -87,6 +87,12 @@ jobs:
             archive | tail -40
           APPDIR="$RUNNER_TEMP/App.xcarchive/Products/Applications/App.app"
           test -d "$APPDIR" || { echo "::error::Arşivde App.app yok"; exit 1; }
+          # Gömülü çerçeveler (GoogleMobileAds, UMP, Capacitor…) de geçici imzayla mühürlenir; dışa aktarma hepsini dağıtım sertifikasıyla yeniden imzalar.
+          if [ -d "$APPDIR/Frameworks" ]; then
+            find "$APPDIR/Frameworks" -maxdepth 1 \( -name '*.framework' -o -name '*.dylib' \) -print0 | while IFS= read -r -d '' F; do
+              codesign --force --sign - --timestamp=none --preserve-metadata=identifier,flags "$F"
+            done
+          fi
           codesign --force --sign - --entitlements App/App.entitlements --timestamp=none "$APPDIR"
           codesign -d --entitlements - "$APPDIR" 2>/dev/null | grep -q aps-environment || { echo "::error::aps-environment yetkisi eklenemedi"; exit 1; }
           cat > "$RUNNER_TEMP/export.plist" <<EOF
