@@ -1,5 +1,8 @@
 # Diji Medu · iOS uygulaması
 
+> **1.1 ve sonrası:** paket Mac gerekmeden GitHub'da derlenir (`.github/workflows/ios-release.yml`, `claude/ios-release-*` dalına push).
+> Reklam, üyelik (App Store) ve bildirim Android'le ortak katmandan gelir (`android-app/src`), pakete `native-runtime.js` olarak gömülür.
+
 Capacitor kabuğu. Uygulama içeriği canlı siteden gelir (`https://app.dijimedu.com/ingilizce/`),
 yani web'e yaptığın her güncelleme iPhone'a da anında yansır; yeni App Store sürümü gerekmez.
 Yeni sürüm yalnızca bu klasördeki ayarlar (ikon, izinler, native eklentiler) değişince gerekir.
