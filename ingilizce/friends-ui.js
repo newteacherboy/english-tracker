@@ -18,11 +18,11 @@
   }
   const originalDraw = window.maCiz, originalOpen = window.meduAkisAc, originalSelect = window.maSekmeSec;
   const originalFeed = window.maAkisListeHtml;
-  let account = '', followed = [], invites = [], loaded = false, busy = false, lastLoad = 0, epoch = 0, frame = 0;
+  let account = '', followed = [], invites = [], busy = false, lastLoad = 0, epoch = 0, frame = 0;
   const online = id => !!window.dmSocialPresence?.isOnline?.(id);
   function resetAccount() {
     if (account === who()) return;
-    account = who(); followed = []; invites = []; loaded = false; busy = false; lastLoad = 0; epoch++;
+    account = who(); followed = []; invites = []; busy = false; lastLoad = 0; epoch++;
   }
   function avatar(id, size) {
     let svg = typeof window.karakterSvg === 'function' ? window.karakterSvg(id, size) : '';
@@ -31,29 +31,32 @@
   }
   function badge(id) { return `<span class="dm-online-badge compact" data-online-person="${esc(id)}">Durum kontrol ediliyor…</span>`; }
   function mine() { return typeof window.maBen === 'function' ? window.maBen() : {ad:who(),rozetler:[]}; }
-  function league() {
-    const list = [...(window.maLigSiralama?.().liste || [])].sort((a,b)=>Number(a.sira)-Number(b.sira));
-    const me = list.find(x => x.benMi || norm(x.ad) === norm(who()));
-    const code = me?.kod || 'yerel';
-    return {me, info:MA_LIGLER[code] || MA_LIGLER.yerel};
-  }
   function level() { return window.dmProgression?.level?.() || mine().playerLevel || 1; }
   function people() {
     const ids = new Set([...(typeof maTakip !== 'undefined' ? maTakip : []), ...followed.map(x=>x.ad)]);
     return [...ids].filter(id=>norm(id)!==norm(who())).sort((a,b)=>Number(online(b))-Number(online(a)));
   }
-  function peopleHtml() {
-    const known = typeof maTumListe !== 'undefined' ? maTumListe : [];
-    const friends = people().slice(0,3).map(id=>`<button type="button" class="fr-person" data-friend-action="profile" data-person="${esc(id)}" aria-label="${esc(id)} vitrinini aç">${avatar(known.find(x=>norm(x.id)===norm(id))?.ad || id,58)}${badge(id)}<b>${esc(id)}</b></button>`).join('');
-    const empty = friends ? '' : `<p class="fr-empty">${loaded?'Takip ettiğin arkadaşların burada görünür.':'Arkadaşların yükleniyor…'}</p>`;
-    return empty+friends+`<button type="button" class="fr-invite-cta" data-friend-action="share">${icon('add')}<b>Davet et</b></button>`;
+  const xp = value => Math.max(0,Number(value)||0).toLocaleString('tr-TR');
+  function leagueHtml() {
+    const allowed=permitted('lig');
+    const data=allowed?window.dmLeagueUI?.weeklyPreview?.():null;
+    const leaders=data?.top.map((player,index)=>`<button type="button" class="fr-leader fr-leader-${index+1}" data-friend-action="profile" data-person="${esc(player.name)}">
+      <span class="fr-leader-cup">${icon('trophy')}<b>${esc(player.rank)}</b></span>
+      ${avatar(player.name,34)}<strong>${esc(player.name)}</strong><span>${xp(player.xp)} XP</span>
+    </button>`).join('');
+    const status=!allowed?'Lig 5. seviyede açılır.':data?.error&&!data.loaded?'Sıralama şu anda alınamadı.':data?.loaded?'Bu ligde henüz sıralama yok.':'Sıralama yükleniyor…';
+    return `<section class="fr-league-board" aria-label="Haftalık lig">
+      <div class="fr-section-head"><h3>${icon('trophy')} ${esc(data?.title||'Yerel Lig')}</h3><button type="button" class="fr-link" data-friend-action="lig" data-friends-gate="lig">Sıralamayı gör ${icon('chevron')}</button></div>
+      ${leaders?'<div class="fr-leaders">'+leaders+'</div>':'<p class="fr-league-status" role="status">'+status+'</p>'}
+      ${data?.me?`<div class="fr-league-self">${avatar(who(),27)}<b>Sen · ${esc(data.me.rank)}. sıra · ${xp(data.me.xp)} XP</b></div>`:''}
+    </section>`;
   }
-  function tilesHtml() {
-    const {me,info} = league();
+  function shortcutsHtml() {
     const pending = invites.some(x=>x.durum==='bekliyor'&&norm(x.alici)===norm(who()));
     return `<div class="fr-summaries">
-      <button type="button" class="fr-tile fr-duel-tile" data-friend-action="matches" data-friends-gate="duello">${icon('swords')}<span><strong>Düello</strong><small>${pending?'Yeni oyun daveti':'Kapışma merkezi'}</small></span>${icon('chevron')}</button>
-      <button type="button" class="fr-tile fr-league-tile" data-friend-action="lig" data-friends-gate="lig">${icon('trophy')}<span><strong>${esc(info.ad)}</strong><small>${me?esc(me.sira)+'. sıra · '+(Number(me.xp)||0)+' XP':'Sıralamayı gör'}</small></span>${icon('chevron')}</button>
+      <div class="fr-friend-shortcut"><button type="button" data-friend-action="people">${icon('people')}<strong>Arkadaşlarım</strong></button>
+        <button type="button" class="fr-invite-cta" data-friend-action="share">${icon('add')}<b>Davet et</b></button></div>
+      <button type="button" class="fr-tile fr-duel-tile" data-friend-action="matches" data-friends-gate="duello">${icon('swords')}<strong>Düello</strong>${pending?'<span class="fr-duel-dot" aria-label="Yeni oyun daveti"></span>':icon('chevron')}</button>
     </div>`;
   }
   const filterOptions = [['herkes','Herkes'],['takip','Takip ettiklerim'],['online','Çevrimiçi']];
@@ -65,18 +68,18 @@
     if (!d) return '';
     return `<aside class="fr-invitation" role="status">${avatar(d.gonderen,36)}<span><b>${esc(d.gonderen)}</b> seni oyuna davet ediyor<small>${esc(window.dmMeduPro?.games?.[d.oyun]?.[0]||d.oyun)}</small></span><button data-friend-action="accept" data-invite-id="${esc(d.id)}" data-friends-gate="duello">Kabul et</button><button data-friend-action="dismiss" data-invite-id="${esc(d.id)}" aria-label="Daveti şimdilik gizle">×</button></aside>`;
   }
-  function clubHeader(){return `<header class="club-hero"><button type="button" class="club-back" data-friend-action="home" aria-label="Arkadaşlar ana ekranına dön">‹</button><h2>Arkadaş akışı</h2><button type="button" data-friend-action="share" aria-label="Davet et">＋</button></header>`;}
+  function clubHeader(){return `<header class="club-hero"><button type="button" class="club-back" data-friend-action="home" aria-label="Arkadaşlar ana ekranına dön">‹</button><h2>Medu Akış</h2><button type="button" data-friend-action="share" aria-label="Davet et">＋</button></header>`;}
   function homeHtml() {
     const options=filterOptions.map(([id,label])=>`<option value="${id}"${maFiltre===id?' selected':''}>${label}</option>`).join('');
     return `<div class="fr-home fr-compact">
-      <section class="fr-friends"><div class="fr-section-head"><h3>${icon('people')} Arkadaşlarım</h3><button type="button" class="fr-link" data-friend-action="people">Tümünü gör ${icon('chevron')}</button></div><div class="fr-people">${peopleHtml()}</div></section>
-      ${tilesHtml()}
-      <section class="fr-feed"><div class="fr-section-head"><h3>${icon('bolt')} Etkinlikler</h3><select class="fr-filter-select" aria-label="Etkinlik filtresi">${options}</select></div><div id="maAkisListe">${window.maAkisListeHtml()}</div></section>
-      <button type="button" class="fr-all-feed" data-friend-action="akis">Tüm etkinlikleri gör ${icon('chevron')}</button>
+      ${leagueHtml()}
+      ${shortcutsHtml()}
+      <section class="fr-feed"><div class="fr-section-head"><h3>${icon('bolt')} Medu Akış</h3><select class="fr-filter-select" aria-label="Etkinlik filtresi">${options}</select></div><div id="maAkisListe">${window.maAkisListeHtml()}</div></section>
+      <button type="button" class="fr-all-feed" data-friend-action="akis">Tüm akışı gör ${icon('chevron')}</button>
     </div>`;
   }
   function fullFeedHtml() {
-    return `<div class="fr-home">${clubHeader()}${filters()}<section class="fr-feed" aria-label="Etkinlikler"><div id="maAkisListe">${window.maAkisListeHtml()}</div></section><div id="frInvitation">${invitationHtml()}</div></div>`;
+    return `<div class="fr-home">${clubHeader()}${filters()}<section class="fr-feed" aria-label="Medu Akış"><div id="maAkisListe">${window.maAkisListeHtml()}</div></section><div id="frInvitation">${invitationHtml()}</div></div>`;
   }
   function compactFeedHtml(rows) {
     if(!rows.length)return '<div class="ma-bos">'+(maAkisYuklendi?'Bu filtrede henüz etkinlik yok.':'Etkinlikler yükleniyor…')+'</div>';
@@ -119,9 +122,16 @@
     if(owner!==who()||ticket!==epoch)return;
     if(results[4].status==='fulfilled'&&Array.isArray(results[4].value?.liste))followed=results[4].value.liste;
     if(results[5].status==='fulfilled'&&Array.isArray(results[5].value?.liste))invites=results[5].value.liste;
-    busy=false;loaded=true;lastLoad=Date.now();renderHome();
+    busy=false;lastLoad=Date.now();renderHome();
+    if(permitted('lig'))void window.dmLeagueUI?.refreshWeekly?.();
     await window.dmSocialPresence?.refresh?.(true);
   }
+  root.addEventListener('dm:weekly-league',()=>{
+    if(maSekme==='hub'&&!maProfilId){
+      const board=root.querySelector('.fr-league-board');
+      if(board)board.outerHTML=leagueHtml();
+    }
+  });
   function decorateDetail() {
     viewHeader();
     if(maSekme==='lig'&&!maProfilId){
@@ -248,6 +258,7 @@
 
     const b=e.target.closest('[data-friend-action]');if(!b)return;
     const action=b.dataset.friendAction;
+    if(action==='lig'&&window.dmLeagueUI?.openWeekly)return window.dmLeagueUI.openWeekly();
     if(['home','akis','vitrin','lig'].includes(action)){window.maSekmeSec(action==='home'?'hub':action);return;}
     if(action==='share')return void shareInvite();
     if(action==='people')return openPeople();

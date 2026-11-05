@@ -59,7 +59,13 @@ const feed=['Elif','Ege','Zeynep','Cemre','Fixture'].map((ogr,i)=>({k:'event'+i,
   const chromeBefore=await page.evaluate(()=>['viewport','theme-color'].map(name=>document.querySelector('meta[name="'+name+'"]').content));
   await page.evaluate(()=>meduAkisAc());await page.waitForSelector('.fr-home .fr-event');await page.waitForTimeout(800);
   assert.equal(await page.locator('.fr-home').count(),1);
-  assert.equal(await page.locator('.fr-summaries .fr-tile').count(),2);
+  await page.waitForSelector('.fr-leader-3');
+  assert.deepEqual(await page.locator('.fr-leader strong').allTextContents(),['Elif','Ege','Zeynep']);
+  assert.deepEqual(await page.locator('.fr-leader-cup b').allTextContents(),['1','2','3']);
+  assert.match(await page.locator('.fr-league-self').innerText(),/Sen · 5\. sıra · 938 XP/);
+  assert.equal((await page.locator('.fr-feed h3').innerText()).trim(),'Medu Akış');
+  assert.equal((await page.locator('.fr-all-feed').innerText()).trim(),'Tüm akışı gör');
+  assert.equal(await page.locator('.fr-summaries .fr-tile').count(),1);
   assert.equal(await page.locator('.fr-feed .fr-event').count(),4);
   assert(await page.locator('#maSegment').isHidden());
   assert.equal(await page.locator('#maSegment button').count(),3);
