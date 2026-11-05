@@ -5,7 +5,7 @@
    - iPhone belleği için: tek canvas, şeker+kelime görüntüleri önbellekte, ağır CSS filtresi yok. */
 (()=>{'use strict';
 if(window.dmPwm)return;
-const V='20261103-v2-2',A='premium-assets/kelime-eslestirme/';
+const V='20261105-lavanta',A='premium-assets/kelime-eslestirme/';
 const API=(typeof apiURL!=='undefined'?apiURL:'https://nxfqlutulxqzqgwewssd.supabase.co/functions/v1/diji-api').replace(/diji-api.*$/,'premium-games');
 const WORLDS=['Büyü Kütüphanesi','Kristal Mağara','Gökyüzü Şatosu','Büyülü Bahçe','Yıldız Kulesi'];
 const BGS=['bg-1-buyu-kutuphanesi','bg-2-kristal-magara','bg-3-gokyuzu-satosu','bg-4-buyulu-bahce','bg-5-yildiz-kulesi'];
@@ -229,15 +229,16 @@ async function start(level,cfg,words){
 function game(){
  view='game';root.dataset.view='game';const g=G;
  $('.pwm-stage').innerHTML=`<section class="pwm-game">
+  <div class="pwm-lvribbon">Seviye ${g.level}</div>
   <div class="pwm-info">
-   <div class="pwm-goalcard"><div class="pwm-lvribbon"><img src="${A}deco-potion.webp" alt="">Seviye ${g.level}</div><small class="pwm-goal-label">✦ Hedef (Görev) ✦</small><p class="pwm-goal-text">Aşağıdaki kelimeleri eşleştir ve topla!</p><div class="pwm-goals" data-goals></div></div>
-   <div class="pwm-scorecard"><div class="pwm-score"><small>Puan</small><b data-score>0</b></div><div class="pwm-starbar"><div class="pwm-stars">${[0,1,2].map(i=>`<img data-star="${i}" src="${A}icon-star-empty.webp" alt="">`).join('')}</div><div class="pwm-bar"><i data-bar></i></div><small data-target>Hedef Puan: ${fmt(g.cfg.stars[2])}</small></div><div class="pwm-moves"><small>Hamle</small><b data-moves>${g.st.moves}</b></div></div>
+   <div class="pwm-goalcard"><small class="pwm-goal-label">Hedef</small><div class="pwm-goals" data-goals></div></div>
+   <div class="pwm-score"><small>Puan</small><b data-score>0</b></div>
+   <div class="pwm-moves"><small>Hamle</small><b data-moves>${g.st.moves}</b></div>
   </div>
+  <div class="pwm-starbar"><div><div class="pwm-stars">${[0,1,2].map(i=>`<img data-star="${i}" src="${A}icon-star-empty.webp" alt="">`).join('')}</div><div class="pwm-bar"><i data-bar></i></div></div><small data-target>Hedef puan ${fmt(g.cfg.stars[2])}</small></div>
   <div class="pwm-board"><canvas aria-label="Kelime şekerleri tahtası. Yan yana iki şekeri kaydırarak yer değiştir; aynı kelimeden üç tane yan yana gelince patlar." role="img"></canvas><div class="pwm-combo" aria-live="polite" hidden></div><div class="pwm-mode" hidden></div></div>
-  <div class="pwm-rewards"><div class="pwm-strip-title"><img src="${A}icon-gift.webp" alt="">Büyük Eşleşme = Büyük Ödül!</div><div class="pwm-chips"><span><i>★</i>3’lü Eşleşme<b>+100 Puan</b></span><span><i>★★</i>4’lü Eşleşme<b>+250 Puan</b></span><span class="gold"><i>♛</i>5’li Eşleşme<b>+500 Puan + Özel Hediye!</b></span></div></div>
-  <div class="pwm-boosters">${BOOSTERS.map(([k,n,s,icon])=>`<button type="button" class="pwm-boost" data-boost="${k}" aria-label="${n}: ${s}"><span class="pwm-boost-ic"><img src="${A}${icon}.webp" alt=""><em data-count="${k}"></em></span><b>${n}</b><small>(${s})</small></button>`).join('')}</div>
-  <img class="pwm-deco-book" src="${A}deco-vocabulary-book.webp" alt="" aria-hidden="true"><span class="pwm-deco-label" aria-hidden="true">Vocabulary<small>(Kelime Defteri)</small></span>
-  <img class="pwm-deco-chest" src="${A}icon-chest-open.webp" alt="" aria-hidden="true"><img class="pwm-deco-cat" src="${A}char-cat.webp" alt="" aria-hidden="true">
+  <details class="pwm-rewards"><summary>Eşleşme ödülleri <i aria-hidden="true">i</i></summary><div class="pwm-chips"><span>3’lü eşleşme<b>+100 puan</b></span><span>4’lü eşleşme<b>+250 puan</b></span><span>5’li eşleşme<b>+500 puan + özel hediye</b></span></div></details>
+  <div class="pwm-boosters">${BOOSTERS.map(([k,n,s,icon])=>`<button type="button" class="pwm-boost" data-boost="${k}" aria-label="${n}: ${s}"><span class="pwm-boost-ic"><img src="${A}${icon}.webp" alt=""><em data-count="${k}"></em></span><b>${n}</b></button>`).join('')}</div>
  </section>`;
  $('.pwm-witch').src=A+'char-witch-idle.webp';
  root.querySelectorAll('[data-boost]').forEach(b=>b.onclick=()=>booster(b.dataset.boost));
@@ -251,7 +252,7 @@ function game(){
 
 function sizeBoard(){
  const g=G;if(!g)return;const box=$('.pwm-board');if(!box)return;
- const w=box.clientWidth,h=box.clientHeight;const size=Math.max(200,Math.floor(Math.min(w,h)));
+ const w=box.clientWidth,h=box.clientHeight;const size=Math.max(1,Math.floor(Math.min(w,h)-10));
  g.size=size;g.cell=size/g.st.cols;g.dpr=Math.min(2,window.devicePixelRatio||1);
  g.canvas.style.width=g.canvas.style.height=size+'px';g.canvas.width=g.canvas.height=Math.round(size*g.dpr);
  g.ctx.setTransform(g.dpr,0,0,g.dpr,0,0);g.cache.clear();
@@ -267,7 +268,7 @@ function sprite(t,s){
   if(s===1||s===2){const st=img(s===1?'fx-stripe-h':'fx-stripe-v');x.globalAlpha=.95;if(ready(st))x.drawImage(st,px*.12,px*.12,px*.76,px*.76);x.globalAlpha=1;}
   const word=G.words[t]?.en||'';let fs=px*.3;x.font=`900 ${fs}px Nunito, "Baloo 2", system-ui, sans-serif`;
   while(x.measureText(word).width>px*.74&&fs>px*.12){fs-=1;x.font=`900 ${fs}px Nunito, "Baloo 2", system-ui, sans-serif`;}
-  x.textAlign='center';x.textBaseline='middle';x.lineJoin='round';x.lineWidth=Math.max(2,px*.07);x.strokeStyle='rgba(255,255,255,.95)';x.strokeText(word,px/2,px*.52);x.fillStyle='#3b1260';x.fillText(word,px/2,px*.52);
+  x.textAlign='center';x.textBaseline='middle';x.shadowColor='rgba(255,255,255,.82)';x.shadowBlur=px*.055;x.fillStyle='#301034';x.fillText(word,px/2,px*.52);
  }
  g.cache.set(key,c);return c;
 }
@@ -363,7 +364,7 @@ function loop(now){
  const {ctx:x,cell:C,size}=g;x.clearRect(0,0,size,size);
  x.save();if(g.shake>0){x.translate((Math.random()-.5)*g.shake,(Math.random()-.5)*g.shake);g.shake*=.86;if(g.shake<.4)g.shake=0;}
  // hücre zemini
- for(let r=0;r<g.st.rows;r++)for(let c=0;c<g.st.cols;c++){x.fillStyle=(r+c)%2?'rgba(76,30,120,.55)':'rgba(96,44,148,.55)';x.fillRect(c*C+1,r*C+1,C-2,C-2);
+ for(let r=0;r<g.st.rows;r++)for(let c=0;c<g.st.cols;c++){x.fillStyle=(r+c)%2?'#e6d8f8':'#eddef9';roundRect(x,c*C+1,r*C+1,C-2,C-2,C*.15);x.fill();
   if(g.ice?.[r]?.[c]>0){const im=img('tile-ice');if(ready(im)){x.globalAlpha=.8;x.drawImage(im,c*C+1,r*C+1,C-2,C-2);x.globalAlpha=1;}}}
  if(g.sel){x.strokeStyle='#ffe27a';x.lineWidth=3;x.strokeRect(g.sel[1]*C+2,g.sel[0]*C+2,C-4,C-4);}
  if(g.mode==='satir'&&g.hover!=null){x.fillStyle='rgba(255,226,122,.25)';x.fillRect(0,g.hover*C,size,C);}

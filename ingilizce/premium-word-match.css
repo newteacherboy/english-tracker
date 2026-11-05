@@ -197,3 +197,41 @@ body.pwm-active{overflow:hidden!important;overscroll-behavior:none}
 @media(min-width:600px) and (min-height:800px){#pwmRoot[data-view=game] .pwm-badge{display:flex;right:max(4px,calc(50% - 360px))}}
 @media(max-height:779px){.pwm-rewards{display:none}.pwm-boost small{display:none}.pwm-goal-text{display:none}.pwm-boost-ic{width:clamp(44px,12vw,54px)}}
 @media(max-height:700px){.pwm-goalcard,.pwm-scorecard{padding-top:12px}.pwm-stars img{width:20px;height:20px}.pwm-title small{display:none}.pwm-stage{padding-top:10px}}
+
+/* Açık lavanta oyun alanı */
+#pwmRoot[data-view=game]{background:#eee3fa;color:#46164f}
+#pwmRoot[data-view=game] :is(.pwm-bg,.pwm-title-book,.pwm-title b,.pwm-title small,.pwm-witch,.pwm-badge){display:none}
+#pwmRoot[data-view=game] .pwm-top{grid-template-columns:36px minmax(0,1fr) 36px;align-items:center;padding:8px 14px 0}
+#pwmRoot[data-view=game] .pwm-round{width:36px;height:36px;border:0;background:#672477;box-shadow:none}
+#pwmRoot[data-view=game] .pwm-title{padding:0;border:0;background:none;box-shadow:none}
+#pwmRoot[data-view=game] .pwm-title strong{color:#551762;text-shadow:none;font-size:clamp(23px,6.4vw,34px)}
+#pwmRoot[data-view=game] .pwm-energy{position:absolute;right:16px;top:50px;padding:0;min-width:0;background:none;border:0;box-shadow:none;color:#672477;font-size:11px}
+#pwmRoot[data-view=game] .pwm-energy svg{width:11px;height:11px}
+#pwmRoot[data-view=game] .pwm-stage{padding:6px 10px 8px}
+#pwmRoot[data-view=game] .pwm-game{gap:clamp(4px,1.05dvh,10px);justify-content:center}
+.pwm-game .pwm-lvribbon{position:static;transform:none;align-self:center;border:0;background:#672477;padding:2px 15px;font-size:13px;text-shadow:none}
+.pwm-game .pwm-info{grid-template-columns:minmax(0,1.9fr) minmax(52px,.8fr) minmax(54px,.8fr);gap:0;align-items:stretch;padding:5px 2px;background:#faf5ff;border-radius:16px;border:1px solid #ddccee}
+.pwm-game .pwm-goalcard{padding:0 4px;border:0;background:none;box-shadow:none;color:inherit}
+.pwm-game .pwm-goal-label{padding:0;background:none;color:inherit;font-size:12px}
+.pwm-game .pwm-goal{border:0;background:none;box-shadow:none;padding:0}
+.pwm-game .pwm-goal img{width:19px;height:19px}
+.pwm-game .pwm-goal em,.pwm-game .pwm-goal b{color:#551762}
+.pwm-game :is(.pwm-score,.pwm-moves){grid-area:auto;display:flex;flex-direction:column;gap:2px;align-items:center;justify-content:center;border:0;border-left:1px solid #e3d2f3;border-radius:0;background:none;padding:0 2px;color:inherit}
+.pwm-game :is(.pwm-score,.pwm-moves) small{font-size:11px}
+.pwm-game :is(.pwm-score,.pwm-moves) b{padding:2px 6px;min-width:32px;border:0;border-radius:10px;color:#551762;background:#eee1fb;text-shadow:none;font-size:clamp(15px,4.4vw,22px);line-height:1.1}
+.pwm-game .pwm-moves.low b{background:#ffdbe5;color:#a2184d}
+.pwm-game .pwm-starbar{display:grid;grid-template-columns:1fr auto;align-items:end;gap:10px;padding:2px 10px 5px;border-radius:12px;background:#f8f1fe}
+.pwm-game .pwm-stars img{width:15px;height:15px}
+.pwm-game .pwm-bar{height:5px;border:0;background:#d5c3eb}
+.pwm-game .pwm-bar i{background:#9448aa}
+.pwm-game .pwm-board{min-height:0;max-height:min(540px,calc(100vw - 20px));border:1px solid #cfb8e7;border-radius:16px;padding:4px;background:#e0cff4;box-shadow:none}
+.pwm-game .pwm-rewards{display:block;align-self:center;position:relative;z-index:2}
+.pwm-game .pwm-rewards summary{list-style:none;cursor:pointer;border:1px solid #ceb5e8;border-radius:999px;padding:2px 10px;background:#f8efff;color:#551762;font-size:12px;font-weight:850}
+.pwm-game .pwm-rewards summary::-webkit-details-marker{display:none}
+.pwm-game .pwm-chips{position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);width:min(290px,82vw);background:#faf4ff;border:1px solid #cfb8e7;border-radius:12px;padding:5px;box-shadow:0 4px 10px #54235e35}
+.pwm-game .pwm-chips span{border:0;background:none;box-shadow:none;color:#551762;font-size:11px}
+.pwm-game .pwm-boost-ic{width:clamp(35px,9.5vw,45px)}
+.pwm-game .pwm-boost-ic em{background:#a02b78;min-width:17px;height:17px;font-size:11px}
+.pwm-game .pwm-boost-ic em.plus{background:#316950}
+.pwm-game .pwm-boost b{color:#551762;text-shadow:none;font-size:clamp(9px,2.8vw,12px)}
+.pwm-game .pwm-rewards summary i{display:inline-grid;place-items:center;width:13px;height:13px;margin-left:2px;border:1px solid;border-radius:50%;font:800 10px/1 system-ui,sans-serif}
