@@ -107,16 +107,44 @@ function pathMarkup(steps,current,learn){
  return '<section class="rt-path rt-v3-map" data-route-map="'+map.key+'" aria-label="'+esc(level)+' · Öğrenme durakları"><header class="rt-v3-summary"><button type="button" class="rt-v3-level" data-rt="all" aria-label="'+(learn?'Öğrenme Yolum':'Okul Yolum')+' tüm durakları göster">'+icon('book')+'<span><b>'+esc(level)+(learn?'':' · Ünite '+info.unit)+'</b><small>'+done+' / '+total+' durak tamamlandı</small><progress value="'+done+'" max="'+Math.max(1,total)+'" aria-label="'+esc(level)+' ilerlemesi"></progress></span></button><button type="button" class="rt-v3-switch" data-rt="switch-route" aria-label="Parkur değiştir">'+icon('switch')+'</button></header><div class="rt-v3-canvas"><div class="rt-v3-art" aria-hidden="true"></div><div class="rt-v3-scroll" tabindex="0" role="region" aria-label="'+(learn?'Öğrenme Yolu':'Okul Yolum')+' · tüm durakları kaydırarak keşfet"><div class="rt-flow-world" style="height:'+map.height+'px">'+mapRows(map,map.from,map.to)+'</div></div><aside class="rt-v3-tools" aria-label="Parkur araçları"><button type="button" data-rt="plan">'+icon('calendar')+'<span>Planım</span><small>Bugünün dersleri</small></button><button type="button" data-rt="missions">'+icon('tasks')+'<span>Görevler</span><small>Günlük ve haftalık</small></button>'+chestMarkup()+'</aside></div><div class="rt-continue">'+(active?.available?'<button type="button" class="rt-start '+(learn?'':'dm-map-continue')+'" '+(learn?'data-rt="continue"':'data-rt="school-stop" data-b="'+active.b+'" data-d="'+active.d+'"')+'>'+icon('play')+' Devam et</button>':'<span class="rt-v3-empty">Parkurun hazırlanıyor…</span>')+'</div></section>';
 }
 const medalParrot='<svg class="rt-medal-parrot" viewBox="0 0 64 64" aria-hidden="true"><path class="rt-medal-feather" d="M19 24c-7-3-6-9 3-10l9 1c-9-5-5-13 4-11 7 2 13 7 14 14-3 5-11 7-19 8z"/><path class="rt-medal-head" d="M47 20c-10-4-24 1-32 9l-7 9 8-1c-5 6-6 15 0 20l5-3c6 7 19 9 29 3l-4-7 5-14c3-7 1-12-4-16z"/><path class="rt-medal-cheek" d="M43 35c-6 2-8 7-7 12 1 6 5 9 10 12l4-2-4-8 7-10z"/><path class="rt-medal-beak" d="M50 32c9-1 14 7 11 15l-3 7c-2-5-6-7-13-7-2-6 0-12 5-15z"/><circle cx="34" cy="36" r="6"/><circle class="rt-medal-eye" cx="35" cy="36" r="1.4" fill="currentColor" stroke="none"/></svg>';
+function medalLayout(steps,current,learn,top,row){
+ const unitNames=new Map();
+ if(!learn)for(const word of window.masterKelimeHavuzu||[]){
+  const key=Number(word.sinif)+':'+Number(word.unite),name=String(word.unit_name||word.unit_title||'').trim();
+  if(name&&!unitNames.has(key))unitNames.set(key,name);
+ }
+ let previousKey,extra=0;
+ return steps.map((step,i)=>{
+  const {grade,unit}=schoolInfo(step),unitNumber=Number(unit);
+  const title=learn?(step.topicTitle||step.theme):unitNames.get(grade+':'+unitNumber);
+  const key=learn?JSON.stringify([step.cefr,step.theme,step.topic??title]):grade+':'+(unitNumber||'mixed');
+  const section=learn?[step.cefr,step.theme===title?'':step.theme].filter(Boolean).join(' · '):
+   grade+'. Sınıf · '+(unitNumber?unitNumber+'. Ünite':'Karışık üniteler');
+  const boundary=i>0&&key!==previousKey;
+  previousKey=key;
+  if(boundary)extra+=60+(i===current?70:i===current+1?38:0);
+  const y=top+i*row+extra+(i>current?30:i<current?-35:0);
+  const dividerY=y-(i===current?116:i===current+1?78:72);
+  return {y,divider:boundary?{y:dividerY,section,title}:null};
+ });
+}
+function medalDivider(divider){
+ if(!divider)return '';
+ const {y,section,title}=divider;
+ return '<h2 class="rt-medal-divider" style="top:'+y+'px"><span>'+
+  (section&&title?'<small>'+esc(section)+'</small>':'')+
+  '<strong>'+esc(title||section)+'</strong></span></h2>';
+}
 function medalRow(map,step,i){
- const {current,learn,top,row}=map;
+ const {current,learn}=map;
  const active=i===current,locked=!step.available,start=active&&!locked,n=routeNumber(step,i,learn);
  const offset=i-current,lanes=[47,33,31,43,60,62,52,36],x=lanes[(offset%lanes.length+lanes.length)%lanes.length];
- const y=top+i*row+(i>current?30:i<current?-35:0);
+ const {y,divider}=map.layout[i];
  const action=learn?'data-rt="chapter" data-chapter="'+step.id+'"':'data-rt="school-stop" data-b="'+step.b+'" data-d="'+step.d+'"';
  const caption=step.done?'Tekrar et':'Devam et';
  const label=n+'. Durak · '+routeTitle(step,learn)+(locked?' · Kilitli':step.done?' · '+stopStars(step,learn)+' yıldız':'');
  const disc=locked?icon('lock'):medalParrot;
- return '<div class="rt-medal-row'+(active?' is-current':'')+(i===map.celebrate?' is-celebrating':'')+'" style="--stop-x:'+x+'%;--stop-y:'+y+'px">'+
+ return medalDivider(divider)+'<div class="rt-medal-row'+(active?' is-current':'')+(i===map.celebrate?' is-celebrating':'')+'" style="--stop-x:'+x+'%;--stop-y:'+y+'px">'+
   '<button type="button" class="rt-medal-stop'+(start?' rt-medal-start':'')+(locked?' is-locked':step.done?' is-done':'')+'" '+
   (start&&learn?'data-rt="continue" data-chapter="'+step.id+'"':action)+(locked?' disabled':'')+(active?' aria-current="step"':'')+
   ' aria-label="'+esc((start?caption+' · ':'')+label)+'">'+
@@ -135,9 +163,10 @@ function medalRouteMarkup(steps,current,learn){
  const completed=previous?.learn===learn&&previous.owner===owner&&prior&&!prior.done
   ?steps.findIndex(step=>step.done&&sameStop(step,prior)):-1;
  const map={steps,current,learn,owner,key:++mapSerial,top:current===0?125:82,row:94,from:Math.max(0,current-5),to:Math.min(steps.length,current+9),renderRows:medalRows,celebrate:completed};
- map.height=map.top+steps.length*map.row+55;
+ map.layout=medalLayout(steps,current,learn,map.top,map.row);
+ map.height=(map.layout.at(-1)?.y??map.top)+map.row+55;
  routeMap=map;
- const ready=chestReady(),chestY=map.top+current*map.row;
+ const ready=chestReady(),chestY=map.layout[current]?.y??map.top;
  const chest='<button type="button" class="rt-medal-chest'+(ready?' is-ready':'')+'" data-rt="chests" style="top:'+chestY+'px">'+img('bilgi-icons/chest.webp')+'<span>'+(ready?'Ödülü al':'Sandık')+'</span></button>';
  const tools=[['all','book','Kütüphane'],['plan','calendar','Plan'],['missions','tasks','Görevler']];
  return '<section class="bi-scene rt-medal-route'+(learn?'':' rt-medal-school')+'" data-route-map="'+map.key+'" aria-label="'+title+'">'+
@@ -152,9 +181,15 @@ function mountScrollable(root){
  const row=map.row||ROW,top=map.top||TOP,renderRows=map.renderRows||mapRows;
  const back=el.querySelector('.rt-medal-return'),currentTile=el.querySelector('[aria-current="step"] .rt-medal-disc'),windows=world.querySelectorAll('.rt-medal-window');
  scroll.dataset.bound='1';let queued=false;
+ function firstAt(y){
+  const i=map.layout.findIndex(stop=>stop.y>=y);
+  return i===-1?map.steps.length:i;
+ }
  function draw(){
   queued=false;if(!el.isConnected||map!==routeMap)return;
-  const from=Math.max(0,Math.floor((scroll.scrollTop-top)/row)-4),to=Math.min(map.steps.length,Math.ceil((scroll.scrollTop+scroll.clientHeight)/row)+5);
+  const viewTop=scroll.scrollTop,viewBottom=viewTop+scroll.clientHeight;
+  const from=map.layout?Math.max(0,firstAt(viewTop)-4):Math.max(0,Math.floor((viewTop-top)/row)-4);
+  const to=Math.min(map.steps.length,(map.layout?firstAt(viewBottom):Math.ceil(viewBottom/row))+5);
   if(from!==map.from||to!==map.to){
    map.from=from;map.to=to;
    if(windows.length){
@@ -170,7 +205,7 @@ function mountScrollable(root){
  }
  function schedule(){if(queued)return;queued=true;requestAnimationFrame(draw);}
  scroll.addEventListener('scroll',schedule,{passive:true});
- const destination=()=>Math.max(0,top+map.current*row-scroll.clientHeight*(back ? .34 : .45));
+ const destination=()=>Math.max(0,(map.layout?.[map.current]?.y??top+map.current*row)-scroll.clientHeight*(back ? .34 : .45));
  const focus=()=>{if(!el.isConnected||map!==routeMap)return;scroll.scrollTop=destination();draw();map.celebrate=-1;};
  if(back)back.onclick=()=>{
   scroll.scrollTo({top:destination(),behavior:window.matchMedia?.('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});
