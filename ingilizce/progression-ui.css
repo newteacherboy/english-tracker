@@ -74,7 +74,7 @@
 
 /* Approved quiet day theme: only mascot, level number and individually unlocked features.
    Keep the semantic dialog title for screen readers, never show a "Yuhuuu" heading. */
-.dm-flight-celebration .dm-flight-sr-only{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;border:0!important;overflow:hidden!important;clip-path:inset(50%)!important;white-space:nowrap!important}
+:is(.dm-flight-celebration,.dm-level-energy) .dm-flight-sr-only{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;border:0!important;overflow:hidden!important;clip-path:inset(50%)!important;white-space:nowrap!important}
 .dm-flight-celebration .dm-unlock-cards article[hidden]{display:none!important}
 .dm-flight-celebration .dm-unlock-cards article.dm-unlock-entry{animation:dmUnlockCardIn .3s ease-out both}
 .dm-flight-celebration .dm-unlock-cards article.dm-unlock-entry>span{animation:dmUnlockShine .32s ease-in-out both}
@@ -109,3 +109,37 @@
   height:min(40vw,158px,24dvh);
  }
 }
+
+.dm-level-up.dm-level-energy{
+ isolation:isolate;overflow:hidden;animation:none;
+ background:radial-gradient(ellipse at 50% 40%,#482778,#261846 56%,#18112d);
+}
+.dm-level-energy section{outline:none;transition:opacity .28s ease}
+.dm-level-energy .dm-energy-cell{
+ position:relative;display:grid;place-items:center;width:clamp(132px,44vw,176px);height:76px;
+ margin:0 auto 22px;border-radius:19px;background:#14122b;
+ box-shadow:inset 0 0 0 3px #bdaef4,0 8px 30px #100b26;
+}
+.dm-energy-cell::after{
+ content:'';position:absolute;left:100%;width:10px;height:27px;
+ border-radius:0 7px 7px 0;background:#bdaef4;
+}
+.dm-energy-track{position:absolute;inset:7px;overflow:hidden;border-radius:12px}
+.dm-energy-track i{
+ display:block;width:100%;height:100%;transform-origin:left;transform:scaleX(0);
+ background:linear-gradient(#e8ffa6,#a4f958 55%,#56d94c);
+}
+.dm-energy-cell b{position:relative;color:#fff;font-size:50px;line-height:1;text-shadow:0 2px 5px #1b342a}
+.dm-energy-count{margin:0;color:#c1ff84;font-size:22px;font-variant-numeric:tabular-nums}
+.dm-energy-full .dm-energy-cell{box-shadow:inset 0 0 0 3px #d9ff9c,0 0 34px #adff6488}
+.dm-level-up.dm-energy-flying{background:#17112835}
+.dm-energy-flying section{opacity:0}
+.dm-energy-star{
+ position:fixed;z-index:2;pointer-events:none;color:#ffec99;
+ font-size:28px;text-shadow:0 0 13px #ffd667;
+}
+.dm-energy-fallback{
+ position:fixed;top:max(14px,env(safe-area-inset-top));right:max(14px,env(safe-area-inset-right));
+ padding:8px 13px;border-radius:30px;background:#211647;color:#cdff97;font-weight:900;
+}
+@media(prefers-reduced-motion:reduce){.dm-level-energy section{transition:none}}

@@ -15,7 +15,7 @@ export function progressionAPI(db:any,json:any){
  }
  const deny=(n:any)=>json({ok:false,status:'kilitli',mesaj:typeof n==='number'?`Bu özellik ${n}. seviyede açılır.`:n},403);
  async function handle(op:string,body:any,q:URLSearchParams,a:any){
-  if(!['haftalikHedefSec','haftalikHedefOdulAl','seviyeDurumu','seviyeSandikAc','seviyeUrunAl','seviyeEkJokerAl','seviyeLigListesi','seviyeOyunOdulu','seviyeParkurPekistirme'].includes(op))return null;
+  if(!['haftalikHedefSec','haftalikHedefOdulAl','seviyeDurumu','seviyeEnerjiDoldur','seviyeSandikAc','seviyeUrunAl','seviyeEkJokerAl','seviyeLigListesi','seviyeOyunOdulu','seviyeParkurPekistirme'].includes(op))return null;
   if(a?.role!=='student'||!a.student_id)return json({ok:false,mesaj:'Öğrenci oturumu gerekli.'},401);
   if(op==='haftalikHedefSec'){
     const xp=Number(body.xp);
@@ -73,6 +73,14 @@ export function progressionAPI(db:any,json:any){
    return json(data);
   }
   if(op==='seviyeDurumu')return json({ok:true,...await context(a,true)});
+  if(op==='seviyeEnerjiDoldur'){
+   if(a.teacher_portal_access_id)return deny('Enerji dolumu öğrenci hesabında kullanılabilir.');
+   const earnedLevel=Number(body.level);
+   if(!Number.isInteger(earnedLevel)||earnedLevel<2||earnedLevel>40)return json({ok:false,mesaj:'Geçerli seviye gerekli.'},400);
+   const {data,error}=await db.rpc('dm_collect_level_energy',{actor:a.student_id,earned_level:earnedLevel});
+   if(error)throw error;
+   return json({ok:true,levelEnergy:data});
+  }
   if(op==='seviyeLigListesi'){
    const scope=String(body.kapsam||q.get('kapsam')||'weekly');
    if(!['weekly','alltime'].includes(scope))return json({ok:false,mesaj:'Geçerli lig kapsamı gerekli.'},400);
