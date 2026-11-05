@@ -40,15 +40,26 @@
   function leagueHtml() {
     const allowed=permitted('lig');
     const data=allowed?window.dmLeagueUI?.weeklyPreview?.():null;
-    const leaders=data?.top.map((player,index)=>`<button type="button" class="fr-leader fr-leader-${index+1}" data-friend-action="profile" data-person="${esc(player.name)}">
-      <span class="fr-leader-cup">${icon('trophy')}<b>${esc(player.rank)}</b></span>
-      ${avatar(player.name,34)}<strong>${esc(player.name)}</strong><span>${xp(player.xp)} XP</span>
-    </button>`).join('');
+    const crown='<svg class="fr-podium-crown" viewBox="0 0 40 26" aria-hidden="true"><path d="m4 7 9 7 7-11 7 11 9-7-4 16H8z" fill="#ffda64" stroke="#ffefaa" stroke-width="1.5" stroke-linejoin="round"/><g fill="#fff0a6"><circle cx="4" cy="7" r="3"/><circle cx="20" cy="3" r="3"/><circle cx="36" cy="7" r="3"/></g></svg>';
+    const laurel='<svg class="fr-podium-laurel" viewBox="0 0 26 44" aria-hidden="true"><path d="M24 41C11 38 6 25 9 8" fill="none" stroke="#edbc43" stroke-width="1.7"/><path d="M9 14C3 12 4 5 10 1c4 5 4 11-1 13ZM8 23C2 21 0 16 2 12c6 2 9 6 6 11Zm4 10C5 33 1 29 1 24c7 0 12 4 11 9Zm8 7c-7 3-13 1-15-4 7-3 13-1 15 4Zm-9-16c-3-6 0-10 6-11 1 6-1 10-6 11Zm4 10c-2-6 1-10 7-10 1 6-2 10-7 10Z" fill="#ffce55"/></svg>';
+    const leaders=data?.top.length?[1,0,2].map(index=>{
+      const player=data.top[index];
+      if(!player)return '<span aria-hidden="true"></span>';
+      return `<button type="button" class="fr-leader fr-leader-${index+1}" data-friend-action="profile" data-person="${esc(player.name)}" aria-label="${esc(player.rank)}. sıra, ${esc(player.name)}, ${xp(player.xp)} XP">
+        <span class="fr-podium-portrait">${index===0?crown+laurel+laurel:''}${avatar(player.name,64)}
+          <span class="fr-leader-cup">${icon('trophy')}<b>${esc(player.rank)}</b></span>
+        </span>
+        <span class="fr-podium-step"><strong>${esc(player.name)}</strong><span>${xp(player.xp)} XP</span></span>
+      </button>`;
+    }).join(''):'';
     const status=!allowed?'Lig 5. seviyede açılır.':data?.error&&!data.loaded?'Sıralama şu anda alınamadı.':data?.loaded?'Bu ligde henüz sıralama yok.':'Sıralama yükleniyor…';
     return `<section class="fr-league-board" aria-label="Haftalık lig">
-      <div class="fr-section-head"><h3>${icon('trophy')} ${esc(data?.title||'Yerel Lig')}</h3><button type="button" class="fr-link" data-friend-action="lig" data-friends-gate="lig">Sıralamayı gör ${icon('chevron')}</button></div>
+      <div class="fr-section-head"><h3>${icon('trophy')} ${esc(data?.title||'Yerel Lig')}</h3></div>
       ${leaders?'<div class="fr-leaders">'+leaders+'</div>':'<p class="fr-league-status" role="status">'+status+'</p>'}
-      ${data?.me?`<div class="fr-league-self">${avatar(who(),27)}<b>Sen · ${esc(data.me.rank)}. sıra · ${xp(data.me.xp)} XP</b></div>`:''}
+      <div class="fr-podium-footer">
+        ${data?.me?`<div class="fr-league-self">${avatar(who(),27)}<b>Sen · ${esc(data.me.rank)}. sıra · ${xp(data.me.xp)} XP</b></div>`:''}
+        <button type="button" class="fr-link" data-friend-action="lig" data-friends-gate="lig">Sıralamayı gör ${icon('chevron')}</button>
+      </div>
     </section>`;
   }
   function shortcutsHtml() {
@@ -86,7 +97,7 @@
     return rows.map((event,index)=>{
       const id=String(event.k), congratulated=maTebrik.has('akis-'+id);
       const person=typeof maTumListe!=='undefined'?maTumListe.find(x=>norm(x.id)===norm(event.ogr)):null;
-      const action=event.tur==='eksi'?'':`<button type="button" class="fr-congrats${congratulated?' basili':''}" data-friend-action="congratulate" data-event="${esc(id)}" aria-pressed="${congratulated}">${congratulated?'✓ Tebrik edildi':icon('applause')+' Tebrik et'}</button>`;
+      const action=event.tur==='eksi'?'':`<button type="button" class="fr-congrats${congratulated?' basili':''}" data-friend-action="congratulate" data-event="${esc(id)}" aria-pressed="${congratulated}" aria-label="${congratulated?'Tebrik edildi':'Tebrik et'}">${icon('applause')}</button>`;
       return `<article class="fr-event" data-fr-color="${index}" data-safety-event="${esc(id)}"><button type="button" class="fr-event-person" data-o="${esc(event.ogr)}" data-person="${esc(event.ogr)}" data-friend-action="profile">${avatar(person?.ad||event.ogr,44)}<span><b>${esc(event.ad||event.ogr)}</b><small title="${esc(event.metin)}">${esc(window.DMFriendsFeed.summarize?.(event) ?? event.metin)}</small></span></button>${action}</article>`;
     }).join('');
   }
@@ -197,7 +208,10 @@
   };
   function paintCongratulation(button) {
     const sent=maTebrik.has('akis-'+button.dataset.event);
-    button.innerHTML=sent?'✓ Tebrik edildi':icon('applause')+' Tebrik et';
+    button.classList.add('fr-congrats');
+    button.innerHTML=icon('applause');
+    const label=sent?'Tebrik edildi':'Tebrik et';
+    button.setAttribute('aria-label',label);
     button.setAttribute('aria-pressed',String(sent));
   }
   function openPeople() {

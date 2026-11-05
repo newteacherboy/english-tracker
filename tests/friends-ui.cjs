@@ -60,8 +60,11 @@ const feed=['Elif','Ege','Zeynep','Cemre','Fixture'].map((ogr,i)=>({k:'event'+i,
   await page.evaluate(()=>meduAkisAc());await page.waitForSelector('.fr-home .fr-event');await page.waitForTimeout(800);
   assert.equal(await page.locator('.fr-home').count(),1);
   await page.waitForSelector('.fr-leader-3');
-  assert.deepEqual(await page.locator('.fr-leader strong').allTextContents(),['Elif','Ege','Zeynep']);
-  assert.deepEqual(await page.locator('.fr-leader-cup b').allTextContents(),['1','2','3']);
+  assert.deepEqual(await page.locator('.fr-leader strong').allTextContents(),['Ege','Elif','Zeynep']);
+  assert.deepEqual(await page.locator('.fr-leader-cup b').allTextContents(),['2','1','3']);
+  const steps=await page.locator('.fr-podium-step').evaluateAll(nodes=>nodes.map(node=>node.getBoundingClientRect().top));
+  assert(steps[1]<steps[0]&&steps[1]<steps[2],'the center winner has the highest step');
+  assert.equal(await page.locator('.fr-leader-1 .fr-podium-crown').count(),1);
   assert.match(await page.locator('.fr-league-self').innerText(),/Sen · 5\. sıra · 938 XP/);
   assert.equal((await page.locator('.fr-feed h3').innerText()).trim(),'Medu Akış');
   assert.equal((await page.locator('.fr-all-feed').innerText()).trim(),'Tüm akışı gör');
@@ -131,7 +134,11 @@ const feed=['Elif','Ege','Zeynep','Cemre','Fixture'].map((ogr,i)=>({k:'event'+i,
   await page.locator('[data-filter="online"]').click();await page.waitForTimeout(300);assert.equal(await page.locator('#maAkisListe .akis-kart').count(),3);
   await page.locator('[data-filter="herkes"]').click();
   await page.locator('.aksiyon button').first().click();assert(writes.some(x=>x.islem==='akisOlayToggle'&&x.tur==='tebrik'));
-  assert.match(await page.locator('.aksiyon button').first().innerText(),/Tebrik edildi/);
+  const congrats=page.locator('.aksiyon .fr-congrats').first();
+  assert.equal((await congrats.innerText()).trim(),'');
+  assert.equal(await congrats.getAttribute('aria-label'),'Tebrik edildi');
+  assert.equal(await congrats.getAttribute('aria-pressed'),'true');
+  assert(await page.locator('.ma-parca').count()>0,'congratulating releases confetti');
   await page.locator('.club-back').click();await page.locator('.fr-showcase-link').click();await page.waitForTimeout(300);assert(await page.locator('.sahne').isVisible());assert.equal(await page.locator('.fr-vitrin-papi').count(),1);await page.screenshot({path:'/tmp/friends-vitrin-mobile.png'});
   await page.locator('.fr-back').click();await page.locator('[data-friend-action="lig"]').click();await page.waitForSelector('.dm-lig-row');assert.equal(await page.locator('.dm-lig-place,.dm-lig-row').evaluateAll(rows=>new Set(rows.map(row=>row.dataset.ligPerson)).size),5);await page.screenshot({path:'/tmp/friends-lig-mobile.png'});
   await page.locator('[data-lig-back]').click();await page.locator('[data-friend-action="people"]').click();
