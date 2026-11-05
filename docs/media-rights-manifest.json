@@ -326,8 +326,8 @@
     },
     {
       "path": "ingilizce/friends-assets/icons.svg",
-      "sha256": "8d57136b6d2c54dd30c9117911df6245c8b1faacc9d2af2760976205f71a61aa",
-      "bytes": 1375,
+      "sha256": "7d5ab83cbaf2e43f5df708628860d71ab852acaa24728179e42faca573724078",
+      "bytes": 2322,
       "status": "code-native",
       "source": "Repository-authored Friends interface SVG; source retained in Git"
     },
