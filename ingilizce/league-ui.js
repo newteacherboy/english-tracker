@@ -30,6 +30,14 @@ function journey(rows,me){
  const value=gap!==null?fmt(gap)+' XP':me?.rank===1?'Harika gidiyorsun':'XP kazanmaya başla';
  return '<section class="dm-lig-journey"><h3>Senin zirve yolculuğun</h3><p>'+(me?'Daha yukarısı seninle mümkün!':'Öğren, puan topla, sıralamaya katıl!')+'</p><div class="dm-lig-gap"><span aria-hidden="true">▂▅▇ ↑</span><span><small>'+label+'</small><b>'+value+'</b></span></div>'+ (me?avatar(me.name,100):'')+'</section>';
 }
+function weeklyPreview(){
+ reset();
+ const state=states.weekly,me=state.rows.find(p=>norm(p.name)===norm(who()));
+ const code=me?.league||'yerel';
+ return {title:leagues[code]?.name||leagues.yerel.name,me,
+  top:state.rows.filter(p=>p.league===code).sort((a,b)=>a.rank-b.rank).slice(0,3),
+  loaded:state.loaded,error:state.error};
+}
 function render(){reset();if(mode==='alltime'&&level()<15)mode='weekly';
  const state=states[mode],me=state.rows.find(p=>norm(p.name)===norm(who()));
  let code=selected||me?.league||'yerel';if(!leagues[code]||level()<leagues[code].level)code='yerel';
@@ -44,14 +52,14 @@ function render(){reset();if(mode==='alltime'&&level()<15)mode='weekly';
  return '<section class="dm-lig dm-lig-'+mode+'" aria-label="'+title+'"><header class="dm-lig-header"><button type="button" data-lig-back aria-label="Arkadaşlara dön">‹</button><h2>'+title+'</h2><img src="friends-assets/papi-league.png" alt="" width="54" height="54"></header><div class="dm-lig-caption"><span>'+(mode==='alltime'?'Toplam XP · Her zaman güncel':'Haftalık yarışma XP’si')+'</span><small>'+(mode==='alltime'?'ⓘ Haftalık sıfırlanmaz':'ⓘ Her pazartesi yeni hafta')+'</small></div>'+tabs+choices+content+(state.error&&state.loaded?'<p role="status" class="dm-lig-message">Güncelleme alınamadı. Son sıralama gösteriliyor. <button type="button" data-lig-retry>Yenile</button></p>':'')+(me?'<aside class="dm-lig-my-place" aria-label="Senin sıralaman">'+row(me,true)+'</aside>':'')+(mode==='weekly'?'<details class="dm-lig-rules"><summary>Lig kuralları ve haftalık ödüller</summary><p>Yerel Lig 5. seviyede açılır. Süper Lig için 10. seviye ve haftalık 750 yarışma XP’si; Şampiyonlar Ligi için 15. seviye ve haftalık 1800 yarışma XP’si gerekir. Joker ve günlük çarpanlar yarışma XP’sine eklenmez. Katılım her hafta yeniden değerlendirilir.</p><p>Şampiyonlar Ligi ilk 10 altın ödülleri: 500, 350, 250, 180, 140, 110, 90, 75, 60, 50. Süper Lig ilk iki: 30 ve 20 altın. Yerel Lig: katılım rozeti. Sonuçlar pazartesi 00.05’te kesinleşir; ödül ilk girişte bir kez eklenir.</p></details>':'<p class="dm-lig-footnote">15. seviyeden itibaren · Güncel toplam XP · Haftalık sıfırlanmaz</p>')+'</section>';
 }
 function draw(){if(!onScreen())return;const old=root.querySelector('.dm-lig');if(old)old.outerHTML=render();}
-async function load(force=false){reset();const scope=mode,state=states[scope];if(state.busy||!force&&Date.now()-state.at<60000)return;
+async function load(force=false,scope=mode){reset();const state=states[scope];if(state.busy||!force&&Date.now()-state.at<60000)return;
  if(scope==='alltime'&&level()<15)return;const ticket=epoch,account=who();state.busy=true;state.error='';draw();
  try{const result=await fetch(apiURL,{method:'POST',body:JSON.stringify({islem:'seviyeLigListesi',kapsam:scope,ogrenci:account,t:localStorage.getItem('ing_token')||'',...(force?{_:Date.now()}:{})})});const d=await result.json();
   if(!result.ok||d.ok===false||!Array.isArray(d.liste)||scope==='alltime'&&d.kapsam!=='alltime')throw Error('Lig verisi alınamadı.');
   if(account!==who()||ticket!==epoch)return;
   state.rows=d.liste;state.loaded=true;state.at=Date.now();
  }catch(e){if(account===who()&&ticket===epoch)state.error=String(e.message||'Güncellenemedi');}
- finally{if(account===who()&&ticket===epoch){state.busy=false;draw();}}
+ finally{if(account===who()&&ticket===epoch){state.busy=false;draw();if(scope==='weekly')root.dispatchEvent(new Event('dm:weekly-league'));}}
 }
 window.maLigHtml=function(){reset();if(!states[mode].busy&&Date.now()-states[mode].at>=60000)queueMicrotask(()=>{if(onScreen())load();});return render();};
 root.addEventListener('click',e=>{
@@ -67,5 +75,5 @@ document.addEventListener('dm:login',()=>{owner='';reset();});
 document.addEventListener('dm:state',()=>{for(const state of Object.values(states))state.at=0;if(onScreen())void load();});
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&onScreen())void load();});
 setInterval(()=>{if(!document.hidden&&onScreen())void load();},180000); // [Kota] 1 dk -> 3 dk
-window.dmLeagueUI={refresh:()=>load(true),render};
+window.dmLeagueUI={refresh:()=>load(true),render,weeklyPreview,refreshWeekly:()=>load(false,'weekly'),openWeekly:()=>{mode='weekly';selected=null;limit=30;window.maSekmeSec?.('lig');}};
 })();
