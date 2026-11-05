@@ -1,6 +1,6 @@
 (function(){'use strict';
 const C=window.DijiProgressionCatalog,R=window.DijiProgressRules;
-let paintKey='',paintFrame=0,leagueData=[],actor='',status=null,busy=false,lastRefresh=0,refreshAgain=false,baseline=0,pending=null,jokerRun=null,jokerUses=0,wraps=new Map();
+let paintKey='',paintFrame=0,leagueData=[],actor='',status=null,busy=false,lastRefresh=0,refreshAgain=false,baseline=0,pending=null,levelEnergy=null,energyChecked=0,jokerRun=null,jokerUses=0,wraps=new Map();
 const who=()=>typeof aktifOgrenciAdi==='undefined'?'':String(aktifOgrenciAdi||'');
 const student=()=>!!who()&&who().toLowerCase()!=='teacher'&&!window.dmGuestMode;
 const ready=()=>student()&&typeof yo!=='undefined'&&!!yo&&typeof yoHazirMi==='function'&&yoHazirMi();
@@ -11,9 +11,32 @@ function need(code){return code==='akis'?'Ana parkurda 3. durağa ulaşınca aç
 const odevAcilisi=()=>Date.now()<(window.__odevAcilisBitis||0);
 function requireFeature(code){if(allowed(code)||odevAcilisi())return true;toast('🔒 '+need(code));return false;}
 function itemAllowed(o,quiet=false){const owns=ready()?new Set(yo.karakter?.sahip||[]):new Set(),has=(o.parca||[o]).every(x=>owns.has(x.atolye?x.kat+':'+x.itemId:'d:'+x.id));const ok=!student()||ready()&&(has||level()>=C.itemLevel(o));if(!ok&&!quiet)toast('🔒 Bu ürün '+C.itemLevel(o)+'. seviyede açılır.');return ok;}
-async function api(op,data={}){const r=await fetch(apiURL,{method:'POST',body:JSON.stringify({islem:op,ogrenci:who(),t:localStorage.getItem('ing_token')||'',...data})});const d=await r.json();if(!r.ok||d.ok===false)throw Error(d.mesaj||d.message||'İşlem tamamlanamadı');return d;}
+async function api(op,data={},force=false){const r=await fetch(apiURL,{method:'POST',...(force?{cache:'reload'}:{}),body:JSON.stringify({islem:op,ogrenci:who(),t:localStorage.getItem('ing_token')||'',...data})});const d=await r.json();if(!r.ok||d.ok===false)throw Error(d.mesaj||d.message||'İşlem tamamlanamadı');return d;}
 async function sync(){const owner=who();if(!ready())throw Error('Öğrenci verisi henüz yüklenmedi.');if(typeof window.dmMemberSaveReady==='function')await window.dmMemberSaveReady(owner);if(owner!==who()||!ready())throw Error('Hesap değişti. İşlemi yeniden aç.');R.migrate(yo);const d=await api('ekVeriKaydet',{anahtar:'yo',deger:JSON.stringify(yo)});if(d.status==='bekliyor')throw Error('Verilerin sunucudan yüklenemedi. Lütfen tekrar dene.');return d;}
-async function refresh(force=false){if(busy){if(force)refreshAgain=true;return;}if(document.hidden&&!force||!ready()||!force&&Date.now()-lastRefresh<300000)return;busy=true;const owner=who();try{const d=await api('seviyeDurumu');if(owner===who()){status=d;if(d.yo)window.dmApplyRewardState?.(d.yo,owner);lastRefresh=Date.now();window.dmStudyUI?.refresh();document.dispatchEvent(new CustomEvent('dm:progression-status',{detail:{owner,startPath:d.startPath||null}}));if(d.level>=5){try{leagueData=(await api('seviyeLigListesi')).liste||[];}catch{}}paint();}}catch(e){}finally{busy=false;if(refreshAgain){refreshAgain=false;refresh(true);}}}
+async function refresh(force=false){
+ if(busy){if(force)refreshAgain=true;return;}
+ if(document.hidden&&!force||!ready()||!force&&Date.now()-lastRefresh<300000)return;
+ busy=true;const owner=who();
+ try{
+  const d=await api('seviyeDurumu',{},force);
+  if(owner!==who())return;
+  status=d;if(d.yo)window.dmApplyRewardState?.(d.yo,owner);
+  const earned=d.yo?.dmLevelEnergy?.level;
+  if(!window.dmTeacherPortalMode&&earned>energyChecked){
+   const {levelEnergy:reward}=await api('seviyeEnerjiDoldur',{level:earned});
+   if(owner!==who()||window.dmTeacherPortalMode)return;
+   energyChecked=earned;
+   if(reward){
+    window.headerEnerjiGoster?.(reward.energy,reward.max);
+    if(reward.level>baseline||pending||document.getElementById('dmLevelUp')?.dataset.level===String(reward.level))levelEnergy=reward;
+   }
+  }
+  lastRefresh=Date.now();window.dmStudyUI?.refresh();
+  document.dispatchEvent(new CustomEvent('dm:progression-status',{detail:{owner,startPath:d.startPath||null}}));
+  if(d.level>=5){try{leagueData=(await api('seviyeLigListesi')).liste||[];}catch{}}
+  paint();
+ }catch(e){}finally{busy=false;if(refreshAgain){refreshAgain=false;refresh(true);}}
+}
 function install(){for(const [fn,code] of Object.entries(C.functions)){const old=window[fn];if(typeof old!=='function'||old===wraps.get(fn))continue;const wrapped=function(){if(!requireFeature(code))return;if(!window.dmTeacherPortalMode&&student()&&fn.endsWith('Baslat')&&code.startsWith('oyun_')&&typeof window.genelEnerjiKalan==='number'&&window.genelEnerjiKalan<3&&!window.dmOdevEnerjiMuaf?.()){window.DijiMeduPapiFeedback?.energy();return;}return old.apply(this,arguments);};Object.assign(wrapped,old);wraps.set(fn,wrapped);window[fn]=wrapped;}
  for(const fn of ['dcSeviyeSec']){const old=window[fn];if(typeof old==='function'&&old!==wraps.get(fn)){const w=function(kod){if(student()&&!window.dmTeacherPortalMode){const code=String(kod).toUpperCase(),idx=['A1','A2','B1','B2'].indexOf(code),n=[1,9,16,23][idx];if(idx>=0&&(odevAcilisi()||status?.studyAccess?.[code]!==false))return old.apply(this,arguments);if(idx>=0){toast('🔒 '+code+' konuları, '+(status?.startPath?.maxCefr||'önceki seviye')+' konularının tamamı bitince veya başlangıç testiyle açılır.');return;}if(idx<0||level()<n){toast('🔒 '+n+'. seviyede açılır.');return;}if(idx>0&&!status?.lessons?.[code]){toast('🔒 Önce '+['A1','A2','B1'][idx-1]+' derslerinin tamamını bitir.');refresh(true);return;}}return old.apply(this,arguments);};Object.assign(w,old);window[fn]=w;wraps.set(fn,w);}}
  const avatar=window.maAvatar;if(typeof avatar==='function'&&avatar!==wraps.get('maAvatar')&&!avatar.__dmSeviye){const w=function(o){const name=o?.id==='ben'?who():o?.ad||o?.id;const raw=typeof maSosyalListe!=='undefined'?maSosyalListe.find(x=>String(x.ogrenci).toLowerCase()===String(name).toLowerCase()):null;const n=String(name).toLowerCase()===who().toLowerCase()?level():raw?C.level(raw.totalXp||0):o?.playerLevel;const html=avatar.apply(this,arguments);if(typeof html==='string'&&html.includes('dm-mini-level'))return html;return Number.isInteger(n)?'<span class="dm-avatar-level">'+html+'<small class="dm-mini-level" aria-label="Seviye '+n+'">Sv. '+n+'</small></span>':html;};w.__dmSeviye=true;window.maAvatar=w;wraps.set('maAvatar',w);}
@@ -46,7 +69,7 @@ function sprite(l){const stage=l<=5?'baby':l<=14?'reader':l<=29?'explorer':'mast
 async function extraJoker(){if(!requireFeature('iki_kisilik'))return;try{await sync();const d=await api('seviyeEkJokerAl');Object.assign(yo,d.yo);toast('🃏 Bir oyun için 4. joker hakkı çantanda!');}catch(e){toast(e.message);}}
 function badges(l){return C.levels.slice(0,l).filter(x=>x.benefits.some(b=>b.includes('rozeti')));}
 function panel(){if(!ready()){toast('Seviye bilgilerin yükleniyor. Birazdan tekrar dene.');return;}document.getElementById('dmProgressOverlay')?.remove();const p=R.progress(R.migrate(yo)),info=C.levels[p.level-1],el=document.createElement('div');el.id='dmProgressOverlay';el.className='dm-progress-overlay';el.innerHTML='<section class="dm-progress-sheet" role="dialog" aria-modal="true" aria-labelledby="dmProgressTitle"><button class="dm-progress-close" aria-label="Kapat">×</button>'+sprite(p.level)+'<h2 id="dmProgressTitle">'+info.name+'</h2><p class="dm-progress-caption-v2">Kalıcı seviyen öğrenme yolculuğunu gösterir. XP biriktirdikçe yeni özellikler açılır.</p><b>Seviye '+p.level+' · '+p.xp.toLocaleString('tr-TR')+' XP</b><div class="dm-progress-numbers"><span><b>'+p.xp.toLocaleString('tr-TR')+'</b>Toplam kazanılan XP</span><span><b>'+(p.next===null?'✓':p.remaining)+'</b>Sonraki seviyeye kalan XP</span></div><div class="dm-progress-track"><i style="width:'+p.ratio*100+'%"></i></div><p>'+(p.next===null?'Yolculuğun zirvesindesin!':p.remaining+' XP sonra '+(p.level+1)+'. seviye')+'</p><div class="dm-next-unlocks">'+(p.next===null?'🏆 Efsane Papağan':['Bir sonraki seviyede açılacaklar'].concat(C.levels[p.level].benefits).map(x=>'<p>🔓 '+x+'</p>').join(''))+'</div><details class="dm-earned-badges"><summary>🪶 Kazandığın seviye rozetleri</summary><small>Tüyler, ulaştığın özel seviyelerin hatıra rozetleridir. Harcanmaz ve XP yerine geçmez.</small>'+badges(p.level).map(x=>'<p>'+x.prop+' '+x.name+'</p>').join('')+'</details><p class="dm-mystery">'+(p.next===null?'':Array.from({length:Math.min(4,39-p.level)},()=>'<span>🔒 ?</span>').join(''))+'</p><p class="dm-mystery-caption">Daha sonraki seviyelerin sürprizleri şimdilik gizli.</p><button class="dm-progress-go">Sandıklarım</button></section>';document.body.append(el);const prior=document.activeElement;const close=()=>{el.remove();prior?.focus?.();};el.querySelector('.dm-progress-close').onclick=close;el.querySelector('.dm-progress-go').onclick=()=>{close();chests();};dialogKeys(el,close);el.querySelector('button').focus();}
-function dialogKeys(el,close){el.addEventListener('keydown',e=>{if(e.key==='Escape')close();if(e.key==='Tab'){const b=[...el.querySelectorAll('button:not([hidden]):not(:disabled)')],i=b.indexOf(document.activeElement);e.preventDefault();b[(i+(e.shiftKey?-1:1)+b.length)%b.length].focus();}});}
+function dialogKeys(el,close){el.addEventListener('keydown',e=>{if(e.key==='Escape')close();if(e.key==='Tab'){const b=[...el.querySelectorAll('button:not([hidden]):not(:disabled)')],i=b.indexOf(document.activeElement);e.preventDefault();b[(i+(e.shiftKey?-1:1)+b.length)%b.length]?.focus();}});}
 /* Native WebAudio notes: never call TTS, never download narration or run a soundtrack.
    Prime on a real interaction for iOS; auto celebration remains gracefully silent
    when the browser forbids playback. Respect both app-level mute preferences. */
@@ -105,11 +128,60 @@ function levelSound(kind){
   return true;
  }catch{return false;} // audio must never block reward flow
 }
-function celebrate(from,to){
+function playLevelEnergy(el,reward,close,later,reduced){
+ el.className='dm-level-up dm-level-energy';
+ el.innerHTML='<section role="dialog" aria-modal="true" aria-labelledby="dmLevelUpTitle" tabindex="-1"><div class="dm-energy-cell" aria-hidden="true"><div class="dm-energy-track"><i></i></div><b>ϟ</b></div><h2 id="dmLevelUpTitle">Enerji doluyor</h2><p class="dm-energy-count"><b></b> / '+reward.max+'</p><p class="dm-energy-announcement dm-flight-sr-only" role="status"></p></section>';
+ const panel=el.querySelector('section'),battery=el.querySelector('.dm-energy-cell');
+ const fill=el.querySelector('.dm-energy-track i'),counter=el.querySelector('.dm-energy-count b');
+ panel.focus({preventScroll:true});
+ const setEnergy=value=>{counter.textContent=value;fill.style.transform='scaleX('+value/reward.max+')';};
+ setEnergy(reward.before);
+ const fly=()=>{
+  const visible=e=>{const r=e.getBoundingClientRect();return r.width>0&&r.height>0&&r.top>=0&&r.bottom<=innerHeight&&getComputedStyle(e).visibility==='visible';};
+  if(!battery.animate){close();return;}
+  let target=[...document.querySelectorAll('.dm-unified-wallet [data-pw="energy"]')].find(visible)
+   ||[...document.querySelectorAll('#headerEnerjiBadge,#ybEnerji')].find(visible);
+  if(!target){
+   target=document.createElement('div');target.className='dm-energy-fallback';
+   target.textContent='ϟ '+reward.energy+'/'+reward.max;el.append(target);
+  }
+  const source=battery.getBoundingClientRect(),end=target.getBoundingClientRect();
+  const startX=source.left+source.width/2,startY=source.top+source.height/2;
+  const dx=end.left+end.width/2-startX,dy=end.top+end.height/2-startY;
+  el.classList.add('dm-energy-flying');
+  for(const [i,offset] of [-100,-70,-38,0,36,68,99].entries()){
+   const star=document.createElement('span');star.className='dm-energy-star';star.setAttribute('aria-hidden','true');
+   star.textContent=i%2?'✧':'✦';star.style.left=startX+'px';star.style.top=startY+'px';el.append(star);
+   star.animate([
+    {transform:'translate(-50%,-50%) scale(.5)',opacity:0},
+    {transform:'translate(calc(-50% + '+(dx*.45+offset)+'px),calc(-50% + '+(dy*.35-35)+'px)) scale(1.15)',opacity:1,offset:.46},
+    {transform:'translate(calc(-50% + '+dx+'px),calc(-50% + '+dy+'px)) scale(.28)',opacity:0}
+   ],{duration:620,delay:i*28,easing:'ease-in-out',fill:'both'});
+  }
+  later(()=>target.animate([{filter:'brightness(1)'},{filter:'brightness(1.65) drop-shadow(0 0 9px #e9ff8a)'},{filter:'brightness(1)'}],{duration:360}),660);
+  later(close,1020);
+ };
+ const full=()=>{
+  setEnergy(reward.energy);el.classList.add('dm-energy-full');
+  el.querySelector('h2').textContent='Enerjin tamamen doldu!';
+  el.querySelector('[role="status"]').textContent='Enerjin '+reward.energy+' / '+reward.max+'.';
+  later(reduced?close:fly,reduced?1000:440);
+ };
+ if(reduced||reward.before===reward.energy){full();return;}
+ const started=performance.now();
+ function tick(now){
+  if(!el.isConnected||!el.classList.contains('dm-level-energy'))return;
+  const ratio=Math.min(1,(now-started)/760);
+  setEnergy(reward.before+Math.floor((reward.energy-reward.before)*ratio));
+  if(ratio<1)requestAnimationFrame(tick);else full();
+ }
+ requestAnimationFrame(tick);
+}
+function celebrate(from,to,preview=false){
  if(document.getElementById('dmLevelUp')||!C.levels[to-1])return;
  const previous=Math.max(1,Math.min(from,to-1)),info=C.levels[to-1],el=document.createElement('div');
  const unlocked=C.levels.slice(Math.max(0,from),to).flatMap(x=>(x.benefits||[]).map(benefit=>({level:x.level,name:x.name,prop:x.prop,benefit})));
- el.id='dmLevelUp';el.className='dm-level-up dm-flight-celebration';
+ el.id='dmLevelUp';if(!preview)el.dataset.level=String(to);el.className='dm-level-up dm-flight-celebration';
  el.innerHTML='<section class="dm-flight-layout" role="dialog" aria-modal="true" aria-labelledby="dmLevelUpTitle"><div class="dm-flight-stars" aria-hidden="true">✦　✧　✦　✧　✦</div><button type="button" class="dm-level-skip" aria-label="Kutlamayı geç">Geç</button><h2 id="dmLevelUpTitle" class="dm-flight-sr-only">Seviye '+to+'</h2><button type="button" class="dm-papi-reveal" aria-label="Papi’ye dokun, açılan özellikleri sırayla gör"><span class="dm-flight-papi" role="img" aria-label="Uçarak gelen Papi papağan"></span></button><div class="dm-flight-number" aria-label="Seviye '+to+'"><span class="dm-flight-old" aria-hidden="true">'+previous+'</span><span class="dm-flight-new" aria-hidden="true">'+to+'</span></div><span class="dm-flight-label">SEVİYE</span><h3 class="dm-flight-name">'+info.name+'</h3><p class="dm-reveal-hint">Yeni özelliklerin açılıyor</p><div class="dm-unlock-cards" role="list" aria-label="Yeni açılan özellikler" hidden></div><button type="button" class="dm-level-continue" hidden>Yolculuğa devam et</button></section>';
  const prior=document.activeElement,timers=[],reduced=!!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
  const later=(fn,ms)=>{timers.push(setTimeout(()=>{if(el.isConnected)fn();},ms));};
@@ -138,7 +210,12 @@ function celebrate(from,to){
    if(i===rows.length-1)finish();
   },200+i*430));
  };
+ const takeEnergy=()=>{
+  if(preview||levelEnergy?.level!==to)return null;
+  const reward=levelEnergy;levelEnergy=null;return reward;
+ };
  const close=()=>{
+  takeEnergy();
   timers.forEach(clearTimeout);
   el.remove();prior?.focus?.();
  };
@@ -148,7 +225,20 @@ function celebrate(from,to){
   if(!flightSoundPlayed)flightSoundPlayed=levelSound('fly');
   reveal(true);
  };
- continueButton.onclick=close;
+ continueButton.onclick=()=>{
+  const deadline=performance.now()+1500;
+  const next=()=>{
+   const reward=takeEnergy();
+   if(!reward){
+    if(!preview&&busy&&performance.now()<deadline){later(next,100);return;}
+    close();return;
+   }
+   timers.forEach(clearTimeout);
+   playLevelEnergy(el,reward,close,later,reduced);
+  };
+  continueButton.disabled=true;
+  next();
+ };
  el.querySelector('.dm-level-skip').onclick=close;
  dialogKeys(el,close);
  el.querySelector('.dm-papi-reveal').focus();
@@ -171,14 +261,14 @@ async function chests(){await window.dmActiveTime?.flush?.();const timeChests=wi
 window.maLigSiralama=function(){const liste=leagueData.map(o=>({ad:o.name,sinif:String(o.class||''),puan:0,xp:o.xp,sira:o.rank,kod:o.league,benMi:o.name.toLowerCase()===who().toLowerCase()}));return {liste,harita:Object.fromEntries(liste.map(x=>[x.ad.toLowerCase(),x]))};};
 document.addEventListener('dm:kisisel-bilgiler',()=>{status=null;lastRefresh=0;refresh(true);});
 document.addEventListener('dm:starting-placement-complete',()=>refresh(true));
-window.dmProgression={paint,allowed,require:requireFeature,level,itemAllowed,refresh,chests,status:()=>status,parkur:()=>true,quota:()=>C.quota(level()),sync,buyExtraJoker:extraJoker,previewAnimation:()=>celebrate(Math.max(0,level()-1),level())};
+window.dmProgression={paint,allowed,require:requireFeature,level,itemAllowed,refresh,chests,status:()=>status,parkur:()=>true,quota:()=>C.quota(level()),sync,buyExtraJoker:extraJoker,previewAnimation:()=>celebrate(Math.max(0,level()-1),level(),true)};
 window.dolapSandikAc=window.bcSandikAc=window.sandikTorenAc=chests;
 /* Uygulamanın kendiliğinden açtığı Medu Akış: kilitliyse uyarı göstermeden Parkur'da kal */
 document.addEventListener('dm:starting-placement-complete',()=>refresh(true));
 window.dmOtomatikAkisAc=function(parkuraDon){if(!student()||allowed('akis'))return window.meduAkisAc?.();if(!status)refresh(true);if(parkuraDon)window.dunyaAc?.();};
 const progressOpen=()=>{const b=document.getElementById('dmLevelBadge');if(b)b.onclick=panel;window.dmProgressPanel=Object.assign(window.dmProgressPanel||{},{open:panel});};
 const originalFetch=window.fetch;window.fetch=async function(url,opt){const owner=who(),r=await originalFetch.apply(this,arguments);if(opt?.body&&typeof opt.body==='string'&&opt.body.includes('"dersTestSonucKaydet"')&&r.ok){r.clone().json().then(d=>{if(owner!==who())return;if(d.eklenenEnerji>0){window.headerEnerjiGoster?.(d.enerjiKalan,d.enerjiMax);toast('📘 İlk başarılı ders: +'+d.eklenenEnerji+' enerji');}refresh(true);}).catch(()=>{});}return r;};
-setInterval(()=>{if(document.hidden)return;install();progressOpen();const name=ready()?who():'';if(name!==actor){leagueData=[];document.getElementById('dmLevelUp')?.remove();document.getElementById('dmChestPanel')?.remove();actor=name;status=null;lastRefresh=0;baseline=name?level():0;pending=null;}const key=[name,level(),status?.feed,JSON.stringify(status?.lessons||{}),!!window.dmPapiTour?.preview()].join('|');if(key!==paintKey){paintKey=key;queuePaint();}if(!name)return;refresh();const now=level();if([5,10,14].includes(now)){const k='dm_store_hint:'+actor+':'+now;if(!localStorage.getItem(k)){localStorage.setItem(k,'1');toast('🪙 Altınların birikiyor! Mağazadaki başlangıç ürünlerini şimdi keşfedebilirsin.');}}if(now>baseline){pending={from:pending?.from??baseline,to:now};baseline=now;}if(pending&&!window.dmPapiNotices?.blocked()&&!document.hidden&&!document.getElementById('dmLevelUp')&&!Array.from(document.querySelectorAll('#genelSonucOverlay,#dmGoalAnnouncement,#dmWeeklyPanel')).some(e=>e.getClientRects().length&&getComputedStyle(e).visibility!=='hidden')){const p=pending;pending=null;celebrate(p.from,p.to);}},1000);
+setInterval(()=>{if(document.hidden)return;install();progressOpen();const name=ready()?who():'';if(name!==actor){leagueData=[];document.getElementById('dmLevelUp')?.remove();document.getElementById('dmChestPanel')?.remove();actor=name;status=null;lastRefresh=0;baseline=name?level():0;pending=null;levelEnergy=null;energyChecked=0;}const key=[name,level(),status?.feed,JSON.stringify(status?.lessons||{}),!!window.dmPapiTour?.preview()].join('|');if(key!==paintKey){paintKey=key;queuePaint();}if(!name)return;refresh();const now=level();if([5,10,14].includes(now)){const k='dm_store_hint:'+actor+':'+now;if(!localStorage.getItem(k)){localStorage.setItem(k,'1');toast('🪙 Altınların birikiyor! Mağazadaki başlangıç ürünlerini şimdi keşfedebilirsin.');}}if(now>baseline){pending={from:pending?.from??baseline,to:now};baseline=now;refresh(true);}if(pending&&!window.dmPapiNotices?.blocked()&&!document.hidden&&!document.getElementById('dmLevelUp')&&!Array.from(document.querySelectorAll('#genelSonucOverlay,#dmGoalAnnouncement,#dmWeeklyPanel')).some(e=>e.getClientRects().length&&getComputedStyle(e).visibility!=='hidden')){const p=pending;pending=null;celebrate(p.from,p.to);}},1000);
 function queuePaint(){if(paintFrame)return;paintFrame=requestAnimationFrame(()=>{paintFrame=0;install();paint();progressOpen();});}
 // Newly mounted controls need a gate once, not a full-document scan every 700 ms.
 if(typeof MutationObserver==='function')new MutationObserver(records=>{if(records.some(r=>[...r.addedNodes].some(n=>n.nodeType===1&&(n.matches?.('button,[onclick],[data-dm-goals],[data-social]')||n.querySelector?.('button,[onclick],[data-dm-goals],[data-social]')))))queuePaint();}).observe(document.getElementById('panel-alani')||document.body,{childList:true,subtree:true});
