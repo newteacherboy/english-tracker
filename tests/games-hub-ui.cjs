@@ -8,15 +8,15 @@ await page.route('https://games.test/premium-games',route=>{
  premiumRequests.push(data.game);
  return route.fulfill({json:{ok:true,premium:false,remaining:data.game==='word-blocks'?0:2}});
 });
-const goHome=()=>page.getByRole('button',{name:'Oyunlara dön'}).click();
-const openCatalogue=()=>page.getByRole('button',{name:'Tüm Oyunları Gör'}).click();
+const goHome=()=>page.locator('[data-gg-party=all]').click();
+const visibleCards=()=>page.locator('.gg-shelf-card:visible');
 for(const [width,height] of [[320,640],[390,844],[768,844],[1180,844]]){
  await page.setViewportSize({width,height});
  await page.goto('https://games.test/');
  await page.evaluate(()=>{localStorage.removeItem('dm_games_visit:Mert');dmGamesUI.enter();});
- assert.equal(await page.locator('.gg-quick-list button:visible').count(),3);
+ assert.equal(await page.locator('.gg-group:visible').count(),6);
  assert.equal(await page.locator('.gg-game:visible').count(),0);
- assert.match(await page.locator('.gg-next').innerText(),/Harf Avı.*14\. seviyede/s);
+
  const featured=page.locator('.gg-featured');
  await featured.getByText('Ücretsiz Dene').waitFor();
  assert.match(await featured.innerText(),/Papizzle/);
@@ -24,17 +24,20 @@ for(const [width,height] of [[320,640],[390,844],[768,844],[1180,844]]){
  assert(await page.evaluate(()=>calls.includes('papizzle')));
  await page.evaluate(()=>dmGamesUI.refresh());
  assert.match(await featured.innerText(),/Papizzle/);
- assert(await page.locator('.gg-shortcuts').evaluate(el=>el.getBoundingClientRect().bottom<=document.querySelector('nav').getBoundingClientRect().top));
- await openCatalogue();
- assert.deepEqual(await page.locator('.gg-group h2:visible').allTextContents(),['Tek Kişilik','Online','Kapışma','Konu','Mola','Premium']);
- assert(await page.locator('.gg-group').evaluateAll(groups=>groups.every(group=>group.querySelectorAll('.gg-list-card').length<=2)));
- await page.locator('.gg-group').filter({has:page.getByRole('heading',{name:'Tek Kişilik',exact:true})}).getByRole('button',{name:'Hepsini Gör'}).click();
- assert.equal(await page.locator('.gg-game:visible').count(),5);
+ assert.deepEqual(await page.locator('.gg-group h2:visible').allTextContents(),['Premium','Tek Kişilik','Kapışma','Online','Konu','Mola']);
+ assert(await page.locator('.gg-group').evaluateAll(groups=>groups.every(group=>group.querySelectorAll('.gg-shelf-card').length<=2&&group.querySelector('.gg-group-heading button'))));
+ await page.getByRole('button',{name:'Tek Kişilik oyunlarının tümünü göster'}).click();
+ assert.equal(await visibleCards().count(),5);
+ const soloCards=await visibleCards().evaluateAll(cards=>cards.map(card=>card.dataset.ggSource));
+ await goHome();
+ await page.locator('#ggSoloTab').click();
+ assert.deepEqual(await visibleCards().evaluateAll(cards=>cards.map(card=>card.dataset.ggSource)),soloCards);
+ assert.equal(await page.locator('.gg-shelf-grid').evaluate(el=>getComputedStyle(el).gridTemplateColumns.split(' ').length),2);
  await page.locator('[data-gg-skill="Dinleme"]').click();
- assert.equal(await page.locator('.gg-game:visible').count(),1);
- assert(await page.locator('.gg-game:visible').evaluate(e=>e.classList.contains('gg-locked')));
+ assert.equal(await visibleCards().count(),1);
+ assert.match(await visibleCards().innerText(),/24\. seviyede açılır/);
  await page.evaluate(()=>{lvl=24;dmGamesUI.refresh();});
- assert(await page.locator('.gg-game:visible').evaluate(e=>!e.classList.contains('gg-locked')));
+ assert.equal(await visibleCards().getAttribute('aria-disabled'),'false');
  await goHome();
  await page.locator('#ggFreeTab').click();
  await page.evaluate(()=>{
@@ -44,13 +47,13 @@ for(const [width,height] of [[320,640],[390,844],[768,844],[1180,844]]){
    button.onclick=()=>calls.push(id);document.querySelector('.az-grid2x2').append(button);
   }
  });
- await page.locator('#wordWheelActivity.gg-game').waitFor();
- assert.deepEqual(await page.locator('.gg-game:visible').evaluateAll(cards=>cards.map(card=>card.id)),['sentenceRaceActivity','papiCardsActivity','meteorActivity','wordWheelActivity']);
- await page.locator('#meteorActivity').click();
+ await page.locator('[data-gg-source=wordWheelActivity]').waitFor();
+ assert.deepEqual(await visibleCards().evaluateAll(cards=>cards.map(card=>card.dataset.ggSource)),['papiCardsActivity','meteorActivity','wordWheelActivity','sentenceRaceActivity']);
+ await page.locator('[data-gg-source=meteorActivity]').click();
  await page.locator('[data-gg-matches]').click();
  assert(await page.evaluate(()=>calls.includes('meteorActivity')&&calls.includes('matches')));
  await page.locator('[data-gg-duo]').click();
- assert.equal(await page.locator('.gg-game:visible').count(),1);
+ assert.equal(await visibleCards().count(),1);
  await goHome();
  await page.evaluate(()=>dmGamesUI.enter());
  await featured.getByText('Premium’u İncele').waitFor();
