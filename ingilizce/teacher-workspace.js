@@ -281,10 +281,10 @@ function dmHome(){
   <h3>⚡ Hızlı İşlemler</h3>
   <div class="dm-v2-actions" data-v2-actions></div>
   <div class="dm-v2-secondary" data-v2-secondary></div>
+  <h3>👑 Premium Oyunlar</h3>
+  <div class="dm-v2-quick dm-v2-premium" data-v2-premium aria-label="Premium öğretmen oyunları"></div>
   <h3>✨ Hızlı Erişim</h3>
   <div class="dm-v2-quick" data-v2-quick></div>
-  <h3>👑 Premium Oyunlar</h3>
-  <div class="dm-v2-quick" data-v2-premium aria-label="Premium öğretmen oyunları"></div>
  </main>`;
  const add=(target,label,emoji,description,run,cls='')=>{
   const button=document.createElement('button');button.type='button';button.className='dm-v2-action '+cls;
