@@ -57,7 +57,7 @@
   b.classList.add('gg-game');b.classList.remove('dm-toy-card','dm-showcase-card');
   const title=b.querySelector('.az-gcard-title')?.textContent.trim()||b.textContent.trim();b.dataset.ggTitle=title;
   const tool=d[0]==='pomodoroAc'||d[0]==='okumaStudyosunuAc';if(tool)b.dataset.ggCategory='tools';
-  const description=b.dataset.ggCategory==='premium'?'Word Bank • 3 ücretsiz oyun, Premium sınırsız':tool?(d[0]==='pomodoroAc'?'Odaklanma ve mola zamanlayıcısı':'Okuma ve anlama çalışmaları'):f?f[1]:d[2]+' • 12 soru';
+  const description=b.dataset.ggCategory==='premium'?(window.dmTeacherPortalMode?'Word Bank • Paketindeki oyun hakları geçerli':'Word Bank • 3 ücretsiz oyun, Premium sınırsız'):tool?(d[0]==='pomodoroAc'?'Odaklanma ve mola zamanlayıcısı':'Okuma ve anlama çalışmaları'):f?f[1]:d[2]+' • 12 soru';
   const thumb=[['harfBahcesiAc',0],['trenOyunAc',1],['yagmurOyunAc',2],['kelimebulOyunAc',3]].find(([fn])=>(b.getAttribute('onclick')||'').includes(fn));if(thumb){b.style.setProperty('--au-thumb',thumb[1]);b.style.setProperty('--au-thumb-x',(thumb[1]%2*100)+'%');b.style.setProperty('--au-thumb-y',(Math.floor(thumb[1]/2)*100)+'%');}
   const toolArt=tool?'<span class="gg-art gg-tool-art" aria-hidden="true">'+(d[0]==='pomodoroAc'?'<svg viewBox="0 0 64 64"><rect x="24" y="3" width="16" height="8" rx="4" fill="#9662d7"/><circle cx="32" cy="36" r="25" fill="#dcf8ee" stroke="#8b62cf" stroke-width="5"/><path d="M32 20v17l11 7" fill="none" stroke="#8b62cf" stroke-width="5" stroke-linecap="round"/></svg>':'<i class="au-art au-passport-icons" style="--au-x:0%;--au-y:0%"></i>')+'</span>':img(+b.dataset.ggIndex);
   b.innerHTML=toolArt+'<span class="gg-copy"><strong class="az-gcard-title">'+esc(title)+'</strong><small>'+esc(description)+'</small><span class="gg-play">'+(f?f[2]:tool?(d[0]==='pomodoroAc'?'Başlat':'Aç'):b.dataset.ggCategory==='duo'?'Davet Et':'Oyna')+' ›</span></span>';
@@ -90,19 +90,19 @@
  async function loadFriends(host){if(friendsLoaded)return;if(!allowed('takip')){host.querySelector('.gg-friends').textContent='Arkadaşlar '+(window.DijiProgressionCatalog?.gates.takip||15)+'. seviyede açılır.';return;}if(!logged()){host.querySelector('.gg-friends').textContent='Arkadaşlarını görmek için giriş yap.';return;}friendsLoaded=true;const row=host.querySelector('.gg-friends');row.innerHTML='<span role="status">Arkadaşların yükleniyor…</span>';const owner=account();try{const d=await m.api('takipDavetListesi');if(account()!==owner)return;skew=Date.parse(d.serverNow)-Date.now();d.liste.forEach(p=>stamp.set(p.ad,p));row.innerHTML=d.liste.length?d.liste.slice(0,5).map(p=>'<button type="button" data-gg-person="'+esc(p.ad)+'" title="'+esc(p.ad)+'"><span class="gg-avatar">'+(window.karakterSvg?.(p.ad,38)||esc(p.ad.slice(0,1).toLocaleUpperCase('tr')))+'</span><small>'+esc(p.ad)+'</small><i class="'+(isOnline(p.ad)?'online':'')+'" aria-label="'+(isOnline(p.ad)?'Çevrimiçi':'Çevrimdışı')+'"></i></button>').join(''):'<span>Henüz takip ettiğin arkadaş yok.</span>';row.querySelectorAll('button').forEach(b=>b.onclick=async()=>{await window.meduAkisAc?.();window.maProfilAc?.(b.dataset.ggPerson);});}catch{row.innerHTML='<button type="button">Arkadaşlar yüklenemedi · Tekrar dene</button>';row.querySelector('button').onclick=()=>{friendsLoaded=false;loadFriends(host);};}}
  function install(force=false){if(document.hidden&&!force)return;const tab=document.getElementById('tab-aktiviteler');if(!force&&knownGrid&&!tab?.classList.contains('active'))return;const host=document.querySelector('#tab-aktiviteler .dc-focus-card'),grid=host?.querySelector('.az-grid2x2');if(!grid)return;
   if(!grid.querySelector('#premiumWordMatchActivity')){const card=document.createElement('button');card.type='button';card.id='premiumWordMatchActivity';card.className='az-gcard';card.setAttribute('onclick','premiumKelimeEslestirmeAc()');card.innerHTML='<div class="az-gcard-title">Candy Papiş</div>';grid.append(card);}
-  if(!window.dmTeacherPortalMode&&!grid.querySelector('#premiumCloudFlightActivity')){
+  if(!grid.querySelector('#premiumCloudFlightActivity')){
    const card=document.createElement('button');card.type='button';card.id='premiumCloudFlightActivity';card.className='az-gcard';
    card.setAttribute('onclick','premiumBulutUcusuAc()');card.innerHTML='<div class="az-gcard-title">Kaptan Pilot Papi</div>';grid.append(card);
   }
-  if(!window.dmTeacherPortalMode&&!grid.querySelector('#premiumWordBlocksActivity')){
+  if(!grid.querySelector('#premiumWordBlocksActivity')){
    const card=document.createElement('button');card.type='button';card.id='premiumWordBlocksActivity';card.className='az-gcard';
    card.setAttribute('onclick','premiumKelimeBloklariAc()');card.innerHTML='<div class="az-gcard-title">Block Papi</div>';grid.append(card);
   }
-  if(!window.dmTeacherPortalMode&&!grid.querySelector('#papizzleActivity')){
+  if(!grid.querySelector('#papizzleActivity')){
    const card=document.createElement('button');card.type='button';card.id='papizzleActivity';card.className='az-gcard';
    card.setAttribute('onclick','papizzleAc()');card.innerHTML='<div class="az-gcard-title">Papizzle</div>';grid.append(card);
   }
-  if(!window.dmTeacherPortalMode&&!grid.querySelector('#runnersPapiActivity')){
+  if(!grid.querySelector('#runnersPapiActivity')){
    const card=document.createElement('button');card.type='button';card.id='runnersPapiActivity';card.className='az-gcard';
    card.setAttribute('onclick','runnersPapiAc()');card.innerHTML='<div class="az-gcard-title">Runners Papi</div>';grid.append(card);
   }
