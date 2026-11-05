@@ -40,8 +40,19 @@ test('external dialogs hold the next notice, typing does not block its own butto
  const f=fixture();try{const {w}=f;const dialog=w.document.createElement('div');dialog.setAttribute('role','dialog');w.document.body.append(dialog);const el=w.dmNoticeSurface.notify('Sıradaki');await f.flush();assert(!w.dmNoticeSurface.isVisible(el));dialog.remove();await f.step();assert(w.dmNoticeSurface.isVisible(el));}finally{f.close();}
 });
 
-test('dismissal does not bubble into a legacy card navigation action',async()=>{
- const f=fixture();try{let navigated=0;const el=f.w.document.createElement('div');el.className='bk-kart';el.textContent='Mağaza önerisi';el.onclick=()=>navigated++;f.w.document.body.append(el);await f.flush();el.querySelector('.dm-notice-done').click();assert.equal(navigated,0);assert(!el.isConnected);}finally{f.close();}
+test('recommendations and social events stay out of the system ribbon',async()=>{
+ const f=fixture();try{const {w}=f;
+ for(const className of ['bk-kart','dm-notification','uy-serit','dm-leader-bonus']){
+  const el=w.document.createElement('div');el.className=className;el.textContent='Yeni bir bildirim';
+  el.onclick=()=>assert.fail('Removing a ribbon must not navigate');
+  w.document.body.append(el);await f.flush();assert(!el.isConnected);
+ }
+ assert.equal(w.dmNoticeSurface.notify('Günlük hedefin hazır',{kind:'feedback'}),null);
+ const notice=w.dmNoticeSurface.notify('Sunucu bağlantısı kesildi',{kind:'feedback'});
+ await f.flush();assert(w.dmNoticeSurface.isVisible(notice));
+ const invite=w.document.createElement('div');invite.className='dv-perde';invite.setAttribute('role','dialog');
+ w.document.body.append(invite);await f.flush();assert(invite.isConnected);assert(!invite.classList.contains('dm-notice-managed'));
+ }finally{f.close();}
 });
 test('typing an appeal inside the active notice does not hide it',async()=>{
  const f=fixture();try{const el=f.w.dmNoticeSurface.notify('Öğretmen uyarısı',{edge:'bottom'});await f.flush();const area=f.w.document.createElement('textarea');el.querySelector('.dm-notice-copy').append(area);area.focus();await f.step();assert(f.w.dmNoticeSurface.isVisible(el));}finally{f.close();}

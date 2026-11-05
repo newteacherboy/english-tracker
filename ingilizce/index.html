@@ -15955,26 +15955,25 @@ const seriCarpani = () => seri() >= 7 ? 2 : (seri() >= 3 ? 1.5 : 1);
   async function unreadCount(list,owner){
     return list.length;   /* [27 Eki 2026] eski duyuru sayımı kaldırıldı */
   }
-  /* ---- Girişte bildirimleri karşılama paneline ver ---- */
+  /* ---- Oturum açıldığında okunmamış bildirimleri yükle ---- */
   let girisBakildi = '';
-  setInterval(async () => {
+  setInterval(() => {
     if (!girisli() || girisBakildi === kucuk(aktifOgrenciAdi)) return;
-    girisBakildi = kucuk(aktifOgrenciAdi);const notifyOwner=girisBakildi;
-    try {
-      let r = await fetch(`${apiURL}?islem=bildirimlerim&ogrenci=${enc(aktifOgrenciAdi)}`);
-      let d = await r.json(), liste = ((d && d.liste) || []).filter(b=>b.tur!=='begeni');
-      if(notifyOwner!==kucuk(aktifOgrenciAdi))return;
-      zilSayi = await unreadCount(liste,notifyOwner);if(notifyOwner!==kucuk(aktifOgrenciAdi))return;zilCiz();
-      if (!liste.length) return;
-      let yaz = () => { if(notifyOwner!==kucuk(aktifOgrenciAdi))return;if (typeof window.karsilamaBildirim === 'function') window.karsilamaBildirim(liste); };
-      yaz(); setTimeout(yaz, 4000);
-      // Opening the notification centre, rather than login, marks items read.
-    } catch (e) {}
+    girisBakildi = kucuk(aktifOgrenciAdi);
+    zilYokla();
   }, 1500);
 
   /* ---- Arkadaşlar: 🔔 bildirim merkezi ---- */
   let zilSayi = 0, zilFiltre = 'hepsi';
   function zilCiz() {
+    const nav=document.querySelector('#bottomNavMobile [data-ekran="tab-meduakis"]');
+    if(nav){
+      let dot=nav.querySelector('.dm-friends-unread');
+      if(zilSayi&&!dot){
+        dot=document.createElement('span');dot.className='dm-friends-unread';dot.setAttribute('aria-hidden','true');nav.append(dot);
+      }else if(!zilSayi)dot?.remove();
+      nav.setAttribute('aria-label',zilSayi?'Arkadaşlar · '+zilSayi+' okunmamış bildirim':'Arkadaşlar');
+    }
     let h2 = document.querySelector('#tab-meduakis .club-hero') || document.querySelector('#tab-meduakis .akis-baslik h2');
     if (!h2) return;
     let b = $('zlBtn');
@@ -15987,21 +15986,25 @@ const seriCarpani = () => seri() >= 7 ? 2 : (seri() >= 3 ? 1.5 : 1);
       h2.appendChild(b);
     }
     b.setAttribute('aria-label','Bildirimler · '+zilSayi+' okunmamış');
-    b.innerHTML = '🔔' + (zilSayi ? `<span class="zl-rozet">${zilSayi > 99 ? '99+' : zilSayi}</span>` : '');
+    if(b.dataset.unread!==String(zilSayi)){
+      b.dataset.unread=String(zilSayi);
+      b.innerHTML='🔔'+(zilSayi?'<span class="zl-rozet" aria-hidden="true"></span>':'');
+    }
   }
   setInterval(zilCiz, 1500);
   document.addEventListener('dm:login',()=>{girisBakildi='';zilSayi=0;zilCiz();});
-  setInterval(async () => {
+  async function zilYokla() {
     if (!girisli() || document.hidden) return;
     const notifyOwner=kucuk(aktifOgrenciAdi);
     try {
       let r = await fetch(`${apiURL}?islem=bildirimlerim&ogrenci=${enc(aktifOgrenciAdi)}`);
-      let d = await r.json(), n = await unreadCount(((d && d.liste) || []).filter(b=>b.tur!=='begeni'),notifyOwner);
+      let d = await r.json(), n = await unreadCount((d && d.liste) || [],notifyOwner);
       if(notifyOwner!==kucuk(aktifOgrenciAdi))return;
       if (n > zilSayi) { let b = $('zlBtn'); if (b) { b.classList.remove('sallan'); void b.offsetWidth; b.classList.add('sallan'); } }
       zilSayi = n; zilCiz();
     } catch (e) {}
- }, 120000);   /* [Kota] 30 sn -> 2 dk; tüm bildirim yoklamaları aynı önbelleği paylaşır */
+  }
+  setInterval(zilYokla,120000);
   function zamanOnce(t) { return window.DMTime.format(t); }
   window.dmNotifications={open:()=>zilAc()};
   async function zilAc() {
@@ -16017,7 +16020,7 @@ const seriCarpani = () => seri() >= 7 ? 2 : (seri() >= 3 ? 1.5 : 1);
     let sosyal = [];
     try {
       let r = await fetch(`${apiURL}?islem=bildirimlerim&tumu=1&ogrenci=${enc(aktifOgrenciAdi)}`);
-      let d = await r.json(); sosyal = ((d && d.liste) || []).filter(b=>b.tur!=='begeni');
+      let d = await r.json(); sosyal = (d && d.liste) || [];
     } catch (e) {}
     if (typeof maAkisYukle === 'function') await maAkisYukle();
     let benim = (typeof maAkisVeri !== 'undefined' ? maAkisVeri : []).filter(e => kucuk(e.ogr) === kucuk(aktifOgrenciAdi)).map(e => ({ tarih: e.t, tur: 'kazanc', ikon: e.ikon, metin: e.metin, yeni: false }));
@@ -16959,79 +16962,11 @@ let adaRenk = adaRenkleri[
     if (typeof dcTumTamEkranlariKapat === 'function') dcTumTamEkranlariKapat();
     if (typeof f === 'function') f(); else if (typeof aktivitelerTamEkranAc === 'function') aktivitelerTamEkranAc();
   };
-  const ICON = { begeni: '❤️', tebrik: '🎉', takip: '👋', enerji: '⚡', duello: '⚔️', duelloYanit: '⚔️', duelloOyun: '🔥', duelloSonuc: '🏁' };
-  const METIN = b => ({
-    begeni: `${b.gonderen} paylaşımını beğendi`, tebrik: `${b.gonderen} seni tebrik etti`, takip: `${b.gonderen} seni takip etmeye başladı`,
-    enerji: `${b.gonderen} sana 2 enerji gönderdi! ⚡`, duelloYanit: `${b.gonderen} ${b.metin}`, duelloOyun: `Rakibin ${b.gonderen} ${b.metin}`, duelloSonuc: b.metin
-  }[b.tur] || `${b.gonderen}: ${b.metin}`);
-  let kuyruk = [], gorulen = new Set(JSON.parse(sessionStorage.getItem('ing_cb_gor') || '[]')), ilkTur = true, cbAcik = false;
-  function kartGoster(b) {
-    if(window.dmPapiNotices?.defer('social:'+b.sat,()=>kartGoster(b)))return;
-    cbAcik = true;
-    let k = document.createElement('div'); k.className = 'cb-kart'; k.setAttribute('role', 'status');
-    let av = (typeof karakterSvg === 'function' && b.gonderen && karakterSvg(b.gonderen, 44)) || ICON[b.tur] || '🔔';
-    let dugme = b.tur === 'duelloOyun' ? '<button class="cb-git">Oyna</button>' : '';
-    k.innerHTML = `<div class="cb-ikon">${av}</div><span class="m">${ICON[b.tur] || '🔔'} ${guvenliMetin(METIN(b))}<small>şimdi</small></span>${dugme}<button class="cb-x" aria-label="Kapat">✕</button>`;
-    document.body.appendChild(k);
-    requestAnimationFrame(() => requestAnimationFrame(() => k.classList.add('gor')));
-    if (b.tur === 'enerji' && typeof headerEnerjiYukle === 'function') headerEnerjiYukle();
-    let kapat = () => { k.classList.remove('gor'); setTimeout(() => { k.remove(); cbAcik = false; }, 500); };
-    k.querySelector('.cb-x').onclick = kapat;
-    let g = k.querySelector('.cb-git'); if (g) g.onclick = () => { kapat(); let d = (window._dlSon || []).find(x => x.durum === 'kabul'); if (d) duelloOyununuAc(d.oyun); };
-    (window.dmPapiNotices?.later||((el,fn,ms)=>setTimeout(fn,ms)))(k,kapat,10000);
-  }
-  async function davetGoster(b) {
-    if(window.dmPapiNotices?.defer('duel:'+b.sat,()=>davetGoster(b)))return;
-    let liste = [];
-    try { let r = await fetch(`${apiURL}?islem=duellolarim&ogrenci=${enc(aktifOgrenciAdi)}`); let d = await r.json(); liste = (d && d.liste) || []; window._dlSon = liste; } catch (e) {}
-    let dl = liste.find(x => x.durum === 'bekliyor' && kucuk(x.alici) === kucuk(aktifOgrenciAdi) && kucuk(x.gonderen) === kucuk(b.gonderen));
-    if (!dl) return;
-    if(window.dmPapiNotices?.defer('duel:'+b.sat,()=>davetGoster(b)))return;
-    let p = document.createElement('div'); p.className = 'dv-perde'; p.setAttribute('role', 'dialog'); p.setAttribute('aria-modal', 'true'); p.setAttribute('aria-label', 'Düello daveti');
-    p.innerHTML = `<div class="dv-kart"><div class="dv-kilic">⚔️</div><h3>Düello daveti!</h3><p><b>${guvenliMetin(b.gonderen)}</b> seni <b>${OYUN_AD[dl.oyun] || dl.oyun}</b> düellosuna çağırıyor.<br>Kazanan +3 ⚡ ve +20 XP alır!</p><button class="dv-kabul">⚔️ Kabul et ve oyna</button><button class="dv-vaz">Sonra</button></div>`;
-    document.body.appendChild(p);
-    setTimeout(() => p.querySelector('.dv-kabul').focus({ preventScroll: true }), 300);
-    p.querySelector('.dv-kabul').onclick = async () => {
-      p.remove();
-      try { await fetch(`${apiURL}?islem=duelloYanit&ogrenci=${enc(aktifOgrenciAdi)}&id=${enc(dl.id)}&kabul=1`); } catch (e) {}
-      if (typeof yoToast === 'function') yoToast('⚔️ Düello başladı! En yüksek puanını yap, 24 saatin var.');
-      duelloOyununuAc(dl.oyun);
-    };
-    p.querySelector('.dv-vaz').onclick = () => {
-      p.remove();
-      let saat = Math.max(1, Math.round((dl.kalanDk || 1440) / 60));
-      if (typeof yoToast === 'function') yoToast(`⏳ Tamam! Bu daveti kabul edip oynamak için ${saat} saatin var. Keşfet › Düellolarım'dan ulaşabilirsin.`);
-    };
-  }
-  async function bildirimYokla() {
-    if (!girisli() || document.hidden) return;
-    const notifyOwner=kucuk(aktifOgrenciAdi);
-    try {
-      let r = await fetch(`${apiURL}?islem=bildirimlerim&ogrenci=${enc(aktifOgrenciAdi)}`);
-      let d = await r.json(), liste = ((d && d.liste) || []).slice().reverse();
-      liste.forEach(b => {
-        let key = String(b.sat);
-        if (gorulen.has(key)) return;
-        gorulen.add(key);
-        if (!ilkTur || b.tur === 'duello') kuyruk.push(b);
-      });
-      sessionStorage.setItem('ing_cb_gor', JSON.stringify([...gorulen].slice(-300)));
-      ilkTur = false;
-    } catch (e) {}
-  }
-  setInterval(bildirimYokla, 180000);   /* 45 sn → 3 dk */
   /* Düello durumunu 2 dakikada bir yokla: rakip oynadıysa sunucu bildirim üretir */
   setInterval(async () => {
     if (!girisli() || document.hidden) return;
     try { let r = await fetch(`${apiURL}?islem=duellolarim&ogrenci=${enc(aktifOgrenciAdi)}`); let d = await r.json(); window._dlSon = (d && d.liste) || []; } catch (e) {}
   }, 300000);   /* 2 dk → 5 dk */
-  setInterval(() => { if (girisli() && ilkTur) bildirimYokla(); }, 5000);
-  setInterval(() => {
-    if (!kuyruk.length || cbAcik || oyunda() || !girisli()) return;
-    let b = kuyruk.shift();
-    if (b.tur === 'duello') davetGoster(b); else kartGoster(b);
-  }, 1500);
-
   /* ===== 7) Keşfet: düellolarım aç/kapa + rozet ===== */
   setInterval(() => {
     document.querySelectorAll('#tab-meduakis .dl-kart').forEach(k => {
@@ -19018,12 +18953,15 @@ body.duyuru-acik .t2-perde, body.duyuru-acik .bk-kart { visibility:hidden !impor
   /* Düello Davet Dinleyicisi */
   async function duelloBildirimYokla() {
     if (!girisli() || document.hidden || oyunda()) return;
+    const owner=kucuk(aktifOgrenciAdi);
     try {
       let r = await fetch(`${apiURL}?islem=bildirimlerim&ogrenci=${enc(aktifOgrenciAdi)}`);
       let d = await r.json(), liste = ((d && d.liste) || []).filter(b => b.tur === 'duello');
+      if (owner!==kucuk(aktifOgrenciAdi)) return;
       if (liste.length > 0) {
-        let b = liste[liste.length - 1];
-        let gorulenKey = 'ing_dl_gor_' + b.sat;
+        const b=liste.slice().reverse().find(note=>!sessionStorage.getItem('ing_dl_gor_'+owner+':'+note.sat));
+        if(!b)return;
+        const gorulenKey='ing_dl_gor_'+owner+':'+b.sat;
         if (!sessionStorage.getItem(gorulenKey)) {
           sessionStorage.setItem(gorulenKey, '1');
           davetGoster(b);
@@ -19031,30 +18969,38 @@ body.duyuru-acik .t2-perde, body.duyuru-acik .bk-kart { visibility:hidden !impor
       }
     } catch (e) {}
   }
-  setInterval(duelloBildirimYokla, 120000);   /* [Kota] 1 dk -> 2 dk */
+  setInterval(duelloBildirimYokla, 120000);
+  setTimeout(duelloBildirimYokla,5000);   /* [Kota] 1 dk -> 2 dk */
 
   async function davetGoster(b) {
     if(window.dmPapiNotices?.defer('duel:'+b.sat,()=>davetGoster(b)))return;
+    const owner=kucuk(aktifOgrenciAdi);
     let liste = [];
     try { let r = await fetch(`${apiURL}?islem=duellolarim&ogrenci=${enc(aktifOgrenciAdi)}`); let d = await r.json(); liste = (d && d.liste) || []; window._dlSon = liste; } catch (e) {}
-    let dl = liste.find(x => x.durum === 'bekliyor' && kucuk(x.alici) === kucuk(aktifOgrenciAdi) && kucuk(x.gonderen) === kucuk(b.gonderen));
-    if (!dl) return;
+    const dl=window.DMNotificationActions?.duelFor(b,liste,owner);
+    if (!dl||owner!==kucuk(aktifOgrenciAdi)) return;
     if(window.dmPapiNotices?.defer('duel:'+b.sat,()=>davetGoster(b)))return;
     let p = document.createElement('div'); p.className = 'dv-perde'; p.setAttribute('role', 'dialog'); p.setAttribute('aria-modal', 'true'); p.setAttribute('aria-label', 'Düello daveti');
-    p.innerHTML = `<div class="dv-kart"><div class="dv-kilic">⚔️</div><h3>Düello daveti!</h3><p><b>${guvenliMetin(b.gonderen)}</b> seni <b>${OYUN_AD[dl.oyun] || dl.oyun}</b> düellosuna çağırıyor.<br>Kazanan +3 ⚡ ve +20 XP alır!</p><button class="dv-kabul">⚔️ Kabul et ve oyna</button><button class="dv-vaz">Sonra</button></div>`;
+    p.innerHTML = `<div class="dv-kart"><div class="dv-kilic">⚔️</div><h3>Düello daveti!</h3><p><b>${guvenliMetin(b.gonderen)}</b> seni <b>${OYUN_AD[dl.oyun] || dl.oyun}</b> düellosuna çağırıyor.<br>Kazanan +3 ⚡ ve +20 XP alır!</p><button class="dv-kabul">⚔️ Kabul et ve oyna</button><button class="dv-vaz">Reddet</button><p data-duel-status role="status"></p></div>`;
     document.body.appendChild(p);
     setTimeout(() => p.querySelector('.dv-kabul').focus({ preventScroll: true }), 300);
-    p.querySelector('.dv-kabul').onclick = async () => {
-      p.remove();
-      try { await fetch(`${apiURL}?islem=duelloYanit&ogrenci=${enc(aktifOgrenciAdi)}&id=${enc(dl.id)}&kabul=1`); } catch (e) {}
-      if (typeof yoToast === 'function') yoToast('⚔️ Düello başladı! En yüksek puanını yap, 24 saatin var.');
-      duelloOyununuAc(dl.oyun);
-    };
-    p.querySelector('.dv-vaz').onclick = () => {
-      p.remove();
-      let saat = Math.max(1, Math.round((dl.kalanDk || 1440) / 60));
-      if (typeof yoToast === 'function') yoToast(`⏳ Tamam! Bu daveti kabul edip oynamak için ${saat} saatin var. Keşfet › Düellolarım'dan ulaşabilirsin.`);
-    };
+    const buttons=[...p.querySelectorAll('button')];
+    async function yanit(kabul){
+      if(owner!==kucuk(aktifOgrenciAdi)){p.remove();return;}
+      buttons.forEach(button=>button.disabled=true);
+      try{
+        await window.dmMeduPro.api('duelloYanit',{id:dl.id,kabul});
+        if(!p.isConnected||owner!==kucuk(aktifOgrenciAdi)){p.remove();return;}
+        p.remove();
+        if(kabul)duelloOyununuAc(dl.oyun);
+      }catch(e){
+        if(!p.isConnected)return;
+        p.querySelector('[data-duel-status]').textContent=e.message||'Yanıt gönderilemedi. Tekrar dene.';
+        buttons.forEach(button=>button.disabled=false);
+      }
+    }
+    buttons[0].onclick=()=>yanit(true);
+    buttons[1].onclick=()=>yanit(false);
   }
 
   /* Keşfet sekmesindeki Düellolarım akordiyon ve buton işlemleri */
