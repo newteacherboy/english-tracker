@@ -32,8 +32,6 @@
 .rp-gates button {position:relative;display:grid;justify-items:center;align-content:start;aspect-ratio:1/1.08;width:100%;padding:11% 11% 0;border:0;border-radius:18%;background:transparent url("premium-assets/runners-gate.webp") center/100% 100% no-repeat;color:#342011;filter:drop-shadow(0 4px 3px #27180485)}
 .rp-gates span {display:grid;place-items:center;min-height:2.2em;width:100%;padding:.08em .12em;font-size:clamp(.72rem,3.4vw,1.08rem);line-height:1.08;overflow-wrap:anywhere;font-weight:900;text-shadow:0 1px #fff1b8}
 .rp-gates .rp-selected {filter:drop-shadow(0 0 8px #ffe181) drop-shadow(0 4px 3px #27180485)}
-.rp-gates button[data-outcome=correct] {filter:drop-shadow(0 0 13px #adff47) drop-shadow(0 0 6px #c6ff52)}
-.rp-gates button[data-outcome=wrong] {filter:drop-shadow(0 0 10px #f54c35);animation:rp-shake .28s ease-out}
 .rp-trail {display:none;position:absolute;z-index:1;top:55%;bottom:12%;left:calc(12% + (76% / var(--lanes)) * (var(--lane,0) + .5));width:8%;transform:translateX(-50%);background:linear-gradient(transparent,#d8ff74 30%,#65ec4f 66%,transparent);clip-path:polygon(45% 0,55% 0,100% 100%,0 100%);opacity:.8;pointer-events:none}
 .rp-game[data-outcome=correct] .rp-trail {display:block}
 .rp-flock {position:absolute;z-index:2;bottom:16%;left:calc(12% + (76% / var(--lanes)) * (var(--lane) + .5));transform:translateX(-50%);width:36%;display:flex;flex-wrap:wrap;justify-content:center;align-content:end;transition:left .22s ease-out;pointer-events:none}
@@ -41,7 +39,7 @@
 .rp-flock img:first-child {width:57%;margin-inline:23%}
 .rp-flock img:nth-child(even) {animation-delay:-.17s}
 @keyframes rp-bob {to{transform:translateY(-5px) rotate(3deg)}}
-@keyframes rp-shake {35%{transform:translateX(5px)} 70%{transform:translateX(-4px)}}
+@keyframes rp-shake {35%{transform:translateX(calc(-50% + 5px))} 70%{transform:translateX(calc(-50% - 4px))}}
 .rp-message {position:absolute;z-index:3;bottom:2%;left:5%;right:5%;margin:0;text-align:center;padding:.4rem;border-radius:12px;background:#102519ed}
 .rp-message:empty {display:none}
 .rp-game[data-outcome=correct] .rp-message {background:#16542e}
@@ -49,10 +47,15 @@
 .rp-game [data-retry] {position:absolute;z-index:3;bottom:11%;left:50%;transform:translateX(-50%)}
 @media (prefers-reduced-motion:reduce) {
   .rp-gates {top:43%;transform:none}
-  .rp-flock img,.rp-gates button[data-outcome=wrong] {animation:none}
+  .rp-flock img {animation:none}
   .rp-flock {transition:none}
 }
+.rp-surge {position:absolute;z-index:3;bottom:31%;left:0;right:0;text-align:center;pointer-events:none}
+.rp-surge span {display:inline-block;color:#eaffad;font-size:clamp(1.55rem,7vw,2.6rem);font-weight:950;text-shadow:0 3px 3px #183e10,0 0 12px #78db32}
 @media (prefers-reduced-motion:no-preference) {
-  .rp-game[data-outcome=correct] .rp-flock {animation:rp-cross .65s ease-out both}
-  @keyframes rp-cross {to{transform:translate(-50%,-45%) scale(.8)}}
+  .rp-flock img.rp-join {animation:rp-join .39s cubic-bezier(.16,.8,.32,1.2) var(--join-delay) both}
+  .rp-surge span {animation:rp-surge .7s ease-out both}
+  .rp-game[data-outcome=wrong] .rp-flock {animation:rp-shake .28s ease-out}
+  @keyframes rp-join {from{opacity:0;transform:translateY(30px) scale(.25)} to{opacity:1;transform:none}}
+  @keyframes rp-surge {0%{opacity:0;transform:translateY(12px) scale(.65)} 22%{opacity:1;transform:translateY(0) scale(1.12)} 75%{opacity:1} 100%{opacity:0;transform:translateY(-35px) scale(1)}}
 }
