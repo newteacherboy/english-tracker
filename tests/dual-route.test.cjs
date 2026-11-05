@@ -48,17 +48,18 @@ test('the gate waits for the start path when it has not arrived yet',async()=>{c
 test('learners with the test or existing progress switch normally; a stale independent choice shows school while the test is needed',async()=>{let {c}=gated({startPath:{learningRoute:'open'}});assert.equal(await c.dmLearningRoute.set('independent'),true);assert.equal(c.yo.dmLearningPurpose,'independent');({c}=gated({startPath:{learningRoute:'needs-test'}}));c.yo.dmLearningPurpose='independent';assert.equal(c.dmLearningRoute.purpose(),'school');});
 test('learners on the learning route without a valid test are moved to the school route on entry',async()=>{const {c}=gated({startPath:{learningRoute:'needs-test'}});c.yo.dmLearningPurpose='independent';const toasts=[];c.yoToast=m=>toasts.push(m);c.document.dispatchEvent(new c.CustomEvent('dm:progression-status',{}));await new Promise(r=>setTimeout(r,20));assert.equal(c.yo.dmLearningPurpose,'school');assert.equal(c.saved,1);assert.equal(c.opened,1,'parkur opened');assert(toasts.some(t=>/seviye testini/.test(t)));});
 
-test('sky academy uses real chapter identities at both ends, with one active mascot and a switch below its chest',async()=>{
+test('green learning route uses real chapter identities, a single active mascot and a separate path chest',async()=>{
  for(const focus of [0,1,14,79]){
   const c=fixture();c.yo.dmLearningPurpose='independent';
   c.dmStoryPath={overview:async()=>({chapters:Array.from({length:80},(_,i)=>({id:1001+i,title:(i+1)+'. Daily Life',cefr:'A1',current:i===focus,done:i<focus,available:i<=focus}))})};
   const root={isConnected:true,html:'',querySelectorAll:()=>[],querySelector:()=>({outerHTML:''}),insertAdjacentHTML(_,h){this.html+=h;}};
   c.dmParkurMapMount({dataset:{rtBound:'1'},querySelector:()=>root});await new Promise(r=>setImmediate(r));
-  assert.match(root.html,/bi-scene bi-sky/);assert.match(root.html,/Gökyüzü Akademisi/);
-  assert.equal((root.html.match(/class="bi-stop /g)||[]).length,4);assert.equal((root.html.match(/class="bi-mascot"/g)||[]).length,1);
+  assert.match(root.html,/bi-scene rt-green-route/);assert.match(root.html,/Öğrenme Yolum/);
+  assert.equal((root.html.match(/class="rt-green-stop/g)||[]).length,Math.min(80,focus+9)-Math.max(0,focus-5));assert.equal((root.html.match(/class="rt-green-papi"/g)||[]).length,1);
   assert.match(root.html,new RegExp('data-chapter="'+(1001+focus)+'"[^>]*aria-current="step"'));
-  assert.match(root.html,new RegExp('<progress value="'+focus+'" max="80"'));
-  assert(root.html.indexOf('data-rt="other-route"')>root.html.indexOf('data-rt="chests"'));
+  assert.match(root.html,/rt-green-unit[^]*data-rt="switch-route"/);
+  assert.match(root.html,/rt-green-scroll[^]*rt-green-chest[^]*data-rt="chests"/);
+  if(focus<79)assert.match(root.html,new RegExp('data-chapter="'+(1002+focus)+'" disabled'));
   assert(!root.html.includes('data-rt="school-stop"'));
  }
 });
