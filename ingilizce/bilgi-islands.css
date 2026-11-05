@@ -139,9 +139,9 @@ body:has(#tab-dunya.active .rt-medal-school) #bzParkur{background:#151f42!import
  --medal-muted:#c9e6d5;--medal-trail:#abcabc;--medal-disc-light:#639885;--medal-disc:#316e59;--medal-disc-edge:#204d3c;
  --medal-active-light:#abf7d1;--medal-active-edge:#29b883;--medal-active-ink:#073829;
  --medal-size:clamp(68px,21vw,85px);--medal-current-size:clamp(87px,27vw,111px);
- --medal-wallet-height:calc(max(10px,var(--bi-safe-top)) + 54px);
+
  display:flex;flex-direction:column;align-items:center;
- padding:var(--medal-wallet-height) 12px calc(max(10px,var(--bi-safe-bottom)) + var(--bi-nav-h) + 6px);
+ padding:4px 12px calc(max(10px,env(safe-area-inset-bottom,0px)) + var(--bi-nav-h) + 6px)!important;
  box-sizing:border-box;background:linear-gradient(155deg,var(--medal-bg),var(--medal-bg-dark));color:var(--medal-ink)
 }
 .rt-medal-school{
@@ -151,30 +151,41 @@ body:has(#tab-dunya.active .rt-medal-school) #bzParkur{background:#151f42!import
  --medal-active-light:#8de0ff;--medal-active-edge:#138ed2;--medal-active-ink:#082649
 }
 .rt-medal-route::before{content:none}
+/* Keep the wallet in the layout so native viewport rules cannot overlay the unit card. */
+body #tab-dunya .bz-ic:has(.rt-medal-route){
+ display:grid!important;grid-template-rows:auto minmax(0,1fr);
+ padding-top:max(8px,env(safe-area-inset-top,0px))!important
+}
+body #tab-dunya .bz-ic:has(.rt-medal-route)>#dmParkurScroll{
+ position:relative!important;inset:auto!important;height:auto!important
+}
 body #tab-dunya .bz-ic:has(.rt-medal-route)>.rt-top{
- left:50%!important;transform:translateX(-50%)!important;width:min(calc(100% - 24px),560px)!important
+ position:relative!important;inset:auto!important;transform:none!important;
+ width:min(calc(100% - 24px),560px)!important;min-height:48px!important;
+ margin:0 auto!important;display:grid!important;align-content:center
 }
 body #tab-dunya .bz-ic:has(.rt-medal-route) .dm-unified-wallet.dm-papi-wallet{
  background:none!important;border:0!important;box-shadow:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important
 }
-body #tab-dunya .bz-ic:has(.rt-medal-route) .dm-unified-wallet.dm-papi-wallet>button{color:#f0fff7!important}
+body #tab-dunya .bz-ic:has(.rt-medal-route) .dm-unified-wallet.dm-papi-wallet :is(button,.dm-pw-copy,[data-pw-value]){color:#f0fff7!important;-webkit-text-fill-color:#f0fff7!important}
 
-.rt-medal-header,.rt-medal-scroll{width:min(100%,560px)}
+.rt-medal-header,.rt-medal-scroll{width:min(100%,620px)}
+.rt-medal-header{flex:none}
 .rt-medal-unit{
  display:flex;justify-content:space-between;align-items:center;gap:8px;
- border:1px solid var(--medal-border);border-radius:16px;min-height:60px;padding:8px 10px 8px 12px;background:var(--medal-surface)
+ border:1px solid var(--medal-border);border-radius:16px;min-height:60px;padding:8px 10px 8px 12px!important;background:var(--medal-surface)
 }
 .rt-medal-unit h1{font:900 clamp(15px,4.5vw,20px)/1.15 Nunito,system-ui;margin:0 0 3px;color:var(--medal-ink)}
 .rt-medal-unit p{font:800 12px/1.2 Nunito,system-ui;margin:0;color:var(--medal-muted)!important;overflow-wrap:anywhere}
 .rt-medal-unit button,.rt-medal-tools button{
  display:flex;align-items:center;justify-content:center;gap:5px;min-height:42px;border:1px solid var(--medal-border);
- border-radius:12px;padding:5px 7px;background:var(--medal-secondary);color:var(--medal-ink);font-size:12px!important
+ border-radius:12px;padding:5px 7px!important;background:var(--medal-secondary);color:var(--medal-ink);font-size:12px!important
 }
 .rt-medal-unit button{flex-shrink:0;background:var(--medal-route-button);white-space:nowrap}
 .rt-medal-unit svg,.rt-medal-tools svg,.rt-medal-stop svg{
  width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round
 }
-.rt-medal-tools{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin:10px 0 5px}
+.rt-medal-tools{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin:10px 0 8px!important}
 .rt-medal-tools button{position:relative;min-width:0;flex-direction:column;gap:3px;padding-inline:3px;min-height:54px}
 .rt-medal-tools button:hover,.rt-medal-unit button:hover{filter:brightness(1.12)}
 .rt-medal-scroll{
@@ -186,44 +197,61 @@ body #tab-dunya .bz-ic:has(.rt-medal-route) .dm-unified-wallet.dm-papi-wallet>bu
 .rt-medal-trail path{fill:none;stroke:var(--medal-trail);stroke-width:2;stroke-dasharray:4 7;stroke-linecap:round;vector-effect:non-scaling-stroke}
 .rt-medal-row{position:absolute;left:var(--stop-x);top:var(--stop-y);width:0;height:0}
 .rt-medal-stop{
- position:absolute;left:0;top:0;transform:translate(-50%,-50%);width:var(--medal-size);height:var(--medal-size);display:grid;place-content:center;justify-items:center;
- border:3px solid var(--medal-disc-light);border-radius:50%;
- background:linear-gradient(150deg,var(--medal-disc-light),var(--medal-disc) 52%);color:var(--medal-ink);
- box-shadow:0 5px 0 var(--medal-disc-edge),0 8px 10px #0003,inset 0 0 8px #fff2;
- font-size:24px!important;line-height:1;gap:3px
+ position:absolute;left:0;top:0;transform:translate(calc(var(--medal-size) / -2),-50%);
+ border:0;background:none;padding:0;color:var(--medal-ink)
 }
-.rt-medal-stop.is-locked{opacity:1;filter:saturate(.78) brightness(.88);cursor:default}
+.rt-medal-disc{
+ box-sizing:border-box;position:relative;display:grid;place-content:center;justify-items:center;gap:3px;
+ width:var(--medal-size);height:var(--medal-size);border:3px solid var(--medal-disc-light);border-radius:50%;
+ background:radial-gradient(ellipse at 30% 15%,#fff5,transparent 50%),linear-gradient(155deg,var(--medal-disc-light),var(--medal-disc) 72%);
+ box-shadow:0 7px 0 var(--medal-disc-edge),0 10px 13px #0006,inset 0 2px 3px #fff6,inset 0 -5px 7px #0002;
+ font-size:24px;line-height:1
+}
+.rt-medal-stop.is-locked{opacity:1;filter:saturate(.62) brightness(.85);cursor:default}
 .rt-medal-stop svg{width:13px;height:13px}
 .rt-medal-stop .rt-v3-stars{display:flex;gap:2px}
 .rt-medal-stop .rt-v3-stars i{font:800 15px/1 system-ui;color:var(--medal-muted)}
 .rt-medal-stop .rt-v3-stars i.on{color:#ffcf57}
 .rt-medal-stop .rt-v3-stars i:nth-child(2){transform:translateY(-2px)}
 .rt-medal-row.is-current{z-index:1}
-.rt-medal-row.is-current .rt-medal-stop{width:var(--medal-current-size);height:var(--medal-current-size);
- background:linear-gradient(155deg,var(--medal-active-light),var(--medal-active) 65%,var(--medal-active-edge));
- border:4px solid var(--medal-active-edge);color:var(--medal-active-ink);
- box-shadow:0 5px 0 var(--medal-active-edge),inset 0 0 10px #fff5;font-size:clamp(33px,11vw,46px)!important}
-.rt-medal-row.is-current .rt-medal-stop::after{content:"";position:absolute;inset:4px;border:3px dashed var(--medal-active-light);border-radius:inherit;pointer-events:none}
-.rt-medal-papi{position:absolute;left:0;bottom:calc(var(--medal-current-size) * .28);width:calc(var(--medal-current-size) * 1.08);height:auto;transform:translateX(-77%);pointer-events:none;z-index:2}
 .rt-medal-start{
- position:absolute;top:0;left:calc(var(--medal-current-size) * .47);transform:translateY(-50%);white-space:nowrap;min-height:44px;
- padding:7px 15px;border:1px solid var(--medal-active-light);border-radius:0 22px 22px 0;background:linear-gradient(var(--medal-active-light),var(--medal-active));color:var(--medal-active-ink);box-shadow:0 3px 0 var(--medal-active-edge);font-size:clamp(14px,4.4vw,18px)!important
+ display:flex;align-items:center;transform:translate(calc(var(--medal-current-size) / -2),-50%);
+ border-radius:999px;color:var(--medal-active-ink)
+}
+.rt-medal-start .rt-medal-disc{
+ z-index:1;width:var(--medal-current-size);height:var(--medal-current-size);
+ background:radial-gradient(ellipse at 28% 15%,#fff9,transparent 52%),linear-gradient(155deg,var(--medal-active-light),var(--medal-active) 60%,var(--medal-active-edge));
+ border:4px solid var(--medal-active-edge);
+ box-shadow:0 7px 0 var(--medal-active-edge),0 0 19px color-mix(in srgb,var(--medal-active) 40%,transparent),inset 0 2px 6px #fffd,inset 0 -6px 9px #0002;font-size:clamp(33px,11vw,46px)
+}
+.rt-medal-start .rt-medal-disc::after{content:"";position:absolute;inset:4px;border:3px dashed var(--medal-active-light);border-radius:inherit;pointer-events:none}
+.rt-medal-start-label{
+ display:flex;align-items:center;gap:7px;min-height:46px;white-space:nowrap;
+ margin-left:-22px!important;padding:8px 16px 8px 34px!important;
+ border:1px solid var(--medal-active-light);border-radius:999px;
+ background:linear-gradient(var(--medal-active-light),var(--medal-active));box-shadow:0 5px 0 var(--medal-active-edge),inset 0 2px 3px #fff8;
+ font-size:clamp(14px,4.4vw,18px)
+}
+.rt-medal-papi{
+ position:absolute;left:0;bottom:calc(var(--medal-current-size) * .31);
+ width:calc(var(--medal-current-size) * 1.16);height:auto;transform:translateX(-61%);pointer-events:none;z-index:2
 }
 .rt-medal-chest{
- position:absolute;right:4%;transform:translateY(-48%);display:grid;justify-items:center;gap:3px;
- min-width:50px;min-height:44px;padding:2px;border:0;background:none;color:var(--medal-muted);z-index:2
+ position:absolute;left:84%;transform:translate(-50%,-48%);display:grid;justify-items:center;gap:2px;
+ min-width:54px;min-height:48px;padding:3px;border:0;border-radius:14px;
+ background:var(--medal-bg);color:var(--medal-muted);z-index:2
 }
-.rt-medal-chest img{width:49px;height:46px;object-fit:contain}
+.rt-medal-chest img{width:clamp(51px,16vw,70px);height:clamp(44px,14vw,60px);object-fit:contain;transform:scale(1.13)}
 .rt-medal-chest span{font:900 10px/1.15 Nunito,system-ui}
 .rt-medal-chest.is-ready img{animation:rt-medal-chest-hop 2.6s ease-in-out infinite}
-.rt-medal-chest.is-ready span{background:#ffd56a;color:#332102;border-radius:12px;padding:4px 5px}
+.rt-medal-chest.is-ready span{background:#ffd56a;color:#332102;border-radius:12px;padding:4px 6px!important}
 .rt-medal-route button:focus-visible,.rt-medal-scroll:focus-visible{outline:3px solid #ffd56a;outline-offset:2px}
 @media(max-height:650px){.rt-medal-route{--bi-nav-h:62px}}
 @media(prefers-reduced-motion:reduce){.rt-medal-chest.is-ready img{animation:none}}
 }
 @keyframes rt-medal-chest-hop {
- 0%,34%,100%{transform:none}
- 8%{transform:scale(1.06,.93)}
- 18%{transform:translateY(-7px) rotate(-5deg)}
- 27%{transform:scale(1.04,.96)}
+ 0%,34%,100%{transform:scale(1.13)}
+ 8%{transform:scale(1.19,1.05)}
+ 18%{transform:translateY(-7px) rotate(-5deg) scale(1.13)}
+ 27%{transform:scale(1.17,1.08)}
 }
