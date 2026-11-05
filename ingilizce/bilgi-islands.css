@@ -218,6 +218,22 @@ body #tab-dunya .bz-ic:has(.rt-medal-route) .dm-unified-wallet.dm-papi-wallet :i
  overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:#4f7969 transparent
 }
 .rt-medal-world{position:relative;width:100%;min-height:100%}
+.rt-medal-divider{
+ position:absolute;inset-inline:6%;transform:translateY(-50%);margin:0;
+ display:grid;grid-template-columns:minmax(12px,1fr) minmax(0,auto) minmax(12px,1fr);
+ align-items:center;gap:clamp(10px,3vw,18px);text-align:center;color:var(--medal-ink);
+ font:800 clamp(17px,4vw,21px)/1.15 Nunito,system-ui;
+}
+.rt-medal-divider::before,.rt-medal-divider::after{
+ content:"";height:1px;background:var(--medal-active-light);opacity:.62
+}
+.rt-medal-divider span{display:grid;gap:3px;max-width:36ch;overflow-wrap:anywhere}
+.rt-medal-divider small{
+ color:var(--medal-active-light);font:800 11px/1.2 Nunito,system-ui;
+ letter-spacing:.045em;text-transform:uppercase
+}
+.rt-medal-divider strong{font:inherit}
+
 .rt-medal-row{position:absolute;left:var(--stop-x);top:var(--stop-y);width:0;height:0}
 .rt-medal-stop{
  position:absolute;left:0;top:0;transform:translate(calc(var(--medal-size) / -2),-50%);
