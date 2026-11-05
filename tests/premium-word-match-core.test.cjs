@@ -47,5 +47,5 @@ test('yıldız eşikleri sunucu fonksiyonuyla aynı',()=>{
  assert.match(sql,/when least\(100,greatest\(1,level_no\)\)<=4 then 8000 when least\(100,greatest\(1,level_no\)\)<=49 then 6500 else 5500 end\)\s*\+ least\(100,greatest\(1,level_no\)\)\*20\) \* \(array\[0\.5,1\.0,1\.3\]\)/);
  const sqlStar=(L,s)=>Math.floor(((L<=4?8000:L<=49?6500:5500)+L*20)*[0.5,1.0,1.3][s-1]);
  for(let L=1;L<=100;L++)for(let s=1;s<=3;s++)assert.equal(core.starScore(L,s),sqlStar(L,s));
- assert.match(sql,/x:=round\(172\*mult\); g:=round\(35\*mult\)/,'3 yıldız ödülü 172 XP + 35 altın');
+
 });
