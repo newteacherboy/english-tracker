@@ -354,12 +354,12 @@ html.dm-teacher-portal #tab-aktiviteler#tab-aktiviteler .gg-page .gg-tabs{grid-t
  padding-bottom:calc(95px + env(safe-area-inset-bottom,0px))!important;
 }
 #tab-aktiviteler#tab-aktiviteler .gg-page.gg-redesign{
- --gg-ink:#f4f7ff;--gg-muted:#bfcde6;--gg-edge:#54729d;
+ --gg-shelf-ink:#f4f7ff;--gg-muted:#bfcde6;--gg-edge:#54729d;
  --gg-panel:linear-gradient(155deg,#33496f,#1e2e4b);
- background:#151d37!important;color:var(--gg-ink)!important;
+ background:#151d37!important;color:var(--gg-shelf-ink)!important;
  padding:8px clamp(9px,2.5vw,22px) 14px!important;
 }
-#tab-aktiviteler#tab-aktiviteler .gg-page.gg-redesign :is(h1,h2,h3){color:var(--gg-ink)!important}
+#tab-aktiviteler#tab-aktiviteler .gg-page.gg-redesign :is(h1,h2,h3){color:var(--gg-shelf-ink)!important}
 #tab-aktiviteler#tab-aktiviteler .gg-redesign .gg-brand{
  padding:0;margin-bottom:6px;border:0;background:none;
 }
@@ -367,11 +367,11 @@ html.dm-teacher-portal #tab-aktiviteler#tab-aktiviteler .gg-page .gg-tabs{grid-t
 #tab-aktiviteler#tab-aktiviteler .gg-redesign .gg-brand .dm-papi-wallet>button{
  flex-direction:row!important;min-height:44px!important;height:44px!important;gap:2px!important;
  border:0!important;background:none!important;box-shadow:none!important;
- color:var(--gg-ink)!important;-webkit-text-fill-color:var(--gg-ink)!important;
+ color:var(--gg-shelf-ink)!important;-webkit-text-fill-color:var(--gg-shelf-ink)!important;
 }
 #tab-aktiviteler#tab-aktiviteler .gg-redesign .gg-brand [data-pw-minutes]{display:none!important}
 #tab-aktiviteler#tab-aktiviteler .gg-redesign .gg-brand:not(.dm-has-wallet)>span{background:#263955;border-color:var(--gg-edge)}
-#tab-aktiviteler#tab-aktiviteler .gg-redesign .gg-brand:not(.dm-has-wallet)>b{color:var(--gg-ink)}
+#tab-aktiviteler#tab-aktiviteler .gg-redesign .gg-brand:not(.dm-has-wallet)>b{color:var(--gg-shelf-ink)}
 #tab-aktiviteler#tab-aktiviteler .gg-redesign .gg-title h1{
  margin:0 0 10px!important;font:1000 clamp(30px,8vw,43px)/1 Nunito,system-ui,sans-serif!important;
 }
@@ -381,7 +381,7 @@ html.dm-teacher-portal #tab-aktiviteler#tab-aktiviteler .gg-page .gg-tabs{grid-t
 }
 #tab-aktiviteler#tab-aktiviteler .gg-redesign .gg-tabs>button{
  grid-column:span 3;gap:2px!important;min-height:45px!important;padding:3px 1px!important;
- background:var(--gg-panel)!important;color:var(--gg-ink)!important;
+ background:var(--gg-panel)!important;color:var(--gg-shelf-ink)!important;
  border:1px solid var(--gg-edge)!important;border-radius:13px!important;
  box-shadow:inset 0 1px 3px #ffffff36,0 3px 0 #10192f!important;
  font:900 clamp(10px,3vw,14px)/1.08 Nunito,system-ui,sans-serif!important;
@@ -397,7 +397,7 @@ html.dm-teacher-portal #tab-aktiviteler#tab-aktiviteler .gg-page .gg-tabs{grid-t
 #tab-aktiviteler#tab-aktiviteler .gg-redesign .gg-tabs #ggPremiumTab:not([aria-pressed=true]){border-color:#edba58!important;color:#ffe7aa!important}
 #tab-aktiviteler#tab-aktiviteler .gg-redesign .au-game-icon{width:27px!important;height:27px!important}
 #tab-aktiviteler#tab-aktiviteler .gg-redesign :is(.gg-filters,.az-grid2x2)[hidden]{display:none!important}
-#tab-aktiviteler#tab-aktiviteler .gg-redesign .gg-filters button{background:#263959!important;color:var(--gg-ink)!important;border-color:var(--gg-edge)!important}
+#tab-aktiviteler#tab-aktiviteler .gg-redesign .gg-filters button{background:#263959!important;color:var(--gg-shelf-ink)!important;border-color:var(--gg-edge)!important}
 #tab-aktiviteler#tab-aktiviteler .gg-redesign .gg-filters button[aria-pressed=true]{background:#8edfff!important;color:#08273c!important}
 }
 .gg-redesign .gg-overview{display:grid;gap:10px;margin-top:9px}
@@ -428,7 +428,7 @@ html.dm-teacher-portal #tab-aktiviteler#tab-aktiviteler .gg-page .gg-tabs{grid-t
 }
 .gg-redesign .gg-shelf-card{
  display:flex;flex-direction:column;align-items:stretch;gap:5px;
- min-width:0;padding:0;border:0;border-radius:11px;background:none;color:var(--gg-ink);text-align:left;
+ min-width:0;padding:0;border:0;border-radius:11px;background:none;color:var(--gg-shelf-ink);text-align:left;
 }
 .gg-redesign .gg-cover{
  position:relative;display:block;isolation:isolate;overflow:hidden;width:100%;aspect-ratio:2.1/1;
@@ -453,7 +453,7 @@ html.dm-teacher-portal #tab-aktiviteler#tab-aktiviteler .gg-page .gg-tabs{grid-t
 .gg-redesign .gg-shelf-card[aria-disabled=true] .gg-cover{filter:grayscale(.5);opacity:.72}
 .gg-redesign .gg-group p,.gg-redesign .gg-tools p,.gg-redesign .gg-friends>span{color:var(--gg-muted)}
 .gg-redesign .gg-shortcuts{margin:14px auto 0;text-align:center}
-.gg-redesign .kg-hub button{background:#233c60;color:var(--gg-ink);border-color:var(--gg-edge);padding:6px}
+.gg-redesign .kg-hub button{background:#233c60;color:var(--gg-shelf-ink);border-color:var(--gg-edge);padding:6px}
 .gg-redesign .kg-hub .kg-list>button{box-shadow:0 2px 0 #132544;display:flex;flex-direction:column;align-items:flex-start;text-align:left}
 .gg-redesign .kg-hub .kg-list small{color:var(--gg-muted)}
 .gg-redesign .kg-hub .kg-list>button>span:first-child{background:#172b4c}

@@ -32,6 +32,7 @@ const compact=await page.evaluate(()=>{
 assert.equal(compact.cards.length,7);
 assert.equal(await page.locator('.gg-tabs').evaluate(el=>getComputedStyle(el).gridTemplateColumns.split(' ').length),12);
 assert.equal(await page.locator('.gg-filters:visible').count(),0);
+assert.equal(await page.locator('#ggOnlineTab span').evaluate(el=>getComputedStyle(el).color),'rgb(244, 247, 255)');
 assert.equal(await page.locator('.gg-brand [data-pw]:visible').count(),4);
 assert(compact.bannerHeight <= 210,'Games header not compact: '+JSON.stringify(compact));
 assert(compact.cards.every(c=>c.height<=125&&c.width>35),'Game category overflow: '+JSON.stringify(compact));
