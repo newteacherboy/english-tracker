@@ -109,6 +109,25 @@ begin
     where student_id=p_actor and game_key=p_game and started_at>=beginning;
   return jsonb_build_object('plan',p,'remaining',greatest(0,5-n));
 end $$;
+-- Başlatma RPC'si hata verirse bu başarısız denemenin kotası geri alınabilir.
+create or replace function public.dm_teacher_premium_release(
+  p_actor uuid, p_game text, p_run uuid
+) returns void language plpgsql security definer set search_path='' as $
+begin
+  if p_actor is null or p_run is null or p_game not in
+    ('word-match','cloud-flight','word-blocks','papizzle','runners-papi')
+    then raise exception 'Geçersiz oyun.'; end if;
+  perform 1 from public.teacher_portal_guests g
+    join public.teacher_portal_access a on a.id=g.access_id and a.state='approved'
+    where g.student_id=p_actor and g.alias='Premium Oyun' and g.preview;
+  if not found then raise exception 'Öğretmen oyun profili gerekli.'; end if;
+  perform pg_advisory_xact_lock(hashtextextended(p_actor::text||':'||p_game,2026));
+  delete from public.dm_teacher_premium_quota_runs
+  where student_id=p_actor and game_key=p_game and run_id=p_run;
+end $;
+revoke all on function public.dm_teacher_premium_release(uuid,text,uuid) from public,anon,authenticated;
+grant execute on function public.dm_teacher_premium_release(uuid,text,uuid) to service_role;
+
 revoke all on function public.dm_teacher_premium_quota(uuid,text,uuid,boolean) from public,anon,authenticated;
 grant execute on function public.dm_teacher_premium_quota(uuid,text,uuid,boolean) to service_role;
 commit;
