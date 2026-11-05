@@ -59,6 +59,12 @@ jobs:
           xcodebuild -project App.xcodeproj -scheme App -configuration Debug \
             -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO build | tail -40
           test "${PIPESTATUS[0]}" = 0
+          # Pakette yerel katman ve ödeme eklentisi gerçekten var mı?
+          APP=$(find ~/Library/Developer/Xcode/DerivedData -path '*Debug-iphonesimulator/App.app' -maxdepth 6 | head -1)
+          test -f "$APP/native-runtime.js" || { echo "::error::native-runtime.js pakette yok"; exit 1; }
+          grep -rqa DmBillingPlugin "$APP" || { echo "::error::DmBillingPlugin derlenmemiş"; exit 1; }
+          grep -rqa MainViewController "$APP" || { echo "::error::MainViewController derlenmemiş"; exit 1; }
+          echo "Paket içeriği doğrulandı: $(du -h "$APP/native-runtime.js" | cut -f1) yerel katman"
         shell: bash
       - name: İmzalı arşiv ve TestFlight yüklemesi
         if: ${{ (github.event_name == 'push' || inputs.upload) && env.HAS_KEY == 'yes' }}

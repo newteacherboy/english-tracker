@@ -27,19 +27,19 @@
   },
   "ssvCallbackUrl": "https://nxfqlutulxqzqgwewssd.supabase.co/functions/v1/ad-rewards/ssv",
   "ios": {
-    "appId": "ca-app-pub-3940256099942544~1458002511",
+    "appId": "ca-app-pub-5025780881593375~8782982262",
     "units": {
-      "energy": "",
-      "gold": "",
-      "banner": "",
-      "interstitial": ""
+      "energy": "ca-app-pub-5025780881593375/7162953841",
+      "gold": "ca-app-pub-5025780881593375/5948935360",
+      "banner": "ca-app-pub-5025780881593375/8898707346",
+      "interstitial": "ca-app-pub-5025780881593375/3012167878"
     },
     "testUnits": {
       "reward": "ca-app-pub-3940256099942544/1712485313",
       "banner": "ca-app-pub-3940256099942544/2435281174",
       "interstitial": "ca-app-pub-3940256099942544/4411468910"
     },
-    "productionEnabled": false,
-    "note": "iOS: gerçek birimler AdMob'da açılınca units ve appId doldurulur, productionEnabled true yapılır. O zamana kadar Google test reklamları gösterilir, ödül verilmez."
+    "productionEnabled": true,
+    "note": "iOS birimleri AdMob'da 5 Kasım 2026'da açıldı (ödüllüler SSV ile). Uygulama App Store'da yayımlanınca AdMob'da mağazaya bağlanmalı; o zamana kadar reklam sunumu sınırlı olabilir."
   }
 }
