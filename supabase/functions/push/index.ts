@@ -2,7 +2,7 @@
 //  - Öğrenci oturumu: register / unregister (cihaz jetonu)
 //  - Yönetici oturumu ('teacher' kullanıcı adlı yönetici): adminStats / adminSend
 // Gizli değerler: FCM_SERVICE_ACCOUNT (Firebase > Proje ayarları > Hizmet hesapları > yeni özel anahtar, JSON)
-//   APNS_KEY_P8 (.p8 içeriği), APNS_KEY_ID, APNS_TEAM_ID (Apple Developer > Keys > Apple Push Notifications service).
+//   APNS_KEY_P8 (.p8 içeriği; Apple Developer > Keys > "Diji Medu Push"). Key ID 8W84J5T9X6 ve Team ID S6VSP7F35Q gizli değil, kodda varsayılan.
 import { createClient } from 'npm:@supabase/supabase-js@2.118.0';
 import { cleanText, validToken, fcmMessage, deadToken, apnsMessage, apnsDead, IOS_TOPIC } from './rules.mjs';
 
@@ -39,8 +39,8 @@ async function fcmAuth() {
 let apnsCached: { value: string; until: number } | null = null;
 async function apnsAuth() {
   if (apnsCached && apnsCached.until > Date.now()) return apnsCached.value;
-  const p8 = Deno.env.get('APNS_KEY_P8') || '', kid = Deno.env.get('APNS_KEY_ID') || '', team = Deno.env.get('APNS_TEAM_ID') || '';
-  if (!p8 || !kid || !team) throw Error('apns_not_configured');
+  const p8 = Deno.env.get('APNS_KEY_P8') || '', kid = Deno.env.get('APNS_KEY_ID') || '8W84J5T9X6', team = Deno.env.get('APNS_TEAM_ID') || 'S6VSP7F35Q';
+  if (!p8) throw Error('apns_not_configured');
   const der = Uint8Array.from(atob(p8.replace(/-----[^-]+-----/g, '').replace(/\s+/g, '')), c => c.charCodeAt(0));
   const k = await crypto.subtle.importKey('pkcs8', der, { name: 'ECDSA', namedCurve: 'P-256' }, false, ['sign']);
   const head = b64url(JSON.stringify({ alg: 'ES256', kid })), body = b64url(JSON.stringify({ iss: team, iat: Math.floor(Date.now() / 1000) }));
