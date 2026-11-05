@@ -68,9 +68,10 @@ const words=Array.from({length:30},(_,i)=>({ingilizce:'item'+i,turkce:'anlam '+i
    await page.locator('[data-audio-toggle]').click();
    assert.equal(await page.locator('[data-audio-toggle]').getAttribute('aria-pressed'),'false');
 
-   await page.waitForTimeout(1000);
-   assert.match(await page.locator('[data-side="0"] .dm-sr-side-meta').innerText(),/Soru 2\s*\/\s*12/);
-   assert.match(await page.locator('[data-side="1"] .dm-sr-side-meta').innerText(),/Soru 2\s*\/\s*12/);
+   for(const side of [0,1]){
+    await page.locator('[data-side="'+side+'"] .dm-sr-side-meta')
+      .filter({hasText:/Soru 2\s*\/\s*12/}).waitFor({timeout:5000});
+   }
    await page.locator('.dm-sr-game-meta [data-close]').click();
    assert.equal(await page.locator('.dm-sr-overlay').count(),0);
    await page.evaluate(()=>dmSentenceRace.open());await page.locator('[data-players]').selectOption('1');await page.locator('[data-unit]').first().click();await page.locator('[data-start]').click();assert.equal(await page.locator('[data-side]').count(),1);const soloFit=await page.locator('.dm-sr-play').evaluate(el=>({scroll:el.scrollHeight-el.clientHeight,bottom:Math.max(...[...el.querySelectorAll('[data-answer]')].map(b=>b.getBoundingClientRect().bottom))}));assert(soloFit.scroll<=2&&soloFit.bottom<=height+1,JSON.stringify(soloFit));await page.locator('.dm-sr-game-meta [data-close]').click();
