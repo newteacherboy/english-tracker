@@ -105,7 +105,7 @@ async function repeat(){
  try{refresh();await window.dmWrongWords?.review({limit:3,onComplete:()=>{observer.disconnect();load(true).catch(()=>{});}});}
  catch(e){observer.disconnect();throw e;}
 }
-async function route(){routePending=true;const p=window.dmLearningRoute?.purpose?.();if(p==='independent')return window.dmThematicLearning?.continueRoute();const current=document.querySelector('#tab-dunya .bi-continue,#tab-dunya .rt-start');if(current)return current.click();await window.dunyaAc?.();return document.querySelector('#tab-dunya .bi-continue,#tab-dunya .rt-start')?.click();}
+async function route(){routePending=true;const p=window.dmLearningRoute?.purpose?.();if(p==='independent')return window.dmThematicLearning?.continueRoute();const current=document.querySelector('#tab-dunya .rt-medal-school .rt-medal-start,#tab-dunya .bi-continue,#tab-dunya .rt-start');if(current)return current.click();await window.dunyaAc?.();return document.querySelector('#tab-dunya .rt-medal-school .rt-medal-start,#tab-dunya .bi-continue,#tab-dunya .rt-start')?.click();}
 async function start(){const b=$('lcPlan')?.querySelector('[data-lc="start"]');if(b)b.disabled=true;try{const d=await load(true);if(!d)return;if(d.review?.due&&!d.reviewDone)return repeat();if(!d.routeDone)return route();if(!d.dialogueDone)return nextDialogue();window.yoToast?.('Bugünkü planın tamamlandı! Yeni görevler için yarın tekrar gel.');return;}catch(e){window.yoToast?.(e.message);}finally{if(b?.isConnected)b.disabled=false;}}
 // Fallback only when the app-wide correct/wrong audio handler is unavailable.
 function companionAnswerSound(correct){
