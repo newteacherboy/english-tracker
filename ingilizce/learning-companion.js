@@ -237,7 +237,7 @@ new MutationObserver(records=>{if(records.some(r=>[...r.addedNodes].some(n=>n.id
 async function openPlan(){
  try{await load(true);const view=sheet('Bugünkü Planım','<div class="lc-plan lc-plan-sheet">'+planMarkup()+'</div>','lcPlanSheet');if(view){const steps=view.el.querySelector('.lc-plan-steps');if(steps)steps.hidden=false;view.el.querySelector('[data-lc="toggle"]')?.setAttribute('aria-expanded','true');}}catch(e){window.yoToast?.(e.message);}
 }
-function planState(){if(!summary||owner!==identity())return null;const d=summary,reviewDone=d.reviewDone||d.review?.total>0&&d.review.due===0;const state=[!!reviewDone,!!d.routeDone,!!d.dialogueDone];return {done:state.filter(Boolean).length,total:state.length};}
+function planState(){if(!summary||owner!==identity())return null;const d=summary,reviewDone=d.reviewDone||d.review?.total>0&&d.review.due===0;const state=[!!reviewDone,!!d.routeDone,!!d.dialogueDone];return {done:state.filter(Boolean).length,total:state.length,claimable:state.every(Boolean)&&!d.planClaimed};}
 function reviewDue(){return summary&&owner===identity()?Number(summary.review?.due)||0:null;}
 window.dmLearningCompanion={openPlan,planState,reviewDue,refresh:()=>load(true),report,dialogues,openStory,nextDialogue,nextStory:()=>nextDialogue('story'),openMissions:period=>window.dmOpenMissions?.(period),teacherSummary,mount,markRouteComplete:lessonDone};
 schedule();

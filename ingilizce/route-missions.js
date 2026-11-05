@@ -83,7 +83,7 @@ window.dmRouteMissions={
  passport,
  finished(period){return (period==='daily'||period==='weekly')&&done(period)&&claimed(period);},
  /* Harita kartındaki rozet: alınmayı bekleyen ödül sayısı ve bitmemiş görev var mı */
- badge(){if(!member()||owner!==who()||!value){askForData();return null;}const periods=['daily','weekly'];return {claimable:periods.filter(p=>done(p)&&!claimed(p)).length,open:!done('daily')};},
+ badge(){if(!member()||owner!==who()||!value){askForData();return null;}const periods=['daily','weekly'];return {claimable:periods.filter(p=>done(p)&&!claimed(p)).length,open:!done('daily'),remaining:periods.reduce((n,p)=>n+(value[p]?goals[p].filter(([event,,target])=>(Number(value[p][event])||0)<target).length:0),0)};},
  data(period){return owner&&owner===who()?(value?.[period]||null):null;},
  set(data,name){if(name!==who())return;owner=name;value=data||null;window.dmRefreshRouteCards?.();},
  markup(period){

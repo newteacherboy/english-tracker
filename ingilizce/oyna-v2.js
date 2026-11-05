@@ -53,8 +53,14 @@ function toolBadge(button,kind,text,label){if(!button)return;let b=button.queryS
  if(!b){b=document.createElement('span');b.className='rt-tool-badge';button.append(b);}b.className='rt-tool-badge is-'+kind+(text?'':' is-dot');b.textContent=text;b.setAttribute('aria-label',label);b.setAttribute('role','status');button.dataset.badge=kind;}
 function paintToolBadges(){
  const plan=window.dmLearningCompanion?.planState?.(),missions=window.dmRouteMissions?.badge?.(),chests=Object.values(window.dmProgression?.status?.()?.chests||{}).filter(state=>state==='ready').length+(window.dmActiveTime?.unclaimed?.().length||0);
- document.querySelectorAll('.rt-v3-tools').forEach(tools=>{
+ document.querySelectorAll('.rt-v3-tools,.rt-green-tools').forEach(tools=>{
   const p=tools.querySelector('[data-rt="plan"]'),m=tools.querySelector('[data-rt="missions"]'),c=tools.querySelector('[data-rt="chests"]');
+  if(tools.classList.contains('rt-green-tools')){
+   const remaining=plan?Math.max(0,plan.total-plan.done):0, pending=missions?.remaining||0;
+   toolBadge(p,plan?.claimable?'green':remaining?'red':'',plan?.claimable?'1':remaining?String(remaining):'',plan?.claimable?'Plan ödülün hazır':remaining+' plan adımı kaldı');
+   toolBadge(m,missions?.claimable?'green':pending?'red':'',missions?.claimable?String(missions.claimable):pending?String(pending):'',missions?.claimable?missions.claimable+' görev ödülü hazır':pending+' görev kaldı');
+   return;
+  }
   toolBadge(p,plan&&plan.done<plan.total?'red':'',plan&&plan.done<plan.total?'1':'','Bugünkü planın tamamlanmadı');
   if(missions?.claimable)toolBadge(m,'green',String(missions.claimable),missions.claimable+' görev ödülü alınmayı bekliyor');
   else toolBadge(m,missions?.open?'red':'','','Tamamlanmamış görevlerin var');
@@ -62,11 +68,13 @@ function paintToolBadges(){
   const open=c?.querySelector('.rt-chest-open');if(open)open.hidden=true;
  });
 }
-if(typeof document!=='undefined'&&typeof document.createElement==='function'&&document.head&&!document.getElementById('rtToolBadgeStyle')){const st=document.createElement('style');st.id='rtToolBadgeStyle';st.textContent='body #tab-dunya .rt-v3-tools>button .rt-tool-badge{position:absolute;top:-7px;right:6px;min-width:22px;height:22px;padding:0 6px;box-sizing:border-box;border-radius:11px;display:flex;align-items:center;justify-content:center;font:800 12px/1 system-ui,sans-serif;color:#fff;border:2px solid #fff;box-shadow:0 2px 5px rgba(0,0,0,.18);z-index:2;pointer-events:none}body #tab-dunya .rt-v3-tools>button .rt-tool-badge.is-red{background:#e5484d}body #tab-dunya .rt-v3-tools>button .rt-tool-badge.is-green{background:#1f9d55}body #tab-dunya .rt-v3-tools>button .rt-tool-badge.is-dot{min-width:14px;width:14px;height:14px;padding:0;top:-4px;right:10px}';document.head.append(st);}
-if(typeof setInterval==='function')setInterval(()=>{if(!document.hidden&&document.querySelector('.rt-v3-tools'))paintToolBadges();},2000);
+if(typeof document!=='undefined'&&typeof document.createElement==='function'&&document.head&&!document.getElementById('rtToolBadgeStyle')){const st=document.createElement('style');st.id='rtToolBadgeStyle';st.textContent='body #tab-dunya :is(.rt-v3-tools,.rt-green-tools)>button .rt-tool-badge{position:absolute;top:-7px;right:6px;min-width:22px;height:22px;padding:0 6px;box-sizing:border-box;border-radius:11px;display:flex;align-items:center;justify-content:center;font:800 12px/1 system-ui,sans-serif;color:#fff;border:2px solid #fff;box-shadow:0 2px 5px rgba(0,0,0,.18);z-index:2;pointer-events:none}body #tab-dunya :is(.rt-v3-tools,.rt-green-tools)>button .rt-tool-badge.is-red{background:#e5484d}body #tab-dunya :is(.rt-v3-tools,.rt-green-tools)>button .rt-tool-badge.is-green{background:#1f9d55}body #tab-dunya :is(.rt-v3-tools,.rt-green-tools)>button .rt-tool-badge.is-dot{min-width:14px;width:14px;height:14px;padding:0;top:-4px;right:10px}';document.head.append(st);}
+if(typeof setInterval==='function')setInterval(()=>{if(!document.hidden&&document.querySelector('.rt-v3-tools,.rt-green-tools'))paintToolBadges();},2000);
 window.dmPaintToolBadges=paintToolBadges;
-function paintChests(){const ready=chestReady();document.querySelectorAll('.rt-map-chest').forEach(b=>{b.classList.toggle('is-ready',ready);b.setAttribute('aria-label',ready?'Kazandığın sandığı aç':'Parkur sandıklarını göster');const label=b.querySelector('.rt-chest-open');if(label)label.hidden=true;});paintToolBadges();}
+function paintChests(){const ready=chestReady();document.querySelectorAll('.rt-map-chest').forEach(b=>{b.classList.toggle('is-ready',ready);b.setAttribute('aria-label',ready?'Kazandığın sandığı aç':'Parkur sandıklarını göster');const label=b.querySelector('.rt-chest-open');if(label)label.hidden=true;});document.querySelectorAll('.rt-green-chest').forEach(b=>{b.classList.toggle('is-ready',ready);b.querySelector('span').textContent=ready?'Ödülü al':'Sandık';});paintToolBadges();}
 document.addEventListener('dm:time',paintChests);
+document.addEventListener('dm:companion-summary',paintToolBadges);
+document.addEventListener('dm:progression-status',paintChests);
 async function refreshChests(){await window.dmProgression?.refresh?.(true);paintChests();}
 function routeTitle(s,learn){
  if(learn)return String(s?.title||'Öğrenme durağı').replace(/^\d+\.\s*Durak\s*·\s*/i,'');
@@ -121,14 +129,44 @@ function pathMarkup(steps,current,learn){
  const map={steps:all,current:focus,learn,key:++mapSerial,height:Math.max(300,TOP+all.length*ROW),from:Math.max(0,focus-5),to:Math.min(all.length,focus+9)};routeMap=map;
  return '<section class="rt-path rt-v3-map" data-route-map="'+map.key+'" aria-label="'+esc(level)+' · Öğrenme durakları"><header class="rt-v3-summary"><button type="button" class="rt-v3-level" data-rt="all" aria-label="'+(learn?'Öğrenme Yolum':'Okul Yolum')+' tüm durakları göster">'+icon('book')+'<span><b>'+esc(level)+(learn?'':' · Ünite '+info.unit)+'</b><small>'+done+' / '+total+' durak tamamlandı</small><progress value="'+done+'" max="'+Math.max(1,total)+'" aria-label="'+esc(level)+' ilerlemesi"></progress></span></button><button type="button" class="rt-v3-switch" data-rt="switch-route" aria-label="Parkur değiştir">'+icon('switch')+'</button></header><div class="rt-v3-canvas"><div class="rt-v3-art" aria-hidden="true"></div><div class="rt-v3-scroll" tabindex="0" role="region" aria-label="'+(learn?'Öğrenme Yolu':'Okul Yolum')+' · tüm durakları kaydırarak keşfet"><div class="rt-flow-world" style="height:'+map.height+'px">'+mapRows(map,map.from,map.to)+'</div></div><aside class="rt-v3-tools" aria-label="Parkur araçları"><button type="button" data-rt="plan">'+icon('calendar')+'<span>Planım</span><small>Bugünün dersleri</small></button><button type="button" data-rt="missions">'+icon('tasks')+'<span>Görevler</span><small>Günlük ve haftalık</small></button>'+chestMarkup()+'</aside></div><div class="rt-continue">'+(active?.available?'<button type="button" class="rt-start '+(learn?'':'dm-map-continue')+'" '+(learn?'data-rt="continue"':'data-rt="school-stop" data-b="'+active.b+'" data-d="'+active.d+'"')+'>'+icon('play')+' Devam et</button>':'<span class="rt-v3-empty">Parkurun hazırlanıyor…</span>')+'</div></section>';
 }
+function greenRows(map,from,to){
+ const {steps,current,height}=map, x=i=>i%2===current%2?33:62, y=i=>map.top+i*map.row;
+ const first=Math.max(0,from-1),last=Math.min(steps.length,to+1);
+ const curve=Array.from({length:last-first},(_,k)=>{const i=first+k;return k?'C'+x(i-1)+' '+(y(i)-map.row/2)+' '+x(i)+' '+(y(i)-map.row/2)+' '+x(i)+' '+y(i):'M'+x(i)+' '+y(i);}).join(' ');
+ const ready=chestReady(),chestIndex=Math.max(0,current-1);
+ return '<svg class="rt-green-trail" viewBox="0 0 100 '+height+'" preserveAspectRatio="none" aria-hidden="true"><path d="'+curve+'"/></svg>'+
+ steps.slice(from,to).map((step,k)=>{
+  const i=from+k, active=i===current, locked=!step.available, n=routeNumber(step,i,true);
+  const action='data-rt="chapter" data-chapter="'+step.id+'"';
+  const stars=step.done?starsMarkup(step,true):'';
+  return '<div class="rt-green-row'+(active?' is-current':'')+'" style="--stop-x:'+x(i)+'%;--stop-y:'+y(i)+'px">'+
+   (active?img('bilgi-mascot.webp','rt-green-papi'):'')+
+   '<button type="button" class="rt-green-stop'+(locked?' is-locked':'')+'" '+action+(locked?' disabled':'')+(active?' aria-current="step"':'')+' aria-label="'+esc(n+'. Durak · '+routeTitle(step,true)+(locked?' · Kilitli':step.done?' · '+stopStars(step,true)+' yıldız':''))+'">'+
+   (locked?icon('lock'):stars)+'<b>'+n+'</b></button>'+
+   (active&&!locked?'<button type="button" class="rt-green-start" data-rt="continue">'+(step.done?'Tekrar et':'Devam et')+' <span aria-hidden="true">›</span></button>':'')+
+   '</div>';
+ }).join('')+
+ (chestIndex>=from&&chestIndex<to?'<button type="button" class="rt-green-chest'+(ready?' is-ready':'')+'" data-rt="chests" style="top:'+y(chestIndex)+'px">'+img('bilgi-icons/chest.webp')+'<span>'+(ready?'Ödülü al':'Sandık')+'</span></button>':'');
+}
+function greenLearningMarkup(steps,current){
+ const active=steps[current],map={steps,current,learn:true,key:++mapSerial,top:78,row:108,from:Math.max(0,current-5),to:Math.min(steps.length,current+9),renderRows:greenRows};
+ map.height=map.top+steps.length*map.row;
+ routeMap=map;
+ const tools=[['all','book','Kütüphane'],['plan','calendar','Plan'],['missions','tasks','Görevler']];
+ return '<section class="bi-scene rt-green-route" data-route-map="'+map.key+'" aria-label="Öğrenme Yolum">'+
+  '<header class="rt-green-header"><div class="rt-green-unit"><div><h1>Öğrenme Yolum</h1><p>'+esc([active.cefr,active.theme].filter(Boolean).join(' · '))+'</p></div><button type="button" data-rt="switch-route" aria-label="Parkur değiştir">'+icon('switch')+'<span>Rota değiştir</span><span aria-hidden="true">›</span></button></div>'+
+  '<div class="rt-green-tools" aria-label="Parkur araçları">'+tools.map(([action,symbol,label])=>'<button type="button" data-rt="'+action+'">'+icon(symbol)+'<span>'+label+'</span></button>').join('')+'</div></header>'+
+  '<div class="rt-green-scroll" tabindex="0" role="region" aria-label="Öğrenme durakları, diğer duraklar için kaydır"><div class="rt-green-world" style="height:'+map.height+'px">'+greenRows(map,map.from,map.to)+'</div></div></section>';
+}
 function mountScrollable(root){
  const el=root?.querySelector?.('[data-route-map]');if(!el?.querySelector||!routeMap||Number(el.dataset.routeMap)!==routeMap.key)return;
- const map=routeMap,scroll=el.querySelector('.rt-v3-scroll'),world=el.querySelector('.rt-flow-world');if(!scroll||scroll.dataset.bound)return;
+ const map=routeMap,scroll=el.querySelector('.rt-v3-scroll,.rt-green-scroll'),world=el.querySelector('.rt-flow-world,.rt-green-world');if(!scroll||scroll.dataset.bound)return;
+ const row=map.row||ROW,top=map.top||TOP,renderRows=map.renderRows||mapRows;
  scroll.dataset.bound='1';let queued=false;
- function draw(){queued=false;if(!el.isConnected||map!==routeMap)return;const from=Math.max(0,Math.floor((scroll.scrollTop-TOP)/ROW)-4),to=Math.min(map.steps.length,Math.ceil((scroll.scrollTop+scroll.clientHeight)/ROW)+5);if(from!==map.from||to!==map.to){map.from=from;map.to=to;world.innerHTML=mapRows(map,from,to);}}
+ function draw(){queued=false;if(!el.isConnected||map!==routeMap)return;const from=Math.max(0,Math.floor((scroll.scrollTop-top)/row)-4),to=Math.min(map.steps.length,Math.ceil((scroll.scrollTop+scroll.clientHeight)/row)+5);if(from!==map.from||to!==map.to){map.from=from;map.to=to;world.innerHTML=renderRows(map,from,to);}}
  function schedule(){if(queued)return;queued=true;requestAnimationFrame(draw);}
  scroll.addEventListener('scroll',schedule,{passive:true});
- const focus=()=>{if(!el.isConnected||map!==routeMap)return;scroll.scrollTop=Math.max(0,TOP+map.current*ROW-scroll.clientHeight*.45);draw();};
+ const focus=()=>{if(!el.isConnected||map!==routeMap)return;scroll.scrollTop=Math.max(0,top+map.current*row-scroll.clientHeight*.45);draw();};
  requestAnimationFrame(focus);mapResize?.disconnect();if(typeof ResizeObserver==='function'){mapResize=new ResizeObserver(schedule);mapResize.observe(scroll);}
 }
 function icon(name){const paths={play:'M8 4l12 8-12 8z',lock:'M6 11h12v10H6zM8 11V7a4 4 0 0 1 8 0v4',chat:'M3 4h18v13H9l-6 4zM7 8h10M7 12h6',bulb:'M9 18h6M9 21h6M8 14a7 7 0 1 1 8 0l-1 4H9z',atom:'M12 10v4M10 12h4M3 7c4-7 22 4 18 10S-1 13 3 7M3 17C-1 11 17 0 21 7S7 24 3 17',leaf:'M4 20C1 7 10 2 21 3c0 11-5 19-17 17zM4 20L17 7',book:'M3 4h6l3 2 3-2h6v15h-6l-3 2-3-2H3zM12 6v15',map:'M3 5l6-2 6 3 6-2v15l-6 2-6-3-6 2zM9 3v15M15 6v15',switch:'M4 7h16l-4-4M20 17H4l4 4',calendar:'M5 5h14v16H5zM8 3v4M16 3v4M5 10h14M9 14h2M14 14h2M9 17h2',tasks:'M9 5H5v16h14V5h-4M9 3h6v5H9zM8 14l2 2 5-5'};return '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="'+paths[name]+'"/></svg>';}
@@ -156,7 +194,23 @@ function scene(o={}){
  return '<div class="rt-root '+(learn?'rt-english':'rt-school')+'" data-route-design="3">'+(learn?'<div class="rt-route-area" role="status">Öğrenme yolun hazırlanıyor…</div>':'')+(learn?'':islandMarkup(steps,current))+'</div>';
 }
 
-async function paintLearning(root,force=false){const owner=who(),turn=++epoch;try{const info=await window.dmStoryPath.overview({force});if(!root.isConnected||owner!==who()||turn!==epoch||purpose()!=='independent')return;if(!info?.chapters?.length)throw Error('Parkur içeriği henüz hazır değil.');const cur=Math.max(0,info.chapters.findIndex(c=>c.current));const area=root.querySelector('.rt-route-area');root.querySelectorAll('.rt-badge,.rt-banner,.rt-completion-count,.rt-path,.bi-sky').forEach(el=>el.remove());const summary='';if(area)area.outerHTML=summary;else root.insertAdjacentHTML('afterbegin',summary);root.insertAdjacentHTML('beforeend',islandMarkup(info.chapters,cur,true));mountScrollable(root);}catch(e){if(!root.isConnected||owner!==who()||turn!==epoch)return;const area=root.querySelector('.rt-route-area');if(area){area.innerHTML='<p>Öğrenme yolun yüklenemedi.</p><button type="button" data-rt="retry">Tekrar dene</button>';}}}
+async function paintLearning(root,force=false){
+ const owner=who(),turn=++epoch;
+ try{
+  const info=await window.dmStoryPath.overview({force});
+  if(!root.isConnected||owner!==who()||turn!==epoch||purpose()!=='independent')return;
+  if(!info?.chapters?.length)throw Error('Parkur içeriği henüz hazır değil.');
+  const current=Math.max(0,info.chapters.findIndex(c=>c.current));
+  root.querySelectorAll('.rt-route-area,.rt-green-route').forEach(el=>el.remove());
+  root.insertAdjacentHTML('beforeend',greenLearningMarkup(info.chapters,current));
+  paintToolBadges();
+  mountScrollable(root);
+ }catch(e){
+  if(!root.isConnected||owner!==who()||turn!==epoch)return;
+  const area=root.querySelector('.rt-route-area');
+  if(area)area.innerHTML='<p>Öğrenme yolun yüklenemedi.</p><button type="button" data-rt="retry">Tekrar dene</button>';
+ }
+}
 let cardStamp='';if(typeof window.setInterval==='function')window.setInterval(()=>{if(document.hidden)return;paintChests();const stamp=JSON.stringify([Y()?.log,Y()?.haftaHedef,Y()?.lig?.xp,tasks()]);if(stamp!==cardStamp){cardStamp=stamp;refreshCards();}},1500);
 function refreshCards(){paintChests();document.querySelectorAll('.mp-missions [data-mission-panel]').forEach(p=>{p.innerHTML=window.dmRouteMissions?.passport(p.dataset.missionPanel)||'';});document.querySelectorAll('.rt-week').forEach(el=>el.outerHTML=weekly());document.querySelectorAll('.rt-tasks').forEach(el=>el.outerHTML=tasks());}
 let routeSaveInProgress=false;
