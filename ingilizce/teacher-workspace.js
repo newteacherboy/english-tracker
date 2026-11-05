@@ -272,6 +272,8 @@ function dmHome(){
   <div data-v2-nav></div>
  </nav><main class="dm-v2-content">
   <header class="dm-v2-banner"><div><small>DİJİ MEDU · ÖĞRETMEN PANELİ</small><h2>Sınıfın kontrolünde,<br>gelişim hep takibinde! 🚀</h2><p>Ödev, duyuru ve raporlar tek bir yerde.</p></div><img src="papi-help-v2.png" alt="Papi"></header>
+  <h3>👑 Premium Oyunlar</h3>
+  <div class="dm-v2-quick" data-v2-premium aria-label="Premium öğretmen oyunları"></div>
   <div class="dm-v2-stats" aria-label="Öğretmen özeti">
     <div>👥 <b data-v2-students>—</b><small>Öğrenci</small></div>
     <div>🏫 <b data-v2-classes>—</b><small>Sınıf</small></div>
@@ -283,8 +285,6 @@ function dmHome(){
   <div class="dm-v2-secondary" data-v2-secondary></div>
   <h3>✨ Hızlı Erişim</h3>
   <div class="dm-v2-quick" data-v2-quick></div>
-  <h3>👑 Premium Oyunlar</h3>
-  <div class="dm-v2-quick" data-v2-premium aria-label="Premium öğretmen oyunları"></div>
  </main>`;
  const add=(target,label,emoji,description,run,cls='')=>{
   const button=document.createElement('button');button.type='button';button.className='dm-v2-action '+cls;
@@ -346,13 +346,15 @@ function installWorkspaceTools(menu){
 
  if(!$('dmNoticeMailCenterButton')){const b=document.createElement('button');b.id='dmNoticeMailCenterButton';b.className='ogretmen-menu-btn';b.textContent='📣 Duyuru ve Mail Yönetim Merkezi';b.onclick=openNoticeMailCenter;menu.querySelector('.rubric-content').append(b);}
  if(!$('dmTeacherOralButton')){const b=document.createElement('button');b.id='dmTeacherOralButton';b.className='ogretmen-menu-btn';b.textContent='🎙️ Sözlü Yap · Kelime sor, 100 XP kazandır';b.onclick=()=>window.dmTeacherOral?.open();menu.querySelector('.rubric-content').append(b);}
+ const content=menu.querySelector('.rubric-content');
+ const firstTool=content.querySelector('.ogretmen-menu-btn');
  for(const [title,emoji,fn] of dmTeacherPremiumGames){
    const id='dmTeacherPremium'+fn;
    if($(id))continue;
    const b=document.createElement('button');b.id=id;b.type='button';b.className='ogretmen-menu-btn';
    b.textContent=emoji+' '+title;
    b.onclick=()=>dmOpenTeacherPremium(fn);
-   menu.querySelector('.rubric-content')?.append(b);
+   content.insertBefore(b,firstTool);
  }
 }
 function maintain(){
