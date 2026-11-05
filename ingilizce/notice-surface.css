@@ -197,3 +197,11 @@ html body #dm-app-update.dm-notice-managed .dm-notice-close,
 html body #dm-app-update.dm-notice-managed .dm-notice-controls,
 html body #dm-app-update.dm-notice-managed .dm-notice-progress {display:none!important}
 }
+
+/* Unread social activity stays with Friends and its notification bell. */
+html body #tab-meduakis #zlBtn .zl-rozet,
+html body #bottomNavMobile .dm-friends-unread{
+ content:"";position:absolute;top:4px;right:5px;width:9px;height:9px;min-width:0;
+ padding:0;border:2px solid #fff;border-radius:50%;background:#f04e61;
+ box-shadow:none;box-sizing:content-box;pointer-events:none;z-index:1;
+}

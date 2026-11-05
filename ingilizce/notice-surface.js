@@ -1,7 +1,7 @@
 /* Shared Papi notice surfaces: one visible item across both screen edges.
    Existing nodes/handlers are retained; account state and read receipts stay with their owner. */
 (()=>{'use strict';
-const SELECTOR='#duyuruOverlay,#dmWeeklyPanel,#dmNudge,#dmPlacementInvite,#dmEmailVerification,#dmEmailGuide,#dmLeagueMomentum,#dmHabitGreet,#dmHabitBreak,#dmWeekDone,.dm-notification,.cb-kart,.tv-kart,.bk-kart,.yo-davet,.dv-perde,#dmInlineNotice,.yo-toast,.uy-serit,.dm-leader-bonus,#medu-offline-notice,#cpBanner,#dm-app-update,.dm-papi-feedback.is-energy,.dm-friends-welcome,[data-papi-notice]';
+const SELECTOR='#duyuruOverlay,#dmWeeklyPanel,#dmNudge,#dmPlacementInvite,#dmEmailVerification,#dmEmailGuide,#dmLeagueMomentum,#dmHabitGreet,#dmHabitBreak,#dmWeekDone,.dm-notification,.cb-kart,.tv-kart,.bk-kart,.yo-davet,#dmInlineNotice,.yo-toast,.uy-serit,.dm-leader-bonus,#medu-offline-notice,#cpBanner,#dm-app-update,.dm-papi-feedback.is-energy,.dm-friends-welcome,[data-papi-notice]';
 const PANEL='.duy3-card,.dm-weekly-card,.dm-nudge-card,.dm-member-sheet,.dm-momentum-panel,.wd-card,.dm-papi-feedback-card,.dm-safety-card,.deg-dialog,.dv-kart';
 const CLOSE='.duy3-close,.dm-member-close,.dm-final-close,.dm-momentum-close,.dm-habit-x,.dm-notif-close,.dm-nudge-x,.dm-safety-close,.deg-close,.cb-x,.tv-x,[data-notice-close],button[aria-label="Kapat"],button[aria-label="Duyuruyu kapat"],button[aria-label*="kapat"]';
 const actor=()=>window.dmTeacherPortalSession?.teacherToken||localStorage.getItem('ing_token')||sessionStorage.getItem('ing_ogr_token')||'';
@@ -18,7 +18,12 @@ function sound(kind){
  (kind==='open'?[660,880]:[660,520]).forEach((frequency,i)=>{const osc=audio.createOscillator(),gain=audio.createGain(),at=now+i*.075;osc.type='sine';osc.frequency.setValueAtTime(frequency,at);gain.gain.setValueAtTime(.0001,at);gain.gain.exponentialRampToValueAtTime(.025,at+.012);gain.gain.exponentialRampToValueAtTime(.0001,at+.105);osc.connect(gain);gain.connect(audio.destination);osc.start(at);osc.stop(at+.12);osc.onended=()=>{osc.disconnect();gain.disconnect();};});
  }catch{/* Audio availability never blocks the notice. */}
 }
-function edge(el){return el.dataset.noticeEdge|| (el.matches('.dm-notification,.cb-kart,.tv-kart,.bk-kart,.yo-davet,.dv-perde,#dmInlineNotice,.yo-toast,.uy-serit,.dm-leader-bonus,#medu-offline-notice,#cpBanner,#dm-app-update,#dmHabitGreet')?'top':'bottom');}
+function edge(el){return el.dataset.noticeEdge|| (el.matches('.dm-notification,.cb-kart,.tv-kart,.bk-kart,.yo-davet,#dmInlineNotice,.yo-toast,.uy-serit,.dm-leader-bonus,#medu-offline-notice,#cpBanner,#dm-app-update,#dmHabitGreet')?'top':'bottom');}
+const systemFeedback=text=>/bağlantı|çevrimdışı|sunucu|oturum|hesap|e-posta|güncelleme|kaydedilemedi|profil.{0,30}kaydedil|işlem.{0,30}(tamamlan|başarısız)/i.test(text);
+function systemRibbon(el){
+ return el.matches('#dm-app-update,#medu-offline-notice,#cpBanner')||
+  el.dataset.noticeKind==='system'||el.matches('#dmInlineNotice,.yo-toast')&&systemFeedback(el.textContent||'');
+}
 function decorate(el){
  if(el.dataset.noticeSurface==='papi-v2'){const panel=el.querySelector('.dm-notice-panel');if(panel)return {panel,close:panel.querySelector('.dm-notice-close'),progress:panel.querySelector('.dm-notice-progress')};}
  let panel=el.querySelector(PANEL);
@@ -56,6 +61,10 @@ function decorate(el){
 }
 function adopt(el){
  if(!el?.matches?.(SELECTOR)||records.has(el)||!requested(el))return;
+ if(edge(el)==='top'&&!systemRibbon(el)){
+  if(el.matches('.cb-kart'))el.querySelector('.cb-x')?.click();
+  el.remove();return;
+ }
  // Top notices belong to the app viewport, never to a tab's hidden/stacked tree.
  if(edge(el)==='top'&&el.parentElement!==document.body)document.body.append(el);
  const r={...decorate(el),el,owner:actor(),order:sequence++,started:false,priority:el.matches('.dm-papi-feedback.is-energy')?0:el.id==='duyuruOverlay'?1:el.dataset.noticePriority==='0'?0:operational(el)?2:3};records.set(el,r);
@@ -95,10 +104,10 @@ function schedule(){if(disposed||scheduled||!records.size&&!active)return;schedu
 function isVisible(el){return active===el&&requested(el)&&!document.hidden&&!blocked(el)&&!el.classList.contains('dm-papi-held')&&visible(el);}
 function later(el,run,delay){let left=Math.max(0,delay),last=Date.now();const tick=()=>{if(disposed||!el.isConnected)return;const now=Date.now(),delta=Math.min(500,now-last);last=now;if(records.has(el)?isVisible(el):visible(el)&&!document.hidden&&!window.dmPapiNotices?.inActivity?.())left-=delta;if(records.has(el))progress(el,left/Math.max(1,delay));if(left<=0){run();return;}setTimeout(tick,100);};return setTimeout(tick,100);}
 function progress(el,ratio){const r=records.get(el);if(!r)return;const fraction=Math.max(0,Math.min(1,ratio));r.progress.firstChild.style.width=fraction*100+'%';const timer=r.panel.querySelector('.dm-notice-timer');if(timer){const seconds=Math.max(0,Math.ceil(fraction*(r.lifetime||5000)/1000));timer.textContent=seconds+' sn';}}
-function notify(message,{title='Papi’den bildirim',edge='top',duration=5000}={}){
- const text=String(message??'').trim();if(!text)return null;
+function notify(message,{title='Papi’den bildirim',edge='top',duration=5000,kind='system'}={}){
+ const text=String(message??'').trim();if(!text||edge==='top'&&kind!=='system'&&!systemFeedback(text))return null;
  const duplicate=[...records.keys()].find(e=>e.dataset.noticeMessage===text);if(duplicate)return duplicate;
- const el=document.createElement('aside');el.dataset.papiNotice='';el.dataset.noticeMessage=text;el.dataset.noticeTitle=title;el.dataset.noticeEdge=edge;el.setAttribute('role','status');
+ const el=document.createElement('aside');el.dataset.papiNotice='';el.dataset.noticeKind='system';el.dataset.noticeMessage=text;el.dataset.noticeTitle=title;el.dataset.noticeEdge=edge;el.setAttribute('role','status');
  if(edge==='top')el.dataset.noticeLifetime=String(duration>0?Math.min(5000,duration):5000);
  const p=document.createElement('p');p.textContent=text;el.append(p);document.body.append(el);adopt(el);if(edge!=='top'&&duration>0)later(el,()=>el.remove(),duration);return el;
 }
@@ -106,7 +115,7 @@ function scan(node){if(node.nodeType!==1)return;adopt(node);for(const el of node
 const observer=new MutationObserver(ms=>{for(const m of ms){if(m.type==='childList')for(const node of m.addedNodes)scan(node);else if(m.target.matches?.(SELECTOR))adopt(m.target);}schedule();});observer.observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['class','style','hidden']});
 function destroy(){disposed=true;observer.disconnect();clearInterval(pulse);records.clear();active=null;}
 window.dmNoticeSurface={adopt,notify,isVisible,later,progress,reset,destroy,busy:()=>!!active};
-function install(){if(disposed)return;for(const name of ['maToast','dcToastGoster'])if(typeof window[name]==='function'&&!window[name].dmNoticeWrapped){const fn=message=>notify(message);fn.dmNoticeWrapped=true;window[name]=fn;}scan(document.body);}
+function install(){if(disposed)return;for(const name of ['maToast','dcToastGoster'])if(typeof window[name]==='function'&&!window[name].dmNoticeWrapped){const fn=message=>notify(message,{kind:'feedback'});fn.dmNoticeWrapped=true;window[name]=fn;}scan(document.body);}
 document.addEventListener('pointerdown',unlock,{capture:true,passive:true});document.addEventListener('keydown',unlock,true);
 document.addEventListener('keydown',e=>{if(e.key!=='Escape'||!active)return;const r=records.get(active);if(r?.close&&!r.close.disabled){e.preventDefault();e.stopImmediatePropagation();r.close.click();}},true);
 document.addEventListener('dm:login',()=>{if(owner!==actor())reset();install();});document.addEventListener('DOMContentLoaded',install,{once:true});document.addEventListener('visibilitychange',schedule);install();const pulse=setInterval(pump,250);window.addEventListener('pagehide',e=>{if(!e.persisted)destroy();});
