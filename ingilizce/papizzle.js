@@ -34,7 +34,7 @@
   window.papizzleAc = async () => {
     if (opening || document.querySelector('.papizzle')) return;
     const name = account();
-    const token = localStorage.getItem('ing_token') || '';
+    const token = (window.dmTeacherPortalMode ? sessionStorage.getItem('ing_ogr_token') : '') || localStorage.getItem('ing_token') || '';
     opening = true;
     try {
       const [state] = await Promise.all([request(token, 'status'), loadStyle()]);
