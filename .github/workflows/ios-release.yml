@@ -79,10 +79,22 @@ jobs:
           set -eo pipefail
           KEY="$RUNNER_TEMP/AuthKey_$ASC_KEY_ID.p8"; printf '%s\n' "$ASC_KEY_P8" > "$KEY"
           AUTH=(-allowProvisioningUpdates -authenticationKeyPath "$KEY" -authenticationKeyID "$ASC_KEY_ID" -authenticationKeyIssuerID "$ASC_ISSUER_ID")
+          # Arşiv imzasız üretilir (geliştirme profili kayıtlı cihaz ister). App Store imzası dışa aktarmada
+          # Apple'ın bulut imzasıyla atılır; yetkiler (anlık bildirim) için uygulama önce geçici imzayla mühürlenir.
           xcodebuild -project App.xcodeproj -scheme App -configuration Release -destination 'generic/platform=iOS' \
-            -archivePath "$RUNNER_TEMP/App.xcarchive" "${AUTH[@]}" \
-            DEVELOPMENT_TEAM="$TEAM" CODE_SIGN_STYLE=Automatic MARKETING_VERSION="$VERSION" CURRENT_PROJECT_VERSION="$BUILD" \
-            archive | tail -60
+            -archivePath "$RUNNER_TEMP/App.xcarchive" \
+            DEVELOPMENT_TEAM="$TEAM" CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO MARKETING_VERSION="$VERSION" CURRENT_PROJECT_VERSION="$BUILD" \
+            archive | tail -40
+          APPDIR="$RUNNER_TEMP/App.xcarchive/Products/Applications/App.app"
+          test -d "$APPDIR" || { echo "::error::Arşivde App.app yok"; exit 1; }
+          # Gömülü çerçeveler (GoogleMobileAds, UMP, Capacitor…) de geçici imzayla mühürlenir; dışa aktarma hepsini dağıtım sertifikasıyla yeniden imzalar.
+          if [ -d "$APPDIR/Frameworks" ]; then
+            find "$APPDIR/Frameworks" -maxdepth 1 \( -name '*.framework' -o -name '*.dylib' \) -print0 | while IFS= read -r -d '' F; do
+              codesign --force --sign - --timestamp=none --preserve-metadata=identifier,flags "$F"
+            done
+          fi
+          codesign --force --sign - --entitlements App/App.entitlements --timestamp=none "$APPDIR"
+          codesign -d --entitlements - "$APPDIR" 2>/dev/null | grep -q aps-environment || { echo "::error::aps-environment yetkisi eklenemedi"; exit 1; }
           cat > "$RUNNER_TEMP/export.plist" <<EOF
           <?xml version="1.0" encoding="UTF-8"?>
           <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
