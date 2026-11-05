@@ -346,3 +346,107 @@ html.dm-teacher-portal #tab-aktiviteler#tab-aktiviteler .gg-page .gg-tabs{grid-t
 #tab-aktiviteler .gg-page .gg-premium-art img{width:100%;height:100%;object-fit:cover;display:block}
 #tab-aktiviteler .gg-page .au-game-icon.gg-premium-icon{background:url(premium-assets/kelime-eslestirme/icon-crown.webp) center/contain no-repeat!important}
 @media(max-width:590px){#tab-aktiviteler .gg-title{flex-wrap:wrap!important}#tab-aktiviteler .gg-title h1{width:100%!important}}
+
+/* Forest-green Games home and category catalogue. */
+@layer bilgiIslands {
+#tab-aktiviteler#tab-aktiviteler:has(.gg-redesign){background:#faf7ef!important}
+#tab-aktiviteler#tab-aktiviteler .gg-page.gg-redesign{
+ --gg-forest:#084936;--gg-surface:#fffcf6;--gg-outline:#dce6d9;--gg-muted:#475e54;
+ background:#faf7ef!important;color:var(--gg-forest)!important;
+ padding:8px clamp(12px,3.6vw,24px) 8px!important;
+}
+#tab-aktiviteler#tab-aktiviteler .gg-page.gg-redesign :is(h1,h2,h3){color:var(--gg-forest)!important}
+#tab-aktiviteler#tab-aktiviteler .gg-redesign .gg-brand{
+ padding:0 6px;margin-bottom:8px;border:1px solid var(--gg-outline);border-radius:24px;background:#edf3e9;
+}
+#tab-aktiviteler#tab-aktiviteler .gg-redesign .gg-brand>.dm-papi-wallet{margin:0!important;gap:2px!important}
+#tab-aktiviteler#tab-aktiviteler .gg-redesign .gg-brand .dm-papi-wallet>button{
+ flex-direction:row!important;min-height:44px!important;height:44px!important;gap:2px!important;
+ border:0!important;background:none!important;box-shadow:none!important;
+}
+#tab-aktiviteler#tab-aktiviteler .gg-redesign .gg-brand [data-pw-minutes]{display:none!important}
+#tab-aktiviteler#tab-aktiviteler .gg-redesign .gg-title h1{
+ margin:0 0 8px!important;font-size:clamp(28px,8vw,42px)!important;line-height:1!important;
+}
+#tab-aktiviteler#tab-aktiviteler .gg-redesign .gg-tabs:has(#ggPremiumTab){
+ display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:6px!important;padding:0!important;
+ border:0!important;background:none!important;box-shadow:none!important;
+}
+#tab-aktiviteler#tab-aktiviteler .gg-redesign .gg-tabs>button{
+ display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
+ min-height:clamp(52px,8.6dvh,76px)!important;height:auto!important;padding:3px!important;
+ background:linear-gradient(#f7f9ef,#edf4e9)!important;color:#173a31!important;
+ border:1px solid #d6e6d8!important;border-radius:15px!important;
+ box-shadow:0 2px 4px #184a2510!important;font-size:clamp(11px,3.3vw,16px)!important;
+}
+#tab-aktiviteler#tab-aktiviteler .gg-redesign .gg-tabs .au-game-icon{
+ width:clamp(27px,5.7dvh,44px)!important;height:clamp(27px,5.7dvh,44px)!important;
+}
+#tab-aktiviteler#tab-aktiviteler .gg-redesign #ggPremiumTab{
+ background:linear-gradient(#fcf7fc,#f2eaf9)!important;color:#4c3267!important;border-color:#dbc5e8!important;
+}
+#tab-aktiviteler#tab-aktiviteler .gg-redesign .gg-filters[hidden],
+#tab-aktiviteler#tab-aktiviteler .gg-redesign .az-grid2x2[hidden],
+#tab-aktiviteler#tab-aktiviteler .gg-redesign .gg-title[hidden]{display:none!important}
+}
+.gg-redesign .gg-quick h2,.gg-redesign .gg-next h3,.gg-redesign .gg-group h2{
+ font:900 clamp(16px,4.5vw,22px)/1.2 Nunito,system-ui,sans-serif;margin:0 0 5px;
+}
+.gg-redesign .gg-quick-list,.gg-redesign .gg-group{display:grid;gap:6px}
+.gg-redesign .gg-list-card{
+ display:grid;grid-template-columns:clamp(43px,7.5dvh,65px) minmax(0,1fr) auto;align-items:center;gap:8px;
+ width:100%;padding:4px 6px;border:1px solid var(--gg-outline);border-radius:14px;
+ background:var(--gg-surface);color:#18283d;text-align:left;box-shadow:0 2px 4px #184a250c;
+}
+.gg-redesign .gg-list-card>.gg-art,.gg-redesign .gg-next .gg-art{
+ width:100%;height:auto;aspect-ratio:1;max-height:65px;border-radius:9px;
+}
+.gg-redesign .gg-list-copy{display:grid;gap:2px;min-width:0}
+.gg-redesign .gg-list-copy strong{font-size:clamp(12px,3.6vw,17px);line-height:1.15;overflow-wrap:anywhere}
+.gg-redesign .gg-list-copy small{font-size:clamp(10px,2.8vw,13px);line-height:1.2;color:var(--gg-muted)}
+.gg-redesign .gg-list-copy .gg-feature-badge{color:var(--gg-forest);font-weight:900}
+.gg-redesign .gg-list-action{
+ display:grid;place-items:center;min-height:34px;max-width:12ch;padding:4px 8px;border-radius:20px;
+ background:#14744a;color:white;font-size:clamp(11px,3vw,14px);font-weight:900;line-height:1.12;text-align:center;
+}
+.gg-redesign .gg-featured-premium{background:#faf5fb;border-color:#e4d4ee}
+.gg-redesign .gg-featured-premium .gg-feature-badge{color:#633880}
+.gg-redesign .gg-featured-premium .gg-list-action{background:#69418c}
+.gg-redesign .gg-next{margin-top:8px}
+.gg-redesign .gg-next>div{
+ display:grid;grid-template-columns:clamp(40px,6.5dvh,58px) minmax(0,1fr) minmax(64px,29%);
+ background:#eaf1e6;gap:8px;padding:5px 8px;
+}
+.gg-redesign .gg-next b{font-size:clamp(12px,3.5vw,16px);line-height:1.1}
+.gg-redesign .gg-next small{margin-top:1px;color:var(--gg-muted);line-height:1.15}
+.gg-redesign .gg-next small .gg-icon{width:14px;height:14px}
+.gg-redesign .gg-next label{width:auto;color:var(--gg-forest);font-size:11px}
+#tab-aktiviteler .gg-redesign[data-gg-party=home]{
+ display:flex;flex-direction:column;min-height:calc(100dvh - 96px - env(safe-area-inset-bottom,0px));
+}
+body.dm-guest-mode #tab-aktiviteler .gg-redesign[data-gg-party=home]{
+ min-height:calc(100dvh - 140px - env(safe-area-inset-bottom,0px));
+}
+.gg-redesign .gg-shortcuts{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:auto;padding-top:5px}
+.gg-redesign :is(.gg-shortcuts,.gg-group-heading,.gg-catalog-header) button{
+ min-height:44px;padding:3px 4px;border:0;border-radius:10px;background:none;color:var(--gg-forest);
+ font-size:clamp(11px,3.25vw,15px);font-weight:900;
+}
+.gg-redesign .gg-catalog-header{display:flex;align-items:center;gap:8px}
+.gg-redesign .gg-catalog-header button{min-width:44px;background:#eaf1e6;font-size:28px}
+.gg-redesign .gg-catalog-title{font:900 clamp(25px,7vw,38px)/1.15 Nunito,system-ui,sans-serif}
+.gg-redesign .gg-catalog-tabs{display:flex;gap:5px;flex-wrap:wrap;margin:10px 0}
+.gg-redesign .gg-catalog-tabs button{
+ min-height:44px;border:1px solid var(--gg-outline);border-radius:999px;padding:4px 9px;
+ background:#f2f6ec;color:var(--gg-forest);font-size:12px;font-weight:900;
+}
+.gg-redesign .gg-catalog-tabs button[aria-pressed=true]{background:var(--gg-forest);color:white}
+.gg-redesign .gg-overview{display:grid;gap:14px}
+.gg-redesign .gg-group-heading{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.gg-redesign .gg-group-heading h2{margin:0}
+.gg-redesign .gg-group p{color:var(--gg-muted);font-size:13px}
+@media(max-height:700px){
+ .gg-redesign .gg-list-card{grid-template-columns:42px minmax(0,1fr) auto}
+ .gg-redesign .gg-next>div{grid-template-columns:38px minmax(0,1fr) minmax(64px,29%)}
+ .gg-redesign .gg-next{margin-top:5px}
+}
