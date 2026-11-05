@@ -82,6 +82,14 @@ begin
     join public.teachers t on t.id=a.teacher_id and t.active and t.frozen_at is null
     where g.student_id=p_actor and g.alias='Premium Oyun' and g.preview;
   if not found then raise exception 'Öğretmen oyun profili gerekli.'; end if;
+  -- Öğretmen oyun profili ilk oluşturulduğunda öğrenci varsayılanı 25 enerjidir.
+  -- Mevcut planın 40/60 kapasitesine göre tetikleyiciyi bir kez çalıştır.
+  if exists(
+    select 1 from public.students st
+    where st.id=p_actor and st.energy_max<>(public.dm_plan_limits(public.dm_plan(p_actor,'student'))->>'energyMax')::int
+  ) then
+    update public.students set energy_max=energy_max where id=p_actor;
+  end if;
   p:=public.dm_plan(p_actor,'student');
   if p<>'pro' then return jsonb_build_object('plan',p,'remaining',case when p='premium_pro' then 999 else 3 end); end if;
   perform pg_advisory_xact_lock(hashtextextended(p_actor::text||':'||p_game,2026));
