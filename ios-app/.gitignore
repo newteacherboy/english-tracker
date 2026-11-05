@@ -3,3 +3,4 @@ package-lock.json
 ios/App/Pods/
 ios/App/App/public/
 ios/DerivedData/
+native/native-runtime.js

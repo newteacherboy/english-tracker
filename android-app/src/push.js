@@ -3,7 +3,7 @@ import { createPushPolicy } from './push-policy.js';
 // Anlık bildirimler: izin (Papi'nin kibar sorusuyla), cihaz jetonunun sunucuya kaydı, bildirime dokununca ilgili sekme.
 const TAB_TO_SCREEN = { parkur: 'tab-dunya', arkadaslar: 'tab-meduakis', oyunlar: 'tab-aktiviteler', derscalis: 'tab-derscalis', magaza: 'tab-magaza', profil: 'tab-profile-menu' };
 
-export function createPush({ plugin, win, endpoint, isTeacher }) {
+export function createPush({ plugin, platform = 'android', win, endpoint, isTeacher }) {
   const doc = win.document;
   let policy, owner = '', startedAt = Date.now(), token = '', sentFor = '', open = null, listening = false;
   const student = () => String(win.dmAndroidStudentName?.() || '');
@@ -17,13 +17,13 @@ export function createPush({ plugin, win, endpoint, isTeacher }) {
     const session = win.localStorage.getItem('ing_token');
     if (!session || !token) return;
     try {
-      const r = await win.fetch(endpoint, { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-diji-token': session }, body: JSON.stringify({ action, token, platform: 'android' }), signal: AbortSignal.timeout(10000) });
+      const r = await win.fetch(endpoint, { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-diji-token': session }, body: JSON.stringify({ action, token, platform }), signal: AbortSignal.timeout(10000) });
       if (r.ok && action === 'register') sentFor = session + '|' + token;
     } catch {}
   }
   async function listen() {
     if (listening) return; listening = true;
-    await plugin.createChannel({ id: 'genel', name: 'Diji Medu', description: 'Hatırlatmalar ve duyurular', importance: 3, visibility: 1 }).catch(() => {});
+    if (platform === 'android') await plugin.createChannel({ id: 'genel', name: 'Diji Medu', description: 'Hatırlatmalar ve duyurular', importance: 3, visibility: 1 }).catch(() => {});
     await plugin.addListener('registration', t => { token = String(t?.value || ''); if (signedIn()) void send('register'); });
     await plugin.addListener('registrationError', () => {});
     // Uygulama açıkken gelen bildirim: Papi'nin küçük duyurusu.

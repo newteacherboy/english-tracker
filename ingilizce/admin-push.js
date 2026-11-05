@@ -57,9 +57,11 @@
     };
     veil.addEventListener('input', preview); veil.addEventListener('change', preview);
     const stats = d => {
-      $('[data-stats]').textContent = `Bildirime izin veren: ${d.students} öğrenci · ${d.devices} cihaz`;
-      const w = $('[data-warn]');
-      w.hidden = !!d.configured; w.textContent = 'Firebase anahtarı (FCM_SERVICE_ACCOUNT) Supabase\'e henüz eklenmedi; gönderim bundan sonra çalışır.';
+      $('[data-stats]').textContent = `Bildirime izin veren: ${d.students} öğrenci · ${d.devices} cihaz` + (d.iosDevices ? ` (${d.iosDevices} iPhone)` : '');
+      const w = $('[data-warn]'), eksik = [];
+      if (!d.configured) eksik.push('Android için FCM_SERVICE_ACCOUNT');
+      if (d.iosDevices && d.iosConfigured === false) eksik.push('iPhone için APNS_KEY_P8');
+      w.hidden = !eksik.length; w.textContent = eksik.join(' ve ') + ' Supabase\'e henüz eklenmedi; o cihazlara gönderim bundan sonra çalışır.';
       $('[data-log]').innerHTML = (d.log || []).length ? d.log.map(x => `<li><span><b>${esc(x.title)}</b> · ${esc(x.target === 'all' ? 'herkese' : x.target.replace(/^user:/, ''))}</span><span>${x.sent} ✓${x.failed ? ' · ' + x.failed + ' ✗' : ''}</span></li>`).join('') : '<li>Henüz gönderim yok.</li>';
     };
     const load = () => call({ action: 'adminStats' }).then(stats).catch(e => { $('[data-stats]').textContent = 'Okunamadı'; msg(e.message, true); });
@@ -83,7 +85,7 @@
     const tiles = doc.querySelector('#tpDashboard .tp-real-tools');
     if (!tiles || tiles.querySelector('[data-dmn]')) return;
     const b = doc.createElement('button'); b.type = 'button'; b.dataset.dmn = '1';
-    b.innerHTML = '<span aria-hidden="true">🔔</span><strong>Bildirim Gönder</strong><small>Android uygulamasına</small>';
+    b.innerHTML = '<span aria-hidden="true">🔔</span><strong>Bildirim Gönder</strong><small>Android ve iPhone uygulamasına</small>';
     b.addEventListener('click', open);
     tiles.appendChild(b);
   }

@@ -25,5 +25,21 @@
     },
     "teacherAds": false
   },
-  "ssvCallbackUrl": "https://nxfqlutulxqzqgwewssd.supabase.co/functions/v1/ad-rewards/ssv"
+  "ssvCallbackUrl": "https://nxfqlutulxqzqgwewssd.supabase.co/functions/v1/ad-rewards/ssv",
+  "ios": {
+    "appId": "ca-app-pub-3940256099942544~1458002511",
+    "units": {
+      "energy": "",
+      "gold": "",
+      "banner": "",
+      "interstitial": ""
+    },
+    "testUnits": {
+      "reward": "ca-app-pub-3940256099942544/1712485313",
+      "banner": "ca-app-pub-3940256099942544/2435281174",
+      "interstitial": "ca-app-pub-3940256099942544/4411468910"
+    },
+    "productionEnabled": false,
+    "note": "iOS: gerçek birimler AdMob'da açılınca units ve appId doldurulur, productionEnabled true yapılır. O zamana kadar Google test reklamları gösterilir, ödül verilmez."
+  }
 }

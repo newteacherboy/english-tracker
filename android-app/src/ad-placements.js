@@ -5,7 +5,7 @@ import { createAdPolicy, SOLO_GAMES } from './ad-policy.js';
 const IDS = { banner:'ca-app-pub-3940256099942544/6300978111', interstitial:'ca-app-pub-3940256099942544/1033173712' };
 export function createPlacements({ admob, ads, win, interstitialEvents, bannerEvents, remote }) {
   const settings=()=>remote?.get?.()||{enabled:true,banner:true,bannerTabs:['games','store','lessons']};
-  const ids=ads.units||IDS, isTesting=ads.mode!=='production';
+  const ids=ads.units||ads.testUnits||IDS, isTesting=ads.mode!=='production';
   let active=true, ready=false, preparing=false, policy, owner='', busy=false, preloadRetryAt=0, bannerRetryAt=0;
   let banner=false, bannerWanted=false, bannerEpoch=0, bannerQueue=Promise.resolve(), initialized=false;
   let pending=null, sequence=0, closing=false;

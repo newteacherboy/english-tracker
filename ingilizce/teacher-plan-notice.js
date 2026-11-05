@@ -57,9 +57,11 @@
   function planSheet(plan) {
     const cur = plan === 'pro' ? 'pro' : 'free';
     const android = !!window.dmAndroidBilling?.available;
-    const card = (id, name, price, feats, extra = '') => `<div class="dmt-plan${cur === id ? ' is-cur' : ''}${id === 'premium_pro' ? ' is-best' : ''}">
+    // iPhone: Apple'da satışa açık olmayan dijital planların fiyatı gösterilmez (App Store 3.1.1).
+    const ios = !!window.dmIosUygulama;
+    const card = (id, name, price, feats, extra = '') => { if (ios && id !== 'free') { price = ''; extra = ''; } return `<div class="dmt-plan${cur === id ? ' is-cur' : ''}${id === 'premium_pro' ? ' is-best' : ''}">
       <div class="dmt-row"><b>${name}</b><span class="dmt-price">${price}</span></div>${extra}
-      <ul class="dmt-feat">${feats.map(f => '<li>' + f + '</li>').join('')}</ul></div>`;
+      <ul class="dmt-feat">${feats.map(f => '<li>' + f + '</li>').join('')}</ul></div>`; };
     const ui = open(`<div class="dmt-veil" role="dialog" aria-modal="true" aria-label="Öğretmen planları"><div class="dmt-sheet">${hero}
       <div class="dmt-body"><p class="dmt-title">Sınıfını büyütmeye hazır mısın?</p>
       <p class="dmt-text">Diji Medu'yu ücretsiz kullanmaya devam edebilirsin. Daha çok sınıf ve detaylı raporlar için öğretmen planlarına göz at.</p>

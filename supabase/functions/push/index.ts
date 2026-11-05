@@ -1,9 +1,10 @@
-// Anlık bildirimler (Android, FCM HTTP v1).
+// Anlık bildirimler: Android (FCM HTTP v1) ve iPhone (APNs, doğrudan Apple).
 //  - Öğrenci oturumu: register / unregister (cihaz jetonu)
 //  - Yönetici oturumu ('teacher' kullanıcı adlı yönetici): adminStats / adminSend
-// Gizli değer: FCM_SERVICE_ACCOUNT (Firebase > Proje ayarları > Hizmet hesapları > yeni özel anahtar, JSON).
+// Gizli değerler: FCM_SERVICE_ACCOUNT (Firebase > Proje ayarları > Hizmet hesapları > yeni özel anahtar, JSON)
+//   APNS_KEY_P8 (.p8 içeriği), APNS_KEY_ID, APNS_TEAM_ID (Apple Developer > Keys > Apple Push Notifications service).
 import { createClient } from 'npm:@supabase/supabase-js@2.118.0';
-import { cleanText, validToken, fcmMessage, deadToken } from './rules.mjs';
+import { cleanText, validToken, fcmMessage, deadToken, apnsMessage, apnsDead, IOS_TOPIC } from './rules.mjs';
 
 const key = JSON.parse(Deno.env.get('SUPABASE_SECRET_KEYS') || '{}').default || Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
 const db = createClient(Deno.env.get('SUPABASE_URL')!, key!, { auth: { persistSession: false, autoRefreshToken: false } });
@@ -34,6 +35,20 @@ async function fcmAuth() {
   return cached;
 }
 
+// APNs sağlayıcı jetonu (ES256, en fazla saatte bir yenilenir; Apple 20-60 dk arası öneriyor).
+let apnsCached: { value: string; until: number } | null = null;
+async function apnsAuth() {
+  if (apnsCached && apnsCached.until > Date.now()) return apnsCached.value;
+  const p8 = Deno.env.get('APNS_KEY_P8') || '', kid = Deno.env.get('APNS_KEY_ID') || '', team = Deno.env.get('APNS_TEAM_ID') || '';
+  if (!p8 || !kid || !team) throw Error('apns_not_configured');
+  const der = Uint8Array.from(atob(p8.replace(/-----[^-]+-----/g, '').replace(/\s+/g, '')), c => c.charCodeAt(0));
+  const k = await crypto.subtle.importKey('pkcs8', der, { name: 'ECDSA', namedCurve: 'P-256' }, false, ['sign']);
+  const head = b64url(JSON.stringify({ alg: 'ES256', kid })), body = b64url(JSON.stringify({ iss: team, iat: Math.floor(Date.now() / 1000) }));
+  const sig = await crypto.subtle.sign({ name: 'ECDSA', hash: 'SHA-256' }, k, new TextEncoder().encode(head + '.' + body));
+  apnsCached = { value: head + '.' + body + '.' + b64url(sig), until: Date.now() + 40 * 60000 };
+  return apnsCached.value;
+}
+
 async function session(req: Request) {
   const token = req.headers.get('x-diji-token') || '';
   if (token.length < 16 || token.length > 1024) return null;
@@ -48,14 +63,33 @@ async function isAdmin(s: any) {
   return t && t.is_admin && t.active && !t.frozen_at && String(t.username).toLowerCase() === 'teacher' ? t : null;
 }
 
-async function sendAll(tokens: string[], msg: { title: string; body: string; tab?: string }) {
-  const auth = await fcmAuth();
-  const url = `https://fcm.googleapis.com/v1/projects/${auth.project}/messages:send`;
-  let sent = 0, failed = 0; const dead: string[] = [];
+type Device = { token: string; platform: string };
+async function sendAll(devices: Device[], msg: { title: string; body: string; tab?: string }) {
+  let sent = 0, failed = 0, missing = 0; const dead: string[] = [];
+  const android = devices.filter(d => d.platform !== 'ios').map(d => d.token), ios = devices.filter(d => d.platform === 'ios').map(d => d.token);
+  // Bir platformun anahtarı eksikse diğeri yine gönderilir.
+  let auth: { value: string; project: string } | null = null;
+  if (android.length) { try { auth = await fcmAuth(); } catch { missing += android.length; } }
+  let apns = '';
+  if (ios.length) { try { apns = await apnsAuth(); } catch { missing += ios.length; } }
+  if (!auth && !apns) throw Error(android.length ? 'fcm_not_configured' : 'apns_not_configured');
+  const iosBody = JSON.stringify(apnsMessage(msg));
+  for (let i = 0; apns && i < ios.length; i += 20) {
+    await Promise.all(ios.slice(i, i + 20).map(async t => {
+      try {
+        const r = await fetch('https://api.push.apple.com/3/device/' + t, { method: 'POST', headers: { authorization: 'bearer ' + apns, 'apns-topic': IOS_TOPIC, 'apns-push-type': 'alert', 'apns-priority': '10' }, body: iosBody, signal: AbortSignal.timeout(10000) });
+        if (r.ok) { sent++; return; }
+        const j = await r.json().catch(() => ({}));
+        failed++; if (apnsDead(r.status, j)) dead.push(t);
+      } catch { failed++; }
+    }));
+  }
+  const tokens = auth ? android : [];
+  const url = auth ? `https://fcm.googleapis.com/v1/projects/${auth.project}/messages:send` : '';
   for (let i = 0; i < tokens.length; i += 20) {
     await Promise.all(tokens.slice(i, i + 20).map(async t => {
       try {
-        const r = await fetch(url, { method: 'POST', headers: { Authorization: 'Bearer ' + auth.value, 'Content-Type': 'application/json' }, body: JSON.stringify(fcmMessage(t, msg)), signal: AbortSignal.timeout(10000) });
+        const r = await fetch(url, { method: 'POST', headers: { Authorization: 'Bearer ' + auth!.value, 'Content-Type': 'application/json' }, body: JSON.stringify(fcmMessage(t, msg)), signal: AbortSignal.timeout(10000) });
         if (r.ok) { sent++; return; }
         const j = await r.json().catch(() => ({}));
         failed++; if (deadToken(r.status, j)) dead.push(t);
@@ -63,7 +97,7 @@ async function sendAll(tokens: string[], msg: { title: string; body: string; tab
     }));
   }
   if (dead.length) await db.from('dm_push_tokens').delete().in('token', dead);
-  return { sent, failed, removed: dead.length };
+  return { sent, failed: failed + missing, removed: dead.length };
 }
 
 Deno.serve(async req => {
@@ -86,15 +120,15 @@ Deno.serve(async req => {
   const admin = await isAdmin(s);
   if (!admin) return reply({ ok: false, mesaj: 'Bu işlem yalnız yönetici hesabına açık.' }, 403);
   if (body.action === 'adminStats') {
-    const { data: all } = await db.from('dm_push_tokens').select('student_id').limit(20000);
-    const count = all?.length || 0, students = new Set((all || []).map(r => r.student_id)).size;
+    const { data: all } = await db.from('dm_push_tokens').select('student_id,platform').limit(20000);
+    const count = all?.length || 0, students = new Set((all || []).map(r => r.student_id)).size, iosDevices = (all || []).filter(r => r.platform === 'ios').length;
     const { data: log } = await db.from('dm_push_log').select('created_at,target,title,sent,failed').order('id', { ascending: false }).limit(10);
-    return reply({ ok: true, devices: count || 0, students: students || 0, configured: !!Deno.env.get('FCM_SERVICE_ACCOUNT'), log: log || [] });
+    return reply({ ok: true, devices: count || 0, students: students || 0, configured: !!Deno.env.get('FCM_SERVICE_ACCOUNT'), iosDevices, iosConfigured: !!Deno.env.get('APNS_KEY_P8'), log: log || [] });
   }
   if (body.action === 'adminSend') {
     const title = cleanText(body.title, 60), text = cleanText(body.body, 200), tab = cleanText(body.tab, 20);
     if (!title || !text) return reply({ ok: false, mesaj: 'Başlık ve metin gerekli.' }, 400);
-    let q = db.from('dm_push_tokens').select('token');
+    let q = db.from('dm_push_tokens').select('token,platform');
     let target = 'all';
     if (body.target === 'user') {
       const username = cleanText(body.username, 80);
@@ -104,11 +138,11 @@ Deno.serve(async req => {
     }
     const { data: rows, error } = await q.limit(20000);
     if (error) return reply({ ok: false, mesaj: 'Liste okunamadı.' }, 503);
-    const tokens = (rows || []).map(r => r.token);
+    const tokens = (rows || []) as Device[];
     if (!tokens.length) return reply({ ok: false, mesaj: target === 'all' ? 'Henüz bildirime izin veren cihaz yok.' : 'Bu öğrencinin bildirime izin veren cihazı yok.' }, 404);
     let result;
     try { result = await sendAll(tokens, { title, body: text, tab }); }
-    catch (e) { return reply({ ok: false, mesaj: String((e as Error).message) === 'fcm_not_configured' ? 'Firebase anahtarı (FCM_SERVICE_ACCOUNT) henüz eklenmedi.' : 'Firebase şu an yanıt vermiyor.' }, 503); }
+    catch (e) { return reply({ ok: false, mesaj: String((e as Error).message) === 'fcm_not_configured' ? 'Firebase anahtarı (FCM_SERVICE_ACCOUNT) henüz eklenmedi.' : String((e as Error).message) === 'apns_not_configured' ? 'Apple bildirim anahtarı (APNS_KEY_P8) henüz eklenmedi.' : 'Bildirim servisi şu an yanıt vermiyor.' }, 503); }
     await db.from('dm_push_log').insert({ sent_by: admin.username, target, title, body: text, ...result });
     return reply({ ok: true, ...result });
   }

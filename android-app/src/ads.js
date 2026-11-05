@@ -23,6 +23,7 @@ export function createTestAds(admob, win, events, options = {}) {
   return {
     mode: production ? 'production' : 'test',
     units: production ? options.units : null,
+    testUnits: options.testUnits || null,
     ensureInitialized,
     get busy() { return busy; },
     async show(kind = 'energy') {
@@ -43,7 +44,7 @@ export function createTestAds(admob, win, events, options = {}) {
         listeners.push(await admob.addListener(events.Dismissed, () => finish.resolve()));
         listeners.push(await admob.addListener(events.FailedToShow, () => finish.reject(new Error('Reklam gösterilemedi.'))));
         if(production)intent=await rewardClient.create(kind);
-        await admob.prepareRewardVideoAd({ adId: production ? options.units[kind] : 'ca-app-pub-3940256099942544/5224354917', isTesting: !production, npa:true, ...(intent ? {ssv:{customData:intent.id}} : {}) });
+        await admob.prepareRewardVideoAd({ adId: production ? options.units[kind] : (options.testUnits?.reward || 'ca-app-pub-3940256099942544/5224354917'), isTesting: !production, npa:true, ...(intent ? {ssv:{customData:intent.id}} : {}) });
         if (teacherMode(win)) throw new Error('Öğretmen modunda reklam gösterilmez.');
         timer = setTimeout(() => finish.reject(new Error('Reklam yanıt vermedi. Yeniden deneyebilirsin.')), 180000);
         await Promise.race([admob.showRewardVideoAd(), closed]);

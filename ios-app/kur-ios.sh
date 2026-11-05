@@ -1,31 +1,10 @@
 #!/bin/sh
 # Diji Medu iOS projesini Mac'te hazırlar. Kullanım:  cd ios-app && sh kur-ios.sh
+# Not: Normal sürümler GitHub'daki "iOS sürümü" iş akışıyla Mac gerekmeden derlenip TestFlight'a gönderilir.
 set -e
 cd "$(dirname "$0")"
-
-echo "🦜 Diji Medu iOS kurulumu başlıyor…"
-
 command -v node >/dev/null 2>&1 || { echo "❌ Node.js bulunamadı. nodejs.org'dan LTS sürümünü kurup tekrar dene."; exit 1; }
 xcode-select -p >/dev/null 2>&1 || { echo "❌ Xcode bulunamadı. App Store'dan Xcode'u kurup bir kez aç, sonra tekrar dene."; exit 1; }
-
-echo "📦 Paketler kuruluyor (birkaç dakika sürebilir)…"
-npm install --no-audit --no-fund \
-  @capacitor/core@8.6.0 @capacitor/ios@8.6.0 \
-  @capacitor-community/admob@8.3.0 \
-  @capacitor/haptics@8 @capacitor/local-notifications@8 @capacitor/network@8
-npm install --no-audit --no-fund --save-dev @capacitor/cli@8.6.0 @capacitor/assets@latest
-
-if [ ! -d ios ]; then
-  echo "📱 iOS projesi oluşturuluyor…"
-  npx cap add ios --packagemanager SPM
-fi
-
-echo "🎨 Uygulama ikonu üretiliyor…"
-npx @capacitor/assets generate --ios --iconBackgroundColor '#1E88E5' --splashBackgroundColor '#FAF8F5' || \
-  echo "⚠️ İkon üretilemedi; Xcode'da Assets → AppIcon'a resources/icon.png'yi elle sürükleyebilirsin."
-
-npx cap sync ios
-sh izinler.sh
-
+sh scripts/hazirla.sh
 echo "✅ Hazır. Xcode açılıyor…"
 npx cap open ios
