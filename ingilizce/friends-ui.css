@@ -312,42 +312,80 @@ body #tab-meduakis.fr-home-view .fr-wallet-host [data-pw-minutes]{display:none!i
 #tab-meduakis .fr-invite-cta .fr-icon{width:18px;height:18px}
 #tab-meduakis .fr-league-board{
   min-width:0;display:grid;gap:5px;padding:7px;
-  border:1px solid #327e82;border-radius:17px;
-  background:linear-gradient(165deg,#08685f,#18304e 58%,#123843);
-  box-shadow:inset 0 1px 2px #a6fbe545,0 3px 6px #07132958;
+  border:1px solid #268576;border-radius:17px;
+  background:radial-gradient(ellipse at 50% 48%,#667b27 0,#0a6252 34%,#063b3a 75%);
+  box-shadow:inset 0 1px 3px #a6fbe545,0 3px 6px #07132958;
 }
 #tab-meduakis .fr-league-board .fr-section-head{padding:0 4px}
-#tab-meduakis .fr-league-board .fr-link{color:#c7f4f0}
-#tab-meduakis .fr-leaders{display:grid;gap:4px}
+#tab-meduakis .fr-leaders{
+  display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr) minmax(0,1fr);align-items:end;
+  min-height:clamp(92px,20dvh,188px);padding-inline:4px;isolation:isolate;
+}
 #tab-meduakis .fr-leader{
-  display:grid;grid-template-columns:auto auto minmax(0,1fr) auto;align-items:center;
-  gap:clamp(4px,1.5vw,8px);min-width:0;min-height:clamp(29px,5.2dvh,45px);padding:1px 8px;
-  text-align:left;color:#f2f7ff;border:1px solid #526f99;border-radius:12px;
-  background:linear-gradient(150deg,#2f4971,#1b2e50);box-shadow:inset 0 1px 2px #ffffff26,0 2px 0 #142744;
-  font:900 clamp(12px,3.7vw,17px)/1.1 'Nunito',system-ui,sans-serif;cursor:pointer;
+  --fr-medal:#e0edff;--fr-step-top:#bccfe5;--fr-step-base:#45647e;
+  display:flex;flex-direction:column;align-items:center;justify-content:flex-end;min-width:0;
+  background:none;border:0;padding:0;color:white;cursor:pointer;
+  font:900 clamp(11px,3.5vw,17px)/1.1 'Nunito',system-ui,sans-serif;
 }
 #tab-meduakis .fr-leader-1{
-  color:#fff7db;border-color:#f4c64b;background:linear-gradient(145deg,#946a0f,#775202);
-  box-shadow:inset 0 1px 2px #ffe17a85,0 2px 0 #503300;
+  --fr-medal:#ffdf68;--fr-step-top:#ffdb5d;--fr-step-base:#c98a18;z-index:1;color:#2b1900;
 }
-#tab-meduakis .fr-leader strong{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-#tab-meduakis .fr-leader .fr-avatar{--avatar-size:clamp(23px,4.3dvh,36px)!important;border:1px solid #b9d1fc}
-#tab-meduakis .fr-leader-cup{position:relative;width:25px;height:25px}
+#tab-meduakis .fr-leader-3{--fr-medal:#ffb78c;--fr-step-top:#de9c75;--fr-step-base:#754834}
+#tab-meduakis .fr-podium-portrait{position:relative;display:flex;justify-content:center;z-index:1}
+#tab-meduakis .fr-leader .fr-avatar{
+  --avatar-size:clamp(32px,8.2dvh,77px)!important;
+  border:3px solid var(--fr-medal);box-shadow:0 0 0 2px #142c3945,0 3px 7px #092b36a0;
+}
+#tab-meduakis .fr-leader-1 .fr-avatar{
+  --avatar-size:clamp(41px,9.6dvh,88px)!important;
+  box-shadow:0 0 0 2px #fff09c77,0 0 21px #ffda6370;
+}
+#tab-meduakis .fr-podium-crown{
+  position:absolute;z-index:1;left:50%;top:0;transform:translate(-50%,-57%);width:38%;height:auto;
+  aspect-ratio:40/26;filter:drop-shadow(0 2px 2px #856023);
+}
+#tab-meduakis .fr-podium-laurel{
+  position:absolute;top:34%;left:-22%;width:28%;height:57%;
+  pointer-events:none;filter:drop-shadow(0 2px 2px #473605);
+}
+#tab-meduakis .fr-podium-laurel+.fr-podium-laurel{left:auto;right:-22%;transform:scaleX(-1)}
+#tab-meduakis .fr-podium-step{
+  position:relative;display:grid;align-content:center;gap:2px;width:100%;box-sizing:border-box;
+  min-height:clamp(34px,6.6dvh,64px);padding:9px 4px 3px;overflow:hidden;
+  border:1px solid var(--fr-medal);border-bottom:0;border-radius:13px 13px 2px 2px;
+  background:linear-gradient(160deg,var(--fr-step-top),var(--fr-step-base) 72%);
+  box-shadow:inset 0 4px 4px #ffffff60,inset -6px 0 10px #1e211529,0 -3px 4px #17323550;
+  text-align:center;
+}
+#tab-meduakis .fr-leader-1 .fr-podium-step{min-height:clamp(40px,8dvh,78px)}
+#tab-meduakis .fr-leader-3 .fr-podium-step{min-height:clamp(31px,6dvh,59px)}
+#tab-meduakis .fr-podium-step strong{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#tab-meduakis .fr-leader-cup{
+  position:absolute;left:50%;bottom:0;transform:translate(-50%,29%);
+  width:clamp(21px,4.7dvh,37px);height:clamp(21px,4.7dvh,37px);
+  filter:drop-shadow(0 2px 2px #3a270774);
+}
 #tab-meduakis .fr-leader-cup .fr-icon{width:100%;height:100%}
 #tab-meduakis .fr-leader-2 .fr-leader-cup .fr-icon{filter:grayscale(1) brightness(1.12)}
 #tab-meduakis .fr-leader-3 .fr-leader-cup .fr-icon{filter:hue-rotate(-25deg) saturate(.8)}
 #tab-meduakis .fr-leader-cup b{
-  position:absolute;left:50%;top:12%;transform:translateX(-50%);width:12px;text-align:center;
-  border-radius:3px;background:#ffe18b;color:#392400;font:1000 10px/12px 'Nunito',sans-serif;
+  position:absolute;left:50%;top:13%;transform:translateX(-50%);width:43%;text-align:center;
+  border-radius:3px;background:var(--fr-medal);color:#332108;font:1000 clamp(9px,1.6dvh,14px)/1.2 'Nunito',sans-serif;
 }
-#tab-meduakis .fr-leader-2 .fr-leader-cup b{background:#dce7f3;color:#243b55}
-#tab-meduakis .fr-leader-3 .fr-leader-cup b{background:#f7b58b;color:#502509}
+#tab-meduakis .fr-podium-footer{
+  display:flex;align-items:center;justify-content:space-between;gap:5px;
+  padding:5px 2px 0;border-top:1px solid #48c5aa80;
+}
+#tab-meduakis .fr-podium-footer .fr-link{
+  margin-left:auto;min-height:30px;flex-shrink:0;padding:2px 6px;border:1px solid #e4c775;
+  border-radius:999px;color:#f1fbfc;background:#07594f;box-shadow:0 2px 0 #073e36;
+  font-size:clamp(10px,3vw,14px);
+}
 #tab-meduakis .fr-league-self{
-  display:flex;align-items:center;justify-content:center;gap:7px;min-width:0;padding:2px 4px;
-  border:1px solid #41e3ba;border-radius:11px;background:#075a4e;color:#f2fffa;
-  font:900 clamp(11px,3.5vw,16px)/1.1 'Nunito',sans-serif;
+  display:flex;align-items:center;gap:5px;min-width:0;color:#f2fffa;
+  font:900 clamp(10px,3.35vw,16px)/1.1 'Nunito',sans-serif;
 }
-#tab-meduakis .fr-league-self .fr-avatar{--avatar-size:clamp(20px,3.5dvh,30px)!important;border:1px solid #75ead1}
+#tab-meduakis .fr-league-self .fr-avatar{--avatar-size:clamp(20px,4dvh,33px)!important;border:2px solid #75ead1}
 #tab-meduakis .fr-league-status{margin:3px 4px 6px;color:var(--fr-muted);font-size:12px}
 #tab-meduakis .fr-compact .fr-summaries{grid-template-columns:minmax(0,1.75fr) minmax(0,1fr);gap:7px;padding-bottom:3px}
 #tab-meduakis .fr-friend-shortcut,#tab-meduakis .fr-tile{
@@ -384,7 +422,7 @@ body #tab-meduakis.fr-home-view .fr-wallet-host [data-pw-minutes]{display:none!i
   border:0;background:none;color:var(--fr-ink);text-align:left;padding:0;cursor:pointer;
 }
 #tab-meduakis .fr-event-person .fr-avatar{
-  --avatar-size:clamp(30px,5.8dvh,57px)!important;
+  --avatar-size:clamp(29px,4.8dvh,51px)!important;
   border:2px solid var(--fr-avatar-edge,#a693e2);padding:2px;
   background:var(--fr-avatar-glow,linear-gradient(145deg,#fff3fa,#d1b7ff));
   box-shadow:0 2px 4px #17294320;
@@ -399,9 +437,10 @@ body #tab-meduakis.fr-home-view .fr-wallet-host [data-pw-minutes]{display:none!i
 }
 #tab-meduakis .fr-event-person b{font:1000 clamp(13px,4.2vw,19px)/1.15 'Nunito',sans-serif}
 #tab-meduakis .fr-event-person small{font:750 clamp(11px,3.35vw,15px)/1.25 'Nunito',sans-serif;color:var(--fr-muted)}
-#tab-meduakis .fr-congrats{min-height:29px;padding-inline:clamp(4px,1.4vw,9px);--fr-button-edge:#e1b856;--fr-button-base:#886127}
+#tab-meduakis .fr-congrats{display:grid;place-items:center;flex:0 0 auto;width:clamp(31px,10vw,43px);min-height:29px;padding:0;--fr-button-edge:#e1b856;--fr-button-base:#886127}
 #tab-meduakis .fr-congrats .fr-icon,#tab-meduakis .aksiyon button .fr-icon{width:15px;height:15px}
-#tab-meduakis .fr-congrats.basili{color:#ffe6a0;--fr-button-edge:#d4a748}
+#tab-meduakis .fr-congrats .fr-icon{width:20px;height:20px}
+#tab-meduakis .fr-congrats.basili{color:#ffe6a0;--fr-button-bg:linear-gradient(#756024,#483713);--fr-button-edge:#ffdb79}
 #tab-meduakis .fr-event>.dm-safety-more{
   border:0;background:none;color:var(--fr-muted);min-width:22px;min-height:32px;padding:0;font-size:17px;
 }
@@ -437,10 +476,25 @@ body #tab-meduakis.fr-home-view .fr-wallet-host [data-pw-minutes]{display:none!i
   #tab-meduakis .fr-compact .fr-feed .fr-section-head{min-height:27px}
   #tab-meduakis .fr-filter-select{min-height:26px}
   #tab-meduakis .fr-league-board{padding:4px;gap:3px}
-  #tab-meduakis .fr-leaders{gap:3px}
-  #tab-meduakis .fr-leader{min-height:26px}
+  #tab-meduakis .fr-leaders{min-height:91px}
+  #tab-meduakis .fr-leader .fr-avatar{--avatar-size:clamp(32px,6.5dvh,41px)!important}
+  #tab-meduakis .fr-leader-1 .fr-avatar{--avatar-size:clamp(42px,8dvh,50px)!important}
+  #tab-meduakis .fr-podium-step{min-height:34px}
+  #tab-meduakis .fr-leader-1 .fr-podium-step{min-height:41px}
+  #tab-meduakis .fr-leader-3 .fr-podium-step{min-height:32px}
   #tab-meduakis .fr-leader-cup{width:22px;height:22px}
   #tab-meduakis .fr-congrats{min-height:25px}
   #tab-meduakis .fr-event>.dm-safety-more{min-height:27px}
   #tab-meduakis .fr-event-person .fr-avatar{--avatar-size:26px!important}
+}
+
+@layer bilgiIslands {
+  body #tab-meduakis.fr-club-view .akis-kart .aksiyon button.fr-congrats{
+    flex:0 0 44px!important;width:44px!important;padding:0!important;
+    border-color:#e1b856!important;background:linear-gradient(#304674,#223658)!important;
+    box-shadow:0 3px 0 #886127!important;
+  }
+  body #tab-meduakis.fr-club-view .akis-kart .aksiyon button.fr-congrats.basili{
+    background:linear-gradient(#756024,#483713)!important;
+  }
 }
