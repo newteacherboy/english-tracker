@@ -27,7 +27,8 @@ for(const engine of (process.env.PWM_ENGINES||'chromium').split(',')){
  const box=await page.locator('.pwm-board canvas').boundingBox();
  assert(box.width>=330,'tahta telefonda geniş olmalı: '+box.width);
  const vp=page.viewportSize();assert(box.y+box.height<=vp.height,'tahta ekrana sığmalı');
- const drag=async([a,b])=>{const c=box.width/7;await page.mouse.move(box.x+(a[1]+.5)*c,box.y+(a[0]+.5)*c);await page.mouse.down();await page.mouse.move(box.x+(b[1]+.5)*c,box.y+(b[0]+.5)*c,{steps:4});await page.mouse.up();};
+ assert.equal(await page.evaluate(()=>window.dmPwm.state().cols),5);
+ const drag=async([a,b])=>{const c=box.width/5;await page.mouse.move(box.x+(a[1]+.5)*c,box.y+(a[0]+.5)*c);await page.mouse.down();await page.mouse.move(box.x+(b[1]+.5)*c,box.y+(b[0]+.5)*c,{steps:4});await page.mouse.up();};
  const m0=await page.evaluate(()=>window.dmPwm.state().moves);
  await drag(await page.evaluate(()=>window.dmPwm.hint()));await page.waitForTimeout(1800);
  assert.equal(await page.evaluate(()=>window.dmPwm.state().moves),m0-1,'geçerli hamle 1 hamle harcar');

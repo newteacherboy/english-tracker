@@ -5,11 +5,14 @@ const moves=st=>{const out=[];for(let r=0;r<st.rows;r++)for(let c=0;c<st.cols;c+
 
 test('100 bölümün hepsi geçerli ve oynanabilir başlar',()=>{
  for(let L=1;L<=100;L++){const cfg=core.levelConfig(L);
-  assert(cfg.types>=5&&cfg.types<=7);assert(cfg.moves>=22&&cfg.moves<=27);assert(cfg.goals.length>=1&&cfg.goals.length<=3);
+  assert.equal(cfg.rows,5);assert.equal(cfg.cols,5);assert.equal(cfg.types,5);assert(cfg.moves>=22&&cfg.moves<=27);assert(cfg.goals.length>=1&&cfg.goals.length<=3);
   assert(!(cfg.ice.length&&cfg.locks.length),'buz ve zincir aynı bölümde olmamalı: '+L);
-  const st=core.create(cfg,L*13);
-  assert.equal(core.findGroups(st).length,0,'başlangıçta hazır eşleşme olmamalı: '+L);
-  assert(core.findMove(st),'en az bir hamle olmalı: '+L);
+  for(let seed=1;seed<=20;seed++){const st=core.create(cfg,L*13+seed);
+   assert.equal(core.findGroups(st).length,0,'başlangıçta hazır eşleşme olmamalı: '+L);
+   assert(core.findMove(st),'en az bir hamle olmalı: '+L);
+   for(const [r,c] of cfg.locks)assert(st.board[r][c].lock,'zincir karıştırmada korunmalı');
+   for(const [r,c] of cfg.ice)assert.equal(st.ice[r][c],1);
+  }
  }
 });
 
@@ -31,10 +34,10 @@ test('oynanan bölümler tutarlı kalır: tahta dolu, puan artar, hedefler aşı
 
 test('4 ve 5 eşleşme özel şeker üretir, güçlendiriciler hamle harcamaz',()=>{
  const st=core.create(core.levelConfig(1),7);const B=st.board;
- for(let r=0;r<7;r++)for(let c=0;c<7;c++){B[r][c].t=(r*3+c*2)%5;B[r][c].s=0;}
- [0,1,3].forEach(c=>B[6][c].t=4);B[5][2].t=4;B[6][2].t=1;B[6][4].t=1;B[6][5].t=2;
+ for(let r=0;r<5;r++)for(let c=0;c<5;c++){B[r][c].t=(r*3+c*2)%5;B[r][c].s=0;}
+ [0,1,3].forEach(c=>B[4][c].t=4);B[3][2].t=4;B[4][2].t=1;B[4][4].t=1;
  assert(core.findGroups(st).length===0);
- const r=core.trySwap(st,[5,2],[6,2]);assert(r.ok);
+ const r=core.trySwap(st,[3,2],[4,2]);assert(r.ok);
  assert(r.steps.find(s=>s.kind==='clear').created.some(c=>c.s===1||c.s===2),'4 eşleşme şeritli şeker vermeli');
  const m=st.moves;core.boosterRow(st,3);core.boosterColor(st,2,2);core.boosterShuffle(st);assert.equal(st.moves,m);
 });
