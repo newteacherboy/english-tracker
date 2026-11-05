@@ -237,7 +237,7 @@ function game(){
   </div>
   <div class="pwm-starbar"><div><div class="pwm-stars">${[0,1,2].map(i=>`<img data-star="${i}" src="${A}icon-star-empty.webp" alt="">`).join('')}</div><div class="pwm-bar"><i data-bar></i></div></div><small data-target>Hedef puan ${fmt(g.cfg.stars[2])}</small></div>
   <div class="pwm-board"><canvas aria-label="Kelime şekerleri tahtası. Yan yana iki şekeri kaydırarak yer değiştir; aynı kelimeden üç tane yan yana gelince patlar." role="img"></canvas><div class="pwm-combo" aria-live="polite" hidden></div><div class="pwm-mode" hidden></div></div>
-  <details class="pwm-rewards"><summary>Eşleşme ödülleri ⓘ</summary><div class="pwm-chips"><span>3’lü eşleşme<b>+100 puan</b></span><span>4’lü eşleşme<b>+250 puan</b></span><span>5’li eşleşme<b>+500 puan + özel hediye</b></span></div></details>
+  <details class="pwm-rewards"><summary>Eşleşme ödülleri <i aria-hidden="true">i</i></summary><div class="pwm-chips"><span>3’lü eşleşme<b>+100 puan</b></span><span>4’lü eşleşme<b>+250 puan</b></span><span>5’li eşleşme<b>+500 puan + özel hediye</b></span></div></details>
   <div class="pwm-boosters">${BOOSTERS.map(([k,n,s,icon])=>`<button type="button" class="pwm-boost" data-boost="${k}" aria-label="${n}: ${s}"><span class="pwm-boost-ic"><img src="${A}${icon}.webp" alt=""><em data-count="${k}"></em></span><b>${n}</b></button>`).join('')}</div>
  </section>`;
  $('.pwm-witch').src=A+'char-witch-idle.webp';

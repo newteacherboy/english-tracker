@@ -205,7 +205,7 @@ body.pwm-active{overflow:hidden!important;overscroll-behavior:none}
 #pwmRoot[data-view=game] .pwm-round{width:36px;height:36px;border:0;background:#672477;box-shadow:none}
 #pwmRoot[data-view=game] .pwm-title{padding:0;border:0;background:none;box-shadow:none}
 #pwmRoot[data-view=game] .pwm-title strong{color:#551762;text-shadow:none;font-size:clamp(23px,6.4vw,34px)}
-#pwmRoot[data-view=game] .pwm-energy{position:absolute;right:57px;top:20px;padding:0;min-width:0;background:none;border:0;box-shadow:none;color:#672477;font-size:11px}
+#pwmRoot[data-view=game] .pwm-energy{position:absolute;right:16px;top:50px;padding:0;min-width:0;background:none;border:0;box-shadow:none;color:#672477;font-size:11px}
 #pwmRoot[data-view=game] .pwm-energy svg{width:11px;height:11px}
 #pwmRoot[data-view=game] .pwm-stage{padding:6px 10px 8px}
 #pwmRoot[data-view=game] .pwm-game{gap:clamp(4px,1.05dvh,10px);justify-content:center}
@@ -234,4 +234,4 @@ body.pwm-active{overflow:hidden!important;overscroll-behavior:none}
 .pwm-game .pwm-boost-ic em{background:#a02b78;min-width:17px;height:17px;font-size:11px}
 .pwm-game .pwm-boost-ic em.plus{background:#316950}
 .pwm-game .pwm-boost b{color:#551762;text-shadow:none;font-size:clamp(9px,2.8vw,12px)}
-@media(max-width:360px){#pwmRoot[data-view=game] .pwm-energy{top:2px;right:55px}}
+.pwm-game .pwm-rewards summary i{display:inline-grid;place-items:center;width:13px;height:13px;margin-left:2px;border:1px solid;border-radius:50%;font:800 10px/1 system-ui,sans-serif}
