@@ -133,7 +133,7 @@ function medalRows(map,from,to){
 function medalRouteMarkup(steps,current,learn){
  const active=steps[current],title=learn?'Öğrenme Yolum':'Okul Yolum',info=schoolInfo(active);
  const subtitle=learn?[active?.cefr,active?.theme].filter(Boolean).join(' · '):active?info.grade+'. Sınıf · '+(Number(info.unit)?info.unit+'. Ünite':info.unit):'';
- const map={steps,current,learn,key:++mapSerial,top:74,row:76,from:Math.max(0,current-5),to:Math.min(steps.length,current+9),renderRows:medalRows};
+ const map={steps,current,learn,key:++mapSerial,top:current===0?126:74,row:76,from:Math.max(0,current-5),to:Math.min(steps.length,current+9),renderRows:medalRows};
  map.height=map.top+steps.length*map.row;
  routeMap=map;
  const tools=[['all','book','Kütüphane'],['plan','calendar','Plan'],['missions','tasks','Görevler']];
