@@ -22,7 +22,7 @@ for(const [name,file,prefix] of [
   assert(fs.statSync(image).size>250000);
   const styles=fs.readFileSync('ingilizce/holiday-splashes/splash.css','utf8');
   assert.match(styles,/html\.dm-holiday-active/);
-  assert.match(styles,/dm-holiday-art>\.dm-holiday-progress/);
+  assert.match(styles,/\.dm-holiday-progress\{display:none!important\}/);
  });
 }
 test('the approved temporary campaign ends precisely at Istanbul midnight 3 November',()=>{

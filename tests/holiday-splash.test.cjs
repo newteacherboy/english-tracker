@@ -50,8 +50,7 @@ test('no competing legacy 2026 theme or double-rendered progress bars',()=>{
   assert(!html.includes('republic-day-splash.css'));
   assert(!html.includes('republic-day-splash.js'));
  }
- assert(code.includes('frame.appendChild(bar)'));
- assert(!code.includes('screen.appendChild(bar)'));
+ assert.doesNotMatch(code,/dm-holiday-progress/);
 });
 test('head scripts execute before visible splash; assets are local and CSS blocks painting',()=>{
  for(const [path,prefix] of [['index.html','ingilizce/'],['ingilizce/index.html','']]){
@@ -68,15 +67,12 @@ test('head scripts execute before visible splash; assets are local and CSS block
  }
 });
 
-test('approved mobile art fills viewport and progress overlays just its preprinted track',()=>{
+test('approved art uses its illustrated bar and hides any cached overlay',()=>{
  const style=fs.readFileSync('ingilizce/holiday-splashes/splash.css','utf8');
  assert.match(style,/background-size:cover/);
- assert.match(style,/width:max\(100vw,56\.28dvh\)/);
- assert.match(style,/width:min\(100vw,56\.28dvh\)/);
- assert.match(style,/left:23\.5%;top:85\.5%/);
- assert.match(style,/width:46\.7%;height:3\.0%/);
- assert.match(style,/animation:none!important/);
- assert(!style.includes('dmHolidayFill'));
+ assert.match(style,/background-size:contain/);
+ assert.match(style,/html\.dm-holiday-active \.dm-holiday-progress\{display:none!important\}/);
+ assert.doesNotMatch(style,/dm-holiday-progress-fill/);
  for(const [file,expectedLink] of [['index.html','ingilizce/holiday-splashes/splash.css?v=20261023-fullscreen-1'],['ingilizce/index.html','holiday-splashes/splash.css?v=20261023-fullscreen-1']]){
   assert(fs.readFileSync(file,'utf8').includes(expectedLink));
  }

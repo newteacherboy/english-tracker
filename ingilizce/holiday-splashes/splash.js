@@ -80,10 +80,8 @@ const defaultPreference={mode:'auto',disabled:[],manual:null};
    }else{
     root.style.removeProperty('--dm-holiday-art');
     delete root.dataset.dmHoliday;delete root.dataset.dmHolidayVariant;
-    doc.querySelectorAll('.dm-holiday-art').forEach(el=>el.remove());
    }
    chosen=next;
-   if(active&&doc.readyState!=='loading')attach();
   }
   updateArtwork(chosen);
   // Server-managed global selection: read asynchronously after immediate cached first paint.
@@ -116,19 +114,6 @@ const defaultPreference={mode:'auto',disabled:[],manual:null};
    }catch(_){}
   }
 
-  function attach(){
-   for(const id of ['splashEkrani','dmBootSplash','oturumYuklemeOverlay']){
-    const screen=doc.getElementById(id);
-    if(!screen||!chosen||screen.querySelector?.('.dm-holiday-art'))continue;
-    const frame=doc.createElement('div');frame.className='dm-holiday-art';
-    frame.setAttribute('aria-label','Diji Medu '+chosen.id+' özel giriş tasarımı');
-    screen.insertBefore(frame,screen.firstChild);
-    const bar=doc.createElement('div');bar.className='dm-holiday-progress';bar.setAttribute('aria-hidden','true');
-    bar.innerHTML='<div class="dm-holiday-progress-fill"></div>';
-    frame.appendChild(bar);
-   }
-  }
-  if(doc.readyState==='loading')doc.addEventListener('DOMContentLoaded',attach,{once:true});else attach();
   if(typeof win.requestIdleCallback==='function')win.requestIdleCallback(syncRemote);else win.addEventListener('load',syncRemote,{once:true});
   // In long-running single-page sessions, re-evaluate at local midnight.
   if(typeof win.setInterval==='function')win.setInterval(()=>{
