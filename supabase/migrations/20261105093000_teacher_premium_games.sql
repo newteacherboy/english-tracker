@@ -112,7 +112,7 @@ end $$;
 -- Başlatma RPC'si hata verirse bu başarısız denemenin kotası geri alınabilir.
 create or replace function public.dm_teacher_premium_release(
   p_actor uuid, p_game text, p_run uuid
-) returns void language plpgsql security definer set search_path='' as $
+) returns void language plpgsql security definer set search_path='' as $teacher_release$
 begin
   if p_actor is null or p_run is null or p_game not in
     ('word-match','cloud-flight','word-blocks','papizzle','runners-papi')
@@ -124,7 +124,7 @@ begin
   perform pg_advisory_xact_lock(hashtextextended(p_actor::text||':'||p_game,2026));
   delete from public.dm_teacher_premium_quota_runs
   where student_id=p_actor and game_key=p_game and run_id=p_run;
-end $;
+end $teacher_release$;
 revoke all on function public.dm_teacher_premium_release(uuid,text,uuid) from public,anon,authenticated;
 grant execute on function public.dm_teacher_premium_release(uuid,text,uuid) to service_role;
 
