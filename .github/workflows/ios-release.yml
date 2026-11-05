@@ -3,8 +3,8 @@ name: Diji Medu iOS sürümü (TestFlight)
 #  1) Her çalışmada önce imzasız simülatör derlemesiyle kodu doğrular.
 #  2) App Store Connect API anahtarı tanımlıysa imzalı arşivi üretip doğrudan App Store Connect'e (TestFlight) yükler.
 # Gerekli repo gizli değerleri (App Store Connect → Kullanıcılar ve Erişim → Entegrasyonlar → App Store Connect API, "Admin" yetkisi):
-#   ASC_KEY_ID, ASC_ISSUER_ID, ASC_KEY_P8 (.p8 dosyasının içeriği)
-# Repo değişkeni (gizli değil): APPLE_TEAM_ID
+#   ASC_KEY_P8 (.p8 dosyasının içeriği). Key ID (ZKBUQJ9ADJ) ve Issuer ID gizli değil, aşağıda varsayılan.
+# Team ID (gizli değil): S6VSP7F35Q; istenirse APPLE_TEAM_ID repo değişkeniyle değiştirilir.
 on:
   push:
     branches: ['claude/ios-release-*', 'release/ios-*']
@@ -69,10 +69,10 @@ jobs:
       - name: İmzalı arşiv ve TestFlight yüklemesi
         if: ${{ (github.event_name == 'push' || inputs.upload) && env.HAS_KEY == 'yes' }}
         env:
-          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
-          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID || 'ZKBUQJ9ADJ' }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID || 'a19892be-030c-4dd3-904a-2dd86a39351e' }}
           ASC_KEY_P8: ${{ secrets.ASC_KEY_P8 }}
-          TEAM: ${{ vars.APPLE_TEAM_ID }}
+          TEAM: ${{ vars.APPLE_TEAM_ID || 'S6VSP7F35Q' }}
         working-directory: ios-app/ios/App
         shell: bash
         run: |
