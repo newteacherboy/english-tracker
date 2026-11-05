@@ -3,7 +3,7 @@
   const assets = 'premium-assets/bulut-ucusu/';
   const endpoint = (typeof apiURL === 'string' ? apiURL :
     'https://nxfqlutulxqzqgwewssd.supabase.co/functions/v1/diji-api').replace(/diji-api.*$/, 'premium-games');
-  const waveMs = 3650;
+  const waveMs = 3250;
   const mistakeLimit = 5;
   const lanes = [17, 50, 83];
   const owner = () => typeof aktifOgrenciAdi === 'undefined' ? '' : aktifOgrenciAdi;
