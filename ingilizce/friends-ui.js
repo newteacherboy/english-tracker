@@ -45,7 +45,7 @@
     const known = typeof maTumListe !== 'undefined' ? maTumListe : [];
     const friends = people().slice(0,3).map(id=>`<button type="button" class="fr-person" data-friend-action="profile" data-person="${esc(id)}" aria-label="${esc(id)} vitrinini aç">${avatar(known.find(x=>norm(x.id)===norm(id))?.ad || id,58)}${badge(id)}<b>${esc(id)}</b></button>`).join('');
     const empty = friends ? '' : `<p class="fr-empty">${loaded?'Takip ettiğin arkadaşların burada görünür.':'Arkadaşların yükleniyor…'}</p>`;
-    return empty+friends+`<button type="button" class="fr-person" data-friend-action="share"><span class="fr-avatar fr-invite-avatar">${icon('add')}</span><b>Davet et</b></button>`;
+    return empty+friends+`<button type="button" class="fr-invite-cta" data-friend-action="share">${icon('add')}<b>Davet et</b></button>`;
   }
   function tilesHtml() {
     const {me,info} = league();
@@ -79,11 +79,11 @@
   }
   function compactFeedHtml(rows) {
     if(!rows.length)return '<div class="ma-bos">'+(maAkisYuklendi?'Bu filtrede henüz etkinlik yok.':'Etkinlikler yükleniyor…')+'</div>';
-    return rows.map(event=>{
+    return rows.map((event,index)=>{
       const id=String(event.k), congratulated=maTebrik.has('akis-'+id);
       const person=typeof maTumListe!=='undefined'?maTumListe.find(x=>norm(x.id)===norm(event.ogr)):null;
       const action=event.tur==='eksi'?'':`<button type="button" class="fr-congrats${congratulated?' basili':''}" data-friend-action="congratulate" data-event="${esc(id)}" aria-pressed="${congratulated}">${congratulated?'✓ Tebrik edildi':icon('applause')+' Tebrik et'}</button>`;
-      return `<article class="fr-event" data-safety-event="${esc(id)}"><button type="button" class="fr-event-person" data-o="${esc(event.ogr)}" data-person="${esc(event.ogr)}" data-friend-action="profile">${avatar(person?.ad||event.ogr,44)}<span><b>${esc(event.ad||event.ogr)}</b><small title="${esc(event.metin)}">${esc(event.metin)}</small></span></button>${action}</article>`;
+      return `<article class="fr-event" data-fr-color="${index}" data-safety-event="${esc(id)}"><button type="button" class="fr-event-person" data-o="${esc(event.ogr)}" data-person="${esc(event.ogr)}" data-friend-action="profile">${avatar(person?.ad||event.ogr,44)}<span><b>${esc(event.ad||event.ogr)}</b><small title="${esc(event.metin)}">${esc(window.DMFriendsFeed.summarize?.(event) ?? event.metin)}</small></span></button>${action}</article>`;
     }).join('');
   }
   function viewHeader() {
@@ -287,6 +287,24 @@
       root.style.setProperty('--fr-home-height',Math.max(0,bottom-top)+'px');
     }
   }
+  const viewport = document.querySelector('meta[name="viewport"]');
+  const themeColor = document.querySelector('meta[name="theme-color"]');
+  let previousChrome;
+  function syncHomeChrome() {
+    const home = root.classList.contains('active') && root.classList.contains('fr-home-view');
+    if (home) {
+      previousChrome ||= {viewport:viewport?.content, color:themeColor?.content};
+      if (viewport && !/viewport-fit\s*=/.test(viewport.content)) viewport.content += ', viewport-fit=cover';
+      const surface = getComputedStyle(root).getPropertyValue('--fr-surface').trim();
+      if (themeColor && surface && themeColor.content!==surface) themeColor.content=surface;
+    } else if (previousChrome) {
+      if (viewport) viewport.content=previousChrome.viewport;
+      if (themeColor) themeColor.content=previousChrome.color;
+      previousChrome=undefined;
+    }
+  }
+  new MutationObserver(syncHomeChrome).observe(root,{attributes:true,attributeFilter:['class']});
+  window.addEventListener('pageshow',syncHomeChrome);
   window.addEventListener('resize',dockSpace,{passive:true});
   const dock=document.getElementById('bottomNavMobile');if(dock&&window.ResizeObserver)new ResizeObserver(dockSpace).observe(dock);
   dockSpace();viewHeader();

@@ -4,7 +4,8 @@ const source=path.resolve(__dirname,'../ingilizce');
 const fixtureName='Fixture';
 const people=['Fixture','Elif','Ege','Zeynep','Cemre'].map((ogrenci,i)=>({ogrenci,sinif:'6',Sinif:'6',durum:'approved',karakter:{cins:i%2?'k':'e',s:{}},totalXp:12000,genelOrtalama:70,rozetListesi:[{emoji:'⭐',rozetAdi:'Yıldız',gerekliPuan:0}],lig:{hafta:'fixture',xp:[938,3034,1162,1140,951][i]}}));
 const league=people.map((p,i)=>({name:p.ogrenci,class:'6',league:'yerel',rank:[5,1,2,3,4][i],xp:p.lig.xp}));
-const feed=['Elif','Ege','Zeynep','Cemre','Fixture'].map((ogr,i)=>({k:'event'+i,ogr,ad:ogr,t:Date.now()-i*60000,metin:'Kelime Laboratuvarı oyununda '+(1701+i)+' puan kazandı',ikon:'🎮',tur:'arti',b:i,tb:0}));
+const lesson='A2 · Present perfect vs past simple (basic) — Present perfect ders konusunu tamamladı!';
+const feed=['Elif','Ege','Zeynep','Cemre','Fixture'].map((ogr,i)=>({k:'event'+i,ogr,ad:ogr,t:Date.now()-i*60000,metin:i===1?lesson:i===2?'Süper Lig seviyesine yükseldi!':'Kelime Laboratuvarı oyununda '+(1701+i)+' puan kazandı',ikon:'🎮',tur:'arti',b:i,tb:0}));
 (async()=>{
   let launch={args:['--no-sandbox']};
   if(process.env.FRIENDS_BROWSER_PATH)launch={executablePath:process.env.FRIENDS_BROWSER_PATH,args:['--no-sandbox','--no-zygote','--single-process','--use-gl=angle','--use-angle=swiftshader','--enable-unsafe-swiftshader'],env:{...process.env,LD_LIBRARY_PATH:path.dirname(process.env.FRIENDS_BROWSER_PATH)}};
@@ -55,6 +56,7 @@ const feed=['Elif','Ege','Zeynep','Cemre','Fixture'].map((ogr,i)=>({k:'event'+i,
     document.getElementById('login-container').style.display='none';
   });
   await page.evaluate(()=>dmProgression.refresh(true));
+  const chromeBefore=await page.evaluate(()=>['viewport','theme-color'].map(name=>document.querySelector('meta[name="'+name+'"]').content));
   await page.evaluate(()=>meduAkisAc());await page.waitForSelector('.fr-home .fr-event');await page.waitForTimeout(800);
   assert.equal(await page.locator('.fr-home').count(),1);
   assert.equal(await page.locator('.fr-summaries .fr-tile').count(),2);
@@ -63,6 +65,14 @@ const feed=['Elif','Ege','Zeynep','Cemre','Fixture'].map((ogr,i)=>({k:'event'+i,
   assert.equal(await page.locator('#maSegment button').count(),3);
   assert.equal(await page.locator('#maSegment [data-s="parkur"],#maSegment [data-s="kesfet"]').count(),0);
   assert.equal(await page.locator('.fr-compact input[type=search], .fr-compact [onclick*=maBegen]').count(),0);
+  assert.deepEqual(await page.locator('.fr-event-person small').allTextContents(),['1.701 puan aldı.','A2 dersini bitirdi.','Süper Lig’e çıktı.','1.704 puan aldı.']);
+  assert.equal(await page.locator('.fr-event-person small').nth(1).getAttribute('title'),lesson);
+  assert.equal(await page.locator('meta[name="theme-color"]').getAttribute('content'),'#fbf7f1');
+  assert.match(await page.locator('meta[name="viewport"]').getAttribute('content'),/viewport-fit=cover/);
+  assert.equal(await page.locator('.fr-event-person .fr-avatar').evaluateAll(avatars=>new Set(avatars.map(avatar=>getComputedStyle(avatar).borderColor)).size),4);
+  await page.evaluate(()=>{navigator.share=async payload=>{window.sharedInvite=payload.url;};});
+  await page.locator('.fr-invite-cta').click();
+  assert.equal(await page.evaluate(()=>window.sharedInvite),'https://app.dijimedu.com/ingilizce/');
   const navBefore=await page.locator('#bottomNavMobile').innerHTML();
   for(const [w,h] of [[320,667],[390,844],[768,1024],[1180,820]]){
     await page.setViewportSize({width:w,height:h});await page.waitForTimeout(200);
@@ -80,6 +90,7 @@ const feed=['Elif','Ege','Zeynep','Cemre','Fixture'].map((ogr,i)=>({k:'event'+i,
     assert.equal(layout.rows,4);
     assert(layout.gap>=0&&layout.gap<=12,'full feed button is immediately above the dock '+JSON.stringify(layout));
     assert(layout.last<=layout.buttonTop,'all four activities fit above the button '+w);
+    assert(await page.locator('.fr-event-person small').evaluateAll(lines=>lines.every(line=>getComputedStyle(line).whiteSpace==='nowrap'&&line.scrollWidth<=line.clientWidth)),'full summaries fit on a single line at '+w);
     if(w===390)await page.screenshot({path:'/tmp/friends-home-mobile.png'});
     console.log('PASS layout '+w+'x'+h);
   }
@@ -89,6 +100,8 @@ const feed=['Elif','Ege','Zeynep','Cemre','Fixture'].map((ogr,i)=>({k:'event'+i,
   await page.locator('.fr-all-feed').click();
   await page.waitForSelector('.fr-club-view .club-hero');
   assert.equal(await page.locator('#maAkisListe .akis-kart').count(),5);
+  assert.match(await page.locator('#maAkisListe').innerText(),/Present perfect vs past simple/);
+  assert.deepEqual(await page.evaluate(()=>['viewport','theme-color'].map(name=>document.querySelector('meta[name="'+name+'"]').content)),chromeBefore);
   await page.locator('.club-back').click();
   await page.waitForSelector('.fr-home-view .fr-summaries');
   assert.equal(await page.locator('#maAkisListe .fr-event').count(),4);
