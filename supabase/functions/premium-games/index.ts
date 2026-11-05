@@ -61,7 +61,13 @@ Deno.serve(async(req:Request)=>{
   }
   async function startGame(path:string,payload:Record<string,unknown>){
     await teacherQuota(true);
-    return gameReply(await db(path,payload));
+    let result:Record<string,unknown>;
+    try{result=await db(path,payload);}
+    catch(error){
+      if(teacherGame)await db('rpc/dm_teacher_premium_release',{p_actor:actor,p_game:game,p_run:b.runId}).catch(()=>{});
+      throw error;
+    }
+    return gameReply(result);
   }
   if(b.game==='runners-papi'){
    if(s.role==='student'&&s.teacher_portal_access_id)return reply(req,{ok:false,mesaj:'Bu oyun için öğrenci hesabına giriş yap.'},403);
@@ -70,11 +76,10 @@ Deno.serve(async(req:Request)=>{
    if(op!=='status'&&(!UUID.test(String(b.runId||''))||(op!=='start'&&!validAnswer))){
     return reply(req,{ok:false,mesaj:'Geçersiz oyun işlemi.'},400);
    }
-   if(op==='start')await teacherQuota(true);
-   return gameReply(await db('rpc/dm_runners_play',{
-    actor:s.student_id,action:op,run_key:op==='status'?null:b.runId,
-    gate_no:validAnswer?b.gate:null,choice:validAnswer?b.choice:null
-   }));
+   const payload={actor,action:op,run_key:op==='status'?null:b.runId,
+    gate_no:validAnswer?b.gate:null,choice:validAnswer?b.choice:null};
+   if(op==='start')return startGame('rpc/dm_runners_play',payload);
+   return gameReply(await db('rpc/dm_runners_play',payload));
   }
   if(b.game==='papizzle'){
    if(s.role==='student'&&s.teacher_portal_access_id)return reply(req,{ok:false,mesaj:'Papizzle için öğrenci hesabına giriş yap.'},403);
