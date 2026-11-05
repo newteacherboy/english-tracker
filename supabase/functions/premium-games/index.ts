@@ -67,8 +67,9 @@ Deno.serve(async(req:Request)=>{
       if(teacherGame)await db('rpc/dm_teacher_premium_release',{p_actor:actor,p_game:game,p_run:b.runId}).catch(()=>{});
       throw error;
     }
-    return gameReply(result);
+    return await gameReply(result);
   }
+  // Await the dispatch helpers here so rejected RPCs reach the HTTP error handler.
   if(b.game==='runners-papi'){
    if(s.role==='student'&&s.teacher_portal_access_id)return reply(req,{ok:false,mesaj:'Bu oyun için öğrenci hesabına giriş yap.'},403);
    const validAnswer=op==='answer'&&Number.isSafeInteger(b.gate)&&b.gate>=0
@@ -78,29 +79,29 @@ Deno.serve(async(req:Request)=>{
    }
    const payload={actor,action:op,run_key:op==='status'?null:b.runId,
     gate_no:validAnswer?b.gate:null,choice:validAnswer?b.choice:null};
-   if(op==='start')return startGame('rpc/dm_runners_play',payload);
-   return gameReply(await db('rpc/dm_runners_play',payload));
+   if(op==='start')return await startGame('rpc/dm_runners_play',payload);
+   return await gameReply(await db('rpc/dm_runners_play',payload));
   }
   if(b.game==='papizzle'){
    if(s.role==='student'&&s.teacher_portal_access_id)return reply(req,{ok:false,mesaj:'Papizzle için öğrenci hesabına giriş yap.'},403);
-   if(op==='status')return gameReply(await db('rpc/dm_papizzle_status',{actor}));
+   if(op==='status')return await gameReply(await db('rpc/dm_papizzle_status',{actor}));
    if(!UUID.test(String(b.runId||'')))return reply(req,{ok:false,mesaj:'Geçersiz oyun.'},400);
-   if(op==='start')return startGame('rpc/dm_papizzle_start',{actor,run_key:b.runId});
+   if(op==='start')return await startGame('rpc/dm_papizzle_start',{actor,run_key:b.runId});
    if(op==='finish'&&Array.isArray(b.selections)&&b.selections.length>=1&&b.selections.length<=256
       &&b.selections.every((pick:unknown)=>typeof pick==='number'&&Number.isInteger(pick)&&pick>=0&&pick<16)){
-    return gameReply(await db('rpc/dm_papizzle_finish',{actor,run_key:b.runId,selections:b.selections}));
+    return await gameReply(await db('rpc/dm_papizzle_finish',{actor,run_key:b.runId,selections:b.selections}));
    }
    return reply(req,{ok:false,mesaj:'Geçersiz oyun sonucu.'},400);
   }
   if(b.game==='cloud-flight'||b.game==='word-blocks'){
    const rpc=b.game==='word-blocks'?'dm_blocks':'dm_cloud';
    if(s.role==='student'&&s.teacher_portal_access_id)return reply(req,{ok:false,mesaj:'Bu oyun için öğrenci hesabına giriş yap.'},403);
-   if(op==='status')return gameReply(await db('rpc/'+rpc+'_status',{actor}));
+   if(op==='status')return await gameReply(await db('rpc/'+rpc+'_status',{actor}));
    if(!UUID.test(String(b.runId||'')))return reply(req,{ok:false,mesaj:'Geçersiz oyun.'},400);
-   if(op==='start')return startGame('rpc/'+rpc+'_start',{actor,run_key:b.runId});
+   if(op==='start')return await startGame('rpc/'+rpc+'_start',{actor,run_key:b.runId});
    if(op==='finish'&&Array.isArray(b.selections)&&b.selections.length<=20
       &&b.selections.every((pick:unknown)=>typeof pick==='number'&&Number.isInteger(pick)&&pick>=(b.game==='word-blocks'?0:-1)&&pick<=(b.game==='word-blocks'?5:2))){
-    return gameReply(await db('rpc/'+rpc+'_finish',{actor,run_key:b.runId,selections:b.selections}));
+    return await gameReply(await db('rpc/'+rpc+'_finish',{actor,run_key:b.runId,selections:b.selections}));
    }
    return reply(req,{ok:false,mesaj:'Geçersiz oyun sonucu.'},400);
   }
@@ -108,20 +109,20 @@ Deno.serve(async(req:Request)=>{
   // Teacher personal access uses a separately verified teacher session and profile.
   if(s.role==='student'&&s.teacher_portal_access_id)
     return reply(req,{ok:false,mesaj:'Premium oyun için öğretmen veya kişisel hesabınla giriş yap.'},403);
-  if(op==='status')return gameReply(await db('rpc/dm_pwm_status',{actor}));
+  if(op==='status')return await gameReply(await db('rpc/dm_pwm_status',{actor}));
   if(op==='start'){
    const level=Number(b.level);
    if(!UUID.test(String(b.runId||''))||!Number.isInteger(level)||level<1||level>100)return reply(req,{ok:false,mesaj:'Geçersiz bölüm.'},400);
-   return startGame('rpc/dm_pwm_start',{actor,run_key:b.runId,p_level:level});
+   return await startGame('rpc/dm_pwm_start',{actor,run_key:b.runId,p_level:level});
   }
   if(op==='finish'){
    if(!UUID.test(String(b.runId||''))||![b.score,b.moves,b.seconds].every(v=>Number.isSafeInteger(v)&&v>=0)||typeof b.won!=='boolean')return reply(req,{ok:false,mesaj:'Geçersiz oyun sonucu.'},400);
-   return gameReply(await db('rpc/dm_pwm_finish',{actor,run_key:b.runId,p_score:b.score,p_won:b.won,p_moves:b.moves,p_seconds:b.seconds}));
+   return await gameReply(await db('rpc/dm_pwm_finish',{actor,run_key:b.runId,p_score:b.score,p_won:b.won,p_moves:b.moves,p_seconds:b.seconds}));
   }
   if(op==='buy'||op==='use'){
    if(!BOOSTERS.has(String(b.kind)))return reply(req,{ok:false,mesaj:'Geçersiz güçlendirici.'},400);
    if(op==='use'&&!UUID.test(String(b.runId||'')))return reply(req,{ok:false,mesaj:'Oyun bulunamadı.'},400);
-   return gameReply(await db('rpc/dm_pwm_booster',{actor,kind:b.kind,op,run_key:op==='use'?b.runId:null}));
+   return await gameReply(await db('rpc/dm_pwm_booster',{actor,kind:b.kind,op,run_key:op==='use'?b.runId:null}));
   }
   return reply(req,{ok:false,mesaj:'Geçersiz işlem.'},400);
  }catch(err){
