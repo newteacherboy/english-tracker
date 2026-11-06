@@ -1,5 +1,7 @@
 /* Check for new workers without interrupting a lesson or clearing account data. */
 (()=>{'use strict';
+ // Mağaza uygulamalarında web çalışanı kurulmaz: içerik her açılışta canlı siteden gelir.
+ if(window.Capacitor?.isNativePlatform?.()||window.dmNativeRuntime)return;
  if(!('serviceWorker' in navigator)||location.protocol!=='https:')return;
  let registration,checking=false,lastCheck=0,shown=false;
  const hadController=!!navigator.serviceWorker.controller;

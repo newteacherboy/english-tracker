@@ -2,7 +2,20 @@
   "appId": "com.dijimedu.ingilizce",
   "appName": "Diji Medu",
   "webDir": "www",
-  "server": {"androidScheme": "https", "appStartPath": "/ingilizce/index.html"},
-  "android": {"backgroundColor": "#FAF8F5", "allowMixedContent": false, "webContentsDebuggingEnabled": false},
-  "plugins": {"SplashScreen": {"launchAutoHide": true}}
+  "server": {
+    "url": "https://app.dijimedu.com",
+    "appStartPath": "/ingilizce/index.html",
+    "androidScheme": "https",
+    "errorPath": "offline.html"
+  },
+  "android": {
+    "backgroundColor": "#FAF8F5",
+    "allowMixedContent": false,
+    "webContentsDebuggingEnabled": false
+  },
+  "plugins": {
+    "SplashScreen": {
+      "launchAutoHide": true
+    }
+  }
 }
