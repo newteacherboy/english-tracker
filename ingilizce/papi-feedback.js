@@ -35,7 +35,24 @@ function energy(){
  window.dmStartSpotlight?.stop();
  const card=mount('energy','Papi ile enerji molası!','İlerlemen güvende. Altınlarınla enerji alabilir veya ders çalışabilirsin.');if(!card)return;root.dataset.noticePriority='0';root.dataset.noticeEdge='bottom';
  const options=document.createElement('div');options.className='dm-energy-options';const status=document.createElement('p');status.dataset.energyStatus='';status.setAttribute('role','status');status.setAttribute('aria-live','polite');
- for(const [amount,price] of [[5,100],[10,130],[15,180]]){const b=document.createElement('button');b.type='button';b.textContent='⚡ '+amount+' enerji · '+price+' altın';b.onclick=async()=>{options.querySelectorAll('button').forEach(x=>x.disabled=true);try{const bought=await window.enerjiPaketiAl?.(amount);if(bought)remove();else status.textContent='Enerji alınamadı. Altın bakiyeni kontrol edip tekrar dene.';}catch{status.textContent='Bağlantı kurulamadı. Enerji paketini tekrar deneyebilirsin.';}finally{if(options.isConnected)options.querySelectorAll('button').forEach(x=>x.disabled=false);}};options.append(b);}
+ for(const [amount,price] of [[5,100],[10,130],[15,180]]){
+  const button=document.createElement('button');button.type='button';button.textContent='⚡ '+amount+' enerji · '+price+' altın';
+  button.onclick=async()=>{
+   const buttons=options.querySelectorAll('button');
+   buttons.forEach(item=>item.disabled=true);
+   status.textContent='';
+   try {
+    const bought=await window.enerjiPaketiAl?.(amount,message=>status.textContent=message);
+    if(bought){if(card.isConnected)remove();}
+    else if(!status.textContent)status.textContent='Enerji alınamadı. Tekrar dene.';
+   } catch {
+    status.textContent='Bağlantı kurulamadı. Enerji paketini tekrar deneyebilirsin.';
+   } finally {
+    buttons.forEach(item=>item.disabled=false);
+   }
+  };
+  options.append(button);
+ }
  const study=document.createElement('button');study.type='button';study.className='dm-energy-study';study.textContent='📚 Ders Çalış’a git';study.onclick=()=>{remove();window.dmThematicLearning?.close(true);window.dmStoryPath?.close(true);for(const name of ['kelimeYarismasiKapat','jpOyunKapat','boslukOyunKapat','hafizaOyunKapat','yagmurOyunKapat','asmacaOyunKapat','kelimebulOyunKapat','esOyunKapat','trenOyunKapat'])window[name]?.();document.querySelector('#bzCik')?.click();window.dersCalisTamEkranAc?.();};
  card.append(options,status,study,card.querySelector('.dm-papi-feedback-close'));window.dmNoticeSurface?.adopt(root);card.querySelector('button')?.focus();
 }
