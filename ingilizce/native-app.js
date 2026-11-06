@@ -86,7 +86,8 @@
   }
 
   /* ---------- Seri hatırlatıcısı ---------- */
-  var Notes = plugin('LocalNotifications');
+  // Android bu sürümde hatırlatıcı izni istemez (bildirimler anlık bildirimle gelir).
+  var Notes = (C && C.getPlatform && C.getPlatform() === 'android') ? null : plugin('LocalNotifications');
   var PREF = 'dm_ios_hatirlatici';          // 'acik' | 'kapali'
   var IDS = [7101, 7102, 7103, 7104, 7105, 7106, 7107];
   var HOUR = 19;
