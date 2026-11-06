@@ -1,6 +1,7 @@
 import {memberStudents,isClassroomGuest} from './classroom-identity.mjs';
 // Every grant is tied to a normal learner; neither role claims nor invite codes grant access.
 // Private teacher codes use rate-limited authentication; owner credentials stay server-side.
+export const teacherApplicationKey='teacher_portal_application_v1';
 export const portalOps=new Set(['teacherPortalApply','teacherPortalStatus','teacherPortalAdminCreate','teacherPortalList','teacherPortalDecide','teacherPortalIssueCode','teacherPortalLogin','teacherPortalResetRequest','teacherPortalReset','teacherPortalChangeCode','teacherPortalAppearance','teacherPortalSyncStudents','teacherPortalStudentReport','teacherPortalClassAnalytics','teacherPortalAnnouncement','teacherPortalRubric','teacherPortalPerformance','teacherPortalStudentContact','teacherPortalStudents','teacherPortalParticipant']);
 export function portalOperationAllowed(op,b={}) {
  if(['kelimeCarkiBaslat','kelimeCarkiCevir','kelimeCarkiCevap','kelimeCarkiBitir','kelimeCarkiDurum','kelimeCarkiSiralama'].includes(op))return true;
@@ -15,6 +16,15 @@ export function teacherPortalAPI(d){
  const {db,json,hash,hashPassword,verifyPassword,issueSession,mailShell,escape,queue,codeKey}=d;
  const fail=(mesaj,status=400)=>json({ok:false,mesaj},status),portal='https://app.dijimedu.com/ingilizce/';
  const byStudent=async id=>{const r=await db.from('teacher_portal_access').select('*').eq('student_id',id).maybeSingle();if(r.error)throw r.error;return r.data;};
+ async function applicationProgress(studentId){
+  const r=await db.from('extra_data').select('value').eq('student_id',studentId).eq('key_name',teacherApplicationKey).maybeSingle();
+  if(r.error)throw r.error;
+  return r.data?.value?.confirmed===true?'confirmed':r.data?'interested':'none';
+ }
+ async function saveApplicationProgress(studentId,confirmed){
+  const r=await db.from('extra_data').upsert({student_id:studentId,key_name:teacherApplicationKey,value:{confirmed},updated_at:new Date().toISOString()},{onConflict:'student_id,key_name',ignoreDuplicates:!confirmed});
+  if(r.error)throw r.error;
+ }
  const digest=code=>hash(codeKey+'|teacher-portal|'+code);
  function randomCode(){const a=[];while(a.length<6){for(const n of crypto.getRandomValues(new Uint8Array(20)))if(n<250&&a.length<6)a.push(String(n%10));}return a.join('');}
  async function codeMail(r,code,reset=null,initial=false){
@@ -24,7 +34,7 @@ export function teacherPortalAPI(d){
  async function ensureCode(studentId,{returnCode=false}={}){const r=await byStudent(studentId);if(!r||r.state!=='approved'||r.code_digest)return null;const code=randomCode();const sent=await codeMail(r,code,null,true);return sent&&returnCode?code:null;}
  async function grant(a){if(a?.role!=='teacher'||!a.teacher_portal_access_id)return null;const r=await db.from('teacher_portal_access').select('*').eq('id',a.teacher_portal_access_id).eq('state','approved').maybeSingle();if(r.error)throw r.error;return r.data;}
  async function session(r,role,sid){const token=await issueSession(role,sid,role==='teacher'?r.teacher_id:undefined,{teacher_portal_access_id:r.id,teacher_portal_version:r.version});return token;}
- return {ensureCode,async apply(studentId,teacherId=null){const r=await db.from('teacher_portal_access').upsert({student_id:studentId,...(teacherId?{teacher_id:teacherId}:{})},{onConflict:'student_id',ignoreDuplicates:true});if(r.error)throw r.error;},async handle(op,b,a,method){
+ return {ensureCode,trackSignup:studentId=>saveApplicationProgress(studentId,false),async apply(studentId,teacherId=null){const r=await db.from('teacher_portal_access').upsert({student_id:studentId,...(teacherId?{teacher_id:teacherId}:{})},{onConflict:'student_id',ignoreDuplicates:true});if(r.error)throw r.error;},async handle(op,b,a,method){
   if(!portalOps.has(op))return null;if(method!=='POST')return fail('POST gerekli.',405);
   if(op==='teacherPortalLogin'){
    if(!/^(?:\d{6}|\d{8})$/.test(String(b.code||'')))return fail('6 veya 8 haneli öğretmen giriş kodunu yaz.');
@@ -86,8 +96,41 @@ export function teacherPortalAPI(d){
   }
   if(op==='teacherPortalApply'||op==='teacherPortalStatus'){
    if(a?.role!=='student'||!a.student_id||a.teacher_portal_access_id)return fail('Kişisel hesabına giriş yap.',401);
-   if(op==='teacherPortalApply'){await this.apply(a.student_id);}
-   await ensureCode(a.student_id);const r=await byStudent(a.student_id);return json({ok:true,state:r?.state||'none',codeSent:!!r?.code_sent_at});
+   const id=a.student_id;
+   const r=await byStudent(id);
+   const state=r?.state||'none';
+   if(state==='approved'){
+    const issued=!b.offerOnly&&!r.code_sent_at&&await ensureCode(id,{returnCode:true});
+    return json({ok:true,state,codeSent:!!(r.code_sent_at||issued)});
+   }
+   if(!['none','pending'].includes(state))return json({ok:true,state,codeSent:false});
+   const progress=await applicationProgress(id);
+   const offer=progress!=='confirmed'&&(progress==='interested'||state==='pending');
+   if(progress==='confirmed'&&state==='pending'||op==='teacherPortalStatus'&&b.offerOnly&&!offer)return json({ok:true,state,offer:false});
+   const member=await db.from('students').select('school,phone').eq('id',id).eq('status','approved').maybeSingle();
+   if(member.error)throw member.error;
+   if(!member.data)return fail('Kişisel hesabına giriş yap.',401);
+   const [first,second,...rest]=String(member.data.school||'').split(' · ');
+   const storedSchool=rest.length?{city:first,district:second,school:rest.join(' · ')}:{city:'',district:'',school:first};
+   if(op==='teacherPortalStatus')return json({ok:true,state,offer,school:storedSchool,hasPhone:!!member.data.phone});
+   if(b.confirm!==true)return fail('Başvurunu onayla.');
+   const field=(value,max)=>typeof value==='string'?value.replace(/[<>]/g,'').replace(/\s+/g,' ').trim().slice(0,max):'';
+   const city=field(b.city??storedSchool.city,40),district=field(b.district??storedSchool.district,60),school=field(b.school??storedSchool.school,120);
+   if(!city||!district||!school)return fail('İl, ilçe ve okul adını yaz.');
+   let phone=member.data.phone;
+   if(!phone){
+    const digits=String(b.phone||'').replace(/\D/g,'');
+    if(!/^(?:0|90)?5\d{9}$/.test(digits))return fail('Geçerli bir telefon numarası yaz (05XX XXX XX XX).');
+    phone='0'+digits.slice(-10);
+   }
+   const location=[city,district,school].join(' · ');
+   if(location!==member.data.school||phone!==member.data.phone){
+    const update=await db.from('students').update({school:location,phone}).eq('id',id).eq('status','approved');
+    if(update.error)throw update.error;
+   }
+   await this.apply(id);
+   await saveApplicationProgress(id,true);
+   return json({ok:true,state:'pending',offer:false});
   }
   const r=await grant(a);if(!r)return fail('Kodla öğretmen girişi gerekli.',403);
   if(!r.student_id&&!ownerTeacher(a))return fail('Yönetici erişimi gerekli.',403);
