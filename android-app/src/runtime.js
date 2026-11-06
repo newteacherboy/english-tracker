@@ -55,28 +55,28 @@ if (Capacitor.isNativePlatform() && (platform === 'android' || (ios && Capacitor
     try { await Browser.open({ url: url.href }); }
     catch { window.DijiMeduPapiFeedback?.notice('Bağlantı açılamadı. Yeniden deneyebilirsin.'); }
   });
-  if (!ios) void App.addListener('backButton', ({ canGoBack }) => {
-    if (billing.isOpen()) { billing.close(); return; }
-    if (document.querySelector('.dmu-veil')) { upsell.close(); return; }
-    const energyClose = document.querySelector('#ybPerde.acik[data-tur="enerji"] .yb-kapat,.dm-papi-feedback.is-energy .dm-papi-feedback-close');
-    if (energyClose) { energyClose.click(); return; }
-    if (window.dmViewHistory?.back?.()) return;
-    const visible = el => el && el.getClientRects().length && !el.inert;
-    const game = [...document.querySelectorAll('.dm-session-surface')].filter(visible).at(-1);
-    const close = game?.querySelector('.dm-session-back,.game-close-btn,[data-close],.dc-exit-btn');
-    if (close && !close.disabled) { close.click(); return; }
-    if (canGoBack) { history.back(); return; }
-    if (confirm('Diji Medu’dan çıkmak istiyor musun?')) void App.exitApp();
-  });
-  void App.addListener('appStateChange', ({ isActive }) => {
-    placements.setActive(isActive);
-    if (isActive) { void adRemote.refresh(); void push.sync(); }
-    if (!isActive) window.speechSynthesis?.cancel(); // Do not cancel Android's own recognition permission/dialog activity.
-  });
   // Both choices are opt-in. The preview never credits the real student's wallet.
   // iOS'ta bu dosya sayfa yüklendikten sonra da gelebilir.
   const ready = fn => document.readyState === 'loading' ? document.addEventListener('DOMContentLoaded', fn, { once: true }) : fn();
   ready(() => {
+    if (!ios) void App.addListener('backButton', ({ canGoBack }) => {
+      if (billing.isOpen()) { billing.close(); return; }
+      if (document.querySelector('.dmu-veil')) { upsell.close(); return; }
+      const energyClose = document.querySelector('#ybPerde.acik[data-tur="enerji"] .yb-kapat,.dm-papi-feedback.is-energy .dm-papi-feedback-close');
+      if (energyClose) { energyClose.click(); return; }
+      if (window.dmViewHistory?.back?.()) return;
+      const visible = el => el && el.getClientRects().length && !el.inert;
+      const game = [...document.querySelectorAll('.dm-session-surface')].filter(visible).at(-1);
+      const close = game?.querySelector('.dm-session-back,.game-close-btn,[data-close],.dc-exit-btn');
+      if (close && !close.disabled) { close.click(); return; }
+      if (canGoBack) { history.back(); return; }
+      if (confirm('Diji Medu’dan çıkmak istiyor musun?')) void App.exitApp();
+    });
+    void App.addListener('appStateChange', ({ isActive }) => {
+      placements.setActive(isActive);
+      if (isActive) { void adRemote.refresh(); void push.sync(); }
+      if (!isActive) window.speechSynthesis?.cancel(); // Do not cancel Android's own recognition permission/dialog activity.
+    });
     placements.start();
     upsell.start();
     push.start();
