@@ -18,7 +18,56 @@ test('runner gains star score within server bounds and has faster movement and s
 test('advanced jump clouds are narrower, moving and fragile; star pickup raises score without gold',async()=>{const f=fixture();try{const w=f.w;const beginner=w.__mv.makePlatform({x:150},0,1),advanced=w.__mv.makePlatform({x:150},0,60);assert(advanced.w<beginner.w);assert(w.__mv.makePlatform({x:150},0,12).moving);assert(w.__mv.makePlatform({x:150},0,10).fragile);await w.dmMola.open('zipla');f.click('Başla · 5 enerji');await f.flush();await f.tick(3.2);const m=w.__mv.state().model;await f.tick(.5);const gold=m.gold;m.platforms=[{x:m.x-50,y:m.y+44,w:100,star:true,coin:false,index:6}];w.__mv.updateJumper(.001);assert(m.bonus>0);assert.equal(m.gold,gold);assert(m.score<=Math.ceil(w.__mv.state().active)*60+3);}finally{await f.close();}});
 test('latest server chapter is the default after asynchronous status; fifteen sections include locked and replay buttons',async()=>{const f=fixture();try{f.unlocked.kosu=6;await f.w.dmMola.open('kosu');await f.flush();assert.equal(f.w.__mv.state().selectedChapter,6);const all=f.w.document.querySelectorAll('[data-chapter]');assert.equal(all.length,15);assert.equal(all[14].disabled,true);assert.equal(all[0].disabled,false);all[0].click();assert.equal(f.w.__mv.state().selectedChapter,1);f.click('Başla · 5 enerji');await f.flush();assert.equal(f.calls.find(c=>c.islem==='molaBaslat').chapter,1);}finally{await f.close();}});
 test('unlimited candy continues past twenty matches and 3/4/5/6/9 matches award increasing bonuses',async()=>{const f=fixture();try{const w=f.w;await w.dmMola.open('patlat');f.click('Başla · 5 enerji');await f.flush();await f.tick(3.2);const m=w.__mv.state().model;w.__mv.setActive(100);for(let n=0;n<25;n++){const [a,b]=w.dmMolaCore.legal(m.board);w.__mv.trySwap(a,b);for(let guard=0;m.anim&&guard<100;guard++)w.__mv.updateCrusher(.4);assert.equal(m.anim,null);assert.equal(w.__mv.state().phase,'play');}assert.equal(m.moves,25);assert(!f.calls.some(c=>c.islem==='molaBitir'));assert.equal(w.dmMolaCore.matchReward(3).bonus,0);assert.equal(w.dmMolaCore.matchReward(4).bonus,80);assert.equal(w.dmMolaCore.matchReward(5).bonus,200);assert.equal(w.dmMolaCore.matchReward(6).bonus,400);assert.equal(w.dmMolaCore.matchReward(9).bonus,900);}finally{await f.close();}});
-test('chapter transition checkpoints once, changes theme, keeps the same paid run and resumes latest on reopen',async()=>{const f=fixture();try{const w=f.w;await w.dmMola.open('patlat');f.click('Başla · 5 enerji');await f.flush();await f.tick(3.2);const m=w.__mv.state().model;m.score=1800;await f.tick(.02);assert.equal(w.__mv.state().phase,'chapter-ready');assert.equal(w.__mv.state().chapter,2);assert.equal(f.calls.filter(c=>c.islem==='molaBolumGec').length,1);f.click('Sonraki bölüme geç');await f.tick(3.2);assert.equal(w.__mv.state().phase,'play');assert.equal(f.calls.filter(c=>c.islem==='molaBaslat').length,1);assert.match(w.document.querySelector('.mv-chapter-hud').textContent,/Turkuaz Sahil/);w.dmMola.close();await f.flush();await w.dmMola.open('patlat');assert.equal(w.__mv.state().selectedChapter,2);}finally{await f.close();}});
+for(const game of ['zipla','patlat'])test(game+': a pending checkpoint keeps the same game running and persists the new chapter',async()=>{
+ const f=fixture(),{w}=f;
+ try{
+  await w.dmMola.open(game);
+  f.click('Başla · 5 enerji');await f.flush();await f.tick(3.2);
+  const model=w.__mv.state().model;
+  const fetch=w.fetch;
+  let release;
+  const gate=new Promise(resolve=>{release=resolve;});
+  w.fetch=async(url,opts)=>{
+   if(JSON.parse(opts.body).islem==='molaBolumGec')await gate;
+   return fetch(url,opts);
+  };
+  if(game==='zipla')model.height=100;
+  else{model.score=1800;model.anim={kind:'pop',hit:[0,1,2],t:.3};}
+  await f.tick(.04);
+  const elapsed=w.__mv.state().active;
+  await f.tick(.1);
+  assert.equal(w.__mv.state().phase,'play');
+  assert.equal(w.__mv.state().chapter,1);
+  assert(w.__mv.state().active>elapsed);
+  release();await f.flush();
+  assert.equal(w.__mv.state().chapter,2);
+  assert.equal(w.__mv.state().model,model);
+  assert.match(w.document.querySelector('.mv-chapter-notice').textContent,/1. bölüm tamamlandı · Turkuaz Sahil/);
+  assert(w.document.querySelector('.mv-panelwrap').hidden);
+  assert.equal(f.calls.filter(c=>c.islem==='molaBolumGec').length,1);
+  assert.equal(f.calls.filter(c=>c.islem==='molaBaslat').length,1);
+  w.dmMola.close();await f.flush();await w.dmMola.open(game);
+  assert.equal(w.__mv.state().selectedChapter,2);
+ }finally{await f.close();}
+});
+test('cloud coins are sparse and candy accumulates tiles before awarding gold',async()=>{
+ const f=fixture(),{w}=f;
+ try{
+  const clouds=Array.from({length:21},(_,i)=>w.__mv.makePlatform({x:150},0,i+1));
+  assert.deepEqual(clouds.filter(c=>c.coin).map(c=>c.index),[1,8,15]);
+  assert(clouds.every(c=>!c.coin||!c.star));
+  await w.dmMola.open('patlat');
+  f.click('Başla · 5 enerji');await f.flush();await f.tick(3.2);
+  w.__mv.setActive(100);
+  const m=w.__mv.state().model;
+  for(let i=0;i<5;i++)w.__mv.explode([0,1,2]);
+  assert.equal(m.gold,0);
+  w.__mv.explode([0,1,2,3]);
+  assert.equal(m.gold,3);
+  assert.equal(m.tilesTowardGold,1);
+  assert.match(m.message,/\+3 altın/);
+ }finally{await f.close();}
+});
 test('bees/crystals cause collisions while storms add recoverable wind and do not block the platform corridor',async()=>{const f=fixture();try{const w=f.w;await w.dmMola.open('zipla');f.click('Başla · 5 enerji');await f.flush();await f.tick(3.2);const m=w.__mv.state().model;for(const index of [4,8,12]){const h=w.__mv.makeHazard({index,x:150,w:100,y:0});assert(h.x<100||h.x>300);}m.hazards=[{kind:'storm',x:m.x,baseX:m.x,y:m.y,phase:0,warning:0}];w.__mv.updateJumper(.001);assert(m.wind>0);assert.equal(w.__mv.state().phase,'play');m.hazards=[{kind:'bee',x:m.x,baseX:m.x,y:m.y,phase:0,warning:0}];w.__mv.updateJumper(.001);await f.flush();assert.equal(w.__mv.state().phase,'result');}finally{await f.close();}});
 
 test('runner checkpoints and announces the next level without pausing or charging again',async()=>{
