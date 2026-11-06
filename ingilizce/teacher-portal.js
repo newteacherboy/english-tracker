@@ -163,7 +163,7 @@
   let dock=document.getElementById('tpTeacherDock');
   if(!dock){
    dock=document.createElement('nav');dock.id='tpTeacherDock';dock.setAttribute('aria-label','Öğretmen menüsü');
-   dock.innerHTML='<button type="button" data-route="home"><span>🏠</span>Ana Sayfa</button><button type="button" data-route="games"><span>🎮</span>Oyunlar</button><button type="button" data-route="study"><span>📖</span>Ders Çalış</button><button type="button" data-route="panel"><span>🎓</span>Öğretmen Paneli</button>';
+   dock.innerHTML='<button type="button" data-route="home"><span class="dm-teacher-icon dm-teacher-icon--home" aria-hidden="true"></span>Ana Sayfa</button><button type="button" data-route="games"><span class="dm-teacher-icon dm-teacher-icon--games" aria-hidden="true"></span>Oyunlar</button><button type="button" data-route="study"><span class="dm-teacher-icon dm-teacher-icon--book" aria-hidden="true"></span>Ders Çalış</button><button type="button" data-route="panel"><span class="dm-teacher-icon dm-teacher-icon--cap" aria-hidden="true"></span>Öğretmen Paneli</button>';
    document.body.append(dock);
    dock.addEventListener('click',e=>{const b=e.target.closest('[data-route]');if(!b)return;e.preventDefault();e.stopPropagation();const route=b.dataset.route;if(route==='home')teacherHomeShow();else if(route==='panel')teacherDashboardShow();else teacherDestination(route);});
   }
@@ -493,8 +493,12 @@
  function teacherDestination(action){
   if(action==='class'){openBulkStudents();return;}
   if(action==='panel'){teacherDashboardShow();return;}
+  if(action==='oral'){
+   if(typeof window.dmTeacherOral?.open==='function')window.dmTeacherOral.open();
+   else window.yoToast?.('Sözlü ekranı henüz hazır değil.');
+   return;
+  }
   rememberRoute(action);teacherHomeHide();teacherDashboardHide();teacherDock();
-  if(action==='oral'){if(typeof window.dmTeacherOral?.open==='function')window.dmTeacherOral.open();else{teacherHomeShow();window.yoToast?.('Sözlü ekranı henüz hazır değil. Ana sayfaya döndün.');}return;}
   const id=action==='study'?'tab-derscalis':action==='games'?'tab-aktiviteler':'tab-profile-menu';
   const launch=action==='study'?window.dersCalisTamEkranAc:window.aktivitelerTamEkranAc;
   const target=document.querySelector('#bottomNavMobile [data-ekran="'+id+'"]');
