@@ -146,6 +146,7 @@
     function home(error) {
       const lowEnergy = !runId && state.energy < 5;
       const actions = state.remaining > 0 && !lowEnergy ? [[`Seviye ${state.level} · ⚡ 5`, start]] : [['Durumu yenile', refresh]];
+      if (lowEnergy && state.remaining > 0) actions.unshift(['Enerji seçenekleri', () => window.dmEnerjiPaketPaneli?.()]);
       const message = error || (lowEnergy ? `Başlamak için 5 enerji gerekli. ${5 - state.energy} enerji daha lazım.` :
         state.remaining <= 0 ? 'Oyun hakkın kalmadı.' : '');
       showPanel('Kelime duvarını temizle!', [
@@ -211,6 +212,7 @@
             if (data) apply(data);
           }
           home(error.message);
+          window.DijiMeduPapiFeedback?.energyDenied(error);
         }
       } finally {
         pending = false;

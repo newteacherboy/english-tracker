@@ -214,7 +214,7 @@ function levelCard(level){
   <div class="pwm-actions"><button type="button" class="pwm-btn gold big" data-go>Başla <span class="pwm-cost">⚡ 5</span></button></div>
   <p class="pwm-muted small">${isPremium()?(practice?'Sınıf modu: enerji ve ödül işlenmez.':'Premium: sınırsız oyun.'):'Bu bölüm 1 ücretsiz hakkını kullanır (kalan '+remaining()+'/3).'}</p>`,'level');
  c.querySelector('[data-x]').onclick=()=>{hideModal();};
- c.querySelector('[data-go]').onclick=async e=>{const b=e.currentTarget;b.disabled=true;b.textContent='Hazırlanıyor…';try{await start(level,cfg,words);}catch(err){b.disabled=false;b.innerHTML='Başla <span class="pwm-cost">⚡ 5</span>';if(err.code==='hak'){status.remaining=0;comingSoon();return;}toast(err.message);if(err.code==='enerji')sound.bad();}};
+ c.querySelector('[data-go]').onclick=async e=>{const b=e.currentTarget;b.disabled=true;b.textContent='Hazırlanıyor…';try{await start(level,cfg,words);}catch(err){b.disabled=false;b.innerHTML='Başla <span class="pwm-cost">⚡ 5</span>';if(err.code==='hak'){status.remaining=0;comingSoon();return;}toast(err.message);if(err.code==='enerji')sound.bad();window.DijiMeduPapiFeedback?.energyDenied(err);}};
 }
 
 /* ---------- oyun ---------- */

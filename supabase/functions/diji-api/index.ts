@@ -1620,6 +1620,16 @@ async function handle(req: Request, proxy: any = null) {
     if (req.method !== "POST") return json({ ok: false, mesaj: "POST gerekli." }, 405);
     const sid = a.student_id, is = String(body.is || "");
     const hataVer = async (mesaj: string, kod = 400) => json({ ok: false, mesaj, ekonomi: ekonomiCevap((await yoOku(sid)).y) }, kod);
+    if (is === "enerjiPaketDurumu") {
+      const { count, error } = await supabase.from("dm_energy_shop_purchases")
+        .select("student_id", { count: "exact", head: true }).eq("student_id", sid)
+        .gte("created_at", trBugun() + "T00:00:00+03:00");
+      if (error || count === null) return json({ ok: false }, 503);
+      const kalan = Math.max(0, 3 - count);
+      return json({ ok: true, kalan, mesaj: kalan === 0
+        ? "Bugünkü 3 enerji paketi alma hakkını kullandın. Yeni alım hakkın Türkiye saatiyle gece 00.00’da yenilenir."
+        : "" });
+    }
     if (is === "parkurAdim") {
       const run = String(body.runId || ""), step = Number(body.soru);
       const needsVerified=await verifiedGames.required();

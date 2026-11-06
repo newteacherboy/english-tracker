@@ -30,6 +30,14 @@ function correct({detail='',anchor=null,duration=1000,card=true}={}){
  timer=setTimeout(remove,Math.max(650,Math.min(duration,1800)));
 }
 function wrong({detail='Tekrar dene!',duration=1100}={}){window.dmAnswerFeedback?.(false);if(window.dmPapiTour?.active?.())return;if(!mount('wrong','Bir daha deneyelim!',detail))return;timer=setTimeout(remove,Math.max(700,Math.min(duration,1800)));}
+async function energyLimit(status){
+ if(!status)return;
+ const message=await window.dmEkonomi?.paketUyarisi?.();
+ if(message&&status.isConnected&&!status.textContent)status.textContent=message;
+}
+function energyDenied(error){
+ if(error?.code==='enerji'||error?.energyEmpty||/yetersiz enerji|enerji.{0,24}(?:yetmiyor|yetersiz|bitti|gerekli)|enerjin.{0,18}(?:yetmiyor|yetersiz|bitti)/i.test(error?.message||''))window.dmEnerjiPaketPaneli?.();
+}
 function energy(){
  if(root?.isConnected&&root.classList.contains('is-energy')){window.dmNoticeSurface?.adopt(root);return root.querySelector('.dm-papi-feedback-card');}
  window.dmStartSpotlight?.stop();
@@ -54,9 +62,9 @@ function energy(){
   options.append(button);
  }
  const study=document.createElement('button');study.type='button';study.className='dm-energy-study';study.textContent='📚 Ders Çalış’a git';study.onclick=()=>{remove();window.dmThematicLearning?.close(true);window.dmStoryPath?.close(true);for(const name of ['kelimeYarismasiKapat','jpOyunKapat','boslukOyunKapat','hafizaOyunKapat','yagmurOyunKapat','asmacaOyunKapat','kelimebulOyunKapat','esOyunKapat','trenOyunKapat'])window[name]?.();document.querySelector('#bzCik')?.click();window.dersCalisTamEkranAc?.();};
- card.append(options,status,study,card.querySelector('.dm-papi-feedback-close'));window.dmNoticeSurface?.adopt(root);card.querySelector('button')?.focus();
+ card.append(options,status,study,card.querySelector('.dm-papi-feedback-close'));void energyLimit(status);window.dmNoticeSurface?.adopt(root);card.querySelector('button')?.focus();
 }
 function notice(message){const text=String(message||'').slice(0,500);if(/bugünün keşif görevleri|günlük hedefini tamamladın|yeni karakter|karakter açtın|bu haftanın hedefi/i.test(text))return;if(/enerji.*(bitti|yetersiz|gerekli|yok)|yeterli.*enerji/i.test(text)){energy();return;}if(window.dmNoticeSurface){window.dmNoticeSurface.notify(text,{kind:'feedback'});return;}document.getElementById('dmInlineNotice')?.remove();const el=document.createElement('div');el.id='dmInlineNotice';el.className='dm-inline-notice';el.setAttribute('role','status');el.textContent=text;document.body.append(el);setTimeout(()=>el.remove(),3500);}
 document.addEventListener('dm:login',()=>{window.dmLastEnergyValue=undefined;remove();});
-window.DijiMeduPapiFeedback={correct,wrong,energy,notice,close:remove};
+window.DijiMeduPapiFeedback={correct,wrong,energy,energyLimit,energyDenied,notice,close:remove};
 })();

@@ -127,8 +127,10 @@ if(typeof document!=='undefined')document.addEventListener('click',async event=>
  const original=buy.textContent;
  buy.disabled=true;buy.textContent='⏳ Satın alınıyor…';
  let paid=false;
- try{paid=await root.enerjiPaketiAl?.(Number(buy.dataset.amount))===true;}
- catch{root.yoToast?.('Enerji alınamadı. Lütfen tekrar dene.');}
+ const status=buy.closest('.sa-perde')?.querySelector('[data-energy-status]');
+ const report=message=>{if(status)status.textContent=message;else root.yoToast?.(message);};
+ try{paid=await root.enerjiPaketiAl?.(Number(buy.dataset.amount),report)===true;}
+ catch{report('Enerji alınamadı. Lütfen tekrar dene.');}
  if(!paid){buy.disabled=false;buy.textContent=original;return;}
  buy.closest('.sa-perde')?.remove();
  const next=document.querySelector('#bzPerde #bzAlan .bz-btn.mor');

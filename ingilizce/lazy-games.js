@@ -1,7 +1,7 @@
 /* Optional games initialize once, when their tab or public opener is used. */
 (()=>{'use strict';
-  const premiumFile='premium-word-match.js?v=20261105-candy-shop';
-  const files=['solo-arcade.js?v=20261029-1','harf-bahcesi.js?v=20261025-results-1','papi-cards.js?v=20261013-review','meteor.js?v=20261025-viewport-2','word-wheel.js?v=20261016-ten-seconds','kelime-rallisi.js?v=20261028-voice-1'];
+  const premiumFile='premium-word-match.js?v=20261106-shared-energy';
+  const files=['solo-arcade.js?v=20261029-1','harf-bahcesi.js?v=20261106-shared-energy','papi-cards.js?v=20261013-review','meteor.js?v=20261025-viewport-2','word-wheel.js?v=20261016-ten-seconds','kelime-rallisi.js?v=20261106-shared-energy'];
   const loaded=new Set();let pending=null,readyDone=false;
   function script(src){return new Promise((resolve,reject)=>{
     if(loaded.has(src)){resolve();return;}
@@ -40,7 +40,7 @@
   const flightProxy=async ()=>{
     const owner=typeof aktifOgrenciAdi==='undefined'?'':aktifOgrenciAdi;
     try{
-      await (flightLoading??=script('premium-cloud-flight.js?v=5').catch(error=>{flightLoading=null;throw error;}));
+      await (flightLoading??=script('premium-cloud-flight.js?v=20261106-shared-energy').catch(error=>{flightLoading=null;throw error;}));
       if(owner!==(typeof aktifOgrenciAdi==='undefined'?'':aktifOgrenciAdi))return;
       if(window.premiumBulutUcusuAc!==flightProxy)await window.premiumBulutUcusuAc();
     }catch(error){window.yoToast?.(error.message);}
@@ -50,7 +50,7 @@
   const blocksProxy=async ()=>{
     const owner=typeof aktifOgrenciAdi==='undefined'?'':aktifOgrenciAdi;
     try{
-      await (blocksLoading??=script('premium-word-blocks.js?v=2').catch(error=>{blocksLoading=null;throw error;}));
+      await (blocksLoading??=script('premium-word-blocks.js?v=20261106-shared-energy').catch(error=>{blocksLoading=null;throw error;}));
       if(owner===(typeof aktifOgrenciAdi==='undefined'?'':aktifOgrenciAdi)&&window.premiumKelimeBloklariAc!==blocksProxy)await window.premiumKelimeBloklariAc();
     }catch(error){window.yoToast?.(error.message);}
   };
@@ -59,7 +59,7 @@
   const papizzleProxy=async ()=>{
     const owner=typeof aktifOgrenciAdi==='undefined'?'':aktifOgrenciAdi;
     try{
-      await (papizzleLoading??=script('papizzle.js?v=2').catch(error=>{papizzleLoading=null;throw error;}));
+      await (papizzleLoading??=script('papizzle.js?v=20261106-shared-energy').catch(error=>{papizzleLoading=null;throw error;}));
       if(owner===(typeof aktifOgrenciAdi==='undefined'?'':aktifOgrenciAdi)&&window.papizzleAc!==papizzleProxy)await window.papizzleAc();
     }catch(error){window.yoToast?.(error.message);}
   };

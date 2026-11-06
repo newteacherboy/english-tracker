@@ -12,7 +12,13 @@ const fs=require('node:fs'),path=require('node:path'),assert=require('node:asser
  await page.evaluate(()=>{headerEnerjiGoster(1,25);headerEnerjiGoster(0,25)});await popup.waitFor({state:'visible'});assert.equal(await popup.count(),1,'energy reaching zero opens the same shop');await popup.getByRole('button',{name:'Duyuruyu kapat'}).click();assert.equal(await popup.count(),0);
  // Insufficient energy before a game reaches its 3-energy admission cost uses the same legacy alias.
  await page.evaluate(()=>{genelEnerjiKalan=2;genelEnerjiBittiGoster()});await popup.waitFor({state:'visible'});
- await page.evaluate(()=>{DijiMeduPapiFeedback.close();document.getElementById('setup')?.remove();window.bought=0;magazaAc();});
+ await page.evaluate(()=>{DijiMeduPapiFeedback.close();document.getElementById('setup')?.remove();window.bought=0;window.dmEkonomi={paketUyarisi:async()=>"Bugünkü hakkın Türkiye saatiyle gece 00.00’da yenilenir."};magazaAc();});
+ await page.locator('#dsEnergy [role="status"]').filter({hasText:'Türkiye saatiyle gece 00.00'}).waitFor({state:'visible'});
+ assert.equal(await page.evaluate(()=>bought),0);
+ await page.evaluate(()=>DijiMeduPapiFeedback.energyDenied({code:'enerji'}));
+ await popup.locator('[data-energy-status]').filter({hasText:'Türkiye saatiyle gece 00.00'}).waitFor({state:'visible'});
+ assert.equal(await page.evaluate(()=>bought),0);
+ await page.evaluate(()=>DijiMeduPapiFeedback.close());
  await page.locator('#dsEnergy [data-pack="5"]').click();
  await page.locator('#dsEnergy [role="status"]').filter({hasText:'Türkiye saatiyle gece 00.00'}).waitFor({state:'visible'});
  assert.deepEqual(errors,[]);await page.close();console.log('PASS start spotlight and urgent bottom energy shop',width,height);
