@@ -24,7 +24,7 @@ for(const [width,height] of [[320,640],[390,844],[768,844],[1180,844]]){
  assert(await page.evaluate(()=>calls.includes('papizzle')));
  await page.evaluate(()=>dmGamesUI.refresh());
  assert.match(await featured.innerText(),/Papizzle/);
- assert.deepEqual(await page.locator('.gg-group h2:visible').allTextContents(),['Premium','Tek Kişilik','Kapışma','Online','Konu','Mola']);
+ assert.deepEqual(await page.locator('.gg-group h2:visible').allTextContents(),['Premium','Tek Kişilik','Kapışma','Online','Konu Oyunları','Mola']);
  assert(await page.locator('.gg-group').evaluateAll(groups=>groups.every(group=>group.querySelectorAll('.gg-shelf-card').length<=2&&group.querySelector('.gg-group-heading button'))));
  await page.getByRole('button',{name:'Tek Kişilik oyunlarının tümünü göster'}).click();
  assert.equal(await visibleCards().count(),5);
