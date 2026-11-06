@@ -110,6 +110,7 @@ function shell(){
  <div class="pwm-modal" hidden></div>
  <div class="pwm-toast" role="status" hidden></div>`;
  document.body.append(root);document.body.classList.add('pwm-active');window.dmPapiNotices?.pause?.();
+ root.dmGameFrameActions={back:()=>back(),exit:()=>back()};
  $('[data-back]').onclick=()=>back();
  $('[data-pause]').onclick=()=>{if(G&&!G.over&&!G.busy)back();};
  $('[data-sound]').onclick=()=>{sound.on=!sound.on;store.set('dm_pwm_sound',sound.on);paintSound();if(sound.on){if(!G||!G.paused)sound.startMusic();sound.tick();}else{sound.stopMusic();}};

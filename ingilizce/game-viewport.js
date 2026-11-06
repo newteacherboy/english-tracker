@@ -99,3 +99,168 @@
   visibleGames:[...document.querySelectorAll(selector)].filter(shown).map(e=>e.id||String(e.className)).slice(0,20)
  })};sync();
 })();
+
+/* One visible toolbar, driven by each game's own navigation, audio and pause handlers. */
+(()=>{
+ 'use strict';
+ const roots='.game-modal-overlay,#dmGameIntro,#yoModal.acik[data-dm-selected-game],#harfBahcesiOverlay,#rallyGame,#wordWheel,#papiCards,#meteorGame,#mvOverlay,#kgOverlay,#onlineMatch,#dmArenaOverlay,#dmMatchOverlay,#dyOyunOverlay,.dm-garden-match,.kart-oyun-overlay,.dm-sr-overlay,#pwmRoot,dialog.papizzle[open],dialog.dm-flight[open],dialog.dm-blocks[open]';
+ const fields='select:is(#mtGrade,#mtUnit,#wwGrade,#wwUnit,#pcGrade,#pcUnit,[data-grade],[data-class],[data-unit],[data-players],[data-duration])';
+ const grades='select:is(#mtGrade,#wwGrade,#pcGrade,[data-grade],[data-class])';
+ const units='.unite-secim-box,.hb-units,.kg-units,.rr-units,.dm-sr-units';
+ const controls={
+  back:'button[data-back],button.dm-vp-back,button.fg-fs-back',
+  exit:'button[data-exit],button.dm-vp-exit,button.game-close-btn,button[data-close],button.mt-exit,button.ww-close,button.pc-close,button.yo-kapat,button.kart-oyun-kapat,button.dm-x,button[data-ia-close]',
+  pause:'button[data-pause],button.dm-vp-pause,button.rr-pause,button.mt-pause',
+  sound:'button.dm-game-music,button[data-sound],button[data-audio-toggle],button[id$="MuzikBtn"],button.mt-music,button.mt-effects'
+ };
+ const labels={back:'Geri dön',exit:'Oyunu kapat',pause:'Oyunu duraklat',sound:'Sesi kapat'};
+ const paths={back:'M19 12H5m7-7-7 7 7 7',exit:'m6 6 12 12M18 6 6 18',pause:'M9 5v14m6-14v14',sound:'M3 9h4l5-4v14l-5-4H3zm13-1q5 4 0 8',muted:'M3 9h4l5-4v14l-5-4H3zm13 0 5 6m0-6-5 6'};
+ const icon=key=>'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="'+paths[key]+'"/></svg>';
+ const choiceGroups=new WeakMap();
+ let scheduled=false,bank,unitTitles=new Map();
+ function titleFor(grade,unit){
+  const words=window.masterKelimeHavuzu;
+  if(bank!==words){
+   bank=words;
+   unitTitles=new Map();
+   for(const word of words||[]){
+    const key=Number(word.sinif)+':'+Number(word.unite),title=String(word.unit_name||word.unit_title||'').trim();
+    if(title&&!unitTitles.has(key))unitTitles.set(key,title);
+   }
+  }
+  return unitTitles.get(grade+':'+unit)||'';
+ }
+ const setAttr=(el,key,value)=>{if(el.getAttribute(key)!==value)el.setAttribute(key,value);};
+ function currentGrade(root){
+  return Number(root.querySelector(grades)?.value)||
+   Number(root.querySelector('.sinif-btn.active')?.dataset.class)||
+   Number(root.querySelector('.sinif-btn.active')?.textContent.match(/\d+/)?.[0])||0;
+ }
+ function selectChoices(select,grade){
+  const kind=select.matches(grades)?'grade':select.matches('[data-players]')?'mode':select.matches('[data-duration]')?'time':'unit';
+  const label={grade:'Sınıf',unit:'Ünite',mode:'Oyuncu sayısı',time:'Soru süresi'}[kind];
+  let state=choiceGroups.get(select);
+  if(!state){
+   const group=document.createElement('div');
+   group.className='dm-picker-grid';group.dataset.kind=kind;
+   group.setAttribute('role','group');group.setAttribute('aria-label',label);
+   select.after(group);select.classList.add('dm-picker-native');
+   choiceGroups.set(select,state={group,signature:''});
+  }
+  const options=[...select.options].filter(option=>option.value!==''&&!option.hidden);
+  const choices=options.map(option=>{
+   const value=option.value,n=Number(value);
+   const title=kind==='unit'?titleFor(grade,n):'';
+   const text=kind==='grade'?String(n):kind==='mode'?(n===1?'Tek Kişilik':'İki Kişilik'):option.textContent.trim();
+   return {value,text,title,disabled:select.disabled||option.disabled};
+  });
+  const signature=JSON.stringify(choices);
+  if(state.signature!==signature){
+   state.signature=signature;
+   state.group.replaceChildren(...choices.map(choice=>{
+    const button=document.createElement('button');
+    button.type='button';button.dataset.value=choice.value;button.disabled=choice.disabled;
+    button.textContent=choice.text;
+    if(choice.title){button.dataset.unitTitle=choice.title;button.setAttribute('aria-label',choice.text+' · '+choice.title);}
+    button.onclick=()=>{
+     if(select.disabled||button.disabled)return;
+     select.value=choice.value;
+     select.dispatchEvent(new Event('change',{bubbles:true}));
+     updateSelections();
+    };
+    return button;
+   }));
+  }
+  function updateSelections(){
+   for(const button of state.group.children)setAttr(button,'aria-pressed',String(button.dataset.value===select.value));
+  }
+  updateSelections();
+  const hidden=choices.length===0;if(state.group.hidden!==hidden)state.group.hidden=hidden;
+ }
+ function enhanceSetup(root){
+  const grade=currentGrade(root);
+  for(const select of root.querySelectorAll(fields))selectChoices(select,grade);
+  for(const grid of root.querySelectorAll(units)){
+   for(const tile of grid.querySelectorAll('button,label.kg-unit')){
+    const n=Number(tile.dataset.unit||tile.querySelector('input')?.value||tile.textContent.match(/\d+/)?.[0]);
+    if(!n)continue;
+    setAttr(tile,'data-unit-title',titleFor(grade,n));
+   }
+  }
+ }
+ function sourceFor(root,kind){
+  const candidates=[...root.querySelectorAll(controls[kind])].filter(button=>
+   !button.hidden&&!button.matches('.dm-frame-control')&&(kind==='sound'||!button.closest('[hidden]'))
+  );
+  if(kind==='exit')return [...candidates.filter(button=>button.matches('.dm-vp-exit,[data-exit]')),
+   ...candidates.filter(button=>!button.matches('.dm-vp-exit,[data-exit]'))];
+  return candidates;
+ }
+ function soundOff(button){
+  const label=(button.getAttribute('aria-label')||button.title||button.textContent).trim();
+  if(/kapalı|aç$|etkinleştir|🔇|♪̸|♫̸/i.test(label))return true;
+  if(/açık/i.test(label))return false;
+  return button.getAttribute('aria-pressed')==='false';
+ }
+ function frame(root){
+  let strip=root.querySelector(':scope > .dm-game-frame');
+  if(!strip){
+   strip=document.createElement('div');strip.className='dm-game-frame';
+   strip.setAttribute('role','group');strip.setAttribute('aria-label','Oyun kontrolleri');
+   strip.innerHTML='<button class="dm-frame-control" data-frame="back" type="button">'+icon('back')+'</button><b>Diji Medu</b>'+
+    ['sound','pause','exit'].map(key=>'<button class="dm-frame-control" data-frame="'+key+'" type="button">'+icon(key)+'</button>').join('');
+   root.prepend(strip);
+  }
+  if(!root.classList.contains('dm-game-framed'))root.classList.add('dm-game-framed');
+  for(const key of Object.keys(controls)){
+   const button=strip.querySelector('[data-frame="'+key+'"]'),sources=sourceFor(root,key);
+   for(const source of sources)if(!source.classList.contains('dm-frame-source'))source.classList.add('dm-frame-source');
+   const active=(key==='back'&&!sources.length?sourceFor(root,'exit'):sources).filter(source=>!source.disabled);
+   const native=root.dmGameFrameActions?.[key];
+   const resume=key==='pause'&&root.querySelector('.dm-game-pause-sheet button');
+   const muted=key==='sound'&&active.length>0&&active.every(soundOff);
+   const label=resume?'Oyuna devam et':muted?'Sesi aç':labels[key];
+   setAttr(button,'aria-label',label);
+   setAttr(button,'title',label);
+   if(key==='sound'){
+    setAttr(button,'aria-pressed',String(!muted&&active.length>0));
+    if(button.dataset.muted!==String(muted)){button.dataset.muted=String(muted);button.innerHTML=icon(muted?'muted':'sound');}
+   }
+   const disabled=!active.length&&!native&&!resume;
+   if(button.disabled!==disabled)button.disabled=disabled;
+   button.onclick=()=>{
+    if(resume)resume.click();
+    else if(native)native();
+    else if(key==='sound'){for(const source of active)if(soundOff(source)===muted)source.click();}
+    else active[0]?.click();
+    schedule();
+   };
+  }
+ }
+ function sync(){
+  scheduled=false;
+  for(const root of document.querySelectorAll('.dm-game-framed')){
+   if(root.matches(roots))continue;
+   root.classList.remove('dm-game-framed');
+   root.querySelector(':scope > .dm-game-frame')?.remove();
+   for(const source of root.querySelectorAll('.dm-frame-source'))source.classList.remove('dm-frame-source');
+   for(const select of root.querySelectorAll('.dm-picker-native')){
+    choiceGroups.get(select)?.group.remove();choiceGroups.delete(select);select.classList.remove('dm-picker-native');
+   }
+  }
+  for(const root of document.querySelectorAll(roots)){
+   if(root.hidden||!root.getClientRects().length||root.closest('[inert],[aria-hidden="true"],[data-dm-nav-suspended]'))continue;
+   frame(root);enhanceSetup(root);
+  }
+ }
+ function schedule(){if(!scheduled){scheduled=true;requestAnimationFrame(sync);}}
+ const tracked=roots+',.dm-game-framed,#yoModal,'+fields+',option,header,.dm-game-music,.dm-vp-pause,.dm-game-pause-sheet,.sinif-btn,'+units;
+ new MutationObserver(records=>{
+  if(records.some(r=>r.type==='attributes'
+   ?r.target.matches?.(tracked)||r.target.matches?.('button,input')&&!!r.target.closest?.(roots)&&!r.target.matches('.dm-frame-control')
+   :r.target.matches?.(fields)||[...r.addedNodes,...r.removedNodes].some(n=>n.nodeType===1&&(n.matches(tracked)||n.querySelector(tracked)))
+  ))schedule();
+ }).observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['class','hidden','disabled','open','aria-pressed','aria-label','style']});
+ document.addEventListener('change',event=>{if(event.target.closest?.(roots))schedule();});
+ sync();
+})();

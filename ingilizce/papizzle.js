@@ -292,6 +292,7 @@
     };
     screen.addEventListener('cancel', event => { event.preventDefault(); close(); });
     document.body.append(screen);
+    screen.dmGameFrameActions={back:close,exit:close};
     screen.showModal();
     const watch = setInterval(() => { if (!sameAccount()) close(); }, 500);
     paintSound();
