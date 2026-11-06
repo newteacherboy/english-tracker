@@ -91,7 +91,7 @@
   party=category;skill='Tümü';render(host,grid);
   host.closest('#tab-aktiviteler').scrollTop=0;
   host.querySelector('[data-gg-party="'+(category==='tools'?'all':category)+'"]')?.focus({preventScroll:true});
-  if(category==='duo'||category==='free')loadFriends(host);
+  if(!window.dmTeacherPortalMode&&(category==='duo'||category==='free'))loadFriends(host);
  }
  function categoryArt(category){
   const i=categoryIcons[category];
@@ -171,7 +171,7 @@
   if(shelves.dataset.signature===signature)return;
   shelves.dataset.signature=signature;
   const previousFocus=document.activeElement?.closest('.gg-shelf-card')?.dataset.ggSource;
-  const groups=catalogue?shelfOrder:[party];
+  const groups=catalogue?shelfOrder.filter(category=>host.querySelector('[data-gg-party="'+category+'"]')):[party];
   shelves.replaceChildren(...groups.map(category=>{
    const section=document.createElement('section');section.className='gg-group';section.dataset.ggShelf=category;
    const highlighted=featured?.dataset.ggCategory===category;
@@ -200,6 +200,7 @@
  }
  function installRedesign(host,grid,top,bottom){
   host.classList.add('gg-redesign');
+  if(window.dmTeacherPortalMode)host.classList.add('gg-teacher-shelves');
   const filters=top.querySelector('.gg-tabs');
   filters.setAttribute('role','group');
   filters.querySelectorAll('button').forEach(button=>{button.removeAttribute('role');button.removeAttribute('aria-controls');});
@@ -258,7 +259,7 @@
    host.querySelector('.gg-heading').hidden=true;
    host.querySelector('.gg-empty').hidden=true;
    host.querySelector('.gg-shortcuts button').textContent=showTools?'Tüm Oyunlara Dön ›':'Çalışma Araçları ›';
-   const social=party==='duo'||party==='free';
+   const social=!window.dmTeacherPortalMode&&(party==='duo'||party==='free');
    host.querySelector('.gg-social').hidden=!social;
    host.querySelector('.gg-matches').hidden=!social;
    host.querySelector('[data-gg-duo]').hidden=party==='duo';
@@ -287,12 +288,12 @@
   if(!host.classList.contains('gg-page')){host.classList.add('gg-page');host.querySelectorAll('.dm-activity-hero,.dm-party-tabs').forEach(e=>e.remove());
    const top=document.createElement('div');top.className='gg-top';top.innerHTML='<div class="gg-brand"><b>DijiMedu</b><span>'+icon('energy')+'<b data-gg-energy>Enerji</b></span><span>'+icon('coin')+'<b data-gg-gold>0</b></span></div><div class="gg-title"><h1>Oyunlar</h1><div class="gg-tabs" role="tablist" aria-label="Oyun kategorisi"><button id="ggSoloTab" type="button" role="tab" data-gg-party="solo" aria-controls="dmActivityGames" aria-label="Tek Kişilik Oyunlar"><svg class="gg-icon" viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="15.5" r="7.5" fill="currentColor"/><path d="M9 39v-4a15 15 0 0 1 30 0v4" stroke="currentColor" fill="none" stroke-width="5" stroke-linecap="round"/><circle cx="37" cy="11" r="3" fill="#ffef91"/></svg><span>Tek Kişilik</span></button><button id="ggOnlineTab" type="button" role="tab" data-gg-party="duo" aria-controls="dmActivityGames" aria-label="Online Çift Kişilik Oyunlar"><svg class="gg-icon" viewBox="0 0 48 48" aria-hidden="true"><circle cx="18" cy="17" r="6.5" fill="currentColor"/><circle cx="32" cy="19" r="5.5" fill="currentColor" opacity=".8"/><path d="M5 38v-3c0-7 6-12 13-12s13 5 13 12v3z" fill="currentColor"/><path d="M30 27c6 0 11 4 11 10v1H30" fill="currentColor" opacity=".75"/><path d="M34 10l3-4 3 4" fill="none" stroke="#ffeb9b" stroke-width="3" stroke-linecap="round"/></svg><span>Online Çift Kişilik</span></button><button id="ggFreeTab" type="button" role="tab" data-gg-party="free" aria-controls="dmActivityGames" aria-label="Kapışma Oyunları"><svg class="gg-icon" viewBox="0 0 48 48" aria-hidden="true"><path d="M8 11l27 27M40 11L13 38" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"/><path d="m6 7 9 2-7 7zm36 0-9 2 7 7z" fill="currentColor"/><path d="m9 31 7 8m16-8-7 8" fill="none" stroke="#ffebb4" stroke-width="3.5" stroke-linecap="round"/></svg><span>Kapışma</span></button><button id="ggKonuTab" type="button" role="tab" data-gg-party="konu" aria-controls="kgTopicPanel" aria-label="Konu Oyunları"><svg class="gg-icon" viewBox="0 0 48 48" aria-hidden="true"><path d="M24 11C17 6 8 7 5 9v27c7-3 14-2 19 2 5-4 12-5 19-2V9c-5-2-13-3-19 2z" fill="none" stroke="currentColor" stroke-width="4" stroke-linejoin="round"/><path d="M24 11v26M10 17h8m-8 7h7m13-7h8m-8 7h7" stroke="currentColor" stroke-width="2.7" stroke-linecap="round"/></svg><span>Konu Oyunları</span></button><button id="ggBreakTab" type="button" role="tab" data-gg-party="break" aria-controls="dmActivityGames" aria-label="Mola Vakti"><svg class="gg-icon" viewBox="0 0 48 48" aria-hidden="true"><path d="M9 19h27v8c0 8-6 13-14 13s-13-5-13-13v-8zM36 22h3a5 5 0 0 1 0 10h-4" fill="none" stroke="currentColor" stroke-width="4" stroke-linejoin="round"/><path d="M15 9c-3 4 3 4 0 8m9-8c-3 4 3 4 0 8m9-8c-3 4 3 4 0 8" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg><span>Mola Vakti</span></button><button id="ggPremiumTab" type="button" role="tab" data-gg-party="premium" aria-controls="dmActivityGames" aria-label="Premium Oyunlar"><span>Premium</span></button></div></div><div class="gg-banner"><img src="oyna-assets/oyna-papi-fly.png" alt="Papi" loading="lazy" decoding="async"><div><h2>Oynayarak öğren!</h2><p>Oyunları keşfet, seviye atladıkça kilitlerini aç.</p></div></div><div class="gg-filters" aria-label="Beceri filtresi">'+['Tümü','Kelime','Dinleme','Cümle'].map(s=>'<button type="button" data-gg-skill="'+s+'">'+s+'</button>').join('')+'</div><div class="gg-social" hidden><b>Arkadaşların</b><div class="gg-friends"></div><button type="button" class="gg-friends-all">'+icon('users')+' Tümü ›</button></div><section class="gg-resume" hidden></section><h2 class="gg-heading">Tüm Oyunlar</h2><p class="gg-empty" hidden>Bu beceride oyun bulunamadı. Diğer filtreleri deneyebilirsin.</p>';
    if(window.dmTeacherPortalMode)top.querySelectorAll('[data-gg-party=duo],[data-gg-party=break]').forEach(b=>b.remove());grid.before(top);const bottom=document.createElement('div');bottom.className='gg-bottom';bottom.innerHTML='<section class="gg-next" hidden></section><div class="gg-matches" hidden><h3>Karşılaşmalarım</h3><div><span>'+icon('users')+' Davetlerini ve sonuçlarını gör</span><button type="button" data-gg-matches>Gör ›</button></div><button type="button" data-gg-duo>Çevrimiçi iki kişilik oyunlar ›</button></div>';grid.after(bottom);
-   top.querySelectorAll('[data-gg-party]').forEach(b=>{b.onclick=()=>{if(!window.dmTeacherPortalMode)return changeCategory(host,grid,b.dataset.ggParty);party=b.dataset.ggParty;render(host,grid);host.querySelector('.gg-matches').hidden=!!window.dmTeacherPortalMode||party==='solo'||party==='break'||party==='konu'||party==='premium';if(!window.dmTeacherPortalMode&&(party==='duo'||party==='free'))loadFriends(host);};b.onkeydown=e=>{if(['ArrowLeft','ArrowRight','Home','End'].includes(e.key)){e.preventDefault();const buttons=[...top.querySelectorAll('[data-gg-party]')];const index=buttons.indexOf(b);const other=e.key==='Home'?buttons[0]:e.key==='End'?buttons.at(-1):buttons[(index+(e.key==='ArrowLeft'?-1:1)+buttons.length)%buttons.length];other.click();other.focus();}};});
+   top.querySelectorAll('[data-gg-party]').forEach(b=>b.onclick=()=>changeCategory(host,grid,b.dataset.ggParty));
    top.querySelectorAll('[data-gg-skill]').forEach(b=>b.onclick=()=>{skill=b.dataset.ggSkill;render(host,grid);});top.querySelector('.gg-friends-all').onclick=()=>window.meduAkisAc?.();bottom.querySelector('[data-gg-matches]').onclick=()=>window.dmArenaAc?.();bottom.querySelector('[data-gg-duo]').onclick=()=>{top.querySelector('[data-gg-party=duo]')?.click();};grid.id='dmActivityGames';grid.setAttribute('role','tabpanel');
-   if(!window.dmTeacherPortalMode){installRedesign(host,grid,top,bottom);grid.removeAttribute('role');party='all';}
+   installRedesign(host,grid,top,bottom);grid.removeAttribute('role');party='all';
    new MutationObserver(()=>{key='';install();}).observe(grid,{childList:true});
   }
-  if(lastAccount!==account()){lastAccount=account();friendsLoaded=false;party=window.dmTeacherPortalMode?'solo':'all';skill='Tümü';key='';visit=0;featured=null;featuredStatus=null;statusRequest=null;if(!window.dmTeacherPortalMode&&tab?.classList.contains('active'))nextVisit();}
+  if(lastAccount!==account()){lastAccount=account();friendsLoaded=false;party='all';skill='Tümü';key='';visit=0;featured=null;featuredStatus=null;statusRequest=null;if(!window.dmTeacherPortalMode&&tab?.classList.contains('active'))nextVisit();}
   const nextKey=[party,skill,level(),host.querySelectorAll('.az-gcard').length,lastGame(),typeof yo!=='undefined'?yo?.altin:0,typeof genelEnerjiKalan==='number'?genelEnerjiKalan:typeof genelEnerjiKalan==='function'?genelEnerjiKalan():0].join('|');if(knownGrid!==grid||key!==nextKey){knownGrid=grid;key=nextKey;render(host,grid);}
  }
  // Page tabs must never inherit the viewport lock used by a playing overlay.
@@ -304,8 +305,7 @@
  window.dmGamesUI={
   refresh:()=>{key='';install(true);},
   enter:()=>{
-   if(window.dmTeacherPortalMode)return;
-   if(lastAccount===account())nextVisit();
+   if(!window.dmTeacherPortalMode&&lastAccount===account())nextVisit();
    party='all';skill='Tümü';key='';install(true);
    const tab=document.getElementById('tab-aktiviteler');if(tab)tab.scrollTop=0;
   }

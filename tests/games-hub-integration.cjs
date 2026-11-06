@@ -15,7 +15,6 @@ const premiumGames=[
  ['papizzleActivity','papizzleAc']
 ];
 const shelfIds=()=>page.locator(".gg-shelf-card:visible").evaluateAll(cards=>cards.map(card=>card.dataset.ggSource));
-const visibleCards=()=>page.locator('.az-grid2x2>.az-gcard:visible').evaluateAll(cards=>cards.map(card=>card.id));
 const browser=await chromium.launch({args:['--no-sandbox']}),page=await browser.newPage(),errors=[];
 page.on('pageerror',e=>errors.push(e.message));
 await page.route('https://games.test/**',r=>{const file=new URL(r.request().url()).pathname.slice(1);if(file)return r.fulfill({path:path.join(base,file)});return r.fulfill({contentType:'text/html',body:'<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><style>'+styles+'</style><link rel="stylesheet" href="approved-centre.css"><link rel="stylesheet" href="activity-ui.css"><link rel="stylesheet" href="papi-wallet.css"><style>body{margin:0!important}#tab-aktiviteler{display:block!important;position:static!important;inset:auto!important;height:auto!important;min-height:100vh}#tab-aktiviteler .dc-focus-card{width:100%;margin:0 auto!important}</style></head><body>'+markup+'<div class="yb-fw gor">Yardım</div><script>window.dmTeacherPortalMode=location.search==="?teacher";window.aktifOgrenciAdi="Mert";localStorage.setItem("ing_token","fixture");window.yo={altin:129};window.genelEnerjiKalan=14;window.genelEnerjiMax=30;window.dmProgression={level:()=>11,allowed:()=>true};window.dmMeduPro={api:async()=>({liste:[],serverNow:new Date().toISOString()})};</script><link rel="stylesheet" href="mola-vakti.css"><link rel="stylesheet" href="kelime-golu.css"><script src="activity-ui.js"></script><script src="mola-vakti.js"></script><script src="kelime-golu.js"></script><script src="papi-wallet.js"></script><script>(function(){'+legacy+'})();</script></body></html>'});});
@@ -76,9 +75,12 @@ await page.evaluate(games=>{
  window.openedPremium=[];
  for(const [id,open] of games)window[open]=()=>window.openedPremium.push(id);
 },premiumGames);
+assert(await page.locator('.gg-teacher-shelves').isVisible());
+assert.deepEqual(await page.locator('.gg-group h2').allTextContents(),['Premium','Tek Kişilik','Kapışma','Konu']);
+assert(await page.locator('.gg-brand').isHidden());
 await page.locator('#ggPremiumTab').click();
-assert.deepEqual(await visibleCards(),premiumGames.map(([id])=>id));
-for(const [id] of premiumGames)await page.locator('#'+id).click();
+assert.deepEqual((await shelfIds()).sort(),premiumGames.map(([id])=>id).sort());
+for(const [id] of premiumGames)await page.locator('[data-gg-source="'+id+'"]').click();
 assert.deepEqual(await page.evaluate(()=>window.openedPremium),premiumGames.map(([id])=>id));
 assert.deepEqual(errors,[]);await browser.close();
 })().catch(e=>{console.error(e);process.exit(1)});

@@ -491,3 +491,10 @@ html.dm-teacher-portal #tab-aktiviteler#tab-aktiviteler .gg-page .gg-tabs{grid-t
 .gg-redesign .gg-matches>[data-gg-duo]{
  color:#d9edff;background:#273e61;border:1px solid var(--gg-edge);min-height:40px;
 }
+
+@layer bilgiIslands {
+#tab-aktiviteler#tab-aktiviteler .gg-teacher-shelves .gg-brand{display:none!important}
+#tab-aktiviteler#tab-aktiviteler .gg-teacher-shelves .gg-tabs:has(#ggPremiumTab){grid-template-columns:repeat(6,minmax(0,1fr))!important}
+#tab-aktiviteler#tab-aktiviteler .gg-teacher-shelves .gg-tabs>button{grid-column:span 2}
+#tab-aktiviteler#tab-aktiviteler .gg-teacher-shelves .gg-tabs>button:nth-child(n+4){grid-column:span 3}
+}
