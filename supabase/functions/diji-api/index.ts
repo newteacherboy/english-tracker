@@ -7,7 +7,7 @@ import {wordPayload} from './word-payload.mjs';
 import {teacherChatAPI} from './teacher-chat.mjs';
 import {announcementsAPI} from './announcements-api.mjs';
 import {isClassroomGuest,memberStudents} from './classroom-identity.mjs';
-import {teacherPortalAPI,portalOps,portalOperationAllowed} from './teacher-portal.mjs';
+import {teacherApplicationKey,teacherPortalAPI,portalOps,portalOperationAllowed} from './teacher-portal.mjs';
 import {routeExplorationAPI} from './route-exploration.mjs';
 import {routeGraduationsAPI} from './route-graduations.mjs';
 import {completeLessonAssignments} from './assignment-completion.mjs';
@@ -2369,7 +2369,7 @@ async function handle(req: Request, proxy: any = null) {
     const saved = existing ? await supabase.from("students").update(payload).eq("id",existing.id).select("id,username,email").single() : await supabase.from("students").insert(payload).select("id,username,email").single();
     if(saved.error||!saved.data)return json({status:"error",message:"Kayıt oluşturulamadı. Biraz sonra tekrar dene."},503);
     await saveLearnerProfile(supabase,saved.data.id,learnerProfile);
-    if(teacherApplication)await teacherPortal.apply(saved.data.id);
+    if(teacherApplication)await teacherPortal.trackSignup(saved.data.id);
     /* Optional, unticked registration checkbox (never a condition of registration): weekly progress / Papi news e-mail. */
     if(body.ilerlemeMailOnay===true){try{const e=String(saved.data.email||"").trim().toLowerCase();if(/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(e)){const at=new Date().toISOString();const r=await supabase.from("extra_data").upsert({student_id:saved.data.id,key_name:"progress_mail_consent_v1",value:{at,source:"registration_checkbox",email:e},updated_at:at},{onConflict:"student_id,key_name"});if(r?.error)console.error("progress mail consent",r.error.message);}}catch(err){console.error("progress mail consent",err);}}
     await yeniOgrenciYoneticiBildirimi(saved.data,"normal");
@@ -2841,7 +2841,7 @@ async function handle(req: Request, proxy: any = null) {
   if (op === "ekVeriKaydet") {
     const name = String(body.ogrenci || ""), key = temizMetin(body.anahtar, 60); const deny = await requireStudent(a, name); if (deny) return deny;
     /* [v4.6] Sunucunun kendi tuttuğu anahtarlara öğrenci yazamaz */
-    if (a?.role === "student" && reservedStudentKey(key)) return json({ status: "error", message: "Bu veri değiştirilemez." }, 403);
+    if (a?.role === "student" && (key===teacherApplicationKey||reservedStudentKey(key))) return json({ status: "error", message: "Bu veri değiştirilemez." }, 403);
     if (a?.role === "teacher" && encName(name) === "teacher" && key === "yo") {
       let tv: any = null; try { tv = typeof body.deger === "string" ? JSON.parse(body.deger) : body.deger; } catch (_) { tv = null; }
       if (!tv || typeof tv !== "object") return json({ status: "error", message: "Geçersiz veri." }, 400);
