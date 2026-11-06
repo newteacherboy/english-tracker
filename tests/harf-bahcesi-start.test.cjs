@@ -18,3 +18,16 @@ test('zero charge is accepted only for an authoritative classroom response; ordi
  for(const [teacher,response,starts]of [[false,{ok:true,eklenen:0},false],[true,{ok:true,eklenen:0},false],[true,{ok:false,rankingOnly:true,eklenen:0},false],[false,{ok:true,eklenen:-3},true]]){const f=fixture(2,teacher,response);f.w.document.querySelector('[data-start]').click();await flush();assert.equal(!!f.w.document.querySelector('.hb-playing'),starts);f.w.close();}
 });
 test('an empty eligible pool gives guidance before any energy request',async()=>{const f=fixture(0,true,{ok:true});f.w.document.querySelector('[data-start]').click();await flush();assert.match(f.w.document.querySelector('.hb-status').textContent,/Başka bir ünite seç/);assert.equal(f.calls.length,0);f.w.close();});
+test('a low-energy garden opens the shared daily purchase warning before any debit',async()=>{
+ const {w,calls}=fixture(2,false,{ok:true,eklenen:-3});
+ try {
+  w.genelEnerjiKalan=2;
+  w.dmEkonomi={paketUyarisi:async()=> 'Bugünkü hakkın gece 00.00’da yenilenir.'};
+  w.eval(fs.readFileSync('ingilizce/papi-feedback.js','utf8'));
+  w.dmEnerjiPaketPaneli=()=>w.DijiMeduPapiFeedback.energy();
+  w.document.querySelector('[data-start]').click();
+  await flush();
+  assert.match(w.document.querySelector('[data-energy-status]').textContent,/gece 00\.00/);
+  assert.equal(calls.length,0);
+ } finally {w.close();}
+});
