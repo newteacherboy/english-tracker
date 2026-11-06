@@ -67,7 +67,7 @@
     screen.setAttribute('aria-label', 'Papizzle');
     screen.innerHTML = `
       <main>
-        <header><span>★ PREMİUM</span><button type="button" data-sound aria-label="Sesi kapat"></button><button type="button" data-close aria-label="Kapat">×</button></header>
+        <header><span>★ PREMİUM</span><button type="button" data-pause aria-label="Oyunu duraklat" hidden>Ⅱ</button><button type="button" data-sound aria-label="Sesi kapat"></button><button type="button" data-close aria-label="Kapat">×</button></header>
         <h1>Papizzle</h1>
         <section data-panel></section>
         <section data-game hidden>
@@ -124,6 +124,7 @@
 
     function showPanel(title, lines, actions) {
       game.hidden = true;
+      $('[data-pause]').hidden = true;
       panel.hidden = false;
       const heading = document.createElement('h2');
       heading.textContent = title;
@@ -201,6 +202,7 @@
         });
         panel.hidden = true;
         game.hidden = false;
+        $('[data-pause]').hidden = false;
         paint();
         board.firstElementChild?.focus({preventScroll: true});
       } catch (error) {
@@ -229,7 +231,7 @@
     }
 
     function choose(index, tile) {
-      if (pending || matched === order.length || tile.disabled) return;
+      if (pending || matched === order.length || tile.disabled || game.inert) return;
       const correct = index === order[matched];
       playSound(correct);
       const feedback = $('[data-feedback]');
@@ -279,6 +281,9 @@
       }
     }
 
+    $('[data-pause]').onclick = () => {
+      if (!game.hidden && !pending && matched < order.length) window.dmLocalGamePause?.(screen, game, () => {});
+    };
     $('[data-close]').onclick = close;
     $('[data-sound]').onclick = () => {
       muted = !muted;

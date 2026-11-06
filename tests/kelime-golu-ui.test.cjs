@@ -30,3 +30,24 @@ test('insufficient energy leaves solo at setup without starting or charging a ru
 test('exit cancels delayed shot callbacks and removes the playing surface',async()=>{
  const f=fixture(),{w}=f;w.kelimeGoluKapismaAc();w.document.querySelector('[data-start]').click();await f.settle();f.answer(0).click();w.document.querySelector('[data-exit]').click();f.flush();assert.equal(w.document.getElementById('kelimeGolu'),null);w.close();
 });
+
+test('pause blocks both players and preserves the time left on their shots',async()=>{
+ const f=fixture(),{w}=f;
+ w.eval(fs.readFileSync('ingilizce/game-pause.js','utf8'));
+ try{
+  w.kelimeGoluKapismaAc();
+  w.document.querySelector('[data-start]').click();
+  await f.settle();
+  const root=w.document.querySelector('#kelimeGolu');
+  const target=f.answer(0);
+  root.querySelector('[data-pause]').click();
+  assert.equal(root.querySelector('.kg-main').inert,true);
+  target.click();f.flush();
+  assert.equal(root.querySelector('[data-player="0"] [data-score]').textContent,'0 PUAN');
+  root.querySelector('.dm-game-pause-sheet button').click();
+  assert.equal(root.querySelector('.kg-main').inert,false);
+  assert.match(root.querySelector('[data-player="0"] [data-clock]').textContent,/15 sn/);
+  target.click();f.flush();
+  assert.equal(root.querySelector('[data-player="0"] [data-score]').textContent,'10 PUAN');
+ }finally{f.dom.window.close();}
+});

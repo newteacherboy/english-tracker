@@ -15,25 +15,25 @@ export function breakGamesAPI(db:any,json:any){
    if(!uuid.test(String(b.runId||'')))return json({ok:false,mesaj:'Geçersiz oyun kimliği.'},400);
    args.run_key=b.runId;
   }
-  if(op==='molaBaslat'){if(b.chapter!==undefined&&(!Number.isInteger(b.chapter)||b.chapter<1||b.chapter>10))return json({ok:false,mesaj:'Geçersiz bölüm.'},400);args.chapter_no=b.chapter??null;fn='dm_break_start';}
-  if(op==='molaBolumGec'){if(!Number.isInteger(b.chapter)||b.chapter<1||b.chapter>10||![b.score,b.seconds].every(v=>Number.isSafeInteger(v)&&v>=0)||b.score>4500000||b.seconds>1800)return json({ok:false,mesaj:'Geçersiz bölüm sonucu.'},400);Object.assign(args,{chapter_no:b.chapter,score:b.score,seconds:b.seconds});fn='dm_break_checkpoint';}
+  if(op==='molaBaslat'){if(b.chapter!==undefined&&(!Number.isInteger(b.chapter)||b.chapter<1||b.chapter>15))return json({ok:false,mesaj:'Geçersiz bölüm.'},400);args.chapter_no=b.chapter??null;fn='dm_break_start';}
+  if(op==='molaBolumGec'){if(!Number.isInteger(b.chapter)||b.chapter<1||b.chapter>15||![b.score,b.seconds].every(v=>Number.isSafeInteger(v)&&v>=0)||b.score>4500000||b.seconds>1800)return json({ok:false,mesaj:'Geçersiz bölüm sonucu.'},400);Object.assign(args,{chapter_no:b.chapter,score:b.score,seconds:b.seconds});fn='dm_break_checkpoint';}
   if(op==='molaBitir'){
    if(![b.score,b.collectedGold,b.seconds].every(v=>Number.isSafeInteger(v)&&v>=0&&v<=4500000)||b.seconds>1800)return json({ok:false,mesaj:'Geçersiz oyun sonucu.'},400);
    Object.assign(args,{score:b.score,collected_gold:b.collectedGold,seconds:b.seconds});fn='dm_break_finish';
   }
   if(op==='molaSiralama'){
-   if(!['week','all'].includes(b.period))return json({ok:false,mesaj:'Geçersiz sıralama.'},400);
-   args.period=b.period;fn='dm_break_ranking';
+   if(b.period!==undefined&&!['week','all'].includes(b.period))return json({ok:false,mesaj:'Geçersiz sıralama.'},400);
+   args.period='all';fn='dm_break_ranking';
   }
   if(a.teacher_portal_access_id&&['dm_break_start','dm_break_finish','dm_break_checkpoint'].includes(fn))fn=fn.replace('dm_','dm_teacher_');
   const {data,error}=await db.rpc(fn,args);
-  if(a.teacher_portal_access_id&&data?.games){for(const g of Object.values(data.games) as any[]){g.remaining=999;g.unlocked=10;}data.rankingOnly=true;data.gold=0;}
+  if(a.teacher_portal_access_id&&data?.games){for(const g of Object.values(data.games) as any[]){g.remaining=999;g.unlocked=15;}data.rankingOnly=true;data.gold=0;}
 
   if(error){
    // Only deliberate policy errors are safe to display; never expose database internals.
    const msg=String(error.message||'');
-   const policy=/^(Bugünkü 2 hakkın bitti|Oyuna başlamak için 5 enerji|Öğrenci oturumu gerekli|Geçersiz oyun|Geçersiz bölüm|Bu bölüm henüz|Bölüm eşiği|Oyun sonucu süreyle|Oyun süresi doğrulanamadı|Oyun bulunamadı|Hesap bilgileri hazır değil)/.test(msg);
-   return json({ok:false,mesaj:policy?msg:'Mola oyunu kaydedilemedi. Tekrar dene.',hata:/5 enerji/.test(msg)?'enerji':/2 hakkın/.test(msg)?'hak':'mola'},policy?400:503);
+   const policy=/^(Bugünkü 2 hakkın bitti|Bugünkü oyun hakkın bitti|Oyuna başlamak için 5 enerji|Öğrenci oturumu gerekli|Geçersiz oyun|Geçersiz bölüm|Bu bölüm henüz|Bölüm eşiği|Oyun sonucu süreyle|Oyun süresi doğrulanamadı|Oyun bulunamadı|Hesap bilgileri hazır değil)/.test(msg);
+   return json({ok:false,mesaj:policy?msg:'Mola oyunu kaydedilemedi. Tekrar dene.',hata:/5 enerji/.test(msg)?'enerji':/2 hakkın|oyun hakkın/.test(msg)?'hak':'mola'},policy?400:503);
   }
   return json(data);
  }};

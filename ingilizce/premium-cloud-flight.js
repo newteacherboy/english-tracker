@@ -66,11 +66,11 @@
       if (beat % 4 === 0) note([131, 165, 110, 98][beat / 4], at, .25, .034, music);
       beat = (beat + 1) % melody.length;
     }
-    function flying(active) {
+    function flying(active, preview=false) {
       if (!engine || !music) return;
-      const audible = active && !document.hidden && !muted;
-      engine.gain.setTargetAtTime(audible ? .032 : 0, context.currentTime, .08);
-      music.gain.setTargetAtTime(audible ? 1 : 0, context.currentTime, .08);
+      const audible = (active || preview) && !document.hidden && !muted;
+      engine.gain.setTargetAtTime(active && audible ? .032 : 0, context.currentTime, .08);
+      music.gain.setTargetAtTime(audible ? (preview ? .65 : 1) : 0, context.currentTime, .08);
       if (audible && !musicTimer) {
         playBeat();
         musicTimer = setInterval(playBeat, 245);
@@ -88,12 +88,11 @@
     }
     return {
       unlock, flying, effect, get muted() { return muted; },
-      toggle(active) {
+      toggle() {
         muted = !muted;
         localStorage.setItem('dm_cloud_muted', muted ? '1' : '0');
         unlock();
         if (bus) bus.gain.setTargetAtTime(muted ? 0 : 1, context.currentTime, .035);
-        flying(active);
       },
       close() { clearInterval(musicTimer); context?.close().catch(() => {}); }
     };
@@ -213,7 +212,7 @@
       syncSound();
       panel.querySelector('button')?.focus({preventScroll: true});
     }
-    function syncSound() { sound.flying(!world.hidden && overlay.hidden && !game?.ending); }
+    function syncSound() { sound.flying(!world.hidden && overlay.hidden && !game?.ending, !overlay.hidden && panel.dataset.variant==='hangar'); }
     function paintSound() {
       const button = $('[data-sound]');
       const waves = sound.muted ? '<path d="m16 9 6 6m0-6-6 6"/>' : '<path d="M16 9a4 4 0 0 1 0 6m2-8a7 7 0 0 1 0 10"/>';
@@ -498,7 +497,7 @@
     world.onpointermove = event => { if (event.pointerId === pointer) move(event); };
     world.onlostpointercapture = () => { pointer = null; };
     $('[data-pause]').onclick = pause;
-    $('[data-sound]').onclick = () => { sound.toggle(overlay.hidden && !game?.ending); paintSound(); };
+    $('[data-sound]').onclick = () => { sound.toggle(); paintSound(); syncSound(); };
     document.addEventListener('visibilitychange', syncSound);
     paintSound();
     screen.addEventListener('cancel', event => {
@@ -514,6 +513,8 @@
     });
     const watch = setInterval(() => { if (owner() !== account) close(); }, 700);
     screen.showModal();
+    screen.addEventListener('click', () => { sound.unlock(); syncSound(); }, {once:true});
+    sound.unlock();
     home();
   }
 })();

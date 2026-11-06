@@ -32,7 +32,7 @@
     if(window.dmFeatureEnabled?.('oyun_harfbahcesi')===false || genelOyunGirisEngelliMi())return;
     close();owner=who();previous=document.activeElement;
     overlay=document.createElement('div');overlay.className='hb-overlay game-modal-overlay';overlay.id='harfBahcesiOverlay';overlay.setAttribute('role','dialog');overlay.setAttribute('aria-modal','true');overlay.setAttribute('aria-labelledby','hbTitle');
-    overlay.innerHTML=`<section class="hb-card"><header><div><small>PAPİ'NİN KELİME BAHÇESİ</small><h2 id="hbTitle">🌿 Harf Bahçesi</h2></div><button type="button" data-close aria-label="Oyundan çık">‹</button></header><div class="hb-body"></div></section>`;
+    overlay.innerHTML=`<section class="hb-card"><header><div><small>PAPİ'NİN KELİME BAHÇESİ</small><h2 id="hbTitle">🌿 Harf Bahçesi</h2></div><button type="button" class="dm-local-game-pause" data-pause aria-label="Oyunu duraklat" hidden>Ⅱ</button><button type="button" data-close aria-label="Oyundan çık">‹</button></header><div class="hb-body"></div></section>`;
     document.body.append(overlay);body=overlay.querySelector('.hb-body');overlay.querySelector('[data-close]').onclick=close;
     overlay.addEventListener('keydown',e=>{if(e.key==='Escape'){e.preventDefault();close();}if(e.key==='Tab'){const a=[...overlay.querySelectorAll('button:not(:disabled),input,select')].filter(x=>x.getClientRects().length);if(!a.length)return;const first=a[0],last=a.at(-1);if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}}});
     state={classNo:1,units:[1],ended:false,runId:crypto.randomUUID()};
@@ -60,7 +60,13 @@
       if(state!==current||overlay!==currentOverlay||who()!==owner)return;
       Object.assign(state,{words:OC.kelimeSec(KEY,available,12),index:0,done:0,solved:new Set(),selected:[],misses:new Set(),started:Date.now(),student});
       OC.basla(KEY);state.runId=OC.aktif.runId;newBoard();
-      timer=setInterval(()=>{if(who()!==owner||!overlay){close();return;}const t=overlay.querySelector('[data-time]');if(t)t.textContent=OC.sure()+' sn';},1000);
+      const pauseButton=overlay.querySelector('[data-pause]');
+      pauseButton.hidden=false;
+      pauseButton.onclick=()=>window.dmLocalGamePause?.(overlay,body,elapsed=>{
+        state.started+=elapsed;
+        if(OC.aktif?.runId===state.runId)OC.aktif.bas+=elapsed;
+      });
+      timer=setInterval(()=>{if(who()!==owner||!overlay){close();return;}if(body.inert)return;const t=overlay.querySelector('[data-time]');if(t)t.textContent=OC.sure()+' sn';},1000);
     } catch(e) { if(state===current&&overlay===currentOverlay){message(e.message);button.disabled=false;window.DijiMeduPapiFeedback?.energyDenied(e);} }
     finally {starting=false;}
   }
@@ -101,6 +107,7 @@
     window.dmVerifiedGames?.record(state.pair[i],word);const clean=!state.misses.has(state.index+i);OC.dogru(clean?1:.5,clean);state.solved.add(i);state.done++;state.selected=[];paint();window.dmCorrectAnswer?.();message('🌸 '+en(state.pair[i]).toUpperCase()+' = '+tr(state.pair[i]));
   }
   async function finish() {
+    if(overlay)overlay.querySelector('[data-pause]').hidden=true;
     if(!state||state.ended)return;state.ended=true;clearInterval(timer);timer=null;
     const s=state,result=OC.sonlandir(KEY),savedOverlay=overlay;
     body.innerHTML='<p class="hb-status" role="status">Sonucun kaydediliyor…</p>';

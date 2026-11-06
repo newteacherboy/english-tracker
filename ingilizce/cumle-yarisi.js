@@ -149,13 +149,26 @@ function setup(){
 }
 function start(decks,duration,cl,units){
  session={duration:duration,classNo:cl,units:units,started:performance.now(),finished:false,teams:decks.map(function(deck,i){return {deck:deck,index:0,score:0,correct:0,wrong:0,timeout:0,deadline:performance.now()+duration*1000,locked:false,last:null,team:i};})};
- root('<section class="dm-sr-shell dm-sr-play"><header class="dm-sr-header dm-sr-game-head"><div><small>🏁 DİJİ MEDU · 12 SORULUK KAPIŞMA</small><h2>Cümle Yarışı</h2></div><div class="dm-sr-game-meta"><span>'+safe(cl)+'. Sınıf · '+units.map(safe).join(', ')+'. Ünite</span><button type="button" data-audio-toggle aria-pressed="true" class="dm-sr-audio">🔊 Ses Açık</button><button type="button" data-close aria-label="Yarışı kapat" class="dm-sr-close">×</button></div></header>'+
+ root('<section class="dm-sr-shell dm-sr-play"><header class="dm-sr-header dm-sr-game-head"><div><small>🏁 DİJİ MEDU · 12 SORULUK KAPIŞMA</small><h2>Cümle Yarışı</h2></div><div class="dm-sr-game-meta"><span>'+safe(cl)+'. Sınıf · '+units.map(safe).join(', ')+'. Ünite</span><button type="button" data-audio-toggle aria-pressed="true" class="dm-sr-audio">🔊 Ses Açık</button><button type="button" class="dm-local-game-pause" data-pause aria-label="Yarışı duraklat">Ⅱ</button><button type="button" data-close aria-label="Yarışı kapat" class="dm-sr-close">×</button></div></header>'+
  '<div class="dm-sr-track"><span class="dm-sr-startflag">BAŞLA</span><div class="dm-sr-track-lanes"><div class="dm-sr-lane dm-sr-red"><span class="dm-sr-lane-label">Kırmızı Takım</span><strong class="dm-sr-track-score" data-live-score="0">0</strong><div class="dm-sr-track-line"><div data-car="0" class="dm-sr-car">'+carMarkup(0)+'</div></div></div><div class="dm-sr-lane dm-sr-blue"><span class="dm-sr-lane-label">Mavi Takım</span><strong class="dm-sr-track-score" data-live-score="1">0</strong><div class="dm-sr-track-line"><div data-car="1" class="dm-sr-car">'+carMarkup(1)+'</div></div></div></div><span class="dm-sr-finishflag">🏁 BİTİŞ</span><div class="dm-sr-finish-banner" data-finish-banner hidden></div></div>'+
  '<div class="dm-sr-dual"><section class="dm-sr-side dm-sr-side-red" data-side="0"></section><section class="dm-sr-side dm-sr-side-blue" data-side="1"></section></div><p class="dm-sr-game-footer">✅ Doğru: +100 + kalan süre × 10 &nbsp; ❌ Yanlış: −40</p></section>');
  if(session.teams.length===1){overlay.querySelector('.dm-sr-play').classList.add('dm-sr-solo');overlay.querySelector('[data-side="1"]').remove();overlay.querySelector('.dm-sr-lane.dm-sr-blue').remove();}
  var audioButton=overlay.querySelector('[data-audio-toggle]');audioButton.onclick=function(){soundEnabled=!soundEnabled;soundToggle();};soundToggle();
+ overlay.dataset.gameMusic='racing';
+ overlay.querySelector('[data-pause]').onclick=pause;
  session.teams.forEach(function(t){drawTeam(t);});drawCars();
  ticker=setInterval(tick,100);
+}
+function pause(){
+ var race=session;
+ if(!window.dmLocalGamePause||!race||race.finished||race.paused||race.teams.some(t=>t.locked))return;
+ race.paused=true;
+ window.dmLocalGamePause(overlay,overlay.querySelector('.dm-sr-play'),function(elapsed){
+  race.paused=false;
+  race.started+=elapsed;
+  race.teams.forEach(function(team){team.deadline+=elapsed;});
+  tick();
+ });
 }
 function drawTeam(team){
  if(!overlay||!session)return;
@@ -168,12 +181,12 @@ function drawTeam(team){
 }
 function grade(remaining,correct){return correct?BASE+Math.max(0,Math.ceil(remaining/1000))*10:-WRONG;}
 function answer(team,value){
- if(!session||session.finished||team.locked||team.index>=TOTAL)return;
+ if(!session||session.finished||session.paused||team.locked||team.index>=TOTAL)return;
  var left=team.deadline-performance.now();if(left<=0){finishQuestion(team,null,true);return;}
  finishQuestion(team,value,false);
 }
 function finishQuestion(team,value,timedOut){
- if(!session||session.finished||team.locked||team.index>=TOTAL)return;
+ if(!session||session.finished||session.paused||team.locked||team.index>=TOTAL)return;
  var q=team.deck[team.index],correct=!timedOut&&value===q.answer;
  var left=Math.max(0,team.deadline-performance.now());
  team.score=Math.max(0,team.score+grade(left,correct));
@@ -192,10 +205,10 @@ function finishQuestion(team,value,timedOut){
  setTimeout(function(){if(!session||session!==current)return;team.index++;team.locked=false;team.deadline=performance.now()+current.duration*1000;drawTeam(team);if(current.teams.every(function(t){return t.index>=TOTAL;}))result();},1050);
 }
 function drawCars(){if(!session||!overlay||session.finished)return;var max=TOTAL*(BASE+session.duration*10);session.teams.forEach(function(team){var car=overlay.querySelector('[data-car="'+team.team+'"]');if(!car)return;var length=Math.max(0,car.parentElement.clientWidth-car.offsetWidth);car.style.left=Math.round(length*Math.min(.87,team.score/max*.87))+'px';});}
-function tick(){if(!session||session.finished||!overlay)return;var now=performance.now();session.teams.forEach(function(team){if(team.index>=TOTAL||team.locked)return;var remain=team.deadline-now;if(remain<=0){finishQuestion(team,null,true);return;}var side=overlay.querySelector('[data-side="'+team.team+'"]');if(!side)return;var seconds=Math.ceil(remain/1000),clock=side.querySelector('[data-clock]'),bar=side.querySelector('[data-time-bar]');if(clock){clock.textContent=seconds+' sn';clock.classList.toggle('urgent',seconds<=5);}if(bar){bar.style.width=Math.max(0,remain/session.duration/10)+'%';bar.classList.toggle('urgent',seconds<=5);}});}
+function tick(){if(!session||session.finished||!overlay)return;overlay.querySelector('[data-pause]').disabled=session.teams.some(t=>t.locked);if(session.paused)return;var now=performance.now();session.teams.forEach(function(team){if(team.index>=TOTAL||team.locked)return;var remain=team.deadline-now;if(remain<=0){finishQuestion(team,null,true);return;}var side=overlay.querySelector('[data-side="'+team.team+'"]');if(!side)return;var seconds=Math.ceil(remain/1000),clock=side.querySelector('[data-clock]'),bar=side.querySelector('[data-time-bar]');if(clock){clock.textContent=seconds+' sn';clock.classList.toggle('urgent',seconds<=5);}if(bar){bar.style.width=Math.max(0,remain/session.duration/10)+'%';bar.classList.toggle('urgent',seconds<=5);}});}
 function result(){
  if(!session||session.finished)return;
- session.finished=true;clearInterval(ticker);ticker=null;
+ session.finished=true;overlay.querySelector('[data-pause]').hidden=true;clearInterval(ticker);ticker=null;
  var current=session,a=session.teams[0],b=session.teams[1]||{score:0},tie=session.teams.length>1&&a.score===b.score,winner=session.teams.length===1?0:tie?-1:(a.score>b.score?0:1);
  var banner=overlay.querySelector('[data-finish-banner]'),track=overlay.querySelector('.dm-sr-track');
  if(track)track.classList.add('dm-sr-finishing');
