@@ -58,6 +58,7 @@ const feed=['Elif','Ege','Zeynep','Cemre','Fixture'].map((ogr,i)=>({k:'event'+i,
   await page.evaluate(()=>dmProgression.refresh(true));
   const chromeBefore=await page.evaluate(()=>['viewport','theme-color'].map(name=>document.querySelector('meta[name="'+name+'"]').content));
   await page.evaluate(()=>meduAkisAc());await page.waitForSelector('.fr-home .fr-event');await page.waitForTimeout(800);
+  assert.equal(await page.locator('.fr-event .fr-congrats').first().innerText(),'Tebrik et');
   assert.equal(await page.locator('.fr-home').count(),1);
   await page.waitForSelector('.fr-leader-3');
   assert.deepEqual(await page.locator('.fr-leader strong').allTextContents(),['Ege','Elif','Zeynep']);
@@ -155,7 +156,7 @@ const feed=['Elif','Ege','Zeynep','Cemre','Fixture'].map((ogr,i)=>({k:'event'+i,
   await page.locator('[data-filter="herkes"]').click();
   await page.locator('.aksiyon button').first().click();assert(writes.some(x=>x.islem==='akisOlayToggle'&&x.tur==='tebrik'));
   const congrats=page.locator('.aksiyon .fr-congrats').first();
-  assert.equal((await congrats.innerText()).trim(),'');
+  assert.equal((await congrats.innerText()).trim(),'Tebrik edildi');
   assert.equal(await congrats.getAttribute('aria-label'),'Tebrik edildi');
   assert.equal(await congrats.getAttribute('aria-pressed'),'true');
   assert(await page.locator('.ma-parca').count()>0,'congratulating releases confetti');

@@ -423,7 +423,7 @@ html.dm-teacher-portal #tab-aktiviteler#tab-aktiviteler .gg-page .gg-tabs{grid-t
  background:linear-gradient(#ffe38b,#f1b94c);box-shadow:0 2px 0 #9a6323;
  font:1000 clamp(9px,2.55vw,12px)/1.1 Nunito,system-ui,sans-serif;
 }
-.gg-redesign .gg-shelf-grid,.gg-redesign .kg-hub .kg-list{
+.gg-redesign .gg-shelf-grid{
  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;
 }
 .gg-redesign .gg-shelf-card{
@@ -468,10 +468,16 @@ html.dm-teacher-portal #tab-aktiviteler#tab-aktiviteler .gg-page .gg-tabs{grid-t
 .gg-redesign .gg-shelf-card[aria-disabled=true] .gg-cover{filter:grayscale(.5);opacity:.72}
 .gg-redesign .gg-group p,.gg-redesign .gg-tools p,.gg-redesign .gg-friends>span{color:var(--gg-muted)}
 .gg-redesign .gg-shortcuts{margin:14px auto 0;text-align:center}
-.gg-redesign .kg-hub button{background:#233c60;color:var(--gg-shelf-ink);border-color:var(--gg-edge);padding:6px}
-.gg-redesign .kg-hub .kg-list>button{box-shadow:0 2px 0 #132544;display:flex;flex-direction:column;align-items:flex-start;text-align:left}
-.gg-redesign .kg-hub .kg-list small{color:var(--gg-muted)}
-.gg-redesign .kg-hub .kg-list>button>span:first-child{background:#172b4c}
+.gg-topic-previews p{margin:5px 0 8px;font-size:13px}
+.gg-topic-previews>div{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
+.gg-topic-previews button{
+ display:grid;place-items:center;align-content:center;gap:4px;
+ min-width:0;min-height:64px;padding:4px;border:1px solid var(--gg-edge);
+ border-radius:12px;color:var(--gg-shelf-ink);background:var(--dm-soft,#293e62);
+ font:800 clamp(10px,3.3vw,15px)/1.15 Nunito,system-ui,sans-serif;
+}
+.gg-topic-previews button>span{font-size:22px}
+.gg-topic-previews button:focus-visible{outline:2px solid var(--dm-accent,#69f2d2);outline-offset:2px}
 
 /* Online challenge controls use the same dark surface and readable labels as the shelves. */
 #tab-aktiviteler#tab-aktiviteler .gg-page.gg-redesign .gg-matches{

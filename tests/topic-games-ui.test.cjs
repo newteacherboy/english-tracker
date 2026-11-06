@@ -2,7 +2,7 @@ const {test}=require('node:test'),assert=require('node:assert/strict'),fs=requir
 const C=require('../ingilizce/konu-oyunlari-a1.js'),topics=require('./topic-games-topics.json');
 const rewards=require('../ingilizce/reward-policy.json').topicGames;
 const {chromium}=require(process.env.TOPIC_PLAYWRIGHT_PATH||'playwright');
-const html=`<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="activity-ui.css"><link rel="stylesheet" href="konu-oyunlari.css"><style>body{margin:0;font-family:Arial,sans-serif}.dc-focus-card{padding:10px}button{font-family:inherit}h2{color:#fff!important}</style><script>var aktifOgrenciAdi='QA';var apiURL='/api';var dcTumKonularCache=null;window.dmMeduPro={api:async()=>({liste:[]})};window.speechSynthesis={cancel(){},speak(){}};window.dmProgression={allowed:()=>true,status:()=>({studyAccess:{A2:false}})};localStorage.setItem('ing_token','fixture');</script><script defer src="konu-oyunlari.js"></script><script defer src="activity-ui.js"></script><div id="tab-aktiviteler" class="active"><div class="dc-focus-card"><div class="az-grid2x2"><button class="az-gcard" onclick="kelimeYarismasiAc()">Kelime</button></div></div></div>`;
+const html=`<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="activity-ui.css"><link rel="stylesheet" href="konu-oyunlari.css"><link rel="stylesheet" href="day-night-theme.css"><style>body{margin:0;font-family:Arial,sans-serif}.dc-focus-card{padding:10px}button{font-family:inherit}h2{color:#fff!important}</style><script>var aktifOgrenciAdi='QA';var apiURL='/api';var dcTumKonularCache=null;window.dmMeduPro={api:async()=>({liste:[]})};window.speechSynthesis={cancel(){},speak(){}};window.dmProgression={allowed:()=>true,status:()=>({studyAccess:{A2:false}})};localStorage.setItem('ing_token','fixture');</script><script defer src="konu-oyunlari.js"></script><script defer src="activity-ui.js"></script><div id="tab-aktiviteler" class="active"><div class="dc-focus-card"><div class="az-grid2x2"><button class="az-gcard" onclick="kelimeYarismasiAc()">Kelime</button></div></div></div>`;
 test('360px real browser: tab keyboard, locked levels, all six games, guest result, quota, exits and account change',{timeout:90000},async()=>{
  const {buildQuestions}=await import('../ingilizce/topic-games-core.mjs');let latest,student=true,calls=[],browser,server;
  const runs=new Map();
@@ -16,9 +16,37 @@ test('360px real browser: tab keyboard, locked levels, all six games, guest resu
  await new Promise(r=>server.listen(0,'127.0.0.1',r));
  try{browser=await chromium.launch({headless:true,executablePath:process.env.TOPIC_CHROMIUM_PATH||chromium.executablePath(),args:['--no-sandbox']});const page=await browser.newPage({viewport:{width:360,height:740},reducedMotion:'reduce'}),errors=[];page.on('pageerror',e=>errors.push(e.message));
  await page.addInitScript(()=>{const real=window.setTimeout;window.setTimeout=(fn,ms,...args)=>real(fn,ms>=700&&ms<=3000?8:ms,...args);window.dmApplyRewardState=(v,owner)=>window.applied={v,owner};});
- await page.goto('http://127.0.0.1:'+server.address().port+'/');await page.locator('#ggKonuTab').click();await page.locator('.kg-list button').first().waitFor();
- assert.equal(await page.locator('.kg-list button').count(),43);assert.equal(await page.locator('#ggKonuTab .au-game-icon').count(),1);assert.equal(await page.locator('#ggKonuTab').getAttribute('aria-selected'),'true');
- await page.locator('#ggKonuTab').press('ArrowRight');assert.equal(await page.locator('#ggBreakTab').getAttribute('aria-selected'),'true');await page.locator('#ggKonuTab').click();
+ await page.goto('http://127.0.0.1:'+server.address().port+'/');
+ assert.equal(await page.locator('[data-gg-topic-category]').count(),3);
+ await page.locator('[data-gg-topic-category=vocab]').click();
+ await page.locator('.kg-list button').first().waitFor();
+ assert.equal(await page.locator('[data-category=vocab]').getAttribute('aria-pressed'),'true');
+ assert.equal(await page.locator('.kg-list button').count(),12);
+ const input=page.getByRole('searchbox',{name:'Konu veya oyun adı'});
+ await input.fill('yiyecekler ve icecekler');
+ await page.getByRole('button',{name:'Ara',exact:true}).click();
+ assert.equal(await page.locator('.kg-list button').count(),1);
+ assert.match(await page.locator('.kg-list button').textContent(),/Yiyecekler ve İçecekler/);
+ await input.fill('alphabet');
+ assert.equal(await page.locator('.kg-list button').count(),0);
+ assert.match(await page.locator('.kg-count').textContent(),/bulunamadı/);
+ await page.locator('[data-category=all]').click();
+ assert.equal(await page.locator('.kg-list button').count(),1);
+ assert.match(await page.locator('.kg-list button').textContent(),/Alfabe ve Heceleme/);
+ await input.fill('balon');
+ assert.equal(await page.locator('.kg-list button').count(),22);
+ await input.fill('');
+ assert.equal(await page.locator('.kg-list button').count(),43);
+ assert.equal(await page.locator('#ggKonuTab .au-game-icon').count(),1);
+ assert.equal(await page.locator('#ggKonuTab').getAttribute('aria-pressed'),'true');
+ for(const [theme,surface,ink] of [['day','rgb(255, 255, 255)','rgb(20, 41, 75)'],['night','rgb(32, 48, 79)','rgb(240, 252, 255)']]){
+  await page.evaluate(t=>document.documentElement.dataset.dmTheme=t,theme);
+  assert.deepEqual(await page.locator('.kg-list button').first().evaluate(el=>[getComputedStyle(el).backgroundColor,getComputedStyle(el.querySelector('b')).color]),[surface,ink]);
+  assert.deepEqual(await page.locator('[data-category=comm]').evaluate(el=>[getComputedStyle(el).backgroundColor,getComputedStyle(el).color]),[surface,ink]);
+ }
+ await page.locator('#ggBreakTab').press('Enter');
+ assert.equal(await page.locator('#ggBreakTab').getAttribute('aria-pressed'),'true');
+ await page.locator('#ggKonuTab').click();
  await page.locator('[data-level=A2]').click({force:true});assert.match(await page.locator('.kg-note').textContent(),/Ders Çalış/);
  assert.equal(await page.locator('[data-topic*="|pron|"]').count(),0);
  assert(await page.evaluate(()=>document.documentElement.scrollWidth<=360));

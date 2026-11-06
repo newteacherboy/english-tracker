@@ -435,10 +435,8 @@ body #tab-meduakis.fr-home-view .fr-wallet-host [data-pw-minutes]{display:none!i
 }
 #tab-meduakis .fr-event-person b{font:1000 clamp(13px,4.2vw,19px)/1.15 'Nunito',sans-serif}
 #tab-meduakis .fr-event-person small{font:750 clamp(11px,3.35vw,15px)/1.25 'Nunito',sans-serif;color:var(--fr-muted)}
-#tab-meduakis .fr-congrats{display:grid;place-items:center;flex:0 0 auto;width:clamp(31px,10vw,43px);min-height:29px;padding:0;--fr-button-edge:#e1b856;--fr-button-base:#886127}
-#tab-meduakis .fr-congrats .fr-icon,#tab-meduakis .aksiyon button .fr-icon{width:15px;height:15px}
-#tab-meduakis .fr-congrats .fr-icon{width:20px;height:20px}
-#tab-meduakis .fr-congrats.basili{color:#ffe6a0;--fr-button-bg:linear-gradient(#756024,#483713);--fr-button-edge:#ffdb79}
+#tab-meduakis .fr-congrats{display:grid;place-items:center;flex:0 0 auto;min-height:36px;padding:4px 10px}
+#tab-meduakis .aksiyon button .fr-icon{width:15px;height:15px}
 #tab-meduakis .fr-event>.dm-safety-more{
   border:0;background:none;color:var(--fr-muted);min-width:22px;min-height:32px;padding:0;font-size:17px;
 }
@@ -481,14 +479,13 @@ body #tab-meduakis.fr-home-view .fr-wallet-host [data-pw-minutes]{display:none!i
   #tab-meduakis .fr-leader-1 .fr-podium-step{min-height:41px}
   #tab-meduakis .fr-leader-3 .fr-podium-step{min-height:32px}
   #tab-meduakis .fr-leader-cup{width:22px;height:22px}
-  #tab-meduakis .fr-congrats{min-height:25px}
   #tab-meduakis .fr-event>.dm-safety-more{min-height:27px}
   #tab-meduakis .fr-event-person .fr-avatar{--avatar-size:26px!important}
 }
 
 @layer bilgiIslands {
   body #tab-meduakis.fr-club-view .akis-kart .aksiyon button.fr-congrats{
-    flex:0 0 44px!important;width:44px!important;padding:0!important;
+    flex:0 1 auto!important;width:auto!important;padding:5px 10px!important;color:#fff!important;
     border-color:#e1b856!important;background:linear-gradient(#304674,#223658)!important;
     box-shadow:0 3px 0 #886127!important;
   }
@@ -557,12 +554,13 @@ body #tab-meduakis.fr-home-view .fr-wallet-host [data-pw-minutes]{display:none!i
 }
 #tab-meduakis .fr-compact .fr-event>.dm-safety-more{position:absolute;inset:1px 3px auto auto}
 #tab-meduakis.fr-home-view .fr-compact .fr-event .fr-congrats{
-  position:relative;min-width:44px;min-height:38px;padding:0;
-  background:none!important;border-color:transparent;box-shadow:none;
+  position:relative;max-width:100%;min-height:34px;margin-top:5px;
+  color:#4c310b;background:linear-gradient(#fff5ca,#ffd778)!important;
+  border-color:#e1b856;box-shadow:0 2px 0 #ad7b30;
+  white-space:normal;text-align:center;
 }
-#tab-meduakis.fr-home-view .fr-compact .fr-event .fr-congrats.basili{background:#ffd46c36!important;border-color:#edb547}
-#tab-meduakis .fr-compact .fr-congrats .fr-applause{
-  width:34px;height:34px;filter:drop-shadow(0 2px 2px #6c450849);
+#tab-meduakis.fr-home-view .fr-compact .fr-event .fr-congrats.basili{
+  color:#16463b;background:#d4f8e9!important;border-color:#69b99f;box-shadow:none;
 }
 #tab-meduakis .fr-compact .fr-tile>.fr-shortcut-art:first-child{
   width:clamp(49px,9.4dvh,93px);height:clamp(42px,7.3dvh,83px);
