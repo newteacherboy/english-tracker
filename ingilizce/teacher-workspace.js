@@ -1,6 +1,6 @@
 /* Keep the teacher workspace open while child screens come and go. */
 (()=>{'use strict';
-const style=document.createElement('link');style.rel='stylesheet';style.href='teacher-workspace.css?v=20261104-mobil-1';document.head.append(style);
+const style=document.createElement('link');style.rel='stylesheet';style.href='teacher-workspace.css?v=20261106-home-scroll';document.head.append(style);
 const $=id=>document.getElementById(id),token=()=>sessionStorage.getItem('ing_ogr_token')||'';
 let active=false,total=0,registrations=0,messages=0,reading=false,lastRead=0,menuSeen=false;
 async function api(op,data={}){const r=await fetch(apiURL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({islem:op,t:token(),...data})});const d=await r.json();if(!r.ok||!d.ok)throw Error(d.mesaj||'Bildirimler alınamadı.');return d;}
@@ -271,8 +271,6 @@ function dmHome(){
   <div data-v2-nav></div>
  </nav><main class="dm-v2-content">
   <header class="dm-v2-banner"><div><small>DİJİ MEDU · ÖĞRETMEN PANELİ</small><h2>Sınıfın kontrolünde,<br>gelişim hep takibinde! 🚀</h2><p>Ödev, duyuru ve raporlar tek bir yerde.</p></div><img src="papi-help-v2.png" alt="Papi"></header>
-  <h3>👑 Premium Oyunlar</h3>
-  <div class="dm-v2-quick" data-v2-premium aria-label="Premium öğretmen oyunları"></div>
   <div class="dm-v2-stats" aria-label="Öğretmen özeti">
     <div>👥 <b data-v2-students>—</b><small>Öğrenci</small></div>
     <div>🏫 <b data-v2-classes>—</b><small>Sınıf</small></div>
@@ -305,9 +303,6 @@ function dmHome(){
  
  add(quick,'Sınıf Oluştur','🏫','Yeni sınıf oluştur',()=>openOriginal('classroom'));
  add(quick,'Sözlü Yap','🎤','Sözlü değerlendirme',()=>openOriginal('oral'));
- const premiumBoard=board.querySelector('[data-v2-premium]');
- for(const [title,emoji,fn] of dmTeacherPremiumGames)
-   add(premiumBoard,title,emoji,'Premium oyun · paket hakların geçerli',()=>dmOpenTeacherPremium(fn));
  // Çoklu sınıf ve sınıf raporları (4 Kas 2026); yönetici için hediye üyelik.
  if(window.dmTeacherClassesOpen)add(quick,'Sınıflarım','🗂️','Sınıf kodları ve öğrenci taşıma',()=>window.dmTeacherClassesOpen());
  if(window.dmTeacherReportsOpen)add(quick,'Sınıf Raporları','📈','Süre, doğruluk, zor kelimeler',()=>window.dmTeacherReportsOpen());

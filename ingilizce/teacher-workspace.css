@@ -148,3 +148,7 @@ html body #ogretmenMenuModal.dm-teacher-open .ogretmen-menu-btn[hidden]{display:
  #dmTeacherDesignV2 .dm-v2-quick .dm-v2-action>span{font-size:19px!important}#dmTeacherDesignV2 .dm-v2-quick .dm-v2-action strong{font-size:10.5px!important}
  #dmTeacherDesignV2 .dm-v2-chat-badge:not([hidden]){min-width:18px;height:18px;font-size:10px;right:6px;top:5px}
 }
+
+/* The workspace home can scroll within the area reserved above its fixed dock. */
+html.dm-teacher-portal body #tpTeacherHome:has(#dmTeacherDesignV2){overflow-y:auto!important}
+#tpTeacherHome .tp-home-inner.dm-v2-host{height:auto;min-height:100%}
