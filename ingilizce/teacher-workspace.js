@@ -1,6 +1,6 @@
 /* Keep the teacher workspace open while child screens come and go. */
 (()=>{'use strict';
-const style=document.createElement('link');style.rel='stylesheet';style.href='teacher-workspace.css?v=20261106-home-scroll';document.head.append(style);
+const style=document.createElement('link');style.rel='stylesheet';style.href='teacher-workspace.css?v=20261106-midnight-home';document.head.append(style);
 const $=id=>document.getElementById(id),token=()=>sessionStorage.getItem('ing_ogr_token')||'';
 let active=false,total=0,registrations=0,messages=0,reading=false,lastRead=0,menuSeen=false;
 async function api(op,data={}){const r=await fetch(apiURL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({islem:op,t:token(),...data})});const d=await r.json();if(!r.ok||!d.ok)throw Error(d.mesaj||'Bildirimler alınamadı.');return d;}
@@ -230,6 +230,9 @@ function dmStudentList(){
 }
 async function dmUpdateTeacherDashboard(board){
  if(!board?.isConnected||!token())return;
+ const now=Date.now();
+ if(now-Number(board.dataset.rosterCheckedAt||0)<60000)return;
+ board.dataset.rosterCheckedAt=String(now);
  try{
   const items=await dmRoster();if(!board.isConnected)return;
   const classes=new Set(items.map(x=>[x.class_no??x.classNo??x.sinif,x.branch??x.sube??''].join('/')).filter(x=>!x.startsWith('/')));
@@ -248,10 +251,75 @@ function dmRemoveTeacherBottomTab(){
  const nav=document.getElementById('bottomNavMobile');
  nav?.querySelectorAll('[data-ekran="tab-teacher-portal"]').forEach(x=>{x.hidden=true;x.style.display='none';});
 }
+function dmMidnightHome(board,openOriginal){
+ const icon=name=>`<span class="dm-teacher-icon dm-teacher-icon--${name}" aria-hidden="true"></span>`;
+ board.className='dm-v2-dashboard dm-midnight-home';
+ board.innerHTML=`
+  <header class="dm-midnight-brand"><span><i aria-hidden="true">${icon('cap')}</i> Diji Medu</span><span>Öğretmen Paneli</span></header>
+  <section class="dm-midnight-hero dm-midnight-raised" aria-labelledby="dmTeacherGreeting">
+   <img src="papi-help-v2.png" alt="">
+   <div>
+    <h1 id="dmTeacherGreeting">Merhaba Öğretmenim!</h1>
+    <p>Sınıfının gelişimini birlikte takip edelim.</p>
+    <div class="dm-midnight-stats">
+     <button type="button" class="dm-midnight-raised" data-home-students><i aria-hidden="true">${icon('people')}</i><span><b data-v2-students>—</b>Öğrenci</span></button>
+     <button type="button" class="dm-midnight-raised" data-home-classes><i aria-hidden="true">${icon('school')}</i><span><b data-v2-classes>—</b>Sınıf</span></button>
+    </div>
+   </div>
+  </section>
+  <section class="dm-midnight-section" aria-labelledby="dmHomeShortcuts">
+   <h2 id="dmHomeShortcuts"><i aria-hidden="true">${icon('bolt')}</i> Hızlı Erişim</h2>
+   <div class="dm-midnight-shortcuts"></div>
+  </section>
+  <section class="dm-midnight-section" aria-labelledby="dmHomeActions">
+   <h2 id="dmHomeActions"><i aria-hidden="true">${icon('bolt')}</i> Hızlı İşlemler</h2>
+   <div class="dm-midnight-actions"></div>
+  </section>
+  <details class="dm-midnight-tools">
+   <summary class="dm-midnight-raised"><i aria-hidden="true"></i> Tüm araçlar <span aria-hidden="true">›</span></summary>
+   <div class="dm-midnight-extra"></div>
+  </details>`;
+ const classes=()=>window.dmTeacherClassesOpen?window.dmTeacherClassesOpen():openOriginal('classroom');
+ board.querySelector('[data-home-students]').onclick=dmStudentList;
+ board.querySelector('[data-home-classes]').onclick=classes;
+ const add=(target,label,art,run)=>{
+  const button=document.createElement('button');
+  button.type='button';button.className='dm-midnight-raised';
+  button.innerHTML=`<i aria-hidden="true">${art}</i><strong>${label}</strong>`;
+  button.onclick=run;target.append(button);
+  return button;
+ };
+ const shortcuts=board.querySelector('.dm-midnight-shortcuts');
+ add(shortcuts,'Sözlü Yap',icon('mic'),()=>openOriginal('oral'));
+ add(shortcuts,'Sınıf Oluştur',icon('people')+'<sup>+</sup>',()=>openOriginal('classroom'));
+ add(shortcuts,'Artı-Eksi Ver','<span class="dm-midnight-signs"><b>+</b><b>−</b></span>',()=>dmUseTool('ders içi performans'));
+ const actions=board.querySelector('.dm-midnight-actions');
+ add(actions,'Ödev Ver',icon('clipboard'),()=>dmUseTool('ödev ver'));
+ add(actions,'Duyurular',icon('megaphone'),()=>dmUseTool('duyurular'));
+ const chat=add(actions,'Öğrenci Sohbetleri',icon('chat'),()=>dmUseTool('öğrenci sohbetleri'));
+ const badge=document.createElement('span');badge.className='dm-v2-chat-badge';badge.dataset.v2ChatCount='';badge.hidden=true;chat.querySelector('i').after(badge);
+ add(actions,'Raporlar Merkezi',icon('chart'),dmReportDialog);
+ add(actions,'Oyun Oyna',icon('games'),()=>openOriginal('game'));
+ add(actions,'Yeni Ders Çalış',icon('books'),()=>openOriginal('study'));
+ const extra=board.querySelector('.dm-midnight-extra');
+ add(extra,'Öğretmen Paneli',icon('cap'),()=>openOriginal('teacher'));
+ add(extra,'Öğrenciler',icon('people'),dmStudentList);
+ add(extra,'Sınıflarım',icon('school'),classes);
+ add(extra,'Rubrik','📈',()=>dmUseTool('rubrik'));
+ if(window.dmTeacherReportsOpen)add(extra,'Sınıf Raporları',icon('chart'),()=>window.dmTeacherReportsOpen());
+ if(sessionStorage.getItem('ing_ogr_yonetici')==='1'){
+  if(window.dmAdminGiftOpen)add(extra,'Hediye Üyelik','🎁',()=>window.dmAdminGiftOpen());
+  if(window.dmAdminAdsOpen)add(extra,'Reklam Ayarları','📺',()=>window.dmAdminAdsOpen());
+  if(window.dmAdminPushOpen)add(extra,'Bildirim Gönder','🔔',()=>window.dmAdminPushOpen());
+ }
+}
 function dmHome(){
- const heading=[...document.querySelectorAll('h1,h2,h3')].find(h=>dmKey(h.textContent).includes('merhaba öğretmenim'));
- if(!heading||!visible(heading))return;
- const originalCards=[...document.querySelectorAll('button,a,[role="button"],article,div')]
+ const portal=$('tpTeacherHome');
+ const current=portal?.querySelector('#dmTeacherDesignV2');
+ if(current){if(visible(current))dmUpdateTeacherDashboard(current);return;}
+ const heading=[...(portal||document).querySelectorAll('h1,h2,h3')].find(h=>dmKey(h.textContent).includes('merhaba öğretmenim')&&visible(h));
+ if(!heading)return;
+ const originalCards=[...(portal||document).querySelectorAll('button,a,[role="button"],article,div')]
   .filter(el=>el.children.length<12&&dmKey(el.textContent).includes('yeni bir konu anlat')&&dmKey(el.textContent).length<180)
   .sort((a,b)=>a.querySelectorAll('*').length-b.querySelectorAll('*').length);
  const sample=originalCards[0];if(!sample)return;
@@ -266,6 +334,8 @@ function dmHome(){
  const original={study:findCard('yeni bir konu anlat'),game:findCard('öğrencilerle oyun oyna'),oral:findCard('sözlü yap'),teacher:findCard('öğretmen paneline git'),classroom:findCard('sınıf oluştur')};
  const openOriginal=key=>{const card=original[key];if(card)card.click();else if(key==='teacher')window.ogretmenPaneliAc?.();else if(key==='oral')dmUseTool('sözlü yap');};
  const board=document.createElement('section');board.id='dmTeacherDesignV2';board.className='dm-v2-dashboard';
+ if(container.closest('#tpTeacherHome'))dmMidnightHome(board,openOriginal);
+ else{
  board.innerHTML=`<nav class="dm-v2-sidebar" aria-label="Öğretmen araçları">
   <strong class="dm-v2-logo">🎓<span>Diji Medu</span></strong>
   <div data-v2-nav></div>
@@ -312,6 +382,7 @@ function dmHome(){
  const nav=board.querySelector('[data-v2-nav]');
  for(const [icon,title,run] of [['⌂','Ana Sayfa',()=>board.scrollIntoView({behavior:'smooth'})],['👥','Öğrenciler',dmStudentList],['🏫','Sınıflar',()=>window.dmTeacherClassesOpen?window.dmTeacherClassesOpen():openOriginal('classroom')],['📋','Ödevler',()=>dmUseTool('ödev ver')],['📣','Duyurular',()=>dmUseTool('duyurular')],['📊','Raporlar',dmReportDialog],['📈','Rubrik',()=>dmUseTool('rubrik')],['⚙','Öğretmen Paneli',()=>openOriginal('teacher')]]){
   const button=document.createElement('button');button.type='button';button.innerHTML='<span>'+icon+'</span>'+title;button.addEventListener('click',run);nav.append(button);
+ }
  }
  const dashboardText=container.textContent||'';
  const students=dashboardText.match(/(\\d+)\\s*öğrenci/i);const classes=dashboardText.match(/(\\d+)\\s*sınıf/i);
