@@ -107,7 +107,7 @@
       signal: AbortSignal.timeout(15000)
     });
     const result = await response.json();
-    if (!response.ok || !result.ok) throw new Error(result.mesaj || 'Bağlantı kurulamadı.');
+    if (!response.ok || !result.ok) throw Object.assign(new Error(result.mesaj || 'Bağlantı kurulamadı.'), {code:result.hata});
     return result;
   }
 
@@ -311,7 +311,7 @@
         loadRound();
         frame = requestAnimationFrame(tick);
       } catch (error) {
-        if (screen.isConnected) home(error.message);
+        if (screen.isConnected) { home(error.message); window.DijiMeduPapiFeedback?.energyDenied(error); }
       } finally {
         pending = false;
       }

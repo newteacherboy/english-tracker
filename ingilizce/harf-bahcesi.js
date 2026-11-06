@@ -61,7 +61,7 @@
       Object.assign(state,{words:OC.kelimeSec(KEY,available,12),index:0,done:0,solved:new Set(),selected:[],misses:new Set(),started:Date.now(),student});
       OC.basla(KEY);state.runId=OC.aktif.runId;newBoard();
       timer=setInterval(()=>{if(who()!==owner||!overlay){close();return;}const t=overlay.querySelector('[data-time]');if(t)t.textContent=OC.sure()+' sn';},1000);
-    } catch(e) { if(state===current&&overlay===currentOverlay){message(e.message);button.disabled=false;} }
+    } catch(e) { if(state===current&&overlay===currentOverlay){message(e.message);button.disabled=false;window.DijiMeduPapiFeedback?.energyDenied(e);} }
     finally {starting=false;}
   }
   function newBoard() {state.pair=state.words.slice(state.index,state.index+1);state.grid=board(state.pair);state.selected=[];state.solved=new Set();overlay?.classList.add("hb-playing");paint();}

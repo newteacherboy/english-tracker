@@ -57,7 +57,7 @@
       body: JSON.stringify({game: 'word-blocks', t: token, op, ...payload})
     });
     const data = await response.json();
-    if (!response.ok || !data.ok) throw new Error(data.mesaj || 'Bağlantı kurulamadı.');
+    if (!response.ok || !data.ok) throw Object.assign(new Error(data.mesaj || 'Bağlantı kurulamadı.'), {code:data.hata});
     return data;
   }
 
@@ -181,7 +181,7 @@
         next();
         frame = requestAnimationFrame(tick);
       } catch (error) {
-        if (dialog.isConnected) home(error.message);
+        if (dialog.isConnected) { home(error.message); window.DijiMeduPapiFeedback?.energyDenied(error); }
       } finally {
         busy = false;
       }

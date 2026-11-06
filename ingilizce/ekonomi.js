@@ -81,6 +81,20 @@
     return d;
   }
 
+  let paketSorgusu;
+  async function paketUyarisi() {
+    if (!hazir()) return '';
+    const owner = ogrenci(), token = localStorage.getItem('ing_token');
+    if (!token) return '';
+    if (paketSorgusu?.token !== token) {
+      const query = {token, result: istek('enerjiPaketDurumu', {t:token})};
+      paketSorgusu = query;
+      void query.result.finally(() => { if (paketSorgusu === query) paketSorgusu = null; });
+    }
+    const d = await paketSorgusu.result;
+    return hazir() && ogrenci() === owner && localStorage.getItem('ing_token') === token && d.ok ? d.mesaj || '' : '';
+  }
+
   async function kaydetBekle() {
     try { if (window.dmProgression && typeof window.dmProgression.sync === 'function') await window.dmProgression.sync(); } catch (e) {}
   }
@@ -193,5 +207,5 @@
     if (d && d.ag) { kuyrugaEkle(is, veri || {}); return { ok: true, kuyrukta: true }; }
     return d;
   }
-  window.dmEkonomi = { kazan, islem, uygula, durum, odulYaz, odulIslem, kuyrukBosalt, kuyrukSayisi };
+  window.dmEkonomi = { kazan, islem, uygula, durum, paketUyarisi, odulYaz, odulIslem, kuyrukBosalt, kuyrukSayisi };
 })();

@@ -8,7 +8,7 @@
   const toast = message => window.yoToast?.(message);
   const packs = [[5,100],[10,130],[15,180]];
   const legacyWardrobe = window.yoMagazaAc;
-  let page = 'home', pending = false, energyStatus = '', observer = null, refreshTimer = null;
+  let page = 'home', pending = false, energyStatus = '', energyLimit = '', storeVisit = 0, observer = null, refreshTimer = null;
   const art = (name, cls = '') => `<span class="ds-art ds-art-${name} ${cls}" aria-hidden="true"></span>`;
   const arrow = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg>';
   const money = n => `${art('coin')}<span>${Number(n).toLocaleString('tr-TR')}</span>`;
@@ -24,7 +24,7 @@
     return `<section class="ds-energy" id="dsEnergy" aria-labelledby="dsEnergyTitle"><div class="ds-energy-intro">${art('bolt')}<div><h2 id="dsEnergyTitle">Enerji al</h2><p>Daha uzun süre öğren,<br>daha çok eğlen!</p><small>Enerjin: ${current}/${capacity}</small></div></div><div class="ds-packs">${packs.map(([n,p]) => {
       const full = current + n > capacity, poor = gold() < p;
       return `<article class="ds-pack"><b>${art('bolt')}+${n}</b><div class="ds-price">${money(p)}</div>${button(full ? 'Yer yok' : poor ? 'Altın eksik' : 'Al', `data-pack="${n}" aria-label="${n} enerji, ${p} altın${full ? ', kapasite yetersiz' : ''}"`, full || pending)}</article>`;
-    }).join('')}</div><p role="status" style="grid-column:1/-1" ${energyStatus ? '' : 'hidden'}>${esc(energyStatus)}</p></section>`;
+    }).join('')}</div><p role="status" style="grid-column:1/-1" ${(energyStatus || energyLimit) ? '' : 'hidden'}>${esc(energyStatus || energyLimit)}</p></section>`;
   }
   function garment(p) {
     const color = /^#[0-9a-f]{6}$/i.test(p.color) ? p.color : '#9b64ef';
@@ -80,10 +80,16 @@
     if (page !== 'home' || !$('tab-magaza')?.classList.contains('active')) return;
     const r = root(); if (r) { r.innerHTML = home(); bind(r); }
   }
+  async function updateEnergyLimit(visit) {
+    const message = await window.dmEkonomi?.paketUyarisi?.();
+    if (visit !== storeVisit || page !== 'home' || !message) return;
+    energyLimit = message;
+    if (!pending) refresh();
+  }
   function showHome() {
-    page = 'home'; energyStatus = ''; const overlay = $('tab-magaza'); if (!overlay) return;
+    page = 'home'; energyStatus = ''; energyLimit = ''; const visit = ++storeVisit; const overlay = $('tab-magaza'); if (!overlay) return;
     overlay.classList.add('ds-store', 'ds-home-mode'); overlay.classList.remove('ds-detail-mode');
-    $('dsCategoryBack')?.remove(); refresh(); overlay.scrollTop = 0;
+    $('dsCategoryBack')?.remove(); refresh(); overlay.scrollTop = 0; void updateEnergyLimit(visit);
   }
   function showDetail(kind, category) {
     if (kind === 'jokers' && !window.dmProgression?.require('joker_magaza')) return;
@@ -123,9 +129,11 @@
       showDetail(btn.dataset.ds);
     });
     r.querySelectorAll('[data-category]').forEach(btn => btn.onclick = () => showDetail('clothing', btn.dataset.category));
-    r.querySelectorAll('[data-pack]').forEach(btn => btn.onclick = () => purchase(btn, () => {
-      energyStatus = '';
-      return window.enerjiPaketiAl(Number(btn.dataset.pack), message => { energyStatus = message; });
+    r.querySelectorAll('[data-pack]').forEach(btn => btn.onclick = () => purchase(btn, async () => {
+      const visit = storeVisit;
+      energyStatus = ''; energyLimit = '';
+      const purchased = await window.enerjiPaketiAl(Number(btn.dataset.pack), message => { if (visit === storeVisit) energyStatus = message; });
+      if (purchased) void updateEnergyLimit(visit);
     }));
     r.querySelectorAll('[data-item]').forEach(btn => btn.onclick = () => purchase(btn, () => wardrobe().buy(btn.dataset.item)));
     r.querySelectorAll('[data-pwm-buy]').forEach(btn => btn.onclick = () => purchase(btn, () => buyPremiumBooster(btn.dataset.pwmBuy)));
