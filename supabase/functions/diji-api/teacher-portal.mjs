@@ -82,7 +82,7 @@ export function teacherPortalAPI(d){
     const code=randomCode(),queued=await codeMail(r.data,code);
     return queued?json({ok:true,issuedCode:code,mailQueued:true}):fail('Kod oluşturulamadı; tekrar deneyebilirsin.',409);
    }
-   const r=await db.from('teacher_portal_access').select('id,state,requested_at,code_sent_at,student_id,students!student_id(username,full_name,email,email_verified_at)').not('student_id','is',null).order('requested_at',{ascending:false});if(r.error)throw r.error;return json({ok:true,items:r.data});
+   const r=await db.from('teacher_portal_access').select('id,state,requested_at,code_sent_at,student_id,students!student_id(username,full_name,email,email_verified_at,school,phone)').not('student_id','is',null).order('requested_at',{ascending:false});if(r.error)throw r.error;return json({ok:true,items:r.data});
   }
   if(op==='teacherPortalApply'||op==='teacherPortalStatus'){
    if(a?.role!=='student'||!a.student_id||a.teacher_portal_access_id)return fail('Kişisel hesabına giriş yap.',401);
