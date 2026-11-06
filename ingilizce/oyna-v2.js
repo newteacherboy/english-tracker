@@ -143,8 +143,9 @@ function medalRow(map,step,i){
  const action=learn?'data-rt="chapter" data-chapter="'+step.id+'"':'data-rt="school-stop" data-b="'+step.b+'" data-d="'+step.d+'"';
  const caption=step.done?'Tekrar et':'Devam et';
  const label=n+'. Durak · '+routeTitle(step,learn)+(locked?' · Kilitli':step.done?' · '+stopStars(step,learn)+' yıldız':'');
- const disc=locked?icon('lock'):medalParrot;
- return medalDivider(divider)+'<div class="rt-medal-row'+(active?' is-current':'')+(i===map.celebrate?' is-celebrating':'')+'" style="--stop-x:'+x+'%;--stop-y:'+y+'px">'+
+ const disc=locked?icon('lock'):medalParrot,badge=map.badges?.get(i);
+ const collectible=badge?window.dmRouteBadges.mapMarkup(badge,y+5,badge===map.freshBadge):'';
+ return medalDivider(divider)+collectible+'<div class="rt-medal-row'+(active?' is-current':'')+(i===map.celebrate?' is-celebrating':'')+'" style="--stop-x:'+x+'%;--stop-y:'+y+'px">'+
   '<button type="button" class="rt-medal-stop'+(start?' rt-medal-start':'')+(locked?' is-locked':step.done?' is-done':'')+'" '+
   (start&&learn?'data-rt="continue" data-chapter="'+step.id+'"':action)+(locked?' disabled':'')+(active?' aria-current="step"':'')+
   ' aria-label="'+esc((start?caption+' · ':'')+label)+'">'+
@@ -164,6 +165,11 @@ function medalRouteMarkup(steps,current,learn){
   ?steps.findIndex(step=>step.done&&sameStop(step,prior)):-1;
  const map={steps,current,learn,owner,key:++mapSerial,top:current===0?125:82,row:94,from:Math.max(0,current-5),to:Math.min(steps.length,current+9),renderRows:medalRows,celebrate:completed};
  map.layout=medalLayout(steps,current,learn,map.top,map.row);
+ map.badges=window.dmRouteBadges?.milestones(steps,learn?'learning':'school');
+ if(completed>=0&&map.badges){
+  map.freshBadge=[...map.badges].find(([end,badge])=>badge.earned&&completed>=badge.first&&completed<=end)?.[1];
+  if(map.freshBadge)window.dmRouteBadges.celebrate(map.freshBadge);
+ }
  map.height=(map.layout.at(-1)?.y??map.top)+map.row+55;
  routeMap=map;
  const ready=chestReady(),chestY=map.layout[current]?.y??map.top;
@@ -211,7 +217,7 @@ function mountScrollable(root){
   scroll.scrollTo({top:destination(),behavior:window.matchMedia?.('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});
   currentTile?.closest('button')?.focus({preventScroll:true});
  };
- requestAnimationFrame(focus);mapResize?.disconnect();if(typeof ResizeObserver==='function'){mapResize=new ResizeObserver(schedule);mapResize.observe(scroll);}
+ window.dmRouteBadges?.resume();requestAnimationFrame(focus);mapResize?.disconnect();if(typeof ResizeObserver==='function'){mapResize=new ResizeObserver(schedule);mapResize.observe(scroll);}
 }
 function icon(name){const paths={play:'M8 4l12 8-12 8z',lock:'M6 11h12v10H6zM8 11V7a4 4 0 0 1 8 0v4',chat:'M3 4h18v13H9l-6 4zM7 8h10M7 12h6',bulb:'M9 18h6M9 21h6M8 14a7 7 0 1 1 8 0l-1 4H9z',atom:'M12 10v4M10 12h4M3 7c4-7 22 4 18 10S-1 13 3 7M3 17C-1 11 17 0 21 7S7 24 3 17',leaf:'M4 20C1 7 10 2 21 3c0 11-5 19-17 17zM4 20L17 7',book:'M3 4h6l3 2 3-2h6v15h-6l-3 2-3-2H3zM12 6v15',map:'M3 5l6-2 6 3 6-2v15l-6 2-6-3-6 2zM9 3v15M15 6v15',route:'M5 18c-3-4-3-7 0-7s3 3 0 7zm14-8c-3-4-3-7 0-7s3 3 0 7zM5 18h3a4 4 0 0 0 4-4 4 4 0 0 1 4-4h3',switch:'M4 7h16l-4-4M20 17H4l4 4',calendar:'M5 5h14v16H5zM8 3v4M16 3v4M5 10h14M9 14h2M14 14h2M9 17h2',tasks:'M9 5H5v16h14V5h-4M9 3h6v5H9zM8 14l2 2 5-5'};return '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="'+paths[name]+'"/></svg>';}
 function missionsDialog(period='daily'){

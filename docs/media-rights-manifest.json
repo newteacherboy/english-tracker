@@ -2524,6 +2524,62 @@
       "bytes": 1075596,
       "status": "owner-supplied",
       "source": "Supplied by the owner in chat on 2026-11-04 as the new Diji Medu app logo (Papi head portrait), chosen from images made for the app. Resized copies serve as web, PWA and Android launcher icons."
+    },
+    {
+      "path": "ingilizce/parkur-badges/learning-02.webp",
+      "sha256": "5af1cd72caaa9251cbd4e0daf4fc83d29ad19b59d7d6e381f4c65e3aaeeae8ad",
+      "bytes": 137866,
+      "status": "ai-generated",
+      "source": "docs/media-generation-record.json"
+    },
+    {
+      "path": "ingilizce/parkur-badges/learning-03.webp",
+      "sha256": "d250435d0cfd800de14006c8d2cf16a1e861f565ee16566df9d38fa5aa0931f5",
+      "bytes": 241472,
+      "status": "ai-generated",
+      "source": "docs/media-generation-record.json"
+    },
+    {
+      "path": "ingilizce/parkur-badges/learning-04.webp",
+      "sha256": "3d1b9c3a83b33c91a340e433f7b2f80767ac7ce9cda13c2c774fdd73a2d6d7aa",
+      "bytes": 236712,
+      "status": "ai-generated",
+      "source": "docs/media-generation-record.json"
+    },
+    {
+      "path": "ingilizce/parkur-badges/papi-01.webp",
+      "sha256": "879162258b9ded492997ba1b0572f102e4b7ec281d6e879faf716c8acd14de2a",
+      "bytes": 117396,
+      "status": "ai-generated",
+      "source": "docs/media-generation-record.json"
+    },
+    {
+      "path": "ingilizce/parkur-badges/school-02.webp",
+      "sha256": "2de2eee891fb149e28ce5157c3c5dabd4b1c0fc28d145ec7c2722728aef9cbde",
+      "bytes": 166486,
+      "status": "ai-generated",
+      "source": "docs/media-generation-record.json"
+    },
+    {
+      "path": "ingilizce/parkur-badges/school-03.webp",
+      "sha256": "fbc0cda9a29b0284c098e1203205d939fa6b6137f790e2a74985a79d2c4c0f28",
+      "bytes": 230746,
+      "status": "ai-generated",
+      "source": "docs/media-generation-record.json"
+    },
+    {
+      "path": "ingilizce/parkur-badges/school-04.webp",
+      "sha256": "90e428a1ebf9b6b793c4aa742a233da6ecc97759978f4c8ff044da2bead55f5f",
+      "bytes": 274302,
+      "status": "ai-generated",
+      "source": "docs/media-generation-record.json"
+    },
+    {
+      "path": "ingilizce/parkur-badges/school-05.webp",
+      "sha256": "a5ed090a17897b94a4e0deff0b51b3dee968cce5449e6a53f30b4a76e0ae4c57",
+      "bytes": 271168,
+      "status": "ai-generated",
+      "source": "docs/media-generation-record.json"
     }
   ]
 }

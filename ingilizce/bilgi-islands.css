@@ -320,3 +320,70 @@ body #tab-dunya .bz-ic:has(.rt-medal-route) .dm-unified-wallet.dm-papi-wallet :i
  18%{transform:translateY(-7px) rotate(-5deg) scale(1.13)}
  27%{transform:scale(1.17,1.08)}
 }
+
+/* Parkur figures stay in the scenery beside the lesson buttons. */
+.dm-route-badge-art{display:block;aspect-ratio:1;background-repeat:no-repeat}
+.rt-medal-world .dm-route-badge-map{
+ position:absolute;left:12%;top:var(--badge-y);transform:translate(-50%,-45%);
+ width:clamp(38px,15%,95px);pointer-events:none;display:grid;justify-items:center;
+ color:#7d8ea8;
+}
+.dm-route-badge-map .dm-route-badge-art{width:100%;filter:grayscale(1);opacity:.48}
+.dm-route-badge-map .dm-route-badge-stars{font:800 clamp(8px,2.7vw,13px)/1 system-ui;white-space:nowrap}
+.dm-route-badge-map.is-earned{color:#f9b840}
+.dm-route-badge-map.is-earned .dm-route-badge-art{filter:none;opacity:1}
+.dm-route-badge-map.is-new .dm-route-badge-art{animation:dm-route-badge-reveal .7s ease-out both}
+@keyframes dm-route-badge-reveal{
+ from{filter:grayscale(1);opacity:.48;transform:scale(.84)}
+ 64%{transform:scale(1.14)}
+ to{filter:none;opacity:1;transform:scale(1)}
+}
+.dm-route-badge-overlay{
+ position:fixed;inset:0;z-index:2147482100;display:grid;place-items:center;
+ padding:12px;background:#06112bd9;backdrop-filter:blur(5px);
+}
+.dm-route-badge-dialog{
+ box-sizing:border-box;position:relative;isolation:isolate;overflow:hidden;
+ width:min(100%,390px);max-height:calc(100dvh - 24px);overflow:auto;
+ display:grid;justify-items:center;gap:8px;padding:24px 16px 18px;
+ text-align:center;color:#fff;background:radial-gradient(ellipse at 50% 39%,#355ea6,#182853 63%);
+ border:2px solid #8bc9ff;border-radius:28px;box-shadow:0 0 34px #43affb66;
+}
+.dm-route-badge-dialog :is(h2,h3,p){margin:0;color:inherit}
+.dm-route-badge-dialog h2{font-size:clamp(22px,6vw,31px);font-weight:900}
+.dm-route-badge-dialog h3{font-size:clamp(18px,5vw,24px)}
+.dm-route-badge-dialog small{color:#d3e8ff}
+.dm-route-badge-dialog .dm-route-badge-art{
+ width:min(61vw,29dvh,205px);filter:drop-shadow(0 0 20px #ffc76e88);
+ animation:dm-route-badge-pop .65s cubic-bezier(.2,.8,.28,1.22) both;
+}
+.dm-route-badge-dialog button{
+ min-height:44px;margin-top:6px;padding:5px 24px;border-radius:14px;
+ border:1px solid #b9ebff;background:#8adfff;color:#10294c;font:850 16px system-ui;
+}
+.dm-route-badge-confetti{position:absolute;inset:0;z-index:-1;pointer-events:none}
+.dm-route-badge-confetti i{
+ position:absolute;left:calc(7% + var(--i) * 7.5%);top:-12px;width:6px;height:12px;
+ border-radius:2px;background:#ffd36b;animation:dm-route-badge-confetti 1.3s ease-in both;
+ animation-delay:calc(var(--i) * 26ms);
+}
+.dm-route-badge-confetti i:nth-child(3n){background:#e99cff}
+.dm-route-badge-confetti i:nth-child(3n+1){background:#76e6ff}
+@keyframes dm-route-badge-pop{from{opacity:.25;transform:translateY(34px) scale(.28)}to{opacity:1;transform:none}}
+@keyframes dm-route-badge-confetti{70%{opacity:1}to{opacity:0;transform:translateY(370px) rotate(300deg)}}
+.dm-route-badge-collection{margin:18px 0;color:var(--dm-text,#e6f4ff)}
+.dm-route-badge-collection details{margin:8px 0;padding:10px;border:1px solid var(--dm-line,#53769e);border-radius:15px;background:var(--dm-surface,#253758)}
+.dm-route-badge-collection summary{font-weight:850;cursor:pointer}
+.dm-route-badge-collection [data-route-badge-list]{margin-top:8px}
+.dm-route-badge-collection ul{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(120px,100%),1fr));gap:8px;list-style:none;padding:0;margin:0}
+.dm-route-badge-collection li>button{
+ display:grid;justify-items:center;align-content:start;gap:3px;width:100%;height:100%;padding:6px;
+ border:1px solid var(--dm-line,#53769e);border-radius:12px;background:var(--dm-soft,#294064);
+ color:inherit;text-align:center;cursor:pointer;
+}
+.dm-route-badge-collection .dm-route-badge-art{width:min(100%,90px)}
+.dm-route-badge-collection li>button>span:last-child{color:var(--dm-link,#84dcff);font-weight:800;font-size:12px}
+@media(prefers-reduced-motion:reduce){
+ .dm-route-badge-map.is-new .dm-route-badge-art,.dm-route-badge-dialog .dm-route-badge-art{animation:none}
+ .dm-route-badge-confetti{display:none}
+}

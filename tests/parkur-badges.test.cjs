@@ -1,0 +1,30 @@
+const test=require('node:test');
+const assert=require('node:assert/strict');
+const fs=require('node:fs');
+const path=require('node:path');
+const {milestones,school,learning,mapMarkup}=require('../ingilizce/parkur-badges');
+const steps=(count,grade=1)=>Array.from({length:count},(_,i)=>({grade,no:grade*1000+i,id:'chapter-'+i,done:true}));
+test('all 132 approved figures have distinct cells in packaged artwork',()=>{
+ const catalog=[...school,...learning];
+ assert.equal(school.length,76);
+ assert.equal(learning.length,56);
+ assert.equal(new Set(catalog.map(x=>[x.src,x.row,x.col].join(':'))).size,132);
+ for(const art of catalog)assert(fs.existsSync(path.join(__dirname,'../ingilizce',art.src)));
+});
+test('five completed stops earn the milestone, school classes restart the count, and the art cycles',()=>{
+ const first=steps(9),second=steps(5,2);
+ first[1].done=false;
+ const result=milestones([...first,...second],'school');
+ assert.deepEqual([...result.keys()],[4,13]);
+ assert.equal(result.get(4).earned,false);
+ assert.equal(result.get(4).passed,4);
+ assert.equal(result.get(13).earned,true);
+ assert.equal(result.get(13).label,'2. Sınıf · 5. Durak');
+ assert.equal(result.get(13).art,school[1]);
+ const long=milestones(steps(285),'learning');
+ assert.equal(long.size,57);
+ assert.equal(long.get(284).art,long.get(4).art);
+ assert.notEqual(long.get(284).id,long.get(4).id);
+ assert.match(mapMarkup(result.get(4),30,false),/4\/5 durak/);
+ assert.match(mapMarkup(result.get(13),30,true),/is-earned is-new/);
+});
