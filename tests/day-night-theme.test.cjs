@@ -4,20 +4,20 @@ const vm=require('node:vm');
 const fs=require('node:fs');
 const path=require('node:path');
 const source=fs.readFileSync(path.join(__dirname,'../ingilizce/day-night-theme.js'),'utf8');
-function fixture(hour=12){
+function fixture(hour=12,stored=null){
   let now=new Date(2026,9,12,hour,0,0),nextId=0;
-  const timers=new Map(),docEvents={},winEvents={},attrs={},meta={},root={style:{},setAttribute(k,v){attrs[k]=v}};
+  const buttons=[],timers=new Map(),docEvents={},winEvents={},attrs={},meta={},root={style:{},setAttribute(k,v){attrs[k]=v}};
   class Clock extends Date {constructor(...a){super(...(a.length?a:[now.getTime()]))}}
-  const document={hidden:false,documentElement:root,querySelector(){return meta},addEventListener(k,f){docEvents[k]=f}};
-  const window={addEventListener(k,f){winEvents[k]=f}};
+  const document={hidden:false,documentElement:root,querySelector(){return meta},querySelectorAll(){return buttons},createElement(){return {attrs:{},setAttribute(k,v){this.attrs[k]=v},addEventListener(k,f){this[k]=f}}},addEventListener(k,f){docEvents[k]=f}};
+  const window={localStorage:{getItem(){return stored},setItem(k,v){stored=v}},addEventListener(k,f){winEvents[k]=f}};
   const context={Date:Clock,document,window,setTimeout(f,ms){timers.set(++nextId,{f,ms});return nextId},clearTimeout(id){timers.delete(id)}};
   vm.runInNewContext(source,context);
-  return {window,document,attrs,meta,root,timers,docEvents,winEvents,context,setHour(h){now.setHours(h,0,0,0)}};
+  return {window,document,attrs,meta,root,timers,docEvents,winEvents,context,buttons,setHour(h){now.setHours(h,0,0,0)}};
 }
-test('the daytime design stays active at every hour',()=>{
+test('the daytime design defaults to day at every hour',()=>{
   for(let h=0;h<24;h++){
     const f=fixture(h);assert.equal(f.attrs['data-dm-theme'],'day');assert.equal(f.root.style.colorScheme,'light');
-    assert.equal(f.meta.content,'#f2fbfa');assert.equal(f.window.dmDayNightTheme.themeFor(new Date(2026,9,12,h)),'day');
+    assert.equal(f.meta.content,'#e3f3ff');assert.equal(f.window.dmDayNightTheme.themeFor(new Date(2026,9,12,h)),'day');
   }
 });
 test('fixed daytime theme never schedules a boundary timer',()=>{
@@ -25,6 +25,26 @@ test('fixed daytime theme never schedules a boundary timer',()=>{
 });
 test('restored pages reapply the daytime design',()=>{
   const f=fixture(23);f.attrs['data-dm-theme']='night';f.root.style.colorScheme='dark';f.winEvents.pageshow();assert.equal(f.attrs['data-dm-theme'],'day');assert.equal(f.root.style.colorScheme,'light');
+});
+test('a manual toggle updates all controls, browser chrome and the saved setting',()=>{
+  const f=fixture(),api=f.window.dmDayNightTheme;
+  f.buttons.push(api.createButton(),api.createButton());
+  f.buttons[0].click();
+  assert.equal(api.themeFor(),'night');
+  assert.equal(f.root.style.colorScheme,'dark');
+  assert.equal(f.meta.content,'#132447');
+  assert.equal(f.window.localStorage.getItem('dm-color-theme'),'night');
+  assert.ok(f.buttons.every(b=>b.attrs['aria-pressed']==='true'));
+  f.winEvents.pageshow();
+  assert.equal(f.attrs['data-dm-theme'],'night');
+  f.buttons[1].click();
+  assert.equal(api.themeFor(),'day');
+});
+test('a reload restores night and another tab can update the preference',()=>{
+  const f=fixture(12,'night');
+  assert.equal(f.attrs['data-dm-theme'],'night');
+  f.winEvents.storage({key:'dm-color-theme',newValue:'day'});
+  assert.equal(f.attrs['data-dm-theme'],'day');
 });
 test('loading theme script twice does not duplicate lifecycle listeners',()=>{
   const f=fixture();const api=f.window.dmDayNightTheme;const listener=f.winEvents.pageshow;vm.runInNewContext(source,f.context);assert.equal(f.window.dmDayNightTheme,api);assert.equal(f.winEvents.pageshow,listener);assert.equal(f.timers.size,0);
