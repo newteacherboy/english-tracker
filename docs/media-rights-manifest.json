@@ -1720,6 +1720,14 @@
       "source": "Original DijiMedu placement item text, synthesized locally with FFmpeg libflite (slt), 2026-10-18; scripts/build-start-placement-audio.py"
     },
     {
+      "path": "ingilizce/school-assets/teacher-home-icons.webp",
+      "sha256": "d38b0910885fc708edd09fca741ddf1edb42cefce61d03a7e71bf22381f5d708",
+      "bytes": 44568,
+      "status": "licensed",
+      "source": "Microsoft Fluent Emoji 3D (MIT). Resized and composed into a WebP atlas. https://github.com/microsoft/fluentui-emoji",
+      "license": "ingilizce/school-assets/teacher-home-icons.LICENSE.txt"
+    },
+    {
       "path": "ingilizce/store-assets/dressing-room.webp",
       "sha256": "d8a1e46ff7c480e3c4f353a8e49b5160c764a478b812bf8eaa4461376a9312c1",
       "bytes": 91956,
