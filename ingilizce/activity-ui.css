@@ -431,7 +431,7 @@ html.dm-teacher-portal #tab-aktiviteler#tab-aktiviteler .gg-page .gg-tabs{grid-t
  min-width:0;padding:0;border:0;border-radius:11px;background:none;color:var(--gg-shelf-ink);text-align:left;
 }
 .gg-redesign .gg-cover{
- position:relative;display:block;isolation:isolate;overflow:hidden;width:100%;aspect-ratio:2.1/1;
+ position:relative;display:block;isolation:isolate;overflow:hidden;width:100%;aspect-ratio:16/10;
  border:1px solid #88a2c2;border-radius:11px;background:#243958;
 }
 .gg-redesign .gg-cover>img,.gg-redesign .gg-cover .gg-art>img{
@@ -440,8 +440,23 @@ html.dm-teacher-portal #tab-aktiviteler#tab-aktiviteler .gg-page .gg-tabs{grid-t
 .gg-redesign .gg-cover>.gg-art{
  position:absolute;inset:0;width:100%;height:100%;max-height:none;aspect-ratio:auto;border-radius:0;overflow:hidden;
 }
-.gg-redesign .gg-cover>.gg-art[style*="--gx"],.gg-redesign .gg-cover[style*="--au-thumb"]>.gg-art{
- inset:50% 0 auto;height:auto;aspect-ratio:1;transform:translateY(-50%);
+/* Square art keeps its complete subject over a matching, soft edge fill. */
+.gg-redesign .gg-cover>.gg-cover-backdrop{
+ filter:blur(9px) brightness(.65) saturate(.8);transform:scale(1.18);pointer-events:none;
+}
+.gg-redesign .gg-cover>.gg-cover-subject{
+ position:absolute;inset:0;width:100%;height:100%;object-fit:contain;
+}
+.gg-redesign .gg-cover>.gg-cover-subject.gg-art[style*="--gx"],
+.gg-redesign .gg-cover[style*="--au-thumb"]>.gg-cover-subject.gg-art{
+ left:50%;right:auto;width:auto;height:100%;aspect-ratio:1;transform:translateX(-50%);
+}
+.gg-redesign .gg-cover>.gg-cover-subject.gg-premium-art{background:none}
+.gg-redesign .gg-cover>.gg-cover-subject.gg-premium-art>img{object-fit:contain}
+.gg-redesign .gg-flight-cover{display:grid;place-items:center;background:radial-gradient(ellipse at center,#8ee6fa,#3169a4 78%)}
+.gg-redesign .gg-flight-papi{
+ height:100%;aspect-ratio:1;transform:scale(1.15);
+ background:url('route-assets/papi-practice-flight.webp') 50% center/300% 100% no-repeat;
 }
 .gg-redesign .gg-cover>.gg-art.mv-card-art{background:none}
 .gg-redesign .gg-cover .mv-card-papi{position:absolute;inset:auto auto 0 13%;width:35%;height:80%}
@@ -457,3 +472,22 @@ html.dm-teacher-portal #tab-aktiviteler#tab-aktiviteler .gg-page .gg-tabs{grid-t
 .gg-redesign .kg-hub .kg-list>button{box-shadow:0 2px 0 #132544;display:flex;flex-direction:column;align-items:flex-start;text-align:left}
 .gg-redesign .kg-hub .kg-list small{color:var(--gg-muted)}
 .gg-redesign .kg-hub .kg-list>button>span:first-child{background:#172b4c}
+
+/* Online challenge controls use the same dark surface and readable labels as the shelves. */
+#tab-aktiviteler#tab-aktiviteler .gg-page.gg-redesign .gg-matches{
+ padding-bottom:0;scroll-margin-bottom:0;
+}
+.gg-redesign .gg-matches>div,.gg-redesign .gg-social{
+ background:var(--gg-panel);color:var(--gg-shelf-ink);border:1px solid var(--gg-edge);border-radius:14px;
+ padding:8px;box-shadow:inset 0 1px 2px #ffffff25,0 2px 0 #10182e;
+}
+#tab-aktiviteler#tab-aktiviteler .gg-redesign .gg-friends>span,
+#tab-aktiviteler#tab-aktiviteler .gg-redesign .gg-friends>button{color:var(--gg-muted)}
+.gg-redesign .gg-matches>div>span{color:var(--gg-shelf-ink);font-weight:750}
+.gg-redesign .gg-matches [data-gg-matches],.gg-redesign .gg-friends-all{
+ color:#08273c;background:linear-gradient(#9be7ff,#4bbfe8);border:1px solid #a9edff;
+ box-shadow:0 2px 0 #177ba7;font-weight:900;min-height:36px;padding:4px 10px;
+}
+.gg-redesign .gg-matches>[data-gg-duo]{
+ color:#d9edff;background:#273e61;border:1px solid var(--gg-edge);min-height:40px;
+}

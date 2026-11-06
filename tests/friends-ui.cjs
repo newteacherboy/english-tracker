@@ -77,7 +77,7 @@ const feed=['Elif','Ege','Zeynep','Cemre','Fixture'].map((ogr,i)=>({k:'event'+i,
   assert.deepEqual(await page.locator('.fr-event-person small').allTextContents(),['1.701 puan aldı.','A2 dersini bitirdi.','Süper Lig’e çıktı.','1.704 puan aldı.']);
   assert.equal(await page.locator('.fr-event-person small').nth(1).getAttribute('title'),lesson);
   assert.equal(await page.locator('meta[name="theme-color"]').getAttribute('content'),'#151e3c');
-  assert.match(await page.locator('meta[name="viewport"]').getAttribute('content'),/viewport-fit=cover/);
+  assert.doesNotMatch(await page.locator('meta[name="viewport"]').getAttribute('content'),/viewport-fit=cover/,'Friends keeps the same viewport mode as the other tabs');
   assert.equal(await page.locator('.fr-event-person .fr-avatar').evaluateAll(avatars=>new Set(avatars.map(avatar=>getComputedStyle(avatar).borderColor)).size),4);
   await page.evaluate(()=>{navigator.share=async payload=>{window.sharedInvite=payload.url;};});
   await page.locator('.fr-invite-cta').click();
@@ -89,7 +89,7 @@ const feed=['Elif','Ege','Zeynep','Cemre','Fixture'].map((ogr,i)=>({k:'event'+i,
   for(const [w,h,safe] of [[320,568,0],[320,667,34],[390,844,34],[768,1024,0],[1180,820,0]]){
     await page.setViewportSize({width:w,height:h});
     await page.evaluate(safe=>{
-      document.documentElement.style.setProperty('--fr-safe-bottom',safe+'px');
+      document.body.style.setProperty('--bi-safe-bottom',safe+'px');
       document.documentElement.style.setProperty('--fr-safe-top',safe?'44px':'0px');
     },safe);
     await page.waitForTimeout(200);
@@ -112,6 +112,18 @@ const feed=['Elif','Ege','Zeynep','Cemre','Fixture'].map((ogr,i)=>({k:'event'+i,
     assert.equal(layout.rows,4);
     assert(layout.gap>=10&&layout.gap<=14,'full feed button is immediately above the dock '+JSON.stringify(layout));
     assert(Math.abs(layout.dockInset)<=1,'dock is anchored to the bottom '+JSON.stringify(layout));
+    const dockPositions=await page.evaluate(()=>{
+      const dock=document.getElementById('bottomNavMobile');
+      const items=[...dock.querySelectorAll('.bn-item')];
+      const current=items.find(item=>item.classList.contains('active'));
+      const positions=items.filter(item=>item.dataset.ekran!=='tab-dunya').map(item=>{
+        current?.classList.remove('active');item.classList.add('active');
+        const position=[item.dataset.ekran,innerHeight-dock.getBoundingClientRect().bottom,getComputedStyle(dock).paddingBottom];
+        item.classList.remove('active');return position;
+      });
+      current?.classList.add('active');return positions;
+    });
+    assert(dockPositions.every(([,gap,padding])=>Math.abs(gap)<=1&&padding===safe+4+'px'),JSON.stringify(dockPositions));
     assert(layout.rowsFit&&layout.hit,'rows fit and the full feed button is tappable '+JSON.stringify(layout));
     assert(layout.last<=layout.buttonTop,'all four activities fit above the button '+w);
     assert(await page.locator('.fr-event-person small').evaluateAll(lines=>lines.every(line=>getComputedStyle(line).whiteSpace==='nowrap'&&line.scrollWidth<=line.clientWidth)),'full summaries fit on a single line at '+w);

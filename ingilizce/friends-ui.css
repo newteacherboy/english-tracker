@@ -231,8 +231,6 @@ body:has(#tab-meduakis.active.fr-home-view){background:var(--fr-surface)!importa
   body:has(#tab-meduakis.active.fr-home-view) #bottomNavMobile#bottomNavMobile.bottom-nav-mobile{
     --dock-bg:#101f3b;--dock-edge:#52729d;--dock-label:#f2f7ff;
     --dock-active-bg:#25466e;--dock-active-edge:#6696bd;--dock-accent:#a6ddff;
-    bottom:0!important;height:auto!important;min-height:0!important;
-    padding-bottom:calc(4px + var(--fr-safe-bottom,env(safe-area-inset-bottom,0px)))!important;
   }
 }
 #tab-meduakis .fr-wallet-host{display:none}
