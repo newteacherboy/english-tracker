@@ -2,8 +2,8 @@ const {test}=require('node:test'),assert=require('node:assert/strict'),fs=requir
 const src=fs.readFileSync(__dirname+'/../supabase/functions/diji-api/index.ts','utf8'),Async=Object.getPrototypeOf(async function(){}).constructor;
 const block=src.slice(src.indexOf('  if (op === "kayitOl")'),src.indexOf('  if (op === "sifreDegistir")')).replace('ogretmen: any','ogretmen').replace('(payload as any)','payload');
 const helpers=fs.readFileSync('supabase/functions/diji-api/learner-profile.mjs','utf8').replace(/export /g,'')+fs.readFileSync('supabase/functions/diji-api/class-code.mjs','utf8').replace(/export /g,'')+'const kodlaOgretmen=async kod=>kod==="GNWGVVE"?{ogretmen:{id:"t1",active:true},sinif:{teacherId:"t1",classNo:6,branch:"B"}}:{ogretmen:(await supabase.from("teachers").select("id").ilike("invite_code",kod).limit(1)).data?.[0]||null,sinif:null};';
-const run=new Async('body','supabase','json','studentByName','denemeSay','denemeYaz','likeKacir','hashPassword','num','temizMetin','onboarding','encName','yeniOgrenciYoneticiBildirimi','issueSession','const op="kayitOl";const OGRENCI_SIFRE_MIN=6;const sadeHarf=v=>String(v||"").toLocaleLowerCase("tr").replace(/[çğıöşüâîû]/g,c=>({"ç":"c","ğ":"g","ı":"i","ö":"o","ş":"s","ü":"u","â":"a","î":"i","û":"u"})[c]).replace(/[^a-z]/g,"");'+helpers+block);
-function fixture(fail=false){const mails=[],writes=[],upserts=[];const db={from(t){return {select(){return this},ilike(){return this},eq(){return this},limit:async()=>({data:[]}),insert(p){writes.push(p);return this},upsert(p){upserts.push(p);return Promise.resolve({data:p,error:null})},single:async()=>({data:fail?null:{id:'new',username:'Yeni Öğrenci',email:'parent@example.test'},error:fail?{}:null})}}};return {mails,writes,upserts,call:b=>run(b,db,(data,status=200)=>({data,status}),async()=>null,async()=>0,async()=>{},s=>s,async()=> 'hash',Number,s=>s,{welcome:async s=>mails.push(s)},s=>String(s).toLocaleLowerCase('tr'),async()=>{},async()=> 'student-session-token')};}
+const run=new Async('body','supabase','json','studentByName','denemeSay','denemeYaz','likeKacir','hashPassword','num','temizMetin','onboarding','encName','yeniOgrenciYoneticiBildirimi','issueSession','teacherPortal','const op="kayitOl";const OGRENCI_SIFRE_MIN=6;const sadeHarf=v=>String(v||"").toLocaleLowerCase("tr").replace(/[çğıöşüâîû]/g,c=>({"ç":"c","ğ":"g","ı":"i","ö":"o","ş":"s","ü":"u","â":"a","î":"i","û":"u"})[c]).replace(/[^a-z]/g,"");'+helpers+block);
+function fixture(fail=false){const mails=[],writes=[],upserts=[],applications=[];const db={from(t){return {select(){return this},ilike(){return this},eq(){return this},limit:async()=>({data:[]}),insert(p){writes.push(p);return this},upsert(p){upserts.push(p);return Promise.resolve({data:p,error:null})},single:async()=>({data:fail?null:{id:'new',username:'Yeni Öğrenci',email:'parent@example.test'},error:fail?{}:null})}}};return {mails,writes,upserts,applications,call:b=>run(b,db,(data,status=200)=>({data,status}),async()=>null,async()=>0,async()=>{},s=>s,async()=> 'hash',Number,s=>s,{welcome:async s=>mails.push(s)},s=>String(s).toLocaleLowerCase('tr'),async()=>{},async()=> 'student-session-token',{apply:async id=>applications.push(id)})};}
 const valid={ogrenciAdi:'yildiz_12',adSoyad:'Yeni Öğrenci',sifre:'secret',telefon:'05551234567',email:'parent@example.test',sinif:3,sube:'A',kvkkOnay:true,kvkkOnayTarihi:'2026-10-04T00:00:00Z'};
 test('optional school is stored with the same student identity; absent school remains null',async()=>{const f=fixture();await f.call({...valid,okul:'  Atatürk   Ortaokulu  '});assert.equal(f.writes[0].school,'Atatürk Ortaokulu');assert.equal(f.writes[0].username,valid.ogrenciAdi);const g=fixture();await g.call(valid);assert.equal(g.writes[0].school,null);});
 test('password signup opens immediately while keeping independent email verification',async()=>{const f=fixture(),r=await f.call(valid);assert.equal(r.data.status,'success');assert.equal(f.writes[0].status,'approved');assert.equal(f.writes[0].email_verification_required,true);assert.equal(f.writes[0].email_verified_at,null);assert.equal(f.mails.length,1);assert.equal(f.mails[0].email,valid.email);assert.equal(r.data.token,'student-session-token')});
@@ -40,4 +40,21 @@ test('class code joins the teacher and branch only when the chosen grade matches
  assert.equal(bad.data.status,'error');assert.match(bad.data.message,/6\. sınıf/);assert.equal(wrong.writes.length,0);
  const right=fixture(),ok=await right.call({...valid,sinif:6,sube:'A',ogretmenKodu:'gnwgvve'});
  assert.equal(ok.data.status,'success');assert.equal(right.writes[0].teacher_id,'t1');assert.equal(right.writes[0].branch,'B');assert.equal(right.writes[0].class_no,6);
+});
+
+test('teacher signup saves the school location and phone before requesting approval',async()=>{
+ const body={...valid,requestTeacherAccess:true,okulIl:' Amasya ',okulIlce:' Merkez ',okul:'Atatürk   Ortaokulu',
+  learnerProfile:{version:1,purpose:'independent',ageBand:''},sinif:null,sube:''};
+ const f=fixture(),r=await f.call(body);
+ assert.equal(r.data.status,'success',JSON.stringify(r));
+ assert.equal(f.writes[0].school,'Amasya · Merkez · Atatürk Ortaokulu');
+ assert.equal(f.writes[0].phone,valid.telefon);
+ assert.equal(f.upserts.find(row=>row.key_name==='learner_profile_v1').value.ageBand,'');
+ assert.deepEqual(f.applications,['new']);
+ for(const key of ['okulIl','okulIlce','okul','telefon']){
+  const missing=fixture();
+  assert.equal((await missing.call({...body,[key]:''})).data.status,'error');
+  assert.equal(missing.writes.length,0);
+  assert.equal(missing.applications.length,0);
+ }
 });
