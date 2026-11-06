@@ -105,6 +105,54 @@
       "mode": "generate",
       "reference": "Diji Medu Papi mascot",
       "prompt": "Approved 2026-11-06 ImageGen concept sheet: Okul Yolum · Oyun ve Keşif. Distinct full-body Papi collectible poses. Figures packaged as a transparent WebP sprite atlas."
+    },
+    {
+      "file": "ingilizce/parkur-badges/v2/learning-02.webp",
+      "mode": "repack",
+      "reference": "ingilizce/parkur-badges/learning-02.webp",
+      "prompt": "Repack from the original approved Papi concept sheet, with an exterior silhouette mask that preserves opaque interior detail and 256 px atlas cells."
+    },
+    {
+      "file": "ingilizce/parkur-badges/v2/learning-03.webp",
+      "mode": "repack",
+      "reference": "ingilizce/parkur-badges/learning-03.webp",
+      "prompt": "Repack from the original approved Papi concept sheet, with an exterior silhouette mask that preserves opaque interior detail and 256 px atlas cells."
+    },
+    {
+      "file": "ingilizce/parkur-badges/v2/learning-04.webp",
+      "mode": "repack",
+      "reference": "ingilizce/parkur-badges/learning-04.webp",
+      "prompt": "Repack from the original approved Papi concept sheet, with an exterior silhouette mask that preserves opaque interior detail and 256 px atlas cells."
+    },
+    {
+      "file": "ingilizce/parkur-badges/v2/papi-01.webp",
+      "mode": "repack",
+      "reference": "ingilizce/parkur-badges/papi-01.webp",
+      "prompt": "Repack from the original approved Papi concept sheet, with an exterior silhouette mask that preserves opaque interior detail and 256 px atlas cells."
+    },
+    {
+      "file": "ingilizce/parkur-badges/v2/school-02.webp",
+      "mode": "repack",
+      "reference": "ingilizce/parkur-badges/school-02.webp",
+      "prompt": "Repack from the original approved Papi concept sheet, with an exterior silhouette mask that preserves opaque interior detail and 256 px atlas cells."
+    },
+    {
+      "file": "ingilizce/parkur-badges/v2/school-03.webp",
+      "mode": "repack",
+      "reference": "ingilizce/parkur-badges/school-03.webp",
+      "prompt": "Repack from the original approved Papi concept sheet, with an exterior silhouette mask that preserves opaque interior detail and 256 px atlas cells."
+    },
+    {
+      "file": "ingilizce/parkur-badges/v2/school-04.webp",
+      "mode": "repack",
+      "reference": "ingilizce/parkur-badges/school-04.webp",
+      "prompt": "Repack from the original approved Papi concept sheet, with an exterior silhouette mask that preserves opaque interior detail and 256 px atlas cells."
+    },
+    {
+      "file": "ingilizce/parkur-badges/v2/school-05.webp",
+      "mode": "repack",
+      "reference": "ingilizce/parkur-badges/school-05.webp",
+      "prompt": "Repack from the original approved Papi concept sheet, with an exterior silhouette mask that preserves opaque interior detail and 256 px atlas cells."
     }
   ]
 }

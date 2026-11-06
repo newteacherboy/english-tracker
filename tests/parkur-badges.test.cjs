@@ -28,3 +28,18 @@ test('five completed stops earn the milestone, school classes restart the count,
  assert.match(mapMarkup(result.get(4),30,false),/4\/5 durak/);
  assert.match(mapMarkup(result.get(13),30,true),/is-earned is-new/);
 });
+test('map badge buttons describe both states and open a set-specific milestone',()=>{
+ const rows=steps(10);
+ rows[0].done=false;
+ const [locked,earned]=milestones(rows,'school').values();
+ const {badgeStatus}=require('../ingilizce/parkur-badges');
+ assert.match(mapMarkup(locked,100,false),/<button type="button".*data-badge-index="4".*aria-haspopup="dialog"/);
+ assert.equal(badgeStatus(locked),'1–5. durakları tamamlayınca açılır. 4/5 durak tamamlandı.');
+ assert.equal(locked.art.set,'İlk Maceralar');
+ assert.match(locked.art.cheer,/keşif/);
+ assert.match(badgeStatus(earned),/Bu rozeti kazandın!/);
+ const data=fs.readFileSync(path.join(__dirname,'../ingilizce',locked.art.src));
+ assert.equal(data.toString('ascii',12,16),'VP8X');
+ assert.equal(data.readUIntLE(24,3)+1,locked.art.cols*256);
+ assert.equal(data.readUIntLE(27,3)+1,locked.art.rows*256);
+});

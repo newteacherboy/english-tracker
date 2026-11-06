@@ -2580,6 +2580,70 @@
       "bytes": 271168,
       "status": "ai-generated",
       "source": "docs/media-generation-record.json"
+    },
+    {
+      "path": "ingilizce/parkur-badges/v2/learning-02.webp",
+      "sha256": "36d5e80edf62293eea64f81c6ea076ccb50688346122df3c2f545a2e72f7b457",
+      "bytes": 201654,
+      "status": "ai-generated",
+      "source": "docs/media-generation-record.json",
+      "derived_from": "ingilizce/parkur-badges/learning-02.webp"
+    },
+    {
+      "path": "ingilizce/parkur-badges/v2/learning-03.webp",
+      "sha256": "05f31bf3d87dc2bc98df64b17e34c39bb4b786e9be885025a402b43285d91160",
+      "bytes": 332842,
+      "status": "ai-generated",
+      "source": "docs/media-generation-record.json",
+      "derived_from": "ingilizce/parkur-badges/learning-03.webp"
+    },
+    {
+      "path": "ingilizce/parkur-badges/v2/learning-04.webp",
+      "sha256": "b886699e08503f884db559f6e50c7d98d472f7cd535fb046cecf7aa3e09b7b85",
+      "bytes": 324824,
+      "status": "ai-generated",
+      "source": "docs/media-generation-record.json",
+      "derived_from": "ingilizce/parkur-badges/learning-04.webp"
+    },
+    {
+      "path": "ingilizce/parkur-badges/v2/papi-01.webp",
+      "sha256": "f6bdd1885cf8055b26559004545bfac32f98ecac463b9913bf42ada7d61987e7",
+      "bytes": 142750,
+      "status": "ai-generated",
+      "source": "docs/media-generation-record.json",
+      "derived_from": "ingilizce/parkur-badges/papi-01.webp"
+    },
+    {
+      "path": "ingilizce/parkur-badges/v2/school-02.webp",
+      "sha256": "49567f50372d571a3bb10b0c0f3ffa294c4648a53ee427d97cd19dadefbe536c",
+      "bytes": 221414,
+      "status": "ai-generated",
+      "source": "docs/media-generation-record.json",
+      "derived_from": "ingilizce/parkur-badges/school-02.webp"
+    },
+    {
+      "path": "ingilizce/parkur-badges/v2/school-03.webp",
+      "sha256": "11af419902144ecf63f2607abbc71c61faa848d14d15bbfab611c2081a2b528c",
+      "bytes": 309182,
+      "status": "ai-generated",
+      "source": "docs/media-generation-record.json",
+      "derived_from": "ingilizce/parkur-badges/school-03.webp"
+    },
+    {
+      "path": "ingilizce/parkur-badges/v2/school-04.webp",
+      "sha256": "6dc1ef2dc61b787399ebd1841af32f74acc7b07fb0abacc44832d1fe01125642",
+      "bytes": 362584,
+      "status": "ai-generated",
+      "source": "docs/media-generation-record.json",
+      "derived_from": "ingilizce/parkur-badges/school-04.webp"
+    },
+    {
+      "path": "ingilizce/parkur-badges/v2/school-05.webp",
+      "sha256": "2de39c771e3c1100efca012a99666079b487151b802651adcbd9169999512b50",
+      "bytes": 349060,
+      "status": "ai-generated",
+      "source": "docs/media-generation-record.json",
+      "derived_from": "ingilizce/parkur-badges/school-05.webp"
     }
   ]
 }

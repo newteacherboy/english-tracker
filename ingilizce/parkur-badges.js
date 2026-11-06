@@ -1,10 +1,20 @@
 /* Collectibles are derived from completed stops, so they follow the account on every device. */
 (function(root){
  'use strict';
- const STEP=5, CELL=160;
+ const STEP=5, CELL=256;
+ const sets={
+  'papi-01':['İlk Maceralar','Bir sonraki adım, yepyeni bir keşif!'],
+  'school-02':['Okul Maceraları','Her durakta yeni bir yeteneğini ortaya çıkar!'],
+  'school-03':['Sanat ve Spor','Sahne senin, sıradaki durağa gücünü göster!'],
+  'school-04':['Doğa ve Meslekler','Merakını takip et, daha keşfedecek çok şey var!'],
+  'school-05':['Oyun ve Keşif','Bir sonraki macerada neler yapabileceğini göster!'],
+  'learning-02':['Gökyüzünden Uzaya','Kanatlarını aç, sıradaki keşif seni bekliyor!'],
+  'learning-03':['Gökyüzü Maceraları','Daha yükseğe uç, her durakta gökyüzü biraz daha yakın!'],
+  'learning-04':['Uzak Galaksiler','Rotanı yıldızlara çevir, keşfin daha yeni başlıyor!']
+ };
  function sheet(file,cols,names,start=0,rows=Math.ceil(names.length/cols)){
   return names.map((name,index)=>({
-   name,src:'parkur-badges/'+file+'.webp',col:(index+start)%cols,row:Math.floor((index+start)/cols),cols,rows
+   name,set:sets[file][0],cheer:sets[file][1],src:'parkur-badges/v2/'+file+'.webp',col:(index+start)%cols,row:Math.floor((index+start)/cols),cols,rows
   }));
  }
  const school=[
@@ -46,12 +56,17 @@
    art.cols*100+'% '+art.rows*100+'%;background-position:'+x+'% '+y+'%"></span>';
  }
  function mapMarkup(badge,y,fresh){
-  return '<div class="dm-route-badge-map'+(badge.earned?' is-earned':'')+(fresh?' is-new':'')+
-   '" style="--badge-y:'+y+'px" role="img" aria-label="'+esc(badge.art.name+' · '+badge.label+
-    (badge.earned?' · Kazanıldı':' · '+badge.passed+'/5 durak'))+'">'+artMarkup(badge.art)+
-   '<span class="dm-route-badge-stars" aria-hidden="true">★ ★ ★</span></div>';
+  return '<button type="button" class="dm-route-badge-map'+(badge.earned?' is-earned':'')+(fresh?' is-new':'')+
+   '" data-rt="route-badge" data-badge-index="'+(badge.first+STEP-1)+'" style="--badge-y:'+y+'px" aria-haspopup="dialog" aria-label="'+
+   esc(badge.art.name+' · '+badge.label+(badge.earned?' · Kazanıldı':' · '+badge.passed+'/'+STEP+' durak'))+'">'+artMarkup(badge.art)+
+   '<span class="dm-route-badge-stars" aria-hidden="true">★ ★ ★</span></button>';
  }
- if(typeof module==='object'&&module.exports){module.exports={milestones,school,learning,mapMarkup};return;}
+ function badgeStatus(badge){
+  if(badge.earned)return 'Bu rozeti kazandın! Başarılarım koleksiyonunda seni bekliyor.';
+  const range=(badge.number-STEP+1)+'–'+badge.number;
+  return range+'. durakları tamamlayınca açılır. '+badge.passed+'/'+STEP+' durak tamamlandı.';
+ }
+ if(typeof module==='object'&&module.exports){module.exports={milestones,school,learning,mapMarkup,badgeStatus};return;}
  const account=()=>String(typeof aktifOgrenciAdi==='undefined'?'':aktifOgrenciAdi||'').trim().toLocaleLowerCase('tr');
  const member=()=>!!account()&&account()!=='teacher'&&!root.dmGuestMode&&!root.dmTeacherPortalMode&&
   !(typeof siniftaOynananOgrenci!=='undefined'&&siniftaOynananOgrenci);
@@ -70,14 +85,22 @@
   if(!member()||account()!==pending[0].owner){pending=[];return;}
   if(document.hidden||!document.querySelector('#tab-dunya.active'))return;
   if(dialog||[...document.querySelectorAll(blockers)].some(visible)){schedule();return;}
-  const {badge}=pending.shift(),previous=document.activeElement;
-  const overlay=document.createElement('div');
+  showBadge(pending.shift().badge,true);
+ }
+ function showBadge(badge,celebration=false){
+  if(!badge||dialog)return;
+  const previous=document.activeElement,overlay=document.createElement('div');
+  const confetti=celebration?'<div class="dm-route-badge-confetti" aria-hidden="true">'+
+   Array.from({length:12},(_,i)=>'<i style="--i:'+i+'"></i>').join('')+'</div>':'';
   overlay.className='dm-route-badge-overlay';
-  overlay.innerHTML='<section class="dm-route-badge-dialog" role="dialog" aria-modal="true" aria-labelledby="dmRouteBadgeTitle">'+
-   '<div class="dm-route-badge-confetti" aria-hidden="true">'+Array.from({length:12},(_,i)=>'<i style="--i:'+i+'"></i>').join('')+'</div>'+
-   '<h2 id="dmRouteBadgeTitle">Rozet kazandın!</h2>'+artMarkup(badge.art)+'<h3>'+esc(badge.art.name)+'</h3>'+
-   '<p>'+esc(title[badge.route]+' · '+badge.label)+'</p><small>Başarılarım koleksiyonuna eklendi.</small>'+
-   '<button type="button">Devam et</button></section>';
+  overlay.innerHTML='<section class="dm-route-badge-dialog'+(badge.earned?'':' is-locked')+
+   '" role="dialog" aria-modal="true" aria-labelledby="dmRouteBadgeTitle">'+confetti+
+   '<small class="dm-route-badge-set">'+esc(badge.art.set)+' Seti</small>'+
+   '<h2 id="dmRouteBadgeTitle">'+(celebration?'Rozet kazandın!':badge.earned?'Kazanılan rozet':'Kilitli rozet')+'</h2>'+
+   artMarkup(badge.art)+'<h3>'+esc(badge.art.name)+'</h3>'+
+   '<small>'+esc(title[badge.route]+' · '+badge.label)+'</small>'+
+   '<p>'+esc(badgeStatus(badge))+'</p><strong>'+esc(badge.art.cheer)+'</strong>'+
+   '<button type="button">'+(celebration?'Devam et':'Tamam')+'</button></section>';
   const close=()=>{
    if(dialog!==overlay)return;
    dialog=null;overlay.remove();root.dmViewHistory?.leave(overlay);
@@ -131,5 +154,5 @@
   document.querySelectorAll('.dm-route-badge-collection').forEach(el=>el.remove());
  });
  document.addEventListener('visibilitychange',schedule);
- root.dmRouteBadges={milestones,mapMarkup,celebrate,collection,resume:schedule};
+ root.dmRouteBadges={milestones,mapMarkup,celebrate,collection,inspect:showBadge,resume:schedule};
 })(globalThis);

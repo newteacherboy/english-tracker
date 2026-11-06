@@ -325,16 +325,16 @@ body #tab-dunya .bz-ic:has(.rt-medal-route) .dm-unified-wallet.dm-papi-wallet :i
 .dm-route-badge-art{display:block;aspect-ratio:1;background-repeat:no-repeat}
 .rt-medal-world .dm-route-badge-map{
  position:absolute;left:12%;top:var(--badge-y);transform:translate(-50%,-45%);
- width:clamp(38px,15%,95px);pointer-events:none;display:grid;justify-items:center;
- color:#7d8ea8;
+ width:clamp(44px,15%,95px);min-height:44px;display:grid;justify-items:center;gap:2px;
+ border:0;padding:0;background:transparent;cursor:pointer;color:#7d8ea8;
 }
-.dm-route-badge-map .dm-route-badge-art{width:100%;filter:grayscale(1);opacity:.48}
+.dm-route-badge-map .dm-route-badge-art{width:100%;filter:grayscale(1);opacity:.65}
 .dm-route-badge-map .dm-route-badge-stars{font:800 clamp(8px,2.7vw,13px)/1 system-ui;white-space:nowrap}
 .dm-route-badge-map.is-earned{color:#f9b840}
 .dm-route-badge-map.is-earned .dm-route-badge-art{filter:none;opacity:1}
 .dm-route-badge-map.is-new .dm-route-badge-art{animation:dm-route-badge-reveal .7s ease-out both}
 @keyframes dm-route-badge-reveal{
- from{filter:grayscale(1);opacity:.48;transform:scale(.84)}
+ from{filter:grayscale(1);opacity:.65;transform:scale(.84)}
  64%{transform:scale(1.14)}
  to{filter:none;opacity:1;transform:scale(1)}
 }
@@ -357,6 +357,9 @@ body #tab-dunya .bz-ic:has(.rt-medal-route) .dm-unified-wallet.dm-papi-wallet :i
  width:min(61vw,29dvh,205px);filter:drop-shadow(0 0 20px #ffc76e88);
  animation:dm-route-badge-pop .65s cubic-bezier(.2,.8,.28,1.22) both;
 }
+.dm-route-badge-dialog .dm-route-badge-set{color:#ffe098;font-weight:850;letter-spacing:.035em}
+.dm-route-badge-dialog strong{color:#ffe098;font-size:14px}
+.dm-route-badge-dialog.is-locked .dm-route-badge-art{filter:grayscale(1);opacity:.8;animation:none}
 .dm-route-badge-dialog button{
  min-height:44px;margin-top:6px;padding:5px 24px;border-radius:14px;
  border:1px solid #b9ebff;background:#8adfff;color:#10294c;font:850 16px system-ui;
