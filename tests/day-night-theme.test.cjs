@@ -19,7 +19,15 @@ function fixture(hour=12, stored={}) {
       querySelector(k){return children[k] ||= element();},remove(){popups.splice(popups.indexOf(this),1);}
     };
   }
+  const studyView={active:false,classList:{contains(){return studyView.active;}}};
+  const lessonView={active:false,classList:{contains(){return lessonView.active;}}};
+  const observed=new Map();
+  class MutationObserver {
+    constructor(callback){this.callback=callback;}
+    observe(element){observed.set(element,this.callback);}
+  }
   const document={
+    getElementById(id){return {'tab-derscalis':studyView,'dcScreenDetail':lessonView}[id];},
     hidden:false,documentElement:root,body:{append(el){popups.push(el);}},
     elementFromPoint(){return buttons[0];},querySelector(){return meta;},querySelectorAll(){return buttons;},
     createElement:element,addEventListener(k,f){docEvents[k]=f;}
@@ -28,9 +36,11 @@ function fixture(hour=12, stored={}) {
     localStorage:{getItem(k){return stored[k];},setItem(k,v){stored[k]=v;}},
     addEventListener(k,f){winEvents[k]=f;}
   };
-  const context={Date:Clock,document,window};
+  const context={Date:Clock,document,window,MutationObserver};
   vm.runInNewContext(source,context);
-  return {window,attrs,meta,root,docEvents,winEvents,context,buttons,popups,stored,setHour(h){now.setHours(h);}};
+  return {window,attrs,meta,root,docEvents,winEvents,context,buttons,popups,stored,setHour(h){now.setHours(h);},
+    openStudy(active){studyView.active=active;observed.get(studyView)([]);},
+    openLesson(active){lessonView.active=active;observed.get(lessonView)([]);}};
 }
 
 test('every launch starts in daylight even with an old saved night preference',()=>{
@@ -57,6 +67,41 @@ test('manual night mode follows navigation and resets on a new login or restored
   f.winEvents.pageshow({persisted:true});
   assert.equal(api.themeFor(),'day');
   assert.equal(f.stored['dm-color-theme'],undefined);
+});
+
+test('a visible study lesson uses daylight and restores the chosen night theme on either exit path',()=>{
+  const f=fixture(),api=f.window.dmDayNightTheme;
+  const button=api.createButton();
+  f.buttons.push(button);
+  button.click();
+  f.openStudy(true);
+  assert.equal(api.themeFor(),'night');
+  f.openLesson(true);
+  assert.equal(api.themeFor(),'day');
+  assert.equal(f.root.style.colorScheme,'light');
+  assert.equal(f.meta.content,'#e3f3ff');
+  assert.equal(button.disabled,true);
+  button.click();
+  assert.equal(api.themeFor(),'day');
+  f.openLesson(false);
+  assert.equal(api.themeFor(),'night');
+  assert.equal(button.disabled,false);
+  f.openLesson(true);
+  f.openStudy(false);
+  assert.equal(api.themeFor(),'night');
+});
+
+test('the 20:00 hint is deferred until the learner leaves the topic',()=>{
+  const f=fixture(20),api=f.window.dmDayNightTheme;
+  f.buttons.push(api.createButton());
+  f.openStudy(true);
+  f.openLesson(true);
+  api.updateHint();
+  assert.equal(f.popups.length,0);
+  assert.equal(f.stored['dm-night-hint-shown'],undefined);
+  f.openLesson(false);
+  api.updateHint();
+  assert.equal(f.popups.length,1);
 });
 
 test('the 20:00 hint appears once at a visible toggle and requires a choice',()=>{
