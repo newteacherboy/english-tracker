@@ -3,7 +3,8 @@
   "appName": "Diji Medu",
   "webDir": "www",
   "server": {
-    "url": "https://app.dijimedu.com/ingilizce/index.html",
+    "url": "https://app.dijimedu.com",
+    "appStartPath": "/ingilizce/index.html",
     "androidScheme": "https",
     "errorPath": "offline.html"
   },
