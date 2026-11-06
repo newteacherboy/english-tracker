@@ -154,7 +154,24 @@ function medalRow(map,step,i){
   (active?img('papi-medal.webp','rt-medal-papi'):'')+'</div>';
 }
 function medalRows(map,from,to){
- return map.steps.slice(from,to).map((step,k)=>from+k===map.current?'':medalRow(map,step,from+k)).join('');
+ return map.steps.slice(from,to).map((step,k)=>{
+  const index=from+k;
+  if(index===map.current)return '';
+  return '<div data-stop-index="'+index+'">'+medalRow(map,step,index)+'</div>';
+ }).join('');
+}
+function updateMedalWindow(windowEl,map,from,to){
+ // Keep overlapping stops and badge buttons mounted while their window shifts.
+ for(const entry of Array.from(windowEl.children)){
+  const index=Number(entry.dataset.stopIndex);
+  if(index<from||index>=to)entry.remove();
+ }
+ if(to<=from)return;
+ const first=windowEl.firstElementChild,last=windowEl.lastElementChild;
+ if(!first){windowEl.insertAdjacentHTML('beforeend',medalRows(map,from,to));return;}
+ const start=Number(first.dataset.stopIndex),end=Number(last.dataset.stopIndex)+1;
+ if(from<start)windowEl.insertAdjacentHTML('afterbegin',medalRows(map,from,start));
+ if(end<to)windowEl.insertAdjacentHTML('beforeend',medalRows(map,end,to));
 }
 function medalRouteMarkup(steps,current,learn){
  const active=steps[current],title=learn?'Öğrenme Yolum':'Okul Yolum',info=schoolInfo(active);
@@ -199,8 +216,8 @@ function mountScrollable(root){
   if(from!==map.from||to!==map.to){
    map.from=from;map.to=to;
    if(windows.length){
-    windows[0].innerHTML=renderRows(map,from,Math.min(to,map.current));
-    windows[1].innerHTML=renderRows(map,Math.max(from,map.current+1),to);
+    updateMedalWindow(windows[0],map,from,Math.min(to,map.current));
+    updateMedalWindow(windows[1],map,Math.max(from,map.current+1),to);
    }else world.innerHTML=renderRows(map,from,to);
   }
   if(back&&currentTile){
@@ -212,7 +229,7 @@ function mountScrollable(root){
  function schedule(){if(queued)return;queued=true;requestAnimationFrame(draw);}
  scroll.addEventListener('scroll',schedule,{passive:true});
  const destination=()=>Math.max(0,(map.layout?.[map.current]?.y??top+map.current*row)-scroll.clientHeight*(back ? .34 : .45));
- const focus=()=>{if(!el.isConnected||map!==routeMap)return;scroll.scrollTop=destination();draw();map.celebrate=-1;};
+ const focus=()=>{if(!el.isConnected||map!==routeMap)return;scroll.scrollTop=destination();draw();map.celebrate=-1;map.freshBadge=null;};
  if(back)back.onclick=()=>{
   scroll.scrollTo({top:destination(),behavior:window.matchMedia?.('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});
   currentTile?.closest('button')?.focus({preventScroll:true});
