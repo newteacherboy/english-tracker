@@ -32,17 +32,17 @@ const {chromium}=require('playwright'),fs=require('fs'),path=require('path'),ass
   if(m.fall)assert(m.fall.height>m.stage.height*.35,JSON.stringify(m));if(m.question)assert(m.letters.y>m.question.bottom+30,JSON.stringify(m));
   if(root==='trenOyunOverlay'){await page.locator('#trenHavuz .tr-v').first().click();assert.equal(await page.locator('#trenHat .tr-v').count(),1);await page.locator('#trenHat .tr-v').click();assert.equal(await page.locator('#trenHat .tr-v').count(),0);}
   await page.screenshot({path:path.join(out,root+'-'+size.width+'.png')});metrics.push(m);
-  await page.locator('#'+root+' > .dm-vp-exit').click();await page.waitForFunction(id=>getComputedStyle(document.getElementById(id)).display==='none',root);assert(await page.locator('#tpTeacherDock').isVisible());
+  await page.locator('#'+root+' > .dm-game-frame [data-frame="exit"]').click();await page.waitForFunction(id=>getComputedStyle(document.getElementById(id)).display==='none',root);assert(await page.locator('#tpTeacherDock').isVisible());
  }
  if(size.width===360){
   for(const [root,stage,entry]of [['kelimeYarismaOverlay','kyOyunEkrani','kyGirisEkrani'],['jpOyunOverlay','jpBalonEkrani','jpGirisEkrani'],['boslukOyunOverlay','boslukOyunEkrani','boslukGirisEkrani'],['hafizaOyunOverlay','hafizaOyunEkrani','hafizaGirisEkrani'],['yagmurOyunOverlay','yagmurOyunEkrani','yagmurGirisEkrani'],['asmacaOyunOverlay','asmacaOyunEkrani','asmacaGirisEkrani'],['kelimebulOyunOverlay','kelimebulOyunEkrani','kelimebulGirisEkrani'],['esOyunOverlay','esOyunEkrani','esGirisEkrani'],['trenOyunOverlay','trenOyunEkrani','trenGirisEkrani']]){
    await page.evaluate(({root,stage})=>{const r=document.getElementById(root);r.querySelectorAll('[id$="Ekrani"]').forEach(e=>e.style.display=e.id===stage?'block':'none');r.style.setProperty('display','flex','important');dmGameViewport.sync();},{root,stage});
-   await page.locator('#'+root+' > .dm-vp-back').click();await page.waitForFunction(({root,entry})=>getComputedStyle(document.getElementById(root)).display!=='none'&&getComputedStyle(document.getElementById(entry)).display!=='none',{root,entry});
-   await page.locator('#'+root+' > .dm-vp-exit').click();await page.waitForFunction(id=>getComputedStyle(document.getElementById(id)).display==='none',root);
+   await page.locator('#'+root+' > .dm-game-frame [data-frame="back"]').click();await page.waitForFunction(({root,entry})=>getComputedStyle(document.getElementById(root)).display!=='none'&&getComputedStyle(document.getElementById(entry)).display!=='none',{root,entry});
+   await page.locator('#'+root+' > .dm-game-frame [data-frame="exit"]').click();await page.waitForFunction(id=>getComputedStyle(document.getElementById(id)).display==='none',root);
   }
   for(const [id,object,closeClass]of [['rallyGame','dmRally','rr-close'],['wordWheel','dmWordWheel','ww-close'],['papiCards','dmPapiCards','pc-close'],['meteorGame','dmMeteor','mt-exit'],['mvOverlay','dmMola','mv-close'],['kgOverlay','dmTopicGames','kg-close']]){
    await page.evaluate(({id,object,closeClass})=>{const r=document.createElement('section');r.id=id;r.style.cssText='display:flex;position:fixed;inset:0;background:white';r.innerHTML='<button class="'+closeClass+'">Native close</button>';window[object]={close:()=>r.remove()};document.body.append(r);dmGameViewport.sync();},{id,object,closeClass});
-   await page.locator('#'+id+' > .dm-vp-exit').click();assert.equal(await page.locator('#'+id).count(),0);
+   await page.locator('#'+id+' > .dm-game-frame [data-frame="exit"]').click();assert.equal(await page.locator('#'+id).count(),0);
   }
   console.log('PASS native back/setup and exit paths for 9 classic games and 6 dynamic game surfaces');
  }
