@@ -493,8 +493,12 @@
  function teacherDestination(action){
   if(action==='class'){openBulkStudents();return;}
   if(action==='panel'){teacherDashboardShow();return;}
+  if(action==='oral'){
+   if(typeof window.dmTeacherOral?.open==='function')window.dmTeacherOral.open();
+   else window.yoToast?.('Sözlü ekranı henüz hazır değil.');
+   return;
+  }
   rememberRoute(action);teacherHomeHide();teacherDashboardHide();teacherDock();
-  if(action==='oral'){if(typeof window.dmTeacherOral?.open==='function')window.dmTeacherOral.open();else{teacherHomeShow();window.yoToast?.('Sözlü ekranı henüz hazır değil. Ana sayfaya döndün.');}return;}
   const id=action==='study'?'tab-derscalis':action==='games'?'tab-aktiviteler':'tab-profile-menu';
   const launch=action==='study'?window.dersCalisTamEkranAc:window.aktivitelerTamEkranAc;
   const target=document.querySelector('#bottomNavMobile [data-ekran="'+id+'"]');
