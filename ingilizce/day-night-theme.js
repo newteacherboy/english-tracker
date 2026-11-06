@@ -6,20 +6,25 @@
   const root = document.documentElement;
   const hintKey = 'dm-night-hint-shown';
   let theme = 'day';
+  let lessonOpen = false;
+  const currentTheme = () => lessonOpen ? 'day' : theme;
   let hintSeen = false;
   let hint, anchor, anchorHost;
   try { hintSeen = window.localStorage.getItem(hintKey) === '1'; } catch {}
 
   function paintButton(button) {
-    button.setAttribute('aria-pressed', String(theme === 'night'));
-    button.title = theme === 'night' ? 'Gündüz moduna geç' : 'Gece moduna geç';
+    const night = currentTheme() === 'night';
+    button.setAttribute('aria-pressed', String(night));
+    button.disabled = lessonOpen;
+    button.title = lessonOpen ? 'Ders konusu gündüz modunda' : night ? 'Gündüz moduna geç' : 'Gece moduna geç';
   }
 
   function refresh() {
-    root.setAttribute('data-dm-theme', theme);
-    root.style.colorScheme = theme === 'night' ? 'dark' : 'light';
+    const activeTheme = currentTheme();
+    root.setAttribute('data-dm-theme', activeTheme);
+    root.style.colorScheme = activeTheme === 'night' ? 'dark' : 'light';
     const meta = document.querySelector('meta[name="theme-color"]');
-    if (meta) meta.content = theme === 'night' ? '#132447' : '#e3f3ff';
+    if (meta) meta.content = activeTheme === 'night' ? '#132447' : '#e3f3ff';
     document.querySelectorAll('.dm-theme-toggle').forEach(paintButton);
   }
 
@@ -29,6 +34,7 @@
   }
 
   function toggle() {
+    if (lessonOpen) return;
     theme = theme === 'day' ? 'night' : 'day';
     closeHint();
     refresh();
@@ -68,7 +74,7 @@
       else closeHint();
       return;
     }
-    if (hintSeen || theme === 'night' || document.hidden || new Date().getHours() < 20) return;
+    if (lessonOpen || hintSeen || theme === 'night' || document.hidden || new Date().getHours() < 20) return;
     for (const button of document.querySelectorAll('.dm-theme-toggle')) {
       const box = visibleBox(button);
       if (!box) continue;
@@ -98,7 +104,31 @@
     return button;
   }
 
-  window.dmDayNightTheme = { refresh, themeFor: () => theme, createButton, updateHint };
+  function watchLessonView() {
+    const study = document.getElementById('tab-derscalis');
+    const detail = document.getElementById('dcScreenDetail');
+    if (!study || !detail) return;
+
+    const sync = () => {
+      const open = study.classList.contains('active') && detail.classList.contains('active');
+      if (open === lessonOpen) return;
+      lessonOpen = open;
+      if (open) closeHint();
+      refresh();
+    };
+    const observer = new MutationObserver(sync);
+    for (const element of [study, detail]) {
+      observer.observe(element, { attributes: true, attributeFilter: ['class'] });
+    }
+    sync();
+  }
+
+  window.dmDayNightTheme = { refresh, themeFor: currentTheme, createButton, updateHint };
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', watchLessonView, { once: true });
+  } else {
+    watchLessonView();
+  }
   window.addEventListener('pageshow', event => event.persisted ? reset() : refresh());
   document.addEventListener('dm:login', reset);
   document.addEventListener('keydown', event => {
