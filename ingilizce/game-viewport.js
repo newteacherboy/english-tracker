@@ -55,7 +55,8 @@
   root.append(button);
  }
  function decorate(root){
-  if(root.id==='kelimeGolu'){if(!root.classList.contains('dm-vp-root'))root.classList.add('dm-vp-root');return;}
+  if(root.id==='kelimeGolu'||root.id==='mvOverlay'&&root.querySelector('.mv-header [data-exit]')||
+     root.id==='kgOverlay'&&root.querySelector('.kg-shell header [data-close]')){if(!root.classList.contains('dm-vp-root'))root.classList.add('dm-vp-root');return;}
   if(!native(root)&&!classics[root.id]&&!modern[root.id])return;
   if(!root.classList.contains('dm-vp-root'))root.classList.add('dm-vp-root');
   for(const [kind,label,text] of [['back','Oyun başlangıcına geri dön','‹'],['exit','Oyunu kapat','×']]){

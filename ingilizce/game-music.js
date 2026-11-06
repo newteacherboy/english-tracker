@@ -23,6 +23,11 @@
   ['.papizzle[open]','puzzle'],
  ];
  const selector=games.map(([q])=>q).join(',');
+ const headerHosts={
+  mvOverlay:'.mv-header',kelimeGolu:'.kg-header',rallyGame:'.rr-hud-stats',
+  wordWheel:'.ww-shell>header',papiCards:'.pc-header',kgOverlay:'.kg-shell>header',
+  soloArcadeOverlay:'.sa-header',harfBahcesiOverlay:'.hb-card>header'
+ };
  const mutedKey='dm-game-music-muted';
  let muted=false,context,bus,current,track,timer,beat=0,scheduled=0;
  try{muted=localStorage.getItem(mutedKey)==='1';}catch{}
@@ -61,14 +66,18 @@
   const next=[...document.querySelectorAll(selector)].filter(root=>!root.closest('[hidden],[inert],[aria-hidden="true"]')&&root.getClientRects().length&&getComputedStyle(root).visibility!=='hidden').at(-1);
   const nextTrack=next?.dataset.gameMusic||games.find(([q])=>next?.matches(q))?.[1];
   if(current!==next||track!==nextTrack){stop();current=next;track=nextTrack;beat=0;}
-  if(current&&!current.querySelector(':scope > .dm-game-music')){
+  const host=current?.querySelector(headerHosts[current.id]||(
+   current.matches('.papizzle')?'main>header':current.matches('.dm-sr-overlay')?'.dm-sr-header':'[data-game-music-host]'
+  ))||current;
+  if(host&&!host.querySelector(':scope > .dm-game-music')){
+   current.querySelector('.dm-game-music')?.remove();
    const button=document.createElement('button');button.type='button';button.className='dm-game-music';
    button.onclick=()=>{
     muted=!muted;
     try{localStorage.setItem(mutedKey,muted?'1':'0');}catch{}
     paint();sync();
    };
-   current.append(button);paint();
+   host.append(button);paint();
   }
   if(muted||document.hidden||!track||current.dataset.musicPaused==='true'||current.classList.contains('sa-paused')||context?.state!=='running'){stop();return;}
   if(!timer){
@@ -94,8 +103,9 @@
  new MutationObserver(records=>{
   if(records.some(r=>{
    if(r.type==='attributes')return r.target===current||r.target.matches?.(selector)||r.target.contains?.(current);
-   return
-    [...r.addedNodes,...r.removedNodes].some(n=>n.nodeType===1&&(n.matches(selector)||n.querySelector(selector)));
+   return [...r.addedNodes,...r.removedNodes].some(n=>n.nodeType===1&&(
+    n.matches(selector+',header')||n.querySelector(selector+',header')
+   ));
   }))schedule();
  }).observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['class','style','hidden','open','inert','aria-hidden','data-game-music','data-music-paused']});
  schedule();

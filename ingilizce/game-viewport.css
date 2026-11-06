@@ -150,3 +150,51 @@ html body .dm-sr-overlay .dm-sr-play{
  width:100%;max-width:none;height:100dvh;max-height:100dvh;border-radius:0;
  padding-top:max(8px,env(safe-area-inset-top,0px));padding-bottom:max(8px,env(safe-area-inset-bottom,0px));
 }
+
+/* Paused overlays own their contrast in both app themes. */
+html[data-dm-theme] body .dm-game-pause-sheet>section,
+html[data-dm-theme] body #pwmRoot .pwm-modal.pause .pwm-card{
+ background:#f5fbff!important;color:#173457!important;
+}
+html[data-dm-theme] body :is(.dm-game-pause-sheet,#pwmRoot .pwm-modal.pause) :is(h2,p){
+ color:#173457!important;-webkit-text-fill-color:#173457!important;text-shadow:none!important;
+}
+html[data-dm-theme] body .dm-game-pause-sheet button{
+ background:#254d79!important;color:#fff!important;-webkit-text-fill-color:#fff!important;
+}
+html[data-dm-theme] body .sa-pause :is(h2,p,b,strong){
+ color:#fff!important;-webkit-text-fill-color:#fff!important;
+}
+
+/* Music lives with the other controls, outside the playing surface. */
+html body :is(header,.rr-hud-stats)>.dm-game-music{
+ position:static;flex:none;z-index:auto;width:38px;height:38px;
+}
+html body .dm-sr-game-head:has(>.dm-game-music){
+ grid-template-columns:auto minmax(0,1fr) auto auto auto;
+}
+html body .dm-sr-game-head>.dm-game-music{grid-column:5;grid-row:1;align-self:center}
+html body .dm-vp-root:is(#dmGameIntro,#yoModal)>.dm-game-music{
+ top:calc(6px + env(safe-area-inset-top,0px));bottom:auto;left:60px;right:auto;width:42px;height:42px;
+}
+@media(max-width:420px){
+ html body #mvOverlay .mv-header{gap:4px;padding-inline:6px}
+ html body #mvOverlay .mv-header>button{width:34px;height:38px;min-width:34px}
+ html body #mvOverlay .mv-header>strong{min-width:0;overflow-wrap:anywhere}
+ html body #kelimeGolu .kg-header h2{font-size:clamp(15px,5vw,21px)!important}
+}
+html[data-dm-theme] body #mvOverlay[data-music-paused="true"] .mv-panel h2{
+ color:#173457!important;-webkit-text-fill-color:#173457!important;
+}
+
+@layer bilgiIslands {
+html body .dm-vp-root:is(#papiCards,#wordWheel,#harfBahcesiOverlay,#soloArcadeOverlay)>:is(.pc-shell,.ww-shell,.hb-card,.sa-shell){
+ padding-top:calc(54px + env(safe-area-inset-top,0px))!important;
+ box-sizing:border-box;
+}
+}
+html body #rallyGame.dm-vp-root .rr-stage{
+ margin-top:calc(54px + env(safe-area-inset-top,0px));
+ height:calc(100% - 54px - env(safe-area-inset-top,0px));
+}
+html body #rallyGame .rr-hud-stats>.dm-game-music{pointer-events:auto}

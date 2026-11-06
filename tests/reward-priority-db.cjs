@@ -33,11 +33,19 @@ function functionSQL(file,name){
  const migration=fs.readdirSync('supabase/migrations').find(n=>n.endsWith('_ranked_learning_rewards.sql'));assert.ok(migration);
  await db.exec(fs.readFileSync(path.join('supabase/migrations',migration),'utf8'));
  const policy=JSON.parse(fs.readFileSync('ingilizce/reward-policy.json','utf8'));
- for(const g of policy.games){const r=(await db.query('select dm_reward_limits($1) r',[g.code])).rows[0].r;assert.deepEqual(r,{xp:g.xp,gold:g.gold});}
  const topicUI=fs.readFileSync('ingilizce/konu-oyunlari.js','utf8');const uiMap=topicUI.match(/const rewardXp=(\{[^;]+\});/);assert.ok(uiMap);assert.deepEqual(require('node:vm').runInNewContext('JSON.stringify('+uiMap[1]+')'),JSON.stringify(policy.topicGames),'Topic labels must match server rewards');
  for(const [code,xp] of Object.entries(policy.topicGames)){const r=(await db.query('select dm_reward_limits($1) r',['konu:'+code])).rows[0].r;assert.equal(r.xp,xp);}
  await db.exec(fs.readFileSync('tests/reward-priority-db.sql','utf8'));
  assert.equal((await db.query('select count(*)::int n from students')).rows[0].n,0,'SQL fixtures must roll back');
+ const arcade=fs.readdirSync('supabase/migrations').find(n=>n.endsWith('_solo_arcade_games.sql'));
+ for(const fn of ['dm_game_reward_claim','dm_solo_fair_claim','dm_solo_fair_percent'])await db.exec(functionSQL(path.join('supabase/migrations',arcade),fn));
+ const scoped=fs.readdirSync('supabase/migrations').find(n=>n.endsWith('_game_class_and_level_rewards.sql'));
+ await db.exec(fs.readFileSync(path.join('supabase/migrations',scoped),'utf8'));
+ for(const g of policy.games){
+  const r=(await db.query('select dm_reward_limits($1) r',[g.code])).rows[0].r;
+  assert.deepEqual(r,{xp:g.xp,gold:g.gold});
+ }
+ await db.exec(fs.readFileSync('tests/game-class-rewards-db.sql','utf8'));
  console.log('PASS: all ranked limits, 7,776 boost/cap cases, lesson tier differences, historical/duplicate guards, 13 solo games, daily bands, route first-clear, rally slowdown, topic quota, online payout/polling, break caps, RPC privileges and rolled-back fixtures');
  await db.close();
 })().catch(e=>{console.error(e.message,e.detail||'',e.where||'');process.exit(1)});
