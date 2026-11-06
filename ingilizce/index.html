@@ -2319,7 +2319,7 @@ function raporlarimKapat() {
             if (!kyAudioElement) {
                 kyAudioElement = new Audio('ozgun/tema-1.mp3'); // Arka plan müzik akışı
                 kyAudioElement.loop = true;
-                kyAudioElement.volume = 0.25;
+                kyAudioElement.volume = 0.10;
             }
             kyAudioElement.play().catch(() => {});
         }
@@ -2377,6 +2377,7 @@ function raporlarimKapat() {
 
             if (kyTimerInterval) clearInterval(kyTimerInterval);
             kyTimerInterval = setInterval(() => {
+                if (OC.aktif?.pauseAt) return;
                 kyGecenSaniye = Math.floor((Date.now() - kyBaslangicZamani) / 1000);
                 document.getElementById('kySureInfo').innerText = `⏱️ Süre: ${kyGecenSaniye}s`;
             }, 1000);
@@ -4168,7 +4169,7 @@ mesajlar.forEach(m => {
                     if (!hafizaAudioElement) {
                         hafizaAudioElement = new Audio('ozgun/tema-1.mp3');
                         hafizaAudioElement.loop = true;
-                        hafizaAudioElement.volume = 0.22;
+                        hafizaAudioElement.volume = 0.10;
                     }
                     hafizaAudioElement.play().catch(() => {});
                 }
@@ -4198,6 +4199,7 @@ mesajlar.forEach(m => {
                     let modalEl = document.getElementById('hafizaOyunOverlay');
                     document.body.appendChild(modalEl);
                     modalEl.style.display = 'flex';
+                    hafizaMuzikBaslat();
                     document.getElementById('hafizaGirisEkrani').style.display = 'block';
                     document.getElementById('hafizaOyunEkrani').style.display = 'none';
                     document.getElementById('hafizaBitisEkrani').style.display = 'none';
@@ -4241,7 +4243,7 @@ mesajlar.forEach(m => {
                     hafizaKartlariCiz();
 
                     if (hafizaTimer) clearInterval(hafizaTimer);
-                    hafizaTimer = setInterval(() => { if (jk.donuk) return; hafizaSure++; document.getElementById('hafizaSureInfo').innerText = `⏱️ ${hafizaSure}s`; }, 1000);
+                    hafizaTimer = setInterval(() => { if (OC.aktif?.pauseAt || jk.donuk) return; hafizaSure++; document.getElementById('hafizaSureInfo').innerText = `⏱️ ${hafizaSure}s`; }, 1000);
                 }
                 let hafizaSeciliAcik = -1, hafizaKilitli = false;
                 function hafizaKartlariCiz() {
@@ -4411,7 +4413,7 @@ mesajlar.forEach(m => {
                     if (!yagmurAudioElement) {
                         yagmurAudioElement = new Audio('ozgun/tema-2.mp3');
                         yagmurAudioElement.loop = true;
-                        yagmurAudioElement.volume = 0.22;
+                        yagmurAudioElement.volume = 0.10;
                     }
                     yagmurAudioElement.play().catch(() => {});
                 }
@@ -4428,6 +4430,7 @@ mesajlar.forEach(m => {
                     let modalEl = document.getElementById('yagmurOyunOverlay');
                     document.body.appendChild(modalEl);
                     modalEl.style.display = 'flex';
+                    yagmurMuzikBaslat();
                     document.getElementById('yagmurGirisEkrani').style.display = 'block';
                     document.getElementById('yagmurOyunEkrani').style.display = 'none';
                     document.getElementById('yagmurBitisEkrani').style.display = 'none';
@@ -4499,6 +4502,7 @@ yagmurHavuz = OC.kelimeSec('yagmur', yagmurHavuz, OC.SORU); OC.basla('yagmur');
 
                     let hiz = (Number(yagmurAktifSinif) <= 2 ? 0.9 : Number(yagmurAktifSinif) <= 4 ? 1.15 : 1.4) * (1 + (yagmurLevel - 1) * 0.06);   /* Hız Fırtınası: doğru bildikçe hızlanır */
                     yagmurInterval = setInterval(() => {
+                        if (OC.aktif?.pauseAt) return;
                                        if (jk.donuk) return;
                         yagmurPozisyon += hiz;
                         el.style.top = yagmurPozisyon + '%';
@@ -4577,7 +4581,7 @@ yagmurHavuz = OC.kelimeSec('yagmur', yagmurHavuz, OC.SORU); OC.basla('yagmur');
                     if (!asmacaAudioElement) {
                         asmacaAudioElement = new Audio('ozgun/tema-3.mp3');
                         asmacaAudioElement.loop = true;
-                        asmacaAudioElement.volume = 0.22;
+                        asmacaAudioElement.volume = 0.10;
                     }
                     asmacaAudioElement.play().catch(() => {});
                 }
@@ -4609,6 +4613,7 @@ yagmurHavuz = OC.kelimeSec('yagmur', yagmurHavuz, OC.SORU); OC.basla('yagmur');
                     let modalEl = document.getElementById('asmacaOyunOverlay');
                     document.body.appendChild(modalEl);
                     modalEl.style.display = 'flex';
+                    asmacaMuzikBaslat();
                     document.getElementById('asmacaGirisEkrani').style.display = 'block';
                     document.getElementById('asmacaOyunEkrani').style.display = 'none';
                     document.getElementById('asmacaBitisEkrani').style.display = 'none';
@@ -4741,7 +4746,7 @@ yagmurHavuz = OC.kelimeSec('yagmur', yagmurHavuz, OC.SORU); OC.basla('yagmur');
                     if (!kelimebulAudioElement) {
                         kelimebulAudioElement = new Audio('ozgun/tema-1.mp3');
                         kelimebulAudioElement.loop = true;
-                        kelimebulAudioElement.volume = 0.22;
+                        kelimebulAudioElement.volume = 0.10;
                     }
                     kelimebulAudioElement.play().catch(() => {});
                 }
@@ -4759,6 +4764,7 @@ yagmurHavuz = OC.kelimeSec('yagmur', yagmurHavuz, OC.SORU); OC.basla('yagmur');
                     let modalEl = document.getElementById('kelimebulOyunOverlay');
                     document.body.appendChild(modalEl);
                     modalEl.style.display = 'flex';
+                    kelimebulMuzikBaslat();
                     document.getElementById('kelimebulGirisEkrani').style.display = 'block';
                     document.getElementById('kelimebulOyunEkrani').style.display = 'none';
                     document.getElementById('kelimebulBitisEkrani').style.display = 'none';
@@ -8262,6 +8268,7 @@ setTimeout(() => {
 
             document.body.appendChild(modal);
             modal.style.setProperty('display', 'flex', 'important');
+                    jeopardyMuzikBaslat();
             modal.style.setProperty('z-index', '9999999', 'important');
 
             let giris = document.getElementById('jpGirisEkrani');
@@ -8363,7 +8370,7 @@ setTimeout(() => {
             if (!jpAudioElement) {
                 jpAudioElement = new Audio('ozgun/tema-2.mp3');
                 jpAudioElement.loop = true;
-                jpAudioElement.volume = 0.25;
+                jpAudioElement.volume = 0.10;
             }
             jpAudioElement.play().catch(() => {});
         }
@@ -8740,7 +8747,7 @@ setTimeout(() => {
             if (!boslukAudioElement) {
                 boslukAudioElement = new Audio('ozgun/tema-3.mp3');
                 boslukAudioElement.loop = true;
-                boslukAudioElement.volume = 0.2;
+                boslukAudioElement.volume = 0.10;
             }
             boslukAudioElement.play().catch(() => {});
         }
@@ -8801,6 +8808,7 @@ setTimeout(() => {
 
             if (boslukTimerInterval) clearInterval(boslukTimerInterval);
             boslukTimerInterval = setInterval(() => {
+                if (OC.aktif?.pauseAt) return;
                 boslukGecenSaniye++;
                 let dk = Math.floor(boslukGecenSaniye / 60);
                 let sn = boslukGecenSaniye % 60;
@@ -19919,6 +19927,7 @@ async function trenOyunuBaslat() {
   if (typeof jokerTuruBaslat === 'function') jokerTuruBaslat('tren', 'trenOyunEkrani');
   if (trenTimer) clearInterval(trenTimer);
   trenTimer = setInterval(() => {
+    if (OC.aktif?.pauseAt) return;
     if (typeof jk !== 'undefined' && jk && jk.donuk) return;
     trenSureD++; trEl('trenSure').innerText = `⏱️ ${trenSureD}s`;
   }, 1000);
@@ -20174,7 +20183,7 @@ window.OC = (function () {
   function hataSay() { yanlis(false); }
   function hesapla() { return DijiScoreRules.calculate({base:d.temelPuan, correct:d.dogru, wrong:d.yanlis, seconds:sure()}); }
   function puan() { return d ? (d.bitti ? d.puan : hesapla().puan) : 0; }
-  function sure() { return d ? (d.bitti ? d.sure : Math.max(0, Math.round((Date.now() - d.bas) / 10) / 100)) : 0; }
+  function sure() { return d ? (d.bitti ? d.sure : Math.max(0, Math.round(((d.pauseAt || Date.now()) - d.bas) / 10) / 100)) : 0; }
   function yildiz(p) { return p >= 800 ? 3 : p >= 500 ? 2 : 1; }
   function sonlandir(oyun) {
     if (!d || d.oyun !== oyun) return sonuclar[oyun] || null;
@@ -26561,15 +26570,15 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <link rel="stylesheet" href="medupro.css?v=20261011-hud">
 <script defer src="medupro.js?v=20261027-kota-2"></script>
 <link rel="stylesheet" href="konu-oyunlari.css?v=20261021-konu-a2-1">
-<script defer src="konu-oyunlari.js?v=20261026-reward-priority-1"></script>
+<script defer src="konu-oyunlari.js?v=20261106-pause"></script>
 <link rel="stylesheet" href="activity-ui.css?v=20261106-teacher-shelves">
 <script defer src="activity-ui.js?v=20261106-teacher-shelves"></script>
 <link rel="stylesheet" href="cumle-yarisi.css?v=20261026-mobile3">
-<script defer src="cumle-yarisi.js?v=20261104-dogrudan"></script>
-<link rel="stylesheet" href="mola-vakti.css?v=20261021-chapters-1">
-<script defer src="mola-chapters.js?v=20261021-chapters-1"></script>
+<script defer src="cumle-yarisi.js?v=20261106-pause"></script>
+<link rel="stylesheet" href="mola-vakti.css?v=20261106-mola-15">
+<script defer src="mola-chapters.js?v=20261106-mola-15"></script>
 <script defer src="mola-core.js?v=20261021-chapters-1"></script>
-<script defer src="mola-vakti.js?v=20261106-shared-energy"></script>
+<script defer src="mola-vakti.js?v=20261106-mola-15"></script>
 <script defer src="navigation-history.js?v=20261106-back-1"></script>
 <script defer src="bottom-nav.js?v=20261106-day-night"></script>
 <script defer src="profile-badges.js?v=20261022-rozet-1"></script>
@@ -26582,7 +26591,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <link rel="stylesheet" href="harf-bahcesi.css?v=1">
 <link rel="stylesheet" href="solo-arcade.css?v=20261029-1">
 <link rel="stylesheet" href="kelime-rallisi.css?v=20261020-slow">
-<script defer src="lazy-games.js?v=20261106-shared-energy"></script>
+<script defer src="lazy-games.js?v=20261106-game-controls"></script>
 <link rel="stylesheet" href="game-experience.css?v=20261011-wordmode">
 <script defer src="game-experience.js?v=20261025-sentence-units-1"></script>
 <script defer src="game-access.js?v=20261020-1"></script>
@@ -26668,7 +26677,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <script defer src="bag-inventory.js?v=20261019-first-tap-4"></script>
 <script defer src="storefront.js?v=20261106-shared-energy"></script>
 <link rel="stylesheet" href="selected-play.css?v=20261011-simple-resume"><script defer src="selected-play.js?v=20261019-step-back-1"></script><script defer src="start-spotlight.js?v=20261026-energy-entry-1"></script>
-<link rel="stylesheet" href="day-night-theme.css?v=20261106-night-contrast">
+<link rel="stylesheet" href="day-night-theme.css?v=20261106-profile-right">
 <link rel="stylesheet" href="member-experience.css?v=20261019-chat-compact-1">
 <script src="placement-bank.js?v=20261013-1"></script>
 <script src="member-experience.js?v=20261028-kota-1"></script><link rel="stylesheet" href="papi-tanitim.css?v=20261022-2"><script defer src="papi-tanitim.js?v=20261023-ilk-karakter-2"></script><script defer src="papi-sayfa-turlari.js?v=20261023-sekme-2"></script><link rel="stylesheet" href="odul-animasyon.css?v=20261022-1"><script defer src="odul-animasyon.js?v=20261022-1"></script>
@@ -26713,13 +26722,30 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <link rel="stylesheet" href="faithful-eight-games.css?v=20261020-selected-art-1">
 <script defer src="faithful-eight-games.js?v=20261028-voice-1"></script>
 <!-- Eight selected mini-games: fullscreen responsive layout and separate back/X controls. -->
-<link rel="stylesheet" href="game-viewport.css?v=20261025-classroom-quiet-2"><script defer src="game-viewport.js?v=20261029-goal-1"></script>
+<link rel="stylesheet" href="game-viewport.css?v=20261106-game-music"><script defer src="game-viewport.js?v=20261106-pause"></script>
+<script defer src="game-music.js?v=20261106-1"></script>
+<script defer src="game-pause.js?v=20261106-1"></script>
+<script>
+window.dmClassicGameClocks={
+ ky: elapsed=>{kyBaslangicZamani+=elapsed;kySoruBaslangicZamani+=elapsed;},
+ jp: elapsed=>{jpBaslangicZamani+=elapsed;jpSoruBaslangicZamani+=elapsed;},
+ yagmur: elapsed=>{yagmurBaslangic+=elapsed;yagmurKelimeBaslangicZamani+=elapsed;},
+ asmaca: elapsed=>{asmacaBaslangic+=elapsed;asmacaKelimeBaslangicZamani+=elapsed;},
+ kelimebul: elapsed=>{kelimebulBaslangic+=elapsed;kelimebulKelimeBaslangicZamani+=elapsed;}
+};
+window.dmClassicGameAudio={
+ ky:[kelimeMuzikDurdur,kelimeMuzikBaslat],jp:[jeopardyMuzikDurdur,jeopardyMuzikBaslat],
+ bosluk:[boslukMuzikDurdur,boslukMuzikBaslat],hafiza:[hafizaMuzikDurdur,hafizaMuzikBaslat],
+ yagmur:[yagmurMuzikDurdur,yagmurMuzikBaslat],asmaca:[asmacaMuzikDurdur,asmacaMuzikBaslat],
+ kelimebul:[kelimebulMuzikDurdur,kelimebulMuzikBaslat]
+};
+</script>
 <link rel="stylesheet" href="eight-game-fullscreen.css?v=20261020-fit-v1">
 <script defer src="eight-game-fullscreen.js?v=20261025-close-1"></script>
 <link rel="stylesheet" href="teacher-portal.css?v=20261025-teacher-fixes-1"><script defer src="teacher-portal.js?v=20261106-midnight-home"></script><script defer src="teacher-classes.js?v=20261105-1"></script><script defer src="teacher-reports.js?v=20261104-2"></script><script defer src="teacher-plan-notice.js?v=20261105-1"></script><script defer src="admin-gift.js?v=20261104-2"></script><script defer src="admin-ads.js?v=20261105-1"></script><script defer src="admin-push.js?v=20261105-1"></script><link rel="stylesheet" href="teacher-splash-control.css?v=20261030-1"><script defer src="teacher-splash-control.js?v=20261030-1"></script>
 <script defer src="announcements.js?v=20261028-kota-1"></script>
 <script defer src="teacher-message-notices.js?v=20261027-kota-2"></script>
 <link rel="stylesheet" href="kelime-golu.css?v=20261029-1">
-<script defer src="kelime-golu.js?v=20261029-1"></script>
+<script defer src="kelime-golu.js?v=20261106-pause"></script>
 </body>      
         </html>

@@ -102,7 +102,7 @@ function shell(){
  <header class="pwm-top">
   <button type="button" class="pwm-round" data-back aria-label="Oyunlardan çık"><svg viewBox="0 0 24 24"><path d="M15 5 8 12l7 7"/></svg></button>
   <div class="pwm-title"><img class="pwm-title-book" src="${A}icon-books.webp" alt=""><div><b>Premium Oyun</b><strong>Candy Papiş</strong></div><small>✦ Kelimeleri Eşleştir, Öğren, Puan Kazan! ✦</small></div>
-  <div class="pwm-top-right"><span class="pwm-energy" title="Enerji"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg><b data-energy>–</b></span><button type="button" class="pwm-round" data-sound aria-label="Sesi aç veya kapat"></button></div>
+  <div class="pwm-top-right"><span class="pwm-energy" title="Enerji"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg><b data-energy>–</b></span><button type="button" class="pwm-round" data-pause aria-label="Oyunu duraklat" hidden>Ⅱ</button><button type="button" class="pwm-round" data-sound aria-label="Sesi aç veya kapat"></button></div>
  </header>
  <img class="pwm-witch" src="${A}char-witch-idle.webp" alt="" aria-hidden="true">
  <div class="pwm-badge" aria-hidden="true"><img src="${A}icon-crown.webp" alt=""><span>PREMIUM<br>OYUN</span></div>
@@ -111,7 +111,8 @@ function shell(){
  <div class="pwm-toast" role="status" hidden></div>`;
  document.body.append(root);document.body.classList.add('pwm-active');window.dmPapiNotices?.pause?.();
  $('[data-back]').onclick=()=>back();
- $('[data-sound]').onclick=()=>{sound.on=!sound.on;store.set('dm_pwm_sound',sound.on);paintSound();if(sound.on){if(G)sound.startMusic();sound.tick();}else{sound.stopMusic();}};
+ $('[data-pause]').onclick=()=>{if(G&&!G.over&&!G.busy)back();};
+ $('[data-sound]').onclick=()=>{sound.on=!sound.on;store.set('dm_pwm_sound',sound.on);paintSound();if(sound.on){if(!G||!G.paused)sound.startMusic();sound.tick();}else{sound.stopMusic();}};
  paintSound();
  root.addEventListener('keydown',e=>{if(e.key==='Escape'){e.preventDefault();back();}});
  window.dmViewHistory?.track?.(root,{parent,close:()=>close(true),back:()=>back(true)});
@@ -176,7 +177,7 @@ function comingSoon(){
 
 /* ---------- bölüm haritası ---------- */
 function home(){
- view='home';root.dataset.view='home';G=null;sound.stopMusic();hideModal();setBg(world);
+ view='home';root.dataset.view='home';G=null;$('[data-pause]').hidden=true;sound.startMusic();hideModal();setBg(world);
  const lv=status?.level||1,stars=status?.stars||{};
  const levels=[];for(let i=(world-1)*20+1;i<=world*20;i++){const s=Number(stars[i]||0),locked=i>lv;levels.push(`<button type="button" class="pwm-lv${locked?' locked':''}${i===lv?' current':''}" data-lv="${i}" ${locked?'aria-disabled="true"':''} aria-label="Seviye ${i}${locked?', kilitli':', '+s+' yıldız'}"><b>${i}</b>${locked?`<img src="${A}icon-lock.webp" alt="">`:`<span class="pwm-lv-stars">${[1,2,3].map(k=>`<i class="${k<=s?'on':''}"></i>`).join('')}</span>`}</button>`);}
  const total=Object.values(stars).reduce((a,b)=>a+Number(b||0),0);
@@ -233,7 +234,7 @@ async function start(level,cfg,words){
 }
 
 function game(){
- view='game';root.dataset.view='game';const g=G;
+ view='game';root.dataset.view='game';$('[data-pause]').hidden=false;const g=G;
  $('.pwm-stage').innerHTML=`<section class="pwm-game">
   <div class="pwm-playline"><div class="pwm-lvribbon">Seviye ${g.level}</div><div class="pwm-moves"><small>Hamle</small><b data-moves>${g.st.moves}</b></div></div>
   <div class="pwm-info">
@@ -369,6 +370,7 @@ function countUp(el,from,to){const t0=performance.now(),d=420;const f=()=>{const
 /* ---------- çizim döngüsü ---------- */
 function loop(now){
  const g=G;if(!g||!root)return;g.frame=requestAnimationFrame(loop);
+ if(g.paused)return;
  const {ctx:x,cell:C,size}=g;x.clearRect(0,0,size,size);
  x.save();if(g.shake>0){x.translate((Math.random()-.5)*g.shake,(Math.random()-.5)*g.shake);g.shake*=.86;if(g.shake<.4)g.shake=0;}
  // hücre zemini
@@ -411,7 +413,7 @@ function roundRect(x,a,b,w,h,r){x.beginPath();x.moveTo(a+r,b);x.arcTo(a+w,b,a+w,
 
 /* ---------- dokunma ---------- */
 function cellAt(e){const g=G,r=g.canvas.getBoundingClientRect();const c=Math.floor((e.clientX-r.left)/g.cell),row=Math.floor((e.clientY-r.top)/g.cell);return row>=0&&c>=0&&row<g.st.rows&&c<g.st.cols?[row,c]:null;}
-function down(e){const g=G;if(!g||g.busy||g.over)return;sound.ac();g.idle=performance.now();g.hint=null;const at=cellAt(e);if(!at)return;
+function down(e){const g=G;if(!g||g.busy||g.over||g.paused)return;sound.ac();g.idle=performance.now();g.hint=null;const at=cellAt(e);if(!at)return;
  try{g.canvas.setPointerCapture(e.pointerId);}catch{}
  if(g.mode==='satir'){useRow(at[0]);return;}
  if(g.mode==='renk'){useColor(at);return;}
@@ -447,7 +449,7 @@ async function spendBooster(k){
  catch(e){toast(e.message);return false;}
 }
 async function booster(k){
- const g=G;if(!g||g.busy||g.over)return;sound.ac();
+ const g=G;if(!g||g.busy||g.over||g.paused)return;sound.ac();
  if(g.mode===k){g.mode=null;showMode('');paintBoosters();return;}
  if(!practice&&Number(g.boosters[k]||0)<1){shop(k);return;}
  const core=window.dmPwmCore;
@@ -477,7 +479,7 @@ async function win(){
 }
 async function lose(){sound.fail();$('.pwm-witch').src=A+'char-witch-idle.webp';await sleep(500);finish(false);}
 async function finish(won){
- const g=G;if(!g)return;sound.stopMusic();
+ const g=G;if(!g)return;$('[data-pause]').hidden=true;sound.stopMusic();
  const body={runId:g.runId,score:g.st.score,won,moves:g.st.movesUsed,seconds:Math.round((Date.now()-g.started)/1000)};
  const c=modal('<h2 class="pwm-ribbon-title">'+(won?'Tebrikler!':'Hamlen bitti')+'</h2><p class="pwm-muted">Sonucun kaydediliyor…</p>','result');
  let d=null;
@@ -504,9 +506,13 @@ function stopGame(){if(!G)return;cancelAnimationFrame(G.frame);G.ro?.disconnect(
 /* ---------- kapanış ---------- */
 function back(fromPop=false){
  if(G&&!G.over&&view==='game'){
+  if(G.busy||G.paused)return;
+  G.paused=true;G.drag=null;$('.pwm-stage').inert=true;sound.stopMusic();
   const c=modal('<h2 class="pwm-ribbon-title">Oyun duraklatıldı</h2><p>Çıkarsan bu bölüm biter ve kullandığın hak/enerji geri gelmez.</p><div class="pwm-actions"><button type="button" class="pwm-btn gold" data-c>▶ Devam et</button><button type="button" class="pwm-btn ghost" data-q>Bölümden çık</button></div>','pause');
   if(fromPop){try{history.pushState({...history.state,dmPwm:navKey},'');}catch{}}
-  c.querySelector('[data-c]').onclick=()=>hideModal();c.querySelector('[data-q]').onclick=()=>{const g=G;g.over=true;hideModal();finish(false);};return;
+  const resume=()=>{G.paused=false;G.idle=performance.now();$('.pwm-stage').inert=false;hideModal();};
+  c.querySelector('[data-c]').onclick=()=>{resume();sound.startMusic();};
+  c.querySelector('[data-q]').onclick=()=>{const g=G;g.over=true;resume();finish(false);};return;
  }
  if(view==='game'&&G?.over){stopGame();home();if(fromPop){try{history.pushState({...history.state,dmPwm:navKey},'');}catch{}}return;}
  close(fromPop);

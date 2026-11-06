@@ -139,7 +139,7 @@
       syncMusic();
       panel.querySelector('button')?.focus();
     }
-    function syncMusic() { sound.music(active()); }
+    function syncMusic() { sound.music(active() || (!game && world.hidden)); }
     function update(data) {
       state = {...state, ...data};
       if (data.energyMax) window.headerEnerjiGoster?.(data.energy, data.energyMax);
@@ -391,6 +391,8 @@
     dialog.addEventListener('cancel', event => { event.preventDefault(); if (active()) pause(); else if (!busy) close(); });
     const watch = setInterval(() => { if (player() !== account) close(); }, 700);
     dialog.showModal();
+    dialog.addEventListener('click', () => { sound.unlock(); syncMusic(); }, {once:true});
+    sound.unlock();
     home();
   }
 })();

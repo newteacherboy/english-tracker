@@ -118,3 +118,35 @@ html body #meteorGame .mt-setup .mt-ranking{position:absolute!important;inset:8p
 @media(max-width:360px){html body #meteorGame .mt-category{display:none!important}html body #meteorGame .mt-title{font-size:15px!important;padding:8px 18px!important}html body #meteorGame .mt-brand{font-size:18px!important}html body #meteorGame .mt-audio button{font-size:9px!important;padding:4px!important}}
 @media(max-height:500px) and (min-width:650px){html body #meteorGame .mt-setup form{display:grid!important;grid-template-columns:1fr 1fr!important;grid-template-rows:auto auto auto minmax(40px,1fr)!important;align-content:start!important;gap:4px!important}html body #meteorGame .mt-fields{grid-column:1/-1!important;grid-row:1!important}html body #meteorGame .mt-modes{grid-column:1!important;grid-row:2!important}html body #meteorGame .mt-count{grid-column:2!important;grid-row:2!important;align-self:center!important}html body #meteorGame .mt-help{grid-column:1!important;grid-row:3!important}html body #meteorGame .mt-history{grid-column:2!important;grid-row:3!important}html body #meteorGame .mt-start{grid-column:1/-1!important;grid-row:4!important;align-self:end!important;margin:0!important}}
 }
+html body .dm-game-music{
+ position:absolute;z-index:2147483646;bottom:calc(10px + env(safe-area-inset-bottom,0px));right:calc(10px + env(safe-area-inset-right,0px));
+ width:44px;height:44px;padding:0;display:grid;place-items:center;border-radius:14px;border:1px solid #a9bedb;
+ background:#f5fbff;color:#244672;font:900 22px/1 system-ui;box-shadow:0 2px 9px #163c6829;cursor:pointer;
+}
+html body .dm-game-music[aria-pressed=false]{color:#67758b;background:#eef1f6}
+html body .dm-game-pause-sheet{
+ position:absolute;inset:0;z-index:2147483647;display:grid;place-items:center;padding:20px;
+ background:#111f45a6;backdrop-filter:blur(4px);text-align:center;
+}
+html body .dm-game-pause-sheet section{
+ max-width:100%;padding:24px;border-radius:22px;background:#f5fbff;color:#244672;box-shadow:0 12px 40px #172d604d;
+}
+html body .dm-game-pause-sheet h2{margin:0 0 16px;font:900 clamp(19px,5vw,26px)/1.2 system-ui}
+html body .dm-game-pause-sheet button,.dm-local-game-pause{
+ min-height:44px;padding:8px 14px;border:1px solid #a9bedb;border-radius:14px;background:#f5fbff;color:#244672;font:800 16px system-ui;cursor:pointer;
+}
+html body .dm-vp-root>.dm-vp-pause{
+ position:absolute;top:calc(6px + env(safe-area-inset-top,0px));right:60px;z-index:2147483646;
+ width:42px;min-height:42px;padding:0;
+}
+html body .dm-sr-overlay .dm-sr-game-head:has([data-pause]){grid-template-columns:auto minmax(0,1fr) auto auto}
+html body .dm-sr-overlay .dm-sr-game-head [data-pause]{grid-column:3;grid-row:1;width:42px;padding:0;align-self:center}
+html body .dm-sr-overlay .dm-sr-game-head:has([data-pause]) .dm-sr-close{grid-column:4}
+html body .dm-vp-root:is(#esOyunOverlay,#trenOyunOverlay)>.dm-game-music{
+ top:calc(6px + env(safe-area-inset-top,0px));bottom:auto;left:60px;right:auto;width:42px;height:42px;
+}
+html body .dm-sr-overlay:has(.dm-sr-play){padding:0}
+html body .dm-sr-overlay .dm-sr-play{
+ width:100%;max-width:none;height:100dvh;max-height:100dvh;border-radius:0;
+ padding-top:max(8px,env(safe-area-inset-top,0px));padding-bottom:max(8px,env(safe-area-inset-bottom,0px));
+}

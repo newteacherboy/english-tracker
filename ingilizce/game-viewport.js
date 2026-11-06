@@ -1,6 +1,7 @@
 /* One viewport and two explicit exits. Native game cleanup remains authoritative. */
 (()=>{'use strict';
  const classics={kelimeYarismaOverlay:['kelimeYarismasiKapat','kelimeYarismasiAc'],jpOyunOverlay:['jpOyunKapat','jpOyunAc'],boslukOyunOverlay:['boslukOyunKapat','boslukOyunAc'],hafizaOyunOverlay:['hafizaOyunKapat','hafizaOyunAc'],yagmurOyunOverlay:['yagmurOyunKapat','yagmurOyunAc'],asmacaOyunOverlay:['asmacaOyunKapat','asmacaOyunAc'],kelimebulOyunOverlay:['kelimebulOyunKapat','kelimebulOyunAc'],esOyunOverlay:['esOyunKapat','esOyunAc'],trenOyunOverlay:['trenOyunKapat','trenOyunAc']};
+ const classicStages={kelimeYarismaOverlay:['ky','#kyOyunEkrani'],jpOyunOverlay:['jp','#jpBalonEkrani,#jpSoruEkrani'],boslukOyunOverlay:['bosluk','#boslukOyunEkrani'],hafizaOyunOverlay:['hafiza','#hafizaOyunEkrani'],yagmurOyunOverlay:['yagmur','#yagmurOyunEkrani'],asmacaOyunOverlay:['asmaca','#asmacaOyunEkrani'],kelimebulOyunOverlay:['kelimebul','#kelimebulOyunEkrani'],esOyunOverlay:['es','#esOyunEkrani'],trenOyunOverlay:['tren','#trenOyunEkrani']};
  const modern={kelimeGolu:'dmKelimeGolu',rallyGame:'dmRally',wordWheel:'dmWordWheel',papiCards:'dmPapiCards',meteorGame:'dmMeteor',mvOverlay:'dmMola',kgOverlay:'dmTopicGames'};
  const selector='.game-modal-overlay,#harfBahcesiOverlay,#dmGameIntro,#yoModal.acik[data-dm-selected-game],#rallyGame,#wordWheel,#papiCards,#meteorGame,#mvOverlay,#kgOverlay,#onlineMatch,#dmArenaOverlay,#dmMatchOverlay,#genelSonucOverlay.acik,#dyOyunOverlay,.dm-garden-match,.kart-oyun-overlay,.kp-shell,.ba-shell';
  // Observe the base IDs as well: when .acik is removed the element no longer
@@ -23,6 +24,36 @@
   try{await closeNative(root);if(back&&!shown(root)){const opener=classics[root.id]?.[1];if(opener&&typeof window[opener]==='function'){window.dmGameReopeningSetup=true;try{await window[opener]();}finally{window.dmGameReopeningSetup=false;}}}}
   finally{window.dmGameExitIntent='';delete root.dataset.vpClosing;queueMicrotask(()=>{sync();if(!back&&window.dmTeacherPortalMode)window.dmTeacherPortal?.returnToGames?.();});}
  }
+ function classicPause(root){
+  const config=classicStages[root.id];
+  if(!config||!window.dmLocalGamePause)return;
+  const [key,stage]=config,round=window.OC?.aktif;
+  if(round?.oyun===key&&round.pauseAt&&!round.bitti)return;
+  const playing=round?.oyun===key&&!round.bitti&&[...root.querySelectorAll(stage)].some(shown);
+  let button=root.querySelector(':scope > .dm-vp-pause');
+  if(!playing){
+   button?.remove();root.querySelector(':scope > .dm-game-pause-sheet button')?.click();
+   return;
+  }
+  if(button)return;
+  button=document.createElement('button');button.type='button';button.className='dm-local-game-pause dm-vp-pause';
+  button.setAttribute('aria-label','Oyunu duraklat');button.textContent='Ⅱ';
+  button.onclick=()=>{
+   const activeRound=window.OC?.aktif;
+   if(activeRound?.oyun!==key||activeRound.bitti||activeRound.pauseAt)return;
+   activeRound.pauseAt=Date.now();
+   window.dmClassicGameAudio?.[key]?.[0]();
+   window.speechSynthesis?.cancel();
+   window.dmLocalGamePause(root,root.querySelector('.game-modal-content'),elapsed=>{
+    delete activeRound.pauseAt;
+    if(activeRound!==window.OC?.aktif||activeRound.bitti||!shown(root))return;
+    activeRound.bas+=elapsed;
+    window.dmClassicGameClocks?.[key]?.(elapsed);
+    window.dmClassicGameAudio?.[key]?.[1]();
+   });
+  };
+  root.append(button);
+ }
  function decorate(root){
   if(root.id==='kelimeGolu'){if(!root.classList.contains('dm-vp-root'))root.classList.add('dm-vp-root');return;}
   if(!native(root)&&!classics[root.id]&&!modern[root.id])return;
@@ -41,9 +72,13 @@
   for(const root of document.querySelectorAll(watchSelector)){
    if(!shown(root)||!root.matches(selector)){
     if(root.classList.contains('dm-vp-root'))root.classList.remove('dm-vp-root');
+    if(classicStages[root.id]){
+     root.querySelector(':scope > .dm-game-pause-sheet button')?.click();
+     root.querySelector(':scope > .dm-vp-pause')?.remove();
+    }
     continue;
    }
-   decorate(root);active=active||root.classList.contains('dm-vp-root');
+   decorate(root);classicPause(root);active=active||root.classList.contains('dm-vp-root');
   }
   document.body.classList.toggle('dm-game-viewport',active);
   // A third-party close animation may not mutate the DOM when it finishes.
@@ -57,7 +92,7 @@
  new MutationObserver(records=>{if(records.some(watchChange))schedule();}).observe(document.body,{subtree:true,childList:true,attributes:true,attributeFilter:['style','class','hidden','aria-hidden','inert','data-dm-nav-suspended']});
  window.addEventListener('resize',schedule);window.visualViewport?.addEventListener('resize',schedule);
  // Native keyboard handling should invoke the same cleanup as the visible X.
- document.addEventListener('keydown',e=>{if(e.key!=='Escape')return;const root=[...document.querySelectorAll('.dm-vp-root')].filter(shown).at(-1);if(root){e.preventDefault();e.stopImmediatePropagation();void navigate(root,false);}},true);
+ document.addEventListener('keydown',e=>{if(e.key!=='Escape'||e.target.closest?.('.dm-game-pause-sheet'))return;const root=[...document.querySelectorAll('.dm-vp-root')].filter(shown).at(-1);if(root){e.preventDefault();e.stopImmediatePropagation();void navigate(root,false);}},true);
  window.dmGameViewport={sync,navigate,diagnostics:()=>({
   locked:document.body.classList.contains('dm-game-viewport'),
   visibleGames:[...document.querySelectorAll(selector)].filter(shown).map(e=>e.id||String(e.className)).slice(0,20)
