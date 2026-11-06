@@ -137,7 +137,7 @@ function speak(text){try{if(!soundOn()||!window.speechSynthesis||!window.SpeechS
 function stop(){clearTimeout(timer);clearTimeout(speechTimer);try{window.speechSynthesis?.cancel();}catch{}}
 function clearRoot(){epoch++;stop();activeRequest?.abort();clearInterval(watch);if(!root)return;window.dmViewHistory?.leave(root);root.remove();root=null;document.body.classList.remove('kg-active');window.dmPapiNotices?.resume?.();}
 function close(fromPop=false){const ad=reklamSonuc;reklamSonuc=null;const key=navKey;clearRoot();navKey='';origin?.focus?.({preventScroll:true});if(!fromPop&&history.state?.dmTopic===key)history.back();window.DijiReklam?.sonucKapandi(ad,true);}
-function shell(label){if(root){window.dmViewHistory?.leave(root);root.remove();}root=document.createElement('section');root.id='kgOverlay';root.className='kg-overlay';root.setAttribute('role','dialog');root.setAttribute('aria-modal','true');root.setAttribute('aria-label',label);
+function shell(label){if(root){window.dmViewHistory?.leave(root);root.remove();}root=document.createElement('section');root.id='kgOverlay';root.className='kg-topic-overlay';root.setAttribute('role','dialog');root.setAttribute('aria-modal','true');root.setAttribute('aria-label',label);
  root.innerHTML='<div class="kg-shell"><header><button type="button" data-back aria-label="Önceki ekrana dön">‹</button><strong>'+esc(label)+'</strong><button type="button" data-sound aria-label="Sesi kapat">🔊</button><button type="button" data-close aria-label="Konu oyununu kapat">×</button></header><div class="kg-content"></div></div>';
  readSound();const sound=root.querySelector('[data-sound]');const sync=()=>{sound.innerHTML=soundIcon(enabled);sound.setAttribute('aria-label',enabled?'Sesi kapat':'Sesi aç');sound.setAttribute('aria-pressed',String(enabled));};sync();sound.onclick=()=>{enabled=!enabled;try{localStorage.setItem(soundKey(),enabled?'on':'off');}catch{}if(enabled)unlockAudio();else{clearTimeout(speechTimer);try{window.speechSynthesis?.cancel();audio?.suspend()?.catch?.(()=>{});}catch{}}sync();};root.addEventListener('pointerdown',unlockAudio,{capture:true});root.addEventListener('keydown',unlockAudio,{capture:true});
  root.querySelector('[data-close]').onclick=()=>close();root.querySelector('[data-back]').onclick=()=>{if(root.classList.contains('kg-sheet'))close();else showSheet();};
@@ -145,8 +145,36 @@ function shell(label){if(root){window.dmViewHistory?.leave(root);root.remove();}
  document.body.append(root);document.body.classList.add('kg-active');window.dmPapiNotices?.pause?.();window.dmViewHistory?.track(root,{parent:returnView,close:()=>close(),back:()=>showSheet()});root.querySelector('[data-back]').focus();
  return root.querySelector('.kg-content');}
 async function openTopic(t){if(window.dmTeacherPortalMode&&!await window.dmTeacherPortal?.beforeGame('topic',[t]))return;if(root)close(true);owner=who();topic=t;origin=document.activeElement;returnView=window.dmViewHistory?.capture();navKey=crypto.randomUUID();history.pushState({...history.state,dmTopic:navKey},'');showSheet();watch=setInterval(()=>{if(owner!==who())close();},500);}
-function showSheet(){epoch++;stop();activeRequest?.abort();const box=shell(title(topic));root.classList.add('kg-sheet');box.innerHTML='<p>Konuyu oynayarak pekiştir.</p>'+topic.games.map(g=>{const left=quota.get(quotaKey(topic,g));return '<button type="button" class="kg-game-card" data-game="'+g+'"><b>'+esc(topic.titles[g])+'</b><span>'+esc(desc[g])+'</span><small>'+(practice()?(guest()?'XP kazanmak için giriş yap':'Öğretmen için alıştırma · XP yok'):left===undefined?'Günde en fazla 3 XP hakkı · kalan hak oyun açılırken kontrol edilir':'Bugün '+left+' XP hakkın kaldı')+'</small>'+(practice()||window.dmTeacherPortalMode?'':'<small>%80 ve üzeri → +'+rewardXp[g]+' XP</small>')+'<strong>Oyna ›</strong></button>';}).join('')+'<p class="kg-prize">Ödül, seçtiğin oyuna göre değişir.</p>';
- box.querySelectorAll('[data-game]').forEach(b=>b.onclick=()=>start(b.dataset.game));}
+// Small vector scenes keep the game choices recognizable without extra downloads.
+const gameArt={
+ kova:'<path d="M35 37h53l-7 33H42z" fill="#2588dc"/><ellipse cx="61.5" cy="37" rx="26.5" ry="6" fill="#76d4ff"/><path d="M39 37q22-38 45 0" fill="none" stroke="#245483" stroke-width="4"/><path d="m66 12 3 7 8 1-6 5 2 8-7-4-7 4 2-8-6-5 8-1z" fill="#ffcb3d"/>',
+ cark:'<circle cx="60" cy="42" r="30" fill="#fff" stroke="#7b49c4" stroke-width="5"/><path d="M60 42V16a26 26 0 0 1 26 26Z" fill="#f288be"/><path d="M60 42h26a26 26 0 0 1-26 26Z" fill="#84dcb3"/><path d="M60 42v26a26 26 0 0 1-26-26Z" fill="#ffd365"/><path d="M60 42H34a26 26 0 0 1 26-26Z" fill="#9bbaff"/><circle cx="60" cy="42" r="5" fill="#7b49c4"/><path d="M52 7h16l-8 12z" fill="#54368d"/>',
+ balon:'<path d="M42 54q-5 10 2 19m34-22q6 13-1 24" fill="none" stroke="#70447a" stroke-width="2"/><ellipse cx="42" cy="35" rx="19" ry="22" fill="#ec67ad"/><ellipse cx="79" cy="31" rx="18" ry="21" fill="#8668e8"/><path d="M32 31q1-7 7-10m32 7q1-7 7-9" fill="none" stroke="#fff" stroke-opacity=".8" stroke-width="4" stroke-linecap="round"/>',
+ dy:'<rect x="21" y="18" width="37" height="48" rx="10" fill="#37a877" transform="rotate(-9 39 42)"/><rect x="63" y="18" width="37" height="48" rx="10" fill="#df647c" transform="rotate(9 81 42)"/><path d="m30 42 7 7 13-15m25 1 13 13m0-13L75 48" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>',
+ sohbet:'<path d="M29 15h48a10 10 0 0 1 10 10v15a10 10 0 0 1-10 10H46L29 61V50a10 10 0 0 1-10-10V25a10 10 0 0 1 10-10Z" fill="#4986e0"/><path d="M66 42h26a9 9 0 0 1 9 9v10a9 9 0 0 1-9 9v9L78 70H66a9 9 0 0 1-9-9V51a9 9 0 0 1 9-9Z" fill="#39a47a"/><path d="M37 33h.1m14 0h.1m14 0h.1m5 23h16" stroke="#fff" stroke-width="5" stroke-linecap="round"/>',
+ durum:'<circle cx="87" cy="22" r="12" fill="#ffca4f"/><path d="M23 60V31l21-17 21 17v29Z" fill="#f18e52"/><path d="M33 60V43h14v17m25 0V41h21v19" fill="#9454a6"/><path d="M18 61h85" stroke="#6f567d" stroke-width="5" stroke-linecap="round"/><path d="M72 44l10-9 12 9" fill="none" stroke="#b76398" stroke-width="4" stroke-linecap="round"/>',
+};
+function showSheet(){
+ epoch++;stop();activeRequest?.abort();
+ const box=shell(title(topic));
+ root.classList.add('kg-sheet');
+ const cards=topic.games.map(g=>{
+  const left=quota.get(quotaKey(topic,g));
+  const quotaLabel=practice()
+   ?(guest()?'XP kazanmak için giriş yap':'Öğretmen için alıştırma · XP yok')
+   :left===undefined?'Günde en fazla 3 XP hakkı · kalan hak oyun açılırken kontrol edilir':'Bugün '+left+' XP hakkın kaldı';
+  return `<button type="button" class="kg-game-card" data-game="${esc(g)}">
+   <span class="kg-game-art" aria-hidden="true"><svg viewBox="0 0 120 84" focusable="false">${gameArt[g]}</svg></span>
+   <b>${esc(topic.titles[g])}</b>
+   <span class="kg-game-desc">${esc(desc[g])}</span>
+   <small>${quotaLabel}</small>
+   ${practice()||window.dmTeacherPortalMode?'':'<small>%80 ve üzeri → +'+rewardXp[g]+' XP</small>'}
+   <strong>Oyna ›</strong>
+  </button>`;
+ }).join('');
+ box.innerHTML='<p class="kg-sheet-intro">Konuyu oynayarak pekiştir.</p><div class="kg-game-grid">'+cards+'</div><p class="kg-prize">Ödül, seçtiğin oyuna göre değişir.</p>';
+ box.querySelectorAll('[data-game]').forEach(b=>b.onclick=()=>start(b.dataset.game));
+}
 async function start(g){stop();game=g;picks=[];index=0;correct=0;streak=0;run=null;questions=[];const token=++epoch;const box=shell(topic.titles[game]);box.innerHTML='<p role="status">Sorular hazırlanıyor…</p>';
  try{const d=await api('konuOyunBaslat',{topicKey:topic.key,game});if(token!==epoch||owner!==who()||!root)return;questions=d.sorular;run=d.runId;quota.set(quotaKey(topic,game),d.bugunXpHakki);play();}catch(e){if(token!==epoch||!root)return;box.innerHTML='<p role="alert">'+esc(e.message)+'</p><button type="button" data-retry>Tekrar dene</button>';box.querySelector('button').onclick=()=>start(game);}
 }

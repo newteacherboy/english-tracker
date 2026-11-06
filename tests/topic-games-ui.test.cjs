@@ -2,7 +2,7 @@ const {test}=require('node:test'),assert=require('node:assert/strict'),fs=requir
 const C=require('../ingilizce/konu-oyunlari-a1.js'),topics=require('./topic-games-topics.json');
 const rewards=require('../ingilizce/reward-policy.json').topicGames;
 const {chromium}=require(process.env.TOPIC_PLAYWRIGHT_PATH||'playwright');
-const html=`<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="activity-ui.css"><link rel="stylesheet" href="konu-oyunlari.css"><link rel="stylesheet" href="day-night-theme.css"><style>body{margin:0;font-family:Arial,sans-serif}.dc-focus-card{padding:10px}button{font-family:inherit}h2{color:#fff!important}</style><script>var aktifOgrenciAdi='QA';var apiURL='/api';var dcTumKonularCache=null;window.dmMeduPro={api:async()=>({liste:[]})};window.speechSynthesis={cancel(){},speak(){}};window.dmProgression={allowed:()=>true,status:()=>({studyAccess:{A2:false}})};localStorage.setItem('ing_token','fixture');</script><script defer src="konu-oyunlari.js"></script><script defer src="activity-ui.js"></script><div id="tab-aktiviteler" class="active"><div class="dc-focus-card"><div class="az-grid2x2"><button class="az-gcard" onclick="kelimeYarismasiAc()">Kelime</button></div></div></div>`;
+const html=`<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="activity-ui.css"><link rel="stylesheet" href="konu-oyunlari.css"><link rel="stylesheet" href="day-night-theme.css"><link rel="stylesheet" href="game-viewport.css"><link rel="stylesheet" href="kelime-golu.css"><style>body{margin:0;font-family:Arial,sans-serif}.dc-focus-card{padding:10px}button{font-family:inherit}h2{color:#fff!important}</style><script>var aktifOgrenciAdi='QA';var apiURL='/api';var dcTumKonularCache=null;window.dmMeduPro={api:async()=>({liste:[]})};window.speechSynthesis={cancel(){},speak(){}};window.dmProgression={allowed:()=>true,status:()=>({studyAccess:{A2:false}})};localStorage.setItem('ing_token','fixture');</script><script defer src="konu-oyunlari.js"></script><script defer src="activity-ui.js"></script><div id="tab-aktiviteler" class="active"><div class="dc-focus-card"><div class="az-grid2x2"><button class="az-gcard" onclick="kelimeYarismasiAc()">Kelime</button></div></div></div>`;
 test('360px real browser: tab keyboard, locked levels, all six games, guest result, quota, exits and account change',{timeout:90000},async()=>{
  const {buildQuestions}=await import('../ingilizce/topic-games-core.mjs');let latest,student=true,calls=[],browser,server;
  const runs=new Map();
@@ -75,7 +75,36 @@ test('360px real browser: tab keyboard, locked levels, all six games, guest resu
    const text=await page.locator('[data-pick="'+selected+'"]').evaluate(el=>{el.click();return document.querySelector('.kg-sentence').textContent;});if(number===18){assert(text.includes(q.before+"'s"));assert(!/\s+'s/.test(text));}
   }await page.locator('.kg-result').waitFor();await page.locator('[data-topics]').click();await page.locator('#kgOverlay').waitFor({state:'detached'});
  }
- await page.setViewportSize({width:1280,height:900});const wheelTopic=C.find(t=>t.type==='vocab');await page.locator('[data-topic]').evaluateAll((nodes,key)=>nodes.find(b=>b.dataset.topic===key).click(),wheelTopic.key);await page.locator('[data-game=cark]').click();await page.locator('.kg-wheel-wrap').waitFor();const size=await page.locator('.kg-wheel-wrap').boundingBox();assert(size.width>=350,JSON.stringify(size));assert(size.width<=820);await page.locator('[data-close]').click();
+ await page.setViewportSize({width:1280,height:900});
+ await page.evaluate(()=>document.documentElement.dataset.dmTheme='night');
+ const boardTopic=C.find(t=>t.type==='grammar'&&t.sortNo===19);
+ await page.locator('[data-topic]').evaluateAll((nodes,key)=>nodes.find(b=>b.dataset.topic===key).click(),boardTopic.key);
+ const sheet=page.locator('#kgOverlay');
+ await sheet.evaluate(el=>el.classList.add('dm-vp-root'));
+ const cards=sheet.locator('.kg-game-card');
+ assert.equal(await cards.count(),2);
+ assert.equal(await cards.locator('svg').count(),2);
+ const [firstCard,secondCard]=await Promise.all([cards.first().boundingBox(),cards.last().boundingBox()]);
+ assert.equal(firstCard.y,secondCard.y);
+ assert(secondCard.x>firstCard.x+firstCard.width);
+ assert.equal(await cards.first().locator('b').evaluate(el=>getComputedStyle(el).color),'rgb(33, 55, 75)');
+ assert.equal(await cards.first().evaluate(el=>getComputedStyle(el).backgroundColor),'rgb(255, 255, 255)');
+ await sheet.locator('[data-game=dy]').click();
+ const boardQuestion=sheet.locator('.kg-stage h2'),boardAnswer=sheet.locator('[data-pick]').first();
+ await boardAnswer.waitFor();
+ await sheet.evaluate(el=>el.classList.add('dm-vp-root'));
+ assert(await boardQuestion.evaluate(el=>parseFloat(getComputedStyle(el).fontSize))>=40);
+ assert(await boardAnswer.evaluate(el=>parseFloat(getComputedStyle(el).fontSize))>=30);
+ const [prompt,answer]=await Promise.all([boardQuestion.boundingBox(),boardAnswer.boundingBox()]);
+ assert(answer.y-(prompt.y+prompt.height)<85,JSON.stringify({prompt,answer}));
+ await sheet.locator('[data-close]').click();
+ const wheelTopic=C.find(t=>t.type==='vocab');
+ await page.locator('[data-topic]').evaluateAll((nodes,key)=>nodes.find(b=>b.dataset.topic===key).click(),wheelTopic.key);
+ await page.locator('[data-game=cark]').click();
+ await page.locator('.kg-wheel-wrap').waitFor();
+ const size=await page.locator('.kg-wheel-wrap').boundingBox();
+ assert(size.width>=350&&size.width<=820,JSON.stringify(size));
+ await page.locator('[data-close]').click();
  assert.deepEqual(errors,[]);
  }finally{await browser?.close();await new Promise(r=>server.close(r));}
 });
