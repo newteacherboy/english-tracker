@@ -65,9 +65,9 @@
   function shortcutsHtml() {
     const pending = invites.some(x=>x.durum==='bekliyor'&&norm(x.alici)===norm(who()));
     return `<div class="fr-summaries">
-      <div class="fr-friend-shortcut"><button type="button" data-friend-action="people">${icon('people')}<strong>Arkadaşlarım</strong></button>
+      <div class="fr-friend-shortcut"><button type="button" data-friend-action="people"><img class="fr-shortcut-art" src="route-assets/bilgi-icons/friends.webp" alt="" decoding="async"><strong>Arkadaşlarım</strong></button>
         <button type="button" class="fr-invite-cta" data-friend-action="share">${icon('add')}<b>Davet et</b></button></div>
-      <button type="button" class="fr-tile fr-duel-tile" data-friend-action="matches" data-friends-gate="duello">${icon('swords')}<strong>Düello</strong>${pending?'<span class="fr-duel-dot" aria-label="Yeni oyun daveti"></span>':icon('chevron')}</button>
+      <button type="button" class="fr-tile fr-duel-tile" data-friend-action="matches" data-friends-gate="duello">${icon('swords','fr-shortcut-art')}<span class="fr-duel-label"><strong>Düello</strong>${pending?'<span class="fr-duel-dot" aria-label="Yeni oyun daveti"></span>':icon('chevron')}</span></button>
     </div>`;
   }
   const filterOptions = [['herkes','Herkes'],['takip','Takip ettiklerim'],['online','Çevrimiçi']];
@@ -97,7 +97,7 @@
     return rows.map((event,index)=>{
       const id=String(event.k), congratulated=maTebrik.has('akis-'+id);
       const person=typeof maTumListe!=='undefined'?maTumListe.find(x=>norm(x.id)===norm(event.ogr)):null;
-      const action=event.tur==='eksi'?'':`<button type="button" class="fr-congrats${congratulated?' basili':''}" data-friend-action="congratulate" data-event="${esc(id)}" aria-pressed="${congratulated}" aria-label="${congratulated?'Tebrik edildi':'Tebrik et'}">${icon('applause')}</button>`;
+      const action=event.tur==='eksi'?'':`<button type="button" class="fr-congrats${congratulated?' basili':''}" data-friend-action="congratulate" data-event="${esc(id)}" aria-pressed="${congratulated}" aria-label="${congratulated?'Tebrik edildi':'Tebrik et'}">${icon('applause','fr-applause')}</button>`;
       return `<article class="fr-event" data-fr-color="${index}" data-safety-event="${esc(id)}"><button type="button" class="fr-event-person" data-o="${esc(event.ogr)}" data-person="${esc(event.ogr)}" data-friend-action="profile">${avatar(person?.ad||event.ogr,44)}<span><b>${esc(event.ad||event.ogr)}</b><small title="${esc(event.metin)}">${esc(window.DMFriendsFeed.summarize?.(event) ?? event.metin)}</small></span></button>${action}</article>`;
     }).join('');
   }
@@ -111,9 +111,10 @@
   }
   function renderHome() {
     if (maSekme!=='hub'||maProfilId) return;
-    const scroll = root.scrollTop;
-    $('maEkran').innerHTML=homeHtml();
-    viewHeader();paintLocks();dockSpace();root.scrollTop=scroll;
+    const screen = $('maEkran');
+    const scroll = screen.scrollTop;
+    screen.innerHTML=homeHtml();
+    viewHeader();paintLocks();dockSpace();screen.scrollTop=scroll;
   }
   function paintLocks() {
     root.querySelectorAll('[data-friends-gate]').forEach(b=>{const blocked=!permitted(b.dataset.friendsGate);b.classList.toggle('fr-locked',blocked);b.setAttribute('aria-disabled',String(blocked));});
@@ -159,7 +160,7 @@
   window.maAkisListeHtml=function(){
     const saved=maAkisVeri, filter=maFiltre;
     let rows=window.DMFriendsFeed.select(saved).filter(e=>filter==='takip'?maTakip.has(e.ogr):filter==='online'?online(e.ogr):true);
-    if(maSekme==='hub'&&!maProfilId)return compactFeedHtml(rows.slice(0,4));
+    if(maSekme==='hub'&&!maProfilId)return compactFeedHtml(rows.slice(0,2));
     let html;
     try{maAkisVeri=rows;maFiltre='herkes';html=originalFeed.call(this);}finally{maAkisVeri=saved;maFiltre=filter;}
     if(!rows.length&&saved.length)html='<div class="ma-bos">'+(filter==='online'?'Şu anda çevrimiçi arkadaşlarından bir paylaşım yok.':filter==='takip'?'Takip ettiklerinden henüz bir paylaşım yok.':'Henüz bir paylaşım yok.')+'</div>';
@@ -193,7 +194,7 @@
   };
   window.maSekmeSec=function(s){
     if(s==='parkur'||s==='kesfet'||s==='hub'){
-      ++maCizNo;maSekme='hub';maProfilId=null;viewHeader();renderHome();void loadHome();root.scrollTop=0;
+      ++maCizNo;maSekme='hub';maProfilId=null;viewHeader();renderHome();void loadHome();$('maEkran').scrollTop=0;
       if(s==='kesfet')void openMatches();return;
     }
     if(['akis','vitrin','lig'].includes(s)&&!requireFeature(s))return;
@@ -209,7 +210,7 @@
   function paintCongratulation(button) {
     const sent=maTebrik.has('akis-'+button.dataset.event);
     button.classList.add('fr-congrats');
-    button.innerHTML=icon('applause');
+    button.innerHTML=icon('applause',button.closest('.fr-event')?'fr-applause':'');
     const label=sent?'Tebrik edildi':'Tebrik et';
     button.setAttribute('aria-label',label);
     button.setAttribute('aria-pressed',String(sent));
@@ -315,21 +316,8 @@
       root.style.setProperty('--fr-home-height',Math.max(0,Math.floor(bottom-bounds.top))+'px');
     }
   }
-  const themeColor = document.querySelector('meta[name="theme-color"]');
-  let previousChrome;
-  function syncHomeChrome() {
-    const home = root.classList.contains('active') && root.classList.contains('fr-home-view');
-    if (home) {
-      previousChrome ||= {color:themeColor?.content};
-      const surface = getComputedStyle(root).getPropertyValue('--fr-surface').trim();
-      if (themeColor && surface && themeColor.content!==surface) themeColor.content=surface;
-    } else if (previousChrome) {
-      if (themeColor) themeColor.content=previousChrome.color;
-      previousChrome=undefined;
-    }
-  }
-  new MutationObserver(()=>{syncHomeChrome();dockSpace();}).observe(root,{attributes:true,attributeFilter:['class']});
-  window.addEventListener('pageshow',()=>{syncHomeChrome();dockSpace();});
+  new MutationObserver(dockSpace).observe(root,{attributes:true,attributeFilter:['class']});
+  window.addEventListener('pageshow',dockSpace);
   window.addEventListener('resize',dockSpace,{passive:true});
   window.visualViewport?.addEventListener('resize',dockSpace,{passive:true});
   window.visualViewport?.addEventListener('scroll',dockSpace,{passive:true});

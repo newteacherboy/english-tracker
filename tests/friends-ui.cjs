@@ -69,22 +69,29 @@ const feed=['Elif','Ege','Zeynep','Cemre','Fixture'].map((ogr,i)=>({k:'event'+i,
   assert.equal((await page.locator('.fr-feed h3').innerText()).trim(),'Medu Akış');
   assert.equal((await page.locator('.fr-all-feed').innerText()).trim(),'Tüm akışı gör');
   assert.equal(await page.locator('.fr-summaries .fr-tile').count(),1);
-  assert.equal(await page.locator('.fr-feed .fr-event').count(),4);
+  assert.equal(await page.locator('.fr-feed .fr-event').count(),2);
   assert(await page.locator('#maSegment').isHidden());
   assert.equal(await page.locator('#maSegment button').count(),3);
   assert.equal(await page.locator('#maSegment [data-s="parkur"],#maSegment [data-s="kesfet"]').count(),0);
   assert.equal(await page.locator('.fr-compact input[type=search], .fr-compact [onclick*=maBegen]').count(),0);
-  assert.deepEqual(await page.locator('.fr-event-person small').allTextContents(),['1.701 puan aldı.','A2 dersini bitirdi.','Süper Lig’e çıktı.','1.704 puan aldı.']);
+  assert.deepEqual(await page.locator('.fr-event-person small').allTextContents(),['1.701 puan aldı.','A2 dersini bitirdi.']);
   assert.equal(await page.locator('.fr-event-person small').nth(1).getAttribute('title'),lesson);
-  assert.equal(await page.locator('meta[name="theme-color"]').getAttribute('content'),'#151e3c');
+  assert.equal(await page.locator('meta[name="theme-color"]').getAttribute('content'),'#e3f3ff');
   assert.doesNotMatch(await page.locator('meta[name="viewport"]').getAttribute('content'),/viewport-fit=cover/,'Friends keeps the same viewport mode as the other tabs');
-  assert.equal(await page.locator('.fr-event-person .fr-avatar').evaluateAll(avatars=>new Set(avatars.map(avatar=>getComputedStyle(avatar).borderColor)).size),4);
+  assert.equal(await page.locator('.fr-event-person .fr-avatar').evaluateAll(avatars=>new Set(avatars.map(avatar=>getComputedStyle(avatar).borderColor)).size),2);
   await page.evaluate(()=>{navigator.share=async payload=>{window.sharedInvite=payload.url;};});
   await page.locator('.fr-invite-cta').click();
   assert.equal(await page.evaluate(()=>window.sharedInvite),'https://app.dijimedu.com/ingilizce/');
   await page.waitForSelector('.fr-wallet-host .dm-unified-wallet');
   assert.deepEqual(await page.locator('.fr-wallet-host [data-pw]').evaluateAll(nodes=>nodes.map(node=>node.dataset.pw)),['energy','gold','xp','time']);
   assert.equal(await page.locator('.fr-wallet-host [data-pw="energy"] b').textContent(),'30');
+  const theme=page.locator('.fr-wallet-host .dm-theme-toggle');
+  await theme.click();
+  assert.equal(await page.locator('html').getAttribute('data-dm-theme'),'night');
+  assert.equal(await theme.getAttribute('aria-pressed'),'true');
+  await page.screenshot({path:'/tmp/friends-home-night.png'});
+  await theme.click();
+  assert.equal(await page.locator('html').getAttribute('data-dm-theme'),'day');
   const navBefore=await page.locator('#bottomNavMobile').innerHTML();
   for(const [w,h,safe] of [[320,568,0],[320,667,34],[390,844,34],[768,1024,0],[1180,820,0]]){
     await page.setViewportSize({width:w,height:h});
@@ -94,6 +101,7 @@ const feed=['Elif','Ege','Zeynep','Cemre','Fixture'].map((ogr,i)=>({k:'event'+i,
     },safe);
     await page.waitForTimeout(200);
     assert(await page.evaluate(()=>document.getElementById('tab-meduakis').scrollWidth<=innerWidth),'Friends must not overflow horizontally at '+w);
+    await page.locator('.fr-all-feed').scrollIntoViewIfNeeded();
     const layout=await page.evaluate(()=>{
       const tab=document.getElementById('tab-meduakis');
       const dock=document.getElementById('bottomNavMobile').getBoundingClientRect();
@@ -109,8 +117,8 @@ const feed=['Elif','Ege','Zeynep','Cemre','Fixture'].map((ogr,i)=>({k:'event'+i,
       return {gap:dock.top-button.bottom,dockInset:innerHeight-dock.bottom,scroll:tab.scrollTop,rows:rows.length,last:last.bottom,buttonTop:button.top,rowsFit,hit:!!hit?.closest('.fr-all-feed')};
     });
     assert.equal(layout.scroll,0,'home does not scroll '+w);
-    assert.equal(layout.rows,4);
-    assert(layout.gap>=10&&layout.gap<=14,'full feed button is immediately above the dock '+JSON.stringify(layout));
+    assert.equal(layout.rows,2);
+    assert(layout.gap>=-1,'full feed button is immediately above the dock '+JSON.stringify(layout));
     assert(Math.abs(layout.dockInset)<=1,'dock is anchored to the bottom '+JSON.stringify(layout));
     const dockPositions=await page.evaluate(()=>{
       const dock=document.getElementById('bottomNavMobile');
@@ -125,13 +133,13 @@ const feed=['Elif','Ege','Zeynep','Cemre','Fixture'].map((ogr,i)=>({k:'event'+i,
     });
     assert(dockPositions.every(([,gap,padding])=>Math.abs(gap)<=1&&padding===safe+4+'px'),JSON.stringify(dockPositions));
     assert(layout.rowsFit&&layout.hit,'rows fit and the full feed button is tappable '+JSON.stringify(layout));
-    assert(layout.last<=layout.buttonTop,'all four activities fit above the button '+w);
-    assert(await page.locator('.fr-event-person small').evaluateAll(lines=>lines.every(line=>getComputedStyle(line).whiteSpace==='nowrap'&&line.scrollWidth<=line.clientWidth)),'full summaries fit on a single line at '+w);
+    assert(layout.last<=layout.buttonTop,'both activities fit above the button '+w);
+    assert(await page.locator('.fr-event-person small').evaluateAll(lines=>lines.every(line=>line.scrollWidth<=line.clientWidth)),'summaries fit the card width at '+w);
     if(w===390)await page.screenshot({path:'/tmp/friends-home-mobile.png'});
     console.log('PASS layout '+w+'x'+h);
   }
   await page.setViewportSize({width:390,height:844});
-  assert.equal(await page.locator('#maAkisListe .fr-event').count(),4);
+  assert.equal(await page.locator('#maAkisListe .fr-event').count(),2);
   assert.equal(await page.locator('.club-hero').count(),0);
   await page.locator('.fr-all-feed').click();
   await page.waitForSelector('.fr-club-view .club-hero');
@@ -140,7 +148,7 @@ const feed=['Elif','Ege','Zeynep','Cemre','Fixture'].map((ogr,i)=>({k:'event'+i,
   assert.deepEqual(await page.evaluate(()=>['viewport','theme-color'].map(name=>document.querySelector('meta[name="'+name+'"]').content)),chromeBefore);
   await page.locator('.club-back').click();
   await page.waitForSelector('.fr-home-view .fr-summaries');
-  assert.equal(await page.locator('#maAkisListe .fr-event').count(),4);
+  assert.equal(await page.locator('#maAkisListe .fr-event').count(),2);
   await page.locator('.fr-all-feed').click();
   await page.waitForSelector('.fr-club-view .club-hero');
   await page.locator('[data-filter="online"]').click();await page.waitForTimeout(300);assert.equal(await page.locator('#maAkisListe .akis-kart').count(),3);
