@@ -16,7 +16,14 @@ const palettes=[{bg:['#effff5','#c6ead6'],ink:'#205951',accent:'#1eb596'},{bg:['
 function rounded(ctx,x,y,w,h,r){ctx.beginPath();ctx.roundRect(x,y,w,h,r);}
 function textLines(ctx,text,x,y,width,size,lineHeight,max=3){ctx.font='900 '+size+'px system-ui';let line='',lines=[];for(const word of String(text).split(/\s+/)){if(ctx.measureText(line+' '+word).width>width&&line){lines.push(line);line=word;}else line+=(line?' ':'')+word;}if(line)lines.push(line);lines.slice(0,max).forEach((t,i)=>ctx.fillText(t,x,y+i*lineHeight));return Math.min(lines.length,max)*lineHeight;}
 function loadImage(src){return new Promise((resolve,reject)=>{const img=new Image();img.onload=()=>resolve(img);img.onerror=()=>reject(Error('Görsel yüklenemedi.'));img.src=src;});}
-async function artwork(item){if(item.svg){const svg=item.svg.includes('xmlns=')?item.svg:item.svg.replace('<svg ','<svg xmlns="http://www.w3.org/2000/svg" ');return loadImage('data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg));}if(item.src)return loadImage(new URL(item.src,location.href).href);return null;}
+async function artwork(item){
+ if(item.sprite){
+  const {src,x,y,size}=item.sprite,atlas=await loadImage(new URL(src,location.href).href);
+  const tile=document.createElement('canvas');tile.width=tile.height=size;
+  tile.getContext('2d').drawImage(atlas,x,y,size,size,0,0,size,size);
+  return tile;
+ }
+ if(item.svg){const svg=item.svg.includes('xmlns=')?item.svg:item.svg.replace('<svg ','<svg xmlns="http://www.w3.org/2000/svg" ');return loadImage('data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg));}if(item.src)return loadImage(new URL(item.src,location.href).href);return null;}
 async function render(item,theme){
  const canvas=document.createElement('canvas');canvas.width=1080;canvas.height=1080;
  const c=canvas.getContext('2d');if(!c)throw Error('Görsel oluşturma desteklenmiyor.');
@@ -43,7 +50,7 @@ async function render(item,theme){
  try{const papi=await loadImage(new URL('papi-reward-v2.png',location.href).href);const ratio=Math.min(260/papi.width,260/papi.height);c.save();c.shadowColor='#123d7a88';c.shadowBlur=16;c.drawImage(papi,80,542,papi.width*ratio,papi.height*ratio);c.restore();}catch(e){console.warn('Papi görseli yüklenemedi',e)}
  c.save();c.shadowColor='#12245e99';c.shadowBlur=16;c.shadowOffsetY=8;c.fillStyle='#14275b';rounded(c,168,728,744,108,34);c.fill();c.restore();
  c.fillStyle=ivory;textLines(c,item.name,540,771,682,Math.max(34,Math.min(62,640/(Math.max(item.name.length,7)*.55))),54,2);
- c.fillStyle='#ffffff';c.font='750 24px system-ui';c.fillText(placement?'Yaklaşık CEFR ön değerlendirmesi · Resmî belge değildir.':badge?'İngilizce yolculuğunda harika ilerliyorsun!':'İngilizce yolculuğunda yeni bir arkadaş.',540,870,920);
+ c.fillStyle='#ffffff';c.font='750 24px system-ui';c.fillText(placement?'Yaklaşık CEFR ön değerlendirmesi · Resmî belge değildir.':badge?(item.caption||'İngilizce yolculuğunda harika ilerliyorsun!'):'İngilizce yolculuğunda yeni bir arkadaş.',540,870,920);
  c.fillStyle=gold;c.font='950 69px system-ui';c.fillText('DijiMedu',540,945);
  c.fillStyle='#ffffff';c.font='700 26px system-ui';c.fillText('Sen de keşfet • app.dijimedu.com',540,999);
  const blob=await new Promise((resolve,reject)=>canvas.toBlob(b=>b?resolve(b):reject(Error('Görsel kaydedilemedi.')),'image/png'));return {canvas,blob};

@@ -57,6 +57,54 @@
       "reference": null,
       "prompt": "Approved Diji-Medu Papi growth sheet: same turquoise and yellow parrot identity in four stages, baby in an egg, reading learner, young explorer with a gold star, mature crowned master with open wings. Transparent background. Orange beak and feet, brown eyes, purple wing tips. Original character illustration for the 40-level learning journey.",
       "processing": "Approved generated PNG encoded as WebP quality 85; no artwork changes."
+    },
+    {
+      "file": "ingilizce/parkur-badges/learning-02.webp",
+      "mode": "generate",
+      "reference": "Diji Medu Papi mascot",
+      "prompt": "Approved 2026-11-06 ImageGen concept sheet: Öğrenme Yolu · Gökyüzünden Uzaya. Distinct full-body Papi collectible poses. Figures packaged as a transparent WebP sprite atlas."
+    },
+    {
+      "file": "ingilizce/parkur-badges/learning-03.webp",
+      "mode": "generate",
+      "reference": "Diji Medu Papi mascot",
+      "prompt": "Approved 2026-11-06 ImageGen concept sheet: Gökyüzü Maceraları: 20 Papi Figürü. Distinct full-body Papi collectible poses. Figures packaged as a transparent WebP sprite atlas."
+    },
+    {
+      "file": "ingilizce/parkur-badges/learning-04.webp",
+      "mode": "generate",
+      "reference": "Diji Medu Papi mascot",
+      "prompt": "Approved 2026-11-06 ImageGen concept sheet: Öğrenme Yolu · Uzak Galaksiler. Distinct full-body Papi collectible poses. Figures packaged as a transparent WebP sprite atlas."
+    },
+    {
+      "file": "ingilizce/parkur-badges/papi-01.webp",
+      "mode": "generate",
+      "reference": "Diji Medu Papi mascot",
+      "prompt": "Approved 2026-11-06 ImageGen concept sheet: İki öğrenme yolunda sekiz Papi rozeti. Distinct full-body Papi collectible poses. Figures packaged as a transparent WebP sprite atlas."
+    },
+    {
+      "file": "ingilizce/parkur-badges/school-02.webp",
+      "mode": "generate",
+      "reference": "Diji Medu Papi mascot",
+      "prompt": "Approved 2026-11-06 ImageGen concept sheet: Okul Yolum · 1. Sınıf. Distinct full-body Papi collectible poses. Figures packaged as a transparent WebP sprite atlas."
+    },
+    {
+      "file": "ingilizce/parkur-badges/school-03.webp",
+      "mode": "generate",
+      "reference": "Diji Medu Papi mascot",
+      "prompt": "Approved 2026-11-06 ImageGen concept sheet: Okul Yolum · Sanat ve Spor. Distinct full-body Papi collectible poses. Figures packaged as a transparent WebP sprite atlas."
+    },
+    {
+      "file": "ingilizce/parkur-badges/school-04.webp",
+      "mode": "generate",
+      "reference": "Diji Medu Papi mascot",
+      "prompt": "Approved 2026-11-06 ImageGen concept sheet: Okul Yolum · Doğa ve Meslekler. Distinct full-body Papi collectible poses. Figures packaged as a transparent WebP sprite atlas."
+    },
+    {
+      "file": "ingilizce/parkur-badges/school-05.webp",
+      "mode": "generate",
+      "reference": "Diji Medu Papi mascot",
+      "prompt": "Approved 2026-11-06 ImageGen concept sheet: Okul Yolum · Oyun ve Keşif. Distinct full-body Papi collectible poses. Figures packaged as a transparent WebP sprite atlas."
     }
   ]
 }

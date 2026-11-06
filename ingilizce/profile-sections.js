@@ -24,7 +24,7 @@
     if(!ogrenci()||!panels[key])return;
     window.dcTumTamEkranlariKapat?.();sekme=key;const el=ensurePanel(key);el.classList.add('active');el.scrollTop=0;
     window.dcBottomNavSenkronize?.();
-    if(key==='istatistik'){rozetOturumu();istatCiz();beceriGetir();}else if(key==='rozetler')rozetCiz();else karakterCiz();
+    if(key==='istatistik'){rozetOturumu();istatCiz();beceriGetir();}else if(key==='rozetler'){rozetCiz();window.dmRouteBadges?.collection($('bdRozet'));}else karakterCiz();
     istatGetir();
   }
   window.dmIlerlememAc=()=>openPanel('istatistik');
