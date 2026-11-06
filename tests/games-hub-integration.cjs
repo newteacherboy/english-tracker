@@ -76,7 +76,7 @@ await page.evaluate(games=>{
  for(const [id,open] of games)window[open]=()=>window.openedPremium.push(id);
 },premiumGames);
 assert(await page.locator('.gg-teacher-shelves').isVisible());
-assert.deepEqual(await page.locator('.gg-group h2').allTextContents(),['Premium','Tek Kişilik','Kapışma','Konu']);
+assert.deepEqual(await page.locator('.gg-group h2').allTextContents(),['Premium','Tek Kişilik','Kapışma','Konu Oyunları']);
 assert(await page.locator('.gg-brand').isHidden());
 await page.locator('#ggPremiumTab').click();
 assert.deepEqual((await shelfIds()).sort(),premiumGames.map(([id])=>id).sort());

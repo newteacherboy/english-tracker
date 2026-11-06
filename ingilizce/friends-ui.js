@@ -97,7 +97,7 @@
     return rows.map((event,index)=>{
       const id=String(event.k), congratulated=maTebrik.has('akis-'+id);
       const person=typeof maTumListe!=='undefined'?maTumListe.find(x=>norm(x.id)===norm(event.ogr)):null;
-      const action=event.tur==='eksi'?'':`<button type="button" class="fr-congrats${congratulated?' basili':''}" data-friend-action="congratulate" data-event="${esc(id)}" aria-pressed="${congratulated}" aria-label="${congratulated?'Tebrik edildi':'Tebrik et'}">${icon('applause','fr-applause')}</button>`;
+      const action=event.tur==='eksi'?'':`<button type="button" class="fr-congrats${congratulated?' basili':''}" data-friend-action="congratulate" data-event="${esc(id)}" aria-pressed="${congratulated}" aria-label="${congratulateLabel(congratulated)}">${congratulateLabel(congratulated)}</button>`;
       return `<article class="fr-event" data-fr-color="${index}" data-safety-event="${esc(id)}"><button type="button" class="fr-event-person" data-o="${esc(event.ogr)}" data-person="${esc(event.ogr)}" data-friend-action="profile">${avatar(person?.ad||event.ogr,44)}<span><b>${esc(event.ad||event.ogr)}</b><small title="${esc(event.metin)}">${esc(window.DMFriendsFeed.summarize?.(event) ?? event.metin)}</small></span></button>${action}</article>`;
     }).join('');
   }
@@ -207,11 +207,12 @@
     document.dispatchEvent(new Event('dm:friends-open'));
     return result;
   };
+  function congratulateLabel(sent){return sent?'Tebrik edildi':'Tebrik et';}
   function paintCongratulation(button) {
     const sent=maTebrik.has('akis-'+button.dataset.event);
     button.classList.add('fr-congrats');
-    button.innerHTML=icon('applause',button.closest('.fr-event')?'fr-applause':'');
-    const label=sent?'Tebrik edildi':'Tebrik et';
+    const label=congratulateLabel(sent);
+    button.textContent=label;
     button.setAttribute('aria-label',label);
     button.setAttribute('aria-pressed',String(sent));
   }

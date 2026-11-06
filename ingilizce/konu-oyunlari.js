@@ -9,7 +9,7 @@ const practice=()=>guest()||who().toLowerCase()==='teacher';
 const title=t=>t.key.split('|').slice(2).join('|').split(' — ').at(-1);
 const reduced=()=>window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
 let reklamSonuc=null;
-let level='A1',catalogs={},catalog,core,loading,rows,category='all',root=null,owner='',topic,game,run,questions=[],picks=[],index=0,correct=0,streak=0,epoch=0,timer,watch,origin,navKey='',returnView,quota=new Map(),quotaDay='',activeRequest;
+let level='A1',catalogs={},catalog,core,loading,rows,category='all',query='',root=null,owner='',topic,game,run,questions=[],picks=[],index=0,correct=0,streak=0,epoch=0,timer,watch,origin,navKey='',returnView,quota=new Map(),quotaDay='',activeRequest;
 const desc={kova:'Kelimeyi oku, doğru görselin kovasına dokun.',cark:'Çarkı çevir, görselin İngilizcesini seç.',balon:'Cümleyi tamamlayan balonu patlat.',dy:'Cümle dil bilgisi açısından doğru mu? Karar ver.',sohbet:'Bir arkadaşınla konuş, doğru cevabı seç.',durum:'Günlük durumlarda ne söyleyeceğini keşfet.'};
 function quotaKey(t,g){const day=new Intl.DateTimeFormat('en-CA',{timeZone:'Europe/Istanbul',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());if(day!==quotaDay){quota.clear();quotaDay=day;}return who()+'|'+t.key+'|'+g;}
 async function api(islem,data={}){
@@ -38,16 +38,100 @@ function readSound(){try{enabled=localStorage.getItem(soundKey())!=='off';}catch
 function soundOn(){return enabled&&window.dmSoundEnabled!==false&&window.dmSound?.enabled!==false;}
 function unlockAudio(){try{if(!soundOn())return;const C=window.AudioContext||window.webkitAudioContext;if(!C)return;if(!audio)audio=new C();if(audio.state==='suspended')audio.resume()?.catch?.(()=>{});}catch{}}
 function effect(kind){try{if(!soundOn())return;unlockAudio();if(!audio)return;const notes=kind==='right'?[[660,0,.11],[880,.12,.13]]:kind==='wrong'?[[220,0,.12],[165,.15,.13]]:kind==='win'?[[523,0,.1],[659,.11,.1],[784,.22,.1],[1047,.33,.16]]:[[392,0,.25]];for(const [hz,delay,duration] of notes){const o=audio.createOscillator(),g=audio.createGain(),at=audio.currentTime+delay;o.type=kind==='wrong'?'triangle':'sine';o.frequency.setValueAtTime(hz,at);g.gain.setValueAtTime(0,at);g.gain.linearRampToValueAtTime(.12,at+.012);g.gain.exponentialRampToValueAtTime(.001,at+duration);o.connect(g);g.connect(audio.destination);o.start(at);o.stop(at+duration+.02);o.onended=()=>{try{o.disconnect();g.disconnect();}catch{}};}}catch{}}
-async function mount(host){
- let hub=host.querySelector('.kg-hub');if(!hub){hub=document.createElement('section');hub.className='kg-hub';hub.id='kgTopicPanel';hub.setAttribute('role','tabpanel');hub.setAttribute('aria-labelledby','ggKonuTab');host.querySelector('.az-grid2x2').before(hub);}
- hub.hidden=false;if(hub.dataset.loaded)return;
+async function mount(host,initialCategory){
+ let hub=host.querySelector('.kg-hub');
+ if(!hub){
+  hub=document.createElement('section');
+  hub.className='kg-hub';
+  hub.id='kgTopicPanel';
+  hub.setAttribute('aria-labelledby','kgHubTitle');
+  host.querySelector('.az-grid2x2').before(hub);
+ }
+ if(initialCategory){category=initialCategory;query='';}
+ hub.hidden=false;
+ if(hub.dataset.loaded){if(initialCategory)drawList(hub);return;}
+ if(hub.dataset.loading)return;
+ hub.dataset.loading='1';
  hub.innerHTML='<p role="status">Konu oyunları yükleniyor…</p>';
- try{await load();if(!hub.isConnected)return;hub.dataset.loaded='1';drawList(hub);}catch(e){hub.innerHTML='<p role="alert">'+esc(e.message)+'</p><button type="button">Tekrar dene</button>';hub.querySelector('button').onclick=()=>mount(host);}
+ try{await load();if(!hub.isConnected)return;hub.dataset.loaded='1';drawList(hub);}
+ catch(e){
+  hub.innerHTML='<p role="alert">'+esc(e.message)+'</p><button type="button">Tekrar dene</button>';
+  hub.querySelector('button').onclick=()=>mount(host);
+ }finally{delete hub.dataset.loading;}
 }
-function drawList(hub){hub.innerHTML='<div class="kg-chips" aria-label="Dil seviyesi">'+['A1','A2','B1','B2'].map(l=>'<button type="button" data-level="'+l+'" aria-pressed="'+(l===level)+'">'+l+(l==='A2'?(levelOpen('A2')?'':' 🔒'):l==='A1'?'':' 🔒 <small>Yakında</small>')+'</button>').join('')+'</div><p class="kg-note" role="status"></p><div class="kg-chips" aria-label="Kategori filtresi">'+[['all','Tümü'],['vocab','Kelimeler'],['grammar','Dil Bilgisi'],['comm','İletişim']].map(([k,v])=>'<button type="button" data-category="'+k+'" aria-pressed="'+(category===k)+'"><span class="kg-filter-symbol" aria-hidden="true">'+({all:'▦',vocab:'Aa',grammar:'≡',comm:'☏'}[k])+'</span>'+v+'</button>').join('')+'</div><div class="kg-list">'+rows.filter(r=>r.seviye===level&&(category==='all'||r.kategori===category)).map(r=>{const key=[r.seviye,r.kategori,r.konuAdi].join('|'),t=catalog.find(t=>t.key===key);return '<button type="button" data-topic="'+esc(key)+'" '+(!t?'aria-disabled="true"':'')+'><span aria-hidden="true">'+cats[r.kategori][1]+'</span><span><b>'+esc(r.konuAdi.split(' — ').at(-1))+'</b><small>'+cats[r.kategori][0]+' · '+(t?'2 oyun':'Yakında')+'</small></span><span aria-hidden="true">›</span></button>';}).join('')+'</div>';
- hub.querySelectorAll('[data-level]').forEach(b=>{b.setAttribute('aria-disabled',String(b.dataset.level==='A2'&&!levelOpen('A2')));b.onclick=async()=>{const next=b.dataset.level;if(!['A1','A2'].includes(next)){hub.querySelector('.kg-note').textContent='Bu seviyenin oyunları yakında geliyor.';return;}if(!levelOpen(next)){hub.querySelector('.kg-note').textContent="A2 oyunları, Ders Çalış'ta A2 seviyen açıldığında burada da açılır.";return;}try{await loadLevel(next);if(!hub.isConnected)return;level=next;catalog=catalogs[next];drawList(hub);}catch(e){hub.querySelector('.kg-note').textContent=e.message;}};});
- hub.querySelectorAll('[data-category]').forEach(b=>b.onclick=()=>{category=b.dataset.category;drawList(hub);hub.querySelector('[data-category="'+category+'"]').focus();});
- hub.querySelectorAll('[data-topic]').forEach(b=>b.onclick=()=>{const t=catalog.find(t=>t.key===b.dataset.topic);if(t)openTopic(t);else hub.querySelector('.kg-note').textContent='Bu konunun oyunları yakında geliyor.';});
+const searchText=value=>String(value??'').toLocaleLowerCase('tr').normalize('NFD').replace(/\p{M}/gu,'').replace(/ı/g,'i');
+function drawList(hub){
+ hub.innerHTML=`<h2 id="kgHubTitle">Konu Oyunları</h2>
+ <form class="kg-search" role="search" aria-label="Konu oyunları">
+  <input type="search" aria-label="Konu veya oyun adı" placeholder="Konu veya oyun adı…" autocomplete="off">
+  <button type="submit">Ara</button>
+ </form>
+ <div class="kg-control">
+  <span id="kgLevelLabel">Dil seviyesi</span>
+  <div class="kg-chips" role="group" aria-labelledby="kgLevelLabel">${['A1','A2','B1','B2'].map(l=>{
+   const upcoming=l==='B1'||l==='B2',locked=upcoming||!levelOpen(l);
+   return `<button type="button" data-level="${l}" aria-pressed="${l===level}" aria-disabled="${locked}">
+    ${l}${upcoming?'<small>Yakında</small>':locked?'<span aria-label="Kilitli">🔒</span>':''}</button>`;
+  }).join('')}</div>
+ </div>
+ <p class="kg-note" role="status"></p>
+ <div class="kg-control">
+  <span id="kgCategoryLabel">Kategori</span>
+  <div class="kg-chips" role="group" aria-labelledby="kgCategoryLabel">${[['all','Tümü'],['vocab',cats.vocab[0]],['grammar',cats.grammar[0]],['comm',cats.comm[0]]].map(([id,label])=>
+   `<button type="button" data-category="${id}" aria-pressed="${id===category}">${label}</button>`).join('')}</div>
+ </div>
+ <p class="kg-count" role="status"></p>
+ <div class="kg-list"></div>`;
+ const search=hub.querySelector('.kg-search'),input=search.querySelector('input');
+ const note=hub.querySelector('.kg-note'),list=hub.querySelector('.kg-list'),count=hub.querySelector('.kg-count');
+ const topics=new Map(catalog.map(t=>[t.key,t]));
+ let levelRequest=0;
+ function renderTopics(){
+  const terms=searchText(query).trim().split(/\s+/).filter(Boolean);
+  const matching=rows.flatMap(r=>{
+   if(r.seviye!==level||category!=='all'&&r.kategori!==category)return [];
+   const key=[r.seviye,r.kategori,r.konuAdi].join('|'),t=topics.get(key);
+   const name=cats[r.kategori][0];
+   const text=searchText([r.konuAdi,name,...Object.values(t?.titles||{})].join(' '));
+   if(!terms.every(term=>text.includes(term)))return [];
+   return [`<button type="button" data-topic="${esc(key)}" data-topic-type="${r.kategori}" ${t?'':'aria-disabled="true"'}>
+    <span aria-hidden="true">${cats[r.kategori][1]}</span>
+    <span><b>${esc(r.konuAdi.split(' — ').at(-1))}</b><small>${name} · ${t?t.games.length+' oyun':'Yakında'}</small></span>
+    <span aria-hidden="true">›</span>
+   </button>`];
+  });
+  count.textContent=matching.length?level+' · '+matching.length+' konu':'Bu aramaya uygun konu bulunamadı.';
+  list.innerHTML=matching.join('');
+ }
+ input.value=query;
+ input.oninput=()=>{query=input.value;renderTopics();};
+ search.onsubmit=e=>{e.preventDefault();input.oninput();};
+ list.onclick=e=>{
+  const button=e.target.closest('[data-topic]');if(!button)return;
+  const t=topics.get(button.dataset.topic);
+  if(t)openTopic(t);else note.textContent='Bu konunun oyunları yakında geliyor.';
+ };
+ hub.querySelectorAll('[data-category]').forEach(button=>button.onclick=()=>{
+  hub.querySelector('[data-category][aria-pressed="true"]').setAttribute('aria-pressed','false');
+  category=button.dataset.category;
+  button.setAttribute('aria-pressed','true');
+  renderTopics();
+ });
+ hub.querySelectorAll('[data-level]').forEach(button=>button.onclick=async()=>{
+  const request=++levelRequest,next=button.dataset.level;
+  if(!['A1','A2'].includes(next)){note.textContent='Bu seviyenin oyunları yakında geliyor.';return;}
+  if(!levelOpen(next)){note.textContent="A2 oyunları, Ders Çalış'ta A2 seviyen açıldığında burada da açılır.";return;}
+  note.textContent='';
+  if(next===level)return;
+  try{
+   await loadLevel(next);
+   if(!note.isConnected||request!==levelRequest||!levelOpen(next))return;
+   const restoreFocus=document.activeElement===button;
+   level=next;catalog=catalogs[next];drawList(hub);
+   if(restoreFocus)hub.querySelector('[data-level="'+next+'"]').focus({preventScroll:true});
+  }catch(e){if(note.isConnected&&request===levelRequest)note.textContent=e.message;}
+ });
+ renderTopics();
 }
 function speak(text){try{if(!soundOn()||!window.speechSynthesis||!window.SpeechSynthesisUtterance)return;window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang='en-US';u.rate=.87;u.onerror=()=>{};window.speechSynthesis.speak(u);}catch{}}
 function stop(){clearTimeout(timer);clearTimeout(speechTimer);try{window.speechSynthesis?.cancel();}catch{}}
@@ -106,7 +190,7 @@ async function finish(){clearTimeout(timer);const token=epoch,box=root.querySele
  const replay=g=>{window.DijiReklam?.sonucKapandi(reklamSonuc,false);reklamSonuc=null;start(g);};box.querySelector('[data-again]').onclick=()=>replay(game);box.querySelector('[data-other]').onclick=()=>replay(topic.games.find(g=>g!==game));box.querySelector('[data-topics]').onclick=()=>close();box.querySelector('[data-again]').focus();
  }catch(e){if(token!==epoch||!root)return;box.innerHTML='<p role="alert">'+esc(e.message)+'</p><p>XP doğrulanamadı. Konulara dönüp yeniden oynayabilirsin.</p><button type="button">Konulara dön</button>';box.querySelector('button').onclick=()=>close();}
 }
-window.addEventListener('popstate',()=>{if(root)close(true);});document.addEventListener('dm:login',()=>{if(root)close();quota.clear();readSound();level='A1';catalog=catalogs.A1;document.querySelectorAll('.kg-hub[data-loaded]').forEach(drawList);});
+window.addEventListener('popstate',()=>{if(root)close(true);});document.addEventListener('dm:login',()=>{if(root)close();quota.clear();readSound();level='A1';category='all';query='';catalog=catalogs.A1;document.querySelectorAll('.kg-hub[data-loaded]').forEach(drawList);});
 window.dmTopicGames={mount,close,openTopic};
 })();
 
