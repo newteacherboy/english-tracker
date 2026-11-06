@@ -54,7 +54,8 @@ function run(){
  for(const [key,value0] of Object.entries(values)){const e=buttons[key],text=e.querySelector('[data-pw-value]');if(text.dataset.dmCounting)continue;const value=key in shown?(key==='energy'?format:compact)(shown[key]):value0;if(text.textContent!==value)text.textContent=value;if(e.getAttribute('aria-label')!==labels[key]){e.setAttribute('aria-label',labels[key]);e.title=labels[key];}}
  const minutes=compact(finite(time.seconds)/60)+' dk',small=buttons.time.querySelector('[data-pw-minutes]');if(small.textContent!==minutes)small.textContent=minutes;
 }
-let queued=false;function schedule(){if(queued||document.hidden)return;queued=true;requestAnimationFrame(()=>{queued=false;run();});}
+function refresh(){run();if(typeof aktifOgrenciAdi!=='undefined'&&aktifOgrenciAdi)window.dmDayNightTheme?.updateHint();}
+let queued=false;function schedule(){if(queued||document.hidden)return;queued=true;requestAnimationFrame(()=>{queued=false;refresh();});}
 // Destination changes update in the next frame; value-only changes retain the icon DOM.
 const relevant=selectors.join(',')+','+activity+',.dc-fullscreen-overlay,#panel-alani';
 new MutationObserver(ms=>{if(ms.some(m=>{
@@ -63,8 +64,8 @@ new MutationObserver(ms=>{if(ms.some(m=>{
  const nodes=[...m.addedNodes,...m.removedNodes].filter(n=>n.nodeType===1&&n!==hud);
  return nodes.some(n=>n.matches(relevant)||n.querySelector(relevant))||nodes.length>0&&m.target.matches?.(relevant);
 } ))schedule();}).observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['class','style','hidden']});
-setInterval(()=>{if(!document.hidden)run();},1000);
+setInterval(()=>{if(!document.hidden)refresh();},1000);
 for(const name of ['dm:time','dm:login','dm:state','dm:view-restored'])document.addEventListener(name,schedule);
 document.addEventListener('visibilitychange',schedule);
-window.DijiMeduPapiWallet={refresh:run};run();
+window.DijiMeduPapiWallet={refresh};refresh();
 })();

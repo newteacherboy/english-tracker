@@ -4,50 +4,101 @@ const vm=require('node:vm');
 const fs=require('node:fs');
 const path=require('node:path');
 const source=fs.readFileSync(path.join(__dirname,'../ingilizce/day-night-theme.js'),'utf8');
-function fixture(hour=12,stored=null){
-  let now=new Date(2026,9,12,hour,0,0),nextId=0;
-  const buttons=[],timers=new Map(),docEvents={},winEvents={},attrs={},meta={},root={style:{},setAttribute(k,v){attrs[k]=v}};
-  class Clock extends Date {constructor(...a){super(...(a.length?a:[now.getTime()]))}}
-  const document={hidden:false,documentElement:root,querySelector(){return meta},querySelectorAll(){return buttons},createElement(){return {attrs:{},setAttribute(k,v){this.attrs[k]=v},addEventListener(k,f){this[k]=f}}},addEventListener(k,f){docEvents[k]=f}};
-  const window={localStorage:{getItem(){return stored},setItem(k,v){stored=v}},addEventListener(k,f){winEvents[k]=f}};
-  const context={Date:Clock,document,window,setTimeout(f,ms){timers.set(++nextId,{f,ms});return nextId},clearTimeout(id){timers.delete(id)}};
+function fixture(hour=12, stored={}) {
+  const now=new Date(2026,9,12,hour,0,0);
+  const buttons=[],docEvents={},winEvents={},attrs={},meta={},popups=[];
+  const root={style:{},clientWidth:390,clientHeight:844,setAttribute(k,v){attrs[k]=v;}};
+  class Clock extends Date { constructor(){super(now.getTime());} }
+  function element() {
+    const children={};
+    return {
+      attrs:{},style:{setProperty(){}},classList:{toggle(){}},parentElement:{},offsetWidth:280,offsetHeight:90,
+      setAttribute(k,v){this.attrs[k]=v;},addEventListener(k,f){this[k]=f;},focus(){},
+      getBoundingClientRect(){return {left:320,top:10,right:364,bottom:54,width:44,height:44};},
+      contains(other){return this===other;},closest(){return null;},
+      querySelector(k){return children[k] ||= element();},remove(){popups.splice(popups.indexOf(this),1);}
+    };
+  }
+  const document={
+    hidden:false,documentElement:root,body:{append(el){popups.push(el);}},
+    elementFromPoint(){return buttons[0];},querySelector(){return meta;},querySelectorAll(){return buttons;},
+    createElement:element,addEventListener(k,f){docEvents[k]=f;}
+  };
+  const window={
+    localStorage:{getItem(k){return stored[k];},setItem(k,v){stored[k]=v;}},
+    addEventListener(k,f){winEvents[k]=f;}
+  };
+  const context={Date:Clock,document,window};
   vm.runInNewContext(source,context);
-  return {window,document,attrs,meta,root,timers,docEvents,winEvents,context,buttons,setHour(h){now.setHours(h,0,0,0)}};
+  return {window,attrs,meta,root,docEvents,winEvents,context,buttons,popups,stored,setHour(h){now.setHours(h);}};
 }
-test('the daytime design defaults to day at every hour',()=>{
-  for(let h=0;h<24;h++){
-    const f=fixture(h);assert.equal(f.attrs['data-dm-theme'],'day');assert.equal(f.root.style.colorScheme,'light');
-    assert.equal(f.meta.content,'#e3f3ff');assert.equal(f.window.dmDayNightTheme.themeFor(new Date(2026,9,12,h)),'day');
+
+test('every launch starts in daylight even with an old saved night preference',()=>{
+  for(let hour=0;hour<24;hour++){
+    const f=fixture(hour,{'dm-color-theme':'night'});
+    assert.equal(f.attrs['data-dm-theme'],'day');
+    assert.equal(f.root.style.colorScheme,'light');
+    assert.equal(f.meta.content,'#e3f3ff');
   }
 });
-test('fixed daytime theme never schedules a boundary timer',()=>{
-  const f=fixture(23);f.window.dmDayNightTheme.refresh();f.setHour(8);f.window.dmDayNightTheme.refresh();assert.equal(f.timers.size,0);
-});
-test('restored pages reapply the daytime design',()=>{
-  const f=fixture(23);f.attrs['data-dm-theme']='night';f.root.style.colorScheme='dark';f.winEvents.pageshow();assert.equal(f.attrs['data-dm-theme'],'day');assert.equal(f.root.style.colorScheme,'light');
-});
-test('a manual toggle updates all controls, browser chrome and the saved setting',()=>{
+
+test('manual night mode follows navigation and resets on a new login or restored visit',()=>{
   const f=fixture(),api=f.window.dmDayNightTheme;
   f.buttons.push(api.createButton(),api.createButton());
   f.buttons[0].click();
   assert.equal(api.themeFor(),'night');
-  assert.equal(f.root.style.colorScheme,'dark');
   assert.equal(f.meta.content,'#132447');
-  assert.equal(f.window.localStorage.getItem('dm-color-theme'),'night');
   assert.ok(f.buttons.every(b=>b.attrs['aria-pressed']==='true'));
-  f.winEvents.pageshow();
-  assert.equal(f.attrs['data-dm-theme'],'night');
+  f.winEvents.pageshow({persisted:false});
+  assert.equal(api.themeFor(),'night');
+  f.docEvents['dm:login']();
+  assert.equal(api.themeFor(),'day');
   f.buttons[1].click();
+  f.winEvents.pageshow({persisted:true});
+  assert.equal(api.themeFor(),'day');
+  assert.equal(f.stored['dm-color-theme'],undefined);
+});
+
+test('the 20:00 hint appears once at a visible toggle and requires a choice',()=>{
+  const f=fixture(19),api=f.window.dmDayNightTheme;
+  f.buttons.push(api.createButton());
+  api.updateHint();
+  assert.equal(f.popups.length,0);
+  f.setHour(20);
+  api.updateHint();
+  assert.equal(f.popups.length,1);
+  assert.equal(api.themeFor(),'day');
+  f.popups[0].querySelector('[data-night-enable]').click();
+  assert.equal(api.themeFor(),'night');
+  assert.equal(f.popups.length,0);
+  f.buttons[0].click();
+  api.updateHint();
+  assert.equal(f.popups.length,0);
+  const revisit=fixture(22,f.stored),next=revisit.window.dmDayNightTheme;
+  revisit.buttons.push(next.createButton());
+  next.updateHint();
+  assert.equal(revisit.popups.length,0);
+  assert.equal(next.themeFor(),'day');
+});
+
+test('the hint waits for a visible switch and closes if the destination changes',()=>{
+  const f=fixture(20),api=f.window.dmDayNightTheme;
+  api.updateHint();
+  assert.equal(f.stored['dm-night-hint-shown'],undefined);
+  f.buttons.push(api.createButton());
+  api.updateHint();
+  assert.equal(f.popups.length,1);
+  f.buttons[0].parentElement={};
+  api.updateHint();
+  assert.equal(f.popups.length,0);
   assert.equal(api.themeFor(),'day');
 });
-test('a reload restores night and another tab can update the preference',()=>{
-  const f=fixture(12,'night');
-  assert.equal(f.attrs['data-dm-theme'],'night');
-  f.winEvents.storage({key:'dm-color-theme',newValue:'day'});
-  assert.equal(f.attrs['data-dm-theme'],'day');
-});
+
 test('loading theme script twice does not duplicate lifecycle listeners',()=>{
-  const f=fixture();const api=f.window.dmDayNightTheme;const listener=f.winEvents.pageshow;vm.runInNewContext(source,f.context);assert.equal(f.window.dmDayNightTheme,api);assert.equal(f.winEvents.pageshow,listener);assert.equal(f.timers.size,0);
+  const f=fixture(),api=f.window.dmDayNightTheme,listener=f.winEvents.pageshow;
+  vm.runInNewContext(source,f.context);
+  assert.equal(f.window.dmDayNightTheme,api);
+  assert.equal(f.winEvents.pageshow,listener);
 });
 function lum(hex){const c=hex.replace('#','').match(/../g).map(x=>parseInt(x,16)/255).map(x=>x<=.04045?x/12.92:((x+.055)/1.055)**2.4);return c[0]*.2126+c[1]*.7152+c[2]*.0722}
 function ratio(a,b){const x=lum(a),y=lum(b);return(Math.max(x,y)+.05)/(Math.min(x,y)+.05)}
