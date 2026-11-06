@@ -47,8 +47,18 @@ await page.evaluate(()=>{for(const [id,title] of [['papiCardsActivity','Papi Kar
 await page.waitForSelector('#wordWheelActivity.gg-game',{state:'attached'});await page.locator('#ggFreeTab').click();
 await page.evaluate(()=>{const b=document.querySelector('[onclick="baModuAc()"]');if(b)b.style.display='grid';});
 assert.deepEqual(await shelfIds(),['papiCardsActivity','meteorActivity','wordWheelActivity','sentenceRaceActivity','kelimeGoluDuo']);
-assert.equal(await page.locator('[data-gg-source=sentenceRaceActivity] .gg-cover img').getAttribute('src'),'games-assets/cumle-yarisi-cover.svg');
+assert.equal(await page.locator('[data-gg-source=sentenceRaceActivity] .gg-cover-subject').getAttribute('src'),'games-assets/cumle-yarisi-cover.svg');
 assert.equal(await page.locator('[data-gg-source=kelimeGoluDuo] .gg-cover img').getAttribute('src'),'games-assets/kelime-golu-stadium-v1.webp');
+const fitted=await page.locator('[data-gg-source=papiCardsActivity] .gg-cover').evaluate(cover=>{
+ const subject=cover.querySelector('.gg-cover-subject'),frame=cover.getBoundingClientRect(),art=subject.getBoundingClientRect();
+ return Math.abs(art.width-art.height)<=1&&art.height<=frame.height&&art.width<frame.width&&!!cover.querySelector('.gg-cover-backdrop');
+});
+assert(fitted,'Atlas foreground keeps its square artwork without cropping');
+assert.equal(await page.locator('[data-gg-source=sentenceRaceActivity] .gg-cover-subject').evaluate(el=>getComputedStyle(el).objectFit),'contain');
+const challenge=await page.locator('.gg-matches>div').evaluate(el=>({color:getComputedStyle(el.querySelector('span')).color,bg:getComputedStyle(el).backgroundImage}));
+assert.equal(challenge.color,'rgb(244, 247, 255)');
+assert.match(challenge.bg,/rgb\(51, 73, 111\)/);
+if(width===390&&process.env.GAMES_SCREENSHOT)await page.screenshot({path:process.env.GAMES_SCREENSHOT+'.challenge.png'});
 await page.locator('#ggBreakTab').click();
 assert.deepEqual(await shelfIds(),['mola-kosu','mola-zipla','mola-patlat']);
 const coverFit=await page.locator('.gg-cover').evaluateAll(covers=>covers.every(cover=>{

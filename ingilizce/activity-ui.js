@@ -54,7 +54,6 @@
   sentenceRaceActivity:'games-assets/cumle-yarisi-cover.svg',
   kelimeGoluSolo:'games-assets/kelime-golu-stadium-v1.webp',
   kelimeGoluDuo:'games-assets/kelime-golu-stadium-v1.webp',
-  dmUcusteKart:'route-assets/papi-practice-flight.webp',
   dmRotaKart:'games-assets/cumle-rotasi-cover.svg'
  };
  let visit=0, featured=null, featuredStatus=null, statusRequest=null;
@@ -101,13 +100,26 @@
  function coverArt(card){
   const art=document.createElement('span');art.className='gg-cover';art.setAttribute('aria-hidden','true');
   const cover=gameCovers[card.id];
-  if(cover){
-   const image=new Image();image.src=cover;image.alt='';image.loading='lazy';image.decoding='async';art.append(image);
+  if(card.id==='dmUcusteKart'){
+   art.classList.add('gg-flight-cover');
+   const bird=document.createElement('span');bird.className='gg-flight-papi';art.append(bird);
+  }else if(cover){
+   const image=new Image();image.src=cover;image.alt='';image.loading='lazy';image.decoding='async';
+   if(card.id==='sentenceRaceActivity'){
+    const backdrop=image.cloneNode();backdrop.className='gg-cover-backdrop';art.append(backdrop);
+    image.className='gg-cover-subject';
+   }
+   art.append(image);
   }else{
    const source=card.querySelector('.gg-art')?.cloneNode(true);
    if(source){
     const image=source.querySelector('image[data-href]');
     if(image)image.setAttribute('href',image.dataset.href);
+    const isAtlas=source.style.getPropertyValue('--gx')||card.style.getPropertyValue('--au-thumb');
+    if(isAtlas||source.classList.contains('gg-premium-art')){
+     const backdrop=source.cloneNode(true);backdrop.classList.add('gg-cover-backdrop');art.append(backdrop);
+     source.classList.add('gg-cover-subject');
+    }
     art.append(source);
    }
   }
@@ -249,6 +261,7 @@
    const social=party==='duo'||party==='free';
    host.querySelector('.gg-social').hidden=!social;
    host.querySelector('.gg-matches').hidden=!social;
+   host.querySelector('[data-gg-duo]').hidden=party==='duo';
    grid.hidden=true;
    if(!showTools&&!showTopics)renderShelves(host,grid,all);
   }

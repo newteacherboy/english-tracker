@@ -315,18 +315,15 @@
       root.style.setProperty('--fr-home-height',Math.max(0,Math.floor(bottom-bounds.top))+'px');
     }
   }
-  const viewport = document.querySelector('meta[name="viewport"]');
   const themeColor = document.querySelector('meta[name="theme-color"]');
   let previousChrome;
   function syncHomeChrome() {
     const home = root.classList.contains('active') && root.classList.contains('fr-home-view');
     if (home) {
-      previousChrome ||= {viewport:viewport?.content, color:themeColor?.content};
-      if (viewport && !/viewport-fit\s*=/.test(viewport.content)) viewport.content += ', viewport-fit=cover';
+      previousChrome ||= {color:themeColor?.content};
       const surface = getComputedStyle(root).getPropertyValue('--fr-surface').trim();
       if (themeColor && surface && themeColor.content!==surface) themeColor.content=surface;
     } else if (previousChrome) {
-      if (viewport) viewport.content=previousChrome.viewport;
       if (themeColor) themeColor.content=previousChrome.color;
       previousChrome=undefined;
     }
