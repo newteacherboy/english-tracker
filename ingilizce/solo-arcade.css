@@ -118,6 +118,19 @@
 .sa-fener.sa-overlay .sa-fener-grid button:focus-visible { outline: none; }
 .sa-fener-grid button:focus-visible span { outline: 2px solid #ffc82e; outline-offset: 3px; }
 .sa-fener-grid button.sa-correct span { color: #a8ffcf; }
+.sa-fener-check {
+  display: inline-grid; place-items: center; width: 1.25em; height: 1.25em;
+  border-radius: 50%; background: #8dffc0; color: #052b1e;
+  vertical-align: middle; font: 900 .95em/1 system-ui, sans-serif;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .sa-fener-check { animation: sa-fener-check-pop .24s ease-out both; }
+}
+@keyframes sa-fener-check-pop {
+  from { transform: scale(.65); opacity: .5; }
+  75% { transform: scale(1.12); }
+  to { transform: scale(1); opacity: 1; }
+}
 .sa-fener-grid button.sa-wrong span { color: #ffd3cb; background: #4a2028; }
 .sa-fener-preview, .sa-hub-fener {
   background: radial-gradient(circle at 62% 43%, #ddfff0 0 9%, #60f4b9 12%, #0e624f 25%, #03221e 45%);

@@ -62,9 +62,13 @@ test('flashlight selects the release tile only; gaps and cancelled drags leave t
   grid.onpointercancel(at(2));
   grid.onpointerup(at(2));
   assert.equal(t.answers.length,0);
+  assert.equal(grid.querySelector('.sa-fener-check'),null);
+  const expected=correct.textContent;
   grid.onpointerdown(at(1));
   grid.onpointerup(at(2));
   assert.equal(t.answers.length,1);
-  assert.equal(t.answers[0].answer,correct.textContent);
+  assert.equal(t.answers[0].answer,expected);
+  assert.equal(correct.querySelector('.sa-fener-check').textContent,'✓');
+  assert.equal(grid.querySelectorAll('.sa-fener-check').length,1);
  }finally{t.dom.window.close();}
 });
