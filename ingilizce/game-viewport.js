@@ -91,7 +91,7 @@
    ?[...r.addedNodes,...r.removedNodes].some(n=>n.nodeType===1&&(n.matches(watchSelector+','+nativeSelector)||n.querySelector(watchSelector+','+nativeSelector)))
    :r.target.matches?.(watchSelector)||!!r.target.closest?.(watchSelector)||r.target===document.body;
  new MutationObserver(records=>{if(records.some(watchChange))schedule();}).observe(document.body,{subtree:true,childList:true,attributes:true,attributeFilter:['style','class','hidden','aria-hidden','inert','data-dm-nav-suspended']});
- window.addEventListener('resize',schedule);window.visualViewport?.addEventListener('resize',schedule);
+ window.addEventListener('resize',schedule);window.visualViewport?.addEventListener('resize',schedule);window.visualViewport?.addEventListener('scroll',schedule);
  // Native keyboard handling should invoke the same cleanup as the visible X.
  document.addEventListener('keydown',e=>{if(e.key!=='Escape'||e.target.closest?.('.dm-game-pause-sheet'))return;const root=[...document.querySelectorAll('.dm-vp-root')].filter(shown).at(-1);if(root){e.preventDefault();e.stopImmediatePropagation();void navigate(root,false);}},true);
  window.dmGameViewport={sync,navigate,diagnostics:()=>({
@@ -200,7 +200,7 @@
  }
  function sourceFor(root,kind){
   const candidates=[...root.querySelectorAll(controls[kind])].filter(button=>
-   !button.hidden&&!button.matches('.dm-frame-control')&&(kind==='sound'||!button.closest('[hidden]'))
+   !button.hidden&&!button.matches('.dm-frame-control')&&(kind==='sound'||!button.closest('[hidden],[inert],[aria-hidden="true"],[style*="display: none"],[style*="display:none"]'))
   );
   if(kind==='exit')return [...candidates.filter(button=>button.matches('.dm-vp-exit,[data-exit]')),
    ...candidates.filter(button=>!button.matches('.dm-vp-exit,[data-exit]'))];
@@ -228,6 +228,8 @@
    for(const source of originals)if(!source.classList.contains('dm-frame-source'))source.classList.add('dm-frame-source');
    const active=(key==='back'&&!sources.length?sourceFor(root,'exit'):sources).filter(source=>!source.disabled);
    const native=root.dmGameFrameActions?.[key];
+   const viewport=key==='back'?root.querySelector(':scope > .dm-vp-back'):null;
+   const localBack=key==='back'?active.find(source=>source.matches('[data-back]')):null;
    const resume=key==='pause'&&root.querySelector('.dm-game-pause-sheet button');
    const muted=key==='sound'&&active.length>0&&active.every(soundOff);
    const label=resume?'Oyuna devam et':muted?'Sesi aç':labels[key];
@@ -242,6 +244,8 @@
    button.onclick=()=>{
     if(resume)resume.click();
     else if(native)native();
+    else if(localBack)localBack.click();
+    else if(viewport)viewport.click();
     else if(key==='sound'){for(const source of active)if(soundOff(source)===muted)source.click();}
     else active[0]?.click();
     schedule();

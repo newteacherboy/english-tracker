@@ -499,10 +499,9 @@ html.dm-teacher-portal #tab-aktiviteler#tab-aktiviteler .gg-page .gg-tabs{grid-t
 }
 
 @layer bilgiIslands {
-#tab-aktiviteler#tab-aktiviteler .gg-teacher-shelves .gg-brand{display:none!important}
-#tab-aktiviteler#tab-aktiviteler .gg-teacher-shelves .gg-tabs:has(#ggPremiumTab){grid-template-columns:repeat(6,minmax(0,1fr))!important}
-#tab-aktiviteler#tab-aktiviteler .gg-teacher-shelves .gg-tabs>button{grid-column:span 2}
-#tab-aktiviteler#tab-aktiviteler .gg-teacher-shelves .gg-tabs>button:nth-child(n+4){grid-column:span 3}
+#tab-aktiviteler#tab-aktiviteler .gg-teacher-list :is(.gg-brand,.gg-tabs>button[hidden]){display:none!important}
+#tab-aktiviteler#tab-aktiviteler .gg-page.gg-teacher-list .gg-tabs:has(#ggPremiumTab){grid-template-columns:repeat(3,minmax(0,1fr))!important}
+#tab-aktiviteler#tab-aktiviteler .gg-redesign.gg-teacher-list .gg-tabs>button{grid-column:auto}
 }
 
 /* Student game catalogue · Oyun Listesi. */
@@ -579,3 +578,10 @@ html[data-dm-theme] #tab-aktiviteler#tab-aktiviteler .gg-redesign.gg-list-view .
 }
 .gg-list-view .gg-row-action svg{width:19px;height:19px}
 .gg-list-view .gg-list-row[aria-disabled=true] .gg-row-action{background:var(--gg-list-field);color:var(--gg-list-muted)}
+
+.gg-list-view .gg-tabs>button span,.gg-list-view .gg-row-copy small{min-width:0;white-space:normal;overflow-wrap:anywhere}
+@media (max-width: 375px) {
+ html[data-dm-theme] #tab-aktiviteler#tab-aktiviteler .gg-redesign.gg-list-view .gg-tabs>button[aria-pressed]:not([data-gg-party="all"]){
+  flex-direction:column!important;gap:2px!important;padding-block:5px!important;
+ }
+}
