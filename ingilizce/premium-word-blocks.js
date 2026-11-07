@@ -390,6 +390,7 @@
     });
     dialog.addEventListener('cancel', event => { event.preventDefault(); if (active()) pause(); else if (!busy) close(); });
     const watch = setInterval(() => { if (player() !== account) close(); }, 700);
+    dialog.dmGameFrameActions={back:close,exit:close};
     dialog.showModal();
     dialog.addEventListener('click', () => { sound.unlock(); syncMusic(); }, {once:true});
     sound.unlock();

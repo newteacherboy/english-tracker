@@ -512,6 +512,7 @@
       game.target = lanes[Math.max(0, Math.min(2, current + (event.key === 'ArrowLeft' ? -1 : 1)))];
     });
     const watch = setInterval(() => { if (owner() !== account) close(); }, 700);
+    screen.dmGameFrameActions={back:close,exit:close};
     screen.showModal();
     screen.addEventListener('click', () => { sound.unlock(); syncSound(); }, {once:true});
     sound.unlock();

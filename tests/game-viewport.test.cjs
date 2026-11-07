@@ -41,3 +41,35 @@ test('closing listening game and keeping inactive fullscreen tab never traps nav
  assert.equal(w.document.body.classList.contains('dm-game-viewport'),false,'deactivated listening game must release the dock');
  w.close();
 });
+
+test('shared frame forwards controls and touch choices to native game handlers',()=>{
+ const {dom,w}=shell('<div class="dm-sr-overlay"><button data-close>Close</button><button data-pause>Pause</button><button data-sound aria-pressed="true">Sound</button><select data-duration><option value="10">10 saniye</option><option value="20">20 saniye</option></select></div>');
+ try{
+  const root=w.document.querySelector('.dm-sr-overlay');
+  const actions=[];
+  for(const kind of ['close','pause','sound'])root.querySelector('[data-'+kind+']').onclick=()=>actions.push(kind);
+  const select=root.querySelector('select');
+  select.onchange=()=>actions.push(select.value);
+  root.querySelector('.dm-picker-grid button[data-value="20"]').click();
+  for(const key of ['pause','sound','exit'])root.querySelector('[data-frame="'+key+'"]').click();
+  assert.deepEqual(actions,['20','pause','sound','close']);
+  assert.equal(root.querySelector('.dm-picker-grid button[data-value="20"]').getAttribute('aria-pressed'),'true');
+  assert(root.querySelector('[data-pause]').classList.contains('dm-frame-source'));
+ }finally{dom.window.close();}
+});
+
+test('a reusable modal releases the shared toolbar and restores its native close control',async()=>{
+ const dom=new JSDOM('<div id="yoModal" class="acik" data-dm-selected-game="dikte"><button class="yo-kapat">Kapat</button></div>',{runScripts:'outside-only',pretendToBeVisual:true}),w=dom.window;
+ w.HTMLElement.prototype.getClientRects=()=>[{width:360,height:640}];
+ w.requestAnimationFrame=fn=>{Promise.resolve().then(()=>{if(w.document?.defaultView)fn();});return 1;};
+ try{
+  w.eval(fs.readFileSync('ingilizce/game-viewport.js','utf8'));
+  const root=w.document.getElementById('yoModal');
+  assert(root.querySelector('.dm-game-frame'));
+  root.classList.remove('acik');
+  delete root.dataset.dmSelectedGame;
+  await new Promise(resolve=>setImmediate(resolve));
+  assert.equal(root.querySelector('.dm-game-frame'),null);
+  assert(!root.querySelector('.yo-kapat').classList.contains('dm-frame-source'));
+ }finally{dom.window.close();}
+});
