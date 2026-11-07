@@ -30,5 +30,37 @@ test('tower collapse accounts for remaining questions and reaches the shared res
  const t=setup({teacher:true});try{t.w.dengesizKuleAc();t.w.document.querySelector('[data-start]').click();await settle();for(let i=0;i<4;i++){const word=t.starts[0].words[i];[...t.w.document.querySelectorAll('[data-answer]')].find(b=>b.textContent!==word.turkce).click();t.w.document.querySelector('[data-next]').click();}await settle();assert.equal(t.answers.length,12);assert.equal(t.results.length,1);assert.equal(t.results[0].yanlis,12);assert.equal(t.results[0].oyunKey,'kule');assert.equal(t.results[0].siralamaYok,true);assert.equal(t.w.document.getElementById('soloArcadeOverlay'),null);}finally{t.dom.window.close();}
 });
 test('server grades both games as single-attempt answers and shares exact unlock gates',async()=>{
- const core=await import('../supabase/functions/diji-api/verified-games.mjs');for(const game of ['canavar','kule']){const task=core.compile(game,[{en:'apple',tr:'elma'}])[0];assert.equal(core.grade(task,'wrong',game).complete,true);assert.equal(core.grade(task,game==='canavar'?'apple':'elma',game).correct,true);assert.equal(core.grade(task,true,game).valid,false);}const t=setup();try{t.w.eval(read('ingilizce/progression-catalog.js'));assert.equal(t.w.DijiProgressionCatalog.gates.oyun_canavar,20);assert.equal(t.w.DijiProgressionCatalog.gates.oyun_kule,35);assert.equal(read('ingilizce/progression-catalog.js'),read('supabase/functions/diji-api/progression-catalog.js'));}finally{t.dom.window.close();}
+ const core=await import('../supabase/functions/diji-api/verified-games.mjs');for(const game of ['canavar','kule','fener']){const task=core.compile(game,[{en:'apple',tr:'elma'}])[0];assert.equal(core.grade(task,'wrong',game).complete,true);assert.equal(core.grade(task,game==='canavar'?'apple':'elma',game).correct,true);assert.equal(core.grade(task,true,game).valid,false);}const t=setup();try{t.w.eval(read('ingilizce/progression-catalog.js'));assert.equal(t.w.DijiProgressionCatalog.gates.oyun_canavar,20);assert.equal(t.w.DijiProgressionCatalog.gates.oyun_kule,35);assert.equal(t.w.DijiProgressionCatalog.gates.oyun_fener,11);assert.equal(read('ingilizce/progression-catalog.js'),read('supabase/functions/diji-api/progression-catalog.js'));}finally{t.dom.window.close();}
+});
+test('flashlight selects the release tile only; gaps and cancelled drags leave the question open',async()=>{
+ const t=setup();
+ try{
+  const doc=t.w.document;
+  t.w.papiFeneriAc();
+  doc.querySelector('[data-start]').click();
+  await settle();
+  const grid=doc.querySelector('.sa-fener-grid'), tiles=[...grid.querySelectorAll('button')];
+  assert.equal(tiles.length,4);
+  assert.equal(doc.querySelector('.sa-question h3').textContent,t.starts[0].words[0].ingilizce);
+  const correct=tiles.find(b=>b.textContent===t.starts[0].words[0].turkce);
+  const wrong=tiles.find(b=>b!==correct);
+  doc.elementFromPoint=x=>[grid,wrong,correct][x];
+  grid.setPointerCapture=()=>{};
+  const at=x=>({clientX:x,clientY:10,pointerId:1,button:0,isPrimary:true});
+  grid.onpointerdown(at(1));
+  assert.ok(wrong.classList.contains('is-lit'));
+  grid.onpointermove(at(2));
+  assert.ok(correct.classList.contains('is-lit'));
+  assert.equal(t.answers.length,0);
+  grid.onpointerup(at(0));
+  assert.equal(t.answers.length,0);
+  grid.onpointerdown(at(1));
+  grid.onpointercancel(at(2));
+  grid.onpointerup(at(2));
+  assert.equal(t.answers.length,0);
+  grid.onpointerdown(at(1));
+  grid.onpointerup(at(2));
+  assert.equal(t.answers.length,1);
+  assert.equal(t.answers[0].answer,correct.textContent);
+ }finally{t.dom.window.close();}
 });

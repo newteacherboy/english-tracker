@@ -14,7 +14,7 @@
   const A = C.Plugins?.AdMob || C.registerPlugin?.('AdMob');
   if (!A) return;
   const SAFETY = {tagForChildDirectedTreatment:true,tagForUnderAgeOfConsent:true,maxAdContentRating:'G',npa:true};
-  const SOLO = new Set(['ky','hafiza','yagmur','asmaca','kelimebul','jp','bosluk','eslestirme','tren','dikte','cumle','harfbahcesi','kulak','canavar','kule','kelime-golu','konu','mola','kp','ralli']);
+  const SOLO = new Set(['ky','hafiza','yagmur','asmaca','kelimebul','jp','bosluk','eslestirme','tren','dikte','cumle','harfbahcesi','kulak','canavar','kule','fener','kelime-golu','konu','mola','kp','ralli']);
   const who = () => typeof aktifOgrenciAdi === 'undefined' ? '' : String(aktifOgrenciAdi || '');
   const wallet = () => typeof yo === 'undefined' ? null : yo;
   const read = key => {try{return localStorage.getItem(key);}catch{return null;}};

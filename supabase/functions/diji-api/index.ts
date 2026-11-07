@@ -490,13 +490,13 @@ async function audit(a: any, operation: string, target: string, payload: any = {
 // [YAMA 5] Öğrencinin skor kaydı her seferinde 403 "Oyuncu uyuşmuyor" dönüyordu
 // ---------------------------------------------------------------------
 const leaderboardKey: Record<string, string> = {
-  canavarLiderlikKaydet: "canavar", kuleLiderlikKaydet: "kule",
+  canavarLiderlikKaydet: "canavar", kuleLiderlikKaydet: "kule", fenerLiderlikKaydet: "fener",
   kelimeLiderlikKaydet: "kelime", hafizaLiderlikKaydet: "hafiza", yagmurLiderlikKaydet: "yagmur",
   asmacaLiderlikKaydet: "asmaca", kelimebulLiderlikKaydet: "kelimebul", jeopardyLiderlikKaydet: "jeopardy",
   boslukLiderlikKaydet: "bosluk", konusmaLiderlikKaydet: "konusma", eslestirmeLiderlikKaydet: "eslestirme", trenLiderlikKaydet: "tren", harfBahcesiLiderlikKaydet: "harfbahcesi", dikteLiderlikKaydet: "dikte", cumleLiderlikKaydet: "cumle"
 };
 const leaderboardGetKey: Record<string, string> = {
-  canavarLiderlikTumunuGetir: "canavar", kuleLiderlikTumunuGetir: "kule",
+  canavarLiderlikTumunuGetir: "canavar", kuleLiderlikTumunuGetir: "kule", fenerLiderlikTumunuGetir: "fener",
   kelimeLiderlikTumunuGetir: "kelime", hafizaLiderlikTumunuGetir: "hafiza", yagmurLiderlikTumunuGetir: "yagmur",
   asmacaLiderlikTumunuGetir: "asmaca", kelimebulLiderlikTumunuGetir: "kelimebul", jeopardyLiderlikTumunuGetir: "jeopardy",
   boslukLiderlikTumunuGetir: "bosluk", konusmaLiderlikTumunuGetir: "konusma", eslestirmeLiderlikTumunuGetir: "eslestirme", trenLiderlikTumunuGetir: "tren", harfBahcesiLiderlikTumunuGetir: "harfbahcesi", dikteLiderlikTumunuGetir: "dikte", cumleLiderlikTumunuGetir: "cumle"
@@ -531,7 +531,7 @@ async function leaderboardSave(op: string, body: any, a: any) {
   if(a?.role==='student'){
     const codes:any={kelime:'ky',jeopardy:'jp',konusma:'kp'};
     const run=await supabase.from('dm_verified_runs').select('game,class_no,units,stop_no').eq('student_id',s.id).eq('run_id',String(body.runId||'')).maybeSingle();
-    if(run.error||!run.data||run.data.game!==(codes[key]||key)){if(await verifiedGames.required())return json({ok:false,message:'Doğrulanmış oyun oturumu gerekli.'},409);}
+    if(run.error||!run.data||run.data.game!==(codes[key]||key)){if(key==="fener"||await verifiedGames.required())return json({ok:false,message:'Doğrulanmış oyun oturumu gerekli.'},409);}
     else{
     const verified=await supabase.rpc('dm_verified_result',{actor:s.id,run_key:String(body.runId),game_code:run.data.game,cls:run.data.class_no,unit_ids:run.data.units,stop_id:run.data.stop_no});
     if(verified.error)return json({ok:false,message:'Oyun sonucu doğrulanamadı.'},409);
@@ -561,7 +561,7 @@ async function leaderboardSave(op: string, body: any, a: any) {
 }
 // [v3.5] Adil puanlama: 9 oyun 1000'lik ölçekte. Sıralama: puan ↓, süre ↑, tarih ↑.
 // Her öğrencinin sadece en iyi skoru listelenir. donem=hafta → bu pazartesiden beri.
-const ADIL_OYUNLAR = new Set(["canavar", "kule", "kelime", "jeopardy", "bosluk", "hafiza", "yagmur", "asmaca", "kelimebul", "eslestirme", "tren", "harfbahcesi", "konusma", "dikte", "cumle"]);
+const ADIL_OYUNLAR = new Set(["canavar", "kule", "fener", "kelime", "jeopardy", "bosluk", "hafiza", "yagmur", "asmaca", "kelimebul", "eslestirme", "tren", "harfbahcesi", "konusma", "dikte", "cumle"]);
 function haftaBasi() {
   const tr = new Date(Date.now() + 3 * 3600000);               // İstanbul saati
   const gun = (tr.getUTCDay() + 6) % 7;                         // pazartesi = 0
