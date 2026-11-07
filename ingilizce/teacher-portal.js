@@ -11,9 +11,9 @@
   catch(e){if(e.name==='AbortError')throw Error('Bağlantı gecikti. Verileri yenileyerek tekrar dene.');throw e;}finally{clearTimeout(timeout);}
  }
 
- function sheet(title,html){document.querySelector('.tp-shade')?.remove();const shade=document.createElement('div');shade.className='tp-shade';shade.innerHTML='<section class="tp-card" role="dialog" aria-modal="true" tabindex="-1"><button class="tp-close" aria-label="Kapat">×</button><h1></h1><form>'+html+'<p class="tp-error" role="status" aria-live="polite"></p></form></section>';shade.querySelector('h1').textContent=title;const before=document.activeElement;const close=()=>{shade.remove();before?.focus?.();};shade.querySelector('.tp-close').onclick=close;shade.addEventListener('keydown',e=>{if(e.key==='Escape'){e.preventDefault();close();}if(e.key==='Tab'){const items=[...shade.querySelectorAll('input,select,button,a[href]')].filter(x=>!x.disabled),first=items[0],last=items.at(-1);if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}}});document.body.append(shade);shade.querySelector('input,select,button').focus();return {shade,close,form:shade.querySelector('form'),error:m=>shade.querySelector('.tp-error').textContent=m};}
+ function sheet(title,html){document.querySelector('.tp-shade')?.remove();const shade=document.createElement('div');shade.className='tp-shade';shade.innerHTML='<section class="tp-card" role="dialog" aria-modal="true" tabindex="-1"><button class="tp-close" aria-label="Kapat">×</button><h1></h1><form>'+html+'<p class="tp-error" role="status" aria-live="polite"></p></form></section>';shade.querySelector('h1').textContent=title;const before=document.activeElement;const close=()=>{shade.remove();before?.focus?.();};shade.querySelector('.tp-close').onclick=close;shade.addEventListener('keydown',e=>{if(e.key==='Escape'){e.preventDefault();close();}if(e.key==='Tab'){const items=[...shade.querySelectorAll('input,select,button,a[href]')].filter(x=>!x.disabled&&x.type!=='hidden'&&!x.closest('[hidden]')),first=items[0],last=items.at(-1);if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}}});document.body.append(shade);shade.querySelector('input,select,button').focus();return {shade,close,form:shade.querySelector('form'),error:m=>shade.querySelector('.tp-error').textContent=m};}
  const codeField=(name,label)=>'<label>'+label+'<input name="'+name+'" type="password" inputmode="numeric" pattern="[0-9]{6}|[0-9]{8}" minlength="6" maxlength="8" autocomplete="off" required></label>';
- function submit(v,fn){v.form.onsubmit=async e=>{e.preventDefault();if(!v.form.reportValidity())return;const buttons=[...v.form.querySelectorAll('button')];buttons.forEach(b=>b.disabled=true);v.error('');try{await fn(new FormData(v.form));}catch(e){v.error(e.message);}finally{buttons.forEach(b=>b.disabled=false);}};}
+ function submit(v,fn,validate){v.form.onsubmit=async e=>{e.preventDefault();if(!v.form.reportValidity()||validate?.()===false)return;const buttons=[...v.form.querySelectorAll('button:not(:disabled)')];buttons.forEach(b=>b.disabled=true);v.error('');try{await fn(new FormData(v.form));}catch(e){v.error(e.message);}finally{buttons.forEach(b=>b.disabled=false);}};}
  function openLogin(){const v=sheet('Öğretmen Girişi','<p>Özel öğretmen platformuna erişmek için e-postana gönderilen 6 veya 8 haneli kodu yaz.</p>'+codeField('code','Öğretmen giriş kodun')+'<button class="tp-primary">Giriş Yap</button><button type="button" data-reset>Kodumu Unuttum</button><small>E-posta doğrulaması ve teacher hesabının erişim onayı gerekir.</small>');v.shade.querySelector('[data-reset]').onclick=resetRequest;submit(v,async f=>{const r=await api('teacherPortalLogin',{code:f.get('code')},'');const preview=await api('teacherPortalParticipant',{self:true},r.token);saveState({teacherToken:r.token,name:r.name,participant:preview,playAsSelf:true,route:'home'});location.assign('./?ogretmen=1');});}
  function resetRequest(){const v=sheet('Öğretmen Kodumu Unuttum','<label>Kişisel kullanıcı adın<input name="username" required maxlength="40" autocomplete="username"></label><label>Kayıtlı e-posta adresin<input name="email" required type="email" autocomplete="email"></label><button class="tp-primary">Yenileme bağlantısı gönder</button>');submit(v,async f=>{const r=await api('teacherPortalResetRequest',Object.fromEntries(f),'');v.error(r.mesaj);});}
  async function resetPage(){const token=new URLSearchParams(location.hash.slice(1)).get('token');history.replaceState(null,'',location.pathname);const v=sheet('Yeni Öğretmen Giriş Kodu',codeField('code','Yeni 6 veya 8 haneli kod')+codeField('confirm','Yeni kodu tekrar yaz')+'<button class="tp-primary">Kodumu Yenile</button>');v.shade.querySelector('.tp-close').onclick=()=>location.assign('./?ogretmenGiris=1');submit(v,async f=>{if(f.get('code')!==f.get('confirm'))throw Error('Kodlar eşleşmiyor.');const r=await api('teacherPortalReset',{resetToken:token,code:f.get('code')},'');v.form.replaceChildren();const message=document.createElement('p');message.textContent=r.mesaj;const link=document.createElement('a');link.href='./?ogretmenGiris=1';link.textContent='Öğretmen girişine dön';v.form.append(message,link);});}
@@ -53,20 +53,120 @@
  async function runPending(){const raw=sessionStorage.getItem('dm_tp_pending');if(!raw)return;sessionStorage.removeItem('dm_tp_pending');try{const next=JSON.parse(raw),path=paths[next.target];await window.dmLazyGames?.ready();wrapGames();replay=true;const object=path?window[path[0]]:window,fn=path?object?.[path[1]]:object[next.target];if(typeof fn!=='function')throw Error('Oyun henüz yüklenemedi. Yeniden aç.');await fn.apply(object,next.args||[]);}catch(e){window.yoToast?.(e.message);}finally{replay=false;}}
  const gameFunctions=['kelimeGoluAc','kelimeYarismasiAc','jpOyunAc','boslukOyunAc','hafizaOyunAc','yagmurOyunAc','asmacaOyunAc','kelimebulOyunAc','esOyunAc','trenOyunAc','dikteAc','cumleAc','harfBahcesiAc','ralliOyunAc','dmArenaAc','dmMatchAc','dmInviteAc'];
  function wrapGames(){if(!mode)return;for(const name of gameFunctions){const old=window[name];if(typeof old!=='function'||old.__tp)continue;const fn=async function(...args){if(await beforeGame(name,args))return old.apply(this,args);};Object.assign(fn,old);fn.__tp=true;window[name]=fn;}}
- const applicationBenefits='<p>Öğretmen paneliyle Diji Medu’yu sınıfında kullanabilirsin.</p><ul><li>Akıllı tahtada sınıfına ve ünitene uygun oyunlar, dersler ve etkinlikler aç.</li><li>Sınıf oluştur, öğrencilerini davet et ve ödev ver.</li><li>Raporlarla öğrenci gelişimini ve tekrar gerektiren konuları gör.</li></ul>';
+ const applicationTitle='Öğretmen kodunla sınıfına özel paneli aç!';
+ const applicationBenefits=[
+  ['board','Akıllı tahtada birlikte oynayın','Sınıfına ve ünitesine uygun oyunları ve dersleri aç.'],
+  ['class','Sınıfını tek yerden yönet','Öğrencilerini ekle, ödev ver ve ilerlemelerini izle.'],
+  ['report','Kimin neye ihtiyacı var, gör','Raporlarla gelişimi ve tekrar gerektiren konuları gör.']
+ ];
  const pendingApplication='Başvurun alındı. Bilgilerini inceleyeceğiz. Gerekirse kayıtlı telefon numarandan sana ulaşacağız.';
+ const locationSearchKey=value=>value.trim().toLocaleLowerCase('tr-TR').normalize('NFD').replace(/\p{M}/gu,'').replace(/ı/g,'i');
+ function locationPicker(form,name,label,placeholder,onSelect){
+  const input=form.elements[name];
+  const root=document.createElement('div');
+  root.className='tp-location';
+  root.innerHTML='<span id="tp-label-'+name+'" class="tp-location-label">'+label+'</span><button type="button" class="tp-location-toggle" aria-expanded="false" aria-labelledby="tp-label-'+name+' tp-value-'+name+'" aria-controls="tp-options-'+name+'"><span id="tp-value-'+name+'"></span><span class="tp-chevron" aria-hidden="true"></span></button><div class="tp-location-options" id="tp-options-'+name+'" hidden><input type="search" aria-label="'+label+' ara" placeholder="'+label+' ara…" autocomplete="off"><div class="tp-location-list"></div></div>';
+  const toggle=root.querySelector('button'),value=toggle.firstElementChild;
+  const options=root.querySelector('.tp-location-options'),search=options.querySelector('input'),list=root.querySelector('.tp-location-list');
+  let choices=[];
+  const close=()=>{options.hidden=true;toggle.setAttribute('aria-expanded','false');};
+  const select=choice=>{input.value=choice;value.textContent=choice||placeholder;};
+  const fill=()=>{
+   const query=locationSearchKey(search.value);
+   list.replaceChildren();
+   for(const choice of choices.filter(choice=>locationSearchKey(choice).includes(query))){
+    const button=document.createElement('button');
+    button.type='button';
+    button.textContent=choice;
+    if(choice===input.value)button.setAttribute('aria-current','true');
+    button.onclick=()=>{select(choice);close();toggle.focus();onSelect?.(choice);};
+    list.append(button);
+   }
+   if(!list.children.length)list.textContent='Sonuç bulunamadı.';
+  };
+  toggle.onclick=()=>{
+   if(!options.hidden){close();return;}
+   options.hidden=false;
+   toggle.setAttribute('aria-expanded','true');
+   search.value='';
+   fill();
+   search.focus();
+  };
+  search.addEventListener('input',fill);
+  root.addEventListener('focusout',event=>{if(!root.contains(event.relatedTarget))close();});
+  root.addEventListener('keydown',event=>{
+   if(event.key==='Escape'&&!options.hidden){event.stopPropagation();event.preventDefault();close();toggle.focus();}
+   if(event.key==='ArrowDown'&&event.target===search){event.preventDefault();list.querySelector('button')?.focus();}
+  });
+  input.type='hidden';
+  input.closest('label').replaceWith(root);
+  root.append(input);
+  return {
+   setChoices(items,selected){
+    close();
+    choices=[...items].sort((a,b)=>a.localeCompare(b,'tr'));
+    toggle.disabled=!choices.length;
+    select(choices.find(choice=>locationSearchKey(choice)===locationSearchKey(selected||''))||'');
+   },
+   focus:()=>toggle.focus()
+  };
+ }
  function renderApplication(v,r,token){
-  const login='<button type="button" data-panel-login>Kodla Öğretmen Girişi</button>';
+  const card=v.form.closest('.tp-card'),heading=card.querySelector('h1');
+  const login='<button type="button" data-panel-login>Kodum Var, Giriş Yap</button>';
   if(r.state==='none'||r.state==='pending'&&r.offer){
-   v.form.innerHTML=applicationBenefits+'<p>Yönetici onayından ve kişisel e-postanı doğruladıktan sonra özel panel giriş kodun gönderilir.</p><label>İl<input name="city" maxlength="40" required></label><label>İlçe<input name="district" maxlength="60" required></label><label>Okul adı<input name="school" maxlength="120" required></label>'+(!r.hasPhone?'<label>Telefon numarası<input name="phone" type="tel" maxlength="20" autocomplete="tel" required></label>':'')+'<button class="tp-primary">Başvurumu Onayla ve Gönder</button><button type="button" data-later>Daha Sonra</button>'+login+'<p class="tp-error" role="status" aria-live="polite"></p>';
+   card.classList.add('tp-application');
+   heading.textContent=applicationTitle;
+   heading.id='tp-application-title';
+   card.setAttribute('aria-labelledby',heading.id);
+   heading.insertAdjacentHTML('beforebegin','<div class="tp-application-hero"><div class="tp-application-copy"><span class="tp-application-badge"><svg aria-hidden="true" viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="m12 2 12 6-12 6L0 8l12-6ZM5 12l7 3.5 7-3.5v5l-7 4-7-4v-5Zm17-1 2-1v8h-2v-7Z"/></svg> Öğretmenlere Özel</span><span class="tp-application-free">Ücretsiz</span><p>Öğretmen kodunu ücretsiz al, Diji Medu’yu sınıfında kullanmaya başla.</p></div><img src="school-assets/teacher-invite-papi-key.webp" alt="" width="313" height="259"></div>');
+   const copy=card.querySelector('.tp-application-copy');
+   copy.insertBefore(heading,copy.querySelector('p'));
+   v.form.innerHTML=`
+    <div class="tp-application-benefits">${applicationBenefits.map(([icon,title,description])=>`
+     <div class="tp-application-benefit tp-benefit-${icon}"><img src="school-assets/teacher-invite-${icon}.webp" alt=""><div><strong>${title}</strong><p>${description}</p></div></div>
+    `).join('')}</div>
+    <div class="tp-application-note"><svg aria-hidden="true" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 11v6m0-10v2"/></svg><p>Öğretmen olduğunu doğrulayabilmemiz için okul bilgilerini paylaş. Başvurun onaylanıp e-postan doğrulandığında kodun sana gönderilir.</p></div>
+    <div class="tp-application-location">
+     <label>İl<input name="city" maxlength="40" required placeholder="İl seç"></label>
+     <label>İlçe<input name="district" maxlength="60" required placeholder="İlçe seç"></label>
+    </div>
+    <small class="tp-application-hint">Listeden seçebilir veya yazarak arayabilirsin.</small>
+    <label>Okul adı<input name="school" maxlength="120" required placeholder="Okulunun adını yaz"></label>
+    ${!r.hasPhone?'<label>Telefon numarası<input name="phone" type="tel" maxlength="20" autocomplete="tel" required placeholder="05XX XXX XX XX"></label>':''}
+    <button class="tp-primary"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="16" cy="8" r="5"/><path d="m12.5 11.5-9 9m3-3 2 2m-4 0 2 2"/></svg> Öğretmen Kodumu İste</button>
+    <div class="tp-application-actions">${login}<button type="button" data-later>Daha Sonra</button></div>
+    <p class="tp-error" role="status" aria-live="polite"></p>`;
    for(const key of ['city','district','school'])v.form.elements[key].value=r.school?.[key]||'';
+   const locations=window.dmTeacherSchoolLocations;
+   let city,district;
+   if(locations){
+    city=locationPicker(v.form,'city','İl','İl seç',value=>district.setChoices(locations[value]));
+    district=locationPicker(v.form,'district','İlçe','İlçe seç');
+    city.setChoices(Object.keys(locations),r.school?.city);
+    district.setChoices(locations[v.form.elements.city.value]||[],r.school?.district);
+   }else{
+    v.form.querySelector('.tp-application-hint').textContent='İlini ve ilçeni yaz.';
+   }
    v.form.querySelector('[data-later]').onclick=v.close;
    submit(v,async form=>{
     if(localStorage.getItem('ing_token')!==token)throw Error('Hesap değişti. Lütfen yeniden giriş yap.');
     await api('teacherPortalApply',{...Object.fromEntries(form),confirm:true},token);
-    renderApplication(v,{state:'pending',offer:false},token);
+    if(v.shade.isConnected){
+     renderApplication(v,{state:'pending',offer:false},token);
+     v.form.querySelector('[data-panel-login]').focus();
+    }
+   },()=>{
+    if(city&&!v.form.elements.city.value){v.error('Lütfen ilini seç.');city.focus();return false;}
+    if(district&&!v.form.elements.district.value){v.error('Lütfen ilçeni seç.');district.focus();return false;}
    });
   }else{
+   if(card.classList.contains('tp-application')){
+    const hero=card.querySelector('.tp-application-hero');
+    hero.replaceWith(heading);
+    card.classList.remove('tp-application');
+   }
+   heading.textContent='Öğretmen Paneli';
    v.form.innerHTML='<p data-panel-status></p>'+login+'<p class="tp-error" role="status" aria-live="polite"></p>';
    v.form.querySelector('[data-panel-status]').textContent=({pending:pendingApplication,approved:r.codeSent?'Özel panel giriş kodun e-postana gönderilmek üzere sıraya alındı.':'Başvurun onaylandı. E-posta adresini doğruladığında kodun gönderilecek.',rejected:'Başvurun reddedildi. Destek ekibiyle görüşebilirsin.',revoked:'Öğretmen paneli erişimin kaldırıldı.'})[r.state]||'Başvuru durumu alınamadı.';
   }
@@ -97,7 +197,7 @@
   if(!hasCharacter&&!sessionStorage.getItem('dm_teacher_notice_character_ready'))return;
   const isVisible=el=>!!el&&el.isConnected&&el.getClientRects().length>0&&getComputedStyle(el).visibility!=='hidden';
   if(document.querySelector('.tp-shade')||[...document.querySelectorAll('#duyuruOverlay,.dm-announcement-overlay,.dm-urgent-announcement,[data-urgent-announcement],.dm-first-character,[role="dialog"][aria-modal="true"]')].some(isVisible))return;
-  const shownKey='dm_teacher_application_offer:'+current.toLocaleLowerCase('tr-TR');
+  const shownKey='dm_teacher_application_offer_v2:'+current.toLocaleLowerCase('tr-TR');
   if(sessionStorage.getItem(shownKey))return;
   if(noticeToken!==token){
    noticeToken=token;
@@ -108,7 +208,7 @@
   if(!noticeResult?.offer)return;
   sessionStorage.setItem(shownKey,'1');
   sessionStorage.removeItem('dm_teacher_notice_character_ready');
-  renderApplication(sheet('👩‍🏫 Diji Medu’yu Sınıfına Taşı',''),noticeResult,token);
+  renderApplication(sheet(applicationTitle,''),noticeResult,token);
  }
  if(!mode){
   const characterReady=()=>{sessionStorage.setItem('dm_teacher_notice_character_ready','1');setTimeout(teacherApplicationNotice,700);};
