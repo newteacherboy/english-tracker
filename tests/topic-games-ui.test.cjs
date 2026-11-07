@@ -17,8 +17,8 @@ test('360px real browser: tab keyboard, locked levels, all six games, guest resu
  try{browser=await chromium.launch({headless:true,executablePath:process.env.TOPIC_CHROMIUM_PATH||chromium.executablePath(),args:['--no-sandbox']});const page=await browser.newPage({viewport:{width:360,height:740},reducedMotion:'reduce'}),errors=[];page.on('pageerror',e=>errors.push(e.message));
  await page.addInitScript(()=>{const real=window.setTimeout;window.setTimeout=(fn,ms,...args)=>real(fn,ms>=700&&ms<=3000?8:ms,...args);window.dmApplyRewardState=(v,owner)=>window.applied={v,owner};});
  await page.goto('http://127.0.0.1:'+server.address().port+'/');
- assert.equal(await page.locator('[data-gg-topic-category]').count(),3);
- await page.locator('[data-gg-topic-category=vocab]').click();
+ await page.locator('#ggKonuTab').press('Enter');
+ await page.locator('[data-category=vocab]').click();
  await page.locator('.kg-list button').first().waitFor();
  assert.equal(await page.locator('[data-category=vocab]').getAttribute('aria-pressed'),'true');
  assert.equal(await page.locator('.kg-list button').count(),12);
@@ -37,7 +37,7 @@ test('360px real browser: tab keyboard, locked levels, all six games, guest resu
  assert.equal(await page.locator('.kg-list button').count(),22);
  await input.fill('');
  assert.equal(await page.locator('.kg-list button').count(),43);
- assert.equal(await page.locator('#ggKonuTab .au-game-icon').count(),1);
+ assert.equal(await page.locator('#ggKonuTab .gg-category-art').count(),1);
  assert.equal(await page.locator('#ggKonuTab').getAttribute('aria-pressed'),'true');
  for(const [theme,surface,ink] of [['day','rgb(255, 255, 255)','rgb(20, 41, 75)'],['night','rgb(32, 48, 79)','rgb(240, 252, 255)']]){
   await page.evaluate(t=>document.documentElement.dataset.dmTheme=t,theme);
