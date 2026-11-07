@@ -1,0 +1,1 @@
+{"name":"dijimedu-garden-3d-study","version":"0.1.0","private":true,"description":"Isolated visual and interaction study. Not connected to production.","scripts":{"build":"node tools/build.cjs","test":"node tests/artifact.cjs"},"devDependencies":{"esbuild":"0.25.11","playwright":"1.58.2"}}
