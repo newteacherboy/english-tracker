@@ -64,6 +64,16 @@
     }catch(error){window.yoToast?.(error.message);}
   };
   window.papizzleAc=papizzleProxy;
+  let bubbleLoading;
+  const bubbleProxy=async()=>{
+    const owner=typeof aktifOgrenciAdi==='undefined'?'':aktifOgrenciAdi;
+    try{
+      await (bubbleLoading??=script('premium-bubble-pop.js?v=20261107-v1').catch(error=>{bubbleLoading=null;throw error;}));
+      if(owner===(typeof aktifOgrenciAdi==='undefined'?'':aktifOgrenciAdi)&&window.premiumBaloncukPatlatmaAc!==bubbleProxy)
+        await window.premiumBaloncukPatlatmaAc();
+    }catch(error){window.yoToast?.(error.message||'Baloncuk oyunu yüklenemedi.');}
+  };
+  window.premiumBaloncukPatlatmaAc=bubbleProxy;
   window.papiFeneriAc=opener(()=>window.papiFeneriAc);
   window.canavarAvcisiAc=opener(()=>window.canavarAvcisiAc);
   window.dengesizKuleAc=opener(()=>window.dengesizKuleAc);
