@@ -11,6 +11,7 @@ create table public.dm_bubble_runs(
  run_id uuid not null,
  level_no integer not null,
  rounds jsonb not null,
+ answers jsonb not null default '{}'::jsonb,
  has_more boolean not null,
  started_at timestamptz not null default clock_timestamp(),
  result jsonb,
@@ -96,6 +97,29 @@ begin
  'result',r.result,'rounds',r.rounds,'hasMore',r.has_more);
 end $$;
 
+create function public.dm_bubble_check(actor uuid,run_key uuid,slot integer,pick integer)
+returns jsonb language plpgsql set search_path to '' as $
+declare r public.dm_bubble_runs; q jsonb; answer_index int; existing jsonb;
+begin
+ if slot<0 or pick not between -1 and 3 then raise exception 'Geçersiz cevap.';end if;
+ select * into r from public.dm_bubble_runs where student_id=actor and run_id=run_key for update;
+ if not found or r.result is not null or slot>=jsonb_array_length(r.rounds) then
+  raise exception 'Oyun bulunamadı.'; end if;
+ q:=r.rounds->slot;
+ answer_index:=(q->>'answer')::int;
+ existing:=r.answers->slot::text;
+ if existing is not null then
+  if (existing->>'pick')::int<>pick then raise exception 'Bu soru zaten cevaplandı.';end if;
+ else
+  if slot>0 and r.answers->(slot-1)::text is null then raise exception 'Soru sırası geçersiz.';end if;
+  update public.dm_bubble_runs
+   set answers=jsonb_set(answers,array[slot::text],jsonb_build_object('pick',pick,'correct',pick=answer_index),true)
+   where student_id=actor and run_id=run_key;
+ end if;
+ return jsonb_build_object('ok',true,'correct',pick=answer_index,
+  'expected',q->'options'->answer_index,'pick',pick,'slot',slot);
+end $;
+
 create function public.dm_bubble_finish(actor uuid,run_key uuid,selections integer[])
 returns jsonb language plpgsql set search_path to '' as $$
 declare st public.students; r public.dm_bubble_runs; v jsonb; outcome jsonb;
@@ -110,10 +134,14 @@ begin
  if r.result is not null then return public.dm_bubble_status(actor)||r.result||
   jsonb_build_object('yo',(select value from public.extra_data where student_id=actor and key_name='yo')); end if;
  total:=jsonb_array_length(r.rounds);
- if selections is null or cardinality(selections)<>total or
+ if selections is null or cardinality(selections)<>total or jsonb_object_length(r.answers)<>total or
     exists(select 1 from unnest(selections) pick where pick is null or pick not between -1 and 3)
     or extract(epoch from clock_timestamp()-r.started_at)<greatest(1,total*1.4-2) then
   raise exception 'Oyun sonucu doğrulanamadı.';
+ end if;
+ if exists (select 1 from generate_series(0,total-1) n where
+   r.answers->n::text is null or (r.answers->n::text->>'pick')::int<>selections[n+1]) then
+   raise exception 'Oyun cevapları doğrulanamadı.';
  end if;
  select count(*) filter(where selections[ord::int]=(q->>'answer')::int),
  count(*) filter(where selections[ord::int]>=0 and selections[ord::int]<>(q->>'answer')::int)
@@ -148,7 +176,7 @@ begin
  return public.dm_bubble_status(actor)||outcome||jsonb_build_object('yo',v);
 end $$;
 revoke all on function public.dm_bubble_size(integer),public.dm_bubble_status(uuid),
- public.dm_bubble_start(uuid,uuid),public.dm_bubble_finish(uuid,uuid,integer[]) from public,anon,authenticated;
+ public.dm_bubble_start(uuid,uuid),public.dm_bubble_check(uuid,uuid,integer,integer),public.dm_bubble_finish(uuid,uuid,integer[]) from public,anon,authenticated;
 grant execute on function public.dm_bubble_size(integer),public.dm_bubble_status(uuid),
- public.dm_bubble_start(uuid,uuid),public.dm_bubble_finish(uuid,uuid,integer[]) to service_role;
+ public.dm_bubble_start(uuid,uuid),public.dm_bubble_check(uuid,uuid,integer,integer),public.dm_bubble_finish(uuid,uuid,integer[]) to service_role;
 commit;
