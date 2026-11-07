@@ -134,13 +134,13 @@ begin
  if r.result is not null then return public.dm_bubble_status(actor)||r.result||
   jsonb_build_object('yo',(select value from public.extra_data where student_id=actor and key_name='yo')); end if;
  total:=jsonb_array_length(r.rounds);
- if selections is null or cardinality(selections)<>total or jsonb_object_length(r.answers)<>total or
+ if selections is null or cardinality(selections)<>total or (select count(*) from jsonb_object_keys(r.answers))<>total or
     exists(select 1 from unnest(selections) pick where pick is null or pick not between -1 and 3)
     or extract(epoch from clock_timestamp()-r.started_at)<greatest(1,total*1.4-2) then
   raise exception 'Oyun sonucu doğrulanamadı.';
  end if;
  if exists (select 1 from generate_series(0,total-1) n where
-   r.answers->n::text is null or (r.answers->n::text->>'pick')::int<>selections[n+1]) then
+   r.answers->n::text is null or ((r.answers->n::text)->>'pick')::int<>selections[n+1]) then
    raise exception 'Oyun cevapları doğrulanamadı.';
  end if;
  select count(*) filter(where selections[ord::int]=(q->>'answer')::int),
