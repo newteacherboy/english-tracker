@@ -1,7 +1,7 @@
 /* Optional games initialize once, when their tab or public opener is used. */
 (()=>{'use strict';
   const premiumFile='premium-word-match.js?v=20261106-pause';
-  const files=['solo-arcade.js?v=20261029-1','harf-bahcesi.js?v=20261106-pause','papi-cards.js?v=20261107-mobile-game-flow','meteor.js?v=20261106-intro-music','word-wheel.js?v=20261016-ten-seconds','kelime-rallisi.js?v=20261106-pause'];
+  const files=['solo-arcade.js?v=20261107-fener','harf-bahcesi.js?v=20261106-pause','papi-cards.js?v=20261107-mobile-game-flow','meteor.js?v=20261106-intro-music','word-wheel.js?v=20261016-ten-seconds','kelime-rallisi.js?v=20261106-pause'];
   const loaded=new Set();let pending=null,readyDone=false;
   function script(src){return new Promise((resolve,reject)=>{
     if(loaded.has(src)){resolve();return;}
@@ -64,6 +64,7 @@
     }catch(error){window.yoToast?.(error.message);}
   };
   window.papizzleAc=papizzleProxy;
+  window.papiFeneriAc=opener(()=>window.papiFeneriAc);
   window.canavarAvcisiAc=opener(()=>window.canavarAvcisiAc);
   window.dengesizKuleAc=opener(()=>window.dengesizKuleAc);
   window.harfBahcesiAc=opener(()=>window.harfBahcesiAc);

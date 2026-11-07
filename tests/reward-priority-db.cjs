@@ -41,6 +41,9 @@ function functionSQL(file,name){
  for(const fn of ['dm_game_reward_claim','dm_solo_fair_claim','dm_solo_fair_percent'])await db.exec(functionSQL(path.join('supabase/migrations',arcade),fn));
  const scoped=fs.readdirSync('supabase/migrations').find(n=>n.endsWith('_game_class_and_level_rewards.sql'));
  await db.exec(fs.readFileSync(path.join('supabase/migrations',scoped),'utf8'));
+ const fener=fs.readdirSync('supabase/migrations').find(n=>n.endsWith('_papi_feneri.sql'));
+ await db.exec(functionSQL(path.join('supabase/migrations',arcade),'dm_arcade_verified_start'));
+ await db.exec(fs.readFileSync(path.join('supabase/migrations',fener),'utf8'));
  for(const g of policy.games){
   const r=(await db.query('select dm_reward_limits($1) r',[g.code])).rows[0].r;
   assert.deepEqual(r,{xp:g.xp,gold:g.gold});

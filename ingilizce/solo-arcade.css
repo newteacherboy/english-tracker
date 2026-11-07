@@ -68,3 +68,53 @@
 /* Dengesiz Kule: center every preview level on one vertical axis on iPad/mobile. */
 .sa-kule .sa-demo-tower{position:relative;left:auto;right:auto;margin-inline:auto}
 .sa-kule .sa-demo-tower .sa-floor{left:50%!important;transform:translateX(-50%);width:min(100%,160px);max-width:100%;object-position:center;}
+
+/* Papi’nin Feneri: the beam follows the pointer, with readable text on the lit tile. */
+.sa-fener, .sa-fener .sa-shell {
+  background: radial-gradient(ellipse at top, #0d3330, #031314 65%);
+  color: #e1fff6;
+}
+.sa-fener .sa-header h2 { color: #79ffc8; text-shadow: none; letter-spacing: -.03em; }
+.sa-fener .sa-header button, .sa-fener .sa-question button {
+  background: #087d56; color: #fff; border-color: #59eeb2; box-shadow: 0 3px #034935;
+}
+.sa-fener .sa-question {
+  justify-content: center; gap: 14px; background: #dbfff0; border-color: #59eeb2;
+  color: #03231c; box-shadow: 0 0 20px #13ff9f40;
+}
+.sa-fener .sa-question h3 { flex: 0 1 auto; font-size: clamp(24px, 5.3vw, 70px); }
+.sa-fener .sa-feedback { background: #092623; border-color: #25675a; color: #e1fff6; }
+.sa-fener .sa-feedback .is-error { color: #ffd3cb; }
+.sa-fener-hud { display: flex; justify-content: space-between; color: #9ef4d6; font-weight: 900; }
+.sa-fener-grid {
+  position: relative; isolation: isolate; display: grid; flex: 1; min-height: 0; gap: 10px;
+  grid-template: repeat(2, minmax(0, 1fr)) / repeat(2, minmax(0, 1fr));
+  touch-action: none; user-select: none; -webkit-user-select: none; overflow: hidden;
+}
+.sa-fener-grid::before {
+  content: ''; position: absolute; inset: 0; pointer-events: none; opacity: 0;
+  background: radial-gradient(circle at var(--beam-x) var(--beam-y), #caffec 0, #76ffbb 30px, #28d998a0 70px, transparent clamp(90px, 19vw, 175px));
+}
+.sa-fener-grid.is-lit::before { opacity: 1; }
+.sa-fener-grid button {
+  position: relative; border: 1px solid #286259; border-radius: 20px; background: #06342c44;
+  color: #ddfff3; min-width: 0; min-height: 0; padding: 8px; cursor: crosshair;
+  font: 900 clamp(15px, 3vw, 36px)/1.15 Nunito, system-ui, sans-serif; overflow-wrap: anywhere;
+}
+.sa-fener-grid button span { opacity: 0; }
+.sa-fener-grid button:is(.is-lit, :focus-visible, .sa-correct, .sa-wrong) span {
+  opacity: 1; background: #06332a; border-radius: 6px; padding: .12em .32em;
+  box-decoration-break: clone; -webkit-box-decoration-break: clone;
+}
+.sa-fener-grid button.sa-correct { background: #0c573f; border-color: #7effb2; opacity: 1; }
+.sa-fener-grid button.sa-wrong { background: #622d36; border-color: #ff939d; opacity: 1; }
+.sa-fener-grid button.sa-wrong span { background: #4a2028; }
+.sa-fener-preview, .sa-hub-fener {
+  background: radial-gradient(circle at 62% 43%, #ddfff0 0 9%, #60f4b9 12%, #0e624f 25%, #03221e 45%);
+}
+.sa-fener-preview { align-self: stretch; border-radius: 20px; font-size: 0; min-height: 90px; }
+.sa-fener .sa-setup-panel { background: #e8fff6; border-color: #9cf1cf; box-shadow: 0 5px #147354; }
+.sa-fener .sa-unlock { background: #093e31; border-color: #74e9b7; box-shadow: 0 4px #06271d; }
+@media (orientation: landscape) {
+  .sa-fener.sa-playing .sa-shell { width: min(100%, 1440px); }
+}
