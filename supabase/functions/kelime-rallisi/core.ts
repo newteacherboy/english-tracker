@@ -20,6 +20,19 @@ export function publicRace(row:any){const {deck,...safe}=row;const index=Number(
 export function twoChoiceLanes(q:any){const wrong=[0,1,2].filter(i=>i!==q.answer);const omit=wrong[(q.word.length+q.en.length)%wrong.length];return [0,1,2].filter(i=>i!==omit);}
 export function twoChoiceQuestion(q:any){if(!q)return null;return {word:q.word,direction:q.direction,options:twoChoiceLanes(q).map(i=>q.options[i])};}
 export function twoChoiceRace(row:any,data:any){const i=Number(data.state?.index||0);return {...data,question:data.finished?null:twoChoiceQuestion(row.deck[i]),nextQuestion:data.finished?null:twoChoiceQuestion(row.deck[i+1])};}
+// Stop reading at the byte limit instead of buffering an unbounded request first.
+async function readSmallJson(req:Request,maxBytes:number){
+ if(Number(req.headers.get('content-length')||0)>maxBytes)return {ok:false,status:413};
+ if(!req.body)return {ok:false,status:400};
+ const reader=req.body.getReader(),chunks:Uint8Array[]=[];let size=0;
+ try{for(;;){const {value,done}=await reader.read();if(done)break;size+=value.byteLength;
+  if(size>maxBytes){void reader.cancel().catch(()=>{});return {ok:false,status:413};}chunks.push(value);
+ }}finally{reader.releaseLock();}
+ const bytes=new Uint8Array(size);let offset=0;for(const chunk of chunks){bytes.set(chunk,offset);offset+=chunk.byteLength;}
+ try{const data=JSON.parse(await new Response(bytes).text());if(!data||typeof data!=='object'||Array.isArray(data))return {ok:false,status:400};return {ok:true,data};}
+ catch{return {ok:false,status:400};}
+}
+
 export function raceHandler(db:DB){
  const headers={'Access-Control-Allow-Origin':'*','Access-Control-Allow-Headers':'content-type,x-diji-token,authorization,apikey','Access-Control-Allow-Methods':'POST,OPTIONS','Cache-Control':'no-store','Content-Type':'application/json'};
  const json=(d:any,status=200)=>new Response(JSON.stringify(d),{status,headers});
@@ -27,26 +40,32 @@ export function raceHandler(db:DB){
   if(req.method==='OPTIONS')return new Response('ok',{headers});
   if(req.method!=='POST')return json({ok:false,mesaj:'POST gerekli.'},405);
   try{
-   const raw=await req.text();if(raw.length>8192)return json({ok:false,mesaj:'İstek çok büyük.'},413);let b:any;try{b=JSON.parse(raw);}catch{return json({ok:false,mesaj:'Geçersiz istek.'},400);}
+   const input=await readSmallJson(req,8192);if(!input.ok)return json({ok:false,mesaj:input.status===413?'İstek çok büyük.':'Geçersiz istek.'},input.status);const b:any=input.data;
    const token=String(b.t||req.headers.get('x-diji-token')||'');if(!token||token.length>512)return json({ok:false,mesaj:'Öğrenci hesabına giriş yap.'},401);
    const hash=Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(token)))).map(x=>x.toString(16).padStart(2,'0')).join('');
    const sessions=await db.select('portal_sessions',{select:'student_id,teacher_id,role,expires_at,teacher_portal_access_id,teacher_portal_version',token_hash:'eq.'+hash,limit:'1'}),a=sessions[0];
    if(!a||!['student','teacher'].includes(a.role)||!Number.isFinite(Date.parse(a.expires_at))||Date.parse(a.expires_at)<=Date.now())return json({ok:false,mesaj:'Geçerli oturum gerekli.'},401);
    if(a.teacher_portal_access_id){
-    const [g]=await db.select('teacher_portal_access',{select:'teacher_id,state,version',id:'eq.'+a.teacher_portal_access_id,limit:'1'});
+    const [g]=await db.select('teacher_portal_access',{select:'teacher_id,state,version,student_id',id:'eq.'+a.teacher_portal_access_id,limit:'1'});
     const [pupil]=await db.select('students',{select:'teacher_id,status,frozen_at',id:'eq.'+a.student_id,limit:'1'});
     if(a.role!=='student'||!g||g.state!=='approved'||g.version!==a.teacher_portal_version||!pupil||pupil.teacher_id!==g.teacher_id||pupil.status!=='approved'||pupil.frozen_at)return json({ok:false,mesaj:'Öğretmen erişimi sona erdi.'},403);
+    const [owner]=await db.select('teachers',{select:'active,frozen_at,username,is_admin',id:'eq.'+g.teacher_id,limit:'1'});
+    if(!owner||owner.active===false||owner.frozen_at)return json({ok:false,mesaj:'Öğretmen erişimi sona erdi.'},403);
+    if(g.student_id){
+     const [linked]=await db.select('students',{select:'status,frozen_at,email_verified_at',id:'eq.'+g.student_id,limit:'1'});
+     if(!linked||linked.status!=='approved'||linked.frozen_at||!linked.email_verified_at)return json({ok:false,mesaj:'Öğretmen erişimi sona erdi.'},403);
+    }else if(owner.username!=='teacher'||owner.is_admin!==true)return json({ok:false,mesaj:'Öğretmen erişimi doğrulanamadı.'},403);
    }
    const teacher=a.role==='teacher';let student:any;
    if(teacher){
-    const rows=a.teacher_id?await db.select('teachers',{select:'id,active',id:'eq.'+a.teacher_id,limit:'1'}):[];
-    if(!rows[0]||rows[0].active===false)return json({ok:false,mesaj:'Aktif öğretmen hesabı gerekli.'},403);
+    const rows=a.teacher_id?await db.select('teachers',{select:'id,active,frozen_at',id:'eq.'+a.teacher_id,limit:'1'}):[];
+    if(!rows[0]||rows[0].active===false||rows[0].frozen_at)return json({ok:false,mesaj:'Aktif öğretmen hesabı gerekli.'},403);
     if(!['setup','practice'].includes(String(b.action||'')))return json({ok:false,mesaj:'Öğretmen hesabı deneme modunu kullanabilir.'},403);
     student={class_no:1};
    }else{
     if(!a.student_id)return json({ok:false,mesaj:'Öğrenci oturumu gerekli.'},401);
-    const rows=await db.select('students',{select:'id,username,status,role,class_no,selected_class',id:'eq.'+a.student_id,limit:'1'});student=rows[0];
-    if(!student||student.status!=='approved'||student.role!=='student')return json({ok:false,mesaj:'Aktif öğrenci hesabı gerekli.'},403);
+    const rows=await db.select('students',{select:'id,username,status,role,frozen_at,class_no,selected_class',id:'eq.'+a.student_id,limit:'1'});student=rows[0];
+    if(!student||student.frozen_at||student.status!=='approved'||student.role!=='student')return json({ok:false,mesaj:'Aktif öğrenci hesabı gerekli.'},403);
     const balances=await db.select('extra_data',{select:'value',student_id:'eq.'+student.id,key_name:'eq.yo',limit:'1'});
     const level=await db.rpc('dm_student_level',{x:Number(balances[0]?.value?.totalXp||0)});
     if(!a.teacher_portal_access_id&&Number(level)<15)return json({ok:false,mesaj:'Kelime Rallisi 15. seviyede açılır.'},403);
