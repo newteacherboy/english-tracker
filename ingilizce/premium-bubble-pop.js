@@ -48,7 +48,7 @@ function mount(account,t,initial){
  const $=sel=>dialog.querySelector(sel);
  const stage=$('[data-bubbles]'),panel=$('[data-panel]'),pane=dialog.querySelector('.db-panel');
  const soundBtn=$('[data-sound]');let muted=localStorage.getItem('dm_bubble_muted')==='1',audio=null;
- let state=initial,run=null,pendingStartId=null,rounds=[],slot=0,picks=[],score=0,streak=0,wrong=0,paused=false,busy=false;
+ let state=initial,run=null,pendingStartId=null,rounds=[],slot=0,picks=[],score=0,streak=0,right=0,wrong=0,paused=false,busy=false;
  let remaining=13000,last=0,frame=0,feedbackTimer=0,accountTimer=0,closed=false,pendingPick=null;
  const live=()=>!closed&&dialog.isConnected&&owner()===account;
  function tone(ok){
@@ -114,8 +114,9 @@ function mount(account,t,initial){
    if(!live())return;
    if(reply.slot!==slot||reply.pick!==index)throw Error('Cevap uyuşmadı.');
    picks.push(index);
-   if(reply.correct){streak++;score+=100;tone(true);}
-   else{streak=0;wrong++;score=Math.max(0,score-25);tone(false);}
+   if(reply.correct){streak++;right++;tone(true);}
+   else{streak=0;wrong++;tone(false);}
+   score=Math.max(0,right*100-wrong*25);
    const selected=stage.querySelector('[data-index="'+index+'"]');
    selected?.classList.add(reply.correct?'is-correct':'is-wrong');
    if(reply.correct)selected?.insertAdjacentHTML('beforeend','<b class="db-popmark" aria-hidden="true">✓</b>');
@@ -144,7 +145,7 @@ function mount(account,t,initial){
    const d=await request(t,'start',{runId:id});
    if(!live())return;
    run=id;pendingStartId=null;rounds=d.rounds||[];if(!rounds.length)throw Error('Bu bölüm için kelime bulunamadı.');
-   slot=0;picks=[];score=0;streak=0;wrong=0;updateStatus(d);hide();busy=false;draw();
+   slot=0;picks=[];score=0;streak=0;right=0;wrong=0;updateStatus(d);hide();busy=false;draw();
   }catch(e){run=null;busy=false;if(live())display('Oyun başlatılamadı',[e.message],[['Tekrar dene',start],['Oyunlara dön',close]]);}
  }
  async function finish(){
