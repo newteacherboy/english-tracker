@@ -27,9 +27,10 @@ body.pc-active{overflow:hidden!important}
 #papiCards .pc-perched{position:absolute;width:90px;height:99px;object-fit:contain;top:-65px;left:calc(50% - 45px);z-index:2;pointer-events:none}
 #papiCards .pc-card{border:1px solid #b9c9a9;border-radius:24px;background:#fffdf4;box-shadow:0 6px 16px #29442b12;padding:32px 16px 24px;position:relative;min-height:345px}
 #papiCards .pc-leaf{position:absolute;font-size:20px;opacity:.65;pointer-events:none}.pc-leaf-top{top:12px;left:13px}.pc-leaf-bottom{bottom:8px;right:12px;transform:rotate(180deg)}
-#papiCards .pc-reveal{border:0;background:transparent;color:#173e35;width:100%;min-height:120px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:17px;padding:15px 2px}
-#papiCards .pc-reveal[aria-pressed="true"]{background:#e9f3e4;border-radius:16px}
-#papiCards .pc-reveal strong{font:600 clamp(27px,8vw,44px)/1.15 Fredoka,Nunito,sans-serif;overflow-wrap:anywhere;word-break:normal;max-width:100%}
+#papiCards .pc-word{border:0;background:transparent;color:#173e35;width:100%;min-height:120px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px;padding:15px 2px}
+#papiCards .pc-meaning:not(:empty){margin:0;padding:8px 12px;border-radius:12px;background:#e9f3e4;color:#173e35;font-weight:850;overflow-wrap:anywhere}
+#papiCards .pc-meaning:empty{margin:0}
+#papiCards .pc-word strong{font:600 clamp(27px,8vw,44px)/1.15 Fredoka,Nunito,sans-serif;overflow-wrap:anywhere;word-break:normal;max-width:100%}
 #papiCards .pc-speaker{display:grid;place-items:center;background:#e3ecd8;border:0;margin:0 auto;width:44px;height:44px;border-radius:50%;font-size:22px}
 #papiCards .pc-answer{border-top:1px solid #d2dac8;margin-top:10px;padding-top:16px}
 #papiCards .pc-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px}
@@ -42,7 +43,7 @@ body.pc-active{overflow:hidden!important}
 #papiCards .pc-notice{font-size:12px;color:#885c41;line-height:1.4;margin:6px 0;min-height:0}
 #papiCards .pc-finish-papi{object-fit:contain;margin:30px auto 10px}
 #papiCards h2{font:600 28px/1.2 Fredoka,Nunito,sans-serif}
-@media(max-height:700px){#papiCards .pc-shell{padding-top:8px}#papiCards .pc-header{margin-bottom:10px}#papiCards h1{font-size:22px}#papiCards .pc-hint{margin-top:8px}#papiCards .pc-deck{margin-top:48px;margin-bottom:15px}#papiCards .pc-perched{width:70px;height:77px;top:-48px;left:calc(50% - 35px)}#papiCards .pc-card{min-height:285px;padding:20px 12px 20px}#papiCards .pc-reveal{min-height:95px;gap:10px;padding:10px 0}#papiCards .pc-actions button{min-height:64px}#papiCards .pc-meaning{margin-bottom:12px}#papiCards .pc-note{margin:8px 0}}
+@media(max-height:700px){#papiCards .pc-shell{padding-top:8px}#papiCards .pc-header{margin-bottom:10px}#papiCards h1{font-size:22px}#papiCards .pc-hint{margin-top:8px}#papiCards .pc-deck{margin-top:48px;margin-bottom:15px}#papiCards .pc-perched{width:70px;height:77px;top:-48px;left:calc(50% - 35px)}#papiCards .pc-card{min-height:285px;padding:20px 12px 20px}#papiCards .pc-word{min-height:95px;gap:10px;padding:10px 0}#papiCards .pc-actions button{min-height:64px}#papiCards .pc-note{margin:8px 0}}
 @media(prefers-reduced-motion:no-preference){#papiCards .pc-card{animation:pcAppear .18s ease-out}@keyframes pcAppear{from{opacity:.65;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}}
 
 #papiCards input{width:100%;min-height:48px;border:1px solid #c3d1b8;border-radius:12px;background:#fffefa;font:16px Nunito,system-ui,sans-serif;color:#173e35;padding:10px 12px}

@@ -3180,7 +3180,9 @@ function papiCardsAPI(db:any,json:any){
   const bank=await db.from('word_bank').select('english,turkish').eq('active',true).eq('class_no',cls).eq('unit_no',unit).limit(2001);
   if(bank.error)return json({ok:false,mesaj:'Kelime destesi doğrulanamadı.'},503);
   const count=new Set((bank.data||[]).filter((r:any)=>String(r.english||'').trim()&&String(r.turkish||'').trim()).map((r:any)=>String(r.english).trim().toLocaleLowerCase('en'))).size;
-  if(count!==total)return json({ok:false,mesaj:'Kelime destesi değişmiş. Üniteyi yeniden açıp çalış.'},409);
+  // Older clients still submit the full unit. New clients explicitly submit a capped round.
+  const expectedTotal=body.turBoyutu===12?Math.min(12,count):count;
+  if(expectedTotal!==total)return json({ok:false,mesaj:'Kelime destesi değişmiş. Üniteyi yeniden açıp çalış.'},409);
   const score=Math.round(known/total*100);
   const {error}=await db.from('papi_card_results').upsert({owner_key:owner,run_id:run,student_id:a.role==='student'?a.student_id:null,teacher_id:a.role==='teacher'?a.teacher_id:null,display_name:name,class_no:cls,unit_no:unit,total,known_count:known,review_count:review,score,duration_seconds:seconds},{onConflict:'owner_key,run_id',ignoreDuplicates:true});
   if(error)return json({ok:false,mesaj:'Sonuç kaydedilemedi. Tekrar dene.'},503);
