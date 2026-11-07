@@ -114,12 +114,12 @@ function mount(account,t,initial){
    if(!live())return;
    if(reply.slot!==slot||reply.pick!==index)throw Error('Cevap uyuşmadı.');
    picks.push(index);
-   if(reply.correct){streak++;score+=100+(streak%3===0?25:0);tone(true);}
+   if(reply.correct){streak++;score+=100;tone(true);}
    else{streak=0;wrong++;score=Math.max(0,score-25);tone(false);}
    const selected=stage.querySelector('[data-index="'+index+'"]');
    selected?.classList.add(reply.correct?'is-correct':'is-wrong');
    if(reply.correct)selected?.insertAdjacentHTML('beforeend','<b class="db-popmark" aria-hidden="true">✓</b>');
-   feedback.textContent=reply.correct?'✓ Harika! +'+(100+(streak%3===0?25:0))+' puan':'✕ Doğru cevap: '+reply.expected;
+   feedback.textContent=reply.correct?'✓ Harika! +100 puan':'✕ Doğru cevap: '+reply.expected;
    $('[data-next]').hidden=false;$('[data-instruction]').hidden=true;setHud();
    busy=false;pendingPick=null;
    if(reply.correct)feedbackTimer=setTimeout(advance,850);
