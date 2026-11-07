@@ -1,0 +1,26 @@
+name: Premium Baloncuk security and play QA
+on:
+  pull_request:
+    paths:
+      - 'ingilizce/premium-bubble-pop.js'
+      - 'ingilizce/premium-bubble-pop.css'
+      - 'ingilizce/lazy-games.js'
+      - 'supabase/functions/premium-games/index.ts'
+      - 'supabase/migrations/*premium_bubble_pop.sql'
+      - 'tests/premium-bubble.test.cjs'
+  push:
+    branches: [main]
+    paths:
+      - 'ingilizce/premium-bubble-pop.js'
+      - 'supabase/functions/premium-games/index.ts'
+      - 'tests/premium-bubble.test.cjs'
+jobs:
+  bubble:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm ci --ignore-scripts
+      - run: node --test tests/premium-bubble.test.cjs
