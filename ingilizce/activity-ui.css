@@ -504,3 +504,78 @@ html.dm-teacher-portal #tab-aktiviteler#tab-aktiviteler .gg-page .gg-tabs{grid-t
 #tab-aktiviteler#tab-aktiviteler .gg-teacher-shelves .gg-tabs>button{grid-column:span 2}
 #tab-aktiviteler#tab-aktiviteler .gg-teacher-shelves .gg-tabs>button:nth-child(n+4){grid-column:span 3}
 }
+
+/* Student game catalogue · Oyun Listesi. */
+@layer bilgiIslands {
+html[data-dm-theme] #tab-aktiviteler#tab-aktiviteler:has(.gg-page.gg-list-view),
+html[data-dm-theme] #tab-aktiviteler#tab-aktiviteler .gg-page.gg-redesign.gg-list-view{
+  background:var(--gg-list-bg)!important;
+}
+html #tab-aktiviteler:has(.gg-list-view){
+  --gg-list-bg:#151e30;
+  --gg-list-line:#42536a;
+  --gg-list-field:#29384e;
+  --gg-list-chip:#233148;
+  --gg-list-premium:#372f29;
+  --gg-list-premium-ink:#ffe0a0;
+  --gg-list-muted:#b6c5dc;
+  --gg-list-play:#287cce;
+}
+html[data-dm-theme="day"] #tab-aktiviteler:has(.gg-list-view){
+  --gg-list-bg:#f8fafc;
+  --gg-list-line:#ced7e2;
+  --gg-list-field:#edf1f5;
+  --gg-list-chip:#fff;
+  --gg-list-premium:#fff9e9;
+  --gg-list-premium-ink:#523a08;
+  --gg-list-muted:#50617b;
+  --gg-list-play:#086dc7;
+}
+html[data-dm-theme] #tab-aktiviteler#tab-aktiviteler .gg-redesign.gg-list-view .gg-tabs>button[aria-pressed]{
+  display:flex!important;flex-direction:row!important;justify-content:center;align-items:center;
+  min-width:0;min-height:42px!important;padding:4px 2px!important;gap:4px!important;
+  border:1px solid var(--gg-list-line)!important;border-radius:10px!important;
+  background:var(--gg-list-chip)!important;box-shadow:none!important;transform:none;
+  font:900 clamp(10px,2.85vw,14px)/1.1 Nunito,system-ui,sans-serif!important;
+  white-space:normal;text-align:center;overflow-wrap:normal;
+}
+html[data-dm-theme] #tab-aktiviteler#tab-aktiviteler .gg-redesign.gg-list-view .gg-tabs #ggPremiumTab:not([aria-pressed=true]){
+  background:var(--gg-list-premium)!important;color:var(--gg-list-premium-ink)!important;
+  border-color:#b48234!important;
+}
+html[data-dm-theme] #tab-aktiviteler#tab-aktiviteler .gg-redesign.gg-list-view .gg-tabs>button[aria-pressed=true]{
+  background:#8fdcff!important;color:#0e2b47!important;border-color:#62b6df!important;
+}
+}
+.gg-list-view .gg-category-art{display:block;width:clamp(15px,5.3vw,24px);height:clamp(15px,5.3vw,24px);flex:none}
+.gg-list-view .gg-search{
+  display:flex;align-items:center;gap:8px;margin:0 0 10px;padding:0 10px;min-height:40px;
+  color:var(--gg-shelf-ink);border:1px solid var(--gg-list-line);border-radius:11px;background:var(--gg-list-field);
+}
+.gg-list-view .gg-search:focus-within{outline:2px solid var(--gg-list-play);outline-offset:1px}
+.gg-list-view .gg-search input{
+  width:100%;min-width:0;min-height:40px;padding:4px 0;border:0;outline:0;
+  color:inherit;background:none;font:700 16px/1.2 Nunito,system-ui,sans-serif;
+}
+.gg-list-view .gg-search input::placeholder{color:var(--gg-list-muted);opacity:1}
+.gg-list-view .gg-overview{gap:0;border-top:1px solid var(--gg-list-line)}
+.gg-list-view .gg-list-row{
+  display:grid;grid-template-columns:clamp(50px,15vw,76px) minmax(0,1fr) 40px;
+  align-items:center;gap:10px;padding:5px 2px;min-height:62px;border-radius:0;
+  border-bottom:1px solid var(--gg-list-line);
+}
+.gg-list-view .gg-list-row:hover{background:var(--gg-list-field)}
+.gg-list-view .gg-list-row .gg-cover{
+  aspect-ratio:1;border:0;border-radius:9px;background:var(--gg-list-field);
+}
+.gg-list-view .gg-cover .mv-card-papi{width:58%;height:84%;left:7%}
+.gg-list-view .gg-row-copy{display:grid;gap:2px;min-width:0}
+.gg-list-view .gg-row-copy strong{font:950 clamp(14px,4vw,21px)/1.15 Nunito,system-ui,sans-serif;overflow-wrap:anywhere}
+.gg-list-view .gg-row-copy small,.gg-list-view .gg-list-empty{color:var(--gg-list-muted);font:750 13px/1.3 Nunito,system-ui,sans-serif}
+.gg-list-view .gg-list-empty{padding:16px 4px}
+.gg-list-view .gg-row-action{
+  display:grid;place-items:center;justify-self:center;width:36px;height:36px;
+  color:#fff;background:var(--gg-list-play);border-radius:50%;
+}
+.gg-list-view .gg-row-action svg{width:19px;height:19px}
+.gg-list-view .gg-list-row[aria-disabled=true] .gg-row-action{background:var(--gg-list-field);color:var(--gg-list-muted)}

@@ -65,9 +65,16 @@
   function shortcutsHtml() {
     const pending = invites.some(x=>x.durum==='bekliyor'&&norm(x.alici)===norm(who()));
     return `<div class="fr-summaries">
-      <div class="fr-friend-shortcut"><button type="button" data-friend-action="people"><img class="fr-shortcut-art" src="route-assets/bilgi-icons/friends.webp" alt="" decoding="async"><strong>Arkadaşlarım</strong></button>
-        <button type="button" class="fr-invite-cta" data-friend-action="share">${icon('add')}<b>Davet et</b></button></div>
-      <button type="button" class="fr-tile fr-duel-tile" data-friend-action="matches" data-friends-gate="duello">${icon('swords','fr-shortcut-art')}<span class="fr-duel-label"><strong>Düello</strong>${pending?'<span class="fr-duel-dot" aria-label="Yeni oyun daveti"></span>':icon('chevron')}</span></button>
+      <section class="fr-duel-card" aria-labelledby="frDuelTitle">
+        <img class="fr-duel-art" src="friends-assets/papi-fencer.webp" alt="" decoding="async">
+        <div class="fr-duel-copy"><h3 id="frDuelTitle">Düello${pending?'<span class="fr-duel-dot" role="img" aria-label="Yeni oyun daveti"></span>':''}</h3>
+          <p>Bir arkadaşınla bilgi mücadelesi yap.</p></div>
+        <button type="button" class="fr-duel-start" data-friend-action="matches" data-friends-gate="duello">Başlat</button>
+      </section>
+      <div class="fr-people-row">
+        <button type="button" class="fr-people-link" data-friend-action="people"><img src="route-assets/bilgi-icons/friends.webp" alt="" decoding="async"><strong>Arkadaşlarım</strong></button>
+        <button type="button" class="fr-people-invite" data-friend-action="share">${icon('add')} Davet et</button>
+      </div>
     </div>`;
   }
   const filterOptions = [['herkes','Herkes'],['takip','Takip ettiklerim'],['online','Çevrimiçi']];
@@ -117,7 +124,11 @@
     viewHeader();paintLocks();dockSpace();screen.scrollTop=scroll;
   }
   function paintLocks() {
-    root.querySelectorAll('[data-friends-gate]').forEach(b=>{const blocked=!permitted(b.dataset.friendsGate);b.classList.toggle('fr-locked',blocked);b.setAttribute('aria-disabled',String(blocked));});
+    root.querySelectorAll('[data-friends-gate]').forEach(b=>{
+      if(b.matches('.fr-duel-start'))return; // The start button explains the lock on activation.
+      const blocked=!permitted(b.dataset.friendsGate);
+      b.classList.toggle('fr-locked',blocked);b.setAttribute('aria-disabled',String(blocked));
+    });
     window.dmProgression?.paint?.();
   }
   async function loadHome(force=false) {

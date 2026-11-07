@@ -2644,6 +2644,20 @@
       "status": "ai-generated",
       "source": "docs/media-generation-record.json",
       "derived_from": "ingilizce/parkur-badges/school-05.webp"
+    },
+    {
+      "path": "ingilizce/friends-assets/papi-fencer.webp",
+      "sha256": "33f07ef895603906ea94a5b80bd178da43bfe36fcf7a5a14a9c17eca8e1343b5",
+      "bytes": 20222,
+      "status": "ai-generated",
+      "source": "OpenAI imagegen, 2026-11-06; transparent Papi fencer illustration based on the approved Friends duel card mockup"
+    },
+    {
+      "path": "ingilizce/games-assets/category-icons.svg",
+      "sha256": "0174f7b1b2efeafe616544056ebcbb30f1e3aef9db7141b6e70fdcc3ae97cd54",
+      "bytes": 2663,
+      "status": "code-native",
+      "source": "Repository-authored game category icon set; SVG source retained in Git"
     }
   ]
 }

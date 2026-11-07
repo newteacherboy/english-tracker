@@ -45,9 +45,11 @@
  ['pomodoroAc',2,'Odaklanma','pomodoro'],['kelimeYarismasiAc',0,'Kelime','oyun_kelime'],['hafizaOyunAc',1,'Hafıza','oyun_hafiza'],['okumaStudyosunuAc',2,'Okuma','okuma_hizi'],['boslukOyunAc',3,'Kelime','oyun_bosluk'],['asmacaOyunAc',4,'Kelime','oyun_asmaca'],['jpOyunAc',5,'Kelime','oyun_jeopardy'],['yagmurOyunAc',6,'Kelime','oyun_yagmur'],['kelimebulOyunAc',7,'Kelime','oyun_kelimebul'],['esOyunAc',8,'Kelime','oyun_eslestirme'],['trenOyunAc',9,'Cümle','oyun_tren'],['dikteAc',10,'Dinleme','oyun_dikte'],['cumleAc',11,'Cümle','oyun_cumle'],['harfBahcesiAc',15,'Kelime','oyun_harfbahcesi'],['ralliOyunAc',16,'Kelime','oyun_ralli'],['kelimeGoluAc',18,'Kelime','oyun_kelime']];
  const free={kelimeGoluDuo:[19,'İki kale, dört köşe; doğru anlamı seç ve golünü at. Enerji harcanmaz.','Maçı Başlat'],papiCardsActivity:[12,'Kelime kartlarını dinle ve öğren.','Kartları Aç'],meteorActivity:[13,'Aynı cihazda kelimeleri yakala, rakibini geç.','Oyunu Aç'],wordWheelActivity:[14,'Çarkı çevir, doğru kelimeyi bul.','Çarkı Aç'],sentenceRaceActivity:[17,'İki takım · farklı sorular · 12 tur · süre bonusu.','Yarışı Başlat']};
  const icon=name=>'<svg class="gg-icon" aria-hidden="true"><use href="games-assets/ui-icons.svg#'+name+'"></use></svg>';
- let party='solo',skill='Tümü',lastAccount='',friendsLoaded=false,knownGrid=null,key='';
+ let party='solo',skill='Tümü',query='',lastAccount='',friendsLoaded=false,knownGrid=null,key='';
  const categories={solo:'Tek Kişilik',duo:'Online',free:'Kapışma',konu:'Konu',break:'Mola',premium:'Premium'};
- const premiumCodes={papizzleActivity:'papizzle',premiumWordBlocksActivity:'word-blocks',premiumCloudFlightActivity:'cloud-flight',premiumWordMatchActivity:'word-match'};
+ const listOrder=['game-jpOyunAc()','game-kelimeYarismasiAc()','kelimeGoluSolo','mola-kosu','premiumWordBlocksActivity','papizzleActivity'];
+ const searchKey=value=>String(value||'').toLocaleLowerCase('tr').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replaceAll('ı','i').trim();
+ const listRank=id=>{const i=listOrder.indexOf(id);return i<0?listOrder.length:i;};
  const shelfOrder=['premium','solo','free','duo','konu','break'];
  const categoryIcons={solo:0,duo:1,free:2,konu:3,break:4,premium:5};
  const gameCovers={
@@ -56,37 +58,6 @@
   kelimeGoluDuo:'games-assets/kelime-golu-stadium-v1.webp',
   dmRotaKart:'games-assets/cumle-rotasi-cover.svg'
  };
- let visit=0, featured=null, featuredStatus=null, statusRequest=null;
- function nextVisit(){
-  featured=null;featuredStatus=null;statusRequest=null;
-  try{
-   const storageKey='dm_games_visit:'+account();
-   visit=(Number(localStorage.getItem(storageKey))||0)+1;
-   localStorage.setItem(storageKey,String(visit));
-  }catch{visit++;}
- }
- function loadFeaturedStatus(card){
-  const token=localStorage.getItem('ing_token'),code=premiumCodes[card.id];
-  if(!token||!code||typeof apiURL!=='string'||statusRequest)return;
-  const request={};statusRequest=request;
-  const controller=new AbortController();
-  const timer=setTimeout(()=>controller.abort(),8000);
-  fetch(apiURL.replace(/diji-api.*$/,'premium-games'),{
-   method:'POST',headers:{'Content-Type':'application/json'},cache:'no-store',
-   body:JSON.stringify({op:'status',game:code,t:token}),signal:controller.signal
-  }).then(async response=>{
-   if(!response.ok)return;
-   const status=await response.json();
-   if(!status?.ok||statusRequest!==request||card!==featured||token!==localStorage.getItem('ing_token'))return;
-   featuredStatus=status;
-   card.closest('.gg-redesign')?.querySelectorAll('.gg-featured .gg-list-action').forEach(action=>action.textContent=featuredAction());
-  }).catch(()=>{}).finally(()=>clearTimeout(timer));
- }
- function featuredAction(){
-  if(!featuredStatus)return 'İncele ›';
-  if(featuredStatus.premium||featuredStatus.practice||featuredStatus.plan==='pro'&&featuredStatus.remaining>0)return 'Oyna ›';
-  return featuredStatus.remaining>0?'Ücretsiz Dene ›':'Premium’u İncele ›';
- }
  function changeCategory(host,grid,category,topicCategory){
   party=category;skill='Tümü';render(host,grid,topicCategory);
   host.closest('#tab-aktiviteler').scrollTop=0;
@@ -97,7 +68,7 @@
   const i=categoryIcons[category];
   return '<i class="au-game-icon'+(category==='premium'?' gg-premium-icon':'')+'" style="background-position:'+i*25+'% 50%" aria-hidden="true"></i>';
  }
- function coverArt(card){
+ function coverArt(card,compact=false){
   const art=document.createElement('span');art.className='gg-cover';art.setAttribute('aria-hidden','true');
   const cover=gameCovers[card.id];
   if(card.id==='dmUcusteKart'){
@@ -105,7 +76,7 @@
    const bird=document.createElement('span');bird.className='gg-flight-papi';art.append(bird);
   }else if(cover){
    const image=new Image();image.src=cover;image.alt='';image.loading='lazy';image.decoding='async';
-   if(card.id==='sentenceRaceActivity'){
+   if(!compact&&card.id==='sentenceRaceActivity'){
     const backdrop=image.cloneNode();backdrop.className='gg-cover-backdrop';art.append(backdrop);
     image.className='gg-cover-subject';
    }
@@ -116,7 +87,7 @@
     const image=source.querySelector('image[data-href]');
     if(image)image.setAttribute('href',image.dataset.href);
     const isAtlas=source.style.getPropertyValue('--gx')||card.style.getPropertyValue('--au-thumb');
-    if(isAtlas||source.classList.contains('gg-premium-art')){
+    if(!compact&&(isAtlas||source.classList.contains('gg-premium-art'))){
      const backdrop=source.cloneNode(true);backdrop.classList.add('gg-cover-backdrop');art.append(backdrop);
      source.classList.add('gg-cover-subject');
     }
@@ -129,63 +100,40 @@
   }
   return art;
  }
- function shelfCard(card,isFeatured){
-  const premium=isFeatured&&card.dataset.ggCategory==='premium';
+ function shelfCard(card){
   const open=allowed(card.dataset.ggGate);
   const button=document.createElement('button');button.type='button';button.className='gg-shelf-card';
   button.dataset.ggSource=card.dataset.ggId;
   button.setAttribute('aria-disabled',String(!open));
-  if(isFeatured)button.classList.add('gg-featured');
   const copy=document.createElement('span');copy.className='gg-shelf-copy';
   copy.innerHTML='<strong>'+esc(card.dataset.ggTitle)+'</strong>';
-  const action=document.createElement('span');action.className='gg-list-action';
-  if(premium)action.textContent=featuredAction();
-  else if(!open)action.textContent='🔒 '+(window.DijiProgressionCatalog?.gates[card.dataset.ggGate]||30)+'. seviyede açılır';
-  else action.hidden=true;
-  copy.append(action);button.append(coverArt(card),copy);
-  button.onclick=()=>{
-   if(premium&&featuredStatus&&!(featuredStatus.premium||featuredStatus.practice)&&featuredStatus.remaining===0&&window.dmAndroidBilling?.available){
-    window.dmAndroidBilling.open('premium-oyunlar');return;
-   }
-   if(premium){statusRequest=null;featuredStatus=null;action.textContent=featuredAction();}
-   card.click();
-  };
-  if(premium){
-   button.addEventListener('focus',()=>loadFeaturedStatus(card));
-   loadFeaturedStatus(card);
+  if(!open){
+   const action=document.createElement('span');action.className='gg-list-action';
+   action.textContent='🔒 '+(window.DijiProgressionCatalog?.gates[card.dataset.ggGate]||30)+'. seviyede açılır';
+   copy.append(action);
   }
+  button.append(coverArt(card),copy);button.onclick=()=>card.click();
   return button;
  }
  function renderShelves(host,grid,all){
   const shelves=host.querySelector('.gg-overview');
   const catalogue=party==='all';
   const cards=all.filter(card=>categories[card.dataset.ggCategory]).sort((a,b)=>Number(a.style.order)-Number(b.style.order));
-  if(visit&&(!featured||!cards.includes(featured)||!allowed(featured.dataset.ggGate))){
-   const premium=Object.keys(premiumCodes).map(id=>cards.find(card=>card.id===id)).filter(Boolean);
-   const solo=cards.filter(card=>card.dataset.ggCategory==='solo'&&allowed(card.dataset.ggGate));
-   const index=visit-1,cycle=Math.floor(index/3);
-   const selection=index%3!==2&&premium.length?premium[(index-cycle)%premium.length]:solo[cycle%solo.length];
-   if(featured!==selection){featured=selection;featuredStatus=null;statusRequest=null;}
-  }
-  const signature=[account(),party,skill,visit,featured?.dataset.ggId,...cards.map(card=>card.dataset.ggId+':'+allowed(card.dataset.ggGate))].join('|');
+  const signature=[account(),party,skill,...cards.map(card=>card.dataset.ggId+':'+allowed(card.dataset.ggGate))].join('|');
   if(shelves.dataset.signature===signature)return;
   shelves.dataset.signature=signature;
   const previousFocus=document.activeElement?.closest('.gg-shelf-card')?.dataset.ggSource;
   const groups=catalogue?shelfOrder.filter(category=>host.querySelector('[data-gg-party="'+category+'"]')):[party];
   shelves.replaceChildren(...groups.map(category=>{
    const section=document.createElement('section');section.className='gg-group';section.dataset.ggShelf=category;
-   const highlighted=featured?.dataset.ggCategory===category;
    section.innerHTML='<div class="gg-group-heading"><h2>'+categoryArt(category)+(category==='konu'?'Konu Oyunları':categories[category])+'</h2>'+
-    (highlighted?'<span class="gg-feature-badge">★ Öne Çıkan</span>':'')+
     (catalogue?'<button type="button" aria-label="'+categories[category]+' oyunlarının tümünü göster">Tümünü Göster ›</button>':'')+
     '</div><div class="gg-shelf-grid"></div>';
    section.querySelector('.gg-group-heading button')?.addEventListener('click',()=>changeCategory(host,grid,category,category==='konu'?'all':undefined));
    const matching=cards.filter(card=>card.dataset.ggCategory===category&&
     (category!=='solo'||skill==='Tümü'||card.dataset.ggGameSkill===skill||skill==='Kelime'&&card.dataset.ggGameSkill==='Hafıza'));
-   if(highlighted&&matching.includes(featured)){matching.splice(matching.indexOf(featured),1);matching.unshift(featured);}
    const featuredPair={free:['sentenceRaceActivity','kelimeGoluDuo'],premium:['premiumWordBlocksActivity','papizzleActivity']}[category]||[];
    const previews=featuredPair.map(id=>matching.find(card=>card.id===id)).filter(Boolean);
-   if(highlighted&&matching.includes(featured))previews.unshift(featured);
    const items=catalogue?[...new Set([...previews,...matching])].slice(0,2):matching;
    const shelf=section.querySelector('.gg-shelf-grid');
    if(category==='konu'){
@@ -197,7 +145,7 @@
     shelf.querySelectorAll('button').forEach(button=>button.onclick=()=>changeCategory(host,grid,'konu',button.dataset.ggTopicCategory));
     return section;
    }
-   shelf.append(...items.map(card=>shelfCard(card,card===featured)));
+   shelf.append(...items.map(shelfCard));
    if(!items.length){
     const hint=document.createElement('p');
     hint.textContent=catalogue?'Oyunları görmek için kategoriye gir.':'Bu filtrede oyun bulunamadı.';
@@ -207,13 +155,53 @@
   }));
   if(previousFocus)[...shelves.querySelectorAll('.gg-shelf-card')].find(card=>card.dataset.ggSource===previousFocus)?.focus({preventScroll:true});
  }
+ function renderList(host,all){
+  const list=host.querySelector('.gg-overview');
+  const term=searchKey(query);
+  const cards=all.filter(card=>{
+   const {ggCategory:category,ggTitle:title,ggGameSkill:gameSkill}=card.dataset;
+   return categories[category]&&(party==='all'||party===category)&&
+    (party!=='solo'||skill==='Tümü'||gameSkill===skill||skill==='Kelime'&&gameSkill==='Hafıza')&&
+    searchKey(title+' '+categories[category]).includes(term);
+  });
+  cards.sort((a,b)=>(party==='all'?listRank(a.dataset.ggId)-listRank(b.dataset.ggId):0)||Number(a.style.order)-Number(b.style.order));
+  const signature=[account(),party,skill,term,...cards.map(card=>card.dataset.ggId+':'+allowed(card.dataset.ggGate))].join('|');
+  if(list.dataset.signature===signature)return;
+  list.dataset.signature=signature;
+  const focused=document.activeElement?.closest('.gg-shelf-card')?.dataset.ggSource;
+  list.replaceChildren(...cards.map(card=>{
+   const {ggId:id,ggTitle:title,ggCategory:category,ggGate:gate}=card.dataset;
+   const open=allowed(gate);
+   const row=document.createElement('button');row.type='button';row.className='gg-shelf-card gg-list-row';
+   row.dataset.ggSource=id;row.setAttribute('aria-disabled',String(!open));
+   const subtitle=open?categories[category]:categories[category]+' · '+(window.DijiProgressionCatalog?.gates[gate]||30)+'. seviyede açılır';
+   row.innerHTML='<span class="gg-row-copy"><strong>'+esc(title)+'</strong><small>'+esc(subtitle)+'</small></span>'+
+    '<span class="gg-row-action" aria-hidden="true">'+(open?'<svg viewBox="0 0 24 24"><path fill="currentColor" d="M8 5a1 1 0 0 1 1.5-.86l11 7a1 1 0 0 1 0 1.72l-11 7A1 1 0 0 1 8 19z"/></svg>':icon('lock'))+'</span>';
+   row.prepend(coverArt(card,true));row.onclick=()=>card.click();
+   return row;
+  }));
+  if(!cards.length){
+   const empty=document.createElement('p');empty.className='gg-list-empty';empty.setAttribute('role','status');
+   empty.textContent='Bu filtrede oyun bulunamadı.';list.append(empty);
+  }
+  if(focused)[...list.children].find(row=>row.dataset.ggSource===focused)?.focus({preventScroll:true});
+ }
  function installRedesign(host,grid,top,bottom){
   host.classList.add('gg-redesign');
   if(window.dmTeacherPortalMode)host.classList.add('gg-teacher-shelves');
   const filters=top.querySelector('.gg-tabs');
   filters.setAttribute('role','group');
   filters.querySelectorAll('button').forEach(button=>{button.removeAttribute('role');button.removeAttribute('aria-controls');});
-  filters.insertAdjacentHTML('afterbegin','<button type="button" data-gg-party="all">Tümü</button>');
+  filters.insertAdjacentHTML('afterbegin','<button type="button" data-gg-party="all">'+(window.dmTeacherPortalMode?'Tümü':'Tüm oyunlar')+'</button>');
+  if(!window.dmTeacherPortalMode){
+   host.classList.add('gg-list-view');
+   filters.insertAdjacentHTML('beforebegin','<label class="gg-search"><svg class="gg-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="m15.5 15.5 4.5 4.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><input type="search" placeholder="Oyun ara" aria-label="Oyun ara" autocomplete="off"></label>');
+   filters.parentElement.querySelector('input').oninput=e=>{query=e.target.value;render(host,grid);};
+   filters.querySelectorAll('[data-gg-party]:not([data-gg-party=all])').forEach(button=>{
+    button.querySelector('svg')?.remove();
+    button.insertAdjacentHTML('afterbegin','<svg class="gg-category-art" aria-hidden="true"><use href="games-assets/category-icons.svg#'+button.dataset.ggParty+'"></use></svg>');
+   });
+  }
   top.insertAdjacentHTML('beforeend','<div class="gg-overview"></div>');
   bottom.insertAdjacentHTML('afterend','<div class="gg-shortcuts"><button type="button">Çalışma Araçları ›</button></div>');
   host.querySelector('.gg-shortcuts button').onclick=()=>changeCategory(host,grid,party==='tools'?'all':'tools');
@@ -247,7 +235,7 @@
   host.querySelectorAll('[data-gg-party]').forEach(b=>{const on=b.dataset.ggParty===active;b.setAttribute(redesigned?'aria-pressed':'aria-selected',String(on));b.tabIndex=redesigned||on?0:-1;});
   host.querySelectorAll('.gg-filters [data-gg-skill]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.ggSkill===skill)));
   host.querySelector('.gg-banner')?.remove();
-  host.classList.add('au-games');host.querySelectorAll('[data-gg-party]').forEach(b=>{const index=categoryIcons[b.dataset.ggParty];if(index===undefined)return;if(!b.querySelector('.au-game-icon')){b.querySelector('svg')?.remove();const art=document.createElement('i');art.className='au-game-icon';art.setAttribute('aria-hidden','true');if(index===5){art.classList.add('gg-premium-icon');}else art.style.backgroundPosition=(index*25)+'% 50%';b.prepend(art);}const label=b.querySelector('span');if(label)label.textContent={solo:'Tek Kişilik',duo:'Online',free:'Kapışma',konu:'Konu',break:'Mola',premium:'Premium'}[b.dataset.ggParty];});
+  host.classList.add('au-games');host.querySelectorAll('[data-gg-party]').forEach(b=>{const index=categoryIcons[b.dataset.ggParty];if(index===undefined)return;if(!b.querySelector('.au-game-icon,.gg-category-art')){b.querySelector('svg')?.remove();const art=document.createElement('i');art.className='au-game-icon';art.setAttribute('aria-hidden','true');if(index===5){art.classList.add('gg-premium-icon');}else art.style.backgroundPosition=(index*25)+'% 50%';b.prepend(art);}const label=b.querySelector('span');if(label)label.textContent={solo:'Tek Kişilik',duo:'Online',free:'Kapışma',konu:'Konu',break:'Mola',premium:'Premium'}[b.dataset.ggParty];});
   host.querySelector('.gg-filters').hidden=party!=='solo';host.querySelector('.gg-social').hidden=!!window.dmTeacherPortalMode||party==='solo'||party==='break'||party==='konu'||party==='premium';host.querySelector('.gg-heading').textContent=party==='premium'?'👑 Premium Oyunlar':party==='konu'?'Konu Başlıkları':party==='break'?'Mola Oyunları':party==='solo'?'Tüm Oyunlar':party==='free'?'Kapışma Oyunları':'İki Kişilik Oyunlar';
   if(!redesigned)grid.setAttribute('aria-labelledby',party==='premium'?'ggPremiumTab':party==='break'?'ggBreakTab':party==='solo'?'ggSoloTab':party==='duo'?'ggOnlineTab':'ggFreeTab');
   let count=0;all.forEach(b=>{const tool=b.dataset.ggCategory==='tools',open=allowed(b.dataset.ggGate),show=(tool&&party===(redesigned?'tools':'solo'))||b.dataset.ggCategory===party&&(party!=='solo'||(skill==='Tümü'||b.dataset.ggGameSkill===skill||skill==='Kelime'&&b.dataset.ggGameSkill==='Hafıza'));b.classList.toggle('gg-locked',!open);b.setAttribute('aria-disabled',String(!open));const play=b.querySelector('.gg-play');if(play)play.textContent=!open?(window.DijiProgressionCatalog?.gates[b.dataset.ggGate]||30)+'. seviyede açılır':free[b.id]?free[b.id][2]+' ›':tool?(b.dataset.ggIndex==='2'&&/pomodoroAc/.test(b.getAttribute('onclick')||'')?'Başlat ›':'Aç ›'):b.dataset.ggCategory==='duo'?'Davet Et ›':'Oyna ›';b.hidden=!show;b.style.setProperty('display',show?'grid':'none','important');if(redesigned&&!tool){
@@ -273,7 +261,10 @@
    host.querySelector('.gg-matches').hidden=!social;
    host.querySelector('[data-gg-duo]').hidden=party==='duo';
    grid.hidden=true;
-   if(!showTools&&!showTopics)renderShelves(host,grid,all);
+   if(host.classList.contains('gg-list-view')){
+    host.querySelector('.gg-search').hidden=showTools||showTopics;
+    if(!showTools&&!showTopics)renderList(host,all);
+   }else if(!showTools&&!showTopics)renderShelves(host,grid,all);
   }
   const xp=typeof yo!=='undefined'?yo:null;host.querySelector('[data-gg-gold]').textContent=xp?.altin||0;host.querySelector('[data-gg-energy]').textContent=(typeof genelEnerjiKalan==='number'?genelEnerjiKalan:typeof genelEnerjiKalan==='function'?genelEnerjiKalan():'–')+'/'+(typeof genelEnerjiMax==='number'?genelEnerjiMax:typeof genelEnerjiMax==='function'?genelEnerjiMax():30);
  }
@@ -302,19 +293,16 @@
    installRedesign(host,grid,top,bottom);grid.removeAttribute('role');party='all';
    new MutationObserver(()=>{key='';install();}).observe(grid,{childList:true});
   }
-  if(lastAccount!==account()){lastAccount=account();friendsLoaded=false;party='all';skill='Tümü';key='';visit=0;featured=null;featuredStatus=null;statusRequest=null;if(!window.dmTeacherPortalMode&&tab?.classList.contains('active'))nextVisit();}
+  if(lastAccount!==account()){lastAccount=account();friendsLoaded=false;party='all';skill='Tümü';query='';const search=host.querySelector('.gg-search input');if(search)search.value='';key='';}
   const nextKey=[party,skill,level(),host.querySelectorAll('.az-gcard').length,lastGame(),typeof yo!=='undefined'?yo?.altin:0,typeof genelEnerjiKalan==='number'?genelEnerjiKalan:typeof genelEnerjiKalan==='function'?genelEnerjiKalan():0].join('|');if(knownGrid!==grid||key!==nextKey){knownGrid=grid;key=nextKey;render(host,grid);}
  }
  // Page tabs must never inherit the viewport lock used by a playing overlay.
- document.addEventListener('dm:view-restored',()=>{
-  if(featured&&document.getElementById('tab-aktiviteler')?.classList.contains('active'))loadFeaturedStatus(featured);
- });
  document.querySelectorAll('.dc-fullscreen-overlay[id^="tab-"]').forEach(el=>el.classList.remove('dm-solo-fullstage'));
  install();setInterval(install,1500);
  window.dmGamesUI={
   refresh:()=>{key='';install(true);},
   enter:()=>{
-   if(!window.dmTeacherPortalMode&&lastAccount===account())nextVisit();
+   query='';const search=document.querySelector('#tab-aktiviteler .gg-search input');if(search)search.value='';
    party='all';skill='Tümü';key='';install(true);
    const tab=document.getElementById('tab-aktiviteler');if(tab)tab.scrollTop=0;
   }

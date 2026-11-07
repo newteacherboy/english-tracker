@@ -494,76 +494,71 @@ body #tab-meduakis.fr-home-view .fr-wallet-host [data-pw-minutes]{display:none!i
   }
 }
 
-/* Arkadaşlar ana ekranı: görselli kısayollar ve iki etkinlik kartı. */
+/* Arkadaşlar ana ekranı · Düello Kartı. */
 #tab-meduakis.fr-home-view .ma-ekran{overflow:auto;overscroll-behavior:contain}
-#tab-meduakis .fr-compact{height:auto;min-height:100%;grid-template-rows:auto auto minmax(min-content,1fr) auto}
-#tab-meduakis .fr-compact .fr-summaries{
-  grid-template-columns:repeat(2,minmax(0,1fr));
-  gap:8px;padding:0;
+#tab-meduakis .fr-compact{
+  height:auto;min-height:100%;grid-template-rows:repeat(4,auto);align-content:start;
+  --fr-duel-surface:#253248;--fr-duel-edge:#7188a4;--fr-feed-surface:#27354b;
+  --fr-feed-edge:#637b9a;--fr-action-ink:#e9f3ff;
 }
-#tab-meduakis .fr-compact :is(.fr-friend-shortcut,.fr-duel-tile){
-  position:relative;display:flex;flex-direction:column;justify-content:center;align-items:center;
-  gap:4px;min-height:clamp(96px,13dvh,150px);padding:5px 4px 7px;
-  border-radius:17px;color:#fff;text-shadow:0 1px 3px #1327439e;
+#tab-meduakis .fr-compact .fr-summaries{grid-template-columns:minmax(0,1fr);gap:8px;padding:0}
+#tab-meduakis .fr-duel-card{
+  display:grid;grid-template-columns:clamp(49px,17vw,94px) minmax(0,1fr) auto;
+  align-items:center;gap:clamp(5px,2vw,11px);min-height:80px;padding:6px 9px;
+  background:var(--fr-duel-surface);border:1px solid var(--fr-duel-edge);border-radius:16px;
 }
-#tab-meduakis .fr-compact .fr-friend-shortcut{
-  --fr-button-bg:radial-gradient(ellipse at 48% 0%,#32ced8,#087f92 66%,#056477);
-  --fr-button-edge:#64d6e5;--fr-button-base:#075368;
+#tab-meduakis .fr-duel-art{display:block;width:100%;height:clamp(58px,10dvh,90px);object-fit:contain}
+#tab-meduakis .fr-duel-copy h3{
+  display:flex;align-items:center;gap:7px;margin:0;
+  color:var(--fr-ink);font:1000 clamp(18px,5vw,27px)/1.12 Nunito,system-ui,sans-serif;
 }
-#tab-meduakis .fr-compact .fr-duel-tile{
-  --fr-button-bg:radial-gradient(ellipse at 50% 3%,#ffc761,#c88025 68%,#a95a10);
-  --fr-button-edge:#ffcc65;--fr-button-base:#824e18;
+#tab-meduakis .fr-duel-copy p{margin:3px 0 0;color:var(--fr-muted);font:700 clamp(11px,3.2vw,16px)/1.3 Nunito,system-ui,sans-serif}
+#tab-meduakis .fr-duel-start{
+  border:0;border-radius:13px;background:#2866dc;color:#fff;
+  min-height:40px;padding:4px clamp(8px,2.9vw,17px);
+  font:950 clamp(12px,3.7vw,17px)/1.15 Nunito,system-ui,sans-serif;cursor:pointer;
 }
-#tab-meduakis .fr-compact .fr-friend-shortcut>button:first-child{
-  flex:1;flex-direction:column;justify-content:center;gap:0;width:100%;text-shadow:inherit;
+#tab-meduakis .fr-duel-dot{display:inline-block;margin:0;flex:none}
+#tab-meduakis .fr-people-row{
+  display:flex;align-items:center;gap:4px;min-height:46px;padding:2px 7px;
+  border:1px solid var(--fr-feed-edge);border-radius:14px;background:var(--fr-feed-surface);
 }
-#tab-meduakis .fr-compact .fr-shortcut-art{
-  display:block;width:clamp(49px,9.4dvh,93px);height:clamp(42px,7.3dvh,83px);
-  object-fit:contain;filter:drop-shadow(0 3px 4px #15283d45);pointer-events:none;
+#tab-meduakis .fr-people-link,#tab-meduakis .fr-people-invite{
+  display:flex;align-items:center;gap:5px;min-height:36px;padding:0;
+  color:var(--fr-ink);background:none;border:0;cursor:pointer;text-align:left;
+  font:950 clamp(12px,3.75vw,17px)/1.15 Nunito,system-ui,sans-serif;
 }
-#tab-meduakis .fr-compact .fr-friend-shortcut strong,#tab-meduakis .fr-duel-tile strong{
-  font-size:clamp(13px,4.3vw,23px);
+#tab-meduakis .fr-people-link{flex:1;min-width:0}
+#tab-meduakis .fr-people-link img{width:clamp(31px,9vw,48px);height:35px;object-fit:contain}
+#tab-meduakis .fr-people-invite{
+  padding:2px 7px;border:1px solid var(--fr-duel-edge);border-radius:999px;
+  min-height:34px;font-size:clamp(11px,3.25vw,14px);white-space:nowrap;
 }
-#tab-meduakis .fr-compact .fr-invite-cta{min-height:25px;margin:0 0 2px;text-shadow:none;padding-inline:8px}
-#tab-meduakis .fr-duel-label{display:flex;align-items:center;justify-content:center;gap:4px}
-#tab-meduakis .fr-duel-label .fr-icon{width:14px;height:14px}
+#tab-meduakis .fr-people-invite .fr-icon{width:15px;height:15px}
 #tab-meduakis .fr-compact .fr-feed{grid-template-rows:auto 1fr}
 #tab-meduakis .fr-compact #maAkisListe{
-  grid-template-columns:repeat(2,minmax(0,1fr));grid-auto-rows:auto;
-  gap:8px;padding:0;border:0;background:none;box-shadow:none;
+  grid-template-columns:minmax(0,1fr);grid-auto-rows:minmax(49px,auto);align-content:start;
+  gap:7px;padding:0;border:0;background:none;box-shadow:none;
 }
-#tab-meduakis .fr-compact .ma-bos{grid-column:1/-1}
 #tab-meduakis .fr-compact .fr-event{
-  --fr-event-bg:linear-gradient(150deg,#484281,#252752);--fr-event-edge:#7770b7;
-  position:relative;display:flex;flex-direction:column;justify-content:center;gap:0;
-  min-height:clamp(104px,14dvh,155px);padding:6px 4px 3px;
-  border:1px solid var(--fr-event-edge);border-radius:16px;background:var(--fr-event-bg);
-  box-shadow:inset 0 1px 2px #ffffff38,0 2px 4px #101e402a;
+  display:flex;align-items:center;gap:4px;min-width:0;padding:4px 7px;
+  border:1px solid var(--fr-event-edge,var(--fr-feed-edge));border-radius:13px;
+  background:var(--fr-event-bg,var(--fr-feed-surface));
 }
-#tab-meduakis .fr-compact .fr-event[data-fr-color="1"]{
-  --fr-event-bg:linear-gradient(150deg,#195a76,#103b57);--fr-event-edge:#4799ac;
-  --fr-avatar-edge:#f0bb5b;--fr-avatar-glow:linear-gradient(#fff7de,#ffd08b);
-}
-#tab-meduakis .fr-compact .fr-event-person{
-  flex:0 1 auto;flex-direction:column;gap:3px;text-align:center;width:100%;
-}
-#tab-meduakis .fr-compact .fr-event-person .fr-avatar{--avatar-size:clamp(29px,5.3dvh,54px)!important}
-#tab-meduakis .fr-compact .fr-event-person small{
-  display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;
-  white-space:normal;overflow-wrap:anywhere;color:var(--fr-muted)!important;
-}
-#tab-meduakis .fr-compact .fr-event>.dm-safety-more{position:absolute;inset:1px 3px auto auto}
+#tab-meduakis .fr-compact .fr-event-person .fr-avatar{--avatar-size:clamp(30px,5.5dvh,46px)!important}
+#tab-meduakis .fr-compact .fr-event>.dm-safety-more{position:static;flex:none;min-width:19px}
 #tab-meduakis.fr-home-view .fr-compact .fr-event .fr-congrats{
-  position:relative;max-width:100%;min-height:34px;margin-top:5px;
-  color:#4c310b;background:linear-gradient(#fff5ca,#ffd778)!important;
-  border-color:#e1b856;box-shadow:0 2px 0 #ad7b30;
-  white-space:normal;text-align:center;
+  min-height:34px;padding:3px 6px;border-radius:999px;
+  color:var(--fr-action-ink);background:transparent!important;border-color:var(--fr-duel-edge);
+  font:900 clamp(10px,3vw,13px)/1.15 Nunito,system-ui,sans-serif;box-shadow:none;white-space:nowrap;
 }
 #tab-meduakis.fr-home-view .fr-compact .fr-event .fr-congrats.basili{
-  color:#16463b;background:#d4f8e9!important;border-color:#69b99f;box-shadow:none;
+  color:#16463b;background:#d4f8e9!important;border-color:#69b99f;
 }
-#tab-meduakis .fr-compact .fr-tile>.fr-shortcut-art:first-child{
-  width:clamp(49px,9.4dvh,93px);height:clamp(42px,7.3dvh,83px);
+#tab-meduakis.fr-home-view .fr-compact .fr-all-feed{box-shadow:none}
+html[data-dm-theme="day"] #tab-meduakis .fr-compact{
+  --fr-duel-surface:#f2f9ff;--fr-duel-edge:#8bb6df;--fr-feed-surface:#f3f8fe;
+  --fr-feed-edge:#aecdec;--fr-action-ink:#153860;
 }
 body #tab-meduakis.fr-home-view .fr-wallet-host>.dm-unified-wallet.dm-papi-wallet:has(.dm-theme-toggle){
   grid-template-columns:clamp(23px,7vw,34px) repeat(4,minmax(0,1fr)) 44px!important;
@@ -592,10 +587,10 @@ html[data-dm-theme="day"] #tab-meduakis .fr-league-board h3{color:#125642}
 html[data-dm-theme="day"] #tab-meduakis .fr-league-self{color:#133b45}
 html[data-dm-theme="day"] #tab-meduakis .fr-podium-footer .fr-link{background:#f0fff9;color:#14374b;border-color:#369f88;box-shadow:none}
 html[data-dm-theme="day"] #tab-meduakis .fr-compact .fr-event{
-  --fr-event-bg:linear-gradient(150deg,#eee6ff,#d6c9f8);--fr-event-edge:#c2acec;
+  --fr-event-bg:#efebfb;--fr-event-edge:#c8bbe9;
 }
 html[data-dm-theme="day"] #tab-meduakis .fr-compact .fr-event[data-fr-color="1"]{
-  --fr-event-bg:linear-gradient(150deg,#d2fbff,#a6e9f6);--fr-event-edge:#8ed5e6;
+  --fr-event-bg:#e2f5fc;--fr-event-edge:#a0d2e7;
 }
 html[data-dm-theme="day"] #tab-meduakis .fr-filter-select{color-scheme:light}
 html[data-dm-theme="day"] #tab-meduakis.fr-home-view :is(.fr-showcase-link,.zl-btn,.fr-filter-select,.fr-all-feed){

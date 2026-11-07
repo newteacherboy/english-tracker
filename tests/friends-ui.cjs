@@ -69,7 +69,7 @@ const feed=['Elif','Ege','Zeynep','Cemre','Fixture'].map((ogr,i)=>({k:'event'+i,
   assert.match(await page.locator('.fr-league-self').innerText(),/Sen · 5\. sıra · 938 XP/);
   assert.equal((await page.locator('.fr-feed h3').innerText()).trim(),'Medu Akış');
   assert.equal((await page.locator('.fr-all-feed').innerText()).trim(),'Tüm akışı gör');
-  assert.equal(await page.locator('.fr-summaries .fr-tile').count(),1);
+  assert.equal(await page.locator('.fr-summaries .fr-duel-card').count(),1);
   assert.equal(await page.locator('.fr-feed .fr-event').count(),2);
   assert(await page.locator('#maSegment').isHidden());
   assert.equal(await page.locator('#maSegment button').count(),3);
@@ -81,7 +81,7 @@ const feed=['Elif','Ege','Zeynep','Cemre','Fixture'].map((ogr,i)=>({k:'event'+i,
   assert.doesNotMatch(await page.locator('meta[name="viewport"]').getAttribute('content'),/viewport-fit=cover/,'Friends keeps the same viewport mode as the other tabs');
   assert.equal(await page.locator('.fr-event-person .fr-avatar').evaluateAll(avatars=>new Set(avatars.map(avatar=>getComputedStyle(avatar).borderColor)).size),2);
   await page.evaluate(()=>{navigator.share=async payload=>{window.sharedInvite=payload.url;};});
-  await page.locator('.fr-invite-cta').click();
+  await page.locator('.fr-people-invite').click();
   assert.equal(await page.evaluate(()=>window.sharedInvite),'https://app.dijimedu.com/ingilizce/');
   await page.waitForSelector('.fr-wallet-host .dm-unified-wallet');
   assert.deepEqual(await page.locator('.fr-wallet-host [data-pw]').evaluateAll(nodes=>nodes.map(node=>node.dataset.pw)),['energy','gold','xp','time']);
@@ -168,7 +168,12 @@ const feed=['Elif','Ege','Zeynep','Cemre','Fixture'].map((ogr,i)=>({k:'event'+i,
   await page.locator('.fr-all-feed').click();await page.waitForSelector('.fr-club-view');
   await page.locator('.fr-card-invite').first().click();await page.waitForTimeout(400);assert.equal(await page.locator('.dm-social').count(),1,'direct invitation opens real profile with game picker');assert(await page.locator('.dm-game').isVisible());
   await page.evaluate(()=>meduAkisAc());await page.waitForTimeout(300);assert(await page.locator('.fr-home').isVisible(),'re-entering from dock always shows hub');
-  await page.evaluate(()=>{window.playedGame='';window.duelloOyununuAc=g=>playedGame=g;});await page.locator('.fr-duel-tile').click();await page.locator('[data-friend-action="accept"]').click();assert(writes.some(x=>x.islem==='duelloYanit'&&x.id==='duel-1'));await page.waitForFunction(()=>playedGame==='Kelime_Liderlik');assert.equal(await page.evaluate(()=>playedGame),'Kelime_Liderlik');
+  const previousXp=await page.evaluate(()=>{const xp=yo.totalXp;yo.totalXp=0;return xp;});
+  await page.getByRole('button',{name:'Başlat',exact:true}).click();
+  assert(await page.evaluate(()=>reportedToasts.some(message=>message.includes('20. seviyede açılır'))));
+  assert.equal(await page.locator('.fr-duel-sheet').count(),0);
+  await page.evaluate(xp=>{yo.totalXp=xp;},previousXp);
+  await page.evaluate(()=>{window.playedGame='';window.duelloOyununuAc=g=>playedGame=g;});await page.locator('.fr-duel-start').click();await page.locator('[data-friend-action="accept"]').click();assert(writes.some(x=>x.islem==='duelloYanit'&&x.id==='duel-1'));await page.waitForFunction(()=>playedGame==='Kelime_Liderlik');assert.equal(await page.evaluate(()=>playedGame),'Kelime_Liderlik');
   assert.equal(await page.locator('#bottomNavMobile').innerHTML(),navBefore,'existing dock unchanged');
   await page.evaluate(()=>{window.dmProgression.allowed=code=>code!=='vitrin';window.dmProgression.require=code=>code!=='vitrin';});await page.locator('[data-friend-action="vitrin"]').click();assert(await page.locator('.fr-home').isVisible(),'locked showcase keeps hub');
   // Stale loading from another account cannot redraw the old student's hub.
