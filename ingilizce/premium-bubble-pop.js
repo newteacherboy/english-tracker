@@ -48,7 +48,7 @@ function mount(account,t,initial){
  const $=sel=>dialog.querySelector(sel);
  const stage=$('[data-bubbles]'),panel=$('[data-panel]'),pane=dialog.querySelector('.db-panel');
  const soundBtn=$('[data-sound]');let muted=localStorage.getItem('dm_bubble_muted')==='1',audio=null;
- let state=initial,run=null,rounds=[],slot=0,picks=[],score=0,streak=0,wrong=0,paused=false,busy=false;
+ let state=initial,run=null,pendingStartId=null,rounds=[],slot=0,picks=[],score=0,streak=0,wrong=0,paused=false,busy=false;
  let remaining=13000,last=0,frame=0,feedbackTimer=0,accountTimer=0,closed=false,pendingPick=null;
  const live=()=>!closed&&dialog.isConnected&&owner()===account;
  function tone(ok){
@@ -139,11 +139,11 @@ function mount(account,t,initial){
  async function start(){
   if(busy||run)return;
   busy=true;display('Baloncuklar hazırlanıyor…',['5 enerji ile yeni bölüm açılıyor.'],[]);
-  const id=crypto.randomUUID();
+  const id=pendingStartId||(pendingStartId=crypto.randomUUID());
   try{
    const d=await request(t,'start',{runId:id});
    if(!live())return;
-   run=id;rounds=d.rounds||[];if(!rounds.length)throw Error('Bu bölüm için kelime bulunamadı.');
+   run=id;pendingStartId=null;rounds=d.rounds||[];if(!rounds.length)throw Error('Bu bölüm için kelime bulunamadı.');
    slot=0;picks=[];score=0;streak=0;wrong=0;updateStatus(d);hide();busy=false;draw();
   }catch(e){run=null;busy=false;if(live())display('Oyun başlatılamadı',[e.message],[['Tekrar dene',start],['Oyunlara dön',close]]);}
  }
