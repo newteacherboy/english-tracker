@@ -64,28 +64,6 @@
     }catch(error){window.yoToast?.(error.message);}
   };
   window.papizzleAc=papizzleProxy;
-  let bubbleLoading;
-  const bubbleProxy=async()=>{
-    const owner=typeof aktifOgrenciAdi==='undefined'?'':aktifOgrenciAdi;
-    try{
-      await (bubbleLoading??=script('premium-bubble-pop.js?v=20261107-v1').catch(error=>{bubbleLoading=null;throw error;}));
-      if(owner===(typeof aktifOgrenciAdi==='undefined'?'':aktifOgrenciAdi)&&window.premiumBaloncukPatlatmaAc!==bubbleProxy)
-        await window.premiumBaloncukPatlatmaAc();
-    }catch(error){window.yoToast?.(error.message||'Baloncuk oyunu yüklenemedi.');}
-  };
-  window.premiumBaloncukPatlatmaAc=bubbleProxy;
-  function bubbleCard(){
-    if(typeof document.querySelector!=='function')return;
-    const grid=document.querySelector('#tab-aktiviteler .az-grid2x2');
-    if(!grid||document.getElementById('premiumBubblePopActivity'))return;
-    const card=document.createElement('button');
-    card.type='button';card.id='premiumBubblePopActivity';card.className='az-gcard dm-premium-card';
-    card.dataset.dmParty='solo';card.setAttribute('onclick','premiumBaloncukPatlatmaAc()');
-    card.innerHTML='<div class="az-gcard-title">🎈 Baloncuk Patlatma <small>PREMIUM</small></div>';
-    grid.append(card);window.dmGamesUI?.refresh();
-  }
-  bubbleCard();
-
   window.papiFeneriAc=opener(()=>window.papiFeneriAc);
   window.canavarAvcisiAc=opener(()=>window.canavarAvcisiAc);
   window.dengesizKuleAc=opener(()=>window.dengesizKuleAc);
@@ -93,7 +71,7 @@
   window.ralliOyunAc=opener(()=>window.ralliOyunAc);
   for(const name of ['dmPapiCards','dmMeteor','dmWordWheel'])window[name]={open:opener(()=>window[name].open),close(){}};
   const tab=document.getElementById('tab-aktiviteler');
-  const check=()=>{bubbleCard();if(!readyDone&&tab?.classList.contains('active'))ready().catch(e=>window.yoToast?.(e.message));};
+  const check=()=>{if(!readyDone&&tab?.classList.contains('active'))ready().catch(e=>window.yoToast?.(e.message));};
   if(tab)new MutationObserver(check).observe(tab,{attributes:true,attributeFilter:['class']});
   window.dmLazyGames={ready};check();
 })();

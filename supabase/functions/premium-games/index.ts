@@ -82,26 +82,6 @@ Deno.serve(async(req:Request)=>{
    }
    return reply(req,{ok:false,mesaj:'Geçersiz oyun sonucu.'},400);
   }
-  if(game==='bubble-pop'){
-   if(s.role==='student'&&s.teacher_portal_access_id)
-     return reply(req,{ok:false,mesaj:'Bu oyun için kişisel öğrenci hesabına giriş yap.'},403);
-   if(op==='status')return await gameReply(await db('rpc/dm_bubble_status',{actor}));
-   if(!UUID.test(String(b.runId||'')))return reply(req,{ok:false,mesaj:'Geçersiz oyun oturumu.'},400);
-   if(op==='start'){
-     const data=await db('rpc/dm_bubble_start',{actor,run_key:b.runId});
-     // Never send the answer key to the client; only the server can grade selections.
-     const rounds=Array.isArray(data.rounds)?data.rounds.map((r:any)=>({tr:r.tr,options:r.options})):[];
-     return await gameReply({...data,rounds});
-   }
-   if(op==='check'&&Number.isInteger(b.slot)&&b.slot>=0&&b.slot<12&&Number.isInteger(b.pick)&&b.pick>=-1&&b.pick<=3){
-     return await gameReply(await db('rpc/dm_bubble_check',{actor,run_key:b.runId,slot:b.slot,pick:b.pick}));
-   }
-   if(op==='finish'&&Array.isArray(b.selections)&&b.selections.length>=1&&b.selections.length<=12
-     &&b.selections.every((pick:unknown)=>Number.isInteger(pick)&&typeof pick==='number'&&pick>=-1&&pick<=3)){
-     return await gameReply(await db('rpc/dm_bubble_finish',{actor,run_key:b.runId,selections:b.selections}));
-   }
-   return reply(req,{ok:false,mesaj:'Geçersiz oyun sonucu.'},400);
-  }
   if(b.game==='cloud-flight'||b.game==='word-blocks'){
    const rpc=b.game==='word-blocks'?'dm_blocks':'dm_cloud';
    if(s.role==='student'&&s.teacher_portal_access_id)return reply(req,{ok:false,mesaj:'Bu oyun için öğrenci hesabına giriş yap.'},403);
