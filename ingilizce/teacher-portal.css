@@ -275,3 +275,97 @@ html.dm-teacher-portal body #tpDashboard .tp-real-tools>button[hidden]{display:n
 .tp-pupil-shared[hidden]{display:none!important}
 .tp-pupil-hint{font-size:13px;color:#526963;line-height:1.5}
 @media(max-width:540px){.tp-pupil-row{grid-template-columns:22px minmax(0,1fr) minmax(0,1fr) 28px;gap:5px;padding:8px 5px}.tp-pupil-row input{font-size:13px;padding:10px 5px}.tp-pupil-row label{font-size:11px}.tp-pupil-actions button{flex:1;min-width:90px}}
+
+/* Teacher code invitation */
+.tp-card.tp-application{
+  --tp-invite-gutter:clamp(14px,3.4vw,28px);
+  width:min(100%,700px);
+  max-height:min(94dvh,970px);
+  padding:0;
+  border-color:#afe1d4;
+  border-radius:32px;
+  background:#f8fcfb;
+  color:#103746;
+  overscroll-behavior:contain;
+}
+.tp-application .tp-close{right:12px;top:12px;z-index:1;margin:0;padding:0;min-width:44px}
+.tp-application-hero{
+  position:relative;
+  isolation:isolate;
+  overflow:hidden;
+  display:flex;
+  align-items:center;
+  min-height:175px;
+  padding:24px var(--tp-invite-gutter) 22px;
+  background:radial-gradient(ellipse at 82% 105%,#98e3d0 0%,#d1f6ec 45%,#effcf7 80%);
+  border-radius:0 0 28px 28px;
+}
+.tp-application-copy{position:relative;z-index:1;flex:1;min-width:0}
+.tp-application-badge,.tp-application-free{
+  display:inline-block;
+  padding:4px 9px;
+  border-radius:999px;
+  font-size:clamp(10px,2vw,13px);
+  font-weight:850;
+  text-transform:uppercase;
+  background:#b2f0df;
+  color:#07555c;
+}
+.tp-application-badge svg{width:1.1em;height:1.1em;vertical-align:-.18em}
+.tp-application-free{margin-inline-start:5px;background:#fff1c7;color:#65500a}
+.tp-application .tp-application-hero h1{
+  margin:9px 0 6px;
+  font-size:clamp(24px,4.25vw,38px);
+  line-height:1.08;
+  font-weight:900;
+  letter-spacing:-.035em;
+  color:#093746;
+}
+.tp-application .tp-application-hero p{margin:0;font-size:clamp(13px,2.15vw,17px);line-height:1.35}
+.tp-application-hero img{width:34%;max-width:215px;height:auto;align-self:flex-end;margin:-4px -7px -19px -2px;clip-path:polygon(3% 0,82% 0,82% 14%,100% 14%,100% 100%,3% 100%)}
+.tp-application form{padding:16px var(--tp-invite-gutter) 18px}
+.tp-application-benefits{display:grid;gap:8px}
+.tp-application-benefit{display:flex;align-items:center;gap:clamp(8px,2vw,15px);padding:7px 12px;border-radius:16px}
+.tp-benefit-board{background:linear-gradient(100deg,#fff3c9,#fbf5e9)}
+.tp-benefit-class{background:linear-gradient(100deg,#f1eaff,#eae8fa)}
+.tp-benefit-report{background:linear-gradient(100deg,#e4f9ed,#d5f6e9)}
+.tp-application-benefit img{width:clamp(45px,8vw,72px);height:auto;flex:none}
+.tp-application-benefit strong{display:block;font-size:clamp(14px,2.6vw,20px);line-height:1.2;font-weight:850}
+.tp-application .tp-application-benefit p,.tp-application .tp-application-note p{margin:3px 0 0;font-size:clamp(12px,1.9vw,15px);line-height:1.32}
+.tp-application-note{display:flex;align-items:center;gap:10px;margin-top:12px;padding:9px 11px;border-radius:13px;background:#d9f5f1}
+.tp-application-note svg{flex:none;color:#075c64}
+.tp-application .tp-application-note p{margin:0}
+.tp-application-location{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:10px}
+.tp-location{position:relative;min-width:0}
+.tp-location-label,.tp-application label{font-size:15px;font-weight:800}
+.tp-application-location>label{margin:0}
+.tp-application .tp-location-toggle,.tp-application input{min-height:44px;border:1.5px solid #8ac3b8;border-radius:12px;box-shadow:0 2px 3px #1349361a}
+.tp-application .tp-location-toggle{display:flex;align-items:center;justify-content:space-between;gap:7px;width:100%;margin:5px 0 0;padding:8px 10px;text-align:left}
+.tp-application .tp-location-toggle:disabled{cursor:default}
+.tp-chevron{flex:none;width:9px;height:9px;border:solid currentColor;border-width:0 2px 2px 0;transform:rotate(45deg);margin:-4px 2px 0}
+.tp-location-options{position:absolute;z-index:2;inset:100% 0 auto;background:#fff;border:1px solid #8ac3b8;border-radius:12px;box-shadow:0 8px 24px #123e4f30;padding:6px}
+.tp-application .tp-location-options input{margin:0;min-height:38px;padding:5px 7px;font-size:16px}
+.tp-location-list{max-height:145px;overflow:auto;overscroll-behavior:contain;padding-top:4px;font-size:13px}
+.tp-application .tp-location-list button{display:block;width:100%;margin:0;border:0;padding:7px;text-align:left;min-height:36px;overflow-wrap:anywhere}
+.tp-application .tp-location-list button:hover,.tp-application .tp-location-list button[aria-current]{background:#d9f5f1}
+.tp-application .tp-application-hint{margin-top:5px;font-size:12px;line-height:1.3}
+.tp-application label{margin:9px 0}
+.tp-application input{font-size:16px}
+.tp-application button.tp-primary{display:flex;align-items:center;justify-content:center;gap:8px;min-height:49px;margin:6px 0 0;background:linear-gradient(100deg,#078b8d,#007478);font-size:clamp(15px,2.6vw,19px);border-radius:14px}
+.tp-application-actions{display:flex;justify-content:center;gap:8px;margin-top:9px}
+.tp-application-actions button{margin:0;padding:7px 12px;min-height:42px;border-radius:12px;font-size:clamp(13px,2.1vw,16px)}
+.tp-application-actions [data-later]{background:transparent;border-color:transparent;color:#526d74}
+.tp-application .tp-error:empty{display:none}
+.tp-application .tp-error{margin:7px 0 0}
+.tp-application :focus-visible{outline:2px solid #00777d;outline-offset:2px}
+@media(max-width:480px){
+  .tp-card.tp-application{border-radius:23px}
+  .tp-application-hero{padding-top:15px;padding-bottom:14px;min-height:140px}
+  .tp-application .tp-close{right:8px;top:8px;min-width:38px;min-height:38px}
+  .tp-application-hero img{width:29%;margin-right:-8px;margin-bottom:-9px}
+  .tp-application-badge,.tp-application-free{padding:3px 6px}
+  .tp-application .tp-application-hero h1{margin-top:6px}
+  .tp-application-benefit{padding-block:6px}
+  .tp-application form{padding-bottom:12px}
+  .tp-application form{padding-top:10px}
+}
