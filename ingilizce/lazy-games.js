@@ -75,6 +75,7 @@
   };
   window.premiumBaloncukPatlatmaAc=bubbleProxy;
   function bubbleCard(){
+    if(typeof document.querySelector!=='function')return;
     const grid=document.querySelector('#tab-aktiviteler .az-grid2x2');
     if(!grid||document.getElementById('premiumBubblePopActivity'))return;
     const card=document.createElement('button');
