@@ -136,6 +136,17 @@
    Number(root.querySelector('.sinif-btn.active')?.dataset.class)||
    Number(root.querySelector('.sinif-btn.active')?.textContent.match(/\d+/)?.[0])||0;
  }
+ function unitCard(tile,n,title){
+  if(!Number.isInteger(n)||n<1)return;
+  for(const node of [...tile.childNodes]){
+   if(node.nodeType!==3||!node.textContent.trim())continue;
+   const original=document.createElement('span');
+   node.before(original);original.append(node);
+  }
+  setAttr(tile,'data-unit-number',String(n));
+  setAttr(tile,'data-unit-title',title||'Ünite');
+  setAttr(tile.querySelector('input')||tile,'aria-label',n+'. Ünite'+(title?' · '+title:''));
+ }
  function selectChoices(select,grade){
   const kind=select.matches(grades)?'grade':select.matches('[data-players]')?'mode':select.matches('[data-duration]')?'time':'unit';
   const label={grade:'Sınıf',unit:'Ünite',mode:'Oyuncu sayısı',time:'Soru süresi'}[kind];
@@ -161,7 +172,7 @@
     const button=document.createElement('button');
     button.type='button';button.dataset.value=choice.value;button.disabled=choice.disabled;
     button.textContent=choice.text;
-    if(choice.title){button.dataset.unitTitle=choice.title;button.setAttribute('aria-label',choice.text+' · '+choice.title);}
+    if(kind==='unit')unitCard(button,Number(choice.value),choice.title||choice.text.replace(/^\s*\d+\s*\.?\s*(?:Ünite)?\s*[:·–-]?\s*/i,''));
     button.onclick=()=>{
      if(select.disabled||button.disabled)return;
      select.value=choice.value;
@@ -183,8 +194,7 @@
   for(const grid of root.querySelectorAll(units)){
    for(const tile of grid.querySelectorAll('button,label.kg-unit')){
     const n=Number(tile.dataset.unit||tile.querySelector('input')?.value||tile.textContent.match(/\d+/)?.[0]);
-    if(!n)continue;
-    setAttr(tile,'data-unit-title',titleFor(grade,n));
+    unitCard(tile,n,titleFor(grade,n));
    }
   }
  }
@@ -214,7 +224,8 @@
   if(!root.classList.contains('dm-game-framed'))root.classList.add('dm-game-framed');
   for(const key of Object.keys(controls)){
    const button=strip.querySelector('[data-frame="'+key+'"]'),sources=sourceFor(root,key);
-   for(const source of sources)if(!source.classList.contains('dm-frame-source'))source.classList.add('dm-frame-source');
+   const originals=key==='pause'?root.querySelectorAll(controls.pause):sources;
+   for(const source of originals)if(!source.classList.contains('dm-frame-source'))source.classList.add('dm-frame-source');
    const active=(key==='back'&&!sources.length?sourceFor(root,'exit'):sources).filter(source=>!source.disabled);
    const native=root.dmGameFrameActions?.[key];
    const resume=key==='pause'&&root.querySelector('.dm-game-pause-sheet button');
@@ -258,7 +269,7 @@
  new MutationObserver(records=>{
   if(records.some(r=>r.type==='attributes'
    ?r.target.matches?.(tracked)||r.target.matches?.('button,input')&&!!r.target.closest?.(roots)&&!r.target.matches('.dm-frame-control')
-   :r.target.matches?.(fields)||[...r.addedNodes,...r.removedNodes].some(n=>n.nodeType===1&&(n.matches(tracked)||n.querySelector(tracked)))
+   :r.target.matches?.(fields+','+units)||[...r.addedNodes,...r.removedNodes].some(n=>n.nodeType===1&&(n.matches(tracked)||n.querySelector(tracked)))
   ))schedule();
  }).observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['class','hidden','disabled','open','aria-pressed','aria-label','style']});
  document.addEventListener('change',event=>{if(event.target.closest?.(roots))schedule();});
