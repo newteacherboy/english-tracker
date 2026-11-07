@@ -139,6 +139,26 @@ test('the hint waits for a visible switch and closes if the destination changes'
   assert.equal(api.themeFor(),'day');
 });
 
+test('teacher suggestion starts at 21:00 and keeps the theme across game participant changes',()=>{
+  const f=fixture(20,{'dm-night-hint-shown':'1'}),api=f.window.dmDayNightTheme;
+  f.window.dmTeacherPortalMode=true;
+  f.buttons.push(api.createButton());
+  api.updateHint();
+  assert.equal(f.popups.length,0);
+  f.setHour(21);
+  api.updateHint();
+  assert.equal(f.popups.length,1);
+  assert.equal(f.popups[0].querySelector('p').textContent,'Gece moduna geçmek ister misiniz?');
+  f.popups[0].querySelector('[data-night-enable]').click();
+  assert.equal(f.stored['dm-teacher-night-hint-shown'],'1');
+  f.docEvents['dm:login']({detail:{teacherParticipantChanged:true}});
+  assert.equal(api.themeFor(),'night');
+  f.docEvents['dm:login']({});
+  assert.equal(api.themeFor(),'day');
+  api.updateHint();
+  assert.equal(f.popups.length,0);
+});
+
 test('loading theme script twice does not duplicate lifecycle listeners',()=>{
   const f=fixture(),api=f.window.dmDayNightTheme,listener=f.winEvents.pageshow;
   vm.runInNewContext(source,f.context);

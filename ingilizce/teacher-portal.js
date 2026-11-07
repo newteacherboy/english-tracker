@@ -45,7 +45,7 @@
   try{siniftaOynananOgrenci='';}catch{}window.dmGuestMode=false;window.dmTeacherToolsActive=false;window.dmClassroomOnlineOwner=null;
   try{if(typeof globalDataCache!=='undefined'&&Array.isArray(globalDataCache)&&!globalDataCache.some(x=>x.ogrenci===participant.name))globalDataCache.push({ogrenci:participant.name,Sinif:1,SinifSube:'',genelPuan:0});}catch{}
   window.yoHazirla?.(participant.name);
-  if(changed)document.dispatchEvent(new Event('dm:login'));
+  if(changed)document.dispatchEvent(new CustomEvent('dm:login',{detail:{teacherParticipantChanged:true}}));
   teacherDestination('games');return true;
  }
 
@@ -301,7 +301,7 @@
   let dock=document.getElementById('tpTeacherDock');
   if(!dock){
    dock=document.createElement('nav');dock.id='tpTeacherDock';dock.setAttribute('aria-label','Öğretmen menüsü');
-   dock.innerHTML='<button type="button" data-route="home"><span class="dm-teacher-icon dm-teacher-icon--home" aria-hidden="true"></span>Ana Sayfa</button><button type="button" data-route="games"><span class="dm-teacher-icon dm-teacher-icon--games" aria-hidden="true"></span>Oyunlar</button><button type="button" data-route="study"><span class="dm-teacher-icon dm-teacher-icon--book" aria-hidden="true"></span>Ders Çalış</button><button type="button" data-route="panel"><span class="dm-teacher-icon dm-teacher-icon--cap" aria-hidden="true"></span>Öğretmen Paneli</button>';
+   dock.innerHTML='<button type="button" data-route="home"><span class="dm-teacher-icon dm-teacher-icon--home" aria-hidden="true"></span>Ana Sayfa</button><button type="button" data-route="games"><span class="dm-teacher-icon dm-teacher-icon--games" aria-hidden="true"></span>Oyunlar</button><button type="button" data-route="study"><span class="dm-teacher-icon dm-teacher-icon--book" aria-hidden="true"></span>Konu Anlat</button><button type="button" data-route="panel"><span class="dm-teacher-icon dm-teacher-icon--cap" aria-hidden="true"></span>Öğretmen Paneli</button>';
    document.body.append(dock);
    dock.addEventListener('click',e=>{const b=e.target.closest('[data-route]');if(!b)return;e.preventDefault();e.stopPropagation();const route=b.dataset.route;if(route==='home')teacherHomeShow();else if(route==='panel')teacherDashboardShow();else teacherDestination(route);});
   }

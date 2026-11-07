@@ -36,7 +36,33 @@ const fs=require('node:fs'),path=require('node:path'),assert=require('node:asser
  assert.equal(await page.locator('#dmDiscovery').count(),0,'teacher never enters learner discovery or its inert focus trap');
  await page.evaluate(async()=>{await dunyaAc();});
  assert.equal(await page.getByText('Parkur yüklenemedi',{exact:true}).count(),0,'teacher boot never starts learner route loading');
+ const home=page.locator('#tpTeacherHome');
+ const dock=page.locator('#tpTeacherDock');
+ const toggle=home.locator('.dm-theme-toggle');
+ await dock.getByRole('button',{name:'Ana Sayfa'}).click();
+ await toggle.waitFor();
+ for(const label of ['Sınıfına Duyuru Yap','Yarışma Yaptır','Konu Anlat'])assert(await home.getByRole('button',{name:label,exact:true}).isVisible());
+ assert(await dock.getByRole('button',{name:'Konu Anlat',exact:true}).isVisible());
+ for(const size of [{width:320,height:568},{width:390,height:844}]){
+  await page.setViewportSize(size);
+  for(const theme of ['day','night']){
+   await page.waitForFunction(theme=>document.documentElement.dataset.dmTheme===theme,theme);
+   const bg=await home.evaluate(el=>getComputedStyle(el).backgroundColor);
+   assert.equal(bg,theme==='day'?'rgb(237, 247, 255)':'rgb(16, 27, 49)');
+   assert(await home.locator('.dm-midnight-actions button strong').evaluateAll(labels=>labels.every(label=>{
+    const box=label.closest('button').getBoundingClientRect(),r=label.getBoundingClientRect();
+    return r.left>=box.left&&r.right<=box.right&&r.top>=box.top&&r.bottom<=box.bottom;
+   })));
+   await toggle.click();
+  }
+ }
+ await toggle.click();
+ await dock.getByRole('button',{name:'Konu Anlat',exact:true}).click();
+ await dock.getByRole('button',{name:'Ana Sayfa'}).click();
+ await page.waitForFunction(()=>document.documentElement.dataset.dmTheme==='night');
   assert.equal(await page.evaluate(()=>dmTeacherPortal.beforeGame('test')),true);assert.equal(await page.evaluate(()=>localStorage.getItem('ing_token')),'self-token');assert.equal(await page.getByRole('heading',{name:'Bu oyunu kim oynayacak?'}).count(),0);
+ assert.equal(await page.evaluate(()=>dmDayNightTheme.themeFor()),'night');
+ console.log('PASS teacher home themes, mobile labels, navigation and game participant changes');
  for(const game of ['ucus','rota']){await page.evaluate(async game=>{window.dmClassroomOnlineOwner='Stale pupil';await dmInviteAc(game);},game);await page.getByText('Alice',{exact:true}).waitFor();assert.equal(await page.getByText('Öğrenci oturumu gerekli.',{exact:true}).count(),0);assert.equal(await page.evaluate(()=>dmClassroomOnlineOwner),null);await page.locator('.dm-perde .dm-x').click();}await page.evaluate(()=>dmArenaAc());await page.getByText('Henüz karşılaşman yok. İlk davetini gönder! 🦜',{exact:true}).waitFor();await page.locator('.dm-perde .dm-x').click();
  async function playing(){await page.evaluate(async()=>{window.dmGameReopeningSetup=true;try{await trenOyunAc();}finally{window.dmGameReopeningSetup=false;}document.getElementById('trenGirisEkrani').style.display='none';document.getElementById('trenOyunEkrani').style.display='block';dmGameViewport.sync();});await page.waitForTimeout(100);}
  for(let i=0;i<2;i++){
