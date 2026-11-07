@@ -4,13 +4,18 @@
   if (window.dmDayNightTheme) return;
 
   const root = document.documentElement;
-  const hintKey = 'dm-night-hint-shown';
+  const learnerHintKey = 'dm-night-hint-shown';
+  const teacherHintKey = 'dm-teacher-night-hint-shown';
   let theme = 'day';
   let lessonOpen = false;
   const currentTheme = () => lessonOpen ? 'day' : theme;
-  let hintSeen = false;
+  const seenHints = new Set();
   let hint, anchor, anchorHost;
-  try { hintSeen = window.localStorage.getItem(hintKey) === '1'; } catch {}
+  try {
+    for (const key of [learnerHintKey, teacherHintKey]) {
+      if (window.localStorage.getItem(key) === '1') seenHints.add(key);
+    }
+  } catch {}
 
   function paintButton(button) {
     const night = currentTheme() === 'night';
@@ -74,7 +79,10 @@
       else closeHint();
       return;
     }
-    if (lessonOpen || hintSeen || theme === 'night' || document.hidden || new Date().getHours() < 20) return;
+    const teacher = !!window.dmTeacherPortalMode;
+    const hintKey = teacher ? teacherHintKey : learnerHintKey;
+    if (lessonOpen || seenHints.has(hintKey) || theme === 'night' || document.hidden ||
+        new Date().getHours() < (teacher ? 21 : 20)) return;
     for (const button of document.querySelectorAll('.dm-theme-toggle')) {
       const box = visibleBox(button);
       if (!box) continue;
@@ -83,11 +91,12 @@
       hint = document.createElement('aside');
       hint.className = 'dm-night-hint';
       hint.innerHTML = '<p role="status">Gece modunu açmak ister misin?</p><div><button type="button" data-night-enable>Gece modunu aç</button><button type="button" data-night-dismiss>Şimdi değil</button></div>';
+      if (teacher) hint.querySelector('p').textContent = 'Gece moduna geçmek ister misiniz?';
       hint.querySelector('[data-night-enable]').addEventListener('click', () => { button.click(); button.focus(); });
       hint.querySelector('[data-night-dismiss]').addEventListener('click', () => { closeHint(); button.focus(); });
       document.body.append(hint);
       positionHint(box);
-      hintSeen = true;
+      seenHints.add(hintKey);
       try { window.localStorage.setItem(hintKey, '1'); } catch {}
       break;
     }
@@ -130,12 +139,14 @@
     watchLessonView();
   }
   window.addEventListener('pageshow', event => event.persisted ? reset() : refresh());
-  document.addEventListener('dm:login', reset);
+  document.addEventListener('dm:login', event => {
+    if (!event?.detail?.teacherParticipantChanged) reset();
+  });
   document.addEventListener('keydown', event => {
     if (event.key === 'Escape' && hint) closeHint();
   });
   window.addEventListener('storage', event => {
-    if (event.key === hintKey && event.newValue === '1') hintSeen = true;
+    if ([learnerHintKey, teacherHintKey].includes(event.key) && event.newValue === '1') seenHints.add(event.key);
   });
   refresh();
 })();

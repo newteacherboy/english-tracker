@@ -1,6 +1,6 @@
 /* Keep the teacher workspace open while child screens come and go. */
 (()=>{'use strict';
-const style=document.createElement('link');style.rel='stylesheet';style.href='teacher-workspace.css?v=20261106-midnight-home';document.head.append(style);
+const style=document.createElement('link');style.rel='stylesheet';style.href='teacher-workspace.css?v=20261107-teacher-home-theme';document.head.append(style);
 const $=id=>document.getElementById(id),token=()=>sessionStorage.getItem('ing_ogr_token')||'';
 let active=false,total=0,registrations=0,messages=0,reading=false,lastRead=0,menuSeen=false;
 async function api(op,data={}){const r=await fetch(apiURL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({islem:op,t:token(),...data})});const d=await r.json();if(!r.ok||!d.ok)throw Error(d.mesaj||'Bildirimler alınamadı.');return d;}
@@ -279,6 +279,8 @@ function dmMidnightHome(board,openOriginal){
    <summary class="dm-midnight-raised"><i aria-hidden="true"></i> Tüm araçlar <span aria-hidden="true">›</span></summary>
    <div class="dm-midnight-extra"></div>
   </details>`;
+ const themeButton=window.dmDayNightTheme?.createButton();
+ if(themeButton)board.querySelector('.dm-midnight-brand').append(themeButton);
  const classes=()=>window.dmTeacherClassesOpen?window.dmTeacherClassesOpen():openOriginal('classroom');
  board.querySelector('[data-home-students]').onclick=dmStudentList;
  board.querySelector('[data-home-classes]').onclick=classes;
@@ -295,12 +297,12 @@ function dmMidnightHome(board,openOriginal){
  add(shortcuts,'Artı-Eksi Ver','<span class="dm-midnight-signs"><b>+</b><b>−</b></span>',()=>dmUseTool('ders içi performans'));
  const actions=board.querySelector('.dm-midnight-actions');
  add(actions,'Ödev Ver',icon('clipboard'),()=>dmUseTool('ödev ver'));
- add(actions,'Duyurular',icon('megaphone'),()=>dmUseTool('duyurular'));
+ add(actions,'Sınıfına Duyuru Yap',icon('megaphone'),()=>dmUseTool('duyurular'));
  const chat=add(actions,'Öğrenci Sohbetleri',icon('chat'),()=>dmUseTool('öğrenci sohbetleri'));
  const badge=document.createElement('span');badge.className='dm-v2-chat-badge';badge.dataset.v2ChatCount='';badge.hidden=true;chat.querySelector('i').after(badge);
  add(actions,'Raporlar Merkezi',icon('chart'),dmReportDialog);
- add(actions,'Oyun Oyna',icon('games'),()=>openOriginal('game'));
- add(actions,'Yeni Ders Çalış',icon('books'),()=>openOriginal('study'));
+ add(actions,'Yarışma Yaptır',icon('games'),()=>openOriginal('game'));
+ add(actions,'Konu Anlat',icon('books'),()=>openOriginal('study'));
  const extra=board.querySelector('.dm-midnight-extra');
  add(extra,'Öğretmen Paneli',icon('cap'),()=>openOriginal('teacher'));
  add(extra,'Öğrenciler',icon('people'),dmStudentList);
@@ -360,13 +362,13 @@ function dmHome(){
  };
  const actions=board.querySelector('[data-v2-actions]');
  add(actions,'Ödev Ver','📋','Sınıfına yeni ödev gönder',()=>dmUseTool('ödev ver'),'v2-mint');
- add(actions,'Duyurular','📣','Öğrencilerini bilgilendir',()=>dmUseTool('duyurular'),'v2-peach');
+ add(actions,'Sınıfına Duyuru Yap','📣','Öğrencilerini bilgilendir',()=>dmUseTool('duyurular'),'v2-peach');
  add(actions,'Öğrenci Sohbetleri','💬','Mesajları oku ve yanıtla',()=>dmUseTool('öğrenci sohbetleri'),'v2-pink');
  const chatBadge=document.createElement('span');chatBadge.className='dm-v2-chat-badge';chatBadge.dataset.v2ChatCount='';chatBadge.hidden=true;actions.lastElementChild.append(chatBadge);
  const secondary=board.querySelector('[data-v2-secondary]');
  add(secondary,'Raporlar Merkezi','📊','Performans, zayıf noktalar, veli özetleri ve sınav sonuçları',dmReportDialog,'v2-lavender');
- add(secondary,'Oyun Oyna','🎮','Oyunlar sekmesine geç ve sınıfınla eğlen',()=>openOriginal('game'),'v2-green v2-feature');
- add(secondary,'Haydi Yeni Ders Çalış','📚','Yeni konuyu anlat, birlikte öğren',()=>openOriginal('study'),'v2-feature v2-peach');
+ add(secondary,'Yarışma Yaptır','🎮','Oyunlar sekmesine geç ve sınıfınla eğlen',()=>openOriginal('game'),'v2-green v2-feature');
+ add(secondary,'Konu Anlat','📚','Yeni konuyu anlat, birlikte öğren',()=>openOriginal('study'),'v2-feature v2-peach');
  const quick=board.querySelector('[data-v2-quick]');
  add(quick,'Artı Eksi Ver','➕','Ders içi performans puanları',()=>dmUseTool('ders içi performans'));
 
@@ -451,7 +453,7 @@ window.dmTeacherWorkspace={paintBadge,refresh,prepare(){const menu=$('ogretmenMe
 const watcher=new MutationObserver(()=>{if(active)maintain();});for(const el of document.querySelectorAll('.rubric-modal,.sm-overlay,.yo-modal,.yo-perde,#yoModalPerde,#odModal,#omSifreModal'))watcher.observe(el,{attributes:true,attributeFilter:['style']});
 new MutationObserver(ms=>{if(active&&ms.some(m=>[...m.addedNodes,...m.removedNodes].some(n=>n.nodeType===1&&(n.matches?.(childSelector)||n.querySelector?.(childSelector)))))maintain();}).observe(document.body,{childList:true});
 const report=$('yoModal');if(report)watcher.observe(report,{attributes:true,attributeFilter:['class','style']});
-setInterval(()=>{if(document.hidden)return;maintain();dmHome();dmRemoveTeacherBottomTab();refresh();installCatalog();},1200);
+setInterval(()=>{if(document.hidden)return;maintain();dmHome();if(window.dmTeacherPortalMode)window.dmDayNightTheme?.updateHint();dmRemoveTeacherBottomTab();refresh();installCatalog();},1200);
 document.addEventListener('dm:login',()=>{total=0;lastRead=0;active=false;menuSeen=false;refresh(true);});
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)refresh(true);});
 refresh(true);
