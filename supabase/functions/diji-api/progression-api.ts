@@ -60,7 +60,7 @@ export function progressionAPI(db:any,json:any){
     units=[stop];
    }
    const checked=await db.rpc('dm_verified_result',{actor:a.student_id,run_key:String(body.runId||''),game_code:game,cls:Number(body.classNo),unit_ids:game==='ba'?[Math.floor((units[0]-200000)%10000/100)]:[...new Set(units)].sort((a,b)=>a-b),stop_id:game==='ba'?units[0]:0});
-   if(checked.error){const required=await db.rpc('dm_verified_required');if(required.error||required.data!==false)return json({ok:false,mesaj:'Doğrulanmış cevaplar gerekli. Uygulamayı yenileyip oyunu yeniden başlat.'},409);}
+   if(checked.error){const required=await db.rpc('dm_verified_required');if(game==='fener'||required.error||required.data!==false)return json({ok:false,mesaj:'Doğrulanmış cevaplar gerekli. Uygulamayı yenileyip oyunu yeniden başlat.'},409);}
    else body={...body,correct:checked.data.correct,wrong:checked.data.wrong,seconds:checked.data.seconds,boost:1};
    const fair=game==='ba'; // Always enforce recorded outcomes; old clients cannot bypass the fairness gate.
    const {data,error}=fair
