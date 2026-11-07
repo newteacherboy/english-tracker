@@ -119,14 +119,14 @@
    heading.textContent=applicationTitle;
    heading.id='tp-application-title';
    card.setAttribute('aria-labelledby',heading.id);
-   heading.insertAdjacentHTML('beforebegin','<div class="tp-application-hero"><div class="tp-application-copy"><span class="tp-application-badge">🎓 Öğretmenlere Özel</span><span class="tp-application-free">Ücretsiz</span><p>Öğretmen kodunu ücretsiz al, Diji Medu’yu sınıfında kullanmaya başla.</p></div><img src="school-assets/teacher-invite-papi-key.webp" alt="" width="313" height="259"></div>');
+   heading.insertAdjacentHTML('beforebegin','<div class="tp-application-hero"><div class="tp-application-copy"><span class="tp-application-badge"><svg aria-hidden="true" viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="m12 2 12 6-12 6L0 8l12-6ZM5 12l7 3.5 7-3.5v5l-7 4-7-4v-5Zm17-1 2-1v8h-2v-7Z"/></svg> Öğretmenlere Özel</span><span class="tp-application-free">Ücretsiz</span><p>Öğretmen kodunu ücretsiz al, Diji Medu’yu sınıfında kullanmaya başla.</p></div><img src="school-assets/teacher-invite-papi-key.webp" alt="" width="313" height="259"></div>');
    const copy=card.querySelector('.tp-application-copy');
    copy.insertBefore(heading,copy.querySelector('p'));
    v.form.innerHTML=`
     <div class="tp-application-benefits">${applicationBenefits.map(([icon,title,description])=>`
      <div class="tp-application-benefit tp-benefit-${icon}"><img src="school-assets/teacher-invite-${icon}.webp" alt=""><div><strong>${title}</strong><p>${description}</p></div></div>
     `).join('')}</div>
-    <div class="tp-application-note"><span aria-hidden="true">ⓘ</span><p>Öğretmen olduğunu doğrulayabilmemiz için okul bilgilerini paylaş. Başvurun onaylanıp e-postan doğrulandığında kodun sana gönderilir.</p></div>
+    <div class="tp-application-note"><svg aria-hidden="true" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 11v6m0-10v2"/></svg><p>Öğretmen olduğunu doğrulayabilmemiz için okul bilgilerini paylaş. Başvurun onaylanıp e-postan doğrulandığında kodun sana gönderilir.</p></div>
     <div class="tp-application-location">
      <label>İl<input name="city" maxlength="40" required placeholder="İl seç"></label>
      <label>İlçe<input name="district" maxlength="60" required placeholder="İlçe seç"></label>

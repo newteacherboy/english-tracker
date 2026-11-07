@@ -311,6 +311,7 @@ html.dm-teacher-portal body #tpDashboard .tp-real-tools>button[hidden]{display:n
   background:#b2f0df;
   color:#07555c;
 }
+.tp-application-badge svg{width:1.1em;height:1.1em;vertical-align:-.18em}
 .tp-application-free{margin-inline-start:5px;background:#fff1c7;color:#65500a}
 .tp-application .tp-application-hero h1{
   margin:9px 0 6px;
@@ -321,7 +322,7 @@ html.dm-teacher-portal body #tpDashboard .tp-real-tools>button[hidden]{display:n
   color:#093746;
 }
 .tp-application .tp-application-hero p{margin:0;font-size:clamp(13px,2.15vw,17px);line-height:1.35}
-.tp-application-hero img{width:34%;max-width:215px;height:auto;align-self:flex-end;margin:-4px -7px -19px -2px}
+.tp-application-hero img{width:34%;max-width:215px;height:auto;align-self:flex-end;margin:-4px -7px -19px -2px;clip-path:polygon(3% 0,82% 0,82% 14%,100% 14%,100% 100%,3% 100%)}
 .tp-application form{padding:16px var(--tp-invite-gutter) 18px}
 .tp-application-benefits{display:grid;gap:8px}
 .tp-application-benefit{display:flex;align-items:center;gap:clamp(8px,2vw,15px);padding:7px 12px;border-radius:16px}
@@ -332,7 +333,7 @@ html.dm-teacher-portal body #tpDashboard .tp-real-tools>button[hidden]{display:n
 .tp-application-benefit strong{display:block;font-size:clamp(14px,2.6vw,20px);line-height:1.2;font-weight:850}
 .tp-application .tp-application-benefit p,.tp-application .tp-application-note p{margin:3px 0 0;font-size:clamp(12px,1.9vw,15px);line-height:1.32}
 .tp-application-note{display:flex;align-items:center;gap:10px;margin-top:12px;padding:9px 11px;border-radius:13px;background:#d9f5f1}
-.tp-application-note span{font-size:22px;line-height:1;color:#075c64}
+.tp-application-note svg{flex:none;color:#075c64}
 .tp-application .tp-application-note p{margin:0}
 .tp-application-location{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:10px}
 .tp-location{position:relative;min-width:0}
@@ -359,8 +360,12 @@ html.dm-teacher-portal body #tpDashboard .tp-real-tools>button[hidden]{display:n
 .tp-application :focus-visible{outline:2px solid #00777d;outline-offset:2px}
 @media(max-width:480px){
   .tp-card.tp-application{border-radius:23px}
-  .tp-application-hero{padding-top:17px;min-height:145px}
+  .tp-application-hero{padding-top:15px;padding-bottom:14px;min-height:140px}
   .tp-application .tp-close{right:8px;top:8px;min-width:38px;min-height:38px}
-  .tp-application-hero img{margin-right:-8px;margin-bottom:-11px}
+  .tp-application-hero img{width:29%;margin-right:-8px;margin-bottom:-9px}
+  .tp-application-badge,.tp-application-free{padding:3px 6px}
+  .tp-application .tp-application-hero h1{margin-top:6px}
+  .tp-application-benefit{padding-block:6px}
+  .tp-application form{padding-bottom:12px}
   .tp-application form{padding-top:10px}
 }
