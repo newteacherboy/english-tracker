@@ -76,6 +76,9 @@ Deno.serve(async(req:Request)=>{
    if(op==='status')return await gameReply(await db('rpc/dm_papizzle_status',{actor}));
    if(!UUID.test(String(b.runId||'')))return reply(req,{ok:false,mesaj:'Geçersiz oyun.'},400);
    if(op==='start')return await startGame('rpc/dm_papizzle_start',{actor,run_key:b.runId});
+   if(op==='check'&&Number.isInteger(b.slot)&&b.slot>=0&&b.slot<12&&Number.isInteger(b.pick)&&b.pick>=-1&&b.pick<=3){
+     return await gameReply(await db('rpc/dm_bubble_check',{actor,run_key:b.runId,slot:b.slot,pick:b.pick}));
+   }
    if(op==='finish'&&Array.isArray(b.selections)&&b.selections.length>=1&&b.selections.length<=256
       &&b.selections.every((pick:unknown)=>typeof pick==='number'&&Number.isInteger(pick)&&pick>=0&&pick<16)){
     return await gameReply(await db('rpc/dm_papizzle_finish',{actor,run_key:b.runId,selections:b.selections}));
