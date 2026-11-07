@@ -318,3 +318,32 @@ html[data-dm-theme="day"] body .dm-game-framed :is(.dm-picker-grid[data-kind="un
 }
 
 }
+
+/* On small screens the options scroll inside the frame, with the primary action in reach. */
+@layer bilgiIslands {
+@media (max-width: 700px), (max-height: 620px) {
+ html body .dm-game-framed :is(.pc-shell,.ww-shell,.hb-card,.sa-shell){
+  display:flex!important;flex-direction:column!important;min-height:0!important;
+  padding-bottom:max(8px,env(safe-area-inset-bottom,0px))!important;
+ }
+ html body .dm-game-framed :is(.pc-header,.ww-shell>header,.hb-card>header,.sa-header){flex:none}
+ html body .dm-game-framed :is(.pc-body,.ww-body,.hb-body,.sa-body){flex:1 1 auto;min-height:0;overflow-y:auto!important}
+ html body .dm-game-framed :is(.pc-body:has(.pc-setup),.ww-body:has(.ww-setup),.dm-garden-entry,.hb-body:has([data-start]),.sa-body:has(.sa-start),.kg-setup,.mt-setup,.rr-panel:has([data-start])){
+  scroll-padding-block-end:64px;
+ }
+ html body .dm-game-framed :is(.pc-setup-papi,.ww-body .ww-papi,.dm-entry-intro img,.hb-intro img,.rr-setup-art){
+  height:clamp(36px,7dvh,54px)!important;width:auto!important;object-fit:contain;
+ }
+ html body .dm-game-framed :is(.pc-setup,.ww-setup){gap:8px!important}
+ html body .dm-game-framed :is(.dm-picker-grid[data-kind="unit"],.unite-secim-box,.hb-units,.kg-units,.rr-units,.dm-sr-units){
+  max-height:clamp(82px,24dvh,174px)!important;
+ }
+ html body .dm-game-framed .dm-garden-entry{padding-top:10px!important}
+ html body .dm-game-framed :is(.dm-entry-heading,.dm-entry-intro,.dm-entry-rules){margin-block:5px!important;padding-block:6px!important}
+ html body .dm-game-framed .mt-setup form{flex:1 0 auto!important}
+ html body .dm-game-framed :is(.pc-setup>.pc-start,.ww-setup>button[type="submit"],.dm-garden-entry .btn-giris,.hb-body>.hb-primary[data-start],.sa-start,.kg-primary[data-start],.mt-start,.rr-panel [data-start]){
+  position:sticky!important;bottom:0!important;z-index:3!important;
+  flex-shrink:0!important;min-height:44px!important;
+ }
+}
+}
