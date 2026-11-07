@@ -98,7 +98,7 @@ begin
 end $$;
 
 create function public.dm_bubble_check(actor uuid,run_key uuid,slot integer,pick integer)
-returns jsonb language plpgsql set search_path to '' as $
+returns jsonb language plpgsql set search_path to '' as $bubble$
 declare r public.dm_bubble_runs; q jsonb; answer_index int; existing jsonb;
 begin
  if slot<0 or pick not between -1 and 3 then raise exception 'Geçersiz cevap.';end if;
@@ -118,7 +118,7 @@ begin
  end if;
  return jsonb_build_object('ok',true,'correct',pick=answer_index,
   'expected',q->'options'->answer_index,'pick',pick,'slot',slot);
-end $;
+end $bubble$;
 
 create function public.dm_bubble_finish(actor uuid,run_key uuid,selections integer[])
 returns jsonb language plpgsql set search_path to '' as $$
