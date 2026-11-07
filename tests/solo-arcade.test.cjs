@@ -41,6 +41,7 @@ test('flashlight selects the release tile only; gaps and cancelled drags leave t
   await settle();
   const grid=doc.querySelector('.sa-fener-grid'), tiles=[...grid.querySelectorAll('button')];
   assert.equal(tiles.length,4);
+  assert.equal(grid.querySelector('svg.sa-fener-tool').getAttribute('aria-hidden'),'true');
   assert.equal(doc.querySelector('.sa-question h3').textContent,t.starts[0].words[0].ingilizce);
   const correct=tiles.find(b=>b.textContent===t.starts[0].words[0].turkce);
   const wrong=tiles.find(b=>b!==correct);
@@ -48,11 +49,14 @@ test('flashlight selects the release tile only; gaps and cancelled drags leave t
   grid.setPointerCapture=()=>{};
   const at=x=>({clientX:x,clientY:10,pointerId:1,button:0,isPrimary:true});
   grid.onpointerdown(at(1));
+  assert.ok(grid.classList.contains('is-lit'));
   assert.ok(wrong.classList.contains('is-lit'));
   grid.onpointermove(at(2));
   assert.ok(correct.classList.contains('is-lit'));
+  assert.equal(grid.style.getPropertyValue('--beam-x'),'2px');
   assert.equal(t.answers.length,0);
   grid.onpointerup(at(0));
+  assert.ok(!grid.classList.contains('is-lit'));
   assert.equal(t.answers.length,0);
   grid.onpointerdown(at(1));
   grid.onpointercancel(at(2));

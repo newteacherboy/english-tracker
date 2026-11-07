@@ -96,6 +96,15 @@
   background: radial-gradient(circle at var(--beam-x) var(--beam-y), #caffec 0, #76ffbb 30px, #28d998a0 70px, transparent clamp(90px, 19vw, 175px));
 }
 .sa-fener-grid.is-lit::before { opacity: 1; }
+.sa-fener-tool {
+  position: absolute; z-index: 1; pointer-events: none;
+  width: 42px; height: 42px; left: 50%; top: 50%; transform: translate(-50%, -50%);
+  filter: drop-shadow(0 3px 5px #001d16) drop-shadow(0 0 7px #63e6b577);
+}
+.sa-fener-grid.is-lit .sa-fener-tool {
+  left: clamp(21px, calc(var(--beam-x) + 30px), calc(100% - 21px));
+  top: clamp(21px, calc(var(--beam-y) + 30px), calc(100% - 21px));
+}
 .sa-fener-grid button {
   position: relative; border: 0; background: transparent; box-shadow: none; -webkit-appearance: none; appearance: none;
   color: #ddfff3; min-width: 0; min-height: 0; padding: 8px; cursor: crosshair;
