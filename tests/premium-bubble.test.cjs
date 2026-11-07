@@ -55,7 +55,7 @@ test('bubble client opens with premium status, plays server-authorized answers a
  }finally{dom.window.close();}
 });
 test('bubble server requires stored answers, uses RLS and idempotent results',()=>{
- const sql=read('supabase/migrations/20261107143000_premium_bubble_pop.sql');
+ const sql=read('supabase/migrations/20261107141515_premium_bubble_pop.sql');
  const edge=read('supabase/functions/premium-games/index.ts');
  const bubble=edge.slice(edge.indexOf("if(game==='bubble-pop')"),edge.indexOf("if(b.game==='cloud-flight'"));
  const papizzle=edge.slice(edge.indexOf("if(b.game==='papizzle')"),edge.indexOf("if(game==='bubble-pop')"));
