@@ -97,7 +97,7 @@
 }
 .sa-fener-grid.is-lit::before { opacity: 1; }
 .sa-fener-grid button {
-  position: relative; border: 1px solid #286259; border-radius: 20px; background: #06342c44;
+  position: relative; border: 0; background: transparent; box-shadow: none; -webkit-appearance: none; appearance: none;
   color: #ddfff3; min-width: 0; min-height: 0; padding: 8px; cursor: crosshair;
   font: 900 clamp(15px, 3vw, 36px)/1.15 Nunito, system-ui, sans-serif; overflow-wrap: anywhere;
 }
@@ -106,9 +106,10 @@
   opacity: 1; background: #06332a; border-radius: 6px; padding: .12em .32em;
   box-decoration-break: clone; -webkit-box-decoration-break: clone;
 }
-.sa-fener-grid button.sa-correct { background: #0c573f; border-color: #7effb2; opacity: 1; }
-.sa-fener-grid button.sa-wrong { background: #622d36; border-color: #ff939d; opacity: 1; }
-.sa-fener-grid button.sa-wrong span { background: #4a2028; }
+.sa-fener.sa-overlay .sa-fener-grid button:focus-visible { outline: none; }
+.sa-fener-grid button:focus-visible span { outline: 2px solid #ffc82e; outline-offset: 3px; }
+.sa-fener-grid button.sa-correct span { color: #a8ffcf; }
+.sa-fener-grid button.sa-wrong span { color: #ffd3cb; background: #4a2028; }
 .sa-fener-preview, .sa-hub-fener {
   background: radial-gradient(circle at 62% 43%, #ddfff0 0 9%, #60f4b9 12%, #0e624f 25%, #03221e 45%);
 }
