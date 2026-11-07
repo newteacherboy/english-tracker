@@ -80,7 +80,13 @@ function flashlightQuestion(word){
  <div class="sa-time-track"><i data-timebar></i></div>
  <div class="sa-question"><h3>${esc(en(word))}</h3><button type="button" data-speak aria-label="İngilizce kelimeyi dinle">🔊</button></div>
  <footer class="sa-feedback"><p data-feedback role="status">${games.fener.hint}</p><button type="button" data-next hidden>Devam et →</button></footer>
- <div class="sa-fener-grid">${choices}</div>
+ <div class="sa-fener-grid">${choices}
+   <svg class="sa-fener-tool" viewBox="0 0 48 48" aria-hidden="true" focusable="false">
+    <path d="M10 17 16 11 26 17 39 30a5 5 0 0 1 0 7l-2 2a5 5 0 0 1-7 0L17 26z" fill="#1baf83" stroke="#b7ffe5" stroke-width="2.5" stroke-linejoin="round"/>
+    <path d="m8 15 7-7a2 2 0 0 1 3 0l4 4a2 2 0 0 1 0 3l-7 7a2 2 0 0 1-3 0l-4-4a2 2 0 0 1 0-3z" fill="#ddfff0" stroke="#63e6b5" stroke-width="2"/>
+    <path d="m28 24 5 5" stroke="#063b30" stroke-width="3.5" stroke-linecap="round"/>
+   </svg>
+ </div>
  <div class="sa-pause" hidden><h3>Oyun duraklatıldı</h3><button type="button" data-resume>▶ Devam et</button></div>`;
  const grid=board.querySelector('.sa-fener-grid');
  let pointer=null;
