@@ -69,6 +69,42 @@ export function createBilling({ plugin, store = 'google', win, endpoint }) {
 .dmb-link{border:0;background:none;color:#07535b;font-weight:700;text-decoration:underline;padding:8px 0}
 .dmb-note{font-size:12px;color:#64748b}.dmb-msg{margin:10px 0;padding:10px 12px;border-radius:12px;background:#eefafa;color:#07535b;font-weight:600}.dmb-msg.err{background:#fdecec;color:#9b1c1c}
 .dmb-gate input{width:100%;box-sizing:border-box;font-size:20px;padding:10px;border-radius:12px;border:2px solid #e7e1d8;margin:10px 0}`;
+
+// Diji-Medu: oyun dünyası abonelik vitrini (satın alma ve veli kapısı korunur).
+const showcaseCss = `
+.dmb-veil{background:rgba(6,13,47,.78);align-items:center;padding:0}
+.dmb-sheet{box-sizing:border-box;width:min(560px,100%);max-height:100dvh;border:0;border-radius:0;padding:16px 12px calc(20px + env(safe-area-inset-bottom,0px));color:#172e66;background:radial-gradient(circle at 12% 5%,#48c9ff 0,transparent 25%),radial-gradient(circle at 95% 27%,#9d50e9 0,transparent 32%),linear-gradient(145deg,#085ed5 0%,#2849be 48%,#6c3ac4 100%);font:600 14px/1.4 system-ui}
+.dmb-head{position:relative;display:flex;align-items:center;justify-content:center;min-height:40px}
+.dmb-head h2{font-size:26px;letter-spacing:-1.1px;color:#fff;text-shadow:0 3px 0 #1645a3,0 5px 14px #102568}
+.dmb-x{position:absolute;right:0;top:0;color:#fff;background:#202a7e;border:2px solid #a5baff}
+.dmb-hero{text-align:center;color:white;padding:12px 8px 6px}
+.dmb-hero-mascot{font-size:56px;line-height:1;filter:drop-shadow(0 5px 6px #19297f);display:block}
+.dmb-hero-ribbon{display:block;margin:5px auto 7px;max-width:360px;background:linear-gradient(110deg,#ed3b94,#ff6a9c,#dc3182);border:2px solid #ffb1d1;border-radius:18px;padding:7px 10px;color:white;font-size:20px;font-weight:950;transform:rotate(-2deg);text-shadow:0 2px 2px #922c65;box-shadow:0 5px 0 #922d70,0 12px 18px #142b8d}
+.dmb-hero p{margin:12px 0 8px;font-size:13px;font-weight:800;text-shadow:0 2px 3px #143879}
+.dmb-toggle{margin:8px auto 16px;max-width:320px;border:1px solid #addbff;background:#1d3b9a;border-radius:999px}
+.dmb-toggle button{color:#e3eaff;border-radius:999px}.dmb-toggle button[aria-pressed=true]{color:#15367f;background:linear-gradient(#fff7c6,#ffdc73)}
+.dmb-body{display:flex;flex-direction:column;gap:11px}
+.dmb-card{position:relative;box-sizing:border-box;margin:0!important;padding:15px 12px 12px!important;border:3px solid #afdaff!important;border-radius:25px!important;background:linear-gradient(180deg,#f0f8ff,#fff)!important;box-shadow:0 7px 0 #1556b1,0 12px 20px #182b88;color:#1c2b5a}
+.dmb-card.is-pro{border-color:#75bafe!important;box-shadow:0 7px 0 #1245af,0 12px 22px #122a82}
+.dmb-card.is-best{border-color:#ffdb64!important;background:linear-gradient(165deg,#fff7fe,#f6e5ff)!important;box-shadow:0 7px 0 #d68814,0 0 23px #ffd65b99,0 15px 25px #172279}
+.dmb-card.is-current{outline:2px solid #38cdd9;outline-offset:-7px}
+.dmb-top{align-items:center;gap:4px}.dmb-top h3{font-size:22px;color:#193479;font-weight:950}.dmb-card.is-best h3{color:#7b259e}
+.dmb-price{white-space:nowrap;font-size:18px;color:#402174;background:linear-gradient(#fffaac,#ffc84b);border:2px solid white;border-radius:100px;padding:4px 10px;box-shadow:0 3px 0 #d99a27}
+.dmb-price small{color:#4b2873;font-size:12px}
+.dmb-card ul{list-style:none;padding:0;margin:10px 0 14px}.dmb-card li{display:flex;gap:8px;align-items:start;padding:5px 0;border-bottom:1px solid #cfdef5;font-size:13px;font-weight:750}.dmb-card li:before{content:'✨';flex:none}
+.dmb-card.is-best li:before{content:'👑'}
+.dmb-card.is-pro li:before{content:'⚡'}
+.dmb-btn{border-radius:100px;min-height:51px;background:linear-gradient(#27aaff,#0555db);border:2px solid #b5e9ff;border-bottom:5px solid #164bad;font-weight:950;font-size:15px;box-shadow:0 4px 10px #123d9b33}
+.dmb-card.is-best .dmb-btn{color:#5c176a;background:linear-gradient(#fff58d,#ffcb24);border-color:#fff0b9;border-bottom-color:#d58a11}
+.dmb-btn[disabled]{background:linear-gradient(#eff7ff,#a7d8ed);color:#35577e;border-color:#fff;border-bottom-color:#6aadc7}
+.dmb-tag{background:#fff0a2;color:#783d12}
+.dmb-reasons{margin-top:16px;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px;padding:9px 3px;border-radius:19px;background:#352eae99;border:1px solid #b4b0ff;color:#fff;text-align:center}
+.dmb-reasons span{font-size:10px;font-weight:800}.dmb-reasons i{display:block;font-size:21px;font-style:normal}
+.dmb-footer-banner{margin:14px auto;color:#4d1268;text-align:center;font-size:17px;font-weight:950;background:linear-gradient(#fff9a1,#ffc930);padding:13px;border:3px solid white;border-radius:100px;box-shadow:0 5px 0 #de9516}
+.dmb-note{color:#e5eaff;font-size:11px;line-height:1.55}.dmb-link{color:#fff5ad}
+.dmb-msg{background:#ecf7ff}.dmb-gate{background:#fff;border-radius:20px;padding:18px}
+@media(min-width:600px){.dmb-sheet{max-height:94dvh;border-radius:25px}}
+`;
   function close() { sheet?.remove(); sheet = null; }
   function el(html) { const t = doc.createElement('template'); t.innerHTML = html.trim(); return t.content.firstElementChild; }
   const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
@@ -81,7 +117,7 @@ export function createBilling({ plugin, store = 'google', win, endpoint }) {
     if (!sheet || !status) return;
     const cards = planCards({ role: status.role, plan: status.plan, products: status.products, storeProducts, period });
     const body = sheet.querySelector('.dmb-body');
-    body.innerHTML = cards.map(c => `<div class="dmb-card${c.current ? ' is-current' : ''}${c.plan === 'premium_pro' ? ' is-best' : ''}">
+    body.innerHTML = cards.map(c => `<div class="dmb-card${c.plan === 'pro' ? ' is-pro' : ''}${c.current ? ' is-current' : ''}${c.plan === 'premium_pro' ? ' is-best' : ''}">
       <div class="dmb-top"><h3>${esc(c.name)}</h3><span class="dmb-price">${apple && c.action === 'soon' ? '' : esc(c.price.text)}${c.price.per && !(apple && c.action === 'soon') ? ` <small>/ ${c.price.per}</small>` : ''}</span></div>
       ${c.saving ? `<span class="dmb-tag">%${c.saving} tasarruf</span>` : ''}${c.price.trialDays && c.action === 'buy' ? ` <span class="dmb-tag">${c.price.trialDays} gün ücretsiz dene</span>` : ''}
       <ul>${c.features.map(f => `<li>${esc(f)}</li>`).join('')}</ul>
@@ -89,7 +125,7 @@ export function createBilling({ plugin, store = 'google', win, endpoint }) {
         : c.action === 'current' ? `<button class="dmb-btn" disabled>Şu anki planın</button>`
         : c.action === 'soon' ? `<button class="dmb-btn" disabled>Yakında</button>`
         : c.action === 'unavailable' ? `<button class="dmb-btn" disabled>Şu an satışta değil</button>` : ''}
-    </div>`).join('') + (apple ? `<p class="dmb-note">Ödeme onaylandığında Apple Kimliği hesabından alınır. Abonelik, dönem bitmeden en az 24 saat önce iptal edilmezse aynı süre ve fiyatla otomatik yenilenir; yenileme ücreti dönem bitmeden önceki 24 saat içinde alınır. Aboneliği satın aldıktan sonra Ayarlar &gt; Apple Kimliği &gt; Abonelikler bölümünden yönetebilir veya iptal edebilirsin.</p>
+    </div>`).join('') + `<div class="dmb-reasons"><span><i>⚡</i>Daha fazla enerji</span><span><i>🎮</i>Premium oyun</span><span><i>🚫</i>Reklamsız</span><span><i>🪙</i>Daha fazla altın</span><span><i>🛡️</i>Seri kalkanı</span></div><div class="dmb-footer-banner">👑 Ayrıcalıkları keşfet!</div>` + (apple ? `<p class="dmb-note">Ödeme onaylandığında Apple Kimliği hesabından alınır. Abonelik, dönem bitmeden en az 24 saat önce iptal edilmezse aynı süre ve fiyatla otomatik yenilenir; yenileme ücreti dönem bitmeden önceki 24 saat içinde alınır. Aboneliği satın aldıktan sonra Ayarlar &gt; Apple Kimliği &gt; Abonelikler bölümünden yönetebilir veya iptal edebilirsin.</p>
       <p class="dmb-note"><a href="https://www.apple.com/legal/internet-services/itunes/dev/stdeula/" target="_blank" rel="noopener">Kullanım Koşulları (EULA)</a> · <a href="https://app.dijimedu.com/ingilizce/gizlilik.html" target="_blank" rel="noopener">Gizlilik Politikası</a></p>`
       : `<p class="dmb-note">Ödeme Google Play hesabından alınır. Abonelik, dönem bitmeden en az 24 saat önce iptal edilmezse aynı süreyle yenilenir. İptal ve ödeme yöntemi Google Play &gt; Abonelikler bölümünden yönetilir.</p>`) + `
       <button class="dmb-link" data-restore>Satın alımları geri yükle</button> ${status.plan !== 'free' ? '<button class="dmb-link" data-manage>Aboneliği yönet</button>' : ''}`;
@@ -129,10 +165,10 @@ export function createBilling({ plugin, store = 'google', win, endpoint }) {
     finally { busy = false; }
   }
   async function open(source = '') {
-    if (!doc.getElementById('dmb-style')) { const s = doc.createElement('style'); s.id = 'dmb-style'; s.textContent = css; doc.head.append(s); }
+    if (!doc.getElementById('dmb-style')) { const s = doc.createElement('style'); s.id = 'dmb-style'; s.textContent = css + showcaseCss; doc.head.append(s); }
     close();
     sheet = el(`<div class="dmb-veil" role="dialog" aria-modal="true" aria-label="Planlar" data-source="${esc(source)}"><div class="dmb-sheet">
-      <div class="dmb-head"><h2>Planlar</h2><button class="dmb-x" aria-label="Kapat">✕</button></div>
+      <div class="dmb-head"><h2>Diji-Medu</h2><button class="dmb-x" aria-label="Kapat">✕</button></div><div class="dmb-hero"><span class="dmb-hero-mascot" aria-hidden="true">🦜👑</span><strong class="dmb-hero-ribbon">Paketlerini Keşfet!</strong><p>İhtiyacına en uygun paketi seç,<br>Diji-Medu deneyimini üst seviyeye taşı!</p></div>
       <div class="dmb-toggle"><button data-period="aylik">Aylık</button><button data-period="yillik">Yıllık</button></div>
       <div class="dmb-msg" hidden></div><div class="dmb-body"><p>Planlar yükleniyor…</p></div></div></div>`);
     sheet.querySelector('.dmb-x').onclick = close;
