@@ -117,7 +117,17 @@ if (Capacitor.isNativePlatform() && (platform === 'android' || (ios && Capacitor
       };
       return button;
     }
-    function addButton(card, kind) { if (!placements.rewardEnabled()) return; upsell.ensureStyle(); card.append(rewardButton(kind, card.matches('.ds-offer,.ds-joker,.ds-pack'))); }
+    function addButton(card, kind) {
+      if (!placements.rewardEnabled()) return;
+      upsell.ensureStyle();
+      const button = rewardButton(kind, card.matches('.ds-offer,.ds-joker,.ds-pack'));
+      if (kind === 'energy' && card.id === 'dsEnergy') {
+        button.onclick = () => window.DijiMeduPapiFeedback?.energy?.();
+      }
+      const premium = kind === 'energy' && card.matches('.dm-papi-feedback-card') ? card.querySelector('.dm-energy-premium') : null;
+      if (premium) card.insertBefore(button, premium);
+      else card.append(button);
+    }
     function addPlanOffer(card) {
       upsell.ensureStyle();
       const button = document.createElement('button');
