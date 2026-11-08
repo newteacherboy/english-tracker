@@ -4,7 +4,7 @@ import { planCards, parentGate, gatePassed } from './billing-core.js';
 export function createBilling({ plugin, store = 'google', win, endpoint }) {
   const apple = store === 'apple';
   const doc = win.document;
-  let status = null, storeProducts = [], loadingProducts = null, busy = false, period = 'aylik';
+  let status = null, storeProducts = [], loadingProducts = null, busy = false, period = 'aylik', selectedPlan = 'premium_pro';
 
   function token() { return win.sessionStorage.getItem('ing_ogr_token') || win.localStorage.getItem('ing_token') || ''; }
   async function call(body) {
@@ -56,15 +56,15 @@ export function createBilling({ plugin, store = 'google', win, endpoint }) {
   // ---------------------------------------------------------------- arayüz
   let sheet;
   const css = `.dmb-veil{position:fixed;inset:0;z-index:2147483643;background:rgba(15,23,42,.55);display:flex;align-items:flex-end;justify-content:center}
-.dmb-sheet{width:min(560px,100%);max-height:92vh;overflow:auto;background:#fffefa;border:1px solid #b7ece4;border-bottom:0;border-radius:32px 32px 0 0;padding:18px 16px calc(18px + env(safe-area-inset-bottom,0px));font:600 15px/1.45 system-ui;color:#114952}
+.dmb-sheet{width:min(560px,100%);max-height:calc(100dvh - env(safe-area-inset-top,0px) - 10px);overflow:hidden;display:flex;flex-direction:column;box-sizing:border-box;background:#fffefa;border:1px solid #b7ece4;border-bottom:0;border-radius:32px 32px 0 0;padding:18px 16px calc(18px + env(safe-area-inset-bottom,0px));font:600 15px/1.45 system-ui;color:#114952}
 .dmb-head{display:flex;align-items:center;justify-content:space-between;gap:8px}.dmb-head h2{margin:0;font-size:20px}
 .dmb-x{border:0;background:#ece7df;border-radius:50%;width:36px;height:36px;font-size:18px}
 .dmb-toggle{display:flex;background:#ece7df;border-radius:12px;padding:3px;margin:14px 0}.dmb-toggle button{flex:1;border:0;background:none;border-radius:10px;padding:9px;font-weight:700;color:#475569}
 .dmb-toggle button[aria-pressed=true]{background:#fff;color:#07535b;box-shadow:0 1px 3px rgba(0,0,0,.12)}
-.dmb-card{background:#fff;border:2px solid #e7e1d8;border-radius:16px;padding:14px;margin-bottom:12px}.dmb-card.is-current{border-color:#09858c}.dmb-card.is-best{border-color:#f5ad3d}.dmb-card{border-radius:20px!important}
+.dmb-body{min-height:0;overflow:auto;overscroll-behavior:contain}.dmb-choice{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin:8px 0 12px}.dmb-choice button{border:1.5px solid #cee4e3;border-radius:14px;background:#f1faf9;padding:10px 3px;color:#28616b;font:800 12px system-ui;min-width:0}.dmb-choice button[aria-pressed=true]{background:#087f89;color:#fff;border-color:#087f89;box-shadow:0 4px 12px #087f8933}.dmb-choice small{display:block;font-weight:600;font-size:10px}.dmb-card{background:#fff;border:2px solid #e7e1d8;border-radius:16px;padding:14px;margin-bottom:12px}.dmb-card.is-current{border-color:#09858c}.dmb-card.is-best{border-color:#f5ad3d}.dmb-card{border-radius:20px!important}
 .dmb-top{display:flex;justify-content:space-between;align-items:baseline;gap:8px}.dmb-top h3{margin:0;font-size:17px}.dmb-price{font-weight:800;font-size:18px;color:#07535b}.dmb-price small{font-weight:600;color:#64748b}
 .dmb-tag{display:inline-block;margin-top:4px;font-size:12px;font-weight:700;color:#8a5a00;background:#fff3d6;border-radius:999px;padding:2px 8px}
-.dmb-card ul{margin:10px 0;padding-left:18px}.dmb-card li{margin:3px 0}
+.dmb-card ul{margin:8px 0;padding:0;list-style:none;display:grid;grid-template-columns:1fr 1fr;gap:6px}.dmb-card li{margin:0;padding:7px;background:#f1faf9;border-radius:10px;font-size:12px;line-height:1.25}.dmb-card li:before{content:'✓ ';color:#00877e;font-weight:900}.dmb-card li:first-child:nth-last-child(7),.dmb-card li:first-child:nth-last-child(7)~li{font-size:11px}@media(max-height:740px){.dmb-sheet{padding:10px 12px calc(10px + env(safe-area-inset-bottom,0px))}.dmb-toggle{margin:8px 0}.dmb-card{padding:10px}.dmb-card li{padding:5px}.dmb-card ul{gap:4px}}
 .dmb-btn{display:block;width:100%;min-height:48px;border:0;border-radius:16px;background:#0aa3ab;color:#fff;font:800 15px system-ui;border-bottom:4px solid #077a80}.dmb-btn[disabled]{background:#cbd5e1;color:#475569}
 .dmb-link{border:0;background:none;color:#07535b;font-weight:700;text-decoration:underline;padding:8px 0}
 .dmb-note{font-size:12px;color:#64748b}.dmb-msg{margin:10px 0;padding:10px 12px;border-radius:12px;background:#eefafa;color:#07535b;font-weight:600}.dmb-msg.err{background:#fdecec;color:#9b1c1c}
@@ -81,18 +81,22 @@ export function createBilling({ plugin, store = 'google', win, endpoint }) {
     if (!sheet || !status) return;
     const cards = planCards({ role: status.role, plan: status.plan, products: status.products, storeProducts, period });
     const body = sheet.querySelector('.dmb-body');
-    body.innerHTML = cards.map(c => `<div class="dmb-card${c.current ? ' is-current' : ''}${c.plan === 'premium_pro' ? ' is-best' : ''}">
-      <div class="dmb-top"><h3>${esc(c.name)}</h3><span class="dmb-price">${apple && c.action === 'soon' ? '' : esc(c.price.text)}${c.price.per && !(apple && c.action === 'soon') ? ` <small>/ ${c.price.per}</small>` : ''}</span></div>
-      ${c.saving ? `<span class="dmb-tag">%${c.saving} tasarruf</span>` : ''}${c.price.trialDays && c.action === 'buy' ? ` <span class="dmb-tag">${c.price.trialDays} gün ücretsiz dene</span>` : ''}
-      <ul>${c.features.map(f => `<li>${esc(f)}</li>`).join('')}</ul>
-      ${c.action === 'buy' ? `<button class="dmb-btn" data-buy="${esc(c.id)}">${status.plan === 'free' ? 'Seç' : 'Yükselt'}</button>`
-        : c.action === 'current' ? `<button class="dmb-btn" disabled>Şu anki planın</button>`
-        : c.action === 'soon' ? `<button class="dmb-btn" disabled>Yakında</button>`
-        : c.action === 'unavailable' ? `<button class="dmb-btn" disabled>Şu an satışta değil</button>` : ''}
-    </div>`).join('') + (apple ? `<p class="dmb-note">Ödeme onaylandığında Apple Kimliği hesabından alınır. Abonelik, dönem bitmeden en az 24 saat önce iptal edilmezse aynı süre ve fiyatla otomatik yenilenir; yenileme ücreti dönem bitmeden önceki 24 saat içinde alınır. Aboneliği satın aldıktan sonra Ayarlar &gt; Apple Kimliği &gt; Abonelikler bölümünden yönetebilir veya iptal edebilirsin.</p>
+    const selected = cards.find(c => c.plan === selectedPlan) || cards.find(c => c.plan === 'premium_pro') || cards[0];
+    body.innerHTML = `<div class="dmb-choice" role="group" aria-label="Plan seçimi">${cards.map(c => `<button type="button" data-plan-choice="${esc(c.plan)}" aria-pressed="${c.plan === selected.plan}">${esc(c.name)}<small>${esc(c.price.text)}${c.price.per ? ' / '+esc(c.price.per) : ''}</small></button>`).join('')}</div>
+      <div class="dmb-card${selected.current ? ' is-current' : ''}${selected.plan === 'premium_pro' ? ' is-best' : ''}">
+      <div class="dmb-top"><h3>${esc(selected.name)}${selected.plan === 'premium_pro' ? ' 👑' : ''}</h3><span class="dmb-price">${apple && selected.action === 'soon' ? '' : esc(selected.price.text)}${selected.price.per && !(apple && selected.action === 'soon') ? ` <small>/ ${selected.price.per}</small>` : ''}</span></div>
+      ${selected.plan === 'premium_pro' ? '<span class="dmb-tag">En kapsamlı plan</span>' : ''}
+      ${selected.saving ? `<span class="dmb-tag">% ${selected.saving} tasarruf</span>` : ''}${selected.price.trialDays && selected.action === 'buy' ? ` <span class="dmb-tag">${selected.price.trialDays} gün ücretsiz dene</span>` : ''}
+      <ul>${selected.features.map(f => `<li>${esc(f)}</li>`).join('')}</ul>
+      ${selected.action === 'buy' ? `<button class="dmb-btn" data-buy="${esc(selected.id)}">${status.plan === 'free' ? 'Bu planı seç' : 'Yükselt'}</button>`
+        : selected.action === 'current' ? '<button class="dmb-btn" disabled>Şu anki planın</button>'
+        : selected.action === 'soon' ? '<button class="dmb-btn" disabled>Yakında</button>'
+        : selected.action === 'unavailable' ? '<button class="dmb-btn" disabled>Şu an satışta değil</button>' : ''}
+    </div>` + (apple ? `<p class="dmb-note">Ödeme onaylandığında Apple Kimliği hesabından alınır. Abonelik, dönem bitmeden en az 24 saat önce iptal edilmezse aynı süre ve fiyatla otomatik yenilenir; yenileme ücreti dönem bitmeden önceki 24 saat içinde alınır. Aboneliği satın aldıktan sonra Ayarlar &gt; Apple Kimliği &gt; Abonelikler bölümünden yönetebilir veya iptal edebilirsin.</p>
       <p class="dmb-note"><a href="https://www.apple.com/legal/internet-services/itunes/dev/stdeula/" target="_blank" rel="noopener">Kullanım Koşulları (EULA)</a> · <a href="https://app.dijimedu.com/ingilizce/gizlilik.html" target="_blank" rel="noopener">Gizlilik Politikası</a></p>`
       : `<p class="dmb-note">Ödeme Google Play hesabından alınır. Abonelik, dönem bitmeden en az 24 saat önce iptal edilmezse aynı süreyle yenilenir. İptal ve ödeme yöntemi Google Play &gt; Abonelikler bölümünden yönetilir.</p>`) + `
       <button class="dmb-link" data-restore>Satın alımları geri yükle</button> ${status.plan !== 'free' ? '<button class="dmb-link" data-manage>Aboneliği yönet</button>' : ''}`;
+    for (const b of sheet.querySelectorAll('[data-plan-choice]')) b.onclick = () => { selectedPlan = b.dataset.planChoice; render(); };
     for (const b of sheet.querySelectorAll('[data-buy]')) b.onclick = () => gateThen(() => buy(b.dataset.buy));
     sheet.querySelector('[data-restore]').onclick = async () => {
       message('Kontrol ediliyor…');
