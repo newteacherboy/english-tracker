@@ -71,39 +71,78 @@ export function createBilling({ plugin, store = 'google', win, endpoint }) {
 .dmb-gate input{width:100%;box-sizing:border-box;font-size:20px;padding:10px;border-radius:12px;border:2px solid #e7e1d8;margin:10px 0}`;
 
 // Diji-Medu: oyun dünyası abonelik vitrini (satın alma ve veli kapısı korunur).
+
 const showcaseCss = `
-.dmb-veil{background:rgba(6,13,47,.78);align-items:center;padding:0}
-.dmb-sheet{box-sizing:border-box;width:min(560px,100%);max-height:100dvh;border:0;border-radius:0;padding:16px 12px calc(20px + env(safe-area-inset-bottom,0px));color:#172e66;background:radial-gradient(circle at 12% 5%,#48c9ff 0,transparent 25%),radial-gradient(circle at 95% 27%,#9d50e9 0,transparent 32%),linear-gradient(145deg,#085ed5 0%,#2849be 48%,#6c3ac4 100%);font:600 14px/1.4 system-ui}
-.dmb-head{position:relative;display:flex;align-items:center;justify-content:center;min-height:40px}
-.dmb-head h2{font-size:26px;letter-spacing:-1.1px;color:#fff;text-shadow:0 3px 0 #1645a3,0 5px 14px #102568}
-.dmb-x{position:absolute;right:0;top:0;color:#fff;background:#202a7e;border:2px solid #a5baff}
-.dmb-hero{text-align:center;color:white;padding:12px 8px 6px}
-.dmb-hero-mascot{width:110px;height:105px;object-fit:contain;margin:auto;filter:drop-shadow(0 5px 6px #19297f);display:block}
-.dmb-hero-ribbon{display:block;margin:5px auto 7px;max-width:360px;background:linear-gradient(110deg,#ed3b94,#ff6a9c,#dc3182);border:2px solid #ffb1d1;border-radius:18px;padding:7px 10px;color:white;font-size:20px;font-weight:950;transform:rotate(-2deg);text-shadow:0 2px 2px #922c65;box-shadow:0 5px 0 #922d70,0 12px 18px #142b8d}
-.dmb-hero p{margin:12px 0 8px;font-size:13px;font-weight:800;text-shadow:0 2px 3px #143879}
-.dmb-toggle{margin:8px auto 16px;max-width:320px;border:1px solid #addbff;background:#1d3b9a;border-radius:999px}
-.dmb-toggle button{color:#e3eaff;border-radius:999px}.dmb-toggle button[aria-pressed=true]{color:#15367f;background:linear-gradient(#fff7c6,#ffdc73)}
-.dmb-body{display:flex;flex-direction:column;gap:11px}
-.dmb-card{position:relative;box-sizing:border-box;margin:0!important;padding:15px 12px 12px!important;border:3px solid #afdaff!important;border-radius:25px!important;background:linear-gradient(180deg,#f0f8ff,#fff)!important;box-shadow:0 7px 0 #1556b1,0 12px 20px #182b88;color:#1c2b5a}
-.dmb-card.is-pro{border-color:#75bafe!important;box-shadow:0 7px 0 #1245af,0 12px 22px #122a82}
-.dmb-card.is-best{border-color:#ffdb64!important;background:linear-gradient(165deg,#fff7fe,#f6e5ff)!important;box-shadow:0 7px 0 #d68814,0 0 23px #ffd65b99,0 15px 25px #172279}
-.dmb-card.is-current{outline:2px solid #38cdd9;outline-offset:-7px}
-.dmb-top{align-items:center;gap:4px}.dmb-top h3{font-size:22px;color:#193479;font-weight:950}.dmb-card.is-best h3{color:#7b259e}
-.dmb-price{white-space:nowrap;font-size:18px;color:#402174;background:linear-gradient(#fffaac,#ffc84b);border:2px solid white;border-radius:100px;padding:4px 10px;box-shadow:0 3px 0 #d99a27}
-.dmb-price small{color:#4b2873;font-size:12px}
-.dmb-card ul{list-style:none;padding:0;margin:10px 0 14px}.dmb-card li{display:flex;gap:8px;align-items:start;padding:5px 0;border-bottom:1px solid #cfdef5;font-size:13px;font-weight:750}.dmb-card li:before{content:'✨';flex:none}
-.dmb-card.is-best li:before{content:'👑'}
-.dmb-card.is-pro li:before{content:'⚡'}
-.dmb-btn{border-radius:100px;min-height:51px;background:linear-gradient(#27aaff,#0555db);border:2px solid #b5e9ff;border-bottom:5px solid #164bad;font-weight:950;font-size:15px;box-shadow:0 4px 10px #123d9b33}
-.dmb-card.is-best .dmb-btn{color:#5c176a;background:linear-gradient(#fff58d,#ffcb24);border-color:#fff0b9;border-bottom-color:#d58a11}
-.dmb-btn[disabled]{background:linear-gradient(#eff7ff,#a7d8ed);color:#35577e;border-color:#fff;border-bottom-color:#6aadc7}
-.dmb-tag{background:#fff0a2;color:#783d12}
-.dmb-reasons{margin-top:16px;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px;padding:9px 3px;border-radius:19px;background:#352eae99;border:1px solid #b4b0ff;color:#fff;text-align:center}
-.dmb-reasons span{font-size:10px;font-weight:800}.dmb-reasons i{display:block;font-size:21px;font-style:normal}
-.dmb-footer-banner{margin:14px auto;color:#4d1268;text-align:center;font-size:17px;font-weight:950;background:linear-gradient(#fff9a1,#ffc930);padding:13px;border:3px solid white;border-radius:100px;box-shadow:0 5px 0 #de9516}
-.dmb-note{color:#e5eaff;font-size:11px;line-height:1.55}.dmb-link{color:#fff5ad}
-.dmb-msg{background:#ecf7ff}.dmb-gate{background:#fff;border-radius:20px;padding:18px}
-@media(min-width:600px){.dmb-sheet{max-height:94dvh;border-radius:25px}}
+.dmb-veil{background:rgba(7,12,55,.82);align-items:center;padding:0}
+.dmb-sheet{box-sizing:border-box;width:min(1180px,100%);max-height:100dvh;border:0;border-radius:0;padding:18px 15px calc(24px + env(safe-area-inset-bottom,0px));color:#233468;background:radial-gradient(circle at 7% 5%,#1fa9f9 0,transparent 30%),radial-gradient(circle at 95% 21%,#8839e4 0,transparent 34%),linear-gradient(120deg,#1167d0 0%,#1751c8 43%,#7136bf 100%);font:650 15px/1.45 system-ui;box-shadow:0 15px 50px #081356}
+.dmb-sheet:before{content:'✦     ✧         ✦              ✧       ✦';display:block;position:absolute;top:110px;right:0;pointer-events:none;font-size:23px;color:#ffdf67;opacity:.72;letter-spacing:30px}
+.dmb-head{position:relative;display:flex;align-items:center;justify-content:center;min-height:55px}
+.dmb-head h2{font-size:clamp(27px,4vw,49px);letter-spacing:-2px;color:#ffdf40;-webkit-text-stroke:1.5px white;text-shadow:0 3px 0 #174caa,0 6px 0 #072f8c,0 9px 15px #122166;font-weight:1000}
+.dmb-x{position:absolute;right:0;top:0;color:white;background:#273d9e;border:2px solid #e0e6ff;z-index:3}
+.dmb-hero{position:relative;text-align:center;color:#fff;min-height:155px;padding:4px 12px 6px}
+.dmb-hero-mascot{position:absolute;top:-34px;left:1%;width:170px;height:165px;object-fit:contain;filter:drop-shadow(0 5px 7px #102888);pointer-events:none}
+.dmb-hero-ribbon{display:block;position:relative;margin:0 auto 12px;max-width:710px;box-sizing:border-box;padding:13px 16px;background:linear-gradient(115deg,#c92786,#fe5dab 48%,#d52a86);border:3px solid #ffa5d1;clip-path:polygon(0 8%,6% 8%,7% 0,93% 0,94% 8%,100% 8%,96% 50%,100% 92%,92% 92%,91% 100%,9% 100%,8% 92%,0 92%,4% 50%);font-size:clamp(23px,3.6vw,41px);font-weight:1000;letter-spacing:-.8px;text-shadow:0 3px 2px #921969;box-shadow:0 9px 18px #152b84;transform:rotate(-1.5deg)}
+.dmb-hero p{margin:5px 0 0 125px;font-size:clamp(12px,1.65vw,20px);font-weight:850;text-shadow:0 2px 5px #163b91}
+.dmb-toggle{margin:10px auto 19px;max-width:320px;border:2px solid #c9b8ff;background:#1a3596;border-radius:999px;padding:3px}
+.dmb-toggle button{color:#fff;border-radius:999px}
+.dmb-toggle button[aria-pressed=true]{color:#17357e;background:linear-gradient(#fff9be,#ffd05e)}
+.dmb-body{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));align-items:stretch;gap:12px}
+.dmb-card{position:relative;min-width:0;box-sizing:border-box;display:flex;flex-direction:column;margin:0!important;padding:22px 14px 14px!important;border:4px solid #e9f4ff!important;border-radius:35px!important;background:linear-gradient(160deg,#e2f4ff,#fff 52%,#e3f0ff)!important;box-shadow:0 7px 0 #165bb7,0 14px 25px #152777;color:#18305d}
+.dmb-card:before{content:'🌱';position:absolute;top:-30px;left:18px;font-size:43px;filter:drop-shadow(0 4px 2px #163c8788)}
+.dmb-card.is-pro{border-color:#b1e0ff!important;box-shadow:0 8px 0 #0755cd,0 16px 26px #122679}
+.dmb-card.is-pro:before{content:'👑'}
+.dmb-card.is-best{border-color:#ffe06e!important;background:linear-gradient(165deg,#c648e2 0,#8129c9 75px,#f9e5ff 90px,#ffeafb 100%)!important;box-shadow:0 7px 0 #dc9719,0 0 24px #ffdf6daa,0 15px 23px #152480}
+.dmb-card.is-best:before{content:'👑';font-size:55px;left:calc(50% - 30px);top:-47px}
+.dmb-card.is-current{outline:2px solid #20c5db;outline-offset:-8px}
+.dmb-top{display:flex;align-items:flex-start;justify-content:space-between;gap:4px;flex-wrap:wrap;min-height:88px}
+.dmb-top h3{font-size:clamp(20px,2.5vw,34px);line-height:1.12;color:#153c8d;font-weight:1000;margin:8px 0}
+.dmb-card.is-best h3{color:white;text-shadow:0 3px 4px #4d1b89}
+.dmb-price{font-size:clamp(15px,2vw,23px);white-space:nowrap;font-weight:1000;background:linear-gradient(#fff9a8,#ffd044);color:#39206d;border:3px solid white;border-radius:999px;padding:5px 11px;box-shadow:0 4px 0 #df9e19}
+.dmb-price small{color:#482d63;font-size:12px}
+.dmb-card ul{padding:0;margin:8px 0 14px;list-style:none;flex:1;background:#ffffffdb;border-radius:20px;padding:13px 10px}
+.dmb-card li{display:flex;gap:9px;align-items:start;padding:8px 0;font-size:clamp(12px,1.35vw,16px);font-weight:780;border-bottom:1px solid #d6e6fa;line-height:1.27}
+.dmb-card li:last-child{border-bottom:0}
+.dmb-card li:before{content:'✨';display:block;flex:0 0 24px;font-size:19px}
+.dmb-card li[data-feature=energy]:before{content:'⚡'}
+.dmb-card li[data-feature=games]:before{content:'🎮'}
+.dmb-card li[data-feature=ads]:before{content:'🚫'}
+.dmb-card li[data-feature=coins]:before{content:'🪙'}
+.dmb-card li[data-feature=shield]:before{content:'🛡️'}
+.dmb-card li[data-feature=all]:before{content:'👑'}
+.dmb-tag{background:#fff0a2;color:#7d4514;font-weight:900}
+.dmb-btn{width:100%;min-height:56px;background:linear-gradient(#279cff,#0753d8);color:white;border:3px solid #b5eaff;border-bottom:6px solid #1247aa;border-radius:100px;font-weight:1000;font-size:clamp(14px,1.6vw,20px);text-shadow:0 1px 2px #183e89;box-shadow:0 5px 11px #0a4db34d}
+.dmb-card.is-best .dmb-btn{color:#4b1a68;text-shadow:none;background:linear-gradient(#fff98f,#ffca1a);border-color:#fff5bb;border-bottom-color:#d18c08}
+.dmb-btn[disabled]{background:linear-gradient(#f1fbff,#b3d6ec);color:#47647b;text-shadow:none;border-color:#fff;border-bottom-color:#6cabc6}
+.dmb-reasons{grid-column:1/-1;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:0;margin-top:24px;padding:10px 4px;border-radius:22px;background:#253caa8c;border:2px solid #8e8bed;color:#fff;text-align:center}
+.dmb-reasons span{font-size:clamp(10px,1.3vw,15px);font-weight:900;border-right:1px solid #9caef5;padding:2px 5px}.dmb-reasons span:last-child{border:0}
+.dmb-reasons i{display:block;font-size:27px;font-style:normal}
+.dmb-footer-banner{grid-column:1/-1;width:min(650px,100%);margin:16px auto 0;text-align:center;color:#5c206b;font-weight:1000;font-size:clamp(16px,2.2vw,27px);background:linear-gradient(#fff9a3,#ffcb20);padding:17px;border:4px solid white;border-bottom:7px solid #d98b06;border-radius:100px;box-shadow:0 8px 20px #162682;font-family:inherit;cursor:pointer}
+.dmb-footer-banner:focus-visible{outline:4px solid white}
+.dmb-note{grid-column:1/-1;color:#f4edff;font-size:12px;line-height:1.6;margin:6px 8px}
+.dmb-link{grid-column:1/-1;justify-self:start;color:#fff5a0}
+.dmb-msg{background:#f1f6ff}.dmb-gate{grid-column:1/-1;background:#fff;border-radius:24px;padding:20px}
+@media(max-width:720px){
+.dmb-sheet{padding:12px 10px calc(20px + env(safe-area-inset-bottom,0px));}
+.dmb-hero{min-height:132px;padding-top:8px}
+.dmb-hero-mascot{width:95px;height:95px;top:35px;left:-8px}
+.dmb-hero-ribbon{margin-left:52px;font-size:22px;padding:10px 7px}
+.dmb-hero p{margin:14px 0 0 80px;font-size:12px}
+.dmb-body{grid-template-columns:minmax(0,1fr);gap:13px}
+.dmb-card{padding:16px 15px!important;border-radius:25px!important}
+.dmb-card:before{font-size:31px;top:-22px}
+.dmb-card.is-best:before{font-size:42px;top:-33px}
+.dmb-top{min-height:auto;flex-wrap:nowrap;align-items:center}
+.dmb-top h3{font-size:24px}
+.dmb-price{font-size:17px}
+.dmb-card ul{padding:10px 13px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:2px 10px}
+.dmb-card li{font-size:12px;padding:6px 0}
+.dmb-btn{min-height:50px}
+.dmb-reasons{margin-top:12px}
+.dmb-reasons span{font-size:9px;padding:2px}
+.dmb-reasons i{font-size:19px}
+.dmb-footer-banner{padding:11px;font-size:16px}
+}
+@media(min-width:721px){.dmb-sheet{max-height:94dvh;border-radius:28px}}
 `;
   function close() { sheet?.remove(); sheet = null; }
   function el(html) { const t = doc.createElement('template'); t.innerHTML = html.trim(); return t.content.firstElementChild; }
@@ -120,15 +159,17 @@ const showcaseCss = `
     body.innerHTML = cards.map(c => `<div class="dmb-card${c.plan === 'pro' ? ' is-pro' : ''}${c.current ? ' is-current' : ''}${c.plan === 'premium_pro' ? ' is-best' : ''}">
       <div class="dmb-top"><h3>${esc(c.name)}</h3><span class="dmb-price">${apple && c.action === 'soon' ? '' : esc(c.price.text)}${c.price.per && !(apple && c.action === 'soon') ? ` <small>/ ${c.price.per}</small>` : ''}</span></div>
       ${c.saving ? `<span class="dmb-tag">%${c.saving} tasarruf</span>` : ''}${c.price.trialDays && c.action === 'buy' ? ` <span class="dmb-tag">${c.price.trialDays} gün ücretsiz dene</span>` : ''}
-      <ul>${c.features.map(f => `<li>${esc(f)}</li>`).join('')}</ul>
+      <ul>${c.features.map(f => `<li data-feature="${/enerji/i.test(f) ? 'energy' : /oyun/i.test(f) ? 'games' : /reklam/i.test(f) ? 'ads' : /altın/i.test(f) ? 'coins' : /kalkan/i.test(f) ? 'shield' : /her şey/i.test(f) ? 'all' : 'other'}">${esc(f)}</li>`).join('')}</ul>
       ${c.action === 'buy' ? `<button class="dmb-btn" data-buy="${esc(c.id)}">${status.plan === 'free' ? 'Seç' : 'Yükselt'}</button>`
         : c.action === 'current' ? `<button class="dmb-btn" disabled>Şu anki planın</button>`
         : c.action === 'soon' ? `<button class="dmb-btn" disabled>Yakında</button>`
         : c.action === 'unavailable' ? `<button class="dmb-btn" disabled>Şu an satışta değil</button>` : ''}
-    </div>`).join('') + `<div class="dmb-reasons"><span><i>⚡</i>Daha fazla enerji</span><span><i>🎮</i>Premium oyun</span><span><i>🚫</i>Reklamsız</span><span><i>🪙</i>Daha fazla altın</span><span><i>🛡️</i>Seri kalkanı</span></div><div class="dmb-footer-banner">👑 Ayrıcalıkları keşfet!</div>` + (apple ? `<p class="dmb-note">Ödeme onaylandığında Apple Kimliği hesabından alınır. Abonelik, dönem bitmeden en az 24 saat önce iptal edilmezse aynı süre ve fiyatla otomatik yenilenir; yenileme ücreti dönem bitmeden önceki 24 saat içinde alınır. Aboneliği satın aldıktan sonra Ayarlar &gt; Apple Kimliği &gt; Abonelikler bölümünden yönetebilir veya iptal edebilirsin.</p>
+    </div>`).join('') + `<div class="dmb-reasons"><span><i>⚡</i>Daha fazla enerji</span><span><i>🎮</i>Premium oyun</span><span><i>🚫</i>Reklamsız</span><span><i>🪙</i>Daha fazla altın</span><span><i>🛡️</i>Seri kalkanı</span></div><button type="button" class="dmb-footer-banner" data-discover>🛒 Hemen Satın Al · Ayrıcalıkları Kaçırma!</button>` + (apple ? `<p class="dmb-note">Ödeme onaylandığında Apple Kimliği hesabından alınır. Abonelik, dönem bitmeden en az 24 saat önce iptal edilmezse aynı süre ve fiyatla otomatik yenilenir; yenileme ücreti dönem bitmeden önceki 24 saat içinde alınır. Aboneliği satın aldıktan sonra Ayarlar &gt; Apple Kimliği &gt; Abonelikler bölümünden yönetebilir veya iptal edebilirsin.</p>
       <p class="dmb-note"><a href="https://www.apple.com/legal/internet-services/itunes/dev/stdeula/" target="_blank" rel="noopener">Kullanım Koşulları (EULA)</a> · <a href="https://app.dijimedu.com/ingilizce/gizlilik.html" target="_blank" rel="noopener">Gizlilik Politikası</a></p>`
       : `<p class="dmb-note">Ödeme Google Play hesabından alınır. Abonelik, dönem bitmeden en az 24 saat önce iptal edilmezse aynı süreyle yenilenir. İptal ve ödeme yöntemi Google Play &gt; Abonelikler bölümünden yönetilir.</p>`) + `
       <button class="dmb-link" data-restore>Satın alımları geri yükle</button> ${status.plan !== 'free' ? '<button class="dmb-link" data-manage>Aboneliği yönet</button>' : ''}`;
+    const discover = sheet.querySelector('[data-discover]');
+    if (discover) discover.onclick = () => sheet.querySelector('.dmb-card.is-best .dmb-btn:not([disabled]),.dmb-card.is-pro .dmb-btn:not([disabled])')?.focus();
     for (const b of sheet.querySelectorAll('[data-buy]')) b.onclick = () => gateThen(() => buy(b.dataset.buy));
     sheet.querySelector('[data-restore]').onclick = async () => {
       message('Kontrol ediliyor…');
