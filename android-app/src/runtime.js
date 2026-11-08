@@ -117,12 +117,22 @@ if (Capacitor.isNativePlatform() && (platform === 'android' || (ios && Capacitor
       };
       return button;
     }
-    function addButton(card, kind) { if (!placements.rewardEnabled()) return; upsell.ensureStyle(); card.append(rewardButton(kind, card.matches('.ds-offer,.ds-joker,.ds-pack'))); }
+    function addButton(card, kind) {
+      if (!placements.rewardEnabled()) return;
+      upsell.ensureStyle();
+      const button = rewardButton(kind, card.matches('.ds-offer,.ds-joker,.ds-pack'));
+      if (kind === 'energy' && card.id === 'dsEnergy') {
+        button.onclick = () => window.DijiMeduPapiFeedback?.energy?.();
+      }
+      const premium = kind === 'energy' && card.matches('.dm-papi-feedback-card') ? card.querySelector('.dm-energy-premium') : null;
+      if (premium) card.insertBefore(button, premium);
+      else card.append(button);
+    }
     function addPlanOffer(card) {
       upsell.ensureStyle();
       const button = document.createElement('button');
       button.type = 'button'; button.dataset.dmPlanOffer = '1'; button.className = 'dmu-pro';
-      button.textContent = '👑 Pro ile günde 40 enerji';
+      button.textContent = '👑 Premium ol, sınırsız enerjin olsun';
       button.onclick = () => billing.open('enerji');
       card.append(button);
     }
@@ -138,9 +148,9 @@ if (Capacitor.isNativePlatform() && (platform === 'android' || (ios && Capacitor
         const plan = window.dmAndroidPlan?.plan || 'free', offer = card.querySelector('[data-dm-plan-offer]');
         if (!purchaseCard && plan === 'free' && !offer) addPlanOffer(card);
         else if (plan !== 'free' && offer) offer.remove();
-        let requestedPrice = Math.max(100, ...[...card.querySelectorAll('[data-pack][disabled]')].map(button => {
+        let requestedPrice = Math.max(230, ...[...card.querySelectorAll('[data-pack][disabled]')].map(button => {
           const amount = Number(button.dataset.pack), capacity = Number(window.genelEnerjiMax || 25), current = Number(window.genelEnerjiKalan || 0);
-          return current + amount <= capacity ? ({5:100,10:130,15:180}[amount] || 100) : 100;
+          return current + amount <= capacity ? ({5:230,10:300,15:460}[amount] || 230) : 230;
         }));
         if(purchaseCard) requestedPrice=Number((card.querySelector('.ds-price')?.textContent||'').replace(/\D/g,''));
         const shortage = !purchaseCard || (/Altın eksik/i.test(card.querySelector('.ds-buy')?.textContent||'') && requestedPrice>balance);
