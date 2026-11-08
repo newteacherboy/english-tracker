@@ -2,6 +2,28 @@ import { createUpsellPolicy } from './upsell-policy.js';
 
 // Duyuru panosu (notice-surface) diliyle: krem zemin, dalgalı nane-mavi başlık, büyük Papi.
 const CSS = `
+/* Approved Energy Pause 01: lavender Papi hero + golden reward action. */
+.dmu-veil{align-items:center!important;padding:calc(env(safe-area-inset-top,0px) + 8px) 10px calc(env(safe-area-inset-bottom,0px) + 8px);box-sizing:border-box;background:#1c0b55a8}
+.dmu-sheet{width:min(100%,430px);max-height:calc(100dvh - 16px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px));overflow:auto;border:2px solid #ddc1fc;border-radius:30px;padding-bottom:10px;background:linear-gradient(180deg,#f6e5ff,#fdf8ff 74%,#f4eaff);color:#54228b;box-shadow:0 25px 70px #22095366}
+.dmu-hero{height:155px;background:radial-gradient(circle at 15% 20%,#ffec84 0 3px,transparent 6px),radial-gradient(circle at 83% 30%,#fff6a3 0 5px,transparent 8px),linear-gradient(125deg,#7948e6,#b181fc 75%,#e8baff);border-radius:0 0 43% 9% / 0 0 16% 7%}
+.dmu-hero img{height:136%;bottom:-21%;filter:drop-shadow(0 5px 8px #4f208c70)}
+.dmu-badge{left:auto;right:14%;top:78px;width:54px;height:35px;border-radius:24px;background:linear-gradient(#fff5b9,#ffc233);color:#522082;box-shadow:0 4px #ec921b;font-size:21px}
+.dmu-badge:after{content:'+7';font-size:14px}
+.dmu-x{background:#fff5ff;color:#4c1c86;z-index:2}
+.dmu-body{padding:10px 17px 12px}
+.dmu-title{font:900 25px/1.2 system-ui;color:#512087;letter-spacing:-.7px}
+.dmu-text{color:#755298;font-size:13px;margin-bottom:8px}
+.dmu-text b{color:#642593}
+.dmu-chips{margin:5px 0 9px}.dmu-chip-now{background:#fff6e1;color:#795422}.dmu-chip-after{background:#f6ebff;color:#722b9e;border-color:#d8b5fa}
+.dmu-video{margin-top:5px;min-height:51px;background:linear-gradient(110deg,#ffeb42,#ffb91d);border:2px solid #fff3aa;border-bottom:4px solid #e9910d;border-radius:20px;color:#4d1c83;font-size:15px}
+.dmu-later{order:2;background:#f1e0ff;border:1px solid #d4affb;border-radius:15px;min-height:38px;color:#6c319d;margin-top:7px;padding:8px;font-size:13px}
+.dmu-pro{min-height:43px;background:linear-gradient(110deg,#e3fff6,#c0f6ed);border-color:#95e4e0;color:#067980;margin-top:8px;font-size:13px}
+.dmu-pack-title{font:900 12px system-ui;color:#54258c;margin:13px 0 8px}
+.dmu-packs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
+.dmu-pack{background:#fffaf5;border:1px solid #e4c9fc;border-bottom:3px solid #dbc1f6;border-radius:16px;color:#52248a;padding:9px 3px;min-height:76px;font:800 12px/1.5 system-ui}
+.dmu-pack strong{display:block}.dmu-pack span{display:block;font-weight:700;font-size:11px}.dmu-pack:disabled{opacity:.45;cursor:not-allowed}
+@media(max-height:670px){.dmu-hero{height:105px}.dmu-hero img{height:133%}.dmu-badge{top:44px}.dmu-body{padding:8px 14px}.dmu-pack{min-height:60px}.dmu-title{font-size:21px}.dmu-text{font-size:12px}}
+
 .dmu-veil{position:fixed;inset:0;z-index:2147483643;background:rgba(13,49,55,.45);display:flex;align-items:flex-end;justify-content:center}
 .dmu-sheet{width:min(100%,520px);background:#fffefa;border:1px solid #b7ece4;border-bottom:0;border-radius:32px 32px 0 0;overflow:hidden;text-align:center;color:#114952;font:600 15px/1.45 system-ui,-apple-system,sans-serif;padding-bottom:env(safe-area-inset-bottom,0px);animation:dmuUp .34s cubic-bezier(.2,.7,.25,1)}
 .dmu-hero{position:relative;height:128px;background:radial-gradient(ellipse at 4% 85%,#fffdf2 0 16%,transparent 17%),radial-gradient(ellipse at 100% 95%,#e4fff1 0 20%,transparent 21%),linear-gradient(125deg,#c7f8ee,#87dbf8 60%,#c2f2f0);border-radius:0 0 46% 9% / 0 0 18% 6%;overflow:hidden}
@@ -76,22 +98,37 @@ export function createUpsell({ win, billing, watch, isTeacher }) {
 
   function energySheet() {
     style();
-    const now = Math.max(0, energy() | 0), after = Math.min(Number(win.genelEnerjiMax) || 25, now + 7), p = plan();
-    open = el(`<div class="dmu-veil" role="dialog" aria-modal="true" aria-label="Enerjin azaldı"><div class="dmu-sheet">
-      <div class="dmu-hero"><img src="${papi}" alt=""><span class="dmu-badge">⚡</span><button class="dmu-x" aria-label="Kapat">✕</button></div>
-      <div class="dmu-body"><p class="dmu-title">Enerjin azaldı</p>
-      <p class="dmu-text">Kısa bir video izlersen Papi sana hemen <b>7 enerji</b> verir. Kaldığın yerden devam edersin.</p>
-      <div class="dmu-chips"><span class="dmu-chip-now">Şu an ${now}</span><span aria-hidden="true">→</span><span class="dmu-chip-after">Video sonrası ${after}</span></div>
+    const now = Math.max(0, energy() | 0), capacity = Number(win.genelEnerjiMax) || 25;
+    const after = Math.min(capacity, now + 7), p = plan();
+    const packs = [[5,230],[10,300],[15,460]];
+    open = el(`<div class="dmu-veil" role="dialog" aria-modal="true" aria-label="Papi ile enerji molası"><div class="dmu-sheet">
+      <div class="dmu-hero"><img src="${papi}" alt="Papi"><span class="dmu-badge">⚡</span><button class="dmu-x" aria-label="Kapat">✕</button></div>
+      <div class="dmu-body"><p class="dmu-title">Papi ile enerji molası!</p>
+      <p class="dmu-text">Kısa bir video izle, hemen <b>+7 enerji</b> kazan ve oyuna devam et.</p>
+      <div class="dmu-chips"><span class="dmu-chip-now">⚡ Şu an ${now}</span><span aria-hidden="true">→</span><span class="dmu-chip-after">⚡ Video sonrası ${after}</span></div>
       <button class="dmu-video" data-video>▶ Video izle, 7 enerji al</button>
+      <button class="dmu-later" data-later>Şimdi değil</button>
       ${p !== 'premium_pro' ? '<button class="dmu-pro" data-pro>👑 Premium ol, sınırsız enerjin olsun</button>' : ''}
-      <div class="dmu-msg" aria-live="polite"></div>
-      <button class="dmu-later" data-later>Şimdi değil</button></div></div></div>`);
+      <div class="dmu-pack-title">⚡ Altınlarınla enerji al</div>
+      <div class="dmu-packs">${packs.map(([amount,price])=>`<button class="dmu-pack" data-pack="${amount}" ${now+amount>capacity?'disabled title="Enerji kapasitesi yetersiz"':''}><strong>⚡ ${amount} enerji</strong><span>🪙 ${price} altın</span></button>`).join('')}</div>
+      <div class="dmu-msg" aria-live="polite"></div></div></div></div>`);
     const later = () => { current().sheetDismissed(); close(); };
     open.querySelector('.dmu-x').onclick = later;
     open.querySelector('[data-later]').onclick = later;
     open.addEventListener('click', e => { if (e.target === open) later(); });
     open.querySelector('[data-video]').onclick = e => runVideo(e.currentTarget, open.querySelector('.dmu-msg'));
     open.querySelector('[data-pro]')?.addEventListener('click', () => { close(); billing.open('enerji-pano'); });
+    for(const button of open.querySelectorAll('[data-pack]')) button.onclick = async () => {
+      const msg=open?.querySelector('.dmu-msg');
+      if(!msg)return;
+      button.disabled=true;
+      try {
+        const bought=await win.enerjiPaketiAl?.(Number(button.dataset.pack),message=>{if(msg.isConnected)msg.textContent=message;});
+        if(bought)close();
+        else if(!msg.textContent)msg.textContent='Enerji alınamadı. Tekrar deneyebilirsin.';
+      }catch(error){msg.textContent=error?.message||'Enerji alınamadı.';}
+      finally{if(button.isConnected)button.disabled=false;}
+    };
     doc.body.append(open);
     current().sheetShown();
   }
