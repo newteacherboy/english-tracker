@@ -78,7 +78,7 @@ const showcaseCss = `
 .dmb-head h2{font-size:26px;letter-spacing:-1.1px;color:#fff;text-shadow:0 3px 0 #1645a3,0 5px 14px #102568}
 .dmb-x{position:absolute;right:0;top:0;color:#fff;background:#202a7e;border:2px solid #a5baff}
 .dmb-hero{text-align:center;color:white;padding:12px 8px 6px}
-.dmb-hero-mascot{font-size:56px;line-height:1;filter:drop-shadow(0 5px 6px #19297f);display:block}
+.dmb-hero-mascot{width:110px;height:105px;object-fit:contain;margin:auto;filter:drop-shadow(0 5px 6px #19297f);display:block}
 .dmb-hero-ribbon{display:block;margin:5px auto 7px;max-width:360px;background:linear-gradient(110deg,#ed3b94,#ff6a9c,#dc3182);border:2px solid #ffb1d1;border-radius:18px;padding:7px 10px;color:white;font-size:20px;font-weight:950;transform:rotate(-2deg);text-shadow:0 2px 2px #922c65;box-shadow:0 5px 0 #922d70,0 12px 18px #142b8d}
 .dmb-hero p{margin:12px 0 8px;font-size:13px;font-weight:800;text-shadow:0 2px 3px #143879}
 .dmb-toggle{margin:8px auto 16px;max-width:320px;border:1px solid #addbff;background:#1d3b9a;border-radius:999px}
@@ -168,7 +168,7 @@ const showcaseCss = `
     if (!doc.getElementById('dmb-style')) { const s = doc.createElement('style'); s.id = 'dmb-style'; s.textContent = css + showcaseCss; doc.head.append(s); }
     close();
     sheet = el(`<div class="dmb-veil" role="dialog" aria-modal="true" aria-label="Planlar" data-source="${esc(source)}"><div class="dmb-sheet">
-      <div class="dmb-head"><h2>Diji-Medu</h2><button class="dmb-x" aria-label="Kapat">✕</button></div><div class="dmb-hero"><span class="dmb-hero-mascot" aria-hidden="true">🦜👑</span><strong class="dmb-hero-ribbon">Paketlerini Keşfet!</strong><p>İhtiyacına en uygun paketi seç,<br>Diji-Medu deneyimini üst seviyeye taşı!</p></div>
+      <div class="dmb-head"><h2>Diji-Medu</h2><button class="dmb-x" aria-label="Kapat">✕</button></div><div class="dmb-hero"><img class="dmb-hero-mascot" src="https://app.dijimedu.com/ingilizce/discovery-assets/papi-kutlama.webp" alt="Papi" loading="eager"><strong class="dmb-hero-ribbon">Paketlerini Keşfet!</strong><p>İhtiyacına en uygun paketi seç,<br>Diji-Medu deneyimini üst seviyeye taşı!</p></div>
       <div class="dmb-toggle"><button data-period="aylik">Aylık</button><button data-period="yillik">Yıllık</button></div>
       <div class="dmb-msg" hidden></div><div class="dmb-body"><p>Planlar yükleniyor…</p></div></div></div>`);
     sheet.querySelector('.dmb-x').onclick = close;
