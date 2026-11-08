@@ -13,11 +13,11 @@ on:
       version_code:
         description: 'Play sürüm kodu (son yüklenenden büyük olmalı)'
         required: true
-        default: '9'
+        default: '10'
       version_name:
         description: 'Sürüm adı'
         required: true
-        default: '1.2.4'
+        default: '1.2.5'
 permissions:
   contents: read
 concurrency:
@@ -65,8 +65,8 @@ jobs:
           ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
           ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
           ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
-          ANDROID_VERSION_CODE: ${{ github.event.inputs.version_code || '9' }}
-          ANDROID_VERSION_NAME: ${{ github.event.inputs.version_name || '1.2.4' }}
+          ANDROID_VERSION_CODE: ${{ github.event.inputs.version_code || '10' }}
+          ANDROID_VERSION_NAME: ${{ github.event.inputs.version_name || '1.2.5' }}
         run: |
           chmod +x android/gradlew
           cd android
@@ -76,7 +76,7 @@ jobs:
         run: rm -f "$RUNNER_TEMP/upload.keystore"
       - uses: actions/upload-artifact@v4
         with:
-          name: DijiMedu-${{ github.event.inputs.version_name || '1.2.4' }}-${{ github.event.inputs.version_code || '9' }}-AAB
+          name: DijiMedu-${{ github.event.inputs.version_name || '1.2.5' }}-${{ github.event.inputs.version_code || '10' }}-AAB
           path: android-app/android/app/build/outputs/bundle/release/*.aab
           if-no-files-found: error
           retention-days: 14
