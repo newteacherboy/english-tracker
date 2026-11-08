@@ -41,9 +41,9 @@ function energyDenied(error){
 function energy(){
  if(root?.isConnected&&root.classList.contains('is-energy')){window.dmNoticeSurface?.adopt(root);return root.querySelector('.dm-papi-feedback-card');}
  window.dmStartSpotlight?.stop();
- const card=mount('energy','Papi ile enerji molası!','İlerlemen güvende. Altınlarınla enerji alabilir veya ders çalışabilirsin.');if(!card)return;root.dataset.noticePriority='0';root.dataset.noticeEdge='bottom';
+ const card=mount('energy','Papi ile enerji molası!','İlerlemen güvende. Kısa bir video izleyerek +7 enerji kazanabilir veya altınlarınla enerji alabilirsin.');if(!card)return;root.dataset.noticePriority='0';root.dataset.noticeEdge='bottom';
  const options=document.createElement('div');options.className='dm-energy-options';const status=document.createElement('p');status.dataset.energyStatus='';status.setAttribute('role','status');status.setAttribute('aria-live','polite');
- for(const [amount,price] of [[5,100],[10,130],[15,180]]){
+ for(const [amount,price] of [[5,230],[10,300],[15,460]]){
   const button=document.createElement('button');button.type='button';button.textContent='⚡ '+amount+' enerji · '+price+' altın';
   button.onclick=async()=>{
    const buttons=options.querySelectorAll('button');
