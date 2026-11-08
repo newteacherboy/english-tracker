@@ -9,6 +9,7 @@ export function createPlacements({ admob, ads, win, interstitialEvents, bannerEv
   let active=true, ready=false, preparing=false, policy, owner='', busy=false, preloadRetryAt=0, bannerRetryAt=0;
   let banner=false, bannerWanted=false, bannerEpoch=0, bannerQueue=Promise.resolve(), initialized=false;
   let pending=null, sequence=0, closing=false;
+  let lastBannerError = '', lastInterstitialError = '';
   const seenObjects=new WeakMap();
   const visible = el => !!el && !el.hidden && el.getClientRects().length>0 && !el.closest('[inert],[aria-hidden="true"],[data-dm-nav-suspended]');
   function identity() { return String(win.dmAndroidStudentName?.() || ''); }
@@ -43,7 +44,7 @@ export function createPlacements({ admob, ads, win, interstitialEvents, bannerEv
           await admob.removeBanner().catch(()=>{});banner=false;reserved(0);return;
         }
         reserved(60);
-      } catch { banner=false;bannerRetryAt=Date.now()+30000;reserved(0); }
+      } catch (error) { lastBannerError=String(error?.message||error||'Bilinmeyen hata'); console.warn('[DijiMedu Ads] Banner load failed:',lastBannerError);banner=false;bannerRetryAt=Date.now()+30000;reserved(0); }
     });
     return bannerQueue;
   }
@@ -52,7 +53,7 @@ export function createPlacements({ admob, ads, win, interstitialEvents, bannerEv
     if(!allowed() || ready || preparing || busy || ads.busy || Date.now()<preloadRetryAt || !policy.interstitialPossible())return;
     preparing=true;const at=owner;
     try { await ads.ensureInitialized();await admob.prepareInterstitial({adId:ids.interstitial,isTesting,npa:true});if(at===identity()&&allowed())ready=true; }
-    catch { ready=false;preloadRetryAt=Date.now()+30000; }
+    catch (error) { lastInterstitialError=String(error?.message||error||'Bilinmeyen hata');console.warn('[DijiMedu Ads] Interstitial preload failed:',lastInterstitialError);ready=false;preloadRetryAt=Date.now()+30000; }
     finally { preparing=false; }
   }
   async function showAtBreak() {
@@ -119,7 +120,7 @@ export function createPlacements({ admob, ads, win, interstitialEvents, bannerEv
     style.textContent='.dm-native-banner-visible #bottomNavMobile{bottom:calc(var(--dm-native-banner-height) + 12px + env(safe-area-inset-bottom,0px))!important}.dm-native-banner-visible #tab-magaza,.dm-native-banner-visible #tab-aktiviteler{padding-bottom:calc(var(--dm-native-banner-height) + 130px)!important}.dm-native-banner-visible #tab-derscalis.dc-fullscreen-overlay{padding-bottom:calc(var(--dm-native-banner-height) + 100px + env(safe-area-inset-bottom,0px))!important}';
     win.document.head.append(style);
     void admob.addListener(bannerEvents.SizeChanged,size=>{if(banner&&bannerWanted)reserved(Math.min(120,Math.max(50,Number(size.height)||60)));});
-    void admob.addListener(bannerEvents.FailedToLoad,()=>{banner=false;bannerRetryAt=Date.now()+30000;reserved(0);});
+    void admob.addListener(bannerEvents.FailedToLoad,error=>{lastBannerError=String(error?.message||error?.code||'AdMob FailedToLoad');console.warn('[DijiMedu Ads] Banner native load failed:',lastBannerError);banner=false;bannerRetryAt=Date.now()+30000;reserved(0);});
     let queued=false;
     new win.MutationObserver(()=>{if(!queued){queued=true;win.requestAnimationFrame(()=>{queued=false;installResults();sync();});}}).observe(win.document.body,{subtree:true,childList:true,attributes:true,attributeFilter:['class','hidden','style','aria-hidden','inert']});
     win.addEventListener('resize',sync);win.document.addEventListener('visibilitychange',sync);
@@ -135,6 +136,6 @@ export function createPlacements({ admob, ads, win, interstitialEvents, bannerEv
     rewardAllowed:kind=>currentPolicy().rewardAllowed(kind),
     rewardClosed(kind,completed){currentPolicy().rewardClosed(kind,completed);sync();},
     rewardEnabled:()=>settings().enabled!==false&&settings().rewarded!==false,
-    diagnostics:()=>({test:isTesting,banner,interstitialReady:ready,busy,gamesSinceAd:currentPolicy().snapshot().games,interstitialsToday:currentPolicy().snapshot().interstitials,settings:settings()})
+    diagnostics:()=>({test:isTesting,banner,bannerWanted,bannerError:lastBannerError,interstitialError:lastInterstitialError,interstitialReady:ready,busy,gamesSinceAd:currentPolicy().snapshot().games,interstitialsToday:currentPolicy().snapshot().interstitials,settings:settings()})
   };
 }

@@ -55,6 +55,14 @@ export function createTestAds(admob, win, events, options = {}) {
         if(!reward)return {completed:false,test:false};
         const verified=await rewardClient.settle(intent.id);
         return {completed:true,test:false,...verified};
+      } catch (error) {
+        // AdMob/UMP provider diagnostics belong in device logs, never on a child's screen.
+        const detail = String(error?.message || error || '');
+        if (/publisher misconfiguration|publisher.s account configuration|no form\(s\) configured/i.test(detail)) {
+          console.warn('[DijiMedu Ads] AdMob privacy-message configuration needs attention:', detail);
+          throw new Error('Video şu anda açılamıyor. Reklam ayarları kontrol ediliyor; biraz sonra tekrar deneyebilirsin.');
+        }
+        throw error;
       } finally {
         clearTimeout(timer);
         if(intent && !reward)await rewardClient.cancel(intent.id).catch(()=>{});
