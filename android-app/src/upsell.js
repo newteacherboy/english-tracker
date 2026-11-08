@@ -83,7 +83,7 @@ export function createUpsell({ win, billing, watch, isTeacher }) {
       <p class="dmu-text">Kısa bir video izlersen Papi sana hemen <b>7 enerji</b> verir. Kaldığın yerden devam edersin.</p>
       <div class="dmu-chips"><span class="dmu-chip-now">Şu an ${now}</span><span aria-hidden="true">→</span><span class="dmu-chip-after">Video sonrası ${after}</span></div>
       <button class="dmu-video" data-video>▶ Video izle, 7 enerji al</button>
-      ${p === 'free' ? '<button class="dmu-pro" data-pro>👑 Pro ile günde 40 enerji</button>' : ''}
+      ${p !== 'premium_pro' ? '<button class="dmu-pro" data-pro>👑 Premium ol, sınırsız enerjin olsun</button>' : ''}
       <div class="dmu-msg" aria-live="polite"></div>
       <button class="dmu-later" data-later>Şimdi değil</button></div></div></div>`);
     const later = () => { current().sheetDismissed(); close(); };
