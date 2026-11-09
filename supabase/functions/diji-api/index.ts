@@ -1433,7 +1433,10 @@ async function handle(req: Request, proxy: any = null) {
   if(op==='oturumBilgisi'){
     if(!a)return json({ok:false,mesaj:'Bu hesabın oturumu sona ermiş. Şifrenle yeniden giriş yap.'},401);
     if(a.role==='teacher')return json({ok:true,rol:'ogretmen',ogrenci:a.ogretmenKullanici,expiresAt:a.expires_at});
-    const {data:s,error}=await supabase.from('students').select('username,status').eq('id',a.student_id).maybeSingle();
+    // auth() already fetched and validated this exact student with the session.
+    // Reuse it only when available; keep the previous authoritative fallback.
+    const verifiedStudent=a.role==='student'&&a._ogr?.id===a.student_id?a._ogr:null;
+    const {data:s,error}=verifiedStudent?{data:verifiedStudent,error:null}:await supabase.from('students').select('username,status').eq('id',a.student_id).maybeSingle();
     if(error)return json({ok:false,mesaj:'Oturum kontrol edilemedi.'},503);
     if(!s||s.status!=='approved')return json({ok:false,mesaj:'Bu hesap artık aktif değil.'},403);
     return json({ok:true,rol:'ogrenci',ogrenci:s.username,expiresAt:a.expires_at});
