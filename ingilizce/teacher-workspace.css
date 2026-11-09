@@ -471,3 +471,27 @@ html[data-dm-theme="day"].dm-teacher-portal body.tp-home-active #tpTeacherDock>b
  #tpTeacherHome .tp-home-inner:has(#dmTeacherDesignV2.dm-midnight-home),
  #tpTeacherHome #dmTeacherDesignV2.dm-midnight-home{height:auto;max-height:none;overflow:visible!important}
 }
+
+
+/* Give teacher home actions more presence on normal/tall phones, without clipping on short devices. */
+@media (min-width:641px){
+ #tpTeacherHome .dm-midnight-shortcuts button{min-height:clamp(78px,11dvh,125px)!important;padding:11px 9px!important}
+ #tpTeacherHome .dm-midnight-actions button{min-height:clamp(76px,10dvh,116px)!important;padding:10px 13px!important}
+ #tpTeacherHome .dm-midnight-shortcuts,.dm-midnight-actions{gap:clamp(10px,1.8vw,16px)}
+}
+@media (max-width:640px) and (min-height:740px){
+ #tpTeacherHome #dmTeacherDesignV2.dm-midnight-home{gap:clamp(6px,1.05dvh,11px)!important}
+ #tpTeacherHome .dm-midnight-shortcuts{gap:7px!important}
+ #tpTeacherHome .dm-midnight-shortcuts button{
+  min-height:clamp(62px,8.3dvh,79px)!important;padding:7px 4px!important;
+  font-size:clamp(10px,2.9vw,13px)!important;gap:4px!important
+ }
+ #tpTeacherHome .dm-midnight-shortcuts i{font-size:clamp(23px,6vw,31px)!important}
+ #tpTeacherHome .dm-midnight-actions{gap:7px!important}
+ #tpTeacherHome .dm-midnight-actions button{
+  min-height:clamp(66px,9dvh,88px)!important;padding:7px 5px!important;
+  font-size:clamp(10px,2.9vw,13px)!important;gap:5px!important
+ }
+ #tpTeacherHome .dm-midnight-actions i{font-size:clamp(22px,6vw,29px)!important}
+ #tpTeacherHome .dm-midnight-extra button{min-height:45px!important;font-size:12px!important}
+}
