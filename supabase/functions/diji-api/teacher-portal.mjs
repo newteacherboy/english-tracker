@@ -332,12 +332,17 @@ export function teacherPortalAPI(d){
     if(saved.error)throw saved.error;
     return json({ok:true,studentCount:pupil?1:recipients.length});
    }
-   const grade=Number(b.grade);if(!Number.isInteger(grade)||grade<1||grade>8)return fail('1–8 arası sınıf seç.',400);
-   const selected=all.filter(p=>Number(p.class_no)===grade),ids=selected.map(p=>p.id),since=new Date(Date.now()-7*86400000).toISOString();
+   const classId=String(b.classId||'');
+   if(!/^[a-f0-9-]{36}$/i.test(classId))return fail('Kendi oluşturduğun sınıfı seç.',400);
+   const owned=await db.from('dm_teacher_classes').select('id,class_no,branch').eq('id',classId).eq('teacher_id',r.teacher_id).is('archived_at',null).maybeSingle();
+   if(owned.error)throw owned.error;
+   if(!owned.data)return fail('Bu sınıf sana ait değil.',403);
+   const selected=all.filter(p=>Number(p.class_no)===Number(owned.data.class_no)&&String(p.branch||'').trim().toLocaleLowerCase('tr')===String(owned.data.branch||'').trim().toLocaleLowerCase('tr'));
+   const ids=selected.map(p=>p.id),since=new Date(Date.now()-7*86400000).toISOString();
    if(!ids.length)return json({ok:true,students:[],inactive:[],summary:{plays:0,correct:0,wrong:0,averageXp:0},rubrics:[]});
    const [games,reports]=await Promise.all([
     db.from('game_scores').select('student_id,game_key,correct_count,wrong_count,played_on').in('student_id',ids).gte('played_on',since).limit(1000),
-    db.from('teacher_reports').select('student_id,report_date,reading_score,writing_score,vocabulary_score,speaking_score,grammar_score,genel_score').in('student_id',ids).order('report_date',{ascending:false}).limit(500)
+    db.from('teacher_reports').select('student_id,report_date,reading_score,writing_score,vocabulary_score,speaking_score,grammar_score,genel_score,exam_score').in('student_id',ids).order('report_date',{ascending:false}).limit(500)
    ]);
    if(games.error)throw games.error;if(reports.error)throw reports.error;
    const rows=games.data||[],active=new Set(rows.map(g=>g.student_id)),wrongByGame={};
