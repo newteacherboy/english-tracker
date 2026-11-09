@@ -2,7 +2,7 @@ import {memberStudents,isClassroomGuest} from './classroom-identity.mjs';
 // Every grant is tied to a normal learner; neither role claims nor invite codes grant access.
 // Private teacher codes use rate-limited authentication; owner credentials stay server-side.
 export const teacherApplicationKey='teacher_portal_application_v1';
-export const portalOps=new Set(['teacherPortalApply','teacherPortalStatus','teacherPortalAdminCreate','teacherPortalList','teacherPortalDecide','teacherPortalIssueCode','teacherPortalLogin','teacherPortalEnter','teacherPortalPersonalSession','teacherPortalResetRequest','teacherPortalReset','teacherPortalChangeCode','teacherPortalAppearance','teacherPortalSyncStudents','teacherPortalStudentReport','teacherPortalClassAnalytics','teacherPortalAnnouncement','teacherPortalRubric','teacherPortalPerformance','teacherPortalStudentContact','teacherPortalStudents','teacherPortalParticipant']);
+export const portalOps=new Set(['teacherPortalApply','teacherPortalStatus','teacherPortalAdminCreate','teacherPortalList','teacherPortalDecide','teacherPortalIssueCode','teacherPortalLogin','teacherPortalEnter','teacherPortalPersonalSession','teacherPortalResetRequest','teacherPortalReset','teacherPortalChangeCode','teacherPortalAppearance','teacherPortalSyncStudents','teacherPortalStudentReport','teacherPortalClassAnalytics','teacherPortalAnnouncement','teacherPortalRubric','teacherPortalPerformance','teacherPortalStudentContact','teacherPortalStudents','teacherPortalParticipant','teacherPortalAssignment']);
 export function portalOperationAllowed(op,b={}) {
  if(['kelimeCarkiBaslat','kelimeCarkiCevir','kelimeCarkiCevap','kelimeCarkiBitir','kelimeCarkiDurum','kelimeCarkiSiralama'].includes(op))return true;
  if(['','oturumBilgisi','cikis','sonGirisGuncelle','iletisimDurumu','memberStatus','wordReviewList','wordReviewAnswer','seviyeDurumu','sosyalOgrencilerGetir','kelimeleriGetir','kelimeHavuzuGetir','tumKelimeleriGetir','seviyeOyunOdulu','enerjiDurumuGetir','publicCatalogVersion','kelimelerGetir','kategorileriGetir','dogruYanlisSorulariGetir','etkinlikTanimlariGetir','konusmaEsAnlamlarGetir','companionDialogueOpen','companionDialogueAnswer','enerjiDegistir','okumaHiziKaydet','okumaGecmisGetir','dersKonulariGetir','dersKonuDetayGetir','dersTestSonucKaydet','dersBilmiyordumToggle','companionSummary','companionDialogues','dialogueList','dialogueStart','dialogueAnswer','dialogueComplete','reviewList','reviewAnswer','companionReview','companionDialogue','companionDialogueComplete'].includes(op))return true;
@@ -254,7 +254,7 @@ export function teacherPortalAPI(d){
    return json({ok:true,student:{username:student.data.username,fullName:student.data.full_name,classNo:student.data.class_no,xp:student.data.xp,points:student.data.points,streak:student.data.streak},totals,reports:reports.data||[]});
   }
 
-  if(['teacherPortalClassAnalytics','teacherPortalAnnouncement','teacherPortalRubric','teacherPortalPerformance','teacherPortalStudentContact'].includes(op)){
+  if(['teacherPortalClassAnalytics','teacherPortalAnnouncement','teacherPortalRubric','teacherPortalPerformance','teacherPortalStudentContact','teacherPortalAssignment'].includes(op)){
    const pupils=await memberStudents(db.from('students').select('id,username,full_name,class_no,branch,email,phone,points,xp,email_verified_at')).eq('teacher_id',r.teacher_id).eq('status','approved').is('frozen_at',null);
    if(pupils.error)throw pupils.error;
    const all=pupils.data||[],sid=String(b.studentId||''),pupil=all.find(x=>x.id===sid);
@@ -291,12 +291,46 @@ export function teacherPortalAPI(d){
     if(saved.error)throw saved.error;
     return json({ok:true,average});
    }
-   if(op==='teacherPortalAnnouncement'){
+   // Resolve a classroom only from the authenticated teacher's own created classes.
+   // Never use a client-supplied class number, branch or arbitrary student list as authority.
+   if(op==='teacherPortalAssignment'||op==='teacherPortalAnnouncement'){
+    const classId=String(b.classId||''),studentId=String(b.studentId||'');
+    if(!/^[a-f0-9-]{36}$/i.test(classId))return fail('Önce kendi oluşturduğun sınıfı seç.',400);
+    const c=await db.from('dm_teacher_classes').select('id,class_no,branch').eq('id',classId).eq('teacher_id',r.teacher_id).is('archived_at',null).maybeSingle();
+    if(c.error)throw c.error;
+    if(!c.data)return fail('Bu sınıf sana ait değil veya arşivlenmiş.',403);
+    const recipients=all.filter(x=>x.class_no===c.data.class_no&&String(x.branch||'').trim().toLocaleLowerCase('tr')===String(c.data.branch||'').trim().toLocaleLowerCase('tr'));
+    if(!recipients.length)return fail('Bu sınıfta kayıtlı öğrenci yok.',400);
+    if(op==='teacherPortalAssignment'){
+     if(studentId)return fail('Ödevleri yalnızca kendi sınıfına gönder.',400);
+     const type=String(b.kind||'');
+     let payload=null,title='';
+     if(type==='oyun'){
+      const game=String(b.game||'');
+      if(!['hafiza','asmaca','kelime','bosluk','yagmur','jeopardy','eslestirme','tren'].includes(game))return fail('Geçerli oyun seç.',400);
+      const units=Array.isArray(b.units)?b.units.map(Number).filter(n=>Number.isInteger(n)&&n>0&&n<=20).slice(0,10):[];
+      const stars=Number(b.stars);
+      payload={oyun:game,sinif:c.data.class_no,uniteler:units,hedefYildiz:[1,2,3].includes(stars)?stars:2};
+      title='Oyun: '+game;
+     }else if(type==='ders'){
+      const level=String(b.level||''),category=String(b.category||''),topic=String(b.topic||'').trim();
+      if(!['A1','A2','B1','B2'].includes(level)||!['grammar','vocab','comm','pron'].includes(category)||topic.length<3||topic.length>160)return fail('Geçerli ders konusu seç.',400);
+      payload={seviye:level,kategori:category,konu:topic};
+      title=topic;
+     }else return fail('Ödev türünü seç.',400);
+     const due=String(b.dueDate||''),note=String(b.note||'').trim().slice(0,500);
+     if(due&&!/^\d{4}-\d{2}-\d{2}$/.test(due))return fail('Geçerli bitiş tarihi gir.',400);
+     const saved=await db.from('assignments').insert({teacher_id:r.teacher_id,class_no:c.data.class_no,branch:c.data.branch,kind:type,title,payload,due_date:due||null,note,active:true}).select('id').single();
+     if(saved.error)throw saved.error;
+     return json({ok:true,id:saved.data.id,studentCount:recipients.length,classNo:c.data.class_no,branch:c.data.branch});
+    }
+    if(studentId&&!recipients.some(x=>x.id===studentId))return fail('Bu öğrenci seçilen sınıfta değil.',403);
     const title=String(b.title||'').trim(),message=String(b.message||'').trim();
-    if(title.length<3||title.length>120||message.length<3||message.length>2000)return fail('Başlık 3–120, duyuru 3–2000 karakter olmalı.');
-    const saved=await db.from('announcements').insert({title,message,target_type:'ogretmen',target_list:[],active:true,teacher_id:r.teacher_id});
+    if(title.length<3||title.length>120||message.length<3||message.length>2000)return fail('Başlık 3–120, duyuru 3–2000 karakter olmalı.',400);
+    const pupil=studentId?recipients.find(x=>x.id===studentId):null;
+    const saved=await db.from('announcements').insert({title,message,target_type:pupil?'secili':'sube',target_list:pupil?[pupil.username]:[c.data.class_no+'|'+String(c.data.branch||'').trim()],active:true,teacher_id:r.teacher_id});
     if(saved.error)throw saved.error;
-    return json({ok:true});
+    return json({ok:true,studentCount:pupil?1:recipients.length});
    }
    const grade=Number(b.grade);if(!Number.isInteger(grade)||grade<1||grade>8)return fail('1–8 arası sınıf seç.',400);
    const selected=all.filter(p=>Number(p.class_no)===grade),ids=selected.map(p=>p.id),since=new Date(Date.now()-7*86400000).toISOString();
