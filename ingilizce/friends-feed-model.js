@@ -8,13 +8,14 @@ function classify(e){const text=clean(e.metin),game=games.find(g=>text.includes(
 if(game&&(/puan|rekor|oynadi|tamamladi/.test(text))&&!/xp.*altin|etkinliginde/.test(text))kind='game';
 else if(/diyalog|hikaye/.test(text)&&/tamamla|bitir/.test(text))kind='story';
 else if(/rozet/.test(text)&&/kazan|acil|ulas/.test(text))kind='badge';
+else if(/lig/.test(text)&&/haftasini\s*\d+\.\s*sirada tamamla/.test(text))kind='weekly';
 else if(/lig/.test(text)&&/yuksel|terfi|gecti/.test(text))kind='league';
 else if(/seri|ust uste|gunluk calisma/.test(text)&&[3,7,14,30,60,100,365].includes(Number((text.match(/(\d+)\s*gun/)||[])[1])))kind='streak';
 else if(/gorev/.test(text)&&/tamamla|bitir/.test(text))kind='mission';
 else if(/seviye/.test(text)&&/yuksel|atladi|ulas/.test(text))kind='level';
 else if(/bolum|durak|ders konusunu|parkur/.test(text)&&/tamamla|gecti|bitir/.test(text))kind='route';
 if(!kind)return null;const score=kind==='game'?Number((text.match(/([\d.,]+)\s*puan/)||[])[1]?.replace(/[.,]/g,''))||null:null;
-return {...base,kind,score,badge:{route:0,game:1,story:2,level:3,badge:4,mission:5,streak:6,league:7}[kind],label:{route:'Bölüme başla',game:'Oyunu aç',story:/hikaye/.test(text)?'Hikâyeye başla':'Diyaloğa başla',level:'Seviyeleri gör',badge:'Rozetleri gör',mission:'Görevlerimi aç',streak:'Serimi gör',league:'Ligi aç'}[kind]};}
+return {...base,kind,score,badge:{route:0,game:1,story:2,level:3,badge:4,mission:5,streak:6,league:7,weekly:8}[kind],label:{route:'Bölüme başla',game:'Oyunu aç',story:/hikaye/.test(text)?'Hikâyeye başla':'Diyaloğa başla',level:'Seviyeleri gör',badge:'Rozetleri gör',mission:'Görevlerimi aç',streak:'Serimi gör',league:'Ligi aç',weekly:'Lig sonuçlarını gör'}[kind]};}
 // The home preview has room for one short sentence; the full feed keeps the original event.
 function summarize(event) {
   const text = clean(event.metin);
@@ -26,6 +27,13 @@ function summarize(event) {
         return level ? level + ' dersini bitirdi.' : 'Bir dersi bitirdi.';
       }
       return 'Parkurda bir durak geçti.';
+    }
+    case 'weekly': {
+      const rank = text.match(/haftasini\s*(\d+)\.\s*sirada/)?.[1];
+      const gold = text.match(/(\d+)\s*altin/)?.[1];
+      const energy = text.match(/(\d+)\s*enerji/)?.[1];
+      return (rank ? 'Haftayı '+rank+'. bitirdi.' : 'Haftalık lig derecesi kazandı.')
+        +(gold!==undefined&&energy!==undefined?' Ödül: '+gold+' altın, '+energy+' enerji.':'');
     }
     case 'league': {
       const rank = text.match(/(\d+)\.\s*siraya/)?.[1];
