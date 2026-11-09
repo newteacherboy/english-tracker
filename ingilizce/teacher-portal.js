@@ -661,7 +661,7 @@
   ['📝','Ödev Ver','Ödevleri planla ve tamamlanma durumlarını takip et.'],
   ['📊','Raporlar','Öğrencilerinin güçlü ve gelişecek yönlerini incele.']
  ];
- let teacherAccountToken='',teacherAccount=null,teacherStatusLoading=false,teacherCodeReceipt=null;
+ let teacherAccountToken='',teacherAccount=null,teacherStatusLoading=false,teacherCodeReceipt=null,lastTeacherCodeShown='';
  const teacherStyle=document.createElement('style');
  teacherStyle.textContent=String.raw`
  #dmTeacherParkurSwitch,#dmTeacherBackToParkur{position:fixed;right:max(12px,env(safe-area-inset-right));bottom:calc(82px + env(safe-area-inset-bottom));z-index:700;padding:11px 15px;border:2px solid #80bcff;border-radius:24px;background:#e5f3ff;color:#174d8c;box-shadow:0 5px 17px #11365a35;font-weight:800;font-size:13px;cursor:pointer}
@@ -744,6 +744,11 @@
    }catch(error){previewTeacherPanel(status);}
   }catch(error){window.yoToast?.(error.message||'Öğretmen paneline ulaşılamadı.');}
  }
+ function queueTeacherCodeReceipt(code){
+  if(!/^\d{6}$/.test(code)||lastTeacherCodeShown===code||teacherCodeReceipt===code)return;
+  teacherCodeReceipt=code;
+  setTimeout(()=>{if(teacherCodeReceipt===code){teacherCodeReceipt=null;lastTeacherCodeShown=code;showSignupTeacherCode(code);}},1600);
+ }
  function showSignupTeacherCode(code){
   if(!/^\d{6}$/.test(code))return;
   const v=sheet('Öğretmen Kodun Hazır!','<p>Bu 6 haneli kodu güvenli bir yere kaydet. Kişisel e-posta hesabını doğrulayıp yönetici onayı aldıktan sonra öğretmen araçların açılacak.</p><div data-teacher-code style="font-size:30px;font-weight:800;letter-spacing:7px;text-align:center;padding:16px;border-radius:16px;background:#e5f3ff;color:#164f84"></div><button type="button" data-copy class="tp-primary">Kodu Kopyala</button><button type="button" data-confirm>Kodumu Kaydettim, Devam Et</button><small>Kodunu unutursan “Kodumu Unuttum” bağlantısından yenileyebilirsin. Öğrencilerin sınıfa katılım kodu farklıdır.</small>');
@@ -754,6 +759,7 @@
  // The registration code is delivered only to the original registration response;
  // never persist it in localStorage, sessionStorage, analytics or query params.
  if(!mode){
+  window.addEventListener('dm:teacher-signup-code',e=>queueTeacherCodeReceipt(e.detail?.code));
   const oldFetch=window.fetch;
   window.fetch=function(url,options){
    let request=null;try{request=typeof options?.body==='string'?JSON.parse(options.body):null;}catch{}
@@ -761,8 +767,7 @@
    if(request&&['kayitOl','ogretmenKayitOl'].includes(request.islem)){
     result.then(r=>r.clone().json()).then(d=>{
      if(d?.status==='success'&&d?.teacherAccount&&/^\d{6}$/.test(d.teacherCode||'')){
-      teacherCodeReceipt=d.teacherCode;
-      setTimeout(()=>{if(teacherCodeReceipt===d.teacherCode){teacherCodeReceipt=null;showSignupTeacherCode(d.teacherCode);}},1600);
+      queueTeacherCodeReceipt(d.teacherCode);
      }
     }).catch(()=>{});
    }
