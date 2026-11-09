@@ -196,6 +196,124 @@ function showDuelResult(d){
  m.querySelector('.dm-lig-duel-primary').onclick=()=>{closeDuelModal();};
 }
 
+
+/* Native Papi match: the real selected solo game's own screen and verified reward result. */
+const nativeGameConfig={
+ kelime:{opener:'kelimeYarismasiAc',root:'kelimeYarismaOverlay',score:'ky'},
+ hafiza:{opener:'hafizaOyunAc',root:'hafizaOyunOverlay',score:'hafiza'},
+ bosluk:{opener:'boslukOyunAc',root:'boslukOyunOverlay',score:'bosluk'},
+ asmaca:{opener:'asmacaOyunAc',root:'asmacaOyunOverlay',score:'asmaca'},
+ jeopardy:{opener:'jpOyunAc',root:'jpOyunOverlay',score:'jp'},
+ yagmur:{opener:'yagmurOyunAc',root:'yagmurOyunOverlay',score:'yagmur'}
+};
+let nativeDuel=null,nativeTicker=null;
+function stopNativeHud(){if(nativeTicker)clearInterval(nativeTicker);nativeTicker=null;document.getElementById('dmVirtualNativeHud')?.remove();}
+function nativeHudTick(){
+ const d=nativeDuel;
+ if(!d||d.owner!==who()){stopNativeHud();nativeDuel=null;return;}
+ const overlay=document.getElementById(d.config.root);
+ if(!overlay||overlay.style.display==='none'||getComputedStyle(overlay).display==='none'){const h=document.getElementById('dmVirtualNativeHud');if(h)h.hidden=true;return;}
+ let hud=document.getElementById('dmVirtualNativeHud');
+ if(!hud){
+  hud=document.createElement('div');hud.id='dmVirtualNativeHud';hud.className='dm-native-duel-hud';
+  hud.innerHTML='<div class="dm-native-side"><strong>Sen</strong><b data-player-value>Oyun devam ediyor</b><span class="dm-native-track"><i data-player-bar></i></span></div>'+
+   '<b class="dm-native-versus">VS</b><div class="dm-native-side"><img src="'+(virtualAvatarAssets[Number(d.bot.id.replace('virtual-',''))]||virtualAvatarAssets[1])+'" alt="Papi"><strong>'+esc(d.bot.name)+'</strong><b data-bot-value>0 XP</b><span class="dm-native-track"><i data-bot-bar></i></span></div>'+
+   '<small class="dm-native-note">Papi sanal rakiptir · gerçek lig ödüllerini etkilemez</small>';
+  overlay.appendChild(hud);
+ }
+ hud.hidden=false;
+ const active=window.OC?.aktif;
+ if(active?.oyun===d.config.score&&!active.bitti){
+  d.started=true;
+  const good=Number(active.dogru||0),bad=Number(active.yanlis||0),total=good+bad;
+  hud.querySelector('[data-player-value]').textContent=total>0?good+' doğru':'Oyun devam ediyor';
+  hud.querySelector('[data-player-bar]').style.width=Math.min(100,good/Math.max(6,total)*100)+'%';
+ }
+ if(d.started&&!d.finished&&!active?.pauseAt){
+  const elapsed=Math.max(0,(Date.now()-d.playAt)/1000);
+  const target=d.difficulty==='easy'?25:70;
+  const value=Math.round(target*Math.min(1,elapsed/(d.difficulty==='easy'?85:65)));
+  hud.querySelector('[data-bot-value]').textContent=value+' XP';
+  hud.querySelector('[data-bot-bar]').style.width=Math.min(100,value/120*100)+'%';
+ }
+}
+async function openVirtualDirect(bot){
+ if(!bot?.is_virtual)return;
+ duelContext={bot,owner:who(),status:null,run:null};
+ const m=duelModal('<div class="dm-lig-duel-hero">'+virtualAvatar(bot,80)+'<h2>'+esc(bot.name)+'</h2><span class="dm-lig-duel-tag">Sanal Rakip</span></div>'+
+ '<p>Bu Papi gerçek bir öğrenci değildir. Lig ödüllerini ve yükselmeni etkilemez. Kendi oyununda Papi ile karşılaş!</p>'+
+ '<p class="dm-lig-duel-free">İlk düellon kolay, ikincisi zorlu · 2 ücretsiz hak · Kazanırsan en fazla 120 XP ve 50 altın</p>'+
+ '<p class="dm-lig-duel-message" aria-live="polite">Oyunlar hazırlanıyor…</p>');
+ try{
+  const status=await duelRequest('dm_virtual_duel_status');
+  if(!duelContext||duelContext.owner!==who()||duelContext.bot.id!==bot.id||duelSheet!==m)return;
+  if(!status.ok)throw Error(status.message||'Düello bilgileri yüklenemedi.');
+  duelContext.status=status;
+  if(!status.allowed)return showDuelPlans();
+  openVirtualGames(bot);
+ }catch(e){duelMessage(e.message||'Düello açılamadı.');}
+}
+async function openVirtualSelection(){
+ let bots=states.weekly.visualRows.filter(p=>p.is_virtual);
+ if(!bots.length){
+  try{const res=await fetch(duelApi+'dm_virtual_league_entries',{method:'POST',headers:{'Content-Type':'application/json',apikey:duelKey},body:'{}'});
+   if(!res.ok)throw Error('Rakip listesi yüklenemedi.');
+   const rows=await res.json();
+   bots=rows.filter(p=>p.is_virtual===true&&p.bot_id>=1&&p.bot_id<=10).map(p=>({id:'virtual-'+p.bot_id,name:p.name,is_virtual:true,league:p.league,xp:p.xp}));
+  }catch(e){window.yoToast?.(e.message);return;}
+ }
+ const m=duelModal('<h2>Papi Rakibini Seç</h2><p>10 sanal rakipten birini seç. Hepsi gerçek lig sıralamandan bağımsızdır.</p>'+
+ '<div class="dm-lig-duel-games dm-virtual-rivals">'+bots.sort((a,b)=>Number(a.id.slice(8))-Number(b.id.slice(8))).map(p=>
+ '<button type="button" data-bot-select="'+esc(p.id)+'">'+virtualAvatar(p,56)+'<b>'+esc(p.name)+'</b><small>Sanal rakip</small></button>').join('')+'</div>');
+ m.querySelectorAll('[data-bot-select]').forEach(b=>b.onclick=()=>{const p=bots.find(x=>x.id===b.dataset.botSelect);if(p)void openVirtualDirect(p);});
+}
+function openDuelChooser(){
+ const m=duelModal('<div class="dm-lig-duel-hero"><img src="friends-assets/papi-fencer.webp" class="dm-lig-duel-papi" alt="Papi"><h2>Düello Başlat</h2><p>Nasıl yarışmak istersin?</p></div>'+
+ duelButton('Gerçek Arkadaşlarla Düello','secondary')+duelButton('Papi Sanal Rakipleriyle Oyna','primary')+
+ '<p class="dm-lig-duel-message" aria-live="polite">Papi ile ilk 2 düello ücretsiz. Gerçek arkadaş düellosu 20. seviyede açılır.</p>');
+ m.querySelector('.dm-lig-duel-secondary').onclick=openRealDuel;
+ m.querySelector('.dm-lig-duel-primary').onclick=()=>void openVirtualSelection();
+}
+async function beginNativeVirtualDuel(bot,key){
+ if(duelBusy)return;
+ const config=nativeGameConfig[key];if(!config)return duelMessage('Bu oyun henüz düelloya uygun değil.');
+ duelBusy=true;
+ try{
+  duelMessage('Gerçek oyun açılıyor…');
+  const d=await duelRequest('dm_virtual_duel_native_start',{p_bot:Number(bot.id.replace('virtual-','')),p_game:key});
+  if(d.paywall)return showDuelPlans(d.message);
+  if(!d.ok)throw Error(d.message||'Düello başlatılamadı.');
+  const activeBot=states.weekly.visualRows.find(p=>p.id==='virtual-'+d.botId)||bot;
+  nativeDuel={owner:who(),bot:activeBot,runId:d.runId,game:key,difficulty:d.difficulty,config,playAt:Date.now(),started:false,finished:false};
+  closeDuelModal();stopNativeHud();
+  const opener=window[config.opener];
+  if(typeof opener!=='function')throw Error('Bu oyun henüz yüklenemedi.');
+  await Promise.resolve(opener());
+  nativeDuel.playAt=Date.now();
+  nativeTicker=setInterval(nativeHudTick,500);
+  nativeHudTick();
+ }catch(e){
+  stopNativeHud();nativeDuel=null;
+  window.yoToast?.(e.message||'Oyun açılamadı.');duelMessage(e.message);
+ }finally{duelBusy=false;}
+}
+document.addEventListener('dm:reward-result',async event=>{
+ const d=nativeDuel,proof=event.detail;
+ if(!d||d.finished||!proof?.ok||proof.game!==d.config.score||!proof.runId||d.owner!==who()||!d.started)return;
+ d.finished=true;stopNativeHud();
+ try{
+  const result=await duelRequest('dm_virtual_duel_native_complete',{p_duel:d.runId,p_native_run:String(proof.runId)});
+  if(!result.ok){d.finished=false;window.yoToast?.(result.message||'Düello sonucu doğrulanamadı.');return;}
+  nativeDuel=null;
+  if(result.yo){document.dispatchEvent(new Event('dm:state'));window.dmProgression?.refresh?.(true);}
+  const m=duelModal('<div class="dm-lig-duel-hero">'+virtualAvatar(d.bot,80)+'<h2>'+(result.won?'Papi\'yi yendin!':'Papi bu kez kazandı!')+'</h2>'+
+  '<p>Gerçek oyundaki doğrulanmış performansına göre sonuçlandı.</p></div>'+
+  '<div class="dm-lig-duel-rewards"><b>+'+fmt(result.xp||0)+' XP</b><b>+'+fmt(result.gold||0)+' altın</b></div>'+
+  '<p>Sanal rakipler gerçek lig sıralamanı etkilemez.</p>'+duelButton('Tamam','primary'));
+  m.querySelector('.dm-lig-duel-primary').onclick=closeDuelModal;
+ }catch(e){d.finished=false;window.yoToast?.(e.message||'Düello sonucu alınamadı.');}
+});
+
 function weeklyPreview(){
  reset();
  const state=states.weekly,me=(state.visualRows.length?state.visualRows:state.rows).find(p=>norm(p.name)===norm(who()));
@@ -241,5 +359,5 @@ document.addEventListener('dm:login',()=>{owner='';reset();});
 document.addEventListener('dm:state',()=>{for(const state of Object.values(states))state.at=0;if(onScreen())void load();});
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&onScreen())void load();});
 setInterval(()=>{if(!document.hidden&&onScreen())void load();},180000); // [Kota] 1 dk -> 3 dk
-window.dmLeagueUI={refresh:()=>load(true),render,weeklyPreview,refreshWeekly:()=>load(false,'weekly'),openWeekly:()=>{mode='weekly';selected=null;limit=30;window.maSekmeSec?.('lig');}};
+window.dmLeagueUI={refresh:()=>load(true),render,weeklyPreview,openVirtualDirect,openVirtualSelection,openDuelChooser,virtualAvatar,refreshWeekly:()=>load(false,'weekly'),openWeekly:()=>{mode='weekly';selected=null;limit=30;window.maSekmeSec?.('lig');}};
 })();
