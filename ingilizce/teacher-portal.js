@@ -62,54 +62,26 @@
  const pendingApplication='Okul bilgilerinle öğretmen başvurun alındı. Yönetici onayından sonra sana “Öğretmen onayınız tamamlandı” e-postası gönderilecek. Öğretmen kodunu kullanabilmek için kişisel e-posta adresini mutlaka doğrula.';
  const locationSearchKey=value=>value.trim().toLocaleLowerCase('tr-TR').normalize('NFD').replace(/\p{M}/gu,'').replace(/ı/g,'i');
  function locationPicker(form,name,label,placeholder,onSelect){
+  // Native select avoids the custom menu being clipped by the scrolling application dialog.
   const input=form.elements[name];
-  const root=document.createElement('div');
-  root.className='tp-location';
-  root.innerHTML='<span id="tp-label-'+name+'" class="tp-location-label">'+label+'</span><button type="button" class="tp-location-toggle" aria-expanded="false" aria-labelledby="tp-label-'+name+' tp-value-'+name+'" aria-controls="tp-options-'+name+'"><span id="tp-value-'+name+'"></span><span class="tp-chevron" aria-hidden="true"></span></button><div class="tp-location-options" id="tp-options-'+name+'" hidden><input type="search" aria-label="'+label+' ara" placeholder="'+label+' ara…" autocomplete="off"><div class="tp-location-list"></div></div>';
-  const toggle=root.querySelector('button'),value=toggle.firstElementChild;
-  const options=root.querySelector('.tp-location-options'),search=options.querySelector('input'),list=root.querySelector('.tp-location-list');
-  let choices=[];
-  const close=()=>{options.hidden=true;toggle.setAttribute('aria-expanded','false');};
-  const select=choice=>{input.value=choice;value.textContent=choice||placeholder;};
-  const fill=()=>{
-   const query=locationSearchKey(search.value);
-   list.replaceChildren();
-   for(const choice of choices.filter(choice=>locationSearchKey(choice).includes(query))){
-    const button=document.createElement('button');
-    button.type='button';
-    button.textContent=choice;
-    if(choice===input.value)button.setAttribute('aria-current','true');
-    button.onclick=()=>{select(choice);close();toggle.focus();onSelect?.(choice);};
-    list.append(button);
-   }
-   if(!list.children.length)list.textContent='Sonuç bulunamadı.';
+  const initial=String(input.value||'');
+  const select=document.createElement('select');
+  select.name=name;select.required=true;select.className='tp-location-native';
+  select.setAttribute('aria-label',label);
+  const wrapper=document.createElement('label');
+  wrapper.className='tp-location';
+  wrapper.append(document.createTextNode(label),select);
+  input.closest('label').replaceWith(wrapper);
+  const update=(items,selected)=>{
+   const current=selected===undefined?select.value:String(selected||'');
+   const options=[...new Set(Array.isArray(items)?items:[])].filter(Boolean).sort((a,b)=>a.localeCompare(b,'tr'));
+   select.replaceChildren(new Option(placeholder,''));
+   for(const entry of options)select.add(new Option(entry,entry));
+   select.value=options.find(item=>locationSearchKey(item)===locationSearchKey(current))||'';
+   select.disabled=!options.length;
   };
-  toggle.onclick=()=>{
-   if(!options.hidden){close();return;}
-   options.hidden=false;
-   toggle.setAttribute('aria-expanded','true');
-   search.value='';
-   fill();
-   search.focus();
-  };
-  search.addEventListener('input',fill);
-  root.addEventListener('focusout',event=>{if(!root.contains(event.relatedTarget))close();});
-  root.addEventListener('keydown',event=>{
-   if(event.key==='Escape'&&!options.hidden){event.stopPropagation();event.preventDefault();close();toggle.focus();}
-   if(event.key==='ArrowDown'&&event.target===search){event.preventDefault();list.querySelector('button')?.focus();}
-  });
-  input.type='hidden';
-  input.closest('label').replaceWith(root);
-  root.append(input);
-  return {
-   setChoices(items,selected){
-    close();
-    choices=[...items].sort((a,b)=>a.localeCompare(b,'tr'));
-    toggle.disabled=!choices.length;
-    select(choices.find(choice=>locationSearchKey(choice)===locationSearchKey(selected||''))||'');
-   },
-   focus:()=>toggle.focus()
-  };
+  select.addEventListener('change',()=>onSelect?.(select.value));
+  return {setChoices:update,focus:()=>select.focus(),value:()=>select.value,initial};
  }
  function renderApplication(v,r,token){
   const card=v.form.closest('.tp-card'),heading=card.querySelector('h1');
