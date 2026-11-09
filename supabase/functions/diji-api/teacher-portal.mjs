@@ -2,7 +2,7 @@ import {memberStudents,isClassroomGuest} from './classroom-identity.mjs';
 // Every grant is tied to a normal learner; neither role claims nor invite codes grant access.
 // Private teacher codes use rate-limited authentication; owner credentials stay server-side.
 export const teacherApplicationKey='teacher_portal_application_v1';
-export const portalOps=new Set(['teacherPortalApply','teacherPortalStatus','teacherPortalAdminCreate','teacherPortalList','teacherPortalDecide','teacherPortalIssueCode','teacherPortalLogin','teacherPortalEnter','teacherPortalResetRequest','teacherPortalReset','teacherPortalChangeCode','teacherPortalAppearance','teacherPortalSyncStudents','teacherPortalStudentReport','teacherPortalClassAnalytics','teacherPortalAnnouncement','teacherPortalRubric','teacherPortalPerformance','teacherPortalStudentContact','teacherPortalStudents','teacherPortalParticipant']);
+export const portalOps=new Set(['teacherPortalApply','teacherPortalStatus','teacherPortalAdminCreate','teacherPortalList','teacherPortalDecide','teacherPortalIssueCode','teacherPortalLogin','teacherPortalEnter','teacherPortalPersonalSession','teacherPortalResetRequest','teacherPortalReset','teacherPortalChangeCode','teacherPortalAppearance','teacherPortalSyncStudents','teacherPortalStudentReport','teacherPortalClassAnalytics','teacherPortalAnnouncement','teacherPortalRubric','teacherPortalPerformance','teacherPortalStudentContact','teacherPortalStudents','teacherPortalParticipant']);
 export function portalOperationAllowed(op,b={}) {
  if(['kelimeCarkiBaslat','kelimeCarkiCevir','kelimeCarkiCevap','kelimeCarkiBitir','kelimeCarkiDurum','kelimeCarkiSiralama'].includes(op))return true;
  if(['','oturumBilgisi','cikis','sonGirisGuncelle','iletisimDurumu','memberStatus','wordReviewList','wordReviewAnswer','seviyeDurumu','sosyalOgrencilerGetir','kelimeleriGetir','kelimeHavuzuGetir','tumKelimeleriGetir','seviyeOyunOdulu','enerjiDurumuGetir','publicCatalogVersion','kelimelerGetir','kategorileriGetir','dogruYanlisSorulariGetir','etkinlikTanimlariGetir','konusmaEsAnlamlarGetir','companionDialogueOpen','companionDialogueAnswer','enerjiDegistir','okumaHiziKaydet','okumaGecmisGetir','dersKonulariGetir','dersKonuDetayGetir','dersTestSonucKaydet','dersBilmiyordumToggle','companionSummary','companionDialogues','dialogueList','dialogueStart','dialogueAnswer','dialogueComplete','reviewList','reviewAnswer','companionReview','companionDialogue','companionDialogueComplete'].includes(op))return true;
@@ -54,6 +54,22 @@ export function teacherPortalAPI(d){
  }
  return {ensureCode,trackSignup:createSignupCode,async apply(studentId,teacherId=null){const r=await db.from('teacher_portal_access').upsert({student_id:studentId,...(teacherId?{teacher_id:teacherId}:{})},{onConflict:'student_id',ignoreDuplicates:true});if(r.error)throw r.error;},async handle(op,b,a,method){
   if(!portalOps.has(op))return null;if(method!=='POST')return fail('POST gerekli.',405);
+  if(op==='teacherPortalPersonalSession'){
+   // Never use the device's last learner account. Resolve the *linked* learner
+   // exclusively from the authenticated, active teacher grant.
+   const r=await grant(a);
+   if(!r||!r.student_id||!r.teacher_id||r.teacher_id!==a.teacher_id)return fail('Bu öğretmen girişine bağlı kişisel Parkur hesabı bulunamadı.',403);
+   const [personal,teacher]=await Promise.all([
+    db.from('students').select('id,username,email_verified_at,status,frozen_at').eq('id',r.student_id).maybeSingle(),
+    db.from('teachers').select('id,active,frozen_at').eq('id',r.teacher_id).maybeSingle()
+   ]);
+   if(personal.error||teacher.error)return fail('Kişisel hesap doğrulanamadı.',503);
+   if(!personal.data||personal.data.status!=='approved'||personal.data.frozen_at||
+      !personal.data.email_verified_at||!teacher.data?.active||teacher.data.frozen_at)
+    return fail('Önce kişisel hesabını doğrulaman ve öğretmen onayının aktif olması gerekiyor.',403);
+   const token=await issueSession('student',r.student_id);
+   return json({ok:true,token,name:personal.data.username,role:'ogrenci'});
+  }
   if(op==='teacherPortalEnter'){
    // A teacher session can only be created from the actual authenticated student
    // session AFTER owner approval and verified email. Never accept student_id in body.
