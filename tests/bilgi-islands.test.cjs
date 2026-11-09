@@ -6,3 +6,27 @@ test('empty or short routes never invent playable stages',()=>{assert.equal((ren
 test('route artwork has one aspect-preserving plane and no screenshot-sampled UI icons',()=>{const css=fs.readFileSync('ingilizce/bilgi-islands.css','utf8');assert.match(css,/aspect-ratio:var\(--bi-ratio\)/);assert.match(css,/--bi-ratio:0\.562799/);assert.match(css,/--bi-ratio:0\.462581/);assert(!css.includes('bilgi-reference'));assert.match(render(14).html,/class="rt-medal-scroll"[^]*class="rt-medal-world"/);for(const name of ['map','friends','games','study','store','profile','calendar','tasks','chest'])assert(fs.statSync('ingilizce/route-assets/bilgi-icons/'+name+'.webp').size>1000);for(const name of ['energy','gold','xp','time'])assert(fs.readFileSync('ingilizce/route-assets/bilgi-icons/'+name+'.svg','utf8').includes('viewBox="0 0 64 68"'));});
 test('an active completed stop still owns its mascot at the end of a route',()=>{const c={yo:{dmLearningPurpose:'school'},aktifOgrenciAdi:'done',document:{getElementById:()=>null,querySelector:()=>null,querySelectorAll:()=>[],addEventListener(){}},addEventListener(){}};c.window=c;vm.createContext(c);vm.runInContext(fs.readFileSync('ingilizce/oyna-v2.js','utf8'),c);const steps=[{b:0,d:0,done:true,available:true,label:'1. sınıf 1. ünite'}],html=c.dmParkurSahne({steps,allSteps:steps,current:0});assert.equal((html.match(/class="rt-medal-papi"/g)||[]).length,1);assert.match(html,/aria-current="step"/);});
 test('island dock sits above the real fullscreen route and below school quizzes',()=>{const css=fs.readFileSync('ingilizce/bilgi-islands.css','utf8'),html=fs.readFileSync('ingilizce/index.html','utf8');const dock=Number(css.match(/#bottomNavMobile#bottomNavMobile\.bottom-nav-mobile\{[^}]*z-index:\s*(\d+)/)[1]);const route=Number(fs.readFileSync('ingilizce/portal-world-extracted.css','utf8').match(/#tab-dunya\.dc-fullscreen-overlay\.active\s*\{[^}]*z-index:\s*(\d+)/)[1]);const quiz=Number(html.match(/\.bz-perde\{[^}]*z-index:\s*(\d+)/)[1]);assert(dock>route,'dock must be above the active native fullscreen route');assert(dock<quiz,'school question screen must stay above navigation');});
+
+test('number chips identify finished, current and locked stages without touching XP',()=>{
+ const {html,c}=render(7,20);
+ const numbers=[...html.matchAll(/class="rt-medal-stop-number"[^>]*>(\d+)<\/span>/g)].map(m=>Number(m[1]));
+ assert(numbers.length>=10,'visible route window must contain numbered stops');
+ assert(numbers.includes(8),'current stage number is visible');
+ assert(numbers.includes(7),'completed stage number is visible');
+ assert(numbers.includes(9),'locked stage number is visible');
+ assert.match(html,/class="rt-medal-stop rt-medal-start"[^]*?class="rt-medal-stop-number"[^>]*>8<\/span>/);
+ assert.equal(c.yo.totalXp,12600);
+ assert.equal(c.yo.altin,1273);
+});
+test('chest shortcut stays at the next fifth-stop landmark rather than following every active stop',()=>{
+ const first=render(6,25).html,second=render(7,25).html,third=render(10,25).html;
+ const position=html=>Number(html.match(/class="rt-medal-chest[^"]*" data-rt="chests" style="top:([\d.]+)px"/)?.[1]);
+ assert.equal(position(first),position(second),'chest should remain next to the same 10th stop');
+ assert.notEqual(position(second),position(third),'chest moves when the next milestone changes');
+ assert.match(first,/Sandıklarım/);
+});
+test('finished stages are differentiated by color and a legible stop number',()=>{
+ const css=fs.readFileSync('ingilizce/bilgi-islands.css','utf8');
+ assert.match(css,/\.rt-medal-stop\.is-done \.rt-medal-disc\s*\{[^}]*background:/);
+ assert.match(css,/\.rt-medal-stop-number\s*\{/);
+});
