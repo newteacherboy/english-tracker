@@ -73,9 +73,11 @@
   await bootstrap('📢 Sınıfına Duyuru Yap','Duyurular yalnızca seçtiğin kendi sınıfına veya içindeki bir öğrenciye gönderilir.',(c,host)=>{
    host.innerHTML='<form data-owned-form><label>Alıcı<select name="studentId"><option value="">Tüm '+esc(c.classNo+'-'+c.branch)+' sınıfı</option>'+roster(c).map(p=>'<option value="'+esc(p.id)+'">'+esc(p.fullName||p.username)+'</option>').join('')+'</select></label>'+
     '<label>Başlık<input name="title" maxlength="120" minlength="3" required></label><label>Duyuru<textarea name="message" maxlength="2000" minlength="3" rows="5" required></textarea></label>'+
+    '<div class="dm-owned-ann-options"><label>🎨 Duyuru rengi<select name="theme"><option value="yesil">🟢 Yeşil</option><option value="mavi">🔵 Mavi</option><option value="turuncu">🟠 Turuncu</option><option value="kirmizi">🔴 Kırmızı</option><option value="mor">🟣 Mor</option></select></label><label>🔁 Gösterim sıklığı<select name="displayLimit"><option value="1">Bir kez göster</option><option value="3">3 kez göster</option><option value="5">5 kez göster</option><option value="0">Sınırsız</option></select></label></div>'+
+    '<label>🖼️ Görsel bağlantısı (isteğe bağlı)<input name="imageLink" type="url" placeholder="https://..."></label>'+
     '<button class="dm-owned-action" type="submit">Duyuru Gönder</button></form>';
    const form=host.querySelector('form');form.onsubmit=async e=>{e.preventDefault();const b=form.querySelector('[type=submit]');b.disabled=true;
-    try{const d=await call('teacherPortalAnnouncement',{classId:c.id,studentId:form.elements.studentId.value,title:form.elements.title.value,message:form.elements.message.value});
+    try{const d=await call('teacherPortalAnnouncement',{classId:c.id,studentId:form.elements.studentId.value,title:form.elements.title.value,message:form.elements.message.value,theme:form.elements.theme.value,displayLimit:Number(form.elements.displayLimit.value),imageLink:form.elements.imageLink.value});
      status('Duyuru '+d.studentCount+' öğrenciye gönderildi.');form.reset();
     }catch(error){status(error.message);}finally{b.disabled=false;}
    };
@@ -154,7 +156,11 @@
   legacyClassList=await ownClasses();
   if(!legacyClassList.length){window.yoToast?.('Önce Sınıflarım bölümünden sınıf oluştur.');return;}
   sessionStorage.setItem('ing_ogr_token',teacherToken);
-  if(typeof window.odevEkraniAc!=='function')throw Error('Ödev Ver ekranı yüklenmedi.');
+  if(typeof window.odevEkraniAc!=='function'||!document.getElementById('odModal')){
+   // The standalone teacher portal does not ship the classic coach modal.
+   // Always open a functional owned-class homework form on the first click.
+   return openHomework();
+  }
   await window.odevEkraniAc();
   const nativeModal=document.getElementById('odModal');
   if(!nativeModal)throw Error('Önceki Ödev Ver ekranı bulunamadı.');
@@ -166,6 +172,7 @@
   nativeModal.style.zIndex='2147483646';
   nativeModal.style.visibility='visible';
   nativeModal.style.display='flex';
+  nativeModal.removeAttribute('hidden');
   setLegacyHomeworkClasses();
   // Keep the original modal at the front even when another dashboard redraw
   // happens during the async class lookup.
@@ -219,13 +226,14 @@
   const classes=await ownClasses();
   if(!classes.length){window.yoToast?.('Önce Sınıflarım bölümünden sınıf oluştur.');return;}
   const modal=document.getElementById('duyuruYonetimModal');
-  if(!modal)throw Error('Önceki Duyuru Yönetimi ekranı yüklenemedi.');
+  if(!modal)return openAnnouncement();
   const currentToken=token();sessionStorage.setItem('ing_ogr_token',currentToken);
   if(typeof window.ogretmenMenuDuyuruAc==='function')window.ogretmenMenuDuyuruAc();
   else{document.getElementById('ogretmenMenuModal')?.style.setProperty('display','none');modal.style.display='flex';}
   modal.classList.add('dm-own-class-announcements');
-  modal.style.zIndex='2147483645';
-  modal.style.display='flex';
+  if(modal.parentElement!==document.body)document.body.append(modal);
+  modal.style.position='fixed';modal.style.inset='0';modal.style.zIndex='2147483646';
+  modal.style.visibility='visible';modal.style.display='flex';
   const targetArea=document.getElementById('duyuruHedefSecimAlani');
   const originalEvery=document.getElementById('duyuruHerkesCb')?.closest('label');
   if(originalEvery)originalEvery.style.display='none';
