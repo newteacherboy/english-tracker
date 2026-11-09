@@ -142,7 +142,7 @@
   screen='teacher-code';
   const code=registered.teacherCode;
   show('<h1>Öğretmen kodun hazır! 🎓</h1>'+image('papi-mektup')+
-   '<p>Bu 6 haneli kodu güvenli bir yere kaydet. Kişisel e-postanı doğrulayıp yönetici onayı aldıktan sonra öğretmen araçların açılacak.</p>'+
+   '<p>Bu 6 haneli kodu güvenli bir yere kaydet. E-posta adresini mutlaka doğrula. Yönetici onay verdiğinde sana “Öğretmen onayınız tamamlandı” e-postası gönderilecek; sonra Öğretmen Girişi bölümünde bu kodu kullanabilirsin.</p>'+
    '<div style="font-size:32px;font-weight:800;letter-spacing:7px;text-align:center;background:#e5f3ff;color:#174e88;padding:17px;border-radius:17px">'+escape(code)+'</div>'+
    '<p class="fd-note">Kodunu unutursan doğrulanmış e-posta adresinle yenileyebilirsin. Bu kod, öğrencilerin sınıfa katılma kodundan farklıdır.</p>',
    button('📋 Kodu Kopyala','teacher-code-copy','secondary')+button('Kodumu Kaydettim, Devam Et','teacher-code-next'),100,'fd-teacher-code',false);
