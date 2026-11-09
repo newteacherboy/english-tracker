@@ -621,6 +621,13 @@ html[data-dm-theme="night"] #tab-meduakis.fr-home-view .fr-podium-footer .fr-lin
 
 
 /* Podium sizing: a small single-character portrait for runners-up, crown remains dominant. */
+#tab-meduakis .fr-leader-2 .fr-avatar,
+#tab-meduakis .fr-leader-3 .fr-avatar{
+  --avatar-size:clamp(48px,14.5vw,64px)!important;
+  width:var(--avatar-size)!important;
+  height:var(--avatar-size)!important;
+}
+
 #tab-meduakis .fr-leader .fr-avatar.fr-papi-leader{
   width:var(--avatar-size)!important;
   height:var(--avatar-size)!important;
