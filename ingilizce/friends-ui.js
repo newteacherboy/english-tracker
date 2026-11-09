@@ -293,7 +293,7 @@
     if(action==='virtual-duel'){const id=b.dataset.botId;const bot=window.dmLeagueUI?.weeklyPreview?.().top?.find(p=>p.id===id&&p.is_virtual);if(bot)void window.dmLeagueUI?.openVirtualDirect?.(bot);return;}
     if(action==='profile'){window.maAkisKisiAc?.(b.dataset.person);return;}
     if(action==='invite')return openInvite(b.dataset.person,b.dataset.game);
-    if(action==='matches')return window.dmLeagueUI?.openDuelChooser?.()||openMatches();
+    if(action==='matches'){if(window.dmLeagueUI?.openDuelChooser)return window.dmLeagueUI.openDuelChooser();return openMatches();}
     if(action==='filter'){
       maFiltre=b.dataset.filter;
       root.querySelectorAll('[data-filter]').forEach(x=>{x.classList.toggle('aktif',x.dataset.filter===maFiltre);x.setAttribute('aria-pressed',String(x.dataset.filter===maFiltre));});
