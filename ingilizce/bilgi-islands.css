@@ -252,6 +252,34 @@ body #tab-dunya .bz-ic:has(.rt-medal-route) .dm-unified-wallet.dm-papi-wallet :i
  font-size:24px;line-height:1
 }
 .rt-medal-stop.is-locked{opacity:1;filter:saturate(.36) brightness(.72);cursor:default}
+
+/* Every school / learning road stop shows a real, stable number.
+   Completed stages have a separate teal finish so progress is understandable at a glance. */
+.rt-medal-disc .rt-medal-stop-number{
+ position:absolute;right:5px;bottom:5px;z-index:5;display:grid;place-items:center;
+ min-width:23px;height:23px;padding:0 4px;box-sizing:border-box;border-radius:12px;
+ background:#f6faff;color:#173a60;border:2px solid #c8e4fa;
+ box-shadow:0 2px 5px #071d3642;
+ font:900 12px/1 Nunito,system-ui,sans-serif;
+ pointer-events:none
+}
+.rt-medal-stop.is-done .rt-medal-disc{
+ border-color:#79dfc1;
+ background:linear-gradient(155deg,#d6fff0,#6ccdab 75%);
+ box-shadow:0 7px 0 #398e76,0 10px 13px #0004,inset 0 2px 4px #fff8
+}
+.rt-medal-stop.is-done .rt-medal-stop-number{
+ color:#0b644c;background:#e8fff7;border-color:#7bdfba
+}
+.rt-medal-stop.is-locked .rt-medal-stop-number{
+ color:#344459;background:#e9edf4;border-color:#c9d0dc;
+ filter:none
+}
+.rt-medal-start .rt-medal-stop-number{
+ color:#085d92;background:#fff7ce;border-color:#f2cd66;
+ min-width:27px;height:27px;font-size:14px
+}
+
 .rt-medal-disc svg{width:26px;height:26px}
 .rt-medal-disc .rt-medal-parrot{width:36px;height:36px;stroke-width:2.6}
 .rt-medal-start .rt-medal-parrot{width:53px;height:53px;stroke-width:2.5}
