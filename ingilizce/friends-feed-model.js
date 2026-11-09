@@ -11,6 +11,10 @@ else if(/rozet/.test(text)&&/kazan|acil|ulas/.test(text))kind='badge';
 else if(/lig/.test(text)&&/haftasini\s*\d+\.\s*sirada tamamla/.test(text))kind='weekly';
 else if(/lig/.test(text)&&/yuksel|terfi|gecti/.test(text))kind='league';
 else if(/seri|ust uste|gunluk calisma/.test(text)&&[3,7,14,30,60,100,365].includes(Number((text.match(/(\d+)\s*gun/)||[])[1])))kind='streak';
+else if(/haftalik gorevini tamamla/.test(text))kind='weeklyGoal';
+else if(/sinif parkurunu bitirdi|sinif parkurundan mezun/.test(text))kind='classGraduation';
+else if(/\d+ duragi tamamla/.test(text)&&/okul yolum/.test(text))kind='fiveStops';
+else if(/duello/.test(text)&&/kazandi|kaybetti|berabere|maglup/.test(text))kind='duel';
 else if(/gorev/.test(text)&&/tamamla|bitir/.test(text))kind='mission';
 else if(/seviye/.test(text)&&/yuksel|atladi|ulas/.test(text))kind='level';
 else if(/bolum|durak|ders konusunu|parkur/.test(text)&&/tamamla|gecti|bitir/.test(text))kind='route';
@@ -53,10 +57,22 @@ function summarize(event) {
       return level ? level + '. seviyeye çıktı.' : 'Seviye atladı.';
     }
     case 'badge': return 'Bir rozet kazandı.';
-    case 'mission': return 'Görevini tamamladı.';
+    case 'weeklyGoal': return 'Haftalık görevini tamamladı!';
+    case 'classGraduation': {
+      const finished=text.match(/(\d+)\. sinif parkurunu bitirdi/);
+      if(finished) return finished[1]+'. sınıfı bitirdi, '+(Number(finished[1])+1)+'. sınıfa geçti!';
+      return 'Okul Yolum parkurundan mezun oldu!';
+    }
+    case 'fiveStops': {
+      const classNo=text.match(/(\d+)\. sinifta/)?.[1];
+      const stops=text.match(/(\d+) duragi/)?.[1];
+      return (classNo&&stops) ? classNo+'. sınıfta '+stops+' durağı tamamladı!' : 'Beş duraklık bir etabı geçti!';
+    }
+    case 'duel': return 'Bir düelloyu tamamladı.';
+    case 'mission': return /haftalik/.test(text)?'Haftalık görevini tamamladı!':'Günlük görevlerini tamamladı!';
     default: return 'Yeni bir etkinlik yaptı.';
   }
 }
-function select(rows){const out=[],days=new Set(),best=new Map(),seen=new Set();for(const e of [...rows].sort((a,b)=>(parse(a.t)||0)-(parse(b.t)||0))){const c=classify(e);if(!c)continue;const key=clean(e.ogr)+':'+c.kind+':'+(c.game?.[0]||'')+':'+c.day;if(c.kind==='game'){const recordKey=clean(e.ogr)+':'+c.game[0],prev=best.get(recordKey);const record=c.score!=null&&prev!=null&&c.score>prev;if(days.has(key)&&!record)continue;days.add(key);if(c.score!=null)best.set(recordKey,Math.max(prev||0,c.score));}else{const fingerprint=key+':'+clean(e.metin);if(seen.has(fingerprint))continue;seen.add(fingerprint);}out.push({...e,club:c});}return out.sort((a,b)=>(b.club.ms||0)-(a.club.ms||0));}
+function select(rows){const out=[],days=new Set(),best=new Map(),seen=new Set();for(const e of [...rows].sort((a,b)=>(parse(a.t)||0)-(parse(b.t)||0))){const c=classify(e);if(!c||!new Set(['weekly','league','level','mission','weeklyGoal','classGraduation','fiveStops','duel']).has(c.kind))continue;const key=clean(e.ogr)+':'+c.kind+':'+(c.game?.[0]||'')+':'+c.day;if(c.kind==='game'){const recordKey=clean(e.ogr)+':'+c.game[0],prev=best.get(recordKey);const record=c.score!=null&&prev!=null&&c.score>prev;if(days.has(key)&&!record)continue;days.add(key);if(c.score!=null)best.set(recordKey,Math.max(prev||0,c.score));}else{const fingerprint=key+':'+clean(e.metin);if(seen.has(fingerprint))continue;seen.add(fingerprint);}out.push({...e,club:c});}return out.sort((a,b)=>(b.club.ms||0)-(a.club.ms||0));}
 root.DMTime={parse,format};root.DMFriendsFeed={classify,select,games,summarize};
 })(typeof window==='undefined'?globalThis:window);

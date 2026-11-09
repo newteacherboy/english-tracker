@@ -5,7 +5,13 @@ const fixtureName='Fixture';
 const people=['Fixture','Elif','Ege','Zeynep','Cemre'].map((ogrenci,i)=>({ogrenci,sinif:'6',Sinif:'6',durum:'approved',karakter:{cins:i%2?'k':'e',s:{}},totalXp:12000,genelOrtalama:70,rozetListesi:[{emoji:'⭐',rozetAdi:'Yıldız',gerekliPuan:0}],lig:{hafta:'fixture',xp:[938,3034,1162,1140,951][i]}}));
 const league=people.map((p,i)=>({name:p.ogrenci,class:'6',league:'yerel',rank:[5,1,2,3,4][i],xp:p.lig.xp}));
 const lesson='A2 · Present perfect vs past simple (basic) — Present perfect ders konusunu tamamladı!';
-const feed=['Elif','Ege','Zeynep','Cemre','Fixture'].map((ogr,i)=>({k:'event'+i,ogr,ad:ogr,t:Date.now()-i*60000,metin:i===1?lesson:i===2?'Süper Lig seviyesine yükseldi!':'Kelime Laboratuvarı oyununda '+(1701+i)+' puan kazandı',ikon:'🎮',tur:'arti',b:i,tb:0}));
+const feed=['Elif','Ege','Zeynep','Cemre','Fixture'].map((ogr,i)=>({k:'event'+i,ogr,ad:ogr,t:Date.now()-i*60000,metin:[
+ 'Haftalık görevini tamamladı! 75 altın kazandı.',
+ 'Okul Yolum 7. sınıf parkurunu bitirdi, 8. sınıfa geçti!',
+ 'Süper Lig seviyesine yükseldi!',
+ 'Okul Yolum 6. sınıfta 15 durağı tamamladı! Yeni rozet yolunda!',
+ 'Günün 3 görevini tamamladı ve ödülünü aldı!'
+ ][i],ikon:'🏆',tur:'arti',b:i,tb:0}));
 (async()=>{
   let launch={args:['--no-sandbox']};
   if(process.env.FRIENDS_BROWSER_PATH)launch={executablePath:process.env.FRIENDS_BROWSER_PATH,args:['--no-sandbox','--no-zygote','--single-process','--use-gl=angle','--use-angle=swiftshader','--enable-unsafe-swiftshader'],env:{...process.env,LD_LIBRARY_PATH:path.dirname(process.env.FRIENDS_BROWSER_PATH)}};
@@ -75,8 +81,8 @@ const feed=['Elif','Ege','Zeynep','Cemre','Fixture'].map((ogr,i)=>({k:'event'+i,
   assert.equal(await page.locator('#maSegment button').count(),3);
   assert.equal(await page.locator('#maSegment [data-s="parkur"],#maSegment [data-s="kesfet"]').count(),0);
   assert.equal(await page.locator('.fr-compact input[type=search], .fr-compact [onclick*=maBegen]').count(),0);
-  assert.deepEqual(await page.locator('.fr-event-person small').allTextContents(),['1.701 puan aldı.','A2 dersini bitirdi.']);
-  assert.equal(await page.locator('.fr-event-person small').nth(1).getAttribute('title'),lesson);
+  assert.deepEqual(await page.locator('.fr-event-person small').allTextContents(),['Haftalık görevini tamamladı!','7. sınıfı bitirdi, 8. sınıfa geçti!']);
+  assert.match(await page.locator('.fr-event-person small').nth(1).getAttribute('title'),/7\. sınıf parkurunu/);
   assert.equal(await page.locator('meta[name="theme-color"]').getAttribute('content'),'#e3f3ff');
   assert.doesNotMatch(await page.locator('meta[name="viewport"]').getAttribute('content'),/viewport-fit=cover/,'Friends keeps the same viewport mode as the other tabs');
   assert.equal(await page.locator('.fr-event-person .fr-avatar').evaluateAll(avatars=>new Set(avatars.map(avatar=>getComputedStyle(avatar).borderColor)).size),2);
@@ -145,7 +151,7 @@ const feed=['Elif','Ege','Zeynep','Cemre','Fixture'].map((ogr,i)=>({k:'event'+i,
   await page.locator('.fr-all-feed').click();
   await page.waitForSelector('.fr-club-view .club-hero');
   assert.equal(await page.locator('#maAkisListe .akis-kart').count(),5);
-  assert.match(await page.locator('#maAkisListe').innerText(),/Present perfect vs past simple/);
+  assert.match(await page.locator('#maAkisListe').innerText(),/sınıf parkurunu bitirdi/);
   assert.deepEqual(await page.evaluate(()=>['viewport','theme-color'].map(name=>document.querySelector('meta[name="'+name+'"]').content)),chromeBefore);
   await page.locator('.club-back').click();
   await page.waitForSelector('.fr-home-view .fr-summaries');
