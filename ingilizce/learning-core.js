@@ -2,6 +2,9 @@
 (function(root,factory){const core=factory();root.DMLearningCore=core;if(typeof module==='object')module.exports=core;})(globalThis,()=>{
  'use strict';
  const norm=s=>String(s??'').normalize('NFKC').toLocaleLowerCase('en').replace(/[’‘]/g,"'").replace(/[.!?,;:]/g,'').replace(/\s+/g,' ').trim();
+ const shuffled=(items,seed)=>{const a=[...items];let state=seed>>>0;for(let i=a.length-1;i>0;i--){state=(Math.imul(state,1664525)+1013904223)>>>0;const j=state%(i+1);[a[i],a[j]]=[a[j],a[i]];}return a;};
+ const seedFor=(text,number)=>{let s=(number+1)>>>0;for(const ch of text)s=(Math.imul(s,31)+ch.charCodeAt(0))>>>0;return s;};
+ const letterPuzzle=(word,number)=>{const positions=[...word].map((ch,i)=>/[a-z]/i.test(ch)?i:-1).filter(i=>i>=0);const count=Math.min(positions.length,positions.length>=13?4:positions.length>=5?3:Math.max(1,positions.length-1));const seed=seedFor(word,number);const missing=shuffled(positions,seed).slice(0,count).sort((a,b)=>a-b);const answer=missing.map(i=>word[i]);const extras=[...'aeiostrn'].filter(ch=>!answer.some(a=>a.toLowerCase()===ch)).slice(0,2);let tokens=shuffled([...answer,...extras],seed^0x9e3779b9);if(tokens.slice(0,answer.length).every((ch,i)=>ch===answer[i]))tokens=[...tokens.slice(answer.length),...tokens.slice(0,answer.length)];return {missing,tokens};};
  const rotate=(a,n)=>a.map((_,i)=>a[(i+n)%a.length]);
  function deck(chapter,previous,deckVersion=7){
   const cards=chapter.cards,a=cards[0],b=cards[1],c=cards[2],u=chapter.examples;
@@ -35,10 +38,8 @@
    const eligible=[...cards,...u].filter(x=>(x.en.match(/[a-z]/gi)||[]).length>=6);
    const target=eligible[chapter.number%eligible.length];
    if(!target)throw Error('Harf sorusu için yeterince uzun ifade bulunamadı.');
-   const letterPositions=[...target.en].map((ch,i)=>/[a-z]/i.test(ch)?i:-1).filter(i=>i>=0),missingCount=letterPositions.length>=13?4:3;
-   const missing=Array.from({length:missingCount},(_,i)=>letterPositions[Math.floor((i+1)*letterPositions.length/(missingCount+1))]);
-   const letters=missing.map(i=>target.en[i]),distractors=[...'aeiostrn'].filter(ch=>!letters.some(l=>l.toLowerCase()===ch)).slice(0,2);
-   tasks.push({kind:'letters',label:'Harfleri tamamla',prompt:'Eksik harfleri tamamla.',support:target.tr,en:target.en,tr:target.tr,missing,tokens:rotate([...letters,...distractors],chapter.number%(letters.length+distractors.length)),answer:target.en,explanation:target.en+' — '+target.tr});
+   const {missing,tokens}=letterPuzzle(target.en,chapter.number);
+   tasks.push({kind:'letters',label:'Harfleri tamamla',prompt:'Eksik harfleri tamamla.',support:target.tr,en:target.en,tr:target.tr,missing,tokens,answer:target.en,explanation:target.en+' — '+target.tr});
   }
   const reviewCards=cards.filter((x,i)=>cards.findIndex(y=>norm(y.en)===norm(x.en))===i);
   if(deckVersion>=6)tasks.push({kind:'review',label:'Son tekrar',prompt:'Bu bölümde öğrendiklerin',cards:reviewCards.map((x,i)=>{
