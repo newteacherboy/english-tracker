@@ -13,22 +13,24 @@ const empty=()=>({rows:[],visualRows:[],loaded:false,busy:false,error:'',at:0});
 let states={weekly:empty(),alltime:empty()};
 function reset(){if(owner===who())return;owner=who();epoch++;mode='weekly';selected=null;limit=30;states={weekly:empty(),alltime:empty()};}
 function onScreen(){return typeof maSekme!=='undefined'&&maSekme==='lig'&&!(typeof maProfilId!=='undefined'&&maProfilId)&&root.classList.contains('active');}
+/* One individual Papi character per bot, cropped from the same parkur badge artwork. */
 const virtualAvatarAssets={
- 1:'friends-assets/papi-fencer.webp',
- 2:'discovery-assets/papi-merhaba.webp',
- 3:'papi-help-v2.png',
- 4:'route-assets/papi-school.webp',
- 5:'papi-reward-v2.png',
- 6:'papi-loading.webp',
- 7:'route-assets/papi-english.webp',
- 8:'study-assets/papi-read.png',
- 9:'study-assets/papi-celebrate.png',
- 10:'discovery-assets/papi-kutlama.webp'
+ 1:{src:'parkur-badges/v2/school-03.webp',col:4,row:0,cols:5,rows:4}, // Şimşek
+ 2:{src:'parkur-badges/v2/papi-01.webp',col:1,row:1,cols:4,rows:2}, // Roket
+ 3:{src:'parkur-badges/v2/school-03.webp',col:0,row:1,cols:5,rows:4}, // Ninja
+ 4:{src:'parkur-badges/v2/school-02.webp',col:2,row:1,cols:4,rows:3}, // Kaptan
+ 5:{src:'parkur-badges/v2/papi-01.webp',col:2,row:1,cols:4,rows:2}, // Yıldız
+ 6:{src:'parkur-badges/v2/school-02.webp',col:1,row:2,cols:4,rows:3}, // Turbo
+ 7:{src:'parkur-badges/v2/papi-01.webp',col:0,row:0,cols:4,rows:2}, // Gezgin
+ 8:{src:'parkur-badges/v2/papi-01.webp',col:1,row:0,cols:4,rows:2}, // Bilge
+ 9:{src:'parkur-badges/v2/papi-01.webp',col:3,row:0,cols:4,rows:2}, // Neşeli
+ 10:{src:'parkur-badges/v2/school-03.webp',col:3,row:3,cols:5,rows:4} // Fırtına
 };
 function virtualAvatar(bot,size=44){
  const id=Number(bot?.bot_id||String(bot?.id||'').replace('virtual-',''))||1;
- const image=virtualAvatarAssets[id]||virtualAvatarAssets[1];
- return '<img src="'+image+'" alt="'+esc(bot?.name||'Papi')+'" class="dm-virtual-papi-img" loading="lazy" style="--papi-size:'+size+'px">';
+ const art=virtualAvatarAssets[id]||virtualAvatarAssets[1];
+ const x=art.col/(art.cols-1)*100,y=art.row/(art.rows-1)*100;
+ return '<span role="img" aria-label="'+esc(bot?.name||'Papi')+'" class="dm-virtual-papi-img" style="--papi-size:'+size+'px;background-image:url('+art.src+');background-size:'+art.cols*100+'% '+art.rows*100+'%;background-position:'+x+'% '+y+'%"></span>';
 }
 function avatar(name,size=38,virtual=false){if(virtual)return '<span class="dm-lig-avatar dm-lig-papi" style="--size:'+size+'px">'+virtualAvatar(typeof virtual==='object'?virtual:{name,id:'virtual-1'},size)+'</span>';let html='';try{html=window.karakterSvg?.(name,size)||'';}catch{}
  if(!html){const icon=window.ogrenciMaskotSec?.(name)||'🦜';html='<span aria-hidden="true">'+esc(icon)+'</span>';}
@@ -217,7 +219,7 @@ function nativeHudTick(){
  if(!hud){
   hud=document.createElement('div');hud.id='dmVirtualNativeHud';hud.className='dm-native-duel-hud';
   hud.innerHTML='<div class="dm-native-side"><strong>Sen</strong><b data-player-value>Oyun devam ediyor</b><span class="dm-native-track"><i data-player-bar></i></span></div>'+
-   '<b class="dm-native-versus">VS</b><div class="dm-native-side"><img src="'+(virtualAvatarAssets[Number(d.bot.id.replace('virtual-',''))]||virtualAvatarAssets[1])+'" alt="Papi"><strong>'+esc(d.bot.name)+'</strong><b data-bot-value>0 XP</b><span class="dm-native-track"><i data-bot-bar></i></span></div>'+
+   '<b class="dm-native-versus">VS</b><div class="dm-native-side dm-native-duel-bot">'+virtualAvatar(d.bot,28)+'<strong>'+esc(d.bot.name)+'</strong><b data-bot-value>0 XP</b><span class="dm-native-track"><i data-bot-bar></i></span></div>'+
    '<small class="dm-native-note">Papi sanal rakiptir · gerçek lig ödüllerini etkilemez</small>';
   overlay.appendChild(hud);
  }
