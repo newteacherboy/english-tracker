@@ -8,6 +8,8 @@ on:
       - 'ingilizce/teacher-portal-boot.js'
       - 'tests/teacher-device-continuity.test.cjs'
       - 'ingilizce/first-discovery-state.js'
+      - 'ingilizce/first-discovery.js'
+      - 'tests/universal-onboarding-ui.test.cjs'
       - 'supabase/migrations/20261109145000_teacher_pending_code_preserve.sql'
       - 'tests/teacher-portal-api.test.mjs'
       - 'tests/onboarding-registration.test.cjs'
@@ -26,4 +28,7 @@ jobs:
       - run: node --check ingilizce/teacher-portal.js
       - run: node --check ingilizce/teacher-portal-boot.js
       - run: node --check ingilizce/first-discovery-state.js
+      - run: node --check ingilizce/first-discovery.js
       - run: node --test tests/teacher-portal-api.test.mjs tests/onboarding-registration.test.cjs tests/google-signup.test.cjs tests/teacher-device-continuity.test.cjs
+      - run: npm install --no-save --package-lock=false --ignore-scripts jsdom@26.1.0
+      - run: node --test tests/universal-onboarding-ui.test.cjs
