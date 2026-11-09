@@ -1,0 +1,35 @@
+name: Repair Papi badge artwork alpha holes
+on:
+  push:
+    branches:
+      - main
+      - fix/badge-artwork-alpha-20261109
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  repair:
+    if: "!contains(github.event.head_commit.message, '[skip ci]')"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m pip install --disable-pip-version-check pillow numpy scipy
+      - name: Repair only small enclosed alpha defects
+        run: python scripts/repair-badge-alpha.py
+      - name: Verify badge catalogue and sprite dimensions
+        run: |
+          node --test tests/parkur-badges.test.cjs
+      - name: Commit repaired artwork to this branch
+        run: |
+          if ! git diff --quiet -- ingilizce/parkur-badges/v2/; then
+            git config user.name 'github-actions[bot]'
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git add ingilizce/parkur-badges/v2/
+            git commit -m 'fix: repair small transparent holes in Papi badges [skip ci]'
+            git push
+          fi
