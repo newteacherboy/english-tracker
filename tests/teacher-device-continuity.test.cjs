@@ -33,13 +33,40 @@ test('personal-account return is a switch and retains the teacher for the accoun
  const native=storage({ing_token:'personal-token'});page(native).w.dmTeacherDevice.remember(portal);const opened=page(native);opened.w.dmTeacherPortalPersonal();assert.equal(opened.w.dmTeacherDevice.list().length,1);assert.equal(opened.session.getItem('dm_tp_session'),null);assert.equal(page(native).w.dmTeacherPortalMode,undefined);assert.equal(native.getItem('ing_token'),'personal-token');
 });
 
-test('teacher Parkur shortcut restores personal account directly without showing account picker',()=>{
- const native=storage({ing_token:'personal-token',ing_aktifOgrenci:'Ada'});
+test('teacher Parkur shortcut handoffs the teacher-linked personal account instead of last device user',async()=>{
+ const native=storage({ing_token:'other-personal-token',ing_aktifOgrenci:'Ada'});
  const first=page(native);first.w.dmTeacherDevice.remember(portal);
  const opened=page(native);
- opened.w.dmTeacherPortalParkur();
+ opened.ctx.document.querySelector=()=>null;
+ opened.ctx.alert=message=>{throw Error('Unexpected alert: '+message)};
+ opened.ctx.fetch=async(_url,opt)=>{
+  const request=JSON.parse(opt.body);
+  assert.equal(request.islem,'teacherPortalPersonalSession');
+  assert.equal(request.t,'owner-token');
+  return {ok:true,status:200,json:async()=>({ok:true,token:'teacher-own-student-token',name:'TeacherOne',role:'ogrenci'})};
+ };
+ await opened.w.dmTeacherPortalParkur();
  assert.deepEqual(opened.calls.at(-1),['assign','./']);
  assert.equal(opened.session.getItem('dm_tp_session'),null);
- assert.equal(native.getItem('ing_token'),'personal-token');
+ assert.equal(native.getItem('ing_token'),'other-personal-token','old device session is unchanged until next startup');
+ const handoff=JSON.parse(opened.session.getItem('dm_session_handoff_v1'));
+ assert.equal(handoff.token,'teacher-own-student-token');
+ assert.equal(handoff.name,'TeacherOne');
+ assert.equal(handoff.previous,'other-personal-token');
  assert.equal(opened.w.dmTeacherDevice.list().length,1);
+});
+test('teacher Parkur shortcut never opens another personal account when server rejects it',async()=>{
+ const native=storage({ing_token:'other-personal-token',ing_aktifOgrenci:'Ada'});
+ const first=page(native);first.w.dmTeacherDevice.remember(portal);
+ const opened=page(native);
+ opened.ctx.document.querySelector=()=>null;
+ let error='';
+ opened.ctx.alert=message=>{error=message};
+ opened.ctx.fetch=async(_url,opt)=>({ok:false,status:403,json:async()=>({ok:false,mesaj:'Kişisel hesap bulunamadı.'})});
+ await opened.w.dmTeacherPortalParkur();
+ assert.equal(error,'Kişisel hesap bulunamadı.');
+ assert.equal(opened.session.getItem('dm_tp_session')!==null,true);
+ assert.equal(opened.session.getItem('dm_session_handoff_v1'),null);
+ assert.equal(native.getItem('ing_token'),'other-personal-token');
+ assert(!opened.calls.some(c=>c[0]==='assign'&&c[1]==='./'));
 });
