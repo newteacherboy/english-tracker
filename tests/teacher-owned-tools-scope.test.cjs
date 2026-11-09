@@ -62,3 +62,23 @@ test('Artı-Eksi, Ödev and Duyuru use exact owned 5/A roster and class ID',asyn
  assert(requests.some(x=>String(x.url).includes('/teacher-classes')&&x.headers['x-diji-token']===teacherToken));
  dom.window.close();
 });
+
+test('Sınıflarım and Sınıf Raporları live in Quick Actions, not All Tools',()=>{
+ const a=workspace.indexOf("const actions=board.querySelector('.dm-midnight-actions')"),b=workspace.indexOf("const extra=board.querySelector('.dm-midnight-extra')",a);
+ assert(a>=0&&b>a);
+ const quick=workspace.slice(a,b);
+ assert.match(quick,/add\(actions,'Sınıflarım'/);
+ assert.match(quick,/add\(actions,'Sınıf Raporları'/);
+ const allTools=workspace.slice(b,workspace.indexOf("if(sessionStorage.getItem('ing_ogr_yonetici')",b));
+ assert.doesNotMatch(allTools,/add\(extra,'Sınıflarım'/);
+ assert.doesNotMatch(allTools,/add\(extra,'Sınıf Raporları'/);
+ assert.match(quick,/dmTeacherReportsOpen/);
+});
+test('phone layout keeps teacher home and new actions visible without main scrolling',()=>{
+ const css=fs.readFileSync('ingilizce/teacher-workspace.css','utf8');
+ assert.match(css,/@media \(max-width:640px\)/);
+ assert.match(css,/\.dm-midnight-actions\{\s*grid-template-columns:repeat\(3,minmax\(0,1fr\)\)/);
+ assert.match(css,/\.dm-midnight-shortcuts\{\s*grid-template-columns:repeat\(4,minmax\(0,1fr\)\)/);
+ assert.match(css,/overflow:hidden!important/);
+ assert.match(workspace,/teacher-workspace\.css\?v=20261110-quick-actions-fit/);
+});
