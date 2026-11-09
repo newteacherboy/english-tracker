@@ -600,7 +600,7 @@
   if(action==='individual'){individualReport();return;}
   if(action==='games'||action==='library'){teacherDashboardHide();teacherDestination(action==='games'?'games':'study');return;}
   if(action==='oral'){void openTeacherOral();return;}
-  if(action==='announcements'){teacherAnnouncement();return;}
+  if(action==='announcements'){void window.dmTeacherOwnedTools?.legacyAnnouncement?.();return;}
   if(['performance','homework','reports','weak','parent','exams'].includes(action)){
    const tool=action==='performance'?'performance':action==='homework'?'legacyHomework':'reports';
    const launch=async()=>{if(typeof window.dmTeacherOwnedTools?.[tool]!=='function')throw Error('Sınıf araçları henüz yüklenmedi. Sayfayı yenile.');await window.dmTeacherOwnedTools[tool]();};
