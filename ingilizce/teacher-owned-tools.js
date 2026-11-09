@@ -139,11 +139,10 @@
    branchSelect.replaceChildren(...choices.map(c=>new Option(c.branch+' şubesi'+(c.name?' · '+c.name:''),c.branch)));
    const count=choices.find(c=>c.branch===branchSelect.value)?.students?.length??choices[0]?.students?.length??0;
    const label=document.getElementById('odHedefSayi');if(label)label.textContent='👥 Bu ödev '+count+' öğrenciye gidecek';
-   // Keep the original lesson-unit selector responsive to grade changes.
-   document.getElementById('odUniteler')?.replaceChildren();
   };
   // Avoid legacy handler reintroducing non-owned branches from globalDataCache.
-  gradeSelect.onchange=()=>{fillBranch();};
+  const originalGradeChange=gradeSelect.onchange;
+  gradeSelect.onchange=()=>{originalGradeChange?.call(gradeSelect);fillBranch();};
   branchSelect.onchange=()=>{const current=legacyClassFromForm();document.getElementById('odHedefSayi').textContent='👥 Bu ödev '+(current?.students?.length||0)+' öğrenciye gidecek';};
   fillBranch();
  }
