@@ -138,3 +138,29 @@
 .dm-native-duel-bot .dm-native-track i{background:#efad43}
 .dm-native-note{grid-column:1/-1;text-align:center;color:#5b6681;font-size:9px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 @media(max-width:400px){.dm-native-duel-hud{top:calc(env(safe-area-inset-top) + 40px);padding:6px;gap:4px}.dm-native-side{font-size:10px}}
+
+
+/* Badge-sheet portraits: one 256px cell per rival, no surrounding characters. */
+.dm-virtual-papi-img{
+  display:block;
+  width:var(--papi-size,44px);
+  height:var(--papi-size,44px);
+  min-width:0;
+  max-width:100%;
+  max-height:100%;
+  flex-shrink:0;
+  aspect-ratio:1/1;
+  border-radius:50%;
+  background-repeat:no-repeat;
+  background-color:transparent;
+  image-rendering:auto;
+}
+.dm-native-duel-bot .dm-virtual-papi-img{
+  position:static;
+  margin:0 auto 2px;
+  width:28px;
+  height:28px;
+  max-width:28px;
+  max-height:28px;
+}
+.dm-virtual-rivals .dm-virtual-papi-img{width:55px;height:55px;max-width:55px;max-height:55px}
