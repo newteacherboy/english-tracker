@@ -31,6 +31,7 @@
  .dm-owned-status{min-height:20px;color:#267462!important;font-size:12px!important}.dm-owned-switches{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin:10px 0}
  .dm-owned-switches button{background:#ebf7fc;color:#145b7b;border:1px solid #bcd8e7;border-radius:11px;padding:10px}
  .dm-owned-panel ul{padding-left:21px}.dm-owned-panel li{margin-bottom:6px}
+ .dm-owned-switches{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px!important}.dm-owned-switches button{display:flex;flex-direction:column;align-items:flex-start;gap:5px;text-align:left;min-height:92px;padding:14px!important;border-radius:16px!important;background:#f2f9fc!important;color:#174e68!important;border:1px solid #c7e2ee!important;font-weight:850!important}.dm-owned-switches button[aria-pressed=true]{background:#dff7ef!important;border:2px solid #20a488!important}.dm-owned-switches button strong{font-size:14px}.dm-owned-switches button small{font-size:11px;font-weight:550;color:#567485}.dm-owned-report-output{background:#fafdfd;border:1px solid #d6e7e8;padding:15px;border-radius:15px;min-height:100px}.dm-owned-ann-options{display:grid;grid-template-columns:1fr 1fr;gap:10px}@media(max-width:410px){.dm-owned-ann-options{grid-template-columns:1fr}}
  @media(prefers-reduced-motion:reduce){.dm-owned-panel *{animation:none!important}}
  `;
  document.head.append(style);
@@ -73,9 +74,11 @@
   await bootstrap('📢 Sınıfına Duyuru Yap','Duyurular yalnızca seçtiğin kendi sınıfına veya içindeki bir öğrenciye gönderilir.',(c,host)=>{
    host.innerHTML='<form data-owned-form><label>Alıcı<select name="studentId"><option value="">Tüm '+esc(c.classNo+'-'+c.branch)+' sınıfı</option>'+roster(c).map(p=>'<option value="'+esc(p.id)+'">'+esc(p.fullName||p.username)+'</option>').join('')+'</select></label>'+
     '<label>Başlık<input name="title" maxlength="120" minlength="3" required></label><label>Duyuru<textarea name="message" maxlength="2000" minlength="3" rows="5" required></textarea></label>'+
+    '<div class="dm-owned-ann-options"><label>🎨 Duyuru rengi<select name="theme"><option value="yesil">🟢 Yeşil</option><option value="mavi">🔵 Mavi</option><option value="turuncu">🟠 Turuncu</option><option value="kirmizi">🔴 Kırmızı</option><option value="mor">🟣 Mor</option></select></label><label>🔁 Gösterim sıklığı<select name="displayLimit"><option value="1">Bir kez göster</option><option value="3">3 kez göster</option><option value="5">5 kez göster</option><option value="0">Sınırsız</option></select></label></div>'+
+    '<label>🖼️ Görsel bağlantısı (isteğe bağlı)<input name="imageLink" type="url" placeholder="https://..."></label>'+
     '<button class="dm-owned-action" type="submit">Duyuru Gönder</button></form>';
    const form=host.querySelector('form');form.onsubmit=async e=>{e.preventDefault();const b=form.querySelector('[type=submit]');b.disabled=true;
-    try{const d=await call('teacherPortalAnnouncement',{classId:c.id,studentId:form.elements.studentId.value,title:form.elements.title.value,message:form.elements.message.value});
+    try{const d=await call('teacherPortalAnnouncement',{classId:c.id,studentId:form.elements.studentId.value,title:form.elements.title.value,message:form.elements.message.value,theme:form.elements.theme.value,displayLimit:Number(form.elements.displayLimit.value),imageLink:form.elements.imageLink.value});
      status('Duyuru '+d.studentCount+' öğrenciye gönderildi.');form.reset();
     }catch(error){status(error.message);}finally{b.disabled=false;}
    };
@@ -100,8 +103,8 @@
  }
  async function openReports(){
   await bootstrap('📊 Raporlar','Sadece seçili sınıf ve şubedeki öğrencilerin raporlarını görüntüle.',(c,host)=>{
-   host.innerHTML='<div class="dm-owned-switches">'+[['performance','Ders İçi Performans'],['weak','Sınıfın Zayıf Noktaları'],['parent','Haftalık Veli Özetleri'],['exam','Seviye Sınavı Sonuçları']].map(([k,v])=>'<button type="button" data-report="'+k+'">'+esc(v)+'</button>').join('')+'</div><div data-report-output><p>Görmek istediğin raporu seç.</p></div>';
-   host.querySelectorAll('[data-report]').forEach(btn=>btn.onclick=async()=>{const output=host.querySelector('[data-report-output]');output.textContent='Rapor yükleniyor…';
+   host.innerHTML='<div class="dm-owned-switches">'+[['performance','📊','Ders İçi Performans','Öğrenci puanları'],['weak','🎯','Sınıfın Zayıf Noktaları','Gelişim alanları'],['parent','👨‍👩‍👧','Haftalık Veli Özetleri','Haftalık durum'],['exam','📝','Seviye Sınavı Sonuçları','Sınav başarıları']].map(([k,emoji,v,sub])=>'<button type="button" data-report="'+k+'" aria-pressed="false"><span aria-hidden="true">'+emoji+'</span><strong>'+esc(v)+'</strong><small>'+esc(sub)+'</small></button>').join('')+'</div><div class="dm-owned-report-output" data-report-output><p>Görmek istediğin raporu seç.</p></div>';
+   host.querySelectorAll('[data-report]').forEach(btn=>btn.onclick=async()=>{host.querySelectorAll('[data-report]').forEach(b=>b.setAttribute('aria-pressed',String(b===btn)));const output=host.querySelector('[data-report-output]');output.textContent='Rapor yükleniyor…';
     try{const data=await call('teacherPortalClassAnalytics',{classId:c.id});
      if(btn.dataset.report==='weak'){
       const wrong=data.summary?.wrongByGame||[];output.innerHTML='<h3>Sınıfın Zayıf Noktaları</h3>'+(wrong.length?'<ul>'+wrong.map(x=>'<li>'+esc(x[0])+': '+Number(x[1])+' yanlış</li>').join('')+'</ul>':'<p>Bu hafta yeterli yanlış cevap verisi bulunmuyor.</p>');
@@ -154,7 +157,11 @@
   legacyClassList=await ownClasses();
   if(!legacyClassList.length){window.yoToast?.('Önce Sınıflarım bölümünden sınıf oluştur.');return;}
   sessionStorage.setItem('ing_ogr_token',teacherToken);
-  if(typeof window.odevEkraniAc!=='function')throw Error('Ödev Ver ekranı yüklenmedi.');
+  if(typeof window.odevEkraniAc!=='function'||!document.getElementById('odModal')){
+   // The standalone teacher portal does not ship the classic coach modal.
+   // Always open a functional owned-class homework form on the first click.
+   return openHomework();
+  }
   await window.odevEkraniAc();
   const nativeModal=document.getElementById('odModal');
   if(!nativeModal)throw Error('Önceki Ödev Ver ekranı bulunamadı.');
@@ -166,6 +173,7 @@
   nativeModal.style.zIndex='2147483646';
   nativeModal.style.visibility='visible';
   nativeModal.style.display='flex';
+  nativeModal.removeAttribute('hidden');
   setLegacyHomeworkClasses();
   // Keep the original modal at the front even when another dashboard redraw
   // happens during the async class lookup.
@@ -219,13 +227,14 @@
   const classes=await ownClasses();
   if(!classes.length){window.yoToast?.('Önce Sınıflarım bölümünden sınıf oluştur.');return;}
   const modal=document.getElementById('duyuruYonetimModal');
-  if(!modal)throw Error('Önceki Duyuru Yönetimi ekranı yüklenemedi.');
+  if(!modal)return openAnnouncement();
   const currentToken=token();sessionStorage.setItem('ing_ogr_token',currentToken);
   if(typeof window.ogretmenMenuDuyuruAc==='function')window.ogretmenMenuDuyuruAc();
   else{document.getElementById('ogretmenMenuModal')?.style.setProperty('display','none');modal.style.display='flex';}
   modal.classList.add('dm-own-class-announcements');
-  modal.style.zIndex='2147483645';
-  modal.style.display='flex';
+  if(modal.parentElement!==document.body)document.body.append(modal);
+  modal.style.position='fixed';modal.style.inset='0';modal.style.zIndex='2147483646';
+  modal.style.visibility='visible';modal.style.display='flex';
   const targetArea=document.getElementById('duyuruHedefSecimAlani');
   const originalEvery=document.getElementById('duyuruHerkesCb')?.closest('label');
   if(originalEvery)originalEvery.style.display='none';

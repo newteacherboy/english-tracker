@@ -2,7 +2,7 @@
 (()=>{'use strict';let root=null,questionView=null,pupils=[],question=null,busy=false,turn=0,requestId=null,accountToken='',timerId=null,deadline=0,expired=false,questionDismissed=false;
 const token=()=>sessionStorage.getItem('ing_ogr_token')||'',esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 async function api(action,data={}){const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),15000);try{const r=await fetch(String(apiURL).replace(/\/diji-api(?:\?.*)?$/,'/teacher-oral'),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action,t:accountToken,...data}),signal:controller.signal}),d=await r.json();if(!r.ok||!d.ok)throw Error(d.mesaj||'İşlem tamamlanamadı.');return d;}catch(e){if(e.name==='AbortError')throw Error('Bağlantı gecikti. Aynı işlemi güvenle tekrar deneyebilirsiniz.');throw e;}finally{clearTimeout(timer);}}
-const el=q=>q==='[data-question-screen]'?questionView:(root?.querySelector(q)||questionView?.querySelector(q)),message=s=>{[root,questionView].forEach(host=>host?.querySelectorAll('[data-status]').forEach(node=>node.textContent=s));};
+const el=q=>q==='[data-question-screen]'?(questionView||root?.querySelector(q)):(root?.querySelector(q)||questionView?.querySelector(q)),message=s=>{[root,questionView].forEach(host=>host?.querySelectorAll('[data-status]').forEach(node=>node.textContent=s));};
 function questionScreen(open){
  const view=questionView||el('[data-question-screen]');if(!view)return;
  if(open&&!questionView){questionView=view;view.id='dmTeacherOralQuestion';document.body.append(view);}
