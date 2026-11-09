@@ -29,7 +29,7 @@
  if(params.get('ogretmen')!=='1'){
   const button=document.createElement('button');
   button.id='dmPersonalToTeacher';button.type='button';button.textContent='👩‍🏫 Öğretmen Paneline Geç';
-  button.style.cssText='position:fixed;right:14px;bottom:calc(env(safe-area-inset-bottom, 0px) + 82px);z-index:2147483000;border:0;border-radius:16px;padding:12px 16px;background:#2563eb;color:#fff;font:700 13px system-ui;box-shadow:0 5px 18px #162b5450;cursor:pointer;display:none;max-width:calc(100vw - 28px)';
+  button.style.cssText='position:static;flex:0 1 auto;min-width:0;max-width:142px;min-height:42px;border:1px solid #93b8ee;border-radius:12px;padding:7px 9px;background:#2563eb;color:#fff;font:800 11px/1.2 system-ui;box-shadow:0 2px 5px #162b5424;cursor:pointer;display:none;white-space:normal;text-align:center';
   const api=async(islem,t,data={})=>{
    const response=await fetch('https://nxfqlutulxqzqgwewssd.supabase.co/functions/v1/diji-api',{method:'POST',headers:{'Content-Type':'application/json'},cache:'no-store',body:JSON.stringify({islem,t,...data})});
    const result=await response.json();
@@ -55,7 +55,25 @@
     activate({teacherToken:entry.token,name:entry.name,participant,playAsSelf:true,route:'home'});
    }catch(error){alert(error.message||'Öğretmen paneline geçilemedi.');button.disabled=false;button.textContent='👩‍🏫 Öğretmen Paneline Geç';}
   };
-  const mount=()=>{document.body.append(button);void refresh();};
+  const placeBesideRoute=()=>{
+    const route=document.querySelector('#tab-dunya .rt-medal-unit [data-rt="switch-route"]');
+    if(!route||!route.parentElement)return;
+    if(button.parentElement!==route.parentElement||button.nextElementSibling!==route)route.before(button);
+   };
+   const mount=()=>{
+    // The route selector is rebuilt on grade/path changes: stay in the same toolbar.
+    document.body.append(button);
+    placeBesideRoute();
+    const root=document.getElementById('tab-dunya');
+    if(root){
+     let queued=false;
+     new MutationObserver(()=>{
+      if(queued)return;queued=true;
+      requestAnimationFrame(()=>{queued=false;placeBesideRoute();});
+     }).observe(root,{subtree:true,childList:true});
+    }
+    void refresh();
+   };
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mount,{once:true});else mount();
   document.addEventListener('dm:login',()=>{checked='';void refresh();});
   window.addEventListener('focus',()=>{checked='';void refresh();});
