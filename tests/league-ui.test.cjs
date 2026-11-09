@@ -21,7 +21,7 @@ test('weekly bots use Papi art and visible disclosure without changing actual pl
  assert.equal(preview.top.some(p=>p.is_virtual),false);
  assert.equal(preview.me.is_virtual,undefined);
  assert.match(f.html(),/Sanal Rakip/);
- assert.match(f.html(),/friends-assets\/papi-fencer.webp/);
+ assert.match(f.html(),/parkur-badges\/v2\/school-03.webp/);
 });
 
 test('virtual rivals do not displace qualified real players above 200 XP',async()=>{
@@ -32,20 +32,15 @@ test('virtual rivals do not displace qualified real players above 200 XP',async(
  assert.equal(preview.me.displayRank,2);
  assert.match(f.html(),/Sanal Rakip/);
 });
-test('Papi bots have unique official mascot poses',async()=>{
+test('virtual league rivals use ten different parkur badge characters',()=>{
  const f=fixture();
- const html1=f.context.window.dmLeagueUI.virtualAvatar({id:'virtual-1',name:'Papi Şimşek'});
- const html2=f.context.window.dmLeagueUI.virtualAvatar({id:'virtual-2',name:'Papi Roket'});
- assert.notEqual(html1,html2);
- assert.match(html2,/discovery-assets\/papi-merhaba.webp/);
-});
-
-test('all ten bot portraits use individual images, never sprite sheets',()=>{
- const f=fixture();
- const avatars=Array.from({length:10},(_,i)=>f.context.window.dmLeagueUI.virtualAvatar({id:'virtual-'+(i+1),name:'Papi'}));
- const images=avatars.map(html=>html.match(/src="([^"]+)"/)?.[1]);
- assert.equal(new Set(images).size,10);
- for(const image of images){
-  assert(!/papi-growth|papi-practice-flight|papi-atlas/.test(image),'Sprite sheet must not be used: '+image);
- }
+ const cards=Array.from({length:10},(_,i)=>f.context.window.dmLeagueUI.virtualAvatar({id:'virtual-'+(i+1),name:'Papi '+(i+1)}));
+ assert.equal(new Set(cards).size,10);
+ assert(cards.every(html=>html.includes('parkur-badges/v2/')));
+ assert(cards.every(html=>html.includes('background-size:')&&html.includes('background-position:')));
+ assert(cards.every(html=>html.includes('class="dm-virtual-papi-img"')));
+ const badgeCells=cards.map(html=>html.match(/background-image:url\(([^)]+)\);background-size:([^;]+);background-position:([^"]+)/)?.[0]);
+ assert(badgeCells.every(Boolean));
+ assert.equal(new Set(badgeCells).size,10);
+ assert.match(cards[9],/school-03.webp/); // Fırtına displays exactly one cell
 });
