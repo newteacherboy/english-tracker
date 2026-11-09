@@ -18,7 +18,7 @@ async function api(op,data={}){const r=await fetch(apiURL,{method:'POST',headers
 function paintBadge(){for(const b of document.querySelectorAll('[data-profile="teacher"]')){let badge=b.querySelector('.dm-teacher-count');if(!badge){badge=document.createElement('span');badge.className='dm-teacher-count';b.append(badge);}badge.textContent=String(total);badge.hidden=total===0;b.setAttribute('aria-label','Öğretmen Paneli'+(total?' · '+total+' bildirim':''));}}
 async function refresh(force=false){if(!token()||reading||document.hidden||!force&&Date.now()-lastRead<60000)return;reading=true;try{const d=await api('teacherNotificationSummary');total=d.total||0;registrations=d.registrations||0;messages=d.messages||0;lastRead=Date.now();paintBadge();const board=$('dmTeacherDesignV2');if(board){const badge=board.querySelector('[data-v2-chat-count]');if(badge){badge.textContent=String(messages);badge.hidden=!messages;}}}catch(e){console.warn('[Öğretmen bildirimleri]',e.message);}finally{reading=false;}}
 function visible(el){return !!el&&el.getClientRects().length>0&&(el.checkVisibility?el.checkVisibility({checkOpacity:true,checkVisibilityCSS:true}):getComputedStyle(el).visibility!=='hidden');}
-const childSelector='.rubric-modal,.cog-perde,.sm-overlay,.dm-member-overlay,.dm-account-overlay,.dm-perde,.yo-modal,.yo-perde,#yoModalPerde,#omSifreModal,#odModal,.game-modal-overlay,.seviye-harita-overlay,#rallyGame,#meteorGame,#wordWheel,#papiCards,#dmTeacherOral,#mlThemeList,#dmStoryLesson,.gso-overlay';
+const childSelector='.rubric-modal,.cog-perde,.sm-overlay,.dm-member-overlay,.dm-account-overlay,.dm-perde,.yo-modal,.yo-perde,#yoModalPerde,#omSifreModal,#odModal,#duyuruYonetimModal,.game-modal-overlay,.seviye-harita-overlay,#rallyGame,#meteorGame,#wordWheel,#papiCards,#dmTeacherOral,#mlThemeList,#dmStoryLesson,.gso-overlay';
 function children(){return [...document.querySelectorAll(childSelector)].filter(x=>x.id!=='ogretmenMenuModal'&&x.id!=='sifreModal'&&(visible(x)||x.closest('#ogretmenMenuModal')&&['flex','block','grid'].includes(x.style.display)));}
 const original=window.ogretmenPaneliAc;window.ogretmenPaneliAc=function(){active=true;const r=original?.apply(this,arguments);refresh(true);return r;};
 document.addEventListener('click',e=>{
@@ -72,9 +72,9 @@ function decorateWorkspace(menu){
   }
   cardIndex++;
   const show=!query||b.dataset.dmTeacherTitle.toLocaleLowerCase('tr').includes(query);
-  b.hidden=!show||b.dataset.dmHomeRelocated==='1';if(show&&!b.hidden)count++;
+  const shouldHide=!show||b.dataset.dmHomeRelocated==='1';if(b.hidden!==shouldHide)b.hidden=shouldHide;if(show&&!b.hidden)count++;
  }
- hero.querySelector('.dm-teacher-no-results').hidden=count>0;
+ const empty=hero.querySelector('.dm-teacher-no-results');if(empty.hidden===(count>0))empty.hidden=!(count>0);
 }
 
 function openNoticeMailCenter(){
@@ -427,7 +427,7 @@ function installWorkspaceTools(menu){
  if(!$('dmPlacementTeacherButton')){const b=document.createElement('button');b.id='dmPlacementTeacherButton';b.className='ogretmen-menu-btn';b.textContent='📋 Seviye sınavı sonuçları ve örnekler';b.onclick=teacherPlacements;menu.querySelector('.rubric-content').append(b);}
 
  if(!$('dmNoticeMailCenterButton')){const b=document.createElement('button');b.id='dmNoticeMailCenterButton';b.className='ogretmen-menu-btn';b.textContent='📣 Duyuru ve Mail Yönetim Merkezi';b.onclick=openNoticeMailCenter;menu.querySelector('.rubric-content').append(b);}
- if(!$('dmTeacherOralButton')){const b=document.createElement('button');b.id='dmTeacherOralButton';b.className='ogretmen-menu-btn';b.textContent='🎙️ Sözlü Yap · Kelime sor, 100 XP kazandır';b.onclick=()=>window.dmTeacherOral?.open();menu.querySelector('.rubric-content').append(b);}
+ if(!$('dmTeacherOralButton')){const b=document.createElement('button');b.id='dmTeacherOralButton';b.className='ogretmen-menu-btn';b.textContent='🎙️ Sözlü Yap · Kelime sor, ±20 XP değerlendir';b.onclick=()=>window.dmTeacherOral?.open();menu.querySelector('.rubric-content').append(b);}
  const content=menu.querySelector('.rubric-content');
  const firstTool=content.querySelector('.ogretmen-menu-btn');
  for(const [title,emoji,fn] of dmTeacherPremiumGames){
@@ -445,7 +445,7 @@ function maintain(){
  // Move child dialogs out of hidden legacy containers and above every workspace layer.
  if(!active)return;
  if(menu.parentElement!==document.body)document.body.append(menu);menu.classList.add('dm-teacher-open');installWorkspaceTools(menu);const dialogs=children();menu.classList.toggle('dm-teacher-obscured',dialogs.length>0);const display=window.dmTeacherPortalMode?'none':dialogs.length?'none':'flex';if(menu.style.display!==display)menu.style.display=display;
- for(const el of dialogs){if(el.parentElement!==document.body)document.body.append(el);if(!el.classList.contains('dm-teacher-child'))el.classList.add('dm-teacher-child');if(el.style.getPropertyValue('z-index')!=='2147483620')el.style.setProperty('z-index','2147483620','important');}
+ for(const el of dialogs){if(el.parentElement!==document.body)document.body.append(el);if(!el.classList.contains('dm-teacher-child'))el.classList.add('dm-teacher-child');const front=el.id==='odModal'||el.id==='duyuruYonetimModal';const layer=front?'2147483646':'2147483620';if(el.style.getPropertyValue('z-index')!==layer||el.style.getPropertyPriority('z-index')!=='important')el.style.setProperty('z-index',layer,'important');}
 
 
 
