@@ -104,3 +104,25 @@ test('owner approval emails the teacher once with verification and code-login in
  assert.equal(again.status,200);
  assert.equal(f.calls.filter(x=>x.mail).length,1,'repeated approval is idempotent');
 });
+
+test('teacher Parkur switch issues a normal learner session for the teacher-linked student only',async()=>{
+ const f=await fixture();
+ const response=await f.run('teacherPortalPersonalSession',{studentId:'bob',username:'Alice'},f.teacher);
+ assert.equal(response.status,200);
+ assert.equal(response.data.name,'TeacherOne');
+ assert.equal(response.data.role,'ogrenci');
+ assert.equal(f.calls.find(x=>x.session)?.session[0],'student');
+ assert.equal(f.calls.find(x=>x.session)?.session[1],'personal');
+ assert.equal(f.calls.find(x=>x.session)?.session[3],undefined,'personal token has no teacher preview grant');
+
+ const forged=await f.run('teacherPortalPersonalSession',{studentId:'personal'},{...f.teacher,teacher_id:'other'});
+ assert.equal(forged.status,403);
+ f.tables.teacher_portal_access[0].state='revoked';
+ assert.equal((await f.run('teacherPortalPersonalSession',{},f.teacher)).status,403);
+ f.tables.teacher_portal_access[0].state='approved';
+ f.tables.students[0].email_verified_at=null;
+ assert.equal((await f.run('teacherPortalPersonalSession',{},f.teacher)).status,403);
+ f.tables.students[0].email_verified_at='2026-10-24';
+ f.tables.teacher_portal_access[0].student_id=null;
+ assert.equal((await f.run('teacherPortalPersonalSession',{},f.teacher)).status,403);
+});
