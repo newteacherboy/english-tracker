@@ -365,3 +365,109 @@ html[data-dm-theme="day"].dm-teacher-portal body.tp-home-active #tpTeacherDock>b
 .dm-midnight-home .dm-midnight-parkur-switch span:first-child{font-size:23px;line-height:1}
 .dm-midnight-home .dm-midnight-parkur-switch:focus-visible{outline:3px solid #1765c5;outline-offset:3px}
 .dm-midnight-home .dm-midnight-parkur-switch:active{transform:scale(.985)}
+
+/* Teacher home: all dashboard actions fit on a normal phone viewport,
+   without nested scrolling, while leaving the app's fixed bottom dock visible. */
+@media (max-width:640px){
+ html.dm-teacher-portal body.tp-home-active #tpTeacherHome.is-visible:has(#dmTeacherDesignV2.dm-midnight-home){
+   overflow:hidden!important;
+ }
+ #tpTeacherHome .tp-home-inner:has(#dmTeacherDesignV2.dm-midnight-home){
+   height:100%;min-height:0!important;max-height:100%;
+   padding:calc(3px + env(safe-area-inset-top,0px)) 9px 5px!important;
+   overflow:hidden;
+ }
+ #tpTeacherHome #dmTeacherDesignV2.dm-midnight-home{
+   height:100%;min-height:0!important;max-height:100%;
+   display:flex!important;flex-direction:column;
+   gap:clamp(3px,.7dvh,7px)!important;
+   overflow:hidden!important;
+ }
+ #tpTeacherHome .dm-midnight-brand{padding:0 2px!important;font-size:clamp(12px,3.3vw,16px);min-height:24px}
+ #tpTeacherHome .dm-midnight-brand>.dm-theme-toggle{width:32px;height:32px;min-width:32px}
+ #tpTeacherHome .dm-midnight-hero{
+   padding:5px 9px!important;grid-template-columns:65px minmax(0,1fr);
+   gap:8px;min-height:74px;flex:0 0 auto;
+ }
+ #tpTeacherHome .dm-midnight-hero img{width:64px;height:68px;transform:none}
+ #tpTeacherHome .dm-midnight-hero h1{font-size:clamp(13px,3.5vw,16px)}
+ #tpTeacherHome .dm-midnight-hero p{font-size:10.5px;margin:1px 0 4px}
+ #tpTeacherHome .dm-midnight-stats{gap:5px}
+ #tpTeacherHome .dm-midnight-stats button{
+   min-height:29px;padding:3px!important;border-radius:9px!important;
+   gap:4px;font-size:10px
+ }
+ #tpTeacherHome .dm-midnight-stats b{font-size:14px}
+ #tpTeacherHome .dm-midnight-stats i{font-size:16px}
+ #tpTeacherHome .dm-midnight-parkur-switch{
+   min-height:31px;margin:2px 0!important;padding:3px 10px!important;
+   border-width:1px;border-radius:10px;font-size:12px!important;
+ }
+ #tpTeacherHome .dm-midnight-parkur-switch span:first-child,
+ #tpTeacherHome .dm-midnight-parkur-switch span:last-child{font-size:16px}
+ #tpTeacherHome .dm-midnight-section{flex:0 0 auto;min-height:0}
+ #tpTeacherHome .dm-midnight-section h2{
+   margin:0 0 4px 3px;font-size:clamp(13px,3.6vw,16px)!important;
+   line-height:1.1
+ }
+ #tpTeacherHome .dm-midnight-shortcuts{
+   grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:5px
+ }
+ #tpTeacherHome .dm-midnight-shortcuts button{
+   min-height:clamp(46px,7dvh,56px)!important;
+   padding:3px 2px!important;gap:2px!important;
+   font-size:clamp(9px,2.7vw,11px)!important;line-height:1.06;
+ }
+ #tpTeacherHome .dm-midnight-shortcuts i{font-size:clamp(18px,5vw,23px);line-height:1}
+ #tpTeacherHome .dm-midnight-actions{
+   grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:5px;
+ }
+ #tpTeacherHome .dm-midnight-actions button{
+   display:flex;flex-direction:column;align-items:center;justify-content:center;
+   min-height:clamp(45px,6.8dvh,56px)!important;
+   padding:3px 2px!important;gap:3px!important;
+   font-size:clamp(9px,2.65vw,11px)!important;
+   line-height:1.08!important;text-align:center!important;
+ }
+ #tpTeacherHome .dm-midnight-actions i{
+   flex:none!important;align-self:center!important;
+   padding:0!important;border:0!important;
+   font-size:clamp(17px,4.8vw,24px)!important;
+   line-height:1!important;
+ }
+ #tpTeacherHome .dm-midnight-home strong{overflow-wrap:anywhere;text-wrap:balance}
+ #tpTeacherHome .dm-midnight-tools{flex:0 0 auto;min-height:0}
+ #tpTeacherHome .dm-midnight-tools summary{
+   min-height:30px!important;margin:0!important;
+   font-size:12px!important;border-width:1px!important;
+ }
+ #tpTeacherHome .dm-midnight-extra{
+   grid-template-columns:repeat(3,minmax(0,1fr));gap:5px;
+   margin-top:5px
+ }
+ #tpTeacherHome .dm-midnight-extra button{min-height:37px;padding:5px;font-size:10.5px}
+ /* Opening "Tüm araçlar" is a deliberate secondary view rather than a long page. */
+ #tpTeacherHome .dm-midnight-tools[open]{
+   overflow-y:auto;overscroll-behavior:contain;flex:1 1 auto
+ }
+}
+/* Short phones get a second tightening pass. On exceptionally tiny viewports
+   preserve reachability rather than silently clipping interactive controls. */
+@media (max-width:640px) and (max-height:690px){
+ #tpTeacherHome #dmTeacherDesignV2.dm-midnight-home{gap:2px!important}
+ #tpTeacherHome .dm-midnight-brand{min-height:20px;font-size:12px}
+ #tpTeacherHome .dm-midnight-hero{min-height:61px;padding:3px 6px!important}
+ #tpTeacherHome .dm-midnight-hero img{height:56px}
+ #tpTeacherHome .dm-midnight-hero p{display:none}
+ #tpTeacherHome .dm-midnight-parkur-switch{min-height:27px!important;padding:1px 9px!important}
+ #tpTeacherHome .dm-midnight-section h2{margin-bottom:2px;font-size:12px!important}
+ #tpTeacherHome .dm-midnight-shortcuts button{min-height:41px!important}
+ #tpTeacherHome .dm-midnight-actions button{min-height:41px!important}
+ #tpTeacherHome .dm-midnight-actions i{font-size:18px!important}
+ #tpTeacherHome .dm-midnight-tools summary{min-height:27px!important}
+}
+@media (max-width:640px) and (max-height:525px){
+ html.dm-teacher-portal body.tp-home-active #tpTeacherHome.is-visible:has(#dmTeacherDesignV2.dm-midnight-home){overflow-y:auto!important}
+ #tpTeacherHome .tp-home-inner:has(#dmTeacherDesignV2.dm-midnight-home),
+ #tpTeacherHome #dmTeacherDesignV2.dm-midnight-home{height:auto;max-height:none;overflow:visible!important}
+}
