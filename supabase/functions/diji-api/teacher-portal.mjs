@@ -115,7 +115,25 @@ export function teacherPortalAPI(d){
   if(op==='teacherPortalList'||op==='teacherPortalDecide'||op==='teacherPortalIssueCode'){
    if(!ownerTeacher(a))return fail('Bu bölüm yalnızca teacher hesabına aittir.',403);
    if(op==='teacherPortalDecide'){
-    const r=await db.rpc('dm_teacher_portal_decide',{owner_id:a.teacher_id,grant_id:String(b.id||''),decision:String(b.decision||'')});if(r.error)return fail('Karar kaydedilemedi.',409);const issuedCode=await ensureCode(r.data.studentId,{returnCode:true});return json({ok:true,...(issuedCode?{issuedCode,mailQueued:true}:{})});
+    const before=await db.from('teacher_portal_access').select('id,state').eq('id',String(b.id||'')).maybeSingle();
+    if(before.error)return fail('Başvuru kontrol edilemedi.',503);
+    const decision=String(b.decision||'');
+    const r=await db.rpc('dm_teacher_portal_decide',{owner_id:a.teacher_id,grant_id:String(b.id||''),decision});if(r.error)return fail('Karar kaydedilemedi.',409);
+    const issuedCode=decision==='approved'?await ensureCode(r.data.studentId,{returnCode:true}):null;
+    let approvalMailQueued=false;
+    if(decision==='approved'&&before.data?.state!=='approved'){
+     const member=await db.from('students').select('email,username,email_verified_at').eq('id',r.data.studentId).maybeSingle();
+     if(member.error)return json({ok:true,mailQueued:false,mesaj:'Öğretmen onaylandı ancak bilgilendirme e-postası hazırlanamadı.'});
+     const address=String(member.data?.email||'').trim();
+     if(/^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$/.test(address)){
+      try{
+       const content='Öğretmen onayınız tamamlandı! Diji-Medu öğretmen paneliniz artık yönetici tarafından onaylandı. Kayıt sırasında güvenle sakladığınız 6 haneli öğretmen kodunu Öğretmen Girişi ekranında kullanabilirsiniz. Öğretmen araçlarını kullanmak için kişisel e-posta adresinizi de doğrulamış olmanız gerekir. Kodunuzu unuttuysanız Öğretmen Kodumu Unuttum seçeneğiyle yenileyebilirsiniz. Öğrencilerin size bağlanma kodu bundan farklıdır.';
+       await queue({student_id:r.data.studentId,to_email:address,kind:'kayit',subject:'Diji-Medu · Öğretmen onayınız tamamlandı',html:mailShell('Öğretmen onayınız tamamlandı!',`<p>${escape(content)}</p><p><a href="${portal}?ogretmenGiris=1">Öğretmen Girişi</a></p>`),text_body:content+' '+portal+'?ogretmenGiris=1'});
+       approvalMailQueued=true;
+      }catch(err){console.error('teacher approval notification queue',err);}
+     }
+    }
+    return json({ok:true,...(issuedCode?{issuedCode}:{}),mailQueued:!!issuedCode||approvalMailQueued,approvalMailQueued});
    }
    if(op==='teacherPortalIssueCode'){
     const r=await db.from('teacher_portal_access').select('*,students!student_id(email_verified_at)').eq('id',String(b.id||'')).maybeSingle();
