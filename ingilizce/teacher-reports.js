@@ -1,5 +1,5 @@
 /* Öğretmen paneli: "📈 Sınıf Raporları" (çoklu sınıfa bağlı).
-   Özet (önceki döneme göre), sınıfın zorlandığı kelimeler, öğrenci tablosu, hiç çalışmayanlar.
+   Oyun, Ders Çalış, Okul Yolum ve Öğrenme Yolu ilk cevap doğruluğu, zor konular ve öğrenci tablosu.
    Plan: Free son 7 gün (sunucu zorlar) · Pro 30 gün + PDF · Premium Pro + Excel (CSV). */
 (() => {
   'use strict';
@@ -40,6 +40,7 @@
 .dmr-tr{font:800 11.5px system-ui}.dmr-tr.up{color:#0f7a5c}.dmr-tr.down{color:#b3261e}.dmr-tr.eq{color:#7aa3a8}
 .dmr-sec{font:800 14px system-ui;margin:18px 2px 8px;color:#2d6b74;display:flex;justify-content:space-between;align-items:baseline}
 .dmr-box{border:1.5px solid #dbe9ea;border-radius:18px;background:#fff;padding:6px 12px}
+.dmr-sources{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.dmr-source{border:1px solid #dceae8;background:#fff;border-radius:14px;padding:12px;display:grid;grid-template-columns:1fr auto;gap:4px}.dmr-source small{grid-column:1/-1;color:#53818a}.dmr-details{padding:8px 0;line-height:1.8}
 .dmr-word{display:flex;justify-content:space-between;gap:8px;padding:7px 0;border-bottom:1px solid #f2f6f5;font-size:14px}.dmr-word:last-child{border:0}.dmr-word small{color:#7aa3a8}
 .dmr-bar{height:6px;border-radius:4px;background:#eef6f5;margin-top:4px;overflow:hidden}.dmr-bar i{display:block;height:100%;background:#f5ad3d}
 .dmr-table{width:100%;border-collapse:collapse;font-size:13.5px}.dmr-table th{font:800 12px system-ui;color:#5c8c92;text-align:right;padding:8px 4px;cursor:pointer;white-space:nowrap;user-select:none}.dmr-table th:first-child,.dmr-table td:first-child{text-align:left}
@@ -65,6 +66,11 @@
     return `<span class="dmr-tr ${d > 0 ? 'up' : 'down'}">${d > 0 ? '▲' : '▼'} ${Math.abs(d)}${unit}</span>`;
   }
   const accCls = a => a === null || a === undefined ? '' : a >= 80 ? 'g' : a >= 60 ? 'y' : 'r';
+  const portion = (correct, wrong) => {
+    const ok = Number(correct || 0), bad = Number(wrong || 0);
+    return ok + bad ? acc(Math.round(100 * ok / (ok + bad))) : '<span style="color:#b9cfd1">—</span>';
+  };
+  const activity = (st) => Number(st.games || 0) + Number(st.study?.runs || 0) + Number(st.study?.completed || 0) + Number(st.schoolPath?.correct || 0) + Number(st.schoolPath?.wrong || 0) + Number(st.learningPath?.correct || 0) + Number(st.learningPath?.wrong || 0);
   const acc = a => a === null || a === undefined ? '<span style="color:#b9cfd1">—</span>' : `<span class="dmr-acc ${accCls(a)}">%${a}</span>`;
 
   function sorted() {
@@ -84,25 +90,56 @@
     if (!data) return `<div class="dmr-body"><div class="dmr-empty">${esc(msg || 'Yükleniyor…')}</div></div>`;
     const s = data.summary, n = data.studentCount;
     const cards = `<div class="dmr-cards">
-<div class="dmr-card"><small>Aktif öğrenci</small><b>${s.active}<span style="font-size:15px;color:#7aa3a8">/${n}</span></b>${trend(s.active, s.prevActive)}</div>
-<div class="dmr-card"><small>Çalışma süresi</small><b>${s.minutes} dk</b>${trend(s.minutes, s.prevMinutes, ' dk')}</div>
-<div class="dmr-card"><small>Doğruluk</small><b>${s.accuracy === null ? '—' : '%' + s.accuracy}</b>${trend(s.accuracy, s.prevAccuracy, ' puan')}</div>
-<div class="dmr-card"><small>Oyun · Seviye</small><b>${s.games} · ${s.levels}</b>${trend(s.games, s.prevGames, ' oyun')}</div></div>`;
+<div class="dmr-card"><small>Aktif öğrenci</small><b>${s.active}<span style="font-size:15px;color:#7aa3a8">/${n}</span></b>${trend(s.active,s.prevActive)}</div>
+<div class="dmr-card"><small>Tüm etkinliklerde doğruluk</small><b>${s.accuracy === null ? '—' : '%' + s.accuracy}</b>${trend(s.accuracy,s.prevAccuracy,' puan')}</div>
+<div class="dmr-card"><small>Ders Çalış</small><b>${s.studyRuns || 0}</b><small>${s.studyCompleted || 0} konu tamamlama</small></div>
+<div class="dmr-card"><small>Parkur cevapları</small><b>${Number(s.schoolCorrect||0)+Number(s.schoolWrong||0)+Number(s.learningCorrect||0)+Number(s.learningWrong||0)}</b><small>İki öğrenme yolu</small></div>
+<div class="dmr-card"><small>Oyun · Seviye</small><b>${s.games} · ${s.levels}</b>${trend(s.games,s.prevGames,' oyun')}</div>
+<div class="dmr-card"><small>Oyun süresi</small><b>${s.minutes} dk</b><small>Ders süresi dahil değil</small></div></div>`;
+    const bySource = [
+      ['🎮 Oyunlar',s.gameCorrect,s.gameWrong],
+      ['📚 Ders Çalış',s.studyCorrect,s.studyWrong],
+      ['🗺️ Okul Yolum',s.schoolCorrect,s.schoolWrong],
+      ['🌍 Öğrenme Yolu',s.learningCorrect,s.learningWrong]
+    ].map(([name,correct,wrong])=>`<div class="dmr-source"><strong>${name}</strong><span>${portion(correct,wrong)}</span><small><b>${correct||0}</b> doğru · <b>${wrong||0}</b> yanlış</small></div>`).join('');
+    const topics = (data.weakTopics||[]).length ? data.weakTopics.map(t=>
+      `<div class="dmr-word"><span><b>${esc(t.topic)}</b> <small>· ${esc(t.level)} / ${esc(t.category)}</small></span><small>${t.students} öğr. · ${t.wrong} yanlış</small></div>`
+    ).join('') : '<div class="dmr-empty">Bu dönemde kaydedilmiş zorlanılan Ders Çalış konusu yok.</div>';
     const top = `<p class="dmr-note">▲▼ önceki ${data.days} güne göre değişim.</p>` + (data.topGames.length ? `<p class="dmr-note" style="margin-top:2px">En çok oynanan: ${data.topGames.map(g => `${esc(GAMES[g.game] || g.game)} (${g.count})`).join(', ')}</p>` : '');
     const maxW = Math.max(1, ...data.weakWords.map(w => w.students));
     const weak = data.weakWords.length ? data.weakWords.map(w => `<div class="dmr-word"><span style="flex:1"><b>${esc(w.en)}</b> <small>— ${esc(w.tr)}</small><div class="dmr-bar"><i style="width:${w.students / maxW * 100}%"></i></div></span><small>${w.students} öğr. · ${w.wrong} yanlış</small></div>`).join('') : '<div class="dmr-empty">Bu sınıfta henüz kayıtlı zor kelime yok.</div>';
     const arrow = k => sort.k === k ? (sort.d < 0 ? ' ▼' : ' ▲') : '';
-    const rows = sorted().map(st => `<tr class="st" data-row="${st.id}"><td class="nm">${esc(st.username)}</td><td>${st.games}</td><td>${st.minutes}</td><td>${acc(st.accuracy)}</td><td class="opt">${st.levels}</td><td class="opt">${ago(st.lastLogin)}</td></tr>${openRow === st.id ? `<tr class="more"><td colspan="6">${st.fullName ? `<b>${esc(st.fullName)}</b> · ` : ''}XP ${st.xp} · ${st.streak} gün seri · son giriş ${ago(st.lastLogin)} · ${st.levels} seviye<br>${st.weak.length ? 'Zorlandığı kelimeler: ' + st.weak.map(w => `<span class="dmr-pill">${esc(w)}</span>`).join('') : 'Kayıtlı zor kelimesi yok.'}</td></tr>` : ''}`).join('');
-    const idle = data.students.filter(s => !s.games);
+    const rows = sorted().map(st => `<tr class="st" data-row="${st.id}"><td class="nm">${esc(st.username)}</td>
+<td>${st.games}</td><td>${st.study?.runs||0}</td>
+<td>${(st.schoolPath?.correct||0)+(st.schoolPath?.wrong||0)}</td>
+<td>${(st.learningPath?.correct||0)+(st.learningPath?.wrong||0)}</td>
+<td>${acc(st.accuracy)}</td>
+<td class="opt">${ago(st.lastLogin)}</td></tr>
+${openRow === st.id ? `<tr class="more"><td colspan="7">${st.fullName ? '<b>'+esc(st.fullName)+'</b> · ' : ''}XP ${st.xp} · ${st.streak} gün seri · son giriş ${ago(st.lastLogin)}<div class="dmr-details">
+<div>Oyunlar: ${st.gameCorrect||0} doğru / ${st.gameWrong||0} yanlış</div>
+<div>Ders Çalış: ${st.study?.correct||0} doğru / ${st.study?.wrong||0} yanlış · ${st.study?.completed||0} konu tamamlama</div>
+<div>Okul Yolum: ${st.schoolPath?.correct||0} doğru / ${st.schoolPath?.wrong||0} yanlış</div>
+<div>Öğrenme Yolu: ${st.learningPath?.correct||0} doğru / ${st.learningPath?.wrong||0} yanlış</div></div>
+${st.weak?.length ? 'Zorlandığı kelimeler: ' + st.weak.map(w => `<span class="dmr-pill">${esc(w)}</span>`).join('') : 'Kayıtlı zor kelimesi yok.'}
+</td></tr>` : ''}`).join('');
+    const idle = data.students.filter(st => !activity(st));
     const plan = data.plan || 'free', canPdf = plan !== 'free', canCsv = plan === 'premium_pro';
     const nat = native();
     return `<div class="dmr-body">${cards}${top}
-<div class="dmr-sec"><span>Sınıfın zorlandığı kelimeler</span><small style="color:#7aa3a8;font-weight:600">öğrenilene kadar</small></div><div class="dmr-box">${weak}</div>
-<div class="dmr-sec"><span>Öğrenciler (${n})</span><small style="color:#7aa3a8;font-weight:600">Satıra dokun: ayrıntı</small></div>
-<div class="dmr-box" style="padding:2px 8px;overflow-x:auto">${n ? `<table class="dmr-table"><thead><tr><th data-sort="name">Öğrenci${arrow('name')}</th><th data-sort="games">Oyun${arrow('games')}</th><th data-sort="minutes">Dk${arrow('minutes')}</th><th data-sort="accuracy">Doğruluk${arrow('accuracy')}</th><th class="opt" data-sort="levels">Seviye${arrow('levels')}</th><th class="opt" data-sort="last">Son giriş${arrow('last')}</th></tr></thead><tbody>${rows}</tbody></table>` : '<div class="dmr-empty">Bu sınıfta öğrenci yok. Sınıflarım ekranından kodu paylaş.</div>'}</div>
-${idle.length && n ? `<div class="dmr-sec"><span>Bu dönemde hiç oyun oynamayanlar (${idle.length})</span></div><div>${idle.map(s => `<span class="dmr-pill" style="background:#fff4dc;color:#a76016">${esc(s.username)}</span>`).join('')}</div>` : ''}
+<div class="dmr-sec"><span>Doğru–yanlış analizi</span><small>Kaydedilmiş ilk cevaplar</small></div>
+<div class="dmr-sources">${bySource}</div>
+<div class="dmr-sec"><span>Ders Çalış: zorlanılan konular</span></div>
+<div class="dmr-box">${topics}</div>
+<div class="dmr-sec"><span>Sınıfın zorlandığı kelimeler</span></div><div class="dmr-box">${weak}</div>
+<div class="dmr-sec"><span>Öğrenciler (${n})</span><small>Satıra dokun: ayrıntı</small></div>
+<div class="dmr-box" style="padding:2px 8px;overflow-x:auto">${n ? `<table class="dmr-table"><thead><tr>
+<th data-sort="name">Öğrenci${arrow('name')}</th><th data-sort="games">Oyun${arrow('games')}</th>
+<th> Ders</th><th>Okul Yolum</th><th>Öğrenme</th>
+<th data-sort="accuracy">Genel doğruluk${arrow('accuracy')}</th><th class="opt" data-sort="last">Son giriş${arrow('last')}</th>
+</tr></thead><tbody>${rows}</tbody></table>` : '<div class="dmr-empty">Bu sınıfta öğrenci yok. Sınıflarım ekranından kodu paylaş.</div>'}</div>
+${idle.length && n ? `<div class="dmr-sec"><span>Bu dönemde kayıtlı etkinliği olmayanlar (${idle.length})</span></div><div>${idle.map(st => `<span class="dmr-pill" style="background:#fff4dc;color:#a76016">${esc(st.username)}</span>`).join('')}</div>` : ''}
 <div class="dmr-acts"><button class="dmr-b${canPdf && !nat ? '' : ' lock'}" data-pdf>${canPdf ? '' : '🔒 '}🖨️ PDF / Yazdır</button><button class="dmr-b${canCsv && !nat ? '' : ' lock'}" data-csv>${canCsv ? '' : '🔒 '}📊 Excel</button></div>
-<p class="dmr-note" data-note>${nat ? 'PDF ve Excel çıktısı web panelinden (app.dijimedu.com) alınır.' : !canPdf ? 'Pro ile son 30 gün ve PDF, Premium Pro ile ek olarak Excel çıktısı.' : !canCsv ? 'Excel çıktısı Premium Pro ile.' : ''} Süre ve doğruluk, oyun sonuçlarından hesaplanır; ders anlatımı ekranında geçen süre dahil değildir.</p></div>`;
+<p class="dmr-note" data-note>${nat ? 'PDF ve Excel çıktısı web panelinden (app.dijimedu.com) alınır. ' : !canPdf ? 'Pro ile son 30 gün ve PDF, Premium Pro ile Excel çıktısı. ' : !canCsv ? 'Excel çıktısı Premium Pro ile. ' : ''}${esc(data.dataNote || 'Çalışma süresi yalnız oyun sonuçlarından hesaplanır.')}</p></div>`;
   }
 
   const render = () => { if (veil) veil.querySelector('.dmr-sheet').innerHTML = head() + body(); };
@@ -119,9 +156,16 @@ ${idle.length && n ? `<div class="dmr-sec"><span>Bu dönemde hiç oyun oynamayan
     const s = data.summary, c = data.class;
     let el = doc.getElementById('dmrPrint'); if (!el) { el = doc.createElement('div'); el.id = 'dmrPrint'; doc.body.appendChild(el); }
     el.innerHTML = `<h1>Diji Medu · ${esc(label(c))} sınıf raporu</h1><div>${c.name ? esc(c.name) + ' · ' : ''}${date(data.from)} – ${date(data.to)} (${data.days} gün)</div>
-<h2>Özet</h2><table><tr><th>Aktif öğrenci</th><th>Çalışma süresi</th><th>Doğruluk</th><th>Oyun</th><th>Seviye</th></tr><tr><td>${s.active}/${data.studentCount}</td><td>${s.minutes} dk</td><td>${s.accuracy === null ? '—' : '%' + s.accuracy}</td><td>${s.games}</td><td>${s.levels}</td></tr></table>
-<h2>Sınıfın zorlandığı kelimeler</h2><table><tr><th>Kelime</th><th>Anlamı</th><th>Öğrenci</th><th>Yanlış</th></tr>${data.weakWords.map(w => `<tr><td>${esc(w.en)}</td><td>${esc(w.tr)}</td><td>${w.students}</td><td>${w.wrong}</td></tr>`).join('') || '<tr><td colspan="4">—</td></tr>'}</table>
-<h2>Öğrenciler</h2><table><tr><th>Öğrenci</th><th>Ad soyad</th><th>Oyun</th><th>Dk</th><th>Doğruluk</th><th>Seviye</th><th>Son giriş</th><th>Zor kelimeler</th></tr>${sorted().map(x => `<tr><td>${esc(x.username)}</td><td>${esc(x.fullName || '')}</td><td>${x.games}</td><td>${x.minutes}</td><td>${x.accuracy === null ? '—' : '%' + x.accuracy}</td><td>${x.levels}</td><td>${ago(x.lastLogin)}</td><td>${esc(x.weak.join(', '))}</td></tr>`).join('')}</table>`;
+<h2>Sınıf özeti</h2><p>Aktif öğrenci: ${s.active}/${data.studentCount} · Genel doğruluk: ${s.accuracy === null ? '—' : '%' + s.accuracy} · Oyun: ${s.games} · Ders Çalış denemesi: ${s.studyRuns || 0}</p>
+<h2>Kaynaklara göre cevaplar</h2><table><tr><th>Alan</th><th>Doğru</th><th>Yanlış</th></tr>
+<tr><td>Oyun</td><td>${s.gameCorrect||0}</td><td>${s.gameWrong||0}</td></tr>
+<tr><td>Ders Çalış</td><td>${s.studyCorrect||0}</td><td>${s.studyWrong||0}</td></tr>
+<tr><td>Okul Yolum</td><td>${s.schoolCorrect||0}</td><td>${s.schoolWrong||0}</td></tr>
+<tr><td>Öğrenme Yolu</td><td>${s.learningCorrect||0}</td><td>${s.learningWrong||0}</td></tr></table>
+<h2>Zorlanılan konular</h2><table><tr><th>Konu</th><th>Seviye</th><th>Yanlış</th></tr>${(data.weakTopics||[]).map(t=>`<tr><td>${esc(t.topic)}</td><td>${esc(t.level)}</td><td>${t.wrong}</td></tr>`).join('')}</table>
+<h2>Öğrenciler</h2><table><tr><th>Öğrenci</th><th>Oyun</th><th>Ders doğru/yanlış</th><th>Okul Yolum doğru/yanlış</th><th>Öğrenme Yolu doğru/yanlış</th><th>Genel doğruluk</th></tr>
+${sorted().map(st=>`<tr><td>${esc(st.username)}</td><td>${st.games}</td><td>${st.study?.correct||0}/${st.study?.wrong||0}</td><td>${st.schoolPath?.correct||0}/${st.schoolPath?.wrong||0}</td><td>${st.learningPath?.correct||0}/${st.learningPath?.wrong||0}</td><td>${st.accuracy===null?'—':'%'+st.accuracy}</td></tr>`).join('')}</table>
+<p>${esc(data.dataNote||'')}</p>`;
     const done = () => { el.innerHTML = ''; doc.body.classList.remove('dmr-printing'); window.removeEventListener('afterprint', done); };
     window.addEventListener('afterprint', done);
     doc.body.classList.add('dmr-printing');
@@ -130,10 +174,12 @@ ${idle.length && n ? `<div class="dmr-sec"><span>Bu dönemde hiç oyun oynamayan
 
   function csv() {
     const q = v => { const s = String(v ?? ''); return /[;"\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s; };
-    const L = [['Öğrenci', 'Ad soyad', 'Oyun', 'Dakika', 'Doğruluk %', 'Seviye', 'XP', 'Seri (gün)', 'Son giriş', 'Zor kelimeler']];
-    for (const x of sorted()) L.push([x.username, x.fullName || '', x.games, x.minutes, x.accuracy ?? '', x.levels, x.xp, x.streak, x.lastLogin ? new Date(x.lastLogin).toLocaleDateString('tr-TR') : '', x.weak.join(', ')]);
-    L.push([], ['Zor kelime', 'Anlamı', 'Öğrenci sayısı', 'Toplam yanlış']);
-    for (const w of data.weakWords) L.push([w.en, w.tr, w.students, w.wrong]);
+    const L = [['Öğrenci','Ad soyad','Oyun sayısı','Oyun doğru','Oyun yanlış','Ders denemesi','Ders tamamlanan konu','Ders doğru','Ders yanlış','Okul Yolum doğru','Okul Yolum yanlış','Öğrenme Yolu doğru','Öğrenme Yolu yanlış','Toplam doğru','Toplam yanlış','Doğruluk %','Oyun süresi dk','XP','Son giriş']];
+    for(const st of sorted())L.push([st.username,st.fullName||'',st.games,st.gameCorrect||0,st.gameWrong||0,st.study?.runs||0,st.study?.completed||0,st.study?.correct||0,st.study?.wrong||0,st.schoolPath?.correct||0,st.schoolPath?.wrong||0,st.learningPath?.correct||0,st.learningPath?.wrong||0,st.totalCorrect||0,st.totalWrong||0,st.accuracy??'',st.minutes,st.xp,st.lastLogin||'']);
+    L.push([],['Zorlanılan ders konusu','Seviye','Kategori','Öğrenci sayısı','Yanlış']);
+    for(const t of data.weakTopics||[])L.push([t.topic,t.level,t.category,t.students,t.wrong]);
+    L.push([],['Zor kelime','Anlamı','Öğrenci sayısı','Toplam yanlış']);
+    for(const w of data.weakWords)L.push([w.en,w.tr,w.students,w.wrong]);
     const blob = new Blob(['﻿' + L.map(r => r.map(q).join(';')).join('\r\n')], { type: 'text/csv;charset=utf-8' });
     const a = doc.createElement('a'); a.href = URL.createObjectURL(blob);
     a.download = `diji-medu-${label(data.class)}-${data.days}gun-${new Date().toISOString().slice(0, 10)}.csv`;
@@ -185,7 +231,7 @@ ${idle.length && n ? `<div class="dmr-sec"><span>Bu dönemde hiç oyun oynamayan
     const tiles = doc.querySelector('#tpDashboard .tp-real-tools');
     if (!tiles || tiles.querySelector('[data-dmr]')) return;
     const b = doc.createElement('button'); b.type = 'button'; b.dataset.dmr = '1';
-    b.innerHTML = '<span aria-hidden="true">📈</span><strong>Sınıf Raporları</strong><small>Süre, doğruluk, zor kelimeler</small>';
+    b.innerHTML = '<span aria-hidden="true">📈</span><strong>Sınıf Raporları</strong><small>Oyun, ders ve parkur sonuçları</small>';
     b.addEventListener('click', () => open());
     const after = tiles.querySelector('[data-dmc]'); after ? after.after(b) : tiles.prepend(b);
   }
