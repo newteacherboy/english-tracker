@@ -7,7 +7,7 @@
    - Supabase istekleri: bu dosya karışmaz (sayfadaki katman yönetir)
    Sayfayı güncellediğinizde SURUM değerini artırın (v2, v3…).
    ===================================================================== */
-const SURUM = 'diji-v353-three-badge-art-20261109';
+const SURUM = 'diji-v364-teacher-switch-live-20261110';
 const SAYFA = 'sayfa-' + SURUM, KAYNAK = 'kaynak-' + SURUM;
 // Cached on first use; never download the A2 catalog at startup.
 const LAZY_TOPIC_FILES = new Set(['konu-oyunlari-a1.js','konu-oyunlari-a2.js','topic-games-core.mjs']);
@@ -27,6 +27,13 @@ self.addEventListener('fetch', e => {
   if (r.method !== 'GET') return;
   const url = new URL(r.url);
   if (url.hostname.endsWith('supabase.co')) return;                 /* API: dokunma */
+  // Teacher account transition must not run an older cached authorization/UI script.
+  if (/\\/teacher-portal-boot\\.js$/.test(url.pathname)) {
+    e.respondWith(fetch(r,{cache:'no-store'}).catch(async()=>{
+      const cached=await caches.open(KAYNAK).then(c=>c.match(r));
+      return cached||Response.error();
+    }));return;
+  }
   // Premium game requires a live account check. Never serve a stale JS/CSS bundle,
   // especially while a prior iPhone WebKit renderer is recovering.
   if (/\/(?:premium-(?:word-match(?:-core)?|cloud-flight|word-blocks)\.(?:js|css)|papizzle\.(?:js|css)|lazy-games\.js)$/.test(url.pathname)) {
