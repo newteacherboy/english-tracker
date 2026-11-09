@@ -753,7 +753,7 @@
   if(!/^\d{6}$/.test(code))return;
   const v=sheet('Öğretmen Kodun Hazır!','<p>Bu 6 haneli kodu güvenli bir yere kaydet. Kişisel e-posta hesabını doğrulayıp yönetici onayı aldıktan sonra öğretmen araçların açılacak.</p><div data-teacher-code style="font-size:30px;font-weight:800;letter-spacing:7px;text-align:center;padding:16px;border-radius:16px;background:#e5f3ff;color:#164f84"></div><button type="button" data-copy class="tp-primary">Kodu Kopyala</button><button type="button" data-confirm>Kodumu Kaydettim, Devam Et</button><small>Kodunu unutursan “Kodumu Unuttum” bağlantısından yenileyebilirsin. Öğrencilerin sınıfa katılım kodu farklıdır.</small>');
   v.shade.querySelector('[data-teacher-code]').textContent=code;
-  v.shade.querySelector('[data-copy]').onclick=()=>navigator.clipboard?.writeText(code).then(()=>v.error('Kod kopyalandı.')).catch(()=>v.error('Kodu elle not alabilirsin.'));
+  v.shade.querySelector('[data-copy]').onclick=()=>{if(!navigator.clipboard?.writeText){v.error('Kodu elle not alabilirsin.');return;}navigator.clipboard.writeText(code).then(()=>v.error('Kod kopyalandı.')).catch(()=>v.error('Kodu elle not alabilirsin.'));};
   v.shade.querySelector('[data-confirm]').onclick=()=>{v.close();refreshTeacherAccount(true);};
  }
  // The registration code is delivered only to the original registration response;
