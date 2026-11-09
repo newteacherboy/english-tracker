@@ -369,3 +369,19 @@ html.dm-teacher-portal body #tpDashboard .tp-real-tools>button[hidden]{display:n
   .tp-application form{padding-bottom:12px}
   .tp-application form{padding-top:10px}
 }
+
+
+/* Reliable, browser-native province/district selectors in the teacher application. */
+.tp-application .tp-application-location .tp-location-native{
+ display:block;width:100%;min-width:0;min-height:44px;margin:5px 0 0;
+ padding:8px 30px 8px 10px;border:1.5px solid #8ac3b8;
+ border-radius:12px;background:#fff;color:#174a50;
+ font:700 14px/1.3 system-ui,-apple-system,sans-serif;
+ box-shadow:0 2px 3px #1349361a;cursor:pointer;
+}
+.tp-application .tp-application-location .tp-location-native:disabled{
+ background:#f3f7f6;color:#8da6ab;cursor:not-allowed;
+}
+.tp-application .tp-application-location .tp-location-native:focus-visible{
+ outline:2px solid #00777d;outline-offset:2px;
+}
