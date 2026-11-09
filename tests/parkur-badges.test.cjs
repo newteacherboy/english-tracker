@@ -43,3 +43,26 @@ test('map badge buttons describe both states and open a set-specific milestone',
  assert.equal(data.readUIntLE(24,3)+1,locked.art.cols*256);
  assert.equal(data.readUIntLE(27,3)+1,locked.art.rows*256);
 });
+
+test('three repaired Papi badges use complete standalone art and preserve all other sprite positions',()=>{
+ const repaired=[
+  [school[6],'bahcivan-papi.png','Bahçıvan Papi'],
+  [school[14],'kaptan-papi.png','Kaptan Papi'],
+  [learning[1],'gokyuzu-pilotu-papi.png','Gökyüzü Pilotu']
+ ];
+ for(const [art,file,name] of repaired){
+  assert.equal(art.name,name);
+  assert.equal(art.src,'parkur-badges/v3/'+file);
+  assert.equal(art.cols,1);
+  assert.equal(art.rows,1);
+  assert.equal(art.cell,512);
+  const png=fs.readFileSync(path.join(__dirname,'../ingilizce',art.src));
+  assert.equal(png.toString('ascii',1,4),'PNG');
+  assert.equal(png.readUInt32BE(16),512);
+  assert.equal(png.readUInt32BE(20),512);
+ }
+ assert.match(mapMarkup({art:school[14],earned:false,passed:0,first:20,label:'7. Sınıf · 25. Durak'},20,false),/background-size:100% 100%/);
+ assert.doesNotMatch(mapMarkup({art:school[14],earned:false,passed:0,first:20,label:'7. Sınıf · 25. Durak'},20,false),/NaN/);
+ assert.equal(school[5].src,'parkur-badges/v2/school-02.webp');
+ assert.equal(learning[0].src,'parkur-badges/v2/papi-01.webp');
+});
