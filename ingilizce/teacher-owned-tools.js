@@ -31,6 +31,17 @@
  .dm-owned-status{min-height:20px;color:#267462!important;font-size:12px!important}.dm-owned-switches{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin:10px 0}
  .dm-owned-switches button{background:#ebf7fc;color:#145b7b;border:1px solid #bcd8e7;border-radius:11px;padding:10px}
  .dm-owned-panel ul{padding-left:21px}.dm-owned-panel li{margin-bottom:6px}
+
+ /* Compact original-style Artı/Eksi student rows; class selection stays at the top. */
+ .dm-owned-veil:has([data-owned-score]) .dm-owned-panel{width:min(100%,580px);background:#f7fbff;border:2px solid #b9dbe8}
+ .dm-owned-veil:has([data-owned-score]) [data-owned-body]>label{padding:10px 12px;border-radius:13px;background:#e6f4fb}
+ .dm-owned-veil:has([data-owned-score]) .dm-owned-row{background:#fff;border:1px solid #c9dee6;padding:13px 12px}
+ .dm-owned-veil:has([data-owned-score]) .dm-owned-plus,.dm-owned-veil:has([data-owned-score]) .dm-owned-minus{
+  min-width:49px;min-height:45px;border:1px solid currentColor;border-radius:12px;font-size:23px!important}
+ .dm-owned-veil:has([data-owned-score]) .dm-owned-row strong{font-size:15px}
+ @media(max-width:440px){.dm-owned-veil:has([data-owned-score]) .dm-owned-row{padding:10px 7px}
+  .dm-owned-veil:has([data-owned-score]) .dm-owned-plus,.dm-owned-veil:has([data-owned-score]) .dm-owned-minus{min-width:42px;padding:6px}}
+
  @media(prefers-reduced-motion:reduce){.dm-owned-panel *{animation:none!important}}
  `;
  document.head.append(style);
@@ -58,7 +69,7 @@
  }
  const roster=c=>(c.students||[]).filter(p=>p&&p.id);
  async function openPerformance(){
-  await bootstrap('➕ Artı-Eksi Ver','Sadece sana ait sınıflardaki öğrencilerin listelenir.',(c,host)=>{
+  await bootstrap('➕ Artı-Eksi Ver','Önce sınıfını seç, ardından öğrencilerine eski düzende artı veya eksi ver.',(c,host)=>{
    host.innerHTML='<p>'+esc(c.classNo+'-'+c.branch)+' · '+roster(c).length+' bağlı öğrenci</p><div class="dm-owned-list">'+roster(c).map(p=>
     '<div class="dm-owned-row"><div><strong>'+esc(p.fullName||p.username)+'</strong><small>'+esc(p.username)+'</small></div><div class="dm-owned-buttons"><button class="dm-owned-minus" data-owned-score="-2" data-student="'+esc(p.id)+'" aria-label="Eksi ver">−</button><button class="dm-owned-plus" data-owned-score="0.3" data-student="'+esc(p.id)+'" aria-label="Artı ver">+</button></div></div>').join('')+'</div>';
    if(!roster(c).length)host.innerHTML+='<p>Bu şubede henüz öğrenci bulunmuyor.</p>';
