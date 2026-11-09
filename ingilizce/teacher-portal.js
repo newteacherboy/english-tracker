@@ -17,16 +17,16 @@
  function openLogin(){const v=sheet('Öğretmen Girişi','<p>Özel öğretmen platformuna erişmek için e-postana gönderilen 6 veya 8 haneli kodu yaz.</p>'+codeField('code','Öğretmen giriş kodun')+'<button class="tp-primary">Giriş Yap</button><button type="button" data-reset>Kodumu Unuttum</button><small>E-posta doğrulaması ve teacher hesabının erişim onayı gerekir.</small>');v.shade.querySelector('[data-reset]').onclick=resetRequest;submit(v,async f=>{const r=await api('teacherPortalLogin',{code:f.get('code')},'');const preview=await api('teacherPortalParticipant',{self:true},r.token);saveState({teacherToken:r.token,name:r.name,participant:preview,playAsSelf:true,route:'home'});location.assign('./?ogretmen=1');});}
  function resetRequest(){const v=sheet('Öğretmen Kodumu Unuttum','<label>Kişisel kullanıcı adın<input name="username" required maxlength="40" autocomplete="username"></label><label>Kayıtlı e-posta adresin<input name="email" required type="email" autocomplete="email"></label><button class="tp-primary">Yenileme bağlantısı gönder</button>');submit(v,async f=>{const r=await api('teacherPortalResetRequest',Object.fromEntries(f),'');v.error(r.mesaj);});}
  async function resetPage(){const token=new URLSearchParams(location.hash.slice(1)).get('token');history.replaceState(null,'',location.pathname);const v=sheet('Yeni Öğretmen Giriş Kodu',codeField('code','Yeni 6 veya 8 haneli kod')+codeField('confirm','Yeni kodu tekrar yaz')+'<button class="tp-primary">Kodumu Yenile</button>');v.shade.querySelector('.tp-close').onclick=()=>location.assign('./?ogretmenGiris=1');submit(v,async f=>{if(f.get('code')!==f.get('confirm'))throw Error('Kodlar eşleşmiyor.');const r=await api('teacherPortalReset',{resetToken:token,code:f.get('code')},'');v.form.replaceChildren();const message=document.createElement('p');message.textContent=r.mesaj;const link=document.createElement('a');link.href='./?ogretmenGiris=1';link.textContent='Öğretmen girişine dön';v.form.append(message,link);});}
- async function management(){const v=sheet('👥 Öğretmen Yönetimi','<p>Başvurular yükleniyor…</p>');try{const r=await api('teacherPortalList');v.form.replaceChildren();const intro=document.createElement('section');intro.className='tp-grant';const title=document.createElement('h2');title.textContent='Yeni öğretmen ekle';const info=document.createElement('p');info.textContent='Önce öğretmenin kendi kişisel hesabını açması ve e-postasını doğrulaması gerekir. Öğretmenim seçeneğini seçenlerin erişim başvuruları burada listelenir. Onayından sonra özel giriş kodu oluşturulur.';const form=document.createElement('div');form.className='tp-admin-create';form.innerHTML='<label>Kullanıcı adı<input name="username" maxlength="20" autocomplete="off"></label><label>Ad soyad<input name="fullName" maxlength="80"></label><label>E-posta<input name="email" type="email" autocomplete="off"></label><label>Başlangıç şifresi<input name="password" type="password" minlength="6" maxlength="64"></label><button type="button" class="tp-primary">Kişisel hesap ve başvuru oluştur</button><p role="status"></p>';form.querySelector('button').onclick=async()=>{const button=form.querySelector('button'),data=Object.fromEntries([...form.querySelectorAll('input')].map(el=>[el.name,el.value]));button.disabled=true;try{const result=await api('teacherPortalAdminCreate',data);form.querySelector('[role="status"]').textContent=result.mesaj+' Öğretmen normal giriş ekranından e-postasını doğrulayıp kişisel hesabını kullanabilir.';form.querySelector('[name="password"]').value='';}catch(e){form.querySelector('[role="status"]').textContent=e.message;}finally{button.disabled=false;}};intro.append(form);const link=document.createElement('a');link.href='./';link.target='_blank';link.rel='noopener noreferrer';link.textContent='Kişisel hesap açma ekranını aç';const copy=document.createElement('button');copy.type='button';copy.textContent='Kayıt bağlantısını kopyala';copy.onclick=()=>{const url=new URL('./',location.href).href;navigator.clipboard?.writeText(url).then(()=>{copy.textContent='Bağlantı kopyalandı';}).catch(()=>v.error('Bağlantı kopyalanamadı.'));};intro.append(title,info,link,copy);v.form.append(intro);if(!r.items.length){const empty=document.createElement('p');empty.textContent='Henüz başvuru yok.';v.form.append(empty);}for(const row of r.items){const s=row.students||{},box=document.createElement('article');box.className='tp-grant';const h=document.createElement('h2');h.textContent=s.full_name||s.username;const p=document.createElement('p');p.textContent=s.username+' · '+s.email+'\nE-posta: '+(s.email_verified_at?'Doğrulandı':'Bekliyor')+' · Erişim: '+({pending:'Bekliyor',approved:'Onaylı',rejected:'Reddedildi',revoked:'Kaldırıldı'}[row.state]||row.state);const school=document.createElement('p');school.textContent='Okul bilgileri · '+(s.school||'Eklenmemiş');
+ async function management(){const v=sheet('👥 Öğretmen Yönetimi','<p>Başvurular yükleniyor…</p>');try{const r=await api('teacherPortalList');v.form.replaceChildren();const intro=document.createElement('section');intro.className='tp-grant';const title=document.createElement('h2');title.textContent='Yeni öğretmen ekle';const info=document.createElement('p');info.textContent='Önce öğretmenin kendi kişisel hesabını açması ve e-postasını doğrulaması gerekir. Öğretmenim seçeneğini seçenlerin erişim başvuruları burada listelenir. Kayıt sırasında özel giriş kodu hazırlanır. Sen onay verdiğinde öğretmene “Öğretmen onayınız tamamlandı” e-postası gönderilir. E-posta doğrulaması tamamlanana kadar özel öğretmen yetkileri kapalı kalır.';const form=document.createElement('div');form.className='tp-admin-create';form.innerHTML='<label>Kullanıcı adı<input name="username" maxlength="20" autocomplete="off"></label><label>Ad soyad<input name="fullName" maxlength="80"></label><label>E-posta<input name="email" type="email" autocomplete="off"></label><label>Başlangıç şifresi<input name="password" type="password" minlength="6" maxlength="64"></label><button type="button" class="tp-primary">Kişisel hesap ve başvuru oluştur</button><p role="status"></p>';form.querySelector('button').onclick=async()=>{const button=form.querySelector('button'),data=Object.fromEntries([...form.querySelectorAll('input')].map(el=>[el.name,el.value]));button.disabled=true;try{const result=await api('teacherPortalAdminCreate',data);form.querySelector('[role="status"]').textContent=result.mesaj+' Öğretmen normal giriş ekranından e-postasını doğrulayıp kişisel hesabını kullanabilir.';form.querySelector('[name="password"]').value='';}catch(e){form.querySelector('[role="status"]').textContent=e.message;}finally{button.disabled=false;}};intro.append(form);const link=document.createElement('a');link.href='./';link.target='_blank';link.rel='noopener noreferrer';link.textContent='Kişisel hesap açma ekranını aç';const copy=document.createElement('button');copy.type='button';copy.textContent='Kayıt bağlantısını kopyala';copy.onclick=()=>{const url=new URL('./',location.href).href;navigator.clipboard?.writeText(url).then(()=>{copy.textContent='Bağlantı kopyalandı';}).catch(()=>v.error('Bağlantı kopyalanamadı.'));};intro.append(title,info,link,copy);v.form.append(intro);if(!r.items.length){const empty=document.createElement('p');empty.textContent='Henüz başvuru yok.';v.form.append(empty);}for(const row of r.items){const s=row.students||{},box=document.createElement('article');box.className='tp-grant';const h=document.createElement('h2');h.textContent=s.full_name||s.username;const p=document.createElement('p');p.textContent=s.username+' · '+s.email+'\nE-posta: '+(s.email_verified_at?'Doğrulandı':'Bekliyor')+' · Erişim: '+({pending:'Bekliyor',approved:'Onaylı',rejected:'Reddedildi',revoked:'Kaldırıldı'}[row.state]||row.state);const school=document.createElement('p');school.textContent='Okul bilgileri · '+(s.school||'Eklenmemiş');
  const phone=document.createElement('p');phone.textContent='Kayıtlı telefon · '+(s.phone||'Eklenmemiş');
- box.append(h,p,school,phone);
+ box.append(h,p,school,phone);if(row.state==='pending'&&row.codeReady){const code=document.createElement('p');code.textContent='🔐 Kişisel öğretmen kodu kayıt sırasında gösterildi; yönetici onayı bekliyor.';box.append(code);}
  if(row.state==='approved'){
   const status=document.createElement('p');
-  status.textContent=row.code_sent_at?'🔒 Özel giriş kodu e-postaya gönderim kuyruğuna alındı. Güvenlik için eski kod görüntülenmez.':'✉️ Kod henüz gönderilmedi; öğretmen e-postasını doğrulamalı.';
+  status.textContent=row.code_sent_at?'🔒 Giriş kodu e-postaya gönderim kuyruğuna alındı.':row.codeReady?'🔐 Giriş kodu kayıt sırasında öğretmene gösterildi.':'✉️ Kod henüz oluşturulmadı; öğretmen e-postasını doğrulamalı.';
   box.append(status);
-  const issue=document.createElement('button');issue.type='button';issue.textContent=row.code_sent_at?'Yeni kod oluştur ve e-postala':'Kodu oluştur ve e-postala';
+  const issue=document.createElement('button');issue.type='button';issue.textContent=row.codeReady||row.code_sent_at?'Yeni kod oluştur ve e-postala':'Kodu oluştur ve e-postala';
   issue.disabled=!s.email_verified_at;
-  issue.onclick=async()=>{if(row.code_sent_at&&!confirm('Yeni kod, eski kodu ve açık öğretmen oturumlarını geçersiz kılar. Devam edilsin mi?'))return;
+  issue.onclick=async()=>{if((row.codeReady||row.code_sent_at)&&!confirm('Yeni kod, eski kodu ve açık öğretmen oturumlarını geçersiz kılar. Devam edilsin mi?'))return;
    issue.disabled=true;try{const result=await api('teacherPortalIssueCode',{id:row.id});const note=document.createElement('p');note.textContent='Yeni özel giriş kodu: '+result.issuedCode+' · Öğretmenin e-postasına gönderim kuyruğuna alındı. Bu kod yalnızca şimdi gösterilir.';box.append(note);issue.remove();}catch(e){v.error(e.message);issue.disabled=false;}};
   box.append(issue);
  }
@@ -59,7 +59,7 @@
   ['class','Sınıfını tek yerden yönet','Öğrencilerini ekle, ödev ver ve ilerlemelerini izle.'],
   ['report','Kimin neye ihtiyacı var, gör','Raporlarla gelişimi ve tekrar gerektiren konuları gör.']
  ];
- const pendingApplication='Başvurun alındı. Bilgilerini inceleyeceğiz. Gerekirse kayıtlı telefon numarandan sana ulaşacağız.';
+ const pendingApplication='Okul bilgilerinle öğretmen başvurun alındı. Yönetici onayından sonra sana “Öğretmen onayınız tamamlandı” e-postası gönderilecek. Öğretmen kodunu kullanabilmek için kişisel e-posta adresini mutlaka doğrula.';
  const locationSearchKey=value=>value.trim().toLocaleLowerCase('tr-TR').normalize('NFD').replace(/\p{M}/gu,'').replace(/ı/g,'i');
  function locationPicker(form,name,label,placeholder,onSelect){
   const input=form.elements[name];
@@ -647,6 +647,168 @@
    if(result&&typeof result.then==='function')result.catch(recover);
   }catch(error){recover(error);}
 
+ }
+
+
+ // A personal teacher account remains a normal learner for its first tour.
+ // A PREVIEW never gets a teacher token. Only the server can issue one after
+ // the owner's explicit approval and verified personal email.
+ const teacherTools=[
+  ['📖','Konu Anlat','Dersleri aç, örneklerle konuyu anlat, akıllı tahtada tekrar yaptır.'],
+  ['🎮','Yarışma Yaptır','Öğrencilerinle kelime ve bilgi oyunları oynat, sınıf sonuçlarını gör.'],
+  ['🏫','Sınıf Oluştur','Sınıfını düzenle ve öğrencilerini güvenli şekilde bağla.'],
+  ['🎤','Sözlü Yap','Öğrencilerin kelime bilgisini değerlendir.'],
+  ['📝','Ödev Ver','Ödevleri planla ve tamamlanma durumlarını takip et.'],
+  ['📊','Raporlar','Öğrencilerinin güçlü ve gelişecek yönlerini incele.']
+ ];
+ let teacherAccountToken='',teacherAccount=null,teacherStatusLoading=false,teacherCodeReceipt=null,lastTeacherCodeShown='';
+ let teacherEmailReminderChecked=false,teacherEmailReminderScheduled=false;
+ async function scheduleTeacherEmailReminder(token){
+  if(mode||teacherEmailReminderChecked||teacherEmailReminderScheduled||!teacherAccount?.teacherAccount||!token)return;
+  teacherEmailReminderScheduled=true;
+  try{
+   const account=await api('memberStatus',{},token);
+   if(token!==localStorage.getItem('ing_token')||!teacherAccount?.teacherAccount)return;
+   teacherEmailReminderChecked=true;
+   if(account.emailVerified)return;
+   let checks=0;
+   const showWhenReady=()=>{
+    if(token!==localStorage.getItem('ing_token')||!teacherAccount?.teacherAccount)return;
+    const busy=[...document.querySelectorAll('.tp-shade,#dmTeacherPreview,#dmDiscovery,.dm-announcement-overlay,.deg-overlay,[role="dialog"][aria-modal="true"]')].some(el=>el.getClientRects().length>0);
+    if(busy||!document.body||!localStorage.getItem('ing_token')){
+     if(++checks<60)setTimeout(showWhenReady,1800);return;
+    }
+    const v=sheet('Öğretmen Hesabını Doğrula','<p>Öğretmen hesabını kullanabilmen için kişisel e-posta adresini mutlaka doğrulamalısın.</p><p>Yönetici onay verince sana <strong>“Öğretmen onayınız tamamlandı”</strong> e-postası gönderilecek. Ardından öğretmen giriş kodunla giriş yapabilirsin.</p><button type="button" class="tp-primary" data-verify-guide>📨 E-postamı Doğrula</button><button type="button" data-verify-later>Parkur’u Keşfetmeye Devam Et</button>');
+    v.form.querySelector('[data-verify-guide]').onclick=()=>{v.close();window.dmEmailGuide?.open?.('help');};
+    v.form.querySelector('[data-verify-later]').onclick=v.close;
+   };
+   setTimeout(showWhenReady,7500);
+  }catch(e){console.warn('[Teacher email reminder]',e?.message||e);}
+  finally{teacherEmailReminderScheduled=false;}
+ }
+
+ const teacherStyle=document.createElement('style');
+ teacherStyle.textContent=String.raw`
+ #dmTeacherParkurSwitch,#dmTeacherBackToParkur{position:fixed;right:max(12px,env(safe-area-inset-right));bottom:calc(82px + env(safe-area-inset-bottom));z-index:700;padding:11px 15px;border:2px solid #80bcff;border-radius:24px;background:#e5f3ff;color:#174d8c;box-shadow:0 5px 17px #11365a35;font-weight:800;font-size:13px;cursor:pointer}
+ #dmTeacherBackToParkur{bottom:calc(86px + env(safe-area-inset-bottom));background:#ecfbea;border-color:#92d4a2;color:#175c2d}
+ #dmTeacherPreview{position:fixed;inset:0;z-index:1900;background:var(--surface,#f5f8ff);overflow:auto;padding:calc(15px + env(safe-area-inset-top)) 16px calc(24px + env(safe-area-inset-bottom));color:var(--text-color,#172a43)}
+ #dmTeacherPreview .tpv-head{display:flex;align-items:center;justify-content:space-between;gap:14px;max-width:740px;margin:0 auto 16px}
+ #dmTeacherPreview .tpv-hero,#dmTeacherPreview .tpv-status,#dmTeacherPreview .tpv-detail{max-width:740px;margin:0 auto 14px;padding:16px;border-radius:18px;background:rgba(134,179,241,.15)}
+ #dmTeacherPreview .tpv-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;max-width:740px;margin:0 auto 16px}
+ #dmTeacherPreview .tpv-tool{background:var(--card-bg,#fff);color:inherit;border:1px solid #9cbbdd66;border-radius:17px;padding:16px 9px;display:flex;flex-direction:column;gap:8px;align-items:center;cursor:pointer;text-align:center}
+ #dmTeacherPreview button:focus-visible{outline:3px solid #2679cf;outline-offset:2px}
+ #dmTeacherPreview .tpv-actions{display:flex;gap:8px;flex-wrap:wrap;max-width:740px;margin:0 auto}
+ #dmTeacherPreview .tpv-actions button,#dmTeacherPreview .tpv-head button{padding:11px 13px;border:1px solid #7daccb;border-radius:12px;background:#e4f2ff;color:#194e83;font-weight:700;cursor:pointer}
+ #dmTeacherPreview .tpv-tool strong{font-size:13px}
+ #dmTeacherPreview .tpv-tool small{font-size:11px;opacity:.7}
+ #dmTeacherPreview .tpv-status{line-height:1.6}
+ @media(max-width:380px){#dmTeacherParkurSwitch{padding:10px;font-size:12px}#dmTeacherPreview .tpv-grid{gap:8px}}
+ `;
+ document.head.append(teacherStyle);
+ const teacherToken=()=>localStorage.getItem('ing_token')||'';
+ function renderTeacherSwitch(){
+  if(mode)return;
+  const route=document.querySelector('.rt-medal-route');
+  const show=!!teacherAccount?.teacherAccount&&!!teacherToken()&&!!route&&route.getClientRects().length>0&&!document.getElementById('dmTeacherPreview');
+  let button=document.getElementById('dmTeacherParkurSwitch');
+  if(!show){button?.remove();return;}
+  if(!button){button=document.createElement('button');button.id='dmTeacherParkurSwitch';button.type='button';button.textContent='🎓 Öğretmen Panelim';button.onclick=()=>openPersonalTeacherPanel();document.body.append(button);}
+ }
+ async function refreshTeacherAccount(force=false){
+  if(mode||window.dmGuestMode||sessionStorage.getItem('ing_ogr_token'))return;
+  const token=teacherToken();
+  if(!token){teacherAccount=null;teacherAccountToken='';renderTeacherSwitch();return;}
+  if(teacherStatusLoading||!force&&teacherAccountToken===token)return;
+  teacherAccountToken=token;teacherStatusLoading=true;
+  try{const r=await api('teacherPortalStatus',{offerOnly:true},token);if(token!==teacherToken())return;teacherAccount=r;renderTeacherSwitch();if(r.teacherAccount)scheduleTeacherEmailReminder(token);}
+  catch{if(token===teacherToken())teacherAccount=null;}
+  finally{teacherStatusLoading=false;}
+ }
+ function previewTeacherPanel(status){
+  document.getElementById('dmTeacherPreview')?.remove();
+  const wrap=document.createElement('main');wrap.id='dmTeacherPreview';wrap.setAttribute('role','dialog');wrap.setAttribute('aria-modal','true');wrap.setAttribute('aria-label','Öğretmen paneli önizleme');
+  const head=document.createElement('header');head.className='tpv-head';
+  const title=document.createElement('h2');title.textContent='🎓 Öğretmen Panelim';
+  const back=document.createElement('button');back.textContent='← Parkur’a Dön';back.onclick=()=>{wrap.remove();renderTeacherSwitch();};
+  head.append(title,back);
+  const hero=document.createElement('section');hero.className='tpv-hero';
+  hero.textContent='Diji-Medu ile sınıfını yönet, yarışmalar düzenle, konu anlat ve öğrencilerinin gelişimini takip et.';
+  const statusText=document.createElement('section');statusText.className='tpv-status';
+  statusText.textContent=status.state==='approved'?'Öğretmen yetkin onaylandı. Özellikleri kullanmak için e-posta doğrulamanın da tamamlanması gerekiyor.':status.state==='pending'?'Öğretmen başvurun alındı. Yetkini yönetici onayladıktan ve e-postanı doğruladıktan sonra tüm özellikler açılacak.':'Öğretmen erişimin şu anda etkin değil. Destek ekibimizle iletişime geçebilirsin.';
+  const grid=document.createElement('section');grid.className='tpv-grid';
+  const detail=document.createElement('section');detail.className='tpv-detail';detail.setAttribute('role','status');detail.hidden=true;
+  for(const [emoji,label,description] of teacherTools){
+   const button=document.createElement('button');button.type='button';button.className='tpv-tool';
+   const icon=document.createElement('span');icon.textContent=emoji;icon.style.fontSize='28px';
+   const name=document.createElement('strong');name.textContent=label;
+   const note=document.createElement('small');note.textContent='🔒 Tanıtımı gör';
+   button.append(icon,name,note);
+   button.onclick=()=>{detail.hidden=false;detail.textContent=description+' Bu özelliği kullanmak için kişisel e-posta doğrulaman ve yönetici öğretmen onayın tamamlanmalı.';detail.scrollIntoView({block:'nearest',behavior:'smooth'});};
+   grid.append(button);
+  }
+  const actions=document.createElement('div');actions.className='tpv-actions';
+  const check=document.createElement('button');check.textContent='🔄 Erişimimi Kontrol Et';check.onclick=async()=>{check.disabled=true;try{await refreshTeacherAccount(true);if(teacherAccount?.state==='approved'){wrap.remove();await openPersonalTeacherPanel();}else{statusText.textContent=teacherAccount?.state==='pending'?'Başvurun hâlâ inceleniyor. Parkur’u keşfetmeye devam edebilirsin.':'Öğretmen erişimi henüz etkin değil.';}}finally{check.disabled=false;}};
+  const login=document.createElement('button');login.textContent='🔑 Kodla Giriş';login.onclick=()=>{wrap.remove();openLogin();};
+  actions.append(check);if(status.state==='approved')actions.append(login);
+  wrap.append(head,hero,statusText,grid,detail,actions);
+  document.body.append(wrap);back.focus();
+ }
+ async function openPersonalTeacherPanel(){
+  const token=teacherToken();
+  if(!token)return;
+  try{
+   const status=await api('teacherPortalStatus',{},token);
+   if(!status.teacherAccount){return;}
+   teacherAccount=status;
+   if(status.state!=='approved'||!status.codeReady){previewTeacherPanel(status);return;}
+   try{
+    const r=await api('teacherPortalEnter',{},token);
+    const participant=await api('teacherPortalParticipant',{self:true},r.token);
+    saveState({teacherToken:r.token,name:r.name,participant,playAsSelf:true,route:'home'});
+    location.assign('./?ogretmen=1');
+   }catch(error){previewTeacherPanel(status);}
+  }catch(error){window.yoToast?.(error.message||'Öğretmen paneline ulaşılamadı.');}
+ }
+ function queueTeacherCodeReceipt(code){
+  if(!/^\d{6}$/.test(code)||lastTeacherCodeShown===code||teacherCodeReceipt===code)return;
+  teacherCodeReceipt=code;
+  setTimeout(()=>{if(teacherCodeReceipt===code){teacherCodeReceipt=null;lastTeacherCodeShown=code;if(!window.dmTeacherSignupCodeHandled)showSignupTeacherCode(code);}},1600);
+ }
+ function showSignupTeacherCode(code){
+  if(!/^\d{6}$/.test(code))return;
+  const v=sheet('Öğretmen Kodun Hazır!','<p>Bu 6 haneli kodu güvenli bir yere kaydet. <strong>Kişisel e-posta adresini mutlaka doğrula.</strong> Yönetici onay verdiğinde sana “Öğretmen onayınız tamamlandı” e-postası gönderilecek. Sonrasında Öğretmen Girişi ekranında bu kodu kullanabilirsin.</p><div data-teacher-code style="font-size:30px;font-weight:800;letter-spacing:7px;text-align:center;padding:16px;border-radius:16px;background:#e5f3ff;color:#164f84"></div><button type="button" data-copy class="tp-primary">Kodu Kopyala</button><button type="button" data-confirm>Kodumu Kaydettim, Devam Et</button><small>Kodunu unutursan “Kodumu Unuttum” bağlantısından yenileyebilirsin. Öğrencilerin sınıfa katılım kodu farklıdır.</small>');
+  v.shade.querySelector('[data-teacher-code]').textContent=code;
+  v.shade.querySelector('[data-copy]').onclick=()=>{if(!navigator.clipboard?.writeText){v.error('Kodu elle not alabilirsin.');return;}navigator.clipboard.writeText(code).then(()=>v.error('Kod kopyalandı.')).catch(()=>v.error('Kodu elle not alabilirsin.'));};
+  v.shade.querySelector('[data-confirm]').onclick=()=>{v.close();refreshTeacherAccount(true);};
+ }
+ // The registration code is delivered only to the original registration response;
+ // never persist it in localStorage, sessionStorage, analytics or query params.
+ if(!mode){
+  window.addEventListener('dm:teacher-signup-code',e=>queueTeacherCodeReceipt(e.detail?.code));
+  const oldFetch=window.fetch;
+  window.fetch=function(url,options){
+   let request=null;try{request=typeof options?.body==='string'?JSON.parse(options.body):null;}catch{}
+   const result=oldFetch.apply(this,arguments);
+   if(request&&['kayitOl','ogretmenKayitOl'].includes(request.islem)){
+    result.then(r=>r.clone().json()).then(d=>{
+     if(d?.status==='success'&&d?.teacherAccount&&/^\d{6}$/.test(d.teacherCode||'')){
+      queueTeacherCodeReceipt(d.teacherCode);
+     }
+    }).catch(()=>{});
+   }
+   return result;
+  };
+  document.addEventListener('dm:login',()=>{teacherEmailReminderChecked=false;teacherEmailReminderScheduled=false;refreshTeacherAccount(true);});
+  document.addEventListener('dm:logout',()=>{teacherAccount=null;teacherAccountToken='';teacherEmailReminderChecked=false;teacherEmailReminderScheduled=false;renderTeacherSwitch();});
+  setInterval(()=>{refreshTeacherAccount();renderTeacherSwitch();},2500);
+ }
+ if(mode){
+  const switchToParkur=()=>{
+   if(document.getElementById('dmTeacherBackToParkur'))return;
+   const b=document.createElement('button');b.type='button';b.id='dmTeacherBackToParkur';b.textContent='🌿 Parkur’a Geç';b.onclick=()=>window.dmTeacherPortalParkur?.();
+   document.body.append(b);
+  };
+  if(document.body)switchToParkur();else document.addEventListener('DOMContentLoaded',switchToParkur,{once:true});
  }
 
  window.dmTeacherPortal={openMessages:()=>teacherDashboardAction('messages'),openLogin,openProfile,beforeGame,management,prepareTools:prepareTeacherTools,returnToGames:()=>{if(!mode||state()?.route!=='games')return;window.dmViewHistory?.clear?.();teacherDestination('games');}};

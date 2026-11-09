@@ -32,3 +32,14 @@ test('network errors never erase the remembered teacher session',async()=>{
 test('personal-account return is a switch and retains the teacher for the account picker',()=>{
  const native=storage({ing_token:'personal-token'});page(native).w.dmTeacherDevice.remember(portal);const opened=page(native);opened.w.dmTeacherPortalPersonal();assert.equal(opened.w.dmTeacherDevice.list().length,1);assert.equal(opened.session.getItem('dm_tp_session'),null);assert.equal(page(native).w.dmTeacherPortalMode,undefined);assert.equal(native.getItem('ing_token'),'personal-token');
 });
+
+test('teacher Parkur shortcut restores personal account directly without showing account picker',()=>{
+ const native=storage({ing_token:'personal-token',ing_aktifOgrenci:'Ada'});
+ const first=page(native);first.w.dmTeacherDevice.remember(portal);
+ const opened=page(native);
+ opened.w.dmTeacherPortalParkur();
+ assert.deepEqual(opened.calls.at(-1),['assign','./']);
+ assert.equal(opened.session.getItem('dm_tp_session'),null);
+ assert.equal(native.getItem('ing_token'),'personal-token');
+ assert.equal(opened.w.dmTeacherDevice.list().length,1);
+});

@@ -1316,7 +1316,12 @@ async function handle(req: Request, proxy: any = null) {
       const telHam = String(body.telefon || "").replace(/\D/g, "");
       const tel = /^5\d{9}$/.test(telHam) ? "0" + telHam : /^05\d{9}$/.test(telHam) ? telHam : /^905\d{9}$/.test(telHam) ? "0" + telHam.slice(2) : "";
       const email = String(body.email || "").trim();
-      let learnerProfile, sinif;try{learnerProfile=normalizeLearnerProfile(body.learnerProfile,body.sinif,body.ogrenimTuru||"school");sinif=learnerClass(learnerProfile,body.sinif);}catch(e){return json({ok:false,mesaj:e.message},400);}
+      const teacherApplication = body.requestTeacherAccess===true;
+      const school=temizMetin(body.okul||"",120).replace(/\s+/g,' ').trim();
+      const city=teacherApplication?temizMetin(body.okulIl||"",40).replace(/\s+/g,' ').trim():"";
+      const district=teacherApplication?temizMetin(body.okulIlce||"",60).replace(/\s+/g,' ').trim():"";
+      if(teacherApplication&&(!city||!district||!school||!tel))return json({ok:false,mesaj:"Öğretmen hesabı için il, ilçe, okul adı ve telefon zorunlu."},400);
+      let learnerProfile, sinif;try{learnerProfile=normalizeLearnerProfile(body.learnerProfile,body.sinif,body.ogrenimTuru||"school",{allowUnknownAge:teacherApplication});sinif=learnerClass(learnerProfile,body.sinif);}catch(e){return json({ok:false,mesaj:e.message},400);}
       const sube = temizMetin(body.sube, 10).trim();
       if ((telHam||!learnerProfile.version)&&!tel) return json({ ok: false, mesaj: "Geçerli bir telefon numarası yaz (05XX XXX XX XX)." }, 400);
       if (email.length > 120 || !/^[^@\s]+@[^@\s]+\.[^@\s]{2,}$/.test(email))
@@ -1347,9 +1352,11 @@ async function handle(req: Request, proxy: any = null) {
       if (createError || !createdId) return json({ ok: false, mesaj: createError?.code === "23505"
         ? "Bu kullanıcı adı zaten kayıtlı. Başka bir takma ad seç ya da mevcut hesabını bağla."
         : "Kayıt tamamlanamadı. Biraz sonra tekrar dene." }, createError?.code === "23505" ? 409 : 503);
-      const adYaz = await supabase.from("students").update({ full_name: adSoyad, school: temizMetin(body.okul || "",120).replace(/\s+/g,' ').trim() || null }).eq("id", createdId);
+      const adYaz = await supabase.from("students").update({ full_name: adSoyad, school: teacherApplication?[city,district,school].join(' · '):school || null }).eq("id", createdId);
       if (adYaz.error) console.error("googleKayit full_name", adYaz.error);
       await saveLearnerProfile(supabase,createdId,learnerProfile);
+      let teacherCode=null;
+      if(teacherApplication){try{teacherCode=await teacherPortal.trackSignup(createdId);}catch(err){console.error('oauth teacher signup code',err);}}
       /* Optional, unticked registration checkbox (never a condition of registration): weekly progress / Papi news e-mail. */
       if(body.ilerlemeMailOnay===true){try{const e=String(email||"").trim().toLowerCase();if(/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(e)){const at=new Date().toISOString();const r=await supabase.from("extra_data").upsert({student_id:createdId,key_name:"progress_mail_consent_v1",value:{at,source:op === "appleKayit" ? "registration_checkbox_apple" : "registration_checkbox_google",email:e},updated_at:at},{onConflict:"student_id,key_name"});if(r?.error)console.error("progress mail consent",r.error.message);}}catch(err){console.error("progress mail consent",err);}}
       await yeniOgrenciYoneticiBildirimi({id:createdId,username},"google");
@@ -1361,7 +1368,7 @@ async function handle(req: Request, proxy: any = null) {
         return json({ ok: false, mesaj: "Hesabın aktif değil. Öğretmeninle görüş." }, 403);
       const token = await issueSession("student", createdStudent.id);
       return json({ ok: true, kayitOlustu: true, token, rol: "ogrenci", ogrenci: createdStudent.username,
-        mesaj: "Google ile kaydın tamamlandı. Hoş geldin!" });
+        ...(teacherApplication?{teacherAccount:true,teacherCode}:{}),mesaj: "Kaydın tamamlandı. Hoş geldin!" });
     }
     if (op === "googleBagla") {
       // Linking ALWAYS verifies the existing password, including repeat requests.
@@ -2382,13 +2389,16 @@ async function handle(req: Request, proxy: any = null) {
     const saved = existing ? await supabase.from("students").update(payload).eq("id",existing.id).select("id,username,email").single() : await supabase.from("students").insert(payload).select("id,username,email").single();
     if(saved.error||!saved.data)return json({status:"error",message:"Kayıt oluşturulamadı. Biraz sonra tekrar dene."},503);
     await saveLearnerProfile(supabase,saved.data.id,learnerProfile);
-    if(teacherApplication)await teacherPortal.trackSignup(saved.data.id);
+    // Teacher signup already includes school/city/district/phone; no second application.
+    // A code is reserved now, but carries NO teacher privilege until owner approval.
+    let teacherCode=null;
+    if(teacherApplication){try{teacherCode=await teacherPortal.trackSignup(saved.data.id);}catch(err){console.error('teacher signup code',err);}}
     /* Optional, unticked registration checkbox (never a condition of registration): weekly progress / Papi news e-mail. */
     if(body.ilerlemeMailOnay===true){try{const e=String(saved.data.email||"").trim().toLowerCase();if(/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(e)){const at=new Date().toISOString();const r=await supabase.from("extra_data").upsert({student_id:saved.data.id,key_name:"progress_mail_consent_v1",value:{at,source:"registration_checkbox",email:e},updated_at:at},{onConflict:"student_id,key_name"});if(r?.error)console.error("progress mail consent",r.error.message);}}catch(err){console.error("progress mail consent",err);}}
     await yeniOgrenciYoneticiBildirimi(saved.data,"normal");
     let mailQueued=true;try { await onboarding.welcome(saved.data); }catch(_){mailQueued=false;}
     const token=await issueSession("student",saved.data.id);
-    return json({status:"success",token,ogrenci:saved.data.username,emailDogrulamaGerekli:true,mailQueued,message:"Hesabın hazır! Uygulamayı kullanabilirsin. E-posta adresini gelen bağlantıyla doğrulamayı unutma."});
+    return json({status:"success",token,ogrenci:saved.data.username,emailDogrulamaGerekli:true,mailQueued,...(teacherApplication?{teacherAccount:true,teacherCode}:{}),message:"Hesabın hazır! Uygulamayı kullanabilirsin. E-posta adresini gelen bağlantıyla doğrulamayı unutma."});
   }
 
   /* [v4.7] ŞİFRE: telefonla sıfırlama kapatıldı (telefonu bilen biri hesabı ele geçirebiliyordu).

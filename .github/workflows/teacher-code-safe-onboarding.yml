@@ -1,0 +1,34 @@
+name: Teacher automatic code and safe access
+on:
+  pull_request:
+    paths:
+      - 'supabase/functions/diji-api/teacher-portal.mjs'
+      - 'supabase/functions/diji-api/index.ts'
+      - 'ingilizce/teacher-portal.js'
+      - 'ingilizce/teacher-portal-boot.js'
+      - 'tests/teacher-device-continuity.test.cjs'
+      - 'ingilizce/first-discovery-state.js'
+      - 'ingilizce/first-discovery.js'
+      - 'tests/universal-onboarding-ui.test.cjs'
+      - 'supabase/migrations/20261109145000_teacher_pending_code_preserve.sql'
+      - 'tests/teacher-portal-api.test.mjs'
+      - 'tests/onboarding-registration.test.cjs'
+      - '.github/workflows/teacher-code-safe-onboarding.yml'
+permissions:
+  contents: read
+jobs:
+  tests:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: node --check ingilizce/teacher-portal.js
+      - run: node --check ingilizce/teacher-portal-boot.js
+      - run: node --check ingilizce/first-discovery-state.js
+      - run: node --check ingilizce/first-discovery.js
+      - run: node --test tests/teacher-portal-api.test.mjs tests/onboarding-registration.test.cjs tests/google-signup.test.cjs tests/teacher-device-continuity.test.cjs
+      - run: npm install --no-save --package-lock=false --ignore-scripts jsdom@26.1.0
+      - run: node --test tests/universal-onboarding-ui.test.cjs
