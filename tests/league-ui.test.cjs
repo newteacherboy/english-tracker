@@ -16,9 +16,26 @@ test('weekly bots use Papi art and visible disclosure without changing actual pl
  const f=fixture();f.render();await tick();
  const preview=f.context.window.dmLeagueUI.weeklyPreview();
  assert.equal(preview.me.rank,2);
- assert.equal(preview.me.displayRank,3);
- assert.equal(preview.top[0].name,'Papi Şimşek');
- assert.equal(preview.top[0].is_virtual,true);
+ assert.equal(preview.me.displayRank,2);
+ assert.deepEqual(preview.top.map(p=>p.name),['Ada','Bora','Cem']);
+ assert.equal(preview.top.some(p=>p.is_virtual),false);
+ assert.equal(preview.me.is_virtual,undefined);
  assert.match(f.html(),/Sanal Rakip/);
  assert.match(f.html(),/friends-assets\/papi-fencer.webp/);
+});
+
+test('virtual rivals do not displace qualified real players above 200 XP',async()=>{
+ const f=fixture();f.render();await tick();
+ const preview=f.context.window.dmLeagueUI.weeklyPreview();
+ assert.deepEqual(preview.top.map(p=>p.name),['Ada','Bora','Cem']);
+ assert.equal(preview.me.rank,2);
+ assert.equal(preview.me.displayRank,2);
+ assert.match(f.html(),/Sanal Rakip/);
+});
+test('Papi bots have unique official mascot poses',async()=>{
+ const f=fixture();
+ const html1=f.context.window.dmLeagueUI.virtualAvatar({id:'virtual-1',name:'Papi Şimşek'});
+ const html2=f.context.window.dmLeagueUI.virtualAvatar({id:'virtual-2',name:'Papi Roket'});
+ assert.notEqual(html1,html2);
+ assert.match(html2,/oyna-papi-fly.png/);
 });
