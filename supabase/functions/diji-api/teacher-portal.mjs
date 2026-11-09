@@ -104,7 +104,7 @@ export function teacherPortalAPI(d){
   if(op==='teacherPortalAdminCreate'){
    if(!ownerTeacher(a))return fail('Bu işlem yalnızca teacher yöneticisine açıktır.',403);
    const username=String(b.username||'').trim(),name=String(b.fullName||'').trim(),email=String(b.email||'').trim().toLowerCase(),password=String(b.password||'');
-   if(!/^[A-Za-z0-9çğıöşüÇĞİÖŞÜ._-]{3,20}$/.test(username)||name.length<3||name.length>80||!/^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$/.test(email)||email.length>254||password.length<6||password.length>64)return fail('Kullanıcı adı (3–20), ad soyad, geçerli e-posta ve 6–64 karakterli başlangıç şifresi gerekli.');
+   if(!/^[A-Za-z0-9çğıöşüÇĞİÖŞÜ._-]{3,20}$/.test(username)||name.length<3||name.length>80||!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)||email.length>254||password.length<6||password.length>64)return fail('Kullanıcı adı (3–20), ad soyad, geçerli e-posta ve 6–64 karakterli başlangıç şifresi gerekli.');
    const account=await db.from('students').insert({username,full_name:name,email,password_hash:await hashPassword(password),role:'student',status:'approved',email_verification_required:true}).select('id').single();
    if(account.error)return fail(account.error.code==='23505'?'Bu kullanıcı adı veya e-posta zaten kayıtlı.':'Kişisel hesap oluşturulamadı.',account.error.code==='23505'?409:503);
    try{await this.apply(account.data.id);}catch(e){return fail('Hesap oluşturuldu fakat başvuru açılamadı. Tekrar hesap oluşturma; mevcut hesabın başvurusunu kontrol et.',503);}
