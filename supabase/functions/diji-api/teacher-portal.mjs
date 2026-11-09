@@ -307,7 +307,7 @@ export function teacherPortalAPI(d){
      let payload=null,title='';
      if(type==='oyun'){
       const game=String(b.game||'');
-      if(!['hafiza','asmaca','kelime','bosluk','yagmur','jeopardy','eslestirme','tren'].includes(game))return fail('Geçerli oyun seç.',400);
+      if(!['ky','jp','bosluk','hafiza','yagmur','asmaca','kelimebul','eslestirme','tren','dikte','cumle','kelime','jeopardy'].includes(game))return fail('Geçerli oyun seç.',400);
       const units=Array.isArray(b.units)?b.units.map(Number).filter(n=>Number.isInteger(n)&&n>0&&n<=20).slice(0,10):[];
       const stars=Number(b.stars);
       payload={oyun:game,sinif:c.data.class_no,uniteler:units,hedefYildiz:[1,2,3].includes(stars)?stars:2};
