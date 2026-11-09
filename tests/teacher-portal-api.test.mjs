@@ -7,7 +7,7 @@ async function fixture(){const digest=await hash('server-secret|teacher-portal|1
  const keys=options.onConflict.split(','),row=tables[table].find(x=>keys.every(k=>x[k]===values[k]));
  if(!row)tables[table].push({...values,...(table==='teacher_portal_access'?{id:'new-grant',state:'pending',version:1}:{})});else if(!options.ignoreDuplicates)Object.assign(row,values);
  return Promise.resolve({data:null,error:null});
- },or(){filters.push(x=>x.profile?.teacher_portal_guest!==true);return this},eq(k,v){filters.push(x=>x[k]===v);return this},is(k,v){filters.push(x=>(x[k]??null)===v);return this},gt(){return this},order(){return this},maybeSingle(){return Promise.resolve(result(true))},then(r,j){const rows=result(false);if(changes)for(const row of rows.data)Object.assign(row,changes);return Promise.resolve({...rows,error:null}).then(r,j)}};return q;},async rpc(name,args){calls.push({name,args});if(name==='dm_teacher_portal_guest'){const id='classroom-self';tables.students.push({id,username:args.guest_alias+' · Öğretmen Denemesi',teacher_id:'teacher-one',status:'approved',profile:{teacher_portal_guest:true}});return {data:id};}return {data:true};}};
+ },or(){filters.push(x=>x.profile?.teacher_portal_guest!==true);return this},eq(k,v){filters.push(x=>x[k]===v);return this},is(k,v){filters.push(x=>(x[k]??null)===v);return this},gt(){return this},order(){return this},maybeSingle(){return Promise.resolve(result(true))},then(r,j){const rows=result(false);if(changes)for(const row of rows.data)Object.assign(row,changes);return Promise.resolve({...rows,error:null}).then(r,j)}};return q;},async rpc(name,args){calls.push({name,args});if(name==='dm_teacher_portal_decide'){const row=tables.teacher_portal_access.find(x=>x.id===args.grant_id);if(row)row.state=args.decision;return {data:{studentId:row?.student_id}};}if(name==='dm_teacher_portal_guest'){const id='classroom-self';tables.students.push({id,username:args.guest_alias+' · Öğretmen Denemesi',teacher_id:'teacher-one',status:'approved',profile:{teacher_portal_guest:true}});return {data:id};}return {data:true};}};
  const api=teacherPortalAPI({db,json:(d,status=200)=>new Response(JSON.stringify(d),{status}),hash,hashPassword:async s=>'hash:'+s,verifyPassword:async()=>false,issueSession:async(...args)=>{calls.push({session:args});return 'signed-session'},mailShell:(_,html)=>html,escape:s=>s,queue:async m=>calls.push({mail:m}),codeKey:'server-secret'});
  const teacher={role:'teacher',teacher_id:'teacher-one',teacher_portal_access_id:'grant',teacher_portal_version:3};
  return {api,calls,tables,teacher,async run(op,b={},a=null){const r=await api.handle(op,b,a,'POST');return {status:r.status,data:await r.json()};}};
@@ -83,4 +83,24 @@ test('an existing pending applicant can complete missing school details without 
  assert.equal((await f.run('teacherPortalApply',{confirm:true,city:'Amasya',district:'Merkez'},actor)).data.state,'pending');
  assert.equal(student.school,'Amasya · Merkez · Örnek Ortaokulu');
  assert.equal(f.tables.teacher_portal_access.filter(row=>row.student_id==='alice').length,1);
+});
+
+test('owner approval emails the teacher once with verification and code-login instructions',async()=>{
+ const f=await fixture();
+ const owner={role:'teacher',teacher_id:'teacher-one',ogretmenKullanici:'teacher',yonetici:true};
+ f.tables.teacher_portal_access[0].state='pending';
+ const result=await f.run('teacherPortalDecide',{id:'grant',decision:'approved'},owner);
+ assert.equal(result.status,200);
+ assert.equal(result.data.approvalMailQueued,true);
+ assert.equal(f.tables.teacher_portal_access[0].state,'approved');
+ const sent=f.calls.filter(x=>x.mail).map(x=>x.mail);
+ assert.equal(sent.length,1);
+ assert.equal(sent[0].to_email,'one@example.test');
+ assert.match(sent[0].subject,/Öğretmen onayınız tamamlandı/);
+ assert.match(sent[0].text_body,/Öğretmen Girişi/);
+ assert.match(sent[0].text_body,/e-posta adresinizi de doğrulamış/);
+ assert.ok(!sent[0].text_body.includes('123456'),'do not leak saved code in email');
+ const again=await f.run('teacherPortalDecide',{id:'grant',decision:'approved'},owner);
+ assert.equal(again.status,200);
+ assert.equal(f.calls.filter(x=>x.mail).length,1,'repeated approval is idempotent');
 });
