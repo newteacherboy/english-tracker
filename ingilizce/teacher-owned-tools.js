@@ -158,9 +158,19 @@
   await window.odevEkraniAc();
   const nativeModal=document.getElementById('odModal');
   if(!nativeModal)throw Error('Önceki Ödev Ver ekranı bulunamadı.');
-  nativeModal.style.zIndex='2147483645';
+  // The legacy homework overlay may be nested inside a transformed/stacked
+  // teacher dashboard. Portal it to body so it cannot sit behind that dashboard.
+  if(nativeModal.parentElement!==document.body)document.body.appendChild(nativeModal);
+  nativeModal.style.position='fixed';
+  nativeModal.style.inset='0';
+  nativeModal.style.zIndex='2147483646';
+  nativeModal.style.visibility='visible';
   nativeModal.style.display='flex';
   setLegacyHomeworkClasses();
+  // Keep the original modal at the front even when another dashboard redraw
+  // happens during the async class lookup.
+  nativeModal.style.zIndex='2147483646';
+  nativeModal.querySelector('button:not([disabled]),[tabindex="0"]')?.focus({preventScroll:true});
   const button=document.getElementById('odVer');
   if(!button)throw Error('Ödev Ver butonu bulunamadı.');
   if(legacyHomeworkSaveInstalled)return;
