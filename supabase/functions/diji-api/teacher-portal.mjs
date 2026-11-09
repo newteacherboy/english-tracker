@@ -328,7 +328,10 @@ export function teacherPortalAPI(d){
     const title=String(b.title||'').trim(),message=String(b.message||'').trim();
     if(title.length<3||title.length>120||message.length<3||message.length>2000)return fail('Başlık 3–120, duyuru 3–2000 karakter olmalı.',400);
     const pupil=studentId?recipients.find(x=>x.id===studentId):null;
-    const saved=await db.from('announcements').insert({title,message,target_type:pupil?'secili':'sube',target_list:pupil?[pupil.username]:[c.data.class_no+'|'+String(c.data.branch||'').trim()],active:true,teacher_id:r.teacher_id});
+    const imageLink=String(b.imageLink||'').trim(),theme=String(b.theme||'mavi'),limit=Number(b.displayLimit??3);
+    if(imageLink&&(!/^https:\/\/[^\s]+$/i.test(imageLink)||imageLink.length>1000))return fail('Geçerli HTTPS görsel bağlantısı gir.',400);
+    if(!['mavi','yesil','mor','turuncu','kirmizi'].includes(theme)||![0,1,2,3,5,10].includes(limit))return fail('Geçerli duyuru gösterim ayarı seç.',400);
+    const saved=await db.from('announcements').insert({title,message,target_type:pupil?'secili':'sube',target_list:pupil?[pupil.username]:[c.data.class_no+'|'+String(c.data.branch||'').trim()],active:true,teacher_id:r.teacher_id,image_link:imageLink||null,theme,display_limit:limit});
     if(saved.error)throw saved.error;
     return json({ok:true,studentCount:pupil?1:recipients.length});
    }
