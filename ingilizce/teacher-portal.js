@@ -724,7 +724,7 @@
   const actions=document.createElement('div');actions.className='tpv-actions';
   const check=document.createElement('button');check.textContent='🔄 Erişimimi Kontrol Et';check.onclick=async()=>{check.disabled=true;try{await refreshTeacherAccount(true);if(teacherAccount?.state==='approved'){wrap.remove();await openPersonalTeacherPanel();}else{statusText.textContent=teacherAccount?.state==='pending'?'Başvurun hâlâ inceleniyor. Parkur’u keşfetmeye devam edebilirsin.':'Öğretmen erişimi henüz etkin değil.';}}finally{check.disabled=false;}};
   const login=document.createElement('button');login.textContent='🔑 Kodla Giriş';login.onclick=()=>{wrap.remove();openLogin();};
-  actions.append(check,login);
+  actions.append(check);if(status.state==='approved')actions.append(login);
   wrap.append(head,hero,statusText,grid,detail,actions);
   document.body.append(wrap);back.focus();
  }
@@ -780,7 +780,7 @@
  if(mode){
   const switchToParkur=()=>{
    if(document.getElementById('dmTeacherBackToParkur'))return;
-   const b=document.createElement('button');b.type='button';b.id='dmTeacherBackToParkur';b.textContent='🌿 Parkur’a Geç';b.onclick=()=>window.dmTeacherPortalPersonal?.();
+   const b=document.createElement('button');b.type='button';b.id='dmTeacherBackToParkur';b.textContent='🌿 Parkur’a Geç';b.onclick=()=>window.dmTeacherPortalParkur?.();
    document.body.append(b);
   };
   if(document.body)switchToParkur();else document.addEventListener('DOMContentLoaded',switchToParkur,{once:true});
