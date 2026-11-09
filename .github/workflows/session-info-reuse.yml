@@ -1,0 +1,19 @@
+name: Session student reuse regression
+on:
+  pull_request:
+    paths:
+      - 'supabase/functions/diji-api/index.ts'
+      - 'tests/session-info-reuse.test.cjs'
+      - '.github/workflows/session-info-reuse.yml'
+permissions:
+  contents: read
+jobs:
+  tests:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: node --test tests/session-info-reuse.test.cjs
