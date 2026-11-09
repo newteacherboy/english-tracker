@@ -6,7 +6,8 @@ const tools=fs.readFileSync('ingilizce/teacher-owned-tools.js','utf8');
 const portal=fs.readFileSync('ingilizce/teacher-portal.js','utf8');
 const server=fs.readFileSync('supabase/functions/diji-api/teacher-portal.mjs','utf8');
 test('all teacher workspaces launch own-class scoped tools',()=>{
- for(const key of ['performance','homework','announcements','reports'])assert(workspace.includes("openOwnedTool('"+key+"')"),key);
+ for(const key of ['performance','reports','legacyHomework'])assert(workspace.includes("openOwnedTool('"+key+"')"),key);
+ assert(workspace.includes('window.dmTeacherLegacyAnnouncementOpen?.()'));
  assert(workspace.includes("add(shortcuts,'Raporlar'"));
  assert(portal.includes("data-dash=\"reports\""));
 });
@@ -81,4 +82,24 @@ test('phone layout keeps teacher home and new actions visible without main scrol
  assert.match(css,/\.dm-midnight-shortcuts\{\s*grid-template-columns:repeat\(4,minmax\(0,1fr\)\)/);
  assert.match(css,/overflow:hidden!important/);
  assert.match(workspace,/teacher-workspace\.css\?v=20261110-quick-actions-fit/);
+});
+
+test('teacher home and teacher panel retain the classic Ödev and Duyuru layouts',()=>{
+ assert.match(workspace,/openOwnedTool\('legacyHomework'\)/);
+ assert.match(workspace,/dmTeacherLegacyAnnouncementOpen/);
+ assert.match(portal,/function teacherAnnouncement\(\)\{/);
+ assert.match(portal,/sheet\('📢 Duyuru Oluştur'/);
+ assert.match(portal,/Duyuruyu Yayınla/);
+ assert.match(portal,/classId:selected.id/);
+ assert.match(portal,/studentId:form.get\('studentId'\)/);
+ assert.match(tools,/window\.odevEkraniAc\(\)/);
+ assert.match(tools,/document\.getElementById\('odSinif'\)/);
+ assert.match(tools,/document\.getElementById\('odSube'\)/);
+ assert.match(tools,/document\.querySelectorAll\('#odKonular input\[data-k\]:checked'\)/);
+ assert.match(tools,/document\.querySelectorAll\('#odOyunlar input\[data-o\]:checked'\)/);
+ assert.match(tools,/event\.stopImmediatePropagation\(\)/);
+});
+test('classic homework game choices remain accepted by secured assignment endpoint',()=>{
+ for(const code of ['ky','jp','bosluk','hafiza','yagmur','asmaca','kelimebul','eslestirme','tren','dikte','cumle'])
+  assert.ok(server.includes("'"+code+"'"),code);
 });
