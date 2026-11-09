@@ -30,6 +30,7 @@
  .dm-owned-minus{background:#ffe3e1;color:#a52525;border:0;border-radius:10px;padding:8px 13px;font-size:18px!important;font-weight:900!important}
  .dm-owned-status{min-height:20px;color:#267462!important;font-size:12px!important}.dm-owned-switches{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin:10px 0}
  .dm-owned-switches button{background:#ebf7fc;color:#145b7b;border:1px solid #bcd8e7;border-radius:11px;padding:10px}
+ .dm-perf-toolbar{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px;align-items:center;padding:10px 12px;background:#eaf7f4;border-radius:12px;margin-bottom:10px}.dm-perf-toolbar label,.dm-perf-student{display:flex!important;flex-direction:row!important;align-items:center;gap:10px;margin:0!important}.dm-perf-toolbar input,.dm-perf-student input{width:18px!important;height:18px!important;accent-color:#149888;flex-shrink:0}.dm-perf-student span{min-width:0}.dm-perf-toolbar span{font-size:12px;color:#46666d}.dm-perf-bulk{margin-top:15px;padding:15px;background:#f0f9fc;border:1px solid #cce2eb;border-radius:15px}.dm-perf-bulk p{margin:3px 0 12px}.dm-perf-bulk-buttons{display:grid;grid-template-columns:1fr 1fr;gap:8px}.dm-perf-bulk-buttons button{min-height:46px;padding:8px;border-radius:11px;font-size:12px!important}.dm-perf-heading{margin:0 0 12px!important}.dm-performance-row{gap:10px}@media(max-width:430px){.dm-perf-bulk-buttons{grid-template-columns:1fr}.dm-performance-row .dm-owned-buttons{flex-shrink:0}}
  .dm-owned-panel ul{padding-left:21px}.dm-owned-panel li{margin-bottom:6px}
  .dm-owned-switches{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px!important}.dm-owned-switches button{display:flex;flex-direction:column;align-items:flex-start;gap:5px;text-align:left;min-height:92px;padding:14px!important;border-radius:16px!important;background:#f2f9fc!important;color:#174e68!important;border:1px solid #c7e2ee!important;font-weight:850!important}.dm-owned-switches button[aria-pressed=true]{background:#dff7ef!important;border:2px solid #20a488!important}.dm-owned-switches button strong{font-size:14px}.dm-owned-switches button small{font-size:11px;font-weight:550;color:#567485}.dm-owned-report-output{background:#fafdfd;border:1px solid #d6e7e8;padding:15px;border-radius:15px;min-height:100px}.dm-owned-ann-options{display:grid;grid-template-columns:1fr 1fr;gap:10px}@media(max-width:410px){.dm-owned-ann-options{grid-template-columns:1fr}}
  @media(prefers-reduced-motion:reduce){.dm-owned-panel *{animation:none!important}}
@@ -59,15 +60,50 @@
  }
  const roster=c=>(c.students||[]).filter(p=>p&&p.id);
  async function openPerformance(){
-  await bootstrap('➕ Artı-Eksi Ver','Sadece sana ait sınıflardaki öğrencilerin listelenir.',(c,host)=>{
-   host.innerHTML='<p>'+esc(c.classNo+'-'+c.branch)+' · '+roster(c).length+' bağlı öğrenci</p><div class="dm-owned-list">'+roster(c).map(p=>
-    '<div class="dm-owned-row"><div><strong>'+esc(p.fullName||p.username)+'</strong><small>'+esc(p.username)+'</small></div><div class="dm-owned-buttons"><button class="dm-owned-minus" data-owned-score="-2" data-student="'+esc(p.id)+'" aria-label="Eksi ver">−</button><button class="dm-owned-plus" data-owned-score="0.3" data-student="'+esc(p.id)+'" aria-label="Artı ver">+</button></div></div>').join('')+'</div>';
-   if(!roster(c).length)host.innerHTML+='<p>Bu şubede henüz öğrenci bulunmuyor.</p>';
-   host.querySelectorAll('[data-owned-score]').forEach(b=>b.onclick=async()=>{
-    b.disabled=true;try{const d=await call('teacherPortalPerformance',{studentId:b.dataset.student,delta:Number(b.dataset.ownedScore)});
-     status('Puan güncellendi. Yeni genel puan: '+d.points);
-    }catch(e){status(e.message);}finally{b.disabled=false;}
-   });
+  await bootstrap('➕ Artı-Eksi Ver','Önce kendi sınıfını seç. Tek tek veya seçtiğin öğrencilere toplu olarak artı ve eksi verebilirsin.',(c,host)=>{
+   const students=roster(c);
+   const row=p=>'<div class="dm-owned-row dm-performance-row"><label class="dm-perf-student"><input type="checkbox" data-perf-select value="'+esc(p.id)+'"><span><strong>'+esc(p.fullName||p.username)+'</strong><small>'+esc(p.username)+'</small></span></label><div class="dm-owned-buttons"><button type="button" class="dm-owned-minus" data-owned-score="-2" data-student="'+esc(p.id)+'" aria-label="'+esc(p.username)+' eksi ver">−</button><button type="button" class="dm-owned-plus" data-owned-score="0.3" data-student="'+esc(p.id)+'" aria-label="'+esc(p.username)+' artı ver">+</button></div></div>';
+   host.innerHTML='<p class="dm-perf-heading"><strong>'+esc(c.classNo+'-'+c.branch)+' sınıfı</strong> · '+students.length+' öğrenci</p>'+
+    '<div class="dm-perf-toolbar"><label><input type="checkbox" data-perf-all> Tüm öğrencileri seç</label><span data-perf-count>0 öğrenci seçildi</span></div>'+
+    '<div class="dm-owned-list" data-perf-list>'+students.map(row).join('')+'</div>'+
+    '<div class="dm-perf-bulk"><strong>Toplu Değerlendirme</strong><p>Seçtiğin öğrencilerin her birine aynı puan uygulanır.</p><div class="dm-perf-bulk-buttons"><button type="button" class="dm-owned-plus" data-perf-bulk="0.3" disabled>✓ Seçilenlere Toplu Artı (+0,3)</button><button type="button" class="dm-owned-minus" data-perf-bulk="-2" disabled>✕ Seçilenlere Toplu Eksi (−2)</button></div></div>';
+   if(!students.length){host.querySelector('[data-perf-list]').innerHTML='<p>Bu sınıfta henüz bağlı öğrenci yok.</p>';return;}
+   const all=host.querySelector('[data-perf-all]'),checks=[...host.querySelectorAll('[data-perf-select]')],bulk=[...host.querySelectorAll('[data-perf-bulk]')],buttons=[...host.querySelectorAll('[data-owned-score]')];
+   let sending=false;
+   const chosen=()=>checks.filter(x=>x.checked).map(x=>x.value);
+   const sync=()=>{
+    const n=chosen().length;
+    host.querySelector('[data-perf-count]').textContent=n+' öğrenci seçildi';
+    all.checked=n===checks.length;
+    all.indeterminate=n>0&&n<checks.length;
+    all.disabled=sending;
+    checks.forEach(x=>x.disabled=sending);
+    bulk.forEach(x=>x.disabled=sending||!n);
+    buttons.forEach(x=>x.disabled=sending);
+   };
+   checks.forEach(x=>x.addEventListener('change',sync));
+   all.onchange=()=>{checks.forEach(x=>x.checked=all.checked);sync();};
+   const submit=async(ids,delta,collective)=>{
+    if(sending||!ids.length)return;
+    if(collective&&!window.confirm(ids.length+' öğrenciye '+(delta>0?'+0,3 artı':'−2 eksi')+' puanı verilsin mi?'))return;
+    sending=true;sync();
+    let completed=0,failed=[],failedIds=new Set();
+    try{
+     for(const id of ids){
+      try{await call('teacherPortalPerformance',{studentId:id,delta});completed++;}
+      catch(e){failedIds.add(id);failed.push((students.find(p=>p.id===id)?.fullName||students.find(p=>p.id===id)?.username||'Öğrenci')+': '+(e.message||'İşlem hatası'));}
+      status(ids.length+' öğrenciden '+completed+' işlem kaydedildi'+(failed.length?' · '+failed.length+' hata':'')+'…');
+     }
+     if(failed.length)status(completed+' öğrenci güncellendi. '+failed.length+' öğrenci güncellenemedi: '+failed.slice(0,3).join('; ')+(failed.length>3?' …':''));
+     else status(completed+' öğrenciye '+(delta>0?'artı':'eksi')+' başarıyla verildi.');
+     if(collective){
+      checks.forEach(x=>{if(ids.includes(x.value)&&!failedIds.has(x.value))x.checked=false;});
+     }
+    }finally{sending=false;sync();}
+   };
+   buttons.forEach(b=>b.onclick=()=>submit([b.dataset.student],Number(b.dataset.ownedScore),false));
+   bulk.forEach(b=>b.onclick=()=>submit(chosen(),Number(b.dataset.perfBulk),true));
+   sync();
   });
  }
  async function openAnnouncement(){
