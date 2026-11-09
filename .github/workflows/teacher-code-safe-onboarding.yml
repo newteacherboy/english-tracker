@@ -23,4 +23,4 @@ jobs:
           node-version: '24'
       - run: node --check ingilizce/teacher-portal.js
       - run: node --check ingilizce/first-discovery-state.js
-      - run: node --test tests/teacher-portal-api.test.mjs tests/onboarding-registration.test.cjs
+      - run: node --test tests/teacher-portal-api.test.mjs tests/onboarding-registration.test.cjs tests/google-signup.test.cjs
