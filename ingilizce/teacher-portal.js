@@ -602,7 +602,7 @@
   if(action==='students'){openBulkStudents();return;}
   if(action==='individual'){individualReport();return;}
   if(action==='games'||action==='library'){teacherDashboardHide();teacherDestination(action==='games'?'games':'study');return;}
-  if(action==='oral'){void legacyTool(/sözlü yap/i);return;}
+  if(action==='oral'){void openTeacherOral();return;}
   const map={
    performance:/ders içi performans/i,
    individual:/bireysel rapor|öğrenci ilerleme|öğrenci rapor/i,
@@ -628,14 +628,22 @@
   document.querySelector('[data-tp-home-nav]')?.classList.add('active');
  }
  function teacherHomeHide(){document.getElementById('tpTeacherHome')?.classList.remove('is-visible');document.body.classList.remove('tp-home-active');document.querySelector('[data-tp-home-nav]')?.classList.remove('active');}
+ async function openTeacherOral(){
+  const current=state(),teacherToken=current?.teacherToken;
+  if(!teacherToken){window.yoToast?.('Sözlü yapmak için öğretmen kodunla giriş yapmalısın.');return;}
+  // Oral authentication uses the same teacher session as class creation.
+  // Set it every time so newly entered teachers do not depend on opening the legacy dashboard.
+  sessionStorage.setItem('ing_ogr_token',teacherToken);
+  sessionStorage.setItem('ing_ogr_ad',current?.name||'');
+  try{
+   if(typeof window.dmTeacherOral?.open!=='function')throw Error('Sözlü ekranı henüz yüklenemedi.');
+   await window.dmTeacherOral.open();
+  }catch(error){window.yoToast?.(error.message||'Sözlü ekranı açılamadı.');}
+ }
  function teacherDestination(action){
   if(action==='class'){openBulkStudents();return;}
   if(action==='panel'){teacherDashboardShow();return;}
-  if(action==='oral'){
-   if(typeof window.dmTeacherOral?.open==='function')window.dmTeacherOral.open();
-   else window.yoToast?.('Sözlü ekranı henüz hazır değil.');
-   return;
-  }
+  if(action==='oral'){void openTeacherOral();return;}
   rememberRoute(action);teacherHomeHide();teacherDashboardHide();teacherDock();
   const id=action==='study'?'tab-derscalis':action==='games'?'tab-aktiviteler':'tab-profile-menu';
   const launch=action==='study'?window.dersCalisTamEkranAc:window.aktivitelerTamEkranAc;
