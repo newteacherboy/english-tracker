@@ -16,7 +16,9 @@
    try{const response=await nativeFetch(api,{method:'POST',headers:{'Content-Type':'application/json',...(accessToken?{Authorization:'Bearer '+accessToken}:{})},body:JSON.stringify(body),signal:controller.signal});
     const result=await response.json();if(result===null&&body.islem==='ekVeriGetir')return null;
     if(body.islem==='googleGiris'&&result.baglantiGerekli)return result;
-    if(!response.ok||result.ok===false||result.status==='error')throw Error(result.message||result.mesaj||'İşlem tamamlanamadı. Tekrar dene.');return result;
+    if(!response.ok||result.ok===false||result.status==='error')throw Error(result.message||result.mesaj||'İşlem tamamlanamadı. Tekrar dene.');
+    if(['kayitOl','ogretmenKayitOl'].includes(body.islem)&&result.teacherAccount&&/^\d{6}$/.test(result.teacherCode||''))window.dispatchEvent(new CustomEvent('dm:teacher-signup-code',{detail:{code:result.teacherCode}}));
+    return result;
    }finally{clearTimeout(timeout);}
   }
  };
