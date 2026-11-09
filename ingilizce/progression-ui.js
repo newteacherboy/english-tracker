@@ -138,7 +138,7 @@ function playLevelEnergy(el,reward,close,later,reduced){
  setEnergy(reward.before);
  const fly=()=>{
   const visible=e=>{const r=e.getBoundingClientRect();return r.width>0&&r.height>0&&r.top>=0&&r.bottom<=innerHeight&&getComputedStyle(e).visibility==='visible';};
-  if(!battery.animate){close();return;}
+  if(!battery.animate){later(close,1800);return;}
   let target=[...document.querySelectorAll('.dm-unified-wallet [data-pw="energy"]')].find(visible)
    ||[...document.querySelectorAll('#headerEnerjiBadge,#ybEnerji')].find(visible);
   if(!target){
@@ -156,22 +156,22 @@ function playLevelEnergy(el,reward,close,later,reduced){
     {transform:'translate(-50%,-50%) scale(.5)',opacity:0},
     {transform:'translate(calc(-50% + '+(dx*.45+offset)+'px),calc(-50% + '+(dy*.35-35)+'px)) scale(1.15)',opacity:1,offset:.46},
     {transform:'translate(calc(-50% + '+dx+'px),calc(-50% + '+dy+'px)) scale(.28)',opacity:0}
-   ],{duration:620,delay:i*28,easing:'ease-in-out',fill:'both'});
+   ],{duration:850,delay:i*35,easing:'ease-in-out',fill:'both'});
   }
-  later(()=>target.animate([{filter:'brightness(1)'},{filter:'brightness(1.65) drop-shadow(0 0 9px #e9ff8a)'},{filter:'brightness(1)'}],{duration:360}),660);
-  later(close,1020);
+  later(()=>target.animate([{filter:'brightness(1)'},{filter:'brightness(1.65) drop-shadow(0 0 9px #e9ff8a)'},{filter:'brightness(1)'}],{duration:500}),990);
+  later(close,1800);
  };
  const full=()=>{
   setEnergy(reward.energy);el.classList.add('dm-energy-full');
   el.querySelector('h2').textContent='Enerjin tamamen doldu!';
   el.querySelector('[role="status"]').textContent='Enerjin '+reward.energy+' / '+reward.max+'.';
-  later(reduced?close:fly,reduced?1000:440);
+  later(reduced?close:fly,reduced?2500:1500);
  };
  if(reduced||reward.before===reward.energy){full();return;}
  const started=performance.now();
  function tick(now){
   if(!el.isConnected||!el.classList.contains('dm-level-energy'))return;
-  const ratio=Math.min(1,(now-started)/760);
+  const ratio=Math.min(1,(now-started)/1200);
   setEnergy(reward.before+Math.floor((reward.energy-reward.before)*ratio));
   if(ratio<1)requestAnimationFrame(tick);else full();
  }
