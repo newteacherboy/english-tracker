@@ -1,0 +1,25 @@
+name: Extra data safe read regression
+on:
+  pull_request:
+    paths:
+      - 'supabase/functions/diji-api/start-path-access.mjs'
+      - 'supabase/functions/medupro-api/start-path-access.mjs'
+      - 'tests/start-path-batched-read.test.cjs'
+      - '.github/workflows/extra-data-safe-read.yml'
+  push:
+    paths:
+      - 'supabase/functions/diji-api/start-path-access.mjs'
+      - 'supabase/functions/medupro-api/start-path-access.mjs'
+      - 'tests/start-path-batched-read.test.cjs'
+permissions:
+  contents: read
+jobs:
+  regression:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: node --test tests/start-path.test.cjs tests/start-path-batched-read.test.cjs

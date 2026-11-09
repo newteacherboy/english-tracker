@@ -9,12 +9,19 @@ export function thematicSummary(rows){
  return {played:[...played],complete:Object.fromEntries(Object.entries(LEVELS).map(([code,ids])=>[code,ids.every(id=>done.has(id))]))};
 }
 export async function loadStartPath(db,studentId,ctx){
- const one=async key=>{const r=await db.from('extra_data').select('value').eq('student_id',studentId).eq('key_name',key).maybeSingle();if(r.error)throw r.error;return r.data?.value;};
- const [profile,placement,choice,student,story]=await Promise.all([
-  one('learner_profile_v1'),one('placement_start_v1'),one('start_point_v1'),
+ // One scoped read replaces three parallel PostgREST calls. No cache, mutations or
+ // changed authorization: the existing server-scoped student ID is still mandatory.
+ const [extras,student,story]=await Promise.all([
+  db.from('extra_data').select('key_name,value').eq('student_id',studentId)
+    .in('key_name',['learner_profile_v1','placement_start_v1','start_point_v1']),
   db.from('students').select('class_no').eq('id',studentId).maybeSingle(),
   db.from('papi_story_progress').select('chapter,completed').eq('student_id',studentId).limit(1000)
  ]);
+ if(extras?.error)throw extras.error;
  if(student?.error)throw student.error;if(story?.error)throw story.error;
+ const byKey=new Map((extras?.data||[]).map(row=>[row.key_name,row.value]));
+ const profile=byKey.get('learner_profile_v1');
+ const placement=byKey.get('placement_start_v1');
+ const choice=byKey.get('start_point_v1');
  return computeStartPath({profile,classNo:student?.data?.class_no,placement,choice,lessons:ctx?.lessons,done:ctx?.done,units:ctx?.units,thematic:thematicSummary(Array.isArray(story?.data)?story.data:[])});
 }
