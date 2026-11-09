@@ -15,15 +15,15 @@ function reset(){if(owner===who())return;owner=who();epoch++;mode='weekly';selec
 function onScreen(){return typeof maSekme!=='undefined'&&maSekme==='lig'&&!(typeof maProfilId!=='undefined'&&maProfilId)&&root.classList.contains('active');}
 const virtualAvatarAssets={
  1:'friends-assets/papi-fencer.webp',
- 2:'oyna-assets/oyna-papi-fly.png',
- 3:'premium-assets/kelime-bloklari/papi.webp',
- 4:'premium-assets/bulut-ucusu/papi-ucak.webp',
- 5:'study-assets/papi-celebrate.png',
- 6:'route-assets/papi-practice-flight.webp',
- 7:'world-assets/papi-atlas.webp',
+ 2:'discovery-assets/papi-merhaba.webp',
+ 3:'papi-help-v2.png',
+ 4:'route-assets/papi-school.webp',
+ 5:'papi-reward-v2.png',
+ 6:'papi-loading.webp',
+ 7:'route-assets/papi-english.webp',
  8:'study-assets/papi-read.png',
- 9:'discovery-assets/papi-merhaba.webp',
- 10:'papi-growth.webp'
+ 9:'study-assets/papi-celebrate.png',
+ 10:'discovery-assets/papi-kutlama.webp'
 };
 function virtualAvatar(bot,size=44){
  const id=Number(bot?.bot_id||String(bot?.id||'').replace('virtual-',''))||1;

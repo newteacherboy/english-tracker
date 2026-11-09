@@ -37,5 +37,15 @@ test('Papi bots have unique official mascot poses',async()=>{
  const html1=f.context.window.dmLeagueUI.virtualAvatar({id:'virtual-1',name:'Papi Şimşek'});
  const html2=f.context.window.dmLeagueUI.virtualAvatar({id:'virtual-2',name:'Papi Roket'});
  assert.notEqual(html1,html2);
- assert.match(html2,/oyna-papi-fly.png/);
+ assert.match(html2,/discovery-assets\/papi-merhaba.webp/);
+});
+
+test('all ten bot portraits use individual images, never sprite sheets',()=>{
+ const f=fixture();
+ const avatars=Array.from({length:10},(_,i)=>f.context.window.dmLeagueUI.virtualAvatar({id:'virtual-'+(i+1),name:'Papi'}));
+ const images=avatars.map(html=>html.match(/src="([^"]+)"/)?.[1]);
+ assert.equal(new Set(images).size,10);
+ for(const image of images){
+  assert(!/papi-growth|papi-practice-flight|papi-atlas/.test(image),'Sprite sheet must not be used: '+image);
+ }
 });
