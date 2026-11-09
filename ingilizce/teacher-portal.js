@@ -530,7 +530,46 @@
    submit(v,async form=>{const values={studentId:student.id};fields.forEach(([k])=>values[k]=Number(form.get(k)));const r=await api('teacherPortalRubric',values);v.form.textContent='Değerlendirme kaydedildi. Genel ortalama: '+r.average;});
   });
  }
- function teacherAnnouncement(){if(window.dmTeacherOwnedTools?.announcements)return window.dmTeacherOwnedTools.announcements();window.yoToast?.('Duyuru ekranı yüklenemedi. Sayfayı yenile.');}
+ function teacherAnnouncement(){
+  // Reuse the original teacher-portal sheet. Only the missing own-class and
+  // individual recipient controls are inserted; original copy and flow remain.
+  const v=sheet('📢 Duyuru Oluştur','<p>Yalnızca sana bağlı öğrencilere gösterilir. Tüm platform duyurusu gönderilemez.</p>'+
+   '<label>Sınıf / Şube<select name="classId" required><option value="">Sınıf yükleniyor…</option></select></label>'+
+   '<label>Alıcı<select name="studentId"><option value="">Sınıfın tamamı</option></select></label>'+
+   '<label>Başlık<input name="title" maxlength="120" required></label>'+
+   '<label>Duyuru<textarea name="message" maxlength="2000" required rows="5"></textarea></label>'+
+   '<button class="tp-primary" type="submit">Duyuruyu Yayınla</button>');
+  let classes=[];
+  const gradeSelect=v.form.elements.classId,studentSelect=v.form.elements.studentId;
+  const refreshPupils=()=>{
+   const selected=classes.find(x=>x.id===gradeSelect.value);
+   studentSelect.replaceChildren(new Option('Sınıfın tamamı',''));
+   for(const pupil of selected?.students||[]){
+    studentSelect.add(new Option(pupil.fullName||pupil.username,pupil.id));
+   }
+  };
+  gradeSelect.onchange=refreshPupils;
+  (async()=>{
+   try{
+    if(typeof window.dmTeacherOwnedTools?.classes!=='function')throw Error('Sınıf listesi yüklenemedi.');
+    classes=await window.dmTeacherOwnedTools.classes();
+    if(!v.shade.isConnected)return;
+    gradeSelect.replaceChildren(new Option('Sınıf seç',''));
+    for(const c of classes)gradeSelect.add(new Option((c.name?c.name+' · ':'')+c.classNo+'. sınıf / '+c.branch+' şubesi',c.id));
+    if(classes.length===1){gradeSelect.value=classes[0].id;refreshPupils();}
+    if(!classes.length)v.error('Önce Sınıflarım bölümünden sınıf oluştur.');
+   }catch(e){if(v.shade.isConnected)v.error(e.message);}
+  })();
+  submit(v,async form=>{
+   const selected=classes.find(x=>x.id===form.get('classId'));
+   if(!selected)throw Error('Önce kendi oluşturduğun sınıfı seç.');
+   const response=await api('teacherPortalAnnouncement',{
+    classId:selected.id,studentId:form.get('studentId')||'',
+    title:form.get('title'),message:form.get('message')});
+   v.form.textContent='Duyuru '+response.studentCount+' öğrenciye gönderildi.';
+  });
+ }
+ window.dmTeacherLegacyAnnouncementOpen=teacherAnnouncement;
  function teacherStudentDetails(){
   chooseTeacherStudent('Öğrenci Bilgilerini Değiştir',async student=>{
    const info=await api('teacherPortalStudentContact',{studentId:student.id});
@@ -561,8 +600,9 @@
   if(action==='individual'){individualReport();return;}
   if(action==='games'||action==='library'){teacherDashboardHide();teacherDestination(action==='games'?'games':'study');return;}
   if(action==='oral'){void openTeacherOral();return;}
-  if(['performance','homework','announcements','reports','weak','parent','exams'].includes(action)){
-   const tool=action==='performance'?'performance':action==='homework'?'homework':action==='announcements'?'announcements':'reports';
+  if(action==='announcements'){teacherAnnouncement();return;}
+  if(['performance','homework','reports','weak','parent','exams'].includes(action)){
+   const tool=action==='performance'?'performance':action==='homework'?'legacyHomework':'reports';
    const launch=async()=>{if(typeof window.dmTeacherOwnedTools?.[tool]!=='function')throw Error('Sınıf araçları henüz yüklenmedi. Sayfayı yenile.');await window.dmTeacherOwnedTools[tool]();};
    void launch().catch(e=>window.yoToast?.(e.message));return;
   }
