@@ -17,7 +17,7 @@ test('weekly bots use Papi art and visible disclosure without changing actual pl
  const preview=f.context.window.dmLeagueUI.weeklyPreview();
  assert.equal(preview.me.rank,2);
  assert.equal(preview.me.displayRank,2);
- assert.deepEqual(preview.top.map(p=>p.name),['Ada','Bora','Cem']);
+ assert.equal(preview.top.map(p=>p.name).join(','),'Ada,Bora,Cem');
  assert.equal(preview.top.some(p=>p.is_virtual),false);
  assert.equal(preview.me.is_virtual,undefined);
  assert.match(f.html(),/Sanal Rakip/);
@@ -27,7 +27,7 @@ test('weekly bots use Papi art and visible disclosure without changing actual pl
 test('virtual rivals do not displace qualified real players above 200 XP',async()=>{
  const f=fixture();f.render();await tick();
  const preview=f.context.window.dmLeagueUI.weeklyPreview();
- assert.deepEqual(preview.top.map(p=>p.name),['Ada','Bora','Cem']);
+ assert.equal(preview.top.map(p=>p.name).join(','),'Ada,Bora,Cem');
  assert.equal(preview.me.rank,2);
  assert.equal(preview.me.displayRank,2);
  assert.match(f.html(),/Sanal Rakip/);
