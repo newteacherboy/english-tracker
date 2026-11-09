@@ -1,9 +1,9 @@
 /* Keep the teacher workspace open while child screens come and go. */
 (()=>{'use strict';
-const style=document.createElement('link');style.rel='stylesheet';style.href='teacher-workspace.css?v=20261110-quick-actions-fit';document.head.append(style);
+const style=document.createElement('link');style.rel='stylesheet';style.href='teacher-workspace.css?v=20261110-spacious-home-2';document.head.append(style);
 const $=id=>document.getElementById(id),token=()=>{try{return JSON.parse(sessionStorage.getItem('dm_tp_session')||'null')?.teacherToken||sessionStorage.getItem('ing_ogr_token')||'';}catch{return sessionStorage.getItem('ing_ogr_token')||'';}};
 const ownedToolReady=new Promise(resolve=>{
- const script=document.createElement('script');script.src='teacher-owned-tools.js?v=20261110';
+ const script=document.createElement('script');script.src='teacher-owned-tools.js?v=20261110-classic-plus-minus-2';
  script.onload=()=>resolve(true);script.onerror=()=>resolve(false);document.head.append(script);
 });
 async function openOwnedTool(key){
