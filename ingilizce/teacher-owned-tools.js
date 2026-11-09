@@ -197,5 +197,72 @@
   },true);
  }
 
- window.dmTeacherOwnedTools={performance:openPerformance,announcements:openAnnouncement,homework:openHomework,legacyHomework,reports:openReports,classes:ownClasses};
+
+ // Original announcement management dialog; keep theme, image, frequency and list.
+ // Only the audience choices come from the current teacher's real classrooms.
+ let announced=null;
+ async function legacyAnnouncement(){
+  const classes=await ownClasses();
+  if(!classes.length){window.yoToast?.('Önce Sınıflarım bölümünden sınıf oluştur.');return;}
+  const modal=document.getElementById('duyuruYonetimModal');
+  if(!modal)throw Error('Önceki Duyuru Yönetimi ekranı yüklenemedi.');
+  const currentToken=token();sessionStorage.setItem('ing_ogr_token',currentToken);
+  if(typeof window.ogretmenMenuDuyuruAc==='function')window.ogretmenMenuDuyuruAc();
+  else{document.getElementById('ogretmenMenuModal')?.style.setProperty('display','none');modal.style.display='flex';}
+  modal.classList.add('dm-own-class-announcements');
+  const targetArea=document.getElementById('duyuruHedefSecimAlani');
+  const originalEvery=document.getElementById('duyuruHerkesCb')?.closest('label');
+  if(originalEvery)originalEvery.style.display='none';
+  if(targetArea)targetArea.style.display='none';
+  // The legacy extension re-draws target chips every second. They must never
+  // expose a platform-wide selection to a regular classroom teacher.
+  if(!document.getElementById('dmOwnAnnouncementStyle')){
+   const st=document.createElement('style');st.id='dmOwnAnnouncementStyle';
+   st.textContent='#duyuruYonetimModal.dm-own-class-announcements #cogDuyuruHedef,#duyuruYonetimModal.dm-own-class-announcements #duyuruHedefSecimAlani{display:none!important}';
+   document.head.append(st);
+  }
+  let pick=document.getElementById('dmLegacyOwnAnnouncementSelects');
+  if(!pick){
+   pick=document.createElement('div');pick.id='dmLegacyOwnAnnouncementSelects';pick.className='rubric-field';
+   pick.innerHTML='<label for="dmOwnAnnClass">Sınıf / Şube</label><select id="dmOwnAnnClass" required></select><label for="dmOwnAnnStudent" style="margin-top:8px">Alıcı</label><select id="dmOwnAnnStudent"></select>';
+   const message=document.getElementById('duyuruMesajInput');
+   if(!message)throw Error('Duyuru alanı bulunamadı.');
+   message.closest('.rubric-field')?.insertAdjacentElement('afterend',pick);
+  }
+  const cls=pick.querySelector('#dmOwnAnnClass'),stu=pick.querySelector('#dmOwnAnnStudent');
+  cls.replaceChildren(new Option('Sınıf / şube seç',''),...classes.map(c=>new Option((c.name?c.name+' · ':'')+c.classNo+'. sınıf / '+c.branch+' şubesi',c.id)));
+  const fill=()=>{
+   const selected=classes.find(c=>c.id===cls.value);
+   stu.replaceChildren(new Option('Sınıfın tamamına',''),...(selected?.students||[]).map(p=>new Option(p.fullName||p.username,p.id)));
+  };
+  cls.onchange=fill;if(classes.length===1)cls.value=classes[0].id;fill();
+  // Capture the original publish button before its inline onclick can send
+  // an old unscoped 'duyuruEkle' request.
+  const publish=[...modal.querySelectorAll('button')].find(b=>b.getAttribute('onclick')?.includes('duyuruEkleGonder'));
+  if(!publish)throw Error('Eski Duyuruyu Yayınla butonu bulunamadı.');
+  if(announced?.button===publish){announced.classes=classes;return;}
+  announced={button:publish,classes};
+  publish.addEventListener('click',async e=>{
+   e.preventDefault();e.stopImmediatePropagation();
+   const chosen=(announced.classes||[]).find(c=>c.id===cls.value);
+   const msg=document.getElementById('duyuruEkleSonucMesaj');
+   const say=x=>{if(msg)msg.textContent=x;};
+   if(!chosen){say('Önce kendi sınıfını seç.');return;}
+   const title=document.getElementById('duyuruBaslikInput')?.value?.trim()||'';
+   const message=document.getElementById('duyuruMesajInput')?.value?.trim()||'';
+   if(title.length<3||message.length<3){say('Başlık ve mesaj en az üç karakter olmalı.');return;}
+   publish.disabled=true;
+   try{
+    const d=await call('teacherPortalAnnouncement',{classId:chosen.id,studentId:stu.value,title,message,
+     imageLink:document.getElementById('duyuruGorselInput')?.value||'',
+     theme:document.getElementById('duyuruTemaSelect')?.value||'mavi',
+     displayLimit:Number(document.getElementById('duyuruGosterimSelect')?.value||0)});
+    say('Duyuru '+d.studentCount+' öğrenciye gönderildi.');
+    document.getElementById('duyuruBaslikInput').value='';
+    document.getElementById('duyuruMesajInput').value='';
+   }catch(err){say(err.message||'Duyuru gönderilemedi.');}
+   finally{publish.disabled=false;}
+  },true);
+ }
+ window.dmTeacherOwnedTools={performance:openPerformance,announcements:openAnnouncement,homework:openHomework,legacyHomework,legacyAnnouncement,reports:openReports,classes:ownClasses};
 })();
