@@ -156,6 +156,10 @@
   sessionStorage.setItem('ing_ogr_token',teacherToken);
   if(typeof window.odevEkraniAc!=='function')throw Error('Ödev Ver ekranı yüklenmedi.');
   await window.odevEkraniAc();
+  const nativeModal=document.getElementById('odModal');
+  if(!nativeModal)throw Error('Önceki Ödev Ver ekranı bulunamadı.');
+  nativeModal.style.zIndex='2147483645';
+  nativeModal.style.display='flex';
   setLegacyHomeworkClasses();
   const button=document.getElementById('odVer');
   if(!button)throw Error('Ödev Ver butonu bulunamadı.');
@@ -210,6 +214,8 @@
   if(typeof window.ogretmenMenuDuyuruAc==='function')window.ogretmenMenuDuyuruAc();
   else{document.getElementById('ogretmenMenuModal')?.style.setProperty('display','none');modal.style.display='flex';}
   modal.classList.add('dm-own-class-announcements');
+  modal.style.zIndex='2147483645';
+  modal.style.display='flex';
   const targetArea=document.getElementById('duyuruHedefSecimAlani');
   const originalEvery=document.getElementById('duyuruHerkesCb')?.closest('label');
   if(originalEvery)originalEvery.style.display='none';
