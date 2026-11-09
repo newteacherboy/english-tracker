@@ -2,6 +2,7 @@ name: Repair Papi badge artwork alpha holes
 on:
   push:
     branches:
+      - main
       - fix/badge-artwork-alpha-20261109
   workflow_dispatch:
 permissions:
