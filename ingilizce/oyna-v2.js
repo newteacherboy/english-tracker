@@ -149,7 +149,7 @@ function medalRow(map,step,i){
   '<button type="button" class="rt-medal-stop'+(start?' rt-medal-start':'')+(locked?' is-locked':step.done?' is-done':'')+'" '+
   (start&&learn?'data-rt="continue" data-chapter="'+step.id+'"':action)+(locked?' disabled':'')+(active?' aria-current="step"':'')+
   ' aria-label="'+esc((start?caption+' · ':'')+label)+'">'+
-  (step.done?starsMarkup(step,learn):'')+'<span class="rt-medal-disc">'+disc+'</span>'+
+  (step.done?starsMarkup(step,learn):'')+'<span class="rt-medal-disc">'+disc+'<span class="rt-medal-stop-number" aria-hidden="true">'+n+'</span></span>'+
   (start?'<span class="rt-medal-start-label">'+caption+' <span aria-hidden="true">›</span></span>':'')+'</button>'+
   (active?img('papi-medal.webp','rt-medal-papi'):'')+'</div>';
 }
@@ -189,8 +189,12 @@ function medalRouteMarkup(steps,current,learn){
  }
  map.height=(map.layout.at(-1)?.y??map.top)+map.row+55;
  routeMap=map;
- const ready=chestReady(),chestY=map.layout[current]?.y??map.top;
- const chest='<button type="button" class="rt-medal-chest'+(ready?' is-ready':'')+'" data-rt="chests" style="top:'+chestY+'px">'+img('bilgi-icons/chest.webp')+'<span>'+(ready?'Ödülü al':'Sandık')+'</span></button>';
+ // Chests are map landmarks, not a marker that follows the student's current stop.
+ // Put the shortcut next to the next 5th stop; it will move only when progress reaches a milestone.
+ const ready=chestReady();
+ const chestIndex=steps.findIndex((step,i)=>i>=current&&routeNumber(step,i,learn)%5===0);
+ const chestY=chestIndex>=0?map.layout[chestIndex]?.y:null;
+ const chest=chestY==null?'':'<button type="button" class="rt-medal-chest'+(ready?' is-ready':'')+'" data-rt="chests" style="top:'+chestY+'px" aria-label="'+(ready?'Hazır sandık ödülünü al':'Sandıklarını görüntüle')+'">'+img('bilgi-icons/chest.webp')+'<span>'+(ready?'Ödülü al':'Sandıklarım')+'</span></button>';
  const tools=[['all','book','Kütüphane'],['plan','calendar','Plan'],['missions','tasks','Görevler']];
  return '<section class="bi-scene rt-medal-route'+(learn?'':' rt-medal-school')+'" data-route-map="'+map.key+'" aria-label="'+title+'">'+
   '<header class="rt-medal-header"><div class="rt-medal-unit"><div><h1>'+title+'</h1><p>'+esc(subtitle)+'</p></div><button type="button" data-rt="switch-route" aria-label="Parkur değiştir">'+icon('route')+'<span>Rota değiştir</span><span aria-hidden="true">›</span></button></div>'+
