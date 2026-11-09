@@ -13,14 +13,14 @@ const empty=()=>({rows:[],visualRows:[],loaded:false,busy:false,error:'',at:0});
 let states={weekly:empty(),alltime:empty()};
 function reset(){if(owner===who())return;owner=who();epoch++;mode='weekly';selected=null;limit=30;states={weekly:empty(),alltime:empty()};}
 function onScreen(){return typeof maSekme!=='undefined'&&maSekme==='lig'&&!(typeof maProfilId!=='undefined'&&maProfilId)&&root.classList.contains('active');}
-function avatar(name,size=38){let html='';try{html=window.karakterSvg?.(name,size)||'';}catch{}
+function avatar(name,size=38,virtual=false){if(virtual)return '<span class="dm-lig-avatar dm-lig-papi" style="--size:'+size+'px"><img src="friends-assets/papi-fencer.webp" alt="Papi" loading="lazy"></span>';let html='';try{html=window.karakterSvg?.(name,size)||'';}catch{}
  if(!html){const icon=window.ogrenciMaskotSec?.(name)||'🦜';html='<span aria-hidden="true">'+esc(icon)+'</span>';}
  return '<span class="dm-lig-avatar" style="--size:'+size+'px">'+html+'</span>';
 }
-function row(p,own=false){return '<button type="button" class="dm-lig-row'+(own?' dm-lig-self':'')+(p.is_virtual?' dm-lig-virtual':'')+'" data-lig-person="'+esc(p.name)+'"'+(p.is_virtual?' data-virtual-rival="true"':'')+'><span class="dm-lig-rank">'+fmt(p.displayRank??p.rank)+'</span>'+avatar(p.name)+'<span class="dm-lig-person"><b>'+esc(p.name)+'</b>'+(p.is_virtual?'<small class="dm-lig-virtual-label">Sanal Rakip</small>':'')+(own?'<small>Senin sıralaman'+(mode==='weekly'?' · '+esc(leagues[p.league]?.short||''):'')+'</small>':'')+'</span><strong>'+fmt(p.xp)+' XP</strong>'+(own?'<span aria-hidden="true">›</span>':'')+'</button>';}
+function row(p,own=false){return '<button type="button" class="dm-lig-row'+(own?' dm-lig-self':'')+(p.is_virtual?' dm-lig-virtual':'')+'" data-lig-person="'+esc(p.name)+'"'+(p.is_virtual?' data-virtual-rival="true"':'')+'><span class="dm-lig-rank">'+fmt(p.displayRank??p.rank)+'</span>'+avatar(p.name,38,p.is_virtual)+'<span class="dm-lig-person"><b>'+esc(p.name)+'</b>'+(p.is_virtual?'<small class="dm-lig-virtual-label">Sanal Rakip</small>':'')+(own?'<small>Senin sıralaman'+(mode==='weekly'?' · '+esc(leagues[p.league]?.short||''):'')+'</small>':'')+'</span><strong>'+fmt(p.xp)+' XP</strong>'+(own?'<span aria-hidden="true">›</span>':'')+'</button>';}
 function podium(rows,large){const top=rows.slice(0,3);return '<div class="dm-lig-podium '+(large?'dm-lig-podium-large':'dm-lig-podium-cards')+'">'+(large?[1,0,2]:[0,1,2]).map(i=>{
  const p=top[i];if(!p)return '<div class="dm-lig-podium-empty" aria-hidden="true"></div>';
- return '<button type="button" class="dm-lig-place dm-lig-place-'+(i+1)+(p.is_virtual?' dm-lig-virtual':'')+'" data-lig-person="'+esc(p.name)+'"'+(p.is_virtual?' data-virtual-rival="true"':'')+' aria-label="'+(i+1)+'. '+esc(p.name)+', '+fmt(p.xp)+' XP">'+(!large?'<span class="dm-lig-medal">'+['👑','🥈','🥉'][i]+'</span>':'')+avatar(p.name,large?128:60)+(large?'<span class="dm-lig-step"><b>'+ (i+1)+'</b></span>':'')+'<span class="dm-lig-winner"><b>'+esc(p.name)+'</b><strong>'+fmt(p.xp)+' XP</strong>'+(p.is_virtual?'<small class="dm-lig-virtual-label">Sanal Rakip</small>':'')+'</span></button>';
+ return '<button type="button" class="dm-lig-place dm-lig-place-'+(i+1)+(p.is_virtual?' dm-lig-virtual':'')+'" data-lig-person="'+esc(p.name)+'"'+(p.is_virtual?' data-virtual-rival="true"':'')+' aria-label="'+(i+1)+'. '+esc(p.name)+', '+fmt(p.xp)+' XP">'+(!large?'<span class="dm-lig-medal">'+['👑','🥈','🥉'][i]+'</span>':'')+avatar(p.name,large?128:60,p.is_virtual)+(large?'<span class="dm-lig-step"><b>'+ (i+1)+'</b></span>':'')+'<span class="dm-lig-winner"><b>'+esc(p.name)+'</b><strong>'+fmt(p.xp)+' XP</strong>'+(p.is_virtual?'<small class="dm-lig-virtual-label">Sanal Rakip</small>':'')+'</span></button>';
 }).join('')+'</div>';}
 function journey(rows,me){
  const ownRows=me?rows.filter(p=>p.league===me.league).sort((a,b)=>a.rank-b.rank):[];
@@ -79,7 +79,7 @@ window.maLigHtml=function(){reset();if(!states[mode].busy&&Date.now()-states[mod
 root.addEventListener('click',e=>{
  const b=e.target.closest('[data-lig-mode],[data-lig-code],[data-lig-person],[data-lig-back],[data-lig-more],[data-lig-retry]');if(!b)return;
  if(b.hasAttribute('data-lig-back'))return window.maSekmeSec?.('hub');
- if(b.hasAttribute('data-lig-person')){if(b.hasAttribute('data-virtual-rival'))return;return window.maAkisKisiAc?.(b.dataset.ligPerson);}
+ if(b.hasAttribute('data-lig-person')){if(b.hasAttribute('data-virtual-rival')){const bot=states.weekly.visualRows.find(p=>p.is_virtual&&p.name===b.dataset.ligPerson);if(bot)void openVirtualInfo(bot);return;}return window.maAkisKisiAc?.(b.dataset.ligPerson);}
  if(b.hasAttribute('data-lig-mode')){if(b.dataset.ligMode==='alltime'&&level()<15){window.yoToast?.('🔒 Efsaneler Ligi 15. seviyede açılır.');return;}mode=b.dataset.ligMode;limit=30;draw();void load();return;}
  if(b.hasAttribute('data-lig-code')){const k=b.dataset.ligCode;if(level()<leagues[k].level)return;selected=k;limit=30;draw();return;}
  if(b.hasAttribute('data-lig-more')){limit+=30;draw();return;}
