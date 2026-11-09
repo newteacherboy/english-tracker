@@ -548,19 +548,8 @@
   report.students.forEach(st=>{const p=document.createElement('p');p.textContent=st.name+' · XP: '+(st.xp||0)+' · Oyun: '+st.plays;list.append(p);});
   v.shade.querySelector('[data-copy]').onclick=()=>{const text=[summary,'Yanlış yapılan oyunlar: '+(report.summary.wrongByGame||[]).map(x=>x.join(': ')).join(', '),'Çalışma yapmayanlar: '+report.inactive.join(', '),...report.students.map(x=>x.name+': '+x.plays+' oyun, '+x.xp+' XP')].join('\n');navigator.clipboard?.writeText(text);};
  }
- function classroom(action){
-  pickClass(action==='parent'?'Haftalık Veli Özetleri':'Sınıfımın Öğrenme Özeti',async grade=>{
-   try{const report=await api('teacherPortalClassAnalytics',{grade});showClassAnalytics(action==='parent'?'Haftalık Veli Özetleri':'Sınıfımın Öğrenme Özeti',grade,report);}
-   catch(e){sheet('Rapor alınamadı','<p>'+String(e.message).replace(/[<>&]/g,'')+'</p>');}
-  });
- }
- function teacherPerformance(){
-  chooseTeacherStudent('Ders İçi Performans',async student=>{
-   const v=sheet('Ders İçi Performans','<h3 data-name></h3><p>Öğrencinin ders içi performansını değerlendir.</p><div class="tp-score-buttons"><button type="button" data-score="0.3">+ Katılım (+0,3)</button><button type="button" data-score="-2">− Performans (−2)</button></div><p role="status" data-result></p>');
-   v.shade.querySelector('[data-name]').textContent=student.full_name||student.username;
-   v.shade.querySelectorAll('[data-score]').forEach(button=>button.onclick=async()=>{button.disabled=true;try{const r=await api('teacherPortalPerformance',{studentId:student.id,delta:Number(button.dataset.score)});v.shade.querySelector('[data-result]').textContent='Güncel puan: '+r.points;}catch(e){v.shade.querySelector('[data-result]').textContent=e.message;}finally{button.disabled=false;}});
-  });
- }
+ function classroom(){if(window.dmTeacherOwnedTools?.reports)return window.dmTeacherOwnedTools.reports();window.yoToast?.('Raporlar yüklenemedi. Sayfayı yenile.');}
+ function teacherPerformance(){if(window.dmTeacherOwnedTools?.performance)return window.dmTeacherOwnedTools.performance();window.yoToast?.('Performans ekranı yüklenemedi. Sayfayı yenile.');}
  function teacherRubric(){
   chooseTeacherStudent('Özel Ders Rubrik Değerlendirme',async student=>{
    const fields=[['reading_score','Okuma'],['writing_score','Yazma'],['vocabulary_score','Kelime'],['speaking_score','Konuşma'],['grammar_score','Dil bilgisi']];
@@ -569,10 +558,7 @@
    submit(v,async form=>{const values={studentId:student.id};fields.forEach(([k])=>values[k]=Number(form.get(k)));const r=await api('teacherPortalRubric',values);v.form.textContent='Değerlendirme kaydedildi. Genel ortalama: '+r.average;});
   });
  }
- function teacherAnnouncement(){
-  const v=sheet('📢 Duyuru Oluştur','<p>Yalnızca sana bağlı öğrencilere gösterilir. Tüm platform duyurusu gönderilemez.</p><label>Başlık<input name="title" maxlength="120" required></label><label>Duyuru<textarea name="message" maxlength="2000" required rows="5"></textarea></label><button class="tp-primary" type="submit">Duyuruyu Yayınla</button>');
-  submit(v,async form=>{await api('teacherPortalAnnouncement',{title:form.get('title'),message:form.get('message')});v.form.textContent='Duyuru öğrencilerine gönderildi.';});
- }
+ function teacherAnnouncement(){if(window.dmTeacherOwnedTools?.announcements)return window.dmTeacherOwnedTools.announcements();window.yoToast?.('Duyuru ekranı yüklenemedi. Sayfayı yenile.');}
  function teacherStudentDetails(){
   chooseTeacherStudent('Öğrenci Bilgilerini Değiştir',async student=>{
    const info=await api('teacherPortalStudentContact',{studentId:student.id});
