@@ -2382,13 +2382,16 @@ async function handle(req: Request, proxy: any = null) {
     const saved = existing ? await supabase.from("students").update(payload).eq("id",existing.id).select("id,username,email").single() : await supabase.from("students").insert(payload).select("id,username,email").single();
     if(saved.error||!saved.data)return json({status:"error",message:"Kayıt oluşturulamadı. Biraz sonra tekrar dene."},503);
     await saveLearnerProfile(supabase,saved.data.id,learnerProfile);
-    if(teacherApplication)await teacherPortal.trackSignup(saved.data.id);
+    // Teacher signup already includes school/city/district/phone; no second application.
+    // A code is reserved now, but carries NO teacher privilege until owner approval.
+    let teacherCode=null;
+    if(teacherApplication){try{teacherCode=await teacherPortal.trackSignup(saved.data.id);}catch(err){console.error('teacher signup code',err);}}
     /* Optional, unticked registration checkbox (never a condition of registration): weekly progress / Papi news e-mail. */
     if(body.ilerlemeMailOnay===true){try{const e=String(saved.data.email||"").trim().toLowerCase();if(/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(e)){const at=new Date().toISOString();const r=await supabase.from("extra_data").upsert({student_id:saved.data.id,key_name:"progress_mail_consent_v1",value:{at,source:"registration_checkbox",email:e},updated_at:at},{onConflict:"student_id,key_name"});if(r?.error)console.error("progress mail consent",r.error.message);}}catch(err){console.error("progress mail consent",err);}}
     await yeniOgrenciYoneticiBildirimi(saved.data,"normal");
     let mailQueued=true;try { await onboarding.welcome(saved.data); }catch(_){mailQueued=false;}
     const token=await issueSession("student",saved.data.id);
-    return json({status:"success",token,ogrenci:saved.data.username,emailDogrulamaGerekli:true,mailQueued,message:"Hesabın hazır! Uygulamayı kullanabilirsin. E-posta adresini gelen bağlantıyla doğrulamayı unutma."});
+    return json({status:"success",token,ogrenci:saved.data.username,emailDogrulamaGerekli:true,mailQueued,...(teacherApplication?{teacherAccount:true,teacherCode}:{}),message:"Hesabın hazır! Uygulamayı kullanabilirsin. E-posta adresini gelen bağlantıyla doğrulamayı unutma."});
   }
 
   /* [v4.7] ŞİFRE: telefonla sıfırlama kapatıldı (telefonu bilen biri hesabı ele geçirebiliyordu).
