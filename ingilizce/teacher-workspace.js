@@ -308,12 +308,16 @@ function dmMidnightHome(board,openOriginal){
  add(actions,'Raporlar',icon('chart'),dmReportDialog);
  add(actions,'Yarışma Yaptır',icon('games'),()=>openOriginal('game'));
  add(actions,'Konu Anlat',icon('books'),()=>openOriginal('study'));
+ // Direct access to the actual teacher-owned classroom and comprehensive reports.
+ add(actions,'Sınıflarım',icon('school'),classes);
+ add(actions,'Sınıf Raporları',icon('chart'),()=>{
+  if(window.dmTeacherReportsOpen)window.dmTeacherReportsOpen();
+  else window.yoToast?.('Sınıf raporları yüklenemedi. Sayfayı yenile.');
+ });
  const extra=board.querySelector('.dm-midnight-extra');
  add(extra,'Öğretmen Paneli',icon('cap'),()=>openOriginal('teacher'));
  add(extra,'Öğrenciler',icon('people'),dmStudentList);
- add(extra,'Sınıflarım',icon('school'),classes);
  add(extra,'Rubrik','📈',()=>dmUseTool('rubrik'));
- if(window.dmTeacherReportsOpen)add(extra,'Sınıf Raporları',icon('chart'),()=>window.dmTeacherReportsOpen());
  if(sessionStorage.getItem('ing_ogr_yonetici')==='1'){
   if(window.dmAdminGiftOpen)add(extra,'Hediye Üyelik','🎁',()=>window.dmAdminGiftOpen());
   if(window.dmAdminAdsOpen)add(extra,'Reklam Ayarları','📺',()=>window.dmAdminAdsOpen());
