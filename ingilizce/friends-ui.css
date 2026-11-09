@@ -618,3 +618,46 @@ html[data-dm-theme="night"] #tab-meduakis.fr-home-view .fr-podium-footer .fr-lin
 #tab-meduakis .fr-papi-leader .dm-virtual-papi-img{width:88%;height:88%;object-fit:contain}
 #tab-meduakis .fr-leader[data-friend-action="virtual-duel"]{cursor:pointer}
 @media(prefers-reduced-motion:reduce){#tab-meduakis .fr-duel-start,#tab-meduakis .fr-duel-start:after{animation:none}}
+
+
+/* Podium sizing: a small single-character portrait for runners-up, crown remains dominant. */
+#tab-meduakis .fr-leader .fr-avatar.fr-papi-leader{
+  width:var(--avatar-size)!important;
+  height:var(--avatar-size)!important;
+  flex:0 0 var(--avatar-size)!important;
+  max-width:100%;
+  aspect-ratio:1;
+  border-radius:50%;
+  box-sizing:border-box;
+  overflow:hidden;
+}
+#tab-meduakis .fr-leader-1 .fr-avatar.fr-papi-leader{
+  --avatar-size:clamp(69px,20vw,88px)!important;
+}
+#tab-meduakis .fr-leader-2 .fr-avatar.fr-papi-leader,
+#tab-meduakis .fr-leader-3 .fr-avatar.fr-papi-leader{
+  --avatar-size:clamp(48px,14.5vw,64px)!important;
+}
+#tab-meduakis .fr-leader-2 .fr-podium-portrait,
+#tab-meduakis .fr-leader-3 .fr-podium-portrait{
+  min-height:65px;
+  display:flex;
+  align-items:flex-end;
+  justify-content:center;
+}
+#tab-meduakis .fr-leader-1 .fr-podium-portrait{
+  min-height:85px;
+  align-items:flex-end;
+}
+#tab-meduakis .fr-avatar.fr-papi-leader .dm-virtual-papi-img{
+  width:88%!important;
+  height:88%!important;
+  max-width:88%!important;
+  max-height:88%!important;
+  object-fit:contain;
+}
+@media(max-width:350px){
+  #tab-meduakis .fr-leader-1 .fr-avatar.fr-papi-leader{--avatar-size:65px!important}
+  #tab-meduakis .fr-leader-2 .fr-avatar.fr-papi-leader,
+  #tab-meduakis .fr-leader-3 .fr-avatar.fr-papi-leader{--avatar-size:48px!important}
+}
