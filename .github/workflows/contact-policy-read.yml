@@ -1,0 +1,19 @@
+name: Contact policy read optimization
+on:
+  pull_request:
+    paths:
+      - 'supabase/functions/diji-api/contact-policy-api.ts'
+      - 'tests/contact-policy-profile-read.test.cjs'
+      - '.github/workflows/contact-policy-read.yml'
+permissions:
+  contents: read
+jobs:
+  unit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: node --test tests/contact-policy-profile-read.test.cjs
