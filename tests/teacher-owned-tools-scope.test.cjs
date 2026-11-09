@@ -7,7 +7,7 @@ const portal=fs.readFileSync('ingilizce/teacher-portal.js','utf8');
 const server=fs.readFileSync('supabase/functions/diji-api/teacher-portal.mjs','utf8');
 test('all teacher workspaces launch own-class scoped tools',()=>{
  for(const key of ['performance','reports','legacyHomework'])assert(workspace.includes("openOwnedTool('"+key+"')"),key);
- assert(workspace.includes('window.dmTeacherLegacyAnnouncementOpen?.()'));
+ assert(workspace.includes("openOwnedTool('legacyAnnouncement')"));
  assert(workspace.includes("add(shortcuts,'Raporlar'"));
  assert(portal.includes("data-dash=\"reports\""));
 });
@@ -86,12 +86,12 @@ test('phone layout keeps teacher home and new actions visible without main scrol
 
 test('teacher home and teacher panel retain the classic Ödev and Duyuru layouts',()=>{
  assert.match(workspace,/openOwnedTool\('legacyHomework'\)/);
- assert.match(workspace,/dmTeacherLegacyAnnouncementOpen/);
+ assert.match(workspace,/openOwnedTool\('legacyAnnouncement'\)/);
  assert.match(portal,/function teacherAnnouncement\(\)\{/);
- assert.match(portal,/sheet\('📢 Duyuru Oluştur'/);
- assert.match(portal,/Duyuruyu Yayınla/);
- assert.match(portal,/classId:selected.id/);
- assert.match(portal,/studentId:form.get\('studentId'\)/);
+ assert.match(tools,/document\.getElementById\('duyuruYonetimModal'\)/);
+ assert.match(tools,/duyuruEkleGonder/);
+ assert.match(tools,/classId:chosen.id/);
+ assert.match(tools,/studentId:stu.value/);
  assert.match(tools,/window\.odevEkraniAc\(\)/);
  assert.match(tools,/document\.getElementById\('odSinif'\)/);
  assert.match(tools,/document\.getElementById\('odSube'\)/);
@@ -102,4 +102,24 @@ test('teacher home and teacher panel retain the classic Ödev and Duyuru layouts
 test('classic homework game choices remain accepted by secured assignment endpoint',()=>{
  for(const code of ['ky','jp','bosluk','hafiza','yagmur','asmaca','kelimebul','eslestirme','tren','dikte','cumle'])
   assert.ok(server.includes("'"+code+"'"),code);
+});
+
+test('all Sözlü Yap shortcuts use the server-enforced 20 XP interface, not legacy 100 XP flow',()=>{
+ assert.match(workspace,/function dmOpenCanonicalOral\(\)/);
+ assert.match(workspace,/window\.dmTeacherOral\?\.open/);
+ assert.doesNotMatch(workspace,/add\(shortcuts,'Sözlü Yap'[^\n]*openOriginal/);
+ assert.doesNotMatch(workspace,/add\(quick,'Sözlü Yap'[^\n]*openOriginal/);
+ const oral=fs.readFileSync('ingilizce/teacher-oral.js','utf8');
+ assert.match(oral,/<strong>\+20 XP<\/strong>/);
+ assert.match(oral,/<strong>−20 XP<\/strong>/);
+ const core=fs.readFileSync('supabase/functions/teacher-oral/core.ts','utf8');
+ assert.match(core,/db\.rpc\('dm_oral_grade'/);
+});
+test('the original announcement management retains image theme and display count',()=>{
+ assert.match(tools,/dmOwnAnnouncementStyle/);
+ assert.match(tools,/duyuruGorselInput/);
+ assert.match(tools,/duyuruTemaSelect/);
+ assert.match(tools,/duyuruGosterimSelect/);
+ assert.match(tools,/stopImmediatePropagation/);
+ assert.match(server,/image_link:imageLink\|\|null,theme,display_limit:limit/);
 });
