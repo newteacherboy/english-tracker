@@ -3,7 +3,7 @@
 const style=document.createElement('link');style.rel='stylesheet';style.href='teacher-workspace.css?v=20261110-spacious-home-3';document.head.append(style);
 const $=id=>document.getElementById(id),token=()=>{try{return JSON.parse(sessionStorage.getItem('dm_tp_session')||'null')?.teacherToken||sessionStorage.getItem('ing_ogr_token')||'';}catch{return sessionStorage.getItem('ing_ogr_token')||'';}};
 const ownedToolReady=new Promise(resolve=>{
- const script=document.createElement('script');script.src='teacher-owned-tools.js?v=20261110-classic-panels';
+ const script=document.createElement('script');script.src='teacher-owned-tools.js?v=20261110-true-classic-and-oral20';
  script.onload=()=>resolve(true);script.onerror=()=>resolve(false);document.head.append(script);
 });
 async function openOwnedTool(key){
@@ -175,6 +175,12 @@ function dmOriginalTool(label){
  return [...menu.querySelectorAll('.ogretmen-menu-btn')].find(b=>
    dmKey(b.dataset.dmTeacherTitle||b.textContent).includes(key));
 }
+function dmOpenCanonicalOral(){
+ if(!token()){window.yoToast?.('Sözlü yapmak için öğretmen hesabınla giriş yap.');return;}
+ const oral=window.dmTeacherOral?.open;
+ if(typeof oral!=='function'){window.yoToast?.('Sözlü Yap ekranı yüklenemedi. Sayfayı yenile.');return;}
+ Promise.resolve(oral()).catch(e=>window.yoToast?.(e?.message||'Sözlü açılamadı.'));
+}
 function dmUseTool(label){
  const launch=()=>{
   const btn=dmOriginalTool(label);
@@ -296,13 +302,13 @@ function dmMidnightHome(board,openOriginal){
   return button;
  };
  const shortcuts=board.querySelector('.dm-midnight-shortcuts');
- add(shortcuts,'Sözlü Yap',icon('mic'),()=>openOriginal('oral'));
+ add(shortcuts,'Sözlü Yap',icon('mic'),dmOpenCanonicalOral);
  add(shortcuts,'Sınıf Oluştur',icon('people')+'<sup>+</sup>',()=>openOriginal('classroom'));
  add(shortcuts,'Raporlar',icon('chart'),dmReportDialog);
  add(shortcuts,'Artı-Eksi Ver','<span class="dm-midnight-signs"><b>+</b><b>−</b></span>',()=>openOwnedTool('performance'));
  const actions=board.querySelector('.dm-midnight-actions');
  add(actions,'Ödev Ver',icon('clipboard'),()=>openOwnedTool('legacyHomework'));
- add(actions,'Sınıfına Duyuru Yap',icon('megaphone'),()=>window.dmTeacherLegacyAnnouncementOpen?.());
+ add(actions,'Sınıfına Duyuru Yap',icon('megaphone'),()=>openOwnedTool('legacyAnnouncement'));
  const chat=add(actions,'Öğrenci Sohbetleri',icon('chat'),()=>dmUseTool('öğrenci sohbetleri'));
  const badge=document.createElement('span');badge.className='dm-v2-chat-badge';badge.dataset.v2ChatCount='';badge.hidden=true;chat.querySelector('i').after(badge);
  add(actions,'Raporlar',icon('chart'),dmReportDialog);
@@ -343,7 +349,7 @@ function dmHome(){
  if(container.querySelector(':scope > #dmTeacherDesignV2')){dmUpdateTeacherDashboard(container.querySelector('#dmTeacherDesignV2'));dmRemoveTeacherBottomTab();return;}
  const findCard=term=>[...oldGrid.querySelectorAll('button,a,[role="button"]')].find(x=>dmKey(x.textContent).includes(dmKey(term)));
  const original={study:findCard('yeni bir konu anlat'),game:findCard('öğrencilerle oyun oyna'),oral:findCard('sözlü yap'),teacher:findCard('öğretmen paneline git'),classroom:findCard('sınıf oluştur')};
- const openOriginal=key=>{const card=original[key];if(card)card.click();else if(key==='teacher')window.ogretmenPaneliAc?.();else if(key==='oral')dmUseTool('sözlü yap');};
+ const openOriginal=key=>{const card=original[key];if(card)card.click();else if(key==='teacher')window.ogretmenPaneliAc?.();else if(key==='oral')dmOpenCanonicalOral();};
  const board=document.createElement('section');board.id='dmTeacherDesignV2';board.className='dm-v2-dashboard';
  if(container.closest('#tpTeacherHome'))dmMidnightHome(board,openOriginal);
  else{
@@ -371,7 +377,7 @@ function dmHome(){
  };
  const actions=board.querySelector('[data-v2-actions]');
  add(actions,'Ödev Ver','📋','Sınıfına yeni ödev gönder',()=>openOwnedTool('legacyHomework'),'v2-mint');
- add(actions,'Sınıfına Duyuru Yap','📣','Öğrencilerini bilgilendir',()=>window.dmTeacherLegacyAnnouncementOpen?.(),'v2-peach');
+ add(actions,'Sınıfına Duyuru Yap','📣','Öğrencilerini bilgilendir',()=>openOwnedTool('legacyAnnouncement'),'v2-peach');
  add(actions,'Öğrenci Sohbetleri','💬','Mesajları oku ve yanıtla',()=>dmUseTool('öğrenci sohbetleri'),'v2-pink');
  const chatBadge=document.createElement('span');chatBadge.className='dm-v2-chat-badge';chatBadge.dataset.v2ChatCount='';chatBadge.hidden=true;actions.lastElementChild.append(chatBadge);
  const secondary=board.querySelector('[data-v2-secondary]');
@@ -383,7 +389,7 @@ function dmHome(){
 
  
  add(quick,'Sınıf Oluştur','🏫','Yeni sınıf oluştur',()=>openOriginal('classroom'));
- add(quick,'Sözlü Yap','🎤','Sözlü değerlendirme',()=>openOriginal('oral'));
+ add(quick,'Sözlü Yap','🎤','Sözlü değerlendirme',dmOpenCanonicalOral);
  // Çoklu sınıf ve sınıf raporları (4 Kas 2026); yönetici için hediye üyelik.
  if(window.dmTeacherClassesOpen)add(quick,'Sınıflarım','🗂️','Sınıf kodları ve öğrenci taşıma',()=>window.dmTeacherClassesOpen());
  if(window.dmTeacherReportsOpen)add(quick,'Sınıf Raporları','📈','Süre, doğruluk, zor kelimeler',()=>window.dmTeacherReportsOpen());
