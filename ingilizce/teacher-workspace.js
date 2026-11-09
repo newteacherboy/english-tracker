@@ -301,8 +301,8 @@ function dmMidnightHome(board,openOriginal){
  add(shortcuts,'Raporlar',icon('chart'),dmReportDialog);
  add(shortcuts,'Artı-Eksi Ver','<span class="dm-midnight-signs"><b>+</b><b>−</b></span>',()=>openOwnedTool('performance'));
  const actions=board.querySelector('.dm-midnight-actions');
- add(actions,'Ödev Ver',icon('clipboard'),()=>openOwnedTool('homework'));
- add(actions,'Sınıfına Duyuru Yap',icon('megaphone'),()=>openOwnedTool('announcements'));
+ add(actions,'Ödev Ver',icon('clipboard'),()=>openOwnedTool('legacyHomework'));
+ add(actions,'Sınıfına Duyuru Yap',icon('megaphone'),()=>window.dmTeacherLegacyAnnouncementOpen?.());
  const chat=add(actions,'Öğrenci Sohbetleri',icon('chat'),()=>dmUseTool('öğrenci sohbetleri'));
  const badge=document.createElement('span');badge.className='dm-v2-chat-badge';badge.dataset.v2ChatCount='';badge.hidden=true;chat.querySelector('i').after(badge);
  add(actions,'Raporlar',icon('chart'),dmReportDialog);
@@ -370,8 +370,8 @@ function dmHome(){
   button.addEventListener('click',run);target.append(button);
  };
  const actions=board.querySelector('[data-v2-actions]');
- add(actions,'Ödev Ver','📋','Sınıfına yeni ödev gönder',()=>openOwnedTool('homework'),'v2-mint');
- add(actions,'Sınıfına Duyuru Yap','📣','Öğrencilerini bilgilendir',()=>openOwnedTool('announcements'),'v2-peach');
+ add(actions,'Ödev Ver','📋','Sınıfına yeni ödev gönder',()=>openOwnedTool('legacyHomework'),'v2-mint');
+ add(actions,'Sınıfına Duyuru Yap','📣','Öğrencilerini bilgilendir',()=>window.dmTeacherLegacyAnnouncementOpen?.(),'v2-peach');
  add(actions,'Öğrenci Sohbetleri','💬','Mesajları oku ve yanıtla',()=>dmUseTool('öğrenci sohbetleri'),'v2-pink');
  const chatBadge=document.createElement('span');chatBadge.className='dm-v2-chat-badge';chatBadge.dataset.v2ChatCount='';chatBadge.hidden=true;actions.lastElementChild.append(chatBadge);
  const secondary=board.querySelector('[data-v2-secondary]');
