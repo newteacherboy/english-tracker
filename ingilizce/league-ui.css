@@ -119,3 +119,22 @@
 .dm-lig-duel-rewards{display:flex;justify-content:center;gap:12px;margin:13px 0}
 .dm-lig-duel-rewards b{background:#e5f7ed;color:#19764e;border-radius:12px;padding:13px;min-width:100px}
 @media(max-width:380px){.dm-lig-duel-dialog{padding:20px 12px}.dm-lig-duel-dialog h2{font-size:20px}.dm-lig-duel-games button{min-height:78px}}
+
+
+/* Every virtual Papi has a different official mascot pose. */
+.dm-virtual-papi-img{display:block;width:var(--papi-size,100%);height:var(--papi-size,100%);max-width:100%;max-height:100%;object-fit:contain;margin:auto}
+#tab-meduakis .dm-lig-avatar.dm-lig-papi{display:grid;place-items:center}
+.dm-virtual-rivals button{min-height:112px;gap:3px}
+.dm-virtual-rivals img{height:55px;width:70px;object-fit:contain}
+.dm-native-duel-hud{position:absolute!important;left:max(8px,env(safe-area-inset-left));right:max(8px,env(safe-area-inset-right));top:calc(env(safe-area-inset-top) + 48px);z-index:500000;background:#ecf5ff!important;border:1px solid #b8d6ed;border-radius:15px;padding:9px;display:grid;grid-template-columns:minmax(0,1fr) 34px minmax(0,1fr);align-items:center;gap:7px;color:#143153!important;box-shadow:0 5px 13px #071b3440;max-height:115px;pointer-events:none}
+.dm-native-duel-hud[hidden]{display:none!important}
+.dm-native-side{min-width:0;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:11px;line-height:1.12}
+.dm-native-side strong{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dm-native-side b{font-size:12px;color:#17416f}
+.dm-native-side img{position:absolute;top:7px;right:13%;width:25px;height:25px;object-fit:contain}
+.dm-native-versus{font-weight:1000;font-size:16px;color:#aa6a36}
+.dm-native-track{height:6px;width:100%;border-radius:6px;background:#d0dfed;overflow:hidden}
+.dm-native-track i{height:100%;display:block;width:0%;background:#19a78f;transition:width .35s}
+.dm-native-duel-bot .dm-native-track i{background:#efad43}
+.dm-native-note{grid-column:1/-1;text-align:center;color:#5b6681;font-size:9px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@media(max-width:400px){.dm-native-duel-hud{top:calc(env(safe-area-inset-top) + 40px);padding:6px;gap:4px}.dm-native-side{font-size:10px}}

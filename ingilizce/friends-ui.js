@@ -45,11 +45,11 @@
     const leaders=data?.top.length?[1,0,2].map(index=>{
       const player=data.top[index];
       if(!player)return '<span aria-hidden="true"></span>';
-      return `<button type="button" class="fr-leader fr-leader-${index+1}" data-friend-action="profile" data-person="${esc(player.name)}" aria-label="${esc(player.rank)}. sıra, ${esc(player.name)}, ${xp(player.xp)} XP">
-        <span class="fr-podium-portrait">${index===0?crown+laurel+laurel:''}${avatar(player.name,64)}
-          <span class="fr-leader-cup">${icon('trophy')}<b>${esc(player.rank)}</b></span>
+      return `<button type="button" class="fr-leader fr-leader-${index+1}" data-friend-action="${player.is_virtual?'virtual-duel':'profile'}" data-person="${esc(player.name)}" data-bot-id="${player.is_virtual?esc(player.id):''}" aria-label="${esc(player.displayRank??player.rank)}. sıra, ${esc(player.name)}, ${xp(player.xp)} XP${player.is_virtual?', Sanal Rakip':''}">
+        <span class="fr-podium-portrait">${index===0?crown+laurel+laurel:''}${player.is_virtual?'<span class="fr-avatar fr-papi-leader">'+(window.dmLeagueUI?.virtualAvatar?.(player,64)||'<img src="friends-assets/papi-fencer.webp" alt="Papi">')+'</span>':avatar(player.name,64)}
+          <span class="fr-leader-cup">${icon('trophy')}<b>${esc(player.displayRank??player.rank)}</b></span>
         </span>
-        <span class="fr-podium-step"><strong>${esc(player.name)}</strong><span>${xp(player.xp)} XP</span></span>
+        <span class="fr-podium-step"><strong>${esc(player.name)}</strong><span>${xp(player.xp)} XP${player.is_virtual?' · Sanal Rakip':''}</span></span>
       </button>`;
     }).join(''):'';
     const status=!allowed?'Lig 5. seviyede açılır.':data?.error&&!data.loaded?'Sıralama şu anda alınamadı.':data?.loaded?'Bu ligde henüz sıralama yok.':'Sıralama yükleniyor…';
@@ -68,8 +68,8 @@
       <section class="fr-duel-card" aria-labelledby="frDuelTitle">
         <img class="fr-duel-art" src="friends-assets/papi-fencer.webp" alt="" decoding="async">
         <div class="fr-duel-copy"><h3 id="frDuelTitle">Düello${pending?'<span class="fr-duel-dot" role="img" aria-label="Yeni oyun daveti"></span>':''}</h3>
-          <p>Bir arkadaşınla bilgi mücadelesi yap.</p></div>
-        <button type="button" class="fr-duel-start" data-friend-action="matches" data-friends-gate="duello">Başlat</button>
+          <p>Arkadaşlarınla yarış ya da Papi'ye meydan oku!</p></div>
+        <button type="button" class="fr-duel-start" data-friend-action="matches">Düello Başlat</button>
       </section>
       <div class="fr-people-row">
         <button type="button" class="fr-people-link" data-friend-action="people"><img src="route-assets/bilgi-icons/friends.webp" alt="" decoding="async"><strong>Arkadaşlarım</strong></button>
@@ -290,9 +290,10 @@
     if(action==='share')return void shareInvite();
     if(action==='people')return openPeople();
     if(action==='congratulate'){window.maTebrikEt('akis-'+b.dataset.event,b);paintCongratulation(b);return;}
+    if(action==='virtual-duel'){const id=b.dataset.botId;const bot=window.dmLeagueUI?.weeklyPreview?.().top?.find(p=>p.id===id&&p.is_virtual);if(bot)void window.dmLeagueUI?.openVirtualDirect?.(bot);return;}
     if(action==='profile'){window.maAkisKisiAc?.(b.dataset.person);return;}
     if(action==='invite')return openInvite(b.dataset.person,b.dataset.game);
-    if(action==='matches')return openMatches();
+    if(action==='matches'){if(window.dmLeagueUI?.openDuelChooser)return window.dmLeagueUI.openDuelChooser();return openMatches();}
     if(action==='filter'){
       maFiltre=b.dataset.filter;
       root.querySelectorAll('[data-filter]').forEach(x=>{x.classList.toggle('aktif',x.dataset.filter===maFiltre);x.setAttribute('aria-pressed',String(x.dataset.filter===maFiltre));});
