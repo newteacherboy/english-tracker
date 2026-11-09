@@ -43,7 +43,35 @@
  ss.setItem('ing_ogr_token',state.teacherToken);
  window.dmTeacherPortalPersonal=()=>{window.dmTeacherDevice.leave();location.assign('./?hesap=1');};
  // Explicit Parkur shortcut goes to the real personal learner session, not account selection.
- window.dmTeacherPortalParkur=()=>{window.dmTeacherDevice.leave();location.assign('./');};
+ window.dmTeacherPortalParkur=async()=>{
+  if(window.dmTeacherParkurSwitching)return;
+  window.dmTeacherParkurSwitching=true;
+  const switchButton=document.querySelector('[data-teacher-parkur-switch],#dmTeacherBackToParkur');
+  if(switchButton)switchButton.disabled=true;
+  try{
+   // A teacher token is bound to exactly one approved personal learner account.
+   // Do not select the last learner session stored on this shared device.
+   const response=await fetch('https://nxfqlutulxqzqgwewssd.supabase.co/functions/v1/diji-api',{
+    method:'POST',headers:{'Content-Type':'application/json'},cache:'no-store',
+    body:JSON.stringify({islem:'teacherPortalPersonalSession',t:state.teacherToken})
+   });
+   const result=await response.json();
+   if(!response.ok||!result.ok||!result.token||!result.name||result.role!=='ogrenci')
+    throw Error(result.mesaj||'Bu öğretmen hesabına bağlı kişisel Parkur açılamadı.');
+   const realStorage=window.dmTeacherDevice.storage;
+   const previous=realStorage.getItem('ing_token')||'';
+   sessionStorage.setItem('dm_session_handoff_v1',JSON.stringify({
+    token:result.token,name:result.name,role:'ogrenci',google:false,previous,at:Date.now()
+   }));
+   window.dmTeacherDevice.leave();
+   location.assign('./');
+  }catch(error){
+   window.dmTeacherParkurSwitching=false;
+   if(switchButton)switchButton.disabled=false;
+   // Keep the teacher session and never silently open someone else's personal account.
+   alert(error.message||'Kişisel hesabına geçilemedi. Tekrar dene.');
+  }
+ };
  window.dmTeacherPortalExit=()=>{
   const current=JSON.parse(ss.getItem('dm_tp_session')||'null');if(current)window.dmTeacherDevice.forget(current.teacherToken);window.dmTeacherDevice.personal();
   for(const k of Object.keys(ss))if(k.startsWith('dm_tp_data:'))ss.removeItem(k);
