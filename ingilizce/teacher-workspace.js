@@ -1,7 +1,18 @@
 /* Keep the teacher workspace open while child screens come and go. */
 (()=>{'use strict';
 const style=document.createElement('link');style.rel='stylesheet';style.href='teacher-workspace.css?v=20261109-parkur-switch';document.head.append(style);
-const $=id=>document.getElementById(id),token=()=>sessionStorage.getItem('ing_ogr_token')||'';
+const $=id=>document.getElementById(id),token=()=>{try{return JSON.parse(sessionStorage.getItem('dm_tp_session')||'null')?.teacherToken||sessionStorage.getItem('ing_ogr_token')||'';}catch{return sessionStorage.getItem('ing_ogr_token')||'';}};
+const ownedToolReady=new Promise(resolve=>{
+ const script=document.createElement('script');script.src='teacher-owned-tools.js?v=20261110';
+ script.onload=()=>resolve(true);script.onerror=()=>resolve(false);document.head.append(script);
+});
+async function openOwnedTool(key){
+ if(!token()){window.yoToast?.('Öğretmen hesabınla giriş yapmalısın.');return;}
+ const loaded=await ownedToolReady;
+ if(!loaded||typeof window.dmTeacherOwnedTools?.[key]!=='function'){window.yoToast?.('Sınıf araçları yüklenemedi. Sayfayı yenile.');return;}
+ try{await window.dmTeacherOwnedTools[key]();}catch(e){window.yoToast?.(e.message||'Sınıf aracı açılamadı.');}
+}
+
 let active=false,total=0,registrations=0,messages=0,reading=false,lastRead=0,menuSeen=false;
 async function api(op,data={}){const r=await fetch(apiURL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({islem:op,t:token(),...data})});const d=await r.json();if(!r.ok||!d.ok)throw Error(d.mesaj||'Bildirimler alınamadı.');return d;}
 function paintBadge(){for(const b of document.querySelectorAll('[data-profile="teacher"]')){let badge=b.querySelector('.dm-teacher-count');if(!badge){badge=document.createElement('span');badge.className='dm-teacher-count';b.append(badge);}badge.textContent=String(total);badge.hidden=total===0;b.setAttribute('aria-label','Öğretmen Paneli'+(total?' · '+total+' bildirim':''));}}
@@ -178,21 +189,7 @@ function dmUseTool(label){
  }
  launch();
 }
-function dmReportDialog(){
- document.getElementById('dmHomeReportDialog')?.remove();
- const dialog=document.createElement('div');dialog.id='dmHomeReportDialog';dialog.className='dm-teacher-child';
- dialog.setAttribute('role','dialog');dialog.setAttribute('aria-modal','true');dialog.setAttribute('aria-label','Raporlar');
- dialog.innerHTML='<section class="dm-home-report-panel"><header><h2>📊 Raporlar</h2><button type="button" data-report-close aria-label="Kapat">✕</button></header><p>Görüntülemek istediğin raporu seç.</p><div class="dm-home-report-list"></div></section>';
- for(const [title,emoji,target] of dmReportActions){
-  const btn=document.createElement('button');btn.type='button';
-  btn.textContent=emoji+'  '+title;btn.addEventListener('click',()=>{dialog.remove();dmUseTool(target);});
-  dialog.querySelector('.dm-home-report-list').append(btn);
- }
- dialog.querySelector('[data-report-close]').onclick=()=>dialog.remove();
- dialog.addEventListener('click',e=>{if(e.target===dialog)dialog.remove();});
- dialog.addEventListener('keydown',e=>{if(e.key==='Escape'){e.stopPropagation();dialog.remove();}});
- document.body.append(dialog);dialog.querySelector('[data-report-close]').focus();
-}
+function dmReportDialog(){void openOwnedTool('reports');}
 
 // Read only students scoped to the authenticated teacher portal.
 let dmRosterCache=null,dmRosterAt=0;
@@ -301,13 +298,14 @@ function dmMidnightHome(board,openOriginal){
  const shortcuts=board.querySelector('.dm-midnight-shortcuts');
  add(shortcuts,'Sözlü Yap',icon('mic'),()=>openOriginal('oral'));
  add(shortcuts,'Sınıf Oluştur',icon('people')+'<sup>+</sup>',()=>openOriginal('classroom'));
- add(shortcuts,'Artı-Eksi Ver','<span class="dm-midnight-signs"><b>+</b><b>−</b></span>',()=>dmUseTool('ders içi performans'));
+ add(shortcuts,'Raporlar',icon('chart'),dmReportDialog);
+ add(shortcuts,'Artı-Eksi Ver','<span class="dm-midnight-signs"><b>+</b><b>−</b></span>',()=>openOwnedTool('performance'));
  const actions=board.querySelector('.dm-midnight-actions');
- add(actions,'Ödev Ver',icon('clipboard'),()=>dmUseTool('ödev ver'));
- add(actions,'Sınıfına Duyuru Yap',icon('megaphone'),()=>dmUseTool('duyurular'));
+ add(actions,'Ödev Ver',icon('clipboard'),()=>openOwnedTool('homework'));
+ add(actions,'Sınıfına Duyuru Yap',icon('megaphone'),()=>openOwnedTool('announcements'));
  const chat=add(actions,'Öğrenci Sohbetleri',icon('chat'),()=>dmUseTool('öğrenci sohbetleri'));
  const badge=document.createElement('span');badge.className='dm-v2-chat-badge';badge.dataset.v2ChatCount='';badge.hidden=true;chat.querySelector('i').after(badge);
- add(actions,'Raporlar Merkezi',icon('chart'),dmReportDialog);
+ add(actions,'Raporlar',icon('chart'),dmReportDialog);
  add(actions,'Yarışma Yaptır',icon('games'),()=>openOriginal('game'));
  add(actions,'Konu Anlat',icon('books'),()=>openOriginal('study'));
  const extra=board.querySelector('.dm-midnight-extra');
@@ -368,16 +366,16 @@ function dmHome(){
   button.addEventListener('click',run);target.append(button);
  };
  const actions=board.querySelector('[data-v2-actions]');
- add(actions,'Ödev Ver','📋','Sınıfına yeni ödev gönder',()=>dmUseTool('ödev ver'),'v2-mint');
- add(actions,'Sınıfına Duyuru Yap','📣','Öğrencilerini bilgilendir',()=>dmUseTool('duyurular'),'v2-peach');
+ add(actions,'Ödev Ver','📋','Sınıfına yeni ödev gönder',()=>openOwnedTool('homework'),'v2-mint');
+ add(actions,'Sınıfına Duyuru Yap','📣','Öğrencilerini bilgilendir',()=>openOwnedTool('announcements'),'v2-peach');
  add(actions,'Öğrenci Sohbetleri','💬','Mesajları oku ve yanıtla',()=>dmUseTool('öğrenci sohbetleri'),'v2-pink');
  const chatBadge=document.createElement('span');chatBadge.className='dm-v2-chat-badge';chatBadge.dataset.v2ChatCount='';chatBadge.hidden=true;actions.lastElementChild.append(chatBadge);
  const secondary=board.querySelector('[data-v2-secondary]');
- add(secondary,'Raporlar Merkezi','📊','Performans, zayıf noktalar, veli özetleri ve sınav sonuçları',dmReportDialog,'v2-lavender');
+ add(secondary,'Raporlar','📊','Performans, zayıf noktalar, veli özetleri ve sınav sonuçları',dmReportDialog,'v2-lavender');
  add(secondary,'Yarışma Yaptır','🎮','Oyunlar sekmesine geç ve sınıfınla eğlen',()=>openOriginal('game'),'v2-green v2-feature');
  add(secondary,'Konu Anlat','📚','Yeni konuyu anlat, birlikte öğren',()=>openOriginal('study'),'v2-feature v2-peach');
  const quick=board.querySelector('[data-v2-quick]');
- add(quick,'Artı Eksi Ver','➕','Ders içi performans puanları',()=>dmUseTool('ders içi performans'));
+ add(quick,'Artı Eksi Ver','➕','Ders içi performans puanları',()=>openOwnedTool('performance'));
 
  
  add(quick,'Sınıf Oluştur','🏫','Yeni sınıf oluştur',()=>openOriginal('classroom'));
