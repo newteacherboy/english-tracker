@@ -46,7 +46,7 @@
  const free={kelimeGoluDuo:[19,'İki kale, dört köşe; doğru anlamı seç ve golünü at. Enerji harcanmaz.','Maçı Başlat'],papiCardsActivity:[12,'Kelime kartlarını dinle ve öğren.','Kartları Aç'],meteorActivity:[13,'Aynı cihazda kelimeleri yakala, rakibini geç.','Oyunu Aç'],wordWheelActivity:[14,'Çarkı çevir, doğru kelimeyi bul.','Çarkı Aç'],sentenceRaceActivity:[17,'İki takım · farklı sorular · 12 tur · süre bonusu.','Yarışı Başlat']};
  const icon=name=>'<svg class="gg-icon" aria-hidden="true"><use href="games-assets/ui-icons.svg#'+name+'"></use></svg>';
  let party='premium',skill='Tümü',query='',lastAccount='',friendsLoaded=false,knownGrid=null,key='';
- const categories={solo:'Tek Kişilik',duo:'Online',free:'Sınıfta Oyna',konu:'Konu',break:'Mola',premium:'Premium'};
+ const categories={solo:'Tek Kişilik',duo:'Online',free:'Sınıfta Oyna',konu:'Konu Oyunları',break:'Mola Vakti',premium:'Premium'};
  const listOrder=['game-jpOyunAc()','game-kelimeYarismasiAc()','kelimeGoluSolo','mola-kosu','premiumWordBlocksActivity','papizzleActivity'];
  const searchKey=value=>String(value||'').toLocaleLowerCase('tr').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replaceAll('ı','i').trim();
  const listRank=id=>{const i=listOrder.indexOf(id);return i<0?listOrder.length:i;};
