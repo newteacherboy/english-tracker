@@ -73,3 +73,7 @@
 #tab-meduakis[data-friends-view="lig"] .ma-gir{animation:none;transform:none}
 #tab-meduakis .dm-lig:has(.dm-lig-my-place){padding-bottom:88px}
 #tab-meduakis .dm-lig-my-place{position:fixed;bottom:calc(var(--fr-nav-space,100px) - 12px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%);width:min(694px,calc(100% - 26px));z-index:5;margin:0;padding:5px 0;background:linear-gradient(transparent,#fdfcfb 20%)}
+
+/* Clearly label non-player practice rivals without making them selectable. */
+.dm-lig-virtual-label{display:block;font-size:11px;font-weight:700;color:#746131;margin-top:3px}
+.dm-lig-virtual{cursor:default!important}
