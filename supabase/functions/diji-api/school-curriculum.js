@@ -2,6 +2,9 @@
 (function(root,factory){const api=factory();root.DMSchoolCurriculum=api;if(typeof module==='object'&&module.exports)module.exports=api;})(globalThis,()=>{
  'use strict';
  const norm=s=>String(s??'').normalize('NFKC').toLocaleLowerCase('en').replace(/[’‘]/g,"'").replace(/[.!?,;:]/g,'').replace(/\s+/g,' ').trim();
+ const shuffled=(items,seed)=>{const a=[...items];let state=seed>>>0;for(let i=a.length-1;i>0;i--){state=(Math.imul(state,1664525)+1013904223)>>>0;const j=state%(i+1);[a[i],a[j]]=[a[j],a[i]];}return a;};
+ const seedFor=(text,number)=>{let s=(number+1)>>>0;for(const ch of text)s=(Math.imul(s,31)+ch.charCodeAt(0))>>>0;return s;};
+ const letterPuzzle=(word,number)=>{const positions=[...word].map((ch,i)=>/[a-z]/i.test(ch)?i:-1).filter(i=>i>=0);const count=Math.min(positions.length,positions.length>=13?4:positions.length>=5?3:Math.max(1,positions.length-1));const seed=seedFor(word,number);const missing=shuffled(positions,seed).slice(0,count).sort((a,b)=>a-b);const answer=missing.map(i=>word[i]);const extras=[...'aeiostrn'].filter(ch=>!answer.some(a=>a.toLowerCase()===ch)).slice(0,2);let tokens=shuffled([...answer,...extras],seed^0x9e3779b9);if(tokens.slice(0,answer.length).every((ch,i)=>ch===answer[i]))tokens=[...tokens.slice(answer.length),...tokens.slice(0,answer.length)];return {missing,tokens};};
  const unique=(a,field)=>a.filter((x,i)=>a.findIndex(y=>norm(y[field])===norm(x[field]))===i);
  function build(words,pool=words,number=0){
   const cards=unique(words.filter(w=>w.en&&w.tr),'en');if(!cards.length)throw Error('Bu durakta kelime bulunamadı.');
@@ -10,9 +13,7 @@
   const choice=(label,word,field,prompt,extra={})=>({kind:'choice',label,prompt,answer:word[field],options:options(word,field),explanation:word.en+' — '+word.tr,...extra});
   // Use real bank phrases where available; never invent a sentence around an arbitrary word.
   const phrase=cards.find(w=>w.en.trim().includes(' '))||at(2),pieces=phrase.en.trim().split(/\s+/),multi=pieces.length>1;
-  const letters=[...phrase.en].map((ch,i)=>/[a-z]/i.test(ch)?i:-1).filter(i=>i>=0);
-  const missing=letters.filter((_,i)=>i%2===0).slice(0,Math.min(3,letters.length));
-  const tokens=[...missing.map(i=>phrase.en[i]),...'aeiostrn'.split('').filter(ch=>!missing.some(i=>phrase.en[i].toLowerCase()===ch)).slice(0,2)];
+  const {missing,tokens}=letterPuzzle(phrase.en,number);
   const last=pieces.at(-1),stem=pieces.slice(0,-1).join(' ');
   const fill=multi?{kind:'choice',label:'Cümleyi tamamla',prompt:stem+' ____',support:phrase.tr,answer:last,options:[last,...unique(bank,'en').map(w=>w.en.split(/\s+/).at(-1)).filter(w=>w!==last)].filter((x,i,a)=>a.indexOf(x)===i).slice(0,3),explanation:phrase.en+' — '+phrase.tr}
    :choice('İfadeyi tamamla',at(1),'en',at(1).tr,{promptAudio:at(1).tr});
