@@ -175,6 +175,12 @@ function dmOriginalTool(label){
  return [...menu.querySelectorAll('.ogretmen-menu-btn')].find(b=>
    dmKey(b.dataset.dmTeacherTitle||b.textContent).includes(key));
 }
+function dmOpenCanonicalOral(){
+ if(!token()){window.yoToast?.('Sözlü yapmak için öğretmen hesabınla giriş yap.');return;}
+ const oral=window.dmTeacherOral?.open;
+ if(typeof oral!=='function'){window.yoToast?.('Sözlü Yap ekranı yüklenemedi. Sayfayı yenile.');return;}
+ Promise.resolve(oral()).catch(e=>window.yoToast?.(e?.message||'Sözlü açılamadı.'));
+}
 function dmUseTool(label){
  const launch=()=>{
   const btn=dmOriginalTool(label);
@@ -296,7 +302,7 @@ function dmMidnightHome(board,openOriginal){
   return button;
  };
  const shortcuts=board.querySelector('.dm-midnight-shortcuts');
- add(shortcuts,'Sözlü Yap',icon('mic'),()=>openOriginal('oral'));
+ add(shortcuts,'Sözlü Yap',icon('mic'),dmOpenCanonicalOral);
  add(shortcuts,'Sınıf Oluştur',icon('people')+'<sup>+</sup>',()=>openOriginal('classroom'));
  add(shortcuts,'Raporlar',icon('chart'),dmReportDialog);
  add(shortcuts,'Artı-Eksi Ver','<span class="dm-midnight-signs"><b>+</b><b>−</b></span>',()=>openOwnedTool('performance'));
@@ -343,7 +349,7 @@ function dmHome(){
  if(container.querySelector(':scope > #dmTeacherDesignV2')){dmUpdateTeacherDashboard(container.querySelector('#dmTeacherDesignV2'));dmRemoveTeacherBottomTab();return;}
  const findCard=term=>[...oldGrid.querySelectorAll('button,a,[role="button"]')].find(x=>dmKey(x.textContent).includes(dmKey(term)));
  const original={study:findCard('yeni bir konu anlat'),game:findCard('öğrencilerle oyun oyna'),oral:findCard('sözlü yap'),teacher:findCard('öğretmen paneline git'),classroom:findCard('sınıf oluştur')};
- const openOriginal=key=>{const card=original[key];if(card)card.click();else if(key==='teacher')window.ogretmenPaneliAc?.();else if(key==='oral')dmUseTool('sözlü yap');};
+ const openOriginal=key=>{const card=original[key];if(card)card.click();else if(key==='teacher')window.ogretmenPaneliAc?.();else if(key==='oral')dmOpenCanonicalOral();};
  const board=document.createElement('section');board.id='dmTeacherDesignV2';board.className='dm-v2-dashboard';
  if(container.closest('#tpTeacherHome'))dmMidnightHome(board,openOriginal);
  else{
@@ -383,7 +389,7 @@ function dmHome(){
 
  
  add(quick,'Sınıf Oluştur','🏫','Yeni sınıf oluştur',()=>openOriginal('classroom'));
- add(quick,'Sözlü Yap','🎤','Sözlü değerlendirme',()=>openOriginal('oral'));
+ add(quick,'Sözlü Yap','🎤','Sözlü değerlendirme',dmOpenCanonicalOral);
  // Çoklu sınıf ve sınıf raporları (4 Kas 2026); yönetici için hediye üyelik.
  if(window.dmTeacherClassesOpen)add(quick,'Sınıflarım','🗂️','Sınıf kodları ve öğrenci taşıma',()=>window.dmTeacherClassesOpen());
  if(window.dmTeacherReportsOpen)add(quick,'Sınıf Raporları','📈','Süre, doğruluk, zor kelimeler',()=>window.dmTeacherReportsOpen());
