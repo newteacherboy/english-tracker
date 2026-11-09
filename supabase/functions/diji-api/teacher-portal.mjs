@@ -128,8 +128,7 @@ export function teacherPortalAPI(d){
      if(/^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$/.test(address)){
       try{
        const content='Öğretmen onayınız tamamlandı! Diji-Medu öğretmen paneliniz artık yönetici tarafından onaylandı. Kayıt sırasında güvenle sakladığınız 6 haneli öğretmen kodunu Öğretmen Girişi ekranında kullanabilirsiniz. Öğretmen araçlarını kullanmak için kişisel e-posta adresinizi de doğrulamış olmanız gerekir. Kodunuzu unuttuysanız Öğretmen Kodumu Unuttum seçeneğiyle yenileyebilirsiniz. Öğrencilerin size bağlanma kodu bundan farklıdır.';
-       await queue({student_id:r.data.studentId,to_email:address,kind:'kayit',subject:'Diji-Medu · Öğretmen onayınız tamamlandı',html:mailShell('Öğretmen onayınız tamamlandı!',`<p>${escape(content)}</p><p><a href="${portal}?ogretmenGiris=1">Öğretmen Girişi</a></p>`),text_body:content+' '+portal+'?ogretmenGiris=1'});
-       approvalMailQueued=true;
+       approvalMailQueued=(await queue({student_id:r.data.studentId,to_email:address,kind:'kayit',subject:'Diji-Medu · Öğretmen onayınız tamamlandı',html:mailShell('Öğretmen onayınız tamamlandı!',`<p>${escape(content)}</p><p><a href="${portal}?ogretmenGiris=1">Öğretmen Girişi</a></p>`),text_body:content+' '+portal+'?ogretmenGiris=1'}))!==false;
       }catch(err){console.error('teacher approval notification queue',err);}
      }
     }
