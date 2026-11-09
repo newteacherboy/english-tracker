@@ -24,43 +24,42 @@
   const saved=read().find(x=>x.teacherToken===last.token);if(saved){ss.setItem('dm_tp_session',JSON.stringify(saved));params.set('ogretmen','1');history.replaceState(null,'',location.pathname+'?'+params.toString());}
  }
  window.dmTeacherDevice={storage,list:read,remember,forget,personal,leave,activate};
- // Personal Parkur -> its own teacher panel, never a different device account.
+
+ // Verify teacher approval using the current personal learner token, not saved device sessions.
  if(params.get('ogretmen')!=='1'){
   const button=document.createElement('button');
   button.id='dmPersonalToTeacher';button.type='button';button.textContent='👩‍🏫 Öğretmen Paneline Geç';
-  button.style.cssText='position:fixed;right:14px;bottom:calc(env(safe-area-inset-bottom, 0px) + 82px);z-index:9000;border:0;border-radius:16px;padding:12px 16px;background:#2563eb;color:#fff;font:700 13px system-ui;box-shadow:0 5px 18px #162b5450;cursor:pointer;display:none';
-  let currentKey='',matched=null,busy=false;
-  const identity=()=>({token:storage.getItem('ing_token')||'',name:storage.getItem('ing_aktifOgrenci')||''});
-  const verify=async(teacher,account)=>{
-   const response=await fetch('https://nxfqlutulxqzqgwewssd.supabase.co/functions/v1/diji-api',{method:'POST',headers:{'Content-Type':'application/json'},cache:'no-store',body:JSON.stringify({islem:'teacherPortalPersonalSession',t:teacher.teacherToken})});
-   const data=await response.json();
-   return response.ok&&data.ok&&data.role==='ogrenci'&&String(data.name||'').toLocaleLowerCase('tr-TR')===account.name.toLocaleLowerCase('tr-TR');
+  button.style.cssText='position:fixed;right:14px;bottom:calc(env(safe-area-inset-bottom, 0px) + 82px);z-index:9000;border:0;border-radius:16px;padding:12px 16px;background:#2563eb;color:#fff;font:700 13px system-ui;box-shadow:0 5px 18px #162b5450;cursor:pointer;display:none;max-width:calc(100vw - 28px)';
+  const api=async(islem,t,data={})=>{
+   const response=await fetch('https://nxfqlutulxqzqgwewssd.supabase.co/functions/v1/diji-api',{method:'POST',headers:{'Content-Type':'application/json'},cache:'no-store',body:JSON.stringify({islem,t,...data})});
+   const result=await response.json();
+   if(!response.ok||!result.ok)throw Error(result.mesaj||'Öğretmen hesabı doğrulanamadı.');
+   return result;
   };
+  let checked='',checking=false;
+  const token=()=>storage.getItem('ing_token')||'';
   const refresh=async()=>{
-   const a=identity(),key=a.token+'|'+a.name;
-   if(key!==currentKey){matched=null;currentKey=key;delete button.dataset.checked;}
-   if(!a.token||!a.name||!read().length){button.style.display='none';return;}
-   if(matched){button.style.display='block';return;}
-   if(busy||button.dataset.checked===key)return;
-   busy=true;
-   try{
-    for(const teacher of read()){
-     if(await verify(teacher,a)){if(identity().token===a.token)matched=teacher;break;}
-    }
-    if(identity().token===a.token){button.dataset.checked=key;button.style.display=matched?'block':'none';}
-   }catch{button.style.display='none';}finally{busy=false;}
+   const t=token();if(t===checked||checking)return;
+   checked=t;button.style.display='none';if(!t)return;checking=true;
+   try{const result=await api('teacherPortalStatus',t,{offerOnly:true});
+    if(t===token()&&result.state==='approved')button.style.display='block';
+   }catch{}finally{checking=false;}
   };
   button.onclick=async()=>{
-   if(!matched)return;
-   button.disabled=true;
-   try{if(!await verify(matched,identity()))throw Error('Bu kişisel hesaba bağlı öğretmen oturumu doğrulanamadı.');activate(matched);}
-   catch(e){alert(e.message||'Öğretmen paneli açılamadı.');button.disabled=false;}
+   const t=token();if(!t)return;
+   button.disabled=true;button.textContent='Öğretmen paneli açılıyor…';
+   try{
+    const entry=await api('teacherPortalEnter',t);
+    const participant=await api('teacherPortalParticipant',entry.token,{self:true});
+    if(t!==token())throw Error('Hesap değişti. Tekrar dene.');
+    activate({teacherToken:entry.token,name:entry.name,participant,playAsSelf:true,route:'home'});
+   }catch(error){alert(error.message||'Öğretmen paneline geçilemedi.');button.disabled=false;button.textContent='👩‍🏫 Öğretmen Paneline Geç';}
   };
   const mount=()=>{document.body.append(button);void refresh();};
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mount,{once:true});else mount();
-  document.addEventListener('dm:login',()=>{currentKey='';void refresh();});
-  window.addEventListener('focus',()=>{currentKey='';void refresh();});
-  setInterval(()=>{const a=identity();if(a.token+'|'+a.name!==currentKey)void refresh();},2000);
+  document.addEventListener('dm:login',()=>{checked='';void refresh();});
+  window.addEventListener('focus',()=>{checked='';void refresh();});
+  setInterval(()=>{if(token()!==checked)void refresh();},2000);
  }
 
 })();
