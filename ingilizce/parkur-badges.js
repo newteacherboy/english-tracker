@@ -30,6 +30,12 @@
   ...sheet('learning-03',5,['Bulut Çobanı','Gökkuşağı Dokumacısı','Fırtına Takipçisi','Rüzgâr Yelkencisi','Paraşütçü Papi','Gün Doğumu Ressamı','Ay Kayıkçısı','Zeplin Tamircisi','Bulut Heykeltıraşı','Hava Balonu Bilimcisi','Gece Seyrüsefercisi','Gökyüzü Kuryesi','Gök Gürültüsü Davulcusu','Sis Kâşifi','Göç Rehberi','Şimşek Yakalayıcısı','Buz Bulutu Rehberi','Gökyüzü Bahçıvanı','Gökyüzü Kondüktörü','Bulut Kalesi Bekçisi']),
   ...sheet('learning-04',5,['Ay Gezgini','Halka Toplayıcısı','Kara Delik Araştırmacısı','Bulutsu Dalgıcı','Ötegezegen Haritacısı','Uzay Dilbilimcisi','Uzay Aşçısı','Kozmik Kütüphaneci','Uzay Arkeoloğu','Yıldız Madencisi','Solucan Deliği İzcisi','Yerçekimi Patencisi','Yörünge Kontrolörü','Gezegen Ses Avcısı','Uzay Botanikçisi','Asteroit Kurtarıcısı','Kuyruklu Yıldız Fotoğrafçısı','Yıldız Tozu Kimyacısı','Tutulma Gözlemcisi','Galaksi Elçisi'])
  ];
+ // Three standalone, complete Papi portraits replace damaged atlas cells.
+ // Keep route milestone positions and all other 129 collectible figures unchanged.
+ const standalone=(art,filename)=>({...art,src:'parkur-badges/v3/'+filename,col:0,row:0,cols:1,rows:1,cell:512});
+ school[6]=standalone(school[6],'bahcivan-papi.png'); // school-02: row 0, column 2
+ school[14]=standalone(school[14],'kaptan-papi.png'); // school-02: row 1, column 2
+ learning[1]=standalone(learning[1],'gokyuzu-pilotu-papi.png'); // papi-01: row 1, column 1
  const title={school:'Okul Yolum',learning:'Öğrenme Yolu'};
  const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
  function milestones(steps,route){
@@ -51,7 +57,7 @@
   return result;
  }
  function artMarkup(art){
-  const x=art.col/(art.cols-1)*100,y=art.rows===1?0:art.row/(art.rows-1)*100;
+  const x=art.cols===1?0:art.col/(art.cols-1)*100,y=art.rows===1?0:art.row/(art.rows-1)*100;
   return '<span class="dm-route-badge-art" aria-hidden="true" style="background-image:url('+art.src+');background-size:'+
    art.cols*100+'% '+art.rows*100+'%;background-position:'+x+'% '+y+'%"></span>';
  }
@@ -71,7 +77,7 @@
  const member=()=>!!account()&&account()!=='teacher'&&!root.dmGuestMode&&!root.dmTeacherPortalMode&&
   !(typeof siniftaOynananOgrenci!=='undefined'&&siniftaOynananOgrenci);
  const sharingItem=badge=>({kind:'badge',id:badge.id,name:badge.art.name,caption:title[badge.route]+' · '+badge.label,
-  sprite:{src:badge.art.src,x:badge.art.col*CELL,y:badge.art.row*CELL,size:CELL}});
+  sprite:{src:badge.art.src,x:badge.art.col*(badge.art.cell||CELL),y:badge.art.row*(badge.art.cell||CELL),size:badge.art.cell||CELL}});
  const visible=el=>el.getClientRects().length>0&&getComputedStyle(el).visibility!=='hidden';
  const blockers='[role="dialog"],#genelSonucOverlay,#dmLevelUp,.ml-overlay,.bz-perde,.gso-overlay';
  let pending=[],shown=new Set(),timer=0,dialog=null;
