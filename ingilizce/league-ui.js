@@ -13,14 +13,31 @@ const empty=()=>({rows:[],visualRows:[],loaded:false,busy:false,error:'',at:0});
 let states={weekly:empty(),alltime:empty()};
 function reset(){if(owner===who())return;owner=who();epoch++;mode='weekly';selected=null;limit=30;states={weekly:empty(),alltime:empty()};}
 function onScreen(){return typeof maSekme!=='undefined'&&maSekme==='lig'&&!(typeof maProfilId!=='undefined'&&maProfilId)&&root.classList.contains('active');}
-function avatar(name,size=38,virtual=false){if(virtual)return '<span class="dm-lig-avatar dm-lig-papi" style="--size:'+size+'px"><img src="friends-assets/papi-fencer.webp" alt="Papi" loading="lazy"></span>';let html='';try{html=window.karakterSvg?.(name,size)||'';}catch{}
+const virtualAvatarAssets={
+ 1:'friends-assets/papi-fencer.webp',
+ 2:'oyna-assets/oyna-papi-fly.png',
+ 3:'premium-assets/kelime-bloklari/papi.webp',
+ 4:'premium-assets/bulut-ucusu/papi-ucak.webp',
+ 5:'study-assets/papi-celebrate.png',
+ 6:'route-assets/papi-practice-flight.webp',
+ 7:'world-assets/papi-atlas.webp',
+ 8:'study-assets/papi-read.png',
+ 9:'discovery-assets/papi-merhaba.webp',
+ 10:'papi-growth.webp'
+};
+function virtualAvatar(bot,size=44){
+ const id=Number(bot?.bot_id||String(bot?.id||'').replace('virtual-',''))||1;
+ const image=virtualAvatarAssets[id]||virtualAvatarAssets[1];
+ return '<img src="'+image+'" alt="'+esc(bot?.name||'Papi')+'" class="dm-virtual-papi-img" loading="lazy" style="--papi-size:'+size+'px">';
+}
+function avatar(name,size=38,virtual=false){if(virtual)return '<span class="dm-lig-avatar dm-lig-papi" style="--size:'+size+'px">'+virtualAvatar(typeof virtual==='object'?virtual:{name,id:'virtual-1'},size)+'</span>';let html='';try{html=window.karakterSvg?.(name,size)||'';}catch{}
  if(!html){const icon=window.ogrenciMaskotSec?.(name)||'🦜';html='<span aria-hidden="true">'+esc(icon)+'</span>';}
  return '<span class="dm-lig-avatar" style="--size:'+size+'px">'+html+'</span>';
 }
-function row(p,own=false){return '<button type="button" class="dm-lig-row'+(own?' dm-lig-self':'')+(p.is_virtual?' dm-lig-virtual':'')+'" data-lig-person="'+esc(p.name)+'"'+(p.is_virtual?' data-virtual-rival="true"':'')+'><span class="dm-lig-rank">'+fmt(p.displayRank??p.rank)+'</span>'+avatar(p.name,38,p.is_virtual)+'<span class="dm-lig-person"><b>'+esc(p.name)+'</b>'+(p.is_virtual?'<small class="dm-lig-virtual-label">Sanal Rakip</small>':'')+(own?'<small>Senin sıralaman'+(mode==='weekly'?' · '+esc(leagues[p.league]?.short||''):'')+'</small>':'')+'</span><strong>'+fmt(p.xp)+' XP</strong>'+(own?'<span aria-hidden="true">›</span>':'')+'</button>';}
+function row(p,own=false){return '<button type="button" class="dm-lig-row'+(own?' dm-lig-self':'')+(p.is_virtual?' dm-lig-virtual':'')+'" data-lig-person="'+esc(p.name)+'"'+(p.is_virtual?' data-virtual-rival="true"':'')+'><span class="dm-lig-rank">'+fmt(p.displayRank??p.rank)+'</span>'+avatar(p.name,38,p.is_virtual?p:false)+'<span class="dm-lig-person"><b>'+esc(p.name)+'</b>'+(p.is_virtual?'<small class="dm-lig-virtual-label">Sanal Rakip</small>':'')+(own?'<small>Senin sıralaman'+(mode==='weekly'?' · '+esc(leagues[p.league]?.short||''):'')+'</small>':'')+'</span><strong>'+fmt(p.xp)+' XP</strong>'+(own?'<span aria-hidden="true">›</span>':'')+'</button>';}
 function podium(rows,large){const top=rows.slice(0,3);return '<div class="dm-lig-podium '+(large?'dm-lig-podium-large':'dm-lig-podium-cards')+'">'+(large?[1,0,2]:[0,1,2]).map(i=>{
  const p=top[i];if(!p)return '<div class="dm-lig-podium-empty" aria-hidden="true"></div>';
- return '<button type="button" class="dm-lig-place dm-lig-place-'+(i+1)+(p.is_virtual?' dm-lig-virtual':'')+'" data-lig-person="'+esc(p.name)+'"'+(p.is_virtual?' data-virtual-rival="true"':'')+' aria-label="'+(i+1)+'. '+esc(p.name)+', '+fmt(p.xp)+' XP">'+(!large?'<span class="dm-lig-medal">'+['👑','🥈','🥉'][i]+'</span>':'')+avatar(p.name,large?128:60,p.is_virtual)+(large?'<span class="dm-lig-step"><b>'+ (i+1)+'</b></span>':'')+'<span class="dm-lig-winner"><b>'+esc(p.name)+'</b><strong>'+fmt(p.xp)+' XP</strong>'+(p.is_virtual?'<small class="dm-lig-virtual-label">Sanal Rakip</small>':'')+'</span></button>';
+ return '<button type="button" class="dm-lig-place dm-lig-place-'+(i+1)+(p.is_virtual?' dm-lig-virtual':'')+'" data-lig-person="'+esc(p.name)+'"'+(p.is_virtual?' data-virtual-rival="true"':'')+' aria-label="'+(i+1)+'. '+esc(p.name)+', '+fmt(p.xp)+' XP">'+(!large?'<span class="dm-lig-medal">'+['👑','🥈','🥉'][i]+'</span>':'')+avatar(p.name,large?128:60,p.is_virtual?p:false)+(large?'<span class="dm-lig-step"><b>'+ (i+1)+'</b></span>':'')+'<span class="dm-lig-winner"><b>'+esc(p.name)+'</b><strong>'+fmt(p.xp)+' XP</strong>'+(p.is_virtual?'<small class="dm-lig-virtual-label">Sanal Rakip</small>':'')+'</span></button>';
 }).join('')+'</div>';}
 function journey(rows,me){
  const ownRows=me?rows.filter(p=>p.league===me.league).sort((a,b)=>a.rank-b.rank):[];
@@ -37,6 +54,13 @@ async function dmVirtualLeagueRows(real){
   if(!response.ok)throw Error('virtual league unavailable');
   const data=await response.json();
   const bots=Array.isArray(data)?data.filter(x=>x?.is_virtual===true&&Number.isInteger(x.bot_id)&&x.bot_id>0&&x.bot_id<=10&&leagues[x.league]&&typeof x.name==='string'&&x.name.length<=60&&Number.isFinite(Number(x.xp))).map(x=>({id:'virtual-'+x.bot_id,name:x.name,league:x.league,xp:Math.max(0,Math.trunc(Number(x.xp))),rank:0,is_virtual:true})):[];
+  // Qualified real players always stand above practice bots. Bots cannot block the podium.
+  for(const code of Object.keys(leagues)){
+   const qualified=real.filter(x=>x.league===code&&Number(x.xp)>200).sort((a,b)=>Number(b.xp)-Number(a.xp));
+   if(!qualified.length)continue;
+   const podiumFloor=Number(qualified[Math.min(2,qualified.length-1)].xp);
+   for(const bot of bots.filter(x=>x.league===code))bot.xp=Math.min(bot.xp,Math.max(0,podiumFloor-1));
+  }
   const combined=[...real.map(x=>({...x})),...bots];
   for(const league of Object.keys(leagues)){
    combined.filter(x=>x.league===league).sort((a,b)=>Number(b.xp)-Number(a.xp)||Number(!!a.is_virtual)-Number(!!b.is_virtual)||String(a.name).localeCompare(String(b.name),'tr')).forEach((p,i)=>p.displayRank=i+1);
@@ -116,7 +140,8 @@ function openVirtualGames(bot){
  const m=duelModal(content);
  m.querySelectorAll('[data-virtual-game]').forEach(b=>b.onclick=()=>void beginVirtualDuel(bot,b.dataset.virtualGame));
 }
-async function beginVirtualDuel(bot,key){
+async function beginVirtualDuel(bot,key){return beginNativeVirtualDuel(bot,key);}
+async function beginLegacyVirtualDuel(bot,key){
  if(duelBusy)return;duelBusy=true;
  try{
   duelMessage('Düello başlatılıyor…');
@@ -206,7 +231,7 @@ window.maLigHtml=function(){reset();if(!states[mode].busy&&Date.now()-states[mod
 root.addEventListener('click',e=>{
  const b=e.target.closest('[data-lig-mode],[data-lig-code],[data-lig-person],[data-lig-back],[data-lig-more],[data-lig-retry]');if(!b)return;
  if(b.hasAttribute('data-lig-back'))return window.maSekmeSec?.('hub');
- if(b.hasAttribute('data-lig-person')){if(b.hasAttribute('data-virtual-rival')){const bot=states.weekly.visualRows.find(p=>p.is_virtual&&p.name===b.dataset.ligPerson);if(bot)void openVirtualInfo(bot);return;}return window.maAkisKisiAc?.(b.dataset.ligPerson);}
+ if(b.hasAttribute('data-lig-person')){if(b.hasAttribute('data-virtual-rival')){const bot=states.weekly.visualRows.find(p=>p.is_virtual&&p.name===b.dataset.ligPerson);if(bot)void openVirtualDirect(bot);return;}return window.maAkisKisiAc?.(b.dataset.ligPerson);}
  if(b.hasAttribute('data-lig-mode')){if(b.dataset.ligMode==='alltime'&&level()<15){window.yoToast?.('🔒 Efsaneler Ligi 15. seviyede açılır.');return;}mode=b.dataset.ligMode;limit=30;draw();void load();return;}
  if(b.hasAttribute('data-lig-code')){const k=b.dataset.ligCode;if(level()<leagues[k].level)return;selected=k;limit=30;draw();return;}
  if(b.hasAttribute('data-lig-more')){limit+=30;draw();return;}
