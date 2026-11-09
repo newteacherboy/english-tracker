@@ -178,7 +178,7 @@
   else if(a==='eye'){const input=$('fdPassword');input.type=input.type==='password'?'text':'password';el.setAttribute('aria-label',input.type==='password'?'Şifreyi göster':'Şifreyi gizle');}
   else if(a==='google')google();else if(a==='emailhelp')window.dmEmailGuide?.open('signup');else if(a==='verify')checkVerification();else if(a==='resend')resend();else if(a==='success'){password='';success();}else if(a==='enter'){placementHandled=true;enter();}else if(a==='placement')startSignupPlacement();
   else if(a==='teacher-login'){window.dmTeacherPortal?.openLogin();}
-  else if(a==='teacher-code-copy'){navigator.clipboard?.writeText(registered?.teacherCode||'').then(()=>error('Kod kopyalandı. Güvenli bir yerde sakla.')).catch(()=>error('Kodu elle not alabilirsin.'));}
+  else if(a==='teacher-code-copy'){if(!navigator.clipboard?.writeText)error('Kodu elle not alabilirsin.');else navigator.clipboard.writeText(registered?.teacherCode||'').then(()=>error('Kod kopyalandı. Güvenli bir yerde sakla.')).catch(()=>error('Kodu elle not alabilirsin.'));}
   else if(a==='teacher-code-next'){if(googleSession){verified=true;success();}else verification();}
   else if(a==='teacher-done'){ctx.session.removeItem(DRAFT);login();}
   else if(a==='tab')openTab(Number(el.dataset.tab));else if(a==='explore')invite();
