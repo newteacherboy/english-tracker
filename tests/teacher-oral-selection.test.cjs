@@ -25,3 +25,33 @@ test('oral incorrect grading exits saving state in detached word screen',async()
  assert.equal(w.document.querySelector('[data-unit]').value,'1');
  w.dmTeacherOral.close();w.close();
 });
+
+test('grade request is submitted even when selection control rendering throws',async()=>{
+ const d=new JSDOM('<body></body>',{url:'https://test.local',runScripts:'outside-only',pretendToBeVisual:true}),w=d.window;
+ w.eval("var apiURL='https://test.local/diji-api';");
+ w.sessionStorage.setItem('ing_ogr_token','test');
+ const calls=[];
+ w.fetch=async(u,o)=>{
+  const b=JSON.parse(o.body);calls.push(b.action);
+  const response=b.action==='setup'?{ok:true,pupils:[{id:'a',username:'Ada',class_no:5,branch:'A'}]}:
+   b.action==='units'?{ok:true,units:[1]}:{ok:true,xp:20,serverNow:new Date().toISOString(),question:{
+    id:'q',english:'apple',turkish:'elma',status:b.action==='grade'?'correct':'pending',
+    expires_at:new Date(Date.now()+15000).toISOString()
+   }};
+  return {ok:true,json:async()=>response};
+ };
+ w.eval(fs.readFileSync('ingilizce/teacher-oral.js','utf8'));
+ await w.dmTeacherOral.open();
+ const click=i=>w.document.querySelectorAll('.dm-oral-choices')[i].querySelector('button').click();
+ click(0);click(1);await new Promise(resolve=>setImmediate(resolve));click(2);
+ w.document.querySelector('[data-draw]').click();await new Promise(resolve=>setImmediate(resolve));
+ const picker=w.document.querySelector('#dmTeacherOral');
+ const original=picker.querySelectorAll.bind(picker);
+ picker.querySelectorAll=(selector)=>{if(selector==='.dm-oral-fields select')throw new Error('layout temporarily failed');return original(selector);};
+ w.document.querySelector('#dmTeacherOralQuestion [data-grade=yes]').click();
+ await new Promise(resolve=>setImmediate(resolve));
+ assert.ok(calls.includes('grade'),'grade request must reach server even if controls crash');
+ assert.match(w.document.querySelector('#dmTeacherOralQuestion [data-status]').textContent,/20 XP kaydedildi/);
+ assert.equal(w.document.querySelector('#dmTeacherOralQuestion [data-card]').dataset.result,'correct');
+ w.dmTeacherOral.close();w.close();
+});
