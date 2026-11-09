@@ -674,7 +674,7 @@
    let checks=0;
    const showWhenReady=()=>{
     if(token!==localStorage.getItem('ing_token')||!teacherAccount?.teacherAccount)return;
-    const busy=[...document.querySelectorAll('.tp-shade,#dmTeacherPreview,#dmFirstDiscovery,.fd-overlay,.dm-announcement-overlay,.deg-overlay,[role="dialog"][aria-modal="true"]')].some(el=>el.getClientRects().length>0);
+    const busy=[...document.querySelectorAll('.tp-shade,#dmTeacherPreview,#dmDiscovery,.dm-announcement-overlay,.deg-overlay,[role="dialog"][aria-modal="true"]')].some(el=>el.getClientRects().length>0);
     if(busy||!document.body||!localStorage.getItem('ing_token')){
      if(++checks<60)setTimeout(showWhenReady,1800);return;
     }
