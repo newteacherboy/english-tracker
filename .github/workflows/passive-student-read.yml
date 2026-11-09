@@ -1,0 +1,19 @@
+name: Passive student updates read regression
+on:
+  pull_request:
+    paths:
+      - 'supabase/functions/diji-api/index.ts'
+      - 'tests/passive-student-update-read.test.cjs'
+      - '.github/workflows/passive-student-read.yml'
+permissions:
+  contents: read
+jobs:
+  regression:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: node --test tests/passive-student-update-read.test.cjs tests/session-info-reuse.test.cjs
