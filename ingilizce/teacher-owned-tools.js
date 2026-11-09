@@ -87,17 +87,17 @@
     if(sending||!ids.length)return;
     if(collective&&!window.confirm(ids.length+' öğrenciye '+(delta>0?'+0,3 artı':'−2 eksi')+' puanı verilsin mi?'))return;
     sending=true;sync();
-    let completed=0,failed=[];
+    let completed=0,failed=[],failedIds=new Set();
     try{
      for(const id of ids){
       try{await call('teacherPortalPerformance',{studentId:id,delta});completed++;}
-      catch(e){failed.push((students.find(p=>p.id===id)?.fullName||students.find(p=>p.id===id)?.username||'Öğrenci')+': '+(e.message||'İşlem hatası'));}
+      catch(e){failedIds.add(id);failed.push((students.find(p=>p.id===id)?.fullName||students.find(p=>p.id===id)?.username||'Öğrenci')+': '+(e.message||'İşlem hatası'));}
       status(ids.length+' öğrenciden '+completed+' işlem kaydedildi'+(failed.length?' · '+failed.length+' hata':'')+'…');
      }
      if(failed.length)status(completed+' öğrenci güncellendi. '+failed.length+' öğrenci güncellenemedi: '+failed.slice(0,3).join('; ')+(failed.length>3?' …':''));
      else status(completed+' öğrenciye '+(delta>0?'artı':'eksi')+' başarıyla verildi.');
      if(collective){
-      checks.forEach(x=>{if(!failed.some(msg=>msg.startsWith((students.find(p=>p.id===x.value)?.fullName||students.find(p=>p.id===x.value)?.username||'Öğrenci')+':')))x.checked=false;});
+      checks.forEach(x=>{if(ids.includes(x.value)&&!failedIds.has(x.value))x.checked=false;});
      }
     }finally{sending=false;sync();}
    };
