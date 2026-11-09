@@ -133,8 +133,8 @@ async function beginVirtualDuel(bot,key){
  finally{duelBusy=false;}
 }
 function duelScores(d){
- return '<div class="dm-lig-duel-scores"><div><b>👤 Sen</b><strong>'+fmt(d.yourScore||0)+' / 6</strong><span class="dm-lig-duel-track"><i style="width:'+Math.min(100,Number(d.step||0)/6*100)+'%"></i></span></div>'+
- '<span class="dm-lig-duel-versus">VS</span><div>'+papiImg+'<b>Papi</b><strong>'+fmt(d.botScore||0)+' / 6</strong><span class="dm-lig-duel-track"><i style="width:'+Math.min(100,Number(d.step||0)/6*100)+'%"></i></span></div></div>';
+ return '<div class="dm-lig-duel-scores"><div><b>👤 Sen</b><strong>'+fmt(d.yourScore||0)+' / 6</strong><span class="dm-lig-duel-track"><i style="width:'+Math.min(100,Number(d.yourScore||0)/6*100)+'%"></i></span></div>'+
+ '<span class="dm-lig-duel-versus">VS</span><div>'+papiImg+'<b>Papi</b><strong>'+fmt(d.botScore||0)+' / 6</strong><span class="dm-lig-duel-track"><i style="width:'+Math.min(100,Number(d.botScore||0)/6*100)+'%"></i></span></div></div>';
 }
 function displayDuelQuestion(d){
  if(!duelContext||!duelContext.run)return;
