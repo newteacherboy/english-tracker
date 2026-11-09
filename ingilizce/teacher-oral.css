@@ -5,3 +5,39 @@
 .dm-oral-fields{grid-template-columns:1fr}.dm-oral-native{display:none}.dm-oral-choices{display:flex;flex-wrap:wrap;gap:8px;max-height:180px;overflow:auto;padding:5px 3px;color:#66808d}.dm-oral-choices button{border:2px solid #c6e0e9;border-radius:13px;padding:10px 15px;min-height:46px;background:#fff;color:#214e66;font-size:15px;font-weight:850;box-shadow:0 3px 0 #d3e7ed}.dm-oral-choices button[aria-pressed="true"]{background:#147c91;border-color:#086175;color:white;box-shadow:0 3px 0 #064d60;transform:translateY(-1px)}.dm-oral-card[data-result="correct"]{border-color:#1ca681;animation:dm-oral-pop .35s ease}.dm-oral-card[data-result="wrong"]{border-color:#ce536d;animation:dm-oral-pop .35s ease}@keyframes dm-oral-pop{50%{transform:scale(1.025)}}@media(prefers-reduced-motion:reduce){.dm-oral-card{animation:none!important}}
 
 .dm-time-celebration{text-align:center;padding:24px 12px}.dm-time-prize{font-size:100px;filter:drop-shadow(0 8px 15px #e9a82970);animation:dm-chest-bounce 1.6s ease-in-out infinite}.dm-time-celebration button{background:linear-gradient(135deg,#ffda54,#f8a925);border:2px solid #fff1aa;border-radius:16px;padding:14px 24px;color:#624208;font:900 18px Nunito,system-ui;cursor:pointer;min-height:48px}.dm-time-celebration.is-open .dm-time-prize{animation:dm-chest-reveal .7s ease-out both}.dm-time-celebration [data-chest-result]{font-size:21px;font-weight:900;color:#158168}@keyframes dm-chest-bounce{0%,100%{transform:rotate(-6deg) translateY(0)}50%{transform:rotate(6deg) translateY(-12px)}}@keyframes dm-chest-reveal{0%{transform:scale(.6) rotate(-15deg);opacity:.2}60%{transform:scale(1.3) rotate(10deg)}100%{transform:scale(1);opacity:1}}@media(prefers-reduced-motion:reduce){.dm-time-prize{animation:none!important}}
+
+
+/* Oral question is a separate, centered full-screen stage; the picker remains mounted beneath it. */
+#dmTeacherOral .dm-oral-question-screen[hidden]{display:none!important}
+#dmTeacherOral .dm-oral-question-screen{
+ position:fixed;inset:0;z-index:4;display:flex;align-items:center;justify-content:center;
+ padding:calc(16px + env(safe-area-inset-top,0px)) calc(14px + env(safe-area-inset-right,0px))
+ calc(16px + env(safe-area-inset-bottom,0px)) calc(14px + env(safe-area-inset-left,0px));
+ overflow:auto;background:linear-gradient(135deg,#e5f8fc,#f6fcf3 56%,#e9f5ff);
+}
+#dmTeacherOral .dm-oral-question-stage{
+ position:relative;display:flex;flex-direction:column;justify-content:center;align-items:stretch;
+ width:min(100%,730px);max-height:100%;min-height:min(490px,calc(100dvh - 40px));
+ padding:clamp(18px,4vw,38px);border-radius:26px;background:#fffefa;
+ border:2px solid #bedfe9;box-shadow:0 18px 65px #173e552b;text-align:center;overflow:auto;
+}
+#dmTeacherOral .dm-oral-question-back{
+ position:absolute;right:12px;top:12px;z-index:2;display:grid;place-items:center;
+ width:44px;height:44px;border-radius:13px;border:1px solid #bad5df;background:#e9f2f5;
+ color:#16465a;font-size:24px;font-weight:800;cursor:pointer;
+}
+#dmTeacherOral .dm-oral-question-heading{padding:16px 42px 0;color:#245b70}
+#dmTeacherOral .dm-oral-question-heading small{letter-spacing:2px;font-weight:900;color:#188596}
+#dmTeacherOral .dm-oral-question-heading h2{font-size:clamp(22px,4vw,32px);margin:6px 0}
+#dmTeacherOral .dm-oral-question-heading p{font-size:13px;margin:0;color:#66808d}
+#dmTeacherOral .dm-oral-question-stage .dm-oral-card{margin-top:16px;box-shadow:none}
+#dmTeacherOral .dm-oral-question-stage .dm-oral-card h2{font-size:clamp(34px,7vw,58px)}
+#dmTeacherOral .dm-oral-resume{margin-top:10px;min-height:44px;border:1px solid #a4cfda;
+ border-radius:12px;background:#ebf9fa;color:#15556b;font-weight:850;width:100%}
+@media(max-width:480px){
+ #dmTeacherOral .dm-oral-question-screen{padding:8px}
+ #dmTeacherOral .dm-oral-question-stage{border-radius:18px;padding:18px 10px;min-height:min(440px,calc(100dvh - 16px))}
+ #dmTeacherOral .dm-oral-question-heading{padding:22px 40px 0}
+ #dmTeacherOral .dm-oral-question-stage .dm-oral-grades{gap:7px}
+ #dmTeacherOral .dm-oral-question-stage .dm-oral-grades button{font-size:13px;padding:8px 4px}
+}
