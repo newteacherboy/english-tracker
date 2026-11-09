@@ -7,14 +7,14 @@
    - Supabase istekleri: bu dosya karışmaz (sayfadaki katman yönetir)
    Sayfayı güncellediğinizde SURUM değerini artırın (v2, v3…).
    ===================================================================== */
-const SURUM = 'diji-v366-full-class-reports-20261110';
+const SURUM = 'diji-v367-teacher-owned-tools-20261110';
 const SAYFA = 'sayfa-' + SURUM, KAYNAK = 'kaynak-' + SURUM;
 // Cached on first use; never download the A2 catalog at startup.
 const LAZY_TOPIC_FILES = new Set(['konu-oyunlari-a1.js','konu-oyunlari-a2.js','topic-games-core.mjs']);
 const DIS_KAYNAK = /^https:\/\/(fonts\.googleapis\.com|fonts\.gstatic\.com|cdn\.jsdelivr\.net|cdnjs\.cloudflare\.com)\//;
 /* Ana sayfanın çevrimdışı kopyasını ASLA değiştirmemesi gereken sayfalar:
    hukuki / hesap sayfaları, deneme ve doğrulama akışları, şifre yenileme ve tüm tasarım önizlemeleri. */
-const AYRI_SAYFA = /\/(?:veli-kontrolu|hesap-sil|hesap-dondur|hesap-ac|gizlilik|telif|lisanslar|kullanim-kosullari|cerez|hakkinda|destek|kelime-atolyesi|misafir|hesap-dogrula|sifre-yenile)\.html$|\/[^/]*-(?:preview(?:-inner)?|comparison|onizleme)\.html$/;
+const AYRI_SAYFA = /\/(?:veli-kontrolu|hesap-sil|hesap-dondur|hesap-ac|gizlilik|telif|lisanslar|kullanim-kosullari|cerez|hakkinda|destek|kelime-atolyesi|misafir|hesap-dogrula|sifre-yenile)\.html$|\/[^\/]*-(?:preview(?:-inner)?|comparison|onizleme)\.html$/;
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(SAYFA).then(c => c.addAll(['./'])).catch(() => {}).then(() => self.skipWaiting()));
@@ -28,7 +28,7 @@ self.addEventListener('fetch', e => {
   const url = new URL(r.url);
   if (url.hostname.endsWith('supabase.co')) return;                 /* API: dokunma */
   // Teacher account transition must not run an older cached authorization/UI script.
-  if (/\\/teacher-portal-boot\\.js$/.test(url.pathname)) {
+  if (url.pathname.endsWith('/teacher-portal-boot.js')) {
     e.respondWith(fetch(r,{cache:'no-store'}).catch(async()=>{
       const cached=await caches.open(KAYNAK).then(c=>c.match(r));
       return cached||Response.error();
@@ -41,8 +41,8 @@ self.addEventListener('fetch', e => {
   }
   // Leaderboard and its badge atlas must not appear stale after a deployment.
   // Network-first even on a slow connection; offline still uses last good copy.
-  const LIVE_LEAGUE_FILES = /\/(?:league-ui|friends-ui)\.(?:js|css)$|\/parkur-badges\/v2\/(?:papi-01|school-02|school-03)\.webp$|\/parkur-badges\/v3\/[^/]+\.png$/;
-  if (url.origin === self.location.origin && LIVE_LEAGUE_FILES.test(url.pathname)) {
+  const LIVE_LEAGUE_FILES = /\/(?:league-ui|friends-ui)\.(?:js|css)$|\/parkur-badges\/v2\/(?:papi-01|school-02|school-03)\.webp$|\/parkur-badges\/v3\/[^\/]+\.png$/;
+  if (url.origin === self.location.origin && (LIVE_LEAGUE_FILES.test(url.pathname) || ['/teacher-workspace.js','/teacher-portal.js','/teacher-owned-tools.js'].some(name => url.pathname.endsWith(name)))) {
     e.respondWith(
       fetch(r,{cache:'no-store'}).then(async response=>{
         if (response && response.ok) {
