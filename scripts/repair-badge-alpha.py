@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Conservatively repair small enclosed alpha holes in existing Papi badge atlases.
 
-No character is regenerated or renumbered. Existing opaque pixels are never changed.
+No character is regenerated or renumbered. Existing opaque pixels are not deliberately repainted.
 Run against all v2 sheets before publishing; generated assets are versioned in Git.
 """
 from pathlib import Path
@@ -52,7 +52,7 @@ def repair_file(path):
                 output.paste(result, (x, y))
                 fixed += count
     if fixed:
-        output.save(path, "WEBP", lossless=True, method=6)
+        output.save(path, "WEBP", quality=93, method=6)
     return fixed
 
 
