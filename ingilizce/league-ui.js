@@ -284,9 +284,11 @@ async function beginNativeVirtualDuel(bot,key){
   if(d.paywall)return showDuelPlans(d.message);
   if(!d.ok)throw Error(d.message||'Düello başlatılamadı.');
   const activeBot=states.weekly.visualRows.find(p=>p.id==='virtual-'+d.botId)||bot;
-  nativeDuel={owner:who(),bot:activeBot,runId:d.runId,game:key,difficulty:d.difficulty,config,playAt:Date.now(),started:false,finished:false};
+  const actualGame=d.game||key,actualConfig=nativeGameConfig[actualGame];
+  if(!actualConfig)throw Error('Yarım kalan düellonun oyunu bulunamadı.');
+  nativeDuel={owner:who(),bot:activeBot,runId:d.runId,game:actualGame,difficulty:d.difficulty,config:actualConfig,playAt:Date.now(),started:false,finished:false};
   closeDuelModal();stopNativeHud();
-  const opener=window[config.opener];
+  const opener=window[nativeDuel.config.opener];
   if(typeof opener!=='function')throw Error('Bu oyun henüz yüklenemedi.');
   await Promise.resolve(opener());
   nativeDuel.playAt=Date.now();
