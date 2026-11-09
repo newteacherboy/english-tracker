@@ -2038,7 +2038,7 @@ async function handle(req: Request, proxy: any = null) {
   }
   if (op === "akisTumu") {
     const deny = await requireStudent(a, ""); if (deny) return deny;
-    const { data } = await supabase.from("feed_events").select("id,student_id,target_student_id,safety_hidden,event_type,payload,created_at,students!feed_events_student_id_fkey(username)").order("created_at", { ascending: false }).limit(400);
+    const { data } = await supabase.from("feed_events").select("id,student_id,target_student_id,safety_hidden,event_type,payload,created_at,students!feed_events_student_id_fkey(username)").in("event_type",["rank_up","league_promotion","student_level_up","daily_complete","weekly_goal_complete","route_five_complete","school_graduation","weekly_result","duel_result","tebrik","begeni"]).order("created_at", { ascending: false }).limit(400);
     const b = new Map<string, number>(), tb = new Map<string, number>(), liste: any[] = [];
     for (const e of (await socialSafety.filterEvents(data||[],a.student_id)).filter(publicParticipant)) {
       const p = e.payload || {};
@@ -2049,7 +2049,7 @@ async function handle(req: Request, proxy: any = null) {
       else if (e.event_type === "energy_send") metin = `${p.target_name || "bir arkadaşına"} ${p.amount ?? 2} ⚡ enerji hediye etti`;
       else if (e.event_type === "duel_invite") metin = `${p.target_name || "birini"} ${OYUN_ADI[p.game_name] || p.game_name || ""} düellosuna çağırdı ⚔️`;
       else if (e.event_type === "level_complete") metin = `${p.mode_name || "Parkurda"} ${p.level ?? ""}. seviyeyi geçti`;
-      liste.push({ k: e.id, t: Date.parse(e.created_at), ogr: ad, ad, tur: e.event_type === "energy_loss" ? "eksi" : "arti", ikon, metin, g: false });
+      liste.push({ k: e.id, t: Date.parse(e.created_at), ogr: ad, ad, event_type:e.event_type, tur:"arti", ikon, metin, g: false });
     }
     liste.forEach(x => { x.b = b.get(x.k) || 0; x.tb = tb.get(x.k) || 0; });
     return json(String(val(body,q,"delta"))==="1"?await transferDelta("feed",transferScope(a),String(val(body,q,"version")),liste):{liste});
