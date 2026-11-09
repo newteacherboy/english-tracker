@@ -143,7 +143,7 @@
    host.innerHTML='<div class="dm-owned-switches">'+types.map(([k,emoji,label,description])=>'<button type="button" data-report="'+k+'" aria-pressed="false"><span>'+emoji+'</span><strong>'+esc(label)+'</strong><small>'+esc(description)+'</small><span class="dm-report-generate">Rapor oluştur →</span></button>').join('')+'</div><section class="dm-owned-report-output" data-report-output aria-live="polite"><p>Oluşturmak istediğin rapora bas.</p></section>';
    // Preserve direct access to the original detailed class reporting tool.
    if(typeof window.dmTeacherReportsOpen==='function'){
-    const original=document.createElement('button');original.type='button';original.className='dm-owned-action';original.textContent='📈 Eski Ayrıntılı Sınıf Raporlarını Aç';original.style.width='100%';original.style.margin='12px 0';original.onclick=()=>{const parent=sheet;sheet?.remove();sheet=null;Promise.resolve(window.dmTeacherReportsOpen(c.id)).catch(e=>window.yoToast?.(e.message||'Ayrıntılı rapor açılamadı.'));};host.prepend(original);
+    const original=document.createElement('button');original.type='button';original.className='dm-owned-action';original.textContent='📈 Eski Ayrıntılı Sınıf Raporlarını Aç';original.style.width='100%';original.style.margin='12px 0';original.onclick=()=>{sheet?.remove();sheet=null;Promise.resolve(window.dmTeacherReportsOpen(c.id)).catch(e=>window.yoToast?.(e.message||'Ayrıntılı rapor açılamadı.'));};host.prepend(original);
    }
    const out=host.querySelector('[data-report-output]');
    const item=(name,description)=>'<li><strong>'+esc(name)+'</strong> · '+esc(description)+'</li>';
