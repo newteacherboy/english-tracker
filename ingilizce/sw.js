@@ -7,7 +7,7 @@
    - Supabase istekleri: bu dosya karışmaz (sayfadaki katman yönetir)
    Sayfayı güncellediğinizde SURUM değerini artırın (v2, v3…).
    ===================================================================== */
-const SURUM = 'diji-v351-energy-pause-20261109';
+const SURUM = 'diji-v352-virtual-badge-avatars-20261109';
 const SAYFA = 'sayfa-' + SURUM, KAYNAK = 'kaynak-' + SURUM;
 // Cached on first use; never download the A2 catalog at startup.
 const LAZY_TOPIC_FILES = new Set(['konu-oyunlari-a1.js','konu-oyunlari-a2.js','topic-games-core.mjs']);
@@ -31,6 +31,24 @@ self.addEventListener('fetch', e => {
   // especially while a prior iPhone WebKit renderer is recovering.
   if (/\/(?:premium-(?:word-match(?:-core)?|cloud-flight|word-blocks)\.(?:js|css)|papizzle\.(?:js|css)|lazy-games\.js)$/.test(url.pathname)) {
     e.respondWith(fetch(r,{cache:'no-store'}));return;
+  }
+  // Leaderboard and its badge atlas must not appear stale after a deployment.
+  // Network-first even on a slow connection; offline still uses last good copy.
+  const LIVE_LEAGUE_FILES = /\/(?:league-ui|friends-ui)\.(?:js|css)$|\/parkur-badges\/v2\/(?:papi-01|school-02|school-03)\.webp$/;
+  if (url.origin === self.location.origin && LIVE_LEAGUE_FILES.test(url.pathname)) {
+    e.respondWith(
+      fetch(r,{cache:'no-store'}).then(async response=>{
+        if (response && response.ok) {
+          const cached=response.clone();
+          await caches.open(KAYNAK).then(c=>c.put(r,cached)).catch(()=>{});
+        }
+        return response;
+      }).catch(async()=>{
+        const cached=await caches.open(KAYNAK).then(c=>c.match(r));
+        return cached||Response.error();
+      })
+    );
+    return;
   }
   if (AYRI_SAYFA.test(url.pathname)) return;                        /* Ayrı sayfalar ana sayfa önbelleğine karışmasın */
   if (url.searchParams.get('misafir') === '1') return;              /* Deneme oturumu ana sayfanın çevrimdışı kopyası değildir. */
