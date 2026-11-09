@@ -267,6 +267,9 @@ function dmMidnightHome(board,openOriginal){
     </div>
    </div>
   </section>
+  <button type="button" class="dm-midnight-parkur-switch" data-teacher-parkur-switch aria-label="Kişisel Parkur hesabıma geç">
+   <span aria-hidden="true">🌿</span><strong>Kişisel Parkur’a Geç</strong><span aria-hidden="true">›</span>
+  </button>
   <section class="dm-midnight-section" aria-labelledby="dmHomeShortcuts">
    <h2 id="dmHomeShortcuts"><i aria-hidden="true">${icon('bolt')}</i> Hızlı Erişim</h2>
    <div class="dm-midnight-shortcuts"></div>
@@ -284,6 +287,10 @@ function dmMidnightHome(board,openOriginal){
  const classes=()=>window.dmTeacherClassesOpen?window.dmTeacherClassesOpen():openOriginal('classroom');
  board.querySelector('[data-home-students]').onclick=dmStudentList;
  board.querySelector('[data-home-classes]').onclick=classes;
+ // The active V2 homepage replaces the legacy teacher home, so its own
+ // switch is needed. The boot layer restores the real personal learner session.
+ const personalParkur=board.querySelector('[data-teacher-parkur-switch]');
+ personalParkur.onclick=()=>window.dmTeacherPortalParkur?.();
  const add=(target,label,art,run)=>{
   const button=document.createElement('button');
   button.type='button';button.className='dm-midnight-raised';
