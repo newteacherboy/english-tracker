@@ -605,3 +605,16 @@ html[data-dm-theme="day"] #tab-meduakis.fr-home-view .fr-locked{
 html[data-dm-theme="night"] #tab-meduakis.fr-home-view .fr-podium-footer .fr-link{
   background:#07594f!important;color:#f1fbfc!important;border-color:#e4c775!important;
 }
+
+
+/* Duel invitation emphasis. Gentle animation, motion-accessible. */
+#tab-meduakis .fr-duel-start{position:relative;isolation:isolate;background:linear-gradient(120deg,#2055d7,#347af2,#2055d7);background-size:220% 100%;box-shadow:0 5px 16px #1c67de55;animation:dmDuelPulse 2.7s ease-in-out infinite,dmDuelShimmer 4.5s linear infinite;transform-origin:center}
+#tab-meduakis .fr-duel-start:after{content:'✦';position:absolute;top:-9px;right:-5px;color:#f7bb3c;font-size:15px;pointer-events:none;animation:dmDuelSpark 2.7s ease-in-out infinite}
+#tab-meduakis .fr-duel-start:active{transform:scale(.95)}
+@keyframes dmDuelPulse{0%,100%{box-shadow:0 4px 13px #1c67de40;transform:scale(1)}48%{box-shadow:0 5px 19px #1c67de8f;transform:scale(1.045)}}
+@keyframes dmDuelShimmer{to{background-position:220% 0}}
+@keyframes dmDuelSpark{0%,100%{transform:rotate(-15deg) scale(.8);opacity:.45}50%{transform:rotate(17deg) scale(1.3);opacity:1}}
+#tab-meduakis .fr-papi-leader{display:flex;align-items:center;justify-content:center;width:100%;height:100%}
+#tab-meduakis .fr-papi-leader .dm-virtual-papi-img{width:88%;height:88%;object-fit:contain}
+#tab-meduakis .fr-leader[data-friend-action="virtual-duel"]{cursor:pointer}
+@media(prefers-reduced-motion:reduce){#tab-meduakis .fr-duel-start,#tab-meduakis .fr-duel-start:after{animation:none}}
