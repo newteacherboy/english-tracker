@@ -32,7 +32,7 @@
  .dm-owned-switches button{background:#ebf7fc;color:#145b7b;border:1px solid #bcd8e7;border-radius:11px;padding:10px}
  .dm-perf-toolbar{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px;align-items:center;padding:10px 12px;background:#eaf7f4;border-radius:12px;margin-bottom:10px}.dm-perf-toolbar label,.dm-perf-student{display:flex!important;flex-direction:row!important;align-items:center;gap:10px;margin:0!important}.dm-perf-toolbar input,.dm-perf-student input{width:18px!important;height:18px!important;accent-color:#149888;flex-shrink:0}.dm-perf-student span{min-width:0}.dm-perf-toolbar span{font-size:12px;color:#46666d}.dm-perf-bulk{margin-top:15px;padding:15px;background:#f0f9fc;border:1px solid #cce2eb;border-radius:15px}.dm-perf-bulk p{margin:3px 0 12px}.dm-perf-bulk-buttons{display:grid;grid-template-columns:1fr 1fr;gap:8px}.dm-perf-bulk-buttons button{min-height:46px;padding:8px;border-radius:11px;font-size:12px!important}.dm-perf-heading{margin:0 0 12px!important}.dm-performance-row{gap:10px}@media(max-width:430px){.dm-perf-bulk-buttons{grid-template-columns:1fr}.dm-performance-row .dm-owned-buttons{flex-shrink:0}}
  .dm-owned-panel ul{padding-left:21px}.dm-owned-panel li{margin-bottom:6px}
- .dm-owned-switches{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px!important}.dm-owned-switches button{display:flex;flex-direction:column;align-items:flex-start;gap:5px;text-align:left;min-height:92px;padding:14px!important;border-radius:16px!important;background:#f2f9fc!important;color:#174e68!important;border:1px solid #c7e2ee!important;font-weight:850!important}.dm-owned-switches button[aria-pressed=true]{background:#dff7ef!important;border:2px solid #20a488!important}.dm-owned-switches button strong{font-size:14px}.dm-owned-switches button small{font-size:11px;font-weight:550;color:#567485}.dm-owned-report-output{background:#fafdfd;border:1px solid #d6e7e8;padding:15px;border-radius:15px;min-height:100px}.dm-owned-ann-options{display:grid;grid-template-columns:1fr 1fr;gap:10px}@media(max-width:410px){.dm-owned-ann-options{grid-template-columns:1fr}}
+ .dm-owned-switches{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px!important}.dm-owned-switches button{display:flex;flex-direction:column;align-items:flex-start;gap:5px;text-align:left;min-height:92px;padding:14px!important;border-radius:16px!important;background:#f2f9fc!important;color:#174e68!important;border:1px solid #c7e2ee!important;font-weight:850!important}.dm-owned-switches button[aria-pressed=true]{background:#dff7ef!important;border:2px solid #20a488!important}.dm-owned-switches button strong{font-size:14px}.dm-owned-switches button small{font-size:11px;font-weight:550;color:#567485}.dm-report-generate{font-size:12px;color:#087c72;font-weight:900}.dm-report-header{display:flex;align-items:center;justify-content:space-between;gap:8px}.dm-report-header h3{margin:0}.dm-report-student{padding:10px;margin:8px 0;border:1px solid #d6e7e8;border-radius:12px}.dm-report-student h4{margin:0}.dm-owned-report-output li{margin:8px 0}.dm-owned-report-output table{width:100%;border-collapse:collapse}.dm-owned-report-output th,.dm-owned-report-output td{padding:8px;border-bottom:1px solid #d6e7e8;text-align:left}.dm-owned-report-output{background:#fafdfd;border:1px solid #d6e7e8;padding:15px;border-radius:15px;min-height:100px}.dm-owned-ann-options{display:grid;grid-template-columns:1fr 1fr;gap:10px}@media(max-width:410px){.dm-owned-ann-options{grid-template-columns:1fr}}
  @media(prefers-reduced-motion:reduce){.dm-owned-panel *{animation:none!important}}
  `;
  document.head.append(style);
@@ -138,21 +138,42 @@
   });
  }
  async function openReports(){
-  await bootstrap('📊 Raporlar','Sadece seçili sınıf ve şubedeki öğrencilerin raporlarını görüntüle.',(c,host)=>{
-   host.innerHTML='<div class="dm-owned-switches">'+[['performance','📊','Ders İçi Performans','Öğrenci puanları'],['weak','🎯','Sınıfın Zayıf Noktaları','Gelişim alanları'],['parent','👨‍👩‍👧','Haftalık Veli Özetleri','Haftalık durum'],['exam','📝','Seviye Sınavı Sonuçları','Sınav başarıları']].map(([k,emoji,v,sub])=>'<button type="button" data-report="'+k+'" aria-pressed="false"><span aria-hidden="true">'+emoji+'</span><strong>'+esc(v)+'</strong><small>'+esc(sub)+'</small></button>').join('')+'</div><div class="dm-owned-report-output" data-report-output><p>Görmek istediğin raporu seç.</p></div>';
-   host.querySelectorAll('[data-report]').forEach(btn=>btn.onclick=async()=>{host.querySelectorAll('[data-report]').forEach(b=>b.setAttribute('aria-pressed',String(b===btn)));const output=host.querySelector('[data-report-output]');output.textContent='Rapor yükleniyor…';
-    try{const data=await call('teacherPortalClassAnalytics',{classId:c.id});
-     if(btn.dataset.report==='weak'){
-      const wrong=data.summary?.wrongByGame||[];output.innerHTML='<h3>Sınıfın Zayıf Noktaları</h3>'+(wrong.length?'<ul>'+wrong.map(x=>'<li>'+esc(x[0])+': '+Number(x[1])+' yanlış</li>').join('')+'</ul>':'<p>Bu hafta yeterli yanlış cevap verisi bulunmuyor.</p>');
-     }else if(btn.dataset.report==='exam'){
-      const exams=(data.rubrics||[]).filter(x=>x.exam_score!==null&&x.exam_score!==undefined);
-      output.innerHTML='<h3>Seviye Sınavı Sonuçları</h3>'+(exams.length?'<ul>'+exams.map(x=>'<li>'+esc(data.students?.find(p=>p.id===x.student_id)?.name||'Öğrenci')+': '+Number(x.exam_score)+'</li>').join('')+'</ul>':'<p>Bu sınıfta henüz seviye sınavı sonucu yok.</p>');
-     }else if(btn.dataset.report==='parent'){
-      const sm=data.summary||{};output.innerHTML='<h3>Haftalık Veli Özeti</h3><p>'+esc(c.classNo+'-'+c.branch)+' · Oynanan oyun: '+Number(sm.plays||0)+' · Doğru: '+Number(sm.correct||0)+' · Yanlış: '+Number(sm.wrong||0)+'</p><p>Özet yalnızca öğretmene gösterilir; velilere otomatik gönderilmez.</p>';
+  await bootstrap('📊 Raporlar','Dört raporu da ayrı ayrı oluşturabilirsin. Önce kendi sınıfını seç.',(c,host)=>{
+   const types=[['performance','📊','Ders İçi Performans','Puan ve katılım'],['weak','🎯','Sınıfın Zayıf Noktaları','Yanlışlar ve eksikler'],['parent','👨‍👩‍👧','Haftalık Veli Özetleri','Öğrenciye özel haftalık rapor'],['exam','📝','Seviye Sınavı Sonuçları','Öğrenci sınav sonuçları']];
+   host.innerHTML='<div class="dm-owned-switches">'+types.map(([k,emoji,label,description])=>'<button type="button" data-report="'+k+'" aria-pressed="false"><span>'+emoji+'</span><strong>'+esc(label)+'</strong><small>'+esc(description)+'</small><span class="dm-report-generate">Rapor oluştur →</span></button>').join('')+'</div><section class="dm-owned-report-output" data-report-output aria-live="polite"><p>Oluşturmak istediğin rapora bas.</p></section>';
+   const out=host.querySelector('[data-report-output]');
+   const item=(name,description)=>'<li><strong>'+esc(name)+'</strong> · '+esc(description)+'</li>';
+   let generation=0;
+   const display=(title,html)=>{
+    out.innerHTML='<div class="dm-report-header"><h3>'+esc(title)+'</h3><button type="button" class="dm-owned-outline" data-report-print>🖨️ Yazdır</button></div><p>'+esc(c.classNo+'-'+c.branch)+' sınıfı · '+new Date().toLocaleDateString('tr-TR')+'</p><div data-report-content>'+html+'</div>';
+    out.querySelector('[data-report-print]').onclick=()=>{
+     const content=out.querySelector('[data-report-content]');if(!content)return;
+     const popup=window.open('','_blank');
+     if(!popup){status('Yazdırma penceresi engellendi. Tarayıcı ayarlarından izin ver.');return;}
+     popup.document.open();
+     popup.document.write('<!doctype html><html lang="tr"><head><meta charset="utf-8"><title>'+esc(title)+'</title><style>body{font:14px system-ui;padding:24px;color:#234}li{margin:9px 0}table{border-collapse:collapse;width:100%}td,th{border:1px solid #ccc;padding:8px}</style></head><body><h1>'+esc(title)+'</h1><p>'+esc(c.classNo+'-'+c.branch)+' sınıfı</p>'+content.innerHTML+'</body></html>');
+     popup.document.close();popup.focus();popup.print();
+    };
+   };
+   host.querySelectorAll('[data-report]').forEach(btn=>btn.onclick=async()=>{
+    const current=++generation;host.querySelectorAll('[data-report]').forEach(x=>x.setAttribute('aria-pressed',String(x===btn)));
+    out.textContent='Seçilen rapor oluşturuluyor…';
+    try{
+     const d=await call('teacherPortalClassAnalytics',{classId:c.id});
+     if(current!==generation||!out.isConnected)return;
+     const students=d.students||[],summary=d.summary||{},kind=btn.dataset.report;
+     if(kind==='performance'){
+      display('Ders İçi Performans Raporu','<p>Öğrenci sayısı: '+students.length+' · Ortalama XP: '+Number(summary.averageXp||0)+'</p><ol>'+students.map(p=>item(p.name,'Performans: '+Number(p.points||0)+' puan · '+Number(p.xp||0)+' XP · '+Number(p.plays||0)+' oyun')).join('')+'</ol>');
+     }else if(kind==='weak'){
+      const wrong=summary.wrongByGame||[],inactive=d.inactive||[];
+      display('Sınıfın Zayıf Noktaları Raporu','<p>Son 7 gün · '+Number(summary.correct||0)+' doğru · '+Number(summary.wrong||0)+' yanlış</p><h4>En çok yanlış yapılan oyunlar</h4>'+(wrong.length?'<ol>'+wrong.map(x=>item(x[0],Number(x[1])+' yanlış')).join('')+'</ol>':'<p>Yanlış cevap verisi yok.</p>')+'<h4>Bu hafta oyun çalışması olmayan öğrenciler</h4>'+(inactive.length?'<ul>'+inactive.map(n=>'<li>'+esc(n)+'</li>').join('')+'</ul>':'<p>Hareketsiz öğrenci bulunmuyor.</p>'));
+     }else if(kind==='parent'){
+      display('Haftalık Veli Özetleri','<p>Son 7 günün oyun etkinliği ve öğrencinin mevcut puanları. Raporlar velilere otomatik gönderilmez.</p>'+students.map(p=>'<article class="dm-report-student"><h4>'+esc(p.name)+'</h4><p>Haftalık oyun: '+Number(p.plays||0)+' · XP: '+Number(p.xp||0)+' · Performans: '+Number(p.points||0)+'</p></article>').join('')+(students.length?'':'<p>Öğrenci bulunamadı.</p>'));
      }else{
-      const students=data.students||[];output.innerHTML='<h3>Ders İçi Performans</h3>'+(students.length?'<div class="dm-owned-list">'+students.map(p=>'<div class="dm-owned-row"><strong>'+esc(p.name)+'</strong><span>'+Number(p.points||0)+' puan</span></div>').join('')+'</div>':'<p>Bu sınıfta henüz öğrenci yok.</p>');
+      const results=(d.rubrics||[]).filter(x=>x.exam_score!==null&&x.exam_score!==undefined);
+      display('Seviye Sınavı Sonuçları Raporu',results.length?'<table><thead><tr><th>Öğrenci</th><th>Not</th><th>Tarih</th></tr></thead><tbody>'+results.map(x=>'<tr><td>'+esc(students.find(p=>p.id===x.student_id)?.name||'Öğrenci')+'</td><td>'+Number(x.exam_score)+'</td><td>'+esc(x.report_date||'—')+'</td></tr>').join('')+'</tbody></table>':'<p>Bu sınıfa ait kayıtlı seviye sınavı bulunmuyor.</p>');
      }
-    }catch(error){output.textContent=error.message;}
+    }catch(e){if(current===generation)out.textContent='Rapor oluşturulamadı: '+(e.message||'Bağlantı hatası');}
    });
   });
  }
