@@ -29,7 +29,7 @@
  if(params.get('ogretmen')!=='1'){
   const button=document.createElement('button');
   button.id='dmPersonalToTeacher';button.type='button';button.textContent='👩‍🏫 Öğretmen Paneline Geç';
-  button.style.cssText='position:fixed;right:14px;bottom:calc(env(safe-area-inset-bottom, 0px) + 82px);z-index:9000;border:0;border-radius:16px;padding:12px 16px;background:#2563eb;color:#fff;font:700 13px system-ui;box-shadow:0 5px 18px #162b5450;cursor:pointer;display:none;max-width:calc(100vw - 28px)';
+  button.style.cssText='position:fixed;right:14px;bottom:calc(env(safe-area-inset-bottom, 0px) + 82px);z-index:2147483000;border:0;border-radius:16px;padding:12px 16px;background:#2563eb;color:#fff;font:700 13px system-ui;box-shadow:0 5px 18px #162b5450;cursor:pointer;display:none;max-width:calc(100vw - 28px)';
   const api=async(islem,t,data={})=>{
    const response=await fetch('https://nxfqlutulxqzqgwewssd.supabase.co/functions/v1/diji-api',{method:'POST',headers:{'Content-Type':'application/json'},cache:'no-store',body:JSON.stringify({islem,t,...data})});
    const result=await response.json();
