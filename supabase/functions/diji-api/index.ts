@@ -2715,12 +2715,17 @@ async function handle(req: Request, proxy: any = null) {
   }
   if (op === "sonGirisGuncelle") {
     const name = String(val(body, q, "ogrenci")); const deny = await requireStudent(a, name); if (deny) return deny;
-    const s = await hedefOgrenci(a, name); if (s) await supabase.from("students").update({ last_login_at: new Date().toISOString() }).eq("id", s.id);
+    // The authenticated student identity was already validated in auth().
+    // Avoid a redundant students SELECT; keep teacher target lookup unchanged.
+    const sid=a?.role==='student'&&a.student_id?a.student_id:(await hedefOgrenci(a,name))?.id;
+    if (sid) await supabase.from("students").update({ last_login_at: new Date().toISOString() }).eq("id", sid);
     return json({ status: "success" });
   }
   if (op === "sinifSec") {
     const name = String(val(body, q, "ogrenci")); const deny = await requireStudent(a, name); if (deny) return deny;
-    const s = await hedefOgrenci(a, name); if (s) await supabase.from("students").update({ selected_class: num(val(body, q, "sinif")) }).eq("id", s.id);
+    // The student session is authoritative; teachers still resolve their scoped target.
+    const sid=a?.role==='student'&&a.student_id?a.student_id:(await hedefOgrenci(a,name))?.id;
+    if (sid) await supabase.from("students").update({ selected_class: num(val(body, q, "sinif")) }).eq("id", sid);
     return json({ status: "success" });
   }
 
