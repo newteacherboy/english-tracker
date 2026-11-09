@@ -133,11 +133,12 @@ export function teacherPortalAPI(d){
    if(op==='teacherPortalDecide'){
     const before=await db.from('teacher_portal_access').select('id,state').eq('id',String(b.id||'')).maybeSingle();
     if(before.error)return fail('Başvuru kontrol edilemedi.',503);
+    const wasApproved=before.data?.state==='approved';
     const decision=String(b.decision||'');
     const r=await db.rpc('dm_teacher_portal_decide',{owner_id:a.teacher_id,grant_id:String(b.id||''),decision});if(r.error)return fail('Karar kaydedilemedi.',409);
     const issuedCode=decision==='approved'?await ensureCode(r.data.studentId,{returnCode:true}):null;
     let approvalMailQueued=false;
-    if(decision==='approved'&&before.data?.state!=='approved'){
+    if(decision==='approved'&&!wasApproved){
      const member=await db.from('students').select('email,username,email_verified_at').eq('id',r.data.studentId).maybeSingle();
      if(member.error)return json({ok:true,mailQueued:false,mesaj:'Öğretmen onaylandı ancak bilgilendirme e-postası hazırlanamadı.'});
      const address=String(member.data?.email||'').trim();
