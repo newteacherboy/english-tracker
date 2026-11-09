@@ -117,5 +117,85 @@
    });
   });
  }
- window.dmTeacherOwnedTools={performance:openPerformance,announcements:openAnnouncement,homework:openHomework,reports:openReports,classes:ownClasses};
+
+ // Preserve the full original Ödev Ver layout (tabs, topic browser, game choices,
+ // units, stars and deadline). Only the teacher-owned class selector and sending
+ // operation are replaced; do not show the simplified form above.
+ let legacyHomeworkSaveInstalled=false,legacyClassList=[];
+ function legacyClassFromForm(){
+  const grade=Number(document.getElementById('odSinif')?.value);
+  const branch=String(document.getElementById('odSube')?.value||'');
+  return legacyClassList.find(c=>Number(c.classNo)===grade&&String(c.branch||'')===branch)||null;
+ }
+ function setLegacyHomeworkClasses(){
+  const gradeSelect=document.getElementById('odSinif'),branchSelect=document.getElementById('odSube');
+  if(!gradeSelect||!branchSelect)return;
+  const grades=[...new Set(legacyClassList.map(c=>Number(c.classNo)))].sort((a,b)=>a-b);
+  const selectedGrade=grades.includes(Number(gradeSelect.value))?Number(gradeSelect.value):grades[0];
+  gradeSelect.replaceChildren(...grades.map(n=>new Option(n+'. sınıf',String(n))));
+  gradeSelect.value=String(selectedGrade);
+  const fillBranch=()=>{
+   const grade=Number(gradeSelect.value),choices=legacyClassList.filter(c=>Number(c.classNo)===grade);
+   branchSelect.replaceChildren(...choices.map(c=>new Option(c.branch+' şubesi'+(c.name?' · '+c.name:''),c.branch)));
+   const count=choices.find(c=>c.branch===branchSelect.value)?.students?.length??choices[0]?.students?.length??0;
+   const label=document.getElementById('odHedefSayi');if(label)label.textContent='👥 Bu ödev '+count+' öğrenciye gidecek';
+  };
+  // Avoid legacy handler reintroducing non-owned branches from globalDataCache.
+  const originalGradeChange=gradeSelect.onchange;
+  gradeSelect.onchange=()=>{originalGradeChange?.call(gradeSelect);fillBranch();};
+  branchSelect.onchange=()=>{const current=legacyClassFromForm();document.getElementById('odHedefSayi').textContent='👥 Bu ödev '+(current?.students?.length||0)+' öğrenciye gidecek';};
+  fillBranch();
+ }
+ async function legacyHomework(){
+  const teacherToken=token();
+  if(!teacherToken){window.yoToast?.('Öğretmen hesabınla giriş yapmalısın.');return;}
+  // Load authoritative classes before the original modal so no global class
+  // data is ever displayed as a selector.
+  legacyClassList=await ownClasses();
+  if(!legacyClassList.length){window.yoToast?.('Önce Sınıflarım bölümünden sınıf oluştur.');return;}
+  sessionStorage.setItem('ing_ogr_token',teacherToken);
+  if(typeof window.odevEkraniAc!=='function')throw Error('Ödev Ver ekranı yüklenmedi.');
+  await window.odevEkraniAc();
+  setLegacyHomeworkClasses();
+  const button=document.getElementById('odVer');
+  if(!button)throw Error('Ödev Ver butonu bulunamadı.');
+  if(legacyHomeworkSaveInstalled)return;
+  legacyHomeworkSaveInstalled=true;
+  button.addEventListener('click',async event=>{
+   // Stop the former unscoped API request before its inline onclick runs.
+   event.preventDefault();event.stopImmediatePropagation();
+   const selected=legacyClassFromForm(),result=document.getElementById('odSonuc');
+   const report=(message,good=false)=>{result.className='od-sonuc '+(good?'iyi':'kotu');result.textContent=message;};
+   if(!selected){report('Yalnızca kendi oluşturduğun sınıf ve şubeyi seç.');return;}
+   const pickedLessons=[...document.querySelectorAll('#odKonular input[data-k]:checked')].map(x=>{
+    const [level,category,...topic]=x.dataset.k.split('|');
+    return {kind:'ders',level,category,topic:topic.join('|')};
+   });
+   const pickedGames=[...document.querySelectorAll('#odOyunlar input[data-o]:checked')].map(x=>({
+    kind:'oyun',game:x.dataset.o,
+    units:[...document.querySelectorAll('#odUniteler [data-u].sec')].map(u=>Number(u.dataset.u)).filter(Number.isInteger),
+    stars:Number(document.querySelector('#odHedef [data-y].sec')?.dataset.y||2)
+   }));
+   const jobs=[...pickedLessons,...pickedGames];
+   if(!jobs.length){report('En az bir ders konusu veya oyun seç.');return;}
+   if(!window.confirm(selected.classNo+'. sınıf '+selected.branch+' şubesi için '+jobs.length+' ödev verilsin mi?'))return;
+   button.disabled=true;button.textContent='Gönderiliyor…';
+   let added=0,failed=null;
+   try{
+    for(const job of jobs){
+     await call('teacherPortalAssignment',{classId:selected.id,...job,
+      dueDate:document.getElementById('odSon')?.value||'',
+      note:document.getElementById('odNot')?.value||''});
+     added++;
+    }
+    report(added+' ödev '+(selected.students||[]).length+' öğrenci için oluşturuldu. ✅',true);
+    document.querySelectorAll('#odKonular input[data-k]:checked,#odOyunlar input[data-o]:checked').forEach(el=>{
+     el.checked=false;el.parentElement?.classList.remove('sec');
+    });
+   }catch(e){failed=e;report(added+' ödev gönderildi; kalanlar gönderilemedi: '+e.message);}
+   finally{button.disabled=false;button.textContent='📝 Ödevi ver';}
+  },true);
+ }
+
+ window.dmTeacherOwnedTools={performance:openPerformance,announcements:openAnnouncement,homework:openHomework,legacyHomework,reports:openReports,classes:ownClasses};
 })();
