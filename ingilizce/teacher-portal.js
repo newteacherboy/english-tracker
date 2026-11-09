@@ -747,7 +747,7 @@
  function queueTeacherCodeReceipt(code){
   if(!/^\d{6}$/.test(code)||lastTeacherCodeShown===code||teacherCodeReceipt===code)return;
   teacherCodeReceipt=code;
-  setTimeout(()=>{if(teacherCodeReceipt===code){teacherCodeReceipt=null;lastTeacherCodeShown=code;showSignupTeacherCode(code);}},1600);
+  setTimeout(()=>{if(teacherCodeReceipt===code){teacherCodeReceipt=null;lastTeacherCodeShown=code;if(!window.dmTeacherSignupCodeHandled)showSignupTeacherCode(code);}},1600);
  }
  function showSignupTeacherCode(code){
   if(!/^\d{6}$/.test(code))return;
