@@ -5,9 +5,9 @@ async function fixture(){const digest=await hash('server-secret|teacher-portal|1
  const tables={teacher_portal_access:[{id:'grant',student_id:'personal',teacher_id:'teacher-one',state:'approved',version:3,code_digest:digest}],teachers:[{id:'teacher-one',username:'TeacherOne',active:true}],students:[{id:'personal',username:'TeacherOne',email:'one@example.test',email_verified_at:'2026-10-24',status:'approved'},{id:'alice',username:'Alice',teacher_id:'teacher-one',status:'approved'},{id:'bob',username:'Bob',teacher_id:'teacher-two',status:'approved'}],teacher_portal_guests:[],extra_data:[]};
  const db={from(table){const filters=[];let changes;const result=single=>({data:single?(tables[table]||[]).find(x=>filters.every(f=>f(x)))||null:(tables[table]||[]).filter(x=>filters.every(f=>f(x)))});const q={select(){return this},update(values){changes=values;return this},upsert(values,options){
  const keys=options.onConflict.split(','),row=tables[table].find(x=>keys.every(k=>x[k]===values[k]));
- if(!row)tables[table].push({...values,...(table==='teacher_portal_access'?{state:'pending'}:{})});else if(!options.ignoreDuplicates)Object.assign(row,values);
+ if(!row)tables[table].push({...values,...(table==='teacher_portal_access'?{id:'new-grant',state:'pending',version:1}:{})});else if(!options.ignoreDuplicates)Object.assign(row,values);
  return Promise.resolve({data:null,error:null});
- },or(){filters.push(x=>x.profile?.teacher_portal_guest!==true);return this},eq(k,v){filters.push(x=>x[k]===v);return this},is(k,v){filters.push(x=>(x[k]??null)===v);return this},gt(){return this},order(){return this},maybeSingle(){return Promise.resolve(result(true))},then(r,j){const rows=result(false);if(changes)for(const row of rows.data)Object.assign(row,changes);return Promise.resolve(rows).then(r,j)}};return q;},async rpc(name,args){calls.push({name,args});if(name==='dm_teacher_portal_guest'){const id='classroom-self';tables.students.push({id,username:args.guest_alias+' · Öğretmen Denemesi',teacher_id:'teacher-one',status:'approved',profile:{teacher_portal_guest:true}});return {data:id};}return {data:true};}};
+ },or(){filters.push(x=>x.profile?.teacher_portal_guest!==true);return this},eq(k,v){filters.push(x=>x[k]===v);return this},is(k,v){filters.push(x=>(x[k]??null)===v);return this},gt(){return this},order(){return this},maybeSingle(){return Promise.resolve(result(true))},then(r,j){const rows=result(false);if(changes)for(const row of rows.data)Object.assign(row,changes);return Promise.resolve({...rows,error:null}).then(r,j)}};return q;},async rpc(name,args){calls.push({name,args});if(name==='dm_teacher_portal_guest'){const id='classroom-self';tables.students.push({id,username:args.guest_alias+' · Öğretmen Denemesi',teacher_id:'teacher-one',status:'approved',profile:{teacher_portal_guest:true}});return {data:id};}return {data:true};}};
  const api=teacherPortalAPI({db,json:(d,status=200)=>new Response(JSON.stringify(d),{status}),hash,hashPassword:async s=>'hash:'+s,verifyPassword:async()=>false,issueSession:async(...args)=>{calls.push({session:args});return 'signed-session'},mailShell:(_,html)=>html,escape:s=>s,queue:async m=>calls.push({mail:m}),codeKey:'server-secret'});
  const teacher={role:'teacher',teacher_id:'teacher-one',teacher_portal_access_id:'grant',teacher_portal_version:3};
  return {api,calls,tables,teacher,async run(op,b={},a=null){const r=await api.handle(op,b,a,'POST');return {status:r.status,data:await r.json()};}};
@@ -44,21 +44,33 @@ test('guest participants from every teacher stay outside member selectors and ca
 
 test('self play uses the authenticated teacher name and a hidden classroom identity, never a supplied pupil',async()=>{const f=await fixture();const r=await f.run('teacherPortalParticipant',{self:true,studentId:'bob',guestName:'Forged teacher'},f.teacher);assert.equal(r.status,200);assert.equal(r.data.self,true);assert.equal(r.data.displayName,'TeacherOne');assert.equal(r.data.preview,true);const guest=f.calls.find(x=>x.name==='dm_teacher_portal_guest');assert.equal(guest.args.guest_alias,'TeacherOne');assert.equal(guest.args.is_preview,true);assert.equal(f.calls.find(x=>x.session).session[1],'classroom-self');assert.equal((await f.run('teacherPortalParticipant',{self:true})).status,403);});
 
-test('teacher signup shows an offer and submits a pending grant only after confirmation',async()=>{
+test('teacher registration creates only a pending grant and a one-time code',async()=>{
  const f=await fixture(),actor={role:'student',student_id:'alice'},student=f.tables.students[1];
  student.phone='05551234567';student.school='Amasya · Merkez · Örnek Ortaokulu';
- assert.equal((await f.run('teacherPortalStatus',{offerOnly:true},actor)).data.offer,false);
- await f.api.trackSignup('alice');
- assert.equal(f.tables.teacher_portal_access.some(row=>row.student_id==='alice'),false);
- const offer=(await f.run('teacherPortalStatus',{offerOnly:true},actor)).data;
- assert.equal(offer.offer,true);
- assert.equal(offer.hasPhone,true);
- assert.equal(offer.school.district,'Merkez');
- assert.equal((await f.run('teacherPortalApply',{},actor)).status,400);
- assert.equal((await f.run('teacherPortalApply',{confirm:true,phone:'05550000000'},actor)).data.state,'pending');
- assert.equal(student.phone,'05551234567');
- assert.equal((await f.run('teacherPortalStatus',{offerOnly:true},actor)).data.offer,false);
+ assert.equal((await f.run('teacherPortalStatus',{offerOnly:true},actor)).data.teacherAccount,false);
+ const code=await f.api.trackSignup('alice');
+ assert.match(code,/^\d{6}$/);
+ const pending=f.tables.teacher_portal_access.find(row=>row.student_id==='alice');
+ assert.equal(pending.state,'pending');
+ assert.equal(pending.code_digest,await hash('server-secret|teacher-portal|'+code));
+ const after=await f.run('teacherPortalStatus',{offerOnly:true},actor);
+ assert.equal(after.data.teacherAccount,true);assert.equal(after.data.codeReady,true);assert.equal(after.data.offer,false);
+ assert.equal((await f.run('teacherPortalLogin',{code})).status,401,'pending code cannot log in');
+ assert.equal((await f.run('teacherPortalEnter',{},actor)).status,403,'personal session cannot bypass owner approval');
+ assert.equal(await f.api.trackSignup('alice'),null,'signup retry never leaks existing code');
  assert.equal(f.tables.teacher_portal_access.filter(row=>row.student_id==='alice').length,1);
+});
+test('approved account may enter using only its own verified personal session',async()=>{
+ const f=await fixture();const personal={role:'student',student_id:'personal'};
+ const entered=await f.run('teacherPortalEnter',{student_id:'alice'},personal);
+ assert.equal(entered.status,200);assert.equal(entered.data.token,'signed-session');
+ assert.equal(f.calls[0].session[3].teacher_portal_access_id,'grant');
+ assert.equal((await f.run('teacherPortalEnter',{}, {role:'student',student_id:'bob'})).status,403);
+ f.tables.students[0].email_verified_at=null;
+ assert.equal((await f.run('teacherPortalEnter',{},personal)).status,403);
+ f.tables.students[0].email_verified_at='2026-10-24';
+ f.tables.teachers[0].active=false;
+ assert.equal((await f.run('teacherPortalEnter',{},personal)).status,403);
 });
 test('an existing pending applicant can complete missing school details without a duplicate grant',async()=>{
  const f=await fixture(),actor={role:'student',student_id:'alice'},student=f.tables.students[1];
