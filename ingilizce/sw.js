@@ -7,7 +7,7 @@
    - Supabase istekleri: bu dosya karışmaz (sayfadaki katman yönetir)
    Sayfayı güncellediğinizde SURUM değerini artırın (v2, v3…).
    ===================================================================== */
-const SURUM = 'diji-v377-oral-immediate-fullscreen-20261110';
+const SURUM = 'diji-v379-real-classic-modal-oral20-20261110';
 const SAYFA = 'sayfa-' + SURUM, KAYNAK = 'kaynak-' + SURUM;
 // Cached on first use; never download the A2 catalog at startup.
 const LAZY_TOPIC_FILES = new Set(['konu-oyunlari-a1.js','konu-oyunlari-a2.js','topic-games-core.mjs']);
@@ -42,7 +42,7 @@ self.addEventListener('fetch', e => {
   // Leaderboard and its badge atlas must not appear stale after a deployment.
   // Network-first even on a slow connection; offline still uses last good copy.
   const LIVE_LEAGUE_FILES = /\/(?:league-ui|friends-ui)\.(?:js|css)$|\/parkur-badges\/v2\/(?:papi-01|school-02|school-03)\.webp$|\/parkur-badges\/v3\/[^\/]+\.png$/;
-  if (url.origin === self.location.origin && (LIVE_LEAGUE_FILES.test(url.pathname) || ['/teacher-workspace.js','/teacher-portal.js','/teacher-owned-tools.js'].some(name => url.pathname.endsWith(name)))) {
+  if ((!self.location?.origin || url.origin === self.location.origin) && (LIVE_LEAGUE_FILES.test(url.pathname) || ['/teacher-workspace.js','/teacher-portal.js','/teacher-owned-tools.js'].some(name => url.pathname.endsWith(name)))) {
     e.respondWith(
       fetch(r,{cache:'no-store'}).then(async response=>{
         if (response && response.ok) {
