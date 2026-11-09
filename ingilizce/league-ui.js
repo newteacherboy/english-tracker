@@ -120,11 +120,13 @@ async function beginVirtualDuel(bot,key){
  if(duelBusy)return;duelBusy=true;
  try{
   duelMessage('Düello başlatılıyor…');
-  const d=await duelRequest('dm_virtual_duel_start',{p_bot:Number(bot.id.replace('virtual-','')),p_game:key});
+  const resuming=!!duelContext?.status?.activeRun;
+  const d=resuming?await duelRequest('dm_virtual_duel_resume'):await duelRequest('dm_virtual_duel_start',{p_bot:Number(bot.id.replace('virtual-','')),p_game:key});
   if(d.paywall){duelBusy=false;return showDuelPlans(d.message);}
   if(!d.ok)throw Error(d.message||'Düello başlatılamadı.');
   if(!duelContext||duelContext.owner!==who())return;
-  duelContext.run=d.runId;duelContext.game=duelGames.find(g=>g.key===key);
+  duelContext.run=d.runId;duelContext.game=duelGames.find(g=>g.key===(d.game||key));
+  if(resuming){const original=states.weekly.visualRows.find(p=>p.id==='virtual-'+d.botId);if(original)duelContext.bot=original;}
   duelContext.difficulty=d.difficulty;
   displayDuelQuestion(d);
  }catch(e){duelMessage(e.message||'Oyun başlatılamadı.');}
