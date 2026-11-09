@@ -77,3 +77,45 @@
 /* Clearly label non-player practice rivals without making them selectable. */
 .dm-lig-virtual-label{display:block;font-size:11px;font-weight:700;color:#746131;margin-top:3px}
 .dm-lig-virtual{cursor:default!important}
+
+/* Sanal Papi league challenge: shared day/night friendly modal. */
+#tab-meduakis .dm-lig-papi img{width:100%;height:100%;object-fit:contain}
+#tab-meduakis .dm-lig-virtual{cursor:pointer!important}
+.dm-lig-duel-overlay{position:fixed;inset:0;background:rgba(6,19,42,.72);display:grid;place-items:center;z-index:2147483000;padding:14px;overscroll-behavior:contain}
+.dm-lig-duel-dialog{position:relative;width:min(100%,480px);max-height:min(92dvh,820px);overflow:auto;overscroll-behavior:contain;border-radius:24px;background:#fff;color:#14284c;box-shadow:0 18px 55px #09142950;padding:25px 18px 18px;font-family:Nunito,system-ui,sans-serif;text-align:center}
+.dm-lig-duel-dialog *{box-sizing:border-box}
+.dm-lig-duel-dialog h2{color:#152961;font-size:23px;line-height:1.16;margin:4px 0 8px;font-weight:950}
+.dm-lig-duel-dialog p{font-size:13px;line-height:1.55;margin:11px 0;color:#3a5070}
+.dm-lig-duel-dialog button{font:inherit;cursor:pointer}
+.dm-lig-duel-close{position:absolute;top:8px;right:10px;border:0;border-radius:50%;background:#f0f4f9;color:#24456d;font-size:25px;width:37px;height:37px;z-index:2}
+.dm-lig-duel-hero{display:flex;flex-direction:column;align-items:center;gap:3px}
+.dm-lig-duel-papi{width:84px;height:84px;object-fit:contain;filter:drop-shadow(0 4px 8px #12265122)}
+.dm-lig-duel-tag,.dm-lig-duel-head span{background:#f1e9ff;color:#5c3398;font-weight:900;font-size:11px;border-radius:20px;padding:5px 12px}
+.dm-lig-duel-free{background:#f0fcf8;border:1px solid #c5e6db;border-radius:12px;padding:12px;color:#12695b!important;font-weight:850}
+.dm-lig-duel-action{width:100%;border-radius:13px;min-height:49px;padding:12px;margin:6px 0;font-size:14px;font-weight:900;border:1px solid transparent}
+.dm-lig-duel-primary{background:#147fbc;color:#fff;box-shadow:0 5px 13px #147fbc30}
+.dm-lig-duel-secondary{background:#f0f4fb;color:#23466f;border-color:#d9e4f4}
+.dm-lig-duel-message{min-height:15px;font-size:12px!important;color:#3d6280!important}
+.dm-lig-duel-games{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin-top:16px}
+.dm-lig-duel-games button{border:1px solid #d7e2f4;border-radius:14px;background:#f4f7ff;min-height:85px;padding:12px 8px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;color:#233e6b}
+.dm-lig-duel-games button b{font-size:14px;line-height:1.3}
+.dm-lig-duel-games button small{font-size:10px;color:#5c738f}
+.dm-lig-duel-head{display:flex;align-items:center;justify-content:space-between;gap:9px;margin:4px 18px 16px 0;text-align:left}
+.dm-lig-duel-head h2{font-size:18px}
+.dm-lig-duel-scores{display:grid;grid-template-columns:minmax(0,1fr) 46px minmax(0,1fr);align-items:center;gap:9px;border-radius:17px;background:#f0f5fb;padding:13px 9px}
+.dm-lig-duel-scores>div{display:flex;align-items:center;flex-direction:column;gap:4px;min-width:0}
+.dm-lig-duel-scores img{width:42px;height:42px;object-fit:contain}
+.dm-lig-duel-scores strong{font-size:18px;color:#193667}
+.dm-lig-duel-scores b{font-size:12px}
+.dm-lig-duel-versus{font-weight:950;color:#a05c35;font-size:16px}
+.dm-lig-duel-track{display:block;border-radius:20px;height:8px;background:#dce5ef;width:100%;overflow:hidden}
+.dm-lig-duel-track i{display:block;background:#16a786;height:100%;border-radius:20px;transition:width .3s}
+.dm-lig-duel-scores>div:last-child .dm-lig-duel-track i{background:#eeac42}
+.dm-lig-duel-step{font-size:12px!important;color:#65758b!important;margin:19px 0 5px!important}
+.dm-lig-duel-word{font-size:26px;font-weight:950;color:#172f63;margin:4px}
+.dm-lig-duel-options{display:flex;flex-direction:column;gap:9px;margin-top:14px}
+.dm-lig-duel-options button{min-height:49px;border-radius:12px;border:1px solid #d8e3f3;background:#fff;color:#20426c;font-weight:900;font-size:15px}
+.dm-lig-duel-options button:disabled{opacity:.6;cursor:default}
+.dm-lig-duel-rewards{display:flex;justify-content:center;gap:12px;margin:13px 0}
+.dm-lig-duel-rewards b{background:#e5f7ed;color:#19764e;border-radius:12px;padding:13px;min-width:100px}
+@media(max-width:380px){.dm-lig-duel-dialog{padding:20px 12px}.dm-lig-duel-dialog h2{font-size:20px}.dm-lig-duel-games button{min-height:78px}}
