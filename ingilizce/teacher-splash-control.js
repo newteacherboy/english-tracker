@@ -1,7 +1,7 @@
 (()=>{'use strict';
  const endpoint='https://nxfqlutulxqzqgwewssd.supabase.co/functions/v1/splash-settings';
- const names={'23-nisan':'23 Nisan','19-mayis':'19 Mayıs','30-agustos':'30 Ağustos','29-ekim':'29 Ekim','10-kasim':'10 Kasım','15-temmuz':'15 Temmuz','ramazan-ayi':'Ramazan ayı','ramazan-bayrami':'Ramazan Bayramı','kurban-bayrami':'Kurban Bayramı'};
- const available={'23-nisan':[1,2],'19-mayis':[1,2],'30-agustos':[1,2],'29-ekim':[1,2],'10-kasim':[1,2],'15-temmuz':[1],'ramazan-ayi':[2],'ramazan-bayrami':[1],'kurban-bayrami':[2]};
+ const names={'23-nisan':'23 Nisan','19-mayis':'19 Mayıs','30-agustos':'30 Ağustos','29-ekim':'29 Ekim','10-kasim':'10 Kasım','24-kasim':'24 Kasım Öğretmenler Günü','15-temmuz':'15 Temmuz','ramazan-ayi':'Ramazan ayı','ramazan-bayrami':'Ramazan Bayramı','kurban-bayrami':'Kurban Bayramı'};
+ const available={'23-nisan':[1,2],'19-mayis':[1,2],'30-agustos':[1,2],'29-ekim':[1,2],'10-kasim':[1,2],'24-kasim':[1],'15-temmuz':[1],'ramazan-ayi':[2],'ramazan-bayrami':[1],'kurban-bayrami':[2]};
  const teacher=()=>{try{return JSON.parse(sessionStorage.getItem('dm_tp_session')||'null')}catch{return null}};
  const isOwner=()=>document.documentElement.classList.contains('dm-teacher-portal')&&teacher()?.name==='teacher'&&!!teacher()?.teacherToken;
  async function request(method='GET',data=null){

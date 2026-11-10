@@ -7,6 +7,7 @@
  'use strict';
  const holidays=[
   {id:'10-kasim',month:11,day:10,before:2,after:1,priority:100,variants:2},
+  {id:'24-kasim',month:11,day:24,before:3,after:3,priority:55,variants:1},
   {id:'15-temmuz',month:7,day:15,before:2,after:2,priority:95,variants:1},
   {id:'ramazan-bayrami',religious:'ramadanEid',before:3,after:3,priority:80,variants:1},
   {id:'kurban-bayrami',religious:'kurbanEid',before:3,after:3,priority:80,variants:1},
@@ -16,7 +17,7 @@
   {id:'23-nisan',month:4,day:23,before:3,after:3,priority:50,variants:2},
   {id:'ramazan-ayi',religious:'ramadan',before:0,after:0,priority:10,variants:1}
  ];
- const imageNames={'15-temmuz':'15-temmuz-1','ramazan-bayrami':'ramazan-bayrami-1','kurban-bayrami':'kurban-bayrami-2','ramazan-ayi':'ramazan-ayi-2'};
+ const imageNames={'24-kasim':'24-kasim-1','15-temmuz':'15-temmuz-1','ramazan-bayrami':'ramazan-bayrami-1','kurban-bayrami':'kurban-bayrami-2','ramazan-ayi':'ramazan-ayi-2'};
  const end2026='2026-11-02';
  function addDays(s,n){const d=new Date(s+'T12:00:00Z');d.setUTCDate(d.getUTCDate()+n);return d.toISOString().slice(0,10);}
  function turkeyDate(now){return new Intl.DateTimeFormat('en-CA',{timeZone:'Europe/Istanbul',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date(now));}
@@ -49,7 +50,7 @@ const defaultPreference={mode:'auto',disabled:[],manual:null};
   if(pref?.mode==='normal')return null;
   if(pref?.mode==='manual'){
    const m=pref.manual;
-   const map={'23-nisan':['1','2'],'19-mayis':['1','2'],'30-agustos':['1','2'],'29-ekim':['1','2'],'10-kasim':['1','2'],'15-temmuz':['1'],'ramazan-ayi':['2'],'ramazan-bayrami':['1'],'kurban-bayrami':['2']};
+   const map={'23-nisan':['1','2'],'19-mayis':['1','2'],'30-agustos':['1','2'],'29-ekim':['1','2'],'10-kasim':['1','2'],'24-kasim':['1'],'15-temmuz':['1'],'ramazan-ayi':['2'],'ramazan-bayrami':['1'],'kurban-bayrami':['2']};
    if(!m||!map[m.id]?.some(v=>m.file===m.id+'-'+v+'.jpg'))return null;
    return {id:m.id,file:m.file,year:+turkeyDate(now).slice(0,4),variant:1,priority:200,today:turkeyDate(now)};
   }
