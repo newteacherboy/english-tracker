@@ -79,3 +79,6 @@
 @media(min-width:600px){#tab-profil .user-info-area{min-height:175px}#tab-profil .dm-forest-papi{width:190px;height:190px;top:105px}#tab-profil .user-details h3{font-size:26px!important}#tab-profil .summary-card{padding:20px!important}#tab-profil .card-title{font-size:13px!important}}
 @media(max-width:380px){#tab-profil .user-details h3{font-size:17px!important}#tab-profil .dm-forest-papi{width:120px;height:120px;top:100px}#tab-profil .header-right-widgets{grid-template-columns:73px minmax(0,1fr) 58px!important}#tab-profil .header-energy-badge{padding:8px 5px!important}#tab-profil .dm-forest-tools{margin-top:0;justify-content:flex-start}}
 @media(prefers-reduced-motion:reduce){#tab-profil *{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+
+/* iOS status-bar clearance; keep the healthy lesson, shop and games tabs unchanged. */
+html.dm-native-ios #tab-profil.dc-fullscreen-overlay.active{padding-top:calc(var(--dm-ios-top-safe,62px) + 12px)!important}
