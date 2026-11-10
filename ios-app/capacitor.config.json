@@ -10,7 +10,7 @@
     ]
   },
   "ios": {
-    "contentInset": "automatic",
+    "contentInset": "never",
     "backgroundColor": "#FAF8F5"
   },
   "plugins": {
