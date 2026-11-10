@@ -70,9 +70,9 @@
         ${card('pro', 'Öğretmen Pro', '59 TL <small>/ ay</small>', ['5 sınıf, 200 öğrenci', 'Detaylı öğrenci raporları', 'Sınırsız ödev'], '<span class="dmt-tag" style="background:#e8f8f8;color:#0b7f86">Yıllık 490 TL · %31 avantaj</span>')}
         ${card('premium_pro', 'Öğretmen Premium Pro', '149 TL <small>/ ay</small>', ['Sınırsız sınıf, 500 öğrenci', 'Sınıflar arası lig ve karşılaştırma', 'Yöneticiyle doğrudan iletişim'], '<span class="dmt-tag" style="background:#fff1d8;color:#a76016">Yıllık 1.190 TL · %33 avantaj</span>')}
       </div>
-      ${android ? '<button class="dmt-btn" data-plans>Planları gör</button>' : '<p class="dmt-text" style="margin:14px 0 0">Öğretmen planları çok yakında satışa açılıyor.</p><button class="dmt-btn" data-close>Tamam</button>'}
+      ${android || window.DMSatis ? '<button class="dmt-btn" data-plans>Paketleri detaylı incele</button>' : '<p class="dmt-text" style="margin:14px 0 0">Öğretmen planları çok yakında satışa açılıyor.</p><button class="dmt-btn" data-close>Tamam</button>'}
       <button class="dmt-later" data-close>Şimdi değil</button></div></div></div>`);
-    ui.veil.querySelector('[data-plans]')?.addEventListener('click', () => { ui.close(); window.dmAndroidBilling.open('ogretmen-paneli'); });
+    ui.veil.querySelector('[data-plans]')?.addEventListener('click', () => { ui.close(); if (window.DMSatis) window.DMSatis.planlar('ogretmen-paneli'); else window.dmAndroidBilling?.open?.('ogretmen-paneli'); });
   }
 
   async function status() {

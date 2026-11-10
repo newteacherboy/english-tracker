@@ -1,0 +1,229 @@
+/* Diji Medu satış katmanı: enerji molası, paket ekranları, mağaza/oyunlar reklam kartları.
+   Uygulama paketinde değil sitede durur; değişiklikler yeni sürüm gerektirmez.
+   --p: onaylı tasarım görselindeki 1 piksel (941 px genişlik = pencere genişliği). */
+:root{--dms-p:min(calc(100vw / 941),.4889px)}
+
+/* Uygulama paketinin eski pencereleri artık kullanılmaz (eski paketlerde de gizli). */
+.dmu-veil,.dmu-drop,#dmuPlanCard,#dmuShopGift,.dmb-veil,#dsEnergy [data-dm-test-ad="energy"],#dsEnergy [data-dm-plan-offer]{display:none!important}
+
+/* ---------------------------------------------------------------- ortak perde */
+.dms-veil{position:fixed;inset:0;z-index:2147483644;display:flex;align-items:flex-end;justify-content:center;background:rgba(43,26,92,.42);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);animation:dmsFade .2s ease-out}
+.dms-veil *{box-sizing:border-box}
+@keyframes dmsFade{from{opacity:0}to{opacity:1}}
+@keyframes dmsUp{from{transform:translateY(100%)}to{transform:none}}
+@keyframes dmsDown{from{transform:translate(-50%,-110%)}to{transform:translate(-50%,0)}}
+@keyframes dmsBar{from{width:100%}to{width:0}}
+@keyframes dmsPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.025)}}
+@keyframes dmsFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(calc(var(--dms-p) * -8))}}
+@media(prefers-reduced-motion:reduce){.dms-veil,.dms-sheet,.dms-drop,.dms-drop-bar i,.dms-video,.dms-hero-img{animation:none!important}}
+
+/* ---------------------------------------------------------------- enerji molası (görseldeki tasarım) */
+.dms-sheet{--p:var(--dms-p);position:relative;width:calc(var(--p) * 941);max-height:calc(100dvh - env(safe-area-inset-top,0px) - 8px);overflow-y:auto;overflow-x:hidden;
+ padding:0 0 calc(var(--p) * 14 + env(safe-area-inset-bottom,0px));border-radius:calc(var(--p) * 74) calc(var(--p) * 74) 0 0;
+ background:radial-gradient(circle at 78% 22%,#fbe6ff 0,transparent calc(var(--p) * 300)),linear-gradient(180deg,#f5efff 0,#f1eaff 55%,#efe8fd 100%);
+ box-shadow:0 -10px 40px rgba(60,30,130,.28),inset 0 2px 0 #fff;font-family:"Baloo 2","Nunito",system-ui,-apple-system,"Segoe UI",sans-serif;color:#3a2f73;animation:dmsUp .38s cubic-bezier(.2,.75,.25,1);-webkit-tap-highlight-color:transparent}
+.dms-grab{position:absolute;left:50%;top:calc(var(--p) * 16);width:calc(var(--p) * 90);height:calc(var(--p) * 10);margin-left:calc(var(--p) * -45);border-radius:99px;background:#a993e8}
+.dms-x{position:absolute;z-index:3;right:calc(var(--p) * 44);top:calc(var(--p) * 36);width:calc(var(--p) * 62);height:calc(var(--p) * 62);border-radius:50%;border:0;background:#fff;color:#2c2470;display:grid;place-items:center;box-shadow:0 calc(var(--p) * 4) calc(var(--p) * 14) rgba(93,64,170,.22);cursor:pointer;padding:0}
+.dms-x svg{width:calc(var(--p) * 26);height:calc(var(--p) * 26);stroke:currentColor;stroke-width:3.2;stroke-linecap:round}
+.dms-top{position:relative;height:calc(var(--p) * 470)}
+.dms-cloud{position:absolute;left:calc(var(--p) * 62);top:calc(var(--p) * 73);width:calc(var(--p) * 443);height:calc(var(--p) * 230)}
+.dms-cloud svg.dms-cloud-bg{position:absolute;inset:0;width:100%;height:100%;overflow:visible;filter:drop-shadow(0 calc(var(--p) * 8) calc(var(--p) * 14) rgba(140,110,220,.22))}
+.dms-cloud h2{position:absolute;left:calc(var(--p) * 26);right:calc(var(--p) * 6);top:calc(var(--p) * 44);margin:0;text-align:center;white-space:nowrap;transform:rotate(-3deg);font:900 calc(var(--p) * 60)/1.12 "Baloo 2","Nunito",system-ui,sans-serif;letter-spacing:calc(var(--p) * -2);
+ background:linear-gradient(95deg,#2b23a6 0%,#4a26b8 45%,#8a2fd1 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.dms-spark{position:absolute;width:calc(var(--p) * 76);height:calc(var(--p) * 76);overflow:visible}
+.dms-spark path{stroke:#ffc21a;stroke-width:9;stroke-linecap:round;fill:none}
+.dms-spark-a{left:calc(var(--p) * 60);top:calc(var(--p) * 98)}
+.dms-spark-b{left:calc(var(--p) * 812);top:calc(var(--p) * 150);transform:scaleX(-1)}
+.dms-text{position:absolute;left:calc(var(--p) * 94);top:calc(var(--p) * 316);width:calc(var(--p) * 372);margin:0;font:500 calc(var(--p) * 29)/calc(var(--p) * 37) "Nunito",system-ui,sans-serif;color:#2f2a5c}
+.dms-text b{font-weight:900;color:#271f6e}
+.dms-hero-img{position:absolute;left:calc(var(--p) * 478);top:calc(var(--p) * 54);width:calc(var(--p) * 408);height:calc(var(--p) * 410);object-fit:contain;pointer-events:none;animation:dmsFloat 3.4s ease-in-out infinite}
+.dms-actions{padding:0 calc(var(--p) * 125)}
+.dms-video{display:flex;align-items:center;justify-content:center;gap:calc(var(--p) * 22);width:100%;height:calc(var(--p) * 105);border:0;border-radius:99px;cursor:pointer;
+ background:linear-gradient(180deg,#ffe763 0,#ffd326 48%,#ffbf14 100%);box-shadow:inset 0 calc(var(--p) * 3) 0 #fff7b0,0 calc(var(--p) * 11) 0 #f2a10d,0 calc(var(--p) * 16) calc(var(--p) * 22) rgba(240,150,10,.35);
+ color:#3a1f6b;font:800 calc(var(--p) * 38)/1 "Nunito",system-ui,sans-serif;margin-bottom:calc(var(--p) * 26);animation:dmsPulse 2.2s ease-in-out infinite}
+.dms-video svg{width:calc(var(--p) * 36);height:calc(var(--p) * 40);fill:#3d1e74}
+.dms-video:disabled{filter:grayscale(.35);opacity:.75;animation:none}
+.dms-later{display:block;width:100%;height:calc(var(--p) * 77);border:calc(var(--p) * 2) solid #d6c6fb;border-radius:99px;background:linear-gradient(180deg,#f0e8ff,#e7dcff);color:#4a3a8c;font:600 calc(var(--p) * 32)/1 "Nunito",system-ui,sans-serif;cursor:pointer;box-shadow:inset 0 calc(var(--p) * 2) 0 #fbf8ff}
+.dms-pro{position:relative;display:flex;align-items:center;justify-content:center;gap:calc(var(--p) * 16);width:calc(var(--p) * 702);height:calc(var(--p) * 70);margin:calc(var(--p) * 26) auto 0;border:calc(var(--p) * 2) solid #b3ece4;border-radius:99px;cursor:pointer;
+ background:linear-gradient(90deg,#d4f8ef,#e3fbf5 50%,#d1f5f1);color:#0d6b64;font:800 calc(var(--p) * 32)/1 "Nunito",system-ui,sans-serif}
+.dms-pro img{width:calc(var(--p) * 52);height:auto}
+.dms-pro .dms-spark{width:calc(var(--p) * 40);height:calc(var(--p) * 40);top:calc(var(--p) * 13)}
+.dms-pro .dms-spark path{stroke-width:7}
+.dms-pro .dms-spark-l{left:calc(var(--p) * 58)}
+.dms-pro .dms-spark-r{right:calc(var(--p) * 58);transform:scaleX(-1)}
+.dms-buy{margin:calc(var(--p) * 24) calc(var(--p) * 33) 0;padding:calc(var(--p) * 22) calc(var(--p) * 29) calc(var(--p) * 30);border:calc(var(--p) * 2) solid #e5dafb;border-radius:calc(var(--p) * 40);background:linear-gradient(180deg,#f8f4ff,#f3edff)}
+.dms-buy-h{display:flex;align-items:center;gap:calc(var(--p) * 14);margin:0 0 calc(var(--p) * 14) calc(var(--p) * 16);font:800 calc(var(--p) * 32)/1 "Nunito",system-ui,sans-serif;color:#2c2470}
+.dms-buy-h img{width:calc(var(--p) * 48);height:auto}
+.dms-packs{display:grid;grid-template-columns:repeat(3,1fr);gap:calc(var(--p) * 16)}
+.dms-pack{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:calc(var(--p) * 12);height:calc(var(--p) * 128);border:0;border-radius:calc(var(--p) * 26);cursor:pointer;padding:0;
+ background:linear-gradient(180deg,#fffdf8,#fff6e8);box-shadow:0 calc(var(--p) * 4) calc(var(--p) * 10) rgba(120,90,200,.14),inset 0 calc(var(--p) * -3) 0 #f6e7cf;color:#2c2470}
+.dms-pack span{display:flex;align-items:center;gap:calc(var(--p) * 10);white-space:nowrap}
+.dms-pack .a{font:800 calc(var(--p) * 32)/1 "Nunito",system-ui,sans-serif}
+.dms-pack .g{font:600 calc(var(--p) * 30)/1 "Nunito",system-ui,sans-serif;color:#3a2f73}
+.dms-pack .a img{width:calc(var(--p) * 30);height:auto}
+.dms-pack .g img{width:calc(var(--p) * 40);height:auto}
+.dms-pack:disabled{opacity:.48;cursor:not-allowed}
+.dms-msg{min-height:calc(var(--p) * 30);margin:calc(var(--p) * 12) calc(var(--p) * 40) 0;text-align:center;font:700 calc(var(--p) * 27)/1.35 "Nunito",system-ui,sans-serif;color:#7a3db0}
+.dms-msg:empty{min-height:0;margin:0}
+.dms-cap{display:block;text-align:center;font:600 calc(var(--p) * 24)/1.3 "Nunito",system-ui,sans-serif;color:#7b6aa8;margin-top:calc(var(--p) * 14)}
+@media(min-width:470px){.dms-sheet{border-radius:36px 36px 0 0}}
+
+/* ---------------------------------------------------------------- üstten inen küçük not */
+.dms-drop{position:fixed;left:50%;top:0;z-index:2147483000;width:min(100%,470px);transform:translateX(-50%);padding-top:env(safe-area-inset-top,0px);border-radius:0 0 26px 26px;overflow:hidden;
+ background:linear-gradient(180deg,#f5efff,#efe7ff);border:2px solid #e2d4fb;border-top:0;box-shadow:0 12px 30px rgba(60,30,130,.25);font-family:"Nunito",system-ui,sans-serif;color:#2c2470;animation:dmsDown .34s cubic-bezier(.2,.75,.25,1)}
+.dms-drop-row{display:flex;align-items:center;gap:12px;padding:10px 14px}
+.dms-drop img{width:58px;height:58px;object-fit:contain;flex-shrink:0}
+.dms-drop-t{flex:1;min-width:0}.dms-drop-t b{display:block;font:900 15px/1.25 "Nunito",system-ui;color:#2b23a6}.dms-drop-t span{font:600 12.5px/1.3 "Nunito",system-ui;color:#4b4180}
+.dms-drop button{border:0;border-radius:99px;padding:10px 15px;font:800 14px "Nunito",system-ui;color:#3a1f6b;background:linear-gradient(180deg,#ffe763,#ffbf14);box-shadow:0 4px 0 #f2a10d;cursor:pointer;white-space:nowrap}
+.dms-drop-bar{height:4px;background:#e4d9fb}.dms-drop-bar i{display:block;height:100%;background:linear-gradient(90deg,#8a5cf0,#ffc21a);animation:dmsBar 6s linear forwards}
+
+/* ---------------------------------------------------------------- Mağaza / Oyunlar reklam kartı */
+.dms-promo{position:relative;display:flex;align-items:center;gap:12px;margin:10px 0 14px;padding:10px 14px 10px 8px;border:2px solid #e2d4fb;border-radius:24px;cursor:pointer;text-align:left;width:100%;
+ background:radial-gradient(circle at 90% 10%,#fbe6ff 0,transparent 55%),linear-gradient(120deg,#f5efff,#ece3ff);box-shadow:0 6px 18px rgba(110,80,200,.16);font-family:"Nunito",system-ui,sans-serif;color:#2c2470;box-sizing:border-box}
+.dms-promo img.p{width:78px;height:78px;object-fit:contain;flex-shrink:0;margin:-6px 0}
+.dms-promo-t{flex:1;min-width:0}
+.dms-promo-t b{display:block;font:900 17px/1.15 "Baloo 2","Nunito",system-ui;background:linear-gradient(95deg,#2b23a6,#8a2fd1);-webkit-background-clip:text;background-clip:text;color:transparent}
+.dms-promo-t span{display:block;margin-top:3px;font:600 12.5px/1.3 "Nunito",system-ui;color:#4b4180}
+.dms-promo-go{flex-shrink:0;display:flex;align-items:center;gap:6px;border:0;border-radius:99px;padding:10px 14px;font:800 14px "Nunito",system-ui;color:#3a1f6b;background:linear-gradient(180deg,#ffe763,#ffbf14);box-shadow:0 4px 0 #f2a10d}
+.dms-promo-go svg{width:11px;height:12px;fill:#3d1e74}
+.dms-promo.is-gold{background:radial-gradient(circle at 90% 10%,#fff6c9 0,transparent 55%),linear-gradient(120deg,#fffaf0,#fff0d4);border-color:#ffe3a3}
+.dms-promo.is-gold .dms-promo-t b{background:linear-gradient(95deg,#9a5a00,#d98a00);-webkit-background-clip:text;background-clip:text}
+.dms-promo .dms-gift{width:62px;height:62px;flex-shrink:0;display:grid;place-items:center;font-size:36px;margin-left:6px}
+.dms-promo-msg{display:block;margin-top:4px;font:700 12px "Nunito",system-ui;color:#7a3db0}
+.dms-promo-msg:empty{display:none}
+
+/* ---------------------------------------------------------------- profildeki plan kartı */
+.dms-profile{position:relative;overflow:hidden;display:flex;align-items:center;gap:12px;margin:0 0 14px;padding:14px;border-radius:24px;color:#fff;font-family:"Nunito",system-ui,sans-serif;
+ background:radial-gradient(circle at 92% 0,#c98bff 0,transparent 45%),linear-gradient(120deg,#4a2bc4,#7b3bdc 60%,#a24ee6);box-shadow:0 10px 24px rgba(74,43,196,.3)}
+.dms-profile img{width:64px;height:64px;object-fit:contain;flex-shrink:0}
+.dms-profile div{flex:1;min-width:0}
+.dms-profile small{display:inline-block;padding:2px 9px;border-radius:99px;background:#ffd34d;color:#4a2400;font:800 11px "Nunito",system-ui}
+.dms-profile b{display:block;margin:5px 0 2px;font:900 17px/1.2 "Baloo 2","Nunito",system-ui}
+.dms-profile span{display:block;font:600 12.5px/1.35 "Nunito",system-ui;color:#eadbff}
+.dms-profile button{flex-shrink:0;border:0;border-radius:99px;padding:10px 14px;background:linear-gradient(180deg,#ffe763,#ffbf14);box-shadow:0 4px 0 #e0920a;color:#3a1f6b;font:800 13.5px "Nunito",system-ui;cursor:pointer}
+
+/* ---------------------------------------------------------------- başarı kartı */
+.dms-mini{width:min(100%,470px);border-radius:32px 32px 0 0;padding:22px 20px calc(18px + env(safe-area-inset-bottom,0px));text-align:center;font-family:"Nunito",system-ui,sans-serif;color:#2c2470;
+ background:radial-gradient(circle at 80% 0,#fbe6ff 0,transparent 50%),linear-gradient(180deg,#f5efff,#efe8fd);animation:dmsUp .38s cubic-bezier(.2,.75,.25,1);position:relative}
+.dms-mini .dms-x{right:16px;top:16px;width:36px;height:36px}.dms-mini .dms-x svg{width:14px;height:14px}
+.dms-mini img.h{width:130px;height:130px;object-fit:contain;margin:-6px auto 2px;display:block}
+.dms-mini h3{margin:0;font:900 25px/1.15 "Baloo 2","Nunito",system-ui;background:linear-gradient(95deg,#2b23a6,#8a2fd1);-webkit-background-clip:text;background-clip:text;color:transparent}
+.dms-mini p{margin:6px 0 12px;font:600 14px/1.45 "Nunito",system-ui;color:#4b4180}
+.dms-perks{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 0 14px;text-align:left}
+.dms-perks span{display:flex;align-items:center;gap:8px;padding:9px 10px;border-radius:16px;background:#fff;box-shadow:0 3px 8px rgba(110,80,200,.1);font:800 12.5px/1.25 "Nunito",system-ui;color:#2c2470}
+.dms-perks i{font-style:normal;font-size:20px}
+.dms-cta{display:block;width:100%;min-height:52px;border:0;border-radius:99px;cursor:pointer;background:linear-gradient(180deg,#ffe763,#ffbf14);box-shadow:inset 0 2px 0 #fff7b0,0 5px 0 #f2a10d;color:#3a1f6b;font:900 17px "Nunito",system-ui}
+.dms-text-btn{display:block;width:100%;border:0;background:none;padding:12px 0 2px;color:#6d5ea6;font:700 14px "Nunito",system-ui;cursor:pointer}
+
+/* ================================================================ PAKET EKRANI (öğrenci) */
+.dmp{position:fixed;inset:0;z-index:2147483645;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;font-family:"Nunito",system-ui,-apple-system,sans-serif;color:#2c2470;
+ background:radial-gradient(circle at 10% 0,#fbe6ff 0,transparent 40%),radial-gradient(circle at 100% 30%,#e3f1ff 0,transparent 45%),linear-gradient(180deg,#f6f1ff,#efe8fd 60%,#f6f2ff);animation:dmsFade .22s ease-out}
+.dmp *{box-sizing:border-box}
+.dmp-in{width:min(100%,560px);margin:0 auto;padding:calc(10px + env(safe-area-inset-top,0px)) 16px calc(130px + env(safe-area-inset-bottom,0px))}
+.dmp-bar{display:flex;align-items:center;justify-content:space-between;height:44px}
+.dmp-bar span{font:900 15px "Nunito",system-ui;color:#6b5aa8;letter-spacing:.3px}
+.dmp-x{width:40px;height:40px;border-radius:50%;border:0;background:#fff;color:#2c2470;display:grid;place-items:center;box-shadow:0 3px 10px rgba(93,64,170,.2);cursor:pointer;padding:0}
+.dmp-x svg{width:15px;height:15px;stroke:currentColor;stroke-width:3.2;stroke-linecap:round}
+.dmp-hero{position:relative;display:flex;align-items:center;gap:6px;margin:4px 0 14px;min-height:150px}
+.dmp-hero img{width:150px;height:150px;object-fit:contain;flex-shrink:0;margin-left:-10px;animation:dmsFloat 3.4s ease-in-out infinite}
+.dmp-hero h1{margin:0;font:900 30px/1.05 "Baloo 2","Nunito",system-ui;letter-spacing:-.5px;background:linear-gradient(95deg,#2b23a6,#8a2fd1);-webkit-background-clip:text;background-clip:text;color:transparent}
+.dmp-hero p{margin:6px 0 0;font:600 14px/1.4 "Nunito",system-ui;color:#4b4180}
+.dmp-current{display:inline-flex;align-items:center;gap:6px;margin-top:8px;padding:4px 10px;border-radius:99px;background:#fff;font:800 12px "Nunito",system-ui;color:#5b47a8;box-shadow:0 2px 6px rgba(110,80,200,.12)}
+.dmp-toggle{display:flex;position:relative;padding:4px;border-radius:99px;background:#e5dbfb;margin:0 auto 16px;max-width:330px}
+.dmp-toggle button{flex:1;border:0;background:none;border-radius:99px;padding:10px 6px;font:800 14.5px "Nunito",system-ui;color:#5b4c96;cursor:pointer;position:relative}
+.dmp-toggle button[aria-pressed=true]{background:#fff;color:#2b23a6;box-shadow:0 3px 8px rgba(80,50,170,.18)}
+.dmp-toggle em{position:absolute;top:-11px;right:4px;font-style:normal;padding:2px 7px;border-radius:99px;background:#22b07d;color:#fff;font:900 10.5px "Nunito",system-ui;white-space:nowrap}
+.dmp-plans{display:grid;gap:14px}
+.dmp-plan{position:relative;display:block;width:100%;text-align:left;padding:16px 16px 14px;border-radius:28px;border:3px solid transparent;background:#fff;box-shadow:0 8px 22px rgba(90,60,180,.12);cursor:pointer;color:inherit;font:inherit}
+.dmp-plan[aria-checked=true]{border-color:#7b4ae6;box-shadow:0 0 0 4px #e4d7ff,0 10px 26px rgba(90,60,180,.2)}
+.dmp-plan.is-premium{background:radial-gradient(circle at 100% 0,#ffe9a8 0,transparent 42%),linear-gradient(150deg,#fffaf0,#fff 45%,#f7f0ff)}
+.dmp-plan.is-premium[aria-checked=true]{border-color:#f0a90f;box-shadow:0 0 0 4px #ffeab0,0 10px 26px rgba(200,140,20,.25)}
+.dmp-ribbon{position:absolute;top:-12px;right:18px;padding:4px 12px;border-radius:99px;background:linear-gradient(90deg,#ff8a3d,#ff5f7e);color:#fff;font:900 11.5px "Nunito",system-ui;box-shadow:0 4px 10px rgba(255,95,126,.35);letter-spacing:.2px}
+.dmp-plan-h{display:flex;align-items:center;gap:10px}
+.dmp-radio{width:24px;height:24px;border-radius:50%;border:3px solid #cbbcf2;flex-shrink:0;display:grid;place-items:center}
+.dmp-plan[aria-checked=true] .dmp-radio{border-color:#7b4ae6;background:#7b4ae6}
+.dmp-plan.is-premium[aria-checked=true] .dmp-radio{border-color:#f0a90f;background:#f0a90f}
+.dmp-plan[aria-checked=true] .dmp-radio:after{content:"";width:8px;height:8px;border-radius:50%;background:#fff}
+.dmp-plan-h img{width:34px;height:auto}
+.dmp-name{flex:1;font:900 21px/1.1 "Baloo 2","Nunito",system-ui;color:#2b23a6}
+.dmp-plan.is-premium .dmp-name{color:#9a4a00}
+.dmp-price{text-align:right;white-space:nowrap}
+.dmp-price b{display:block;font:900 22px/1 "Nunito",system-ui;color:#2c2470}
+.dmp-price small{display:block;margin-top:3px;font:700 11.5px "Nunito",system-ui;color:#7b6aa8}
+.dmp-pitch{margin:10px 0 0 34px;font:700 13.5px/1.4 "Nunito",system-ui;color:#4b4180}
+.dmp-chips{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 0 34px}
+.dmp-chips span{display:inline-flex;align-items:center;gap:5px;padding:5px 9px;border-radius:99px;background:#f2ecff;font:800 12px "Nunito",system-ui;color:#4a3a8c}
+.dmp-plan.is-premium .dmp-chips span{background:#fff1cc;color:#7a4300}
+.dmp-tag{display:inline-block;margin:8px 0 0 34px;padding:3px 9px;border-radius:99px;background:#e2f8ee;color:#127a52;font:900 11.5px "Nunito",system-ui}
+.dmp-now{display:inline-block;margin:8px 0 0 34px;padding:3px 9px;border-radius:99px;background:#e7e1ff;color:#4a3a8c;font:900 11.5px "Nunito",system-ui}
+.dmp-sec{margin:26px 0 10px;font:900 19px/1.2 "Baloo 2","Nunito",system-ui;color:#2b23a6}
+.dmp-sec small{display:block;margin-top:2px;font:600 13px "Nunito",system-ui;color:#6b5aa8}
+/* ayrıntılı özellik kartları */
+.dmp-feats{display:grid;gap:10px}
+.dmp-feat{display:flex;gap:12px;align-items:flex-start;padding:13px 14px;border-radius:22px;background:#fff;box-shadow:0 5px 14px rgba(90,60,180,.09)}
+.dmp-feat .i{width:46px;height:46px;flex-shrink:0;border-radius:16px;display:grid;place-items:center;font-size:24px;background:#f2ecff}
+.dmp-feat .i img{width:30px;height:auto}
+.dmp-feat b{display:block;font:900 15px/1.25 "Nunito",system-ui;color:#2c2470}
+.dmp-feat p{margin:3px 0 0;font:600 13px/1.4 "Nunito",system-ui;color:#4b4180}
+.dmp-feat .v{display:flex;flex-wrap:wrap;gap:5px;margin-top:7px}
+.dmp-feat .v span{padding:3px 8px;border-radius:10px;font:800 11.5px "Nunito",system-ui;background:#f4f1fb;color:#6b5aa8}
+.dmp-feat .v span.on{background:#efe6ff;color:#5a2fc0}
+.dmp-feat .v span.top{background:#fff1cc;color:#8a4a00}
+.dmp-feat.soon{opacity:.86}.dmp-soon{display:inline-block;margin-left:6px;padding:1px 7px;border-radius:99px;background:#ffe9f0;color:#c0365f;font:900 10.5px "Nunito",system-ui;vertical-align:2px}
+/* karşılaştırma tablosu */
+.dmp-table{width:100%;border-collapse:separate;border-spacing:0;background:#fff;border-radius:22px;overflow:hidden;box-shadow:0 5px 14px rgba(90,60,180,.09);font:700 12.5px/1.3 "Nunito",system-ui}
+.dmp-table th,.dmp-table td{padding:10px 6px;text-align:center;border-bottom:1px solid #f0eafb}
+.dmp-table tr:last-child td{border-bottom:0}
+.dmp-table th{font:900 12.5px "Nunito",system-ui;color:#4a3a8c;background:#f6f2ff}
+.dmp-table th.pre{background:#fff3d4;color:#8a4a00}
+.dmp-table td:first-child,.dmp-table th:first-child{text-align:left;padding-left:12px;color:#2c2470;width:36%}
+.dmp-table td.pre{background:#fffaf0;color:#7a4300;font-weight:900}
+.dmp-table td.no{color:#b3a8d4}
+.dmp-table td.yes{color:#16935f;font-weight:900}
+.dmp-trust{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:16px}
+.dmp-trust span{padding:10px 6px;border-radius:18px;background:#ffffffb3;text-align:center;font:800 11.5px/1.3 "Nunito",system-ui;color:#4b4180}
+.dmp-trust i{display:block;font-style:normal;font-size:22px;margin-bottom:3px}
+.dmp-legal{margin:18px 4px 0;font:600 11.5px/1.55 "Nunito",system-ui;color:#6b5aa8}
+.dmp-legal a{color:#4a2bc4}
+.dmp-links{display:flex;flex-wrap:wrap;gap:4px 14px;margin-top:8px}
+.dmp-links button{border:0;background:none;padding:6px 0;color:#4a2bc4;font:800 13px "Nunito",system-ui;text-decoration:underline;cursor:pointer}
+.dmp-msg{margin:12px 0 0;padding:11px 14px;border-radius:16px;background:#efe6ff;color:#3d2a8f;font:800 13.5px/1.4 "Nunito",system-ui}
+.dmp-msg.err{background:#ffe8ee;color:#a52148}
+.dmp-msg[hidden]{display:none}
+/* alttaki sabit satın alma çubuğu */
+.dmp-foot{position:fixed;left:0;right:0;bottom:0;z-index:2;padding:12px 16px calc(12px + env(safe-area-inset-bottom,0px));background:linear-gradient(180deg,rgba(246,241,255,0),#f3edff 26%);pointer-events:none}
+.dmp-foot-in{width:min(100%,528px);margin:0 auto;pointer-events:auto}
+.dmp-buy{display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%;min-height:62px;border:0;border-radius:99px;cursor:pointer;
+ background:linear-gradient(180deg,#ffe763 0,#ffd326 48%,#ffbf14 100%);box-shadow:inset 0 3px 0 #fff7b0,0 6px 0 #f2a10d,0 10px 20px rgba(240,150,10,.3);color:#3a1f6b;font:900 18px/1.15 "Nunito",system-ui}
+.dmp-buy small{font:800 12px "Nunito",system-ui;color:#6b4a14;margin-top:2px}
+.dmp-buy:disabled{filter:grayscale(.5);opacity:.7;cursor:default}
+.dmp-foot-note{margin:7px 0 0;text-align:center;font:700 11.5px "Nunito",system-ui;color:#6b5aa8}
+.dmp-gate{padding:20px;border-radius:24px;background:#fff;box-shadow:0 6px 18px rgba(90,60,180,.12);text-align:center;margin-top:10px}
+.dmp-gate p{font:800 16px/1.4 "Nunito",system-ui;margin:0 0 10px}
+.dmp-gate input{width:100%;padding:12px;font:800 22px "Nunito",system-ui;text-align:center;border:3px solid #e2d6fb;border-radius:16px;margin:0 0 12px;color:#2c2470}
+
+/* ================================================================ PAKET EKRANI (öğretmen) */
+.dmp.is-teacher{background:radial-gradient(circle at 0 0,#d9f6ff 0,transparent 42%),radial-gradient(circle at 100% 25%,#e4ecff 0,transparent 45%),linear-gradient(180deg,#f2f8ff,#eaf1fd 60%,#f3f7ff)}
+.dmp.is-teacher .dmp-hero h1{background:linear-gradient(95deg,#0b4f8a,#1f7ae0);-webkit-background-clip:text;background-clip:text}
+.dmp.is-teacher .dmp-hero p,.dmp.is-teacher .dmp-pitch,.dmp.is-teacher .dmp-feat p{color:#3c5677}
+.dmp.is-teacher .dmp-toggle{background:#d9e6f8}.dmp.is-teacher .dmp-toggle button{color:#3f5d86}.dmp.is-teacher .dmp-toggle button[aria-pressed=true]{color:#0b4f8a}
+.dmp.is-teacher .dmp-name{color:#0b4f8a}
+.dmp.is-teacher .dmp-plan[aria-checked=true]{border-color:#1f7ae0;box-shadow:0 0 0 4px #d6e8ff,0 10px 26px rgba(30,90,180,.18)}
+.dmp.is-teacher .dmp-plan[aria-checked=true] .dmp-radio{border-color:#1f7ae0;background:#1f7ae0}
+.dmp.is-teacher .dmp-plan.is-premium[aria-checked=true]{border-color:#f0a90f;box-shadow:0 0 0 4px #ffeab0,0 10px 26px rgba(200,140,20,.25)}
+.dmp.is-teacher .dmp-plan.is-premium[aria-checked=true] .dmp-radio{border-color:#f0a90f;background:#f0a90f}
+.dmp.is-teacher .dmp-chips span{background:#e6f1ff;color:#1d4f86}
+.dmp.is-teacher .dmp-sec{color:#0b4f8a}.dmp.is-teacher .dmp-sec small{color:#4d6a90}
+.dmp.is-teacher .dmp-feat .i{background:#e6f1ff}
+.dmp.is-teacher .dmp-feat .v span.on{background:#e3efff;color:#1d5fae}
+.dmp.is-teacher .dmp-table th{background:#eef5ff;color:#1d4f86}
+.dmp.is-teacher .dmp-table td:first-child{color:#17375e}
+.dmp.is-teacher .dmp-foot{background:linear-gradient(180deg,rgba(242,248,255,0),#ecf3fe 26%)}
+.dmp.is-teacher .dmp-msg{background:#e3efff;color:#174c87}
+.dmp.is-teacher .dmp-legal,.dmp.is-teacher .dmp-foot-note,.dmp.is-teacher .dmp-bar span{color:#4d6a90}
+.dmp-teal{background:linear-gradient(180deg,#38c8f0,#1d8fe0)!important;box-shadow:inset 0 3px 0 #9be7ff,0 6px 0 #156bb0,0 10px 20px rgba(30,120,220,.3)!important;color:#fff!important}
+.dmp-teal small{color:#dff3ff!important}
+.dmp-soonbox{margin-top:10px;padding:14px;border-radius:22px;background:#fff;border:2px dashed #b9d4f5;text-align:center;font:800 13.5px/1.45 "Nunito",system-ui;color:#2c4f7c}
+
+/* gece modu: perdeler kendi açık zeminini korur */
+@media(max-width:360px){.dmp-hero img{width:120px;height:120px}.dmp-hero h1{font-size:26px}.dmp-price b{font-size:19px}.dmp-name{font-size:19px}}
