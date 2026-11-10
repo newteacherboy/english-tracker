@@ -372,9 +372,8 @@
     const say = (m, err = false) => { ui.msg = m; ui.err = err; rerender(); };
     root.querySelector('[data-buy]').onclick = () => {
       if (!sellOpen || ui.busy) return;
-      if (role === 'teacher') { void buy(ctx, pickPl.id, say, rerender); return; }
-      ui.gate = gateQ(); ui.msg = ''; rerender();
-      const input = root.querySelector('.dmp-gate input'); input?.focus(); input?.scrollIntoView({ block: 'center', behavior: 'smooth' });
+      // Satın alma onayını mağaza kendisi ister (şifre / parmak izi, Aile Bağlantısı onayı); ayrıca soru sorulmaz.
+      void buy(ctx, pickPl.id, say, rerender);
     };
     root.querySelector('[data-gate-back]')?.addEventListener('click', () => { ui.gate = null; rerender(); });
     root.querySelector('[data-gate-ok]')?.addEventListener('click', () => {
