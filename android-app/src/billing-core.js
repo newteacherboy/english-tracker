@@ -12,8 +12,8 @@ export const PLAN_FEATURES = Object.freeze({
     teacher_premium_pro: ['Sınırsız sınıf, 500 öğrenci', 'Sınıflar arası lig ve karşılaştırma', 'Yöneticiyle iletişim'],
   },
 });
-// Öğretmen özellikleri henüz panelde yok: satış açılmaz, kartlar "Yakında" görünür.
-export const SALE_OPEN = Object.freeze({ student: true, teacher: false });
+// Öğretmen paketleri satışta (10 Kasım 2026). Paket ekranı artık sitede (ingilizce/dm-satis.js).
+export const SALE_OPEN = Object.freeze({ student: true, teacher: true });
 const RANK = { free: 0, pro: 1, premium_pro: 2 };
 const PERIOD_LABEL = { aylik: 'ay', yillik: 'yıl' };
 
