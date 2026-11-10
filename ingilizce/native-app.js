@@ -14,26 +14,58 @@
   if (!native) return;
 
   document.documentElement.classList.add('dm-native-app');
-  // Capacitor's iOS WKWebView can report a zero CSS safe-area inset even while
-  // the native status bar overlaps web content (notably on notched iPhones).
-  // Scope the fallback strictly to the iOS App Store shell; never shift web/TWA.
+  // iPhone: üst göstergeler saat/pil çubuğunun altında kalmasın.
+  // 1) viewport-fit=cover: WKWebView gerçek güvenli alanı env(safe-area-inset-*) ile bildirir
+  //    (bu olmadan env() hep 0 döner ve sayfadaki tüm env() kuralları etkisiz kalır).
+  // 2) env() yine 0 gelirse ekran boyutuna göre güvenli bir yedek değer kullanılır.
+  // Yalnız App Store kabuğunda çalışır; web ve Android etkilenmez.
   if (window.dmIosUygulama) {
-    document.documentElement.classList.add('dm-native-ios');
+    var root = document.documentElement;
+    root.classList.add('dm-native-ios');
+    var guess = Math.max(screen.width || 0, screen.height || 0) >= 812 ? 54 : 20;
+    root.style.setProperty('--dm-ios-top-min', guess + 'px');
     var safeStyle = document.createElement('style');
     safeStyle.id = 'dm-ios-statusbar-safe-area';
     safeStyle.textContent = [
-      '.dm-native-ios{--dm-ios-top-safe:max(62px, env(safe-area-inset-top, 0px))}',
+      '.dm-native-ios{--dm-ios-top-safe:max(env(safe-area-inset-top,0px),var(--dm-ios-top-min,0px))}',
       '.dm-native-ios #tab-meduakis.active{box-sizing:border-box!important;padding-top:var(--dm-ios-top-safe)!important}',
       '.dm-native-ios #tab-dunya.active .rt-top,',
       '.dm-native-ios #tab-aktiviteler.active .gg-brand,',
       '.dm-native-ios #tab-derscalis.active .su-levels-heading,',
       '.dm-native-ios #tab-magaza.active .ds-header{',
       'box-sizing:border-box!important;margin-top:var(--dm-ios-top-safe)!important}',
+      // Parkur haritasında .rt-top zaten top:var(--bi-safe-top) ile iner; iki kez kaydırılmasın.
+      '.dm-native-ios body #tab-dunya.active .bz-ic:has(.bi-scene)>.rt-top{margin-top:0!important}',
       '.dm-native-ios body #bzPerde#bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game{',
       'padding-top:var(--dm-ios-top-safe)!important}',
-      '.dm-native-ios #dmNetBand{top:calc(var(--dm-ios-top-safe) + 8px)!important}'
+      '.dm-native-ios #dmNetBand{top:calc(var(--dm-ios-top-safe) + 8px)!important}',
+      '.dm-native-ios .dms-sheet{max-height:calc(100dvh - var(--dm-ios-top-safe) - 8px)}',
+      '.dm-native-ios .dmp-in{padding-top:calc(10px + var(--dm-ios-top-safe))}',
+      '.dm-native-ios .dms-drop{padding-top:var(--dm-ios-top-safe)}'
     ].join('');
-    (document.head || document.documentElement).appendChild(safeStyle);
+    (document.head || root).appendChild(safeStyle);
+    var cover = function () {
+      var m = document.querySelector('meta[name="viewport"]');
+      if (!m) { m = document.createElement('meta'); m.name = 'viewport'; m.content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no'; (document.head || root).appendChild(m); }
+      if (!/viewport-fit\s*=\s*cover/.test(m.content)) m.content = m.content.replace(/\s*,?\s*viewport-fit\s*=\s*\w+/g, '') + ', viewport-fit=cover';
+    };
+    var measure = function () {
+      cover();
+      if (!document.body) return;
+      var probe = document.createElement('div');
+      probe.style.cssText = 'position:fixed;left:0;top:0;width:0;height:0;visibility:hidden;pointer-events:none;padding-top:env(safe-area-inset-top,0px)';
+      document.body.appendChild(probe);
+      var real = parseFloat(getComputedStyle(probe).paddingTop) || 0;
+      probe.remove();
+      // Gerçek değer geldiyse yalnız o kullanılır; gelmediyse yedek değer kalır.
+      root.style.setProperty('--dm-ios-top-min', real > 0 ? '0px' : guess + 'px');
+      window.dmIosSafeTop = real > 0 ? real : guess;
+    };
+    cover();
+    document.addEventListener('DOMContentLoaded', function () { measure(); setTimeout(measure, 400); });
+    window.addEventListener('load', function () { setTimeout(measure, 300); });
+    window.addEventListener('resize', measure);
+    window.addEventListener('orientationchange', function () { setTimeout(measure, 300); });
   }
 
   function plugin(name) {
