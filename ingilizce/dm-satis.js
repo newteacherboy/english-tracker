@@ -244,46 +244,27 @@
 
   // ---------------------------------------------------------------- PAKET EKRANLARI
   const STUDENT = {
-    hero: { title: 'Daha çok oyna, daha hızlı öğren', text: 'Paketini seç; enerjin bitmesin, reklamlar araya girmesin, her gün altın kazan.' },
+    hero: { title: 'Paketini seç', text: 'Paketini seç; enerjin bitmesin, reklamlar araya girmesin, her gün altın kazan.' },
     plans: [
       { id: 'diji_pro', plan: 'pro', name: 'Pro', list: { aylik: 45, yillik: 380 }, pitch: 'Reklamsız öğren, günde 40 enerjiyle daha uzun oyna.',
-        chips: ['⚡ 40 enerji', '🚫 Reklamsız', '🪙 +30 altın/gün', '🎮 5 Premium bölüm/gün'] },
+        chips: ['⚡ Günde 40 enerji', '🚫 Reklamsız', '🪙 Her gün +30 altın', '🎮 Premium oyun 5 bölüm/gün'] },
       { id: 'diji_premium_pro', plan: 'premium_pro', name: 'Premium Pro', ribbon: 'En avantajlı', list: { aylik: 79, yillik: 700 }, pitch: 'Enerji hiç bitmez, Premium Oyunlar sınırsız. Diji Medu\'nun tamamı.',
-        chips: ['⚡ Sınırsız enerji', '🎮 Sınırsız Premium', '🪙 +75 altın/gün', '🛡️ 5 kalkan/ay'] },
+        chips: ['⚡ Sınırsız enerji', '🚫 Reklamsız', '🪙 Her gün +75 altın', '🎮 Sınırsız Premium oyun'] },
     ],
-    feats: [
-      { i: 'bolt', t: 'Enerjin bitmesin', d: 'Oyunlar ve parkur durakları enerjiyle oynanır. Premium Pro\'da harcadığın enerji anında geri dolar.', v: ['Free: 25', 'Pro: 40', 'Premium Pro: Sınırsız'] },
-      { i: '🚫', t: 'Reklamsız öğrenme', d: 'Alt banner ve oyun arası geçiş reklamları tamamen kalkar. Ödüllü videoyu yalnız istersen izlersin.', v: ['Free: Reklamlı', 'Pro: Reklamsız', 'Premium Pro: Reklamsız'] },
-      { i: 'coin', t: 'Her gün hediye altın', d: 'Altınlarınla karakterine kıyafet, enerji paketi ve joker alırsın. Hediye her gün hesabına eklenir.', v: ['Free: —', 'Pro: +30/gün', 'Premium Pro: +75/gün'] },
-      { i: '🎮', t: 'Premium Oyunlar', d: 'Candy Papiş, Kaptan Pilot Papi, Block Papi gibi özel oyunlar ve en yüksek ödüller.', v: ['Free: 3 deneme', 'Pro: Günde 5 bölüm', 'Premium Pro: Sınırsız'] },
-      { i: '🛡️', t: 'Seri kalkanı', d: 'Bir gün giremezsen kalkan devreye girer, günlük serin bozulmaz.', v: ['Free: —', 'Pro: Ayda 2', 'Premium Pro: Ayda 5'] },
-      { i: '🏝️', t: 'Mola Vakti', d: 'Papi Koşu, Papi Zıpla ve Renk Patlat oyunlarını her gün daha çok oyna.', v: ['Free: Günde 2', 'Pro: Günde 3', 'Premium Pro: Günde 5'] },
-      { i: '📚', t: 'Tüm dersler her planda', d: 'Parkurlar, Ders Çalış ve tüm ders oyunları ücretsiz planda da açık kalır. Paketler ekstra ayrıcalık getirir.', v: ['Free: ✓', 'Pro: ✓', 'Premium Pro: ✓'] },
-    ],
-    table: [['Günlük enerji', '25', '40', 'Sınırsız'], ['Reklamlar', 'Var', 'Yok', 'Yok'], ['Hediye altın', '—', '+30/gün', '+75/gün'], ['Premium Oyunlar', '3 deneme', '5 bölüm/gün', 'Sınırsız'],
-      ['Seri kalkanı', '—', '2/ay', '5/ay'], ['Mola Vakti (her oyun)', '2/gün', '3/gün', '5/gün'], ['Parkurlar ve Ders Çalış', '✓', '✓', '✓']],
+    table: [['⚡ Enerji', '25', '40', 'Sınırsız'], ['🚫 Reklam', 'Var', 'Yok', 'Yok'], ['🪙 Altın/gün', '—', '+30', '+75'], ['🎮 Premium oyun', '3 deneme', '5/gün', 'Sınırsız'],
+      ['🛡️ Seri kalkanı', '—', '2/ay', '5/ay'], ['🏝️ Mola Vakti', '2/gün', '3/gün', '5/gün']],
   };
   const TEACHER = {
-    hero: { title: 'Sınıfını Diji Medu ile büyüt', text: 'Daha çok sınıf, sınırsız ödev ve detaylı raporlarla öğrencilerinin İngilizcesini adım adım takip et.' },
+    hero: { title: 'Öğretmen paketleri', text: 'Daha çok sınıf, sınırsız ödev ve detaylı raporlarla öğrencilerinin İngilizcesini adım adım takip et.' },
     plans: [
-      { id: 'teacher_pro', plan: 'pro', name: 'Öğretmen Pro', list: { aylik: 59, yillik: 490 }, pitch: 'Birden çok şubesi olan öğretmenler için: 5 sınıf, sınırsız ödev, detaylı raporlar.',
-        chips: ['🏫 5 sınıf', '👩‍🎓 200 öğrenci', '📝 Sınırsız ödev', '📊 Detaylı rapor'] },
-      { id: 'teacher_premium_pro', plan: 'premium_pro', name: 'Öğretmen Premium Pro', ribbon: 'Okul için ideal', list: { aylik: 149, yillik: 1190 }, pitch: 'Tüm okulun için: sınırsız sınıf, 500 öğrenci ve yöneticiyle doğrudan iletişim.',
-        chips: ['🏫 Sınırsız sınıf', '👩‍🎓 500 öğrenci', '🌍 Sınıflar arası lig', '🤝 Yönetici desteği'] },
+      { id: 'teacher_pro', plan: 'pro', name: 'Öğretmen Pro', short: 'Pro', list: { aylik: 59, yillik: 490 }, pitch: 'Birden çok şubesi olan öğretmenler için: 5 sınıf, sınırsız ödev, detaylı raporlar.',
+        chips: ['🏫 5 sınıf', '👩‍🎓 200 öğrenci', '📝 Sınırsız ödev', '📊 Detaylı raporlar'] },
+      { id: 'teacher_premium_pro', plan: 'premium_pro', name: 'Öğretmen Premium Pro', short: 'Premium Pro', ribbon: 'Okul için ideal', list: { aylik: 149, yillik: 1190 }, pitch: 'Tüm okulun için: sınırsız sınıf, 500 öğrenci ve yöneticiyle doğrudan iletişim.',
+        chips: ['🏫 Sınırsız sınıf', '👩‍🎓 500 öğrenci', '🌍 Sınıflar arası lig', '🤝 Yöneticiyle iletişim'] },
     ],
-    feats: [
-      { i: '🏫', t: 'Sınıf sayısı', d: 'Her şubeni ayrı yönet; öğrencilerin sınıf koduyla katılır, ilerlemeleri kendiliğinden gelir.', v: ['Free: 1 sınıf', 'Pro: 5 sınıf', 'Premium Pro: Sınırsız'] },
-      { i: '👩‍🎓', t: 'Öğrenci kapasitesi', d: 'Tüm sınıflarındaki toplam öğrenci sayısı.', v: ['Free: 40', 'Pro: 200', 'Premium Pro: 500'] },
-      { i: '📝', t: 'Ödevler', d: 'Parkur ve kelime ödevi ver; kimin bitirdiğini, kimin zorlandığını anında gör.', v: ['Free: 2 aktif ödev', 'Pro: Sınırsız', 'Premium Pro: Sınırsız'] },
-      { i: '📊', t: 'Detaylı öğrenci raporları', d: 'Sınıfın tüm cevaplarını, en çok hata yapılan soruları ve her öğrencinin gelişimini tek ekranda incele.', v: ['Free: Temel takip', 'Pro: Detaylı', 'Premium Pro: Detaylı'] },
-      { i: '🌍', t: 'Sınıflar arası lig ve karşılaştırma', d: 'Şubelerini yarıştır, hangi sınıfın nerede güçlü olduğunu karşılaştır.', v: ['Free: —', 'Pro: —', 'Premium Pro: ✓'] },
-      { i: '🤝', t: 'Yöneticiyle doğrudan iletişim', d: 'Sorularını ve önerilerini Diji Medu ekibine doğrudan ilet, öncelikli yanıt al.', v: ['Free: —', 'Pro: —', 'Premium Pro: ✓'] },
-      { i: '🏆', t: 'Canlı sınıf yarışması', soon: true, d: 'Tahtaya yansıt, tüm sınıf aynı anda yarışsın.', v: ['Free: Ayda 4', 'Pro: Sınırsız', 'Premium Pro: Sınırsız'] },
-      { i: '📨', t: 'Veli raporu', soon: true, d: 'Velilere öğrencinin gelişim özeti otomatik gitsin.', v: ['Free: —', 'Pro: Aylık', 'Premium Pro: Haftalık'] },
-      { i: '🎁', t: 'Öğrencilerine Pro hediye', soon: true, d: 'Seçtiğin öğrencilere Diji Medu Pro hediye et.', v: ['Free: —', 'Pro: —', 'Premium Pro: 3 öğrenci'] },
-    ],
-    table: [['Sınıf', '1', '5', 'Sınırsız'], ['Öğrenci', '40', '200', '500'], ['Aktif ödev', '2', 'Sınırsız', 'Sınırsız'], ['Öğrenci raporları', 'Temel', 'Detaylı', 'Detaylı'],
-      ['Sınıflar arası lig', '—', '—', '✓'], ['Yöneticiyle iletişim', '—', '—', '✓'], ['Reklam', 'Yok', 'Yok', 'Yok']],
+    soon: 'Canlı sınıf yarışması · Veli raporu · Öğrencine Pro hediye',
+    table: [['🏫 Sınıf', '1', '5', 'Sınırsız'], ['👩‍🎓 Öğrenci', '40', '200', '500'], ['📝 Aktif ödev', '2', 'Sınırsız', 'Sınırsız'], ['📊 Raporlar', 'Temel', 'Detaylı', 'Detaylı'],
+      ['🌍 Sınıflar arası lig', '—', '—', '✓'], ['🤝 Yönetici iletişimi', '—', '—', '✓']],
   };
 
   const TL = n => Number(n).toLocaleString('tr-TR', { maximumFractionDigits: 2 }) + ' TL';
@@ -346,14 +327,15 @@
     const card = pl => {
       const pr = priceOf(pl), monthly = ui.period === 'yillik' ? TL(Math.round(pl.list.yillik / 12 * 100) / 100) : '';
       const isCur = cur === pl.plan, lower = cur === 'premium_pro' && pl.plan === 'pro';
+      const chip = c => c.startsWith('🪙') ? `<img src="${IMG.coin}" alt="">` + esc(c.slice(2).trim()) : esc(c);
       return `<button type="button" class="dmp-plan${pl.plan === 'premium_pro' ? ' is-premium' : ''}" role="radio" aria-checked="${ui.pick === pl.plan}" data-pick="${pl.plan}" ${lower ? 'disabled style="opacity:.55"' : ''}>
         ${pl.ribbon ? `<span class="dmp-ribbon">${esc(pl.ribbon)}</span>` : ''}
-        <div class="dmp-plan-h"><span class="dmp-radio"></span><img src="${IMG.crown}" alt=""><span class="dmp-name">${esc(pl.name)}</span>
-        ${showPrice ? `<span class="dmp-price"><b>${esc(pr.text)}</b><small>${ui.period === 'yillik' ? 'yıllık · aylık ' + esc(monthly) : 'aylık'}</small></span>` : ''}</div>
-        <p class="dmp-pitch">${esc(pl.pitch)}</p>
-        <div class="dmp-chips">${pl.chips.map(c => `<span>${c.startsWith('🪙') ? `<img src="${IMG.coin}" alt="" style="width:15px">` + esc(c.slice(2).trim()) : esc(c)}</span>`).join('')}</div>
-        ${isCur ? '<span class="dmp-now">Şu anki planın</span>' : ui.period === 'yillik' && showPrice ? `<span class="dmp-tag">Yıllıkta %${saving(pl.list)} tasarruf</span>` : ''}
-        ${pr.trial && sellOpen && !isCur ? '<span class="dmp-tag">7 gün ücretsiz dene</span>' : ''}
+        <span class="dmp-radio"></span>
+        <span class="dmp-name"><img src="${IMG.crown}" alt="">${esc(pl.short || pl.name)}</span>
+        ${showPrice ? `<span class="dmp-price"><b>${esc(pr.text)}</b><small>${ui.period === 'yillik' ? '/ yıl · aylık ' + esc(monthly) : '/ ay'}</small></span>` : ''}
+        <ul class="dmp-keys">${pl.chips.map(c => `<li>${chip(c)}</li>`).join('')}</ul>
+        ${isCur ? '<span class="dmp-now">Şu anki planın</span>' : ui.period === 'yillik' && showPrice ? `<span class="dmp-tag">%${saving(pl.list)} tasarruf</span>` : ''}
+        ${pr.trial && sellOpen && !isCur ? '<span class="dmp-tag">7 gün ücretsiz</span>' : ''}
       </button>`;
     };
     const ic = i => i === 'bolt' || i === 'coin' ? `<img src="${IMG[i]}" alt="">` : i;
@@ -361,31 +343,26 @@
     const pickPl = C.plans.find(x => x.plan === ui.pick) || C.plans[1];
     const pr = priceOf(pickPl);
     let cta, ctaNote = '', ctaDisabled = false, ctaTeal = role === 'teacher';
-    if (role === 'teacher') { cta = 'Öğretmen paketleri çok yakında'; ctaNote = 'Şimdilik tüm özellikleri ücretsiz plan sınırları içinde kullanabilirsin.'; ctaDisabled = true; }
+    if (role === 'teacher') { cta = 'Öğretmen paketleri çok yakında'; ctaNote = 'Şimdilik ücretsiz planla devam edebilirsin.'; ctaDisabled = true; }
     else if (!sellOpen) { cta = 'Paketler uygulamada satışta'; ctaNote = 'Satın alma Diji Medu mobil uygulamasından yapılır.'; ctaDisabled = true; }
     else if (cur === ui.pick) { cta = 'Bu paket sende açık 🎉'; ctaDisabled = true; }
     else { cta = `${pickPl.name}'ya geç`; ctaNote = `${pr.text} / ${ui.period === 'yillik' ? 'yıl' : 'ay'} · İstediğin zaman iptal edebilirsin`; if (!pr.available && ctx.p) { cta = 'Bu paket şu an satışta değil'; ctaDisabled = true; } }
     const storeName = iosApp ? 'App Store' : 'Google Play';
     root.innerHTML = `<div class="dmp-in">
       <div class="dmp-bar"><span>${role === 'teacher' ? 'ÖĞRETMEN PAKETLERİ' : 'DİJİ MEDU PAKETLERİ'}</span><button type="button" class="dmp-x" data-close aria-label="Kapat">${ICON_X}</button></div>
-      <div class="dmp-hero"><img src="${role === 'teacher' ? IMG.teacher : IMG.party}" alt="" onerror="this.src='${IMG.welcome}'"><div><h1>${esc(C.hero.title)}</h1><p>${esc(C.hero.text)}</p>
+      <div class="dmp-hero"><img src="${role === 'teacher' ? IMG.teacher : IMG.party}" alt="" onerror="this.src='${IMG.welcome}'"><div><h1>${esc(C.hero.title)}</h1>
         <span class="dmp-current">Şu anki planın: <b>${esc(curName)}</b></span></div></div>
       ${showPrice ? `<div class="dmp-toggle" role="group" aria-label="Ödeme dönemi"><button type="button" data-period="aylik" aria-pressed="${ui.period === 'aylik'}">Aylık</button><button type="button" data-period="yillik" aria-pressed="${ui.period === 'yillik'}">Yıllık<em>%${saving(C.plans[0].list)}'e varan indirim</em></button></div>` : ''}
       <div class="dmp-plans" role="radiogroup" aria-label="Paket seç">${C.plans.map(card).join('')}</div>
       <p class="dmp-msg${ui.err ? ' err' : ''}" ${ui.msg ? '' : 'hidden'} role="status">${esc(ui.msg)}</p>
       ${ui.gate ? `<div class="dmp-gate"><p>${esc(ui.gate.q)}</p><input inputmode="numeric" autocomplete="off" aria-label="Cevap"><button type="button" class="dmp-buy" data-gate-ok>Devam</button><button type="button" class="dms-text-btn" data-gate-back>Vazgeç</button></div>` : ''}
-      <h2 class="dmp-sec">Pakette neler var?<small>${role === 'teacher' ? 'Her özelliğin üç plandaki karşılığı' : 'Her ayrıcalığın Free, Pro ve Premium Pro\'daki karşılığı'}</small></h2>
-      <div class="dmp-feats">${C.feats.map(f => `<div class="dmp-feat${f.soon ? ' soon' : ''}"><span class="i">${ic(f.i)}</span><div><b>${esc(f.t)}${f.soon ? '<span class="dmp-soon">Yakında</span>' : ''}</b><p>${esc(f.d)}</p><div class="v">${vals(f.v)}</div></div></div>`).join('')}</div>
-      <h2 class="dmp-sec">Hızlı karşılaştırma</h2>
-      <table class="dmp-table"><thead><tr><th></th><th>${role === 'teacher' ? 'Free' : 'Free'}</th><th>Pro</th><th class="pre">Premium Pro</th></tr></thead>
+      <h2 class="dmp-sec">Karşılaştır</h2>
+      <table class="dmp-table"><thead><tr><th></th><th>Free</th><th>Pro</th><th class="pre">Premium</th></tr></thead>
         <tbody>${C.table.map(r => `<tr><td>${esc(r[0])}</td>${r.slice(1).map((x, k) => `<td class="${k === 2 ? 'pre' : ''} ${x === '—' ? 'no' : x === '✓' ? 'yes' : ''}">${esc(x)}</td>`).join('')}</tr>`).join('')}</tbody></table>
-      <div class="dmp-trust">${role === 'teacher'
-        ? '<span><i>🔒</i>Öğrenci verisi güvende</span><span><i>🇹🇷</i>MEB müfredatıyla uyumlu</span><span><i>💬</i>Türkçe destek</span>'
-        : '<span><i>👨‍👩‍👧</i>Veli onaylı satın alma</span><span><i>↩️</i>İstediğin an iptal</span><span><i>🔒</i>Güvenli ödeme</span>'}</div>
+      ${C.soon ? `<p class="dmp-soonline"><span class="dmp-soon">Yakında</span> ${esc(C.soon)}</p>` : ''}
       ${sellOpen ? `<p class="dmp-legal">Ödeme ${storeName} hesabından alınır. Abonelik, dönem bitmeden en az 24 saat önce iptal edilmezse aynı süreyle otomatik yenilenir. İptal ve yönetim ${storeName} hesap ayarlarındaki Abonelikler bölümünden yapılır.
         ${iosApp ? '<br><a href="https://www.apple.com/legal/internet-services/itunes/dev/stdeula/" target="_blank" rel="noopener">Kullanım Koşulları (EULA)</a> · ' : '<br>'}<a href="${BASE}gizlilik.html" target="_blank" rel="noopener">Gizlilik Politikası</a> · <a href="${BASE}kullanim-kosullari.html" target="_blank" rel="noopener">Kullanım Koşulları</a></p>
         <div class="dmp-links"><button type="button" data-restore>Satın alımları geri yükle</button>${cur !== 'free' ? '<button type="button" data-manage>Aboneliği yönet</button>' : ''}</div>` : ''}
-      ${role === 'teacher' ? '<div class="dmp-soonbox">Öğretmen paketleri çok yakında satışa açılıyor. "Yakında" yazan özellikler yayına girdikçe paketine kendiliğinden eklenecek.</div>' : ''}
     </div>
     <div class="dmp-foot"><div class="dmp-foot-in"><button type="button" class="dmp-buy${ctaTeal ? ' dmp-teal' : ''}" data-buy ${ctaDisabled || ui.busy ? 'disabled' : ''}>${esc(ui.busy ? 'Bekle…' : cta)}${ctaNote && !ui.busy ? `<small>${esc(ctaNote)}</small>` : ''}</button></div></div>`;
     const rerender = () => render(root, ctx);

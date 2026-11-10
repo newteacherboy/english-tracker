@@ -227,3 +227,38 @@
 
 /* gece modu: perdeler kendi açık zeminini korur */
 @media(max-width:360px){.dmp-hero img{width:120px;height:120px}.dmp-hero h1{font-size:26px}.dmp-price b{font-size:19px}.dmp-name{font-size:19px}}
+
+/* ---------------------------------------------------------------- sade paket ekranı (tek bakışta) */
+.dmp-in{padding-bottom:calc(112px + env(safe-area-inset-bottom,0px))}
+.dmp-bar{height:38px}
+.dmp-hero{min-height:0;margin:0 0 10px;gap:10px}
+.dmp-hero img{width:74px;height:74px;margin:0;animation:none}
+.dmp-hero h1{font-size:25px}
+.dmp-current{margin-top:5px}
+.dmp-toggle{margin:4px auto 18px}
+.dmp-plans{grid-template-columns:1fr 1fr;gap:10px;align-items:stretch}
+.dmp-plan{display:flex;flex-direction:column;align-items:flex-start;padding:14px 12px 12px;border-radius:24px;min-width:0}
+.dmp-plan .dmp-radio{position:absolute;top:12px;right:12px;width:20px;height:20px;border-width:2.5px}
+.dmp-plan[aria-checked=true] .dmp-radio:after{width:7px;height:7px}
+.dmp-plan .dmp-name{display:flex;align-items:center;gap:5px;flex:none;font-size:19px;padding-right:20px}
+.dmp-plan .dmp-name img{width:24px;height:auto}
+.dmp-plan .dmp-price{text-align:left;margin-top:6px;white-space:normal}
+.dmp-plan .dmp-price b{display:inline;font-size:21px}
+.dmp-plan .dmp-price small{display:block;margin-top:2px;font-size:11px}
+.dmp-ribbon{top:-11px;right:auto;left:12px;font-size:10.5px;padding:3px 10px}
+.dmp-keys{list-style:none;margin:10px 0 0;padding:10px 0 0;border-top:1px dashed #e4dbf7;display:grid;gap:7px;width:100%}
+.dmp-keys li{display:flex;align-items:flex-start;gap:5px;font:800 12.5px/1.25 "Nunito",system-ui;color:#2c2470}
+.dmp-keys li img{width:15px;height:auto;margin-top:1px}
+.dmp-plan.is-premium .dmp-keys{border-top-color:#f6deb0}
+.dmp-plan .dmp-tag,.dmp-plan .dmp-now{margin:10px 0 0}
+.dmp-plan .dmp-tag + .dmp-tag{margin-top:5px}
+.dmp-sec{margin:18px 0 8px;font-size:17px}
+.dmp-table{font-size:12px}
+.dmp-table th,.dmp-table td{padding:8px 4px}
+.dmp-table td:first-child,.dmp-table th:first-child{padding-left:10px;width:38%;white-space:nowrap}
+.dmp-soonline{margin:10px 2px 0;font:700 12px/1.45 "Nunito",system-ui;color:#4d6a90}
+.dmp-soonline .dmp-soon{margin:0 4px 0 0}
+.dmp-legal{margin-top:12px;font-size:10.5px;line-height:1.5}
+.dmp-buy{min-height:56px;font-size:17px}
+.dmp.is-teacher .dmp-keys li{color:#17375e}.dmp.is-teacher .dmp-keys{border-top-color:#d6e4f6}
+@media(max-width:350px){.dmp-plans{grid-template-columns:1fr}}
