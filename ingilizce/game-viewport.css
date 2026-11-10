@@ -347,3 +347,10 @@ html[data-dm-theme="day"] body .dm-game-framed :is(.dm-picker-grid[data-kind="un
  }
 }
 }
+
+/* iOS: preserve the full game viewport while moving controls below the native status bar. */
+html.dm-native-ios body .dm-vp-root{--dm-game-top:0px;--dm-game-height:100dvh}
+html.dm-native-ios body .dm-vp-root>:is(.dm-vp-back,.dm-vp-exit){top:calc(var(--dm-ios-top-safe,62px) + 6px)!important}
+html.dm-native-ios body .dm-vp-root>.game-modal-content{padding-top:calc(var(--dm-ios-top-safe,62px) + 52px)!important}
+html.dm-native-ios body .dm-game-framed{--dm-frame-height:calc(54px + var(--dm-ios-top-safe,62px))}
+html.dm-native-ios body .dm-game-framed .dm-game-frame{padding-top:var(--dm-ios-top-safe,62px)!important}

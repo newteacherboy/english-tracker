@@ -300,3 +300,6 @@ html body #yoModal.fg-fs-active .fg-ultra-tight .yo-havuz .yo-chip{min-height:31
 @media(prefers-reduced-motion:reduce){
  html body .fg-fs-active *{scroll-behavior:auto!important;transition:none!important}
 }
+
+/* Protect legacy full-screen game exit controls on iOS. */
+html.dm-native-ios body .fg-fs-active :is(.fg-fs-back,.fg-fs-close){top:calc(var(--dm-ios-top-safe,62px) + 8px)!important}
