@@ -28,14 +28,14 @@
     safeStyle.id = 'dm-ios-statusbar-safe-area';
     safeStyle.textContent = [
       '.dm-native-ios{--dm-ios-top-safe:max(env(safe-area-inset-top,0px),var(--dm-ios-top-min,0px))}',
-      '.dm-native-ios #tab-meduakis.active{box-sizing:border-box!important;padding-top:var(--dm-ios-top-safe)!important}',
-      '.dm-native-ios #tab-dunya.active .rt-top,',
-      '.dm-native-ios #tab-aktiviteler.active .gg-brand,',
-      '.dm-native-ios #tab-derscalis.active .su-levels-heading,',
-      '.dm-native-ios #tab-magaza.active .ds-header{',
-      'box-sizing:border-box!important;margin-top:var(--dm-ios-top-safe)!important}',
-      // Parkur haritasında .rt-top zaten top:var(--bi-safe-top) ile iner; iki kez kaydırılmasın.
-      '.dm-native-ios body #tab-dunya.active .bz-ic:has(.bi-scene)>.rt-top{margin-top:0!important}',
+      // Tüm ana sekmeler (Ana Sayfa, Oyunlar, Ders Çalış, Mağaza, Profil, Kulüp…) tam ekran .dc-fullscreen-overlay.
+      // Üstlerine saydam bir kenar eklenir: arka plan saat/pil çubuğunun altına uzanır, içerik ise altında başlar.
+      // Sekmenin kendi üst boşluğu korunur; yalnız güvenli alan kadar ek kaydırma yapılır.
+      '.dm-native-ios .dc-fullscreen-overlay.active:not(#tab-profil):not(:has(.bi-scene)){box-sizing:border-box!important;',
+      'border-top:var(--dm-ios-top-safe) solid transparent!important;background-clip:border-box!important}',
+      // Sayfa akışındaki ekranlar (giriş, öğretmen paneli, özet) için.
+      '.dm-native-ios body{padding-top:var(--dm-ios-top-safe)!important}',
+      // Profil (profile-forest.css) ve Parkur haritası (.bi-scene) güvenli alanı zaten kendi hesaplıyor; dokunulmaz.
       '.dm-native-ios body #bzPerde#bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game{',
       'padding-top:var(--dm-ios-top-safe)!important}',
       '.dm-native-ios #dmNetBand{top:calc(var(--dm-ios-top-safe) + 8px)!important}',
@@ -45,9 +45,17 @@
     ].join('');
     (document.head || root).appendChild(safeStyle);
     var cover = function () {
-      var m = document.querySelector('meta[name="viewport"]');
-      if (!m) { m = document.createElement('meta'); m.name = 'viewport'; m.content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no'; (document.head || root).appendChild(m); }
-      if (!/viewport-fit\s*=\s*cover/.test(m.content)) m.content = m.content.replace(/\s*,?\s*viewport-fit\s*=\s*\w+/g, '') + ', viewport-fit=cover';
+      // Sayfada birden çok viewport etiketi olabilir (bu dosya <head> başında, asıl etiket sonra gelir);
+      // WebKit sonuncuyu kullandığı için hepsine viewport-fit=cover eklenir.
+      var ms = document.querySelectorAll('meta[name="viewport"]');
+      if (!ms.length) {
+        var m = document.createElement('meta'); m.name = 'viewport';
+        m.content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no';
+        (document.head || root).appendChild(m); ms = [m];
+      }
+      for (var i = 0; i < ms.length; i++) {
+        if (!/viewport-fit\s*=\s*cover/.test(ms[i].content)) ms[i].content = ms[i].content.replace(/\s*,?\s*viewport-fit\s*=\s*\w+/g, '') + ', viewport-fit=cover';
+      }
     };
     var measure = function () {
       cover();
@@ -61,7 +69,7 @@
       root.style.setProperty('--dm-ios-top-min', real > 0 ? '0px' : guess + 'px');
       window.dmIosSafeTop = real > 0 ? real : guess;
     };
-    cover();
+    if (document.readyState !== 'loading') measure();
     document.addEventListener('DOMContentLoaded', function () { measure(); setTimeout(measure, 400); });
     window.addEventListener('load', function () { setTimeout(measure, 300); });
     window.addEventListener('resize', measure);
