@@ -1,9 +1,9 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.57.0';
 const ORIGIN='https://app.dijimedu.com';
 const HEADERS={'Content-Type':'application/json','Access-Control-Allow-Origin':ORIGIN,'Access-Control-Allow-Methods':'GET,POST,OPTIONS','Access-Control-Allow-Headers':'content-type,authorization,apikey','Cache-Control':'no-store','Vary':'Origin'};
-const holidays=['23-nisan','19-mayis','30-agustos','29-ekim','10-kasim','15-temmuz','ramazan-ayi','ramazan-bayrami','kurban-bayrami'];
+const holidays=['23-nisan','19-mayis','30-agustos','29-ekim','10-kasim','24-kasim','15-temmuz','ramazan-ayi','ramazan-bayrami','kurban-bayrami'];
 const names={ '23-nisan':'23 Nisan', '19-mayis':'19 Mayıs', '30-agustos':'30 Ağustos', '29-ekim':'29 Ekim','10-kasim':'10 Kasım','15-temmuz':'15 Temmuz','ramazan-ayi':'Ramazan ayı','ramazan-bayrami':'Ramazan Bayramı','kurban-bayrami':'Kurban Bayramı'};
-const variants={'23-nisan':['23-nisan-1.jpg','23-nisan-2.jpg'],'19-mayis':['19-mayis-1.jpg','19-mayis-2.jpg'],'30-agustos':['30-agustos-1.jpg','30-agustos-2.jpg'],'29-ekim':['29-ekim-1.jpg','29-ekim-2.jpg'],'10-kasim':['10-kasim-1.jpg','10-kasim-2.jpg'],'15-temmuz':['15-temmuz-1.jpg'],'ramazan-ayi':['ramazan-ayi-2.jpg'],'ramazan-bayrami':['ramazan-bayrami-1.jpg'],'kurban-bayrami':['kurban-bayrami-2.jpg']};
+const variants={'23-nisan':['23-nisan-1.jpg','23-nisan-2.jpg'],'19-mayis':['19-mayis-1.jpg','19-mayis-2.jpg'],'30-agustos':['30-agustos-1.jpg','30-agustos-2.jpg'],'29-ekim':['29-ekim-1.jpg','29-ekim-2.jpg'],'10-kasim':['10-kasim-1.jpg','10-kasim-2.jpg'],'24-kasim':['24-kasim-1.jpg'],'15-temmuz':['15-temmuz-1.jpg'],'ramazan-ayi':['ramazan-ayi-2.jpg'],'ramazan-bayrami':['ramazan-bayrami-1.jpg'],'kurban-bayrami':['kurban-bayrami-2.jpg']};
 const defaults={mode:'auto',disabled:[],manual:null};
 const response=(data,status=200)=>new Response(JSON.stringify(data),{status,headers:HEADERS});
 Deno.serve(async(req)=>{
@@ -27,7 +27,7 @@ Deno.serve(async(req)=>{
   const verified=await allowed.json().catch(()=>({}));
   if(!allowed.ok||verified?.ok!==true||!Array.isArray(verified.items))return response({ok:false,message:'Yalnızca yönetici teacher hesabı değiştirebilir.'},403);
   const value=body.config;
-  if(!value||!['auto','normal','manual'].includes(value.mode)||!Array.isArray(value.disabled)||value.disabled.length>9||value.disabled.some((x)=>!holidays.includes(x))||new Set(value.disabled).size!==value.disabled.length)return response({ok:false,message:'Geçersiz animasyon ayarları'},400);
+  if(!value||!['auto','normal','manual'].includes(value.mode)||!Array.isArray(value.disabled)||value.disabled.length>holidays.length||value.disabled.some((x)=>!holidays.includes(x))||new Set(value.disabled).size!==value.disabled.length)return response({ok:false,message:'Geçersiz animasyon ayarları'},400);
   const manual=value.manual;
   if(value.mode==='manual'&&(!manual||!variants[manual.id]||!variants[manual.id].includes(manual.file)))return response({ok:false,message:'Geçerli özel gün ve görsel seç'},400);
   if(manual&&(!variants[manual.id]||!variants[manual.id].includes(manual.file)))return response({ok:false,message:'Geçersiz görsel'},400);
