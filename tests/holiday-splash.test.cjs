@@ -75,13 +75,15 @@ test('head scripts execute before visible splash; assets are local and CSS block
  }
 });
 
-test('approved art uses its illustrated bar and hides any cached overlay',()=>{
+test('prior art hides illustrated overlays; 24 November adds one truthful boot track',()=>{
  const style=fs.readFileSync('ingilizce/holiday-splashes/splash.css','utf8');
  assert.match(style,/background-size:cover/);
  assert.match(style,/background-size:contain/);
  assert.match(style,/html\.dm-holiday-active \.dm-holiday-progress\{display:none!important\}/);
  assert.doesNotMatch(style,/dm-holiday-progress-fill/);
- for(const [file,expectedLink] of [['index.html','ingilizce/holiday-splashes/splash.css?v=20261023-fullscreen-1'],['ingilizce/index.html','holiday-splashes/splash.css?v=20261023-fullscreen-1']]){
+ assert.match(style,/data-dm-holiday="24-kasim"/);
+ assert.match(style,/var\(--dm-papi-progress,0%\)/);
+ for(const [file,expectedLink] of [['index.html','ingilizce/holiday-splashes/splash.css?v=20261111-teachers-1'],['ingilizce/index.html','holiday-splashes/splash.css?v=20261023-fullscreen-1']]){
   assert(fs.readFileSync(file,'utf8').includes(expectedLink));
  }
 });
