@@ -14,6 +14,27 @@
   if (!native) return;
 
   document.documentElement.classList.add('dm-native-app');
+  // Capacitor's iOS WKWebView can report a zero CSS safe-area inset even while
+  // the native status bar overlaps web content (notably on notched iPhones).
+  // Scope the fallback strictly to the iOS App Store shell; never shift web/TWA.
+  if (window.dmIosUygulama) {
+    document.documentElement.classList.add('dm-native-ios');
+    var safeStyle = document.createElement('style');
+    safeStyle.id = 'dm-ios-statusbar-safe-area';
+    safeStyle.textContent = [
+      '.dm-native-ios{--dm-ios-top-safe:max(62px, env(safe-area-inset-top, 0px))}',
+      '.dm-native-ios #tab-meduakis.active{box-sizing:border-box!important;padding-top:var(--dm-ios-top-safe)!important}',
+      '.dm-native-ios #tab-dunya.active .rt-top,',
+      '.dm-native-ios #tab-aktiviteler.active .gg-brand,',
+      '.dm-native-ios #tab-derscalis.active .su-levels-heading,',
+      '.dm-native-ios #tab-magaza.active .ds-header{',
+      'box-sizing:border-box!important;margin-top:var(--dm-ios-top-safe)!important}',
+      '.dm-native-ios body #bzPerde#bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game{',
+      'padding-top:var(--dm-ios-top-safe)!important}',
+      '.dm-native-ios #dmNetBand{top:calc(var(--dm-ios-top-safe) + 8px)!important}'
+    ].join('');
+    (document.head || document.documentElement).appendChild(safeStyle);
+  }
 
   function plugin(name) {
     try { return (C.Plugins && C.Plugins[name]) || (C.registerPlugin && C.registerPlugin(name)) || null; } catch (_) { return null; }
