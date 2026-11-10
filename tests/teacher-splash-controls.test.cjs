@@ -31,3 +31,12 @@ test('backend requires server-validated teacher owner and restricts allowed art'
  assert(s.includes('!Array.isArray(verified.items)'));
  assert(s.includes('variants[manual.id].includes(manual.file)'));
 });
+test('24 Kasım artwork is manual-only: selectable, never automatic',()=>{
+ const r=mod.prefResolve(date,calendar,{mode:'manual',disabled:[],manual:{id:'24-kasim',file:'24-kasim-1.jpg'}});
+ assert.equal(r.file,'24-kasim-1.jpg');
+ assert.ok(fs.existsSync('ingilizce/holiday-splashes/24-kasim-1.jpg'));
+ assert.ok(!mod.holidays.some(h=>h.id==='24-kasim'));
+ for(const d of ['2026-11-21','2026-11-24','2026-11-27','2027-11-24'])assert.notEqual(mod.prefResolve(d+'T12:00:00+03:00',calendar,{mode:'auto',disabled:[]})?.id,'24-kasim');
+ const b=fs.readFileSync('supabase/functions/splash-settings/index.ts','utf8');
+ assert(b.includes("'24-kasim':['24-kasim-1.jpg']"));
+});
