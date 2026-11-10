@@ -43,8 +43,8 @@ html.dm-holiday-active[data-dm-holiday="24-kasim"] :is(#splashEkrani,#dmBootSpla
  border:2px solid rgba(24,62,107,.8)!important;box-shadow:0 2px 14px #173d6f99!important;
 }
 html.dm-holiday-active[data-dm-holiday="24-kasim"] :is(#splashEkrani,#dmBootSplash,#oturumYuklemeOverlay) .dm-papi-loading::after{
- left:calc(50% - min(38vw,170px) + min(76vw,340px) * var(--dm-papi-progress-number,0) / 200)!important;
- width:calc(min(76vw,340px) * var(--dm-papi-progress-number,0) / 100)!important;
+ left:calc(50% - min(38vw,170px))!important;
+ width:var(--dm-papi-progress,0%)!important;max-width:min(76vw,340px)!important;
  background:linear-gradient(90deg,#ffcc39,#ff8e24)!important;
  transform:none!important;box-shadow:0 1px 6px #80542277!important;
 }
