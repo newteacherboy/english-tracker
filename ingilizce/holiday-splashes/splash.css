@@ -25,3 +25,26 @@ html.dm-holiday-active .dm-holiday-progress{display:none!important}
   background-repeat:no-repeat;background-size:contain;
  }
 }
+
+/* 24 Kasım: static selected scene with the existing truthful startup progress. */
+html.dm-holiday-active[data-dm-holiday="24-kasim"] :is(#splashEkrani,#dmBootSplash,#oturumYuklemeOverlay) .dm-papi-loading{
+ position:absolute!important;inset:0!important;width:100%!important;height:100%!important;
+ z-index:4!important;pointer-events:none!important;
+}
+html.dm-holiday-active[data-dm-holiday="24-kasim"] :is(#splashEkrani,#dmBootSplash,#oturumYuklemeOverlay) .dm-papi-loading > *{display:none!important}
+html.dm-holiday-active[data-dm-holiday="24-kasim"] :is(#splashEkrani,#dmBootSplash,#oturumYuklemeOverlay) .dm-papi-loading::before,
+html.dm-holiday-active[data-dm-holiday="24-kasim"] :is(#splashEkrani,#dmBootSplash,#oturumYuklemeOverlay) .dm-papi-loading::after{
+ content:"";position:absolute!important;display:block!important;left:50%!important;
+ bottom:max(7%,env(safe-area-inset-bottom,0px) + 24px)!important;
+ height:10px!important;border-radius:20px!important;transform:translateX(-50%)!important;
+}
+html.dm-holiday-active[data-dm-holiday="24-kasim"] :is(#splashEkrani,#dmBootSplash,#oturumYuklemeOverlay) .dm-papi-loading::before{
+ width:min(76vw,340px)!important;background:rgba(255,255,255,.9)!important;
+ border:2px solid rgba(24,62,107,.8)!important;box-shadow:0 2px 14px #173d6f99!important;
+}
+html.dm-holiday-active[data-dm-holiday="24-kasim"] :is(#splashEkrani,#dmBootSplash,#oturumYuklemeOverlay) .dm-papi-loading::after{
+ left:calc(50% - min(38vw,170px) + min(76vw,340px) * var(--dm-papi-progress-number,0) / 200)!important;
+ width:calc(min(76vw,340px) * var(--dm-papi-progress-number,0) / 100)!important;
+ background:linear-gradient(90deg,#ffcc39,#ff8e24)!important;
+ transform:none!important;box-shadow:0 1px 6px #80542277!important;
+}
