@@ -29,9 +29,11 @@ test('Pro members can only upgrade; Premium Pro members see nothing to buy', () 
   const asPremium = planCards({ role: 'student', plan: 'premium_pro', products, storeProducts: store });
   assert.deepEqual(asPremium.map(c => c.action), ['none', 'none', 'current']);
 });
-test('teacher plans are shown but not sold until panel features exist', () => {
+test('teacher plans are on sale when the store offers them', () => {
   const t = [{ id: 'teacher_pro', plan: 'pro', name: 'Öğretmen Pro', listPrice: { aylik: 59, yillik: 490 } }];
-  assert.equal(planCards({ role: 'teacher', plan: 'free', products: t })[1].action, 'soon');
+  assert.equal(planCards({ role: 'teacher', plan: 'free', products: t })[1].action, 'unavailable');
+  const store = [{ id: 'teacher_pro', offers: [{ basePlanId: 'aylik', phases: [{ price: '59 TL', micros: 59000000 }] }] }];
+  assert.equal(planCards({ role: 'teacher', plan: 'free', products: t, storeProducts: store })[1].action, 'buy');
 });
 test('parent gate needs the exact product', () => {
   const g = parentGate(() => 0);

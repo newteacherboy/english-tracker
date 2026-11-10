@@ -296,17 +296,17 @@
     style(); closePlans(); closeSheet();
     const b = billing();
     let status = b?.status || null;
-    const role0 = status?.role || (W.dmTeacherPortalMode || teacher() && name().toLowerCase() === 'teacher' ? 'teacher' : 'student');
+    const role0 = W.dmTeacherPortalMode ? 'teacher' : status?.role || (teacher() && name().toLowerCase() === 'teacher' ? 'teacher' : 'student');
     const ui = { period: 'yillik', pick: want === 'pro' ? 'pro' : 'premium_pro', products: [], busy: false, gate: null, msg: '', err: false };
     screen = html(`<div class="dmp${role0 === 'teacher' ? ' is-teacher' : ''}" role="dialog" aria-modal="true" aria-label="Paketler" data-source="${esc(source)}"><div class="dmp-in"><p class="dmp-msg">Paketler yükleniyor…</p></div></div>`);
     D.body.append(screen); D.documentElement.style.overflow = 'hidden';
     screen.addEventListener('keydown', e => { if (e.key === 'Escape') closePlans(); });
-    try { status = b ? (await b.refresh()) || b.status : await call({ action: 'status' }, role0); } catch (e) { status = status || null; }
+    try { status = b && role0 !== 'teacher' ? (await b.refresh()) || b.status : await call({ action: 'status' }, role0); } catch (e) { status = role0 === 'teacher' ? null : status; }
     if (!screen) return;
     const role = status?.role === 'teacher' ? 'teacher' : role0;
     screen.classList.toggle('is-teacher', role === 'teacher');
     const p = b && plugin();
-    if (p && status?.canBuy && role !== 'teacher') {
+    if (p && status?.canBuy) {
       try { ui.products = (await p.getProducts({ ids: (status.products || []).map(x => x.id) })).products || []; } catch {}
     }
     if (!screen) return;
@@ -316,7 +316,7 @@
   function render(root, ctx) {
     const { role, status, ui } = ctx;
     const C = role === 'teacher' ? TEACHER : STUDENT, cur = status?.plan || 'free';
-    const iosApp = ios(), sellOpen = role !== 'teacher' && !!billing() && !!status?.canBuy;
+    const iosApp = ios(), sellOpen = !!billing() && !!status?.canBuy;
     // App Store: satışı olmayan planın fiyatı iPhone'da yazılmaz.
     const showPrice = !(iosApp && !sellOpen);
     const byId = Object.fromEntries((ui.products || []).map(x => [x.id, x]));
@@ -343,8 +343,8 @@
     const pickPl = C.plans.find(x => x.plan === ui.pick) || C.plans[1];
     const pr = priceOf(pickPl);
     let cta, ctaNote = '', ctaDisabled = false, ctaTeal = role === 'teacher';
-    if (role === 'teacher') { cta = 'Öğretmen paketleri çok yakında'; ctaNote = 'Şimdilik ücretsiz planla devam edebilirsin.'; ctaDisabled = true; }
-    else if (!sellOpen) { cta = 'Paketler uygulamada satışta'; ctaNote = 'Satın alma Diji Medu mobil uygulamasından yapılır.'; ctaDisabled = true; }
+    const refresh = async () => role === 'teacher' ? call({ action: 'status' }, 'teacher') : billing().refresh();
+    if (!sellOpen) { cta = 'Paketler uygulamada satışta'; ctaNote = 'Satın alma Diji Medu mobil uygulamasından yapılır.'; ctaDisabled = true; }
     else if (cur === ui.pick) { cta = 'Bu paket sende açık 🎉'; ctaDisabled = true; }
     else { cta = `${pickPl.name}'ya geç`; ctaNote = `${pr.text} / ${ui.period === 'yillik' ? 'yıl' : 'ay'} · İstediğin zaman iptal edebilirsin`; if (!pr.available && ctx.p) { cta = 'Bu paket şu an satışta değil'; ctaDisabled = true; } }
     const storeName = iosApp ? 'App Store' : 'Google Play';
@@ -372,6 +372,7 @@
     const say = (m, err = false) => { ui.msg = m; ui.err = err; rerender(); };
     root.querySelector('[data-buy]').onclick = () => {
       if (!sellOpen || ui.busy) return;
+      if (role === 'teacher') { void buy(ctx, pickPl.id, say, rerender); return; }
       ui.gate = gateQ(); ui.msg = ''; rerender();
       const input = root.querySelector('.dmp-gate input'); input?.focus(); input?.scrollIntoView({ block: 'center', behavior: 'smooth' });
     };
@@ -385,12 +386,25 @@
     });
     root.querySelector('[data-restore]')?.addEventListener('click', async () => {
       say('Kontrol ediliyor…');
-      try { const n = await billing().restore({ quiet: false }); ctx.status = (await billing().refresh()) || ctx.status; say(n ? 'Aboneliğin hesabına bağlandı.' : `Bu ${iosApp ? 'Apple Kimliğinde' : 'Google hesabında'} etkin abonelik bulunamadı.`); }
+      try { const n = await restoreAll(ctx); ctx.status = (await refresh()) || ctx.status; say(n ? 'Aboneliğin hesabına bağlandı.' : `Bu ${iosApp ? 'Apple Kimliğinde' : 'Google hesabında'} etkin abonelik bulunamadı.`); }
       catch (e) { say(e?.message || 'Geri yükleme yapılamadı.', true); }
     });
     root.querySelector('[data-manage]')?.addEventListener('click', () => { ctx.p?.manage?.({ productId: ctx.status?.entitlements?.[0]?.product_key || '' }).catch(() => {}); });
   }
 
+  const statusOf = ctx => ctx.role === 'teacher' ? call({ action: 'status' }, 'teacher') : billing().refresh();
+  // Cihazdaki abonelikleri bu hesaba (öğrenci ya da öğretmen) yeniden bağlar.
+  async function restoreAll(ctx) {
+    const apple = ios(); let n = 0;
+    const { purchases = [] } = await ctx.p.restore();
+    for (const x of purchases) {
+      const productId = (x.products || [])[0];
+      if (!x.purchaseToken || x.state !== 'purchased' || !(ctx.status?.products || []).some(pr => pr.id === productId)) continue;
+      await call(apple ? { action: 'verifyApple', productId, signedTransaction: x.purchaseToken } : { action: 'verify', productId, purchaseToken: x.purchaseToken }, ctx.role); n++;
+    }
+    if (ctx.role !== 'teacher') await billing().refresh();
+    return n;
+  }
   async function buy(ctx, productId, say, rerender) {
     const p = ctx.p, b = billing(), apple = ios();
     if (!p || !b) return say('Satın alma şu an kullanılamıyor.', true);
@@ -398,18 +412,18 @@
     try {
       const st = ctx.status;
       let oldPurchaseToken = null;
-      const current = (st.entitlements || []).find(e => e.provider === 'google');
+      const current = (st.entitlements || []).find(e => e.provider === 'google' && (st.products || []).some(pr => pr.id === e.product_key));
       if (current && !apple) { const { purchases = [] } = await p.restore().catch(() => ({})); oldPurchaseToken = purchases.find(x => (x.products || []).includes(current.product_key))?.purchaseToken || null; }
       const result = await p.purchase({ productId, basePlanId: ctx.ui.period, accountRef: st.accountRef, ...(oldPurchaseToken ? { oldPurchaseToken } : {}) });
       if (result.canceled) { ctx.ui.busy = false; say(''); return; }
-      if (result.alreadyOwned) { await b.restore({ quiet: false }); ctx.status = (await b.refresh()) || st; ctx.ui.busy = false; say('Bu abonelik zaten senin. Hesabına bağlandı.'); return; }
+      if (result.alreadyOwned) { await restoreAll(ctx); ctx.status = (await statusOf(ctx)) || st; ctx.ui.busy = false; say('Bu abonelik zaten senin. Hesabına bağlandı.'); return; }
       const purchase = (result.purchases || []).find(x => (x.products || []).includes(productId));
       if (purchase?.state === 'pending') { ctx.ui.busy = false; say('Ödeme onay bekliyor. Onaylanınca paketin otomatik açılır.'); return; }
       if (!purchase?.purchaseToken || purchase.state !== 'purchased') throw Error('Satın alma tamamlanamadı.');
       await call(apple ? { action: 'verifyApple', productId, signedTransaction: purchase.purchaseToken } : { action: 'verify', productId, purchaseToken: purchase.purchaseToken }, ctx.role);
-      ctx.status = (await b.refresh()) || st;
+      ctx.status = (await statusOf(ctx)) || st;
       ctx.ui.busy = false;
-      say('Teşekkürler! ' + (ctx.status?.plan === 'premium_pro' ? 'Premium Pro' : 'Pro') + ' paketin açıldı. 🎉');
+      say('Teşekkürler! ' + (ctx.status?.plan === 'premium_pro' ? 'Premium Pro' : 'Pro') + ' paketin açıldı. 🎉'); if (ctx.role === 'teacher') W.dispatchEvent(new CustomEvent('dm:teacher-plan', { detail: ctx.status }));
     } catch (e) { ctx.ui.busy = false; say(e?.message || 'Satın alma tamamlanamadı.', true); }
   }
 
