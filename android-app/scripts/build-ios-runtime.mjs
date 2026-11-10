@@ -7,7 +7,7 @@ import { fileURLToPath } from 'node:url';
 const app = fileURLToPath(new URL('..', import.meta.url));
 const out = path.resolve(process.argv[2] || path.join(app, '../ios-app/native/native-runtime.js'));
 await build({
-  entryPoints: [path.join(app, 'src/runtime.js')], outfile: out,
+  entryPoints: [path.join(app, 'src/boot.js')], outfile: out,
   define: { DM_PRODUCTION_ADS: JSON.stringify(process.env.DM_PRODUCTION_ADS === '1') },
   bundle: true, format: 'iife', platform: 'browser', target: ['safari15'], minify: true,
 });

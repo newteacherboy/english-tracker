@@ -1,0 +1,6 @@
+{
+  "_not": "Zorunlu/önerilen güncelleme. min altındaki sürümler uygulamayı kullanamaz, latest altındakilere 3 günde bir kapatılabilir öneri çıkar. 0 = kapalı.",
+  "android": { "min": "0", "latest": "0", "url": "https://play.google.com/store/apps/details?id=com.dijimedu.ingilizce" },
+  "ios": { "min": "0", "latest": "0", "url": "https://apps.apple.com/app/id6828143078" },
+  "mesaj": "Diji Medu'nun yeni sürümü hazır. Devam etmek için uygulamayı güncelle."
+}

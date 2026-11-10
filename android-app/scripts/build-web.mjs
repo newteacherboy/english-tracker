@@ -14,7 +14,7 @@ await rm(out, { recursive: true, force: true });
 await mkdir(path.join(out, 'ingilizce'), { recursive: true });
 // İçerik canlı siteden gelir (capacitor.config.json → server.url). Pakette yalnız yerel katman ve çevrimdışı sayfası kalır.
 await build({
-  entryPoints: [path.join(app, 'src/runtime.js')],
+  entryPoints: [path.join(app, 'src/boot.js')],
   outfile: path.join(out, 'ingilizce/android-runtime.js'),
   define: { DM_PRODUCTION_ADS: JSON.stringify(production) },
   bundle: true,
@@ -22,8 +22,6 @@ await build({
   platform: 'browser',
   target: ['chrome110'],
   minify: true,
-  banner: { js: 'if (window === window.top && location.origin === "https://app.dijimedu.com") { window.dmNativeRuntime = true;' },
-  footer: { js: '}' },
 });
 const offline = '<!doctype html><html lang="tr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Diji Medu</title><style>body{margin:0;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;background:#FAF8F5;color:#07535b;font:16px system-ui;text-align:center;padding:24px;box-sizing:border-box}h1{font-size:20px;margin:0}p{margin:0;color:#3d5a5e}button{border:0;border-radius:14px;padding:13px 22px;background:#0f766e;color:#fff;font:700 16px system-ui}</style></head><body><div style="font-size:54px">🦜</div><h1>İnternet bağlantısı yok</h1><p>Diji Medu’yu kullanmak için internete bağlan, sonra tekrar dene.</p><button onclick="location.href=\'https://app.dijimedu.com/ingilizce/index.html\'">Tekrar dene</button></body></html>';
 await writeFile(path.join(out, 'offline.html'), offline);

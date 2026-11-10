@@ -1,4 +1,5 @@
 import Foundation
+import UIKit
 import Capacitor
 import StoreKit
 
@@ -18,7 +19,8 @@ public class DmBillingPlugin: CAPPlugin, CAPBridgedPlugin {
         CAPPluginMethod(name: "getProducts", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "purchase", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "restore", returnType: CAPPluginReturnPromise),
-        CAPPluginMethod(name: "manage", returnType: CAPPluginReturnPromise)
+        CAPPluginMethod(name: "manage", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "requestReview", returnType: CAPPluginReturnPromise)
     ]
     private static let periods = ["aylik", "yillik"]
     private var updates: Task<Void, Never>?
@@ -127,6 +129,17 @@ public class DmBillingPlugin: CAPPlugin, CAPBridgedPlugin {
             guard let scene = self.bridge?.viewController?.view.window?.windowScene else { call.reject("Ekran hazır değil."); return }
             do { try await AppStore.showManageSubscriptions(in: scene); call.resolve() }
             catch { call.reject("Abonelik ekranı açılamadı.") }
+        }
+    }
+
+    // App Store puanlama penceresi (Apple yılda en fazla 3 kez gösterir, ne zaman göstereceğine kendisi karar verir).
+    @objc func requestReview(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            guard let scene = UIApplication.shared.connectedScenes.first(where: { $0.activationState == .foregroundActive }) as? UIWindowScene else {
+                call.resolve(["shown": false]); return
+            }
+            if #available(iOS 16.0, *) { AppStore.requestReview(in: scene) } else { SKStoreReviewController.requestReview(in: scene) }
+            call.resolve(["shown": true])
         }
     }
 }

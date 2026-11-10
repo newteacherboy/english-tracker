@@ -23,10 +23,15 @@ import { createPush } from './push.js';
 // (1.0 kabuğu bu dosyayı hiç yüklemez). Genel adlar (dmAndroid*) web kodu değişmesin diye korunur.
 const platform = Capacitor.getPlatform();
 const ios = platform === 'ios';
-if (Capacitor.isNativePlatform() && (platform === 'android' || (ios && Capacitor.isPluginAvailable('DmBilling'))) && !window.dmAndroidShell) {
+// Kabuk (1.3+/1.1+) bu dosyayı önce siteden (ingilizce/native/runtime-*.js) yükler; açılmazsa paketteki kopyayı çalıştırır.
+// Böylece reklam kimlikleri, reklam/abonelik kuralları ve bu katmandaki düzeltmeler yeni sürüm gerektirmez.
+export function startRuntime(source = 'paket') {
+if (!(Capacitor.isNativePlatform() && (platform === 'android' || (ios && Capacitor.isPluginAvailable('DmBilling'))) && !window.dmAndroidShell)) return false;
+{
   const units = ios ? adConfig.ios.units : adConfig.units;
   const live = production && (!ios || adConfig.ios.productionEnabled === true);
-  window.dmAndroidShell = { version: 6, platform, ads: live?'production':'test', rewards: REWARDS };
+  window.dmAndroidShell = { version: 7, platform, source, shellBuild: Number(window.dmShellBuild) || 0, ads: live?'production':'test', rewards: REWARDS };
+  installExtras();
   window.dmAndroidIsTeacher = () => { try { return isTeacherSession({ portal: !!window.dmTeacherPortalMode, classroomPlayer: typeof siniftaOynananOgrenci !== 'undefined' && siniftaOynananOgrenci, name: typeof aktifOgrenciAdi === 'undefined' ? '' : aktifOgrenciAdi }); } catch { return true; } };
   window.dmAndroidStudentName = () => { try { return typeof aktifOgrenciAdi === 'undefined' ? '' : String(aktifOgrenciAdi || ''); } catch { return ''; } };
   window.dmAndroidGoldBalance = () => { try { return typeof yo !== 'undefined' && yo ? Number(yo.altin) : NaN; } catch { return NaN; } };
@@ -167,4 +172,46 @@ if (Capacitor.isNativePlatform() && (platform === 'android' || (ios && Capacitor
     window.addEventListener('dm:ad-settings', attach);
     attach();
   });
+}
+return true;
+}
+
+// Paylaşma, mağaza puanı ve bağlantıdan açılma. Yalnız eklentisi olan kabuklarda çalışır.
+function installExtras() {
+  const has = name => { try { return Capacitor.isPluginAvailable(name); } catch { return false; } };
+  // Android WebView'da navigator.share yok: yerel paylaşım penceresine bağlanır.
+  if (has('Share') && typeof navigator.share !== 'function') {
+    const Share = registerPlugin('Share');
+    try {
+      navigator.share = async (data = {}) => {
+        const r = await Share.share({ title: data.title || '', text: data.text || '', url: data.url || undefined, dialogTitle: 'Paylaş' });
+        return r;
+      };
+      navigator.canShare = () => true;
+    } catch {}
+  }
+  window.dmNativeShare = has('Share') ? (data => registerPlugin('Share').share(data)) : null;
+  // Mağaza puan penceresi (Google/Apple ne zaman gösterileceğine kendileri karar verir).
+  window.dmRequestReview = async () => {
+    if (!has('DmBilling')) return { shown: false };
+    try { const p = registerPlugin('DmBilling'); return typeof p.requestReview === 'function' ? await p.requestReview() : { shown: false }; }
+    catch { return { shown: false }; }
+  };
+  // E-posta vb. bağlantılar: app.dijimedu.com/ingilizce/... uygulamada açılır.
+  const open = raw => {
+    try {
+      const u = new URL(raw);
+      if (u.hostname !== 'app.dijimedu.com' || !u.pathname.startsWith('/ingilizce')) return;
+      if (u.href === location.href) return;
+      location.href = u.href;
+    } catch {}
+  };
+  void App.addListener('appUrlOpen', e => open(e?.url));
+  App.getLaunchUrl?.().then(r => {
+    const url = r?.url; if (!url) return;
+    let done = ''; try { done = sessionStorage.getItem('dm_launch_url') || ''; } catch {}
+    if (done === url) return;
+    try { sessionStorage.setItem('dm_launch_url', url); } catch {}
+    open(url);
+  }).catch(() => {});
 }
