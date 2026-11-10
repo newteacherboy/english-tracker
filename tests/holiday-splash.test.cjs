@@ -35,6 +35,14 @@ test('10 Kasım active 2 days prior and 1 after',()=>{
  assert.equal(at('2027-11-11').file,'10-kasim-1.jpg');
  assert.equal(at('2027-11-12'),null);
 });
+test('24 Kasım single design is active 21–27 November each year',()=>{
+ assert.equal(at('2026-11-20'),null);
+ assert.equal(at('2026-11-21').file,'24-kasim-1.jpg');
+ assert.equal(at('2026-11-24').file,'24-kasim-1.jpg');
+ assert.equal(at('2026-11-27').file,'24-kasim-1.jpg');
+ assert.equal(at('2026-11-28'),null);
+ assert.equal(at('2027-11-24').file,'24-kasim-1.jpg');
+});
 test('15 Temmuz two days before and after',()=>{
  assert.equal(at('2027-07-13').file,'15-temmuz-1.jpg');
  assert.equal(at('2027-07-17').file,'15-temmuz-1.jpg');
@@ -62,7 +70,7 @@ test('head scripts execute before visible splash; assets are local and CSS block
   assert(marker<head.indexOf(prefix+'holiday-splashes/splash.css'));
  }
  for(const entry of app.holidays){
-  const files=entry.variants===2?[entry.id+'-1.jpg',entry.id+'-2.jpg']:[({ '15-temmuz':'15-temmuz-1.jpg','ramazan-ayi':'ramazan-ayi-2.jpg','ramazan-bayrami':'ramazan-bayrami-1.jpg','kurban-bayrami':'kurban-bayrami-2.jpg'})[entry.id]];
+  const files=entry.variants===2?[entry.id+'-1.jpg',entry.id+'-2.jpg']:[({ '24-kasim':'24-kasim-1.jpg','15-temmuz':'15-temmuz-1.jpg','ramazan-ayi':'ramazan-ayi-2.jpg','ramazan-bayrami':'ramazan-bayrami-1.jpg','kurban-bayrami':'kurban-bayrami-2.jpg'})[entry.id]];
   for(const file of files)assert(fs.statSync('ingilizce/holiday-splashes/'+file).size>10000,'Missing '+file);
  }
 });
