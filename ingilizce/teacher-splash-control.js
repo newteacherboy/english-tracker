@@ -1,7 +1,9 @@
 (()=>{'use strict';
  const endpoint='https://nxfqlutulxqzqgwewssd.supabase.co/functions/v1/splash-settings';
- const names={'23-nisan':'23 Nisan','19-mayis':'19 Mayıs','30-agustos':'30 Ağustos','29-ekim':'29 Ekim','10-kasim':'10 Kasım','15-temmuz':'15 Temmuz','ramazan-ayi':'Ramazan ayı','ramazan-bayrami':'Ramazan Bayramı','kurban-bayrami':'Kurban Bayramı'};
- const available={'23-nisan':[1,2],'19-mayis':[1,2],'30-agustos':[1,2],'29-ekim':[1,2],'10-kasim':[1,2],'15-temmuz':[1],'ramazan-ayi':[2],'ramazan-bayrami':[1],'kurban-bayrami':[2]};
+ const names={'23-nisan':'23 Nisan','19-mayis':'19 Mayıs','30-agustos':'30 Ağustos','29-ekim':'29 Ekim','10-kasim':'10 Kasım','15-temmuz':'15 Temmuz','ramazan-ayi':'Ramazan ayı','ramazan-bayrami':'Ramazan Bayramı','kurban-bayrami':'Kurban Bayramı','24-kasim':'24 Kasım Öğretmenler Günü'};
+ const available={'23-nisan':[1,2],'19-mayis':[1,2],'30-agustos':[1,2],'29-ekim':[1,2],'10-kasim':[1,2],'15-temmuz':[1],'ramazan-ayi':[2],'ramazan-bayrami':[1],'kurban-bayrami':[2],'24-kasim':[1]};
+ // Only offered as a manual choice; not part of the automatic calendar toggles.
+ const manualOnly=new Set(['24-kasim']);
  const teacher=()=>{try{return JSON.parse(sessionStorage.getItem('dm_tp_session')||'null')}catch{return null}};
  const isOwner=()=>document.documentElement.classList.contains('dm-teacher-portal')&&teacher()?.name==='teacher'&&!!teacher()?.teacherToken;
  async function request(method='GET',data=null){
@@ -25,7 +27,7 @@
   request().then(data=>{
    const initial=data.config||{mode:'auto',disabled:[],manual:null};
    body.hidden=false;feedback.textContent='';
-   const choices=Object.entries(names).map(([id,name])=>'<label class="dm-splash-row"><input type="checkbox" data-holiday="'+id+'" '+(!initial.disabled?.includes(id)?'checked':'')+'><span>'+esc(name)+'</span><small>'+(available[id].length===2?'Her yıl değişen iki tasarım':'Tek tasarım')+'</small></label>').join('');
+   const choices=Object.entries(names).filter(([id])=>!manualOnly.has(id)).map(([id,name])=>'<label class="dm-splash-row"><input type="checkbox" data-holiday="'+id+'" '+(!initial.disabled?.includes(id)?'checked':'')+'><span>'+esc(name)+'</span><small>'+(available[id].length===2?'Her yıl değişen iki tasarım':'Tek tasarım')+'</small></label>').join('');
    const options=Object.entries(names).map(([id,name])=>available[id].map(n=>'<option value="'+id+'-'+n+'.jpg">'+esc(name)+' — Tasarım '+n+'</option>').join('')).join('');
    body.innerHTML='<fieldset class="dm-splash-modes"><legend>Gösterim modu</legend><label><input type="radio" name="dmSplashMode" value="auto"> Otomatik takvim</label><label><input type="radio" name="dmSplashMode" value="normal"> Normal Papi girişi</label><label><input type="radio" name="dmSplashMode" value="manual"> Seçtiğim özel tasarım</label></fieldset><label class="dm-splash-manual">Özel tasarım seç<select id="dmSplashVariant">'+options+'</select></label><div class="dm-splash-preview"><img alt="Seçilen giriş animasyonunun ön izlemesi"></div><h3>Özel günleri aç / kapat</h3><p class="dm-splash-note">İşareti kaldırılan özel gün otomatik gösterilmez.</p><div class="dm-splash-choices">'+choices+'</div><button type="button" class="dm-splash-save">Ayarları Kaydet</button>';
    const mode=body.querySelectorAll('[name=dmSplashMode]'),variant=body.querySelector('#dmSplashVariant'),img=body.querySelector('.dm-splash-preview img'),man=body.querySelector('.dm-splash-manual');
