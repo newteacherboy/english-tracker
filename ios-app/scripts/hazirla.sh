@@ -9,7 +9,7 @@ echo "📦 Capacitor paketleri…"
 npm install --no-audit --no-fund \
   @capacitor/core@8.6.0 @capacitor/ios@8.6.0 @capacitor/app@8.1.2 \
   @capacitor-community/admob@8.3.0 @capacitor/push-notifications@8.1.3 \
-  @capacitor/haptics@8.0.2 @capacitor/local-notifications@8 @capacitor/network@8.0.1
+  @capacitor/haptics@8.0.2 @capacitor/local-notifications@8 @capacitor/network@8.0.1 @capacitor/share@8
 npm install --no-audit --no-fund --save-dev @capacitor/cli@8.6.0 @capacitor/assets@3 sharp@0.34.5
 
 echo "🧩 Ortak yerel katman (reklam, üyelik, bildirim)…"

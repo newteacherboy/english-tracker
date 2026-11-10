@@ -11,6 +11,9 @@ import com.android.billingclient.api.Purchase;
 import com.android.billingclient.api.PurchasesUpdatedListener;
 import com.android.billingclient.api.QueryProductDetailsParams;
 import com.android.billingclient.api.QueryPurchasesParams;
+import com.google.android.play.core.review.ReviewInfo;
+import com.google.android.play.core.review.ReviewManager;
+import com.google.android.play.core.review.ReviewManagerFactory;
 import com.getcapacitor.JSArray;
 import com.getcapacitor.JSObject;
 import com.getcapacitor.Plugin;
@@ -189,5 +192,18 @@ public class DmBillingPlugin extends Plugin implements PurchasesUpdatedListener 
             getContext().startActivity(intent);
             call.resolve();
         } catch (Exception e) { call.reject("Google Play açılamadı."); }
+    }
+
+    /** Google Play uygulama içi puanlama penceresi. Google gösterip göstermeyeceğine kendisi karar verir. */
+    @PluginMethod
+    public void requestReview(PluginCall call) {
+        try {
+            ReviewManager manager = ReviewManagerFactory.create(getContext());
+            manager.requestReviewFlow().addOnCompleteListener(task -> {
+                if (!task.isSuccessful() || getActivity() == null) { JSObject r = new JSObject(); r.put("shown", false); call.resolve(r); return; }
+                ReviewInfo info = task.getResult();
+                manager.launchReviewFlow(getActivity(), info).addOnCompleteListener(done -> { JSObject r = new JSObject(); r.put("shown", true); call.resolve(r); });
+            });
+        } catch (Exception e) { JSObject r = new JSObject(); r.put("shown", false); call.resolve(r); }
     }
 }

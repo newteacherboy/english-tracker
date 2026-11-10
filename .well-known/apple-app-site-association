@@ -1,0 +1,12 @@
+{
+  "applinks": {
+    "details": [
+      {
+        "appIDs": ["S6VSP7F35Q.com.dijimedu.ingilizce"],
+        "components": [
+          { "/": "/ingilizce/*", "comment": "Diji Medu uygulama sayfaları uygulamada açılır" }
+        ]
+      }
+    ]
+  }
+}

@@ -32,6 +32,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
 
+            <!-- E-postadaki app.dijimedu.com/ingilizce bağlantıları uygulamayı açar (.well-known/assetlinks.json). -->
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="https" android:host="app.dijimedu.com" android:pathPrefix="/ingilizce" />
+            </intent-filter>
+
         </activity>
 
         <provider
