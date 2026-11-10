@@ -1,6 +1,8 @@
 /* One undistorted art plane owns all stop coordinates. UI icons are standalone assets. */
 @layer bilgiIslands {
 body{--bi-safe-top:env(safe-area-inset-top,0px);--bi-safe-bottom:env(safe-area-inset-bottom,0px)}
+/* iOS native shell with a zero reported inset: keep the route wallet clear of the status bar. */
+html.dm-native-ios body{--bi-safe-top:var(--dm-ios-top-safe,62px)}
 body:has(#tab-dunya.active .bi-scene) #bzParkur{position:fixed!important;inset:0!important;width:100%!important;height:100dvh!important;max-height:none!important;padding:0!important;overflow:hidden!important;background:#4fcddd!important}
 body #tab-dunya .bz-ic:has(.bi-scene){position:absolute!important;inset:0!important;width:100%!important;height:100%!important;max-width:none!important;margin:0!important;padding:0!important;display:block!important;background:none!important;border:0!important;overflow:hidden!important}
 body #tab-dunya #dmParkurScroll:has(.bi-scene),body #tab-dunya .rt-school:has(.bi-scene),body #tab-dunya .rt-english:has(.bi-scene){position:absolute!important;inset:0!important;width:100%!important;height:100%!important;min-height:0!important;max-height:none!important;margin:0!important;padding:0!important;background:none!important;overflow:visible!important}
