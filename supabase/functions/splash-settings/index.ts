@@ -2,8 +2,10 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.57.0';
 const ORIGIN='https://app.dijimedu.com';
 const HEADERS={'Content-Type':'application/json','Access-Control-Allow-Origin':ORIGIN,'Access-Control-Allow-Methods':'GET,POST,OPTIONS','Access-Control-Allow-Headers':'content-type,authorization,apikey','Cache-Control':'no-store','Vary':'Origin'};
 const holidays=['23-nisan','19-mayis','30-agustos','29-ekim','10-kasim','15-temmuz','ramazan-ayi','ramazan-bayrami','kurban-bayrami'];
-const names={ '23-nisan':'23 Nisan', '19-mayis':'19 Mayıs', '30-agustos':'30 Ağustos', '29-ekim':'29 Ekim','10-kasim':'10 Kasım','15-temmuz':'15 Temmuz','ramazan-ayi':'Ramazan ayı','ramazan-bayrami':'Ramazan Bayramı','kurban-bayrami':'Kurban Bayramı'};
-const variants={'23-nisan':['23-nisan-1.jpg','23-nisan-2.jpg'],'19-mayis':['19-mayis-1.jpg','19-mayis-2.jpg'],'30-agustos':['30-agustos-1.jpg','30-agustos-2.jpg'],'29-ekim':['29-ekim-1.jpg','29-ekim-2.jpg'],'10-kasim':['10-kasim-1.jpg','10-kasim-2.jpg'],'15-temmuz':['15-temmuz-1.jpg'],'ramazan-ayi':['ramazan-ayi-2.jpg'],'ramazan-bayrami':['ramazan-bayrami-1.jpg'],'kurban-bayrami':['kurban-bayrami-2.jpg']};
+const names={ '23-nisan':'23 Nisan', '19-mayis':'19 Mayıs', '30-agustos':'30 Ağustos', '29-ekim':'29 Ekim','10-kasim':'10 Kasım','15-temmuz':'15 Temmuz','ramazan-ayi':'Ramazan ayı','ramazan-bayrami':'Ramazan Bayramı','kurban-bayrami':'Kurban Bayramı','24-kasim':'24 Kasım Öğretmenler Günü'};
+const variants={'23-nisan':['23-nisan-1.jpg','23-nisan-2.jpg'],'19-mayis':['19-mayis-1.jpg','19-mayis-2.jpg'],'30-agustos':['30-agustos-1.jpg','30-agustos-2.jpg'],'29-ekim':['29-ekim-1.jpg','29-ekim-2.jpg'],'10-kasim':['10-kasim-1.jpg','10-kasim-2.jpg'],'15-temmuz':['15-temmuz-1.jpg'],'ramazan-ayi':['ramazan-ayi-2.jpg'],'ramazan-bayrami':['ramazan-bayrami-1.jpg'],'kurban-bayrami':['kurban-bayrami-2.jpg'],'24-kasim':['24-kasim-1.jpg']};
+// Manual-only artwork: selectable in the admin panel, never auto-scheduled or toggled.
+const manualOnly=['24-kasim'];
 const defaults={mode:'auto',disabled:[],manual:null};
 const response=(data,status=200)=>new Response(JSON.stringify(data),{status,headers:HEADERS});
 Deno.serve(async(req)=>{
@@ -17,7 +19,7 @@ Deno.serve(async(req)=>{
   if(req.method==='GET'){
    const {data,error}=await db.from('dm_splash_preferences').select('config,updated_at').eq('id',1).single();
    if(error)throw error;
-   return response({ok:true,config:data?.config||defaults,updatedAt:data?.updated_at,catalog:holidays.map(id=>({id,name:names[id],variants:variants[id]}))});
+   return response({ok:true,config:data?.config||defaults,updatedAt:data?.updated_at,catalog:[...holidays,...manualOnly].map(id=>({id,name:names[id],variants:variants[id],manualOnly:manualOnly.includes(id)}))});
   }
   const body=await req.json().catch(()=>({}));
   const token=String(body.teacherToken||'');
