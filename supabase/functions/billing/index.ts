@@ -59,7 +59,9 @@ async function session(req: Request) {
     const { data: st } = await db.from('students').select('id,username,status,role,frozen_at,profile').eq('id', s.student_id).maybeSingle();
     if (!st || st.status !== 'approved' || st.role !== 'student' || st.frozen_at) return null;
     const guest = st.username === 'dijimedu_demo' || st.profile?.teacher_portal_guest === true || String(st.profile?.teacher_portal_guest) === 'true' || / · (Misafir|Öğretmen Denemesi) [a-f0-9]{8}$/.test(st.username || '');
-    return { role: 'student', id: st.id as string, canBuy: !guest };
+    // Demo hesap (App Store / Play inceleme ekibi) yalnız test (sandbox) ödemeleriyle satın alabilir; gerçek ödeme reddedilir.
+    const demo = st.username === 'dijimedu_demo';
+    return { role: 'student', id: st.id as string, canBuy: !guest || demo, sandboxOnly: demo };
   }
   if (s.role === 'teacher' && s.teacher_id) return { role: 'teacher', id: s.teacher_id as string, canBuy: true };
   return null;
@@ -213,6 +215,7 @@ Deno.serve(async req => {
       if (!PRODUCTS[productId] || PRODUCTS[productId].role !== acct.role || purchaseToken.length < 20 || purchaseToken.length > 4096) return reply({ ok: false, mesaj: 'Geçersiz satın alma.' }, 400);
       const sub = await fetchSubscription(purchaseToken);
       if (!sub) return reply({ ok: false, mesaj: 'Satın alma Google Play\'de bulunamadı.' }, 404);
+      if ((acct as any).sandboxOnly && !sub.testPurchase) return reply({ ok: false, mesaj: 'Demo hesapla yalnız test ödemesi yapılabilir.' }, 403);
       const result = await record(purchaseToken, sub, acct);
       if (!result.ok) return reply({ ok: false, mesaj: result.reason === 'other_account' ? 'Bu satın alma başka bir Diji Medu hesabına ait.' : 'Satın alma doğrulanamadı.', reason: result.reason }, 409);
       return reply({ ...result, ...(await status(acct)) });
@@ -222,6 +225,7 @@ Deno.serve(async req => {
       let tx;
       try { tx = await verifyAppleJws(String(body.signedTransaction || '')); }
       catch { return reply({ ok: false, mesaj: 'Satın alma Apple tarafından doğrulanamadı.' }, 400); }
+      if ((acct as any).sandboxOnly && (tx as any)?.environment === 'Production') return reply({ ok: false, mesaj: 'Demo hesapla yalnız test ödemesi yapılabilir.' }, 403);
       const result = await recordApple(tx, acct);
       if (!result.ok) return reply({ ok: false, mesaj: result.reason === 'other_account' ? 'Bu satın alma başka bir Diji Medu hesabına ait.' : 'Satın alma doğrulanamadı.', reason: result.reason }, 409);
       return reply({ ...result, ...(await status(acct)) });
