@@ -31,3 +31,13 @@ test('backend requires server-validated teacher owner and restricts allowed art'
  assert(s.includes('!Array.isArray(verified.items)'));
  assert(s.includes('variants[manual.id].includes(manual.file)'));
 });
+
+test('24 Kasım artwork is selectable and its automatic display can be disabled',()=>{
+ assert.equal(mod.prefResolve('2026-11-24T12:00:00+03:00',calendar,{mode:'auto',disabled:[]}).file,'24-kasim-1.jpg');
+ assert.equal(mod.prefResolve('2026-11-24T12:00:00+03:00',calendar,{mode:'auto',disabled:['24-kasim']}),null);
+ assert.equal(mod.prefResolve(date,calendar,{mode:'manual',disabled:[],manual:{id:'24-kasim',file:'24-kasim-1.jpg'}}).id,'24-kasim');
+ const ui=fs.readFileSync('ingilizce/teacher-splash-control.js','utf8');
+ const api=fs.readFileSync('supabase/functions/splash-settings/index.ts','utf8');
+ assert(ui.includes("'24-kasim':[1]"));
+ assert(api.includes("'24-kasim':['24-kasim-1.jpg']"));
+});
