@@ -18,6 +18,8 @@
  ];
  const imageNames={'15-temmuz':'15-temmuz-1','ramazan-bayrami':'ramazan-bayrami-1','kurban-bayrami':'kurban-bayrami-2','ramazan-ayi':'ramazan-ayi-2'};
  const end2026='2026-11-02';
+ // Manual-only artwork (admin panel → "Seçtiğim özel tasarım"); intentionally not in the automatic calendar.
+ const manualOnly=['24-kasim'];
  function addDays(s,n){const d=new Date(s+'T12:00:00Z');d.setUTCDate(d.getUTCDate()+n);return d.toISOString().slice(0,10);}
  function turkeyDate(now){return new Intl.DateTimeFormat('en-CA',{timeZone:'Europe/Istanbul',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date(now));}
  function periodsFor(cal,rule,year){
@@ -49,7 +51,7 @@ const defaultPreference={mode:'auto',disabled:[],manual:null};
   if(pref?.mode==='normal')return null;
   if(pref?.mode==='manual'){
    const m=pref.manual;
-   const map={'23-nisan':['1','2'],'19-mayis':['1','2'],'30-agustos':['1','2'],'29-ekim':['1','2'],'10-kasim':['1','2'],'15-temmuz':['1'],'ramazan-ayi':['2'],'ramazan-bayrami':['1'],'kurban-bayrami':['2']};
+   const map={'23-nisan':['1','2'],'19-mayis':['1','2'],'30-agustos':['1','2'],'29-ekim':['1','2'],'10-kasim':['1','2'],'15-temmuz':['1'],'ramazan-ayi':['2'],'ramazan-bayrami':['1'],'kurban-bayrami':['2'],'24-kasim':['1']};
    if(!m||!map[m.id]?.some(v=>m.file===m.id+'-'+v+'.jpg'))return null;
    return {id:m.id,file:m.file,year:+turkeyDate(now).slice(0,4),variant:1,priority:200,today:turkeyDate(now)};
   }
@@ -121,5 +123,5 @@ const defaultPreference={mode:'auto',disabled:[],manual:null};
    if((next?.file||'')!==(chosen?.file||''))win.location.reload();
   },60*60*1000);
  }
- return {resolve,prefResolve,turkeyDate,addDays,holidays,install};
+ return {resolve,prefResolve,turkeyDate,addDays,holidays,manualOnly,install};
 });
