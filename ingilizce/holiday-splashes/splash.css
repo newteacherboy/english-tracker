@@ -28,3 +28,4 @@ html.dm-holiday-active .dm-holiday-progress{display:none!important}
 
 /* Yönetici seçimi sunucudan gelene kadar (en çok 1,5 sn) açılış ekranında başka tasarım görünmesin */
 html.dm-splash-pending :is(#splashEkrani,#dmBootSplash)>*{visibility:hidden!important}
+html.dm-papi-intro-bg,html.dm-papi-intro-bg body,html.dm-papi-intro-bg :is(#splashEkrani,#dmBootSplash){background:#0A5560!important}

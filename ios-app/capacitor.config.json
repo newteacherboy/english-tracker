@@ -11,7 +11,7 @@
   },
   "ios": {
     "contentInset": "never",
-    "backgroundColor": "#FAF8F5"
+    "backgroundColor": "#0A5560"
   },
   "plugins": {
     "LocalNotifications": {

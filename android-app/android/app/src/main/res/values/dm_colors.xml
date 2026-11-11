@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="dm_notification">#0F8B7D</color>
+    <!-- Açılış: Papi giriş animasyonuyla aynı derin turkuaz, simge yok -->
+    <color name="dm_splash">#0A5560</color>
 </resources>
