@@ -64,18 +64,19 @@
   function tilesHtml() {
     const pending = invites.filter(x=>x.durum==='bekliyor'&&norm(x.alici)===norm(who())).length;
     const list = people();
-    return `<div class="fr-tiles">
+    // 11 Kas 2026 · Claude Design "Arkadaşlar A": Düello ve Davet et büyük, parlayan; Arkadaşlarım/Vitrinim küçük ikili.
+    return `<div class="fr-tiles fr-tiles-v2">
       <button type="button" class="fr-tile fr-tile-duel" data-friend-action="matches" aria-label="Düello${pending?', '+pending+' bekleyen davet':''}">
-        ${pending?'<span class="fr-duel-dot" aria-hidden="true"></span>':''}<img src="friends-assets/papi-fencer.webp" alt="" decoding="async"><b>Düello</b>
+        ${pending?'<span class="fr-duel-dot" aria-hidden="true"></span>':''}<img src="friends-assets/papi-fencer.webp" alt="" decoding="async"><span class="fr-tile-copy"><b>Düello</b><small>Arkadaşını çağır · Kazanan +2 ⚡ +30 XP</small></span><span class="fr-tile-cta" aria-hidden="true">Başla</span><i class="fr-tile-spark" aria-hidden="true">✦</i>
+      </button>
+      <button type="button" class="fr-tile fr-tile-invite" data-friend-action="share">
+        <img src="friends-assets/papi-invite.webp" alt="" decoding="async"><span class="fr-tile-copy"><b>Davet et</b><small>Arkadaşlarını getir, birlikte öğrenin</small></span><span class="fr-tile-cta" aria-hidden="true">Gönder</span><i class="fr-tile-spark" aria-hidden="true">✦</i>
       </button>
       <button type="button" class="fr-tile fr-tile-people" data-friend-action="people" aria-label="Arkadaşlarım, ${list.length} arkadaş">
         ${list.length?`<span class="fr-tile-count">${list.length}</span>`:''}<img src="friends-assets/friends-kids.webp" alt="" decoding="async"><b>Arkadaşlarım</b>
       </button>
       <button type="button" class="fr-tile fr-tile-showcase" data-friend-action="vitrin" data-friends-gate="vitrin">
         <img src="friends-assets/papi-friends.png" alt="" decoding="async"><b>Vitrinim</b>
-      </button>
-      <button type="button" class="fr-tile fr-tile-invite" data-friend-action="share">
-        <img src="friends-assets/papi-invite.webp" alt="" decoding="async"><b>Davet et</b>
       </button>
     </div>`;
   }
