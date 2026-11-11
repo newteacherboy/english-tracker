@@ -2,8 +2,8 @@
 <html lang="tr">
 <head>
 <script src="ingilizce/holiday-splashes/dates.js?v=20261023-2"></script>
-<script src="ingilizce/holiday-splashes/papi-intro.js?v=20261111-1"></script><script src="ingilizce/holiday-splashes/splash.js?v=20261111-papi-giris-1"></script>
-<link rel="stylesheet" href="ingilizce/holiday-splashes/splash.css?v=20261023-fullscreen-1">
+<script src="ingilizce/holiday-splashes/papi-intro.js?v=20261111-2"></script><script src="ingilizce/holiday-splashes/splash.js?v=20261111-papi-giris-2"></script>
+<link rel="stylesheet" href="ingilizce/holiday-splashes/splash.css?v=20261111-pending-1">
 
 <script src="ingilizce/day-night-theme.js?v=20261012-1"></script>
 <meta charset="UTF-8">
@@ -615,6 +615,9 @@ body {
  const splash=document.getElementById('splashEkrani');
  function finish(){
   splash.style.setProperty('--dm-papi-progress','100%');
+  const w=typeof window!=='undefined'?window:{};
+  const wait=Math.max(w.dmSplashPending?300:0,(w.dmPapiIntro&&w.dmPapiIntro.remainingMs)?w.dmPapiIntro.remainingMs():0);
+  if(wait>0){setTimeout(finish,wait);return;}
   requestAnimationFrame(()=>{splash.classList.add('splash-gizle');setTimeout(()=>splash.remove(),200);});
  }
  // Navigation is ready when scripts and markup are ready; unrelated images do not block it.

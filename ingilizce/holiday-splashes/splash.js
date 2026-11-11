@@ -70,6 +70,17 @@ const defaultPreference={mode:'auto',disabled:[],manual:null};
   let prefs=defaultPreference;
   try{const cached=JSON.parse(win.localStorage.getItem('dm-splash-preferences')||'null');if(cached&&['auto','normal','manual'].includes(cached.mode))prefs=cached;}catch(_){}
   let chosen=prefResolve(new Date(),calendar,prefs);
+  /* [11 Kas 2026] Yönetici panelinde seçilen tasarım dışında hiçbir şey görünmesin:
+     sunucu cevabı gelene kadar (en çok 1,5 sn) açılış ekranının içi gizli bekler; cevap yoksa kayıtlı seçim kullanılır. */
+  let decided=false;
+  win.dmSplashPending=true;
+  doc.documentElement.classList.add('dm-splash-pending');
+  function decide(next){
+   if(decided)return;decided=true;
+   updateArtwork(next);
+   win.dmSplashPending=false;
+   doc.documentElement.classList.remove('dm-splash-pending');
+  }
   function updateArtwork(next){
    // [11 Kas 2026] "Papi 3D Giriş": görsel yerine canlı, sesli animasyon (papi-intro.js).
    if(next&&next.id==='papi-giris'&&win.dmPapiIntro){
@@ -92,21 +103,23 @@ const defaultPreference={mode:'auto',disabled:[],manual:null};
    }
    chosen=next;
   }
-  updateArtwork(chosen);
+  setTimeout(()=>decide(chosen),1500);
   // Server-managed global selection: read asynchronously after immediate cached first paint.
   function refreshPreferences(){
-   if(typeof win.fetch!=='function')return;
+   if(typeof win.fetch!=='function'){decide(chosen);return;}
    win.fetch('https://nxfqlutulxqzqgwewssd.supabase.co/functions/v1/splash-settings',{cache:'no-store'})
     .then(r=>{if(!r.ok)throw Error('settings unavailable');return r.json();})
     .then(data=>{
-     if(!data.ok||!data.config)return;
+     if(!data.ok||!data.config){decide(chosen);return;}
      prefs=data.config;
      try{win.localStorage.setItem('dm-splash-preferences',JSON.stringify(prefs));}catch(_){}
      const next=prefResolve(new Date(),calendar,prefs);
+     if(!decided){decide(next);return;}
      if(next?.file!==chosen?.file)updateArtwork(next);
-    }).catch(()=>{});
+    }).catch(()=>decide(chosen));
   }
-  if(doc.readyState==='loading')doc.addEventListener('DOMContentLoaded',refreshPreferences,{once:true});else refreshPreferences();
+  // Seçim hemen istenir (sayfanın tamamı yüklenmeyi beklemeden), böylece ilk görünen tasarım doğru olur.
+  refreshPreferences();
   const current=win.DM_HOLIDAY_DATES?.verified||'';
   function syncRemote(){
    try{
