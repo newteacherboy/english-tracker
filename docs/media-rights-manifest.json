@@ -2658,13 +2658,6 @@
       "bytes": 2663,
       "status": "code-native",
       "source": "Repository-authored game category icon set; SVG source retained in Git"
-    },
-    {
-      "path": "ingilizce/app-icons/papi-turkuaz-2026.svg",
-      "sha256": "79d19aae0c3ba6ba26c5d18421c2e48834e072fb1e3570f511fafc3d954d430a",
-      "bytes": 3208,
-      "status": "code-native",
-      "source": "Diji-Medu Papi turquoise icon: original vector rendition based on user-provided mascot reference; 2026-11-11"
     }
   ]
 }
