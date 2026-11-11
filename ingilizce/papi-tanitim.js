@@ -55,7 +55,6 @@ function introSteps(){
   {center:true,img:'papi-merhaba',title:'Merhaba, ben Papi!',text:'Uygulamayı 1 dakikada birlikte gezelim. Her sayfanın ne işe yaradığını kısaca göstereceğim.',next:'Hadi gezelim',secondary:'Şimdi değil',noDots:true},
   {target:tab('tab-dunya'),title:'Parkur',text:school?'Macera Haritan burada. Sınıfına göre üniteler ve duraklar seni bekliyor; her gün bir durak çöz.':'Öğrenme Yolun burada. Seviyene göre konular ve dersler seni bekliyor; her gün bir ders çöz.',tip:'Her durak yeni kelimeler öğretir.'},
   {target:'.dm-unified-wallet',title:'Enerji, altın ve XP',text:'Enerjiyle soru çözersin, altınla Mağaza’dan alışveriş yaparsın, XP ile seviye atlarsın.',tip:'Üst üste doğru cevaplar bonus kazandırır.'},
-  {target:tab('tab-derscalis'),title:'Ders Çalış',text:'Kelime, dil bilgisi ve iletişim konularını tek tek çalış. Zorlandığın konuya buradan dönebilirsin.',tip:'Her konunun kendi oyunları var.'},
   {target:tab('tab-aktiviteler'),title:'Oyunlar',text:'Öğrendiklerinle oyna, XP ve altın kazan. Mola Vakti’nde kısa bir ara verebilirsin.',tip:'Çalıştıkça yeni oyunlar açılır.'},
   {target:tab('tab-meduakis'),title:'Arkadaşlar',text:'Arkadaşlarını ekle, başarılarını gör ve sıralamada yarış.'},
   {target:tab('tab-magaza'),title:'Mağaza',text:'Kazandığın altınlarla karakterine kıyafet, joker ve enerji alabilirsin.'},

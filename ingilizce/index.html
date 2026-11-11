@@ -156,7 +156,7 @@ html, body { touch-action: pan-x pan-y; }
 </script>
 <link rel="stylesheet" href="papi-loading.css?v=20261018-unified-2">
 
-<link rel="stylesheet" href="bottom-nav.css?v=20261018-approved-final-1">
+<link rel="stylesheet" href="bottom-nav.css?v=20261111-ders-ogretmen">
 <style id="dm-parkur-final-layout">
 #bzMicCards{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,145px),1fr));gap:10px;width:100%;max-width:560px;margin:18px auto;align-items:stretch}
 #bzMicCards .dm-final-card{box-sizing:border-box;min-width:0;width:100%;min-height:114px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;background:#f2f7ea;color:#193f35;border:2px solid #d9e6cc;border-radius:18px;padding:14px 10px;white-space:normal;overflow-wrap:break-word;word-break:normal;text-align:center;line-height:1.3}
@@ -13029,7 +13029,7 @@ const YO_SOHBET = [
           yoSonuc({ oyunAdi:'📋 Seviye tespit', baslik:`Seviyen: ${sonuc}`, dogru:svt.d, yanlis:YO_SEVIYE.length - svt.d, puan:svt.d * 10, sureSaniye:Math.round((Date.now() - svt.bas) / 1000), siralamaYok:true,
             devamFn: () => {
               yoModalKapat();
-              if (typeof dersCalisTamEkranAc === 'function') { dersCalisTamEkranAc(); setTimeout(() => { if (typeof dcSeviyeSec === 'function') dcSeviyeSec(sonuc, YO_SEVIYE_AD[sonuc]); }, 350); }
+              if (typeof dunyaAc === 'function') dunyaAc(); // Ders Çalış yalnızca öğretmen panelinde (11 Kas 2026)
             } });
         }
         function seviyeDavetGoster() {
@@ -13403,7 +13403,6 @@ function sohbetMikDur() {
             so.insertAdjacentHTML('beforeend', `<div class="sana-ozel-odevler-baslik" style="color:#553c9a; border-bottom-color:#e7dcff;">🚀 Gelişim araçlarım</div>
               <div class="az-grid2x2" id="yoSanaOzelGrid">
                 <button class="az-gcard" style="background:linear-gradient(160deg,#fb7185,#be123c);" onclick="yoZkAc()"><span class="yo-rozet-kose" id="yoZkRozet" style="display:none"></span><div class="az-gcard-icon">🔁</div><div class="az-gcard-title">Zor Kelimelerim</div></button>
-                <button class="az-gcard" style="background:linear-gradient(160deg,#818cf8,#4338ca);" onclick="seviyeTestAc()"><span class="yo-rozet-kose" id="yoSeviyeRozet">YENİ</span><div class="az-gcard-icon">📋</div><div class="az-gcard-title">Seviye Tespit</div></button>
                 <button class="az-gcard" style="background:linear-gradient(160deg,#fbbf24,#d97706);" onclick="yoLigAc()"><div class="az-gcard-icon">🏆</div><div class="az-gcard-title">Haftalık Lig</div></button>
                 <button class="az-gcard" style="background:linear-gradient(160deg,#34d399,#0f766e);" onclick="yoMagazaAc()"><div class="az-gcard-icon">🛍️</div><div class="az-gcard-title">Papağan Mağazası</div></button>
               </div>`);
@@ -18023,7 +18022,7 @@ body.pk-sekmeli #dunyaAlan { padding-top:78px !important; }
 @media (prefers-reduced-motion: reduce) { .mik-dalga i, .pk-sekmeler i, .pk-sekmeler button::after, .ba-sik-btn, .tr-delik, .tr-el, .bk-kart .i { animation:none !important; } .tr-delik, .tr-balon, .bk-kart { transition:none !important; } }
 </style>
 <div class="mik-durum" id="mikDurum" role="status" aria-live="polite"><span class="mik-dalga"><i></i><i></i><i></i><i></i></span><span id="mikDurumMetin">Dinliyorum…</span></div>
-<script src="papi-guide-content.js?v=20261111-kartlar"></script>
+<script src="papi-guide-content.js?v=20261111-ders-ogretmen"></script>
 <style>
 .yd-level-scroll{overflow-x:auto}.yd-level-table{width:100%;border-collapse:collapse;text-align:left;font-size:13px}.yd-level-table caption{font-weight:900;padding:10px}.yd-level-table th,.yd-level-table td{padding:8px;border-bottom:1px solid #ddd;vertical-align:top}.yd-level-table thead{background:#eee7fb;color:#302447}
 .t2-balon p{max-height:38vh;overflow-y:auto;overscroll-behavior:contain}.t2-noktalar{flex-wrap:wrap;max-height:30px;overflow-y:auto}.t2-adim-sayisi{display:block;text-align:center;font-size:12px;font-weight:800;color:#574077;margin:5px 0}.t2-balon{max-height:calc(100dvh - 24px);overflow-y:auto}
@@ -18155,7 +18154,6 @@ body.pk-sekmeli #dunyaAlan { padding-top:78px !important; }
     if (il) { let n = il.ba || 0, k = 3 - (n % 3); l.push(['🎁', `Sıradaki sandığa ${k} seviye kaldı`, 'Büyü Akademisi parkurunda', () => { if (typeof dunyaAc === 'function') dunyaAc(); }]); }
     if (altin >= 50) l.push(['🎭', `${altin} altının var`, 'Koleksiyondan yeni bir karakter alabilirsin', () => { if (typeof magazaAc === 'function') magazaAc(); }]);
     l.push(['⚔️', 'Bir arkadaşını düelloya çağır ödülü kap', 'Kazanan +2 ⚡ +30 XP alır', () => { if (typeof meduAkisAc === 'function') { maSekme = 'kesfet'; meduAkisAc(); } }]);
-    l.push(['📘', 'Ders Çalış Ücretsiz Kazan', 'Her konu testi +2 ⚡ +30 XP', () => { if (typeof dersCalisTamEkranAc === 'function') dersCalisTamEkranAc(); }]);
     l.push(['🦜', 'Papağanla sohbet etmeyi denedin mi?', 'Her sohbet ödüllü', () => { if (typeof sohbetEkraniAc === 'function') sohbetEkraniAc(); }]);
     return l;
   }
@@ -25902,6 +25900,8 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
     if (o.tur === 'ders') {
       let v = o.veri || {};
       if (typeof dersCalisTamEkranAc === 'function') dersCalisTamEkranAc();
+      /* Ders Çalış öğrencide yalnızca ödevden açılır: geri/çıkış Ödevlerim'e döner (ders-odev-modu.js). */
+      window.dmDersOdevModu?.start();
       for (let i = 0; i < 30 && !(typeof dcTumKonularCache !== 'undefined' && dcTumKonularCache.length); i++) await bekle(200);
       try {
         dcAktifSeviye = v.seviye; dcAktifKategori = v.kategori;
@@ -26546,7 +26546,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <script defer src="google-login.js?v=20261028-ios-1"></script>
 <link rel="stylesheet" href="parkur-map-theme-v1.css?v=20261010-levelbadge-fix">
 <script defer src="parkur-map-theme-v1.js?v=3"></script>
-<link rel="stylesheet" href="papi-feedback.css?v=1"><script defer src="papi-feedback.js?v=20261106-shared-energy"></script><script defer src="papi-haptics.js?v=1"></script><script defer src="papi-wallet.js?v=20261106-night-contrast"></script>
+<link rel="stylesheet" href="papi-feedback.css?v=1"><script defer src="papi-feedback.js?v=20261111-ders-ogretmen"></script><script defer src="papi-haptics.js?v=1"></script><script defer src="papi-wallet.js?v=20261106-night-contrast"></script>
 <link rel="stylesheet" href="story-path.css?v=3"><script defer src="story-curriculum.js?v=2"></script><link rel="stylesheet" href="thematic-learning.css?v=20261026-entry-sheet-1"><link rel="stylesheet" href="learning-question-v1.css?v=20261025-classroom-quiet-2"><script defer src="learning-core.js?v=20261017-learning-hud-letters-1"></script><link rel="stylesheet" href="route-practice-flight.css?v=20261026-combo-1"><script defer src="route-practice-flight.js?v=20261026-combo-1"></script><script defer src="papi-mascot.js?v=20261111-2"></script><script defer src="thematic-learning.js?v=20261111-papi-1"></script><script defer src="school-curriculum.js?v=20261025-1"></script><script defer src="school-word-art.js?v=20261025-soft-1"></script><script defer src="school-lesson.js?v=20261029-claim-1"></script><link rel="stylesheet" href="school-soft-cards.css?v=20261025-soft-1"><script defer src="story-path.js?v=20261022-no-papi-card"></script>
 <link rel="stylesheet" href="medupro.css?v=20261011-hud">
 <script defer src="medupro.js?v=20261027-kota-2"></script>
@@ -26561,14 +26561,14 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <script defer src="mola-core.js?v=20261021-chapters-1"></script>
 <script defer src="mola-vakti.js?v=20261111-papi"></script>
 <script defer src="navigation-history.js?v=20261106-back-1"></script>
-<script defer src="bottom-nav.js?v=20261106-day-night"></script>
+<script defer src="bottom-nav.js?v=20261111-ders-ogretmen"></script>
 <script defer src="profile-badges.js?v=20261022-rozet-1"></script>
 <link rel="stylesheet" href="weekly-ui.css?v=2">
 <script defer src="feature-catalog.js?v=20261107-fener"></script>
 <script defer src="weekly-ui.js?v=20261019-purple-1"></script>
 <style>body{flex-direction:column;align-items:center}#login-container{flex-shrink:0}</style>
 <link rel="stylesheet" href="experience-ui.css?v=20261013-activity-2">
-<script defer src="experience-ui.js?v=20261026-papi-surfaces-1"></script>
+<script defer src="experience-ui.js?v=20261111-ders-ogretmen"></script>
 <link rel="stylesheet" href="harf-bahcesi.css?v=1">
 <link rel="stylesheet" href="solo-arcade.css?v=20261107-fener">
 <link rel="stylesheet" href="kelime-rallisi.css?v=20261020-slow">
@@ -26628,7 +26628,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 @media(min-width:750px){#bzPerde:has(> .bz-oyun.dm-question-panel)>#bzAlan{width:min(90%,700px)!important;max-width:700px!important}}
 @media(max-height:680px){#bzPerde:has(> .bz-oyun.dm-question-panel) #bzAlan .bz-kart2{height:clamp(44px,9vh,65px)!important}#bzPerde:has(> .bz-oyun.dm-question-panel) #bzAlan .bz-ipucu{margin:2px 0 5px!important}#bzPerde:has(> .bz-oyun.dm-question-panel)>#bzJokerler .bz-jk{padding:2px!important}}
 </style>
-<link rel="stylesheet" href="account-settings.css?v=20261025-energy-menu-1"><script defer src="account-settings.js?v=20261025-energy-menu-1"></script><script defer src="kisisel-bilgiler.js?v=20261025-contact-exit-1"></script><script defer src="student-management.js?v=20261021-contacts-2"></script><script defer src="contact-policy.js?v=20261025-contact-exit-1"></script><script defer src="sifre-islem.js?v=20261027-password-6"></script><script defer src="ekonomi.js?v=20261106-shared-energy"></script>
+<link rel="stylesheet" href="account-settings.css?v=20261025-energy-menu-1"><script defer src="account-settings.js?v=20261025-energy-menu-1"></script><script defer src="kisisel-bilgiler.js?v=20261111-ders-ogretmen"></script><script defer src="student-management.js?v=20261021-contacts-2"></script><script defer src="contact-policy.js?v=20261025-contact-exit-1"></script><script defer src="sifre-islem.js?v=20261027-password-6"></script><script defer src="ekonomi.js?v=20261106-shared-energy"></script>
 <link rel="stylesheet" href="goal-announcements.css?v=1"><script defer src="goal-announcements.js?v=3"></script>
 <link rel="stylesheet" href="progress-ui.css?v=1">
 <link rel="stylesheet" href="progression-ui.css?v=20261018-chest-1"><script defer src="progression-ui.js?v=20261025-soft-teacher-1"></script>
@@ -26656,6 +26656,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <script defer src="league-ui.js?v=20261027-kota-2"></script>
 <link rel="stylesheet" href="study-ui.css?v=20261019-learn-play-1">
 <script defer src="study-ui.js?v=20261026-reward-priority-1"></script>
+<script defer src="ders-odev-modu.js?v=20261111-1"></script>
 <link rel="stylesheet" href="storefront.css?v=20261103-pwm2">
 <script defer src="boutique-art.js?v=20261014-legend-1"></script>
 <script defer src="bag-inventory.js?v=20261019-first-tap-4"></script>
@@ -26665,10 +26666,10 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <link rel="stylesheet" href="parkur-v4.css?v=20261111-2">
 <link rel="stylesheet" href="member-experience.css?v=20261019-chat-compact-1">
 <script src="placement-bank.js?v=20261013-1"></script>
-<script src="member-experience.js?v=20261028-kota-1"></script><link rel="stylesheet" href="papi-tanitim.css?v=20261022-2"><script defer src="papi-tanitim.js?v=20261023-ilk-karakter-2"></script><script defer src="papi-sayfa-turlari.js?v=20261111-kartlar"></script><link rel="stylesheet" href="odul-animasyon.css?v=20261022-1"><script defer src="odul-animasyon.js?v=20261022-1"></script>
+<script src="member-experience.js?v=20261111-ders-ogretmen"></script><link rel="stylesheet" href="papi-tanitim.css?v=20261022-2"><script defer src="papi-tanitim.js?v=20261111-ders-ogretmen"></script><script defer src="papi-sayfa-turlari.js?v=20261111-kartlar"></script><link rel="stylesheet" href="odul-animasyon.css?v=20261022-1"><script defer src="odul-animasyon.js?v=20261022-1"></script>
 <link rel="stylesheet" href="start-placement.css?v=20261020-start-test-2">
 <script src="start-placement-bank.js?v=20261018-1"></script>
-<script src="start-placement.js?v=20261020-start-test-2"></script>
+<script src="start-placement.js?v=20261111-ders-ogretmen"></script>
 <script defer src="email-guide.js?v=20261018-compact-2"></script>
 <link rel="stylesheet" href="teacher-oral.css?v=20261110-immediate-fullscreen-4">
 <script defer src="teacher-oral.js?v=20261110-grade-server-first-6"></script>
@@ -26697,9 +26698,9 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <link rel="stylesheet" href="social-safety.css?v=20261018-readable-study-1">
 <script defer src="social-safety.js?v=20261026-papi-surfaces-1"></script>
 <script defer src="apple-login.js?v=20261028-ios-1"></script>
-<link rel="stylesheet" href="learning-companion.css?v=20261024-rewards-2">
+<link rel="stylesheet" href="learning-companion.css?v=20261111-ders-ogretmen">
 <script defer src="learning-dialogues.js?v=20261019-1"></script>
-<script defer src="learning-companion.js?v=20261029-claim-1"></script>
+<script defer src="learning-companion.js?v=20261111-ders-ogretmen"></script>
 <link rel="stylesheet" href="parkur-purple.css?v=20261019-offline-1">
 <link rel="stylesheet" href="route-graduation.css?v=20261020-member-flows-1"><script defer src="route-graduation.js?v=20261029-kota-1"></script>
 <link rel="stylesheet" href="route-design-three.css?v=20261020-fixed-art-2">
