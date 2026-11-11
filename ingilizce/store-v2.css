@@ -45,3 +45,18 @@ html[data-dm-theme="night"] body #tab-magaza :is(.ds-v2-bag,.ds-v2-deal){box-sha
 @keyframes dsv2Bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
 @keyframes dsv2Wiggle{0%,70%,100%{transform:rotate(0)}76%{transform:rotate(-8deg)}84%{transform:rotate(7deg)}92%{transform:rotate(-3deg)}}
 @media (prefers-reduced-motion:reduce){html body #tab-magaza :is(.ds-shop-cta,.ds-shop-cta::after,.ds-buy,.ds-buy::after,#dmsShopEnergy,#dmsShopEnergy::after,.ds-v2-pro::after,.ds-v2-crown,.ds-v2-pro-go,.ds-v2-art){animation:none!important}}
+/* [12 Kas 2026] Enerji paketleri yan yana, küçük: alttaki kutular yukarı çıkar. */
+html body #tab-magaza .ds-home .ds-energy{padding:10px!important}
+html body #tab-magaza .ds-home .ds-energy-intro{display:flex!important;align-items:center!important;gap:8px!important;margin-bottom:8px!important}
+html body #tab-magaza .ds-home .ds-energy-intro>.ds-art,html body #tab-magaza .ds-home .ds-energy-intro>svg,html body #tab-magaza .ds-home .ds-energy-intro>img{width:28px!important;height:28px!important;flex:none!important}
+html body #tab-magaza .ds-home .ds-energy-intro>div{display:flex!important;align-items:baseline!important;gap:8px!important;flex-wrap:wrap!important}
+html body #tab-magaza .ds-home .ds-energy-intro h2{margin:0!important;font-size:19px!important;line-height:1.1!important}
+html body #tab-magaza .ds-home .ds-energy-intro p{display:none!important}
+html body #tab-magaza .ds-home .ds-energy-intro small{margin:0!important;font-size:12.5px!important;font-weight:800!important}
+html body #tab-magaza .ds-home .ds-packs{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:8px!important}
+html body #tab-magaza .ds-home .ds-pack{flex-direction:column!important;align-items:stretch!important;gap:5px!important;padding:8px 6px!important;text-align:center!important}
+html body #tab-magaza .ds-home .ds-pack>b{justify-content:center!important;min-width:0!important;font-size:18px!important;gap:2px!important}
+html body #tab-magaza .ds-home .ds-pack>b .ds-art{width:22px!important;height:22px!important}
+html body #tab-magaza .ds-home .ds-pack .ds-price{flex:none!important;justify-content:center!important;font-size:14px!important}
+html body #tab-magaza .ds-home .ds-pack .ds-price .ds-art,html body #tab-magaza .ds-home .ds-pack .ds-price svg{width:18px!important;height:18px!important}
+html body #tab-magaza .ds-home .ds-pack .ds-buy{min-width:0!important;width:100%!important;min-height:32px!important;padding:5px 6px!important;font-size:13px!important;border-radius:11px!important}

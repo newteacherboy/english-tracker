@@ -20,18 +20,9 @@
   return s;
  }
 
- // ✕: oyun gezinmesi (play-navigation.js) butonun yazısını sürekli '‹' yapar; yazıyla yarışmamak için
- // yazı görünmez yapılır ve ✕ arka plan resmi olarak çizilir (bir kez, satır içi !important; katmanlı stili ezer).
- const XIMG='url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 24 24%27%3E%3Cpath d=%27M6 6l12 12M18 6 6 18%27 stroke=%27%239AAEC6%27 stroke-width=%273%27 stroke-linecap=%27round%27/%3E%3C/svg%3E") center/24px 24px no-repeat';
- function backButton(modal){
-  const b=modal.querySelector('.ml-header>[data-back]');if(!b||modal.classList.contains('ml-entry')||b.dataset.qcX)return;
-  b.dataset.qcX='1';
-  for(const [k,v] of [['position','static'],['background',XIMG],['border','0'],['box-shadow','none'],['color','transparent'],['-webkit-text-fill-color','transparent'],['font-size','0'],['width','40px'],['height','40px'],['animation','none'],['transition','none'],['outline','none']])b.style.setProperty(k,v,'important');
- }
  function update(modal){
   if(!modal.isConnected)return;
   if(modal.classList.contains('ml-entry')){modal.classList.remove('qc-result','qc-wrong');modal.querySelector(':scope>.qc-sheet')?.classList.remove('is-on');return;}
-  backButton(modal);
   const fb=modal.querySelector('.ml-feedback');
   const ok=!!fb?.classList.contains('is-correct')&&!!fb.textContent.trim();
   const no=!!fb?.classList.contains('is-answer-wrong');
