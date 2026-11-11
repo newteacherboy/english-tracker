@@ -25,3 +25,6 @@ html.dm-holiday-active .dm-holiday-progress{display:none!important}
   background-repeat:no-repeat;background-size:contain;
  }
 }
+
+/* Yönetici seçimi sunucudan gelene kadar (en çok 1,5 sn) açılış ekranında başka tasarım görünmesin */
+html.dm-splash-pending :is(#splashEkrani,#dmBootSplash)>*{visibility:hidden!important}

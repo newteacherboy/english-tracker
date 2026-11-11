@@ -3,8 +3,8 @@
         <head>
 <script src="teacher-portal-boot.js?v=20261110-parkur-header-route-5"></script>
 <script src="holiday-splashes/dates.js?v=20261023-2"></script>
-<script src="holiday-splashes/papi-intro.js?v=20261111-1"></script><script src="holiday-splashes/splash.js?v=20261111-papi-giris-1"></script>
-<link rel="stylesheet" href="holiday-splashes/splash.css?v=20261023-fullscreen-1">
+<script src="holiday-splashes/papi-intro.js?v=20261111-2"></script><script src="holiday-splashes/splash.js?v=20261111-papi-giris-2"></script>
+<link rel="stylesheet" href="holiday-splashes/splash.css?v=20261111-pending-1">
 
 <meta charset="UTF-8">
 <script src="native-app.js?v=20261111-ios-safe-4"></script>
@@ -207,7 +207,7 @@ html, body { touch-action: pan-x pan-y; }
 <script>(function(){
 const splash=document.getElementById('dmBootSplash');let timer,done=false,loaded=false,finishTimer=0;const splashStartedAt=Date.now(),minSplashMs=(window.dmPapiIntro&&window.dmPapiIntro.isActive())?3400:0;
 function visible(el){return !!el&&el.getClientRects().length>0&&getComputedStyle(el).display!=='none';}
-function finish(){if(done)return;splash.style.setProperty("--dm-papi-progress","100%");const remaining=minSplashMs-(Date.now()-splashStartedAt);if(remaining>0){if(!finishTimer)finishTimer=setTimeout(()=>{finishTimer=0;finish();},remaining);return;}done=true;clearInterval(timer);clearTimeout(deadline);document.removeEventListener('dm:login',check);document.removeEventListener('dm:state',check);splash.classList.add('dm-ready');setTimeout(()=>{splash.remove();document.dispatchEvent(new Event('dm:boot-ready'));},250);}
+function finish(){if(done)return;splash.style.setProperty("--dm-papi-progress","100%");const remaining=Math.max(minSplashMs-(Date.now()-splashStartedAt),window.dmSplashPending?300:0,(window.dmPapiIntro&&window.dmPapiIntro.remainingMs)?window.dmPapiIntro.remainingMs():0);if(remaining>0){if(!finishTimer)finishTimer=setTimeout(()=>{finishTimer=0;finish();},remaining);return;}done=true;clearInterval(timer);clearTimeout(deadline);document.removeEventListener('dm:login',check);document.removeEventListener('dm:state',check);splash.classList.add('dm-ready');setTimeout(()=>{splash.remove();document.dispatchEvent(new Event('dm:boot-ready'));},250);}
 function check(){if(!loaded)return;const login=document.getElementById('login-container'),panel=document.getElementById('panel-alani');
 const loading=document.getElementById('oturumYuklemeOverlay');if(visible(loading))return;
 let restoring=false;try{restoring=localStorage.getItem('ing_oturumAcik')==='true'&&!!localStorage.getItem('ing_aktifOgrenci');}catch(e){}
