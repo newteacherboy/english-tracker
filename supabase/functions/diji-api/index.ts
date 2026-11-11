@@ -2061,6 +2061,15 @@ async function handle(req: Request, proxy: any = null) {
     liste.forEach(x => { x.b = b.get(x.k) || 0; x.tb = tb.get(x.k) || 0; });
     return json(String(val(body,q,"delta"))==="1"?await transferDelta("feed",transferScope(a),String(val(body,q,"version")),liste):{liste});
   }
+  // [Kas 2026] Medu Akış kaldırıldı: bildirim zilindeki "kazandıkların" listesi yalnız öğrencinin kendi
+  // son 30 hareketini okur (tüm akışın 400 satırı yerine).
+  if (op === "benimHareketlerim") {
+    const name = String(val(body, q, "ogrenci")); const deny = await requireStudent(a, name); if (deny) return deny;
+    const s = await hedefOgrenci(a, name); if (!s) return json({ liste: [] });
+    const { data } = await supabase.from("feed_events").select("id,event_type,payload,created_at").eq("student_id", s.id).in("event_type",["rank_up","league_promotion","student_level_up","daily_complete","weekly_goal_complete","route_five_complete","school_graduation","weekly_result","duel_result"]).order("created_at", { ascending: false }).limit(30);
+    const liste = (data || []).map((e: any) => { const p = e.payload || {}; return { k: e.id, t: Date.parse(e.created_at), ikon: p.icon || "✨", metin: p.message || "Yeni bir hareket yaptı" }; });
+    return json({ liste });
+  }
   if (op === "akisOlaylariGetir") {
     const name = String(val(body, q, "ogrenci")); const deny = await requireStudent(a, name); if (deny) return deny;
     const s = await hedefOgrenci(a, name); if (!s) return json({ takip: [], begeni: [], tebrik: [] });
