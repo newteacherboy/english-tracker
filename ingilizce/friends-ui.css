@@ -700,3 +700,42 @@ html body #tab-meduakis .fr-tiles .fr-tile-duel{background:linear-gradient(180de
 html body #tab-meduakis .fr-tiles .fr-tile-duel :is(b,small){color:#fff!important}
 html body #tab-meduakis .fr-tiles .fr-tile-showcase{background:linear-gradient(180deg,#fff1cc,#ffe2a1)!important;border-color:#f0c96a!important;color:#6b3d06!important}
 html body #tab-meduakis .fr-tiles .fr-tile-showcase :is(b,small){color:#6b3d06!important}
+
+/* Kasım 2026 · Kartlar tek satır + "Bugünkü Durumun" (plan sınırları). Önceki 2×2 kart kurallarını geçersiz kılar. */
+#tab-meduakis .fr-tiles{grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+#tab-meduakis .fr-tiles .fr-tile{min-height:0;height:84px;padding:6px 4px;border-radius:18px;align-items:center;justify-content:space-between;text-align:center;gap:2px}
+#tab-meduakis .fr-tiles .fr-tile b{font-size:12px;line-height:1.1;justify-content:center;white-space:nowrap}
+#tab-meduakis .fr-tiles .fr-tile img{position:static;width:50px;height:50px}
+#tab-meduakis .fr-tiles .fr-tile .fr-duel-dot{position:absolute;top:6px;right:8px;width:9px;height:9px;margin:0}
+#tab-meduakis .fr-tiles .fr-tile-faces{margin-top:10px}
+#tab-meduakis .fr-tiles .fr-tile-faces>.fr-avatar,#tab-meduakis .fr-tiles .fr-tile-more{width:28px;height:28px}
+#tab-meduakis .fr-tiles .fr-tile-plus{margin-top:8px;width:34px;height:34px}
+#tab-meduakis .fr-status{background:#fff;border:1.5px solid #d3e0f7;border-radius:22px;padding:11px 11px 12px;display:grid;gap:8px;font-family:'Nunito',system-ui,sans-serif}
+#tab-meduakis .fr-status-head{display:flex;align-items:center;gap:8px}
+#tab-meduakis .fr-status-head>span{width:22px;height:4px;border-radius:4px;background:#f2c13b}
+#tab-meduakis .fr-status-head h3{margin:0;flex:1;font:900 16px 'Nunito',sans-serif;color:#1b2559}
+#tab-meduakis .fr-status-head small{font:800 11.5px 'Nunito',sans-serif;color:#4c5a85}
+#tab-meduakis .fr-status-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+#tab-meduakis .fr-status-row{display:flex;align-items:center;gap:7px;min-height:36px;padding:5px 7px;border-radius:12px;background:#f6f8ff;box-sizing:border-box}
+#tab-meduakis .fr-status-row>svg{width:17px;height:17px;flex:none}
+#tab-meduakis .fr-status-row>span:first-of-type{flex:1;min-width:0;font:800 12.5px 'Nunito',sans-serif;color:#3a4670;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#tab-meduakis .fr-status-pill{flex:none;display:inline-flex;align-items:center;gap:3px;min-width:38px;justify-content:center;padding:3px 8px;border-radius:999px;font:900 12px 'Nunito',sans-serif;color:#fff;background:#3d3a9e}
+#tab-meduakis .fr-status-ok{background:#3d3a9e}
+#tab-meduakis .fr-status-out{background:#e0565b}
+#tab-meduakis .fr-status-wait{background:#c7cfe6;color:#4c5a85}
+#tab-meduakis .fr-status-free{background:#23a36f}
+#tab-meduakis .fr-status-pro{background:#ffd45c;color:#3d2600}
+#tab-meduakis .fr-crown{width:12px;height:12px}
+html body #tab-meduakis .fr-status-cta{display:flex;align-items:center;justify-content:center;gap:8px;height:46px;border:0;border-radius:16px;background:linear-gradient(180deg,#ffd45c,#f2b52a)!important;box-shadow:0 4px 0 #c98f12;color:#3d2600!important;font:900 15px 'Nunito',sans-serif;cursor:pointer}
+#tab-meduakis .fr-status-cta .fr-crown{width:20px;height:20px}
+#tab-meduakis .fr-status-cta:active{transform:translateY(2px);box-shadow:0 2px 0 #c98f12}
+html[data-dm-theme="night"] #tab-meduakis .fr-status{background:var(--dm-surface);border-color:var(--dm-line)}
+html[data-dm-theme="night"] #tab-meduakis .fr-status-head h3{color:var(--dm-text)}
+html[data-dm-theme="night"] #tab-meduakis .fr-status-head small{color:var(--dm-muted)}
+html[data-dm-theme="night"] #tab-meduakis .fr-status-row{background:var(--dm-soft)}
+html[data-dm-theme="night"] #tab-meduakis .fr-status-row>span:first-of-type{color:var(--dm-text)}
+@media(min-width:600px){#tab-meduakis .fr-tiles .fr-tile{height:100px}#tab-meduakis .fr-tiles .fr-tile img{width:62px;height:62px}#tab-meduakis .fr-tiles .fr-tile b{font-size:13.5px}}
+#tab-meduakis .fr-status-row{gap:5px;padding:5px 6px}
+#tab-meduakis .fr-status-row>svg{width:15px;height:15px}
+#tab-meduakis .fr-status-row>span:first-of-type{font-size:12px;text-overflow:clip}
+#tab-meduakis .fr-status-pill{min-width:30px;padding:3px 6px;font-size:11.5px}
