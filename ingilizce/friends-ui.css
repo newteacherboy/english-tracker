@@ -668,3 +668,35 @@ html[data-dm-theme="night"] #tab-meduakis.fr-home-view .fr-podium-footer .fr-lin
   #tab-meduakis .fr-leader-2 .fr-avatar.fr-papi-leader,
   #tab-meduakis .fr-leader-3 .fr-avatar.fr-papi-leader{--avatar-size:48px!important}
 }
+
+/* Kasım 2026 · Medu Akış kaldırıldı: lig tablosunun altında dört kart (Düello, Arkadaşlarım, Vitrinim, Davet et). */
+#tab-meduakis .fr-tiles-home{align-content:start}
+#tab-meduakis .fr-tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+#tab-meduakis .fr-tile{position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:space-between;align-items:flex-start;gap:6px;min-height:112px;padding:12px;border-radius:20px;border:1.5px solid #d3e0f7;background:#fff;color:#1b2559;text-align:left;font-family:'Nunito',system-ui,sans-serif;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:transform .12s ease}
+#tab-meduakis .fr-tile:active{transform:scale(.97)}
+#tab-meduakis .fr-tile b{display:flex;align-items:center;gap:6px;font:900 17px/1.15 'Nunito',sans-serif;position:relative;z-index:1}
+#tab-meduakis .fr-tile small{display:block;max-width:62%;font:800 12.5px/1.25 'Nunito',sans-serif;color:inherit;opacity:.88;position:relative;z-index:1}
+#tab-meduakis .fr-tile img{position:absolute;right:-6px;bottom:-4px;width:80px;height:80px;object-fit:contain;pointer-events:none}
+#tab-meduakis .fr-tile-duel{background:linear-gradient(180deg,#4f78f0,#3157d6);border-color:#3157d6;color:#fff}
+#tab-meduakis .fr-tile-duel .fr-duel-dot{width:9px;height:9px;background:#ffc660;border-radius:50%;box-shadow:0 0 0 2px #fff}
+#tab-meduakis .fr-tile-showcase{background:linear-gradient(180deg,#fff1cc,#ffe2a1);border-color:#f0c96a;color:#6b3d06}
+#tab-meduakis .fr-tile-invite{border-style:dashed;border-color:#9fb4ee}
+#tab-meduakis .fr-tile-people small,#tab-meduakis .fr-tile-invite small{max-width:100%}
+#tab-meduakis .fr-tile-faces{display:flex;align-items:center}
+#tab-meduakis .fr-tile-faces>.fr-avatar,#tab-meduakis .fr-tile-more{width:34px;height:34px;border-radius:50%;border:2px solid #fff;box-sizing:border-box;overflow:hidden;background:#eaf2ff}
+#tab-meduakis .fr-tile-faces>*+*{margin-left:-9px}
+#tab-meduakis .fr-tile-more{display:inline-flex;align-items:center;justify-content:center;font:900 11px 'Nunito',sans-serif;color:#4c5a85;background:#eef1f8}
+#tab-meduakis .fr-tile-plus{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:12px;background:#e2ecff;color:#3a63e8}
+#tab-meduakis .fr-tile-plus .fr-icon{width:20px;height:20px}
+#tab-meduakis .fr-tile.fr-locked{opacity:.6}
+html[data-dm-theme="night"] #tab-meduakis :is(.fr-tile-people,.fr-tile-invite){background:var(--dm-surface);border-color:var(--dm-line);color:var(--dm-text)}
+html[data-dm-theme="night"] #tab-meduakis .fr-tile-duel small{color:#fff!important}
+html[data-dm-theme="night"] #tab-meduakis .fr-tile-showcase small{color:#6b3d06!important}
+html[data-dm-theme="night"] #tab-meduakis .fr-tile-faces>*{border-color:var(--dm-surface)}
+html[data-dm-theme="night"] #tab-meduakis .fr-tile-plus{background:var(--dm-soft);color:var(--dm-accent)}
+@media(min-width:600px){#tab-meduakis .fr-tile{min-height:136px;padding:16px}#tab-meduakis .fr-tile b{font-size:19px}#tab-meduakis .fr-tile img{width:100px;height:100px}}
+/* Renkli kartlar genel düğme/tema kurallarından etkilenmesin. */
+html body #tab-meduakis .fr-tiles .fr-tile-duel{background:linear-gradient(180deg,#4f78f0,#3157d6)!important;border-color:#3157d6!important;color:#fff!important}
+html body #tab-meduakis .fr-tiles .fr-tile-duel :is(b,small){color:#fff!important}
+html body #tab-meduakis .fr-tiles .fr-tile-showcase{background:linear-gradient(180deg,#fff1cc,#ffe2a1)!important;border-color:#f0c96a!important;color:#6b3d06!important}
+html body #tab-meduakis .fr-tiles .fr-tile-showcase :is(b,small){color:#6b3d06!important}

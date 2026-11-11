@@ -42,10 +42,11 @@ const TOURS=[
  }},
  {id:'arkadaslar',tab:'tab-meduakis',title:'Arkadaşlar',ask:'Bugün sana Arkadaşlar sayfasını göstereyim mi?',steps:()=>[
   {center:true,before:()=>openTab('tab-meduakis','.fr-home'),title:'Arkadaşlar',text:'Arkadaşlarınla birlikte öğrenip yarışacağın yer. Bölümlerine bakalım.',noDots:true,next:'Başlayalım'},
-  {target:'.fr-welcome .fr-add',title:'Arkadaş ekle',text:'Kullanıcı adıyla arkadaşını ara ve takip et.',tip:lockTip(15,'Takip')},
-  {target:'.fr-friends',title:'Arkadaşlarım',text:'Takip ettiğin arkadaşların burada; kimin çevrimiçi olduğunu görürsün. “Davet et” ile oyun daveti gönderebilirsin.'},
-  {target:'.fr-summaries',title:'Vitrin ve lig',text:'Vitrininde rozetlerini sergilersin. Haftalık ligde o hafta kazandığın XP ile sıralamaya girersin; lig her hafta yenilenir.',tip:lockTip(5,'Lig')},
-  {target:'.fr-feed',title:'Arkadaş akışı',text:'Arkadaşlarının başarılarını gör ve onları tebrik et. Filtrelerle sadece takip ettiklerini ya da çevrimiçi olanları seçebilirsin.',tip:lockTip(10,'Tebrik')},
+  {target:'.fr-league-board',title:'Yerel Lig',text:'Haftalık ligde o hafta kazandığın XP ile sıralamaya girersin; lig her hafta yenilenir. “Sıralamayı gör” ile tüm listeyi açarsın.',tip:lockTip(5,'Lig')},
+  {target:'.fr-tile-duel',title:'Düello',text:'Arkadaşına ya da Papi\'ye meydan oku. Sana gelen davetler de burada görünür.',tip:lockTip(20,'Düello')},
+  {target:'.fr-tile-people',title:'Arkadaşlarım',text:'Takip ettiğin arkadaşların burada. Birine dokunup profilini açabilirsin.'},
+  {target:'.fr-tile-showcase',title:'Vitrinim',text:'Vitrininde rozetlerini sergilersin; arkadaşların seni böyle görür.'},
+  {target:'.fr-tile-invite',title:'Davet et',text:'Bağlantıyı paylaş, arkadaşın da Diji Medu\'ya katılıp ligde seninle yarışsın.'},
   {target:'#frInvitation:not(:empty)',title:'Davetler',text:'Sana gelen oyun davetleri burada çıkar; kabul edip hemen oynayabilirsin.'},
   {target:'.fr-matches',title:'Karşılaşmalarım',text:'Düellolarını ve oyun davetlerinin sonuçlarını buradan takip edersin.',tip:lockTip(20,'Düello')},
   {center:true,img:'papi-kutlama',title:'Birlikte daha eğlenceli!',text:'Arkadaşlarını takip et, haftalık ligde yarış ve birbirinizi tebrik edin.',noDots:true,next:'Tamam',secondary:'Kapat'}
