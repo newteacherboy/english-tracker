@@ -1,9 +1,8 @@
-/* [11 Kas 2026] Oyunlar · "Premium ol" bandı (Claude Design Oyunlar A). iOS'ta ve Premium Pro'da gösterilmez.
+/* [11 Kas 2026] Oyunlar · "Premium ol" bandı (Claude Design Oyunlar A). Premium Pro'da gösterilmez (iOS'ta da açık).
    Paketler DMSatis.planlar('oyunlar') ile açılır; başka hiçbir davranış değişmez. Görünüm: games-v2.css */
 (()=>{'use strict';
  if(typeof document==='undefined')return;
- const ios=()=>!!window.dmIosUygulama||window.Capacitor?.getPlatform?.()==='ios';
- const offer=()=>!ios()&&!window.dmTeacherPortalMode&&(Number(window.genelEnerjiMax)||0)<60&&!!window.DMSatis?.planlar;
+ const offer=()=>!window.dmTeacherPortalMode&&(Number(window.genelEnerjiMax)||0)<60&&!!window.DMSatis?.planlar;
  function paint(){
   const page=document.querySelector('#tab-aktiviteler .gg-page.au-games');if(!page)return;
   const tabs=page.querySelector('.gg-tabs');if(!tabs)return;

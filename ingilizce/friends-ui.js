@@ -111,8 +111,6 @@
     quota={owner,at:Date.now(),mola:left.length?Math.max(...left):null,pwm:pwm.status==='fulfilled'&&Number.isFinite(Number(pwm.value?.remaining))?Number(pwm.value.remaining):null};
     const box=root.querySelector('.fr-status');if(box)box.outerHTML=statusHtml();
   }
-  // iOS uygulamasında paket düğmesi şimdilik gösterilmez (kullanıcı kararı, Kasım 2026).
-  const ios = () => !!window.dmIosUygulama || window.Capacitor?.getPlatform?.() === 'ios';
   function statusHtml() {
     if(window.dmTeacherPortalMode||!who())return '';
     const id=planId(), p=PLAN[id], own=quota.owner===who();
@@ -120,8 +118,8 @@
     const pro=`<span class="fr-status-pill fr-status-pro">${CROWN}Pro</span>`;
     const count=(left,max)=>left===null||left===undefined?pill(own?'—':'…','fr-status-wait'):pill(`${left}/${max}`,left>0?'fr-status-ok':'fr-status-out');
     const energyLeft=Math.max(0,Number(window.genelEnerjiKalan)||0), energyMax=Number(window.genelEnerjiMax)||(id==='pro'?40:25);
-    // Her satır ilgili yere gider; kilitli (Pro) satırlar paketleri açar — iOS'ta şimdilik paket açılmaz.
-    const locked=ios()?'':'plans';
+    // Her satır ilgili yere gider; kilitli (Pro) satırlar paketleri açar (iOS dahil).
+    const locked='plans';
     const rows=[
       ['bolt','Enerji',id==='premium_pro'?pill('Sınırsız','fr-status-free'):count(energyLeft,energyMax),'energy'],
       ['break','Mola Vakti',count(own?quota.mola:null,p.mola),'mola'],
@@ -135,7 +133,7 @@
     return `<section class="fr-status fr-plan-${id}" aria-labelledby="frStatusTitle">
       <div class="fr-status-head"><h3 id="frStatusTitle">Bugünkü Durumun</h3><span class="fr-status-plan">${badge}</span></div>
       <div class="fr-status-grid">${rows.map(([k,label,val,go])=>go?`<button type="button" class="fr-status-row" data-friend-action="status-go" data-go="${go}"><svg viewBox="0 0 24 24" aria-hidden="true">${art[k]}</svg><span>${label}</span>${val}</button>`:`<div class="fr-status-row"><svg viewBox="0 0 24 24" aria-hidden="true">${art[k]}</svg><span>${label}</span>${val}</div>`).join('')}</div>
-      ${id==='premium_pro'||ios()?'':`<button type="button" class="fr-status-cta" data-friend-action="plans">${CROWN}Premium Pro ile sınırsız enerji</button>`}
+      ${id==='premium_pro'?'':`<button type="button" class="fr-status-cta" data-friend-action="plans">${CROWN}Premium Pro ile sınırsız enerji</button>`}
     </section>`;
   }
   const filterOptions = [['herkes','Herkes'],['takip','Takip ettiklerim'],['online','Çevrimiçi']];
