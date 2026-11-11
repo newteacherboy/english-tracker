@@ -63,10 +63,9 @@
     const item = premiumBoosters.find(x => x[0] === kind);
     toast(`${item ? item[1] : 'Güçlendirici'} eklendi! Sende ${d.boosters?.[kind] ?? ''} tane var.`); window.yoSes?.('dogru');
   }
-  // 11 Kas 2026 · Claude Design "Mağaza B": Premium kartı (iOS ve Premium Pro dışında). Reklamla enerji kartı dm-satis.js'ten gelir (#dmsShopEnergy).
+  // 11 Kas 2026 · Claude Design "Mağaza B": Premium kartı (Premium Pro dışında; iOS'ta da açık). Reklamla enerji kartı dm-satis.js'ten gelir (#dmsShopEnergy).
   function v2Extras() {
-    const ios = !!window.dmIosUygulama || window.Capacitor?.getPlatform?.() === 'ios';
-    const pro = !ios && !window.dmTeacherPortalMode && Number(window.genelEnerjiMax || 0) < 60 && !!window.DMSatis?.planlar;
+    const pro = !window.dmTeacherPortalMode && Number(window.genelEnerjiMax || 0) < 60 && !!window.DMSatis?.planlar;
     return `${pro ? '<button type="button" class="ds-v2-pro" data-ds="plans"><span class="ds-v2-crown" aria-hidden="true"></span><span class="ds-v2-pro-copy"><b>Premium · sınırsız enerji</b><small>Enerji derdi yok, reklam yok</small></span><span class="ds-v2-pro-go">Premium ol</span></button>' : ''}`;
   }
   function home() {

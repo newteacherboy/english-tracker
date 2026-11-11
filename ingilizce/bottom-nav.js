@@ -15,7 +15,7 @@ function close(restore=true){const panel=document.getElementById('rtProfileBackd
 let profileReturnPane='main';
 const centreItems=[['İlerlemem','Gelişimimi keşfet','progress',0],['Başarılarım','Rozetlerimi gör','badges',1],['Karnelerim','Notlarımı incele','certificates',2],['Ödevlerim','Görevlerimi tamamla','daily',3],['Kelime Tekrarı','Kelimeleri pekiştir','repeat',5],['Parkur Değiştir','Yeni maceralara geç','route',6],['Veli Kontrolü','Ayarlar ve raporlar','guardian',7],['Öğretmen Paneli','Sınıfıma geç','teacherPanel',5,'account-icons']];
 // 11 Kas 2026 · Benim Merkezim (Claude Design Profil A): Seviye Testi yalnızca Parkur Değiştir'den; Veli Kontrolü'nün yanında Öğretmen Paneli.
-const proOffer=()=>!(window.dmIosUygulama||window.Capacitor?.getPlatform?.()==='ios')&&(Number(window.genelEnerjiMax)||0)<60&&!!window.DMSatis?.planlar;
+const proOffer=()=>(Number(window.genelEnerjiMax)||0)<60&&!!window.DMSatis?.planlar;
 const accountItems=[['Profilim','Kişisel bilgilerimi düzenle','profile',0],['Ayarlar','Uygulama tercihlerini yönet','settings',1],['Hesap Değiştir','Farklı bir hesapla devam et','switchAccount',2],['Yardım ve Destek','Sık sorulan sorular ve iletişim','help',3],['Güvenlik ve Bildirimlerim','Hesap güvenliği ve bildirim ayarları','safety',4],['Öğretmen Paneli','Öğretmen araçlarına erişim','teacher',5],['Öğretmene Mesaj Gönder','Sorularını ilet','coach',6],['Çıkış Yap','Güvenli bir şekilde çıkış yap','logout',7]];
 const centreArt=(name,cell)=>'<i class="au-art au-'+name+'" style="--au-x:'+(cell%3*50)+'%;--au-y:'+Math.floor(cell/3)*50+'%" aria-hidden="true"></i>';
 window.dmProfileMenuAc=function(initial='main'){
