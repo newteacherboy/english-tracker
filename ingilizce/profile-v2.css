@@ -50,3 +50,33 @@ html[data-dm-theme="night"] #rtProfileBackdrop .pa-user{background:#1d3157;box-s
 @media (prefers-reduced-motion:reduce){#rtProfileBackdrop :is(.pa-pro,.pa-pro::after,.pa-pro-crown,.pa-spark){animation:none}}
 #rtProfileBackdrop .pa-body{display:block;align-self:start;min-width:0}
 #rtProfileBackdrop :is(.pa-hero,.pa-user,.pa-pro,.pa-grid){align-self:start}
+/* [12 Kas 2026] Kısaltma: Hesap ve Destek alt menünün arkasında kalmasın diye kutular küçültüldü.
+   Eski kurallar bilgiIslands katmanında !important olduğu için aynı katmanda daha güçlü seçicilerle yazıldı. */
+@layer bilgiIslands{
+html body #rtProfileBackdrop .pa-hero{margin:0 0 10px!important;padding:10px 62px 10px 14px!important;border-radius:22px!important}
+html body #rtProfileBackdrop .pa-wordmark{font-size:13px!important}
+html body #rtProfileBackdrop .pa-hero h2{font-size:23px!important;line-height:1.05!important}
+html body #rtProfileBackdrop .pa-hero p{font-size:12px!important;margin-top:3px!important}
+html body #rtProfileBackdrop .pa-hero-papi{width:66px!important;height:72px!important;margin:-14px 2px -10px 0!important}
+html body #rtProfileBackdrop .pa-user{margin:0 0 10px!important;padding:9px 10px!important;gap:10px!important;border-radius:20px!important}
+html body #rtProfileBackdrop .pa-avatar{width:54px!important;height:54px!important}
+html body #rtProfileBackdrop .pa-name-row strong{font-size:19px!important}
+html body #rtProfileBackdrop .pa-user progress{height:10px!important;margin-top:6px!important}
+html body #rtProfileBackdrop .pa-edit{width:34px!important;height:34px!important;font-size:15px!important}
+html body #rtProfileBackdrop .pa-pro{margin:0 0 10px!important;padding:9px 10px 9px 12px!important;gap:10px!important;border-radius:20px!important}
+html body #rtProfileBackdrop .pa-pro-crown{width:34px!important;height:34px!important}
+html body #rtProfileBackdrop .pa-pro-copy b{font-size:15px!important}
+html body #rtProfileBackdrop .pa-pro-copy small{font-size:11px!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
+html body #rtProfileBackdrop .pa-pro-go{padding:8px 12px!important;font-size:13px!important}
+html body #rtProfileBackdrop .pa-spark{left:42px!important;top:2px!important}
+html body #rtProfileBackdrop .pa-grid{row-gap:8px!important;margin:0 0 10px!important}
+html body #rtProfileBackdrop .pa-grid>button>.au-art{width:50px!important;height:50px!important}
+html body #rtProfileBackdrop .pa-grid b{font-size:12.5px!important}
+html body #rtProfileBackdrop .pa-grid small{font-size:10.5px!important;margin-top:1px!important;display:-webkit-box!important;-webkit-line-clamp:2!important;-webkit-box-orient:vertical!important;overflow:hidden!important}
+html body #rtProfileBackdrop .rt-profile.au-centre{padding-bottom:calc(112px + env(safe-area-inset-bottom,0px))!important}
+html body #rtProfileBackdrop .au-centre .au-account-entry{min-height:64px!important;margin-top:6px!important;padding:7px 12px!important;gap:10px!important}
+html body #rtProfileBackdrop .au-centre .au-account-entry>.au-art{width:52px!important;height:52px!important}
+html body #rtProfileBackdrop .au-centre .au-account-entry b{font-size:17px!important}
+html body #rtProfileBackdrop .au-centre .au-account-entry small{font-size:12px!important;display:-webkit-box!important;-webkit-line-clamp:1!important;-webkit-box-orient:vertical!important;overflow:hidden!important}
+html body #rtProfileBackdrop .au-centre .pa-hero h2{font-size:23px!important;margin:0!important}
+}

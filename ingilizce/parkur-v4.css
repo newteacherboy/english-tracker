@@ -183,3 +183,15 @@ body #tab-dunya .rt-medal-route .rt-medal-tools>button{pointer-events:auto}
 body #tab-dunya .rt-medal-route .rt-medal-scroll{padding-top:var(--rt-tools-h);scroll-padding-top:var(--rt-tools-h)}
 /* Yazılar durakların üstünde de okunur kalsın */
 html[data-dm-theme="day"] body #tab-dunya .rt-medal-route .rt-medal-tools button>span{text-shadow:0 0 3px #E6F1FC,0 0 6px #E6F1FC,0 1px 0 #fff}
+/* [12 Kas 2026] Duraklar biraz küçüldü; Papi'nin konuşma balonu daha küçük. */
+body #tab-dunya .rt-medal-route{--medal-size:clamp(52px,15.5vw,64px);--medal-current-size:clamp(62px,19vw,76px)}
+body #tab-dunya .rt-medal-route .rt-medal-disc .rt-medal-parrot{width:30px!important;height:30px!important}
+body #tab-dunya .rt-medal-route .rt-medal-start .rt-medal-parrot{width:42px!important;height:42px!important}
+body #tab-dunya .rt-medal-route .rt-medal-disc svg:not(.rt-medal-parrot){width:22px;height:22px}
+body #tab-dunya .rt-medal-route .rt-medal-disc .rt-medal-stop-number{min-width:23px!important;height:23px!important;font-size:11px!important}
+body #tab-dunya .rt-medal-route .rt-medal-disc{border-width:3px!important;border-bottom-width:7px!important;box-shadow:0 0 0 5px var(--v4-lock-ring)!important}
+body #tab-dunya .rt-medal-route .rt-medal-stop.is-done .rt-medal-disc{box-shadow:0 0 0 5px var(--v4-done-ring)!important}
+body #tab-dunya .rt-medal-route .rt-medal-start .rt-medal-disc{box-shadow:0 0 0 6px var(--v4-current-ring)!important}
+.dm-lp-say{width:min(176px,calc(100vw - 150px));padding:7px 10px;border-radius:15px;font-size:12px;line-height:1.28;top:2px}
+.dm-lp-say>i{width:12px;height:12px;right:-5px;top:16px}
+.dm-lp-go{margin-top:5px;padding:5px 10px;border-radius:10px;font-size:11.5px}

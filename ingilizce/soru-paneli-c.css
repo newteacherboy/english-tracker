@@ -226,3 +226,16 @@ html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson
 }
 
 }
+
+/* [12 Kas 2026] ✕ titremesi: oyun gezinmesi (play-navigation.css) geri butonunu kendi CSS katmanında konumlar;
+   katmanlı !important katmansız kuralları yener ve ✕ her soruda önce oraya sonra ızgaraya zıplıyordu.
+   Aynı katmanda daha güçlü seçiciyle ✕ ilk karede doğru yerde ve doğru görünümde olur. */
+@layer playNavigation{
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson.dm-session-surface.ml-lesson:not(.ml-entry) .ml-header>[data-back].dm-session-back,
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-header>[data-back]{
+ grid-area:back!important;position:static!important;inset:auto!important;width:40px!important;height:40px!important;min-width:40px!important;min-height:40px!important;max-width:40px!important;
+ padding:0!important;margin:0!important;border:0!important;border-radius:12px!important;box-shadow:none!important;outline:none!important;
+ color:transparent!important;-webkit-text-fill-color:transparent!important;font-size:0!important;line-height:0!important;animation:none!important;transition:none!important;transform:none!important;
+ background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M6 6l12 12M18 6 6 18' stroke='%239AAEC6' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E") center/24px 24px no-repeat!important
+}
+}
