@@ -111,6 +111,8 @@
     quota={owner,at:Date.now(),mola:left.length?Math.max(...left):null,pwm:pwm.status==='fulfilled'&&Number.isFinite(Number(pwm.value?.remaining))?Number(pwm.value.remaining):null};
     const box=root.querySelector('.fr-status');if(box)box.outerHTML=statusHtml();
   }
+  // iOS uygulamasında paket düğmesi şimdilik gösterilmez (kullanıcı kararı, Kasım 2026).
+  const ios = () => !!window.dmIosUygulama || window.Capacitor?.getPlatform?.() === 'ios';
   function statusHtml() {
     if(window.dmTeacherPortalMode||!who())return '';
     const id=planId(), p=PLAN[id], own=quota.owner===who();
@@ -130,7 +132,7 @@
     return `<section class="fr-status" aria-labelledby="frStatusTitle">
       <div class="fr-status-head"><span aria-hidden="true"></span><h3 id="frStatusTitle">Bugünkü Durumun</h3><small>${p.name}</small></div>
       <div class="fr-status-grid">${rows.map(([k,label,val])=>`<div class="fr-status-row"><svg viewBox="0 0 24 24" aria-hidden="true">${art[k]}</svg><span>${label}</span>${val}</div>`).join('')}</div>
-      ${id==='premium_pro'?'':`<button type="button" class="fr-status-cta" data-friend-action="plans">${CROWN}Premium Pro ile sınırsız enerji</button>`}
+      ${id==='premium_pro'||ios()?'':`<button type="button" class="fr-status-cta" data-friend-action="plans">${CROWN}Premium Pro ile sınırsız enerji</button>`}
     </section>`;
   }
   const filterOptions = [['herkes','Herkes'],['takip','Takip ettiklerim'],['online','Çevrimiçi']];
