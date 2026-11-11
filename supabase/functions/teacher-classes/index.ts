@@ -4,8 +4,10 @@
 //   POST {action:'update', classId, name?, newCode?, archive?}
 //   POST {action:'move', studentId, classId}               → öğrenciyi kendi sınıflarından birine taşı
 //   POST {action:'report', classId, days:7|30}           → sınıf raporu (Free planda her zaman 7 gün)
+//   POST {action:'league', period:'week'|'month'|'all'}  → Sınıflar sekmesi (sınıf ligi); Free planda her listede yalnız ilk 2 öğrenci
 import { createClient } from 'npm:@supabase/supabase-js@2.118.0';
 import { classError, cleanName, isUuid } from './rules.mjs';
+import { buildLeague } from './league.mjs';
 
 const key = JSON.parse(Deno.env.get('SUPABASE_SECRET_KEYS') || '{}').default || Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
 const db = createClient(Deno.env.get('SUPABASE_URL')!, key!, { auth: { persistSession: false, autoRefreshToken: false } });
@@ -40,6 +42,12 @@ Deno.serve(async req => {
     if (!id) return reply({ ok: false, mesaj: 'Öğretmen olarak giriş yapmalısın.' }, 401);
 
     if (body.action === 'list') return reply(await list(id));
+    if (body.action === 'league') {
+      const period = ['week', 'month', 'all'].includes(body.period) ? body.period : 'week';
+      const r = await db.rpc('dm_teacher_league', { p_teacher: id, p_period: period });
+      if (r.error) throw r.error;
+      return reply(buildLeague(r.data));
+    }
     if (body.action === 'report') {
       if (!isUuid(body.classId)) return reply({ ok: false, mesaj: 'Sınıf seçilmedi.' }, 400);
       const r = await db.rpc('dm_class_report', { p_teacher: id, p_class: body.classId, p_days: Number(body.days) === 30 ? 30 : 7 });
