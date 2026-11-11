@@ -739,3 +739,33 @@ html[data-dm-theme="night"] #tab-meduakis .fr-status-row>span:first-of-type{colo
 #tab-meduakis .fr-status-row>svg{width:15px;height:15px}
 #tab-meduakis .fr-status-row>span:first-of-type{font-size:12px;text-overflow:clip}
 #tab-meduakis .fr-status-pill{min-width:30px;padding:3px 6px;font-size:11.5px}
+
+/* Kasım 2026 · Kart görselleri, plan renkleri, tıklanabilir satırlar. */
+#tab-meduakis .fr-tiles .fr-tile-people img,#tab-meduakis .fr-tiles .fr-tile-invite img{width:56px;height:52px;object-fit:contain}
+#tab-meduakis .fr-tiles .fr-tile-count{position:absolute;top:5px;right:6px;min-width:20px;height:20px;padding:0 5px;border-radius:999px;background:#3a63e8;color:#fff;font:900 11px/20px 'Nunito',sans-serif;box-sizing:border-box}
+#tab-meduakis .fr-status{padding:0 11px 12px;overflow:hidden}
+#tab-meduakis .fr-status-head{margin:0 -11px;padding:10px 12px;gap:8px;border-bottom:1.5px solid transparent}
+#tab-meduakis .fr-status-head h3{font-size:16px}
+#tab-meduakis .fr-status-plan{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:999px;font:900 12px 'Nunito',sans-serif;white-space:nowrap}
+#tab-meduakis .fr-status-plan .fr-crown{width:13px;height:13px}
+/* Free: sade gri-mavi */
+#tab-meduakis .fr-status.fr-plan-free .fr-status-head{background:linear-gradient(90deg,#eef2f9,#f7f9fd)}
+#tab-meduakis .fr-status.fr-plan-free .fr-status-plan{background:#dfe5f1;color:#4c5a85}
+/* Pro: mavi-mor */
+#tab-meduakis .fr-status.fr-plan-pro{border-color:#8fa6f5}
+#tab-meduakis .fr-status.fr-plan-pro .fr-status-head{background:linear-gradient(90deg,#4f78f0,#7b5cf0)}
+#tab-meduakis .fr-status.fr-plan-pro .fr-status-head h3{color:#fff!important}
+#tab-meduakis .fr-status.fr-plan-pro .fr-status-plan{background:#fff;color:#4a4fd8}
+/* Premium Pro: altın */
+#tab-meduakis .fr-status.fr-plan-premium_pro{border-color:#f0c96a;box-shadow:0 0 0 3px #fff3cf}
+#tab-meduakis .fr-status.fr-plan-premium_pro .fr-status-head{background:linear-gradient(90deg,#f7c948,#ffe08a 55%,#f2b52a)}
+#tab-meduakis .fr-status.fr-plan-premium_pro .fr-status-head h3{color:#4a2c00!important}
+#tab-meduakis .fr-status.fr-plan-premium_pro .fr-status-plan{background:#4a2c00;color:#ffd45c}
+#tab-meduakis .fr-status-grid{margin-top:2px}
+#tab-meduakis button.fr-status-row{width:100%;border:0;text-align:left;font:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:transform .12s ease,background .12s ease}
+#tab-meduakis button.fr-status-row:active{transform:scale(.97);background:#e9eeff}
+#tab-aktiviteler .fr-flash{animation:frFlash 1.6s ease}
+@keyframes frFlash{0%,100%{box-shadow:none}25%,75%{box-shadow:0 0 0 4px #ffd45c}}
+html[data-dm-theme="night"] #tab-meduakis .fr-status.fr-plan-free .fr-status-head{background:var(--dm-soft)}
+html[data-dm-theme="night"] #tab-meduakis .fr-status.fr-plan-free .fr-status-plan{background:var(--dm-surface);color:var(--dm-text)}
+#tab-meduakis .fr-status-head>.fr-status-plan{width:auto;height:auto;border-radius:999px}

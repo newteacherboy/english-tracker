@@ -63,20 +63,19 @@
   }
   function tilesHtml() {
     const pending = invites.filter(x=>x.durum==='bekliyor'&&norm(x.alici)===norm(who())).length;
-    const list = people(), shown = list.slice(0,2), more = Math.max(0,list.length-shown.length);
-    const faces = shown.map(id=>avatar(id,28)).join('') + (more?`<span class="fr-tile-more">+${more}</span>`:'');
+    const list = people();
     return `<div class="fr-tiles">
       <button type="button" class="fr-tile fr-tile-duel" data-friend-action="matches" aria-label="Düello${pending?', '+pending+' bekleyen davet':''}">
         ${pending?'<span class="fr-duel-dot" aria-hidden="true"></span>':''}<img src="friends-assets/papi-fencer.webp" alt="" decoding="async"><b>Düello</b>
       </button>
       <button type="button" class="fr-tile fr-tile-people" data-friend-action="people" aria-label="Arkadaşlarım, ${list.length} arkadaş">
-        <span class="fr-tile-faces">${faces||'<span class="fr-tile-more">0</span>'}</span><b>Arkadaşlarım</b>
+        ${list.length?`<span class="fr-tile-count">${list.length}</span>`:''}<img src="friends-assets/friends-kids.webp" alt="" decoding="async"><b>Arkadaşlarım</b>
       </button>
       <button type="button" class="fr-tile fr-tile-showcase" data-friend-action="vitrin" data-friends-gate="vitrin">
         <img src="friends-assets/papi-friends.png" alt="" decoding="async"><b>Vitrinim</b>
       </button>
       <button type="button" class="fr-tile fr-tile-invite" data-friend-action="share">
-        <span class="fr-tile-plus">${icon('add')}</span><b>Davet et</b>
+        <img src="friends-assets/papi-invite.webp" alt="" decoding="async"><b>Davet et</b>
       </button>
     </div>`;
   }
@@ -120,18 +119,21 @@
     const pro=`<span class="fr-status-pill fr-status-pro">${CROWN}Pro</span>`;
     const count=(left,max)=>left===null||left===undefined?pill(own?'—':'…','fr-status-wait'):pill(`${left}/${max}`,left>0?'fr-status-ok':'fr-status-out');
     const energyLeft=Math.max(0,Number(window.genelEnerjiKalan)||0), energyMax=Number(window.genelEnerjiMax)||(id==='pro'?40:25);
+    // Her satır ilgili yere gider; kilitli (Pro) satırlar paketleri açar — iOS'ta şimdilik paket açılmaz.
+    const locked=ios()?'':'plans';
     const rows=[
-      ['bolt','Enerji',id==='premium_pro'?pill('Sınırsız','fr-status-free'):count(energyLeft,energyMax)],
-      ['break','Mola Vakti',count(own?quota.mola:null,p.mola)],
-      ['game','Premium oyun',p.pwm===null?pill('Sınırsız','fr-status-free'):count(own?quota.pwm:null,p.pwm)],
-      ['shield','Seri kalkanı',p.shields?pill(p.shields,'fr-status-free'):pro],
-      ['coin','Günlük altın',p.gold?pill(p.gold,'fr-status-free'):pro],
-      ['noads','Reklamsız',p.ads?pro:pill('Açık','fr-status-free')]
+      ['bolt','Enerji',id==='premium_pro'?pill('Sınırsız','fr-status-free'):count(energyLeft,energyMax),'energy'],
+      ['break','Mola Vakti',count(own?quota.mola:null,p.mola),'mola'],
+      ['game','Premium oyun',p.pwm===null?pill('Sınırsız','fr-status-free'):count(own?quota.pwm:null,p.pwm),'premium'],
+      ['shield','Seri kalkanı',p.shields?pill(p.shields,'fr-status-free'):pro,p.shields?'streak':locked],
+      ['coin','Günlük altın',p.gold?pill(p.gold,'fr-status-free'):pro,p.gold?'shop':locked],
+      ['noads','Reklamsız',p.ads?pro:pill('Açık','fr-status-free'),p.ads?locked:'']
     ];
     const art={bolt:'<path d="M13 2 4 14h7l-1 8 9-12h-7z" fill="#f5a524"/>',break:'<path d="M12 3c4 0 7 2.5 7 6H5c0-3.5 3-6 7-6zm-1 7h2v8h4v2H7v-2h4z" fill="#23a36f"/>',game:'<path d="M7 8h10a4 4 0 0 1 4 4v3a3 3 0 0 1-5.4 1.8L14 15h-4l-1.6 1.8A3 3 0 0 1 3 15v-3a4 4 0 0 1 4-4z" fill="#5b55d6"/>',shield:'<path d="M12 2 4 5v6c0 5 3.4 9.4 8 11 4.6-1.6 8-6 8-11V5z" fill="#3a63e8"/>',coin:'<circle cx="12" cy="12" r="9" fill="#f2c94c" stroke="#d9a520" stroke-width="2"/>',noads:'<circle cx="12" cy="12" r="10" fill="#e86a6a"/><path d="M6 11h12v2H6z" fill="#fff"/>'};
-    return `<section class="fr-status" aria-labelledby="frStatusTitle">
-      <div class="fr-status-head"><span aria-hidden="true"></span><h3 id="frStatusTitle">Bugünkü Durumun</h3><small>${p.name}</small></div>
-      <div class="fr-status-grid">${rows.map(([k,label,val])=>`<div class="fr-status-row"><svg viewBox="0 0 24 24" aria-hidden="true">${art[k]}</svg><span>${label}</span>${val}</div>`).join('')}</div>
+    const badge=id==='premium_pro'?CROWN+'Premium Pro':id==='pro'?'★ Pro':'Free';
+    return `<section class="fr-status fr-plan-${id}" aria-labelledby="frStatusTitle">
+      <div class="fr-status-head"><h3 id="frStatusTitle">Bugünkü Durumun</h3><span class="fr-status-plan">${badge}</span></div>
+      <div class="fr-status-grid">${rows.map(([k,label,val,go])=>go?`<button type="button" class="fr-status-row" data-friend-action="status-go" data-go="${go}"><svg viewBox="0 0 24 24" aria-hidden="true">${art[k]}</svg><span>${label}</span>${val}</button>`:`<div class="fr-status-row"><svg viewBox="0 0 24 24" aria-hidden="true">${art[k]}</svg><span>${label}</span>${val}</div>`).join('')}</div>
       ${id==='premium_pro'||ios()?'':`<button type="button" class="fr-status-cta" data-friend-action="plans">${CROWN}Premium Pro ile sınırsız enerji</button>`}
     </section>`;
   }
@@ -345,6 +347,16 @@
     if(action==='lig'&&window.dmLeagueUI?.openWeekly)return window.dmLeagueUI.openWeekly();
     if(['home','akis','vitrin','lig'].includes(action)){window.maSekmeSec(action==='home'?'hub':action);return;}
     if(action==='share')return void shareInvite();
+    if(action==='status-go'){
+      const go=b.dataset.go;
+      if(go==='energy'){if(window.DMSatis?.enerji)return window.DMSatis.enerji('arkadaslar-durum');return window.dijiEnerjiPaneliAc?.();}
+      if(go==='mola'){window.aktivitelerTamEkranAc?.();setTimeout(()=>{const card=document.querySelector('#tab-aktiviteler [data-mola]');if(card){card.scrollIntoView({behavior:'smooth',block:'center'});card.classList.add('fr-flash');setTimeout(()=>card.classList.remove('fr-flash'),1600);}},350);return;}
+      if(go==='premium'){if(typeof window.premiumKelimeEslestirmeAc==='function')return window.premiumKelimeEslestirmeAc();return window.aktivitelerTamEkranAc?.();}
+      if(go==='streak')return window.dmLearningCompanion?.report?.();
+      if(go==='shop'){if(typeof window.magazaAc==='function')return window.magazaAc();return window.maSekmeSec?.('magaza');}
+      if(go==='plans'){if(window.DMSatis?.planlar)return window.DMSatis.planlar('arkadaslar-durum');return window.dmAndroidOpenPlans?.();}
+      return;
+    }
     if(action==='plans'){if(window.DMSatis?.planlar)return window.DMSatis.planlar('arkadaslar-durum');return window.dmAndroidOpenPlans?.();}
     if(action==='people')return openPeople();
     if(action==='congratulate'){window.maTebrikEt('akis-'+b.dataset.event,b);paintCongratulation(b);return;}
