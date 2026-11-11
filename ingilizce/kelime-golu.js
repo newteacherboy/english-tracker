@@ -168,7 +168,7 @@ function finish(){const s=session;if(!s||s.phase!=='play')return;s.phase='result
   if(!practice()||window.dmTeacherPortalMode)saveScore(s,result).catch(()=>{});
  }else{
   const [a,b]=s.players,winner=a.score===b.score?'Berabere!':(a.score>b.score?a.name:b.name)+' kazandı!';
-  root.querySelector('.kg-main').innerHTML=`<div class="kg-results"><div class="kg-trophy">🏆</div><h3>${esc(winner)}</h3><div class="kg-result-grid">${s.players.map(p=>`<article><h4>${esc(p.name)}</h4><strong>${p.score} puan</strong><p>${p.correct} gol · ${p.wrong} yanlış</p></article>`).join('')}</div><p>Enerji ve joker harcanmadı. Hesaplara XP veya altın yazılmaz.</p><button type="button" class="kg-primary" data-again>Rövanş ⚽</button><button type="button" data-done>Oyunlara dön</button></div>`;
+  root.querySelector('.kg-main').innerHTML=`<div class="kg-results">${window.DMPapi?window.DMPapi.tag('alkis','kg-trophy'):'<div class="kg-trophy">🏆</div>'}<h3>${esc(winner)}</h3><div class="kg-result-grid">${s.players.map(p=>`<article><h4>${esc(p.name)}</h4><strong>${p.score} puan</strong><p>${p.correct} gol · ${p.wrong} yanlış</p></article>`).join('')}</div><p>Enerji ve joker harcanmadı. Hesaplara XP veya altın yazılmaz.</p><button type="button" class="kg-primary" data-again>Rövanş ⚽</button><button type="button" data-done>Oyunlara dön</button></div>`;
   root.querySelector('[data-again]').onclick=()=>open('duo');root.querySelector('[data-done]').onclick=close;
  }
 }

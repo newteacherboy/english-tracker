@@ -13,6 +13,7 @@
 .dmp{display:block;width:100%;height:100%;overflow:visible}
 .dm-papi-host{display:block;pointer-events:auto!important;-webkit-tap-highlight-color:transparent}
 .dm-papi-host .dmp{cursor:pointer}
+.dm-papi-res{display:block;width:140px;height:150px;margin:0 auto 6px;font-size:0;line-height:0;object-fit:initial}
 #dmStoryLesson .ml-result-mascot .ml-result-papi{width:118px;height:128px;margin:auto}
 #dmStoryLesson[data-fit="1"] .ml-result-mascot .ml-result-papi{width:92px;height:100px}
 #dmStoryLesson[data-fit="2"] .ml-result-mascot .ml-result-papi{width:68px;height:74px}
@@ -168,7 +169,8 @@
     const m = MOODS.includes(mood) ? mood : 'idle';
     const u = 'dmp' + (++seq);
     const alt = String(label || 'Papi').replace(/[<>&"]/g, '');
-    if (opts && opts.ms > 0) setTimeout(() => { const el = document.querySelector('svg.dmp[data-dmp-id="' + u + '"]'); if (el && el.classList.contains('m-' + m)) setMood(el, opts.then || 'idle'); }, opts.ms);
+    if (opts && opts.steps) setTimeout(() => { const el = document.querySelector('svg.dmp[data-dmp-id="' + u + '"]'); if (el) sequence(el, opts.steps, opts.then || 'idle'); }, 0);
+    else if (opts && opts.ms > 0) setTimeout(() => { const el = document.querySelector('svg.dmp[data-dmp-id="' + u + '"]'); if (el && el.classList.contains('m-' + m)) setMood(el, opts.then || 'idle'); }, opts.ms);
     return `<svg class="dmp m-${m}" data-dmp="1" data-dmp-id="${u}"${opts && opts.tap ? ' data-dmp-tap="1" data-dmp-base="' + ((opts.ms > 0 && opts.then) || m) + '"' : ''} viewBox="0 0 400 440" role="img" aria-label="${alt}">
 <defs>
 <radialGradient id="${u}b" cx="38%" cy="28%" r="80%"><stop offset="0" stop-color="#5FE3D5"/><stop offset=".55" stop-color="#22BFB2"/><stop offset="1" stop-color="#128E8F"/></radialGradient>
@@ -287,5 +289,15 @@
     setTimeout(() => { s._dmpTap = 0; }, 1500);
   }, true);
 
-  window.DMPapi = { html, react, sequence, setMood, resultMood, MOODS };
+  /* Sonuç ekranları için hazır kutu: tag('sevinc', 'ek-sinif') -> <span>…</span>
+     Tepki ~3,5 sn sürer, sonra gülümseyen hale geçer; teselli önce kısa bir üzüntüyle başlar. */
+  function tag(mood, cls, opts) {
+    const m = MOODS.includes(mood) ? mood : 'sevinc';
+    const o = Object.assign({ tap: true, then: 'mutlu' }, opts || {});
+    if (m === 'teselli' && !o.steps) o.steps = [['uzgun', 1300], ['teselli', 3200]];
+    else if (!o.steps && o.ms === undefined) o.ms = 3600;
+    return '<span class="dm-papi-host dm-papi-res' + (cls ? ' ' + cls : '') + '">' + html(o.steps ? o.steps[0][0] : m, 'Papi', o) + '</span>';
+  }
+
+  window.DMPapi = { html, tag, react, sequence, setMood, resultMood, MOODS };
 })();
