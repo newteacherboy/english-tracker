@@ -50,7 +50,7 @@ test('profile word review and placement close buttons both return to profile men
  const {w}=fixture('<nav id="bottomNavMobile"><button class="bn-item" data-ekran="tab-profile-menu"><span class="bn-icon"></span><span class="bn-label"></span></button></nav><div id="panel-alani" style="display:block"></div>');
  w.eval("var aktifOgrenciAdi='New',yo={dmLearningPurpose:'school'},apiURL='/api';");w.yoHazirMi=()=>true;w.dcTumTamEkranlariKapat=()=>{};w.fetch=async(_u,opt)=>({ok:true,json:async()=>JSON.parse(opt.body).islem==='wordReviewList'?{ok:true,words:[]}:{ok:true}});
  w.eval(source('placement-bank.js'));w.eval(source('bottom-nav.js'));w.eval(source('member-experience.js'));
- for(const key of ['repeat','exam']){w.dmProfileMenuAc();w.document.querySelector('[data-profile="'+key+'"]').click();await flush();const modal=w.document.querySelector('.dm-member-overlay');assert(modal);modal.querySelector('.dm-member-close').click();await new Promise(r=>setTimeout(r,30));assert(w.document.getElementById('rtProfileBackdrop'));w.document.querySelector('#rtProfileBackdrop .rt-close').click();}
+ for(const key of ['repeat']) /* Seviye Testi Benim Merkezim'den kaldırıldı: yalnızca Parkur Değiştir'den (11 Kas 2026) */{w.dmProfileMenuAc();w.document.querySelector('[data-profile="'+key+'"]').click();await flush();const modal=w.document.querySelector('.dm-member-overlay');assert(modal);modal.querySelector('.dm-member-close').click();await new Promise(r=>setTimeout(r,30));assert(w.document.getElementById('rtProfileBackdrop'));w.document.querySelector('#rtProfileBackdrop .rt-close').click();}
  w.close();
 });
 test('all classroom cards dispatch to working entrypoints including local and online battles',()=>{
