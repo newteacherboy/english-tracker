@@ -10,7 +10,6 @@
   const icon = (name, cls = '') => `<svg class="fr-icon ${cls}" aria-hidden="true"><use href="friends-assets/icons.svg#${name}"></use></svg>`;
   const art = (name, cls = '') => `<img class="${cls}" src="friends-assets/${name}.png" alt="" decoding="async">`;
   root.querySelector('.akis-baslik')?.insertAdjacentHTML('beforebegin','<div class="fr-wallet-host"></div>');
-  root.querySelector('.akis-baslik h2')?.insertAdjacentHTML('afterend',`<div class="fr-header-actions"><button type="button" class="fr-showcase-link" data-friend-action="vitrin" data-friends-gate="vitrin">${icon('star')} Vitrinim</button></div>`);
   const permitted = code => window.dmFeatureEnabled?.(code) !== false && window.dmProgression?.allowed?.(code) !== false;
   function requireFeature(code) {
     if (window.dmFeatureEnabled?.(code) === false) { window.maToast?.('Bu özellik şu anda kapalı.'); return false; }
@@ -62,19 +61,31 @@
       </div>
     </section>`;
   }
-  function shortcutsHtml() {
-    const pending = invites.some(x=>x.durum==='bekliyor'&&norm(x.alici)===norm(who()));
-    return `<div class="fr-summaries">
-      <section class="fr-duel-card" aria-labelledby="frDuelTitle">
-        <img class="fr-duel-art" src="friends-assets/papi-fencer.webp" alt="" decoding="async">
-        <div class="fr-duel-copy"><h3 id="frDuelTitle">Düello${pending?'<span class="fr-duel-dot" role="img" aria-label="Yeni oyun daveti"></span>':''}</h3>
-          <p>Arkadaşlarınla yarış ya da Papi'ye meydan oku!</p></div>
-        <button type="button" class="fr-duel-start" data-friend-action="matches">Düello Başlat</button>
-      </section>
-      <div class="fr-people-row">
-        <button type="button" class="fr-people-link" data-friend-action="people"><img src="route-assets/bilgi-icons/friends.webp" alt="" decoding="async"><strong>Arkadaşlarım</strong></button>
-        <button type="button" class="fr-people-invite" data-friend-action="share">${icon('add')} Davet et</button>
-      </div>
+  function tilesHtml() {
+    const pending = invites.filter(x=>x.durum==='bekliyor'&&norm(x.alici)===norm(who())).length;
+    const list = people(), shown = list.slice(0,3), more = Math.max(0,list.length-shown.length);
+    const faces = shown.map(id=>avatar(id,34)).join('') + (more?`<span class="fr-tile-more">+${more}</span>`:'');
+    return `<div class="fr-tiles">
+      <button type="button" class="fr-tile fr-tile-duel" data-friend-action="matches">
+        <b>Düello${pending?'<span class="fr-duel-dot" role="img" aria-label="Yeni oyun daveti"></span>':''}</b>
+        <img src="friends-assets/papi-fencer.webp" alt="" decoding="async">
+        <small>${pending?pending+' bekleyen davet':'Arkadaşına ya da Papi\'ye meydan oku'}</small>
+      </button>
+      <button type="button" class="fr-tile fr-tile-people" data-friend-action="people">
+        <b>Arkadaşlarım</b>
+        ${faces?`<span class="fr-tile-faces">${faces}</span>`:''}
+        <small>${list.length?list.length+' arkadaş':'Henüz arkadaş eklemedin'}</small>
+      </button>
+      <button type="button" class="fr-tile fr-tile-showcase" data-friend-action="vitrin" data-friends-gate="vitrin">
+        <b>Vitrinim</b>
+        <img src="friends-assets/papi-friends.png" alt="" decoding="async">
+        <small>Arkadaşların seni böyle görüyor</small>
+      </button>
+      <button type="button" class="fr-tile fr-tile-invite" data-friend-action="share">
+        <b>Davet et</b>
+        <span class="fr-tile-plus">${icon('add')}</span>
+        <small>Arkadaşın lige katılsın</small>
+      </button>
     </div>`;
   }
   const filterOptions = [['herkes','Herkes'],['takip','Takip ettiklerim'],['online','Çevrimiçi']];
@@ -88,12 +99,11 @@
   }
   function clubHeader(){return `<header class="club-hero"><button type="button" class="club-back" data-friend-action="home" aria-label="Arkadaşlar ana ekranına dön">‹</button><h2>Medu Akış</h2><button type="button" data-friend-action="share" aria-label="Davet et">＋</button></header>`;}
   function homeHtml() {
-    const options=filterOptions.map(([id,label])=>`<option value="${id}"${maFiltre===id?' selected':''}>${label}</option>`).join('');
-    return `<div class="fr-home fr-compact">
+    // Medu Akış kaldırıldı (Kasım 2026): ana ekran lig + dört kart; akış verisi artık yüklenmez.
+    return `<div class="fr-home fr-compact fr-tiles-home">
       ${leagueHtml()}
-      ${shortcutsHtml()}
-      <section class="fr-feed"><div class="fr-section-head"><h3>${icon('bolt')} Medu Akış</h3><select class="fr-filter-select" aria-label="Etkinlik filtresi">${options}</select></div><div id="maAkisListe">${window.maAkisListeHtml()}</div></section>
-      <button type="button" class="fr-all-feed" data-friend-action="akis">Tüm akışı gör ${icon('chevron')}</button>
+      <div id="frInvitation">${invitationHtml()}</div>
+      ${tilesHtml()}
     </div>`;
   }
   function fullFeedHtml() {
@@ -136,18 +146,16 @@
     busy=true;const owner=account, ticket=epoch;
     const results=await Promise.allSettled([
       Promise.resolve().then(()=>window.maTumGetir?.()),
-      Promise.resolve().then(()=>window.maAkisYukle?.()),
       Promise.resolve().then(()=>window.maOlaylariYukle?.()),
       Promise.resolve().then(()=>window.dmProgression?.refresh?.()),
       permitted('takip')?window.dmMeduPro?.api?.('takipDavetListesi'):Promise.resolve(null),
       permitted('duello')?window.dmMeduPro?.api?.('duellolarim'):Promise.resolve(null)
     ]);
     if(owner!==who()||ticket!==epoch)return;
-    if(results[4].status==='fulfilled'&&Array.isArray(results[4].value?.liste))followed=results[4].value.liste;
-    if(results[5].status==='fulfilled'&&Array.isArray(results[5].value?.liste))invites=results[5].value.liste;
+    if(results[3].status==='fulfilled'&&Array.isArray(results[3].value?.liste))followed=results[3].value.liste;
+    if(results[4].status==='fulfilled'&&Array.isArray(results[4].value?.liste))invites=results[4].value.liste;
     busy=false;lastLoad=Date.now();renderHome();
     if(permitted('lig'))void window.dmLeagueUI?.refreshWeekly?.();
-    await window.dmSocialPresence?.refresh?.(true);
   }
   root.addEventListener('dm:weekly-league',()=>{
     if(maSekme==='hub'&&!maProfilId){
@@ -204,11 +212,11 @@
     const result=await originalDraw.apply(this,arguments);decorateDetail();return result;
   };
   window.maSekmeSec=function(s){
-    if(s==='parkur'||s==='kesfet'||s==='hub'){
+    if(s==='parkur'||s==='kesfet'||s==='hub'||s==='akis'){
       ++maCizNo;maSekme='hub';maProfilId=null;viewHeader();renderHome();void loadHome();$('maEkran').scrollTop=0;
       if(s==='kesfet')void openMatches();return;
     }
-    if(['akis','vitrin','lig'].includes(s)&&!requireFeature(s))return;
+    if(['vitrin','lig'].includes(s)&&!requireFeature(s))return;
     return originalSelect.apply(this,arguments);
   };
   window.meduAkisAc=function(){
@@ -314,7 +322,7 @@
   });
   // Only observe structure. Badge text/attribute updates must not cause a render loop.
   observer.observe($('maEkran'),{childList:true,subtree:true});
-  setInterval(()=>{if(root.classList.contains('active')&&!document.hidden){resetAccount();paintLocks();if(maSekme==='hub'&&!maProfilId)void loadHome();}},60000);
+  setInterval(()=>{if(root.classList.contains('active')&&!document.hidden){resetAccount();paintLocks();if(maSekme==='hub'&&!maProfilId)void loadHome();}},180000);
   window.dmFriends={open:()=>window.meduAkisAc(),home:()=>window.maSekmeSec('hub'),detail:s=>window.maSekmeSec(s),refresh:()=>loadHome(true)};
   function dockSpace(){
     const dock=$('bottomNavMobile');
