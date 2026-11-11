@@ -173,16 +173,6 @@ html[data-dm-theme="night"] .dm-lp-say>i{background:#1c2a4a}
 html[data-dm-theme="night"] .dm-lp-say b{color:#8fc1ff}
 @media (prefers-reduced-motion:reduce){.dm-lp-say{animation:none}.dm-lp-say:first-child{opacity:1;visibility:visible}.dm-lp-go::after{animation:none}}
 
-/* [12 Kas 2026] Kütüphane / Plan / Görevler şeridi saydam: kaydırırken duraklar butonların arkasından
-   görünür, şeridin altında kesilmez. Şerit parkurun üstünde yüzer; kaydırma alanı onun kadar içeriden başlar. */
-body #tab-dunya .rt-medal-route{--rt-tools-h:72px}
-html[data-dm-theme="day"] body #tab-dunya .rt-medal-route{--rt-tools-h:106px}
-body #tab-dunya .rt-medal-route .rt-medal-header{position:relative;z-index:6}
-body #tab-dunya .rt-medal-route .rt-medal-tools{position:absolute!important;left:0;right:0;top:100%;margin:0!important;padding:8px 0 0;background:transparent!important;pointer-events:none}
-body #tab-dunya .rt-medal-route .rt-medal-tools>button{pointer-events:auto}
-body #tab-dunya .rt-medal-route .rt-medal-scroll{padding-top:var(--rt-tools-h);scroll-padding-top:var(--rt-tools-h)}
-/* Yazılar durakların üstünde de okunur kalsın */
-html[data-dm-theme="day"] body #tab-dunya .rt-medal-route .rt-medal-tools button>span{text-shadow:0 0 3px #E6F1FC,0 0 6px #E6F1FC,0 1px 0 #fff}
 /* [12 Kas 2026] Duraklar biraz küçüldü; Papi'nin konuşma balonu daha küçük. */
 body #tab-dunya .rt-medal-route{--medal-size:clamp(52px,15.5vw,64px);--medal-current-size:clamp(62px,19vw,76px)}
 body #tab-dunya .rt-medal-route .rt-medal-disc .rt-medal-parrot{width:30px!important;height:30px!important}
@@ -195,3 +185,15 @@ body #tab-dunya .rt-medal-route .rt-medal-start .rt-medal-disc{box-shadow:0 0 0 
 .dm-lp-say{width:min(176px,calc(100vw - 150px));padding:7px 10px;border-radius:15px;font-size:12px;line-height:1.28;top:2px}
 .dm-lp-say>i{width:12px;height:12px;right:-5px;top:16px}
 .dm-lp-go{margin-top:5px;padding:5px 10px;border-radius:10px;font-size:11.5px}
+
+/* [12 Kas 2026] Kütüphane / Plan / Görevler: başlık altındaki şerit yerine parkur haritasının solunda,
+   alt alta küçük yuvarlak butonlar. Harita kaydırılırken yerinde kalırlar. */
+body #tab-dunya .rt-medal-route .rt-medal-header{position:relative;z-index:6}
+body #tab-dunya .rt-medal-route .rt-medal-tools{position:absolute!important;top:calc(100% + 12px);left:0;display:flex!important;flex-direction:column;gap:12px!important;margin:0!important;padding:0!important;width:62px;background:transparent!important;pointer-events:none}
+body #tab-dunya .rt-medal-route .rt-medal-tools>button{pointer-events:auto;width:62px!important;min-width:0!important;min-height:0!important;padding:0!important;gap:4px!important;border:0!important;border-radius:0!important;background:none!important;box-shadow:none!important;font:900 11px/1.1 Nunito,system-ui,sans-serif!important;white-space:nowrap;filter:none}
+html[data-dm-theme="day"] body #tab-dunya .rt-medal-route .rt-medal-tools>button{color:#0F2747!important;text-shadow:0 0 3px #E6F1FC,0 0 6px #E6F1FC}
+html[data-dm-theme="day"] body #tab-dunya .rt-medal-route .rt-medal-tools>button::before{width:50px!important;height:50px!important;background-color:#fff!important;background-size:32px,0 0!important;box-shadow:0 3px 0 #C9DDF2,0 4px 10px #0f27471f}
+body #tab-dunya .rt-medal-route .rt-medal-tools>button>svg{width:22px!important;height:22px!important;padding:13px;box-sizing:content-box;border-radius:50%;background:var(--medal-secondary);border:1px solid var(--medal-border);box-shadow:0 3px 0 #0003}
+html:not([data-dm-theme="day"]) body #tab-dunya .rt-medal-route .rt-medal-tools>button{text-shadow:0 1px 3px #000a}
+body #tab-dunya .rt-medal-route .rt-medal-tools>button:active::before,body #tab-dunya .rt-medal-route .rt-medal-tools>button:active>svg{transform:scale(.92)}
+body #tab-dunya .rt-medal-route .rt-medal-tools .rt-tool-badge{top:-3px!important;right:2px!important;left:auto!important}
