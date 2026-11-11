@@ -6,7 +6,7 @@ const vm=require('node:vm');
 const {resolve}=require('../ingilizce/holiday-splashes/splash.js');
 const calendar=JSON.parse(fs.readFileSync('ingilizce/holiday-splashes/dates.json','utf8'));
 for(const [name,file,prefix] of [
- ['home','index.html','ingilizce/'],
+ ['home','portal/index.html','ingilizce/'],
  ['English portal','ingilizce/index.html','']
 ]){
  test(name+' selects the approved 2026 second artwork before first paint',()=>{

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Diji Medu'yu indir</title>
+<meta name="robots" content="noindex, follow">
+<link rel="canonical" href="https://app.dijimedu.com/">
+<script>
+/* QR kodun açtığı adres: telefona göre doğru mağazaya gönderir. */
+(function(){
+  var ua=navigator.userAgent||'';
+  var ios=/iPhone|iPad|iPod/.test(ua)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+  var android=/Android/i.test(ua);
+  var to=ios?'https://apps.apple.com/tr/app/diji-medu-i-ngilizce-%C3%B6%C4%9Fren/id6828143078'
+        :android?'https://play.google.com/store/apps/details?id=com.dijimedu.ingilizce'
+        :'/?kal=1';
+  location.replace(to);
+})();
+</script>
+<style>body{margin:0;font-family:system-ui,sans-serif;background:#eaf8fd;color:#10303a;display:flex;min-height:100vh;align-items:center;justify-content:center;text-align:center}a{display:block;margin:10px;font-weight:800;color:#0b7f8a}</style>
+</head>
+<body>
+<main>
+  <p>Mağazaya yönlendiriliyorsun…</p>
+  <a href="https://play.google.com/store/apps/details?id=com.dijimedu.ingilizce">Google Play</a>
+  <a href="https://apps.apple.com/tr/app/diji-medu-i-ngilizce-%C3%B6%C4%9Fren/id6828143078">App Store</a>
+  <a href="/?kal=1">Tarayıcıda oyna</a>
+</main>
+</body>
+</html>

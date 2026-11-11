@@ -1,6 +1,6 @@
 'use strict';
 const {test}=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm');
-const root=fs.readFileSync('index.html','utf8');
+const root=fs.readFileSync('portal/index.html','utf8');
 const portal=fs.readFileSync('ingilizce/index.html','utf8');
 const script=[...root.matchAll(/<script\b[^>]*>([^]*?)<\/script>/gi)].find(m=>m[1].includes("const splash=document.getElementById('splashEkrani')"))[1];
 test('home navigation is revealed at DOM readiness even if noncritical images never load',()=>{
