@@ -25900,6 +25900,8 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
     if (o.tur === 'ders') {
       let v = o.veri || {};
       if (typeof dersCalisTamEkranAc === 'function') dersCalisTamEkranAc();
+      /* Ders Çalış öğrencide yalnızca ödevden açılır: geri/çıkış Ödevlerim'e döner (ders-odev-modu.js). */
+      window.dmDersOdevModu?.start();
       for (let i = 0; i < 30 && !(typeof dcTumKonularCache !== 'undefined' && dcTumKonularCache.length); i++) await bekle(200);
       try {
         dcAktifSeviye = v.seviye; dcAktifKategori = v.kategori;
@@ -26654,6 +26656,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <script defer src="league-ui.js?v=20261027-kota-2"></script>
 <link rel="stylesheet" href="study-ui.css?v=20261019-learn-play-1">
 <script defer src="study-ui.js?v=20261026-reward-priority-1"></script>
+<script defer src="ders-odev-modu.js?v=20261111-1"></script>
 <link rel="stylesheet" href="storefront.css?v=20261103-pwm2">
 <script defer src="boutique-art.js?v=20261014-legend-1"></script>
 <script defer src="bag-inventory.js?v=20261019-first-tap-4"></script>
