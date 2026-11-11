@@ -28,7 +28,8 @@ function load(){if(loading)return loading;loading=(async()=>{
  if(!Array.isArray(rows))throw Error('Konular yüklenemedi.');
  rows=rows.filter(r=>['A1','A2'].includes(r.seviye)&&Object.hasOwn(cats,r.kategori)).sort((a,b)=>Object.keys(cats).indexOf(a.kategori)-Object.keys(cats).indexOf(b.kategori)||Number(a.siraNo)-Number(b.siraNo));
  })().catch(e=>{loading=null;throw e;});return loading;}
-function levelOpen(code){if(code==='A1'||guest()||['teacher','dijimedu_demo'].includes(who().toLowerCase()))return true;const access=window.dmProgression?.status?.()?.studyAccess;return !access||access[code]!==false;}
+/* 11 Kas 2026: Ders Çalış öğrencide kapalı; hazır olan tüm seviyeler (A1, A2) herkese açık. B1/B2 'Yakında'. */
+function levelOpen(code){return true;}
 const levelLoading={};
 function loadLevel(code){if(catalogs[code])return Promise.resolve();if(levelLoading[code])return levelLoading[code];return levelLoading[code]=new Promise((resolve,reject)=>{const s=document.createElement('script');s.src='konu-oyunlari-'+code.toLowerCase()+'.js?v='+version;s.onload=()=>{catalogs[code]=window['DijiTopicGames'+code];resolve();};s.onerror=()=>{delete levelLoading[code];s.remove();reject(Error('Oyun içerikleri yüklenemedi.'));};document.head.append(s);});}
 let audio,enabled=true,speechTimer;

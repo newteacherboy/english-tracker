@@ -1,7 +1,5 @@
 import './konu-oyunlari-a1.js';
 import './konu-oyunlari-a2.js';
-import {loadStartPath} from './start-path-access.mjs';
-import {studyAccess} from './start-path.mjs';
 import {isDemo} from './demo-account.ts';
 import {buildQuestions,answerKey,validPicks} from './topic-games-core.mjs';
 const catalog=[...(globalThis as any).DijiTopicGamesA1,...(globalThis as any).DijiTopicGamesA2];
@@ -20,9 +18,7 @@ export function topicGamesAPI(db:any,json:any){
    const topic=catalog.find((t:any)=>t.key===b.topicKey);
    if(!topic||!topic.games.includes(b.game))return fail('Bu konu oyunu henüz hazır değil.');
    const [level,category,name]=topic.key.split('|');
-   if(level==='A2'&&!practice&&!isDemo(a)&&!a?.teacher_portal_access_id){
-    try{const ctx=await db.rpc('dm_progress_context',{actor:a.student_id});if(ctx.error)throw ctx.error;const path=await loadStartPath(db,a.student_id,ctx.data);if(!studyAccess(path).A2)return fail('Bu seviye henüz açık değil.',403);}catch{return fail('Seviye erişimi kontrol edilemedi.',503);}
-   }
+   // 11 Kas 2026: Ders Çalış öğrencide kapalı; Konu Oyunları'nın tüm hazır seviyeleri (A1, A2) her öğrenciye açık. Giriş şartı aşağıda sürer.
    if(level==='A2'&&!a)return fail('Bu seviye henüz açık değil.',403);
    const active=await db.from('lesson_topics').select('topic_name').eq('level',level).eq('category',category).eq('topic_name',name).eq('active',true).maybeSingle();
    if(active.error)return fail('Konular kontrol edilemedi.',503);
