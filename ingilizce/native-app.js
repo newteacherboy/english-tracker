@@ -31,11 +31,12 @@
       // Tüm ana sekmeler (Ana Sayfa, Oyunlar, Ders Çalış, Mağaza, Profil, Kulüp…) tam ekran .dc-fullscreen-overlay.
       // Üstlerine saydam bir kenar eklenir: arka plan saat/pil çubuğunun altına uzanır, içerik ise altında başlar.
       // Sekmenin kendi üst boşluğu korunur; yalnız güvenli alan kadar ek kaydırma yapılır.
-      '.dm-native-ios .dc-fullscreen-overlay.active:not(#tab-profil):not(:has(.bi-scene)){box-sizing:border-box!important;',
+      '.dm-native-ios .dc-fullscreen-overlay.active:not(#tab-profil):not(#tab-meduakis.fr-home-view):not(:has(.bi-scene)){box-sizing:border-box!important;',
       'border-top:var(--dm-ios-top-safe) solid transparent!important;background-clip:border-box!important}',
       // Sayfa akışındaki ekranlar (giriş, öğretmen paneli, özet) için.
       '.dm-native-ios body{padding-top:var(--dm-ios-top-safe)!important}',
-      // Profil (profile-forest.css) ve Parkur haritası (.bi-scene) güvenli alanı zaten kendi hesaplıyor; dokunulmaz.
+      // Profil (profile-forest.css), Arkadaşlar ana görünümü (friends-ui.css .ma-wrap) ve Parkur haritası (.bi-scene)
+      // güvenli alanı zaten kendi hesaplıyor; dokunulmaz (yoksa iki kez kayar, alt kısım kesilir).
       '.dm-native-ios body #bzPerde#bzPerde#bzPerde#bzPerde.rq-approved.dm-school-game{',
       'padding-top:var(--dm-ios-top-safe)!important}',
       '.dm-native-ios #dmNetBand{top:calc(var(--dm-ios-top-safe) + 8px)!important}',
@@ -69,6 +70,22 @@
       root.style.setProperty('--dm-ios-top-min', real > 0 ? '0px' : guess + 'px');
       window.dmIosSafeTop = real > 0 ? real : guess;
     };
+    // Benim Merkezim / Hesap ve Destek paneli (#rtProfileBackdrop) katmanlı (@layer) !important kurallarla
+    // biçimlendiriliyor; o yüzden üst boşluk doğrudan öğeye yazılır: başlık, kapat ve tema düğmesi çubuğun altına iner.
+    var padProfile = function () {
+      var p = document.querySelector('#rtProfileBackdrop .rt-profile');
+      if (!p || p.dataset.dmIosSafe) return;
+      p.dataset.dmIosSafe = '1';
+      p.style.setProperty('box-sizing', 'border-box', 'important');
+      p.style.setProperty('border-top', 'var(--dm-ios-top-safe) solid transparent', 'important');
+      p.style.setProperty('background-clip', 'border-box', 'important');
+    };
+    var watchProfile = function () {
+      if (!document.body) return;
+      new MutationObserver(padProfile).observe(document.body, { childList: true, subtree: true });
+      padProfile();
+    };
+    if (document.readyState !== 'loading') watchProfile(); else document.addEventListener('DOMContentLoaded', watchProfile);
     if (document.readyState !== 'loading') measure();
     document.addEventListener('DOMContentLoaded', function () { measure(); setTimeout(measure, 400); });
     window.addEventListener('load', function () { setTimeout(measure, 300); });
