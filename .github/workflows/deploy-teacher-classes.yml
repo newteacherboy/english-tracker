@@ -30,7 +30,7 @@ jobs:
         with:
           node-version: '22'
       - name: Pre-deploy checks
-        run: node --test supabase/functions/teacher-classes/rules.test.mjs supabase/functions/diji-api/class-code.test.mjs
+        run: node --test supabase/functions/teacher-classes/rules.test.mjs supabase/functions/teacher-classes/league.test.mjs supabase/functions/diji-api/class-code.test.mjs
       - uses: supabase/setup-cli@v1
         with:
           version: latest
