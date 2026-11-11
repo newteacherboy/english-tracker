@@ -55,3 +55,8 @@ html body #dmStoryLesson:not(.ml-pop) .ml-entry-pill{display:none}
  html body #dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-entry.ml-pop .ml-entry-card{animation:none!important}
  html body #dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-entry.ml-pop .ml-entry-start::after{animation:none!important;display:none!important}
 }
+
+/* kilitli durağa dokununca: titreşim (oyna-v2.js lockedStop) + sallanma */
+body #tab-dunya .rt-medal-route .rt-medal-stop.is-locked{cursor:not-allowed}
+body #tab-dunya .rt-medal-route .rt-medal-stop.is-shaking .rt-medal-disc{animation:dmLockShake .45s ease-in-out both!important}
+@keyframes dmLockShake{0%,100%{translate:0}20%{translate:-7px 0}40%{translate:6px 0}60%{translate:-4px 0}80%{translate:3px 0}}
