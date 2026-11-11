@@ -185,6 +185,7 @@
       screen.remove();
     }
     function openPanel(title, details, actions, variant = '') {
+      window.dmPremiumIntro?.unmount(screen);
       panel.dataset.variant = variant;
       panel.replaceChildren();
       const heading = document.createElement('h2');
@@ -212,7 +213,10 @@
       syncSound();
       panel.querySelector('button')?.focus({preventScroll: true});
     }
-    function syncSound() { sound.flying(!world.hidden && overlay.hidden && !game?.ending, !overlay.hidden && panel.dataset.variant==='hangar'); }
+    function syncSound() {
+      const intro = !!screen.querySelector(':scope > .dmpi');
+      sound.flying(!intro && !world.hidden && overlay.hidden && !game?.ending, intro || !overlay.hidden && panel.dataset.variant==='hangar');
+    }
     function paintSound() {
       const button = $('[data-sound]');
       const waves = sound.muted ? '<path d="m16 9 6 6m0-6-6 6"/>' : '<path d="M16 9a4 4 0 0 1 0 6m2-8a7 7 0 0 1 0 10"/>';
@@ -273,6 +277,47 @@
     }
     function home(error) {
       world.hidden = true;
+      const intro = window.dmPremiumIntro;
+      if (intro) {
+        overlay.hidden = true;
+        const ready = !state.completed && state.remaining > 0;
+        const openPlans = intro.plans();
+        const actions = [];
+        if (ready) actions.push({label: `Bölüm ${state.level}’e uç`, cost: 5, onClick: start});
+        else if (!state.completed && openPlans) actions.push({label: 'Premium’u incele', onClick: openPlans});
+        actions.push({label: 'Oyunlara dön', kind: actions.length ? 'secondary' : 'primary', onClick: close});
+        const first = Math.max(1, state.level - 3), last = state.level + (state.completed ? 0 : 2);
+        const route = [];
+        for (let number = first; number <= last; number++) {
+          const done = number < state.level || number === state.level && state.completed;
+          const current = !done && number === state.level;
+          route.push({label: String(number), state: done ? 'done' : current ? 'current' : 'locked',
+            aria: `Bölüm ${number}, ${done ? 'geçildi' : current ? 'açık' : 'kilitli'}`});
+        }
+        const note = error ? {text: error, icon: 'bolt'} :
+          state.completed ? {text: 'Tüm uçuş rotasını tamamladın!', icon: 'check'} :
+          state.remaining <= 0 ? {text: 'Üç ücretsiz denemeni kullandın. Premium ile sınırsız uçabilirsin.', icon: 'lock'} : null;
+        intro.mount(screen, {
+          theme: 'flight',
+          image: assets + 'papi-ucak.webp',
+          imageFit: 'contain',
+          heroBackground: assets + 'gece.webp',
+          imageAlt: 'Pilot gözlüklü Papi turkuaz uçağında',
+          title: 'Kaptan Pilot Papi',
+          desc: 'Doğru anlamın yazdığı buluta uç, gökyüzündeki engellerden sıyrıl.',
+          route,
+          stats: [
+            {value: `Bölüm ${state.level}`, label: state.words ? `${state.words} kelime` : 'Gece rotası'},
+            {value: `${state.energy}/${state.energyMax}`, label: 'Enerji', icon: 'bolt'},
+            state.premium ? {value: 'Sınırsız', label: 'Premium', icon: 'infinity'} : {value: `${Math.max(0, state.remaining)}`, label: 'Uçuş hakkı'}
+          ],
+          rules: ready ? [{value: '+20', label: 'Doğru', tone: 'good'}, {value: '−10', label: 'Yanlış', tone: 'bad'}, {value: '5 hata', label: 'Düşüş'}] : [],
+          note,
+          actions
+        });
+        syncSound();
+        return;
+      }
       const plan = state.premium ? 'Premium ∞' : `Ücretsiz: ${state.remaining} hak`;
       const actions = !state.completed && state.remaining > 0 ? [[`Bölüm ${state.level} · ⚡ 5`, start]] : [];
       actions.push(['Oyunlara dön', close]);
@@ -502,7 +547,7 @@
     paintSound();
     screen.addEventListener('cancel', event => {
       event.preventDefault();
-      if (overlay.hidden) pause();
+      if (overlay.hidden && !screen.querySelector(':scope > .dmpi')) pause();
       else if (world.hidden && !pending) close();
     });
     screen.addEventListener('keydown', event => {

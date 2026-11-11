@@ -1,6 +1,7 @@
 /* Optional games initialize once, when their tab or public opener is used. */
 (()=>{'use strict';
-  const premiumFile='premium-word-match.js?v=20261106-pause';
+  const premiumFile='premium-word-match.js?v=20261111-intro';
+  const introFile='premium-intro.js?v=20261111-intro';
   const files=['solo-arcade.js?v=20261111-papi','harf-bahcesi.js?v=20261111-papi','papi-cards.js?v=20261107-scored-rounds','meteor.js?v=20261106-intro-music','word-wheel.js?v=20261016-ten-seconds','kelime-rallisi.js?v=20261106-pause'];
   const loaded=new Set();let pending=null,readyDone=false;
   function script(src){return new Promise((resolve,reject)=>{
@@ -28,7 +29,7 @@
   const premiumProxy=async (...args)=>{
     const owner=typeof aktifOgrenciAdi==='undefined'?'':aktifOgrenciAdi;
     try{
-      await script(premiumFile);
+      await Promise.all([script(introFile),script(premiumFile)]);
       if(owner!==(typeof aktifOgrenciAdi==='undefined'?'':aktifOgrenciAdi))return;
       const fn=window.premiumKelimeEslestirmeAc;
       if(fn===premiumProxy||typeof fn!=='function')throw Error('Candy Papiş açılamadı.');
@@ -40,7 +41,7 @@
   const flightProxy=async ()=>{
     const owner=typeof aktifOgrenciAdi==='undefined'?'':aktifOgrenciAdi;
     try{
-      await (flightLoading??=script('premium-cloud-flight.js?v=20261106-intro-music').catch(error=>{flightLoading=null;throw error;}));
+      await (flightLoading??=Promise.all([script(introFile),script('premium-cloud-flight.js?v=20261111-intro')]).catch(error=>{flightLoading=null;throw error;}));
       if(owner!==(typeof aktifOgrenciAdi==='undefined'?'':aktifOgrenciAdi))return;
       if(window.premiumBulutUcusuAc!==flightProxy)await window.premiumBulutUcusuAc();
     }catch(error){window.yoToast?.(error.message);}
@@ -50,7 +51,7 @@
   const blocksProxy=async ()=>{
     const owner=typeof aktifOgrenciAdi==='undefined'?'':aktifOgrenciAdi;
     try{
-      await (blocksLoading??=script('premium-word-blocks.js?v=20261111-papi').catch(error=>{blocksLoading=null;throw error;}));
+      await (blocksLoading??=Promise.all([script(introFile),script('premium-word-blocks.js?v=20261111-intro')]).catch(error=>{blocksLoading=null;throw error;}));
       if(owner===(typeof aktifOgrenciAdi==='undefined'?'':aktifOgrenciAdi)&&window.premiumKelimeBloklariAc!==blocksProxy)await window.premiumKelimeBloklariAc();
     }catch(error){window.yoToast?.(error.message);}
   };
@@ -59,7 +60,7 @@
   const papizzleProxy=async ()=>{
     const owner=typeof aktifOgrenciAdi==='undefined'?'':aktifOgrenciAdi;
     try{
-      await (papizzleLoading??=script('papizzle.js?v=20261106-pause').catch(error=>{papizzleLoading=null;throw error;}));
+      await (papizzleLoading??=Promise.all([script(introFile),script('papizzle.js?v=20261111-intro')]).catch(error=>{papizzleLoading=null;throw error;}));
       if(owner===(typeof aktifOgrenciAdi==='undefined'?'':aktifOgrenciAdi)&&window.papizzleAc!==papizzleProxy)await window.papizzleAc();
     }catch(error){window.yoToast?.(error.message);}
   };

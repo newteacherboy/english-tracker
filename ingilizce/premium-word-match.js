@@ -165,7 +165,7 @@ function trialPopup(){
 function comingSoon(){
  // Android uygulamasında abonelik satılır; web ve iOS'ta eski "yakında" ekranı kalır.
  const shop=!!window.dmAndroidBilling?.available, plan=window.dmAndroidPlan?.plan||'free';
- view='soon';$('.pwm-stage').innerHTML='';
+ view='soon';window.dmPremiumIntro?.unmount(root);$('.pwm-stage').innerHTML='';
  const c=modal(`<img class="pwm-soon-art" src="${A}yakinda-art.webp" alt="Büyücü kız taçlı sandığa bakıyor">
   <h2 class="pwm-ribbon-title">${shop?(plan==='pro'?'Bugünkü hakkın bitti':'Premium Oyunlar açılsın mı?'):'Premium çok yakında!'}</h2>
   <p>${plan==='pro'?'Pro ile bugünkü 5 bölümünü oynadın. Yarın yeniden açılır, <b>Premium Pro</b> ile hemen <b>sınırsız</b> oynayabilirsin.':shop?'3 ücretsiz oyun hakkını kullandın. <b>Pro</b> ile günde 5 bölüm, <b>Premium Pro</b> ile <b>sınırsız</b> oynayabilirsin.':'3 ücretsiz oyun hakkını kullandın. Premium paket açıldığında <b>Kelime Eşleştirme</b> ve tüm premium oyunları <b>sınırsız</b> oynayabileceksin.'}</p>
@@ -176,9 +176,44 @@ function comingSoon(){
  c.querySelector('[data-plans]')?.addEventListener('click',()=>{close();window.dmAndroidBilling.open('premium-oyunlar');});
 }
 
+/* ---------- sade giriş ekranı (premium-intro.js) ---------- */
+function introHome(){
+ const lv=status?.level||1,stars=status?.stars||{},total=Object.values(stars).reduce((a,b)=>a+Number(b||0),0);
+ const first=(world-1)*20+1,last=world*20,doneInWorld=Math.max(0,Math.min(lv,last+1)-first);
+ const el=(t,c,x)=>{const n=document.createElement(t);if(c)n.className=c;if(x!=null)n.textContent=x;return n;};
+ const levelButton=i=>{const s=Number(stars[i]||0),locked=i>lv,b=el('button','dmpi-lv');b.type='button';
+  b.dataset.state=locked?'locked':i===lv?'current':'done';
+  b.setAttribute('aria-label','Seviye '+i+(locked?', kilitli':i===lv?', sıradaki':', '+s+' yıldız'));
+  b.append(document.createTextNode(String(i)));if(!locked&&i!==lv)b.append(el('i','', '★'.repeat(s)+'☆'.repeat(3-s)));
+  b.onclick=()=>{if(locked){toast('Önce Seviye '+lv+'’i geç!');sound.bad();return;}sound.tick();levelCard(i);};return b;};
+ const after=el('div','dmpi-candy');after.style.cssText='display:flex;flex-direction:column;gap:12px';
+ const nav=el('nav','dmpi-worlds');nav.setAttribute('aria-label','Dünyalar');
+ WORLDS.forEach((n,i)=>{const w=i+1,open=lv>(w-1)*20,b=el('button','dmpi-chip');b.type='button';b.setAttribute('aria-pressed',String(w===world));
+  if(!open){b.setAttribute('aria-disabled','true');b.insertAdjacentHTML('beforeend','<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>');}
+  b.append(document.createTextNode(w+' · '+n));
+  b.onclick=()=>{if(!open){toast('Bu dünya önceki bölümleri bitirince açılır.');return;}if(w===world)return;world=w;sound.tick();home();};nav.append(b);});
+ const box=el('section','dmpi-levels'),head=el('div','dmpi-levels-head');head.append(el('h3','',WORLDS[world-1]));
+ const toggle=el('button','',`Tümü · ${Math.min(20,doneInWorld)}/20`);toggle.type='button';toggle.setAttribute('aria-expanded','false');head.append(toggle);
+ const row=el('div','dmpi-level-row'),all=el('div','dmpi-all');all.hidden=true;
+ const start=Math.max(first,Math.min(last-4,(lv>=first&&lv<=last?lv:first)-2));
+ for(let i=start;i<start+5;i++)row.append(levelButton(i));
+ for(let i=first;i<=last;i++)all.append(levelButton(i));
+ toggle.onclick=()=>{const open=all.hidden;all.hidden=!open;row.hidden=open;toggle.setAttribute('aria-expanded',String(open));sound.tick();};
+ box.append(head,row,all);after.append(nav,box);
+ window.dmPremiumIntro.mount(root,{
+  theme:'candy',image:A+'candy-hero.webp',imageAlt:'Büyücü kız ve üzerinde İngilizce-Türkçe kelimeler yazan renkli şekerler',
+  title:'Candy Papiş',desc:'Kelimeleri eşleştir, öğren, yıldız kazan!',
+  stats:[{value:total+'/300',label:'Yıldız',icon:'star'},{value:status?.energyMax?`${status.energy}/${status.energyMax}`:String(status?.energy??'–'),label:'Enerji',icon:'bolt'},
+   isPremium()?{value:practice?'Sınıf':'Sınırsız',label:practice?'Ödül işlenmez':'Premium',icon:'infinity'}:{value:String(remaining()),label:'Kalan hak'}],
+  after,
+  actions:[{label:'Güçlendiriciler',kind:'icon',icon:'flask',onClick:()=>shop()},{label:'Seviye '+lv+'’i oyna',cost:5,onClick:()=>levelCard(lv)},{label:'Oyunlara dön',kind:'link',onClick:()=>back()}]
+ });
+}
+
 /* ---------- bölüm haritası ---------- */
 function home(){
  view='home';root.dataset.view='home';G=null;$('[data-pause]').hidden=true;sound.startMusic();hideModal();setBg(world);
+ if(window.dmPremiumIntro)return introHome();
  const lv=status?.level||1,stars=status?.stars||{};
  const levels=[];for(let i=(world-1)*20+1;i<=world*20;i++){const s=Number(stars[i]||0),locked=i>lv;levels.push(`<button type="button" class="pwm-lv${locked?' locked':''}${i===lv?' current':''}" data-lv="${i}" ${locked?'aria-disabled="true"':''} aria-label="Seviye ${i}${locked?', kilitli':', '+s+' yıldız'}"><b>${i}</b>${locked?`<img src="${A}icon-lock.webp" alt="">`:`<span class="pwm-lv-stars">${[1,2,3].map(k=>`<i class="${k<=s?'on':''}"></i>`).join('')}</span>`}</button>`);}
  const total=Object.values(stars).reduce((a,b)=>a+Number(b||0),0);
@@ -235,6 +270,7 @@ async function start(level,cfg,words){
 }
 
 function game(){
+ window.dmPremiumIntro?.unmount(root);
  view='game';root.dataset.view='game';$('[data-pause]').hidden=false;const g=G;
  $('.pwm-stage').innerHTML=`<section class="pwm-game">
   <div class="pwm-playline"><div class="pwm-lvribbon">Seviye ${g.level}</div><div class="pwm-moves"><small>Hamle</small><b data-moves>${g.st.moves}</b></div></div>

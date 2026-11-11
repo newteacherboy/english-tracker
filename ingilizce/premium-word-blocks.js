@@ -120,6 +120,7 @@
       dialog.remove();
     }
     function show(title, lines, actions, mood) {
+      window.dmPremiumIntro?.unmount(dialog);
       panel.replaceChildren();
       if (mood && window.DMPapi) panel.insertAdjacentHTML('beforeend', window.DMPapi.tag(mood));
       const heading = document.createElement('h2');
@@ -149,6 +150,37 @@
     function home(error) {
       world.hidden = true;
       const ready = !state.completed && state.remaining > 0;
+      const intro = window.dmPremiumIntro;
+      if (intro) {
+        overlay.hidden = true;
+        const openPlans = intro.plans();
+        const actions = [];
+        if (ready) actions.push({label: 'Atölyeye gir', cost: 5, onClick: start});
+        else if (!state.completed && openPlans) actions.push({label: 'Premium’u incele', onClick: openPlans});
+        actions.push({label: 'Oyunlara dön', kind: actions.length ? 'secondary' : 'primary', onClick: close});
+        const note = error ? {text: error, icon: 'bolt'} :
+          state.completed ? {text: 'Tüm atölye rotasını tamamladın!', icon: 'check'} :
+          state.remaining <= 0 ? {text: 'Ücretsiz hakların bitti. Premium ile sınırsız oynayabilirsin.', icon: 'lock'} : null;
+        intro.mount(dialog, {
+          theme: 'blocks',
+          image: assets + 'kapak.webp',
+          imageAlt: 'Renkli bloklar, ARMUT, ELMA, MUZ kelime kutuları ve Papi',
+          imagePosition: 'center 80%',
+          title: 'Block Papi',
+          done: state.level > 1 ? `${state.level - 1} bölüm geçildi` : '',
+          desc: 'Düşen İngilizce bloğu doğru anlamın üstüne indir. Üç sütun dolunca satır temizlenir.',
+          stats: [
+            {value: `Bölüm ${state.level}`, label: `${state.words} kelime`},
+            {value: `${state.energy}/${state.energyMax}`, label: 'Enerji', icon: 'bolt'},
+            state.premium ? {value: 'Sınırsız', label: 'Premium', icon: 'infinity'} : {value: `${Math.max(0, state.remaining)}`, label: 'Kalan hak'}
+          ],
+          rules: ready ? [{value: '+20', label: 'Doğru', tone: 'good'}, {value: '−10', label: 'Yanlış', tone: 'bad'}, {value: '5 hata', label: 'Tur biter'}] : [],
+          note,
+          actions
+        });
+        syncMusic();
+        return;
+      }
       show('Block Papi', [
         error || 'Düşen İngilizce bloğu doğru anlamın üstüne indir. Üç sütun dolunca satır temizlenir.',
         `Bölüm ${state.level} · ${state.words} kelime · ⚡ ${state.energy} / ${state.energyMax}`,
