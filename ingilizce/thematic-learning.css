@@ -856,3 +856,6 @@
  #dmStoryLesson#dmStoryLesson .ml-actions [data-review-continue],
  #dmStoryLesson#dmStoryLesson .ml-actions [data-next]{position:relative!important;z-index:31!important}
 }
+
+/* Sonuç A için eklenen sarmalayıcı ve doğruluk kutusu yalnızca soru-paneli-c.css ile görünür. */
+#dmStoryLesson .ml-result-acc{display:none}
