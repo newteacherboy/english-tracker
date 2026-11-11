@@ -123,6 +123,7 @@
     }
 
     function showPanel(title, lines, actions) {
+      window.dmPremiumIntro?.unmount(screen);
       game.hidden = true;
       $('[data-pause]').hidden = true;
       panel.hidden = false;
@@ -146,6 +147,37 @@
 
     function home(error) {
       const lowEnergy = !runId && state.energy < 5;
+      const intro = window.dmPremiumIntro;
+      if (intro) {
+        game.hidden = true;
+        panel.hidden = true;
+        $('[data-pause]').hidden = true;
+        const openPlans = intro.plans();
+        const actions = [];
+        if (state.remaining > 0 && !lowEnergy) actions.push({label: `Seviye ${state.level}’i oyna`, cost: 5, onClick: start});
+        else if (state.remaining > 0) actions.push({label: 'Enerji seçenekleri', onClick: () => window.dmEnerjiPaketPaneli?.()});
+        else if (openPlans) actions.push({label: 'Premium’u incele', onClick: openPlans});
+        else actions.push({label: 'Durumu yenile', onClick: refresh});
+        actions.push({label: 'Oyunlara dön', kind: 'secondary', onClick: close});
+        const note = error ? {text: error, icon: 'bolt'} :
+          lowEnergy && state.remaining > 0 ? {text: `Başlamak için 5 enerji gerekli. ${5 - state.energy} enerji daha lazım.`, icon: 'bolt'} :
+          state.remaining <= 0 ? {text: 'Oyun hakkın kalmadı. Premium ile sınırsız oynayabilirsin.', icon: 'lock'} : null;
+        intro.mount(screen, {
+          theme: 'papizzle',
+          image: 'premium-assets/papizzle-hero.webp',
+          imageAlt: 'Papi ve renkli anlam kutularından oluşan kelime duvarı',
+          title: 'Papizzle',
+          desc: 'Kelime duvarını temizle! Üstteki İngilizce kelimenin anlamına dokun.',
+          stats: [
+            {value: `Seviye ${state.level}`, label: 'Sıradaki'},
+            {value: `${state.energy}/${state.energyMax}`, label: 'Enerji', icon: 'bolt'},
+            state.premium ? {value: 'Sınırsız', label: 'Premium', icon: 'infinity'} : {value: `${Math.max(0, state.remaining)}`, label: 'Kalan hak'}
+          ],
+          note,
+          actions
+        });
+        return;
+      }
       const actions = state.remaining > 0 && !lowEnergy ? [[`Seviye ${state.level} · ⚡ 5`, start]] : [['Durumu yenile', refresh]];
       if (lowEnergy && state.remaining > 0) actions.unshift(['Enerji seçenekleri', () => window.dmEnerjiPaketPaneli?.()]);
       const message = error || (lowEnergy ? `Başlamak için 5 enerji gerekli. ${5 - state.energy} enerji daha lazım.` :
