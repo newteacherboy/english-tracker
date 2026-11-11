@@ -106,6 +106,8 @@ const defaultPreference={mode:'auto',disabled:[],manual:null};
    }
    chosen=next;
   }
+  // Kayıtlı seçim Papi girişiyse beklemeden başla (animasyon ilk kareden oynasın); değilse sunucu cevabını bekle.
+  if(chosen&&chosen.id==='papi-giris')decide(chosen);
   setTimeout(()=>decide(chosen),1500);
   // Server-managed global selection: read asynchronously after immediate cached first paint.
   function refreshPreferences(){
