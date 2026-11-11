@@ -19,6 +19,9 @@
  function native(root){return root.querySelector(nativeSelector);}
  function closeNative(root){if(root.id==='genelSonucOverlay'&&typeof window.genelSonucKapat==='function')return window.genelSonucKapat('devam');const name=classics[root.id]?.[0],object=modern[root.id];if(name&&typeof window[name]==='function')return window[name]();if(object&&typeof window[object]?.close==='function')return window[object].close();return native(root)?.click();}
  async function navigate(root,back){
+  /* Kurulum ekranındayken geri: oyunu kapat (eskiden kapatıp aynı ekranı yeniden açıyordu). */
+  const stage=classicStages[root.id],entry=stage&&root.querySelector('#'+stage[0]+'GirisEkrani');
+  if(back&&entry&&shown(entry))back=false;
   if(root.dataset.vpClosing)return;root.dataset.vpClosing='1';
   window.dmGameExitIntent=back?'back':'exit';
   try{await closeNative(root);if(back&&!shown(root)){const opener=classics[root.id]?.[1];if(opener&&typeof window[opener]==='function'){window.dmGameReopeningSetup=true;try{await window[opener]();}finally{window.dmGameReopeningSetup=false;}}}}

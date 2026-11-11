@@ -124,6 +124,10 @@ html body .gl-skin .dm-sr-setup.gl-entry>.dm-sr-header{background:transparent!im
 html body .gl-skin .dm-sr-setup.gl-entry>.dm-sr-header>div{display:none!important}
 html body .gl-skin .dm-sr-setup.gl-entry>.dm-sr-header .dm-sr-close{background:rgba(255,255,255,.14)!important;color:#fff!important;-webkit-text-fill-color:#fff!important;border:0!important}
 html body .gl-skin .gl-entry .dm-sr-setting>select[data-players]+*{color:inherit}
+html body .gl-skin .gl-entry .sa-setup-panel{background:transparent!important;border:0!important;box-shadow:none!important;padding:0!important;display:flex!important;flex-direction:column!important;gap:12px!important;color:#fff!important}
+html body .gl-skin .gl-entry .sa-setup-panel :is(.sa-instruction,p){color:#d9d2ff!important;-webkit-text-fill-color:#d9d2ff!important;text-shadow:none!important}
+html body .gl-skin .gl-entry .gl-play.gl-play.gl-play :is(span,small,b,i,em){color:#4a2400!important;-webkit-text-fill-color:#4a2400!important;text-shadow:none!important;opacity:1!important}
+html body .gl-skin .gl-entry .gl-play{text-shadow:none!important;flex-direction:column!important;gap:2px!important}
 
 /* [11 Kas 2026] Yerleşim düzeltmesi: giriş alanı eski kurallarla "block" kalıyordu; gap çalışmıyor,
    kurallar/kartlar/not üst üste biniyor ve ekranın altı boş kalıyordu. Alan artık tüm yüksekliği
