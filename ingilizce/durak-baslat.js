@@ -33,12 +33,13 @@
   const gap=18,limit=bottomLimit();
   modal.classList.add('ml-pop-anchored');
   const ch=card.offsetHeight;
-  let r=disc.getBoundingClientRect();
+  const box=()=>{const d=disc.getBoundingClientRect(),w=(a.querySelector('.rt-medal-start-label')||a).getBoundingClientRect();return {top:d.top,left:d.left,width:d.width,height:Math.max(d.bottom,w.bottom)-d.top,bottom:Math.max(d.bottom,w.bottom)};};
+  let r=box();
   if(r.bottom+gap+ch>limit||r.top<64){
-   const box=scroller(disc),target=Math.max(64,limit-ch-gap-r.height);
+   const sc=scroller(disc),target=Math.max(64,limit-ch-gap-r.height);
    const want=Math.min(target,Math.max(64,innerHeight*.18));
-   try{box.scrollTo({top:box.scrollTop+(r.top-want),behavior:'instant'});}catch{box.scrollTop+=r.top-want;}
-   r=disc.getBoundingClientRect();
+   try{sc.scrollTo({top:sc.scrollTop+(r.top-want),behavior:'instant'});}catch{sc.scrollTop+=r.top-want;}
+   r=box();
   }
   if(r.bottom+gap+ch>limit+1||r.bottom<0){modal.classList.remove('ml-pop-anchored');return;}
   card.style.top=Math.round(r.bottom+gap)+'px';
@@ -51,10 +52,12 @@
  function place(modal){
   if(!modal||!modal.classList.contains('ml-entry'))return;
   modal.classList.add('ml-pop');
+  // Oturum geri oku (play-navigation) bu karta ait değil: kapatmak için kart dışına dokunmak yeter.
+  modal.querySelectorAll('.ml-entry-card [data-back],.ml-entry-card .dm-session-back').forEach(b=>b.style.setProperty('display','none','important'));
   if(!modal.dataset.popBound){
    modal.dataset.popBound='1';
    modal.addEventListener('click',e=>{
-    if(e.target===modal&&modal.classList.contains('ml-entry'))modal.querySelector('[data-back]')?.click();
+    if(modal.classList.contains('ml-entry')&&!e.target.closest('.ml-entry-card'))modal.querySelector('.ml-entry-card [data-back]')?.click();
    });
   }
   position(modal);
