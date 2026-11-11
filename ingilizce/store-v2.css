@@ -1,0 +1,47 @@
+/* [11 Kas 2026] Mağaza · Claude Design "Mağaza B": parlayan Alışveriş Yap, reklamla enerji kartı, enerji paketleri
+   liste halinde, Premium kartı, büyük Çantam ve Günün fırsatı. Satın alma akışı storefront.js'te aynen. */
+html body #tab-magaza .ds-home .ds-shop-cta{position:relative;overflow:hidden;background:#FFC531!important;color:#3A2400!important;border:0!important;box-shadow:0 5px 0 #D99A00!important;animation:dsv2Gold 2s ease-in-out infinite}
+html body #tab-magaza .ds-home .ds-shop-cta::after{content:"";position:absolute;top:-30%;left:-60%;width:36%;height:160%;background:linear-gradient(100deg,#fff0,#fffc,#fff0);transform:rotate(16deg);animation:dsv2Shine 2.8s ease-in-out infinite;pointer-events:none}
+/* enerji: başlık üstte, paketler satır satır */
+html body #tab-magaza .ds-home .ds-energy{display:block!important;padding:12px!important;border:0!important;border-radius:22px!important;background:#F1ECFF!important}
+html body #tab-magaza .ds-home .ds-energy-intro{margin-bottom:10px}
+html body #tab-magaza .ds-home .ds-packs{display:grid!important;grid-template-columns:1fr!important;gap:8px!important}
+html body #tab-magaza .ds-home .ds-pack{display:flex!important;align-items:center!important;gap:10px!important;padding:8px 10px!important;border:0!important;border-radius:16px!important;background:#fff!important;box-shadow:0 4px 0 #DCD3F7!important;text-align:left!important}
+html body #tab-magaza .ds-home .ds-pack>b{justify-content:flex-start!important;min-width:76px;font-size:20px!important;color:#0F2747}
+html body #tab-magaza .ds-home .ds-pack .ds-art{width:30px!important;height:30px!important}
+html body #tab-magaza .ds-home .ds-pack .ds-price{flex:1;justify-content:flex-start!important;font-size:16px!important;font-weight:900}
+html body #tab-magaza .ds-home .ds-pack .ds-buy{flex:none;min-width:86px;min-height:38px!important;padding:6px 14px!important;font-size:14px!important;border-radius:13px!important}
+html body #tab-magaza .ds-home .ds-pack .ds-buy:not(:disabled){position:relative;overflow:hidden;background:#7B4DFF!important;color:#fff!important;border:0!important;box-shadow:0 4px 0 #5133C9!important;animation:dsv2Purple 2s ease-in-out infinite}
+html body #tab-magaza .ds-home .ds-pack .ds-buy:not(:disabled)::after{content:"";position:absolute;top:-30%;left:-70%;width:40%;height:160%;background:linear-gradient(100deg,#fff0,#fffb,#fff0);transform:rotate(16deg);animation:dsv2Shine 2.8s ease-in-out infinite;pointer-events:none}
+/* reklamla enerji kartı (dm-satis.js #dmsShopEnergy) parlasın */
+html body #tab-magaza #dmsShopEnergy.dms-promo{position:relative;overflow:hidden;animation:dsv2Green 2s ease-in-out infinite}
+html body #tab-magaza #dmsShopEnergy.dms-promo::after{content:"";position:absolute;top:-30%;left:-60%;width:36%;height:160%;background:linear-gradient(100deg,#fff0,#fff9,#fff0);transform:rotate(16deg);animation:dsv2Shine 2.8s ease-in-out infinite;pointer-events:none}
+/* Premium kartı */
+html body #tab-magaza .ds-v2-pro{position:relative;overflow:hidden;display:flex;align-items:center;gap:10px;width:100%;padding:12px 12px 12px 14px;border:0;border-radius:20px;background:#0F2747;color:#fff;text-align:left;font-family:Nunito,system-ui,sans-serif;cursor:pointer}
+html body #tab-magaza .ds-v2-pro::after{content:"";position:absolute;top:-30%;left:-60%;width:36%;height:160%;background:linear-gradient(100deg,#fff0,#fff5,#fff0);transform:rotate(16deg);animation:dsv2Shine 3.2s ease-in-out infinite;pointer-events:none}
+html body #tab-magaza .ds-v2-crown{width:40px;height:40px;flex:none;background:url('premium-assets/kelime-eslestirme/icon-crown.webp') center/contain no-repeat;animation:dsv2Wiggle 2.6s ease-in-out infinite}
+html body #tab-magaza .ds-v2-pro-copy{flex:1;min-width:0}
+html body #tab-magaza .ds-v2-pro-copy b{display:block;font-size:16px;font-weight:900}
+html body #tab-magaza .ds-v2-pro-copy small{display:block;font-size:12px;font-weight:700;color:#C9D8EA}
+html body #tab-magaza .ds-v2-pro-go{flex:none;position:relative;z-index:1;padding:9px 12px;border-radius:13px;background:#FFC531;color:#3A2400;font-size:13px;font-weight:900;animation:dsv2Gold 2s ease-in-out infinite}
+/* büyük Çantam + Günün fırsatı */
+html body #tab-magaza .ds-v2-shortcuts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+html body #tab-magaza .ds-v2-tile{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-height:168px;padding:14px 10px;border:0;border-radius:24px;text-align:center;font-family:Nunito,system-ui,sans-serif;cursor:pointer}
+html body #tab-magaza .ds-v2-bag{background:#EEE9FF;box-shadow:0 5px 0 #D2C6FA;color:#2B1B66}
+html body #tab-magaza .ds-v2-deal{background:#FFF1C9;box-shadow:0 5px 0 #F2D98A;color:#6B3D06}
+html body #tab-magaza .ds-v2-art{width:92px;height:92px;display:grid;place-items:center;overflow:hidden;animation:dsv2Bob 2.6s ease-in-out infinite}
+html body #tab-magaza .ds-v2-art :is(img,svg){max-width:100%;max-height:100%;object-fit:contain}
+html body #tab-magaza .ds-v2-sprite{width:92px;height:92px;background:url('store-assets/shop-icons.webp') 0 0/300% 200% no-repeat}
+html body #tab-magaza .ds-v2-tile b{font-size:20px;font-weight:900;line-height:1.1}
+html body #tab-magaza .ds-v2-tile small{font-size:12px;font-weight:800;opacity:.85;line-height:1.25}
+html[data-dm-theme="night"] body #tab-magaza .ds-home .ds-energy{background:#1d3157!important}
+html[data-dm-theme="night"] body #tab-magaza .ds-home .ds-pack{background:#25395f!important;box-shadow:0 4px 0 #0f1f3b!important}
+html[data-dm-theme="night"] body #tab-magaza .ds-home .ds-pack>b{color:#F1F6FF}
+html[data-dm-theme="night"] body #tab-magaza :is(.ds-v2-bag,.ds-v2-deal){box-shadow:0 5px 0 #0f1f3b}
+@keyframes dsv2Gold{0%,100%{box-shadow:0 5px 0 #D99A00,0 0 0 0 #FFC53199}50%{box-shadow:0 5px 0 #D99A00,0 0 20px 6px #FFC53166}}
+@keyframes dsv2Purple{0%,100%{box-shadow:0 4px 0 #5133C9,0 0 0 0 #7B4DFF99}50%{box-shadow:0 4px 0 #5133C9,0 0 16px 4px #7B4DFF55}}
+@keyframes dsv2Green{0%,100%{box-shadow:0 5px 0 #1E8B4F,0 0 0 0 #2DB66B99}50%{box-shadow:0 5px 0 #1E8B4F,0 0 20px 6px #2DB66B55}}
+@keyframes dsv2Shine{0%,45%{left:-60%}80%,100%{left:130%}}
+@keyframes dsv2Bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+@keyframes dsv2Wiggle{0%,70%,100%{transform:rotate(0)}76%{transform:rotate(-8deg)}84%{transform:rotate(7deg)}92%{transform:rotate(-3deg)}}
+@media (prefers-reduced-motion:reduce){html body #tab-magaza :is(.ds-shop-cta,.ds-shop-cta::after,.ds-buy,.ds-buy::after,#dmsShopEnergy,#dmsShopEnergy::after,.ds-v2-pro::after,.ds-v2-crown,.ds-v2-pro-go,.ds-v2-art){animation:none!important}}
