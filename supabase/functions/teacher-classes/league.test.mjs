@@ -11,7 +11,7 @@ const raw = plan => ({ plan, period: 'week', weekStart: '2026-11-09',
   classes: [{ id: A, classNo: 6, branch: 'A', name: null }, { id: B, classNo: 6, branch: 'B', name: 'Kuşlar' }],
   students: [1, 2, 3, 4, 5, 6].map(i => stu(i, i % 2 ? A : B)).concat(stu(7, null, { lastLogin: day(10), ok: 3, bad: 30 })) });
 
-test('free plan sends only the first 2 rows per list and never the hidden names', () => {
+test('free plan shows only the overall top 2 students anywhere', () => {
   const r = buildLeague(raw('free'), { now });
   assert.equal(r.unlocked, false); assert.equal(FREE_ROWS, 2);
   for (const sc of Object.values(r.scopes)) for (const k of CATEGORIES) {
@@ -19,9 +19,12 @@ test('free plan sends only the first 2 rows per list and never the hidden names'
     assert.ok(c.rows.length <= 2, k);
     assert.equal(c.rows.length + c.hidden, c.total);
   }
-  const visible = new Set(Object.values(r.scopes).flatMap(sc => [...Object.values(sc.categories).flatMap(c => c.rows.map(x => x.id)), ...Object.values(sc.leaders).map(x => x.id)]));
+  const visible = new Set(Object.values(r.scopes).flatMap(sc => [...Object.values(sc.categories).flatMap(c => c.rows.map(x => x.id)), ...Object.values(sc.leaders).filter(x => x.id).map(x => x.id)]));
   assert.deepEqual(Object.keys(r.students).sort(), [...visible].sort(), 'only visible students are described');
   assert.equal(r.scopes.all.attention.rows.length, 0);
+  assert.equal(Object.keys(r.students).length, 2, 'only 2 student names in the whole response');
+  assert.deepEqual(r.scopes.all.categories.genel.rows.map(x => x.rank), [1, 2]);
+  assert.ok(Object.values(r.scopes.all.leaders).some(l => l.locked));
   assert.ok(r.scopes.all.attention.count >= 1);
 });
 

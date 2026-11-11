@@ -1,5 +1,6 @@
 // Sınıflar sekmesi (sınıf ligi): ham ölçülerden sıralama üretir. Saf fonksiyon, Node testlerinde de çalışır.
-// Free planda her listede yalnız ilk FREE_ROWS öğrenci gönderilir; kalanların yalnız SAYISI gider (isim/puan gitmez).
+// Free planda yalnız genel sıralamanın ilk FREE_ROWS öğrencisi (tüm öğrenciler içinde) görünür. Diğer listelerde de yalnız
+// bu öğrenciler, listenin başındaysa görünür; kalanların yalnız SAYISI gider (isim/puan gitmez).
 export const FREE_ROWS = 2;
 export const CATEGORIES = ['genel', 'sure', 'kelime', 'dogruluk', 'gelisen', 'ilerleme', 'seri', 'odev'];
 const MIN_ANSWERS = { week: 30, month: 50, all: 50 };
@@ -66,13 +67,16 @@ function attention(list, now) {
   }).filter(Boolean).sort((a, b) => b.w - a.w);
 }
 
-function scope(list, unlocked, now, seen) {
+function scope(list, visible, now, seen) {
+  const unlocked = !visible;
   const cats = {}, leaders = {};
   for (const key of CATEGORIES) {
     const r = rank(list, key);
-    const keep = unlocked ? r : r.slice(0, FREE_ROWS);
+    let n = 0; if (!unlocked) while (n < r.length && visible.has(r[n].id)) n++;
+    const keep = unlocked ? r : r.slice(0, n);
     cats[key] = { rows: keep.map((s, i) => (seen.add(s), { rank: i + 1, id: s.id, value: DEF[key].show(s) })), hidden: r.length - keep.length, total: r.length };
-    if (r[0]) { seen.add(r[0]); leaders[key] = { id: r[0].id, value: DEF[key].show(r[0]) }; }
+    if (r[0] && (unlocked || visible.has(r[0].id))) { seen.add(r[0]); leaders[key] = { id: r[0].id, value: DEF[key].show(r[0]) }; }
+    else if (r[0]) leaders[key] = { locked: true };
   }
   const att = attention(list, now);
   return {
@@ -89,8 +93,9 @@ export function buildLeague(raw, { now = Date.now() } = {}) {
   const list = (Array.isArray(raw?.students) ? raw.students : []).map(s => derive(s, period));
   score(list, period);
   const seen = new Set();
-  const scopes = { all: scope(list, unlocked, now, seen) };
-  for (const c of classes) scopes[c.id] = scope(list.filter(s => s.classId === c.id), unlocked, now, seen);
+  const visible = unlocked ? null : new Set(rank(list, 'genel').slice(0, FREE_ROWS).map(s => s.id));
+  const scopes = { all: scope(list, visible, now, seen) };
+  for (const c of classes) scopes[c.id] = scope(list.filter(s => s.classId === c.id), visible, now, seen);
   const students = {};
   for (const s of seen) students[s.id] = card(s, classes);
   const classLeague = classes.map(c => {

@@ -1,6 +1,6 @@
 /* Öğretmen paneli: "🏆 Sınıflar" — sınıf ligi (Tasarım B: lider kartları).
    Tek istek (teacher-classes, action 'league') dönem başına tüm sınıfları getirir; sınıf ve kategori değişimi yeni istek atmaz.
-   Dönem verisi 5 dk bellekte tutulur. Free planda sunucu her listede yalnız ilk 2 öğrenciyi gönderir;
+   Dönem verisi 5 dk bellekte tutulur. Free planda sunucu yalnız genel sıralamanın ilk 2 öğrencisini gönderir;
    kalan satırlar burada yalnız bulanık yer tutucu olarak çizilir ve "Kilidi aç" mevcut öğretmen paket ekranını açar. */
 (() => {
   'use strict';
@@ -115,6 +115,7 @@
 
   function leaderCards(sc) {
     return LEADERS.map(([k, badge, sub, tone]) => {
+      if (sc.leaders[k]?.locked) return `<button type="button" class="dml-lc" data-unlock><span class="dml-tag ${tone}">${esc(badge)}</span><small>${esc(sub)}</small><b>🔒 Pro ile görünür</b><span class="v">Kilidi aç</span></button>`;
       const l = sc.leaders[k] && { ...sc.leaders[k], ...stu(sc.leaders[k].id) };
       return `<button type="button" class="dml-lc${l ? '' : ' none'}" data-cat="${k}"><span class="dml-tag ${tone}">${esc(badge)}</span><small>${esc(sub)}</small><b>${l ? esc(l.name) : 'Henüz yok'}</b>${l ? `<span class="v">${esc(l.value)}</span>` : ''}</button>`;
     }).join('');
@@ -145,7 +146,7 @@
 <section class="dml-box" aria-label="Sıralama"><h2>${esc(CATS.find(c => c[0] === st.cat)[1])} sıralaması <small>${sc.categories[st.cat].total} öğrenci</small></h2><div class="dml-row" style="margin:0 0 6px">${catChips}</div>${rowsHtml(st.cat, sc)}</section>
 ${attHtml}<p class="dml-note">Lig XP’sine öğretmenin ders içi +/- puanları dahil değildir. Süre: hafta/ay için oyun süreleri, tüm zamanlar için uygulamadaki aktif süre.${st.err ? ` <b style="color:#B3261E">${esc(st.err)}</b>` : ''}</p>`;
     }
-    const hidden = d && sc && !d.unlocked ? Math.max(0, sc.count - d.freeRows) : 0;
+    const hidden = d && sc && !d.unlocked ? Math.max(0, sc.count - (sc.categories.genel?.rows.length || 0)) : 0;
     const cta = hidden ? `<div class="dml-cta"><div><b>+${hidden} öğrenci kilitli</b><small>Tüm sınıfı Öğretmen Pro ile aç</small></div><button type="button" data-unlock>Kilidi aç</button></div>` : '';
     page.innerHTML = `<div class="dml-wrap"><div class="dml-top"><button type="button" class="dml-ib" data-close aria-label="Geri">‹</button><h1>Sınıflar</h1><button type="button" class="dml-ib" data-refresh aria-label="Yenile">↻</button><button type="button" class="dml-ib dark" data-board aria-label="Tahtaya yansıt"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><rect x="3" y="4" width="18" height="12" rx="2"></rect><path d="M12 16v4M8 20h8"></path></svg></button></div>
 <div class="dml-row" role="group" aria-label="Sınıf">${classChips}</div><div class="dml-seg" role="group" aria-label="Dönem">${seg}</div>${body}</div>${cta}`;
