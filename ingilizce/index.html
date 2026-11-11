@@ -4937,7 +4937,6 @@ yagmurHavuz = OC.kelimeSec('yagmur', yagmurHavuz, OC.SORU); OC.basla('yagmur');
                     .then(res => res.json())
                     .then(liste => {
                         if (liste && liste.length > 0) {
-                            try { window.dmOgretmenPuanXp?.(liste); } catch (e) {}
                             liste.forEach(item => { if (Number(item.degisim) !== 0) pbBildirimKuyrugu.push(item); });
                             pbSiradakiniGoster();
                         }
@@ -15811,26 +15810,7 @@ const seriCarpani = () => seri() >= 7 ? 2 : (seri() >= 3 ? 1.5 : 1);
   }).observe(document.body, { subtree: true, attributes: true, attributeFilter: ['class'] });
   setInterval(() => { if (!document.querySelector('.game-modal-overlay, .seviye-harita-overlay, .kart-oyun-overlay') || ![...document.querySelectorAll('.game-modal-overlay, .seviye-harita-overlay, .kart-oyun-overlay')].some(gor)) { if (!($('tab-buyuakademisi') || {}).classList?.contains('active') && !($('tab-konusmapratigi') || {}).classList?.contains('active')) kombo = 0; } }, 3000);
 
-  /* Öğretmenin ders içi +/- puanları haftalık XP'ye de yansısın (1 puan = 10 XP).
-     [Kas 2026] Medu Akış kaldırıldı: kaynak artık puan bildirimleri (yeniPuanBildirimleriGetir → points_transactions).
-     Eski sürüm tüm akışı 5 dakikada bir indiriyordu ve ders içi puanlar akışta hiç yer almadığı için hiçbir şey eklemiyordu. */
-  window.dmOgretmenPuanXp = function (liste) {
-    if (!girisli() || !yoVar() || !Array.isArray(liste) || !liste.length) return;
-    yo.siIslenen = yo.siIslenen || [];
-    let degisti = false;
-    liste.forEach(item => {
-      const id = 'PT' + String(item && item.id || ''), puan = Number(item && item.degisim);
-      if (!item || !item.id || !Number.isFinite(puan) || puan === 0 || yo.siIslenen.includes(id)) return;
-      if (/ödevi .* gündür yapılmadı/i.test(String(item.sebep || ''))) return; // otomatik ödev hatırlatması öğretmen puanı sayılmaz
-      yo.siIslenen.push(id); if (yo.siIslenen.length > 400) yo.siIslenen.shift();
-      const xp = Math.round(puan * 10); if (!xp) return;
-      degisti = true;
-      yoGunKontrol();
-      yo.lig.xp = Math.max(0, (yo.lig.xp || 0) + xp);
-      if (xp > 0) yo.xpGun.xp += xp;
-    });
-    if (degisti) yoKaydet();
-  };
+  /* [Kas 2026] Öğretmenin ders içi +/- puanları haftalık lig XP'sini etkilemez (kullanıcı kararı); yalnız puan bildirimi gösterilir. */
 
   /* [v4.9] Eski düello modülü kaldırıldı; güncel sürümü aşağıdaki "Düello" bölümünde. */
   /* Arkadaşlar bölümünde parkur bulunmaz; parkurlar Oyna'da açılır. */
