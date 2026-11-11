@@ -172,3 +172,14 @@ html[data-dm-theme="night"] .dm-lp-say{background:#1c2a4a;color:#eef3ff;box-shad
 html[data-dm-theme="night"] .dm-lp-say>i{background:#1c2a4a}
 html[data-dm-theme="night"] .dm-lp-say b{color:#8fc1ff}
 @media (prefers-reduced-motion:reduce){.dm-lp-say{animation:none}.dm-lp-say:first-child{opacity:1;visibility:visible}.dm-lp-go::after{animation:none}}
+
+/* [12 Kas 2026] Kütüphane / Plan / Görevler şeridi saydam: kaydırırken duraklar butonların arkasından
+   görünür, şeridin altında kesilmez. Şerit parkurun üstünde yüzer; kaydırma alanı onun kadar içeriden başlar. */
+body #tab-dunya .rt-medal-route{--rt-tools-h:72px}
+html[data-dm-theme="day"] body #tab-dunya .rt-medal-route{--rt-tools-h:106px}
+body #tab-dunya .rt-medal-route .rt-medal-header{position:relative;z-index:6}
+body #tab-dunya .rt-medal-route .rt-medal-tools{position:absolute!important;left:0;right:0;top:100%;margin:0!important;padding:8px 0 0;background:transparent!important;pointer-events:none}
+body #tab-dunya .rt-medal-route .rt-medal-tools>button{pointer-events:auto}
+body #tab-dunya .rt-medal-route .rt-medal-scroll{padding-top:var(--rt-tools-h);scroll-padding-top:var(--rt-tools-h)}
+/* Yazılar durakların üstünde de okunur kalsın */
+html[data-dm-theme="day"] body #tab-dunya .rt-medal-route .rt-medal-tools button>span{text-shadow:0 0 3px #E6F1FC,0 0 6px #E6F1FC,0 1px 0 #fff}
