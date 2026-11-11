@@ -63,30 +63,75 @@
   }
   function tilesHtml() {
     const pending = invites.filter(x=>x.durum==='bekliyor'&&norm(x.alici)===norm(who())).length;
-    const list = people(), shown = list.slice(0,3), more = Math.max(0,list.length-shown.length);
-    const faces = shown.map(id=>avatar(id,34)).join('') + (more?`<span class="fr-tile-more">+${more}</span>`:'');
+    const list = people(), shown = list.slice(0,2), more = Math.max(0,list.length-shown.length);
+    const faces = shown.map(id=>avatar(id,28)).join('') + (more?`<span class="fr-tile-more">+${more}</span>`:'');
     return `<div class="fr-tiles">
-      <button type="button" class="fr-tile fr-tile-duel" data-friend-action="matches">
-        <b>Düello${pending?'<span class="fr-duel-dot" role="img" aria-label="Yeni oyun daveti"></span>':''}</b>
-        <img src="friends-assets/papi-fencer.webp" alt="" decoding="async">
-        <small>${pending?pending+' bekleyen davet':'Arkadaşına ya da Papi\'ye meydan oku'}</small>
+      <button type="button" class="fr-tile fr-tile-duel" data-friend-action="matches" aria-label="Düello${pending?', '+pending+' bekleyen davet':''}">
+        ${pending?'<span class="fr-duel-dot" aria-hidden="true"></span>':''}<img src="friends-assets/papi-fencer.webp" alt="" decoding="async"><b>Düello</b>
       </button>
-      <button type="button" class="fr-tile fr-tile-people" data-friend-action="people">
-        <b>Arkadaşlarım</b>
-        ${faces?`<span class="fr-tile-faces">${faces}</span>`:''}
-        <small>${list.length?list.length+' arkadaş':'Henüz arkadaş eklemedin'}</small>
+      <button type="button" class="fr-tile fr-tile-people" data-friend-action="people" aria-label="Arkadaşlarım, ${list.length} arkadaş">
+        <span class="fr-tile-faces">${faces||'<span class="fr-tile-more">0</span>'}</span><b>Arkadaşlarım</b>
       </button>
       <button type="button" class="fr-tile fr-tile-showcase" data-friend-action="vitrin" data-friends-gate="vitrin">
-        <b>Vitrinim</b>
-        <img src="friends-assets/papi-friends.png" alt="" decoding="async">
-        <small>Arkadaşların seni böyle görüyor</small>
+        <img src="friends-assets/papi-friends.png" alt="" decoding="async"><b>Vitrinim</b>
       </button>
       <button type="button" class="fr-tile fr-tile-invite" data-friend-action="share">
-        <b>Davet et</b>
-        <span class="fr-tile-plus">${icon('add')}</span>
-        <small>Arkadaşın lige katılsın</small>
+        <span class="fr-tile-plus">${icon('add')}</span><b>Davet et</b>
       </button>
     </div>`;
+  }
+  /* Bugünkü Durumun: planın sınırlı hakları. Mola ve Premium oyun hakları 10 dakikada en fazla bir kez sorulur. */
+  const CROWN = '<svg class="fr-crown" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 18 5 7l4.5 4L12 5l2.5 6L19 7l2 11z" fill="currentColor"/></svg>';
+  const PLAN = {
+    free:{name:'Free plan',mola:2,pwm:3,shields:null,gold:null,ads:true},
+    pro:{name:'Pro',mola:3,pwm:5,shields:'2/ay',gold:'+30',ads:false},
+    premium_pro:{name:'Premium Pro',mola:5,pwm:null,shields:'5/ay',gold:'+75',ads:false}
+  };
+  let quota = {owner:'',at:0,mola:null,pwm:null}, quotaBusy = false;
+  function planId() {
+    const p = window.dmAndroidPlan?.plan;
+    if (PLAN[p]) return p;
+    const cap = Number(window.genelEnerjiMax)||0;
+    return cap>=60?'premium_pro':cap>=40?'pro':'free';
+  }
+  async function loadQuota(force=false) {
+    const owner=who();
+    if(!owner||quotaBusy||(!force&&quota.owner===owner&&Date.now()-quota.at<600000))return;
+    quotaBusy=true;
+    const token=(window.dmTeacherPortalMode?sessionStorage.getItem('ing_ogr_token'):'')||localStorage.getItem('ing_token')||'';
+    const base=(typeof apiURL!=='undefined'?apiURL:'https://nxfqlutulxqzqgwewssd.supabase.co/functions/v1/diji-api');
+    const [mola,pwm]=await Promise.allSettled([
+      Promise.resolve().then(()=>window.dmMola?.refresh?.()),
+      planId()==='premium_pro'?Promise.resolve(null):fetch(base.replace(/diji-api.*$/,'premium-games'),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({op:'status',t:token}),cache:'no-store'}).then(r=>r.ok?r.json():null)
+    ]);
+    quotaBusy=false;
+    if(owner!==who())return;
+    const games=mola.status==='fulfilled'?mola.value?.games:null;
+    const left=games?Object.values(games).map(g=>Number(g?.remaining)).filter(Number.isFinite):[];
+    quota={owner,at:Date.now(),mola:left.length?Math.max(...left):null,pwm:pwm.status==='fulfilled'&&Number.isFinite(Number(pwm.value?.remaining))?Number(pwm.value.remaining):null};
+    const box=root.querySelector('.fr-status');if(box)box.outerHTML=statusHtml();
+  }
+  function statusHtml() {
+    if(window.dmTeacherPortalMode||!who())return '';
+    const id=planId(), p=PLAN[id], own=quota.owner===who();
+    const pill=(text,cls='')=>`<span class="fr-status-pill ${cls}">${text}</span>`;
+    const pro=`<span class="fr-status-pill fr-status-pro">${CROWN}Pro</span>`;
+    const count=(left,max)=>left===null||left===undefined?pill(own?'—':'…','fr-status-wait'):pill(`${left}/${max}`,left>0?'fr-status-ok':'fr-status-out');
+    const energyLeft=Math.max(0,Number(window.genelEnerjiKalan)||0), energyMax=Number(window.genelEnerjiMax)||(id==='pro'?40:25);
+    const rows=[
+      ['bolt','Enerji',id==='premium_pro'?pill('Sınırsız','fr-status-free'):count(energyLeft,energyMax)],
+      ['break','Mola Vakti',count(own?quota.mola:null,p.mola)],
+      ['game','Premium oyun',p.pwm===null?pill('Sınırsız','fr-status-free'):count(own?quota.pwm:null,p.pwm)],
+      ['shield','Seri kalkanı',p.shields?pill(p.shields,'fr-status-free'):pro],
+      ['coin','Günlük altın',p.gold?pill(p.gold,'fr-status-free'):pro],
+      ['noads','Reklamsız',p.ads?pro:pill('Açık','fr-status-free')]
+    ];
+    const art={bolt:'<path d="M13 2 4 14h7l-1 8 9-12h-7z" fill="#f5a524"/>',break:'<path d="M12 3c4 0 7 2.5 7 6H5c0-3.5 3-6 7-6zm-1 7h2v8h4v2H7v-2h4z" fill="#23a36f"/>',game:'<path d="M7 8h10a4 4 0 0 1 4 4v3a3 3 0 0 1-5.4 1.8L14 15h-4l-1.6 1.8A3 3 0 0 1 3 15v-3a4 4 0 0 1 4-4z" fill="#5b55d6"/>',shield:'<path d="M12 2 4 5v6c0 5 3.4 9.4 8 11 4.6-1.6 8-6 8-11V5z" fill="#3a63e8"/>',coin:'<circle cx="12" cy="12" r="9" fill="#f2c94c" stroke="#d9a520" stroke-width="2"/>',noads:'<circle cx="12" cy="12" r="10" fill="#e86a6a"/><path d="M6 11h12v2H6z" fill="#fff"/>'};
+    return `<section class="fr-status" aria-labelledby="frStatusTitle">
+      <div class="fr-status-head"><span aria-hidden="true"></span><h3 id="frStatusTitle">Bugünkü Durumun</h3><small>${p.name}</small></div>
+      <div class="fr-status-grid">${rows.map(([k,label,val])=>`<div class="fr-status-row"><svg viewBox="0 0 24 24" aria-hidden="true">${art[k]}</svg><span>${label}</span>${val}</div>`).join('')}</div>
+      ${id==='premium_pro'?'':`<button type="button" class="fr-status-cta" data-friend-action="plans">${CROWN}Premium Pro ile sınırsız enerji</button>`}
+    </section>`;
   }
   const filterOptions = [['herkes','Herkes'],['takip','Takip ettiklerim'],['online','Çevrimiçi']];
   function filters() {
@@ -104,6 +149,7 @@
       ${leagueHtml()}
       <div id="frInvitation">${invitationHtml()}</div>
       ${tilesHtml()}
+      ${statusHtml()}
     </div>`;
   }
   function fullFeedHtml() {
@@ -156,6 +202,7 @@
     if(results[4].status==='fulfilled'&&Array.isArray(results[4].value?.liste))invites=results[4].value.liste;
     busy=false;lastLoad=Date.now();renderHome();
     if(permitted('lig'))void window.dmLeagueUI?.refreshWeekly?.();
+    void loadQuota();
   }
   root.addEventListener('dm:weekly-league',()=>{
     if(maSekme==='hub'&&!maProfilId){
@@ -296,6 +343,7 @@
     if(action==='lig'&&window.dmLeagueUI?.openWeekly)return window.dmLeagueUI.openWeekly();
     if(['home','akis','vitrin','lig'].includes(action)){window.maSekmeSec(action==='home'?'hub':action);return;}
     if(action==='share')return void shareInvite();
+    if(action==='plans'){if(window.DMSatis?.planlar)return window.DMSatis.planlar('arkadaslar-durum');return window.dmAndroidOpenPlans?.();}
     if(action==='people')return openPeople();
     if(action==='congratulate'){window.maTebrikEt('akis-'+b.dataset.event,b);paintCongratulation(b);return;}
     if(action==='virtual-duel'){const id=b.dataset.botId;const bot=window.dmLeagueUI?.weeklyPreview?.().top?.find(p=>p.id===id&&p.is_virtual);if(bot)void window.dmLeagueUI?.openVirtualDirect?.(bot);return;}
