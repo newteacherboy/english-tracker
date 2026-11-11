@@ -17,19 +17,23 @@
  function road(world){
   const rows=[...world.querySelectorAll('.rt-medal-row')];
   let svg=world.querySelector(':scope>.dm-v4-road');
-  if(rows.length<2){svg?.remove();return;}
   const w=world.clientWidth||1;
   const pts=rows.map(r=>({x:parseFloat(r.style.getPropertyValue('--stop-x'))/100*w,y:parseFloat(r.style.getPropertyValue('--stop-y')),cur:r.classList.contains('is-current')})).filter(p=>Number.isFinite(p.x)&&Number.isFinite(p.y)).sort((a,b)=>a.y-b.y);
   if(pts.length<2){svg?.remove();return;}
-  const seg=(a,b)=>{const m=(b.y-a.y)/2;return ' C '+a.x.toFixed(1)+' '+(a.y+m).toFixed(1)+', '+b.x.toFixed(1)+' '+(b.y-m).toFixed(1)+', '+b.x.toFixed(1)+' '+b.y.toFixed(1);};
-  let all='M '+pts[0].x.toFixed(1)+' '+pts[0].y.toFixed(1),done='';
+  /* Yol yalnızca ekrana çizilmiş duraklar kadar uzun: tüm dünya boyunda (on binlerce px) bir SVG iOS'ta kaydırmayı bozuyordu. */
+  const top=Math.max(0,Math.floor(pts[0].y-20)),h=Math.ceil(pts.at(-1).y-top+20);
+  const P=p=>p.x.toFixed(1)+' '+(p.y-top).toFixed(1);
+  const seg=(a,b)=>{const m=(b.y-a.y)/2;return ' C '+a.x.toFixed(1)+' '+(a.y+m-top).toFixed(1)+', '+b.x.toFixed(1)+' '+(b.y-m-top).toFixed(1)+', '+P(b);};
+  let all='M '+P(pts[0]),done='';
   const ci=pts.findIndex(p=>p.cur);
   for(let i=1;i<pts.length;i++){const s=seg(pts[i-1],pts[i]);all+=s;if(i<=ci)done+=s;}
-  if(done)done='M '+pts[0].x.toFixed(1)+' '+pts[0].y.toFixed(1)+done;
-  const h=Math.max(world.scrollHeight,pts.at(-1).y+60);
+  done=done?'M '+P(pts[0])+done:'M0 0';
+  const key=w+'|'+top+'|'+h+'|'+all+'|'+done;
+  if(svg&&svg.dataset.key===key)return;
   if(!svg){svg=document.createElementNS(NS,'svg');svg.setAttribute('class','dm-v4-road');svg.setAttribute('aria-hidden','true');svg.innerHTML='<path fill="none" stroke="var(--v4-road)" stroke-width="18" stroke-linecap="round"/><path fill="none" stroke="var(--v4-road-done)" stroke-width="18" stroke-linecap="round"/>';world.prepend(svg);}
-  svg.setAttribute('height',h);svg.style.height=h+'px';svg.setAttribute('viewBox','0 0 '+w+' '+h);
-  const [p1,p2]=svg.querySelectorAll('path');p1.setAttribute('d',all);p2.setAttribute('d',done||'M0 0');
+  svg.dataset.key=key;
+  svg.style.top=top+'px';svg.style.height=h+'px';svg.setAttribute('height',h);svg.setAttribute('viewBox','0 0 '+w+' '+h);
+  const [p1,p2]=svg.querySelectorAll('path');p1.setAttribute('d',all);p2.setAttribute('d',done);
  }
  function walker(world){
   const cur=world.querySelector('.rt-medal-row.is-current');
@@ -37,7 +41,7 @@
   if(!cur){lane?.remove();return;}
   const y=parseFloat(cur.style.getPropertyValue('--stop-y'));if(!Number.isFinite(y))return;
   if(!lane){lane=document.createElement('div');lane.className='dm-lp-lane';lane.setAttribute('aria-hidden','true');lane.innerHTML='<div class="dm-lp dm-lp-walker"><div class="dm-lp-hop">'+papi()+'</div></div>';world.append(lane);}
-  lane.style.top=Math.max(0,y-165)+'px';
+  const t=Math.max(0,y-165)+'px';if(lane.style.top!==t)lane.style.top=t;
  }
  function wallet(){
   document.querySelectorAll('.dm-unified-wallet .dm-pw-papi:not(.dm-lp)').forEach(el=>{el.classList.add('dm-lp','dm-lp-mini');el.innerHTML=papi();});
