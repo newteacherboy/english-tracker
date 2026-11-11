@@ -281,10 +281,10 @@
       if (intro) {
         overlay.hidden = true;
         const ready = !state.completed && state.remaining > 0;
-        const openPlans = intro.plans();
+        const openPlans = intro.plans('kaptan-pilot', (window.dmAndroidPlan?.plan || 'free') === 'pro' ? 'premium_pro' : '');
         const actions = [];
         if (ready) actions.push({label: `Bölüm ${state.level}’e uç`, cost: 5, onClick: start});
-        else if (!state.completed && openPlans) actions.push({label: 'Premium’u incele', onClick: openPlans});
+        else if (!state.completed && openPlans) actions.push({label: 'Paketleri gör', onClick: () => { close(); openPlans(); }}); // oyun penceresi üst katmanda; önce kapanır
         actions.push({label: 'Oyunlara dön', kind: actions.length ? 'secondary' : 'primary', onClick: close});
         const first = Math.max(1, state.level - 3), last = state.level + (state.completed ? 0 : 2);
         const route = [];
@@ -296,7 +296,7 @@
         }
         const note = error ? {text: error, icon: 'bolt'} :
           state.completed ? {text: 'Tüm uçuş rotasını tamamladın!', icon: 'check'} :
-          state.remaining <= 0 ? {text: 'Üç ücretsiz denemeni kullandın. Premium ile sınırsız uçabilirsin.', icon: 'lock'} : null;
+          state.remaining <= 0 ? {text: intro.noRightsText('uçabilirsin'), icon: 'lock'} : null;
         intro.mount(screen, {
           theme: 'flight',
           image: assets + 'papi-ucak.webp',
