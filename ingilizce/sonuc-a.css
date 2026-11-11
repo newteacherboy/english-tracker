@@ -1,0 +1,110 @@
+/* [12 Kas 2026] Sonuç ekranı · tasarım A ("beyaz kutlama"). Ortak sonuç ekranı (#genelSonucOverlay) için.
+   Tam ekran beyaz; arkasında dönen ışınlarla 3D Papi (duygusu sonuca göre: game-feedback.js DMPapi.resultMood),
+   yıldızlar, başlık, XP · ALTIN · DOĞRULUK kutucukları, süre satırı, yeşil DEVAM ET.
+   Düzen sonuc-a.js ile kurulur; ödül, puan ve sıralama hesapları değişmez. */
+html body #genelSonucOverlay#genelSonucOverlay{background:#fff!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;padding:0!important;align-items:stretch!important}
+html body #genelSonucOverlay#genelSonucOverlay .gso-kart{
+ display:flex!important;flex-direction:column!important;align-items:stretch!important;box-sizing:border-box!important;
+ width:100%!important;max-width:520px!important;min-height:100%!important;margin:0 auto!important;
+ padding:calc(64px + env(safe-area-inset-top,0px)) 18px calc(24px + env(safe-area-inset-bottom,0px))!important;
+ border:0!important;border-radius:0!important;background:#fff!important;box-shadow:none!important;overflow:visible!important;
+ font-family:Nunito,system-ui,sans-serif!important;text-align:center!important;color:#0F2747!important;animation:none!important
+}
+html body #genelSonucOverlay#genelSonucOverlay .gso-kart::before,
+html body #genelSonucOverlay#genelSonucOverlay .gso-kart::after{content:none!important;display:none!important}
+html body #genelSonucOverlay#genelSonucOverlay :is(.gso-konfeti,.gso-parca,#dmScoreBreakdown,.dm-score-breakdown){display:none!important}
+
+/* Papi + dönen ışınlar */
+html body #genelSonucOverlay#genelSonucOverlay .gso-maskot{
+ position:relative!important;width:200px!important;height:200px!important;margin:0 auto!important;border:0!important;border-radius:0!important;background:none!important;box-shadow:none!important;overflow:visible!important;isolation:isolate
+}
+html body #genelSonucOverlay#genelSonucOverlay .gso-maskot::before{
+ content:''!important;position:absolute!important;left:50%!important;top:50%!important;width:320px!important;height:320px!important;margin:-160px 0 0 -160px!important;border-radius:50%!important;z-index:-1!important;
+ background:repeating-conic-gradient(#FFD54A40 0 10deg,#FFD54A00 10deg 24deg)!important;
+ -webkit-mask:radial-gradient(circle,#000 22%,#0000 66%)!important;mask:radial-gradient(circle,#000 22%,#0000 66%)!important;
+ animation:saSpin 14s linear infinite!important;display:block!important
+}
+html body #genelSonucOverlay#genelSonucOverlay.sa-low .gso-maskot::before{background:repeating-conic-gradient(#9CC7F533 0 10deg,#9CC7F500 10deg 24deg)!important}
+html body #genelSonucOverlay#genelSonucOverlay .gso-maskot::after{content:none!important}
+html body #genelSonucOverlay#genelSonucOverlay .gso-maskot-ic,
+html body #genelSonucOverlay#genelSonucOverlay .gso-maskot .dm-result-papi{
+ position:absolute!important;inset:0!important;width:100%!important;height:100%!important;margin:0!important;border:0!important;border-radius:0!important;background:none!important;box-shadow:none!important;display:flex!important;align-items:center!important;justify-content:center!important;font-size:120px!important
+}
+html body #genelSonucOverlay#genelSonucOverlay .gso-maskot :is(img,svg,.dm-papi){max-width:100%!important;max-height:100%!important;width:100%!important;height:100%!important}
+@keyframes saSpin{to{transform:rotate(360deg)}}
+
+/* yıldızlar, başlık */
+html body #genelSonucOverlay#genelSonucOverlay .sa-stars{display:flex;justify-content:center;align-items:flex-end;gap:2px;margin-top:4px;line-height:1}
+html body #genelSonucOverlay#genelSonucOverlay .sa-stars i{font-style:normal;font-size:34px;animation:saStar .5s cubic-bezier(.2,1.6,.4,1) both}
+html body #genelSonucOverlay#genelSonucOverlay .sa-stars i:nth-child(2){font-size:44px;animation-delay:.15s}
+html body #genelSonucOverlay#genelSonucOverlay .sa-stars i:nth-child(3){animation-delay:.3s}
+html body #genelSonucOverlay#genelSonucOverlay .sa-stars i.off{filter:grayscale(1) opacity(.3)}
+@keyframes saStar{from{transform:scale(0) rotate(-40deg)}to{transform:none}}
+html body #genelSonucOverlay#genelSonucOverlay .gso-baslik{margin:10px 0 0!important;color:#0F2747!important;-webkit-text-fill-color:#0F2747!important;font:900 32px/1.1 Nunito,system-ui,sans-serif!important;background:none!important}
+html body #genelSonucOverlay#genelSonucOverlay .gso-alt{margin:4px 0 0!important;color:#5D7A9C!important;-webkit-text-fill-color:#5D7A9C!important;font:800 15px/1.3 Nunito,system-ui,sans-serif!important}
+
+/* XP · ALTIN · DOĞRULUK kutucukları */
+html body #genelSonucOverlay#genelSonucOverlay .sa-row{display:flex;gap:10px;margin-top:22px}
+html body #genelSonucOverlay#genelSonucOverlay .sa-row #dmRewardCards{display:contents!important}
+html body #genelSonucOverlay#genelSonucOverlay .sa-row #dmRewardCards[hidden]>div{visibility:hidden}
+html body #genelSonucOverlay#genelSonucOverlay .sa-row :is(#dmRewardCards>div,.gso-istat-kart){
+ flex:1 1 0!important;min-width:0!important;margin:0!important;padding:0!important;border-radius:18px!important;border:2.5px solid var(--sa-c)!important;background:var(--sa-soft)!important;box-shadow:none!important;overflow:hidden!important;display:block!important;text-align:center!important;
+ animation:saPop .45s .2s cubic-bezier(.2,1.6,.4,1) both!important
+}
+html body #genelSonucOverlay#genelSonucOverlay .sa-row #dmRewardCards>div:nth-child(1){--sa-c:#FFC531;--sa-soft:#FFF8E1;--sa-ink:#B07A00}
+html body #genelSonucOverlay#genelSonucOverlay .sa-row #dmRewardCards>div:nth-child(2){--sa-c:#FF9F1C;--sa-soft:#FFF2E0;--sa-ink:#B85E00;animation-delay:.3s!important}
+html body #genelSonucOverlay#genelSonucOverlay .sa-row .gso-istat-kart{--sa-c:#2DB66B;--sa-soft:#E6F8EE;--sa-ink:#1E8B4F;animation-delay:.4s!important}
+html body #genelSonucOverlay#genelSonucOverlay .sa-row #dmRewardCards>div>small,
+html body #genelSonucOverlay#genelSonucOverlay .sa-row .gso-istat-bas{
+ display:block!important;margin:0!important;padding:6px 4px!important;background:var(--sa-c)!important;color:#fff!important;-webkit-text-fill-color:#fff!important;font:900 0/1 Nunito,system-ui,sans-serif!important;letter-spacing:.06em!important;border:0!important
+}
+html body #genelSonucOverlay#genelSonucOverlay .sa-row #dmRewardCards>div>small::before{content:'XP';font-size:11.5px}
+html body #genelSonucOverlay#genelSonucOverlay .sa-row #dmRewardCards>div:nth-child(2)>small::before{content:'ALTIN'}
+html body #genelSonucOverlay#genelSonucOverlay .sa-row .gso-istat-bas::before{content:'DOĞRULUK';font-size:11.5px}
+html body #genelSonucOverlay#genelSonucOverlay .sa-row :is(#dmRewardCards>div>strong,.gso-istat-deger){
+ display:block!important;margin:0!important;padding:12px 4px 13px!important;background:none!important;border:0!important;color:var(--sa-ink)!important;-webkit-text-fill-color:var(--sa-ink)!important;font:900 22px/1 Nunito,system-ui,sans-serif!important;white-space:nowrap!important;overflow:hidden;text-overflow:ellipsis
+}
+html body #genelSonucOverlay#genelSonucOverlay .sa-row .dm-earned-track{display:none!important}
+html body #genelSonucOverlay#genelSonucOverlay .gso-istat{display:none!important}
+@keyframes saPop{from{transform:scale(.5);opacity:0}to{transform:none;opacity:1}}
+
+/* süre satırı ve kısa durum yazıları */
+html body #genelSonucOverlay#genelSonucOverlay .sa-meta{margin:14px 0 0;color:#7C93B2;font:800 13.5px/1.35 Nunito,system-ui,sans-serif}
+html body #genelSonucOverlay#genelSonucOverlay :is(#dmRewardStatus,#dmLeaderboardStatus,.dm-result-status){margin:6px 0 0!important;padding:0!important;background:none!important;border:0!important;color:#9AAEC6!important;-webkit-text-fill-color:#9AAEC6!important;font:700 12px/1.35 Nunito,system-ui,sans-serif!important}
+html body #genelSonucOverlay#genelSonucOverlay :is(#dmRewardStatus,#dmLeaderboardStatus):empty{display:none!important}
+
+/* butonlar */
+html body #genelSonucOverlay#genelSonucOverlay .gso-btnlar{display:flex!important;flex-direction:column!important;align-items:stretch!important;gap:6px!important;margin:auto 0 0!important;padding-top:22px!important}
+html body #genelSonucOverlay#genelSonucOverlay #gsoDevamBtn{
+ position:relative!important;overflow:hidden!important;width:100%!important;max-width:none!important;height:56px!important;padding:0!important;border:0!important;border-radius:18px!important;
+ background:#2DB66B!important;box-shadow:0 5px 0 #1E8B4F!important;color:#fff!important;-webkit-text-fill-color:#fff!important;font:900 19px/1 Nunito,system-ui,sans-serif!important;letter-spacing:.04em!important;text-transform:uppercase!important;transition:transform .08s,box-shadow .08s!important
+}
+html body #genelSonucOverlay#genelSonucOverlay #gsoDevamBtn::after{content:''!important;position:absolute!important;top:-30%!important;left:-60%!important;width:36%!important;height:160%!important;background:linear-gradient(100deg,#fff0,#fffb,#fff0)!important;transform:rotate(16deg)!important;animation:saShine 2.4s ease-in-out infinite!important}
+html body #genelSonucOverlay#genelSonucOverlay #gsoDevamBtn:active{transform:translateY(4px)!important;box-shadow:0 1px 0 #1E8B4F!important}
+html body #genelSonucOverlay#genelSonucOverlay #gsoDevamBtn:disabled{opacity:.6!important}
+html body #genelSonucOverlay#genelSonucOverlay #gsoTekrarBtn{height:44px!important;padding:0!important;border:0!important;background:none!important;color:#2F86EB!important;-webkit-text-fill-color:#2F86EB!important;font:900 16px/1 Nunito,system-ui,sans-serif!important;text-decoration:none!important}
+@keyframes saShine{0%,40%{left:-60%}80%,100%{left:130%}}
+
+/* sıralama: sade liste */
+html body #genelSonucOverlay#genelSonucOverlay .gso-sira-baslik{max-width:none!important;margin:22px 0 8px!important;color:#0F2747!important;font:900 15px/1.2 Nunito,system-ui,sans-serif!important;text-align:left!important}
+html body #genelSonucOverlay#genelSonucOverlay .gso-sira{max-width:none!important}
+html body #genelSonucOverlay#genelSonucOverlay .gso-sira-satir{border-radius:14px!important;background:#F4F8FD!important;color:#0F2747!important;font:800 13.5px/1.2 Nunito,system-ui,sans-serif!important;box-shadow:none!important}
+
+/* konfeti (iyi sonuçta) */
+html body #genelSonucOverlay#genelSonucOverlay .sa-confetti{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:0}
+html body #genelSonucOverlay#genelSonucOverlay .sa-confetti i{position:absolute;top:-30px;width:9px;height:13px;border-radius:3px;animation:saFall linear infinite}
+@keyframes saFall{from{transform:translateY(0) rotate(0)}to{transform:translateY(110vh) rotate(540deg)}}
+html body #genelSonucOverlay#genelSonucOverlay .gso-kart>*:not(.sa-confetti){position:relative;z-index:1}
+
+/* gece */
+html[data-dm-theme="night"] body #genelSonucOverlay#genelSonucOverlay,
+html[data-dm-theme="night"] body #genelSonucOverlay#genelSonucOverlay .gso-kart{background:#12142a!important}
+html[data-dm-theme="night"] body #genelSonucOverlay#genelSonucOverlay :is(.gso-baslik,.gso-sira-baslik){color:#eef0ff!important;-webkit-text-fill-color:#eef0ff!important}
+html[data-dm-theme="night"] body #genelSonucOverlay#genelSonucOverlay .gso-sira-satir{background:#1c1f3a!important;color:#eef0ff!important}
+@media(prefers-reduced-motion:reduce){
+ html body #genelSonucOverlay#genelSonucOverlay .gso-maskot::before,html body #genelSonucOverlay#genelSonucOverlay #gsoDevamBtn::after{animation:none!important}
+ html body #genelSonucOverlay#genelSonucOverlay :is(.sa-stars i,.sa-row>*,.sa-row #dmRewardCards>div){animation:none!important}
+ html body #genelSonucOverlay#genelSonucOverlay .sa-confetti{display:none}
+}
+html body #genelSonucOverlay#genelSonucOverlay .gso-maskot :not(svg):not(svg *){background:transparent!important;box-shadow:none!important;border-color:transparent!important}
+html body #genelSonucOverlay#genelSonucOverlay .gso-maskot svg{background:none!important;border-radius:0!important;box-shadow:none!important}
