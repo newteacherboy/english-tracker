@@ -51,7 +51,16 @@
   queued=false;wallet();
   document.querySelectorAll('#tab-dunya .rt-medal-route .rt-medal-world').forEach(world=>{try{road(world);walker(world);}catch(_){}});
  }
- function schedule(){if(!queued){queued=true;requestAnimationFrame(refresh);}}
+ /* Kaydırma sürerken (özellikle iOS'taki ivmeli kaydırmada) kaydırılan içerikte hiçbir şeyi değiştirme:
+    yol ve Papi şeridi ancak kaydırma 350 ms durduktan sonra güncellenir. */
+ let lastScroll=0,idleTimer=0;
+ addEventListener('scroll',e=>{if(e.target?.classList?.contains('rt-medal-scroll'))lastScroll=Date.now();},{capture:true,passive:true});
+ function schedule(){
+  if(queued)return;
+  const wait=350-(Date.now()-lastScroll);
+  if(wait>0){clearTimeout(idleTimer);idleTimer=setTimeout(schedule,wait+20);return;}
+  queued=true;requestAnimationFrame(refresh);
+ }
  function start(){
   const tab=document.getElementById('tab-dunya');
   if(tab)new MutationObserver(muts=>{for(const m of muts){if(m.type==='childList'&&[...m.addedNodes].some(n=>n.nodeType===1&&!n.closest?.('.dm-lp-lane,.dm-v4-road')&&!(n.classList&&(n.classList.contains('dm-lp-lane')||n.classList.contains('dm-v4-road'))))){schedule();return;}}}).observe(tab,{childList:true,subtree:true});
