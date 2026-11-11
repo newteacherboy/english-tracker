@@ -13,6 +13,8 @@
 html.dm-papi-intro :is(#splashEkrani,#dmBootSplash,#oturumYuklemeOverlay){background:#0A5560!important;overflow:hidden!important;isolation:isolate}
 html.dm-papi-intro :is(#splashEkrani,#dmBootSplash,#oturumYuklemeOverlay)>:not(.pi-wrap):not(#dmBootRetry){opacity:0!important;pointer-events:none!important}
 html.dm-papi-intro .dm-republic-footer{display:none!important}
+/* Açılışta oturum yükleme katmanı da açılır ve normalde üstte durur: animasyon bitene kadar açılış ekranı en üstte kalsın */
+html.dm-papi-intro:not(.dm-papi-booted) #dmBootSplash{z-index:2147483600!important}
 .pi-wrap{position:absolute;inset:0;z-index:5;display:flex;align-items:center;justify-content:center;pointer-events:none;font-family:ui-rounded,"SF Pro Rounded",system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
 .pi-stage{display:flex;flex-direction:column;align-items:center;transform:translateY(-4vh)}
 .pi-papi{position:relative;width:min(64vw,290px);aspect-ratio:400/440}
@@ -103,10 +105,14 @@ html.dm-papi-intro .dm-republic-footer{display:none!important}
   if(STATIC_IDS.includes(el.id)){el.querySelector('.pi-wrap').classList.add('pi-static');return;}
   if(!startedAt){startedAt=performance.now();trySound();}
  }
+ function setMeta(c){try{const m=document.querySelector('meta[name="theme-color"]');if(m){if(!m.dataset.dmOrig)m.dataset.dmOrig=m.content;m.content=c;}}catch(_){}}
+ /* Açılış bitince turkuaz zemin uygulamanın arkasında kalmasın */
+ document.addEventListener('dm:boot-ready',()=>{document.documentElement.classList.add('dm-papi-booted');document.documentElement.classList.remove('dm-papi-intro-bg');try{const m=document.querySelector('meta[name="theme-color"]');if(m&&m.dataset.dmOrig)m.content=m.dataset.dmOrig;}catch(_){}});
  function scan(){IDS.concat(STATIC_IDS).forEach(id=>mountInto(document.getElementById(id)));}
  function enable(){
   if(active)return;active=true;css();
-  document.documentElement.classList.add('dm-papi-intro');
+  document.documentElement.classList.add('dm-papi-intro','dm-papi-intro-bg');
+  setMeta('#0A5560');
   scan();
   if(typeof MutationObserver==='function'&&!observer){observer=new MutationObserver(scan);observer.observe(document.documentElement,{childList:true,subtree:true});
    const stop=()=>{observer&&observer.disconnect();observer=null;scan();};
@@ -114,7 +120,7 @@ html.dm-papi-intro .dm-republic-footer{display:none!important}
  }
  function disable(){
   if(!active)return;active=false;
-  document.documentElement.classList.remove('dm-papi-intro');
+  document.documentElement.classList.remove('dm-papi-intro','dm-papi-intro-bg');
   document.querySelectorAll('.pi-wrap').forEach(n=>n.remove());
   observer&&observer.disconnect();observer=null;
  }

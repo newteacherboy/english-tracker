@@ -75,9 +75,12 @@ const defaultPreference={mode:'auto',disabled:[],manual:null};
   let decided=false;
   win.dmSplashPending=true;
   doc.documentElement.classList.add('dm-splash-pending');
+  // Kayıtlı seçim Papi girişiyse ilk kareden itibaren zemin derin turkuaz olsun (beyaz/eski renk görünmesin)
+  if(chosen&&chosen.id==='papi-giris')doc.documentElement.classList.add('dm-papi-intro-bg');
   function decide(next){
    if(decided)return;decided=true;
    updateArtwork(next);
+   if(!(next&&next.id==='papi-giris'))doc.documentElement.classList.remove('dm-papi-intro-bg');
    win.dmSplashPending=false;
    doc.documentElement.classList.remove('dm-splash-pending');
   }
@@ -103,6 +106,8 @@ const defaultPreference={mode:'auto',disabled:[],manual:null};
    }
    chosen=next;
   }
+  // Kayıtlı seçim Papi girişiyse beklemeden başla (animasyon ilk kareden oynasın); değilse sunucu cevabını bekle.
+  if(chosen&&chosen.id==='papi-giris')decide(chosen);
   setTimeout(()=>decide(chosen),1500);
   // Server-managed global selection: read asynchronously after immediate cached first paint.
   function refreshPreferences(){

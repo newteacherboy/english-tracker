@@ -20,7 +20,9 @@ if [ ! -d ios ]; then npx cap add ios --packagemanager SPM; fi
 echo "🎨 Simge (yeni Papi logosu)…"
 mkdir -p resources
 node -e "require('sharp')('$ROOT/ingilizce/app-icons/papi-logo-1024.png').resize(1024,1024).flatten({background:'#A5DBA9'}).removeAlpha().png().toFile('resources/icon.png').then(()=>console.log('icon.png hazır'))"
-npx @capacitor/assets generate --ios --iconBackgroundColor '#A5DBA9' --splashBackgroundColor '#FAF8F5'
+# Açılış ekranı: simgesiz düz derin turkuaz (Papi giriş animasyonuyla aynı renk)
+node -e "const s=require('sharp');const b={create:{width:2732,height:2732,channels:3,background:'#0A5560'}};Promise.all([s(b).png().toFile('resources/splash.png'),s(b).png().toFile('resources/splash-dark.png')]).then(()=>console.log('splash.png hazır'))"
+npx @capacitor/assets generate --ios --iconBackgroundColor '#A5DBA9' --splashBackgroundColor '#0A5560' --splashBackgroundColorDark '#0A5560'
 
 npx cap sync ios
 sh izinler.sh
