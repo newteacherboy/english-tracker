@@ -102,7 +102,7 @@ function breakCombo(localOnly=false){
  comboBreakPromise=comboBreakPromise.catch(()=>{}).then(async()=>{if(ticket!==epoch||!modal||identity()!==at||cursor!==session.cursor)return;try{const r=await api('comboReset',{chapter:chapter.id,cursor,version});if(ticket===epoch&&modal&&identity()===at){if(!r.stale&&r.cursor===session?.cursor&&Number(r.version)>Number(session?.version)){session={...session,version:r.version};}wallet(r);}}catch(e){if(ticket===epoch&&modal){feedback('Kombo kaydedilemedi. Bağlantı gelince tekrar dene.');throw e;}}});comboBreakPromise.catch(()=>{});
 }
 async function open(id,options={}){const navTicket=window.dmViewHistory?.ticket();const returnView=window.dmViewHistory?.parent(modal);if(busy)return false;await curriculum();await preloadV8();if(!options.intro)await status();if(window.dmViewHistory&&!window.dmViewHistory.valid(navTicket))return false;id=Number(id);if(id>=0&&id<80)id=1000+id;const C=data.chapters.find(c=>c.id===id);if(!C)return false;if(modal&&window.dmPapiFirstPractice?.locked('independent')&&!options.intro)return false;close(!!options.intro);origin=document.activeElement;chapter=C;session=null;owner=identity();const scope=owner+'|'+C.id;if(reviewScope!==scope){reviewScope=scope;reviewSnapshots.clear();}const at=owner,ticket=++epoch;modal=document.createElement('div');modal.id='dmStoryLesson';modal.className='ml-lesson ml-overlay';modal.setAttribute('role','dialog');modal.setAttribute('aria-modal','true');modal.setAttribute('aria-label',C.title);document.body.append(modal);window.dmViewHistory?.track(modal,{parent:returnView,close:()=>close(true),back});watchLessonLayout();document.body.classList.add('dm-story-open');modal.innerHTML='<section class="ml-loading">Bölüm hazırlanıyor…<button type="button">Geri dön</button></section>';modal.querySelector('button').onclick=()=>close();busy=true;try{const r=await api('open',{chapter:id});if(ticket!==epoch||identity()!==at)return false;session=r;busy=false;wallet(r);entry();return true;}catch(e){if(ticket===epoch&&modal){busy=false;modal.querySelector('.ml-loading').firstChild.textContent=e.message;const retry=document.createElement('button');retry.textContent='Yeniden dene';retry.onclick=()=>open(id,options);modal.querySelector('section').append(retry);}return false;}}
-function back(){if(busy||!modal)return;if(!modal.classList.contains('ml-entry')){try{speechSynthesis.cancel();}catch{}entry();scheduleLessonFit();return;}close();}
+function back(){if(busy||!modal)return;if(!modal.classList.contains('ml-entry')){if(!modal.querySelector('.ml-complete')&&typeof window.dmSoruPanel?.confirmExit==='function'){const ticket=epoch;window.dmSoruPanel.confirmExit(()=>{if(ticket===epoch&&modal)close();});return;}try{speechSynthesis.cancel();}catch{}entry();scheduleLessonFit();return;}close();}
 function teachingCards(task){const cards=[...(session.deckVersion===8||schoolBridge?chapter.cards:task.cards)];if(session.deckVersion===8&&cards.length<4&&!schoolBridge){for(const c of chapter.examples||[])if(cards.length<4&&!cards.some(x=>core.norm(x.en)===core.norm(c.en)))cards.push(c);}return cards;}
 function entry(){
  if(!modal||!session||!chapter)return;
@@ -160,7 +160,9 @@ function watchLessonLayout(){
 function showComboReward(r){
  const gain=Number(r.comboGain),key=identity()+'|'+r.chapter+'|'+r.version;if(!Number.isFinite(gain)||gain<=0||key===lastComboReward)return;lastComboReward=key;
  const ticket=epoch,at=identity();comboRewardPromise=new Promise(resolve=>queueMicrotask(async()=>{try{if(ticket!==epoch||!modal||identity()!==at)return;
-  if(typeof window.dmRoutePracticeFlight?.playCombo==='function'){
+  if(typeof window.dmComboSteps?.play==='function'){
+   await window.dmComboSteps.play({gain,isCurrent:()=>ticket===epoch&&!!modal&&identity()===at,sound:voice,host:modal});
+  }else if(typeof window.dmRoutePracticeFlight?.playCombo==='function'){
    await window.dmRoutePracticeFlight.playCombo({gain,isCurrent:()=>ticket===epoch&&!!modal&&identity()===at,onExit:()=>close(true),sound:voice});
   }else if(typeof window.DMRouteQuestions?.celebrate==='function'){
    window.DMRouteQuestions.celebrate(modal,gain,5);
@@ -278,7 +280,8 @@ async function submit(answer,clicked,{guided=false}={}){
   else{feedback('Cevabı öğrendin. Sonraki soruya geçiliyor…',true);}
   saveAnsweredSnapshot(answeredCursor);
   const nextCursor=session.cursor;
-  setTimeout(()=>{if(ticket===epoch&&modal&&identity()===at&&session.cursor===nextCursor)render();},guided?320:650);
+  // 5'li kombo animasyonu oynuyorsa bitince sıradaki soruya kendiliğinden geçilir.
+  setTimeout(async()=>{try{await comboRewardPromise;}catch{}if(ticket===epoch&&modal&&identity()===at&&session.cursor===nextCursor)render();},guided?320:650);
  }catch(e){
   if(e.energyEmpty){busy=false;modal?.removeAttribute('aria-busy');wallet(e);render();feedback(e.message);window.DijiMeduPapiFeedback?.energy();}
   else await reconcileLesson(ticket,at,e);

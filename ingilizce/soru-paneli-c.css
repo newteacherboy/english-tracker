@@ -1,0 +1,136 @@
+/* [11 Kas 2026] Soru paneli · tasarım C (Öğrenme Yolu + Okul Yolum, tüm duraklar).
+   Ekranda yalnızca: sol üstte ✕, ilerleme çubuğu + "N / 10 soru", 🔥 kombo, soru ve şıklar.
+   Doğru/yanlış sonucu alttan Papili kartla gelir (soru-paneli-c.js). Sunucu, enerji, kombo ve ödül kuralları değişmez.
+   5 kimlikli seçici, mevcut 4 kimlikli kuralların (learning-question-v1.css, school-soft-cards.css) üstüne çıkar. */
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry):not([data-task-kind="teach"])[data-appearance="day"]{
+ --l-bg:#ffffff;--l-ink:#0F2747;--l-muted:#5D7A9C;--l-card:#ffffff;--l-line:#DCE5F0;--l-track:#E5ECF4;
+ background:#fff!important;color:#0F2747!important
+}
+/* üst çubuk: ✕ | ilerleme | 🔥 */
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-shell{
+ grid-template-columns:40px minmax(0,1fr) auto!important;
+ grid-template-areas:"back prog hud" "board board board"!important;
+ column-gap:12px!important;padding-left:12px!important;padding-right:16px!important
+}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) :is(.ml-header>div,.ml-header>[data-lesson-theme],.ml-header>[data-voice],.ml-arena-title,.ml-question-history,.ml-shell>footer,.ml-combo-toast){display:none!important}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-header{display:contents!important}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-header>[data-back]{
+ grid-area:back!important;position:static!important;width:40px!important;height:40px!important;min-width:40px!important;min-height:40px!important;
+ padding:0!important;margin:0!important;border:0!important;border-radius:12px!important;background:transparent!important;box-shadow:none!important;
+ color:#9AAEC6!important;-webkit-text-fill-color:#9AAEC6!important;font:900 26px/1 Nunito,system-ui,sans-serif!important;display:grid!important;place-items:center!important
+}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-header>[data-back]::before,
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-header>[data-back]::after{content:none!important;display:none!important}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-progress{
+ grid-area:prog!important;display:flex!important;flex-direction:column!important;align-items:stretch!important;gap:5px!important;margin:0!important;padding:0!important;min-width:0!important;background:none!important;border:0!important;box-shadow:none!important
+}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-progress progress{
+ order:0!important;width:100%!important;height:16px!important;margin:0!important;border:0!important;border-radius:8px!important;background:#E5ECF4!important;overflow:hidden!important;-webkit-appearance:none!important;appearance:none!important
+}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-progress progress::-webkit-progress-bar{background:#E5ECF4!important;border-radius:8px!important}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-progress progress::-webkit-progress-value{background:#2DB66B!important;border-radius:8px!important;box-shadow:inset 0 4px 0 #ffffff55!important;transition:width .3s}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-progress progress::-moz-progress-bar{background:#2DB66B!important;border-radius:8px!important}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-progress>span{
+ order:1!important;display:block!important;position:static!important;width:auto!important;height:auto!important;overflow:visible!important;clip:auto!important;clip-path:none!important;white-space:nowrap!important;margin:0!important;padding:0!important;background:none!important;border:0!important;box-shadow:none!important;
+ color:#7C93B2!important;-webkit-text-fill-color:#7C93B2!important;font:900 12.5px/1 Nunito,system-ui,sans-serif!important;text-align:left!important
+}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-wallet{
+ grid-area:hud!important;display:flex!important;align-items:center!important;gap:0!important;margin:0!important;padding:0!important;background:none!important;border:0!important;box-shadow:none!important;align-self:start!important;margin-top:-2px!important
+}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-wallet-chip:not([aria-label="Kuş tüyü kombo"]){display:none!important}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-wallet-chip[aria-label="Kuş tüyü kombo"]{
+ display:flex!important;align-items:center!important;gap:3px!important;padding:0!important;margin:0!important;background:none!important;border:0!important;box-shadow:none!important;min-height:0!important
+}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-wallet-chip[aria-label="Kuş tüyü kombo"]::before{content:'🔥';font-size:19px;line-height:1;display:inline-block;animation:qcFlame 1.2s ease-in-out infinite}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-wallet-chip[aria-label="Kuş tüyü kombo"] :is(svg,small){display:none!important}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-wallet-chip[aria-label="Kuş tüyü kombo"] b{color:#FF7A00!important;-webkit-text-fill-color:#FF7A00!important;font:900 19px/1 Nunito,system-ui,sans-serif!important}
+@keyframes qcFlame{0%,100%{transform:scale(1) rotate(-4deg)}50%{transform:scale(1.15) rotate(4deg)}}
+
+/* soru alanı: süs yok, büyük soru, sade şıklar */
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry):not([data-task-kind="teach"]) :is(.ml-arena-papi,.ml-school-count,.ml-reference-controls){display:none!important}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry):not([data-task-kind="teach"]) .ml-arena-hero{
+ display:block!important;min-height:0!important;margin:6px 0 0!important;padding:0!important;background:none!important;border:0!important;box-shadow:none!important;text-align:left!important
+}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry):not([data-task-kind="teach"]) .ml-school-question-head{display:block!important;min-height:0!important;margin:0!important;padding:0!important}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry):not([data-task-kind="teach"]) :is(.ml-eyebrow,.ml-school-instruction){
+ display:block!important;margin:10px 0 0!important;padding:0!important;background:none!important;border:0!important;box-shadow:none!important;
+ color:#5D7A9C!important;-webkit-text-fill-color:#5D7A9C!important;font:800 15px/1.3 Nunito,system-ui,sans-serif!important;letter-spacing:0!important;text-transform:none!important;text-align:left!important
+}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry):not([data-task-kind="teach"]) .ml-eyebrow::before{content:none!important;display:none!important}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry)[data-route="school"]:not([data-task-kind="teach"]) .ml-eyebrow{display:none!important}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry):not([data-task-kind="teach"]) .ml-speech{
+ display:flex!important;flex-direction:row-reverse!important;justify-content:flex-end!important;align-items:center!important;flex-wrap:wrap!important;gap:12px!important;
+ margin:12px 0 0!important;padding:0!important;min-height:0!important;background:none!important;border:0!important;box-shadow:none!important;text-align:left!important
+}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry):not([data-task-kind="teach"]) .ml-speech h2{
+ margin:0!important;padding:0!important;color:#0F2747!important;-webkit-text-fill-color:#0F2747!important;font:900 clamp(26px,8vw,34px)/1.15 Nunito,system-ui,sans-serif!important;text-align:left!important;overflow-wrap:anywhere
+}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry):not([data-task-kind="teach"]) .ml-speech :is(p,.ml-support){color:#5D7A9C!important;-webkit-text-fill-color:#5D7A9C!important;text-align:left!important}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry):not([data-task-kind="teach"]) .ml-speaker{
+ width:52px!important;height:52px!important;min-width:52px!important;min-height:52px!important;padding:0!important;margin:0!important;border:0!important;border-radius:16px!important;
+ background:#2F86EB!important;box-shadow:0 4px 0 #1E64C2!important;color:transparent!important;-webkit-text-fill-color:transparent!important;font-size:0!important;position:relative!important;overflow:hidden!important;flex-shrink:0
+}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry):not([data-task-kind="teach"]) .ml-speaker::before{
+ content:''!important;position:absolute!important;inset:13px!important;width:auto!important;height:auto!important;background:#fff!important;border:0!important;border-radius:0!important;
+ -webkit-mask:var(--qc-spk) center/contain no-repeat!important;mask:var(--qc-spk) center/contain no-repeat!important;display:block!important
+}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry){--qc-spk:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M11 5 6 9H3v6h3l5 4z' fill='black'/%3E%3Cpath d='M15.5 8.5a5 5 0 0 1 0 7'/%3E%3Cpath d='M18.5 5.5a9 9 0 0 1 0 13'/%3E%3C/svg%3E")}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-choices:not(.ml-image-choices){
+ display:grid!important;grid-template-columns:1fr!important;grid-auto-rows:auto!important;align-content:start!important;flex:0 0 auto!important;height:auto!important;gap:12px!important;margin-top:24px!important
+}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-choices>button{
+ grid-column:auto!important;min-height:58px!important;height:auto!important;padding:15px 18px!important;margin:0!important;
+ border:2.5px solid #DCE5F0!important;border-radius:18px!important;background:#fff!important;box-shadow:0 4px 0 #DCE5F0!important;
+ color:#0F2747!important;-webkit-text-fill-color:#0F2747!important;font:800 19px/1.25 Nunito,system-ui,sans-serif!important;text-align:left!important;justify-content:flex-start!important;
+ transition:transform .08s,box-shadow .08s,background .15s,border-color .15s!important
+}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-choices.ml-image-choices{grid-auto-rows:minmax(120px,auto)!important;align-content:start!important;flex:0 0 auto!important;height:auto!important;margin-top:18px!important}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-choices.ml-image-choices>button{text-align:center!important;justify-content:center!important;min-height:120px!important}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-choices:not(.ml-image-choices)>button::before{content:none!important;display:none!important}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-choices>button:active:not(:disabled){transform:translateY(4px)!important;box-shadow:0 0 0 #DCE5F0!important}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-choices>button:disabled:not(.is-correct):not(.is-wrong){opacity:.55!important}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-choices>button.is-correct{background:#D7F5E3!important;border-color:#2DB66B!important;box-shadow:0 4px 0 #2DB66B!important;color:#156B3C!important;-webkit-text-fill-color:#156B3C!important;opacity:1!important}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-choices>button.is-wrong{background:#FFE1E1!important;border-color:#E5484D!important;box-shadow:0 4px 0 #E5484D!important;color:#A8262E!important;-webkit-text-fill-color:#A8262E!important;opacity:1!important;animation:qcShake .4s!important}
+@keyframes qcShake{0%,100%{translate:0}20%{translate:-8px 0}40%{translate:7px 0}60%{translate:-5px 0}80%{translate:3px 0}}
+
+/* sonuç: asıl metin ve buton gizlenir, yerine alttan Papili kart (soru-paneli-c.js) */
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson.qc-result :is(.ml-feedback.is-correct,.ml-feedback.is-answer-wrong){visibility:hidden!important;height:0!important;min-height:0!important;margin:0!important;padding:0!important;border:0!important;overflow:hidden!important}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson.qc-wrong .ml-actions{visibility:hidden!important;height:0!important;min-height:0!important;margin:0!important;padding:0!important;overflow:hidden!important}
+#dmStoryLesson .qc-sheet{position:fixed;left:0;right:0;bottom:0;z-index:2147482000;box-sizing:border-box;padding:18px 18px calc(22px + env(safe-area-inset-bottom,0px));border-radius:26px 26px 0 0;
+ box-shadow:0 -8px 24px rgba(17,40,75,.12);font-family:Nunito,system-ui,sans-serif;transform:translateY(calc(100% + 80px));transition:transform .28s cubic-bezier(.2,.9,.3,1.1);pointer-events:none}
+#dmStoryLesson .qc-sheet.is-on{transform:none;pointer-events:auto}
+#dmStoryLesson .qc-sheet .qc-papi{position:absolute;left:14px;top:-46px;width:74px;height:82px;pointer-events:none}
+#dmStoryLesson .qc-sheet .qc-copy{padding-left:92px;min-height:46px}
+#dmStoryLesson .qc-sheet .qc-head{font:900 21px/1.15 Nunito,system-ui,sans-serif}
+#dmStoryLesson .qc-sheet .qc-sub{margin-top:3px;color:#0F2747;font:800 15px/1.35 Nunito,system-ui,sans-serif;overflow-wrap:anywhere}
+#dmStoryLesson .qc-sheet .qc-btn{display:block;margin-top:14px;width:100%;height:52px;border:0;border-radius:16px;color:#fff;font:900 18px/1 Nunito,system-ui,sans-serif;letter-spacing:.04em;cursor:pointer;transition:transform .08s,box-shadow .08s}
+#dmStoryLesson .qc-sheet .qc-btn:active{transform:translateY(4px);box-shadow:none!important}
+#dmStoryLesson .qc-sheet.is-ok{background:#D7F5E3}
+#dmStoryLesson .qc-sheet.is-ok .qc-head{color:#1E8B4F}
+#dmStoryLesson .qc-sheet.is-ok .qc-btn{display:none}
+#dmStoryLesson .qc-sheet.is-no{background:#FFE1E1}
+#dmStoryLesson .qc-sheet.is-no .qc-head{color:#D03B44}
+#dmStoryLesson .qc-sheet.is-no .qc-btn{background:#E5484D;box-shadow:0 5px 0 #A8262E}
+#dmStoryLesson[data-appearance="night"] .qc-sheet.is-ok{background:#173a2f}
+#dmStoryLesson[data-appearance="night"] .qc-sheet.is-no{background:#43252a}
+#dmStoryLesson[data-appearance="night"] .qc-sheet .qc-sub{color:#eef0ff}
+#dmStoryLesson.ml-entry .qc-sheet{display:none}
+
+/* çıkış uyarısı */
+.qc-exit{position:fixed;inset:0;z-index:2147483647;display:flex;align-items:flex-end;background:rgba(15,39,71,.45);opacity:0;transition:opacity .2s;font-family:Nunito,system-ui,sans-serif}
+.qc-exit.is-on{opacity:1}
+.qc-exit>div{box-sizing:border-box;width:100%;padding:22px 18px calc(24px + env(safe-area-inset-bottom,0px));border-radius:28px 28px 0 0;background:#fff;text-align:center;transform:translateY(105%);transition:transform .28s cubic-bezier(.2,.9,.3,1.1)}
+.qc-exit.is-on>div{transform:none}
+.qc-exit .qc-exit-papi{display:block;width:86px;height:94px;margin:-66px auto 4px}
+.qc-exit h3{margin:0;font:900 22px/1.2 Nunito,system-ui,sans-serif;color:#0F2747}
+.qc-exit p{margin:8px auto 0;max-width:310px;font:800 15px/1.4 Nunito,system-ui,sans-serif;color:#5D7A9C}
+.qc-exit p b{color:#1E64C2}
+.qc-exit .qc-stay{position:relative;overflow:hidden;display:block;margin-top:18px;width:100%;height:54px;border:0;border-radius:18px;background:#2DB66B;box-shadow:0 5px 0 #1E8B4F;color:#fff;font:900 19px/1 Nunito,system-ui,sans-serif;letter-spacing:.03em;cursor:pointer;animation:qcGlow 2s ease-in-out infinite}
+.qc-exit .qc-stay::after{content:"";position:absolute;top:-30%;left:-60%;width:36%;height:160%;background:linear-gradient(100deg,#fff0,#fffb,#fff0);transform:rotate(16deg);animation:qcShine 2.4s ease-in-out infinite}
+.qc-exit .qc-leave{display:block;margin-top:10px;width:100%;height:46px;border:0;background:none;color:#E5484D;font:900 16px/1 Nunito,system-ui,sans-serif;cursor:pointer}
+@keyframes qcGlow{0%,100%{box-shadow:0 5px 0 #1E8B4F,0 0 0 0 #2DB66B88}50%{box-shadow:0 5px 0 #1E8B4F,0 0 20px 5px #2DB66B55}}
+@keyframes qcShine{0%,40%{left:-60%}80%,100%{left:130%}}
+html[data-dm-theme="night"] .qc-exit>div{background:#1c1f3a}
+html[data-dm-theme="night"] .qc-exit h3{color:#eef0ff}
+html[data-dm-theme="night"] .qc-exit p{color:#a9aecb}
+@media(prefers-reduced-motion:reduce){#dmStoryLesson .qc-sheet,.qc-exit,.qc-exit>div{transition:none}.qc-exit .qc-stay,.qc-exit .qc-stay::after{animation:none}}
