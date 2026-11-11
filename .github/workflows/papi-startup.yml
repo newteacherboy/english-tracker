@@ -1,9 +1,9 @@
 name: Papi startup regression checks
 on:
   push:
-    paths: ['index.html', 'ingilizce/index.html', 'ingilizce/papi-loading.*', 'ingilizce/portal-bootstrap.js', 'tests/papi-startup.test.cjs', 'tests/portal-bootstrap.test.cjs', '.github/workflows/papi-startup.yml']
+    paths: ['index.html', 'portal/index.html', 'ingilizce/index.html', 'ingilizce/papi-loading.*', 'ingilizce/portal-bootstrap.js', 'tests/papi-startup.test.cjs', 'tests/portal-bootstrap.test.cjs', '.github/workflows/papi-startup.yml']
   pull_request:
-    paths: ['index.html', 'ingilizce/index.html', 'ingilizce/papi-loading.*', 'ingilizce/portal-bootstrap.js', 'tests/papi-startup.test.cjs', 'tests/portal-bootstrap.test.cjs', '.github/workflows/papi-startup.yml']
+    paths: ['index.html', 'portal/index.html', 'ingilizce/index.html', 'ingilizce/papi-loading.*', 'ingilizce/portal-bootstrap.js', 'tests/papi-startup.test.cjs', 'tests/portal-bootstrap.test.cjs', '.github/workflows/papi-startup.yml']
 permissions:
   contents: read
 jobs:

@@ -44,7 +44,7 @@ test('Türkiye midnight boundary independent of device time zone',()=>{
  assert.equal(app.turkeyDate('2027-04-22T21:00:00Z'),'2027-04-23');
 });
 test('no competing legacy 2026 theme or double-rendered progress bars',()=>{
- for(const file of ['index.html','ingilizce/index.html']){
+ for(const file of ['portal/index.html','ingilizce/index.html']){
   const html=fs.readFileSync(file,'utf8');
   assert(!html.includes('dm-republic-2026-prepaint'));
   assert(!html.includes('republic-day-splash.css'));
@@ -53,7 +53,7 @@ test('no competing legacy 2026 theme or double-rendered progress bars',()=>{
  assert.doesNotMatch(code,/dm-holiday-progress/);
 });
 test('head scripts execute before visible splash; assets are local and CSS blocks painting',()=>{
- for(const [path,prefix] of [['index.html','ingilizce/'],['ingilizce/index.html','']]){
+ for(const [path,prefix] of [['portal/index.html','ingilizce/'],['ingilizce/index.html','']]){
   const html=fs.readFileSync(path,'utf8');
   const head=html.split('</head>')[0],marker=head.indexOf(prefix+'holiday-splashes/splash.js');
   assert(marker>=0);
@@ -73,7 +73,7 @@ test('approved art uses its illustrated bar and hides any cached overlay',()=>{
  assert.match(style,/background-size:contain/);
  assert.match(style,/html\.dm-holiday-active \.dm-holiday-progress\{display:none!important\}/);
  assert.doesNotMatch(style,/dm-holiday-progress-fill/);
- for(const [file,expectedLink] of [['index.html','ingilizce/holiday-splashes/splash.css?v=20261111-pending-3'],['ingilizce/index.html','holiday-splashes/splash.css?v=20261111-pending-3']]){
+ for(const [file,expectedLink] of [['portal/index.html','ingilizce/holiday-splashes/splash.css?v=20261111-pending-3'],['ingilizce/index.html','holiday-splashes/splash.css?v=20261111-pending-3']]){
   assert(fs.readFileSync(file,'utf8').includes(expectedLink));
  }
 });
