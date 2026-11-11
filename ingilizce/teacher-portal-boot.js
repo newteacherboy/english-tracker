@@ -28,8 +28,8 @@
  // Verify teacher approval using the current personal learner token, not saved device sessions.
  if(params.get('ogretmen')!=='1'){
   const button=document.createElement('button');
-  button.id='dmPersonalToTeacher';button.type='button';button.textContent='👩‍🏫 Öğretmen Paneline Geç';
-  button.style.cssText='position:static;flex:0 1 auto;min-width:0;max-width:142px;min-height:42px;border:1px solid #93b8ee;border-radius:12px;padding:7px 9px;background:#2563eb;color:#fff;font:800 11px/1.2 system-ui;box-shadow:0 2px 5px #162b5424;cursor:pointer;display:none;white-space:normal;text-align:center';
+  button.id='dmPersonalToTeacher';button.type='button';button.className='dm-teacher-switch';button.hidden=true;
+  const LABEL='<span class="dm-ts-icon" aria-hidden="true"></span><span class="dm-ts-copy"><b>Öğretmen Paneli</b><small>Sınıfını ve öğrencilerini yönet</small></span><span class="dm-ts-go">Geç <span aria-hidden="true">›</span></span>';button.innerHTML=LABEL;button.setAttribute('aria-label','Öğretmen Paneline Geç');
   const api=async(islem,t,data={})=>{
    const response=await fetch('https://nxfqlutulxqzqgwewssd.supabase.co/functions/v1/diji-api',{method:'POST',headers:{'Content-Type':'application/json'},cache:'no-store',body:JSON.stringify({islem,t,...data})});
    const result=await response.json();
@@ -40,26 +40,28 @@
   const token=()=>storage.getItem('ing_token')||'';
   const refresh=async()=>{
    const t=token();if(t===checked||checking)return;
-   checked=t;button.style.display='none';if(!t)return;checking=true;
+   checked=t;button.hidden=true;if(!t)return;checking=true;
    try{const result=await api('teacherPortalStatus',t,{offerOnly:true});
-    if(t===token()&&result.state==='approved')button.style.display='block';
+    if(t===token()&&result.state==='approved'){button.hidden=false;document.dispatchEvent(new CustomEvent('dm:teacher-switch-ready'));}
    }catch{}finally{checking=false;}
   };
   button.onclick=async()=>{
    const t=token();if(!t)return;
-   button.disabled=true;button.textContent='Öğretmen paneli açılıyor…';
+   button.disabled=true;button.querySelector('.dm-ts-copy small').textContent='Öğretmen paneli açılıyor…';
    try{
     const entry=await api('teacherPortalEnter',t);
     const participant=await api('teacherPortalParticipant',entry.token,{self:true});
     if(t!==token())throw Error('Hesap değişti. Tekrar dene.');
     activate({teacherToken:entry.token,name:entry.name,participant,playAsSelf:true,route:'home'});
-   }catch(error){alert(error.message||'Öğretmen paneline geçilemedi.');button.disabled=false;button.textContent='👩‍🏫 Öğretmen Paneline Geç';}
+   }catch(error){alert(error.message||'Öğretmen paneline geçilemedi.');button.disabled=false;button.innerHTML=LABEL;}
   };
+  // 11 Kas 2026: Okul Yolum kartının içine sıkışmasın; kartın hemen altında tam genişlik şerit.
   const placeBesideRoute=()=>{
-    const route=document.querySelector('#tab-dunya .rt-medal-unit [data-rt="switch-route"]');
-    if(!route||!route.parentElement)return;
-    if(button.parentElement!==route.parentElement||button.nextElementSibling!==route)route.before(button);
+    const unit=document.querySelector('#tab-dunya .rt-medal-unit');
+    if(!unit||!unit.parentElement)return;
+    if(unit.nextElementSibling!==button)unit.after(button);
    };
+  window.dmTeacherSwitch={available:()=>!button.hidden,open:()=>button.click()};
    const mount=()=>{
     // The route selector is rebuilt on grade/path changes: stay in the same toolbar.
     document.body.append(button);
