@@ -151,7 +151,7 @@ function answer(index){
 function advance(){if(!s||!s.locked)return;clearTimeout(nextTimer);s.index++;if(s.key==='kule'&&s.balance===0){for(let i=s.index;i<s.words.length;i++){window.dmVerifiedGames.record(s.words[i],null,s.runId);OC.yanlis();}s.index=s.words.length;}question();}
 async function finish(){
  const current=s;if(!current||current.phase==='saving'||current.phase==='done')return;stopTimers();current.phase='saving';current.result=current.result||OC.sonlandir(current.key);root.querySelector('[data-pause]').hidden=true;
- const r=current.result;root.querySelector('.sa-body').innerHTML='<div class="sa-finish"><img src="papi-reward-v2.png" alt="Kutlayan Papi"><h3>Oyun tamamlandı!</h3><p data-status role="status">Sonucun kaydediliyor…</p><button type="button" data-retry hidden>Kaydı tekrar dene</button></div>';
+ const r=current.result;root.querySelector('.sa-body').innerHTML='<div class="sa-finish">'+(window.DMPapi?window.DMPapi.tag('sevinc'):'<img src="papi-reward-v2.png" alt="Kutlayan Papi">')+'<h3>Oyun tamamlandı!</h3><p data-status role="status">Sonucun kaydediliyor…</p><button type="button" data-retry hidden>Kaydı tekrar dene</button></div>';
  try{
   if(!practice()){const res=await fetch(apiURL,{method:'POST',body:JSON.stringify({islem:games[current.key].op+'LiderlikKaydet',isim:current.student,sinif:current.classNo+'. Sınıf',unite:current.units.join(','),runId:current.runId,puanSurum:3,puan:r.puan,puanTemel:r.temelPuan,dogru:r.dogru,yanlis:r.yanlis,suresaniye:r.sure})}),d=await res.json();if(!res.ok||d.status!=='success')throw Error(d.mesaj||d.message||'Sonuç kaydedilemedi.');}
   if(!alive(current))return;current.phase='done';const key=current.key,local=practice();close();

@@ -119,8 +119,9 @@
       dialog.close();
       dialog.remove();
     }
-    function show(title, lines, actions) {
+    function show(title, lines, actions, mood) {
       panel.replaceChildren();
+      if (mood && window.DMPapi) panel.insertAdjacentHTML('beforeend', window.DMPapi.tag(mood));
       const heading = document.createElement('h2');
       heading.textContent = title;
       panel.append(heading);
@@ -342,7 +343,8 @@
           `+${data.xp} XP · +${data.gold} altın`,
           data.crashed ? (data.wrong === 5 ? 'Beş hata yaptın.' : 'Bloklar tahtanın tepesine ulaştı.') :
             data.hasMore ? `✓ Bölüm ${data.playedLevel} geçildi · Bölüm ${data.level} açıldı` : 'Tüm atölye rotasını tamamladın!'
-        ], [...(playable ? [[data.crashed ? 'Tekrar oyna · ⚡ 5' : 'Sonraki bölüm · ⚡ 5', start]] : []), ['Oyunlara dön', close]]);
+        ], [...(playable ? [[data.crashed ? 'Tekrar oyna · ⚡ 5' : 'Sonraki bölüm · ⚡ 5', start]] : []), ['Oyunlara dön', close]],
+          data.crashed ? 'teselli' : window.DMPapi?.resultMood({ yildiz: Number(data.stars) || 0, dogru: data.correct, yanlis: data.wrong }));
       } catch (error) {
         if (dialog.isConnected) show('Sonuç kaydedilemedi', [error.message], [['Tekrar dene', finish], ['Oyunlara dön', close]]);
       }
