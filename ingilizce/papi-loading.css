@@ -1,5 +1,5 @@
 /* Shared opening and session transition artwork. No minimum loading delay. */
-#splashEkrani,#dmBootSplash,#oturumYuklemeOverlay{position:fixed!important;inset:0!important;z-index:2147483000!important;background:#fff8ed!important;align-items:center!important;justify-content:center!important;flex-direction:column!important;padding:24px!important;box-sizing:border-box;text-align:center!important}
+#splashEkrani,#dmBootSplash,#oturumYuklemeOverlay{position:fixed!important;inset:0!important;z-index:2147483645!important;background:#fff8ed!important;align-items:center!important;justify-content:center!important;flex-direction:column!important;padding:24px!important;box-sizing:border-box;text-align:center!important}
 #splashEkrani,#dmBootSplash{display:flex;transition:opacity .2s ease}
 #splashEkrani.splash-gizle,#dmBootSplash.dm-ready{opacity:0;pointer-events:none}
 .dm-papi-loading{font-family:system-ui,-apple-system,BlinkMacSystemFont,Arial,sans-serif;color:#253b59;display:flex;align-items:center;flex-direction:column;gap:14px;width:100%;max-width:420px}

@@ -14,7 +14,7 @@ html.dm-papi-intro :is(#splashEkrani,#dmBootSplash,#oturumYuklemeOverlay){backgr
 html.dm-papi-intro :is(#splashEkrani,#dmBootSplash,#oturumYuklemeOverlay)>:not(.pi-wrap):not(#dmBootRetry){opacity:0!important;pointer-events:none!important}
 html.dm-papi-intro .dm-republic-footer{display:none!important}
 /* Açılışta oturum yükleme katmanı da açılır ve normalde üstte durur: animasyon bitene kadar açılış ekranı en üstte kalsın */
-html.dm-papi-intro:not(.dm-papi-booted) #dmBootSplash{z-index:2147483600!important}
+html.dm-papi-intro:not(.dm-papi-booted) #dmBootSplash{z-index:2147483646!important}
 .pi-wrap{position:absolute;inset:0;z-index:5;display:flex;align-items:center;justify-content:center;pointer-events:none;font-family:ui-rounded,"SF Pro Rounded",system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
 .pi-stage{display:flex;flex-direction:column;align-items:center;transform:translateY(-4vh)}
 .pi-papi{position:relative;width:min(64vw,290px);aspect-ratio:400/440}

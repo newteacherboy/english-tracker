@@ -52,7 +52,12 @@
  async function bootstrap(title,desc,render){
   modal(title,desc);
   try{classes=await ownClasses();if(!sheet)return;
-   if(!classes.length){body().innerHTML='<p>Henüz oluşturulmuş sınıfın yok. Önce Sınıf Oluştur bölümünden sınıf ve şube tanımla.</p>';return;}
+   if(!classes.length){
+    // Ödev, duyuru ve artı-eksi yalnız öğretmenin kendi oluşturduğu sınıflara gider.
+    // Eski sistemden kalan öğrenciler varsa da önce sınıf açılmalı (öğrenciler sonra o sınıfa taşınır).
+    body().innerHTML='<p>Bu işlem yalnızca <b>kendi oluşturduğun sınıflara</b> yapılabilir ve henüz sınıfın yok.</p><p>Önce sınıf ve şubeni oluştur; sınıfı tanımlanmamış öğrencilerini de oradan sınıfına taşıyabilirsin.</p><button type="button" class="dm-owned-action" data-owned-create>🏫 Sınıf Oluştur</button>';
+    body().querySelector('[data-owned-create]').onclick=()=>{sheet?.remove();sheet=null;if(window.dmTeacherClassesOpen)window.dmTeacherClassesOpen();else window.yoToast?.('Sınıflarım açılamadı. Sayfayı yenile.');};
+    return;}
    body().innerHTML='<label>Benim sınıfım<select data-owned-class>'+classOptions()+'</select></label><div data-owned-extra></div>';
    const draw=()=>{current=selectedClass();if(current)render(current,$('[data-owned-extra]'));};
    $('[data-owned-class]').onchange=()=>{status('');draw();};draw();
@@ -216,7 +221,8 @@
   // Load authoritative classes before the original modal so no global class
   // data is ever displayed as a selector.
   legacyClassList=await ownClasses();
-  if(!legacyClassList.length){window.yoToast?.('Önce Sınıflarım bölümünden sınıf oluştur.');return;}
+  // Sınıf yoksa sessiz bildirim yerine açıklayan pencere açılır (öğretmen panelinde bildirim görünmeyebiliyor).
+  if(!legacyClassList.length)return openHomework();
   sessionStorage.setItem('ing_ogr_token',teacherToken);
   if(typeof window.odevEkraniAc!=='function'||!document.getElementById('odModal')){
    // The standalone teacher portal does not ship the classic coach modal.
@@ -286,7 +292,7 @@
  let announced=null;
  async function legacyAnnouncement(){
   const classes=await ownClasses();
-  if(!classes.length){window.yoToast?.('Önce Sınıflarım bölümünden sınıf oluştur.');return;}
+  if(!classes.length)return openAnnouncement();
   const modal=document.getElementById('duyuruYonetimModal');
   if(!modal)return openAnnouncement();
   const currentToken=token();sessionStorage.setItem('ing_ogr_token',currentToken);
