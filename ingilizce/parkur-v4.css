@@ -52,11 +52,15 @@ html[data-dm-theme="day"] body #tab-dunya .rt-medal-route .rt-medal-unit p{color
 html[data-dm-theme="day"] body #tab-dunya .rt-medal-route .rt-medal-unit button{position:relative;min-height:44px!important;padding:4px 14px!important;border:0!important;border-bottom:4px solid #BFD9F7!important;border-radius:23px!important;background:#fff!important;color:#1E64C2!important;font-weight:900!important;font-size:14px!important;box-shadow:none!important}
 /* Kütüphane / Plan / Görevler: renkli ikon karoları */
 html[data-dm-theme="day"] body #tab-dunya .rt-medal-route .rt-medal-tools{gap:10px!important}
-html[data-dm-theme="day"] body #tab-dunya .rt-medal-route .rt-medal-tools button{min-height:84px!important;gap:5px!important;padding:8px 4px!important;border:0!important;border-radius:20px!important;background:#fff!important;box-shadow:0 4px 0 #C9DDF2!important;color:#0F2747!important;font-weight:900!important;font-size:14px!important;white-space:nowrap}
+/* Claude Design F: kartsız, arka plana oturan yuvarlak ikonlar */
+html[data-dm-theme="day"] body #tab-dunya .rt-medal-route .rt-medal-tools button{min-height:86px!important;gap:6px!important;padding:2px 2px 4px!important;border:0!important;border-radius:16px!important;background:none!important;box-shadow:none!important;color:#0F2747!important;font-weight:900!important;font-size:14px!important;white-space:nowrap}
 html[data-dm-theme="day"] body #tab-dunya .rt-medal-route .rt-medal-tools button>svg{display:none!important}
-html[data-dm-theme="day"] body #tab-dunya .rt-medal-route .rt-medal-tools button::before{content:"";width:44px;height:44px;border-radius:14px;background:#E3F6F4 url('route-assets/bilgi-icons/study.webp') 50% 50%/34px no-repeat;flex:none}
-html[data-dm-theme="day"] body #tab-dunya .rt-medal-route .rt-medal-tools button[data-rt=plan]::before{background-color:#FFECEC;background-image:url('route-assets/bilgi-icons/calendar.webp')}
-html[data-dm-theme="day"] body #tab-dunya .rt-medal-route .rt-medal-tools button[data-rt=missions]::before{background-color:#FFF4E0;background-image:url('route-assets/bilgi-icons/tasks.webp')}
+html[data-dm-theme="day"] body #tab-dunya .rt-medal-route .rt-medal-tools button::before{content:"";width:62px;height:62px;border-radius:50%;background:url('route-assets/bilgi-icons/study.webp') 50% 50%/46px no-repeat,radial-gradient(circle,#fff 0 55%,#fff0 72%);flex:none}
+html[data-dm-theme="day"] body #tab-dunya .rt-medal-route .rt-medal-tools button[data-rt=plan]::before{background:url('route-assets/bilgi-icons/calendar.webp') 50% 50%/46px no-repeat,radial-gradient(circle,#fff 0 55%,#fff0 72%)}
+html[data-dm-theme="day"] body #tab-dunya .rt-medal-route .rt-medal-tools button[data-rt=missions]::before{background:url('route-assets/bilgi-icons/tasks.webp') 50% 50%/46px no-repeat,radial-gradient(circle,#fff 0 55%,#fff0 72%)}
+html[data-dm-theme="day"] body #tab-dunya .rt-medal-route .rt-medal-tools button:active::before{transform:scale(.94)}
+/* kırmızı bildirim noktası ikonun köşesinde */
+html[data-dm-theme="day"] body #tab-dunya .rt-medal-route .rt-medal-tools .rt-tool-badge{top:4px!important;right:calc(50% - 30px)!important;left:auto!important}
 html[data-dm-theme="day"] body #tab-dunya .rt-medal-route .rt-medal-divider{color:#5D7A9C!important}
 
 /* ---------- canlı Papi (giriş animasyonundaki maskot) ---------- */
