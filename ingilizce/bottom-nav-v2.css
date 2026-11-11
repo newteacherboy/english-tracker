@@ -1,0 +1,41 @@
+/* [11 Kas 2026] Öğrenci alt menüsü · Claude Design "I": renkli uygulama karoları, ortada yükselen ve parlayan "Oyna",
+   Profil'de canlı 3D Papi. Öğretmen paneli menüsü değişmez. Davranış ve hedefler aynı (bottom-nav.js), görsel katman bottom-nav-v2.js.
+   Not: eski ikon görseli bilgiIslands katmanında !important; ezilemediği için --bi-icon boşaltılıp üstüne kendi katmanımız konur. */
+html:not(.dm-teacher-portal) body #bottomNavMobile#bottomNavMobile.dm-nv2-on{--dm-dock-active-bg:transparent;--dm-dock-active-edge:transparent;--dock-active-bg:transparent;--dock-active-edge:transparent}
+html:not(.dm-teacher-portal) body #bottomNavMobile.dm-nv2-on .bn-item[data-ekran]{--bi-icon:none}
+html:not(.dm-teacher-portal) body #bottomNavMobile.dm-nv2-on .bn-item[data-ekran] .dm-nav-art{opacity:0}
+#bottomNavMobile .dm-nv2{position:absolute;left:50%;top:50%;width:0;height:0;pointer-events:none;z-index:2}
+#bottomNavMobile .dm-nv2-tile{position:absolute;left:-19px;top:-23px;width:38px;height:38px;border-radius:13px;background:var(--t);box-shadow:0 3px 0 var(--te);display:flex;align-items:center;justify-content:center;transition:transform .18s ease}
+#bottomNavMobile .dm-nv2-tile>svg{width:23px;height:23px;display:block}
+#bottomNavMobile .bn-item.active .dm-nv2-tile{transform:translateY(-2px) scale(1.06)}
+#bottomNavMobile .bn-item:not(.active) .dm-nv2-tile:not(.dm-nv2-papi){filter:saturate(.85)}
+/* seçili sekme: etiketin altında nokta */
+#bottomNavMobile .dm-nv2-dot{position:absolute;left:50%;bottom:1px;width:6px;height:6px;margin-left:-3px;border-radius:50%;background:#1E64C2;opacity:0;pointer-events:none}
+#bottomNavMobile .bn-item.active .dm-nv2-dot{opacity:1}
+html[data-dm-theme="night"] #bottomNavMobile .dm-nv2-dot{background:#a6ddff}
+/* Profil: canlı Papi */
+#bottomNavMobile .dm-nv2-papi{--t:#E3F0FF;--te:#BFD7F2;overflow:hidden;align-items:flex-end}
+html[data-dm-theme="night"] #bottomNavMobile .dm-nv2-papi{--t:#25466e;--te:#163050}
+#bottomNavMobile .dm-nv2-papi .dm-lp{display:block;width:40px;height:44px;margin-bottom:-7px;flex:none}
+#bottomNavMobile .dm-nv2-papi .dm-lp svg{width:100%;height:100%}
+/* Oyna: menüden yukarı taşan, parlayan mor disk */
+#bottomNavMobile .dm-nv2-oyna-disc{position:absolute;left:-36px;top:-64px;width:72px;height:72px;border-radius:50%;background:#7B4DFF;border:4px solid #fff;box-sizing:border-box;display:flex;align-items:center;justify-content:center;overflow:hidden;animation:dmNv2Pulse 2.2s ease-in-out infinite}
+html[data-dm-theme="night"] #bottomNavMobile .dm-nv2-oyna-disc{border-color:#0f1f3b}
+#bottomNavMobile .dm-nv2-oyna-disc::after{content:"";position:absolute;top:-20%;left:-60%;width:40%;height:140%;background:linear-gradient(100deg,#fff0,#fffc,#fff0);transform:rotate(18deg);animation:dmNv2Sweep 2.6s ease-in-out infinite}
+#bottomNavMobile .dm-nv2-oyna-disc img{position:relative;z-index:1;width:44px;height:44px;object-fit:contain;animation:dmNv2Bob 2.2s ease-in-out infinite}
+#bottomNavMobile .dm-nv2-spark{position:absolute;font-style:normal;color:#FFC531;font-size:13px;line-height:1;animation:dmNv2Twinkle 1.8s ease-in-out infinite}
+#bottomNavMobile .bn-item[data-ekran="tab-aktiviteler"] .bn-label{color:#6236D9!important;-webkit-text-fill-color:#6236D9!important}
+html[data-dm-theme="night"] #bottomNavMobile .bn-item[data-ekran="tab-aktiviteler"] .bn-label{color:#c4b0ff!important;-webkit-text-fill-color:#c4b0ff!important}
+@keyframes dmNv2Pulse{0%,100%{box-shadow:0 6px 0 #5133C9,0 0 0 0 #7B4DFF66}50%{box-shadow:0 6px 0 #5133C9,0 0 0 12px #7B4DFF00}}
+@keyframes dmNv2Sweep{0%,40%{left:-60%}75%,100%{left:130%}}
+@keyframes dmNv2Bob{0%,100%{transform:translateY(0) rotate(-4deg)}50%{transform:translateY(-3px) rotate(4deg)}}
+@keyframes dmNv2Twinkle{0%,100%{opacity:0;transform:scale(.4)}50%{opacity:1;transform:scale(1)}}
+@media (prefers-reduced-motion:reduce){#bottomNavMobile .dm-nv2-oyna-disc,#bottomNavMobile .dm-nv2-oyna-disc::after,#bottomNavMobile .dm-nv2-oyna-disc img,#bottomNavMobile .dm-nv2-spark{animation:none}}
+#bottomNavMobile:not(.dm-nv2-on) :is(.dm-nv2,.dm-nv2-dot){display:none!important}
+@media (max-width:360px){
+ #bottomNavMobile .dm-nv2-tile{left:-16px;top:-21px;width:32px;height:32px;border-radius:11px}
+ #bottomNavMobile .dm-nv2-tile>svg{width:20px;height:20px}
+ #bottomNavMobile .dm-nv2-papi .dm-lp{width:34px;height:38px;margin-bottom:-6px}
+ #bottomNavMobile .dm-nv2-oyna-disc{left:-31px;top:-60px;width:62px;height:62px}
+ #bottomNavMobile .dm-nv2-oyna-disc img{width:38px;height:38px}
+}

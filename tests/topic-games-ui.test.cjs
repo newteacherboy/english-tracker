@@ -47,7 +47,7 @@ test('360px real browser: tab keyboard, locked levels, all six games, guest resu
  await page.locator('#ggBreakTab').press('Enter');
  assert.equal(await page.locator('#ggBreakTab').getAttribute('aria-pressed'),'true');
  await page.locator('#ggKonuTab').click();
- await page.locator('[data-level=A2]').click({force:true});assert.match(await page.locator('.kg-note').textContent(),/Ders Çalış/);
+ assert.equal(await page.locator('[data-level=A2]').getAttribute('aria-disabled'),'false','A2 is open for every learner');
  assert.equal(await page.locator('[data-topic*="|pron|"]').count(),0);
  assert(await page.evaluate(()=>document.documentElement.scrollWidth<=360));
  for(const g of ['kova','cark','balon','dy','sohbet','durum']){
