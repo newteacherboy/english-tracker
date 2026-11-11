@@ -142,3 +142,16 @@ body .dm-unified-wallet .dm-pw-papi.dm-lp svg{position:absolute;left:50%;top:50%
  .dm-lp-walker .p-eyeHappy,.dm-lp-walker .p-sparkles{opacity:1}
  .dm-lp-walker .p-eyeOpen{opacity:0}
 }
+
+/* 11 Kas 2026 · Öğretmen hesabıyla giren öğrencinin "Öğretmen Paneline Geç" şeridi (teacher-portal-boot.js) */
+#dmPersonalToTeacher.dm-teacher-switch{display:flex;align-items:center;gap:10px;width:100%;margin:10px 0 0;padding:8px 8px 8px 10px;border:0;border-radius:18px;background:#6C3BEA;color:#fff;box-shadow:0 4px 0 #4A23B8;font-family:Nunito,system-ui,sans-serif;text-align:left;cursor:pointer;position:relative;overflow:hidden;box-sizing:border-box}
+#dmPersonalToTeacher.dm-teacher-switch[hidden]{display:none!important}
+#dmPersonalToTeacher.dm-teacher-switch::after{content:"";position:absolute;top:-30%;left:-60%;width:36%;height:160%;background:linear-gradient(100deg,#fff0,#fff8,#fff0);transform:rotate(16deg);animation:dmTsShine 3.2s ease-in-out infinite;pointer-events:none}
+#dmPersonalToTeacher .dm-ts-icon{width:40px;height:40px;flex:none;border-radius:12px;background:#fff url('school-assets/teacher-home-icons.webp') 66.666% 0%/400% auto no-repeat}
+#dmPersonalToTeacher .dm-ts-copy{flex:1;min-width:0;display:grid;gap:1px}
+#dmPersonalToTeacher .dm-ts-copy b{font-size:15px;font-weight:900;line-height:1.15}
+#dmPersonalToTeacher .dm-ts-copy small{font-size:12px;font-weight:700;color:#E7DEFF;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#dmPersonalToTeacher .dm-ts-go{flex:none;padding:8px 12px;border-radius:13px;background:#FFC531;color:#3A2400;font-size:14px;font-weight:900;box-shadow:0 3px 0 #D99A00;position:relative;z-index:1}
+#dmPersonalToTeacher:disabled{opacity:.8}
+@keyframes dmTsShine{0%,50%{left:-60%}85%,100%{left:130%}}
+@media (prefers-reduced-motion:reduce){#dmPersonalToTeacher.dm-teacher-switch::after{animation:none}}

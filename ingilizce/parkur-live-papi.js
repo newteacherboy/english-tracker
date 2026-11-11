@@ -14,7 +14,9 @@
   return SVG.replace(/id="(pi[a-zA-Z])"/g,'id="$1'+n+'"').replace(/url\(#(pi[a-zA-Z])\)/g,'url(#$1'+n+')').replace('<svg ','<svg aria-hidden="true" focusable="false" '+(extra||'')+' ');
  }
  const NS='http://www.w3.org/2000/svg';
- function road(world){
+ /* 11 Kas 2026: duraklar arası yol çizgisi kaldırıldı (kullanıcı isteği). */
+ function road(world){world.querySelector(':scope>.dm-v4-road')?.remove();return;}
+ function roadOld(world){
   const rows=[...world.querySelectorAll('.rt-medal-row')];
   let svg=world.querySelector(':scope>.dm-v4-road');
   const w=world.clientWidth||1;
