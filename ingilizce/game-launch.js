@@ -149,7 +149,120 @@
   const mine=myLevel();
   entry.querySelectorAll('.gl-level').forEach(b=>{const has=!!b.querySelector('.gl-mine');if((b.dataset.level===mine)!==has){if(has)b.querySelector('.gl-mine').remove();else b.insertAdjacentHTML('afterbegin','<span class="gl-mine">Senin seviyen</span>');}});
  }
- function run(){for(const g of GAMES)decorate(...g);}
+ /* ---- Kulak Dedektifi / Cümle Ustası (#dmGameIntro) ve Harf Bahçesi: aynı hb-card yapısı ---- */
+ const INTRO={dikte:'Kulak Dedektifi',cumle:'Cümle Ustası'};
+ const HB=[
+  {id:'dmGameIntro',key:ov=>{const t=ov.querySelector('#dmIntroTitle')?.textContent||'';return Object.keys(INTRO).find(k=>INTRO[k]===t)||'';},title:k=>INTRO[k],levels:k=>k==='dikte',classes:'#dmIntroClasses',units:'#dmIntroUnits',after:'[data-units]',keep:()=>document.getElementById('yoModal')?.classList.contains('acik')},
+  {id:'harfBahcesiOverlay',key:()=>'harf',title:()=>'Harf Bahçesi',levels:()=>true,classes:'#hbClasses',units:'#hbUnits',after:'#hbUnits',keep:()=>false}
+ ];
+ const hbState={};
+ function wrapUnitChip(c,grade){
+  if(c.dataset.unitNumber)return;
+  const n=Number(c.dataset.unit||c.querySelector('input')?.value||(c.textContent.match(/\d+/)||[])[0]);if(!n)return;
+  for(const node of [...c.childNodes]){if(node.nodeType===3&&node.textContent.trim()){const sp=document.createElement('span');node.before(sp);sp.append(node);}}
+  c.dataset.unitNumber=String(n);const t=unitTitle(grade,n);c.dataset.unitTitle=t||(n+'. Ünite');c.setAttribute('aria-label',n+'. Ünite'+(t?' · '+t:''));
+ }
+ function decorateHb(cfg){
+  const ov=document.getElementById(cfg.id),pre='hb-'+cfg.id;
+  if(!ov){if(hbState[cfg.id]&&swapped?.prefix===pre&&!cfg.keep())restorePool();if(swapped?.prefix!==pre)delete hbState[cfg.id];return;}
+  const key=cfg.key(ov);if(!key)return;
+  const body=ov.querySelector('.hb-body');if(!body)return;
+  const levelOk=cfg.levels(key),learn=levelOk&&learningPath();
+  if(!ov.querySelector(cfg.classes)){return;} /* oyun ekranı açık: kurulum değil */
+  if(body.dataset.gl!=='1'){
+   body.dataset.gl='1';const st=hbState[cfg.id]={level:null};
+   ov.classList.add('gl-intro');body.classList.add('gl-entry');
+   body.prepend(heroFor(pre,cfg.title(key)));
+   const heads=[...body.querySelectorAll(':scope>h3')];
+   heads[0]?.classList.add('gl-grade-sec');heads[1]?.classList.add('gl-unit-sec');
+   ov.querySelector(cfg.classes)?.classList.add('gl-grade-sec','sinif-secim-grid');
+   ov.querySelector(cfg.after)?.classList.add('gl-unit-sec');
+   ov.querySelectorAll(cfg.classes+' .sinif-btn').forEach(b=>{const n=b.dataset.class||(b.textContent.match(/\d+/)||[''])[0];if(!n)return;b.dataset.glGrade=n;b.setAttribute('aria-label',n+'. Sınıf');b.textContent=n;});
+   const play=ov.querySelector('[data-start]');if(play){play.classList.add('gl-play');play.innerHTML=PLAY+'<span>OYNA</span>';}
+   if(levelOk){
+    const lv=levelsFor(pre);ov.querySelector(cfg.after)?.after(lv);
+    lv.querySelectorAll('.gl-level').forEach(b=>{b.onclick=()=>pickHbLevel(cfg,ov,b.dataset.level);});
+   }
+   ov.querySelector('.gl-path').textContent=learn?'ÖĞRENME YOLUM · SEVİYENİ SEÇ':'OKUL YOLUM · SINIF VE ÜNİTE';
+   body.classList.toggle('gl-learn',learn);
+   if(learn)pickHbLevel(cfg,ov,myLevel());
+  }
+  const grade=Number(ov.querySelector(cfg.classes+' .sinif-btn.active')?.dataset.glGrade)||0;
+  ov.querySelectorAll(cfg.units+' .unite-chip').forEach((c,i)=>{if(c.dataset.glTone!==String(i%4))c.dataset.glTone=String(i%4);wrapUnitChip(c,grade);});
+  const mine=myLevel();
+  body.querySelectorAll('.gl-level').forEach(b=>{const has=!!b.querySelector('.gl-mine');if((b.dataset.level===mine)!==has){if(has)b.querySelector('.gl-mine').remove();else b.insertAdjacentHTML('afterbegin','<span class="gl-mine">Senin seviyen</span>');}});
+ }
+ async function pickHbLevel(cfg,ov,code){
+  const st=hbState[cfg.id];if(!st)return;st.level=code;
+  ov.querySelectorAll('.gl-level').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.level===code)));
+  const play=ov.querySelector('[data-start]');if(play)play.disabled=true;
+  const grade=(LEVELS.find(l=>l[0]===code)||LEVELS[0])[2];
+  const words=await levelWords(code,grade);
+  if(!document.body.contains(ov)||hbState[cfg.id]?.level!==code)return;
+  if(words.length<3){if(play)play.disabled=false;window.yoToast?.('Bu seviyenin kelimeleri yüklenemedi. İnterneti kontrol edip tekrar dene.');return;}
+  restorePool();swapped={original:window.masterKelimeHavuzu,words,prefix:'hb-'+cfg.id};window.masterKelimeHavuzu=words;
+  ov.querySelector(cfg.classes+' .sinif-btn[data-gl-grade="'+grade+'"]')?.click();
+  if(play)play.disabled=false;
+ }
+ /* ---- Kendi kurulum ekranı olan oyunlar: Arcade kaplaması (okul yolu: sınıf + ünite) ----
+    Meteor, Kelime Çarkı ve Kelime Rallisi kelimeleri sunucudan sınıf/üniteye göre seçer;
+    Papi Kartları ve Kelime Gölü havuzu kurulumda sabitler. Bu oyunlarda seviye kipi yok. */
+ const SKIN=[
+  {root:'meteorGame',host:'.mt-setup',title:'Meteor Düellosu',grade:'#mtGrade',unit:'#mtUnit',play:'.mt-start',hide:'.mt-setup>img,.mt-setup>h2'},
+  {root:'wordWheel',host:'.ww-body',need:'.ww-setup',title:'Kelime Çarkı',grade:'#wwGrade',unit:'#wwUnit',play:'.ww-main',hide:'.ww-body>.ww-papi,.ww-body>p:not([class])'},
+  {root:'papiCards',host:'.pc-body',need:'.pc-setup',title:'Papi Kartları',grade:'#pcGrade',unit:'#pcUnit',play:'.pc-setup>.pc-start',hide:'.pc-body>.pc-setup-papi,.pc-body>.pc-sub'},
+  {root:'kelimeGolu',host:'.kg-setup',title:'Kelime Gölü',grade:'[data-grade]',units:'[data-units]',unitItem:'.kg-unit',play:'[data-start]',hide:'.kg-preview'},
+  {root:'rallyGame',host:'.rr-panel',need:'[data-class]',title:'Kelime Rallisi',grade:'[data-class]',units:'.rr-units',unitItem:'[data-unit]',play:'[data-start]',hide:'.rr-panel>.rr-setup-art,.rr-panel>h1,.rr-panel>h1+p'},
+  {root:null,find:()=>document.querySelector('.dm-sr-setup')?.closest('.dm-sr-overlay'),host:'.dm-sr-setup',title:'Cümle Yarışı',grade:'[data-class]',units:'[data-units]',unitItem:'.dm-sr-unit',play:'[data-start]',hide:'.dm-sr-hero',sentences:true}
+ ];
+ function fire(sel){sel.dispatchEvent(new Event('change',{bubbles:true}));}
+ function gradeMirror(host,sel){
+  let box=host.querySelector('.gl-grade-mirror');
+  const opts=[...sel.options].filter(o=>/\d/.test(o.value));
+  const sig=opts.map(o=>o.value+(o.disabled?'x':'')).join(',');
+  if(!box){box=el('div','gl-grade-mirror gl-grade-sec sinif-secim-grid');box.setAttribute('role','group');box.setAttribute('aria-label','Sınıf seç');const lab=sel.closest('label')||sel;lab.classList.add('gl-hidden');lab.before(box);}
+  if(box.dataset.sig!==sig){
+   box.dataset.sig=sig;box.style.setProperty('--gl-cols',String(Math.max(1,Math.min(8,opts.length))));
+   box.replaceChildren(...opts.map(o=>{const b=el('button','sinif-btn',o.value);b.type='button';b.dataset.glGrade=o.value;b.disabled=o.disabled;b.setAttribute('aria-label',o.value+'. Sınıf');b.onclick=()=>{if(sel.value===o.value)return;sel.value=o.value;fire(sel);schedule();};return b;}));
+  }
+  box.querySelectorAll('.sinif-btn').forEach(b=>{const on=b.dataset.glGrade===sel.value;b.classList.toggle('active',on);b.setAttribute('aria-pressed',String(on));});
+ }
+ function unitMirror(host,sel,grade){
+  let box=host.querySelector('.gl-unit-mirror');
+  const opts=[...sel.options].filter(o=>/\d/.test(o.value));
+  const sig=grade+':'+opts.map(o=>o.value).join(',');
+  if(!box){box=el('div','gl-unit-mirror gl-unit-sec unite-secim-box');box.setAttribute('role','group');box.setAttribute('aria-label','Ünite seç');const lab=sel.closest('label')||sel;lab.classList.add('gl-hidden');lab.before(box);}
+  if(box.dataset.sig!==sig){
+   box.dataset.sig=sig;
+   box.replaceChildren(...opts.map((o,i)=>{const b=el('button','unite-chip','<span>'+o.value+'. Ünite</span>');b.type='button';b.dataset.glTone=String(i%4);wrapUnitChip(b,grade);b.dataset.unitNumber=o.value;b.onclick=()=>{sel.value=o.value;fire(sel);schedule();};return b;}));
+  }
+  box.querySelectorAll('.unite-chip').forEach(b=>{const on=b.dataset.unitNumber===sel.value;b.classList.toggle('selected',on);b.setAttribute('aria-pressed',String(on));});
+ }
+ function decorateSkin(cfg){
+  const root=cfg.root?document.getElementById(cfg.root):cfg.find();if(!root)return;
+  const host=root.querySelector(cfg.host);if(!host||(cfg.need&&!host.querySelector(cfg.need)))return;
+  if(host.dataset.gl!=='1'){
+   host.dataset.gl='1';root.classList.add('gl-skin');host.classList.add('gl-entry');
+   const hero=heroFor('skin',cfg.title);hero.querySelector('.gl-rules')?.remove();hero.querySelector('.gl-path').textContent='SINIFINI VE ÜNİTENİ SEÇ';host.prepend(hero);
+   if(cfg.hide)host.querySelectorAll(cfg.hide).forEach(x=>x.classList.add('gl-hidden'));
+   const play=host.querySelector(cfg.play);if(play)play.classList.add('gl-play');
+   if(cfg.units)host.querySelector(cfg.units)?.classList.add('unite-secim-box','gl-unit-sec');
+   if(!host.dataset.glListen){host.dataset.glListen='1';host.addEventListener('change',schedule,true);host.addEventListener('click',()=>setTimeout(schedule,0),true);}
+  }
+  const gsel=host.querySelector(cfg.grade);
+  if(gsel?.tagName==='SELECT')gradeMirror(host,gsel);
+  const grade=Number(gsel?.value)||0;
+  if(cfg.unit){const usel=host.querySelector(cfg.unit);if(usel)unitMirror(host,usel,grade);}
+  if(cfg.units){
+   host.querySelectorAll(cfg.units+' '+cfg.unitItem).forEach((c,i)=>{
+    c.classList.add('unite-chip');if(c.dataset.glTone!==String(i%4))c.dataset.glTone=String(i%4);
+    if(!cfg.sentences)wrapUnitChip(c,grade);
+    const on=c.querySelector('input')?c.querySelector('input').checked:(c.getAttribute('aria-pressed')==='true'||c.classList.contains('selected'));
+    c.classList.toggle('selected',on);
+   });
+  }
+ }
+ function run(){for(const g of GAMES)decorate(...g);for(const c of HB)decorateHb(c);for(const c of SKIN)decorateSkin(c);}
  let queued=false;const schedule=()=>{if(queued)return;queued=true;requestAnimationFrame(()=>{queued=false;run();});};
  function start(){
   run();
@@ -158,6 +271,11 @@
    if(entry)new MutationObserver(schedule).observe(entry,{attributes:true,attributeFilter:['style','class'],childList:true,subtree:true});
    if(root)new MutationObserver(schedule).observe(root,{attributes:true,attributeFilter:['style','class']});
   }
+  new MutationObserver(schedule).observe(document.body,{childList:true});
+  /* kendi kurulumu olan oyunlar ekranı innerHTML ile yeniden çizer */
+  const GL_ROOTS='#meteorGame,#wordWheel,#papiCards,#kelimeGolu,#rallyGame,.dm-sr-overlay,#harfBahcesiOverlay,#dmGameIntro';
+  new MutationObserver(muts=>{if(!document.querySelector(GL_ROOTS))return;for(const m of muts){const t=m.target;if(t.nodeType===1&&t.closest?.(GL_ROOTS)&&!t.closest('.gl-hero')){schedule();return;}}}).observe(document.body,{childList:true,subtree:true});
+  const yoModal=document.getElementById('yoModal');if(yoModal)new MutationObserver(schedule).observe(yoModal,{attributes:true,attributeFilter:['class']});
  }
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
  window.dmGameLaunch={version:'20261111',restorePool,learningPath,myLevel};
