@@ -152,16 +152,16 @@
         game.hidden = true;
         panel.hidden = true;
         $('[data-pause]').hidden = true;
-        const openPlans = intro.plans();
+        const openPlans = intro.plans('papizzle', (window.dmAndroidPlan?.plan || 'free') === 'pro' ? 'premium_pro' : '');
         const actions = [];
         if (state.remaining > 0 && !lowEnergy) actions.push({label: `Seviye ${state.level}’i oyna`, cost: 5, onClick: start});
         else if (state.remaining > 0) actions.push({label: 'Enerji seçenekleri', onClick: () => window.dmEnerjiPaketPaneli?.()});
-        else if (openPlans) actions.push({label: 'Premium’u incele', onClick: openPlans});
+        else if (openPlans) actions.push({label: 'Paketleri gör', onClick: () => { close(); openPlans(); }}); // oyun penceresi üst katmanda; önce kapanır
         else actions.push({label: 'Durumu yenile', onClick: refresh});
         actions.push({label: 'Oyunlara dön', kind: 'secondary', onClick: close});
         const note = error ? {text: error, icon: 'bolt'} :
           lowEnergy && state.remaining > 0 ? {text: `Başlamak için 5 enerji gerekli. ${5 - state.energy} enerji daha lazım.`, icon: 'bolt'} :
-          state.remaining <= 0 ? {text: 'Oyun hakkın kalmadı. Premium ile sınırsız oynayabilirsin.', icon: 'lock'} : null;
+          state.remaining <= 0 ? {text: intro.noRightsText(), icon: 'lock'} : null;
         intro.mount(screen, {
           theme: 'papizzle',
           image: 'premium-assets/papizzle-hero.webp',

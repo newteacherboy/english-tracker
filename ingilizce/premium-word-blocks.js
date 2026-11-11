@@ -153,14 +153,14 @@
       const intro = window.dmPremiumIntro;
       if (intro) {
         overlay.hidden = true;
-        const openPlans = intro.plans();
+        const openPlans = intro.plans('block-papi', (window.dmAndroidPlan?.plan || 'free') === 'pro' ? 'premium_pro' : '');
         const actions = [];
         if (ready) actions.push({label: 'Atölyeye gir', cost: 5, onClick: start});
-        else if (!state.completed && openPlans) actions.push({label: 'Premium’u incele', onClick: openPlans});
+        else if (!state.completed && openPlans) actions.push({label: 'Paketleri gör', onClick: () => { close(); openPlans(); }}); // oyun penceresi üst katmanda; önce kapanır
         actions.push({label: 'Oyunlara dön', kind: actions.length ? 'secondary' : 'primary', onClick: close});
         const note = error ? {text: error, icon: 'bolt'} :
           state.completed ? {text: 'Tüm atölye rotasını tamamladın!', icon: 'check'} :
-          state.remaining <= 0 ? {text: 'Ücretsiz hakların bitti. Premium ile sınırsız oynayabilirsin.', icon: 'lock'} : null;
+          state.remaining <= 0 ? {text: intro.noRightsText(), icon: 'lock'} : null;
         intro.mount(dialog, {
           theme: 'blocks',
           image: assets + 'kapak.webp',

@@ -143,7 +143,7 @@ async function open(){
   if(ticket!==epoch||!root)return;
   practice=!!d.practice;adopt(d);world=Math.min(5,Math.ceil(Math.max(1,d.level||1)/20));setBg(world);
   preload([...CANDIES,'candy-rainbow-bomb','fx-stripe-h','fx-stripe-v','tile-ice','tile-chain','fx-sparkle','fx-burst']);
-  if(!isPremium()&&remaining()<=0)return comingSoon();
+  if(!isPremium()&&remaining()<=0&&!window.dmPremiumIntro)return comingSoon();
   home();
   if(!isPremium()&&!store.get('dm_pwm_trial_seen:'+owner.toLowerCase()))trialPopup();
  }catch(e){if(ticket===epoch&&root){$('.pwm-stage').innerHTML='';const c=modal('<h2 class="pwm-ribbon-title">Oyun açılamadı</h2><p>'+esc(e.message)+'</p><div class="pwm-actions"><button type="button" class="pwm-btn" data-retry>Tekrar dene</button><button type="button" class="pwm-btn ghost" data-x>Çık</button></div>');c.querySelector('[data-retry]').onclick=()=>{close();open();};c.querySelector('[data-x]').onclick=()=>close();}}
@@ -163,6 +163,7 @@ function trialPopup(){
 }
 
 function comingSoon(){
+ if(window.dmPremiumIntro&&root){if(status)status.remaining=0;stopGame();return home();}
  // Android uygulamasında abonelik satılır; web ve iOS'ta eski "yakında" ekranı kalır.
  const shop=!!window.dmAndroidBilling?.available, plan=window.dmAndroidPlan?.plan||'free';
  view='soon';window.dmPremiumIntro?.unmount(root);$('.pwm-stage').innerHTML='';
@@ -206,7 +207,10 @@ function introHome(){
   stats:[{value:total+'/300',label:'Yıldız',icon:'star'},{value:status?.energyMax?`${status.energy}/${status.energyMax}`:String(status?.energy??'–'),label:'Enerji',icon:'bolt'},
    isPremium()?{value:practice?'Sınıf':'Sınırsız',label:practice?'Ödül işlenmez':'Premium',icon:'infinity'}:{value:String(remaining()),label:'Kalan hak'}],
   after,
-  actions:[{label:'Güçlendiriciler',kind:'icon',icon:'flask',onClick:()=>shop()},{label:'Seviye '+lv+'’i oyna',cost:5,onClick:()=>levelCard(lv)},{label:'Oyunlara dön',kind:'link',onClick:()=>back()}]
+  note:!isPremium()&&remaining()<=0?{text:window.dmPremiumIntro.noRightsText(),icon:'lock'}:null,
+  actions:!isPremium()&&remaining()<=0
+   ?[{label:'Paketleri gör',onClick:()=>{const o=window.dmPremiumIntro.plans('candy-papis',(window.dmAndroidPlan?.plan||'free')==='pro'?'premium_pro':'');o?o():toast('Paketler şu an açılamadı.');}},{label:'Oyunlara dön',kind:'link',onClick:()=>back()}]
+   :[{label:'Güçlendiriciler',kind:'icon',icon:'flask',onClick:()=>shop()},{label:'Seviye '+lv+'’i oyna',cost:5,onClick:()=>levelCard(lv)},{label:'Oyunlara dön',kind:'link',onClick:()=>back()}]
  });
 }
 

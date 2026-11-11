@@ -36,11 +36,18 @@
     return node;
   };
 
-  /* Uygulamada paket ekranı açılabiliyorsa onu döndürür (Android/iOS kabuğu). */
-  function plans(source = 'premium-oyunlar') {
+  /* Paket satın alma ekranını açan fonksiyonu döndürür (web: dm-satis.js, eski kabuk: DmBilling). */
+  function plans(source = 'premium-oyunlar', want = '') {
+    if (typeof window.DMSatis?.planlar === 'function') return () => window.DMSatis.planlar(source, want);
     const billing = window.dmAndroidBilling;
-    if (!billing?.available || typeof billing.open !== 'function') return null;
-    return () => billing.open(source);
+    if (billing?.available && typeof billing.open === 'function') return () => billing.open(source);
+    return null;
+  }
+  /* Hak bitince gösterilecek açıklama: Pro'nun günlük sınırı ile ücretsiz deneme farklıdır. */
+  function noRightsText(verb = 'oynayabilirsin') {
+    return (window.dmAndroidPlan?.plan || 'free') === 'pro'
+      ? `Bugünkü oyun hakkın bitti. Premium Pro ile sınırsız ${verb}.`
+      : `Ücretsiz hakların bitti. Paketlerden birini seçerek sınırsız ${verb}.`;
   }
 
   /*
@@ -172,5 +179,5 @@
     host?.querySelectorAll(':scope > .dmpi').forEach(node => node.remove());
   }
 
-  window.dmPremiumIntro = {build, mount, unmount, plans, css};
+  window.dmPremiumIntro = {build, mount, unmount, plans, noRightsText, css};
 })();
