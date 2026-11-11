@@ -1,6 +1,6 @@
-/* Six icon-only destinations and the approved profile popover. */
+/* Five icon-only student destinations (Ders Çalış only in the teacher panel, 11 Kas 2026) and the approved profile popover. */
 (()=>{'use strict';
-const layout=window.dmTeacherPortalMode?[['tab-aktiviteler','Oyunlar','game'],['tab-derscalis','Ders Çalış','book'],['tab-profile-menu','Profilim','profile'],['tab-teacher-portal','Öğretmen Paneli','teacher']]:[['tab-dunya','Parkur','path'],['tab-meduakis','Arkadaşlar','friends'],['tab-aktiviteler','Oyunlar','game'],['tab-derscalis','Ders Çalış','book'],['tab-magaza','Mağaza','shop'],['tab-profile-menu','Profil','profile']];
+const layout=window.dmTeacherPortalMode?[['tab-aktiviteler','Oyunlar','game'],['tab-derscalis','Ders Çalış','book'],['tab-profile-menu','Profilim','profile'],['tab-teacher-portal','Öğretmen Paneli','teacher']]:[['tab-dunya','Parkur','path'],['tab-meduakis','Arkadaşlar','friends'],['tab-aktiviteler','Oyunlar','game'],['tab-magaza','Mağaza','shop'],['tab-profile-menu','Profil','profile']];
 // A profile dialog always has a real primary destination beneath it.
 let primaryId=window.dmTeacherPortalMode?'tab-aktiviteler':'tab-dunya';
 function rememberPrimary(){const id=layout.slice(0,-1).map(x=>x[0]).find(id=>document.getElementById(id)?.classList.contains('active'));if(id)primaryId=id;}

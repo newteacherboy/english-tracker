@@ -149,3 +149,5 @@ body:has(#rtProfileBackdrop) #bottomNavMobile#bottomNavMobile{z-index:2147483550
  @media(min-width:769px){#bottomNavMobile#bottomNavMobile.bottom-nav-mobile{left:50%!important;right:auto!important;transform:translateX(-50%)!important;max-width:660px!important}}
  @media(prefers-reduced-motion:reduce){#bottomNavMobile#bottomNavMobile .bn-item{transition:none!important}}
 }
+/* 11 Kas 2026 · Ders Çalış yalnızca öğretmen panelinde: öğrenci menüsü beş eşit sekme. */
+html:not(.dm-teacher-portal) body #bottomNavMobile#bottomNavMobile.bottom-nav-mobile{grid-template-columns:repeat(5,minmax(0,1fr))!important}

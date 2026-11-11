@@ -39,7 +39,7 @@ const DETAY = {
   await page.waitForTimeout(1200);
   await page.waitForTimeout(2500);
   await page.evaluate(() => { document.getElementById('login-container').style.display = 'none'; document.getElementById('panel-alani').style.display = 'block'; window.__t = []; const ot = window.yoToast; window.yoToast = m => { __t.push(m); }; window.__odevAcilisBitis = Date.now() + 120000; });
-  await page.locator('.bn-item[data-ekran="tab-derscalis"]').click();
+  await page.evaluate(() => window.dersCalisTamEkranAc()); // Ders Çalış öğrenci alt menüsünde yok (yalnızca öğretmen paneli)
   await page.waitForTimeout(800);
   await page.waitForTimeout(600);
   if (await page.locator('.ab-perde .ab-basla').count()) await page.locator('.ab-perde .ab-basla').waitFor({ state: 'attached' }); await page.evaluate(() => document.querySelector('.ab-perde .ab-basla')?.click());

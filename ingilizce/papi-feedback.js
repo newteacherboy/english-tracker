@@ -85,8 +85,8 @@ function energy(){
  }
  const packLabel=document.createElement('div');packLabel.className='dm-energy-pack-label';packLabel.textContent='⚡ Altınlarınla enerji al';
  const premium=document.createElement('button');premium.type='button';premium.className='dm-energy-premium';premium.textContent='👑 Premium ol, sınırsız enerjin olsun';premium.onclick=()=>{remove();window.dmAndroidOpenPlans?.('enerji-molasi');};
- const study=document.createElement('button');study.type='button';study.className='dm-energy-study';study.textContent='📚 Ders Çalış’a git';study.onclick=()=>{remove();window.dmThematicLearning?.close(true);window.dmStoryPath?.close(true);for(const name of ['kelimeYarismasiKapat','jpOyunKapat','boslukOyunKapat','hafizaOyunKapat','yagmurOyunKapat','asmacaOyunKapat','kelimebulOyunKapat','esOyunKapat','trenOyunKapat'])window[name]?.();document.querySelector('#bzCik')?.click();window.dersCalisTamEkranAc?.();};
- card.append(premium,packLabel,options,status,study,card.querySelector('.dm-papi-feedback-close'));void energyLimit(status);window.dmNoticeSurface?.adopt(root);card.querySelector('button')?.focus();
+ // Ders Çalış yalnızca öğretmen panelinde: enerji altınla ya da reklamla alınır (11 Kas 2026).
+ card.append(premium,packLabel,options,status,card.querySelector('.dm-papi-feedback-close'));void energyLimit(status);window.dmNoticeSurface?.adopt(root);card.querySelector('button')?.focus();
 }
 function notice(message){const text=String(message||'').slice(0,500);if(/bugünün keşif görevleri|günlük hedefini tamamladın|yeni karakter|karakter açtın|bu haftanın hedefi/i.test(text))return;if(/enerji.*(bitti|yetersiz|gerekli|yok)|yeterli.*enerji/i.test(text)){energy();return;}if(window.dmNoticeSurface){window.dmNoticeSurface.notify(text,{kind:'feedback'});return;}document.getElementById('dmInlineNotice')?.remove();const el=document.createElement('div');el.id='dmInlineNotice';el.className='dm-inline-notice';el.setAttribute('role','status');el.textContent=text;document.body.append(el);setTimeout(()=>el.remove(),3500);}
 document.addEventListener('dm:login',()=>{window.dmLastEnergyValue=undefined;remove();});

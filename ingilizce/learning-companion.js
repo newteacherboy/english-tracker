@@ -234,8 +234,10 @@ document.addEventListener('visibilitychange',()=>{if(!document.hidden)schedule()
 // Observe screen switches and replaced map/profile content, not the full game tree.
 for(const id of ['tab-dunya','tab-derscalis','ogretmenMenuModal']){const el=$(id);if(el)new MutationObserver(schedule).observe(el,{childList:true,subtree:true,attributes:true,attributeFilter:['class']});}
 new MutationObserver(records=>{if(records.some(r=>[...r.addedNodes].some(n=>n.id==='rtProfileBackdrop')))schedule();}).observe(document.body,{childList:true});
+/* 11 Kas 2026 · Ders Çalış öğrencilerde kapalı: Hikâye ve Diyalog listesi Plan'da; dokununca diyalog doğrudan açılır. */
+const planStories=()=>'<section class="lc-entry lc-plan-stories" aria-label="Hikâye ve Diyalog"><div class="lc-library-heading"><span aria-hidden="true">📖</span><div><h3>Hikâye ve Diyalog</h3><p>Oku, dinle, keşfet · Enerji harcanmaz</p></div></div>'+storyGroups()+'</section>';
 async function openPlan(){
- try{await load(true);const view=sheet('Bugünkü Planım','<div class="lc-plan lc-plan-sheet">'+planMarkup()+'</div>','lcPlanSheet');if(view){const steps=view.el.querySelector('.lc-plan-steps');if(steps)steps.hidden=false;view.el.querySelector('[data-lc="toggle"]')?.setAttribute('aria-expanded','true');}}catch(e){window.yoToast?.(e.message);}
+ try{await load(true);const view=sheet('Bugünkü Planım','<div class="lc-plan lc-plan-sheet">'+planMarkup()+'</div>'+planStories(),'lcPlanSheet');if(view){const steps=view.el.querySelector('.lc-plan-steps');if(steps)steps.hidden=false;view.el.querySelector('[data-lc="toggle"]')?.setAttribute('aria-expanded','true');const stories=view.el.querySelector('.lc-plan-stories');if(stories)bindStories(stories,()=>view.close());}}catch(e){window.yoToast?.(e.message);}
 }
 function planState(){if(!summary||owner!==identity())return null;const d=summary,reviewDone=d.reviewDone||d.review?.total>0&&d.review.due===0;const state=[!!reviewDone,!!d.routeDone,!!d.dialogueDone];return {done:state.filter(Boolean).length,total:state.length,claimable:state.every(Boolean)&&!d.planClaimed};}
 function reviewDue(){return summary&&owner===identity()?Number(summary.review?.due)||0:null;}
