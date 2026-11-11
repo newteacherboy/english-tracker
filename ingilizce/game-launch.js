@@ -205,13 +205,15 @@
   if(play)play.disabled=false;
  }
  /* ---- Kendi kurulum ekranı olan oyunlar: Arcade kaplaması (okul yolu: sınıf + ünite) ----
-    Meteor, Kelime Çarkı ve Kelime Rallisi kelimeleri sunucudan sınıf/üniteye göre seçer;
-    Papi Kartları ve Kelime Gölü havuzu kurulumda sabitler. Bu oyunlarda seviye kipi yok. */
+    Meteor, Kelime Çarkı ve Kelime Rallisi kelimeleri sunucudan sınıf/üniteye göre seçer,
+    Papi Kartları havuzu kurulumda sabitler: bu oyunlarda seviye kipi yok.
+    Kelime Gölü ve Papi'nin Feneri / Canavar Avcısı / Dengesiz Kule havuzu canlı okur: seviye kipi var. */
  const SKIN=[
   {root:'meteorGame',host:'.mt-setup',title:'Meteor Düellosu',grade:'#mtGrade',unit:'#mtUnit',play:'.mt-start',hide:'.mt-setup>img,.mt-setup>h2'},
   {root:'wordWheel',host:'.ww-body',need:'.ww-setup',title:'Kelime Çarkı',grade:'#wwGrade',unit:'#wwUnit',play:'.ww-main',hide:'.ww-body>.ww-papi,.ww-body>p:not([class])'},
   {root:'papiCards',host:'.pc-body',need:'.pc-setup',title:'Papi Kartları',grade:'#pcGrade',unit:'#pcUnit',play:'.pc-setup>.pc-start',hide:'.pc-body>.pc-setup-papi,.pc-body>.pc-sub'},
-  {root:'kelimeGolu',host:'.kg-setup',title:'Kelime Gölü',grade:'[data-grade]',units:'[data-units]',unitItem:'.kg-unit',play:'[data-start]',hide:'.kg-preview'},
+  {root:'kelimeGolu',host:'.kg-setup',title:'Kelime Gölü',grade:'[data-grade]',units:'[data-units]',unitItem:'.kg-unit',play:'[data-start]',hide:'.kg-preview',levels:true},
+  {root:'soloArcadeOverlay',host:'.sa-body',need:'.sa-setup-panel',title:r=>r.querySelector('#saTitle')?.textContent||'Oyun',grade:'[data-grade]',unit:'[data-unit]',play:'[data-start]',hide:'.sa-intro-art',levels:true},
   {root:'rallyGame',host:'.rr-panel',need:'[data-class]',title:'Kelime Rallisi',grade:'[data-class]',units:'.rr-units',unitItem:'[data-unit]',play:'[data-start]',hide:'.rr-panel>.rr-setup-art,.rr-panel>h1,.rr-panel>h1+p'},
   {root:null,find:()=>document.querySelector('.dm-sr-setup')?.closest('.dm-sr-overlay'),host:'.dm-sr-setup',title:'Cümle Yarışı',grade:'[data-class]',units:'[data-units]',unitItem:'.dm-sr-unit',play:'[data-start]',hide:'.dm-sr-hero',sentences:true}
  ];
@@ -238,16 +240,29 @@
   }
   box.querySelectorAll('.unite-chip').forEach(b=>{const on=b.dataset.unitNumber===sel.value;b.classList.toggle('selected',on);b.setAttribute('aria-pressed',String(on));});
  }
+ const skinState={};
+ const skinKey=cfg=>'skin-'+(cfg.root||'race');
  function decorateSkin(cfg){
-  const root=cfg.root?document.getElementById(cfg.root):cfg.find();if(!root)return;
+  const key=skinKey(cfg);
+  const root=cfg.root?document.getElementById(cfg.root):cfg.find();
+  if(!root){if(swapped?.prefix===key)restorePool();delete skinState[key];return;}
   const host=root.querySelector(cfg.host);if(!host||(cfg.need&&!host.querySelector(cfg.need)))return;
+  const learn=!!cfg.levels&&learningPath();
   if(host.dataset.gl!=='1'){
    host.dataset.gl='1';root.classList.add('gl-skin');host.classList.add('gl-entry');
-   const hero=heroFor('skin',cfg.title);hero.querySelector('.gl-rules')?.remove();hero.querySelector('.gl-path').textContent='SINIFINI VE ÜNİTENİ SEÇ';host.prepend(hero);
+   const hero=heroFor('skin',typeof cfg.title==='function'?cfg.title(root):cfg.title);hero.querySelector('.gl-rules')?.remove();host.prepend(hero);
    if(cfg.hide)host.querySelectorAll(cfg.hide).forEach(x=>x.classList.add('gl-hidden'));
    const play=host.querySelector(cfg.play);if(play)play.classList.add('gl-play');
-   if(cfg.units)host.querySelector(cfg.units)?.classList.add('unite-secim-box','gl-unit-sec');
+   if(cfg.units){const u=host.querySelector(cfg.units);u?.classList.add('unite-secim-box');(u?.closest('fieldset')||u)?.classList.add('gl-unit-sec');}
    if(!host.dataset.glListen){host.dataset.glListen='1';host.addEventListener('change',schedule,true);host.addEventListener('click',()=>setTimeout(schedule,0),true);}
+   hero.querySelector('.gl-path').textContent=learn?'ÖĞRENME YOLUM · SEVİYENİ SEÇ':'SINIFINI VE ÜNİTENİ SEÇ';
+   host.classList.toggle('gl-learn',learn);
+   if(learn){
+    const lv=levelsFor(key);(play||host.lastElementChild).before(lv);
+    lv.querySelectorAll('.gl-level').forEach(b=>{b.onclick=()=>pickSkinLevel(cfg,root,b.dataset.level);});
+    const st=skinState[key]||(skinState[key]={level:null});
+    setTimeout(()=>pickSkinLevel(cfg,root,st.level&&st.level!=='…'?st.level:myLevel()),0);
+   }
   }
   const gsel=host.querySelector(cfg.grade);
   if(gsel?.tagName==='SELECT')gradeMirror(host,gsel);
@@ -261,6 +276,29 @@
     c.classList.toggle('selected',on);
    });
   }
+  if(learn){const mine=myLevel();host.querySelectorAll('.gl-level').forEach(b=>{const has=!!b.querySelector('.gl-mine');if((b.dataset.level===mine)!==has){if(has)b.querySelector('.gl-mine').remove();else b.insertAdjacentHTML('afterbegin','<span class="gl-mine">Senin seviyen</span>');}});}
+ }
+ async function pickSkinLevel(cfg,root,code){
+  const key=skinKey(cfg),st=skinState[key]||(skinState[key]={level:null});st.level=code;
+  const hostNow=()=>root.querySelector(cfg.host);
+  let host=hostNow();if(!host)return;
+  host.querySelectorAll('.gl-level').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.level===code)));
+  const play=host.querySelector(cfg.play);if(play)play.disabled=true;
+  const grade=(LEVELS.find(l=>l[0]===code)||LEVELS[0])[2];
+  const words=await levelWords(code,grade);
+  host=hostNow();
+  if(!host||!document.body.contains(root)||st.level!==code)return;
+  if(words.length<4){if(play)play.disabled=false;window.yoToast?.('Bu seviyenin kelimeleri yüklenemedi. İnterneti kontrol edip tekrar dene.');return;}
+  if(swapped?.prefix!==key){restorePool();swapped={original:window.masterKelimeHavuzu,words,prefix:key};}else swapped.words=words;
+  window.masterKelimeHavuzu=words;
+  const gsel=host.querySelector(cfg.grade);
+  if(gsel){
+   let opt=[...gsel.options].find(o=>Number(o.value)===grade);
+   if(!opt){opt=new Option(grade+'. Sınıf',String(grade));gsel.append(opt);}
+   opt.disabled=false;gsel.value=String(grade);fire(gsel);
+  }
+  const p=hostNow()?.querySelector(cfg.play);if(p)p.disabled=false;
+  schedule();
  }
  function run(){for(const g of GAMES)decorate(...g);for(const c of HB)decorateHb(c);for(const c of SKIN)decorateSkin(c);}
  let queued=false;const schedule=()=>{if(queued)return;queued=true;requestAnimationFrame(()=>{queued=false;run();});};
@@ -273,7 +311,7 @@
   }
   new MutationObserver(schedule).observe(document.body,{childList:true});
   /* kendi kurulumu olan oyunlar ekranı innerHTML ile yeniden çizer */
-  const GL_ROOTS='#meteorGame,#wordWheel,#papiCards,#kelimeGolu,#rallyGame,.dm-sr-overlay,#harfBahcesiOverlay,#dmGameIntro';
+  const GL_ROOTS='#soloArcadeOverlay,#meteorGame,#wordWheel,#papiCards,#kelimeGolu,#rallyGame,.dm-sr-overlay,#harfBahcesiOverlay,#dmGameIntro';
   new MutationObserver(muts=>{if(!document.querySelector(GL_ROOTS))return;for(const m of muts){const t=m.target;if(t.nodeType===1&&t.closest?.(GL_ROOTS)&&!t.closest('.gl-hero')){schedule();return;}}}).observe(document.body,{childList:true,subtree:true});
   const yoModal=document.getElementById('yoModal');if(yoModal)new MutationObserver(schedule).observe(yoModal,{attributes:true,attributeFilter:['class']});
  }
