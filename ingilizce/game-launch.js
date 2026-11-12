@@ -246,7 +246,14 @@
   const key=skinKey(cfg);
   const root=cfg.root?document.getElementById(cfg.root):cfg.find();
   if(!root){if(swapped?.prefix===key)restorePool();delete skinState[key];return;}
-  const host=root.querySelector(cfg.host);if(!host||(cfg.need&&!host.querySelector(cfg.need)))return;
+  const host=root.querySelector(cfg.host);
+  if(!host||(cfg.need&&!host.querySelector(cfg.need))){
+   /* Oyun başladı: aynı kap (ör. .pc-body, .ww-body) oyun ekranına dönüşüyor. Kurulum kaplaması
+      kalırsa mor zemin + beyaz yazı oyun ekranına da uygulanıyor, kart/çark yazıları okunmuyordu. */
+   if(host?.dataset.gl==='1'){host.classList.remove('gl-entry','gl-learn');delete host.dataset.gl;host.querySelectorAll(':scope>.gl-hero').forEach(x=>x.remove());}
+   if(cfg.need)root.classList.remove('gl-skin');
+   return;
+  }
   const learn=!!cfg.levels&&learningPath();
   if(host.dataset.gl!=='1'){
    host.dataset.gl='1';root.classList.add('gl-skin');host.classList.add('gl-entry');
