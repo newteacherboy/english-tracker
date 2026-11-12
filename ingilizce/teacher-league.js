@@ -148,7 +148,7 @@ ${attHtml}<p class="dml-note">Lig XP’sine öğretmenin ders içi +/- puanları
     }
     const hidden = d && sc && !d.unlocked ? Math.max(0, sc.count - (sc.categories.genel?.rows.length || 0)) : 0;
     const cta = hidden ? `<div class="dml-cta"><div><b>+${hidden} öğrenci kilitli</b><small>Tüm sınıfı Öğretmen Pro ile aç</small></div><button type="button" data-unlock>Kilidi aç</button></div>` : '';
-    page.innerHTML = `<div class="dml-wrap"><div class="dml-top"><button type="button" class="dml-ib" data-close aria-label="Geri">‹</button><h1>Sınıflar</h1><button type="button" class="dml-ib" data-refresh aria-label="Yenile">↻</button><button type="button" class="dml-ib dark" data-board aria-label="Tahtaya yansıt"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><rect x="3" y="4" width="18" height="12" rx="2"></rect><path d="M12 16v4M8 20h8"></path></svg></button></div>
+    page.innerHTML = `<div class="dml-wrap"><div class="dml-top"><button type="button" class="dml-ib" data-close aria-label="Geri">‹</button><h1>Sınıfım</h1><button type="button" class="dml-ib" data-refresh aria-label="Yenile">↻</button><button type="button" class="dml-ib dark" data-board aria-label="Tahtaya yansıt"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><rect x="3" y="4" width="18" height="12" rx="2"></rect><path d="M12 16v4M8 20h8"></path></svg></button></div>
 <div class="dml-row" role="group" aria-label="Sınıf">${classChips}</div><div class="dml-seg" role="group" aria-label="Dönem">${seg}</div>${body}</div>${cta}`;
   }
 
@@ -206,7 +206,7 @@ ${rows.length > 3 ? `<ol>${rows.slice(3, 15).map(r => `<li><span>${r.rank}. ${es
   function open() {
     if (page) return;
     if (!doc.getElementById('dml-css')) { const s = doc.createElement('style'); s.id = 'dml-css'; s.textContent = CSS; doc.head.appendChild(s); }
-    page = doc.createElement('div'); page.className = 'dml-page'; page.setAttribute('role', 'dialog'); page.setAttribute('aria-modal', 'true'); page.setAttribute('aria-label', 'Sınıflar');
+    page = doc.createElement('div'); page.className = 'dml-page'; page.setAttribute('role', 'dialog'); page.setAttribute('aria-modal', 'true'); page.setAttribute('aria-label', 'Sınıfım');
     page.addEventListener('click', onClick); doc.addEventListener('keydown', onKey);
     doc.body.appendChild(page);
     fetchPeriod(false);
@@ -216,7 +216,7 @@ ${rows.length > 3 ? `<ol>${rows.slice(3, 15).map(r => `<li><span>${r.rank}. ${es
     const tiles = doc.querySelector('#tpDashboard .tp-real-tools');
     if (!tiles || tiles.querySelector('[data-dml]')) return;
     const b = doc.createElement('button'); b.type = 'button'; b.dataset.dml = '1';
-    b.innerHTML = '<span aria-hidden="true">🏆</span><strong>Sınıflar</strong><small>Sınıf ligi ve öğrenci sıralaması</small>';
+    b.innerHTML = '<span aria-hidden="true">🏆</span><strong>Sınıfım</strong><small>Sınıf ligi ve öğrenci sıralaması</small>';
     b.addEventListener('click', open);
     tiles.prepend(b);
   }

@@ -8,7 +8,10 @@ const server=fs.readFileSync('supabase/functions/diji-api/teacher-portal.mjs','u
 test('all teacher workspaces launch own-class scoped tools',()=>{
  for(const key of ['performance','reports','legacyHomework'])assert(workspace.includes("openOwnedTool('"+key+"')"),key);
  assert(workspace.includes("openOwnedTool('legacyAnnouncement')"));
- assert(workspace.includes("add(shortcuts,'Raporlar'"));
+ // Raporlar Hızlı İşlemler'de kalır; Hızlı Erişim'in ilk kutusu Sınıfım (sınıf ligi).
+ assert(workspace.includes("add(actions,'Raporlar'"));
+ assert(workspace.includes("add(shortcuts,'Sınıfım'"));
+ assert(workspace.includes('window.dmTeacherLeagueOpen'));
  assert(portal.includes("data-dash=\"reports\""));
 });
 test('teacher tool class sources are authenticated teacher-classes only',()=>{
