@@ -10,7 +10,9 @@ const norm=v=>String(v).normalize('NFKC').toLocaleLowerCase('tr').replace(/\s+/g
 function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
 function words(bank){const seen=new Set();return bank.filter(w=>{const k=en(w).toLowerCase();if(!k||!tr(w)||seen.has(k))return false;seen.add(k);return true;});}
 function options(word,bank){const seen=new Set([norm(tr(word))]);const wrong=shuffle(bank).filter(w=>{const k=norm(tr(w));if(!k||seen.has(k))return false;seen.add(k);return true;}).slice(0,3).map(tr);if(wrong.length!==3)throw Error('Dört farklı anlam için başka bir ünite daha seç.');return shuffle([tr(word),...wrong]);}
-function decks(bank){const a=shuffle(words(bank)).slice(0,TOTAL);return [a,a.slice(1).concat(a.slice(0,1))];}
+// [12 Kas 2026] İki kişilik: oyunculara farklı kelimeler. Ünitede yeterli kelime varsa iki liste tamamen ayrı;
+// yoksa ikinci oyuncu önce kullanılmayan kelimeleri, sonra birincinin listesini yarım tur kaydırılmış alır (aynı sırada aynı kelime gelmez).
+function decks(bank){const a=shuffle(words(bank)),n=Math.min(TOTAL,a.length),first=a.slice(0,n),second=a.slice(n,2*n),r=second.length;let shift=Math.max(1,Math.floor(n/2));if(n>1&&((shift-r)%n+n)%n===0)shift++;for(let k=r;k<n;k++)second.push(first[(k-r+shift)%n]);return [first,second];}
 const who=()=>typeof aktifOgrenciAdi==='undefined'?'':String(aktifOgrenciAdi||'');
 const practice=()=>!!window.dmTeacherPortalMode||who().toLowerCase()==='teacher'||typeof siniftaOynananOgrenci!=='undefined'&&!!siniftaOynananOgrenci;
 const pupil=()=>typeof siniftaOynananOgrenci!=='undefined'&&siniftaOynananOgrenci?String(siniftaOynananOgrenci):who();
