@@ -20,6 +20,7 @@ on:
       - 'ingilizce/teacher-portal-boot.js'
       - 'ingilizce/papi-flow.js'
       - 'ingilizce/index.html'
+      - 'ingilizce/app-js/**'
       - 'supabase/functions/diji-api/announcements-api.mjs'
       - 'tests/announcements-*'
       - 'ingilizce/member-experience.js'

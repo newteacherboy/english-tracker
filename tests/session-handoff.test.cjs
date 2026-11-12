@@ -1,4 +1,5 @@
 'use strict';
+require('./_index-source.cjs');
 const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm');
 function apply(next,token='old'){
  const local=new Map([['ing_token',token],['ing_aktifOgrenci','Alice'],['ing_google_auth','true']]),session=new Map([['dm_session_handoff_v1',JSON.stringify(next)],['ing_ogr_token','teacher-old']]);

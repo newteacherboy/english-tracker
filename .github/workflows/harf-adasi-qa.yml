@@ -4,12 +4,14 @@ on:
     paths:
       - 'ingilizce/harf-adasi*'
       - 'ingilizce/index.html'
+      - 'ingilizce/app-js/**'
       - 'tests/harf-adasi*'
       - '.github/workflows/harf-adasi-qa.yml'
   pull_request:
     paths:
       - 'ingilizce/harf-adasi*'
       - 'ingilizce/index.html'
+      - 'ingilizce/app-js/**'
       - 'tests/harf-adasi*'
   workflow_dispatch:
 permissions:

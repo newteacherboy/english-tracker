@@ -1,3 +1,4 @@
+require('./_index-source.cjs');
 const {test}=require('node:test'),assert=require('node:assert/strict'),vm=require('node:vm'),fs=require('node:fs');
 const html=fs.readFileSync('ingilizce/index.html','utf8');
 const start=html.indexOf('  const saveReadyTasks = new Map();'),end=html.indexOf("  window.addEventListener('online', () => { loadRetries.clear();",start);

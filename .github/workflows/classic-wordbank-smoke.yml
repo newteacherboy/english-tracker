@@ -4,6 +4,7 @@ on:
     branches: [main]
     paths:
       - 'ingilizce/index.html'
+      - 'ingilizce/app-js/**'
       - 'tests/classic-wordbank-rotation-smoke.test.cjs'
       - '.github/workflows/classic-wordbank-smoke.yml'
   workflow_dispatch:

@@ -1,3 +1,4 @@
+require('./_index-source.cjs');
 const {test}=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),{JSDOM}=require('jsdom');
 function fixture(){const dom=new JSDOM('<section id="tab-magaza"></section><div id="bottomNavMobile"><button data-ekran="tab-magaza">Mağaza</button><button data-ekran="tab-dunya">Parkur</button></div>',{url:'https://app.test/ingilizce/',runScripts:'outside-only'});const w=dom.window;const frames=new Map();let seq=0;w.requestAnimationFrame=f=>{frames.set(++seq,f);return seq};w.cancelAnimationFrame=id=>frames.delete(id);w.eval(fs.readFileSync('ingilizce/bag-inventory.js','utf8'));return {w,shop:w.document.querySelector('[data-ekran="tab-magaza"]'),panel:w.document.getElementById('tab-magaza'),flush(){const run=[...frames.values()];frames.clear();run.forEach(f=>f());},popup:()=>w.document.getElementById('dmBagPopup')};}
 const tick=()=>new Promise(setImmediate);

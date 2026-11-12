@@ -1,3 +1,4 @@
+require('./_index-source.cjs');
 const fs=require('node:fs'),assert=require('node:assert/strict'),{test}=require('node:test'),{JSDOM}=require(process.env.DIJI_JSDOM||'jsdom');
 const read=n=>fs.readFileSync('ingilizce/'+n,'utf8'),html=read('index.html');
 const pause=()=>new Promise(r=>setTimeout(r,35));

@@ -1,7 +1,7 @@
 name: Single bottom route entry
 on:
   pull_request:
-    paths: ['ingilizce/index.html', 'ingilizce/thematic-learning.*', 'ingilizce/school-lesson.js', 'tests/route-entry-*', '.github/workflows/route-entry-sheet.yml']
+    paths: ['ingilizce/index.html', 'ingilizce/app-js/**', 'ingilizce/thematic-learning.*', 'ingilizce/school-lesson.js', 'tests/route-entry-*', '.github/workflows/route-entry-sheet.yml']
   workflow_dispatch:
 permissions:
   contents: read

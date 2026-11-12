@@ -1,9 +1,9 @@
 name: Papi AI chat limits and mobile UI
 on:
   push:
-    paths: ['ingilizce/papi-chat.*', 'ingilizce/index.html', 'supabase/functions/papi-chat/**', 'supabase/migrations/*papi*chat*', 'tests/papi-chat*', '.github/workflows/papi-ai-chat.yml']
+    paths: ['ingilizce/papi-chat.*', 'ingilizce/index.html', 'ingilizce/app-js/**', 'supabase/functions/papi-chat/**', 'supabase/migrations/*papi*chat*', 'tests/papi-chat*', '.github/workflows/papi-ai-chat.yml']
   pull_request:
-    paths: ['ingilizce/papi-chat.*', 'ingilizce/index.html', 'supabase/functions/papi-chat/**', 'tests/papi-chat*']
+    paths: ['ingilizce/papi-chat.*', 'ingilizce/index.html', 'ingilizce/app-js/**', 'supabase/functions/papi-chat/**', 'tests/papi-chat*']
 permissions:
   contents: read
 jobs:

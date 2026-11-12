@@ -6,6 +6,7 @@ on:
       - 'ingilizce/avatar-assets/adventure-*.webp'
       - 'ingilizce/avatar-assets/head-*.webp'
       - 'ingilizce/index.html'
+      - 'ingilizce/app-js/**'
       - 'ingilizce/storefront.js'
       - 'ingilizce/storefront.css'
       - 'ingilizce/character-builder.js'

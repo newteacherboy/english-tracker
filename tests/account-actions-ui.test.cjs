@@ -1,3 +1,4 @@
+require('./_index-source.cjs');
 const {test}=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),{JSDOM}=require('jsdom');
 const source=fs.readFileSync('ingilizce/hesap-sil.js','utf8');
 const flush=async()=>{for(let i=0;i<8;i++)await new Promise(r=>setImmediate(r));};

@@ -1,3 +1,4 @@
+require('./_index-source.cjs');
 const {test}=require('node:test');const assert=require('node:assert/strict');const vm=require('node:vm');const fs=require('node:fs');
 test('classic games share unit rotation with 12 questions',()=>{
  const html=fs.readFileSync('ingilizce/index.html','utf8');

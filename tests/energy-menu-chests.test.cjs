@@ -1,3 +1,4 @@
+require('./_index-source.cjs');
 const {test}=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm'),{JSDOM}=require('jsdom');
 const read=f=>fs.readFileSync('ingilizce/'+f,'utf8');
 test('header normalizes stale and excessive energy responses to the fixed capacity',()=>{

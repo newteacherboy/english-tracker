@@ -1,4 +1,5 @@
 'use strict';
+require('./_index-source.cjs');
 const {test}=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm');
 const html=fs.readFileSync('ingilizce/index.html','utf8');
 function scriptAt(marker){const i=html.indexOf(marker);assert(i>0);const start=html.lastIndexOf('<script>',i)+8;return html.slice(start,html.indexOf('</script>',i));}

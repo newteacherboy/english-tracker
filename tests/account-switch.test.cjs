@@ -1,4 +1,5 @@
 'use strict';
+require('./_index-source.cjs');
 const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm');
 test('daily task client gets fresh version and account switch UI is loaded',()=>{
  const html=fs.readFileSync('ingilizce/index.html','utf8');

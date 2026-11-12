@@ -1,3 +1,4 @@
+require('./_index-source.cjs');
 const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm');
 const html=fs.readFileSync('ingilizce/index.html','utf8');
 const verified=fs.readFileSync('ingilizce/verified-games.js','utf8');

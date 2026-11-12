@@ -1,3 +1,4 @@
+require('./_index-source.cjs');
 // After a server-side reward advances the stored progress version, the next device save must carry
 // that version (no "Bu cihazdaki veri eski" rejection on the first purchase).
 const {test}=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm');

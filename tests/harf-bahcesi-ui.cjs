@@ -1,3 +1,4 @@
+require('./_index-source.cjs');
 const fs=require('fs'),assert=require('node:assert/strict');
 const {chromium}=require(process.env.CODEX_PRIMARY_RUNTIME_NODE_MODULES+'/playwright');
 (async()=>{

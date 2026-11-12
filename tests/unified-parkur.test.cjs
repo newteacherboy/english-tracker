@@ -1,3 +1,4 @@
+require('./_index-source.cjs');
 const {test}=require('node:test'),assert=require('node:assert/strict'),vm=require('node:vm'),fs=require('node:fs');
 function theme(doc){const listeners={},window={};const document=doc||{getElementById:()=>null,querySelectorAll:()=>[],body:{classList:{contains:()=>false,toggle(){}}},addEventListener:(n,f)=>listeners[n]=f};vm.runInNewContext(fs.readFileSync('ingilizce/parkur-map-theme-v1.js','utf8'),{window,document,setInterval(){},MutationObserver:class{observe(){}}});return {window,listeners};}
 function data(current=10){const steps=[];[16,20,16,16].forEach((n,b)=>{for(let d=0;d<n;d++)steps.push({b,d,no:steps.length+1,done:steps.length<current,available:steps.length<=current})});return steps;}

@@ -1,3 +1,4 @@
+require('./_index-source.cjs');
 const {test}=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),{JSDOM}=require('jsdom');
 const read=p=>fs.readFileSync(p,'utf8');
 const rows=Array.from({length:12},(_,i)=>({ingilizce:'word'+i,turkce:'anlam'+i,sinif:5,unite:1}));

@@ -1,3 +1,4 @@
+require('./_index-source.cjs');
 const {test}=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm');
 const html=fs.readFileSync('ingilizce/index.html','utf8'),code=html.slice(html.indexOf('let maAkisVeri = []'),html.indexOf('function maZamanOnce'));
 test('returning to a fresh cached feed does not leave a resolved promise blocking later refreshes',async()=>{

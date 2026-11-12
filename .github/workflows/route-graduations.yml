@@ -1,7 +1,7 @@
 name: Route graduations and certificates
 on:
   push:
-    paths: ['ingilizce/route-graduation*', 'ingilizce/index.html', 'ingilizce/thematic-learning.js', 'ingilizce/game-feedback.js', 'ingilizce/graduation-assets/**', 'ingilizce/bottom-nav.js', 'supabase/functions/diji-api/route-graduations.mjs', 'supabase/functions/diji-api/graduation-catalog.json', 'tests/route-graduations*', '.github/workflows/route-graduations.yml']
+    paths: ['ingilizce/route-graduation*', 'ingilizce/index.html', 'ingilizce/app-js/**', 'ingilizce/thematic-learning.js', 'ingilizce/game-feedback.js', 'ingilizce/graduation-assets/**', 'ingilizce/bottom-nav.js', 'supabase/functions/diji-api/route-graduations.mjs', 'supabase/functions/diji-api/graduation-catalog.json', 'tests/route-graduations*', '.github/workflows/route-graduations.yml']
   pull_request:
     paths: ['ingilizce/route-graduation*', 'tests/route-graduations*']
 permissions:

@@ -6,6 +6,7 @@ on:
       - 'tests/holiday-splash.test.cjs'
       - 'index.html'
       - 'ingilizce/index.html'
+      - 'ingilizce/app-js/**'
   pull_request:
     paths:
       - 'ingilizce/holiday-splashes/**'

@@ -1,4 +1,5 @@
 'use strict';
+require('./_index-source.cjs');
 const {chromium}=require('playwright'),fs=require('fs'),path=require('path'),assert=require('node:assert/strict');
 (async()=>{
  const options={headless:true,args:['--no-sandbox','--disable-dev-shm-usage']};

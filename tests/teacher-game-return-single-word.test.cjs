@@ -1,3 +1,4 @@
+require('./_index-source.cjs');
 const {test}=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),{JSDOM}=require('jsdom');
 const html=fs.readFileSync('ingilizce/index.html','utf8');
 test('Eksik Harf presents one word and completes all words with correct per-word results',()=>{

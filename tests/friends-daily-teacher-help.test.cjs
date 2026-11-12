@@ -1,3 +1,4 @@
+require('./_index-source.cjs');
 const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs');
 test('daily tasks retain the existing panel and progress readiness checks',()=>{const s=fs.readFileSync('ingilizce/index.html','utf8');assert.match(s,/data-dm-goals="daily"/);assert.match(s,/window\.soPanelCiz = ciz/);assert.match(s,/window\.dmGunGorevleri/);});
 test('friends width containment and stylesheet connection',()=>{const s=fs.readFileSync('ingilizce/index.html','utf8');const css=fs.readFileSync('ingilizce/friends-overflow-fix.css','utf8');assert.match(s,/friends-overflow-fix\.css/);assert.match(css,/overflow-x:hidden/);assert.match(css,/overflow-x:auto/);});

@@ -1,4 +1,5 @@
 'use strict';
+require('./_index-source.cjs');
 const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm');
 function setup(){
  const local=new Map([['ing_token','alice-token'],['ing_aktifOgrenci','Alice']]),session=new Map();let reloads=0,reply={ok:true,status:200,data:{ok:true,ogrenci:'Bob',rol:'ogrenci'}},sent;

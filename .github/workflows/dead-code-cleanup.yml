@@ -3,11 +3,13 @@ on:
   pull_request:
     paths:
       - 'ingilizce/index.html'
+      - 'ingilizce/app-js/**'
       - 'tests/dead-code-cleanup.test.cjs'
       - '.github/workflows/dead-code-cleanup.yml'
   push:
     paths:
       - 'ingilizce/index.html'
+      - 'ingilizce/app-js/**'
       - 'tests/dead-code-cleanup.test.cjs'
       - '.github/workflows/dead-code-cleanup.yml'
 permissions:

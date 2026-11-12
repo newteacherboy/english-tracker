@@ -3,6 +3,7 @@ on:
   pull_request:
     paths:
       - 'ingilizce/index.html'
+      - 'ingilizce/app-js/**'
       - 'ingilizce/lazy-games.js'
       - 'ingilizce/portal-secondary-extracted.css'
       - 'ingilizce/portal-world-extracted.css'
@@ -11,6 +12,7 @@ on:
   push:
     paths:
       - 'ingilizce/index.html'
+      - 'ingilizce/app-js/**'
       - 'ingilizce/lazy-games.js'
       - 'ingilizce/portal-secondary-extracted.css'
       - 'ingilizce/portal-world-extracted.css'

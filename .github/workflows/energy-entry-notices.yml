@@ -1,7 +1,7 @@
 name: Energy entry notices
 on:
   pull_request:
-    paths: ['ingilizce/index.html', 'ingilizce/papi-feedback.js', 'ingilizce/papi-flow.js', 'ingilizce/notice-surface.js', 'ingilizce/start-spotlight.js', 'tests/energy-entry-*', '.github/workflows/energy-entry-notices.yml']
+    paths: ['ingilizce/index.html', 'ingilizce/app-js/**', 'ingilizce/papi-feedback.js', 'ingilizce/papi-flow.js', 'ingilizce/notice-surface.js', 'ingilizce/start-spotlight.js', 'tests/energy-entry-*', '.github/workflows/energy-entry-notices.yml']
   workflow_dispatch:
 permissions:
   contents: read

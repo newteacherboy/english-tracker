@@ -1,4 +1,5 @@
 'use strict';
+require('./_index-source.cjs');
 const {test}=require('node:test'), assert=require('node:assert/strict'), vm=require('node:vm'), fs=require('node:fs');
 const source=fs.readFileSync('ingilizce/cumle-yarisi.js','utf8');
 const css=fs.readFileSync('ingilizce/cumle-yarisi.css','utf8');

@@ -1,4 +1,5 @@
 'use strict';
+require('./_index-source.cjs');
 const {test}=require('node:test');
 const assert=require('node:assert/strict');
 const fs=require('node:fs'),path=require('node:path'),vm=require('node:vm');

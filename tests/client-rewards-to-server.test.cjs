@@ -1,3 +1,4 @@
+require('./_index-source.cjs');
 const {test}=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm');
 const html=fs.readFileSync(__dirname+'/../ingilizce/index.html','utf8');
 test('every in-app reward names a server reward reason (retired chest flow excepted)',()=>{

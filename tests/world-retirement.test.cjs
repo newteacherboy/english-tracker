@@ -1,3 +1,4 @@
+require('./_index-source.cjs');
 const {test}=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm');
 const read=p=>fs.readFileSync('ingilizce/'+p,'utf8');
 test('retired hub cannot be loaded or opened by production navigation',()=>{const html=read('index.html');assert(!fs.existsSync('ingilizce/benim-dunyam.js'));assert(!fs.existsSync('ingilizce/benim-dunyam.css'));assert.match(html,/profile-sections\.js/);for(const file of ['index.html','bottom-nav.js','experience-ui.js','member-polish.js','papi-wallet.js','notice-sharing.js','papi-guide-content.js','profile-sections.js'])assert.doesNotMatch(read(file),/benimDunyamAc|tab-dunyam|Benim Dünyam/,file);});

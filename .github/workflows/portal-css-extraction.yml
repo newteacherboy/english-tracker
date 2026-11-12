@@ -3,12 +3,14 @@ on:
   pull_request:
     paths:
       - 'ingilizce/index.html'
+      - 'ingilizce/app-js/**'
       - 'ingilizce/portal-base-extracted.css'
       - 'tests/portal-extracted-css.test.cjs'
       - '.github/workflows/portal-css-extraction.yml'
   push:
     paths:
       - 'ingilizce/index.html'
+      - 'ingilizce/app-js/**'
       - 'ingilizce/portal-base-extracted.css'
       - 'tests/portal-extracted-css.test.cjs'
       - '.github/workflows/portal-css-extraction.yml'
