@@ -214,7 +214,7 @@
   {root:'papiCards',host:'.pc-body',need:'.pc-setup',title:'Papi Kartları',grade:'#pcGrade',unit:'#pcUnit',play:'.pc-setup>.pc-start',hide:'.pc-body>.pc-setup-papi,.pc-body>.pc-sub'},
   {root:'kelimeGolu',host:'.kg-setup',title:'Kelime Gölü',grade:'[data-grade]',units:'[data-units]',unitItem:'.kg-unit',play:'[data-start]',hide:'.kg-preview',levels:true},
   {root:'soloArcadeOverlay',host:'.sa-body',need:'.sa-setup-panel',title:r=>r.querySelector('#saTitle')?.textContent||'Oyun',grade:'[data-grade]',unit:'[data-unit]',play:'[data-start]',hide:'.sa-intro-art',levels:true},
-  {root:'rallyGame',host:'.rr-panel',need:'[data-class]',title:'Kelime Rallisi',grade:'[data-class]',units:'.rr-units',unitItem:'[data-unit]',play:'[data-start]',hide:'.rr-panel>.rr-setup-art,.rr-panel>h1,.rr-panel>h1+p'},
+  /* Kelime Rallisi artık Premium ve kendi tek kartlı başlangıç ekranını kullanıyor (12 Kas 2026). */
   {root:null,find:()=>document.querySelector('.dm-sr-setup')?.closest('.dm-sr-overlay'),host:'.dm-sr-setup',title:'Cümle Yarışı',grade:'[data-class]',units:'[data-units]',unitItem:'.dm-sr-unit',play:'[data-start]',hide:'.dm-sr-hero',sentences:true}
  ];
  function fire(sel){sel.dispatchEvent(new Event('change',{bubbles:true}));}

@@ -90,3 +90,58 @@
 #rallyGame .rr-level-up{background:#e3f8ec;color:#11653f;border-radius:12px;padding:8px 10px;font-weight:900}
 #rallyGame .rr-level-note{color:#6a5a3a;font-weight:800;font-size:13px}
 #rallyGame .rr-b .rr-gate{pointer-events:auto}
+
+/* ===== Başlangıç ekranı · Tasarım A · Tek kart (12 Kas 2026) ===== */
+#rallyGame .rr-panel.rr-setup-a{position:relative;max-width:440px;margin:0 auto;padding:0;background:#fff;border:0;border-radius:26px;box-shadow:0 18px 50px #00203e66;overflow:hidden;text-align:left;font-family:Nunito,system-ui,sans-serif}
+#rallyGame .rr-a-road{position:relative;height:118px;background:#5b6573;overflow:hidden}
+#rallyGame .rr-a-road::before,#rallyGame .rr-a-road::after{content:"";position:absolute;left:0;right:0;height:9px;background:repeating-linear-gradient(90deg,#fff 0 22px,#e2445c 22px 44px)}
+#rallyGame .rr-a-road::before{top:0}
+#rallyGame .rr-a-road::after{bottom:0}
+#rallyGame .rr-a-road{background-image:repeating-linear-gradient(90deg,#fff 0 34px,transparent 34px 68px);background-size:100% 6px;background-repeat:no-repeat;background-position:0 56px;background-color:#5b6573}
+#rallyGame .rr-a-car{position:absolute;left:50%;top:50%;width:52px;transform:translate(-50%,-50%) rotate(90deg);filter:drop-shadow(0 5px 3px #0006);animation:rrACar 2.4s ease-in-out infinite}
+#rallyGame .rr-a-car svg{display:block;width:100%;height:auto}
+@keyframes rrACar{50%{transform:translate(-36%,-50%) rotate(90deg)}}
+#rallyGame .rr-a-card{padding:18px 20px 16px}
+#rallyGame .rr-a-head{display:flex;justify-content:space-between;align-items:center;gap:8px}
+#rallyGame .rr-a-label{font-weight:900;font-size:13px;letter-spacing:.08em;color:#7a8797}
+#rallyGame .rr-setup-a .rr-rights{margin:0;font-size:13px;padding:5px 10px;border-radius:999px}
+#rallyGame .rr-a-stepper{display:flex;align-items:center;justify-content:space-between;margin-top:8px}
+#rallyGame .rr-a-step{width:54px;height:54px;border-radius:16px;border:2px solid #e3e8ee;background:#fff;color:#17324a;font:900 26px Nunito,system-ui,sans-serif;display:grid;place-items:center;touch-action:manipulation}
+#rallyGame .rr-a-step:disabled{opacity:.35}
+#rallyGame .rr-a-step.locked{background:#f4f6f8;color:#9aa6b2;font-size:18px}
+#rallyGame .rr-a-level{text-align:center;display:grid;gap:4px}
+#rallyGame .rr-a-level b{font-size:58px;line-height:1;font-weight:950;color:#0b6b66}
+#rallyGame .rr-setup-a .rr-pace-note{margin:0;font-weight:850;font-size:14px;color:#5b6b7c}
+#rallyGame .rr-a-dots{display:flex;justify-content:center;align-items:center;gap:6px;margin:12px 0 4px}
+#rallyGame .rr-a-dots span{width:10px;height:10px;border-radius:50%;background:#dde3ea}
+#rallyGame .rr-a-dots span.open{background:#1fae6b}
+#rallyGame .rr-a-dots span.on{width:24px;border-radius:6px;background:#0b6b66}
+#rallyGame .rr-a-dots em{font-style:normal;font-weight:850;font-size:12px;color:#9aa6b2;margin-left:4px}
+#rallyGame .rr-a-units{margin-top:14px;width:100%;display:flex;align-items:center;gap:12px;border:2px solid #e3e8ee;border-radius:18px;background:#f8fafb;padding:12px 14px;text-align:left;color:#17324a;font-family:inherit}
+#rallyGame .rr-a-icon{font-size:22px}
+#rallyGame .rr-a-utext{flex:1;min-width:0;display:grid}
+#rallyGame .rr-a-utext small{font-weight:800;font-size:12px;color:#7a8797}
+#rallyGame .rr-a-utext b{font-weight:900;font-size:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#rallyGame .rr-a-change{font-weight:900;font-size:14px;color:#0b6b66}
+#rallyGame .rr-a-sheet{margin-top:12px;border:2px solid #e3e8ee;border-radius:18px;padding:12px;background:#f8fafb}
+#rallyGame .rr-a-class{display:flex;align-items:center;justify-content:space-between;gap:10px;font-weight:900}
+#rallyGame .rr-a-class select{min-height:42px;border-radius:12px;border:2px solid #d5dde6;padding:0 10px;font:800 15px Nunito,system-ui,sans-serif;background:#fff}
+#rallyGame .rr-setup-a .rr-units{max-height:210px;margin-top:10px;display:grid;grid-template-columns:1fr 1fr;gap:8px}
+#rallyGame .rr-setup-a .rr-units button{min-height:46px;text-align:left;border-radius:12px;border:2px solid #e3e8ee;background:#fff;color:#17324a;font-size:14px;font-weight:850;line-height:1.15}
+#rallyGame .rr-setup-a .rr-units button b{display:inline-grid;place-items:center;min-width:24px;height:24px;border-radius:7px;background:#eef2f6;margin-right:4px;font-size:12px}
+#rallyGame .rr-setup-a .rr-units button[aria-pressed=true]{border-color:#0b6b66;background:#e6f5f2}
+#rallyGame .rr-setup-a .rr-units button[aria-pressed=true] b{background:#0b6b66;color:#fff}
+#rallyGame .rr-setup-a .rr-selected-count{margin:8px 0 0;font-size:12px;font-weight:800;color:#7a8797;text-align:center}
+#rallyGame .rr-setup-a [data-units-done]{display:block;width:100%;margin:8px 0 0}
+#rallyGame .rr-a-rule{margin:12px 0 0;text-align:center;font-weight:850;font-size:14px;color:#5b6b7c}
+#rallyGame .rr-setup-a .rr-status{margin:6px 0 0;text-align:center;min-height:0}
+#rallyGame .rr-setup-a .rr-status:empty{display:none}
+#rallyGame .rr-main.rr-a-start{margin:14px 0 6px;min-height:60px;border:0;border-radius:20px;background:#e5312b;color:#fff;font-size:22px;font-weight:950;box-shadow:0 6px 0 #a81f1a}
+#rallyGame .rr-main.rr-a-start:disabled{opacity:.55}
+#rallyGame .rr-a-links{display:flex;justify-content:center;gap:4px;flex-wrap:wrap}
+#rallyGame .rr-a-links button{border:0;background:none;color:#0b6b66;font:850 14px Nunito,system-ui,sans-serif;padding:8px 10px;border-radius:10px}
+#rallyGame .rr-a-links button[hidden]{display:none}
+@media(max-height:620px){#rallyGame .rr-a-road{display:none}#rallyGame .rr-a-level b{font-size:44px}#rallyGame .rr-a-step{width:46px;height:46px}}
+@media(prefers-reduced-motion:reduce){#rallyGame .rr-a-car{animation:none}}
+#rallyGame .rr-a-level{min-width:0;flex:1;justify-items:center}
+#rallyGame .rr-setup-a .rr-pace-note{text-align:center}
