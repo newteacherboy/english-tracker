@@ -12,14 +12,10 @@
     return a;
   }
   const solved = (word,guessed)=>letters(word).every(ch=>guessed.has(ch));
-  const quota = level=>level>=30?3:level>=20?2:level>=15?1:0;
+  const quota = ()=>0;
   window.dmHarfAdasiCore=Object.freeze({makeKeys,solved,quota,letters});
   const id='asmacaOyunOverlay',get=sel=>document.querySelector('#'+id+' '+sel);
-  let current=null,timeout=null,ticker=null,run=0,usedBoosts=0,maxBoosts=0;
-  function progressLevel(){
-    try { const p=window.dmProgression;const n=p && typeof p.level==='function'?p.level():Number(window.level||window.yo?.level||1);return Number(n)||1; }
-    catch(_){return 1;}
-  }
+  let current=null,timeout=null,ticker=null,run=0;
   function stop(){
     run++;clearTimeout(timeout);clearInterval(ticker);timeout=null;ticker=null;current=null;
     document.getElementById(id)?.classList.remove('ia-playing','ia-intro');
@@ -73,7 +69,7 @@
       current.keys.map((ch,i)=>'<button type="button" data-ia-letter="'+ch+'" data-ia-tile="'+i+'" aria-label="'+ch+' harfi">'+ch+'</button>').join('')+'</div>';
   }
   function drawTools(){
-    return '<footer class="ha-tools"><button type="button" class="ha-hint" data-ia-boost="reveal">İpucu · <span data-ia-boost-count>'+(maxBoosts-usedBoosts)+'</span></button>'+
+    return '<footer class="ha-tools">'+
       '<button type="button" class="ha-skip" data-ia-skip disabled>Kelimeyi geç</button></footer>'+
       '<p class="ia-message" role="status" aria-live="polite">Harfleri kelimedeki sırayla seç.</p>';
   }
@@ -97,8 +93,6 @@
     let h=get('[data-ia-lives]');if(h){h.innerHTML=Array.from({length:5},(_,i)=>'<span class="'+(i>=current.lives?'lost':'')+'">'+HEART+'</span>').join('');h.setAttribute('aria-label','Kalan can: '+current.lives);}
     const sc=get('[data-ia-score]');if(sc)sc.textContent=asmacaPuan;
     const skip=get('[data-ia-skip]');if(skip)skip.disabled=current.locked||current.mistakes<2;
-    const budget=get('[data-ia-boost-count]');if(budget)budget.textContent=Math.max(0,maxBoosts-usedBoosts);
-    get('[data-ia-boost="reveal"]')?.toggleAttribute('disabled',current.locked||usedBoosts>=maxBoosts||current.usedTypes.has('reveal')||current.pos>=current.seq.length);
   }
   function flash(symbol,good){
     const feedback=get('.ia-feedback');if(!feedback)return;
@@ -144,13 +138,6 @@
       if(current.lives===0)finishWord(false);else status('Sıradaki harf bu değil. Kalan can: '+current.lives);
     }
   }
-  function boost(type){
-    if(type!=='reveal'||!current||current.locked||usedBoosts>=maxBoosts||current.usedTypes.has(type))return;
-    const need=current.seq[current.pos]?.ch;if(!need)return;
-    const tile=current.keys.findIndex((c,i)=>c===need&&!current.used.has(i));if(tile<0)return;
-    current.assisted=true;current.usedTypes.add(type);usedBoosts++;pick(tile);
-    status('Bir harf açıldı.');refresh();
-  }
   function next(){
     clearTimeout(timeout);timeout=null;clearInterval(ticker);
     const overlay=document.getElementById(id),body=document.getElementById('asmacaOyunEkrani');
@@ -158,7 +145,6 @@
     if(asmacaAktifIndex>=asmacaKelimeler.length){
       stop();return originalFinish();
     }
-    if(asmacaAktifIndex===0){usedBoosts=0;maxBoosts=quota(progressLevel());}
     run++;
     const k=asmacaKelimeler[asmacaAktifIndex];
     asmacaAktifKelime=String(k.ingilizce||k.en||'').trim().toUpperCase();
@@ -172,7 +158,6 @@
     body.innerHTML='<main class="ia-screen ha-v2" aria-label="Papi’nin Harf Adası oyunu">'+drawHeader()+drawScene()+drawAnswers()+'<div class="ha-bottom">'+drawKeys()+drawTools()+'</div></main>';
     body.querySelectorAll('[data-ia-close]').forEach(b=>b.addEventListener('click',exitToGames));
     body.querySelectorAll('[data-ia-tile]').forEach(b=>b.addEventListener('click',()=>pick(+b.dataset.iaTile)));
-    body.querySelectorAll('[data-ia-boost]').forEach(b=>b.addEventListener('click',()=>boost(b.dataset.iaBoost)));
     body.querySelector('[data-ia-skip]').addEventListener('click',()=>{if(current&&!current.locked&&current.mistakes>=2)finishWord(false);});
     refresh();timerStart();
   }

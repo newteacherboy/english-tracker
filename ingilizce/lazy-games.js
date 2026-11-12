@@ -1,6 +1,6 @@
 /* Optional games initialize once, when their tab or public opener is used. */
 (()=>{'use strict';
-  const premiumFile='premium-word-match.js?v=20261111-paket';
+  const premiumFile='premium-word-match.js?v=20261113-no-jokers';
   const introFile='premium-intro.js?v=20261111-paket';
   const files=['solo-arcade.js?v=20261111-papi','harf-bahcesi.js?v=20261111-papi','papi-cards.js?v=20261107-scored-rounds','meteor.js?v=20261112-kalan','word-wheel.js?v=20261016-ten-seconds','kelime-rallisi.js?v=20261112-kart-a'];
   const loaded=new Set();let pending=null,readyDone=false;

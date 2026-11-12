@@ -13,8 +13,6 @@
   const arrow = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg>';
   const money = n => `${art('coin')}<span>${Number(n).toLocaleString('tr-TR')}</span>`;
   const allowed = code => window.dmProgression?.allowed(code) !== false;
-  const jokerPrice = j => Number(j.f || 0);
-  const jokers = () => window.JOKER_MAGAZA || [];
   function button(label, attrs = '', disabled = false) { return `<button type="button" class="ds-buy" ${attrs} ${disabled && !(label === 'Altın eksik' && window.DijiReklam?.reklamGosterilsinMi()) ? 'disabled' : ''} ${label === 'Altın eksik' ? 'data-ad-shortage' : ''}>${label}</button>`; }
   function header() {
     return `<header class="ds-header"><div class="ds-heading">${art('bag')}<div><h1>Mağaza</h1><p>Karakterini giydir, enerjini al, macerana renk kat!</p></div></div><button type="button" class="ds-wallet" data-ds="energy" aria-label="Altın bakiyen ${gold()} · enerji paketlerine git">${money(gold())}<span class="ds-plus">+</span></button></header>`;
@@ -38,30 +36,9 @@
     const label = !o.allowed ? `🔒 Sv. ${o.level}` : o.equipped ? 'Giyili' : o.owned ? 'Kuşan' : gold() < o.price ? 'Altın eksik' : 'Satın al';
     return `<article class="ds-offer ${i ? 'ds-opportunity' : 'ds-outfit'}"><button type="button" class="ds-offer-heading" data-ds="clothing"><h2>${esc(o.title)}</h2></button><p>${esc(o.name)}${o.count > 1 ? ' · '+o.count+' parça' : ''}</p><div class="ds-offer-note">${esc(o.note || (o.count > 1 ? 'Birbiriyle uyumlu parçalar' : 'Tarzına yeni bir renk kat!'))}</div>${thumbnails}<button type="button" class="ds-product-preview" data-ds="clothing" aria-label="${esc(o.name)} ürününü incele">${preview}</button><div class="ds-offer-footer"><div class="ds-price">${money(o.price)}</div>${button(label, `data-item="${esc(o.id)}"`, !o.allowed || o.equipped || (!o.owned && gold() < o.price) || pending)}</div></article>`;
   }
-  function jokerCard(j) {
-    if (!j) return '';
-    const unlocked = allowed('joker_magaza'), n = typeof yo !== 'undefined' ? Number(yo?.jokerEnv?.[j.tur] || 0) : 0;
-    return `<article class="ds-joker"><div class="ds-joker-picture">${art(j.tur === 'm_xp' ? 'xp' : 'x2')}</div><div class="ds-joker-info"><b>${esc(j.tur === 'cift' ? 'Çift Puan' : j.ad)}</b><small>${esc(j.ac)}</small>${n ? `<span class="ds-stock">Çantanda: ${n}</span>` : ''}<div class="ds-joker-bottom"><div class="ds-price">${money(jokerPrice(j))}</div>${button(!unlocked ? '🔒 Sv. 18' : gold() < j.f ? 'Altın eksik' : 'Al', `data-joker="${esc(j.id)}"`, !unlocked || gold() < j.f || pending)}</div></div></article>`;
-  }
   function collectionCard() {
     const list=window._krkListe?.()||[],count=list.filter(k=>k.acik).length;
     return `<button type="button" class="ds-chests ds-collection" data-ds="collection"><span class="ds-collection-symbol" aria-hidden="true">🎭</span><span><b>Karakter koleksiyonum</b><small>${list.length?count+' / '+list.length+' karakter açıldı':'Yeni karakterleri keşfet'} · Tüm seviyelere açık</small></span>${arrow}</button>`;
-  }
-  // Premium Kelime Eşleştirme güçlendiricileri: altınla alınır, sayıları sunucuda (premium-games) tutulur.
-  const premiumBoosters = [['karistir','Karıştır','Karışık düzen','booster-karistir',40],['degistir','Yer Değiştir','2 şekli değiştir','booster-yer-degistir',60],['satir','Satır Patlat','Tüm satırı temizle','booster-satir-patlat',80],['renk','Renk Patlat','Aynı renklerin hepsi','booster-renk-patlat',120]];
-  function premiumBoosterSection() {
-    return `<section class="ds-pwm" aria-label="Premium oyun güçlendiricileri"><div class="ds-pwm-head"><img src="premium-assets/kelime-eslestirme/icon-crown.webp" alt=""><div><h2>Güçlendiriciler</h2><p>Premium Kelime Eşleştirme oyununda kullan!</p></div></div><div class="ds-pwm-grid">${premiumBoosters.map(([k, n, s, icon, price]) => `<article class="ds-pwm-item"><img src="premium-assets/kelime-eslestirme/${icon}.webp" alt="" loading="lazy" decoding="async"><b>${n}</b><small>${s}</small>${button(money(price), `data-pwm-buy="${k}"`, gold() < price)}</article>`).join('')}</div></section>`;
-  }
-  async function buyPremiumBooster(kind) {
-    const user = typeof aktifOgrenciAdi === 'undefined' ? '' : String(aktifOgrenciAdi || '');
-    const t = user.toLowerCase() === 'teacher' ? (sessionStorage.getItem('ing_ogr_token') || localStorage.getItem('ing_token') || '') : (localStorage.getItem('ing_token') || '');
-    const url = (typeof apiURL !== 'undefined' ? apiURL : '').replace(/diji-api.*$/, 'premium-games');
-    const r = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ op: 'buy', kind, t }), cache: 'no-store' });
-    const d = await r.json().catch(() => null);
-    if (!r.ok || !d || d.ok === false) throw Error(d?.mesaj || 'Satın alma tamamlanamadı.');
-    if (d.yo) window.dmApplyRewardState?.(d.yo, user);
-    const item = premiumBoosters.find(x => x[0] === kind);
-    toast(`${item ? item[1] : 'Güçlendirici'} eklendi! Sende ${d.boosters?.[kind] ?? ''} tane var.`); window.yoSes?.('dogru');
   }
   // 11 Kas 2026 · Claude Design "Mağaza B": Premium kartı (Premium Pro dışında; iOS'ta da açık). Reklamla enerji kartı dm-satis.js'ten gelir (#dmsShopEnergy).
   function v2Extras() {
@@ -72,8 +49,7 @@
     const offers = wardrobe()?.offers() || [];
     const character = wardrobe()?.character(240) || '<img src="profile-assets/papi-selam.png" alt="Papi">';
     const ready = wardrobe()?.ready();
-    const featureJokers = [jokers().find(j => j.tur === 'cift'), jokers().find(j => j.id === 'xp-tilsimi')];
-    return `<main class="ds-home">${header()}<section class="ds-room" aria-label="Karakterinin giyinme odası"><div class="ds-wardrobe-shortcuts"><button type="button" data-category="sapka" aria-label="Şapka ve gözlükleri incele">🧢</button><button type="button" data-category="ust" aria-label="Üst giyimi incele">🧥</button><button type="button" data-category="aks" aria-label="Aksesuarları incele">🎒</button></div><div class="ds-character">${character}</div><div class="ds-character-actions"><button type="button" class="ds-character-label" data-ds="builder"><b>${ready ? 'Karakterin' : 'Papi seni bekliyor'}</b><span>✎ ${ready ? 'Tipimi tasarla' : 'Karakterini oluştur'}</span></button><button type="button" class="ds-shop-cta" data-ds="clothing" aria-label="Alışveriş Yap: karakterin için kıyafet ve aksesuarları aç"><span aria-hidden="true">🛍️</span><span>Alışveriş Yap</span><span aria-hidden="true">›</span></button></div></section>${energy()}${v2Extras()}<section class="ds-v2-shortcuts" aria-label="Çantam ve günün fırsatı"><button type="button" class="ds-v2-tile ds-v2-bag" data-ds="bag"><span class="ds-v2-art"><img src="bag-purple.svg" alt=""></span><b>Çantam</b><small>Aldıkların ve kazandıkların</small></button><button type="button" class="ds-v2-tile ds-v2-deal" data-ds="clothing"><span class="ds-v2-art">${(offers[1]||offers[0]) ? (wardrobe()?.art((offers[1]||offers[0]).id) || '') : '<span class="ds-v2-sprite"></span>'}</span><b>Günün fırsatı</b><small>${esc((offers[1]||offers[0])?.name || 'Giyim koleksiyonunu keşfet!')}</small></button></section><section class="ds-jokers"><div class="ds-joker-intro"><button type="button" data-ds="jokers"><h2>Jokerler ${arrow}</h2></button><p>Oyunlarında sana<br>özel güçler!</p></div>${featureJokers.map(jokerCard).join('')}</section>${premiumBoosterSection()}<section class="ds-discover-grid" aria-label="Sandıklar ve karakter koleksiyonu"><button type="button" class="ds-chests" data-ds="chests">${art('chest')}<span><b>Sandıklar</b><small>Sürpriz ödüllerini keşfet!</small></span>${arrow}</button>${collectionCard()}</section></main>`;
+    return `<main class="ds-home">${header()}<section class="ds-room" aria-label="Karakterinin giyinme odası"><div class="ds-wardrobe-shortcuts"><button type="button" data-category="sapka" aria-label="Şapka ve gözlükleri incele">🧢</button><button type="button" data-category="ust" aria-label="Üst giyimi incele">🧥</button><button type="button" data-category="aks" aria-label="Aksesuarları incele">🎒</button></div><div class="ds-character">${character}</div><div class="ds-character-actions"><button type="button" class="ds-character-label" data-ds="builder"><b>${ready ? 'Karakterin' : 'Papi seni bekliyor'}</b><span>✎ ${ready ? 'Tipimi tasarla' : 'Karakterini oluştur'}</span></button><button type="button" class="ds-shop-cta" data-ds="clothing" aria-label="Alışveriş Yap: karakterin için kıyafet ve aksesuarları aç"><span aria-hidden="true">🛍️</span><span>Alışveriş Yap</span><span aria-hidden="true">›</span></button></div></section>${energy()}${v2Extras()}<section class="ds-v2-shortcuts" aria-label="Çantam ve günün fırsatı"><button type="button" class="ds-v2-tile ds-v2-bag" data-ds="bag"><span class="ds-v2-art"><img src="bag-purple.svg" alt=""></span><b>Çantam</b><small>Aldıkların ve kazandıkların</small></button><button type="button" class="ds-v2-tile ds-v2-deal" data-ds="clothing"><span class="ds-v2-art">${(offers[1]||offers[0]) ? (wardrobe()?.art((offers[1]||offers[0]).id) || '') : '<span class="ds-v2-sprite"></span>'}</span><b>Günün fırsatı</b><small>${esc((offers[1]||offers[0])?.name || 'Giyim koleksiyonunu keşfet!')}</small></button></section><section class="ds-discover-grid" aria-label="Sandıklar ve karakter koleksiyonu"><button type="button" class="ds-chests" data-ds="chests">${art('chest')}<span><b>Sandıklar</b><small>Sürpriz ödüllerini keşfet!</small></span>${arrow}</button>${collectionCard()}</section></main>`;
   }
   function root() {
     const overlay = $('tab-magaza'), cap = overlay?.querySelector('.mg-kap');
@@ -97,7 +73,6 @@
     $('dsCategoryBack')?.remove(); refresh(); overlay.scrollTop = 0; void updateEnergyLimit(visit);
   }
   function showDetail(kind, category) {
-    if (kind === 'jokers' && !window.dmProgression?.require('joker_magaza')) return;
     if (kind === 'collection' && !window.dmProgression?.require('koleksiyon')) return;
     page = kind; const overlay = $('tab-magaza'); overlay.classList.remove('ds-home-mode'); overlay.classList.add('ds-detail-mode');
     let back = $('dsCategoryBack'); if (!back) { back = document.createElement('button'); back.type = 'button'; back.id = 'dsCategoryBack'; back.className = 'ds-back'; overlay.querySelector('.mg-kap').prepend(back); }
@@ -111,20 +86,16 @@
       $('magazaAlan').style.display = 'none';
       root().innerHTML = `<main class="ds-home ds-collection-page">${header()}<section id="dsCollection" aria-label="Karakter koleksiyonum"></section></main>`;
       window.bcKoleksiyonCiz?.($('dsCollection'));bind(root());
-    } else {
-      $('magazaAlan').style.display = 'none';
-      root().innerHTML = `<main class="ds-home ds-all-jokers">${header()}<h2>Tüm jokerler</h2><div class="ds-joker-grid">${jokers().map(j => `<article class="ds-joker ds-catalog-joker"><div class="ds-catalog-emoji" aria-hidden="true">${esc(j.e)}</div><div class="ds-joker-info"><b>${esc(j.ad)}</b><small>${esc(j.ac)}</small><div class="ds-joker-bottom"><div class="ds-price">${money(j.f)}</div>${button(gold() < j.f ? 'Altın eksik' : 'Al',`data-joker="${esc(j.id)}"`,gold() < j.f || pending)}</div></div></article>`).join('')}</div></main>`;
-      bind(root());
     }
     overlay.scrollTop = 0;
   }
   async function purchase(btn, action) {
     if (pending || btn.disabled) return;
-    if(!btn.dataset.pack && btn.hasAttribute('data-ad-shortage') && window.DijiReklam?.reklamGosterilsinMi()){const urun=btn.dataset.item?{tip:'kiyafet',id:btn.dataset.item}:btn.dataset.joker?{tip:'joker',id:btn.dataset.joker}:{tip:'enerji',id:btn.dataset.pack};window.DijiReklam.altinEksik(urun);return;}
+    if(!btn.dataset.pack && btn.hasAttribute('data-ad-shortage') && window.DijiReklam?.reklamGosterilsinMi()){const urun=btn.dataset.item?{tip:'kiyafet',id:btn.dataset.item}:{tip:'enerji',id:btn.dataset.pack};window.DijiReklam.altinEksik(urun);return;}
     pending = true; const old = btn.textContent; btn.disabled = true; btn.textContent = 'Alınıyor…';
     try { await action(); }
     catch (e) { toast(e.message || 'Satın alma tamamlanamadı.'); }
-    finally { pending = false; if (page === 'home') refresh(); else if (page === 'jokers') showDetail('jokers'); if (btn.isConnected) { btn.disabled = false; btn.textContent = old; } }
+    finally { pending = false; if (page === 'home') refresh(); if (btn.isConnected) { btn.disabled = false; btn.textContent = old; } }
   }
   function bind(r) {
     r.querySelectorAll('[data-ds]').forEach(btn => btn.onclick = () => {
@@ -143,14 +114,6 @@
       if (purchased) void updateEnergyLimit(visit);
     }));
     r.querySelectorAll('[data-item]').forEach(btn => btn.onclick = () => purchase(btn, () => wardrobe().buy(btn.dataset.item)));
-    r.querySelectorAll('[data-pwm-buy]').forEach(btn => btn.onclick = () => purchase(btn, () => buyPremiumBooster(btn.dataset.pwmBuy)));
-    r.querySelectorAll('[data-joker]').forEach(btn => btn.onclick = () => purchase(btn, async () => {
-      if (!window.dmProgression?.require('joker_magaza')) return;
-      const j = jokers().find(x => x.id === btn.dataset.joker); if (!j) throw Error('Ürün bulunamadı.');
-      const d = await window.dmEkonomi.islem('jokerAl', { id: j.id });
-      if (!d?.ok) throw Error(d?.mesaj || 'Satın alma tamamlanamadı.');
-      toast(`${j.ad} çantana eklendi!`); window.yoSes?.('dogru');
-    }));
   }
   window.magazaAc = function () {
     if (typeof yoHazirMi === 'function' && !yoHazirMi()) return;
@@ -181,7 +144,7 @@
   if (!window.dmBagInventory && !document.querySelector('script[data-dm-bag-module]')) {
     const module = document.createElement('script');
     module.dataset.dmBagModule = '1';
-    module.src = new URL('bag-inventory.js?v=20261019-first-tap-4', document.currentScript?.src || location.href).href;
+    module.src = new URL('bag-inventory.js?v=20261113-no-jokers', document.currentScript?.src || location.href).href;
     document.head.appendChild(module);
   }
 })();

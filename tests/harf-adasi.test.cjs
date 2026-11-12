@@ -17,8 +17,8 @@ test('repeated letters are revealed with one correct choice',()=>{
  assert(!core.solved('BANANA',new Set(['B','A'])));
  assert(core.solved('ICE-CREAM',new Set(['I','C','E','R','A','M'])));
 });
-test('boost entitlement follows level thresholds',()=>{
- assert.deepEqual([1,14,15,19,20,29,30,40].map(core.quota),[0,0,1,1,2,2,3,3]);
+test('retired hint rights stay zero at every level',()=>{
+ assert.deepEqual([1,14,15,19,20,29,30,40].map(core.quota),[0,0,0,0,0,0,0,0]);
 });
 test('new source is isolated from energy debit and remote reward writes',()=>{
  assert(!src.includes('enerjiDegistir'));

@@ -5,7 +5,6 @@
 const PROJECT_URL=Deno.env.get('SUPABASE_URL')||'';
 const ADMIN_KEY=Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')||'';
 const UUID=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-const BOOSTERS=new Set(['karistir','degistir','satir','renk']);
 // Token gövdede taşınır (çerez yok); diji-api gibi tüm kökenlere açık.
 function headers(_req:Request){return {'Access-Control-Allow-Origin':'*','Access-Control-Allow-Headers':'content-type, authorization, apikey, x-client-info','Access-Control-Allow-Methods':'POST, OPTIONS','Access-Control-Max-Age':'86400','Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store'};}
 function reply(req:Request,data:unknown,status=200){return new Response(JSON.stringify(data),{status,headers:headers(req)});}
@@ -107,11 +106,6 @@ Deno.serve(async(req:Request)=>{
   if(op==='finish'){
    if(!UUID.test(String(b.runId||''))||![b.score,b.moves,b.seconds].every(v=>Number.isSafeInteger(v)&&v>=0)||typeof b.won!=='boolean')return reply(req,{ok:false,mesaj:'Geçersiz oyun sonucu.'},400);
    return await gameReply(await db('rpc/dm_pwm_finish',{actor,run_key:b.runId,p_score:b.score,p_won:b.won,p_moves:b.moves,p_seconds:b.seconds}));
-  }
-  if(op==='buy'||op==='use'){
-   if(!BOOSTERS.has(String(b.kind)))return reply(req,{ok:false,mesaj:'Geçersiz güçlendirici.'},400);
-   if(op==='use'&&!UUID.test(String(b.runId||'')))return reply(req,{ok:false,mesaj:'Oyun bulunamadı.'},400);
-   return await gameReply(await db('rpc/dm_pwm_booster',{actor,kind:b.kind,op,run_key:op==='use'?b.runId:null}));
   }
   return reply(req,{ok:false,mesaj:'Geçersiz işlem.'},400);
  }catch(err){

@@ -30,7 +30,7 @@ test('card finale offers two choices without microphone controls', () => {
 
 test('card finale cannot be bypassed using jokers', () => {
   const script=html.slice(start,end);
-  assert.match(script,/O\.sorular\[O\.i\]\?\.tip==='sesliFinal'/);
+  assert.doesNotMatch(script,/function jokerKullan|function jkHarca|id="bzJokerler"/);
 });
 test('incorrect final cards stay pending and enter the student review queue', () => {
   const script=html.slice(start,end),a=script.indexOf('  function sesliFinal('),b=script.indexOf('  /* 🎈 Risk',a),final=script.slice(a,b);

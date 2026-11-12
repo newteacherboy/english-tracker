@@ -158,11 +158,7 @@
         let hedef = kilitli.find(k => krkFiyat(k) <= altin) || kilitli[0];
         if (hedef) tavsiye({ ikon: krkGorsel(hedef), metin: `${hedef.ad} karakterini almak ister misin?`, alt: `🪙 ${krkFiyat(hedef)} · Altının: ${altin}`, btn: 'Göz at', fn: () => krkSatinAl(hedef) }, true);
       } else if (/Sandık/.test(s)) tavsiye({ ikon: '🧰', metin: 'Seviye beklemeden sandık aç!', alt: `Bronz Sandık 🪙 150 · Altının: ${altin}`, btn: 'İncele', fn: () => sandikAl(0) }, true);
-      else if (/Joker/.test(s)) {
-        let J = window.JOKER_MAGAZA || [], E = yo.jokerEnv || {}, bos = !Object.values(E).some(v => v > 0);
-        let j = J.filter(x => x.f <= Math.max(altin, 10)).sort((a, b) => b.f - a.f)[0] || J[0];
-        if (j) tavsiye({ ikon: j.e, metin: bos ? 'Çantan boş! Oyunlarda seni kurtaracak bir joker al.' : `${j.ad}: ${j.ac}`, alt: `🪙 ${j.f} · Altının: ${altin}`, btn: 'Al', fn: () => onayKarti({ urun:{tip:'joker',id:j.id}, gorsel: j.e, baslik: j.ad, metin: j.ac, fiyat: j.f, evet: 'Çantama ekle', al: () => { document.querySelector(`.jm-al[data-id="${j.id}"]`)?.click(); } }) }, true);
-      } else if (/Atölye/.test(s) && altin >= 30) tavsiye({ ikon: '🎨', metin: `${altin} altının var! Karakterine yeni bir şapka ya da kıyafet dene.`, alt: 'Önce dene, beğenirsen al' }, true);
+      else if (/Atölye/.test(s) && altin >= 30) tavsiye({ ikon: '🎨', metin: `${altin} altının var! Karakterine yeni bir şapka ya da kıyafet dene.`, alt: 'Önce dene, beğenirsen al' }, true);
     }
     sonSekme = s;
   }, 700);
@@ -173,23 +169,4 @@
     if (typeof k === 'number' && k <= 3 && (yo.altin || 0) >= 15 && !gosterilen.has('enerji' + k))
       if (tavsiye({ ikon: '🪫', metin: `Enerjin azalıyor (${k} kaldı)!`, alt: '5 enerji = 🪙 100 · oyun bölünmesin', btn: '⚡ Al', fn: () => window.dmEnerjiPaketPaneli?.() })) gosterilen.add('enerji' + k);
   }, 20000);
-  /* Oyunda jokerler bitince (ya da bitmeden, nadiren) */
-  let oyunNo = 0, oyundaydi = false, buOyunOneri = false;
-  setInterval(() => {
-    let s = oyunda();
-    if (s && !oyundaydi) { oyunNo++; buOyunOneri = false; }
-    oyundaydi = s;
-    if (!s || buOyunOneri || !yoVar()) return;
-    let bar = $('jkBar'); if (!bar || !bar.offsetParent) return;
-    let butonlar = [...bar.querySelectorAll('[onclick*="jokerKullan"]')];
-    if (!butonlar.length) return;
-    let hepsiBitti = typeof jk !== 'undefined' && jk.kullanilan && butonlar.every(b => { let m = (b.getAttribute('onclick') || '').match(/jokerKullan\('(\w+)'\)/); return m && jk.kullanilan.has(m[1]) && !((yo.jokerEnv || {})[m[1]] > 0); });
-    let J = window.JOKER_MAGAZA || [];
-    let turler = butonlar.map(b => ((b.getAttribute('onclick') || '').match(/jokerKullan\('(\w+)'\)/) || [])[1]).filter(Boolean);
-    let aday = J.filter(j => turler.includes(j.tur) && j.kad === 1 && j.f <= (yo.altin || 0));
-    if (!aday.length) return;
-    let j = aday[Math.floor(Math.random() * aday.length)];
-    if (hepsiBitti && Math.random() < 0.6) { buOyunOneri = true; tavsiye({ ikon: j.e, metin: 'Jokerlerin bitti! 🎒', alt: `${j.ad} · 🪙 ${j.f} — ${j.ac}`, btn: 'Al', fn: () => onayKarti({ urun:{tip:'joker',id:j.id}, gorsel: j.e, baslik: j.ad, metin: j.ac + ' Hemen kullanabilirsin.', fiyat: j.f, evet: 'Al ve kullan', al: () => { window.dmEkonomi.islem('jokerAl', { id: j.id }).then(d => { if (!d.ok) { toast(d.mesaj || 'Satın alma tamamlanamadı.'); return; } if (typeof jokerBarCiz === 'function') jokerBarCiz(); toast(`${j.e} ${j.ad} çantanda!`); }); } }) }); }
-    else if (!hepsiBitti && oyunNo % 4 === 0 && Math.random() < 0.15) { buOyunOneri = true; tavsiye({ ikon: j.e, metin: `İpucu: ${j.ad} bu oyunda çok işe yarar!`, alt: `🪙 ${j.f} · Mağaza › Jokerler` }); }
-  }, 3000);
 })();

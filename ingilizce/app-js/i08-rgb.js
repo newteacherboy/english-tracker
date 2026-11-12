@@ -137,17 +137,13 @@ const KADEME = [
 ];
 const SOYUN = {
   ba: { ad:'Büyü Akademisi', ikon:'🧙', zemin:'linear-gradient(180deg,#2a1a5e 0%,#5b21b6 55%,#7c3aed 100%)', govde:'#6d28d9', kapak:'#8b5cf6', amblem:'🔮', dekor:['✨','🌙','⭐','🔮','🪄'],
-        sandik:['Çırak Sandığı','Büyücü Sandığı','Başbüyücü Sandığı','Ejderha Hazinesi'],
-        joker:[['✂️','Yarıya indir'],['🔤','Harf ipucu'],['🦜','Papağan yardımı']] },
+        sandik:['Çırak Sandığı','Büyücü Sandığı','Başbüyücü Sandığı','Ejderha Hazinesi'] },
   kp: { ad:'Kelime Modu', ikon:'🔤', zemin:'linear-gradient(180deg,#ff8a3d 0%,#ff5d8f 60%,#c026d3 100%)', govde:'#c2410c', kapak:'#f97316', amblem:'🔤', dekor:['🅰️','🅱️','💬','🎤','📣'],
-        sandik:['Harf Kutusu','Kelime Sandığı','Hece Hazinesi','Alfabe Kralı Sandığı'],
-        joker:[['🔁','Tekrar dinle'],['⏭️','Pas geç'],['🐢','Yavaş söyle']] },
+        sandik:['Harf Kutusu','Kelime Sandığı','Hece Hazinesi','Alfabe Kralı Sandığı'] },
   sohbet: { ad:'Papağanla Sohbet', ikon:'🦜', zemin:'linear-gradient(180deg,#0ea5e9 0%,#10b981 60%,#15803d 100%)', govde:'#15803d', kapak:'#22c55e', amblem:'🦜', dekor:['🌴','🌺','🥥','🌊','🍍'],
-        sandik:['Yuva Kutusu','Tropik Sandık','Mercan Sandığı','Gökkuşağı Papağan Hazinesi'],
-        joker:[['💡','Örnek cevap'],['🔁','Tekrar dinle'],['⏭️','Pas geç']] },
+        sandik:['Yuva Kutusu','Tropik Sandık','Mercan Sandığı','Gökkuşağı Papağan Hazinesi'] },
   kart: { ad:'Kelime Kartları', ikon:'🃏', zemin:'linear-gradient(180deg,#38bdf8 0%,#0284c7 50%,#1e3a8a 100%)', govde:'#7c4a1e', kapak:'#a16207', amblem:'🗺️', dekor:['🏝️','⛵','🐚','🦀','🐠'],
-        sandik:['Ada Sandığı','Kaptan Sandığı','Zümrüt Hazine','Efsane Korsan Hazinesi'],
-        joker:[['👁️','Kartı çevir'],['✂️','Yarıya indir'],['🛡️','Kalkan']] }
+        sandik:['Ada Sandığı','Kaptan Sandığı','Zümrüt Hazine','Efsane Korsan Hazinesi'] }
 };
 function sandikSVG(o, k, px) {
   let K = KADEME[k], efsane = k === 3;
@@ -174,15 +170,14 @@ function sandikSVG(o, k, px) {
 function odulUret(k, o) {
   let r = [];
   const T = [
-    { xp:[10,20], al:[3,5],   en:[0,1], jk:[0,0],    hd:0,    kar:0 },
-    { xp:[20,35], al:[5,10],  en:[0.30,2], jk:[0.15,1], hd:0,    kar:0 },
-    { xp:[35,60], al:[10,15], en:[1,3],    jk:[0.5,1],  hd:0.25, kar:0 },
-    { xp:[60,100],al:[15,25], en:[1,5],    jk:[1,2],    hd:1,    kar:0.25 }
+    { xp:[10,20], al:[3,5],   en:[0,1],    hd:0,    kar:0 },
+    { xp:[20,35], al:[5,10],  en:[0.30,2], hd:0,    kar:0 },
+    { xp:[35,60], al:[10,15], en:[1,3],  hd:0.25, kar:0 },
+    { xp:[60,100],al:[15,25], en:[1,5],    hd:1,    kar:0.25 }
   ][k];
   r.push({ e:'⭐', m:rnd(...T.xp), t:'XP', tur:'xp' });
   r.push({ e:'🪙', m:rnd(...T.al), t:'altın', tur:'altin' });
   if (sans(T.en[0])) r.push({ e:'⚡', m:T.en[1], t:'enerji', tur:'enerji' });
-  if (T.jk[1] && sans(T.jk[0])) for (let i = 0; i < T.jk[1]; i++) { let j = o.joker[rnd(0, o.joker.length - 1)]; r.push({ e:j[0], m:1, t:j[1] + ' jokeri', tur:'joker', nadir:true }); }
   if (sans(T.hd)) r.push({ e:'🎁', m:1, t:'hediye gönderme hakkı', tur:'hediye', nadir:true });
   if (sans(T.kar)) r.push({ e:'👕', m:1, t:'nadir kıyafet parçası', tur:'kar', nadir:true });
   return r;
@@ -263,7 +258,7 @@ function odulUret(k, o) {
       parca(r.left + r.width / 2, r.top + r.height / 2, 30, ['✨', '⭐', '🪙', '🎉', '💎']);
       s.remove();
       p.querySelector('.bc-ipucu').innerText = k >= 2 ? '🤩 Muhteşem bir hazine!' : 'İşte hazinen!';
-      p.querySelector('.bc-oduller').innerHTML = oduller.map((x, i) => `<div class="bc-odul${x.nadir ? ' nadir' : ''}" style="--g:${0.15 + i * 0.22}s"><span class="e">${x.e}</span><b>${['xp', 'altin', 'enerji'].includes(x.tur) ? '+' + x.m : '×' + x.m}</b><small>${x.tur === 'joker' ? 'ekstra joker' : x.t}</small></div>`).join('');
+      p.querySelector('.bc-oduller').innerHTML = oduller.map((x, i) => `<div class="bc-odul${x.nadir ? ' nadir' : ''}" style="--g:${0.15 + i * 0.22}s"><span class="e">${x.e}</span><b>${['xp', 'altin', 'enerji'].includes(x.tur) ? '+' + x.m : '×' + x.m}</b><small>${x.t}</small></div>`).join('');
       setTimeout(() => p.classList.add('bitti'), 300 + oduller.length * 220);
     };
     p.querySelector('.bc-topla').onclick = () => {
@@ -271,7 +266,6 @@ function odulUret(k, o) {
       let xp = 0, al = 0, en = 0;
       oduller.forEach(x => {
         if (x.tur === 'xp') xp += x.m; else if (x.tur === 'altin') al += x.m; else if (x.tur === 'enerji') en += x.m;
-        else if (x.tur === 'joker') yo.jokerStok = (yo.jokerStok || 0) + x.m;
         else if (x.tur === 'hediye') yo.hediyeHak = (yo.hediyeHak || 0) + x.m;
         else if (x.tur === 'kar') {
           let aday = yo.karakter ? NADIR_KIYAFET.filter(id => !(yo.karakter.sahip || []).includes(id)) : [];
@@ -332,21 +326,6 @@ function odulUret(k, o) {
   };
 
   /* ================= EKSTRA JOKER ================= */
-  let orgJk = window.jokerKullan;
-  if (typeof orgJk === 'function') window.jokerKullan = function (j) {
-    if (typeof jk !== 'undefined' && jk.kullanilan && jk.kullanilan.has(j) && yoVar() && (yo.jokerStok || 0) > 0) {
-      jk.kullanilan.delete(j); yo.jokerStok--; yoKaydet();
-      if (typeof yoToast === 'function') yoToast(`🎟️ Ekstra joker kullanıldı! Kalan: ${yo.jokerStok}`);
-    }
-    return orgJk.apply(this, arguments);
-  };
-  let orgJb = window.jokerBarCiz;
-  if (typeof orgJb === 'function') window.jokerBarCiz = function () {
-    let r = orgJb.apply(this, arguments);
-    if (yoVar() && yo.jokerStok) document.querySelectorAll('.jk-alt span').forEach(s => { if (!/Ekstra/.test(s.innerText) && /Kalan joker/.test(s.innerText)) s.innerText += ` · 🎟️ Ekstra: ${yo.jokerStok}`; });
-    return r;
-  };
-
   /* ================= EKSTRA HEDİYE HAKKI ================= */
   let orgEg = window.enerjiGonder;
   if (typeof orgEg === 'function') window.enerjiGonder = async function (alici, btn) {
@@ -420,7 +399,7 @@ function odulUret(k, o) {
     return `<div class="bc-kutu"><h3>🎁 Kayıp Hazineler</h3><p>Her oyunda her 3 seviyede bir sandık kazanırsın. Kademeler sırayla yükselir: Bronz → Gümüş → Altın → Efsane. Her sandığın %15 "yükselme" şansı var.</p>
       ${['ba', 'kp', 'sh', 'kk'].map(g => { let n = ilerleme[g] || 0, sonraki = 3 - (n % 3), o = SOYUN[SK[g]], acilan = s[g] || 0, k = acilan % 4;
         return `<div class="bc-satir"><span class="bc-mini">${sandikSVG(o, k, 54)}</span><span><b>${OYUN_AD[g]}</b><small>${n} seviye · ${acilan} sandık açtın · sonraki (${KADEME[k].ad}) ${sonraki} seviye sonra</small></span></div>`; }).join('')}
-      <div class="bc-envanter"><span>🎟️ Ekstra joker: <b>${(yoVar() && yo.jokerStok) || 0}</b><small>Bir jokeri aynı turda tekrar kullanır</small></span><span>🎁 Hediye hakkı: <b>${(yoVar() && yo.hediyeHak) || 0}</b><small>Arkadaşına günde 1'den fazla enerji yollar</small></span></div></div>`;
+      <div class="bc-envanter"><span>🎁 Hediye hakkı: <b>${(yoVar() && yo.hediyeHak) || 0}</b><small>Arkadaşına günde 1'den fazla enerji yollar</small></span></div></div>`;
   }
            window.bcMgCiz = mgCiz;
   window.bcSandikAc = sandikTorenAc;

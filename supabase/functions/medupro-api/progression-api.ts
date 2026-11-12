@@ -8,7 +8,7 @@ export function progressionAPI(db:any,json:any){
  async function context(a:any,withPath=false){const {data,error}=await db.rpc('dm_progress_context',{actor:a.student_id});if(error)throw error;if(!withPath)return data;const startPath=await loadStartPath(db,a.student_id,data);return {...data,startPath,studyAccess:studyAccess(startPath)};}
  const deny=(n:any)=>json({ok:false,status:'kilitli',mesaj:typeof n==='number'?`Bu özellik ${n}. seviyede açılır.`:n},403);
  async function handle(op:string,body:any,q:URLSearchParams,a:any){
-  if(!['haftalikHedefSec','haftalikHedefOdulAl','seviyeDurumu','seviyeSandikAc','seviyeUrunAl','seviyeEkJokerAl','seviyeLigListesi','seviyeOyunOdulu','seviyeParkurPekistirme'].includes(op))return null;
+  if(!['haftalikHedefSec','haftalikHedefOdulAl','seviyeDurumu','seviyeSandikAc','seviyeUrunAl','seviyeLigListesi','seviyeOyunOdulu','seviyeParkurPekistirme'].includes(op))return null;
   if(a?.role!=='student'||!a.student_id)return json({ok:false,mesaj:'Öğrenci oturumu gerekli.'},401);
   if(op==='haftalikHedefSec'){
     const xp=Number(body.xp);
@@ -53,7 +53,7 @@ export function progressionAPI(db:any,json:any){
    const {data,error}=fair
       ?await db.rpc('dm_parkur_fair_claim',{actor:a.student_id,run_key:String(body.runId||''),
          class_id:Number(body.classNo),stop_no:units[0],seconds:Number(body.seconds)})
-      :await db.rpc('dm_solo_fair_claim',{actor:a.student_id,run_key:String(body.runId||''),game_code:game,class_id:Number(body.classNo),unit_ids:units,right_count:Number(body.correct),wrong_count:Number(body.wrong),duration_seconds:Number(body.seconds),boost_factor:[2,3,4].includes(Number(body.boost))?Number(body.boost):1});
+      :await db.rpc('dm_solo_fair_claim',{actor:a.student_id,run_key:String(body.runId||''),game_code:game,class_id:Number(body.classNo),unit_ids:units,right_count:Number(body.correct),wrong_count:Number(body.wrong),duration_seconds:Number(body.seconds),boost_factor:1});
    if(error)return json({ok:false,mesaj:error.message},400);
    if(fair&&data?.ok&&['awarded','duplicate'].includes(String(data.reason||''))){
      // Idempotent existing three-stop gift; retrying a completed claim may
@@ -69,7 +69,6 @@ export function progressionAPI(db:any,json:any){
   if(op==='seviyeDurumu')return json({ok:true,...await context(a,true)});
   if(op==='seviyeLigListesi'){const {data,error}=await db.rpc('dm_progress_league');if(error)throw error;return json({ok:true,liste:data});}
   if(op==='seviyeSandikAc'){const {data,error}=await db.rpc('dm_progress_chest',{actor:a.student_id,chest:String(body.sandik||'')});if(error)return deny(error.message);return json({ok:true,...data});}
-  if(op==='seviyeEkJokerAl'){const {data,error}=await db.rpc('dm_progress_purchase',{actor:a.student_id,item_key:'extra-joker',is_showcase:false});if(error)return deny(error.message);return json({ok:true,...data});}
   const item=(items as any[]).find(x=>x.id===String(body.item));if(!item)return json({ok:false,mesaj:'Ürün bulunamadı.'},400);
   // Daily display rotation is deterministic and computed independently of the client.
   const {data:st,error:se}=await db.from('students').select('username').eq('id',a.student_id).single();if(se)throw se;
@@ -104,11 +103,9 @@ export function progressionAPI(db:any,json:any){
    const before=ctx.yo||{};
    if(incoming?.karakter?.cins&&!['k','e'].includes(incoming.karakter.cins))return deny('Geçerli karakter seçimi gerekli.');
    if(incoming?.profilKrk&&incoming?.profilKrk!==before.profilKrk&&l<20)return deny(20);
-   if(l<18&&Object.entries(incoming?.jokerEnv||{}).some(([k,n])=>Number(n)>Number(before.jokerEnv?.[k]||0)))return deny(18);
    const oldOwned=new Set(before.karakter?.sahip||[]),newOwned=incoming?.karakter?.sahip||[];
    if(!Array.isArray(newOwned)||newOwned.some((id:any)=>!oldOwned.has(id)))return deny('Yeni ürünler mağazanın satın alma işlemiyle kazanılır.');
    // Paid rights, weekly XP and reward ledgers can only be credited by the server.
-   if(Number(incoming?.dmExtraJoker||0)>Number(before.dmExtraJoker||0))return deny('Ek joker hakkını mağazadan satın al.');
    if(l<(C.gates.haftalik_hedef||1)&&incoming?.haftaHedef&&JSON.stringify(incoming?.haftaHedef)!==JSON.stringify(before.haftaHedef))return deny(C.gates.haftalik_hedef||1);
    if(l<(C.gates.gunluk_gorev||1)&&incoming?.gorev&&JSON.stringify(incoming?.gorev)!==JSON.stringify(before.gorev))return deny(C.gates.gunluk_gorev||1);
    if(incoming?.karakter){

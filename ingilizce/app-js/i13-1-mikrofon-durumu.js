@@ -81,9 +81,6 @@
     }
     if (xp === 0 && altin === 5) altin = 3;
     if (xp === 20 && !altin) xp = 30;
-    const bonus = window.dmGameBonusFlags?.() || {};
-    if (bonus.xpBoost) xp = (xp || 0) * 2;
-    if (bonus.goldBoost || (bonus.comboBoost && altin === 5)) altin = (altin || 0) * 2;
     if (aktif('tab-buyuakademisi')) { xp = Math.round((xp || 0) * 2); altin = Math.round((altin || 0) * 2); }
     if (altin > 0) altin = Math.round(altin * window.seriCarpani());
     return orgXp.call(this, xp, altin);

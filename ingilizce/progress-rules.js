@@ -31,9 +31,7 @@
     if(!correct||correct>8||!baseXp)return {xp:0,gold:0,bonus:1};
     const stars=correct/(correct+wrong)>=.8?3:correct/(correct+wrong)>=.5?2:1;
     const daily=ordinal<=3?2:ordinal>12?.5:1;
-    const double=level>=15&&Number(o.odulCarpan)>1;
-    const xpFactor=double||(level>=15&&xpBoost)?2:1;
-    const goldFactor=double||(level>=15&&goldBoost)?2:1;
+    const xpFactor=1,goldFactor=1;
     return {xp:Math.min(GAME_XP_MAX,Math.round(Math.min(baseXp,GAME_BASE_XP)*daily*xpFactor)),gold:Math.round(Math.round([0,4,7,10][stars]*daily*goldFactor)*Math.min(1.5,Math.max(1,Number(streak)||1))),bonus:Math.max(xpFactor,goldFactor)};
   }
   function discount(price,{first=false,showcase=false}={}){return Math.round(positive(price)*(first?.75:showcase?.7:1));}

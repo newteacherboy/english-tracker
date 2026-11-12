@@ -342,7 +342,7 @@
       'lab','wordOrder','patternOrder','patternComplete','patternListen','patternTranslate'];
     const sorular=types.map((tip,i)=>({tip,k:active[i%active.length],l:active.slice()}));
     sorular.push({tip:'sesliFinal',l:active.slice()});
-    O = { owner:ownerAtStart, b, d, D, sorular, speechAlternatives:{}, kombo:0, i: 0, dogru: 0, yanlis: 0, sonuclar: [], tum, bas: Date.now(), gecmis: [], jk: {}, jkBedava: { yari: 0, harf: 0, pas: 0, ikinci: 0 }, jokerKullanim: 0, harcanan: 0, runId:crypto.randomUUID(), pendingAnswer:null };
+    O = { owner:ownerAtStart, b, d, D, sorular, speechAlternatives:{}, kombo:0, i: 0, dogru: 0, yanlis: 0, sonuclar: [], tum, bas: Date.now(), gecmis: [], jk: {}, harcanan: 0, runId:crypto.randomUUID(), pendingAnswer:null };
     const saved=checkpointRead(D.no);
     if(saved){O={...saved.state,tum,owner:ownerAtStart,pendingAnswer:null,advancing:false,jk:{},paused:false,bas:Date.now()-(saved.state.elapsed||0)};}
     checkpointSave(); // Even a failed first server handshake must not discard this run.
@@ -354,7 +354,6 @@
       try{await parkurEnerjiAdim(O.runId,1,null);}
       catch(e){checkpointSave();toast('Enerji bağlantısı kurulamadı; bölümün korundu. Tekrar dene.');O=null;return;}
     }
-    try { if (typeof jokerTuruBaslat === 'function') {/* jokerler bu modda kapalı: her soru farklı mekanik */} } catch (e) {}
     checkpointSave();soruCiz();
   }
   function oyunUst() {
@@ -366,60 +365,6 @@
       <span style="font-weight:900;font-size:13px">${O.i + 1}/${O.sorular.length}</span><span class="sp-combo" aria-label="Kombo">🔥 ${O.kombo||0}</span><span class="bz-enerji-pill" aria-label="Enerji">⚡ ${enerji}</span><span class="sp-gold" aria-label="Altın">🪙 ${yoVar()?yo.altin||0:0}</span></div>
       <div class="bz-govde" id="bzGovde"><span class="bz-tip">${ik} ${ad}${s.tekrarMi ? ' · 🔁 Önceki üniteden' : ''}</span>`;
   }
-  /* ---------- Jokerler: her durakta her jokerin 1 bedava hakkı + çantadakiler (Oyunlar'le ortak çanta) ---------- */
-  const JK = [['yari', '✂️', 'Yarıya indir'], ['harf', '💡', 'İpucu'], ['pas', '🔄', 'Pas'], ['ikinci', '🎯', 'İkinci şans']];
-  const canta = () => (yoVar() && yo.jokerEnv) ? yo.jokerEnv : {};
-  const jkSay = t => (O.jkBedava[t] || 0) + (canta()[t] || 0);
-  function jkHarca(t) {
-    if(!window.dmProgression?.require("joker") || O.jokerKullanim >= window.dmProgression.quota()) return false;
-    O.jokerKullanim++;
-    if ((O.jkBedava[t] || 0) > 0) { O.jkBedava[t]--; return true; }
-    let E = canta(); if ((E[t] || 0) > 0) { E[t]--; if (typeof yoKaydet === 'function') yoKaydet(); return true; }
-    return false;
-  }
-  function jokerBarCiz() {
-    let bar = $('bzJokerler'); if (!bar) return;
-    bar.innerHTML = JK.map(([t, ik, ad]) => {
-      let n = jkSay(t), uygun = !O._cevaplandi && O.sorular[O.i]?.tip!=='sesliFinal' && (t === 'pas' || (t !== 'ikinci' && typeof O.jk[t] === 'function'));
-      let bilgi = t === 'ikinci' ? 'Yanlış yapınca sorar' : '';
-      return `<button class="bz-jk" data-jk="${t}" ${n > 0 && uygun ? '' : 'disabled'} aria-label="${ad}, ${n} hak${bilgi ? ', ' + bilgi : ''}"><span>${ik}</span>${ad}${n ? `<b>${n}</b>` : ''}</button>`;
-    }).join('') + `<button class="bz-jk al" id="bzJkAl" aria-label="Joker ve enerji satın al"><span>🛒</span>Al</button>`;
-    bar.querySelectorAll('[data-jk]').forEach(b => b.onclick = () => jokerKullan(b.dataset.jk));
-    $('bzJkAl').onclick = dukkanAc;
-  }
-  function jokerKullan(t) {
-    if (O._cevaplandi || O.sorular[O.i]?.tip==='sesliFinal' || jkSay(t) <= 0) return;
-    if(!window.dmProgression?.require('joker') || O.jokerKullanim >= window.dmProgression.quota()) return toast('🃏 Bu duraktaki joker hakkın doldu.');
-    if (t === 'pas') { jkHarca('pas'); O._pas = true; $('bzAlan').querySelectorAll('button,input').forEach(x => x.disabled = true); cevap(true, ''); return; }
-    let f = O.jk[t]; if (typeof f !== 'function') return;
-    if (f() === false) { toast('Bu soruda bu joker artık işe yaramaz.'); return; }
-    jkHarca(t); ses('dogru'); jokerBarCiz();
-  }
-  /* 🛒 Oyun içinden joker ve enerji satın alma (Joker Dükkânı fiyatlarıyla, aynı çantaya) */
-  function dukkanAc() {
-    if(!window.dmProgression?.require("joker_magaza")) return;
-    let urunler = (window.JOKER_MAGAZA || []).filter(j => ['yari', 'harf', 'pas', 'ikinci'].includes(j.tur));
-    let p = document.createElement('div'); p.className = 'bz-panel'; p.setAttribute('role', 'dialog'); p.setAttribute('aria-modal', 'true');
-    const ciz = () => {
-      let altin = yoVar() ? (yo.altin || 0) : 0;
-      p.innerHTML = `<div class="bz-panel-kart"><h3>🛒 Joker Dükkânı</h3><p>Altının: 🪙 ${altin} · Aldıkların çantana eklenir, bütün oyunlarda geçerli.</p>
-        <div class="bz-dukkan">${urunler.map((j, i) => `<div><span class="e">${j.e}</span><span>${kac(j.ad)}<small>${kac(j.ac || '')} · çantanda ${canta()[j.tur] || 0}</small></span><button type="button" data-u="${i}" ${altin >= j.f ? '' : 'disabled style="opacity:.5"'}>${j.f} 🪙</button></div>`).join('') || '<div>Dükkân şu an yüklenemedi.</div>'}
-        <div><span class="e">⚡</span><span>Enerji paketleri<small>5 enerji 100 🪙 · 10 enerji 130 🪙 · 15 enerji 180 🪙</small></span><button type="button" id="bzEnerjiAl">Paketleri incele</button></div></div>
-        <button class="bz-btn" id="bzDukkanKapat" style="background:#f5f3ff;color:#6d28d9;box-shadow:none">Oyuna dön</button></div>`;
-      p.querySelectorAll('[data-u]').forEach(b => b.onclick = () => {
-        let j = urunler[+b.dataset.u]; if (!yoVar() || (yo.altin || 0) < j.f) return;
-        b.disabled = true;
-        window.dmEkonomi.islem('jokerAl', { id: j.id }).then(d => {
-          if (!d.ok) { toast(d.mesaj || 'Satın alma tamamlanamadı.'); b.disabled = false; return; }
-          ses('dogru'); toast(`${j.e} ${j.ad} çantana eklendi!`); ciz(); jokerBarCiz();
-        });
-      });
-      $('bzEnerjiAl').onclick = () => { p.remove(); window.dmEnerjiPaketPaneli?.(); };
-      $('bzDukkanKapat').onclick = () => p.remove();
-    };
-    ciz(); document.body.appendChild(p);
-    p.addEventListener('click', e => { if (e.target === p) p.remove(); });
-  }
   function ustTazele() { let e = document.querySelector('.bz-enerji-pill'); if (e && typeof window.genelEnerjiKalan === 'number') e.textContent = '⚡ ' + window.genelEnerjiKalan; const c=document.querySelector('.sp-combo'),g=document.querySelector('.sp-gold');if(c)c.textContent='🔥 '+(O.kombo||0);if(g)g.textContent='🪙 '+(yoVar()?yo.altin||0:0); }
   /* ---------- ← Önceki soruları gör ---------- */
   function incelemeAc(k) {
@@ -428,18 +373,18 @@
     while (k > 0 && !O.gecmis[k]) k--;
     let g = O.gecmis[k]; if (!g) return;
     let [, ik, ad] = TIPLER.find(t => t[0] === g.tip) || ['sesliFinal','🎙️','Papi ile Konuş'];
-    $('bzAlan').style.display = 'none'; $('bzJokerler').style.display = 'none'; let tip = document.querySelector('#bzGovde .bz-tip'); if (tip) tip.style.visibility = 'hidden';
+    $('bzAlan').style.display = 'none'; let tip = document.querySelector('#bzGovde .bz-tip'); if (tip) tip.style.visibility = 'hidden';
     let inc = $('bzInceleme'); inc.style.display = '';
     inc.innerHTML = `<div class="bz-inceleme-bas"><button type="button" id="bzIncOnce" ${k > 0 ? '' : 'disabled'} aria-label="Daha önceki soru">‹</button><span style="flex:1">👀 ${k + 1}. soru · ${ik} ${ad} ${O.sonuclar[k] ? '✅' : '❌'}</span><button type="button" id="bzIncSonra" ${k < son ? '' : 'disabled'} aria-label="Sonraki soru">›</button><button type="button" id="bzIncKapat">Soruya dön</button></div><div class="bz-inceleme-govde dm-question-review" data-question-type="${g.tip}">${g.html}</div>`;
     $('bzIncOnce').onclick = () => incelemeAc(k - 1); $('bzIncSonra').onclick = () => incelemeAc(k + 1);
-    $('bzIncKapat').onclick = () => { inc.style.display = 'none'; inc.innerHTML = ''; $('bzAlan').style.display = ''; $('bzJokerler').style.display = ''; if (tip) tip.style.visibility = ''; };
+    $('bzIncKapat').onclick = () => { inc.style.display = 'none'; inc.innerHTML = ''; $('bzAlan').style.display = ''; if (tip) tip.style.visibility = ''; };
   }
   function soruCiz() {
     if (zamanlayici) { clearInterval(zamanlayici); zamanlayici = null; }
     if (O.i >= O.sorular.length) return bitir();
     let p = perdeAc(), s = O.sorular[O.i];
     O.jk = {};
-    p.innerHTML = `<div class="bz-oyun dm-question-panel" data-question-type="${s.tip}">${oyunUst()}</div></div><div id="bzAlan"></div><div class="bz-inceleme" id="bzInceleme" style="display:none"></div><div class="bz-jokerler" id="bzJokerler"></div>`;
+    p.innerHTML = `<div class="bz-oyun dm-question-panel" data-question-type="${s.tip}">${oyunUst()}</div></div><div id="bzAlan"></div><div class="bz-inceleme" id="bzInceleme" style="display:none"></div>`;
     $('bzCik').onclick = () => { checkpointSave();window.dmPapiFirstPractice?.recover('school');let b=O.b,d=O.d;kapat();durakKarti(b,d); };
     $('bzGeriSoru').onclick = () => incelemeAc();
     const nav=p.querySelector('.bz-oyun-ust');if(nav){const next=document.createElement('button');next.type='button';next.className='bz-geri-soru';next.textContent='→';next.title='Cevaplanan soruları ileri/geri incele';next.setAttribute('aria-label','Sonraki cevaplanmış soruyu incele');next.disabled=!O.gecmis.some(Boolean);next.onclick=()=>incelemeAc(0);nav.insertBefore(next,nav.querySelector('.bz-noktalar'));}
@@ -454,7 +399,7 @@
       if(!alan.textContent.trim())throw new Error('Soru içeriği boş');
       try { window.dmCalmQuestion?.(p); } catch(layoutError) { console.warn('[Parkur] görünüm',layoutError); }
       if(!alan.textContent.trim())throw new Error('Soru görünümü boşaltıldı');
-      jokerBarCiz();window.DMRouteQuestions?.mountSchool(p,O.i+1,O.sorular.length,O.kombo||0);
+      window.DMRouteQuestions?.mountSchool(p,O.i+1,O.sorular.length,O.kombo||0);
     } catch(err) {
       console.error('[DijiMedu parkur] Soru çizimi başarısız:',s.tip,err);
       alan.innerHTML='<div class="bz-etiket">🦜 Papi yardım ediyor</div><div class="bz-soru">Bu soruyu gösteremedik.</div><p class="bz-ipucu">İlerlemen korunuyor. Soruyu yeniden yükleyebilir veya haritaya dönebilirsin.</p><button type="button" class="bz-btn" id="bzRetryQuestion">↻ Soruyu yeniden dene</button><button type="button" class="bz-btn" id="bzReturnMap">🏰 Haritaya dön</button>';
@@ -518,12 +463,6 @@
     let alan = $('bzAlan'); alan.appendChild(g);
     O.gecmis[O.i] = { tip: O.sorular[O.i].tip, html: alan.innerHTML };
     let kalanSoru = O.i + 1 < O.sorular.length, enerjiNotu = kalanSoru && O.i!==0 && !sinifModu() && O.sorular[O.i+1].tip!=='sesliFinal' ? ' · ⚡ −1' : '';
-    if (!iyi && jkSay('ikinci') > 0 && !O._ikinci) {
-      let ik = document.createElement('button'); ik.className = 'bz-btn'; ik.style.marginTop = '10px';
-      ik.textContent = `🎯 İkinci şans kullan (${jkSay('ikinci')})`;
-      ik.onclick = () => { if (!jkHarca('ikinci')) return; O.yanlis--; O.sonuclar[O.i] = undefined; O.gecmis[O.i] = undefined; O._cevaplandi = false; O._ikinci = true; soruCiz(); };
-      alan.appendChild(ik);
-    }
     let dev = document.createElement('button'); dev.className = 'bz-btn mor'; dev.style.marginTop = '10px'; dev.textContent = kalanSoru ? 'Devam →' + enerjiNotu : '🏁 Sonucu gör';
     dev.onclick = devamEt;
     alan.appendChild(dev);
@@ -533,7 +472,7 @@
       dev.onclick=()=>{if(advancing||O!==state||O.i!==index||!dev.isConnected)return;advancing=true;dev.disabled=true;devamEt().finally(()=>{advancing=false;if(dev.isConnected)dev.disabled=false;});};
       setTimeout(()=>{if(O===state&&O.i===index&&dev.isConnected)dev.click();},1000);
     }
-    checkpointSave();jokerBarCiz(); let gs = $('bzGeriSoru'); if (gs) gs.disabled = false;
+    checkpointSave(); let gs = $('bzGeriSoru'); if (gs) gs.disabled = false;
     setTimeout(() => { dev.focus({preventScroll:true}); window.dmSelectedPlayFit?.(); }, 60);
   }
   const celdirici = (k, f, adet) => karistir(O.tum.filter(x => x !== k && norm(f(x)) !== norm(f(k)))).map(f).filter((v, i, a) => a.indexOf(v) === i).slice(0, adet);

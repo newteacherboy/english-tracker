@@ -4,7 +4,7 @@ const $=id=>document.getElementById(id);
 const assetBase=new URL('.',document.currentScript?.src||location.href).href;
 const asset=name=>new URL(name,assetBase).href;
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const types=[['all','Tümü','▦'],['chests','Sandıklar','🎁'],['jokers','Jokerler','🃏'],['badges','Rozetler','🏅'],['characters','Karakterler','🦜'],['clothing','Kıyafetler','👕'],['items','Eşyalar','🎒'],['energy','Enerji','⚡']];
+const types=[['all','Tümü','▦'],['chests','Sandıklar','🎁'],['badges','Rozetler','🏅'],['characters','Karakterler','🦜'],['clothing','Kıyafetler','👕'],['items','Eşyalar','🎒'],['energy','Enerji','⚡']];
 const arr=x=>Array.isArray(x)?x:[];
 const st=()=>typeof yo==='undefined'?{}:yo||{};
 const norm=x=>typeof x==='string'?{id:x}:x&&typeof x==='object'?x:null;
@@ -67,16 +67,7 @@ function entries(){
   const badge=badges.find(b=>b.id===id);if(!badge)continue;
   add('badges',id,badge.ad,{pictureUrl:badge.resim,emoji:badge.ikon||'🏅'});
  }
- // Real remaining quantities, named and illustrated with the existing joker shop catalog.
- const jokerCatalog=arr(window.JOKER_MAGAZA);
- for(const [id,val] of Object.entries(y.jokerEnv&&typeof y.jokerEnv==='object'?y.jokerEnv:{})){
-  const n=Math.floor(Math.max(0,Number(val)||0));if(!n)continue;
-  const j=jokerCatalog.find(x=>x.tur===id||x.id===id);
-  add('jokers',id,j?.ad||readable(id),{count:n,emoji:j?.e||'🃏',origin:'joker'});
- }
- for(const [id,name,count] of [['dondurucu','Seri Dondurucu',y.dondurucu],['extra-joker','Ek Joker',y.dmExtraJoker],['joker-stok','Yedek Joker',y.jokerStok]]){
-  if(Number(count)>0)add('jokers',id,name,{count:Math.floor(Number(count)),emoji:id==='dondurucu'?'❄️':'🃏'});
- }
+ if(Number(y.dondurucu)>0)add('items','dondurucu','Seri Dondurucu',{count:Math.floor(Number(y.dondurucu)),emoji:'❄️'});
  // Server-authoritative parkur chests: only READY and CLAIMED ones belong in the bag.
  const status=window.dmProgression?.status?.();
  const chestCatalog=arr(window.DijiProgressionCatalog?.chests);
@@ -150,7 +141,6 @@ function render(){
   if(kind==='characters')document.querySelector('#dmStoreFront [data-ds="collection"]')?.click();
   else if(kind==='clothing'||kind==='items')document.querySelector('#dmStoreFront [data-ds="clothing"]')?.click();
   else if(kind==='badges')window.dmBasarilarimAc?.();
-  else if(kind==='jokers')document.querySelector('#dmStoreFront [data-ds="jokers"]')?.click();
   else if(kind==='chests')window.dmProgression?.chests?.();
   else if(kind==='energy')window.yoToast?.('Mevcut enerjini parkurda ve oyunlarda kullanabilirsin.');
  });

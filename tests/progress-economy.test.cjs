@@ -13,7 +13,11 @@ test('parkur seed uses recorded stars and conservative missing-star fallback',()
 });
 test('failed games never mint gold; malformed inputs cannot mint XP',()=>{for(const o of [{dogru:0,xp:0},{dogru:1,xp:0},{dogru:9,xp:100},{dogru:1,xp:Infinity}])assert.deepEqual(r.gameReward(o),{xp:0,gold:0,bonus:1});});
 test('daily bonus, streak and late-game half reward',()=>{const o=score.calculate({correct:8,seconds:25});assert.deepEqual(r.gameReward(o,{ordinal:1,streak:1.5}),{xp:118,gold:30,bonus:1});assert.equal(r.gameReward(o,{ordinal:13,streak:1.5}).xp,30);});
-test('boosts do not stack and cannot be used before level 15',()=>{const o={...score.calculate({correct:8,seconds:25}),odulCarpan:2};assert.equal(r.gameReward(o,{level:14,xpBoost:true,goldBoost:true}).xp,118);const b=r.gameReward(o,{level:15,xpBoost:true,goldBoost:true,streak:1.5});assert.equal(b.xp,r.GAME_XP_MAX);assert.equal(b.gold,60);assert.equal(r.gameReward({...o,xp:9999},{level:15}).xp,172);assert.equal(r.GAME_XP_MAX,r.PARKUR_XP_MAX-20);});
+test('cached paid boosts cannot change ordinary game rewards',()=>{
+ const o=score.calculate({correct:8,seconds:25});
+ const baseline=r.gameReward(o,{level:40,streak:1.5});
+ assert.deepEqual(r.gameReward({...o,odulCarpan:2},{level:40,xpBoost:true,goldBoost:true,streak:1.5}),baseline);
+});
 test('one account first-purchase discount never stacks with showcase',()=>{assert.equal(r.discount(1000,{first:true,showcase:true}),750);assert.equal(r.discount(1000,{showcase:true}),700);});
 function rewardClient(handler,state={altin:0,totalXp:0}) {
  const fs=require('fs'),vm=require('vm'),store=new Map(),events={},requests=[],rewardEvents=[];

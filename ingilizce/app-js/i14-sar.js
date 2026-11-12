@@ -113,8 +113,6 @@
     let k = baglam(); if (!k) return Promise.resolve();
     if (sonGiris.k === k && Date.now() - sonGiris.t < 4000) return Promise.resolve();
     sonGiris = { k, t: Date.now() }; soruSayac = 0;
-    let E = yoVar() && yo.jokerEnv;
-    if (E && E.m_bilet > 0) { E.m_bilet--; yoKaydet(); toast('🎟️ Bedava Bilet kullanıldı, giriş enerjisi harcanmadı!'); return Promise.resolve(); }
     return enerjiSunucu(-ucret(k));
   }
   function soru(n) {
