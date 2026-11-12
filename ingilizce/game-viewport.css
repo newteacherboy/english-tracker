@@ -210,21 +210,22 @@ html body .dm-game-framed>.dm-game-frame{
  position:absolute;inset:0 0 auto;z-index:2147483647;height:var(--dm-frame-height);
  box-sizing:border-box;display:grid;grid-template-columns:44px minmax(0,1fr) repeat(3,44px);
  align-items:center;gap:5px;padding:env(safe-area-inset-top,0px) max(8px,env(safe-area-inset-right,0px)) 0 max(8px,env(safe-area-inset-left,0px));
- background:#096e6a;color:#fff;border-bottom:1px solid #ddfffa;
+ background:#0B6B66;color:#fff;border-bottom:0;
 }
 html[data-dm-theme="night"] body .dm-game-framed>.dm-game-frame{background:#123541;border-color:#3b626f}
 html body .dm-game-framed>.dm-game-frame>b{
  min-width:0;text-align:center;color:#fff!important;-webkit-text-fill-color:#fff!important;
- font:900 clamp(16px,5vw,21px)/1.15 system-ui;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+ font:900 clamp(17px,5vw,20px)/1.15 Nunito,system-ui,sans-serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
 }
 html body .dm-game-framed>.dm-game-frame>.dm-frame-control{
  position:static!important;display:grid!important;place-items:center;
  width:44px;height:44px;min-width:44px;min-height:44px;margin:0!important;padding:0!important;
- border:1px solid #c0e8e6!important;border-radius:12px!important;
- background:#f2fffe!important;color:#123c4c!important;box-shadow:none!important;
+ border:0!important;border-radius:14px!important;
+ background:rgba(255,255,255,.14)!important;color:#fff!important;-webkit-text-fill-color:#fff!important;box-shadow:none!important;
  cursor:pointer;touch-action:manipulation;
 }
-html body .dm-game-frame>.dm-frame-control:disabled{opacity:.48;cursor:default}
+html body .dm-game-frame>.dm-frame-control:disabled{opacity:.4;cursor:default}
+html body .dm-game-frame>.dm-frame-control:active{background:rgba(255,255,255,.26)!important}
 html body .dm-game-frame>.dm-frame-control:focus-visible{outline:2px solid #ffdf76;outline-offset:1px}
 html body .dm-game-frame svg{width:21px;height:21px;stroke:currentColor;stroke-width:2.2;fill:none;stroke-linecap:round;stroke-linejoin:round}
 html body .dm-game-framed>.game-modal-content,
