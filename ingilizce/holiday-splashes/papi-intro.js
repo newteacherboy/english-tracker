@@ -44,9 +44,11 @@ html.dm-papi-intro:not(.dm-papi-booted) #dmBootSplash{z-index:2147483646!importa
 .pi-svg .p-cheek{animation:piCheek 3.4s both}
 .pi-svg .p-sparkles{animation:piSpark 3.4s both}
 .pi-svg .p-sparkles path{animation:piSparkPop .8s ease-out 2.2s 3 both}
-.pi-word{display:flex;gap:.25em;margin-top:2vh;transform:rotate(-4deg);font-size:min(16.5vw,66px);font-weight:900;line-height:1;letter-spacing:.01em;white-space:nowrap;
- text-shadow:0 1px 0 #2B1766,0 2px 0 #2B1766,0 3px 0 #2B1766,0 4px 0 #2B1766,0 5px 0 #2B1766,0 6px 0 #2B1766,0 7px 0 #2B1766,0 12px 14px rgba(0,0,0,.35);
- -webkit-text-stroke:2px #2B1766;paint-order:stroke fill}
+.pi-word{display:flex;align-items:center;gap:.18em;margin-top:2.4vh;font-size:min(15vw,58px);font-weight:800;line-height:1;white-space:nowrap;font-family:"Baloo 2",ui-rounded,"SF Pro Rounded",system-ui,sans-serif}
+/* [12 Kas 2026] Marka yazısı · "Mor etiket": Diji mor etiketin içinde, Medu beyaz (kullanıcı seçti) */
+.pi-word .pi-tag{display:inline-flex;padding:.12em .28em .02em;border-radius:.38em;background:#6D3FD0;box-shadow:0 .1em 0 #45238F;transform-origin:50% 60%;animation:piTag .5s cubic-bezier(.34,1.56,.64,1) .92s both}
+.pi-word .pi-plain{text-shadow:0 .09em 0 #063B43}
+@keyframes piTag{0%{transform:scale(0);opacity:0}100%{transform:scale(1);opacity:1}}
 .pi-static *{animation-delay:-3.4s!important}
 .pi-static .pi-svg .p-crest,.pi-static .pi-svg .p-body{animation-delay:0s!important}
 .pi-word i{font-style:normal;display:inline-block;opacity:0;animation:piLtr .55s cubic-bezier(.34,1.56,.64,1) both}
@@ -71,7 +73,7 @@ html.dm-papi-intro:not(.dm-papi-booted) #dmBootSplash{z-index:2147483646!importa
 @media (prefers-reduced-motion:reduce){.pi-wrap *{animation-duration:.01s!important;animation-delay:0s!important;animation-iteration-count:1!important}}
 `;
  function letters(word,color,start){return word.split('').map((ch,k)=>'<i style="color:'+color+';animation-delay:'+(1+(start+k)*0.08).toFixed(2)+'s">'+ch+'</i>').join('');}
- const MARKUP='<div class="pi-wrap" aria-hidden="true"><div class="pi-stage"><div class="pi-papi"><div class="pi-glow"></div>'+SVG+'</div><div class="pi-word"><span>'+letters('Diji','#FFC83D',0)+'</span><span>'+letters('Medu','#FFFFFF',4)+'</span></div></div></div>';
+ const MARKUP='<div class="pi-wrap" aria-hidden="true"><div class="pi-stage"><div class="pi-papi"><div class="pi-glow"></div>'+SVG+'</div><div class="pi-word"><span class="pi-tag">'+letters('Diji','#FFFFFF',0)+'</span><span class="pi-plain">'+letters('Medu','#FFFFFF',4)+'</span></div></div></div>';
  let active=false,observer=null,soundDone=false,ac=null;
  function css(){if(document.getElementById('dmPapiIntroCss'))return;const s=document.createElement('style');s.id='dmPapiIntroCss';s.textContent=CSS;(document.head||document.documentElement).appendChild(s);}
  /* ---- ses: "Pa-pi!" çağrısı ve sevinç cıvıltısı ---- */

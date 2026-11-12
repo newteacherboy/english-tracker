@@ -239,7 +239,10 @@
     const g = gold(), energyCard = D.getElementById('dmsShopEnergy');
     place('dmsShopGold', 'gold', shopWhere && energyCard ? { parent: shopWhere.parent, before: energyCard } : shopWhere, shopOn && loggedIn() && !teacher() && Number.isFinite(g) && g < 100 && videoState('gold') === 'ok');
     const games = D.getElementById('tab-aktiviteler'), host = games?.classList.contains('active') ? games.querySelector('.dc-focus-card') : null;
-    place('dmsGamesEnergy', 'energy', host ? { parent: host, before: host.firstElementChild?.id === 'dmsGamesEnergy' ? host.firstElementChild.nextElementSibling : host.firstElementChild } : null, show);
+    // [12 Kas 2026] Bant en üstte cüzdan çubuğunun üstüne biniyordu: kategori düğmelerinin hemen altına alındı.
+    const tabs = host?.querySelector(':scope > .gg-tabs');
+    const after = tabs ? tabs.nextElementSibling : null;
+    place('dmsGamesEnergy', 'energy', host ? (tabs ? { parent: host, before: after?.id === 'dmsGamesEnergy' ? after.nextElementSibling : after } : { parent: host, before: host.firstElementChild?.id === 'dmsGamesEnergy' ? host.firstElementChild.nextElementSibling : host.firstElementChild }) : null, show);
   }
 
   // ---------------------------------------------------------------- PAKET EKRANLARI
