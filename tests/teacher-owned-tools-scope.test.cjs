@@ -9,6 +9,9 @@ test('all teacher workspaces launch own-class scoped tools',()=>{
  for(const key of ['performance','reports','legacyHomework'])assert(workspace.includes("openOwnedTool('"+key+"')"),key);
  assert(workspace.includes("openOwnedTool('legacyAnnouncement')"));
  assert(workspace.includes("add(shortcuts,'Raporlar'"));
+ // Sınıfım (sınıf ligi) öğretmen alt menüsünde, Konu Anlat'ın yanında bir sekmedir.
+ assert(portal.includes('data-route="study"')&&portal.indexOf('data-route="league"')>portal.indexOf('data-route="study"'));
+ assert(portal.includes('window.dmTeacherLeagueOpen'));
  assert(portal.includes("data-dash=\"reports\""));
 });
 test('teacher tool class sources are authenticated teacher-classes only',()=>{

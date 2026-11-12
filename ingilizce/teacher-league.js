@@ -23,7 +23,8 @@
   const PERIODS = [['week', 'Bu hafta'], ['month', 'Bu ay'], ['all', 'Tüm zamanlar']];
   const EMPTY_HINT = { gelisen: 'Geçen döneme göre XP’si artan öğrenci yok.', dogruluk: 'Doğruluk sıralaması için öğrencinin yeterli soru çözmesi gerekir.', odev: 'Bu dönemde verilen ödev yok.' };
 
-  const CSS = `.dml-page{position:fixed;inset:0;z-index:2147483642;background:#F7F5FF;color:#1D1B3A;overflow:auto;font:600 15px/1.4 Nunito,system-ui,-apple-system,sans-serif;padding-bottom:calc(96px + env(safe-area-inset-bottom,0px));animation:dmlIn .25s ease-out}
+  const CSS = `html.dm-teacher-portal .dml-page{z-index:2147483639}
+.dml-page{position:fixed;inset:0;z-index:2147483642;background:#F7F5FF;color:#1D1B3A;overflow:auto;font:600 15px/1.4 Nunito,system-ui,-apple-system,sans-serif;padding-bottom:calc(96px + env(safe-area-inset-bottom,0px));animation:dmlIn .25s ease-out}
 .dml-wrap{max-width:640px;margin:0 auto;padding:16px 16px 0}
 .dml-top{display:flex;align-items:center;gap:10px}.dml-top h1{flex:1;margin:0;font:900 26px/1.1 Nunito,system-ui,sans-serif}
 .dml-ib{width:44px;height:44px;flex:0 0 auto;border:0;border-radius:14px;background:#fff;color:#1D1B3A;font:900 18px system-ui;display:grid;place-items:center;cursor:pointer;box-shadow:0 2px 0 #E4DEFB}
@@ -148,7 +149,7 @@ ${attHtml}<p class="dml-note">Lig XP’sine öğretmenin ders içi +/- puanları
     }
     const hidden = d && sc && !d.unlocked ? Math.max(0, sc.count - (sc.categories.genel?.rows.length || 0)) : 0;
     const cta = hidden ? `<div class="dml-cta"><div><b>+${hidden} öğrenci kilitli</b><small>Tüm sınıfı Öğretmen Pro ile aç</small></div><button type="button" data-unlock>Kilidi aç</button></div>` : '';
-    page.innerHTML = `<div class="dml-wrap"><div class="dml-top"><button type="button" class="dml-ib" data-close aria-label="Geri">‹</button><h1>Sınıflar</h1><button type="button" class="dml-ib" data-refresh aria-label="Yenile">↻</button><button type="button" class="dml-ib dark" data-board aria-label="Tahtaya yansıt"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><rect x="3" y="4" width="18" height="12" rx="2"></rect><path d="M12 16v4M8 20h8"></path></svg></button></div>
+    page.innerHTML = `<div class="dml-wrap"><div class="dml-top"><button type="button" class="dml-ib" data-close aria-label="Geri">‹</button><h1>Sınıfım</h1><button type="button" class="dml-ib" data-refresh aria-label="Yenile">↻</button><button type="button" class="dml-ib dark" data-board aria-label="Tahtaya yansıt"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><rect x="3" y="4" width="18" height="12" rx="2"></rect><path d="M12 16v4M8 20h8"></path></svg></button></div>
 <div class="dml-row" role="group" aria-label="Sınıf">${classChips}</div><div class="dml-seg" role="group" aria-label="Dönem">${seg}</div>${body}</div>${cta}`;
   }
 
@@ -201,14 +202,15 @@ ${rows.length > 3 ? `<ol>${rows.slice(3, 15).map(r => `<li><span>${r.rank}. ${es
   }
 
   function onKey(e) { if (e.key === 'Escape' && !doc.querySelector('.dml-veil,.dml-board')) close(); }
-  function close() { page?.remove(); page = null; doc.removeEventListener('keydown', onKey); }
+  const sync = on => { doc.body.classList.toggle('tp-league-active', on); window.dmTeacherDockSync?.(); };
+  function close() { if (!page) return; page.remove(); page = null; doc.removeEventListener('keydown', onKey); sync(false); }
 
   function open() {
     if (page) return;
     if (!doc.getElementById('dml-css')) { const s = doc.createElement('style'); s.id = 'dml-css'; s.textContent = CSS; doc.head.appendChild(s); }
-    page = doc.createElement('div'); page.className = 'dml-page'; page.setAttribute('role', 'dialog'); page.setAttribute('aria-modal', 'true'); page.setAttribute('aria-label', 'Sınıflar');
+    page = doc.createElement('div'); page.className = 'dml-page'; page.setAttribute('role', 'dialog'); page.setAttribute('aria-modal', 'true'); page.setAttribute('aria-label', 'Sınıfım');
     page.addEventListener('click', onClick); doc.addEventListener('keydown', onKey);
-    doc.body.appendChild(page);
+    doc.body.appendChild(page); sync(true);
     fetchPeriod(false);
   }
 
@@ -216,11 +218,12 @@ ${rows.length > 3 ? `<ol>${rows.slice(3, 15).map(r => `<li><span>${r.rank}. ${es
     const tiles = doc.querySelector('#tpDashboard .tp-real-tools');
     if (!tiles || tiles.querySelector('[data-dml]')) return;
     const b = doc.createElement('button'); b.type = 'button'; b.dataset.dml = '1';
-    b.innerHTML = '<span aria-hidden="true">🏆</span><strong>Sınıflar</strong><small>Sınıf ligi ve öğrenci sıralaması</small>';
+    b.innerHTML = '<span aria-hidden="true">🏆</span><strong>Sınıfım</strong><small>Sınıf ligi ve öğrenci sıralaması</small>';
     b.addEventListener('click', open);
     tiles.prepend(b);
   }
   new MutationObserver(addTile).observe(doc.documentElement, { childList: true, subtree: true });
   addTile();
   window.dmTeacherLeagueOpen = open;
+  window.dmTeacherLeagueClose = close;
 })();

@@ -391,13 +391,14 @@ function dmHome(){
  add(quick,'Sınıf Oluştur','🏫','Yeni sınıf oluştur',()=>openOriginal('classroom'));
  add(quick,'Sözlü Yap','🎤','Sözlü değerlendirme',dmOpenCanonicalOral);
  // Çoklu sınıf ve sınıf raporları (4 Kas 2026); yönetici için hediye üyelik.
+ add(quick,'Sınıfım','🏆','Sınıf ligi ve öğrenci sıralaması',()=>window.dmTeacherLeagueOpen?window.dmTeacherLeagueOpen():window.yoToast?.('Sınıfım yüklenemedi. Sayfayı yenile.'));
  if(window.dmTeacherClassesOpen)add(quick,'Sınıflarım','🗂️','Sınıf kodları ve öğrenci taşıma',()=>window.dmTeacherClassesOpen());
  if(window.dmTeacherReportsOpen)add(quick,'Sınıf Raporları','📈','Süre, doğruluk, zor kelimeler',()=>window.dmTeacherReportsOpen());
  try{if(window.dmAdminGiftOpen&&sessionStorage.getItem('ing_ogr_yonetici')==='1')add(quick,'Hediye Üyelik','🎁','Plan hediye et',()=>window.dmAdminGiftOpen());}catch{}
  try{if(window.dmAdminAdsOpen&&sessionStorage.getItem('ing_ogr_yonetici')==='1')add(quick,'Reklam Ayarları','📺','Tek tuşla kapat',()=>window.dmAdminAdsOpen());}catch{}
  try{if(window.dmAdminPushOpen&&sessionStorage.getItem('ing_ogr_yonetici')==='1')add(quick,'Bildirim Gönder','🔔','Android ve iPhone',()=>window.dmAdminPushOpen());}catch{}
  const nav=board.querySelector('[data-v2-nav]');
- for(const [icon,title,run] of [['⌂','Ana Sayfa',()=>board.scrollIntoView({behavior:'smooth'})],['👥','Öğrenciler',dmStudentList],['🏫','Sınıflar',()=>window.dmTeacherClassesOpen?window.dmTeacherClassesOpen():openOriginal('classroom')],['📋','Ödevler',()=>dmUseTool('ödev ver')],['📣','Duyurular',()=>dmUseTool('duyurular')],['📊','Raporlar',dmReportDialog],['📈','Rubrik',()=>dmUseTool('rubrik')],['⚙','Öğretmen Paneli',()=>openOriginal('teacher')]]){
+ for(const [icon,title,run] of [['⌂','Ana Sayfa',()=>board.scrollIntoView({behavior:'smooth'})],['👥','Öğrenciler',dmStudentList],['🏆','Sınıfım',()=>window.dmTeacherLeagueOpen?.()],['🏫','Sınıflarım',()=>window.dmTeacherClassesOpen?window.dmTeacherClassesOpen():openOriginal('classroom')],['📋','Ödevler',()=>dmUseTool('ödev ver')],['📣','Duyurular',()=>dmUseTool('duyurular')],['📊','Raporlar',dmReportDialog],['📈','Rubrik',()=>dmUseTool('rubrik')],['⚙','Öğretmen Paneli',()=>openOriginal('teacher')]]){
   const button=document.createElement('button');button.type='button';button.innerHTML='<span>'+icon+'</span>'+title;button.addEventListener('click',run);nav.append(button);
  }
  }
