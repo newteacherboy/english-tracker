@@ -19,7 +19,7 @@ function sound(kind){
  }catch{/* Audio availability never blocks the notice. */}
 }
 function edge(el){return el.dataset.noticeEdge|| (el.matches('.dm-notification,.cb-kart,.tv-kart,.bk-kart,.yo-davet,#dmInlineNotice,.yo-toast,.uy-serit,.dm-leader-bonus,#medu-offline-notice,#cpBanner,#dm-app-update,#dmHabitGreet')?'top':'bottom');}
-const systemFeedback=text=>/bağlantı|çevrimdışı|sunucu|oturum|hesap|e-posta|güncelleme|kaydedilemedi|profil.{0,30}kaydedil|işlem.{0,30}(tamamlan|başarısız)/i.test(text);
+const systemFeedback=text=>/bağlantı|çevrimdışı|sunucu|oturum|hesap|e-posta|güncelleme|kaydedilemedi|profil.{0,30}kaydedil|işlem.{0,30}(tamamlan|başarısız)|🔒|seviyede açılır|seviyesinde açılır|kilitli/i.test(text);
 function systemRibbon(el){
  return el.matches('#dm-app-update,#medu-offline-notice,#cpBanner')||
   el.dataset.noticeKind==='system'||el.matches('#dmInlineNotice,.yo-toast')&&systemFeedback(el.textContent||'');

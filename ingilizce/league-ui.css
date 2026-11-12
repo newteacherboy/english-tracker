@@ -164,3 +164,5 @@
   max-height:28px;
 }
 .dm-virtual-rivals .dm-virtual-papi-img{width:55px;height:55px;max-width:55px;max-height:55px}
+.dm-lig-duel-message.dm-lig-duel-warn{background:#fff4d6;color:#7a4c00;border-radius:12px;padding:8px 10px;font-weight:800;animation:dmDuelWarn .5s ease-out}
+@keyframes dmDuelWarn{30%{transform:scale(1.04)}}

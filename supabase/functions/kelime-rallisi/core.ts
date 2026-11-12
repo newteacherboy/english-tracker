@@ -1,5 +1,8 @@
 /* Isolated race API; portal sessions and all wallet writes remain server-owned. */
-type DB={select:(table:string,params:Record<string,string>)=>Promise<any[]>,rpc:(name:string,body:any)=>Promise<any>};
+type DB={select:(table:string,params:Record<string,string>)=>Promise<any[]>,rpc:(name:string,body:any)=>Promise<any>,upsert?:(table:string,row:any,conflict:string)=>Promise<any>};
+// [12 Kas 2026] Bölüm ilerlemesi sunucuda: extra_data 'rally_level' = {unlocked, runs:{runId:level}} (öğrenci yazamaz).
+export const RALLY_MAX_LEVEL=20;
+export function rallyPassed(d:any){return !!d?.finished&&!d?.practice&&Number(d?.state?.index)>=Number(d?.totalQuestions||12)&&Number(d?.state?.correct)>=9;}
 const normalize=(v:string)=>v.trim().toLocaleLowerCase('tr').replace(/\s+/g,' ');
 export function buildRaceDeck(rows:any[],previous:any[]=[],questionCount:12|15=15){
  const seen=new Set<string>(),words=rows.map(r=>({en:String(r.english||'').trim(),tr:String(r.turkish||'').trim()})).filter(w=>{const k=w.en.toLocaleLowerCase('en');if(!w.en||!w.tr||w.en.length>48||w.tr.length>90||seen.has(k))return false;seen.add(k);return true;});
@@ -67,13 +70,15 @@ export function raceHandler(db:DB){
     if(plan==='pro'){const d=new Date(Date.now()+3*3600000).toISOString().slice(0,10);return {plan,premium:false,limit:5,period:'day',remaining:Math.max(0,5-await runsSince(d+'T00:00:00+03:00'))};}
     return {plan:'free',premium:false,limit:3,period:'total',remaining:Math.max(0,3-await runsSince(RALLY_PREMIUM_SINCE))};
    };
+   const levelRow=async()=>{if(teacher||a.teacher_portal_access_id)return null;const [r]=await db.select('extra_data',{select:'value',student_id:'eq.'+student.id,key_name:'eq.rally_level',limit:'1'});const v=r?.value||{};return {unlocked:Math.min(RALLY_MAX_LEVEL,Math.max(1,Number(v.unlocked)||1)),runs:v.runs&&typeof v.runs==='object'?v.runs:{}};};
+   const saveLevel=async(v:any)=>{if(!db.upsert)return;const keep=Object.entries(v.runs||{}).slice(-20);await db.upsert('extra_data',{student_id:student.id,key_name:'rally_level',value:{unlocked:v.unlocked,runs:Object.fromEntries(keep)},updated_at:new Date().toISOString()},'student_id,key_name');};
    const op=String(b.action||''),cls=Number(b.classNo||student.selected_class||student.class_no||1),units=Array.isArray(b.units)?[...new Set(b.units.map(Number))].sort((x:any,y:any)=>x-y):[];
    if(['setup','start','practice','ranking'].includes(op)&&(!Number.isInteger(cls)||cls<1||cls>8))return json({ok:false,mesaj:'1–8 arasında sınıf seç.'},400);
    if(['start','practice','ranking'].includes(op)&&(units.length<1||units.length>10||units.some((x:any)=>!Number.isInteger(x)||x<1||x>100)))return json({ok:false,mesaj:'En az bir ünite seç.'},400);
    if(op==='setup'){
     const rows=await db.select('word_bank',{select:'unit_no,english,turkish',active:'eq.true',class_no:'eq.'+cls,limit:'6000'}),counts=new Map<number,Set<string>>();
     for(const w of rows){if(!w.english||!w.turkish)continue;const n=Number(w.unit_no);if(!counts.has(n))counts.set(n,new Set());counts.get(n)!.add(String(w.english).toLowerCase());}
-    return json({ok:true,classNo:cls,access:await rallyAccess(),units:[...counts].sort(([a],[b])=>a-b).map(([id,set])=>({id,count:set.size}))});
+    const lv=await levelRow();return json({ok:true,classNo:cls,access:await rallyAccess(),level:lv?{unlocked:lv.unlocked,max:RALLY_MAX_LEVEL}:null,units:[...counts].sort(([a],[b])=>a-b).map(([id,set])=>({id,count:set.size}))});
    }
    if(op==='practice'){
     const flags=await db.select('dm_release_flags',{select:'code,enabled',code:'in.(aktiviteler,tek_kisilik,oyun_ralli)'});if(flags.some(f=>f.enabled===false))return json({ok:false,mesaj:'Kelime Rallisi şu anda kapalı.'},403);
@@ -97,14 +102,19 @@ export function raceHandler(db:DB){
     const difficulty=['easy','normal','hard'].includes(b.difficulty)?b.difficulty:'normal';
     const rows=await db.select('word_bank',{select:'english,turkish',active:'eq.true',class_no:'eq.'+cls,unit_no:'in.('+units.join(',')+')',limit:'6000'});
     const previous=await db.select('dm_rally_runs',{select:'deck',student_id:'eq.'+student.id,class_no:'eq.'+cls,order:'created_at.desc',limit:'50'});
-    return json(await view(await db.rpc(a.teacher_portal_access_id?'dm_teacher_rally_start':'dm_rally_start',{...(a.teacher_portal_access_id?{grant_id:a.teacher_portal_access_id}:{}),actor:student.id,run_key:b.runId,class_id:cls,unit_ids:units,question_deck:buildRaceDeck(rows,previous,b.twelveWords===true?12:15),pace:difficulty})));
+    const lv=await levelRow();let level=1;if(lv){level=Math.min(lv.unlocked,Math.max(1,Math.floor(Number(b.level)||1)));}
+    const started=await view(await db.rpc(a.teacher_portal_access_id?'dm_teacher_rally_start':'dm_rally_start',{...(a.teacher_portal_access_id?{grant_id:a.teacher_portal_access_id}:{}),actor:student.id,run_key:b.runId,class_id:cls,unit_ids:units,question_deck:buildRaceDeck(rows,previous,b.twelveWords===true?12:15),pace:difficulty}));
+    if(lv&&started?.runId){lv.runs[String(started.runId)]=level;try{await saveLevel(lv);}catch{}}
+    return json({...started,level});
    }
    if(op==='state'){const rows=await db.select('dm_rally_runs',{select:'*',id:'eq.'+b.runId,student_id:'eq.'+student.id,limit:'1'});return rows[0]?json(b.twoChoices?twoChoiceRace(rows[0],publicRace(rows[0])):publicRace(rows[0])):json({ok:false,mesaj:'Yarış bulunamadı.'},404);}
    if(op==='answer'){
     if(!Number.isInteger(b.round)||b.round<0||b.round>14||!Number.isInteger(b.lane)||b.lane<0||b.lane>2)return json({ok:false,mesaj:'Geçerli kelime kapısını seç.'},400);
     let lane=b.lane;if(b.twoChoices){if(lane>1)return json({ok:false,mesaj:'İki kapıdan birini seç.'},400);const rows=await db.select('dm_rally_runs',{select:'*',id:'eq.'+b.runId,student_id:'eq.'+student.id,limit:'1'});if(!rows[0]?.deck[b.round])return json({ok:false,mesaj:'Yarış bulunamadı.'},404);lane=twoChoiceLanes(rows[0].deck[b.round])[lane];}
     // slow: the learner slowed the road for this question; the database pays less for it.
-    return json(await view(await db.rpc('dm_rally_answer',{actor:student.id,run_key:b.runId,round_no:b.round,lane,...(b.slow===true?{slowed:true}:{})})));
+    const answered=await view(await db.rpc('dm_rally_answer',{actor:student.id,run_key:b.runId,round_no:b.round,lane,...(b.slow===true?{slowed:true}:{})}));
+    if(answered?.finished){const lv=await levelRow();const level=lv?Number(lv.runs[String(b.runId)]||0):0;if(lv&&level){const passed=rallyPassed(answered),before=lv.unlocked;if(passed&&level>=before&&before<RALLY_MAX_LEVEL)lv.unlocked=before+1;delete lv.runs[String(b.runId)];try{await saveLevel(lv);}catch{}return json({...answered,level:{played:level,passed,unlocked:lv.unlocked,max:RALLY_MAX_LEVEL,opened:lv.unlocked>before}});}}
+    return json(answered);
    }
    if(op==='finish')return json(await db.rpc(a.teacher_portal_access_id?'dm_teacher_rally_finish':'dm_rally_finish',{actor:student.id,run_key:b.runId}));
    return json({ok:false,mesaj:'Geçersiz yarış işlemi.'},400);
