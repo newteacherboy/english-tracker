@@ -37,7 +37,7 @@
 <script src="progress-rules.js?v=20261020-cap"></script>
 <link rel="stylesheet" href="character-builder.css?v=20261016-2">
 <script defer src="character-poses.js?v=20261016-flow-2"></script>
-<script defer src="character-builder.js?v=20261016-2"></script>
+<script defer src="character-builder.js?v=20261112-poz"></script>
 <script src="progression-catalog.js?v=20261107-fener"></script>
 <link rel="stylesheet" href="first-discovery.css?v=20261020-member-flows-1">
 <script src="first-discovery-state.js?v=20261019-apple-1"></script>
@@ -217,7 +217,7 @@ if(visible(document.querySelector('.dc-fullscreen-overlay.active'))||(!restoring
 }
 function domReady(){loaded=true;check();}if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',domReady,{once:true});else domReady();
 document.addEventListener('dm:login',check);document.addEventListener('dm:state',check);timer=setInterval(check,500);
-const deadline=setTimeout(()=>{if(done)return;document.getElementById('dmBootText').textContent='Bağlantı beklenenden uzun sürüyor. Tekrar deneyebilirsin.';document.getElementById('dmBootRetry').hidden=false;},20000);
+const deadline=setTimeout(()=>{if(done)return;document.getElementById('dmBootText').textContent='Okul ağında ilk açılış biraz sürebilir. Papi hazırlanıyor, lütfen bekle…';setTimeout(()=>{if(done)return;document.getElementById('dmBootText').textContent='Hâlâ yükleniyor. İstersen sayfayı yeniden yükleyebilirsin.';document.getElementById('dmBootRetry').hidden=false;},40000);},15000);
 document.getElementById('dmBootRetry').onclick=()=>location.reload();
 })();</script>
                         <div class="oturum-yukleme-overlay" id="oturumYuklemeOverlay"><div class="dm-papi-loading" role="status" aria-live="polite"><div class="dm-papi-halo"><img class="dm-papi-base" src="papi-loading.webp" width="220" height="240" fetchpriority="high" alt="DijiMedu papağanı Papi"><div class="dm-papi-fill" aria-hidden="true"><img src="papi-loading.webp" width="220" height="240" alt=""></div></div><div class="dm-brand-line" aria-label="DijiMedu">Diji<span>Medu</span></div></div></div>
@@ -2463,8 +2463,9 @@ document.getElementById('dmBootRetry').onclick=()=>location.reload();
                 let benMi = String(item.isim).toLowerCase() === ben ? ' ben' : '';
                 return `<div class="gso-sira-satir${benMi}"><span>${emoji}</span><span class="ad">${guvenliMetin(String(item.isim))}</span><span>${item.puan}</span></div>`;
             };
-            let html = liste.slice(0, 5).map(satir).join('');
-            if (benimSiram >= 5) html += '<div class="gso-sira-ayrac">⋯</div>' + satir(liste[benimSiram], benimSiram);
+            // [12 Kas 2026] Sonuç ekranında yalnız ilk 2 gösterilir; ilk 2'de olmayana kalan fark yazılır.
+            let html = liste.slice(0, 2).map(satir).join('');
+            if (benimSiram < 0 || benimSiram >= 2) { const hedef = Number(liste[Math.min(1, liste.length - 1)]?.puan || 0), benimPuan = benimSiram >= 0 ? Number(liste[benimSiram].puan || 0) : 0, fark = Math.max(1, hedef - benimPuan + 1); html += '<div class="gso-sira-bos">İlk 2\'ye girmek için ' + fark.toLocaleString('tr-TR') + ' puan daha topla!</div>'; }
             alan.innerHTML = html;
         }
 
@@ -7296,7 +7297,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <link rel="stylesheet" href="storefront.css?v=20261103-pwm2">
 <script defer src="boutique-art.js?v=20261014-legend-1"></script>
 <script defer src="bag-inventory.js?v=20261019-first-tap-4"></script>
-<script defer src="storefront.js?v=20261112-ios-paket"></script><link rel="stylesheet" href="dm-satis.css?v=20261112-toplu"><script defer src="dm-satis.js?v=20261112-teshis"></script><script defer src="dm-uygulama.js?v=20261110-1"></script>
+<script defer src="storefront.js?v=20261112-ios-paket"></script><link rel="stylesheet" href="dm-satis.css?v=20261112-x"><script defer src="dm-satis.js?v=20261112-teshis"></script><script defer src="dm-uygulama.js?v=20261110-1"></script>
 <link rel="stylesheet" href="selected-play.css?v=20261011-simple-resume"><script defer src="selected-play.js?v=20261019-step-back-1"></script><script defer src="start-spotlight.js?v=20261026-energy-entry-1"></script>
 <link rel="stylesheet" href="day-night-theme.css?v=20261106-profile-right">
 <link rel="stylesheet" href="parkur-v4.css?v=20261112-toplu">

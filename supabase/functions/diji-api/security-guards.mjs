@@ -79,6 +79,12 @@ export function protectStudentState(incoming,stored,now=Date.now()){
   .reduce((sum,[,xp])=>sum+(Number.isFinite(Number(xp))?Math.max(0,Number(xp)):0),0);
  const old=stored?.lig||{};
  result.lig={...structuredClone(old),hafta:week,xp:Math.max(logged,old.hafta===week?Number(old.xp)||0:0)};
+ // Purchased items are owned server-side: a stale device save may never remove them.
+ const owned=stored?.karakter?.sahip;
+ if(Array.isArray(owned)&&owned.length&&result.karakter&&typeof result.karakter==='object'){
+  const incomingOwned=Array.isArray(result.karakter.sahip)?result.karakter.sahip:[];
+  result.karakter={...result.karakter,sahip:[...new Set([...owned,...incomingOwned])]};
+ }
  result.guncelleme=Math.max(now,Number(stored?.guncelleme||0)+1);
  return result;
 }
