@@ -1,16 +1,14 @@
-/* The school-route navigator follows Learning Path's accordion layout, with its own color and theme. */
+/* School-route navigator; appearance follows the shared profile theme. */
 (()=>{'use strict';
 if(window.dmSchoolJourney)return;
 const characters=['bumbi','fora','kori','lumo','mimo','nori','pofin','tiko','vela','ziri'];
 const esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;'}[c]));
 const currentRoute=()=>window.dmLearningRoute?.purpose?.()==='school';
 let visit=0,steps=[],entrySource=null,lastContext={grade:1,unit:1,part:1};
-const themeKey='dm-school-route-theme-v1';
-function theme(){try{return localStorage.getItem(themeKey)==='night'?'night':'day'}catch{return 'day';}}
+function theme(){return window.dmDayNightTheme?.themeFor()||'day';}
 function themeSet(t){
- const choice=t==='night'?'night':'day';try{localStorage.setItem(themeKey,choice)}catch{}
+ const choice=t==='night'?'night':'day';
  document.querySelectorAll('.rt-root.rt-school,.rt-school-modal,#bzPerde.dm-school-game,.sp-adventure-entry.dm-school-start').forEach(x=>{if(x.dataset.schoolAppearance!==choice)x.dataset.schoolAppearance=choice;});
- document.querySelectorAll('[data-school-theme]').forEach(b=>{b.textContent=b.classList.contains('dm-school-head-theme')?(choice==='night'?'☀️':'🌙'):(choice==='night'?'☀️ Gündüz':'🌙 Gece');b.setAttribute('aria-label',choice==='night'?'Gündüz görünümüne geç':'Gece görünümüne geç');});
 }
 const mascot=(n=0)=>characters[((Math.abs(n)+visit)%characters.length)];
 const art=(n,cls='')=>'<img class="'+cls+'" src="learning-assets/characters/'+mascot(n)+'.webp" alt="" loading="lazy" width="100" height="100" decoding="async">';
@@ -47,7 +45,7 @@ function preview(state){
  art(grade*11,'rt-school-main-hero')+'</header>'+
  '<div class="ml-summary-card rt-school-overall"><div class="ml-summary-ring" role="progressbar" aria-label="Okul Yolum ilerlemesi" aria-valuemin="0" aria-valuemax="'+total+'" aria-valuenow="'+done+'" style="--ml-done:'+pct+'%"><div><b>'+done+'</b><small>/ '+total+'</small></div></div>'+
  '<div class="ml-summary-info"><strong>8 sınıf · Macera yolculuğun</strong><p>Üniteleri sırayla keşfet, tamamlanan durakları tekrar çalış.</p><div class="ml-summary-track"><span style="width:'+pct+'%"></span></div><small>%'+pct+' tamamlandı</small></div></div>'+
- '<div class="rt-school-overview-actions"><button type="button" data-school-theme aria-label="Görünümü değiştir">'+(theme()==='night'?'☀️ Gündüz':'🌙 Gece')+'</button><button type="button" data-school-open>⤢ Tam ekran</button></div>'+
+ '<div class="rt-school-overview-actions"><button type="button" data-school-open>⤢ Tam ekran</button></div>'+
  '<h3 class="ml-theme-list-heading">Sınıflarım <small>8 sınıf</small></h3>'+
  '<div class="rt-school-grades">'+grades.map(g=>renderGrade(g,grade)).join('')+'</div></section>';
 }
@@ -90,7 +88,6 @@ function open(rows,gradeHint){
  '<button type="button" data-school-close data-close aria-label="Haritayı kapat">×</button></header>'+
  '<div class="ml-summary-card"><div class="ml-summary-ring" role="progressbar" aria-label="Tüm macera ilerlemesi" aria-valuemin="0" aria-valuemax="'+total+'" aria-valuenow="'+done+'" style="--ml-done:'+pct+'%"><div><b>'+done+'</b><small>/ '+total+'</small></div></div><div class="ml-summary-info"><strong>8 sınıf · Tam yolculuğun</strong><p>Her ünitede yeni bir macera, her durakta yeni kelimeler.</p>'+
  '<div class="ml-summary-track"><span style="width:'+pct+'%"></span></div><small>%'+pct+' tamamlandı</small></div></div>'+
- '<div class="rt-school-overview-actions"><button type="button" data-school-theme>'+(theme()==='night'?'☀️ Gündüz':'🌙 Gece')+'</button><span>Görünüm yalnızca Okul Yolum için değişir.</span></div>'+
  '<h3 class="ml-theme-list-heading">Sınıflarım <small>8 sınıf</small></h3>'+
  groups.map(g=>renderGrade(g,active)).join('')+'</section>';
  const parent=window.dmViewHistory?.capture(),before=document.activeElement;
@@ -147,8 +144,7 @@ function decorateQuestion(){
  if(!header){
   header=document.createElement('header');header.className='dm-school-lesson-head';
   header.innerHTML='<button type="button" class="dm-school-back" data-school-exit aria-label="Macera haritasına dön">✕</button>'+
-   '<div class="dm-school-lesson-title"><small>'+esc(lastContext.grade)+'. Sınıf · '+esc(lastContext.unit)+'. Ünite · '+esc(lastContext.part)+'. Durak</small><strong>Macera Parkuru</strong></div>'+
-   '<button type="button" data-school-theme class="dm-school-head-theme" aria-label="Görünümü değiştir">'+(theme()==='night'?'☀️':'🌙')+'</button>';
+   '<div class="dm-school-lesson-title"><small>'+esc(lastContext.grade)+'. Sınıf · '+esc(lastContext.unit)+'. Ünite · '+esc(lastContext.part)+'. Durak</small><strong>Macera Parkuru</strong></div>';
   modal.prepend(header);
   header.querySelector('[data-school-exit]').onclick=()=>closer?.click();
  }
@@ -226,9 +222,7 @@ if(typeof scene==='function'){
   if(html.includes('data-route-design="3"'))return html;
   const themed=html.replace(prefix,prefix+' data-school-appearance="'+theme()+'"')
     .replaceAll('src="route-assets/papi-school.webp"','src="learning-assets/characters/'+displayMascot+'.webp"');
-  // Small theme control stays inside the banner, rather than taking an extra row.
-  const toggle='<button type="button" class="rt-school-home-theme" data-school-theme aria-label="Okul Yolum görünümünü değiştir">'+(theme()==='night'?'☀️':'🌙')+'</button>';
-  return themed.replace('<button type="button" class="rt-all-link"',toggle+'<button type="button" class="rt-all-link"');
+  return themed;
  };
 }
 document.addEventListener('click',e=>{
@@ -236,8 +230,6 @@ document.addEventListener('click',e=>{
  if(stop&&!stop.disabled&&currentRoute()&&!stop.closest('#mlThemeList')){
   e.preventDefault();e.stopPropagation();const step=steps.find(x=>String(x.b)===stop.dataset.schoolB&&String(x.d)===stop.dataset.schoolD);launchStep(step);return;
  }
- const toggle=e.target.closest('[data-school-theme]');
- if(toggle){e.preventDefault();e.stopPropagation();themeSet(theme()==='night'?'day':'night');return;}
  const openButton=e.target.closest('[data-school-open]');
  if(openButton){e.preventDefault();e.stopPropagation();if(currentRoute())open(steps,Number(openButton.dataset.schoolGrade)||null);}
 });

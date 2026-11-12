@@ -7,8 +7,8 @@
   const learnerHintKey = 'dm-night-hint-shown';
   const teacherHintKey = 'dm-teacher-night-hint-shown';
   let theme = 'day';
-  let lessonOpen = false;
-  const currentTheme = () => lessonOpen ? 'day' : theme;
+  const currentTheme = () => theme;
+  const profileSelector = '#rtProfileBackdrop, [data-dm-theme-profile]';
   const seenHints = new Set();
   let hint, anchor, anchorHost;
   try {
@@ -20,8 +20,7 @@
   function paintButton(button) {
     const night = currentTheme() === 'night';
     button.setAttribute('aria-pressed', String(night));
-    button.disabled = lessonOpen;
-    button.title = lessonOpen ? 'Ders konusu gündüz modunda' : night ? 'Gündüz moduna geç' : 'Gece moduna geç';
+    button.title = night ? 'Gündüz moduna geç' : 'Gece moduna geç';
   }
 
   function refresh() {
@@ -31,6 +30,8 @@
     const meta = document.querySelector('meta[name="theme-color"]');
     if (meta) meta.content = activeTheme === 'night' ? '#132447' : '#e3f3ff';
     document.querySelectorAll('.dm-theme-toggle').forEach(paintButton);
+    window.dmSchoolJourney?.themeSet(activeTheme);
+    document.dispatchEvent(new Event('dm:theme'));
   }
 
   function closeHint() {
@@ -39,7 +40,6 @@
   }
 
   function toggle() {
-    if (lessonOpen) return;
     theme = theme === 'day' ? 'night' : 'day';
     closeHint();
     refresh();
@@ -74,16 +74,17 @@
 
   function updateHint() {
     if (hint) {
-      const box = destination(anchor) === anchorHost && visibleBox(anchor);
+      const box = anchor.closest(profileSelector) && destination(anchor) === anchorHost && visibleBox(anchor);
       if (box) positionHint(box);
       else closeHint();
       return;
     }
     const teacher = !!window.dmTeacherPortalMode;
     const hintKey = teacher ? teacherHintKey : learnerHintKey;
-    if (lessonOpen || seenHints.has(hintKey) || theme === 'night' || document.hidden ||
-        new Date().getHours() < (teacher ? 21 : 20)) return;
+    if (seenHints.has(hintKey) || theme === 'night' || document.hidden ||
+        new Date().getHours() < 21) return;
     for (const button of document.querySelectorAll('.dm-theme-toggle')) {
+      if (!button.closest(profileSelector)) continue;
       const box = visibleBox(button);
       if (!box) continue;
       anchor = button;
@@ -113,31 +114,7 @@
     return button;
   }
 
-  function watchLessonView() {
-    const study = document.getElementById('tab-derscalis');
-    const detail = document.getElementById('dcScreenDetail');
-    if (!study || !detail) return;
-
-    const sync = () => {
-      const open = study.classList.contains('active') && detail.classList.contains('active');
-      if (open === lessonOpen) return;
-      lessonOpen = open;
-      if (open) closeHint();
-      refresh();
-    };
-    const observer = new MutationObserver(sync);
-    for (const element of [study, detail]) {
-      observer.observe(element, { attributes: true, attributeFilter: ['class'] });
-    }
-    sync();
-  }
-
   window.dmDayNightTheme = { refresh, themeFor: currentTheme, createButton, updateHint };
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', watchLessonView, { once: true });
-  } else {
-    watchLessonView();
-  }
   window.addEventListener('pageshow', event => event.persisted ? reset() : refresh());
   document.addEventListener('dm:login', event => {
     if (!event?.detail?.teacherParticipantChanged) reset();

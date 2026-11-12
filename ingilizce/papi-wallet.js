@@ -3,8 +3,6 @@
 const visible=e=>!!e&&e.getClientRects().length>0&&getComputedStyle(e).visibility!=='hidden';
 const hud=document.createElement('div');hud.className='dm-papi-wallet dm-unified-wallet';hud.setAttribute('aria-label','Enerji, altın, XP ve aktif kullanım yıldızları');
 hud.innerHTML='<i class="dm-pw-art dm-pw-papi" aria-hidden="true"></i>'+['energy','gold','xp','time'].map(key=>'<button type="button" data-pw="'+key+'"><i class="dm-pw-art dm-pw-'+key+'" aria-hidden="true"></i><span class="dm-pw-copy"><b data-pw-value></b>'+(key==='time'?'<small data-pw-minutes></small>':'')+'</span></button>').join('');
-const themeButton=window.dmDayNightTheme?.createButton();
-if(themeButton)hud.append(themeButton);
 const buttons=Object.fromEntries([...hud.querySelectorAll('[data-pw]')].map(e=>[e.dataset.pw,e]));
 buttons.time.onclick=()=>window.dmActiveTime?.panel();buttons.energy.onclick=()=>window.dijiEnerjiPaneliAc?.();buttons.gold.onclick=()=>window.magazaAc?.();buttons.xp.onclick=()=>window.dmIlerlememAc?.();
 const activity='#dmStoryLesson,#bzPerde #bzAlan,.game-modal-overlay,#meteorGame,#wordWheel,#papiCards,#harfBahcesiOverlay,#baOyunEkrani,#kpKelimeOyunEkrani,#kmPanel .km-sec,#seviyeDisLinkOverlay';
