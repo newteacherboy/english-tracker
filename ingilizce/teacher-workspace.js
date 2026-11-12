@@ -285,8 +285,6 @@ function dmMidnightHome(board,openOriginal){
    <summary class="dm-midnight-raised"><i aria-hidden="true"></i> Tüm araçlar <span aria-hidden="true">›</span></summary>
    <div class="dm-midnight-extra"></div>
   </details>`;
- const themeButton=window.dmDayNightTheme?.createButton();
- if(themeButton)board.querySelector('.dm-midnight-brand').append(themeButton);
  const classes=()=>window.dmTeacherClassesOpen?window.dmTeacherClassesOpen():openOriginal('classroom');
  board.querySelector('[data-home-students]').onclick=dmStudentList;
  board.querySelector('[data-home-classes]').onclick=classes;

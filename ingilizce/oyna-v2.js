@@ -198,9 +198,9 @@ function medalRouteMarkup(steps,current,learn){
  const chestIndex=steps.findIndex((step,i)=>i>=current&&routeNumber(step,i,learn)%5===0);
  const chestY=chestIndex>=0?map.layout[chestIndex]?.y:null;
  const chest=chestY==null?'':'<button type="button" class="rt-medal-chest'+(ready?' is-ready':'')+'" data-rt="chests" style="top:'+chestY+'px" aria-label="'+(ready?'Hazır sandık ödülünü al':'Sandıklarını görüntüle')+'">'+img('bilgi-icons/chest.webp')+'<span>'+(ready?'Ödülü al':'Sandıklarım')+'</span></button>';
- const tools=[['all','book','Kütüphane'],['plan','calendar','Plan'],['missions','tasks','Görevler']];
+ const tools=[['plan','calendar','Plan'],['missions','tasks','Görevler']];
  return '<section class="bi-scene rt-medal-route'+(learn?'':' rt-medal-school')+'" data-route-map="'+map.key+'" aria-label="'+title+'">'+
-  '<header class="rt-medal-header"><div class="rt-medal-unit"><div><h1>'+title+'</h1><p>'+esc(subtitle)+'</p></div><button type="button" data-rt="switch-route" aria-label="Parkur değiştir">'+icon('route')+'<span>Rota değiştir</span><span aria-hidden="true">›</span></button></div>'+
+  '<header class="rt-medal-header"><div class="rt-medal-unit"><button type="button" class="rt-route-explorer" data-rt="all" aria-label="'+esc(title+' · '+subtitle+' · Tüm durakları göster')+'"><span class="rt-route-copy"><span class="rt-route-name">'+title+'</span><span class="rt-route-subtitle">'+esc(subtitle)+'</span></span><span class="rt-route-chevron" aria-hidden="true">⌄</span></button><button type="button" data-rt="switch-route" aria-label="Parkur değiştir">'+icon('route')+'<span>Rota değiştir</span><span aria-hidden="true">›</span></button></div>'+
   '<div class="rt-medal-tools" aria-label="Parkur araçları">'+tools.map(([action,symbol,label])=>'<button type="button" data-rt="'+action+'">'+icon(symbol)+'<span>'+label+'</span></button>').join('')+'</div></header>'+
   (steps.length?'<div class="rt-medal-scroll" tabindex="0" role="region" aria-label="Öğrenme durakları, diğer duraklar için kaydır"><div class="rt-medal-world" style="height:'+map.height+'px"><div class="rt-medal-window">'+medalRows(map,map.from,current)+'</div>'+medalRow(map,active,current)+'<div class="rt-medal-window">'+medalRows(map,current+1,map.to)+'</div>'+chest+'</div></div>'+
   '<button type="button" class="rt-medal-return" hidden aria-label="Güncel durağa dön"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20V4m-7 7 7-7 7 7"/></svg></button>':'<p role="status">Parkurun hazırlanıyor…</p>')+'</section>';
@@ -391,5 +391,5 @@ function reconcileVisibleRoute(){
 document.addEventListener('dm:state',()=>{preview=null;refreshCards();reconcileVisibleRoute();});
 document.addEventListener('dm:login',()=>{weeklyClaimOwner='';weeklyError='';preview=null;lastRenderedSchoolGrade=0;if(sceneOwner!==who())latest=null;routeMap=null;mapResize?.disconnect();epoch++;reconcileVisibleRoute();});window.addEventListener('resize',fit);window.visualViewport?.addEventListener('resize',fit);
 // School route uses its own theme and expanded grade/unit navigator.
-if(typeof document!=='undefined'&&document.createElement&&document.head&&!document.querySelector('script[data-dm-school-journey]')){const loader=document.createElement('script');loader.src='school-journey.js?v=20261112-sade';loader.defer=true;loader.dataset.dmSchoolJourney='1';document.head.append(loader);}
+if(typeof document!=='undefined'&&document.createElement&&document.head&&!document.querySelector('script[data-dm-school-journey]')){const loader=document.createElement('script');loader.src='school-journey.js?v=20261113-profile-theme';loader.defer=true;loader.dataset.dmSchoolJourney='1';document.head.append(loader);}
 })();

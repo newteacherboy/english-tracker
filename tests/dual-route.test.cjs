@@ -74,3 +74,16 @@ test('new route-switch control delegates to saved route selection and preserves 
  assert.equal(c.yo.dmLearningPurpose,'independent');assert.equal(c.opened,1);assert.equal(b.disabled,false);
  assert.equal(c.yo.altin,25);assert.deepEqual(c.yo.storyProgress,[1,2]);assert.equal(c.yo.baYildiz[210101],3);
 });
+
+test('route heading delegates to the existing full explorer and removes the separate library shortcut',()=>{
+ const c=fixture();const html=c.dmParkurSahne({steps,current:0});
+ assert.match(html,/class="rt-route-explorer" data-rt="all"/);
+ assert(!html.includes('Kütüphane'));
+ assert.equal((html.match(/data-rt="all"/g)||[]).length,1);
+ let handler,opened;
+ const root={isConnected:true,querySelectorAll:()=>[],querySelector:()=>null};
+ c.dmSchoolJourney={open:rows=>opened=rows};
+ c.dmParkurMapMount({dataset:{},querySelector:()=>root,addEventListener:(_,fn)=>handler=fn});
+ handler({target:{closest:()=>({dataset:{rt:'all'}})},preventDefault(){},stopPropagation(){}});
+ assert.equal(opened,steps);
+});
