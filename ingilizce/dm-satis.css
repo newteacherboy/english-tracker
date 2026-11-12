@@ -116,9 +116,9 @@
 .dms-text-btn{display:block;width:100%;border:0;background:none;padding:12px 0 2px;color:#6d5ea6;font:700 14px "Nunito",system-ui;cursor:pointer}
 
 /* ================================================================ PAKET EKRANI (öğrenci) */
-.dmp{position:fixed;inset:0;z-index:2147483645;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;font-family:"Nunito",system-ui,-apple-system,sans-serif;color:#2c2470;
+div.dmp{position:fixed;inset:0;z-index:2147483645;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;font-family:"Nunito",system-ui,-apple-system,sans-serif;color:#2c2470;
  background:radial-gradient(circle at 10% 0,#fbe6ff 0,transparent 40%),radial-gradient(circle at 100% 30%,#e3f1ff 0,transparent 45%),linear-gradient(180deg,#f6f1ff,#efe8fd 60%,#f6f2ff);animation:dmsFade .22s ease-out}
-.dmp *{box-sizing:border-box}
+div.dmp *{box-sizing:border-box}
 .dmp-in{width:min(100%,560px);margin:0 auto;padding:calc(10px + env(safe-area-inset-top,0px)) 16px calc(130px + env(safe-area-inset-bottom,0px))}
 .dmp-bar{display:flex;align-items:center;justify-content:space-between;height:44px}
 .dmp-bar span{font:900 15px "Nunito",system-ui;color:#6b5aa8;letter-spacing:.3px}
@@ -203,24 +203,24 @@
 .dmp-gate input{width:100%;padding:12px;font:800 22px "Nunito",system-ui;text-align:center;border:3px solid #e2d6fb;border-radius:16px;margin:0 0 12px;color:#2c2470}
 
 /* ================================================================ PAKET EKRANI (öğretmen) */
-.dmp.is-teacher{background:radial-gradient(circle at 0 0,#d9f6ff 0,transparent 42%),radial-gradient(circle at 100% 25%,#e4ecff 0,transparent 45%),linear-gradient(180deg,#f2f8ff,#eaf1fd 60%,#f3f7ff)}
-.dmp.is-teacher .dmp-hero h1{background:linear-gradient(95deg,#0b4f8a,#1f7ae0);-webkit-background-clip:text;background-clip:text}
-.dmp.is-teacher .dmp-hero p,.dmp.is-teacher .dmp-pitch,.dmp.is-teacher .dmp-feat p{color:#3c5677}
-.dmp.is-teacher .dmp-toggle{background:#d9e6f8}.dmp.is-teacher .dmp-toggle button{color:#3f5d86}.dmp.is-teacher .dmp-toggle button[aria-pressed=true]{color:#0b4f8a}
-.dmp.is-teacher .dmp-name{color:#0b4f8a}
-.dmp.is-teacher .dmp-plan[aria-checked=true]{border-color:#1f7ae0;box-shadow:0 0 0 4px #d6e8ff,0 10px 26px rgba(30,90,180,.18)}
-.dmp.is-teacher .dmp-plan[aria-checked=true] .dmp-radio{border-color:#1f7ae0;background:#1f7ae0}
-.dmp.is-teacher .dmp-plan.is-premium[aria-checked=true]{border-color:#f0a90f;box-shadow:0 0 0 4px #ffeab0,0 10px 26px rgba(200,140,20,.25)}
-.dmp.is-teacher .dmp-plan.is-premium[aria-checked=true] .dmp-radio{border-color:#f0a90f;background:#f0a90f}
-.dmp.is-teacher .dmp-chips span{background:#e6f1ff;color:#1d4f86}
-.dmp.is-teacher .dmp-sec{color:#0b4f8a}.dmp.is-teacher .dmp-sec small{color:#4d6a90}
-.dmp.is-teacher .dmp-feat .i{background:#e6f1ff}
-.dmp.is-teacher .dmp-feat .v span.on{background:#e3efff;color:#1d5fae}
-.dmp.is-teacher .dmp-table th{background:#eef5ff;color:#1d4f86}
-.dmp.is-teacher .dmp-table td:first-child{color:#17375e}
-.dmp.is-teacher .dmp-foot{background:linear-gradient(180deg,rgba(242,248,255,0),#ecf3fe 26%)}
-.dmp.is-teacher .dmp-msg{background:#e3efff;color:#174c87}
-.dmp.is-teacher .dmp-legal,.dmp.is-teacher .dmp-foot-note,.dmp.is-teacher .dmp-bar span{color:#4d6a90}
+div.dmp.is-teacher{background:radial-gradient(circle at 0 0,#d9f6ff 0,transparent 42%),radial-gradient(circle at 100% 25%,#e4ecff 0,transparent 45%),linear-gradient(180deg,#f2f8ff,#eaf1fd 60%,#f3f7ff)}
+div.dmp.is-teacher .dmp-hero h1{background:linear-gradient(95deg,#0b4f8a,#1f7ae0);-webkit-background-clip:text;background-clip:text}
+div.dmp.is-teacher .dmp-hero p,div.dmp.is-teacher .dmp-pitch,div.dmp.is-teacher .dmp-feat p{color:#3c5677}
+div.dmp.is-teacher .dmp-toggle{background:#d9e6f8}div.dmp.is-teacher .dmp-toggle button{color:#3f5d86}div.dmp.is-teacher .dmp-toggle button[aria-pressed=true]{color:#0b4f8a}
+div.dmp.is-teacher .dmp-name{color:#0b4f8a}
+div.dmp.is-teacher .dmp-plan[aria-checked=true]{border-color:#1f7ae0;box-shadow:0 0 0 4px #d6e8ff,0 10px 26px rgba(30,90,180,.18)}
+div.dmp.is-teacher .dmp-plan[aria-checked=true] .dmp-radio{border-color:#1f7ae0;background:#1f7ae0}
+div.dmp.is-teacher .dmp-plan.is-premium[aria-checked=true]{border-color:#f0a90f;box-shadow:0 0 0 4px #ffeab0,0 10px 26px rgba(200,140,20,.25)}
+div.dmp.is-teacher .dmp-plan.is-premium[aria-checked=true] .dmp-radio{border-color:#f0a90f;background:#f0a90f}
+div.dmp.is-teacher .dmp-chips span{background:#e6f1ff;color:#1d4f86}
+div.dmp.is-teacher .dmp-sec{color:#0b4f8a}div.dmp.is-teacher .dmp-sec small{color:#4d6a90}
+div.dmp.is-teacher .dmp-feat .i{background:#e6f1ff}
+div.dmp.is-teacher .dmp-feat .v span.on{background:#e3efff;color:#1d5fae}
+div.dmp.is-teacher .dmp-table th{background:#eef5ff;color:#1d4f86}
+div.dmp.is-teacher .dmp-table td:first-child{color:#17375e}
+div.dmp.is-teacher .dmp-foot{background:linear-gradient(180deg,rgba(242,248,255,0),#ecf3fe 26%)}
+div.dmp.is-teacher .dmp-msg{background:#e3efff;color:#174c87}
+div.dmp.is-teacher .dmp-legal,div.dmp.is-teacher .dmp-foot-note,div.dmp.is-teacher .dmp-bar span{color:#4d6a90}
 .dmp-teal{background:linear-gradient(180deg,#38c8f0,#1d8fe0)!important;box-shadow:inset 0 3px 0 #9be7ff,0 6px 0 #156bb0,0 10px 20px rgba(30,120,220,.3)!important;color:#fff!important}
 .dmp-teal small{color:#dff3ff!important}
 .dmp-soonbox{margin-top:10px;padding:14px;border-radius:22px;background:#fff;border:2px dashed #b9d4f5;text-align:center;font:800 13.5px/1.45 "Nunito",system-ui;color:#2c4f7c}
@@ -260,5 +260,5 @@
 .dmp-soonline .dmp-soon{margin:0 4px 0 0}
 .dmp-legal{margin-top:12px;font-size:10.5px;line-height:1.5}
 .dmp-buy{min-height:56px;font-size:17px}
-.dmp.is-teacher .dmp-keys li{color:#17375e}.dmp.is-teacher .dmp-keys{border-top-color:#d6e4f6}
+div.dmp.is-teacher .dmp-keys li{color:#17375e}div.dmp.is-teacher .dmp-keys{border-top-color:#d6e4f6}
 @media(max-width:350px){.dmp-plans{grid-template-columns:1fr}}

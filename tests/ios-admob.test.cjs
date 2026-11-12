@@ -119,19 +119,10 @@ test('counter counts once on result close only; excludes opponents and parkur; t
  }finally{h.close();}
 });
 
-test('banner only on lists/store; hidden for dialogs/game/result, failure releases spacing',async()=>{
+test('banner is off: never shown on lists, store or games (12 Kas 2026 decision)',async()=>{
  const h=harness();try{
   await new Promise(r=>setTimeout(r,20));
-  assert(h.calls.some(c=>c[0]==='banner'));
-  const game=h.w.document.createElement('section');game.className='game-modal-overlay';h.w.document.body.append(game);
-  h.w.document.dispatchEvent(new h.w.Event('visibilitychange'));await new Promise(r=>setTimeout(r,20));
-  assert(h.calls.some(c=>c[0]==='removeBanner'));assert(!h.w.document.documentElement.classList.contains('dm-ios-banner'));
-  game.remove();h.w.document.dispatchEvent(new h.w.Event('visibilitychange'));await new Promise(r=>setTimeout(r,20));
-  h.events.bannerAdSizeChanged.forEach(f=>f({height:90}));assert.equal(h.w.document.documentElement.style.getPropertyValue('--dm-ios-ad-height'),'90px');
-  h.events.bannerAdFailedToLoad.forEach(f=>f());await new Promise(r=>setTimeout(r,20));
-  assert(!h.w.document.documentElement.classList.contains('dm-ios-banner'));
-  h.w.document.getElementById('tab-aktiviteler').classList.remove('active');
-  h.w.document.dispatchEvent(new h.w.Event('visibilitychange'));await new Promise(r=>setTimeout(r,20));
+  assert(!h.calls.some(c=>c[0]==='banner'));
   assert(!h.w.document.documentElement.classList.contains('dm-ios-banner'));
  }finally{h.close();}
 });

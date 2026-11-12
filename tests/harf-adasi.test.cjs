@@ -5,12 +5,11 @@ const src=fs.readFileSync(path.join(__dirname,'../ingilizce/harf-adasi.js'),'utf
 const w={};
 vm.runInNewContext(src,{window:w,document:{getElementById:()=>null},Math,Set,Date,clearInterval,clearTimeout,setTimeout,setInterval});
 const core=w.dmHarfAdasiCore;
-test('each keyboard includes every required letter exactly once and never duplicates choices',()=>{
+test('keyboard holds only the word letters, repeats included (Sade Ada, 12 Kas 2026)',()=>{
  for(const word of ['CAT','STRAWBERRY','ELEPHANT','NATIONAL DAY','INTERNATIONAL','JAZZ','HOUSE']){
-   const keys=core.makeKeys(word,()=>0.4);
-   assert.equal(keys.length,new Set(keys).size);
-   assert(keys.length>=12&&keys.length<=26);
-   for(const ch of new Set(word.replace(/[^A-Z]/g,'').split('')))assert(keys.includes(ch));
+   const keys=core.makeKeys(word,()=>0.4),letters=word.replace(/[^A-Z]/g,'').split('');
+   assert.equal(keys.length,letters.length);
+   assert.deepEqual([...keys].sort(),[...letters].sort());
  }
 });
 test('repeated letters are revealed with one correct choice',()=>{

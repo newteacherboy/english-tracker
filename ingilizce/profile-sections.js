@@ -164,15 +164,18 @@
     const r = ROZETLER.find(r => r.id === rozetSirasi[0]); if (!r) { rozetSirasi.shift(); kuyrukKaydet(); return; }
     const kisi = rozetKisi, once = document.activeElement, el = document.createElement('div');
     el.className = 'bd-kutlama'; el.id = 'bdRozetKutlama';
-    el.innerHTML = `<section class="bd-kutlama-kart" role="dialog" aria-modal="true" aria-labelledby="bdRozetTebrik" aria-describedby="bdRozetAciklama">
+    // [12 Kas 2026] Rozet ekranı B: açık kutlama ekranı, koleksiyon ilerlemesi; İndir ve Paylaş korunur.
+    let kazanilan = 0; try { kazanilan = kazanilanRozetler(istat).size; } catch (e) {}
+    const toplam = ROZETLER.length, yuzde = Math.max(3, Math.round(100 * kazanilan / Math.max(1, toplam)));
+    el.classList.add('rz-b');
+    el.innerHTML = `<section class="bd-kutlama-kart rz-b-kart" role="dialog" aria-modal="true" aria-labelledby="bdRozetTebrik" aria-describedby="bdRozetAciklama">
       <button type="button" class="bd-kutlama-kapat" aria-label="Kutlamayı kapat">×</button>
-      <div class="bd-kutlama-isilti" aria-hidden="true">✦ ✧ ✦ ✧</div>
-      <p class="bd-kutlama-etiket">YENİ ROZET KAZANDIN</p><h2 id="bdRozetTebrik">Tebrikler, ${kac((typeof yoIsim !== 'undefined' && yoIsim) || aktifOgrenciAdi)}!</h2>
-      <div class="bd-kutlama-rozet"><img src="${kac(r.resim)}" alt="${kac(r.ad)} rozeti"><span hidden aria-hidden="true">${r.ikon}</span></div>
-      <h3>${kac(r.ad)}</h3><p id="bdRozetAciklama">Başardığın hedef: ${kac(r.kosul)}.</p>
-      <div class="bd-kutlama-papi"><img src="papi-reward-v2.png" alt=""><p>Harikasın! Emeğin yeni bir rozetle taçlandı. Maceraya devam!</p></div>
-      <small>Rozetin Profil → Başarılarım bölümüne eklendi.</small>
-      <button type="button" class="bd-kutlama-devam">Harika! Devam et ✨</button>
+      <i class="rz-k rz-k1" aria-hidden="true"></i><i class="rz-k rz-k2" aria-hidden="true"></i><i class="rz-k rz-k3" aria-hidden="true"></i><i class="rz-k rz-k4" aria-hidden="true"></i>
+      <p class="rz-ust" id="bdRozetTebrik">Tebrikler, ${kac((typeof yoIsim !== 'undefined' && yoIsim) || aktifOgrenciAdi)}!</p>
+      <div class="bd-kutlama-rozet rz-rozet"><img src="${kac(r.resim)}" alt="${kac(r.ad)} rozeti"><span hidden aria-hidden="true">${r.ikon}</span></div>
+      <h3 class="rz-ad">${kac(r.ad)}</h3><p class="rz-aciklama" id="bdRozetAciklama">${kac(r.kosul)} hedefini başardın ve yeni bir rozet kazandın.</p>
+      <div class="rz-koleksiyon"><div class="rz-kol-ust"><span>Rozet koleksiyonun</span><span>${kazanilan} / ${toplam}</span></div><div class="rz-bar"><i style="width:${yuzde}%"></i></div></div>
+      <button type="button" class="bd-kutlama-devam rz-devam">Harika! Devam et</button>
     </section>`;
     document.body.append(el); kutlama = el;
     window.dmSharing?.attachAchievementActions(el.querySelector('section'), {kind:'badge',id:r.id,name:r.ad,src:r.resim,emoji:r.ikon});

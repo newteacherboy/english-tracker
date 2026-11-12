@@ -117,3 +117,32 @@ body .rubric-modal,body .cog-perde,body #duyuruYonetimModal,body #ogretmenSohbet
 @media(max-width:359px){#tab-ilerlemem.active{padding-left:10px!important;padding-right:10px!important}.bd-skill-result{font-size:10px;padding:4px 6px}.bd-skill{gap:5px}.bd-time-row small{font-size:9px}}
 #bdIstat .bd-skill{position:relative;min-height:34px;padding:6px 9px 8px;flex-wrap:nowrap}#bdIstat .bd-skill progress{position:absolute;bottom:0;left:9px;width:calc(100% - 18px);height:3px;border:0;appearance:none;background:#e5e6f0;border-radius:4px;overflow:hidden}#bdIstat .bd-skill progress::-webkit-progress-bar{background:#e5e6f0}#bdIstat .bd-skill progress::-webkit-progress-value{background:#27b8a7}#bdIstat .bd-skill progress::-moz-progress-bar{background:#27b8a7}
 #bdIstat .bd-skill-list{gap:5px}#bdIstat .bd-skill-scope{font-size:9px;margin:4px 0}#bdIstat .bd-progress-hero{min-height:52px;margin-bottom:9px;padding:6px 10px}#bdIstat .bd-progress-hero img{width:40px;height:40px}#bdIstat .bd-story-start{min-height:36px;margin-bottom:8px}#bdIstat .bd-activity-summary{padding:8px 10px;margin-bottom:8px}#bdIstat .bd-activity-summary>div{margin:5px 0}#bdIstat .bd-cubuklar{height:60px}#bdIstat .bd-time-row button{min-height:60px;padding:7px 9px}#tab-ilerlemem .bd-teacher>summary{padding:10px 12px}
+
+/* [12 Kas 2026] Rozet ekranı B (onaylı): açık zemin, büyük rozet, koleksiyon ilerlemesi; İndir + Paylaş. */
+html body .bd-kutlama.rz-b{padding:0!important;background:linear-gradient(180deg,#F1ECFF 0%,#FFFFFF 62%)!important;backdrop-filter:none!important;place-items:stretch!important}
+html body .bd-kutlama.rz-b .rz-b-kart{width:100%!important;max-width:520px!important;margin:0 auto!important;height:100dvh!important;max-height:100dvh!important;box-sizing:border-box!important;display:flex!important;flex-direction:column!important;align-items:center!important;gap:12px!important;padding:calc(env(safe-area-inset-top,0px) + 56px) 22px calc(env(safe-area-inset-bottom,0px) + 22px)!important;border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important;color:#2C2470!important;overflow-y:auto!important}
+html body .bd-kutlama.rz-b .bd-kutlama-kapat{top:calc(env(safe-area-inset-top,0px) + 14px)!important;right:16px!important;width:44px!important;height:44px!important;background:#fff!important;color:#2C2470!important;box-shadow:0 3px 10px rgba(93,64,170,.18)!important;font-size:22px!important}
+html body .bd-kutlama.rz-b .rz-k{position:absolute;width:10px;height:16px;border-radius:3px;pointer-events:none;animation:rzDus 2.4s ease-in-out infinite}
+html body .bd-kutlama.rz-b .rz-k1{left:12%;top:12%;background:#F2B233;transform:rotate(20deg)}
+html body .bd-kutlama.rz-b .rz-k2{right:14%;top:16%;background:#2BB5A8;transform:rotate(-25deg);animation-delay:.4s}
+html body .bd-kutlama.rz-b .rz-k3{left:20%;top:38%;background:#E2445C;transform:rotate(35deg);animation-delay:.8s}
+html body .bd-kutlama.rz-b .rz-k4{right:20%;top:36%;background:#6B3FE0;transform:rotate(-15deg);animation-delay:1.2s}
+@keyframes rzDus{0%,100%{translate:0 0}50%{translate:0 10px}}
+html body .bd-kutlama.rz-b .rz-ust{margin:0!important;font:900 15px Nunito,system-ui,sans-serif!important;letter-spacing:.5px!important;color:#6B5AA8!important;-webkit-text-fill-color:#6B5AA8!important;text-transform:uppercase}
+html body .bd-kutlama.rz-b .rz-rozet{width:min(56vw,220px)!important;height:min(56vw,220px)!important;border-radius:50%!important;background:radial-gradient(circle,#FFF4D9 0%,#F1ECFF 70%)!important;display:grid!important;place-items:center!important;margin:0!important;box-shadow:none!important;border:0!important}
+html body .bd-kutlama.rz-b .rz-rozet img{width:78%!important;height:78%!important;object-fit:contain!important;animation:rzPop .6s cubic-bezier(.2,1.4,.4,1) both}
+@keyframes rzPop{0%{transform:scale(.3);opacity:0}100%{transform:scale(1);opacity:1}}
+html body .bd-kutlama.rz-b .rz-ad{margin:0!important;font:900 32px/1.05 Nunito,system-ui,sans-serif!important;color:#2C2470!important;-webkit-text-fill-color:#2C2470!important}
+html body .bd-kutlama.rz-b .rz-aciklama{margin:0!important;max-width:340px;font-size:16px!important;font-weight:700!important;color:#5A5390!important}
+html body .bd-kutlama.rz-b .rz-koleksiyon{width:100%;box-sizing:border-box;background:#fff;border-radius:18px;padding:12px 16px;box-shadow:0 4px 0 #E3DCFB;text-align:left}
+html body .bd-kutlama.rz-b .rz-kol-ust{display:flex;justify-content:space-between;font-size:13px;font-weight:800;color:#6B5AA8}
+html body .bd-kutlama.rz-b .rz-bar{margin-top:8px;height:10px;border-radius:5px;background:#ECE7FB;overflow:hidden}
+html body .bd-kutlama.rz-b .rz-bar i{display:block;height:100%;border-radius:5px;background:#6B3FE0}
+html body .bd-kutlama.rz-b .dm-achievement-preview{display:none!important}
+html body .bd-kutlama.rz-b .dm-achievement-actions{order:9;width:100%;display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important;margin:auto 0 0!important}
+html body .bd-kutlama.rz-b .dm-achievement-actions button{height:48px!important;min-height:0!important;margin:0!important;padding:0 8px!important;border:2px solid #DCD5F7!important;border-radius:14px!important;background:#fff!important;color:#5B3FD6!important;font:900 15px Nunito,system-ui,sans-serif!important;box-shadow:none!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+html body .bd-kutlama.rz-b .dm-achievement-status{order:10;margin:0!important;font-size:12px!important;color:#6E6894!important;min-height:0}
+html body .bd-kutlama.rz-b .rz-devam{order:11;width:100%!important;height:56px!important;min-height:0!important;margin:0!important;border:0!important;border-radius:18px!important;background:#6B3FE0!important;color:#fff!important;font:900 18px Nunito,system-ui,sans-serif!important;box-shadow:0 5px 0 #4A26B0!important}
+@media (max-height:700px){html body .bd-kutlama.rz-b .rz-rozet{width:150px!important;height:150px!important}html body .bd-kutlama.rz-b .rz-ad{font-size:26px!important}html body .bd-kutlama.rz-b .rz-b-kart{gap:8px!important}}
+@media (prefers-reduced-motion:reduce){html body .bd-kutlama.rz-b .rz-k,html body .bd-kutlama.rz-b .rz-rozet img{animation:none}}
+html body .bd-kutlama.rz-b .rz-rozet::before,html body .bd-kutlama.rz-b .rz-rozet::after{display:none!important;content:none!important}

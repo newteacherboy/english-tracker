@@ -197,3 +197,18 @@ body #tab-dunya .rt-medal-route .rt-medal-tools>button>svg{width:22px!important;
 html:not([data-dm-theme="day"]) body #tab-dunya .rt-medal-route .rt-medal-tools>button{text-shadow:0 1px 3px #000a}
 body #tab-dunya .rt-medal-route .rt-medal-tools>button:active::before,body #tab-dunya .rt-medal-route .rt-medal-tools>button:active>svg{transform:scale(.92)}
 body #tab-dunya .rt-medal-route .rt-medal-tools .rt-tool-badge{top:-3px!important;right:2px!important;left:auto!important}
+
+/* [12 Kas 2026] Sol Kütüphane / Plan / Görevler butonları kilitli durak gibi soluk: gri disk, gri simge,
+   soluk yazı. Kırmızı bildirim noktası (.rt-tool-badge) filtre dışında kalır, parlak kırmızı görünür. */
+html body #tab-dunya .rt-medal-route .rt-medal-tools>button::before{background-color:var(--v4-lock)!important;border:3px solid var(--v4-lock-edge)!important;border-bottom-width:6px!important;box-shadow:0 0 0 5px var(--v4-lock-ring)!important;filter:grayscale(1);opacity:.78;box-sizing:border-box}
+html body #tab-dunya .rt-medal-route .rt-medal-tools>button>svg{background:var(--v4-lock)!important;border:3px solid var(--v4-lock-edge)!important;color:#fff!important;filter:grayscale(1);opacity:.78;box-shadow:0 0 0 5px var(--v4-lock-ring)!important}
+html body #tab-dunya .rt-medal-route .rt-medal-tools>button{color:#6B7A90!important}
+html[data-dm-theme="night"] body #tab-dunya .rt-medal-route .rt-medal-tools>button{color:#9AA8BD!important}
+html body #tab-dunya .rt-medal-route .rt-medal-tools .rt-tool-badge{filter:none!important;opacity:1!important;z-index:2}
+
+/* [12 Kas 2026] Öğrenme Yolu: kilitli bölüm başında "Buradan devam et" (durak kilitli görünür, etiket seçilebilir). */
+body #tab-dunya .rt-medal-route .rt-medal-jump{position:absolute;left:0;top:calc(var(--medal-size, 76px) / 2 + 16px);transform:translateX(-50%);z-index:2;display:inline-flex;align-items:center;gap:5px;min-height:34px;padding:0 14px;white-space:nowrap;border:2px solid #0E7C7B;border-bottom-width:4px;border-radius:999px;background:#fff;color:#0E7C7B;font:900 13px/1 Nunito,system-ui,sans-serif;cursor:pointer;box-shadow:0 3px 8px #0f27471f}
+body #tab-dunya .rt-medal-route .rt-medal-jump:active{transform:translateX(-50%) scale(.95)}
+html[data-dm-theme="night"] body #tab-dunya .rt-medal-route .rt-medal-jump{background:#13283f;color:#7FE0D6;border-color:#2BA79C}
+.rt-jump-choices{grid-template-columns:1fr 1fr!important}
+.rt-jump-choices [data-jump-yes]{background:#0E7C7B!important;color:#fff!important;border-color:#0A5F5E!important}

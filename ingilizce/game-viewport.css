@@ -355,3 +355,11 @@ html.dm-native-ios body .dm-vp-root>:is(.dm-vp-back,.dm-vp-exit){top:calc(var(--
 html.dm-native-ios body .dm-vp-root>.game-modal-content{padding-top:calc(var(--dm-ios-top-safe,62px) + 52px)!important}
 html.dm-native-ios body .dm-game-framed{--dm-frame-height:calc(54px + var(--dm-ios-top-safe,62px))}
 html.dm-native-ios body .dm-game-framed .dm-game-frame{padding-top:var(--dm-ios-top-safe,62px)!important}
+
+/* [12 Kas 2026] Klasik oyun pencereleri (Eksik Harf vb.) z-index 9999999 ile açılır; alt menünün Oyna diski
+   (kol simgesi) bunların üstünde kalıyordu. bilgi-islands katmanındaki display:flex!important, katmansız gizleme
+   kurallarını eziyordu; bu yüzden gizleme aynı katmanda ve daha güçlü seçiciyle yazıldı. */
+@layer bilgiIslands{
+html body:is(.dm-game-viewport,.dm-play-session) #bottomNavMobile#bottomNavMobile.bottom-nav-mobile,
+html body:has(> .game-modal-overlay[style*="display: flex"]) #bottomNavMobile#bottomNavMobile.bottom-nav-mobile{display:none!important;visibility:hidden!important;pointer-events:none!important}
+}
