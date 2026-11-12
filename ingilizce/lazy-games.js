@@ -2,7 +2,7 @@
 (()=>{'use strict';
   const premiumFile='premium-word-match.js?v=20261111-paket';
   const introFile='premium-intro.js?v=20261111-paket';
-  const files=['solo-arcade.js?v=20261111-papi','harf-bahcesi.js?v=20261111-papi','papi-cards.js?v=20261107-scored-rounds','meteor.js?v=20261112-tek-atis','word-wheel.js?v=20261016-ten-seconds','kelime-rallisi.js?v=20261112-seviye'];
+  const files=['solo-arcade.js?v=20261111-papi','harf-bahcesi.js?v=20261111-papi','papi-cards.js?v=20261107-scored-rounds','meteor.js?v=20261112-tek-atis','word-wheel.js?v=20261016-ten-seconds','kelime-rallisi.js?v=20261112-kart-a'];
   const loaded=new Set();let pending=null,readyDone=false;
   function script(src){window.dmLateCss?.();return new Promise((resolve,reject)=>{
     if(loaded.has(src)){resolve();return;}
