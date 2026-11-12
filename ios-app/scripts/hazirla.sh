@@ -32,6 +32,22 @@ cp native/DmBillingPlugin.swift native/MainViewController.swift native/native-ru
 # Ana ekran denetleyicisi: eklentiyi kaydeder ve yerel katmanı sayfaya ekler.
 sed -i '' 's/customClass="CAPBridgeViewController" customModule="Capacitor"/customClass="MainViewController" customModule="App" customModuleProvider="target"/' ios/App/App/Base.lproj/Main.storyboard
 grep -q 'customClass="MainViewController"' ios/App/App/Base.lproj/Main.storyboard || { echo "❌ Main.storyboard güncellenemedi"; exit 1; }
+# Capacitor 8.5+ (UIScene): ana ekranı SceneDelegate kodla kurar, storyboard'daki sınıf KULLANILMAZ.
+# 1.1 (107) bu yüzden yerel katmanı (ödeme, reklam) hiç başlatmadı. Kök denetleyici burada MainViewController olur.
+if [ -f ios/App/App/SceneDelegate.swift ]; then
+  python3 - <<'PY'
+import re
+p='ios/App/App/SceneDelegate.swift'; s=open(p).read()
+if 'MainViewController()' not in s:
+    s2, n = re.subn(r'\bCAPBridgeViewController\(\)', 'MainViewController()', s)
+    if n == 0:
+        s2, n = re.subn(r'(rootViewController\s*=\s*)[A-Za-z_.]*\(\)', r'\1MainViewController()', s)
+    assert n > 0, 'SceneDelegate içinde kök denetleyici bulunamadı'
+    open(p, 'w').write(s2)
+print('SceneDelegate kök denetleyicisi: MainViewController')
+PY
+  grep -q 'MainViewController()' ios/App/App/SceneDelegate.swift || { echo "❌ SceneDelegate MainViewController kullanmıyor"; exit 1; }
+fi
 # Anlık bildirim jetonunu Capacitor'a ilet (Capacitor belgelerindeki iki yöntem).
 if ! grep -q capacitorDidRegisterForRemoteNotifications ios/App/App/AppDelegate.swift; then
   python3 - <<'PY'

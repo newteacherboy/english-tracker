@@ -14,7 +14,7 @@ on:
       version:
         description: 'Sürüm (App Store)'
         required: true
-        default: '1.1'
+        default: '1.1.1'
       build:
         description: 'Derleme numarası (boşsa 100 + çalışma sayısı)'
         required: false
@@ -34,7 +34,7 @@ jobs:
     timeout-minutes: 60
     env:
       DM_PRODUCTION_ADS: '1'
-      VERSION: ${{ inputs.version || '1.1' }}
+      VERSION: ${{ inputs.version || '1.1.1' }}
       HAS_KEY: ${{ secrets.ASC_KEY_P8 != '' && 'yes' || 'no' }}
     steps:
       - uses: actions/checkout@v4
@@ -64,6 +64,8 @@ jobs:
           test -f "$APP/native-runtime.js" || { echo "::error::native-runtime.js pakette yok"; exit 1; }
           grep -rqa DmBillingPlugin "$APP" || { echo "::error::DmBillingPlugin derlenmemiş"; exit 1; }
           grep -rqa MainViewController "$APP" || { echo "::error::MainViewController derlenmemiş"; exit 1; }
+          # Capacitor 8.5+: kök denetleyici SceneDelegate kodunda kurulur; MainViewController orada olmalı.
+          if [ -f App/SceneDelegate.swift ]; then grep -q "MainViewController()" App/SceneDelegate.swift || { echo "::error::SceneDelegate MainViewController kullanmıyor (ödeme/reklam katmanı çalışmaz)"; exit 1; }; fi
           echo "Paket içeriği doğrulandı: $(du -h "$APP/native-runtime.js" | cut -f1) yerel katman"
         shell: bash
       - name: İmzalı arşiv ve TestFlight yüklemesi
