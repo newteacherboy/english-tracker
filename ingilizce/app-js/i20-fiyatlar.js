@@ -483,7 +483,7 @@
   async function satinAl(o, kombinMi) {
     if(!window.dmProgression?.itemAllowed(o)) return;
     const btn=$('dlEylemBtn');if(btn)btn.disabled=true;
-    try { await window.dmProgression.sync(); const r=await fetch(apiURL,{method:'POST',body:JSON.stringify({islem:'seviyeUrunAl',ogrenci:aktifOgrenciAdi,item:o.id})});const result=await r.json();if(!r.ok||!result.ok)throw Error(result.mesaj||'Satın alma tamamlanamadı');Object.assign(yo,result.yo);D.deneme=Object.assign({},kk().s);D.secili=null;window.yoAvatarUygula?.();window.dmProgression.refresh(true);ciz();toast(`🎉 ${o.ad} artık senin!`); }
+    try { await window.dmProgression.sync(); const r=await fetch(apiURL,{method:'POST',body:JSON.stringify({islem:'seviyeUrunAl',ogrenci:aktifOgrenciAdi,item:o.id})});const result=await r.json();if(!r.ok||!result.ok)throw Error(result.mesaj||'Satın alma tamamlanamadı');Object.assign(yo,result.yo);try{localStorage.setItem('ing_yo_'+aktifOgrenciAdi,JSON.stringify(yo));}catch(_){}D.deneme=Object.assign({},kk().s);D.secili=null;window.yoAvatarUygula?.();window.dmProgression.refresh(true);ciz();toast(`🎉 ${o.ad} artık senin!`); }
     catch(e){toast(e.message);if(btn)btn.disabled=false;}
   }
   function hosGeldinAl() {

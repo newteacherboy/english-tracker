@@ -38,7 +38,7 @@
             const v = result.yo || JSON.parse(govde.deger);
             taban[ad] = Math.max(Number(taban[ad])||0, Number(v?.guncelleme)||0);
             if (ad === kucuk(isimAl()) && result.yo && yoVar()) {
-              for (const key of ['guncelleme','lig','xpGun']) if (v[key] !== undefined) yo[key] = v[key];
+              for (const key of ['guncelleme','lig','xpGun']) if (v[key] !== undefined) yo[key] = v[key]; if (window.yoSahipBirlestir?.(yo, v)) { try { localStorage.setItem('ing_yo_' + isimAl(), JSON.stringify(yo)); } catch (e) {} window.yoAvatarUygula?.(); }
             }
           }
         }
