@@ -25,8 +25,8 @@ if(i===6&&task.label==='Cümleyi tamamla'){
 assert.equal(await p.locator('.ml-task h2').evaluate(el=>getComputedStyle(el).color),'rgb(20, 45, 73)','Question heading must match the approved high-contrast daytime skin');
 await p.evaluate(()=>{window.spoken=[];window.SpeechSynthesisUtterance=function(text){this.text=text;};window.speechSynthesis.cancel=()=>{};window.speechSynthesis.speak=u=>window.spoken.push({text:u.text,lang:u.lang});});
 await p.getByRole('button',{name:'🔊 Cümleyi dinle',exact:true}).click();
-await p.getByRole('button',{name:'🔊 Türkçe anlamını dinle',exact:true}).click();
-assert.deepEqual(await p.evaluate(()=>window.spoken),[{text:task.prompt.replace('____',task.answer),lang:'en-US'},{text:task.promptAudio,lang:'tr-TR'}]);
+assert.equal(await p.getByRole('button',{name:'🔊 Türkçe anlamını dinle',exact:true}).count(),0,'Cümleyi tamamla shows only the English speaker');
+assert.deepEqual(await p.evaluate(()=>window.spoken),[{text:task.prompt.replace('____',task.answer),lang:'en-US'}]);
 }
 if(i===1&&height>520){const b=await p.locator('.ml-board').boundingBox(),h=await p.locator('.ml-arena-hero').boundingBox();assert(h.y-b.y<80,'Prompt must start near top');assert(h.height>=85,'Mascot must have room');}assert.equal(await p.locator('.ml-arena-papi').count(),1);await p.waitForFunction(()=>{const img=document.querySelector('#dmStoryLesson .ml-arena-papi');return img?.complete&&img.naturalWidth>0;},null,{timeout:10000});assert.equal(await p.locator('.ml-arena-papi').getAttribute('data-ml-character'),ROSTER[(i-1)%10],'Question '+i+' mascot must follow the approved order');assert.ok((await p.locator('.ml-arena-papi').getAttribute('src')).endsWith('/'+ROSTER[(i-1)%10]+'.webp'),'Question mascot image must load without Papi fallback');
 if([2,4,6,7,10,11].includes(i))await p.screenshot({animations:'disabled',path:path.join(out,'question-'+i+'-'+width+'.png')});

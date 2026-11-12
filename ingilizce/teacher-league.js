@@ -24,6 +24,13 @@
   const EMPTY_HINT = { gelisen: 'Geçen döneme göre XP’si artan öğrenci yok.', dogruluk: 'Doğruluk sıralaması için öğrencinin yeterli soru çözmesi gerekir.', odev: 'Bu dönemde verilen ödev yok.' };
 
   const CSS = `html.dm-teacher-portal .dml-page{z-index:2147483639}
+.dml-page .dml-box h2{color:#1D1B3A!important}.dml-page .dml-att h2{color:#7A3A00!important}
+.dml-pro{margin-top:12px;background:linear-gradient(150deg,#26215A,#1D1B3A);border-radius:22px;padding:16px;color:#fff;box-shadow:0 8px 22px rgba(29,27,58,.25)}
+.dml-pro-top{display:flex;gap:12px;align-items:center}.dml-pro .ic{flex:none;width:44px;height:44px;border-radius:14px;background:#F2A541;display:grid;place-items:center;font-size:22px}
+.dml-pro b{display:block;font:900 17px/1.2 Nunito,system-ui,sans-serif;color:#fff}.dml-pro small{display:block;margin-top:2px;color:#D9D3FF;font-weight:700;font-size:13px}
+.dml-pro ul{margin:12px 0 14px;padding:0;list-style:none;display:grid;gap:6px}.dml-pro li{font-size:13px;font-weight:800;color:#F1EEFF}.dml-pro li::before{content:'✓';color:#F2A541;margin-right:8px}
+.dml-pro button{width:100%;min-height:48px;border:0;border-radius:14px;background:#F2A541;color:#3A1F00;font:900 16px Nunito,system-ui,sans-serif;cursor:pointer;box-shadow:0 3px 0 #C47F1E}
+html.dm-teacher-portal .dml-page{padding-bottom:calc(110px + env(safe-area-inset-bottom,0px))}
 .dml-page{position:fixed;inset:0;z-index:2147483642;background:#F7F5FF;color:#1D1B3A;overflow:auto;font:600 15px/1.4 Nunito,system-ui,-apple-system,sans-serif;padding-bottom:calc(96px + env(safe-area-inset-bottom,0px));animation:dmlIn .25s ease-out}
 .dml-wrap{max-width:640px;margin:0 auto;padding:16px 16px 0}
 .dml-top{display:flex;align-items:center;gap:10px}.dml-top h1{flex:1;margin:0;font:900 26px/1.1 Nunito,system-ui,sans-serif}
@@ -142,13 +149,16 @@
       const att = sc.attention;
       const attHtml = att.count ? (d.unlocked
         ? `<section class="dml-att" aria-label="Dikkat isteyenler"><h2>Dikkat isteyenler · ${att.count} öğrenci</h2>${att.rows.map(x => ({ ...x, ...stu(x.id) })).map(r => `<div class="r"><span>${esc(r.name)} <small style="font-weight:700">${esc(r.cls)}</small></span><span>${esc(r.why)}</span></div>`).join('')}</section>`
-        : `<section class="dml-att"><button type="button" class="lk" data-unlock><span style="flex:1"><h2>Dikkat isteyenler · ${att.count} öğrenci</h2><small style="font-weight:700">İsimler Öğretmen Pro ile görünür</small></span><span aria-hidden="true">🔒</span></button></section>`) : '';
+        : '') : '';
+      // Ücretsiz plan: kilitli öğrenciler ve dikkat isteyenler tek, okunaklı Pro kartında (sabit alt çubuk yok;
+      // öğretmen alt menüsünün arkasında kalmaz).
+      const lockedN = Math.max(0, sc.count - (sc.categories.genel?.rows.length || 0));
+      const proHtml = !d.unlocked && (lockedN || att.count) ? `<section class="dml-pro" aria-label="Öğretmen Pro"><div class="dml-pro-top"><span class="ic" aria-hidden="true">🔒</span><div><b>Tüm sınıfını gör</b><small>${[lockedN ? `+${lockedN} öğrenci` : '', att.count ? `${att.count} dikkat isteyen öğrenci` : ''].filter(Boolean).join(' ve ')} Öğretmen Pro ile açılır.</small></div></div><ul><li>Tüm öğrencilerin tam sıralaması</li><li>Dikkat isteyen öğrenciler ve nedenleri</li></ul><button type="button" data-unlock>Kilidi aç</button></section>` : '';
       body = `${champHtml}<div class="dml-grid">${leaderCards(sc)}</div>${league}
 <section class="dml-box" aria-label="Sıralama"><h2>${esc(CATS.find(c => c[0] === st.cat)[1])} sıralaması <small>${sc.categories[st.cat].total} öğrenci</small></h2><div class="dml-row" style="margin:0 0 6px">${catChips}</div>${rowsHtml(st.cat, sc)}</section>
-${attHtml}<p class="dml-note">Lig XP’sine öğretmenin ders içi +/- puanları dahil değildir. Süre: hafta/ay için oyun süreleri, tüm zamanlar için uygulamadaki aktif süre.${st.err ? ` <b style="color:#B3261E">${esc(st.err)}</b>` : ''}</p>`;
+${proHtml}${attHtml}<p class="dml-note">Lig XP’sine öğretmenin ders içi +/- puanları dahil değildir. Süre: hafta/ay için oyun süreleri, tüm zamanlar için uygulamadaki aktif süre.${st.err ? ` <b style="color:#B3261E">${esc(st.err)}</b>` : ''}</p>`;
     }
-    const hidden = d && sc && !d.unlocked ? Math.max(0, sc.count - (sc.categories.genel?.rows.length || 0)) : 0;
-    const cta = hidden ? `<div class="dml-cta"><div><b>+${hidden} öğrenci kilitli</b><small>Tüm sınıfı Öğretmen Pro ile aç</small></div><button type="button" data-unlock>Kilidi aç</button></div>` : '';
+    const cta = '';
     page.innerHTML = `<div class="dml-wrap"><div class="dml-top"><button type="button" class="dml-ib" data-close aria-label="Geri">‹</button><h1>Sınıfım</h1><button type="button" class="dml-ib" data-refresh aria-label="Yenile">↻</button><button type="button" class="dml-ib dark" data-board aria-label="Tahtaya yansıt"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><rect x="3" y="4" width="18" height="12" rx="2"></rect><path d="M12 16v4M8 20h8"></path></svg></button></div>
 <div class="dml-row" role="group" aria-label="Sınıf">${classChips}</div><div class="dml-seg" role="group" aria-label="Dönem">${seg}</div>${body}</div>${cta}`;
   }

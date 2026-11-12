@@ -78,7 +78,7 @@
   const options = adId => ({...SAFETY,adId,isTesting:true});
   function obstructed() {
     return document.hidden || document.body.matches('.dm-play-session,.mv-active') ||
-      [...document.querySelectorAll('[role="dialog"],.dm-session-surface,#genelSonucOverlay.acik,#yoModal.acik,#dmBagPage,.dm-papi-feedback,.game-modal-overlay,#kgOverlay,#mvOverlay,#harfBahcesiOverlay,#dmStoryLesson,#bzPerde,#mlThemeList')].some(visible);
+      [...document.querySelectorAll('[role="dialog"],.dm-session-surface,#genelSonucOverlay.acik,#yoModal.acik,#dmBagPage,.dm-papi-feedback,.game-modal-overlay,#kgOverlay,#mvOverlay,#harfBahcesiOverlay,#dmStoryLesson,#bzPerde,#mlThemeList,div.dmp[role="dialog"],.dmp-sheet')].some(visible);
   }
   function listVisible(){return visible(document.querySelector('#tab-aktiviteler.active'))&&!obstructed();}
   function bannerAllowed(){return reklamGosterilsinMi()&&!busy&&!obstructed()&&
