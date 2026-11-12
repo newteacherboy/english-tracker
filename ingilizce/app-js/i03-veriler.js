@@ -211,6 +211,18 @@ const YO_SOHBET = [
           if (!yo || !yoIsim || yoIsim.toLowerCase() === 'teacher') return;
           fetch(apiURL, { method:'POST', body: JSON.stringify({ islem:'ekVeriKaydet', ogrenci:yoIsim, anahtar:'yo', deger: JSON.stringify((DijiProgressRules.migrate(yo),yo)) }) }).catch(() => {});
         }
+        /* Sunucudaki satın alınmış ürünleri (karakter.sahip) cihazdaki kayda ekler; değişiklik olduysa true. */
+        function yoSahipBirlestir(hedef, kaynak) {
+          const owned = kaynak?.karakter?.sahip;
+          if (!hedef || !Array.isArray(owned) || !owned.length) return false;
+          if (!hedef.karakter || typeof hedef.karakter !== 'object') { if (!kaynak.karakter) return false; hedef.karakter = JSON.parse(JSON.stringify(kaynak.karakter)); return true; }
+          const mine = Array.isArray(hedef.karakter.sahip) ? hedef.karakter.sahip : [], add = owned.filter(x => !mine.includes(x));
+          if (!add.length) return false;
+          hedef.karakter.sahip = mine.concat(add);
+          if (kaynak.dolapIlkIndirimKullanildi) hedef.dolapIlkIndirimKullanildi = true;
+          return true;
+        }
+        window.yoSahipBirlestir = yoSahipBirlestir;
         async function yoSunucudanAl() {
           const owner = yoIsim;
           if (!owner) return false;
@@ -222,6 +234,10 @@ const YO_SOHBET = [
               let server = typeof d.deger === 'string' ? JSON.parse(d.deger) : d.deger;
               if ((server.guncelleme || 0) > (yo.guncelleme || 0)) {
                 yo = Object.assign(yoVarsayilan(), server); DijiProgressRules.migrate(yo); yoGunKontrol();
+                try { localStorage.setItem('ing_yo_' + owner, JSON.stringify(yo)); } catch (e) {}
+                yoArayuzTazele();
+              } else if (yoSahipBirlestir(yo, server)) {
+                /* Cihazdaki kayıt daha yeni olsa da sunucuda satın alınan ürünler kaybolmaz (kilitli görünmez). */
                 try { localStorage.setItem('ing_yo_' + owner, JSON.stringify(yo)); } catch (e) {}
                 yoArayuzTazele();
               }
