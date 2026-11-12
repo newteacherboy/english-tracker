@@ -273,17 +273,18 @@
   let dock=document.getElementById('tpTeacherDock');
   if(!dock){
    dock=document.createElement('nav');dock.id='tpTeacherDock';dock.setAttribute('aria-label','Öğretmen menüsü');
-   dock.innerHTML='<button type="button" data-route="home"><span class="dm-teacher-icon dm-teacher-icon--home" aria-hidden="true"></span>Ana Sayfa</button><button type="button" data-route="games"><span class="dm-teacher-icon dm-teacher-icon--games" aria-hidden="true"></span>Oyunlar</button><button type="button" data-route="study"><span class="dm-teacher-icon dm-teacher-icon--book" aria-hidden="true"></span>Konu Anlat</button><button type="button" data-route="panel"><span class="dm-teacher-icon dm-teacher-icon--cap" aria-hidden="true"></span>Öğretmen Paneli</button>';
+   dock.innerHTML='<button type="button" data-route="home"><span class="dm-teacher-icon dm-teacher-icon--home" aria-hidden="true"></span>Ana Sayfa</button><button type="button" data-route="games"><span class="dm-teacher-icon dm-teacher-icon--games" aria-hidden="true"></span>Oyunlar</button><button type="button" data-route="study"><span class="dm-teacher-icon dm-teacher-icon--book" aria-hidden="true"></span>Konu Anlat</button><button type="button" data-route="league"><span aria-hidden="true">🏆</span>Sınıfım</button><button type="button" data-route="panel"><span class="dm-teacher-icon dm-teacher-icon--cap" aria-hidden="true"></span>Öğretmen Paneli</button>';
    document.body.append(dock);
-   dock.addEventListener('click',e=>{const b=e.target.closest('[data-route]');if(!b)return;e.preventDefault();e.stopPropagation();const route=b.dataset.route;if(route==='home')teacherHomeShow();else if(route==='panel')teacherDashboardShow();else teacherDestination(route);});
+   dock.addEventListener('click',e=>{const b=e.target.closest('[data-route]');if(!b)return;e.preventDefault();e.stopPropagation();const route=b.dataset.route;if(route==='league'){if(window.dmTeacherLeagueOpen)window.dmTeacherLeagueOpen();else window.yoToast?.('Sınıfım yüklenemedi. Sayfayı yenile.');return;}window.dmTeacherLeagueClose?.();if(route==='home')teacherHomeShow();else if(route==='panel')teacherDashboardShow();else teacherDestination(route);});
   }
-  const route=document.body.classList.contains('tp-dash-active')?'panel':document.body.classList.contains('tp-home-active')?'home':state()?.route;
+  const route=document.body.classList.contains('tp-league-active')?'league':document.body.classList.contains('tp-dash-active')?'panel':document.body.classList.contains('tp-home-active')?'home':state()?.route;
   dock.querySelectorAll('[data-route]').forEach(b=>{
    const selected=b.dataset.route===route;
    b.classList.toggle('active',selected);
    if(selected)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');
   });
  }
+ window.dmTeacherDockSync=teacherDock;
  function teacherHome(){
   if(!mode)return;
   let home=document.getElementById('tpTeacherHome');

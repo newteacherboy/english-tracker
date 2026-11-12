@@ -290,8 +290,6 @@ function dmMidnightHome(board,openOriginal){
  const classes=()=>window.dmTeacherClassesOpen?window.dmTeacherClassesOpen():openOriginal('classroom');
  board.querySelector('[data-home-students]').onclick=dmStudentList;
  board.querySelector('[data-home-classes]').onclick=classes;
- // Sınıfım (sınıf ligi, teacher-league.js). Script defer yüklendiği için tıklamada çözülür.
- const league=()=>window.dmTeacherLeagueOpen?window.dmTeacherLeagueOpen():window.yoToast?.('Sınıfım yüklenemedi. Sayfayı yenile.');
  // The active V2 homepage replaces the legacy teacher home, so its own
  // switch is needed. The boot layer restores the real personal learner session.
  const personalParkur=board.querySelector('[data-teacher-parkur-switch]');
@@ -304,9 +302,9 @@ function dmMidnightHome(board,openOriginal){
   return button;
  };
  const shortcuts=board.querySelector('.dm-midnight-shortcuts');
- add(shortcuts,'Sınıfım','🏆',league);
  add(shortcuts,'Sözlü Yap',icon('mic'),dmOpenCanonicalOral);
  add(shortcuts,'Sınıf Oluştur',icon('people')+'<sup>+</sup>',()=>openOriginal('classroom'));
+ add(shortcuts,'Raporlar',icon('chart'),dmReportDialog);
  add(shortcuts,'Artı-Eksi Ver','<span class="dm-midnight-signs"><b>+</b><b>−</b></span>',()=>openOwnedTool('performance'));
  const actions=board.querySelector('.dm-midnight-actions');
  add(actions,'Ödev Ver',icon('clipboard'),()=>openOwnedTool('legacyHomework'));
