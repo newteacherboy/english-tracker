@@ -251,7 +251,7 @@
    /* Oyun başladı: aynı kap (ör. .pc-body, .ww-body) oyun ekranına dönüşüyor. Kurulum kaplaması
       kalırsa mor zemin + beyaz yazı oyun ekranına da uygulanıyor, kart/çark yazıları okunmuyordu. */
    if(host?.dataset.gl==='1'){host.classList.remove('gl-entry','gl-learn');delete host.dataset.gl;host.querySelectorAll(':scope>.gl-hero').forEach(x=>x.remove());}
-   if(cfg.need)root.classList.remove('gl-skin');
+   root.classList.remove('gl-skin');
    return;
   }
   const learn=!!cfg.levels&&learningPath();
