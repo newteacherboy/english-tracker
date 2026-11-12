@@ -34,20 +34,26 @@ export function raceHandler(db:DB){
    const sessions=await db.select('portal_sessions',{select:'student_id,teacher_id,role,expires_at,teacher_portal_access_id,teacher_portal_version',token_hash:'eq.'+hash,limit:'1'}),a=sessions[0];
    if(!a||!['student','teacher'].includes(a.role)||!Number.isFinite(Date.parse(a.expires_at))||Date.parse(a.expires_at)<=Date.now())return json({ok:false,mesaj:'Geçerli oturum gerekli.'},401);
    if(a.teacher_portal_access_id){
-    const [g]=await db.select('teacher_portal_access',{select:'teacher_id,state,version',id:'eq.'+a.teacher_portal_access_id,limit:'1'});
+    const [g]=await db.select('teacher_portal_access',{select:'teacher_id,state,version,student_id',id:'eq.'+a.teacher_portal_access_id,limit:'1'});
     const [pupil]=await db.select('students',{select:'teacher_id,status,frozen_at',id:'eq.'+a.student_id,limit:'1'});
     if(a.role!=='student'||!g||g.state!=='approved'||g.version!==a.teacher_portal_version||!pupil||pupil.teacher_id!==g.teacher_id||pupil.status!=='approved'||pupil.frozen_at)return json({ok:false,mesaj:'Öğretmen erişimi sona erdi.'},403);
+    const [owner]=await db.select('teachers',{select:'active,frozen_at,username,is_admin',id:'eq.'+g.teacher_id,limit:'1'});
+    if(!owner||owner.active===false||owner.frozen_at)return json({ok:false,mesaj:'Öğretmen erişimi sona erdi.'},403);
+    if(g.student_id){
+     const [linked]=await db.select('students',{select:'status,frozen_at,email_verified_at',id:'eq.'+g.student_id,limit:'1'});
+     if(!linked||linked.status!=='approved'||linked.frozen_at||!linked.email_verified_at)return json({ok:false,mesaj:'Öğretmen erişimi sona erdi.'},403);
+    }else if(owner.username!=='teacher'||owner.is_admin!==true)return json({ok:false,mesaj:'Öğretmen erişimi doğrulanamadı.'},403);
    }
    const teacher=a.role==='teacher';let student:any;
    if(teacher){
-    const rows=a.teacher_id?await db.select('teachers',{select:'id,active',id:'eq.'+a.teacher_id,limit:'1'}):[];
-    if(!rows[0]||rows[0].active===false)return json({ok:false,mesaj:'Aktif öğretmen hesabı gerekli.'},403);
+    const rows=a.teacher_id?await db.select('teachers',{select:'id,active,frozen_at',id:'eq.'+a.teacher_id,limit:'1'}):[];
+    if(!rows[0]||rows[0].active===false||rows[0].frozen_at)return json({ok:false,mesaj:'Aktif öğretmen hesabı gerekli.'},403);
     if(!['setup','practice'].includes(String(b.action||'')))return json({ok:false,mesaj:'Öğretmen hesabı deneme modunu kullanabilir.'},403);
     student={class_no:1};
    }else{
     if(!a.student_id)return json({ok:false,mesaj:'Öğrenci oturumu gerekli.'},401);
-    const rows=await db.select('students',{select:'id,username,status,role,class_no,selected_class',id:'eq.'+a.student_id,limit:'1'});student=rows[0];
-    if(!student||student.status!=='approved'||student.role!=='student')return json({ok:false,mesaj:'Aktif öğrenci hesabı gerekli.'},403);
+    const rows=await db.select('students',{select:'id,username,status,role,frozen_at,class_no,selected_class',id:'eq.'+a.student_id,limit:'1'});student=rows[0];
+    if(!student||student.frozen_at||student.status!=='approved'||student.role!=='student')return json({ok:false,mesaj:'Aktif öğrenci hesabı gerekli.'},403);
     // [12 Kas 2026] Kelime Rallisi artık Premium oyun: seviye kilidi yok; hak kuralı start'ta (rallyAccess).
     if(b.action==='practice')return json({ok:false,mesaj:'Öğretmen hesabı gerekli.'},403);
    }
