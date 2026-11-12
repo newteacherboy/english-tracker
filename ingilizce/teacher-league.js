@@ -24,6 +24,10 @@
   const EMPTY_HINT = { gelisen: 'Geçen döneme göre XP’si artan öğrenci yok.', dogruluk: 'Doğruluk sıralaması için öğrencinin yeterli soru çözmesi gerekir.', odev: 'Bu dönemde verilen ödev yok.' };
 
   const CSS = `html.dm-teacher-portal .dml-page{z-index:2147483639}
+.dml-start{margin-top:16px;background:#fff;border-radius:22px;padding:24px 18px;text-align:center;box-shadow:0 2px 0 #E4DEFB}
+.dml-start>span{display:block;font-size:44px;line-height:1}.dml-start .dml-st{display:block;margin:10px 0 6px;color:#1D1B3A;font:900 20px/1.2 Nunito,system-ui,sans-serif}
+.dml-start p{margin:0 auto 16px;max-width:340px;color:#4A4570;font-weight:700}
+.dml-start button{min-height:48px;padding:0 22px;border:0;border-radius:14px;background:#0E7C7B;color:#fff;font:900 16px Nunito,system-ui,sans-serif;cursor:pointer;box-shadow:0 3px 0 #0A5F5E}
 .dml-page{position:fixed;inset:0;z-index:2147483642;background:#F7F5FF;color:#1D1B3A;overflow:auto;font:600 15px/1.4 Nunito,system-ui,-apple-system,sans-serif;padding-bottom:calc(96px + env(safe-area-inset-bottom,0px));animation:dmlIn .25s ease-out}
 .dml-wrap{max-width:640px;margin:0 auto;padding:16px 16px 0}
 .dml-top{display:flex;align-items:center;gap:10px}.dml-top h1{flex:1;margin:0;font:900 26px/1.1 Nunito,system-ui,sans-serif}
@@ -130,7 +134,8 @@
     let body = '';
     if (st.loading && !d) body = '<p class="dml-msg" role="status">Sıralama yükleniyor…</p>';
     else if (!d) body = `<p class="dml-msg bad" role="alert">${esc(st.err || 'Sıralama yüklenemedi.')}</p><button type="button" class="dml-chip" data-retry>Tekrar dene</button>`;
-    else if (!sc.count) body = '<p class="dml-msg">Bu sınıfta henüz öğrenci yok. Sınıf kodunu öğrencilerinle paylaş.</p>';
+    else if (!d.classes.length && !sc.count) body = `<div class="dml-start"><span aria-hidden="true">🏫</span><b class="dml-st">Henüz sınıfın yok</b><p>Önce sınıfını oluştur. Öğrencilerin sınıf koduyla katılınca sıralama burada görünür.</p><button type="button" data-classes>➕ Sınıf oluştur</button></div>`;
+    else if (!sc.count) body = `<div class="dml-start"><span aria-hidden="true">👥</span><b class="dml-st">${st.scope === 'all' ? 'Henüz öğrencin yok' : 'Bu sınıfta henüz öğrenci yok'}</b><p>Sınıf kodunu öğrencilerinle paylaş. Kodla katılan öğrenciler burada sıralanır.</p><button type="button" data-classes>👥 Öğrenci ekle</button></div>`;
     else {
       const champ = sc.leaders.genel && { ...sc.leaders.genel, ...stu(sc.leaders.genel.id) };
       const champHtml = champ ? `<button type="button" class="dml-champ" data-student="${esc(champ.id)}">${av(champ)}<span><small>${CHAMP[st.period]} · Genel</small><b>${esc(champ.name)}</b><span class="v">${esc(champ.value)}${champ.cls ? ' · ' + esc(champ.cls) : ''}</span></span><span class="n" aria-hidden="true">1</span></button>` : '';
@@ -150,7 +155,7 @@ ${attHtml}<p class="dml-note">Lig XP’sine öğretmenin ders içi +/- puanları
     const hidden = d && sc && !d.unlocked ? Math.max(0, sc.count - (sc.categories.genel?.rows.length || 0)) : 0;
     const cta = hidden ? `<div class="dml-cta"><div><b>+${hidden} öğrenci kilitli</b><small>Tüm sınıfı Öğretmen Pro ile aç</small></div><button type="button" data-unlock>Kilidi aç</button></div>` : '';
     page.innerHTML = `<div class="dml-wrap"><div class="dml-top"><button type="button" class="dml-ib" data-close aria-label="Geri">‹</button><h1>Sınıfım</h1><button type="button" class="dml-ib" data-refresh aria-label="Yenile">↻</button><button type="button" class="dml-ib dark" data-board aria-label="Tahtaya yansıt"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><rect x="3" y="4" width="18" height="12" rx="2"></rect><path d="M12 16v4M8 20h8"></path></svg></button></div>
-<div class="dml-row" role="group" aria-label="Sınıf">${classChips}</div><div class="dml-seg" role="group" aria-label="Dönem">${seg}</div>${body}</div>${cta}`;
+${d && !d.classes.length && !sc?.count ? '' : `<div class="dml-row" role="group" aria-label="Sınıf">${classChips}</div><div class="dml-seg" role="group" aria-label="Dönem">${seg}</div>`}${body}</div>${cta}`;
   }
 
   function findStudent(id) { return data?.students?.[id] ? { id, ...data.students[id] } : null; }
@@ -195,10 +200,22 @@ ${rows.length > 3 ? `<ol>${rows.slice(3, 15).map(r => `<li><span>${r.rank}. ${es
     if (t.matches('[data-board]')) return board();
     if (t.matches('[data-refresh]')) return fetchPeriod(true);
     if (t.matches('[data-retry]')) return fetchPeriod(true);
+    if (t.matches('[data-classes]')) return manageClasses();
     if (t.dataset.period && t.dataset.period !== st.period) { st.period = t.dataset.period; return fetchPeriod(false); }
     if (t.dataset.scope) { st.scope = t.dataset.scope; return render(); }
     if (t.dataset.cat) { st.cat = t.dataset.cat; render(); if (t.classList.contains('dml-lc')) page.querySelector('[aria-label="Sıralama"]')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); return; }
     if (t.dataset.student) return studentCard(t.dataset.student);
+  }
+
+  // Sınıflarım (teacher-classes.js): sınıf oluşturma formu ve sınıf kodları. Kapanınca sıralama yenilenir.
+  function manageClasses() {
+    if (!window.dmTeacherClassesOpen) { st.err = 'Sınıflarım yüklenemedi. Sayfayı yenile.'; return render(); }
+    window.dmTeacherClassesOpen();
+    const watch = new MutationObserver(() => {
+      if (doc.querySelector('.dmc-veil')) return;
+      watch.disconnect(); for (const k of Object.keys(cache)) delete cache[k]; if (page) fetchPeriod(true);
+    });
+    setTimeout(() => { if (doc.querySelector('.dmc-veil')) watch.observe(doc.body, { childList: true }); }, 0);
   }
 
   function onKey(e) { if (e.key === 'Escape' && !doc.querySelector('.dml-veil,.dml-board')) close(); }
