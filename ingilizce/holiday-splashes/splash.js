@@ -112,12 +112,14 @@ const defaultPreference={mode:'auto',disabled:[],manual:null};
   // Server-managed global selection: read asynchronously after immediate cached first paint.
   function refreshPreferences(){
    if(typeof win.fetch!=='function'){decide(chosen);return;}
+   /* [12 Kas 2026] Supabase yükü: seçim cihazda varsa sunucu 10 dakikada bir sorulur (her açılışta değil). */
+   try{const last=Number(win.localStorage.getItem('dm-splash-checked')||0);if(prefs&&Date.now()-last<600000){decide(chosen);return;}}catch(_){}
    win.fetch('https://nxfqlutulxqzqgwewssd.supabase.co/functions/v1/splash-settings',{cache:'no-store'})
     .then(r=>{if(!r.ok)throw Error('settings unavailable');return r.json();})
     .then(data=>{
      if(!data.ok||!data.config){decide(chosen);return;}
      prefs=data.config;
-     try{win.localStorage.setItem('dm-splash-preferences',JSON.stringify(prefs));}catch(_){}
+     try{win.localStorage.setItem('dm-splash-preferences',JSON.stringify(prefs));win.localStorage.setItem('dm-splash-checked',String(Date.now()));}catch(_){}
      const next=prefResolve(new Date(),calendar,prefs);
      if(!decided){decide(next);return;}
      if(next?.file!==chosen?.file)updateArtwork(next);

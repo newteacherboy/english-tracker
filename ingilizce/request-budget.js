@@ -3,6 +3,21 @@
   if(window.dmRequestBudget||window.dmGuestMode)return;
   const native=window.fetch.bind(window),endpoint='https://nxfqlutulxqzqgwewssd.supabase.co/functions/v1/';
   const content=new Set(['kelimelerGetir','dersKonuDetayGetir']);
+  // [12 Kas 2026] Supabase yükü: JSON gövdeli POST'lar "application/json" ile gidince tarayıcı her adres için
+  // önce ayrı bir OPTIONS (ön kontrol) isteği atıyor, bu da fonksiyonu ikinci kez çalıştırıyordu (~2.000/gün).
+  // diji-api ve medupro-api gövdeyi türe bakmadan JSON olarak okur; başka başlık yoksa düz metin gönderilir.
+  function simple(opt){
+    if(!opt||String(opt.method||'GET').toUpperCase()!=='POST'||typeof opt.body!=='string')return opt;
+    const h=new Headers(opt.headers||{});const names=Array.from(h.keys());
+    if(names.some(n=>n!=='content-type'))return opt;
+    const type=h.get('content-type')||'';if(type&&!/^application\/json\b/i.test(type))return opt;
+    h.set('content-type','text/plain;charset=UTF-8');return {...opt,headers:h};
+  }
+  // Yazma/canlı istekler de adreste işlem adını taşısın: sunucu kayıtlarında hangi işlemin yük yaptığı görünür
+  // (gövde aynen gider; sunucu önce gövdedeki islem'i okur).
+  function tagged(input,d){if(String(d.opt?.method||'GET').toUpperCase()!=='POST'||d.op==='KOK')return input;try{const u=new URL(input,location.href);if(!u.searchParams.has('islem'))u.searchParams.set('islem',d.op);return u.href;}catch{return input;}}
+  // Oturumsuz cihazdan kişisel işlemler sunucuya gitmeden reddedilir (sunucu da 403 veriyordu).
+  const personal=new Set(['bildirimlerim','kaydet','safetyStudentNotices','safetyStatus','benimIstatistik','memberStatus','announcementInbox']);
   const reads=new Set(['bildirimlerim','ilerlemeOzet','enerjiDurumuGetir','duyurulariGetir',
     'sosyalOgrencilerGetir','ekVeriGetir','seviyeDurumu','seviyeLigListesi',
     'yayinOzellikleri','dersKonulariGetir','akisTumu','duellolarim','sosyalDurum',
@@ -62,7 +77,7 @@
     }
     if(String(opt?.method||'GET').toUpperCase()==='POST'){const u=new URL(input,location.href);if(d.op!=='KOK')u.searchParams.set('islem',d.op);input=u.href;}
     stats.network++;
-    return native(input,opt).then(async r=>{
+    return native(input,simple(opt)).then(async r=>{
       if(r.status===304&&old)return {...old,at:Date.now()};
       return snapshot(r,await r.text());
     });
@@ -110,7 +125,7 @@
       try{
         stats.network++;stats.batches++;stats.batchItems+=part.length;
         const base=part[0].d,u=new URL(base.url);u.search='';u.searchParams.set('islem','okumaGrubu');
-        const headers=new Headers(base.opt?.headers||{});headers.set('Content-Type','application/json');
+        const headers=new Headers(base.opt?.headers||{});headers.set('Content-Type',Array.from(headers.keys()).every(n=>n==='content-type')?'text/plain;charset=UTF-8':'application/json');
         const items=part.map(({d})=>Object.fromEntries(Object.entries(d.args).filter(([k])=>!['t','_','_contentVersion'].includes(k))));
         const r=await native(u.href,{method:'POST',headers,body:JSON.stringify({islem:'okumaGrubu',t:base.token,istekler:items})});
         const envelope=await r.json();
@@ -126,13 +141,14 @@
     let d;try{d=describe(input,opt);}catch{return native(input,opt);}
     if(!d)return native(input,opt);
     const current=actor();if(current!==identity){identity=current;clear();}
-    if(liveReads.has(d.op)||passive.has(d.op))return native(input,opt);
+    if(!d.token&&!window.dmTeacherPortalMode&&personal.has(d.op))return new Response(JSON.stringify({ok:false,mesaj:'Bu işlem için kişisel hesabın gerekli.'}),{status:403,headers:{'Content-Type':'application/json'}});
+    if(liveReads.has(d.op)||passive.has(d.op))return native(tagged(input,d),simple(opt));
     if(!reads.has(d.op)&&!content.has(d.op)){
       // All writes, rewards, login and live match/presence requests go straight
       // through. Invalidate before AND after to avoid a read/write race.
-      clear();try{return await native(input,opt);}finally{clear();}
+      clear();try{return await native(tagged(input,d),simple(opt));}finally{clear();}
     }
-    if(d.bypass)return native(input,opt);
+    if(d.bypass)return native(tagged(input,d),simple(opt));
     if(d.opt?.signal?.aborted)throw d.opt.signal.reason||new Error('Request aborted');
     const old=memory.get(d.key)||stored(d),age=old?Date.now()-old.at:Infinity;
     const duration=content.has(d.op)?(window.dmPublicCatalog?300000:86400000):(ttl[d.op]||0);

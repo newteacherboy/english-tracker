@@ -307,7 +307,10 @@
   const p=hostNow()?.querySelector(cfg.play);if(p)p.disabled=false;
   schedule();
  }
- function run(){for(const g of GAMES)decorate(...g);for(const c of HB)decorateHb(c);for(const c of SKIN)decorateSkin(c);}
+ const GL_OPEN='.game-modal-overlay[style*="display: flex"],.game-modal-overlay[style*="display: block"],#soloArcadeOverlay,#meteorGame,#wordWheel,#papiCards,#kelimeGolu,#rallyGame,.dm-sr-overlay,#harfBahcesiOverlay,#dmGameIntro';
+ /* [12 Kas 2026] Hız: hiçbir oyun açık değilken (açılışta onlarca DOM değişikliği olur) 9 oyunu tek tek
+    taramak ve görünürlük için yerleşim hesaplatmak gereksizdi. Oyun açılınca/kapanınca gözlemciler yine tetikler. */
+ function run(){if(!swapped&&!document.querySelector(GL_OPEN))return;for(const g of GAMES)decorate(...g);for(const c of HB)decorateHb(c);for(const c of SKIN)decorateSkin(c);}
  let queued=false;const schedule=()=>{if(queued)return;queued=true;requestAnimationFrame(()=>{queued=false;run();});};
  function font(){if(document.getElementById('dmFredoka'))return;const l=document.createElement('link');l.id='dmFredoka';l.rel='stylesheet';l.href='https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600&family=Nunito:wght@700;800;900&display=swap';document.head.append(l);}
  function start(){

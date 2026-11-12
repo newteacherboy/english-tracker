@@ -7,7 +7,7 @@
    - Supabase istekleri: bu dosya karışmaz (sayfadaki katman yönetir)
    Sayfayı güncellediğinizde SURUM değerini artırın (v2, v3…).
    ===================================================================== */
-const SURUM = 'diji-v412-ogretmen-duzeltme-20261112';
+const SURUM = 'diji-v413-hizli-acilis-20261112';
 const SAYFA = 'sayfa-' + SURUM, KAYNAK = 'kaynak-' + SURUM;
 // Cached on first use; never download the A2 catalog at startup.
 const LAZY_TOPIC_FILES = new Set(['konu-oyunlari-a1.js','konu-oyunlari-a2.js','topic-games-core.mjs']);
@@ -67,6 +67,12 @@ self.addEventListener('fetch', e => {
     return;
   }
   if (url.origin === self.location.origin && (LAZY_TOPIC_FILES.has(url.pathname.split('/').at(-1)) || /\.(?:js|css|json)$/.test(url.pathname))) {
+    /* [12 Kas 2026] Hız: sürüm numaralı (?v=…) JS/CSS için ağa en fazla 200 ms beklenir, sonra cihazdaki
+       kopya açılır ve arka planda yenilenir (eskiden 600 ms). Sürümsüz dosyalar 600 ms'de kalır. */
+    if (url.searchParams.has('v') && /\.(?:js|css)$/.test(url.pathname)) {
+      e.respondWith(boundedNetwork(e, r, KAYNAK, r, 200));
+      return;
+    }
     e.respondWith(boundedNetwork(e, r, KAYNAK, r, 600));
     return;
   }

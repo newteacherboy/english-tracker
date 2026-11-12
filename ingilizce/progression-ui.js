@@ -15,7 +15,7 @@ async function api(op,data={},force=false){const r=await fetch(apiURL,{method:'P
 async function sync(){const owner=who();if(!ready())throw Error('Öğrenci verisi henüz yüklenmedi.');if(typeof window.dmMemberSaveReady==='function')await window.dmMemberSaveReady(owner);if(owner!==who()||!ready())throw Error('Hesap değişti. İşlemi yeniden aç.');R.migrate(yo);const d=await api('ekVeriKaydet',{anahtar:'yo',deger:JSON.stringify(yo)});if(d.status==='bekliyor')throw Error('Verilerin sunucudan yüklenemedi. Lütfen tekrar dene.');return d;}
 async function refresh(force=false){
  if(busy){if(force)refreshAgain=true;return;}
- if(document.hidden&&!force||!ready()||!force&&Date.now()-lastRefresh<300000)return;
+ /* [12 Kas 2026] Supabase yükü: kendiliğinden yenileme 5 dk yerine 10 dk; ders/test sonrası zorunlu yenileme aynen. */if(document.hidden&&!force||!ready()||!force&&Date.now()-lastRefresh<600000)return;
  busy=true;const owner=who();
  try{
   const d=await api('seviyeDurumu',{},force);
