@@ -133,7 +133,8 @@ html body .gl-skin .gl-entry .gl-play{text-shadow:none!important;flex-direction:
    kurallar/kartlar/not üst üste biniyor ve ekranın altı boş kalıyordu. Alan artık tüm yüksekliği
    doldurur, öğeler arasında nefes payı vardır, OYNA en altta durur. */
 html body .gl-root.dm-entry-open>.game-modal-content{display:flex!important;flex-direction:column!important}
-html body .gl-root>.game-modal-content>.gl-entry{display:flex!important;flex-direction:column!important;flex:1 1 auto!important;min-height:0!important;gap:clamp(12px,2.2dvh,22px)!important;padding-bottom:max(10px,env(safe-area-inset-bottom,0px))!important}
+/* Oyun başlarken giriş ekranı satır içi display:none ile gizlenir; o durumda bu kural uygulanmamalı. */
+html body .gl-root>.game-modal-content>.gl-entry:not([style*="none"]){display:flex!important;flex-direction:column!important;flex:1 1 auto!important;min-height:0!important;gap:clamp(12px,2.2dvh,22px)!important;padding-bottom:max(10px,env(safe-area-inset-bottom,0px))!important}
 html body .gl-root .gl-entry>*{flex-shrink:0!important;margin-block:0!important}
 html body .gl-root .gl-entry .gl-hero{gap:6px!important}
 html body .gl-root .gl-entry .gl-papi{width:clamp(112px,19dvh,176px)!important;height:auto!important;aspect-ratio:132/145}
