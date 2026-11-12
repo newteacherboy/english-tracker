@@ -1,10 +1,13 @@
 /* iOS 1.1 only. No DOM, storage, networking, or plugin registration before the gate. */
 (() => {
   'use strict';
+  // [12 Kas 2026] Gerçek iOS birimleri (AdMob'da onaylı; paketteki GADApplicationIdentifier gerçek iOS uygulama kimliği).
+  // Önceden test birimleriydi; yerel katman çalışmayan paketlerde kullanıcılar "Test mode" reklam görüyordu.
   const IDS = Object.freeze({
-    odullu: 'ca-app-pub-3940256099942544/1712485313',
-    banner: 'ca-app-pub-3940256099942544/2435281174',
-    gecis: 'ca-app-pub-3940256099942544/4411468910'
+    odullu: 'ca-app-pub-5025780881593375/7162953841',
+    odulluAltin: 'ca-app-pub-5025780881593375/5948935360',
+    banner: 'ca-app-pub-5025780881593375/8898707346',
+    gecis: 'ca-app-pub-5025780881593375/3012167878'
   });
   if (!(window.Capacitor?.isNativePlatform?.() && window.Capacitor?.isPluginAvailable?.('AdMob'))) return;
   // iOS 1.1+ paketleri reklamı uygulamayla gelen ortak katmanla (native-runtime.js) gösterir.
@@ -71,17 +74,19 @@
       if(consent.isConsentFormAvailable&&consent.status==='REQUIRED')consent=await A.showConsentForm();
       if(!consent.canRequestAds)throw Error('Reklam izni hazır değil.');
       // 8.3.0 translates General to GADMaxAdContentRating.general (G).
-      await A.initialize({...SAFETY,maxAdContentRating:'General',initializeForTesting:true});
+      await A.initialize({...SAFETY,maxAdContentRating:'General',initializeForTesting:false});
     })();
     return init; // A failed/denied session stays closed; never initialize twice.
   }
-  const options = adId => ({...SAFETY,adId,isTesting:true});
+  const options = adId => ({...SAFETY,adId,isTesting:false});
   function obstructed() {
     return document.hidden || document.body.matches('.dm-play-session,.mv-active') ||
       [...document.querySelectorAll('[role="dialog"],.dm-session-surface,#genelSonucOverlay.acik,#yoModal.acik,#dmBagPage,.dm-papi-feedback,.game-modal-overlay,#kgOverlay,#mvOverlay,#harfBahcesiOverlay,#dmStoryLesson,#bzPerde,#mlThemeList,div.dmp[role="dialog"],.dmp-sheet')].some(visible);
   }
   function listVisible(){return visible(document.querySelector('#tab-aktiviteler.active'))&&!obstructed();}
-  function bannerAllowed(){return reklamGosterilsinMi()&&!busy&&!obstructed()&&
+  // [12 Kas 2026] Banner kapalı (kullanıcı kararı): uygulama görünümünü bozuyor, paket butonunu kapatıyordu.
+  const BANNER_ON=false;
+  function bannerAllowed(){return BANNER_ON&&reklamGosterilsinMi()&&!busy&&!obstructed()&&
     (listVisible()||visible(document.querySelector('#tab-magaza.active')));}
   function reserve(height) {
     if(bannerHeight===height)return;bannerHeight=height;
@@ -134,7 +139,7 @@
       await setBanner(false);
       const h=await hak(true,urun);
       if(!(h.kalan?.[tur]>0)||h.uygun?.[tur]===false){rights=null;document.querySelectorAll('[data-ios-ad]').forEach(e=>e.remove());tell('Bugünkü haklarını veya bakiyeni kontrol et.');return;}
-      await initialize();await A.prepareRewardVideoAd(options(IDS.odullu));
+      await initialize();await A.prepareRewardVideoAd(options(tur==='altin'?IDS.odulluAltin:IDS.odullu));
       if(owner!==who()||token!==read('ing_token')||!reklamGosterilsinMi())return;
       await fullscreen('reward',()=>{earned=true;});
       if(!earned){tell('Ödül için videonun sonuna kadar izlemelisin.');return;}

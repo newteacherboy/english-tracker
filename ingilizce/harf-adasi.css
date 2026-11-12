@@ -164,3 +164,47 @@
   #asmacaOyunOverlay .ia-scene .ia-art-chest{height:min(47%,152px)!important;}
   #asmacaOyunOverlay .ia-scene .ia-art-papi{height:min(55%,178px)!important;}
 }
+
+/* [12 Kas 2026] Sade Ada (onaylanan tasarım A). Üstteki oyun çerçevesi (54 px) hesaba katılır; alttaki
+   butonlar artık ekran dışına taşmaz. Klavyede yalnız kelimenin harfleri, sırayla yazılır. */
+#asmacaOyunOverlay.ia-playing>.game-modal-content{height:calc(100dvh - var(--dm-frame-height,0px))!important;max-height:calc(100dvh - var(--dm-frame-height,0px))!important}
+#asmacaOyunOverlay .ia-screen.ha-v2{background:linear-gradient(180deg,#DDF2FF 0%,#EAF7F2 55%,#F6F0E2 100%);color:#123A4F;padding:12px 14px calc(env(safe-area-inset-bottom,0px) + 14px);gap:12px;overflow:hidden}
+#asmacaOyunOverlay .ha-v2 .ha-hud{display:flex;align-items:center;gap:8px;flex:none}
+#asmacaOyunOverlay .ha-v2 .ha-pill{display:flex;align-items:center;gap:6px;padding:6px 12px;border-radius:999px;background:#fff;box-shadow:0 2px 0 #C9D9E8;font-weight:900;font-size:15px}
+#asmacaOyunOverlay .ha-v2 .ha-pill svg{width:16px;height:16px;fill:none;stroke:#0E7C7B;stroke-width:2.6;stroke-linecap:round}
+#asmacaOyunOverlay .ha-v2 .ha-score{margin-left:0;background:#F2A541;color:#3A1F00;box-shadow:0 2px 0 #C47F1E}
+#asmacaOyunOverlay .ha-v2 .ha-hearts{position:static;width:auto;margin-left:auto;display:flex;gap:3px;text-shadow:none}
+#asmacaOyunOverlay .ha-v2 .ha-hearts span{display:block;width:18px;height:18px}
+#asmacaOyunOverlay .ha-v2 .ha-hearts svg{width:18px;height:18px;fill:#E2445C}
+#asmacaOyunOverlay .ha-v2 .ha-hearts .lost svg{fill:#C9D3DF}
+#asmacaOyunOverlay .ha-v2 .ha-trip{flex:none;background:#fff;border-radius:18px;padding:10px 14px;box-shadow:0 3px 0 #C9D9E8}
+#asmacaOyunOverlay .ha-v2 .ha-trip-top{display:flex;justify-content:space-between;font-size:12px;font-weight:800;color:#56708A}
+#asmacaOyunOverlay .ha-v2 .ha-road{position:relative;height:22px;margin:6px 18px 0 0}
+#asmacaOyunOverlay .ha-v2 .ha-road::before{content:"";position:absolute;left:0;right:0;top:9px;height:4px;border-radius:4px;background:#D6E6F2}
+#asmacaOyunOverlay .ha-v2 .ha-road i{position:absolute;left:0;top:9px;height:4px;border-radius:4px;background:#0E7C7B;transition:width .4s}
+#asmacaOyunOverlay .ha-v2 .ha-papi{position:absolute;top:0;width:22px;height:22px;border-radius:50%;background:#2BB5A8;border:3px solid #fff;box-sizing:border-box;box-shadow:0 2px 4px rgba(0,0,0,.2);transition:left .4s}
+#asmacaOyunOverlay .ha-v2 .ha-chest{position:absolute;right:-20px;top:-2px;width:26px;height:26px;border-radius:8px;background:#F2A541 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%233A1F00' stroke-width='2.4'%3E%3Crect x='3' y='9' width='18' height='11' rx='2'/%3E%3Cpath d='M3 13h18M12 11v4M5 9a7 5 0 0 1 14 0'/%3E%3C/svg%3E") center/16px no-repeat}
+#asmacaOyunOverlay .ha-v2 .ha-clue{flex:none;display:flex;gap:10px;align-items:flex-start;background:#FFF6E3;border:2px solid #F6D9A6;border-radius:18px;padding:12px 14px;font-size:16px;font-weight:800;line-height:1.3}
+#asmacaOyunOverlay .ha-v2 .ha-clue svg{flex:none;width:22px;height:22px;fill:none;stroke:#B4761B;stroke-width:2.4;stroke-linecap:round}
+#asmacaOyunOverlay .ha-v2 .ha-slots{flex:1 1 auto;min-height:0;display:flex;flex-wrap:wrap;align-content:center;justify-content:center;gap:10px 14px;overflow:auto}
+#asmacaOyunOverlay .ha-v2 .ha-word{display:flex;gap:4px}
+#asmacaOyunOverlay .ha-v2 .ia-slot{flex:none;width:26px;min-width:0;max-width:none;height:36px;min-height:0;padding:0;border-radius:9px;background:#fff;border:2px solid #B7D3E8;box-shadow:none;color:#0E7C7B;font-size:18px;font-weight:900;display:grid;place-items:center}
+#asmacaOyunOverlay .ha-v2 .ia-slot.on{border-color:#0E7C7B;background:#E6F6F5}
+#asmacaOyunOverlay .ha-v2 .ia-slot.cur{border-color:#F2A541;box-shadow:0 0 0 3px #FCE3BC}
+#asmacaOyunOverlay .ha-v2 .ia-slot.fixed{width:auto;border:0;background:none}
+#asmacaOyunOverlay .ha-v2 .ha-bottom{flex:none;display:flex;flex-direction:column;gap:10px}
+#asmacaOyunOverlay .ha-v2 .ha-keys{display:grid;gap:8px;background:none;border:0;padding:0;box-shadow:none}
+#asmacaOyunOverlay .ha-v2 .ha-keys button{height:clamp(44px,6.6dvh,54px);border:0;border-radius:14px;background:#fff;box-shadow:0 4px 0 #C9D9E8;color:#123A4F;font:900 22px Nunito,system-ui,sans-serif;transition:transform .1s}
+#asmacaOyunOverlay .ha-v2 .ha-keys button:active{transform:translateY(2px)}
+#asmacaOyunOverlay .ha-v2 .ha-keys button.correct{visibility:hidden}
+#asmacaOyunOverlay .ha-v2 .ha-keys button.shake{animation:ha-shake .4s}
+#asmacaOyunOverlay .ha-v2 .ha-tools{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;background:none;box-shadow:none;padding:0}
+#asmacaOyunOverlay .ha-v2 .ha-tools button{height:50px;border:0;border-radius:14px;font:900 16px Nunito,system-ui,sans-serif}
+#asmacaOyunOverlay .ha-v2 .ha-hint{background:#F2A541;color:#3A1F00;box-shadow:0 4px 0 #C47F1E}
+#asmacaOyunOverlay .ha-v2 .ha-skip{background:#123A4F;color:#fff;box-shadow:0 4px 0 #071E2B}
+#asmacaOyunOverlay .ha-v2 .ha-tools button:disabled{opacity:.45}
+#asmacaOyunOverlay .ha-v2 .ia-message{margin:0;font-size:12px;color:#56708A}
+#asmacaOyunOverlay .ha-v2 .ia-feedback{position:absolute;left:50%;top:42%;transform:translateX(-50%);font-size:40px;font-weight:900;color:#0E7C7B;pointer-events:none;z-index:5}
+#asmacaOyunOverlay .ha-v2 .ia-feedback.bad{color:#E2445C}
+@keyframes ha-shake{0%,100%{transform:translateX(0);background:#fff}25%{transform:translateX(-5px);background:#FFD5DB}75%{transform:translateX(5px);background:#FFD5DB}}
+@media (max-height:700px){#asmacaOyunOverlay .ha-v2 .ha-trip{padding:8px 12px}#asmacaOyunOverlay .ha-v2 .ha-clue{padding:9px 12px;font-size:15px}#asmacaOyunOverlay .ia-screen.ha-v2{gap:8px}}
