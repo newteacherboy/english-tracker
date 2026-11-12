@@ -312,6 +312,12 @@
     if (p && status?.canBuy) {
       try { ui.products = (await p.getProducts({ ids: (status.products || []).map(x => x.id) })).products || []; } catch {}
     }
+    // [12 Kas 2026] iOS teşhis: satın alma açılamıyorsa hangi uygulama yapısı ve katman çalışıyor, ekranda görünsün.
+    if (ios() && !(b && status?.canBuy)) {
+      let info = null; try { const C = W.Capacitor, A = C?.Plugins?.App || C?.registerPlugin?.('App'); info = await Promise.race([A?.getInfo?.(), new Promise(r => setTimeout(r, 1500))]); } catch {}
+      let billingPlugin = false; try { billingPlugin = !!W.Capacitor?.isPluginAvailable?.('DmBilling'); } catch {}
+      ui.diag = `iOS ${info?.version || '?'} (${info?.build || '?'}) · katman: ${W.dmNativeRuntime ? 'var' : 'yok'} · kabuk: ${W.dmAndroidShell ? 'var' : 'yok'} · ödeme eklentisi: ${billingPlugin ? 'var' : 'yok'} · hesap: ${status ? (status.canBuy ? 'uygun' : 'uygun değil') : 'okunamadı'}`;
+    }
     if (!screen) return;
     render(screen, { role, status, ui, p });
   }
@@ -347,7 +353,7 @@
     const pr = priceOf(pickPl);
     let cta, ctaNote = '', ctaDisabled = false, ctaTeal = role === 'teacher';
     const refresh = async () => role === 'teacher' ? call({ action: 'status' }, 'teacher') : billing().refresh();
-    if (!sellOpen) { cta = 'Paketler uygulamada satışta'; ctaNote = 'Satın alma Diji Medu mobil uygulamasından yapılır.'; ctaDisabled = true; }
+    if (!sellOpen) { cta = 'Paketler uygulamada satışta'; ctaNote = ui.diag ? 'Satın alma bu uygulama sürümünde açılamadı. App Store’dan güncelleyip uygulamayı yeniden aç. · ' + ui.diag : 'Satın alma Diji Medu mobil uygulamasından yapılır.'; ctaDisabled = true; }
     else if (cur === ui.pick) { cta = 'Bu paket sende açık 🎉'; ctaDisabled = true; }
     else { cta = `${pickPl.name}'ya geç`; ctaNote = `${pr.text} / ${ui.period === 'yillik' ? 'yıl' : 'ay'} · İstediğin zaman iptal edebilirsin`; if (!pr.available && ctx.p) { cta = 'Bu paket şu an satışta değil'; ctaDisabled = true; } }
     const storeName = iosApp ? 'App Store' : 'Google Play';
