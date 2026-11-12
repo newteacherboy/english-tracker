@@ -186,3 +186,16 @@ test('the next stop prepared with the reward starts without a separate start req
  await ctx.fetch('/api',{method:'POST',body:JSON.stringify({islem:'seviyeOyunOdulu',runId:'next-run-1234567890'})});
  assert.equal(calls.at(-1).verifiedAnswers.length,1,'hazır oturumda da cevaplar ödülle gider');
 });
+test('Öğrenme Yolum level pool: A1/A2 topic words are accepted with level, rejected without it, invented words still fail',async()=>{
+ const c=await load(),pool=c.levelPool('A1');assert(pool.length>=12);
+ let started=null;const db={rpc:async(name,args)=>{if(name==='dm_progress_context')return {data:{level:40,units:[],done:[]}};started=args;return {data:{ok:true}};},from(){return{select(){return this},eq(){return this},in(){return this},limit:async()=>({data:words.map(w=>({english:w.en,turkish:w.tr}))})}}};
+ globalThis.DijiProgressionCatalog={gates:{oyun_kelime:1,oyun_fener:1}};
+ const api=c.verifiedGamesAPI(db,(data,status=200)=>({data,status})),who={role:'student',student_id:'sid'};
+ const twelve=pool.slice(0,12);
+ const ok=await api.handle('verifiedGameStart',{runId:'level-run-1234567890',game:'fener',classNo:2,units:[1],level:'A1',words:twelve},who,'POST');
+ assert.equal(ok.status,200,JSON.stringify(ok.data));assert.equal(started.tasks.length,12);
+ const noLevel=await api.handle('verifiedGameStart',{runId:'level-run-2234567890',game:'fener',classNo:2,units:[1],words:twelve},who,'POST');
+ assert.equal(noLevel.status,400);
+ const fake=await api.handle('verifiedGameStart',{runId:'level-run-3234567890',game:'ky',classNo:2,units:[1],level:'B1',words:[...pool.slice(0,11),{en:'invented',tr:'fake'}]},who,'POST');
+ assert.equal(fake.status,400);
+});

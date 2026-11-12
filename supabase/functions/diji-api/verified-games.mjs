@@ -1,10 +1,22 @@
 import './school-curriculum.js';
+import './konu-oyunlari-a1.js';
+import './konu-oyunlari-a2.js';
 // Authoritative grading: only bank-backed tasks are persisted, no client correctness flags.
 import {loadStartPath} from './start-path-access.mjs';
 import {schoolStopProblem} from './start-path.mjs';
 export const games=new Set(['ky','jp','bosluk','hafiza','yagmur','asmaca','kelimebul','eslestirme','tren','harfbahcesi','canavar','kule','fener','kp','dikte','cumle','ba']);
 export const norm=v=>String(v??'').normalize('NFKC').toLocaleLowerCase('en').replace(/[’‘`]/g,"'").replace(/[^\p{L}\p{N}]+/gu,' ').trim();
 const key=v=>String(v??'').trim().toLocaleLowerCase('en');
+// [12 Kas 2026] Öğrenme Yolum seviye kipi: istemci (game-launch.js levelWords) sorulari A1/A2 konu
+// kelime listelerinden seçer; B1/B2 şimdilik A1+A2. Doğrulama aynı listelerle yapılır (word_bank değil).
+export function levelPool(level){
+ const sources=level==='A1'?['A1']:level==='A2'?['A2']:['A1','A2'],out=[],seen=new Set();
+ for(const c of sources)for(const topic of globalThis['DijiTopicGames'+c]||[]){
+  if(topic?.type!=='vocab')continue;
+  for(const it of topic.items||[]){const en=String(it.en||'').trim(),tr=String(it.tr||'').trim();if(!en||!tr||seen.has(en.toLowerCase()))continue;seen.add(en.toLowerCase());out.push({en,tr});}
+ }
+ return out;
+}
 export const types=['teach','hatirla','soyle','dinleSec','eslestir','eksik','lab','wordOrder','patternOrder','patternComplete','patternListen','patternTranslate'];
 export function compile(game,words){
  if(game!=='ba')return words.map(w=>({...w,kind:['ky','jp','kp'].includes(game)?'either':['hafiza','eslestirme','yagmur','kule','fener'].includes(game)?'tr':'en'}));
@@ -76,11 +88,16 @@ export function verifiedGamesAPI(db,json){
    const code=({ky:'oyun_kelime',jp:'oyun_jeopardy',kp:'kelime_modu',ba:'parkur'})[game]||'oyun_'+game;
    const ctx=await db.rpc('dm_progress_context',{actor:a.student_id});if(ctx.error)return fail('Seviye doğrulanamadı.',503);
    const C=globalThis.DijiProgressionCatalog;if(!C?.gates[code]||!a.teacher_portal_access_id&&ctx.data.level<C.gates[code])return fail('Bu oyun henüz açılmadı.',403);
-   let bankQuery=db.from('word_bank').select('english,turkish,class_no,unit_no').eq('active',true);
-   bankQuery=game==='kp'?bankQuery.in('class_no',[1,2,3,4,5,6,7,8]):bankQuery.eq('class_no',classNo);
-   const bank=await bankQuery.in('unit_no',units).limit(5000);
-   if(bank.error)return fail('Kelime havuzu yüklenemedi.',503);
-   const available=(bank.data||[]).filter(w=>w.english?.trim()&&w.turkish?.trim()).map(w=>({en:w.english.trim(),tr:w.turkish.trim()}));
+   const level=['A1','A2','B1','B2'].includes(body.level)&&game!=='ba'&&game!=='kp'&&game!=='tren'&&game!=='cumle'?body.level:'';
+   let available;
+   if(level){available=levelPool(level);if(available.length<4)return fail('Seviye kelimeleri yüklenemedi.',503);}
+   else{
+     let bankQuery=db.from('word_bank').select('english,turkish,class_no,unit_no').eq('active',true);
+     bankQuery=game==='kp'?bankQuery.in('class_no',[1,2,3,4,5,6,7,8]):bankQuery.eq('class_no',classNo);
+     const bank=await bankQuery.in('unit_no',units).limit(5000);
+     if(bank.error)return fail('Kelime havuzu yüklenemedi.',503);
+     available=(bank.data||[]).filter(w=>w.english?.trim()&&w.turkish?.trim()).map(w=>({en:w.english.trim(),tr:w.turkish.trim()}));
+   }
    let words=[],stop=Number(body.stopNo)||0;
    if(game==='ba'){
     const door=ctx.data.units.findIndex(row=>row.includes(stop)),unit=Math.floor((stop-200000)%10000/100),part=stop%100-51;

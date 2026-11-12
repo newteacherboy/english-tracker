@@ -25,11 +25,13 @@ async function start(game,runId,scope,words){
  }
  words=words||decks.get(game)||[];
  const bank=window.masterKelimeHavuzu||[];
+ // Öğrenme Yolum seviye kipi (game-launch.js): kelimeler A1/A2 konu listelerinden; sunucu aynı listeyle doğrular.
+ const levels=[...new Set(words.map(w=>w?.dmLevelPool?String(w.seviye||''):'').filter(Boolean))],level=levels.length===1&&words.every(w=>w?.dmLevelPool)?levels[0]:'';
  const resolved=words.map(w=>bank.find(x=>key(en(x))===key(en(w))&&norm(tr(x))===norm(tr(w))&&(!scope?.classNo||Number(x.sinif)===Number(scope.classNo)))||w);
  const cls=Number(scope?.classNo||resolved[0]?.sinif||resolved[0]?.class_no||resolved[0]?.[3]);
  const scopedUnits=scope?.units?.map(Number).filter(u=>u>=1)||[];
  const units=[...new Set((scopedUnits.length?scopedUnits:resolved.map(w=>Number(w.unite??w.unit_no??w[4]))).map(Number))].sort((a,b)=>a-b);
- const state={owner:who(),runId,game,events:[...pending(who(),runId),...(early.get(runId)||[])],acked:0,slots:[],last:{},payload:{runId,game,classNo:cls,units,stopNo:scope?.stopNo||0,schoolVersion:scope?.schoolVersion,words:words.map(w=>({en:en(w),tr:tr(w)}))}};
+ const state={owner:who(),runId,game,events:[...pending(who(),runId),...(early.get(runId)||[])],acked:0,slots:[],last:{},payload:{runId,game,classNo:cls,units,stopNo:scope?.stopNo||0,schoolVersion:scope?.schoolVersion,...(level?{level}:{}),words:words.map(w=>({en:en(w),tr:tr(w)}))}};
  runs.set(runId,state);
  if(window.OC?.aktif?.runId===runId)window.OC.aktif.rewardScope={classNo:cls,units,stopNo:scope?.stopNo||0};
  early.delete(runId);const carried=state.events.length;
