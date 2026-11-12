@@ -25,14 +25,14 @@ test('the newer external activity dialog is the single static target',()=>{
  const markup=html.replace(/<script\b[^>]*>[^]*?<\/script>/gi,'');
  for(const id of ['disLinkOverlay','disLinkBaslikAlani','disLinkYorumAlani','disLinkYukleniyorAlani','disLinkEngelliUyari','disLinkYeniSekmeBtn','disLinkIframe'])assert.equal([...markup.matchAll(new RegExp('id="'+id+'"','g'))].length,1,id);
 });
-test('consolidated XP preserves the final legacy adjustments and does not change the canonical base adder',()=>{
+test('consolidated XP preserves ordinary adjustments and ignores retired consumable flags',()=>{
  const source=blocks.find(b=>b.includes('const ADIL =')&&b.includes('window.yoXpEkle ='));
  const start=source.indexOf('  let orgXp ='),end=source.indexOf('  /* ================= 5)',start),code=source.slice(start,end);
  const c={window:{dmBaseXpAdd:(xp,gold)=>({xp,gold}),seriCarpani:()=>1,dmGameBonusFlags:()=>({})},aktif:()=>false,document:{querySelector:()=>null},Date,ADIL:{tavanDogru:12,saniyeBasi:6},oyunBas:0};vm.createContext(c);vm.runInContext(code,c);
  assert.deepEqual(c.window.yoXpEkle(20,0),{xp:30,gold:0});
  assert.deepEqual(c.window.yoXpEkle(0,5),{xp:0,gold:3});
  c.window.seriCarpani=()=>1.5;c.aktif=k=>k==='tab-buyuakademisi';c.window.dmGameBonusFlags=()=>({xpBoost:true,goldBoost:true});
- assert.deepEqual(c.window.yoXpEkle(10,2),{xp:40,gold:12});
+ assert.deepEqual(c.window.yoXpEkle(10,2),{xp:20,gold:6});
  assert.deepEqual(c.window.dmBaseXpAdd(10,2),{xp:10,gold:2});
 });
 test('one account load is shared, device lists survive, and an account switch rejects a late response',async()=>{
