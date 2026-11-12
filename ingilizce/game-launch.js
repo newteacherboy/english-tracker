@@ -133,7 +133,7 @@
   if(s.learn!==learn){
    s.learn=learn;
    entry.classList.toggle('gl-learn',learn);
-   entry.querySelector('.gl-path').textContent=learn?'ÖĞRENME YOLUM · SEVİYENİ SEÇ':'OKUL YOLUM · SINIF VE ÜNİTE';
+   entry.querySelector('.gl-path').textContent=learn?'Öğrenme Yolum · seviyeni seç':'Okul Yolum · sınıf ve ünite';
    const play=entry.querySelector('.gl-play');if(play)play.innerHTML=PLAY+'<span>OYNA</span>';
   }
   const open=entry.style.display!=='none'&&root.getClientRects().length>0;
@@ -183,7 +183,7 @@
     const lv=levelsFor(pre);ov.querySelector(cfg.after)?.after(lv);
     lv.querySelectorAll('.gl-level').forEach(b=>{b.onclick=()=>pickHbLevel(cfg,ov,b.dataset.level);});
    }
-   ov.querySelector('.gl-path').textContent=learn?'ÖĞRENME YOLUM · SEVİYENİ SEÇ':'OKUL YOLUM · SINIF VE ÜNİTE';
+   ov.querySelector('.gl-path').textContent=learn?'Öğrenme Yolum · seviyeni seç':'Okul Yolum · sınıf ve ünite';
    body.classList.toggle('gl-learn',learn);
    if(learn)pickHbLevel(cfg,ov,myLevel());
   }
@@ -262,7 +262,7 @@
    const play=host.querySelector(cfg.play);if(play)play.classList.add('gl-play');
    if(cfg.units){const u=host.querySelector(cfg.units);u?.classList.add('unite-secim-box');(u?.closest('fieldset')||u)?.classList.add('gl-unit-sec');}
    if(!host.dataset.glListen){host.dataset.glListen='1';host.addEventListener('change',schedule,true);host.addEventListener('click',()=>setTimeout(schedule,0),true);}
-   hero.querySelector('.gl-path').textContent=learn?'ÖĞRENME YOLUM · SEVİYENİ SEÇ':'SINIFINI VE ÜNİTENİ SEÇ';
+   hero.querySelector('.gl-path').textContent=learn?'Öğrenme Yolum · seviyeni seç':'Okul Yolum · sınıf ve ünite';
    host.classList.toggle('gl-learn',learn);
    if(learn){
     const lv=levelsFor(key);(play||host.lastElementChild).before(lv);
@@ -309,8 +309,9 @@
  }
  function run(){for(const g of GAMES)decorate(...g);for(const c of HB)decorateHb(c);for(const c of SKIN)decorateSkin(c);}
  let queued=false;const schedule=()=>{if(queued)return;queued=true;requestAnimationFrame(()=>{queued=false;run();});};
+ function font(){if(document.getElementById('dmFredoka'))return;const l=document.createElement('link');l.id='dmFredoka';l.rel='stylesheet';l.href='https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600&family=Nunito:wght@700;800;900&display=swap';document.head.append(l);}
  function start(){
-  run();
+  font();run();
   for(const [prefix,rootId] of GAMES){
    const entry=document.getElementById(prefix+'GirisEkrani'),root=document.getElementById(rootId);
    if(entry)new MutationObserver(schedule).observe(entry,{attributes:true,attributeFilter:['style','class'],childList:true,subtree:true});

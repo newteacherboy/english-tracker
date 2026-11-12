@@ -30,3 +30,36 @@ body.mv-active{overflow:hidden!important;overscroll-behavior:none}
 .mv-chapter-picker{margin:12px 0;padding:12px;border:2px solid #cfe9e7;border-radius:14px;background:#f1fbf9;text-align:left;font-size:13px;font-weight:900}.mv-chapter-picker summary{cursor:pointer;line-height:1.5;color:#21766d}.mv-chapter-picker .mv-chapters{margin-bottom:0}
 
 .mv-chapter-notice{position:absolute;top:24%;left:50%;transform:translateX(-50%);z-index:1;pointer-events:none;width:max-content;max-width:90%;padding:10px 18px;border-radius:16px;background:#fff3ad;color:#553600;text-align:center;font-weight:1000;box-shadow:0 5px 15px #58340038}
+
+/* [12 Kas 2026] Mola oyunları giriş paneli · Tasarım A (sade, uygulama gibi): solda Papi kutusu + ad,
+   iki bilgi kutusu, kurallar "Nasıl oynanır?" altında, bölüm seçimi tek satır, turkuaz Başla. */
+html body .mv-panel.mvA{background:#F4F6FB!important;border:0!important;border-radius:26px!important;padding:18px 18px 16px!important;text-align:left!important;display:flex;flex-direction:column;gap:12px;box-shadow:0 18px 50px #0f274733!important;font-family:Nunito,system-ui,sans-serif;color:#18213A}
+html body .mv-panel.mvA .mvA-head{display:flex;align-items:center;gap:14px}
+html body .mv-panel.mvA .mvA-art{flex:none;width:76px;height:76px;border-radius:22px;background:#E8F6F4;box-shadow:0 4px 0 #D9DFEA;display:grid;place-items:center;overflow:hidden}
+html body .mv-panel.mvA .mvA-art .mv-papi{width:64px!important;height:64px!important;margin:0!important;filter:none!important}
+html body .mv-panel.mvA .mvA-chip{display:inline-block;padding:3px 9px;border-radius:999px;background:#E8F6F4;color:#0E7C74;font:800 12px Nunito,sans-serif}
+html body .mv-panel.mvA h1{margin:4px 0 2px!important;font:600 26px/1.05 Fredoka,Nunito,system-ui,sans-serif!important;color:#18213A!important;text-align:left!important}
+html body .mv-panel.mvA .mvA-head p{margin:0!important;font:700 14px/1.35 Nunito,sans-serif!important;color:#5A6478!important}
+html body .mv-panel.mvA .mvA-stats{display:flex;background:#fff;border:1px solid #E3E8F2;border-radius:18px;overflow:hidden}
+html body .mv-panel.mvA .mvA-stats>div{flex:1;display:flex;flex-direction:column;align-items:center;gap:1px;padding:10px 4px;text-align:center}
+html body .mv-panel.mvA .mvA-stats>div+div{border-left:1px solid #E3E8F2}
+html body .mv-panel.mvA .mvA-stats b{display:inline-flex;align-items:center;gap:3px;font:900 17px Nunito,sans-serif;color:#18213A}
+html body .mv-panel.mvA .mvA-stats b svg{width:16px;height:16px;color:#E39B00;fill:currentColor}
+html body .mv-panel.mvA .mvA-stats small{font:700 12px Nunito,sans-serif;color:#5A6478}
+html body .mv-panel.mvA :is(.mvA-rules,.mv-chapter-picker){background:#fff;border:1px solid #E3E8F2;border-radius:16px;padding:0;margin:0!important}
+html body .mv-panel.mvA :is(.mvA-rules,.mv-chapter-picker)>summary{min-height:48px;display:flex;align-items:center;padding:0 14px;font:800 15px Nunito,sans-serif;color:#18213A;cursor:pointer;list-style:none}
+html body .mv-panel.mvA :is(.mvA-rules,.mv-chapter-picker)>summary::-webkit-details-marker{display:none}
+html body .mv-panel.mvA :is(.mvA-rules,.mv-chapter-picker)>summary::after{content:"›";margin-left:auto;font-size:22px;color:#8A93A6;transition:transform .15s}
+html body .mv-panel.mvA :is(.mvA-rules,.mv-chapter-picker)[open]>summary::after{transform:rotate(90deg)}
+html body .mv-panel.mvA .mvA-rules ul{margin:0;padding:0 14px 0 32px;text-align:left;background:none!important}
+html body .mv-panel.mvA .mvA-rules li{font:700 14px/1.45 Nunito,sans-serif;color:#3B4660;margin:0 0 6px}
+html body .mv-panel.mvA .mvA-rules p{margin:6px 14px 12px!important;font:700 13px/1.4 Nunito,sans-serif!important;color:#5A6478!important;text-align:left!important}
+html body .mv-panel.mvA .mv-chapters{padding:0 10px 10px}
+html body .mv-panel.mvA :is(.mv-primary,.mv-secondary){margin:0!important;min-height:52px;border-radius:18px!important;font:800 16px Nunito,sans-serif}
+html body .mv-panel.mvA .mv-primary{order:10;min-height:58px;background:#0E7C74!important;box-shadow:0 4px 0 #095650!important;color:#fff!important;font:600 21px Fredoka,Nunito,sans-serif!important}
+html body .mv-panel.mvA .mv-primary:disabled{opacity:.55}
+html body .mv-panel.mvA .mv-secondary{order:11;background:#E6EAF3!important;color:#3B4660!important;box-shadow:none!important}
+html body .mv-panel.mvA .mv-notice{order:9;margin:0!important;text-align:center;font:800 13px Nunito,sans-serif;color:#B42318}
+html[data-dm-theme="night"] body .mv-panel.mvA{background:#F4F6FB!important}
+html body .mv-panel.mvA .mvA-art .mv-papi{width:72px!important;height:72px!important;object-fit:contain}
+html body .dm-game-framed:has(.mv-panel.mvA) .mv-header{display:none!important}
