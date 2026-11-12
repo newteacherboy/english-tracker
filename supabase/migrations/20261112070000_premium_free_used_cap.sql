@@ -13,3 +13,13 @@ begin
     execute def;
   end loop;
 end $$;
+
+-- dm_runners_play aynı sayacı farklı yazımla artırıyor.
+do $$
+declare def text;
+begin
+  def := replace(pg_get_functiondef('public.dm_runners_play'::regproc),
+    'free_used=dm_runners_progress.free_used+case when prem then 0 else 1 end',
+    'free_used=least(3,dm_runners_progress.free_used+case when prem then 0 else 1 end)');
+  execute def;
+end $$;
