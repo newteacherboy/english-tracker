@@ -20,6 +20,7 @@ export function publicRace(row:any){const {deck,...safe}=row;const index=Number(
 export function twoChoiceLanes(q:any){const wrong=[0,1,2].filter(i=>i!==q.answer);const omit=wrong[(q.word.length+q.en.length)%wrong.length];return [0,1,2].filter(i=>i!==omit);}
 export function twoChoiceQuestion(q:any){if(!q)return null;return {word:q.word,direction:q.direction,options:twoChoiceLanes(q).map(i=>q.options[i])};}
 export function twoChoiceRace(row:any,data:any){const i=Number(data.state?.index||0);return {...data,question:data.finished?null:twoChoiceQuestion(row.deck[i]),nextQuestion:data.finished?null:twoChoiceQuestion(row.deck[i+1])};}
+export const RALLY_PREMIUM_SINCE='2026-11-12T11:00:00Z';
 export function raceHandler(db:DB){
  const headers={'Access-Control-Allow-Origin':'*','Access-Control-Allow-Headers':'content-type,x-diji-token,authorization,apikey','Access-Control-Allow-Methods':'POST,OPTIONS','Cache-Control':'no-store','Content-Type':'application/json'};
  const json=(d:any,status=200)=>new Response(JSON.stringify(d),{status,headers});
@@ -47,18 +48,26 @@ export function raceHandler(db:DB){
     if(!a.student_id)return json({ok:false,mesaj:'Öğrenci oturumu gerekli.'},401);
     const rows=await db.select('students',{select:'id,username,status,role,class_no,selected_class',id:'eq.'+a.student_id,limit:'1'});student=rows[0];
     if(!student||student.status!=='approved'||student.role!=='student')return json({ok:false,mesaj:'Aktif öğrenci hesabı gerekli.'},403);
-    const balances=await db.select('extra_data',{select:'value',student_id:'eq.'+student.id,key_name:'eq.yo',limit:'1'});
-    const level=await db.rpc('dm_student_level',{x:Number(balances[0]?.value?.totalXp||0)});
-    if(!a.teacher_portal_access_id&&Number(level)<15)return json({ok:false,mesaj:'Kelime Rallisi 15. seviyede açılır.'},403);
+    // [12 Kas 2026] Kelime Rallisi artık Premium oyun: seviye kilidi yok; hak kuralı start'ta (rallyAccess).
     if(b.action==='practice')return json({ok:false,mesaj:'Öğretmen hesabı gerekli.'},403);
    }
+   // Premium oyun hakkı (diğer Premium oyunlarla aynı): Premium Pro sınırsız, Pro günde 5, ücretsiz toplam 3.
+   // Sınıfta öğretmenin açtığı yarış ve öğretmen denemesi hak harcamaz.
+   const rallyAccess=async()=>{
+    if(teacher||a.teacher_portal_access_id)return {plan:'classroom',premium:true,remaining:999};
+    const rawPlan=await db.rpc('dm_plan',{actor:student.id,account_role:'student'});const plan=typeof rawPlan==='string'?rawPlan:'free';
+    if(plan==='premium_pro')return {plan,premium:true,remaining:999};
+    const runsSince=async(since:string)=>(await db.select('dm_rally_runs',{select:'id',student_id:'eq.'+student.id,created_at:'gte.'+since,limit:'10'})).length;
+    if(plan==='pro'){const d=new Date(Date.now()+3*3600000).toISOString().slice(0,10);return {plan,premium:false,limit:5,period:'day',remaining:Math.max(0,5-await runsSince(d+'T00:00:00+03:00'))};}
+    return {plan:'free',premium:false,limit:3,period:'total',remaining:Math.max(0,3-await runsSince(RALLY_PREMIUM_SINCE))};
+   };
    const op=String(b.action||''),cls=Number(b.classNo||student.selected_class||student.class_no||1),units=Array.isArray(b.units)?[...new Set(b.units.map(Number))].sort((x:any,y:any)=>x-y):[];
    if(['setup','start','practice','ranking'].includes(op)&&(!Number.isInteger(cls)||cls<1||cls>8))return json({ok:false,mesaj:'1–8 arasında sınıf seç.'},400);
    if(['start','practice','ranking'].includes(op)&&(units.length<1||units.length>10||units.some((x:any)=>!Number.isInteger(x)||x<1||x>100)))return json({ok:false,mesaj:'En az bir ünite seç.'},400);
    if(op==='setup'){
     const rows=await db.select('word_bank',{select:'unit_no,english,turkish',active:'eq.true',class_no:'eq.'+cls,limit:'6000'}),counts=new Map<number,Set<string>>();
     for(const w of rows){if(!w.english||!w.turkish)continue;const n=Number(w.unit_no);if(!counts.has(n))counts.set(n,new Set());counts.get(n)!.add(String(w.english).toLowerCase());}
-    return json({ok:true,classNo:cls,units:[...counts].sort(([a],[b])=>a-b).map(([id,set])=>({id,count:set.size}))});
+    return json({ok:true,classNo:cls,access:await rallyAccess(),units:[...counts].sort(([a],[b])=>a-b).map(([id,set])=>({id,count:set.size}))});
    }
    if(op==='practice'){
     const flags=await db.select('dm_release_flags',{select:'code,enabled',code:'in.(aktiviteler,tek_kisilik,oyun_ralli)'});if(flags.some(f=>f.enabled===false))return json({ok:false,mesaj:'Kelime Rallisi şu anda kapalı.'},403);
@@ -77,6 +86,8 @@ export function raceHandler(db:DB){
    if(op==='start'){
     const flags=await db.select('dm_release_flags',{select:'code,enabled',code:'in.(aktiviteler,tek_kisilik,oyun_ralli)'});if(flags.some(f=>f.enabled===false))return json({ok:false,mesaj:'Kelime Rallisi şu anda kapalı.'},403);
     const existing=await db.select('dm_rally_runs',{select:'*',id:'eq.'+b.runId,student_id:'eq.'+student.id,limit:'1'});if(existing[0])return json(b.twoChoices?twoChoiceRace(existing[0],publicRace(existing[0])):publicRace(existing[0]));
+    const access=await rallyAccess();
+    if(access.remaining<=0)return json({ok:false,premiumRequired:true,access,mesaj:access.plan==='pro'?'Bugünkü 5 Kelime Rallisi hakkın bitti. Premium Pro ile sınırsız oynayabilirsin.':'3 ücretsiz Kelime Rallisi hakkın bitti. Premium ile oynamaya devam edebilirsin.'},402);
     const difficulty=['easy','normal','hard'].includes(b.difficulty)?b.difficulty:'normal';
     const rows=await db.select('word_bank',{select:'english,turkish',active:'eq.true',class_no:'eq.'+cls,unit_no:'in.('+units.join(',')+')',limit:'6000'});
     const previous=await db.select('dm_rally_runs',{select:'deck',student_id:'eq.'+student.id,class_no:'eq.'+cls,order:'created_at.desc',limit:'50'});
@@ -91,6 +102,6 @@ export function raceHandler(db:DB){
    }
    if(op==='finish')return json(await db.rpc(a.teacher_portal_access_id?'dm_teacher_rally_finish':'dm_rally_finish',{actor:student.id,run_key:b.runId}));
    return json({ok:false,mesaj:'Geçersiz yarış işlemi.'},400);
-  }catch(e){const message=String((e as any)?.message||'');const known=/enerji|seviyede|kelime|ünite|kapısına|yarış.*bulunamadı|kısa bir süre|hesap bilgileri/i.test(message);return json({ok:false,mesaj:known?message:'Yarış bağlantısı tamamlanamadı. Tekrar dene.'},known?400:503);}
+  }catch(e){const message=String((e as any)?.message||'');const known=/enerji|seviyede|hakkın|premium|kelime|ünite|kapısına|yarış.*bulunamadı|kısa bir süre|hesap bilgileri/i.test(message);return json({ok:false,mesaj:known?message:'Yarış bağlantısı tamamlanamadı. Tekrar dene.'},known?400:503);}
  };
 }
