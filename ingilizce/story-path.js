@@ -1,6 +1,8 @@
 /* Papi's story route: independent account-owned learning progression. */
 (()=>{'use strict';
 if(window.dmThematicLearning){window.dmStoryPath=window.dmThematicLearning;return;}
+// [12 Kas 2026] Müfredat dosyası açılışta yüklenmiyor; bu yedek yol çalışırsa önce onu yükle, sonra kendini yeniden başlat.
+if(!window.DMStoryCurriculum&&!window.dmStoryCurriculumLoading){window.dmStoryCurriculumLoading=true;const me=document.currentScript?.src;const c=document.createElement('script');c.src='story-curriculum.js?v=2';c.onload=()=>{if(me){const again=document.createElement('script');again.src=me+(me.includes('?')?'&':'?')+'r=1';document.head.append(again);}};document.head.append(c);return;}
 
 const curriculum=()=>{const list=window.DMStoryCurriculum||[];if(list.length<=40)return list;const ids=[...Array.from({length:10},(_,i)=>i),...Array.from({length:10},(_,i)=>40+i),...Array.from({length:10},(_,i)=>10+i),...Array.from({length:10},(_,i)=>50+i),...Array.from({length:10},(_,i)=>20+i),...Array.from({length:10},(_,i)=>60+i),...Array.from({length:10},(_,i)=>30+i),...Array.from({length:10},(_,i)=>70+i)];const byId=new Map(list.map(c=>[c.id,c]));return ids.map(id=>byId.get(id)).filter(Boolean)},esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const storage={get(k){try{return localStorage.getItem(k)}catch{return null}},set(k,v){try{localStorage.setItem(k,v)}catch{}}};
