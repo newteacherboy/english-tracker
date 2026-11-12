@@ -93,3 +93,9 @@
 #lcPlanSheet .lc-plan-stories .lc-library-heading{display:flex;align-items:center;gap:10px;margin:0 0 10px}
 #lcPlanSheet .lc-plan-stories .lc-library-heading h3{margin:0}
 #lcPlanSheet .lc-plan-stories .lc-story-groups{display:grid;gap:8px;width:100%}
+
+/* [12 Kas 2026] Bugünkü Planım: pencere durum çubuğunun altına girmiyor, kapat düğmesi küçük ve belirgin,
+   pasaport görseli biraz daha küçük. */
+html body #lcPlanSheet .dm-member-sheet{margin-top:env(safe-area-inset-top,0px)!important;max-height:calc(100dvh - 24px - env(safe-area-inset-top,0px))!important}
+html body #lcPlanSheet .dm-member-close{top:10px!important;right:10px!important;width:40px!important;height:40px!important;min-width:40px!important;min-height:40px!important;border:0!important;border-radius:50%!important;background:#472274!important;color:#fff!important;-webkit-text-fill-color:#fff!important;font-size:20px!important;box-shadow:0 3px 0 #2d1450!important}
+html body #lcPlanSheet .ap-hero{width:88%!important;margin:10px auto 8px!important;border-radius:20px!important}

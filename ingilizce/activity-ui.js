@@ -187,7 +187,7 @@
    }
    if(show&&!tool)count++;});
   host.querySelector('.gg-empty').hidden=party==='konu'||count!==0;
-  grid.hidden=party==='konu';const topicHub=host.querySelector('.kg-hub');if(topicHub)topicHub.hidden=party!=='konu';if(party==='konu')window.dmTopicGames?.mount(host,topicCategory);
+  grid.hidden=party==='konu';/* katmanlı display:...!important kuralları hidden'ı eziyordu; Konu Oyunları'nda liste altta kalıyordu */if(party==='konu')grid.style.setProperty('display','none','important');else grid.style.removeProperty('display');const topicHub=host.querySelector('.kg-hub');if(topicHub)topicHub.hidden=party!=='konu';if(party==='konu')window.dmTopicGames?.mount(host,topicCategory);
   const locked=all.filter(b=>b.dataset.ggCategory==='solo'&&!allowed(b.dataset.ggGate)).sort((a,b)=>(window.DijiProgressionCatalog?.gates[a.dataset.ggGate]||40)-(window.DijiProgressionCatalog?.gates[b.dataset.ggGate]||40));
   const next=host.querySelector('.gg-next');next.hidden=redesigned||party!=='solo'||!locked.length;
   if(!next.hidden){const b=locked[0],need=window.DijiProgressionCatalog?.gates[b.dataset.ggGate]||40;next.innerHTML='<h3>Sıradaki Oyun</h3><div>'+img(+b.dataset.ggIndex)+'<span><b>'+esc(b.dataset.ggTitle)+'</b><small>'+icon('lock')+need+'. seviyede açılır</small></span><label>Seviye '+level()+' → '+need+'<progress value="'+Math.min(level(),need)+'" max="'+need+'"></progress></label></div>';}

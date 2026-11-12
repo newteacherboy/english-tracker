@@ -92,3 +92,23 @@
 @media(max-width:650px){#mlThemeList.rt-school-modal .ml-topic-grid{grid-template-columns:1fr}#mlThemeList.rt-school-modal .rt-school-cover-mascot{height:95px;width:85px}.rt-school-main-mascot{height:95px}}
 @media(max-width:360px){.rt-school-mini-grades{grid-template-columns:repeat(4,minmax(0,1fr))}.rt-school-current-unit{grid-template-columns:56px minmax(0,1fr)}.rt-school-unit-mascot{height:55px;width:55px}.rt-school-unit-status{display:none}.rt-school-cover-actions button{font-size:10px}}
 @media(prefers-reduced-motion:reduce){.rt-school-main-mascot{animation:none}}
+
+/* [12 Kas 2026] Okul Yolum paneli sadeleşti: başlık kartı küçük, kapat düğmesi yakın ve belirgin,
+   üstte ikinci bir geri düğmesi yok (kapat aynı işi yapıyor), durum çubuğunun altına girmiyor. */
+html body #mlThemeList.rt-school-modal .dm-session-back{display:none!important}
+html body #mlThemeList.rt-school-modal .ml-theme-panel{padding-top:calc(10px + env(safe-area-inset-top,0px))!important}
+html body #mlThemeList.rt-school-modal .ml-theme-cover{position:relative!important;min-height:0!important;display:flex!important;align-items:center!important;gap:12px!important;padding:10px 62px 10px 12px!important;border-radius:20px!important}
+html body #mlThemeList.rt-school-modal .ml-theme-cover-copy>small,
+html body #mlThemeList.rt-school-modal .ml-theme-cover p{display:none!important}
+html body #mlThemeList.rt-school-modal .ml-theme-cover h2{margin:0!important;font-size:24px!important;line-height:1.1!important}
+html body #mlThemeList.rt-school-modal .rt-school-cover-mascot{order:-1;width:52px!important;height:56px!important;flex:none}
+html body #mlThemeList.rt-school-modal [data-school-close]{top:50%!important;right:10px!important;transform:translateY(-50%);width:42px!important;height:42px!important;font-size:24px!important;line-height:1!important;background:#513269!important;color:#fff!important;box-shadow:0 3px 0 #2f1b3f!important}
+html body #mlThemeList.rt-school-modal .ml-summary-card{padding:12px 14px!important;gap:12px!important;min-height:0!important}
+html body #mlThemeList.rt-school-modal .ml-summary-ring{width:68px!important;height:68px!important;min-width:68px!important}
+html body #mlThemeList.rt-school-modal .ml-summary-ring>div{width:52px!important;height:52px!important}
+html body #mlThemeList.rt-school-modal .ml-summary-ring b{font-size:19px!important}
+html body #mlThemeList.rt-school-modal .ml-summary-ring small{font-size:10px!important}
+html body #mlThemeList.rt-school-modal .ml-summary-info p,
+html body #mlThemeList.rt-school-modal .rt-school-overview-actions>span{display:none!important}
+html body #mlThemeList.rt-school-modal .ml-summary-info strong{font-size:16px!important}
+html body #mlThemeList.rt-school-modal .rt-school-overview-actions{margin:8px 0!important}

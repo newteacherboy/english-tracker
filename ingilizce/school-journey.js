@@ -242,7 +242,7 @@ document.addEventListener('click',e=>{
  if(openButton){e.preventDefault();e.stopPropagation();if(currentRoute())open(steps,Number(openButton.dataset.schoolGrade)||null);}
 });
 if(!document.getElementById('dm-school-journey-css')){
- const link=document.createElement('link');link.id='dm-school-journey-css';link.rel='stylesheet';link.href='school-journey.css?v=20261017-1';document.head.append(link);
+ const link=document.createElement('link');link.id='dm-school-journey-css';link.rel='stylesheet';link.href='school-journey.css?v=20261112-sade';document.head.append(link);
 }
 if(!document.getElementById('dm-school-adventure-v2-css')){
  const link=document.createElement('link');link.id='dm-school-adventure-v2-css';link.rel='stylesheet';link.href='school-adventure-v2.css?v=20261017-home-restore-3';document.head.append(link);

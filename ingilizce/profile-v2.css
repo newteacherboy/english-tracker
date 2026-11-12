@@ -80,3 +80,7 @@ html body #rtProfileBackdrop .au-centre .au-account-entry b{font-size:17px!impor
 html body #rtProfileBackdrop .au-centre .au-account-entry small{font-size:12px!important;display:-webkit-box!important;-webkit-line-clamp:1!important;-webkit-box-orient:vertical!important;overflow:hidden!important}
 html body #rtProfileBackdrop .au-centre .pa-hero h2{font-size:23px!important;margin:0!important}
 }
+
+/* [12 Kas 2026] Benim Merkezim içerikleri dikeyde ortalanır: üstte toplanıp altta boşluk bırakmıyor.
+   Bölüm bir ızgara: satırlar bütün olarak ortalanır; ekran küçükse 'safe' sayesinde üstten taşmaz. */
+@layer bilgiIslands{html body #rtProfileBackdrop .rt-profile.au-centre:not(.au-account){padding-bottom:16px!important;grid-template-rows:none!important;grid-auto-rows:auto!important;align-content:center!important;align-content:safe center!important}}
