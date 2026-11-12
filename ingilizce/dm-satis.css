@@ -262,3 +262,8 @@ div.dmp.is-teacher .dmp-legal,div.dmp.is-teacher .dmp-foot-note,div.dmp.is-teach
 .dmp-buy{min-height:56px;font-size:17px}
 div.dmp.is-teacher .dmp-keys li{color:#17375e}div.dmp.is-teacher .dmp-keys{border-top-color:#d6e4f6}
 @media(max-width:350px){.dmp-plans{grid-template-columns:1fr}}
+/* 12 Kas 2026: kapatma (X) her zeminde net görünsün: koyu mor daire, beyaz çarpı */
+div.dmp .dmp-x,.dms-sheet .dms-x,.dms-mini .dms-x{background:#3b2f8f!important;color:#fff!important;box-shadow:0 4px 12px rgba(44,36,112,.35)!important;opacity:1!important;visibility:visible!important}
+div.dmp .dmp-x svg,.dms-sheet .dms-x svg,.dms-mini .dms-x svg{stroke:#fff!important;fill:none!important}
+div.dmp .dmp-x svg path,.dms-sheet .dms-x svg path,.dms-mini .dms-x svg path{stroke:#fff!important}
+div.dmp.is-teacher .dmp-x{background:#0b4f8a!important}

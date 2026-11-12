@@ -24,3 +24,58 @@
 #rallyGame .rr-pace-note{margin:4px 0 0;font-size:12px;font-weight:800;line-height:1.35;color:#2a4f6e;text-align:left}
 #rallyGame .rr-slow-note{font-size:12px;font-weight:800;color:#8a4b0c}
 #rallyGame .rr-fields:has(.rr-pace-note){grid-template-columns:1fr!important}#rallyGame .rr-fields .rr-pace-note{grid-column:1/-1}
+
+/* ===== Tasarım B · kuşbakışı yol (12 Kas 2026) ===== */
+#rallyGame .rr-stage.rr-b{background:#4fa64a}
+#rallyGame .rr-b .rr-scenery,#rallyGame .rr-b .rr-vignette,#rallyGame .rr-b .rr-logo,#rallyGame .rr-b .rr-speed,#rallyGame .rr-b .rr-controls,#rallyGame .rr-b .rr-instruction,#rallyGame .rr-b .rr-tally span{display:none!important}
+#rallyGame .rr-b .rr-hud{grid-template-columns:1fr;left:4%;right:4%;text-shadow:none}
+#rallyGame .rr-b .rr-hud-right{display:flex;justify-content:space-between;align-items:center;gap:6px}
+#rallyGame .rr-b .rr-hud-stats{order:1;background:#fff;border-radius:16px;padding:3px 8px;box-shadow:0 3px 0 #0002}
+#rallyGame .rr-b .rr-hearts{font-size:18px;filter:none}
+#rallyGame .rr-b .rr-score,#rallyGame .rr-b .rr-tally{order:2;background:#fff;color:#22324a;border:0;border-radius:16px;padding:5px 10px;font-size:15px;box-shadow:0 3px 0 #0002}
+#rallyGame .rr-b .rr-tally{order:3}
+#rallyGame .rr-b .rr-tally b{color:#b7780b}
+#rallyGame .rr-b .rr-slow,#rallyGame .rr-b .rr-pause{background:#eef2f6;color:#22324a;border:0;border-radius:12px}
+#rallyGame .rr-b .rr-progress{height:6px;background:#ffffff66}
+#rallyGame .rr-b .rr-mission{top:calc(70px + env(safe-area-inset-top,0px));left:8%;right:8%;filter:none}
+#rallyGame .rr-b .rr-plank{background:#fff;border:0;border-radius:18px;padding:8px 12px;box-shadow:0 4px 0 #0003;color:#22324a}
+#rallyGame .rr-b .rr-plank::before,#rallyGame .rr-b .rr-plank::after{display:none}
+#rallyGame .rr-b .rr-word{font-size:clamp(20px,7cqw,34px);color:#22324a}
+#rallyGame .rr-b .rr-direction{color:#6a7a8c;font-weight:800}
+#rallyGame .rr-b .rr-round{display:inline-block;margin-top:5px;background:#22324acc;color:#fff;border-radius:10px;padding:2px 8px;font-weight:800}
+#rallyGame .rr-b .rr-gate{height:auto;padding:0;filter:none;cursor:pointer;touch-action:manipulation}
+#rallyGame .rr-b .rr-gate::before,#rallyGame .rr-b .rr-gate::after,#rallyGame .rr-b .rr-gate .rr-arrow,#rallyGame .rr-b .rr-gate .rr-label::before,#rallyGame .rr-b .rr-gate .rr-label::after{display:none}
+#rallyGame .rr-b .rr-gate .rr-label{min-height:52px;background:#fff;color:#22324a;border:3px solid #fff;border-radius:16px;box-shadow:0 5px 0 #0003;font-weight:950;font-size:16px;text-shadow:none}
+#rallyGame .rr-b .rr-gate.correct .rr-label{background:#1fae6b;border-color:#bff5d9;color:#fff}
+#rallyGame .rr-b .rr-gate.wrong .rr-label{background:#e04848;border-color:#ffc2c2;color:#fff}
+#rallyGame .rr-b .rr-car{top:auto;bottom:calc(64px + env(safe-area-inset-bottom,0px));width:clamp(46px,14cqw,70px);filter:drop-shadow(0 6px 3px #0005);transition:none}
+#rallyGame .rr-b .rr-car svg{display:block;width:100%;height:auto}
+#rallyGame .rr-b .rr-car::after{display:none}
+#rallyGame .rr-b .rr-car.good{animation:rrGood .45s ease-out}
+#rallyGame .rr-b .rr-car.bad{animation:rrBad .4s ease-out}
+@keyframes rrGood{40%{filter:drop-shadow(0 0 14px #5dffb0)}}
+@keyframes rrBad{20%,60%{margin-left:-5px}40%,80%{margin-left:5px}}
+#rallyGame .rr-b .rr-hint{position:absolute;left:50%;bottom:calc(12px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:5;white-space:nowrap;background:#ffffffe6;color:#22324a;border-radius:14px;padding:7px 12px;font-size:13px;font-weight:850;box-shadow:0 3px 0 #0002;pointer-events:none}
+#rallyGame .rr-b .rr-feedback{top:auto;bottom:calc(150px + env(safe-area-inset-bottom,0px));font-size:19px;color:#fff;text-shadow:0 2px 3px #0008}
+#rallyGame .rr-b .rr-toast{top:auto;bottom:calc(185px + env(safe-area-inset-bottom,0px))}
+#rallyGame .rr-b .rr-combo{top:auto;bottom:calc(215px + env(safe-area-inset-bottom,0px))}
+#rallyGame .rr-b .rr-pickups{bottom:calc(60px + env(safe-area-inset-bottom,0px))}
+#rallyGame .rr-rights{margin:4px auto 0;display:inline-block;background:#fff4d6;color:#7a4c00;border-radius:12px;padding:4px 10px;font-weight:850;font-size:13px}
+#rallyGame .rr-rights.empty{background:#ffe1e1;color:#9a1c1c}
+#rallyGame .rr-pay-icon{font-size:46px;text-align:center}
+#rallyGame .rr-pay-list{list-style:none;padding:0;margin:8px 0 12px;display:grid;gap:6px;text-align:left;font-weight:800}
+#rallyGame .rr-pay-list li{background:#f2f5f9;color:#22324a;border-radius:12px;padding:8px 10px}
+@media(prefers-reduced-motion:reduce){#rallyGame .rr-b .rr-car.good,#rallyGame .rr-b .rr-car.bad{animation:none}}
+@media(orientation:landscape) and (max-height:600px){
+#rallyGame .rr-b .rr-hud-right{justify-content:flex-start}
+#rallyGame .rr-b .rr-tally{margin-left:auto}
+#rallyGame .rr-b .rr-mission{top:calc(6px + env(safe-area-inset-top,0px));left:31%;right:31%}
+#rallyGame .rr-b .rr-plank{padding:4px 10px;border-radius:14px}
+#rallyGame .rr-b .rr-word{font-size:22px}
+#rallyGame .rr-b .rr-round{margin-top:2px;font-size:11px}
+#rallyGame .rr-b .rr-car{bottom:calc(40px + env(safe-area-inset-bottom,0px));width:44px}
+#rallyGame .rr-b .rr-hint{bottom:6px;font-size:12px;padding:4px 10px}
+#rallyGame .rr-b .rr-gate .rr-label{min-height:46px;font-size:14px}
+}
+#rallyGame .rr-b .rr-score,#rallyGame .rr-b .rr-tally{white-space:nowrap}
+@media(max-width:360px){#rallyGame .rr-b .rr-score,#rallyGame .rr-b .rr-tally{padding:4px 7px;font-size:13px}#rallyGame .rr-b .rr-hud-stats{padding:2px 5px}#rallyGame .rr-b .rr-slow span{display:none}}

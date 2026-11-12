@@ -100,3 +100,10 @@ test('both deploy packages have identical security rules and CAS timestamps alwa
  assert(src.includes('value=protectStudentState(value,e2)'));
  assert(src.includes('reservedStudentKey(key)'));
 });
+test('a stale device save never removes purchased wardrobe items or poses',async()=>{
+ const {protectStudentState}=await security();
+ const stored={karakter:{cins:'k',sahip:['durus:belde','d:c:🔥']}};
+ const out=protectStudentState({karakter:{cins:'k',sahip:['d:c:🔥','gozluk:gunes'],s:{durus:'belde'}}},stored,Date.UTC(2026,10,12));
+ assert.deepEqual(new Set(out.karakter.sahip),new Set(['durus:belde','d:c:🔥','gozluk:gunes']));
+ assert.equal(out.karakter.s.durus,'belde');
+});

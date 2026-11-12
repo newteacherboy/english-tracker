@@ -39,7 +39,8 @@ export function meteorAPI(db:any,json:any){
    if(round!==p.index||!Number.isInteger(option)||option<0||option>=w.options.length)return json({ok:false,mesaj:'Geçersiz cevap.'},400);
    if(p.attempts.length>=200)return json({ok:false,mesaj:'Bu soruda çok fazla deneme yapıldı.'},429);
    const correct=norm(w.options[option])===norm(w.answer),delta=correct?10:-5;p.score+=delta;p[correct?'correct':'wrong']++;p.attempts.push(attempt);s.last={round,player,correct,delta,word:w.word,answer:w.answer,attempt};
-   if(correct){p.index++;p.attempts=[];}s.index=Math.min(...s.players.map((x:any)=>x.index));return update(r,s,s.players.every((x:any)=>x.index>=x.order.length)?'finished':'playing');
+   // [12 Kas 2026] Yanlış cevap da soruyu tüketir: her kelimeye tek atış, kalan soru sayısı her cevapta düşer.
+   p.index++;p.attempts=[];s.index=Math.min(...s.players.map((x:any)=>x.index));return update(r,s,s.players.every((x:any)=>x.index>=x.order.length)?'finished':'playing');
   }
   if(round<s.index)return json(view(r));if(round!==s.index||!Number.isInteger(player)||player<0||player>=r.mode||!Number.isInteger(option)||option<0||option>=r.deck[s.index].options.length||!/^[a-z0-9-]{8,80}$/i.test(attempt))return json({ok:false,mesaj:'Geçersiz cevap.'},400);
   if(s.attempts.includes(attempt))return json(view(r));if(s.attempts.length>=200)return json({ok:false,mesaj:'Bu soruda çok fazla deneme yapıldı. Oyunu bitirip yeniden başlat.'},429);
