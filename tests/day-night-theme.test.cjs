@@ -5,6 +5,7 @@ const fs=require('node:fs');
 const path=require('node:path');
 const source=fs.readFileSync(path.join(__dirname,'../ingilizce/day-night-theme.js'),'utf8');
 function fixture(hour=12, stored={}) {
+  let profileOpen=true;
   const now=new Date(2026,9,12,hour,0,0);
   const buttons=[],docEvents={},winEvents={},attrs={},meta={},popups=[];
   const root={style:{},clientWidth:390,clientHeight:844,setAttribute(k,v){attrs[k]=v;}};
@@ -15,10 +16,11 @@ function fixture(hour=12, stored={}) {
       attrs:{},style:{setProperty(){}},classList:{toggle(){}},parentElement:{},offsetWidth:280,offsetHeight:90,
       setAttribute(k,v){this.attrs[k]=v;},addEventListener(k,f){this[k]=f;},focus(){},
       getBoundingClientRect(){return {left:320,top:10,right:364,bottom:54,width:44,height:44};},
-      contains(other){return this===other;},closest(){return null;},
+      contains(other){return this===other;},closest(selector){return selector.includes('rtProfileBackdrop')&&profileOpen?profile:null;},
       querySelector(k){return children[k] ||= element();},remove(){popups.splice(popups.indexOf(this),1);}
     };
   }
+  const profile={};
   const studyView={active:false,classList:{contains(){return studyView.active;}}};
   const lessonView={active:false,classList:{contains(){return lessonView.active;}}};
   const observed=new Map();
@@ -30,17 +32,17 @@ function fixture(hour=12, stored={}) {
     getElementById(id){return {'tab-derscalis':studyView,'dcScreenDetail':lessonView}[id];},
     hidden:false,documentElement:root,body:{append(el){popups.push(el);}},
     elementFromPoint(){return buttons[0];},querySelector(){return meta;},querySelectorAll(){return buttons;},
-    createElement:element,addEventListener(k,f){docEvents[k]=f;}
+    dispatchEvent(){},createElement:element,addEventListener(k,f){docEvents[k]=f;}
   };
   const window={
     localStorage:{getItem(k){return stored[k];},setItem(k,v){stored[k]=v;}},
     addEventListener(k,f){winEvents[k]=f;}
   };
-  const context={Date:Clock,document,window,MutationObserver};
+  const context={Date:Clock,document,window,MutationObserver,Event};
   vm.runInNewContext(source,context);
-  return {window,attrs,meta,root,docEvents,winEvents,context,buttons,popups,stored,setHour(h){now.setHours(h);},
-    openStudy(active){studyView.active=active;observed.get(studyView)([]);},
-    openLesson(active){lessonView.active=active;observed.get(lessonView)([]);}};
+  return {window,attrs,meta,root,docEvents,winEvents,context,buttons,popups,stored,setHour(h){now.setHours(h);},setProfile(open){profileOpen=open;},
+    openStudy(active){studyView.active=active;observed.get(studyView)?.([]);},
+    openLesson(active){lessonView.active=active;observed.get(lessonView)?.([]);}};
 }
 
 test('every launch starts in daylight even with an old saved night preference',()=>{
@@ -69,47 +71,27 @@ test('manual night mode follows navigation and resets on a new login or restored
   assert.equal(f.stored['dm-color-theme'],undefined);
 });
 
-test('a visible study lesson uses daylight and restores the chosen night theme on either exit path',()=>{
+test('the chosen night theme remains active in study topics and on exit',()=>{
   const f=fixture(),api=f.window.dmDayNightTheme;
-  const button=api.createButton();
-  f.buttons.push(button);
-  button.click();
-  f.openStudy(true);
-  assert.equal(api.themeFor(),'night');
-  f.openLesson(true);
-  assert.equal(api.themeFor(),'day');
-  assert.equal(f.root.style.colorScheme,'light');
-  assert.equal(f.meta.content,'#e3f3ff');
-  assert.equal(button.disabled,true);
-  button.click();
-  assert.equal(api.themeFor(),'day');
-  f.openLesson(false);
-  assert.equal(api.themeFor(),'night');
-  assert.equal(button.disabled,false);
-  f.openLesson(true);
-  f.openStudy(false);
-  assert.equal(api.themeFor(),'night');
+  const button=api.createButton();f.buttons.push(button);button.click();
+  f.openStudy(true);f.openLesson(true);
+  assert.equal(api.themeFor(),'night');assert.equal(f.root.style.colorScheme,'dark');
+  f.openLesson(false);f.openStudy(false);assert.equal(api.themeFor(),'night');
 });
 
-test('the 20:00 hint is deferred until the learner leaves the topic',()=>{
-  const f=fixture(20),api=f.window.dmDayNightTheme;
-  f.buttons.push(api.createButton());
-  f.openStudy(true);
-  f.openLesson(true);
-  api.updateHint();
-  assert.equal(f.popups.length,0);
-  assert.equal(f.stored['dm-night-hint-shown'],undefined);
-  f.openLesson(false);
-  api.updateHint();
-  assert.equal(f.popups.length,1);
+test('the hint waits for Profile and closes when Profile is closed',()=>{
+ const f=fixture(22),api=f.window.dmDayNightTheme;f.buttons.push(api.createButton());
+ f.setProfile(false);api.updateHint();assert.equal(f.popups.length,0);
+ f.setProfile(true);api.updateHint();assert.equal(f.popups.length,1);
+ f.setProfile(false);api.updateHint();assert.equal(f.popups.length,0);
 });
 
-test('the 20:00 hint appears once at a visible toggle and requires a choice',()=>{
+test('the 21:00 hint appears once at a visible toggle and requires a choice',()=>{
   const f=fixture(19),api=f.window.dmDayNightTheme;
   f.buttons.push(api.createButton());
   api.updateHint();
   assert.equal(f.popups.length,0);
-  f.setHour(20);
+  f.setHour(21);
   api.updateHint();
   assert.equal(f.popups.length,1);
   assert.equal(api.themeFor(),'day');
@@ -127,7 +109,7 @@ test('the 20:00 hint appears once at a visible toggle and requires a choice',()=
 });
 
 test('the hint waits for a visible switch and closes if the destination changes',()=>{
-  const f=fixture(20),api=f.window.dmDayNightTheme;
+  const f=fixture(21),api=f.window.dmDayNightTheme;
   api.updateHint();
   assert.equal(f.stored['dm-night-hint-shown'],undefined);
   f.buttons.push(api.createButton());
