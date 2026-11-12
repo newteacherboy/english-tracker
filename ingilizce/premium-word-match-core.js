@@ -208,19 +208,6 @@ function shuffle(st){
 }
 function ensureMove(st){if(!findMove(st))shuffle(st);}
 
-/* Güçlendiriciler (hamle harcamaz). */
-function boosterRow(st,r){const steps=[];const cells=[];for(let c=0;c<st.cols;c++)cells.push([r,c]);resolve(st,steps,[],{cells,score:300});after(st,steps);return steps;}
-function boosterColor(st,r,c){const p=st.board[r][c];if(!p)return [];const t=p.t>=0?p.t:mostCommon(st);const cells=[];for(let y=0;y<st.rows;y++)for(let x=0;x<st.cols;x++)if(st.board[y][x]?.t===t||(y===r&&x===c))cells.push([y,x]);const steps=[];resolve(st,steps,[],{cells,score:400,bombType:t});after(st,steps);return steps;}
-function boosterShuffle(st){shuffle(st);return [{kind:'shuffle',board:snap(st),ice:iceSnap(st)}];}
-function boosterSwap(st,a,b){
- if(!adjacent(a,b)||!st.board[a[0]][a[1]]||!st.board[b[0]][b[1]])return {ok:false,steps:[]};
- const pa=st.board[a[0]][a[1]],pb=st.board[b[0]][b[1]];const la=pa.lock,lb=pb.lock;pa.lock=false;pb.lock=false;
- doSwap(st,a,b);const steps=[{kind:'swap',a,b,board:snap(st),ice:iceSnap(st)}];
- pa.lock=la;pb.lock=lb;
- const special=specialSwap(st,b,a);
- resolve(st,steps,[a,b],special);after(st,steps);return {ok:true,steps};
-}
-
 /* Bölüm kazanılınca: kalan her hamle rastgele bir şekeri şeride çevirir, sonra hepsi patlar ("Büyü Yağmuru"). */
 function bonus(st){
  const steps=[];const n=Math.min(st.moves,15);const marked=[];
@@ -240,6 +227,6 @@ function bonus(st){
 }
 function stars(st){const s=st.cfg.stars;return st.score>=s[2]?3:st.score>=s[1]?2:st.score>=s[0]?1:0;}
 
-const api={mulberry,starScore,levelConfig,create,trySwap,findMove,findGroups,shuffle,boosterRow,boosterColor,boosterShuffle,boosterSwap,bonus,stars,goalsDone,canSwap,adjacent,snap};
+const api={mulberry,starScore,levelConfig,create,trySwap,findMove,findGroups,shuffle,bonus,stars,goalsDone,canSwap,adjacent,snap};
 if(typeof module!=='undefined'&&module.exports)module.exports=api;else root.dmPwmCore=api;
 })(typeof window!=='undefined'?window:globalThis);

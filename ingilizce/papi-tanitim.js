@@ -57,7 +57,7 @@ function introSteps(){
   {target:'.dm-unified-wallet',title:'Enerji, altın ve XP',text:'Enerjiyle soru çözersin, altınla Mağaza’dan alışveriş yaparsın, XP ile seviye atlarsın.',tip:'Üst üste doğru cevaplar bonus kazandırır.'},
   {target:tab('tab-aktiviteler'),title:'Oyna',text:'Öğrendiklerinle oyna, XP ve altın kazan. Mola Vakti’nde kısa bir ara verebilirsin.',tip:'Çalıştıkça yeni oyunlar açılır.'},
   {target:tab('tab-meduakis'),title:'Arkadaşlar',text:'Arkadaşlarını ekle, başarılarını gör ve sıralamada yarış.'},
-  {target:tab('tab-magaza'),title:'Mağaza',text:'Kazandığın altınlarla karakterine kıyafet, joker ve enerji alabilirsin.'},
+  {target:tab('tab-magaza'),title:'Mağaza',text:'Kazandığın altınlarla karakterine kıyafet ve enerji alabilirsin.'},
   {target:tab('tab-profile-menu'),title:'Profil',text:'Seviyeni, rozetlerini ve hesap ayarlarını buradan görürsün.'},
   {center:true,img:'papi-kutlama',title:'Hazırsın!',text:'İlk durağın seni bekliyor. Birlikte başlayalım.',next:'İlk durağa başla',secondary:'Kapat',noDots:true,finishAction:'start'}
  ];

@@ -1,7 +1,7 @@
 /* Premium Oyunlar · Candy Papiş (v2, 3 Kas 2026).
    - Şekerlerin üstünde Word Bank kelimeleri yazar; eşleşince Türkçesi belirir.
    - 100 bölüm / 5 dünya. Her bölüm 5 enerji. Premium olmayanların 3 ücretsiz denemesi var.
-   - Hak, enerji, ödül, bölüm ilerlemesi ve güçlendiriciler sunucuda (premium-games) tutulur.
+   - Hak, enerji, ödül, bölüm ilerlemesi sunucuda (premium-games) tutulur.
    - iPhone belleği için: tek canvas, şeker+kelime görüntüleri önbellekte, ağır CSS filtresi yok. */
 (()=>{'use strict';
 if(window.dmPwm)return;
@@ -10,13 +10,6 @@ const API=(typeof apiURL!=='undefined'?apiURL:'https://nxfqlutulxqzqgwewssd.supa
 const WORLDS=['Büyü Kütüphanesi','Kristal Mağara','Gökyüzü Şatosu','Büyülü Bahçe','Yıldız Kulesi'];
 const BGS=['bg-1-buyu-kutuphanesi','bg-2-kristal-magara','bg-3-gokyuzu-satosu','bg-4-buyulu-bahce','bg-5-yildiz-kulesi'];
 const CANDIES=['candy-pink-oval','candy-red-flower','candy-blue-star','candy-yellow-drop','candy-green-heart','candy-orange-cloud','candy-purple-square'];
-const BOOSTERS=[['karistir','Karıştır','Karışık Düzen','booster-karistir',40],['degistir','Yer Değiştir','2 Şekli Değiştir','booster-yer-degistir',60],['satir','Satır Patlat','Tüm Satırı Temizle','booster-satir-patlat',80],['renk','Renk Patlat','Aynı Renklerin Hepsini Temizle','booster-renk-patlat',120]];
-const PLAY_BOOSTERS={
- karistir:['Karıştır','M3 6h3c5 0 6 12 11 12h4m-3-3 3 3-3 3M3 18h3c2 0 4-2 5-4m3-4c1-2 2-4 4-4h3m-3-3 3 3-3 3'],
- degistir:['Değiştir','M20 7H4m4-4L4 7l4 4M4 17h16m-4-4 4 4-4 4'],
- satir:['Satır','M13 2 4 14h7l-1 8 10-12h-8z'],
- renk:['Renk','M12 3c3 4 6 7 6 11a6 6 0 0 1-12 0c0-4 3-7 6-11Z']
-};
 const COMBO_WORDS=['','','Harika!','Süper!','Muhteşem!'];
 const FALLBACK=[['book','kitap'],['apple','elma'],['house','ev'],['cat','kedi'],['school','okul'],['dog','köpek'],['water','su'],['tree','ağaç'],['sun','güneş'],['milk','süt'],['car','araba'],['bird','kuş'],['pen','kalem'],['door','kapı'],['fish','balık'],['ball','top'],['chair','sandalye'],['bread','ekmek'],['rain','yağmur'],['moon','ay'],['flower','çiçek'],['window','pencere'],['friend','arkadaş'],['teacher','öğretmen']];
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -210,7 +203,7 @@ function introHome(){
   note:!isPremium()&&remaining()<=0?{text:window.dmPremiumIntro.noRightsText(),icon:'lock'}:null,
   actions:!isPremium()&&remaining()<=0
    ?[{label:'Paketleri gör',onClick:()=>{const o=window.dmPremiumIntro.plans('candy-papis',(window.dmAndroidPlan?.plan||'free')==='pro'?'premium_pro':'');o?o():toast('Paketler şu an açılamadı.');}},{label:'Oyunlara dön',kind:'link',onClick:()=>back()}]
-   :[{label:'Güçlendiriciler',kind:'icon',icon:'flask',onClick:()=>shop()},{label:'Seviye '+lv+'’i oyna',cost:5,onClick:()=>levelCard(lv)},{label:'Oyunlara dön',kind:'link',onClick:()=>back()}]
+   :[{label:'Seviye '+lv+'’i oyna',cost:5,onClick:()=>levelCard(lv)},{label:'Oyunlara dön',kind:'link',onClick:()=>back()}]
  });
 }
 
@@ -227,10 +220,9 @@ function home(){
   <nav class="pwm-worlds" aria-label="Dünyalar">${WORLDS.map((n,i)=>{const w=i+1,open=lv>(w-1)*20;return `<button type="button" data-world="${w}" aria-pressed="${w===world}" ${open?'':'aria-disabled="true"'}><span>${w}</span><small>${n}</small></button>`;}).join('')}</nav>
   <h2 class="pwm-world-name">${WORLDS[world-1]}</h2>
   <div class="pwm-levels">${levels.join('')}</div>
-  <div class="pwm-home-actions"><button type="button" class="pwm-btn gold big" data-play>▶ Seviye ${lv}’i Oyna</button><button type="button" class="pwm-btn ghost" data-shop><img src="${A}booster-renk-patlat.webp" alt="">Güçlendiriciler</button></div>
+  <div class="pwm-home-actions"><button type="button" class="pwm-btn gold big" data-play>▶ Seviye ${lv}’i Oyna</button></div>
  </section>`;
  $('[data-play]').onclick=()=>levelCard(lv);
- $('[data-shop]').onclick=()=>shop();
  root.querySelectorAll('[data-world]').forEach(b=>b.onclick=()=>{if(b.getAttribute('aria-disabled')){toast('Bu dünya önceki bölümleri bitirince açılır.');return;}world=+b.dataset.world;sound.tick();home();});
  root.querySelectorAll('[data-lv]').forEach(b=>b.onclick=()=>{if(b.classList.contains('locked')){toast('Önce Seviye '+lv+'’i geç!');sound.bad();return;}sound.tick();levelCard(+b.dataset.lv);});
  root.querySelector('.pwm-lv.current')?.scrollIntoView?.({block:'nearest'});
@@ -264,11 +256,11 @@ async function start(level,cfg,words){
  const d=await api('start',{runId,level});
  if(ticket!==epoch||!root)return;
  adopt(d);
- await preload([...CANDIES,'candy-rainbow-bomb','fx-stripe-h','fx-stripe-v','tile-ice','tile-chain','fx-sparkle','fx-burst',...BOOSTERS.map(b=>b[3])]);
+ await preload([...CANDIES,'candy-rainbow-bomb','fx-stripe-h','fx-stripe-v','tile-ice','tile-chain','fx-sparkle','fx-burst']);
  if(ticket!==epoch||!root)return;
  hideModal();
  const st=window.dmPwmCore.create(cfg,(Math.random()*2**31)|0);
- G={level,cfg,words,st,runId,started:Date.now(),busy:false,mode:null,sel:null,over:false,pieces:new Map(),particles:[],floats:[],beams:[],shake:0,idle:performance.now(),hint:null,cell:48,dpr:1,cache:new Map(),boosters:{...(status?.boosters||{})},usedBooster:false,lastScore:0};
+ G={level,cfg,words,st,runId,started:Date.now(),busy:false,mode:null,sel:null,over:false,pieces:new Map(),particles:[],floats:[],beams:[],shake:0,idle:performance.now(),hint:null,cell:48,dpr:1,cache:new Map(),lastScore:0};
  world=cfg.world;setBg(world);
  game();sound.startMusic();
 }
@@ -284,11 +276,9 @@ function game(){
   </div>
   <div class="pwm-board"><canvas aria-label="Kelime şekerleri tahtası. Yan yana iki şekeri kaydırarak yer değiştir; aynı kelimeden üç tane yan yana gelince patlar." role="img"></canvas><div class="pwm-combo" aria-live="polite" hidden></div><div class="pwm-mode" hidden></div></div>
   <details class="pwm-rewards"><summary>Eşleşme ödülleri <i aria-hidden="true">i</i></summary><div class="pwm-chips"><span>3’lü eşleşme<b>+100 puan</b></span><span>4’lü eşleşme<b>+250 puan</b></span><span>5’li eşleşme<b>+500 puan + özel hediye</b></span></div></details>
-  <div class="pwm-boosters">${BOOSTERS.map(([k,n,s])=>`<button type="button" class="pwm-boost" data-boost="${k}" aria-label="${n}: ${s}"><span class="pwm-boost-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="${PLAY_BOOSTERS[k][1]}"/></svg><em data-count="${k}"></em></span><b>${PLAY_BOOSTERS[k][0]}</b></button>`).join('')}</div>
  </section>`;
  $('.pwm-witch').src=A+'char-witch-idle.webp';
- root.querySelectorAll('[data-boost]').forEach(b=>b.onclick=()=>booster(b.dataset.boost));
- paintHud(true);paintBoosters();
+ paintHud(true);
  const cv=$('.pwm-board canvas');g.canvas=cv;g.ctx=cv.getContext('2d');
  g.ro=new ResizeObserver(()=>sizeBoard());g.ro.observe($('.pwm-board'));sizeBoard();
  syncPieces(g.st.board,true);
@@ -456,10 +446,8 @@ function roundRect(x,a,b,w,h,r){x.beginPath();x.moveTo(a+r,b);x.arcTo(a+w,b,a+w,
 function cellAt(e){const g=G,r=g.canvas.getBoundingClientRect();const c=Math.floor((e.clientX-r.left)/g.cell),row=Math.floor((e.clientY-r.top)/g.cell);return row>=0&&c>=0&&row<g.st.rows&&c<g.st.cols?[row,c]:null;}
 function down(e){const g=G;if(!g||g.busy||g.over||g.paused)return;sound.ac();g.idle=performance.now();g.hint=null;const at=cellAt(e);if(!at)return;
  try{g.canvas.setPointerCapture(e.pointerId);}catch{}
- if(g.mode==='satir'){useRow(at[0]);return;}
- if(g.mode==='renk'){useColor(at);return;}
  g.drag={at,x:e.clientX,y:e.clientY,moved:false};}
-function move(e){const g=G;if(!g)return;if(g.mode==='satir'){const at=cellAt(e);g.hover=at?at[0]:null;}
+function move(e){const g=G;if(!g)return;
  const d=g.drag;if(!d||d.moved||g.busy)return;const dx=e.clientX-d.x,dy=e.clientY-d.y;if(Math.max(Math.abs(dx),Math.abs(dy))<g.cell*.32)return;
  d.moved=true;const to=Math.abs(dx)>Math.abs(dy)?[d.at[0],d.at[1]+(dx>0?1:-1)]:[d.at[0]+(dy>0?1:-1),d.at[1]];g.sel=null;swap(d.at,to);}
 function up(){const g=G;if(!g)return;const d=g.drag;g.drag=null;if(!d||d.moved||g.busy)return;
@@ -468,7 +456,6 @@ function up(){const g=G;if(!g)return;const d=g.drag;g.drag=null;if(!d||d.moved||
 async function swap(a,b){
  const g=G;if(!g||g.busy||g.over)return;if(b[0]<0||b[1]<0||b[0]>=g.st.rows||b[1]>=g.st.cols)return;
  const core=window.dmPwmCore;
- if(g.mode==='degistir'){if(!core.adjacent(a,b))return;if(!await spendBooster('degistir'))return;g.busy=true;g.mode=null;showMode('');const r=core.boosterSwap(g.st,a,b);await play(r.steps);g.busy=false;return settle();}
  const p=g.st.board[a[0]][a[1]],q=g.st.board[b[0]][b[1]];if(p?.lock||q?.lock){toast('Zincirli şeker yer değiştiremez. Yanında eşleşme yaparak zinciri kır!');sound.bad();return;}
  g.busy=true;const r=core.trySwap(g.st,a,b);await play(r.steps);g.busy=false;
  if(r.ok)settle();
@@ -479,35 +466,6 @@ async function settle(){
  if(core.goalsDone(g.st)){g.over=true;return win();}
  if(g.st.moves<=0){g.over=true;return lose();}
  if(g.st.moves===5)toast('Son 5 hamle!');
-}
-
-/* ---------- güçlendiriciler ---------- */
-function paintBoosters(){if(!G)return;for(const [k] of BOOSTERS){const el=root.querySelector(`[data-count="${k}"]`);if(!el)continue;const n=practice?'∞':Number(G.boosters[k]||0);el.textContent=n===0?'+':n;el.classList.toggle('plus',n===0);root.querySelector(`[data-boost="${k}"]`)?.setAttribute('aria-pressed',String(G.mode===k));}}
-async function spendBooster(k){
- const g=G;if(practice)return true;
- if(Number(g.boosters[k]||0)<1){shop(k);return false;}
- try{const d=await api('use',{kind:k,runId:g.runId});g.boosters={...d.boosters};status.boosters=d.boosters;paintBoosters();g.usedBooster=true;return true;}
- catch(e){toast(e.message);return false;}
-}
-async function booster(k){
- const g=G;if(!g||g.busy||g.over||g.paused)return;sound.ac();
- if(g.mode===k){g.mode=null;showMode('');paintBoosters();return;}
- if(!practice&&Number(g.boosters[k]||0)<1){shop(k);return;}
- const core=window.dmPwmCore;
- if(k==='karistir'){if(!await spendBooster(k))return;g.busy=true;await play(core.boosterShuffle(g.st));g.busy=false;settle();return;}
- g.mode=k;g.sel=null;paintBoosters();
- showMode(k==='satir'?'Patlatmak istediğin satıra dokun':k==='renk'?'Bir şekere dokun: o kelimenin hepsi patlar':'Yer değiştirecek iki komşu şekeri kaydır');
-}
-async function useRow(r){const g=G;if(!await spendBooster('satir'))return;g.mode=null;showMode('');paintBoosters();g.busy=true;g.beams.push({kind:'row',r,life:1});await play(window.dmPwmCore.boosterRow(g.st,r));g.busy=false;settle();}
-async function useColor(at){const g=G;if(!await spendBooster('renk'))return;g.mode=null;showMode('');paintBoosters();g.busy=true;await play(window.dmPwmCore.boosterColor(g.st,at[0],at[1]));g.busy=false;settle();}
-
-function shop(focus){
- const b=status?.boosters||{};const gold=typeof yo!=='undefined'?Number(yo?.altin||0):Number(status?.gold||0);
- const c=modal(`<button type="button" class="pwm-x" data-x aria-label="Kapat">×</button><h2 class="pwm-ribbon-title">Güçlendiriciler</h2>
-  <p class="pwm-muted">Altınla al, zor bölümlerde kullan. Altının: <b data-gold>${fmt(gold)}</b></p>
-  <div class="pwm-shop">${BOOSTERS.map(([k,n,s,icon,price])=>`<div class="pwm-shop-item${focus===k?' focus':''}"><img src="${A}${icon}.webp" alt=""><div><b>${n}</b><small>${s}</small><em>Sende: <span data-have="${k}">${practice?'∞':Number(b[k]||0)}</span></em></div><button type="button" class="pwm-btn gold" data-buy="${k}" ${practice?'disabled':''}>🪙 ${price}</button></div>`).join('')}</div>`,'shopm');
- c.querySelector('[data-x]').onclick=()=>hideModal();
- c.querySelectorAll('[data-buy]').forEach(btn=>btn.onclick=async()=>{btn.disabled=true;try{const d=await api('buy',{kind:btn.dataset.buy});status.boosters=d.boosters;if(G)G.boosters={...d.boosters};if(d.yo){pendingYo=d.yo;window.dmApplyRewardState?.(d.yo,owner);}c.querySelector(`[data-have="${btn.dataset.buy}"]`).textContent=d.boosters[btn.dataset.buy];c.querySelector('[data-gold]').textContent=fmt(d.yo?.altin??d.gold);paintBoosters();sound.create();}catch(e){toast(e.message);sound.bad();}finally{btn.disabled=false;}});
 }
 
 /* ---------- bölüm sonu ---------- */
@@ -530,7 +488,7 @@ async function finish(won){
  const next=won&&g.level<100,outOfPlays=!isPremium()&&remaining()<=0;
  c.innerHTML=`<img class="pwm-result-char" src="${A}${won?'char-witch-cheer':'char-witch-idle'}.webp" alt="">
   <h2 class="pwm-ribbon-title">${won?'Seviye '+g.level+' tamam!':'Hamlen bitti'}</h2>
-  ${won?`<div class="pwm-result-stars">${[0,1,2].map(i=>`<img data-rs="${i}" src="${A}icon-star-empty.webp" alt="">`).join('')}</div>`:`<p>Hedeflere çok yaklaştın! Güçlendiricilerle tekrar dene.</p>`}
+  ${won?`<div class="pwm-result-stars">${[0,1,2].map(i=>`<img data-rs="${i}" src="${A}icon-star-empty.webp" alt="">`).join('')}</div>`:`<p>Hedeflere çok yaklaştın! Bir kez daha dene.</p>`}
   <p class="pwm-result-score">Puan <b>${fmt(g.st.score)}</b></p>
   <div class="pwm-reward"><span><i class="xp">★</i><b>+${fmt(d.xp||0)}</b> XP</span><span><i class="coin"></i><b>+${fmt(d.gold||0)}</b> altın</span></div>
   ${practice?'<p class="pwm-muted small">Sınıf modu: ödül işlenmez.</p>':''}

@@ -32,14 +32,13 @@ test('oynanan bölümler tutarlı kalır: tahta dolu, puan artar, hedefler aşı
  }
 });
 
-test('4 ve 5 eşleşme özel şeker üretir, güçlendiriciler hamle harcamaz',()=>{
+test('4 eşleşme oyunun doğal şeritli şekerini üretir',()=>{
  const st=core.create(core.levelConfig(1),7);const B=st.board;
  for(let r=0;r<5;r++)for(let c=0;c<5;c++){B[r][c].t=(r*3+c*2)%5;B[r][c].s=0;}
  [0,1,3].forEach(c=>B[4][c].t=4);B[3][2].t=4;B[4][2].t=1;B[4][4].t=1;
  assert(core.findGroups(st).length===0);
  const r=core.trySwap(st,[3,2],[4,2]);assert(r.ok);
  assert(r.steps.find(s=>s.kind==='clear').created.some(c=>c.s===1||c.s===2),'4 eşleşme şeritli şeker vermeli');
- const m=st.moves;core.boosterRow(st,3);core.boosterColor(st,2,2);core.boosterShuffle(st);assert.equal(st.moves,m);
 });
 
 test('yıldız eşikleri sunucu fonksiyonuyla aynı',()=>{

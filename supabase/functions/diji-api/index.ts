@@ -37,7 +37,7 @@ import { contactPolicyAPI } from './contact-policy-api.ts';
 // DİJİ-MEDU API — Supabase Edge Function (YAMALI SÜRÜM v4.6)
 // Yamalar "[YAMA n]" / "[v4.x]" etiketiyle işaretlidir. İşlem adları ve cevap
 // biçimleri önceki sürümle aynıdır.
-// v4.8: altın, joker, dondurucu, karakter ve enerji paketi sunucuda; ödev oyunu enerji harcamaz.
+// v4.8: altın, dondurucu, karakter ve enerji paketi sunucuda; ödev oyunu enerji harcamaz.
 // v4.7: e-postayla şifre yenileme, takma adlı kayıt, giriş yapmışken şifre değiştirme.
 // v4.6: hile açıkları kapatıldı, öğretmen değerlendirmeleri gizlendi,
 //       şifre sıfırlamaya e-posta eklendi, ödev cezasına tatil ve katılım
@@ -897,40 +897,33 @@ async function enerjiYenile(s: any) {
 }
 
 // =====================================================================
-// [v4.8] EKONOMİ SUNUCUDA: altın, joker çantası, seri dondurucu, satın alınan
-// karakterler ve 4. joker hakkı. Öğrenci kaydı bu alanları ARTIRAMAZ, sadece
-// harcayabilir (joker kullanmak, dondurucu kullanmak). Artış yalnızca sunucu
+// EKONOMİ SUNUCUDA: altın, seri dondurucu ve satın alınan karakterler.
+// Öğrenci kaydı bu alanları artıramaz. Artış yalnızca sunucu
 // işlemleriyle olur (altın kazanma, mağaza satın alma, sandık, parkur hediyesi).
 // =====================================================================
-const JOKER_KATALOG: Record<string, [string, number, number]> = {"sihirli-makas":["yari",1,10],"cift-makas":["yari",2,18],"makas-firtinasi":["yari",3,25],"ikinci-sans":["ikinci",1,12],"yanki-tilsim":["ikinci",2,22],"altin-yildiz":["cift",1,14],"yildiz-yagmuru":["cift",2,26],"ucan-halı":["pas",1,10],"roket-pas":["pas",2,18],"isinlanma":["pas",3,25],"kristal-kalkan":["kalkan",1,12],"ejder-pulu":["kalkan",2,22],"titan-kalkan":["kalkan",3,30],"harf-fener":["harf",1,10],"harf-kandili":["harf",2,18],"alfabe-anahtar":["harf",3,25],"papagan-fisiltisi":["papagan",1,12],"papagan-korosu":["papagan",2,22],"kalp-iksiri":["can",1,14],"anka-tuyu":["can",2,26],"baykus-gozu":["bakis",1,12],"kartal-bakisi":["bakis",2,22],"buz-kristali":["dondur",1,12],"zaman-kum-saati":["dondur",2,22],"xp-tilsimi":["m_xp",1,20],"buyuk-xp":["m_xp3",1,30],"altin-miknatis":["m_altin",1,20],"bedava-bilet":["m_bilet",1,30],"seri-kalkani":["m_seri",1,150],"sans-yoncasi":["m_kombo",1,16]};   // id: [tür, adet, fiyat]
 const KARAKTER_SIRA: Record<string, number> = {"Pofuduk Çırak":0,"Zıpzıp":1,"Kristal Kedi":2,"Profesör Hu":3,"Yıldız Tozu":4,"Ay Hayaleti":5,"Kazan Kıpır":6,"Asa Ustası":7,"Ejderhacık":8,"Alfi":0,"Zıpır Z":1,"Hece Böceği":2,"Yankı":3,"Mikro Mimi":4,"Kafiye":5,"Tekerleme":6,"Nokta Hanım":7,"Alfabe Kral":8,"Cıvıl":0,"Kaktüs Koko":1,"Ananas Nana":2,"Mercan":3,"Dalga":4,"Tukan Tuki":5,"Hindistan Coco":6,"Lagün":7,"Gökkuşağı Papağan":8,"Kaptan Yengeç":0,"Pusula":1,"Pofi Balon":2,"Deniz Yıldızı":3,"Martı Mert":4,"Korsan Tavşan":5,"Ahtapot Oki":6,"Zümrüt Kaplumbağa":7,"Efsane Kraken":8};   // ad: sıra → fiyat 50 + sıra × 10
 const DONDURUCU_FIYAT = 150, DONDURUCU_MAX = 2;
 const ENERJI_PAKET_KUCUK = { fiyat: 15, miktar: 5 }, ENERJI_PAKET_TAM_FIYAT = 60, ENERJI_SATIN_GUNLUK = 3;
 const TEK_SEFERDE_ALTIN = 500;
 function ekonomiAl(y: any) {
   y = y && typeof y === "object" ? y : {};
-  const j: any = {}; const jy = y.jokerEnv && typeof y.jokerEnv === "object" ? y.jokerEnv : {};
-  for (const k of Object.keys(jy)) { const v = Math.max(0, Math.floor(num(jy[k]))); if (v > 0) j[k] = v; }
-  return { altin: Math.max(0, Math.floor(num(y.altin))), jokerEnv: j, dondurucu: Math.max(0, Math.floor(num(y.dondurucu))),
-    dmExtraJoker: Math.max(0, Math.floor(num(y.dmExtraJoker))), krkSatin: Array.isArray(y.krkSatin) ? y.krkSatin.map(String) : [], ekoSurum: Math.max(0, Math.floor(num(y.ekoSurum))) };
+  return { altin: Math.max(0, Math.floor(num(y.altin))), dondurucu: Math.max(0, Math.floor(num(y.dondurucu))),
+    krkSatin: Array.isArray(y.krkSatin) ? y.krkSatin.map(String) : [], ekoSurum: Math.max(0, Math.floor(num(y.ekoSurum))) };
 }
 /* Öğrencinin gönderdiği kayıtta ekonomi alanlarını sunucudaki değerlere göre düzelt */
 function ekonomiKoru(value: any, e: any) {
   const s = ekonomiAl(e), c = ekonomiAl(value);
-  /* Cihaz yeni sürümü kullanıyorsa (ekoV 2) ve son sunucu işlemini görmüşse harcamalarını (joker/dondurucu kullanımı) kabul et.
+  /* Cihaz yeni sürümü kullanıyorsa (ekoV 2) ve son sunucu işlemini görmüşse harcamalarını (dondurucu kullanımı) kabul et.
      Eski sürümdeki cihazların ekonomi alanları tamamen yok sayılır: ne harcayabilir ne kazanabilir, sunucudaki değer korunur. */
   const guncel = !!e && value.ekoV === 2 && c.ekoSurum >= s.ekoSurum;
   value.altin = guncel ? Math.min(c.altin, s.altin) : s.altin;
   value.dondurucu = guncel ? Math.min(c.dondurucu, s.dondurucu) : s.dondurucu;
-  value.dmExtraJoker = guncel ? Math.min(c.dmExtraJoker, s.dmExtraJoker) : s.dmExtraJoker;
-  const j: any = {};
-  for (const k of Object.keys(s.jokerEnv)) { const v = guncel ? Math.min(s.jokerEnv[k], c.jokerEnv[k] || 0) : s.jokerEnv[k]; if (v > 0) j[k] = v; }
-  value.jokerEnv = j;
+  delete value.jokerEnv; delete value.jokerStok; delete value.dmExtraJoker;
   value.krkSatin = s.krkSatin;
   value.ekoSurum = s.ekoSurum;
   if (e && e.dmAltinGun) value.dmAltinGun = e.dmAltinGun; else delete value.dmAltinGun;
 }
-const ekonomiCevap = (y: any) => { const x = ekonomiAl(y); return { altin: x.altin, jokerEnv: x.jokerEnv, dondurucu: x.dondurucu, dmExtraJoker: x.dmExtraJoker, krkSatin: x.krkSatin, ekoSurum: x.ekoSurum }; };
+const ekonomiCevap = (y: any) => { const x = ekonomiAl(y); return { altin: x.altin, dondurucu: x.dondurucu, krkSatin: x.krkSatin, ekoSurum: x.ekoSurum }; };
 async function yoOku(sid: string) {
   const { data } = await supabase.from("extra_data").select("value,updated_at").eq("student_id", sid).eq("key_name", "yo").maybeSingle();
   let y: any = data?.value || null; if (typeof y === "string") { try { y = JSON.parse(y); } catch (_) { y = null; } }
@@ -1449,7 +1442,7 @@ async function handle(req: Request, proxy: any = null) {
     return json({ok:true,rol:'ogrenci',ogrenci:s.username,expiresAt:a.expires_at});
   }
 
-  const iosAdResponse=['reklamHakki','reklamOdulu'].includes(op)?await iosAdRewards({db:supabase,json,isDemo,jokers:JOKER_KATALOG,characters:KARAKTER_SIRA,items:iosAdItems,catalog:(globalThis as any).DijiProgressionCatalog}).handle(op,body,a,req.method):null;
+  const iosAdResponse=['reklamHakki','reklamOdulu'].includes(op)?await iosAdRewards({db:supabase,json,isDemo,characters:KARAKTER_SIRA,items:iosAdItems,catalog:(globalThis as any).DijiProgressionCatalog}).handle(op,body,a,req.method):null;
   if(iosAdResponse)return iosAdResponse;
 
   // Private classroom play only records verified game rankings: no wallet mutation.
@@ -1629,6 +1622,7 @@ async function handle(req: Request, proxy: any = null) {
     if (!a || a.role !== "student" || !a.student_id) return json({ ok: false, hata: "oturum", mesaj: "Önce giriş yapmalısın." }, 401);
     if (req.method !== "POST") return json({ ok: false, mesaj: "POST gerekli." }, 405);
     const sid = a.student_id, is = String(body.is || "");
+    if (is === "jokerAl") return json({ok:false,mesaj:"Bu özellik kaldırıldı."},410);
     const hataVer = async (mesaj: string, kod = 400) => json({ ok: false, mesaj, ekonomi: ekonomiCevap((await yoOku(sid)).y) }, kod);
     if (is === "enerjiPaketDurumu") {
       const { count, error } = await supabase.from("dm_energy_shop_purchases")
@@ -1739,22 +1733,6 @@ async function handle(req: Request, proxy: any = null) {
         if (d >= DONDURUCU_MAX) return { hata: `En fazla ${DONDURUCU_MAX} dondurucu taşıyabilirsin.` };
         if (al < DONDURUCU_FIYAT) return { hata: `${DONDURUCU_FIYAT - al} altın daha lazım 🪙` };
         y.altin = al - DONDURUCU_FIYAT; y.dondurucu = d + 1; return { fiyat: DONDURUCU_FIYAT };
-      });
-    } else if (is === "jokerAl") {
-      const urun = JOKER_KATALOG[String(body.id || "")];
-      if (!urun) return hataVer("Bu ürün bulunamadı.");
-      const [tur, adet, fiyat] = urun;
-      r = await ekonomiGuncelle(sid, (y: any) => {
-        const al = Math.max(0, Math.floor(num(y.altin)));
-        if (al < fiyat) return { hata: `${fiyat - al} altın daha lazım 🪙` };
-        const E: any = { ...(y.jokerEnv && typeof y.jokerEnv === "object" ? y.jokerEnv : {}) };
-        if (tur === "m_seri") {
-          const d = Math.max(0, Math.floor(num(y.dondurucu)));
-          if (d >= DONDURUCU_MAX) return { hata: `En fazla ${DONDURUCU_MAX} seri kalkanı taşıyabilirsin.` };
-          y.dondurucu = d + 1;
-        } else if (tur === "m_xp3") E.m_xp = Math.max(0, num(E.m_xp)) + 3;
-        else E[tur] = Math.max(0, num(E[tur])) + adet;
-        y.jokerEnv = E; y.altin = al - fiyat; return { fiyat };
       });
     } else if (is === "karakterAl") {
       const ad = String(body.ad || "");

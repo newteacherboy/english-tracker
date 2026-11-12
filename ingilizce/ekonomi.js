@@ -25,7 +25,6 @@
   function tazele() {
     try { if (typeof yoArayuzTazele === 'function') yoArayuzTazele(); } catch (e) {}
     try { window.yoGoster?.(); } catch (e) {}
-    try { window.jokerBarCiz?.(); } catch (e) {}
   }
 
   /* Sunucudaki değerleri ekrana uygula. Henüz gönderilmemiş kazançlar korunur.
@@ -35,9 +34,8 @@
     yo.altin = Math.max(0, Number(e.altin) || 0) + bekleyen;
     yo.ekoV = 2;
     if (sadeceAltin) { try { if (typeof yoKaydet === 'function') yoKaydet(); } catch (x) {} tazele(); return; }
-    yo.jokerEnv = e.jokerEnv || {};
+    delete yo.jokerEnv; delete yo.jokerStok; delete yo.dmExtraJoker;
     yo.dondurucu = Number(e.dondurucu) || 0;
-    yo.dmExtraJoker = Number(e.dmExtraJoker) || 0;
     yo.krkSatin = Array.isArray(e.krkSatin) ? e.krkSatin : [];
     yo.ekoSurum = Number(e.ekoSurum) || 0;
     yo.ekoV = 2;
