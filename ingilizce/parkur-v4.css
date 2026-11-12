@@ -213,16 +213,17 @@ html[data-dm-theme="night"] body #tab-dunya .rt-medal-route .rt-medal-jump{backg
 .rt-jump-choices{grid-template-columns:1fr 1fr!important}
 .rt-jump-choices [data-jump-yes]{background:#0E7C7B!important;color:#fff!important;border-color:#0A5F5E!important}
 
-/* The route heading opens the existing stop explorer. */
-body #tab-dunya .rt-medal-route .rt-medal-unit .rt-route-explorer{
- flex:1 1 auto;min-width:0;min-height:52px!important;justify-content:space-between;gap:8px;
- padding:8px 10px!important;border:1px solid #ffffff70!important;border-bottom:3px solid #ffffff90!important;
- border-radius:14px!important;background:#ffffff20!important;color:var(--medal-ink)!important;text-align:left;white-space:normal;
+/* Only the route text opens the existing stop explorer. */
+html[data-dm-theme] body #tab-dunya .rt-medal-route .rt-medal-unit .rt-route-explorer{
+ flex:0 1 auto;width:auto;max-width:100%;min-width:0;min-height:44px!important;
+ justify-content:flex-start;gap:0;padding:0!important;border:0!important;border-radius:0!important;
+ background:transparent!important;box-shadow:none!important;color:var(--medal-ink)!important;
+ text-align:left;white-space:normal;cursor:pointer;
 }
 .rt-route-copy{display:flex;flex-direction:column;min-width:0;gap:3px}
 body #tab-dunya .rt-route-name{font:900 clamp(18px,5vw,25px)/1.15 Nunito,system-ui;color:inherit!important}
 body #tab-dunya .rt-route-subtitle{font:800 12px/1.3 Nunito,system-ui;color:inherit!important}
-.rt-route-chevron{font:900 22px/1 system-ui;flex:none}
-body #tab-dunya .rt-route-explorer:focus-visible{outline:3px solid #ffda66;outline-offset:3px}
-body #tab-dunya .rt-route-explorer:hover{background:#ffffff35!important}
-@media(max-width:360px){body #tab-dunya .rt-medal-route .rt-medal-unit{padding:10px!important;gap:6px}body #tab-dunya .rt-medal-route .rt-medal-unit button[data-rt="switch-route"]{padding:4px 8px!important;font-size:12px!important}.rt-route-chevron{font-size:18px}}
+.rt-route-chevron{display:none!important}
+body #tab-dunya .rt-route-explorer:focus-visible{outline:3px solid #ffda66;outline-offset:4px}
+body #tab-dunya .rt-route-explorer:hover .rt-route-name{text-decoration:underline;text-underline-offset:3px}
+@media(max-width:360px){body #tab-dunya .rt-medal-route .rt-medal-unit{padding:10px!important;gap:6px}body #tab-dunya .rt-medal-route .rt-medal-unit button[data-rt="switch-route"]{padding:4px 8px!important;font-size:12px!important}}
