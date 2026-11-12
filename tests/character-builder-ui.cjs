@@ -1,3 +1,4 @@
+require('./_index-source.cjs');
 const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),{chromium}=require('playwright');
 (async()=>{
 fs.mkdirSync('/tmp/evening-mobile',{recursive:true});

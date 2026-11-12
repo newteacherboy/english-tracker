@@ -1,4 +1,5 @@
 'use strict';
+require('./_index-source.cjs');
 const assert=require('node:assert/strict'),{test}=require('node:test');
 const fs=require('node:fs');
 const mod=require('../ingilizce/holiday-splashes/splash.js');

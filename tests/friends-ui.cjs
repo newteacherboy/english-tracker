@@ -1,3 +1,4 @@
+require('./_index-source.cjs');
 const fs=require('fs'),path=require('path'),assert=require('assert/strict');
 const {chromium}=require('playwright');
 const source=path.resolve(__dirname,'../ingilizce');

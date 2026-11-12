@@ -1,3 +1,4 @@
+require('./_index-source.cjs');
 const {test}=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm');
 test('a legacy completed unit never marks every new micro-section completed',()=>{
  const html=fs.readFileSync('ingilizce/index.html','utf8'),a=html.indexOf('  function aktar() {'),b=html.indexOf('  function aktarGerekirse()',a);

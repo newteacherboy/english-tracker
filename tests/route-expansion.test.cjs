@@ -1,3 +1,4 @@
+require('./_index-source.cjs');
 const {test}=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm'),cp=require('node:child_process');
 const data=require('../ingilizce/thematic-curriculum.json'),core=require('../ingilizce/learning-core.js'),v8=require('../ingilizce/thematic-v8-candidate.js');
 const counts={1:[12,12,12,12,12,12,12,12],2:[93,86,123,67,73,59],3:[51,56,56,56,37,45],4:[107,83,78,50,50,79,84,59,47,62],5:[69,128,99,54,90,82,62,61],6:[52,104,52,68,61,75,46,61],7:[38,37,38,37,36,37,36,36],8:[38,36,38,37,36,36,36,36,36,36]};

@@ -1,3 +1,4 @@
+require('./_index-source.cjs');
 const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict');
 const {chromium}=require('playwright');
 // The production entry must load a single guide after member experience.

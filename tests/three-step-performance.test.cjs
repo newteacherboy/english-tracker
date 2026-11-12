@@ -1,4 +1,5 @@
 'use strict';
+require('./_index-source.cjs');
 const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs');
 const html=fs.readFileSync('ingilizce/index.html','utf8');
 test('both extracted stylesheets load in the same relative order',()=>{

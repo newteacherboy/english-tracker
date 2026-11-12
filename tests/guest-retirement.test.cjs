@@ -1,3 +1,4 @@
+require('./_index-source.cjs');
 const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm');
 test('guest query parameters are retired without losing member token or other URL state',()=>{
  const values=new Map([['ing_oturumAcik','true'],['ing_token','real-session'],['ing_aktifOgrenci','Alice']]);let url;

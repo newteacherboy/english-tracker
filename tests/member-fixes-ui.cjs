@@ -1,4 +1,5 @@
 'use strict';
+require('./_index-source.cjs');
 const {test}=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),{JSDOM}=require(process.env.DIJI_JSDOM||'jsdom');
 const source=name=>fs.readFileSync('ingilizce/'+name,'utf8');
 const flush=()=>new Promise(r=>setImmediate(r));

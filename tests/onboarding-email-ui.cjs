@@ -1,3 +1,4 @@
+require('./_index-source.cjs');
 const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),{chromium}=require('playwright');
 (async()=>{
  const browser=await chromium.launch({headless:true}),context=await browser.newContext({viewport:{width:390,height:844}}),page=await context.newPage(),root=path.resolve('ingilizce'),errors=[],saved=[];let emailVerified=false,confirmCalls=0;

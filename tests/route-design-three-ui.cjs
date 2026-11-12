@@ -1,3 +1,4 @@
+require('./_index-source.cjs');
 const {chromium}=require('playwright'),fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict');
 (async()=>{
  const launch=process.env.ROUTE_CHROME?{executablePath:process.env.ROUTE_CHROME,args:['--no-sandbox']}:{};

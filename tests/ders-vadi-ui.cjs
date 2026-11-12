@@ -1,3 +1,4 @@
+require('./_index-source.cjs');
 /* Ders Çalış konu sayfası "Vadi Defteri" görünümü: gerçek sayfada konu açılır, süsler kurulur, kilitler değişmez.
    Çalıştırma: CODEX_PRIMARY_RUNTIME_NODE_MODULES=<node_modules> DIJI_CHROMIUM=<chromium> node tests/ders-vadi-ui.cjs */
 const fs = require('fs'), path = require('path'), assert = require('node:assert/strict');

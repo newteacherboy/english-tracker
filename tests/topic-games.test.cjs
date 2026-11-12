@@ -1,3 +1,4 @@
+require('./_index-source.cjs');
 const {test}=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm');
 const C=require('../ingilizce/konu-oyunlari-a1.js'),snapshot=require('./topic-games-topics.json');
 const core=()=>import('../ingilizce/topic-games-core.mjs');

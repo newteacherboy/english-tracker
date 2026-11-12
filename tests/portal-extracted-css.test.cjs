@@ -1,4 +1,5 @@
 'use strict';
+require('./_index-source.cjs');
 const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');
 test('portal base CSS extracted verbatim and loaded before feature styles',()=>{
  const html=fs.readFileSync(path.join(__dirname,'../ingilizce/index.html'),'utf8');

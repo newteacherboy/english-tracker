@@ -1,4 +1,5 @@
 'use strict';
+require('./_index-source.cjs');
 const {test}=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm');
 const root=fs.readFileSync('portal/index.html','utf8');
 const portal=fs.readFileSync('ingilizce/index.html','utf8');

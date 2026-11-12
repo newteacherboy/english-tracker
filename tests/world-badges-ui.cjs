@@ -1,3 +1,4 @@
+require('./_index-source.cjs');
 const fs=require('node:fs'),assert=require('node:assert/strict'),vm=require('node:vm');
 const {JSDOM}=require(process.env.DIJI_JSDOM || 'jsdom');
 const source=fs.readFileSync(__dirname+'/../ingilizce/profile-sections.js','utf8');

@@ -1,3 +1,4 @@
+require('./_index-source.cjs');
 const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs');
 test('daily goal script uses an explicit nonempty cache version',()=>{
  const html=fs.readFileSync('ingilizce/index.html','utf8'),scripts=[...html.matchAll(/<script\b[^>]*src="([^"]+)"/g)].map(x=>new URL(x[1],'https://app.test/ingilizce/'));

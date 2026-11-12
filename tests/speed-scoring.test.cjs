@@ -1,3 +1,4 @@
+require('./_index-source.cjs');
 const {test}=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm');
 const rules=require('../ingilizce/score-rules.js');
 test('eight correct answers at 25 seconds beat the same result at 30 seconds',()=>{

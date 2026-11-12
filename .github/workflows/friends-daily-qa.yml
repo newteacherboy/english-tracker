@@ -3,6 +3,7 @@ on:
   pull_request:
     paths:
       - 'ingilizce/index.html'
+      - 'ingilizce/app-js/**'
       - 'ingilizce/profile-sections.js'
       - 'ingilizce/friends-overflow-fix.css'
       - 'ingilizce/papi-guide-content.js'
@@ -12,6 +13,7 @@ on:
   push:
     paths:
       - 'ingilizce/index.html'
+      - 'ingilizce/app-js/**'
       - 'ingilizce/profile-sections.js'
       - 'ingilizce/friends-overflow-fix.css'
       - 'ingilizce/papi-guide-content.js'

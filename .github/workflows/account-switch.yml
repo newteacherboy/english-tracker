@@ -3,6 +3,7 @@ on:
   pull_request:
     paths:
       - 'ingilizce/index.html'
+      - 'ingilizce/app-js/**'
       - 'ingilizce/account-switch.js'
       - 'ingilizce/saved-sessions.js'
       - 'ingilizce/session-handoff.js'
@@ -15,6 +16,7 @@ on:
   push:
     paths:
       - 'ingilizce/index.html'
+      - 'ingilizce/app-js/**'
       - 'ingilizce/account-switch.js'
       - 'ingilizce/saved-sessions.js'
       - 'ingilizce/session-handoff.js'

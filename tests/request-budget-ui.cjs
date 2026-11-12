@@ -1,3 +1,4 @@
+require('./_index-source.cjs');
 const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),{chromium}=require(process.env.CODEX_PRIMARY_RUNTIME_NODE_MODULES+'/playwright');
 (async()=>{
 const browser=await chromium.launch({executablePath:'/tmp/diji-browser/chromium',args:['--no-sandbox','--no-zygote','--single-process'],env:{...process.env,LD_LIBRARY_PATH:'/tmp/diji-browser/lib'}}),page=await browser.newPage({viewport:{width:390,height:844}}),errors=[],calls=[];

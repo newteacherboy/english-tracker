@@ -1,3 +1,4 @@
+require('./_index-source.cjs');
 const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm');
 const src=fs.readFileSync('ingilizce/progression-ui.js','utf8');
 test('daily and weekly goals are not locked during initial profile hydration',()=>{const match=src.match(/function allowed\(code\)\{[^}]+\}/);assert.ok(match);assert.match(match[0],/if\(!ready\(\)\)return code==='gunluk_gorev'\|\|code==='haftalik_hedef'/);assert.match(src,/C\.gates\[code\]/);});

@@ -1,3 +1,4 @@
+require('./_index-source.cjs');
 const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),{chromium}=require('playwright');
 (async()=>{
  const core=await import('../supabase/functions/diji-api/verified-games.mjs'),base=path.resolve(__dirname,'../ingilizce'),html=fs.readFileSync(base+'/index.html','utf8');

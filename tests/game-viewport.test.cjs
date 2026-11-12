@@ -1,3 +1,4 @@
+require('./_index-source.cjs');
 const {test}=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),{JSDOM}=require('jsdom');
 const html=fs.readFileSync('ingilizce/index.html','utf8');
 function nativeFunction(name){const start=html.indexOf('function '+name+'(');assert(start>=0);const begin=html.indexOf('{',start);let depth=1,i=begin+1;for(;depth&&i<html.length;i++){if(html[i]==='{')depth++;if(html[i]==='}')depth--;}return html.slice(start,i);}

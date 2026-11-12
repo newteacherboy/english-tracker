@@ -1,3 +1,4 @@
+require('./_index-source.cjs');
 const {test}=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),{stripTypeScriptTypes}=require('node:module');
 const ts=fs.readFileSync(__dirname+'/../supabase/functions/diji-api/index.ts','utf8');
 const source=stripTypeScriptTypes('async function extracted(){'+ts.slice(ts.indexOf('  if (op === "enerjiDegistir")'),ts.indexOf('// ============================================================ LİDERLİK'))+'}',{mode:'transform'});

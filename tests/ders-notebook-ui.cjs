@@ -1,3 +1,4 @@
+require('./_index-source.cjs');
 /* Çalışma Defteri menü araması, yeniden çizim ve mobil yerleşim kontrolü. */
 const fs = require('fs'), path = require('path'), assert = require('node:assert/strict');
 const { chromium } = require(process.env.CODEX_PRIMARY_RUNTIME_NODE_MODULES + '/playwright');

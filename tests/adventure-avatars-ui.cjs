@@ -1,3 +1,4 @@
+require('./_index-source.cjs');
 const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),{chromium}=require('playwright');
 (async()=>{
 const exe=process.env.FRIENDS_BROWSER_PATH,browser=await chromium.launch({executablePath:exe||undefined,args:['--no-sandbox','--no-zygote','--single-process','--use-gl=angle','--use-angle=swiftshader'],env:{...process.env,LD_LIBRARY_PATH:exe?path.dirname(exe):process.env.LD_LIBRARY_PATH||''}}),page=await browser.newPage(),errors=[],root=path.resolve('ingilizce');page.on('pageerror',e=>errors.push(e.message));

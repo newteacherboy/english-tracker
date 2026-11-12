@@ -1,4 +1,5 @@
 'use strict';
+require('./_index-source.cjs');
 const {chromium}=require('playwright'),{JSDOM}=require('jsdom'),fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict');
 const root=path.resolve('ingilizce'),read=n=>fs.readFileSync(path.join(root,n),'utf8'),index=read('index.html'),parsed=new JSDOM(index),nav=parsed.window.document.getElementById('bottomNavMobile').outerHTML,teacher=parsed.window.document.getElementById('ogretmenMenuModal').outerHTML,inline=[...index.matchAll(/<style\b[^>]*>([\s\S]*?)<\/style>/g)].map(m=>m[1]).join('\n');
 const styles=[...parsed.window.document.querySelectorAll('style,link[rel="stylesheet"]')].map(el=>el.tagName==='STYLE'?el.outerHTML:(!/^https?:/.test(el.getAttribute('href'))?el.outerHTML:'' )).join('\n');

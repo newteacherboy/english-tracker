@@ -1,4 +1,5 @@
 'use strict';
+require('./_index-source.cjs');
 const {chromium}=require('playwright'),{JSDOM}=require('jsdom'),fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict');
 const root=path.resolve('ingilizce'),read=n=>fs.readFileSync(path.join(root,n),'utf8'),doc=new JSDOM(read('index.html')).window.document;
 const styles=[...doc.querySelectorAll('style,link[rel=stylesheet]')].map(e=>e.tagName==='STYLE'||!/^https?:/.test(e.getAttribute('href'))?e.outerHTML:'').join('\n');

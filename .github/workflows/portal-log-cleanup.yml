@@ -3,11 +3,13 @@ on:
   pull_request:
     paths:
       - 'ingilizce/index.html'
+      - 'ingilizce/app-js/**'
       - 'tests/portal-log-cleanup.test.cjs'
       - '.github/workflows/portal-log-cleanup.yml'
   push:
     paths:
       - 'ingilizce/index.html'
+      - 'ingilizce/app-js/**'
       - 'tests/portal-log-cleanup.test.cjs'
       - '.github/workflows/portal-log-cleanup.yml'
 permissions:

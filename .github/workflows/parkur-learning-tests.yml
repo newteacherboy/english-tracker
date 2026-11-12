@@ -3,11 +3,13 @@ on:
   pull_request:
     paths:
       - 'ingilizce/index.html'
+      - 'ingilizce/app-js/**'
       - 'tests/parkur-learning.test.cjs'
       - '.github/workflows/parkur-learning-tests.yml'
   push:
     paths:
       - 'ingilizce/index.html'
+      - 'ingilizce/app-js/**'
       - 'tests/parkur-learning.test.cjs'
       - '.github/workflows/parkur-learning-tests.yml'
 jobs:

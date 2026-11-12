@@ -1,3 +1,4 @@
+require('./_index-source.cjs');
 const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),{chromium}=require('playwright');
 (async()=>{const base=path.resolve('ingilizce'),html=fs.readFileSync(path.join(base,'index.html'),'utf8');const energyStart=html.indexOf('  window.dmEnerjiPaketPaneli = function(){'),energyEnd=html.indexOf('\n\n  /* ================= 2)',energyStart);const headerStart=html.indexOf('        function headerEnerjiGoster(kalan, max)'),headerEnd=html.indexOf('        function ozellikGorunurlukAyarla',headerStart);
  const browser=await chromium.launch({headless:true});fs.mkdirSync('/tmp/energy-entry-qa',{recursive:true});try{for(const [width,height]of [[320,568],[390,844],[768,1024]]){

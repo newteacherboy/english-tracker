@@ -1,3 +1,4 @@
+require('./_index-source.cjs');
 const {test}=require('node:test'),assert=require('node:assert/strict'),fs=require('fs'),vm=require('vm');
 const C=require('../ingilizce/konu-oyunlari-a2.js'),A=require('../ingilizce/konu-oyunlari-a1.js'),keys=require('./topic-games-a2-topics.json');
 test('A2: exact 43 DB keys, 86 games, 12/22/9 categories, no pronunciation and exact server copies',()=>{
