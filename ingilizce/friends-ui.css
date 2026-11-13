@@ -769,3 +769,48 @@ html[data-dm-theme="night"] #tab-meduakis .fr-status-row>span:first-of-type{colo
 html[data-dm-theme="night"] #tab-meduakis .fr-status.fr-plan-free .fr-status-head{background:var(--dm-soft)}
 html[data-dm-theme="night"] #tab-meduakis .fr-status.fr-plan-free .fr-status-plan{background:var(--dm-surface);color:var(--dm-text)}
 #tab-meduakis .fr-status-head>.fr-status-plan{width:auto;height:auto;border-radius:999px}
+
+/* Arkadaşlarım: zilin solundaki simge ve ona bağlı açılır liste. */
+#tab-meduakis.fr-home-view .akis-baslik{padding-right:112px}
+#tab-meduakis .fr-people-toggle{display:none}
+#tab-meduakis.fr-home-view .fr-people-toggle{display:grid;place-items:center;position:absolute;right:60px;top:50%;transform:translateY(-50%);width:44px;height:44px;padding:7px;border:1px solid #5da7ff;border-bottom:4px solid #155ac4;border-radius:14px;background:linear-gradient(155deg,#439dff,#0873ee);box-shadow:0 3px 8px #216bce33;cursor:pointer;touch-action:manipulation}
+#tab-meduakis .fr-people-toggle svg{display:block;width:29px;height:29px}
+#tab-meduakis .fr-people-toggle i{position:absolute;right:-2px;bottom:-2px;width:10px;height:10px;border:2px solid #fff;border-radius:50%;background:#29c66d}
+#tab-meduakis .fr-people-toggle[aria-expanded="true"]{outline:3px solid #b7e1ff;outline-offset:2px}
+#tab-meduakis .fr-people-toggle:focus-visible{outline:3px solid #ffc531;outline-offset:3px}
+.fr-people-layer{position:fixed;inset:0;z-index:2147483001;pointer-events:none;font-family:Nunito,system-ui,sans-serif}
+.fr-people-shade{position:absolute;inset:var(--fr-people-shade-top,0px) 0 0;pointer-events:auto;background:#12284436}
+.fr-people-dropdown{position:fixed;box-sizing:border-box;display:flex;flex-direction:column;gap:10px;padding:13px;border:1px solid #d0def1;border-radius:23px;background:#fff;color:#102b50;box-shadow:0 12px 36px #102b5038,0 3px 6px #102b5020;pointer-events:auto;isolation:isolate}
+.fr-people-dropdown::before{content:"";position:absolute;left:calc(var(--fr-people-pointer) - 8px);top:-9px;width:16px;height:16px;background:inherit;border-left:1px solid #d0def1;border-top:1px solid #d0def1;transform:rotate(45deg);z-index:-1}
+.fr-people-dropdown header{display:flex;align-items:center;gap:8px;flex:none}
+.fr-people-dropdown h3{flex:1;min-width:0;margin:0;font:1000 20px/1.2 Nunito,system-ui,sans-serif;color:inherit}
+.fr-people-count{display:grid;place-items:center;min-width:28px;height:28px;padding:0 4px;border-radius:12px;background:#edf3fc;font-weight:900}
+.fr-people-close{display:grid;place-items:center;flex:none;width:32px;height:32px;border:0;border-radius:10px;background:none;color:#6a7e9a;font:24px/1 system-ui;cursor:pointer}
+.fr-people-search{display:flex;align-items:center;gap:7px;flex:none;padding:7px 10px;border:1px solid #d3dff0;border-radius:13px;background:#f4f7fc}
+.fr-people-search svg{width:19px;height:19px;fill:none;stroke:#6682a9;stroke-width:2;flex:none}
+.fr-people-search input{box-sizing:border-box;min-width:0;width:100%;padding:0!important;border:0!important;outline:0;background:transparent!important;color:#16385f;font:600 16px/1.4 Nunito,system-ui,sans-serif}
+.fr-people-search:focus-within{outline:2px solid #3995fa;outline-offset:1px}
+.fr-people-list{min-height:0;overflow:auto;overscroll-behavior:contain;scrollbar-width:thin;max-height:300px}
+.fr-people-dropdown .fr-people-row{display:flex;align-items:center;gap:8px;box-sizing:border-box;width:100%;min-height:61px;margin:0;padding:8px 1px;border:0;border-bottom:1px solid #e6edf7;border-radius:0;background:transparent;color:inherit;text-align:left;cursor:pointer}
+.fr-people-dropdown .fr-avatar{flex:none;width:40px;height:40px;overflow:hidden;display:grid;place-items:center;border-radius:50%;background:#edf4ff}
+.fr-people-dropdown .fr-avatar svg{width:40px;height:40px}
+.fr-people-name{display:grid;gap:3px;min-width:0;flex:1}
+.fr-people-name b{font-size:15px;line-height:1.2;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fr-people-name small{font-size:12px;color:#6b7e98}
+.fr-people-state{display:flex;align-items:center;gap:4px;font-size:10px;white-space:nowrap;color:#78879b}
+.fr-people-state i{width:7px;height:7px;border-radius:50%;background:#b6c0d1;flex:none}
+.fr-people-state.is-online{color:#168248}.fr-people-state.is-online i{background:#21c668}
+.fr-people-chevron{font:24px/1 system-ui;color:#6581aa}
+.fr-people-empty{margin:0;padding:18px 8px;color:#607a9c;text-align:center;font-size:14px;line-height:1.5}
+.fr-people-add{flex:none;min-height:42px;padding:9px 12px;border:1px solid #addaff;border-radius:14px;background:linear-gradient(#d6efff,#bce3ff);color:#0756b6;font:900 16px/1.2 Nunito,system-ui,sans-serif;cursor:pointer}
+.fr-people-dropdown button:focus-visible{outline:2px solid #3698ff;outline-offset:-2px}
+.fr-people-row:hover{background:#f1f7ff!important}
+html[data-dm-theme="night"] .fr-people-dropdown{background:#1e2f50;border-color:#47618a;color:#f0f6ff;box-shadow:0 12px 36px #0008}
+html[data-dm-theme="night"] .fr-people-dropdown::before{border-color:#47618a}
+html[data-dm-theme="night"] .fr-people-search,html[data-dm-theme="night"] .fr-people-count{background:#152640;border-color:#47618a}
+html[data-dm-theme="night"] .fr-people-search input{color:#e9f3ff}
+html[data-dm-theme="night"] .fr-people-row{border-color:#385075}
+html[data-dm-theme="night"] .fr-people-name small,html[data-dm-theme="night"] .fr-people-state{color:#b9c9e0}
+html[data-dm-theme="night"] .fr-people-state.is-online{color:#62e5a0}
+html[data-dm-theme="night"] .fr-people-row:hover{background:#2b436a!important}
+html[data-dm-theme="night"] .fr-people-close,html[data-dm-theme="night"] .fr-people-empty{color:#bbcee7}

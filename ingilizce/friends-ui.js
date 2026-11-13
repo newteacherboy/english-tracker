@@ -21,6 +21,7 @@
   const online = id => !!window.dmSocialPresence?.isOnline?.(id);
   function resetAccount() {
     if (account === who()) return;
+    closePeople(false);
     account = who(); followed = []; invites = []; busy = false; lastLoad = 0; epoch++;
   }
   function avatar(id, size) {
@@ -63,17 +64,13 @@
   }
   function tilesHtml() {
     const pending = invites.filter(x=>x.durum==='bekliyor'&&norm(x.alici)===norm(who())).length;
-    const list = people();
-    // 11 Kas 2026 · Claude Design "Arkadaşlar A": Düello ve Davet et büyük, parlayan; Arkadaşlarım/Vitrinim küçük ikili.
+    // Arkadaş listesi başlıktaki simgeden açılır; burada yalnız iki ana işlem kalır.
     return `<div class="fr-tiles fr-tiles-v2">
       <button type="button" class="fr-tile fr-tile-duel" data-friend-action="matches" aria-label="Düello${pending?', '+pending+' bekleyen davet':''}">
         ${pending?'<span class="fr-duel-dot" aria-hidden="true"></span>':''}<img src="friends-assets/papi-fencer.webp" alt="" decoding="async"><span class="fr-tile-copy"><b>Düello</b><small>Arkadaşını çağır</small></span><span class="fr-tile-cta" aria-hidden="true">Başla</span><i class="fr-tile-spark" aria-hidden="true">✦</i>
       </button>
       <button type="button" class="fr-tile fr-tile-invite" data-friend-action="share">
         <img src="friends-assets/papi-invite.webp" alt="" decoding="async"><span class="fr-tile-copy"><b>Davet et</b><small>Arkadaşlarını getir, birlikte öğrenin</small></span><span class="fr-tile-cta" aria-hidden="true">Gönder</span><i class="fr-tile-spark" aria-hidden="true">✦</i>
-      </button>
-      <button type="button" class="fr-tile fr-tile-people" data-friend-action="people" aria-label="Arkadaşlarım, ${list.length} arkadaş">
-        ${list.length?`<span class="fr-tile-count">${list.length}</span>`:''}<img src="friends-assets/friends-kids.webp" alt="" decoding="async"><b>Arkadaşlarım</b>
       </button>
     </div>`;
   }
@@ -170,6 +167,8 @@
     root.classList.toggle('fr-club-view',maSekme==='akis'&&!maProfilId);
     root.dataset.friendsView = maProfilId ? 'profile' : maSekme;
     const back = root.querySelector('.fr-back'); if(back) back.hidden=home;
+    mountPeopleButton();
+    if(!home)closePeople(false);
     root.querySelectorAll('#maSegment button').forEach(b=>{b.setAttribute('aria-selected',String(b.dataset.s===maSekme));b.classList.toggle('aktif',b.dataset.s===maSekme);});
   }
   function renderHome() {
@@ -255,6 +254,7 @@
     const result=await originalDraw.apply(this,arguments);decorateDetail();return result;
   };
   window.maSekmeSec=function(s){
+    closePeople(false);
     window.dmUserCard?.close();
     if(s==='parkur'||s==='kesfet'||s==='hub'||s==='akis'){
       ++maCizNo;maSekme='hub';maProfilId=null;viewHeader();renderHome();void loadHome();$('maEkran').scrollTop=0;
@@ -280,14 +280,80 @@
     button.setAttribute('aria-label',label);
     button.setAttribute('aria-pressed',String(sent));
   }
-  function openPeople() {
-    const sheet=window.dmMeduPro?.sheet?.('Arkadaşlarım','Profilini açmak için arkadaşına dokun.');
-    if(!sheet)return;
-    sheet.p.classList.add('fr-friend-sheet');
-    sheet.body.innerHTML=people().map(id=>`<button type="button" class="fr-search-person" data-person="${esc(id)}">${avatar(id,40)}<span class="fr-search-name"><b>${esc(id)}</b>${badge(id)}</span></button>`).join('')||'<p class="fr-empty">Henüz takip ettiğin bir arkadaş yok.</p>';
-    sheet.body.querySelectorAll('.fr-search-person').forEach(button=>{const open=()=>{const rect=button.getBoundingClientRect();sheet.close();window.maAkisKisiAc?.(button.dataset.person,rect);};button.onclick=open;button.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();open();}};});
-    void window.dmSocialPresence?.refresh?.();
+  // Başlığa bağlı, arama yapılabilen arkadaş listesi; mevcut profil ve takip akışlarını kullanır.
+  let peopleView=null;
+  function mountPeopleButton(){
+    const header=root.querySelector('.akis-baslik');if(!header)return;
+    let button=header.querySelector('.fr-people-toggle');
+    if(!button){
+      button=document.createElement('button');button.type='button';button.className='fr-people-toggle';
+      button.dataset.friendAction='people';button.setAttribute('aria-haspopup','dialog');
+      button.setAttribute('aria-controls','frPeopleDropdown');
+      button.innerHTML='<svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="12" cy="11" r="5" fill="white"/><circle cx="23" cy="12" r="4" fill="#c9e5ff"/><path d="M2 28v-3a10 10 0 0 1 20 0v3z" fill="white"/><path d="M22 18a8 8 0 0 1 9 8v2h-7v-3a12 12 0 0 0-2-7" fill="#c9e5ff"/></svg><i aria-hidden="true"></i>';
+      header.append(button);
+    }
+    button.setAttribute('aria-label','Arkadaşlarım, '+people().length+' arkadaş');
+    button.setAttribute('aria-expanded',String(!!peopleView));
   }
+  function closePeople(focus=true){
+    if(!peopleView)return;
+    const v=peopleView;peopleView=null;v.host.remove();
+    v.anchor.setAttribute('aria-expanded','false');
+    if(focus&&v.anchor.isConnected&&root.classList.contains('active'))v.anchor.focus({preventScroll:true});
+  }
+  function positionPeople(){
+    const v=peopleView;if(!v)return;
+    if(v.owner!==who()||!root.classList.contains('active')||!root.classList.contains('fr-home-view')){closePeople(false);return;}
+    const viewport=window.visualViewport,r=v.anchor.getBoundingClientRect();
+    const left=viewport?.offsetLeft||0,top=viewport?.offsetTop||0,w=viewport?.width||innerWidth,h=viewport?.height||innerHeight;
+    const width=Math.min(316,w-24),x=Math.max(left+12,Math.min(r.right-width,left+w-width-12)),y=Math.max(top+8,r.bottom+12);
+    const dock=$('bottomNavMobile')?.getBoundingClientRect(),bottom=Math.min(top+h-12,dock?.height&&dock.top>y+180?dock.top-10:top+h-12);
+    v.panel.style.cssText='left:'+x+'px;top:'+y+'px;width:'+width+'px;max-height:'+Math.max(130,bottom-y)+'px;--fr-people-pointer:'+Math.max(20,Math.min(width-20,r.left+r.width/2-x))+'px';
+    v.host.style.setProperty('--fr-people-shade-top',Math.max(0,r.bottom+6)+'px');
+  }
+  function drawPeople(){
+    const v=peopleView;if(!v||v.owner!==who())return;
+    const friends=people(),query=norm(v.input.value),known=typeof maTumListe==='undefined'?[]:maTumListe;
+    const ids=v.add?[...new Set(known.map(p=>p.id||p.ad).filter(Boolean))].filter(id=>norm(id)!==norm(who())&&!friends.some(f=>norm(f)===norm(id))):friends;
+    const list=ids.filter(id=>norm(id).includes(query));
+    v.panel.querySelector('.fr-people-count').textContent=String(friends.length);
+    v.panel.querySelector('h3').textContent=v.add?'Arkadaş ekle':'Arkadaşlarım';
+    v.panel.querySelector('.fr-people-add').textContent=v.add?'‹ Arkadaşlarıma dön':'+ Arkadaş ekle';
+    v.input.placeholder=v.add?'Öğrenci ara…':'Arkadaş ara…';
+    v.list.innerHTML=list.map(id=>{
+      const person=typeof maBul==='function'?maBul(id):known.find(p=>norm(p.id||p.ad)===norm(id));
+      const lv=Number(person?.playerLevel||person?.seviye),subtitle=Number.isFinite(lv)&&lv>0?'Seviye '+lv:'';
+      return `<button type="button" class="fr-search-person fr-people-row" data-person="${esc(id)}">${avatar(id,40)}<span class="fr-people-name"><b>${esc(id)}</b>${subtitle?'<small>'+esc(subtitle)+'</small>':''}</span><span class="fr-people-state ${online(id)?'is-online':''}"><i aria-hidden="true"></i>${online(id)?'Çevrimiçi':'Çevrimdışı'}</span><span class="fr-people-chevron" aria-hidden="true">›</span></button>`;
+    }).join('')||'<p class="fr-people-empty" role="status">'+(query?'Bu isimde bir arkadaş bulunamadı.':v.add?'Ekleyebileceğin bir öğrenci bulunamadı.':'Henüz takip ettiğin bir arkadaş yok. Arkadaş ekle ile başlayabilirsin.')+'</p>';
+    positionPeople();
+  }
+  function openPeople(){
+    if(peopleView){closePeople();return;}
+    mountPeopleButton();
+    const anchor=root.querySelector('.fr-people-toggle');if(!anchor)return;
+    const host=document.createElement('div');host.className='fr-people-layer';
+    host.innerHTML='<div class="fr-people-shade" aria-hidden="true"></div><section id="frPeopleDropdown" class="fr-people-dropdown" role="dialog" aria-modal="false" aria-labelledby="frPeopleTitle"><header><h3 id="frPeopleTitle">Arkadaşlarım</h3><span class="fr-people-count"></span><button type="button" class="fr-people-close" aria-label="Arkadaş listesini kapat">×</button></header><label class="fr-people-search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10" cy="10" r="6"/><path d="m15 15 6 6"/></svg><input type="search" aria-label="Arkadaş ara" placeholder="Arkadaş ara…" autocomplete="off"></label><div class="fr-people-list" role="region" aria-label="Arkadaşlar"></div><button type="button" class="fr-people-add">+ Arkadaş ekle</button></section>';
+    const panel=host.querySelector('section');
+    peopleView={host,panel,anchor,owner:who(),input:host.querySelector('input'),list:host.querySelector('.fr-people-list'),add:false};
+    document.body.append(host);anchor.setAttribute('aria-expanded','true');
+    host.querySelector('.fr-people-shade').onclick=()=>closePeople();
+    host.querySelector('.fr-people-close').onclick=()=>closePeople();
+    peopleView.input.oninput=drawPeople;
+    host.querySelector('.fr-people-add').onclick=()=>{const v=peopleView;v.add=!v.add;v.input.value='';drawPeople();v.input.focus({preventScroll:true});};
+    panel.addEventListener('click',e=>{
+      const row=e.target.closest('[data-person]');if(!row)return;
+      const id=row.dataset.person,rect=row.getBoundingClientRect();closePeople(false);window.maAkisKisiAc?.(id,rect);
+    });
+    drawPeople();panel.querySelector('.fr-people-close').focus({preventScroll:true});
+    const v=peopleView;Promise.resolve(window.dmSocialPresence?.refresh?.()).then(()=>{if(peopleView===v)drawPeople();}).catch(()=>{});
+  }
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&peopleView){e.preventDefault();closePeople();}});
+  document.addEventListener('pointerdown',e=>{if(peopleView&&!peopleView.host.contains(e.target)&&!peopleView.anchor.contains(e.target))closePeople(false);},true);
+  document.addEventListener('dm:login',()=>{closePeople(false);resetAccount();mountPeopleButton();});
+  document.addEventListener('focusin',e=>{if(peopleView&&!peopleView.host.contains(e.target)&&!peopleView.anchor.contains(e.target))closePeople(false);});
+  window.addEventListener('resize',positionPeople,{passive:true});
+  window.visualViewport?.addEventListener('resize',positionPeople,{passive:true});
+  window.visualViewport?.addEventListener('scroll',positionPeople,{passive:true});
   async function shareInvite() {
     const url='https://app.dijimedu.com/ingilizce/';
     try{
@@ -390,7 +456,7 @@
       root.style.setProperty('--fr-home-height',Math.max(0,Math.floor(bottom-bounds.top))+'px');
     }
   }
-  new MutationObserver(dockSpace).observe(root,{attributes:true,attributeFilter:['class']});
+  new MutationObserver(()=>{dockSpace();if(!root.classList.contains('active'))closePeople(false);}).observe(root,{attributes:true,attributeFilter:['class']});
   window.addEventListener('pageshow',dockSpace);
   window.addEventListener('resize',dockSpace,{passive:true});
   window.visualViewport?.addEventListener('resize',dockSpace,{passive:true});
