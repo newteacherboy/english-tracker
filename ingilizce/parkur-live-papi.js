@@ -46,39 +46,11 @@
    const w=lane.querySelector('.dm-lp-walker');talk(w);w.addEventListener('animationiteration',e=>{if(e.target===w&&e.animationName==='dmLpWalk')talk(w);});}
   const t=Math.max(0,y-165)+'px';if(lane.style.top!==t)lane.style.top=t;
  }
- /* Papi konuşuyor (tasarım A): her durakta beyaz balonla, açık hesabın adıyla rastgele cümleler + özelliği açan buton. */
- const firstName=()=>{const raw=String((typeof aktifOgrenciAdi!=='undefined'&&aktifOgrenciAdi)||'').trim().split(/\s+/)[0]||'';return raw?raw.charAt(0).toLocaleUpperCase('tr-TR')+raw.slice(1):'';};
- const tab=id=>()=>document.querySelector('#bottomNavMobile [data-ekran="'+id+'"]')?.click();
- const ACTIONS={
-  start:()=>document.querySelector('#tab-dunya .rt-medal-route .rt-medal-start')?.click(),
-  duel:tab('tab-meduakis'),invite:tab('tab-meduakis'),play:tab('tab-aktiviteler'),shop:tab('tab-magaza'),
-  missions:()=>window.dmOpenMissions?.(),plan:()=>window.dmLearningCompanion?.openPlan?.()
- };
- const esc=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
- function lines(n){
-  const N=n?'<b>'+esc(n)+'</b>':'';
-  return [
-   [(N?'Merhaba '+N+'!':'Merhaba!')+' 👋 Bugün nasılsın?'],
-   [(N?N+', bugün':'Bugün')+' neler öğreniyoruz? ✨','Başla','start','#2DB66B','#1E8B4F'],
-   [(N?N+', bugün':'Bugün')+' 2 durak bitirelim mi? 🎯','Başla','start','#2DB66B','#1E8B4F'],
-   ['Kelime <b>Düellosu</b>nu denedin mi? ⚔️','Düello','duel','#FF9F1C','#D97E00'],
-   ['Arkadaşını davet et, birlikte öğrenin! 💌','Davet et','invite','#FF9F1C','#D97E00'],
-   ['<b>Oyna</b> sekmesinde seni oyunlar bekliyor 🎮','Oyna','play','#7B4DFF','#5133C9'],
-   ['<b>Konu Oyunları</b>nı denedin mi? 🧩','Oyna','play','#7B4DFF','#5133C9'],
-   ['Haftalık görevlerine baktın mı'+(N?' '+N:'')+'? 🏆','Görevler','missions','#FF5C8A','#D63A69'],
-   ['Planında hikâye ve diyaloglar var 📖','Plan','plan','#2F86EB','#1E64C2'],
-   ['Mağazada <b>günün fırsatı</b> seni bekliyor 🛍️','Mağaza','shop','#FF5C8A','#D63A69'],
-   ['Harika gidiyorsun'+(N?' '+N:'')+'! ⭐'],
-   ['Her gün biraz, her gün daha iyi! 💪']
-  ];
- }
+ /* The existing walking Papi invites learners to AI chat. No random notices or plan badge. */
  function talk(walker){
   const box=walker.querySelector('.dm-lp-says');if(!box)return;
-  const all=lines(firstName()),greet=all[0],rest=all.slice(1).sort(()=>Math.random()-.5);
-  // 5 duraktan 3'ünde konuşur: ilk durakta selam, sonra iki rastgele cümle.
-  const slots=[greet,null,rest[0],null,rest[1]];
-  box.innerHTML=slots.map((m,i)=>m?'<div class="dm-lp-say" style="animation-delay:'+(i*4)+'s" role="status"><span>'+m[0]+'</span>'+(m[1]?'<button type="button" class="dm-lp-go" data-lp-go="'+m[2]+'" style="--go:'+m[3]+';--go-edge:'+m[4]+'">'+m[1]+' ›</button>':'')+'<i aria-hidden="true"></i></div>':'').join('');
-  box.onclick=e=>{const b=e.target.closest('[data-lp-go]');if(b)ACTIONS[b.dataset.lpGo]?.();};
+  box.innerHTML='<div class="dm-lp-say dm-lp-chat-invite"><span>Benimle canlı sohbet etmek ister misin?</span><button type="button" class="dm-lp-go" data-lp-chat style="--go:#087FFF;--go-edge:#155BC3"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 11.5a8.5 8.5 0 0 1-8.5 8.5 10 10 0 0 1-4-.8L3 21l1.8-5.5A8.5 8.5 0 1 1 21 11.5Z"/></svg>Başlat ›</button><i aria-hidden="true"></i></div>';
+  box.onclick=e=>{if(e.target.closest('[data-lp-chat]')){if(window.dmPapiChat?.open)window.dmPapiChat.open();else window.yoToast?.('Sohbet hazırlanıyor. Birazdan tekrar dene.');}};
  }
  function wallet(){
   document.querySelectorAll('.dm-unified-wallet .dm-pw-papi:not(.dm-lp)').forEach(el=>{el.classList.add('dm-lp','dm-lp-mini');el.innerHTML=papi();});

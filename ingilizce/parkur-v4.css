@@ -227,3 +227,12 @@ body #tab-dunya .rt-route-subtitle{font:800 12px/1.3 Nunito,system-ui;color:inhe
 body #tab-dunya .rt-route-explorer:focus-visible{outline:3px solid #ffda66;outline-offset:4px}
 body #tab-dunya .rt-route-explorer:hover .rt-route-name{text-decoration:underline;text-underline-offset:3px}
 @media(max-width:360px){body #tab-dunya .rt-medal-route .rt-medal-unit{padding:10px!important;gap:6px}body #tab-dunya .rt-medal-route .rt-medal-unit button[data-rt="switch-route"]{padding:4px 8px!important;font-size:12px!important}}
+
+/* Approved chat invitation: the existing small walking Papi, with an intermittent white bubble. */
+.dm-lp-say.dm-lp-chat-invite{width:min(190px,calc(100vw - 150px));border:1px solid #a7caff;padding:10px 12px;animation:dmLpChatInvite 20s ease-in-out infinite}
+.dm-lp-chat-invite .dm-lp-go{display:inline-flex;align-items:center;gap:6px;min-height:40px;font-size:14px;padding:8px 12px}
+.dm-lp-chat-invite .dm-lp-go svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:2;flex:none}
+.dm-lp-walker:focus-within{animation-play-state:paused}
+.dm-lp-chat-invite:focus-within{animation:none;opacity:1;visibility:visible;transform:none}
+@keyframes dmLpChatInvite{0%,2%,34%,49%,82%,100%{opacity:0;visibility:hidden;transform:translateX(8px) scale(.94)}5%,30%,53%,78%{opacity:1;visibility:visible;transform:none}}
+@media(prefers-reduced-motion:reduce){.dm-lp-say.dm-lp-chat-invite{animation:none;opacity:1;visibility:visible;transform:none}}

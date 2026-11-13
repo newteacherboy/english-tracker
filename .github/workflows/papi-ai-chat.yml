@@ -16,11 +16,14 @@ jobs:
         with:
           node-version: '24'
       - run: npm install --no-save --package-lock=false --ignore-scripts jsdom@26.1.0 playwright@1.58.2
-      - run: node --test tests/papi-chat.test.cjs tests/papi-chat-ui.test.cjs tests/portal-integrity.test.cjs
+      - run: node --test tests/papi-chat.test.cjs tests/papi-chat-ui.test.cjs tests/premium-pro-level-access.test.cjs tests/portal-integrity.test.cjs
       - run: npx playwright install --with-deps chromium
       - run: node tests/papi-chat-mobile.cjs
+      - run: node tests/premium-pro-level-access-ui.cjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: papi-chat-mobile-layouts
-          path: /tmp/papi-chat-mobile/*.png
+          path: |
+            /tmp/papi-chat-mobile/*.png
+            /tmp/premium-access-qa/*.png
