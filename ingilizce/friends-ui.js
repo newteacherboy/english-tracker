@@ -66,8 +66,8 @@
     const pending = invites.filter(x=>x.durum==='bekliyor'&&norm(x.alici)===norm(who())).length;
     // Arkadaş listesi başlıktaki simgeden açılır; burada yalnız iki ana işlem kalır.
     return `<div class="fr-tiles fr-tiles-v2">
-      <button type="button" class="fr-tile fr-tile-duel" data-friend-action="matches" aria-label="Düello${pending?', '+pending+' bekleyen davet':''}">
-        ${pending?'<span class="fr-duel-dot" aria-hidden="true"></span>':''}<img src="friends-assets/papi-fencer.webp" alt="" decoding="async"><span class="fr-tile-copy"><b>Düello</b><small>Arkadaşını çağır</small></span><span class="fr-tile-cta" aria-hidden="true">Başla</span><i class="fr-tile-spark" aria-hidden="true">✦</i>
+      <button type="button" class="fr-tile fr-tile-duel" data-friend-action="matches" aria-label="Düelloya Davet Et${pending?', '+pending+' bekleyen davet':''}">
+        ${pending?'<span class="fr-duel-dot" aria-hidden="true"></span>':''}<img src="friends-assets/papi-fencer.webp" alt="" decoding="async"><span class="fr-tile-copy"><b>Düelloya Davet Et</b><small>Aynı oyunu ayrı ayrı oynayın, puanlarınızı yarıştırın.</small></span><span class="fr-tile-cta" aria-hidden="true">Başla</span><i class="fr-tile-spark" aria-hidden="true">✦</i>
       </button>
       <button type="button" class="fr-tile fr-tile-invite" data-friend-action="share">
         <img src="friends-assets/papi-invite.webp" alt="" decoding="async"><span class="fr-tile-copy"><b>Davet et</b><small>Arkadaşlarını getir, birlikte öğrenin</small></span><span class="fr-tile-cta" aria-hidden="true">Gönder</span><i class="fr-tile-spark" aria-hidden="true">✦</i>

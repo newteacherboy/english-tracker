@@ -33,3 +33,7 @@ html body #tab-meduakis .fr-status .fr-status-cta::after{content:"";position:abs
 @keyframes frv2Wiggle{0%,70%,100%{transform:rotate(0)}76%{transform:rotate(-8deg)}84%{transform:rotate(7deg)}92%{transform:rotate(-3deg)}}
 @keyframes frv2Twinkle{0%,100%{opacity:0;transform:scale(.4)}50%{opacity:1;transform:scale(1)}}
 @media (prefers-reduced-motion:reduce){html body #tab-meduakis :is(.fr-tile,.fr-tile::after,.fr-tile>img,.fr-tile-spark,.fr-status-cta,.fr-status-cta::after){animation:none!important}}
+
+/* Longer, explicit duel label stays inside the compact side-by-side cards. */
+html body #tab-meduakis .fr-tiles.fr-tiles-v2 .fr-tile-duel .fr-tile-copy b{white-space:normal!important;overflow-wrap:normal!important}
+html body #tab-meduakis .fr-tiles.fr-tiles-v2 .fr-tile-duel .fr-tile-copy small{max-width:100%!important}
