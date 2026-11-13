@@ -1,0 +1,26 @@
+name: Route answer order regression
+on:
+  pull_request:
+    paths: ['ingilizce/learning-core.js', 'ingilizce/thematic-learning.js', 'tests/route-answer-order*', '.github/workflows/route-answer-order.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  answers:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: npm install --prefix /tmp/order-qa --no-audit --no-fund jsdom@26.1.0 playwright@1.58.2
+      - run: NODE_PATH=/tmp/order-qa/node_modules node --test tests/route-answer-order.test.cjs tests/route-answer-order-ui.test.cjs tests/thematic-learning.test.cjs tests/thematic-grouped-teach.test.cjs tests/school-shared-curriculum.test.cjs tests/route-combo-reward.test.cjs
+      - run: /tmp/order-qa/node_modules/.bin/playwright install --with-deps chromium
+      - run: NODE_PATH=/tmp/order-qa/node_modules node tests/final-review-retry-ui.cjs
+      - run: NODE_PATH=/tmp/order-qa/node_modules node tests/school-shared-ui.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: route-answer-order
+          path: /tmp/school-shared-qa/*.png

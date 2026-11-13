@@ -5,6 +5,19 @@
  const shuffled=(items,seed)=>{const a=[...items];let state=seed>>>0;for(let i=a.length-1;i>0;i--){state=(Math.imul(state,1664525)+1013904223)>>>0;const j=state%(i+1);[a[i],a[j]]=[a[j],a[i]];}return a;};
  const seedFor=(text,number)=>{let s=(number+1)>>>0;for(const ch of text)s=(Math.imul(s,31)+ch.charCodeAt(0))>>>0;return s;};
  const letterPuzzle=(word,number)=>{const positions=[...word].map((ch,i)=>/[a-z]/i.test(ch)?i:-1).filter(i=>i>=0);const count=Math.min(positions.length,positions.length>=13?4:positions.length>=5?3:Math.max(1,positions.length-1));const seed=seedFor(word,number);const missing=shuffled(positions,seed).slice(0,count).sort((a,b)=>a-b);const answer=missing.map(i=>word[i]);const extras=[...'aeiostrn'].filter(ch=>!answer.some(a=>a.toLowerCase()===ch)).slice(0,2);let tokens=shuffled([...answer,...extras],seed^0x9e3779b9);if(tokens.slice(0,answer.length).every((ch,i)=>ch===answer[i]))tokens=[...tokens.slice(answer.length),...tokens.slice(0,answer.length)];return {missing,tokens};};
+ // Presentation order is fresh per lesson attempt, independent of chapter/slot numbers.
+ // Keep canonical task indices: grades, saved answers and server decks do not change.
+ function presentation(random=()=>{try{if(globalThis.crypto?.getRandomValues){const n=new Uint32Array(1);globalThis.crypto.getRandomValues(n);return n[0]/4294967296;}}catch{}return Math.random();}){
+  const layouts=new Map();
+  return (key,values)=>{
+   const signature=JSON.stringify(values),saved=layouts.get(key);
+   if(saved?.signature===signature)return saved.indices.slice();
+   const indices=Array.from(values,(_,i)=>i);
+   for(let i=indices.length-1;i>0;i--){const j=Math.floor(random()*(i+1));[indices[i],indices[j]]=[indices[j],indices[i]];}
+   if(layouts.size>=256)layouts.delete(layouts.keys().next().value);
+   layouts.set(key,{signature,indices});return indices.slice();
+  };
+ }
  const rotate=(a,n)=>a.map((_,i)=>a[(i+n)%a.length]);
  function deck(chapter,previous,deckVersion=7){
   const cards=chapter.cards,a=cards[0],b=cards[1],c=cards[2],u=chapter.examples;
@@ -63,5 +76,5 @@
   if(task.kind==='choice'&&!task.options.includes(answer))return {valid:false,correct:false};
   return {valid:true,correct:norm(answer)===norm(task.answer)};
  }
- return Object.freeze({deck,grade,norm});
+ return Object.freeze({deck,grade,norm,presentation});
 });
