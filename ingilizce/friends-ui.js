@@ -34,7 +34,7 @@
   function level() { return window.dmProgression?.level?.() || mine().playerLevel || 1; }
   function people() {
     const ids = new Set([...(typeof maTakip !== 'undefined' ? maTakip : []), ...followed.map(x=>x.ad)]);
-    return [...ids].filter(id=>norm(id)!==norm(who())).sort((a,b)=>Number(online(b))-Number(online(a)));
+    return [...ids].filter(id=>norm(id)!==norm(who())).sort((a,b)=>a.localeCompare(b,'tr'));
   }
   const xp = value => Math.max(0,Number(value)||0).toLocaleString('tr-TR');
   function leagueHtml() {
@@ -289,7 +289,7 @@
       button=document.createElement('button');button.type='button';button.className='fr-people-toggle';
       button.dataset.friendAction='people';button.setAttribute('aria-haspopup','dialog');
       button.setAttribute('aria-controls','frPeopleDropdown');
-      button.innerHTML='<svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="12" cy="11" r="5" fill="white"/><circle cx="23" cy="12" r="4" fill="#c9e5ff"/><path d="M2 28v-3a10 10 0 0 1 20 0v3z" fill="white"/><path d="M22 18a8 8 0 0 1 9 8v2h-7v-3a12 12 0 0 0-2-7" fill="#c9e5ff"/></svg><i aria-hidden="true"></i>';
+      button.innerHTML='<svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="12" cy="11" r="5" fill="white"/><circle cx="23" cy="12" r="4" fill="#c9e5ff"/><path d="M2 28v-3a10 10 0 0 1 20 0v3z" fill="white"/><path d="M22 18a8 8 0 0 1 9 8v2h-7v-3a12 12 0 0 0-2-7" fill="#c9e5ff"/></svg>';
       header.append(button);
     }
     button.setAttribute('aria-label','Arkadaşlarım, '+people().length+' arkadaş');
@@ -323,7 +323,7 @@
     v.list.innerHTML=list.map(id=>{
       const person=typeof maBul==='function'?maBul(id):known.find(p=>norm(p.id||p.ad)===norm(id));
       const lv=Number(person?.playerLevel||person?.seviye),subtitle=Number.isFinite(lv)&&lv>0?'Seviye '+lv:'';
-      return `<button type="button" class="fr-search-person fr-people-row" data-person="${esc(id)}">${avatar(id,40)}<span class="fr-people-name"><b>${esc(id)}</b>${subtitle?'<small>'+esc(subtitle)+'</small>':''}</span><span class="fr-people-state dm-online-badge compact ${online(id)?'online':''}" data-online-person="${esc(id)}">${online(id)?'Çevrimiçi':'Çevrimdışı'}</span><span class="fr-people-chevron" aria-hidden="true">›</span></button>`;
+      return `<button type="button" class="fr-search-person fr-people-row" data-person="${esc(id)}">${avatar(id,40)}<span class="fr-people-name"><b>${esc(id)}</b>${subtitle?'<small>'+esc(subtitle)+'</small>':''}</span><span class="fr-people-chevron" aria-hidden="true">›</span></button>`;
     }).join('')||'<p class="fr-people-empty" role="status">'+(query?'Bu isimde bir arkadaş bulunamadı.':v.add?'Ekleyebileceğin bir öğrenci bulunamadı.':'Henüz takip ettiğin bir arkadaş yok. Arkadaş ekle ile başlayabilirsin.')+'</p>';
     positionPeople();
   }
@@ -345,7 +345,6 @@
       const id=row.dataset.person,rect=row.getBoundingClientRect();closePeople(false);window.maAkisKisiAc?.(id,rect);
     });
     drawPeople();panel.querySelector('.fr-people-close').focus({preventScroll:true});
-    const v=peopleView;Promise.resolve(window.dmSocialPresence?.refresh?.()).then(()=>{if(peopleView===v)drawPeople();}).catch(()=>{});
   }
   document.addEventListener('keydown',e=>{if(e.key==='Escape'&&peopleView){e.preventDefault();closePeople();}});
   document.addEventListener('pointerdown',e=>{if(peopleView&&!peopleView.host.contains(e.target)&&!peopleView.anchor.contains(e.target))closePeople(false);},true);

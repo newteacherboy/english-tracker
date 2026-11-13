@@ -66,6 +66,7 @@ const feed=['Elif','Ege','Zeynep','Cemre','Fixture'].map((ogr,i)=>({k:'event'+i,
   });
   await page.evaluate(()=>dmProgression.refresh(true));
   await page.evaluate(()=>meduAkisAc());await page.waitForSelector('.fr-leader-1');
+  await page.evaluate(()=>{window.dropdownPresenceCalls=0;if(window.dmSocialPresence)window.dmSocialPresence.refresh=async()=>{dropdownPresenceCalls++}});
   fs.mkdirSync('/tmp/friends-dropdown-qa',{recursive:true});
   assert.equal(await page.locator('.fr-tile-people').count(),0,'old wide row removed');
   const toggle=page.locator('.fr-people-toggle');
@@ -80,7 +81,7 @@ const feed=['Elif','Ege','Zeynep','Cemre','Fixture'].map((ogr,i)=>({k:'event'+i,
     assert.equal(await page.locator('.fr-people-count').textContent(),'4');
     const box=await page.locator('#frPeopleDropdown').boundingBox(),anchor=await toggle.boundingBox();
     assert(box.x>=0&&box.x+box.width<=width&&box.y>=anchor.y+anchor.height&&box.y+box.height<=844,'dropdown fits viewport and opens below anchor');
-    assert(await page.locator('.fr-people-state.online').count()>0);assert(await page.locator('.fr-people-row[data-person="Zeynep"] .fr-people-state').isVisible(),'offline status is visible');
+    assert.equal(await page.locator('#frPeopleDropdown [data-online-person],.fr-people-state').count(),0);assert.equal(await page.evaluate(()=>dropdownPresenceCalls),0,'opening/searching the dropdown never refreshes presence');
     await page.locator('.fr-people-search input').fill('zey');assert.equal(await page.locator('.fr-people-row').count(),1);assert.match(await page.locator('.fr-people-row').textContent(),/Zeynep/);
     await page.locator('.fr-people-search input').fill('no-match');assert.equal(await page.locator('.fr-people-row').count(),0);assert(await page.locator('.fr-people-empty').isVisible());
     await page.locator('.fr-people-search input').fill('');
@@ -98,5 +99,5 @@ const feed=['Elif','Ege','Zeynep','Cemre','Fixture'].map((ogr,i)=>({k:'event'+i,
   await page.evaluate(()=>{document.getElementById('tab-meduakis').classList.add('active');meduAkisAc()});await toggle.click();
   await page.evaluate(()=>{aktifOgrenciAdi='Other';document.dispatchEvent(new Event('dm:login'))});await page.waitForFunction(()=>!document.querySelector('#frPeopleDropdown'));
   assert.deepEqual(errors.filter(x=>!x.includes('Chart')&&!x.includes('pdf')),[]);
-  console.log('PASS header position, no old row, anchored bounds at 320/390/768 px day/night, search, empty, add, profile, toggle, Escape, outside, navigation and account switch');await browser.close();
+  console.log('PASS header position, no old row, no presence UI or refresh, anchored bounds at 320/390/768 px day/night, search, empty, add, profile, toggle, Escape, outside, navigation and account switch');await browser.close();
 })().catch(e=>{console.error(e);process.exit(1)});
