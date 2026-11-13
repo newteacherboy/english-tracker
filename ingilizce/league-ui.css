@@ -181,10 +181,11 @@
  padding:6px 10px!important;color:#4a2fbd!important;
  font-family:Nunito,system-ui,sans-serif!important;overflow:hidden;
 }
-.dm-league-rise-float .dm-lig-rank{display:grid;place-items:center;min-width:28px;font-weight:950}
+.dm-league-rise-float .dm-lig-rank{display:grid;place-items:center;min-width:38px;font-size:24px;font-weight:950}
 .dm-league-rise-float .dm-lig-person{flex:1;min-width:0;display:flex;flex-direction:column;font-size:13px}
 .dm-league-rise-float .dm-lig-person b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .dm-league-rise-float .dm-lig-person small{font-size:10px}
+.dm-league-rise-float .dm-league-rise-detail{font-size:12px!important;font-weight:850;color:#6028ad;line-height:1.5}
 .dm-league-rise-float strong{font-size:13px;white-space:nowrap}
 .dm-league-rise-badge{
  position:fixed;top:calc(env(safe-area-inset-top,0px) + 72px);left:50%;
@@ -192,7 +193,7 @@
  max-width:calc(100vw - 28px);padding:11px 17px;border:2px solid #d6baff;
  border-radius:999px;background:linear-gradient(115deg,#f8f0ff,#eadbff);
  color:#6223b3;font:900 14px Nunito,system-ui,sans-serif;
- box-shadow:0 7px 22px #8658d653;text-align:center;white-space:nowrap;
+ box-shadow:0 7px 22px #8658d653;text-align:center;white-space:normal;width:max-content;box-sizing:border-box;
  animation:dm-league-rise-badge-in .35s ease-out both;pointer-events:none;
 }
 @keyframes dm-league-rise-badge-in{from{opacity:0;transform:translate(-50%,-14px)}to{opacity:1;transform:translate(-50%,0)}}
