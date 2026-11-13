@@ -17,12 +17,13 @@ const who=()=>typeof aktifOgrenciAdi==='undefined'?'':String(aktifOgrenciAdi||''
 const practice=()=>!!window.dmTeacherPortalMode||who().toLowerCase()==='teacher'||typeof siniftaOynananOgrenci!=='undefined'&&!!siniftaOynananOgrenci;
 const pupil=()=>typeof siniftaOynananOgrenci!=='undefined'&&siniftaOynananOgrenci?String(siniftaOynananOgrenci):who();
 let root=null,session=null,tick=null,origin=null,epoch=0,soundOn=true;
+(window.dmNativeAnswerScopes ||= []).push(()=>!!root?.isConnected&&!!session);
 const timers=new Set();
 function later(fn,ms){const ticket=epoch;const id=setTimeout(()=>{timers.delete(id);if(ticket===epoch&&root)fn();},ms);timers.add(id);}
 // A goal needs its own stadium cue, not the generic correct-answer ping.
 let audioContext=null;
 function goalSound(delay=0){
- if(!soundOn)return;
+ if(!soundOn||window.dmAnswerAudio?.enabled()===false)return;
  try{
   const Audio=window.AudioContext||window.webkitAudioContext;
   if(!Audio){window.genelSesEfektiCal?.('dogru');return;}
@@ -39,7 +40,7 @@ function goalSound(delay=0){
   });
  }catch(e){window.genelSesEfektiCal?.('dogru');}
 }
-function effect(good){if(!soundOn)return;if(good)goalSound();else window.genelSesEfektiCal?.('yanlis');}
+function effect(good){if(!soundOn||window.dmAnswerAudio?.enabled()===false)return;if(good)goalSound();else window.genelSesEfektiCal?.('yanlis');}
 const keeperMarkup=()=>`<svg viewBox="0 0 140 160" aria-hidden="true"><ellipse cx="68" cy="151" rx="49" ry="7" fill="#052b20" opacity=".35"/><g stroke="#12304b" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M52 105 33 143M84 105 109 143"/><path d="M48 66 20 89 9 79M90 66 118 41 131 48"/></g><g fill="#fff4dd" stroke="#173453" stroke-width="3"><circle cx="9" cy="79" r="11"/><circle cx="131" cy="48" r="11"/><circle cx="70" cy="30" r="21"/></g><path d="M47 58 Q70 52 94 60 L94 109 Q69 123 45 108Z" fill="#ffca39" stroke="#133a59" stroke-width="4"/><path d="M55 73 85 73M70 65 70 102" stroke="#fff" stroke-width="5" opacity=".7"/><path d="M46 109 44 129 96 129 94 109" fill="#183c78"/><path d="M33 143 20 151M109 143 123 151" stroke="#101d36" stroke-width="12" stroke-linecap="round"/></svg>`;
 function cleanup(){epoch++;clearInterval(tick);tick=null;for(const id of timers)clearTimeout(id);timers.clear();}
 function close(){const s=session;cleanup();root?.remove();root=null;session=null;if(s?.mode==='solo'&&s.runId&&window.OC?.aktif?.runId===s.runId&&!OC.aktif.bitti)OC.aktif.bitti=true;window.dmPlayNavigation?.sync?.();window.dmGameViewport?.sync?.();origin?.focus?.();}

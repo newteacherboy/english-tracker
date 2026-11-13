@@ -13,7 +13,7 @@
     let context, timer, step = 0;
     let muted = localStorage.getItem('dm_blocks_mute') === '1';
     function tone(freq, volume, offset = 0) {
-      if (!context || muted || document.hidden || !freq) return;
+      if (!context || muted || document.hidden || !freq || window.dmAnswerAudio?.enabled()===false) return;
       const at = context.currentTime + offset;
       const note = context.createOscillator(), volumeNode = context.createGain();
       note.type = 'sine';

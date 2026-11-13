@@ -214,7 +214,7 @@
   for(const [method,correct] of [['dogru',true],['yanlis',false]]){
    const previous=OC[method];if(typeof previous!=='function'||previous.dmSelectedAudioWrapped)continue;
    const wrapped=function(...args){const result=previous.apply(this,args);cue(correct);return result;};
-   wrapped.dmSelectedAudioWrapped=true;OC[method]=wrapped;
+   wrapped.dmSelectedAudioWrapped=true;wrapped.dmSharedFeedback=previous.dmSharedFeedback;OC[method]=wrapped;
   }
   return true;
  }

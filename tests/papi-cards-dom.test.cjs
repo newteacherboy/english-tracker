@@ -49,3 +49,5 @@ test('12 distinct cards per round, prioritizing words absent from the previous r
  assert.deepEqual(f.calls.filter(c=>c.islem==='papiKartSonucKaydet').map(c=>[c.turBoyutu,c.toplam,c.biliyorum,c.tekrar]),[[12,12,9,3],[12,12,9,3]]);
  f.dom.window.close();
 });
+
+test('card rating emits the actual result once, reveal and speaker emit no answer result',async()=>{const f=fixture(),results=[];f.w.dmAnswerFeedback=(correct,kind,opts)=>results.push([correct,opts.eventId]);f.click('#papiCardsActivity');await f.flush();f.start();f.click('.pc-speaker');f.click('.pc-show');assert.equal(results.length,0);f.click('.pc-again');f.click('.pc-again');f.click('.pc-show');f.click('.pc-known');assert.deepEqual(results.map(x=>x[0]),[false,true]);assert.notEqual(results[0][1],results[1][1]);f.dom.window.close();});

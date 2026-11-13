@@ -36,7 +36,7 @@ let audio,enabled=true,speechTimer;
 const soundKey=()=> 'dm-topic-sound:'+who().toLowerCase();
 const soundIcon=on=>'<svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"><path d="'+(on?'M3 9h4l5-4v14l-5-4H3zM16 8q6 4 0 8':'M3 9h4l5-4v14l-5-4H3zM17 9l5 6m0-6-5 6')+'"/></svg>';
 function readSound(){try{enabled=localStorage.getItem(soundKey())!=='off';}catch{enabled=true;}}
-function soundOn(){return enabled&&window.dmSoundEnabled!==false&&window.dmSound?.enabled!==false;}
+function soundOn(){return enabled&&window.dmAnswerAudio?.enabled()!==false&&window.dmSoundEnabled!==false&&window.dmSound?.enabled!==false;}
 function unlockAudio(){try{if(!soundOn())return;const C=window.AudioContext||window.webkitAudioContext;if(!C)return;if(!audio)audio=new C();if(audio.state==='suspended')audio.resume()?.catch?.(()=>{});}catch{}}
 function effect(kind){try{if(!soundOn())return;unlockAudio();if(!audio)return;const notes=kind==='right'?[[660,0,.11],[880,.12,.13]]:kind==='wrong'?[[220,0,.12],[165,.15,.13]]:kind==='win'?[[523,0,.1],[659,.11,.1],[784,.22,.1],[1047,.33,.16]]:[[392,0,.25]];for(const [hz,delay,duration] of notes){const o=audio.createOscillator(),g=audio.createGain(),at=audio.currentTime+delay;o.type=kind==='wrong'?'triangle':'sine';o.frequency.setValueAtTime(hz,at);g.gain.setValueAtTime(0,at);g.gain.linearRampToValueAtTime(.12,at+.012);g.gain.exponentialRampToValueAtTime(.001,at+duration);o.connect(g);g.connect(audio.destination);o.start(at);o.stop(at+duration+.02);o.onended=()=>{try{o.disconnect();g.disconnect();}catch{}};}}catch{}}
 async function mount(host,initialCategory){

@@ -1,0 +1,26 @@
+name: Rank rise and answer audio
+on:
+  push:
+    branches: [main, codex/audit-rank-audio]
+  pull_request:
+    paths: ['ingilizce/league-ui.*', 'ingilizce/member-polish.js', 'tests/*audio*', 'tests/league-rank-rise*', '.github/workflows/rank-answer-audio.yml']
+permissions:
+  contents: read
+jobs:
+  regression:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: npm install --no-save --package-lock=false --ignore-scripts jsdom@26.1.0 playwright@1.58.2
+      - run: node --test tests/answer-audio.test.cjs tests/league-ui.test.cjs tests/league-rank-rise.test.cjs tests/papi-cards-dom.test.cjs tests/word-wheel-dom.test.cjs tests/word-wheel-timer.test.cjs tests/kelime-golu.test.cjs tests/kelime-golu-ui.test.cjs
+      - run: npx playwright install --with-deps chromium
+      - run: node tests/rank-answer-audio-browser.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: rank-answer-audio
+          path: /tmp/rank-answer-audio/*.png

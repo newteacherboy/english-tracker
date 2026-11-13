@@ -1912,6 +1912,7 @@ mesajlar.forEach(m => {
                 }
 
                             function genelSesEfektiCal(tip, komboSayisi) {
+            if ((tip === 'dogru' || tip === 'yanlis') && window.dmAnswerAudio) { window.dmAnswerAudio.play(tip === 'dogru'); return; }
             try {
                 let ctx = new (window.AudioContext || window.webkitAudioContext)();
                 let osc = ctx.createOscillator();
