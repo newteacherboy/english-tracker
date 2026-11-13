@@ -18,7 +18,7 @@ const AYRI_SAYFA = /\/(?:veli-kontrolu|hesap-sil|hesap-dondur|hesap-ac|gizlilik|
 
 self.addEventListener('install', e => {
   // Keep the complete lightweight opening (including the inline SVG game) available offline.
-  const opening=['holiday-splashes/papi-intro.js?v=24d4c8eb05','holiday-splashes/splash.js?v=20261112-yuk','holiday-splashes/dates.js?v=20261023-2','holiday-splashes/splash.css?v=20261111-pending-3'];
+  const opening=['papi-loading.css?v=20261112-ust','papi-loading.webp','holiday-splashes/papi-intro.js?v=24d4c8eb05','holiday-splashes/splash.js?v=20261112-yuk','holiday-splashes/dates.js?v=20261023-2','holiday-splashes/splash.css?v=20261111-pending-3'];
   e.waitUntil(Promise.all([
     caches.open(SAYFA).then(c => c.addAll(['./'])),
     caches.open(KAYNAK).then(c => c.addAll(opening))
