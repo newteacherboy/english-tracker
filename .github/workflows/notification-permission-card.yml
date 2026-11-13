@@ -1,0 +1,25 @@
+name: Notification permission card
+on:
+  pull_request:
+    paths: ['ingilizce/notification-permission-card.*', 'ingilizce/native-app.js', 'tests/notification-permission-card-ui.cjs', '.github/workflows/notification-permission-card.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: node --check ingilizce/notification-permission-card.js && node --check ingilizce/native-app.js
+      - run: npm install --prefix /tmp/notification-qa --no-audit --no-fund playwright@1.58.2
+      - run: /tmp/notification-qa/node_modules/.bin/playwright install --with-deps chromium
+      - run: NODE_PATH=/tmp/notification-qa/node_modules node tests/notification-permission-card-ui.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: notification-card-qa
+          path: /tmp/notification-card-qa/*.png

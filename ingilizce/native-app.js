@@ -195,6 +195,13 @@
     }).catch(function () {});
   }
 
+  // Parkur kartından açıkça izin verildiğinde eski iOS kabuğunda da hatırlatıcıyı etkinleştir.
+  window.dmIosEnableReminders = function () {
+    if (!Notes) return;
+    store(PREF, 'acik');
+    reschedule();
+  };
+
   /* Hatırlatıcı kartı: uygulamanın stilleri bozmasın diye Shadow DOM içinde. */
   var CARD_CSS =
     ':host{all:initial}' +
