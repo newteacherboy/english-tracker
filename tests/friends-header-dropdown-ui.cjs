@@ -80,7 +80,7 @@ const feed=['Elif','Ege','Zeynep','Cemre','Fixture'].map((ogr,i)=>({k:'event'+i,
     assert.equal(await page.locator('.fr-people-count').textContent(),'4');
     const box=await page.locator('#frPeopleDropdown').boundingBox(),anchor=await toggle.boundingBox();
     assert(box.x>=0&&box.x+box.width<=width&&box.y>=anchor.y+anchor.height&&box.y+box.height<=844,'dropdown fits viewport and opens below anchor');
-    assert(await page.locator('.fr-people-state.is-online').count()>0);
+    assert(await page.locator('.fr-people-state.online').count()>0);
     await page.locator('.fr-people-search input').fill('zey');assert.equal(await page.locator('.fr-people-row').count(),1);assert.match(await page.locator('.fr-people-row').textContent(),/Zeynep/);
     await page.locator('.fr-people-search input').fill('no-match');assert.equal(await page.locator('.fr-people-row').count(),0);assert(await page.locator('.fr-people-empty').isVisible());
     await page.locator('.fr-people-search input').fill('');

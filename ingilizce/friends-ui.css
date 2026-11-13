@@ -798,8 +798,8 @@ html[data-dm-theme="night"] #tab-meduakis .fr-status.fr-plan-free .fr-status-pla
 .fr-people-name b{font-size:15px;line-height:1.2;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .fr-people-name small{font-size:12px;color:#6b7e98}
 .fr-people-state{display:flex;align-items:center;gap:4px;font-size:10px;white-space:nowrap;color:#78879b}
-.fr-people-state i{width:7px;height:7px;border-radius:50%;background:#b6c0d1;flex:none}
-.fr-people-state.is-online{color:#168248}.fr-people-state.is-online i{background:#21c668}
+.fr-people-state::before{content:"";width:7px;height:7px;border-radius:50%;background:#b6c0d1;flex:none}
+.fr-people-state.online{color:#168248}.fr-people-state.online::before{background:#21c668}
 .fr-people-chevron{font:24px/1 system-ui;color:#6581aa}
 .fr-people-empty{margin:0;padding:18px 8px;color:#607a9c;text-align:center;font-size:14px;line-height:1.5}
 .fr-people-add{flex:none;min-height:42px;padding:9px 12px;border:1px solid #addaff;border-radius:14px;background:linear-gradient(#d6efff,#bce3ff);color:#0756b6;font:900 16px/1.2 Nunito,system-ui,sans-serif;cursor:pointer}
@@ -811,6 +811,8 @@ html[data-dm-theme="night"] .fr-people-search,html[data-dm-theme="night"] .fr-pe
 html[data-dm-theme="night"] .fr-people-search input{color:#e9f3ff}
 html[data-dm-theme="night"] .fr-people-row{border-color:#385075}
 html[data-dm-theme="night"] .fr-people-name small,html[data-dm-theme="night"] .fr-people-state{color:#b9c9e0}
-html[data-dm-theme="night"] .fr-people-state.is-online{color:#62e5a0}
+html[data-dm-theme="night"] .fr-people-state.online{color:#62e5a0}
 html[data-dm-theme="night"] .fr-people-row:hover{background:#2b436a!important}
 html[data-dm-theme="night"] .fr-people-close,html[data-dm-theme="night"] .fr-people-empty{color:#bbcee7}
+
+.fr-people-dropdown .fr-people-state.dm-online-badge{margin:0;padding:0;border:0;border-radius:0;background:none;font-size:10px}.fr-people-dropdown .fr-people-state.dm-online-badge::after{content:none}

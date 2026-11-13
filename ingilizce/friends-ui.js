@@ -323,7 +323,7 @@
     v.list.innerHTML=list.map(id=>{
       const person=typeof maBul==='function'?maBul(id):known.find(p=>norm(p.id||p.ad)===norm(id));
       const lv=Number(person?.playerLevel||person?.seviye),subtitle=Number.isFinite(lv)&&lv>0?'Seviye '+lv:'';
-      return `<button type="button" class="fr-search-person fr-people-row" data-person="${esc(id)}">${avatar(id,40)}<span class="fr-people-name"><b>${esc(id)}</b>${subtitle?'<small>'+esc(subtitle)+'</small>':''}</span><span class="fr-people-state ${online(id)?'is-online':''}"><i aria-hidden="true"></i>${online(id)?'Çevrimiçi':'Çevrimdışı'}</span><span class="fr-people-chevron" aria-hidden="true">›</span></button>`;
+      return `<button type="button" class="fr-search-person fr-people-row" data-person="${esc(id)}">${avatar(id,40)}<span class="fr-people-name"><b>${esc(id)}</b>${subtitle?'<small>'+esc(subtitle)+'</small>':''}</span><span class="fr-people-state dm-online-badge compact ${online(id)?'online':''}" data-online-person="${esc(id)}">${online(id)?'Çevrimiçi':'Çevrimdışı'}</span><span class="fr-people-chevron" aria-hidden="true">›</span></button>`;
     }).join('')||'<p class="fr-people-empty" role="status">'+(query?'Bu isimde bir arkadaş bulunamadı.':v.add?'Ekleyebileceğin bir öğrenci bulunamadı.':'Henüz takip ettiğin bir arkadaş yok. Arkadaş ekle ile başlayabilirsin.')+'</p>';
     positionPeople();
   }
