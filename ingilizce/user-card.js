@@ -80,7 +80,7 @@
   }catch(e){if(!alive(v)||e.name==='AbortError')return;v.error=e.message;el.querySelector('.uc-stats').textContent=e.message;paintActions(v);place(v);}
  }
  async function act(v,b){
-  if(!alive(v))return;const reason=unavailable(v,b);if(reason){notice(v,reason);return;}
+  if(!alive(v))return;const reason=unavailable(v,b);if(reason){const feature={message:'hazir_mesaj',gift:'enerji_hediye',duel:'duello',follow:'takip'}[b.dataset.userAction];if(feature&&window.dmProgression?.allowed?.(feature)===false&&norm(v.id)!==norm(who())&&!v.blocked)window.dmProgression.require(feature);notice(v,reason);return;}
   const action=b.dataset.userAction,id=v.id,feature=actionFeatures[action];
   if(feature&&window.dmProgression?.require&&!window.dmProgression.require(feature)){notice(v,'Bu işlem şu an hesabın için açık değil.');return;}
   if(action==='message'){close(false);return window.dmMessageAc?.(id);}

@@ -101,8 +101,9 @@ function duelModal(content){
 function closeDuelModal(){duelSheet?.remove();duelSheet=null;duelBusy=false;duelContext=null;}
 function duelButton(name,variant='primary'){return '<button type="button" class="dm-lig-duel-action dm-lig-duel-'+variant+'">'+name+'</button>';}
 function duelMessage(message){const el=duelSheet?.querySelector('.dm-lig-duel-message');if(el)el.textContent=String(message||'');}
+const accessLevel=()=>window.dmProgression?.earlyAccess?.()?40:level();
 function openRealDuel(){
- if(level()<20){const msg='🔒 Gerçek arkadaş düellosu 20. seviyede açılır (şu an '+level()+'. seviyedesin). Papi rakipleriyle pratik yapabilirsin.';if(duelSheet?.querySelector('.dm-lig-duel-message')){duelMessage(msg);const el=duelSheet.querySelector('.dm-lig-duel-message');el.classList.remove('dm-lig-duel-warn');void el.offsetWidth;el.classList.add('dm-lig-duel-warn');}else window.yoToast?.(msg);return;}
+ if(accessLevel()<20){window.dmProgression?.require?.('duello');const msg='🔒 Gerçek arkadaş düellosu 20. seviyede açılır (şu an '+level()+'. seviyedesin). Papi rakipleriyle pratik yapabilirsin.';if(duelSheet?.querySelector('.dm-lig-duel-message')){duelMessage(msg);const el=duelSheet.querySelector('.dm-lig-duel-message');el.classList.remove('dm-lig-duel-warn');void el.offsetWidth;el.classList.add('dm-lig-duel-warn');}else window.yoToast?.(msg);return;}
  closeDuelModal();window.dmArenaAc?.();
 }
 function showDuelPlans(message='İki ücretsiz düellonu tamamladın.'){
@@ -135,7 +136,7 @@ async function openVirtualInfo(bot){
 function openVirtualGames(bot){
  if(!duelContext||duelContext.owner!==who())return;
  if(duelContext.status&&!duelContext.status.allowed)return showDuelPlans();
- const available=duelGames.filter(g=>level()>=g.min&&window.dmProgression?.allowed?.(g.gate)!==false);
+ const available=duelGames.filter(g=>accessLevel()>=g.min&&window.dmProgression?.allowed?.(g.gate)!==false);
  const content='<div class="dm-lig-duel-hero">'+papiImg+'<h2>Oyununu Seç!</h2><p>'+esc(bot.name)+' seni bekliyor.</p></div>'+
  '<p>Açık tek kişilik oyunlarının kısa düello sürümlerinden birini seç. İki yarışmacının ilerlemesini aynı anda göreceksin.</p>'+
  '<div class="dm-lig-duel-games">'+available.map(g=>'<button type="button" data-virtual-game="'+g.key+'"><b>'+g.icon+' '+esc(g.title)+'</b><small>Düello sürümü</small></button>').join('')+'</div>'+
@@ -272,7 +273,7 @@ async function openVirtualSelection(){
 }
 function openDuelChooser(){
  const m=duelModal('<div class="dm-lig-duel-hero"><img src="friends-assets/papi-fencer.webp" class="dm-lig-duel-papi" alt="Papi"><h2>Düello Başlat</h2><p>Nasıl yarışmak istersin?</p></div>'+
- duelButton(level()<20?'🔒 Gerçek Arkadaşlarla Düello · Sv. 20':'Gerçek Arkadaşlarla Düello','secondary')+duelButton('Papi Sanal Rakipleriyle Oyna','primary')+
+ duelButton(accessLevel()<20?'🔒 Gerçek Arkadaşlarla Düello · Sv. 20':'Gerçek Arkadaşlarla Düello','secondary')+duelButton('Papi Sanal Rakipleriyle Oyna','primary')+
  '<p class="dm-lig-duel-message" aria-live="polite">Papi ile ilk 2 düello ücretsiz. Gerçek arkadaş düellosu 20. seviyede açılır.</p>');
  m.querySelector('.dm-lig-duel-secondary').onclick=openRealDuel;
  m.querySelector('.dm-lig-duel-primary').onclick=()=>void openVirtualSelection();
@@ -327,13 +328,13 @@ function weeklyPreview(){
   top:(state.visualRows.length?state.visualRows:state.rows).filter(p=>p.league===code).sort((a,b)=>(a.displayRank??a.rank)-(b.displayRank??b.rank)).slice(0,3),
   loaded:state.loaded,error:state.error};
 }
-function render(){reset();if(mode==='alltime'&&level()<15)mode='weekly';
+function render(){reset();if(mode==='alltime'&&accessLevel()<15)mode='weekly';
  const state=states[mode],me=(mode==='weekly'&&state.visualRows.length?state.visualRows:state.rows).find(p=>norm(p.name)===norm(who()));
- let code=selected||me?.league||'yerel';if(!leagues[code]||level()<leagues[code].level)code='yerel';
+ let code=selected||me?.league||'yerel';if(!leagues[code]||accessLevel()<leagues[code].level)code='yerel';
  const rows=mode==='alltime'?state.rows:[...(state.visualRows.length?state.visualRows:state.rows)].filter(p=>p.league===code).sort((a,b)=>(a.displayRank??a.rank)-(b.displayRank??b.rank));
  const title=mode==='alltime'?'Efsaneler Ligi':leagues[code].name;
- const tabs='<nav class="dm-lig-period" aria-label="Sıralama dönemi"><button type="button" data-lig-mode="weekly" aria-pressed="'+(mode==='weekly')+'">Haftalık</button><button type="button" data-lig-mode="alltime" aria-pressed="'+(mode==='alltime')+'" aria-disabled="'+(level()<15)+'" data-dm-league-level="15">'+(level()<15?'🔒 ':'')+'Tüm Zamanlar'+(level()<15?'<small>15. seviye</small>':'')+'</button></nav>';
- const choices=mode==='weekly'?'<nav class="dm-lig-choices" aria-label="Haftalık ligler">'+Object.entries(leagues).map(([k,l])=>'<button type="button" data-lig-code="'+k+'" data-dm-league-level="'+l.level+'" aria-disabled="'+(level()<l.level)+'" aria-pressed="'+(k===code)+'">'+l.icon+' '+l.short+(level()<l.level?'<small>🔒 '+l.level+'. seviye</small>':'')+'</button>').join('')+'</nav>':'';
+ const tabs='<nav class="dm-lig-period" aria-label="Sıralama dönemi"><button type="button" data-lig-mode="weekly" aria-pressed="'+(mode==='weekly')+'">Haftalık</button><button type="button" data-lig-mode="alltime" aria-pressed="'+(mode==='alltime')+'" aria-disabled="'+(accessLevel()<15)+'" data-dm-league-level="15">'+(accessLevel()<15?'🔒 ':'')+'Tüm Zamanlar'+(accessLevel()<15?'<small>15. seviye</small>':'')+'</button></nav>';
+ const choices=mode==='weekly'?'<nav class="dm-lig-choices" aria-label="Haftalık ligler">'+Object.entries(leagues).map(([k,l])=>'<button type="button" data-lig-code="'+k+'" data-dm-league-level="'+l.level+'" aria-disabled="'+(accessLevel()<l.level)+'" aria-pressed="'+(k===code)+'">'+l.icon+' '+l.short+(accessLevel()<l.level?'<small>🔒 '+l.level+'. seviye</small>':'')+'</button>').join('')+'</nav>':'';
  let content='';
  if(!state.loaded&&state.busy)content='<p class="dm-lig-message" role="status">Sıralama yükleniyor…</p>';
  else if(state.error&&!state.loaded)content='<p class="dm-lig-message" role="alert">Sıralama yüklenemedi. <button type="button" data-lig-retry>Yeniden dene</button></p>';
@@ -342,7 +343,7 @@ function render(){reset();if(mode==='alltime'&&level()<15)mode='weekly';
 }
 function draw(){if(!onScreen())return;const old=root.querySelector('.dm-lig');if(old)old.outerHTML=render();}
 async function load(force=false,scope=mode){reset();const state=states[scope];if(state.busy||!force&&Date.now()-state.at<60000)return;
- if(scope==='alltime'&&level()<15)return;const ticket=epoch,account=who();state.busy=true;state.error='';draw();
+ if(scope==='alltime'&&accessLevel()<15)return;const ticket=epoch,account=who();state.busy=true;state.error='';draw();
  try{const result=await fetch(apiURL,{method:'POST',body:JSON.stringify({islem:'seviyeLigListesi',kapsam:scope,ogrenci:account,t:localStorage.getItem('ing_token')||'',...(force?{_:Date.now()}:{})})});const d=await result.json();
   if(!result.ok||d.ok===false||!Array.isArray(d.liste)||scope==='alltime'&&d.kapsam!=='alltime')throw Error('Lig verisi alınamadı.');
   if(account!==who()||ticket!==epoch)return;
@@ -355,12 +356,13 @@ root.addEventListener('click',e=>{
  const b=e.target.closest('[data-lig-mode],[data-lig-code],[data-lig-person],[data-lig-back],[data-lig-more],[data-lig-retry]');if(!b)return;
  if(b.hasAttribute('data-lig-back'))return window.maSekmeSec?.('hub');
  if(b.hasAttribute('data-lig-person')){if(b.hasAttribute('data-virtual-rival')){const bot=states.weekly.visualRows.find(p=>p.is_virtual&&p.name===b.dataset.ligPerson);if(bot)void openVirtualDirect(bot);return;}return window.maAkisKisiAc?.(b.dataset.ligPerson);}
- if(b.hasAttribute('data-lig-mode')){if(b.dataset.ligMode==='alltime'&&level()<15){window.yoToast?.('🔒 Efsaneler Ligi 15. seviyede açılır.');return;}mode=b.dataset.ligMode;limit=30;draw();void load();return;}
- if(b.hasAttribute('data-lig-code')){const k=b.dataset.ligCode;if(level()<leagues[k].level)return;selected=k;limit=30;draw();return;}
+ if(b.hasAttribute('data-lig-mode')){if(b.dataset.ligMode==='alltime'&&accessLevel()<15){window.yoToast?.('🔒 Efsaneler Ligi 15. seviyede açılır.');return;}mode=b.dataset.ligMode;limit=30;draw();void load();return;}
+ if(b.hasAttribute('data-lig-code')){const k=b.dataset.ligCode;if(accessLevel()<leagues[k].level)return;selected=k;limit=30;draw();return;}
  if(b.hasAttribute('data-lig-more')){limit+=30;draw();return;}
  if(b.hasAttribute('data-lig-retry'))void load(true);
 });
 document.addEventListener('dm:login',()=>{owner='';reset();});
+document.addEventListener('dm:progression-status',()=>{if(onScreen())draw();});
 document.addEventListener('dm:state',()=>{for(const state of Object.values(states))state.at=0;if(onScreen())void load();});
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&onScreen())void load();});
 setInterval(()=>{if(!document.hidden&&onScreen())void load();},180000); // [Kota] 1 dk -> 3 dk

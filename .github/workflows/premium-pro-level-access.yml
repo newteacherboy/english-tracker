@@ -1,0 +1,25 @@
+name: Premium Pro early level access
+on:
+  pull_request:
+    paths: ['ingilizce/progression-ui.*', 'ingilizce/dm-satis.js', 'ingilizce/league-ui.js', 'ingilizce/user-card.js', 'supabase/functions/**/progression-api.ts', 'supabase/migrations/*premium_pro_level_access.sql', 'tests/premium-pro-level-access*', 'tests/progression-api.test.cjs', '.github/workflows/premium-pro-level-access.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  access:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: npm install --prefix /tmp/early-qa --no-audit --no-fund jsdom@26.1.0 playwright@1.58.2
+      - run: NODE_PATH=/tmp/early-qa/node_modules node --test tests/premium-pro-level-access.test.cjs tests/progression-api.test.cjs tests/medupro-edge.test.cjs tests/social-safety.test.mjs tests/verified-games.test.cjs
+      - run: /tmp/early-qa/node_modules/.bin/playwright install --with-deps chromium
+      - run: NODE_PATH=/tmp/early-qa/node_modules node tests/premium-pro-level-access-ui.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: premium-pro-level-access
+          path: /tmp/premium-access-qa/*.png

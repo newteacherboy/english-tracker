@@ -6,11 +6,23 @@ const student=()=>!!who()&&who().toLowerCase()!=='teacher'&&!window.dmGuestMode;
 const ready=()=>student()&&typeof yo!=='undefined'&&!!yo&&typeof yoHazirMi==='function'&&yoHazirMi();
 const level=()=>ready()?R.progress(R.migrate(yo)).level:1;
 const toast=m=>window.yoToast?.(m);
-function allowed(code){if(window.dmTeacherPortalMode)return true;if(['parkur','ders','aktiviteler','akis','magaza','medupro'].includes(code))return true;if(code==='magaza'||code==='karakter'&&C.gates.karakter===1)return true;if(window.dmPapiTour?.preview())return true;if(!student())return true;if(!ready())return code==='gunluk_gorev'||code==='haftalik_hedef';if(code==='akis')return !!status?.feed;return level()>=(C.gates[code]||1);}
+let accessOwner='';
+const earlyAccess=()=>ready()&&accessOwner===who()&&status?.levelEarlyAccess===true;
+function levelLock(message){
+ document.getElementById('dmLevelAccess')?.remove();
+ const prior=document.activeElement,el=document.createElement('div');el.id='dmLevelAccess';el.className='dm-progress-overlay';
+ el.innerHTML='<section class="dm-progress-sheet dm-level-access" role="dialog" aria-modal="true" aria-labelledby="dmLevelAccessTitle"><button class="dm-progress-close" aria-label="Kapat">×</button><h2 id="dmLevelAccessTitle">🔒 Seviye kilidi</h2><p class="dm-level-access-reason"></p><p>Premium Pro ile seviyeyi beklemeden bu özelliği kullanabilirsin.</p><button class="dm-progress-go" data-early-plan>Premium Pro ile Aç</button><button class="dm-level-access-later">Seviye kazanarak devam et</button></section>';
+ el.querySelector('.dm-level-access-reason').textContent=message;document.body.append(el);
+ const close=()=>{el.remove();prior?.focus?.();};el.querySelector('.dm-progress-close').onclick=close;el.querySelector('.dm-level-access-later').onclick=close;
+ el.querySelector('[data-early-plan]').onclick=()=>{close();if(window.DMSatis?.planlar)window.DMSatis.planlar('seviye-kilidi','premium_pro');else window.dmAndroidOpenPlans?.('seviye-kilidi');};
+ el.onclick=e=>{if(e.target===el)close();};dialogKeys(el,close);el.querySelector('[data-early-plan]').focus();
+}
+
+function allowed(code){if(window.dmTeacherPortalMode)return true;if(['parkur','ders','aktiviteler','akis','magaza','medupro'].includes(code))return true;if(code==='magaza'||code==='karakter'&&C.gates.karakter===1)return true;if(window.dmPapiTour?.preview())return true;if(!student())return true;if(!ready())return code==='gunluk_gorev'||code==='haftalik_hedef';if(earlyAccess())return true;if(code==='akis')return !!status?.feed;return level()>=(C.gates[code]||1);}
 function need(code){return code==='akis'?'Ana parkurda 3. durağa ulaşınca açılır.':(C.gates[code]||1)+'. seviyede açılır.';}
 const odevAcilisi=()=>Date.now()<(window.__odevAcilisBitis||0);
-function requireFeature(code){if(allowed(code)||odevAcilisi())return true;toast('🔒 '+need(code));return false;}
-function itemAllowed(o,quiet=false){const owns=ready()?new Set(yo.karakter?.sahip||[]):new Set(),has=(o.parca||[o]).every(x=>owns.has(x.atolye?x.kat+':'+x.itemId:'d:'+x.id));const ok=!student()||ready()&&(has||level()>=C.itemLevel(o));if(!ok&&!quiet)toast('🔒 Bu ürün '+C.itemLevel(o)+'. seviyede açılır.');return ok;}
+function requireFeature(code){if(allowed(code)||odevAcilisi())return true;levelLock('Bu özellik '+need(code));return false;}
+function itemAllowed(o,quiet=false){const owns=ready()?new Set(yo.karakter?.sahip||[]):new Set(),has=(o.parca||[o]).every(x=>owns.has(x.atolye?x.kat+':'+x.itemId:'d:'+x.id));const ok=!student()||ready()&&(has||earlyAccess()||level()>=C.itemLevel(o));if(!ok&&!quiet)levelLock('Bu ürün '+C.itemLevel(o)+'. seviyede açılır.');return ok;}
 async function api(op,data={},force=false){const r=await fetch(apiURL,{method:'POST',...(force?{cache:'reload'}:{}),body:JSON.stringify({islem:op,ogrenci:who(),t:localStorage.getItem('ing_token')||'',...data})});const d=await r.json();if(!r.ok||d.ok===false)throw Error(d.mesaj||d.message||'İşlem tamamlanamadı');return d;}
 async function sync(){const owner=who();if(!ready())throw Error('Öğrenci verisi henüz yüklenmedi.');if(typeof window.dmMemberSaveReady==='function')await window.dmMemberSaveReady(owner);if(owner!==who()||!ready())throw Error('Hesap değişti. İşlemi yeniden aç.');R.migrate(yo);const d=await api('ekVeriKaydet',{anahtar:'yo',deger:JSON.stringify(yo)});if(d.status==='bekliyor')throw Error('Verilerin sunucudan yüklenemedi. Lütfen tekrar dene.');return d;}
 async function refresh(force=false){
@@ -20,7 +32,7 @@ async function refresh(force=false){
  try{
   const d=await api('seviyeDurumu',{},force);
   if(owner!==who())return;
-  status=d;if(d.yo)window.dmApplyRewardState?.(d.yo,owner);
+  status=d;accessOwner=owner;if(d.yo)window.dmApplyRewardState?.(d.yo,owner);
   const earned=d.yo?.dmLevelEnergy?.level;
   if(!window.dmTeacherPortalMode&&earned>energyChecked){
    const {levelEnergy:reward}=await api('seviyeEnerjiDoldur',{level:earned});
@@ -56,9 +68,9 @@ function paint(){if(!student())return;document.querySelectorAll('.dm-avatar-leve
  document.querySelectorAll('#yoCumleKart').forEach(e=>mark(e,'oyun_cumle'));
  document.querySelectorAll('#dmUcusteKart,#dmRotaKart').forEach(e=>mark(e,'iki_kisilik'));
  document.querySelectorAll('#bottomNavMobile [data-ekran]').forEach(e=>{const code={'tab-derscalis':'ders','tab-aktiviteler':'aktiviteler','tab-meduakis':'akis','tab-magaza':'magaza'}[e.dataset.ekran];if(code)mark(e,code);});
- document.querySelectorAll('[data-dm-league-level]').forEach(e=>e.classList.toggle('dm-level-locked',level()<Number(e.dataset.dmLeagueLevel)));
+ document.querySelectorAll('[data-dm-league-level]').forEach(e=>e.classList.toggle('dm-level-locked',!earlyAccess()&&level()<Number(e.dataset.dmLeagueLevel)));
 }
-document.addEventListener('click',e=>{if(window.dmTeacherPortalMode||!student())return;const b=e.target.closest('[data-dm-level-lock],[data-dm-category-level],[data-dm-league-level],[data-s],[data-nav],[data-social]');if(!b)return;if(b.dataset.dmLeagueLevel&&level()<Number(b.dataset.dmLeagueLevel)){e.preventDefault();e.stopImmediatePropagation();toast('🔒 Bu lig '+b.dataset.dmLeagueLevel+'. seviyede açılır.');return;}if(b.dataset.dmCategoryLevel&&level()<Number(b.dataset.dmCategoryLevel)){e.preventDefault();e.stopImmediatePropagation();toast('🔒 Bu kategori '+b.dataset.dmCategoryLevel+'. seviyede açılır.');return;}const code=b.dataset.dmLevelLock||({meduakis:'akis',ders:'ders',aktiviteler:'aktiviteler',magaza:'magaza'}[b.dataset.nav])||(['akis','kesfet','lig','vitrin'].includes(b.dataset.s)?b.dataset.s:null);if(code&&!allowed(code)){e.preventDefault();e.stopImmediatePropagation();requireFeature(code);}},true);
+document.addEventListener('click',e=>{if(window.dmTeacherPortalMode||!student())return;const b=e.target.closest('[data-dm-level-lock],[data-dm-category-level],[data-dm-league-level],[data-s],[data-nav],[data-social]');if(!b)return;if(b.dataset.dmLeagueLevel&&!earlyAccess()&&level()<Number(b.dataset.dmLeagueLevel)){e.preventDefault();e.stopImmediatePropagation();levelLock('Bu lig '+b.dataset.dmLeagueLevel+'. seviyede açılır.');return;}if(b.dataset.dmCategoryLevel&&!earlyAccess()&&level()<Number(b.dataset.dmCategoryLevel)){e.preventDefault();e.stopImmediatePropagation();levelLock('Bu kategori '+b.dataset.dmCategoryLevel+'. seviyede açılır.');return;}const code=b.dataset.dmLevelLock||({meduakis:'akis',ders:'ders',aktiviteler:'aktiviteler',magaza:'magaza'}[b.dataset.nav])||(['akis','kesfet','lig','vitrin'].includes(b.dataset.s)?b.dataset.s:null);if(code&&!allowed(code)){e.preventDefault();e.stopImmediatePropagation();requireFeature(code);}},true);
 function sprite(l){const stage=l<=5?'baby':l<=14?'reader':l<=29?'explorer':'master';return '<div class="dm-papi-stage '+stage+'"><i role="img" aria-label="Papi papağan"></i><span class="dm-papi-prop">'+C.levels[l-1].prop+'</span></div>';}
 function badges(l){return C.levels.slice(0,l).filter(x=>x.benefits.some(b=>b.includes('rozeti')));}
 function panel(){if(!ready()){toast('Seviye bilgilerin yükleniyor. Birazdan tekrar dene.');return;}document.getElementById('dmProgressOverlay')?.remove();const p=R.progress(R.migrate(yo)),info=C.levels[p.level-1],el=document.createElement('div');el.id='dmProgressOverlay';el.className='dm-progress-overlay';el.innerHTML='<section class="dm-progress-sheet" role="dialog" aria-modal="true" aria-labelledby="dmProgressTitle"><button class="dm-progress-close" aria-label="Kapat">×</button>'+sprite(p.level)+'<h2 id="dmProgressTitle">'+info.name+'</h2><p class="dm-progress-caption-v2">Kalıcı seviyen öğrenme yolculuğunu gösterir. XP biriktirdikçe yeni özellikler açılır.</p><b>Seviye '+p.level+' · '+p.xp.toLocaleString('tr-TR')+' XP</b><div class="dm-progress-numbers"><span><b>'+p.xp.toLocaleString('tr-TR')+'</b>Toplam kazanılan XP</span><span><b>'+(p.next===null?'✓':p.remaining)+'</b>Sonraki seviyeye kalan XP</span></div><div class="dm-progress-track"><i style="width:'+p.ratio*100+'%"></i></div><p>'+(p.next===null?'Yolculuğun zirvesindesin!':p.remaining+' XP sonra '+(p.level+1)+'. seviye')+'</p><div class="dm-next-unlocks">'+(p.next===null?'🏆 Efsane Papağan':['Bir sonraki seviyede açılacaklar'].concat(C.levels[p.level].benefits).map(x=>'<p>🔓 '+x+'</p>').join(''))+'</div><details class="dm-earned-badges"><summary>🪶 Kazandığın seviye rozetleri</summary><small>Tüyler, ulaştığın özel seviyelerin hatıra rozetleridir. Harcanmaz ve XP yerine geçmez.</small>'+badges(p.level).map(x=>'<p>'+x.prop+' '+x.name+'</p>').join('')+'</details><p class="dm-mystery">'+(p.next===null?'':Array.from({length:Math.min(4,39-p.level)},()=>'<span>🔒 ?</span>').join(''))+'</p><p class="dm-mystery-caption">Daha sonraki seviyelerin sürprizleri şimdilik gizli.</p><button class="dm-progress-go">Sandıklarım</button></section>';document.body.append(el);const prior=document.activeElement;const close=()=>{el.remove();prior?.focus?.();};el.querySelector('.dm-progress-close').onclick=close;el.querySelector('.dm-progress-go').onclick=()=>{close();chests();};dialogKeys(el,close);el.querySelector('button').focus();}
@@ -254,7 +266,8 @@ async function chests(){await window.dmActiveTime?.flush?.();const timeChests=wi
 window.maLigSiralama=function(){const liste=leagueData.map(o=>({ad:o.name,sinif:String(o.class||''),puan:0,xp:o.xp,sira:o.rank,kod:o.league,benMi:o.name.toLowerCase()===who().toLowerCase()}));return {liste,harita:Object.fromEntries(liste.map(x=>[x.ad.toLowerCase(),x]))};};
 document.addEventListener('dm:kisisel-bilgiler',()=>{status=null;lastRefresh=0;refresh(true);});
 document.addEventListener('dm:starting-placement-complete',()=>refresh(true));
-window.dmProgression={paint,allowed,require:requireFeature,level,itemAllowed,refresh,chests,status:()=>status,parkur:()=>true,quota:()=>0,sync,previewAnimation:()=>celebrate(Math.max(0,level()-1),level(),true)};
+window.addEventListener('dm:plan',()=>{status=null;accessOwner='';paint();refresh(true);});
+window.dmProgression={paint,allowed,require:requireFeature,level,earlyAccess,levelLock,itemAllowed,refresh,chests,status:()=>status,parkur:()=>true,quota:()=>0,sync,previewAnimation:()=>celebrate(Math.max(0,level()-1),level(),true)};
 window.dolapSandikAc=window.bcSandikAc=window.sandikTorenAc=chests;
 /* Uygulamanın kendiliğinden açtığı Medu Akış: kilitliyse uyarı göstermeden Parkur'da kal */
 document.addEventListener('dm:starting-placement-complete',()=>refresh(true));

@@ -56,7 +56,7 @@ export function progressionAPI(db:any,json:any){
   }
   if(op==='seviyeOyunOdulu'){
    const ctx=await context(a,body.game==='ba'),game=String(body.game||''),code=({ky:'oyun_kelime',jp:'oyun_jeopardy',kp:'kelime_modu',ba:'parkur',harfbahcesi:'oyun_harfbahcesi',eslestirme:'oyun_eslestirme'} as any)[game]||'oyun_'+game;
-   if(!Object.hasOwn(C.gates,code)||ctx.level<C.gates[code])return deny(C.gates[code]||40);
+   if(!Object.hasOwn(C.gates,code)||!ctx.levelEarlyAccess&&ctx.level<C.gates[code])return deny(C.gates[code]||40);
    let units=Array.isArray(body.units)?body.units.map(Number):[];
    if(game==='ba'){
     const stop=Number(body.stopNo||200000+Number(body.classNo)*10000+Number(units[0])*100+1);
@@ -91,7 +91,7 @@ export function progressionAPI(db:any,json:any){
    const scope=String(body.kapsam||q.get('kapsam')||'weekly');
    if(!['weekly','alltime'].includes(scope))return json({ok:false,mesaj:'Geçerli lig kapsamı gerekli.'},400);
    if(scope==='alltime'){
-    const ctx=await context(a);if(ctx.level<15)return deny(15);
+    const ctx=await context(a);if(!ctx.levelEarlyAccess&&ctx.level<15)return deny(15);
     const safety=socialSafetyAPI({db,json});
     const liste=await allTimeLeague(db,(rows:any[],viewer:string)=>safety.filterStudents(rows,viewer),a.student_id,(xp:number)=>C.level(xp),publicParticipant);
     return json({ok:true,kapsam:'alltime',liste});
@@ -124,7 +124,7 @@ export function progressionAPI(db:any,json:any){
   if(!code&&!lesson&&!save&&op!=='buyuSeviyeTamamla')return null;
   const ctx=await context(save?{...a,teacher_portal_access_id:null}:a,lesson||op==='buyuSeviyeTamamla'),l=ctx.level;
   if(code==='akis'&&!ctx.feed)return deny('Akış, ana parkurda 3. durağa ulaşınca açılır.');
-  if(code&&l<(C.gates[code]||1))return deny(C.gates[code]);
+  if(code&&!ctx.levelEarlyAccess&&l<(C.gates[code]||1))return deny(C.gates[code]);
   if(op==='buyuSeviyeTamamla'){const supplied=Number(body.seviyeNo),no=supplied>=1000&&supplied<2000?200000+Math.floor((supplied-1000)/100)*10000+((supplied-1000)%100)*100+1:supplied,door=ctx.units.findIndex((d:any[])=>d.includes(no));if(door<0)return deny('Geçerli parkur durağı gerekli.');const problem=schoolStopProblem(ctx.startPath,ctx,no);if(problem)return deny(problem);
     // The authenticated server reward transaction now writes level_completions.
     // A direct client completion must never create a pass before the verified claim.
@@ -134,7 +134,7 @@ export function progressionAPI(db:any,json:any){
   if(save){let incoming=body.deger;try{if(typeof incoming==='string')incoming=JSON.parse(incoming);}catch{return deny('Geçersiz veri.');}
    const before=ctx.yo||{};
    if(incoming?.karakter?.cins&&!['k','e'].includes(incoming.karakter.cins))return deny('Geçerli karakter seçimi gerekli.');
-   if(incoming?.profilKrk&&incoming?.profilKrk!==before.profilKrk&&l<20)return deny(20);
+   if(incoming?.profilKrk&&incoming?.profilKrk!==before.profilKrk&&!ctx.levelEarlyAccess&&l<20)return deny(20);
    const oldOwned=new Set(before.karakter?.sahip||[]),newOwned=incoming?.karakter?.sahip||[];
    if(!Array.isArray(newOwned)||newOwned.some((id:any)=>!oldOwned.has(id)))return deny('Yeni ürünler mağazanın satın alma işlemiyle kazanılır.');
    // Paid rights, weekly XP and reward ledgers can only be credited by the server.
@@ -151,7 +151,7 @@ export function progressionAPI(db:any,json:any){
       if(!item)return deny('Geçerli bir görünüm ürünü seç.');
       if(!C.compatible(item,c))return deny('Bu ürün diğer karakter seçimine ait.');
       const key=item.atolye?kat+':'+item.itemId:'d:'+item.id,owned=oldOwned.has(key);
-      if(!owned&&C.itemLevel(item)>l)return deny(C.itemLevel(item));
+      if(!owned&&!ctx.levelEarlyAccess&&C.itemLevel(item)>l)return deny(C.itemLevel(item));
       if(!owned&&item.f>0)return deny('Önce bu ürünü mağazadan satın al.');
     }
    }
