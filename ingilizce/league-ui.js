@@ -341,13 +341,67 @@ function render(){reset();if(mode==='alltime'&&accessLevel()<15)mode='weekly';
  else content=(mode==='weekly'?journey(state.rows,me):'')+(rows.length?podium(rows,mode==='alltime')+'<div class="dm-lig-list">'+rows.slice(3,limit).map(p=>row(p)).join('')+'</div>'+(rows.length>limit?'<button type="button" class="dm-lig-more" data-lig-more>Diğer öğrencileri göster</button>':''):'<p class="dm-lig-message">'+(mode==='alltime'?'15. seviyeye ulaşan öğrenciler burada sıralanacak.':'Bu ligde henüz öğrenci yok.')+'</p>');
  return '<section class="dm-lig dm-lig-'+mode+'" aria-label="'+title+'"><header class="dm-lig-header"><button type="button" data-lig-back aria-label="Arkadaşlara dön">‹</button><h2>'+title+'</h2><img src="friends-assets/papi-league.png" alt="" width="54" height="54"></header><div class="dm-lig-caption"><span>'+(mode==='alltime'?'Toplam XP · Her zaman güncel':'Haftalık yarışma XP’si')+'</span><small>'+(mode==='alltime'?'ⓘ Haftalık sıfırlanmaz':'ⓘ Her pazartesi yeni hafta')+'</small></div>'+tabs+choices+content+(state.error&&state.loaded?'<p role="status" class="dm-lig-message">Güncelleme alınamadı. Son sıralama gösteriliyor. <button type="button" data-lig-retry>Yenile</button></p>':'')+(me?'<aside class="dm-lig-my-place" aria-label="Senin sıralaman">'+row(me,true)+'</aside>':'')+(mode==='weekly'?'<details class="dm-lig-rules"><summary>Lig kuralları ve haftalık ödüller</summary><p>Yerel Lig 5. seviyede açılır. Süper Lig için 10. seviye ve haftalık 750 yarışma XP’si; Şampiyonlar Ligi için 15. seviye ve haftalık 1800 yarışma XP’si gerekir. Joker ve günlük çarpanlar yarışma XP’sine eklenmez. Katılım her hafta yeniden değerlendirilir.</p><p>Şampiyonlar Ligi ilk 10 altın ödülleri: 500, 350, 250, 180, 140, 110, 90, 75, 60, 50. Süper Lig ilk iki: 30 ve 20 altın. Yerel Lig: katılım rozeti. Sonuçlar pazartesi 00.05’te kesinleşir; ödül ilk girişte bir kez eklenir.</p></details>':'<p class="dm-lig-footnote">15. seviyeden itibaren · Güncel toplam XP · Haftalık sıfırlanmaz</p>')+'</section>';
 }
-function draw(){if(!onScreen())return;const old=root.querySelector('.dm-lig');if(old)old.outerHTML=render();}
+/* Rank rise: a local, week/account-scoped presentation only. No league or XP writes. */
+const rankRiseKey='dm.league.rank-rise.v1:';
+let pendingRise=null,lastRise=null,riseTimer=null;
+const weekStamp=()=>{const d=new Date(Date.now()+10800000);d.setUTCDate(d.getUTCDate()-(d.getUTCDay()+6)%7);return d.toISOString().slice(0,10);};
+const riseStoreKey=(account,league)=>rankRiseKey+encodeURIComponent(norm(account))+':'+league+':'+weekStamp();
+function captureRankRise(account){
+ const view=states.weekly.visualRows.length?states.weekly.visualRows:states.weekly.rows;
+ const me=view.find(p=>!p.is_virtual&&norm(p.name)===norm(account));
+ if(!me||!leagues[me.league])return;
+ const rank=Number(me.displayRank??me.rank);
+ if(!Number.isInteger(rank)||rank<1)return;
+ const key=riseStoreKey(account,me.league);
+ let previous=null;
+ try{previous=JSON.parse(localStorage.getItem(key)||'null');}catch{}
+ if(previous&&Number.isInteger(previous.rank)&&previous.rank>rank){
+  pendingRise={from:previous.rank,to:rank,league:me.league,account:norm(account),week:weekStamp()};
+ }
+ try{localStorage.setItem(key,JSON.stringify({rank,at:Date.now()}));}catch{}
+}
+function clearRise(){
+ if(riseTimer){clearTimeout(riseTimer);riseTimer=null;}
+ document.getElementById('dmLeagueRiseFloat')?.remove();
+ document.getElementById('dmLeagueRiseBadge')?.remove();
+}
+function showRankRise(change){
+ if(!onScreen()||mode!=='weekly'||norm(who())!==change.account||weekStamp()!==change.week||!states.weekly.loaded)return;
+ const me=(states.weekly.visualRows.length?states.weekly.visualRows:states.weekly.rows).find(p=>!p.is_virtual&&norm(p.name)===change.account);
+ if(!me||me.league!==change.league||Number(me.displayRank??me.rank)!==change.to)return;
+ const source=root.querySelector('.dm-lig-my-place .dm-lig-self');
+ if(!source)return;
+ clearRise();
+ const rect=source.getBoundingClientRect();
+ if(rect.width<20||rect.height<20)return;
+ const reduced=window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches;
+ const match=[...root.querySelectorAll('.dm-lig-list .dm-lig-row, .dm-lig-podium .dm-lig-place')]
+  .find(el=>norm(el.dataset.ligPerson)===change.account);
+ const destination=match?.getBoundingClientRect();
+ const target=destination&&destination.height&&destination.top>=0&&destination.bottom<=innerHeight
+  ?destination.top:Math.max(88,rect.top-Math.min(240,innerHeight*.32));
+ const badge=document.createElement('div');
+ badge.id='dmLeagueRiseBadge';badge.className='dm-league-rise-badge';
+ badge.setAttribute('role','status');badge.textContent='↗ Yükseldin! '+change.from+'. sıradan '+change.to+'. sıraya';
+ document.body.append(badge);
+ if(!reduced){
+  const ghost=source.cloneNode(true);ghost.id='dmLeagueRiseFloat';ghost.classList.add('dm-league-rise-float');
+  ghost.removeAttribute('data-lig-person');ghost.setAttribute('aria-hidden','true');ghost.tabIndex=-1;
+  Object.assign(ghost.style,{left:rect.left+'px',top:rect.top+'px',width:rect.width+'px',height:rect.height+'px',pointerEvents:'none'});
+  document.body.append(ghost);
+  ghost.animate([{transform:'translateY(0) scale(1)',opacity:'.92',filter:'drop-shadow(0 0 0 #9f65ff)'},{offset:.65,transform:'translateY('+((target-rect.top)*.65)+'px) scale(1.055)',opacity:'1',filter:'drop-shadow(0 0 18px #a677ff)'},{transform:'translateY('+(target-rect.top)+'px) scale(1.02)',opacity:'0',filter:'drop-shadow(0 0 9px #ab74ff)'}],{duration:1000,easing:'cubic-bezier(.18,.72,.25,1)',fill:'forwards'});
+ }
+ source.classList.add('dm-league-rise-highlight');
+ riseTimer=setTimeout(()=>{clearRise();source.classList.remove('dm-league-rise-highlight');},2200);
+ lastRise=change;
+}
+function draw(){if(!onScreen())return;const old=root.querySelector('.dm-lig');if(old)old.outerHTML=render();if(pendingRise){const change=pendingRise;pendingRise=null;requestAnimationFrame(()=>showRankRise(change));}}
 async function load(force=false,scope=mode){reset();const state=states[scope];if(state.busy||!force&&Date.now()-state.at<60000)return;
  if(scope==='alltime'&&accessLevel()<15)return;const ticket=epoch,account=who();state.busy=true;state.error='';draw();
  try{const result=await fetch(apiURL,{method:'POST',body:JSON.stringify({islem:'seviyeLigListesi',kapsam:scope,ogrenci:account,t:localStorage.getItem('ing_token')||'',...(force?{_:Date.now()}:{})})});const d=await result.json();
   if(!result.ok||d.ok===false||!Array.isArray(d.liste)||scope==='alltime'&&d.kapsam!=='alltime')throw Error('Lig verisi alınamadı.');
   if(account!==who()||ticket!==epoch)return;
-  state.rows=d.liste;state.visualRows=scope==='weekly'?await dmVirtualLeagueRows(d.liste):[];state.loaded=true;state.at=Date.now();
+  state.rows=d.liste;state.visualRows=scope==='weekly'?await dmVirtualLeagueRows(d.liste):[];if(account!==who()||ticket!==epoch)return;state.loaded=true;state.at=Date.now();if(scope==='weekly')captureRankRise(account);
  }catch(e){if(account===who()&&ticket===epoch)state.error=String(e.message||'Güncellenemedi');}
  finally{if(account===who()&&ticket===epoch){state.busy=false;draw();if(scope==='weekly')root.dispatchEvent(new Event('dm:weekly-league'));}}
 }
@@ -355,13 +409,13 @@ window.maLigHtml=function(){reset();if(!states[mode].busy&&Date.now()-states[mod
 root.addEventListener('click',e=>{
  const b=e.target.closest('[data-lig-mode],[data-lig-code],[data-lig-person],[data-lig-back],[data-lig-more],[data-lig-retry]');if(!b)return;
  if(b.hasAttribute('data-lig-back'))return window.maSekmeSec?.('hub');
- if(b.hasAttribute('data-lig-person')){if(b.hasAttribute('data-virtual-rival')){const bot=states.weekly.visualRows.find(p=>p.is_virtual&&p.name===b.dataset.ligPerson);if(bot)void openVirtualDirect(bot);return;}return window.maAkisKisiAc?.(b.dataset.ligPerson);}
+ if(b.hasAttribute('data-lig-person')){if(b.closest('.dm-lig-my-place')&&lastRise&&lastRise.account===norm(who())&&lastRise.week===weekStamp()){showRankRise(lastRise);return;}if(b.hasAttribute('data-virtual-rival')){const bot=states.weekly.visualRows.find(p=>p.is_virtual&&p.name===b.dataset.ligPerson);if(bot)void openVirtualDirect(bot);return;}return window.maAkisKisiAc?.(b.dataset.ligPerson);}
  if(b.hasAttribute('data-lig-mode')){if(b.dataset.ligMode==='alltime'&&accessLevel()<15){window.yoToast?.('🔒 Efsaneler Ligi 15. seviyede açılır.');return;}mode=b.dataset.ligMode;limit=30;draw();void load();return;}
  if(b.hasAttribute('data-lig-code')){const k=b.dataset.ligCode;if(accessLevel()<leagues[k].level)return;selected=k;limit=30;draw();return;}
  if(b.hasAttribute('data-lig-more')){limit+=30;draw();return;}
  if(b.hasAttribute('data-lig-retry'))void load(true);
 });
-document.addEventListener('dm:login',()=>{owner='';reset();});
+document.addEventListener('dm:login',()=>{clearRise();pendingRise=null;lastRise=null;owner='';reset();});
 document.addEventListener('dm:progression-status',()=>{if(onScreen())draw();});
 document.addEventListener('dm:state',()=>{for(const state of Object.values(states))state.at=0;if(onScreen())void load();});
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&onScreen())void load();});
