@@ -22,13 +22,17 @@ function play({isCurrent=()=>true,onExit=()=>{},sound=true,mode='practice',gain=
  root.setAttribute('aria-label',combo?count+' doğru üst üste! Kombo, artı '+gain+' enerji.':'Haydi pratik zamanı!');
  root.innerHTML='<div class="rf-shade" aria-hidden="true"></div><div class="rf-stage"><div class="rf-light" aria-hidden="true"></div><div class="rf-pool" aria-hidden="true"></div><div class="rf-actor" aria-hidden="true">'+markup()+'</div>'+(combo?'<div class="rf-particles" aria-hidden="true">'+[[-96,-74,-25],[83,-60,15],[-116,7,-9],[109,23,23],[-64,-113,12],[49,-121,-20]].map(([x,y,r])=>'<b style="--x:'+x+'px;--y:'+y+'px;--r:'+r+'deg">✦</b>').join('')+'</div><div class="rf-label" aria-hidden="true"><div class="rf-combo-word">KOMBO!</div><div class="rf-message">'+count+' doğru üst üste!</div><div class="rf-reward">+'+gain+' enerji</div></div>':'<div class="rf-speech" aria-hidden="true">Haydi pratik zamanı!</div>')+'</div>';
  document.body.append(root);host?.classList.add('qc-combo');
- let resolve;const promise=new Promise(r=>resolve=r),state={promise,root,combo,sound,voices:new Set(),frame:0,elapsed:0,last:performance.now(),exited:false,finish(complete){if(run!==state)return;cancelAnimationFrame(state.frame);document.removeEventListener('visibilitychange',visibility);document.removeEventListener('keydown',key);for(const voice of state.voices)try{voice.stop();}catch{}state.voices.clear();root.remove();host?.classList.remove('qc-combo');run=null;resolve(complete);}};run=state;
+ let resolve;const promise=new Promise(r=>resolve=r),state={promise,root,combo,sound,voices:new Set(),frame:0,elapsed:0,last:performance.now(),exited:false,finish(complete){if(run!==state)return;cancelAnimationFrame(state.frame);root.removeEventListener('animationend',animationEnd);document.removeEventListener('visibilitychange',visibility);document.removeEventListener('keydown',key);for(const voice of state.voices)try{voice.stop();}catch{}state.voices.clear();root.remove();host?.classList.remove('qc-combo');run=null;resolve(complete);}};run=state;
  const key=e=>{if(e.key==='Escape'){e.preventDefault();e.stopPropagation();state.finish(false);onExit();}};
  const visibility=()=>{root.classList.toggle('is-paused',document.hidden);state.last=performance.now();if(!isCurrent())state.finish(false);};
+ // The visible actor's CSS completion is authoritative, including on slow devices.
+ const actor=root.querySelector('.rf-actor');
+ const animationEnd=e=>{if(e.target!==actor||!['rf-flip','rf-arc','rf-reduced'].includes(e.animationName)||document.hidden)return;state.finish(isCurrent());};
+ root.addEventListener('animationend',animationEnd);
  document.addEventListener('keydown',key);document.addEventListener('visibilitychange',visibility);visibility();
  // Starting the CSS animation after mounting prevents a blank first frame on WebKit.
  void root.offsetWidth;root.classList.add('is-playing');entrySound(state);
- function tick(now){if(run!==state)return;if(!isCurrent()){state.finish(false);return;}const delta=Math.min(50,Math.max(0,now-state.last));state.last=now;if(!document.hidden)state.elapsed+=delta;if(muted())for(const voice of state.voices)try{voice.stop();}catch{}
+ function tick(now){if(run!==state)return;if(!isCurrent()){state.finish(false);return;}const delta=Math.max(0,now-state.last);state.last=now;if(!document.hidden)state.elapsed+=delta;if(muted())for(const voice of state.voices)try{voice.stop();}catch{}
   if(!combo&&!state.exited&&state.elapsed>=2700){state.exited=true;tone(state,1700,0,.32,350,.035);}
   if(state.elapsed>=duration){state.finish(true);return;}state.frame=requestAnimationFrame(tick);
  }

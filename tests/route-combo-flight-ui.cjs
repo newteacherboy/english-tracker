@@ -22,13 +22,14 @@ const CORE=require('../ingilizce/learning-core.js'),DATA=require('../ingilizce/t
   }
   await page.waitForSelector('.dm-route-flight-combo');assert.equal(correct,5);assert.match(await page.locator('[data-ml-energy]').textContent(),/^21/);
   const full=await page.locator('.dm-route-flight-combo').boundingBox();assert.equal(full.width,width);assert.equal(full.height,height);
+  await page.evaluate(()=>{window.comboEndAt=0;window.comboNextAt=0;const before=Number(document.querySelector('.ml-progress progress').value);const observer=new MutationObserver(()=>{if(window.comboEndAt&&Number(document.querySelector('.ml-progress progress')?.value)>before){window.comboNextAt=performance.now();observer.disconnect();}});observer.observe(document.body,{childList:true,subtree:true,attributes:true});document.querySelector('.rf-actor').addEventListener('animationend',e=>{if(e.target===e.currentTarget&&e.animationName==='rf-flip')window.comboEndAt=performance.now();});});
   await page.waitForTimeout(1650);
   const actor=await page.locator('.rf-actor').evaluate(e=>({width:e.offsetWidth,height:e.offsetHeight})),label=await page.locator('.rf-label').boundingBox();assert(actor.width===150&&actor.height===165);assert(label.x>=0&&label.x+label.width<=width+1);assert.match(await page.locator('.rf-reward').textContent(),/\+1 enerji/);
   assert.equal(await page.locator('#dmRoutePracticeFlight').evaluate(e=>getComputedStyle(e).pointerEvents),'none');assert.equal(await page.locator('#dmRoutePracticeFlight').getAttribute('aria-modal'),null);
   assert.equal(await page.evaluate(()=>tones.length),5);assert.equal(await page.evaluate(()=>vibrations.length),0);
   assert.equal(await page.locator('.rf-actor svg .p-eyeHappy').count(),1);
   await page.screenshot({path:`/tmp/route-papi-flight/${kind}-${width}-combo.png`});const requestCount=requests.length;
-  await page.waitForFunction(()=>!document.getElementById('dmRoutePracticeFlight'));assert.equal(requests.length,requestCount,'presentation must not write energy or answers');assert.equal(correct,5);
+  await page.waitForFunction(()=>!document.getElementById('dmRoutePracticeFlight'));await page.waitForFunction(()=>window.comboNextAt>0);const gap=await page.evaluate(()=>comboNextAt-comboEndAt);assert(gap<250,'next question must appear immediately after combo: '+gap+'ms');assert.equal(requests.length,requestCount,'presentation must not write energy or answers');assert.equal(correct,5);
   await page.evaluate(()=>dmThematicLearning.close(true));await open();assert.equal(await page.locator('.dm-route-flight-combo').count(),0,'same acknowledged reward cannot replay');assert.deepEqual(errors,[]);await page.close();console.log('PASS combo',kind,width,height);
  }
  }finally{await browser.close();}})().catch(e=>{console.error(e);process.exitCode=1});
