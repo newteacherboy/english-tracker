@@ -1,6 +1,8 @@
 /* Approved concept 1: Lila & Altın. Only Parkur owns the animated streak entry. */
 body .dm-daily-streak-button[hidden]{display:none!important}
-/* The live route theme has more specific wallet rules. Keep all five controls
+@layer bilgiIslands {
+/* Share the live route layer: layered important declarations outrank unlayered ones.
+   The live route theme has more specific wallet rules. Keep all five controls
    on one explicit grid row, including when theme CSS is loaded later. */
 body #tab-dunya#tab-dunya .dm-unified-wallet.dm-papi-wallet.dm-has-daily-streak{display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr))!important;gap:3px!important;align-items:center!important;box-sizing:border-box!important;min-width:0!important}
 body #tab-dunya#tab-dunya .dm-has-daily-streak>.dm-pw-papi{display:none!important}
@@ -15,6 +17,7 @@ body #tab-dunya#tab-dunya .dm-daily-streak-button b{justify-self:end;font:900 12
 body #tab-dunya#tab-dunya .dm-daily-streak-button small{justify-self:start}
 body #tab-dunya#tab-dunya .dm-daily-flame{grid-column:1/-1;grid-row:1;justify-self:center;align-self:center;font-size:20px;line-height:20px;filter:drop-shadow(0 2px 2px #e8912160);animation:dgFlameWarmth 3s ease-in-out infinite}
 .dm-daily-streak-button small{font:900 10px/1 Nunito,system-ui,sans-serif}
+}
 .dm-daily-ready{animation:dgButtonPulse 2.4s ease-in-out infinite}
 @keyframes dgButtonPulse{0%,100%{filter:drop-shadow(0 0 1px #ffce54)}50%{filter:drop-shadow(0 0 6px #ffc93e)}}
 @keyframes dgFlameWarmth{50%{transform:rotate(-5deg) scale(1.08)}}
