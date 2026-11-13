@@ -10,7 +10,6 @@ const legacyStart=source.indexOf('  const KART = ['),legacyEnd=source.indexOf(' 
 assert(legacyStart>0&&legacyEnd>legacyStart);
 const legacy=source.slice(legacyStart,legacyEnd);
 const premiumGames=[
- ['rallyActivity','ralliOyunAc'],
  ['premiumWordMatchActivity','premiumKelimeEslestirmeAc'],
  ['premiumCloudFlightActivity','premiumBulutUcusuAc'],
  ['premiumWordBlocksActivity','premiumKelimeBloklariAc'],
