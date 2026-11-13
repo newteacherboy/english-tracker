@@ -67,9 +67,9 @@ const feed=['Elif','Ege','Zeynep','Cemre','Fixture'].map((ogr,i)=>({k:'event'+i,
   await page.evaluate(()=>dmProgression.refresh(true));
   await page.evaluate(()=>meduAkisAc());await page.waitForSelector('.fr-leader-1');
   assert.equal(await page.locator('[data-friend-action="vitrin"],#maSegment [data-s="vitrin"]').count(),0);
-  const keep=await page.locator('#maEkran').innerHTML();
+  await page.evaluate(()=>window.cardFriendsNode=document.querySelector('#maEkran').firstElementChild);
   await page.locator('.fr-leader-1').click();await page.waitForSelector('#dmUserCard .uc-character svg');
-  assert.equal(await page.locator('#maEkran').innerHTML(),keep,'opening a user never redraws Friends');
+  assert(await page.evaluate(()=>document.querySelector('#maEkran').firstElementChild===window.cardFriendsNode),'opening a user keeps the same Friends content node');
   assert.equal(await page.locator('#dmUserCard [data-user-action]').count(),6);
   assert.match(await page.locator('#dmUserCard .uc-stats').innerText(),/Süper Lig[\s\S]*12 gün seri[\s\S]*18. seviye/);
   assert.equal(await page.locator('#dmUserCard .uc-character svg').getAttribute('viewBox'),'0 0 200 390');

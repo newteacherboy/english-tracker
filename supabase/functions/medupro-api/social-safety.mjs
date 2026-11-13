@@ -10,7 +10,7 @@ export function socialFeature(op){
  if(['hazirMesajGonder'].includes(op))return 'messages';
  if(['enerjiGonder','aksesuarHediye'].includes(op))return 'gifts';
  if(/^oyunEslesme|^duello/.test(op))return 'duels';
- if(['akisTumu','sosyalOgrencilerGetir','akisOlaylariGetir','akisOlayToggle','aktifDurum','takipDavetListesi','bildirimGonder','duelloDavetGonder','seviyeLigListesi'].includes(op))return 'social';
+ if(['kullaniciBilgiKarti','akisTumu','sosyalOgrencilerGetir','akisOlaylariGetir','akisOlayToggle','aktifDurum','takipDavetListesi','bildirimGonder','duelloDavetGonder','seviyeLigListesi'].includes(op))return 'social';
  return null;
 }
 async function hashGuardianPin(pin){
