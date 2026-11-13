@@ -1,22 +1,21 @@
-/* [11 Kas 2026] Arkadaşlar · Claude Design "Arkadaşlar A": Düello ve Davet et büyük, parlayan; Arkadaşlarım/Vitrinim
-   küçük ikili; Bugünkü Durumun'daki Premium düğmesi parlıyor. Tıklama hedefleri friends-ui.js'te aynen. */
+/* [11 Kas 2026] Arkadaşlar · Claude Design "Arkadaşlar A": Düello ve Davet et yan yana, parlayan; Arkadaşlarım alt sırada; Bugünkü Durumun'daki Premium düğmesi parlıyor. Tıklama hedefleri friends-ui.js'te aynen. */
 html body #tab-meduakis .fr-tiles.fr-tiles-v2{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:12px 10px!important}
 html body #tab-meduakis .fr-tiles.fr-tiles-v2 .fr-tile{height:auto!important;min-height:0!important}
-html body #tab-meduakis .fr-tiles.fr-tiles-v2 :is(.fr-tile-duel,.fr-tile-invite){grid-column:1/-1;display:flex!important;flex-direction:row!important;align-items:center!important;justify-content:flex-start!important;gap:10px!important;padding:10px 12px 10px 8px!important;border:0!important;border-radius:24px!important;text-align:left!important;overflow:hidden!important;position:relative!important}
+html body #tab-meduakis .fr-tiles.fr-tiles-v2 :is(.fr-tile-duel,.fr-tile-invite){grid-column:auto;display:grid!important;grid-template-columns:44px minmax(0,1fr)!important;grid-template-rows:1fr auto!important;align-items:center!important;gap:6px!important;min-height:118px!important;padding:10px 9px!important;border:0!important;border-radius:24px!important;text-align:left!important;overflow:hidden!important;position:relative!important}
 html body #tab-meduakis .fr-tiles.fr-tiles-v2 .fr-tile-duel{background:#3E6BFF!important;color:#fff!important;animation:frv2Blue 2s ease-in-out infinite}
 html body #tab-meduakis .fr-tiles.fr-tiles-v2 .fr-tile-invite{background:#2DB66B!important;color:#fff!important;animation:frv2Green 2s ease-in-out infinite}
 html body #tab-meduakis .fr-tiles.fr-tiles-v2 :is(.fr-tile-duel,.fr-tile-invite)::after{content:"";position:absolute;top:-30%;left:-60%;width:36%;height:160%;background:linear-gradient(100deg,#fff0,#fffb,#fff0);transform:rotate(16deg);animation:frv2Shine 2.8s ease-in-out infinite;pointer-events:none}
-html body #tab-meduakis .fr-tiles.fr-tiles-v2 :is(.fr-tile-duel,.fr-tile-invite)>img{width:66px!important;height:66px!important;flex:none!important;object-fit:contain!important;margin:0!important}
+html body #tab-meduakis .fr-tiles.fr-tiles-v2 :is(.fr-tile-duel,.fr-tile-invite)>img{grid-column:1;grid-row:1;width:44px!important;height:52px!important;flex:none!important;object-fit:contain!important;margin:0!important}
 html body #tab-meduakis .fr-tiles.fr-tiles-v2 .fr-tile-duel>img{animation:frv2Wiggle 2.6s ease-in-out infinite;transform-origin:50% 90%}
 html body #tab-meduakis .fr-tiles.fr-tiles-v2 .fr-tile-invite>img{animation:frv2Bob 2.4s ease-in-out infinite}
-html body #tab-meduakis .fr-tiles.fr-tiles-v2 .fr-tile-copy{flex:1;min-width:0;display:grid;gap:2px;position:relative;z-index:1;text-align:left;justify-items:start}
-html body #tab-meduakis .fr-tiles.fr-tiles-v2 .fr-tile-copy b{font:900 21px/1.1 Nunito,system-ui,sans-serif!important;color:#fff!important}
-html body #tab-meduakis .fr-tiles.fr-tiles-v2 .fr-tile-copy small{font:800 12px/1.25 Nunito,system-ui,sans-serif!important;color:#EAF0FF!important;white-space:normal!important}
-html body #tab-meduakis .fr-tiles.fr-tiles-v2 .fr-tile-cta{flex:none;position:relative;z-index:1;padding:9px 13px;border-radius:14px;font:900 14px/1 Nunito,system-ui,sans-serif}
+html body #tab-meduakis .fr-tiles.fr-tiles-v2 .fr-tile-copy{grid-column:2;grid-row:1;flex:1;min-width:0;display:grid;gap:2px;position:relative;z-index:1;text-align:left;justify-items:start}
+html body #tab-meduakis .fr-tiles.fr-tiles-v2 .fr-tile-copy b{font:900 17px/1.1 Nunito,system-ui,sans-serif!important;color:#fff!important}
+html body #tab-meduakis .fr-tiles.fr-tiles-v2 .fr-tile-copy small{font:800 10.5px/1.25 Nunito,system-ui,sans-serif!important;color:#EAF0FF!important;white-space:normal!important}
+html body #tab-meduakis .fr-tiles.fr-tiles-v2 .fr-tile-cta{grid-column:1/-1;grid-row:2;justify-self:end;flex:none;position:relative;z-index:1;padding:7px 12px;border-radius:12px;font:900 12px/1 Nunito,system-ui,sans-serif}
 html body #tab-meduakis .fr-tiles.fr-tiles-v2 .fr-tile-duel .fr-tile-cta{background:#FFC531;color:#3A2400;box-shadow:0 4px 0 #D99A00}
 html body #tab-meduakis .fr-tiles.fr-tiles-v2 .fr-tile-invite .fr-tile-cta{background:#fff;color:#148A57;box-shadow:0 4px 0 #B8EBD2}
-html body #tab-meduakis .fr-tiles.fr-tiles-v2 .fr-tile-spark{position:absolute;left:64px;top:8px;font-style:normal;color:#FFC531;font-size:13px;animation:frv2Twinkle 1.8s ease-in-out infinite;z-index:1}
-html body #tab-meduakis .fr-tiles.fr-tiles-v2 .fr-duel-dot{position:absolute!important;left:62px;top:12px;z-index:2}
+html body #tab-meduakis .fr-tiles.fr-tiles-v2 .fr-tile-spark{position:absolute;left:42px;top:8px;font-style:normal;color:#FFC531;font-size:13px;animation:frv2Twinkle 1.8s ease-in-out infinite;z-index:1}
+html body #tab-meduakis .fr-tiles.fr-tiles-v2 .fr-duel-dot{position:absolute!important;left:38px;top:10px;z-index:2}
 html body #tab-meduakis .fr-tiles.fr-tiles-v2 :is(.fr-tile-people,.fr-tile-showcase){display:flex!important;flex-direction:row!important;align-items:center!important;justify-content:flex-start!important;gap:8px!important;padding:8px 10px!important;border:0!important;border-radius:18px!important;box-shadow:0 4px 0 #C9DDF2!important}
 html body #tab-meduakis .fr-tiles.fr-tiles-v2 .fr-tile-people{background:#fff!important;color:#0F2747!important}
 html body #tab-meduakis .fr-tiles.fr-tiles-v2 .fr-tile-showcase{background:#FFF4D6!important;box-shadow:0 4px 0 #F2D98A!important;color:#8A5A00!important}
