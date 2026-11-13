@@ -1,0 +1,18 @@
+/* Rota başlığının altında; parkur araçları kartın altından başlar. */
+body #tab-dunya .dm-notification-card{box-sizing:border-box;display:grid;grid-template-columns:48px minmax(0,1fr) auto;align-items:center;gap:9px;margin:10px 0 2px;padding:11px 12px;border:1px solid #cbdff4;border-bottom-width:3px;border-radius:20px;background:#fff;color:#0f2747;box-shadow:0 4px 12px #2863a00c;font-family:Nunito,system-ui,sans-serif;text-align:left}
+body #tab-dunya .dm-npc-art{position:relative;width:48px;height:52px;align-self:center}
+body #tab-dunya .dm-npc-art img{display:block;width:42px;height:52px;object-fit:contain}
+body #tab-dunya .dm-npc-art span{position:absolute;right:-2px;bottom:0;font-size:25px;line-height:1;filter:drop-shadow(0 2px 1px #d5a13b44)}
+body #tab-dunya .dm-npc-copy{min-width:0}
+body #tab-dunya .dm-npc-copy strong{display:block;font-size:15px;font-weight:900;line-height:1.25;color:inherit}
+body #tab-dunya .dm-npc-copy p{margin:4px 0 0!important;font-size:12px!important;line-height:1.35;color:#5d7797!important}
+body #tab-dunya .dm-notification-card .dm-npc-allow{box-sizing:border-box;min-width:76px;min-height:44px;padding:8px 12px!important;border:0;border-bottom:4px solid #1567c6;border-radius:15px;background:#238cf3;color:#fff;-webkit-text-fill-color:#fff;font:900 14px/1.2 Nunito,system-ui,sans-serif;white-space:nowrap;cursor:pointer;box-shadow:0 3px 7px #287cce22;touch-action:manipulation}
+body #tab-dunya .dm-npc-allow:active{transform:translateY(2px)}
+body #tab-dunya .dm-npc-allow:focus-visible{outline:3px solid #ffbf24;outline-offset:3px}
+body #tab-dunya .dm-npc-allow:disabled{opacity:.65;cursor:wait}
+body #tab-dunya .dm-notification-card .dm-npc-help{grid-column:1/-1;margin:0!important;padding:9px 10px;border-radius:11px;background:#edf5ff;color:#345d88!important;font-size:12px!important;line-height:1.45}
+body #tab-dunya .dm-npc-help[hidden]{display:none!important}
+html[data-dm-theme="night"] body #tab-dunya .dm-notification-card{background:#233653;border-color:#405777;color:#edf5ff;box-shadow:none}
+html[data-dm-theme="night"] body #tab-dunya .dm-npc-copy p{color:#bed0e6!important}
+html[data-dm-theme="night"] body #tab-dunya .dm-notification-card .dm-npc-help{background:#162945;color:#c3dcfa!important}
+@media(max-width:350px){body #tab-dunya .dm-notification-card{grid-template-columns:36px minmax(0,1fr) auto;gap:7px;padding:9px 8px;border-radius:17px}body #tab-dunya .dm-npc-art{width:36px;height:45px}body #tab-dunya .dm-npc-art img{width:34px;height:45px}body #tab-dunya .dm-npc-art span{font-size:20px}body #tab-dunya .dm-npc-copy strong{font-size:13px}body #tab-dunya .dm-notification-card .dm-npc-allow{min-width:67px;padding:8px!important;font-size:13px}}
