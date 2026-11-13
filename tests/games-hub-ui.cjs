@@ -29,7 +29,7 @@ for(const [width,height] of [[320,640],[390,844],[768,844],[1180,844]]){
  await search.fill('');
  await page.locator('[data-gg-main=premium]').click();
  await visibleCards().filter({hasText:'Papizzle'}).click();
- assert(await page.evaluate(()=>calls.includes('papizzle')));
+ await page.waitForFunction(()=>calls.includes('papizzle'));
  await page.locator('[data-gg-main=free]').click();
  await page.locator('#ggSoloTab').click();
  assert.equal(await visibleCards().count(),5);
