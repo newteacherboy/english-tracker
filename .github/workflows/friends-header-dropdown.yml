@@ -1,0 +1,26 @@
+name: Friends header dropdown
+on:
+  pull_request:
+    paths: ['ingilizce/friends-ui.*', 'tests/friends-header-dropdown-ui.cjs', '.github/workflows/friends-header-dropdown.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: node --check ingilizce/friends-ui.js
+      - run: npm install --prefix /tmp/friends-header-qa --no-audit --no-fund playwright@1.58.2 jsdom@26.1.0
+      - run: /tmp/friends-header-qa/node_modules/.bin/playwright install --with-deps chromium
+      - run: NODE_PATH=/tmp/friends-header-qa/node_modules node --test tests/user-card-ui.test.cjs tests/friends-club-model.test.cjs
+      - run: NODE_PATH=/tmp/friends-header-qa/node_modules node tests/friends-header-dropdown-ui.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: friends-header-dropdown
+          path: /tmp/friends-dropdown-qa/*.png
