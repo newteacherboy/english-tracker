@@ -290,8 +290,10 @@ async function submit(answer,clicked,{guided=false}={}){
   else{feedback('Cevabı öğrendin. Sonraki soruya geçiliyor…',true);}
   saveAnsweredSnapshot(answeredCursor);
   const nextCursor=session.cursor;
-  // 5'li kombo animasyonu oynuyorsa bitince sıradaki soruya kendiliğinden geçilir.
-  setTimeout(async()=>{try{await comboRewardPromise;}catch{}if(ticket===epoch&&modal&&identity()===at&&session.cursor===nextCursor)render();},guided?320:650);
+  const renderNext=()=>{if(ticket===epoch&&modal&&identity()===at&&session.cursor===nextCursor)render();};
+  // A combo already provides feedback time: advance in the same promise turn it ends.
+  if(r.comboGain>0&&!r.alreadyCompleted&&!r.replay){try{await comboRewardPromise;}catch{}renderNext();}
+  else setTimeout(renderNext,guided?320:650);
  }catch(e){
   if(e.energyEmpty){busy=false;modal?.removeAttribute('aria-busy');wallet(e);render();feedback(e.message);window.DijiMeduPapiFeedback?.energy();}
   else await reconcileLesson(ticket,at,e);

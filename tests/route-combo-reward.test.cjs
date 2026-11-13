@@ -27,3 +27,21 @@ test('the tenth school combo finishes its flight before the lesson result closes
  assert.equal(flights,1);assert.equal(finish,0);assert(w.document.getElementById('dmStoryLesson'));release(true);await new Promise(r=>setImmediate(r));assert.equal(finish,1);assert(!w.document.getElementById('dmStoryLesson'));
  }finally{w.close();}
 });
+for(const kind of ['learning','school'])test(kind+': next question renders in the same turn the combo completes, with no feedback timer',async()=>{
+ const dom=new JSDOM('<body></body>',{url:'https://route.test/',runScripts:'outside-only',pretendToBeVisual:true}),w=dom.window;
+ let cursor=kind==='learning'?4:2,version=cursor,count=0,release,feedbackTimers=0;
+ try{
+ const originalTimer=w.setTimeout.bind(w);w.setTimeout=(f,ms,...args)=>{if(ms===650){feedbackTimers++;return 0;}return originalTimer(f,ms,...args);};
+ w.DMLearningCore=CORE;w.DMThematicV8Candidate=V8;w.requestAnimationFrame=()=>1;w.cancelAnimationFrame=()=>{};w.matchMedia=()=>({matches:false});w.apiURL='https://route.test/functions/v1/diji-api';w.aktifOgrenciAdi='Ada';w.localStorage.setItem('ing_token','one');
+ w.dmRoutePracticeFlight={prepare(){},cancel(){}};w.dmComboSteps={play:()=>new Promise(r=>release=r)};
+ const words=[{en:'book',tr:'kitap'},{en:'good morning',tr:'günaydın'},{en:'classroom',tr:'derslik'},{en:'Friday',tr:'Cuma'}],tasks=kind==='learning'?V8.build(DATA.chapters[0],null):SCHOOL.build(words,words,220151);
+ const response=()=>({ok:true,chapter:kind==='learning'?1000:220151,deckVersion:kind==='learning'?8:9,cursor,version,accepted:true,comboGain:count?1:0,wallet:{energy:23,energyMax:25,gold:0,combo:5}});
+ const request=async(action)=>{if(action==='advance'){cursor++;version++;count++;}return response();};
+ w.fetch=async(url,opt)=>({ok:true,json:async()=>opt?.body?request(JSON.parse(opt.body).action):DATA});w.eval(fs.readFileSync('ingilizce/thematic-learning.js','utf8'));
+ if(kind==='learning')await w.dmThematicLearning.open(1000,{intro:true});else await w.dmThematicLearning.openSchool({chapter:{id:220151,routeNumber:1,cefr:'2. Sınıf',theme:'1. Ünite',title:'Okul Yolum',cards:words,examples:[],schoolTasks:tasks},session:response(),request});
+ w.document.querySelector('.ml-entry-start').click();
+ const before=Number(w.document.querySelector('.ml-progress progress').value);w.document.querySelector('[data-answer]').click();for(let i=0;i<5;i++)await new Promise(r=>setImmediate(r));
+ assert.equal(typeof release,'function');assert.equal(Number(w.document.querySelector('.ml-progress progress').value),before,'keep current question while Papi is visible');release(true);for(let i=0;i<5;i++)await new Promise(r=>setImmediate(r));
+ assert.equal(Number(w.document.querySelector('.ml-progress progress').value),before+1,'render immediately after Papi exits');assert.equal(feedbackTimers,0);assert.equal(count,1,'advance presentation without another answer request');
+ }finally{w.close();}
+});
