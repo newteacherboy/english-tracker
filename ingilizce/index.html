@@ -155,9 +155,9 @@ window.supabaseClient=supabaseClient;
 <link rel="preload" as="style" href="portal-secondary-extracted.css?v=20261015-1">
 <link rel="preload" as="script" href="app-js/i01-raporlarimac.js?v=f7d800c9ff">
 <link rel="preload" as="script" href="app-js/i02-jokerturubaslat.js?v=41524e631a">
-<link rel="preload" as="script" href="app-js/i03-veriler.js?v=7a23fdc072">
+<link rel="preload" as="script" href="app-js/i03-veriler.js?v=99669724cc">
 <link rel="preload" as="script" href="app-js/i04-meduakisac.js?v=16c9af410e">
-<link rel="preload" as="script" href="app-js/i05-hedefyuzu.js?v=5e7c151c6a">
+<link rel="preload" as="script" href="app-js/i05-hedefyuzu.js?v=1eb1d0d812">
 <link rel="preload" as="script" href="app-js/i06-renk-yardimcilari.js?v=c9adbca8db">
 <link rel="preload" as="script" href="app-js/i07-gonder.js?v=1ce2b7055b">
 <link rel="preload" as="script" href="app-js/i08-rgb.js?v=1607b2c4f7">
@@ -173,7 +173,7 @@ window.supabaseClient=supabaseClient;
 <link rel="preload" as="style" href="notice-surface.css?v=20261026-energy-entry-1">
 <link rel="preload" as="script" href="notice-surface.js?v=20261112-kilit">
 <link rel="preload" as="script" href="papi-onboarding.js?v=20261013-member-1">
-<link rel="preload" as="script" href="app-js/i14-sar.js?v=b3e3ccdf9a">
+<link rel="preload" as="script" href="app-js/i14-sar.js?v=761417d823">
 <link rel="preload" as="script" href="app-js/i15-duellolargetir.js?v=9c2284c154">
 <link rel="preload" as="script" href="app-js/i16-eslestirme-oyunu.js?v=13e70b6b6e">
 <link rel="preload" as="script" href="app-js/i17-kelime-treni.js?v=f250850aa8">
@@ -278,7 +278,7 @@ window.supabaseClient=supabaseClient;
 <link rel="preload" as="script" href="bag-inventory.js?v=20261113-no-jokers">
 <link rel="preload" as="script" href="storefront.js?v=20261113-energy-350-600-850">
 <link rel="preload" as="style" href="dm-satis.css?v=20261114-trial-1">
-<link rel="preload" as="script" href="dm-satis.js?v=20261114-trial-ios-2">
+<link rel="preload" as="script" href="dm-satis.js?v=6216a7c02d">
 <link rel="preload" as="script" href="dm-uygulama.js?v=20261110-1">
 <link rel="preload" as="style" href="selected-play.css?v=20261011-simple-resume">
 <link rel="preload" as="script" href="selected-play.js?v=20261019-step-back-1">
@@ -319,8 +319,8 @@ window.supabaseClient=supabaseClient;
 <link rel="preload" as="script" href="saved-sessions.js?v=20261025-device-fit-1">
 <link rel="preload" as="script" href="account-switch.js?v=20261025-device-fit-1">
 <link rel="preload" as="script" href="demo-account.js?v=20261020-open">
-<link rel="preload" as="style" href="papi-chat.css?v=2ea00d3520">
-<link rel="preload" as="script" href="papi-chat.js?v=cb8a1ebd1d">
+<link rel="preload" as="style" href="papi-chat.css?v=7955814255">
+<link rel="preload" as="script" href="papi-chat.js?v=7fa0ca49a3">
 <link rel="preload" as="style" href="approved-game-boards.css?v=20261025-device-fit-1">
 <link rel="preload" as="script" href="approved-game-boards.js?v=20261113-no-jokers">
 <link rel="preload" as="style" href="play-navigation.css?v=20261018-1">
@@ -2988,7 +2988,8 @@ document.getElementById('dmBootRetry').onclick=()=>location.reload();
             <div id="yoGovde"></div>
           </div>
         </div>
-        <script src="app-js/i03-veriler.js?v=7a23fdc072"></script>
+        <script src="papi-dialogues.js?v=d1fab2766e"></script>
+<script src="app-js/i03-veriler.js?v=99669724cc"></script>
         <script>
         /* ---------- 1) İKİZ AYNA BÜYÜSÜ (baştan, sağlam sürüm) ---------- */
         function baHafizaGoster(k) {
@@ -3322,6 +3323,7 @@ function sohbetEkraniAc() {
   if (typeof sohbetListeCiz === 'function') sohbetListeCiz();
 }
 function sohbetEkraniKapat() {
+  if (typeof sh !== 'undefined') sh = null;
   if (typeof sohbetMikDur === 'function') sohbetMikDur();
   if ('speechSynthesis' in window) speechSynthesis.cancel();
   document.getElementById('tab-sohbet').classList.remove('active');
@@ -3529,7 +3531,7 @@ setInterval(async () => {
 <div class="yb-fw" id="ybEnerji" role="button" tabindex="0" aria-label="Enerji ve altın"><div class="yb-ic" id="ybEnerjiIc"></div></div>
 <div class="yb-fw" id="ybArac" role="button" tabindex="0" aria-label="Araçlar: Günlük hedef, Yardım, AI Koç"><div class="yb-ic" id="ybAracIc"></div><div class="yb-nokta"></div><div class="yb-ipucu"></div></div>
 <div class="yb-perde" id="ybPerde" role="dialog" aria-modal="true" aria-label="Seçenekler"><div class="yb-perde-ic" id="ybPerdeIc"></div></div>
-<script src="app-js/i05-hedefyuzu.js?v=5e7c151c6a"></script>
+<script src="app-js/i05-hedefyuzu.js?v=1eb1d0d812"></script>
 <style>
 .ka-av { background:none !important; overflow:hidden; padding:0 !important; }
 .ka-av svg { width:100%; height:100%; display:block; }
@@ -4076,7 +4078,6 @@ const seriCarpani = () => seri() >= 7 ? 2 : (seri() >= 3 ? 1.5 : 1);
   }
   sar('baSeviyeBaslat', a => ({ ikon: '🧙', renk: 'linear-gradient(145deg,#c4a1ff,#7c3aed)', ad: `Büyü Akademisi · ${a[0]}. seviye`, ekstra: [`🏆 Seviye sonu rütbe ilerlemesi`] }));
   sar('kpSeviyeBaslat', a => ({ ikon: '🔤', renk: 'linear-gradient(145deg,#ffc93c,#ff5d8f)', ad: `Kelime Modu · ${a[0]}. seviye`, ekstra: [`🎤 Doğru telaffuz = seviye yıldızı`] }));
-  sar('sohbetBasla', a => ({ ikon: '🦜', renk: 'linear-gradient(145deg,#6bcb77,#4d96ff)', ad: `Papağanla sohbet · ${Number(a[0]) + 1}. diyalog`, ekstra: [`🌟 Sohbet sonunda 3 yıldıza kadar`] }));
   sar('seviyeDisLinkAc', a => ({ ikon: '🃏', renk: 'linear-gradient(145deg,#38bdf8,#0ea5e9)', ad: `Kelime Kartları · ${a[1]}. ünite, ${a[2]}. seviye`, ekstra: [`🏝️ Adayı bitir, yeni ada açılsın`] }));
 
 
@@ -4902,7 +4903,7 @@ body.kk-acik .seviye-harita-content { height:auto !important; max-height:100% !i
 .so-zar.donuyor { animation:soZar .12s linear infinite; }
 @keyframes soZar { 50% { transform:rotate(-2deg) scale(1.02); } }
 </style>
-<script src="app-js/i14-sar.js?v=b3e3ccdf9a"></script>
+<script src="app-js/i14-sar.js?v=761417d823"></script>
 
 <style>
 /* ============ ÇIKARTMA TASARIMI — ortak ============ */
@@ -7487,7 +7488,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <link rel="stylesheet" href="storefront.css?v=20261113-no-collection" media="print" data-dm-later>
 <script defer src="boutique-art.js?v=20261014-legend-1"></script>
 <script defer src="bag-inventory.js?v=20261113-no-jokers"></script>
-<script defer src="storefront.js?v=20261113-energy-350-600-850"></script><link rel="stylesheet" href="dm-satis.css?v=20261114-trial-1"><script defer src="dm-satis.js?v=20261114-trial-ios-2"></script><script defer src="dm-uygulama.js?v=20261110-1"></script>
+<script defer src="storefront.js?v=20261113-energy-350-600-850"></script><link rel="stylesheet" href="dm-satis.css?v=20261114-trial-1"><script defer src="dm-satis.js?v=6216a7c02d"></script><script defer src="dm-uygulama.js?v=20261110-1"></script>
 <link rel="stylesheet" href="selected-play.css?v=20261011-simple-resume"><script defer src="selected-play.js?v=20261019-step-back-1"></script><script defer src="start-spotlight.js?v=20261026-energy-entry-1"></script>
 <link rel="stylesheet" href="day-night-theme.css?v=20261106-profile-right">
 <link rel="stylesheet" href="parkur-v4.css?v=64673e1c1a">
@@ -7522,8 +7523,8 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <script defer src="saved-sessions.js?v=20261025-device-fit-1"></script>
 <script defer src="account-switch.js?v=20261025-device-fit-1"></script>
 <script defer src="demo-account.js?v=20261020-open"></script>
-<link rel="stylesheet" href="papi-chat.css?v=2ea00d3520">
-<script defer src="papi-chat.js?v=cb8a1ebd1d"></script>
+<link rel="stylesheet" href="papi-chat.css?v=7955814255">
+<script defer src="papi-chat.js?v=7fa0ca49a3"></script>
 <link rel="stylesheet" href="approved-game-boards.css?v=20261025-device-fit-1">
 <script defer src="approved-game-boards.js?v=20261113-no-jokers"></script>
 <link rel="stylesheet" href="play-navigation.css?v=20261018-1">

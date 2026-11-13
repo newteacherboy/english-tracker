@@ -84,12 +84,12 @@
   }, 1500);
 
   /* ================= 4) ENERJİ: parkur girişi 2, oyun girişi 1, her 3 soruda 1 ================= */
-  const PARKUR = { 'P:ba': 1, 'P:kp': 1, 'P:sh': 1, 'P:kk': 1 };
+  const PARKUR = { 'P:ba': 1, 'P:kp': 1, 'P:kk': 1 };
   function baglam() {
     if (aktif('tab-derscalis')) return '';
     if (aktif('tab-buyuakademisi')) return 'P:ba';
     if (aktif('tab-konusmapratigi')) return 'P:kp';
-    if (aktif('tab-sohbet')) return 'P:sh';
+    if (aktif('tab-sohbet')) return ''; // Premium Pro dialogues never charge energy.
     if ([...document.querySelectorAll('.seviye-harita-overlay, #seviyeDisLinkOverlay')].some(gor)) return 'P:kk';
     let ym = $('yoModal'); if (ym && ym.classList.contains('acik')) return 'O:yo';
     let g = [...document.querySelectorAll('.game-modal-overlay')].find(gor);

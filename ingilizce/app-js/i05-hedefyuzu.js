@@ -4,7 +4,7 @@
   const OYUNLAR = [
     { ad:'Büyü Akademisi', alt:'Büyülü soru parkuru', html:'<div class="yb-buyu"><span class="yor"><i>✨</i><i>⭐</i><i>💫</i></span>🧙</div>', ac:() => (window.dunyaAc || baModuAc)() },
     { ad:'Kelime Modu', alt:'Kelimeyi söyle, seviyeyi geç', html:'<div class="yb-kelime"><span>🔤</span><b class="harf">A</b></div>', ac:() => kpModuAc() },
-        { ad:'Papağanla sohbet', alt:'16 diyaloglu sohbet haritası', html:'<div class="yb-sohbet"><span>🦜</span></div>', ac:() => sohbetEkraniAc() },
+        { ad:'Papağanla sohbet', alt:'36 diyaloglu sohbet haritası', html:'<div class="yb-sohbet"><span>🦜</span></div>', ac:() => sohbetEkraniAc() },
     { ad:'Kelime Kartları', alt:'Takımadalarda kelime yolculuğu', html:'<div class="yb-kartlar-yuz">🃏</div>', ac:() => { if (typeof seviyeHaritasiAc === 'function') seviyeHaritasiAc(); } }
   ];
   function hedefYuzu() {
