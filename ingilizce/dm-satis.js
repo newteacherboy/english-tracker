@@ -9,7 +9,7 @@
   'use strict';
   if (window.DMSatis) return;
   const W = window, D = document;
-  const VER = '20261114-trial-1';
+  const VER = '20261114-trial-ios-2';
   const BASE = (() => { try { return new URL('.', D.currentScript?.src || location.href).href; } catch { return ''; } })();
   const A = name => BASE + 'satis-assets/' + name;
   const IMG = { papi: A('papi-enerji-molasi.webp'), bolt: A('ic-bolt.webp'), coin: A('ic-coin.webp'), crown: A('ic-crown.webp'),
@@ -290,11 +290,20 @@
     const base = offers.find(o => !o.offerId) || offers[0];
     const paid = base?.phases?.filter(x => Number(x.micros) > 0).at(-1);
     const trials = offers.filter(o => o.offerId && o.phases?.some(x => Number(x.micros) === 0));
-    // Android süreyi iletir; eski iOS köprüsü iletmez. Süresi bilinmeyen teklife 7 gün demeyiz.
+    // App Store Connect'te kullanıcı tarafından doğrulandı: Premium Pro Aylık,
+    // Türkiye, 14 Kasım 2026–1 Mart 2027, ilk hafta ücretsiz. Eski iOS köprüsü
+    // süreyi iletmediği için yalnız bu doğrulanmış kampanyaya dar bir eşleme uygularız.
+    // Mağaza yine de uygun bir ücretsiz teklif döndürmek zorunda; hak burada verilmez.
+    const now = Date.now();
+    const verifiedAppleWeek = ios() && prod.id === 'diji_premium_pro' && period === 'aylik'
+      && now >= Date.parse('2026-11-14T00:00:00+03:00') && now < Date.parse('2027-03-02T00:00:00+03:00')
+      && trials.length === 1 && trials[0].offerId === 'deneme' && trials[0].phases?.length === 2
+      && !trials[0].phases[0].period && !trials[0].phases[1].period
+      && /₺|\b(?:TRY|TL)\b/i.test(trials[0].phases[1].price || '');
     const trial = trials.length > 0;
-    const sevenDays = trials.some(o => o.phases?.some(x => Number(x.micros) === 0 && /^(P7D|P1W)$/.test(x.period || '')));
+    const sevenDays = verifiedAppleWeek || trials.some(o => o.phases?.some(x => Number(x.micros) === 0 && /^(P7D|P1W)$/.test(x.period || '')));
     // Android köprüsü son isimli teklifi seçer. Birden fazla teklifte ücretsiz başlangıç vaat etme.
-    const simpleMonthly = trials.length === 1 && trials[0].phases?.length === 2 && Number(trials[0].phases[0].micros) === 0 && Number(trials[0].phases[1].micros) > 0 && trials[0].phases[1].period === 'P1M';
+    const simpleMonthly = trials.length === 1 && trials[0].phases?.length === 2 && Number(trials[0].phases[0].micros) === 0 && Number(trials[0].phases[1].micros) > 0 && (trials[0].phases[1].period === 'P1M' || verifiedAppleWeek);
     const campaign = simpleMonthly && prod.id === 'diji_premium_pro' && period === 'aylik' && sevenDays && trials.length === 1 && offers.filter(o => o.offerId).length === 1;
     const campaignPaid = campaign ? trials[0].phases?.filter(x => Number(x.micros) > 0).at(-1) : null;
     return { text: campaignPaid?.price || paid?.price || TL(prod.list[period]), available: !!base, trial, sevenDays, campaign };
