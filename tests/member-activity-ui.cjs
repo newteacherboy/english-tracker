@@ -10,10 +10,10 @@ const {chromium}=require('playwright'),fs=require('node:fs'),assert=require('nod
  for(const id of ['dcScreenTest','meteorGame','wordWheel','papiCards','dmStoryLesson','baOyunEkrani','kpKelimeOyunEkrani','seviyeDisLinkOverlay']){
   await page.evaluate(id=>{const e=document.createElement('div');e.id=id;e.textContent='Activity';document.body.append(e);},id);
   assert(await page.evaluate(()=>dmPapiNotices.inActivity()),id);
-  await page.evaluate(()=>dmNudgeSystem.showPreview({id:'test',title:'Test',text:'Test',target:'ders'}));assert.equal(await page.locator('#dmNudge').count(),0,id);
+  assert.equal(await page.evaluate(()=>typeof dmNudgeSystem),'undefined');assert.equal(await page.locator('#dmNudge').count(),0,id);
   await page.evaluate(id=>document.getElementById(id).remove(),id);
  }
- await page.evaluate(()=>dmNudgeSystem.showPreview({id:'test',title:'Test',text:'Test',target:'ders'}));assert.equal(await page.locator('.dm-nudge-time').textContent(),'10 sn');await page.locator('.dm-nudge-x').click();
+ assert.equal(await page.locator('#dmNudge').count(),0);assert.equal(await page.locator('#dmMusicToggle').count(),1);
  await page.setContent('<div id="dmStoryLesson"><div id="area"></div><div id="actions"></div></div>');
  await page.evaluate(()=>{window.DMStoryExercises={norm:s=>s.toLowerCase(),speak(){},listen:async()=>({status:'heard',text:'cat'})};window.answers=[];});
  await page.addScriptTag({content:fs.readFileSync('ingilizce/story-v2-ui.js','utf8')});
@@ -36,5 +36,5 @@ const {chromium}=require('playwright'),fs=require('node:fs'),assert=require('nod
  await page.setContent('<div class="rubric-modal" id="ogretmenMenuModal" style="display:none"><div class="rubric-content"><button class="game-close-btn" onclick="this.closest(\'.rubric-modal\').style.display=\'none\'">X</button><button id="openChild" onclick="document.getElementById(\'ogretmenMenuModal\').style.display=\'none\';document.getElementById(\'child\').style.display=\'flex\'">Child</button></div></div><div class="rubric-modal" id="child" style="display:none"><button class="game-close-btn" onclick="this.parentElement.style.display=\'none\'">X</button></div>');
  await page.evaluate(()=>{sessionStorage.setItem('ing_ogr_token','fixture');window.ogretmenPaneliAc=()=>document.getElementById('ogretmenMenuModal').style.display='flex';window.fetch=async()=>({ok:true,json:async()=>({ok:true,total:0})});});
  await page.addScriptTag({content:fs.readFileSync('ingilizce/teacher-workspace.js','utf8')});await page.evaluate(()=>ogretmenPaneliAc());await page.locator('#openChild').click();await page.waitForFunction(()=>document.getElementById('child').classList.contains('dm-teacher-child'));assert.equal(await page.locator('#child').evaluate(e=>e.style.zIndex),'2147483620');await page.locator('#child .game-close-btn').click();assert(await page.locator('#ogretmenMenuModal').isVisible());await page.locator('#ogretmenMenuModal .game-close-btn').click();assert(await page.locator('#ogretmenMenuModal').isHidden());
- assert.deepEqual(errors,[]);await browser.close();console.log('PASS activity suppression, 10-second notice, two-choice final, placement feedback/result and teacher child close');
+ assert.deepEqual(errors,[]);await browser.close();console.log('PASS activity suppression, retired automatic notices, two-choice final, placement feedback/result and teacher child close');
 })().catch(e=>{console.error(e);process.exit(1)});

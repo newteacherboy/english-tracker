@@ -5,11 +5,13 @@ on:
       - 'ingilizce/notice-surface.*'
       - 'ingilizce/announcements.js'
       - 'tests/notice-surface*'
+      - 'tests/automatic-nudges-retired.test.cjs'
       - '.github/workflows/communication-notice-regression.yml'
   pull_request:
     paths:
       - 'ingilizce/notice-surface.*'
       - 'tests/notice-surface*'
+      - 'tests/automatic-nudges-retired.test.cjs'
       - 'ingilizce/papi-feedback.js'
       - 'ingilizce/papi-habit.js'
       - 'ingilizce/medupro.js'
@@ -41,7 +43,7 @@ jobs:
           node-version: '22'
       - run: node --check ingilizce/notice-surface.js
       - run: npm install --prefix /tmp/notice-qa --no-audit --no-fund jsdom@26.1.0 playwright@1.58.2
-      - run: NODE_PATH=/tmp/notice-qa/node_modules node --test tests/notice-surface.test.cjs
+      - run: NODE_PATH=/tmp/notice-qa/node_modules node --test tests/notice-surface.test.cjs tests/automatic-nudges-retired.test.cjs
       - run: /tmp/notice-qa/node_modules/.bin/playwright install --with-deps chromium
       - run: NODE_PATH=/tmp/notice-qa/node_modules node tests/notice-surface-ui.cjs
       - uses: actions/upload-artifact@v4
