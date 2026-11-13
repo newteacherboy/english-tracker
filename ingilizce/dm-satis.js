@@ -9,7 +9,7 @@
   'use strict';
   if (window.DMSatis) return;
   const W = window, D = document;
-  const VER = '20261110-1';
+  const VER = '20261114-trial-1';
   const BASE = (() => { try { return new URL('.', D.currentScript?.src || location.href).href; } catch { return ''; } })();
   const A = name => BASE + 'satis-assets/' + name;
   const IMG = { papi: A('papi-enerji-molasi.webp'), bolt: A('ic-bolt.webp'), coin: A('ic-coin.webp'), crown: A('ic-crown.webp'),
@@ -289,8 +289,15 @@
     const offers = (sp?.offers || []).filter(o => o.basePlanId === period);
     const base = offers.find(o => !o.offerId) || offers[0];
     const paid = base?.phases?.filter(x => Number(x.micros) > 0).at(-1);
-    const trial = offers.some(o => o.offerId && o.phases?.some(x => Number(x.micros) === 0));
-    return { text: paid?.price || TL(prod.list[period]), available: !!base, trial };
+    const trials = offers.filter(o => o.offerId && o.phases?.some(x => Number(x.micros) === 0));
+    // Android süreyi iletir; eski iOS köprüsü iletmez. Süresi bilinmeyen teklife 7 gün demeyiz.
+    const trial = trials.length > 0;
+    const sevenDays = trials.some(o => o.phases?.some(x => Number(x.micros) === 0 && /^(P7D|P1W)$/.test(x.period || '')));
+    // Android köprüsü son isimli teklifi seçer. Birden fazla teklifte ücretsiz başlangıç vaat etme.
+    const simpleMonthly = trials.length === 1 && trials[0].phases?.length === 2 && Number(trials[0].phases[0].micros) === 0 && Number(trials[0].phases[1].micros) > 0 && trials[0].phases[1].period === 'P1M';
+    const campaign = simpleMonthly && prod.id === 'diji_premium_pro' && period === 'aylik' && sevenDays && trials.length === 1 && offers.filter(o => o.offerId).length === 1;
+    const campaignPaid = campaign ? trials[0].phases?.filter(x => Number(x.micros) > 0).at(-1) : null;
+    return { text: campaignPaid?.price || paid?.price || TL(prod.list[period]), available: !!base, trial, sevenDays, campaign };
   }
 
   let screen = null;
@@ -300,7 +307,7 @@
     const b = billing();
     let status = b?.status || null;
     const role0 = W.dmTeacherPortalMode ? 'teacher' : status?.role || (teacher() && name().toLowerCase() === 'teacher' ? 'teacher' : 'student');
-    const ui = { period: 'yillik', pick: want === 'pro' ? 'pro' : 'premium_pro', products: [], busy: false, gate: null, msg: '', err: false };
+    const ui = { period: role0 === 'teacher' ? 'yillik' : 'aylik', pick: want === 'pro' ? 'pro' : 'premium_pro', products: [], busy: false, gate: null, msg: '', err: false };
     screen = html(`<div class="dmp${role0 === 'teacher' ? ' is-teacher' : ''}" role="dialog" aria-modal="true" aria-label="Paketler" data-source="${esc(source)}"><div class="dmp-in"><p class="dmp-msg">Paketler yükleniyor…</p></div></div>`);
     D.body.append(screen); D.documentElement.style.overflow = 'hidden';
     screen.addEventListener('keydown', e => { if (e.key === 'Escape') closePlans(); });
@@ -344,18 +351,25 @@
         ${showPrice ? `<span class="dmp-price"><b>${esc(pr.text)}</b><small>${ui.period === 'yillik' ? '/ yıl · aylık ' + esc(monthly) : '/ ay'}</small></span>` : ''}
         <ul class="dmp-keys">${pl.chips.map(c => `<li>${chip(c)}</li>`).join('')}</ul>
         ${isCur ? '<span class="dmp-now">Şu anki planın</span>' : ui.period === 'yillik' && showPrice ? `<span class="dmp-tag">%${saving(pl.list)} tasarruf</span>` : ''}
-        ${pr.trial && sellOpen && !isCur ? '<span class="dmp-tag">7 gün ücretsiz</span>' : ''}
+        ${pr.trial && sellOpen && !isCur ? `<span class="dmp-tag">${pr.sevenDays ? '7 gün ücretsiz' : 'Ücretsiz deneme'}</span>` : ''}
       </button>`;
     };
     const ic = i => i === 'bolt' || i === 'coin' ? `<img src="${IMG[i]}" alt="">` : i;
     const vals = v => v.map((x, k) => `<span class="${k === 2 ? 'top' : k === 1 ? 'on' : ''}">${esc(x)}</span>`).join('');
     const pickPl = C.plans.find(x => x.plan === ui.pick) || C.plans[1];
     const pr = priceOf(pickPl);
+    const trialReady = sellOpen && role === 'student' && cur === 'free' && pr.campaign;
+    const trialPrice = storePrice(STUDENT.plans[1], byId.diji_premium_pro, 'aylik');
+    const showTrial = sellOpen && role === 'student' && cur === 'free' && trialPrice.campaign;
     let cta, ctaNote = '', ctaDisabled = false, ctaTeal = role === 'teacher';
     const refresh = async () => role === 'teacher' ? call({ action: 'status' }, 'teacher') : billing().refresh();
     if (!sellOpen) { cta = 'Paketler uygulamada satışta'; ctaNote = ui.diag ? 'Satın alma bu uygulama sürümünde açılamadı. App Store’dan güncelleyip uygulamayı yeniden aç. · ' + ui.diag : 'Satın alma Diji Medu mobil uygulamasından yapılır.'; ctaDisabled = true; }
     else if (cur === ui.pick) { cta = 'Bu paket sende açık 🎉'; ctaDisabled = true; }
     else { cta = `${pickPl.name}'ya geç`; ctaNote = `${pr.text} / ${ui.period === 'yillik' ? 'yıl' : 'ay'} · İstediğin zaman iptal edebilirsin`; if (!pr.available && ctx.p) { cta = 'Bu paket şu an satışta değil'; ctaDisabled = true; } }
+    if (trialReady) {
+      cta = '7 gün ücretsiz dene';
+      ctaNote = `Ardından ${pr.text} / ay · İptal edilmezse otomatik yenilenir`;
+    }
     const storeName = iosApp ? 'App Store' : 'Google Play';
     root.innerHTML = `<div class="dmp-in">
       <div class="dmp-bar"><span>${role === 'teacher' ? 'ÖĞRETMEN PAKETLERİ' : 'DİJİ MEDU PAKETLERİ'}</span><button type="button" class="dmp-x" data-close aria-label="Kapat">${ICON_X}</button></div>
@@ -366,8 +380,9 @@
       <p class="dmp-msg${ui.err ? ' err' : ''}" ${ui.msg ? '' : 'hidden'} role="status">${esc(ui.msg)}</p>
       ${ui.gate ? `<div class="dmp-gate"><p>${esc(ui.gate.q)}</p><input inputmode="numeric" autocomplete="off" aria-label="Cevap"><button type="button" class="dmp-buy" data-gate-ok>Devam</button><button type="button" class="dms-text-btn" data-gate-back>Vazgeç</button></div>` : ''}
       <h2 class="dmp-sec">Karşılaştır</h2>
-      <table class="dmp-table"><thead><tr><th></th><th>Free</th><th>Pro</th><th class="pre">Premium</th></tr></thead>
-        <tbody>${C.table.map(r => `<tr><td>${esc(r[0])}</td>${r.slice(1).map((x, k) => `<td class="${k === 2 ? 'pre' : ''} ${x === '—' ? 'no' : x === '✓' ? 'yes' : ''}">${esc(x)}</td>`).join('')}</tr>`).join('')}</tbody></table>
+      <table class="dmp-table"><thead><tr><th></th><th>Free</th><th>Pro</th><th class="pre">Premium Pro</th></tr></thead>
+        <tbody>${C.table.map(r => `<tr><td>${esc(r[0])}</td>${r.slice(1).map((x, k) => `<td class="${k === 2 ? 'pre' : ''} ${x === '—' ? 'no' : x === '✓' ? 'yes' : ''}">${esc(x)}</td>`).join('')}</tr>`).join('')}${showTrial ? `<tr><td>🎁 Ücretsiz deneme</td><td>—</td><td>—</td><td class="pre"><button type="button" class="dmp-trial" data-trial ${ui.busy ? 'disabled' : ''}>7 gün ücretsiz dene</button><small class="dmp-trial-note">Ardından ${esc(trialPrice.text)} / ay.<br>İptal edilmezse otomatik yenilenir.</small></td></tr>` : ''}</tbody></table>
+      ${trialReady ? `<p class="dmp-legal">Premium Pro'nun tamamı ilk 7 gün ücretsizdir. Deneme bitmeden iptal etmezsen ${esc(pr.text)} / ay ücret alınır ve abonelik her ay otomatik yenilenir. İptali ${storeName} &gt; Abonelikler bölümünden yapabilirsin.</p>` : ''}
       ${C.soon ? `<p class="dmp-soonline"><span class="dmp-soon">Yakında</span> ${esc(C.soon)}</p>` : ''}
       ${sellOpen ? `<p class="dmp-legal">Ödeme ${storeName} hesabından alınır. Abonelik, dönem bitmeden en az 24 saat önce iptal edilmezse aynı süreyle otomatik yenilenir. İptal ve yönetim ${storeName} hesap ayarlarındaki Abonelikler bölümünden yapılır.
         ${iosApp ? '<br><a href="https://www.apple.com/legal/internet-services/itunes/dev/stdeula/" target="_blank" rel="noopener">Kullanım Koşulları (EULA)</a> · ' : '<br>'}<a href="${BASE}gizlilik.html" target="_blank" rel="noopener">Gizlilik Politikası</a> · <a href="${BASE}kullanim-kosullari.html" target="_blank" rel="noopener">Kullanım Koşulları</a></p>
@@ -382,15 +397,21 @@
     root.querySelector('[data-buy]').onclick = () => {
       if (!sellOpen || ui.busy) return;
       // Satın alma onayını mağaza kendisi ister (şifre / parmak izi, Aile Bağlantısı onayı); ayrıca soru sorulmaz.
-      void buy(ctx, pickPl.id, say, rerender);
+      void buy(ctx, pickPl.id, say, rerender, trialReady);
     };
+    root.querySelector('[data-trial]')?.addEventListener('click', () => {
+      if (ui.busy) return;
+      ui.period = 'aylik'; ui.pick = 'premium_pro'; ui.gate = null;
+      rerender();
+      root.querySelector('[data-buy]')?.focus({ preventScroll: true });
+    });
     root.querySelector('[data-gate-back]')?.addEventListener('click', () => { ui.gate = null; rerender(); });
     root.querySelector('[data-gate-ok]')?.addEventListener('click', () => {
       const v = root.querySelector('.dmp-gate input')?.value;
       const ok = String(v ?? '').trim() !== '' && Number(String(v).trim()) === ui.gate.a;
       ui.gate = null;
       if (!ok) { say('Cevap doğru değil. Satın alma için veline danış.', true); return; }
-      void buy(ctx, pickPl.id, say, rerender);
+      void buy(ctx, pickPl.id, say, rerender, trialReady);
     });
     root.querySelector('[data-restore]')?.addEventListener('click', async () => {
       say('Kontrol ediliyor…');
@@ -413,16 +434,29 @@
     if (ctx.role !== 'teacher') await billing().refresh();
     return n;
   }
-  async function buy(ctx, productId, say, rerender) {
+  async function buy(ctx, productId, say, rerender, requireTrial = false) {
     const p = ctx.p, b = billing(), apple = ios();
     if (!p || !b) return say('Satın alma şu an kullanılamıyor.', true);
+    if (ctx.ui.busy) return;
+    const selectedPeriod = ctx.ui.period;
     ctx.ui.busy = true; say(apple ? 'App Store açılıyor…' : 'Google Play açılıyor…');
     try {
       const st = ctx.status;
+      if (requireTrial) {
+        // Deneme kaybolduysa ücretli satın almaya sessizce geçme; yeni fiyatı tekrar onaylat.
+        const fresh = await p.getProducts({ ids: [productId] });
+        const price = storePrice(STUDENT.plans[1], fresh.products?.find(x => x.id === productId), selectedPeriod);
+        ctx.ui.products = ctx.ui.products.filter(x => x.id !== productId).concat(fresh.products || []);
+        if (!price.campaign) {
+          ctx.ui.busy = false;
+          say('Bu hesap için 7 günlük deneme şu an kullanılamıyor. Güncel paket ve fiyatı inceleyebilirsin.', true);
+          return;
+        }
+      }
       let oldPurchaseToken = null;
       const current = (st.entitlements || []).find(e => e.provider === 'google' && (st.products || []).some(pr => pr.id === e.product_key));
       if (current && !apple) { const { purchases = [] } = await p.restore().catch(() => ({})); oldPurchaseToken = purchases.find(x => (x.products || []).includes(current.product_key))?.purchaseToken || null; }
-      const result = await p.purchase({ productId, basePlanId: ctx.ui.period, accountRef: st.accountRef, ...(oldPurchaseToken ? { oldPurchaseToken } : {}) });
+      const result = await p.purchase({ productId, basePlanId: selectedPeriod, accountRef: st.accountRef, ...(oldPurchaseToken ? { oldPurchaseToken } : {}) });
       if (result.canceled) { ctx.ui.busy = false; say(''); return; }
       if (result.alreadyOwned) { await restoreAll(ctx); ctx.status = (await statusOf(ctx)) || st; ctx.ui.busy = false; say('Bu abonelik zaten senin. Hesabına bağlandı.'); return; }
       const purchase = (result.purchases || []).find(x => (x.products || []).includes(productId));
