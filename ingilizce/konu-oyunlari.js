@@ -46,10 +46,12 @@ async function mount(host,initialCategory){
   hub.className='kg-hub';
   hub.id='kgTopicPanel';
   hub.setAttribute('aria-labelledby','kgHubTitle');
-  host.querySelector('.az-grid2x2').before(hub);
+  (host.querySelector('.gg-overview')||host.querySelector('.az-grid2x2')).before(hub);
  }
  if(initialCategory){category=initialCategory;query='';}
  hub.hidden=false;
+ if(host.dataset.ggParty&&host.dataset.ggParty!=='konu'){hub.hidden=true;hub.style.setProperty('display','none','important');return;}
+ hub.style.setProperty('display','block','important');
  if(hub.dataset.loaded){if(initialCategory)drawList(hub);return;}
  if(hub.dataset.loading)return;
  hub.dataset.loading='1';

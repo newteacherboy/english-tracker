@@ -684,3 +684,6 @@ html[data-dm-theme] #tab-aktiviteler#tab-aktiviteler .gg-redesign.gg-list-view .
   grid-template-columns:repeat(2,minmax(0,1fr))!important;
  }
 }
+
+/* Two primary categories; free subcategories expand below. */
+.gg-main-categories{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:12px 0}.gg-main-categories button{min-height:58px;border:2px solid #dfd5ff;border-radius:18px;background:#fff;color:#5133c9;font:inherit;font-weight:800;padding:10px;cursor:pointer}.gg-main-categories button[aria-pressed="true"]{background:#7145ef;color:#fff;border-color:#7145ef;box-shadow:0 4px 0 #5030b5}.gg-tabs [data-gg-party="premium"]{display:none!important}.gg-redesign .gg-tabs{grid-template-columns:repeat(3,minmax(0,1fr))}.gg-main-categories+ .gg-tabs[hidden],.gg-overview[hidden],.kg-hub[hidden]{display:none!important}

@@ -47,7 +47,7 @@
   function noRightsText(verb = 'oynayabilirsin') {
     return (window.dmAndroidPlan?.plan || 'free') === 'pro'
       ? `Bugünkü oyun hakkın bitti. Premium Pro ile sınırsız ${verb}.`
-      : `Ücretsiz hakların bitti. Paketlerden birini seçerek sınırsız ${verb}.`;
+      : `Günlük hakkın veya ilk 3 günlük deneme süren bitti. Daha fazla oynamak için Pro ol; Premium Pro ile sınırsız ${verb}.`;
   }
 
   /*

@@ -1,19 +1,23 @@
 const assert=require('node:assert/strict'),path=require('node:path');
 const {chromium}=require(process.env.CODEX_PRIMARY_RUNTIME_NODE_MODULES+'/playwright');
-(async()=>{const browser=await chromium.launch({args:['--no-sandbox']}),page=await browser.newPage(),errors=[];page.on('pageerror',e=>errors.push(e.message));const base=path.resolve(__dirname,'../ingilizce');
+(async()=>{const browser=await chromium.launch({executablePath:process.env.CHROME_BIN||undefined,args:['--no-sandbox']}),page=await browser.newPage(),errors=[];page.on('pageerror',e=>errors.push(e.message));const base=path.resolve(__dirname,'../ingilizce');
 await page.route('https://games.test/**',r=>{const name=new URL(r.request().url()).pathname.slice(1);if(name)return r.fulfill({path:path.join(base,name)});return r.fulfill({contentType:'text/html',body:`<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="approved-centre.css"><link rel="stylesheet" href="activity-ui.css"><style>body{margin:0}.az-gcard{display:grid!important}.dc-focus-card{width:100%}</style></head><body><section id="tab-aktiviteler" class="dc-fullscreen-overlay active"><div class="dc-focus-card"><div class="az-grid2x2"><button class="az-gcard" onclick="kelimeYarismasiAc()"><div class="az-gcard-title">Kelime Laboratuvarı</div></button><button class="az-gcard" onclick="hafizaOyunAc()"><div class="az-gcard-title">Hafıza Sandığı</div></button><button class="az-gcard" onclick="boslukOyunAc()"><div class="az-gcard-title">Eksik Harf</div></button><button class="az-gcard" onclick="asmacaOyunAc()"><div class="az-gcard-title">Harf Avı</div></button><button class="az-gcard" onclick="dikteAc()"><div class="az-gcard-title">Kulak Dedektifi</div></button><button class="az-gcard" id="dmUcusteKart"><div class="az-gcard-title">Kelime Uçuşu</div></button></div></div></section><nav style="position:fixed;bottom:0;height:80px;background:white;width:100%">Mevcut alt menü</nav><script>window.apiURL='https://games.test/diji-api';window.aktifOgrenciAdi='Mert';localStorage.setItem('ing_token','fixture');window.yo={altin:97};window.genelEnerjiKalan=30;window.genelEnerjiMax=30;window.lvl=12;window.calls=[];window.DijiProgressionCatalog={gates:{oyun_kelime:3,oyun_hafiza:6,oyun_bosluk:11,oyun_asmaca:14,oyun_dikte:24},functions:{}};window.dmProgression={level:()=>lvl,allowed:c=>lvl>=(DijiProgressionCatalog.gates[c]||1),require:()=>calls.push('locked')};for(const n of ['kelimeYarismasiAc','hafizaOyunAc','boslukOyunAc','asmacaOyunAc','dikteAc'])window[n]=()=>calls.push(n);window.papizzleAc=()=>calls.push('papizzle');window.dmArenaAc=()=>calls.push('matches');window.meduAkisAc=()=>calls.push('friends');window.dmMeduPro={api:async(op)=>({liste:[{ad:'Ayşe',online:true,seenAt:new Date().toISOString()}],serverNow:new Date().toISOString()}),sheet:()=>({body:document.createElement('div'),p:{},close(){}}),games:{ucus:['Kelime Uçuşu']}};</script><script src="activity-ui.js"></script></body></html>`});});
-const goHome=()=>page.locator('#ggPremiumTab').click();
+await page.route('**/premium-games',r=>r.fulfill({json:{ok:true,plan:'free',remaining:1}}));
+const goHome=()=>page.locator('[data-gg-main=premium]').click();
 const visibleCards=()=>page.locator('.gg-shelf-card:visible');
 for(const [width,height] of [[320,640],[390,844],[768,844],[1180,844]]){
  await page.setViewportSize({width,height});
  await page.goto('https://games.test/');
  await page.evaluate(()=>dmGamesUI.enter());
+ assert.equal(await page.locator('[data-gg-main]:visible').count(),2);
+ assert.equal(await page.locator('.gg-tabs button:visible').count(),0);
  assert.equal(await page.locator('[data-gg-party=all]').count(),0);
  assert.equal(await page.locator('#ggPremiumTab').getAttribute('aria-pressed'),'true');
  assert.equal(await page.locator('.gg-group:visible').count(),0);
  assert.equal(await page.locator('.gg-game:visible').count(),0);
  assert.equal(await page.locator('.gg-category-art').count(),6);
  const search=page.getByRole('searchbox',{name:'Oyun ara'});
+ await page.locator('[data-gg-main=free]').click();
  await page.locator('#ggSoloTab').click();
  await search.fill('laboratuvari');
  assert.equal(await visibleCards().count(),1);
@@ -23,13 +27,15 @@ for(const [width,height] of [[320,640],[390,844],[768,844],[1180,844]]){
  assert.equal(await visibleCards().count(),0);
  assert.equal(await page.locator('.gg-list-empty').innerText(),'Bu filtrede oyun bulunamadı.');
  await search.fill('');
- await page.locator('#ggPremiumTab').click();
+ await page.locator('[data-gg-main=premium]').click();
  await visibleCards().filter({hasText:'Papizzle'}).click();
- assert(await page.evaluate(()=>calls.includes('papizzle')));
+ await page.waitForFunction(()=>calls.includes('papizzle'));
+ await page.locator('[data-gg-main=free]').click();
  await page.locator('#ggSoloTab').click();
  assert.equal(await visibleCards().count(),5);
  const soloCards=await visibleCards().evaluateAll(cards=>cards.map(card=>card.dataset.ggSource));
  await goHome();
+ await page.locator('[data-gg-main=free]').click();
  await page.locator('#ggSoloTab').click();
  assert.deepEqual(await visibleCards().evaluateAll(cards=>cards.map(card=>card.dataset.ggSource)),soloCards);
  assert.equal(await page.locator('.gg-overview').evaluate(el=>getComputedStyle(el).gridTemplateColumns.split(' ').length),1);
@@ -39,6 +45,7 @@ for(const [width,height] of [[320,640],[390,844],[768,844],[1180,844]]){
  await page.evaluate(()=>{lvl=24;dmGamesUI.refresh();});
  assert.equal(await visibleCards().getAttribute('aria-disabled'),'false');
  await goHome();
+ await page.locator('[data-gg-main=free]').click();
  await page.locator('#ggFreeTab').click();
  await page.evaluate(()=>{
   for(const [id,title] of [['papiCardsActivity','Papi Kartları'],['meteorActivity','Meteor Düellosu'],['wordWheelActivity','Kelime Çarkı']]){

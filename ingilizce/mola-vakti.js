@@ -30,7 +30,7 @@ async function loadStatus(){const user=who();if(!user){status=null;paintCards();
  const promise=api('molaDurum').then(d=>{if(who()===user)adopt(d);return d;}).finally(()=>{if(statusPromise?.promise===promise)statusPromise=null;});statusPromise={user,promise};return promise;
 }
 const left=g=>statusOwner===who()?status?.games?.[g]?.remaining:null;
-const quota=g=>left(g)===null||left(g)===undefined?'Haklar kontrol ediliyor…':left(g)===0?'Bugünkü 2 hakkın bitti, yarın yine gel':'Bugün '+left(g)+' hak kaldı';
+const quota=g=>left(g)===null||left(g)===undefined?'Haklar kontrol ediliyor…':left(g)===0?'Bugünkü hakkın bitti, yarın yine gel':'Bugün '+left(g)+' hak kaldı';
 function paintCards(){document.querySelectorAll('[data-mola]').forEach(b=>{const g=b.dataset.mola,el=b.querySelector('.mv-card-status');if(el)el.textContent='Bölüm '+(status?.games?.[g]?.currentChapter||1)+' / '+MAX_CHAPTER+' · 5 enerji · '+quota(g);});}
 // Kart görseli (188 KB) yalnızca Oyunlar sekmesi görününce yüklenir.
 const artObserver='IntersectionObserver' in window?new IntersectionObserver(es=>es.forEach(e=>{if(!e.isIntersecting)return;artObserver.unobserve(e.target);showArt(e.target);}),{rootMargin:'200px'}):null;

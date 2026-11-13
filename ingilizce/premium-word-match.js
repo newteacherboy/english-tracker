@@ -1,6 +1,6 @@
 /* Premium Oyunlar · Candy Papiş (v2, 3 Kas 2026).
    - Şekerlerin üstünde Word Bank kelimeleri yazar; eşleşince Türkçesi belirir.
-   - 100 bölüm / 5 dünya. Her bölüm 5 enerji. Premium olmayanların 3 ücretsiz denemesi var.
+   - 100 bölüm / 5 dünya. Her bölüm 5 enerji. Free: ilk 3 gün, oyun başına günde 1 deneme.
    - Hak, enerji, ödül, bölüm ilerlemesi sunucuda (premium-games) tutulur.
    - iPhone belleği için: tek canvas, şeker+kelime görüntüleri önbellekte, ağır CSS filtresi yok. */
 (()=>{'use strict';
@@ -162,7 +162,7 @@ function comingSoon(){
  view='soon';window.dmPremiumIntro?.unmount(root);$('.pwm-stage').innerHTML='';
  const c=modal(`<img class="pwm-soon-art" src="${A}yakinda-art.webp" alt="Büyücü kız taçlı sandığa bakıyor">
   <h2 class="pwm-ribbon-title">${shop?(plan==='pro'?'Bugünkü hakkın bitti':'Premium Oyunlar açılsın mı?'):'Premium çok yakında!'}</h2>
-  <p>${plan==='pro'?'Pro ile bugünkü 5 bölümünü oynadın. Yarın yeniden açılır, <b>Premium Pro</b> ile hemen <b>sınırsız</b> oynayabilirsin.':shop?'3 ücretsiz oyun hakkını kullandın. <b>Pro</b> ile günde 5 bölüm, <b>Premium Pro</b> ile <b>sınırsız</b> oynayabilirsin.':'3 ücretsiz oyun hakkını kullandın. Premium paket açıldığında <b>Kelime Eşleştirme</b> ve tüm premium oyunları <b>sınırsız</b> oynayabileceksin.'}</p>
+  <p>${plan==='pro'?'Pro ile bugünkü 5 bölümünü oynadın. Yarın yeniden açılır, <b>Premium Pro</b> ile hemen <b>sınırsız</b> oynayabilirsin.':shop?'Günlük deneme hakkın veya 3 günlük deneme süren bitti. <b>Pro</b> ile günde 5 bölüm, <b>Premium Pro</b> ile <b>sınırsız</b> oynayabilirsin.':'Günlük deneme hakkın veya 3 günlük deneme süren bitti. Premium paket açıldığında <b>Kelime Eşleştirme</b> ve tüm premium oyunları <b>sınırsız</b> oynayabileceksin.'}</p>
   <ul class="pwm-soon-list"><li>✦ 100 bölüm, 5 büyülü dünya</li><li>✦ Oyunlar arasında en yüksek ödül</li><li>✦ Her bölümde yeni kelimeler</li></ul>
   <p class="pwm-muted">Bu sırada diğer oyunlarla XP ve altın kazanmaya devam edebilirsin.</p>
   <div class="pwm-actions">${shop?'<button type="button" class="pwm-btn gold big" data-plans>Planları gör</button><button type="button" class="pwm-btn ghost" data-x>Tamam</button>':'<button type="button" class="pwm-btn gold" data-x>Tamam</button>'}</div>`,'soon');
@@ -215,7 +215,7 @@ function home(){
  const levels=[];for(let i=(world-1)*20+1;i<=world*20;i++){const s=Number(stars[i]||0),locked=i>lv;levels.push(`<button type="button" class="pwm-lv${locked?' locked':''}${i===lv?' current':''}" data-lv="${i}" ${locked?'aria-disabled="true"':''} aria-label="Seviye ${i}${locked?', kilitli':', '+s+' yıldız'}"><b>${i}</b>${locked?`<img src="${A}icon-lock.webp" alt="">`:`<span class="pwm-lv-stars">${[1,2,3].map(k=>`<i class="${k<=s?'on':''}"></i>`).join('')}</span>`}</button>`);}
  const total=Object.values(stars).reduce((a,b)=>a+Number(b||0),0);
  $('.pwm-stage').innerHTML=`<section class="pwm-home">
-  <div class="pwm-home-head"><div class="pwm-plan">${isPremium()?`<img src="${A}icon-infinity.webp" alt=""><span><b>${practice?'Sınıf modu':'Premium'}</b><small>${practice?'Ödül işlenmez':'Sınırsız oyun'}</small></span>`:`<img src="${A}icon-gift.webp" alt=""><span><b>${remaining()} / 3</b><small>ücretsiz hak</small></span>`}</div>
+  <div class="pwm-home-head"><div class="pwm-plan">${isPremium()?`<img src="${A}icon-infinity.webp" alt=""><span><b>${practice?'Sınıf modu':'Premium'}</b><small>${practice?'Ödül işlenmez':'Sınırsız oyun'}</small></span>`:`<img src="${A}icon-gift.webp" alt=""><span><b>${remaining()}</b><small>ücretsiz hak</small></span>`}</div>
    <div class="pwm-plan"><img src="${A}icon-star-full.webp" alt=""><span><b>${total} / 300</b><small>yıldız</small></span></div></div>
   <nav class="pwm-worlds" aria-label="Dünyalar">${WORLDS.map((n,i)=>{const w=i+1,open=lv>(w-1)*20;return `<button type="button" data-world="${w}" aria-pressed="${w===world}" ${open?'':'aria-disabled="true"'}><span>${w}</span><small>${n}</small></button>`;}).join('')}</nav>
   <h2 class="pwm-world-name">${WORLDS[world-1]}</h2>
@@ -245,7 +245,7 @@ function levelCard(level){
   <h3>Bu bölümün kelimeleri</h3>
   <ul class="pwm-words">${words.map((w,i)=>`<li><img src="${A}${CANDIES[i]}.webp" alt=""><b>${esc(w.en)}</b><span>${esc(w.tr)}</span></li>`).join('')}</ul>
   <div class="pwm-actions"><button type="button" class="pwm-btn gold big" data-go>Başla <span class="pwm-cost">⚡ 5</span></button></div>
-  <p class="pwm-muted small">${isPremium()?(practice?'Sınıf modu: enerji ve ödül işlenmez.':'Premium: sınırsız oyun.'):'Bu bölüm 1 ücretsiz hakkını kullanır (kalan '+remaining()+'/3).'}</p>`,'level');
+  <p class="pwm-muted small">${isPremium()?(practice?'Sınıf modu: enerji ve ödül işlenmez.':'Premium: sınırsız oyun.'):'Bu bölüm 1 ücretsiz hakkını kullanır (kalan '+remaining()+').'}</p>`,'level');
  c.querySelector('[data-x]').onclick=()=>{hideModal();};
  c.querySelector('[data-go]').onclick=async e=>{const b=e.currentTarget;b.disabled=true;b.textContent='Hazırlanıyor…';try{await start(level,cfg,words);}catch(err){b.disabled=false;b.innerHTML='Başla <span class="pwm-cost">⚡ 5</span>';if(err.code==='hak'){status.remaining=0;comingSoon();return;}toast(err.message);if(err.code==='enerji')sound.bad();window.DijiMeduPapiFeedback?.energyDenied(err);}};
 }
