@@ -6,7 +6,7 @@
   const gold = () => typeof yo !== 'undefined' && yo ? Number(yo.altin || 0) : 0;
   const wardrobe = () => window.dmStoreWardrobe;
   const toast = message => window.yoToast?.(message);
-  const packs = [[5,230],[10,300],[15,460]];
+  const packs = [[5,350],[10,600],[15,850]];
   const legacyWardrobe = window.yoMagazaAc;
   let page = 'home', pending = false, energyStatus = '', energyLimit = '', storeVisit = 0, observer = null, refreshTimer = null;
   const art = (name, cls = '') => `<span class="ds-art ds-art-${name} ${cls}" aria-hidden="true"></span>`;

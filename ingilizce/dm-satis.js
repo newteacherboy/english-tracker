@@ -15,7 +15,7 @@
   const IMG = { papi: A('papi-enerji-molasi.webp'), bolt: A('ic-bolt.webp'), coin: A('ic-coin.webp'), crown: A('ic-crown.webp'),
     party: BASE + 'discovery-assets/papi-kutlama.webp', teacher: BASE + 'discovery-assets/ogretmen.webp', welcome: BASE + 'papi-welcome-v2.png' };
   const API = 'https://nxfqlutulxqzqgwewssd.supabase.co/functions/v1/billing';
-  const PACKS = [[5, 230], [10, 300], [15, 460]];
+  const PACKS = [[5, 350], [10, 600], [15, 850]];
   const REWARD_ENERGY = 7, REWARD_GOLD = 100;
   const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
   const visible = el => !!el && !el.hidden && el.getClientRects().length > 0 && !el.closest('[inert],[aria-hidden="true"],[data-dm-nav-suspended]');
