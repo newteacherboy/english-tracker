@@ -115,3 +115,15 @@ test('Efsaneler endpoint denies level 14 and forged level fields before reading 
  assert.equal((await api.handle('seviyeLigListesi',{kapsam:'alltime'},new URLSearchParams(),{})).status,401);
  assert.equal((await api.handle('seviyeLigListesi',{kapsam:'unknown'},new URLSearchParams(),student)).status,400);
 });
+
+
+test('Premium Pro early access opens entry gates without changing earned level or trusting client flags',async()=>{
+ const {api,ctx}=fixture(1),q=new URLSearchParams();
+ for(const plan of ['free','pro']){ctx.plan=plan;ctx.levelEarlyAccess=false;assert.equal((await api.guard('oyunEslesmeOlustur',{levelEarlyAccess:true,plan:'premium_pro'},q,student)).status,403);}
+ ctx.levelEarlyAccess=true;
+ for(const op of ['oyunEslesmeOlustur','hazirMesajGonder','enerjiGonder','duelloGonder','konusmaSeviyeIlerlemeGetir','kuleLiderlikKaydet'])assert.equal(await api.guard(op,{},q,student),null,op);
+ assert.equal((await api.handle('seviyeDurumu',{},q,student)).body.level,1);
+ assert.equal((await api.guard('ekVeriKaydet',{anahtar:'yo',deger:{karakter:{sahip:['d:forged']}}},q,student)).status,403,'paid plan cannot forge purchases');
+ ctx.levelEarlyAccess=false;assert.equal((await api.guard('oyunEslesmeOlustur',{},q,student)).status,403,'expiration restores the entry gate');
+ ctx.level=30;assert.equal(await api.guard('oyunEslesmeOlustur',{},q,student),null,'earned level stays unlocked after expiration');
+});

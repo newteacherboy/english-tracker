@@ -87,7 +87,7 @@ export function verifiedGamesAPI(db,json){
    if(!games.has(game)||!Number.isInteger(classNo)||classNo<1||classNo>8||!units.length||units.length>20||units.some(u=>!Number.isInteger(u)||u<1||u>100))return fail('Geçersiz oyun kapsamı.',400);
    const code=({ky:'oyun_kelime',jp:'oyun_jeopardy',kp:'kelime_modu',ba:'parkur'})[game]||'oyun_'+game;
    const ctx=await db.rpc('dm_progress_context',{actor:a.student_id});if(ctx.error)return fail('Seviye doğrulanamadı.',503);
-   const C=globalThis.DijiProgressionCatalog;if(!C?.gates[code]||!a.teacher_portal_access_id&&ctx.data.level<C.gates[code])return fail('Bu oyun henüz açılmadı.',403);
+   const C=globalThis.DijiProgressionCatalog;if(!C?.gates[code]||!a.teacher_portal_access_id&&!ctx.data.levelEarlyAccess&&ctx.data.level<C.gates[code])return fail('Bu oyun henüz açılmadı.',403);
    const level=['A1','A2','B1','B2'].includes(body.level)&&game!=='ba'&&game!=='kp'&&game!=='tren'&&game!=='cumle'?body.level:'';
    let available;
    if(level){available=levelPool(level);if(available.length<4)return fail('Seviye kelimeleri yüklenemedi.',503);}

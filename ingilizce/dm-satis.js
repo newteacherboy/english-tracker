@@ -251,11 +251,11 @@
     plans: [
       { id: 'diji_pro', plan: 'pro', name: 'Pro', list: { aylik: 45, yillik: 380 }, pitch: 'Reklamsız öğren, günde 40 enerjiyle daha uzun oyna.',
         chips: ['⚡ Günde 40 enerji', '🚫 Reklamsız', '🪙 Her gün +30 altın', '🎮 Premium oyun 5 bölüm/gün'] },
-      { id: 'diji_premium_pro', plan: 'premium_pro', name: 'Premium Pro', ribbon: 'En avantajlı', list: { aylik: 79, yillik: 700 }, pitch: 'Enerji hiç bitmez, Premium Oyunlar sınırsız. Diji Medu\'nun tamamı.',
-        chips: ['⚡ Sınırsız enerji', '🚫 Reklamsız', '🪙 Her gün +75 altın', '🎮 Sınırsız Premium oyun'] },
+      { id: 'diji_premium_pro', plan: 'premium_pro', name: 'Premium Pro', ribbon: 'En avantajlı', list: { aylik: 79, yillik: 700 }, pitch: 'Seviye kilitleri beklemeden açılır; enerji ve Premium Oyunlar sınırsız. Diji Medu\'nun tamamı.',
+        chips: ['⚡ Sınırsız enerji', '🚫 Reklamsız', '🪙 Her gün +75 altın', '🎮 Sınırsız Premium oyun', '🔓 Seviye kilitlerine erken erişim'] },
     ],
     table: [['⚡ Enerji', '25', '40', 'Sınırsız'], ['🚫 Reklam', 'Var', 'Yok', 'Yok'], ['🪙 Altın/gün', '—', '+30', '+75'], ['🎮 Premium oyun', '3 deneme', '5/gün', 'Sınırsız'],
-      ['🛡️ Seri kalkanı', '—', '2/ay', '5/ay'], ['🏝️ Mola Vakti', '2/gün', '3/gün', '5/gün']],
+      ['🔓 Seviyeyle açılan özellikler', 'Seviyene göre', 'Seviyene göre', 'Hemen açık'], ['🛡️ Seri kalkanı', '—', '2/ay', '5/ay'], ['🏝️ Mola Vakti', '2/gün', '3/gün', '5/gün']],
   };
   const TEACHER = {
     hero: { title: 'Öğretmen paketleri', text: 'Daha çok sınıf, sınırsız ödev ve detaylı raporlarla öğrencilerinin İngilizcesini adım adım takip et.' },

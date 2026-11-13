@@ -143,3 +143,5 @@
  padding:8px 13px;border-radius:30px;background:#211647;color:#cdff97;font-weight:900;
 }
 @media(prefers-reduced-motion:reduce){.dm-level-energy section{transition:none}}
+
+#dmLevelAccess{z-index:2147483647}#dmLevelAccess .dm-level-access{max-width:380px;text-align:center}#dmLevelAccess .dm-level-access-reason{font-weight:800}#dmLevelAccess .dm-level-access-later{border:0;background:none;color:inherit;padding:12px;font:inherit;cursor:pointer}

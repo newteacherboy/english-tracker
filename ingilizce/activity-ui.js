@@ -235,7 +235,7 @@
    new MutationObserver(()=>{key='';install();}).observe(grid,{childList:true});
   }
   if(lastAccount!==account()){lastAccount=account();friendsLoaded=false;party='premium';skill='Tümü';query='';const search=host.querySelector('.gg-search input');if(search)search.value='';key='';}
-  const nextKey=[!!window.dmTeacherPortalMode,party,skill,level(),host.querySelectorAll('.az-gcard').length,lastGame(),typeof yo!=='undefined'?yo?.altin:0,typeof genelEnerjiKalan==='number'?genelEnerjiKalan:typeof genelEnerjiKalan==='function'?genelEnerjiKalan():0].join('|');if(knownGrid!==grid||key!==nextKey){knownGrid=grid;key=nextKey;render(host,grid);}
+  const nextKey=[!!window.dmTeacherPortalMode,party,skill,level(),!!window.dmProgression?.earlyAccess?.(),host.querySelectorAll('.az-gcard').length,lastGame(),typeof yo!=='undefined'?yo?.altin:0,typeof genelEnerjiKalan==='number'?genelEnerjiKalan:typeof genelEnerjiKalan==='function'?genelEnerjiKalan():0].join('|');if(knownGrid!==grid||key!==nextKey){knownGrid=grid;key=nextKey;render(host,grid);}
  }
  // Page tabs must never inherit the viewport lock used by a playing overlay.
  document.querySelectorAll('.dc-fullscreen-overlay[id^="tab-"]').forEach(el=>el.classList.remove('dm-solo-fullstage'));
