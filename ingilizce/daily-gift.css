@@ -4,10 +4,11 @@ body #tab-dunya .dm-unified-wallet.dm-papi-wallet.dm-has-daily-streak{grid-templ
 body #tab-dunya .dm-has-daily-streak>button:not(.dm-daily-streak-button){font-size:clamp(11px,3vw,16px)!important;padding-inline:1px!important}
 body #tab-dunya .dm-has-daily-streak .dm-pw-art:not(.dm-pw-papi){width:clamp(18px,5vw,26px);height:clamp(18px,5vw,26px)}
 body #tab-dunya .dm-unified-wallet.dm-papi-wallet>.dm-daily-streak-button{position:relative;display:grid!important;grid-template-columns:24px 1fr;grid-template-rows:1fr 12px;gap:0!important;border:1px solid #ffd16b!important;background:linear-gradient(135deg,#fff7c6,#ffcf44)!important;color:#54205f!important;-webkit-text-fill-color:#54205f!important;box-shadow:0 3px 0 #e5a629,0 0 0 3px #ffdf7a55!important;border-radius:17px!important;padding:5px!important;overflow:visible!important;font-size:15px!important}
-.dm-daily-flame{grid-row:1/3;align-self:center;font-size:25px;filter:drop-shadow(0 2px 2px #e8912160)}
+.dm-daily-flame{grid-row:1/3;align-self:center;font-size:25px;filter:drop-shadow(0 2px 2px #e8912160);animation:dgFlameWarmth 3s ease-in-out infinite}
 .dm-daily-streak-button small{font:900 10px/1 Nunito,system-ui,sans-serif}
 .dm-daily-ready{animation:dgButtonPulse 2.4s ease-in-out infinite}
-@keyframes dgButtonPulse{0%,100%{transform:scale(1);filter:drop-shadow(0 0 1px #ffce54)}50%{transform:scale(1.045);filter:drop-shadow(0 0 6px #ffc93e)}}
+@keyframes dgButtonPulse{0%,100%{filter:drop-shadow(0 0 1px #ffce54)}50%{filter:drop-shadow(0 0 6px #ffc93e)}}
+@keyframes dgFlameWarmth{50%{transform:rotate(-5deg) scale(1.08)}}
 .dg-layer{position:fixed;inset:0;z-index:2147483000;display:flex;align-items:center;justify-content:center;padding:18px 14px max(18px,env(safe-area-inset-bottom));box-sizing:border-box;background:#25304970;backdrop-filter:blur(3px);font-family:Nunito,system-ui,sans-serif;color:#4f176b}
 .dg-dialog{position:relative;width:min(100%,390px);max-height:calc(100dvh - 40px);overflow:auto;overscroll-behavior:contain;box-sizing:border-box;border:3px solid #dfc1fc;border-radius:29px;background:linear-gradient(155deg,#fff,#fff 66%,#f4eafd);box-shadow:0 16px 60px #36135144;padding:20px 22px 16px;text-align:center;animation:dgEnter .32s ease-out both;outline:none}
 .dg-dialog *{box-sizing:border-box}
@@ -43,4 +44,4 @@ body #tab-dunya .dm-unified-wallet.dm-papi-wallet>.dm-daily-streak-button{positi
 @keyframes dgPapiFloat{50%{transform:translateY(-5px) rotate(-1deg)}}
 @media(max-height:690px){.dg-dialog{padding:14px 17px;border-radius:24px}.dg-gift-hero{height:155px}.dg-gift-hero img{height:170px;width:170px}.dg-series-hero{height:105px}.dg-series-hero img{height:119px;width:115px}.dg-dialog h2{font-size:26px;margin-bottom:8px}.dg-day{min-height:73px}.dg-sub{font-size:14px;margin:10px 0}.dg-primary{font-size:18px;min-height:46px}.dg-next{margin-top:9px}.dg-calendar-link{padding-top:8px}}
 @media(max-width:340px){.dg-dialog{padding-inline:15px}.dg-days{gap:5px}.dg-day strong{font-size:17px}.dg-series-hero>div{padding:9px}.dg-series-hero strong{font-size:36px}.dg-series-hero b{font-size:14px}}
-@media(prefers-reduced-motion:reduce){.dm-daily-ready,.dg-dialog,.dg-gift-hero img{animation:none!important}}
+@media(prefers-reduced-motion:reduce){.dm-daily-ready,.dm-daily-flame,.dg-dialog,.dg-gift-hero img{animation:none!important}}
