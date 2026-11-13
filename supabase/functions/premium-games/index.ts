@@ -16,7 +16,7 @@ async function db(path:string,body?:unknown){
  if(!r.ok){
   const msg=String(data?.message||'');
   // Yalnızca bilinçli politika hataları kullanıcıya gösterilir.
-  if(/^(Ücretsiz 3 oyun|Bugünkü 5 bölüm|Oyuna başlamak için 5 enerji|Bu bölüm henüz|Geçersiz|Oyun bulunamadı|Oyun sonucu|Bu güçlendirici|Yeterli altının|Hesap bilgileri|Öğrenci oturumu)/.test(msg))throw new PolicyError(msg);
+  if(/^(Ücretsiz oyun|Ücretsiz 3 oyun|Bugünkü 5 bölüm|Oyuna başlamak için 5 enerji|Bu bölüm henüz|Geçersiz|Oyun bulunamadı|Oyun sonucu|Bu güçlendirici|Yeterli altının|Hesap bilgileri|Öğrenci oturumu)/.test(msg))throw new PolicyError(msg);
   throw Error('Database '+r.status);
  }
  return data;
@@ -45,6 +45,7 @@ Deno.serve(async(req:Request)=>{
     // The same teacher-only profile is reused across devices. Never play as a pupil.
     actor=await db('rpc/dm_teacher_portal_guest',{grant_id:grant.id,guest_alias:'Premium Oyun',is_preview:true,secret_hash:crypto.randomUUID()});
   }else if(!actor)return reply(req,{ok:false,mesaj:'Öğrenci oturumu gerekli.'},401);
+  if(op==='access')return reply(req,{ok:true,...await db('rpc/dm_game_access',{actor,game_key:game})});
   // Server-validated teacher plan: Free 3/game, Pro 5/day/game, Premium Pro unlimited.
   // Administrator override is exclusively in dm_plan(), tied to verified teachers.is_admin.
   async function teacherQuota(reserve=false){
@@ -109,7 +110,7 @@ Deno.serve(async(req:Request)=>{
   }
   return reply(req,{ok:false,mesaj:'Geçersiz işlem.'},400);
  }catch(err){
-  if(err instanceof PolicyError){const m=err.message;return reply(req,{ok:false,mesaj:m,hata:/enerji/.test(m)?'enerji':/3 oyun|5 bölüm/.test(m)?'hak':/altın/.test(m)?'altin':'kural'},400);}
+  if(err instanceof PolicyError){const m=err.message;return reply(req,{ok:false,mesaj:m,hata:/enerji/.test(m)?'enerji':/oyun hakkın|3 oyun|5 bölüm/.test(m)?'hak':/altın/.test(m)?'altin':'kural'},400);}
   console.error('premium-games:',err instanceof Error?err.message:'error');
   return reply(req,{ok:false,mesaj:'Bağlantı kurulamadı. Tekrar dene.'},503);
  }

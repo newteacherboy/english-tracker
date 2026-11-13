@@ -14,7 +14,8 @@ jobs:
           node-version: '22'
       - run: node --check ingilizce/activity-ui.js
       - run: node --test tests/games-design-selected-1.test.cjs
-      - run: npm install --no-save --package-lock=false playwright@1.58.2
+      - run: npm install --no-save --package-lock=false playwright@1.58.2 jsdom@26.1.0
+      - run: node --test tests/games-category-access.test.cjs
       - run: npx playwright install --with-deps chromium
       - run: node tests/games-hub-ui.cjs
         env:

@@ -1,7 +1,7 @@
 /* Optional games initialize once, when their tab or public opener is used. */
 (()=>{'use strict';
   const premiumFile='premium-word-match.js?v=e810bf387f';
-  const introFile='premium-intro.js?v=20261111-paket';
+  const introFile='premium-intro.js?v=20261114-daily-trial';
   const files=['solo-arcade.js?v=20261111-papi','harf-bahcesi.js?v=20261111-papi','papi-cards.js?v=b9d02db518','meteor.js?v=9460b40009','word-wheel.js?v=dc87a710bb','kelime-rallisi.js?v=20261112-kart-a'];
   const loaded=new Set();let pending=null,readyDone=false;
   function script(src){window.dmLateCss?.();return new Promise((resolve,reject)=>{
