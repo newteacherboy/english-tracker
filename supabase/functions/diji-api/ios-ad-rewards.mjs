@@ -1,11 +1,10 @@
 // Server-side catalog resolution; never accept a client-supplied price.
-export function iosAdRewards({db,json,isDemo,characters,items,catalog}) {
+export function iosAdRewards({db,json,isDemo,items,catalog}) {
  const candidates=items.filter(x=>!x.atolye&&!x.parca&&x.sv!=='temel').map(x=>({id:x.id,gender:catalog.itemGender(x)}));
  function product(urun) {
   if(!urun)return null;
   const id=String(urun.id||'');
   if(urun.tip==='kiyafet'&&items.some(x=>x.id===id))return {tip:'kiyafet',id};
-  if(urun.tip==='karakter'&&Object.hasOwn(characters,id))return {tip:'karakter',id,price:50+characters[id]*10};
   if(urun.tip==='enerji'&&['5','10','15'].includes(id))return {tip:'enerji',id,price:({'5':100,'10':130,'15':180})[id]};
   throw Error('Ürün bulunamadı.');
  }

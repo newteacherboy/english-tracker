@@ -24,7 +24,6 @@ function paint(){if(!student())return;for(const f of C.features)for(const select
  document.querySelectorAll('[onclick]').forEach(e=>{const match=(e.getAttribute('onclick')||'').match(/\b([A-Za-z_$][\w$]*)\s*\(/);if(match&&C.functions[match[1]])mark(e,C.functions[match[1]]);});
  document.querySelectorAll('[data-dm-goals]').forEach(e=>{const code=e.dataset.dmGoals==='daily'?'gunluk_gorev':'haftalik_hedef';mark(e,code);e.querySelectorAll('button').forEach(b=>mark(b,code));});
  document.querySelectorAll('[data-social]').forEach(e=>{const code={message:'hazir_mesaj',duel:'duello',gift:'enerji_hediye'}[e.dataset.social];if(code)mark(e,code);});
- document.querySelectorAll('[data-k="koleksiyon"],[data-k="karakterler"],#bcKoleksiyon').forEach(e=>mark(e,'koleksiyon'));
  document.querySelectorAll('.ka-cins,#kaKaristir').forEach(e=>mark(e,'karakter'));
  document.querySelectorAll('#dlSekmeler [data-s]').forEach(e=>{const cat={vitrin:15,sac:17,ust:20,dis:20,alt:23,tek:23,ayak:26,aks:29,sapka:32,bas:32,kombin:35,dost:29,cik:38,yuz:15,sandik:5}[e.dataset.s];if(cat){const locked=level()<cat;e.classList.toggle('dm-level-locked',locked);if(locked){e.dataset.dmCategoryLevel=cat;e.setAttribute('aria-disabled','true');}else{delete e.dataset.dmCategoryLevel;e.removeAttribute('aria-disabled');}}});
  document.querySelectorAll('.so-hedef button').forEach(e=>mark(e,'haftalik_hedef'));

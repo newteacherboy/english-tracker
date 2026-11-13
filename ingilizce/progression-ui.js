@@ -48,7 +48,6 @@ function paint(){if(!student())return;document.querySelectorAll('.dm-avatar-leve
  document.querySelectorAll('[onclick]').forEach(e=>{const match=(e.getAttribute('onclick')||'').match(/\b([A-Za-z_$][\w$]*)\s*\(/);if(match&&C.functions[match[1]])mark(e,C.functions[match[1]]);});
  document.querySelectorAll('[data-dm-goals]').forEach(e=>{const code=e.dataset.dmGoals==='daily'?'gunluk_gorev':'haftalik_hedef';mark(e,code);e.querySelectorAll('button').forEach(b=>mark(b,code));});
  document.querySelectorAll('[data-social]').forEach(e=>{const code={message:'hazir_mesaj',duel:'duello',gift:'enerji_hediye'}[e.dataset.social];if(code)mark(e,code);});
- document.querySelectorAll('[data-k="koleksiyon"],[data-k="karakterler"],#bcKoleksiyon').forEach(e=>mark(e,'koleksiyon'));
  document.querySelectorAll('.ka-cins,#kaKaristir').forEach(e=>mark(e,'karakter'));
  document.querySelectorAll('#dlSekmeler [data-s]').forEach(e=>{e.classList.remove('dm-level-locked');delete e.dataset.dmCategoryLevel;e.removeAttribute('aria-disabled');});
  document.querySelectorAll('.so-hedef button').forEach(e=>mark(e,'haftalik_hedef'));
