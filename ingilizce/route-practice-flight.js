@@ -34,7 +34,8 @@ function play({isCurrent=()=>true,onExit=()=>{},sound=true,mode='practice',gain=
  void root.offsetWidth;root.classList.add('is-playing');entrySound(state);
  function tick(now){if(run!==state)return;if(!isCurrent()){state.finish(false);return;}const delta=Math.max(0,now-state.last);state.last=now;if(!document.hidden)state.elapsed+=delta;if(muted())for(const voice of state.voices)try{voice.stop();}catch{}
   if(!combo&&!state.exited&&state.elapsed>=2700){state.exited=true;tone(state,1700,0,.32,350,.035);}
-  if(state.elapsed>=duration){state.finish(true);return;}state.frame=requestAnimationFrame(tick);
+  // Let a real CSS animation deliver its end event before the clock fallback.
+  if(state.elapsed>=duration){const cssAnimation=actor.getAnimations?.().some(a=>['rf-flip','rf-arc','rf-reduced'].includes(a.animationName));if(!cssAnimation||state.elapsed>=duration+150){state.finish(true);return;}}state.frame=requestAnimationFrame(tick);
  }
  state.frame=requestAnimationFrame(tick);return promise;
 }
