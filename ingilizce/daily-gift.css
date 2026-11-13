@@ -1,0 +1,47 @@
+/* Approved concept 1: Lila & Altın. Only Parkur owns the animated streak entry. */
+body .dm-daily-streak-button[hidden]{display:none!important}
+body #tab-dunya .dm-unified-wallet.dm-papi-wallet.dm-has-daily-streak{grid-template-columns:clamp(26px,7vw,42px) repeat(4,minmax(0,1fr)) 54px!important;gap:3px!important}
+body #tab-dunya .dm-has-daily-streak>button:not(.dm-daily-streak-button){font-size:clamp(11px,3vw,16px)!important;padding-inline:1px!important}
+body #tab-dunya .dm-has-daily-streak .dm-pw-art:not(.dm-pw-papi){width:clamp(18px,5vw,26px);height:clamp(18px,5vw,26px)}
+body #tab-dunya .dm-unified-wallet.dm-papi-wallet>.dm-daily-streak-button{position:relative;display:grid!important;grid-template-columns:24px 1fr;grid-template-rows:1fr 12px;gap:0!important;border:1px solid #ffd16b!important;background:linear-gradient(135deg,#fff7c6,#ffcf44)!important;color:#54205f!important;-webkit-text-fill-color:#54205f!important;box-shadow:0 3px 0 #e5a629,0 0 0 3px #ffdf7a55!important;border-radius:17px!important;padding:5px!important;overflow:visible!important;font-size:15px!important}
+.dm-daily-flame{grid-row:1/3;align-self:center;font-size:25px;filter:drop-shadow(0 2px 2px #e8912160);animation:dgFlameWarmth 3s ease-in-out infinite}
+.dm-daily-streak-button small{font:900 10px/1 Nunito,system-ui,sans-serif}
+.dm-daily-ready{animation:dgButtonPulse 2.4s ease-in-out infinite}
+@keyframes dgButtonPulse{0%,100%{filter:drop-shadow(0 0 1px #ffce54)}50%{filter:drop-shadow(0 0 6px #ffc93e)}}
+@keyframes dgFlameWarmth{50%{transform:rotate(-5deg) scale(1.08)}}
+.dg-layer{position:fixed;inset:0;z-index:2147483000;display:flex;align-items:center;justify-content:center;padding:18px 14px max(18px,env(safe-area-inset-bottom));box-sizing:border-box;background:#25304970;backdrop-filter:blur(3px);font-family:Nunito,system-ui,sans-serif;color:#4f176b}
+.dg-dialog{position:relative;width:min(100%,390px);max-height:calc(100dvh - 40px);overflow:auto;overscroll-behavior:contain;box-sizing:border-box;border:3px solid #dfc1fc;border-radius:29px;background:linear-gradient(155deg,#fff,#fff 66%,#f4eafd);box-shadow:0 16px 60px #36135144;padding:20px 22px 16px;text-align:center;animation:dgEnter .32s ease-out both;outline:none}
+.dg-dialog *{box-sizing:border-box}
+.dg-dialog h2{font:950 clamp(25px,7vw,32px)/1.15 Nunito,system-ui,sans-serif;color:#4d1767;margin:8px 0 12px}
+.dg-close{position:absolute;right:12px;top:12px;z-index:3;border:0;border-radius:50%;background:#f0e3fb;color:#9260bc;width:36px;min-height:36px;padding:0;font:800 29px/1 Nunito,system-ui;cursor:pointer}
+.dg-gift-hero{position:relative;height:218px;margin:-5px -10px 0;display:flex;align-items:center;justify-content:center;isolation:isolate}
+.dg-gift-hero::before{content:'';position:absolute;inset:35px 0 5px;border-radius:50%;background:radial-gradient(ellipse,#f0dfff,transparent 70%);z-index:-1}
+.dg-gift-hero img{width:230px;height:230px;object-fit:contain;animation:dgPapiFloat 4s ease-in-out infinite}
+.dg-energy{display:inline-block;padding:8px 17px;border-radius:50px;background:#eee1fd;color:#4f176b;font-weight:950;font-size:25px}
+.dg-sub{font-size:15px;line-height:1.5;font-weight:800;color:#743f99;margin:13px 0 8px}
+.dg-primary{display:block;width:100%;min-height:50px;border:2px solid #ffdb54;border-bottom-color:#ed9e1b;border-radius:20px;background:linear-gradient(120deg,#ffdf54,#ffc100);box-shadow:0 4px 0 #e9a329,0 6px 13px #ffc73e33;padding:11px 10px;color:#501358;font:950 20px/1.2 Nunito,system-ui,sans-serif;cursor:pointer;touch-action:manipulation}
+.dg-primary:disabled{opacity:.7;cursor:progress}
+.dg-primary:focus-visible,.dg-close:focus-visible,.dg-calendar-link:focus-visible{outline:3px solid #9b55e8;outline-offset:3px}
+.dg-next{display:table;margin:12px auto 0;padding:3px 13px;border-radius:30px;background:#efdefe;color:#75349e;font-size:14px;font-weight:850}
+.dg-calendar-link{border:0;background:none;padding:11px 5px 0;color:#8348a9;font:800 12px Nunito,system-ui;cursor:pointer}
+.dg-status{font-size:13px;line-height:1.4;color:#76588b;margin:8px 0;min-height:0}
+.dg-status:empty{display:none}
+.dg-series{padding-top:19px}
+.dg-series h2{margin:0 22px 4px}
+.dg-series-hero{display:flex;align-items:center;justify-content:center;gap:5px;height:130px;margin:4px -12px 2px}
+.dg-series-hero img{object-fit:contain;width:134px;height:144px;align-self:flex-end}
+.dg-series-hero>div{display:flex;align-items:center;gap:7px;padding:10px 12px;border-radius:36px;background:linear-gradient(110deg,#fff6da,#ffe7a0)}
+.dg-series-hero strong{font-size:44px;line-height:1;font-weight:950}
+.dg-series-hero b{font-size:16px;line-height:1.1;max-width:65px;text-align:left}
+.dg-days{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:7px;margin:9px -7px 0}
+.dg-day{grid-column:span 2;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:81px;border-radius:17px;border:1px solid #e8dcfc;background:#f0e9fc;padding:6px 2px;color:#57206d}
+.dg-day:nth-child(5){grid-column:2/span 2}
+.dg-day b{font-size:12px}.dg-day strong{font-size:20px;white-space:nowrap;margin:4px 0}.dg-day small{display:grid;place-items:center;min-height:18px;font-weight:900;font-size:11px;color:#a685c5}
+.dg-day.dg-done{border-color:#b9e8d9;background:#def8ee}.dg-day.dg-done small{width:20px;border-radius:50%;background:#1bb77c;color:white}
+.dg-day.dg-today{border-color:#f5be27;background:linear-gradient(#fff8de,#ffefb0);box-shadow:0 0 0 2px #fff3c4}.dg-day.dg-today small{background:#efa000;color:#fff;border-radius:15px;padding:2px 8px}
+.dg-loading{min-height:200px;display:flex;flex-direction:column;justify-content:center}
+@keyframes dgEnter{from{opacity:0;transform:translateY(14px) scale(.97)}to{opacity:1;transform:none}}
+@keyframes dgPapiFloat{50%{transform:translateY(-5px) rotate(-1deg)}}
+@media(max-height:690px){.dg-dialog{padding:14px 17px;border-radius:24px}.dg-gift-hero{height:155px}.dg-gift-hero img{height:170px;width:170px}.dg-series-hero{height:105px}.dg-series-hero img{height:119px;width:115px}.dg-dialog h2{font-size:26px;margin-bottom:8px}.dg-day{min-height:73px}.dg-sub{font-size:14px;margin:10px 0}.dg-primary{font-size:18px;min-height:46px}.dg-next{margin-top:9px}.dg-calendar-link{padding-top:8px}}
+@media(max-width:340px){.dg-dialog{padding-inline:15px}.dg-days{gap:5px}.dg-day strong{font-size:17px}.dg-series-hero>div{padding:9px}.dg-series-hero strong{font-size:36px}.dg-series-hero b{font-size:14px}}
+@media(prefers-reduced-motion:reduce){.dm-daily-ready,.dm-daily-flame,.dg-dialog,.dg-gift-hero img{animation:none!important}}

@@ -3,6 +3,8 @@
 const visible=e=>!!e&&e.getClientRects().length>0&&getComputedStyle(e).visibility!=='hidden';
 const hud=document.createElement('div');hud.className='dm-papi-wallet dm-unified-wallet';hud.setAttribute('aria-label','Enerji, altın, XP ve aktif kullanım yıldızları');
 hud.innerHTML='<i class="dm-pw-art dm-pw-papi" aria-hidden="true"></i>'+['energy','gold','xp','time'].map(key=>'<button type="button" data-pw="'+key+'"><i class="dm-pw-art dm-pw-'+key+'" aria-hidden="true"></i><span class="dm-pw-copy"><b data-pw-value></b>'+(key==='time'?'<small data-pw-minutes></small>':'')+'</span></button>').join('');
+const daily=document.createElement('button');daily.type='button';daily.className='dm-daily-streak-button';daily.dataset.dmDailyStreak='';daily.hidden=true;
+daily.innerHTML='<span class="dm-daily-flame" aria-hidden="true">🔥</span><b data-daily-count>·</b><small>Seri</small>';daily.setAttribute('aria-label','Günlük seri');daily.onclick=()=>window.DijiDailyGift?.open();
 const buttons=Object.fromEntries([...hud.querySelectorAll('[data-pw]')].map(e=>[e.dataset.pw,e]));
 buttons.time.onclick=()=>window.dmActiveTime?.panel();buttons.energy.onclick=()=>window.dijiEnerjiPaneliAc?.();buttons.gold.onclick=()=>window.magazaAc?.();buttons.xp.onclick=()=>window.dmIlerlememAc?.();
 const activity='#dmStoryLesson,#bzPerde #bzAlan,.game-modal-overlay,#meteorGame,#wordWheel,#papiCards,#harfBahcesiOverlay,#baOyunEkrani,#kpKelimeOyunEkrani,#kmPanel .km-sec,#seviyeDisLinkOverlay';
@@ -35,6 +37,8 @@ function run(){
  const host=visible(friends)?friends.querySelector('.fr-wallet-host'):selectors.flatMap(s=>[...document.querySelectorAll(s)]).find(visible);
  if(visible(friends)&&!friends.classList.contains('fr-home-view')){detach();return;}if(!host){detach();return;}
  if(hud.parentElement!==host){detach();host.prepend(hud);host.classList.add('dm-has-wallet');window.dispatchEvent(new Event('resize'));}
+ const dailyVisible=!!window.DijiDailyGift&&!!host.closest('#tab-dunya')&&!window.dmGuestMode&&!['teacher','dijimedu_demo'].includes(String(aktifOgrenciAdi).toLowerCase())&&!window.dmTeacherPortalMode;
+ if(dailyVisible){daily.hidden=false;if(daily.parentElement!==hud)hud.append(daily);}else daily.remove();hud.classList.toggle('dm-has-daily-streak',dailyVisible);window.DijiDailyGift?.decorateButton(daily);if(dailyVisible)window.DijiDailyGift?.onParkurVisible();
  const y=typeof yo==='undefined'?{}:yo||{},time=window.dmActiveTime?.summary()||{stars:0,seconds:0},level=window.dmProgression?.level?.()||1;
  const energy=window.genelEnerjiKalan,values={energy:energy==null?'—':format(energy),gold:compact(y.altin),xp:compact(y.totalXp),time:compact(time.stars)};
  const labels={energy:'Enerji paketleri · '+values.energy,gold:'Altınlarım ve mağaza · '+format(y.altin)+' altın',xp:'XP ve ilerlemem · '+format(y.totalXp)+' XP · Seviye '+level,time:'Aktif kullanım yıldızları · '+format(time.stars)+' yıldız · '+format(finite(time.seconds)/60)+' dakika'};
