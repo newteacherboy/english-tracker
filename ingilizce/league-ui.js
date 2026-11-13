@@ -104,7 +104,7 @@ function duelMessage(message){const el=duelSheet?.querySelector('.dm-lig-duel-me
 const accessLevel=()=>window.dmProgression?.earlyAccess?.()?40:level();
 function openRealDuel(){
  if(accessLevel()<20){window.dmProgression?.require?.('duello');const msg='🔒 Gerçek arkadaş düellosu 20. seviyede açılır (şu an '+level()+'. seviyedesin). Papi rakipleriyle pratik yapabilirsin.';if(duelSheet?.querySelector('.dm-lig-duel-message')){duelMessage(msg);const el=duelSheet.querySelector('.dm-lig-duel-message');el.classList.remove('dm-lig-duel-warn');void el.offsetWidth;el.classList.add('dm-lig-duel-warn');}else window.yoToast?.(msg);return;}
- closeDuelModal();window.dmArenaAc?.();
+ closeDuelModal();window.dmRealDuelAc?.();
 }
 function showDuelPlans(message='İki ücretsiz düellonu tamamladın.'){
  const m=duelModal('<div class="dm-lig-duel-hero">'+papiImg+'<h2>Papi ile maceraya devam!</h2><p>'+esc(message)+'</p></div><p>Yeni sanal düellolar için Pro veya Premium planlarını inceleyebilirsin. Satın almak zorunda değilsin; diğer oyunlar açık kalır.</p>'+
