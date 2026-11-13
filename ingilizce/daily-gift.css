@@ -7,6 +7,7 @@ body #tab-dunya#tab-dunya .dm-has-daily-streak>.dm-pw-papi{display:none!importan
 body #tab-dunya#tab-dunya .dm-unified-wallet.dm-papi-wallet.dm-has-daily-streak>button{grid-row:1!important;min-width:0!important;min-height:44px!important;height:44px!important;box-sizing:border-box!important;margin:0!important;padding:3px 1px!important;font-size:12px!important;line-height:14px!important;gap:2px!important;flex-direction:column!important}
 body #tab-dunya#tab-dunya .dm-has-daily-streak .dm-pw-art:not(.dm-pw-papi){width:18px!important;height:18px!important}
 body #tab-dunya#tab-dunya .dm-has-daily-streak .dm-pw-copy{align-items:center!important;gap:0!important}
+body #tab-dunya#tab-dunya .dm-has-daily-streak>[data-pw]::after{display:none!important}
 body #tab-dunya#tab-dunya .dm-has-daily-streak [data-pw-minutes]{display:none!important}
 body #tab-dunya#tab-dunya .dm-unified-wallet.dm-papi-wallet.dm-has-daily-streak>.dm-daily-streak-button{position:relative;display:grid!important;grid-template-columns:minmax(0,1fr) auto;grid-template-rows:20px 14px;column-gap:2px!important;row-gap:0!important;align-content:center!important;border:1px solid #ffd16b!important;background:linear-gradient(135deg,#fff7c6,#ffcf44)!important;color:#54205f!important;-webkit-text-fill-color:#54205f!important;box-shadow:0 2px 0 #e5a629!important;border-radius:14px!important;padding:3px 5px!important;overflow:hidden!important}
 body #tab-dunya#tab-dunya .dm-daily-streak-button :is(b,small){color:inherit!important;-webkit-text-fill-color:inherit!important;min-width:0}
