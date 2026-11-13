@@ -47,6 +47,7 @@
   if(!revealed||body()?.inert||!queue.length)return;
   window.speechSynthesis?.cancel();
   const word=words[queue.shift()];
+  window.dmAnswerFeedback?.(yes,undefined,{eventId:'papi-card:'+session.runId+':'+session.total+':'+queue.length});
   if(yes)session.correct++;
   else window.dmWrongWords?.add(word);
   draw();

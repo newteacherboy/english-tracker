@@ -11,7 +11,7 @@ const leagues={sampiyon:{name:'Şampiyonlar Ligi',short:'Şampiyonlar',icon:'�
 let mode='weekly',selected=null,limit=30,epoch=0,owner=who();
 const empty=()=>({rows:[],visualRows:[],loaded:false,busy:false,error:'',at:0});
 let states={weekly:empty(),alltime:empty()};
-function reset(){if(owner===who())return;owner=who();epoch++;mode='weekly';selected=null;limit=30;states={weekly:empty(),alltime:empty()};}
+function reset(){if(owner===who())return;clearRise();pendingRise=null;lastRise=null;owner=who();epoch++;mode='weekly';selected=null;limit=30;states={weekly:empty(),alltime:empty()};}
 function onScreen(){return typeof maSekme!=='undefined'&&maSekme==='lig'&&!(typeof maProfilId!=='undefined'&&maProfilId)&&root.classList.contains('active');}
 /* One individual Papi character per bot, cropped from the same parkur badge artwork. */
 const virtualAvatarAssets={
@@ -361,41 +361,44 @@ function captureRankRise(account){
  try{localStorage.setItem(key,JSON.stringify({rank,at:Date.now()}));}catch{}
 }
 function clearRise(){
+ if(!window.document)return;
  if(riseTimer){clearTimeout(riseTimer);riseTimer=null;}
  document.getElementById('dmLeagueRiseFloat')?.remove();
  document.getElementById('dmLeagueRiseBadge')?.remove();
+ root.querySelectorAll('.dm-league-rise-highlight').forEach(el=>el.classList.remove('dm-league-rise-highlight'));
 }
 function showRankRise(change){
- if(!onScreen()||mode!=='weekly'||norm(who())!==change.account||weekStamp()!==change.week||!states.weekly.loaded)return;
+ if(!onScreen()||mode!=='weekly'||document.hidden||norm(who())!==change.account||weekStamp()!==change.week||!states.weekly.loaded||selected&&selected!==change.league)return false;
  const me=(states.weekly.visualRows.length?states.weekly.visualRows:states.weekly.rows).find(p=>!p.is_virtual&&norm(p.name)===change.account);
- if(!me||me.league!==change.league||Number(me.displayRank??me.rank)!==change.to)return;
+ if(!me||me.league!==change.league||Number(me.displayRank??me.rank)!==change.to)return false;
  const source=root.querySelector('.dm-lig-my-place .dm-lig-self');
- if(!source)return;
+ if(!source)return false;
  clearRise();
  const rect=source.getBoundingClientRect();
- if(rect.width<20||rect.height<20)return;
+ if(rect.width<20||rect.height<20)return false;
  const reduced=window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches;
  const match=[...root.querySelectorAll('.dm-lig-list .dm-lig-row, .dm-lig-podium .dm-lig-place')]
   .find(el=>norm(el.dataset.ligPerson)===change.account);
  const destination=match?.getBoundingClientRect();
- const target=destination&&destination.height&&destination.top>=0&&destination.bottom<=innerHeight
-  ?destination.top:Math.max(88,rect.top-Math.min(240,innerHeight*.32));
+ const fallback=Math.max(12,rect.top-Math.min(240,innerHeight*.32));
+ const target=destination&&destination.height&&destination.top>=12&&destination.bottom<=innerHeight&&destination.top<rect.top-12?destination.top:fallback;
  const badge=document.createElement('div');
  badge.id='dmLeagueRiseBadge';badge.className='dm-league-rise-badge';
  badge.setAttribute('role','status');badge.textContent='↗ Yükseldin! '+change.from+'. sıradan '+change.to+'. sıraya';
  document.body.append(badge);
- if(!reduced){
+ if(!reduced&&typeof source.animate==='function'){
   const ghost=source.cloneNode(true);ghost.id='dmLeagueRiseFloat';ghost.classList.add('dm-league-rise-float');
   ghost.removeAttribute('data-lig-person');ghost.setAttribute('aria-hidden','true');ghost.tabIndex=-1;
   Object.assign(ghost.style,{left:rect.left+'px',top:rect.top+'px',width:rect.width+'px',height:rect.height+'px',pointerEvents:'none'});
   document.body.append(ghost);
-  ghost.animate([{transform:'translateY(0) scale(1)',opacity:'.92',filter:'drop-shadow(0 0 0 #9f65ff)'},{offset:.65,transform:'translateY('+((target-rect.top)*.65)+'px) scale(1.055)',opacity:'1',filter:'drop-shadow(0 0 18px #a677ff)'},{transform:'translateY('+(target-rect.top)+'px) scale(1.02)',opacity:'0',filter:'drop-shadow(0 0 9px #ab74ff)'}],{duration:1000,easing:'cubic-bezier(.18,.72,.25,1)',fill:'forwards'});
+  try{ghost.animate?.([{transform:'translateY(0) scale(1)',opacity:'.92',filter:'drop-shadow(0 0 0 #9f65ff)'},{offset:.65,transform:'translateY('+((target-rect.top)*.65)+'px) scale(1.055)',opacity:'1',filter:'drop-shadow(0 0 18px #a677ff)'},{transform:'translateY('+(target-rect.top)+'px) scale(1.02)',opacity:'0',filter:'drop-shadow(0 0 9px #ab74ff)'}],{duration:1000,easing:'cubic-bezier(.18,.72,.25,1)',fill:'forwards'});}catch{ghost.remove();}
  }
  source.classList.add('dm-league-rise-highlight');
  riseTimer=setTimeout(()=>{clearRise();source.classList.remove('dm-league-rise-highlight');},2200);
- lastRise=change;
+ lastRise=change;return true;
 }
-function draw(){if(!onScreen())return;const old=root.querySelector('.dm-lig');if(old)old.outerHTML=render();if(pendingRise){const change=pendingRise;pendingRise=null;requestAnimationFrame(()=>showRankRise(change));}}
+function animatePendingRise(){if(pendingRise&&showRankRise(pendingRise))pendingRise=null;}
+function draw(){if(!onScreen()){clearRise();return;}const old=root.querySelector('.dm-lig');if(old)old.outerHTML=render();if(pendingRise)requestAnimationFrame(animatePendingRise);}
 async function load(force=false,scope=mode){reset();const state=states[scope];if(state.busy||!force&&Date.now()-state.at<60000)return;
  if(scope==='alltime'&&accessLevel()<15)return;const ticket=epoch,account=who();state.busy=true;state.error='';draw();
  try{const result=await fetch(apiURL,{method:'POST',body:JSON.stringify({islem:'seviyeLigListesi',kapsam:scope,ogrenci:account,t:localStorage.getItem('ing_token')||'',...(force?{_:Date.now()}:{})})});const d=await result.json();
@@ -405,20 +408,21 @@ async function load(force=false,scope=mode){reset();const state=states[scope];if
  }catch(e){if(account===who()&&ticket===epoch)state.error=String(e.message||'Güncellenemedi');}
  finally{if(account===who()&&ticket===epoch){state.busy=false;draw();if(scope==='weekly')root.dispatchEvent(new Event('dm:weekly-league'));}}
 }
-window.maLigHtml=function(){reset();if(!states[mode].busy&&Date.now()-states[mode].at>=60000)queueMicrotask(()=>{if(onScreen())load();});return render();};
+window.maLigHtml=function(){reset();if(!states[mode].busy&&Date.now()-states[mode].at>=60000)queueMicrotask(()=>{if(onScreen())load();});if(pendingRise)requestAnimationFrame(animatePendingRise);return render();};
 root.addEventListener('click',e=>{
  const b=e.target.closest('[data-lig-mode],[data-lig-code],[data-lig-person],[data-lig-back],[data-lig-more],[data-lig-retry]');if(!b)return;
  if(b.hasAttribute('data-lig-back'))return window.maSekmeSec?.('hub');
- if(b.hasAttribute('data-lig-person')){if(b.closest('.dm-lig-my-place')&&lastRise&&lastRise.account===norm(who())&&lastRise.week===weekStamp()){showRankRise(lastRise);return;}if(b.hasAttribute('data-virtual-rival')){const bot=states.weekly.visualRows.find(p=>p.is_virtual&&p.name===b.dataset.ligPerson);if(bot)void openVirtualDirect(bot);return;}return window.maAkisKisiAc?.(b.dataset.ligPerson);}
- if(b.hasAttribute('data-lig-mode')){if(b.dataset.ligMode==='alltime'&&accessLevel()<15){window.yoToast?.('🔒 Efsaneler Ligi 15. seviyede açılır.');return;}mode=b.dataset.ligMode;limit=30;draw();void load();return;}
- if(b.hasAttribute('data-lig-code')){const k=b.dataset.ligCode;if(accessLevel()<leagues[k].level)return;selected=k;limit=30;draw();return;}
+ if(b.hasAttribute('data-lig-person')){if(b.closest('.dm-lig-my-place')&&lastRise&&lastRise.account===norm(who())&&lastRise.week===weekStamp()){if(showRankRise(lastRise))return;}if(b.hasAttribute('data-virtual-rival')){const bot=states.weekly.visualRows.find(p=>p.is_virtual&&p.name===b.dataset.ligPerson);if(bot)void openVirtualDirect(bot);return;}return window.maAkisKisiAc?.(b.dataset.ligPerson);}
+ if(b.hasAttribute('data-lig-mode')){if(b.dataset.ligMode==='alltime'&&accessLevel()<15){window.yoToast?.('🔒 Efsaneler Ligi 15. seviyede açılır.');return;}clearRise();mode=b.dataset.ligMode;limit=30;draw();void load();return;}
+ if(b.hasAttribute('data-lig-code')){const k=b.dataset.ligCode;if(accessLevel()<leagues[k].level)return;clearRise();selected=k;limit=30;draw();return;}
  if(b.hasAttribute('data-lig-more')){limit+=30;draw();return;}
  if(b.hasAttribute('data-lig-retry'))void load(true);
 });
 document.addEventListener('dm:login',()=>{clearRise();pendingRise=null;lastRise=null;owner='';reset();});
 document.addEventListener('dm:progression-status',()=>{if(onScreen())draw();});
 document.addEventListener('dm:state',()=>{for(const state of Object.values(states))state.at=0;if(onScreen())void load();});
-document.addEventListener('visibilitychange',()=>{if(!document.hidden&&onScreen())void load();});
+document.addEventListener('visibilitychange',()=>{if(document.hidden)clearRise();else if(onScreen()){animatePendingRise();void load();}});
+if(typeof MutationObserver==='function')new MutationObserver(()=>{if(!onScreen())clearRise();}).observe(root,{attributes:true,attributeFilter:['class'],childList:true});
 setInterval(()=>{if(!document.hidden&&onScreen())void load();},180000); // [Kota] 1 dk -> 3 dk
 window.dmLeagueUI={refresh:()=>load(true),render,weeklyPreview,openVirtualDirect,openVirtualSelection,openDuelChooser,virtualAvatar,refreshWeekly:()=>load(false,'weekly'),openWeekly:()=>{mode='weekly';selected=null;limit=30;window.maSekmeSec?.('lig');}};
 })();

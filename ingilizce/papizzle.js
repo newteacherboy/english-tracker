@@ -95,7 +95,7 @@
     }
 
     function playSound(ok) {
-      if (muted) return;
+      if (muted || window.dmAnswerAudio?.enabled()===false) return;
       try {
         const Audio = window.AudioContext || window.webkitAudioContext;
         if (!Audio) return;

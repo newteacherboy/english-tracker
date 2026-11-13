@@ -81,7 +81,7 @@
       }
     }
     function effect(kind) {
-      if (!context || muted || document.hidden) return;
+      if (!context || muted || document.hidden || window.dmAnswerAudio?.enabled()===false) return;
       const notes = kind === 'correct' ? [587, 784, 1047] : kind === 'wrong' ? [294, 196] : [118, 74];
       notes.forEach((frequency, index) =>
         note(frequency, context.currentTime + index * .08, .16, .065, bus, kind === 'impact' ? 'triangle' : 'sine'));
