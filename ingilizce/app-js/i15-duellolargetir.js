@@ -73,15 +73,6 @@
     }).join('');
   }
 
-  /* Vitrine ve Keşfet'e Düello Kartı Ekleme */
-  let orgVitrin = window.maVitrinHtml;
-  if (typeof orgVitrin === 'function') window.maVitrinHtml = function (id, benimMi) {
-    let html = orgVitrin.apply(this, arguments);
-    if (benimMi || id === 'ben' || typeof maTakip === 'undefined' || !maTakip.has(id)) return html;
-    let sec = Object.keys(DL_OYUNLAR).map(k => `<option value="${k}">${DL_OYUNLAR[k]}</option>`).join('');
-    return `<div class="dl-kart"><h4>⚔️ Düelloya çağır</h4><div style="display:flex;gap:8px;align-items:center"><select id="dlOyunSec" aria-label="Düello oyunu">${sec}</select><button class="dl-gonder" data-o="${guvenliMetin(id)}" onclick="duelloGonder(this.dataset.o, this)">Düello yolla</button></div><small style="display:block;margin-top:6px;color:#8a78b8">Kabul ederse bugün ikiniz de bu oyunu oynarsınız, en yüksek puan kazanır: +3 ⚡ +20 XP.</small></div>` + html;
-  };
-
   let orgKesfet = window.maKesfetHtml;
   if (typeof orgKesfet === 'function') window.maKesfetHtml = function () {
     setTimeout(async () => { await duellolarGetir(); document.querySelectorAll('.dl-alan').forEach(a => a.innerHTML = dlListeHtml(false)); }, 50);

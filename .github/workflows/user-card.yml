@@ -1,0 +1,24 @@
+name: Compact user card QA
+on:
+  pull_request:
+    paths: ['ingilizce/user-card.*', 'ingilizce/friends-ui.js', 'ingilizce/medupro.js', 'ingilizce/app-js/i04-meduakisac.js', 'supabase/functions/diji-api/user-card.mjs', 'supabase/functions/diji-api/progression-api.ts', 'tests/user-card-*', '.github/workflows/user-card.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  card:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm install --prefix /tmp/card-qa --no-audit --no-fund jsdom@26.1.0 playwright@1.58.2
+      - run: /tmp/card-qa/node_modules/.bin/playwright install --with-deps chromium
+      - run: NODE_PATH=/tmp/card-qa/node_modules node --test tests/user-card-api.test.mjs tests/user-card-ui.test.cjs tests/social-safety.test.mjs tests/social-safety-ui.test.cjs
+      - run: NODE_PATH=/tmp/card-qa/node_modules node tests/user-card-browser.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: compact-user-card
+          path: /tmp/user-card-*.png

@@ -340,13 +340,6 @@ function odulUret(k, o) {
     }
     return orgEg.apply(this, arguments);
   };
-  let orgVit = window.maVitrinHtml;
-  if (typeof orgVit === 'function') window.maVitrinHtml = function (id, benimMi) {
-    let h = orgVit.apply(this, arguments);
-    if (yoVar() && (yo.hediyeHak || 0) > 0) h = h.replace(/(<button disabled data-o="[^"]*" onclick="enerjiGonder\(this\.dataset\.o, this\)">)Bugün gönderdin/, (m, a) => a.replace('disabled ', '') + `🎁 Ekstra hakla gönder (${yo.hediyeHak})`);
-    return h;
-  };
-
   /* ================= MAĞAZA SEKMELERİ: ATÖLYE / KOLEKSİYON / SANDIKLAR ================= */
   let mgSekme = 'atolye', kolFiltre = 'hepsi';
   function mgBarCiz() {
