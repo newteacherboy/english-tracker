@@ -1,21 +1,24 @@
 /* Approved concept 1: Lila & Altın. Only Parkur owns the animated streak entry. */
 body .dm-daily-streak-button[hidden]{display:none!important}
 @layer bilgiIslands {
+/* Match the route content width in portrait, landscape and desktop. */
+body #tab-dunya#tab-dunya .rt-top.dm-has-wallet:has(.dm-has-daily-streak){position:relative!important;inset:auto!important;transform:none!important;width:100%!important;max-width:none!important;min-width:0!important;box-sizing:border-box!important;justify-self:stretch!important;grid-column:1/-1!important;margin:0!important;padding:0!important}
+
 /* Share the live route layer: layered important declarations outrank unlayered ones.
    The live route theme has more specific wallet rules. Keep all five controls
    on one explicit grid row, including when theme CSS is loaded later. */
 body #tab-dunya#tab-dunya .dm-unified-wallet.dm-papi-wallet.dm-has-daily-streak{display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr))!important;gap:3px!important;align-items:center!important;box-sizing:border-box!important;min-width:0!important}
 body #tab-dunya#tab-dunya .dm-has-daily-streak>.dm-pw-papi{display:none!important}
-body #tab-dunya#tab-dunya .dm-unified-wallet.dm-papi-wallet.dm-has-daily-streak>button{grid-row:1!important;min-width:0!important;min-height:44px!important;height:44px!important;box-sizing:border-box!important;margin:0!important;padding:3px 1px!important;font-size:12px!important;line-height:14px!important;gap:2px!important;flex-direction:column!important}
-body #tab-dunya#tab-dunya .dm-has-daily-streak .dm-pw-art:not(.dm-pw-papi){width:18px!important;height:18px!important}
+body #tab-dunya#tab-dunya .dm-unified-wallet.dm-papi-wallet.dm-has-daily-streak>button{grid-row:1!important;min-width:0!important;min-height:52px!important;height:52px!important;box-sizing:border-box!important;margin:0!important;padding:3px 1px!important;font-size:clamp(12px,1.8vw,16px)!important;line-height:18px!important;gap:3px!important;flex-direction:column!important}
+body #tab-dunya#tab-dunya .dm-has-daily-streak .dm-pw-art:not(.dm-pw-papi){width:clamp(20px,3vw,26px)!important;height:clamp(20px,3vw,26px)!important}
 body #tab-dunya#tab-dunya .dm-has-daily-streak .dm-pw-copy{align-items:center!important;gap:0!important}
 body #tab-dunya#tab-dunya .dm-has-daily-streak>[data-pw]::after{display:none!important}
 body #tab-dunya#tab-dunya .dm-has-daily-streak [data-pw-minutes]{display:none!important}
-body #tab-dunya#tab-dunya .dm-unified-wallet.dm-papi-wallet.dm-has-daily-streak>.dm-daily-streak-button{position:relative;display:grid!important;grid-template-columns:minmax(0,1fr) auto;grid-template-rows:20px 14px;column-gap:2px!important;row-gap:0!important;align-content:center!important;border:1px solid #ffd16b!important;background:linear-gradient(135deg,#fff7c6,#ffcf44)!important;color:#54205f!important;-webkit-text-fill-color:#54205f!important;box-shadow:0 2px 0 #e5a629!important;border-radius:14px!important;padding:3px 5px!important;overflow:hidden!important}
+body #tab-dunya#tab-dunya .dm-unified-wallet.dm-papi-wallet.dm-has-daily-streak>.dm-daily-streak-button{position:relative;display:grid!important;grid-template-columns:minmax(0,1fr) auto;grid-template-rows:24px 18px;column-gap:4px!important;row-gap:0!important;align-content:center!important;border:1px solid #ffd16b!important;background:linear-gradient(135deg,#fff7c6,#ffcf44)!important;color:#54205f!important;-webkit-text-fill-color:#54205f!important;box-shadow:0 2px 0 #e5a629!important;border-radius:14px!important;padding:3px 5px!important;overflow:hidden!important}
 body #tab-dunya#tab-dunya .dm-daily-streak-button :is(b,small){color:inherit!important;-webkit-text-fill-color:inherit!important;min-width:0}
-body #tab-dunya#tab-dunya .dm-daily-streak-button b{justify-self:end;font:900 12px/14px Nunito,system-ui,sans-serif}
+body #tab-dunya#tab-dunya .dm-daily-streak-button b{justify-self:end;font:900 clamp(12px,1.8vw,16px)/18px Nunito,system-ui,sans-serif}
 body #tab-dunya#tab-dunya .dm-daily-streak-button small{justify-self:start}
-body #tab-dunya#tab-dunya .dm-daily-flame{grid-column:1/-1;grid-row:1;justify-self:center;align-self:center;font-size:20px;line-height:20px;filter:drop-shadow(0 2px 2px #e8912160);animation:dgFlameWarmth 3s ease-in-out infinite}
+body #tab-dunya#tab-dunya .dm-daily-flame{grid-column:1/-1;grid-row:1;justify-self:center;align-self:center;font-size:24px;line-height:24px;filter:drop-shadow(0 2px 2px #e8912160);animation:dgFlameWarmth 3s ease-in-out infinite}
 .dm-daily-streak-button small{font:900 10px/1 Nunito,system-ui,sans-serif}
 }
 .dm-daily-ready{animation:dgButtonPulse 2.4s ease-in-out infinite}
