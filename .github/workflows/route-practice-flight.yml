@@ -1,7 +1,7 @@
 name: Route Papi practice flight
 on:
   pull_request:
-    paths: ['ingilizce/route-practice-flight.*', 'ingilizce/route-assets/papi-practice-flight.webp', 'ingilizce/thematic-learning.js', 'tests/route-practice-flight*', 'tests/route-combo-*', '.github/workflows/route-practice-flight.yml']
+    paths: ['ingilizce/route-practice-flight.*', 'ingilizce/kombo-basamak.js', 'ingilizce/route-assets/papi-practice-flight.webp', 'ingilizce/thematic-learning.js', 'tests/route-practice-flight*', 'tests/route-combo-*', '.github/workflows/route-practice-flight.yml']
   workflow_dispatch:
 permissions:
   contents: read
