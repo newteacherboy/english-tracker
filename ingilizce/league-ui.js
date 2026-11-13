@@ -343,7 +343,8 @@ function render(){reset();if(mode==='alltime'&&accessLevel()<15)mode='weekly';
 }
 /* Rank rise: a local, week/account-scoped presentation only. No league or XP writes. */
 const rankRiseKey='dm.league.rank-rise.v1:';
-let pendingRise=null,lastRise=null,riseTimer=null;
+let pendingRise=null,lastRise=null,riseTimer=null,riseRankTimer=null;
+const riseMotionMs=4600,riseNoticeMs=6000;
 const weekStamp=()=>{const d=new Date(Date.now()+10800000);d.setUTCDate(d.getUTCDate()-(d.getUTCDay()+6)%7);return d.toISOString().slice(0,10);};
 const riseStoreKey=(account,league)=>rankRiseKey+encodeURIComponent(norm(account))+':'+league+':'+weekStamp();
 function captureRankRise(account){
@@ -363,6 +364,7 @@ function captureRankRise(account){
 function clearRise(){
  if(!window.document)return;
  if(riseTimer){clearTimeout(riseTimer);riseTimer=null;}
+ if(riseRankTimer){clearTimeout(riseRankTimer);riseRankTimer=null;}
  document.getElementById('dmLeagueRiseFloat')?.remove();
  document.getElementById('dmLeagueRiseBadge')?.remove();
  root.querySelectorAll('.dm-league-rise-highlight').forEach(el=>el.classList.remove('dm-league-rise-highlight'));
@@ -380,8 +382,10 @@ function showRankRise(change){
  const match=[...root.querySelectorAll('.dm-lig-list .dm-lig-row, .dm-lig-podium .dm-lig-place')]
   .find(el=>norm(el.dataset.ligPerson)===change.account);
  const destination=match?.getBoundingClientRect();
- const fallback=Math.max(12,rect.top-Math.min(240,innerHeight*.32));
- const target=destination&&destination.height&&destination.top>=12&&destination.bottom<=innerHeight&&destination.top<rect.top-12?destination.top:fallback;
+ // Keep the row visible above mobile navigation, even when the real self row is below the fold.
+ const startTop=Math.max(140,Math.min(rect.top,innerHeight-rect.height-160));
+ const fallback=Math.max(120,startTop-Math.min(220,innerHeight*.28));
+ const target=destination&&destination.height&&destination.top>=120&&destination.bottom<=innerHeight-160&&destination.top<startTop-40?destination.top:fallback;
  const badge=document.createElement('div');
  badge.id='dmLeagueRiseBadge';badge.className='dm-league-rise-badge';
  badge.setAttribute('role','status');badge.textContent='↗ Yükseldin! '+change.from+'. sıradan '+change.to+'. sıraya';
@@ -389,12 +393,25 @@ function showRankRise(change){
  if(!reduced&&typeof source.animate==='function'){
   const ghost=source.cloneNode(true);ghost.id='dmLeagueRiseFloat';ghost.classList.add('dm-league-rise-float');
   ghost.removeAttribute('data-lig-person');ghost.setAttribute('aria-hidden','true');ghost.tabIndex=-1;
-  Object.assign(ghost.style,{left:rect.left+'px',top:rect.top+'px',width:rect.width+'px',height:rect.height+'px',pointerEvents:'none'});
+  Object.assign(ghost.style,{left:rect.left+'px',top:startTop+'px',width:rect.width+'px',height:rect.height+'px',pointerEvents:'none'});
+  const rank=ghost.querySelector('.dm-lig-rank');
+  const detail=ghost.querySelector('.dm-lig-person small');
+  if(rank)rank.textContent=String(change.from);
+  if(detail){detail.classList.add('dm-league-rise-detail');detail.textContent=change.from+'. sıra → '+change.to+'. sıra · ↑ '+(change.from-change.to)+' basamak';}
   document.body.append(ghost);
-  try{ghost.animate?.([{transform:'translateY(0) scale(1)',opacity:'.92',filter:'drop-shadow(0 0 0 #9f65ff)'},{offset:.65,transform:'translateY('+((target-rect.top)*.65)+'px) scale(1.055)',opacity:'1',filter:'drop-shadow(0 0 18px #a677ff)'},{transform:'translateY('+(target-rect.top)+'px) scale(1.02)',opacity:'0',filter:'drop-shadow(0 0 9px #ab74ff)'}],{duration:1000,easing:'cubic-bezier(.18,.72,.25,1)',fill:'forwards'});}catch{ghost.remove();}
+  // Read the old position, follow the climb, then hold the new position before fading.
+  try{ghost.animate([
+   {offset:0,transform:'translateY(0) scale(1)',opacity:1},
+   {offset:.18,transform:'translateY(0) scale(1.03)',opacity:1},
+   {offset:.72,transform:'translateY('+(target-startTop)+'px) scale(1.03)',opacity:1},
+   {offset:.92,transform:'translateY('+(target-startTop)+'px) scale(1.03)',opacity:1},
+   {offset:1,transform:'translateY('+(target-startTop)+'px) scale(1.03)',opacity:0}
+  ],{duration:riseMotionMs,easing:'ease-in-out',fill:'forwards'});
+   riseRankTimer=setTimeout(()=>{if(rank&&ghost.isConnected)rank.textContent=String(change.to);riseRankTimer=null;},riseMotionMs*.72);
+  }catch{ghost.remove();}
  }
  source.classList.add('dm-league-rise-highlight');
- riseTimer=setTimeout(()=>{clearRise();source.classList.remove('dm-league-rise-highlight');},2200);
+ riseTimer=setTimeout(()=>{clearRise();source.classList.remove('dm-league-rise-highlight');},riseNoticeMs);
  lastRise=change;return true;
 }
 function animatePendingRise(){if(pendingRise&&showRankRise(pendingRise))pendingRise=null;}
