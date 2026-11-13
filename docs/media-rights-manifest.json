@@ -2658,6 +2658,20 @@
       "bytes": 2663,
       "status": "code-native",
       "source": "Repository-authored game category icon set; SVG source retained in Git"
+    },
+    {
+      "path": "ingilizce/daily-gift-assets/papi-streak-3d.webp",
+      "sha256": "2e44b5390b787d265282b79c2266a9c5fae7b6231ec761d2dcd772d152175f8b",
+      "bytes": 55880,
+      "status": "ai-generated",
+      "source": "docs/daily-gift-artwork.json"
+    },
+    {
+      "path": "ingilizce/daily-gift-assets/papi-gift-3d.webp",
+      "sha256": "16340a78d45d20d7710dc8fb54798c31b6bc75bedae8cd313013eeb129ab0de1",
+      "bytes": 66872,
+      "status": "ai-generated",
+      "source": "docs/daily-gift-artwork.json"
     }
   ]
 }

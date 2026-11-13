@@ -1447,6 +1447,7 @@ async function handle(req: Request, proxy: any = null) {
 
   // Private classroom play only records verified game rankings: no wallet mutation.
   if(a?.teacher_portal_access_id&&a.role==='student'){
+    if(op==='gunlukSeriDurumu')return json({ok:false,mesaj:'Günlük hediye kişisel öğrenci hesabında kullanılabilir.'},403);
     const classroomAllowance={enerjiKalan:25,enerjiMax:25,energy:25,energyMax:25,charged:0};
     if(['enerjiDegistir','enerjiDurumuGetir'].includes(op))return json({ok:true,status:'success',rankingOnly:true,eklenen:0,eklenenEnerji:0,...classroomAllowance});
     if(op==='iletisimDurumu')return json({ok:true,eksik:false,uyari:false,donuk:false});
@@ -2569,6 +2570,14 @@ async function handle(req: Request, proxy: any = null) {
   }
 
   // ============================================================ ENERJİ
+  if (op === "gunlukSeriDurumu") {
+    if(isDemo(a))return json({ok:false,mesaj:"Demo hesabında günlük hediye kapalı."},403);
+    const name = String(val(body, q, "ogrenci")); const deny = await requireStudent(a, name); if (deny) return deny;
+    const s = await hedefOgrenci(a, name); if (!s) return bulunamadi();
+    const result = await supabase.rpc('dm_daily_gift', { actor: s.id, claim: false });
+    if (result.error) { console.error('daily gift status', result.error); return json({ok:false,mesaj:'Günlük seri şu an yüklenemedi. Tekrar dene.'},503); }
+    return json(result.data);
+  }
   if (op === "enerjiDurumuGetir") {
     const name = String(val(body, q, "ogrenci")); const deny = await requireStudent(a, name); if (deny) return deny;
     let s = await hedefOgrenci(a, name); if (!s) return bulunamadi();

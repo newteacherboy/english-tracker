@@ -195,7 +195,7 @@ window.supabaseClient=supabaseClient;
 <link rel="preload" as="style" href="papi-feedback.css?v=1">
 <link rel="preload" as="script" href="papi-feedback.js?v=20261113-energy-350-600-850">
 <link rel="preload" as="script" href="papi-haptics.js?v=1">
-<link rel="preload" as="script" href="papi-wallet.js?v=20261113-profile-theme">
+<link rel="preload" as="script" href="papi-wallet.js?v=78e3f2495b">
 <link rel="preload" as="script" href="learning-core.js?v=decf68eb87">
 <link rel="preload" as="style" href="route-practice-flight.css?v=20261113-spotlight-flip-1">
 <link rel="preload" as="script" href="route-practice-flight.js?v=20261113-combo-next-2">
@@ -5769,25 +5769,8 @@ try { sessionStorage.setItem('ing_ka_soruldu', '1'); } catch (e) {}
   document.addEventListener('visibilitychange', () => { if (!document.hidden) tazele(); });
   setTimeout(tazele, 4000);
 
-  /* Günlük giriş hediyesi: miktarı sunucu belirler (+5, her 7. günde +10) */
-  const dailyBonusPending=new Set();
-  window.gunlukEnerjiBonusuKontrolEt = function () {
-    if(window.dmGuestMode||!ogrenci())return;
-    const owner=ogrenci(),bugun=new Intl.DateTimeFormat('en-CA',{timeZone:'Europe/Istanbul',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());
-    const key='ing_gunlukEnerjiBonusTarih_v3:'+owner;
-    if(localStorage.getItem(key)===bugun||dailyBonusPending.has(owner))return;
-    dailyBonusPending.add(owner);
-    setTimeout(async()=>{
-      try{
-        if(owner!==ogrenci())return;
-        const d=await enerjiKazan(5,'gunluk');
-        if(!d?.ok||owner!==ogrenci())return;
-        localStorage.setItem(key,d.day||bugun);
-        if(d.claimed===true&&d.eklenen>0&&typeof odulGoster==='function')odulGoster({ikon:d.eklenen>=10?'🎁':'🌞',baslik:d.eklenen>=10?'7. gün hediyesi!':'Günaydın! Günlük hediyen',alt:`+${d.eklenen} ⚡ enerji`,enerji:d.eklenen});
-      }finally{dailyBonusPending.delete(owner);}
-    },1500);
-  };
-  setTimeout(() => { if (ogrenci()) window.gunlukEnerjiBonusuKontrolEt(); }, 5000);
+  /* Daily gift UI owns the check; the server owns streak, day and credited energy. */
+  window.gunlukEnerjiBonusuKontrolEt = () => window.DijiDailyGift?.check();
 
   /* "Bilmiyordum" işaretlenen konular: sonradan geçilince daha büyük ödül */
   const orgFetch = window.fetch;
@@ -7382,7 +7365,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <script defer src="google-login.js?v=20261028-ios-1"></script>
 <link rel="stylesheet" href="parkur-map-theme-v1.css?v=20261010-levelbadge-fix">
 <script defer src="parkur-map-theme-v1.js?v=3"></script>
-<link rel="stylesheet" href="papi-feedback.css?v=1"><script defer src="papi-feedback.js?v=20261113-energy-350-600-850"></script><script defer src="papi-haptics.js?v=1"></script><script defer src="papi-wallet.js?v=20261113-profile-theme"></script>
+<link rel="stylesheet" href="papi-feedback.css?v=1"><script defer src="papi-feedback.js?v=20261113-energy-350-600-850"></script><script defer src="papi-haptics.js?v=1"></script><script defer src="papi-wallet.js?v=78e3f2495b"></script>
 <link rel="stylesheet" href="story-path.css?v=3" media="print" data-dm-later><!-- story-curriculum.js (189 KB) açılışta yüklenmez: yalnız eski story-path yedeği kullanır, o da gerekirse kendisi yükler. --><link rel="stylesheet" href="thematic-learning.css?v=20261112-sonuc" media="print" data-dm-later><link rel="stylesheet" href="learning-question-v1.css?v=65b98d6235" media="print" data-dm-later><script defer src="learning-core.js?v=decf68eb87"></script><link rel="stylesheet" href="route-practice-flight.css?v=20261113-spotlight-flip-1"><script defer src="route-practice-flight.js?v=20261113-combo-next-2"></script><script defer src="papi-mascot.js?v=20261111-2"></script><script defer src="thematic-learning.js?v=20261113-combo-next-2"></script><script defer src="school-curriculum.js?v=20261025-1"></script><script defer src="school-word-art.js?v=20261025-soft-1"></script><script defer src="school-lesson.js?v=20261029-claim-1"></script><link rel="stylesheet" href="school-soft-cards.css?v=20261025-soft-1"><script defer src="story-path.js?v=20261112-hafif"></script>
 <link rel="stylesheet" href="medupro.css?v=20261011-hud">
 <script defer src="medupro.js?v=2c56fc4b90"></script>
@@ -7587,5 +7570,7 @@ window.dmClassicGameAudio={
 <script defer src="teacher-message-notices.js?v=20261027-kota-2"></script>
 <link rel="stylesheet" href="kelime-golu.css?v=20261029-1" media="print" data-dm-later>
 <script defer src="kelime-golu.js?v=9a104ac260"></script>
+<link rel="stylesheet" href="daily-gift.css?v=ecea230d5a">
+<script defer src="daily-gift.js?v=d84252d6a9"></script>
 </body>      
         </html>
