@@ -68,95 +68,7 @@
   { kod:'B1', ad:'Orta', ikon:'🌳', renk:'#8b5cf6' },
   { kod:'B2', ad:'Orta-Üstü', ikon:'🏔️', renk:'#f43f5e' }
 ];
-const YO_SOHBET = [
-  /* ---------- A1 ---------- */
-  { id:'tanisma', sv:'A1', ad:'Tanışma', ikon:'👋', satirlar:[
-    { p:"Hello! What is your name?", tr:"Adını söyle.", ornek:"My name is Ali.", k:["my name is","i am","i'm","name"] },
-    { p:"Nice to meet you! How old are you?", tr:"Yaşını söyle.", ornek:"I am ten years old.", k:["i am","i'm","years old","year"] },
-    { p:"Where are you from?", tr:"Nereli olduğunu söyle.", ornek:"I am from Turkey.", k:["from","turkey","istanbul","ankara","izmir"] },
-    { p:"Great! Goodbye!", tr:"Vedalaş.", ornek:"Goodbye! See you.", k:["goodbye","bye","see you"] } ] },
-  { id:'renkler', sv:'A1', ad:'Renkler ve Eşyalar', ikon:'🎨', satirlar:[
-    { p:"What color is your bag?", tr:"Çantanın rengini söyle.", ornek:"My bag is blue.", k:["red","blue","green","yellow","black","white","pink","purple","orange","brown","grey","gray"] },
-    { p:"Do you have a pencil?", tr:"Kalemin olup olmadığını söyle.", ornek:"Yes, I have a pencil.", k:["yes","no","i have","i don't","i do"] },
-    { p:"How many books are on your desk?", tr:"Masandaki kitap sayısını söyle.", ornek:"There are three books.", k:["one","two","three","four","five","six","seven","eight","nine","ten","there are","there is","no books"] },
-    { p:"Thank you! See you later!", tr:"Karşılık ver.", ornek:"You're welcome! Bye!", k:["welcome","bye","see you","thank"] } ] },
-  { id:'hayvanlar', sv:'A1', ad:'Hayvanlar', ikon:'🐶', satirlar:[
-    { p:"Do you have a pet?", tr:"Evcil hayvanın var mı?", ornek:"Yes, I have a cat.", k:["yes","no","i have","i don't","cat","dog","bird","fish","rabbit"] },
-    { p:"What is your favourite animal?", tr:"En sevdiğin hayvanı söyle.", ornek:"My favourite animal is the lion.", k:["favourite","favorite","i like","i love","cat","dog","lion","tiger","horse","bird","fish","rabbit","elephant","monkey","panda"] },
-    { p:"Can a fish fly?", tr:"Balık uçabilir mi?", ornek:"No, it can't fly. It can swim.", k:["no","can't","cannot","can not","swim"] },
-    { p:"What can a bird do?", tr:"Kuşun neler yapabildiğini söyle.", ornek:"A bird can fly and sing.", k:["can","fly","sing"] } ] },
-  { id:'aile', sv:'A1', ad:'Ailem', ikon:'👨‍👩‍👧', satirlar:[
-    { p:"How many people are there in your family?", tr:"Ailende kaç kişi olduğunu söyle.", ornek:"There are four people in my family.", k:["there are","we are","three","four","five","six","two","seven"] },
-    { p:"What is your mother's name?", tr:"Annenin adını söyle.", ornek:"Her name is Ayşe.", k:["her name","name is","my mother","she is"] },
-    { p:"Do you have a brother or a sister?", tr:"Kardeşin var mı?", ornek:"Yes, I have a sister.", k:["yes","no","i have","brother","sister","i don't"] },
-    { p:"Who is your best friend?", tr:"En iyi arkadaşını söyle.", ornek:"My best friend is Can.", k:["my best friend","best friend","is","name"] } ] },
-
-  /* ---------- A2 ---------- */
-  { id:'kafe', sv:'A2', ad:'Kafede', ikon:'☕', satirlar:[
-    { p:"Hi! What would you like to drink?", tr:"Ne içmek istediğini söyle.", ornek:"I would like some water, please.", k:["i would like","i'd like","can i have","please","water","tea","juice","milk","lemonade"] },
-    { p:"Would you like something to eat?", tr:"Yiyecek isteyip istemediğini söyle.", ornek:"Yes, a sandwich, please.", k:["yes","no","sandwich","cake","cookie","please","thank"] },
-    { p:"That is five lira, please.", tr:"Parayı ver.", ornek:"Here you are.", k:["here you are","here","thank"] },
-    { p:"Have a nice day!", tr:"Karşılık ver.", ornek:"You too, thank you!", k:["you too","thank","thanks","bye"] } ] },
-  { id:'okul', sv:'A2', ad:'Okulda', ikon:'🏫', satirlar:[
-    { p:"What is your favourite lesson?", tr:"En sevdiğin dersi söyle.", ornek:"My favourite lesson is English.", k:["favourite","favorite","i like","english","math","science","art","music","history","turkish","pe"] },
-    { p:"Why do you like it?", tr:"Nedenini söyle.", ornek:"Because it is fun.", k:["because","it is","it's","fun","interesting","easy","love"] },
-    { p:"What time does school start?", tr:"Okulun başlama saatini söyle.", ornek:"It starts at nine o'clock.", k:["at","o'clock","starts","half past","eight","nine"] },
-    { p:"See you tomorrow!", tr:"Vedalaş.", ornek:"See you! Bye!", k:["see you","bye","goodbye"] } ] },
-  { id:'alisveris', sv:'A2', ad:'Alışveriş', ikon:'🛍️', satirlar:[
-    { p:"Hello! Can I help you?", tr:"Ne aradığını söyle.", ornek:"Yes, I'm looking for a T-shirt.", k:["looking for","i want","i'd like","i would like","yes","please","t-shirt","shoes","jacket"] },
-    { p:"What size do you need?", tr:"Bedenini söyle.", ornek:"Medium, please.", k:["small","medium","large","size","s","m","l"] },
-    { p:"It is fifty lira. Cash or card?", tr:"Nasıl ödeyeceğini söyle.", ornek:"By card, please.", k:["cash","card"] },
-    { p:"Here is your bag. Have a nice day!", tr:"Teşekkür et.", ornek:"Thank you! You too.", k:["thank","you too","bye"] } ] },
-  { id:'rutin', sv:'A2', ad:'Günlük Rutin', ikon:'⏰', satirlar:[
-    { p:"What time do you get up in the morning?", tr:"Kaçta kalktığını söyle.", ornek:"I get up at seven o'clock.", k:["i get up","get up","at","o'clock","wake up"] },
-    { p:"What do you have for breakfast?", tr:"Kahvaltıda ne yediğini söyle.", ornek:"I have eggs, cheese and bread.", k:["i have","i eat","eggs","egg","bread","cheese","olives","milk","tea","honey","toast"] },
-    { p:"How do you go to school?", tr:"Okula nasıl gittiğini söyle.", ornek:"I go to school by bus.", k:["by bus","by car","on foot","walk","by bike","by metro","school bus"] },
-    { p:"What do you usually do after school?", tr:"Okuldan sonra ne yaptığını söyle.", ornek:"I usually do my homework.", k:["i do","homework","i play","i watch","i read","i usually","i go","i help"] } ] },
-
-  /* ---------- B1 ---------- */
-  { id:'yol', sv:'B1', ad:'Yol Tarifi', ikon:'🗺️', satirlar:[
-    { p:"Excuse me, where is the library?", tr:"Yerini tarif et.", ornek:"It is next to the park.", k:["it is","it's","next to","near","left","right","straight","opposite","between","behind"] },
-    { p:"Is it far from here?", tr:"Uzak olup olmadığını söyle.", ornek:"No, it is very close. About five minutes.", k:["no","yes","near","far","close","minutes"] },
-    { p:"Which bus should I take?", tr:"Hangi otobüse binmesi gerektiğini söyle.", ornek:"You should take bus number 12.", k:["you should","take","number","bus","you can"] },
-    { p:"Thank you very much!", tr:"Rica et.", ornek:"You are welcome!", k:["welcome","no problem","not at all","my pleasure"] } ] },
-  { id:'haftasonu', sv:'B1', ad:'Hafta Sonum', ikon:'📅', satirlar:[
-    { p:"What did you do last weekend?", tr:"Geçen hafta sonu ne yaptığını anlat.", ornek:"I visited my grandparents.", k:["i went","i played","i watched","i visited","i was","i did","i stayed","i met","i read","i helped","i cooked"], min:3 },
-    { p:"Who were you with?", tr:"Kiminle olduğunu söyle.", ornek:"I was with my family.", k:["with","i was","alone","my"] },
-    { p:"Did you have a good time?", tr:"Eğlenip eğlenmediğini söyle.", ornek:"Yes, it was really fun.", k:["yes","no","it was","i did","i didn't","fun","great","boring"] },
-    { p:"What are you going to do next weekend?", tr:"Gelecek hafta sonu planını söyle.", ornek:"I am going to watch a film.", k:["going to","i will","i'll","i'm going","i am going","plan"], min:3 } ] },
-  { id:'doktor', sv:'B1', ad:'Doktorda', ikon:'🩺', satirlar:[
-    { p:"Hello, what's the matter?", tr:"Neyin var, anlat.", ornek:"I have a headache and a fever.", k:["i have","headache","stomachache","fever","cold","cough","hurts","sore","i feel","toothache"] },
-    { p:"How long have you felt like this?", tr:"Ne zamandır böyle olduğunu söyle.", ornek:"Since yesterday.", k:["since","for","days","yesterday","week","two","three"] },
-    { p:"Are you taking any medicine?", tr:"İlaç kullanıp kullanmadığını söyle.", ornek:"No, I'm not taking any medicine.", k:["yes","no","i am","i'm not","i take","i don't"] },
-    { p:"You should rest and drink lots of water. Get well soon!", tr:"Teşekkür et.", ornek:"Thank you, doctor. I will.", k:["thank","i will","okay","ok"] } ] },
-  { id:'tatil', sv:'B1', ad:'Tatil Planı', ikon:'✈️', satirlar:[
-    { p:"Where would you like to travel?", tr:"Nereye gitmek istediğini söyle.", ornek:"I would like to go to Japan.", k:["i would like","i'd like","i want","to go","to visit"] },
-    { p:"Why do you want to go there?", tr:"Nedenini açıkla.", ornek:"Because I want to see the famous temples.", k:["because","it is","it's","beautiful","famous","want to see","interesting"], min:4 },
-    { p:"How will you get there?", tr:"Oraya nasıl gideceğini söyle.", ornek:"I will go by plane.", k:["by plane","by train","by car","by bus","by ship","will","fly"] },
-    { p:"What will you pack in your suitcase?", tr:"Bavuluna neler koyacağını söyle.", ornek:"I will pack clothes, a camera and my passport.", k:["i will","i'll","clothes","camera","passport","pack","shoes","book"], min:3 } ] },
-
-  /* ---------- B2 ---------- */
-  { id:'cevre', sv:'B2', ad:'Çevre ve Gezegen', ikon:'🌍', satirlar:[
-    { p:"In your opinion, what is the biggest problem for our planet?", tr:"Sence gezegenin en büyük sorunu ne?", ornek:"I think plastic pollution is the biggest problem.", k:["pollution","climate","global warming","plastic","waste","i think","in my opinion","deforestation"], min:4 },
-    { p:"What can students do to help?", tr:"Öğrencilerin neler yapabileceğini anlat.", ornek:"We can recycle and use less plastic.", k:["we can","should","recycle","save","turn off","use less","plant","reduce"], min:4 },
-    { p:"Have you ever joined a clean-up activity?", tr:"Hiç temizlik etkinliğine katıldın mı?", ornek:"Yes, I have. We cleaned the beach last year.", k:["i have","i've","never","yes","no","haven't","have not"] },
-    { p:"If you were the president, what would you change?", tr:"Başkan olsaydın neyi değiştirirdin?", ornek:"I would ban plastic bags.", k:["i would","i'd"], min:4 } ] },
-  { id:'teknoloji', sv:'B2', ad:'Teknoloji', ikon:'💻', satirlar:[
-    { p:"How much time do you spend online every day?", tr:"Günde ne kadar internette olduğunu söyle.", ornek:"I spend about two hours online.", k:["hours","hour","minutes","about","i spend","around"] },
-    { p:"Do you think social media is good for teenagers?", tr:"Sosyal medya gençler için iyi mi? Görüşünü söyle.", ornek:"I think it can be useful, but it can also be addictive.", k:["i think","in my opinion","i believe","because","good","bad","useful","addictive","harmful"], min:5 },
-    { p:"What would happen if the internet stopped for a week?", tr:"İnternet bir hafta kesilse ne olurdu?", ornek:"People would talk to each other more.", k:["would","people","we","couldn't","could not"], min:4 },
-    { p:"Which invention couldn't you live without?", tr:"Hangi icat olmadan yaşayamazdın?", ornek:"I couldn't live without my computer.", k:["couldn't","could not","without","phone","computer","internet","electricity"] } ] },
-  { id:'gelecek', sv:'B2', ad:'Gelecek Hayallerim', ikon:'🎯', satirlar:[
-    { p:"What do you want to be in the future?", tr:"Gelecekte ne olmak istediğini söyle.", ornek:"I want to be a doctor.", k:["i want to be","i'd like to be","i would like to be","become","i want to become"] },
-    { p:"Why did you choose this job?", tr:"Bu mesleği neden seçtiğini anlat.", ornek:"Because I love helping people.", k:["because","i love","i like","help","interested","enjoy"], min:4 },
-    { p:"What do you need to do to achieve this dream?", tr:"Bu hayale ulaşmak için ne yapman gerektiğini söyle.", ornek:"I need to study hard and read a lot.", k:["i need to","i have to","study","work hard","learn","should","practise","practice"], min:4 },
-    { p:"Where do you see yourself in ten years?", tr:"On yıl sonra kendini nerede görüyorsun?", ornek:"I will be working in a big hospital.", k:["i will","i'll","i see myself","i hope","i'd","i would"], min:4 } ] },
-  { id:'film', sv:'B2', ad:'Film Sohbeti', ikon:'🎬', satirlar:[
-    { p:"What's the best film you've ever seen?", tr:"İzlediğin en iyi filmi söyle.", ornek:"The best film I've ever seen is Coco.", k:["the best","i've seen","i have seen","film","movie","is"] },
-    { p:"What was it about?", tr:"Filmin konusunu anlat.", ornek:"It was about a boy who loved music.", k:["it was about","it's about","it is about","about","story"], min:4 },
-    { p:"Would you recommend it to your friends? Why?", tr:"Arkadaşlarına önerir misin? Neden?", ornek:"Yes, I would, because it is funny and touching.", k:["yes","no","i would","because","recommend"], min:4 },
-    { p:"Thanks for the great chat! Goodbye!", tr:"Sohbeti güzelce bitir.", ornek:"Thank you too! It was a pleasure. Goodbye!", k:["thank","bye","goodbye","see you","pleasure"] } ] }
-];
+const YO_SOHBET = window.DMPapiDialogueCatalog;
 
         /* ========== DURUM VE KAYIT ========== */
         let yo = null, yoIsim = null, yoKayitZaman = null, yoModalKapaninca = null;
@@ -657,7 +569,7 @@ const YS_KONUM = [50, 76, 50, 24];
 function ysAzHareket() { return !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches); }
 function ysPanel() { return document.getElementById('kp-panel-sohbet'); }
 function ysYildiz(id) { return (yo && yo.sohbet && yo.sohbet[id]) || 0; }
-function ysAcikMi(i) { return i === 0 || ysYildiz(YO_SOHBET[i - 1].id) >= 1; }
+function ysAcikMi(i) { const d=YO_SOHBET[i];return !!d&&(i===0||ysYildiz(d.id)>=1||ysYildiz(YO_SOHBET[i-1].id)>=1||d.legacyAfter&&ysYildiz(d.legacyAfter)>=1); }
 function ysSeviye(kod) { return YO_SOHBET_SEVIYE.find(s => s.kod === kod) || YO_SOHBET_SEVIYE[0]; }
 function ysMerkez(el) { let r = el.getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2 }; }
 
@@ -700,7 +612,7 @@ function sohbetListeCiz(acilis) {
     <div class="ys-ust"><div class="ys-ust-kus">🦜</div><div class="ys-ust-metin"><b>Papağanla sohbet</b>
       <span>${tamam}/${toplam} diyalog · ⭐ ${yildizTop}/${toplam * 3}</span>
       <div class="ys-ust-bar"><i style="width:${Math.round(tamam / toplam * 100)}%"></i></div></div></div>
-    <div class="ys-aciklama">Her sohbet 1 enerji. En az %60 doğru cevapla, sıradaki sohbetin kilidi açılsın. Hepsini ilk denemede bilirsen 3 yıldız!</div>`;
+    <div class="ys-aciklama">En az %60 doğru cevapla, sıradaki sohbetin kilidi açılsın. Hepsini ilk denemede bilirsen 3 yıldız!</div>`;
   YO_SOHBET_SEVIYE.forEach(sv => {
     let grup = YO_SOHBET.map((d, i) => ({ d, i })).filter(x => x.d.sv === sv.kod);
     if (!grup.length) return;
@@ -802,12 +714,23 @@ function ysPortal(kaynak, renk, sonra) {
 
 /* ---- Sohbet ekranı ---- */
 function sohbetBasla(i, kaynak) {
-  if (!yoHazirMi()) return;
+  if (!yoHazirMi()||!YO_SOHBET[i]) return;
+  if(!window.dmPapiChat?.access()){void window.dmPapiChat?.open();return;}
   if (!ysAcikMi(i)) { if (kaynak) ysKilitliTik(kaynak); return; }
-  if (!yoEnerjiKontrol()) return;
   let d = YO_SOHBET[i], sv = ysSeviye(d.sv);
+  document.querySelector('.ys-start-overlay')?.remove();
+  const overlay=document.createElement('div');overlay.className='ys-start-overlay';overlay.setAttribute('role','dialog');overlay.setAttribute('aria-modal','true');overlay.setAttribute('aria-label',d.ad);
+  overlay.innerHTML='<section class="ys-start-card"><button type="button" class="ys-start-close" aria-label="Kapat">×</button><h2>'+yoGuvenliMetin(d.ad)+'</h2><p>'+d.sv+' · '+(i+1)+'. durak · '+d.satirlar.length+' konuşma adımı</p><button type="button" class="yo-btn" data-ys-start>Başlat</button><p role="status" class="ys-start-status"></p></section>';
+  document.body.append(overlay);const prior=document.activeElement;const close=()=>{overlay.remove();prior?.focus?.();};overlay.querySelector('.ys-start-close').onclick=close;overlay.addEventListener('keydown',e=>{if(e.key==='Escape')close();if(e.key==='Tab'){const b=[...overlay.querySelectorAll('button:not(:disabled)')];if(b.length){e.preventDefault();b[(b.indexOf(document.activeElement)+(e.shiftKey?-1:1)+b.length)%b.length].focus();}}});overlay.onclick=e=>{if(e.target===overlay)close();};
+  const runId=crypto.randomUUID();overlay.querySelector('[data-ys-start]').onclick=async()=>{
+   const b=overlay.querySelector('[data-ys-start]');b.disabled=true;const status=overlay.querySelector('.ys-start-status');status.textContent='Sohbet açılıyor…';
+   try{const run=await window.dmPapiChat.request('start',{dialogueId:d.id,runId});if(!overlay.isConnected)return;overlay.remove();sohbetDuragiBaslat(i,kaynak,runId,run);}catch(e){if(!overlay.isConnected)return;status.textContent=e.message;b.disabled=false;}
+  };overlay.querySelector('[data-ys-start]').focus();
+}
+function sohbetDuragiBaslat(i,kaynak,runId,run){
+  let d=YO_SOHBET[i],sv=ysSeviye(d.sv);
   sohbetMikDur();
-  sh = { idx: i, s: d, i: 0, d: 0, y: 0, ilk: 0, deneme: 0, bas: Date.now(), kilit: true };
+  sh = { runId, owner:typeof aktifOgrenciAdi==='undefined'?'':aktifOgrenciAdi, idx: i, s: d, i: run.step, d: run.correctCount, y: run.wrongCount, ilk: run.firstCount, deneme: run.attempts, bas: Date.now(), kilit: true };
   let o = sh;
   ysPortal(kaynak, sv.renk, () => {
     if (sh !== o) return;
@@ -850,36 +773,22 @@ function sohbetPapaganSoyle() {
     o.kilit = false;
   }, ysAzHareket() ? 100 : 950);
 }
-function sohbetGonder(metin) {
-  if (!sh || sh.kilit) return;
-  let inp = document.getElementById('yoSInput');
-  metin = String(metin || (inp ? inp.value : '')).trim();
-  if (!metin) return;
-  if (inp) inp.value = '';
-  let benBalon = sohbetBalon('ben', yoGuvenliMetin(metin));
-  let s = sh.s.satirlar[sh.i];
-  let norm = typeof kpNormallestir === 'function' ? kpNormallestir : (x => String(x).toLowerCase());
-  let n = norm(metin), kelimeSay = n.split(' ').filter(Boolean).length;
-  let tutar = s.k.some(k => n.includes(norm(k)));
-  if (tutar && s.min && kelimeSay < s.min) {
-    sohbetBalon('hata', `✍️ Güzel başlangıç! Biraz daha uzun anlat (en az ${s.min} kelime).`);
-    return;
-  }
-  if (tutar) {
-    sh.d++; if (sh.deneme === 0) sh.ilk++;
-    sh.kilit = true;
-    if (benBalon) benBalon.classList.add('parla');
-    sohbetBalon('ok', sh.deneme === 0 ? '✅ Harika cevap!' : '✅ Bu sefer oldu!');
-    ysPatlat(benBalon, ['✨','⭐','🎉'], 10);
-    yoSes('dogru');
-    sohbetIleri(1300);
-  } else {
-    sh.deneme++; yoSes('yanlis');
-    if (benBalon) benBalon.classList.add('ys-salla');
-    if (sh.deneme < 2) sohbetBalon('hata', '🤔 Tam olmadı, ipucuna bakıp tekrar dene.');
-    else { sh.y++; sh.kilit = true; sohbetBalon('hata', `Şöyle diyebilirdin: "${yoGuvenliMetin(s.ornek)}"`); sohbetIleri(2400); }
-  }
+async function sohbetGonder(metin) {
+  const o=sh;if(!o||o.kilit)return;
+  const inp=document.getElementById('yoSInput');metin=String(metin||(inp?inp.value:'')).trim();if(!metin||metin.length>400)return;
+  if(!o.pending||o.pending.text!==metin||o.pending.step!==o.i)o.pending={runId:o.runId,step:o.i,text:metin,requestId:crypto.randomUUID()};
+  o.kilit=true;const s=o.s.satirlar[o.i];
+  try{
+   const r=await window.dmPapiChat.request('answer',o.pending);if(sh!==o)return;o.pending=null;
+   if(inp)inp.value='';const benBalon=sohbetBalon('ben',yoGuvenliMetin(metin));
+   o.d=r.correctCount;o.y=r.wrongCount;o.ilk=r.firstCount;o.deneme=r.attempts;
+   if(r.tooShort){sohbetBalon('hata','✍️ Güzel başlangıç! En az '+r.minimum+' kelimeyle anlat.');o.kilit=false;return;}
+   if(r.accepted){benBalon?.classList.add('parla');sohbetBalon('ok',r.attempts===0?'✅ Harika cevap!':'✅ Bu sefer oldu!');ysPatlat(benBalon,['✨','⭐','🎉'],10);yoSes('dogru');}
+   else {yoSes('yanlis');benBalon?.classList.add('ys-salla');sohbetBalon('hata',r.advance?'Şöyle diyebilirdin: "'+yoGuvenliMetin(s.ornek)+'"':'🤔 Tam olmadı, ipucuna bakıp tekrar dene.');}
+   if(r.advance)sohbetIleri(r.accepted?1000:1800);else o.kilit=false;
+  }catch(e){if(sh===o){sohbetBalon('hata',yoGuvenliMetin(e.message)+' Aynı cevabı yeniden gönderebilirsin.');o.kilit=false;}}
 }
+
 function sohbetIleri(ms) {
   sh.deneme = 0;
   let o = sh;
@@ -887,38 +796,24 @@ function sohbetIleri(ms) {
 }
 
 /* ---- Bitiş sahnesi ---- */
-function sohbetBitir() {
-  sohbetMikDur();
-  let o = sh, t = o.s.satirlar.length;
-  let gecti = o.d / t >= 0.6;
-  let yildiz = !gecti ? 0 : (o.d === t ? (o.ilk === t ? 3 : 2) : 1);
-  let eski = ysYildiz(o.s.id), ilkKezGecti = gecti && eski < 1;
-  if (yo) { yo.sohbet = yo.sohbet || {}; if (yildiz > eski) yo.sohbet[o.s.id] = yildiz; yoKaydet(); }
-  let xp = o.d * 10;
-  if (o.d > 0) yoXpEkle(xp, o.d, 'sohbet', o.s.id);
-  let acilis = null;
-  if (ilkKezGecti && o.idx + 1 < YO_SOHBET.length) {
-    let sonraki = YO_SOHBET[o.idx + 1];
-    acilis = { yeniIdx: o.idx + 1, oncekiIdx: o.idx, yeniSeviye: sonraki.sv !== o.s.sv ? sonraki.sv : null };
-  }
-  let baslik = !gecti ? 'Biraz daha pratik!' : (yildiz === 3 ? 'Mükemmel sohbet!' : 'Harika sohbet!');
-  let p = ysPanel();
-  p.innerHTML = `<div class="yo-sohbet ys-final" style="--sr:${ysSeviye(o.s.sv).renk}">
-    <div class="ys-final-kus${gecti ? ' mutlu' : ''}">🦜</div>
-    <div class="ys-final-baslik">${baslik}</div>
-    <div class="ys-final-alt">${o.s.ikon} ${o.s.ad} · ${o.d}/${t} doğru</div>
-    <div class="ys-final-yildiz">${[1, 2, 3].map(n => `<span class="${n <= yildiz ? 'dolu' : ''}" style="animation-delay:${0.25 + n * 0.35}s">★</span>`).join('')}</div>
-    <div class="ys-final-xp">+<b id="ysXp">0</b> XP · +${o.d} 🪙</div>
-    ${gecti ? (acilis ? '<div class="ys-final-not">🔓 Yeni bir sohbetin kilidi açıldı!</div>' : '') : '<div class="ys-final-not hata">Kilidi açmak için en az %60 doğru gerekiyor.</div>'}
-    <button class="yo-btn" id="ysHaritaBtn">🗺️ Haritaya dön</button>
-    <button class="yo-btn ikincil" id="ysTekrarBtn">🔁 Tekrar dene</button></div>`;
-  p.scrollIntoView({ block: 'start' });
-  let xpEl = document.getElementById('ysXp'), sayi = 0, adim = Math.max(1, Math.ceil(xp / 20));
-  let say = setInterval(() => { sayi = Math.min(xp, sayi + adim); if (xpEl) xpEl.innerText = sayi; if (sayi >= xp) clearInterval(say); }, 45);
-  if (gecti) { setTimeout(() => ysKonfetiYagmuru(yildiz * 12), 600); if (typeof genelSesEfektiCal === 'function') setTimeout(() => genelSesEfektiCal('kombo', 10), 400); }
-  document.getElementById('ysHaritaBtn').onclick = () => sohbetListeCiz(acilis);
-  document.getElementById('ysTekrarBtn').onclick = (e) => sohbetBasla(o.idx, e.currentTarget);
-  sh = null;
+async function sohbetBitir() {
+  const o=sh;if(!o||o.finishing)return;sohbetMikDur();o.finishing=true;
+  const p=ysPanel();p.innerHTML='<div class="ys-saving" role="status">Sohbetin ve ödülün kaydediliyor…</div>';
+  try{
+   const eski=ysYildiz(o.s.id),r=await window.dmPapiChat.request('finish',{runId:o.runId});if(sh!==o)return;
+   const t=o.s.satirlar.length,gecti=r.passed,yildiz=r.stars;let acilis=null;
+   if(gecti&&eski<1&&o.idx+1<YO_SOHBET.length){const next=YO_SOHBET[o.idx+1];acilis={yeniIdx:o.idx+1,oncekiIdx:o.idx,yeniSeviye:next.sv!==o.s.sv?next.sv:null};}
+   const baslik=!gecti?'Biraz daha pratik!':yildiz===3?'Mükemmel sohbet!':'Harika sohbet!';
+   p.innerHTML=`<div class="yo-sohbet ys-final" style="--sr:${ysSeviye(o.s.sv).renk}">
+    <div class="ys-final-kus${gecti?' mutlu':''}"><img src="profile-assets/papi-selam.png" alt="3D Papi" width="150" height="150"></div>
+    <div class="ys-final-baslik">${baslik}</div><div class="ys-final-alt">${o.s.ikon} ${o.s.ad} · ${r.correctCount}/${t} doğru</div>
+    <div class="ys-final-yildiz">${[1,2,3].map(n=>`<span class="${n<=yildiz?'dolu':''}" style="animation-delay:${0.25+n*0.35}s">★</span>`).join('')}</div>
+    <div class="ys-final-xp">+${r.xp} XP · +${r.gold} 🪙</div>
+    ${gecti?(acilis?'<div class="ys-final-not">🔓 Yeni bir sohbetin kilidi açıldı!</div>':''):'<div class="ys-final-not hata">Kilidi açmak için en az %60 doğru gerekiyor.</div>'}
+    <button class="yo-btn" id="ysHaritaBtn">🗺️ Haritaya dön</button><button class="yo-btn ikincil" id="ysTekrarBtn">🔁 Tekrar dene</button></div>`;
+   p.scrollIntoView?.({block:'start'});if(gecti){ysKonfetiYagmuru(yildiz*12);if(typeof genelSesEfektiCal==='function')genelSesEfektiCal('kombo',10);}
+   document.getElementById('ysHaritaBtn').onclick=()=>sohbetListeCiz(acilis);document.getElementById('ysTekrarBtn').onclick=e=>sohbetBasla(o.idx,e.currentTarget);sh=null;
+  }catch(e){if(sh!==o)return;o.finishing=false;p.innerHTML='<div class="ys-saving" role="status"><p>'+yoGuvenliMetin(e.message)+'</p><button type="button" class="yo-btn" id="ysFinishRetry">Kaydı yeniden dene</button></div>';document.getElementById('ysFinishRetry').onclick=sohbetBitir;}
 }
 
 /* ---- Mikrofon ---- */
