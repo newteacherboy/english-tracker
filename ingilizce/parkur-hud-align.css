@@ -161,3 +161,57 @@
     body #tab-dunya#tab-dunya .rt-top .dm-has-daily-streak>button .dm-pw-art:not(.dm-pw-papi){width:22px!important;height:22px!important}
   }
 }
+
+/* iPhone emergency correction: earlier daily-gift.css set inset:auto, leaving
+   the absolutely-positioned route HUD at y=0 over iOS status indicators. */
+@layer bilgiIslands {
+  body #tab-dunya#tab-dunya .bz-ic:has(.bi-scene)>.rt-top.dm-has-wallet:has(.dm-has-daily-streak) {
+    position:absolute!important;
+    inset:auto!important;
+    top:max(52px,var(--bi-safe-top,0px))!important;
+    left:50%!important;
+    right:auto!important;
+    bottom:auto!important;
+    transform:translateX(-50%)!important;
+    z-index:20!important;
+    width:min(calc(100vw - 24px),560px)!important;
+    max-width:min(calc(100vw - 24px),560px)!important;
+    height:60px!important;
+    min-height:0!important;
+    margin:0!important;
+    padding:0!important;
+    background:transparent!important;
+  }
+  body #tab-dunya#tab-dunya .rt-top .dm-unified-wallet.dm-papi-wallet.dm-has-daily-streak{
+    grid-template-rows:52px!important;
+    height:60px!important;
+    min-height:0!important;
+    padding:4px!important;
+    border-radius:17px!important;
+  }
+  body #tab-dunya#tab-dunya .rt-top .dm-unified-wallet.dm-has-daily-streak>button{
+    min-height:52px!important;
+    height:52px!important;
+    max-height:52px!important;
+    gap:1px!important;
+    font-size:clamp(11px,2.9vw,14px)!important;
+    border-radius:11px!important;
+  }
+  body #tab-dunya#tab-dunya .rt-top .dm-has-daily-streak>button .dm-pw-art:not(.dm-pw-papi){
+    width:21px!important;
+    height:21px!important;
+  }
+  body #tab-dunya#tab-dunya .rt-top .dm-has-daily-streak>.dm-daily-streak-button{
+    grid-template-rows:22px 16px!important;
+    row-gap:0!important;
+  }
+  body #tab-dunya#tab-dunya .rt-top .dm-has-daily-streak>.dm-daily-streak-button .dm-daily-flame{
+    font-size:21px!important;
+    line-height:22px!important;
+  }
+  body #tab-dunya#tab-dunya .rt-top .dm-has-daily-streak>.dm-daily-streak-button b,
+  body #tab-dunya#tab-dunya .rt-top .dm-has-daily-streak>.dm-daily-streak-button small{
+    font-size:11px!important;
+    line-height:16px!important;
+  }
+}
