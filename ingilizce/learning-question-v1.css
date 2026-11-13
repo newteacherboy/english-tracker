@@ -435,3 +435,11 @@ html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not
  html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson:not(.ml-entry) .ml-actions button,
  html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson[data-route="school"][data-task-kind]:not(.ml-entry) .ml-actions button{min-height:36px!important;padding-block:6px!important}
 }
+
+/* Keep sentence construction in the same two-row landscape grid as the school card. */
+@media(min-width:700px) and (max-height:420px){
+ html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson[data-route="school"][data-task-kind="order"]:not(.ml-entry) .ml-task{grid-template-rows:minmax(0,1fr) auto!important}
+ html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson[data-route="school"][data-task-kind="order"]:not(.ml-entry) .ml-sentence{grid-column:2!important;grid-row:1!important}
+ html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson[data-route="school"][data-task-kind="order"]:not(.ml-entry) .ml-tokens{grid-column:2!important;grid-row:2!important;margin:0!important}
+ html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson[data-route="school"][data-task-kind="order"]:not(.ml-entry) .ml-reference-controls{grid-column:1!important;grid-row:2!important}
+}
