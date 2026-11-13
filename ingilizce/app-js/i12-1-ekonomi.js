@@ -14,7 +14,7 @@
   async function enerjiPaketiAl(miktar = 5, hataGoster = toast) {
     if (!yoVar()) { hataGoster('Enerji almak için önce giriş yapmalısın.'); return false; }
     const pack = [5,10,15].includes(Number(miktar)) ? Number(miktar) : 5;
-    const price = ({5:100,10:130,15:180})[pack];
+    const price = ({5:350,10:600,15:850})[pack];
     const key = 'paket_' + Date.now() + '_' + Math.random().toString(36).slice(2,12);
     const d = await window.dmEkonomi.islem('enerjiPaketAl', {miktar:pack, islemKimligi:key});
     if (!d?.ok) {
@@ -37,7 +37,7 @@
     if(window.DijiMeduPapiFeedback?.energy)return window.DijiMeduPapiFeedback.energy();
     if(document.querySelector('.sa-perde'))return;
     const bg=document.createElement('div');bg.className='sa-perde';bg.setAttribute('role','dialog');bg.setAttribute('aria-modal','true');bg.setAttribute('aria-label','Enerji paketleri');
-    bg.innerHTML='<div class="sa-kart"><div class="sa-gorsel">🦜⚡</div><h3>Papi Enerji Mağazası</h3><p>Altınlarınla enerji alabilir veya enerjinin yenilenmesini bekleyebilirsin.</p><div style="display:grid;gap:9px;margin:15px 0">'+[[5,100],[10,130],[15,180]].map(([n,price])=>`<button type="button" class="dm-energy-buy" data-amount="${n}" style="padding:12px;border-radius:12px;border:1px solid #b8ebc9;background:#eefdf3;color:#155e40;font-weight:800">⚡ ${n} enerji — 🪙 ${price} altın</button>`).join('')+'</div><div class="sa-btn"><button type="button" class="sa-hayir">Şimdi değil</button></div></div>';
+    bg.innerHTML='<div class="sa-kart"><div class="sa-gorsel">🦜⚡</div><h3>Papi Enerji Mağazası</h3><p>Altınlarınla enerji alabilir veya enerjinin yenilenmesini bekleyebilirsin.</p><div style="display:grid;gap:9px;margin:15px 0">'+[[5,350],[10,600],[15,850]].map(([n,price])=>`<button type="button" class="dm-energy-buy" data-amount="${n}" style="padding:12px;border-radius:12px;border:1px solid #b8ebc9;background:#eefdf3;color:#155e40;font-weight:800">⚡ ${n} enerji — 🪙 ${price} altın</button>`).join('')+'</div><div class="sa-btn"><button type="button" class="sa-hayir">Şimdi değil</button></div></div>';
     document.body.appendChild(bg);
     bg.querySelector('.sa-hayir').onclick=()=>bg.remove();
     bg.addEventListener('click',e=>{if(e.target===bg)bg.remove();});

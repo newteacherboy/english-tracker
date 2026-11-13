@@ -14,6 +14,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
+      - run: node --test tests/dm-satis-prices.test.mjs
       - run: npm install --prefix /tmp/energy-qa --no-audit --no-fund jsdom@26.1.0 playwright@1.58.2
       - run: NODE_PATH=/tmp/energy-qa/node_modules node --test tests/notice-surface.test.cjs tests/auto-notice-budget.test.cjs tests/portal-integrity.test.cjs tests/thematic-grouped-teach.test.cjs tests/route-combo-reward.test.cjs
       - run: /tmp/energy-qa/node_modules/.bin/playwright install chromium

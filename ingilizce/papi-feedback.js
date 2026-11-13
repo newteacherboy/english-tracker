@@ -65,7 +65,7 @@ function energy(){
  window.dmStartSpotlight?.stop();ensureEnergyStyle();
  const card=mount('energy','Papi ile enerji molası!','İlerlemen güvende. Kısa bir video izleyerek +7 enerji kazanabilir veya altınlarınla enerji alabilirsin.');if(!card)return;root.dataset.noticePriority='0';root.dataset.noticeEdge='bottom';
  const options=document.createElement('div');options.className='dm-energy-options';const status=document.createElement('p');status.dataset.energyStatus='';status.setAttribute('role','status');status.setAttribute('aria-live','polite');
- for(const [amount,price] of [[5,230],[10,300],[15,460]]){
+ for(const [amount,price] of [[5,350],[10,600],[15,850]]){
   const button=document.createElement('button');button.type='button';button.textContent='⚡ '+amount+' enerji · '+price+' altın';
   button.onclick=async()=>{
    const buttons=options.querySelectorAll('button');
