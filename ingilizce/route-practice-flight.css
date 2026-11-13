@@ -5,7 +5,7 @@
 .dm-route-flight-v2 .rf-light{position:absolute;inset:0;background:linear-gradient(168deg,#fff9d3b3,#fffae047 54%,#fff6ce05 88%);clip-path:polygon(76% 0,84% 0,85% 82%,5% 82%);filter:blur(5px);mix-blend-mode:screen;opacity:0}
 .dm-route-flight-v2 .rf-pool{position:absolute;width:202px;height:30px;left:calc(50% - 101px);top:78%;border-radius:50%;background:radial-gradient(ellipse,#fff6c3b3,transparent 72%);filter:blur(3px);opacity:0}
 .dm-route-flight-v2 .rf-actor{position:absolute;width:160px;height:176px;left:calc(50% - 95px);top:48.5%;filter:drop-shadow(-2px -3px 3px #fff7c57a) drop-shadow(0 14px 10px #080f2440);opacity:0}
-.dm-route-flight-v2 .pi-svg{width:100%;height:100%;overflow:visible}.dm-route-flight-v2 .pi-svg *{transform-box:fill-box}.dm-route-flight-v2 .p-wingL{transform-origin:100% 0%;transform:rotate(40deg)}.dm-route-flight-v2 .p-wingR{transform-origin:0% 0%;transform:rotate(-40deg)}
+.dm-route-flight-v2 .rf-svg{width:100%;height:100%;overflow:visible}.dm-route-flight-v2 .rf-svg *{transform-box:fill-box}.dm-route-flight-v2 .p-wingL{transform-origin:100% 0%;transform:rotate(40deg)}.dm-route-flight-v2 .p-wingR{transform-origin:0% 0%;transform:rotate(-40deg)}
 .dm-route-flight-v2 :is(.p-eyeHappy,.p-eyeClosed,.p-glasses,.p-fx,.p-mouth,.p-shadow){opacity:0}
 .dm-route-flight-v2 .rf-speech{position:absolute;right:22px;top:43.5%;width:182px;box-sizing:border-box;padding:12px 10px;background:#fffdf2;color:#31544b;box-shadow:0 5px 24px #10152226;border-radius:17px;text-align:center;font:750 16px/1.2 ui-rounded,"SF Pro Rounded",system-ui,sans-serif;opacity:0}
 .dm-route-flight-v2 .rf-speech::after{content:"";position:absolute;bottom:-6px;left:50%;width:13px;height:13px;background:inherit;transform:translateX(-50%) rotate(45deg)}
@@ -30,7 +30,7 @@
 @keyframes rf-combo-light{0%{opacity:0}14.74%,80.84%{opacity:1}100%{opacity:0}}
 @keyframes rf-particle{0%,18%{opacity:0;transform:translate(0,0) scale(0)}42%{opacity:1;transform:translate(var(--x),var(--y)) rotate(var(--r)) scale(1.1)}82%,100%{opacity:0;transform:translate(calc(var(--x)*1.4),calc(var(--y)*1.4 + 24px)) rotate(160deg) scale(.3)}}
 .dm-route-flight-v2.is-paused *{animation-play-state:paused!important}
-.dm-route-flight-v2.is-reduced.is-playing :is(.rf-shade,.rf-light,.rf-pool,.rf-actor,.rf-speech,.rf-label){animation:rf-reduced 1s both!important}.dm-route-flight-v2.is-reduced .rf-particles{display:none}.dm-route-flight-v2.is-reduced.is-playing .pi-svg *{animation:none!important}
+.dm-route-flight-v2.is-reduced.is-playing :is(.rf-shade,.rf-light,.rf-pool,.rf-actor,.rf-speech,.rf-label){animation:rf-reduced 1s both!important}.dm-route-flight-v2.is-reduced .rf-particles{display:none}.dm-route-flight-v2.is-reduced.is-playing .rf-svg *{animation:none!important}
 @keyframes rf-reduced{0%,100%{opacity:0}15%,85%{opacity:1}}
 #dmStoryLesson.qc-combo .qc-sheet{transform:translateY(calc(100% + 80px))!important}
 @layer dmNoticeSurface {
