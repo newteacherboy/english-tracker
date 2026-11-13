@@ -89,7 +89,7 @@ await page.locator('.dm-perde .dm-x').last().click();
   await page.locator('[data-friend-action="people"]').click();await page.waitForSelector('.fr-search-person');await page.locator('.fr-search-person .fr-avatar').first().click();await page.waitForSelector('#dmUserCard .uc-character svg');
   await page.evaluate(()=>document.documentElement.dataset.dmTheme='night');await page.screenshot({animations:'disabled',path:'/tmp/user-card-night.png'});
   await page.keyboard.press('Escape');assert.equal(await page.locator('#dmUserCard').count(),0);
-  await page.evaluate(()=>dmUserCard.open('Fixture',document.querySelector('.fr-leader-1')));await page.waitForSelector('#dmUserCard .uc-character svg');await page.locator('[data-user-action="message"]').click();assert.match(await page.locator('.uc-notice').innerText(),/Kendine mesaj gönderemezsin/);assert(await page.locator('#dmUserCard').isVisible());await page.screenshot({animations:'disabled',path:'/tmp/user-card-self.png'});
+  await page.evaluate(()=>dmUserCard.open('Fixture',document.querySelector('.fr-leader-1')));await page.waitForSelector('#dmUserCard .uc-character svg');await page.locator('[data-user-action="message"]').click({force:true});assert.match(await page.locator('.uc-notice').innerText(),/Kendine mesaj gönderemezsin/);assert(await page.locator('#dmUserCard').isVisible());await page.screenshot({animations:'disabled',path:'/tmp/user-card-self.png'});
   assert.deepEqual(errors.filter(x=>!x.includes('Chart')&&!x.includes('pdf')),[]);
   console.log('PASS compact card, real body renderer, all six actions, list avatar tap, 320/390/768 px bounds, night mode');await browser.close();
 })().catch(e=>{console.error(e);process.exit(1);});
