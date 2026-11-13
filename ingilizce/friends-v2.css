@@ -9,7 +9,7 @@ html body #tab-meduakis .fr-tiles.fr-tiles-v2 :is(.fr-tile-duel,.fr-tile-invite)
 html body #tab-meduakis .fr-tiles.fr-tiles-v2 .fr-tile-duel>img{animation:frv2Wiggle 2.6s ease-in-out infinite;transform-origin:50% 90%}
 html body #tab-meduakis .fr-tiles.fr-tiles-v2 .fr-tile-invite>img{animation:frv2Bob 2.4s ease-in-out infinite}
 html body #tab-meduakis .fr-tiles.fr-tiles-v2 .fr-tile-copy{grid-column:2;grid-row:1;flex:1;min-width:0;display:grid;gap:2px;position:relative;z-index:1;text-align:left;justify-items:start}
-html body #tab-meduakis .fr-tiles.fr-tiles-v2 .fr-tile-copy b{font:900 17px/1.1 Nunito,system-ui,sans-serif!important;color:#fff!important}
+html body #tab-meduakis .fr-tiles.fr-tiles-v2 .fr-tile-copy b{font:900 clamp(15px,4.2vw,17px)/1.1 Nunito,system-ui,sans-serif!important;color:#fff!important;white-space:nowrap!important}
 html body #tab-meduakis .fr-tiles.fr-tiles-v2 .fr-tile-copy small{font:800 10.5px/1.25 Nunito,system-ui,sans-serif!important;color:#EAF0FF!important;white-space:normal!important}
 html body #tab-meduakis .fr-tiles.fr-tiles-v2 .fr-tile-cta{grid-column:1/-1;grid-row:2;justify-self:end;flex:none;position:relative;z-index:1;padding:7px 12px;border-radius:12px;font:900 12px/1 Nunito,system-ui,sans-serif}
 html body #tab-meduakis .fr-tiles.fr-tiles-v2 .fr-tile-duel .fr-tile-cta{background:#FFC531;color:#3A2400;box-shadow:0 4px 0 #D99A00}
