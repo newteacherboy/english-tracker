@@ -14,9 +14,11 @@
   if(!alive(v))return;
   const viewport=window.visualViewport,w=viewport?.width||innerWidth,h=viewport?.height||innerHeight,left=viewport?.offsetLeft||0,top=viewport?.offsetTop||0;
   const r=v.anchorEl?.isConnected?v.anchorEl.getBoundingClientRect():v.rect;
-  v.el.style.maxHeight=Math.max(120,h-32)+'px';v.el.style.width=Math.min(348,w-24)+'px';
+  const safeTop=parseFloat(getComputedStyle(v.el).getPropertyValue('--uc-safe-top'))||0;
+  const insetTop=Math.max(12,safeTop+8);
+  v.el.style.maxHeight=Math.max(120,h-insetTop-16)+'px';v.el.style.width=Math.min(288,w-32)+'px';
   const box=v.el.getBoundingClientRect(),x=Math.max(left+12,Math.min(r.right+8,left+w-box.width-12));
-  const y=Math.max(top+16,Math.min(r.top-box.height+34,top+h-box.height-16));
+  const y=Math.max(top+insetTop,Math.min(r.top-box.height+24,top+h-box.height-16));
   v.el.style.left=x+'px';v.el.style.top=y+'px';
   v.el.dataset.arrow=r.left+r.width/2<x?'left':'bottom';
   v.el.style.setProperty('--tip-y',Math.max(28,Math.min(box.height-28,r.top+r.height/2-y))+'px');
@@ -24,12 +26,33 @@
  }
  function character(data){
   const k=data.character;
-  try{if(k?.cins&&k.s&&window.dolapTamBoySVG)return window.dolapTamBoySVG({...window.KA_VARSAYILAN?.[k.cins],...k.s},k.cins,174);
-   if(k?.cins&&window.dmAdventureAvatar)return window.dmAdventureAvatar.render(k.s||{},{cins:k.cins,px:174,full:true});
+  try{if(k?.cins&&k.s&&window.dolapTamBoySVG)return window.dolapTamBoySVG({...window.KA_VARSAYILAN?.[k.cins],...k.s},k.cins,124);
+   if(k?.cins&&window.dmAdventureAvatar)return window.dmAdventureAvatar.render(k.s||{},{cins:k.cins,px:124,full:true});
   }catch{}
-  return '<img src="friends-assets/papi-friends.png" alt="Papi karakteri" width="94" height="154">';
+  return '<img src="friends-assets/papi-friends.png" alt="Papi karakteri" width="64" height="124">';
  }
- const button=(action,label,cls='')=>'<button type="button" class="uc-action '+cls+'" data-user-action="'+action+'" disabled>'+icon(action)+'<span>'+label+'</span></button>';
+ const button=(action,label,cls='')=>'<button type="button" class="uc-action '+cls+'" data-user-action="'+action+'" aria-disabled="true">'+icon(action)+'<span>'+label+'</span></button>';
+ const actionFeatures={message:'hazir_mesaj',gift:'enerji_hediye',duel:'duello',follow:'takip'};
+ const ownReasons={message:'Kendine mesaj gönderemezsin.',gift:'Kendine hediye gönderemezsin.',duel:'Kendinle düello yapamazsın.',follow:'Kendini takip edemezsin.',block:'Kendi hesabını engelleyemezsin.',report:'Kendini bildiremezsin.'};
+ function unavailable(v,b){
+  if(b.dataset.busy)return 'İşlemin tamamlanmasını bekle.';
+  if(v.error)return v.error;
+  if(!v.data)return 'Kullanıcı bilgileri yükleniyor. Biraz sonra tekrar dene.';
+  const action=b.dataset.userAction;
+  if(norm(v.id)===norm(v.owner))return ownReasons[action];
+  const feature=actionFeatures[action];
+  if(feature&&window.dmFeatureEnabled?.(feature)===false)return 'Bu özellik şu anda kullanıma kapalı.';
+  if(feature&&window.dmProgression?.allowed?.(feature)===false){
+   const required=Number(window.DijiProgressionCatalog?.gates?.[feature]),level=Number(window.dmProgression?.level?.());
+   return required?'Bu işlem '+required+'. seviyede açılır.'+(level?' Şu an '+level+'. seviyedesin.':''):'Bu işlem şu an hesabın için açık değil.';
+  }
+  return '';
+ }
+ function paintActions(v){v.el.querySelectorAll('[data-user-action]').forEach(b=>{const reason=unavailable(v,b);b.disabled=false;b.setAttribute('aria-disabled',String(!!reason));if(reason)b.title=reason;else b.removeAttribute('title');});}
+ function notice(v,message){
+  if(!alive(v))return;const n=v.el.querySelector('.uc-notice');n.hidden=false;n.textContent=message;
+  (window.yoToast||window.maToast)?.(message);place(v);
+ }
  async function open(id,anchor){
   id=id==='ben'?who():String(id||'').trim();if(!id)return;
   const anchorEl=anchor?.getBoundingClientRect?anchor:lastAnchor?.el;
@@ -39,9 +62,9 @@
   const account=who()+'|'+token();if(cacheOwner!==account){cache.clear();cacheOwner=account;}
   const el=document.createElement('section');el.id='dmUserCard';el.className='dm-user-card';el.setAttribute('role','dialog');el.setAttribute('aria-modal','false');el.setAttribute('aria-labelledby','dmUserCardName');
   el.innerHTML='<button type="button" class="uc-close" aria-label="Bilgi kartını kapat">×</button><div class="uc-identity"><div class="uc-character" aria-label="Boydan karakter"></div><div class="uc-details"><h2 id="dmUserCardName">'+esc(id)+'</h2><div class="uc-stats" aria-live="polite">Yükleniyor…</div></div></div><div class="uc-actions">'+button('message','Mesaj Gönder','uc-primary')+button('gift','Hediye Gönder')+button('duel','Düello')+button('follow','Takip Et','uc-follow')+'</div><footer>'+button('block','Engelle')+button('report','Kullanıcıyı Bildir')+'</footer><p class="uc-notice" role="status" hidden></p>';
-  const v={el,anchorEl,rect,origin,owner:who(),token:token(),id,controller:new AbortController(),data:null};view=v;document.body.append(el);anchorEl?.setAttribute('aria-expanded','true');
+  const v={el,anchorEl,rect,origin,owner:who(),token:token(),id,controller:new AbortController(),data:null,error:''};view=v;document.body.append(el);anchorEl?.setAttribute('aria-expanded','true');
   el.querySelector('.uc-close').onclick=()=>close();el.addEventListener('click',e=>{e.stopPropagation();const b=e.target.closest('[data-user-action]');if(b)void act(v,b);});
-  place(v);el.querySelector('.uc-close').focus({preventScroll:true});
+  paintActions(v);place(v);el.querySelector('.uc-close').focus({preventScroll:true});
   try{
    let data=cache.get(id);if(!data||Date.now()-data.at>30000){
     const response=await fetch(apiURL,{method:'POST',headers:{'Content-Type':'application/json'},cache:'no-store',signal:v.controller.signal,body:JSON.stringify({islem:'kullaniciBilgiKarti',kullanici:id,t:v.token})});
@@ -51,30 +74,30 @@
    if(!alive(v))return;v.data=data;v.id=data.name;
    el.querySelector('h2').textContent=data.name;el.querySelector('.uc-character').innerHTML=character(data);
    el.querySelector('.uc-stats').innerHTML='<span><i aria-hidden="true">🏆</i>'+esc(leagues[data.league]||'Lig henüz açılmadı')+'</span><span><i aria-hidden="true">🔥</i>'+Math.max(0,Number(data.streak)||0)+' gün seri</span><span><i aria-hidden="true">▥</i>'+Math.max(1,Number(data.level)||1)+'. seviye</span>';
-   const own=norm(v.id)===norm(v.owner);el.querySelectorAll('[data-user-action]').forEach(b=>b.disabled=own);
+   const own=norm(v.id)===norm(v.owner);paintActions(v);
    const following=typeof maTakip!=='undefined'&&maTakip.has(v.id);el.querySelector('[data-user-action="follow"] span').textContent=following?'Takip Ediliyor':'Takip Et';
    if(own){const n=el.querySelector('.uc-notice');n.hidden=false;n.textContent='Bu senin bilgi kartın.';}place(v);
-  }catch(e){if(!alive(v)||e.name==='AbortError')return;el.querySelector('.uc-stats').textContent=e.message;place(v);}
+  }catch(e){if(!alive(v)||e.name==='AbortError')return;v.error=e.message;el.querySelector('.uc-stats').textContent=e.message;paintActions(v);place(v);}
  }
  async function act(v,b){
-  if(!alive(v)||!v.data||b.disabled)return;const action=b.dataset.userAction,id=v.id;
-  const feature={message:'hazir_mesaj',gift:'enerji_hediye',duel:'duello',follow:'takip'}[action];
-  if(feature&&window.dmProgression?.require&&!window.dmProgression.require(feature))return;
+  if(!alive(v))return;const reason=unavailable(v,b);if(reason){notice(v,reason);return;}
+  const action=b.dataset.userAction,id=v.id,feature=actionFeatures[action];
+  if(feature&&window.dmProgression?.require&&!window.dmProgression.require(feature)){notice(v,'Bu işlem şu an hesabın için açık değil.');return;}
   if(action==='message'){close(false);return window.dmMessageAc?.(id);}
   if(action==='gift'){close(false);return window.dmGiftAc?.(id);}
   if(action==='duel'){close(false);return window.dmDuelAc?.(id);}
   if(action==='report'){close(false);return window.dmSocialSafety?.report('user',id);}
-  b.disabled=true;
+  b.dataset.busy='true';b.setAttribute('aria-busy','true');paintActions(v);
   try{
    if(action==='follow'){
-    await window.maTakipDegistir(id,b);
+    await window.maTakipDegistir(id);
     if(alive(v)){const t=typeof maTakip!=='undefined'&&maTakip.has(id);b.innerHTML=icon('follow')+'<span>'+(t?'Takip Ediliyor':'Takip Et')+'</span>';}
    }else if(action==='block'){
     await window.dmMeduPro.api('ogrenciEngelle',{alici:id});if(!alive(v))return;
     if(typeof maTakip!=='undefined')maTakip.delete(id);cache.delete(id);close();window.maCiz?.();window.maToast?.('Kullanıcı engellendi.');
    }
-  }catch(e){if(alive(v)){const n=v.el.querySelector('.uc-notice');n.hidden=false;n.textContent=e.message;}}
-  finally{if(alive(v))b.disabled=false;}
+  }catch(e){notice(v,e.message);}
+  finally{if(alive(v)){delete b.dataset.busy;b.removeAttribute('aria-busy');paintActions(v);}}
  }
  document.addEventListener('click',e=>{
   if(view&&!view.el.contains(e.target))close(false);
