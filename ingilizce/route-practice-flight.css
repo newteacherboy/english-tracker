@@ -1,29 +1,41 @@
-.dm-route-flight{position:fixed;inset:0;z-index:2147483646;overflow:hidden;background:linear-gradient(#9ae8f1,#ebffea);color:#084c52;font-family:system-ui,-apple-system,sans-serif;isolation:isolate;height:100dvh}
-.dm-route-flight-canvas{position:absolute;inset:0;display:block;width:100%;height:100%;pointer-events:none}
-.dm-route-flight-copy{position:absolute;top:70%;left:16px;right:16px;text-align:center;opacity:0;pointer-events:none}
-.dm-route-flight-copy h2{font:900 clamp(28px,5.8vh,64px)/1.12 system-ui,sans-serif;letter-spacing:-1px;color:#084c52;margin:0 0 18px;text-shadow:0 2px 0 #ffffff50}
-.dm-route-flight-copy p{font:500 clamp(14px,2.1vh,25px)/1.5 system-ui,sans-serif;color:#4e8b85;margin:0;overflow-wrap:anywhere}
-.dm-route-flight-exit,.dm-route-flight-skip{position:absolute;z-index:1;border:1px solid #ffffffc0;border-radius:24px;background:#ffffffb8;color:#175b61;font:800 15px/1.3 system-ui,sans-serif;min-height:44px;padding:10px 16px;cursor:pointer}
-.dm-route-flight-exit{top:calc(14px + env(safe-area-inset-top,0px));right:14px;width:44px;padding:0;font-size:28px}
-.dm-route-flight-skip{bottom:calc(15px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%);white-space:nowrap}
-.dm-route-flight-fallback{position:absolute;left:50%;top:40%;transform:translate(-50%,-50%);width:min(72vw,44vh,540px);height:auto}.dm-route-flight-fallback[hidden]{display:none}
-.dm-route-flight button:focus-visible{outline:3px solid #127b9f;outline-offset:3px}
+/* Floating, non-modal Papi over the current lesson. No replacement screen. */
+.dm-route-flight-v2{position:fixed;inset:0;z-index:2147483646;pointer-events:none;overflow:hidden;isolation:isolate;font-family:ui-rounded,"SF Pro Rounded",system-ui,sans-serif}
+.dm-route-flight-v2 .rf-stage{position:absolute;width:min(100%,350px);height:min(100%,492px);left:50%;top:50%;transform:translate(-50%,-50%)}
+.dm-route-flight-v2 .rf-shade{position:absolute;inset:0;background:#070f1c59;opacity:0}
+.dm-route-flight-v2 .rf-light{position:absolute;inset:0;background:linear-gradient(168deg,#fff9d3b3,#fffae047 54%,#fff6ce05 88%);clip-path:polygon(76% 0,84% 0,85% 82%,5% 82%);filter:blur(5px);mix-blend-mode:screen;opacity:0}
+.dm-route-flight-v2 .rf-pool{position:absolute;width:202px;height:30px;left:calc(50% - 101px);top:78%;border-radius:50%;background:radial-gradient(ellipse,#fff6c3b3,transparent 72%);filter:blur(3px);opacity:0}
+.dm-route-flight-v2 .rf-actor{position:absolute;width:160px;height:176px;left:calc(50% - 95px);top:48.5%;filter:drop-shadow(-2px -3px 3px #fff7c57a) drop-shadow(0 14px 10px #080f2440);opacity:0}
+.dm-route-flight-v2 .rf-svg{width:100%;height:100%;overflow:visible}.dm-route-flight-v2 .rf-svg *{transform-box:fill-box}.dm-route-flight-v2 .p-wingL{transform-origin:100% 0%;transform:rotate(40deg)}.dm-route-flight-v2 .p-wingR{transform-origin:0% 0%;transform:rotate(-40deg)}
+.dm-route-flight-v2 :is(.p-eyeHappy,.p-eyeClosed,.p-glasses,.p-fx,.p-mouth,.p-shadow){opacity:0}
+.dm-route-flight-v2 .rf-speech{position:absolute;right:22px;top:43.5%;width:182px;box-sizing:border-box;padding:12px 10px;background:#fffdf2;color:#31544b;box-shadow:0 5px 24px #10152226;border-radius:17px;text-align:center;font:750 16px/1.2 ui-rounded,"SF Pro Rounded",system-ui,sans-serif;opacity:0}
+.dm-route-flight-v2 .rf-speech::after{content:"";position:absolute;bottom:-6px;left:50%;width:13px;height:13px;background:inherit;transform:translateX(-50%) rotate(45deg)}
+.dm-route-flight-v2.is-playing .rf-shade{animation:rf-dim 3.6s both}.dm-route-flight-v2.is-playing :is(.rf-light,.rf-pool){animation:rf-light 3.6s both}.dm-route-flight-v2.is-playing .rf-actor{animation:rf-arc 3.6s both}.dm-route-flight-v2.is-playing .rf-speech{animation:rf-speak 3.6s both}
+.dm-route-flight-v2.is-playing .p-wingL{animation:rf-wing-l .16s ease-in-out 22 alternate}.dm-route-flight-v2.is-playing .p-wingR{animation:rf-wing-r .16s ease-in-out 22 alternate}.dm-route-flight-v2.is-playing .p-lid{animation:rf-blink 3.6s both}
+@keyframes rf-arc{0%{transform:translate(280px,-170px) rotate(25deg);opacity:0}8%{opacity:1}28%{transform:translate(-13px,3px) rotate(-14deg)}42%{transform:translate(0,-8px) rotate(6deg)}62%{transform:translate(-2px,0) rotate(-4deg)}76%{transform:translate(22px,-30px) rotate(18deg);opacity:1}100%{transform:translate(-290px,-170px) rotate(-26deg);opacity:0}}
+@keyframes rf-speak{0%,25%{opacity:0;transform:translateY(8px) scale(.85)}35%,68%{opacity:1;transform:none}81%,100%{opacity:0;transform:translateY(-8px) scale(.94)}}
+@keyframes rf-dim{0%{opacity:0}18%,77%{opacity:1}100%{opacity:0}}@keyframes rf-light{0%,10%{opacity:0}28%,73%{opacity:1}100%{opacity:0}}
+@keyframes rf-wing-l{from{transform:rotate(-18deg) scaleX(.8)}to{transform:rotate(72deg) scaleX(1.08)}}@keyframes rf-wing-r{from{transform:rotate(18deg) scaleX(.8)}to{transform:rotate(-72deg) scaleX(1.08)}}@keyframes rf-blink{0%,42%,50%,100%{transform:none}46%{transform:translateY(58px)}}
+/* Selected joyful flip: 2.8s original + a full 1s of visible celebration. */
+.dm-route-flight-combo .rf-shade{background:#08172517}.dm-route-flight-combo .rf-light{background:radial-gradient(ellipse at 50% 55%,#fff0bd8c,transparent 45%);clip-path:none;filter:none;mix-blend-mode:normal}.dm-route-flight-combo .rf-pool{display:none}
+.dm-route-flight-combo .rf-actor{top:34.8%;width:150px;height:165px;left:calc(50% - 75px);filter:drop-shadow(0 8px 8px #192e3c20)}
+.dm-route-flight-combo .p-eyeOpen{opacity:0}.dm-route-flight-combo .p-eyeHappy{opacity:1}
+.dm-route-flight-combo .rf-label{position:absolute;z-index:2;left:calc(50% - 112px);width:224px;top:65.45%;text-align:center;opacity:0}
+.dm-route-flight-combo .rf-combo-word{font:900 35px/1.1 ui-rounded,"SF Pro Rounded",system-ui,sans-serif;letter-spacing:-1px;color:#db8b24;text-shadow:0 2px 0 #fff,0 4px 0 #f6d59e}
+.dm-route-flight-combo .rf-message{font:650 13px/1.3 system-ui,sans-serif;color:#91642d;margin-top:7px}.dm-route-flight-combo .rf-reward{display:inline-flex;align-items:center;gap:4px;margin-top:11px;padding:8px 14px;border-radius:14px;background:#fff1b8;color:#94651e;font:750 14px/1.3 system-ui,sans-serif;box-shadow:0 3px 0 #e7cf7e}
+.dm-route-flight-combo .rf-particles{position:absolute;inset:0;z-index:1}.dm-route-flight-combo .rf-particles b{position:absolute;left:50%;top:52%;font-size:23px;color:#e5b541;font-weight:500;opacity:0}
+.dm-route-flight-combo.is-playing :is(.rf-shade,.rf-light){animation:rf-combo-light 3.8s both}.dm-route-flight-combo.is-playing .rf-actor{animation:rf-flip 3.8s both}.dm-route-flight-combo.is-playing .rf-label{animation:rf-combo-label 3.8s both}.dm-route-flight-combo.is-playing .rf-particles b{animation:rf-particle 2.8s both}
+.dm-route-flight-combo.is-playing .p-wingL{animation:rf-wing-l .22s ease-in-out 16 alternate}.dm-route-flight-combo.is-playing .p-wingR{animation:rf-wing-r .22s ease-in-out 16 alternate}
+@keyframes rf-flip{0%{opacity:0;transform:translateY(180px) scale(.5) rotate(-25deg)}13.26%{opacity:1;transform:translateY(-35px)}29.47%{transform:translateY(-52px) rotate(360deg)}39.05%{transform:translateY(0) rotate(365deg) scale(1.06,.94)}48.63%,74.95%{transform:translateY(-12px) rotate(360deg)}84.53%{transform:translateY(0) rotate(360deg);opacity:1}100%{opacity:0;transform:translate(240px,-120px) rotate(382deg)}}
+@keyframes rf-combo-label{0%,28.74%{opacity:0;transform:scale(.6)}38.32%{opacity:1;transform:scale(1.12)}47.16%,83.79%{opacity:1;transform:none}100%{opacity:0;transform:translateY(-12px)}}
+@keyframes rf-combo-light{0%{opacity:0}14.74%,80.84%{opacity:1}100%{opacity:0}}
+@keyframes rf-particle{0%,18%{opacity:0;transform:translate(0,0) scale(0)}42%{opacity:1;transform:translate(var(--x),var(--y)) rotate(var(--r)) scale(1.1)}82%,100%{opacity:0;transform:translate(calc(var(--x)*1.4),calc(var(--y)*1.4 + 24px)) rotate(160deg) scale(.3)}}
+.dm-route-flight-v2.is-paused *{animation-play-state:paused!important}
+.dm-route-flight-v2.is-reduced.is-playing :is(.rf-shade,.rf-light,.rf-pool,.rf-actor,.rf-speech,.rf-label){animation:rf-reduced 1s both!important}.dm-route-flight-v2.is-reduced .rf-particles{display:none}.dm-route-flight-v2.is-reduced.is-playing .rf-svg *{animation:none!important}
+@keyframes rf-reduced{0%,100%{opacity:0}15%,85%{opacity:1}}
+#dmStoryLesson.qc-combo .qc-sheet{transform:translateY(calc(100% + 80px))!important}
 @layer dmNoticeSurface {
 #dmStoryLesson .ml-teach [data-learn].is-listened{background:linear-gradient(135deg,#e5fae9,#d4f6e2)!important;border-color:#35bc76!important;box-shadow:0 0 0 2px #35bc7626!important;color:#155b3c!important}
 #dmStoryLesson .ml-teach [data-learn].is-listened :is(b,span,small){color:#155b3c!important}
 #dmStoryLesson .ml-teach [data-learn].is-listened small{font-weight:800!important}
 #dmStoryLesson .ml-teach [data-learn].is-listened small{font-size:18px!important;display:grid!important;place-items:center!important} #dmStoryLesson .ml-teach [data-learn].is-listened small::after{display:none!important}
 }
-@media(prefers-reduced-motion:reduce){.dm-route-flight *{animation:none!important;transition:none!important}}
-
-/* Combo #1 uses the approved mint sky, soft feathers and a foreground reward. */
-.dm-route-flight-combo{background:linear-gradient(#a1ece1,#f4ffe0)}
-.dm-route-flight-combo .dm-route-flight-copy{top:4.2%}
-.dm-route-flight-combo .dm-route-flight-copy h2{font-size:clamp(28px,5.1vh,65px);color:#086e50;margin:0 0 12px;letter-spacing:0}
-.dm-route-flight-combo .dm-route-flight-copy p{color:#417f67}
-.dm-route-flight-energy{position:absolute;left:50%;top:61.3%;width:min(89%,50vh);box-sizing:border-box;display:flex;align-items:center;justify-content:space-evenly;gap:12px;padding:clamp(12px,2.4vh,28px);border:3px solid #eabe3e;border-radius:clamp(26px,5.1vh,65px);background:#fffcef;box-shadow:0 0 36px #f7c73330;color:#087a57;opacity:0;transform:translate(-50%,-50%) scale(.45);pointer-events:none}
-.dm-route-flight-bolt{display:grid;place-items:center;width:clamp(66px,12.5vh,160px);aspect-ratio:1;border-radius:50%;background:#fff0a0;border:2px solid #ffdc5f;flex-shrink:0}
-.dm-route-flight-bolt svg{width:66%;height:66%}
-.dm-route-flight-energy b{display:block;text-align:center;font-size:clamp(48px,6.8vh,87px);line-height:1.1;font-weight:900}
-.dm-route-flight-energy small{display:block;text-align:center;margin-top:8px;font-size:clamp(17px,2.5vh,32px);font-weight:800;color:#557852}
-.dm-route-flight-energy-caption{position:absolute;top:79%;left:16px;right:16px;margin:0;text-align:center;font-size:clamp(17px,2.5vh,32px);font-weight:800;color:#0f6f50;opacity:0;pointer-events:none}
