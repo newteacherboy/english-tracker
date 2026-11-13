@@ -58,6 +58,8 @@
  }
  async function act(v,b){
   if(!alive(v)||!v.data||b.disabled)return;const action=b.dataset.userAction,id=v.id;
+  const feature={message:'hazir_mesaj',gift:'enerji_hediye',duel:'duello',follow:'takip'}[action];
+  if(feature&&window.dmProgression?.require&&!window.dmProgression.require(feature))return;
   if(action==='message'){close(false);return window.dmMessageAc?.(id);}
   if(action==='gift'){close(false);return window.dmGiftAc?.(id);}
   if(action==='duel'){close(false);return window.dmDuelAc?.(id);}
