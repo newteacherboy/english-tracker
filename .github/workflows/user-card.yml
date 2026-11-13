@@ -1,7 +1,7 @@
 name: Compact user card QA
 on:
   pull_request:
-    paths: ['ingilizce/user-card.*', 'ingilizce/friends-ui.js', 'ingilizce/medupro.js', 'ingilizce/app-js/i04-meduakisac.js', 'supabase/functions/diji-api/user-card.mjs', 'supabase/functions/diji-api/progression-api.ts', 'tests/user-card-*', '.github/workflows/user-card.yml']
+    paths: ['ingilizce/user-card.*', 'ingilizce/friends-ui.js', 'ingilizce/friends-v2.css', 'ingilizce/medupro.js', 'ingilizce/app-js/i04-meduakisac.js', 'supabase/functions/diji-api/user-card.mjs', 'supabase/functions/diji-api/progression-api.ts', 'tests/user-card-*', '.github/workflows/user-card.yml']
   workflow_dispatch:
 permissions:
   contents: read
