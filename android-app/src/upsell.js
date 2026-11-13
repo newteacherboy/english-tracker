@@ -100,7 +100,7 @@ export function createUpsell({ win, billing, watch, isTeacher }) {
     style();
     const now = Math.max(0, energy() | 0), capacity = Number(win.genelEnerjiMax) || 25;
     const after = Math.min(capacity, now + 7), p = plan();
-    const packs = [[5,230],[10,300],[15,460]];
+    const packs = [[5,350],[10,600],[15,850]];
     open = el(`<div class="dmu-veil" role="dialog" aria-modal="true" aria-label="Papi ile enerji molası"><div class="dmu-sheet">
       <div class="dmu-hero"><img src="${papi}" alt="Papi"><span class="dmu-badge">⚡</span><button class="dmu-x" aria-label="Kapat">✕</button></div>
       <div class="dmu-body"><p class="dmu-title">Papi ile enerji molası!</p>

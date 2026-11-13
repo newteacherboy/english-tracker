@@ -153,9 +153,9 @@ if (!(Capacitor.isNativePlatform() && (platform === 'android' || (ios && Capacit
         const plan = window.dmAndroidPlan?.plan || 'free', offer = card.querySelector('[data-dm-plan-offer]');
         if (!purchaseCard && plan === 'free' && !offer) addPlanOffer(card);
         else if (plan !== 'free' && offer) offer.remove();
-        let requestedPrice = Math.max(230, ...[...card.querySelectorAll('[data-pack][disabled]')].map(button => {
+        let requestedPrice = Math.max(350, ...[...card.querySelectorAll('[data-pack][disabled]')].map(button => {
           const amount = Number(button.dataset.pack), capacity = Number(window.genelEnerjiMax || 25), current = Number(window.genelEnerjiKalan || 0);
-          return current + amount <= capacity ? ({5:230,10:300,15:460}[amount] || 230) : 230;
+          return current + amount <= capacity ? ({5:350,10:600,15:850}[amount] || 350) : 350;
         }));
         if(purchaseCard) requestedPrice=Number((card.querySelector('.ds-price')?.textContent||'').replace(/\D/g,''));
         const shortage = !purchaseCard || (/Altın eksik/i.test(card.querySelector('.ds-buy')?.textContent||'') && requestedPrice>balance);
