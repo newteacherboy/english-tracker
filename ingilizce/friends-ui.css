@@ -815,4 +815,4 @@ html[data-dm-theme="night"] .fr-people-state.online{color:#62e5a0}
 html[data-dm-theme="night"] .fr-people-row:hover{background:#2b436a!important}
 html[data-dm-theme="night"] .fr-people-close,html[data-dm-theme="night"] .fr-people-empty{color:#bbcee7}
 
-.fr-people-dropdown .fr-people-state.dm-online-badge{margin:0;padding:0;border:0;border-radius:0;background:none;font-size:10px}.fr-people-dropdown .fr-people-state.dm-online-badge::after{content:none}
+.fr-people-dropdown .fr-people-state.dm-online-badge{display:inline-flex;margin:0;padding:0;border:0;border-radius:0;background:none;font-size:10px}.fr-people-dropdown .fr-people-state.dm-online-badge::after{content:none}
