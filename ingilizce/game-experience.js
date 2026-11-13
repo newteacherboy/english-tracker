@@ -186,7 +186,7 @@
  function cue(correct){
   const root=currentRoot();if(!root)return;
   // Most games already play their native success/failure sounds; no duplicate tone.
-  if(root.id==='harfBahcesiOverlay'||(root.id!=='yoModal'&&typeof window.genelSesEfektiCal!=='function'))effect(correct);
+  // The shared OC score handler already emits the audio; never add a second, unmuted tone here.
   if(root.id==='yoModal'&&root.dataset.dmSelectedGame==='cumle'){
    root.querySelectorAll('.yo-cevap-alan .yo-chip').forEach(chip=>{
     chip.classList.add(correct?'dm-answer-right':'dm-answer-wrong');
