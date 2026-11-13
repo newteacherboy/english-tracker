@@ -1,0 +1,25 @@
+name: Papi opening waiting game
+on:
+  pull_request:
+    paths: ['ingilizce/holiday-splashes/papi-intro.js', 'ingilizce/index.html', 'ingilizce/sw.js', 'tests/papi-wait-game*', '.github/workflows/papi-wait-game.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  waiting-game:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: npm install --prefix /tmp/wait-qa --no-audit --no-fund jsdom@26.1.0 playwright@1.58.2
+      - run: NODE_PATH=/tmp/wait-qa/node_modules node --test tests/papi-wait-game.test.cjs tests/papi-startup.test.cjs tests/holiday-splash.test.cjs tests/portal-bootstrap.test.cjs
+      - run: /tmp/wait-qa/node_modules/.bin/playwright install --with-deps chromium
+      - run: NODE_PATH=/tmp/wait-qa/node_modules node tests/papi-wait-game-ui.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: papi-opening-game
+          path: /tmp/papi-wait-qa/*.png

@@ -3,7 +3,7 @@
         <head>
 <script src="teacher-portal-boot.js?v=20261111-ogretmen-serit"></script>
 <script src="holiday-splashes/dates.js?v=20261023-2"></script>
-<script src="holiday-splashes/papi-intro.js?v=20261112-mor"></script><script src="holiday-splashes/splash.js?v=20261112-yuk"></script>
+<script src="holiday-splashes/papi-intro.js?v=24d4c8eb05"></script><script src="holiday-splashes/splash.js?v=20261112-yuk"></script>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@800&amp;display=swap">
 <link rel="stylesheet" href="holiday-splashes/splash.css?v=20261111-pending-3">
 
@@ -121,7 +121,7 @@ window.supabaseClient=supabaseClient;
 <!-- dm-preload:start (scripts/build-preloads.py üretir; elle düzenleme) -->
 <link rel="preload" as="script" href="teacher-portal-boot.js?v=20261111-ogretmen-serit">
 <link rel="preload" as="script" href="holiday-splashes/dates.js?v=20261023-2">
-<link rel="preload" as="script" href="holiday-splashes/papi-intro.js?v=20261112-mor">
+<link rel="preload" as="script" href="holiday-splashes/papi-intro.js?v=24d4c8eb05">
 <link rel="preload" as="script" href="holiday-splashes/splash.js?v=20261112-yuk">
 <link rel="preload" as="style" href="holiday-splashes/splash.css?v=20261111-pending-3">
 <link rel="preload" as="script" href="native-app.js?v=20261111-ios-safe-4">
@@ -452,8 +452,8 @@ window.dmLateCss=go;document.addEventListener('dm:boot-ready',go,{once:true});ad
 <script>(function(){
 const splash=document.getElementById('dmBootSplash');let timer,done=false,loaded=false,finishTimer=0;const splashStartedAt=Date.now(),minSplashMs=(window.dmPapiIntro&&window.dmPapiIntro.isActive())?3400:0;
 function visible(el){return !!el&&el.getClientRects().length>0&&getComputedStyle(el).display!=='none';}
-function finish(){if(done)return;splash.style.setProperty("--dm-papi-progress","100%");const remaining=Math.max(minSplashMs-(Date.now()-splashStartedAt),window.dmSplashPending?300:0,(window.dmPapiIntro&&window.dmPapiIntro.remainingMs)?window.dmPapiIntro.remainingMs():0);if(remaining>0){if(!finishTimer)finishTimer=setTimeout(()=>{finishTimer=0;finish();},remaining);return;}done=true;clearInterval(timer);clearTimeout(deadline);document.removeEventListener('dm:login',check);document.removeEventListener('dm:state',check);splash.classList.add('dm-ready');setTimeout(()=>{splash.remove();document.dispatchEvent(new Event('dm:boot-ready'));},250);}
-function check(){if(!loaded)return;const login=document.getElementById('login-container'),panel=document.getElementById('panel-alani');
+function finish(){if(done)return;splash.style.setProperty("--dm-papi-progress","100%");const remaining=Math.max(minSplashMs-(Date.now()-splashStartedAt),window.dmSplashPending?300:0,(window.dmPapiIntro&&window.dmPapiIntro.remainingMs)?window.dmPapiIntro.remainingMs():0);if(remaining>0){if(!finishTimer)finishTimer=setTimeout(()=>{finishTimer=0;finish();},remaining);return;}if(window.dmPapiIntro?.holdBoot?.(finish))return;done=true;clearInterval(timer);clearTimeout(deadline);document.removeEventListener('dm:login',check);document.removeEventListener('dm:state',check);splash.classList.add('dm-ready');setTimeout(()=>{splash.remove();document.dispatchEvent(new Event('dm:boot-ready'));},250);}
+function check(){if(!loaded)return;if(navigator.onLine===false&&window.dmPapiIntro?.isActive())return;const login=document.getElementById('login-container'),panel=document.getElementById('panel-alani');
 const loading=document.getElementById('oturumYuklemeOverlay');if(visible(loading))return;
 let restoring=false;try{restoring=localStorage.getItem('ing_oturumAcik')==='true'&&!!localStorage.getItem('ing_aktifOgrenci');}catch(e){}
 if(window.dmDiscoveryContext?.welcome&&document.getElementById('dmDiscovery')){finish();return;}
