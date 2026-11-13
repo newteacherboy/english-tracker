@@ -166,3 +166,34 @@
 .dm-virtual-rivals .dm-virtual-papi-img{width:55px;height:55px;max-width:55px;max-height:55px}
 .dm-lig-duel-message.dm-lig-duel-warn{background:#fff4d6;color:#7a4c00;border-radius:12px;padding:8px 10px;font-weight:800;animation:dmDuelWarn .5s ease-out}
 @keyframes dmDuelWarn{30%{transform:scale(1.04)}}
+
+/* The selected rise animation: a floating copy of the real user's own row. */
+#tab-meduakis .dm-league-rise-highlight,.dm-league-rise-float{
+ background:linear-gradient(115deg,#eee5ff,#ffffff 55%,#f1e9ff)!important;
+ border:2px solid #aa67ff!important;
+ border-radius:20px!important;
+ box-shadow:0 0 0 3px #ceafff44,0 8px 25px #925cff60!important;
+}
+.dm-league-rise-float{
+ position:fixed!important;z-index:2147482000!important;
+ margin:0!important;box-sizing:border-box!important;
+ display:flex!important;align-items:center!important;gap:9px!important;
+ padding:6px 10px!important;color:#4a2fbd!important;
+ font-family:Nunito,system-ui,sans-serif!important;overflow:hidden;
+}
+.dm-league-rise-float .dm-lig-rank{display:grid;place-items:center;min-width:28px;font-weight:950}
+.dm-league-rise-float .dm-lig-person{flex:1;min-width:0;display:flex;flex-direction:column;font-size:13px}
+.dm-league-rise-float .dm-lig-person b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dm-league-rise-float .dm-lig-person small{font-size:10px}
+.dm-league-rise-float strong{font-size:13px;white-space:nowrap}
+.dm-league-rise-badge{
+ position:fixed;top:calc(env(safe-area-inset-top,0px) + 72px);left:50%;
+ transform:translateX(-50%);z-index:2147482001;
+ max-width:calc(100vw - 28px);padding:11px 17px;border:2px solid #d6baff;
+ border-radius:999px;background:linear-gradient(115deg,#f8f0ff,#eadbff);
+ color:#6223b3;font:900 14px Nunito,system-ui,sans-serif;
+ box-shadow:0 7px 22px #8658d653;text-align:center;white-space:nowrap;
+ animation:dm-league-rise-badge-in .35s ease-out both;pointer-events:none;
+}
+@keyframes dm-league-rise-badge-in{from{opacity:0;transform:translate(-50%,-14px)}to{opacity:1;transform:translate(-50%,0)}}
+@media(prefers-reduced-motion:reduce){.dm-league-rise-badge{animation:none}}
