@@ -161,19 +161,4 @@
     return orgCikis.apply(self, a);
   };
 
-  /* ---------- "X karakter açtın!" bildirimi: veri yüklenmeden gösterme, hesap başına bir kez ---------- */
-  let orgOdul = window.odulGoster;
-  if (typeof orgOdul === 'function') window.odulGoster = function (o) {
-    try {
-      if(o && /Yeni karakter|karakter açtın!/i.test(String(o.baslik||'')))return;
-      if (o && /karakter açtın!$/.test(String(o.baslik || '')) && /Koleksiyon/.test(String(o.alt || ''))) {
-        let ad = kucuk(isimAl()), anahtar = 'diji_krk_toplu_' + ad;
-        if (!benimsendi.has(ad)) return;                                   /* veri gelmeden: gösterme */
-        if (localStorage.getItem(anahtar) || (yoVar() && yo.krkTopluGoruldu)) return;
-        try { localStorage.setItem(anahtar, '1'); } catch (e) {}
-        if (yoVar()) yo.krkTopluGoruldu = 1;
-      }
-    } catch (e) {}
-    return orgOdul.apply(this, arguments);
-  };
 })();

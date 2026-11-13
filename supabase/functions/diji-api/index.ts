@@ -901,7 +901,6 @@ async function enerjiYenile(s: any) {
 // Öğrenci kaydı bu alanları artıramaz. Artış yalnızca sunucu
 // işlemleriyle olur (altın kazanma, mağaza satın alma, sandık, parkur hediyesi).
 // =====================================================================
-const KARAKTER_SIRA: Record<string, number> = {"Pofuduk Çırak":0,"Zıpzıp":1,"Kristal Kedi":2,"Profesör Hu":3,"Yıldız Tozu":4,"Ay Hayaleti":5,"Kazan Kıpır":6,"Asa Ustası":7,"Ejderhacık":8,"Alfi":0,"Zıpır Z":1,"Hece Böceği":2,"Yankı":3,"Mikro Mimi":4,"Kafiye":5,"Tekerleme":6,"Nokta Hanım":7,"Alfabe Kral":8,"Cıvıl":0,"Kaktüs Koko":1,"Ananas Nana":2,"Mercan":3,"Dalga":4,"Tukan Tuki":5,"Hindistan Coco":6,"Lagün":7,"Gökkuşağı Papağan":8,"Kaptan Yengeç":0,"Pusula":1,"Pofi Balon":2,"Deniz Yıldızı":3,"Martı Mert":4,"Korsan Tavşan":5,"Ahtapot Oki":6,"Zümrüt Kaplumbağa":7,"Efsane Kraken":8};   // ad: sıra → fiyat 50 + sıra × 10
 const DONDURUCU_FIYAT = 150, DONDURUCU_MAX = 2;
 const ENERJI_PAKET_KUCUK = { fiyat: 15, miktar: 5 }, ENERJI_PAKET_TAM_FIYAT = 60, ENERJI_SATIN_GUNLUK = 3;
 const TEK_SEFERDE_ALTIN = 500;
@@ -1245,6 +1244,7 @@ async function handle(req: Request, proxy: any = null) {
   // KOK was an internal cache label accidentally sent by older clients.
   const requestedOp = String(body.islem || q.get("islem") || "").trim();
   const op = requestedOp === "KOK" ? "" : requestedOp;
+  if ((op === "ekonomi" && body.is === "karakterAl") || op === "karakterAl" || (["reklamHakki","reklamOdulu"].includes(op) && body.urun?.tip === "karakter")) return json({ok:false,mesaj:"Karakter koleksiyonu kaldırıldı."},410);
   const rate=async(scope:string,value:string,max:number,seconds:number)=>{
     const key="shield:"+await sha256(scope+"|"+value);
     const {data,error}=await supabase.rpc("dm_security_rate_check",
@@ -1442,7 +1442,7 @@ async function handle(req: Request, proxy: any = null) {
     return json({ok:true,rol:'ogrenci',ogrenci:s.username,expiresAt:a.expires_at});
   }
 
-  const iosAdResponse=['reklamHakki','reklamOdulu'].includes(op)?await iosAdRewards({db:supabase,json,isDemo,characters:KARAKTER_SIRA,items:iosAdItems,catalog:(globalThis as any).DijiProgressionCatalog}).handle(op,body,a,req.method):null;
+  const iosAdResponse=['reklamHakki','reklamOdulu'].includes(op)?await iosAdRewards({db:supabase,json,isDemo,items:iosAdItems,catalog:(globalThis as any).DijiProgressionCatalog}).handle(op,body,a,req.method):null;
   if(iosAdResponse)return iosAdResponse;
 
   // Private classroom play only records verified game rankings: no wallet mutation.
@@ -1733,17 +1733,6 @@ async function handle(req: Request, proxy: any = null) {
         if (d >= DONDURUCU_MAX) return { hata: `En fazla ${DONDURUCU_MAX} dondurucu taşıyabilirsin.` };
         if (al < DONDURUCU_FIYAT) return { hata: `${DONDURUCU_FIYAT - al} altın daha lazım 🪙` };
         y.altin = al - DONDURUCU_FIYAT; y.dondurucu = d + 1; return { fiyat: DONDURUCU_FIYAT };
-      });
-    } else if (is === "karakterAl") {
-      const ad = String(body.ad || "");
-      if (!(ad in KARAKTER_SIRA)) return hataVer("Bu karakter bulunamadı.");
-      const fiyat = 50 + KARAKTER_SIRA[ad] * 10;
-      r = await ekonomiGuncelle(sid, (y: any) => {
-        const liste = Array.isArray(y.krkSatin) ? y.krkSatin.map(String) : [];
-        if (liste.includes(ad)) return { hata: "Bu karakter zaten senin." };
-        const al = Math.max(0, Math.floor(num(y.altin)));
-        if (al < fiyat) return { hata: `${ad} için ${fiyat - al} altın daha lazım 🪙` };
-        y.krkSatin = [...liste, ad]; y.altin = al - fiyat; return { fiyat };
       });
     } else if (is === "enerjiPaketAl") {
       const amount = Number(body.miktar);

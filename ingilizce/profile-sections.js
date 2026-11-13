@@ -8,7 +8,7 @@
   const ogrenci = () => typeof aktifOgrenciAdi !== 'undefined' && aktifOgrenciAdi && String(aktifOgrenciAdi).toLowerCase() !== 'teacher';
   const izin = kod => !window.dmProgression || window.dmProgression.allowed(kod);
 
-  const panels={istatistik:{id:'tab-ilerlemem',title:'İlerlemem',content:'<div id="bdIstat"></div><details class="bd-teacher"><summary>👥 Öğretmen değerlendirmeleri <span>⌄</span></summary><p>Genel puan ve deneme sonuçların · Dönem filtresinden bağımsız</p><div id="bdGelisim"></div></details>'},rozetler:{id:'tab-basarilarim',title:'Başarılarım',content:'<div id="bdRozet"></div>'},karakter:{id:'tab-dolabim',title:'Dolabım',content:'<div id="bdKarakterUst"></div><div id="bdKarakterAlan"></div><div id="bdKoleksiyon"></div>'}};
+  const panels={istatistik:{id:'tab-ilerlemem',title:'İlerlemem',content:'<div id="bdIstat"></div><details class="bd-teacher"><summary>👥 Öğretmen değerlendirmeleri <span>⌄</span></summary><p>Genel puan ve deneme sonuçların · Dönem filtresinden bağımsız</p><div id="bdGelisim"></div></details>'},rozetler:{id:'tab-basarilarim',title:'Başarılarım',content:'<div id="bdRozet"></div>'},karakter:{id:'tab-dolabim',title:'Dolabım',content:'<div id="bdKarakterUst"></div><div id="bdKarakterAlan"></div>'}};
   let beceriler=null, beceriKisi='', beceriYukleniyor=false, beceriHata=false, beceriZaman=0;
   let sekme='', aralik='hafta', istat=null, istatZaman=0, istatYukleniyor=false;
   let istatOyunSonu=0, rozetKisi='', istatDeneme=0, yenileT=null, rozetSirasi=[], kutlama=null;
@@ -59,7 +59,6 @@
     ['seviye-5', 'Seviye 5', '🪽', '5. seviyeye ulaş', c => c.seviye >= 5],
     ['seviye-10', 'Seviye 10', '🪽', '10. seviyeye ulaş', c => c.seviye >= 10],
     ['seviye-20', 'Seviye 20', '💠', '20. seviyeye ulaş', c => c.seviye >= 20],
-    ['koleksiyoncu', 'Koleksiyoncu', '👕', '5 karakter aç', c => c.karakter >= 5],
     ['puan-avcisi', 'Puan Avcısı', '🌟', '1.000 XP topla', c => c.xp >= 1000],
     ['puan-efsanesi', 'Puan Efsanesi', '✨', '10.000 XP topla', c => c.xp >= 10000],
     ['altin-kumbara', 'Altın Kumbara', '🐷', '1.000 altın biriktir', c => c.altin >= 1000],
@@ -91,9 +90,6 @@
   const badgeStatus=()=>window.dmMemberBadgeStatus?.owner===String(typeof aktifOgrenciAdi==='undefined'?'':aktifOgrenciAdi)?window.dmMemberBadgeStatus:null;
   function rozetBaglami() {
     const sv = seviyeBilgi(), tum = toplamlar(istat && istat.gunler);
-    let karakter = 0;
-    const kol = document.querySelector('#bdKoleksiyon .bc-kutu h3');
-    const m = kol && kol.textContent.match(/(\d+)\s*\/\s*36/); if (m) karakter = Number(m[1]);
     const beceri = yoVar() && yo.beceri && Array.isArray(yo.beceri.dinleme) ? yo.beceri.dinleme : [];
     const cevap = tum.dogru + tum.yanlis;
     return {
@@ -105,7 +101,7 @@
       seri:Number(badgeStatus()?.maxLoginStreak)||0,
       hafta: yoVar() && Array.isArray(yo.rozetler) ? yo.rozetler.filter(r => /Haftalık hedef/i.test(r && r.ad || '')).length : 0,
       gorev: yoVar() && Array.isArray(yo.dmGorevGunleri) ? yo.dmGorevGunleri.length : 0,
-      seviye: sv.level, xp: sv.xp, altin: yoVar() ? Number(yo.altin) || 0 : 0, karakter,
+      seviye: sv.level, xp: sv.xp, altin: yoVar() ? Number(yo.altin) || 0 : 0,
       dinleme: beceri.filter(x => Number(x) >= 80).length
     };
   }
@@ -361,8 +357,6 @@
       window.yoGomuluHedef = 'bdKarakterAlan';
       if (typeof window.yoMagazaAc === 'function') { try { window.yoMagazaAc(); } catch (e) {} }
     }
-    const kol = $('profilKoleksiyon') || document.querySelector('#bdKoleksiyon #profilKoleksiyon');
-    if (kol) { tasi(kol, $('bdKoleksiyon')); if (typeof window.bcKoleksiyonCiz === 'function' && !kol.children.length) window.bcKoleksiyonCiz(kol); }
   }
 
 

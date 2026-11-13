@@ -203,19 +203,4 @@ setInterval(() => { if (!baAktif()) baHarcandi = false; }, 1000);
     for (let m of ms) { if (m.type === 'characterData') metinIsle(m.target); else m.addedNodes.forEach(isimIsle); }
   }).observe(document.body, { subtree: true, childList: true, characterData: true });
 
-  /* ===== 10) KARAKTERİ ALTINLA SATIN ALMA ===== */
-  window.krkFiyat = k => 50 + (Math.round(k.sv / 3) - 1) * 10;
-  window.krkSatinAl = function (k) {
-    if (!yoVar()) return;
-    let f = krkFiyat(k);
-    if ((yo.altin || 0) < f) { if (typeof yoToast === 'function') yoToast(`🔒 ${k.ad} için ${f} altın gerekiyor. ${f - (yo.altin || 0)} altın daha lazım! Ya da ${k.sv}. seviyeye ulaşınca bedava açılır.`); return; }
-    if (!confirm(`${k.ad} karakterini ${f} altına satın almak istiyor musun?\n(${k.sv}. seviyeye ulaşınca zaten bedava açılacak)`)) return;
-    window.dmEkonomi.islem('karakterAl', { ad: k.ad }).then(d => {
-      if (!d.ok) { if (typeof yoToast === 'function') yoToast(d.mesaj || 'Satın alma tamamlanamadı.'); return; }
-      yo.krkGoruldu = yo.krkGoruldu || []; if (!yo.krkGoruldu.includes(k.ad)) { yo.krkGoruldu.push(k.ad); yoKaydet(); }
-      if (typeof yoToast === 'function') yoToast(`🎉 ${k.ad} artık senin! Dokunup profil fotoğrafın yapabilirsin.`);
-      if (typeof bcMgCiz === 'function' && $('tab-magaza') && $('tab-magaza').classList.contains('active')) bcMgCiz();
-      if ($('tab-profil') && $('tab-profil').classList.contains('active') && typeof bcKoleksiyonCiz === 'function') bcKoleksiyonCiz($('profilKoleksiyon'));
-    });
-  };
 })();

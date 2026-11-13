@@ -68,7 +68,7 @@ const TOURS=[
   {target:'.ds-wallet',title:'Altının',text:'Şu anki altın bakiyen. Ders çalıştıkça, oynadıkça ve görev tamamladıkça altın kazanırsın.'},
   {target:'.ds-room',title:'Karakterin',text:'“Tipimi tasarla” ile karakterinin görünümünü düzenle, “Alışveriş Yap” ile kıyafet ve aksesuar al.',tip:'Yeni kıyafet türleri seviye atladıkça açılır.'},
   {target:'#dsEnergy',title:'Enerji al',text:'Enerjin azaldığında altınla enerji paketi alabilirsin. Enerji ayrıca her 15 dakikada 1 dolar.'},
-  {target:'.ds-discover-grid',title:'Sandıklar ve koleksiyon',text:'Kazandığın sandıkları aç ve karakter koleksiyonunu tamamla.'},
+  {target:'.ds-discover-grid',title:'Sandıklar',text:'Kazandığın sandıkları aç ve sürpriz ödüllerini keşfet.'},
   {target:'#dmBagPopup',title:'Çantam',text:'Satın aldığın ve kazandığın her şey burada: sandıklar, rozetler, karakterler, kıyafetler, eşyalar ve enerji.',tip:'Mağaza düğmesine dokununca Çantam da açılır.'},
   {center:true,img:'papi-kutlama',title:'Alışverişe hazırsın!',text:'Altınlarını biriktir, karakterini istediğin gibi giydir.',noDots:true,next:'Tamam',secondary:'Kapat'}
  ]},

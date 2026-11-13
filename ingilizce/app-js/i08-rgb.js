@@ -210,7 +210,6 @@ function odulUret(k, o) {
       ilerleme.kk = u && u.seviyeIlerleme ? u.seviyeIlerleme.filter(s => s.tamamlandi).length : 0;
     } catch (e) {}
     ilerlemeHazir = true;
-    kontrolEt();
     if ($('tab-dunya') && $('tab-dunya').classList.contains('active') && !$('tab-dunya').classList.contains('bz-yeni')) dunyaCiz();
   }
   window.bcIlerleme = () => Object.assign({}, ilerleme);
@@ -278,37 +277,11 @@ function odulUret(k, o) {
       if (xp || al) yoXpEkle(xp, al);
       if (en && typeof enerjiHediye === 'function') enerjiHediye(en);
       p.remove();
-      setTimeout(kontrolEt, 600);
     };
   }
 
   /* ================= KARAKTER AÇILIŞLARI ================= */
-    const krkAcik = k => (ilerleme[k.oyun] || 0) >= k.sv || (yoVar() && (yo.krkSatin || []).includes(k.ad));
-  function karakterKontrol() {
-    if (!yoVar() || !ilerlemeHazir) return false;
-    let acik = KRK.filter(krkAcik).map(k => k.ad);
-    if (!yo.krkGoruldu) { yo.krkGoruldu = acik; yoKaydet(); return false; }
-    let yeni = acik.filter(a => !yo.krkGoruldu.includes(a));
-    if (!yeni.length) return false;
-    let k = KRK.find(x => x.ad === yeni[0]);
-    if (!window.dmSharing?.celebrateCharacter({kind:'character',id:k.ad,name:k.ad,svg:krkSVG(k,512)})) return false;
-    yo.krkGoruldu.push(yeni[0]); yoKaydet();
-    return true;
-  }
-  function kontrolEt() {
-    if (!girisli() || (window.yoHazirMi && !window.yoHazirMi()) || oyunda() || document.querySelector('.bc-perde')) return;
-    /* Parkur sandıkları progression-ui üzerinden sunucuda bir kez alınır. */
-    karakterKontrol();
-  }
-  setInterval(kontrolEt, 4000);
-  setInterval(ilerlemeGetir, 600000);   /* 2 dk → 10 dk */
-  let ilkGiris = '';
-  setInterval(() => { if (girisli() && ilkGiris !== kucuk(aktifOgrenciAdi)) { ilkGiris = kucuk(aktifOgrenciAdi); setTimeout(ilerlemeGetir, 3000); } }, 1500);
-  ['baModuKapat', 'kpModuKapat', 'sohbetEkraniKapat', 'baLevelupKapat', 'kpKelimeOyunuBitir'].forEach(ad => {
-    let org = window[ad];
-    if (typeof org === 'function') window[ad] = function () { let r = org.apply(this, arguments); setTimeout(ilerlemeGetir, 2500); return r; };
-  });
-
+    const krkAcik = k => yoVar() && ((yo.krkSatin || []).includes(k.ad) || (yo.krkGoruldu || []).includes(k.ad) || yo.profilKrk === k.ad);
   /* ================= PROFİL KARAKTERİ ================= */
   let profilHarita = {};
   let orgKsvg = window.karakterSvg;
@@ -348,7 +321,7 @@ function odulUret(k, o) {
   };
 
   /* ================= MAĞAZA SEKMELERİ: ATÖLYE / KOLEKSİYON / SANDIKLAR ================= */
-  let mgSekme = 'atolye', kolFiltre = 'hepsi';
+  let mgSekme = 'atolye';
   function mgBarCiz() {
     let kap = document.querySelector('#tab-magaza .mg-kap');
     if (!kap) return;
@@ -367,32 +340,7 @@ function odulUret(k, o) {
     if (!at || !al) return;
     at.style.display = mgSekme === 'atolye' ? '' : 'none';
     al.style.display = mgSekme === 'atolye' ? 'none' : '';
-    if (mgSekme === 'koleksiyon' && !window.dmProgression?.require('koleksiyon')) {mgSekme='atolye';return;}
-    if (mgSekme === 'koleksiyon') al.innerHTML = koleksiyonHtml(), kolBagla(al);
     if (mgSekme === 'sandik') al.innerHTML = sandikOzetHtml();
-  }
-  function koleksiyonHtml() {
-    let acik = KRK.filter(krkAcik).length, sec = yoVar() ? yo.profilKrk : '';
-    let f = [['hepsi', 'Hepsi'], ['ba', '🧙'], ['kp', '🔤'], ['sh', '🦜'], ['kk', '🃏'], ['acik', '✅ Açılanlar']];
-    return `<div class="bc-kutu"><h3>🎭 Karakter Koleksiyonu · ${acik}/36</h3><p>Her oyunda her 3 seviyede bir yeni karakter açılır. Açtığın birini profil fotoğrafın yapabilirsin.</p>
-      ${sec ? `<button class="bc-geri" id="bcKendi">🎨 Kendi karakterime dön</button>` : ''}
-      <div class="bc-filtre">${f.map(([k, t]) => `<button class="${kolFiltre === k ? 'aktif' : ''}" data-f="${k}">${t}</button>`).join('')}</div>
-      <div class="bc-izgara">${KRK.filter(k => kolFiltre === 'hepsi' || (kolFiltre === 'acik' ? krkAcik(k) : k.oyun === kolFiltre)).map((k, i) => {
-        let a = krkAcik(k);
-        return `<button class="bc-krk${a ? '' : ' kilitli'}${sec === k.ad ? ' secili' : ''}" data-ad="${k.ad}" style="--z:${OYUNLAR[k.oyun][2]};--g:${(i % 6) * .3}s"><span class="nadir" style="--n:${NADIR[k.nadir][1]}">${NADIR[k.nadir][0]}</span><span class="sahne">${krkSVG(k, 70)}</span>${a ? k.ad : '???'}<small>${a ? (sec === k.ad ? '✓ Profilinde' : 'Dokun, seç') : `🔒 ${k.sv}. sv · ${typeof krkFiyat === 'function' ? krkFiyat(k) : ''} 🪙`}</small></button>`;
-      }).join('')}</div></div>`;
-  }
-  function kolBagla(al) {
-    al.querySelectorAll('.bc-filtre button').forEach(b => b.onclick = () => { kolFiltre = b.dataset.f; mgCiz(); });
-    let kendi = $('bcKendi'); if (kendi) kendi.onclick = () => { yo.profilKrk = ''; yoKaydet(); if (typeof yoAvatarUygula === 'function') yoAvatarUygula(); mgCiz(); };
-    al.querySelectorAll('.bc-krk').forEach(b => b.onclick = () => {
-      let k = KRK.find(x => x.ad === b.dataset.ad);
-          if (!krkAcik(k)) { if (typeof krkSatinAl === 'function') krkSatinAl(k); return; }
-      yo.profilKrk = k.ad; yoKaydet();
-      if (typeof yoAvatarUygula === 'function') yoAvatarUygula();
-      if (typeof yoToast === 'function') yoToast(`✨ ${k.ad} artık profil fotoğrafın!`);
-      mgCiz();
-    });
   }
   function sandikOzetHtml() {
     let s = (yoVar() && yo.sandik) || {};
@@ -404,14 +352,6 @@ function odulUret(k, o) {
            window.bcMgCiz = mgCiz;
   window.bcSandikAc = sandikTorenAc;
   window.dmCharacterArt = (name,px=256) => {const k=KRK.find(x=>x.ad===name);return k&&krkAcik(k)?krkSVG(k,px):null;};
-  window._krkListe = () => KRK.map(k => Object.assign({}, k, { acik: krkAcik(k) }));
-  window.bcKoleksiyonCiz = function (el) {
-    let ciz = () => {
-      el.innerHTML = koleksiyonHtml(); kolBagla(el);
-      el.querySelectorAll('.bc-filtre button, .bc-krk, #bcKendi').forEach(b => { let o = b.onclick; b.onclick = e => { if (o) o(e); ciz(); }; });
-    };
-    ilerlemeGetir().then(ciz); ciz();
-  };
   let orgMg = window.magazaAc;
   if (typeof orgMg === 'function') window.magazaAc = function () { let r = orgMg.apply(this, arguments); mgCiz(); return r; };
 
@@ -492,8 +432,6 @@ let adaRenk = adaRenkleri[
         let acildi = Math.floor(sv / 3) <= ((yoVar() && yo.sandik && yo.sandik.ba) || 0);
         rozet += `<span class="bc-sandikr${acildi ? ' acildi' : ''}" style="left:calc(${p.x}% + ${p.x > 50 ? -48 : 48}px);top:${p.y + 14}px" title="Sandık">🎁</span>`;
       }
-      let kr = KRK.find(k => k.oyun === 'ba' && k.sv === sv);
-      if (kr) rozet += `<span class="bc-kr${bitti ? ' acik' : ''}" style="left:calc(${p.x}% + ${p.x > 50 ? -50 : 50}px);top:${p.y - 26}px" title="${kr.ad}">${krkSVG(kr, 32)}</span>`;
      dugum += `
 <button
     class="bc-d ${cls}"

@@ -120,7 +120,6 @@
     if (seri >= 2) l.push(['🔥', `${seri} günlük serin var!`, seri >= 3 ? `Altınların şu an ×${window.seriCarpani ? seriCarpani() : 1}` : 'Yarın da gel, 3. günde altınlar ×1.25', null]);
     let il = window.bcIlerleme ? bcIlerleme() : null;
     if (il) { let n = il.ba || 0, k = 3 - (n % 3); l.push(['🎁', `Sıradaki sandığa ${k} seviye kaldı`, 'Büyü Akademisi parkurunda', () => { if (typeof dunyaAc === 'function') dunyaAc(); }]); }
-    if (altin >= 50) l.push(['🎭', `${altin} altının var`, 'Koleksiyondan yeni bir karakter alabilirsin', () => { if (typeof magazaAc === 'function') magazaAc(); }]);
     l.push(['⚔️', 'Bir arkadaşını düelloya çağır ödülü kap', 'Kazanan +2 ⚡ +30 XP alır', () => { if (typeof meduAkisAc === 'function') { maSekme = 'kesfet'; meduAkisAc(); } }]);
     l.push(['🦜', 'Papağanla sohbet etmeyi denedin mi?', 'Her sohbet ödüllü', () => { if (typeof sohbetEkraniAc === 'function') sohbetEkraniAc(); }]);
     return l;

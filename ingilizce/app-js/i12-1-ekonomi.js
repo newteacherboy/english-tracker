@@ -86,25 +86,6 @@
       setTimeout(() => s.remove(), 1050);
     }
   }
-  function krkGorsel(k) {
-    let el = document.querySelector(`.bc-krk[data-ad="${k.ad}"] .sahne svg`);
-    return el ? el.outerHTML.replace('filter:brightness(0)', '') : '🎭';
-  }
-  window.krkSatinAl = function (k) {
-    if (!yoVar()) return;
-    let f = typeof krkFiyat === 'function' ? krkFiyat(k) : 50;
-    onayKarti({ urun:{tip:'karakter',id:k.ad}, gorsel: krkGorsel(k), baslik: k.ad, metin: `Bu karakteri hemen açmak ister misin? (${k.sv}. seviyeye ulaşınca zaten bedava açılacak.)`, fiyat: f, evet: '🎭 Satın al',
-      al: () => {
-        window.dmEkonomi.islem('karakterAl', { ad: k.ad }).then(d => {
-          if (!d.ok) { toast(d.mesaj || 'Satın alma tamamlanamadı.'); return; }
-          yo.krkGoruldu = yo.krkGoruldu || []; if (!yo.krkGoruldu.includes(k.ad)) { yo.krkGoruldu.push(k.ad); yoKaydet(); }
-          toast(`🎉 ${k.ad} artık senin! Dokunup profil fotoğrafın yap.`);
-          if (typeof bcMgCiz === 'function' && $('tab-magaza') && $('tab-magaza').classList.contains('active')) bcMgCiz();
-          if ($('tab-profil') && $('tab-profil').classList.contains('active') && typeof bcKoleksiyonCiz === 'function') bcKoleksiyonCiz($('profilKoleksiyon'));
-        });
-      } });
-  };
-
   /* ================= 3) SANDIK SATIN ALMA ================= */
   const SANDIK = [[0, 'Bronz Sandık', 200, '#fdf2e9', '1 Dolap öğesi · %85 temel, %15 özel'], [1, 'Gümüş Sandık', 450, '#f1f5f9', '2 Dolap öğesi · en az 1 özel · %5 efsane'], [2, 'Altın Sandık', 1000, '#fffbeb', '3 Dolap öğesi · en az 1 özel · %15 efsane'], [3, 'Efsane Sandık', 1800, '#f5f0ff', '3 Dolap öğesi · 1 efsane garanti']];
   function sandikAl(k) {
@@ -153,11 +134,7 @@
     if (/Sandık/.test(s || '')) sandikBolum();
     if (s && s !== sonSekme) {
       let altin = yo.altin || 0;
-      if (/Koleksiyon/.test(s) && typeof krkFiyat === 'function' && window._krkListe) {
-        let kilitli = window._krkListe().filter(k => !k.acik).sort((a, b) => krkFiyat(a) - krkFiyat(b));
-        let hedef = kilitli.find(k => krkFiyat(k) <= altin) || kilitli[0];
-        if (hedef) tavsiye({ ikon: krkGorsel(hedef), metin: `${hedef.ad} karakterini almak ister misin?`, alt: `🪙 ${krkFiyat(hedef)} · Altının: ${altin}`, btn: 'Göz at', fn: () => krkSatinAl(hedef) }, true);
-      } else if (/Sandık/.test(s)) tavsiye({ ikon: '🧰', metin: 'Seviye beklemeden sandık aç!', alt: `Bronz Sandık 🪙 150 · Altının: ${altin}`, btn: 'İncele', fn: () => sandikAl(0) }, true);
+      if (/Sandık/.test(s)) tavsiye({ ikon: '🧰', metin: 'Seviye beklemeden sandık aç!', alt: `Bronz Sandık 🪙 150 · Altının: ${altin}`, btn: 'İncele', fn: () => sandikAl(0) }, true);
       else if (/Atölye/.test(s) && altin >= 30) tavsiye({ ikon: '🎨', metin: `${altin} altının var! Karakterine yeni bir şapka ya da kıyafet dene.`, alt: 'Önce dene, beğenirsen al' }, true);
     }
     sonSekme = s;
