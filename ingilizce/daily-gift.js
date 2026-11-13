@@ -49,7 +49,7 @@ function maybeAuto(){
 }
 function tile(day){
  const current=day===state.streak,past=day<state.streak,done=state.claimedDays?.includes(day)||(current&&state.alreadyClaimed);
- return '<div class="dg-day '+(current?'dg-today ':past&&done?'dg-done ':'')+'"'+(current?' aria-current="date"':'')+'><b>'+day+'. gün</b><strong>⚡ +'+day+'</strong><small>'+(current?(done?'Alındı':'Bugün'):done?'✓':past?'Geçti':'♙')+'</small></div>';
+ return '<div class="dg-day '+(current?'dg-today ':past&&done?'dg-done ':'')+'"'+(current?' aria-current="date"':'')+'><b>'+day+'. gün</b><strong>⚡ +'+day+'</strong><small>'+(current?(done?'Alındı':'Bugün'):done?'✓':past?'Geçti':'🔒')+'</small></div>';
 }
 function render(){
  if(!layer)return;
