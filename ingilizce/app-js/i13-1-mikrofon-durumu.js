@@ -2,10 +2,7 @@
 (function () {
   const $ = id => document.getElementById(id);
   const kucuk = x => String(x || '').trim().toLowerCase();
-  const gor = el => el && getComputedStyle(el).display !== 'none' && el.getClientRects().length > 0;
-  const yoVar = () => typeof yo !== 'undefined' && yo;
   const aktif = id => $(id) && $(id).classList.contains('active');
-  const girisli = () => { let p = $('panel-alani'); return !!(p && p.style.display === 'block' && typeof aktifOgrenciAdi !== 'undefined' && aktifOgrenciAdi && kucuk(aktifOgrenciAdi) !== 'teacher' && !(typeof siniftaOynananOgrenci !== 'undefined' && siniftaOynananOgrenci)); };
   const oyunda = () => typeof odulOyunda === 'function' && odulOyunda();
 
   /* ================= 1) MİKROFON DURUMU ================= */
@@ -110,33 +107,6 @@
 
   /* ================= 6) TANITIM TURU: Papi'ye devredildi (papi-tur-blok.html) ================= */
   const turBaslat = (ad, zorla) => { if (typeof window.turBaslat === 'function') window.turBaslat(ad, zorla); };
-  const turBitti = ad => typeof window.turBitti === 'function' ? !!(window.turBitti('v2:' + ad) || window.turBitti(ad)) : true;
 
-  /* ================= 7) SOLUK BİLGİ KARTLARI ================= */
-  let bkSay = 0, bkSon = 0, bkBas = Date.now();
-  function bkIcerik() {
-    let l = [], altin = yo.altin || 0, hedef = yo.hedef || 50, xp = (yo.xpGun && yo.xpGun.xp) || 0, seri = parseInt(localStorage.getItem('ing_girisSerisiSayisi') || '0') || 0;
-    if (xp < hedef) l.push(['🎯', `Günlük hedefine ${hedef - xp} XP kaldı`, 'Tamamlarsan +5 🪙', () => { if (typeof dunyaAc === 'function') dunyaAc(); }]);
-    if (seri >= 2) l.push(['🔥', `${seri} günlük serin var!`, seri >= 3 ? `Altınların şu an ×${window.seriCarpani ? seriCarpani() : 1}` : 'Yarın da gel, 3. günde altınlar ×1.25', null]);
-    let il = window.bcIlerleme ? bcIlerleme() : null;
-    if (il) { let n = il.ba || 0, k = 3 - (n % 3); l.push(['🎁', `Sıradaki sandığa ${k} seviye kaldı`, 'Büyü Akademisi parkurunda', () => { if (typeof dunyaAc === 'function') dunyaAc(); }]); }
-    l.push(['⚔️', 'Bir arkadaşını düelloya çağır ödülü kap', 'Kazanan +2 ⚡ +30 XP alır', () => { if (typeof meduAkisAc === 'function') { maSekme = 'kesfet'; meduAkisAc(); } }]);
-    l.push(['🦜', 'Papağanla sohbet etmeyi denedin mi?', 'Her sohbet ödüllü', () => { if (typeof sohbetEkraniAc === 'function') sohbetEkraniAc(); }]);
-    return l;
-  }
-  setInterval(() => {
-    if ((typeof window.dmPapiNotices?.blocked === 'function' && window.dmPapiNotices.blocked()) || window.dmNudgeSystemActive || !girisli() || !yoVar() || oyunda() || window.turAcik || !turBitti('ana') || document.hidden) return;
-    let gecen = Date.now() - bkBas;
-    if (bkSay >= 3 || gecen < 3 * 60000 || Date.now() - bkSon < 12 * 60000) return;
-    if (document.querySelector('.tv-kart, .sa-perde, .kr-perde, .od-perde, .bc-perde, .cb-kart, .bk-kart')) return;
-    let l = bkIcerik(); let s = l[(bkSay + new Date().getDate()) % l.length];
-    bkSay++; bkSon = Date.now();
-    let k = document.createElement('div'); k.className = 'bk-kart'; k.setAttribute('role', 'status');
-    k.innerHTML = `<span class="i">${s[0]}</span><span>${s[1]}<small>${s[2]}</small></span>`;
-    document.body.appendChild(k);
-    requestAnimationFrame(() => requestAnimationFrame(() => k.classList.add('gor')));
-    let kapat = () => { k.classList.remove('gor'); setTimeout(() => k.remove(), 600); };
-    k.onclick = () => { kapat(); if (s[3]) s[3](); };
-    (window.dmPapiNotices?.later||((el,fn,ms)=>setTimeout(fn,ms)))(k,kapat,8000);
-  }, 20000);
+  /* Automatic legacy hint cards retired alongside the timed recommendations. */
 })();
