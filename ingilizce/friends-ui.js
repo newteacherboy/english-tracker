@@ -75,9 +75,6 @@
       <button type="button" class="fr-tile fr-tile-people" data-friend-action="people" aria-label="Arkadaşlarım, ${list.length} arkadaş">
         ${list.length?`<span class="fr-tile-count">${list.length}</span>`:''}<img src="friends-assets/friends-kids.webp" alt="" decoding="async"><b>Arkadaşlarım</b>
       </button>
-      <button type="button" class="fr-tile fr-tile-showcase" data-friend-action="vitrin" data-friends-gate="vitrin">
-        <img src="friends-assets/papi-friends.png" alt="" decoding="async"><b>Vitrinim</b>
-      </button>
     </div>`;
   }
   /* Bugünkü Durumun: planın sınırlı hakları. Mola ve Premium oyun hakları 10 dakikada en fazla bir kez sorulur. */
@@ -219,10 +216,6 @@
       const card=root.querySelector('.ml-ben');
       if(card&&!card.querySelector('.fr-league-papi'))card.insertAdjacentHTML('beforeend',art('papi-league','fr-league-papi'));
     }
-    if(maSekme==='vitrin'||maProfilId){
-      const stage=root.querySelector('.sahne');
-      if(stage&&!stage.querySelector('.fr-vitrin-papi'))stage.insertAdjacentHTML('beforeend',art('papi-friends','fr-vitrin-papi'));
-    }
     paintLocks();
   }
   window.maAkisHtml=function(){return fullFeedHtml();};
@@ -262,11 +255,13 @@
     const result=await originalDraw.apply(this,arguments);decorateDetail();return result;
   };
   window.maSekmeSec=function(s){
+    window.dmUserCard?.close();
     if(s==='parkur'||s==='kesfet'||s==='hub'||s==='akis'){
       ++maCizNo;maSekme='hub';maProfilId=null;viewHeader();renderHome();void loadHome();$('maEkran').scrollTop=0;
       if(s==='kesfet')void openMatches();return;
     }
-    if(['vitrin','lig'].includes(s)&&!requireFeature(s))return;
+    if(s==='vitrin')return window.maSekmeSec('hub');
+    if(s==='lig'&&!requireFeature(s))return;
     return originalSelect.apply(this,arguments);
   };
   window.meduAkisAc=function(){
@@ -289,8 +284,8 @@
     const sheet=window.dmMeduPro?.sheet?.('Arkadaşlarım','Profilini açmak için arkadaşına dokun.');
     if(!sheet)return;
     sheet.p.classList.add('fr-friend-sheet');
-    sheet.body.innerHTML=people().map(id=>`<div class="fr-search-person">${avatar(id,40)}<button type="button" class="fr-search-name" data-person="${esc(id)}"><b>${esc(id)}</b>${badge(id)}</button></div>`).join('')||'<p class="fr-empty">Henüz takip ettiğin bir arkadaş yok.</p>';
-    sheet.body.querySelectorAll('[data-person]').forEach(button=>button.onclick=()=>{sheet.close();window.maAkisKisiAc?.(button.dataset.person);});
+    sheet.body.innerHTML=people().map(id=>`<button type="button" class="fr-search-person" data-person="${esc(id)}">${avatar(id,40)}<span class="fr-search-name"><b>${esc(id)}</b>${badge(id)}</span></button>`).join('')||'<p class="fr-empty">Henüz takip ettiğin bir arkadaş yok.</p>';
+    sheet.body.querySelectorAll('.fr-search-person').forEach(button=>{const open=()=>{const rect=button.getBoundingClientRect();sheet.close();window.maAkisKisiAc?.(button.dataset.person,rect);};button.onclick=open;button.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();open();}};});
     void window.dmSocialPresence?.refresh?.();
   }
   async function shareInvite() {
@@ -319,10 +314,7 @@
   }
   function openInvite(id,game){
     if(!requireFeature('duello'))return;
-    window.maProfilAc(id);
-    const inviteOwner=who();
-    const apply=()=>{if(who()!==inviteOwner)return true;const panel=[...root.querySelectorAll('.dm-social')].find(x=>x.dataset.person===id);if(!panel)return false;const select=panel.querySelector('.dm-game');if(select&&game&&[...select.options].some(o=>o.value===game)){select.value=game;select.dispatchEvent(new Event('change',{bubbles:true}));}panel.scrollIntoView({block:'start',behavior:'smooth'});return true;};
-    if(!apply()){const observer=new MutationObserver(()=>{if(apply())observer.disconnect();});observer.observe(root,{childList:true,subtree:true});setTimeout(()=>observer.disconnect(),5000);}
+    return window.dmDuelAc?.(id,game);
   }
   async function acceptInvite(id,btn){
     if(!requireFeature('duello'))return;

@@ -1,3 +1,4 @@
+import {userCard} from './user-card.mjs';
 import {allTimeLeague} from './league-alltime.mjs';
 import {publicParticipant} from './demo-account.ts';
 import {loadStartPath} from './start-path-access.mjs';
@@ -15,8 +16,13 @@ export function progressionAPI(db:any,json:any){
  }
  const deny=(n:any)=>json({ok:false,status:'kilitli',mesaj:typeof n==='number'?`Bu özellik ${n}. seviyede açılır.`:n},403);
  async function handle(op:string,body:any,q:URLSearchParams,a:any){
-  if(!['haftalikHedefSec','haftalikHedefOdulAl','seviyeDurumu','seviyeEnerjiDoldur','seviyeSandikAc','seviyeUrunAl','seviyeLigListesi','seviyeOyunOdulu','seviyeParkurPekistirme'].includes(op))return null;
+  if(!['kullaniciBilgiKarti','haftalikHedefSec','haftalikHedefOdulAl','seviyeDurumu','seviyeEnerjiDoldur','seviyeSandikAc','seviyeUrunAl','seviyeLigListesi','seviyeOyunOdulu','seviyeParkurPekistirme'].includes(op))return null;
   if(a?.role!=='student'||!a.student_id)return json({ok:false,mesaj:'Öğrenci oturumu gerekli.'},401);
+  if(op==='kullaniciBilgiKarti'){
+   const safety=socialSafetyAPI({db,json});
+   const result=await userCard(db,{viewer:a.student_id,target:value(body,q,'kullanici'),filterStudents:(rows:any[],viewer:string)=>safety.filterStudents(rows,viewer),publicParticipant,level:(xp:number)=>C.level(xp)});
+   const {status=200,...data}=result;return json(data,status);
+  }
   if(op==='haftalikHedefSec'){
     const xp=Number(body.xp);
     if(![1000,1500,2500].includes(xp))return json({ok:false,mesaj:'Geçerli haftalık hedef seç.'},400);

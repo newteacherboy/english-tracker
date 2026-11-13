@@ -551,25 +551,6 @@
   window.dolapAc = () => ac(null);                       /* eski bağlantılar Mağaza'yı açar */
   document.querySelectorAll('#dlSanaOzelKart, #dlMagazaBanner').forEach(e => e.remove());
 
-  /* Vitrinim: tam boy giydirilmiş karakter */
-  function karakterOf(ad) {
-    let a = String(ad || '').trim().toLowerCase(), ben = String(typeof aktifOgrenciAdi !== 'undefined' ? aktifOgrenciAdi : '').trim().toLowerCase();
-    if (a && a === ben) return kk();
-    try { let h = JSON.parse(localStorage.getItem('ing_ka_harita') || '{}'); return h[a] || null; } catch (e) { return null; }
-  }
-  let orgVitrin = window.maVitrinHtml;
-  if (typeof orgVitrin === 'function') window.maVitrinHtml = function (id, benimMi) {
-    let html = orgVitrin.apply(this, arguments);
-    try {
-      let o = typeof maBul === 'function' ? maBul(id) : null, ad = o ? (o.id === 'ben' ? aktifOgrenciAdi : o.ad) : '', k = karakterOf(ad);
-      let profilKrkVar = (o && o.id === 'ben') ? (yoVar() && yo.profilKrk) : false;
-      if (k && k.cins && k.s && !profilKrkVar) {
-        let svg = dolapTamBoySVG(Object.assign({}, window.KA_VARSAYILAN[k.cins], k.s), k.cins, 230);
-        html = html.replace(/<div class="yildiz-maskot">[\s\S]*?<\/div><div class="kurs">/, `<div class="yildiz-maskot dl-tamboy">${svg}</div><div class="kurs">`);
-      }
-    } catch (e) {}
-    return html;
-  };
   /* Atölye fiyatları yeni tabloya (bedava olanlar bedava kalır) ve koleksiyon karakter fiyatı */
   try { Object.values(window.KA_KATALOG || {}).forEach(k => k.liste.forEach(u => { if (u.f > 0 && !u._eskiF) { u._eskiF = u.f; u.dmTier=u.f<=30?'temel':u.f<=60?'ozel':'efsane';u.f=DijiProgressionCatalog.price({kat:Object.keys(window.KA_KATALOG).find(key=>window.KA_KATALOG[key]===k),sv:u.dmTier}); } })); } catch (e) {}
   window.krkFiyat = k => (Number(k && k.sv) || 0) >= 20 ? 2500 : 1200;
