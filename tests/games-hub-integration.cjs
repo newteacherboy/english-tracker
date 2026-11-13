@@ -51,7 +51,7 @@ assert.equal(await page.locator('.yb-fw:visible').count(),0,'Floating shortcuts 
 await page.evaluate(()=>{for(const [id,title] of [['papiCardsActivity','Papi Kartları'],['meteorActivity','Papi’nin Meteor Düellosu'],['wordWheelActivity','Papi’nin Kelime Çarkı']]){const b=document.createElement('button');b.className='az-gcard';b.id=id;b.innerHTML='<div class="az-gcard-title">'+title+'</div>';document.querySelector('.az-grid2x2').append(b);}});
 await page.waitForSelector('#wordWheelActivity.gg-game',{state:'attached'});await page.locator('#ggFreeTab').click();
 await page.evaluate(()=>{const b=document.querySelector('[onclick="baModuAc()"]');if(b)b.style.display='grid';});
-assert.deepEqual(await shelfIds(),['papiCardsActivity','meteorActivity','wordWheelActivity','sentenceRaceActivity']);
+assert.deepEqual(await shelfIds(),['papiCardsActivity','meteorActivity','wordWheelActivity','sentenceRaceActivity','kelimeGoluDuo']);
 assert.equal(await page.locator('[data-gg-source=sentenceRaceActivity] .gg-cover img').getAttribute('src'),'games-assets/cumle-yarisi-cover.svg');
 
 const fitted=await page.locator('[data-gg-source=papiCardsActivity] .gg-cover').evaluate(cover=>{
