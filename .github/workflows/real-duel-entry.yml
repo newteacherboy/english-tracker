@@ -1,0 +1,18 @@
+name: Consistent real friend duel entry
+on:
+  pull_request:
+    paths: ['ingilizce/medupro.js', 'ingilizce/league-ui.js', 'tests/real-duel-entry.test.cjs', 'tests/league-ui.test.cjs', '.github/workflows/real-duel-entry.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  duel-entry:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: npm install --prefix /tmp/duel-qa --no-audit --no-fund jsdom@26.1.0
+      - run: NODE_PATH=/tmp/duel-qa/node_modules node --test tests/real-duel-entry.test.cjs tests/league-ui.test.cjs tests/medupro-edge.test.cjs tests/medupro-presence.test.cjs
