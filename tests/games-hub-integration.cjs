@@ -88,7 +88,7 @@ assert(await page.locator('.gg-list-view.gg-teacher-list').isVisible());
 assert(await page.locator('.gg-search input').isVisible());
 assert(await page.locator('#ggOnlineTab').isHidden());
 assert(await page.locator('#ggBreakTab').isHidden());
-assert.equal(await page.locator('#ggFreeTab span').textContent(),'Sınıfta Oyna');
+assert.equal(await page.locator('#ggFreeTab .gg-category-name').textContent(),'Sınıfta Oyna');
 assert(await page.locator('.gg-list-row:visible').count()>0);
 assert(await page.locator('.gg-brand').isHidden());
 await page.locator('[data-gg-main=premium]').click();
