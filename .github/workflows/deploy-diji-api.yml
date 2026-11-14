@@ -35,6 +35,8 @@ jobs:
       - uses: supabase/setup-cli@v1
         with:
           version: latest
+      - name: Configure student level rewards
+        run: node scripts/deploy-solo-rewards.mjs
       - name: Deploy
         run: |
           test -n "$SUPABASE_ACCESS_TOKEN" || { echo "::error::SUPABASE_ACCESS_TOKEN secret is missing"; exit 1; }

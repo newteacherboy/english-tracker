@@ -51,12 +51,14 @@
  const listRank=id=>{const i=listOrder.indexOf(id);return i<0?listOrder.length:i;};
  const categoryIcons={solo:0,duo:1,free:2,konu:3,break:4,premium:5};
  const gameCovers={
+  dmUcusteKart:'ozgun/ucus-panosi.svg',
   sentenceRaceActivity:'games-assets/cumle-yarisi-cover.svg',
   kelimeGoluSolo:'games-assets/kelime-golu-stadium-v1.webp',
   kelimeGoluDuo:'games-assets/kelime-golu-stadium-v1.webp',
   dmRotaKart:'games-assets/cumle-rotasi-cover.svg'
  };
  function changeCategory(host,grid,category,topicCategory){
+  if(!window.dmTeacherPortalMode&&['free','konu'].includes(category))category='solo';
   party=category;skill='Tümü';render(host,grid,topicCategory);
   host.closest('#tab-aktiviteler').scrollTop=0;
   host.querySelector('[data-gg-party="'+(category==='tools'?'all':category)+'"]')?.focus({preventScroll:true});
@@ -96,7 +98,7 @@
   const cover=gameCovers[card.id];
   if(card.id==='dmUcusteKart'){
    art.classList.add('gg-flight-cover');
-   const bird=document.createElement('span');bird.className='gg-flight-papi';art.append(bird);
+   const bird=new Image();bird.src=cover;bird.alt='';bird.loading='lazy';bird.decoding='async';art.append(bird);
   }else if(cover){
    const image=new Image();image.src=cover;image.alt='';image.loading='lazy';image.decoding='async';
    if(!compact&&card.id==='sentenceRaceActivity'){
@@ -198,11 +200,13 @@
   if(['dmUcusteKart','dmRotaKart'].includes(b.id))b.onclick=()=>window.dmInviteAc(b.id==='dmUcusteKart'?'ucus':'rota');
  }
  function render(host,grid,topicCategory){
-  const routeCard=b=>/yolculuguAc|baModuAc|baFabTikla|buyuAkademisiYeniAc/.test(b.getAttribute('onclick')||'');
+  const routeCard=b=>/asmacaOyunAc/.test(b.getAttribute('onclick')||'')||/yolculuguAc|baModuAc|baFabTikla|buyuAkademisiYeniAc/.test(b.getAttribute('onclick')||'');
   grid.querySelectorAll('.az-gcard').forEach(b=>{if(routeCard(b)){b.hidden=true;b.style.setProperty('display','none','important');}});
   const all=[...grid.querySelectorAll('.az-gcard'),...host.querySelectorAll('.gg-tools .az-gcard')].filter(b=>!routeCard(b));all.forEach(prepare);
   let tools=host.querySelector('.gg-tools');if(!tools){tools=document.createElement('section');tools.className='gg-tools';tools.setAttribute('aria-labelledby','ggToolsTitle');tools.innerHTML='<h2 id="ggToolsTitle">Çalışma Araçları</h2><p>Odaklanmak ve okuma becerini geliştirmek için yardımcı araçlar.</p><div class="gg-tools-grid"></div>';grid.after(tools);}all.filter(b=>b.dataset.ggCategory==='tools').forEach(b=>{if(b.parentElement!==tools.querySelector('.gg-tools-grid'))tools.querySelector('.gg-tools-grid').append(b);});const redesigned=host.classList.contains('gg-redesign');tools.hidden=party!==(redesigned?'tools':'solo');
   const teacher=!!window.dmTeacherPortalMode;
+  if(!teacher&&['free','konu'].includes(party))party='solo';
+  host.querySelectorAll('[data-gg-party="free"],[data-gg-party="konu"]').forEach(b=>{b.hidden=!teacher;b.style.setProperty('display',teacher?'':'none','important');});
   const freeGroup=party!=='premium';
   const tabs=host.querySelector('.gg-tabs');tabs.hidden=!freeGroup;
   tabs.style.setProperty('grid-template-columns','repeat(2,minmax(0,1fr))','important');

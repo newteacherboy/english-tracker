@@ -15,6 +15,7 @@ function trKonus(metin, hiz) { try { let u = new SpeechSynthesisUtterance(metin)
 function trParcala(en) { return String(en).replace(/[.,!?;:"]/g, ' ').trim().split(/\s+/).filter(Boolean); }
 
 function trenOyunAc() {
+ if(window.dmSoloLevels?.needs('tren'))return window.dmSoloLevels.open('tren',()=>trenOyunAc());
   if (typeof genelOyunGirisEngelliMi === 'function' && genelOyunGirisEngelliMi()) return;
   let modal = trEl('trenOyunOverlay');
   document.body.appendChild(modal);
@@ -60,7 +61,7 @@ async function trenOyunuBaslat() {
   if (!trenSecilenUniteler || !trenSecilenUniteler.length) { alert('En az bir ünite seçmelisin.'); return; }
   let btn = trEl('trenBaslaBtn'), eskiYazi = btn.innerText;
   btn.disabled = true; btn.innerText = '🚉 Cümleler yükleniyor...';
-  let cumleHavuzu = (window.masterKelimeHavuzu || []).filter(k => Number(k.sinif)===Number(trenAktifSinif) && trenSecilenUniteler.includes(Number(k.unite)) && k.ingilizce && k.turkce && k.ingilizce.trim().split(/\s+/).length>=3 && k.ingilizce.trim().split(/\s+/).length<=9).map(k => ({en:k.ingilizce.trim(),tr:k.turkce.trim(),sinif:Number(k.sinif),unite:Number(k.unite)}));
+  let cumleHavuzu = (window.dmSoloLevels?.bank('tren') || window.masterKelimeHavuzu || []).filter(k => Number(k.sinif)===Number(trenAktifSinif) && trenSecilenUniteler.includes(Number(k.unite)) && k.ingilizce && k.turkce && k.ingilizce.trim().split(/\s+/).length>=3 && k.ingilizce.trim().split(/\s+/).length<=9).map(k => ({en:k.ingilizce.trim(),tr:k.turkce.trim(),sinif:Number(k.sinif),unite:Number(k.unite)}));
   btn.disabled = false; btn.innerText = eskiYazi;
   let secilen = OC.kelimeSec('tren', cumleHavuzu, TREN_SORU, { anahtar: s => trNorm(s.en), zk: false });
   if (secilen.length < 4) { alert('Bu sınıf ve ünitede henüz yeterli cümle yok. Başka bir ünite seç ya da öğretmenine haber ver.'); return; }

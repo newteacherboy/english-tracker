@@ -7,7 +7,7 @@
   const OGRT = () => { try { return sessionStorage.getItem('ing_ogr_token') || ''; } catch (e) { return ''; } };
   const toast = m => { if (typeof yoToast === 'function') yoToast(m); };
   const OYUN = [['ky', '🔬', 'Kelime Laboratuvarı', 'kelimeYarismasiAc'], ['jp', '🎈', 'Risk Balonları', 'jpOyunAc'], ['bosluk', '✏️', 'Eksik Harf', 'boslukOyunAc'], ['hafiza', '🃏', 'Hafıza Sandığı', 'hafizaOyunAc'],
-    ['yagmur', '🌪️', 'Hız Fırtınası', 'yagmurOyunAc'], ['asmaca', '🔤', 'Harf Avı', 'asmacaOyunAc'], ['kelimebul', '🔐', 'Şifre Kırıcı', 'kelimebulOyunAc'], ['eslestirme', '🔗', 'Eş Bul', 'esOyunAc'],
+    ['yagmur', '🌪️', 'Hız Fırtınası', 'yagmurOyunAc'], ['kelimebul', '🔐', 'Şifre Kırıcı', 'kelimebulOyunAc'], ['eslestirme', '🔗', 'Eş Bul', 'esOyunAc'],
     ['tren', '🚂', 'Kelime Treni', 'trenOyunAc'], ['dikte', '🎧', 'Kulak Dedektifi', 'dikteAc'], ['cumle', '🧱', 'Cümle Ustası', 'cumleAc']];
   const KAT_AD = { grammar: 'Dil Bilgisi', vocab: 'Kelime', comm: 'İletişim', pron: 'Telaffuz' };
   const kisaTarih = t => { try { return new Date(t).toLocaleDateString('tr-TR', { day: 'numeric', month: 'short' }); } catch (e) { return ''; } };

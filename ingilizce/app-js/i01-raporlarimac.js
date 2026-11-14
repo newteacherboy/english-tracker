@@ -84,6 +84,7 @@ function raporlarimKapat() {
         let kyKombo = 0;
 
         function kelimeYarismasiAc() {
+ if(window.dmSoloLevels?.needs('ky'))return window.dmSoloLevels.open('ky',()=>kelimeYarismasiAc());
             if (genelOyunGirisEngelliMi()) return;
             document.getElementById('kelimeYarismaOverlay').style.display = 'flex';
             document.getElementById('kyGirisEkrani').style.display = 'block';
@@ -124,6 +125,7 @@ function raporlarimKapat() {
         }
 
         function kySinifGuncelle(sinif) {
+ if(window.dmSoloLevels?.scope('ky')){kyAktifSinif=sinif;kySecilenUniteler=window.dmSoloLevels.active.units.slice();return;}
             // Sınıfa ait üniteleri masterKelimeHavuzu'ndan veya global veriden bulalım
             let havuz = window.masterKelimeHavuzu || [];
             let sinifKelimeleri = havuz.filter(k => Number(k.sinif) === Number(sinif));
@@ -194,7 +196,7 @@ function raporlarimKapat() {
             let isim = document.getElementById('kyIsimInput').value.trim();
             if (!isim) { alert("Lütfen adınızı giriniz!"); return; }
             if (kySecilenUniteler.length === 0) { alert("Lütfen en az bir ünite seçiniz!"); return; }
-            let havuz = window.masterKelimeHavuzu || [];
+            let havuz = window.dmSoloLevels?.bank('ky') || window.masterKelimeHavuzu || [];
             // Seçilen sınıf ve çoklu ünitelere ait kelimeleri filtrele
             let filtrelenmis = havuz.filter(k => Number(k.sinif) === Number(kyAktifSinif) && kySecilenUniteler.includes(Number(k.unite)));
 
@@ -1982,10 +1984,11 @@ mesajlar.forEach(m => {
 
                         // ===== ORTAK: Bu 4 oyun için havuz filtreleme yardımcı fonksiyonu =====
                 function oyunHavuzGetir(sinif, uniteler) {
-                    let havuz = window.masterKelimeHavuzu || [];
+                    let havuz = window.dmSoloLevels?.active ? window.dmSoloLevels.bank(window.dmSoloLevels.active.game) : window.masterKelimeHavuzu || [];
                     return havuz.filter(k => Number(k.sinif) === Number(sinif) && uniteler.includes(Number(k.unite)));
                 }
                 function genericSinifGuncelle(sinif, uniteBoxId, secilenUnitelerSetFn) {
+ if(window.dmSoloLevels?.active){const units=window.dmSoloLevels.active.units;const box=document.getElementById(uniteBoxId);box.innerHTML=units.map(u=>'<button class="unite-chip selected">'+u+'.Ü</button>').join('');secilenUnitelerSetFn(units.slice());return;}
                     let havuz = window.masterKelimeHavuzu || [];
                     let sinifKelimeleri = havuz.filter(k => Number(k.sinif) === Number(sinif));
                     let uniteler = [...new Set(sinifKelimeleri.map(k => Number(k.unite)))].sort((a,b) => a-b);
@@ -2042,6 +2045,7 @@ mesajlar.forEach(m => {
                 }
 
                 function hafizaOyunAc() {
+ if(window.dmSoloLevels?.needs('hafiza'))return window.dmSoloLevels.open('hafiza',()=>hafizaOyunAc());
                     if (genelOyunGirisEngelliMi()) return;
                     let modalEl = document.getElementById('hafizaOyunOverlay');
                     document.body.appendChild(modalEl);
@@ -2273,6 +2277,7 @@ mesajlar.forEach(m => {
                 }
 
                function yagmurOyunAc() {
+ if(window.dmSoloLevels?.needs('yagmur'))return window.dmSoloLevels.open('yagmur',()=>yagmurOyunAc());
                     if (genelOyunGirisEngelliMi()) return;
                     let modalEl = document.getElementById('yagmurOyunOverlay');
                     document.body.appendChild(modalEl);
@@ -2455,7 +2460,7 @@ yagmurHavuz = OC.kelimeSec('yagmur', yagmurHavuz, OC.SORU); OC.basla('yagmur');
                     return `<svg class="as-hangman-svg" width="110" height="105" viewBox="0 0 100 100">${gosterilecek.join('')}</svg>`;
                 }
 
-                function asmacaOyunAc() {
+                function asmacaOyunAc() { return; /* Harf Avı kaldırıldı. */
                     if (genelOyunGirisEngelliMi()) return;
                     let modalEl = document.getElementById('asmacaOyunOverlay');
                     document.body.appendChild(modalEl);
@@ -2607,6 +2612,7 @@ yagmurHavuz = OC.kelimeSec('yagmur', yagmurHavuz, OC.SORU); OC.basla('yagmur');
                 function kelimebulCanGoster() { document.getElementById('kbCanInfo').innerText = "❤️".repeat(Math.max(0, kelimebulCan)) + "🖤".repeat(5 - Math.max(0, kelimebulCan)); }
 
                function kelimebulOyunAc() {
+ if(window.dmSoloLevels?.needs('kelimebul'))return window.dmSoloLevels.open('kelimebul',()=>kelimebulOyunAc());
                     if (genelOyunGirisEngelliMi()) return;
                     let modalEl = document.getElementById('kelimebulOyunOverlay');
                     document.body.appendChild(modalEl);
@@ -2649,72 +2655,29 @@ yagmurHavuz = OC.kelimeSec('yagmur', yagmurHavuz, OC.SORU); OC.basla('yagmur');
             kelimebulSonrakiKelime();
         }
                 function kelimebulSonrakiKelime() {
-                    if (kelimebulAktifIndex >= kelimebulKelimeler.length) { kelimebulOyunuBitir(); return; }
-                    let k = kelimebulKelimeler[kelimebulAktifIndex];
-                    kelimebulHedef = (k.ingilizce || k.en || '').toUpperCase();
-                    kelimebulDenemeSayisi = 0;
-                    kelimebulSatirlarArr = [];
-                    kelimebulKelimeBaslangicZamani = Date.now();
-                    document.getElementById('kbKelimeInfo').innerText = `Kelime: ${kelimebulAktifIndex+1}/${kelimebulKelimeler.length}`;
-                    document.getElementById('kbPuanInfo').innerText = `Puan: ${kelimebulPuan}`;
-                    kelimebulCanGoster();
-                    document.getElementById('kbIpucu').className = 'kb-ipucu-kutu';
-                    document.getElementById('kbIpucu').innerHTML = `💡 <b>${guvenliMetin(k.turkce || k.tr || '')}</b> &nbsp;·&nbsp; ${kelimebulHedef.length} harfli kelime`;
-                    document.getElementById('kbTahminInput').value = "";
-                    document.getElementById('kbTahminInput').maxLength = kelimebulHedef.length;
-                    document.getElementById('kbSatirlar').innerHTML = "";
-                }
-                function kelimebulTahminGonder() {
-                    let tahmin = document.getElementById('kbTahminInput').value.trim().toUpperCase();
-                    if (tahmin.length !== kelimebulHedef.length) { alert(`Lütfen ${kelimebulHedef.length} harfli bir kelime gir.`); return; }
-                    window.dmVerifiedGames?.record(kelimebulKelimeler[kelimebulAktifIndex],tahmin);
-                    kelimebulDenemeSayisi++;
-
-                    let satir = document.createElement('div');
-                    satir.className = 'kb-row-v2';
-                    let hedefHarfleri = kelimebulHedef.split('');
-                    let kullanilan = new Array(hedefHarfleri.length).fill(false);
-                    let renkler = new Array(tahmin.length).fill('gri');
-
-                    for (let i = 0; i < tahmin.length; i++) {
-                        if (tahmin[i] === hedefHarfleri[i]) { renkler[i] = 'yesil'; kullanilan[i] = true; }
-                    }
-                    for (let i = 0; i < tahmin.length; i++) {
-                        if (renkler[i] === 'yesil') continue;
-                        let idx = hedefHarfleri.findIndex((ch, j) => ch === tahmin[i] && !kullanilan[j]);
-                        if (idx !== -1) { renkler[i] = 'sari'; kullanilan[idx] = true; }
-                    }
-                    tahmin.split('').forEach((ch, i) => {
-                        let box = document.createElement('div');
-                        box.className = 'kb-box-v2 ' + renkler[i];
-                        box.innerText = ch;
-                        satir.appendChild(box);
+                    if(kelimebulAktifIndex>=kelimebulKelimeler.length)return kelimebulOyunuBitir();
+                    const k=kelimebulKelimeler[kelimebulAktifIndex],target=String(k.ingilizce||k.en).trim();kelimebulHedef=target.toUpperCase();kelimebulDenemeSayisi=0;
+                    document.getElementById('kbKelimeInfo').textContent=`Kelime: ${kelimebulAktifIndex+1}/${kelimebulKelimeler.length}`;
+                    document.getElementById('kbPuanInfo').textContent='Puan: '+OC.puan();
+                    document.getElementById('kbIpucu').textContent=String(k.turkce||k.tr)+' · Doğru İngilizce kelimeyi seç';
+                    const input=document.getElementById('kbTahminInput');if(input)input.parentElement.style.display='none';
+                    const board=document.getElementById('kbSatirlar');if(!board)return;
+                    const bank=[...(window.dmSoloLevels?.bank('kelimebul')||kelimebulKelimeler),...(window.masterKelimeHavuzu||[])];
+                    const alternatives=[...new Set(bank.filter(w=>String(w.turkce||w.tr).trim().toLowerCase()!==String(k.turkce||k.tr).trim().toLowerCase()).map(w=>String(w.ingilizce||w.en||'').trim()).filter(w=>w&&w.toLowerCase()!==target.toLowerCase()))];
+                    for(let i=alternatives.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[alternatives[i],alternatives[j]]=[alternatives[j],alternatives[i]];}
+                    const choices=[target,...alternatives.slice(0,7)];for(let i=choices.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[choices[i],choices[j]]=[choices[j],choices[i]];}
+                    board.classList.add('dm-code-choices');board.innerHTML=choices.map((w,i)=>`<button type="button" class="yo-sik" data-code-choice="${i}">${guvenliMetin(w)}</button>`).join('');
+                    board.querySelectorAll('button').forEach(b=>b.onclick=()=>{
+                      if(kelimebulDenemeSayisi)return;kelimebulDenemeSayisi=1;const answer=choices[Number(b.dataset.codeChoice)],ok=answer.toLowerCase()===target.toLowerCase(),index=kelimebulAktifIndex,runId=OC.aktif?.runId;
+                      board.querySelectorAll('button').forEach(x=>{x.disabled=true;if(choices[Number(x.dataset.codeChoice)]===target)x.classList.add('dogru');});
+                      window.dmVerifiedGames?.record(k,answer);
+                      if(ok){kelimebulDogruSayi++;kelimebulKombo++;OC.dogru(1);genelSesEfektiCal('dogru');}
+                      else{kelimebulYanlisSayi++;kelimebulKombo=0;OC.yanlis();b.classList.add('yanlis');genelSesEfektiCal('yanlis');}
+                      kelimebulPuan=OC.puan();document.getElementById('kbPuanInfo').textContent='Puan: '+kelimebulPuan;
+                      setTimeout(()=>{if(OC.aktif?.runId!==runId||kelimebulAktifIndex!==index||document.getElementById('kelimebulOyunOverlay').style.display==='none')return;kelimebulAktifIndex++;kelimebulSonrakiKelime();},ok?800:1100);
                     });
-                    document.getElementById('kbSatirlar').appendChild(satir);
-                    document.getElementById('kbTahminInput').value = "";
-
-                              if (tahmin === kelimebulHedef) {
-                        let gecenSaniye = Math.floor((Date.now() - kelimebulKelimeBaslangicZamani) / 1000);
-                                        OC.dogru(kelimebulDenemeSayisi <= 3 ? 1 : 0.5); let puanKazanc = 0;
-                        kelimebulKombo++;
-                                                      kelimebulDogruSayi++;
-                        kelimebulPuan = OC.puan();
-                                                      genelSesEfektiCal('dogru');
-                        genelKomboGoster(kelimebulKombo, document.querySelector('#kelimebulOyunOverlay .game-modal-content'));
-                        document.getElementById('kbPuanInfo').innerText = `Puan: ${kelimebulPuan}`;
-                        setTimeout(() => { kelimebulAktifIndex++; kelimebulSonrakiKelime(); }, 1200);
-                               } else if (kelimebulDenemeSayisi >= 6) {
-                        genelSesEfektiCal('yanlis');
-                        kelimebulKombo = 0;
-                        document.getElementById('kbIpucu').innerHTML = "❌ Doğrusu: <b>" + kelimebulHedef + "</b>";
-                        kelimebulCan = Math.max(0, kelimebulCan - 1); OC.yanlis(false);
-                                                      kelimebulYanlisSayi++;
-                        kelimebulCanGoster();
-                        kelimebulPuan = OC.puan();
-                        document.getElementById('kbPuanInfo').innerText = `Puan: ${kelimebulPuan}`;
-                        setTimeout(() => { kelimebulAktifIndex++; kelimebulSonrakiKelime(); }, 1600);
-                    }
                 }
+                function kelimebulTahminGonder() { /* Answers are selected from the eight buttons. */ }
                 async function kelimebulOyunuBitir() {
                     kelimebulMuzikDurdur();
                     document.getElementById('kelimebulOyunEkrani').style.display = 'none';
@@ -6106,6 +6069,7 @@ setTimeout(() => {
         let jpGeriDonTimeout = null;
 
         function jpOyunAc() {
+ if(window.dmSoloLevels?.needs('jp'))return window.dmSoloLevels.open('jp',()=>jpOyunAc());
             if (genelOyunGirisEngelliMi()) return;
             clearTimeout(jpGeriDonTimeout);
             if (jpTimerInterval) clearInterval(jpTimerInterval);
@@ -6179,6 +6143,7 @@ setTimeout(() => {
         }
 
         function jpSinifGuncelle(sinif) {
+ if(window.dmSoloLevels?.scope('jp')){jpAktifSinif=sinif;jpSecilenUniteler=window.dmSoloLevels.active.units.slice();return;}
             let havuz = window.masterKelimeHavuzu || [];
             let sinifKelimeleri = havuz.filter(k => Number(k.sinif) === Number(sinif));
             let uniteler = [...new Set(sinifKelimeleri.map(k => Number(k.unite)))].sort((a, b) => a - b);
@@ -6246,7 +6211,7 @@ setTimeout(() => {
             let isim = document.getElementById('jpIsimInput').value.trim();
             if (!isim) { alert("Lütfen adınızı giriniz!"); return; }
             if (jpSecilenUniteler.length === 0) { alert("Lütfen en az bir ünite seçiniz!"); return; }
-            let havuz = window.masterKelimeHavuzu || [];
+            let havuz = window.dmSoloLevels?.bank('jp') || window.masterKelimeHavuzu || [];
             let filtrelenmis = havuz.filter(k => Number(k.sinif) === Number(jpAktifSinif) && jpSecilenUniteler.includes(Number(k.unite)));
 
             if (filtrelenmis.length < 5) {
@@ -6495,6 +6460,7 @@ setTimeout(() => {
         let boslukKomboBonus = 0;
 
         function boslukOyunAc() {
+ if(window.dmSoloLevels?.needs('bosluk'))return window.dmSoloLevels.open('bosluk',()=>boslukOyunAc());
             if (genelOyunGirisEngelliMi()) return;
             let modal = document.getElementById('boslukOyunOverlay');
             if (modal) {
@@ -6556,6 +6522,7 @@ setTimeout(() => {
         }
 
         function boslukSinifGuncelle(sinif) {
+ if(window.dmSoloLevels?.scope('bosluk')){boslukAktifSinif=sinif;boslukSecilenUniteler=window.dmSoloLevels.active.units.slice();return;}
             let havuz = window.masterKelimeHavuzu || [];
             let sinifKelimeleri = havuz.filter(k => Number(k.sinif) === Number(sinif));
             let uniteler = [...new Set(sinifKelimeleri.map(k => Number(k.unite)))].sort((a, b) => a - b);
@@ -6623,7 +6590,7 @@ setTimeout(() => {
             if (!isim) { alert("Lütfen adınızı giriniz!"); return; }
             if (boslukSecilenUniteler.length === 0) { alert("Lütfen en az bir ünite seçiniz!"); return; }
 
-            let havuz = window.masterKelimeHavuzu || [];
+            let havuz = window.dmSoloLevels?.bank('bosluk') || window.masterKelimeHavuzu || [];
             // Seçilen sınıf ve ünitelere ait kelimeleri filtrele
             let filtrelenmis = havuz.filter(k => Number(k.sinif) === Number(boslukAktifSinif) && boslukSecilenUniteler.includes(Number(k.unite)));
 

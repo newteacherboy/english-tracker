@@ -17,6 +17,8 @@ import {socialSafetyAPI} from './social-safety.mjs';
 import {normalizeLearnerProfile,learnerClass,saveLearnerProfile} from './learner-profile.mjs';
 import {requireSafePassword,PasswordPolicyError} from './password-security.mjs';
 import {verifiedGamesAPI} from './verified-games.mjs';
+import {soloLevelsAPI} from './solo-levels.mjs';
+import {validateRegistrationEmail} from './registration-email.mjs';
 import {gradeStudyQuiz,studyTier,recoveryQuestions} from './fair-study.mjs';
 import {DEMO_ID,DEMO_USER,isDemo,isDemoTeacherGrant,DEMO_BLOCKED,publicParticipant} from './demo-account.ts';
 import { FEATURES } from './feature-catalog.ts';
@@ -1309,6 +1311,7 @@ async function handle(req: Request, proxy: any = null) {
       const telHam = String(body.telefon || "").replace(/\D/g, "");
       const tel = /^5\d{9}$/.test(telHam) ? "0" + telHam : /^05\d{9}$/.test(telHam) ? telHam : /^905\d{9}$/.test(telHam) ? "0" + telHam.slice(2) : "";
       const email = String(body.email || "").trim();
+    {const mailCheck=await validateRegistrationEmail(email);if(!mailCheck.ok)return json({ok:false,status:"error",message:mailCheck.message,mesaj:mailCheck.message},mailCheck.temporary?503:400);}
       const teacherApplication = body.requestTeacherAccess===true;
       const school=temizMetin(body.okul||"",120).replace(/\s+/g,' ').trim();
       const city=teacherApplication?temizMetin(body.okulIl||"",40).replace(/\s+/g,' ').trim():"";
@@ -1489,6 +1492,7 @@ async function handle(req: Request, proxy: any = null) {
   const announcementResponse=await announcements.handle(op,body,a,req.method);if(announcementResponse)return announcementResponse;
   const myWorldResult=await myWorld.handle(op,body,q,a);if(myWorldResult)return myWorldResult;
   const managementResult=await studentManagement.handle(op,body,q,a,req.method);if(managementResult)return managementResult;
+  const soloResponse=await soloLevelsAPI(supabase,json).handle(op,body,a,req.method);if(soloResponse)return soloResponse;
   const verifiedResponse=await verifiedGames.handle(op,body,a,req.method);if(verifiedResponse)return verifiedResponse;
   const progressionDeny=await progression.guard(op,body,q,a);if(progressionDeny)return progressionDeny;
   const progressionResult=await progression.handle(op,body,q,a);
@@ -2231,6 +2235,7 @@ async function handle(req: Request, proxy: any = null) {
   if (op === "ogretmenKayitOl") {
     const kullanici = String(body.kullaniciAdi || "").trim().replace(/\s+/g, " ");
     const adSoyad = temizMetin(body.adSoyad, 80), eposta = String(body.email || "").trim(), kurum = temizMetin(body.kurum, 120), sifre = String(body.sifre || "");
+    {const mailCheck=await validateRegistrationEmail(eposta);if(!mailCheck.ok)return json({ok:false,status:"error",message:mailCheck.message,mesaj:mailCheck.message},mailCheck.temporary?503:400);}
     if (!/^[A-Za-zÇĞİÖŞÜçğıöşü0-9 ._-]{3,40}$/.test(kullanici)) return json({ ok: false, mesaj: "Kullanıcı adı 3-40 karakter olmalı (harf, rakam, boşluk, . _ -)." });
     if (!adSoyad || adSoyad.length < 3) return json({ ok: false, mesaj: "Adını ve soyadını yaz." });
     if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(eposta)) return json({ ok: false, mesaj: "Geçerli bir e-posta adresi yaz. Öğrenci bildirimleri bu adrese gelecek." });
@@ -2314,6 +2319,7 @@ async function handle(req: Request, proxy: any = null) {
     if (password.length < OGRENCI_SIFRE_MIN || password.length > 64) return json({ status: "error", message: `Şifre ${OGRENCI_SIFRE_MIN}-64 karakter olmalı.` });
     let learnerProfile, selectedClass;try{learnerProfile=normalizeLearnerProfile(body.learnerProfile,body.sinif,body.ogrenimTuru||"school",{allowUnknownAge:teacherApplication});selectedClass=learnerClass(learnerProfile,body.sinif);}catch(e){return json({status:"error",message:e.message},400);}
     /* [v4.1] Yeni kayıtlarda geçerli veli telefonu ve e-postası zorunlu */
+    {const mailCheck=await validateRegistrationEmail(body.email);if(!mailCheck.ok)return json({ok:false,status:"error",message:mailCheck.message,mesaj:mailCheck.message},mailCheck.temporary?503:400);}
     const telHam = String(body.telefon || "").replace(/\D/g, "");
     const tel = telHam.length === 10 && telHam[0] === "5" ? "0" + telHam : telHam.length === 11 && telHam.startsWith("05") ? telHam : telHam.length === 12 && telHam.startsWith("905") ? "0" + telHam.slice(2) : "";
     if ((telHam||!learnerProfile.version||teacherApplication)&&!tel) return json({ status: "error", message: "Geçerli bir telefon numarası yaz (05XX XXX XX XX)." });
@@ -2837,7 +2843,7 @@ async function handle(req: Request, proxy: any = null) {
   if (op === "ekVeriKaydet") {
     const name = String(body.ogrenci || ""), key = temizMetin(body.anahtar, 60); const deny = await requireStudent(a, name); if (deny) return deny;
     /* [v4.6] Sunucunun kendi tuttuğu anahtarlara öğrenci yazamaz */
-    if (a?.role === "student" && (key===teacherApplicationKey||reservedStudentKey(key))) return json({ status: "error", message: "Bu veri değiştirilemez." }, 403);
+    if (a?.role === "student" && (key.startsWith('solo_levels_v1_')||key===teacherApplicationKey||reservedStudentKey(key))) return json({ status: "error", message: "Bu veri değiştirilemez." }, 403);
     if (a?.role === "teacher" && encName(name) === "teacher" && key === "yo") {
       let tv: any = null; try { tv = typeof body.deger === "string" ? JSON.parse(body.deger) : body.deger; } catch (_) { tv = null; }
       if (!tv || typeof tv !== "object") return json({ status: "error", message: "Geçersiz veri." }, 400);

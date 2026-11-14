@@ -1,0 +1,18 @@
+name: Student solo levels and registration
+on:
+  push:
+    paths: ['ingilizce/solo-levels.*','ingilizce/harf-bahcesi.js','supabase/functions/diji-api/solo-*.mjs','supabase/functions/diji-api/registration-email.mjs','tests/student-solo-levels.test.cjs']
+  pull_request:
+    paths: ['ingilizce/solo-levels.*','ingilizce/harf-bahcesi.js','supabase/functions/diji-api/solo-*.mjs','supabase/functions/diji-api/registration-email.mjs','tests/student-solo-levels.test.cjs']
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm install --prefix /tmp/solo-level-tests jsdom@26.1.0 --no-audit --no-fund
+      - run: node --test tests/student-solo-levels.test.cjs tests/harf-bahcesi.test.cjs tests/solo-arcade.test.cjs tests/verified-games.test.cjs tests/teacher-game-return-single-word.test.cjs
+        env:
+          NODE_PATH: /tmp/solo-level-tests/node_modules

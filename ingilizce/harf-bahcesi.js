@@ -9,11 +9,14 @@
   function adjacent(a,b) { return a!==b && Math.abs(a%COLS-b%COLS)<=1 && Math.abs(Math.floor(a/COLS)-Math.floor(b/COLS))<=1; }
   function board(words) {
     let route=Array.from({length:ROWS},(_,r)=>Array.from({length:COLS},(_,c)=>r*COLS+(r%2?COLS-1-c:c))).flat();
-    if(Math.random()<.5)route.reverse();
-    if(Math.random()<.5)route=route.map(i=>Math.floor(i/COLS)*COLS+COLS-1-i%COLS);
+    for(let round=0;round<80;round++){
+      if(Math.random()<.5)route.reverse();
+      const neighbors=route.map((cell,i)=>i>1&&adjacent(route[0],cell)?i:-1).filter(i=>i>1);
+      const at=neighbors[Math.floor(Math.random()*neighbors.length)];if(at!==undefined)route=[...route.slice(0,at).reverse(),...route.slice(at)];
+    }
+    const total=words.reduce((n,w)=>n+en(w).length,0);let offset=Math.floor(Math.random()*(COLS*ROWS-total+1));
     const letters=Array.from({length:COLS*ROWS},()=> 'abcdefghijklmnopqrstuvwxyz'[Math.floor(Math.random()*26)]),paths=[];
-    let offset=0;
-    words.forEach(k=>{const w=en(k),path=route.slice(offset,offset+w.length);path.forEach((p,i)=>letters[p]=w[i]);paths.push(path);offset+=w.length;});
+    for(const w of words){const path=route.slice(offset,offset+en(w).length);path.forEach((p,i)=>letters[p]=en(w)[i]);paths.push(path);offset+=en(w).length;}
     return {letters,paths};
   }
   window.dmHarfBahcesiCore = Object.freeze({pool,board,adjacent,en,tr});
@@ -29,6 +32,7 @@
     genericSinifGuncelle(n,'hbUnits',u=>state.units=u);
   }
   window.harfBahcesiAc=function() {
+    if(window.dmSoloLevels?.needs(KEY))return window.dmSoloLevels.open(KEY,()=>window.harfBahcesiAc());
     if(window.dmFeatureEnabled?.('oyun_harfbahcesi')===false || genelOyunGirisEngelliMi())return;
     close();owner=who();previous=document.activeElement;
     overlay=document.createElement('div');overlay.className='hb-overlay game-modal-overlay';overlay.id='harfBahcesiOverlay';overlay.setAttribute('role','dialog');overlay.setAttribute('aria-modal','true');overlay.setAttribute('aria-labelledby','hbTitle');
@@ -36,6 +40,7 @@
     document.body.append(overlay);body=overlay.querySelector('.hb-body');overlay.querySelector('[data-close]').onclick=close;
     overlay.addEventListener('keydown',e=>{if(e.key==='Escape'){e.preventDefault();close();}if(e.key==='Tab'){const a=[...overlay.querySelectorAll('button:not(:disabled),input,select')].filter(x=>x.getClientRects().length);if(!a.length)return;const first=a[0],last=a.at(-1);if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}}});
     state={classNo:1,units:[1],ended:false,runId:crypto.randomUUID()};
+    const level=window.dmSoloLevels?.scope(KEY);if(level){state.classNo=level.classNo;state.units=level.units;body.innerHTML='<p class="hb-status"></p><button data-start>Başlat</button>';body.querySelector('[data-start]').onclick=start;return;}
     body.innerHTML=`<div class="hb-intro"><img src="papi-welcome-v2.png" alt="Papi"><p>Türkçe ipucundan İngilizce kelimeyi bul. Bitişik harflere sırayla dokun ya da parmağını kaydır!</p></div><p>En fazla 12 kelime · Süre + doğruluk puanı · 3 ⚡<br><small>İlk denemede +100; düzeltince +50. Hız bonusu eklenir; yanlış −40 puan ve turdan −3 XP.</small></p><h3>Sınıfını seç</h3><div id="hbClasses" class="hb-classes">${Array.from({length:8},(_,i)=>`<button type="button" class="sinif-btn" data-class="${i+1}">${i+1}. Sınıf</button>`).join('')}</div><h3>Ünitelerini seç</h3><div id="hbUnits" class="unite-secim-box hb-units"></div><p class="hb-status" role="status"></p><button class="hb-primary" type="button" data-start>Bahçeye gir 🌱</button>`;
     overlay.querySelectorAll('[data-class]').forEach(b=>b.onclick=()=>chooseClass(Number(b.dataset.class)));
     sinifGridKisitlamaUygula('hbClasses',n=>state.classNo=n,chooseClass);
@@ -74,18 +79,19 @@
   function text() {return state.selected.map(i=>state.grid.letters[i]).join('');}
   function paint() {
     const s=state;
-    body.innerHTML=`<div class="hb-meta"><b>${s.done}/${s.words.length} kelime</b><span>${OC.puan()} puan</span><span data-time>${OC.sure()} sn</span></div><progress max="${s.words.length}" value="${s.done}" aria-label="Bulunan kelimeler"></progress><div class="hb-hints">${s.pair.map((k,i)=>`<div class="${s.solved.has(i)?'hb-solved':''}"><span>${esc(tr(k))}</span><b lang="en">${s.solved.has(i)?esc(en(k).toUpperCase()):'•'.repeat(en(k).length)}</b></div>`).join('')}</div><div class="hb-grid" aria-label="Harf bahçesi">${s.grid.letters.map((h,i)=>`<button type="button" data-cell="${i}" lang="en" aria-label="${h.toUpperCase()}, ${Math.floor(i/COLS)+1}. satır ${i%COLS+1}. sütun">${h.toUpperCase()}</button>`).join('')}</div><div class="hb-selection" lang="en" aria-live="polite">Harfleri birleştir</div><div class="hb-actions"><button type="button" data-clear>Temizle</button><button type="button" class="hb-primary" data-check>🔎 Kelimeyi bul</button><button type="button" data-skip>Pas geç</button></div><p class="hb-status" role="status">Yatay, dikey veya çapraz komşu harfleri birleştir. Bir harfi aynı kelimede iki kez kullanamazsın.</p><button type="button" class="hb-next" data-next hidden>${s.index+1>=s.words.length?'Sonucumu gör 🌟':'Sonraki bahçe →'}</button>`;
+    body.innerHTML=`<div class="hb-meta"><b>${s.done}/${s.words.length} kelime</b><span>${OC.puan()} puan</span><span data-time>${OC.sure()} sn</span></div><progress max="${s.words.length}" value="${s.done}" aria-label="Bulunan kelimeler"></progress><div class="hb-hints">${s.pair.map((k,i)=>`<div class="${s.solved.has(i)?'hb-solved':''}"><span>${esc(tr(k))}</span><b lang="en">${s.solved.has(i)?esc(en(k).toUpperCase()):'•'.repeat(en(k).length)}</b></div>`).join('')}</div><div class="hb-grid" aria-label="Harf bahçesi">${s.grid.letters.map((h,i)=>`<button type="button" data-cell="${i}" lang="en" aria-label="${h.toUpperCase()}, ${Math.floor(i/COLS)+1}. satır ${i%COLS+1}. sütun">${h.toUpperCase()}</button>`).join('')}</div><div class="hb-selection" lang="en" aria-live="polite">Harfleri birleştir</div><div class="hb-actions"><button type="button" data-clear>Temizle</button><button type="button" data-skip>Pas geç</button></div><p class="hb-status" role="status">Yatay, dikey veya çapraz komşu harfleri birleştir. Bir harfi aynı kelimede iki kez kullanamazsın.</p><button type="button" class="hb-next" data-next hidden>${s.index+1>=s.words.length?'Sonucumu gör 🌟':'Sonraki bahçe →'}</button>`;
     body.querySelectorAll('[data-cell]').forEach(b=>b.onclick=()=>select(Number(b.dataset.cell)));
-    body.querySelector('[data-clear]').onclick=()=>{s.selected=[];selection();};body.querySelector('[data-check]').onclick=check;
-    body.querySelector('[data-skip]').onclick=()=>{const i=s.pair.findIndex((_,j)=>!s.solved.has(j));if(i<0)return;window.dmVerifiedGames?.record(s.pair[i],null);OC.yanlis();if(!classroom())window.dmWrongWords?.add(s.pair[i]);s.solved.add(i);s.done++;s.selected=[];paint();message('Tekrar çalış: '+tr(s.pair[i])+' → '+en(s.pair[i]));};
+    body.querySelector('[data-clear]').onclick=()=>{s.selected=[];selection();};
+    body.querySelector('[data-skip]').onclick=()=>{if(s.locked)return;s.selected=[-1];check();};
     body.querySelector('[data-next]').onclick=()=>{if(s.solved.size!==s.pair.length)return;s.index+=1;if(s.index>=s.words.length)finish();else newBoard();};
-    let dragging=false,moved=false,startIndex=-1;
+    let pointer=null,moved=false,startIndex=-1;
     const grid=body.querySelector('.hb-grid');
-    grid.addEventListener('pointerdown',e=>{if(e.pointerType==='mouse')return;const b=e.target.closest('[data-cell]');if(!b)return;dragging=true;moved=false;startIndex=Number(b.dataset.cell);});
-    grid.addEventListener('pointermove',e=>{if(!dragging)return;const b=document.elementFromPoint(e.clientX,e.clientY)?.closest('[data-cell]');if(!b||!grid.contains(b))return;const i=Number(b.dataset.cell);if(i===startIndex&&!moved)return;if(!moved){select(startIndex);moved=true;}select(i);});
-    grid.addEventListener('pointerup',e=>{if(dragging&&moved){e.preventDefault();grid.dataset.ignoreClick='1';setTimeout(()=>delete grid.dataset.ignoreClick,0);}dragging=false;});
-    grid.addEventListener('pointercancel',()=>dragging=false);
-    grid.addEventListener('click',e=>{if(grid.dataset.ignoreClick){e.stopImmediatePropagation();e.preventDefault();}},true);
+    grid.onpointerdown=e=>{const b=e.target.closest('[data-cell]');if(!b||state.locked||e.button!==0)return;pointer=e.pointerId;moved=false;startIndex=Number(b.dataset.cell);state.selected=[];select(startIndex);grid.setPointerCapture(pointer);e.preventDefault();};
+    grid.onpointermove=e=>{if(e.pointerId!==pointer)return;const b=document.elementFromPoint(e.clientX,e.clientY)?.closest('[data-cell]');if(b&&grid.contains(b)){const i=Number(b.dataset.cell);if(i!==startIndex)moved=true;select(i);}};
+    grid.onpointerup=e=>{if(e.pointerId!==pointer)return;pointer=null;e.preventDefault();if(state.selected.length)check();};
+    grid.onpointercancel=()=>{pointer=null;state.selected=[];selection();};
+    grid.addEventListener('click',e=>{if(e.detail){e.stopImmediatePropagation();e.preventDefault();}},true);
+    body.querySelectorAll('[data-cell]').forEach(b=>b.onclick=()=>{select(Number(b.dataset.cell));if(state.selected.length===en(state.pair[0]).length)check();});
     selection();if(s.solved.size===s.pair.length){body.querySelector('[data-next]').hidden=false;body.querySelectorAll('[data-check],[data-skip]').forEach(b=>b.disabled=true);}
   }
   function select(i) {
@@ -101,10 +107,14 @@
     body.querySelectorAll('[data-cell]').forEach(b=>{const i=Number(b.dataset.cell);b.classList.toggle('hb-picked',state.selected.includes(i));b.classList.toggle('hb-found',[...state.solved].some(j=>state.grid.paths[j].includes(i)));b.setAttribute('aria-pressed',String(state.selected.includes(i)));});
   }
   function check() {
-    if(!state||state.ended||!state.selected.length||state.solved.size===state.pair.length)return;
-    const word=text(),i=state.pair.findIndex((k,j)=>!state.solved.has(j)&&en(k)===word);
-    if(i<0){const hint=body?.querySelector(".hb-hints>div");hint?.classList.add("hb-error");setTimeout(()=>hint?.classList.remove("hb-error"),650);for(const [j,k] of state.pair.entries())if(!state.solved.has(j))window.dmVerifiedGames?.record(k,word);OC.yanlis();state.pair.forEach((_,j)=>{if(!state.solved.has(j))state.misses.add(state.index+j);if(!classroom())window.dmWrongWords?.add(state.pair[j]);});state.selected=[];selection();message('Bu kelime ipuçlarına uymadı. Yeniden dene!');return;}
-    window.dmVerifiedGames?.record(state.pair[i],word);const clean=!state.misses.has(state.index+i);OC.dogru(clean?1:.5,clean);state.solved.add(i);state.done++;state.selected=[];paint();window.dmCorrectAnswer?.();message('🌸 '+en(state.pair[i]).toUpperCase()+' = '+tr(state.pair[i]));
+    const s=state;if(!s||s.ended||s.locked||!s.selected.length||s.solved.size===s.pair.length)return;s.locked=true;
+    const word=text(),ok=en(s.pair[0])===word,selected=s.selected.slice();
+    window.dmVerifiedGames?.record(s.pair[0],word,s.runId);
+    if(ok){OC.dogru(1);s.solved.add(0);window.genelSesEfektiCal?.('dogru');}
+    else{OC.yanlis();if(!classroom())window.dmWrongWords?.add(s.pair[0]);window.genelSesEfektiCal?.('yanlis');}
+    body.querySelectorAll('[data-cell]').forEach(b=>{b.disabled=true;if(selected.includes(Number(b.dataset.cell)))b.classList.add(ok?'hb-found':'hb-error');});
+    message(ok?'🌸 Doğru!':'Doğru kelime: '+en(s.pair[0]).toUpperCase());s.done++;
+    setTimeout(()=>{if(state!==s||!overlay)return;s.index++;s.locked=false;if(s.index>=s.words.length)finish();else newBoard();},ok?650:1000);
   }
   async function finish() {
     if(overlay)overlay.querySelector('[data-pause]').hidden=true;

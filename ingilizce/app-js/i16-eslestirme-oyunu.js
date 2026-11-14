@@ -14,6 +14,7 @@ function esSeslendir(metin) {
 }
 
 function esOyunAc() {
+ if(window.dmSoloLevels?.needs('eslestirme'))return window.dmSoloLevels.open('eslestirme',()=>esOyunAc());
   if (typeof genelOyunGirisEngelliMi === 'function' && genelOyunGirisEngelliMi()) return;
   let modal = esEl('esOyunOverlay');
   document.body.appendChild(modal);
