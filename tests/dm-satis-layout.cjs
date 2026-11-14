@@ -13,11 +13,11 @@ window.Capacitor={getPlatform:()=> 'android',Plugins:{DmBilling:{getProducts:asy
 });
 await page.addScriptTag({url:'http://127.0.0.1:8765/ingilizce/dm-satis.js'});await page.waitForSelector('.dms-trial-float');
 await page.waitForTimeout(450);if(w===390)await page.screenshot({path:'sales-qa/gift.png'});
-await page.click('.dms-trial-open');await page.waitForSelector('.dmp-trial-hero');await page.waitForTimeout(100);
+await page.click('.dms-trial-open');await page.waitForSelector('.dmp-trial-hero');await page.waitForTimeout(450);
 await page.click('[data-period="yillik"]');await page.click('[data-trial]');
 if(await page.locator('[data-period="aylik"]').getAttribute('aria-pressed')!=='true')throw Error('trial does not select monthly');
-const check=await page.evaluate(()=>{const r=s=>{const a=document.querySelector(s).getBoundingClientRect();return {top:a.top,bottom:a.bottom,left:a.left,right:a.right}};return {trial:r('.dmp-trial-hero'),buy:r('.dmp-buy'),table:r('.dmp-table'),legal:r('.dmp-legal'),content:document.querySelector('.dmp-in').scrollHeight,height:document.querySelector('.dmp-in').clientHeight,overflow:document.querySelector('.dmp-in').scrollWidth>innerWidth}});
-console.log(w,h,JSON.stringify(check));if(check.buy.bottom>h||check.trial.top<0||check.overflow)throw Error('layout overflow');
+const check=await page.evaluate(()=>{const r=s=>{const a=document.querySelector(s).getBoundingClientRect();return {top:a.top,bottom:a.bottom,left:a.left,right:a.right}};return {trial:r('.dmp-trial-hero'),buy:r('.dmp-buy'),plans:r('.dmp-plans'),table:r('.dmp-table'),legal:r('.dmp-legal'),content:document.querySelector('.dmp-in').scrollHeight,height:document.querySelector('.dmp-in').clientHeight,overflow:document.querySelector('.dmp-in').scrollWidth>innerWidth}});
+console.log(w,h,JSON.stringify(check));if(check.buy.bottom>h||check.trial.top<0||check.overflow||(w>=360&&check.plans.bottom>check.buy.top))throw Error('layout overflow');
 await page.screenshot({path:`sales-qa/plans-${w}.png`});
 await page.click('[data-close]');await page.evaluate(()=>DMSatis.enerji());await page.waitForSelector('[data-energy-trial]');await page.waitForTimeout(450);if(w===390)await page.screenshot({path:'sales-qa/energy.png'});
 await page.click('[data-energy-trial]');await page.waitForSelector('.dmp-trial-hero');await page.close();

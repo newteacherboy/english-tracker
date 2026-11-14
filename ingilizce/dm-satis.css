@@ -312,3 +312,5 @@ div.dmp.dmp-compact{display:flex;flex-direction:column;overflow:hidden}
 .dmp-details{margin-top:6px;color:#674288;font:700 11px "Nunito",system-ui}.dmp-details summary{cursor:pointer;padding:5px 0}.dmp-details[open]{padding-bottom:6px}.dmp-compact .dmp-legal{font-size:10px;line-height:1.35;margin:6px 1px 0}.dmp-compact .dmp-links{margin-top:3px}.dmp-compact .dmp-links button{padding:4px 0;font-size:11px}
 .dmp-compact .dmp-buy{min-height:54px;font-size:18px}.dmp-compact .dmp-buy small{font-size:11px;line-height:1.25;padding:0 8px}
 @media(max-height:750px){.dmp-compact .dmp-trial-hero{padding:6px 10px;margin-bottom:11px}.dmp-compact .dmp-trial-hero img{width:52px;height:60px}.dmp-compact .dmp-trial-hero b{font-size:17px}.dmp-compact .dmp-hero h1{font-size:20px}.dmp-compact .dmp-keys{gap:4px}.dmp-compact .dmp-keys li{font-size:10.5px}.dmp-compact .dmp-bar{height:32px}}
+.dmp-small-rows{display:none}
+@media(max-height:750px){.dmp-compact .dmp-sec,.dmp-compact .dmp-sec + .dmp-table{display:none}.dmp-compact .dmp-small-rows{display:table-row-group}.dmp-compact .dmp-hero h1{display:none}.dmp-compact .dmp-details{margin-top:8px}}

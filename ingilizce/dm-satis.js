@@ -12,7 +12,7 @@
   const VER = '20261114-papi-trial-2';
   const BASE = (() => { try { return new URL('.', D.currentScript?.src || location.href).href; } catch { return ''; } })();
   const A = name => BASE + 'satis-assets/' + name;
-  const IMG = { papi: A('papi-enerji-molasi.webp'), bolt: A('ic-bolt.webp'), coin: A('ic-coin.webp'), crown: A('ic-crown.webp'),
+  const IMG = { papi: A('papi-energy-3d.webp'), bolt: A('ic-bolt.webp'), coin: A('ic-coin.webp'), crown: A('ic-crown.webp'),
     gift: A('papi-premium-gift.webp'), party: BASE + 'discovery-assets/papi-kutlama.webp', teacher: BASE + 'discovery-assets/ogretmen.webp', welcome: BASE + 'papi-welcome-v2.png' };
   const API = 'https://nxfqlutulxqzqgwewssd.supabase.co/functions/v1/billing';
   const PACKS = [[5, 350], [10, 600], [15, 850]];
@@ -450,7 +450,7 @@
       <h2 class="dmp-sec">Karşılaştır</h2>
       <table class="dmp-table"><thead><tr><th></th><th>Free</th><th>Pro</th><th class="pre">Premium Pro</th></tr></thead>
         <tbody>${rowHtml(summaryRows)}</tbody></table>
-      ${extraRows.length ? `<details class="dmp-details"><summary>Tüm özellikleri karşılaştır</summary><table class="dmp-table"><thead><tr><th>Özellik</th><th>Free</th><th>Pro</th><th>Premium Pro</th></tr></thead><tbody>${rowHtml(extraRows)}</tbody></table></details>` : ''}
+      ${extraRows.length ? `<details class="dmp-details"><summary>Tüm özellikleri karşılaştır</summary><table class="dmp-table"><thead><tr><th>Özellik</th><th>Free</th><th>Pro</th><th>Premium Pro</th></tr></thead><tbody class="dmp-small-rows">${rowHtml(summaryRows)}</tbody><tbody>${rowHtml(extraRows)}</tbody></table></details>` : ''}
       ${C.soon ? `<p class="dmp-soonline"><span class="dmp-soon">Yakında</span> ${esc(C.soon)}</p>` : ''}
       ${sellOpen ? `<p class="dmp-legal">${role === 'student' ? `Ödeme ${storeName} hesabından alınır. ${trialReady ? 'Deneme bitmeden iptal edebilirsin. ' : ''}İptal edilmezse abonelik otomatik yenilenir. Yönetim: ${storeName} &gt; Abonelikler.` : `Ödeme ${storeName} hesabından alınır. Abonelik, dönem bitmeden en az 24 saat önce iptal edilmezse aynı süreyle otomatik yenilenir. İptal ve yönetim ${storeName} hesap ayarlarındaki Abonelikler bölümünden yapılır.`}
         ${iosApp ? '<br><a href="https://www.apple.com/legal/internet-services/itunes/dev/stdeula/" target="_blank" rel="noopener">Kullanım Koşulları (EULA)</a> · ' : '<br>'}<a href="${BASE}gizlilik.html" target="_blank" rel="noopener">Gizlilik Politikası</a> · <a href="${BASE}kullanim-kosullari.html" target="_blank" rel="noopener">Kullanım Koşulları</a></p>
