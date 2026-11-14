@@ -74,3 +74,8 @@ test('a reusable modal releases the shared toolbar and restores its native close
   assert(!root.querySelector('.yo-kapat').classList.contains('dm-frame-source'));
  }finally{dom.window.close();}
 });
+test('Premium skill games keep their single owned toolbar and native cleanup',async()=>{
+ const f=shell('<section id="premiumSkillGame" class="game-modal-overlay"><header class="psg-header"><button data-back>Geri</button><button data-close>Kapat</button></header></section>'),w=f.w,r=w.document.getElementById('premiumSkillGame');
+ assert(r.classList.contains('dm-vp-root'));assert(!r.classList.contains('dm-game-framed'));assert.equal(r.querySelector('.dm-game-frame,.dm-vp-back,.dm-vp-exit'),null);
+ let closed=0;w.dmPremiumSkillGames={close:()=>{closed++;r.remove();}};await w.dmGameViewport.navigate(r,false);await new Promise(resolve=>setImmediate(resolve));assert.equal(closed,1);assert(!w.document.getElementById('premiumSkillGame'));assert(!w.document.body.classList.contains('dm-game-viewport'));f.dom.window.close();
+});

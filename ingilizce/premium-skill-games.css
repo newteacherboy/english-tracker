@@ -35,3 +35,56 @@ body:has(#premiumSkillGame) #bottomNavMobile#bottomNavMobile{display:none!import
 .psg-ball{width:clamp(110px,33cqw,190px);background:url('games-assets/word-goal-sprites-v2.png') right center/300% 100% no-repeat}
 .psg-ball b{font-size:clamp(16px,5.2cqw,30px);max-width:72%;transform:perspective(180px) rotateY(-8deg) rotateZ(-6deg)}
 @keyframes psgDiveReal{from{transform:scaleX(var(--facing,1))}40%{transform:translate(calc(var(--dx)*.5),calc(var(--dy)*.5 - 15px)) scaleX(var(--facing,1))}to{transform:translate(var(--dx),var(--dy)) scaleX(var(--facing,1))}}
+
+/* One owned toolbar: the safe area is counted once, with the stage directly below. */
+html body #premiumSkillGame .psg-shell{height:100%!important;min-height:0!important}
+html body #premiumSkillGame .psg-header{min-height:54px;padding:6px 10px;gap:7px}
+html body #premiumSkillGame .psg-header h2{font-size:clamp(17px,4.6vw,23px);line-height:1.15}
+html body #premiumSkillGame .psg-body{padding-top:8px}
+html body #premiumSkillGame[data-game-phase="intro"] .psg-body{justify-content:flex-start;gap:0}
+html body #premiumSkillGame .psg-intro{margin:0 auto;padding:14px;gap:0;text-align:center;background:#fffdf7;flex:none}
+.psg-intro-stage{position:relative;isolation:isolate;overflow:hidden;width:100%;height:clamp(155px,25dvh,215px);border-radius:20px;background:radial-gradient(ellipse at 40% 20%,#dbf8ff,#73c5ff 80%);border:1px solid #b0dfff}
+.psg-intro-tower::after{content:'';position:absolute;bottom:9%;left:44%;width:49%;height:12%;border-radius:50%;background:#a384e4;box-shadow:0 7px 0 #7462bd}
+.psg-intro-papi{position:absolute;left:0;bottom:3%;width:48%;height:91%;object-fit:contain;z-index:3;filter:drop-shadow(0 6px 4px #174e7330);animation:psgHello 3s ease-in-out infinite}
+.psg-intro-stack{position:absolute;left:53%;bottom:24%;height:67%;width:35%;z-index:2}
+.psg-intro-stack .psg-block{height:23%;bottom:calc(var(--i)*23%);border-radius:7px}
+.psg-intro-stack .psg-block:last-child{bottom:82%;rotate:-5deg;animation:psgFloat 2s ease-in-out infinite}
+.psg-intro-word{position:absolute;right:8%;top:8%;z-index:4;padding:6px 11px;border:2px solid white;border-radius:12px;background:#fffef4;color:#194a65;font-size:13px;box-shadow:0 3px 0 #84b4db}
+.psg-intro-word-goal{background:linear-gradient(#8dd3ff 0 35%,#a7d93d 35%,#5ea52e)}
+.psg-intro-goal{position:absolute;right:4%;top:12%;width:65%;height:61%;border:5px solid #fff;border-radius:7px;background:repeating-linear-gradient(0deg,transparent 0 13px,#ffffff99 13px 15px),repeating-linear-gradient(90deg,#174b68 0 14px,#ffffff99 14px 16px);box-shadow:0 4px 6px #315f3d55}
+.psg-intro-target{position:absolute;right:9%;top:19%;z-index:2;padding:7px 14px;border:2px solid white;border-radius:11px;background:#15b682;color:white;font:900 17px Nunito,system-ui;box-shadow:0 3px 0 #08705c}
+.psg-intro-ball{position:absolute;right:14%;bottom:5%;width:24%;aspect-ratio:1;z-index:3;display:grid;place-items:center;background:url('games-assets/word-goal-sprites-v2.png') right center/300% 100% no-repeat;filter:drop-shadow(0 6px 4px #2b52245c)}
+.psg-intro-ball b{max-width:72%;font-size:clamp(12px,3.7vw,18px);color:#142f53;transform:rotate(-8deg);mix-blend-mode:multiply}
+.psg-course{width:100%;padding:12px;border:1px solid #d6e6f4;border-radius:17px;background:#edf7ff;margin-top:9px;text-align:left}
+.psg-course-heading{display:flex;align-items:center;justify-content:space-between;gap:6px;color:#173e66}
+.psg-course-heading strong{font-size:19px;white-space:nowrap}.psg-course-heading strong small{font-size:12px;color:#597c9d}
+.psg-course-heading>span{font-size:11px;text-align:right;color:#466c91}
+.psg-course progress{display:block;width:100%;height:9px;appearance:none;-webkit-appearance:none;border:0;border-radius:8px;overflow:hidden;background:#d5e4f2;margin:9px 0 5px}
+.psg-course progress::-webkit-progress-bar{background:#d5e4f2}.psg-course progress::-webkit-progress-value{background:linear-gradient(90deg,#23bb8a,#8bdd53);border-radius:8px}.psg-course progress::-moz-progress-bar{background:#23bb8a}
+.psg-course>small{display:block;font-size:11px;color:#456b8b}
+.psg-course-route{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));padding:0;margin:11px 0 0;list-style:none;gap:7px}
+.psg-course-route li{display:flex;flex-direction:column;align-items:center;gap:4px;position:relative;color:#7692ab;font-size:10px}
+.psg-course-route li::before{content:'';position:absolute;left:-50%;right:50%;height:3px;background:#cbddec;top:16px}.psg-course-route li:first-child::before{display:none}
+.psg-course-route b{display:grid;place-items:center;position:relative;z-index:1;width:34px;height:34px;border:2px solid #fff;border-radius:12px;background:#d8e7f4;font-size:14px;box-shadow:0 3px 0 #c0d4e7}
+.psg-course-route .is-done b{color:#fff;background:#29b58d;box-shadow:0 3px 0 #159875}.psg-course-route .is-current{color:#145d90;font-weight:900}.psg-course-route .is-current b{color:#173e66;background:#ffd358;box-shadow:0 3px 0 #e6ae2f;outline:2px solid #ffc43455;outline-offset:2px}
+html body #premiumSkillGame .psg-rights{font-size:12px;line-height:1.35;color:#52718c;margin:10px 0 0}
+html body #premiumSkillGame .psg-intro .psg-actions{margin-top:12px}
+.psg-result-papi{width:145px;height:145px;object-fit:contain}.psg-result-note{font-size:15px;line-height:1.4;color:#245b75}
+@layer bilgiIslands{
+html body #premiumSkillGame .psg-panel h2{color:#153c65!important;-webkit-text-fill-color:#153c65!important;font:1000 27px/1.15 Nunito,system-ui,sans-serif!important;margin:13px 0 6px!important}
+html body #premiumSkillGame .psg-panel>p{color:#3c5d78!important;-webkit-text-fill-color:#3c5d78!important;font:750 14px/1.45 Nunito,system-ui,sans-serif!important;margin:4px 0!important}
+html body #premiumSkillGame .psg-header h2{color:white!important;-webkit-text-fill-color:white!important;margin:0!important}
+html body #premiumSkillGame .psg-panel .psg-rights{font-size:12px!important;margin-top:10px!important}
+}
+@keyframes psgHello{50%{transform:translateY(-5px) rotate(-2deg)}}
+@media(max-height:700px){
+html body #premiumSkillGame .psg-intro{padding:10px}
+.psg-intro-stage{height:110px;min-height:110px;border-radius:15px}.psg-intro-word{font-size:11px;padding:3px 7px}.psg-intro-target{font-size:14px;padding:4px 10px}
+.psg-course{padding:8px;margin-top:6px}.psg-course-route{margin-top:6px}.psg-course-route b{width:27px;height:27px;border-radius:9px;font-size:12px}.psg-course-route li{gap:2px;font-size:9px}.psg-course-route li::before{top:13px}
+.psg-course-heading strong{font-size:16px}.psg-course progress{height:7px;margin:6px 0 4px}.psg-course>small{font-size:10px}.psg-intro .psg-actions button{min-height:46px;padding:10px}
+html body #premiumSkillGame .psg-intro .psg-actions{margin-top:8px}
+@layer bilgiIslands{html body #premiumSkillGame .psg-intro h2{font-size:22px!important;margin:8px 0 3px!important}html body #premiumSkillGame .psg-intro>p{font-size:12px!important;line-height:1.3!important}html body #premiumSkillGame .psg-panel .psg-rights{font-size:10px!important;margin-top:7px!important}}
+}
+@media(prefers-reduced-motion:reduce){.psg-intro-papi{animation:none}}
+html body #premiumSkillGame.psg-overlay{background:#087e7a!important}
+html body #premiumSkillGame .psg-header>.dm-game-music{display:none!important}
