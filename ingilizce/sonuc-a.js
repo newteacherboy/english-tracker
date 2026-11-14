@@ -8,7 +8,7 @@
  let last={};
  const $=s=>document.querySelector(s);
  function pct(){const t=$('#gsoDogruluk')?.textContent||'';const n=parseInt(t.replace(/\D/g,''),10);return Number.isFinite(n)?n:null;}
- function starCount(p){const y=Number(last.parkurYildiz);if(y>=1&&y<=3)return y;if(p==null)return 0;return p>=90?3:p>=60?2:p>0?1:0;}
+ function starCount(p){const y=Number(last.parkurYildiz);if(Number.isInteger(y)&&y>=0&&y<=3)return y;if(p==null)return 0;return p>=90?3:p>=60?2:p>0?1:0;}
  function arrange(){
   const ov=$('#genelSonucOverlay'),kart=ov?.querySelector('.gso-kart');if(!kart)return;
   const alt=kart.querySelector('.gso-alt'),maskot=kart.querySelector('.gso-maskot');
@@ -51,5 +51,5 @@
   ['gsoDogruluk','gsoSure','gsoPuan'].forEach(id=>{const el=document.getElementById(id);if(el)new MutationObserver(schedule).observe(el,{childList:true,characterData:true,subtree:true});});
  }
  if(document.readyState==='complete')start();else addEventListener('load',start,{once:true});
- window.dmSonucA={arrange};
+ window.dmSonucA={arrange,showSaved(o){last=o||{};window.dmShowSavedResult(o);arrange();schedule();}};
 })();

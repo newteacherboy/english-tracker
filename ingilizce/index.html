@@ -155,7 +155,7 @@ window.supabaseClient=supabaseClient;
 <link rel="preload" as="style" href="portal-secondary-extracted.css?v=20261015-1">
 <link rel="preload" as="script" href="app-js/i01-raporlarimac.js?v=f7d800c9ff">
 <link rel="preload" as="script" href="app-js/i02-jokerturubaslat.js?v=41524e631a">
-<link rel="preload" as="script" href="app-js/i03-veriler.js?v=04e0b5ede3">
+<link rel="preload" as="script" href="app-js/i03-veriler.js?v=210b3360cb">
 <link rel="preload" as="script" href="app-js/i04-meduakisac.js?v=16c9af410e">
 <link rel="preload" as="script" href="app-js/i05-hedefyuzu.js?v=0358fb1ba8">
 <link rel="preload" as="script" href="app-js/i06-renk-yardimcilari.js?v=c9adbca8db">
@@ -245,7 +245,7 @@ window.supabaseClient=supabaseClient;
 <link rel="preload" as="style" href="progression-ui.css?v=b3ed9af867">
 <link rel="preload" as="script" href="progression-ui.js?v=a1434754d4">
 <link rel="preload" as="style" href="game-feedback.css?v=1">
-<link rel="preload" as="script" href="game-feedback.js?v=20261113-no-jokers">
+<link rel="preload" as="script" href="game-feedback.js?v=b1f0d9d356">
 <link rel="preload" as="style" href="profile-forest.css?v=1">
 <link rel="preload" as="script" href="profile-forest.js?v=64614e5d0f">
 <link rel="preload" as="style" href="ders-vadi.css?v=6">
@@ -263,7 +263,7 @@ window.supabaseClient=supabaseClient;
 <link rel="preload" as="script" href="durak-baslat.js?v=20261111-2">
 <link rel="preload" as="script" href="soru-paneli-c.js?v=20261112-4">
 <link rel="preload" as="script" href="kombo-basamak.js?v=20261113-flip-1">
-<link rel="preload" as="script" href="sonuc-a.js?v=20261112-1">
+<link rel="preload" as="script" href="sonuc-a.js?v=6bb780912d">
 <link rel="preload" as="script" href="bottom-nav-v2.js?v=20261111-1">
 <link rel="preload" as="script" href="games-v2.js?v=20261112-ios-paket">
 <link rel="preload" as="style" href="friends-ui.css?v=20261113-header-friends">
@@ -319,7 +319,7 @@ window.supabaseClient=supabaseClient;
 <link rel="preload" as="script" href="saved-sessions.js?v=20261025-device-fit-1">
 <link rel="preload" as="script" href="account-switch.js?v=20261025-device-fit-1">
 <link rel="preload" as="script" href="demo-account.js?v=20261020-open">
-<link rel="preload" as="style" href="papi-chat.css?v=a688fc12a8">
+<link rel="preload" as="style" href="papi-chat.css?v=7e7871bddc">
 <link rel="preload" as="script" href="papi-chat.js?v=4d701318b6">
 <link rel="preload" as="style" href="approved-game-boards.css?v=20261025-device-fit-1">
 <link rel="preload" as="script" href="approved-game-boards.js?v=20261113-no-jokers">
@@ -1308,7 +1308,6 @@ document.getElementById('dmBootRetry').onclick=()=>location.reload();
         #tab-buyuakademisi .ba-portrait.active { border-color:#ec8636; background:#fff3e0; animation:baPortraitPulse 1.8s ease-out infinite; }
         @keyframes baPortraitPulse { 0%,100%{box-shadow:0 4px 10px rgba(0,0,0,.15), 0 0 0 0 rgba(236,134,54,.5);} 70%{box-shadow:0 4px 10px rgba(0,0,0,.15), 0 0 0 14px rgba(236,134,54,0);} }
         #tab-buyuakademisi .ba-portrait.locked { border-color:#cbd5e1; background:#f1f5f9; filter:grayscale(1); opacity:.55; cursor:not-allowed; }
-        #tab-buyuakademisi .ba-portrait.active::after { content:'🦜'; position:absolute; top:-28px; left:50%; transform:translateX(-50%); font-size:20px; animation:baBob 1.6s ease-in-out infinite; }
         @keyframes baBob { 0%,100%{transform:translateX(-50%) translateY(0);} 50%{transform:translateX(-50%) translateY(-6px);} }
         #tab-buyuakademisi .ba-lock-badge { position:absolute; bottom:-2px; right:-2px; background:#94a3b8; color:#fff; width:22px; height:22px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:11px; border:2px solid #f4fbfc; }
         #tab-buyuakademisi .ba-stars { font-size:12px; margin-top:6px; letter-spacing:1px; }
@@ -2642,6 +2641,7 @@ document.getElementById('dmBootRetry').onclick=()=>location.reload();
         function genelSonucEkraniGoster(o) {
             const resultRoot=document.getElementById('genelSonucOverlay');
             document.body.appendChild(resultRoot);
+            resultRoot.dataset.source=o.savedReward?'papi':'';
             for(const root of document.querySelectorAll('.game-modal-overlay'))root.style.display='none';
             const quiz=document.getElementById('yoModal');if(quiz?.dataset.dmSelectedGame)quiz.classList.remove('acik');
             let dogru = Number(o.dogru) || 0;
@@ -2666,7 +2666,7 @@ document.getElementById('dmBootRetry').onclick=()=>location.reload();
             document.getElementById('gsoSiralama').style.display = o.siralamaYok ? 'none' : '';
             document.getElementById('gsoSiralama').innerHTML = '<div class="gso-sira-bos">Sıralama yükleniyor...</div>';
 
-            gsoAktif = { reklamSonuc: window.DijiReklam?.sonucHazir(o), isim: o.isim || '', oyunKey: o.oyunKey, devamFn: o.devamFn, tekrarFn: o.tekrarFn };
+            gsoAktif = { reklamSonuc: o.savedReward ? null : window.DijiReklam?.sonucHazir(o), isim: o.isim || '', oyunKey: o.oyunKey, devamFn: o.devamFn, tekrarFn: o.tekrarFn };
             let overlay = document.getElementById('genelSonucOverlay');
             let kart = overlay.querySelector('.gso-kart');
             // Animasyonları her açılışta baştan oynat
@@ -2675,6 +2675,8 @@ document.getElementById('dmBootRetry').onclick=()=>location.reload();
             gsoKonfetiPatlat(kart);
             setTimeout(() => { let b = document.getElementById('gsoDevamBtn'); if (b) b.focus(); }, 450);
         }
+
+        window.dmResultPresentation=genelSonucEkraniGoster;
 
         function gsoKonfetiPatlat(kart) {
             if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
@@ -2907,7 +2909,6 @@ document.getElementById('dmBootRetry').onclick=()=>location.reload();
 .ys-dugum.bitti .ys-dugum-ic { background:var(--sr); box-shadow:0 6px 0 rgba(0,0,0,.2), inset 0 -6px 10px rgba(0,0,0,.12); }
 .ys-dugum.aktif::before { content:''; position:absolute; inset:-6px; border-radius:50%; background:conic-gradient(#ff6b6b,#ffd93d,#6bcb77,#4d96ff,#a06bff,#ff6b6b); animation:ysDon 3s linear infinite; }
 .ys-dugum.aktif { animation:ysNabiz 2s ease-out infinite; }
-.ys-dugum.aktif::after { content:'🦜'; position:absolute; top:-34px; left:50%; font-size:24px; transform:translateX(-50%); animation:ysPapaganZipla 1.4s ease-in-out infinite; }
 .ys-dugum.kilitli .ys-dugum-ic { background:#ebe5fa; filter:grayscale(1); opacity:.7; box-shadow:0 6px 0 rgba(59,44,102,.1); }
 .ys-kilit { position:absolute; bottom:-4px; right:-4px; width:28px; height:28px; border-radius:50%; background:#8a78b8; font-size:13px; display:flex; align-items:center; justify-content:center; border:3px solid #fdfaff; z-index:2; }
 .ys-kilit.kiriliyor { animation:ysKilitKir .65s ease forwards; }
@@ -2989,7 +2990,7 @@ document.getElementById('dmBootRetry').onclick=()=>location.reload();
           </div>
         </div>
         <script src="papi-dialogues.js?v=d1fab2766e"></script>
-<script src="app-js/i03-veriler.js?v=04e0b5ede3"></script>
+<script src="app-js/i03-veriler.js?v=210b3360cb"></script>
         <script>
         /* ---------- 1) İKİZ AYNA BÜYÜSÜ (baştan, sağlam sürüm) ---------- */
         function baHafizaGoster(k) {
@@ -3323,6 +3324,9 @@ function sohbetEkraniAc() {
   if (typeof sohbetListeCiz === 'function') sohbetListeCiz();
 }
 function sohbetEkraniKapat() {
+  if(typeof ysViewportStop==='function')ysViewportStop();
+  if(typeof sh!=='undefined'&&sh)window.dmRoutePracticeFlight?.cancel();
+  const result=document.getElementById('genelSonucOverlay');if(result?.dataset.source==='papi'){result.classList.remove('acik');gsoAktif=null;}
   if (typeof sohbetDurdur === 'function') sohbetDurdur();
   if (typeof sh !== 'undefined') sh = null;
   if (typeof sohbetMikDur === 'function') sohbetMikDur();
@@ -7400,7 +7404,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <link rel="stylesheet" href="goal-announcements.css?v=1"><script defer src="goal-announcements.js?v=3"></script>
 <link rel="stylesheet" href="progress-ui.css?v=1">
 <link rel="stylesheet" href="progression-ui.css?v=b3ed9af867"><script defer src="progression-ui.js?v=a1434754d4"></script>
-<link rel="stylesheet" href="game-feedback.css?v=1"><script defer src="game-feedback.js?v=20261113-no-jokers"></script>
+<link rel="stylesheet" href="game-feedback.css?v=1"><script defer src="game-feedback.js?v=b1f0d9d356"></script>
 <link rel="stylesheet" href="profile-forest.css?v=1">
 <script defer src="profile-forest.js?v=64614e5d0f"></script>
 <link rel="stylesheet" href="question-panels-v1.css?v=2" media="print" data-dm-later>
@@ -7422,7 +7426,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <script defer src="durak-baslat.js?v=20261111-2"></script>
 <script defer src="soru-paneli-c.js?v=20261112-4"></script>
 <script defer src="kombo-basamak.js?v=20261113-flip-1"></script>
-<script defer src="sonuc-a.js?v=20261112-1"></script>
+<script defer src="sonuc-a.js?v=6bb780912d"></script>
 <script defer src="bottom-nav-v2.js?v=20261111-1"></script>
 <script defer src="games-v2.js?v=20261112-ios-paket"></script>
 <link rel="stylesheet" href="friends-ui.css?v=20261113-header-friends">
@@ -7471,7 +7475,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <script defer src="saved-sessions.js?v=20261025-device-fit-1"></script>
 <script defer src="account-switch.js?v=20261025-device-fit-1"></script>
 <script defer src="demo-account.js?v=20261020-open"></script>
-<link rel="stylesheet" href="papi-chat.css?v=a688fc12a8">
+<link rel="stylesheet" href="papi-chat.css?v=7e7871bddc">
 <script defer src="papi-chat.js?v=4d701318b6"></script>
 <link rel="stylesheet" href="approved-game-boards.css?v=20261025-device-fit-1">
 <script defer src="approved-game-boards.js?v=20261113-no-jokers"></script>

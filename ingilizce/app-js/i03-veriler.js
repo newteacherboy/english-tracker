@@ -626,7 +626,7 @@ document.addEventListener('visibilitychange',()=>{if(document.hidden)sohbetDurdu
 /* ---- Harita ---- */
 function sohbetListeCiz(acilis) {
   let p = ysPanel(); if (!p) return;
-  sohbetDurdur(); sh = null;
+  ysViewportStop();sohbetDurdur(); sh = null;
   if (yo && !yo.sohbet) yo.sohbet = {};
   const trial=window.dmPapiChat?.trial?.();
   let toplam = YO_SOHBET.length;
@@ -682,7 +682,7 @@ function ysKilitAcAnimasyonu(a) {
         setTimeout(() => yeni.classList.remove('ys-yeni-acildi'), 800);
         ysPatlat(yeni, ['✨','⭐','💫','🎉'], 16);
         yoSes('dogru');
-        if (onceki) ysPapaganUcur(onceki, yeni);
+
       }, 650);
     }, 550);
   };
@@ -693,18 +693,6 @@ function ysKilitAcAnimasyonu(a) {
       ac();
     });
   } else ac();
-}
-function ysPapaganUcur(a, b) {
-  if (ysAzHareket() || !document.body.animate) return;
-  let p1 = ysMerkez(a), p2 = ysMerkez(b);
-  let k = document.createElement('div'); k.className = 'ys-ucan-kus'; k.innerText = '🦜';
-  document.body.appendChild(k);
-  let ortaX = (p1.x + p2.x) / 2, ortaY = Math.min(p1.y, p2.y) - 90;
-  k.animate([
-    { transform: `translate(${p1.x - 22}px, ${p1.y - 22}px) scale(.8) rotate(0deg)` },
-    { transform: `translate(${ortaX - 22}px, ${ortaY - 22}px) scale(1.5) rotate(-12deg)` },
-    { transform: `translate(${p2.x - 22}px, ${p2.y - 52}px) scale(1) rotate(0deg)` }
-  ], { duration: 1000, easing: 'cubic-bezier(.4,0,.2,1)', fill: 'forwards' }).onfinish = () => k.remove();
 }
 function ysSeviyeKutla(kod, sonra) {
   let sv = ysSeviye(kod);
@@ -723,18 +711,19 @@ function ysSeviyeKutla(kod, sonra) {
 }
 
 /* ---- Portal geçişi ---- */
-function ysPortal(kaynak, renk, sonra) {
-  if (ysAzHareket() || !kaynak || !document.body.animate) { sonra(); return; }
-  let m = ysMerkez(kaynak);
-  let p = document.createElement('div'); p.className = 'ys-portal'; p.style.setProperty('--sr', renk);
-  p.innerHTML = '<div class="ys-portal-kus">🦜</div>';
-  document.body.appendChild(p);
-  let an = p.animate([{ clipPath: `circle(0px at ${m.x}px ${m.y}px)` }, { clipPath: `circle(150vmax at ${m.x}px ${m.y}px)` }],
-    { duration: 650, easing: 'cubic-bezier(.6,0,.2,1)', fill: 'forwards' });
-  an.onfinish = () => {
-    sonra();
-    setTimeout(() => { p.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 380, fill: 'forwards' }).onfinish = () => p.remove(); }, 300);
-  };
+function ysPortal(kaynak,renk,sonra,isCurrent=()=>true){
+ const flight=window.dmRoutePracticeFlight;
+ if(!flight?.play){if(isCurrent())sonra();return;}
+ flight.prepare?.();
+ Promise.resolve(flight.play({isCurrent,onExit:()=>{if(isCurrent())sohbetListeCiz();}})).then(done=>{if(done&&isCurrent())sonra();});
+}
+let ysViewportCleanup=null;
+function ysViewportStop(){ysViewportCleanup?.();ysViewportCleanup=null;const root=document.getElementById('tab-sohbet');root?.style.removeProperty('--ys-viewport-height');root?.style.removeProperty('--ys-viewport-top');root?.classList.remove('ys-keyboard-open');}
+function ysViewportStart(){
+ ysViewportStop();const root=document.getElementById('tab-sohbet'),vv=window.visualViewport;let largest=window.innerHeight;
+ const sync=()=>{if(!root?.querySelector('.ys-call'))return;const height=vv?.height||window.innerHeight;largest=Math.max(largest,window.innerHeight,height);root.style.setProperty('--ys-viewport-height',height+'px');root.style.setProperty('--ys-viewport-top',(vv?.offsetTop||0)+'px');root.classList.toggle('ys-keyboard-open',document.activeElement?.id==='yoSInput'&&height<largest*.78);};
+ window.addEventListener('resize',sync);vv?.addEventListener('resize',sync);vv?.addEventListener('scroll',sync);root.addEventListener('focusin',sync);root.addEventListener('focusout',sync);
+ ysViewportCleanup=()=>{window.removeEventListener('resize',sync);vv?.removeEventListener('resize',sync);vv?.removeEventListener('scroll',sync);root.removeEventListener('focusin',sync);root.removeEventListener('focusout',sync);};sync();
 }
 
 /* ---- Sohbet ekranı ---- */
@@ -774,9 +763,9 @@ function sohbetDuragiBaslat(i,kaynak,runId,run){
       <button type="button" class="ys-side-control" onclick="sohbetDurdur()" aria-label="Konuşmayı ve mikrofonu durdur"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="3"/></svg><span>Durdur</span></button></div>
       <div class="yo-s-giris ys-text-fallback"><input id="yoSInput" aria-label="Yazarak cevap ver" placeholder="İstersen yaz…" maxlength="400" autocomplete="off" onkeydown="if(event.key==='Enter')sohbetGonder()"><button type="button" onclick="sohbetGonder()" aria-label="Gönder">➤</button></div>
       <section class="ys-transcript" id="ysTranscript" role="dialog" aria-modal="true" aria-labelledby="ysTranscriptTitle" hidden><div class="ys-transcript-card"><header><h2 id="ysTranscriptTitle">Konuşmanın tamamı</h2><button type="button" onclick="ysTranscript(false)" aria-label="Konuşma metnini kapat">×</button></header><div class="yo-s-akis" id="yoSAkis" role="log" aria-label="Papi ve senin konuşmaların"></div></div></section></div>`;
-    p.scrollIntoView({ block: 'start' });
+    ysViewportStart();document.getElementById('tab-sohbet').scrollTop=0;
     sohbetPapaganSoyle();
-  });
+  },()=>sh===o);
 }
 function ysAdimGuncelle() {
   let a = document.getElementById('ysAdimlar'); if (!a || !sh) return;
@@ -793,6 +782,7 @@ function sohbetPapaganSoyle() {
   let s = o.s.satirlar[o.i];
   ysAdimGuncelle();
   o.kilit = true;
+  const feedback=document.getElementById('ysAnswerStatus');if(feedback)feedback.textContent='';
   let yaziyor = sohbetBalon('p ys-yaziyor', '<i></i><i></i><i></i>');
   document.getElementById('yoSIpucu').innerHTML = '';
   setTimeout(() => {
@@ -838,15 +828,13 @@ async function sohbetBitir() {
    const t=o.s.satirlar.length,gecti=r.passed,yildiz=r.stars;let acilis=null;
    if(gecti&&eski<1&&o.idx+1<YO_SOHBET.length){const next=YO_SOHBET[o.idx+1];acilis={yeniIdx:o.idx+1,oncekiIdx:o.idx,yeniSeviye:next.sv!==o.s.sv?next.sv:null};}
    const baslik=!gecti?'Biraz daha pratik!':yildiz===3?'Mükemmel sohbet!':'Harika sohbet!';
-   p.innerHTML=`<div class="yo-sohbet ys-final" style="--sr:${ysSeviye(o.s.sv).renk}">
-    <div class="ys-final-kus${gecti?' mutlu':''}"><img src="profile-assets/papi-selam.png" alt="3D Papi" width="150" height="150"></div>
-    <div class="ys-final-baslik">${baslik}</div><div class="ys-final-alt">${o.s.ikon} ${o.s.ad} · ${r.correctCount}/${t} doğru</div>
-    <div class="ys-final-yildiz">${[1,2,3].map(n=>`<span class="${n<=yildiz?'dolu':''}" style="animation-delay:${0.25+n*0.35}s">★</span>`).join('')}</div>
-    <div class="ys-final-xp">+${r.xp} XP · +${r.gold} 🪙</div>
-    ${gecti?(acilis?'<div class="ys-final-not">🔓 Yeni bir sohbetin kilidi açıldı!</div>':''):'<div class="ys-final-not hata">Kilidi açmak için en az %60 doğru gerekiyor.</div>'}
-    <button class="yo-btn" id="ysHaritaBtn">🗺️ Haritaya dön</button><button class="yo-btn ikincil" id="ysTekrarBtn">🔁 Tekrar dene</button></div>`;
-   p.scrollIntoView?.({block:'start'});if(gecti){ysKonfetiYagmuru(yildiz*12);if(typeof genelSesEfektiCal==='function')genelSesEfektiCal('kombo',10);}
-   document.getElementById('ysHaritaBtn').onclick=()=>sohbetListeCiz(acilis);document.getElementById('ysTekrarBtn').onclick=e=>sohbetBasla(o.idx,e.currentTarget);sh=null;
+   if(!window.dmSonucA?.showSaved)throw Error('Sonuç ekranı hazırlanamadı. Yeniden dene.');
+   ysViewportStop();
+   window.dmSonucA.showSaved({oyunAdi:'Papi ile sohbet · '+o.s.ad,baslik,oyunKey:'papi-sohbet',dogru:r.correctCount,yanlis:r.wrongCount,
+    sureSaniye:Math.max(1,Math.round((Date.now()-o.bas)/1000)),siralamaYok:true,parkurGecti:gecti,parkurYildiz:yildiz,
+    savedReward:{xp:r.xp,gold:r.gold},resultNote:gecti?(acilis?'Yeni bir sohbetin kilidi açıldı!':'İlerlemen sohbet haritana kaydedildi.'):'Biraz daha pratik yap. Sonraki sohbet için en az %60 doğru gerekiyor.',
+    devamFn:()=>sohbetListeCiz(acilis),tekrarFn:()=>{sohbetListeCiz();sohbetBasla(o.idx);}});
+   sh=null;
   }catch(e){if(sh!==o)return;o.finishing=false;p.innerHTML='<div class="ys-saving" role="status"><p>'+yoGuvenliMetin(e.message)+'</p><button type="button" class="yo-btn" id="ysFinishRetry">Kaydı yeniden dene</button></div>';document.getElementById('ysFinishRetry').onclick=sohbetBitir;}
 }
 
