@@ -9,7 +9,7 @@
   'use strict';
   if (window.DMSatis) return;
   const W = window, D = document;
-  const VER = '20261114-trial-promo-3';
+  const VER = '20261114-purchase-plan-1';
   const BASE = (() => { try { return new URL('.', D.currentScript?.src || location.href).href; } catch { return ''; } })();
   const A = name => BASE + 'satis-assets/' + name;
   const IMG = { papi: A('papi-enerji-molasi.webp'), bolt: A('ic-bolt.webp'), coin: A('ic-coin.webp'), crown: A('ic-crown.webp'),
@@ -364,7 +364,7 @@
 
   function render(root, ctx) {
     const { role, status, ui } = ctx;
-    const C = role === 'teacher' ? TEACHER : STUDENT, cur = status?.plan || 'free';
+    const C = role === 'teacher' ? TEACHER : STUDENT, cur = status?.purchasePlan || status?.plan || 'free';
     const iosApp = ios(), sellOpen = !!billing() && !!status?.canBuy;
     // App Store: satışı olmayan planın fiyatı iPhone'da yazılmaz.
     const showPrice = !(iosApp && !sellOpen);

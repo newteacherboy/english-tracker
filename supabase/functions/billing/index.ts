@@ -9,6 +9,7 @@ import { createClient } from 'npm:@supabase/supabase-js@2.118.0';
 import { PACKAGE_NAME, PRODUCTS, productsFor, accountRef, tokenKey, interpret, serviceJwt, parseRtdn } from './play.mjs';
 import { AD_DEFAULTS, normalizeAdSettings } from './ad-settings.mjs';
 import { verifyAppleJws, interpretApple, appleTokenFor } from './apple.mjs';
+import { purchasePlanFor } from './purchase-plan.mjs';
 
 const key = JSON.parse(Deno.env.get('SUPABASE_SECRET_KEYS') || '{}').default || Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
 const db = createClient(Deno.env.get('SUPABASE_URL')!, key!, { auth: { persistSession: false, autoRefreshToken: false } });
@@ -67,12 +68,13 @@ async function session(req: Request) {
   return null;
 }
 
-async function status(acct: { role: string; id: string; canBuy: boolean }) {
+async function status(acct: { role: string; id: string; canBuy: boolean; sandboxOnly?: boolean }) {
   const { data: plan, error } = await db.rpc('dm_plan', { actor: acct.id, account_role: acct.role });
   if (error) throw Error('plan_unavailable');
   const limits = acct.role === 'student' ? (await db.rpc('dm_plan_limits', { plan })).data : TEACHER_LIMITS[plan] || TEACHER_LIMITS.free;
-  const { data: ent } = await db.from('dm_entitlements').select('product_key,valid_until,provider').eq('account_id', acct.id).eq('account_role', acct.role).eq('state', 'active');
-  return { ok: true, role: acct.role, plan, limits, canBuy: acct.canBuy, accountRef: acct.canBuy ? await accountRef(acct.role, acct.id) : null, products: productsFor(acct.role), entitlements: ent || [] };
+  const { data: ent, error: entitlementError } = await db.from('dm_entitlements').select('product_key,valid_until,provider').eq('account_id', acct.id).eq('account_role', acct.role).eq('state', 'active');
+  if (entitlementError) throw Error('entitlements_unavailable');
+  return { ok: true, role: acct.role, plan, purchasePlan: purchasePlanFor(acct, plan, ent), limits, canBuy: acct.canBuy, accountRef: acct.canBuy ? await accountRef(acct.role, acct.id) : null, products: productsFor(acct.role), entitlements: ent || [] };
 }
 
 // Google'dan gelen durumu deftere yazar. account verilmezse (bildirim) mevcut kayıttan bulunur.

@@ -1,7 +1,7 @@
 name: Account lifecycle and moderation
 on:
   push:
-    paths: ['ingilizce/hesap-*.html', 'ingilizce/hesap-sil.js', 'ingilizce/apple-login.js', 'ingilizce/account-settings.js', 'supabase/functions/account-delete/**', 'supabase/functions/diji-api/content-moderation.mjs', 'tests/account-oauth.test.mjs', 'tests/content-moderation.test.mjs', 'tests/account-actions-ui.test.cjs', '.github/workflows/account-lifecycle.yml']
+    paths: ['ingilizce/hesap-*.html', 'ingilizce/hesap-sil.js', 'ingilizce/apple-login.js', 'ingilizce/account-settings.js', 'ingilizce/demo-account.js', 'tests/demo-account-actions-ui.test.cjs', 'tests/demo-purchase-ui.test.cjs', 'supabase/functions/account-delete/**', 'supabase/functions/diji-api/content-moderation.mjs', 'tests/account-oauth.test.mjs', 'tests/content-moderation.test.mjs', 'tests/account-actions-ui.test.cjs', '.github/workflows/account-lifecycle.yml']
   pull_request:
     paths: ['ingilizce/hesap-*.html', 'ingilizce/hesap-sil.js', 'supabase/functions/account-delete/**', 'supabase/functions/diji-api/content-moderation.mjs', 'tests/account-oauth.test.mjs', 'tests/content-moderation.test.mjs', 'tests/account-actions-ui.test.cjs', '.github/workflows/account-lifecycle.yml']
 permissions:
@@ -15,4 +15,4 @@ jobs:
         with:
           node-version: '22'
       - run: npm install --prefix /tmp/lifecycle-qa --no-audit --no-fund jsdom@26.1.0
-      - run: NODE_PATH=/tmp/lifecycle-qa/node_modules node --test tests/account-deletion.test.mjs tests/account-oauth.test.mjs tests/content-moderation.test.mjs tests/account-actions-ui.test.cjs tests/google-signup.test.cjs tests/social-safety.test.mjs tests/social-safety-ui.test.cjs tests/portal-integrity.test.cjs
+      - run: NODE_PATH=/tmp/lifecycle-qa/node_modules node --test tests/demo-account.test.cjs tests/demo-account-actions-ui.test.cjs tests/demo-purchase-ui.test.cjs tests/account-deletion.test.mjs tests/account-oauth.test.mjs tests/content-moderation.test.mjs tests/account-actions-ui.test.cjs tests/google-signup.test.cjs tests/social-safety.test.mjs tests/social-safety-ui.test.cjs tests/portal-integrity.test.cjs
