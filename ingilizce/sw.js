@@ -7,7 +7,7 @@
    - Supabase istekleri: bu dosya karışmaz (sayfadaki katman yönetir)
    Sayfayı güncellediğinizde SURUM değerini artırın (v2, v3…).
    ===================================================================== */
-const SURUM = 'diji-v434-snapshot-0231-20261114';
+const SURUM = 'diji-v436-voice-room-two-trials-20261114';
 const SAYFA = 'sayfa-' + SURUM, KAYNAK = 'kaynak-' + SURUM;
 // Cached on first use; never download the A2 catalog at startup.
 const LAZY_TOPIC_FILES = new Set(['konu-oyunlari-a1.js','konu-oyunlari-a2.js','topic-games-core.mjs']);
@@ -18,7 +18,7 @@ const AYRI_SAYFA = /\/(?:veli-kontrolu|hesap-sil|hesap-dondur|hesap-ac|gizlilik|
 
 self.addEventListener('install', e => {
   // Keep the complete lightweight opening (including the inline SVG game) available offline.
-  const opening=['papi-loading.css?v=20261112-ust','papi-loading.webp','holiday-splashes/papi-intro.js?v=24d4c8eb05','holiday-splashes/splash.js?v=20261112-yuk','holiday-splashes/dates.js?v=20261023-2','holiday-splashes/splash.css?v=20261111-pending-3'];
+  const opening=['papi-loading.css?v=20261112-ust','papi-loading.webp','holiday-splashes/papi-intro.js?v=eab062f621','holiday-splashes/splash.js?v=20261112-yuk','holiday-splashes/dates.js?v=20261023-2','holiday-splashes/splash.css?v=20261111-pending-3'];
   e.waitUntil(Promise.all([
     caches.open(SAYFA).then(c => c.addAll(['./'])),
     caches.open(KAYNAK).then(c => c.addAll(opening))

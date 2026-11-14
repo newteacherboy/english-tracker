@@ -49,3 +49,73 @@ html.dm-papi-chat-open,html.dm-papi-chat-open body{overflow:hidden!important}
 #dmPapiChat .pc-lila-copy>.pc-premium-later{margin-top:10px;min-height:38px;padding:8px;color:#785598;font:900 14px/1.2 Nunito,system-ui;box-shadow:none;background:transparent}
 @media(max-height:760px){#dmPapiChat .pc-lila-hero{max-height:29dvh}#dmPapiChat .pc-lila-copy{padding-top:12px}#dmPapiChat .pc-lila-copy h2{font-size:25px}#dmPapiChat .pc-benefits{margin:11px 0}#dmPapiChat .pc-benefits>div{min-height:78px;padding:5px 2px}#dmPapiChat .pc-premium.pc-lila .pc-condition{margin:9px 0 11px}}
 @media(min-aspect-ratio:6/5){#dmPapiChat .pc-premium.pc-lila{display:grid;grid-template-columns:42% 58%;width:min(900px,100%);align-items:start}#dmPapiChat .pc-stage{position:sticky;top:0}#dmPapiChat .pc-lila-hero{max-height:60dvh}#dmPapiChat .pc-lila-copy{margin:0;border-radius:28px 28px 0 0}}
+
+/* The journey uses the same character markup as the opening animation. */
+#tab-sohbet .ys-ust-kus{display:block;flex:0 0 60px;width:60px;height:66px;min-height:44px;margin:0;padding:0;border:0;border-radius:14px;background:transparent;font-size:0;animation:none;cursor:pointer}
+#tab-sohbet .ys-ust-kus>svg,#tab-sohbet .ys-ust-kus>img{display:block;width:100%;height:100%;object-fit:contain;overflow:visible}
+#tab-sohbet .ys-ust-kus.ys-papi-react{animation:ysPapiGreeting .65s ease-in-out}
+#tab-sohbet .ys-ust-kus:focus-visible{outline:3px solid #9671e7;outline-offset:2px}
+@keyframes ysPapiGreeting{25%{transform:translateY(-5px) rotate(-9deg) scale(1.08)}65%{transform:translateY(-2px) rotate(7deg)}100%{transform:none}}
+@media(prefers-reduced-motion:reduce){#tab-sohbet .ys-ust-kus.ys-papi-react{animation:none;filter:brightness(1.15)}}
+
+/* Selected conversation room: voice first, the original animated opening character. */
+#tab-sohbet:has(.ys-call){background:linear-gradient(155deg,#e4f5ff,#d9f3f7)!important;overflow:auto!important}
+body:has(#tab-sohbet.active .ys-call) :is(.dc-bottom-nav,#bottomNav,#bottomNavMobile,#altMenu){display:none!important}
+#tab-sohbet:has(.ys-call)>.dc-exit-btn{display:none!important}
+#tab-sohbet #kp-panel-sohbet:has(.ys-call){padding:0!important}
+#tab-sohbet .ys-call{box-sizing:border-box;display:flex;flex-direction:column;gap:10px;width:min(620px,100%);max-width:100%;margin:0 auto;padding:calc(14px + env(safe-area-inset-top,0px)) 16px max(16px,env(safe-area-inset-bottom,0px));background:radial-gradient(ellipse at 0 90%,#e8f9ff,transparent 40%),linear-gradient(#effaff,#fffdf9);border-radius:28px;color:#20305b;min-height:100dvh;font-family:Nunito,system-ui,sans-serif}
+#tab-sohbet .ys-call *{box-sizing:border-box}
+#tab-sohbet .ys-call .yo-s-ust{display:flex;align-items:center;gap:10px;margin:0;flex:none}
+#tab-sohbet .ys-call .yo-s-ust b{flex:1;min-width:0;font-size:clamp(15px,4.8vw,22px);color:#302663;line-height:1.2}
+#tab-sohbet .ys-call .yo-s-geri{border:0;border-radius:17px;padding:10px 12px;min-height:44px;background:#eee5ff;color:#6336b9;font:900 14px Nunito,system-ui;white-space:nowrap}
+#tab-sohbet .ys-call .ys-rozet{padding:6px 12px;border-radius:20px;background:#2bb873;color:white;font-weight:900}
+#tab-sohbet .ys-call .ys-adimlar{display:flex;gap:7px;margin:0 2px 5px}
+#tab-sohbet .ys-call .ys-adimlar i{flex:1;height:7px;border-radius:10px;background:#d8e2fc}
+#tab-sohbet .ys-call .ys-adimlar i.tamam,#tab-sohbet .ys-call .ys-adimlar i.simdi{background:linear-gradient(#75e0a9,#36bf83)}
+#tab-sohbet .ys-call-scene{position:relative;display:grid;place-items:center;isolation:isolate;overflow:hidden;min-height:220px;height:clamp(220px,35dvh,360px);border:2px solid white;border-radius:34px;background:radial-gradient(ellipse at 9% 32%,#fff 0, #fff9 7%,transparent 16%),radial-gradient(ellipse at 100% 82%,#87dba3 0,#7bdb9c 16%,transparent 25%),radial-gradient(ellipse at 0 95%,#87ddac 0,#6ed8a6 20%,transparent 29%),linear-gradient(#6dc7fa,#b1eaff 72%,#20bd9c);box-shadow:0 12px 25px #269cb822}
+#tab-sohbet .ys-call-character{position:relative;width:100%;height:100%;border:0;background:none;padding:0;cursor:pointer;filter:drop-shadow(0 12px 8px #167d9733)}
+#tab-sohbet .ys-call-character>svg{display:block;width:100%;height:100%;overflow:visible;transform:scale(1.13);transform-origin:50% 35%}
+#tab-sohbet .ys-touch-hint{position:absolute;right:10px;top:16px;z-index:2;width:68px;padding:8px;border-radius:18px;background:#ffffffda;font:900 12px/1.25 Nunito,system-ui;color:#243561;text-align:center;pointer-events:none}
+#tab-sohbet .ys-voice-pill{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);display:flex;align-items:center;justify-content:center;gap:8px;width:max-content;max-width:94%;min-height:34px;padding:6px 14px;border:2px solid #fff9;border-radius:99px;background:#ddfff2ed;color:#16305a;font:900 12px/1.3 Nunito,system-ui;text-align:center;pointer-events:none}
+#tab-sohbet .ys-wave{display:flex;gap:3px;align-items:center;height:20px;flex:none}#tab-sohbet .ys-wave i{width:3px;height:8px;background:#00c2a3;border-radius:4px}#tab-sohbet .ys-wave i:nth-child(2n){height:18px}#tab-sohbet .ys-wave i:nth-child(3){height:24px}
+#tab-sohbet .ys-call[data-voice=speaking] .ys-wave i,#tab-sohbet .ys-call[data-voice=listening] .ys-wave i{animation:ysWave .7s ease-in-out infinite alternate}#tab-sohbet .ys-wave i:nth-child(2n){animation-delay:-.3s!important}
+#tab-sohbet .ys-question{position:relative;background:#fff;border-radius:23px;padding:13px 16px 9px;box-shadow:0 7px 14px #536b8f1f}
+#tab-sohbet .ys-question:before{content:'';position:absolute;left:27px;top:-10px;border-left:10px solid transparent;border-right:10px solid transparent;border-bottom:12px solid white}
+#tab-sohbet .ys-question-label{font:900 10px Nunito,system-ui;color:#7890ac}#tab-sohbet .ys-question p{color:#202856;font:1000 clamp(19px,5.4vw,28px)/1.2 Nunito,system-ui;margin:2px 0 8px}
+#tab-sohbet .ys-question button{border:0;background:#e8f7f8;color:#213664;border-radius:20px;padding:7px 11px;min-height:36px;font:900 11px Nunito,system-ui;cursor:pointer}
+#tab-sohbet .ys-call .yo-s-ipucu{padding:7px 10px;margin:0;border:0;border-radius:16px;background:#eee9ff;color:#8470b4;font:800 12px/1.4 Nunito,system-ui;text-align:center;min-height:0}
+#tab-sohbet .ys-call #ysAnswerStatus{margin:0;text-align:center;min-height:17px;color:#277d73;font:900 12px/1.3 Nunito,system-ui}
+#tab-sohbet .ys-call-controls{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.65fr) minmax(0,1fr);align-items:center;gap:12px;margin:0 auto;width:min(380px,100%)}
+#tab-sohbet .ys-call-controls button{cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;border:2px solid #fff;border-radius:50%;font-family:Nunito,system-ui;min-width:0}
+#tab-sohbet .ys-call-controls svg{width:25px;height:25px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+#tab-sohbet .ys-call-controls .ys-side-control{width:70px;height:70px;margin:auto;padding:8px 5px;background:linear-gradient(#fff,#edf1ff);color:#475783;box-shadow:0 4px 0 #d5dff5;font-size:10px;font-weight:900;line-height:1.2;text-align:center}
+#tab-sohbet .ys-call-controls .yo-s-mik{width:124px;height:124px;max-width:100%;margin:0 auto;padding:14px 9px;background:linear-gradient(145deg,#08dac3,#00a5ab);color:white;box-shadow:0 0 0 7px #bdf8eb,0 0 0 12px #e3fff6,0 7px 12px #45b9ac33;font-size:11px;font-weight:950;text-align:center}
+#tab-sohbet .ys-call-controls .yo-s-mik svg{width:42px;height:42px;stroke-width:2.3}
+#tab-sohbet .ys-call-controls .yo-s-mik.dinliyor{background:linear-gradient(#10d7b8,#079f98);box-shadow:0 0 0 8px #9eefd9,0 0 0 15px #caffee;animation:ysMicPulse 1s ease-in-out infinite alternate}
+#tab-sohbet .ys-call .ys-text-fallback{display:flex;align-items:center;gap:7px;width:100%;margin:8px 0 0;padding:5px 6px 5px 14px;border:2px solid #e0e8fc;border-radius:28px;background:#ffffffc9;box-shadow:0 4px 0 #d9edfa}
+#tab-sohbet .ys-call .ys-text-fallback input{flex:1;min-width:0;width:0;border:0;border-radius:0;box-shadow:none;background:transparent;padding:7px 0;font:800 13px Nunito,system-ui;color:#273d69;min-height:35px}
+#tab-sohbet .ys-call .ys-text-fallback>button{border:2px solid white;border-radius:50%;background:#05bea7;color:#fff;width:40px;height:40px;min-height:40px;padding:0;box-shadow:0 3px 5px #09a99033;font-size:23px}
+#tab-sohbet .ys-transcript[hidden]{display:none!important}
+#tab-sohbet .ys-transcript{position:fixed;inset:0;z-index:2147483596;display:grid;place-items:center;padding:max(16px,env(safe-area-inset-top)) 14px max(16px,env(safe-area-inset-bottom));background:#1c355e77;backdrop-filter:blur(5px)}
+#tab-sohbet .ys-transcript-card{display:flex;flex-direction:column;width:min(570px,100%);height:min(720px,90dvh);border-radius:25px;background:#f8fcff;box-shadow:0 18px 60px #12345044;overflow:hidden}
+#tab-sohbet .ys-transcript header{display:flex;align-items:center;gap:12px;padding:16px;border-bottom:1px solid #dde7fa}#tab-sohbet .ys-transcript h2{flex:1;font:950 20px Nunito,system-ui;color:#25345d!important;margin:0}#tab-sohbet .ys-transcript header button{background:#e6eafa;border:0;border-radius:50%;width:44px;height:44px;font-size:26px;color:#4c5685}
+#tab-sohbet .ys-transcript .yo-s-akis{display:flex;flex-direction:column;gap:10px;flex:1;min-height:0;overflow:auto;padding:16px;max-height:none;height:auto;background:transparent;border-radius:0;scroll-behavior:auto}
+#tab-sohbet .ys-transcript .yo-s-balon{flex:none;max-width:92%;overflow-wrap:anywhere}
+#tab-sohbet :is(.ys-call-character,.ys-ust-kus)[data-emotion=happy] .p-eyeHappy,#tab-sohbet :is(.ys-call-character,.ys-ust-kus)[data-emotion=love] .p-heart,#tab-sohbet :is(.ys-call-character,.ys-ust-kus)[data-emotion=curious] .p-question,#tab-sohbet :is(.ys-call-character,.ys-ust-kus)[data-emotion=surprised] .p-exclaim,#tab-sohbet :is(.ys-call-character,.ys-ust-kus)[data-emotion=cool] .p-glasses{opacity:1}
+#tab-sohbet :is(.ys-call-character,.ys-ust-kus)[data-emotion=happy] .p-eyeOpen{opacity:0}
+#tab-sohbet :is(.ys-call-character,.ys-ust-kus)[data-emotion=curious] .p-tilt{transform:rotate(-7deg)}
+#tab-sohbet :is(.ys-call-character,.ys-ust-kus)[data-emotion=surprised] .p-body{transform:scale(1.04)}
+#tab-sohbet :is(.ys-call-character,.ys-ust-kus)[data-speaking] .p-mouth{animation:ysTalkMouth .2s ease-in-out infinite alternate}
+#tab-sohbet :is(.ys-call-character,.ys-ust-kus)[data-speaking] .p-jaw{animation:ysTalkJaw .2s ease-in-out infinite alternate}
+#tab-sohbet .ys-call-character.ys-papi-react .p-wingL{animation:ysWing .6s ease-in-out}
+#tab-sohbet .ys-call :focus-visible{outline:3px solid #795cdd;outline-offset:4px}
+.ys-trial-note{padding:8px 12px;margin:12px 0;border-radius:16px;background:#e6fff2;color:#217b69;font:900 13px/1.4 Nunito,system-ui;text-align:center}
+@keyframes ysWave{to{transform:scaleY(.4)}}@keyframes ysMicPulse{to{filter:brightness(1.08)}}@keyframes ysTalkMouth{to{transform:scaleY(1.1)}}@keyframes ysTalkJaw{to{transform:translateY(8px)}}@keyframes ysWing{45%{transform:rotate(40deg)}75%{transform:rotate(10deg)}}
+@media(max-width:350px){#tab-sohbet .ys-call{padding-left:10px;padding-right:10px;gap:8px}#tab-sohbet .ys-call-controls{gap:8px}#tab-sohbet .ys-call-controls .yo-s-mik{width:104px;height:104px;font-size:10px}#tab-sohbet .ys-call-controls .ys-side-control{width:62px;height:62px;font-size:9px}}
+@media(max-height:730px){#tab-sohbet .ys-call{gap:7px}#tab-sohbet .ys-call-scene{height:27dvh;min-height:170px}#tab-sohbet .ys-call-controls .yo-s-mik{width:100px;height:100px}#tab-sohbet .ys-call-controls .yo-s-mik svg{width:32px;height:32px}}
+@media(min-aspect-ratio:6/5){#tab-sohbet .ys-call{min-height:100dvh;max-width:900px;display:grid;grid-template-columns:43% minmax(0,1fr);align-content:start;align-items:center;column-gap:22px}#tab-sohbet .ys-call .yo-s-ust,#tab-sohbet .ys-call .ys-adimlar{grid-column:1/-1}#tab-sohbet .ys-call-scene{grid-column:1;grid-row:3/8;height:65dvh;min-height:230px}#tab-sohbet .ys-question,#tab-sohbet .ys-call .yo-s-ipucu,#tab-sohbet .ys-call #ysAnswerStatus,#tab-sohbet .ys-call-controls,#tab-sohbet .ys-call .ys-text-fallback{grid-column:2}}
+@media(prefers-reduced-motion:reduce){#tab-sohbet .ys-call *,#tab-sohbet .ys-ust-kus *{animation:none!important}}
+
+#tab-sohbet.dc-fullscreen-overlay.active:has(.ys-call){padding:0!important}
+#tab-sohbet:has(.ys-call) .sohbet-kap{width:100%;max-width:none;margin:0;padding:0!important}
+body:has(#tab-sohbet.active .ys-call) #pkSekmeler{display:none!important}

@@ -46,39 +46,6 @@
   setInterval(() => { aracGuncelle(); yuzleriKur('ybArac', ARACLAR); yuzDegistir('ybArac', ARACLAR); }, 5000);
   setInterval(() => document.querySelectorAll('.yb-kelime .harf').forEach(h => { h.innerText = 'ABCDEFGHIKLMNOPRSTUWY'[Math.floor(Math.random() * 21)]; }), 1800);
 
-  /* ---- enerji ---- */
-  let son = { e:null, a:null, anahtar:'' };
-  function renk(p) { return p > .5 ? '#6bcb77' : p > .2 ? '#ffd166' : '#ff6b6b'; }
-  function degerler() {
-    let e = window.genelEnerjiKalan, m = window.genelEnerjiMax;
-    let a = (typeof yo !== 'undefined' && yo) ? (yo.altin || 0) : 0;
-    let p = (e !== undefined && m) ? Math.max(0, Math.min(1, e / m)) : 0;
-    return { e, m, a, p };
-  }
-  function enerjiHtml(d) {
-    return `<div class="yb-en" style="--ew:${renk(d.p)}; --dol:${Math.round(d.p * 100)}%"><div class="su"></div><span class="bolt">⚡</span><span class="sayi">${d.e !== undefined ? d.e : '--'}/${d.m || '--'}</span></div><span class="yb-altin"><i>🪙</i>${d.a}</span>`;
-  }
-  function degisim(fark, ikon) {
-    let fw = $('ybEnerji'), up = fark > 0;
-    fw.classList.remove('artti', 'azaldi'); void fw.offsetWidth; fw.classList.add(up ? 'artti' : 'azaldi', 'parla');
-    setTimeout(() => fw.classList.remove('parla'), 1500);
-    let u = document.createElement('span'); u.className = 'yb-ucan'; u.style.color = up ? '#16a34a' : '#dc2626';
-    u.innerText = (up ? '+' : '') + fark + ' ' + ikon; fw.appendChild(u); setTimeout(() => u.remove(), 1150);
-  }
-  function enerjiGuncelle() {
-    let d = degerler();
-    if (d.e !== undefined && son.e !== null && d.e !== son.e) degisim(d.e - son.e, '⚡');
-    if (son.a !== null && d.a !== son.a) degisim(d.a - son.a, '🪙');
-    if (d.e !== undefined) son.e = d.e;
-    son.a = d.a;
-    let anahtar = [d.e, d.m, d.a].join('|');
-    if (anahtar === son.anahtar) return;
-    son.anahtar = anahtar;
-    $('ybEnerjiIc').innerHTML = enerjiHtml(d);
-    $('ybEnerji').classList.toggle('dusuk', d.p <= .2);
-    if ($('ybPerde').dataset.tur === 'enerji') enerjiKarti(true);
-  }
-
   /* ---- kart ekranı ---- */
   function kartlarAc(tur) {
     let liste = tur === 'oyun' ? OYUNLAR : (aracGuncelle(), ARACLAR);
@@ -94,28 +61,12 @@
     p.classList.add('acik');
     setTimeout(() => { let k = $('ybPerdeIc').querySelector('.yb-kart'); if (k) k.focus({ preventScroll:true }); }, 300);
   }
-  function enerjiKarti(guncelle) {
-    let d = degerler(), r = renk(d.p);
-    $('ybPerdeIc').innerHTML = `<div class="yb-en-kart"${guncelle ? ' style="animation:none"' : ''}>
-        <div class="ust"><div class="gosterge"><div class="yb-ic">${enerjiHtml(d)}</div></div>
-        <div><h3>⚡ Enerjin</h3><div class="buyuk-sayi" style="color:${r === '#ffd166' ? '#b7791f' : r}">${d.e !== undefined ? d.e : '--'} / ${d.m || '--'}</div></div></div>
-        <div class="bar"><i style="width:${Math.round(d.p * 100)}%; background:${r}"></i></div>
-        <div class="not">Her 15 dakikada +1 enerji dolar (en fazla ${d.m || 30}). Günlük hediye ve mağazadaki paketlerle de enerji alabilirsin.</div>
-        <div class="altin-satir"><span>🪙 Altının</span><span>${d.a}</span></div>
-        <div class="not">Altını ders, oyun ve görevleri tamamlayarak kazanırsın.</div>
-        <p class="not" role="status" data-energy-limit></p>
-        <button class="btn" id="ybMagazaBtn">🛍️ Mağazaya git</button></div>
-      <button class="yb-kapat">Kapat</button>`;
-    void window.DijiMeduPapiFeedback?.energyLimit($('ybPerdeIc').querySelector('[data-energy-limit]'));
-    $('ybMagazaBtn').onclick = () => { perdeKapat(); if (typeof meduAkisAc === 'function') { maSekme = 'magaza'; meduAkisAc(); } };
-    $('ybPerdeIc').querySelector('.yb-kapat').onclick = perdeKapat;
-  }
   function perdeKapat() { let p = $('ybPerde'); p.classList.remove('acik'); p.dataset.tur = ''; }
   $('ybPerde').addEventListener('click', e => { if (e.target === $('ybPerde')) perdeKapat(); });
   document.addEventListener('keydown', e => { if (e.key === 'Escape') perdeKapat(); });
 
   /* ---- sürükleme + kenara yapışma ---- */
-  const VARSAYILAN = { ybOyun:0.34, ybEnerji:0.50, ybArac:0.66 };
+  const VARSAYILAN = { ybOyun:0.34, ybArac:0.66 };
   function boyut(fw) { return fw.offsetWidth || 52; }
   function yerlestir(fw, x, y, kaydet) {
     let b = boyut(fw), ust = 70, alt = innerHeight - b - 96;
@@ -155,12 +106,12 @@
   surukle($('ybOyun'), () => kartlarAc('oyun'));
   window.dijiAracPaneliAc = () => kartlarAc('arac');
   surukle($('ybArac'), window.dijiAracPaneliAc);
-  window.dijiEnerjiPaneliAc = () => { $('ybPerde').dataset.tur = 'enerji'; enerjiKarti(false); $('ybPerde').classList.add('acik'); };
-  surukle($('ybEnerji'), window.dijiEnerjiPaneliAc);
-  function tumKonumlar() { ['ybOyun', 'ybEnerji', 'ybArac'].forEach(konumYukle); }
+  // The shared top HUD opens the current shop sheet; the retired floating meter has no renderer or polling.
+  window.dijiEnerjiPaneliAc = () => window.DMSatis?.enerji ? window.DMSatis.enerji('enerji-gostergesi') : window.magazaAc?.();
+  function tumKonumlar() { ['ybOyun', 'ybArac'].forEach(konumYukle); }
   addEventListener('resize', tumKonumlar);
 
-  /* ---- oyun sırasında sadece enerji kalsın ---- */
+  /* ---- oyun sırasında eski oyun ve araç kısayollarını gizle ---- */
   function oyundaMi() {
     let secici = ['.game-modal-overlay', '.seviye-harita-overlay', '.kart-oyun-overlay', '.pomodoro-overlay', '#genelSonucOverlay', '#yoModal', '.rubric-modal', '.duy3-overlay', '.yardim-modal-overlay', '.ba-levelup-overlay', '#aiChatModal'];
     for (let s of secici) for (let el of document.querySelectorAll(s)) if (el.getClientRects().length&&getComputedStyle(el).display !== 'none'&&getComputedStyle(el).visibility!=='hidden') return true;
@@ -175,7 +126,6 @@
     let panel = $('panel-alani');
     let girisli = !!(panel && panel.style.display === 'block' && typeof aktifOgrenciAdi !== 'undefined' && aktifOgrenciAdi && aktifOgrenciAdi.toLowerCase() !== 'teacher');
     let oyunda = girisli && oyundaMi();
-    $('ybEnerji').classList.toggle('gor', girisli);
     $('ybOyun').classList.toggle('gor', girisli && !oyunda);
     $('ybArac').classList.toggle('gor', girisli && !oyunda);
     if (girisli && !konumlandi) { konumlandi = true; tumKonumlar(); }
@@ -184,6 +134,5 @@
     if (lb && !lb._ma) { lb._ma = true; lb.onclick = () => { if (typeof meduAkisAc === 'function') { maSekme = 'lig'; meduAkisAc(); } }; }
     let ym = $('yoModal'), ma = $('tab-meduakis');
     if (ma && ma.classList.contains('active') && typeof maSekme !== 'undefined' && maSekme === 'magaza' && $('maGomuluAlan') && ym && !ym.classList.contains('acik')) window.yoGomuluHedef = 'maGomuluAlan';
-    if (girisli) enerjiGuncelle();
   }, 500);
 })();

@@ -600,18 +600,43 @@ function ysNoktalar(x1, x2) {
   return '<div class="ys-noktalar">' + [0.25, 0.5, 0.75].map(t => `<i style="left:${x1 + (x2 - x1) * t}%; top:${t * 100}%"></i>`).join('') + '</div>';
 }
 
+function ysPapiMarkup(){return window.dmPapiIntro?.characterMarkup?.() || window.dmLivePapi?.markup?.() || '<img src="daily-gift-assets/papi-streak-3d.webp" alt="Papi" width="60" height="66">';}
+let ysEmotionIndex=0,ysSpeech=null,ysSpeechTimer=null;
+function ysCallState(state,message){const root=document.querySelector('.ys-call');if(!root)return;root.dataset.voice=state;const status=document.getElementById('ysVoiceStatus');if(status)status.textContent=message;const mic=document.getElementById('yoSMik');if(mic){mic.classList.toggle('dinliyor',state==='listening');mic.setAttribute('aria-pressed',String(state==='listening'));mic.querySelector('span').textContent=state==='listening'?'Dinliyorum…':'Konuşmak için dokun';}}
+function ysPapiSpeak(text){
+ sohbetMikDur();ysSpeechStop();const owner=sh,step=sh?.i;
+ if(!window.speechSynthesis||!window.SpeechSynthesisUtterance){ysCallState('idle','Sıra sende');return;}
+ const u=new SpeechSynthesisUtterance(text);ysSpeech=u;u.lang='en-US';u.rate=.9;
+ const done=()=>{if(ysSpeech!==u)return;ysSpeech=null;clearTimeout(ysSpeechTimer);document.querySelectorAll('[data-speaking]').forEach(e=>e.removeAttribute('data-speaking'));if(sh===owner&&sh?.i===step)ysCallState('idle','Sıra sende');};
+ u.onstart=()=>{if(ysSpeech!==u)return;document.querySelectorAll('.ys-call-character,.ys-ust-kus').forEach(e=>e.dataset.speaking='true');ysCallState('speaking','Papi konuşuyor…');};u.onend=done;u.onerror=done;
+ try{speechSynthesis.speak(u);ysSpeechTimer=setTimeout(done,20000);}catch{done();}
+}
+function ysSpeechStop(){clearTimeout(ysSpeechTimer);ysSpeech=null;window.speechSynthesis?.cancel();document.querySelectorAll('[data-speaking]').forEach(e=>e.removeAttribute('data-speaking'));}
+function ysPapiReact(button){
+ const emotions=['happy','curious','love','surprised','cool'];button.dataset.emotion=emotions[ysEmotionIndex++%emotions.length];
+ button.classList.remove('ys-papi-react');void button.offsetWidth;button.classList.add('ys-papi-react');
+ ysPapiSpeak(['Hello, my friend!','Let’s practise English!','You are doing great!','Wow! That is amazing!','We make a great team!'][(ysEmotionIndex-1)%5]);
+ setTimeout(()=>button.classList.remove('ys-papi-react'),700);
+}
+function ysPapiReplay(){if(sh&&!sh.finishing)ysPapiSpeak(sh.s.satirlar[sh.i]?.p||'');}
+function sohbetDurdur(){sohbetMikDur();ysSpeechStop();ysCallState('idle','Durduruldu · Hazır olduğunda devam et');}
+function ysTranscript(open){const panel=document.getElementById('ysTranscript');if(!panel)return;panel.hidden=!open;document.getElementById('ysTranscriptButton')?.setAttribute('aria-expanded',String(open));if(open){panel.querySelector('button')?.focus();const flow=document.getElementById('yoSAkis');flow.scrollTop=flow.scrollHeight;}else document.getElementById('ysTranscriptButton')?.focus();}
+document.addEventListener('keydown',e=>{const panel=document.getElementById('ysTranscript');if(!panel||panel.hidden)return;if(e.key==='Escape'){e.preventDefault();ysTranscript(false);}if(e.key==='Tab'){e.preventDefault();panel.querySelector('button')?.focus();}});
+document.addEventListener('visibilitychange',()=>{if(document.hidden)sohbetDurdur();});
 /* ---- Harita ---- */
 function sohbetListeCiz(acilis) {
   let p = ysPanel(); if (!p) return;
-  sohbetMikDur(); sh = null;
+  sohbetDurdur(); sh = null;
   if (yo && !yo.sohbet) yo.sohbet = {};
+  const trial=window.dmPapiChat?.trial?.();
   let toplam = YO_SOHBET.length;
   let tamam = YO_SOHBET.filter(d => ysYildiz(d.id) >= 1).length;
   let yildizTop = YO_SOHBET.reduce((t, d) => t + ysYildiz(d.id), 0);
   let html = `<div class="ys-harita">
-    <div class="ys-ust"><div class="ys-ust-kus">🦜</div><div class="ys-ust-metin"><b>Papağanla sohbet</b>
+    <div class="ys-ust"><button type="button" class="ys-ust-kus dm-lp" onclick="ysPapiReact(this)" aria-label="Papi’ye dokun">${ysPapiMarkup()}</button><div class="ys-ust-metin"><b>Papi ile sohbet</b>
       <span>${tamam}/${toplam} diyalog · ⭐ ${yildizTop}/${toplam * 3}</span>
       <div class="ys-ust-bar"><i style="width:${Math.round(tamam / toplam * 100)}%"></i></div></div></div>
+    ${trial&&!trial.premium?'<div class="ys-trial-note">'+trial.remaining+' ücretsiz sohbet hakkın var · Premium Pro ile sınırsız</div>':''}
     <div class="ys-aciklama">En az %60 doğru cevapla, sıradaki sohbetin kilidi açılsın. Hepsini ilk denemede bilirsen 3 yıldız!</div>`;
   YO_SOHBET_SEVIYE.forEach(sv => {
     let grup = YO_SOHBET.map((d, i) => ({ d, i })).filter(x => x.d.sv === sv.kod);
@@ -720,7 +745,8 @@ function sohbetBasla(i, kaynak) {
   let d = YO_SOHBET[i], sv = ysSeviye(d.sv);
   document.querySelector('.ys-start-overlay')?.remove();
   const overlay=document.createElement('div');overlay.className='ys-start-overlay';overlay.setAttribute('role','dialog');overlay.setAttribute('aria-modal','true');overlay.setAttribute('aria-label',d.ad);
-  overlay.innerHTML='<section class="ys-start-card"><button type="button" class="ys-start-close" aria-label="Kapat">×</button><h2>'+yoGuvenliMetin(d.ad)+'</h2><p>'+d.sv+' · '+(i+1)+'. durak · '+d.satirlar.length+' konuşma adımı</p><button type="button" class="yo-btn" data-ys-start>Başlat</button><p role="status" class="ys-start-status"></p></section>';
+  const trial=window.dmPapiChat?.trial?.();
+  overlay.innerHTML='<section class="ys-start-card"><button type="button" class="ys-start-close" aria-label="Kapat">×</button><h2>'+yoGuvenliMetin(d.ad)+'</h2><p>'+d.sv+' · '+(i+1)+'. durak · '+d.satirlar.length+' konuşma adımı</p>'+(trial&&!trial.premium?'<p>'+trial.remaining+' ücretsiz hakkından 1’i kullanılacak.</p>':'')+'<button type="button" class="yo-btn" data-ys-start>Başlat</button><p role="status" class="ys-start-status"></p></section>';
   document.body.append(overlay);const prior=document.activeElement;const close=()=>{overlay.remove();prior?.focus?.();};overlay.querySelector('.ys-start-close').onclick=close;overlay.addEventListener('keydown',e=>{if(e.key==='Escape')close();if(e.key==='Tab'){const b=[...overlay.querySelectorAll('button:not(:disabled)')];if(b.length){e.preventDefault();b[(b.indexOf(document.activeElement)+(e.shiftKey?-1:1)+b.length)%b.length].focus();}}});overlay.onclick=e=>{if(e.target===overlay)close();};
   const runId=crypto.randomUUID();overlay.querySelector('[data-ys-start]').onclick=async()=>{
    const b=overlay.querySelector('[data-ys-start]');b.disabled=true;const status=overlay.querySelector('.ys-start-status');status.textContent='Sohbet açılıyor…';
@@ -735,14 +761,19 @@ function sohbetDuragiBaslat(i,kaynak,runId,run){
   ysPortal(kaynak, sv.renk, () => {
     if (sh !== o) return;
     let p = ysPanel();
-    p.innerHTML = `<div class="yo-sohbet ys-sohbet" style="--sr:${sv.renk}">
+    p.innerHTML = `<div class="yo-sohbet ys-sohbet ys-call" data-voice="idle" style="--sr:${sv.renk}">
       <div class="yo-s-ust"><button class="yo-s-geri" onclick="sohbetListeCiz()">← Harita</button><b>${d.ikon} ${d.ad}</b><span class="ys-rozet">${d.sv}</span></div>
       <div class="ys-adimlar" id="ysAdimlar">${d.satirlar.map(() => '<i></i>').join('')}</div>
-      <div class="yo-s-akis" id="yoSAkis"></div>
-      <div class="yo-s-ipucu" id="yoSIpucu"></div>
-      <div class="yo-s-giris"><button class="yo-s-mik" id="yoSMik" onclick="sohbetMik()" aria-label="Mikrofonla cevap ver">🎤</button>
-        <input id="yoSInput" placeholder="Cevabını yaz..." autocomplete="off" onkeydown="if(event.key==='Enter')sohbetGonder()">
-        <button onclick="sohbetGonder()" aria-label="Gönder">➤</button></div></div>`;
+      <section class="ys-call-scene"><span class="ys-touch-hint">Papi’ye dokun ✨</span>
+      <button type="button" class="ys-call-character dm-lp" data-emotion="happy" onclick="ysPapiReact(this)" aria-label="Papi’ye dokun, konuşsun ve duygusu değişsin">${ysPapiMarkup()}</button>
+      <div class="ys-voice-pill"><span class="ys-wave" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span><span id="ysVoiceStatus" role="status">Papi hazırlanıyor…</span></div></section>
+      <div class="ys-question"><span class="ys-question-label">Papi</span><p id="ysCurrentQuestion"></p><button type="button" onclick="ysPapiReplay()">◖)) Tekrar dinle</button></div>
+      <div class="yo-s-ipucu" id="yoSIpucu"></div><p id="ysAnswerStatus" role="status"></p>
+      <div class="ys-call-controls"><button type="button" class="ys-side-control" id="ysTranscriptButton" onclick="ysTranscript(true)" aria-label="Konuşmanın tüm metnini göster" aria-expanded="false" aria-controls="ysTranscript"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h12v18H6zM9 8h6M9 12h6M9 16h4"/></svg><span>Konuşma metni</span></button>
+      <button type="button" class="yo-s-mik" id="yoSMik" onclick="sohbetMik()" aria-label="Mikrofonla cevap ver" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10v2a7 7 0 0014 0v-2M12 19v3M8 22h8"/></svg><span>Konuşmak için dokun</span></button>
+      <button type="button" class="ys-side-control" onclick="sohbetDurdur()" aria-label="Konuşmayı ve mikrofonu durdur"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="3"/></svg><span>Durdur</span></button></div>
+      <div class="yo-s-giris ys-text-fallback"><input id="yoSInput" aria-label="Yazarak cevap ver" placeholder="İstersen yaz…" maxlength="400" autocomplete="off" onkeydown="if(event.key==='Enter')sohbetGonder()"><button type="button" onclick="sohbetGonder()" aria-label="Gönder">➤</button></div>
+      <section class="ys-transcript" id="ysTranscript" role="dialog" aria-modal="true" aria-labelledby="ysTranscriptTitle" hidden><div class="ys-transcript-card"><header><h2 id="ysTranscriptTitle">Konuşmanın tamamı</h2><button type="button" onclick="ysTranscript(false)" aria-label="Konuşma metnini kapat">×</button></header><div class="yo-s-akis" id="yoSAkis" role="log" aria-label="Papi ve senin konuşmaların"></div></div></section></div>`;
     p.scrollIntoView({ block: 'start' });
     sohbetPapaganSoyle();
   });
@@ -767,8 +798,9 @@ function sohbetPapaganSoyle() {
   setTimeout(() => {
     if (sh !== o) return;
     if (yaziyor) yaziyor.remove();
-    sohbetBalon('p', '🦜 ' + yoGuvenliMetin(s.p));
-    yoSoyle(s.p, 0.9);
+    sohbetBalon('p', yoGuvenliMetin(s.p));
+    document.getElementById('ysCurrentQuestion').textContent=s.p;
+    ysPapiSpeak(s.p);
     document.getElementById('yoSIpucu').innerHTML = `💡 ${yoGuvenliMetin(s.tr)} Örnek: <i>${yoGuvenliMetin(s.ornek)}</i>`;
     o.kilit = false;
   }, ysAzHareket() ? 100 : 950);
@@ -777,16 +809,18 @@ async function sohbetGonder(metin) {
   const o=sh;if(!o||o.kilit)return;
   const inp=document.getElementById('yoSInput');metin=String(metin||(inp?inp.value:'')).trim();if(!metin||metin.length>400)return;
   if(!o.pending||o.pending.text!==metin||o.pending.step!==o.i)o.pending={runId:o.runId,step:o.i,text:metin,requestId:crypto.randomUUID()};
-  o.kilit=true;const s=o.s.satirlar[o.i];
+  sohbetDurdur();o.kilit=true;ysCallState('thinking','Cevabına bakıyorum…');const s=o.s.satirlar[o.i];
   try{
    const r=await window.dmPapiChat.request('answer',o.pending);if(sh!==o)return;o.pending=null;
    if(inp)inp.value='';const benBalon=sohbetBalon('ben',yoGuvenliMetin(metin));
    o.d=r.correctCount;o.y=r.wrongCount;o.ilk=r.firstCount;o.deneme=r.attempts;
+   const feedback=document.getElementById('ysAnswerStatus');if(feedback)feedback.textContent=r.tooShort?'En az '+r.minimum+' kelimeyle anlat.':r.accepted?'Harika cevap!':r.advance?'Birlikte bir sonrakini deneyelim.':'İpucuna bakıp tekrar dene.';
+   document.querySelector('.ys-call-character')?.setAttribute('data-emotion',r.accepted?'happy':'curious');ysCallState('idle',r.accepted?'Harikasın!':'Sıra sende');
    if(r.tooShort){sohbetBalon('hata','✍️ Güzel başlangıç! En az '+r.minimum+' kelimeyle anlat.');o.kilit=false;return;}
    if(r.accepted){benBalon?.classList.add('parla');sohbetBalon('ok',r.attempts===0?'✅ Harika cevap!':'✅ Bu sefer oldu!');ysPatlat(benBalon,['✨','⭐','🎉'],10);yoSes('dogru');}
    else {yoSes('yanlis');benBalon?.classList.add('ys-salla');sohbetBalon('hata',r.advance?'Şöyle diyebilirdin: "'+yoGuvenliMetin(s.ornek)+'"':'🤔 Tam olmadı, ipucuna bakıp tekrar dene.');}
    if(r.advance)sohbetIleri(r.accepted?1000:1800);else o.kilit=false;
-  }catch(e){if(sh===o){sohbetBalon('hata',yoGuvenliMetin(e.message)+' Aynı cevabı yeniden gönderebilirsin.');o.kilit=false;}}
+  }catch(e){if(sh===o){sohbetBalon('hata',yoGuvenliMetin(e.message)+' Aynı cevabı yeniden gönderebilirsin.');ysCallState('idle',e.message+' Yeniden deneyebilirsin.');o.kilit=false;}}
 }
 
 function sohbetIleri(ms) {
@@ -797,7 +831,7 @@ function sohbetIleri(ms) {
 
 /* ---- Bitiş sahnesi ---- */
 async function sohbetBitir() {
-  const o=sh;if(!o||o.finishing)return;sohbetMikDur();o.finishing=true;
+  const o=sh;if(!o||o.finishing)return;sohbetDurdur();o.finishing=true;
   const p=ysPanel();p.innerHTML='<div class="ys-saving" role="status">Sohbetin ve ödülün kaydediliyor…</div>';
   try{
    const eski=ysYildiz(o.s.id),r=await window.dmPapiChat.request('finish',{runId:o.runId});if(sh!==o)return;
@@ -818,20 +852,20 @@ async function sohbetBitir() {
 
 /* ---- Mikrofon ---- */
 function sohbetMik() {
-  let SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-  if (!SR) { yoToast('Tarayıcın mikrofonu desteklemiyor, yazarak cevap ver.'); return; }
-  if (yoSR) { sohbetMikDur(); return; }
-  yoSR = new SR(); yoSR.lang = 'en-US'; yoSR.interimResults = false; yoSR.maxAlternatives = 1;
-  let btn = document.getElementById('yoSMik'); if (btn) btn.classList.add('dinliyor');
-  yoSR.onresult = e => { let t = e.results[0][0].transcript; sohbetMikDur(); sohbetGonder(t); };
-  yoSR.onerror = () => sohbetMikDur();
-  yoSR.onend = () => { yoSR = null; let b = document.getElementById('yoSMik'); if (b) b.classList.remove('dinliyor'); };
-  try { yoSR.start(); } catch (e) { sohbetMikDur(); }
+ const o=sh;if(!o||o.kilit||o.finishing)return;
+ if(yoSR){sohbetDurdur();return;}
+ const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+ const fallback=message=>{ysCallState('idle',message);yoToast(message);document.getElementById('yoSInput')?.focus();};
+ if(!SR){fallback('Mikrofon bu cihazda desteklenmiyor. Cevabını yazabilirsin.');return;}
+ ysSpeechStop();const step=o.i,r=new SR();yoSR=r;r.lang='en-US';r.interimResults=false;r.maxAlternatives=1;
+ const current=()=>yoSR===r&&sh===o&&o.i===step&&!o.kilit;
+ r.onstart=()=>{if(current())ysCallState('listening','Seni dinliyorum…');};
+ r.onresult=e=>{if(!current())return;const t=e.results?.[0]?.[0]?.transcript||'';sohbetMikDur();if(t.trim())void sohbetGonder(t);};
+ r.onerror=e=>{if(!current())return;sohbetMikDur();fallback(e.error==='not-allowed'||e.error==='service-not-allowed'?'Mikrofon izni verilmedi. Cevabını yazabilirsin.':e.error==='no-speech'?'Ses duyamadım. Tekrar dene veya cevabını yaz.':'Mikrofon çalışmadı. Tekrar dene veya cevabını yaz.');};
+ r.onend=()=>{if(yoSR!==r)return;yoSR=null;ysCallState('idle','Sıra sende');};
+ try{ysCallState('listening','Mikrofon açılıyor…');r.start();}catch{sohbetMikDur();fallback('Mikrofon açılamadı. Cevabını yazabilirsin.');}
 }
-function sohbetMikDur() {
-  if (yoSR) { let r = yoSR; yoSR = null; try { r.stop(); } catch (e) {} }
-  let b = document.getElementById('yoSMik'); if (b) b.classList.remove('dinliyor');
-}
+function sohbetMikDur(){const r=yoSR;yoSR=null;if(r){r.onstart=r.onresult=r.onerror=r.onend=null;try{if(r.abort)r.abort();else r.stop();}catch{}}document.getElementById('yoSMik')?.classList.remove('dinliyor');}
 
         /* ========== 10-11) ÖĞRETMEN RAPORLARI ========== */
         let yoRaporTip = 'zayif';

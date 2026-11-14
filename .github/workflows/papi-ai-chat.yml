@@ -16,7 +16,7 @@ jobs:
         with:
           node-version: '24'
       - run: npm install --no-save --package-lock=false --ignore-scripts jsdom@26.1.0 playwright@1.58.2
-      - run: node --test tests/papi-chat.test.cjs tests/papi-chat-ui.test.cjs tests/papi-dialogue.test.cjs tests/premium-pro-level-access.test.cjs tests/portal-integrity.test.cjs
+      - run: node --test tests/papi-voice-room.test.cjs tests/papi-chat.test.cjs tests/papi-chat-ui.test.cjs tests/papi-dialogue.test.cjs tests/premium-pro-level-access.test.cjs tests/portal-integrity.test.cjs
       - run: npx playwright install --with-deps chromium
       - run: node tests/papi-chat-mobile.cjs
       - run: node tests/premium-pro-level-access-ui.cjs
