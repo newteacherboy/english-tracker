@@ -21,6 +21,7 @@ function sound(kind){if(window.dmSoundEnabled===false||window.dmSesAcik===false)
 function monster(i){return `<span class="sa-monster sa-monster-${i}" aria-hidden="true"></span>`;}
 function floor(i,offset=0){return `<img class="sa-floor" src="arcade-assets/floor.webp" alt="" style="--i:${i};--offset:${offset}px;--hue:${i%4*48}deg">`;}
 function open(key){
+ if(key==='kule'&&window.dmPremiumSkillGames)return window.dmPremiumSkillGames.open('tower');
  if(!games[key]||window.dmFeatureEnabled?.('oyun_'+key)===false||window.dmProgression?.require('oyun_'+key)===false)return;
  close();prior=document.activeElement;const parent=window.dmViewHistory?.capture();
  s={key,owner:who(),student:player(),classNo:1,units:[],phase:'setup',busy:false,index:0,streak:0,balance:100,floors:[],runId:null};

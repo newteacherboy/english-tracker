@@ -46,6 +46,17 @@ Deno.serve(async(req:Request)=>{
     actor=await db('rpc/dm_teacher_portal_guest',{grant_id:grant.id,guest_alias:'Premium Oyun',is_preview:true,secret_hash:crypto.randomUUID()});
   }else if(!actor)return reply(req,{ok:false,mesaj:'Öğrenci oturumu gerekli.'},401);
   if(op==='access')return reply(req,{ok:true,...await db('rpc/dm_game_access',{actor,game_key:game})});
+  if(game==='tower'||game==='word-goal'){
+    if(s.role==='student'&&s.teacher_portal_access_id)return reply(req,{ok:false,mesaj:'Premium oyun için kişisel hesabına giriş yap.'},403);
+    const rpc=game==='tower'?'dm_tower':'dm_goal';
+    if(op==='status')return reply(req,await db('rpc/'+rpc+'_status',{actor}));
+    if(!UUID.test(String(b.runId||'')))return reply(req,{ok:false,mesaj:'Geçersiz oyun.'},400);
+    if(op==='start')return reply(req,await db('rpc/'+rpc+'_start',{actor,run_key:b.runId}));
+    if(op==='finish'&&Array.isArray(b.selections)&&b.selections.length>=4&&b.selections.length<=12&&b.selections.every((pick:unknown)=>typeof pick==='number'&&Number.isInteger(pick)&&pick>=-1&&pick<=3)){
+      return reply(req,await db('rpc/'+rpc+'_finish',{actor,run_key:b.runId,selections:b.selections}));
+    }
+    return reply(req,{ok:false,mesaj:'Geçersiz oyun sonucu.'},400);
+  }
   // Server-validated teacher plan: Free 3/game, Pro 5/day/game, Premium Pro unlimited.
   // Administrator override is exclusively in dm_plan(), tied to verified teachers.is_admin.
   async function teacherQuota(reserve=false){

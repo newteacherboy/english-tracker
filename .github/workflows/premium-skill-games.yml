@@ -1,0 +1,31 @@
+name: Premium Tower and Word Goal
+on:
+  pull_request:
+    paths:
+      - 'ingilizce/premium-skill-games.*'
+      - 'ingilizce/profile-v2.css'
+      - 'ingilizce/bottom-nav.js'
+      - 'ingilizce/kelime-golu.js'
+      - 'ingilizce/solo-arcade.js'
+      - 'tests/premium-skill-games*'
+      - '.github/workflows/premium-skill-games.yml'
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: npm install --prefix /tmp/premium-skill-qa jsdom@26.1.0 --no-audit --no-fund
+      - name: Syntax and regression checks
+        env:
+          NODE_PATH: /tmp/premium-skill-qa/node_modules
+        run: |
+          node --check ingilizce/premium-skill-games.js
+          node --check ingilizce/bottom-nav.js
+          node --check ingilizce/kelime-golu.js
+          node --check ingilizce/solo-arcade.js
+          node --test tests/premium-skill-games.test.cjs tests/kelime-golu.test.cjs tests/solo-arcade.test.cjs tests/profile-return-poses.test.cjs tests/premium-pro-level-access.test.cjs

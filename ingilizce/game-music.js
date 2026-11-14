@@ -12,6 +12,8 @@
  const games=[
   ['#mvOverlay','racing'],
   ['#kelimeGolu','stadium'],
+  ['#premiumSkillGame.psg-word-goal','stadium'],
+  ['#premiumSkillGame.psg-tower','arcade'],
   ['#rallyGame','racing'],
   ['#wordWheel','arcade'],
   ['#papiCards','puzzle'],
@@ -25,7 +27,8 @@
  const headerHosts={
   mvOverlay:'.mv-header',kelimeGolu:'.kg-header',rallyGame:'.rr-hud-stats',
   wordWheel:'.ww-shell>header',papiCards:'.pc-header',kgOverlay:'.kg-shell>header',
-  soloArcadeOverlay:'.sa-header',harfBahcesiOverlay:'.hb-card>header'
+  soloArcadeOverlay:'.sa-header',harfBahcesiOverlay:'.hb-card>header',
+  premiumSkillGame:'.psg-header'
  };
  const mutedKey='dm-game-music-muted';
  let muted=false,context,bus,current,track,timer,beat=0,scheduled=0;
@@ -62,6 +65,7 @@
  }
  const visible=node=>!!node&&!node.hidden&&getComputedStyle(node).display!=='none'&&node.getClientRects().length>0;
  function playing(root){
+  if(root.id==='premiumSkillGame')return root.dataset.gamePhase==='play'&&root.dataset.musicPaused!=='true';
   if(root.id==='rallyGame')return root.dataset.gamePhase==='playing'&&root.dataset.musicPaused!=='true';
   if(root.matches('.papizzle'))return visible(root.querySelector('[data-game]'))&&!visible(root.querySelector('[data-panel]'))&&!root.querySelector('.dmpi');
   if(root.classList.contains('dm-entry-open')||root.querySelector('.dmpi'))return false;
