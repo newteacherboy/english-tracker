@@ -61,7 +61,7 @@ test('all classroom cards dispatch to working entrypoints including local and on
  w.eval("var siniftaOynananOgrenci=null;var $=id=>document.getElementById(id);function rastgele(){};function siniftaOyunRozetiGoster(){};");let called=[];
  const fns=['baModuAc','kpModuAc','seviyeHaritasiAc','kelimeYarismasiAc','jpOyunAc','boslukOyunAc','hafizaOyunAc','yagmurOyunAc','asmacaOyunAc','kelimebulOyunAc','esOyunAc','trenOyunAc','dikteAc','cumleAc','okumaStudyosunuAc','pomodoroAc','harfBahcesiAc','dmInviteAc'];for(const fn of fns)w[fn]=()=>called.push(fn);
  for(const fn of ['dmPapiCards','dmMeteor','dmWordWheel'])w[fn]={open:()=>called.push(fn)};
- w.eval(normal+part+'\nsoKur();');const cards=[...w.document.querySelectorAll('[data-so]')];assert.equal(cards.length,22);
+ w.eval(normal+part+'\nsoKur();');const cards=[...w.document.querySelectorAll('[data-so]')];assert.equal(cards.length,21);assert(!cards.some(card=>card.textContent.includes('Harf Avı')));
  for(const card of cards){card.disabled=false;called=[];card.click();assert.equal(called.length,1,card.dataset.so);assert.equal(w.siniftaOynananOgrenci,'Alice');}
  assert.equal(w.dmClassroomOnlineOwner,'Alice');w.close();
 });

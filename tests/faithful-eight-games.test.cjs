@@ -18,7 +18,7 @@ test('all eight selected game designs load after legacy styles',()=>{
  assert.match(js,/\besOyunEkrani\b/);
  assert.match(js,/\btrenOyunEkrani\b/);
  assert.match(js,/fg-listening-banner/);
- assert.match(js,/fg-sentence-banner/);
+ assert.doesNotMatch(js,/fg-sentence-banner/,'Cümle Ustası keeps only the main title');
 });
 test('each approved visual palette has native gameplay selectors and a complete scenic background',()=>{
  const css=source('faithful-eight-games.css');
