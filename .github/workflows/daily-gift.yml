@@ -1,10 +1,10 @@
 name: Daily gift and login streak
 on:
   pull_request:
-    paths: ['ingilizce/daily-gift*', 'ingilizce/papi-wallet.*', 'supabase/functions/diji-api/index.ts', 'tests/daily-gift*', 'tests/daily-energy-bonus*', '.github/workflows/daily-gift.yml']
+    paths: ['ingilizce/daily-gift*', 'ingilizce/papi-wallet.*', 'ingilizce/parkur-live-papi.js', 'ingilizce/parkur-v4.css', 'supabase/functions/diji-api/index.ts', 'tests/daily-gift*', 'tests/daily-energy-bonus*', '.github/workflows/daily-gift.yml']
   push:
     branches: [main]
-    paths: ['ingilizce/daily-gift*', 'ingilizce/papi-wallet.*', 'tests/daily-gift*', '.github/workflows/daily-gift.yml']
+    paths: ['ingilizce/daily-gift*', 'ingilizce/papi-wallet.*', 'ingilizce/parkur-live-papi.js', 'ingilizce/parkur-v4.css', 'tests/daily-gift*', '.github/workflows/daily-gift.yml']
 permissions:
   contents: read
 jobs:

@@ -37,20 +37,15 @@
   svg.style.top=top+'px';svg.style.height=h+'px';svg.setAttribute('height',h);svg.setAttribute('viewBox','0 0 '+w+' '+h);
   const [p1,p2]=svg.querySelectorAll('path');p1.setAttribute('d',all);p2.setAttribute('d',done);
  }
- function walker(world){
-  const cur=world.querySelector('.rt-medal-row.is-current');
-  let lane=world.querySelector(':scope>.dm-lp-lane');
-  if(!cur){lane?.remove();return;}
-  const y=parseFloat(cur.style.getPropertyValue('--stop-y'));if(!Number.isFinite(y))return;
-  if(!lane){lane=document.createElement('div');lane.className='dm-lp-lane';lane.innerHTML='<div class="dm-lp dm-lp-walker"><div class="dm-lp-hop" aria-hidden="true">'+papi()+'</div><div class="dm-lp-says"></div></div>';world.append(lane);
-   const w=lane.querySelector('.dm-lp-walker');talk(w);w.addEventListener('animationiteration',e=>{if(e.target===w&&e.animationName==='dmLpWalk')talk(w);});}
-  const t=Math.max(0,y-165)+'px';if(lane.style.top!==t)lane.style.top=t;
- }
- /* The existing walking Papi invites learners to AI chat. No random notices or plan badge. */
- function talk(walker){
-  const box=walker.querySelector('.dm-lp-says');if(!box)return;
-  box.innerHTML='<div class="dm-lp-say dm-lp-chat-invite"><span>Benimle canlı sohbet etmek ister misin?</span><button type="button" class="dm-lp-go" data-lp-chat style="--go:#087FFF;--go-edge:#155BC3"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 11.5a8.5 8.5 0 0 1-8.5 8.5 10 10 0 0 1-4-.8L3 21l1.8-5.5A8.5 8.5 0 1 1 21 11.5Z"/></svg>Başlat ›</button><i aria-hidden="true"></i></div>';
-  box.onclick=e=>{if(e.target.closest('[data-lp-chat]')){if(window.dmPapiChat?.open)window.dmPapiChat.open();else window.yoToast?.('Sohbet hazırlanıyor. Birazdan tekrar dene.');}};
+ /* Selected design 2: a compact chat head at the edge of the visible route. */
+ function shortcut(route){
+  route.querySelectorAll('.dm-lp-lane').forEach(el=>el.remove());
+  if(route.querySelector(':scope>.dm-papi-chat-shortcut'))return;
+  const button=document.createElement('button');button.type='button';button.className='dm-papi-chat-shortcut';
+  button.setAttribute('aria-label','Papi ile canlı sohbet');
+  button.innerHTML='<span class="dm-papi-chat-label">Sohbet et <span aria-hidden="true">›</span></span><span class="dm-papi-chat-avatar dm-lp" aria-hidden="true">'+papi().replace('viewBox="0 0 400 440"','viewBox="80 35 240 275"')+'<span class="dm-papi-chat-badge">•••</span></span>';
+  button.onclick=()=>{if(window.dmPapiChat?.open)window.dmPapiChat.open();else window.yoToast?.('Sohbet hazırlanıyor. Birazdan tekrar dene.');};
+  route.append(button);
  }
  function wallet(){
   document.querySelectorAll('.dm-unified-wallet .dm-pw-papi:not(.dm-lp)').forEach(el=>{el.classList.add('dm-lp','dm-lp-mini');el.innerHTML=papi();});
@@ -58,7 +53,7 @@
  let queued=false;
  function refresh(){
   queued=false;wallet();
-  document.querySelectorAll('#tab-dunya .rt-medal-route .rt-medal-world').forEach(world=>{try{road(world);walker(world);}catch(_){}});
+  document.querySelectorAll('#tab-dunya .rt-medal-route .rt-medal-world').forEach(world=>{try{road(world);shortcut(world.closest('.rt-medal-route'));}catch(_){}});
  }
  /* Kaydırma sürerken (özellikle iOS'taki ivmeli kaydırmada) kaydırılan içerikte hiçbir şeyi değiştirme:
     yol ve Papi şeridi ancak kaydırma 350 ms durduktan sonra güncellenir. */
