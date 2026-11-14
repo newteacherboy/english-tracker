@@ -1,10 +1,9 @@
 export const DEMO_ID='dcde2026-1015-4000-8000-000000000001';
 export const DEMO_USER='dijimedu_demo';
 export const isDemo=(a:any)=>a?.role==='student'&&a.student_id===DEMO_ID;
-/* Demo hesabı her parkura, bölüme ve oyuna erişir (20 Eki 2026). Kapalı olanlar yalnızca:
-   öğretmene mesaj, şifre değiştirme ve şifreyi sıfırlamaya yol açabilecek e-posta değişikliği.
-   Hesap dondurma ve silme account-delete fonksiyonunda kapalıdır. */
-export const DEMO_BLOCKED=new Set(['sohbetMesajGonder','sifreDegistir','sifremiDegistir','sifreSifirlamaIste','memberEmailResend','iletisimGuncelle']);
+/* Hesap silme, dondurma ve mevcut şifreyle şifre değiştirme normal doğrulamayla açıktır.
+   Öğretmene mesaj ve iletişim bilgisi/e-posta sıfırlama kısıtları korunur. */
+export const DEMO_BLOCKED=new Set(['sohbetMesajGonder','sifreSifirlamaIste','memberEmailResend','iletisimGuncelle']);
 export const DEMO_PASSWORD_HASH='pbkdf2$210000$kz3nVx+iiNnFVmYTawObdA==$xPIK3djL2coH56WC9L3fBYOgAFtk4xjzorVZVuzYZOk='; // şifre: 31526931
 /* A valid starting-test record: the learning route never asks the demo account for the level test. */
 export const DEMO_PLACEMENT=()=>({version:'starting-point-20261018-v1',total:24,correct:24,level:'B2',studyUnlockedLevel:'B2',completedAt:new Date().toISOString(),demo:true});

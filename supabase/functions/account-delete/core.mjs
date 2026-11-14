@@ -62,7 +62,6 @@ export async function handleRequest(req, db) {
     }
     if (body.operation === 'prepare' || body.operation === 'prepare_oauth') {
       const username = typeof body.username === 'string' ? body.username.trim() : '';
-      if(username.toLocaleLowerCase('tr')==='dijimedu_demo')return respond({ok:false,message:'Demo hesabı silinemez.'},403);
       const password = typeof body.password === 'string' ? body.password : '';
       const role = body.role;
       if(body.action!==undefined&&!['delete','freeze','restore'].includes(body.action))return respond({ok:false,message:'Geçersiz hesap işlemi.'},400);
@@ -98,7 +97,6 @@ export async function handleRequest(req, db) {
       const account = accounts?.length === 1 ? accounts[0] : null;
       if (!account || (oauth ? account.id!==oauthAccount : !await verifyPassword(password, account.password_hash)))
         return respond({ ok: false, message: 'Hesap türü, kullanıcı adı veya şifre hatalı.' }, 401);
-      if(account.username?.toLocaleLowerCase('tr')==='dijimedu_demo')return respond({ok:false,message:'Demo hesabında bu işlem kapalı.'},403);
       const ticket = crypto.randomUUID() + '-' + crypto.randomUUID();
       const { error } = await db.from(action==='delete'?'diji_deletion_tickets':'dm_account_action_tickets').insert({
         ...(action==='delete'?{}:{action}),

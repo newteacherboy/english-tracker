@@ -13,7 +13,7 @@ function fixture(options={}) {
         select(){return this;},eq(){return this;},ilike(column,value){lookup=value;return this;},limit(){return this;},
         async single(){return {data:{worker_key:'a'.repeat(64)}};},
         async insert(){created++;return {error:options.insertError?{message:'fail'}:null};},
-        then(resolve){resolve({data:options.missing?[]:[{id:'own-id',username:'Own account',password_hash:stored}]});}
+      then(resolve){resolve({data:options.missing?[]:[{id:'own-id',username:options.username || 'Own account',password_hash:stored}]});}
       };return builder;
     },
     async rpc(name,args){
@@ -36,6 +36,18 @@ test('PBKDF2 verifier accepts only the correct password and rejects malformed ha
 test('wrong credentials cannot prepare or delete an account',async()=>{
   const f=fixture();assert.equal((await f.request({operation:'prepare',role:'student',username:'Own account',password:'wrong'})).status,401);
   assert.equal(f.counts().created,0);assert.equal(f.counts().deleted,0);
+});
+test('demo account uses normal reauthentication for deletion, freeze and restore',async()=>{
+  for (const action of ['delete','freeze','restore']) {
+    const f=fixture({username:'dijimedu_demo'});
+    const body={operation:'prepare',role:'student',username:'dijimedu_demo',action};
+    assert.equal((await f.request({...body,password:'wrong'})).status,401);
+    assert.equal(f.counts().created,0);
+    const response=await f.request({...body,password:'correct'});
+    assert.equal(response.status,200);assert.equal(response.data.action,action);
+    assert.equal(response.data.username,'dijimedu_demo');assert.equal(response.data.ticket.length,73);
+    assert.equal(f.counts().created,1);assert.equal(f.counts().deleted,0);
+  }
 });
 test('reauthentication issues a ticket, never a deletion; names escape wildcards',async()=>{
   const f=fixture();const r=await f.request({operation:'prepare',role:'teacher',username:'own%_name',password:'correct'});

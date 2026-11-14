@@ -36,10 +36,10 @@
     const label = !o.allowed ? `🔒 Sv. ${o.level}` : o.equipped ? 'Giyili' : o.owned ? 'Kuşan' : gold() < o.price ? 'Altın eksik' : 'Satın al';
     return `<article class="ds-offer ${i ? 'ds-opportunity' : 'ds-outfit'}"><button type="button" class="ds-offer-heading" data-ds="clothing"><h2>${esc(o.title)}</h2></button><p>${esc(o.name)}${o.count > 1 ? ' · '+o.count+' parça' : ''}</p><div class="ds-offer-note">${esc(o.note || (o.count > 1 ? 'Birbiriyle uyumlu parçalar' : 'Tarzına yeni bir renk kat!'))}</div>${thumbnails}<button type="button" class="ds-product-preview" data-ds="clothing" aria-label="${esc(o.name)} ürününü incele">${preview}</button><div class="ds-offer-footer"><div class="ds-price">${money(o.price)}</div>${button(label, `data-item="${esc(o.id)}"`, !o.allowed || o.equipped || (!o.owned && gold() < o.price) || pending)}</div></article>`;
   }
-  // 11 Kas 2026 · Claude Design "Mağaza B": Premium kartı (Premium Pro dışında; iOS'ta da açık). Reklamla enerji kartı dm-satis.js'ten gelir (#dmsShopEnergy).
+  // Paketlere erişim, mevcut enerji limiti veya Premium erişimi nedeniyle gizlenmez.
   function v2Extras() {
-    const pro = !window.dmTeacherPortalMode && Number(window.genelEnerjiMax || 0) < 60 && !!window.DMSatis?.planlar;
-    return `${pro ? '<button type="button" class="ds-v2-pro" data-ds="plans"><span class="ds-v2-crown" aria-hidden="true"></span><span class="ds-v2-pro-copy"><b>Premium · sınırsız enerji</b><small>Enerji derdi yok, reklam yok</small></span><span class="ds-v2-pro-go">Premium ol</span></button>' : ''}`;
+    const pro = !window.dmTeacherPortalMode && !!window.DMSatis?.planlar;
+    return `${pro ? '<button type="button" class="ds-v2-pro" data-ds="plans"><span class="ds-v2-crown" aria-hidden="true"></span><span class="ds-v2-pro-copy"><b>Paketler ve abonelikler</b><small>Pro ve Premium Pro · Aylık / Yıllık</small></span><span class="ds-v2-pro-go">İncele</span></button>' : ''}`;
   }
   function home() {
     const character = wardrobe()?.character(240) || '<img src="profile-assets/papi-selam.png" alt="Papi">';

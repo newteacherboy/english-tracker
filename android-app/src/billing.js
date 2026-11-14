@@ -154,7 +154,7 @@ const showcaseCss = `
   }
   function render() {
     if (!sheet || !status) return;
-    const cards = planCards({ role: status.role, plan: status.plan, products: status.products, storeProducts, period });
+    const cards = planCards({ role: status.role, plan: status.purchasePlan || status.plan, products: status.products, storeProducts, period });
     const body = sheet.querySelector('.dmb-body');
     body.innerHTML = cards.map(c => `<div class="dmb-card${c.plan === 'pro' ? ' is-pro' : ''}${c.current ? ' is-current' : ''}${c.plan === 'premium_pro' ? ' is-best' : ''}">
       <div class="dmb-top"><h3>${esc(c.name)}</h3><span class="dmb-price">${apple && c.action === 'soon' ? '' : esc(c.price.text)}${c.price.per && !(apple && c.action === 'soon') ? ` <small>/ ${c.price.per}</small>` : ''}</span></div>
