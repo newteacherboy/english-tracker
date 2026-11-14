@@ -58,3 +58,50 @@ test('version 8 opens as fourteen stage course after server migration',async()=>
 test('class 1–8 students need the starting test for every learning-route step, even chapters opened before the rule',async()=>{const f=fixture(),owner='s:00000000-0000-4000-8000-000000000001';f.tables.students[0].class_no=7;f.tables.extra_data=[];f.tables.papi_story_progress.push({actor_key:owner,chapter:1000,cursor:3,completed:false,version:2,deck_version:7});let r=await f.req({action:'open',chapter:1000});assert.equal(r.status,403);assert.equal(r.d.needsTest,true);r=await f.req({action:'advance',chapter:1000,cursor:3,version:2,answer:true});assert.equal(r.status,403);assert.equal(f.tables.papi_story_progress[0].cursor,3,'progress kept');const test={student_id:'00000000-0000-4000-8000-000000000001',key_name:'placement_start_v1',value:{version:'starting-point-20261018-v1',total:24,level:'A2',completedAt:'2026-10-20T12:00:00Z'}};f.tables.extra_data.push(test);r=await f.req({action:'open',chapter:1000});assert.equal(r.status,403,'a test from before the rule does not count');test.value.completedAt='2026-10-20T13:00:00Z';r=await f.req({action:'open',chapter:1000});assert.equal(r.status,200);assert.equal(r.d.cursor,3,'resumes where it stopped');});
 
 test('intermediate wrong clicks reset only the authenticated current combo, without advancing or charging',async()=>{const f=fixture();let r=(await f.req({action:'open',chapter:1000})).d;const row=f.tables.papi_story_progress[0];row.cursor=4;row.route_combo=4;const before={cursor:row.cursor,version:row.version,cost:f.cost};r=(await f.req({action:'comboReset',chapter:1000,cursor:row.cursor,version:row.version,student_id:'other'})).d;assert.equal(r.combo,0);assert.equal(r.cursor,before.cursor);assert.equal(r.version,before.version);assert.equal(f.cost,before.cost);row.route_combo=3;r=(await f.req({action:'comboReset',chapter:1000,cursor:row.cursor-1,version:row.version})).d;assert(r.stale);assert.equal(row.route_combo,3);assert.equal(f.rewards,0);});
+
+test('explicit start is persisted for the authenticated learner at any chapter without awarding skipped stops',async()=>{
+ const f=fixture(),chapter=DATA.chapters.find(c=>c.cefr==='B2'&&c.part===2)||DATA.chapters.at(-3);
+ f.tables.students[0].class_no=7;
+ assert.equal((await f.req({action:'open',chapter:chapter.id})).status,403);
+ const selection=await f.req({action:'startHere',chapter:chapter.id,student_id:'someone-else',xp:9999});
+ assert.equal(selection.status,200);assert.equal(selection.d.startChapter,chapter.id);
+ assert.equal(f.tables.dm_thematic_enrollment.length,1);
+ assert.equal(f.tables.dm_thematic_enrollment[0].actor_key,'s:'+f.tables.students[0].id);
+ assert.equal(f.tables.dm_thematic_enrollment[0].start_chapter,chapter.id);
+ assert.equal(f.tables.papi_story_progress.length,0);assert.equal(f.rewards,0);assert.equal(f.cost,0);
+ const status=(await f.req({action:'status'})).d;
+ assert.equal(status.startChapter,chapter.id);assert.equal(status.currentChapter,chapter.id);
+ assert.equal(status.access.learningRoute,'open');assert.equal(status.progress.length,0);
+ assert.equal((await f.req({action:'open',chapter:chapter.id})).status,200);
+ assert.equal(f.tables.students[0].class_no,7);
+});
+test('a chosen late chapter unlocks the next in order, survives status reloads and never jumps back to an earlier gap',async()=>{
+ const f=fixture(),index=200,chapter=DATA.chapters[index];
+ await f.req({action:'startHere',chapter:chapter.id});
+ assert.equal((await f.req({action:'open',chapter:DATA.chapters[index+2].id})).status,403);
+ let r=(await f.req({action:'open',chapter:chapter.id})).d;
+ const deck=CORE.deck(chapter,DATA.chapters[index-1]);
+ for(const task of deck){const answer=task.kind==='teach'?true:task.kind==='match'?task.pairs:task.kind==='review'?task.cards.map(c=>c.tr):task.answer;r=(await f.req({action:'advance',chapter:chapter.id,cursor:r.cursor,version:r.version,answer})).d;}
+ assert(r.finished);assert.equal(f.rewards,1);
+ const status=(await f.req({action:'status'})).d;assert.equal(status.startChapter,chapter.id);assert.equal(status.currentChapter,DATA.chapters[index+1].id);
+ assert.equal(status.progress.some(p=>p.chapter===1000),false);
+ assert.equal((await f.req({action:'open',chapter:DATA.chapters[index+1].id})).status,200);
+});
+test('chosen routes cross CEFR boundaries in order and can choose an earlier start without erasing progress',async()=>{
+ const f=fixture(),index=DATA.chapters.findIndex(c=>c.cefr==='B1')-1,chapter=DATA.chapters[index];
+ await f.req({action:'startHere',chapter:chapter.id});await f.req({action:'open',chapter:chapter.id});
+ const row=f.tables.papi_story_progress[0];row.completed=true;row.cursor=12;row.reward_claimed=true;
+ assert.equal((await f.req({action:'status'})).d.currentChapter,DATA.chapters[index+1].id);
+ assert.equal((await f.req({action:'open',chapter:DATA.chapters[index+1].id})).status,200);
+ await f.req({action:'startHere',chapter:DATA.chapters[5].id});
+ assert.equal((await f.req({action:'status'})).d.currentChapter,DATA.chapters[5].id);
+ assert.equal(f.tables.papi_story_progress.find(x=>x.chapter===chapter.id).completed,true);
+ assert.equal(f.rewards,0);assert.equal(f.cost,0);
+});
+test('invalid, frozen, expired and classroom identities cannot save a learning start',async()=>{
+ for(const change of [f=>f.tables.students[0].frozen_at='2026-11-14',f=>f.tables.portal_sessions[0].expires_at='2000-01-01',f=>f.tables.portal_sessions[0].teacher_portal_access_id='classroom']){
+  const f=fixture();change(f);assert.notEqual((await f.req({action:'startHere',chapter:1200})).status,200);assert.equal(f.tables.dm_thematic_enrollment.length,0);
+ }
+ const f=fixture();assert.equal((await f.req({action:'startHere',chapter:999999})).status,400);
+ assert.equal(f.tables.dm_thematic_enrollment[0]?.start_chapter,undefined);
+});
