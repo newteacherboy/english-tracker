@@ -32,9 +32,9 @@ const compact=await page.evaluate(()=>{
 assert.equal(await page.locator('[data-gg-main]:visible').count(),2);
 assert.equal(await page.locator('.gg-tabs button:visible').count(),0);
 await page.locator('[data-gg-main=free]').click();
-assert.equal(await page.locator('.gg-tabs').evaluate(el=>getComputedStyle(el).gridTemplateColumns.split(' ').length),3);
+assert.equal(await page.locator('.gg-tabs').evaluate(el=>getComputedStyle(el).gridTemplateColumns.split(' ').length),2);
 assert.equal(await page.locator('.gg-filters:visible').count(),1);
-assert.equal(await page.locator('#ggOnlineTab span').evaluate(el=>getComputedStyle(el).color),'rgb(244, 247, 255)');
+assert.equal(await page.locator('#ggOnlineTab .gg-category-copy').evaluate(el=>getComputedStyle(el).color),'rgb(22, 46, 83)');
 assert.equal(await page.locator('.gg-brand [data-pw]:visible').count(),4);
 assert(compact.bannerHeight <= 210,'Games header not compact: '+JSON.stringify(compact));
 
