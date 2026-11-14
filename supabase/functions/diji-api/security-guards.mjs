@@ -31,7 +31,7 @@ const anonymousLimits=Object.freeze({
  sifreSifirlamaIste:[50,3600,10,3600],sifreSifirla:[80,900,0,0]
 });
 const authenticatedLimits=Object.freeze({
- routeGraduations:[30,300],verifiedGameStatus:[120,300],verifiedGameStart:[60,300],verifiedGameAnswer:[1200,300],verifiedGameAnswers:[400,300],seviyeOyunOdulu:[80,300],
+ soloLevelStatus:[60,300],soloLevelComplete:[60,300],routeGraduations:[30,300],verifiedGameStatus:[120,300],verifiedGameStart:[60,300],verifiedGameAnswer:[1200,300],verifiedGameAnswers:[400,300],seviyeOyunOdulu:[80,300],
  seviyeParkurPekistirme:[90,300],
  dersTestSonucKaydet:[60,300],
  sifremiDegistir:[15,900],
@@ -89,6 +89,7 @@ export function protectStudentState(incoming,stored,now=Date.now()){
  return result;
 }
 export function reservedStudentKey(key){
+ if(String(key).startsWith('solo_levels_v1_'))return true;
  return ['yo_gunluk','puan_gorulen','weekly_target','learner_profile_v1','placement_start_v1','start_point_v1','progress_mail_consent_v1','rally_level'].includes(key)||String(key).startsWith('energy_daily:')||['review_word:','practice_dialogue:','practice_plan:','practice_reward:','member_login:','streak_shield:','streak_free_shield:','mission_daily_claim:','mission_weekly_claim:'].some(prefix=>String(key).startsWith(prefix));
 }
 export function dailyGoalCredit(state,day){

@@ -22,6 +22,7 @@ function monster(i){return `<span class="sa-monster sa-monster-${i}" aria-hidden
 function floor(i,offset=0){return `<img class="sa-floor" src="arcade-assets/floor.webp" alt="" style="--i:${i};--offset:${offset}px;--hue:${i%4*48}deg">`;}
 function open(key){
  if(key==='kule'&&window.dmPremiumSkillGames)return window.dmPremiumSkillGames.open('tower');
+ if(window.dmSoloLevels?.needs(key))return window.dmSoloLevels.open(key,()=>open(key));
  if(!games[key]||window.dmFeatureEnabled?.('oyun_'+key)===false||window.dmProgression?.require('oyun_'+key)===false)return;
  close();prior=document.activeElement;const parent=window.dmViewHistory?.capture();
  s={key,owner:who(),student:player(),classNo:1,units:[],phase:'setup',busy:false,index:0,streak:0,balance:100,floors:[],runId:null};
@@ -32,6 +33,7 @@ function open(key){
  window.dmViewHistory?.track(root,{parent,close});setup();root.querySelector('[data-close]').focus();window.dmGameViewport?.sync();
 }
 function setup(){
+ const level=window.dmSoloLevels?.scope(s.key);if(level){s.classNo=level.classNo;s.units=level.units;root.querySelector('.sa-body').innerHTML='<p data-status role="status"></p><button data-start>Başlat</button>';root.querySelector('[data-start]').onclick=start;return;}
  const g=games[s.key],tower=s.key==='kule';
  const intro=s.key==='fener'?'<div class="sa-fener-preview" aria-hidden="true">⌕</div>':null;
  root.querySelector('.sa-body').innerHTML=`<div class="sa-intro-art">${intro??(tower?`<div class="sa-demo-tower">${[0,1,2,3].map((i)=>floor(i,0)).join('')}</div>`:`<div class="sa-demo-monsters">${[0,1,2].map(monster).join('')}</div>`)}<img class="sa-papi" src="papi-welcome-v2.png" alt="Papi"><span class="sa-unlock">${g.level}. seviyede açılır</span></div><div class="sa-setup-panel"><p class="sa-instruction">${g.hint}</p><label>Sınıf seç<select data-grade aria-label="Sınıf seç"></select></label><label>Ünite seç<select data-unit aria-label="Ünite seç"></select></label><p class="sa-bank-note">Seçili ünitenin kelimeleri · En fazla 12 soru</p><p data-status role="status"></p><button type="button" class="sa-start" data-start><span>▶ OYUNA BAŞLA</span><small>${practice()||window.dmTeacherPortalMode?'Sınıf oyunu · Enerji harcanmaz':'⚡ 3 Enerji'}</small></button></div>`;
@@ -50,7 +52,7 @@ async function start(){
  const why=window.dmGameAccess?.reason(current.classNo,current.units[0]);if(why)return status(why);
  const bank=pool(oyunHavuzGetir(current.classNo,current.units));if(bank.length<2)return status('Bu oyun için ünitede en az iki farklı kelime olmalı. Başka bir ünite seç.');
  if(current.key==='fener'){
-  const alternatives=pool([...bank,...oyunHavuzGetir(current.classNo,[...root.querySelector('[data-unit]').options].filter(o=>!o.disabled).map(o=>Number(o.value)))]);
+  const alternatives=window.dmSoloLevels?.scope(current.key)?bank:pool([...bank,...oyunHavuzGetir(current.classNo,[...root.querySelector('[data-unit]').options].filter(o=>!o.disabled).map(o=>Number(o.value)))]);
   current.choicesBank=new Set(bank.map(w=>norm(tr(w)))).size>=4?bank:alternatives;
   if(new Set(current.choicesBank.map(w=>norm(tr(w)))).size<4)return status('Dört farklı Türkçe anlamı olan bir ünite seç.');
  }
@@ -149,7 +151,7 @@ function answer(index){
  const text=root.querySelector('[data-feedback]');text.textContent=ok?(s.streak%3===0?(s.key==='kule'?'Harika seri! Kule dengelendi!':'Üç doğru üst üste!'):'Harika! '+en(word)+' = '+tr(word)):(index<0?'Süre doldu. ':'Doğru cevap: ')+en(word)+' = '+tr(word);text.classList.toggle('is-error',!ok);
  if(ok){const current=s;nextTimer=setTimeout(()=>{if(alive(current))advance();},1100);}else{root.querySelector('[data-next]').hidden=false;root.querySelector('[data-next]').focus({preventScroll:true});}
 }
-function advance(){if(!s||!s.locked)return;clearTimeout(nextTimer);s.index++;if(s.key==='kule'&&s.balance===0){for(let i=s.index;i<s.words.length;i++){window.dmVerifiedGames.record(s.words[i],null,s.runId);OC.yanlis();}s.index=s.words.length;}question();}
+function advance(){if(!s||!s.locked)return;clearTimeout(nextTimer);s.index++;if(s.key==='kule'&&s.balance===0&&!window.dmSoloLevels?.scope(s.key)){for(let i=s.index;i<s.words.length;i++){window.dmVerifiedGames.record(s.words[i],null,s.runId);OC.yanlis();}s.index=s.words.length;}question();}
 async function finish(){
  const current=s;if(!current||current.phase==='saving'||current.phase==='done')return;stopTimers();current.phase='saving';current.result=current.result||OC.sonlandir(current.key);root.querySelector('[data-pause]').hidden=true;
  const r=current.result;root.querySelector('.sa-body').innerHTML='<div class="sa-finish">'+(window.DMPapi?window.DMPapi.tag('sevinc'):'<img src="papi-reward-v2.png" alt="Kutlayan Papi">')+'<h3>Oyun tamamlandı!</h3><p data-status role="status">Sonucun kaydediliyor…</p><button type="button" data-retry hidden>Kaydı tekrar dene</button></div>';

@@ -1,10 +1,11 @@
 import './school-curriculum.js';
+import {soloGames,progressKey,loadCatalog} from './solo-levels.mjs';
 import './konu-oyunlari-a1.js';
 import './konu-oyunlari-a2.js';
 // Authoritative grading: only bank-backed tasks are persisted, no client correctness flags.
 import {loadStartPath} from './start-path-access.mjs';
 import {schoolStopProblem} from './start-path.mjs';
-export const games=new Set(['ky','jp','bosluk','hafiza','yagmur','asmaca','kelimebul','eslestirme','tren','harfbahcesi','canavar','kule','fener','kp','dikte','cumle','ba']);
+export const games=new Set(['ky','jp','bosluk','hafiza','yagmur','kelimebul','eslestirme','tren','harfbahcesi','canavar','kule','fener','kp','dikte','cumle','ba']);
 export const norm=v=>String(v??'').normalize('NFKC').toLocaleLowerCase('en').replace(/[’‘`]/g,"'").replace(/[^\p{L}\p{N}]+/gu,' ').trim();
 const key=v=>String(v??'').trim().toLocaleLowerCase('en');
 // [12 Kas 2026] Öğrenme Yolum seviye kipi: istemci (game-launch.js levelWords) sorulari A1/A2 konu
@@ -46,7 +47,7 @@ export function grade(task,answer,game){
  const candidates=game==='kp'||task.kind==='soyle'?answer.split('|'):[answer];
  if(candidates.length>3)return {valid:false,correct:false,complete:false};
  const correct=candidates.some(x=>norm(x)===norm(expected)||task.kind==='either'&&norm(x)===norm(task.tr));
- return {valid:true,complete:correct||game==='ba'||['ky','yagmur','dikte','cumle','canavar','kule','fener'].includes(game),correct};
+ return {valid:true,complete:correct||game==='ba'||['ky','yagmur','dikte','kelimebul','cumle','harfbahcesi','canavar','kule','fener'].includes(game),correct};
 }
 export function verifiedGamesAPI(db,json){
  const fail=(message,status=409)=>json({ok:false,mesaj:message},status);
@@ -89,8 +90,17 @@ export function verifiedGamesAPI(db,json){
    const ctx=await db.rpc('dm_progress_context',{actor:a.student_id});if(ctx.error)return fail('Seviye doğrulanamadı.',503);
    const C=globalThis.DijiProgressionCatalog;if(!C?.gates[code]||!a.teacher_portal_access_id&&!ctx.data.levelEarlyAccess&&ctx.data.level<C.gates[code])return fail('Bu oyun henüz açılmadı.',403);
    const level=['A1','A2','B1','B2'].includes(body.level)&&game!=='ba'&&game!=='kp'&&game!=='tren'&&game!=='cumle'?body.level:'';
+   let soloStage=null;const soloKey=game==='ky'&&body.soloVariant==='golu'?'golu':game;
+   if(body.soloLevel&&!a.teacher_portal_access_id&&soloGames.has(game)){
+    const saved=await db.from('extra_data').select('value').eq('student_id',a.student_id).eq('key_name',progressKey(soloKey)).maybeSingle();
+    if(saved.error)return fail('Seviye yüklenemedi.',503);
+    const stages=await loadCatalog(db,soloKey),current=Math.max(1,Number(saved.data?.value?.next)||1);
+    soloStage=stages[Math.min(current,stages.length)-1];
+    if(!soloStage||Number(body.soloLevel)!==soloStage.number||classNo!==soloStage.classNo||JSON.stringify(units)!==JSON.stringify(soloStage.units))return fail('Bu seviye henüz açılmadı.',403);
+   }
    let available;
-   if(level){available=levelPool(level);if(available.length<4)return fail('Seviye kelimeleri yüklenemedi.',503);}
+   if(soloStage)available=soloStage.words;
+   else if(level){available=levelPool(level);if(available.length<4)return fail('Seviye kelimeleri yüklenemedi.',503);}
    else{
      let bankQuery=db.from('word_bank').select('english,turkish,class_no,unit_no').eq('active',true);
      bankQuery=game==='kp'?bankQuery.in('class_no',[1,2,3,4,5,6,7,8]):bankQuery.eq('class_no',classNo);
@@ -131,6 +141,7 @@ export function verifiedGamesAPI(db,json){
    }
    if(!words.length)return fail('Bu bölümde soru bulunamadı.',400);
    const deck=game==='ba'&&body.schoolVersion===9?globalThis.DMSchoolCurriculum.build(words,available,stop):compile(game,words);
+   if(soloStage){if(deck.length!==12)return fail('Seviye 12 soru içermeli.',400);for(const t of deck){t.soloLevel=soloStage.number;if(soloKey!==game)t.soloVariant=soloKey;}}
    const r=await db.rpc(a.teacher_portal_access_id?'dm_teacher_verified_start':['canavar','kule','fener'].includes(game)?'dm_arcade_verified_start':'dm_verified_start',{actor:a.student_id,run_key:run,game_code:game,cls:classNo,unit_ids:units,stop_id:stop,tasks:deck});
    if(r.error)return fail(['canavar','kule','fener'].includes(game)?r.error.message:'Oyun oturumu kaydedilemedi.',409);
    return json({ok:true,answersInClaim:true,total:deck.length,words,...(body.schoolVersion===9?{tasks:deck}:{}),slots:deck.map((w,i)=>({slot:i,en:w.en,kind:w.kind,pairs:w.pairs})),...r.data});

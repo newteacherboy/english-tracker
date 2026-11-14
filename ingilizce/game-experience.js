@@ -46,6 +46,7 @@
     ['cumle','cumleAc','Cümle Ustası','Karışık kelimeleri sırala, İngilizce cümleyi kur.']]) {
     const original=window[fn];if(typeof original!=='function')continue;
     window[fn]=function(){
+      if(window.dmSoloLevels?.needs(key))return window.dmSoloLevels.open(key,()=>{original();const child=document.getElementById('yoModal');if(child)child.dataset.dmSelectedGame=key;});
       if(typeof genelOyunGirisEngelliMi==='function'&&genelOyunGirisEngelliMi())return;
       document.getElementById('dmGameIntro')?.remove();
       const overlay=document.createElement('div');overlay.id='dmGameIntro';overlay.className='hb-overlay';

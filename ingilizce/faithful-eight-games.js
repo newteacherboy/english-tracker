@@ -38,14 +38,7 @@
      speaker.before(banner);
     }
    }
-   if(modal.dataset.dmSelectedGame==='cumle'){
-    const question=yo.querySelector('.yo-soru');
-    if(question&&!yo.querySelector('.fg-sentence-banner')){
-     const banner=document.createElement('div');banner.className='fg-sentence-banner';
-     banner.innerHTML='<span aria-hidden="true">🍃</span><strong>🧱 Cümle Ustası</strong><span aria-hidden="true">🌼</span>';
-     question.before(banner);
-    }
-   }
+
   };
   new MutationObserver(update).observe(yo,{childList:true});
   new MutationObserver(update).observe(modal,{attributes:true,attributeFilter:['class','data-dm-selected-game']});

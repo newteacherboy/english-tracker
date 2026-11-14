@@ -223,6 +223,7 @@ const YO_SOHBET = window.DMPapiDialogueCatalog;
           return true;
         }
         function yoOrnekKelimeHavuzu(regex) {
+          if(window.dmSoloLevels?.scope('dikte'))return window.dmSoloLevels.bank('dikte').filter(k=>regex.test(k.ingilizce));
           if (window.dmSelectedIntro?.key === 'dikte') return oyunHavuzGetir(window.dmSelectedIntro.classNo,window.dmSelectedIntro.units).filter(k=>regex.test(String(k.ingilizce||k.en||''))&&(k.turkce||k.tr));
           let s = Number(yoSinif(yoIsim)) || 0;
           let tum = (window.masterKelimeHavuzu || []).filter(k => regex.test(String(k.ingilizce || k.en || '').trim()) && (k.turkce || k.tr));
@@ -419,33 +420,30 @@ const YO_SOHBET = window.DMPapiDialogueCatalog;
         }
         function dikteSoru() {
           if (dkt.i >= dkt.liste.length) return dikteBitir();
-          let w = dkt.liste[dkt.i];
-          yoGovde(`<div class="yo-ust-bilgi"><span>Kelime ${dkt.i + 1}/${dkt.liste.length}</span><span>✅ ${dkt.d} · ❌ ${dkt.y}</span></div>
-            <div class="yo-ilerleme"><div style="width:${Math.round(dkt.i / dkt.liste.length * 100)}%"></div></div>
-            <div class="yo-dikte-dinle"><button onclick="dikteDinle()" aria-label="Kelimeyi dinle">🔊</button><button class="kucuk" onclick="dikteDinle(true)" aria-label="Yavaş dinle">🐢</button></div>
-            <div class="yo-bos" style="padding:0 0 10px">Duyduğun kelimeyi yaz · Anlamı: <b>${yoGuvenliMetin(w.turkce || w.tr)}</b></div>
-            <input class="yo-giris" id="yoDikteInput" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="kelimeyi yaz" onkeydown="if(event.key==='Enter')dikteKontrol()">
-            <button class="yo-btn" onclick="dikteKontrol()">Kontrol et</button>
-            <div class="yo-geri-bildirim" id="yoGB"></div>`);
-          setTimeout(() => { dikteDinle(); let i = document.getElementById('yoDikteInput'); if (i) i.focus(); }, 350);
+          const current=dkt,w=current.liste[current.i],correct=String(w.ingilizce||w.en).trim();
+          const bank=window.dmSoloLevels?.bank('dikte')||window.masterKelimeHavuzu||[];
+          const wrong=yoKaristir(bank.filter(k=>String(k.ingilizce||k.en).trim().toLowerCase()!==correct.toLowerCase()&&String(k.turkce||k.tr).trim().toLowerCase()!==String(w.turkce||w.tr).trim().toLowerCase()));
+          if(!wrong.length){yoToast('İkinci seçenek yüklenemedi.');return;}
+          current.choices=yoKaristir([correct,String(wrong[0].ingilizce||wrong[0].en).trim()]);current.locked=false;
+          yoGovde(`<div class="yo-ust-bilgi"><span>Kelime ${current.i+1}/${current.liste.length}</span><span>✅ ${current.d} · ❌ ${current.y}</span></div><div class="yo-dikte-dinle"><button onclick="dikteDinle()" aria-label="Kelimeyi dinle">🔊</button><button onclick="dikteDinle(true)" aria-label="Yavaş dinle">🐢</button></div><p>Duyduğun kelimeyi seç.</p><div class="yo-siklar" id="yoDikteChoices" hidden>${current.choices.map((v,i)=>`<button type="button" class="yo-sik" onclick="dikteKontrol(${i})">${yoGuvenliMetin(v)}</button>`).join('')}</div><div class="yo-geri-bildirim" id="yoGB"></div>`);
+          const index=current.i;setTimeout(()=>{if(dkt===current&&current.i===index&&document.querySelector('#yoModal.acik'))dikteDinle();},200);
         }
-        function dikteDinle(yavas) { let w = dkt && dkt.liste[dkt.i]; if (w) yoSoyle(String(w.ingilizce || w.en).trim(), yavas ? 0.55 : 0.9); }
-        function dikteKontrol() {
-          let inp = document.getElementById('yoDikteInput'), gb = document.getElementById('yoGB');
-          if (!inp || inp.disabled) return;
-          let v = inp.value.trim().toLowerCase();
-          if (!v) { gb.style.color = '#e0434b'; gb.innerText = 'Önce duyduğun kelimeyi yaz.'; return; }
-          let w = dkt.liste[dkt.i], dogru = String(w.ingilizce || w.en).trim().toLowerCase(), tamam = v === dogru;
-          window.dmVerifiedGames?.record(w,v);
-          inp.disabled = true;
-          if (tamam) {
-            dkt.d++; OC.dogru(1); inp.style.borderColor = '#2f9e5a'; inp.style.background = '#dff6e7';
-            gb.style.color = '#2f9e5a'; gb.innerText = '✅ Harika, doğru yazdın!'; yoSes('dogru');
-          } else {
-            dkt.y++; OC.yanlis(false); zkEkle(w); inp.style.borderColor = '#e0434b'; inp.style.background = '#fde2e3';
-            gb.style.color = '#e0434b'; gb.innerHTML = `Doğrusu: <b>${yoGuvenliMetin(dogru)}</b>`; yoSes('yanlis');
-          }
-          setTimeout(() => { dkt.i++; dikteSoru(); }, tamam ? 1000 : 2100);
+        function dikteDinle(yavas) {
+          const current=dkt,index=current?.i,w=current?.liste[index];if(!w)return;
+          const show=()=>{if(dkt===current&&current.i===index){const choices=document.getElementById('yoDikteChoices');if(choices)choices.hidden=false;}};
+          if(!window.speechSynthesis){show();return;}
+          const u=new SpeechSynthesisUtterance(String(w.ingilizce||w.en).trim());u.lang='en-US';u.rate=yavas?.55:.9;u.onend=show;u.onerror=show;
+          speechSynthesis.cancel();speechSynthesis.speak(u);setTimeout(show,5000);
+        }
+        function dikteKontrol(index) {
+          const current=dkt,buttons=[...document.querySelectorAll('#yoDikteChoices .yo-sik')],gb=document.getElementById('yoGB');
+          if(!current||current.locked||!Number.isInteger(index)||!buttons[index]||document.getElementById('yoDikteChoices').hidden)return;
+          current.locked=true;buttons.forEach(b=>b.disabled=true);
+          const w=current.liste[current.i],answer=current.choices[index],correct=String(w.ingilizce||w.en).trim(),ok=answer.toLowerCase()===correct.toLowerCase();
+          window.dmVerifiedGames?.record(w,answer);buttons[current.choices.indexOf(correct)].classList.add('dogru');
+          if(ok){current.d++;OC.dogru(1);gb.textContent='✅ Doğru!';yoSes('dogru');}
+          else{current.y++;OC.yanlis(false);zkEkle(w);buttons[index].classList.add('yanlis');gb.textContent='Doğru cevap: '+correct;yoSes('yanlis');}
+          setTimeout(()=>{if(dkt!==current||!document.querySelector('#yoModal.acik'))return;current.i++;dikteSoru();},ok?850:1200);
         }
         function dikteBitir() {
           yoSonuc({ oyunAdi:'🎧 Kulak Dedektifi', oyunKey:'dikte', dogru:dkt.d, yanlis:dkt.y, puan:OC.puan(), sureSaniye:Math.round((Date.now() - dkt.bas) / 1000), siralamaYok:true,
@@ -458,10 +456,10 @@ const YO_SOHBET = window.DMPapiDialogueCatalog;
         let cml = null;
         function cumleAc() {
           if (!yoHazirMi()) return;
-          let s = window.dmSelectedIntro?.key === 'cumle' ? window.dmSelectedIntro.classNo : Number(yoSinif(yoIsim)) || 0;
+          let s = window.dmSoloLevels?.scope('cumle')?.classNo || (window.dmSelectedIntro?.key === 'cumle' ? window.dmSelectedIntro.classNo : Number(yoSinif(yoIsim)) || 0);
           let seviyeler = !s ? ['A1','A2','B1'] : s <= 4 ? ['A1'] : s <= 6 ? ['A1','A2'] : ['A2','B1'];
           const selectedUnits = window.dmSelectedIntro?.key === 'cumle' ? window.dmSelectedIntro.units : null;
-          let bank = (window.masterKelimeHavuzu || []).filter(k => Number(k.sinif) === Number(s) && (!Array.isArray(selectedUnits) || selectedUnits.includes(Number(k.unite))) && typeof k.ingilizce === 'string' && k.ingilizce.trim().split(/\s+/).length >= 3 && k.ingilizce.trim().split(/\s+/).length <= 9 && k.turkce).map(k => [k.ingilizce.trim(), k.turkce.trim(), 'word_bank', Number(k.sinif), Number(k.unite)]);
+          let bank = (window.dmSoloLevels?.bank('cumle') || window.masterKelimeHavuzu || []).filter(k => Number(k.sinif) === Number(s) && (!Array.isArray(selectedUnits) || selectedUnits.includes(Number(k.unite))) && typeof k.ingilizce === 'string' && k.ingilizce.trim().split(/\s+/).length >= 3 && k.ingilizce.trim().split(/\s+/).length <= 9 && k.turkce).map(k => [k.ingilizce.trim(), k.turkce.trim(), 'word_bank', Number(k.sinif), Number(k.unite)]);
           let liste = OC.kelimeSec('cumle', bank, OC.SORU, { anahtar: c => c[0], zk: false });
           if (!liste.length) { yoToast('Bu sınıfın seçilen ünitelerinde cümle kurulabilecek kalıp yok. Başka bir ünite seç.'); return; }
           if (!yoEnerjiKontrol()) return;

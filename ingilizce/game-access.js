@@ -15,7 +15,8 @@
   if(!grid)return;
   const buttons=[...grid.querySelectorAll('.sinif-btn')];
   const classes=buttons.map((button,index)=>Number(button.dataset.class)||Number(button.textContent.match(/\d+/)?.[0])||index+1);
-  const preferred=classes.indexOf(rule()?.cls);
+  const stage=window.dmSoloLevels?.active;
+  const preferred=classes.indexOf(stage?.classNo||rule()?.cls);
   const active=preferred<0?0:preferred;
   buttons.forEach((button,index)=>{
    button.disabled=false;
