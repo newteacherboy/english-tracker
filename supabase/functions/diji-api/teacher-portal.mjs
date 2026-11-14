@@ -1,4 +1,5 @@
 import {memberStudents,isClassroomGuest} from './classroom-identity.mjs';
+import {isDemoTeacherGrant} from './demo-account.ts';
 // Every grant is tied to a normal learner; neither role claims nor invite codes grant access.
 // Private teacher codes use rate-limited authentication; owner credentials stay server-side.
 export const teacherApplicationKey='teacher_portal_application_v1';
@@ -65,7 +66,7 @@ export function teacherPortalAPI(d){
    ]);
    if(personal.error||teacher.error)return fail('Kişisel hesap doğrulanamadı.',503);
    if(!personal.data||personal.data.status!=='approved'||personal.data.frozen_at||
-      !personal.data.email_verified_at||!teacher.data?.active||teacher.data.frozen_at)
+      (!personal.data.email_verified_at&&!isDemoTeacherGrant(r))||!teacher.data?.active||teacher.data.frozen_at)
     return fail('Önce kişisel hesabını doğrulaman ve öğretmen onayının aktif olması gerekiyor.',403);
    const token=await issueSession('student',r.student_id);
    return json({ok:true,token,name:personal.data.username,role:'ogrenci'});
@@ -81,7 +82,7 @@ export function teacherPortalAPI(d){
     db.from('teachers').select('id,username,active,frozen_at').eq('id',r.teacher_id).maybeSingle()
    ]);
    if(student.error||teacher.error)return fail('Hesap doğrulanamadı.',503);
-   if(!student.data?.email_verified_at||student.data.status!=='approved'||student.data.frozen_at||
+   if((!student.data?.email_verified_at&&!isDemoTeacherGrant(r))||student.data?.status!=='approved'||student.data.frozen_at||
       !teacher.data?.active||teacher.data.frozen_at)return fail('Önce e-posta hesabını doğrula ve öğretmen onayını bekle.',403);
    return json({ok:true,token:await session(r,'teacher'),name:teacher.data.username});
   }

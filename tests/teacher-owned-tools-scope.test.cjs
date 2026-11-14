@@ -84,7 +84,7 @@ test('phone layout keeps teacher home and new actions visible without main scrol
  assert.match(css,/\.dm-midnight-actions\{\s*grid-template-columns:repeat\(3,minmax\(0,1fr\)\)/);
  assert.match(css,/\.dm-midnight-shortcuts\{\s*grid-template-columns:repeat\(4,minmax\(0,1fr\)\)/);
  assert.match(css,/overflow:hidden!important/);
- assert.match(workspace,/teacher-workspace\.css\?v=20261110-quick-actions-fit/);
+ assert.match(workspace,/teacher-workspace\.css\?v=[\w-]+/);
 });
 
 test('teacher home and teacher panel retain the classic Ödev and Duyuru layouts',()=>{

@@ -1,4 +1,5 @@
 import {test} from 'node:test';import assert from 'node:assert/strict';import {teacherChatAPI} from '../supabase/functions/diji-api/teacher-chat.mjs';
+import {DEMO_ID,DEMO_TEACHER_ID} from '../supabase/functions/diji-api/demo-account.ts';
 function fixture(){
  const tables={students:[{id:'a',username:'Alice',teacher_id:'t1',status:'approved'},{id:'b',username:'Bob',teacher_id:'t2',status:'approved'},{id:'c',username:'Independent',teacher_id:null,status:'approved'},{id:'future',username:'Future',teacher_id:'t2',status:'approved'}],teachers:[{id:'owner',username:'teacher',is_admin:true,active:true,email:'owner@example.test'},{id:'t1',username:'one',active:true,email:'one@example.test'},{id:'t2',username:'two',active:true,email:'two@example.test'}],teacher_chat_admin_copies:[{student_id:'a'},{student_id:'b'},{student_id:'c'}],teacher_chat_receipts:[],chat_messages:[],mail_queue:[]};
  let failInsert=false;const db={from(name){let filters=[],op='',payload,single=false,sort='',asc=true,limit=Infinity,start=0;const q={select(){return q},eq(k,v){filters.push(r=>r[k]===v);return q},or(value){const m=value.match(/^created_at.gt.(.+),and\(created_at.eq.(.+),id.gt.(.+)\)$/);if(m)filters.push(r=>r.created_at>m[1]||(r.created_at===m[2]&&r.id>m[3]));return q},neq(k,v){filters.push(r=>r[k]!==v);return q},in(k,v){filters.push(r=>v.includes(r[k]));return q},is(k,v){filters.push(r=>(r[k]??null)===v);return q},gte(k,v){filters.push(r=>r[k]>=v);return q},order(k,o){sort=k;asc=o?.ascending!==false;return q},range(a,b){start=a;limit=b-a+1;return q},limit(n){limit=n;return q},maybeSingle(){single=true;return run()},insert(p){op='insert';payload=p;return q},upsert(p){op='upsert';payload=p;return q},update(p){op='update';payload=p;return q},then(a,b){return run().then(a,b)}};async function run(){const all=tables[name]||[];let found=all.filter(r=>filters.every(f=>f(r)));if(sort==='created_at')found.sort((a,b)=>(String(a[sort]).localeCompare(String(b[sort])))*(asc?1:-1));found=found.slice(start,start+limit);
@@ -7,6 +8,16 @@ function fixture(){
  const student=id=>({role:'student',student_id:id}),teacher=id=>({role:'teacher',teacher_id:id}),owner={...teacher('owner'),yonetici:true,ogretmenKullanici:'teacher'};
  return {tables,api,student,teacher,owner,fail:()=>{failInsert=true},call:(op,b={},a=student('a'),method='POST')=>api.handle(op,b,new URLSearchParams(),a,method)};
 }
+test('demo messages persist, reach the owner inbox and accept replies without exposing other students',async()=>{
+ const f=fixture();f.tables.students.push({id:DEMO_ID,username:'dijimedu_demo',teacher_id:null,status:'approved'});
+ const demo=f.student(DEMO_ID);
+ assert.equal((await f.call('sohbetMesajGonder',{mesaj:'Demo question'},demo)).status,200);
+ assert.equal(f.tables.chat_messages[0].student_id,DEMO_ID);
+ assert.equal((await f.call('ogretmenSohbetListesi',{},f.owner)).data[0].ogrenci,'dijimedu_demo');
+ assert.equal((await f.call('ogretmenCevapGonder',{ogrenci:'dijimedu_demo',mesaj:'Demo reply'},f.owner)).status,200);
+ assert.equal((await f.call('sohbetGetir',{},demo)).data.at(-1).mesaj,'Demo reply');
+ assert.equal((await f.call('ogretmenSohbetAc',{ogrenci:'Alice'},f.teacher(DEMO_TEACHER_ID))).status,403);
+});
 test('existing linked account sends to its teacher and owner; unlinked goes only to owner',async()=>{const f=fixture();await f.call('sohbetMesajGonder',{ogrenci:'Alice',mesaj:'hello'});assert.deepEqual(f.tables.mail_queue.map(x=>x.to_email),['one@example.test','owner@example.test']);await f.call('sohbetMesajGonder',{mesaj:'hello'},f.student('c'));assert.equal(f.tables.mail_queue.at(-1).to_email,'owner@example.test');assert.equal(f.tables.students[0].teacher_id,'t1');});
 test('future linked account stays with own teacher; body cannot choose another pupil or teacher',async()=>{const f=fixture();await f.call('sohbetMesajGonder',{mesaj:'hello',teacher_id:'owner',student_id:'a'},f.student('future'));assert.deepEqual(f.tables.mail_queue.map(x=>x.to_email),['two@example.test']);assert.equal(f.tables.chat_messages[0].student_id,'future');assert.equal((await f.call('sohbetMesajGonder',{ogrenci:'Bob',mesaj:'bad'})).status,403);});
 test('unrelated teachers and non-owner administrators cannot read or reply to foreign threads',async()=>{const f=fixture();for(const op of ['ogretmenSohbetAc','ogretmenCevapGonder'])assert.equal((await f.call(op,{ogrenci:'Alice',mesaj:'no'},{...f.teacher('t2'),yonetici:true,ogretmenKullanici:'other'})).status,403);assert.equal((await f.call('ogretmenSohbetAc',{ogrenci:'Future'},f.owner)).status,403);});

@@ -1,9 +1,11 @@
 export const DEMO_ID='dcde2026-1015-4000-8000-000000000001';
+export const DEMO_TEACHER_ID='dcde2026-1015-4000-8000-000000000002';
+export const isDemoTeacherGrant=(grant:any)=>grant?.student_id===DEMO_ID&&grant.teacher_id===DEMO_TEACHER_ID;
 export const DEMO_USER='dijimedu_demo';
 export const isDemo=(a:any)=>a?.role==='student'&&a.student_id===DEMO_ID;
 /* Hesap silme, dondurma ve mevcut şifreyle şifre değiştirme normal doğrulamayla açıktır.
-   Öğretmene mesaj ve iletişim bilgisi/e-posta sıfırlama kısıtları korunur. */
-export const DEMO_BLOCKED=new Set(['sohbetMesajGonder','sifreSifirlamaIste','memberEmailResend','iletisimGuncelle']);
+   Sohbet açıktır; iletişim bilgisi/e-posta sıfırlama kısıtları korunur. */
+export const DEMO_BLOCKED=new Set(['sifreSifirlamaIste','memberEmailResend','iletisimGuncelle']);
 export const DEMO_PASSWORD_HASH='pbkdf2$210000$kz3nVx+iiNnFVmYTawObdA==$xPIK3djL2coH56WC9L3fBYOgAFtk4xjzorVZVuzYZOk='; // şifre: 31526931
 /* A valid starting-test record: the learning route never asks the demo account for the level test. */
 export const DEMO_PLACEMENT=()=>({version:'starting-point-20261018-v1',total:24,correct:24,level:'B2',studyUnlockedLevel:'B2',completedAt:new Date().toISOString(),demo:true});

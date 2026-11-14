@@ -8,12 +8,13 @@ test('demo identity is rejected in public profile, score, feed and relationship 
 });
 test('demo remains available to its login and owner while foreign target lookups cannot reveal it',async()=>{
  const {publicParticipant,DEMO_ID}=await import('../supabase/functions/diji-api/demo-account.ts');
+ const {isClassroomGuest}=await import('../supabase/functions/diji-api/classroom-identity.mjs');
  const line=src.slice(src.indexOf('  const studentByName = async (n:'),src.indexOf('\n  const ogrFiltre',src.indexOf('  const studentByName = async (n:')));
- const make=new Function('studentByNameGenel','publicParticipant','DEMO_ID','op','a','kapsamda',stripTypeScriptTypes(line,{mode:'transform'})+';return studentByName;');
+ const make=new Function('studentByNameGenel','publicParticipant','DEMO_ID','op','a','kapsamda','isClassroomGuest',stripTypeScriptTypes(line,{mode:'transform'})+';return studentByName;');
  const pupil={id:DEMO_ID,username:'dijimedu_demo'},lookup=async()=>pupil,scope=()=>true;
- assert.equal(await make(lookup,publicParticipant,DEMO_ID,'giris',null,scope)('dijimedu_demo'),pupil);
- assert.equal(await make(lookup,publicParticipant,DEMO_ID,'ekVeriGetir',{student_id:DEMO_ID},scope)('dijimedu_demo'),pupil);
- assert.equal(await make(lookup,publicParticipant,DEMO_ID,'akisOlayToggle',{student_id:'other'},scope)('dijimedu_demo'),null);
+ assert.equal(await make(lookup,publicParticipant,DEMO_ID,'giris',null,scope,isClassroomGuest)('dijimedu_demo'),pupil);
+ assert.equal(await make(lookup,publicParticipant,DEMO_ID,'ekVeriGetir',{student_id:DEMO_ID},scope,isClassroomGuest)('dijimedu_demo'),pupil);
+ assert.equal(await make(lookup,publicParticipant,DEMO_ID,'akisOlayToggle',{student_id:'other'},scope,isClassroomGuest)('dijimedu_demo'),null);
 });
 test('public leaderboards filter demo scores while retaining legacy players with no UUID',async()=>{
  const {publicParticipant,DEMO_ID}=await import('../supabase/functions/diji-api/demo-account.ts');

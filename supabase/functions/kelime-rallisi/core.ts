@@ -44,7 +44,9 @@ export function raceHandler(db:DB){
     if(!owner||owner.active===false||owner.frozen_at)return json({ok:false,mesaj:'Öğretmen erişimi sona erdi.'},403);
     if(g.student_id){
      const [linked]=await db.select('students',{select:'status,frozen_at,email_verified_at',id:'eq.'+g.student_id,limit:'1'});
-     if(!linked||linked.status!=='approved'||linked.frozen_at||!linked.email_verified_at)return json({ok:false,mesaj:'Öğretmen erişimi sona erdi.'},403);
+     // Same fixed, isolated review grant as diji-api; ordinary teacher email checks remain required.
+     const demoGrant=g.student_id==='dcde2026-1015-4000-8000-000000000001'&&g.teacher_id==='dcde2026-1015-4000-8000-000000000002';
+     if(!linked||linked.status!=='approved'||linked.frozen_at||(!linked.email_verified_at&&!demoGrant))return json({ok:false,mesaj:'Öğretmen erişimi sona erdi.'},403);
     }else if(owner.username!=='teacher'||owner.is_admin!==true)return json({ok:false,mesaj:'Öğretmen erişimi doğrulanamadı.'},403);
    }
    const teacher=a.role==='teacher';let student:any;

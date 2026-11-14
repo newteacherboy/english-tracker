@@ -18,7 +18,7 @@ import {normalizeLearnerProfile,learnerClass,saveLearnerProfile} from './learner
 import {requireSafePassword,PasswordPolicyError} from './password-security.mjs';
 import {verifiedGamesAPI} from './verified-games.mjs';
 import {gradeStudyQuiz,studyTier,recoveryQuestions} from './fair-study.mjs';
-import {DEMO_ID,DEMO_USER,isDemo,DEMO_BLOCKED,publicParticipant} from './demo-account.ts';
+import {DEMO_ID,DEMO_USER,isDemo,isDemoTeacherGrant,DEMO_BLOCKED,publicParticipant} from './demo-account.ts';
 import { FEATURES } from './feature-catalog.ts';
 import { memberToolsAPI } from './member-tools-api.ts';
 import { storyAPI } from './story-api.ts';
@@ -252,7 +252,7 @@ async function auth(req: Request, body: any, q: URLSearchParams) {
     if(!teacher.data?.active||teacher.data.frozen_at)return null;
     if(grant.data.student_id){
       const own=await supabase.from('students').select('email_verified_at,status,frozen_at').eq('id',grant.data.student_id).maybeSingle();
-      if(!own.data?.email_verified_at||own.data.status!=='approved'||own.data.frozen_at)return null;
+      if((!own.data?.email_verified_at&&!isDemoTeacherGrant(grant.data))||own.data?.status!=='approved'||own.data.frozen_at)return null;
     }else if(teacher.data.username!=='teacher'||teacher.data.is_admin!==true)return null;
     if(data.role==='teacher'&&data.teacher_id!==grant.data.teacher_id)return null;
     if(data.role==='student'){
