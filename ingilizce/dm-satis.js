@@ -9,11 +9,11 @@
   'use strict';
   if (window.DMSatis) return;
   const W = window, D = document;
-  const VER = '20261114-purchase-plan-1';
+  const VER = '20261114-papi-trial-2';
   const BASE = (() => { try { return new URL('.', D.currentScript?.src || location.href).href; } catch { return ''; } })();
   const A = name => BASE + 'satis-assets/' + name;
-  const IMG = { papi: A('papi-enerji-molasi.webp'), bolt: A('ic-bolt.webp'), coin: A('ic-coin.webp'), crown: A('ic-crown.webp'),
-    party: BASE + 'discovery-assets/papi-kutlama.webp', teacher: BASE + 'discovery-assets/ogretmen.webp', welcome: BASE + 'papi-welcome-v2.png' };
+  const IMG = { papi: A('papi-energy-3d.webp'), bolt: A('ic-bolt.webp'), coin: A('ic-coin.webp'), crown: A('ic-crown.webp'),
+    gift: A('papi-premium-gift.webp'), party: BASE + 'discovery-assets/papi-kutlama.webp', teacher: BASE + 'discovery-assets/ogretmen.webp', welcome: BASE + 'papi-welcome-v2.png' };
   const API = 'https://nxfqlutulxqzqgwewssd.supabase.co/functions/v1/billing';
   const PACKS = [[5, 350], [10, 600], [15, 850]];
   const REWARD_ENERGY = 7, REWARD_GOLD = 100;
@@ -80,6 +80,7 @@
     if (teacher()) return null;
     style();
     closeSheet();
+    D.querySelectorAll('.dms-trial-float').forEach(el => el.remove());
     W.dmStartSpotlight?.stop?.();
     const now = energy(), cap = capacity(), p = plan(), v = videoState('energy');
     const unlimited = W.dmAndroidPlan?.limits?.unlimitedEnergy === true || p === 'premium_pro';
@@ -101,7 +102,7 @@
         <div class="dms-actions">
           ${v === 'ok' ? `<button type="button" class="dms-video" data-video>${ICON_PLAY}<span>Video izle, ${REWARD_ENERGY} enerji al</span></button>` : ''}
           ${v === 'limit' ? `<button type="button" class="dms-video" disabled>${ICON_PLAY}<span>Bugünkü video hakkın doldu</span></button>` : ''}
-          <button type="button" class="dms-later" data-later>Şimdi değil</button>
+          <div data-energy-trial-host></div><button type="button" class="dms-later" data-later>Şimdi değil</button>
         </div>
         ${proLine ? `<button type="button" class="dms-pro" data-pro>${spark('dms-spark-l')}<img src="${IMG.crown}" alt=""><span>${proLine}</span>${spark('dms-spark-r')}</button>` : ''}
         <div class="dms-buy">
@@ -131,6 +132,7 @@
       finally { if (sheet) all.forEach(x => { x.disabled = energy() + Number(x.dataset.pack) > capacity(); }); }
     });
     D.body.append(sheet);
+    updateEnergyTrial();
     sheet.querySelector('[data-video],[data-later]')?.focus({ preventScroll: true });
     void W.DijiMeduPapiFeedback?.energyLimit?.(msg);
     return sheet.querySelector('.dms-sheet');
@@ -229,27 +231,54 @@
     }
     where.parent.insertBefore(card, where.before || null);
   }
-  // The store still verifies eligibility and the renewal price inside planlar().
-  // These entry cards advertise the offer without depending on rewarded-video availability.
+  // A short, account-scoped cache avoids billing queries on every DOM refresh.
+  let trialCache = { owner: '', until: 0, price: null, pending: null }, trialDismissed = '';
+  function trialOwner() { return token('student'); }
+  function entryTrial() {
+    const owner = trialOwner(), now = Date.now();
+    if (!owner || teacher() || !canSell() || plan() !== 'free' || now < Date.parse('2026-11-14T00:00:00+03:00') || now >= Date.parse('2027-03-02T00:00:00+03:00')) return null;
+    if (trialCache.owner !== owner) trialCache = { owner, until: 0, price: null, pending: null };
+    if (now >= trialCache.until && !trialCache.pending) {
+      const cache = trialCache;
+      cache.pending = Promise.resolve().then(() => plugin()?.getProducts({ ids: ['diji_premium_pro'] })).then(result => {
+        const price = storePrice(STUDENT.plans[1], result?.products?.find(x => x.id === 'diji_premium_pro'), 'aylik');
+        cache.price = price.campaign ? price : null;
+      }).catch(() => { cache.price = null; }).finally(() => {
+        cache.until = Date.now() + 60000; cache.pending = null;
+        if (trialCache === cache && trialOwner() === owner) { trialPromoCards(); updateEnergyTrial(); }
+      });
+    }
+    return now < trialCache.until ? trialCache.price : null;
+  }
+  function updateEnergyTrial() {
+    if (!sheet) return;
+    const host = sheet.querySelector('[data-energy-trial-host]');
+    if (!host) return;
+    const price = entryTrial();
+    if (!price) { host.replaceChildren(); return; }
+    if (host.dataset.price === price.text && host.firstElementChild) return;
+    host.dataset.price = price.text;
+    host.innerHTML = `<span class="dms-or">veya</span><button type="button" class="dms-energy-trial" data-energy-trial><img src="${IMG.crown}" alt=""><span>7 gün ücretsiz sınırsız enerji<small>Premium Pro · Ardından ${esc(price.text)} / ay</small></span></button><small class="dms-trial-terms">Uygun hesaplara özel. İptal edilmezse otomatik yenilenir.</small>`;
+    host.querySelector('button').onclick = () => planlar('enerji-deneme-teklifi', 'premium_pro');
+  }
   function trialPromoCards() {
-    const now = Date.now();
-    const show = loggedIn() && !teacher() && canSell() && plan() === 'free'
-      && now >= Date.parse('2026-11-14T00:00:00+03:00') && now < Date.parse('2027-03-02T00:00:00+03:00');
-    for (const [id, tabId, selector, source] of [
-      ['dmsShopTrial', 'tab-magaza', '#dmStoreFront main.ds-home', 'magaza-deneme-teklifi'],
-      ['dmsGamesTrial', 'tab-aktiviteler', '.dc-focus-card', 'oyunlar-deneme-teklifi'],
+    const price = entryTrial();
+    const show = !!price && trialDismissed !== trialOwner() && !D.hidden && !busyScreen();
+    for (const [id, tabId, source] of [
+      ['dmsShopTrial', 'tab-magaza', 'magaza-deneme-teklifi'],
+      ['dmsGamesTrial', 'tab-aktiviteler', 'oyunlar-deneme-teklifi'],
     ]) {
-      const tab = D.getElementById(tabId), host = tab?.classList.contains('active') ? tab.querySelector(selector) : null;
-      const old = D.getElementById(id);
-      if (!show || !host) { old?.remove(); continue; }
-      if (old?.parentNode === host) continue;
-      const card = old || html(`<div id="${id}" class="dms-promo dms-trial-promo" role="group" aria-label="Premium Pro ücretsiz deneme teklifi">
-        <span class="dms-gift" aria-hidden="true">🎁</span><div class="dms-promo-t"><small>Uygun hesaplara özel</small>
-        <b>7 gün ücretsiz Premium Pro</b><span>Sonrasında aylık abonelik. Teklif ve ücret mağazada doğrulanır.</span></div>
-        <button type="button" class="dms-promo-go">Teklifi gör</button></div>`);
-      card.querySelector('button').onclick = () => planlar(source, 'premium_pro');
-      const tabs = host.querySelector(':scope > .gg-tabs');
-      if (tabs) host.insertBefore(card, tabs.nextElementSibling); else host.prepend(card);
+      const tab = D.getElementById(tabId), old = D.getElementById(id);
+      if (!show || !tab?.classList.contains('active')) { old?.remove(); continue; }
+      if (old) continue;
+      const card = html(`<aside id="${id}" class="dms-trial-float" aria-label="Premium Pro ücretsiz deneme teklifi">
+        <button type="button" class="dms-trial-open" aria-label="7 gün ücretsiz Premium Pro teklifini gör">
+          <span class="dms-trial-pill"><b>7 gün ücretsiz</b><span>Premium Pro’yu dene →</span></span>
+          <img src="${IMG.gift}" alt="Hediyeli Papi" width="88" height="100">
+        </button><button type="button" class="dms-trial-dismiss" aria-label="Teklif duyurusunu kapat">×</button></aside>`);
+      card.querySelector('.dms-trial-open').onclick = () => planlar(source, 'premium_pro');
+      card.querySelector('.dms-trial-dismiss').onclick = () => { trialDismissed = trialOwner(); card.remove(); };
+      D.body.append(card);
     }
   }
   function adCards() {
@@ -337,6 +366,7 @@
   function closePlans() { screen?.remove(); screen = null; D.documentElement.style.removeProperty('overflow'); }
   async function planlar(source = '', want = '') {
     style(); closePlans(); closeSheet();
+    D.querySelectorAll('.dms-trial-float').forEach(el => el.remove());
     const b = billing();
     let status = b?.status || null;
     const role0 = W.dmTeacherPortalMode ? 'teacher' : status?.role || (teacher() && name().toLowerCase() === 'teacher' ? 'teacher' : 'student');
@@ -403,21 +433,26 @@
       cta = '7 gün ücretsiz dene';
       ctaNote = `Ardından ${pr.text} / ay · İptal edilmezse otomatik yenilenir`;
     }
+    root.classList.toggle('dmp-compact', role === 'student');
+    const summaryRows = role === 'student' ? C.table.filter((_, i) => [0, 3, 5].includes(i)) : C.table;
+    const extraRows = role === 'student' ? C.table.filter((_, i) => ![0, 3, 5].includes(i)) : [];
+    const rowHtml = rows => rows.map(r => `<tr><td>${esc(r[0])}</td>${r.slice(1).map((x, k) => `<td class="${k === 2 ? 'pre' : ''}">${esc(x)}</td>`).join('')}</tr>`).join('');
     const storeName = iosApp ? 'App Store' : 'Google Play';
     root.innerHTML = `<div class="dmp-in">
       <div class="dmp-bar"><span>${role === 'teacher' ? 'ÖĞRETMEN PAKETLERİ' : 'DİJİ MEDU PAKETLERİ'}</span><button type="button" class="dmp-x" data-close aria-label="Kapat">${ICON_X}</button></div>
       <div class="dmp-hero"><img src="${role === 'teacher' ? IMG.teacher : IMG.party}" alt="" onerror="this.src='${IMG.welcome}'"><div><h1>${esc(C.hero.title)}</h1>
         <span class="dmp-current">Şu anki planın: <b>${esc(curName)}</b></span></div></div>
+      ${showTrial ? `<button type="button" class="dmp-trial-hero" data-trial><span><b>7 gün ücretsiz Premium Pro</b><span>Sınırsız enerji, oyunlar ve Papi ile sohbet</span><small>Uygun hesaplara özel · Ardından ${esc(trialPrice.text)} / ay</small></span><img src="${IMG.gift}" alt=""></button>` : ''}
       ${showPrice ? `<div class="dmp-toggle" role="group" aria-label="Ödeme dönemi"><button type="button" data-period="aylik" aria-pressed="${ui.period === 'aylik'}">Aylık</button><button type="button" data-period="yillik" aria-pressed="${ui.period === 'yillik'}">Yıllık<em>%${saving(C.plans[0].list)}'e varan indirim</em></button></div>` : ''}
       <div class="dmp-plans" role="radiogroup" aria-label="Paket seç">${C.plans.map(card).join('')}</div>
       <p class="dmp-msg${ui.err ? ' err' : ''}" ${ui.msg ? '' : 'hidden'} role="status">${esc(ui.msg)}</p>
       ${ui.gate ? `<div class="dmp-gate"><p>${esc(ui.gate.q)}</p><input inputmode="numeric" autocomplete="off" aria-label="Cevap"><button type="button" class="dmp-buy" data-gate-ok>Devam</button><button type="button" class="dms-text-btn" data-gate-back>Vazgeç</button></div>` : ''}
       <h2 class="dmp-sec">Karşılaştır</h2>
       <table class="dmp-table"><thead><tr><th></th><th>Free</th><th>Pro</th><th class="pre">Premium Pro</th></tr></thead>
-        <tbody>${C.table.map(r => `<tr><td>${esc(r[0])}</td>${r.slice(1).map((x, k) => `<td class="${k === 2 ? 'pre' : ''} ${x === '—' ? 'no' : x === '✓' ? 'yes' : ''}">${esc(x)}</td>`).join('')}</tr>`).join('')}${showTrial ? `<tr><td>🎁 Ücretsiz deneme</td><td>—</td><td>—</td><td class="pre"><button type="button" class="dmp-trial" data-trial ${ui.busy ? 'disabled' : ''}>7 gün ücretsiz dene</button><small class="dmp-trial-note">Ardından ${esc(trialPrice.text)} / ay.<br>İptal edilmezse otomatik yenilenir.</small></td></tr>` : ''}</tbody></table>
-      ${trialReady ? `<p class="dmp-legal">Premium Pro'nun tamamı ilk 7 gün ücretsizdir. Deneme bitmeden iptal etmezsen ${esc(pr.text)} / ay ücret alınır ve abonelik her ay otomatik yenilenir. İptali ${storeName} &gt; Abonelikler bölümünden yapabilirsin.</p>` : ''}
+        <tbody>${rowHtml(summaryRows)}</tbody></table>
+      ${extraRows.length ? `<details class="dmp-details"><summary>Tüm özellikleri karşılaştır</summary><table class="dmp-table"><thead><tr><th>Özellik</th><th>Free</th><th>Pro</th><th>Premium Pro</th></tr></thead><tbody class="dmp-small-rows">${rowHtml(summaryRows)}</tbody><tbody>${rowHtml(extraRows)}</tbody></table></details>` : ''}
       ${C.soon ? `<p class="dmp-soonline"><span class="dmp-soon">Yakında</span> ${esc(C.soon)}</p>` : ''}
-      ${sellOpen ? `<p class="dmp-legal">Ödeme ${storeName} hesabından alınır. Abonelik, dönem bitmeden en az 24 saat önce iptal edilmezse aynı süreyle otomatik yenilenir. İptal ve yönetim ${storeName} hesap ayarlarındaki Abonelikler bölümünden yapılır.
+      ${sellOpen ? `<p class="dmp-legal">${role === 'student' ? `Ödeme ${storeName} hesabından alınır. ${trialReady ? 'Deneme bitmeden iptal edebilirsin. ' : ''}İptal edilmezse abonelik otomatik yenilenir. Yönetim: ${storeName} &gt; Abonelikler.` : `Ödeme ${storeName} hesabından alınır. Abonelik, dönem bitmeden en az 24 saat önce iptal edilmezse aynı süreyle otomatik yenilenir. İptal ve yönetim ${storeName} hesap ayarlarındaki Abonelikler bölümünden yapılır.`}
         ${iosApp ? '<br><a href="https://www.apple.com/legal/internet-services/itunes/dev/stdeula/" target="_blank" rel="noopener">Kullanım Koşulları (EULA)</a> · ' : '<br>'}<a href="${BASE}gizlilik.html" target="_blank" rel="noopener">Gizlilik Politikası</a> · <a href="${BASE}kullanim-kosullari.html" target="_blank" rel="noopener">Kullanım Koşulları</a></p>
         <div class="dmp-links"><button type="button" data-restore>Satın alımları geri yükle</button>${cur !== 'free' ? '<button type="button" data-manage>Aboneliği yönet</button>' : ''}</div>` : ''}
     </div>
@@ -564,7 +599,7 @@
     let q = false;
     new MutationObserver(() => { if (q) return; q = true; requestAnimationFrame(() => { q = false; patch(); swapLegacy(); adCards(); }); }).observe(D.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['class'] });
     setInterval(tick, 1000);
-    D.addEventListener('dm:login', () => { pol = null; lastEnergy = undefined; closeSheet(); closePlans(); });
+    D.addEventListener('dm:login', () => { trialCache = { owner: '', until: 0, price: null, pending: null }; trialDismissed = ''; pol = null; lastEnergy = undefined; closeSheet(); closePlans(); });
     W.addEventListener('dm:plan', () => { profileCard(); adCards(); });
     D.addEventListener('keydown', e => { if (e.key === 'Escape' && sheet) closeSheet(); });
     tick();

@@ -2672,6 +2672,20 @@
       "bytes": 66872,
       "status": "ai-generated",
       "source": "docs/daily-gift-artwork.json"
+    },
+    {
+      "path": "ingilizce/satis-assets/papi-premium-gift.webp",
+      "sha256": "e7a1cc520802d271c643ef061a49b9244bf6e3cf236f55985916520ffb0c2600",
+      "bytes": 31938,
+      "status": "ai-generated",
+      "source": "OpenAI image generation, 2026-11-14. User-approved DijiMedu Papi design: 3D Papi holding a gold crown gift on a lavender pedestal. Reference: ingilizce/papi-welcome-v2.png."
+    },
+    {
+      "path": "ingilizce/satis-assets/papi-energy-3d.webp",
+      "sha256": "4e17231aadd191ad7c6535ac1047eb261b44a62dc7190a5ee54769e747305987",
+      "bytes": 65310,
+      "status": "ai-generated",
+      "source": "OpenAI image generation, 2026-11-14. User-approved DijiMedu Papi design: 3D Papi wearing purple headphones and holding a lightning token. Reference: ingilizce/papi-welcome-v2.png."
     }
   ]
 }
