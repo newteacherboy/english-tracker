@@ -8,7 +8,7 @@ daily.innerHTML='<span class="dm-daily-flame" aria-hidden="true">🔥</span><b d
 const buttons=Object.fromEntries([...hud.querySelectorAll('[data-pw]')].map(e=>[e.dataset.pw,e]));
 buttons.time.onclick=()=>window.dmActiveTime?.panel();buttons.energy.onclick=()=>window.dijiEnerjiPaneliAc?.();buttons.gold.onclick=()=>window.magazaAc?.();buttons.xp.onclick=()=>window.dmIlerlememAc?.();
 const activity='#dmStoryLesson,#bzPerde #bzAlan,.game-modal-overlay,#meteorGame,#wordWheel,#papiCards,#harfBahcesiOverlay,#baOyunEkrani,#kpKelimeOyunEkrani,#kmPanel .km-sec,#seviyeDisLinkOverlay';
-const selectors=['#tab-dunya .rt-top','#tab-aktiviteler .gg-brand','#tab-meduakis.active.fr-home-view .fr-wallet-host','#tab-derscalis .su-levels-heading','#tab-magaza .ds-header','.dc-fullscreen-overlay.active header'];
+const selectors=['#tab-dunya .rt-medal-header','#tab-dunya .rt-top','#tab-aktiviteler .gg-brand','#tab-meduakis.active.fr-home-view .fr-wallet-host','#tab-derscalis .su-levels-heading','#tab-magaza .ds-header','.dc-fullscreen-overlay.active header'];
 const finite=n=>Number.isFinite(Number(n))?Math.max(0,Math.floor(Number(n))):0;
 const format=n=>finite(n).toLocaleString('tr-TR');
 const compact=n=>finite(n)>=10000?new Intl.NumberFormat('tr-TR',{notation:'compact',maximumFractionDigits:1}).format(finite(n)):format(n);
