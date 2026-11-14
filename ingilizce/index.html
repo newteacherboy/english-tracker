@@ -2662,6 +2662,8 @@ document.getElementById('dmBootRetry').onclick=()=>location.reload();
                 ? '—' : (Math.floor(sn / 60) + ':' + String(Math.floor(sn % 60)).padStart(2, '0'));
 
             document.getElementById('gsoTekrarBtn').style.display = o.tekrarFn ? '' : 'none';
+            document.getElementById('gsoDevamBtn').onclick = () => genelSonucKapat('devam');
+            document.getElementById('gsoTekrarBtn').onclick = () => genelSonucKapat('tekrar');
             document.getElementById('gsoDevamBtn').textContent = o.devamEtiketi || 'DEVAM ET';
             document.getElementById('gsoTekrarBtn').textContent = o.tekrarEtiketi || '🔄 Tekrar oyna';
             document.querySelector('#genelSonucOverlay .gso-sira-baslik').style.display = o.siralamaYok ? 'none' : '';
