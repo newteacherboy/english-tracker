@@ -2,7 +2,7 @@
 (()=>{'use strict';
  const classics={kelimeYarismaOverlay:['kelimeYarismasiKapat','kelimeYarismasiAc'],jpOyunOverlay:['jpOyunKapat','jpOyunAc'],boslukOyunOverlay:['boslukOyunKapat','boslukOyunAc'],hafizaOyunOverlay:['hafizaOyunKapat','hafizaOyunAc'],yagmurOyunOverlay:['yagmurOyunKapat','yagmurOyunAc'],asmacaOyunOverlay:['asmacaOyunKapat','asmacaOyunAc'],kelimebulOyunOverlay:['kelimebulOyunKapat','kelimebulOyunAc'],esOyunOverlay:['esOyunKapat','esOyunAc'],trenOyunOverlay:['trenOyunKapat','trenOyunAc']};
  const classicStages={kelimeYarismaOverlay:['ky','#kyOyunEkrani'],jpOyunOverlay:['jp','#jpBalonEkrani,#jpSoruEkrani'],boslukOyunOverlay:['bosluk','#boslukOyunEkrani'],hafizaOyunOverlay:['hafiza','#hafizaOyunEkrani'],yagmurOyunOverlay:['yagmur','#yagmurOyunEkrani'],asmacaOyunOverlay:['asmaca','#asmacaOyunEkrani'],kelimebulOyunOverlay:['kelimebul','#kelimebulOyunEkrani'],esOyunOverlay:['es','#esOyunEkrani'],trenOyunOverlay:['tren','#trenOyunEkrani']};
- const modern={kelimeGolu:'dmKelimeGolu',rallyGame:'dmRally',wordWheel:'dmWordWheel',papiCards:'dmPapiCards',meteorGame:'dmMeteor',mvOverlay:'dmMola',kgOverlay:'dmTopicGames'};
+ const modern={premiumSkillGame:'dmPremiumSkillGames',kelimeGolu:'dmKelimeGolu',rallyGame:'dmRally',wordWheel:'dmWordWheel',papiCards:'dmPapiCards',meteorGame:'dmMeteor',mvOverlay:'dmMola',kgOverlay:'dmTopicGames'};
  const selector='.game-modal-overlay,#harfBahcesiOverlay,#dmGameIntro,#yoModal.acik[data-dm-selected-game],#rallyGame,#wordWheel,#papiCards,#meteorGame,#mvOverlay,#kgOverlay,#onlineMatch,#dmArenaOverlay,#dmMatchOverlay,#genelSonucOverlay.acik,#dyOyunOverlay,.dm-garden-match,.kart-oyun-overlay,.kp-shell,.ba-shell';
  // Observe the base IDs as well: when .acik is removed the element no longer
  // matches the active selector, so watching only active selectors leaves the
@@ -58,7 +58,7 @@
   root.append(button);
  }
  function decorate(root){
-  if(root.id==='kelimeGolu'||root.id==='mvOverlay'&&root.querySelector('.mv-header [data-exit]')||
+  if(root.id==='premiumSkillGame'||root.id==='kelimeGolu'||root.id==='mvOverlay'&&root.querySelector('.mv-header [data-exit]')||
      root.id==='kgOverlay'&&root.querySelector('.kg-shell header [data-close]')){if(!root.classList.contains('dm-vp-root'))root.classList.add('dm-vp-root');return;}
   if(!native(root)&&!classics[root.id]&&!modern[root.id])return;
   if(!root.classList.contains('dm-vp-root'))root.classList.add('dm-vp-root');
@@ -216,6 +216,8 @@
   return button.getAttribute('aria-pressed')==='false';
  }
  function frame(root){
+  // Premium skill games already own one safe-area-aware toolbar.
+  if(root.id==='premiumSkillGame')return;
   let strip=root.querySelector(':scope > .dm-game-frame');
   if(!strip){
    strip=document.createElement('div');strip.className='dm-game-frame';

@@ -25,3 +25,22 @@ test('uncertain start preserves ID and account change cannot reveal a stale resp
  await f.w.dmPremiumSkillGames.open('tower');f.d.querySelector('.psg-actions button').click();await turn();f.d.querySelector('.psg-actions button').click();await turn();
  assert.equal(f.calls[1].runId,f.calls[2].runId);f.w.aktifOgrenciAdi='Other';f.w.dmPremiumSkillGames.close();release();await turn();assert(!f.d.getElementById('premiumSkillGame'));f.close();
 });
+test('intro explains each game with Papi and persisted level progress',async()=>{
+ for(const key of ['tower','word-goal']){
+  const f=fixture(()=>({ok:true,remaining:1,level:83}));await f.w.dmPremiumSkillGames.open(key);
+  assert.equal(f.d.querySelector('.psg-intro-papi').getAttribute('src'),'profile-assets/papi-selam.png');
+  assert.equal(f.d.querySelector('.psg-course progress').value,82);assert.match(f.d.querySelector('.psg-course').textContent,/Seviye 83/);assert.match(f.d.querySelector('.psg-course').textContent,/A1/);
+  assert(f.d.querySelector(key==='tower'?'.psg-intro-stack':'.psg-intro-goal'));assert.equal(f.d.querySelector('.psg-course [aria-current="step"] b').textContent,'83');f.close();
+ }
+});
+test('saved success and failure use the common Papi result without claiming rewards again',async()=>{
+ for(const passed of [true,false]){
+  let presented,rewardClaims=0;const f=fixture(b=>b.op==='status'?{ok:true,remaining:1,level:3}:{ok:true,runId:b.runId,playedLevel:3,level:passed?4:3,result:{playedLevel:3,level:passed?4:3,correct:passed?12:8,wrong:passed?0:4,total:12,passed,stars:passed?3:1,xp:passed?24:10,gold:passed?6:2}});
+  const buttons=f.d.createElement('div');buttons.innerHTML='<div id="genelSonucOverlay"><div class="gso-maskot"></div><button id="gsoDevamBtn"></button><button id="gsoTekrarBtn"></button></div>';f.d.body.append(buttons);
+  f.w.genelSonucEkraniGoster=()=>rewardClaims++;f.w.dmSonucA={showSaved:o=>presented=o};
+  await f.w.dmPremiumSkillGames.open('tower');f.d.querySelector('.psg-actions button').click();await turn();
+  assert.equal(f.d.querySelector('.psg-result-3d').getAttribute('src'),passed?'papi-reward-v2.png':'papi-help-v2.png');assert(presented);assert.equal(presented.parkurGecti,passed);assert.equal(presented.savedReward.xp,passed?24:10);assert.equal(rewardClaims,0);assert(!f.d.getElementById('premiumSkillGame'));assert.equal(f.calls.length,2);
+  assert.match(presented.resultNote,passed ? /Seviye 4 açıldı/ : /en az 9 doğru/);assert.equal(f.d.getElementById('gsoDevamBtn').textContent,passed?'SONRAKİ SEVİYE':'TEKRAR DENE');
+  presented.devamFn();await turn();assert(f.d.querySelector('.psg-intro'));assert.equal(f.calls.at(-1).op,'status');f.close();
+ }
+});

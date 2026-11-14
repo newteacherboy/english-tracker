@@ -33,9 +33,9 @@
   if(!who()||!token()){window.yoToast?.('Önce hesabına giriş yap.');return;}
   const s=state={key,owner:who(),token:token(),picks:[],phase:'loading',busy:false,sound:true};
   root=document.createElement('section');root.id='premiumSkillGame';root.className='psg-overlay game-modal-overlay psg-'+key;root.setAttribute('role','dialog');root.setAttribute('aria-modal','true');root.setAttribute('aria-labelledby','psgTitle');
-  root.innerHTML='<div class="psg-shell"><header class="psg-header"><button type="button" data-close aria-label="Oyundan çık">‹</button><h2 id="psgTitle">'+games[key].title+'</h2><button type="button" data-sound aria-label="Sesi kapat" aria-pressed="true">♫</button><button type="button" data-pause aria-label="Duraklat" hidden>Ⅱ</button><button type="button" data-close aria-label="Kapat">×</button></header><main class="psg-body"></main></div>';
-  root.querySelectorAll('[data-close]').forEach(b=>b.onclick=close);root.querySelector('[data-pause]').onclick=togglePause;
-  root.querySelector('[data-sound]').onclick=e=>{s.sound=!s.sound;e.currentTarget.textContent=s.sound?'♫':'♪';e.currentTarget.setAttribute('aria-pressed',String(s.sound));e.currentTarget.setAttribute('aria-label',s.sound?'Sesi kapat':'Sesi aç');root.dataset.musicPaused=String(!s.sound||s.phase!=='play'||s.paused);};
+  root.innerHTML='<div class="psg-shell"><header class="psg-header"><button type="button" data-back aria-label="Geri dön">‹</button><h2 id="psgTitle">'+games[key].title+'</h2><button type="button" data-sound aria-label="Sesi kapat" aria-pressed="true">♫</button><button type="button" data-pause aria-label="Duraklat" hidden>Ⅱ</button><button type="button" data-close aria-label="Kapat">×</button></header><main class="psg-body"></main></div>';
+  root.querySelector('[data-back]').onclick=()=>s.phase==='setup'||s.phase==='loading'?close():open(s.key);root.querySelectorAll('[data-close]').forEach(b=>b.onclick=close);root.querySelector('[data-pause]').onclick=togglePause;
+  root.querySelector('[data-sound]').onclick=e=>{s.sound=!s.sound;e.currentTarget.textContent=s.sound?'♫':'♪';e.currentTarget.setAttribute('aria-pressed',String(s.sound));e.currentTarget.setAttribute('aria-label',s.sound?'Sesi kapat':'Sesi aç');root.dataset.musicPaused=String(!s.sound||s.phase!=='play'||s.paused);const music=root.querySelector('.dm-game-music');if(s.sound&&music?.getAttribute('aria-pressed')==='false')music.click();};
   root.onkeydown=e=>{if(e.key==='Escape'){e.preventDefault();close();}if(e.key==='Tab'){const buttons=[...root.querySelectorAll('button:not(:disabled)')].filter(b=>b.getClientRects().length);const i=buttons.indexOf(document.activeElement);e.preventDefault();buttons[(i+(e.shiftKey?-1:1)+buttons.length)%buttons.length]?.focus();}};
   document.body.append(root);window.dmViewHistory?.track?.(root,{close});window.dmGameViewport?.sync?.();root.querySelector('[data-close]').focus();
   await loadStatus(s);
@@ -50,14 +50,29 @@
   const pending=saved(s),canResume=!!pending?.runId;
   const actions=d.completed?[['Oyunlara dön',close]]:d.remaining>0||canResume?[[canResume?'Kaldığın oyuna devam et':`Seviye ${d.level} · Başla · ⚡ 5`,start]]:[['Premium ile sınırsız oyna',plans],['Oyunlara dön',close]];
   panel(g.title,`Seviye ${d.level} / 160 · Kolaydan zora ilerle. ${g.hint} ${d.premium?'Sınırsız oyun hakkı.':d.remaining+' günlük oyun hakkın kaldı.'}`,actions);
-  const image=document.createElement('img');image.src=g.image;image.alt='';image.className='psg-cover';root.querySelector('.psg-panel').prepend(image);
+  root.dataset.gamePhase='intro';
+  const level=Math.max(1,Math.min(160,Number(d.level)||1)),done=d.completed?160:level-1;
+  const card=root.querySelector('.psg-panel');card.classList.add('psg-intro');
+  card.querySelector('h2').textContent=g.title;
+  card.querySelector('p').textContent=s.key==='tower'?'Kelimeleri bil, renkli blokları üst üste diz. Papi ile kuleni yükselt!':'Topun üzerindeki kelimeyi oku. Doğru anlamın olduğu köşeye şut çek!';
+  const scene=document.createElement('div');scene.className='psg-intro-stage psg-intro-'+s.key;scene.setAttribute('aria-hidden','true');
+  scene.innerHTML=s.key==='tower'?'<div class="psg-intro-stack">'+[0,1,2,3].map(i=>block(i)).join('')+'</div><span class="psg-intro-word">apple = elma</span>':'<div class="psg-intro-goal"></div><span class="psg-intro-target">elma ✓</span><div class="psg-intro-ball"><b>apple</b></div>';
+  scene.insertAdjacentHTML('beforeend','<img class="psg-intro-papi" src="profile-assets/papi-selam.png" alt="">');
+  card.prepend(scene);
+  const course=level<=80?Math.floor((level-1)/10)+1+'. sınıf kelimeleri':['A1','A2','B1','B2'][Math.floor((level-81)/20)]+' kelimeleri';
+  const from=Math.max(1,Math.min(156,level-2));
+  const progress=document.createElement('section');progress.className='psg-course';progress.setAttribute('aria-label','Seviye ilerlemen');
+  progress.innerHTML='<div class="psg-course-heading"><strong>Seviye '+level+' <small>/ 160</small></strong><span>'+esc(course)+'</span></div><progress value="'+done+'" max="160" aria-label="Tamamlanan seviyeler"></progress><small>'+done+' seviye tamamlandı'+(d.completed?' · Tüm yolculuk bitti!':' · 12 soruda en az 9 doğru')+'</small><ol class="psg-course-route">'+Array.from({length:5},(_,i)=>{const n=from+i;return '<li class="'+(d.completed||n<level?'is-done':n===level?'is-current':'is-locked')+'"'+(n===level?' aria-current="step"':'')+'><b>'+n+'</b><span>'+(d.completed||n<level?'✓':n===level?'Şimdi':'Sonraki')+'</span></li>';}).join('')+'</ol>';
+  card.querySelector('.psg-actions').before(progress);
+  const rights=document.createElement('p');rights.className='psg-rights';rights.textContent=canResume?'Yarım kalan seviyen hazır · Yeniden enerji harcanmaz':d.completed?'160 seviyenin tamamını bitirdin!':d.premium?'Sınırsız oyun hakkın var · Giriş 5 enerji':d.remaining>0?'Bugün '+d.remaining+' oyun hakkın var · Giriş 5 enerji':'Bugünkü oyun hakkın bitti';
+  card.querySelector('.psg-actions').before(rights);
  }
  async function start(){
   const s=state;if(s.busy)return;s.busy=true;root.querySelectorAll('.psg-actions button').forEach(b=>b.disabled=true);status('Bölüm hazırlanıyor…');
   const pending=saved(s);s.runId=s.runId||pending?.runId||crypto.randomUUID();s.picks=pending?.runId===s.runId&&Array.isArray(pending.picks)?pending.picks:[];save();
   try{
    const d=await api('start',{runId:s.runId});if(!alive(s))return;
-   if(d.runId!==s.runId)s.picks=[];s.runId=d.runId;s.rounds=d.rounds;s.info=d;s.phase='play';s.paused=false;
+   if(d.runId!==s.runId)s.picks=[];s.runId=d.runId;s.rounds=d.rounds;s.info=d;s.phase='play';s.paused=false;s.started=Date.now();
    if(d.result){showResult({...d,...d.result});return;}
    s.picks=s.picks.filter(n=>Number.isInteger(n)&&n>=-1&&n<=3).slice(0,s.rounds.length);save();
    if(typeof d.energy==='number'){window.genelEnerjiKalan=d.energy;window.headerEnerjiGoster?.(d.energy,d.energyMax);}
@@ -107,9 +122,29 @@
   catch(e){if(alive(s)){s.phase='save-error';panel('Sonuç kaydedilemedi',e.message,[['Kaydı tekrar dene',finish]]);}}
  }
  function showResult(d){
-  const s=state;s.phase='result';s.info=d;try{localStorage.removeItem(savedKey(s));}catch{}s.runId=null;s.picks=[];
+  const s=state,key=s.key,runId=s.runId,played=Number(d.playedLevel)||Number(s.info.playedLevel)||1,next=Math.min(160,Number(d.level)||played);
+  s.phase='result';s.info=d;clearInterval(ticker);clearTimeout(transition);try{localStorage.removeItem(savedKey(s));}catch{}s.runId=null;s.picks=[];
   if(d.yo)window.dmApplyRewardState?.(d.yo,s.owner);window.dmProgression?.refresh?.(true);
-  panel(d.passed?'Bölüm tamamlandı!':'Bir kez daha dene',`${d.correct} / ${d.total} doğru · ${d.xp} XP · ${d.gold} altın`,[...(!d.completed?[[d.passed?'Sonraki bölüm':'Tekrar oyna',()=>loadStatus(s)]]:[]),['Oyunlara dön',close]]);
+  const note=d.completed?'160 seviyenin tamamı bitti!':d.passed?'Seviye '+played+' tamamlandı · Seviye '+next+' açıldı!':'Seviye '+played+' · İlerlemek için en az 9 doğru yapmalısın.';
+  const result={oyunAdi:games[key].title+' · Seviye '+played,oyunKey:'premium-'+key,runId,baslik:d.completed?'Muhteşem bir yolculuk!':d.passed?'Seviye tamamlandı!':'Birlikte tekrar deneyelim!',isim:s.owner,
+   dogru:d.correct,yanlis:d.wrong,puan:d.score,sureSaniye:s.started?Math.max(1,Math.round((Date.now()-s.started)/1000)):undefined,
+   siralamaYok:true,parkurGecti:!!d.passed,parkurYildiz:Number(d.stars)||0,savedReward:{xp:d.xp,gold:d.gold},resultNote:note,
+   devamEtiketi:d.completed?'OYUNLARA DÖN':d.passed?'SONRAKİ SEVİYE':'TEKRAR DENE',tekrarEtiketi:'OYUNLARA DÖN',
+   devamFn:d.completed?close:()=>open(key),tekrarFn:d.completed?null:close};
+  const show=window.dmSonucA?.showSaved?o=>window.dmSonucA.showSaved(o):window.dmShowSavedResult;
+  if(typeof show==='function'){
+   close();show(result);
+   const mascot=document.querySelector('#genelSonucOverlay .gso-maskot');
+   if(mascot)mascot.innerHTML='<img class="dm-result-papi psg-result-3d" src="'+(d.passed?'papi-reward-v2.png':'papi-help-v2.png')+'" alt="'+(d.passed?'Kutlayan Papi':'Sana yardımcı olan Papi')+'">';
+   const primary=document.getElementById('gsoDevamBtn'),secondary=document.getElementById('gsoTekrarBtn');
+   if(primary)primary.textContent=d.completed?'OYUNLARA DÖN':d.passed?'SONRAKİ SEVİYE':'TEKRAR DENE';
+   if(secondary)secondary.textContent='OYUNLARA DÖN';
+   window.dmGameViewport?.sync?.();
+  }else{
+   panel(result.baslik,`${d.correct} / ${d.total} doğru · ${d.xp} XP · ${d.gold} altın`,[...(!d.completed?[[d.passed?'Sonraki seviye':'Tekrar dene',()=>loadStatus(s)]]:[]),['Oyunlara dön',close]]);
+   root.querySelector('.psg-panel').insertAdjacentHTML('afterbegin','<img class="psg-result-papi" src="papi-reward-v2.png" alt="Papi">');
+   const progress=document.createElement('p');progress.className='psg-result-note';progress.textContent=note;root.querySelector('.psg-actions').before(progress);
+  }
  }
  document.addEventListener('visibilitychange',()=>{if(document.hidden&&state?.phase==='play'&&!state.paused&&!state.locked)togglePause();});
  document.addEventListener('dm:login',close);

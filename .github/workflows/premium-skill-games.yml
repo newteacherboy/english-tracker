@@ -3,6 +3,7 @@ on:
   pull_request:
     paths:
       - 'ingilizce/premium-skill-games.*'
+      - 'ingilizce/game-viewport.js'
       - 'ingilizce/profile-v2.css'
       - 'ingilizce/bottom-nav.js'
       - 'ingilizce/kelime-golu.js'
@@ -28,4 +29,4 @@ jobs:
           node --check ingilizce/bottom-nav.js
           node --check ingilizce/kelime-golu.js
           node --check ingilizce/solo-arcade.js
-          node --test tests/premium-skill-games.test.cjs tests/kelime-golu.test.cjs tests/solo-arcade.test.cjs tests/profile-return-poses.test.cjs tests/premium-pro-level-access.test.cjs
+          node --test tests/premium-skill-games.test.cjs tests/game-viewport.test.cjs tests/kelime-golu.test.cjs tests/solo-arcade.test.cjs tests/profile-return-poses.test.cjs tests/premium-pro-level-access.test.cjs
