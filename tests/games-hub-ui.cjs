@@ -15,7 +15,7 @@ for(const [width,height] of [[320,640],[390,844],[768,844],[1180,844]]){
  assert.equal(await page.locator('#ggPremiumTab').getAttribute('aria-pressed'),'true');
  assert.equal(await page.locator('.gg-group:visible').count(),0);
  assert.equal(await page.locator('.gg-game:visible').count(),0);
- assert.equal(await page.locator('.gg-category-art').count(),5);
+ assert.equal(await page.locator('.gg-category-art').count(),6);
  assert.equal(await page.getByRole('searchbox',{name:'Oyun ara'}).count(),0);
  assert.equal(await page.locator('.gg-heading-controller,.gg-category-check').count(),0);
  await page.locator('[data-gg-main=free]').click();
