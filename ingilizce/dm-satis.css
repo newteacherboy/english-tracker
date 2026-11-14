@@ -283,7 +283,7 @@ div.dmp.is-teacher .dmp-x{background:#0b4f8a!important}
 @media(max-width:380px){.dms-trial-promo{padding:10px;gap:8px;flex-wrap:wrap}.dms-trial-promo .dms-promo-t{flex:1 1 calc(100% - 50px)}.dms-trial-promo .dms-promo-go{margin-left:auto}}
 
 /* Compact Papi gift: outside tab flow, above the navigation safe area. */
-.dms-trial-float{position:fixed;right:max(28px,calc((100vw - 528px)/2));bottom:calc(124px + env(safe-area-inset-bottom,0px));z-index:100000019;font-family:"Nunito",system-ui;max-width:calc(100vw - 24px);filter:drop-shadow(0 4px 8px #48258c26)}
+.dms-trial-float{position:fixed;right:max(12px,calc((100vw - 560px)/2));bottom:calc(124px + env(safe-area-inset-bottom,0px));z-index:100000019;font-family:"Nunito",system-ui;max-width:calc(100vw - 24px);filter:drop-shadow(0 4px 8px #48258c26)}
 .dms-trial-open{display:flex;align-items:flex-end;border:0;background:none;padding:0;cursor:pointer;color:#fff;min-height:76px}
 .dms-trial-open>img{width:82px;height:96px;object-fit:contain;margin-left:-13px;position:relative;animation:dmsGiftFloat 3s ease-in-out infinite}
 .dms-trial-pill{display:block;border:2px solid #ffdf65;border-radius:24px 8px 8px 24px;padding:9px 21px 9px 13px;margin-bottom:9px;background:linear-gradient(135deg,#a74df0,#6223b1);box-shadow:inset 0 2px 0 #ffffff50;text-align:left}
