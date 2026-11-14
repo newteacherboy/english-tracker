@@ -1,5 +1,5 @@
 const {test}=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),{JSDOM}=require('jsdom');
-test('demo can click password, freeze and deletion; teacher messages remain blocked',async()=>{
+test('demo can click password, freeze and deletion; teacher messaging opens normally',async()=>{
   const dom=new JSDOM('<body><button data-profile="coach">Mesaj</button></body>',{url:'https://app.dijimedu.com/ingilizce/',runScripts:'outside-only'});
   const w=dom.window;let changed=0,opened=[];
   w.aktifOgrenciAdi='dijimedu_demo';
@@ -16,7 +16,7 @@ test('demo can click password, freeze and deletion; teacher messages remain bloc
   }
   assert.equal(changed,1);assert.deepEqual(opened,['hesap-dondur.html','hesap-sil.html']);
   let messages=0;w.document.querySelector('[data-profile="coach"]').onclick=()=>messages++;
-  w.document.querySelector('[data-profile="coach"]').click();assert.equal(messages,0);
+  w.document.querySelector('[data-profile="coach"]').click();assert.equal(messages,1);
   await new Promise(resolve=>setImmediate(resolve));
   for(const observer of observers)observer.disconnect();
   let plans=0;w.DMSatis={planlar:()=>plans++};

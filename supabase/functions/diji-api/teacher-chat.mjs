@@ -7,7 +7,7 @@ export function teacherChatAPI({db,json,memberStudents,clean,queue,mailShell,htm
  const owner=a=>a?.role==='teacher'&&a.ogretmenKullanici==='teacher'&&a.yonetici===true;
  async function copies(){return new Set((await allRows(()=>db.from('teacher_chat_admin_copies').select('student_id'))).map(x=>x.student_id));}
  async function pupils(a){
-  const all=await allRows(()=>{let q=memberStudents(db.from('students').select('id,username,teacher_id,profile')).neq('id','dcde2026-1015-4000-8000-000000000001');return owner(a)?q:q.eq('teacher_id',a.teacher_id);});
+  const all=await allRows(()=>{let q=memberStudents(db.from('students').select('id,username,teacher_id,profile'));return owner(a)?q:q.eq('teacher_id',a.teacher_id);});
   if(!owner(a))return all;
   const mirrored=await copies(),active=new Set((checked(await db.from('teachers').select('id').eq('active',true).is('frozen_at',null))||[]).map(t=>t.id));return all.filter(s=>!s.teacher_id||!active.has(s.teacher_id)||s.teacher_id===a.teacher_id||mirrored.has(s.id));
  }

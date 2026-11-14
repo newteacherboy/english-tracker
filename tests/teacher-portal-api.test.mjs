@@ -1,5 +1,6 @@
 import {test} from 'node:test';import assert from 'node:assert/strict';
 import {teacherPortalAPI,portalOperationAllowed,ownerTeacher} from '../supabase/functions/diji-api/teacher-portal.mjs';
+import {DEMO_ID,DEMO_TEACHER_ID} from '../supabase/functions/diji-api/demo-account.ts';
 const hash=async s=>Buffer.from(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s))).toString('hex');
 async function fixture(){const digest=await hash('server-secret|teacher-portal|123456'),calls=[];
  const tables={teacher_portal_access:[{id:'grant',student_id:'personal',teacher_id:'teacher-one',state:'approved',version:3,code_digest:digest}],teachers:[{id:'teacher-one',username:'TeacherOne',active:true}],students:[{id:'personal',username:'TeacherOne',email:'one@example.test',email_verified_at:'2026-10-24',status:'approved'},{id:'alice',username:'Alice',teacher_id:'teacher-one',status:'approved'},{id:'bob',username:'Bob',teacher_id:'teacher-two',status:'approved'}],teacher_portal_guests:[],extra_data:[]};
@@ -71,6 +72,26 @@ test('approved account may enter using only its own verified personal session',a
  f.tables.students[0].email_verified_at='2026-10-24';
  f.tables.teachers[0].active=false;
  assert.equal((await f.run('teacherPortalEnter',{},personal)).status,403);
+});
+test('demo enters its own approved teacher workspace without a code or personal email, and can return',async()=>{
+ const f=await fixture();
+ const personal=f.tables.students[0],grant=f.tables.teacher_portal_access[0];
+ personal.id=DEMO_ID;personal.username='dijimedu_demo';personal.email_verified_at=null;grant.student_id=DEMO_ID;
+ grant.teacher_id=DEMO_TEACHER_ID;f.tables.teachers[0].id=DEMO_TEACHER_ID;f.teacher.teacher_id=DEMO_TEACHER_ID;
+ const actor={role:'student',student_id:DEMO_ID};
+ const status=await f.run('teacherPortalStatus',{offerOnly:true},actor);
+ assert.equal(status.data.state,'approved');assert.equal(status.data.codeReady,true);
+ assert.equal((await f.run('teacherPortalEnter',{},actor)).status,200);
+ assert.equal(f.calls.at(-1).session[2],DEMO_TEACHER_ID);
+ assert.equal((await f.run('teacherPortalPersonalSession',{},f.teacher)).data.name,'dijimedu_demo');
+ assert.equal(f.calls.at(-1).session[1],DEMO_ID);
+ // Supplying the demo UUID in a body never upgrades another account.
+ assert.equal((await f.run('teacherPortalEnter',{student_id:DEMO_ID},{role:'student',student_id:'bob'})).status,403);
+ personal.frozen_at='2026-11-14';
+ assert.equal((await f.run('teacherPortalEnter',{},actor)).status,403);
+ assert.equal((await f.run('teacherPortalPersonalSession',{},f.teacher)).status,403);
+ personal.frozen_at=null;grant.state='revoked';
+ assert.equal((await f.run('teacherPortalEnter',{},actor)).status,403);
 });
 test('an existing pending applicant can complete missing school details without a duplicate grant',async()=>{
  const f=await fixture(),actor={role:'student',student_id:'alice'},student=f.tables.students[1];
