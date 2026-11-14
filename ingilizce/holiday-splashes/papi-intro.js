@@ -204,5 +204,7 @@ html.dm-papi-intro:not(.dm-papi-booted) #dmBootSplash{z-index:2147483646!importa
  }
  /* Açılış ekranı kapanmadan önce animasyonun bitmesi için kalan süre (ms) */
  function remainingMs(){if(!active)return 0;if(!startedAt)return 3400;return Math.max(0,3400-(performance.now()-startedAt));}
- window.dmPapiIntro={enable,disable,holdBoot:go=>waitGame?.hold(go)||false,isActive:()=>active,remainingMs,minMs:3400};
+ let characterSequence=0;
+ function characterMarkup(){const suffix='chat'+(++characterSequence);return SVG.replace('class="pi-svg"','class="dm-papi-character-svg"').replace(/id="(pi[a-zA-Z])"/g,'id="$1'+suffix+'"').replace(/url\(#(pi[a-zA-Z])\)/g,'url(#$1'+suffix+')');}
+ window.dmPapiIntro={characterMarkup,enable,disable,holdBoot:go=>waitGame?.hold(go)||false,isActive:()=>active,remainingMs,minMs:3400};
 })();

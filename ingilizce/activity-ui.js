@@ -45,10 +45,9 @@
  ['pomodoroAc',2,'Odaklanma','pomodoro'],['kelimeYarismasiAc',0,'Kelime','oyun_kelime'],['hafizaOyunAc',1,'Hafıza','oyun_hafiza'],['okumaStudyosunuAc',2,'Okuma','okuma_hizi'],['boslukOyunAc',3,'Kelime','oyun_bosluk'],['asmacaOyunAc',4,'Kelime','oyun_asmaca'],['jpOyunAc',5,'Kelime','oyun_jeopardy'],['yagmurOyunAc',6,'Kelime','oyun_yagmur'],['kelimebulOyunAc',7,'Kelime','oyun_kelimebul'],['esOyunAc',8,'Kelime','oyun_eslestirme'],['trenOyunAc',9,'Cümle','oyun_tren'],['dikteAc',10,'Dinleme','oyun_dikte'],['cumleAc',11,'Cümle','oyun_cumle'],['harfBahcesiAc',15,'Kelime','oyun_harfbahcesi'],['ralliOyunAc',16,'Kelime','oyun_ralli'],['kelimeGoluAc',18,'Kelime','oyun_kelime']];
  const free={kelimeGoluDuo:[19,'İki kale, dört köşe; doğru anlamı seç ve golünü at. Enerji harcanmaz.','Maçı Başlat'],papiCardsActivity:[12,'Kelime kartlarını dinle ve öğren.','Kartları Aç'],meteorActivity:[13,'Aynı cihazda kelimeleri yakala, rakibini geç.','Oyunu Aç'],wordWheelActivity:[14,'Çarkı çevir, doğru kelimeyi bul.','Çarkı Aç'],sentenceRaceActivity:[17,'İki takım · farklı sorular · 12 tur · süre bonusu.','Yarışı Başlat']};
  const icon=name=>'<svg class="gg-icon" aria-hidden="true"><use href="games-assets/ui-icons.svg#'+name+'"></use></svg>';
- let party='premium',skill='Tümü',query='',lastAccount='',friendsLoaded=false,knownGrid=null,key='';
+ let party='premium',skill='Tümü',lastAccount='',friendsLoaded=false,knownGrid=null,key='';
  const categories={solo:'Tek Kişilik',duo:'İki Kişilik',free:'Sınıfta Oyna',konu:'Konu Oyunları',break:'Mola Vakti',premium:'Premium Oyunlar'};
  const listOrder=['game-jpOyunAc()','game-kelimeYarismasiAc()','kelimeGoluSolo','mola-kosu','premiumWordBlocksActivity','papizzleActivity'];
- const searchKey=value=>String(value||'').toLocaleLowerCase('tr').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replaceAll('ı','i').trim();
  const listRank=id=>{const i=listOrder.indexOf(id);return i<0?listOrder.length:i;};
  const categoryIcons={solo:0,duo:1,free:2,konu:3,break:4,premium:5};
  const gameCovers={
@@ -114,15 +113,13 @@
  }
  function renderList(host,all){
   const list=host.querySelector('.gg-overview');
-  const term=searchKey(query);
   const cards=all.filter(card=>{
    const {ggCategory:category,ggTitle:title,ggGameSkill:gameSkill}=card.dataset;
    return categories[category]&&(!window.dmTeacherPortalMode||!['duo','break'].includes(category))&&(party==='all'||party===category)&&
-    (party!=='solo'||skill==='Tümü'||gameSkill===skill||skill==='Kelime'&&gameSkill==='Hafıza')&&
-    searchKey(title+' '+categories[category]).includes(term);
+    (party!=='solo'||skill==='Tümü'||gameSkill===skill||skill==='Kelime'&&gameSkill==='Hafıza');
   });
   cards.sort((a,b)=>(party==='all'?listRank(a.dataset.ggId)-listRank(b.dataset.ggId):0)||Number(a.style.order)-Number(b.style.order));
-  const signature=[account(),!!window.dmTeacherPortalMode,party,skill,term,...cards.map(card=>card.dataset.ggId+':'+allowed(card.dataset.ggGate))].join('|');
+  const signature=[account(),!!window.dmTeacherPortalMode,party,skill,...cards.map(card=>card.dataset.ggId+':'+allowed(card.dataset.ggGate))].join('|');
   if(list.dataset.signature===signature)return;
   list.dataset.signature=signature;
   const focused=document.activeElement?.closest('.gg-shelf-card')?.dataset.ggSource;
@@ -149,8 +146,6 @@
   filters.setAttribute('role','group');
   filters.querySelectorAll('button').forEach(button=>{button.removeAttribute('role');button.removeAttribute('aria-controls');});
   // The redundant all-games category is removed; show the Solo category by default.
-  filters.insertAdjacentHTML('beforebegin','<label class="gg-search"><svg class="gg-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="m15.5 15.5 4.5 4.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><input type="search" placeholder="Oyun ara" aria-label="Oyun ara" autocomplete="off"></label>');
-  filters.parentElement.querySelector('input').oninput=e=>{query=e.target.value;render(host,grid);};
   filters.querySelectorAll('[data-gg-party]:not([data-gg-party=all])').forEach(button=>{
    button.querySelector('svg')?.remove();
    button.insertAdjacentHTML('afterbegin','<svg class="gg-category-art" aria-hidden="true"><use href="games-assets/category-icons.svg#'+button.dataset.ggParty+'"></use></svg>');
@@ -165,10 +160,9 @@
   groups.querySelector('[data-gg-main="premium"]').onclick=()=>changeCategory(host,grid,'premium');
   groups.querySelector('[data-gg-main="free"]').onclick=()=>changeCategory(host,grid,'solo');
   const art=(box,cls='gg-category-art')=>'<svg class="'+cls+'" viewBox="'+box+'" aria-hidden="true" focusable="false"><image href="design-assets/games-cards-approved.webp" width="1086" height="1448"/></svg>';
-  const boxes={solo:'145 526 150 153',duo:'581 524 145 155',free:'157 717 142 140',konu:'579 712 146 148',break:'166 901 150 91'};
-  filters.querySelectorAll('[data-gg-party]').forEach(button=>{const key=button.dataset.ggParty;if(!boxes[key])return;button.innerHTML=art(boxes[key])+'<span class="gg-category-copy"><b class="gg-category-name">'+categories[key]+'</b>'+(key==='duo'?'<small class="gg-online-label">Online</small>':'')+'</span><span class="gg-category-check" aria-hidden="true">✓</span>';});
+  const boxes={solo:'145 526 150 132',duo:'581 524 145 136',free:'158 719 138 120',konu:'584 714 133 130',break:'168 904 147 78'};
+  filters.querySelectorAll('[data-gg-party]').forEach(button=>{const key=button.dataset.ggParty;if(!boxes[key])return;button.innerHTML=art(boxes[key])+'<span class="gg-category-copy"><b class="gg-category-name">'+categories[key]+'</b>'+(key==='duo'?'<small class="gg-online-label">Online</small>':'')+'</span>';});
   const question=document.createElement('h2');question.className='gg-category-question';question.textContent='Nasıl oynamak istersin?';filters.before(question);
-  const heading=host.querySelector('.gg-title h1');heading.insertAdjacentHTML('beforeend',art('673 9 245 171','gg-heading-controller'));
 
 
  }
@@ -242,7 +236,6 @@
    host.querySelector('.gg-matches').hidden=!social;
    host.querySelector('[data-gg-duo]').hidden=party==='duo';
    grid.hidden=true;
-   host.querySelector('.gg-search').hidden=showTools||showTopics;
    if(!showTools&&!showTopics)renderList(host,all);
   }
   const xp=typeof yo!=='undefined'?yo:null;host.querySelector('[data-gg-gold]').textContent=xp?.altin||0;host.querySelector('[data-gg-energy]').textContent=(typeof genelEnerjiKalan==='number'?genelEnerjiKalan:typeof genelEnerjiKalan==='function'?genelEnerjiKalan():'–')+'/'+(typeof genelEnerjiMax==='number'?genelEnerjiMax:typeof genelEnerjiMax==='function'?genelEnerjiMax():30);
@@ -272,7 +265,7 @@
    installRedesign(host,grid,top,bottom);grid.removeAttribute('role');party='premium';
    new MutationObserver(()=>{key='';install();}).observe(grid,{childList:true});
   }
-  if(lastAccount!==account()){lastAccount=account();friendsLoaded=false;party='premium';skill='Tümü';query='';const search=host.querySelector('.gg-search input');if(search)search.value='';key='';}
+  if(lastAccount!==account()){lastAccount=account();friendsLoaded=false;party='premium';skill='Tümü';key='';}
   const nextKey=[!!window.dmTeacherPortalMode,party,skill,level(),!!window.dmProgression?.earlyAccess?.(),host.querySelectorAll('.az-gcard').length,lastGame(),typeof yo!=='undefined'?yo?.altin:0,typeof genelEnerjiKalan==='number'?genelEnerjiKalan:typeof genelEnerjiKalan==='function'?genelEnerjiKalan():0].join('|');if(knownGrid!==grid||key!==nextKey){knownGrid=grid;key=nextKey;render(host,grid);}
  }
  // Page tabs must never inherit the viewport lock used by a playing overlay.
@@ -281,7 +274,6 @@
  window.dmGamesUI={
   refresh:()=>{key='';install(true);},
   enter:()=>{
-   query='';const search=document.querySelector('#tab-aktiviteler .gg-search input');if(search)search.value='';
    party='premium';skill='Tümü';key='';install(true);
    const tab=document.getElementById('tab-aktiviteler');if(tab)tab.scrollTop=0;
   }

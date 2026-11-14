@@ -145,7 +145,7 @@ function playLevelEnergy(el,reward,close,later,reduced){
   const visible=e=>{const r=e.getBoundingClientRect();return r.width>0&&r.height>0&&r.top>=0&&r.bottom<=innerHeight&&getComputedStyle(e).visibility==='visible';};
   if(!battery.animate){later(close,1800);return;}
   let target=[...document.querySelectorAll('.dm-unified-wallet [data-pw="energy"]')].find(visible)
-   ||[...document.querySelectorAll('#headerEnerjiBadge,#ybEnerji')].find(visible);
+   ||[...document.querySelectorAll('#headerEnerjiBadge')].find(visible);
   if(!target){
    target=document.createElement('div');target.className='dm-energy-fallback';
    target.textContent='ϟ '+reward.energy+'/'+reward.max;el.append(target);
