@@ -206,10 +206,26 @@ html body #tab-dunya .rt-medal-route .rt-medal-tools>button{color:#6B7A90!import
 html[data-dm-theme="night"] body #tab-dunya .rt-medal-route .rt-medal-tools>button{color:#9AA8BD!important}
 html body #tab-dunya .rt-medal-route .rt-medal-tools .rt-tool-badge{filter:none!important;opacity:1!important;z-index:2}
 
-/* [12 Kas 2026] Öğrenme Yolu: kilitli bölüm başında "Buradan devam et" (durak kilitli görünür, etiket seçilebilir). */
-body #tab-dunya .rt-medal-route .rt-medal-jump{position:absolute;left:0;top:calc(var(--medal-size, 76px) / 2 + 16px);transform:translateX(-50%);z-index:2;display:inline-flex;align-items:center;gap:5px;min-height:34px;padding:0 14px;white-space:nowrap;border:2px solid #0E7C7B;border-bottom-width:4px;border-radius:999px;background:#fff;color:#0E7C7B;font:900 13px/1 Nunito,system-ui,sans-serif;cursor:pointer;box-shadow:0 3px 8px #0f27471f}
-body #tab-dunya .rt-medal-route .rt-medal-jump:active{transform:translateX(-50%) scale(.95)}
-html[data-dm-theme="night"] body #tab-dunya .rt-medal-route .rt-medal-jump{background:#13283f;color:#7FE0D6;border-color:#2BA79C}
+/* Approved gold flag: beside its own stop, with a 44px touch target and 36px visible disc. */
+body #tab-dunya .rt-medal-route .rt-medal-jump{
+ position:absolute;left:calc(var(--medal-size,64px) / 2 + 10px);top:0;
+ transform:translateY(-50%);z-index:2;display:grid;place-items:center;
+ box-sizing:border-box;width:44px;height:44px;min-width:44px;min-height:44px;
+ margin:0;padding:0;border:0;border-radius:50%;background:transparent;color:#102B4C;
+ cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;
+}
+body #tab-dunya .rt-medal-route .rt-medal-jump::before{
+ content:"";position:absolute;inset:4px;box-sizing:border-box;border:3px solid #fff;
+ border-radius:50%;background:linear-gradient(150deg,#FFE575,#FFC531 65%,#FFB91E);
+ box-shadow:0 3px 0 #D99A00,0 5px 10px #0F27472B,inset 0 1px 1px #FFF8;
+ pointer-events:none;
+}
+body #tab-dunya .rt-medal-route .rt-medal-jump svg{
+ position:relative;display:block;width:18px;height:18px;fill:currentColor;pointer-events:none;
+}
+body #tab-dunya .rt-medal-route .rt-medal-jump:active{transform:translateY(-50%) scale(.94)}
+body #tab-dunya .rt-medal-route .rt-medal-jump:focus-visible{outline:3px solid #1679BA;outline-offset:2px}
+html[data-dm-theme="night"] body #tab-dunya .rt-medal-route .rt-medal-jump::before{box-shadow:0 3px 0 #B97A00,0 5px 12px #0006,inset 0 1px 1px #FFF8}
 .rt-jump-choices{grid-template-columns:1fr 1fr!important}
 .rt-jump-choices [data-jump-yes]{background:#0E7C7B!important;color:#fff!important;border-color:#0A5F5E!important}
 
