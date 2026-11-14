@@ -606,7 +606,9 @@ function ysCallState(state,message){const root=document.querySelector('.ys-call'
 function ysPapiSpeak(text){
  sohbetMikDur();ysSpeechStop();const owner=sh,step=sh?.i;
  if(!window.speechSynthesis||!window.SpeechSynthesisUtterance){ysCallState('idle','Sıra sende');return;}
- const u=new SpeechSynthesisUtterance(text);ysSpeech=u;u.lang='en-US';u.rate=.9;
+ const u=new SpeechSynthesisUtterance(text);ysSpeech=u;u.lang='en-US';
+ // A lightly raised character voice, with a clear pace for English learners.
+ u.pitch=1.2;u.rate=.92;u.volume=1;
  const done=()=>{if(ysSpeech!==u)return;ysSpeech=null;clearTimeout(ysSpeechTimer);document.querySelectorAll('[data-speaking]').forEach(e=>e.removeAttribute('data-speaking'));if(sh===owner&&sh?.i===step)ysCallState('idle','Sıra sende');};
  u.onstart=()=>{if(ysSpeech!==u)return;document.querySelectorAll('.ys-call-character,.ys-ust-kus').forEach(e=>e.dataset.speaking='true');ysCallState('speaking','Papi konuşuyor…');};u.onend=done;u.onerror=done;
  try{speechSynthesis.speak(u);ysSpeechTimer=setTimeout(done,20000);}catch{done();}
