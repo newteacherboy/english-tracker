@@ -138,8 +138,8 @@ function medalDivider(divider){
 function medalRow(map,step,i){
  const {current,learn}=map;
  const active=i===current,locked=!step.available,start=active&&!locked,n=routeNumber(step,i,learn);
- // [12 Kas 2026] Öğrenme Yolu: kilitli bir bölümün ilk durağı "Buradan devam et" ile seçilebilir.
- const sectionStart=learn&&locked&&i>current&&(i===0||!!map.layout[i]?.divider);
+ // Öğrenme Yolu: her durak yeni başlangıç olarak seçilebilir; Okul Yolum etkilenmez.
+ const sectionStart=learn&&!active;
  const offset=i-current,lanes=[47,33,31,43,60,62,52,36],x=lanes[(offset%lanes.length+lanes.length)%lanes.length];
  const {y,divider}=map.layout[i];
  const action=learn?'data-rt="chapter" data-chapter="'+step.id+'"':'data-rt="school-stop" data-b="'+step.b+'" data-d="'+step.d+'"';
@@ -361,7 +361,7 @@ function startHere(b){
  card.querySelectorAll('.rt-close,h2').forEach(node=>node.remove());
  el.onclick=e=>{e.stopPropagation();if(!e.target.closest('[data-jump-yes]'))close();};
  const button=el.querySelector('[data-jump-yes]');
- button.onclick=async()=>{close();const api=window.dmThematicLearning||window.dmStoryPath;if(typeof api?.startHere!=='function'){tell('Bu özellik şu an açılamadı. Sayfayı yenile.');return;}await api.startHere(id);refreshLearning();};
+ button.onclick=async()=>{close();const api=window.dmThematicLearning||window.dmStoryPath;if(typeof api?.startHere!=='function'){tell('Bu özellik şu an açılamadı. Sayfayı yenile.');return;}try{await api.startHere(id);refreshLearning();}catch(error){tell(error?.message||'Başlangıç durağı kaydedilemedi. Yeniden dene.');}};
  button.focus({preventScroll:true});
 }
 
