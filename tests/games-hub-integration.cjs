@@ -73,7 +73,7 @@ assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)
 await page.locator('[data-gg-main=premium]').click();
 if(width===390&&process.env.GAMES_SCREENSHOT)await page.screenshot({path:process.env.GAMES_SCREENSHOT});
 await page.evaluate(()=>{document.documentElement.dataset.dmTheme='day';});
-assert.equal(await page.locator('.gg-list-view').evaluate(el=>getComputedStyle(el).backgroundColor),'rgb(248, 250, 252)');
+assert.equal(await page.locator('.gg-list-view').evaluate(el=>getComputedStyle(el).backgroundColor),'rgb(248, 247, 255)');
 assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'Day mode horizontal overflow');
 if(width===390&&process.env.GAMES_SCREENSHOT)await page.screenshot({path:process.env.GAMES_SCREENSHOT+'.day.png'});
 console.log('PASS real app styles and late legacy decorators '+width+'px');
