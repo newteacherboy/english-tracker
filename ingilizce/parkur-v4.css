@@ -226,8 +226,23 @@ body #tab-dunya .rt-medal-route .rt-medal-jump svg{
 body #tab-dunya .rt-medal-route .rt-medal-jump:active{transform:translateY(-50%) scale(.94)}
 body #tab-dunya .rt-medal-route .rt-medal-jump:focus-visible{outline:3px solid #1679BA;outline-offset:2px}
 html[data-dm-theme="night"] body #tab-dunya .rt-medal-route .rt-medal-jump::before{box-shadow:0 3px 0 #B97A00,0 5px 12px #0006,inset 0 1px 1px #FFF8}
-.rt-jump-choices{grid-template-columns:1fr 1fr!important}
-.rt-jump-choices [data-jump-yes]{background:#0E7C7B!important;color:#fff!important;border-color:#0A5F5E!important}
+/* Compact native-style continuation card: one action; tap empty space to dismiss. */
+.rt-overlay.rt-jump-overlay{background:#102B4C26;-webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px)}
+.rt-jump-overlay .rt-dialog.rt-jump-card{
+ box-sizing:border-box;width:min(280px,100%);padding:10px;margin:0;border:1px solid #fff;
+ border-radius:24px;background:#FFFFFFF5;overflow:visible;
+ box-shadow:0 12px 36px #102B4C24,0 2px 6px #102B4C0D;
+}
+.rt-jump-card .rt-jump-continue{
+ display:flex;align-items:center;justify-content:center;box-sizing:border-box;width:100%;min-height:52px;
+ margin:0;padding:14px 18px;border:1px solid #FFE69B;border-bottom:4px solid #D99A00;border-radius:17px;
+ background:linear-gradient(160deg,#FFE687,#FFC531 78%);color:#102B4C;
+ font:900 17px/1.2 Nunito,system-ui,sans-serif;white-space:nowrap;text-align:center;
+ box-shadow:inset 0 1px 0 #FFF9;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;
+}
+.rt-jump-card .rt-jump-continue:active{transform:translateY(1px);border-bottom-width:3px}
+.rt-jump-card .rt-jump-continue:focus-visible{outline:3px solid #1679BA;outline-offset:3px}
+html[data-dm-theme="night"] .rt-jump-overlay .rt-dialog.rt-jump-card{background:#172B43;border-color:#29425E;box-shadow:0 14px 40px #0005}
 
 /* Only the route text opens the existing stop explorer. */
 html[data-dm-theme] body #tab-dunya .rt-medal-route .rt-medal-unit .rt-route-explorer{

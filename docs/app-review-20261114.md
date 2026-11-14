@@ -7,7 +7,7 @@ Build referenced by rejection: 1.1.1 (108), iPad Air 11-inch (M3), iPadOS 27.3.
 - Demo account settings allow password changes, freeze, reopen and permanent deletion through the same authenticated flows as ordinary accounts.
 - Password verification, rate limits, action-specific five-minute tickets and final confirmation remain mandatory.
 - Login no longer recreates a deleted demo account. Restore is available for frozen accounts; deletion is permanent. After a reviewer changes credentials or deletes the review account, the owner must update the review access details before another submission.
-- Demo learning access remains Premium Pro. Billing returns a separate purchasePlan from unexpired store entitlements, so the access grant no longer disables Pro monthly/yearly purchase options.
+- Demo learning access follows real subscription entitlements. Without an active subscription the demo is Free; a verified purchase upgrades it normally. Billing purchasePlan remains separate from non-purchase access grants.
 - Packages are accessible from Shop → Packages and subscriptions, and Profile → Account settings → Packages and subscriptions, including accounts with Premium access.
 
 ## Review navigation
@@ -33,3 +33,9 @@ These tests do not validate a real StoreKit product response or Apple's payment 
 - Personal Parkur returns to the linked demo learner, regardless of another account saved on the device. The teacher identity has no access to unrelated students or owner administration.
 - Do not submit another build solely for these web/server changes. Real iPadOS WebKit, TestFlight StoreKit purchase and restore remain device acceptance checks, not replaced by server/unit tests.
 - Route continuation button redesign is a pending visual proposal and has not been applied.
+
+## Simplified continuation and Free review account
+
+The route flag opens a compact white card containing only the gold “Buradan devam et” action. Empty card space, backdrop and Escape dismiss it without starting a chapter; the action starts the selected chapter.
+
+Migration 20261114134458 removes only the automatic demo Premium Pro branch of dm_plan. Active subscriptions, expiry, teacher plan inheritance and owner preview rules stay intact. The demo teacher grant is independent of the learner's plan and remains approved. Real StoreKit device acceptance remains outstanding.
