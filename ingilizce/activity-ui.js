@@ -73,11 +73,13 @@
   document.body.append(overlay);document.addEventListener('keydown',keys);overlay.querySelector('[data-plans]').focus();
  }
  async function premiumEntry(card){
+  // These games check quota in their own status/start flow and can resume a paid run at zero remaining.
+  if(['towerActivity','kelimeGoluSolo'].includes(card.id)){card.click();return;}
   if(card.dataset.ggCategory!=='premium'||window.dmTeacherPortalMode){card.click();return;}
   if(card.dataset.accessPending)return;
   card.dataset.accessPending='1';
   const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),12000);
-  const games={premiumWordMatchActivity:'word-match',premiumCloudFlightActivity:'cloud-flight',premiumWordBlocksActivity:'word-blocks',papizzleActivity:'papizzle'};
+  const games={premiumWordMatchActivity:'word-match',premiumCloudFlightActivity:'cloud-flight',premiumWordBlocksActivity:'word-blocks',papizzleActivity:'papizzle',towerActivity:'tower',kelimeGoluSolo:'word-goal'};
   const game=games[card.id]||'rally';
   try{
    const token=localStorage.getItem('ing_token')||'';
@@ -183,7 +185,7 @@
  function game(b){const rule=defs.find(d=>(b.getAttribute('onclick')||'').includes(d[0]))||defs.find(d=>b.id===d[0]||b.id==='yoDikteKart'&&d[0]==='dikteAc');return rule||[null,8,'Kelime',b.dataset.dmLevelLock||window.DijiProgressionCatalog?.functions[(b.getAttribute('onclick')||'').match(/([A-Za-z_$][\w$]*)\s*\(/)?.[1]]||''];}
  function lastGame(){try{return localStorage.getItem('dm_last_game:'+account())||'';}catch{return '';}}
  function remember(b){try{localStorage.setItem('dm_last_game:'+account(),b.dataset.ggId);}catch{}}
- function prepare(b,i){if(b.dataset.ggReady)return;b.dataset.ggReady='1';b.dataset.ggId=b.id||'game-'+(b.getAttribute('onclick')||i);const d=game(b),f=free[b.id];b.dataset.ggGameSkill=d[2];b.dataset.ggGate=d[3];b.dataset.ggCategory=f?'free':b.classList.contains('dm-live-card')||['dmUcusteKart','dmRotaKart'].includes(b.id)?'duo':'solo';if(b.dataset.ggCategory==='duo')b.dataset.ggGate='iki_kisilik';b.dataset.ggIndex=f?f[0]:d[1];b.style.order=String(f?f[0]:defs.includes(d)?d[1]:50);if(['premiumWordMatchActivity','premiumCloudFlightActivity','premiumWordBlocksActivity','papizzleActivity','rallyActivity'].includes(b.id)){b.dataset.ggCategory='premium';b.dataset.ggGate='';b.dataset.ggIndex=b.id==='rallyActivity'?'16':b.id==='papizzleActivity'?'26':b.id==='premiumWordBlocksActivity'?'24':b.id==='premiumCloudFlightActivity'?'23':'22';}
+ function prepare(b,i){if(b.dataset.ggReady)return;b.dataset.ggReady='1';b.dataset.ggId=b.id||'game-'+(b.getAttribute('onclick')||i);const d=game(b),f=free[b.id];b.dataset.ggGameSkill=d[2];b.dataset.ggGate=d[3];b.dataset.ggCategory=f?'free':b.classList.contains('dm-live-card')||['dmUcusteKart','dmRotaKart'].includes(b.id)?'duo':'solo';if(b.dataset.ggCategory==='duo')b.dataset.ggGate='iki_kisilik';b.dataset.ggIndex=f?f[0]:d[1];b.style.order=String(f?f[0]:defs.includes(d)?d[1]:50);if(['premiumWordMatchActivity','premiumCloudFlightActivity','premiumWordBlocksActivity','papizzleActivity','rallyActivity','towerActivity','kelimeGoluSolo'].includes(b.id)){b.dataset.ggCategory='premium';b.dataset.ggGate='';b.dataset.ggIndex=b.id==='towerActivity'?'21':b.id==='kelimeGoluSolo'?'18':b.id==='rallyActivity'?'16':b.id==='papizzleActivity'?'26':b.id==='premiumWordBlocksActivity'?'24':b.id==='premiumCloudFlightActivity'?'23':'22';}
   b.classList.add('gg-game');b.classList.remove('dm-toy-card','dm-showcase-card');
   const title=b.querySelector('.az-gcard-title')?.textContent.trim()||b.textContent.trim();b.dataset.ggTitle=title;
   const tool=d[0]==='pomodoroAc'||d[0]==='okumaStudyosunuAc';if(tool)b.dataset.ggCategory='tools';

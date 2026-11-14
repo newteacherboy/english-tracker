@@ -49,6 +49,7 @@ function unitsFor(cls){return [...new Set((window.masterKelimeHavuzu||[]).filter
 function locked(cls,unit){return session?.mode==='solo'?window.dmGameAccess?.reason?.(cls,unit)||'':'';}
 function fillUnits(){const s=session;s.units=[];const box=root.querySelector('[data-units]');box.innerHTML=unitsFor(s.classNo).map(n=>`<label class="kg-unit"><input type="checkbox" value="${n}" ${locked(s.classNo,n)?'disabled':''}>${n}. Ünite</label>`).join('');const first=box.querySelector('input:not(:disabled)');if(first)first.checked=true;box.onchange=()=>{s.units=[...box.querySelectorAll('input:checked')].map(b=>Number(b.value));};box.onchange();}
 function open(mode='solo',scope=null){
+ if(mode==='solo'&&window.dmPremiumSkillGames)return window.dmPremiumSkillGames.open('word-goal');
  if(mode==='solo'&&window.dmFeatureEnabled?.('oyun_kelime')===false)return;
  if(mode==='solo'&&!practice()&&window.dmProgression?.allowed?.('oyun_kelime')===false){window.dmProgression?.require?.('oyun_kelime');return;}
  close();origin=document.activeElement;const solo=mode==='solo';session={mode:solo?'solo':'duo',owner:who(),classNo:1,units:[],phase:'setup',players:[],starting:false,scope};

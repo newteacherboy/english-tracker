@@ -2686,6 +2686,13 @@
       "bytes": 65310,
       "status": "ai-generated",
       "source": "OpenAI image generation, 2026-11-14. User-approved DijiMedu Papi design: 3D Papi wearing purple headphones and holding a lightning token. Reference: ingilizce/papi-welcome-v2.png."
+    },
+    {
+      "path": "ingilizce/games-assets/word-goal-sprites-v2.png",
+      "sha256": "8a81b907d4ed900f2ceef71a33311d6796404c340ae5c88062d761f4ffebc643",
+      "bytes": 1493489,
+      "status": "ai-generated",
+      "source": "docs/premium-skill-artwork.json"
     }
   ]
 }
