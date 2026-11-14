@@ -717,3 +717,7 @@ html:not([data-dm-theme=night]) #tab-aktiviteler#tab-aktiviteler .gg-page.gg-sel
 .gg-exhausted section{position:relative;box-sizing:border-box;width:min(100%,360px);max-height:90dvh;overflow:auto;padding:30px 24px 20px;border:1px solid #ffffffb3;border-radius:28px;background:linear-gradient(160deg,#fffdf6,#f1eaff);box-shadow:0 24px 80px #100c344d;text-align:center;color:#30214e;font-family:inherit}
 .gg-exhausted-crown{display:block;font-size:48px;margin-bottom:12px}.gg-exhausted h2{font-size:23px;line-height:1.25;margin:0 0 12px}.gg-exhausted p{font-size:16px;margin:0 0 24px}
 .gg-exhausted button{cursor:pointer;font:inherit;border:0}.gg-exhausted [data-plans]{display:block;width:100%;padding:15px 12px;border-radius:16px;background:linear-gradient(135deg,#7850df,#5732bb);color:white;font-weight:800}.gg-exhausted [data-dismiss]{padding:14px;background:transparent;color:#635878}.gg-exhausted .gg-exhausted-close{position:absolute;top:10px;right:12px;padding:4px 10px;font-size:25px;background:transparent;color:#635878}
+
+/* Quota dialog: protect heading contrast from global game styles. */
+#ggExhausted #ggExhaustedTitle{color:#38205c!important;-webkit-text-fill-color:#38205c!important;background:none!important;text-shadow:none!important;font-weight:900}
+#ggExhausted .gg-exhausted-papi{display:block;width:128px;height:128px;object-fit:contain;margin:0 auto 12px;filter:drop-shadow(0 5px 8px #6b3fa523)}
