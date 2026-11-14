@@ -32,9 +32,9 @@ const compact=await page.evaluate(()=>{
 assert.equal(await page.locator('[data-gg-main]:visible').count(),2);
 assert.equal(await page.locator('.gg-tabs button:visible').count(),0);
 await page.locator('[data-gg-main=free]').click();
-assert.equal(await page.locator('.gg-tabs').evaluate(el=>getComputedStyle(el).gridTemplateColumns.split(' ').length),3);
+assert.equal(await page.locator('.gg-tabs').evaluate(el=>getComputedStyle(el).gridTemplateColumns.split(' ').length),2);
 assert.equal(await page.locator('.gg-filters:visible').count(),1);
-assert.equal(await page.locator('#ggOnlineTab span').evaluate(el=>getComputedStyle(el).color),'rgb(244, 247, 255)');
+assert.equal(await page.locator('#ggOnlineTab .gg-category-copy').evaluate(el=>getComputedStyle(el).color),'rgb(22, 46, 83)');
 assert.equal(await page.locator('.gg-brand [data-pw]:visible').count(),4);
 assert(compact.bannerHeight <= 210,'Games header not compact: '+JSON.stringify(compact));
 
@@ -73,7 +73,7 @@ assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)
 await page.locator('[data-gg-main=premium]').click();
 if(width===390&&process.env.GAMES_SCREENSHOT)await page.screenshot({path:process.env.GAMES_SCREENSHOT});
 await page.evaluate(()=>{document.documentElement.dataset.dmTheme='day';});
-assert.equal(await page.locator('.gg-list-view').evaluate(el=>getComputedStyle(el).backgroundColor),'rgb(248, 250, 252)');
+assert.equal(await page.locator('.gg-list-view').evaluate(el=>getComputedStyle(el).backgroundColor),'rgb(248, 247, 255)');
 assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'Day mode horizontal overflow');
 if(width===390&&process.env.GAMES_SCREENSHOT)await page.screenshot({path:process.env.GAMES_SCREENSHOT+'.day.png'});
 console.log('PASS real app styles and late legacy decorators '+width+'px');
@@ -88,7 +88,7 @@ assert(await page.locator('.gg-list-view.gg-teacher-list').isVisible());
 assert(await page.locator('.gg-search input').isVisible());
 assert(await page.locator('#ggOnlineTab').isHidden());
 assert(await page.locator('#ggBreakTab').isHidden());
-assert.equal(await page.locator('#ggFreeTab span').textContent(),'Sınıfta Oyna');
+assert.equal(await page.locator('#ggFreeTab .gg-category-name').textContent(),'Sınıfta Oyna');
 assert(await page.locator('.gg-list-row:visible').count()>0);
 assert(await page.locator('.gg-brand').isHidden());
 await page.locator('[data-gg-main=premium]').click();

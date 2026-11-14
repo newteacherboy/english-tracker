@@ -1,0 +1,24 @@
+'use strict';
+require('./_index-source.cjs');
+const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict');
+const {chromium}=require('playwright'),{JSDOM}=require('jsdom'),chat=require('./papi-dialogue-fixture.cjs');
+const root=path.resolve('ingilizce'),html=fs.readFileSync(root+'/index.html','utf8');
+const doc=new JSDOM(html).window.document;
+const styles=[...doc.querySelectorAll('style,link[rel=stylesheet]')].filter(e=>e.tagName==='STYLE'||!/^https?:/.test(e.getAttribute('href'))).map(e=>e.outerHTML).join('\n');
+const games=fs.readFileSync('tests/games-hub-ui.cjs','utf8').match(/body:`([\s\S]*?)`\}\);/)[1].replace('</head>',styles+'</head>');
+(async()=>{const browser=await chromium.launch({headless:true,...(process.env.CHROMIUM_PATH?{executablePath:process.env.CHROMIUM_PATH}:{})});fs.mkdirSync('/tmp/lila-cards-qa',{recursive:true});
+try{for(const [width,height] of [[320,740],[360,800],[390,844],[430,932],[768,1024],[844,390]]){
+ const page=await browser.newPage({viewport:{width,height},reducedMotion:'reduce'}),errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.route('**/*',r=>{const u=new URL(r.request().url());if(!['chat.test','games.test'].includes(u.hostname))return r.abort();if(u.pathname==='/')return r.fulfill({contentType:'text/html; charset=utf-8',body:u.hostname==='chat.test'?chat.html(styles):games});if(u.pathname.endsWith('/premium-games'))return r.fulfill({json:{ok:true,plan:'free',remaining:1}});const f=path.resolve(root,'.'+u.pathname);return f.startsWith(root+path.sep)&&fs.existsSync(f)&&fs.statSync(f).isFile()?r.fulfill({path:f}):r.fulfill({status:404,body:''});});
+ await page.goto('https://chat.test/');await page.evaluate(()=>qaPremium=false);await page.getByRole('button',{name:'Papi Başlat',exact:true}).click();await page.locator('.pc-lila').waitFor();await page.waitForLoadState('networkidle');
+ assert.equal(await page.locator('.pc-benefits>div').count(),3);assert.equal(await page.locator('.pc-lila-hero image').getAttribute('href'),'design-assets/chat-lila-approved.webp');assert.equal(await page.locator('.pc-topics').count(),0);
+ const info=await page.locator('.pc-content').evaluate(e=>({w:e.clientWidth,scroll:e.scrollWidth}));assert(info.scroll<=info.w+1,JSON.stringify({width,info}));
+ await page.locator('[data-pc-plans]').scrollIntoViewIfNeeded();const button=await page.locator('[data-pc-plans]').boundingBox();assert(button.x>=0&&button.x+button.width<=width+1&&button.y>=0&&button.y+button.height<=height+1,JSON.stringify({width,button}));await page.screenshot({path:`/tmp/lila-cards-qa/chat-${width}.png`});await page.locator('[data-pc-plans]').click();assert.equal(await page.evaluate(()=>qaPlan[1]),'premium_pro');assert.equal(await page.locator('#dmPapiChat').count(),0);
+ await page.goto('https://games.test/');await page.evaluate(()=>{document.documentElement.dataset.dmTheme='day';dmGamesUI.enter();});await page.locator('[data-gg-main=free]').click();await page.waitForLoadState('networkidle');
+ assert.equal(await page.locator('.gg-tabs button:visible').count(),5);assert.equal(await page.locator('.gg-online-label').textContent(),'Online');assert.equal(await page.locator('.gg-category-question').isVisible(),true);
+ const cards=await page.locator('.gg-tabs button:visible').evaluateAll(bs=>bs.map(e=>{const r=e.getBoundingClientRect();return{id:e.id,x:r.x,y:r.y,right:r.right,w:r.width,h:r.height,scroll:e.scrollWidth,client:e.clientWidth,art:e.querySelector('image')?.getAttribute('href'),iconWidth:e.querySelector('.gg-category-art')?.getBoundingClientRect().width}}));
+ assert.equal(cards.length,5);for(const c of cards){assert(c.x>=0&&c.right<=width+1&&c.h>=44&&c.scroll<=c.client+1,JSON.stringify({width,c}));assert.equal(c.art,'design-assets/games-cards-approved.webp');assert(c.iconWidth>=39,JSON.stringify({width,c}));}assert(Math.abs(cards[0].y-cards[1].y)<1);assert(Math.abs(cards[2].y-cards[3].y)<1);assert(cards[4].w>cards[0].w*1.9);
+ await page.screenshot({path:`/tmp/lila-cards-qa/games-${width}.png`,fullPage:true});
+ for(const key of ['duo','free','konu','break','solo']){await page.locator('button[data-gg-party='+key+']').click();assert.equal(await page.locator('.gg-selected-cards').getAttribute('data-gg-party'),key);assert.equal(await page.locator('button[data-gg-party='+key+']').getAttribute('aria-pressed'),'true');}
+ await page.locator('[data-gg-main=premium]').click();assert.equal(await page.locator('.gg-tabs').isVisible(),false);assert.equal(await page.locator('.gg-category-question').isVisible(),false);await page.locator('[data-gg-main=free]').click();assert.equal(await page.locator('.gg-tabs button:visible').count(),5);assert.deepEqual(errors,[]);await page.close();console.log('PASS approved lila paywall and five category cards',width,height);
+}}finally{await browser.close();}})().catch(e=>{console.error(e);process.exit(1)});

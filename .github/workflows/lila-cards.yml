@@ -1,0 +1,27 @@
+name: Approved lila chat and category cards
+on:
+  pull_request:
+    paths: ['ingilizce/papi-chat.*', 'ingilizce/activity-ui.*', 'ingilizce/design-assets/**', 'tests/lila-cards-browser.cjs', '.github/workflows/lila-cards.yml']
+  push:
+    branches: [main]
+    paths: ['ingilizce/papi-chat.*', 'ingilizce/activity-ui.*', 'ingilizce/design-assets/**', 'tests/lila-cards-browser.cjs', '.github/workflows/lila-cards.yml']
+permissions:
+  contents: read
+jobs:
+  selected-designs:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: npm install --no-save --package-lock=false --ignore-scripts jsdom@26.1.0 playwright@1.58.2
+      - run: node --test tests/papi-chat-ui.test.cjs tests/games-category-access.test.cjs tests/portal-integrity.test.cjs
+      - run: npx playwright install --with-deps chromium
+      - run: node tests/lila-cards-browser.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: approved-lila-cards-layouts
+          path: /tmp/lila-cards-qa/*.png
