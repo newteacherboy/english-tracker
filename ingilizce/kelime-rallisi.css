@@ -145,3 +145,28 @@
 @media(prefers-reduced-motion:reduce){#rallyGame .rr-a-car{animation:none}}
 #rallyGame .rr-a-level{min-width:0;flex:1;justify-items:center}
 #rallyGame .rr-setup-a .rr-pace-note{text-align:center}
+/* Continuous coastal race: one shared projection for the track, car, and two gate rows. */
+#rallyGame .rr-race .rr-scenery{background-size:cover;background-position:center 39%;transform:none}
+#rallyGame .rr-race .rr-hud{top:calc(8px + env(safe-area-inset-top,0px));left:4%;right:4%;grid-template-columns:1fr;text-shadow:none}
+#rallyGame .rr-race .rr-hud-right{display:flex;justify-content:space-between;align-items:center;background:#074a50ed;padding:9px 12px;border-radius:18px;color:#fff}
+#rallyGame .rr-race .rr-hud-stats{gap:8px;min-width:0}.rr-race .rr-level{font-size:clamp(10px,3cqw,14px);font-weight:900}.rr-race .rr-hearts{font-size:19px}
+#rallyGame .rr-race .rr-score{font-size:12px;border:0;background:transparent;padding:0}.rr-race .rr-tally,.rr-race .rr-slow{display:none!important}
+#rallyGame .rr-race .rr-progress{height:5px;background:#06464d66}
+#rallyGame .rr-race .rr-mission{top:calc(78px + env(safe-area-inset-top,0px));left:7%;right:7%;filter:none}
+#rallyGame .rr-race .rr-plank{background:linear-gradient(120deg,#fff9e9,#fff);border:1px solid #fff;border-radius:20px;padding:12px 16px;box-shadow:0 4px 18px #102d4033}
+#rallyGame .rr-race .rr-plank:before,#rallyGame .rr-race .rr-plank:after{display:none}
+#rallyGame .rr-race .rr-word{font-size:clamp(23px,8cqw,42px);color:#132d44}.rr-race .rr-direction{color:#657a87}.rr-race .rr-round{font-size:10px;margin-top:5px;background:#07505bd9;border:0}
+#rallyGame .rr-race .rr-gate,#rallyGame .rr-race .rr-preview-gate{position:absolute;top:0;left:0;padding:0 3px;transition:none;will-change:transform;filter:drop-shadow(0 5px 4px #05283a66);transform-origin:50% 100%;display:block;z-index:3;pointer-events:auto}
+#rallyGame .rr-race .rr-gate:before,#rallyGame .rr-race .rr-gate:after,.rr-preview-gate:before,.rr-preview-gate:after{content:'';position:absolute;top:22%;bottom:0;width:5%;background:repeating-linear-gradient(0deg,#fff 0 11px,#243a46 11px 22px);border:1px solid #c4d9df;border-radius:3px;display:block}
+#rallyGame .rr-race .rr-gate:before,.rr-preview-gate:before{left:4%}#rallyGame .rr-race .rr-gate:after,.rr-preview-gate:after{right:4%}
+#rallyGame .rr-race .rr-gate .rr-label,.rr-preview-gate span{display:flex;align-items:center;justify-content:center;position:relative;z-index:1;height:40%;min-height:26px;padding:4px 6px;background:linear-gradient(#167e83,#085057);color:#fff;border:2px solid #fee09c;border-radius:8px;box-shadow:0 3px 0 #1c363d;font-size:clamp(10px,4cqw,20px);line-height:1.1;text-align:center;font-weight:950;overflow-wrap:anywhere}
+.rr-race .rr-next-gates{position:absolute;inset:0;pointer-events:none;z-index:2}.rr-race .rr-preview-gate{opacity:.8;pointer-events:none!important}.rr-race .rr-preview-gate span{font-size:clamp(7px,2.1cqw,12px);border-width:1px;min-height:14px;border-radius:4px}
+#rallyGame .rr-race .rr-car{top:auto;bottom:12%;width:43%;max-width:220px;filter:drop-shadow(0 12px 8px #05192488)}
+#rallyGame .rr-race .rr-car:after{display:none}.rr-race .rr-car img{display:block;width:100%}
+#rallyGame .rr-race .rr-controls{display:flex;bottom:calc(18px + env(safe-area-inset-bottom,0px));left:5%;right:5%}
+#rallyGame .rr-race .rr-controls button{width:58px;height:58px;font-size:30px;background:#d9f8ff33;box-shadow:inset 0 0 20px #fff2;border:1px solid #fff9}
+#rallyGame .rr-race .rr-hint{position:absolute;bottom:calc(27px + env(safe-area-inset-bottom,0px));left:25%;right:25%;font-size:10px;text-align:center;color:#fff;z-index:5;text-shadow:0 1px 3px #123}
+#rallyGame .rr-race .rr-feedback{top:auto;bottom:38%;font-size:17px;background:#07505bc9;border-radius:20px;left:15%;right:15%;text-shadow:none}
+#rallyGame .rr-race .rr-feedback:empty{display:none}.rr-race .rr-combo{top:32%;font-size:14px}.rr-race .rr-pickups,.rr-race .rr-toast{display:none!important}
+#rallyGame .rr-race .rr-panel{background:#fffdf7;border:1px solid #fff;border-radius:26px;box-shadow:0 16px 70px #072e4c55}.rr-race .rr-route-note{background:#e9f6f4;border-radius:14px;padding:12px;color:#176b68}
+@media(orientation:landscape) and (max-height:600px){#rallyGame .rr-race .rr-mission{top:8px;left:32%;right:24%}#rallyGame .rr-race .rr-hud{right:70%}.rr-race .rr-hud-right{flex-wrap:wrap}.rr-race .rr-level{font-size:9px!important}#rallyGame .rr-race .rr-car{width:20%;bottom:13%}#rallyGame .rr-race .rr-word{font-size:22px}#rallyGame .rr-race .rr-plank{padding:5px}}

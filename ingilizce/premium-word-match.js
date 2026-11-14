@@ -106,7 +106,7 @@ function shell(){
  root.dmGameFrameActions={back:()=>back(),exit:()=>back()};
  $('[data-back]').onclick=()=>back();
  $('[data-pause]').onclick=()=>{if(G&&!G.over&&!G.busy)back();};
- $('[data-sound]').onclick=()=>{sound.on=!sound.on;store.set('dm_pwm_sound',sound.on);paintSound();if(sound.on){if(!G||!G.paused)sound.startMusic();sound.tick();}else{sound.stopMusic();}};
+ $('[data-sound]').onclick=()=>{sound.on=!sound.on;store.set('dm_pwm_sound',sound.on);paintSound();if(sound.on){if(G&&!G.paused)sound.startMusic();sound.tick();}else{sound.stopMusic();}};
  paintSound();
  root.addEventListener('keydown',e=>{if(e.key==='Escape'){e.preventDefault();back();}});
  window.dmViewHistory?.track?.(root,{parent,close:()=>close(true),back:()=>back(true)});
@@ -209,7 +209,7 @@ function introHome(){
 
 /* ---------- bölüm haritası ---------- */
 function home(){
- view='home';root.dataset.view='home';G=null;$('[data-pause]').hidden=true;sound.startMusic();hideModal();setBg(world);
+ view='home';root.dataset.view='home';G=null;$('[data-pause]').hidden=true;sound.stopMusic();hideModal();setBg(world);
  if(window.dmPremiumIntro)return introHome();
  const lv=status?.level||1,stars=status?.stars||{};
  const levels=[];for(let i=(world-1)*20+1;i<=world*20;i++){const s=Number(stars[i]||0),locked=i>lv;levels.push(`<button type="button" class="pwm-lv${locked?' locked':''}${i===lv?' current':''}" data-lv="${i}" ${locked?'aria-disabled="true"':''} aria-label="Seviye ${i}${locked?', kilitli':', '+s+' yıldız'}"><b>${i}</b>${locked?`<img src="${A}icon-lock.webp" alt="">`:`<span class="pwm-lv-stars">${[1,2,3].map(k=>`<i class="${k<=s?'on':''}"></i>`).join('')}</span>`}</button>`);}
@@ -256,6 +256,7 @@ async function start(level,cfg,words){
  const d=await api('start',{runId,level});
  if(ticket!==epoch||!root)return;
  adopt(d);
+ if(Array.isArray(d.words)&&d.words.length>=cfg.types){const bank=d.words.slice();for(let i=bank.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[bank[i],bank[j]]=[bank[j],bank[i]];}words=bank.slice(0,cfg.types);}
  await preload([...CANDIES,'candy-rainbow-bomb','fx-stripe-h','fx-stripe-v','tile-ice','tile-chain','fx-sparkle','fx-burst']);
  if(ticket!==epoch||!root)return;
  hideModal();

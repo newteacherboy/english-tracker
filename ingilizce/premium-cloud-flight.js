@@ -215,7 +215,7 @@
     }
     function syncSound() {
       const intro = !!screen.querySelector(':scope > .dmpi');
-      sound.flying(!intro && !world.hidden && overlay.hidden && !game?.ending, intro || !overlay.hidden && panel.dataset.variant==='hangar');
+      sound.flying(!intro && !world.hidden && overlay.hidden && !game?.ending, false);
     }
     function paintSound() {
       const button = $('[data-sound]');
