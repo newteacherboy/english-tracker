@@ -153,7 +153,7 @@ function medalRow(map,step,i){
   ' aria-label="'+esc((start?caption+' · ':'')+label)+'">'+
   (step.done?starsMarkup(step,learn):'')+'<span class="rt-medal-disc">'+disc+'<span class="rt-medal-stop-number" aria-hidden="true">'+n+'</span></span>'+
   (start?'<span class="rt-medal-start-label">'+caption+' <span aria-hidden="true">›</span></span>':'')+'</button>'+
-  (sectionStart?'<button type="button" class="rt-medal-jump" data-rt="start-here" data-chapter="'+step.id+'" aria-label="'+esc('Buradan devam et · '+routeTitle(step,learn))+'">Buradan devam et <span aria-hidden="true">›</span></button>':'')+
+  (sectionStart?'<button type="button" class="rt-medal-jump" data-rt="start-here" data-chapter="'+step.id+'" aria-label="'+esc('Buradan devam et · '+routeTitle(step,learn))+'"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 3v18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><path d="M6 4c4-3 8 3 13 0v11c-5 3-9-3-13 0z"/></svg></button>':'')+
   (active?img('papi-medal.webp','rt-medal-papi'):'')+'</div>';
 }
 function medalRows(map,from,to){
