@@ -274,3 +274,10 @@ div.dmp.is-teacher .dmp-x{background:#0b4f8a!important}
 .dmp-trial:disabled{opacity:.6;cursor:default}
 .dmp-trial-note{display:block;margin-top:7px;font-size:11px;line-height:1.5;overflow-wrap:anywhere}
 .dmp-buy small{white-space:normal;text-align:center;line-height:1.5}
+
+/* Trial entry: available independently from rewarded-video ads. */
+.dms-trial-promo{box-sizing:border-box;background:linear-gradient(120deg,#f7f1ff,#eef6ff);gap:10px}
+.dms-trial-promo .dms-promo-t small{display:block;color:#6a538a;font:700 11px/1.3 Nunito,system-ui;margin-bottom:3px}
+.dms-trial-promo .dms-gift{width:40px;height:44px;font-size:29px;margin-left:0}
+.dms-trial-promo .dms-promo-go{white-space:nowrap;padding:10px 12px;font-size:12px;min-height:44px}
+@media(max-width:380px){.dms-trial-promo{padding:10px;gap:8px;flex-wrap:wrap}.dms-trial-promo .dms-promo-t{flex:1 1 calc(100% - 50px)}.dms-trial-promo .dms-promo-go{margin-left:auto}}

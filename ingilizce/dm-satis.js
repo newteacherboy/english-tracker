@@ -9,7 +9,7 @@
   'use strict';
   if (window.DMSatis) return;
   const W = window, D = document;
-  const VER = '20261114-trial-ios-2';
+  const VER = '20261114-trial-promo-3';
   const BASE = (() => { try { return new URL('.', D.currentScript?.src || location.href).href; } catch { return ''; } })();
   const A = name => BASE + 'satis-assets/' + name;
   const IMG = { papi: A('papi-enerji-molasi.webp'), bolt: A('ic-bolt.webp'), coin: A('ic-coin.webp'), crown: A('ic-crown.webp'),
@@ -229,6 +229,29 @@
     }
     where.parent.insertBefore(card, where.before || null);
   }
+  // The store still verifies eligibility and the renewal price inside planlar().
+  // These entry cards advertise the offer without depending on rewarded-video availability.
+  function trialPromoCards() {
+    const now = Date.now();
+    const show = loggedIn() && !teacher() && canSell() && plan() === 'free'
+      && now >= Date.parse('2026-11-14T00:00:00+03:00') && now < Date.parse('2027-03-02T00:00:00+03:00');
+    for (const [id, tabId, selector, source] of [
+      ['dmsShopTrial', 'tab-magaza', '#dmStoreFront main.ds-home', 'magaza-deneme-teklifi'],
+      ['dmsGamesTrial', 'tab-aktiviteler', '.dc-focus-card', 'oyunlar-deneme-teklifi'],
+    ]) {
+      const tab = D.getElementById(tabId), host = tab?.classList.contains('active') ? tab.querySelector(selector) : null;
+      const old = D.getElementById(id);
+      if (!show || !host) { old?.remove(); continue; }
+      if (old?.parentNode === host) continue;
+      const card = old || html(`<div id="${id}" class="dms-promo dms-trial-promo" role="group" aria-label="Premium Pro ücretsiz deneme teklifi">
+        <span class="dms-gift" aria-hidden="true">🎁</span><div class="dms-promo-t"><small>Uygun hesaplara özel</small>
+        <b>7 gün ücretsiz Premium Pro</b><span>Sonrasında aylık abonelik. Teklif ve ücret mağazada doğrulanır.</span></div>
+        <button type="button" class="dms-promo-go">Teklifi gör</button></div>`);
+      card.querySelector('button').onclick = () => planlar(source, 'premium_pro');
+      const tabs = host.querySelector(':scope > .gg-tabs');
+      if (tabs) host.insertBefore(card, tabs.nextElementSibling); else host.prepend(card);
+    }
+  }
   function adCards() {
     const show = loggedIn() && !teacher() && plan() !== 'premium_pro' && videoState('energy') === 'ok';
     const shop = D.getElementById('tab-magaza'), shopOn = !!shop?.classList.contains('active');
@@ -243,6 +266,7 @@
     const tabs = host?.querySelector(':scope > .gg-tabs');
     const after = tabs ? tabs.nextElementSibling : null;
     place('dmsGamesEnergy', 'energy', host ? (tabs ? { parent: host, before: after?.id === 'dmsGamesEnergy' ? after.nextElementSibling : after } : { parent: host, before: host.firstElementChild?.id === 'dmsGamesEnergy' ? host.firstElementChild.nextElementSibling : host.firstElementChild }) : null, show);
+    trialPromoCards();
   }
 
   // ---------------------------------------------------------------- PAKET EKRANLARI
