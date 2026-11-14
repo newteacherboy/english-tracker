@@ -765,7 +765,7 @@ function sohbetDuragiBaslat(i,kaynak,runId,run){
       <div class="yo-s-ust"><button class="yo-s-geri" onclick="sohbetListeCiz()">← Harita</button><b>${d.ikon} ${d.ad}</b><span class="ys-rozet">${d.sv}</span></div>
       <div class="ys-adimlar" id="ysAdimlar">${d.satirlar.map(() => '<i></i>').join('')}</div>
       <section class="ys-call-scene"><span class="ys-touch-hint">Papi’ye dokun ✨</span>
-      <button type="button" class="ys-call-character dm-lp" data-emotion="happy" onclick="ysPapiReact(this)" aria-label="Papi’ye dokun, konuşsun ve duygusu değişsin">${ysPapiMarkup().replace('viewBox="0 0 400 440"','viewBox="60 20 280 345" preserveAspectRatio="xMidYMid slice"')}</button>
+      <button type="button" class="ys-call-character dm-lp" data-emotion="neutral" onclick="ysPapiReact(this)" aria-label="Papi’ye dokun, konuşsun ve duygusu değişsin">${ysPapiMarkup().replace('viewBox="0 0 400 440"','viewBox="60 20 280 345" preserveAspectRatio="xMidYMid slice"')}</button>
       <div class="ys-voice-pill"><span class="ys-wave" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span><span id="ysVoiceStatus" role="status">Papi hazırlanıyor…</span></div></section>
       <div class="ys-question"><span class="ys-question-label">Papi</span><p id="ysCurrentQuestion"></p><button type="button" onclick="ysPapiReplay()">◖)) Tekrar dinle</button></div>
       <div class="yo-s-ipucu" id="yoSIpucu"></div><p id="ysAnswerStatus" role="status"></p>
