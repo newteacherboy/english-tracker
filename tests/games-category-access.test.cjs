@@ -23,7 +23,12 @@ test('two-level categories, topic replacement, and exhausted-game purchase entry
  }
  click('[data-gg-main=premium]');
  click('[data-gg-source=premiumWordMatchActivity]');await tick();
- assert.equal(opened,0);assert.deepEqual(offers,[['premium-oyunlar','pro']]);
+ assert.equal(opened,0);assert.deepEqual(offers,[]);
+ assert.match(d.querySelector('#ggExhausted').textContent,/Bugünlük ücretsiz hakkın bitti/);
+ d.querySelector('#ggExhausted [data-dismiss]').click();assert.equal(d.querySelector('#ggExhausted'),null);assert.equal(offers.length,0);
+ click('[data-gg-source=premiumWordMatchActivity]');await tick();
+ d.querySelector('#ggExhausted [data-plans]').click();assert.deepEqual(offers,[['premium-oyunlar','premium_pro']]);
+ assert.equal(d.querySelector('#ggExhausted'),null);
  remaining=1;click('[data-gg-source=premiumWordMatchActivity]');await tick();assert.equal(opened,1);
  dom.window.close();
 });
