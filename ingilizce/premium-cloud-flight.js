@@ -322,7 +322,7 @@
       const actions = !state.completed && state.remaining > 0 ? [[`Bölüm ${state.level} · ⚡ 5`, start]] : [];
       actions.push(['Oyunlara dön', close]);
       openPanel('Kaptan Pilot Papi', [
-        error || (state.completed ? 'Tüm uçuş rotasını tamamladın!' : state.remaining > 0 ? 'Doğru anlamın yazdığı buluta uç, gökyüzündeki engellerden sıyrıl.' : 'Üç ücretsiz denemeni kullandın. Premium ile sınırsız uçabilirsin.')
+        error || (state.completed ? 'Tüm uçuş rotasını tamamladın!' : state.remaining > 0 ? 'Doğru anlamın yazdığı buluta uç, gökyüzündeki engellerden sıyrıl.' : 'Bugünlük ücretsiz hakkın bitti. Premium ile sınırsız uçabilirsin.')
       ], actions, 'hangar');
       if (!error && !state.completed && state.remaining > 0) {
         const rules = document.createElement('p');

@@ -62,6 +62,16 @@
   host.querySelector('[data-gg-party="'+(category==='tools'?'all':category)+'"]')?.focus({preventScroll:true});
   if(!window.dmTeacherPortalMode&&(category==='duo'||category==='free'))loadFriends(host);
  }
+ function exhaustedCard(access={}){
+  document.getElementById('ggExhausted')?.remove();
+  const previous=document.activeElement,overlay=document.createElement('div');overlay.id='ggExhausted';overlay.className='gg-exhausted';
+  overlay.innerHTML='<section role="dialog" aria-modal="true" aria-labelledby="ggExhaustedTitle"><button type="button" class="gg-exhausted-close" aria-label="Kapat">×</button><span class="gg-exhausted-crown" aria-hidden="true">👑</span><h2 id="ggExhaustedTitle">'+(access.plan==='pro'?'Bugünlük oyun hakkın bitti':'Bugünlük ücretsiz hakkın bitti')+'</h2><p>Premium ile sınırsız oyna.</p><button type="button" data-plans>Premium ile sınırsız oyna</button><button type="button" data-dismiss>Şimdi değil</button></section>';
+  const close=()=>{overlay.remove();document.removeEventListener('keydown',keys);previous?.focus?.();};
+  const keys=e=>{if(e.key==='Escape')close();if(e.key==='Tab'){const buttons=[...overlay.querySelectorAll('button')],first=buttons[0],last=buttons.at(-1);if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}}};
+  overlay.onclick=e=>{if(e.target===overlay)close();};overlay.querySelector('.gg-exhausted-close').onclick=close;overlay.querySelector('[data-dismiss]').onclick=close;
+  overlay.querySelector('[data-plans]').onclick=()=>{close();if(window.DMSatis?.planlar)window.DMSatis.planlar('premium-oyunlar','premium_pro');else window.dmAndroidBilling?.open?.('premium-oyunlar');};
+  document.body.append(overlay);document.addEventListener('keydown',keys);overlay.querySelector('[data-plans]').focus();
+ }
  async function premiumEntry(card){
   if(card.dataset.ggCategory!=='premium'||window.dmTeacherPortalMode){card.click();return;}
   if(card.dataset.accessPending)return;
@@ -74,7 +84,7 @@
    const response=await fetch((typeof apiURL==='string'?apiURL:'https://nxfqlutulxqzqgwewssd.supabase.co/functions/v1/diji-api').replace(/diji-api.*$/,'premium-games'),{method:'POST',signal:controller.signal,headers:{'Content-Type':'application/json'},body:JSON.stringify({op:'access',game,t:token})});
    const access=await response.json();
    if(!response.ok||access.ok===false)throw Error(access.mesaj||'Haklar kontrol edilemedi.');
-   if(access.remaining<=0){if(window.DMSatis?.planlar)window.DMSatis.planlar('premium-oyunlar',access.plan==='pro'?'premium_pro':'pro');else window.dmAndroidBilling?.open?.('premium-oyunlar');return;}
+   if(access.remaining<=0){exhaustedCard(access);return;}
    card.click();
   }catch(error){window.alert(error.message||'Haklar kontrol edilemedi. Tekrar dene.');}
   finally{clearTimeout(timeout);delete card.dataset.accessPending;}
@@ -272,6 +282,7 @@
  document.querySelectorAll('.dc-fullscreen-overlay[id^="tab-"]').forEach(el=>el.classList.remove('dm-solo-fullstage'));
  install();setInterval(install,1500);
  window.dmGamesUI={
+  exhaustedCard,
   refresh:()=>{key='';install(true);},
   enter:()=>{
    party='premium';skill='Tümü';key='';install(true);

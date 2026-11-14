@@ -150,7 +150,7 @@ function trialPopup(){
   <div class="pwm-trial-row"><img src="${A}icon-gift.webp" alt=""><p>Sonrasında <b>premium üyelere sınırsız</b> oynama.</p><img src="${A}icon-infinity.webp" alt=""></div>
   <p class="pwm-pill"><img src="${A}icon-dice.webp" alt="">Her oynayışta farklı kelimeler gelir.</p>
   <p class="pwm-pill"><img src="${A}icon-books.webp" alt="">Kelimeler Word Bank’ten rastgele çekilir.</p>
-  <p class="pwm-trial-left">Kalan ücretsiz hakkın: <b>${left} / 3</b> · Her bölüm 5 enerji</p>
+  <p class="pwm-trial-left">Kalan ücretsiz hakkın: <b>${left}</b> · Her bölüm 5 enerji</p>
   <div class="pwm-actions"><button type="button" class="pwm-btn gold" data-x>Hadi Başlayalım!</button></div>`,'trial');
  c.querySelectorAll('[data-x]').forEach(b=>b.onclick=()=>{store.set('dm_pwm_trial_seen:'+owner.toLowerCase(),true);hideModal();sound.tick();});
 }
