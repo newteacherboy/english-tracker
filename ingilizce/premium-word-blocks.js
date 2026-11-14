@@ -141,7 +141,7 @@
       syncMusic();
       panel.querySelector('button')?.focus();
     }
-    function syncMusic() { sound.music(active() || (!game && world.hidden)); }
+    function syncMusic() { sound.music(active()); }
     function update(data) {
       state = {...state, ...data};
       if (data.energyMax) window.headerEnerjiGoster?.(data.energy, data.energyMax);

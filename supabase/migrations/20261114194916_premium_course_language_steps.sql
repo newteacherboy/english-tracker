@@ -1,0 +1,2 @@
+-- Advance the vocabulary window within each CEFR band instead of repeating its first words.
+do $steps$ declare source text; begin source:=pg_get_functiondef('public.dm_premium_course_words(integer)'::regprocedure); if position('ord::integer as unit_no' in source)=0 then raise exception 'Unexpected vocabulary ordering';end if;execute replace(source,'ord::integer as unit_no','abs(ord::integer-((s.n-81)%20)*(case when s.n<=100 then 26 when s.n<=120 then 23 else 8 end)) as unit_no');end $steps$;

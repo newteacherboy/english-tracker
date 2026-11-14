@@ -1,8 +1,8 @@
 /* Optional games initialize once, when their tab or public opener is used. */
 (()=>{'use strict';
-  const premiumFile='premium-word-match.js?v=20261114-daily-one-card';
+  const premiumFile='premium-word-match.js?v=20261114-flow';
   const introFile='premium-intro.js?v=20261114-daily-one-card';
-  const files=['solo-arcade.js?v=20261111-papi','harf-bahcesi.js?v=20261111-papi','papi-cards.js?v=b9d02db518','meteor.js?v=9460b40009','word-wheel.js?v=dc87a710bb','kelime-rallisi.js?v=20261114-daily-one-card'];
+  const files=['solo-arcade.js?v=20261111-papi','harf-bahcesi.js?v=20261111-papi','papi-cards.js?v=b9d02db518','meteor.js?v=9460b40009','word-wheel.js?v=dc87a710bb','kelime-rallisi.js?v=20261114-flow'];
   const loaded=new Set();let pending=null,readyDone=false;
   function script(src){window.dmLateCss?.();return new Promise((resolve,reject)=>{
     if(loaded.has(src)){resolve();return;}
@@ -41,7 +41,7 @@
   const flightProxy=async ()=>{
     const owner=typeof aktifOgrenciAdi==='undefined'?'':aktifOgrenciAdi;
     try{
-      await (flightLoading??=Promise.all([script(introFile),script('premium-cloud-flight.js?v=20261114-daily-one-card')]).catch(error=>{flightLoading=null;throw error;}));
+      await (flightLoading??=Promise.all([script(introFile),script('premium-cloud-flight.js?v=20261114-flow')]).catch(error=>{flightLoading=null;throw error;}));
       if(owner!==(typeof aktifOgrenciAdi==='undefined'?'':aktifOgrenciAdi))return;
       if(window.premiumBulutUcusuAc!==flightProxy)await window.premiumBulutUcusuAc();
     }catch(error){window.yoToast?.(error.message);}
@@ -51,7 +51,7 @@
   const blocksProxy=async ()=>{
     const owner=typeof aktifOgrenciAdi==='undefined'?'':aktifOgrenciAdi;
     try{
-      await (blocksLoading??=Promise.all([script(introFile),script('premium-word-blocks.js?v=e23cf01acc')]).catch(error=>{blocksLoading=null;throw error;}));
+      await (blocksLoading??=Promise.all([script(introFile),script('premium-word-blocks.js?v=20261114-flow')]).catch(error=>{blocksLoading=null;throw error;}));
       if(owner===(typeof aktifOgrenciAdi==='undefined'?'':aktifOgrenciAdi)&&window.premiumKelimeBloklariAc!==blocksProxy)await window.premiumKelimeBloklariAc();
     }catch(error){window.yoToast?.(error.message);}
   };

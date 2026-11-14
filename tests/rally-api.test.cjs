@@ -39,3 +39,7 @@ test('rally levels live on the server: start clamps to unlocked, a passed race o
  assert.equal(rallyPassed({finished:true,totalQuestions:12,state:{index:12,correct:8}}),false);
  assert.equal(rallyPassed({finished:true,totalQuestions:12,state:{index:5,correct:5}}),false);
 });
+
+test('curriculum covers all school grades and A1 through B2; each advanced slice builds a full race',()=>{const f=fixture();vm.runInContext('globalThis.course=rallyCourse;globalThis.pool=languagePool;',f.ctx);for(let level=1;level<=160;level++){const c=f.ctx.course(level);assert(c.classNo>=1&&c.classNo<=8);if(level<=80){assert.equal(c.classNo,Math.ceil(level/10));assert.equal(c.cefr,null);}else {assert.equal(c.cefr,['A1','A2','B1','B2'][Math.floor((level-81)/20)]);assert.equal(f.ctx.build(f.ctx.pool(level),[],12).length,12);}}});
+
+test('automatic curriculum ignores supplied grade/unit and clamps locked chapters on the server',async()=>{const f=fixture();const r=await f.run({action:'start',curriculum:true,level:160,runId:crypto.randomUUID(),classNo:8,units:[99],twelveWords:true});assert.equal(r.status,200);const call=f.calls.find(x=>x.rpc==='dm_rally_start');assert.equal(call.p.class_id,1);assert.deepEqual(Array.from(call.p.unit_ids),[1]);assert.equal(r.d.level,1);});

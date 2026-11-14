@@ -10,7 +10,6 @@
   mystery:[.31,57,[0,3,7,3,2,5,8,5,0,3,10,7,5,8,2,7]]
  };
  const games=[
-  ['#dmGameIntro,#yoModal.acik[data-dm-selected-game]','arcade'],
   ['#mvOverlay','racing'],
   ['#kelimeGolu','stadium'],
   ['#rallyGame','racing'],
@@ -61,6 +60,17 @@
    button.setAttribute('aria-label',button.title);
   });
  }
+ const visible=node=>!!node&&!node.hidden&&getComputedStyle(node).display!=='none'&&node.getClientRects().length>0;
+ function playing(root){
+  if(root.id==='rallyGame')return root.dataset.gamePhase==='playing'&&root.dataset.musicPaused!=='true';
+  if(root.matches('.papizzle'))return visible(root.querySelector('[data-game]'))&&!visible(root.querySelector('[data-panel]'))&&!root.querySelector('.dmpi');
+  if(root.classList.contains('dm-entry-open')||root.querySelector('.dmpi'))return false;
+  // All setup/intro/result sheets stay quiet; only the live stage gets the shared score.
+  const entry=root.querySelector('[id$="GirisEkrani"],.sa-entry,.hb-setup,.ww-setup,.pc-setup,.kg-setup,.mv-setup');
+  if(visible(entry))return false;
+  const sheet=root.querySelector('.rr-modal,.ww-modal,.pc-modal,.kg-modal,.mv-modal');
+  return !visible(sheet);
+ }
  function sync(){
   scheduled=0;
   const next=[...document.querySelectorAll(selector)].filter(root=>!root.closest('[hidden],[inert],[aria-hidden="true"]')&&root.getClientRects().length&&getComputedStyle(root).visibility!=='hidden').at(-1);
@@ -79,7 +89,7 @@
    };
    host.append(button);paint();
   }
-  if(muted||document.hidden||!track||current.dataset.musicPaused==='true'||current.classList.contains('sa-paused')||context?.state!=='running'){stop();return;}
+  if(muted||document.hidden||!track||!playing(current)||current.dataset.musicPaused==='true'||current.classList.contains('sa-paused')||context?.state!=='running'){stop();return;}
   if(!timer){
    bus.gain.setTargetAtTime(.27,context.currentTime,.06);
    playBeat();timer=setInterval(playBeat,songs[track][0]*1000);
@@ -102,11 +112,11 @@
  window.addEventListener('pageshow',schedule);
  new MutationObserver(records=>{
   if(records.some(r=>{
-   if(r.type==='attributes')return r.target===current||r.target.matches?.(selector)||r.target.contains?.(current);
+   if(r.type==='attributes')return r.target===current||(current?.contains(r.target)&&(r.attributeName!=='style'||r.target.matches('[data-panel],[data-game],[id$=GirisEkrani]')))||r.target.matches?.(selector)||r.target.contains?.(current);
    return [...r.addedNodes,...r.removedNodes].some(n=>n.nodeType===1&&(
     n.matches(selector+',header')||n.querySelector(selector+',header')
    ));
   }))schedule();
- }).observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['class','style','hidden','open','inert','aria-hidden','data-game-music','data-music-paused']});
+ }).observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['class','style','hidden','open','inert','aria-hidden','data-game-music','data-music-paused','data-game-phase']});
  schedule();
 })();
