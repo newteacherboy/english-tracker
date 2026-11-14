@@ -3,32 +3,32 @@ import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {runInNewContext} from 'node:vm';
 const src=readFileSync(new URL('../ingilizce/dm-satis.js',import.meta.url),'utf8');
-const code=src.slice(src.indexOf('  function trialPromoCards()'),src.indexOf('  function adCards()'));
+const code=src.slice(src.indexOf('  let trialCache ='),src.indexOf('  function adCards()'));
 function fixture(){
-  const cards=new Map(),calls=[],state={logged:true,teacher:false,sell:true,plan:'free',now:Date.parse('2026-11-14T09:00:00Z')};
-  const hosts=['tab-magaza','tab-aktiviteler'].map(id=>({id,querySelector:()=>null,prepend(card){card.parentNode=this;cards.set(card.id,card)}}));
-  const tabs=hosts.map(host=>({classList:{contains:()=>true},querySelector:()=>host}));
-  const refresh=runInNewContext(code+';trialPromoCards',{
-    D:{getElementById:id=>id==='tab-magaza'?tabs[0]:id==='tab-aktiviteler'?tabs[1]:cards.get(id)},
-    loggedIn:()=>state.logged,teacher:()=>state.teacher,canSell:()=>state.sell,plan:()=>state.plan,
-    Date:{now:()=>state.now,parse:Date.parse},planlar:(...args)=>calls.push(args),
-    html:markup=>{const id=markup.match(/id="([^"]+)"/)[1],button={};return{id,markup,parentNode:null,querySelector:()=>button,remove(){cards.delete(id);this.parentNode=null}}},
-  });
-  return{refresh,cards,calls,state};
+ const cards=new Map(),calls=[],state={owner:'account-a',teacher:false,sell:true,plan:'free',eligible:true,queries:0,now:Date.parse('2026-11-14T09:00:00Z'),active:'tab-aktiviteler',busy:false};
+ const api=runInNewContext(code+';({trialPromoCards,entryTrial})',{
+  D:{hidden:false,getElementById:id=>id.startsWith('tab-')?{classList:{contains:()=>state.active===id}}:cards.get(id),body:{append(card){cards.set(card.id,card)}}},
+  token:()=>state.owner,teacher:()=>state.teacher,canSell:()=>state.sell,plan:()=>state.plan,busyScreen:()=>state.busy,
+  Date:{now:()=>state.now,parse:Date.parse},planlar:(...args)=>calls.push(args),sheet:null,IMG:{gift:'gift.webp'},esc:x=>x,
+  STUDENT:{plans:[{},{}]},plugin:()=>({getProducts:async()=>{state.queries++;return{products:[{id:'diji_premium_pro',campaign:state.eligible,text:'₺79'}]}}}),storePrice:(_,p)=>p||{},
+  html:markup=>{const id=markup.match(/id="([^"]+)"/)[1],buttons={};return{id,markup,querySelector:s=>buttons[s]??=( {} ),remove(){cards.delete(id)}}},
+ });
+ return{...api,cards,calls,state,settle:()=>new Promise(r=>setImmediate(r))};
 }
-test('free native account sees both offer entries without a rewarded-video service; click opens Premium Pro',()=>{
-  const f=fixture();f.refresh();assert.equal(f.cards.size,2);
-  const card=f.cards.get('dmsGamesTrial');assert.match(card.markup,/Uygun hesaplara özel/);assert.match(card.markup,/Sonrasında aylık abonelik/);
-  card.querySelector('button').onclick();assert.equal(f.calls[0][0],'oyunlar-deneme-teklifi');assert.equal(f.calls[0][1],'premium_pro');
-  f.refresh();assert.equal(f.cards.get('dmsGamesTrial'),card,'refresh does not recreate cards');
+test('eligible active tab gets one compact gift; click selects Premium Pro and dismissal survives refresh',async()=>{
+ const f=fixture();f.trialPromoCards();assert.equal(f.cards.size,0);await f.settle();
+ const card=f.cards.get('dmsGamesTrial');assert.ok(card);assert.match(card.markup,/dms-trial-float/);
+ card.querySelector('.dms-trial-open').onclick();assert.deepEqual(f.calls[0],['oyunlar-deneme-teklifi','premium_pro']);
+ f.trialPromoCards();assert.equal(f.state.queries,1);assert.equal(f.cards.get('dmsGamesTrial'),card);
+ f.state.active='tab-magaza';f.trialPromoCards();assert.equal(f.cards.size,1);assert.ok(f.cards.has('dmsShopTrial'));
+ f.cards.get('dmsShopTrial').querySelector('.dms-trial-dismiss').onclick();f.trialPromoCards();assert.equal(f.cards.size,0);
 });
-test('paid plans, teachers, signed-out accounts and unsupported stores remove promotion entries',()=>{
-  for(const patch of [{plan:'premium_pro'},{plan:'pro'},{teacher:true},{logged:false},{sell:false}]){
-    const f=fixture();f.refresh();Object.assign(f.state,patch);f.refresh();assert.equal(f.cards.size,0);
-  }
+test('ineligible accounts never advertise a trial; switching accounts discards cached eligibility',async()=>{
+ const f=fixture();f.trialPromoCards();await f.settle();assert.equal(f.cards.size,1);
+ f.state.owner='account-b';f.state.eligible=false;f.trialPromoCards();assert.equal(f.cards.size,0);await f.settle();assert.equal(f.cards.size,0);assert.equal(f.state.queries,2);
 });
-test('campaign cards disappear outside the approved campaign dates',()=>{
-  for(const now of [Date.parse('2026-11-13T20:59:59Z'),Date.parse('2027-03-01T21:00:00Z')]){
-    const f=fixture();f.state.now=now;f.refresh();assert.equal(f.cards.size,0);
-  }
+test('paid accounts, teachers, unsupported stores, overlays and campaign boundaries hide the gift',async()=>{
+ for(const patch of [{plan:'premium_pro'},{plan:'pro'},{teacher:true},{owner:''},{sell:false},{busy:true},{now:Date.parse('2026-11-13T20:59:59Z')},{now:Date.parse('2027-03-01T21:00:00Z')}]){
+  const f=fixture();f.trialPromoCards();await f.settle();Object.assign(f.state,patch);f.trialPromoCards();assert.equal(f.cards.size,0);
+ }
 });

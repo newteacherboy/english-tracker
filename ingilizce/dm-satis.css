@@ -281,3 +281,34 @@ div.dmp.is-teacher .dmp-x{background:#0b4f8a!important}
 .dms-trial-promo .dms-gift{width:40px;height:44px;font-size:29px;margin-left:0}
 .dms-trial-promo .dms-promo-go{white-space:nowrap;padding:10px 12px;font-size:12px;min-height:44px}
 @media(max-width:380px){.dms-trial-promo{padding:10px;gap:8px;flex-wrap:wrap}.dms-trial-promo .dms-promo-t{flex:1 1 calc(100% - 50px)}.dms-trial-promo .dms-promo-go{margin-left:auto}}
+
+/* Compact Papi gift: outside tab flow, above the navigation safe area. */
+.dms-trial-float{position:fixed;right:max(12px,calc((100vw - 560px)/2));bottom:calc(88px + env(safe-area-inset-bottom,0px));z-index:100000019;font-family:"Nunito",system-ui;max-width:calc(100vw - 24px);filter:drop-shadow(0 4px 8px #48258c26)}
+.dms-trial-open{display:flex;align-items:flex-end;border:0;background:none;padding:0;cursor:pointer;color:#fff;min-height:76px}
+.dms-trial-open>img{width:82px;height:96px;object-fit:contain;margin-left:-13px;position:relative;animation:dmsGiftFloat 3s ease-in-out infinite}
+.dms-trial-pill{display:block;border:2px solid #ffdf65;border-radius:24px 8px 8px 24px;padding:9px 21px 9px 13px;margin-bottom:9px;background:linear-gradient(135deg,#a74df0,#6223b1);box-shadow:inset 0 2px 0 #ffffff50;text-align:left}
+.dms-trial-pill b{display:block;font-size:15px;line-height:1.2;color:#fff075}.dms-trial-pill span{display:block;margin-top:3px;font-size:10px;font-weight:800}
+.dms-trial-dismiss{position:absolute;right:-5px;top:-3px;width:32px;height:32px;border:2px solid #e4cbff;border-radius:50%;background:#fff7ff;color:#6b279b;font:bold 24px/1 system-ui;cursor:pointer}
+.dms-trial-open:focus-visible,.dms-trial-dismiss:focus-visible,.dmp-trial-hero:focus-visible{outline:3px solid #efae00;outline-offset:3px}
+@keyframes dmsGiftFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+@media(prefers-reduced-motion:reduce){.dms-trial-open>img{animation:none}}
+.dms-or{display:flex;align-items:center;gap:10px;font:800 12px "Nunito",system-ui;color:#9875bc;margin:9px 0}.dms-or:before,.dms-or:after{content:'';height:1px;background:#d4bce9;flex:1}
+.dms-energy-trial{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:10px 8px;border:2px solid #eeb332;border-radius:24px;background:linear-gradient(#fffdf1,#ffe4a1);color:#542283;font:900 13px/1.25 "Nunito",system-ui;cursor:pointer;box-shadow:0 3px 0 #ebbd58}
+.dms-energy-trial img{width:28px;height:28px;object-fit:contain}.dms-energy-trial small{display:block;font-size:10px;font-weight:700;margin-top:3px}
+.dms-trial-terms{display:block;text-align:center;margin:8px 0 10px;font:600 10px/1.4 "Nunito",system-ui;color:#775c8e}
+.dms-sheet:has([data-energy-trial]) .dms-video{background:linear-gradient(#ad47e7,#7822bd);color:#fff;box-shadow:inset 0 2px 0 #ffffff60,0 4px 0 #5f179e;animation:none}.dms-sheet:has([data-energy-trial]) .dms-video svg{fill:#fff}
+.dmp-trial-hero{display:flex;align-items:center;justify-content:space-between;gap:6px;width:100%;padding:10px 12px;margin:2px 0 13px;border:2px solid #efb939;border-radius:22px;background:linear-gradient(120deg,#fffdf2,#ffecb5);box-shadow:0 4px 0 #ebc573;color:#572183;text-align:left;cursor:pointer}
+.dmp-trial-hero>span{min-width:0}.dmp-trial-hero b{display:block;font:900 19px/1.12 "Baloo 2","Nunito",system-ui}.dmp-trial-hero span span{display:block;font:800 11px/1.3 "Nunito",system-ui;margin-top:4px}.dmp-trial-hero small{display:block;font:700 10px/1.3 "Nunito",system-ui;margin-top:4px}.dmp-trial-hero img{width:69px;height:76px;object-fit:contain;flex-shrink:0}
+/* Full details remain accessible; primary offer and purchase stay in view. */
+div.dmp.dmp-compact{display:flex;flex-direction:column;overflow:hidden}
+.dmp-compact .dmp-in{flex:1;min-height:0;overflow:auto;overscroll-behavior:contain;padding:calc(6px + env(safe-area-inset-top,0px)) 12px 10px;scrollbar-width:thin}
+.dmp-compact .dmp-foot{position:relative;flex:none;padding:8px 12px calc(10px + env(safe-area-inset-bottom,0px));background:#f3edff}
+.dmp-compact .dmp-bar{height:36px}.dmp-compact .dmp-bar span{font-size:12px}.dmp-compact .dmp-x{width:34px;height:34px}
+.dmp-compact .dmp-hero{margin:0 0 7px;justify-content:center;text-align:center}.dmp-compact .dmp-hero>img{display:none}.dmp-compact .dmp-hero h1{font-size:23px}.dmp-compact .dmp-current{font-size:11px;padding:3px 9px;margin-top:3px}
+.dmp-compact .dmp-toggle{margin:4px auto 15px}.dmp-compact .dmp-toggle button{padding:7px 6px;font-size:13px}
+.dmp-compact .dmp-plans{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px}.dmp-compact .dmp-plan{padding:11px 9px 9px;border-radius:21px;border-width:2px}.dmp-compact .dmp-plan .dmp-name{font-size:16px;gap:3px;padding-right:16px}.dmp-compact .dmp-name img{width:20px}.dmp-compact .dmp-plan .dmp-radio{width:16px;height:16px;top:10px;right:8px}
+.dmp-compact .dmp-price b{font-size:21px}.dmp-compact .dmp-price small{font-size:10px}.dmp-compact .dmp-keys{margin:6px 0 0;padding-top:6px;gap:5px}.dmp-compact .dmp-keys li{font-size:11px;line-height:1.2;gap:3px}.dmp-compact .dmp-keys li img{width:13px}.dmp-compact .dmp-plan .dmp-tag{font-size:10px;margin-top:6px;padding:3px 7px}
+.dmp-compact .dmp-sec{font-size:14px;margin:10px 0 5px}.dmp-compact .dmp-table{font-size:10px;table-layout:fixed}.dmp-compact .dmp-table td,.dmp-compact .dmp-table th{padding:5px 3px;overflow-wrap:anywhere;white-space:normal}.dmp-compact .dmp-table td:first-child,.dmp-compact .dmp-table th:first-child{width:32%;padding-left:6px;white-space:normal}
+.dmp-details{margin-top:6px;color:#674288;font:700 11px "Nunito",system-ui}.dmp-details summary{cursor:pointer;padding:5px 0}.dmp-details[open]{padding-bottom:6px}.dmp-compact .dmp-legal{font-size:10px;line-height:1.35;margin:6px 1px 0}.dmp-compact .dmp-links{margin-top:3px}.dmp-compact .dmp-links button{padding:4px 0;font-size:11px}
+.dmp-compact .dmp-buy{min-height:54px;font-size:18px}.dmp-compact .dmp-buy small{font-size:11px;line-height:1.25;padding:0 8px}
+@media(max-height:750px){.dmp-compact .dmp-trial-hero{padding:6px 10px;margin-bottom:11px}.dmp-compact .dmp-trial-hero img{width:52px;height:60px}.dmp-compact .dmp-trial-hero b{font-size:17px}.dmp-compact .dmp-hero h1{font-size:20px}.dmp-compact .dmp-keys{gap:4px}.dmp-compact .dmp-keys li{font-size:10.5px}.dmp-compact .dmp-bar{height:32px}}

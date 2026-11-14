@@ -1,0 +1,27 @@
+name: Sales trial layout
+on:
+  push:
+    paths: ['ingilizce/dm-satis.*', 'ingilizce/satis-assets/papi-premium-gift.webp', 'tests/dm-satis-*', '.github/workflows/sales-trial-layout.yml']
+  pull_request:
+    paths: ['ingilizce/dm-satis.*', 'tests/dm-satis-*', '.github/workflows/sales-trial-layout.yml']
+permissions:
+  contents: read
+jobs:
+  sales:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node --check ingilizce/dm-satis.js && node --test tests/dm-satis-*.test.mjs
+      - run: npm install --no-save playwright
+      - run: npx playwright install --with-deps chromium
+      - run: |
+          python3 -m http.server 8765 > /tmp/sales-http.log 2>&1 &
+          node tests/dm-satis-layout.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: sales-layout
+          path: sales-qa/
