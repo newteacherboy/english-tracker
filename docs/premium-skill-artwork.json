@@ -1,0 +1,12 @@
+{
+  "date": "2026-11-15",
+  "tool": "Built-in OpenAI ImageGen",
+  "assets": [
+    {
+      "file": "ingilizce/games-assets/word-goal-sprites-v2.png",
+      "mode": "generate",
+      "reference": null,
+      "prompt": "Transparent three-cell 3D football game sprite atlas. Left: brown-haired boy goalkeeper in a blue kit standing ready with white gloves. Center: the same goalkeeper airborne diving to the viewer right with both arms outstretched. Right: realistic white and navy stitched leather football with a blank white front panel for a word overlay. Exactly three equal square cells in one horizontal row, no labels, no stadium, transparent background."
+    }
+  ]
+}
