@@ -142,7 +142,7 @@
    [/öğretmenler/i,'👥'],[/öğrenci hesaplarını yönet/i,'🔐'],[/üye iletişim/i,'📇']
   ];
   for(const tile of panel.querySelectorAll('.tp-real-tools>button')){
-   const icon=tile.querySelector(':scope>span');if(!icon)return;
+   const icon=tile.querySelector(':scope>span');if(!icon)continue;
    // Original 3D sprite icons are preserved; only legacy/empty admin icons need help.
    if(icon.classList.contains('tp-approved-art')&&!icon.classList.contains('tp-tool-fallback-icon'))continue;
    const label=tile.querySelector(':scope>strong')?.textContent||tile.dataset.nativeTitle||tile.textContent||'';
