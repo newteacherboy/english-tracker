@@ -75,8 +75,8 @@ test('account screen uses the compact layout and preserves code/invite handlers'
  assert.match(css,/\.tp-account-settings>summary/);
  assert.match(css,/\[data-teacher-identity\] #cogOgretmenKart\[hidden\]/);
  assert.ok(index.includes('teacher-workspace.js?v=20261115-role-home-1'));
- assert.ok(index.includes('teacher-portal.css?v=20261115-role-settings-1'));
- assert.ok(sw.includes('diji-v446-teacher-role-settings-20261115'));
+ assert.ok(index.includes('teacher-portal.css?v=20261115-single-tile-1'));
+ assert.ok(sw.includes('diji-v447-teacher-single-class-tiles-20261115'));
 });
 
 test('administrator scripts never create controls from stale sessionStorage in regular teacher accounts',async()=>{
@@ -103,4 +103,71 @@ test('administrator scripts never create controls from stale sessionStorage in r
   assert.equal(tiles.querySelector('[data-'+attr+']'),null,file+' removes card on revoked role');
   w.close();
  }
+});
+
+test('three module exports remain intact without injecting any duplicate class buttons',async()=>{
+ const dom=new JSDOM('<!doctype html><html><body><main id="tpDashboard">'+
+  '<div class="tp-real-tools">'+
+  '<button type="button" data-dash="league"><strong>Sınıfım</strong></button>'+
+  '<button type="button" data-dash="classes"><strong>Sınıflarım</strong></button>'+
+  '<button type="button" data-dash="classReports"><strong>Sınıf Raporları</strong></button>'+
+  '</div></main></body></html>',
+  {url:'https://app.dijimedu.com/ingilizce/?ogretmen=1',runScripts:'outside-only'});
+ const w=dom.window;
+ for(const [file,exportName] of [
+  ['teacher-league.js','dmTeacherLeagueOpen'],
+  ['teacher-classes.js','dmTeacherClassesOpen'],
+  ['teacher-reports.js','dmTeacherReportsOpen']
+ ]){
+  const source=fs.readFileSync('ingilizce/'+file,'utf8');
+  assert.doesNotMatch(source,/function addTile\(\)/,'old module injection removed: '+file);
+  assert.doesNotMatch(source,/MutationObserver\(addTile\)/,'no automatic re-add loop: '+file);
+  w.eval(source);
+  assert.equal(typeof w[exportName],'function',file+' still opens its existing classroom tool');
+ }
+ const tiles=w.document.querySelector('.tp-real-tools');
+ for(let i=0;i<3;i++){
+  tiles.append(w.document.createElement('span')); // any DOM re-render
+  await new Promise(resolve=>setImmediate(resolve));
+  assert.equal(tiles.querySelectorAll('button').length,3,'class buttons are not re-injected');
+ }
+ assert.deepEqual([...tiles.querySelectorAll('button')].map(b=>b.dataset.dash),
+  ['league','classes','classReports']);
+ w.close();
+});
+
+test('pagination ignores old cached module buttons without triggering a re-injection loop',async()=>{
+ const dom=new JSDOM('<!doctype html><html><body><main id="tpDashboard"><div class="tp-real-tools">'+
+  '<button data-dash="league"><strong>Sınıfım</strong></button>'+
+  '<button data-dash="classes"><strong>Sınıflarım</strong></button>'+
+  '<button data-dash="classReports"><strong>Sınıf Raporları</strong></button>'+
+  '</div><details class="tp-account-settings"></details></main></body></html>',
+  {runScripts:'outside-only'});
+ const w=dom.window,tiles=w.document.querySelector('.tp-real-tools');
+ const start=portal.indexOf('function canonicalDashboardTool(');
+ const end=portal.indexOf("window.addEventListener('resize',paginateDashboard);",start);
+ assert.ok(start>=0&&end>start);
+ w.eval('(()=>{'+portal.slice(start,end)+'window.checkTiles=paginateDashboard;})()');
+ for(const [attr,title] of [['dml','Sınıfım'],['dmc','Sınıflarım'],['dmr','Sınıf Raporları']]){
+  const b=w.document.createElement('button');b.setAttribute('data-'+attr,'1');
+  b.innerHTML='<strong>'+title+'</strong>';
+  tiles.prepend(b);
+ }
+ // An older module would add a missing tile whenever an existing tile is removed.
+ const watched=new w.MutationObserver(()=>{
+  if(!tiles.querySelector('[data-dml]')){
+   const b=w.document.createElement('button');b.dataset.dml='1';b.textContent='Sınıfım';tiles.prepend(b);
+  }
+ });
+ watched.observe(w.document.documentElement,{childList:true,subtree:true});
+ w.checkTiles();
+ await new Promise(resolve=>setImmediate(resolve));
+ assert.equal(tiles.querySelectorAll('[data-dml],[data-dmc],[data-dmr]').length,3);
+ assert.ok([...tiles.querySelectorAll('[data-dml],[data-dmc],[data-dmr]')].every(b=>b.hidden));
+ assert.deepEqual([...tiles.querySelectorAll('button:not([hidden])')].map(b=>b.dataset.dash),
+   ['league','classes','classReports']);
+ assert.equal(w.document.querySelector('.tp-tools-pager').hidden,true,'no phantom pagination page');
+ w.checkTiles();
+ assert.equal(tiles.querySelectorAll('[data-dml],[data-dmc],[data-dmr]').length,3);
+ watched.disconnect();w.close();
 });
