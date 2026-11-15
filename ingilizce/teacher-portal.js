@@ -67,21 +67,24 @@
   ensureAdminStyle();
   const v=sheet('👥 Erişim Başvuruları ve Özel Panel Kodları','<p>Başvurular yükleniyor…</p>');
   let rows=[],tab=initialTab,search='',filter='all',busy=false;
+  // render() replaces form contents. Keep a live status node so action handlers never throw before the API call.
+  const status=document.createElement('p');status.className='tp-error';status.setAttribute('role','status');status.setAttribute('aria-live','polite');
+  const notify=message=>{status.textContent=message||'';if(!status.isConnected)v.form.append(status);};
   const getRows=()=>rows.filter(r=>{const s=r.students||{};const term=(s.full_name+' '+s.username+' '+s.email+' '+s.school).toLocaleLowerCase('tr-TR');return (!search||term.includes(search))&&(filter==='all'||r.state===filter);});
-  async function reload(){try{const result=await api('teacherPortalList');rows=result.items||[];render();}catch(e){v.error(e.message);}}
+  async function reload(){try{const result=await api('teacherPortalList');rows=result.items||[];render();}catch(e){notify(e.message);}}
   async function decide(row,decision){
    if(busy)return;
    if(decision==='revoked'&&!confirm('Öğretmenin panel erişimi kaldırılacak. Devam edilsin mi?'))return;
-   busy=true;v.error('');
+   busy=true;notify('');
    try{const result=await api('teacherPortalDecide',{id:row.id,decision});if(result.issuedCode){alert('Yeni özel giriş kodu: '+result.issuedCode+'\nBu kod yalnızca şimdi gösterilir. E-posta kuyruğuna alındı.');}await reload();}
-   catch(e){v.error(e.message);}finally{busy=false;}
+   catch(e){notify(e.message);}finally{busy=false;}
   }
   async function issue(row){
    if(busy)return;
    if((row.codeReady||row.code_sent_at)&&!confirm('Yeni kod eski kodu ve açık öğretmen oturumlarını geçersiz kılar. Devam edilsin mi?'))return;
-   busy=true;v.error('');
+   busy=true;notify('');
    try{const result=await api('teacherPortalIssueCode',{id:row.id});alert('Yeni özel giriş kodu: '+result.issuedCode+'\nE-posta kuyruğuna alındı. Bu kod yalnızca şimdi gösterilir.');await reload();}
-   catch(e){v.error(e.message);}finally{busy=false;}
+   catch(e){notify(e.message);}finally{busy=false;}
   }
   function render(){
    const pending=rows.filter(r=>r.state==='pending').length;
@@ -90,6 +93,7 @@
    const form='<details class="ta-details"><summary>＋ Yeni öğretmen hesabı ve başvuru oluştur</summary><div class="ta-create"><label>Kullanıcı adı<input name="username" maxlength="20" autocomplete="off"></label><label>Ad soyad<input name="fullName" maxlength="80"></label><label>E-posta<input name="email" type="email" autocomplete="off"></label><label>Başlangıç şifresi<input name="password" type="password" minlength="6" maxlength="64"></label><button type="button" data-create>Hesap ve başvuru oluştur</button><p role="status"></p><small>Öğretmen e-posta doğrulamasını tamamladıktan sonra özel panel erişimi kullanabilir.</small></div></details>';
    const list=getRows().filter(r=>tab==='codes'?r.state==='approved':true);
    v.form.innerHTML='<div class="tp-admin-v1">'+head+intro+'<div class="ta-search"><input type="search" data-search placeholder="Öğretmen ara (ad, e-posta, okul...)" aria-label="Öğretmen ara"><select data-filter aria-label="Durum filtresi"><option value="all">Tümü</option><option value="pending">Bekleyen</option><option value="approved">Onaylı</option><option value="rejected">Reddedilen</option><option value="revoked">Kaldırılan</option></select></div>'+form+'<h2 class="ta-title">'+(tab==='requests'?'Öğretmen Başvuruları':'Onaylı Öğretmen Kodları')+' · '+list.length+'</h2><div class="ta-list"></div></div>';
+   v.form.append(status);
    v.form.querySelector('[data-search]').value=search;v.form.querySelector('[data-filter]').value=filter;
    v.form.querySelectorAll('[data-tab]').forEach(btn=>btn.onclick=()=>{tab=btn.dataset.tab;render();});
    v.form.querySelector('[data-search]').oninput=e=>{search=e.target.value.toLocaleLowerCase('tr-TR').trim();fillList();};
@@ -98,7 +102,7 @@
     const area=v.form.querySelector('.ta-create'),btn=area.querySelector('[data-create]');
     const values=Object.fromEntries([...area.querySelectorAll('input')].map(el=>[el.name,el.value.trim()]));
     if(!values.username||!values.fullName||!values.email||!values.password){area.querySelector('[role="status"]').textContent='Tüm alanları doldur.';return;}
-    btn.disabled=true;try{const result=await api('teacherPortalAdminCreate',values);area.querySelector('[role="status"]').textContent=result.mesaj+' Öğretmen e-postasını doğrulamalıdır.';area.querySelector('[name="password"]').value='';await reload();}catch(e){area.querySelector('[role="status"]').textContent=e.message;}finally{btn.disabled=false;}
+    btn.disabled=true;try{const result=await api('teacherPortalAdminCreate',values);notify(result.mesaj+' Öğretmen e-postasını doğrulamalıdır.');await reload();}catch(e){notify(e.message);}finally{btn.disabled=false;}
    };
    function fillList(){
     const list=getRows().filter(r=>tab==='codes'?r.state==='approved':true);
