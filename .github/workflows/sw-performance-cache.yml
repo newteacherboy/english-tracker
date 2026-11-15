@@ -4,11 +4,13 @@ on:
     paths:
       - 'ingilizce/sw.js'
       - 'tests/sw-versioned-cache.test.cjs'
+      - 'tests/reward-cache-policy.test.cjs'
       - '.github/workflows/sw-performance-cache.yml'
   push:
     paths:
       - 'ingilizce/sw.js'
       - 'tests/sw-versioned-cache.test.cjs'
+      - 'tests/reward-cache-policy.test.cjs'
       - '.github/workflows/sw-performance-cache.yml'
 permissions:
   contents: read
@@ -21,4 +23,4 @@ jobs:
         with:
           node-version: '22'
       - run: node --check ingilizce/sw.js
-      - run: node --test tests/sw-versioned-cache.test.cjs tests/account-deletion-sw.test.cjs
+      - run: node --test tests/reward-cache-policy.test.cjs tests/sw-versioned-cache.test.cjs tests/account-deletion-sw.test.cjs
