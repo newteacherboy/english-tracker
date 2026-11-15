@@ -1,2 +1,48 @@
 #dmSoloLevelIntro{z-index:2147483500!important}#dmSoloLevelIntro .hb-body{overflow-y:auto;max-height:75dvh}#dmSoloLevelIntro [data-stage]{font-size:24px;color:#6740bc}#dmSoloLevelIntro [data-start]{width:100%;min-height:52px}#yoModal[data-dm-selected-game="cumle"] .dm-live-game-title{display:none!important}.dm-code-choices{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;width:100%}.dm-code-choices button{min-height:48px;padding:10px;border:2px solid #b19de9;border-radius:14px;background:#fff;color:#38235b;font:800 16px system-ui;overflow-wrap:anywhere}.dm-code-choices .dogru{background:#b7efc6;border-color:#2b9348}.dm-code-choices .yanlis{background:#ffc2c2;border-color:#d33}.hb-grid .hb-error{background:#ef4444!important;color:#fff!important}.hb-grid{touch-action:none}#yoDikteChoices[hidden]{display:none!important}
 #asmacaOyunOverlay,[onclick*="asmacaOyunAc"]{display:none!important}
+
+
+/* Student solo start - approved bright, 3D Papi game layout; teacher mode unchanged. */
+html body #dmSoloLevelIntro.dm-solo-intro{position:fixed!important;inset:0!important;padding:0!important;background:#bde5ff!important;color:#412478!important;z-index:2147483500!important}
+html body #dmSoloLevelIntro>.dm-solo-card{display:flex!important;flex-direction:column!important;width:100%!important;max-width:560px!important;height:100%!important;max-height:100%!important;margin:0 auto!important;border:0!important;border-radius:0!important;background:#eef5ff!important;overflow:hidden!important;padding:0!important;box-sizing:border-box!important}
+html body #dmSoloLevelIntro.dm-game-framed>.dm-solo-card{padding:0!important}
+html body #dmSoloLevelIntro .dm-solo-native-header{display:flex;align-items:center;justify-content:space-between;flex:0 0 52px;padding:5px 16px!important;color:#fff!important;background:#0b6b66!important}
+html body #dmSoloLevelIntro.dm-game-framed .dm-solo-native-header{display:none!important}
+html body #dmSoloLevelIntro .dm-solo-native-header h2{font:900 17px Nunito,system-ui!important;color:#fff!important;margin:0!important}
+html body #dmSoloLevelIntro .dm-solo-native-header [data-close]{padding:5px 14px;border:0;border-radius:14px;color:white;background:#ffffff33;font-size:25px}
+html body #dmSoloLevelIntro .dm-solo-body{flex:1 1 auto!important;display:block!important;min-height:0!important;max-height:none!important;overflow-x:hidden!important;overflow-y:auto!important;overscroll-behavior:contain;background:linear-gradient(#abe2ff,#ede5ff 80%,#fbe8cd)!important;padding:0 0 max(20px,env(safe-area-inset-bottom))!important;box-sizing:border-box!important}
+html body #dmSoloLevelIntro .dm-solo-hero{position:relative;isolation:isolate;height:clamp(270px,43dvh,400px);min-height:270px;padding:15px 10px 0;background:linear-gradient(#63c3ff,#d2eaff);background-size:cover;background-position:center;text-align:center;overflow:hidden;box-sizing:border-box}
+html body #dmSoloLevelIntro[data-scene="garden"] .dm-solo-hero{background-image:url("game-scenes/garden.svg")}
+html body #dmSoloLevelIntro[data-scene="carnival"] .dm-solo-hero{background-image:url("game-scenes/carnival.svg")}
+html body #dmSoloLevelIntro[data-scene="storm"] .dm-solo-hero{background-image:url("game-scenes/storm.svg")}
+html body #dmSoloLevelIntro[data-scene="lock"] .dm-solo-hero{background-image:url("game-scenes/lock.svg")}
+html body #dmSoloLevelIntro[data-scene="station"] .dm-solo-hero{background-image:url("game-scenes/station.svg")}
+html body #dmSoloLevelIntro[data-scene="detective"] .dm-solo-hero{background-image:url("game-scenes/detective.svg")}
+html body #dmSoloLevelIntro .dm-solo-kicker{position:relative;z-index:3;display:inline-block;padding:6px 15px;border:2px solid #fff;border-radius:99px;background:#fffe;color:#482b84;font:1000 11px Nunito,system-ui;letter-spacing:.12em;box-shadow:0 3px #7f67af}
+html body #dmSoloLevelIntro .dm-solo-game-title{position:relative;z-index:3;display:flex;align-items:center;justify-content:center;gap:8px;width:max-content;max-width:98%;margin:11px auto 0!important;padding:10px 16px!important;border:3px solid #fff7;border-radius:22px;background:linear-gradient(160deg,#b950f8,#7c32c9 66%,#56239d);color:#fff!important;-webkit-text-fill-color:#fff!important;text-shadow:0 2px #5f228e;font:1000 clamp(22px,6vw,34px)/1.12 Fredoka,Nunito,system-ui!important;box-shadow:0 6px #4f2187,0 10px 25px #4f218752;text-align:center;overflow-wrap:anywhere}
+html body #dmSoloLevelIntro .dm-solo-game-title>span{font-size:1em;flex:none}
+html body #dmSoloLevelIntro .dm-solo-papi{position:absolute;z-index:2;left:4%;bottom:5px;height:65%;width:min(55%,245px);object-fit:contain;object-position:left bottom;filter:drop-shadow(0 10px 10px #375e8544);animation:dmSoloPapiFloat 3.8s ease-in-out infinite}
+html body #dmSoloLevelIntro .dm-solo-floats{position:absolute;inset:0;pointer-events:none}
+html body #dmSoloLevelIntro .dm-solo-float{position:absolute;z-index:1;display:grid;place-items:center;width:65px;height:65px;border:2px solid #fff;border-radius:19px;background:#fff9;box-shadow:0 8px 20px #194d8766;font-size:36px;animation:dmSoloPropFloat 3.1s ease-in-out infinite}
+html body #dmSoloLevelIntro .dm-solo-float-0{top:42%;right:11%;transform:rotate(-9deg)}
+html body #dmSoloLevelIntro .dm-solo-float-1{top:64%;right:3%;transform:rotate(10deg);animation-delay:-1s}
+html body #dmSoloLevelIntro .dm-solo-float-2{top:75%;right:33%;width:48px;height:48px;font-size:26px;animation-delay:-2s}
+html body #dmSoloLevelIntro .dm-solo-subtitle{position:absolute;z-index:3;bottom:10px;left:42%;right:4%;margin:0!important;padding:8px 9px;border:2px solid #ffffffbe;border-radius:17px;background:#fffffff0;color:#44266e!important;font:900 13px/1.25 Nunito,system-ui!important;box-shadow:0 4px #8c69bc}
+html body #dmSoloLevelIntro .dm-solo-progress{position:relative;z-index:4;margin:-3px 12px 0;padding:15px 12px 19px;border:2px solid #ffffffeb;border-radius:25px;background:linear-gradient(#f8f0ff,#fffaff);box-shadow:0 8px 26px #623a8c27;color:#303857;text-align:center}
+html body #dmSoloLevelIntro .dm-solo-stage-head{display:flex;align-items:center;justify-content:center;gap:6px}
+html body #dmSoloLevelIntro .dm-solo-stage-head>span{font-size:31px}
+html body #dmSoloLevelIntro [data-stage]{margin:0!important;color:#6a2cba!important;-webkit-text-fill-color:#6a2cba!important;font:1000 clamp(20px,5.6vw,30px)/1.15 Fredoka,Nunito,system-ui!important}
+html body #dmSoloLevelIntro .dm-solo-progress>p:not(.dm-solo-status){margin:9px 0!important;color:#29554b!important;font:750 14px/1.4 Nunito,system-ui!important}
+html body #dmSoloLevelIntro .dm-solo-perks{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin:13px 0}
+html body #dmSoloLevelIntro .dm-solo-perks>span{min-height:73px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:5px 2px;border:2px solid #fff;border-radius:17px;background:linear-gradient(#fffdfd,#f2e9ff);color:#4b237f;font:900 12px/1.13 Nunito,system-ui;box-shadow:0 4px #c9b7e3}
+html body #dmSoloLevelIntro .dm-solo-perks b{font-size:25px}
+html body #dmSoloLevelIntro .dm-solo-economy{padding:8px;border-radius:12px;background:#fff1ce;color:#825d38;font:800 11px/1.4 Nunito,system-ui}
+html body #dmSoloLevelIntro .dm-solo-status{min-height:18px!important;margin:8px 0!important;color:#714a8d!important;font:800 12px/1.2 Nunito,system-ui!important}
+html body #dmSoloLevelIntro .dm-solo-start{display:block!important;width:100%!important;min-height:63px!important;margin:5px auto 0!important;padding:10px!important;border:3px solid #fff!important;border-radius:24px!important;background:linear-gradient(#d15dff,#a329e6 65%,#7e1ac4)!important;box-shadow:0 6px #631b90,0 12px 20px #5f20815b!important;color:#fff!important;-webkit-text-fill-color:#fff!important;text-shadow:0 2px #73179b!important;font:1000 clamp(22px,5.9vw,30px) Fredoka,Nunito,system-ui!important;cursor:pointer}
+html body #dmSoloLevelIntro .dm-solo-start:disabled{filter:grayscale(.5);opacity:.7;cursor:wait}
+html body #dmSoloLevelIntro .dm-solo-retry:not([hidden]){display:block;width:100%;min-height:43px;margin:12px auto 0;border:1px solid #b9a6df;border-radius:13px;background:#fff;color:#642ea3;font:900 14px Nunito,system-ui}
+@keyframes dmSoloPapiFloat{0%,100%{translate:0 0}50%{translate:0 -6px}}
+@keyframes dmSoloPropFloat{0%,100%{translate:0 0}50%{translate:0 -7px}}
+@media(max-height:740px){html body #dmSoloLevelIntro .dm-solo-hero{height:245px;min-height:245px}html body #dmSoloLevelIntro .dm-solo-papi{height:57%}html body #dmSoloLevelIntro .dm-solo-perks>span{min-height:58px}}
+@media(max-width:350px){html body #dmSoloLevelIntro .dm-solo-hero{height:235px;min-height:235px}html body #dmSoloLevelIntro .dm-solo-game-title{font-size:21px!important}html body #dmSoloLevelIntro .dm-solo-progress{margin-inline:8px;padding-inline:9px}html body #dmSoloLevelIntro .dm-solo-perks>span{font-size:11px}}
+@media(prefers-reduced-motion:reduce){html body #dmSoloLevelIntro .dm-solo-papi,html body #dmSoloLevelIntro .dm-solo-float{animation:none!important}}
