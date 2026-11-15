@@ -100,7 +100,7 @@
   if(!document.getElementById('dmTeacherVisualGuard')){
    const style=document.createElement('style');style.id='dmTeacherVisualGuard';
    style.textContent=`
-@layer bilgiIslands {
+@layer glArcade {
  html.dm-teacher-portal body #tpDashboard.tp-approved .tp-approved-welcome .tp-approved-intro h2,
  html.dm-teacher-portal body #tpDashboard.tp-approved .tp-approved-welcome .tp-approved-intro h2 *{
   color:#073249!important;-webkit-text-fill-color:#073249!important;opacity:1!important;text-shadow:none!important;
