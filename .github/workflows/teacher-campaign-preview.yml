@@ -1,0 +1,19 @@
+name: Teacher campaign admin preview
+on:
+  pull_request:
+    paths: ['ingilizce/teacher-campaign-preview*', 'supabase/functions/teacher-campaign-preview/**', 'tests/teacher-campaign-preview*', '.github/workflows/teacher-campaign-preview.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  preview-tests:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: npm install --prefix /tmp/preview-qa --no-audit --no-fund jsdom@26.1.0 playwright@1.56.1
+      - run: NODE_PATH=/tmp/preview-qa/node_modules node --test tests/teacher-campaign-preview.test.mjs tests/teacher-campaign-preview-dom.test.cjs
+      - run: /tmp/preview-qa/node_modules/.bin/playwright install --with-deps chromium-headless-shell
+      - run: CHROMIUM_PATH=$(find "$HOME/.cache/ms-playwright" -path '*/chrome-linux/headless_shell' -type f | head -1) PLAYWRIGHT_MODULE=/tmp/preview-qa/node_modules/playwright node tests/teacher-campaign-preview-browser.cjs
