@@ -57,6 +57,26 @@ function raporlarimKapat() {
             }
         }
 
+        // Keep the displayed native picker and the game's start scope in agreement.
+        function oyunSeciliUniteleriGetir(box) {
+            if (!box) return [];
+            return [...new Set(Array.from(box.querySelectorAll('.unite-chip.selected')).map(chip =>
+                Number(chip.dataset.unit || chip.dataset.unitNumber || chip.textContent.match(/\d+/)?.[0])
+            ).filter(n => Number.isInteger(n) && n > 0))];
+        }
+        function oyunKurulumSeciminiOku(prefix, sinif, uniteler) {
+            // Student level scopes are server-selected; their hidden native pickers may be stale.
+            if (window.dmSoloLevels?.active) return { sinif, uniteler };
+            const teacher = window.dmTeacherPortalMode || (typeof aktifOgrenciAdi !== 'undefined' && String(aktifOgrenciAdi).toLowerCase() === 'teacher') || (typeof siniftaOynananOgrenci !== 'undefined' && siniftaOynananOgrenci);
+            if (!teacher) return { sinif, uniteler };
+            const box = document.getElementById(prefix + 'UniteBox');
+            if (!box) return { sinif, uniteler };
+            const grade = document.querySelector('#' + prefix + 'SinifGrid .sinif-btn.active');
+            const selectedClass = Number(grade?.dataset.glGrade || grade?.dataset.class || grade?.textContent.match(/\d+/)?.[0]);
+            return { sinif: Number.isInteger(selectedClass) && selectedClass >= 1 && selectedClass <= 8 ? selectedClass : sinif,
+                uniteler: oyunSeciliUniteleriGetir(box) };
+        }
+
         function kySinifKisitlamaUygulaVeBaslat() {
             sinifGridKisitlamaUygula('kySinifGrid', function(s) { kyAktifSinif = s; }, kySinifGuncelle);
         }
@@ -143,7 +163,8 @@ function raporlarimKapat() {
                 let chip = document.createElement('button');
                 chip.type = 'button';
                 chip.className = 'unite-chip' + (idx === 0 ? ' selected' : '');
-                chip.innerText = u + '.Ü';
+                chip.dataset.unit = String(u);
+                chip.textContent = u + '.Ü';
                 chip.onclick = function() {
                     chip.classList.toggle('selected');
                     kyUniteSecimleriniGuncelle();
@@ -154,12 +175,7 @@ function raporlarimKapat() {
         }
 
         function kyUniteSecimleriniGuncelle() {
-            kySecilenUniteler = [];
-            document.querySelectorAll('#kyUniteBox .unite-chip').forEach((chip, idx) => {
-                if (chip.classList.contains('selected')) {
-                    kySecilenUniteler.push(idx + 1);
-                }
-            });
+            kySecilenUniteler = oyunSeciliUniteleriGetir(document.getElementById('kyUniteBox'));
         }
 
         function kelimeMuzikBaslat() {
@@ -192,6 +208,7 @@ function raporlarimKapat() {
         }
 
         function kelimeYarismasiBaslat() {
+            ({sinif: kyAktifSinif, uniteler: kySecilenUniteler} = oyunKurulumSeciminiOku('ky', kyAktifSinif, kySecilenUniteler));
             if (genelOyunGirisEngelliMi()) return;
             let isim = document.getElementById('kyIsimInput').value.trim();
             if (!isim) { alert("Lütfen adınızı giriniz!"); return; }
@@ -2000,8 +2017,9 @@ mesajlar.forEach(m => {
                         let chip = document.createElement('button');
                         chip.type = 'button';
                         chip.className = 'unite-chip' + (idx === 0 ? ' selected' : '');
-                        chip.innerText = u + '.Ü';
-                        chip.onclick = function() { chip.classList.toggle('selected'); secilenUnitelerSetFn(Array.from(box.querySelectorAll('.unite-chip.selected')).map((c,i) => uniteler[Array.from(box.children).indexOf(c)])); };
+                        chip.dataset.unit = String(u);
+                        chip.textContent = u + '.Ü';
+                        chip.onclick = function() { chip.classList.toggle('selected'); secilenUnitelerSetFn(oyunSeciliUniteleriGetir(box)); };
                         box.appendChild(chip);
                         if (idx === 0) secilen.push(u);
                     });
@@ -2069,6 +2087,7 @@ mesajlar.forEach(m => {
               function hafizaOyunKapat() { if (liderlikKilitliMiKontrolEt('hafiza', 'hafizaBitisEkrani')) return; document.getElementById('hafizaOyunOverlay').style.display = 'none'; if (hafizaTimer) clearInterval(hafizaTimer); hafizaMuzikDurdur(); }
 
                 function hafizaOyunuBaslat() {
+            ({sinif: hafizaAktifSinif, uniteler: hafizaSecilenUniteler} = oyunKurulumSeciminiOku('hafiza', hafizaAktifSinif, hafizaSecilenUniteler));
             if (genelOyunGirisEngelliMi()) return;
             let isim = document.getElementById('hafizaIsimInput').value.trim();
             if (!isim) { alert("Lütfen adınızı giriniz!"); return; }
@@ -2301,6 +2320,7 @@ mesajlar.forEach(m => {
            function yagmurOyunKapat() { if (liderlikKilitliMiKontrolEt('yagmur', 'yagmurBitisEkrani')) return; document.getElementById('yagmurOyunOverlay').style.display = 'none'; if (yagmurInterval) clearInterval(yagmurInterval); yagmurMuzikDurdur(); }
 
                 function yagmurOyunuBaslat() {
+            ({sinif: yagmurAktifSinif, uniteler: yagmurSecilenUniteler} = oyunKurulumSeciminiOku('yagmur', yagmurAktifSinif, yagmurSecilenUniteler));
             if (genelOyunGirisEngelliMi()) return;
             let isim = document.getElementById('yagmurIsimInput').value.trim();
             if (!isim) { alert("Lütfen adınızı giriniz!"); return; }
@@ -2636,6 +2656,7 @@ yagmurHavuz = OC.kelimeSec('yagmur', yagmurHavuz, OC.SORU); OC.basla('yagmur');
                function kelimebulOyunKapat() { if (liderlikKilitliMiKontrolEt('kelimebul', 'kelimebulBitisEkrani')) return; document.getElementById('kelimebulOyunOverlay').style.display = 'none'; kelimebulMuzikDurdur(); }
 
                function kelimebulOyunuBaslat() {
+            ({sinif: kelimebulAktifSinif, uniteler: kelimebulSecilenUniteler} = oyunKurulumSeciminiOku('kelimebul', kelimebulAktifSinif, kelimebulSecilenUniteler));
             if (genelOyunGirisEngelliMi()) return;
             let isim = document.getElementById('kelimebulIsimInput').value.trim();
             if (!isim) { alert("Lütfen adınızı giriniz!"); return; }
@@ -6158,7 +6179,8 @@ setTimeout(() => {
                 let chip = document.createElement('button');
                 chip.type = 'button';
                 chip.className = 'unite-chip' + (idx === 0 ? ' selected' : '');
-                chip.innerText = u + '.Ü';
+                chip.dataset.unit = String(u);
+                chip.textContent = u + '.Ü';
                 chip.onclick = function() {
                     chip.classList.toggle('selected');
                     jpUniteSecimleriniGuncelle();
@@ -6169,12 +6191,7 @@ setTimeout(() => {
         }
 
         function jpUniteSecimleriniGuncelle() {
-            jpSecilenUniteler = [];
-            document.querySelectorAll('#jpUniteBox .unite-chip').forEach((chip, idx) => {
-                if (chip.classList.contains('selected')) {
-                    jpSecilenUniteler.push(idx + 1);
-                }
-            });
+            jpSecilenUniteler = oyunSeciliUniteleriGetir(document.getElementById('jpUniteBox'));
         }
 
         function jeopardyMuzikBaslat() {
@@ -6207,6 +6224,7 @@ setTimeout(() => {
         }
 
         function jeopardyOyunuBaslat() {
+            ({sinif: jpAktifSinif, uniteler: jpSecilenUniteler} = oyunKurulumSeciminiOku('jp', jpAktifSinif, jpSecilenUniteler));
             if (genelOyunGirisEngelliMi()) return;
             let isim = document.getElementById('jpIsimInput').value.trim();
             if (!isim) { alert("Lütfen adınızı giriniz!"); return; }
@@ -6537,7 +6555,8 @@ setTimeout(() => {
                 let chip = document.createElement('button');
                 chip.type = 'button';
                 chip.className = 'unite-chip' + (idx === 0 ? ' selected' : '');
-                chip.innerText = u + '.Ü';
+                chip.dataset.unit = String(u);
+                chip.textContent = u + '.Ü';
                 chip.onclick = function() {
                     chip.classList.toggle('selected');
                     boslukUniteSecimGuncelle();
@@ -6548,12 +6567,7 @@ setTimeout(() => {
         }
 
         function boslukUniteSecimGuncelle() {
-            boslukSecilenUniteler = [];
-            document.querySelectorAll('#boslukUniteBox .unite-chip').forEach((chip, idx) => {
-                if (chip.classList.contains('selected')) {
-                    boslukSecilenUniteler.push(idx + 1);
-                }
-            });
+            boslukSecilenUniteler = oyunSeciliUniteleriGetir(document.getElementById('boslukUniteBox'));
         }
 
         function boslukMuzikBaslat() {
@@ -6586,6 +6600,7 @@ setTimeout(() => {
         }
 
         function boslukOyunuBaslat() {
+            ({sinif: boslukAktifSinif, uniteler: boslukSecilenUniteler} = oyunKurulumSeciminiOku('bosluk', boslukAktifSinif, boslukSecilenUniteler));
             let isim = document.getElementById('boslukIsimInput').value.trim();
             if (!isim) { alert("Lütfen adınızı giriniz!"); return; }
             if (boslukSecilenUniteler.length === 0) { alert("Lütfen en az bir ünite seçiniz!"); return; }

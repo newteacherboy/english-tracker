@@ -55,6 +55,7 @@ function trCeldiriciler(s, adet) {
 }
 
 async function trenOyunuBaslat() {
+  ({sinif: trenAktifSinif, uniteler: trenSecilenUniteler} = oyunKurulumSeciminiOku('tren', trenAktifSinif, trenSecilenUniteler));
   if (typeof genelOyunGirisEngelliMi === 'function' && genelOyunGirisEngelliMi()) return;
   let isim = trEl('trenIsimInput').value.trim();
   if (!isim) { alert('Lütfen adınızı giriniz!'); return; }

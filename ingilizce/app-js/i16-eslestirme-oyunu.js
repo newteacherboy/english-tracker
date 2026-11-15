@@ -41,6 +41,7 @@ function esOyunKapat() {
 }
 
 function esOyunuBaslat() {
+  ({sinif: esAktifSinif, uniteler: esSecilenUniteler} = oyunKurulumSeciminiOku('es', esAktifSinif, esSecilenUniteler));
   if (typeof genelOyunGirisEngelliMi === 'function' && genelOyunGirisEngelliMi()) return;
   let isim = esEl('esIsimInput').value.trim();
   if (!isim) { alert('Lütfen adınızı giriniz!'); return; }
