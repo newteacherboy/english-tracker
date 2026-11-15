@@ -23,8 +23,18 @@
   const stage=classicStages[root.id],entry=stage&&root.querySelector('#'+stage[0]+'GirisEkrani');
   if(back&&entry&&shown(entry))back=false;
   if(root.dataset.vpClosing)return;root.dataset.vpClosing='1';
-  window.dmGameExitIntent=back?'back':'exit';
-  try{await closeNative(root);if(back&&!shown(root)){const opener=classics[root.id]?.[1];if(opener&&typeof window[opener]==='function'){window.dmGameReopeningSetup=true;try{await window[opener]();}finally{window.dmGameReopeningSetup=false;}}}}
+  const studentGame=classicStages[root.id]?.[0]||
+   (root.id==='yoModal'?root.dataset.dmSelectedGame:
+    root.id==='harfBahcesiOverlay'?'harfbahcesi':
+    root.id==='soloArcadeOverlay'?window.dmSoloLevels?.active?.game:null);
+  const soloBack=back&&window.dmSoloLevels?.isCurrentGame?.(studentGame);
+  // Students return to their saved level intro; teachers still reopen the class/unit setup.
+  window.dmGameExitIntent=soloBack?'exit':back?'back':'exit';
+  try{
+   await closeNative(root);
+   if(soloBack)await window.dmSoloLevels.backToIntro(studentGame);
+   else if(back&&!shown(root)){const opener=classics[root.id]?.[1];if(opener&&typeof window[opener]==='function'){window.dmGameReopeningSetup=true;try{await window[opener]();}finally{window.dmGameReopeningSetup=false;}}}
+  }
   finally{window.dmGameExitIntent='';delete root.dataset.vpClosing;queueMicrotask(()=>{sync();if(!back&&window.dmTeacherPortalMode)window.dmTeacherPortal?.returnToGames?.();});}
  }
  function classicPause(root){

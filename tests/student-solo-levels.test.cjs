@@ -27,3 +27,33 @@ test('code breaker has exactly eight options, one tap records once and progresse
 test('listening has two choices, no text input, and records either answer only once with feedback sound',()=>{
  const src=read('ingilizce/app-js/i03-veriler.js'),dom=new JSDOM('<div id="yoModal" class="acik"><div id="content"></div></div>',{runScripts:'outside-only'}),w=dom.window,records=[],sounds=[],timers=[];w.dkt={liste:[{en:'cat',tr:'kedi'}],i:0,d:0,y:0};w.masterKelimeHavuzu=[{en:'cat',tr:'kedi'},{en:'dog',tr:'köpek'}];w.yoKaristir=a=>a;w.yoGuvenliMetin=s=>s;w.yoGovde=h=>w.document.getElementById('content').innerHTML=h;w.dmVerifiedGames={record:(...a)=>records.push(a)};w.OC={dogru(){},yanlis(){}};w.zkEkle=()=>{};w.yoSes=s=>sounds.push(s);w.setTimeout=f=>timers.push(f);w.eval(src.slice(src.indexOf('        function dikteSoru() {'),src.indexOf('        function dikteBitir() {')));w.dikteSoru();assert.equal(w.document.querySelectorAll('#yoDikteChoices button').length,2);assert.equal(w.document.querySelectorAll('input').length,0);assert(w.document.getElementById('yoDikteChoices').hidden);w.dikteDinle();w.dikteKontrol(1);w.dikteKontrol(1);assert.equal(records.length,1);assert.deepEqual(sounds,['yanlis']);assert.equal(w.dkt.y,1);w.close();
 });
+
+
+test('each student game has its own Papi hero and back reopens the saved level screen',async()=>{
+ const dom=new JSDOM('<body></body>',{url:'https://test.invalid',runScripts:'outside-only'}),w=dom.window;
+ w.aktifOgrenciAdi='learner';w.apiURL='/api';w.setTimeout=()=>0;
+ w.fetch=async()=>Response.json({ok:true,number:3,classNo:1,units:[1],words:[],label:'1. Sınıf',totalLevels:320});
+ w.eval(read('ingilizce/solo-levels.js'));
+ for(const starter of ['kelimeYarismasiBaslat','jeopardyOyunuBaslat','boslukOyunuBaslat','hafizaOyunuBaslat','yagmurOyunuBaslat','kelimebulOyunuBaslat','esOyunuBaslat','trenOyunuBaslat'])w[starter]=()=>{};
+ const keys=['ky','jp','bosluk','hafiza','yagmur','kelimebul','eslestirme','tren','dikte','cumle','harfbahcesi','fener','canavar'];
+ const names=new Set();
+ for(const game of keys){
+  let calls=0;await w.dmSoloLevels.open(game,()=>calls++);
+  const root=w.document.getElementById('dmSoloLevelIntro');
+  assert.equal(root.dataset.game,game);
+  assert(root.querySelector('.dm-solo-papi'),game);
+  assert(root.querySelector('.dm-solo-game-title'),game);
+  assert(root.querySelector('.dm-solo-start'),game);
+  assert.equal(root.querySelectorAll('select,[data-grade],[data-unit]').length,0,game);
+  names.add(root.querySelector('.dm-solo-game-title').textContent);
+  root.querySelector('[data-start]').click();
+  await new Promise(resolve=>setImmediate(resolve));
+  assert.equal(calls,1,game);
+  assert.equal(w.dmSoloLevels.isCurrentGame(game),true,game);
+  await w.dmSoloLevels.backToIntro(game);
+  assert(w.document.getElementById('dmSoloLevelIntro'),game);
+  assert.equal(w.dmSoloLevels.isCurrentGame(game),false,game);
+ }
+ assert.equal(names.size,keys.length);
+ w.close();
+});
