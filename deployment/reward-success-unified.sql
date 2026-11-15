@@ -93,6 +93,18 @@ $new$elsif c*100>=n*60 then
   reason:='awarded';
 end if;$new$);
 
+-- Parkur: use the 12 recorded first answers, never the client-requested score.
+-- The existing recovery flow stays available, but a failed first attempt cannot
+-- be promoted to a reward-bearing clear merely by finishing recovery questions.
+select pg_temp.dm_replace_once(
+ 'public.dm_parkur_fair_claim(uuid,text,integer,integer,numeric)'::regprocedure,
+ 'if correct_count<8 and not rec.completed then',
+ 'if correct_count<8 then');
+
+-- Lesson and duel RPCs are intentionally not patched without a server-owned
+-- per-question receipt. Client-submitted tiers cannot establish 60% accuracy.
+-- Do not claim end-to-end coverage until those receipts are migrated.
+
 -- Solo: use verified first-try correct count for the success gate; no payout under 60%.
 -- Existing reward claim and replay ledger remain authoritative.
 select pg_temp.dm_replace_once(
