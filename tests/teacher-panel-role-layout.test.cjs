@@ -171,3 +171,30 @@ test('pagination ignores old cached module buttons without triggering a re-injec
  assert.equal(tiles.querySelectorAll('[data-dml],[data-dmc],[data-dmr]').length,3);
  watched.disconnect();w.close();
 });
+
+
+test('approved Sınıfım design 1 keeps live data, tabs, search, class actions and premium restrictions',()=>{
+ const source=fs.readFileSync('ingilizce/teacher-league.js','utf8');
+ const html=fs.readFileSync('ingilizce/index.html','utf8');
+ assert.match(source,/dml-class-banner/);
+ assert.match(source,/dml-metrics/);
+ assert.match(source,/dml-tabs/);
+ assert.match(source,/dml-student-list/);
+ assert.match(source,/data-add-students/);
+ assert.match(source,/data-class-reports/);
+ assert.match(source,/data-search/);
+ assert.match(source,/data-filter/);
+ assert.match(source,/data-expand/);
+ assert.match(source,/window\.dmTeacherClassesOpen/);
+ assert.match(source,/window\.dmTeacherReportsOpen/);
+ assert.match(source,/window\.dmTeacherBulkStudentsOpen/);
+ assert.match(source,/action: 'league'/);
+ assert.match(source,/category\.hidden/);
+ assert.match(source,/!d\.unlocked/);
+ assert.match(source,/dml-board/);
+ assert.match(source,/DESIGN_ONE_CSS/);
+ assert.match(html,/teacher-league\.js\?v=20261115-design-one-1/);
+ assert.match(html,/teacher-portal\.js\?v=20261115-design-one-1/);
+ assert.match(fs.readFileSync('ingilizce/sw.js','utf8'),/diji-v449-classroom-design-one-20261115/);
+ assert.match(portal,/window\.dmTeacherBulkStudentsOpen = \(\) => openBulkStudents\(\)/);
+});

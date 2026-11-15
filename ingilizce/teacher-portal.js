@@ -395,6 +395,7 @@
   document.querySelector('#bottomNavMobile [data-tp-panel-nav]')?.classList.add('active');
  }
  function teacherDashboardHide(){window.dmTeacherToolsActive=false;document.body.classList.remove('tp-legacy-child-open');document.getElementById('ogretmenMenuModal')?.classList.remove('dm-teacher-open');document.body.classList.remove('tp-legacy-inline');document.getElementById('ogretmenMenuModal')?.style.setProperty('display','none');document.getElementById('tpDashboard')?.classList.remove('is-visible');document.body.classList.remove('tp-dash-active');}
+ window.dmTeacherBulkStudentsOpen = () => openBulkStudents();
  function openBulkStudents(){
   // Approved compact student-entry design; keep existing creation API and validation.
   const row=(n)=>'<div class="tp-pupil-row" data-pupil-row><span class="tp-pupil-num">'+n+'</span><label><span>Kullanıcı adı</span><input name="pupil_user" autocomplete="off" maxlength="20" aria-label="'+n+'. öğrencinin kullanıcı adı" placeholder="ogrenci'+String(n).padStart(2,'0')+'"></label><label><span>Başlangıç şifresi</span><input name="pupil_pass" type="password" autocomplete="new-password" minlength="6" maxlength="64" aria-label="'+n+'. öğrencinin başlangıç şifresi" placeholder="En az 6 karakter"></label><button type="button" class="tp-pupil-remove" aria-label="'+n+'. öğrenciyi kaldır">×</button></div>';
