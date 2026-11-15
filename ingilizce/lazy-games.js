@@ -1,6 +1,6 @@
 /* Optional games initialize once, when their tab or public opener is used. */
 (()=>{'use strict';
-  const premiumFile='premium-word-match.js?v=20261114-flow';
+  const premiumFile='premium-word-match.js?v=20261115-campaign-proof';
   const introFile='premium-intro.js?v=20261114-daily-one-card';
   const files=['solo-arcade.js?v=82a3b3891e','harf-bahcesi.js?v=b936541467','papi-cards.js?v=b9d02db518','meteor.js?v=9460b40009','word-wheel.js?v=dc87a710bb','kelime-rallisi.js?v=20261114-flow'];
   const loaded=new Set();let pending=null,readyDone=false;

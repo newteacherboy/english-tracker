@@ -1,0 +1,25 @@
+name: Teacher campaign QA
+on:
+  pull_request:
+    paths: ['ingilizce/teacher-campaign*', 'ingilizce/premium-word-match*', 'ingilizce/premium-skill-games.js', 'supabase/functions/diji-api/campaign-api.mjs', 'supabase/functions/premium-games/**', 'supabase/migrations/*ogretmenimle*', 'tests/campaign*', 'tests/fixtures/campaign-schema.json', '.github/workflows/teacher-campaign.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: npm install --prefix /tmp/campaign-qa --no-audit --no-fund jsdom@26.1.0 @electric-sql/pglite@0.3.14 playwright@1.56.1
+      - run: NODE_PATH=/tmp/campaign-qa/node_modules node --test tests/campaign-api.test.mjs tests/campaign-proof.test.mjs tests/campaign-dom.test.cjs tests/premium-word-match-core.test.cjs tests/premium-skill-games.test.cjs tests/student-solo-levels.test.cjs tests/teacher-portal-api.test.mjs tests/notice-coordinator.test.cjs
+      - run: PGLITE_MODULE=/tmp/campaign-qa/node_modules/@electric-sql/pglite/dist/index.cjs node tests/campaign-db.cjs
+      - run: /tmp/campaign-qa/node_modules/.bin/playwright install --with-deps chromium-headless-shell
+      - run: CHROMIUM_PATH=$(find "$HOME/.cache/ms-playwright" -path '*/chrome-linux/headless_shell' -type f | head -1) PLAYWRIGHT_MODULE=/tmp/campaign-qa/node_modules/playwright node tests/campaign-ui.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: teacher-campaign-screenshots
+          path: /tmp/zirve-*.png

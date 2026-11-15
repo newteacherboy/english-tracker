@@ -20,11 +20,11 @@ async function refresh(force=false){if(!token()||reading||document.hidden||!forc
 function visible(el){return !!el&&el.getClientRects().length>0&&(el.checkVisibility?el.checkVisibility({checkOpacity:true,checkVisibilityCSS:true}):getComputedStyle(el).visibility!=='hidden');}
 const childSelector='.rubric-modal,.cog-perde,.sm-overlay,.dm-member-overlay,.dm-account-overlay,.dm-perde,.yo-modal,.yo-perde,#yoModalPerde,#omSifreModal,#odModal,#duyuruYonetimModal,.game-modal-overlay,.seviye-harita-overlay,#rallyGame,#meteorGame,#wordWheel,#papiCards,#dmTeacherOral,#mlThemeList,#dmStoryLesson,.gso-overlay';
 function children(){return [...document.querySelectorAll(childSelector)].filter(x=>x.id!=='ogretmenMenuModal'&&x.id!=='sifreModal'&&(visible(x)||x.closest('#ogretmenMenuModal')&&['flex','block','grid'].includes(x.style.display)));}
-const original=window.ogretmenPaneliAc;window.ogretmenPaneliAc=function(){active=true;const r=original?.apply(this,arguments);refresh(true);return r;};
+const original=window.ogretmenPaneliAc;window.ogretmenPaneliAc=function(){document.dispatchEvent(new CustomEvent('dm:teacher-enter'));active=true;const r=original?.apply(this,arguments);refresh(true);return r;};
 document.addEventListener('click',e=>{
  const menu=$('ogretmenMenuModal');if(!menu)return;
  if(menu.contains(e.target)){
-  if(e.target.closest('.game-close-btn')){active=false;menuSeen=false;menu.classList.remove('dm-teacher-open');return;}
+  if(e.target.closest('.game-close-btn')){document.dispatchEvent(new CustomEvent('dm:teacher-exit'));active=false;menuSeen=false;menu.classList.remove('dm-teacher-open');return;}
   if(e.target.closest('button')){active=true;setTimeout(maintain,0);}
  }else if(active&&e.target.closest('.dm-teacher-child'))setTimeout(()=>{maintain();refresh(true);},0);
 },true);

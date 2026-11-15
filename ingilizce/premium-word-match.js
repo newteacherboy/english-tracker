@@ -5,7 +5,7 @@
    - iPhone belleği için: tek canvas, şeker+kelime görüntüleri önbellekte, ağır CSS filtresi yok. */
 (()=>{'use strict';
 if(window.dmPwm)return;
-const V='20261105-seker-dukkani',A='premium-assets/kelime-eslestirme/';
+const V='20261115-campaign-proof',A='premium-assets/kelime-eslestirme/';
 const API=(typeof apiURL!=='undefined'?apiURL:'https://nxfqlutulxqzqgwewssd.supabase.co/functions/v1/diji-api').replace(/diji-api.*$/,'premium-games');
 const WORLDS=['Büyü Kütüphanesi','Kristal Mağara','Gökyüzü Şatosu','Büyülü Bahçe','Yıldız Kulesi'];
 const BGS=['bg-1-buyu-kutuphanesi','bg-2-kristal-magara','bg-3-gokyuzu-satosu','bg-4-buyulu-bahce','bg-5-yildiz-kulesi'];
@@ -136,9 +136,9 @@ async function open(){
   if(ticket!==epoch||!root)return;
   practice=!!d.practice;adopt(d);world=Math.min(5,Math.ceil(Math.max(1,d.level||1)/20));setBg(world);
   preload([...CANDIES,'candy-rainbow-bomb','fx-stripe-h','fx-stripe-v','tile-ice','tile-chain','fx-sparkle','fx-burst']);
-  if(!isPremium()&&remaining()<=0&&!window.dmPremiumIntro)return comingSoon();
+  if(!isPremium()&&(remaining()<=0&&!status?.activeRunId)&&!window.dmPremiumIntro)return comingSoon();
   home();
-  if(!isPremium()&&!store.get('dm_pwm_trial_seen:'+owner.toLowerCase()))trialPopup();
+  if(!isPremium()&&!status?.campaignRemaining&&!status?.activeRunId&&!store.get('dm_pwm_trial_seen:'+owner.toLowerCase()))trialPopup();
  }catch(e){if(ticket===epoch&&root){$('.pwm-stage').innerHTML='';const c=modal('<h2 class="pwm-ribbon-title">Oyun açılamadı</h2><p>'+esc(e.message)+'</p><div class="pwm-actions"><button type="button" class="pwm-btn" data-retry>Tekrar dene</button><button type="button" class="pwm-btn ghost" data-x>Çık</button></div>');c.querySelector('[data-retry]').onclick=()=>{close();open();};c.querySelector('[data-x]').onclick=()=>close();}}
 }
 
@@ -200,10 +200,10 @@ function introHome(){
   stats:[{value:total+'/300',label:'Yıldız',icon:'star'},{value:status?.energyMax?`${status.energy}/${status.energyMax}`:String(status?.energy??'–'),label:'Enerji',icon:'bolt'},
    isPremium()?{value:practice?'Sınıf':'Sınırsız',label:practice?'Ödül işlenmez':'Premium',icon:'infinity'}:{value:String(remaining()),label:'Kalan hak'}],
   after,
-  note:!isPremium()&&remaining()<=0?{text:window.dmPremiumIntro.noRightsText(),icon:'lock'}:null,
-  actions:!isPremium()&&remaining()<=0
+  note:!isPremium()&&(remaining()<=0&&!status?.activeRunId)?{text:window.dmPremiumIntro.noRightsText(),icon:'lock'}:null,
+  actions:!isPremium()&&(remaining()<=0&&!status?.activeRunId)
    ?[{label:'Paketleri gör',onClick:()=>{const o=window.dmPremiumIntro.plans('candy-papis',(window.dmAndroidPlan?.plan||'free')==='pro'?'premium_pro':'');o?o():toast('Paketler şu an açılamadı.');}},{label:'Oyunlara dön',kind:'link',onClick:()=>back()}]
-   :[{label:'Seviye '+lv+'’i oyna',cost:5,onClick:()=>levelCard(lv)},{label:'Oyunlara dön',kind:'link',onClick:()=>back()}]
+   :[{label:status?.activeRunId?'Kaldığın oyuna devam et':'Seviye '+lv+'’i oyna',cost:status?.campaignRemaining?0:5,onClick:()=>levelCard(lv)},{label:'Oyunlara dön',kind:'link',onClick:()=>back()}]
  });
 }
 
@@ -244,26 +244,34 @@ function levelCard(level){
   <p class="pwm-muted">${cfg.moves} hamle · Hedef puan ${fmt(cfg.stars[0])}</p>
   <h3>Bu bölümün kelimeleri</h3>
   <ul class="pwm-words">${words.map((w,i)=>`<li><img src="${A}${CANDIES[i]}.webp" alt=""><b>${esc(w.en)}</b><span>${esc(w.tr)}</span></li>`).join('')}</ul>
-  <div class="pwm-actions"><button type="button" class="pwm-btn gold big" data-go>Başla <span class="pwm-cost">⚡ 5</span></button></div>
-  <p class="pwm-muted small">${isPremium()?(practice?'Sınıf modu: enerji ve ödül işlenmez.':'Premium: sınırsız oyun.'):'Bu bölüm 1 ücretsiz hakkını kullanır (kalan '+remaining()+').'}</p>`,'level');
+  <div class="pwm-actions"><button type="button" class="pwm-btn gold big" data-go>Başla <span class="pwm-cost">${status?.campaignRemaining?'🎁 Ücretsiz':'⚡ 5'}</span></button></div>
+  <p class="pwm-muted small">${isPremium()?(practice?'Sınıf modu: enerji ve ödül işlenmez.':'Premium: sınırsız oyun.'):status?.campaignRemaining?'Kampanyaya özel ücretsiz oyun · Enerji harcanmaz':status?.activeRunId?'Yarım kalan oyununa devam et · Yeni hak harcanmaz':'Bu bölüm 1 ücretsiz hakkını kullanır (kalan '+remaining()+').'}</p>`,'level');
  c.querySelector('[data-x]').onclick=()=>{hideModal();};
  c.querySelector('[data-go]').onclick=async e=>{const b=e.currentTarget;b.disabled=true;b.textContent='Hazırlanıyor…';try{await start(level,cfg,words);}catch(err){b.disabled=false;b.innerHTML='Başla <span class="pwm-cost">⚡ 5</span>';if(err.code==='hak'){status.remaining=0;comingSoon();return;}toast(err.message);if(err.code==='enerji')sound.bad();window.DijiMeduPapiFeedback?.energyDenied(err);}};
 }
 
 /* ---------- oyun ---------- */
 async function start(level,cfg,words){
- const ticket=epoch,runId=uuid();
+ const pendingKey='dm_pwm_pending:'+token();
+ let pending;try{pending=JSON.parse(sessionStorage.getItem(pendingKey)||'null');}catch{}
+ const ticket=epoch,runId=status?.activeRunId||(pending?.level===level?pending.runId:uuid());
+ sessionStorage.setItem(pendingKey,JSON.stringify({runId,level}));
  const d=await api('start',{runId,level});
  if(ticket!==epoch||!root)return;
  adopt(d);
+ if(d.playedLevel){level=d.playedLevel;cfg=window.dmPwmCore.levelConfig(level);}
  if(Array.isArray(d.words)&&d.words.length>=cfg.types){const bank=d.words.slice();for(let i=bank.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[bank[i],bank[j]]=[bank[j],bank[i]];}words=bank.slice(0,cfg.types);}
  await preload([...CANDIES,'candy-rainbow-bomb','fx-stripe-h','fx-stripe-v','tile-ice','tile-chain','fx-sparkle','fx-burst']);
  if(ticket!==epoch||!root)return;
  hideModal();
- const st=window.dmPwmCore.create(cfg,(Math.random()*2**31)|0);
- G={level,cfg,words,st,runId,started:Date.now(),busy:false,mode:null,sel:null,over:false,pieces:new Map(),particles:[],floats:[],beams:[],shake:0,idle:performance.now(),hint:null,cell:48,dpr:1,cache:new Map(),lastScore:0};
+ const st=window.dmPwmCore.create(cfg,d.seed??((Math.random()*2**31)|0));
+ const actionKey='dm_pwm_actions:'+token();let prior;try{prior=JSON.parse(sessionStorage.getItem(actionKey)||'null');}catch{}
+ const actions=prior?.runId===(d.runId||runId)?prior.actions||[]:[];
+ for(const pair of actions)window.dmPwmCore.trySwap(st,pair.slice(0,2),pair.slice(2));
+ sessionStorage.removeItem(pendingKey);
+ G={level,cfg,words,st,runId:d.runId||runId,actions,actionKey,started:Date.now(),busy:false,mode:null,sel:null,over:false,pieces:new Map(),particles:[],floats:[],beams:[],shake:0,idle:performance.now(),hint:null,cell:48,dpr:1,cache:new Map(),lastScore:0};
  world=cfg.world;setBg(world);
- game();sound.startMusic();
+ game();sound.startMusic();if(window.dmPwmCore.goalsDone(st)||st.moves<=0)void settle();
 }
 
 function game(){
@@ -458,7 +466,7 @@ async function swap(a,b){
  const g=G;if(!g||g.busy||g.over)return;if(b[0]<0||b[1]<0||b[0]>=g.st.rows||b[1]>=g.st.cols)return;
  const core=window.dmPwmCore;
  const p=g.st.board[a[0]][a[1]],q=g.st.board[b[0]][b[1]];if(p?.lock||q?.lock){toast('Zincirli şeker yer değiştiremez. Yanında eşleşme yaparak zinciri kır!');sound.bad();return;}
- g.busy=true;const r=core.trySwap(g.st,a,b);await play(r.steps);g.busy=false;
+ g.busy=true;const r=core.trySwap(g.st,a,b);if(r.ok){g.actions.push([...a,...b]);try{sessionStorage.setItem(g.actionKey,JSON.stringify({runId:g.runId,actions:g.actions}));}catch{}}await play(r.steps);g.busy=false;
  if(r.ok)settle();
 }
 async function settle(){
@@ -480,13 +488,13 @@ async function win(){
 async function lose(){sound.fail();$('.pwm-witch').src=A+'char-witch-idle.webp';await sleep(500);finish(false);}
 async function finish(won){
  const g=G;if(!g)return;$('[data-pause]').hidden=true;sound.stopMusic();
- const body={runId:g.runId,score:g.st.score,won,moves:g.st.movesUsed,seconds:Math.round((Date.now()-g.started)/1000)};
+ const body={runId:g.runId,actions:g.actions,score:g.st.score,won,moves:g.st.movesUsed,seconds:Math.round((Date.now()-g.started)/1000)};
  const c=modal('<h2 class="pwm-ribbon-title">'+(won?'Tebrikler!':'Hamlen bitti')+'</h2><p class="pwm-muted">Sonucun kaydediliyor…</p>','result');
  let d=null;
  for(let i=0;i<3&&!d;i++){try{d=await api('finish',body);}catch(e){if(i===2){c.innerHTML='<h2 class="pwm-ribbon-title">Sonucun bekliyor</h2><p>'+esc(e.message)+'</p><p class="pwm-muted small">Aynı sonucu yeniden kaydetmek ikinci kez ödül vermez.</p><div class="pwm-actions"><button type="button" class="pwm-btn gold" data-r>Tekrar dene</button><button type="button" class="pwm-btn ghost" data-h>Haritaya dön</button></div>';c.querySelector('[data-r]').onclick=()=>finish(won);c.querySelector('[data-h]').onclick=()=>home();return;}await sleep(900);}}
- if(G!==g)return;adopt(d);if(d.yo)pendingYo=d.yo;earned.xp+=Number(d.xp||0);earned.gold+=Number(d.gold||0);
+ if(G!==g)return;try{sessionStorage.removeItem(g.actionKey);}catch{}adopt(d);if(d.yo)pendingYo=d.yo;earned.xp+=Number(d.xp||0);earned.gold+=Number(d.gold||0);
  const stars=won?Math.max(1,Number(d.stars||window.dmPwmCore.stars(g.st)||1)):0;
- const next=won&&g.level<100,outOfPlays=!isPremium()&&remaining()<=0;
+ const next=won&&g.level<100,outOfPlays=!isPremium()&&(remaining()<=0&&!status?.activeRunId);
  c.innerHTML=`<img class="pwm-result-char" src="${A}${won?'char-witch-cheer':'char-witch-idle'}.webp" alt="">
   <h2 class="pwm-ribbon-title">${won?'Seviye '+g.level+' tamam!':'Hamlen bitti'}</h2>
   ${won?`<div class="pwm-result-stars">${[0,1,2].map(i=>`<img data-rs="${i}" src="${A}icon-star-empty.webp" alt="">`).join('')}</div>`:`<p>Hedeflere çok yaklaştın! Bir kez daha dene.</p>`}

@@ -1,3 +1,4 @@
+import {replayCandy} from './campaign-proof.mjs';
 // Diji Medu · Premium Oyunlar (Kelime Eşleştirme).
 // Mevcut portal oturumunu doğrular; enerji, 3 ücretsiz hak, ödül ve güçlendiriciler
 // yalnızca service_role'e açık dm_pwm_* fonksiyonlarında kilitli olarak işlenir.
@@ -117,7 +118,14 @@ Deno.serve(async(req:Request)=>{
   }
   if(op==='finish'){
    if(!UUID.test(String(b.runId||''))||![b.score,b.moves,b.seconds].every(v=>Number.isSafeInteger(v)&&v>=0)||typeof b.won!=='boolean')return reply(req,{ok:false,mesaj:'Geçersiz oyun sonucu.'},400);
-   return await gameReply(await db('rpc/dm_pwm_finish',{actor,run_key:b.runId,p_score:b.score,p_won:b.won,p_moves:b.moves,p_seconds:b.seconds}));
+   // Older clients keep normal rewards, but only server-replayed results get KP.
+   let proof:any=null;
+   if(Array.isArray(b.actions)){
+    const run=(await db('dm_premium_match_runs?student_id=eq.'+actor+'&run_id=eq.'+b.runId+'&select=level_no,campaign_seed&limit=1'))?.[0];
+    if(!run)return reply(req,{ok:false,mesaj:'Oyun bulunamadı.'},400);
+    try{proof=replayCandy(run,b.actions);}catch{return reply(req,{ok:false,mesaj:'Oyun hamleleri doğrulanamadı.'},400);}
+   }
+   return await gameReply(await db('rpc/'+(proof?'dm_campaign_pwm_finish':'dm_pwm_finish'),{actor,run_key:b.runId,p_score:proof?.score??b.score,p_won:proof?.won??b.won,p_moves:proof?.moves??b.moves,p_seconds:b.seconds}));
   }
   return reply(req,{ok:false,mesaj:'Geçersiz işlem.'},400);
  }catch(err){

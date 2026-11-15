@@ -1,0 +1,330 @@
+/* Isolated campaign surfaces; existing games and Parkur layouts are untouched. */
+.zirve-shade {
+  position: fixed;
+  inset: 0;
+  z-index: 2147483646;
+  display: grid;
+  place-items: center;
+  padding: max(10px, env(safe-area-inset-top)) 10px
+    max(10px, env(safe-area-inset-bottom));
+  background: #172344b8;
+  backdrop-filter: blur(7px);
+  font-family: Nunito, system-ui, sans-serif;
+  color: #26345c;
+  box-sizing: border-box;
+}
+.zirve-shade * {
+  box-sizing: border-box;
+}
+.zirve-panel {
+  position: relative;
+  width: min(100%, 620px);
+  max-height: calc(
+    100dvh - 28px - env(safe-area-inset-top) - env(safe-area-inset-bottom)
+  );
+  overflow: auto;
+  overscroll-behavior: contain;
+  border-radius: 28px;
+  background: #f3f6ff;
+  border: 3px solid #fff;
+  box-shadow: 0 24px 80px #10234d66;
+  padding: 18px;
+  scrollbar-width: thin;
+}
+.zirve-close {
+  position: sticky;
+  top: 0;
+  float: right;
+  z-index: 2;
+  border: 0;
+  background: #fff;
+  color: #37467a;
+  border-radius: 50%;
+  width: 38px;
+  height: 38px;
+  font-size: 28px;
+  box-shadow: 0 3px 0 #cad4ef;
+  cursor: pointer;
+}
+.zirve-hero {
+  border-radius: 22px;
+  padding: 20px 16px 12px;
+  background:
+    radial-gradient(ellipse at 80% 15%, #bca5ff 0, transparent 50%),
+    linear-gradient(135deg, #5a54d8, #334fb7);
+  color: #fff;
+  text-align: center;
+  overflow: hidden;
+}
+.zirve-hero small {
+  display: block;
+  font-size: 11px;
+  letter-spacing: 1.4px;
+  font-weight: 900;
+  color: #ffe9a3;
+}
+.zirve-hero h2 {
+  font-size: clamp(24px, 6vw, 34px);
+  line-height: 1.1;
+  margin: 10px 0;
+}
+.zirve-hero p {
+  font-size: 14px;
+  line-height: 1.4;
+  margin: 8px 0;
+}
+.zirve-art {
+  height: 130px;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 14px;
+}
+.zirve-art img {
+  height: 140px;
+  width: 140px;
+  object-fit: contain;
+  filter: drop-shadow(0 8px 6px #152f8466);
+}
+.zirve-art span {
+  font-size: 42px;
+  filter: drop-shadow(0 4px 0 #173b6a33);
+  transform: rotate(-12deg);
+}
+.zirve-art span:last-child {
+  transform: rotate(12deg);
+}
+.zirve-free {
+  display: block;
+  border-radius: 14px;
+  padding: 12px 8px;
+  background: #fff1a6;
+  color: #6b4111;
+  font-size: 15px;
+  font-weight: 1000;
+  box-shadow: 0 4px 0 #e2b754;
+  line-height: 1.35;
+  margin: 12px 0 4px;
+}
+.zirve-copy {
+  font-size: 14px;
+  line-height: 1.65;
+  padding: 4px 6px;
+}
+.zirve-copy p {
+  margin: 12px 0;
+}
+.zirve-rewards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin: 14px 0;
+}
+.zirve-rewards div {
+  padding: 14px 8px;
+  border-radius: 18px;
+  background: #fff;
+  border: 1px solid #e1e7fb;
+  text-align: center;
+  box-shadow: 0 4px 0 #dfe5f8;
+}
+.zirve-rewards strong {
+  display: block;
+  color: #5845b6;
+  font-size: 21px;
+}
+.zirve-rewards small {
+  display: block;
+  margin: 4px 0;
+  color: #536180;
+}
+.zirve-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+  margin-top: 13px;
+}
+.zirve-actions button,
+.zirve-launch {
+  border: 0;
+  border-radius: 14px;
+  padding: 13px 15px;
+  background: #6253d7;
+  color: #fff;
+  font:
+    900 14px Nunito,
+    system-ui,
+    sans-serif;
+  cursor: pointer;
+  box-shadow: 0 4px 0 #4434a9;
+}
+.zirve-actions button {
+  flex: 1;
+  min-width: 120px;
+}
+.zirve-actions button[data-wa] {
+  background: #148759;
+  box-shadow: 0 4px 0 #0a603e;
+}
+.zirve-actions button[data-rules],
+.zirve-actions button[data-refresh] {
+  background: #e5e9fb;
+  color: #3e477b;
+  box-shadow: 0 4px 0 #ccd5f0;
+}
+.zirve-actions button:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+.zirve-link {
+  width: 100%;
+  font: 12px system-ui;
+  border: 1px solid #d5def6;
+  border-radius: 12px;
+  background: #fff;
+  padding: 12px;
+  color: #354a78;
+  margin-top: 12px;
+}
+.zirve-stats {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin: 14px 0;
+}
+.zirve-stat {
+  background: #fff;
+  border: 1px solid #e1e8fa;
+  border-radius: 17px;
+  text-align: center;
+  padding: 14px 6px;
+  box-shadow: 0 3px 0 #e0e6f8;
+}
+.zirve-stat b {
+  display: block;
+  font-size: 27px;
+  color: #5345bb;
+}
+.zirve-stat span {
+  font-size: 12px;
+  color: #52617d;
+  font-weight: 800;
+}
+.zirve-section {
+  margin-top: 17px;
+}
+.zirve-section h3 {
+  font-size: 16px;
+  margin: 10px 2px;
+  color: #39446f;
+}
+.zirve-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: space-between;
+  background: white;
+  border: 1px solid #e5eafb;
+  border-radius: 12px;
+  padding: 11px;
+  margin: 6px 0;
+  font-size: 13px;
+}
+.zirve-row.is-self {
+  background: #fff4be;
+  border-color: #e6c565;
+}
+.zirve-row b {
+  white-space: nowrap;
+  color: #5b44ac;
+}
+.zirve-clock {
+  display: block;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 900;
+  margin: 15px 0 8px;
+  color: #5a527c;
+}
+.zirve-note {
+  font-size: 12px;
+  line-height: 1.5;
+  color: #53627e;
+  margin: 10px 0;
+}
+.zirve-rules {
+  font-size: 13px;
+  line-height: 1.6;
+  background: #fff;
+  border-radius: 17px;
+  padding: 14px;
+}
+.zirve-rules table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.zirve-rules th,
+.zirve-rules td {
+  text-align: left;
+  padding: 6px;
+  border-bottom: 1px solid #e4e9f7;
+}
+.zirve-launch {
+  margin: 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(110deg, #6357cf, #396cca);
+  font-size: 13px;
+}
+.zirve-status {
+  font-size: 13px;
+  color: #653c87;
+  line-height: 1.5;
+  min-height: 20px;
+}
+.zirve-panel :focus-visible {
+  outline: 3px solid #f5b32e;
+  outline-offset: 3px;
+}
+.zirve-board {
+  max-height: 330px;
+  overflow: auto;
+}
+.zirve-footer {
+  margin: 18px 0 2px;
+  text-align: center;
+  font-weight: 900;
+  font-size: 13px;
+  color: #6d5b9b;
+}
+@media (max-width: 380px) {
+  .zirve-panel {
+    padding: 11px;
+    border-radius: 22px;
+  }
+  .zirve-hero {
+    padding: 16px 9px 10px;
+  }
+  .zirve-art {
+    height: 110px;
+  }
+  .zirve-art img {
+    width: 120px;
+    height: 120px;
+  }
+  .zirve-actions button {
+    min-width: 105px;
+    font-size: 12px;
+  }
+  .zirve-row {
+    font-size: 12px;
+    padding: 10px 8px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .zirve-shade * {
+    scroll-behavior: auto;
+  }
+}

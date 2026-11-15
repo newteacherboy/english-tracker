@@ -48,7 +48,7 @@
  function intro(){
   const s=state,d=s.info,g=games[s.key];s.phase='setup';
   const pending=saved(s),canResume=!!pending?.runId;
-  const actions=d.completed?[['Oyunlara dön',close]]:d.remaining>0||canResume?[[canResume?'Kaldığın oyuna devam et':`Seviye ${d.level} · Başla · ⚡ 5`,start]]:[['Premium ile sınırsız oyna',plans],['Oyunlara dön',close]];
+  const actions=d.completed?[['Oyunlara dön',close]]:d.remaining>0||canResume?[[canResume?'Kaldığın oyuna devam et':`Seviye ${d.level} · Başla · ${d.campaignRemaining?'🎁 Ücretsiz':'⚡ 5'}`,start]]:[['Premium ile sınırsız oyna',plans],['Oyunlara dön',close]];
   panel(g.title,`Seviye ${d.level} / 160 · Kolaydan zora ilerle. ${g.hint} ${d.premium?'Sınırsız oyun hakkı.':d.remaining+' günlük oyun hakkın kaldı.'}`,actions);
   root.dataset.gamePhase='intro';
   const level=Math.max(1,Math.min(160,Number(d.level)||1)),done=d.completed?160:level-1;
@@ -64,7 +64,7 @@
   const progress=document.createElement('section');progress.className='psg-course';progress.setAttribute('aria-label','Seviye ilerlemen');
   progress.innerHTML='<div class="psg-course-heading"><strong>Seviye '+level+' <small>/ 160</small></strong><span>'+esc(course)+'</span></div><progress value="'+done+'" max="160" aria-label="Tamamlanan seviyeler"></progress><small>'+done+' seviye tamamlandı'+(d.completed?' · Tüm yolculuk bitti!':' · 12 soruda en az 9 doğru')+'</small><ol class="psg-course-route">'+Array.from({length:5},(_,i)=>{const n=from+i;return '<li class="'+(d.completed||n<level?'is-done':n===level?'is-current':'is-locked')+'"'+(n===level?' aria-current="step"':'')+'><b>'+n+'</b><span>'+(d.completed||n<level?'✓':n===level?'Şimdi':'Sonraki')+'</span></li>';}).join('')+'</ol>';
   card.querySelector('.psg-actions').before(progress);
-  const rights=document.createElement('p');rights.className='psg-rights';rights.textContent=canResume?'Yarım kalan seviyen hazır · Yeniden enerji harcanmaz':d.completed?'160 seviyenin tamamını bitirdin!':d.premium?'Sınırsız oyun hakkın var · Giriş 5 enerji':d.remaining>0?'Bugün '+d.remaining+' oyun hakkın var · Giriş 5 enerji':'Bugünkü oyun hakkın bitti';
+  const rights=document.createElement('p');rights.className='psg-rights';rights.textContent=canResume?'Yarım kalan seviyen hazır · Yeniden enerji harcanmaz':d.completed?'160 seviyenin tamamını bitirdin!':d.premium?'Sınırsız oyun hakkın var · Giriş 5 enerji':d.remaining>0?d.campaignRemaining?'Kampanyaya özel '+d.campaignRemaining+' ücretsiz hak · Enerji harcanmaz':'Bugün '+d.remaining+' oyun hakkın var · Giriş 5 enerji':'Bugünkü oyun hakkın bitti';
   card.querySelector('.psg-actions').before(rights);
  }
  async function start(){

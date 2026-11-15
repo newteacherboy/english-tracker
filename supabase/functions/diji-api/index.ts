@@ -1,3 +1,4 @@
+import {campaignAPI} from './campaign-api.mjs';
 import {iosAdRewards} from './ios-ad-rewards.mjs';
 import iosAdItems from './progression-shop.json' with {type:'json'};
 import {isClassCode,classCodeCheck} from './class-code.mjs';
@@ -1425,6 +1426,8 @@ async function handle(req: Request, proxy: any = null) {
   const a = proxy || await auth(req, body, q);
   const portalResponse=await teacherPortal.handle(op,body,a,req.method);if(portalResponse)return portalResponse;
   if(a?.teacher_portal_access_id&&a.role==="student"&&!portalOperationAllowed(op,{...Object.fromEntries(q),...body}))return json({ok:false,mesaj:"Bu işlem için kişisel hesabına geç."},403);
+  if(a&&['campaignStatus','campaignJoin','campaignReview','campaignApprove'].includes(op)){const denied=await rate('campaign:'+op,a.student_id||a.teacher_id,op==='campaignStatus'?30:10,60);if(denied)return denied;}
+  const campaignResponse=await campaignAPI(supabase,json).handle(op,body,a,req.method);if(campaignResponse)return campaignResponse;
   authSeen.set(req, a);
   if(['konuOyunBaslat','konuOyunBitir'].includes(op)&&a){const denied=await rate('account:'+op,a.student_id||a.teacher_id,op==='konuOyunBaslat'?30:40,300);if(denied)return denied;}
   if(a?.student_id){

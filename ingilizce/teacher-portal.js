@@ -345,6 +345,7 @@
  }
  window.addEventListener('resize',paginateDashboard);
  function teacherDashboardShow(){
+  document.dispatchEvent(new CustomEvent('dm:teacher-enter'));
   window.dmTeacherToolsActive=true;
   if(!mode)return;
   rememberRoute('panel');teacherHomeHide();
@@ -627,6 +628,7 @@
  }
 
  function teacherHomeShow(){
+  document.dispatchEvent(new CustomEvent('dm:teacher-enter'));
   teacherDashboardHide();
   if(!mode)return;rememberRoute('home');document.getElementById('tpTeacherEmergency')?.remove();document.getElementById('tpTeacherHome')?.classList.add('is-visible');
   document.body.classList.add('tp-home-active');document.documentElement.classList.remove('tp-home-starting');teacherDock();

@@ -228,5 +228,5 @@ function bonus(st){
 function stars(st){const s=st.cfg.stars;return st.score>=s[2]?3:st.score>=s[1]?2:st.score>=s[0]?1:0;}
 
 const api={mulberry,starScore,levelConfig,create,trySwap,findMove,findGroups,shuffle,bonus,stars,goalsDone,canSwap,adjacent,snap};
-if(typeof module!=='undefined'&&module.exports)module.exports=api;else root.dmPwmCore=api;
+if(typeof module!=='undefined'&&module.exports)module.exports=api;root.dmPwmCore=api;
 })(typeof window!=='undefined'?window:globalThis);
