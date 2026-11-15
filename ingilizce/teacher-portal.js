@@ -463,6 +463,7 @@
    await window.dmRefreshTeacherIdentity?.(info);
    const tiles=document.querySelector('#tpDashboard .tp-real-tools');
    const verifiedAdmin=info.yonetici===true;
+   window.dmTeacherVerifiedAdmin=verifiedAdmin;window.dmTeacherVerifiedAdminToken=token;window.dispatchEvent(new Event('dm:teacher-admin-role-verified'));
    if(tiles&&!verifiedAdmin)tiles.querySelectorAll('[data-native-title]').forEach(button=>button.remove());
    if(tiles&&verifiedAdmin){
     await decorate();
