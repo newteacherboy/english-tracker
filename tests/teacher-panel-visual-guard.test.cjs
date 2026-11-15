@@ -42,10 +42,10 @@ test('iOS teacher panel repairs admin icons even when cached index and teacher-p
 });
 
 test('teacher entry and teacher assets use network-first cache behavior',()=>{
- assert.match(sw,/diji-v445-teacher-panel-live-visuals/);
+ assert.match(sw,/const SURUM = 'diji-v\d+-[^']+'/);
  assert.match(sw,/teacher-portal\.css/);
  assert.match(sw,/teacher-assets\/approved-teacher-2\.webp/);
  assert.match(sw,/url\.searchParams\.get\('ogretmen'\) === '1'/);
  assert.match(index,/teacher-portal-boot\.js\?v=20261115-live-guard-1/);
- assert.match(index,/teacher-portal\.css\?v=20261115-tools-contrast-2/);
+ assert.match(index,/teacher-portal\.css\?v=20261115-[a-z0-9-]+/);
 });

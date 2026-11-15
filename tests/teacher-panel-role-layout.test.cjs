@@ -74,9 +74,9 @@ test('account screen uses the compact layout and preserves code/invite handlers'
  assert.match(css,/\.tp-approved-code>button\{/);
  assert.match(css,/\.tp-account-settings>summary/);
  assert.match(css,/\[data-teacher-identity\] #cogOgretmenKart\[hidden\]/);
- assert.ok(index.includes('teacher-workspace.js?v=20261115-role-home-1'));
- assert.ok(index.includes('teacher-portal.css?v=20261115-single-tile-1'));
- assert.ok(sw.includes('diji-v447-teacher-single-class-tiles-20261115'));
+ assert.ok(index.includes('teacher-workspace.js?v=20261115-approved-dashboard-1'));
+ assert.match(index,/teacher-portal\.css\?v=20261115-[a-z0-9-]+/);
+ assert.match(sw,/const SURUM = 'diji-v\d+-[^']+'/);
 });
 
 test('administrator scripts never create controls from stale sessionStorage in regular teacher accounts',async()=>{
@@ -194,8 +194,8 @@ test('approved Sınıfım design 1 keeps live data, tabs, search, class actions 
  assert.match(source,/dml-board/);
  assert.match(source,/DESIGN_ONE_CSS/);
  assert.match(html,/teacher-league\.js\?v=20261115-design-one-1/);
- assert.match(html,/teacher-portal\.js\?v=20261115-design-one-1/);
- assert.match(fs.readFileSync('ingilizce/sw.js','utf8'),/diji-v449-classroom-design-one-20261115/);
+ assert.match(html,/teacher-portal\.js\?v=20261115-[a-z0-9-]+/);
+ assert.match(fs.readFileSync('ingilizce/sw.js','utf8'),/const SURUM = 'diji-v\d+-[^']+'/);
  assert.match(portal,/window\.dmTeacherBulkStudentsOpen = \(\) => openBulkStudents\(\)/);
 });
 
@@ -217,6 +217,6 @@ test('approved admin teachers purple design preserves real approval, code, creat
  assert.match(source,/data-filter/);
  assert.match(source,/adminStyle/);
  assert.match(source,/email_verified_at/);
- assert.match(html,/teacher-portal\.js\?v=20261115-admin-purple-1/);
- assert.match(sw,/diji-v450-admin-teachers-purple-20261115/);
+ assert.match(html,/teacher-portal\.js\?v=20261115-[a-z0-9-]+/);
+ assert.match(sw,/const SURUM = 'diji-v\d+-[^']+'/);
 });

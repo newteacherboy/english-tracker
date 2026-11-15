@@ -6,6 +6,9 @@ on:
       - 'ingilizce/teacher-portal.css'
       - 'ingilizce/teacher-portal.js'
       - 'ingilizce/teacher-workspace.js'
+      - 'ingilizce/teacher-dashboard-selected.css'
+      - 'ingilizce/teacher-dashboard-assets/**'
+      - 'tests/teacher-dashboard-design1.test.cjs'
       - 'ingilizce/admin-gift.js'
       - 'ingilizce/admin-ads.js'
       - 'ingilizce/admin-push.js'
@@ -20,6 +23,9 @@ on:
       - 'ingilizce/teacher-portal.css'
       - 'ingilizce/teacher-portal.js'
       - 'ingilizce/teacher-workspace.js'
+      - 'ingilizce/teacher-dashboard-selected.css'
+      - 'ingilizce/teacher-dashboard-assets/**'
+      - 'tests/teacher-dashboard-design1.test.cjs'
       - 'ingilizce/admin-gift.js'
       - 'ingilizce/admin-ads.js'
       - 'ingilizce/admin-push.js'
@@ -39,6 +45,7 @@ jobs:
         with:
           node-version: '24'
       - run: npm install --prefix /tmp/teacher-guard-test jsdom@26.1.0 --no-audit --no-fund
-      - run: node --test tests/teacher-panel-visual-guard.test.cjs tests/teacher-panel-role-layout.test.cjs
+      - run: node --check ingilizce/teacher-workspace.js
+      - run: node --test tests/teacher-panel-visual-guard.test.cjs tests/teacher-panel-role-layout.test.cjs tests/teacher-dashboard-design1.test.cjs
         env:
           NODE_PATH: /tmp/teacher-guard-test/node_modules
