@@ -7,7 +7,7 @@
    - Supabase istekleri: bu dosya karışmaz (sayfadaki katman yönetir)
    Sayfayı güncellediğinizde SURUM değerini artırın (v2, v3…).
    ===================================================================== */
-const SURUM = 'diji-v451-admin-actions-fix-20261115';
+const SURUM = 'diji-v452-baby-papi-3d-20261115';
 const SAYFA = 'sayfa-' + SURUM, KAYNAK = 'kaynak-' + SURUM;
 // Cached on first use; never download the A2 catalog at startup.
 const LAZY_TOPIC_FILES = new Set(['konu-oyunlari-a1.js','konu-oyunlari-a2.js','topic-games-core.mjs']);
@@ -34,6 +34,13 @@ self.addEventListener('fetch', e => {
   if (url.hostname.endsWith('supabase.co')) return;                 /* API: dokunma */
   // Teacher account transition must not run an older cached authorization/UI script.
   if (url.pathname.endsWith('/teacher-portal-boot.js')) {
+    e.respondWith(fetch(r,{cache:'no-store'}).catch(async()=>{
+      const cached=await caches.open(KAYNAK).then(c=>c.match(r));
+      return cached||Response.error();
+    }));return;
+  }
+  // New 3D Papi must never be silently replaced by stale route scripts.
+  if (/\/(?:baby-papi-webgl|route-papi-walk-feedback)\.js$/.test(url.pathname)) {
     e.respondWith(fetch(r,{cache:'no-store'}).catch(async()=>{
       const cached=await caches.open(KAYNAK).then(c=>c.match(r));
       return cached||Response.error();
