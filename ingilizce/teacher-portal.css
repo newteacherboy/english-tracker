@@ -538,3 +538,49 @@ html.dm-teacher-portal body #tpDashboard.tp-approved[data-tool-page="1"] .tp-rea
  html.dm-teacher-portal body #tpDashboard.tp-approved .tp-account-settings summary{min-height:44px;padding:5px 10px}
 }
 }
+
+
+/* Teacher dashboard accessibility: preserve the existing layout and restore missing artwork. */
+@layer bilgiIslands {
+ html.dm-teacher-portal body #tpDashboard.tp-approved .tp-approved-intro h2,
+ html.dm-teacher-portal body #tpDashboard.tp-approved .tp-approved-intro h2 span {
+  color:#073249!important;-webkit-text-fill-color:#073249!important;opacity:1!important;text-shadow:none!important;
+ }
+ html.dm-teacher-portal body #tpDashboard.tp-approved .tp-approved-intro>div{min-width:0!important;position:relative;z-index:1}
+ html.dm-teacher-portal body #tpDashboard.tp-approved .tp-real-tools>button>span.tp-tool-fallback-icon{
+  display:grid!important;place-items:center!important;background-image:none!important;
+  font:normal 26px/1 "Apple Color Emoji","Segoe UI Emoji",system-ui,sans-serif!important;
+  color:#073249!important;-webkit-text-fill-color:initial!important;text-shadow:none!important;
+ }
+ html.dm-teacher-portal body #tpDashboard.tp-approved .tp-real-tools>button>i{
+  -webkit-text-fill-color:#365e69!important;align-self:center!important;
+ }
+ html.dm-teacher-portal body #tpDashboard.tp-approved [data-teacher-identity] .cog-ogretmen-kart,
+ html.dm-teacher-portal body #tpDashboard.tp-approved [data-teacher-identity] .cog-ogretmen-kart small{
+  color:#315361!important;-webkit-text-fill-color:#315361!important;opacity:1!important;text-shadow:none!important;
+ }
+ html.dm-teacher-portal body #tpDashboard.tp-approved [data-teacher-identity] #cogOgretmenKart>div{
+  display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  gap:7px!important;margin:10px 0!important;
+ }
+ html.dm-teacher-portal body #tpDashboard.tp-approved [data-teacher-identity] #cogOgretmenKart>div>button{
+  display:flex!important;align-items:center!important;justify-content:center!important;
+  min-width:0!important;min-height:43px!important;margin:0!important;padding:9px!important;
+  background:#def6ee!important;border:1px solid #89d6c7!important;border-radius:12px!important;
+  color:#075364!important;-webkit-text-fill-color:#075364!important;text-shadow:none!important;
+  font:800 13px/1.25 Nunito,system-ui,sans-serif!important;white-space:normal!important;text-align:center!important;
+ }
+ html.dm-teacher-portal body #tpDashboard.tp-approved [data-teacher-identity] #cogOgretmenKart>div>button:focus-visible{
+  outline:3px solid #e5a500!important;outline-offset:2px!important;
+ }
+ html.dm-teacher-portal body #tpDashboard.tp-approved .tp-approved-code>span{
+  color:#073249!important;-webkit-text-fill-color:#073249!important;min-width:0!important;
+ }
+ html.dm-teacher-portal body #tpDashboard.tp-approved .tp-approved-code>b{min-width:0!important;max-width:100%!important;text-overflow:ellipsis;overflow:hidden!important}
+ @media(max-width:420px){
+  html.dm-teacher-portal body #tpDashboard.tp-approved .tp-approved-code{flex-wrap:wrap!important}
+  html.dm-teacher-portal body #tpDashboard.tp-approved .tp-approved-code>span{flex-basis:100%!important}
+  html.dm-teacher-portal body #tpDashboard.tp-approved .tp-account-settings summary{flex-wrap:wrap!important}
+  html.dm-teacher-portal body #tpDashboard.tp-approved .tp-account-settings summary>small{flex:1 1 100%!important;padding-left:42px}
+ }
+}
