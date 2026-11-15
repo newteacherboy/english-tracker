@@ -1,0 +1,9 @@
+{
+  "date": "2026-11-15",
+  "tool": "OpenAI built-in image generation",
+  "purpose": "Approved Diji-Medu daily Premium game quota modal",
+  "asset": "ingilizce/premium-assets/papi-game-offer.webp",
+  "prompt": "Cheerful 3D turquoise green Papi parrot holding a purple game controller; yellow chest, orange beak, big blue eyes; transparent background; no text, no UI.",
+  "derived_from": "User-approved modal design generated in the same conversation",
+  "processing": "Resized to 420px and exported as WebP quality 88"
+}
