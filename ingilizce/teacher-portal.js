@@ -17,20 +17,109 @@
  function openLogin(){const v=sheet('Öğretmen Girişi','<p>Özel öğretmen platformuna erişmek için e-postana gönderilen 6 veya 8 haneli kodu yaz.</p>'+codeField('code','Öğretmen giriş kodun')+'<button class="tp-primary">Giriş Yap</button><button type="button" data-reset>Kodumu Unuttum</button><small>E-posta doğrulaması ve teacher hesabının erişim onayı gerekir.</small>');v.shade.querySelector('[data-reset]').onclick=resetRequest;submit(v,async f=>{const r=await api('teacherPortalLogin',{code:f.get('code')},'');const preview=await api('teacherPortalParticipant',{self:true},r.token);saveState({teacherToken:r.token,name:r.name,participant:preview,playAsSelf:true,route:'home'});location.assign('./?ogretmen=1');});}
  function resetRequest(){const v=sheet('Öğretmen Kodumu Unuttum','<label>Kişisel kullanıcı adın<input name="username" required maxlength="40" autocomplete="username"></label><label>Kayıtlı e-posta adresin<input name="email" required type="email" autocomplete="email"></label><button class="tp-primary">Yenileme bağlantısı gönder</button>');submit(v,async f=>{const r=await api('teacherPortalResetRequest',Object.fromEntries(f),'');v.error(r.mesaj);});}
  async function resetPage(){const token=new URLSearchParams(location.hash.slice(1)).get('token');history.replaceState(null,'',location.pathname);const v=sheet('Yeni Öğretmen Giriş Kodu',codeField('code','Yeni 6 veya 8 haneli kod')+codeField('confirm','Yeni kodu tekrar yaz')+'<button class="tp-primary">Kodumu Yenile</button>');v.shade.querySelector('.tp-close').onclick=()=>location.assign('./?ogretmenGiris=1');submit(v,async f=>{if(f.get('code')!==f.get('confirm'))throw Error('Kodlar eşleşmiyor.');const r=await api('teacherPortalReset',{resetToken:token,code:f.get('code')},'');v.form.replaceChildren();const message=document.createElement('p');message.textContent=r.mesaj;const link=document.createElement('a');link.href='./?ogretmenGiris=1';link.textContent='Öğretmen girişine dön';v.form.append(message,link);});}
- async function management(){const v=sheet('👥 Öğretmen Yönetimi','<p>Başvurular yükleniyor…</p>');try{const r=await api('teacherPortalList');v.form.replaceChildren();const intro=document.createElement('section');intro.className='tp-grant';const title=document.createElement('h2');title.textContent='Yeni öğretmen ekle';const info=document.createElement('p');info.textContent='Önce öğretmenin kendi kişisel hesabını açması ve e-postasını doğrulaması gerekir. Öğretmenim seçeneğini seçenlerin erişim başvuruları burada listelenir. Kayıt sırasında özel giriş kodu hazırlanır. Sen onay verdiğinde öğretmene “Öğretmen onayınız tamamlandı” e-postası gönderilir. E-posta doğrulaması tamamlanana kadar özel öğretmen yetkileri kapalı kalır.';const form=document.createElement('div');form.className='tp-admin-create';form.innerHTML='<label>Kullanıcı adı<input name="username" maxlength="20" autocomplete="off"></label><label>Ad soyad<input name="fullName" maxlength="80"></label><label>E-posta<input name="email" type="email" autocomplete="off"></label><label>Başlangıç şifresi<input name="password" type="password" minlength="6" maxlength="64"></label><button type="button" class="tp-primary">Kişisel hesap ve başvuru oluştur</button><p role="status"></p>';form.querySelector('button').onclick=async()=>{const button=form.querySelector('button'),data=Object.fromEntries([...form.querySelectorAll('input')].map(el=>[el.name,el.value]));button.disabled=true;try{const result=await api('teacherPortalAdminCreate',data);form.querySelector('[role="status"]').textContent=result.mesaj+' Öğretmen normal giriş ekranından e-postasını doğrulayıp kişisel hesabını kullanabilir.';form.querySelector('[name="password"]').value='';}catch(e){form.querySelector('[role="status"]').textContent=e.message;}finally{button.disabled=false;}};intro.append(form);const link=document.createElement('a');link.href='./';link.target='_blank';link.rel='noopener noreferrer';link.textContent='Kişisel hesap açma ekranını aç';const copy=document.createElement('button');copy.type='button';copy.textContent='Kayıt bağlantısını kopyala';copy.onclick=()=>{const url=new URL('./',location.href).href;navigator.clipboard?.writeText(url).then(()=>{copy.textContent='Bağlantı kopyalandı';}).catch(()=>v.error('Bağlantı kopyalanamadı.'));};intro.append(title,info,link,copy);v.form.append(intro);if(!r.items.length){const empty=document.createElement('p');empty.textContent='Henüz başvuru yok.';v.form.append(empty);}for(const row of r.items){const s=row.students||{},box=document.createElement('article');box.className='tp-grant';const h=document.createElement('h2');h.textContent=s.full_name||s.username;const p=document.createElement('p');p.textContent=s.username+' · '+s.email+'\nE-posta: '+(s.email_verified_at?'Doğrulandı':'Bekliyor')+' · Erişim: '+({pending:'Bekliyor',approved:'Onaylı',rejected:'Reddedildi',revoked:'Kaldırıldı'}[row.state]||row.state);const school=document.createElement('p');school.textContent='Okul bilgileri · '+(s.school||'Eklenmemiş');
- const phone=document.createElement('p');phone.textContent='Kayıtlı telefon · '+(s.phone||'Eklenmemiş');
- box.append(h,p,school,phone);if(row.state==='pending'&&row.codeReady){const code=document.createElement('p');code.textContent='🔐 Kişisel öğretmen kodu kayıt sırasında gösterildi; yönetici onayı bekliyor.';box.append(code);}
- if(row.state==='approved'){
-  const status=document.createElement('p');
-  status.textContent=row.code_sent_at?'🔒 Giriş kodu e-postaya gönderim kuyruğuna alındı.':row.codeReady?'🔐 Giriş kodu kayıt sırasında öğretmene gösterildi.':'✉️ Kod henüz oluşturulmadı; öğretmen e-postasını doğrulamalı.';
-  box.append(status);
-  const issue=document.createElement('button');issue.type='button';issue.textContent=row.codeReady||row.code_sent_at?'Yeni kod oluştur ve e-postala':'Kodu oluştur ve e-postala';
-  issue.disabled=!s.email_verified_at;
-  issue.onclick=async()=>{if((row.codeReady||row.code_sent_at)&&!confirm('Yeni kod, eski kodu ve açık öğretmen oturumlarını geçersiz kılar. Devam edilsin mi?'))return;
-   issue.disabled=true;try{const result=await api('teacherPortalIssueCode',{id:row.id});const note=document.createElement('p');note.textContent='Yeni özel giriş kodu: '+result.issuedCode+' · Öğretmenin e-postasına gönderim kuyruğuna alındı. Bu kod yalnızca şimdi gösterilir.';box.append(note);issue.remove();}catch(e){v.error(e.message);issue.disabled=false;}};
-  box.append(issue);
+
+ const adminEsc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+ const adminStatus=x=>({pending:'Bekliyor',approved:'Onaylı',rejected:'Reddedildi',revoked:'Kaldırıldı'}[x]||x||'Bekliyor');
+ const adminStyle=String.raw`
+ .tp-shade:has(.tp-admin-v1) .tp-card{width:min(96vw,680px);max-height:calc(100dvh - 90px);overflow:auto;background:#f8f6ff;border-radius:24px;padding:18px 16px 26px;color:#211943;box-sizing:border-box}
+ .tp-shade:has(.tp-admin-v1) .tp-card>h1{font-size:24px;color:#23194d;margin:5px 44px 13px 0}
+ .tp-admin-v1{font:inherit;color:#23194d}
+ .tp-admin-v1 button{cursor:pointer;font:inherit}
+ .tp-admin-v1 .ta-head{display:flex;gap:8px;align-items:stretch;margin:8px 0 12px}
+ .tp-admin-v1 .ta-head button{flex:1;min-width:0;border:0;border-radius:14px;padding:12px 8px;background:linear-gradient(125deg,#8a49e7,#5a29bd);color:white;font-weight:900;text-align:left;font-size:13px;box-shadow:0 3px 0 #45228c}
+ .tp-admin-v1 .ta-head small{display:block;font-size:10px;color:#eee5ff;margin-top:3px}
+ .tp-admin-v1 .ta-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin-bottom:12px}
+ .tp-admin-v1 .ta-stats div{background:#fff;border:1px solid #e8ddfa;border-radius:14px;padding:12px 5px;text-align:center;box-shadow:0 2px 5px #3522640b}
+ .tp-admin-v1 .ta-stats strong{display:block;font-size:22px;font-weight:900}
+ .tp-admin-v1 .ta-stats small{display:block;font-size:11px;font-weight:800;color:#5b507f}
+ .tp-admin-v1 .ta-search{display:flex;gap:7px;margin:11px 0}
+ .tp-admin-v1 .ta-search input{flex:1;min-width:0;border:1.5px solid #dac9fb;background:white;border-radius:13px;padding:12px;font-size:13px;color:#201942}
+ .tp-admin-v1 .ta-search select{max-width:112px;border:1.5px solid #dac9fb;background:white;border-radius:13px;padding:7px;font-size:12px;color:#201942}
+ .tp-admin-v1 .ta-row{display:flex;gap:10px;align-items:center;background:#fff;border:1px solid #e9e2f7;border-radius:16px;padding:11px;margin:8px 0;box-shadow:0 2px 0 #e7dff6}
+ .tp-admin-v1 .ta-avatar{flex:none;width:40px;height:40px;display:grid;place-items:center;background:#eee5ff;border-radius:50%;font-size:20px}
+ .tp-admin-v1 .ta-info{flex:1;min-width:0}
+ .tp-admin-v1 .ta-info b{display:block;font-size:14px;color:#241a4d;overflow-wrap:anywhere}
+ .tp-admin-v1 .ta-info small{display:block;font-size:11px;color:#6b6289;overflow-wrap:anywhere;line-height:1.5}
+ .tp-admin-v1 .ta-pill{font-size:11px;font-weight:900;padding:6px 8px;border-radius:99px;background:#dcf9e7;color:#156d3b;white-space:nowrap}
+ .tp-admin-v1 .ta-pill.off{background:#ffe5e5;color:#a62c31}
+ .tp-admin-v1 .ta-action{flex:none;border:1px solid #ded2f7;background:#faf8ff;color:#42258b;border-radius:11px;padding:8px;font-weight:900}
+ .tp-admin-v1 .ta-tabs{display:grid;grid-template-columns:1fr 1fr;gap:5px;background:#eae3fb;border-radius:14px;padding:4px;margin:10px 0 14px}
+ .tp-admin-v1 .ta-tabs button{border:0;border-radius:11px;background:transparent;color:#3d2a74;font-size:12px;font-weight:900;padding:12px 6px}
+ .tp-admin-v1 .ta-tabs button[aria-selected=true]{background:#6b35d3;color:white}
+ .tp-admin-v1 .ta-intro{background:#f0e9ff;border-radius:13px;padding:12px;color:#49357b;font-size:12px;line-height:1.5}
+ .tp-admin-v1 .ta-title{font-size:16px;font-weight:900;margin:16px 0 8px}
+ .tp-admin-v1 .ta-details{background:#fff;border:1px solid #e8dff7;border-radius:16px;padding:13px;margin:9px 0}
+ .tp-admin-v1 .ta-details summary{cursor:pointer;font-weight:900;font-size:14px}
+ .tp-admin-v1 .ta-details p{font-size:12px;color:#514769;overflow-wrap:anywhere;white-space:pre-line}
+ .tp-admin-v1 .ta-actions{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px}
+ .tp-admin-v1 .ta-actions button,.tp-admin-v1 .ta-create button{border:1px solid #dacaf5;background:white;color:#4a2992;border-radius:11px;padding:10px;font-size:12px;font-weight:900}
+ .tp-admin-v1 .ta-actions .yes{background:#dcf9e7;color:#126c39;border-color:#d4f1df}
+ .tp-admin-v1 .ta-actions .no{background:#ffe5e5;color:#a32b31;border-color:#ffdddd}
+ .tp-admin-v1 .ta-create{display:grid;gap:9px;padding:13px;background:#fff;border-radius:16px;border:1px solid #e9dff7}
+ .tp-admin-v1 .ta-create label{display:grid;gap:4px;font-size:12px;font-weight:800}
+ .tp-admin-v1 .ta-create input{min-height:40px;border:1px solid #d9caee;border-radius:10px;padding:9px;background:white;color:#211943}
+ .tp-admin-v1 .ta-create button{background:#6935d0;color:white}
+ .tp-admin-v1 .ta-empty{padding:25px 10px;text-align:center;color:#776e9a;font-weight:800}
+ @media(max-width:380px){.tp-admin-v1 .ta-head button{font-size:11px}.tp-admin-v1 .ta-row{gap:6px;padding:8px}.tp-admin-v1 .ta-avatar{width:34px;height:34px}.tp-admin-v1 .ta-pill{font-size:10px}}
+`;
+ function ensureAdminStyle(){if(document.getElementById('tp-admin-v1-css'))return;const el=document.createElement('style');el.id='tp-admin-v1-css';el.textContent=adminStyle;document.head.append(el);}
+ async function management(initialTab='requests'){
+  ensureAdminStyle();
+  const v=sheet('👥 Erişim Başvuruları ve Özel Panel Kodları','<p>Başvurular yükleniyor…</p>');
+  let rows=[],tab=initialTab,search='',filter='all',busy=false;
+  const getRows=()=>rows.filter(r=>{const s=r.students||{};const term=(s.full_name+' '+s.username+' '+s.email+' '+s.school).toLocaleLowerCase('tr-TR');return (!search||term.includes(search))&&(filter==='all'||r.state===filter);});
+  async function reload(){try{const result=await api('teacherPortalList');rows=result.items||[];render();}catch(e){v.error(e.message);}}
+  async function decide(row,decision){
+   if(busy)return;
+   if(decision==='revoked'&&!confirm('Öğretmenin panel erişimi kaldırılacak. Devam edilsin mi?'))return;
+   busy=true;v.error('');
+   try{const result=await api('teacherPortalDecide',{id:row.id,decision});if(result.issuedCode){alert('Yeni özel giriş kodu: '+result.issuedCode+'\nBu kod yalnızca şimdi gösterilir. E-posta kuyruğuna alındı.');}await reload();}
+   catch(e){v.error(e.message);}finally{busy=false;}
+  }
+  async function issue(row){
+   if(busy)return;
+   if((row.codeReady||row.code_sent_at)&&!confirm('Yeni kod eski kodu ve açık öğretmen oturumlarını geçersiz kılar. Devam edilsin mi?'))return;
+   busy=true;v.error('');
+   try{const result=await api('teacherPortalIssueCode',{id:row.id});alert('Yeni özel giriş kodu: '+result.issuedCode+'\nE-posta kuyruğuna alındı. Bu kod yalnızca şimdi gösterilir.');await reload();}
+   catch(e){v.error(e.message);}finally{busy=false;}
+  }
+  function render(){
+   const pending=rows.filter(r=>r.state==='pending').length;
+   const head='<div class="ta-tabs"><button type="button" data-tab="requests" aria-selected="'+(tab==='requests')+'">📋 Başvurular ('+pending+')</button><button type="button" data-tab="codes" aria-selected="'+(tab==='codes')+'">🔑 Panel Kodları</button></div>';
+   const intro='<p class="ta-intro">ℹ️ Öğretmenlerin kayıt, erişim ve özel giriş kodu işlemlerini buradan yönetebilirsin. Onaylanan öğretmenlere bildirim e-postası gönderilir.</p>';
+   const form='<details class="ta-details"><summary>＋ Yeni öğretmen hesabı ve başvuru oluştur</summary><div class="ta-create"><label>Kullanıcı adı<input name="username" maxlength="20" autocomplete="off"></label><label>Ad soyad<input name="fullName" maxlength="80"></label><label>E-posta<input name="email" type="email" autocomplete="off"></label><label>Başlangıç şifresi<input name="password" type="password" minlength="6" maxlength="64"></label><button type="button" data-create>Hesap ve başvuru oluştur</button><p role="status"></p><small>Öğretmen e-posta doğrulamasını tamamladıktan sonra özel panel erişimi kullanabilir.</small></div></details>';
+   const list=getRows().filter(r=>tab==='codes'?r.state==='approved':true);
+   v.form.innerHTML='<div class="tp-admin-v1">'+head+intro+'<div class="ta-search"><input type="search" data-search placeholder="Öğretmen ara (ad, e-posta, okul...)" aria-label="Öğretmen ara"><select data-filter aria-label="Durum filtresi"><option value="all">Tümü</option><option value="pending">Bekleyen</option><option value="approved">Onaylı</option><option value="rejected">Reddedilen</option><option value="revoked">Kaldırılan</option></select></div>'+form+'<h2 class="ta-title">'+(tab==='requests'?'Öğretmen Başvuruları':'Onaylı Öğretmen Kodları')+' · '+list.length+'</h2><div class="ta-list"></div></div>';
+   v.form.querySelector('[data-search]').value=search;v.form.querySelector('[data-filter]').value=filter;
+   v.form.querySelectorAll('[data-tab]').forEach(btn=>btn.onclick=()=>{tab=btn.dataset.tab;render();});
+   v.form.querySelector('[data-search]').oninput=e=>{search=e.target.value.toLocaleLowerCase('tr-TR').trim();fillList();};
+   v.form.querySelector('[data-filter]').onchange=e=>{filter=e.target.value;fillList();};
+   v.form.querySelector('[data-create]').onclick=async()=>{
+    const area=v.form.querySelector('.ta-create'),btn=area.querySelector('[data-create]');
+    const values=Object.fromEntries([...area.querySelectorAll('input')].map(el=>[el.name,el.value.trim()]));
+    if(!values.username||!values.fullName||!values.email||!values.password){area.querySelector('[role="status"]').textContent='Tüm alanları doldur.';return;}
+    btn.disabled=true;try{const result=await api('teacherPortalAdminCreate',values);area.querySelector('[role="status"]').textContent=result.mesaj+' Öğretmen e-postasını doğrulamalıdır.';area.querySelector('[name="password"]').value='';await reload();}catch(e){area.querySelector('[role="status"]').textContent=e.message;}finally{btn.disabled=false;}
+   };
+   function fillList(){
+    const list=getRows().filter(r=>tab==='codes'?r.state==='approved':true);
+    const holder=v.form.querySelector('.ta-list');if(!holder)return;holder.replaceChildren();
+    if(!list.length){const empty=document.createElement('p');empty.className='ta-empty';empty.textContent='Bu filtrede öğretmen bulunamadı.';holder.append(empty);return;}
+    for(const row of list){
+     const s=row.students||{},article=document.createElement('details');article.className='ta-details';
+     const summary=document.createElement('summary');summary.textContent=(s.full_name||s.username||'Öğretmen')+' · '+adminStatus(row.state);
+     const details=document.createElement('p');details.textContent=[s.username,s.email,'E-posta: '+(s.email_verified_at?'Doğrulandı':'Bekliyor'),'Okul: '+(s.school||'Eklenmemiş'),'Telefon: '+(s.phone||'Eklenmemiş'),'Öğretmen kodu: '+(row.codeReady?'Oluşturuldu':'Bekliyor')].join('\n');
+     const actions=document.createElement('div');actions.className='ta-actions';
+     for(const [decision,label,cls] of [['approved','✓ Onayla','yes'],['rejected','✕ Reddet','no'],['revoked','Erişimi Kaldır','']]){
+      if(row.state===decision)continue;const button=document.createElement('button');button.type='button';button.className=cls;button.textContent=label;button.onclick=()=>decide(row,decision);actions.append(button);
+     }
+     if(row.state==='approved'){const button=document.createElement('button');button.type='button';button.textContent=row.codeReady||row.code_sent_at?'🔑 Yeni kod oluştur ve e-postala':'🔑 Kod oluştur ve e-postala';button.disabled=!s.email_verified_at;button.onclick=()=>issue(row);actions.append(button);}
+     article.append(summary,details,actions);holder.append(article);
+    }
+   }
+   fillList();
+  }
+  await reload();
  }
- for(const [decision,label]of [['approved','Onayla'],['rejected','Reddet'],['revoked','Erişimi Kaldır']]){const button=document.createElement('button');button.type='button';button.textContent=label;button.disabled=row.state===decision;button.onclick=async()=>{button.disabled=true;try{const result=await api('teacherPortalDecide',{id:row.id,decision});if(result.issuedCode){v.error('Özel giriş kodu: '+result.issuedCode+' · E-posta kuyruğuna alındı. Bu kod yalnızca şimdi gösterilir.');button.textContent='Onaylandı';button.disabled=true;}else management();}catch(e){v.error(e.message);button.disabled=false;}};box.append(button);}v.form.append(box);}}catch(e){v.error(e.message);}}
  function openProfile(){const v=sheet('Öğretmen Profilim','<p>Öğretmen alanında enerji harcanmaz ve ödül kazanılmaz. Yalnızca sıralama kaydedilir.</p><p>✅ Kişisel öğretmen hesabının e-posta adresi doğrulanmış. Bu doğrulama, özel kodla giriş için zaten zorunludur.</p><p data-name></p><button type="button" data-game-player>🎮 Oyunlarda öğretmen / öğrenci seç</button><button type="button" data-appearance>🎨 Kişisel Karakterimi Düzenle</button><button type="button" data-change class="tp-primary">Giriş Kodumu Değiştir</button><button type="button" data-personal>Kişisel Hesabıma Dön</button><button type="button" data-exit>Öğretmen Alanından Çık</button>');v.shade.setAttribute('data-dm-theme-profile','');const themeButton=window.dmDayNightTheme?.createButton();if(themeButton)v.form.prepend(themeButton);v.shade.querySelector('[data-name]').textContent=state()?.name||'';v.shade.querySelector('[data-game-player]').onclick=()=>{v.close();const s=state();s.playAsSelf=!s.playAsSelf;saveState(s);window.yoToast?.(s.playAsSelf?'Oyunlar öğretmen olarak açılacak.':'Oyun açılırken öğrenci veya misafir seçebilirsin.');};v.shade.querySelector('[data-appearance]').onclick=()=>{v.close();window.dmCharacterBuilder?.open?.();};v.shade.querySelector('[data-personal]').onclick=window.dmTeacherPortalPersonal;v.shade.querySelector('[data-exit]').onclick=async()=>{const s=state();try{await api('cikis',{},s?.teacherToken);await api('cikis',{},s?.participant?.token);}catch{}window.dmTeacherPortalExit();};v.shade.querySelector('[data-change]').onclick=()=>{const c=sheet('Giriş Kodumu Değiştir',codeField('currentCode','Mevcut giriş kodun')+codeField('code','Yeni 6 veya 8 haneli kod')+codeField('confirm','Yeni kodu tekrar yaz')+'<button class="tp-primary">Kodu Değiştir</button>');submit(c,async f=>{if(f.get('code')!==f.get('confirm'))throw Error('Kodlar eşleşmiyor.');await api('teacherPortalChangeCode',Object.fromEntries(f));window.dmTeacherPortalExit();});};}
  let choosing=null,replay=false;
  function chooseParticipant(){if(choosing)return choosing;choosing=new Promise(resolve=>{const v=sheet('Bu oyunu kim oynayacak?','<p>Yalnızca oyun puanı ve sıralama kaydedilir. Enerji harcanmaz; XP ve altın kazanılmaz.</p><label>Bağlı öğrencin<select name="studentId"><option value="">Öğrenci seç</option></select></label><p>veya üye olmayan öğrenci için:</p><label>Sıralamada görünecek ad<input name="guestName" minlength="3" maxlength="32" autocomplete="off"></label><button class="tp-primary">Bu öğrenciyle devam et</button>');const guest=v.form.elements.guestName;guest.oninput=()=>{const short=guest.value.trim().length>0&&[...guest.value.trim()].length<3;guest.setCustomValidity(short?'En az 3 harf girin.':'');v.error(short?'En az 3 harf girin.':'');};v.form.elements.studentId.onchange=()=>{if(v.form.elements.studentId.value){guest.value='';guest.setCustomValidity('');v.error('');}};const finish=value=>{v.close();choosing=null;resolve(value);};v.shade.querySelector('.tp-close').onclick=()=>finish(null);v.shade.addEventListener('keydown',e=>{if(e.key==='Escape')finish(null);});api('teacherPortalStudents').then(r=>{for(const s of r.items){const o=document.createElement('option');o.value=s.id;o.textContent=(s.full_name?s.full_name+' · ':'')+s.username+(s.class_no?' · '+s.class_no+'. sınıf':'');v.form.elements.studentId.append(o);}}).catch(e=>v.error(e.message));submit(v,async f=>{const studentId=f.get('studentId'),guestName=String(f.get('guestName')||'').trim();if(!!studentId===!!guestName)throw Error('Bir öğrenci seç veya yalnızca misafir adını yaz.');if(guestName&&[...guestName].length<3)throw Error('En az 3 harf girin.');const r=await api('teacherPortalParticipant',{studentId,guestName});finish(r);});});return choosing;}
@@ -191,6 +280,7 @@
  }
 
  // Put approval management inside the existing top Teachers list, instead of a separate dashboard tile.
+
  function attachTeacherApprovals(){
   if(!mode)return;
   const panel=document.getElementById('tpDashboard');
@@ -198,13 +288,36 @@
   const candidates=[...document.querySelectorAll('[role="dialog"],.cog-perde,.rubric-modal,.dm-member-overlay')];
   const teachers=candidates.find(el=>el.getClientRects().length&&/bağımsız öğrenciler/i.test(el.textContent||'')&&/öğretmenler/i.test(el.textContent||''));
   if(!teachers||teachers.querySelector('[data-tp-unified-approvals]'))return;
-  const button=document.createElement('button');
-  button.type='button';button.dataset.tpUnifiedApprovals='1';button.className='tp-primary';
-  button.textContent='🔐 Erişim başvurularını ve özel panel kodlarını yönet';
-  button.style.cssText='display:block;width:100%;margin:12px 0;padding:12px';
-  button.onclick=()=>management();
+  ensureAdminStyle();
+  teachers.classList.add('tp-admin-teachers-list');
+  if(!document.getElementById('tp-admin-list-css')){
+   const style=document.createElement('style');style.id='tp-admin-list-css';style.textContent=
+   '.tp-admin-teachers-list{--ta-purple:#6c39d5}.tp-admin-teachers-list [data-tp-unified-approvals]{display:grid!important;grid-template-columns:1fr 1fr;gap:9px;margin:13px 0!important;padding:0!important;background:transparent!important;border:0!important;box-shadow:none!important}.tp-admin-teachers-list [data-tp-unified-approvals] button{min-width:0;min-height:68px;border:0;border-radius:15px;background:linear-gradient(115deg,#8c49e8,#5b2fc6);color:white;font-weight:900;font-size:13px;padding:11px;text-align:left;box-shadow:0 3px 0 #482596}.tp-admin-teachers-list [data-tp-unified-approvals] button small{display:block;font-size:10px;color:#eee5ff;margin-top:4px}.tp-admin-teachers-list [data-tp-teacher-search]{display:flex;gap:8px;margin:12px 0}.tp-admin-teachers-list [data-tp-teacher-search] input{flex:1;min-width:0;min-height:42px;padding:10px;border:1.5px solid #d9cafa;border-radius:13px;background:#fff;color:#241a4b;font-size:13px}.tp-admin-teachers-list [data-tp-teacher-search] select{width:106px;border:1.5px solid #d9cafa;border-radius:13px;background:#fff;color:#241a4b;font-size:12px}.tp-admin-teachers-list [data-tp-teacher-stats]{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin:10px 0}.tp-admin-teachers-list [data-tp-teacher-stats] span{padding:11px 4px;border:1px solid #e8dff7;border-radius:13px;background:#faf7ff;text-align:center;font-size:12px;color:#4d3684;font-weight:900}.tp-admin-teachers-list [data-tp-teacher-stats] b{display:block;font-size:21px;color:#271b53}.tp-admin-teachers-list [data-tp-teacher-row]{border-radius:15px!important;border-color:#e6ddf5!important;background:#fff!important;box-shadow:0 2px 0 #ece4fb;padding:11px!important;margin:8px 0!important}.tp-admin-teachers-list [data-tp-teacher-row][hidden]{display:none!important}';
+   document.head.append(style);
+  }
+  const wrapper=document.createElement('div');wrapper.dataset.tpUnifiedApprovals='1';
+  const request=document.createElement('button');request.type='button';request.innerHTML='📋 Erişim Başvuruları<small>Başvuruları incele ve onayla</small>';request.onclick=()=>management('requests');
+  const codes=document.createElement('button');codes.type='button';codes.innerHTML='🔑 Özel Panel Kodları<small>Kod oluştur · Yönet</small>';codes.onclick=()=>management('codes');
+  wrapper.append(request,codes);
   const head=teachers.querySelector('h1,h2,h3');
-  if(head)head.insertAdjacentElement('afterend',button);else teachers.prepend(button);
+  if(head)head.insertAdjacentElement('afterend',wrapper);else teachers.prepend(wrapper);
+  const rows=[...teachers.querySelectorAll('article,li')].filter(el=>/kod|öğrenci|pasif|aktif/i.test(el.textContent||'')&&!el.contains(wrapper));
+  rows.forEach(el=>el.dataset.tpTeacherRow='1');
+  const stats=document.createElement('div');stats.dataset.tpTeacherStats='1';
+  const updateStats=()=>{
+   const total=rows.length,passive=rows.filter(el=>/pasif/i.test(el.textContent||'')).length;
+   stats.innerHTML='<span><b>'+total+'</b>Toplam</span><span><b>'+(total-passive)+'</b>Aktif</span><span><b>'+passive+'</b>Pasif</span>';
+  };
+  updateStats();wrapper.insertAdjacentElement('afterend',stats);
+  const search=document.createElement('div');search.dataset.tpTeacherSearch='1';
+  search.innerHTML='<input type="search" placeholder="Öğretmen ara (ad, e-posta, kod...)" aria-label="Öğretmen ara"><select aria-label="Öğretmen durumu"><option value="all">Tümü</option><option value="active">Aktif</option><option value="passive">Pasif</option></select>';
+  stats.insertAdjacentElement('afterend',search);
+  const filter=()=>{
+   const q=search.querySelector('input').value.toLocaleLowerCase('tr-TR').trim(),status=search.querySelector('select').value;
+   for(const row of rows){const passive=/pasif/i.test(row.textContent||'');row.hidden=!( (!q||row.textContent.toLocaleLowerCase('tr-TR').includes(q))&&(status==='all'||(status==='passive'?passive:!passive)) );}
+  };
+  search.querySelector('input').addEventListener('input',filter);
+  search.querySelector('select').addEventListener('change',filter);
  }
  if(mode){const observe=new MutationObserver(()=>{requestAnimationFrame(attachTeacherApprovals);});if(document.body)observe.observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['style','class']});else document.addEventListener('DOMContentLoaded',()=>observe.observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['style','class']}),{once:true});}
  let checkedToken='',canManage=false;

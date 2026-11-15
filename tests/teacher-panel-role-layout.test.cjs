@@ -198,3 +198,25 @@ test('approved Sınıfım design 1 keeps live data, tabs, search, class actions 
  assert.match(fs.readFileSync('ingilizce/sw.js','utf8'),/diji-v449-classroom-design-one-20261115/);
  assert.match(portal,/window\.dmTeacherBulkStudentsOpen = \(\) => openBulkStudents\(\)/);
 });
+
+
+test('approved admin teachers purple design preserves real approval, code, create and list workflows',()=>{
+ const source=fs.readFileSync('ingilizce/teacher-portal.js','utf8');
+ const html=fs.readFileSync('ingilizce/index.html','utf8');
+ const sw=fs.readFileSync('ingilizce/sw.js','utf8');
+ assert.match(source,/function attachTeacherApprovals/);
+ assert.match(source,/data-tp-teacher-search/);
+ assert.match(source,/data-tp-teacher-stats/);
+ assert.match(source,/management\('requests'\)/);
+ assert.match(source,/management\('codes'\)/);
+ assert.match(source,/teacherPortalList/);
+ assert.match(source,/teacherPortalDecide/);
+ assert.match(source,/teacherPortalIssueCode/);
+ assert.match(source,/teacherPortalAdminCreate/);
+ assert.match(source,/data-create/);
+ assert.match(source,/data-filter/);
+ assert.match(source,/adminStyle/);
+ assert.match(source,/email_verified_at/);
+ assert.match(html,/teacher-portal\.js\?v=20261115-admin-purple-1/);
+ assert.match(sw,/diji-v450-admin-teachers-purple-20261115/);
+});
