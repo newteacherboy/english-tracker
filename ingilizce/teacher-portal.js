@@ -470,7 +470,7 @@
     const existing=[...tiles.querySelectorAll('[data-dash]')].map(b=>b.dataset.dash),patterns={league:/^sınıfım$/i,classes:/^sınıflarım$/i,classReports:/sınıf raporları/i,homework:/ödev ver/i,rubric:/rubrik/i,performance:/ders içi performans/i,announcements:/duyurular/i,messages:/öğrenci sohbetleri/i,weak:/zayıf noktalar/i,parent:/veli özetleri/i,studentDetails:/öğrenci şifresi/i,exams:/seviye sınavı/i,oral:/sözlü yap/i};
     for(const target of document.querySelectorAll('#ogretmenMenuModal button.ogretmen-menu-btn')){
      const title=String(target.dataset.dmTeacherTitle||target.querySelector('.dm-teacher-card-title')?.textContent||target.textContent).trim();
-     if(/öğretmen erişim onayları/i.test(title))continue;
+     if(/öğretmen erişim onayları|hediye üyelik|reklam ayarları|bildirim gönder/i.test(title))continue;
      if(existing.some(key=>patterns[key]?.test(title.toLocaleLowerCase('tr-TR')))||['league','classes','classReports'].includes(canonicalDashboardTool(title)))continue;
      if([...tiles.querySelectorAll('[data-native-title]')].some(b=>b.dataset.nativeTitle===title))continue;
      const b=document.createElement('button');b.type='button';b.dataset.nativeTitle=title;
