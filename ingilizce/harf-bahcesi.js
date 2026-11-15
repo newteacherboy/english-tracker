@@ -75,7 +75,11 @@
     } catch(e) { if(state===current&&overlay===currentOverlay){message(e.message);button.disabled=false;window.DijiMeduPapiFeedback?.energyDenied(e);} }
     finally {starting=false;}
   }
-  function newBoard() {state.pair=state.words.slice(state.index,state.index+1);state.grid=board(state.pair);state.selected=[];state.solved=new Set();overlay?.classList.add("hb-playing");paint();}
+  function newBoard() {
+    // The shared launcher decorates setup only. Its layered layout rules must
+    // not constrain the live board after the setup DOM has been replaced.
+    overlay?.classList.remove('gl-intro');body.classList.remove('gl-entry','gl-learn');delete body.dataset.gl;
+    state.pair=state.words.slice(state.index,state.index+1);state.grid=board(state.pair);state.selected=[];state.solved=new Set();overlay?.classList.add("hb-playing");paint();}
   function text() {return state.selected.map(i=>state.grid.letters[i]).join('');}
   function paint() {
     const s=state;

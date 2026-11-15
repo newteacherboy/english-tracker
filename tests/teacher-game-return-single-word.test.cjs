@@ -12,7 +12,7 @@ test('the result Continue action keeps native cleanup and returns teacher play t
  w.dmTeacherPortalMode=true;w.dmTeacherPortal={returnToGames:()=>games++};w.gsoAktif={oyunKey:'bosluk',devamFn:()=>cleanup++,tekrarFn:()=>replayed++};w.eval(source);w.genelSonucKapat('devam');await new Promise(r=>setImmediate(r));assert.equal(cleanup,1);assert.equal(games,1);w.gsoAktif={tekrarFn:()=>replayed++};w.genelSonucKapat('tekrar');await new Promise(r=>setImmediate(r));assert.equal(replayed,1);assert.equal(games,1);w.dmTeacherPortalMode=false;w.gsoAktif={devamFn:()=>cleanup++};w.genelSonucKapat('devam');await new Promise(r=>setImmediate(r));assert.equal(games,1);assert.equal(cleanup,2);w.close();
 });
 test('teacher panel keeps the approved eight and six tools stable across viewport changes and preserves admin tools',()=>{
- const s=fs.readFileSync('ingilizce/teacher-portal.js','utf8'),source=s.slice(s.indexOf('function paginateDashboard(){'),s.indexOf("window.addEventListener('resize',paginateDashboard)"));
+ const s=fs.readFileSync('ingilizce/teacher-portal.js','utf8'),source=s.slice(s.indexOf('function canonicalDashboardTool(text){'),s.indexOf("window.addEventListener('resize',paginateDashboard)"));
  for(const count of [14,23]){
   const dom=new JSDOM('<div id="tpDashboard"><div class="tp-real-tools">'+Array.from({length:count},(_,i)=>'<button>Tool '+i+'</button>').join('')+'</div><details class="tp-account-settings"></details></div>',{runScripts:'outside-only'}),w=dom.window;
   w.eval(source);w.paginateDashboard();
@@ -25,7 +25,7 @@ test('teacher panel keeps the approved eight and six tools stable across viewpor
 });
 test('approved teacher panel renders all tools and routes identity actions to the existing account controls',()=>{
  const s=fs.readFileSync('ingilizce/teacher-portal.js','utf8'),dom=new JSDOM('<button id="cogK1"></button><button id="cogK2"></button>',{runScripts:'outside-only'}),w=dom.window,calls=[];
- const start=s.indexOf(' function paginateDashboard(){'),end=s.indexOf(' function teacherDashboardHide()',start);
+ const start=s.indexOf(' function canonicalDashboardTool(text){'),end=s.indexOf(' function teacherDashboardHide()',start);
  Object.assign(w,{mode:true,rememberRoute:()=>{},teacherHomeHide:()=>{},teacherDock:()=>{},observeTeacherChildren:()=>{},prepareTeacherTools:async()=>[],showTeacherToolError:()=>{}});
  // Test actual rendered event bindings with isolated destination handlers.
  w.teacherDashboardAction=action=>calls.push(action);w.eval(s.slice(start,end));w.teacherDashboardShow();w.paginateDashboard();

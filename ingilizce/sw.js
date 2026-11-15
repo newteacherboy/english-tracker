@@ -7,7 +7,7 @@
    - Supabase istekleri: bu dosya karışmaz (sayfadaki katman yönetir)
    Sayfayı güncellediğinizde SURUM değerini artırın (v2, v3…).
    ===================================================================== */
-const SURUM = 'diji-v453-premium-ad-play-20261115';
+const SURUM = 'diji-v454-reward-policy-sync-20261115';
 const SAYFA = 'sayfa-' + SURUM, KAYNAK = 'kaynak-' + SURUM;
 // Cached on first use; never download the A2 catalog at startup.
 const LAZY_TOPIC_FILES = new Set(['konu-oyunlari-a1.js','konu-oyunlari-a2.js','topic-games-core.mjs']);
@@ -32,6 +32,15 @@ self.addEventListener('fetch', e => {
   if (r.method !== 'GET') return;
   const url = new URL(r.url);
   if (url.hostname.endsWith('supabase.co')) return;                 /* API: dokunma */
+  // Reward and progression code must never be served from a stale PWA cache.
+  // Native clients already bypass this worker. Supabase requests are never cached.
+  // A network failure is surfaced instead of replaying an outdated reward flow.
+  if ((!self.location?.origin || url.origin === self.location.origin) &&
+      (/\/app-js\/(?:i03-veriler|i12-1-ekonomi|i24-oku|i27-yenidenyukle)\.js$/.test(url.pathname) ||
+      /\/(?:progression(?:-api)?|reward(?:s|-policy|-engine|-ui)?|parkur(?:-core|-progress|-rewards)?|solo(?:-games|-levels|-rewards)?|premium-(?:word-match(?:-core)?|cloud-flight|word-blocks|intro)|papizzle|topic-games-core|konu-oyunlari(?:-a[12])?|study-ui|ders-test|progress-rules|score-rules|game-feedback|verified-games|student-solo-levels|lazy-games)\.(?:js|mjs|json|css)$/.test(url.pathname))) {
+    e.respondWith(fetch(r,{cache:'no-store'}));
+    return;
+  }
   // Teacher account transition must not run an older cached authorization/UI script.
   if (url.pathname.endsWith('/teacher-portal-boot.js')) {
     e.respondWith(fetch(r,{cache:'no-store'}).catch(async()=>{

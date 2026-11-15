@@ -9,7 +9,9 @@ const { syncBuiltinESMExports } = require('module');
 
 const INDEX = path.resolve(__dirname, '..', 'ingilizce', 'index.html');
 const APP_JS = path.resolve(__dirname, '..', 'ingilizce', 'app-js');
-const TAG = /<script src="app-js\/([^"?]+)\?v=[0-9a-f]+"><\/script>/g;
+// Production uses both content hashes and descriptive release identifiers.
+// Restrict the filename to a single JS basename while accepting either version.
+const TAG = /<script src="app-js\/([a-zA-Z0-9_-]+\.js)\?v=[a-zA-Z0-9_-]+"><\/script>/g;
 
 function isIndex(p) {
   try {
