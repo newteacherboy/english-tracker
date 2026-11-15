@@ -79,3 +79,16 @@ test('Premium skill games keep their single owned toolbar and native cleanup',as
  assert(r.classList.contains('dm-vp-root'));assert(!r.classList.contains('dm-game-framed'));assert.equal(r.querySelector('.dm-game-frame,.dm-vp-back,.dm-vp-exit'),null);
  let closed=0;w.dmPremiumSkillGames={close:()=>{closed++;r.remove();}};await w.dmGameViewport.navigate(r,false);await new Promise(resolve=>setImmediate(resolve));assert.equal(closed,1);assert(!w.document.getElementById('premiumSkillGame'));assert(!w.document.body.classList.contains('dm-game-viewport'));f.dom.window.close();
 });
+
+
+test('student back returns to level entry instead of native class/unit chooser',async()=>{
+ const f=shell('<div id="jpOyunOverlay" style="display:flex"><button class="game-close-btn"></button></div>'),w=f.w,r=w.document.getElementById('jpOyunOverlay');
+ const history=[];let reopened=0;
+ w.jpOyunKapat=()=>{history.push(w.dmGameExitIntent);r.style.display='none';};
+ w.jpOyunAc=()=>{reopened++;};
+ w.dmSoloLevels={active:{game:'jp'},isCurrentGame:game=>game==='jp',backToIntro:async game=>history.push('intro:'+game)};
+ await w.dmGameViewport.navigate(r,true);
+ assert.deepEqual(history,['exit','intro:jp']);
+ assert.equal(reopened,0);
+ f.dom.window.close();
+});
