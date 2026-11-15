@@ -1,0 +1,40 @@
+name: Reward success v2 PostgreSQL tests
+on:
+  push:
+    branches: [feature/reward-success-policy-60]
+  pull_request:
+    paths:
+      - 'deployment/reward-success-*.sql'
+      - 'tests/reward-*.sql'
+      - 'tests/reward-topic-v2.test.cjs'
+      - 'tests/fixtures/reward-topic-v2.sql'
+      - '.github/workflows/reward-success-v2.yml'
+permissions:
+  contents: read
+jobs:
+  database:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    services:
+      postgres:
+        image: postgres:17.6
+        env:
+          POSTGRES_PASSWORD: isolated-reward-tests
+          POSTGRES_DB: reward_tests
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm install --prefix /tmp/reward-v2 --ignore-scripts --no-package-lock pg@8.13.3
+      - name: Verify policy boundaries, atomic topic rewards and quota locking
+        run: node --test tests/reward-topic-v2.test.cjs
+        env:
+          NODE_PATH: /tmp/reward-v2/node_modules
+          REWARD_TEST_DATABASE_URL: postgresql://postgres:isolated-reward-tests@localhost:5432/reward_tests

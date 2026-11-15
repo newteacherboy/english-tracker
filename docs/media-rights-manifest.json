@@ -326,10 +326,13 @@
     },
     {
       "path": "ingilizce/friends-assets/icons.svg",
-      "sha256": "7d5ab83cbaf2e43f5df708628860d71ab852acaa24728179e42faca573724078",
-      "bytes": 2322,
-      "status": "code-native",
-      "source": "Repository-authored Friends interface SVG; source retained in Git"
+      "sha256": "c23bf644816254e8a57d6bedb2837dc6dd986fa4f4b59ec403221447f4a2e392",
+      "bytes": 3636,
+      "status": "repository-history-origin-unverified",
+      "source": "https://github.com/newteacherboy/english-tracker/commit/86ebe8a7d5ceb286497ba8922711d7b8673e02e7",
+      "previous_sha256": "7d5ab83cbaf2e43f5df708628860d71ab852acaa24728179e42faca573724078",
+      "previous_source": "Repository-authored Friends interface SVG; source retained in Git",
+      "provenance_note": "Content recovered from existing repository history; original generation or licence evidence has not been independently verified. This record is not rights clearance."
     },
     {
       "path": "ingilizce/friends-assets/meadow.svg",
@@ -2847,6 +2850,334 @@
       "bytes": 28556,
       "status": "ai-generated",
       "source": "docs/premium-play-offer-generation.json"
+    },
+    {
+      "path": "ingilizce/design-assets/chat-lila-approved.webp",
+      "sha256": "5d8c96f19b2a005efc7efb8e003594781dd5a758d7deeabf822dc220aac4bca9",
+      "bytes": 150650,
+      "status": "repository-history-origin-unverified",
+      "source": "https://github.com/newteacherboy/english-tracker/commit/e1556c579913d052392dc8ef60b948c7797d742d",
+      "provenance_note": "Content recovered from existing repository history; original generation or licence evidence has not been independently verified. This record is not rights clearance."
+    },
+    {
+      "path": "ingilizce/design-assets/games-cards-approved.webp",
+      "sha256": "2dc665355f2fe04825b52b327bfcec47c995a61131b2d4aae6a745190eabdc0c",
+      "bytes": 131218,
+      "status": "repository-history-origin-unverified",
+      "source": "https://github.com/newteacherboy/english-tracker/commit/e1556c579913d052392dc8ef60b948c7797d742d",
+      "provenance_note": "Content recovered from existing repository history; original generation or licence evidence has not been independently verified. This record is not rights clearance."
+    },
+    {
+      "path": "ingilizce/friends-assets/friends-kids.webp",
+      "sha256": "775adb3262bfe724580ecb106ab9ca8c60c6a45968c196140e12af560f0897ce",
+      "bytes": 10776,
+      "status": "repository-history-origin-unverified",
+      "source": "https://github.com/newteacherboy/english-tracker/commit/771b14f3641464bcd46796c416bfc560191e8d9f",
+      "provenance_note": "Content recovered from existing repository history; original generation or licence evidence has not been independently verified. This record is not rights clearance."
+    },
+    {
+      "path": "ingilizce/friends-assets/papi-invite.webp",
+      "sha256": "a466e27366c1b4c3b63eaa2ba44990bbb4fc0151d1a69d6271f3403e3feaaca0",
+      "bytes": 7796,
+      "status": "repository-history-origin-unverified",
+      "source": "https://github.com/newteacherboy/english-tracker/commit/771b14f3641464bcd46796c416bfc560191e8d9f",
+      "provenance_note": "Content recovered from existing repository history; original generation or licence evidence has not been independently verified. This record is not rights clearance."
+    },
+    {
+      "path": "ingilizce/game-scenes/carnival.svg",
+      "sha256": "1766f23a5e0de7a7d682410d3e681b8ff8e80e45ec2e94240f49066183b581c3",
+      "bytes": 1754,
+      "status": "repository-history-origin-unverified",
+      "source": "https://github.com/newteacherboy/english-tracker/commit/240d994347d5b7b6d7333d1c9f4f157961a48da3",
+      "provenance_note": "Content recovered from existing repository history; original generation or licence evidence has not been independently verified. This record is not rights clearance."
+    },
+    {
+      "path": "ingilizce/game-scenes/detective.svg",
+      "sha256": "d8f4667bbe96cedd7fa1efea9456ae272d519ad729136537f153fcdcdc84267f",
+      "bytes": 1188,
+      "status": "repository-history-origin-unverified",
+      "source": "https://github.com/newteacherboy/english-tracker/commit/240d994347d5b7b6d7333d1c9f4f157961a48da3",
+      "provenance_note": "Content recovered from existing repository history; original generation or licence evidence has not been independently verified. This record is not rights clearance."
+    },
+    {
+      "path": "ingilizce/game-scenes/garden.svg",
+      "sha256": "d83860d74e9b654f30cf144043f77661570098ce64dda62b0ab6a742634b8598",
+      "bytes": 2218,
+      "status": "repository-history-origin-unverified",
+      "source": "https://github.com/newteacherboy/english-tracker/commit/240d994347d5b7b6d7333d1c9f4f157961a48da3",
+      "provenance_note": "Content recovered from existing repository history; original generation or licence evidence has not been independently verified. This record is not rights clearance."
+    },
+    {
+      "path": "ingilizce/game-scenes/lock.svg",
+      "sha256": "778bfacd88d5fd68e0470fe8ee2bec3008f5b57832191fdee1b11c253ea70655",
+      "bytes": 1114,
+      "status": "repository-history-origin-unverified",
+      "source": "https://github.com/newteacherboy/english-tracker/commit/240d994347d5b7b6d7333d1c9f4f157961a48da3",
+      "provenance_note": "Content recovered from existing repository history; original generation or licence evidence has not been independently verified. This record is not rights clearance."
+    },
+    {
+      "path": "ingilizce/game-scenes/station.svg",
+      "sha256": "6b0fe00c1ff30c4b6b1c92e5f88c31cb7e917e86ed6c54eea384f1564f5b1b7a",
+      "bytes": 1699,
+      "status": "repository-history-origin-unverified",
+      "source": "https://github.com/newteacherboy/english-tracker/commit/240d994347d5b7b6d7333d1c9f4f157961a48da3",
+      "provenance_note": "Content recovered from existing repository history; original generation or licence evidence has not been independently verified. This record is not rights clearance."
+    },
+    {
+      "path": "ingilizce/game-scenes/storm.svg",
+      "sha256": "9266ed727e03b888b68378b61af45416a5d9643c421e295216b57088df6c81f0",
+      "bytes": 1213,
+      "status": "repository-history-origin-unverified",
+      "source": "https://github.com/newteacherboy/english-tracker/commit/240d994347d5b7b6d7333d1c9f4f157961a48da3",
+      "provenance_note": "Content recovered from existing repository history; original generation or licence evidence has not been independently verified. This record is not rights clearance."
+    },
+    {
+      "path": "ingilizce/games-assets/cumle-rotasi-cover.svg",
+      "sha256": "f8157995a52880f0b914a15b9ef3978cae114a9e1cb1a6dae846b3b7de1dd274",
+      "bytes": 1328,
+      "status": "repository-history-origin-unverified",
+      "source": "https://github.com/newteacherboy/english-tracker/commit/3d382243954c451ae3b69f2986790ab7990d1031",
+      "provenance_note": "Content recovered from existing repository history; original generation or licence evidence has not been independently verified. This record is not rights clearance."
+    },
+    {
+      "path": "ingilizce/games-assets/cumle-yarisi-cover.svg",
+      "sha256": "443217dedf41e232fa2600905037e147c44967e625cec57278a81bafdb2696fe",
+      "bytes": 6358,
+      "status": "repository-history-origin-unverified",
+      "source": "https://github.com/newteacherboy/english-tracker/commit/c0d0d950fa82770d99dcb03fb6adf4130ff4c895",
+      "provenance_note": "Content recovered from existing repository history; original generation or licence evidence has not been independently verified. This record is not rights clearance."
+    },
+    {
+      "path": "ingilizce/games-assets/kelime-golu-stadium-v1.webp",
+      "sha256": "173008a77c162aa82e2c21727f29c452d250373b6c36cd0de54655280873a0c9",
+      "bytes": 330412,
+      "status": "repository-history-origin-unverified",
+      "source": "https://github.com/newteacherboy/english-tracker/commit/1b6a13b88b5e7f843045a38145e16c9ac02b8ceb",
+      "provenance_note": "Content recovered from existing repository history; original generation or licence evidence has not been independently verified. This record is not rights clearance."
+    },
+    {
+      "path": "ingilizce/mola-assets/kosu-scene.svg",
+      "sha256": "e5586ec93ef11c098c64b0ea7f8354efbcd8d628a6c5f3c89ea7f4a1d3b3eb1b",
+      "bytes": 1198,
+      "status": "repository-history-origin-unverified",
+      "source": "https://github.com/newteacherboy/english-tracker/commit/d86615eeb1ecee5c63ab11d3edaca860f396d66e",
+      "provenance_note": "Content recovered from existing repository history; original generation or licence evidence has not been independently verified. This record is not rights clearance."
+    },
+    {
+      "path": "ingilizce/mola-assets/patlat-scene.svg",
+      "sha256": "149246a65a49e8be1d99466252dfc2fbb2116053fc8a52699299b3491157f381",
+      "bytes": 1526,
+      "status": "repository-history-origin-unverified",
+      "source": "https://github.com/newteacherboy/english-tracker/commit/d86615eeb1ecee5c63ab11d3edaca860f396d66e",
+      "provenance_note": "Content recovered from existing repository history; original generation or licence evidence has not been independently verified. This record is not rights clearance."
+    },
+    {
+      "path": "ingilizce/mola-assets/zipla-scene.svg",
+      "sha256": "9b70dc34839e5d73a712454ee5edb6e810ea4e77616aa556098560fe74fc6aa1",
+      "bytes": 1086,
+      "status": "repository-history-origin-unverified",
+      "source": "https://github.com/newteacherboy/english-tracker/commit/d86615eeb1ecee5c63ab11d3edaca860f396d66e",
+      "provenance_note": "Content recovered from existing repository history; original generation or licence evidence has not been independently verified. This record is not rights clearance."
+    },
+    {
+      "path": "ingilizce/parkur-badges/v3/bahcivan-papi.png",
+      "sha256": "389fc86d0e53b5f3ea27f269e67f4b37e0851a85ce6bca46f3579ca4be03c64a",
+      "bytes": 256248,
+      "status": "repository-history-origin-unverified",
+      "source": "https://github.com/newteacherboy/english-tracker/commit/46d098822f0b71b3ee482f694df343debec1d129",
+      "provenance_note": "Content recovered from existing repository history; original generation or licence evidence has not been independently verified. This record is not rights clearance."
+    },
+    {
+      "path": "ingilizce/parkur-badges/v3/gokyuzu-pilotu-papi.png",
+      "sha256": "9c9f9f44df9d96d0e233ede5faaca32a23aeca6c9656128dffb0ad718c7c0864",
+      "bytes": 247340,
+      "status": "repository-history-origin-unverified",
+      "source": "https://github.com/newteacherboy/english-tracker/commit/46d098822f0b71b3ee482f694df343debec1d129",
+      "provenance_note": "Content recovered from existing repository history; original generation or licence evidence has not been independently verified. This record is not rights clearance."
+    },
+    {
+      "path": "ingilizce/parkur-badges/v3/kaptan-papi.png",
+      "sha256": "deb037dc0ec6ad250ca7afd10d70f0fbcd7c7e445f425892948eb5905120a875",
+      "bytes": 260632,
+      "status": "repository-history-origin-unverified",
+      "source": "https://github.com/newteacherboy/english-tracker/commit/46d098822f0b71b3ee482f694df343debec1d129",
+      "provenance_note": "Content recovered from existing repository history; original generation or licence evidence has not been independently verified. This record is not rights clearance."
+    },
+    {
+      "path": "ingilizce/premium-assets/bulut-ucusu/bulut.webp",
+      "sha256": "5eb3c7f419004dca7205bdd09a25831d116356dd0ecc4530f4cc82615956cfba",
+      "bytes": 13932,
+      "status": "repository-history-origin-unverified",
+      "source": "https://github.com/newteacherboy/english-tracker/commit/8729fda28203b4204eefd689474c63bbb3e0efbb",
+      "provenance_note": "Content recovered from existing repository history; original generation or licence evidence has not been independently verified. This record is not rights clearance."
+    },
+    {
+      "path": "ingilizce/premium-assets/bulut-ucusu/gece.webp",
+      "sha256": "af12ee465f6400149b2ef3cb7df9993a1a22b4cd306d8240e1749d21146e5f61",
+      "bytes": 56222,
+      "status": "repository-history-origin-unverified",
+      "source": "https://github.com/newteacherboy/english-tracker/commit/8729fda28203b4204eefd689474c63bbb3e0efbb",
+      "provenance_note": "Content recovered from existing repository history; original generation or licence evidence has not been independently verified. This record is not rights clearance."
+    },
+    {
+      "path": "ingilizce/premium-assets/bulut-ucusu/kapak.webp",
+      "sha256": "90641118e4c6c1789dc336f0670fc55e02ac2fa6de4106d8ca8f252bfc1fd19e",
+      "bytes": 25364,
+      "status": "repository-history-origin-unverified",
+      "source": "https://github.com/newteacherboy/english-tracker/commit/8729fda28203b4204eefd689474c63bbb3e0efbb",
+      "provenance_note": "Content recovered from existing repository history; original generation or licence evidence has not been independently verified. This record is not rights clearance."
+    },
+    {
+      "path": "ingilizce/premium-assets/bulut-ucusu/papi-ucak.webp",
+      "sha256": "c8a8f3d07af4af90eddd174fe13f494c37125ad0267807d75972704107e07a32",
+      "bytes": 39684,
+      "status": "repository-history-origin-unverified",
+      "source": "https://github.com/newteacherboy/english-tracker/commit/8729fda28203b4204eefd689474c63bbb3e0efbb",
+      "provenance_note": "Content recovered from existing repository history; original generation or licence evidence has not been independently verified. This record is not rights clearance."
+    },
+    {
+      "path": "ingilizce/premium-assets/kelime-bloklari/atolye.webp",
+      "sha256": "d0d88c9784876e0d2bea38901cd02d7b791e395749dd02043deff69e1addc29e",
+      "bytes": 50280,
+      "status": "repository-history-origin-unverified",
+      "source": "https://github.com/newteacherboy/english-tracker/commit/331a2b8c558b57309d675cefe008531686147e2e",
+      "provenance_note": "Content recovered from existing repository history; original generation or licence evidence has not been independently verified. This record is not rights clearance."
+    },
+    {
+      "path": "ingilizce/premium-assets/kelime-bloklari/kapak.webp",
+      "sha256": "04fc2c46a2937a987fbe3dc76b1e6308f73be56eea271631e135acb615deca2c",
+      "bytes": 56848,
+      "status": "repository-history-origin-unverified",
+      "source": "https://github.com/newteacherboy/english-tracker/commit/331a2b8c558b57309d675cefe008531686147e2e",
+      "provenance_note": "Content recovered from existing repository history; original generation or licence evidence has not been independently verified. This record is not rights clearance."
+    },
+    {
+      "path": "ingilizce/premium-assets/kelime-bloklari/papi.webp",
+      "sha256": "00eeb3ef4fc80bdece951634592d5886fe493c84ac43311060a696a9538c2c2e",
+      "bytes": 14772,
+      "status": "repository-history-origin-unverified",
+      "source": "https://github.com/newteacherboy/english-tracker/commit/331a2b8c558b57309d675cefe008531686147e2e",
+      "provenance_note": "Content recovered from existing repository history; original generation or licence evidence has not been independently verified. This record is not rights clearance."
+    },
+    {
+      "path": "ingilizce/premium-assets/kelime-eslestirme/candy-hero.webp",
+      "sha256": "eb80c5d3cbb6e8d7265964d425d234524a774a0fcbb2d5a6fef86b0a234c6a11",
+      "bytes": 86994,
+      "status": "repository-history-origin-unverified",
+      "source": "https://github.com/newteacherboy/english-tracker/commit/111ae4e2cb782f435625068839ef435f1aae0f5d",
+      "provenance_note": "Content recovered from existing repository history; original generation or licence evidence has not been independently verified. This record is not rights clearance."
+    },
+    {
+      "path": "ingilizce/premium-assets/papizzle-cover.webp",
+      "sha256": "0f9e4692950dfae44e4154cc4287f19ceb8d73f6f35af4958e9cdf231ff36bcf",
+      "bytes": 14482,
+      "status": "repository-history-origin-unverified",
+      "source": "https://github.com/newteacherboy/english-tracker/commit/ef77d19005fd6065545d406e50a80dddf30d4ed8",
+      "provenance_note": "Content recovered from existing repository history; original generation or licence evidence has not been independently verified. This record is not rights clearance."
+    },
+    {
+      "path": "ingilizce/premium-assets/papizzle-hero.webp",
+      "sha256": "40fbbad4be0d843a01b35d2562687d7e1cbebb38f3086c06e60319d46cb0f215",
+      "bytes": 55374,
+      "status": "repository-history-origin-unverified",
+      "source": "https://github.com/newteacherboy/english-tracker/commit/111ae4e2cb782f435625068839ef435f1aae0f5d",
+      "provenance_note": "Content recovered from existing repository history; original generation or licence evidence has not been independently verified. This record is not rights clearance."
+    },
+    {
+      "path": "ingilizce/route-assets/learning-fixed-approved-v2.webp",
+      "sha256": "efd90327b6bdd98ecd45ea4542e741f6db043b44aff23a93db339d4eb172d200",
+      "bytes": 84862,
+      "status": "repository-history-origin-unverified",
+      "source": "https://github.com/newteacherboy/english-tracker/commit/6357de60769c77982a11d4d368d55c43b7bcf665",
+      "provenance_note": "Content recovered from existing repository history; original generation or licence evidence has not been independently verified. This record is not rights clearance."
+    },
+    {
+      "path": "ingilizce/route-assets/papi-medal.webp",
+      "sha256": "640999d78ca3d370f5870288af07c068bd9b6d9172c1a262ee00abff86246b88",
+      "bytes": 10150,
+      "status": "repository-history-origin-unverified",
+      "source": "https://github.com/newteacherboy/english-tracker/commit/220509b520d64ff5d8a69ded1446c8c3ec86b779",
+      "provenance_note": "Content recovered from existing repository history; original generation or licence evidence has not been independently verified. This record is not rights clearance."
+    },
+    {
+      "path": "ingilizce/route-assets/school-fixed-approved-v2.webp",
+      "sha256": "1c37d40761d126c50b5cf3bdde2c74075c4a0ec3123c9aca1515c7aae8f2d7a3",
+      "bytes": 110344,
+      "status": "repository-history-origin-unverified",
+      "source": "https://github.com/newteacherboy/english-tracker/commit/6357de60769c77982a11d4d368d55c43b7bcf665",
+      "provenance_note": "Content recovered from existing repository history; original generation or licence evidence has not been independently verified. This record is not rights clearance."
+    },
+    {
+      "path": "ingilizce/satis-assets/ic-bolt.webp",
+      "sha256": "7082cdcfb79e682d399a9d7128b26125605f0d2662cb19d4eeefa24766d875ca",
+      "bytes": 6012,
+      "status": "repository-history-origin-unverified",
+      "source": "https://github.com/newteacherboy/english-tracker/commit/a2d1cc26d07e7d668e082a78811bf59dfb194910",
+      "provenance_note": "Content recovered from existing repository history; original generation or licence evidence has not been independently verified. This record is not rights clearance."
+    },
+    {
+      "path": "ingilizce/satis-assets/ic-coin.webp",
+      "sha256": "5e3f0947aa557cd5410a653ed7f2da37acc221d52b6f1a3a3778c4c1f9c4d0b7",
+      "bytes": 5992,
+      "status": "repository-history-origin-unverified",
+      "source": "https://github.com/newteacherboy/english-tracker/commit/a2d1cc26d07e7d668e082a78811bf59dfb194910",
+      "provenance_note": "Content recovered from existing repository history; original generation or licence evidence has not been independently verified. This record is not rights clearance."
+    },
+    {
+      "path": "ingilizce/satis-assets/ic-crown.webp",
+      "sha256": "759805fa73eee345cbe7b72cbf21a391474a3b3d4920299b2e80aafe91b233b0",
+      "bytes": 7408,
+      "status": "repository-history-origin-unverified",
+      "source": "https://github.com/newteacherboy/english-tracker/commit/a2d1cc26d07e7d668e082a78811bf59dfb194910",
+      "provenance_note": "Content recovered from existing repository history; original generation or licence evidence has not been independently verified. This record is not rights clearance."
+    },
+    {
+      "path": "ingilizce/satis-assets/papi-enerji-molasi.webp",
+      "sha256": "31cb1fe81f367d8810a20f632357af9c6af38a8065e6e6fd916b68563e3bfaca",
+      "bytes": 34596,
+      "status": "repository-history-origin-unverified",
+      "source": "https://github.com/newteacherboy/english-tracker/commit/a2d1cc26d07e7d668e082a78811bf59dfb194910",
+      "provenance_note": "Content recovered from existing repository history; original generation or licence evidence has not been independently verified. This record is not rights clearance."
+    },
+    {
+      "path": "ingilizce/school-assets/teacher-invite-board.webp",
+      "sha256": "638b95cf876763deedcd9f21df1aebc6adf303a98b9a32346713be368c8f5e34",
+      "bytes": 2726,
+      "status": "repository-history-origin-unverified",
+      "source": "https://github.com/newteacherboy/english-tracker/commit/37e7efec73d6ada41630428f759442109e65d660",
+      "provenance_note": "Content recovered from existing repository history; original generation or licence evidence has not been independently verified. This record is not rights clearance."
+    },
+    {
+      "path": "ingilizce/school-assets/teacher-invite-class.webp",
+      "sha256": "4167221ff59163ad6436c7109ac747382976c2db036b1d10c69d0612a2a58794",
+      "bytes": 2896,
+      "status": "repository-history-origin-unverified",
+      "source": "https://github.com/newteacherboy/english-tracker/commit/37e7efec73d6ada41630428f759442109e65d660",
+      "provenance_note": "Content recovered from existing repository history; original generation or licence evidence has not been independently verified. This record is not rights clearance."
+    },
+    {
+      "path": "ingilizce/school-assets/teacher-invite-papi-key.webp",
+      "sha256": "e1d8abe53d69e563cf9d8962cc2ceebbe6b3340aa0475ed1ffecddd1e862d832",
+      "bytes": 15924,
+      "status": "repository-history-origin-unverified",
+      "source": "https://github.com/newteacherboy/english-tracker/commit/37e7efec73d6ada41630428f759442109e65d660",
+      "provenance_note": "Content recovered from existing repository history; original generation or licence evidence has not been independently verified. This record is not rights clearance."
+    },
+    {
+      "path": "ingilizce/school-assets/teacher-invite-report.webp",
+      "sha256": "b8e3e6cc7798539a5658561e040f0c6a31af3a229fae8309199643c946febb06",
+      "bytes": 2712,
+      "status": "repository-history-origin-unverified",
+      "source": "https://github.com/newteacherboy/english-tracker/commit/37e7efec73d6ada41630428f759442109e65d660",
+      "provenance_note": "Content recovered from existing repository history; original generation or licence evidence has not been independently verified. This record is not rights clearance."
+    },
+    {
+      "path": "ingilizce/teacher-assets/approved-teacher-2.webp",
+      "sha256": "4e95ca3a8610e77348f7671189c71ad23d80f78665284ec26f03c90e5e66edb9",
+      "bytes": 338880,
+      "status": "repository-history-origin-unverified",
+      "source": "https://github.com/newteacherboy/english-tracker/commit/b7eaf21478907a3ef973087410208b6f303cc83f",
+      "provenance_note": "Content recovered from existing repository history; original generation or licence evidence has not been independently verified. This record is not rights clearance."
     }
   ]
 }

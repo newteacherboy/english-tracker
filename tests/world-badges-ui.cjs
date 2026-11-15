@@ -26,7 +26,7 @@ check('historical baseline saved without congratulation flood',()=>{assert.deepE
 w.dmIlerlememAc();
 check('progress opens independently and retains the original assessment chart',()=>{assert(w.document.getElementById('tab-ilerlemem').classList.contains('active'));assert(w.document.getElementById('bdGelisim').contains(w.document.getElementById('denemeGrafik')));});
 w.dmProgression.allowed=()=>true;w.yoMagazaAc=()=>{w.document.getElementById(w.yoGomuluHedef).textContent='Wardrobe fixture';};w.dmDolabimAc();
-check('wardrobe opens independently and restores assessment content',()=>{assert(w.document.getElementById('tab-dolabim').classList.contains('active'));assert.equal(w.yoGomuluHedef,'bdKarakterAlan');assert(w.document.getElementById('bdKarakterAlan').textContent.includes('Wardrobe fixture'));assert(w.document.getElementById('bdKoleksiyon').contains(w.document.getElementById('profilKoleksiyon')));assert(!w.document.getElementById('bdGelisim').contains(w.document.getElementById('denemeGrafik')));});
+check('wardrobe opens independently and restores assessment content',()=>{assert(w.document.getElementById('tab-dolabim').classList.contains('active'));assert.equal(w.yoGomuluHedef,'bdKarakterAlan');assert(w.document.getElementById('bdKarakterAlan').textContent.includes('Wardrobe fixture'));assert(w.document.getElementById('tab-profil').contains(w.document.getElementById('profilKoleksiyon')));assert(w.document.getElementById('tab-ozet').contains(w.document.getElementById('denemeGrafik')));assert(!w.document.getElementById('bdGelisim').contains(w.document.getElementById('denemeGrafik')));});
 w.dcTumTamEkranlariKapat();
 check('closing wardrobe restores collection and clears embedded renderer target',()=>{assert.equal(w.yoGomuluHedef,null);assert(w.document.getElementById('tab-profil').contains(w.document.getElementById('profilKoleksiyon')));});
 w.dmBasarilarimAc();
@@ -40,7 +40,7 @@ check('multiple badges celebrate one at a time',()=>{assert(popup());assert(popu
 popup().dispatchEvent(new w.KeyboardEvent('keydown',{key:'Escape',bubbles:true}));await drain();await tick();
 check('acknowledged badges do not celebrate again',()=>{assert(!popup());assert.equal(w.localStorage.getItem('bd_rozet_bekleyen:fixture'),'[]');});
 w.localStorage.setItem('ing_girisSerisiSayisi','0');await tick();w.dmBasarilarimAc();
-check('earned badges stay earned when a streak expires',()=>{assert(w.document.querySelector('#bdRozet .bd-rozet:not(.kilitli)[title="3 gün üst üste gir"]'));assert.equal(w.document.querySelectorAll('#bdRozet .bd-rozet').length,32);});
+check('earned badges stay earned when a streak expires',()=>{assert(w.document.querySelector('#bdRozet .bd-rozet:not(.kilitli)[title="3 gün üst üste gir"]'));assert.equal(w.document.querySelectorAll('#bdRozet .bd-rozet').length,31);assert.equal(w.dmRozetKatalogu.length,31);assert(!w.dmRozetKatalogu.some(r=>r.id==='koleksiyoncu'));});
 stats.gunler.today={o:1,d:8,y:0,m:1,l:1,p:0};
 const response=await w.fetch(w.apiURL,{method:'POST',body:JSON.stringify({islem:'seviyeOyunOdulu',ogrenci:'Fixture'})});await flush();await drain();await tick();
 check('successful game save refreshes stats and preserves response',()=>{assert(popup().textContent.includes('İlk Adım'));assert.equal(response.bodyUsed,false);assert(requests>=2);});

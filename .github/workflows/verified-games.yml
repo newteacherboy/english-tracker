@@ -2,6 +2,8 @@ name: Verified Games Security
 on:
   push:
     paths:
+      - 'tests/_index-source.cjs'
+      - 'tests/index-source-reader.test.cjs'
       - 'ingilizce/**'
       - 'supabase/functions/**'
       - 'supabase/migrations/*verified*'
@@ -12,6 +14,8 @@ on:
       - '.github/workflows/verified-games.yml'
   pull_request:
     paths:
+      - 'tests/_index-source.cjs'
+      - 'tests/index-source-reader.test.cjs'
       - 'ingilizce/**'
       - 'supabase/functions/**'
       - 'supabase/migrations/*verified*'
