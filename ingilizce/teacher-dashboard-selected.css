@@ -1,0 +1,490 @@
+/* Approved teacher-home concept 1 — scoped to the existing, working code-login home.
+   Existing click handlers, the owner-only tools, and the teacher dock are retained. */
+html.dm-teacher-portal body.tp-home-active,
+html.dm-teacher-portal body.tp-home-active #tpTeacherHome.is-visible {
+  background: radial-gradient(ellipse at 45% -12%,#b3eaff 0%,transparent 58%),linear-gradient(180deg,#d7f1ff 0%,#eaf7ff 52%,#e6f5ff 100%)!important;
+}
+html.dm-teacher-portal body.tp-home-active #tpTeacherHome.is-visible:has(#dmTeacherDesignV2.dm-approved-home) {
+  overflow-y:auto!important;
+  overflow-x:hidden!important;
+  overscroll-behavior-y:contain;
+  -webkit-overflow-scrolling:touch;
+}
+#tpTeacherHome .tp-home-inner:has(#dmTeacherDesignV2.dm-approved-home) {
+  box-sizing:border-box;
+  width:min(650px,100%)!important;
+  min-height:100%!important;
+  height:auto!important;
+  max-height:none!important;
+  padding:calc(10px + env(safe-area-inset-top,0px)) clamp(10px,3.2vw,21px) 36px!important;
+  overflow:visible!important;
+}
+#tpTeacherHome #dmTeacherDesignV2.dm-midnight-home.dm-approved-home {
+  --dm-card:linear-gradient(135deg,#fff,#e9f7ff);
+  --dm-bevel:0 4px 12px #336f9830,inset 0 1px 0 #fff;
+  --dm-teacher-heading:#142f60;
+  --dm-teacher-line:#accde6;
+  --dm-teacher-muted:#45617c;
+  --dm-radius:23px;
+  background:transparent!important;
+  border:0!important;
+  color:#102c54!important;
+  display:flex!important;
+  flex-direction:column!important;
+  gap:clamp(10px,1.35dvh,19px)!important;
+  height:auto!important;
+  min-height:0!important;
+  max-height:none!important;
+  overflow:visible!important;
+  box-shadow:none!important;
+  padding:0!important;
+  font-family:Nunito,system-ui,sans-serif;
+}
+#tpTeacherHome .dm-approved-home .dm-midnight-brand {
+  display:grid!important;
+  grid-template-columns:auto minmax(0,1fr) auto;
+  align-items:center;
+  gap:7px;
+  padding:6px 3px 8px!important;
+  min-height:35px!important;
+  color:#12335d;
+  font-weight:950;
+  font-size:clamp(12px,3.5vw,18px)!important;
+  letter-spacing:-.35px;
+}
+#tpTeacherHome .dm-approved-home .dm-midnight-brand>span:first-child {
+  display:inline-flex;align-items:center;gap:5px;
+}
+#tpTeacherHome .dm-approved-home .dm-midnight-brand>span:nth-child(2) {
+  color:#13365d!important;
+  border-left:1px solid #a7c9de;
+  font-size:clamp(12px,3.4vw,18px);
+  white-space:nowrap;
+  padding-left:7px;
+}
+#tpTeacherHome .dm-approved-home .dm-midnight-brand>span:nth-child(2)::before,
+#tpTeacherHome .dm-approved-home .dm-midnight-brand>span:nth-child(2)::after {
+  color:#15989a;
+  width:.48em;height:.8em;margin:0 .17em;
+}
+#tpTeacherHome .dm-approved-home .dm-midnight-brand>.dm-theme-toggle {
+  width:32px!important;height:32px!important;min-width:32px!important;
+}
+#tpTeacherHome .dm-approved-home .dm-approved-icon {
+  display:block;flex:none;
+  width:1.25em;height:1.25em;
+  object-fit:contain;
+  background:none!important;
+  filter:drop-shadow(0 2px 1px #17405a16);
+  pointer-events:none;
+}
+#tpTeacherHome .dm-approved-home .dm-midnight-brand .dm-approved-icon {
+  width:29px;height:29px;
+}
+#tpTeacherHome .dm-approved-home .dm-midnight-raised {
+  color:#122c56!important;
+  border:1px solid #b6d6ef!important;
+  background:linear-gradient(150deg,#fff,#edf7ff)!important;
+  box-shadow:0 4px 11px #265c8b1c,inset 0 1px 0 #fff!important;
+  border-radius:21px!important;
+}
+#tpTeacherHome .dm-approved-home .dm-midnight-hero.dm-approved-welcome {
+  position:relative;
+  isolation:isolate;
+  display:grid!important;
+  grid-template-columns:clamp(88px,27%,160px) minmax(0,1fr)!important;
+  gap:clamp(8px,2.3vw,20px)!important;
+  align-items:center!important;
+  min-height:clamp(155px,21dvh,220px)!important;
+  height:auto!important;
+  flex:0 0 auto;
+  border-radius:27px!important;
+  padding:clamp(10px,2.6vw,21px)!important;
+  background:radial-gradient(circle at 79% 11%,#f9ffff 0,transparent 40%),linear-gradient(130deg,#f8feff 4%,#d9f5ff 95%)!important;
+  border:1px solid #a2d2f1!important;
+  overflow:hidden;
+  box-shadow:0 9px 18px #397a9b24,inset 0 2px 0 #fff!important;
+}
+#tpTeacherHome .dm-approved-home .dm-midnight-hero.dm-approved-welcome::after {
+  content:"";position:absolute;right:-15px;bottom:-20px;width:190px;height:65px;
+  z-index:-1;border-radius:80% 55% 0 0;
+  background:linear-gradient(130deg,#c9f9e7,#7cdbb5);
+  opacity:.36;
+}
+#tpTeacherHome .dm-approved-home .dm-midnight-hero.dm-approved-welcome>img:first-child {
+  display:block;
+  width:100%;height:clamp(130px,20dvh,196px)!important;
+  transform:none!important;
+  object-fit:contain;
+  position:relative;z-index:2;
+  filter:drop-shadow(0 7px 5px #32799b32)!important;
+}
+#tpTeacherHome .dm-approved-home .dm-midnight-hero.dm-approved-welcome>div {
+  min-width:0;position:relative;z-index:2;
+}
+#tpTeacherHome .dm-approved-home .dm-midnight-hero.dm-approved-welcome h1 {
+  font-size:clamp(20px,5.65vw,32px)!important;
+  line-height:1.05!important;
+  letter-spacing:-.7px;
+  font-weight:1000;
+  color:#152b58!important;
+  max-width:350px;
+  margin:0 0 4px!important;
+}
+#tpTeacherHome .dm-approved-home .dm-midnight-hero.dm-approved-welcome p {
+  font-size:clamp(11px,3vw,15px)!important;
+  color:#47637b!important;line-height:1.24;
+  margin:0 0 10px!important;
+  max-width:315px;
+}
+#tpTeacherHome .dm-approved-home .dm-approved-school {
+  position:absolute!important;
+  right:7px;top:5px;
+  width:clamp(48px,12vw,77px)!important;
+  height:clamp(48px,12vw,77px)!important;
+  opacity:.5;z-index:0!important;
+  pointer-events:none;
+  transform:none!important;
+}
+#tpTeacherHome .dm-approved-home .dm-midnight-stats {
+  display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:clamp(5px,1.5vw,10px)!important;
+}
+#tpTeacherHome .dm-approved-home .dm-midnight-stats button {
+  display:flex!important;flex-direction:row!important;
+  justify-content:center;align-items:center;gap:5px!important;
+  min-height:clamp(43px,5.5dvh,62px)!important;
+  padding:5px 6px!important;
+  border-radius:15px!important;
+  background:linear-gradient(140deg,#fff,#e9f8ff)!important;
+  text-align:left;
+  color:#223658!important;
+  font-size:clamp(10px,2.8vw,15px)!important;
+  line-height:1.08!important;
+  box-shadow:0 3px 7px #40768c22!important;
+}
+#tpTeacherHome .dm-approved-home .dm-midnight-stats button i {
+  display:grid!important;place-items:center;
+  font-size:inherit!important;flex:none!important;
+  padding:0!important;
+  border:0!important;
+}
+#tpTeacherHome .dm-approved-home .dm-midnight-stats button .dm-approved-icon {
+  width:clamp(27px,7vw,37px);height:clamp(27px,7vw,37px);
+}
+#tpTeacherHome .dm-approved-home .dm-midnight-stats b {
+  display:block;font-size:clamp(18px,5vw,28px)!important;
+  color:#152e60;font-weight:1000;line-height:1.02;
+}
+#tpTeacherHome .dm-approved-home .dm-midnight-parkur-switch {
+  position:relative;
+  display:flex!important;
+  align-items:center;justify-content:flex-start;
+  width:100%;min-height:clamp(52px,6.4dvh,71px)!important;
+  flex:0 0 auto;
+  margin:0!important;
+  padding:9px 14px!important;
+  gap:13px;
+  color:white!important;
+  background:linear-gradient(110deg,#29b964,#37c47e 50%,#78db75)!important;
+  border:1px solid #44b56b!important;
+  border-radius:24px!important;
+  box-shadow:0 5px 12px #318b6032,inset 0 2px 0 #b3ffd374!important;
+  font-size:clamp(17px,4.7vw,26px)!important;
+  font-weight:1000;
+  text-align:left;
+  overflow:hidden;
+}
+#tpTeacherHome .dm-approved-home .dm-midnight-parkur-switch::after {
+  content:"";width:160px;height:90px;position:absolute;right:27px;bottom:-74px;
+  background:#d7ffd052;border-radius:50%;pointer-events:none;
+}
+#tpTeacherHome .dm-approved-home .dm-approved-sprout {
+  display:grid;place-items:center;
+  width:48px!important;height:43px;
+  flex:none;position:relative;z-index:1;
+}
+#tpTeacherHome .dm-approved-home .dm-approved-sprout .dm-approved-icon {
+  width:45px;height:45px;
+}
+#tpTeacherHome .dm-approved-home .dm-midnight-parkur-switch strong {
+  position:relative;z-index:1;min-width:0;color:#fff!important;
+  text-shadow:0 2px 0 #168c53a0;
+}
+#tpTeacherHome .dm-approved-home .dm-approved-next {
+  display:grid;place-items:center;margin-left:auto!important;
+  width:43px!important;height:43px;
+  flex:none;position:relative;z-index:1;
+}
+#tpTeacherHome .dm-approved-home .dm-approved-next .dm-approved-icon {
+  width:43px;height:43px;
+}
+#tpTeacherHome .dm-approved-home .dm-midnight-section {
+  flex:0 0 auto!important;
+  min-width:0!important;min-height:auto!important;
+}
+#tpTeacherHome .dm-approved-home .dm-midnight-section h2 {
+  display:flex;align-items:center;gap:8px;
+  margin:0 0 10px 2px!important;
+  line-height:1.1!important;
+  color:#102b57!important;
+  font-size:clamp(20px,5.7vw,28px)!important;
+  font-weight:1000;
+  text-shadow:none;
+}
+#tpTeacherHome .dm-approved-home .dm-midnight-section h2 i {
+  display:grid;place-items:center;
+  font-size:inherit!important;
+  width:30px;height:30px;
+}
+#tpTeacherHome .dm-approved-home .dm-midnight-section h2 .dm-approved-icon {
+  width:30px;height:30px;
+}
+#tpTeacherHome #dmTeacherDesignV2.dm-approved-home .dm-midnight-shortcuts {
+  display:grid!important;
+  grid-template-columns:repeat(4,minmax(0,1fr))!important;
+  gap:clamp(6px,1.45vw,11px)!important;
+}
+#tpTeacherHome #dmTeacherDesignV2.dm-approved-home .dm-midnight-shortcuts button {
+  display:flex!important;
+  flex-direction:column!important;align-items:center!important;justify-content:center!important;
+  position:relative;
+  gap:5px!important;
+  min-width:0;min-height:clamp(80px,10.5dvh,119px)!important;
+  padding:8px 3px!important;
+  border-radius:22px!important;
+  background:linear-gradient(145deg,#fff,#ecf7ff)!important;
+  box-shadow:0 5px 13px #1a6fa01f,inset 0 2px 0 #fff!important;
+  color:#0d2b57!important;
+  text-align:center!important;
+  line-height:1.05!important;
+  font-size:clamp(10px,2.8vw,14px)!important;
+  font-weight:1000;
+}
+#tpTeacherHome #dmTeacherDesignV2.dm-approved-home .dm-midnight-shortcuts button strong {
+  font-weight:1000;
+  overflow-wrap:normal;
+  text-wrap:balance;
+}
+#tpTeacherHome #dmTeacherDesignV2.dm-approved-home .dm-midnight-shortcuts button i {
+  display:grid!important;place-items:center!important;
+  font-size:inherit!important;flex:none!important;
+  width:47px;height:47px;
+  margin:0;padding:0!important;border:0!important;
+  text-shadow:none!important;
+}
+#tpTeacherHome #dmTeacherDesignV2.dm-approved-home .dm-midnight-shortcuts button .dm-approved-icon {
+  width:clamp(33px,9vw,49px)!important;height:clamp(33px,9vw,49px)!important;
+}
+#tpTeacherHome #dmTeacherDesignV2.dm-approved-home .dm-midnight-actions {
+  display:grid!important;
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  gap:clamp(7px,1.7vw,12px)!important;
+}
+#tpTeacherHome #dmTeacherDesignV2.dm-approved-home .dm-midnight-actions button {
+  min-width:0;min-height:clamp(77px,9.7dvh,107px)!important;
+  display:flex!important;
+  flex-direction:row!important;align-items:center!important;
+  justify-content:flex-start!important;
+  gap:clamp(7px,1.55vw,13px)!important;
+  padding:9px 10px!important;
+  text-align:left!important;
+  line-height:1.12!important;
+  font-size:clamp(12px,3.55vw,18px)!important;
+  font-weight:1000;
+  border-radius:22px!important;
+  box-shadow:0 4px 12px #24558222,inset 0 2px 0 #ffffffde!important;
+  color:#142b56!important;
+}
+#tpTeacherHome #dmTeacherDesignV2.dm-approved-home .dm-midnight-actions button:nth-child(1) {
+  background:linear-gradient(140deg,#fff,#e3f5ff)!important;
+}
+#tpTeacherHome #dmTeacherDesignV2.dm-approved-home .dm-midnight-actions button:nth-child(2) {
+  background:linear-gradient(140deg,#fffaf0,#ffeccf)!important;
+}
+#tpTeacherHome #dmTeacherDesignV2.dm-approved-home .dm-midnight-actions button:nth-child(3),
+#tpTeacherHome #dmTeacherDesignV2.dm-approved-home .dm-midnight-actions button:nth-child(5) {
+  background:linear-gradient(140deg,#fbf8ff,#eee4ff)!important;
+}
+#tpTeacherHome #dmTeacherDesignV2.dm-approved-home .dm-midnight-actions button:nth-child(4),
+#tpTeacherHome #dmTeacherDesignV2.dm-approved-home .dm-midnight-actions button:nth-child(8) {
+  background:linear-gradient(140deg,#f9ffff,#d6f8ed)!important;
+}
+#tpTeacherHome #dmTeacherDesignV2.dm-approved-home .dm-midnight-actions button:nth-child(6) {
+  background:linear-gradient(140deg,#f9fcff,#e1f3ff)!important;
+}
+#tpTeacherHome #dmTeacherDesignV2.dm-approved-home .dm-midnight-actions button:nth-child(7) {
+  background:linear-gradient(140deg,#fff,#ffe8e3)!important;
+}
+#tpTeacherHome #dmTeacherDesignV2.dm-approved-home .dm-midnight-actions button i {
+  display:grid!important;place-items:center!important;
+  flex:0 0 clamp(44px,13.4vw,67px)!important;
+  width:clamp(44px,13.4vw,67px);
+  height:clamp(49px,12vw,70px);
+  align-self:center!important;
+  padding:0!important;
+  border:0!important;
+  margin:0;
+  font-size:inherit!important;
+  line-height:1!important;
+  text-shadow:none!important;
+}
+#tpTeacherHome #dmTeacherDesignV2.dm-approved-home .dm-midnight-actions button .dm-approved-icon {
+  width:clamp(44px,13.3vw,65px)!important;
+  height:clamp(44px,13.3vw,65px)!important;
+}
+#tpTeacherHome #dmTeacherDesignV2.dm-approved-home .dm-midnight-actions button strong {
+  flex:1;min-width:0;font-weight:1000;overflow-wrap:normal;hyphens:auto;
+  text-wrap:balance;
+}
+#tpTeacherHome #dmTeacherDesignV2.dm-approved-home .dm-v2-chat-badge:not([hidden]) {
+  left:40px;right:auto;top:3px;
+  background:#fa466e;color:#fff;border:2px solid #fff;
+  z-index:2;
+}
+#tpTeacherHome #dmTeacherDesignV2.dm-approved-home .dm-midnight-tools summary {
+  border-radius:18px!important;
+  border:1px solid #efc36b!important;
+  min-height:45px!important;
+  background:linear-gradient(135deg,#fff6cf,#fff1ba)!important;
+  color:#655018!important;
+  box-shadow:0 4px 9px #6b593021!important;
+  font-size:16px!important;
+}
+#tpTeacherHome #dmTeacherDesignV2.dm-approved-home .dm-midnight-extra {
+  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;
+}
+#tpTeacherHome #dmTeacherDesignV2.dm-approved-home .dm-midnight-extra button {
+  min-height:58px;min-width:0;padding:8px;border-radius:14px!important;
+  font-size:12px!important;
+}
+#tpTeacherHome #dmTeacherDesignV2.dm-approved-home .dm-midnight-extra .dm-approved-icon {
+  width:26px;height:26px;
+}
+/* The existing teacher dock remains functional: only its appearance and icons change. */
+html.dm-teacher-portal body.tp-home-active #tpTeacherDock {
+  --dm-dock-height:clamp(75px,9.8dvh,96px)!important;
+  height:calc(var(--dm-dock-height) + env(safe-area-inset-bottom,0px))!important;
+  padding:7px max(8px,calc((100vw - 620px)/2)) calc(7px + env(safe-area-inset-bottom,0px))!important;
+  gap:4px!important;
+  border-radius:27px 27px 0 0!important;
+  border:1px solid #aacde7!important;border-bottom:0!important;
+  background:linear-gradient(180deg,#fff,#ebf7ff 96%)!important;
+  box-shadow:0 -5px 18px #3179a329,inset 0 2px 0 #fff!important;
+}
+html.dm-teacher-portal body.tp-home-active #tpTeacherDock>button {
+  color:#142d59!important;
+  font:1000 clamp(10px,2.7vw,14px)/1.06 Nunito,system-ui,sans-serif!important;
+  border-radius:18px!important;
+  gap:3px!important;
+}
+html.dm-teacher-portal body.tp-home-active #tpTeacherDock>button.active {
+  background:linear-gradient(#63d2ea,#10adbc)!important;
+  color:#fff!important;
+  box-shadow:0 3px 7px #16889e55,inset 0 2px 0 #b7faff!important;
+}
+html.dm-teacher-portal body.tp-home-active #tpTeacherDock>button+button::before {
+  background:#c5d5e7!important;
+}
+html.dm-teacher-portal body.tp-home-active #tpTeacherDock>button>.dm-teacher-icon {
+  width:clamp(27px,8vw,42px)!important;
+  height:clamp(27px,8vw,42px)!important;
+  background-size:100% 100%!important;
+  background-position:center!important;
+  background-repeat:no-repeat!important;
+}
+html.dm-teacher-portal body.tp-home-active #tpTeacherDock .dm-teacher-icon--home { background-image:url("teacher-dashboard-assets/home.svg")!important; }
+html.dm-teacher-portal body.tp-home-active #tpTeacherDock .dm-teacher-icon--games { background-image:url("teacher-dashboard-assets/games.svg")!important; }
+html.dm-teacher-portal body.tp-home-active #tpTeacherDock .dm-teacher-icon--book { background-image:url("teacher-dashboard-assets/book.svg")!important; }
+html.dm-teacher-portal body.tp-home-active #tpTeacherDock .dm-teacher-icon--trophy { background-image:url("teacher-dashboard-assets/trophy.svg")!important; }
+html.dm-teacher-portal body.tp-home-active #tpTeacherDock .dm-teacher-icon--cap { background-image:url("teacher-dashboard-assets/cap.svg")!important; }
+@media(max-width:640px) {
+ html.dm-teacher-portal body.tp-home-active #tpTeacherHome.is-visible:has(#dmTeacherDesignV2.dm-approved-home) {
+   overflow-y:auto!important;overflow-x:hidden!important;
+ }
+ #tpTeacherHome .tp-home-inner:has(#dmTeacherDesignV2.dm-approved-home) {
+   height:auto!important;max-height:none!important;min-height:100%!important;
+   overflow:visible!important;
+   padding:calc(5px + env(safe-area-inset-top,0px)) 10px 30px!important;
+ }
+ #tpTeacherHome #dmTeacherDesignV2.dm-approved-home {
+   height:auto!important;max-height:none!important;min-height:0!important;
+   display:flex!important;flex-direction:column!important;
+   overflow:visible!important;
+   gap:clamp(10px,1.2dvh,17px)!important;
+ }
+ #tpTeacherHome #dmTeacherDesignV2.dm-approved-home .dm-midnight-brand {
+   min-height:33px!important;font-size:clamp(12px,3.5vw,17px)!important;
+ }
+ #tpTeacherHome #dmTeacherDesignV2.dm-approved-home .dm-midnight-hero {
+   min-height:155px!important;padding:11px!important;
+   grid-template-columns:clamp(91px,26vw,125px) minmax(0,1fr)!important;
+ }
+ #tpTeacherHome #dmTeacherDesignV2.dm-approved-home .dm-midnight-hero>img:first-child {
+   height:145px!important;width:100%!important;
+ }
+ #tpTeacherHome #dmTeacherDesignV2.dm-approved-home .dm-midnight-hero h1 {
+   font-size:clamp(17px,5.3vw,25px)!important;
+ }
+ #tpTeacherHome #dmTeacherDesignV2.dm-approved-home .dm-midnight-hero p {
+   font-size:clamp(10px,2.65vw,13px)!important;margin:0 0 7px!important;
+ }
+ #tpTeacherHome #dmTeacherDesignV2.dm-approved-home .dm-midnight-stats button {
+   min-height:46px!important;
+ }
+ #tpTeacherHome #dmTeacherDesignV2.dm-approved-home .dm-midnight-section h2 {
+   margin:0 0 8px 2px!important;
+ }
+ #tpTeacherHome #dmTeacherDesignV2.dm-approved-home .dm-midnight-shortcuts button {
+   min-height:clamp(76px,10.4dvh,104px)!important;
+   padding:6px 2px!important;
+   font-size:clamp(10px,2.8vw,12px)!important;
+ }
+ #tpTeacherHome #dmTeacherDesignV2.dm-approved-home .dm-midnight-actions {
+   grid-template-columns:repeat(2,minmax(0,1fr))!important;
+   gap:7px!important;
+ }
+ #tpTeacherHome #dmTeacherDesignV2.dm-approved-home .dm-midnight-actions button {
+   flex-direction:row!important;
+   justify-content:flex-start!important;
+   text-align:left!important;
+   min-height:clamp(75px,10dvh,96px)!important;
+   padding:8px 7px!important;
+   font-size:clamp(11px,3.35vw,15px)!important;
+   gap:6px!important;
+ }
+ #tpTeacherHome #dmTeacherDesignV2.dm-approved-home .dm-midnight-actions i {
+   flex:0 0 46px!important;
+   font-size:inherit!important;
+   padding:0!important;
+   border:0!important;
+   align-self:center!important;
+ }
+ #tpTeacherHome #dmTeacherDesignV2.dm-approved-home .dm-midnight-actions .dm-approved-icon {
+   width:45px!important;height:45px!important;
+ }
+ #tpTeacherHome #dmTeacherDesignV2.dm-approved-home .dm-midnight-extra {
+   grid-template-columns:repeat(2,minmax(0,1fr));
+ }
+}
+@media(max-width:350px) {
+ #tpTeacherHome #dmTeacherDesignV2.dm-approved-home .dm-midnight-brand>span:nth-child(2)::before,
+ #tpTeacherHome #dmTeacherDesignV2.dm-approved-home .dm-midnight-brand>span:nth-child(2)::after {display:none}
+ #tpTeacherHome #dmTeacherDesignV2.dm-approved-home .dm-midnight-brand {gap:4px}
+ #tpTeacherHome #dmTeacherDesignV2.dm-approved-home .dm-midnight-brand>.dm-theme-toggle {width:27px!important;min-width:27px!important;height:27px!important}
+ #tpTeacherHome #dmTeacherDesignV2.dm-approved-home .dm-midnight-hero {grid-template-columns:70px minmax(0,1fr)!important}
+ #tpTeacherHome #dmTeacherDesignV2.dm-approved-home .dm-midnight-hero>img:first-child {height:115px!important}
+ #tpTeacherHome #dmTeacherDesignV2.dm-approved-home .dm-midnight-hero h1 {font-size:17px!important}
+ #tpTeacherHome #dmTeacherDesignV2.dm-approved-home .dm-midnight-stats button {font-size:9px!important;padding:3px!important}
+ #tpTeacherHome #dmTeacherDesignV2.dm-approved-home .dm-midnight-stats .dm-approved-icon {width:24px;height:24px}
+ #tpTeacherHome #dmTeacherDesignV2.dm-approved-home .dm-midnight-shortcuts button {font-size:9px!important}
+ #tpTeacherHome #dmTeacherDesignV2.dm-approved-home .dm-midnight-actions button {font-size:11px!important}
+}
+@media(prefers-reduced-motion:no-preference) {
+ #tpTeacherHome .dm-approved-home .dm-approved-tile {transition:transform .16s ease,box-shadow .16s ease}
+ #tpTeacherHome .dm-approved-home .dm-approved-tile:active {transform:scale(.975)}
+}
+#tpTeacherHome .dm-approved-home :is(button,summary):focus-visible {
+ outline:3px solid #18aaba!important;
+ outline-offset:3px;
+}
