@@ -7,7 +7,7 @@
    - Supabase istekleri: bu dosya karışmaz (sayfadaki katman yönetir)
    Sayfayı güncellediğinizde SURUM değerini artırın (v2, v3…).
    ===================================================================== */
-const SURUM = 'diji-v444-admin-campaign-preview-20261115';
+const SURUM = 'diji-v445-teacher-panel-live-visuals-20261115';
 const SAYFA = 'sayfa-' + SURUM, KAYNAK = 'kaynak-' + SURUM;
 // Cached on first use; never download the A2 catalog at startup.
 const LAZY_TOPIC_FILES = new Set(['konu-oyunlari-a1.js','konu-oyunlari-a2.js','topic-games-core.mjs']);
@@ -47,7 +47,7 @@ self.addEventListener('fetch', e => {
   // Leaderboard and its badge atlas must not appear stale after a deployment.
   // Network-first even on a slow connection; offline still uses last good copy.
   const LIVE_LEAGUE_FILES = /\/(?:league-ui|friends-ui)\.(?:js|css)$|\/parkur-badges\/v2\/(?:papi-01|school-02|school-03)\.webp$|\/parkur-badges\/v3\/[^\/]+\.png$/;
-  if ((!self.location?.origin || url.origin === self.location.origin) && (LIVE_LEAGUE_FILES.test(url.pathname) || ['/teacher-workspace.js','/teacher-portal.js','/teacher-owned-tools.js'].some(name => url.pathname.endsWith(name)))) {
+  if ((!self.location?.origin || url.origin === self.location.origin) && (LIVE_LEAGUE_FILES.test(url.pathname) || ['/teacher-workspace.js','/teacher-portal.js','/teacher-portal.css','/teacher-portal-boot.js','/teacher-owned-tools.js','/teacher-assets/approved-teacher-2.webp'].some(name => url.pathname.endsWith(name)))) {
     e.respondWith(
       fetch(r,{cache:'no-store'}).then(async response=>{
         if (response && response.ok) {
@@ -68,6 +68,15 @@ self.addEventListener('fetch', e => {
   /* Prefer fresh responses, but an existing installation must not wait for a
      slow network. Refresh the cached copy in the background; never reload a tab. */
   if (r.mode === 'navigate') {
+    // Teacher workspaces must render the latest dashboard, not the 1.2-second cached index.
+    // Offline keeps the last usable copy, but online never silently replays old markup.
+    if (url.origin === self.location.origin && url.searchParams.get('ogretmen') === '1') {
+      e.respondWith(fetch(r,{cache:'no-store'}).then(async response=>{
+        if(response?.ok)await caches.open(SAYFA).then(c=>c.put('./',response.clone())).catch(()=>{});
+        return response;
+      }).catch(async()=>await caches.open(SAYFA).then(c=>c.match('./'))||Response.error()));
+      return;
+    }
     e.respondWith(boundedNetwork(e, r, SAYFA, './', 1200));
     return;
   }
