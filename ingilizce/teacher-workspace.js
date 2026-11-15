@@ -156,6 +156,7 @@ function dmVerifyAdminRole(){
  }).catch(()=>{
   if(token()!==current)return;
   dmAdminRoleVerified=false;dmAdminRoleToken=current;
+  window.dmTeacherVerifiedAdmin=false;window.dmTeacherVerifiedAdminToken=current;window.dispatchEvent(new Event('dm:teacher-admin-role-verified'));
   $('dmTeacherDesignV2')?.dmSyncAdminTools?.(false);
  }).finally(()=>{if(dmAdminRolePendingToken===current)dmAdminRolePendingToken='';});
 }
@@ -490,7 +491,7 @@ const watcher=new MutationObserver(()=>{if(active)maintain();});for(const el of 
 new MutationObserver(ms=>{if(active&&ms.some(m=>[...m.addedNodes,...m.removedNodes].some(n=>n.nodeType===1&&(n.matches?.(childSelector)||n.querySelector?.(childSelector)))))maintain();}).observe(document.body,{childList:true});
 const report=$('yoModal');if(report)watcher.observe(report,{attributes:true,attributeFilter:['class','style']});
 setInterval(()=>{if(document.hidden)return;maintain();dmHome();if(window.dmTeacherPortalMode)window.dmDayNightTheme?.updateHint();dmRemoveTeacherBottomTab();refresh();installCatalog();},1200);
-document.addEventListener('dm:login',()=>{total=0;lastRead=0;active=false;menuSeen=false;dmAdminRoleToken='';dmAdminRoleVerified=false;dmAdminRolePendingToken='';$('dmTeacherDesignV2')?.dmSyncAdminTools?.(false);refresh(true);});
+document.addEventListener('dm:login',()=>{total=0;lastRead=0;active=false;menuSeen=false;dmAdminRoleToken='';dmAdminRoleVerified=false;dmAdminRolePendingToken='';window.dmTeacherVerifiedAdmin=false;window.dmTeacherVerifiedAdminToken='';window.dispatchEvent(new Event('dm:teacher-admin-role-verified'));$('dmTeacherDesignV2')?.dmSyncAdminTools?.(false);refresh(true);});
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)refresh(true);});
 refresh(true);
 })();
