@@ -45,6 +45,11 @@ Deno.serve(async(req:Request)=>{
     // The same teacher-only profile is reused across devices. Never play as a pupil.
     actor=await db('rpc/dm_teacher_portal_guest',{grant_id:grant.id,guest_alias:'Premium Oyun',is_preview:true,secret_hash:crypto.randomUUID()});
   }else if(!actor)return reply(req,{ok:false,mesaj:'Öğrenci oturumu gerekli.'},401);
+  if(op==='ad-prepare'||op==='ad-redeem'){
+    if(teacherGame||s.teacher_portal_access_id)return reply(req,{ok:false,mesaj:'Öğrenci oturumu gerekli.'},403);
+    if(op==='ad-redeem'&&!UUID.test(String(b.offerId||'')))return reply(req,{ok:false,mesaj:'Geçersiz reklam teklifi.'},400);
+    return reply(req,await db('rpc/dm_premium_ad_offer',{actor,game_key:game,op:op==='ad-prepare'?'prepare':'redeem',offer_key:b.offerId||null}));
+  }
   if(op==='access')return reply(req,{ok:true,...await db('rpc/dm_game_access',{actor,game_key:game})});
   if(game==='tower'||game==='word-goal'){
     if(s.role==='student'&&s.teacher_portal_access_id)return reply(req,{ok:false,mesaj:'Premium oyun için kişisel hesabına giriş yap.'},403);
@@ -126,3 +131,4 @@ Deno.serve(async(req:Request)=>{
   return reply(req,{ok:false,mesaj:'Bağlantı kurulamadı. Tekrar dene.'},503);
  }
 });
+

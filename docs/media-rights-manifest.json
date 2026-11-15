@@ -2840,6 +2840,13 @@
       "bytes": 1109,
       "status": "original-vector",
       "source": "Custom SVG vector authored for user-approved Diji-Medu Teacher Dashboard Design 1, 2026-11-15; no external imagery."
+    },
+    {
+      "path": "ingilizce/premium-assets/papi-game-offer.webp",
+      "sha256": "8e4794a0dfe693e043447ec4190f65d9a7c3a69703f42930c665680d1f06d108",
+      "bytes": 28556,
+      "status": "ai-generated",
+      "source": "docs/premium-play-offer-generation.json"
     }
   ]
 }

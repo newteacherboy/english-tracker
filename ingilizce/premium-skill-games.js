@@ -18,7 +18,7 @@
   try{
    const url=(typeof apiURL==='string'?apiURL:'https://nxfqlutulxqzqgwewssd.supabase.co/functions/v1/diji-api').replace(/diji-api.*$/,'premium-games');
    const response=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({game:s.key,op,t:s.token,...data}),signal:controller.signal});
-   const result=await response.json();if(!response.ok||result.ok===false)throw Error(result.mesaj||'Oyun yüklenemedi. Tekrar dene.');
+   const result=await response.json();if(!response.ok||result.ok===false){const e=Error(result.mesaj||'Oyun yüklenemedi. Tekrar dene.');e.code=result.hata;throw e;}
    return result;
   }catch(e){if(e.name==='AbortError')throw Error('Bağlantı gecikti. Aynı oyunu tekrar deneyebilirsin.');throw e;}finally{clearTimeout(timeout);}
  }
@@ -48,7 +48,7 @@
  function intro(){
   const s=state,d=s.info,g=games[s.key];s.phase='setup';
   const pending=saved(s),canResume=!!pending?.runId;
-  const actions=d.completed?[['Oyunlara dön',close]]:d.remaining>0||canResume?[[canResume?'Kaldığın oyuna devam et':`Seviye ${d.level} · Başla · ⚡ 5`,start]]:[['Premium ile sınırsız oyna',plans],['Oyunlara dön',close]];
+  const actions=d.completed?[['Oyunlara dön',close]]:d.remaining>0||canResume?[[canResume?'Kaldığın oyuna devam et':`Seviye ${d.level} · Başla · ⚡ 5`,start]]:[['Başla',()=>window.dmPremiumPlayOffer?.open({game:s.key,onReady:async()=>{if(!alive(s))return;await loadStatus(s);if(alive(s))start();},onPlans:close})],['Oyunlara dön',close]];
   panel(g.title,`Seviye ${d.level} / 160 · Kolaydan zora ilerle. ${g.hint} ${d.premium?'Sınırsız oyun hakkı.':d.remaining+' günlük oyun hakkın kaldı.'}`,actions);
   root.dataset.gamePhase='intro';
   const level=Math.max(1,Math.min(160,Number(d.level)||1)),done=d.completed?160:level-1;
@@ -78,7 +78,7 @@
    if(typeof d.energy==='number'){window.genelEnerjiKalan=d.energy;window.headerEnerjiGoster?.(d.energy,d.energyMax);}
    root.dataset.gamePhase='play';root.dataset.musicPaused=String(!s.sound);root.querySelector('[data-pause]').hidden=false;
    renderQuestion();ticker=setInterval(tick,100);
-  }catch(e){if(alive(s)){status(e.message);root.querySelectorAll('.psg-actions button').forEach(b=>b.disabled=false);}}
+  }catch(e){if(alive(s)){if(e.code==='hak'){s.runId=null;localStorage.removeItem(savedKey(s));s.info.remaining=0;intro();root.querySelector('.psg-actions button')?.click();}else{status(e.message);window.DijiMeduPapiFeedback?.energyDenied(e);root.querySelectorAll('.psg-actions button').forEach(b=>b.disabled=false);}}}
   finally{if(alive(s))s.busy=false;}
  }
  const block=(i,falling=false)=>'<i class="psg-block'+(falling?' psg-falling':'')+'" style="--i:'+i+';--hue:'+(i*57%360)+'deg"></i>';
@@ -150,3 +150,4 @@
  document.addEventListener('dm:login',close);
  window.dmPremiumSkillGames={open,close};
 })();
+

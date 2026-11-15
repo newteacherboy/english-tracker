@@ -7,7 +7,7 @@
    - Supabase istekleri: bu dosya karışmaz (sayfadaki katman yönetir)
    Sayfayı güncellediğinizde SURUM değerini artırın (v2, v3…).
    ===================================================================== */
-const SURUM = 'diji-v452-baby-papi-3d-20261115';
+const SURUM = 'diji-v453-premium-ad-play-20261115';
 const SAYFA = 'sayfa-' + SURUM, KAYNAK = 'kaynak-' + SURUM;
 // Cached on first use; never download the A2 catalog at startup.
 const LAZY_TOPIC_FILES = new Set(['konu-oyunlari-a1.js','konu-oyunlari-a2.js','topic-games-core.mjs']);
@@ -131,4 +131,5 @@ async function boundedNetwork(event, request, bucket, key, budget) {
     ]);
   } finally {clearTimeout(timer);}
 }
+
 
