@@ -1,6 +1,7 @@
 /* Keep the teacher workspace open while child screens come and go. */
 (()=>{'use strict';
 const style=document.createElement('link');style.rel='stylesheet';style.href='teacher-workspace.css?v=20261110-spacious-home-3';document.head.append(style);
+const selectedStyle=document.createElement('link');selectedStyle.rel='stylesheet';selectedStyle.href='teacher-dashboard-selected.css?v=20261115-design1';document.head.append(selectedStyle);
 const $=id=>document.getElementById(id),token=()=>{try{return JSON.parse(sessionStorage.getItem('dm_tp_session')||'null')?.teacherToken||sessionStorage.getItem('ing_ogr_token')||'';}catch{return sessionStorage.getItem('ing_ogr_token')||'';}};
 const ownedToolReady=new Promise(resolve=>{
  const script=document.createElement('script');script.src='teacher-owned-tools.js?v=20261112-sinif-yok';
@@ -273,11 +274,11 @@ function dmRemoveTeacherBottomTab(){
  nav?.querySelectorAll('[data-ekran="tab-teacher-portal"]').forEach(x=>{x.hidden=true;x.style.display='none';});
 }
 function dmMidnightHome(board,openOriginal){
- const icon=name=>`<span class="dm-teacher-icon dm-teacher-icon--${name}" aria-hidden="true"></span>`;
- board.className='dm-v2-dashboard dm-midnight-home';
+ const icon=name=>`<img class="dm-approved-icon" src="teacher-dashboard-assets/${name}.svg" alt="" aria-hidden="true">`;
+ board.className='dm-v2-dashboard dm-midnight-home dm-approved-home';
  board.innerHTML=`
   <header class="dm-midnight-brand"><span><i aria-hidden="true">${icon('cap')}</i> Diji Medu</span><span>Öğretmen Paneli</span></header>
-  <section class="dm-midnight-hero dm-midnight-raised" aria-labelledby="dmTeacherGreeting">
+  <section class="dm-midnight-hero dm-midnight-raised dm-approved-welcome" aria-labelledby="dmTeacherGreeting">
    <img src="papi-help-v2.png" alt="">
    <div>
     <h1 id="dmTeacherGreeting">Merhaba Öğretmenim!</h1>
@@ -287,16 +288,17 @@ function dmMidnightHome(board,openOriginal){
      <button type="button" class="dm-midnight-raised" data-home-classes><i aria-hidden="true">${icon('school')}</i><span><b data-v2-classes>—</b>Sınıf</span></button>
     </div>
    </div>
+   <img class="dm-approved-school" src="teacher-dashboard-assets/school.svg" alt="" aria-hidden="true">
   </section>
   <button type="button" class="dm-midnight-parkur-switch" data-teacher-parkur-switch aria-label="Kişisel Parkur hesabıma geç">
-   <span aria-hidden="true">🌿</span><strong>Kişisel Parkur’a Geç</strong><span aria-hidden="true">›</span>
+   <span aria-hidden="true" class="dm-approved-sprout">${icon('leaf')}</span><strong>Kişisel Parkur’a Geç</strong><span aria-hidden="true" class="dm-approved-next">${icon('arrow-right')}</span>
   </button>
   <section class="dm-midnight-section" aria-labelledby="dmHomeShortcuts">
    <h2 id="dmHomeShortcuts"><i aria-hidden="true">${icon('bolt')}</i> Hızlı Erişim</h2>
    <div class="dm-midnight-shortcuts"></div>
   </section>
   <section class="dm-midnight-section" aria-labelledby="dmHomeActions">
-   <h2 id="dmHomeActions"><i aria-hidden="true">${icon('bolt')}</i> Hızlı İşlemler</h2>
+   <h2 id="dmHomeActions"><i aria-hidden="true">${icon('sparkle')}</i> Hızlı İşlemler</h2>
    <div class="dm-midnight-actions"></div>
   </section>`;
  const classes=()=>window.dmTeacherClassesOpen?window.dmTeacherClassesOpen():openOriginal('classroom');
@@ -308,16 +310,16 @@ function dmMidnightHome(board,openOriginal){
  personalParkur.onclick=()=>window.dmTeacherPortalParkur?.();
  const add=(target,label,art,run)=>{
   const button=document.createElement('button');
-  button.type='button';button.className='dm-midnight-raised';
+  button.type='button';button.className='dm-midnight-raised dm-approved-tile';
   button.innerHTML=`<i aria-hidden="true">${art}</i><strong>${label}</strong>`;
   button.onclick=run;target.append(button);
   return button;
  };
  const shortcuts=board.querySelector('.dm-midnight-shortcuts');
  add(shortcuts,'Sözlü Yap',icon('mic'),dmOpenCanonicalOral);
- add(shortcuts,'Sınıf Oluştur',icon('people')+'<sup>+</sup>',()=>openOriginal('classroom'));
+ add(shortcuts,'Sınıf Oluştur',icon('people-add'),()=>openOriginal('classroom'));
  add(shortcuts,'Raporlar',icon('chart'),dmReportDialog);
- add(shortcuts,'Artı-Eksi Ver','<span class="dm-midnight-signs"><b>+</b><b>−</b></span>',()=>openOwnedTool('performance'));
+ add(shortcuts,'Artı-Eksi Ver',icon('plus-minus'),()=>openOwnedTool('performance'));
  const actions=board.querySelector('.dm-midnight-actions');
  add(actions,'Ödev Ver',icon('clipboard'),()=>openOwnedTool('legacyHomework'));
  add(actions,'Sınıfına Duyuru Yap',icon('megaphone'),()=>openOwnedTool('legacyAnnouncement'));
@@ -328,7 +330,7 @@ function dmMidnightHome(board,openOriginal){
  add(actions,'Konu Anlat',icon('books'),()=>openOriginal('study'));
  // Direct access to the actual teacher-owned classroom and comprehensive reports.
  add(actions,'Sınıflarım',icon('school'),classes);
- add(actions,'Sınıf Raporları',icon('chart'),()=>{
+ add(actions,'Sınıf Raporları',icon('report'),()=>{
   if(window.dmTeacherReportsOpen)window.dmTeacherReportsOpen();
   else window.yoToast?.('Sınıf raporları yüklenemedi. Sayfayı yenile.');
  });
