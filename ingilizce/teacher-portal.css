@@ -385,3 +385,156 @@ html.dm-teacher-portal body #tpDashboard .tp-real-tools>button[hidden]{display:n
 .tp-application .tp-application-location .tp-location-native:focus-visible{
  outline:2px solid #00777d;outline-offset:2px;
 }
+
+/* Approved teacher panel, concept 2. Scoped to the dashboard; home is independent. */
+@layer bilgiIslands {
+html.dm-teacher-portal body #tpDashboard.tp-approved{
+ --ta-ink:#073249;--ta-teal:#008b84;--ta-gold:#ffc72e;
+ background:#fffaf2!important;color:var(--ta-ink)!important;overflow:auto!important;
+ top:0!important;bottom:calc(78px + env(safe-area-inset-bottom,0px))!important;
+ padding-top:env(safe-area-inset-top,0px)!important;
+}
+html.dm-teacher-portal body #tpDashboard.tp-approved *{box-sizing:border-box}
+html.dm-teacher-portal body #tpDashboard.tp-approved .tp-dash-wrap{
+ width:min(100%,850px)!important;max-width:850px!important;height:auto!important;min-height:100%!important;
+ padding:0 12px 14px!important;gap:12px!important;display:flex!important;flex-direction:column!important;
+}
+html.dm-teacher-portal body #tpDashboard.tp-approved button{font-family:inherit;cursor:pointer}
+html.dm-teacher-portal body #tpDashboard.tp-approved button:focus-visible,html.dm-teacher-portal body #tpDashboard.tp-approved summary:focus-visible{outline:3px solid #e5a500!important;outline-offset:3px}
+html.dm-teacher-portal body #tpDashboard.tp-approved .tp-dash-hero{
+ position:relative;display:flex!important;align-items:center!important;gap:9px!important;margin:0 -12px!important;
+ padding:20px 15px 38px!important;min-height:94px!important;flex:none!important;
+ border-radius:0 0 48% 8% / 0 0 15% 7%!important;border-bottom:3px solid var(--ta-gold)!important;
+ background:linear-gradient(115deg,#082a46 10%,#005f6b 75%,#009889)!important;color:#fff!important;
+}
+html.dm-teacher-portal body #tpDashboard.tp-approved .tp-dash-hero h1{font-size:clamp(15px,3.9vw,22px)!important;color:#fff!important;flex:1;margin:0!important;text-align:center;line-height:1.15}
+html.dm-teacher-portal body #tpDashboard.tp-approved .tp-approved-brand{border:0!important;border-radius:0!important;border-right:1px solid #ffffff70!important;background:transparent!important;color:#fff!important;font-weight:900!important;font-size:clamp(14px,3.8vw,21px)!important;padding:5px 10px 5px 0!important;margin:0!important;white-space:nowrap}
+html.dm-teacher-portal body #tpDashboard.tp-approved .tp-approved-sync{background:#ffffff12!important;color:#fff!important;border:1px solid #ffffff50!important;border-radius:50%!important;flex:0 0 34px!important;width:34px!important;height:34px!important;padding:0!important;margin:0!important;font-size:23px!important}
+html.dm-teacher-portal body #tpDashboard.tp-approved .tp-approved-welcome{
+ position:relative;margin-top:-28px;padding:16px 12px 12px;border:1px solid #f1dcba;border-radius:27px;
+ background:linear-gradient(125deg,#fffefd,#fff8ed);box-shadow:0 5px 10px #735c3820;flex:none;
+}
+html.dm-teacher-portal body #tpDashboard.tp-approved .tp-approved-intro{display:grid;grid-template-columns:minmax(0,1fr) 31%;align-items:center;gap:4px}
+html.dm-teacher-portal body #tpDashboard.tp-approved .tp-approved-intro h2{font-size:clamp(21px,5.5vw,32px);line-height:1.12;margin:0 0 8px;font-weight:950;color:#073249}
+html.dm-teacher-portal body #tpDashboard.tp-approved .tp-approved-intro p{font-size:clamp(12px,3.1vw,16px);line-height:1.4;margin:0 0 10px;color:#315361}
+html.dm-teacher-portal body #tpDashboard.tp-approved .tp-approved-art{display:inline-block!important;flex:none!important;background-image:url('teacher-assets/approved-teacher-2.webp');background-size:400% 400%;background-repeat:no-repeat;width:42px;height:42px;vertical-align:middle}
+html.dm-teacher-portal body #tpDashboard.tp-approved .tp-approved-papi{background-position:0 0;width:100%;height:auto;aspect-ratio:1;transform:scale(1.15);transform-origin:center}
+html.dm-teacher-portal body #tpDashboard.tp-approved[data-tool-page="1"] .tp-approved-papi{background-position:33.333% 0}
+html.dm-teacher-portal body #tpDashboard.tp-approved .tp-art-game{background-position:66.667% 0}
+html.dm-teacher-portal body #tpDashboard.tp-approved .tp-art-clipboard{background-position:100% 0}
+html.dm-teacher-portal body #tpDashboard.tp-approved .tp-art-school{background-position:0 33.333%}
+html.dm-teacher-portal body #tpDashboard.tp-approved .tp-art-chart{background-position:33.333% 33.333%}
+html.dm-teacher-portal body #tpDashboard.tp-approved .tp-art-pencil{background-position:66.667% 33.333%}
+html.dm-teacher-portal body #tpDashboard.tp-approved .tp-art-award{background-position:100% 33.333%}
+html.dm-teacher-portal body #tpDashboard.tp-approved .tp-art-megaphone{background-position:0 66.667%}
+html.dm-teacher-portal body #tpDashboard.tp-approved .tp-art-chat{background-position:33.333% 66.667%}
+html.dm-teacher-portal body #tpDashboard.tp-approved .tp-art-target{background-position:66.667% 66.667%}
+html.dm-teacher-portal body #tpDashboard.tp-approved .tp-art-people{background-position:100% 66.667%}
+html.dm-teacher-portal body #tpDashboard.tp-approved .tp-art-key{background-position:0 100%}
+html.dm-teacher-portal body #tpDashboard.tp-approved .tp-art-exam{background-position:33.333% 100%}
+html.dm-teacher-portal body #tpDashboard.tp-approved .tp-art-mic{background-position:66.667% 100%}
+html.dm-teacher-portal body #tpDashboard.tp-approved .tp-art-gear{background-position:100% 100%}
+html.dm-teacher-portal body #tpDashboard.tp-approved .tp-dash-metrics{display:flex!important;gap:7px!important;flex-wrap:wrap!important;margin:0!important}
+html.dm-teacher-portal body #tpDashboard.tp-approved .tp-dash-metrics>span{display:flex;align-items:center;justify-content:center;gap:4px;border:1px solid #9ed8d2;border-radius:13px;padding:7px 8px;background:linear-gradient(120deg,#fff,#daf5f0);font-size:12px;flex:1;white-space:nowrap;box-shadow:0 3px 5px #135b5812}
+html.dm-teacher-portal body #tpDashboard.tp-approved .tp-dash-metrics>span+span{background:linear-gradient(120deg,#fff,#fff2cc);border-color:#edd296}
+html.dm-teacher-portal body #tpDashboard.tp-approved .tp-dash-metrics b{font-size:20px!important;margin:0!important;color:#073249}
+html.dm-teacher-portal body #tpDashboard.tp-approved .tp-approved-code{display:flex;align-items:center;gap:6px;padding:7px;margin:13px 0 10px;background:#d9f4ec;border-radius:16px}
+html.dm-teacher-portal body #tpDashboard.tp-approved .tp-approved-code>span{font-size:12px;font-weight:850;flex:1}
+html.dm-teacher-portal body #tpDashboard.tp-approved .tp-approved-code b{font-size:clamp(16px,4.8vw,23px);letter-spacing:2px;white-space:nowrap;background:#fff;border-radius:22px;padding:7px 10px;color:#007d75;box-shadow:0 2px 5px #175a4920}
+html.dm-teacher-portal body #tpDashboard.tp-approved .tp-approved-code button{background:linear-gradient(#00b7a8,#007b76);color:white;border:1px solid #81e6da;border-radius:20px;padding:9px;font-weight:850;min-height:38px;box-shadow:0 2px 3px #105c5130}
+html.dm-teacher-portal body #tpDashboard.tp-approved .tp-approved-invite{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+html.dm-teacher-portal body #tpDashboard.tp-approved .tp-approved-invite button{border:1px solid #7bc9bd;background:#fffefa;color:#075364;min-height:44px;border-radius:17px;font-size:15px;font-weight:900;box-shadow:0 3px 4px #175a4920}
+html.dm-teacher-portal body #tpDashboard.tp-approved .tp-approved-invite button+button{background:linear-gradient(#ffe66b,#ffc400);border-color:#ffd13c;color:#063848}
+html.dm-teacher-portal body #tpDashboard.tp-approved[data-tool-page="1"] .tp-approved-invite button+button{background:linear-gradient(#00b5a7,#00827a);border-color:#5ddacd;color:#fff}
+html.dm-teacher-portal body #tpDashboard.tp-approved .tp-dash-status:empty{display:none}
+html.dm-teacher-portal body #tpDashboard.tp-approved .tp-dash-status{margin:8px 0 0!important;font-size:12px!important;color:#7c3a24!important}
+html.dm-teacher-portal body #tpDashboard.tp-approved .tp-approved-shortcuts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+html.dm-teacher-portal body #tpDashboard.tp-approved .tp-approved-shortcuts button{display:flex;align-items:center;gap:9px;min-height:62px;padding:7px 12px;border:1px solid #5bd2c1;border-radius:20px;background:linear-gradient(135deg,#00b6a3,#007c75);color:#fff;font-weight:900;font-size:19px;box-shadow:0 4px 5px #27605025}
+html.dm-teacher-portal body #tpDashboard.tp-approved .tp-approved-shortcuts button>span:last-child{margin-left:auto;font-size:25px}
+html.dm-teacher-portal body #tpDashboard.tp-approved .tp-dash-main{position:relative;display:block!important;overflow:visible!important;flex:none!important;min-height:0!important;padding:22px 9px 10px!important;margin-top:15px!important;border:1px solid #e8b84d!important;border-radius:24px!important;background:#fffcf5!important}
+html.dm-teacher-portal body #tpDashboard.tp-approved .tp-dash-main>h2{position:absolute;left:10px;top:-17px;display:flex;align-items:center;gap:8px;background:linear-gradient(#ffe375,#ffc527);padding:6px 14px;border:1px solid #ffd052;border-radius:13px;box-shadow:0 3px 4px #bd91332a;color:#073249;font-size:21px!important;margin:0!important}
+html.dm-teacher-portal body #tpDashboard.tp-approved .tp-real-tools{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;grid-template-rows:none!important;gap:10px!important;min-height:0!important}
+html.dm-teacher-portal body #tpDashboard.tp-approved .tp-real-tools>button{
+ display:grid!important;grid-template-columns:43px minmax(0,1fr) 9px!important;grid-template-rows:auto!important;align-items:center!important;gap:6px!important;
+ min-height:64px!important;height:auto!important;min-width:0!important;padding:8px 7px!important;border:1px solid #fff!important;border-radius:17px!important;
+ background:linear-gradient(120deg,#fff,#fcfaf7)!important;color:#073249!important;-webkit-text-fill-color:#073249!important;
+ box-shadow:0 4px 5px #4e473c25!important;overflow:visible!important;
+}
+html.dm-teacher-portal body #tpDashboard.tp-approved .tp-real-tools>button>span{width:43px!important;height:43px!important;font-size:0!important;border-radius:11px!important;background-color:#e0f5f3}
+html.dm-teacher-portal body #tpDashboard.tp-approved .tp-real-tools>button:nth-child(4n+1)>span{background-color:#d9f4ff}
+html.dm-teacher-portal body #tpDashboard.tp-approved .tp-real-tools>button:nth-child(4n+2)>span{background-color:#eee5ff}
+html.dm-teacher-portal body #tpDashboard.tp-approved .tp-real-tools>button:nth-child(4n+3)>span{background-color:#d9f9ec}
+html.dm-teacher-portal body #tpDashboard.tp-approved .tp-real-tools>button:nth-child(4n)>span{background-color:#fff1cd}
+html.dm-teacher-portal body #tpDashboard.tp-approved .tp-real-tools>button>strong{color:#073249!important;-webkit-text-fill-color:#073249!important;font:900 clamp(12px,3.5vw,17px)/1.18 Nunito,system-ui,sans-serif!important;overflow-wrap:normal!important;word-break:normal!important;min-width:0!important}
+html.dm-teacher-portal body #tpDashboard.tp-approved .tp-real-tools>button>i{font-size:19px;font-style:normal;color:#5b6c70}
+html.dm-teacher-portal body #tpDashboard.tp-approved .tp-real-tools>button[hidden]{display:none!important}
+html.dm-teacher-portal body #tpDashboard.tp-approved .tp-account-settings{flex:none;border:1px solid #79c8bb;border-radius:19px;background:#fffdf7;box-shadow:0 3px 5px #305b4b18}
+html.dm-teacher-portal body #tpDashboard.tp-approved .tp-account-settings summary{display:flex;align-items:center;gap:9px;min-height:50px;padding:7px 11px;cursor:pointer;list-style:none}
+html.dm-teacher-portal body #tpDashboard.tp-approved .tp-account-settings summary::-webkit-details-marker{display:none}
+html.dm-teacher-portal body #tpDashboard.tp-approved .tp-account-settings summary .tp-approved-art{width:32px;height:32px}
+html.dm-teacher-portal body #tpDashboard.tp-approved .tp-account-settings strong{font-size:16px;font-weight:900;white-space:nowrap}
+html.dm-teacher-portal body #tpDashboard.tp-approved .tp-account-settings small{font-size:10px;color:#49616a}
+html.dm-teacher-portal body #tpDashboard.tp-approved .tp-settings-chevron{margin-left:auto;font-size:22px}
+html.dm-teacher-portal body #tpDashboard.tp-approved .tp-account-settings[open] .tp-settings-chevron{transform:rotate(90deg)}
+html.dm-teacher-portal body #tpDashboard.tp-approved .tp-dash-menu{display:flex!important;flex-wrap:wrap!important;background:transparent!important;gap:6px!important;padding:10px!important}
+html.dm-teacher-portal body #tpDashboard.tp-approved .tp-dash-menu button{background:#e2f7f0!important;color:#075364!important;border:1px solid #9ddacf!important;border-radius:12px!important;font-size:13px!important;padding:10px!important;min-height:44px!important}
+html.dm-teacher-portal body #tpDashboard.tp-approved .tp-dash-menu .tp-dash-logout{color:#a63030!important;background:#ffe9e5!important;border-color:#ffc2b8!important}
+html.dm-teacher-portal body #tpDashboard.tp-approved [data-teacher-identity] .cog-ogretmen-kart{background:transparent!important;padding:0 10px 10px!important;color:#21484e!important}
+html.dm-teacher-portal body #tpDashboard.tp-approved [data-teacher-identity] .cog-ogretmen-kart>b,html.dm-teacher-portal body #tpDashboard.tp-approved [data-teacher-identity] .kod,html.dm-teacher-portal body #tpDashboard.tp-approved #cogK1,html.dm-teacher-portal body #tpDashboard.tp-approved #cogK2,html.dm-teacher-portal body #tpDashboard.tp-approved #cogCreateStudents{display:none!important}
+html.dm-teacher-portal body #tpDashboard.tp-approved .tp-tools-pager{display:flex;gap:22px;min-height:44px;margin:0;color:#073249;font-weight:850;font-size:16px}
+html.dm-teacher-portal body #tpDashboard.tp-approved .tp-tools-pager button{border:1px solid #97d2c5;border-radius:18px;background:#e2f6ef;color:#164d55;padding:9px 17px;min-height:42px;font-size:15px;font-weight:800;box-shadow:0 3px 4px #31524815}
+html.dm-teacher-portal body #tpDashboard.tp-approved .tp-tools-pager button:last-child:enabled{background:linear-gradient(#00b5a7,#00847e);color:#fff;border-color:#3dd2bf}
+html.dm-teacher-portal body #tpDashboard.tp-approved .tp-tools-pager button:disabled{opacity:.45;cursor:default;box-shadow:none}
+html.dm-teacher-portal body #tpDashboard.tp-approved .tp-tools-pager[hidden]{display:none!important}
+html.dm-teacher-portal body.tp-dash-active #tpTeacherDock{height:calc(78px + env(safe-area-inset-bottom,0px))!important;background:#fffcf6!important;border:1px solid #e8e0d6!important;border-radius:24px 24px 0 0!important;box-shadow:0 -3px 12px #594f3c15!important}
+html.dm-teacher-portal body.tp-dash-active #tpTeacherDock>button.active{background:linear-gradient(#b9f8e8,#7bdfd1)!important;box-shadow:0 3px 5px #248b7725!important}
+@media(max-width:360px){
+ html.dm-teacher-portal body #tpDashboard.tp-approved .tp-dash-wrap{gap:10px!important;padding-left:8px!important;padding-right:8px!important}
+ html.dm-teacher-portal body #tpDashboard.tp-approved .tp-approved-code{flex-wrap:wrap}
+ html.dm-teacher-portal body #tpDashboard.tp-approved .tp-approved-code>span{flex-basis:100%}
+ html.dm-teacher-portal body #tpDashboard.tp-approved .tp-real-tools>button{grid-template-columns:32px minmax(0,1fr) 6px!important;gap:4px!important;padding:7px 5px!important}
+ html.dm-teacher-portal body #tpDashboard.tp-approved .tp-real-tools>button>span{width:32px!important;height:32px!important}
+ html.dm-teacher-portal body #tpDashboard.tp-approved .tp-account-settings small{display:none}
+}
+@media(min-width:701px){
+ html.dm-teacher-portal body #tpDashboard.tp-approved .tp-dash-wrap{padding:0 25px 22px!important;gap:16px!important}
+ html.dm-teacher-portal body #tpDashboard.tp-approved .tp-dash-hero{margin:0 -25px!important}
+ html.dm-teacher-portal body #tpDashboard.tp-approved .tp-approved-welcome{padding:22px}
+ html.dm-teacher-portal body #tpDashboard.tp-approved .tp-approved-intro{grid-template-columns:minmax(0,1fr) 150px}
+ html.dm-teacher-portal body #tpDashboard.tp-approved .tp-real-tools>button{min-height:82px!important;padding:12px!important;grid-template-columns:52px minmax(0,1fr) 14px!important}
+ html.dm-teacher-portal body #tpDashboard.tp-approved .tp-real-tools>button>span{width:52px!important;height:52px!important}
+}
+}
+@layer bilgiIslands {
+html.dm-teacher-portal body #tpDashboard.tp-approved .tp-approved-intro{grid-template-columns:31% minmax(0,1fr)}
+html.dm-teacher-portal body #tpDashboard.tp-approved .tp-approved-intro>div{order:2}
+html.dm-teacher-portal body #tpDashboard.tp-approved .tp-approved-papi{order:1}
+html.dm-teacher-portal body #tpDashboard.tp-approved .tp-approved-shortcuts [data-dash="tools"]{display:none}
+html.dm-teacher-portal body #tpDashboard.tp-approved[data-tool-page="1"] .tp-approved-intro{grid-template-columns:minmax(0,1fr) 31%}
+html.dm-teacher-portal body #tpDashboard.tp-approved[data-tool-page="1"] .tp-approved-intro>div{order:1}
+html.dm-teacher-portal body #tpDashboard.tp-approved[data-tool-page="1"] .tp-approved-papi{order:2}
+html.dm-teacher-portal body #tpDashboard.tp-approved[data-tool-page="1"] .tp-approved-shortcuts{grid-template-columns:repeat(3,minmax(0,1fr))}
+html.dm-teacher-portal body #tpDashboard.tp-approved[data-tool-page="1"] .tp-approved-shortcuts button{display:flex;flex-direction:column;gap:4px;justify-content:center;background:linear-gradient(125deg,#fff,#e8ddff);color:#073249;min-height:80px;font-size:16px;border-color:#ded0ee}
+html.dm-teacher-portal body #tpDashboard.tp-approved[data-tool-page="1"] .tp-approved-shortcuts button:nth-child(2){background:linear-gradient(125deg,#fff,#ffe9b1);border-color:#f1d49e}
+html.dm-teacher-portal body #tpDashboard.tp-approved[data-tool-page="1"] .tp-approved-shortcuts button:nth-child(3){background:linear-gradient(125deg,#fff,#c6f2e3);border-color:#adddce}
+html.dm-teacher-portal body #tpDashboard.tp-approved[data-tool-page="1"] .tp-approved-shortcuts button>span:last-child:not(.tp-approved-art){display:none}
+html.dm-teacher-portal body #tpDashboard.tp-approved[data-tool-page="1"] .tp-dash-main{margin-top:0!important;border:0!important;padding:0!important;background:transparent!important}
+html.dm-teacher-portal body #tpDashboard.tp-approved[data-tool-page="1"] .tp-dash-main>h2{display:none!important}
+html.dm-teacher-portal body #tpDashboard.tp-approved[data-tool-page="1"] .tp-real-tools>button{min-height:65px!important;background:linear-gradient(120deg,#fff,#dff3ff)!important}
+html.dm-teacher-portal body #tpDashboard.tp-approved[data-tool-page="1"] .tp-real-tools>button:nth-child(4n+2){background:linear-gradient(120deg,#fff,#f9e7f1)!important}
+html.dm-teacher-portal body #tpDashboard.tp-approved[data-tool-page="1"] .tp-real-tools>button:nth-child(4n+3){background:linear-gradient(120deg,#fff,#dff4e9)!important}
+html.dm-teacher-portal body #tpDashboard.tp-approved[data-tool-page="1"] .tp-real-tools>button:nth-child(4n){background:linear-gradient(120deg,#fff,#fff0cc)!important}
+@media(max-height:900px) and (max-width:700px){
+ html.dm-teacher-portal body #tpDashboard.tp-approved .tp-dash-wrap{gap:9px!important}
+ html.dm-teacher-portal body #tpDashboard.tp-approved .tp-dash-hero{min-height:78px!important;padding-top:14px!important;padding-bottom:28px!important}
+ html.dm-teacher-portal body #tpDashboard.tp-approved .tp-approved-welcome{padding:12px 10px 10px;border-radius:23px;margin-top:-20px}
+ html.dm-teacher-portal body #tpDashboard.tp-approved .tp-approved-intro h2{font-size:21px;margin-bottom:5px}
+ html.dm-teacher-portal body #tpDashboard.tp-approved .tp-approved-intro p{font-size:12px;margin-bottom:7px}
+ html.dm-teacher-portal body #tpDashboard.tp-approved .tp-approved-code{margin:10px 0 8px;padding:5px}
+ html.dm-teacher-portal body #tpDashboard.tp-approved .tp-approved-invite button{min-height:40px;font-size:14px}
+ html.dm-teacher-portal body #tpDashboard.tp-approved .tp-approved-shortcuts button{min-height:51px}
+ html.dm-teacher-portal body #tpDashboard.tp-approved .tp-real-tools{gap:8px!important}
+ html.dm-teacher-portal body #tpDashboard.tp-approved .tp-real-tools>button{min-height:55px!important;padding:7px 6px!important}
+ html.dm-teacher-portal body #tpDashboard.tp-approved .tp-account-settings summary{min-height:44px;padding:5px 10px}
+}
+}
