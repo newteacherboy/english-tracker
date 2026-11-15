@@ -95,7 +95,7 @@ html.dm-teacher-portal .dml-page{padding-bottom:calc(110px + env(safe-area-inset
 @media(prefers-reduced-motion:reduce){.dml-page,.dml-sheet{animation:none}}`;
 
   const cache = {};
-  let page = null, data = null, st = { period: 'week', scope: 'all', cat: 'genel', loading: false, err: '' };
+  let page = null, data = null, st = { period: 'week', scope: 'all', cat: 'genel', tab: 'students', search: '', filter: 'all', expanded: false, loading: false, err: '' };
 
   async function load(period, force) {
     const c = cache[period];
@@ -133,39 +133,59 @@ html.dm-teacher-portal .dml-page{padding-bottom:calc(110px + env(safe-area-inset
     }).join('');
   }
 
+
+  const CATEGORY_ICONS = { genel:'🏆',kelime:'🎯',dogruluk:'⚡',sure:'⏱️',gelisen:'🚀',ilerleme:'🧭',seri:'🔥',odev:'📚' };
+  const LEADER_ICONS = {kelime:'🎯',dogruluk:'⚡',sure:'⏱️',gelisen:'🚀',ilerleme:'🧭',seri:'🔥',odev:'📚'};
+  function currentScope() { return data?.scopes?.[st.scope] || data?.scopes?.all; }
+  function ranking(sc) {
+    const category=sc?.categories?.[st.cat] || {rows:[],hidden:0,total:0};
+    const text=st.search.toLocaleLowerCase('tr-TR').trim();
+    let rows=category.rows.map(x=>({...x,...stu(x.id)}));
+    if(text) rows=rows.filter(x=>(x.name+' '+(x.cls||'')).toLocaleLowerCase('tr-TR').includes(text));
+    if(st.filter==='top') rows=rows.filter(x=>Number(x.rank)<=3);
+    if(st.filter==='active') rows=rows.filter(x=>Number(x.m?.minutes||0)>0||Number(x.m?.xp||0)>0);
+    return {category,rows};
+  }
+  function studentRows(sc) {
+    const {category,rows}=ranking(sc),shown=st.expanded?rows:rows.slice(0,5);
+    const items=shown.map(r=>'<button type="button" class="dml-student" data-student="'+esc(r.id)+'"><span class="dml-rank">'+esc(r.rank)+'</span><span class="dml-avatar">'+esc(r.ini||'?')+'</span><span class="dml-student-name"><b>'+esc(r.name)+'</b><small>'+esc(r.cls||'Öğrenci')+'</small></span><span class="dml-student-score">'+esc(r.value)+'</span><span class="dml-next">›</span></button>').join('');
+    const empty='<p class="dml-empty">'+esc(st.search?'Aradığın öğrenci bulunamadı.':(EMPTY_HINT[st.cat]||'Bu dönemde henüz sıralama verisi yok.'))+'</p>';
+    const more=rows.length>5?'<button type="button" class="dml-seeall" data-expand>'+ (st.expanded?'Daha az göster':'Tümünü gör ('+rows.length+')')+' ⌄</button>':'';
+    const locked=category.hidden?'<div class="dml-private"><span>🔒</span> '+esc(category.hidden)+' öğrenci daha · Öğretmen Pro ile görüntülenir <button type="button" data-unlock>Kilidi aç</button></div>':'';
+    return '<div class="dml-student-list">'+(items||empty)+more+locked+'</div>';
+  }
+  function leaderTiles(sc) {
+    return LEADERS.map(([k,title,subtitle,tone])=>{
+      const locked=sc.leaders[k]?.locked, l=!locked&&sc.leaders[k]?{...sc.leaders[k],...stu(sc.leaders[k].id)}:null;
+      return '<button type="button" class="dml-achievement" '+(locked?'data-unlock':'data-cat="'+k+'"')+'><span class="dml-achievement-icon">'+LEADER_ICONS[k]+'</span><span class="dml-tag '+tone+'">'+esc(title)+'</span><small>'+esc(subtitle)+'</small><b>'+ (locked?'🔒 Pro ile görünür':l?esc(l.name):'Henüz yok')+'</b></button>';
+    }).join('');
+  }
   function render() {
-    if (!page) return;
-    const d = data, sc = d?.scopes?.[st.scope] || d?.scopes?.all;
-    const classChips = d ? [`<button type="button" class="dml-chip" data-scope="all" aria-pressed="${st.scope === 'all'}">Tüm öğrencilerim</button>`, ...d.classes.map(c => `<button type="button" class="dml-chip" data-scope="${esc(c.id)}" aria-pressed="${st.scope === c.id}">${esc(c.label)}</button>`)].join('') : '';
-    const seg = PERIODS.map(([k, t]) => `<button type="button" data-period="${k}" aria-pressed="${st.period === k}">${t}</button>`).join('');
-    let body = '';
-    if (st.loading && !d) body = '<p class="dml-msg" role="status">Sıralama yükleniyor…</p>';
-    else if (!d) body = `<p class="dml-msg bad" role="alert">${esc(st.err || 'Sıralama yüklenemedi.')}</p><button type="button" class="dml-chip" data-retry>Tekrar dene</button>`;
-    else if (!d.classes.length && !sc.count) body = `<div class="dml-start"><span aria-hidden="true">🏫</span><b class="dml-st">Henüz sınıfın yok</b><p>Önce sınıfını oluştur. Öğrencilerin sınıf koduyla katılınca sıralama burada görünür.</p><button type="button" data-classes>➕ Sınıf oluştur</button></div>`;
-    else if (!sc.count) body = `<div class="dml-start"><span aria-hidden="true">👥</span><b class="dml-st">${st.scope === 'all' ? 'Henüz öğrencin yok' : 'Bu sınıfta henüz öğrenci yok'}</b><p>Sınıf kodunu öğrencilerinle paylaş. Kodla katılan öğrenciler burada sıralanır.</p><button type="button" data-classes>👥 Öğrenci ekle</button></div>`;
+    if(!page)return;
+    const d=data,sc=currentScope();
+    const classChips=d?[{id:'all',label:'Tüm öğrencilerim'},...d.classes].map(c=>'<button type="button" class="dml-chip" data-scope="'+esc(c.id)+'" aria-pressed="'+(st.scope===c.id)+'">'+esc(c.label)+'</button>').join(''):'';
+    const periods=PERIODS.map(([k,t])=>'<button type="button" data-period="'+k+'" aria-pressed="'+(st.period===k)+'">'+t+'</button>').join('');
+    const scopeName=st.scope==='all'?'Tüm öğrencilerim':d?.classes?.find(c=>c.id===st.scope)?.label||'Sınıfım';
+    const count=sc?.count||0;
+    let body='';
+    if(st.loading&&!d)body='<p class="dml-msg" role="status">Sınıf verileri yükleniyor…</p>';
+    else if(!d)body='<p class="dml-msg bad" role="alert">'+esc(st.err||'Sınıf verileri yüklenemedi.')+'</p><button type="button" class="dml-chip" data-retry>Tekrar dene</button>';
+    else if(!d.classes.length&&!count)body='<div class="dml-start"><span>🏫</span><b class="dml-st">Henüz sınıfın yok</b><p>İlk sınıfını oluşturarak öğrenci gelişimini takip etmeye başla.</p><button type="button" data-classes>＋ Sınıf oluştur</button></div>';
     else {
-      const champ = sc.leaders.genel && { ...sc.leaders.genel, ...stu(sc.leaders.genel.id) };
-      const champHtml = champ ? `<button type="button" class="dml-champ" data-student="${esc(champ.id)}">${av(champ)}<span><small>${CHAMP[st.period]} · Genel</small><b>${esc(champ.name)}</b><span class="v">${esc(champ.value)}${champ.cls ? ' · ' + esc(champ.cls) : ''}</span></span><span class="n" aria-hidden="true">1</span></button>` : '';
-      const league = st.scope === 'all' && d.classLeague.length > 1 ? (() => {
-        const max = Math.max(1, ...d.classLeague.map(c => c.avg));
-        return `<section class="dml-box" aria-label="Sınıflar Ligi"><h2>Sınıflar Ligi <small>ortalama genel puan</small></h2>${d.classLeague.map(c => `<div class="dml-bar"><span>${esc(c.label)}</span><i><u style="width:${Math.round(100 * c.avg / max)}%"></u></i><span>${c.avg.toLocaleString('tr-TR')}</span></div>`).join('')}</section>`;
-      })() : '';
-      const catChips = CATS.map(([k, t]) => `<button type="button" class="dml-chip cat" data-cat="${k}" aria-pressed="${st.cat === k}">${t}</button>`).join('');
-      const att = sc.attention;
-      const attHtml = att.count ? (d.unlocked
-        ? `<section class="dml-att" aria-label="Dikkat isteyenler"><h2>Dikkat isteyenler · ${att.count} öğrenci</h2>${att.rows.map(x => ({ ...x, ...stu(x.id) })).map(r => `<div class="r"><span>${esc(r.name)} <small style="font-weight:700">${esc(r.cls)}</small></span><span>${esc(r.why)}</span></div>`).join('')}</section>`
-        : '') : '';
-      // Ücretsiz plan: kilitli öğrenciler ve dikkat isteyenler tek, okunaklı Pro kartında (sabit alt çubuk yok;
-      // öğretmen alt menüsünün arkasında kalmaz).
-      const lockedN = Math.max(0, sc.count - (sc.categories.genel?.rows.length || 0));
-      const proHtml = !d.unlocked && (lockedN || att.count) ? `<section class="dml-pro" aria-label="Öğretmen Pro"><div class="dml-pro-top"><span class="ic" aria-hidden="true">🔒</span><div><b>Tüm sınıfını gör</b><small>${[lockedN ? `+${lockedN} öğrenci` : '', att.count ? `${att.count} dikkat isteyen öğrenci` : ''].filter(Boolean).join(' ve ')} Öğretmen Pro ile açılır.</small></div></div><ul><li>Tüm öğrencilerin tam sıralaması</li><li>Dikkat isteyen öğrenciler ve nedenleri</li></ul><button type="button" data-unlock>Kilidi aç</button></section>` : '';
-      body = `${champHtml}<div class="dml-grid">${leaderCards(sc)}</div>${league}
-<section class="dml-box" aria-label="Sıralama"><h2>${esc(CATS.find(c => c[0] === st.cat)[1])} sıralaması <small>${sc.categories[st.cat].total} öğrenci</small></h2><div class="dml-row" style="margin:0 0 6px">${catChips}</div>${rowsHtml(st.cat, sc)}</section>
-${proHtml}${attHtml}<p class="dml-note">Lig XP’sine öğretmenin ders içi +/- puanları dahil değildir. Süre: hafta/ay için oyun süreleri, tüm zamanlar için uygulamadaki aktif süre.${st.err ? ` <b style="color:#B3261E">${esc(st.err)}</b>` : ''}</p>`;
+      const metrics=[['kelime','🎯','Kelime Kralı'],['dogruluk','⚡','Keskin Nişancı'],['gelisen','🚀','Roket'],['seri','🔥','Ateş Serisi']];
+      const quick=metrics.map(([key,ic,title])=>{const l=sc?.leaders?.[key];return '<button type="button" class="dml-metric" '+(l?.locked?'data-unlock':'data-cat="'+key+'"')+'><span>'+ic+'</span><b>'+title+'</b><small>'+(l?.locked?'🔒 Pro':l?esc(stu(l.id).name):'Henüz yok')+'</small></button>';}).join('');
+      const tabs=[['students','👥','Öğrenciler'],['performance','▥','Performans'],['reports','▤','Raporlar']].map(([id,ic,label])=>'<button type="button" data-tab="'+id+'" aria-pressed="'+(st.tab===id)+'">'+ic+' '+label+'</button>').join('');
+      const catChips=CATS.map(([k,t])=>'<button type="button" class="dml-chip cat" data-cat="'+k+'" aria-pressed="'+(st.cat===k)+'">'+t+'</button>').join('');
+      const att=sc?.attention||{count:0,rows:[]};
+      const league=st.scope==='all'&&d.classLeague?.length>1?'<section class="dml-box"><h2>Sınıflar Ligi <small>Ortalama genel puan</small></h2>'+d.classLeague.map(c=>'<div class="dml-bar"><span>'+esc(c.label)+'</span><i><u style="width:'+Math.round(100*c.avg/Math.max(1,...d.classLeague.map(x=>x.avg)))+'%"></u></i><span>'+Number(c.avg).toLocaleString('tr-TR')+'</span></div>').join('')+'</section>':'';
+      const attHtml=att.count&&d.unlocked?'<section class="dml-att"><h2>Dikkat isteyenler · '+att.count+' öğrenci</h2>'+att.rows.map(x=>({...x,...stu(x.id)})).map(r=>'<div class="r"><span>'+esc(r.name)+'</span><span>'+esc(r.why)+'</span></div>').join('')+'</section>':'';
+      const proHtml=!d.unlocked&&(Math.max(0,count-(sc?.categories?.genel?.rows?.length||0))||att.count)?'<section class="dml-pro"><div class="dml-pro-top"><span class="ic">🔒</span><div><b>Tüm sınıfını gör</b><small>Tam sıralama ve dikkat isteyen öğrenciler · Öğretmen Pro</small></div></div><ul><li>Tüm öğrencilerin tam sıralaması</li><li>Dikkat isteyen öğrenciler ve nedenleri</li></ul><button type="button" data-unlock>Kilidi aç</button></section>':'';
+      const students='<div class="dml-searchbar"><label><span>⌕</span><input data-search type="search" placeholder="Öğrenci ara..." aria-label="Öğrenci ara" value="'+esc(st.search)+'"></label><select data-filter aria-label="Öğrenci filtresi"><option value="all" '+(st.filter==='all'?'selected':'')+'>Tümü</option><option value="top" '+(st.filter==='top'?'selected':'')+'>İlk 3</option><option value="active" '+(st.filter==='active'?'selected':'')+'>Aktif</option></select></div><div class="dml-manage-row"><button type="button" data-add-students>＋ Öğrenci Ekle</button><button type="button" data-classes>👥 Sınıfı Yönet</button></div><div class="dml-section-head"><h2>Öğrenci Listesi</h2><span>'+count+' öğrenci</span></div><div class="dml-category-scroll">'+catChips+'</div>'+studentRows(sc);
+      const performance='<div class="dml-section-head"><h2>Başarı Rozetleri</h2><span>'+esc(PERIODS.find(p=>p[0]===st.period)[1])+'</span></div><div class="dml-grid">'+leaderTiles(sc)+'</div>'+league+attHtml;
+      const reports='<div class="dml-section-head"><h2>Genel sıralaması</h2><span>'+count+' öğrenci</span></div><div class="dml-category-scroll">'+catChips+'</div>'+studentRows(sc)+league+attHtml+'<button type="button" class="dml-report-action" data-class-reports>▥ Ayrıntılı Sınıf Raporları</button>';
+      body='<section class="dml-class-banner"><span class="dml-class-icon">🏫</span><div><b>'+esc(scopeName)+'</b><small>Sınıf bilgilerini görüntüle ve yönet.</small></div><span class="dml-class-count">👥 <strong>'+count+'</strong><small>Öğrenci</small></span></section><div class="dml-metrics">'+quick+'</div><div class="dml-tabs" role="group" aria-label="Sınıfım bölümleri">'+tabs+'</div>'+({students,performance,reports}[st.tab]||students)+proHtml+'<p class="dml-note">Sıralama ve başarı verileri seçilen döneme aittir. Lig XP’sine öğretmenin ders içi +/- puanları dahil değildir.</p>';
     }
-    const cta = '';
-    page.innerHTML = `<div class="dml-wrap"><div class="dml-top"><button type="button" class="dml-ib" data-close aria-label="Geri">‹</button><h1>Sınıfım</h1><button type="button" class="dml-ib" data-refresh aria-label="Yenile">↻</button><button type="button" class="dml-ib dark" data-board aria-label="Tahtaya yansıt"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><rect x="3" y="4" width="18" height="12" rx="2"></rect><path d="M12 16v4M8 20h8"></path></svg></button></div>
-${d && !d.classes.length && !sc?.count ? '' : `<div class="dml-row" role="group" aria-label="Sınıf">${classChips}</div><div class="dml-seg" role="group" aria-label="Dönem">${seg}</div>`}${body}</div>${cta}`;
+    page.innerHTML='<div class="dml-wrap"><header class="dml-top"><button type="button" class="dml-ib" data-close aria-label="Geri">‹</button><div class="dml-heading"><h1>Sınıfım</h1><small>Sınıf performansı ve öğrenciler</small></div><button type="button" class="dml-ib" data-refresh aria-label="Yenile">↻</button><button type="button" class="dml-ib dark" data-board aria-label="Tahtaya yansıt">▣</button></header>'+(d?'<div class="dml-row" role="group" aria-label="Sınıf seçimi">'+classChips+'</div><div class="dml-seg" role="group" aria-label="Dönem">'+periods+'</div>':'')+body+'</div>';
   }
 
   function findStudent(id) { return data?.students?.[id] ? { id, ...data.students[id] } : null; }
@@ -211,9 +231,13 @@ ${rows.length > 3 ? `<ol>${rows.slice(3, 15).map(r => `<li><span>${r.rank}. ${es
     if (t.matches('[data-refresh]')) return fetchPeriod(true);
     if (t.matches('[data-retry]')) return fetchPeriod(true);
     if (t.matches('[data-classes]')) return manageClasses();
+    if (t.matches('[data-add-students]')) { if(window.dmTeacherBulkStudentsOpen) return window.dmTeacherBulkStudentsOpen(); return manageClasses(); }
+    if (t.matches('[data-class-reports]')) { if(window.dmTeacherReportsOpen) return window.dmTeacherReportsOpen(); st.err='Rapor ekranı yüklenemedi.'; return render(); }
+    if (t.dataset.tab) { st.tab=t.dataset.tab; st.expanded=false; return render(); }
+    if (t.matches('[data-expand]')) { st.expanded=!st.expanded; return render(); }
     if (t.dataset.period && t.dataset.period !== st.period) { st.period = t.dataset.period; return fetchPeriod(false); }
-    if (t.dataset.scope) { st.scope = t.dataset.scope; return render(); }
-    if (t.dataset.cat) { st.cat = t.dataset.cat; render(); if (t.classList.contains('dml-lc')) page.querySelector('[aria-label="Sıralama"]')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); return; }
+    if (t.dataset.scope) { st.scope = t.dataset.scope; st.expanded=false; return render(); }
+    if (t.dataset.cat) { st.cat = t.dataset.cat; st.expanded=false; if(t.classList.contains('dml-metric')||t.classList.contains('dml-achievement'))st.tab='reports'; return render(); }
     if (t.dataset.student) return studentCard(t.dataset.student);
   }
 
@@ -236,7 +260,10 @@ ${rows.length > 3 ? `<ol>${rows.slice(3, 15).map(r => `<li><span>${r.rank}. ${es
     if (page) return;
     if (!doc.getElementById('dml-css')) { const s = doc.createElement('style'); s.id = 'dml-css'; s.textContent = CSS; doc.head.appendChild(s); }
     page = doc.createElement('div'); page.className = 'dml-page'; page.setAttribute('role', 'dialog'); page.setAttribute('aria-modal', 'true'); page.setAttribute('aria-label', 'Sınıfım');
-    page.addEventListener('click', onClick); doc.addEventListener('keydown', onKey);
+    page.addEventListener('click', onClick);
+    page.addEventListener('input', e => { if(e.target.matches('[data-search]')) { st.search=e.target.value; const cursor=e.target.selectionStart; render(); const field=page.querySelector('[data-search]');field?.focus();try{field?.setSelectionRange(cursor,cursor)}catch{} } });
+    page.addEventListener('change', e => { if(e.target.matches('[data-filter]')) { st.filter=e.target.value; st.expanded=false; render(); } });
+    doc.addEventListener('keydown', onKey);
     doc.body.appendChild(page); sync(true);
     fetchPeriod(false);
   }
