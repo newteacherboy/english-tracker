@@ -1,8 +1,16 @@
 /* Approved teacher-home concept 1 — scoped to the existing, working code-login home.
    Existing click handlers, the owner-only tools, and the teacher dock are retained. */
-html.dm-teacher-portal body.tp-home-active,
-html.dm-teacher-portal body.tp-home-active #tpTeacherHome.is-visible {
-  background: radial-gradient(ellipse at 45% -12%,#b3eaff 0%,transparent 58%),linear-gradient(180deg,#d7f1ff 0%,#eaf7ff 52%,#e6f5ff 100%)!important;
+html.dm-teacher-portal body.tp-home-active {
+  background-color:#e6f5ff!important;
+  background-image:radial-gradient(ellipse at 45% -12%,#b3eaff 0%,transparent 58%),linear-gradient(180deg,#d7f1ff 0%,#eaf7ff 52%,#e6f5ff 100%)!important;
+}
+html[data-dm-theme="day"].dm-teacher-portal body.tp-home-active #tpTeacherHome.is-visible {
+  background-color:#edf7ff!important;
+  background-image:radial-gradient(ellipse at 45% -12%,#b3eaff 0%,transparent 58%),linear-gradient(180deg,#d7f1ff 0%,#eaf7ff 52%,#e6f5ff 100%)!important;
+}
+html[data-dm-theme="night"].dm-teacher-portal body.tp-home-active #tpTeacherHome.is-visible {
+  background-color:#101b31!important;
+  background-image:none!important;
 }
 html.dm-teacher-portal body.tp-home-active #tpTeacherHome.is-visible:has(#dmTeacherDesignV2.dm-approved-home) {
   overflow-y:auto!important;
