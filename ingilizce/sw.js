@@ -35,7 +35,7 @@ self.addEventListener('fetch', e => {
   // Reward and progression code must never be served from a stale PWA cache.
   // Native clients already bypass this worker. Supabase requests are never cached.
   // A network failure is surfaced instead of replaying an outdated reward flow.
-  if (url.origin === self.location.origin &&
+  if ((!self.location?.origin || url.origin === self.location.origin) &&
       /\/(?:progression(?:-api)?|reward(?:s|-policy|-engine|-ui)?|parkur(?:-core|-progress|-rewards)?|solo(?:-games|-levels|-rewards)?|premium-(?:word-match(?:-core)?|cloud-flight|word-blocks|intro)|papizzle|topic-games-core|konu-oyunlari-a[12]|lazy-games)\.(?:js|mjs|json|css)$/.test(url.pathname)) {
     e.respondWith(fetch(r,{cache:'no-store'}));
     return;
