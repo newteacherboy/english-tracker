@@ -34,6 +34,7 @@ test('each student game has its own Papi hero and back reopens the saved level s
  w.aktifOgrenciAdi='learner';w.apiURL='/api';w.setTimeout=()=>0;
  w.fetch=async()=>Response.json({ok:true,number:3,classNo:1,units:[1],words:[],label:'1. Sınıf',totalLevels:320});
  w.eval(read('ingilizce/solo-levels.js'));
+ for(const starter of ['kelimeYarismasiBaslat','jeopardyOyunuBaslat','boslukOyunuBaslat','hafizaOyunuBaslat','yagmurOyunuBaslat','kelimebulOyunuBaslat','esOyunuBaslat','trenOyunuBaslat'])w[starter]=()=>{};
  const keys=['ky','jp','bosluk','hafiza','yagmur','kelimebul','eslestirme','tren','dikte','cumle','harfbahcesi','fener','canavar'];
  const names=new Set();
  for(const game of keys){
