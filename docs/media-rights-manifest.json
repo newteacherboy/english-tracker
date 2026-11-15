@@ -2693,6 +2693,153 @@
       "bytes": 1493489,
       "status": "ai-generated",
       "source": "docs/premium-skill-artwork.json"
+    },
+    {
+      "path": "ingilizce/teacher-dashboard-assets/arrow-right.svg",
+      "sha256": "5cbb8cb8f29fa9994860ac85599451b619b8e040891c18eb79abc75c633f3a73",
+      "bytes": 829,
+      "status": "original-vector",
+      "source": "Custom SVG vector authored for user-approved Diji-Medu Teacher Dashboard Design 1, 2026-11-15; no external imagery."
+    },
+    {
+      "path": "ingilizce/teacher-dashboard-assets/bolt.svg",
+      "sha256": "5976602425b19375b8706d8265998ebe7eed6031d4872aaee2e956833aa18658",
+      "bytes": 844,
+      "status": "original-vector",
+      "source": "Custom SVG vector authored for user-approved Diji-Medu Teacher Dashboard Design 1, 2026-11-15; no external imagery."
+    },
+    {
+      "path": "ingilizce/teacher-dashboard-assets/book.svg",
+      "sha256": "e0c3ebe3d8d1dd5e9204cd5c01793384e3882ff713e1cda56a26cc73e6a8f22c",
+      "bytes": 1001,
+      "status": "original-vector",
+      "source": "Custom SVG vector authored for user-approved Diji-Medu Teacher Dashboard Design 1, 2026-11-15; no external imagery."
+    },
+    {
+      "path": "ingilizce/teacher-dashboard-assets/books.svg",
+      "sha256": "e75533aeec2f2947c336a1f47088658f3f29d8013f954cac2c6952293dcb34c8",
+      "bytes": 1087,
+      "status": "original-vector",
+      "source": "Custom SVG vector authored for user-approved Diji-Medu Teacher Dashboard Design 1, 2026-11-15; no external imagery."
+    },
+    {
+      "path": "ingilizce/teacher-dashboard-assets/cap.svg",
+      "sha256": "ca1294b05788932394a784320529008be0e9b377425e70c16f2e0136fa10e410",
+      "bytes": 1062,
+      "status": "original-vector",
+      "source": "Custom SVG vector authored for user-approved Diji-Medu Teacher Dashboard Design 1, 2026-11-15; no external imagery."
+    },
+    {
+      "path": "ingilizce/teacher-dashboard-assets/chart.svg",
+      "sha256": "a7823f916a5fd48236c84c47518a70baac29d134534591d1aca2bc900fd49323",
+      "bytes": 1024,
+      "status": "original-vector",
+      "source": "Custom SVG vector authored for user-approved Diji-Medu Teacher Dashboard Design 1, 2026-11-15; no external imagery."
+    },
+    {
+      "path": "ingilizce/teacher-dashboard-assets/chat.svg",
+      "sha256": "682e1d5b066fb599cca4049ab6e773b603586b2b2ec39c9c5c50e667cab15a9d",
+      "bytes": 1015,
+      "status": "original-vector",
+      "source": "Custom SVG vector authored for user-approved Diji-Medu Teacher Dashboard Design 1, 2026-11-15; no external imagery."
+    },
+    {
+      "path": "ingilizce/teacher-dashboard-assets/clipboard.svg",
+      "sha256": "15cb83a5069a3d203db67bd0fabb4963f8a770e9cc2e9f20b07e9c40de24e5ba",
+      "bytes": 1137,
+      "status": "original-vector",
+      "source": "Custom SVG vector authored for user-approved Diji-Medu Teacher Dashboard Design 1, 2026-11-15; no external imagery."
+    },
+    {
+      "path": "ingilizce/teacher-dashboard-assets/games.svg",
+      "sha256": "17c8aa8c85112393086d7a13970b3aa54c8e1408e816f3d42973c5ff682bdc64",
+      "bytes": 1096,
+      "status": "original-vector",
+      "source": "Custom SVG vector authored for user-approved Diji-Medu Teacher Dashboard Design 1, 2026-11-15; no external imagery."
+    },
+    {
+      "path": "ingilizce/teacher-dashboard-assets/home.svg",
+      "sha256": "8cd78161a8f6b797dbf970cc956c42e0d35aa7ce6fb93f86426fe83bdf73120c",
+      "bytes": 1035,
+      "status": "original-vector",
+      "source": "Custom SVG vector authored for user-approved Diji-Medu Teacher Dashboard Design 1, 2026-11-15; no external imagery."
+    },
+    {
+      "path": "ingilizce/teacher-dashboard-assets/laurel.svg",
+      "sha256": "334f25eeb5c34ddf6125c20fc734d6d6b8bf54d347ca0c0c00da2356823c3869",
+      "bytes": 800,
+      "status": "original-vector",
+      "source": "Custom SVG vector authored for user-approved Diji-Medu Teacher Dashboard Design 1, 2026-11-15; no external imagery."
+    },
+    {
+      "path": "ingilizce/teacher-dashboard-assets/leaf.svg",
+      "sha256": "9305273c14bb7f37db6e877ef837c8547ee6295ab48db822f3e5759bce33e491",
+      "bytes": 1083,
+      "status": "original-vector",
+      "source": "Custom SVG vector authored for user-approved Diji-Medu Teacher Dashboard Design 1, 2026-11-15; no external imagery."
+    },
+    {
+      "path": "ingilizce/teacher-dashboard-assets/megaphone.svg",
+      "sha256": "84a0502f006d8fabee3dde5168febbca91219d817064b9109715c7853272979c",
+      "bytes": 1150,
+      "status": "original-vector",
+      "source": "Custom SVG vector authored for user-approved Diji-Medu Teacher Dashboard Design 1, 2026-11-15; no external imagery."
+    },
+    {
+      "path": "ingilizce/teacher-dashboard-assets/mic.svg",
+      "sha256": "bb22dfb9a2d5063f37c431b0d9f5f0307e0aec6ac1c40eb5584f491510c4e2f5",
+      "bytes": 1138,
+      "status": "original-vector",
+      "source": "Custom SVG vector authored for user-approved Diji-Medu Teacher Dashboard Design 1, 2026-11-15; no external imagery."
+    },
+    {
+      "path": "ingilizce/teacher-dashboard-assets/people-add.svg",
+      "sha256": "952bfdab6773068e4b069571086bf1a86aff9dee2f4005be2242931db8aa67ba",
+      "bytes": 1039,
+      "status": "original-vector",
+      "source": "Custom SVG vector authored for user-approved Diji-Medu Teacher Dashboard Design 1, 2026-11-15; no external imagery."
+    },
+    {
+      "path": "ingilizce/teacher-dashboard-assets/people.svg",
+      "sha256": "5f51b9e3a26add970a2db02b22bad2fa97319bdd15cacb5fbb5a2659fbdf6027",
+      "bytes": 1019,
+      "status": "original-vector",
+      "source": "Custom SVG vector authored for user-approved Diji-Medu Teacher Dashboard Design 1, 2026-11-15; no external imagery."
+    },
+    {
+      "path": "ingilizce/teacher-dashboard-assets/plus-minus.svg",
+      "sha256": "88a741082f6b3b91e487b3eb574826ca9d5e9cc646b3f1cf5e75fd00ad24d584",
+      "bytes": 1049,
+      "status": "original-vector",
+      "source": "Custom SVG vector authored for user-approved Diji-Medu Teacher Dashboard Design 1, 2026-11-15; no external imagery."
+    },
+    {
+      "path": "ingilizce/teacher-dashboard-assets/report.svg",
+      "sha256": "a8c3d15adc733ee0cc2949ccf988fd4c47639279af3f68e1560f1335c3d72484",
+      "bytes": 1058,
+      "status": "original-vector",
+      "source": "Custom SVG vector authored for user-approved Diji-Medu Teacher Dashboard Design 1, 2026-11-15; no external imagery."
+    },
+    {
+      "path": "ingilizce/teacher-dashboard-assets/school.svg",
+      "sha256": "224774fcd570a7e42a54b8fddc0de4c2034b95d1fc60b0116c9e1f0950240da3",
+      "bytes": 1254,
+      "status": "original-vector",
+      "source": "Custom SVG vector authored for user-approved Diji-Medu Teacher Dashboard Design 1, 2026-11-15; no external imagery."
+    },
+    {
+      "path": "ingilizce/teacher-dashboard-assets/sparkle.svg",
+      "sha256": "2debbd7045bbfc1df68ccfec25303165c5c21453cbfeebcc8bafcd699e4d19e1",
+      "bytes": 887,
+      "status": "original-vector",
+      "source": "Custom SVG vector authored for user-approved Diji-Medu Teacher Dashboard Design 1, 2026-11-15; no external imagery."
+    },
+    {
+      "path": "ingilizce/teacher-dashboard-assets/trophy.svg",
+      "sha256": "6a175c5e7caf889482efd8327a9322b32053b35be82934dde91de71a66e4be52",
+      "bytes": 1109,
+      "status": "original-vector",
+      "source": "Custom SVG vector authored for user-approved Diji-Medu Teacher Dashboard Design 1, 2026-11-15; no external imagery."
     }
   ]
 }
