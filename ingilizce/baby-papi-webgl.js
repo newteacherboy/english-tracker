@@ -43,7 +43,7 @@ function mount(canvas){
  for(let y=0;y<rows;y++)for(let x=0;x<cols;x++){let k=y*(cols+1)+x;indices.push(k,k+cols+1,k+1,k+1,k+cols+1,k+cols+2);}
  function buffer(target,arr){let b=gl.createBuffer();gl.bindBuffer(target,b);gl.bufferData(target,arr,gl.STATIC_DRAW);return b;}
  const pb=buffer(gl.ARRAY_BUFFER,new Float32Array(verts)),nb=buffer(gl.ARRAY_BUFFER,new Float32Array(norms)),ib=buffer(gl.ELEMENT_ARRAY_BUFFER,new Uint16Array(indices));
- gl.enableVertexAttribArray(P);gl.enableVertexAttribArray(N);gl.enable(gl.DEPTH_TEST);
+ gl.enableVertexAttribArray(P);gl.enableVertexAttribArray(N);gl.disable(gl.DEPTH_TEST);
  let running=true,mood='idle',time=0,previous=0,raf=0;
  function draw(ms){
   if(!running)return;let dt=previous?Math.min((ms-previous)/1000,.08):0;previous=ms;time+=dt;
@@ -62,7 +62,7 @@ function mount(canvas){
    if(mood==='comfort'){if(part.kind==='head'||part.kind==='eye'||part.kind==='beak')roll=.05*Math.sin(t*3);if(part.kind==='wing')roll=part.side*.11*Math.sin(t*3);}
    if(mood==='talk'&&part.kind==='beak'&&part.id!=='beak')z-=.06*(.5+.5*Math.sin(t*14));
    if(mood==='idle'&&part.kind!=='foot')z+=.02*Math.sin(t*2.5);
-   gl.uniform3f(loc.pos,x,y,z);gl.uniform3f(loc.rad,...part.r);gl.uniform3f(loc.tint,...part.c);gl.uniform1f(loc.yaw,yaw);gl.uniform1f(loc.roll,roll);gl.uniform1f(loc.pitch,pitch);
+   gl.uniform3f(loc.pos,x,y,z);gl.uniform3f(loc.rad,part.r[0],part.r[1],part.r[2]);gl.uniform3f(loc.tint,part.c[0],part.c[1],part.c[2]);gl.uniform1f(loc.yaw,yaw);gl.uniform1f(loc.roll,roll);gl.uniform1f(loc.pitch,pitch);
    gl.drawElements(gl.TRIANGLES,indices.length,gl.UNSIGNED_SHORT,0);
   }
   raf=requestAnimationFrame(draw);
