@@ -151,7 +151,7 @@ function dmVerifyAdminRole(){
  dmAdminRolePendingToken=current;
  void api('ogretmenBilgim').then(info=>{
   if(token()!==current)return;
-  dmAdminRoleVerified=info.yonetici===true;dmAdminRoleToken=current;
+  dmAdminRoleVerified=info.yonetici===true;dmAdminRoleToken=current;window.dmTeacherVerifiedAdmin=dmAdminRoleVerified;window.dmTeacherVerifiedAdminToken=current;window.dispatchEvent(new Event('dm:teacher-admin-role-verified'));
   $('dmTeacherDesignV2')?.dmSyncAdminTools?.(dmAdminRoleVerified);
  }).catch(()=>{
   if(token()!==current)return;
