@@ -437,7 +437,7 @@
   function cevap(iyi, dogruMetin,actual) {
     if (O._cevaplandi) return;
     if(O.i<12)window.dmVerifiedGames?.record(O.i,actual===undefined?O.verifiedAnswer:actual,O.runId);
-    if(iyi)window.DijiMeduPapiFeedback?.correct({detail:dogruMetin||'Doğru cevap!',duration:850,card:false}); O._cevaplandi = true;
+    O._cevaplandi = true;
     if (zamanlayici) { clearInterval(zamanlayici); zamanlayici = null; }
     O.sonuclar[O.i] = iyi;
     const yardimli = typeof actual === 'string' && actual.startsWith(window.DMRouteQuestions?.ASSISTED || '~yardim~');
@@ -460,7 +460,14 @@
     const english=word&&typeof EN==='function'?EN(word):'';
     if(!iyi&&!sinifModu()&&word)window.dmWrongWords?.add({en:english,tr:translated,source:'macera-haritasi'});
     g.innerHTML = (O._pas ? '🔄 Pas geçtin (doğru sayıldı)' : iyi ? ['✨ Büyü tuttu!', '✨ Harika!', '✨ Mükemmel!'][Math.floor(Math.random() * 3)] : '💨 Olmadı!') + (!iyi ? `<div style="font-size:13.5px;margin-top:4px">Doğru kelime: <b>${kac(english||dogruMetin||'')}</b><br>Türkçesi: <b>${kac(translated||'')}</b></div>` : dogruMetin ? `<div style="font-size:13.5px;margin-top:4px">${kac(dogruMetin)}</div>` : '');
-    let alan = $('bzAlan'); alan.appendChild(g);
+    let alan = $('bzAlan');
+    // Keep the answer and reward flow intact; replace only the feedback presentation.
+    const papiWalkReady=!!window.DMRoutePapiWalk?.show&&!sinifModu();
+    if(papiWalkReady){
+      g.hidden=true;
+      window.DMRoutePapiWalk.show(!!iyi,english||dogruMetin||'',translated||'');
+    }
+    alan.appendChild(g);
     O.gecmis[O.i] = { tip: O.sorular[O.i].tip, html: alan.innerHTML };
     let kalanSoru = O.i + 1 < O.sorular.length, enerjiNotu = kalanSoru && O.i!==0 && !sinifModu() && O.sorular[O.i+1].tip!=='sesliFinal' ? ' · ⚡ −1' : '';
     let dev = document.createElement('button'); dev.className = 'bz-btn mor'; dev.style.marginTop = '10px'; dev.textContent = kalanSoru ? 'Devam →' + enerjiNotu : '🏁 Sonucu gör';
