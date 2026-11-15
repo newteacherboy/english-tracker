@@ -93,6 +93,74 @@
  Object.defineProperty(window,'genelEnerjiKalan',{configurable:true,get:()=>25,set:()=>{}});
  window.dmTeacherPortalMode=true;window.dmTeacherPortalSession=state;
  document.documentElement.classList.add('dm-teacher-portal');
+
+ // Self-healing teacher visuals. This bootstrap is always requested network-first,
+ // even when an older cached index.html / teacher-portal.js is still active on iOS.
+ const mountTeacherVisualGuard=()=>{
+  if(!document.getElementById('dmTeacherVisualGuard')){
+   const style=document.createElement('style');style.id='dmTeacherVisualGuard';
+   style.textContent=`
+@layer bilgiIslands {
+ html.dm-teacher-portal body #tpDashboard.tp-approved .tp-approved-welcome .tp-approved-intro h2,
+ html.dm-teacher-portal body #tpDashboard.tp-approved .tp-approved-welcome .tp-approved-intro h2 *{
+  color:#073249!important;-webkit-text-fill-color:#073249!important;opacity:1!important;text-shadow:none!important;
+ }
+ html.dm-teacher-portal body #tpDashboard.tp-approved .tp-real-tools>button>span.tp-tool-fallback-icon{
+  display:grid!important;place-items:center!important;background-image:none!important;
+  font:normal 27px/1 "Apple Color Emoji","Segoe UI Emoji",system-ui,sans-serif!important;
+  -webkit-text-fill-color:initial!important;opacity:1!important;
+ }
+ html.dm-teacher-portal body #tpDashboard.tp-approved [data-teacher-identity] .cog-ogretmen-kart,
+ html.dm-teacher-portal body #tpDashboard.tp-approved [data-teacher-identity] .cog-ogretmen-kart small,
+ html.dm-teacher-portal body #tpDashboard.tp-approved [data-teacher-identity] .cog-ogretmen-kart>small{
+  color:#315361!important;-webkit-text-fill-color:#315361!important;opacity:1!important;text-shadow:none!important;
+ }
+ html.dm-teacher-portal body #tpDashboard.tp-approved [data-teacher-identity] #cogOgretmenKart>div>button{
+  display:flex!important;align-items:center!important;justify-content:center!important;
+  color:#075364!important;-webkit-text-fill-color:#075364!important;opacity:1!important;
+  background:#def6ee!important;border:1px solid #89d6c7!important;border-radius:12px!important;
+  white-space:normal!important;text-align:center!important;font:800 13px/1.25 Nunito,system-ui,sans-serif!important;
+  padding:9px!important;min-height:44px!important;min-width:0!important;margin:0!important;
+ }
+ html.dm-teacher-portal body #tpDashboard.tp-approved .tp-approved-code>span,
+ html.dm-teacher-portal body #tpDashboard.tp-approved .tp-account-settings summary strong{
+  color:#073249!important;-webkit-text-fill-color:#073249!important;opacity:1!important;text-shadow:none!important;
+ }
+}
+`;
+   document.head.append(style);
+  }
+  const panel=document.getElementById('tpDashboard');
+  if(!panel)return;
+  const emojiForTitle=[
+   [/^sınıfım$/i,'🏆'],[/^sınıflarım$/i,'🏫'],[/sınıf raporları/i,'📊'],
+   [/ödev/i,'📝'],[/rubrik/i,'📈'],[/performans/i,'⚡'],[/duyuru/i,'📣'],
+   [/sohbet/i,'💬'],[/rapor/i,'📊'],[/zayıf nokta/i,'🎯'],[/veli özet/i,'👨‍👩‍👧'],
+   [/şifre/i,'🔑'],[/sınav/i,'📋'],[/sözlü/i,'🎤'],[/hediye üyelik/i,'🎁'],
+   [/reklam ayarları/i,'📺'],[/bildirim gönder/i,'🔔'],[/candy papiş/i,'🍬'],
+   [/kaptan pilot papi/i,'✈️'],[/block papi/i,'🧱'],[/papizzle/i,'💎'],
+   [/öğretmenler/i,'👥'],[/öğrenci hesaplarını yönet/i,'🔐'],[/üye iletişim/i,'📇']
+  ];
+  for(const tile of panel.querySelectorAll('.tp-real-tools>button')){
+   const icon=tile.querySelector(':scope>span');if(!icon)return;
+   // Original 3D sprite icons are preserved; only legacy/empty admin icons need help.
+   if(icon.classList.contains('tp-approved-art')&&!icon.classList.contains('tp-tool-fallback-icon'))continue;
+   const label=tile.querySelector(':scope>strong')?.textContent||tile.dataset.nativeTitle||tile.textContent||'';
+   const emoji=emojiForTitle.find(([re])=>re.test(label.trim()))?.[1]||'🛠️';
+   if(icon.textContent!==emoji)icon.textContent=emoji;
+   if(!icon.classList.contains('tp-tool-fallback-icon'))icon.classList.add('tp-tool-fallback-icon');
+  }
+ };
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mountTeacherVisualGuard,{once:true});else mountTeacherVisualGuard();
+ const guardObserver=new MutationObserver(records=>{
+  // Handle tools added after the teacher/admin APIs finish without repainting continuously.
+  if(records.some(record=>[...record.addedNodes].some(node=>node.nodeType===1 &&
+   (node.id==='tpDashboard'||node.matches?.('#tpDashboard .tp-real-tools>button')||
+    node.querySelector?.('#tpDashboard,.tp-real-tools>button')))))mountTeacherVisualGuard();
+ });
+ const startGuardObserver=()=>guardObserver.observe(document.body,{subtree:true,childList:true});
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',startGuardObserver,{once:true});else if(document.body)startGuardObserver();
+
  const ss=window.sessionStorage;const prefix=()=>{try{return 'dm_tp_data:'+JSON.parse(ss.getItem('dm_tp_session')||'{}').participant.name+':';}catch{return 'dm_tp_data:preview:';}};
  const isolated={getItem:k=>ss.getItem(prefix()+k),setItem:(k,v)=>ss.setItem(prefix()+k,String(v)),removeItem:k=>ss.removeItem(prefix()+k),clear(){for(const k of Object.keys(ss))if(k.startsWith(prefix()))ss.removeItem(k);},key:i=>Object.keys(ss).filter(k=>k.startsWith(prefix()))[i]?.slice(prefix().length)||null,get length(){return Object.keys(ss).filter(k=>k.startsWith(prefix())).length;}};
  Object.defineProperty(window,'localStorage',{value:isolated,configurable:true});
