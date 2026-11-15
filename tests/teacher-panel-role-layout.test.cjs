@@ -74,7 +74,7 @@ test('account screen uses the compact layout and preserves code/invite handlers'
  assert.match(css,/\.tp-approved-code>button\{/);
  assert.match(css,/\.tp-account-settings>summary/);
  assert.match(css,/\[data-teacher-identity\] #cogOgretmenKart\[hidden\]/);
- assert.ok(index.includes('teacher-workspace.js?v=20261115-role-home-1'));
+ assert.ok(index.includes('teacher-workspace.js?v=20261115-approved-dashboard-1'));
  assert.ok(index.includes('teacher-portal.css?v=20261115-single-tile-1'));
  assert.ok(sw.includes('diji-v447-teacher-single-class-tiles-20261115'));
 });
