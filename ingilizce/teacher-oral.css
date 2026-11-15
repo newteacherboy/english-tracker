@@ -112,3 +112,15 @@
  #dmTeacherOralQuestion .dm-oral-question-heading{padding:0 45px}
  #dmTeacherOralQuestion .dm-oral-question-back{top:calc(12px + env(safe-area-inset-top,0px))!important;right:calc(12px + env(safe-area-inset-right,0px))!important}
 }
+
+/* Leave breathing room below grading and emphasize the next word action. */
+#dmTeacherOral .dm-oral-main{margin-top:14px}
+#dmTeacherOralQuestion .dm-oral-card>.dm-oral-next{
+ display:block;width:100%;margin-top:26px;min-height:54px;padding:14px 18px;
+ border:1px solid #ffe78e;border-radius:15px;
+ background:linear-gradient(135deg,#ffdf63,#ffb92d);color:#563a0c;
+ font-size:clamp(16px,4vw,20px);font-weight:900;
+ box-shadow:0 4px 0 #ce8b1c,0 8px 18px #eaa62c26;
+}
+#dmTeacherOralQuestion .dm-oral-card>.dm-oral-next:active:not(:disabled){transform:translateY(2px);box-shadow:0 2px 0 #ce8b1c}
+#dmTeacherOral .dm-oral-choices button:focus-visible{outline:3px solid #158baa;outline-offset:3px}

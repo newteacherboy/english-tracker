@@ -55,3 +55,50 @@ test('grade request is submitted even when selection control rendering throws',a
  assert.equal(w.document.querySelector('#dmTeacherOralQuestion [data-card]').dataset.result,'correct');
  w.dmTeacherOral.close();w.close();
 });
+
+test('multiple units toggle independently, skip exhausted units and preserve failed request for retry',async()=>{
+ const d=new JSDOM('<body></body>',{url:'https://test.local',runScripts:'outside-only',pretendToBeVisual:true}),w=d.window;
+ try{
+ w.eval("var apiURL='https://test.local/diji-api';Math.random=()=>.999;");w.sessionStorage.setItem('ing_ogr_token','test');
+ const draws=[];let fail=false,exhausted=false;
+ w.fetch=async(u,o)=>{
+  const b=JSON.parse(o.body);let data;
+  if(b.action==='setup')data={ok:true,pupils:[{id:'a',username:'Ada',class_no:5,branch:'A'}]};
+  if(b.action==='units')data={ok:true,units:[1,2,3]};
+  if(b.action==='draw'){
+   draws.push(b);if(fail){fail=false;throw Error('Network error');}
+   data=exhausted||b.unit===1?{ok:true,exhausted:true,mesaj:'Tüm kelimeler soruldu.'}:{ok:true,question:{id:'q',english:'Maths',turkish:'Matematik',status:'pending',expires_at:new Date(Date.now()+15000).toISOString()}};
+  }
+  if(b.action==='grade')data={ok:true,xp:20,question:{id:'q',english:'Maths',turkish:'Matematik',status:'correct'}};
+  return {ok:true,json:async()=>data};
+ };
+ w.eval(fs.readFileSync('ingilizce/teacher-oral.js','utf8'));await w.dmTeacherOral.open();
+ const el=s=>w.document.querySelector(s),unit=i=>w.document.querySelectorAll('[data-unit] + div button')[i],tick=()=>new Promise(r=>setImmediate(r));
+ el('[data-class] + div button').click();el('[data-student] + div button').click();await tick();
+ unit(0).click();unit(1).click();
+ assert.deepEqual([...el('[data-unit]').selectedOptions].map(o=>o.value),['1','2']);
+ unit(1).click();assert.equal(w.document.querySelectorAll('[data-unit] + div [aria-pressed=true]').length,1);unit(1).click();
+ el('[data-draw]').click();await tick();assert.deepEqual(draws.map(x=>x.unit),[1,2]);assert.notEqual(draws[0].requestId,draws[1].requestId);
+ assert.equal(unit(0).disabled,true);el('[data-question-back]').click();assert.equal(w.document.querySelectorAll('[data-unit] + div [aria-pressed=true]').length,2);
+ el('[data-open-question]').click();el('[data-grade=yes]').click();await tick();
+ el('[data-question-back]').click();unit(0).click();fail=true;el('[data-draw]').click();await tick();const failed=draws.at(-1);
+ el('[data-draw]').click();await tick();assert.equal(draws.at(-1).unit,failed.unit);assert.equal(draws.at(-1).requestId,failed.requestId);
+ el('[data-grade=yes]').click();await tick();exhausted=true;el('[data-next-word]').click();await tick();
+ assert.equal(el('[data-question-screen]').hidden,true);unit(1).click();assert.equal(el('[data-draw]').disabled,true);
+ }finally{w.dmTeacherOral.close();w.close();}
+});
+
+test('premium order starts with Kelime Golü and Papizzle and ends with rally for both roles',()=>{
+ const fixture=fs.readFileSync('tests/games-hub-ui.cjs','utf8').match(/body:`([\s\S]*?)`\}\);/)[1];
+ const dom=new JSDOM(fixture,{url:'https://games.test/',runScripts:'dangerously',pretendToBeVisual:true}),w=dom.window;
+ try{
+ const grid=w.document.querySelector('.az-grid2x2');
+ for(const id of ['rallyActivity','towerActivity','kelimeGoluSolo']){const b=w.document.createElement('button');b.id=id;b.className='az-gcard';b.textContent=id;grid.append(b);}
+ w.eval(fs.readFileSync('ingilizce/activity-ui.js','utf8'));
+ for(const teacher of [false,true]){
+  w.dmTeacherPortalMode=teacher;w.dmGamesUI.enter();
+  const ids=[...w.document.querySelectorAll('.gg-shelf-card')].map(c=>c.dataset.ggSource);
+  assert.deepEqual(ids.slice(0,2),['kelimeGoluSolo','papizzleActivity']);assert.equal(ids.at(-1),'rallyActivity');
+ }
+ }finally{w.close();}
+});
