@@ -471,12 +471,12 @@
     O.gecmis[O.i] = { tip: O.sorular[O.i].tip, html: alan.innerHTML };
     let kalanSoru = O.i + 1 < O.sorular.length, enerjiNotu = kalanSoru && O.i!==0 && !sinifModu() && O.sorular[O.i+1].tip!=='sesliFinal' ? ' · ⚡ −1' : '';
     let dev = document.createElement('button'); dev.className = 'bz-btn mor'; dev.style.marginTop = '10px'; dev.textContent = kalanSoru ? 'Devam →' + enerjiNotu : '🏁 Sonucu gör';
-    dev.onclick = devamEt;
+    dev.onclick = () => { window.DMRoutePapiWalk?.close(); return devamEt(); };
     alan.appendChild(dev);
     if(target.tip==='teach'&&iyi){
       dev.textContent='🎉 Tebrikler! Sorulara geç →';
       const state=O,index=O.i;let advancing=false;
-      dev.onclick=()=>{if(advancing||O!==state||O.i!==index||!dev.isConnected)return;advancing=true;dev.disabled=true;devamEt().finally(()=>{advancing=false;if(dev.isConnected)dev.disabled=false;});};
+      dev.onclick=()=>{window.DMRoutePapiWalk?.close();if(advancing||O!==state||O.i!==index||!dev.isConnected)return;advancing=true;dev.disabled=true;devamEt().finally(()=>{advancing=false;if(dev.isConnected)dev.disabled=false;});};
       setTimeout(()=>{if(O===state&&O.i===index&&dev.isConnected)dev.click();},1000);
     }
     checkpointSave(); let gs = $('bzGeriSoru'); if (gs) gs.disabled = false;
