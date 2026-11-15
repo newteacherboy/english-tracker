@@ -78,3 +78,29 @@ test('account screen uses the compact layout and preserves code/invite handlers'
  assert.ok(index.includes('teacher-portal.css?v=20261115-role-settings-1'));
  assert.ok(sw.includes('diji-v446-teacher-role-settings-20261115'));
 });
+
+test('administrator scripts never create controls from stale sessionStorage in regular teacher accounts',async()=>{
+ for(const [file,attr] of [
+  ['admin-gift.js','dmg'],['admin-ads.js','dma'],['admin-push.js','dmn']
+ ]){
+  const script=fs.readFileSync('ingilizce/'+file,'utf8');
+  const dom=new JSDOM('<!doctype html><html><body><main id="tpDashboard"><div class="tp-real-tools"></div></main></body></html>',
+   {url:'https://app.dijimedu.com/ingilizce/?ogretmen=1',runScripts:'outside-only'});
+  const w=dom.window;
+  w.dmTeacherPortalMode=true;
+  w.sessionStorage.setItem('ing_ogr_yonetici','1'); // previous account may have been admin
+  w.sessionStorage.setItem('dm_tp_session',JSON.stringify({teacherToken:'regular-teacher'}));
+  w.eval(script);
+  const tiles=w.document.querySelector('.tp-real-tools');
+  tiles.append(w.document.createElement('span'));
+  await new Promise(resolve=>setImmediate(resolve));
+  assert.equal(tiles.querySelector('[data-'+attr+']'),null,file+' must hide with unverified role');
+  w.dmTeacherVerifiedAdmin=true;w.dmTeacherVerifiedAdminToken='regular-teacher';
+  w.dispatchEvent(new w.Event('dm:teacher-admin-role-verified'));
+  assert.ok(tiles.querySelector('[data-'+attr+']'),file+' renders for verified administrator');
+  w.dmTeacherVerifiedAdmin=false;
+  w.dispatchEvent(new w.Event('dm:teacher-admin-role-verified'));
+  assert.equal(tiles.querySelector('[data-'+attr+']'),null,file+' removes card on revoked role');
+  w.close();
+ }
+});
