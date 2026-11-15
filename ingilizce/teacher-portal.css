@@ -687,3 +687,36 @@ html.dm-teacher-portal body #tpDashboard.tp-approved[data-tool-page="1"] .tp-rea
   display:none!important;
  }
 }
+
+/* Approved compact student-entry modal: one viewport until more rows are added. */
+html.dm-teacher-portal .tp-bulk-shade{align-items:center!important;padding:8px 12px!important;bottom:calc(78px + env(safe-area-inset-bottom))!important}
+html.dm-teacher-portal .tp-bulk-card{width:min(100%,560px)!important;max-height:calc(100dvh - 118px - env(safe-area-inset-bottom))!important;overflow-y:auto!important;overscroll-behavior:contain;padding:16px!important;border-radius:22px!important;background:#f8fcff!important;border:1px solid #b7d9ed!important;box-shadow:0 18px 55px #092e4b50!important}
+.tp-bulk-card h1{font-size:clamp(21px,5vw,26px)!important;color:#0b3862!important;margin:0 44px 5px 0!important;line-height:1.2}
+.tp-bulk-card .tp-close{top:9px!important;right:9px!important;background:#e9f4fc!important;color:#0b4477!important}
+.tp-bulk-card .tp-bulk-intro{margin:0 30px 12px 0!important;font-size:12px!important;line-height:1.4!important;color:#45647b!important}
+.tp-bulk-card .tp-bulk-defaults{grid-template-columns:minmax(0,1fr) minmax(0,.55fr)!important;gap:9px!important}
+.tp-bulk-card label{font-size:12px!important;margin:0!important;color:#133d5d!important}
+.tp-bulk-card input,.tp-bulk-card select{min-height:39px!important;margin-top:4px!important;padding:7px 9px!important;font-size:14px!important;border:1px solid #a8c9df!important;border-radius:10px!important}
+.tp-bulk-card .tp-bulk-extra{margin:8px 0 5px;border:1px solid #d3e5ef;border-radius:10px;padding:5px 10px;background:#fff}
+.tp-bulk-card .tp-bulk-extra summary{font-size:12px;font-weight:700;color:#315e7e;cursor:pointer}
+.tp-bulk-card .tp-bulk-extra label{display:block;margin:7px 0 3px!important}
+.tp-bulk-card .tp-pupil-title{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:8px 0 6px}
+.tp-bulk-card .tp-pupil-heading{margin:0!important;font-size:16px!important;color:#103d68!important}
+.tp-bulk-card [data-pupil-count]{background:#e1f1fd;border-radius:999px;padding:3px 9px;font-size:11px;font-weight:800;color:#16619c}
+.tp-bulk-card .tp-pupil-rows{gap:6px!important}
+.tp-bulk-card .tp-pupil-row{grid-template-columns:19px minmax(0,1fr) minmax(0,1fr) 30px!important;gap:5px!important;align-items:end!important;padding:7px!important;border-radius:11px!important;background:white!important;border-color:#d3e4f0!important}
+.tp-bulk-card .tp-pupil-row label{font-size:10px!important;min-width:0}
+.tp-bulk-card .tp-pupil-row input{width:100%!important;min-width:0!important;font-size:12px!important;padding:7px 5px!important;min-height:36px!important}
+.tp-bulk-card .tp-pupil-num{font-size:12px!important;align-self:center!important}
+.tp-bulk-card .tp-pupil-remove{padding:0!important;min-height:35px!important;height:35px!important;width:30px!important;margin:0!important;border:0!important;background:#fff0f0!important;color:#b43145!important}
+.tp-bulk-card .tp-pupil-actions{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:6px!important;margin:9px 0!important}
+.tp-bulk-card .tp-pupil-actions button{margin:0!important;padding:7px 2px!important;min-height:36px!important;min-width:0!important;font-size:11px!important;border-color:#9bc9e8!important;background:#eaf5ff!important;color:#14598b!important}
+.tp-bulk-card .tp-pupil-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:7px 0}
+.tp-bulk-card .tp-pupil-common{display:flex!important;align-items:center!important;gap:5px!important;font-size:11px!important;line-height:1.25!important}
+.tp-bulk-card .tp-pupil-common input{min-height:18px!important;height:18px!important;width:18px!important;margin:0!important;flex:none}
+.tp-bulk-card .tp-pupil-shared{display:block;margin:7px 0!important}
+.tp-bulk-card .tp-pupil-shared[hidden]{display:none!important}
+.tp-bulk-card .tp-pupil-hint{margin:8px 0!important;padding:8px!important;border-radius:10px;background:#e7f3fc;color:#365a72;font-size:11px!important;line-height:1.35!important}
+.tp-bulk-card .tp-bulk-save{position:sticky;bottom:-16px;background:linear-gradient(180deg,#f8fcffb0,#f8fcff 24%);padding:6px 0 2px;z-index:2}
+.tp-bulk-card .tp-bulk-save .tp-primary{min-height:43px!important;margin:0!important;border-radius:12px!important;background:linear-gradient(110deg,#0865aa,#003d79)!important;font-size:15px!important}
+@media(max-width:360px){.tp-bulk-card .tp-pupil-row{grid-template-columns:16px minmax(0,1fr) minmax(0,1fr) 26px!important;gap:3px!important;padding:5px!important}.tp-bulk-card .tp-pupil-row input{font-size:11px!important}.tp-bulk-card .tp-pupil-actions button{font-size:10px!important}}
