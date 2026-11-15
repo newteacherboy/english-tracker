@@ -369,3 +369,285 @@
   padding: 15px;
   border-radius: 15px;
 }
+
+/* Selected campaign announcement design; scoped to announcement only. */
+.zirve-poster {
+  overflow: hidden;
+  border-radius: 24px;
+  background: #fff;
+  border: 1px solid #ddd4ff;
+  box-shadow: 0 7px 0 #dcd8f8, 0 15px 28px #302c8040;
+  color: #362075;
+}
+.zirve-poster-hero {
+  position: relative;
+  text-align: center;
+  padding: 18px 13px 16px;
+  overflow: hidden;
+  color: white;
+  background:
+    radial-gradient(circle at 75% 35%, #d98bff80 0, transparent 40%),
+    radial-gradient(circle at 16% 56%, #f8baff69 0, transparent 34%),
+    linear-gradient(135deg, #6a35d3 0%, #8944ec 50%, #5243c2 100%);
+}
+.zirve-poster-brand {
+  font-size: 17px;
+  font-weight: 1000;
+  text-shadow: 0 2px 2px #2c166c70;
+  margin: 1px 0 14px;
+}
+.zirve-poster-brand span {
+  padding: 3px 10px;
+  margin-left: 3px;
+  font-size: 12px;
+  border-radius: 30px;
+  background: #5233c0;
+  box-shadow: 0 2px 0 #2e1b86;
+}
+.zirve-poster-date {
+  position: relative;
+  z-index: 1;
+  display: inline-block;
+  max-width: 100%;
+  border-radius: 13px;
+  padding: 10px 13px;
+  background: linear-gradient(180deg,#ffec74,#ffc939);
+  color: #42256d;
+  box-shadow: 0 4px 0 #ed9f12, 0 8px 15px #25146a40;
+  font-size: 12px;
+  font-weight: 1000;
+  letter-spacing: .4px;
+}
+.zirve-poster-headline {
+  position: relative;
+  z-index: 1;
+  margin: 18px auto 12px;
+  padding: 12px 3px 14px;
+  max-width: 440px;
+  border-radius: 28px;
+  background: linear-gradient(160deg,#6122cd,#4510a4);
+  box-shadow: 0 6px 0 #340b8e, inset 0 2px 10px #ac71fa;
+}
+.zirve-poster-headline h2 {
+  margin: 0;
+  font-size: clamp(22px,6vw,38px);
+  line-height: 1.08;
+  font-weight: 1000;
+  letter-spacing: -.9px;
+  color: #fff;
+  text-shadow: 0 3px 0 #7542bc, 0 5px 6px #2b106a;
+}
+.zirve-poster-headline h2 em {
+  display: block;
+  margin-top: 2px;
+  color: #ffde45;
+  font-size: 1.22em;
+  font-style: normal;
+  text-shadow: 0 3px 0 #cd7919, 0 5px 6px #2b106a;
+}
+.zirve-poster-cup {
+  position: absolute;
+  top: 18px;
+  left: 1px;
+  font-size: 32px;
+  transform: rotate(-14deg);
+  filter: drop-shadow(0 3px 2px #2b106a);
+}
+.zirve-poster-subhead {
+  display: inline-block;
+  position: relative;
+  z-index: 1;
+  max-width: 96%;
+  border-radius: 25px;
+  background: #fff9ff;
+  color: #442087;
+  padding: 7px 15px;
+  font-size: 13px;
+  line-height: 1.35;
+  font-weight: 1000;
+  box-shadow: 0 4px 0 #bb90f2;
+}
+.zirve-poster-scene {
+  height: 185px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  position: relative;
+  margin-top: 6px;
+}
+.zirve-poster-scene::before {
+  content: "";
+  position: absolute;
+  inset: 5px 10px 0;
+  border-radius: 50%;
+  background: radial-gradient(ellipse at center,#f2bdff95 0,transparent 64%);
+}
+.zirve-poster-scene img {
+  position: relative;
+  z-index: 2;
+  width: 175px;
+  height: 180px;
+  object-fit: contain;
+  filter: drop-shadow(0 7px 5px #250b6555);
+}
+.zirve-poster-summit {
+  position: absolute;
+  right: 10%;
+  bottom: 9px;
+  z-index: 1;
+  width: 86px;
+  height: 122px;
+  background: linear-gradient(135deg,#c9a1ff,#6950e6 80%);
+  clip-path: polygon(50% 0,100% 100%,0 100%);
+  filter: drop-shadow(0 4px 2px #31127555);
+}
+.zirve-poster-summit span {
+  position: absolute;
+  top: 10px;
+  left: 33px;
+  font-size: 25px;
+}
+.zirve-poster-present {
+  position: relative;
+  z-index: 2;
+  font-size: 43px;
+  filter: drop-shadow(0 4px 2px #39107150);
+}
+.zirve-poster-present.left { transform: rotate(-14deg) translate(8px,-2px); }
+.zirve-poster-present.right { transform: rotate(12deg) translate(-7px,-6px); }
+.zirve-poster-spark {
+  position: absolute;
+  color: #ffe34d;
+  font-size: 28px;
+  text-shadow: 0 3px #ac4ddc;
+}
+.zirve-poster-spark.a { left: 8%; top: 18%; }
+.zirve-poster-spark.b { right: 12%; top: 9%; }
+.zirve-poster-slogan {
+  position: relative;
+  z-index: 2;
+  margin: 4px auto 0;
+  padding: 12px 9px;
+  border-radius: 22px;
+  max-width: 460px;
+  background: linear-gradient(100deg,#5123bb,#7c2cce);
+  color: white;
+  box-shadow: 0 5px 0 #3c158e;
+  font-size: 15px;
+  line-height: 1.32;
+  font-weight: 1000;
+}
+.zirve-poster-lower {
+  padding: 16px 13px 18px;
+  background: linear-gradient(180deg,#fff 0%,#fcfaff 100%);
+}
+.zirve-poster-steps {
+  display: grid;
+  grid-template-columns: repeat(3,minmax(0,1fr));
+  gap: 7px;
+}
+.zirve-poster-step {
+  min-width: 0;
+  border: 1px solid #dfd4ff;
+  background: linear-gradient(180deg,#fff,#eee8ff);
+  border-radius: 16px;
+  padding: 10px 6px;
+  text-align: center;
+  box-shadow: 0 3px 0 #dfd6ff;
+}
+.zirve-poster-step-title {
+  white-space: nowrap;
+  color: #4a278d;
+  font-size: clamp(10px,2.7vw,13px);
+  font-weight: 1000;
+}
+.zirve-poster-step-title span {
+  display: inline-grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  margin-right: 2px;
+  border-radius: 50%;
+  color: #fff;
+  background: #773ee5;
+  box-shadow: 0 2px 0 #5329ae;
+}
+.zirve-poster-step-emoji {
+  display: block;
+  font-size: 29px;
+  margin: 7px 0 5px;
+}
+.zirve-poster-step p {
+  margin: 0;
+  font-size: clamp(10px,2.45vw,12px);
+  line-height: 1.32;
+  font-weight: 800;
+}
+.zirve-poster-free {
+  display: block;
+  text-align: center;
+  margin: 17px 0;
+  border-radius: 22px;
+  background: linear-gradient(180deg,#ffec6a,#ffc938);
+  color: #42216b;
+  font-size: clamp(13px,3.3vw,18px);
+  padding: 13px 9px;
+  line-height: 1.25;
+  box-shadow: 0 4px 0 #e4ae29;
+}
+.zirve-poster-prizes {
+  display: grid;
+  grid-template-columns: repeat(2,minmax(0,1fr));
+  gap: 9px;
+}
+.zirve-poster-prize {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  text-align: center;
+  gap: 5px;
+  padding: 12px 6px;
+  border: 1px solid #d7ccfc;
+  background: linear-gradient(180deg,#fff,#f4efff);
+  border-radius: 19px;
+  box-shadow: 0 4px 0 #d6c9ff;
+}
+.zirve-poster-prize > span { font-size: 32px; }
+.zirve-poster-prize p {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.25;
+  font-weight: 900;
+}
+.zirve-poster-prize strong {
+  display: block;
+  margin: 7px 0 4px;
+  border-radius: 20px;
+  background: #ffdf59;
+  color: #5830a3;
+  font-size: 23px;
+  padding: 3px 9px;
+}
+.zirve-poster-prize b { font-size: 12px; }
+.zirve-poster-tail {
+  text-align: center;
+  color: #665a80;
+  font-size: 12px;
+  line-height: 1.4;
+  margin: 13px 3px 0;
+  font-weight: 800;
+}
+@media (max-width:380px) {
+  .zirve-poster-hero { padding: 14px 8px; }
+  .zirve-poster-lower { padding: 13px 8px; }
+  .zirve-poster-headline { padding: 14px 3px; }
+  .zirve-poster-headline h2 { font-size: 23px; }
+  .zirve-poster-cup { font-size: 25px; }
+  .zirve-poster-scene { height: 155px; }
+  .zirve-poster-scene img { width: 140px; height: 150px; }
+  .zirve-poster-present { font-size: 32px; }
+  .zirve-poster-slogan { font-size: 13px; }
+  .zirve-poster-step { padding: 9px 3px; }
+  .zirve-poster-step-title span { width: 18px; height: 18px; }
+}

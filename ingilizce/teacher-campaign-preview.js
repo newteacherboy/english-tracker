@@ -168,6 +168,41 @@
   function hero() {
     return '<header class="zirve-hero"><small>20 KASIM–10 ARALIK 2026 · ÖĞRETMENLER GÜNÜ</small><h2>🏆 ÖĞRETMENİMLE<br>ZİRVEYE!</h2><p>24 Kasım Öğretmenler Gününe Özel Büyük Yarışma!</p><div class="zirve-art"><span aria-hidden="true">🏆</span><img src="daily-gift-assets/papi-gift-3d.webp" alt="Hediyesiyle 3D Papi"><span aria-hidden="true">🎁</span></div><strong class="zirve-free">KATILIM VE ÜYELİK<br>TAMAMEN ÜCRETSİZ!</strong></header>';
   }
+  function announcementVisual() {
+    return `
+      <section class="zirve-poster" aria-labelledby="zirvePosterTitle">
+        <div class="zirve-poster-hero">
+          <div class="zirve-poster-brand">✦ Diji-Medu <span>English</span></div>
+          <div class="zirve-poster-date">📅 20 KASIM – 10 ARALIK 2026</div>
+          <div class="zirve-poster-headline">
+            <span class="zirve-poster-cup" aria-hidden="true">🏆</span>
+            <h2 id="zirvePosterTitle">ÖĞRETMENİMLE<br><em>ZİRVEYE!</em></h2>
+          </div>
+          <div class="zirve-poster-subhead">24 Kasım Öğretmenler Günü’ne özel büyük yarışma!</div>
+          <div class="zirve-poster-scene" aria-hidden="true">
+            <div class="zirve-poster-summit"><span>🏆</span></div>
+            <span class="zirve-poster-spark a">✦</span><span class="zirve-poster-spark b">✧</span>
+            <span class="zirve-poster-present left">🎁</span>
+            <img src="daily-gift-assets/papi-gift-3d.webp" alt="" loading="lazy">
+            <span class="zirve-poster-present right">🎁</span>
+          </div>
+          <p class="zirve-poster-slogan">Öğrencilerini topla, puanları kap,<br>ödülleri birlikte kazan!</p>
+        </div>
+        <div class="zirve-poster-lower">
+          <div class="zirve-poster-steps" aria-label="Yarışmaya katılım adımları">
+            <div class="zirve-poster-step"><div class="zirve-poster-step-title"><span>1</span> Davet et</div><span class="zirve-poster-step-emoji" aria-hidden="true">🔗</span><p>Özel bağlantını yeni ve mevcut öğrencilerinle paylaş.</p></div>
+            <div class="zirve-poster-step"><div class="zirve-poster-step-title"><span>2</span> Puan topla</div><span class="zirve-poster-step-emoji" aria-hidden="true">🎮</span><p>Parkur, oyunlar ve öğrenme etkinlikleriyle puan kazanın.</p></div>
+            <div class="zirve-poster-step"><div class="zirve-poster-step-title"><span>3</span> Zirveye çık</div><span class="zirve-poster-step-emoji" aria-hidden="true">🚩</span><p>İlk 5 öğrencinin puanıyla grubunu zirveye taşı!</p></div>
+          </div>
+          <strong class="zirve-poster-free">📣 KATILIM VE ÜYELİK TAMAMEN ÜCRETSİZ!</strong>
+          <div class="zirve-poster-prizes" aria-label="Yarışma ödülleri">
+            <div class="zirve-poster-prize"><span aria-hidden="true">🏆</span><p>Şampiyon öğretmene<strong>3 Ay</strong><b>Premium Pro</b></p></div>
+            <div class="zirve-poster-prize"><span aria-hidden="true">🎁</span><p>Şampiyon grubun ilk 5 öğrencisine<strong>1’er Ay</strong><b>Premium Pro</b></p></div>
+          </div>
+          <p class="zirve-poster-tail">Sınıf düzeyi fark etmez; önemli olan öğretmenin davet bağlantısıyla aynı grupta yarışmak.</p>
+        </div>
+      </section>`;
+  }
   const prizes = () =>
     '<div class="zirve-rewards"><div>🏆<strong>3 ay</strong><small>Şampiyon öğretmene<br>Premium Pro</small></div><div>🎁<strong>1’er ay</strong><small>Şampiyon grubun ilk 5 öğrencisine<br>Premium Pro</small></div></div>';
   const link = () => "https://app.dijimedu.com/ingilizce/?zirve-onizleme=1";
@@ -265,11 +300,9 @@
       const body = shell();
       shade.dataset.announcement = "true";
       body.innerHTML =
-        hero() +
+        announcementVisual() +
         shareMarkup(d) +
         '<div class="zirve-actions"><button type="button" data-board>🏆 Yarışma sıralamasına geç</button></div>' +
-        '<div class="zirve-copy"><p><b>Sevgili öğretmenimiz,</b></p><p>24 Kasım Öğretmenler Günü’ne özel hazırladığımız yarışmada öğrencilerinizle birlikte zirveye çıkmaya hazır mısınız?</p><p>Size özel davet bağlantısını öğrencilerinizle paylaşın. Yeni veya mevcut öğrencileriniz bağlantınızdan yarışmaya katılsın.</p><p>Öğrencileriniz kampanya boyunca <b>Kelime Golü ve Candy Papiş</b> oyunlarını her gün <b>5’er kez ücretsiz</b> oynasın.</p><p>Üstelik Diji-Medu’daki öğrenme etkinlikleriyle de yarışma puanı kazansın!</p></div>' +
-        prizes() +
         '<span class="zirve-clock" data-countdown></span><p class="zirve-footer">Öğrencilerini Davet Et, Birlikte Zirveye Çık!</p>';
       wireShare(d, body);
       body.querySelector("[data-board]").onclick = () => open();

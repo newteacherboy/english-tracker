@@ -75,6 +75,10 @@ test("owner can inspect all views without joining, launching a game or distribut
     assert.ok(d.querySelector(".zirve-shade"));
     assert.ok(d.querySelector("#ogretmenMenuModal [data-zirve-preview-open]"));
     assert.match(d.body.textContent, /YÖNETİCİ ÖNİZLEMESİ/);
+    assert.ok(d.querySelector(".zirve-poster"), "selected announcement poster is visible");
+    assert.match(d.querySelector(".zirve-poster").textContent, /KATILIM VE ÜYELİK TAMAMEN ÜCRETSİZ/);
+    assert.equal(d.querySelectorAll(".zirve-poster-step").length, 3);
+    assert.equal(d.querySelectorAll(".zirve-poster-prize").length, 2);
     d.querySelector('[data-pv="student"]').click();
     await turn();
     assert.ok(d.querySelector("[data-goal]"));
