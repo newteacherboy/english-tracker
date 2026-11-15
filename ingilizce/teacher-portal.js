@@ -280,6 +280,7 @@
  }
 
  // Put approval management inside the existing top Teachers list, instead of a separate dashboard tile.
+
  function attachTeacherApprovals(){
   if(!mode)return;
   const panel=document.getElementById('tpDashboard');
@@ -287,13 +288,36 @@
   const candidates=[...document.querySelectorAll('[role="dialog"],.cog-perde,.rubric-modal,.dm-member-overlay')];
   const teachers=candidates.find(el=>el.getClientRects().length&&/bağımsız öğrenciler/i.test(el.textContent||'')&&/öğretmenler/i.test(el.textContent||''));
   if(!teachers||teachers.querySelector('[data-tp-unified-approvals]'))return;
-  const button=document.createElement('button');
-  button.type='button';button.dataset.tpUnifiedApprovals='1';button.className='tp-primary';
-  button.textContent='🔐 Erişim başvurularını ve özel panel kodlarını yönet';
-  button.style.cssText='display:block;width:100%;margin:12px 0;padding:12px';
-  button.onclick=()=>management();
+  ensureAdminStyle();
+  teachers.classList.add('tp-admin-teachers-list');
+  if(!document.getElementById('tp-admin-list-css')){
+   const style=document.createElement('style');style.id='tp-admin-list-css';style.textContent=
+   '.tp-admin-teachers-list{--ta-purple:#6c39d5}.tp-admin-teachers-list [data-tp-unified-approvals]{display:grid!important;grid-template-columns:1fr 1fr;gap:9px;margin:13px 0!important;padding:0!important;background:transparent!important;border:0!important;box-shadow:none!important}.tp-admin-teachers-list [data-tp-unified-approvals] button{min-width:0;min-height:68px;border:0;border-radius:15px;background:linear-gradient(115deg,#8c49e8,#5b2fc6);color:white;font-weight:900;font-size:13px;padding:11px;text-align:left;box-shadow:0 3px 0 #482596}.tp-admin-teachers-list [data-tp-unified-approvals] button small{display:block;font-size:10px;color:#eee5ff;margin-top:4px}.tp-admin-teachers-list [data-tp-teacher-search]{display:flex;gap:8px;margin:12px 0}.tp-admin-teachers-list [data-tp-teacher-search] input{flex:1;min-width:0;min-height:42px;padding:10px;border:1.5px solid #d9cafa;border-radius:13px;background:#fff;color:#241a4b;font-size:13px}.tp-admin-teachers-list [data-tp-teacher-search] select{width:106px;border:1.5px solid #d9cafa;border-radius:13px;background:#fff;color:#241a4b;font-size:12px}.tp-admin-teachers-list [data-tp-teacher-stats]{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin:10px 0}.tp-admin-teachers-list [data-tp-teacher-stats] span{padding:11px 4px;border:1px solid #e8dff7;border-radius:13px;background:#faf7ff;text-align:center;font-size:12px;color:#4d3684;font-weight:900}.tp-admin-teachers-list [data-tp-teacher-stats] b{display:block;font-size:21px;color:#271b53}.tp-admin-teachers-list [data-tp-teacher-row]{border-radius:15px!important;border-color:#e6ddf5!important;background:#fff!important;box-shadow:0 2px 0 #ece4fb;padding:11px!important;margin:8px 0!important}.tp-admin-teachers-list [data-tp-teacher-row][hidden]{display:none!important}';
+   document.head.append(style);
+  }
+  const wrapper=document.createElement('div');wrapper.dataset.tpUnifiedApprovals='1';
+  const request=document.createElement('button');request.type='button';request.innerHTML='📋 Erişim Başvuruları<small>Başvuruları incele ve onayla</small>';request.onclick=()=>management('requests');
+  const codes=document.createElement('button');codes.type='button';codes.innerHTML='🔑 Özel Panel Kodları<small>Kod oluştur · Yönet</small>';codes.onclick=()=>management('codes');
+  wrapper.append(request,codes);
   const head=teachers.querySelector('h1,h2,h3');
-  if(head)head.insertAdjacentElement('afterend',button);else teachers.prepend(button);
+  if(head)head.insertAdjacentElement('afterend',wrapper);else teachers.prepend(wrapper);
+  const rows=[...teachers.querySelectorAll('article,li')].filter(el=>/kod|öğrenci|pasif|aktif/i.test(el.textContent||'')&&!el.contains(wrapper));
+  rows.forEach(el=>el.dataset.tpTeacherRow='1');
+  const stats=document.createElement('div');stats.dataset.tpTeacherStats='1';
+  const updateStats=()=>{
+   const total=rows.length,passive=rows.filter(el=>/pasif/i.test(el.textContent||'')).length;
+   stats.innerHTML='<span><b>'+total+'</b>Toplam</span><span><b>'+(total-passive)+'</b>Aktif</span><span><b>'+passive+'</b>Pasif</span>';
+  };
+  updateStats();wrapper.insertAdjacentElement('afterend',stats);
+  const search=document.createElement('div');search.dataset.tpTeacherSearch='1';
+  search.innerHTML='<input type="search" placeholder="Öğretmen ara (ad, e-posta, kod...)" aria-label="Öğretmen ara"><select aria-label="Öğretmen durumu"><option value="all">Tümü</option><option value="active">Aktif</option><option value="passive">Pasif</option></select>';
+  stats.insertAdjacentElement('afterend',search);
+  const filter=()=>{
+   const q=search.querySelector('input').value.toLocaleLowerCase('tr-TR').trim(),status=search.querySelector('select').value;
+   for(const row of rows){const passive=/pasif/i.test(row.textContent||'');row.hidden=!( (!q||row.textContent.toLocaleLowerCase('tr-TR').includes(q))&&(status==='all'||(status==='passive'?passive:!passive)) );}
+  };
+  search.querySelector('input').addEventListener('input',filter);
+  search.querySelector('select').addEventListener('change',filter);
  }
  if(mode){const observe=new MutationObserver(()=>{requestAnimationFrame(attachTeacherApprovals);});if(document.body)observe.observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['style','class']});else document.addEventListener('DOMContentLoaded',()=>observe.observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['style','class']}),{once:true});}
  let checkedToken='',canManage=false;
