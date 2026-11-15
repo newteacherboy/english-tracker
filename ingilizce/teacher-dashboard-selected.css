@@ -13,6 +13,10 @@ html[data-dm-theme="night"].dm-teacher-portal body.tp-home-active #tpTeacherHome
   background-image:none!important;
 }
 html.dm-teacher-portal body.tp-home-active #tpTeacherHome.is-visible:has(#dmTeacherDesignV2.dm-approved-home) {
+  --dm-dock-height:clamp(75px,9.8dvh,96px);
+  bottom:calc(var(--dm-dock-height) + env(safe-area-inset-bottom,0px))!important;
+}
+html.dm-teacher-portal body.tp-home-active #tpTeacherHome.is-visible:has(#dmTeacherDesignV2.dm-approved-home) {
   overflow-y:auto!important;
   overflow-x:hidden!important;
   overscroll-behavior-y:contain;
