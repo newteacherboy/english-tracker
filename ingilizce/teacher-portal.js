@@ -344,6 +344,12 @@
   const preferred=new Set([...tiles.querySelectorAll(':scope > button[data-dash]')].map(b=>b.dataset.dash));
   const seen=new Set();
   for(const button of [...tiles.querySelectorAll(':scope > button')]){
+   // Old iOS/PWA bundles may still run a legacy injector. Keep its node hidden
+   // rather than removing it: an older MutationObserver would immediately re-add it.
+   if(button.matches('[data-dml],[data-dmc],[data-dmr]')){
+    if(!button.hidden)button.hidden=true;
+    continue;
+   }
    const key=canonicalDashboardTool(button.dataset.nativeTitle||button.querySelector('strong')?.textContent||button.textContent);
    if(!key)continue;
    if(!button.dataset.dash&&preferred.has(key)){button.remove();continue;}
@@ -353,7 +359,8 @@
  }
  function paginateDashboard(){
   const panel=document.getElementById('tpDashboard'),tiles=panel?.querySelector('.tp-real-tools');if(!tiles)return;
-  const buttons=[...tiles.children].filter(x=>x.tagName==='BUTTON');
+  dedupeDashboardTools(tiles);
+  const buttons=[...tiles.children].filter(x=>x.tagName==='BUTTON'&&!x.matches('[data-dml],[data-dmc],[data-dmr]'));
   buttons.forEach((button,index)=>{button.dataset.toolPage=String(index<8?0:index<14?1:2+Math.floor((index-14)/8));});
   const pages=Math.max(1,...buttons.map(b=>Number(b.dataset.toolPage)+1)),page=Math.max(0,Math.min(Number(panel.dataset.toolPage)||0,pages-1));
   panel.dataset.toolPage=page;buttons.forEach(b=>b.hidden=Number(b.dataset.toolPage)!==page);

@@ -680,3 +680,10 @@ html.dm-teacher-portal body #tpDashboard.tp-approved[data-tool-page="1"] .tp-rea
   html.dm-teacher-portal body #tpDashboard.tp-approved .tp-account-settings .tp-dash-menu{gap:7px!important;padding:8px!important}
  }
 }
+
+/* A prior iOS/PWA bundle can still inject retired classroom cards; never show them. */
+@layer glArcade {
+ html.dm-teacher-portal body #tpDashboard.tp-approved .tp-real-tools>button:is([data-dml],[data-dmc],[data-dmr]) {
+  display:none!important;
+ }
+}

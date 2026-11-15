@@ -241,16 +241,7 @@ ${rows.length > 3 ? `<ol>${rows.slice(3, 15).map(r => `<li><span>${r.rank}. ${es
     fetchPeriod(false);
   }
 
-  function addTile() {
-    const tiles = doc.querySelector('#tpDashboard .tp-real-tools');
-    if (!tiles || tiles.querySelector('[data-dml]')) return;
-    const b = doc.createElement('button'); b.type = 'button'; b.dataset.dml = '1';
-    b.innerHTML = '<span aria-hidden="true">🏆</span><strong>Sınıfım</strong><small>Sınıf ligi ve öğrenci sıralaması</small>';
-    b.addEventListener('click', open);
-    tiles.prepend(b);
-  }
-  new MutationObserver(addTile).observe(doc.documentElement, { childList: true, subtree: true });
-  addTile();
+  // The canonical tile is rendered by teacher-portal.js; do not inject duplicates.
   window.dmTeacherLeagueOpen = open;
   window.dmTeacherLeagueClose = close;
 })();

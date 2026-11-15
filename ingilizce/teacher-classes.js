@@ -147,14 +147,6 @@ ${unassigned}
     catch (e) { if (veil) veil.querySelector('.dmc-hero p').textContent = e.message; }
   }
 
-  function addTile() {
-    const tiles = doc.querySelector('#tpDashboard .tp-real-tools');
-    if (!tiles || tiles.querySelector('[data-dmc]')) return;
-    const b = doc.createElement('button'); b.type = 'button'; b.dataset.dmc = '1';
-    b.innerHTML = '<span aria-hidden="true">🏫</span><strong>Sınıflarım</strong><small>Sınıf kodları ve öğrenci taşıma</small>';
-    b.addEventListener('click', open);
-    tiles.prepend(b);
-  }
-  new MutationObserver(addTile).observe(doc.documentElement, { childList: true, subtree: true });
+  // The canonical tile is rendered by teacher-portal.js; do not inject duplicates.
   window.dmTeacherClassesOpen = open;
 })();

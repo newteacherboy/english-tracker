@@ -227,14 +227,6 @@ ${sorted().map(st=>`<tr><td>${esc(st.username)}</td><td>${st.games}</td><td>${st
     } catch (e) { msg = e.message; render(); }
   }
 
-  function addTile() {
-    const tiles = doc.querySelector('#tpDashboard .tp-real-tools');
-    if (!tiles || tiles.querySelector('[data-dmr]')) return;
-    const b = doc.createElement('button'); b.type = 'button'; b.dataset.dmr = '1';
-    b.innerHTML = '<span aria-hidden="true">📈</span><strong>Sınıf Raporları</strong><small>Oyun, ders ve parkur sonuçları</small>';
-    b.addEventListener('click', () => open());
-    const after = tiles.querySelector('[data-dmc]'); after ? after.after(b) : tiles.prepend(b);
-  }
-  new MutationObserver(addTile).observe(doc.documentElement, { childList: true, subtree: true });
+  // The canonical tile is rendered by teacher-portal.js; do not inject duplicates.
   window.dmTeacherReportsOpen = open;
 })();
