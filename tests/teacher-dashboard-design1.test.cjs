@@ -3,6 +3,7 @@ const {test}=require('node:test');
 const assert=require('node:assert/strict');
 const fs=require('node:fs');
 const path=require('node:path');
+const {createHash}=require('node:crypto');
 const {JSDOM}=require('jsdom');
 const source=fs.readFileSync('ingilizce/teacher-workspace.js','utf8');
 const css=fs.readFileSync('ingilizce/teacher-dashboard-selected.css','utf8');
@@ -34,6 +35,13 @@ test('approved visual uses 21 separate safe, valid SVG assets, all referenced ar
   assert.match(svg,/^<svg xmlns="http:\/\/www\.w3\.org\/2000\/svg"/,name);
   assert.match(svg,/<\/svg>\s*$/,name);
   assert.doesNotMatch(svg,/<script|onload=|onerror=|<foreignObject|javascript:/i,name);
+  const manifest=JSON.parse(fs.readFileSync('docs/media-rights-manifest.json','utf8'));
+  const record=manifest.assets.find(r=>r.path==='ingilizce/teacher-dashboard-assets/'+name+'.svg');
+  assert.ok(record,name+' needs a provenance record');
+  assert.equal(record.status,'original-vector');
+  assert.equal(record.bytes,Buffer.byteLength(svg));
+  assert.equal(record.sha256,createHash('sha256').update(svg).digest('hex'));
+
  }
  assert.match(source,/teacher-dashboard-selected\.css\?v=20261115-design1/);
  assert.ok(index.includes('teacher-workspace.js?v=20261115-approved-dashboard-1'));
