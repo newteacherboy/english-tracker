@@ -152,6 +152,7 @@
   }
  };
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mountTeacherVisualGuard,{once:true});else mountTeacherVisualGuard();
+ if(typeof MutationObserver==='function'){
  const guardObserver=new MutationObserver(records=>{
   // Handle tools added after the teacher/admin APIs finish without repainting continuously.
   if(records.some(record=>[...record.addedNodes].some(node=>node.nodeType===1 &&
@@ -160,6 +161,7 @@
  });
  const startGuardObserver=()=>guardObserver.observe(document.body,{subtree:true,childList:true});
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',startGuardObserver,{once:true});else if(document.body)startGuardObserver();
+ }
 
  const ss=window.sessionStorage;const prefix=()=>{try{return 'dm_tp_data:'+JSON.parse(ss.getItem('dm_tp_session')||'{}').participant.name+':';}catch{return 'dm_tp_data:preview:';}};
  const isolated={getItem:k=>ss.getItem(prefix()+k),setItem:(k,v)=>ss.setItem(prefix()+k,String(v)),removeItem:k=>ss.removeItem(prefix()+k),clear(){for(const k of Object.keys(ss))if(k.startsWith(prefix()))ss.removeItem(k);},key:i=>Object.keys(ss).filter(k=>k.startsWith(prefix()))[i]?.slice(prefix().length)||null,get length(){return Object.keys(ss).filter(k=>k.startsWith(prefix())).length;}};
