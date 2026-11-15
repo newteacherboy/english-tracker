@@ -105,6 +105,12 @@ select pg_temp.dm_replace_once(
 -- per-question receipt. Client-submitted tiers cannot establish 60% accuracy.
 -- Do not claim end-to-end coverage until those receipts are migrated.
 
+-- Verified solo levels use the same tier schedule as the reward policy.
+select pg_temp.dm_replace_once(
+ 'public.dm_solo_fair_claim(uuid,text,text,integer,integer[],integer,integer,numeric,integer)'::regprocedure,
+ 'percentage:=case right_count when 12 then 100 when 11 then 80 when 10 then 60 when 9 then 35 else case when right_count>0 then 20 else 0 end end;',
+ 'percentage:=case when right_count=12 then 100 when right_count=11 then 90 when right_count=10 then 80 when right_count=9 then 65 when right_count>=8 then 50 else 0 end;');
+
 -- Solo: use verified first-try correct count for the success gate; no payout under 60%.
 -- Existing reward claim and replay ledger remain authoritative.
 select pg_temp.dm_replace_once(
