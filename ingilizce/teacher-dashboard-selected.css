@@ -488,3 +488,17 @@ html.dm-teacher-portal body.tp-home-active #tpTeacherDock .dm-teacher-icon--cap 
  outline:3px solid #18aaba!important;
  outline-offset:3px;
 }
+
+/* The separate laurel and trophy SVGs replace the legacy embedded/emoji artwork. */
+#tpTeacherHome #dmTeacherDesignV2.dm-approved-home .dm-midnight-brand>span:nth-child(2)::before,
+#tpTeacherHome #dmTeacherDesignV2.dm-approved-home .dm-midnight-brand>span:nth-child(2)::after {
+  background:url("teacher-dashboard-assets/laurel.svg") center/contain no-repeat!important;
+  -webkit-mask:none!important;mask:none!important;
+}
+html.dm-teacher-portal body.tp-home-active #tpTeacherDock [data-route="league"]>span {
+  font-size:0!important;
+  display:inline-block!important;
+  width:clamp(27px,8vw,42px)!important;
+  height:clamp(27px,8vw,42px)!important;
+  background:url("teacher-dashboard-assets/trophy.svg") center/contain no-repeat!important;
+}
