@@ -9,7 +9,7 @@
   const NAME = Object.fromEntries(PRODUCTS);
   const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
   const token = () => { try { return JSON.parse(sessionStorage.getItem('dm_tp_session') || 'null')?.teacherToken || sessionStorage.getItem('ing_ogr_token') || ''; } catch { return ''; } };
-  const isAdmin = () => { try { return sessionStorage.getItem('ing_ogr_yonetici') === '1'; } catch { return false; } };
+  const isAdmin = () => { try { if(window.dmTeacherPortalMode)return window.dmTeacherVerifiedAdmin===true&&window.dmTeacherVerifiedAdminToken===token();return sessionStorage.getItem('ing_ogr_yonetici') === '1'; } catch { return false; } };
   const date = v => v ? new Date(v).toLocaleDateString('tr-TR') : '—';
 
   async function call(body) {
@@ -96,14 +96,17 @@
   }
 
   function addTile() {
-    if (!isAdmin()) return;
     const tiles = doc.querySelector('#tpDashboard .tp-real-tools');
-    if (!tiles || tiles.querySelector('[data-dmg]')) return;
+    if (!tiles) return;
+    const ownTile=tiles.querySelector('[data-dmg]');
+    if (!isAdmin()){ownTile?.remove();return;}
+    if(ownTile)return;
     const b = doc.createElement('button'); b.type = 'button'; b.dataset.dmg = '1';
     b.innerHTML = '<span aria-hidden="true">🎁</span><strong>Hediye Üyelik</strong><small>Plan hediye et · otomatik hediye</small>';
     b.addEventListener('click', open);
     tiles.appendChild(b);
   }
   new MutationObserver(addTile).observe(doc.documentElement, { childList: true, subtree: true });
+  window.addEventListener('dm:teacher-admin-role-verified', addTile);
   window.dmAdminGiftOpen = open;
 })();

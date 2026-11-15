@@ -6,7 +6,7 @@
   const doc = document;
   const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
   const token = () => { try { return JSON.parse(sessionStorage.getItem('dm_tp_session') || 'null')?.teacherToken || sessionStorage.getItem('ing_ogr_token') || ''; } catch { return ''; } };
-  const isAdmin = () => { try { return sessionStorage.getItem('ing_ogr_yonetici') === '1'; } catch { return false; } };
+  const isAdmin = () => { try { if(window.dmTeacherPortalMode)return window.dmTeacherVerifiedAdmin===true&&window.dmTeacherVerifiedAdminToken===token();return sessionStorage.getItem('ing_ogr_yonetici') === '1'; } catch { return false; } };
   async function call(body) {
     const r = await fetch(API, { method: 'POST', headers: { 'content-type': 'application/json', 'x-diji-token': token() }, body: JSON.stringify(body) });
     const j = await r.json().catch(() => ({}));
@@ -81,14 +81,17 @@
   }
 
   function addTile() {
-    if (!isAdmin()) return;
     const tiles = doc.querySelector('#tpDashboard .tp-real-tools');
-    if (!tiles || tiles.querySelector('[data-dmn]')) return;
+    if (!tiles) return;
+    const ownTile=tiles.querySelector('[data-dmn]');
+    if (!isAdmin()){ownTile?.remove();return;}
+    if(ownTile)return;
     const b = doc.createElement('button'); b.type = 'button'; b.dataset.dmn = '1';
     b.innerHTML = '<span aria-hidden="true">🔔</span><strong>Bildirim Gönder</strong><small>Android ve iPhone uygulamasına</small>';
     b.addEventListener('click', open);
     tiles.appendChild(b);
   }
   new MutationObserver(addTile).observe(doc.documentElement, { childList: true, subtree: true });
+  window.addEventListener('dm:teacher-admin-role-verified', addTile);
   window.dmAdminPushOpen = open;
 })();

@@ -142,6 +142,24 @@ function openNoticeMailCenter(){
 
 
 
+// Verify role for this teacher token, never from a possibly stale device flag.
+let dmAdminRoleToken='',dmAdminRoleVerified=false,dmAdminRolePendingToken='';
+function dmVerifyAdminRole(){
+ const current=token();
+ if(!window.dmTeacherPortalMode||!current)return;
+ if(dmAdminRoleToken===current||dmAdminRolePendingToken===current)return;
+ dmAdminRolePendingToken=current;
+ void api('ogretmenBilgim').then(info=>{
+  if(token()!==current)return;
+  dmAdminRoleVerified=info.yonetici===true;dmAdminRoleToken=current;window.dmTeacherVerifiedAdmin=dmAdminRoleVerified;window.dmTeacherVerifiedAdminToken=current;window.dispatchEvent(new Event('dm:teacher-admin-role-verified'));
+  $('dmTeacherDesignV2')?.dmSyncAdminTools?.(dmAdminRoleVerified);
+ }).catch(()=>{
+  if(token()!==current)return;
+  dmAdminRoleVerified=false;dmAdminRoleToken=current;
+  window.dmTeacherVerifiedAdmin=false;window.dmTeacherVerifiedAdminToken=current;window.dispatchEvent(new Event('dm:teacher-admin-role-verified'));
+  $('dmTeacherDesignV2')?.dmSyncAdminTools?.(false);
+ }).finally(()=>{if(dmAdminRolePendingToken===current)dmAdminRolePendingToken='';});
+}
 const dmTeacherPremiumGames=[
  ['Candy Papiş','🍬','premiumKelimeEslestirmeAc'],
  ['Kaptan Pilot Papi','✈️','premiumBulutUcusuAc'],
@@ -280,11 +298,7 @@ function dmMidnightHome(board,openOriginal){
   <section class="dm-midnight-section" aria-labelledby="dmHomeActions">
    <h2 id="dmHomeActions"><i aria-hidden="true">${icon('bolt')}</i> Hızlı İşlemler</h2>
    <div class="dm-midnight-actions"></div>
-  </section>
-  <details class="dm-midnight-tools">
-   <summary class="dm-midnight-raised"><i aria-hidden="true"></i> Tüm araçlar <span aria-hidden="true">›</span></summary>
-   <div class="dm-midnight-extra"></div>
-  </details>`;
+  </section>`;
  const classes=()=>window.dmTeacherClassesOpen?window.dmTeacherClassesOpen():openOriginal('classroom');
  board.querySelector('[data-home-students]').onclick=dmStudentList;
  board.querySelector('[data-home-classes]').onclick=classes;
@@ -318,22 +332,31 @@ function dmMidnightHome(board,openOriginal){
   if(window.dmTeacherReportsOpen)window.dmTeacherReportsOpen();
   else window.yoToast?.('Sınıf raporları yüklenemedi. Sayfayı yenile.');
  });
- const extra=board.querySelector('.dm-midnight-extra');
- add(extra,'Öğretmen Paneli',icon('cap'),()=>openOriginal('teacher'));
- add(extra,'Öğrenciler',icon('people'),dmStudentList);
- add(extra,'Rubrik','📈',()=>dmUseTool('rubrik'));
- if(sessionStorage.getItem('ing_ogr_yonetici')==='1'){
+ // No "Tüm araçlar" DOM is created for regular teachers.
+ board.dmSyncAdminTools=verified=>{
+  const previous=board.querySelector('.dm-midnight-tools');
+  if(!verified){previous?.remove();return;}
+  if(previous)return;
+  const details=document.createElement('details');details.className='dm-midnight-tools';
+  details.innerHTML='<summary class="dm-midnight-raised"><i aria-hidden="true"></i> Tüm araçlar <span aria-hidden="true">›</span></summary><div class="dm-midnight-extra"></div>';
+  board.append(details);
+  const extra=details.querySelector('.dm-midnight-extra');
+  add(extra,'Öğretmen Paneli',icon('cap'),()=>openOriginal('teacher'));
+  add(extra,'Öğrenciler',icon('people'),dmStudentList);
+  add(extra,'Rubrik','📈',()=>dmUseTool('rubrik'));
   if(window.dmAdminGiftOpen)add(extra,'Hediye Üyelik','🎁',()=>window.dmAdminGiftOpen());
   if(window.dmAdminAdsOpen)add(extra,'Reklam Ayarları','📺',()=>window.dmAdminAdsOpen());
   if(window.dmAdminPushOpen)add(extra,'Bildirim Gönder','🔔',()=>window.dmAdminPushOpen());
- }
+ };
+ board.dmSyncAdminTools(dmAdminRoleToken===token()&&dmAdminRoleVerified);
 }
 function dmHome(){
  const portal=$('tpTeacherHome');
  const current=portal?.querySelector('#dmTeacherDesignV2');
- if(current){if(visible(current))dmUpdateTeacherDashboard(current);return;}
+ if(current){dmVerifyAdminRole();current.dmSyncAdminTools?.(dmAdminRoleToken===token()&&dmAdminRoleVerified);if(visible(current))dmUpdateTeacherDashboard(current);return;}
  const heading=[...(portal||document).querySelectorAll('h1,h2,h3')].find(h=>dmKey(h.textContent).includes('merhaba öğretmenim')&&visible(h));
  if(!heading)return;
+ dmVerifyAdminRole();
  const originalCards=[...(portal||document).querySelectorAll('button,a,[role="button"],article,div')]
   .filter(el=>el.children.length<12&&dmKey(el.textContent).includes('yeni bir konu anlat')&&dmKey(el.textContent).length<180)
   .sort((a,b)=>a.querySelectorAll('*').length-b.querySelectorAll('*').length);
@@ -468,7 +491,7 @@ const watcher=new MutationObserver(()=>{if(active)maintain();});for(const el of 
 new MutationObserver(ms=>{if(active&&ms.some(m=>[...m.addedNodes,...m.removedNodes].some(n=>n.nodeType===1&&(n.matches?.(childSelector)||n.querySelector?.(childSelector)))))maintain();}).observe(document.body,{childList:true});
 const report=$('yoModal');if(report)watcher.observe(report,{attributes:true,attributeFilter:['class','style']});
 setInterval(()=>{if(document.hidden)return;maintain();dmHome();if(window.dmTeacherPortalMode)window.dmDayNightTheme?.updateHint();dmRemoveTeacherBottomTab();refresh();installCatalog();},1200);
-document.addEventListener('dm:login',()=>{total=0;lastRead=0;active=false;menuSeen=false;refresh(true);});
+document.addEventListener('dm:login',()=>{total=0;lastRead=0;active=false;menuSeen=false;dmAdminRoleToken='';dmAdminRoleVerified=false;dmAdminRolePendingToken='';window.dmTeacherVerifiedAdmin=false;window.dmTeacherVerifiedAdminToken='';window.dispatchEvent(new Event('dm:teacher-admin-role-verified'));$('dmTeacherDesignV2')?.dmSyncAdminTools?.(false);refresh(true);});
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)refresh(true);});
 refresh(true);
 })();
