@@ -202,7 +202,7 @@ function introHome(){
   after,
   note:!isPremium()&&remaining()<=0?{text:window.dmPremiumIntro.noRightsText(),icon:'lock'}:null,
   actions:!isPremium()&&remaining()<=0
-   ?[{label:'Paketleri gör',onClick:()=>{const o=window.dmPremiumIntro.plans('candy-papis',(window.dmAndroidPlan?.plan||'free')==='pro'?'premium_pro':'');o?o():toast('Paketler şu an açılamadı.');}},{label:'Oyunlara dön',kind:'link',onClick:()=>back()}]
+   ?[{label:'Seviye '+lv+'’i oyna',onClick:()=>window.dmPremiumPlayOffer?.open({game:'word-match',onReady:async()=>{const ticket=epoch,d=await api('status');if(ticket!==epoch||!root)return;adopt(d);home();levelCard(lv);},onPlans:close})},{label:'Oyunlara dön',kind:'link',onClick:()=>back()}]
    :[{label:'Seviye '+lv+'’i oyna',cost:5,onClick:()=>levelCard(lv)},{label:'Oyunlara dön',kind:'link',onClick:()=>back()}]
  });
 }
@@ -528,3 +528,4 @@ function close(fromPop=false){
 window.dmPwm={open,close,api,hint:()=>G?window.dmPwmCore.findMove(G.st):null,state:()=>G?.st||null};
 window.premiumKelimeEslestirmeAc=open;
 })();
+

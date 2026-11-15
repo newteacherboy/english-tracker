@@ -156,7 +156,7 @@
         const openPlans = intro.plans('block-papi', (window.dmAndroidPlan?.plan || 'free') === 'pro' ? 'premium_pro' : '');
         const actions = [];
         if (ready) actions.push({label: 'Atölyeye gir', cost: 5, onClick: start});
-        else if (!state.completed && openPlans) actions.push({label: 'Paketleri gör', onClick: () => { close(); openPlans(); }}); // oyun penceresi üst katmanda; önce kapanır
+        else if (!state.completed) actions.push({label: 'Başla', onClick: () => window.dmPremiumPlayOffer?.open({game: 'word-blocks', onReady: async () => { const data=await call(token, 'status'); if (dialog.isConnected && player() === account) { update(data); home(); start(); } }, onPlans: close})}); // oyun penceresi üst katmanda; önce kapanır
         actions.push({label: 'Oyunlara dön', kind: actions.length ? 'secondary' : 'primary', onClick: close});
         const note = error ? {text: error, icon: 'bolt'} :
           state.completed ? {text: 'Tüm atölye rotasını tamamladın!', icon: 'check'} :
@@ -431,3 +431,4 @@
     home();
   }
 })();
+

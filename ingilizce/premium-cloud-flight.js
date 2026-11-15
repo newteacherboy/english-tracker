@@ -284,7 +284,7 @@
         const openPlans = intro.plans('kaptan-pilot', (window.dmAndroidPlan?.plan || 'free') === 'pro' ? 'premium_pro' : '');
         const actions = [];
         if (ready) actions.push({label: `Bölüm ${state.level}’e uç`, cost: 5, onClick: start});
-        else if (!state.completed && openPlans) actions.push({label: 'Paketleri gör', onClick: () => { close(); openPlans(); }}); // oyun penceresi üst katmanda; önce kapanır
+        else if (!state.completed) actions.push({label: 'Başla', onClick: () => window.dmPremiumPlayOffer?.open({game: 'cloud-flight', onReady: async () => { const data=await request(token, 'status'); if (screen.isConnected && owner() === account) { apply(data); home(); start(); } }, onPlans: close})}); // oyun penceresi üst katmanda; önce kapanır
         actions.push({label: 'Oyunlara dön', kind: actions.length ? 'secondary' : 'primary', onClick: close});
         const first = Math.max(1, state.level - 3), last = state.level + (state.completed ? 0 : 2);
         const route = [];
@@ -564,3 +564,4 @@
     home();
   }
 })();
+

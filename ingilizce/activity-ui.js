@@ -65,7 +65,8 @@
   host.querySelector('[data-gg-party="'+(category==='tools'?'all':category)+'"]')?.focus({preventScroll:true});
   if(!window.dmTeacherPortalMode&&(category==='duo'||category==='free'))loadFriends(host);
  }
- function exhaustedCard(access={}){
+ function exhaustedCard(access={},options={}){
+  if(window.dmPremiumPlayOffer)return window.dmPremiumPlayOffer.open(options);
   document.getElementById('ggExhausted')?.remove();
   const previous=document.activeElement,overlay=document.createElement('div');overlay.id='ggExhausted';overlay.className='gg-exhausted';
   overlay.innerHTML='<section role="dialog" aria-modal="true" aria-labelledby="ggExhaustedTitle"><button type="button" class="gg-exhausted-close" aria-label="Kapat">×</button><img class="gg-exhausted-papi" src="satis-assets/papi-premium-gift.webp" alt="3D Papi" width="128" height="128"><h2 id="ggExhaustedTitle">'+(access.plan==='pro'?'Bugünlük oyun hakkın bitti':'Bugünlük ücretsiz hakkın bitti')+'</h2><p>Premium ile sınırsız oyna.</p><button type="button" data-plans>Premium ile sınırsız oyna</button><button type="button" data-dismiss>Şimdi değil</button></section>';
@@ -89,7 +90,7 @@
    const response=await fetch((typeof apiURL==='string'?apiURL:'https://nxfqlutulxqzqgwewssd.supabase.co/functions/v1/diji-api').replace(/diji-api.*$/,'premium-games'),{method:'POST',signal:controller.signal,headers:{'Content-Type':'application/json'},body:JSON.stringify({op:'access',game,t:token})});
    const access=await response.json();
    if(!response.ok||access.ok===false)throw Error(access.mesaj||'Haklar kontrol edilemedi.');
-   if(access.remaining<=0){exhaustedCard(access);return;}
+   if(access.remaining<=0){exhaustedCard(access,{game,onReady:()=>card.click()});return;}
    card.click();
   }catch(error){window.alert(error.message||'Haklar kontrol edilemedi. Tekrar dene.');}
   finally{clearTimeout(timeout);delete card.dataset.accessPending;}
@@ -298,4 +299,5 @@
  };
  window.dmActivityPresence={refresh,isOnline};
 })();
+
 

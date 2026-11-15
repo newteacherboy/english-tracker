@@ -1,0 +1,39 @@
+name: Deploy Premium rewarded plays
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'deployment/premium-ad-plays.sql'
+      - 'scripts/deploy-premium-ad-plays.mjs'
+      - 'tests/premium-play-offer.test.cjs'
+      - '.github/workflows/premium-ad-plays.yml'
+  pull_request:
+    paths:
+      - 'ingilizce/premium-play-offer.*'
+      - 'tests/premium-play-offer.test.cjs'
+      - '.github/workflows/premium-ad-plays.yml'
+permissions:
+  contents: read
+concurrency:
+  group: premium-ad-plays
+  cancel-in-progress: false
+jobs:
+  verify-deploy:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm install --prefix /tmp/ad-play-qa jsdom@26.1.0 --no-audit --no-fund
+      - name: Verify modal and game integrations
+        env:
+          NODE_PATH: /tmp/ad-play-qa/node_modules
+        run: node --test tests/premium-play-offer.test.cjs
+      - name: Install and verify server quota
+        if: github.event_name == 'push'
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          PROJECT_REF: nxfqlutulxqzqgwewssd
+        run: node scripts/deploy-premium-ad-plays.mjs

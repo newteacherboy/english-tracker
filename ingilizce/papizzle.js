@@ -156,8 +156,7 @@
         const actions = [];
         if (state.remaining > 0 && !lowEnergy) actions.push({label: `Seviye ${state.level}’i oyna`, cost: 5, onClick: start});
         else if (state.remaining > 0) actions.push({label: 'Enerji seçenekleri', onClick: () => window.dmEnerjiPaketPaneli?.()});
-        else if (openPlans) actions.push({label: 'Paketleri gör', onClick: () => { close(); openPlans(); }}); // oyun penceresi üst katmanda; önce kapanır
-        else actions.push({label: 'Durumu yenile', onClick: refresh});
+        else actions.push({label: 'Başla', onClick: () => window.dmPremiumPlayOffer?.open({game: 'papizzle', onReady: async () => { await refresh(); if (screen.isConnected && sameAccount() && state.remaining > 0) start(); }, onPlans: close})}); // oyun penceresi üst katmanda; önce kapanır
         actions.push({label: 'Oyunlara dön', kind: 'secondary', onClick: close});
         const note = error ? {text: error, icon: 'bolt'} :
           lowEnergy && state.remaining > 0 ? {text: `Başlamak için 5 enerji gerekli. ${5 - state.energy} enerji daha lazım.`, icon: 'bolt'} :
@@ -331,3 +330,4 @@
     home();
   }
 })();
+

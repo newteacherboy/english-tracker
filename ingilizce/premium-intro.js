@@ -45,9 +45,8 @@
   }
   /* Hak bitince gösterilecek açıklama: Pro'nun günlük sınırı ile ücretsiz deneme farklıdır. */
   function noRightsText(verb = 'oynayabilirsin') {
-    return (window.dmAndroidPlan?.plan || 'free') === 'pro'
-      ? `Bugünkü oyun hakkın bitti. Premium Pro ile sınırsız ${verb}.`
-      : `Bugünlük ücretsiz hakkın bitti. Premium ile sınırsız ${verb}.`;
+    return 'Bugünkü oyun hakkın doldu. Reklam izle veya Premium Pro ile sınırsız oyna.';
+
   }
 
   /*
@@ -181,3 +180,4 @@
 
   window.dmPremiumIntro = {build, mount, unmount, plans, noRightsText, css};
 })();
+
