@@ -92,3 +92,9 @@ html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson[dat
 html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson[data-route="school"]:not(.ml-entry) .ml-art-soft-bag{--art-x:155px!important;--art-y:680px!important;--art-w:170px;--art-h:145px}
 html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson[data-route="school"]:not(.ml-entry) .ml-art-soft-desk{--art-x:450px!important;--art-y:680px!important;--art-w:180px;--art-h:145px}
 @media(max-height:700px){html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson[data-route="school"]:not(.ml-entry) .ml-speech{min-height:90px!important}}
+
+/* Fix school color cards: the generic white !important background erased the
+   original color art when a numbered PNG is unavailable or an old JS is cached. */
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson[data-route="school"]:not(.ml-entry) .ml-teach.ml-teach-collection .ml-art-color{background-color:var(--ml-color)!important;border:2px solid #d9e4df!important;border-radius:14px!important}
+/* Keep the numbered PNG itself on top of the school card's white background. */
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson[data-route="school"]:not(.ml-entry) .ml-teach.ml-teach-collection .ml-art-pilot img{display:block!important;position:relative!important;z-index:2!important;width:100%!important;height:100%!important;object-fit:contain!important;opacity:1!important;visibility:visible!important}
