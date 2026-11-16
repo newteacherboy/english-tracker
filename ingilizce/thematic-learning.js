@@ -74,7 +74,7 @@ const dmNumberedArt=new Map([["bye|güle güle","assets/word-images/pilot/number
 // safely fall back to the unique English expression for numbered assets.
 const dmNumberedByEnglish=new Map([...dmNumberedArt].map(([key,path])=>[key.split('|')[0],path]));
 function dmPilotImage(card){
- const normalize=value=>String(value||'').normalize('NFKC').toLowerCase().replace(/[^\\p{L}\\p{N}]+/gu,' ').trim();
+ const normalize=value=>String(value||'').normalize('NFKC').toLowerCase().replace(/[^\p{L}\p{N}]+/gu,' ').trim();
  const english=normalize(card?.en),turkish=normalize(card?.tr);
  if(!english)return null;
  return dmPilotArt.get(english+'|'+turkish)||dmNumberedArt.get(english+'|'+turkish)||dmNumberedByEnglish.get(english)||null;
