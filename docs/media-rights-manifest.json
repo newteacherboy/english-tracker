@@ -11,6 +11,27 @@
       "source": "docs/media-generation-record.json"
     },
     {
+      "path": "ingilizce/app-icons/papagan-192.png",
+      "sha256": "ade6b44bb94874bc0450ed9d7fb332271b14536e3cf73546b2212a9c01aec71d",
+      "bytes": 55109,
+      "status": "owner-supplied",
+      "source": "Supplied by the owner in chat on 2026-11-04 as the new Diji Medu app logo (Papi head portrait), chosen from images made for the app. Resized copies serve as web, PWA and Android launcher icons."
+    },
+    {
+      "path": "ingilizce/app-icons/papagan-512.png",
+      "sha256": "cd329ee6ad18650d69bef70f2338d4515f2621d92f74a97e73e9c558aadc8302",
+      "bytes": 316331,
+      "status": "owner-supplied",
+      "source": "Supplied by the owner in chat on 2026-11-04 as the new Diji Medu app logo (Papi head portrait), chosen from images made for the app. Resized copies serve as web, PWA and Android launcher icons."
+    },
+    {
+      "path": "ingilizce/app-icons/papagan-maskable-512.png",
+      "sha256": "cd329ee6ad18650d69bef70f2338d4515f2621d92f74a97e73e9c558aadc8302",
+      "bytes": 316331,
+      "status": "owner-supplied",
+      "source": "Supplied by the owner in chat on 2026-11-04 as the new Diji Medu app logo (Papi head portrait), chosen from images made for the app. Resized copies serve as web, PWA and Android launcher icons."
+    },
+    {
       "path": "ingilizce/app-icons/papi-192.png",
       "sha256": "a231e93ea8d468afee9c15545377681991272002f53ac76ad3c5dd541fd9b1cd",
       "bytes": 43101,
@@ -27,12 +48,47 @@
       "derived_from": "ingilizce/papi-app-icon-v3.png"
     },
     {
+      "path": "ingilizce/app-icons/papi-logo-1024.png",
+      "sha256": "8509f3006203b0643362e40e42263fba737663ba175a9ad9b25694891df84871",
+      "bytes": 1075596,
+      "status": "owner-supplied",
+      "source": "Supplied by the owner in chat on 2026-11-04 as the new Diji Medu app logo (Papi head portrait), chosen from images made for the app. Resized copies serve as web, PWA and Android launcher icons."
+    },
+    {
       "path": "ingilizce/app-icons/papi-maskable-512.png",
       "sha256": "2e3503fb0824036285411be41d6519a2bde34d88fe0e82eb38ef2e6b7025e848",
       "bytes": 98833,
       "status": "ai-generated",
       "source": "docs/media-generation-record.json",
       "derived_from": "ingilizce/papi-app-icon-v3.png"
+    },
+    {
+      "path": "ingilizce/arcade-assets/city.webp",
+      "sha256": "37183cc160cc501a671b3a68bbce133e753777e958bda588fea1a38e7260676f",
+      "bytes": 83382,
+      "status": "ai-generated",
+      "source": "docs/solo-arcade-assets.json"
+    },
+    {
+      "path": "ingilizce/arcade-assets/floor.webp",
+      "sha256": "0c06ff7d3bf42d30804b30884044bc5c5215f0a03def1aa596531ea7bf3791b8",
+      "bytes": 16460,
+      "status": "ai-generated",
+      "source": "docs/solo-arcade-assets.json"
+    },
+    {
+      "path": "ingilizce/arcade-assets/forest.webp",
+      "sha256": "677f9b34f94e9d8fc990ddd9fb3608d091f90a7b186be9a605fc8e103eb0f266",
+      "bytes": 176826,
+      "status": "ai-generated",
+      "source": "docs/solo-arcade-assets.json"
+    },
+    {
+      "path": "ingilizce/arcade-assets/monsters.webp",
+      "sha256": "be4195ae7e181f955faad2bbea8c3bd779e7d8c6000134f11b34c0e6096ad37d",
+      "bytes": 167840,
+      "status": "ai-generated",
+      "source": "docs/solo-arcade-assets.json"
     },
     {
       "path": "ingilizce/assets/forest-answer-frame-v1.svg",
@@ -82,6 +138,111 @@
       "bytes": 732363,
       "status": "ai-generated",
       "source": "OpenAI image generation on 2026-10-08; derived from approved Orman Atölyesi concept, embedded original WebP with SVG viewports."
+    },
+    {
+      "path": "ingilizce/assets/word-images/pilot/a-bird-can-fly-1a1c9b658b.png",
+      "sha256": "c68bfb964859438fb746c3671c25cd07e777b31e01ac6c0a2f35dbabc3a1cd12",
+      "bytes": 459440,
+      "status": "ai-generated",
+      "source": "Diji-Medu Görsel Atölyesi; user-approved pilot export"
+    },
+    {
+      "path": "ingilizce/assets/word-images/pilot/a-bottle-of-8dc76877fd.png",
+      "sha256": "32c154902471ea308085bf5c2fcd3dea746d4748618d4f7de6571d4609e78944",
+      "bytes": 348003,
+      "status": "ai-generated",
+      "source": "Diji-Medu Görsel Atölyesi; user-approved pilot export"
+    },
+    {
+      "path": "ingilizce/assets/word-images/pilot/a-butterfly-has-wings-0ad0e46d91.png",
+      "sha256": "b8bc0a936c0a200aeab5db331d862ae2540e878c0632c3509849fb2b894a2c0f",
+      "bytes": 418919,
+      "status": "ai-generated",
+      "source": "Diji-Medu Görsel Atölyesi; user-approved pilot export"
+    },
+    {
+      "path": "ingilizce/assets/word-images/pilot/a-cat-has-got-a-small-nose-f4c82a7726.png",
+      "sha256": "a8feb3e44d0a850f648aae5e9971b6df166af8362f8638f487679f350935005e",
+      "bytes": 401255,
+      "status": "ai-generated",
+      "source": "Diji-Medu Görsel Atölyesi; user-approved pilot export"
+    },
+    {
+      "path": "ingilizce/assets/word-images/pilot/a-cat-has-got-claws-ca09f5b8d8.png",
+      "sha256": "e1dec6288d17acfab1a8956cbebac417c1b7e771cde18ae746ef3d2e2ab233c0",
+      "bytes": 356391,
+      "status": "ai-generated",
+      "source": "Diji-Medu Görsel Atölyesi; user-approved pilot export"
+    },
+    {
+      "path": "ingilizce/assets/word-images/pilot/a-convincing-essay-considers-a-relevant-count-717da52d5f.png",
+      "sha256": "df225ce6b999398e0ff1e548f4e060d2d6d9f4003bd837b821c5e012adae3a4e",
+      "bytes": 382665,
+      "status": "ai-generated",
+      "source": "Diji-Medu Görsel Atölyesi; user-approved pilot export"
+    },
+    {
+      "path": "ingilizce/assets/word-images/pilot/a-doctor-helps-people-1d7e51bfcb.png",
+      "sha256": "435a850daa709806550d18d31aa7c0eeb295032ba7eb4f0db6f60ff2ec83d2e5",
+      "bytes": 402176,
+      "status": "ai-generated",
+      "source": "Diji-Medu Görsel Atölyesi; user-approved pilot export"
+    },
+    {
+      "path": "ingilizce/assets/word-images/pilot/a-dog-has-got-paws-f0e27b3790.png",
+      "sha256": "1c6611f5c59f40f60a362eb0d3bd91f00ee18b1b1950102d5b6f54804e2b7203",
+      "bytes": 357318,
+      "status": "ai-generated",
+      "source": "Diji-Medu Görsel Atölyesi; user-approved pilot export"
+    },
+    {
+      "path": "ingilizce/assets/word-images/pilot/a-farmer-grows-vegetables-47f22caaa0.png",
+      "sha256": "92fc44bfdb4155bf419356b4a8319088b7e3daa80d0dabf30050d01e9e3c03a9",
+      "bytes": 459032,
+      "status": "ai-generated",
+      "source": "Diji-Medu Görsel Atölyesi; user-approved pilot export"
+    },
+    {
+      "path": "ingilizce/assets/word-images/pilot/a-fish-can-swim-3334b883b7.png",
+      "sha256": "c056972ef8c0a45a2b8477581a18d128693984dfdee99ea9b4703c9bac5d6cda",
+      "bytes": 505359,
+      "status": "ai-generated",
+      "source": "Diji-Medu Görsel Atölyesi; user-approved pilot export"
+    },
+    {
+      "path": "ingilizce/assets/word-images/pilot/a-horse-is-fast-1db41175c3.png",
+      "sha256": "d4db725737c5766be6c0ff3568f765a2ca010740bdb70d5160ce2f508133efca",
+      "bytes": 421895,
+      "status": "ai-generated",
+      "source": "Diji-Medu Görsel Atölyesi; user-approved pilot export"
+    },
+    {
+      "path": "ingilizce/assets/word-images/pilot/a-kilo-of-apples-please-051f0d8a28.png",
+      "sha256": "ca57c46d5536570ea6f21394f030ea744d688942dcabbfbd3fb6da70fbcd628e",
+      "bytes": 404410,
+      "status": "ai-generated",
+      "source": "Diji-Medu Görsel Atölyesi; user-approved pilot export"
+    },
+    {
+      "path": "ingilizce/assets/word-images/pilot/a-mouse-is-small-19a0f2dd0f.png",
+      "sha256": "916b69c858ce30b9ccd1576b26278a642e9e89918e0a4d2a7ba488927f42a992",
+      "bytes": 408319,
+      "status": "ai-generated",
+      "source": "Diji-Medu Görsel Atölyesi; user-approved pilot export"
+    },
+    {
+      "path": "ingilizce/assets/word-images/pilot/a-nurse-works-in-a-hospital-e79cfe5986.png",
+      "sha256": "4f3a271fd82bf557229ce26d4bcd17b240f4c6302233409f94fe390e4d768b66",
+      "bytes": 379708,
+      "status": "ai-generated",
+      "source": "Diji-Medu Görsel Atölyesi; user-approved pilot export"
+    },
+    {
+      "path": "ingilizce/assets/word-images/pilot/a-teacher-works-at-a-school-f07b0f6f07.png",
+      "sha256": "dc6cf0e763137e5b7bff3a13d28bc2fa4992668e447ab91d59e27e6919d69d3d",
+      "bytes": 400540,
+      "status": "ai-generated",
+      "source": "Diji-Medu Görsel Atölyesi; user-approved pilot export"
     },
     {
       "path": "ingilizce/avatar-assets/adventure-boy-v2.webp",
@@ -166,6 +327,20 @@
       "bytes": 232860,
       "status": "ai-generated",
       "source": "docs/sticker-navigation-design.md"
+    },
+    {
+      "path": "ingilizce/daily-gift-assets/papi-gift-3d.webp",
+      "sha256": "16340a78d45d20d7710dc8fb54798c31b6bc75bedae8cd313013eeb129ab0de1",
+      "bytes": 66872,
+      "status": "ai-generated",
+      "source": "docs/daily-gift-artwork.json"
+    },
+    {
+      "path": "ingilizce/daily-gift-assets/papi-streak-3d.webp",
+      "sha256": "2e44b5390b787d265282b79c2266a9c5fae7b6231ec761d2dcd772d152175f8b",
+      "bytes": 55880,
+      "status": "ai-generated",
+      "source": "docs/daily-gift-artwork.json"
     },
     {
       "path": "ingilizce/ders-vadi/notebook-doodles.webp",
@@ -325,6 +500,20 @@
       "source": "docs/first-discovery-generation.json"
     },
     {
+      "path": "ingilizce/friends-assets/club-badges-v1.webp",
+      "sha256": "bc2b60bd26a36aee7bfd38a958c0f9afd074b9d132c782b1682a98ad550fc90d",
+      "bytes": 398740,
+      "status": "ai-generated",
+      "source": "docs/friends-club-20261024.md"
+    },
+    {
+      "path": "ingilizce/friends-assets/club-hero-v1.webp",
+      "sha256": "0771cce7773724570c8b7fed071db252d3e2862435687a315bafbc258f9276a0",
+      "bytes": 164178,
+      "status": "ai-generated",
+      "source": "docs/friends-club-20261024.md"
+    },
+    {
       "path": "ingilizce/friends-assets/icons.svg",
       "sha256": "7d5ab83cbaf2e43f5df708628860d71ab852acaa24728179e42faca573724078",
       "bytes": 2322,
@@ -337,6 +526,13 @@
       "bytes": 729,
       "status": "code-native",
       "source": "Repository-authored Friends interface SVG; source retained in Git"
+    },
+    {
+      "path": "ingilizce/friends-assets/papi-fencer.webp",
+      "sha256": "33f07ef895603906ea94a5b80bd178da43bfe36fcf7a5a14a9c17eca8e1343b5",
+      "bytes": 20222,
+      "status": "ai-generated",
+      "source": "OpenAI imagegen, 2026-11-06; transparent Papi fencer illustration based on the approved Friends duel card mockup"
     },
     {
       "path": "ingilizce/friends-assets/papi-friends.png",
@@ -409,6 +605,48 @@
       "source": "docs/approved-game-boards.md"
     },
     {
+      "path": "ingilizce/games-assets/arena-v1/blue-car.webp",
+      "sha256": "db2ae60ecff549e35303a3cfd586de6b250f5f9ef30f0e39769f5308749a860d",
+      "bytes": 24948,
+      "status": "ai-generated",
+      "source": "docs/race-arena-generation.json"
+    },
+    {
+      "path": "ingilizce/games-assets/arena-v1/blue-mascot.webp",
+      "sha256": "a5c6ea3846cb9a83b40784188e3099636691732480f8bae46baadaa7c90247d1",
+      "bytes": 34414,
+      "status": "ai-generated",
+      "source": "docs/race-arena-generation.json"
+    },
+    {
+      "path": "ingilizce/games-assets/arena-v1/red-car.webp",
+      "sha256": "2e9ca22db579a867a7eba3aa7c3ad379a0010475634c7c4571e112bea0e1929f",
+      "bytes": 26558,
+      "status": "ai-generated",
+      "source": "docs/race-arena-generation.json"
+    },
+    {
+      "path": "ingilizce/games-assets/arena-v1/red-mascot.webp",
+      "sha256": "1cacabf73fc559c3712dce12a92d7c6e037ee7e6bfaa2ecada01d1a94a26ff41",
+      "bytes": 28902,
+      "status": "ai-generated",
+      "source": "docs/race-arena-generation.json"
+    },
+    {
+      "path": "ingilizce/games-assets/arena-v1/stadium.webp",
+      "sha256": "38b980c3c1a88be24e78209b22b1e0770c30b7c316e2b7f1ff69af9d4b3d8e66",
+      "bytes": 89356,
+      "status": "ai-generated",
+      "source": "docs/race-arena-generation.json"
+    },
+    {
+      "path": "ingilizce/games-assets/category-icons.svg",
+      "sha256": "0174f7b1b2efeafe616544056ebcbb30f1e3aef9db7141b6e70fdcc3ae97cd54",
+      "bytes": 2663,
+      "status": "code-native",
+      "source": "Repository-authored game category icon set; SVG source retained in Git"
+    },
+    {
       "path": "ingilizce/games-assets/game-atlas-v1.webp",
       "sha256": "a16f52a8cbf3df9d093fb924a05b4b8615d0707463c310956aa7bc90e962b272",
       "bytes": 276396,
@@ -423,6 +661,13 @@
       "source": "Original repository-authored SVG controls, 2026-10-11"
     },
     {
+      "path": "ingilizce/games-assets/word-goal-sprites-v2.png",
+      "sha256": "8a81b907d4ed900f2ceef71a33311d6796404c340ae5c88062d761f4ffebc643",
+      "bytes": 1493489,
+      "status": "ai-generated",
+      "source": "docs/premium-skill-artwork.json"
+    },
+    {
       "path": "ingilizce/garden-icon.svg",
       "sha256": "4daf3dac7299ef5c5ff237d24f9f23a8728510c6eb77a0fd659675ccd59bb80f",
       "bytes": 1125,
@@ -435,6 +680,41 @@
       "bytes": 6007,
       "status": "approved-brand-asset",
       "source": "https://developers.google.com/static/identity/images/signin-assets.zip (Android + Web PNG @2x Light Square)"
+    },
+    {
+      "path": "ingilizce/graduation-assets/learning-certificate.webp",
+      "sha256": "29d36847fd20fc1bc8bebe232b808737042fd8e55ff8175da5c2a33c5980e09f",
+      "source": "OpenAI image generation; derived from user-approved Diji-Medu graduation mockups, 20 October 2026",
+      "status": "original_ai_generated",
+      "bytes": 266222
+    },
+    {
+      "path": "ingilizce/graduation-assets/learning-portal.webp",
+      "sha256": "f644e0c630f494db5793638df070e6dae42141c61f6a87234e55439f067bb6f4",
+      "source": "OpenAI image generation; derived from user-approved Diji-Medu graduation mockups, 20 October 2026",
+      "status": "original_ai_generated",
+      "bytes": 344082
+    },
+    {
+      "path": "ingilizce/graduation-assets/school-certificate.webp",
+      "sha256": "17638266ce9c013a14d77587325ee8f7cb3118a8129d72b29942038cb4825120",
+      "source": "OpenAI image generation; derived from user-approved Diji-Medu graduation mockups, 20 October 2026",
+      "status": "original_ai_generated",
+      "bytes": 140232
+    },
+    {
+      "path": "ingilizce/graduation-assets/school-finale.webp",
+      "sha256": "4097a4151e4189054f6f65eb087c3ac365a2720992144f256a4fa2dc1dd86d6f",
+      "bytes": 125504,
+      "source": "OpenAI ImageGen, 20 October 2026; exact Papi trophy finale derived from user-approved school graduation mockup",
+      "status": "ai-generated"
+    },
+    {
+      "path": "ingilizce/graduation-assets/school-portal.webp",
+      "sha256": "4d4a066df5452422cd31c49a755d261fd642017d459f67dd5e751301acb9c610",
+      "source": "OpenAI image generation; derived from user-approved Diji-Medu graduation mockups, 20 October 2026",
+      "status": "original_ai_generated",
+      "bytes": 326284
     },
     {
       "path": "ingilizce/harf-adasi-approved-sheet.webp",
@@ -920,6 +1200,13 @@
       "source": "scripts/create-original-media.py"
     },
     {
+      "path": "ingilizce/papagan-app-icon-512.png",
+      "sha256": "cd329ee6ad18650d69bef70f2338d4515f2621d92f74a97e73e9c558aadc8302",
+      "bytes": 316331,
+      "status": "owner-supplied",
+      "source": "Supplied by the owner in chat on 2026-11-04 as the new Diji Medu app logo (Papi head portrait), chosen from images made for the app. Resized copies serve as web, PWA and Android launcher icons."
+    },
+    {
       "path": "ingilizce/papi-app-icon-v3.png",
       "sha256": "d7711818d98a1c20e18d6aa159cb1a90f8908319ce22b78f79887cac17915be6",
       "bytes": 50282,
@@ -968,6 +1255,126 @@
       "bytes": 50282,
       "status": "ai-generated",
       "source": "docs/media-generation-record.json"
+    },
+    {
+      "path": "ingilizce/parkur-badges/learning-02.webp",
+      "sha256": "5af1cd72caaa9251cbd4e0daf4fc83d29ad19b59d7d6e381f4c65e3aaeeae8ad",
+      "bytes": 137866,
+      "status": "ai-generated",
+      "source": "docs/media-generation-record.json"
+    },
+    {
+      "path": "ingilizce/parkur-badges/learning-03.webp",
+      "sha256": "d250435d0cfd800de14006c8d2cf16a1e861f565ee16566df9d38fa5aa0931f5",
+      "bytes": 241472,
+      "status": "ai-generated",
+      "source": "docs/media-generation-record.json"
+    },
+    {
+      "path": "ingilizce/parkur-badges/learning-04.webp",
+      "sha256": "3d1b9c3a83b33c91a340e433f7b2f80767ac7ce9cda13c2c774fdd73a2d6d7aa",
+      "bytes": 236712,
+      "status": "ai-generated",
+      "source": "docs/media-generation-record.json"
+    },
+    {
+      "path": "ingilizce/parkur-badges/papi-01.webp",
+      "sha256": "879162258b9ded492997ba1b0572f102e4b7ec281d6e879faf716c8acd14de2a",
+      "bytes": 117396,
+      "status": "ai-generated",
+      "source": "docs/media-generation-record.json"
+    },
+    {
+      "path": "ingilizce/parkur-badges/school-02.webp",
+      "sha256": "2de2eee891fb149e28ce5157c3c5dabd4b1c0fc28d145ec7c2722728aef9cbde",
+      "bytes": 166486,
+      "status": "ai-generated",
+      "source": "docs/media-generation-record.json"
+    },
+    {
+      "path": "ingilizce/parkur-badges/school-03.webp",
+      "sha256": "fbc0cda9a29b0284c098e1203205d939fa6b6137f790e2a74985a79d2c4c0f28",
+      "bytes": 230746,
+      "status": "ai-generated",
+      "source": "docs/media-generation-record.json"
+    },
+    {
+      "path": "ingilizce/parkur-badges/school-04.webp",
+      "sha256": "90e428a1ebf9b6b793c4aa742a233da6ecc97759978f4c8ff044da2bead55f5f",
+      "bytes": 274302,
+      "status": "ai-generated",
+      "source": "docs/media-generation-record.json"
+    },
+    {
+      "path": "ingilizce/parkur-badges/school-05.webp",
+      "sha256": "a5ed090a17897b94a4e0deff0b51b3dee968cce5449e6a53f30b4a76e0ae4c57",
+      "bytes": 271168,
+      "status": "ai-generated",
+      "source": "docs/media-generation-record.json"
+    },
+    {
+      "path": "ingilizce/parkur-badges/v2/learning-02.webp",
+      "sha256": "36d5e80edf62293eea64f81c6ea076ccb50688346122df3c2f545a2e72f7b457",
+      "bytes": 201654,
+      "status": "ai-generated",
+      "source": "docs/media-generation-record.json",
+      "derived_from": "ingilizce/parkur-badges/learning-02.webp"
+    },
+    {
+      "path": "ingilizce/parkur-badges/v2/learning-03.webp",
+      "sha256": "05f31bf3d87dc2bc98df64b17e34c39bb4b786e9be885025a402b43285d91160",
+      "bytes": 332842,
+      "status": "ai-generated",
+      "source": "docs/media-generation-record.json",
+      "derived_from": "ingilizce/parkur-badges/learning-03.webp"
+    },
+    {
+      "path": "ingilizce/parkur-badges/v2/learning-04.webp",
+      "sha256": "b886699e08503f884db559f6e50c7d98d472f7cd535fb046cecf7aa3e09b7b85",
+      "bytes": 324824,
+      "status": "ai-generated",
+      "source": "docs/media-generation-record.json",
+      "derived_from": "ingilizce/parkur-badges/learning-04.webp"
+    },
+    {
+      "path": "ingilizce/parkur-badges/v2/papi-01.webp",
+      "sha256": "f6bdd1885cf8055b26559004545bfac32f98ecac463b9913bf42ada7d61987e7",
+      "bytes": 142750,
+      "status": "ai-generated",
+      "source": "docs/media-generation-record.json",
+      "derived_from": "ingilizce/parkur-badges/papi-01.webp"
+    },
+    {
+      "path": "ingilizce/parkur-badges/v2/school-02.webp",
+      "sha256": "49567f50372d571a3bb10b0c0f3ffa294c4648a53ee427d97cd19dadefbe536c",
+      "bytes": 221414,
+      "status": "ai-generated",
+      "source": "docs/media-generation-record.json",
+      "derived_from": "ingilizce/parkur-badges/school-02.webp"
+    },
+    {
+      "path": "ingilizce/parkur-badges/v2/school-03.webp",
+      "sha256": "11af419902144ecf63f2607abbc71c61faa848d14d15bbfab611c2081a2b528c",
+      "bytes": 309182,
+      "status": "ai-generated",
+      "source": "docs/media-generation-record.json",
+      "derived_from": "ingilizce/parkur-badges/school-03.webp"
+    },
+    {
+      "path": "ingilizce/parkur-badges/v2/school-04.webp",
+      "sha256": "6dc1ef2dc61b787399ebd1841af32f74acc7b07fb0abacc44832d1fe01125642",
+      "bytes": 362584,
+      "status": "ai-generated",
+      "source": "docs/media-generation-record.json",
+      "derived_from": "ingilizce/parkur-badges/school-04.webp"
+    },
+    {
+      "path": "ingilizce/parkur-badges/v2/school-05.webp",
+      "sha256": "2de39c771e3c1100efca012a99666079b487151b802651adcbd9169999512b50",
+      "bytes": 349060,
+      "status": "ai-generated",
+      "source": "docs/media-generation-record.json",
+      "derived_from": "ingilizce/parkur-badges/school-05.webp"
     },
     {
       "path": "ingilizce/parkur-continuous-world-v1.svg",
@@ -1031,1163 +1438,6 @@
       "bytes": 356,
       "status": "code-native",
       "source": "Original repository-authored subtle star SVG; docs/selected-play-design.md"
-    },
-    {
-      "path": "ingilizce/profile-assets/papi-selam.png",
-      "sha256": "9c61746c17f96b0d8b1392b6b2963fc9dded2fe600fd2734aec7635f7b8b8ca5",
-      "bytes": 113365,
-      "status": "ai-generated",
-      "source": "docs/media-generation-record.json",
-      "derived_from": "ingilizce/papi-welcome-v2.png"
-    },
-    {
-      "path": "ingilizce/profile-assets/rozet-aktif-15.svg",
-      "sha256": "d0eaed24c417f9a7ed0cb6c504d6cfb0b4125d7d04987991b7179e26ad1f2eb7",
-      "bytes": 678,
-      "status": "code-authored",
-      "source": "Original vector medallion authored in code for Diji-Medu member achievements on 2026-10-15; no external image input."
-    },
-    {
-      "path": "ingilizce/profile-assets/rozet-aktif-5.svg",
-      "sha256": "271846de2e42fa1c20be1e07b22d1fdcfe3a86538f0fc716f5193d8cd0363303",
-      "bytes": 677,
-      "status": "code-authored",
-      "source": "Original vector medallion authored in code for Diji-Medu member achievements on 2026-10-15; no external image input."
-    },
-    {
-      "path": "ingilizce/profile-assets/rozet-aktif-60.svg",
-      "sha256": "12c3a0ccf30332730c8cea61d5d10e8171018541794569d5a845d8d82b055daa",
-      "bytes": 679,
-      "status": "code-authored",
-      "source": "Original vector medallion authored in code for Diji-Medu member achievements on 2026-10-15; no external image input."
-    },
-    {
-      "path": "ingilizce/profile-assets/rozet-altin-kumbara.webp",
-      "sha256": "ec33362630327cf7d23e66343dc61b016671e141d590fa6abd8197dd957faf9f",
-      "bytes": 21596,
-      "status": "ai-generated",
-      "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/rozet-23-altin-kumbara.png and resized/converted to WebP."
-    },
-    {
-      "path": "ingilizce/profile-assets/rozet-ders-kurdu.webp",
-      "sha256": "38c8aa3d55e6839426ddc7d04b1f561bb3e289cf5bb7e4191454a9931a6b07da",
-      "bytes": 21242,
-      "status": "ai-generated",
-      "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/rozet-10-ders-kurdu.png and resized/converted to WebP."
-    },
-    {
-      "path": "ingilizce/profile-assets/rozet-dinleme-ustasi.webp",
-      "sha256": "6b7e5c26e301fda3c9d11def020c3c20de1d3ab652f810faf9ee93e965474363",
-      "bytes": 20428,
-      "status": "ai-generated",
-      "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/rozet-24-dinleme-ustasi.png and resized/converted to WebP."
-    },
-    {
-      "path": "ingilizce/profile-assets/rozet-dogru-50.svg",
-      "sha256": "e3b9fab531c5410f81d972578450afaff97204272fd969a560d11ad163d9ea6c",
-      "bytes": 675,
-      "status": "code-authored",
-      "source": "Original vector medallion authored in code for Diji-Medu member achievements on 2026-10-15; no external image input."
-    },
-    {
-      "path": "ingilizce/profile-assets/rozet-gorev-avcisi.webp",
-      "sha256": "be9d86221ad1cbb9404f1f5cde491e560025d92b3428f230813861b43d1d31cb",
-      "bytes": 20246,
-      "status": "ai-generated",
-      "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/rozet-16-gorev-avcisi.png and resized/converted to WebP."
-    },
-    {
-      "path": "ingilizce/profile-assets/rozet-hos-geldin.svg",
-      "sha256": "b22816ce505a52abbf070b3092b5ad58ef5bb2ca92dc6524bdd81b2d7bb2a791",
-      "bytes": 677,
-      "status": "code-authored",
-      "source": "Original vector medallion authored in code for Diji-Medu member achievements on 2026-10-15; no external image input."
-    },
-    {
-      "path": "ingilizce/profile-assets/rozet-ilk-adim.webp",
-      "sha256": "28cedba4f025329e0c4ddf9f7fb49be0e740a5f5e88d83128f557ed0cbf488e8",
-      "bytes": 18142,
-      "status": "ai-generated",
-      "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/rozet-01-ilk-adim.png and resized/converted to WebP."
-    },
-    {
-      "path": "ingilizce/profile-assets/rozet-ilk-zafer.webp",
-      "sha256": "c3e00260f644374ee863f9fec3dca5eac3ff879ac20fc98d9b93c8b4c982d4d5",
-      "bytes": 19268,
-      "status": "ai-generated",
-      "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/rozet-02-ilk-zafer.png and resized/converted to WebP."
-    },
-    {
-      "path": "ingilizce/profile-assets/rozet-kasif.webp",
-      "sha256": "a3867ec8f0945f49a3848b797a15418743b69d0c33970b1a200bf7d2b14dea6b",
-      "bytes": 20900,
-      "status": "ai-generated",
-      "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/rozet-14-kasif.png and resized/converted to WebP."
-    },
-    {
-      "path": "ingilizce/profile-assets/rozet-kelime-avcisi.webp",
-      "sha256": "50f2ab89d561cd1d5c9e56c60abf6942c2a12eb79232041bfedd0bd06d9ddaa1",
-      "bytes": 22618,
-      "status": "ai-generated",
-      "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/rozet-06-kelime-avcisi.png and resized/converted to WebP."
-    },
-    {
-      "path": "ingilizce/profile-assets/rozet-kelime-ustasi.webp",
-      "sha256": "7382293da7897520b74a6b8132416dc75d54fd984bbb84dcbbdf67e75362274e",
-      "bytes": 19176,
-      "status": "ai-generated",
-      "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/rozet-07-kelime-ustasi.png and resized/converted to WebP."
-    },
-    {
-      "path": "ingilizce/profile-assets/rozet-keskin-goz.webp",
-      "sha256": "6002b2a41ba130bd6ba3a8c58a1c3e094c9a3d21edcd753437693d22c4b7fc69",
-      "bytes": 20272,
-      "status": "ai-generated",
-      "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/rozet-09-keskin-goz.png and resized/converted to WebP."
-    },
-    {
-      "path": "ingilizce/profile-assets/rozet-koleksiyoncu.webp",
-      "sha256": "b60c003d602e368ce3233e8cf96175ab8b3e2d9d7dcd69579fe4bdcd8c32fc3d",
-      "bytes": 22156,
-      "status": "ai-generated",
-      "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/rozet-20-koleksiyoncu.png and resized/converted to WebP."
-    },
-    {
-      "path": "ingilizce/profile-assets/rozet-konu-ustasi.webp",
-      "sha256": "c2f6649bc61e14b71dc908f9691ab6371fe17b5f88cda6760464a3b0816bd569",
-      "bytes": 19628,
-      "status": "ai-generated",
-      "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/rozet-11-konu-ustasi.png and resized/converted to WebP."
-    },
-    {
-      "path": "ingilizce/profile-assets/rozet-oyun-25.svg",
-      "sha256": "5b5aa9d670c6aafefa7ee1073c5f31a679a6dee6a4306d26e0e7f570df52e6e5",
-      "bytes": 675,
-      "status": "code-authored",
-      "source": "Original vector medallion authored in code for Diji-Medu member achievements on 2026-10-15; no external image input."
-    },
-    {
-      "path": "ingilizce/profile-assets/rozet-parkur-50.svg",
-      "sha256": "b7bc9e76cdf7f80e296e74a772ea856b69735777c69c9587069a6e892b4d409f",
-      "bytes": 675,
-      "status": "code-authored",
-      "source": "Original vector medallion authored in code for Diji-Medu member achievements on 2026-10-15; no external image input."
-    },
-    {
-      "path": "ingilizce/profile-assets/rozet-parkurcu.webp",
-      "sha256": "fde6e66176c661e1c7d5b84c39e8e4254394afd9cd9c90e1775f5519955922cf",
-      "bytes": 21472,
-      "status": "ai-generated",
-      "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/rozet-13-parkurcu.png and resized/converted to WebP."
-    },
-    {
-      "path": "ingilizce/profile-assets/rozet-puan-avcisi.webp",
-      "sha256": "12c42ba4a32962460a4567e2f8f91834a73936735a05c8f57789afe844ed9e43",
-      "bytes": 23294,
-      "status": "ai-generated",
-      "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/rozet-21-puan-avcisi.png and resized/converted to WebP."
-    },
-    {
-      "path": "ingilizce/profile-assets/rozet-puan-efsanesi.webp",
-      "sha256": "57f093516a8b4e4fb8741c99c051505bd15b0ad8ca1d13a801d5eadb66801a5f",
-      "bytes": 18518,
-      "status": "ai-generated",
-      "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/rozet-22-puan-efsanesi.png and resized/converted to WebP."
-    },
-    {
-      "path": "ingilizce/profile-assets/rozet-sampiyon.webp",
-      "sha256": "df2a0261a0207c1dd434e14efc8a05aa53937ffd3426b2d40b30874e4415011b",
-      "bytes": 20098,
-      "status": "ai-generated",
-      "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/rozet-15-sampiyon.png and resized/converted to WebP."
-    },
-    {
-      "path": "ingilizce/profile-assets/rozet-seri-14.svg",
-      "sha256": "773a2707d1594ce4db7a6befa811b6ee030070e10f690aac7b336ec14333b1a2",
-      "bytes": 675,
-      "status": "code-authored",
-      "source": "Original vector medallion authored in code for Diji-Medu member achievements on 2026-10-15; no external image input."
-    },
-    {
-      "path": "ingilizce/profile-assets/rozet-seri-3.webp",
-      "sha256": "2f5e206a106ca13772b5a5a694c8f57a4d4ce177b97dd24d7b2356e5664049ff",
-      "bytes": 17904,
-      "status": "ai-generated",
-      "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/rozet-03-3-gun-seri.png and resized/converted to WebP."
-    },
-    {
-      "path": "ingilizce/profile-assets/rozet-seri-30.webp",
-      "sha256": "fb6e0476257ed79ecc28f89af6d4f1c8ad7ffbcc154f04b09dd7a5e2ce9bf95a",
-      "bytes": 19324,
-      "status": "ai-generated",
-      "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/rozet-05-30-gun-seri.png and resized/converted to WebP."
-    },
-    {
-      "path": "ingilizce/profile-assets/rozet-seri-7.webp",
-      "sha256": "9f5126a51b95a5c65363a354a5043c95506648f62ad0d13fd744511903c77eb3",
-      "bytes": 18802,
-      "status": "ai-generated",
-      "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/rozet-04-7-gun-seri.png and resized/converted to WebP."
-    },
-    {
-      "path": "ingilizce/profile-assets/rozet-seviye-10.webp",
-      "sha256": "47d2947b3a2984b4401feb9676da883a2232e6856e798b6bdfd8c86020dd43f6",
-      "bytes": 21000,
-      "status": "ai-generated",
-      "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/rozet-18-seviye-10.png and resized/converted to WebP."
-    },
-    {
-      "path": "ingilizce/profile-assets/rozet-seviye-20.webp",
-      "sha256": "f9387dd432239c44215342f0eb6169180bb9f7c9b702a9b5dbeb0dde28e3a240",
-      "bytes": 22570,
-      "status": "ai-generated",
-      "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/rozet-19-seviye-20.png and resized/converted to WebP."
-    },
-    {
-      "path": "ingilizce/profile-assets/rozet-seviye-5.webp",
-      "sha256": "a8f9c7acede2be02b448e8effeddaad2e967d3a330dc10e73acd3a326f7347a4",
-      "bytes": 20210,
-      "status": "ai-generated",
-      "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/rozet-17-seviye-5.png and resized/converted to WebP."
-    },
-    {
-      "path": "ingilizce/profile-assets/rozet-tam-isabet.webp",
-      "sha256": "a2a9b630dcf4deac024adefaa1f5def4c7b9665c03b17fa3f5f651b4e6de3c4c",
-      "bytes": 20852,
-      "status": "ai-generated",
-      "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/rozet-08-tam-isabet.png and resized/converted to WebP."
-    },
-    {
-      "path": "ingilizce/profile-assets/rozet-yildiz-toplayici.webp",
-      "sha256": "8c50df506c3e98bbe6e1d8b509223210e4eaa829e075bbb5922f21ef0df945a8",
-      "bytes": 18178,
-      "status": "ai-generated",
-      "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/rozet-12-yildiz-toplayici.png and resized/converted to WebP."
-    },
-    {
-      "path": "ingilizce/profile-assets/sahne-sana-ozel.webp",
-      "sha256": "75402db2305ced9c039ed4b264b027f20f0f127647672133d39a080618ae19ad",
-      "bytes": 174212,
-      "status": "ai-generated",
-      "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/sahne-sana-ozel.png and resized/converted to WebP."
-    },
-    {
-      "path": "ingilizce/rally-assets/car.webp",
-      "sha256": "5283eab89a9fab9104d10305e5517070e07ec646cb1ff7e37c14548763e14e33",
-      "bytes": 50436,
-      "status": "ai-generated",
-      "source": "OpenAI ImageGen, 2026-10-16; extracted/recreated from the user-approved Kelime Rallisi mobile game concept; optimized as WebP."
-    },
-    {
-      "path": "ingilizce/rally-assets/coast.webp",
-      "sha256": "61aa26409f4b1ce641579fcfd8aaf9aa0eef75ddb71d7373b5eb04681306c4bb",
-      "bytes": 276328,
-      "status": "ai-generated",
-      "source": "OpenAI ImageGen, 2026-10-16; extracted/recreated from the user-approved Kelime Rallisi mobile game concept; optimized as WebP."
-    },
-    {
-      "path": "ingilizce/route-assets/ada-yolculugu.webp",
-      "sha256": "fae512c087d85c4b0fd275dcfdc28026be804c7e2b776d6275051e41fbf8783f",
-      "bytes": 45306,
-      "status": "ai-generated",
-      "source": "Built-in ImageGen, 2026-10-13; user-approved map concepts, original daytime scene; no UI/text. Lossy WebP encoding for mobile delivery."
-    },
-    {
-      "path": "ingilizce/route-assets/ai-coach.svg",
-      "sha256": "3c836de64005677f6583276a1424ed7da2bab9d63a8186e9799a36d710625193",
-      "bytes": 472,
-      "status": "repository-restored",
-      "source": "Existing route asset from Git history through 41ca0aa869f6d626cb39d9f2d67cded06ea67c1c; original generation provenance was not recorded by the upload."
-    },
-    {
-      "path": "ingilizce/route-assets/bag.svg",
-      "sha256": "b03aaad11a88f5825f7b32129d34ecba06a2c844c7b6949e177f30b0bbe309e6",
-      "bytes": 655,
-      "status": "repository-restored",
-      "source": "Restored from commit 16362b9af935e4defdc4ed56b3e4aac1da249cae; original generation provenance was not recorded by that package."
-    },
-    {
-      "path": "ingilizce/route-assets/book.svg",
-      "sha256": "24fd9c463d56e1da1a3f039a171a9082d05d3b182482a074e4312d56cf80edb0",
-      "bytes": 660,
-      "status": "repository-restored",
-      "source": "Restored from commit 16362b9af935e4defdc4ed56b3e4aac1da249cae; original generation provenance was not recorded by that package."
-    },
-    {
-      "path": "ingilizce/route-assets/chart.svg",
-      "sha256": "43d82fb750da8fc417c1c47d67aa861869cdaec494eaecd890bf6cccdd5cbb33",
-      "bytes": 665,
-      "status": "repository-restored",
-      "source": "Restored from commit 16362b9af935e4defdc4ed56b3e4aac1da249cae; original generation provenance was not recorded by that package."
-    },
-    {
-      "path": "ingilizce/route-assets/chest.svg",
-      "sha256": "7b684de409a227f15ff31d45d1b54c8fa51f1a3c0a9751237d847fe5ab93e607",
-      "bytes": 643,
-      "status": "repository-restored",
-      "source": "Restored from commit 16362b9af935e4defdc4ed56b3e4aac1da249cae; original generation provenance was not recorded by that package."
-    },
-    {
-      "path": "ingilizce/route-assets/coin.svg",
-      "sha256": "43c250256dea424be73b643648a8fe236b1f9d0615839619ad4028c827f5fc85",
-      "bytes": 679,
-      "status": "code-native",
-      "source": "Repository-authored generic gold coin SVG, 2026-10-13; original code retained in Git."
-    },
-    {
-      "path": "ingilizce/route-assets/compact-wallet-atlas-v1.webp",
-      "sha256": "444eb9f91b5d45200a93e143f4e478e8944b1764caa811bc93d9f8b523efafe5",
-      "bytes": 105636,
-      "status": "ai-generated",
-      "source": "ImageGen, 2026-10-13; regenerated from the user-approved compact strip concept 1. Papi head, lightning, coin, XP hexagon and active-time star; transparent five-cell atlas."
-    },
-    {
-      "path": "ingilizce/route-assets/exam.svg",
-      "sha256": "efefc986c2d52be2c7dcc4f0a5cb7f55cbe929fdcf7555a21b0132d897bbf83d",
-      "bytes": 482,
-      "status": "repository-restored",
-      "source": "Existing route asset from Git history through 41ca0aa869f6d626cb39d9f2d67cded06ea67c1c; original generation provenance was not recorded by the upload."
-    },
-    {
-      "path": "ingilizce/route-assets/family-icon.svg",
-      "sha256": "98ba14cce082a3cf1115f6b2bda04c694703449a215e76ea7e9e5c56343735d9",
-      "bytes": 314,
-      "status": "original-code",
-      "source": "docs/social-safety-guardian-controls.md"
-    },
-    {
-      "path": "ingilizce/route-assets/feather-combo.svg",
-      "sha256": "2d7a16bda07729ba3d72f9f9b001e7402c45ee91eef1a045d813afe190fc642a",
-      "bytes": 921,
-      "status": "repository-existing-unverified",
-      "source": "Existing in repository before member-flow release eb197cdd; original artwork provenance was not recorded. This entry records file integrity, not rights clearance."
-    },
-    {
-      "path": "ingilizce/route-assets/friends.svg",
-      "sha256": "86fefda75aaa46c64402f1fa46df9dbd0c161a7b3a4214bf632068b3106324e3",
-      "bytes": 543,
-      "status": "repository-restored",
-      "source": "Restored from commit 16362b9af935e4defdc4ed56b3e4aac1da249cae; original generation provenance was not recorded by that package."
-    },
-    {
-      "path": "ingilizce/route-assets/game.svg",
-      "sha256": "5dd94c47836ac5a86738bb8237717da4ee40762ae702810530763b4c6e63af80",
-      "bytes": 654,
-      "status": "repository-restored",
-      "source": "Restored from commit 16362b9af935e4defdc4ed56b3e4aac1da249cae; original generation provenance was not recorded by that package."
-    },
-    {
-      "path": "ingilizce/route-assets/gear.svg",
-      "sha256": "42097be3d8b0e818e5b8fbc8b84cb79d893873a0bbd6b9d4b6800889ea2e3d9a",
-      "bytes": 581,
-      "status": "repository-restored",
-      "source": "Restored from commit 16362b9af935e4defdc4ed56b3e4aac1da249cae; original generation provenance was not recorded by that package."
-    },
-    {
-      "path": "ingilizce/route-assets/goal.svg",
-      "sha256": "4cc180b32e9e331625852894e8eb5400a2afa3e2f96a7a12e267260e5c4ebfe0",
-      "bytes": 625,
-      "status": "repository-restored",
-      "source": "Restored from commit 16362b9af935e4defdc4ed56b3e4aac1da249cae; original generation provenance was not recorded by that package."
-    },
-    {
-      "path": "ingilizce/route-assets/help.svg",
-      "sha256": "4946c316b2f64033c1eb27863b6b71b50d13380769100ec0e7397ec82e43797f",
-      "bytes": 612,
-      "status": "repository-restored",
-      "source": "Restored from commit 16362b9af935e4defdc4ed56b3e4aac1da249cae; original generation provenance was not recorded by that package."
-    },
-    {
-      "path": "ingilizce/route-assets/homework-icon.svg",
-      "sha256": "788fe678fd925d72156ece151d57a7a34eab516114c5ad24dbe8c1d41bbc62fb",
-      "bytes": 441,
-      "status": "original-code",
-      "source": "docs/social-safety-guardian-controls.md"
-    },
-    {
-      "path": "ingilizce/route-assets/logout.svg",
-      "sha256": "f92c5e7b91f26d1d6de11072cc4e623c950867649ed66448e9836ede2c4aca40",
-      "bytes": 333,
-      "status": "repository-restored",
-      "source": "Existing route asset from Git history through 41ca0aa869f6d626cb39d9f2d67cded06ea67c1c; original generation provenance was not recorded by the upload."
-    },
-    {
-      "path": "ingilizce/route-assets/medal.svg",
-      "sha256": "a53de5f56781a17db1c23b6fbc7599a3268bd8681c50631337fb26457cf68afa",
-      "bytes": 571,
-      "status": "repository-restored",
-      "source": "Restored from commit 16362b9af935e4defdc4ed56b3e4aac1da249cae; original generation provenance was not recorded by that package."
-    },
-    {
-      "path": "ingilizce/route-assets/odul-rotasi.webp",
-      "sha256": "e7945cd48fc563826b0b12c8b0783753cb7989446e79643ffa0181333dd63eb8",
-      "bytes": 45916,
-      "status": "ai-generated",
-      "source": "Built-in ImageGen, 2026-10-13; user-approved map concepts, original daytime scene; no UI/text. Lossy WebP encoding for mobile delivery."
-    },
-    {
-      "path": "ingilizce/route-assets/papi-english.webp",
-      "sha256": "e69244d853a3685a3e096ccdbdd6582c57ca85cb257f5b90900c066cd5085584",
-      "bytes": 184022,
-      "status": "repository-restored",
-      "source": "Restored from commit 16362b9af935e4defdc4ed56b3e4aac1da249cae; original generation provenance was not recorded by that package."
-    },
-    {
-      "path": "ingilizce/route-assets/papi-profile.png",
-      "sha256": "af715d4208ab17917777b8d511763bfcadcb9354b919486f1ddfec5a8387232d",
-      "bytes": 41534,
-      "status": "repository-restored",
-      "source": "Restored from commit 16362b9af935e4defdc4ed56b3e4aac1da249cae; original generation provenance was not recorded by that package."
-    },
-    {
-      "path": "ingilizce/route-assets/papi-school.webp",
-      "sha256": "4ce889ab20173922f4ffd03a041b181937431190813f3f2e32934925c57e9b06",
-      "bytes": 137802,
-      "status": "repository-restored",
-      "source": "Restored from commit 16362b9af935e4defdc4ed56b3e4aac1da249cae; original generation provenance was not recorded by that package."
-    },
-    {
-      "path": "ingilizce/route-assets/path.svg",
-      "sha256": "66515c1ec6b68269023e9c2c110aec58fdd98b183acea066cb001d15f51be31d",
-      "bytes": 689,
-      "status": "repository-restored",
-      "source": "Restored from commit 16362b9af935e4defdc4ed56b3e4aac1da249cae; original generation provenance was not recorded by that package."
-    },
-    {
-      "path": "ingilizce/route-assets/placement-icon.svg",
-      "sha256": "ec7909d94ac2992b3de41a3d9bdeff7134fc847b170b07a919195232ab3531d1",
-      "bytes": 480,
-      "status": "original-code",
-      "source": "docs/social-safety-guardian-controls.md"
-    },
-    {
-      "path": "ingilizce/route-assets/profile.svg",
-      "sha256": "d37a0df585496db9dfa8c197e0117fc1b072d3b5e7a527be3ed29cc5e31544a1",
-      "bytes": 330,
-      "status": "repository-restored",
-      "source": "Existing route asset from Git history through 41ca0aa869f6d626cb39d9f2d67cded06ea67c1c; original generation provenance was not recorded by the upload."
-    },
-    {
-      "path": "ingilizce/route-assets/reference-coin.svg",
-      "sha256": "baa13bc004010a2fc34e5d20dc2ecadc8291c010652c6dc473cd838f8e66ee8c",
-      "bytes": 596,
-      "status": "repository-existing-unverified",
-      "source": "Existing in repository before member-flow release eb197cdd; original artwork provenance was not recorded. This entry records file integrity, not rights clearance."
-    },
-    {
-      "path": "ingilizce/route-assets/reference-energy.svg",
-      "sha256": "6c618b1e8910a1f001944840e88072488fdaadaf69e0340d23e69eeadd06e2a0",
-      "bytes": 450,
-      "status": "repository-existing-unverified",
-      "source": "Existing in repository before member-flow release eb197cdd; original artwork provenance was not recorded. This entry records file integrity, not rights clearance."
-    },
-    {
-      "path": "ingilizce/route-assets/reference-feather.svg",
-      "sha256": "dfb0c4a012edeeeae5d4f431aaa6143c5c2be0ab084ad89655b620c07b861705",
-      "bytes": 714,
-      "status": "repository-existing-unverified",
-      "source": "Existing in repository before member-flow release eb197cdd; original artwork provenance was not recorded. This entry records file integrity, not rights clearance."
-    },
-    {
-      "path": "ingilizce/route-assets/reference-forest.webp",
-      "sha256": "86fbb5b7db1ca3685edfd8826e0cc7c3c8ba41f167762de7db8bfc982a6d9f0e",
-      "bytes": 124452,
-      "status": "repository-existing-unverified",
-      "source": "Existing in repository before member-flow release eb197cdd; original artwork provenance was not recorded. This entry records file integrity, not rights clearance."
-    },
-    {
-      "path": "ingilizce/route-assets/reference-speaker.svg",
-      "sha256": "07e3575a45fae7bb76d921fb6d6f2ca66b6a7f2fcdb4d8b1c795871b95e9d5c0",
-      "bytes": 277,
-      "status": "repository-existing-unverified",
-      "source": "Existing in repository before member-flow release eb197cdd; original artwork provenance was not recorded. This entry records file integrity, not rights clearance."
-    },
-    {
-      "path": "ingilizce/route-assets/reference-wave.svg",
-      "sha256": "e8b1eb82c99b11b20cb064f668249b64ce4666b2b5f0f61967b79444ff5fe371",
-      "bytes": 194,
-      "status": "repository-existing-unverified",
-      "source": "Existing in repository before member-flow release eb197cdd; original artwork provenance was not recorded. This entry records file integrity, not rights clearance."
-    },
-    {
-      "path": "ingilizce/route-assets/repeat.svg",
-      "sha256": "aca4b1b170178f6e6aae3f6a158856a238aa6d104a44e38109ef3e5b7af787da",
-      "bytes": 435,
-      "status": "repository-restored",
-      "source": "Existing route asset from Git history through 41ca0aa869f6d626cb39d9f2d67cded06ea67c1c; original generation provenance was not recorded by the upload."
-    },
-    {
-      "path": "ingilizce/route-assets/safety-icon.svg",
-      "sha256": "e9e5c6092c9911e961444ac67486c77bc9bef013270f8423cd2ee6fcf9a3ac42",
-      "bytes": 414,
-      "status": "original-code",
-      "source": "docs/social-safety-guardian-controls.md"
-    },
-    {
-      "path": "ingilizce/route-assets/shop.svg",
-      "sha256": "8488d2b5736fa8d21a9513097f657da7727fc0837e539e7402ba416b4ff355eb",
-      "bytes": 632,
-      "status": "repository-restored",
-      "source": "Restored from commit 16362b9af935e4defdc4ed56b3e4aac1da249cae; original generation provenance was not recorded by that package."
-    },
-    {
-      "path": "ingilizce/route-assets/support-icon.svg",
-      "sha256": "e0cfa49fdcc91686c3c01f2950b06d811ebf0c265b5eeff0b6dcf218fc28cd48",
-      "bytes": 590,
-      "status": "original-code",
-      "source": "docs/social-safety-guardian-controls.md"
-    },
-    {
-      "path": "ingilizce/route-assets/teacher.svg",
-      "sha256": "38781fc3fb13a726ea13877db13e42c83bf3994fd3676d14d9a147ec8e0a9982",
-      "bytes": 453,
-      "status": "repository-restored",
-      "source": "Existing route asset from Git history through 41ca0aa869f6d626cb39d9f2d67cded06ea67c1c; original generation provenance was not recorded by the upload."
-    },
-    {
-      "path": "ingilizce/route-assets/user.svg",
-      "sha256": "44ac6534964045b5004536991052c44fdb2b49bf905d53bece1938ff9b1fe13f",
-      "bytes": 516,
-      "status": "repository-restored",
-      "source": "Restored from commit 16362b9af935e4defdc4ed56b3e4aac1da249cae; original generation provenance was not recorded by that package."
-    },
-    {
-      "path": "ingilizce/start-placement-audio/A1-10.mp3",
-      "sha256": "357133b948598ded1e71f162cca2f7e1e544f7a4e7a2ed48cff2884695e6e8cc",
-      "bytes": 35757,
-      "status": "original-synthesized-audio",
-      "source": "Original DijiMedu placement item text, synthesized locally with FFmpeg libflite (slt), 2026-10-18; scripts/build-start-placement-audio.py"
-    },
-    {
-      "path": "ingilizce/start-placement-audio/A1-8.mp3",
-      "sha256": "f57c079f02e08a8457d5798956c7eb2c8055cb41452d024063877c5d2afd2f40",
-      "bytes": 33069,
-      "status": "original-synthesized-audio",
-      "source": "Original DijiMedu placement item text, synthesized locally with FFmpeg libflite (slt), 2026-10-18; scripts/build-start-placement-audio.py"
-    },
-    {
-      "path": "ingilizce/start-placement-audio/A1-9.mp3",
-      "sha256": "bc17167b9ed14918b20e4b71e4dc525c5a3b7111b208b62d46f39c3831ab6609",
-      "bytes": 36333,
-      "status": "original-synthesized-audio",
-      "source": "Original DijiMedu placement item text, synthesized locally with FFmpeg libflite (slt), 2026-10-18; scripts/build-start-placement-audio.py"
-    },
-    {
-      "path": "ingilizce/start-placement-audio/A1-extra-10.mp3",
-      "sha256": "d4ab0d5388cda1ea636a2c076d03e04c640b8a6a64fa6b65093be6885d354684",
-      "bytes": 31149,
-      "status": "original-synthesized-audio",
-      "source": "Original DijiMedu placement item text, synthesized locally with FFmpeg libflite (slt), 2026-10-18; scripts/build-start-placement-audio.py"
-    },
-    {
-      "path": "ingilizce/start-placement-audio/A1-extra-8.mp3",
-      "sha256": "5785268dff30673d5fbc8365ccd9ecb99370ceeb748414b0300e6baecfc3b4dc",
-      "bytes": 23853,
-      "status": "original-synthesized-audio",
-      "source": "Original DijiMedu placement item text, synthesized locally with FFmpeg libflite (slt), 2026-10-18; scripts/build-start-placement-audio.py"
-    },
-    {
-      "path": "ingilizce/start-placement-audio/A1-extra-9.mp3",
-      "sha256": "b11c4d39e6da9bfb370a02286bd7b2e15907ec845044cb7296d5a93e0ec6ded4",
-      "bytes": 36141,
-      "status": "original-synthesized-audio",
-      "source": "Original DijiMedu placement item text, synthesized locally with FFmpeg libflite (slt), 2026-10-18; scripts/build-start-placement-audio.py"
-    },
-    {
-      "path": "ingilizce/start-placement-audio/A2-10.mp3",
-      "sha256": "0a7094722f0f2b83c75a2353dbdf8dd72f19e7993cf561b74f6d699da7359638",
-      "bytes": 64365,
-      "status": "original-synthesized-audio",
-      "source": "Original DijiMedu placement item text, synthesized locally with FFmpeg libflite (slt), 2026-10-18; scripts/build-start-placement-audio.py"
-    },
-    {
-      "path": "ingilizce/start-placement-audio/A2-8.mp3",
-      "sha256": "83f4e6eb3e7fa6f97d6861a193b60f2d2cdaf71a7440962c9e77df01bc11770b",
-      "bytes": 66861,
-      "status": "original-synthesized-audio",
-      "source": "Original DijiMedu placement item text, synthesized locally with FFmpeg libflite (slt), 2026-10-18; scripts/build-start-placement-audio.py"
-    },
-    {
-      "path": "ingilizce/start-placement-audio/A2-9.mp3",
-      "sha256": "782ed865aab893fc18a882263ce14869565b46755ef95845529550a8000ff496",
-      "bytes": 53037,
-      "status": "original-synthesized-audio",
-      "source": "Original DijiMedu placement item text, synthesized locally with FFmpeg libflite (slt), 2026-10-18; scripts/build-start-placement-audio.py"
-    },
-    {
-      "path": "ingilizce/start-placement-audio/A2-extra-18.mp3",
-      "sha256": "26de36713d363a30f728748173b5b0a208440847c24ec45bad0982a01f386dac",
-      "bytes": 48429,
-      "status": "original-synthesized-audio",
-      "source": "Original DijiMedu placement item text, synthesized locally with FFmpeg libflite (slt), 2026-10-18; scripts/build-start-placement-audio.py"
-    },
-    {
-      "path": "ingilizce/start-placement-audio/A2-extra-19.mp3",
-      "sha256": "f644660c2f269c8aef63274f21ec822c161da0a360daba67136e3df795363524",
-      "bytes": 47469,
-      "status": "original-synthesized-audio",
-      "source": "Original DijiMedu placement item text, synthesized locally with FFmpeg libflite (slt), 2026-10-18; scripts/build-start-placement-audio.py"
-    },
-    {
-      "path": "ingilizce/start-placement-audio/A2-extra-20.mp3",
-      "sha256": "ae91fdd981e54648d69c15b6aa196e43ef0f67f4765f11e25e6ec7aef90999e2",
-      "bytes": 50541,
-      "status": "original-synthesized-audio",
-      "source": "Original DijiMedu placement item text, synthesized locally with FFmpeg libflite (slt), 2026-10-18; scripts/build-start-placement-audio.py"
-    },
-    {
-      "path": "ingilizce/start-placement-audio/B1-10.mp3",
-      "sha256": "a3e4d2540ca0af92d08d7e1400a8f5a91be29b9395720f451e0cd76c4b461ad8",
-      "bytes": 87405,
-      "status": "original-synthesized-audio",
-      "source": "Original DijiMedu placement item text, synthesized locally with FFmpeg libflite (slt), 2026-10-18; scripts/build-start-placement-audio.py"
-    },
-    {
-      "path": "ingilizce/start-placement-audio/B1-8.mp3",
-      "sha256": "fa7c7d39abb68c14f7571b1509f3dc6569fcc91281559f52833b65f3f9736ea5",
-      "bytes": 103725,
-      "status": "original-synthesized-audio",
-      "source": "Original DijiMedu placement item text, synthesized locally with FFmpeg libflite (slt), 2026-10-18; scripts/build-start-placement-audio.py"
-    },
-    {
-      "path": "ingilizce/start-placement-audio/B1-9.mp3",
-      "sha256": "acfe8973a7bf258a01b9d6679e69820b0d0f7efd2195bd819b0549c908031ba1",
-      "bytes": 67629,
-      "status": "original-synthesized-audio",
-      "source": "Original DijiMedu placement item text, synthesized locally with FFmpeg libflite (slt), 2026-10-18; scripts/build-start-placement-audio.py"
-    },
-    {
-      "path": "ingilizce/start-placement-audio/B1-extra-28.mp3",
-      "sha256": "b028a353eb6fc93987bb5079c9074e55817fadf1a3d55a5427a25af85fcdb3c5",
-      "bytes": 77997,
-      "status": "original-synthesized-audio",
-      "source": "Original DijiMedu placement item text, synthesized locally with FFmpeg libflite (slt), 2026-10-18; scripts/build-start-placement-audio.py"
-    },
-    {
-      "path": "ingilizce/start-placement-audio/B1-extra-29.mp3",
-      "sha256": "da4cb66a8d0f27394adfbcfd2530d882d3f556c04dff8b7dc1b82b7032d0daa8",
-      "bytes": 82029,
-      "status": "original-synthesized-audio",
-      "source": "Original DijiMedu placement item text, synthesized locally with FFmpeg libflite (slt), 2026-10-18; scripts/build-start-placement-audio.py"
-    },
-    {
-      "path": "ingilizce/start-placement-audio/B1-extra-30.mp3",
-      "sha256": "a93bfefd0123c716c99a3735e2412c188559b1e2e31160fb5c0ad069e4370b30",
-      "bytes": 75117,
-      "status": "original-synthesized-audio",
-      "source": "Original DijiMedu placement item text, synthesized locally with FFmpeg libflite (slt), 2026-10-18; scripts/build-start-placement-audio.py"
-    },
-    {
-      "path": "ingilizce/start-placement-audio/B2-10.mp3",
-      "sha256": "7fe1bedd3422eb2a909a7ec3b2a33a5721eefa72f7f1da1618535963147d1bbe",
-      "bytes": 111405,
-      "status": "original-synthesized-audio",
-      "source": "Original DijiMedu placement item text, synthesized locally with FFmpeg libflite (slt), 2026-10-18; scripts/build-start-placement-audio.py"
-    },
-    {
-      "path": "ingilizce/start-placement-audio/B2-8.mp3",
-      "sha256": "a06fa6ea926cea450c81557db2e2f61f853ccd92b8d100d665e41ffac7a87482",
-      "bytes": 131181,
-      "status": "original-synthesized-audio",
-      "source": "Original DijiMedu placement item text, synthesized locally with FFmpeg libflite (slt), 2026-10-18; scripts/build-start-placement-audio.py"
-    },
-    {
-      "path": "ingilizce/start-placement-audio/B2-9.mp3",
-      "sha256": "ffbd1f76d555bd6d53f65bfa96ab6445a560c7041bf489f0f7980c83e06f799e",
-      "bytes": 124269,
-      "status": "original-synthesized-audio",
-      "source": "Original DijiMedu placement item text, synthesized locally with FFmpeg libflite (slt), 2026-10-18; scripts/build-start-placement-audio.py"
-    },
-    {
-      "path": "ingilizce/start-placement-audio/B2-extra-38.mp3",
-      "sha256": "4cae403f3610aa5a9bf009900ce7a874475d3905d0ef748ace101b720f597824",
-      "bytes": 108717,
-      "status": "original-synthesized-audio",
-      "source": "Original DijiMedu placement item text, synthesized locally with FFmpeg libflite (slt), 2026-10-18; scripts/build-start-placement-audio.py"
-    },
-    {
-      "path": "ingilizce/start-placement-audio/B2-extra-39.mp3",
-      "sha256": "7b4b1b1afad4c38456c893d7f9c5be195ad9fab6640d285df9f1a709d8671519",
-      "bytes": 85485,
-      "status": "original-synthesized-audio",
-      "source": "Original DijiMedu placement item text, synthesized locally with FFmpeg libflite (slt), 2026-10-18; scripts/build-start-placement-audio.py"
-    },
-    {
-      "path": "ingilizce/start-placement-audio/B2-extra-40.mp3",
-      "sha256": "978a5da9f66c295e64f696d08b34daf04d01d22665bb3ebcdfa8500509741168",
-      "bytes": 97197,
-      "status": "original-synthesized-audio",
-      "source": "Original DijiMedu placement item text, synthesized locally with FFmpeg libflite (slt), 2026-10-18; scripts/build-start-placement-audio.py"
-    },
-    {
-      "path": "ingilizce/school-assets/teacher-home-icons.webp",
-      "sha256": "d38b0910885fc708edd09fca741ddf1edb42cefce61d03a7e71bf22381f5d708",
-      "bytes": 44568,
-      "status": "licensed",
-      "source": "Microsoft Fluent Emoji 3D (MIT). Resized and composed into a WebP atlas. https://github.com/microsoft/fluentui-emoji",
-      "license": "ingilizce/school-assets/teacher-home-icons.LICENSE.txt"
-    },
-    {
-      "path": "ingilizce/store-assets/dressing-room.webp",
-      "sha256": "d8a1e46ff7c480e3c4f353a8e49b5160c764a478b812bf8eaa4461376a9312c1",
-      "bytes": 91956,
-      "status": "ai-generated",
-      "source": "OpenAI ImageGen; user-authorized DijiMedu UI assets generated 2026-10-11 from approved designs"
-    },
-    {
-      "path": "ingilizce/store-assets/shop-icons.webp",
-      "sha256": "2d268b6c5cda148cbd08bf933440ed5c77affff06baec7d3f8e5da93b44bf596",
-      "bytes": 138478,
-      "status": "ai-generated",
-      "source": "OpenAI ImageGen; user-authorized DijiMedu UI assets generated 2026-10-11 from approved designs"
-    },
-    {
-      "path": "ingilizce/story-garden-map.webp",
-      "sha256": "24b2f224f6f3efd3055a685b23a799d159cccd53f1cb8fc7907c8333424fbba1",
-      "bytes": 543354,
-      "status": "ai-generated",
-      "source": "docs/papi-learning-story.md"
-    },
-    {
-      "path": "ingilizce/story-scene-boy.webp",
-      "sha256": "16e1c98f4709037340ba1383a9c4c7a545528c00e8e388de5696e68ffd9ce39a",
-      "bytes": 436932,
-      "status": "ai-generated",
-      "source": "docs/papi-learning-story.md"
-    },
-    {
-      "path": "ingilizce/story-scene-girl.webp",
-      "sha256": "49089fad5bbd79cda59a923b268a12a2be261b3d37ba37504fc22e89e9e28ed4",
-      "bytes": 422706,
-      "status": "ai-generated",
-      "source": "docs/papi-learning-story.md"
-    },
-    {
-      "path": "ingilizce/story-space-background.webp",
-      "sha256": "6546fd6565e9500faa68b818b97ffc59f0c8966fcff1c747889574d4b15ad9ad",
-      "bytes": 78968,
-      "status": "ai-generated",
-      "source": "docs/space-learning-design.md"
-    },
-    {
-      "path": "ingilizce/story-space-sprites.webp",
-      "sha256": "b0bcd9c82ce53b66172afea3d41550ed0d46a03a25655a06572b4fc0b8bb2163",
-      "bytes": 322572,
-      "status": "ai-generated",
-      "source": "docs/space-learning-design.md"
-    },
-    {
-      "path": "ingilizce/study-assets/icons.svg",
-      "sha256": "f8effa1bdd09e744178353bcfb434e7eeb3e868620c5ba475053f3870b393871",
-      "bytes": 2210,
-      "status": "code-native",
-      "source": "Repository-authored study interface SVG; original source retained in Git"
-    },
-    {
-      "path": "ingilizce/study-assets/island-a1.png",
-      "sha256": "5b844e607cd9c6d4356cc2cbbcc0b869cb4c7c92ad2e0988f14b6dc02932073f",
-      "bytes": 46516,
-      "status": "ai-generated",
-      "source": "docs/study-media-generation.json"
-    },
-    {
-      "path": "ingilizce/study-assets/island-a2.png",
-      "sha256": "41c3e3a6c46895b7f1c3efd1ff9273bdb0a35156222e07615ee31e8f9d98d7ca",
-      "bytes": 42876,
-      "status": "ai-generated",
-      "source": "docs/study-media-generation.json"
-    },
-    {
-      "path": "ingilizce/study-assets/island-b1.png",
-      "sha256": "b603cede93e49c19071012ba393066bdea4ec8ce3ceb504a161aace6d5a6e465",
-      "bytes": 45596,
-      "status": "ai-generated",
-      "source": "docs/study-media-generation.json"
-    },
-    {
-      "path": "ingilizce/study-assets/island-b2.png",
-      "sha256": "75fa55915514473e71cdf57ed17558e78f0b0882649820986e86ed2f309eadf2",
-      "bytes": 45526,
-      "status": "ai-generated",
-      "source": "docs/study-media-generation.json"
-    },
-    {
-      "path": "ingilizce/study-assets/papi-celebrate.png",
-      "sha256": "af715d4208ab17917777b8d511763bfcadcb9354b919486f1ddfec5a8387232d",
-      "bytes": 41534,
-      "status": "ai-generated",
-      "source": "docs/study-media-generation.json"
-    },
-    {
-      "path": "ingilizce/study-assets/papi-explain.png",
-      "sha256": "746e4b63d970779f5f54c6adc9e06cd5f57c020d602f8352573da777121ea4ed",
-      "bytes": 32615,
-      "status": "ai-generated",
-      "source": "docs/study-media-generation.json"
-    },
-    {
-      "path": "ingilizce/study-assets/papi-read.png",
-      "sha256": "b880af1f5f74996ff1280f87148ab0ac85da86c2ad08e99dbded00ea34627c46",
-      "bytes": 36011,
-      "status": "ai-generated",
-      "source": "docs/study-media-generation.json"
-    },
-    {
-      "path": "ingilizce/study-assets/topic-sun.svg",
-      "sha256": "5b792968fce75151b8e723443d785a86a0678f3a63c4096abccef9129ad8ba1f",
-      "bytes": 253,
-      "status": "code-native",
-      "source": "Repository-authored study interface SVG; original source retained in Git"
-    },
-    {
-      "path": "ingilizce/study-islands-v2.webp",
-      "sha256": "4887cc543f05d761673cde3e06d7fd5bee6d70d297dc926651283d7572daecdd",
-      "bytes": 516278,
-      "status": "ai-generated",
-      "source": "docs/media-generation-record.json"
-    },
-    {
-      "path": "ingilizce/world-assets/compass.svg",
-      "sha256": "773e41d95f85d78fc1770d061716c7a9d4f88041440c4a3efc9396dad935dc14",
-      "bytes": 925,
-      "status": "original-code",
-      "source": "Original SVG authored for approved world design 1"
-    },
-    {
-      "path": "ingilizce/world-assets/dressing-room.webp",
-      "sha256": "8c32c2a095837ea76bc9bffa1b6409f3cef31ad8b02346eeb50232503d2e9a41",
-      "bytes": 73598,
-      "status": "ai-generated",
-      "source": "OpenAI ImageGen, 2026-10-11; generated from the user-approved Benim Dünyam design 1"
-    },
-    {
-      "path": "ingilizce/world-assets/papi-atlas.webp",
-      "sha256": "b5ba1f41de38db183b4182a336ae65052e76652453ee55c53656d85d488dd97d",
-      "bytes": 188692,
-      "status": "ai-generated",
-      "source": "OpenAI ImageGen, 2026-10-11; generated from the user-approved Benim Dünyam design 1"
-    },
-    {
-      "path": "ingilizce/graduation-assets/school-portal.webp",
-      "sha256": "4d4a066df5452422cd31c49a755d261fd642017d459f67dd5e751301acb9c610",
-      "source": "OpenAI image generation; derived from user-approved Diji-Medu graduation mockups, 20 October 2026",
-      "status": "original_ai_generated",
-      "bytes": 326284
-    },
-    {
-      "path": "ingilizce/graduation-assets/learning-portal.webp",
-      "sha256": "f644e0c630f494db5793638df070e6dae42141c61f6a87234e55439f067bb6f4",
-      "source": "OpenAI image generation; derived from user-approved Diji-Medu graduation mockups, 20 October 2026",
-      "status": "original_ai_generated",
-      "bytes": 344082
-    },
-    {
-      "path": "ingilizce/graduation-assets/school-certificate.webp",
-      "sha256": "17638266ce9c013a14d77587325ee8f7cb3118a8129d72b29942038cb4825120",
-      "source": "OpenAI image generation; derived from user-approved Diji-Medu graduation mockups, 20 October 2026",
-      "status": "original_ai_generated",
-      "bytes": 140232
-    },
-    {
-      "path": "ingilizce/graduation-assets/learning-certificate.webp",
-      "sha256": "29d36847fd20fc1bc8bebe232b808737042fd8e55ff8175da5c2a33c5980e09f",
-      "source": "OpenAI image generation; derived from user-approved Diji-Medu graduation mockups, 20 October 2026",
-      "status": "original_ai_generated",
-      "bytes": 266222
-    },
-    {
-      "path": "ingilizce/graduation-assets/school-finale.webp",
-      "sha256": "4097a4151e4189054f6f65eb087c3ac365a2720992144f256a4fa2dc1dd86d6f",
-      "bytes": 125504,
-      "source": "OpenAI ImageGen, 20 October 2026; exact Papi trophy finale derived from user-approved school graduation mockup",
-      "status": "ai-generated"
-    },
-    {
-      "path": "ingilizce/route-assets/chest-three.svg",
-      "sha256": "b5270b4401a06cea0743f892cb506d26f7f38d61b3f12adb6ea431e737c6d0bb",
-      "bytes": 691,
-      "status": "original-vector",
-      "source": "Original SVG authored for the approved Diji Medu concept-3 route interface; no external artwork."
-    },
-    {
-      "path": "ingilizce/route-assets/nav-three.svg",
-      "sha256": "2fb24d856decd4be97b340a3b36470de78340c5d7dbfdd0aa007b1c77dedf502",
-      "bytes": 830,
-      "status": "original-vector",
-      "source": "Original SVG authored for the approved Diji Medu concept-3 route interface; no external artwork."
-    },
-    {
-      "path": "ingilizce/route-assets/school-fixed-approved-v1.webp",
-      "sha256": "8004e1f4f6d85b5c56878a6a058f5987a92083fbd32210e84c2ebb47fb2b9aef",
-      "bytes": 16820,
-      "status": "original-derived",
-      "source": "Original approved Diji-Medu 20 October 2026 concept 3; UI artifacts removed, fixed illustrated scenery, live scrolling route elements."
-    },
-    {
-      "path": "ingilizce/route-assets/learning-fixed-approved-v1.webp",
-      "sha256": "cef88ee492a688e53d41d9e67cd96e3c4be66b54cf9a29f988d746e0ac0a84fe",
-      "bytes": 12184,
-      "status": "original-derived",
-      "source": "Original approved Diji-Medu 20 October 2026 concept 3; UI artifacts removed, fixed illustrated scenery, live scrolling route elements."
-    },
-    {
-      "path": "ingilizce/route-assets/bilgi-background.webp",
-      "sha256": "2f813cc836a313dea12e95f48614b7758b2a5cc085a837a1d90b38cc6d30ce72",
-      "bytes": 471926,
-      "status": "ai-generated",
-      "source": "Generated with OpenAI image generation for the user-approved Bilgi Adaları design on 2026-10-24; prompt provenance in docs/bilgi-adalari-20261024.md."
-    },
-    {
-      "path": "ingilizce/route-assets/bilgi-mascot.webp",
-      "sha256": "973757f98305e9830ae7611a894fd0cf33a742a9dc2d19b3695357bbe37005d0",
-      "bytes": 206004,
-      "status": "ai-generated",
-      "source": "Generated with OpenAI image generation for the user-approved Bilgi Adaları design on 2026-10-24; prompt provenance in docs/bilgi-adalari-20261024.md."
-    },
-    {
-      "path": "ingilizce/route-assets/bilgi-reference.webp",
-      "sha256": "1d7f03364a2f75540c8992ed2e1444722ba154638f6232bdc04763e9fe2b2a46",
-      "bytes": 474900,
-      "status": "ai-generated",
-      "source": "Generated with OpenAI image generation for the user-approved Bilgi Adaları design on 2026-10-24; prompt provenance in docs/bilgi-adalari-20261024.md."
-    },
-    {
-      "path": "ingilizce/route-assets/bilgi-icons/calendar.webp",
-      "sha256": "a3db6e71ff73540c231532c21b5c82f6b368f0ec4bda145415f91e1dd7710add",
-      "bytes": 107696,
-      "status": "ai-generated",
-      "source": "Generated with OpenAI image generation for the user-approved Bilgi Adaları design on 2026-10-24; prompt provenance in docs/bilgi-adalari-20261024.md."
-    },
-    {
-      "path": "ingilizce/route-assets/bilgi-icons/chest.webp",
-      "sha256": "b01a7a8df7ed87fe17f6e3cdeb1dc58c33250b77933535a364e5dfb150033014",
-      "bytes": 177700,
-      "status": "ai-generated",
-      "source": "Generated with OpenAI image generation for the user-approved Bilgi Adaları design on 2026-10-24; prompt provenance in docs/bilgi-adalari-20261024.md."
-    },
-    {
-      "path": "ingilizce/route-assets/bilgi-icons/energy.svg",
-      "sha256": "aa5993aaa5c4eabb19f586f263be3a6fc078723f691f5134a247a61e8f913c15",
-      "bytes": 565,
-      "status": "original-vector",
-      "source": "Original Diji-Medu Bilgi Adaları interface asset, created in this project with native SVG"
-    },
-    {
-      "path": "ingilizce/route-assets/bilgi-icons/friends.webp",
-      "sha256": "f18764ad092c6f0a926bc63d8a1592f700bc8accb550dbd0c406e4e4cc4ae5d1",
-      "bytes": 316328,
-      "status": "ai-generated",
-      "source": "Generated with OpenAI image generation for the user-approved Bilgi Adaları design on 2026-10-24; prompt provenance in docs/bilgi-adalari-20261024.md."
-    },
-    {
-      "path": "ingilizce/route-assets/bilgi-icons/games.webp",
-      "sha256": "1278df8d4f0356e585083be916c8880ee99fd29f6f7a422797f6f5527fce7730",
-      "bytes": 128072,
-      "status": "ai-generated",
-      "source": "Generated with OpenAI image generation for the user-approved Bilgi Adaları design on 2026-10-24; prompt provenance in docs/bilgi-adalari-20261024.md."
-    },
-    {
-      "path": "ingilizce/route-assets/bilgi-icons/gold.svg",
-      "sha256": "6e98bb7177ca3b6910f74da1e75ca125abd92ee8a476eae9f7dcda2daebc7601",
-      "bytes": 738,
-      "status": "original-vector",
-      "source": "Original Diji-Medu Bilgi Adaları interface asset, created in this project with native SVG"
-    },
-    {
-      "path": "ingilizce/route-assets/bilgi-icons/map.webp",
-      "sha256": "25b91b7410392c627ec5704aa95e65a12ca38f4e06043ee1469c4af31c9ddecf",
-      "bytes": 152522,
-      "status": "ai-generated",
-      "source": "Generated with OpenAI image generation for the user-approved Bilgi Adaları design on 2026-10-24; prompt provenance in docs/bilgi-adalari-20261024.md."
-    },
-    {
-      "path": "ingilizce/route-assets/bilgi-icons/profile.webp",
-      "sha256": "bc0ed43518df94dd6f4cd61a7f53989feea714b0d7543c4fda9362d3e10d98a2",
-      "bytes": 218732,
-      "status": "ai-generated",
-      "source": "Generated with OpenAI image generation for the user-approved Bilgi Adaları design on 2026-10-24; prompt provenance in docs/bilgi-adalari-20261024.md."
-    },
-    {
-      "path": "ingilizce/route-assets/bilgi-icons/store.webp",
-      "sha256": "b214b5a08699ad84e7409261fc08c4ed8982852db94acd6fc925bfab33bc2e5d",
-      "bytes": 138610,
-      "status": "ai-generated",
-      "source": "Generated with OpenAI image generation for the user-approved Bilgi Adaları design on 2026-10-24; prompt provenance in docs/bilgi-adalari-20261024.md."
-    },
-    {
-      "path": "ingilizce/route-assets/bilgi-icons/study.webp",
-      "sha256": "35da10752cd5911301d0b9265c4240ec8aa072f7cbe0e5a9f3933a623a0d422a",
-      "bytes": 114320,
-      "status": "ai-generated",
-      "source": "Generated with OpenAI image generation for the user-approved Bilgi Adaları design on 2026-10-24; prompt provenance in docs/bilgi-adalari-20261024.md."
-    },
-    {
-      "path": "ingilizce/route-assets/bilgi-icons/tasks.webp",
-      "sha256": "aa61021c41abf6ff289360f7dd24403adeb732bfeb99147445034cd06d8f8bd9",
-      "bytes": 90318,
-      "status": "ai-generated",
-      "source": "Generated with OpenAI image generation for the user-approved Bilgi Adaları design on 2026-10-24; prompt provenance in docs/bilgi-adalari-20261024.md."
-    },
-    {
-      "path": "ingilizce/route-assets/bilgi-icons/time.svg",
-      "sha256": "371d143c3874563c0e7e2c624df3968d50da8e165a30076ab2cc58e61550a7ad",
-      "bytes": 583,
-      "status": "original-vector",
-      "source": "Original Diji-Medu Bilgi Adaları interface asset, created in this project with native SVG"
-    },
-    {
-      "path": "ingilizce/route-assets/bilgi-icons/xp.svg",
-      "sha256": "2811612e8d14268a93e4535c5a99412fa090f5843b7c1c2f36636bc103238ee3",
-      "bytes": 686,
-      "status": "original-vector",
-      "source": "Original Diji-Medu Bilgi Adaları interface asset, created in this project with native SVG"
-    },
-    {
-      "path": "ingilizce/route-assets/sky-academy-background.webp",
-      "sha256": "d3e7ad2416de21000d01039cb73960da988a053dcca31358510b24a72bc9f54a",
-      "bytes": 351624,
-      "status": "ai-generated",
-      "source": "docs/sky-academy-20261024.md"
-    },
-    {
-      "path": "ingilizce/route-assets/approved/account-icons.webp",
-      "sha256": "d2a724611bac2e8e59e0e58a5db365387d10872cb6fab2690270f537cfbb1ab5",
-      "bytes": 200634,
-      "status": "ai-generated",
-      "source": "docs/approved-centre-20261024.md"
-    },
-    {
-      "path": "ingilizce/route-assets/approved/center-hero.webp",
-      "sha256": "a2b541d9fe5c4f82ff1d93afc5c8a6a835bc749eaeacd4c8778cb0b885383978",
-      "bytes": 51422,
-      "status": "ai-generated",
-      "source": "docs/approved-centre-20261024.md"
-    },
-    {
-      "path": "ingilizce/route-assets/approved/center-icons.webp",
-      "sha256": "b1493a9dcf7d4dc8f297cb87f9a35c3abc6a82403eb7ef056c9f88575eba9321",
-      "bytes": 253920,
-      "status": "ai-generated",
-      "source": "docs/approved-centre-20261024.md"
-    },
-    {
-      "path": "ingilizce/route-assets/approved/game-icons.webp",
-      "sha256": "31e6c65c14dbc8cb4a3420f891ebeb1c556c66ab6fbfa4f5eb253c471abb7f1e",
-      "bytes": 262598,
-      "status": "ai-generated",
-      "source": "docs/approved-centre-20261024.md"
-    },
-    {
-      "path": "ingilizce/route-assets/approved/game-thumbs.webp",
-      "sha256": "c96d25d9e1660bec9e7a01c295f9bbf3251704d6e4d80af0a8feec5e0316b4ff",
-      "bytes": 274574,
-      "status": "ai-generated",
-      "source": "docs/approved-centre-20261024.md"
-    },
-    {
-      "path": "ingilizce/route-assets/approved/passport-hero.webp",
-      "sha256": "149f0b88a11c808fefe8a8fefb78344453e2da8fb59509f44bfbef41fc1253e6",
-      "bytes": 106488,
-      "status": "ai-generated",
-      "source": "docs/approved-centre-20261024.md"
-    },
-    {
-      "path": "ingilizce/route-assets/approved/passport-icons.webp",
-      "sha256": "ee10f785c810d8fe77f5dd1901a6ab280bda8348a84772baa4f130a880c8ace8",
-      "bytes": 149038,
-      "status": "ai-generated",
-      "source": "docs/approved-centre-20261024.md"
-    },
-    {
-      "path": "ingilizce/friends-assets/club-hero-v1.webp",
-      "sha256": "0771cce7773724570c8b7fed071db252d3e2862435687a315bafbc258f9276a0",
-      "bytes": 164178,
-      "status": "ai-generated",
-      "source": "docs/friends-club-20261024.md"
-    },
-    {
-      "path": "ingilizce/friends-assets/club-badges-v1.webp",
-      "sha256": "bc2b60bd26a36aee7bfd38a958c0f9afd074b9d132c782b1682a98ad550fc90d",
-      "bytes": 398740,
-      "status": "ai-generated",
-      "source": "docs/friends-club-20261024.md"
-    },
-    {
-      "path": "ingilizce/school-assets/soft-cards-approved.png",
-      "sha256": "570263c103e76b325f0fb51ccb67d3f3d67b61cdce985623c94bf92779ae45d5",
-      "bytes": 1340058,
-      "status": "ai-generated",
-      "source": "docs/school-soft-cards-20261025.md"
-    },
-    {
-      "path": "ingilizce/route-assets/papi-practice-flight.webp",
-      "sha256": "1f7097c799ea9ec80285c0d4792ffe0eb055860ddcaf18b8a982a0008ba02182",
-      "bytes": 153560,
-      "status": "ai-generated",
-      "source": "docs/route-flight-generation.json"
-    },
-    {
-      "path": "ingilizce/games-assets/arena-v1/blue-car.webp",
-      "sha256": "db2ae60ecff549e35303a3cfd586de6b250f5f9ef30f0e39769f5308749a860d",
-      "bytes": 24948,
-      "status": "ai-generated",
-      "source": "docs/race-arena-generation.json"
-    },
-    {
-      "path": "ingilizce/games-assets/arena-v1/blue-mascot.webp",
-      "sha256": "a5c6ea3846cb9a83b40784188e3099636691732480f8bae46baadaa7c90247d1",
-      "bytes": 34414,
-      "status": "ai-generated",
-      "source": "docs/race-arena-generation.json"
-    },
-    {
-      "path": "ingilizce/games-assets/arena-v1/red-car.webp",
-      "sha256": "2e9ca22db579a867a7eba3aa7c3ad379a0010475634c7c4571e112bea0e1929f",
-      "bytes": 26558,
-      "status": "ai-generated",
-      "source": "docs/race-arena-generation.json"
-    },
-    {
-      "path": "ingilizce/games-assets/arena-v1/red-mascot.webp",
-      "sha256": "1cacabf73fc559c3712dce12a92d7c6e037ee7e6bfaa2ecada01d1a94a26ff41",
-      "bytes": 28902,
-      "status": "ai-generated",
-      "source": "docs/race-arena-generation.json"
-    },
-    {
-      "path": "ingilizce/games-assets/arena-v1/stadium.webp",
-      "sha256": "38b980c3c1a88be24e78209b22b1e0770c30b7c316e2b7f1ff69af9d4b3d8e66",
-      "bytes": 89356,
-      "status": "ai-generated",
-      "source": "docs/race-arena-generation.json"
-    },
-    {
-      "path": "ingilizce/arcade-assets/monsters.webp",
-      "sha256": "be4195ae7e181f955faad2bbea8c3bd779e7d8c6000134f11b34c0e6096ad37d",
-      "bytes": 167840,
-      "status": "ai-generated",
-      "source": "docs/solo-arcade-assets.json"
-    },
-    {
-      "path": "ingilizce/arcade-assets/forest.webp",
-      "sha256": "677f9b34f94e9d8fc990ddd9fb3608d091f90a7b186be9a605fc8e103eb0f266",
-      "bytes": 176826,
-      "status": "ai-generated",
-      "source": "docs/solo-arcade-assets.json"
-    },
-    {
-      "path": "ingilizce/arcade-assets/city.webp",
-      "sha256": "37183cc160cc501a671b3a68bbce133e753777e958bda588fea1a38e7260676f",
-      "bytes": 83382,
-      "status": "ai-generated",
-      "source": "docs/solo-arcade-assets.json"
-    },
-    {
-      "path": "ingilizce/arcade-assets/floor.webp",
-      "sha256": "0c06ff7d3bf42d30804b30884044bc5c5215f0a03def1aa596531ea7bf3791b8",
-      "bytes": 16460,
-      "status": "ai-generated",
-      "source": "docs/solo-arcade-assets.json"
     },
     {
       "path": "ingilizce/premium-assets/kelime-eslestirme/bg-1-buyu-kutuphanesi.webp",
@@ -2491,194 +1741,733 @@
       "source": "Generated with ChatGPT (OpenAI) by the owner for the Premium Kelime Eslestirme game; added in commit aa062a0 (2026-11-03), whose message records them as ChatGPT images."
     },
     {
-      "path": "ingilizce/app-icons/papagan-192.png",
-      "sha256": "ade6b44bb94874bc0450ed9d7fb332271b14536e3cf73546b2212a9c01aec71d",
-      "bytes": 55109,
-      "status": "owner-supplied",
-      "source": "Supplied by the owner in chat on 2026-11-04 as the new Diji Medu app logo (Papi head portrait), chosen from images made for the app. Resized copies serve as web, PWA and Android launcher icons."
-    },
-    {
-      "path": "ingilizce/app-icons/papagan-512.png",
-      "sha256": "cd329ee6ad18650d69bef70f2338d4515f2621d92f74a97e73e9c558aadc8302",
-      "bytes": 316331,
-      "status": "owner-supplied",
-      "source": "Supplied by the owner in chat on 2026-11-04 as the new Diji Medu app logo (Papi head portrait), chosen from images made for the app. Resized copies serve as web, PWA and Android launcher icons."
-    },
-    {
-      "path": "ingilizce/app-icons/papagan-maskable-512.png",
-      "sha256": "cd329ee6ad18650d69bef70f2338d4515f2621d92f74a97e73e9c558aadc8302",
-      "bytes": 316331,
-      "status": "owner-supplied",
-      "source": "Supplied by the owner in chat on 2026-11-04 as the new Diji Medu app logo (Papi head portrait), chosen from images made for the app. Resized copies serve as web, PWA and Android launcher icons."
-    },
-    {
-      "path": "ingilizce/papagan-app-icon-512.png",
-      "sha256": "cd329ee6ad18650d69bef70f2338d4515f2621d92f74a97e73e9c558aadc8302",
-      "bytes": 316331,
-      "status": "owner-supplied",
-      "source": "Supplied by the owner in chat on 2026-11-04 as the new Diji Medu app logo (Papi head portrait), chosen from images made for the app. Resized copies serve as web, PWA and Android launcher icons."
-    },
-    {
-      "path": "ingilizce/app-icons/papi-logo-1024.png",
-      "sha256": "8509f3006203b0643362e40e42263fba737663ba175a9ad9b25694891df84871",
-      "bytes": 1075596,
-      "status": "owner-supplied",
-      "source": "Supplied by the owner in chat on 2026-11-04 as the new Diji Medu app logo (Papi head portrait), chosen from images made for the app. Resized copies serve as web, PWA and Android launcher icons."
-    },
-    {
-      "path": "ingilizce/parkur-badges/learning-02.webp",
-      "sha256": "5af1cd72caaa9251cbd4e0daf4fc83d29ad19b59d7d6e381f4c65e3aaeeae8ad",
-      "bytes": 137866,
+      "path": "ingilizce/premium-assets/papi-game-offer.webp",
+      "sha256": "8e4794a0dfe693e043447ec4190f65d9a7c3a69703f42930c665680d1f06d108",
+      "bytes": 28556,
       "status": "ai-generated",
-      "source": "docs/media-generation-record.json"
+      "source": "docs/premium-play-offer-generation.json"
     },
     {
-      "path": "ingilizce/parkur-badges/learning-03.webp",
-      "sha256": "d250435d0cfd800de14006c8d2cf16a1e861f565ee16566df9d38fa5aa0931f5",
-      "bytes": 241472,
-      "status": "ai-generated",
-      "source": "docs/media-generation-record.json"
-    },
-    {
-      "path": "ingilizce/parkur-badges/learning-04.webp",
-      "sha256": "3d1b9c3a83b33c91a340e433f7b2f80767ac7ce9cda13c2c774fdd73a2d6d7aa",
-      "bytes": 236712,
-      "status": "ai-generated",
-      "source": "docs/media-generation-record.json"
-    },
-    {
-      "path": "ingilizce/parkur-badges/papi-01.webp",
-      "sha256": "879162258b9ded492997ba1b0572f102e4b7ec281d6e879faf716c8acd14de2a",
-      "bytes": 117396,
-      "status": "ai-generated",
-      "source": "docs/media-generation-record.json"
-    },
-    {
-      "path": "ingilizce/parkur-badges/school-02.webp",
-      "sha256": "2de2eee891fb149e28ce5157c3c5dabd4b1c0fc28d145ec7c2722728aef9cbde",
-      "bytes": 166486,
-      "status": "ai-generated",
-      "source": "docs/media-generation-record.json"
-    },
-    {
-      "path": "ingilizce/parkur-badges/school-03.webp",
-      "sha256": "fbc0cda9a29b0284c098e1203205d939fa6b6137f790e2a74985a79d2c4c0f28",
-      "bytes": 230746,
-      "status": "ai-generated",
-      "source": "docs/media-generation-record.json"
-    },
-    {
-      "path": "ingilizce/parkur-badges/school-04.webp",
-      "sha256": "90e428a1ebf9b6b793c4aa742a233da6ecc97759978f4c8ff044da2bead55f5f",
-      "bytes": 274302,
-      "status": "ai-generated",
-      "source": "docs/media-generation-record.json"
-    },
-    {
-      "path": "ingilizce/parkur-badges/school-05.webp",
-      "sha256": "a5ed090a17897b94a4e0deff0b51b3dee968cce5449e6a53f30b4a76e0ae4c57",
-      "bytes": 271168,
-      "status": "ai-generated",
-      "source": "docs/media-generation-record.json"
-    },
-    {
-      "path": "ingilizce/parkur-badges/v2/learning-02.webp",
-      "sha256": "36d5e80edf62293eea64f81c6ea076ccb50688346122df3c2f545a2e72f7b457",
-      "bytes": 201654,
+      "path": "ingilizce/profile-assets/papi-selam.png",
+      "sha256": "9c61746c17f96b0d8b1392b6b2963fc9dded2fe600fd2734aec7635f7b8b8ca5",
+      "bytes": 113365,
       "status": "ai-generated",
       "source": "docs/media-generation-record.json",
-      "derived_from": "ingilizce/parkur-badges/learning-02.webp"
+      "derived_from": "ingilizce/papi-welcome-v2.png"
     },
     {
-      "path": "ingilizce/parkur-badges/v2/learning-03.webp",
-      "sha256": "05f31bf3d87dc2bc98df64b17e34c39bb4b786e9be885025a402b43285d91160",
-      "bytes": 332842,
+      "path": "ingilizce/profile-assets/rozet-aktif-15.svg",
+      "sha256": "d0eaed24c417f9a7ed0cb6c504d6cfb0b4125d7d04987991b7179e26ad1f2eb7",
+      "bytes": 678,
+      "status": "code-authored",
+      "source": "Original vector medallion authored in code for Diji-Medu member achievements on 2026-10-15; no external image input."
+    },
+    {
+      "path": "ingilizce/profile-assets/rozet-aktif-5.svg",
+      "sha256": "271846de2e42fa1c20be1e07b22d1fdcfe3a86538f0fc716f5193d8cd0363303",
+      "bytes": 677,
+      "status": "code-authored",
+      "source": "Original vector medallion authored in code for Diji-Medu member achievements on 2026-10-15; no external image input."
+    },
+    {
+      "path": "ingilizce/profile-assets/rozet-aktif-60.svg",
+      "sha256": "12c3a0ccf30332730c8cea61d5d10e8171018541794569d5a845d8d82b055daa",
+      "bytes": 679,
+      "status": "code-authored",
+      "source": "Original vector medallion authored in code for Diji-Medu member achievements on 2026-10-15; no external image input."
+    },
+    {
+      "path": "ingilizce/profile-assets/rozet-altin-kumbara.webp",
+      "sha256": "ec33362630327cf7d23e66343dc61b016671e141d590fa6abd8197dd957faf9f",
+      "bytes": 21596,
       "status": "ai-generated",
-      "source": "docs/media-generation-record.json",
-      "derived_from": "ingilizce/parkur-badges/learning-03.webp"
+      "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/rozet-23-altin-kumbara.png and resized/converted to WebP."
     },
     {
-      "path": "ingilizce/parkur-badges/v2/learning-04.webp",
-      "sha256": "b886699e08503f884db559f6e50c7d98d472f7cd535fb046cecf7aa3e09b7b85",
-      "bytes": 324824,
+      "path": "ingilizce/profile-assets/rozet-ders-kurdu.webp",
+      "sha256": "38c8aa3d55e6839426ddc7d04b1f561bb3e289cf5bb7e4191454a9931a6b07da",
+      "bytes": 21242,
       "status": "ai-generated",
-      "source": "docs/media-generation-record.json",
-      "derived_from": "ingilizce/parkur-badges/learning-04.webp"
+      "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/rozet-10-ders-kurdu.png and resized/converted to WebP."
     },
     {
-      "path": "ingilizce/parkur-badges/v2/papi-01.webp",
-      "sha256": "f6bdd1885cf8055b26559004545bfac32f98ecac463b9913bf42ada7d61987e7",
-      "bytes": 142750,
+      "path": "ingilizce/profile-assets/rozet-dinleme-ustasi.webp",
+      "sha256": "6b7e5c26e301fda3c9d11def020c3c20de1d3ab652f810faf9ee93e965474363",
+      "bytes": 20428,
       "status": "ai-generated",
-      "source": "docs/media-generation-record.json",
-      "derived_from": "ingilizce/parkur-badges/papi-01.webp"
+      "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/rozet-24-dinleme-ustasi.png and resized/converted to WebP."
     },
     {
-      "path": "ingilizce/parkur-badges/v2/school-02.webp",
-      "sha256": "49567f50372d571a3bb10b0c0f3ffa294c4648a53ee427d97cd19dadefbe536c",
-      "bytes": 221414,
+      "path": "ingilizce/profile-assets/rozet-dogru-50.svg",
+      "sha256": "e3b9fab531c5410f81d972578450afaff97204272fd969a560d11ad163d9ea6c",
+      "bytes": 675,
+      "status": "code-authored",
+      "source": "Original vector medallion authored in code for Diji-Medu member achievements on 2026-10-15; no external image input."
+    },
+    {
+      "path": "ingilizce/profile-assets/rozet-gorev-avcisi.webp",
+      "sha256": "be9d86221ad1cbb9404f1f5cde491e560025d92b3428f230813861b43d1d31cb",
+      "bytes": 20246,
       "status": "ai-generated",
-      "source": "docs/media-generation-record.json",
-      "derived_from": "ingilizce/parkur-badges/school-02.webp"
+      "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/rozet-16-gorev-avcisi.png and resized/converted to WebP."
     },
     {
-      "path": "ingilizce/parkur-badges/v2/school-03.webp",
-      "sha256": "11af419902144ecf63f2607abbc71c61faa848d14d15bbfab611c2081a2b528c",
-      "bytes": 309182,
+      "path": "ingilizce/profile-assets/rozet-hos-geldin.svg",
+      "sha256": "b22816ce505a52abbf070b3092b5ad58ef5bb2ca92dc6524bdd81b2d7bb2a791",
+      "bytes": 677,
+      "status": "code-authored",
+      "source": "Original vector medallion authored in code for Diji-Medu member achievements on 2026-10-15; no external image input."
+    },
+    {
+      "path": "ingilizce/profile-assets/rozet-ilk-adim.webp",
+      "sha256": "28cedba4f025329e0c4ddf9f7fb49be0e740a5f5e88d83128f557ed0cbf488e8",
+      "bytes": 18142,
       "status": "ai-generated",
-      "source": "docs/media-generation-record.json",
-      "derived_from": "ingilizce/parkur-badges/school-03.webp"
+      "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/rozet-01-ilk-adim.png and resized/converted to WebP."
     },
     {
-      "path": "ingilizce/parkur-badges/v2/school-04.webp",
-      "sha256": "6dc1ef2dc61b787399ebd1841af32f74acc7b07fb0abacc44832d1fe01125642",
-      "bytes": 362584,
+      "path": "ingilizce/profile-assets/rozet-ilk-zafer.webp",
+      "sha256": "c3e00260f644374ee863f9fec3dca5eac3ff879ac20fc98d9b93c8b4c982d4d5",
+      "bytes": 19268,
       "status": "ai-generated",
-      "source": "docs/media-generation-record.json",
-      "derived_from": "ingilizce/parkur-badges/school-04.webp"
+      "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/rozet-02-ilk-zafer.png and resized/converted to WebP."
     },
     {
-      "path": "ingilizce/parkur-badges/v2/school-05.webp",
-      "sha256": "2de39c771e3c1100efca012a99666079b487151b802651adcbd9169999512b50",
-      "bytes": 349060,
+      "path": "ingilizce/profile-assets/rozet-kasif.webp",
+      "sha256": "a3867ec8f0945f49a3848b797a15418743b69d0c33970b1a200bf7d2b14dea6b",
+      "bytes": 20900,
       "status": "ai-generated",
-      "source": "docs/media-generation-record.json",
-      "derived_from": "ingilizce/parkur-badges/school-05.webp"
+      "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/rozet-14-kasif.png and resized/converted to WebP."
     },
     {
-      "path": "ingilizce/friends-assets/papi-fencer.webp",
-      "sha256": "33f07ef895603906ea94a5b80bd178da43bfe36fcf7a5a14a9c17eca8e1343b5",
-      "bytes": 20222,
+      "path": "ingilizce/profile-assets/rozet-kelime-avcisi.webp",
+      "sha256": "50f2ab89d561cd1d5c9e56c60abf6942c2a12eb79232041bfedd0bd06d9ddaa1",
+      "bytes": 22618,
       "status": "ai-generated",
-      "source": "OpenAI imagegen, 2026-11-06; transparent Papi fencer illustration based on the approved Friends duel card mockup"
+      "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/rozet-06-kelime-avcisi.png and resized/converted to WebP."
     },
     {
-      "path": "ingilizce/games-assets/category-icons.svg",
-      "sha256": "0174f7b1b2efeafe616544056ebcbb30f1e3aef9db7141b6e70fdcc3ae97cd54",
-      "bytes": 2663,
+      "path": "ingilizce/profile-assets/rozet-kelime-ustasi.webp",
+      "sha256": "7382293da7897520b74a6b8132416dc75d54fd984bbb84dcbbdf67e75362274e",
+      "bytes": 19176,
+      "status": "ai-generated",
+      "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/rozet-07-kelime-ustasi.png and resized/converted to WebP."
+    },
+    {
+      "path": "ingilizce/profile-assets/rozet-keskin-goz.webp",
+      "sha256": "6002b2a41ba130bd6ba3a8c58a1c3e094c9a3d21edcd753437693d22c4b7fc69",
+      "bytes": 20272,
+      "status": "ai-generated",
+      "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/rozet-09-keskin-goz.png and resized/converted to WebP."
+    },
+    {
+      "path": "ingilizce/profile-assets/rozet-koleksiyoncu.webp",
+      "sha256": "b60c003d602e368ce3233e8cf96175ab8b3e2d9d7dcd69579fe4bdcd8c32fc3d",
+      "bytes": 22156,
+      "status": "ai-generated",
+      "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/rozet-20-koleksiyoncu.png and resized/converted to WebP."
+    },
+    {
+      "path": "ingilizce/profile-assets/rozet-konu-ustasi.webp",
+      "sha256": "c2f6649bc61e14b71dc908f9691ab6371fe17b5f88cda6760464a3b0816bd569",
+      "bytes": 19628,
+      "status": "ai-generated",
+      "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/rozet-11-konu-ustasi.png and resized/converted to WebP."
+    },
+    {
+      "path": "ingilizce/profile-assets/rozet-oyun-25.svg",
+      "sha256": "5b5aa9d670c6aafefa7ee1073c5f31a679a6dee6a4306d26e0e7f570df52e6e5",
+      "bytes": 675,
+      "status": "code-authored",
+      "source": "Original vector medallion authored in code for Diji-Medu member achievements on 2026-10-15; no external image input."
+    },
+    {
+      "path": "ingilizce/profile-assets/rozet-parkur-50.svg",
+      "sha256": "b7bc9e76cdf7f80e296e74a772ea856b69735777c69c9587069a6e892b4d409f",
+      "bytes": 675,
+      "status": "code-authored",
+      "source": "Original vector medallion authored in code for Diji-Medu member achievements on 2026-10-15; no external image input."
+    },
+    {
+      "path": "ingilizce/profile-assets/rozet-parkurcu.webp",
+      "sha256": "fde6e66176c661e1c7d5b84c39e8e4254394afd9cd9c90e1775f5519955922cf",
+      "bytes": 21472,
+      "status": "ai-generated",
+      "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/rozet-13-parkurcu.png and resized/converted to WebP."
+    },
+    {
+      "path": "ingilizce/profile-assets/rozet-puan-avcisi.webp",
+      "sha256": "12c42ba4a32962460a4567e2f8f91834a73936735a05c8f57789afe844ed9e43",
+      "bytes": 23294,
+      "status": "ai-generated",
+      "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/rozet-21-puan-avcisi.png and resized/converted to WebP."
+    },
+    {
+      "path": "ingilizce/profile-assets/rozet-puan-efsanesi.webp",
+      "sha256": "57f093516a8b4e4fb8741c99c051505bd15b0ad8ca1d13a801d5eadb66801a5f",
+      "bytes": 18518,
+      "status": "ai-generated",
+      "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/rozet-22-puan-efsanesi.png and resized/converted to WebP."
+    },
+    {
+      "path": "ingilizce/profile-assets/rozet-sampiyon.webp",
+      "sha256": "df2a0261a0207c1dd434e14efc8a05aa53937ffd3426b2d40b30874e4415011b",
+      "bytes": 20098,
+      "status": "ai-generated",
+      "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/rozet-15-sampiyon.png and resized/converted to WebP."
+    },
+    {
+      "path": "ingilizce/profile-assets/rozet-seri-14.svg",
+      "sha256": "773a2707d1594ce4db7a6befa811b6ee030070e10f690aac7b336ec14333b1a2",
+      "bytes": 675,
+      "status": "code-authored",
+      "source": "Original vector medallion authored in code for Diji-Medu member achievements on 2026-10-15; no external image input."
+    },
+    {
+      "path": "ingilizce/profile-assets/rozet-seri-3.webp",
+      "sha256": "2f5e206a106ca13772b5a5a694c8f57a4d4ce177b97dd24d7b2356e5664049ff",
+      "bytes": 17904,
+      "status": "ai-generated",
+      "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/rozet-03-3-gun-seri.png and resized/converted to WebP."
+    },
+    {
+      "path": "ingilizce/profile-assets/rozet-seri-30.webp",
+      "sha256": "fb6e0476257ed79ecc28f89af6d4f1c8ad7ffbcc154f04b09dd7a5e2ce9bf95a",
+      "bytes": 19324,
+      "status": "ai-generated",
+      "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/rozet-05-30-gun-seri.png and resized/converted to WebP."
+    },
+    {
+      "path": "ingilizce/profile-assets/rozet-seri-7.webp",
+      "sha256": "9f5126a51b95a5c65363a354a5043c95506648f62ad0d13fd744511903c77eb3",
+      "bytes": 18802,
+      "status": "ai-generated",
+      "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/rozet-04-7-gun-seri.png and resized/converted to WebP."
+    },
+    {
+      "path": "ingilizce/profile-assets/rozet-seviye-10.webp",
+      "sha256": "47d2947b3a2984b4401feb9676da883a2232e6856e798b6bdfd8c86020dd43f6",
+      "bytes": 21000,
+      "status": "ai-generated",
+      "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/rozet-18-seviye-10.png and resized/converted to WebP."
+    },
+    {
+      "path": "ingilizce/profile-assets/rozet-seviye-20.webp",
+      "sha256": "f9387dd432239c44215342f0eb6169180bb9f7c9b702a9b5dbeb0dde28e3a240",
+      "bytes": 22570,
+      "status": "ai-generated",
+      "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/rozet-19-seviye-20.png and resized/converted to WebP."
+    },
+    {
+      "path": "ingilizce/profile-assets/rozet-seviye-5.webp",
+      "sha256": "a8f9c7acede2be02b448e8effeddaad2e967d3a330dc10e73acd3a326f7347a4",
+      "bytes": 20210,
+      "status": "ai-generated",
+      "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/rozet-17-seviye-5.png and resized/converted to WebP."
+    },
+    {
+      "path": "ingilizce/profile-assets/rozet-tam-isabet.webp",
+      "sha256": "a2a9b630dcf4deac024adefaa1f5def4c7b9665c03b17fa3f5f651b4e6de3c4c",
+      "bytes": 20852,
+      "status": "ai-generated",
+      "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/rozet-08-tam-isabet.png and resized/converted to WebP."
+    },
+    {
+      "path": "ingilizce/profile-assets/rozet-yildiz-toplayici.webp",
+      "sha256": "8c50df506c3e98bbe6e1d8b509223210e4eaa829e075bbb5922f21ef0df945a8",
+      "bytes": 18178,
+      "status": "ai-generated",
+      "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/rozet-12-yildiz-toplayici.png and resized/converted to WebP."
+    },
+    {
+      "path": "ingilizce/profile-assets/sahne-sana-ozel.webp",
+      "sha256": "75402db2305ced9c039ed4b264b027f20f0f127647672133d39a080618ae19ad",
+      "bytes": 174212,
+      "status": "ai-generated",
+      "source": "Generated with ChatGPT (OpenAI) by the owner on 2026-10-08 for the Benim Dünyam screen; original artwork, no third-party source image. Uploaded as ingilizce/sahne-sana-ozel.png and resized/converted to WebP."
+    },
+    {
+      "path": "ingilizce/rally-assets/car.webp",
+      "sha256": "5283eab89a9fab9104d10305e5517070e07ec646cb1ff7e37c14548763e14e33",
+      "bytes": 50436,
+      "status": "ai-generated",
+      "source": "OpenAI ImageGen, 2026-10-16; extracted/recreated from the user-approved Kelime Rallisi mobile game concept; optimized as WebP."
+    },
+    {
+      "path": "ingilizce/rally-assets/coast.webp",
+      "sha256": "61aa26409f4b1ce641579fcfd8aaf9aa0eef75ddb71d7373b5eb04681306c4bb",
+      "bytes": 276328,
+      "status": "ai-generated",
+      "source": "OpenAI ImageGen, 2026-10-16; extracted/recreated from the user-approved Kelime Rallisi mobile game concept; optimized as WebP."
+    },
+    {
+      "path": "ingilizce/route-assets/ada-yolculugu.webp",
+      "sha256": "fae512c087d85c4b0fd275dcfdc28026be804c7e2b776d6275051e41fbf8783f",
+      "bytes": 45306,
+      "status": "ai-generated",
+      "source": "Built-in ImageGen, 2026-10-13; user-approved map concepts, original daytime scene; no UI/text. Lossy WebP encoding for mobile delivery."
+    },
+    {
+      "path": "ingilizce/route-assets/ai-coach.svg",
+      "sha256": "3c836de64005677f6583276a1424ed7da2bab9d63a8186e9799a36d710625193",
+      "bytes": 472,
+      "status": "repository-restored",
+      "source": "Existing route asset from Git history through 41ca0aa869f6d626cb39d9f2d67cded06ea67c1c; original generation provenance was not recorded by the upload."
+    },
+    {
+      "path": "ingilizce/route-assets/approved/account-icons.webp",
+      "sha256": "d2a724611bac2e8e59e0e58a5db365387d10872cb6fab2690270f537cfbb1ab5",
+      "bytes": 200634,
+      "status": "ai-generated",
+      "source": "docs/approved-centre-20261024.md"
+    },
+    {
+      "path": "ingilizce/route-assets/approved/center-hero.webp",
+      "sha256": "a2b541d9fe5c4f82ff1d93afc5c8a6a835bc749eaeacd4c8778cb0b885383978",
+      "bytes": 51422,
+      "status": "ai-generated",
+      "source": "docs/approved-centre-20261024.md"
+    },
+    {
+      "path": "ingilizce/route-assets/approved/center-icons.webp",
+      "sha256": "b1493a9dcf7d4dc8f297cb87f9a35c3abc6a82403eb7ef056c9f88575eba9321",
+      "bytes": 253920,
+      "status": "ai-generated",
+      "source": "docs/approved-centre-20261024.md"
+    },
+    {
+      "path": "ingilizce/route-assets/approved/game-icons.webp",
+      "sha256": "31e6c65c14dbc8cb4a3420f891ebeb1c556c66ab6fbfa4f5eb253c471abb7f1e",
+      "bytes": 262598,
+      "status": "ai-generated",
+      "source": "docs/approved-centre-20261024.md"
+    },
+    {
+      "path": "ingilizce/route-assets/approved/game-thumbs.webp",
+      "sha256": "c96d25d9e1660bec9e7a01c295f9bbf3251704d6e4d80af0a8feec5e0316b4ff",
+      "bytes": 274574,
+      "status": "ai-generated",
+      "source": "docs/approved-centre-20261024.md"
+    },
+    {
+      "path": "ingilizce/route-assets/approved/passport-hero.webp",
+      "sha256": "149f0b88a11c808fefe8a8fefb78344453e2da8fb59509f44bfbef41fc1253e6",
+      "bytes": 106488,
+      "status": "ai-generated",
+      "source": "docs/approved-centre-20261024.md"
+    },
+    {
+      "path": "ingilizce/route-assets/approved/passport-icons.webp",
+      "sha256": "ee10f785c810d8fe77f5dd1901a6ab280bda8348a84772baa4f130a880c8ace8",
+      "bytes": 149038,
+      "status": "ai-generated",
+      "source": "docs/approved-centre-20261024.md"
+    },
+    {
+      "path": "ingilizce/route-assets/bag.svg",
+      "sha256": "b03aaad11a88f5825f7b32129d34ecba06a2c844c7b6949e177f30b0bbe309e6",
+      "bytes": 655,
+      "status": "repository-restored",
+      "source": "Restored from commit 16362b9af935e4defdc4ed56b3e4aac1da249cae; original generation provenance was not recorded by that package."
+    },
+    {
+      "path": "ingilizce/route-assets/bilgi-background.webp",
+      "sha256": "2f813cc836a313dea12e95f48614b7758b2a5cc085a837a1d90b38cc6d30ce72",
+      "bytes": 471926,
+      "status": "ai-generated",
+      "source": "Generated with OpenAI image generation for the user-approved Bilgi Adaları design on 2026-10-24; prompt provenance in docs/bilgi-adalari-20261024.md."
+    },
+    {
+      "path": "ingilizce/route-assets/bilgi-icons/calendar.webp",
+      "sha256": "a3db6e71ff73540c231532c21b5c82f6b368f0ec4bda145415f91e1dd7710add",
+      "bytes": 107696,
+      "status": "ai-generated",
+      "source": "Generated with OpenAI image generation for the user-approved Bilgi Adaları design on 2026-10-24; prompt provenance in docs/bilgi-adalari-20261024.md."
+    },
+    {
+      "path": "ingilizce/route-assets/bilgi-icons/chest.webp",
+      "sha256": "b01a7a8df7ed87fe17f6e3cdeb1dc58c33250b77933535a364e5dfb150033014",
+      "bytes": 177700,
+      "status": "ai-generated",
+      "source": "Generated with OpenAI image generation for the user-approved Bilgi Adaları design on 2026-10-24; prompt provenance in docs/bilgi-adalari-20261024.md."
+    },
+    {
+      "path": "ingilizce/route-assets/bilgi-icons/energy.svg",
+      "sha256": "aa5993aaa5c4eabb19f586f263be3a6fc078723f691f5134a247a61e8f913c15",
+      "bytes": 565,
+      "status": "original-vector",
+      "source": "Original Diji-Medu Bilgi Adaları interface asset, created in this project with native SVG"
+    },
+    {
+      "path": "ingilizce/route-assets/bilgi-icons/friends.webp",
+      "sha256": "f18764ad092c6f0a926bc63d8a1592f700bc8accb550dbd0c406e4e4cc4ae5d1",
+      "bytes": 316328,
+      "status": "ai-generated",
+      "source": "Generated with OpenAI image generation for the user-approved Bilgi Adaları design on 2026-10-24; prompt provenance in docs/bilgi-adalari-20261024.md."
+    },
+    {
+      "path": "ingilizce/route-assets/bilgi-icons/games.webp",
+      "sha256": "1278df8d4f0356e585083be916c8880ee99fd29f6f7a422797f6f5527fce7730",
+      "bytes": 128072,
+      "status": "ai-generated",
+      "source": "Generated with OpenAI image generation for the user-approved Bilgi Adaları design on 2026-10-24; prompt provenance in docs/bilgi-adalari-20261024.md."
+    },
+    {
+      "path": "ingilizce/route-assets/bilgi-icons/gold.svg",
+      "sha256": "6e98bb7177ca3b6910f74da1e75ca125abd92ee8a476eae9f7dcda2daebc7601",
+      "bytes": 738,
+      "status": "original-vector",
+      "source": "Original Diji-Medu Bilgi Adaları interface asset, created in this project with native SVG"
+    },
+    {
+      "path": "ingilizce/route-assets/bilgi-icons/map.webp",
+      "sha256": "25b91b7410392c627ec5704aa95e65a12ca38f4e06043ee1469c4af31c9ddecf",
+      "bytes": 152522,
+      "status": "ai-generated",
+      "source": "Generated with OpenAI image generation for the user-approved Bilgi Adaları design on 2026-10-24; prompt provenance in docs/bilgi-adalari-20261024.md."
+    },
+    {
+      "path": "ingilizce/route-assets/bilgi-icons/profile.webp",
+      "sha256": "bc0ed43518df94dd6f4cd61a7f53989feea714b0d7543c4fda9362d3e10d98a2",
+      "bytes": 218732,
+      "status": "ai-generated",
+      "source": "Generated with OpenAI image generation for the user-approved Bilgi Adaları design on 2026-10-24; prompt provenance in docs/bilgi-adalari-20261024.md."
+    },
+    {
+      "path": "ingilizce/route-assets/bilgi-icons/store.webp",
+      "sha256": "b214b5a08699ad84e7409261fc08c4ed8982852db94acd6fc925bfab33bc2e5d",
+      "bytes": 138610,
+      "status": "ai-generated",
+      "source": "Generated with OpenAI image generation for the user-approved Bilgi Adaları design on 2026-10-24; prompt provenance in docs/bilgi-adalari-20261024.md."
+    },
+    {
+      "path": "ingilizce/route-assets/bilgi-icons/study.webp",
+      "sha256": "35da10752cd5911301d0b9265c4240ec8aa072f7cbe0e5a9f3933a623a0d422a",
+      "bytes": 114320,
+      "status": "ai-generated",
+      "source": "Generated with OpenAI image generation for the user-approved Bilgi Adaları design on 2026-10-24; prompt provenance in docs/bilgi-adalari-20261024.md."
+    },
+    {
+      "path": "ingilizce/route-assets/bilgi-icons/tasks.webp",
+      "sha256": "aa61021c41abf6ff289360f7dd24403adeb732bfeb99147445034cd06d8f8bd9",
+      "bytes": 90318,
+      "status": "ai-generated",
+      "source": "Generated with OpenAI image generation for the user-approved Bilgi Adaları design on 2026-10-24; prompt provenance in docs/bilgi-adalari-20261024.md."
+    },
+    {
+      "path": "ingilizce/route-assets/bilgi-icons/time.svg",
+      "sha256": "371d143c3874563c0e7e2c624df3968d50da8e165a30076ab2cc58e61550a7ad",
+      "bytes": 583,
+      "status": "original-vector",
+      "source": "Original Diji-Medu Bilgi Adaları interface asset, created in this project with native SVG"
+    },
+    {
+      "path": "ingilizce/route-assets/bilgi-icons/xp.svg",
+      "sha256": "2811612e8d14268a93e4535c5a99412fa090f5843b7c1c2f36636bc103238ee3",
+      "bytes": 686,
+      "status": "original-vector",
+      "source": "Original Diji-Medu Bilgi Adaları interface asset, created in this project with native SVG"
+    },
+    {
+      "path": "ingilizce/route-assets/bilgi-mascot.webp",
+      "sha256": "973757f98305e9830ae7611a894fd0cf33a742a9dc2d19b3695357bbe37005d0",
+      "bytes": 206004,
+      "status": "ai-generated",
+      "source": "Generated with OpenAI image generation for the user-approved Bilgi Adaları design on 2026-10-24; prompt provenance in docs/bilgi-adalari-20261024.md."
+    },
+    {
+      "path": "ingilizce/route-assets/bilgi-reference.webp",
+      "sha256": "1d7f03364a2f75540c8992ed2e1444722ba154638f6232bdc04763e9fe2b2a46",
+      "bytes": 474900,
+      "status": "ai-generated",
+      "source": "Generated with OpenAI image generation for the user-approved Bilgi Adaları design on 2026-10-24; prompt provenance in docs/bilgi-adalari-20261024.md."
+    },
+    {
+      "path": "ingilizce/route-assets/book.svg",
+      "sha256": "24fd9c463d56e1da1a3f039a171a9082d05d3b182482a074e4312d56cf80edb0",
+      "bytes": 660,
+      "status": "repository-restored",
+      "source": "Restored from commit 16362b9af935e4defdc4ed56b3e4aac1da249cae; original generation provenance was not recorded by that package."
+    },
+    {
+      "path": "ingilizce/route-assets/chart.svg",
+      "sha256": "43d82fb750da8fc417c1c47d67aa861869cdaec494eaecd890bf6cccdd5cbb33",
+      "bytes": 665,
+      "status": "repository-restored",
+      "source": "Restored from commit 16362b9af935e4defdc4ed56b3e4aac1da249cae; original generation provenance was not recorded by that package."
+    },
+    {
+      "path": "ingilizce/route-assets/chest-three.svg",
+      "sha256": "b5270b4401a06cea0743f892cb506d26f7f38d61b3f12adb6ea431e737c6d0bb",
+      "bytes": 691,
+      "status": "original-vector",
+      "source": "Original SVG authored for the approved Diji Medu concept-3 route interface; no external artwork."
+    },
+    {
+      "path": "ingilizce/route-assets/chest.svg",
+      "sha256": "7b684de409a227f15ff31d45d1b54c8fa51f1a3c0a9751237d847fe5ab93e607",
+      "bytes": 643,
+      "status": "repository-restored",
+      "source": "Restored from commit 16362b9af935e4defdc4ed56b3e4aac1da249cae; original generation provenance was not recorded by that package."
+    },
+    {
+      "path": "ingilizce/route-assets/coin.svg",
+      "sha256": "43c250256dea424be73b643648a8fe236b1f9d0615839619ad4028c827f5fc85",
+      "bytes": 679,
       "status": "code-native",
-      "source": "Repository-authored game category icon set; SVG source retained in Git"
+      "source": "Repository-authored generic gold coin SVG, 2026-10-13; original code retained in Git."
     },
     {
-      "path": "ingilizce/daily-gift-assets/papi-streak-3d.webp",
-      "sha256": "2e44b5390b787d265282b79c2266a9c5fae7b6231ec761d2dcd772d152175f8b",
-      "bytes": 55880,
+      "path": "ingilizce/route-assets/compact-wallet-atlas-v1.webp",
+      "sha256": "444eb9f91b5d45200a93e143f4e478e8944b1764caa811bc93d9f8b523efafe5",
+      "bytes": 105636,
       "status": "ai-generated",
-      "source": "docs/daily-gift-artwork.json"
+      "source": "ImageGen, 2026-10-13; regenerated from the user-approved compact strip concept 1. Papi head, lightning, coin, XP hexagon and active-time star; transparent five-cell atlas."
     },
     {
-      "path": "ingilizce/daily-gift-assets/papi-gift-3d.webp",
-      "sha256": "16340a78d45d20d7710dc8fb54798c31b6bc75bedae8cd313013eeb129ab0de1",
-      "bytes": 66872,
-      "status": "ai-generated",
-      "source": "docs/daily-gift-artwork.json"
+      "path": "ingilizce/route-assets/exam.svg",
+      "sha256": "efefc986c2d52be2c7dcc4f0a5cb7f55cbe929fdcf7555a21b0132d897bbf83d",
+      "bytes": 482,
+      "status": "repository-restored",
+      "source": "Existing route asset from Git history through 41ca0aa869f6d626cb39d9f2d67cded06ea67c1c; original generation provenance was not recorded by the upload."
     },
     {
-      "path": "ingilizce/satis-assets/papi-premium-gift.webp",
-      "sha256": "e7a1cc520802d271c643ef061a49b9244bf6e3cf236f55985916520ffb0c2600",
-      "bytes": 31938,
+      "path": "ingilizce/route-assets/family-icon.svg",
+      "sha256": "98ba14cce082a3cf1115f6b2bda04c694703449a215e76ea7e9e5c56343735d9",
+      "bytes": 314,
+      "status": "original-code",
+      "source": "docs/social-safety-guardian-controls.md"
+    },
+    {
+      "path": "ingilizce/route-assets/feather-combo.svg",
+      "sha256": "2d7a16bda07729ba3d72f9f9b001e7402c45ee91eef1a045d813afe190fc642a",
+      "bytes": 921,
+      "status": "repository-existing-unverified",
+      "source": "Existing in repository before member-flow release eb197cdd; original artwork provenance was not recorded. This entry records file integrity, not rights clearance."
+    },
+    {
+      "path": "ingilizce/route-assets/friends.svg",
+      "sha256": "86fefda75aaa46c64402f1fa46df9dbd0c161a7b3a4214bf632068b3106324e3",
+      "bytes": 543,
+      "status": "repository-restored",
+      "source": "Restored from commit 16362b9af935e4defdc4ed56b3e4aac1da249cae; original generation provenance was not recorded by that package."
+    },
+    {
+      "path": "ingilizce/route-assets/game.svg",
+      "sha256": "5dd94c47836ac5a86738bb8237717da4ee40762ae702810530763b4c6e63af80",
+      "bytes": 654,
+      "status": "repository-restored",
+      "source": "Restored from commit 16362b9af935e4defdc4ed56b3e4aac1da249cae; original generation provenance was not recorded by that package."
+    },
+    {
+      "path": "ingilizce/route-assets/gear.svg",
+      "sha256": "42097be3d8b0e818e5b8fbc8b84cb79d893873a0bbd6b9d4b6800889ea2e3d9a",
+      "bytes": 581,
+      "status": "repository-restored",
+      "source": "Restored from commit 16362b9af935e4defdc4ed56b3e4aac1da249cae; original generation provenance was not recorded by that package."
+    },
+    {
+      "path": "ingilizce/route-assets/goal.svg",
+      "sha256": "4cc180b32e9e331625852894e8eb5400a2afa3e2f96a7a12e267260e5c4ebfe0",
+      "bytes": 625,
+      "status": "repository-restored",
+      "source": "Restored from commit 16362b9af935e4defdc4ed56b3e4aac1da249cae; original generation provenance was not recorded by that package."
+    },
+    {
+      "path": "ingilizce/route-assets/help.svg",
+      "sha256": "4946c316b2f64033c1eb27863b6b71b50d13380769100ec0e7397ec82e43797f",
+      "bytes": 612,
+      "status": "repository-restored",
+      "source": "Restored from commit 16362b9af935e4defdc4ed56b3e4aac1da249cae; original generation provenance was not recorded by that package."
+    },
+    {
+      "path": "ingilizce/route-assets/homework-icon.svg",
+      "sha256": "788fe678fd925d72156ece151d57a7a34eab516114c5ad24dbe8c1d41bbc62fb",
+      "bytes": 441,
+      "status": "original-code",
+      "source": "docs/social-safety-guardian-controls.md"
+    },
+    {
+      "path": "ingilizce/route-assets/learning-fixed-approved-v1.webp",
+      "sha256": "cef88ee492a688e53d41d9e67cd96e3c4be66b54cf9a29f988d746e0ac0a84fe",
+      "bytes": 12184,
+      "status": "original-derived",
+      "source": "Original approved Diji-Medu 20 October 2026 concept 3; UI artifacts removed, fixed illustrated scenery, live scrolling route elements."
+    },
+    {
+      "path": "ingilizce/route-assets/logout.svg",
+      "sha256": "f92c5e7b91f26d1d6de11072cc4e623c950867649ed66448e9836ede2c4aca40",
+      "bytes": 333,
+      "status": "repository-restored",
+      "source": "Existing route asset from Git history through 41ca0aa869f6d626cb39d9f2d67cded06ea67c1c; original generation provenance was not recorded by the upload."
+    },
+    {
+      "path": "ingilizce/route-assets/medal.svg",
+      "sha256": "a53de5f56781a17db1c23b6fbc7599a3268bd8681c50631337fb26457cf68afa",
+      "bytes": 571,
+      "status": "repository-restored",
+      "source": "Restored from commit 16362b9af935e4defdc4ed56b3e4aac1da249cae; original generation provenance was not recorded by that package."
+    },
+    {
+      "path": "ingilizce/route-assets/nav-three.svg",
+      "sha256": "2fb24d856decd4be97b340a3b36470de78340c5d7dbfdd0aa007b1c77dedf502",
+      "bytes": 830,
+      "status": "original-vector",
+      "source": "Original SVG authored for the approved Diji Medu concept-3 route interface; no external artwork."
+    },
+    {
+      "path": "ingilizce/route-assets/odul-rotasi.webp",
+      "sha256": "e7945cd48fc563826b0b12c8b0783753cb7989446e79643ffa0181333dd63eb8",
+      "bytes": 45916,
       "status": "ai-generated",
-      "source": "OpenAI image generation, 2026-11-14. User-approved DijiMedu Papi design: 3D Papi holding a gold crown gift on a lavender pedestal. Reference: ingilizce/papi-welcome-v2.png."
+      "source": "Built-in ImageGen, 2026-10-13; user-approved map concepts, original daytime scene; no UI/text. Lossy WebP encoding for mobile delivery."
+    },
+    {
+      "path": "ingilizce/route-assets/papi-english.webp",
+      "sha256": "e69244d853a3685a3e096ccdbdd6582c57ca85cb257f5b90900c066cd5085584",
+      "bytes": 184022,
+      "status": "repository-restored",
+      "source": "Restored from commit 16362b9af935e4defdc4ed56b3e4aac1da249cae; original generation provenance was not recorded by that package."
+    },
+    {
+      "path": "ingilizce/route-assets/papi-practice-flight.webp",
+      "sha256": "1f7097c799ea9ec80285c0d4792ffe0eb055860ddcaf18b8a982a0008ba02182",
+      "bytes": 153560,
+      "status": "ai-generated",
+      "source": "docs/route-flight-generation.json"
+    },
+    {
+      "path": "ingilizce/route-assets/papi-profile.png",
+      "sha256": "af715d4208ab17917777b8d511763bfcadcb9354b919486f1ddfec5a8387232d",
+      "bytes": 41534,
+      "status": "repository-restored",
+      "source": "Restored from commit 16362b9af935e4defdc4ed56b3e4aac1da249cae; original generation provenance was not recorded by that package."
+    },
+    {
+      "path": "ingilizce/route-assets/papi-school.webp",
+      "sha256": "4ce889ab20173922f4ffd03a041b181937431190813f3f2e32934925c57e9b06",
+      "bytes": 137802,
+      "status": "repository-restored",
+      "source": "Restored from commit 16362b9af935e4defdc4ed56b3e4aac1da249cae; original generation provenance was not recorded by that package."
+    },
+    {
+      "path": "ingilizce/route-assets/path.svg",
+      "sha256": "66515c1ec6b68269023e9c2c110aec58fdd98b183acea066cb001d15f51be31d",
+      "bytes": 689,
+      "status": "repository-restored",
+      "source": "Restored from commit 16362b9af935e4defdc4ed56b3e4aac1da249cae; original generation provenance was not recorded by that package."
+    },
+    {
+      "path": "ingilizce/route-assets/placement-icon.svg",
+      "sha256": "ec7909d94ac2992b3de41a3d9bdeff7134fc847b170b07a919195232ab3531d1",
+      "bytes": 480,
+      "status": "original-code",
+      "source": "docs/social-safety-guardian-controls.md"
+    },
+    {
+      "path": "ingilizce/route-assets/profile.svg",
+      "sha256": "d37a0df585496db9dfa8c197e0117fc1b072d3b5e7a527be3ed29cc5e31544a1",
+      "bytes": 330,
+      "status": "repository-restored",
+      "source": "Existing route asset from Git history through 41ca0aa869f6d626cb39d9f2d67cded06ea67c1c; original generation provenance was not recorded by the upload."
+    },
+    {
+      "path": "ingilizce/route-assets/reference-coin.svg",
+      "sha256": "baa13bc004010a2fc34e5d20dc2ecadc8291c010652c6dc473cd838f8e66ee8c",
+      "bytes": 596,
+      "status": "repository-existing-unverified",
+      "source": "Existing in repository before member-flow release eb197cdd; original artwork provenance was not recorded. This entry records file integrity, not rights clearance."
+    },
+    {
+      "path": "ingilizce/route-assets/reference-energy.svg",
+      "sha256": "6c618b1e8910a1f001944840e88072488fdaadaf69e0340d23e69eeadd06e2a0",
+      "bytes": 450,
+      "status": "repository-existing-unverified",
+      "source": "Existing in repository before member-flow release eb197cdd; original artwork provenance was not recorded. This entry records file integrity, not rights clearance."
+    },
+    {
+      "path": "ingilizce/route-assets/reference-feather.svg",
+      "sha256": "dfb0c4a012edeeeae5d4f431aaa6143c5c2be0ab084ad89655b620c07b861705",
+      "bytes": 714,
+      "status": "repository-existing-unverified",
+      "source": "Existing in repository before member-flow release eb197cdd; original artwork provenance was not recorded. This entry records file integrity, not rights clearance."
+    },
+    {
+      "path": "ingilizce/route-assets/reference-forest.webp",
+      "sha256": "86fbb5b7db1ca3685edfd8826e0cc7c3c8ba41f167762de7db8bfc982a6d9f0e",
+      "bytes": 124452,
+      "status": "repository-existing-unverified",
+      "source": "Existing in repository before member-flow release eb197cdd; original artwork provenance was not recorded. This entry records file integrity, not rights clearance."
+    },
+    {
+      "path": "ingilizce/route-assets/reference-speaker.svg",
+      "sha256": "07e3575a45fae7bb76d921fb6d6f2ca66b6a7f2fcdb4d8b1c795871b95e9d5c0",
+      "bytes": 277,
+      "status": "repository-existing-unverified",
+      "source": "Existing in repository before member-flow release eb197cdd; original artwork provenance was not recorded. This entry records file integrity, not rights clearance."
+    },
+    {
+      "path": "ingilizce/route-assets/reference-wave.svg",
+      "sha256": "e8b1eb82c99b11b20cb064f668249b64ce4666b2b5f0f61967b79444ff5fe371",
+      "bytes": 194,
+      "status": "repository-existing-unverified",
+      "source": "Existing in repository before member-flow release eb197cdd; original artwork provenance was not recorded. This entry records file integrity, not rights clearance."
+    },
+    {
+      "path": "ingilizce/route-assets/repeat.svg",
+      "sha256": "aca4b1b170178f6e6aae3f6a158856a238aa6d104a44e38109ef3e5b7af787da",
+      "bytes": 435,
+      "status": "repository-restored",
+      "source": "Existing route asset from Git history through 41ca0aa869f6d626cb39d9f2d67cded06ea67c1c; original generation provenance was not recorded by the upload."
+    },
+    {
+      "path": "ingilizce/route-assets/safety-icon.svg",
+      "sha256": "e9e5c6092c9911e961444ac67486c77bc9bef013270f8423cd2ee6fcf9a3ac42",
+      "bytes": 414,
+      "status": "original-code",
+      "source": "docs/social-safety-guardian-controls.md"
+    },
+    {
+      "path": "ingilizce/route-assets/school-fixed-approved-v1.webp",
+      "sha256": "8004e1f4f6d85b5c56878a6a058f5987a92083fbd32210e84c2ebb47fb2b9aef",
+      "bytes": 16820,
+      "status": "original-derived",
+      "source": "Original approved Diji-Medu 20 October 2026 concept 3; UI artifacts removed, fixed illustrated scenery, live scrolling route elements."
+    },
+    {
+      "path": "ingilizce/route-assets/shop.svg",
+      "sha256": "8488d2b5736fa8d21a9513097f657da7727fc0837e539e7402ba416b4ff355eb",
+      "bytes": 632,
+      "status": "repository-restored",
+      "source": "Restored from commit 16362b9af935e4defdc4ed56b3e4aac1da249cae; original generation provenance was not recorded by that package."
+    },
+    {
+      "path": "ingilizce/route-assets/sky-academy-background.webp",
+      "sha256": "d3e7ad2416de21000d01039cb73960da988a053dcca31358510b24a72bc9f54a",
+      "bytes": 351624,
+      "status": "ai-generated",
+      "source": "docs/sky-academy-20261024.md"
+    },
+    {
+      "path": "ingilizce/route-assets/support-icon.svg",
+      "sha256": "e0cfa49fdcc91686c3c01f2950b06d811ebf0c265b5eeff0b6dcf218fc28cd48",
+      "bytes": 590,
+      "status": "original-code",
+      "source": "docs/social-safety-guardian-controls.md"
+    },
+    {
+      "path": "ingilizce/route-assets/teacher.svg",
+      "sha256": "38781fc3fb13a726ea13877db13e42c83bf3994fd3676d14d9a147ec8e0a9982",
+      "bytes": 453,
+      "status": "repository-restored",
+      "source": "Existing route asset from Git history through 41ca0aa869f6d626cb39d9f2d67cded06ea67c1c; original generation provenance was not recorded by the upload."
+    },
+    {
+      "path": "ingilizce/route-assets/user.svg",
+      "sha256": "44ac6534964045b5004536991052c44fdb2b49bf905d53bece1938ff9b1fe13f",
+      "bytes": 516,
+      "status": "repository-restored",
+      "source": "Restored from commit 16362b9af935e4defdc4ed56b3e4aac1da249cae; original generation provenance was not recorded by that package."
     },
     {
       "path": "ingilizce/satis-assets/papi-energy-3d.webp",
@@ -2688,11 +2477,313 @@
       "source": "OpenAI image generation, 2026-11-14. User-approved DijiMedu Papi design: 3D Papi wearing purple headphones and holding a lightning token. Reference: ingilizce/papi-welcome-v2.png."
     },
     {
-      "path": "ingilizce/games-assets/word-goal-sprites-v2.png",
-      "sha256": "8a81b907d4ed900f2ceef71a33311d6796404c340ae5c88062d761f4ffebc643",
-      "bytes": 1493489,
+      "path": "ingilizce/satis-assets/papi-premium-gift.webp",
+      "sha256": "e7a1cc520802d271c643ef061a49b9244bf6e3cf236f55985916520ffb0c2600",
+      "bytes": 31938,
       "status": "ai-generated",
-      "source": "docs/premium-skill-artwork.json"
+      "source": "OpenAI image generation, 2026-11-14. User-approved DijiMedu Papi design: 3D Papi holding a gold crown gift on a lavender pedestal. Reference: ingilizce/papi-welcome-v2.png."
+    },
+    {
+      "path": "ingilizce/school-assets/soft-cards-approved.png",
+      "sha256": "570263c103e76b325f0fb51ccb67d3f3d67b61cdce985623c94bf92779ae45d5",
+      "bytes": 1340058,
+      "status": "ai-generated",
+      "source": "docs/school-soft-cards-20261025.md"
+    },
+    {
+      "path": "ingilizce/school-assets/teacher-home-icons.webp",
+      "sha256": "d38b0910885fc708edd09fca741ddf1edb42cefce61d03a7e71bf22381f5d708",
+      "bytes": 44568,
+      "status": "licensed",
+      "source": "Microsoft Fluent Emoji 3D (MIT). Resized and composed into a WebP atlas. https://github.com/microsoft/fluentui-emoji",
+      "license": "ingilizce/school-assets/teacher-home-icons.LICENSE.txt"
+    },
+    {
+      "path": "ingilizce/start-placement-audio/A1-10.mp3",
+      "sha256": "357133b948598ded1e71f162cca2f7e1e544f7a4e7a2ed48cff2884695e6e8cc",
+      "bytes": 35757,
+      "status": "original-synthesized-audio",
+      "source": "Original DijiMedu placement item text, synthesized locally with FFmpeg libflite (slt), 2026-10-18; scripts/build-start-placement-audio.py"
+    },
+    {
+      "path": "ingilizce/start-placement-audio/A1-8.mp3",
+      "sha256": "f57c079f02e08a8457d5798956c7eb2c8055cb41452d024063877c5d2afd2f40",
+      "bytes": 33069,
+      "status": "original-synthesized-audio",
+      "source": "Original DijiMedu placement item text, synthesized locally with FFmpeg libflite (slt), 2026-10-18; scripts/build-start-placement-audio.py"
+    },
+    {
+      "path": "ingilizce/start-placement-audio/A1-9.mp3",
+      "sha256": "bc17167b9ed14918b20e4b71e4dc525c5a3b7111b208b62d46f39c3831ab6609",
+      "bytes": 36333,
+      "status": "original-synthesized-audio",
+      "source": "Original DijiMedu placement item text, synthesized locally with FFmpeg libflite (slt), 2026-10-18; scripts/build-start-placement-audio.py"
+    },
+    {
+      "path": "ingilizce/start-placement-audio/A1-extra-10.mp3",
+      "sha256": "d4ab0d5388cda1ea636a2c076d03e04c640b8a6a64fa6b65093be6885d354684",
+      "bytes": 31149,
+      "status": "original-synthesized-audio",
+      "source": "Original DijiMedu placement item text, synthesized locally with FFmpeg libflite (slt), 2026-10-18; scripts/build-start-placement-audio.py"
+    },
+    {
+      "path": "ingilizce/start-placement-audio/A1-extra-8.mp3",
+      "sha256": "5785268dff30673d5fbc8365ccd9ecb99370ceeb748414b0300e6baecfc3b4dc",
+      "bytes": 23853,
+      "status": "original-synthesized-audio",
+      "source": "Original DijiMedu placement item text, synthesized locally with FFmpeg libflite (slt), 2026-10-18; scripts/build-start-placement-audio.py"
+    },
+    {
+      "path": "ingilizce/start-placement-audio/A1-extra-9.mp3",
+      "sha256": "b11c4d39e6da9bfb370a02286bd7b2e15907ec845044cb7296d5a93e0ec6ded4",
+      "bytes": 36141,
+      "status": "original-synthesized-audio",
+      "source": "Original DijiMedu placement item text, synthesized locally with FFmpeg libflite (slt), 2026-10-18; scripts/build-start-placement-audio.py"
+    },
+    {
+      "path": "ingilizce/start-placement-audio/A2-10.mp3",
+      "sha256": "0a7094722f0f2b83c75a2353dbdf8dd72f19e7993cf561b74f6d699da7359638",
+      "bytes": 64365,
+      "status": "original-synthesized-audio",
+      "source": "Original DijiMedu placement item text, synthesized locally with FFmpeg libflite (slt), 2026-10-18; scripts/build-start-placement-audio.py"
+    },
+    {
+      "path": "ingilizce/start-placement-audio/A2-8.mp3",
+      "sha256": "83f4e6eb3e7fa6f97d6861a193b60f2d2cdaf71a7440962c9e77df01bc11770b",
+      "bytes": 66861,
+      "status": "original-synthesized-audio",
+      "source": "Original DijiMedu placement item text, synthesized locally with FFmpeg libflite (slt), 2026-10-18; scripts/build-start-placement-audio.py"
+    },
+    {
+      "path": "ingilizce/start-placement-audio/A2-9.mp3",
+      "sha256": "782ed865aab893fc18a882263ce14869565b46755ef95845529550a8000ff496",
+      "bytes": 53037,
+      "status": "original-synthesized-audio",
+      "source": "Original DijiMedu placement item text, synthesized locally with FFmpeg libflite (slt), 2026-10-18; scripts/build-start-placement-audio.py"
+    },
+    {
+      "path": "ingilizce/start-placement-audio/A2-extra-18.mp3",
+      "sha256": "26de36713d363a30f728748173b5b0a208440847c24ec45bad0982a01f386dac",
+      "bytes": 48429,
+      "status": "original-synthesized-audio",
+      "source": "Original DijiMedu placement item text, synthesized locally with FFmpeg libflite (slt), 2026-10-18; scripts/build-start-placement-audio.py"
+    },
+    {
+      "path": "ingilizce/start-placement-audio/A2-extra-19.mp3",
+      "sha256": "f644660c2f269c8aef63274f21ec822c161da0a360daba67136e3df795363524",
+      "bytes": 47469,
+      "status": "original-synthesized-audio",
+      "source": "Original DijiMedu placement item text, synthesized locally with FFmpeg libflite (slt), 2026-10-18; scripts/build-start-placement-audio.py"
+    },
+    {
+      "path": "ingilizce/start-placement-audio/A2-extra-20.mp3",
+      "sha256": "ae91fdd981e54648d69c15b6aa196e43ef0f67f4765f11e25e6ec7aef90999e2",
+      "bytes": 50541,
+      "status": "original-synthesized-audio",
+      "source": "Original DijiMedu placement item text, synthesized locally with FFmpeg libflite (slt), 2026-10-18; scripts/build-start-placement-audio.py"
+    },
+    {
+      "path": "ingilizce/start-placement-audio/B1-10.mp3",
+      "sha256": "a3e4d2540ca0af92d08d7e1400a8f5a91be29b9395720f451e0cd76c4b461ad8",
+      "bytes": 87405,
+      "status": "original-synthesized-audio",
+      "source": "Original DijiMedu placement item text, synthesized locally with FFmpeg libflite (slt), 2026-10-18; scripts/build-start-placement-audio.py"
+    },
+    {
+      "path": "ingilizce/start-placement-audio/B1-8.mp3",
+      "sha256": "fa7c7d39abb68c14f7571b1509f3dc6569fcc91281559f52833b65f3f9736ea5",
+      "bytes": 103725,
+      "status": "original-synthesized-audio",
+      "source": "Original DijiMedu placement item text, synthesized locally with FFmpeg libflite (slt), 2026-10-18; scripts/build-start-placement-audio.py"
+    },
+    {
+      "path": "ingilizce/start-placement-audio/B1-9.mp3",
+      "sha256": "acfe8973a7bf258a01b9d6679e69820b0d0f7efd2195bd819b0549c908031ba1",
+      "bytes": 67629,
+      "status": "original-synthesized-audio",
+      "source": "Original DijiMedu placement item text, synthesized locally with FFmpeg libflite (slt), 2026-10-18; scripts/build-start-placement-audio.py"
+    },
+    {
+      "path": "ingilizce/start-placement-audio/B1-extra-28.mp3",
+      "sha256": "b028a353eb6fc93987bb5079c9074e55817fadf1a3d55a5427a25af85fcdb3c5",
+      "bytes": 77997,
+      "status": "original-synthesized-audio",
+      "source": "Original DijiMedu placement item text, synthesized locally with FFmpeg libflite (slt), 2026-10-18; scripts/build-start-placement-audio.py"
+    },
+    {
+      "path": "ingilizce/start-placement-audio/B1-extra-29.mp3",
+      "sha256": "da4cb66a8d0f27394adfbcfd2530d882d3f556c04dff8b7dc1b82b7032d0daa8",
+      "bytes": 82029,
+      "status": "original-synthesized-audio",
+      "source": "Original DijiMedu placement item text, synthesized locally with FFmpeg libflite (slt), 2026-10-18; scripts/build-start-placement-audio.py"
+    },
+    {
+      "path": "ingilizce/start-placement-audio/B1-extra-30.mp3",
+      "sha256": "a93bfefd0123c716c99a3735e2412c188559b1e2e31160fb5c0ad069e4370b30",
+      "bytes": 75117,
+      "status": "original-synthesized-audio",
+      "source": "Original DijiMedu placement item text, synthesized locally with FFmpeg libflite (slt), 2026-10-18; scripts/build-start-placement-audio.py"
+    },
+    {
+      "path": "ingilizce/start-placement-audio/B2-10.mp3",
+      "sha256": "7fe1bedd3422eb2a909a7ec3b2a33a5721eefa72f7f1da1618535963147d1bbe",
+      "bytes": 111405,
+      "status": "original-synthesized-audio",
+      "source": "Original DijiMedu placement item text, synthesized locally with FFmpeg libflite (slt), 2026-10-18; scripts/build-start-placement-audio.py"
+    },
+    {
+      "path": "ingilizce/start-placement-audio/B2-8.mp3",
+      "sha256": "a06fa6ea926cea450c81557db2e2f61f853ccd92b8d100d665e41ffac7a87482",
+      "bytes": 131181,
+      "status": "original-synthesized-audio",
+      "source": "Original DijiMedu placement item text, synthesized locally with FFmpeg libflite (slt), 2026-10-18; scripts/build-start-placement-audio.py"
+    },
+    {
+      "path": "ingilizce/start-placement-audio/B2-9.mp3",
+      "sha256": "ffbd1f76d555bd6d53f65bfa96ab6445a560c7041bf489f0f7980c83e06f799e",
+      "bytes": 124269,
+      "status": "original-synthesized-audio",
+      "source": "Original DijiMedu placement item text, synthesized locally with FFmpeg libflite (slt), 2026-10-18; scripts/build-start-placement-audio.py"
+    },
+    {
+      "path": "ingilizce/start-placement-audio/B2-extra-38.mp3",
+      "sha256": "4cae403f3610aa5a9bf009900ce7a874475d3905d0ef748ace101b720f597824",
+      "bytes": 108717,
+      "status": "original-synthesized-audio",
+      "source": "Original DijiMedu placement item text, synthesized locally with FFmpeg libflite (slt), 2026-10-18; scripts/build-start-placement-audio.py"
+    },
+    {
+      "path": "ingilizce/start-placement-audio/B2-extra-39.mp3",
+      "sha256": "7b4b1b1afad4c38456c893d7f9c5be195ad9fab6640d285df9f1a709d8671519",
+      "bytes": 85485,
+      "status": "original-synthesized-audio",
+      "source": "Original DijiMedu placement item text, synthesized locally with FFmpeg libflite (slt), 2026-10-18; scripts/build-start-placement-audio.py"
+    },
+    {
+      "path": "ingilizce/start-placement-audio/B2-extra-40.mp3",
+      "sha256": "978a5da9f66c295e64f696d08b34daf04d01d22665bb3ebcdfa8500509741168",
+      "bytes": 97197,
+      "status": "original-synthesized-audio",
+      "source": "Original DijiMedu placement item text, synthesized locally with FFmpeg libflite (slt), 2026-10-18; scripts/build-start-placement-audio.py"
+    },
+    {
+      "path": "ingilizce/store-assets/dressing-room.webp",
+      "sha256": "d8a1e46ff7c480e3c4f353a8e49b5160c764a478b812bf8eaa4461376a9312c1",
+      "bytes": 91956,
+      "status": "ai-generated",
+      "source": "OpenAI ImageGen; user-authorized DijiMedu UI assets generated 2026-10-11 from approved designs"
+    },
+    {
+      "path": "ingilizce/store-assets/shop-icons.webp",
+      "sha256": "2d268b6c5cda148cbd08bf933440ed5c77affff06baec7d3f8e5da93b44bf596",
+      "bytes": 138478,
+      "status": "ai-generated",
+      "source": "OpenAI ImageGen; user-authorized DijiMedu UI assets generated 2026-10-11 from approved designs"
+    },
+    {
+      "path": "ingilizce/story-garden-map.webp",
+      "sha256": "24b2f224f6f3efd3055a685b23a799d159cccd53f1cb8fc7907c8333424fbba1",
+      "bytes": 543354,
+      "status": "ai-generated",
+      "source": "docs/papi-learning-story.md"
+    },
+    {
+      "path": "ingilizce/story-scene-boy.webp",
+      "sha256": "16e1c98f4709037340ba1383a9c4c7a545528c00e8e388de5696e68ffd9ce39a",
+      "bytes": 436932,
+      "status": "ai-generated",
+      "source": "docs/papi-learning-story.md"
+    },
+    {
+      "path": "ingilizce/story-scene-girl.webp",
+      "sha256": "49089fad5bbd79cda59a923b268a12a2be261b3d37ba37504fc22e89e9e28ed4",
+      "bytes": 422706,
+      "status": "ai-generated",
+      "source": "docs/papi-learning-story.md"
+    },
+    {
+      "path": "ingilizce/story-space-background.webp",
+      "sha256": "6546fd6565e9500faa68b818b97ffc59f0c8966fcff1c747889574d4b15ad9ad",
+      "bytes": 78968,
+      "status": "ai-generated",
+      "source": "docs/space-learning-design.md"
+    },
+    {
+      "path": "ingilizce/story-space-sprites.webp",
+      "sha256": "b0bcd9c82ce53b66172afea3d41550ed0d46a03a25655a06572b4fc0b8bb2163",
+      "bytes": 322572,
+      "status": "ai-generated",
+      "source": "docs/space-learning-design.md"
+    },
+    {
+      "path": "ingilizce/study-assets/icons.svg",
+      "sha256": "f8effa1bdd09e744178353bcfb434e7eeb3e868620c5ba475053f3870b393871",
+      "bytes": 2210,
+      "status": "code-native",
+      "source": "Repository-authored study interface SVG; original source retained in Git"
+    },
+    {
+      "path": "ingilizce/study-assets/island-a1.png",
+      "sha256": "5b844e607cd9c6d4356cc2cbbcc0b869cb4c7c92ad2e0988f14b6dc02932073f",
+      "bytes": 46516,
+      "status": "ai-generated",
+      "source": "docs/study-media-generation.json"
+    },
+    {
+      "path": "ingilizce/study-assets/island-a2.png",
+      "sha256": "41c3e3a6c46895b7f1c3efd1ff9273bdb0a35156222e07615ee31e8f9d98d7ca",
+      "bytes": 42876,
+      "status": "ai-generated",
+      "source": "docs/study-media-generation.json"
+    },
+    {
+      "path": "ingilizce/study-assets/island-b1.png",
+      "sha256": "b603cede93e49c19071012ba393066bdea4ec8ce3ceb504a161aace6d5a6e465",
+      "bytes": 45596,
+      "status": "ai-generated",
+      "source": "docs/study-media-generation.json"
+    },
+    {
+      "path": "ingilizce/study-assets/island-b2.png",
+      "sha256": "75fa55915514473e71cdf57ed17558e78f0b0882649820986e86ed2f309eadf2",
+      "bytes": 45526,
+      "status": "ai-generated",
+      "source": "docs/study-media-generation.json"
+    },
+    {
+      "path": "ingilizce/study-assets/papi-celebrate.png",
+      "sha256": "af715d4208ab17917777b8d511763bfcadcb9354b919486f1ddfec5a8387232d",
+      "bytes": 41534,
+      "status": "ai-generated",
+      "source": "docs/study-media-generation.json"
+    },
+    {
+      "path": "ingilizce/study-assets/papi-explain.png",
+      "sha256": "746e4b63d970779f5f54c6adc9e06cd5f57c020d602f8352573da777121ea4ed",
+      "bytes": 32615,
+      "status": "ai-generated",
+      "source": "docs/study-media-generation.json"
+    },
+    {
+      "path": "ingilizce/study-assets/papi-read.png",
+      "sha256": "b880af1f5f74996ff1280f87148ab0ac85da86c2ad08e99dbded00ea34627c46",
+      "bytes": 36011,
+      "status": "ai-generated",
+      "source": "docs/study-media-generation.json"
+    },
+    {
+      "path": "ingilizce/study-assets/topic-sun.svg",
+      "sha256": "5b792968fce75151b8e723443d785a86a0678f3a63c4096abccef9129ad8ba1f",
+      "bytes": 253,
+      "status": "code-native",
+      "source": "Repository-authored study interface SVG; original source retained in Git"
+    },
+    {
+      "path": "ingilizce/study-islands-v2.webp",
+      "sha256": "4887cc543f05d761673cde3e06d7fd5bee6d70d297dc926651283d7572daecdd",
+      "bytes": 516278,
+      "status": "ai-generated",
+      "source": "docs/media-generation-record.json"
     },
     {
       "path": "ingilizce/teacher-dashboard-assets/arrow-right.svg",
@@ -2842,11 +2933,25 @@
       "source": "Custom SVG vector authored for user-approved Diji-Medu Teacher Dashboard Design 1, 2026-11-15; no external imagery."
     },
     {
-      "path": "ingilizce/premium-assets/papi-game-offer.webp",
-      "sha256": "8e4794a0dfe693e043447ec4190f65d9a7c3a69703f42930c665680d1f06d108",
-      "bytes": 28556,
+      "path": "ingilizce/world-assets/compass.svg",
+      "sha256": "773e41d95f85d78fc1770d061716c7a9d4f88041440c4a3efc9396dad935dc14",
+      "bytes": 925,
+      "status": "original-code",
+      "source": "Original SVG authored for approved world design 1"
+    },
+    {
+      "path": "ingilizce/world-assets/dressing-room.webp",
+      "sha256": "8c32c2a095837ea76bc9bffa1b6409f3cef31ad8b02346eeb50232503d2e9a41",
+      "bytes": 73598,
       "status": "ai-generated",
-      "source": "docs/premium-play-offer-generation.json"
+      "source": "OpenAI ImageGen, 2026-10-11; generated from the user-approved Benim Dünyam design 1"
+    },
+    {
+      "path": "ingilizce/world-assets/papi-atlas.webp",
+      "sha256": "b5ba1f41de38db183b4182a336ae65052e76652453ee55c53656d85d488dd97d",
+      "bytes": 188692,
+      "status": "ai-generated",
+      "source": "OpenAI ImageGen, 2026-10-11; generated from the user-approved Benim Dünyam design 1"
     }
   ]
 }
