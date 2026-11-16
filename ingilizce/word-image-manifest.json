@@ -1,0 +1,212 @@
+{
+  "version": 1,
+  "images": [
+    {
+      "id": "a-bird-can-fly-1a1c9b658b",
+      "english": "A bird can fly.",
+      "turkish": "Kuş uçabilir.",
+      "image": "/assets/word-images/pilot/a-bird-can-fly-1a1c9b658b.png",
+      "contexts": [
+        {
+          "route": "Öğrenme Yolu",
+          "cefr": "A1",
+          "chapter": 84,
+          "topic": "Hayvanlar Ne Yapabilir?"
+        }
+      ]
+    },
+    {
+      "id": "a-bottle-of-8dc76877fd",
+      "english": "a bottle of",
+      "turkish": "bir şişe",
+      "image": "/assets/word-images/pilot/a-bottle-of-8dc76877fd.png",
+      "contexts": [
+        {
+          "route": "Öğrenme Yolu",
+          "cefr": "A2",
+          "chapter": 175,
+          "topic": "Miktar ve Adet"
+        }
+      ]
+    },
+    {
+      "id": "a-butterfly-has-wings-0ad0e46d91",
+      "english": "A butterfly has wings.",
+      "turkish": "Kelebeğin kanatları vardır.",
+      "image": "/assets/word-images/pilot/a-butterfly-has-wings-0ad0e46d91.png",
+      "contexts": [
+        {
+          "route": "Öğrenme Yolu",
+          "cefr": "A1",
+          "chapter": 84,
+          "topic": "Hayvanlar Ne Yapabilir?"
+        }
+      ]
+    },
+    {
+      "id": "a-cat-has-got-a-small-nose-f4c82a7726",
+      "english": "A cat has got a small nose.",
+      "turkish": "Bir kedinin küçük bir burnu var.",
+      "image": "/assets/word-images/pilot/a-cat-has-got-a-small-nose-f4c82a7726.png",
+      "contexts": [
+        {
+          "route": "Okul Yolum",
+          "grade": 2,
+          "unit": 5
+        }
+      ]
+    },
+    {
+      "id": "a-cat-has-got-claws-ca09f5b8d8",
+      "english": "A cat has got claws.",
+      "turkish": "Bir kedinin pençeleri var.",
+      "image": "/assets/word-images/pilot/a-cat-has-got-claws-ca09f5b8d8.png",
+      "contexts": [
+        {
+          "route": "Okul Yolum",
+          "grade": 2,
+          "unit": 5
+        }
+      ]
+    },
+    {
+      "id": "a-convincing-essay-considers-a-relevant-count-717da52d5f",
+      "english": "A convincing essay considers a relevant counterargument.",
+      "turkish": "İkna edici bir yazı ilgili bir karşı savı değerlendirir.",
+      "image": "/assets/word-images/pilot/a-convincing-essay-considers-a-relevant-count-717da52d5f.png",
+      "contexts": [
+        {
+          "route": "Öğrenme Yolu",
+          "cefr": "B2",
+          "chapter": 358,
+          "topic": "Karşı Görüşü Yanıtlama"
+        }
+      ]
+    },
+    {
+      "id": "a-doctor-helps-people-1d7e51bfcb",
+      "english": "A doctor helps people.",
+      "turkish": "Doktor insanlara yardım eder.",
+      "image": "/assets/word-images/pilot/a-doctor-helps-people-1d7e51bfcb.png",
+      "contexts": [
+        {
+          "route": "Öğrenme Yolu",
+          "cefr": "A2",
+          "chapter": 194,
+          "topic": "Meslekler"
+        }
+      ]
+    },
+    {
+      "id": "a-dog-has-got-paws-f0e27b3790",
+      "english": "A dog has got paws.",
+      "turkish": "Bir köpeğin patileri var.",
+      "image": "/assets/word-images/pilot/a-dog-has-got-paws-f0e27b3790.png",
+      "contexts": [
+        {
+          "route": "Okul Yolum",
+          "grade": 2,
+          "unit": 5
+        }
+      ]
+    },
+    {
+      "id": "a-farmer-grows-vegetables-47f22caaa0",
+      "english": "A farmer grows vegetables.",
+      "turkish": "Çiftçi sebze yetiştirir.",
+      "image": "/assets/word-images/pilot/a-farmer-grows-vegetables-47f22caaa0.png",
+      "contexts": [
+        {
+          "route": "Öğrenme Yolu",
+          "cefr": "A2",
+          "chapter": 194,
+          "topic": "Meslekler"
+        }
+      ]
+    },
+    {
+      "id": "a-fish-can-swim-3334b883b7",
+      "english": "A fish can swim.",
+      "turkish": "Balık yüzebilir.",
+      "image": "/assets/word-images/pilot/a-fish-can-swim-3334b883b7.png",
+      "contexts": [
+        {
+          "route": "Öğrenme Yolu",
+          "cefr": "A1",
+          "chapter": 84,
+          "topic": "Hayvanlar Ne Yapabilir?"
+        }
+      ]
+    },
+    {
+      "id": "a-horse-is-fast-1db41175c3",
+      "english": "A horse is fast.",
+      "turkish": "At hızlıdır.",
+      "image": "/assets/word-images/pilot/a-horse-is-fast-1db41175c3.png",
+      "contexts": [
+        {
+          "route": "Öğrenme Yolu",
+          "cefr": "A1",
+          "chapter": 82,
+          "topic": "Hayvanların Özellikleri"
+        }
+      ]
+    },
+    {
+      "id": "a-kilo-of-apples-please-051f0d8a28",
+      "english": "A kilo of apples, please.",
+      "turkish": "Bir kilo elma, lütfen.",
+      "image": "/assets/word-images/pilot/a-kilo-of-apples-please-051f0d8a28.png",
+      "contexts": [
+        {
+          "route": "Öğrenme Yolu",
+          "cefr": "A2",
+          "chapter": 176,
+          "topic": "Miktar ve Adet"
+        }
+      ]
+    },
+    {
+      "id": "a-mouse-is-small-19a0f2dd0f",
+      "english": "A mouse is small.",
+      "turkish": "Fare küçüktür.",
+      "image": "/assets/word-images/pilot/a-mouse-is-small-19a0f2dd0f.png",
+      "contexts": [
+        {
+          "route": "Öğrenme Yolu",
+          "cefr": "A1",
+          "chapter": 82,
+          "topic": "Hayvanların Özellikleri"
+        }
+      ]
+    },
+    {
+      "id": "a-nurse-works-in-a-hospital-e79cfe5986",
+      "english": "A nurse works in a hospital.",
+      "turkish": "Hemşire hastanede çalışır.",
+      "image": "/assets/word-images/pilot/a-nurse-works-in-a-hospital-e79cfe5986.png",
+      "contexts": [
+        {
+          "route": "Öğrenme Yolu",
+          "cefr": "A2",
+          "chapter": 196,
+          "topic": "Çalışma Yerleri"
+        }
+      ]
+    },
+    {
+      "id": "a-teacher-works-at-a-school-f07b0f6f07",
+      "english": "A teacher works at a school.",
+      "turkish": "Öğretmen okulda çalışır.",
+      "image": "/assets/word-images/pilot/a-teacher-works-at-a-school-f07b0f6f07.png",
+      "contexts": [
+        {
+          "route": "Öğrenme Yolu",
+          "cefr": "A2",
+          "chapter": 196,
+          "topic": "Çalışma Yerleri"
+        }
+      ]
+    }
+  ]
+}
