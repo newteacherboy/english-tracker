@@ -1,0 +1,1454 @@
+{
+  "description": "User-supplied numbered visual mappings. All 161 marked completed by user. Image content not visually verified; not yet wired into app.",
+  "entries": [
+    {
+      "number": "0001",
+      "english": "bye",
+      "turkish": "güle güle",
+      "grade": 1,
+      "unit": null,
+      "path": "assets/word-images/pilot/numbered/0001.png",
+      "approved": true
+    },
+    {
+      "number": "0002",
+      "english": "hello",
+      "turkish": "merhaba",
+      "grade": 1,
+      "unit": null,
+      "path": "assets/word-images/pilot/numbered/0002.png",
+      "approved": true
+    },
+    {
+      "number": "0003",
+      "english": "see you",
+      "turkish": "görüşürüz",
+      "grade": 1,
+      "unit": null,
+      "path": "assets/word-images/pilot/numbered/0003.png",
+      "approved": true
+    },
+    {
+      "number": "0004",
+      "english": "angry",
+      "turkish": "kızgın",
+      "grade": 1,
+      "unit": null,
+      "path": "assets/word-images/pilot/numbered/0004.png",
+      "approved": true
+    },
+    {
+      "number": "0005",
+      "english": "how are you",
+      "turkish": "nasılsın",
+      "grade": 1,
+      "unit": null,
+      "path": "assets/word-images/pilot/numbered/0005.png",
+      "approved": true
+    },
+    {
+      "number": "0006",
+      "english": "sad",
+      "turkish": "üzgün",
+      "grade": 1,
+      "unit": null,
+      "path": "assets/word-images/pilot/numbered/0006.png",
+      "approved": true
+    },
+    {
+      "number": "0007",
+      "english": "black",
+      "turkish": "siyah",
+      "grade": 1,
+      "unit": null,
+      "path": "assets/word-images/pilot/numbered/0007.png",
+      "approved": true
+    },
+    {
+      "number": "0008",
+      "english": "gray",
+      "turkish": "gri",
+      "grade": 1,
+      "unit": null,
+      "path": "assets/word-images/pilot/numbered/0008.png",
+      "approved": true
+    },
+    {
+      "number": "0009",
+      "english": "purple",
+      "turkish": "mor",
+      "grade": 1,
+      "unit": null,
+      "path": "assets/word-images/pilot/numbered/0009.png",
+      "approved": true
+    },
+    {
+      "number": "0010",
+      "english": "eight",
+      "turkish": "sekiz",
+      "grade": 1,
+      "unit": null,
+      "path": "assets/word-images/pilot/numbered/0010.png",
+      "approved": true
+    },
+    {
+      "number": "0011",
+      "english": "nine",
+      "turkish": "dokuz",
+      "grade": 1,
+      "unit": null,
+      "path": "assets/word-images/pilot/numbered/0011.png",
+      "approved": true
+    },
+    {
+      "number": "0012",
+      "english": "ten",
+      "turkish": "on",
+      "grade": 1,
+      "unit": null,
+      "path": "assets/word-images/pilot/numbered/0012.png",
+      "approved": true
+    },
+    {
+      "number": "0013",
+      "english": "bag",
+      "turkish": "çanta",
+      "grade": 1,
+      "unit": null,
+      "path": "assets/word-images/pilot/numbered/0013.png",
+      "approved": true
+    },
+    {
+      "number": "0014",
+      "english": "desk",
+      "turkish": "sıra",
+      "grade": 1,
+      "unit": null,
+      "path": "assets/word-images/pilot/numbered/0014.png",
+      "approved": true
+    },
+    {
+      "number": "0015",
+      "english": "pencil",
+      "turkish": "kurşun kalem",
+      "grade": 1,
+      "unit": null,
+      "path": "assets/word-images/pilot/numbered/0015.png",
+      "approved": true
+    },
+    {
+      "number": "0016",
+      "english": "baby",
+      "turkish": "bebek",
+      "grade": 1,
+      "unit": null,
+      "path": "assets/word-images/pilot/numbered/0016.png",
+      "approved": true
+    },
+    {
+      "number": "0017",
+      "english": "family",
+      "turkish": "aile",
+      "grade": 1,
+      "unit": null,
+      "path": "assets/word-images/pilot/numbered/0017.png",
+      "approved": true
+    },
+    {
+      "number": "0018",
+      "english": "grandfather",
+      "turkish": "büyükbaba",
+      "grade": 1,
+      "unit": null,
+      "path": "assets/word-images/pilot/numbered/0018.png",
+      "approved": true
+    },
+    {
+      "number": "0019",
+      "english": "bird",
+      "turkish": "kuş",
+      "grade": 1,
+      "unit": null,
+      "path": "assets/word-images/pilot/numbered/0019.png",
+      "approved": true
+    },
+    {
+      "number": "0020",
+      "english": "duck",
+      "turkish": "ördek",
+      "grade": 1,
+      "unit": null,
+      "path": "assets/word-images/pilot/numbered/0020.png",
+      "approved": true
+    },
+    {
+      "number": "0021",
+      "english": "lion",
+      "turkish": "aslan",
+      "grade": 1,
+      "unit": null,
+      "path": "assets/word-images/pilot/numbered/0021.png",
+      "approved": true
+    },
+    {
+      "number": "0022",
+      "english": "close",
+      "turkish": "kapatmak",
+      "grade": 1,
+      "unit": null,
+      "path": "assets/word-images/pilot/numbered/0022.png",
+      "approved": true
+    },
+    {
+      "number": "0023",
+      "english": "listen",
+      "turkish": "dinlemek",
+      "grade": 1,
+      "unit": null,
+      "path": "assets/word-images/pilot/numbered/0023.png",
+      "approved": true
+    },
+    {
+      "number": "0024",
+      "english": "run",
+      "turkish": "koşmak",
+      "grade": 1,
+      "unit": null,
+      "path": "assets/word-images/pilot/numbered/0024.png",
+      "approved": true
+    },
+    {
+      "number": "0025",
+      "english": "good morning",
+      "turkish": "günaydın",
+      "grade": 1,
+      "unit": null,
+      "path": "assets/word-images/pilot/numbered/0025.png",
+      "approved": true
+    },
+    {
+      "number": "0026",
+      "english": "fine",
+      "turkish": "iyi",
+      "grade": 1,
+      "unit": null,
+      "path": "assets/word-images/pilot/numbered/0026.png",
+      "approved": true
+    },
+    {
+      "number": "0027",
+      "english": "blue",
+      "turkish": "mavi",
+      "grade": 1,
+      "unit": null,
+      "path": "assets/word-images/pilot/numbered/0027.png",
+      "approved": true
+    },
+    {
+      "number": "0028",
+      "english": "eleven",
+      "turkish": "on bir",
+      "grade": 1,
+      "unit": null,
+      "path": "assets/word-images/pilot/numbered/0028.png",
+      "approved": true
+    },
+    {
+      "number": "0029",
+      "english": "book",
+      "turkish": "kitap",
+      "grade": 1,
+      "unit": null,
+      "path": "assets/word-images/pilot/numbered/0029.png",
+      "approved": true
+    },
+    {
+      "number": "0030",
+      "english": "boy",
+      "turkish": "erkek çocuk",
+      "grade": 1,
+      "unit": null,
+      "path": "assets/word-images/pilot/numbered/0030.png",
+      "approved": true
+    },
+    {
+      "number": "0031",
+      "english": "cat",
+      "turkish": "kedi",
+      "grade": 1,
+      "unit": null,
+      "path": "assets/word-images/pilot/numbered/0031.png",
+      "approved": true
+    },
+    {
+      "number": "0032",
+      "english": "drink",
+      "turkish": "içmek",
+      "grade": 1,
+      "unit": null,
+      "path": "assets/word-images/pilot/numbered/0032.png",
+      "approved": true
+    },
+    {
+      "number": "0033",
+      "english": "good night",
+      "turkish": "iyi geceler",
+      "grade": 1,
+      "unit": null,
+      "path": "assets/word-images/pilot/numbered/0033.png",
+      "approved": true
+    },
+    {
+      "number": "0034",
+      "english": "great",
+      "turkish": "harika",
+      "grade": 1,
+      "unit": null,
+      "path": "assets/word-images/pilot/numbered/0034.png",
+      "approved": true
+    },
+    {
+      "number": "0035",
+      "english": "brown",
+      "turkish": "kahverengi",
+      "grade": 1,
+      "unit": null,
+      "path": "assets/word-images/pilot/numbered/0035.png",
+      "approved": true
+    },
+    {
+      "number": "0036",
+      "english": "five",
+      "turkish": "beş",
+      "grade": 1,
+      "unit": null,
+      "path": "assets/word-images/pilot/numbered/0036.png",
+      "approved": true
+    },
+    {
+      "number": "0037",
+      "english": "chair",
+      "turkish": "sandalye",
+      "grade": 1,
+      "unit": null,
+      "path": "assets/word-images/pilot/numbered/0037.png",
+      "approved": true
+    },
+    {
+      "number": "0038",
+      "english": "brother",
+      "turkish": "erkek kardeş",
+      "grade": 1,
+      "unit": null,
+      "path": "assets/word-images/pilot/numbered/0038.png",
+      "approved": true
+    },
+    {
+      "number": "0039",
+      "english": "cow",
+      "turkish": "inek",
+      "grade": 1,
+      "unit": null,
+      "path": "assets/word-images/pilot/numbered/0039.png",
+      "approved": true
+    },
+    {
+      "number": "0040",
+      "english": "eat",
+      "turkish": "yemek yemek",
+      "grade": 1,
+      "unit": null,
+      "path": "assets/word-images/pilot/numbered/0040.png",
+      "approved": true
+    },
+    {
+      "number": "0041",
+      "english": "classroom",
+      "turkish": "derslik; sınıf",
+      "grade": 2,
+      "unit": 1,
+      "path": "assets/word-images/pilot/numbered/0041.png",
+      "approved": true
+    },
+    {
+      "number": "0042",
+      "english": "garden",
+      "turkish": "bahçe",
+      "grade": 2,
+      "unit": 1,
+      "path": "assets/word-images/pilot/numbered/0042.png",
+      "approved": true
+    },
+    {
+      "number": "0043",
+      "english": "He is a headmaster.",
+      "turkish": "O bir okul müdürü. (Erkek)",
+      "grade": 2,
+      "unit": 1,
+      "path": "assets/word-images/pilot/numbered/0043.png",
+      "approved": true
+    },
+    {
+      "number": "0044",
+      "english": "headmaster",
+      "turkish": "erkek okul müdürü",
+      "grade": 2,
+      "unit": 1,
+      "path": "assets/word-images/pilot/numbered/0044.png",
+      "approved": true
+    },
+    {
+      "number": "0045",
+      "english": "hi",
+      "turkish": "selam",
+      "grade": 2,
+      "unit": 1,
+      "path": "assets/word-images/pilot/numbered/0045.png",
+      "approved": true
+    },
+    {
+      "number": "0046",
+      "english": "It is a classroom.",
+      "turkish": "Bu bir derslik.",
+      "grade": 2,
+      "unit": 1,
+      "path": "assets/word-images/pilot/numbered/0046.png",
+      "approved": true
+    },
+    {
+      "number": "0047",
+      "english": "It is a playground.",
+      "turkish": "Bu bir oyun alanı.",
+      "grade": 2,
+      "unit": 1,
+      "path": "assets/word-images/pilot/numbered/0047.png",
+      "approved": true
+    },
+    {
+      "number": "0048",
+      "english": "It is Monday.",
+      "turkish": "Bugün Pazartesi.",
+      "grade": 2,
+      "unit": 1,
+      "path": "assets/word-images/pilot/numbered/0048.png",
+      "approved": true
+    },
+    {
+      "number": "0049",
+      "english": "It is Tuesday.",
+      "turkish": "Bugün Salı.",
+      "grade": 2,
+      "unit": 1,
+      "path": "assets/word-images/pilot/numbered/0049.png",
+      "approved": true
+    },
+    {
+      "number": "0050",
+      "english": "library",
+      "turkish": "kütüphane",
+      "grade": 2,
+      "unit": 1,
+      "path": "assets/word-images/pilot/numbered/0050.png",
+      "approved": true
+    },
+    {
+      "number": "0051",
+      "english": "My name is Alice.",
+      "turkish": "Benim adım Alice.",
+      "grade": 2,
+      "unit": 1,
+      "path": "assets/word-images/pilot/numbered/0051.png",
+      "approved": true
+    },
+    {
+      "number": "0052",
+      "english": "Nice to meet you, too.",
+      "turkish": "Ben de tanıştığımıza memnun oldum.",
+      "grade": 2,
+      "unit": 1,
+      "path": "assets/word-images/pilot/numbered/0052.png",
+      "approved": true
+    },
+    {
+      "number": "0053",
+      "english": "pupil",
+      "turkish": "öğrenci",
+      "grade": 2,
+      "unit": 1,
+      "path": "assets/word-images/pilot/numbered/0053.png",
+      "approved": true
+    },
+    {
+      "number": "0054",
+      "english": "She is a girl.",
+      "turkish": "O bir kız çocuk.",
+      "grade": 2,
+      "unit": 1,
+      "path": "assets/word-images/pilot/numbered/0054.png",
+      "approved": true
+    },
+    {
+      "number": "0055",
+      "english": "She is in the playground.",
+      "turkish": "O oyun alanında. (Kız)",
+      "grade": 2,
+      "unit": 1,
+      "path": "assets/word-images/pilot/numbered/0055.png",
+      "approved": true
+    },
+    {
+      "number": "0056",
+      "english": "teacher",
+      "turkish": "öğretmen",
+      "grade": 2,
+      "unit": 1,
+      "path": "assets/word-images/pilot/numbered/0056.png",
+      "approved": true
+    },
+    {
+      "number": "0057",
+      "english": "They are friends.",
+      "turkish": "Onlar arkadaşlar.",
+      "grade": 2,
+      "unit": 1,
+      "path": "assets/word-images/pilot/numbered/0057.png",
+      "approved": true
+    },
+    {
+      "number": "0058",
+      "english": "Thursday",
+      "turkish": "Perşembe",
+      "grade": 2,
+      "unit": 1,
+      "path": "assets/word-images/pilot/numbered/0058.png",
+      "approved": true
+    },
+    {
+      "number": "0059",
+      "english": "What is this?",
+      "turkish": "Bu ne?",
+      "grade": 2,
+      "unit": 1,
+      "path": "assets/word-images/pilot/numbered/0059.png",
+      "approved": true
+    },
+    {
+      "number": "0060",
+      "english": "Where is the boy?",
+      "turkish": "Erkek çocuk nerede?",
+      "grade": 2,
+      "unit": 1,
+      "path": "assets/word-images/pilot/numbered/0060.png",
+      "approved": true
+    },
+    {
+      "number": "0061",
+      "english": "Where is the pupil?",
+      "turkish": "Öğrenci nerede?",
+      "grade": 2,
+      "unit": 1,
+      "path": "assets/word-images/pilot/numbered/0061.png",
+      "approved": true
+    },
+    {
+      "number": "0062",
+      "english": "you're welcome",
+      "turkish": "rica ederim",
+      "grade": 2,
+      "unit": 1,
+      "path": "assets/word-images/pilot/numbered/0062.png",
+      "approved": true
+    },
+    {
+      "number": "0063",
+      "english": "A sharpener is red.",
+      "turkish": "Bir kalemtıraş kırmızıdır.",
+      "grade": 2,
+      "unit": 2,
+      "path": "assets/word-images/pilot/numbered/0063.png",
+      "approved": true
+    },
+    {
+      "number": "0064",
+      "english": "Can I ...?",
+      "turkish": "... yapabilir miyim?",
+      "grade": 2,
+      "unit": 2,
+      "path": "assets/word-images/pilot/numbered/0064.png",
+      "approved": true
+    },
+    {
+      "number": "0065",
+      "english": "Colour it, please!",
+      "turkish": "Onu boya, lütfen!",
+      "grade": 2,
+      "unit": 2,
+      "path": "assets/word-images/pilot/numbered/0065.png",
+      "approved": true
+    },
+    {
+      "number": "0066",
+      "english": "eighteen",
+      "turkish": "on sekiz",
+      "grade": 2,
+      "unit": 2,
+      "path": "assets/word-images/pilot/numbered/0066.png",
+      "approved": true
+    },
+    {
+      "number": "0067",
+      "english": "green",
+      "turkish": "yeşil",
+      "grade": 2,
+      "unit": 2,
+      "path": "assets/word-images/pilot/numbered/0067.png",
+      "approved": true
+    },
+    {
+      "number": "0068",
+      "english": "Is it a ...?",
+      "turkish": "Bu bir ... mi?",
+      "grade": 2,
+      "unit": 2,
+      "path": "assets/word-images/pilot/numbered/0068.png",
+      "approved": true
+    },
+    {
+      "number": "0069",
+      "english": "Look at my notebook.",
+      "turkish": "Defterime bak.",
+      "grade": 2,
+      "unit": 2,
+      "path": "assets/word-images/pilot/numbered/0069.png",
+      "approved": true
+    },
+    {
+      "number": "0070",
+      "english": "nineteen",
+      "turkish": "on dokuz",
+      "grade": 2,
+      "unit": 2,
+      "path": "assets/word-images/pilot/numbered/0070.png",
+      "approved": true
+    },
+    {
+      "number": "0071",
+      "english": "Open the window, Brad.",
+      "turkish": "Pencereyi aç, Brad.",
+      "grade": 2,
+      "unit": 2,
+      "path": "assets/word-images/pilot/numbered/0071.png",
+      "approved": true
+    },
+    {
+      "number": "0072",
+      "english": "Pass the pencil!",
+      "turkish": "Kalemi uzat!",
+      "grade": 2,
+      "unit": 2,
+      "path": "assets/word-images/pilot/numbered/0072.png",
+      "approved": true
+    },
+    {
+      "number": "0073",
+      "english": "pink",
+      "turkish": "pembe",
+      "grade": 2,
+      "unit": 2,
+      "path": "assets/word-images/pilot/numbered/0073.png",
+      "approved": true
+    },
+    {
+      "number": "0074",
+      "english": "Put your book in the bag.",
+      "turkish": "Kitabını çantaya koy.",
+      "grade": 2,
+      "unit": 2,
+      "path": "assets/word-images/pilot/numbered/0074.png",
+      "approved": true
+    },
+    {
+      "number": "0075",
+      "english": "rubber",
+      "turkish": "silgi",
+      "grade": 2,
+      "unit": 2,
+      "path": "assets/word-images/pilot/numbered/0075.png",
+      "approved": true
+    },
+    {
+      "number": "0076",
+      "english": "seventeen",
+      "turkish": "on yedi",
+      "grade": 2,
+      "unit": 2,
+      "path": "assets/word-images/pilot/numbered/0076.png",
+      "approved": true
+    },
+    {
+      "number": "0077",
+      "english": "sixteen",
+      "turkish": "on altı",
+      "grade": 2,
+      "unit": 2,
+      "path": "assets/word-images/pilot/numbered/0077.png",
+      "approved": true
+    },
+    {
+      "number": "0078",
+      "english": "tablet",
+      "turkish": "tablet",
+      "grade": 2,
+      "unit": 2,
+      "path": "assets/word-images/pilot/numbered/0078.png",
+      "approved": true
+    },
+    {
+      "number": "0079",
+      "english": "three",
+      "turkish": "üç",
+      "grade": 2,
+      "unit": 2,
+      "path": "assets/word-images/pilot/numbered/0079.png",
+      "approved": true
+    },
+    {
+      "number": "0080",
+      "english": "What color is it?",
+      "turkish": "Bu ne renk?",
+      "grade": 2,
+      "unit": 2,
+      "path": "assets/word-images/pilot/numbered/0080.png",
+      "approved": true
+    },
+    {
+      "number": "0081",
+      "english": "yellow",
+      "turkish": "sarı",
+      "grade": 2,
+      "unit": 2,
+      "path": "assets/word-images/pilot/numbered/0081.png",
+      "approved": true
+    },
+    {
+      "number": "0082",
+      "english": "arm",
+      "turkish": "kol",
+      "grade": 2,
+      "unit": 3,
+      "path": "assets/word-images/pilot/numbered/0082.png",
+      "approved": true
+    },
+    {
+      "number": "0083",
+      "english": "body",
+      "turkish": "vücut / gövde",
+      "grade": 2,
+      "unit": 3,
+      "path": "assets/word-images/pilot/numbered/0083.png",
+      "approved": true
+    },
+    {
+      "number": "0084",
+      "english": "ear",
+      "turkish": "kulak",
+      "grade": 2,
+      "unit": 3,
+      "path": "assets/word-images/pilot/numbered/0084.png",
+      "approved": true
+    },
+    {
+      "number": "0085",
+      "english": "face",
+      "turkish": "yüz",
+      "grade": 2,
+      "unit": 3,
+      "path": "assets/word-images/pilot/numbered/0085.png",
+      "approved": true
+    },
+    {
+      "number": "0086",
+      "english": "foot",
+      "turkish": "ayak",
+      "grade": 2,
+      "unit": 3,
+      "path": "assets/word-images/pilot/numbered/0086.png",
+      "approved": true
+    },
+    {
+      "number": "0087",
+      "english": "hair",
+      "turkish": "saç",
+      "grade": 2,
+      "unit": 3,
+      "path": "assets/word-images/pilot/numbered/0087.png",
+      "approved": true
+    },
+    {
+      "number": "0088",
+      "english": "Has he got ...?",
+      "turkish": "Onun ... var mı?",
+      "grade": 2,
+      "unit": 3,
+      "path": "assets/word-images/pilot/numbered/0088.png",
+      "approved": true
+    },
+    {
+      "number": "0089",
+      "english": "Have you got ...?",
+      "turkish": "... var mı?",
+      "grade": 2,
+      "unit": 3,
+      "path": "assets/word-images/pilot/numbered/0089.png",
+      "approved": true
+    },
+    {
+      "number": "0090",
+      "english": "hot",
+      "turkish": "sıcak",
+      "grade": 2,
+      "unit": 3,
+      "path": "assets/word-images/pilot/numbered/0090.png",
+      "approved": true
+    },
+    {
+      "number": "0091",
+      "english": "How many eyes have you got?",
+      "turkish": "Kaç tane gözün var?",
+      "grade": 2,
+      "unit": 3,
+      "path": "assets/word-images/pilot/numbered/0091.png",
+      "approved": true
+    },
+    {
+      "number": "0092",
+      "english": "I have got a purple bag.",
+      "turkish": "Mor bir çantaya sahibim.",
+      "grade": 2,
+      "unit": 3,
+      "path": "assets/word-images/pilot/numbered/0092.png",
+      "approved": true
+    },
+    {
+      "number": "0093",
+      "english": "I have got an orange coat.",
+      "turkish": "Turuncu bir monta sahibim.",
+      "grade": 2,
+      "unit": 3,
+      "path": "assets/word-images/pilot/numbered/0093.png",
+      "approved": true
+    },
+    {
+      "number": "0094",
+      "english": "I have got one mouth.",
+      "turkish": "Bir ağza sahibim.",
+      "grade": 2,
+      "unit": 3,
+      "path": "assets/word-images/pilot/numbered/0094.png",
+      "approved": true
+    },
+    {
+      "number": "0095",
+      "english": "I have got two eyes.",
+      "turkish": "İki göze sahibim.",
+      "grade": 2,
+      "unit": 3,
+      "path": "assets/word-images/pilot/numbered/0095.png",
+      "approved": true
+    },
+    {
+      "number": "0096",
+      "english": "Is it a leg?",
+      "turkish": "Bu bir bacak mı?",
+      "grade": 2,
+      "unit": 3,
+      "path": "assets/word-images/pilot/numbered/0096.png",
+      "approved": true
+    },
+    {
+      "number": "0097",
+      "english": "It is cold but it is ok, I have got a coat.",
+      "turkish": "Hava soğuk ama sorun değil, montum var.",
+      "grade": 2,
+      "unit": 3,
+      "path": "assets/word-images/pilot/numbered/0097.png",
+      "approved": true
+    },
+    {
+      "number": "0098",
+      "english": "It is raining today. I have got a yellow umbrella.",
+      "turkish": "Bugün yağmur yağıyor. Sarı bir şemsiyem var.",
+      "grade": 2,
+      "unit": 3,
+      "path": "assets/word-images/pilot/numbered/0098.png",
+      "approved": true
+    },
+    {
+      "number": "0099",
+      "english": "jeans",
+      "turkish": "kot pantolon",
+      "grade": 2,
+      "unit": 3,
+      "path": "assets/word-images/pilot/numbered/0099.png",
+      "approved": true
+    },
+    {
+      "number": "0100",
+      "english": "leg",
+      "turkish": "bacak",
+      "grade": 2,
+      "unit": 3,
+      "path": "assets/word-images/pilot/numbered/0100.png",
+      "approved": true
+    },
+    {
+      "number": "0101",
+      "english": "No, he hasn't.",
+      "turkish": "Hayır, sahip değil.",
+      "grade": 2,
+      "unit": 3,
+      "path": "assets/word-images/pilot/numbered/0101.png",
+      "approved": true
+    },
+    {
+      "number": "0102",
+      "english": "No, she hasn't.",
+      "turkish": "Hayır, sahip değil.",
+      "grade": 2,
+      "unit": 3,
+      "path": "assets/word-images/pilot/numbered/0102.png",
+      "approved": true
+    },
+    {
+      "number": "0103",
+      "english": "raincoat",
+      "turkish": "yağmurluk",
+      "grade": 2,
+      "unit": 3,
+      "path": "assets/word-images/pilot/numbered/0103.png",
+      "approved": true
+    },
+    {
+      "number": "0104",
+      "english": "scarf",
+      "turkish": "atkı",
+      "grade": 2,
+      "unit": 3,
+      "path": "assets/word-images/pilot/numbered/0104.png",
+      "approved": true
+    },
+    {
+      "number": "0105",
+      "english": "shoes",
+      "turkish": "ayakkabılar",
+      "grade": 2,
+      "unit": 3,
+      "path": "assets/word-images/pilot/numbered/0105.png",
+      "approved": true
+    },
+    {
+      "number": "0106",
+      "english": "skirt",
+      "turkish": "etek",
+      "grade": 2,
+      "unit": 3,
+      "path": "assets/word-images/pilot/numbered/0106.png",
+      "approved": true
+    },
+    {
+      "number": "0107",
+      "english": "Sunday",
+      "turkish": "Pazar",
+      "grade": 2,
+      "unit": 3,
+      "path": "assets/word-images/pilot/numbered/0107.png",
+      "approved": true
+    },
+    {
+      "number": "0108",
+      "english": "teeth",
+      "turkish": "dişler",
+      "grade": 2,
+      "unit": 3,
+      "path": "assets/word-images/pilot/numbered/0108.png",
+      "approved": true
+    },
+    {
+      "number": "0109",
+      "english": "toes",
+      "turkish": "ayak parmakları",
+      "grade": 2,
+      "unit": 3,
+      "path": "assets/word-images/pilot/numbered/0109.png",
+      "approved": true
+    },
+    {
+      "number": "0110",
+      "english": "Wednesday",
+      "turkish": "Çarşamba",
+      "grade": 2,
+      "unit": 3,
+      "path": "assets/word-images/pilot/numbered/0110.png",
+      "approved": true
+    },
+    {
+      "number": "0111",
+      "english": "What is it?",
+      "turkish": "O nedir?",
+      "grade": 2,
+      "unit": 3,
+      "path": "assets/word-images/pilot/numbered/0111.png",
+      "approved": true
+    },
+    {
+      "number": "0112",
+      "english": "Yes, it is.",
+      "turkish": "Evet, öyle.",
+      "grade": 2,
+      "unit": 3,
+      "path": "assets/word-images/pilot/numbered/0112.png",
+      "approved": true
+    },
+    {
+      "number": "0113",
+      "english": "aunt",
+      "turkish": "hala / teyze",
+      "grade": 2,
+      "unit": 4,
+      "path": "assets/word-images/pilot/numbered/0113.png",
+      "approved": true
+    },
+    {
+      "number": "0114",
+      "english": "blonde",
+      "turkish": "sarışın",
+      "grade": 2,
+      "unit": 4,
+      "path": "assets/word-images/pilot/numbered/0114.png",
+      "approved": true
+    },
+    {
+      "number": "0115",
+      "english": "daughter",
+      "turkish": "kız evlat",
+      "grade": 2,
+      "unit": 4,
+      "path": "assets/word-images/pilot/numbered/0115.png",
+      "approved": true
+    },
+    {
+      "number": "0116",
+      "english": "He has got short hair.",
+      "turkish": "O kısa saça sahip.",
+      "grade": 2,
+      "unit": 4,
+      "path": "assets/word-images/pilot/numbered/0116.png",
+      "approved": true
+    },
+    {
+      "number": "0117",
+      "english": "He is Çınar's brother.",
+      "turkish": "O Çınar'ın erkek kardeşi.",
+      "grade": 2,
+      "unit": 4,
+      "path": "assets/word-images/pilot/numbered/0117.png",
+      "approved": true
+    },
+    {
+      "number": "0118",
+      "english": "Hi! I'm Mehmet.",
+      "turkish": "Selam! Ben Mehmet.",
+      "grade": 2,
+      "unit": 4,
+      "path": "assets/word-images/pilot/numbered/0118.png",
+      "approved": true
+    },
+    {
+      "number": "0119",
+      "english": "Is he your ...?",
+      "turkish": "O senin ... mı?",
+      "grade": 2,
+      "unit": 4,
+      "path": "assets/word-images/pilot/numbered/0119.png",
+      "approved": true
+    },
+    {
+      "number": "0120",
+      "english": "long",
+      "turkish": "uzun (saç)",
+      "grade": 2,
+      "unit": 4,
+      "path": "assets/word-images/pilot/numbered/0120.png",
+      "approved": true
+    },
+    {
+      "number": "0121",
+      "english": "My cat has short legs.",
+      "turkish": "Kedimin kısa bacakları var.",
+      "grade": 2,
+      "unit": 4,
+      "path": "assets/word-images/pilot/numbered/0121.png",
+      "approved": true
+    },
+    {
+      "number": "0122",
+      "english": "She is Emel's daughter.",
+      "turkish": "O Emel'in kızı.",
+      "grade": 2,
+      "unit": 4,
+      "path": "assets/word-images/pilot/numbered/0122.png",
+      "approved": true
+    },
+    {
+      "number": "0123",
+      "english": "She is my mother. She has blonde hair.",
+      "turkish": "O benim annem. Onun sarı saçları var.",
+      "grade": 2,
+      "unit": 4,
+      "path": "assets/word-images/pilot/numbered/0123.png",
+      "approved": true
+    },
+    {
+      "number": "0124",
+      "english": "son",
+      "turkish": "erkek evlat",
+      "grade": 2,
+      "unit": 4,
+      "path": "assets/word-images/pilot/numbered/0124.png",
+      "approved": true
+    },
+    {
+      "number": "0125",
+      "english": "This is a lovely baby.",
+      "turkish": "Bu çok sevimli bir bebek.",
+      "grade": 2,
+      "unit": 4,
+      "path": "assets/word-images/pilot/numbered/0125.png",
+      "approved": true
+    },
+    {
+      "number": "0126",
+      "english": "uncle",
+      "turkish": "amca / dayı",
+      "grade": 2,
+      "unit": 4,
+      "path": "assets/word-images/pilot/numbered/0126.png",
+      "approved": true
+    },
+    {
+      "number": "0127",
+      "english": "Who are they?",
+      "turkish": "Onlar kim?",
+      "grade": 2,
+      "unit": 4,
+      "path": "assets/word-images/pilot/numbered/0127.png",
+      "approved": true
+    },
+    {
+      "number": "0128",
+      "english": "You have got ...",
+      "turkish": "Senin ... var.",
+      "grade": 2,
+      "unit": 4,
+      "path": "assets/word-images/pilot/numbered/0128.png",
+      "approved": true
+    },
+    {
+      "number": "0129",
+      "english": "A cat has got a small nose.",
+      "turkish": "Bir kedinin küçük bir burnu var.",
+      "grade": 2,
+      "unit": 5,
+      "path": "assets/word-images/pilot/numbered/0129.png",
+      "approved": true
+    },
+    {
+      "number": "0130",
+      "english": "bathroom",
+      "turkish": "banyo",
+      "grade": 2,
+      "unit": 5,
+      "path": "assets/word-images/pilot/numbered/0130.png",
+      "approved": true
+    },
+    {
+      "number": "0131",
+      "english": "coffee table",
+      "turkish": "sehpa",
+      "grade": 2,
+      "unit": 5,
+      "path": "assets/word-images/pilot/numbered/0131.png",
+      "approved": true
+    },
+    {
+      "number": "0132",
+      "english": "eyes",
+      "turkish": "gözler",
+      "grade": 2,
+      "unit": 5,
+      "path": "assets/word-images/pilot/numbered/0132.png",
+      "approved": true
+    },
+    {
+      "number": "0133",
+      "english": "has got",
+      "turkish": "sahip olmak; var",
+      "grade": 2,
+      "unit": 5,
+      "path": "assets/word-images/pilot/numbered/0133.png",
+      "approved": true
+    },
+    {
+      "number": "0134",
+      "english": "house",
+      "turkish": "ev",
+      "grade": 2,
+      "unit": 5,
+      "path": "assets/word-images/pilot/numbered/0134.png",
+      "approved": true
+    },
+    {
+      "number": "0135",
+      "english": "It has got a beak.",
+      "turkish": "Onun bir gagası var.",
+      "grade": 2,
+      "unit": 5,
+      "path": "assets/word-images/pilot/numbered/0135.png",
+      "approved": true
+    },
+    {
+      "number": "0136",
+      "english": "kitchen",
+      "turkish": "mutfak",
+      "grade": 2,
+      "unit": 5,
+      "path": "assets/word-images/pilot/numbered/0136.png",
+      "approved": true
+    },
+    {
+      "number": "0137",
+      "english": "rabbit",
+      "turkish": "tavşan",
+      "grade": 2,
+      "unit": 5,
+      "path": "assets/word-images/pilot/numbered/0137.png",
+      "approved": true
+    },
+    {
+      "number": "0138",
+      "english": "sofa",
+      "turkish": "kanepe",
+      "grade": 2,
+      "unit": 5,
+      "path": "assets/word-images/pilot/numbered/0138.png",
+      "approved": true
+    },
+    {
+      "number": "0139",
+      "english": "The chair is in the dining room.",
+      "turkish": "Sandalye yemek odasında.",
+      "grade": 2,
+      "unit": 5,
+      "path": "assets/word-images/pilot/numbered/0139.png",
+      "approved": true
+    },
+    {
+      "number": "0140",
+      "english": "The table is in the kitchen.",
+      "turkish": "Masa mutfakta.",
+      "grade": 2,
+      "unit": 5,
+      "path": "assets/word-images/pilot/numbered/0140.png",
+      "approved": true
+    },
+    {
+      "number": "0141",
+      "english": "There are two fish in the tank.",
+      "turkish": "Akvaryumda iki balık var.",
+      "grade": 2,
+      "unit": 5,
+      "path": "assets/word-images/pilot/numbered/0141.png",
+      "approved": true
+    },
+    {
+      "number": "0142",
+      "english": "There is a nice sofa in the sitting room.",
+      "turkish": "Oturma odasında hoş bir kanepe var.",
+      "grade": 2,
+      "unit": 5,
+      "path": "assets/word-images/pilot/numbered/0142.png",
+      "approved": true
+    },
+    {
+      "number": "0143",
+      "english": "toilet",
+      "turkish": "tuvalet",
+      "grade": 2,
+      "unit": 5,
+      "path": "assets/word-images/pilot/numbered/0143.png",
+      "approved": true
+    },
+    {
+      "number": "0144",
+      "english": "Where are the books?",
+      "turkish": "Kitaplar nerede?",
+      "grade": 2,
+      "unit": 5,
+      "path": "assets/word-images/pilot/numbered/0144.png",
+      "approved": true
+    },
+    {
+      "number": "0145",
+      "english": "Where is the dog?",
+      "turkish": "Köpek nerede?",
+      "grade": 2,
+      "unit": 5,
+      "path": "assets/word-images/pilot/numbered/0145.png",
+      "approved": true
+    },
+    {
+      "number": "0146",
+      "english": "You have got a small bedroom.",
+      "turkish": "Senin küçük bir yatak odan var.",
+      "grade": 2,
+      "unit": 5,
+      "path": "assets/word-images/pilot/numbered/0146.png",
+      "approved": true
+    },
+    {
+      "number": "0147",
+      "english": "apple",
+      "turkish": "elma",
+      "grade": 2,
+      "unit": 6,
+      "path": "assets/word-images/pilot/numbered/0147.png",
+      "approved": true
+    },
+    {
+      "number": "0148",
+      "english": "banana",
+      "turkish": "muz",
+      "grade": 2,
+      "unit": 6,
+      "path": "assets/word-images/pilot/numbered/0148.png",
+      "approved": true
+    },
+    {
+      "number": "0149",
+      "english": "broccoli",
+      "turkish": "brokoli",
+      "grade": 2,
+      "unit": 6,
+      "path": "assets/word-images/pilot/numbered/0149.png",
+      "approved": true
+    },
+    {
+      "number": "0150",
+      "english": "Can I have some fish?",
+      "turkish": "Biraz balık alabilir miyim?",
+      "grade": 2,
+      "unit": 6,
+      "path": "assets/word-images/pilot/numbered/0150.png",
+      "approved": true
+    },
+    {
+      "number": "0151",
+      "english": "cherry",
+      "turkish": "kiraz",
+      "grade": 2,
+      "unit": 6,
+      "path": "assets/word-images/pilot/numbered/0151.png",
+      "approved": true
+    },
+    {
+      "number": "0152",
+      "english": "cucumber",
+      "turkish": "salatalık",
+      "grade": 2,
+      "unit": 6,
+      "path": "assets/word-images/pilot/numbered/0152.png",
+      "approved": true
+    },
+    {
+      "number": "0153",
+      "english": "Do you like coffee?",
+      "turkish": "Kahve sever misin?",
+      "grade": 2,
+      "unit": 6,
+      "path": "assets/word-images/pilot/numbered/0153.png",
+      "approved": true
+    },
+    {
+      "number": "0154",
+      "english": "fish",
+      "turkish": "balık",
+      "grade": 2,
+      "unit": 6,
+      "path": "assets/word-images/pilot/numbered/0154.png",
+      "approved": true
+    },
+    {
+      "number": "0155",
+      "english": "Is there a tomato in the kitchen?",
+      "turkish": "Mutfakta bir domates var mı?",
+      "grade": 2,
+      "unit": 6,
+      "path": "assets/word-images/pilot/numbered/0155.png",
+      "approved": true
+    },
+    {
+      "number": "0156",
+      "english": "milk",
+      "turkish": "süt",
+      "grade": 2,
+      "unit": 6,
+      "path": "assets/word-images/pilot/numbered/0156.png",
+      "approved": true
+    },
+    {
+      "number": "0157",
+      "english": "pear",
+      "turkish": "armut",
+      "grade": 2,
+      "unit": 6,
+      "path": "assets/word-images/pilot/numbered/0157.png",
+      "approved": true
+    },
+    {
+      "number": "0158",
+      "english": "strawberry",
+      "turkish": "çilek",
+      "grade": 2,
+      "unit": 6,
+      "path": "assets/word-images/pilot/numbered/0158.png",
+      "approved": true
+    },
+    {
+      "number": "0159",
+      "english": "there aren't",
+      "turkish": "yok (çoğul)",
+      "grade": 2,
+      "unit": 6,
+      "path": "assets/word-images/pilot/numbered/0159.png",
+      "approved": true
+    },
+    {
+      "number": "0160",
+      "english": "there isn't",
+      "turkish": "yok (tekil)",
+      "grade": 2,
+      "unit": 6,
+      "path": "assets/word-images/pilot/numbered/0160.png",
+      "approved": true
+    },
+    {
+      "number": "0161",
+      "english": "Yes, I do.",
+      "turkish": "Evet, severim.",
+      "grade": 2,
+      "unit": 6,
+      "path": "assets/word-images/pilot/numbered/0161.png",
+      "approved": true
+    }
+  ]
+}
