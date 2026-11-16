@@ -1,5 +1,5 @@
 {
-  "description": "User-supplied numbered visual mappings. approved=false for 0060 because Yapıldı marker absent. Image content not visually verified; not yet wired into app.",
+  "description": "User-supplied numbered visual mappings. All 161 marked completed by user. Image content not visually verified; not yet wired into app.",
   "entries": [
     {
       "number": "0001",
@@ -539,7 +539,7 @@
       "grade": 2,
       "unit": 1,
       "path": "assets/word-images/pilot/numbered/0060.png",
-      "approved": false
+      "approved": true
     },
     {
       "number": "0061",
