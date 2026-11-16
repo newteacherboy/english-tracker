@@ -859,3 +859,8 @@
 
 /* Sonuç A için eklenen sarmalayıcı ve doğruluk kutusu yalnızca soru-paneli-c.css ile görünür. */
 #dmStoryLesson .ml-result-acc{display:none}
+
+/* Numbered lesson illustrations: keep image visible in compact school cards. */
+#dmStoryLesson .ml-art.ml-art-pilot{display:flex;align-items:center;justify-content:center;overflow:hidden;background:#fff;min-width:34px;min-height:34px}
+#dmStoryLesson .ml-art.ml-art-pilot>img{display:block!important;width:100%!important;height:100%!important;object-fit:contain!important;opacity:1!important;visibility:visible!important}
+#dmStoryLesson .ml-art.ml-art-load-failed{font-size:10px;line-height:1.15;color:#a52a2a;text-align:center;padding:3px}
