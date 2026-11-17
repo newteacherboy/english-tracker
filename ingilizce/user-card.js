@@ -73,6 +73,12 @@
    }
    if(!alive(v))return;v.data=data;v.id=data.name;
    el.querySelector('h2').textContent=data.name;el.querySelector('.uc-character').innerHTML=character(data);
+   const tier=data.membership_tier;
+   if(tier==='pro'||tier==='premium_pro'){
+    el.classList.add(tier==='pro'?'dm-member-pro-card':'dm-member-premium-card');
+    const label=document.createElement('span');label.className='uc-member-label';label.textContent=tier==='pro'?'PRO ÜYE':'PREMIUM PRO ÜYE';
+    el.querySelector('h2').after(label);
+   }
    el.querySelector('.uc-stats').innerHTML='<span><i aria-hidden="true">🏆</i>'+esc(leagues[data.league]||'Lig henüz açılmadı')+'</span><span><i aria-hidden="true">🔥</i>'+Math.max(0,Number(data.streak)||0)+' gün seri</span><span><i aria-hidden="true">▥</i>'+Math.max(1,Number(data.level)||1)+'. seviye</span>';
    const own=norm(v.id)===norm(v.owner);paintActions(v);
    const following=typeof maTakip!=='undefined'&&maTakip.has(v.id);el.querySelector('[data-user-action="follow"] span').textContent=following?'Takip Ediliyor':'Takip Et';

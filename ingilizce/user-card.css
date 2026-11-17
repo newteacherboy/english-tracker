@@ -4,3 +4,20 @@ html[data-dm-theme="night"] .dm-user-card{--uc-bg:#24253d;--uc-ink:#eee4ff;--uc-
 html body #tab-meduakis .fr-tiles.fr-tiles-v2 .fr-tile-people{grid-column:1/-1}
 @keyframes uc-enter{from{opacity:0;transform:translateY(5px) scale(.98)}to{opacity:1;transform:none}}@media(prefers-reduced-motion:reduce){.dm-user-card{animation:none}}
 #tab-meduakis button.fr-search-person{width:100%;border:0;text-align:left;background:transparent;font:inherit;color:inherit;cursor:pointer}
+
+/* Active subscription cosmetics; never affect ranks or character ownership. */
+#tab-meduakis :is(.dm-lig-avatar,.fr-avatar):is(.dm-member-pro,.dm-member-premium){position:relative;overflow:visible;isolation:isolate;border-radius:50%;background:#fff8e3;box-shadow:0 0 0 2px #fff2b0,0 0 0 4px #d5941c,0 2px 9px #b6780040}
+#tab-meduakis :is(.dm-lig-avatar,.fr-avatar).dm-member-premium{background:#f3e8ff;box-shadow:0 0 0 2px #f1c0ff,0 0 0 4px #8950e8,0 0 10px #a66bff80}
+.dm-member-badge{position:absolute;bottom:-5px;left:50%;transform:translateX(-50%);z-index:3;white-space:nowrap;border:1px solid #fff;border-radius:7px;padding:2px 5px;font:900 8px/1 Nunito,system-ui,sans-serif;background:linear-gradient(135deg,#fff0a0,#d79517);color:#633b00;pointer-events:none}
+.dm-member-premium .dm-member-badge{background:linear-gradient(135deg,#c985ff,#6533bf);color:#fff}
+.dm-member-premium::after{content:'♛';position:absolute;top:-10px;right:-5px;font-size:16px;color:#ecaa25;text-shadow:0 1px 2px #6d3998;pointer-events:none}
+#tab-meduakis .dm-lig-journey>.dm-lig-avatar:is(.dm-member-pro,.dm-member-premium){position:absolute}
+.dm-user-card.dm-member-pro-card{border:2px solid #dcaa36;background:linear-gradient(150deg,#fff5cf,var(--uc-bg) 65%);box-shadow:0 9px 28px #b47c273d}
+.dm-user-card.dm-member-premium-card{border:2px solid #a266ed;background:linear-gradient(150deg,#e7d2ff,var(--uc-bg) 65%);box-shadow:0 9px 28px #7544c347}
+.dm-member-pro-card .uc-character,.dm-member-premium-card .uc-character{border-radius:28px;border:2px solid #e3ab35;background:linear-gradient(145deg,#fff4bf,#fce1a0);position:relative}
+.dm-member-premium-card .uc-character{border-color:#a66be9;background:linear-gradient(145deg,#f6e1ff,#ceb6ff)}
+.dm-member-premium-card .uc-character::after{content:'♛';position:absolute;top:-13px;right:-5px;color:#d39416;font-size:22px}
+.uc-member-label{display:inline-block;margin:0 0 6px;padding:4px 7px;border-radius:9px;background:linear-gradient(135deg,#fff0a0,#d79517);color:#633b00;font:900 10px/1.2 Nunito,system-ui,sans-serif}
+.dm-member-premium-card .uc-member-label{background:linear-gradient(135deg,#c985ff,#6533bf);color:white}
+html[data-dm-theme="night"] .dm-user-card.dm-member-pro-card{background:linear-gradient(150deg,#59451c,var(--uc-bg) 65%)}
+html[data-dm-theme="night"] .dm-user-card.dm-member-premium-card{background:linear-gradient(150deg,#513478,var(--uc-bg) 65%)}

@@ -33,10 +33,11 @@
     closePeople(false);
     account = who(); followed = []; invites = []; busy = false; lastLoad = 0; epoch++;
   }
-  function avatar(id, size) {
+  function avatar(id, size, tier='free') {
     let svg = typeof window.karakterSvg === 'function' ? window.karakterSvg(id, size) : '';
     if (!svg) svg = `<span>${typeof window.ogrenciMaskotSec === 'function' ? window.ogrenciMaskotSec(id) : '🦜'}</span>`;
-    return `<span class="fr-avatar" style="--avatar-size:${size}px">${svg}</span>`;
+    const cls=tier==='pro'?' dm-member-pro':tier==='premium_pro'?' dm-member-premium':'';
+    return `<span class="fr-avatar${cls}" style="--avatar-size:${size}px">${svg}${cls?'<span class="dm-member-badge" aria-label="'+(tier==='pro'?'Pro Üye':'Premium Pro Üye')+'">'+(tier==='pro'?'PRO':'PRO+')+'</span>':''}</span>`;
   }
   function badge(id) { return `<span class="dm-online-badge compact" data-online-person="${esc(id)}">Durum kontrol ediliyor…</span>`; }
   function mine() { return typeof window.maBen === 'function' ? window.maBen() : {ad:who(),rozetler:[]}; }
@@ -55,7 +56,7 @@
       const player=data.top[index];
       if(!player)return '<span aria-hidden="true"></span>';
       return `<button type="button" class="fr-leader fr-leader-${index+1}" data-friend-action="${player.is_virtual?'virtual-duel':'profile'}" data-person="${esc(player.name)}" data-bot-id="${player.is_virtual?esc(player.id):''}" aria-label="${esc(player.displayRank??player.rank)}. sıra, ${esc(player.name)}, ${xp(player.xp)} XP${player.is_virtual?', Sanal Rakip':''}">
-        <span class="fr-podium-portrait">${index===0?crown+laurel+laurel:''}${player.is_virtual?'<span class="fr-avatar fr-papi-leader">'+(window.dmLeagueUI?.virtualAvatar?.(player,64)||'<img src="friends-assets/papi-fencer.webp" alt="Papi">')+'</span>':avatar(player.name,64)}
+        <span class="fr-podium-portrait">${index===0?crown+laurel+laurel:''}${player.is_virtual?'<span class="fr-avatar fr-papi-leader">'+(window.dmLeagueUI?.virtualAvatar?.(player,64)||'<img src="friends-assets/papi-fencer.webp" alt="Papi">')+'</span>':avatar(player.name,64,player.membership_tier)}
           <span class="fr-leader-cup">${icon('trophy')}<b>${esc(player.displayRank??player.rank)}</b></span>
         </span>
         <span class="fr-podium-step"><strong>${esc(player.name)}</strong><span>${xp(player.xp)} XP${player.is_virtual?' · Sanal Rakip':''}</span></span>
@@ -66,7 +67,7 @@
       <div class="fr-section-head"><h3>${icon('trophy')} ${esc(data?.title||'Yerel Lig')}</h3></div>
       ${leaders?'<div class="fr-leaders">'+leaders+'</div>':'<p class="fr-league-status" role="status">'+status+'</p>'}
       <div class="fr-podium-footer">
-        ${data?.me?`<div class="fr-league-self">${avatar(who(),27)}<b>Sen · ${esc(data.me.rank)}. sıra · ${xp(data.me.xp)} XP</b></div>`:''}
+        ${data?.me?`<div class="fr-league-self">${avatar(who(),27,data.me.membership_tier)}<b>Sen · ${esc(data.me.rank)}. sıra · ${xp(data.me.xp)} XP</b></div>`:''}
         <button type="button" class="fr-link" data-friend-action="lig" data-friends-gate="lig">Sıralamayı gör ${icon('chevron')}</button>
       </div>
     </section>`;
@@ -182,7 +183,7 @@
       const id=String(event.k), congratulated=maTebrik.has('akis-'+id);
       const person=typeof maTumListe!=='undefined'?maTumListe.find(x=>norm(x.id)===norm(event.ogr)):null;
       const action=event.tur==='eksi'?'':`<button type="button" class="fr-congrats${congratulated?' basili':''}" data-friend-action="congratulate" data-event="${esc(id)}" aria-pressed="${congratulated}" aria-label="${congratulateLabel(congratulated)}">${congratulateLabel(congratulated)}</button>`;
-      return `<article class="fr-event" data-fr-color="${index}" data-safety-event="${esc(id)}"><button type="button" class="fr-event-person" data-o="${esc(event.ogr)}" data-person="${esc(event.ogr)}" data-friend-action="profile">${avatar(person?.ad||event.ogr,44)}<span><b>${esc(event.ad||event.ogr)}</b><small title="${esc(event.metin)}">${esc(window.DMFriendsFeed.summarize?.(event) ?? event.metin)}</small></span></button>${action}</article>`;
+      return `<article class="fr-event" data-fr-color="${index}" data-safety-event="${esc(id)}"><button type="button" class="fr-event-person" data-o="${esc(event.ogr)}" data-person="${esc(event.ogr)}" data-friend-action="profile">${avatar(person?.ad||event.ogr,44,person?.membership_tier)}<span><b>${esc(event.ad||event.ogr)}</b><small title="${esc(event.metin)}">${esc(window.DMFriendsFeed.summarize?.(event) ?? event.metin)}</small></span></button>${action}</article>`;
     }).join('');
   }
   function viewHeader() {
