@@ -153,7 +153,7 @@ function ensureLobby() {
   lobby = sb.channel(LOBBY, {config: {broadcast: {self: false, ack: false}}});
   lobby.on('broadcast', {event: 'seek'}, ({payload}) => onSeek(payload))
        .on('broadcast', {event: 'taken'}, ({payload}) => { if (banner && banner.id === payload?.id) hideBanner(); })
-       .subscribe(s => { lobbyReady = s === 'SUBSCRIBED'; });
+       .subscribe(s => { lobbyReady = s === 'SUBSCRIBED'; if (['CHANNEL_ERROR','TIMED_OUT','CLOSED'].includes(s)) lobbyReady = false; });
 }
 function dropLobby() {
   if (lobby) { try { window.supabaseClient?.removeChannel(lobby); } catch {} }
@@ -163,7 +163,13 @@ function lobbySend(event, payload) {
   ensureLobby();
   if (!lobby) return;
   const go = () => lobby?.send({type: 'broadcast', event, payload}).catch(() => {});
-  if (lobbyReady) go(); else setTimeout(go, 1200);
+  if (lobbyReady) go(); else {
+    const channel = lobby, started = Date.now();
+    const wait = setInterval(() => {
+      if (lobby !== channel || Date.now() - started > 5000) { clearInterval(wait); return; }
+      if (lobbyReady) { clearInterval(wait); go(); }
+    }, 200);
+  }
 }
 async function onSeek(p) {
   if (!p?.id || !p?.name || norm(p.name) === norm(who()) || busyScreen() || banner) return;
@@ -464,7 +470,7 @@ function boot() {
 }
 document.addEventListener('visibilitychange', () => { if (document.hidden) { dropLobby(); hideBanner(); } else boot(); });
 document.addEventListener('dm:login', () => { rights = null; dropLobby(); setTimeout(boot, 1500); });
-setInterval(() => { if (lobbyOwner && lobbyOwner !== token()) { dropLobby(); rights = null; } boot(); }, 30000);
+setInterval(() => { if (lobbyOwner && lobbyOwner !== token()) { dropLobby(); rights = null; } boot(); }, 3000);
 setTimeout(boot, 4000);
 
 window.dmLiveDuel = {startLive, startPapi, status, paywall};
