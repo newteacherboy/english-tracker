@@ -25,7 +25,7 @@ function paywall(){
  <main class="pc-content"><section class="pc-premium pc-lila"><div class="pc-stage"><span class="pc-premium-badge">👑 Premium Pro</span><div class="pc-lila-hero" role="img" aria-label="Lila sahnede selam veren üç boyutlu Papi">${art('0 285 903 610','pc-scene-art')}</div></div>
  <div class="pc-lila-copy"><h2>Papi ile İngilizce<br>sohbet et!</h2><p class="pc-lila-sub">Konuş, keşfet, birlikte öğren.</p>
  <div class="pc-benefits"><div>${art('104 1180 143 111','pc-benefit-art')}<b>İngilizce<br>pratik</b></div><div>${art('387 1182 132 108','pc-benefit-art')}<b>Seviyene<br>uygun konular</b></div><div>${art('668 1190 142 100','pc-benefit-art')}<b>Eğlenceli<br>diyaloglar</b></div></div>
- <p class="pc-condition">2 ücretsiz sohbet hakkın tamamlandı. Premium Pro ile sınırsız devam et.</p><button type="button" data-pc-plans>👑 Paketleri İncele</button><button type="button" class="pc-premium-later" data-pc-later>Parkura dön</button></div></section></main></section>`;
+ <p class="pc-condition">Ücretsiz sohbet hakkın tamamlandı. Premium Pro ile sınırsız devam et.</p><button type="button" data-pc-plans>👑 Paketleri İncele</button><button type="button" class="pc-premium-later" data-pc-later>Parkura dön</button></div></section></main></section>`;
  premiumView=el;document.body.append(el);document.documentElement.classList.add('dm-papi-chat-open');
  el.querySelector('[data-pc-close]').onclick=closePaywall;el.querySelector('[data-pc-later]').onclick=closePaywall;
  el.querySelector('[data-pc-plans]').onclick=()=>{closePaywall();if(window.DMSatis?.planlar)window.DMSatis.planlar('papi-sohbet','premium_pro');else window.dmAndroidOpenPlans?.('papi-sohbet');};
