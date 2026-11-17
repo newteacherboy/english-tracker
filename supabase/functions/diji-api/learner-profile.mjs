@@ -15,3 +15,19 @@ export function learnerClass(profile, value){
  if(!bounds||!Number.isInteger(n)||n<bounds[0]||n>bounds[1])throw Error('Eğitim kademene uygun sınıfı seç.');return n;
 }
 export async function saveLearnerProfile(db,id,profile){if(!profile.version)return;const r=await db.from('extra_data').upsert({student_id:id,key_name:'learner_profile_v1',value:profile,updated_at:new Date().toISOString()},{onConflict:'student_id,key_name'});if(r.error)throw r.error;}
+
+/* [18 Kas 2026] Kayıtta seçilen amaç parkuru belirler: "Okul derslerim için" → Okul Yolum (lise/üniversite dahil,
+   tüm okul yolu açık), "Kendim için" → Öğrenme Yolu. Rota kayıt anında sunucuda yazılır; istemcinin ikinci isteği
+   başarısız olsa bile hesap rotasız kalmaz. Zaten seçilmiş bir rotanın üzerine yazılmaz. */
+export async function seedLearningRoute(db,id,profile){
+ if(!id||!profile||!['school','independent'].includes(profile.purpose))return;
+ const route=profile.purpose==='school'?'school':'independent',at=new Date().toISOString();
+ const cur=await db.from('extra_data').select('value').eq('student_id',id).eq('key_name','yo').maybeSingle();
+ if(cur.error)throw cur.error;
+ const value=cur.data?.value&&typeof cur.data.value==='object'?cur.data.value:null;
+ if(value?.dmLearningPurpose==='school'||value?.dmLearningPurpose==='independent')return;
+ const next={...(value||{}),dmLearningPurpose:route,guncelleme:Math.max(Number(value?.guncelleme)||0,Date.now())};
+ const r=value?await db.from('extra_data').update({value:next,updated_at:at}).eq('student_id',id).eq('key_name','yo')
+  :await db.from('extra_data').insert({student_id:id,key_name:'yo',value:next,updated_at:at});
+ if(r.error)throw r.error;
+}

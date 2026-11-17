@@ -14,7 +14,7 @@ import {completeLessonAssignments} from './assignment-completion.mjs';
 import graduationCatalog from './graduation-catalog.json' with {type:'json'};
 import {moderationIssue} from './content-moderation.mjs';
 import {socialSafetyAPI} from './social-safety.mjs';
-import {normalizeLearnerProfile,learnerClass,saveLearnerProfile} from './learner-profile.mjs';
+import {normalizeLearnerProfile,learnerClass,saveLearnerProfile,seedLearningRoute} from './learner-profile.mjs';
 import {requireSafePassword,PasswordPolicyError} from './password-security.mjs';
 import {verifiedGamesAPI} from './verified-games.mjs';
 import {soloLevelsAPI} from './solo-levels.mjs';
@@ -1351,6 +1351,7 @@ async function handle(req: Request, proxy: any = null) {
       const adYaz = await supabase.from("students").update({ full_name: adSoyad, school: teacherApplication?[city,district,school].join(' · '):school || null }).eq("id", createdId);
       if (adYaz.error) console.error("googleKayit full_name", adYaz.error);
       await saveLearnerProfile(supabase,createdId,learnerProfile);
+      try{await seedLearningRoute(supabase,createdId,learnerProfile);}catch(err){console.error('googleKayit route',err);}
       let teacherCode=null;
       if(teacherApplication){try{teacherCode=await teacherPortal.trackSignup(createdId);}catch(err){console.error('oauth teacher signup code',err);}}
       /* Optional, unticked registration checkbox (never a condition of registration): weekly progress / Papi news e-mail. */
@@ -2355,6 +2356,7 @@ async function handle(req: Request, proxy: any = null) {
     const saved = existing ? await supabase.from("students").update(payload).eq("id",existing.id).select("id,username,email").single() : await supabase.from("students").insert(payload).select("id,username,email").single();
     if(saved.error||!saved.data)return json({status:"error",message:"Kayıt oluşturulamadı. Biraz sonra tekrar dene."},503);
     await saveLearnerProfile(supabase,saved.data.id,learnerProfile);
+    try{await seedLearningRoute(supabase,saved.data.id,learnerProfile);}catch(err){console.error('kayit route',err);}
     // Teacher signup already includes school/city/district/phone; no second application.
     // A code is reserved now, but carries NO teacher privilege until owner approval.
     let teacherCode=null;
