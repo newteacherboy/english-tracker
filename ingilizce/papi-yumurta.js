@@ -71,8 +71,8 @@ function tap(b){
  if(busy)return;
  if(!state){void check({force:true}).then(()=>state&&tap(b));return;}
  if(state.ready){hatch(b);return;}
- const left=state.need-state.progress,r=state.reward||{};
- bubble(b,'<b>'+(KIND[state.kind]||KIND.benekli).name+'</b><span>'+left+' durak daha bitir, çatlasın.</span><small>İçinden: +'+(r.gold||0)+' altın · +'+(r.energy||0)+' enerji</small>');
+ const left=state.need-state.progress;
+ bubble(b,'<b>'+(KIND[state.kind]||KIND.benekli).name+'</b><span>'+left+' durak daha bitir, çatlasın.</span><small>İçinde ne var? Sürpriz!</small>');
 }
 const wait=ms=>new Promise(r=>setTimeout(r,ms));
 async function hatch(b){
