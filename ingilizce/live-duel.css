@@ -1,0 +1,215 @@
+/* Canlı Düello + Papi'ye Karşı [17 Kas 2026] */
+html.ld-open{overflow:hidden}
+html.ld-open #bottomNavMobile{display:none!important}
+.ld-layer{position:fixed;inset:0;z-index:2147483000;display:flex;flex-direction:column;align-items:center;box-sizing:border-box;padding:max(18px,env(safe-area-inset-top)) 18px max(20px,env(safe-area-inset-bottom));font-family:'Nunito',system-ui,sans-serif;color:#fff;overflow-y:auto;-webkit-tap-highlight-color:transparent;animation:ldFade .22s ease-out}
+.ld-layer *{box-sizing:border-box}
+.ld-layer svg{width:1em;height:1em}
+.ld-layer button{font-family:inherit;cursor:pointer}
+.ld-layer h2{margin:0}
+@keyframes ldFade{from{opacity:0}to{opacity:1}}
+@keyframes ldPop{0%{transform:scale(.6);opacity:0}60%{transform:scale(1.12);opacity:1}100%{transform:scale(1)}}
+@keyframes ldBob{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-7px) rotate(2deg)}}
+@keyframes ldTw{0%,100%{opacity:0;transform:scale(.3)}50%{opacity:1;transform:scale(1) rotate(45deg)}}
+@keyframes ldRing{0%{transform:scale(.55);opacity:.9}100%{transform:scale(1.25);opacity:0}}
+@keyframes ldShake{0%,100%{transform:translateX(0)}20%{transform:translateX(-5px)}40%{transform:translateX(5px)}60%{transform:translateX(-3px)}80%{transform:translateX(3px)}}
+@keyframes ldFloat{0%{transform:translateY(6px);opacity:0}15%{opacity:1}100%{transform:translateY(-30px);opacity:0}}
+@keyframes ldGlow{0%,100%{box-shadow:0 4px 0 #c99a1d,0 0 0 0 rgba(255,212,92,.7)}50%{box-shadow:0 4px 0 #c99a1d,0 0 0 12px rgba(255,212,92,0)}}
+.ld-kicker{font-size:13px;font-weight:900;letter-spacing:.08em;color:#ffd45c;text-align:center}
+.ld-pop{animation:ldPop .45s ease-out}
+.ld-primary{width:100%;max-width:420px;height:56px;border:0;border-radius:18px;background:#ffd45c;color:#3d2a00;font-size:18px;font-weight:900;box-shadow:0 4px 0 #c99a1d;animation:ldGlow 1.8s ease-out infinite}
+.ld-ghost{width:100%;max-width:420px;height:50px;border-radius:16px;border:2px solid rgba(255,255,255,.35);background:transparent;color:#fff;font-size:16px;font-weight:800}
+.ld-primary:active,.ld-ghost:active,.ld-opt-btn:active{transform:translateY(2px)}
+
+/* Arama */
+.ld-search{background:#0a5961;gap:14px;justify-content:center}
+.ld-radar{position:relative;width:250px;height:250px;display:flex;align-items:center;justify-content:center;margin:6px 0}
+.ld-radar span{position:absolute;inset:0;border-radius:50%;border:2px solid rgba(255,212,92,.55);animation:ldRing 2.4s ease-out infinite}
+.ld-radar span:nth-child(2){animation-delay:.8s}.ld-radar span:nth-child(3){animation-delay:1.6s}
+.ld-radar img{width:130px;height:150px;object-fit:contain;animation:ldBob 2.6s ease-in-out infinite}
+.ld-search h2{font-size:28px;font-weight:900}
+.ld-search-sub{margin:0;color:#d6f3f1;font-size:15px;text-align:center}
+.ld-count{font-size:56px;font-weight:900;color:#ffd45c;line-height:1}
+.ld-steps{list-style:none;margin:0;padding:12px 16px;width:100%;max-width:420px;background:rgba(255,255,255,.08);border-radius:18px;display:grid;gap:8px;font-size:14px;font-weight:700;color:#d6f3f1}
+.ld-steps li{display:flex;gap:10px;align-items:center}
+.ld-steps li::before{content:"";flex:none;width:18px;height:18px;border-radius:50%;border:2px solid #ffd45c}
+.ld-steps li.ld-done::before{background:#1fa463;border-color:#1fa463}
+.ld-foot{color:#9fd6d1;font-size:12px}
+
+/* Davet bildirimi */
+.ld-invite{position:fixed;left:12px;right:12px;top:calc(12px + env(safe-area-inset-top));z-index:2147482990;max-width:460px;margin:0 auto;background:#fff;color:#102b50;border-radius:22px;padding:14px;box-shadow:0 14px 36px rgba(16,43,80,.3);display:grid;gap:12px;font-family:'Nunito',system-ui,sans-serif;transform:translateY(-140%);transition:transform .26s ease-out}
+.ld-invite.ld-in{transform:translateY(0)}
+.ld-invite-top{display:flex;gap:12px;align-items:center}
+.ld-avatar{position:relative;flex:none;width:52px;height:52px;border-radius:50%;background:#6b3fd6;color:#fff;font-weight:900;font-size:22px;display:flex;align-items:center;justify-content:center}
+.ld-avatar img{position:absolute;right:-10px;bottom:-8px;width:32px;height:32px;object-fit:contain}
+.ld-invite-copy{display:grid;gap:1px}
+.ld-invite-copy small{font-size:12px;font-weight:900;color:#0b6e78;letter-spacing:.05em}
+.ld-invite-copy b{font-size:16px;font-weight:900;line-height:1.2}
+.ld-invite-copy span{font-size:13px;color:#4c5a85;font-weight:700}
+.ld-invite-bar{height:6px;border-radius:6px;background:#eef3f9;overflow:hidden}
+.ld-invite-bar i{display:block;height:100%;width:100%;background:#ffb020;border-radius:6px;transition:width .25s linear}
+.ld-invite-actions{display:flex;gap:10px}
+.ld-invite-actions button{flex:1;height:48px;border:0;border-radius:14px;font-family:inherit;font-size:15px;font-weight:900;cursor:pointer}
+.ld-invite-no{background:#eef3f9;color:#4c5a85}
+.ld-invite-yes{flex:1.4!important;background:#0b6e78;color:#fff;box-shadow:0 4px 0 #084f56}
+
+/* VS */
+.ld-vs{background:#3a2390;gap:22px;justify-content:center}
+.ld-vs-row{display:flex;align-items:center;justify-content:space-between;width:100%;max-width:420px}
+.ld-vs-p{display:flex;flex-direction:column;align-items:center;gap:6px;width:130px;text-align:center}
+.ld-vs-p b{font-size:19px;font-weight:900;overflow-wrap:anywhere}
+.ld-vs-p small{font-size:13px;font-weight:700;color:#d8ccf7}
+.ld-big{width:96px;height:96px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:40px;font-weight:900;border:5px solid #fff;color:#fff;overflow:hidden}
+.ld-big.ld-sm{width:42px;height:42px;font-size:18px;border-width:3px}
+.ld-me{background:#0e8f97}.ld-them{background:#8a5cf0}
+.ld-big-papi{background:#ffd45c}.ld-big-papi img{width:86%;height:86%;object-fit:contain}
+.ld-vs-badge{width:70px;height:70px;border-radius:50%;background:#ffd45c;color:#3a2390;font-size:28px;font-weight:900;display:flex;align-items:center;justify-content:center;box-shadow:0 5px 0 #c99a1d;animation:ldPop .5s ease-out}
+.ld-facts,.ld-stats{display:flex;gap:10px;width:100%;max-width:420px}
+.ld-facts div,.ld-stats div{flex:1;background:rgba(255,255,255,.1);border-radius:16px;padding:10px;text-align:center;display:grid;gap:2px}
+.ld-facts b,.ld-stats b{font-size:20px;font-weight:900}
+.ld-facts span,.ld-stats span{font-size:12px;font-weight:700;color:#d8ccf7}
+.ld-go{display:flex;flex-direction:column;align-items:center;gap:4px}
+.ld-go span{font-weight:700;color:#d8ccf7}
+.ld-go b{font-size:110px;line-height:1;font-weight:900}
+.ld-vs-note{margin:0;max-width:340px;text-align:center;font-size:13px;line-height:1.4;color:#d8ccf7}
+
+/* Savaş paneli */
+.ld-battle{background:#24154f;gap:14px}
+.ld-battle>*{width:100%;max-width:460px}
+.ld-bhead{display:flex;align-items:center;justify-content:space-between}
+.ld-x{width:42px;height:42px;border:0;border-radius:12px;background:rgba(255,255,255,.1);color:#fff;display:flex;align-items:center;justify-content:center;font-size:18px}
+.ld-round{font-size:13px;font-weight:900;background:rgba(255,255,255,.1);border-radius:10px;padding:6px 10px}
+.ld-fighters{position:relative;display:flex;align-items:center;gap:10px}
+.ld-f{flex:1;display:flex;align-items:center;gap:8px;min-width:0;position:relative}
+.ld-f-r{flex-direction:row-reverse;text-align:right}
+.ld-fcopy{flex:1;min-width:0;display:grid;gap:4px}
+.ld-fcopy b{font-size:15px;font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ld-fcopy small{font-size:12px;font-weight:900}
+.ld-hp{height:14px;border-radius:8px;background:rgba(255,255,255,.14);overflow:hidden;display:flex}
+.ld-hp i{display:block;height:100%;width:100%;border-radius:8px;background:#3fd17f;transition:width .45s cubic-bezier(.2,.8,.2,1)}
+.ld-hp-r{justify-content:flex-end}.ld-hp-r i{background:#ff8a3d}
+.ld-hp.ld-low i{background:#ff5d6c}
+.ld-shake{animation:ldShake .45s ease-in-out}
+.ld-vs-mini{font-weight:900;color:#ffd45c}
+.ld-dmg{position:absolute;right:4px;top:-14px;font-size:22px;font-weight:900;color:#ffd45c;opacity:0;pointer-events:none}
+.ld-dmg-me{left:4px;right:auto;color:#ff8a9a}
+.ld-dmg.ld-show{animation:ldFloat 1.2s ease-out}
+.ld-dots{display:flex;gap:6px;justify-content:center}
+.ld-dots span{width:26px;height:8px;border-radius:5px;background:rgba(255,255,255,.18);transition:background .2s}
+.ld-dots span.ld-now{background:#ffd45c}
+.ld-dots span.ld-dot-final{width:38px}
+.ld-card{position:relative;margin-top:24px;background:#3a2390;border-radius:24px;padding:40px 16px 18px;display:flex;flex-direction:column;align-items:center;gap:10px;min-height:150px;justify-content:center}
+.ld-is-final .ld-card{background:#5a2a8f;box-shadow:0 0 0 3px #ffd45c inset}
+.ld-timer{position:absolute;top:-26px;width:58px;height:58px;border-radius:50%;background:#24154f;display:flex;align-items:center;justify-content:center}
+.ld-timer svg{position:absolute;inset:1px;width:56px!important;height:56px!important;transform:rotate(-90deg)}
+.ld-tr{fill:none;stroke:rgba(255,255,255,.15);stroke-width:5}
+.ld-tf{fill:none;stroke:#ffd45c;stroke-width:5;stroke-linecap:round;stroke-dasharray:144.5;transition:stroke-dashoffset .1s linear}
+.ld-hurry .ld-tf{stroke:#ff6b7a}
+.ld-timer b{position:relative;font-size:20px;font-weight:900}
+.ld-qtype{font-size:12px;font-weight:900;letter-spacing:.06em;color:#bdb0ec;text-align:center}
+.ld-is-final .ld-qtype{color:#ffd45c}
+.ld-q{margin:0;font-size:24px;font-weight:900;text-align:center;line-height:1.3;overflow-wrap:anywhere}
+.ld-blank{color:#ffd45c}
+.ld-opp-flag[hidden]{display:none!important}
+.ld-opp-flag{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:800;color:#ffd45c;background:rgba(255,212,92,.14);border-radius:10px;padding:5px 10px}
+.ld-opts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.ld-opts-pair{grid-template-columns:1fr}
+.ld-opt-btn{min-height:62px;padding:8px 10px;border:0;border-radius:16px;background:#fff;color:#24154f;font-size:18px;font-weight:900;line-height:1.2;box-shadow:0 4px 0 #cfc6ee;overflow-wrap:anywhere;transition:background .15s,color .15s}
+.ld-opts-pair .ld-opt-btn{min-height:52px;font-size:16px}
+.ld-opt-btn.ld-true{background:#3fd17f;color:#0b3b22;box-shadow:0 4px 0 #239a59}
+.ld-opt-btn.ld-false{background:#ff6b7a;color:#4a0b14;box-shadow:0 4px 0 #c9404f}
+.ld-opt-btn:disabled{opacity:.55}
+.ld-opt-btn.ld-right{opacity:1;background:#3fd17f;color:#0b3b22;box-shadow:0 0 0 3px #fff,0 4px 0 #239a59}
+.ld-opt-btn.ld-wrong{opacity:1;background:#ff5d6c;color:#fff;box-shadow:0 4px 0 #c9404f;animation:ldShake .4s}
+.ld-tip{margin-top:auto;background:rgba(255,255,255,.07);border-radius:16px;padding:10px 12px;display:flex;gap:10px;align-items:center;font-size:12px;line-height:1.4;color:#d8ccf7}
+.ld-tip img{width:36px;height:42px;object-fit:contain}
+.ld-tip b{color:#fff}
+.ld-confirm{position:fixed;inset:0;background:rgba(10,6,30,.6);display:flex;align-items:center;justify-content:center;padding:24px;z-index:2}
+.ld-confirm>div{background:#fff;color:#102b50;border-radius:22px;padding:20px;max-width:340px;display:grid;gap:10px;text-align:center}
+.ld-confirm b{font-size:18px;color:#102b50}.ld-confirm p{margin:0;font-size:14px;color:#4c5a85}
+.ld-confirm div div{display:flex;gap:10px}
+.ld-confirm button{flex:1;height:46px;border:0;border-radius:14px;font-weight:900;font-size:15px}
+.ld-confirm [data-stay]{background:#0b6e78;color:#fff}.ld-confirm [data-leave]{background:#eef3f9;color:#b23a48}
+
+/* Bekleme ve sonuç */
+.ld-wait{background:#24154f;justify-content:center;gap:12px;text-align:center}
+.ld-wait-papi{width:120px;height:130px;object-fit:contain;animation:ldBob 2.4s ease-in-out infinite}
+.ld-wait p{margin:0;color:#d8ccf7}
+.ld-result{background:#24154f;gap:14px;overflow-x:hidden}
+.ld-result>*{max-width:420px}
+.ld-title{font-size:50px;font-weight:900;color:#d8ccf7;line-height:1;margin:2px 0 0}
+.ld-win .ld-title{color:#ffd45c;animation:ldPop .55s ease-out}
+.ld-sub{margin:0;color:#d8ccf7;font-weight:700;text-align:center}
+.ld-result-papi{width:140px;height:156px;object-fit:contain;animation:ldBob 2.6s ease-in-out infinite}
+.ld-hpline{width:100%;display:flex;justify-content:space-between;gap:10px;background:rgba(255,255,255,.08);border-radius:16px;padding:12px 14px;font-weight:800;font-size:14px}
+.ld-g{color:#3fd17f}.ld-r{color:#ff8a9a}
+.ld-reward div{background:rgba(255,212,92,.14)}
+.ld-reward b{color:#ffd45c}
+.ld-result .ld-primary{margin-top:auto}
+.ld-sp{position:absolute;width:18px;height:18px;color:#ffd45c;animation:ldTw 2.2s ease-in-out infinite;pointer-events:none}
+.ld-sp-s{width:12px;height:12px;color:#fff}
+
+/* Hak bitti paneli */
+.ld-sheet-layer{background:rgba(16,43,80,.45);justify-content:flex-end;padding:0}
+.ld-sheet{width:100%;max-width:520px;background:#fff;color:#102b50;border-radius:28px 28px 0 0;padding:14px 20px max(24px,env(safe-area-inset-bottom));display:flex;flex-direction:column;align-items:center;gap:12px;animation:ldSheet .28s ease-out}
+@keyframes ldSheet{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.ld-grab{width:44px;height:5px;border-radius:5px;background:#d0def1}
+.ld-sheet-papi{width:110px;height:120px;object-fit:contain}
+.ld-sheet h2{font-size:23px;font-weight:900;text-align:center;color:#102b50!important}
+.ld-sheet>p{margin:0;font-size:14px;color:#4c5a85;text-align:center;line-height:1.4}
+.ld-opt{display:flex;align-items:center;gap:12px;width:100%;border:0;border-radius:18px;padding:14px 16px;text-align:left;color:#fff}
+.ld-opt b{display:block;font-size:17px;font-weight:900}
+.ld-opt small{display:block;font-size:12px;font-weight:700;margin-top:2px;opacity:.85}
+.ld-opt-ic{width:44px;height:44px;border-radius:14px;display:flex;align-items:center;justify-content:center;flex:none;font-size:22px}
+.ld-opt-ad{background:#0b6e78;box-shadow:0 4px 0 #084f56}.ld-opt-ad .ld-opt-ic{background:rgba(255,255,255,.16);color:#ffd45c}
+.ld-opt-pro{background:#3a2390;box-shadow:0 4px 0 #24154f}.ld-opt-pro .ld-opt-ic{background:#ffd45c;color:#3a2390}
+.ld-opt:disabled{opacity:.5}
+.ld-sheet-note{margin:0;font-size:13px;font-weight:800;color:#4c5a85;text-align:center}
+.ld-text-btn{border:0;background:transparent;color:#4c5a85;font-weight:800;font-size:14px;padding:8px}
+
+@media (prefers-reduced-motion:reduce){
+ .ld-layer,.ld-layer *,.ld-invite{animation:none!important;transition:none!important}
+}
+
+/* Arkadaşlar sekmesi: tek büyük, ışıltılı Düello kartı */
+@keyframes frDzShine{0%{transform:translateX(-160%) skewX(-20deg)}55%,100%{transform:translateX(620%) skewX(-20deg)}}
+@keyframes frDzTw{0%,100%{opacity:0;transform:scale(.3)}50%{opacity:1;transform:scale(1) rotate(45deg)}}
+@keyframes frDzGlow{0%,100%{box-shadow:0 4px 0 #c99a1d,0 0 0 0 rgba(247,197,49,.75)}50%{box-shadow:0 4px 0 #c99a1d,0 0 0 10px rgba(247,197,49,0)}}
+@keyframes frDzBob{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-6px) rotate(2deg)}}
+@keyframes frDzAura{0%,100%{box-shadow:0 7px 0 #2347b8,0 0 0 0 rgba(93,140,255,0)}50%{box-shadow:0 7px 0 #2347b8,0 0 26px 4px rgba(93,140,255,.55)}}
+html body #tab-meduakis .fr-tiles.fr-tiles-v3{display:flex!important;flex-direction:column;gap:14px;grid-template-columns:none!important}
+html body #tab-meduakis .fr-duel-card{position:relative;overflow:hidden;display:flex;flex-direction:column;gap:9px;min-height:162px;padding:16px;border:0;border-radius:24px;background:#3d6ef2!important;color:#fff;font-family:'Nunito',system-ui,sans-serif;text-align:left;animation:frDzAura 2.8s ease-in-out infinite;box-sizing:border-box}
+html body #tab-meduakis .fr-duel-card .fr-dz-shine{position:absolute;top:-20%;bottom:-20%;left:0;width:22%;background:linear-gradient(90deg,rgba(255,255,255,0),rgba(255,255,255,.36),rgba(255,255,255,0));animation:frDzShine 3.2s ease-in-out infinite;pointer-events:none}
+html body #tab-meduakis .fr-duel-card .fr-dz-spark{position:absolute;width:15px;height:15px;fill:#ffe27a;animation:frDzTw 2.4s ease-in-out infinite;pointer-events:none}
+html body #tab-meduakis .fr-duel-card .fr-dz-spark:nth-of-type(1){left:84px;top:10px}
+html body #tab-meduakis .fr-duel-card .fr-dz-spark:nth-of-type(2){left:18px;top:18px;width:11px;height:11px;fill:#fff;animation-delay:.8s}
+html body #tab-meduakis .fr-duel-card .fr-dz-spark:nth-of-type(3){right:34%;top:8px;width:10px;height:10px;animation-delay:1.4s}
+html body #tab-meduakis .fr-duel-card .fr-dz-spark:nth-of-type(4){right:16px;bottom:12px;width:13px;height:13px;fill:#fff;animation-delay:.4s}
+html body #tab-meduakis .fr-duel-card .fr-dz-spark:nth-of-type(5){left:46%;bottom:8px;width:9px;height:9px;animation-delay:1.9s}
+html body #tab-meduakis .fr-duel-card .fr-dz-papi{position:absolute;left:8px;top:8px;width:86px;height:98px;object-fit:contain;animation:frDzBob 2.6s ease-in-out infinite;transform-origin:50% 90%;pointer-events:none}
+html body #tab-meduakis .fr-dz-head{position:relative;display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-left:88px}
+html body #tab-meduakis .fr-dz-head h2{margin:0;font:900 24px/1 'Nunito',sans-serif;color:#fff}
+html body #tab-meduakis .fr-dz-free{display:inline-flex;align-items:center;gap:5px;background:#f7c531;color:#3d2a00;border-radius:10px;padding:4px 9px;font:900 12px/1.2 'Nunito',sans-serif}
+html body #tab-meduakis .fr-dz-free svg{width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+html body #tab-meduakis .fr-dz-mine{position:relative;margin-left:auto;height:34px;border:0;border-radius:12px;background:#fff;color:#2347b8;font:900 13px 'Nunito',sans-serif;padding:0 12px;cursor:pointer}
+html body #tab-meduakis .fr-dz-badge{position:absolute;top:-7px;right:-7px;min-width:20px;height:20px;border-radius:10px;background:#ef4b5f;color:#fff;font-size:12px;display:flex;align-items:center;justify-content:center;border:2px solid #3d6ef2;box-sizing:border-box}
+html body #tab-meduakis .fr-dz-copy{position:relative;margin:0 0 4px 88px;min-height:34px;font:800 13px/1.35 'Nunito',sans-serif;color:#dce6ff}
+html body #tab-meduakis .fr-dz-actions{position:relative;display:grid;grid-template-columns:1fr 1fr;gap:8px}
+html body #tab-meduakis .fr-dz-actions button{height:46px;border:0;border-radius:14px;padding:0 10px;font:900 15px 'Nunito',sans-serif;display:inline-flex;align-items:center;justify-content:center;gap:7px;cursor:pointer;-webkit-tap-highlight-color:transparent}
+html body #tab-meduakis .fr-dz-actions button:active{transform:translateY(2px)}
+html body #tab-meduakis .fr-dz-live{grid-column:1/-1;height:52px!important;font-size:17px!important;background:#f7c531;color:#3d2a00;animation:frDzGlow 1.6s ease-out infinite}
+html body #tab-meduakis .fr-dz-live svg{width:17px;height:17px;fill:#3d2a00}
+html body #tab-meduakis .fr-dz-btn{background:#fff;color:#2347b8}
+html body #tab-meduakis .fr-dz-soft{background:rgba(255,255,255,.18)!important;color:#fff!important}
+html body #tab-meduakis .fr-invite-strip{display:flex;align-items:center;gap:12px;width:100%;border:0;border-radius:20px;background:#2db66b;box-shadow:0 6px 0 #1d8a50;padding:10px 14px 10px 12px;color:#fff;text-align:left;font-family:'Nunito',sans-serif;cursor:pointer;box-sizing:border-box}
+html body #tab-meduakis .fr-invite-strip img{width:46px;height:46px;object-fit:contain}
+html body #tab-meduakis .fr-invite-strip>span:nth-child(2){flex:1;display:grid;gap:1px}
+html body #tab-meduakis .fr-invite-strip b{font:900 17px 'Nunito',sans-serif}
+html body #tab-meduakis .fr-invite-strip small{font:800 12.5px 'Nunito',sans-serif;color:#dcf7e7}
+html body #tab-meduakis .fr-invite-go{background:#fff;color:#1d8a50;border-radius:12px;padding:9px 14px;font:900 14px 'Nunito',sans-serif}
+@media (max-width:360px){
+ html body #tab-meduakis .fr-dz-actions button{font-size:14px}
+}
+@media (prefers-reduced-motion:reduce){
+ html body #tab-meduakis .fr-duel-card,html body #tab-meduakis .fr-duel-card *{animation:none!important}
+ html body #tab-meduakis .fr-duel-card .fr-dz-shine,html body #tab-meduakis .fr-duel-card .fr-dz-spark{display:none}
+}
