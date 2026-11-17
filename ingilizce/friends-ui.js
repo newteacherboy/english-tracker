@@ -18,6 +18,15 @@
   const originalDraw = window.maCiz, originalOpen = window.meduAkisAc, originalSelect = window.maSekmeSec;
   const originalFeed = window.maAkisListeHtml;
   let account = '', followed = [], invites = [], busy = false, lastLoad = 0, epoch = 0, frame = 0;
+  // [17 Kas 2026] Düello kartındaki günlük hak etiketi (60 sn önbellekli tek istek).
+  let liveFree = '';
+  const duelLabel = r => !r ? '' : r.unlimited ? 'Sınırsız düello' : Number(r.live?.remaining) > 0 ? r.live.remaining + ' ücretsiz hak' : '';
+  function refreshDuelLabel() {
+    const p = window.dmLiveDuel?.status?.();
+    if (!p) return;
+    p.then(r => { const t = duelLabel(r); if (t !== liveFree) { liveFree = t; renderHome(); } }).catch(() => {});
+  }
+  document.addEventListener('dm:duel-rights', e => { const t = duelLabel(e.detail); if (t !== liveFree) { liveFree = t; renderHome(); } });
   const online = id => !!window.dmSocialPresence?.isOnline?.(id);
   function resetAccount() {
     if (account === who()) return;
@@ -65,12 +74,27 @@
   function tilesHtml() {
     const pending = invites.filter(x=>x.durum==='bekliyor'&&norm(x.alici)===norm(who())).length;
     // Arkadaş listesi başlıktaki simgeden açılır; burada yalnız iki ana işlem kalır.
-    return `<div class="fr-tiles fr-tiles-v2">
-      <button type="button" class="fr-tile fr-tile-duel" data-friend-action="matches" aria-label="Düelloya Davet Et${pending?', '+pending+' bekleyen davet':''}">
-        ${pending?'<span class="fr-duel-dot" aria-hidden="true"></span>':''}<img src="friends-assets/papi-fencer.webp" alt="" decoding="async"><span class="fr-tile-copy"><b>Düelloya Davet Et</b><small>Aynı oyunu ayrı ayrı oynayın, puanlarınızı yarıştırın.</small></span><span class="fr-tile-cta" aria-hidden="true">Başla</span><i class="fr-tile-spark" aria-hidden="true">✦</i>
-      </button>
-      <button type="button" class="fr-tile fr-tile-invite" data-friend-action="share">
-        <img src="friends-assets/papi-invite.webp" alt="" decoding="async"><span class="fr-tile-copy"><b>Davet et</b><small>Arkadaşlarını getir, birlikte öğrenin</small></span><span class="fr-tile-cta" aria-hidden="true">Gönder</span><i class="fr-tile-spark" aria-hidden="true">✦</i>
+    // [17 Kas 2026] Tek büyük, ışıltılı Düello kartı + ince Davet et şeridi (çevrimiçi sayısı gösterilmez).
+    const star='<svg class="fr-dz-spark" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0c.8 6.4 4.6 10.9 12 12-7.4 1.1-11.2 5.6-12 12-.8-6.4-4.6-10.9-12-12C7.4 10.9 11.2 6.4 12 0z"/></svg>';
+    const free=liveFree;
+    return `<div class="fr-tiles fr-tiles-v3">
+      <section class="fr-duel-card fr-tile-duel" aria-label="Düello">
+        <span class="fr-dz-shine" aria-hidden="true"></span>${star}${star}${star}${star}${star}
+        <img class="fr-dz-papi" src="friends-assets/papi-fencer.webp" alt="" decoding="async">
+        <div class="fr-dz-head">
+          <h2>Düello</h2>
+          ${free?`<span class="fr-dz-free"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="9" width="18" height="12" rx="2"/><path d="M3 13h18M12 9v12M12 9c-2-4-6-4-6-1.5S9 9 12 9zM12 9c2-4 6-4 6-1.5S15 9 12 9z"/></svg>${esc(free)}</span>`:''}
+          <button type="button" class="fr-dz-mine" data-friend-action="my-duels" aria-label="Düellolarım${pending?', '+pending+' bekleyen davet':''}">Düellolarım${pending?`<span class="fr-dz-badge">${pending}</span>`:''}</button>
+        </div>
+        <p class="fr-dz-copy">6 soruluk kelime savaşı. Rakibinin canını ilk sen bitir!</p>
+        <div class="fr-dz-actions">
+          <button type="button" class="fr-dz-live" data-friend-action="live-duel"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg>Canlı Düello</button>
+          <button type="button" class="fr-dz-btn" data-friend-action="challenge">Meydan Oku</button>
+          <button type="button" class="fr-dz-btn fr-dz-soft" data-friend-action="papi-duel">Papi'ye Karşı</button>
+        </div>
+      </section>
+      <button type="button" class="fr-invite-strip" data-friend-action="share">
+        <img src="friends-assets/papi-invite.webp" alt="" decoding="async"><span><b>Davet et</b><small>Arkadaşlarını getir, birlikte öğrenin</small></span><span class="fr-invite-go">Gönder</span>
       </button>
     </div>`;
   }
@@ -177,6 +201,7 @@
     const scroll = screen.scrollTop;
     screen.innerHTML=homeHtml();
     viewHeader();paintLocks();dockSpace();screen.scrollTop=scroll;
+    refreshDuelLabel();
   }
   function paintLocks() {
     root.querySelectorAll('[data-friends-gate]').forEach(b=>{
@@ -420,6 +445,10 @@
     if(action==='profile'){window.maAkisKisiAc?.(b.dataset.person);return;}
     if(action==='invite')return openInvite(b.dataset.person,b.dataset.game);
     if(action==='matches'){if(window.dmLeagueUI?.openDuelChooser)return window.dmLeagueUI.openDuelChooser();return openMatches();}
+    if(action==='live-duel')return void window.dmLiveDuel?.startLive();
+    if(action==='papi-duel')return void window.dmLiveDuel?.startPapi();
+    if(action==='challenge')return void window.dmRealDuelAc?.();
+    if(action==='my-duels')return openMatches();
     if(action==='filter'){
       maFiltre=b.dataset.filter;
       root.querySelectorAll('[data-filter]').forEach(x=>{x.classList.toggle('aktif',x.dataset.filter===maFiltre);x.setAttribute('aria-pressed',String(x.dataset.filter===maFiltre));});
