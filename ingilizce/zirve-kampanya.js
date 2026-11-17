@@ -24,7 +24,8 @@ const today = () => new Intl.DateTimeFormat('en-CA', {timeZone: 'Europe/Istanbul
 const studentToken = () => store.get('ing_token') || '';
 const teacherToken = () => {
   try { const s = JSON.parse(sessionStorage.getItem('dm_tp_session') || 'null'); if (s?.teacherToken) return s.teacherToken; } catch {}
-  try { if (sessionStorage.getItem('ing_ogr_yonetici') === '1') return sessionStorage.getItem('ing_ogr_token') || ''; } catch {}
+  try { if (window.dmTeacherPortalMode && window.dmTeacherPortalSession?.teacherToken) return window.dmTeacherPortalSession.teacherToken;
+    return sessionStorage.getItem('ing_ogr_token') || ''; } catch {}
   return '';
 };
 const who = () => String(typeof aktifOgrenciAdi === 'undefined' ? '' : aktifOgrenciAdi || store.get('ing_aktifOgrenci') || '');
@@ -424,27 +425,56 @@ function teacherCardHtml(s) {
     '<span class="zk-go" style="width:34px;height:34px;border-radius:50%;background:#fff;display:grid;place-items:center;color:#6B2FE0;flex:none">' + I.go + '</span></button>';
 }
 let teacherBusy = false;
+let teacherRetryAt = 0;
+function teacherHost() {
+  const selectors = ['#tpTeacherHome #dmTeacherDesignV2', '#ogretmenMenuModal .dm-v2-content', '#tpDashboard.is-visible .tp-real-tools', '#tpTeacherHome.is-visible'];
+  for (const selector of selectors) {
+    const el = D.querySelector(selector);
+    if (el && el.getClientRects().length && getComputedStyle(el).visibility !== 'hidden') return el;
+  }
+  return null;
+}
 async function mountTeacher() {
-  const content = D.querySelector('#ogretmenMenuModal .dm-v2-content');
+  const content = teacherHost();
   const tok = teacherToken();
-  if (!content || !tok || teacherBusy || !content.getClientRects().length) return;
-  if (content.querySelector('[data-zk-tcard]')) return;
+  D.querySelectorAll('[data-zk-teacher-host]').forEach(el => {
+    if (!tok || el.zkToken !== tok || el.parentElement !== content) el.remove();
+  });
+  if (!content || !tok || teacherBusy || Date.now() < teacherRetryAt) return;
+  const previous = content.querySelector(':scope > [data-zk-teacher-host]');
+  if (previous && Date.now() - (previous.zkCheckedAt || 0) < 60000) return;
   teacherBusy = true;
   try {
     const s = await status(tok);
-    if (!isOn(s) || s.role !== 'teacher' || content.querySelector('[data-zk-tcard]')) return;
-    const banner = content.querySelector('.dm-v2-banner');
-    if (banner) banner.insertAdjacentHTML('afterend', teacherCardHtml(s)); else content.insertAdjacentHTML('afterbegin', teacherCardHtml(s));
-    if (s.admin && !content.querySelector('[data-zk-admin]')) {
-      const quick = content.querySelector('[data-v2-quick]');
-      if (quick) {
-        const b = D.createElement('button'); b.type = 'button'; b.className = 'dm-v2-action'; b.dataset.zkAdmin = '1';
-        b.innerHTML = '<span aria-hidden="true">🏆</span><strong>Zirve Kampanyası</strong><small>Yayın, sıralama ve ödül onayı</small><i aria-hidden="true">›</i>';
-        b.onclick = openAdmin; quick.prepend(b);
+    if (tok !== teacherToken() || content !== teacherHost() || !content.isConnected) return;
+    if (!isOn(s) || s.role !== 'teacher') {
+      previous?.remove();
+      teacherRetryAt = Date.now() + (s ? 60000 : 5000);
+      return;
+    }
+    const host = previous || D.createElement('div');
+    host.dataset.zkTeacherHost = '1';
+    host.zkToken = tok;
+    host.zkCheckedAt = Date.now();
+    host.style.gridColumn = '1 / -1';
+    if (!previous) {
+      host.innerHTML = teacherCardHtml(s);
+      if (s.admin) {
+        const b = D.createElement('button');
+        b.type = 'button'; b.className = 'zk-btn small';
+        b.dataset.zkAdmin = '1';
+        b.textContent = '🏆 Zirve Kampanyası · Yönetim';
+        b.onclick = openAdmin;
+        host.append(b);
       }
+      const banner = content.querySelector(':scope > .dm-midnight-hero, :scope > .dm-v2-banner');
+      if (banner) banner.after(host); else content.prepend(host);
     }
     const key = 'zk_tpop_' + tok.slice(-12) + '_' + today();
-    if (!store.get(key) && !store.get('zk_tjoined_' + tok.slice(-12)) && s.campaign.phase !== 'results') { store.set(key, '1'); setTimeout(() => teacherPopup(s), 700); }
+    if (!store.get(key) && !store.get('zk_tjoined_' + tok.slice(-12)) && s.campaign.phase !== 'results' && s.campaign.phase !== 'ended' && !D.querySelector('.zk-veil,.zk-layer')) {
+      store.set(key, '1');
+      teacherPopup(s);
+    }
   } finally { teacherBusy = false; }
 }
 D.addEventListener('click', e => { if (e.target.closest('[data-zk-tcard]')) openTeacherHub(); });
@@ -519,7 +549,7 @@ function schedulePopup() {
   };
   popupTimer = setTimeout(tick, 6000);
 }
-function onLogin() { cache.clear(); D.querySelectorAll('[data-zk-banner]').forEach(x => x.remove()); acceptInvite(); schedulePopup(); mountBanner(); }
+function onLogin() { cache.clear(); teacherRetryAt = 0; D.querySelectorAll('[data-zk-teacher-host]').forEach(x => x.remove()); observe(); D.querySelectorAll('[data-zk-banner]').forEach(x => x.remove()); acceptInvite(); schedulePopup(); mountBanner(); }
 
 captureInvite();
 let queued = false;
@@ -528,6 +558,9 @@ function start() {
   new MutationObserver(muts => { for (const m of muts) for (const n of m.addedNodes) if (n.nodeType === 1 && !n.closest?.('.zk-layer,.zk-veil,[data-zk-banner],[data-zk-tcard]')) { observe(); return; } })
     .observe(D.body, {childList: true, subtree: true});
   D.addEventListener('dm:login', onLogin);
+  window.addEventListener('dm:teacher-admin-role-verified', () => { teacherRetryAt = 0; observe(); });
+  D.addEventListener('visibilitychange', () => { if (!D.hidden) observe(); });
+  setInterval(() => { if (!D.hidden) mountTeacher(); }, 2000);
   acceptInvite(); schedulePopup(); observe();
 }
 if (D.readyState === 'loading') D.addEventListener('DOMContentLoaded', start); else start();
