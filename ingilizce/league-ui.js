@@ -34,7 +34,13 @@ function virtualAvatar(bot,size=44){
 }
 const memberClass=t=>t==='pro'?' dm-member-pro':t==='premium_pro'?' dm-member-premium':'';
 const memberBadge=t=>memberClass(t)?'<span class="dm-member-badge" aria-label="'+(t==='pro'?'Pro Üye':'Premium Pro Üye')+'">'+(t==='pro'?'PRO':'PRO+')+'</span>':'';
-function avatar(name,size=38,virtual=false,tier='free'){if(virtual)return '<span class="dm-lig-avatar dm-lig-papi" style="--size:'+size+'px">'+virtualAvatar(typeof virtual==='object'?virtual:{name,id:'virtual-1'},size)+'</span>';let html='';try{html=window.karakterSvg?.(name,size)||'';}catch{}
+// Cosmetic tiers for virtual rivals only: stable across weeks, no entitlements or XP changes.
+function virtualTier(bot){const id=Number(bot?.bot_id||String(bot?.id||'').replace('virtual-',''));return Number.isInteger(id)&&id>=1&&id<=10?(id%2?'pro':'premium_pro'):'free';}
+function virtualMemberAvatar(bot,size=44,kind='modal'){
+ const tier=virtualTier(bot),cls=kind==='friends'?'fr-avatar fr-papi-leader':kind==='league'?'dm-lig-avatar dm-lig-papi':'dm-virtual-member-avatar';
+ return '<span class="'+cls+memberClass(tier)+'" style="--size:'+size+'px;--avatar-size:'+size+'px;--virtual-member-size:'+size+'px">'+virtualAvatar(bot,size)+memberBadge(tier)+'</span>';
+}
+function avatar(name,size=38,virtual=false,tier='free'){if(virtual)return virtualMemberAvatar(typeof virtual==='object'?virtual:{name,id:'virtual-1'},size,'league');let html='';try{html=window.karakterSvg?.(name,size)||'';}catch{}
  if(!html){const icon=window.ogrenciMaskotSec?.(name)||'🦜';html='<span aria-hidden="true">'+esc(icon)+'</span>';}
  return '<span class="dm-lig-avatar'+memberClass(tier)+'" style="--size:'+size+'px">'+html+memberBadge(tier)+'</span>';
 }
@@ -223,7 +229,7 @@ function nativeHudTick(){
  if(!hud){
   hud=document.createElement('div');hud.id='dmVirtualNativeHud';hud.className='dm-native-duel-hud';
   hud.innerHTML='<div class="dm-native-side"><strong>Sen</strong><b data-player-value>Oyun devam ediyor</b><span class="dm-native-track"><i data-player-bar></i></span></div>'+
-   '<b class="dm-native-versus">VS</b><div class="dm-native-side dm-native-duel-bot">'+virtualAvatar(d.bot,28)+'<strong>'+esc(d.bot.name)+'</strong><b data-bot-value>0 XP</b><span class="dm-native-track"><i data-bot-bar></i></span></div>'+
+   '<b class="dm-native-versus">VS</b><div class="dm-native-side dm-native-duel-bot">'+virtualMemberAvatar(d.bot,28)+'<strong>'+esc(d.bot.name)+'</strong><b data-bot-value>0 XP</b><span class="dm-native-track"><i data-bot-bar></i></span></div>'+
    '<small class="dm-native-note">Papi sanal rakiptir · gerçek lig ödüllerini etkilemez</small>';
   overlay.appendChild(hud);
  }
@@ -246,7 +252,7 @@ function nativeHudTick(){
 async function openVirtualDirect(bot){
  if(!bot?.is_virtual)return;
  duelContext={bot,owner:who(),status:null,run:null};
- const m=duelModal('<div class="dm-lig-duel-hero">'+virtualAvatar(bot,80)+'<h2>'+esc(bot.name)+'</h2><span class="dm-lig-duel-tag">Sanal Rakip</span></div>'+
+ const m=duelModal('<div class="dm-lig-duel-hero">'+virtualMemberAvatar(bot,80)+'<h2>'+esc(bot.name)+'</h2><span class="dm-lig-duel-tag">Sanal Rakip</span></div>'+
  '<p>Bu Papi gerçek bir öğrenci değildir. Lig ödüllerini ve yükselmeni etkilemez. Kendi oyununda Papi ile karşılaş!</p>'+
  '<p class="dm-lig-duel-free">İlk düellon kolay, ikincisi zorlu · 2 ücretsiz hak · Kazanırsan en fazla 120 XP ve 50 altın</p>'+
  '<p class="dm-lig-duel-message" aria-live="polite">Oyunlar hazırlanıyor…</p>');
@@ -270,7 +276,7 @@ async function openVirtualSelection(){
  }
  const m=duelModal('<h2>Papi Rakibini Seç</h2><p>10 sanal rakipten birini seç. Hepsi gerçek lig sıralamandan bağımsızdır.</p>'+
  '<div class="dm-lig-duel-games dm-virtual-rivals">'+bots.sort((a,b)=>Number(a.id.slice(8))-Number(b.id.slice(8))).map(p=>
- '<button type="button" data-bot-select="'+esc(p.id)+'">'+virtualAvatar(p,56)+'<b>'+esc(p.name)+'</b><small>Sanal rakip</small></button>').join('')+'</div>');
+ '<button type="button" data-bot-select="'+esc(p.id)+'">'+virtualMemberAvatar(p,56)+'<b>'+esc(p.name)+'</b><small>Sanal rakip</small></button>').join('')+'</div>');
  m.querySelectorAll('[data-bot-select]').forEach(b=>b.onclick=()=>{const p=bots.find(x=>x.id===b.dataset.botSelect);if(p)void openVirtualDirect(p);});
 }
 function openDuelChooser(){
@@ -314,7 +320,7 @@ document.addEventListener('dm:reward-result',async event=>{
   if(!result.ok){d.finished=false;window.yoToast?.(result.message||'Düello sonucu doğrulanamadı.');return;}
   nativeDuel=null;
   if(result.yo){document.dispatchEvent(new Event('dm:state'));window.dmProgression?.refresh?.(true);}
-  const m=duelModal('<div class="dm-lig-duel-hero">'+virtualAvatar(d.bot,80)+'<h2>'+(result.won?'Papi\'yi yendin!':'Papi bu kez kazandı!')+'</h2>'+
+  const m=duelModal('<div class="dm-lig-duel-hero">'+virtualMemberAvatar(d.bot,80)+'<h2>'+(result.won?'Papi\'yi yendin!':'Papi bu kez kazandı!')+'</h2>'+
   '<p>Gerçek oyundaki doğrulanmış performansına göre sonuçlandı.</p></div>'+
   '<div class="dm-lig-duel-rewards"><b>+'+fmt(result.xp||0)+' XP</b><b>+'+fmt(result.gold||0)+' altın</b></div>'+
   '<p>Sanal rakipler gerçek lig sıralamanı etkilemez.</p>'+duelButton('Tamam','primary'));
@@ -451,5 +457,5 @@ document.addEventListener('dm:state',()=>{for(const state of Object.values(state
 document.addEventListener('visibilitychange',()=>{if(document.hidden)clearRise();else if(onScreen()){animatePendingRise();void load();}});
 if(typeof MutationObserver==='function')new MutationObserver(()=>{if(!onScreen())clearRise();}).observe(root,{attributes:true,attributeFilter:['class'],childList:true});
 setInterval(()=>{if(!document.hidden&&onScreen())void load();},180000); // [Kota] 1 dk -> 3 dk
-window.dmLeagueUI={refresh:()=>load(true),render,weeklyPreview,openVirtualDirect,openVirtualSelection,openDuelChooser,virtualAvatar,refreshWeekly:()=>load(false,'weekly'),openWeekly:()=>{mode='weekly';selected=null;limit=30;window.maSekmeSec?.('lig');}};
+window.dmLeagueUI={refresh:()=>load(true),render,weeklyPreview,openVirtualDirect,openVirtualSelection,openDuelChooser,virtualAvatar,virtualTier,virtualMemberAvatar,refreshWeekly:()=>load(false,'weekly'),openWeekly:()=>{mode='weekly';selected=null;limit=30;window.maSekmeSec?.('lig');}};
 })();
