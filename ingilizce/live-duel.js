@@ -1,4 +1,4 @@
-/* Canlı Düello + Papi'ye Karşı — 6 soruluk savaş paneli. [17 Kas 2026]
+/* Canlı Düello + Papi'ye Karşı — 10 soruluk savaş paneli. [17 Kas 2026, 18 Kas 2026'da 6'dan 10 soruya]
    Sunucu yükü düşük tutulur:
    - Davet, Supabase Realtime "broadcast" kanalından gider (veritabanına yazmaz).
    - Veritabanına yalnız: arama/kabul, en fazla 5 bekleme kontrolü, sonuç kaydı.
@@ -178,7 +178,7 @@ function showBanner(p) {
   const el = document.createElement('aside');
   el.className = 'ld-invite'; el.style.zIndex = '2147483647'; el.setAttribute('role', 'alertdialog'); el.setAttribute('aria-label', 'Canlı düello daveti');
   el.innerHTML = `<div class="ld-invite-top"><span class="ld-avatar ld-av-guest">${esc(p.name.slice(0,1).toLocaleUpperCase('tr-TR'))}<img src="${PAPI_INVITE}" alt=""></span>
-    <span class="ld-invite-copy"><small>CANLI DÜELLO</small><b>${esc(p.name)} seninle kapışmak istiyor!</b><span>Sv. ${esc(p.level || 1)} · 6 soruluk savaş</span></span></div>
+    <span class="ld-invite-copy"><small>CANLI DÜELLO</small><b>${esc(p.name)} seninle kapışmak istiyor!</b><span>Sv. ${esc(p.level || 1)} · 10 soruluk savaş</span></span></div>
     <div class="ld-invite-bar"><i></i></div>
     <div class="ld-invite-actions"><button type="button" class="ld-invite-no">Şimdi değil</button><button type="button" class="ld-invite-yes">Kabul et · <span data-left>13</span> sn</button></div>`;
   document.body.append(el);
@@ -294,7 +294,7 @@ function avatarHtml(name, cls) {
 }
 function startMatch(d) {
   inDuel = true;
-  if (!Array.isArray(d.questions) || d.questions.length !== 6) { inDuel = false; closeLayer(); return toast('Düello soruları alınamadı. Tekrar dene.'); }
+  if (!Array.isArray(d.questions) || ![6, 10].includes(d.questions.length)) { inDuel = false; closeLayer(); return toast('Düello soruları alınamadı. Tekrar dene.'); }
   const opp = d.vsPapi ? 'Papi' : (d.opponent || 'Rakip');
   const el = openLayer('ld-vs', `
     <span class="ld-kicker">${d.vsPapi && d.kind === 'live' ? 'ŞU AN KİMSE MÜSAİT DEĞİL · PAPİ SENİNLE KAPIŞIYOR!' : 'RAKİP BULUNDU!'}</span>
@@ -303,7 +303,7 @@ function startMatch(d) {
       <span class="ld-vs-badge">VS</span>
       <div class="ld-vs-p">${avatarHtml(opp, 'ld-them')}<b>${esc(opp)}</b>${d.opponentLevel ? `<small>Sv. ${esc(d.opponentLevel)}</small>` : ''}</div>
     </div>
-    <div class="ld-facts"><div><b>6</b><span>soru</span></div><div><b>100</b><span>can</span></div><div><b>x2</b><span>final</span></div></div>
+    <div class="ld-facts"><div><b>${d.questions.length}</b><span>soru</span></div><div><b>100</b><span>can</span></div><div><b>x2</b><span>final</span></div></div>
     <div class="ld-go"><span>Başlıyor</span><b data-n>3</b></div>
     <p class="ld-vs-note">Doğru ve hızlı cevap rakibinin canını azaltır. Son soru 2 kat hasar verir.</p>`, () => {});
   const n = el.querySelector('[data-n]');
@@ -312,7 +312,8 @@ function startMatch(d) {
 }
 
 /* ---------- Savaş paneli ---------- */
-const hitFor = (q, i, ms) => { const lim = q.lim * 1000, t = Math.min(lim, Math.max(0, ms)); let h = 12 + Math.round(8 * (lim - t) / lim); if (i === 5) h *= 2; return h; };
+// Sunucudaki dm_private.duel_score ile aynı: 10 soruda 8 + hız bonusu (en fazla 5), 6 soruda 12 + 8; son soru 2 kat.
+const hitFor = (q, i, ms, n) => { const lim = q.lim * 1000, t = Math.min(lim, Math.max(0, ms)); let h = n <= 6 ? 12 + Math.round(8 * (lim - t) / lim) : 8 + Math.round(5 * (lim - t) / lim); if (i === n - 1) h *= 2; return h; };
 function battle(d, opp) {
   const owner = token(), me = who();
   const qs = d.questions, answers = [];
@@ -321,7 +322,7 @@ function battle(d, opp) {
     <header class="ld-bhead">
       <button type="button" class="ld-x" data-quit aria-label="Düellodan çık">${ICON.close}</button>
       <span class="ld-kicker">${d.vsPapi ? "PAPİ'YE KARŞI" : 'CANLI DÜELLO'}</span>
-      <span class="ld-round" data-round>Tur 1/6</span>
+      <span class="ld-round" data-round>Tur 1/${qs.length}</span>
     </header>
     <div class="ld-fighters">
       <div class="ld-f">${avatarHtml(me, 'ld-me ld-sm')}<div class="ld-fcopy"><b>Sen</b><div class="ld-hp" data-myhp><i></i></div><small data-myn>100 can</small></div></div>
@@ -329,7 +330,7 @@ function battle(d, opp) {
       <div class="ld-f ld-f-r">${avatarHtml(opp, 'ld-them ld-sm')}<div class="ld-fcopy"><b>${esc(opp)}</b><div class="ld-hp ld-hp-r" data-opphp><i></i></div><small data-oppn>100 can</small></div><span class="ld-dmg" data-oppdmg></span></div>
       <span class="ld-dmg ld-dmg-me" data-mydmg></span>
     </div>
-    <div class="ld-dots" data-dots>${qs.map((_, i) => `<span class="${i === 5 ? 'ld-dot-final' : ''}"></span>`).join('')}</div>
+    <div class="ld-dots" data-dots>${qs.map((_, i) => `<span class="${i === qs.length - 1 ? 'ld-dot-final' : ''}"></span>`).join('')}</div>
     <section class="ld-card">
       <div class="ld-timer"><svg viewBox="0 0 56 56" aria-hidden="true"><circle cx="28" cy="28" r="23" class="ld-tr"/><circle cx="28" cy="28" r="23" class="ld-tf" data-ring/></svg><b data-sec>10</b></div>
       <span class="ld-qtype" data-type></span>
@@ -337,7 +338,7 @@ function battle(d, opp) {
       <span class="ld-opp-flag" data-flag hidden>${ICON.bolt}<span>${esc(opp)} cevapladı</span></span>
     </section>
     <div class="ld-opts" data-opts></div>
-    <div class="ld-tip"><img src="${PAPI}" alt=""><span><b>Hızlı ol!</b> Doğru cevap rakibe 12–20 hasar verir. 6. soru <b>Final: 2 kat hasar.</b></span></div>`, () => askQuit());
+    <div class="ld-tip"><img src="${PAPI}" alt=""><span><b>Hızlı ol!</b> Doğru cevap rakibe ${qs.length <= 6 ? '12–20' : '8–13'} hasar verir. ${qs.length}. soru <b>Final: 2 kat hasar.</b></span></div>`, () => askQuit());
   const $ = s => el.querySelector(s);
   const ring = $('[data-ring]'), sec = $('[data-sec]'), opts = $('[data-opts]');
   function paintHp() {
@@ -355,26 +356,26 @@ function battle(d, opp) {
     let at = 0;
     d.papi.forEach((a, i) => {
       at += Math.min(qs[i].lim * 1000, a.ms) + 900;
-      papiTimers.push(setTimeout(() => { if (quit) return; flag(); if (a.c === qs[i].a) hitMe(hitFor(qs[i], i, a.ms)); }, at));
+      papiTimers.push(setTimeout(() => { if (quit) return; flag(); if (a.c === qs[i].a) hitMe(hitFor(qs[i], i, a.ms, qs.length)); }, at));
     });
   } else if (window.supabaseClient?.channel) {
     oppChannel = window.supabaseClient.channel('dm-duel-' + d.id, {config: {broadcast: {self: false}}});
     oppChannel.on('broadcast', {event: 'ans'}, ({payload}) => {
       if (quit || !payload || payload.side === d.side) return;
-      const i = Number(payload.i); if (!(i >= 0 && i < 6)) return;
+      const i = Number(payload.i); if (!(i >= 0 && i < qs.length)) return;
       flag();
-      if (payload.ok) hitMe(hitFor(qs[i], i, Number(payload.ms) || qs[i].lim * 1000));
+      if (payload.ok) hitMe(hitFor(qs[i], i, Number(payload.ms) || qs[i].lim * 1000, qs.length));
     }).subscribe();
   }
   function show() {
     const q = qs[idx];
     locked = false;
-    $('[data-round]').textContent = 'Tur ' + (idx + 1) + '/6';
+    $('[data-round]').textContent = 'Tur ' + (idx + 1) + '/' + qs.length;
     el.querySelectorAll('[data-dots] span').forEach((s, i) => s.classList.toggle('ld-now', i === idx));
     $('[data-type]').textContent = q.t === 'final' ? TYPE_LABEL.final : (q.ask === 'meaning' ? TYPE_LABEL.meaning : TYPE_LABEL[q.t] || '');
     const p = esc(q.p).replace('___', '<span class="ld-blank">___</span>');
     $('[data-q]').innerHTML = q.t === 'meaning' || (q.t === 'final' && q.ask === 'meaning') ? `“${p}”` : p;
-    el.classList.toggle('ld-is-final', idx === 5);
+    el.classList.toggle('ld-is-final', idx === qs.length - 1);
     opts.className = 'ld-opts' + (q.o.length === 2 ? ' ld-opts-2' : '') + (q.t === 'pair' ? ' ld-opts-pair' : '');
     opts.innerHTML = q.o.map((o, i) => `<button type="button" class="ld-opt-btn${q.o.length === 2 ? (i === 0 ? ' ld-true' : ' ld-false') : ''}" data-i="${i}">${esc(o)}</button>`).join('');
     opts.querySelectorAll('[data-i]').forEach(b => b.onclick = () => pick(Number(b.dataset.i)));
@@ -397,9 +398,9 @@ function battle(d, opp) {
     const ok = c === q.a;
     opts.querySelectorAll('[data-i]').forEach(b => { b.disabled = true; const i = Number(b.dataset.i); if (i === q.a) b.classList.add('ld-right'); else if (i === c) b.classList.add('ld-wrong'); });
     sfx(ok ? 'dogru' : 'yanlis');
-    if (ok) hitOpp(hitFor(q, idx, ms));
+    if (ok) hitOpp(hitFor(q, idx, ms, qs.length));
     oppChannel?.send({type: 'broadcast', event: 'ans', payload: {side: d.side, i: idx, ok, ms}}).catch(() => {});
-    setTimeout(() => { if (quit) return; idx++; if (idx < 6) show(); else finish(); }, 1100);
+    setTimeout(() => { if (quit) return; idx++; if (idx < qs.length) show(); else finish(); }, 1100);
   }
   function askQuit() {
     if (quit) return;
@@ -408,18 +409,18 @@ function battle(d, opp) {
     box.innerHTML = '<div><b>Düellodan çıkılsın mı?</b><p>Çıkarsan kalan sorular boş sayılır ve düello hakkın geri gelmez.</p><div><button type="button" data-stay>Devam et</button><button type="button" data-leave>Çık</button></div></div>';
     el.append(box);
     box.querySelector('[data-stay]').onclick = () => box.remove();
-    box.querySelector('[data-leave]').onclick = () => { box.remove(); for (let i = idx; i < 6; i++) if (!answers[i]) answers[i] = {c: -1, ms: qs[i].lim * 1000}; locked = true; clearInterval(timer); finish(); };
+    box.querySelector('[data-leave]').onclick = () => { box.remove(); for (let i = idx; i < qs.length; i++) if (!answers[i]) answers[i] = {c: -1, ms: qs[i].lim * 1000}; locked = true; clearInterval(timer); finish(); };
   }
   $('[data-quit]').onclick = askQuit;
   async function finish() {
     quit = true; clearInterval(timer); papiTimers.forEach(clearTimeout);
-    for (let i = 0; i < 6; i++) if (!answers[i]) answers[i] = {c: -1, ms: qs[i].lim * 1000};
+    for (let i = 0; i < qs.length; i++) if (!answers[i]) answers[i] = {c: -1, ms: qs[i].lim * 1000};
     const wait = openLayer('ld-wait', `<img src="${PAPI}" alt="" class="ld-wait-papi"><h2>Sonuçlar hesaplanıyor…</h2><p data-w>${d.vsPapi ? '' : esc(opp) + ' bitirmeyi bekliyoruz.'}</p>`, () => {});
     let r = null;
     try {
       for (let i = 0; i < 4 && !r; i++) { r = await rpc('dm_duel_finish', {p_duel: d.id, p_answers: answers}, owner).catch(() => null); if (!r) await sleep(1500); }
       if (!r?.ok) throw Error(r?.message || 'Sonuç kaydedilemedi.');
-      const until = Date.now() + 170000;
+      const until = Date.now() + 260000;
       while (r.status !== 'finished' && Date.now() < until) {
         await sleep(4000);
         if (!wait.isConnected) break;
@@ -441,7 +442,8 @@ function result(d, opp, r) {
   const me = r.me || {}, them = r.them || {};
   const title = win ? 'ZAFER!' : draw ? 'BERABERE!' : 'YENİLGİ';
   const sub = win ? (Number(them.hp) === 0 ? 'Nakavt! ' : '') + esc(opp) + ' yenildi.' : draw ? 'Çok çekişmeliydi!' : (opp === 'Papi' ? 'Papi bu kez kazandı. Rövanş?' : esc(opp) + ' bu kez kazandı. Rövanş?');
-  const avg = me.correct ? (Number(me.ms || 0) / 6 / 1000).toFixed(1) : '-';
+  const total = Number(me.total) || d.questions?.length || 10;
+  const avg = me.correct ? (Number(me.ms || 0) / total / 1000).toFixed(1) : '-';
   const el = openLayer('ld-result' + (win ? ' ld-win' : ''), `
     ${win ? `<i class="ld-sp" style="left:14%;top:12%">${ICON.star}</i><i class="ld-sp" style="right:14%;top:18%;animation-delay:.7s">${ICON.star}</i><i class="ld-sp ld-sp-s" style="left:24%;top:30%;animation-delay:1.3s">${ICON.star}</i>` : ''}
     <span class="ld-kicker">${d.vsPapi ? "PAPİ'YE KARŞI" : 'CANLI DÜELLO'} BİTTİ</span>
@@ -449,7 +451,7 @@ function result(d, opp, r) {
     <p class="ld-sub">${sub}</p>
     <img class="ld-result-papi" src="${PAPI}" alt="">
     <div class="ld-hpline"><span>Sen <b class="ld-g">${Number(me.hp ?? 0)} can</b></span><span>${esc(opp)} <b class="ld-r">${Number(them.hp ?? 0)} can</b></span></div>
-    <div class="ld-stats"><div><b>${Number(me.correct || 0)}/6</b><span>doğru</span></div><div><b>${avg}${avg === '-' ? '' : ' sn'}</b><span>ort. süre</span></div><div><b>${Number(me.damage || 0)}</b><span>hasar</span></div></div>
+    <div class="ld-stats"><div><b>${Number(me.correct || 0)}/${total}</b><span>doğru</span></div><div><b>${avg}${avg === '-' ? '' : ' sn'}</b><span>ort. süre</span></div><div><b>${Number(me.damage || 0)}</b><span>hasar</span></div></div>
     ${Number(me.xp || 0) > 0 ? `<div class="ld-stats ld-reward"><div><b>+${Number(me.xp || 0)} XP</b><span>kazandın</span></div><div><b>+${Number(me.gold || 0)}</b><span>altın</span></div></div>` : `<p class="ld-sub">Bu kez ödül yok. Kazanırsan <b>300 XP + 50 altın</b>!</p>`}
     <button type="button" class="ld-primary" data-again>${d.kind === 'papi' ? 'Papi ile Rövanş' : 'Yeni Canlı Düello'}</button>
     <button type="button" class="ld-ghost" data-close>Kapat</button>`, () => done());

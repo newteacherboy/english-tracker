@@ -43,7 +43,7 @@ const TOURS=[
  {id:'arkadaslar',tab:'tab-meduakis',title:'Arkadaşlar',ask:'Bugün sana Arkadaşlar sayfasını göstereyim mi?',steps:()=>[
   {center:true,before:()=>openTab('tab-meduakis','.fr-home'),title:'Arkadaşlar',text:'Arkadaşlarınla birlikte öğrenip yarışacağın yer. Bölümlerine bakalım.',noDots:true,next:'Başlayalım'},
   {target:'.fr-league-board',title:'Yerel Lig',text:'Haftalık ligde o hafta kazandığın XP ile sıralamaya girersin; lig her hafta yenilenir. “Sıralamayı gör” ile tüm listeyi açarsın.',tip:lockTip(5,'Lig')},
-  {target:'.fr-tile-duel',title:'Düello',text:'Canlı Düello ile anında rakip bul, arkadaşına meydan oku ya da Papi\'ye karşı oyna. 6 soruluk savaşta rakibinin canını ilk sen bitir!',tip:'Canlı Düello günde 1, Papi\'ye Karşı günde 2 ücretsiz.'},
+  {target:'.fr-tile-duel',title:'Düello',text:'Canlı Düello ile anında rakip bul, arkadaşına meydan oku ya da Papi\'ye karşı oyna. 10 soruluk savaşta rakibinin canını ilk sen bitir!',tip:'Canlı Düello günde 1, Papi\'ye Karşı günde 2 ücretsiz.'},
   {target:'.fr-tile-people',title:'Arkadaşlarım',text:'Takip ettiğin arkadaşların burada. Birine dokunup profilini açabilirsin.'},
   {target:'.fr-tile-showcase',title:'Vitrinim',text:'Vitrininde rozetlerini sergilersin; arkadaşların seni böyle görür.'},
   {target:'.fr-tile-invite',title:'Davet et',text:'Bağlantıyı paylaş, arkadaşın da Diji Medu\'ya katılıp ligde seninle yarışsın.'},

@@ -10,6 +10,10 @@ const questions=[
  {t:'blank',ask:'blank',p:'___ I pay in cash?',o:['bird','can','wide','tour'],a:1,lim:12},
  {t:'tf',p:'shop = mağaza',o:['Doğru','Yanlış'],a:0,lim:6},
  {t:'pair',p:'Hangisi doğru eşleşme?',o:['afternoon = konuşmak','cook = yemek pişirmek','talk = fotoğraf','photo = öğleden sonra'],a:1,lim:10},
+ {t:'meaning',p:'oven',o:['fırın','çöl','geniş','gezi'],a:0,lim:10},
+ {t:'reverse',p:'şemsiye',o:['plate','fork','umbrella','shirt'],a:2,lim:10},
+ {t:'tf',p:'quiet = gümüş',o:['Doğru','Yanlış'],a:1,lim:6},
+ {t:'blank',ask:'blank',p:'We are going to ___ the island.',o:['explore','teeth','silver','path'],a:0,lim:12},
  {t:'final',ask:'blank',p:'___ camera is mine.',o:['saturday','this','insect','member'],a:1,lim:12}
 ];
 const papi=questions.map((q,i)=>({c:i%2?q.a:(q.a+1)%q.o.length,ms:1500}));
@@ -28,7 +32,7 @@ const papi=questions.map((q,i)=>({c:i%2?q.a:(q.a+1)%q.o.length,ms:1500}));
    else if(op==='dm_duel_live_search')d={ok:true,id:'d-live',kind:'live',status:'searching',side:'host',broadcast:true,level:24};
    else if(op==='dm_duel_live_poll'){pollCount++;d=pollCount<2?{ok:true,id:'d-live',status:'searching'}:{ok:true,id:'d-live',kind:'live',status:'matched',side:'host',vsPapi:true,opponent:'Papi',questions,papi};}
    else if(op==='dm_duel_live_accept')d={ok:true,id:'d-inv',kind:'live',status:'matched',side:'guest',vsPapi:false,opponent:'Ece',opponentLevel:22,questions};
-   else if(op==='dm_duel_finish')d={ok:true,status:'finished',outcome:'win',me:{hp:46,xp:300,gold:50,correct:6,damage:132,ms:9000},them:{hp:0,xp:0,gold:0},yo:null};
+   else if(op==='dm_duel_finish')d={ok:true,status:'finished',outcome:'win',me:{hp:46,xp:300,gold:50,correct:10,damage:143,ms:15000,total:10},them:{hp:0,xp:0,gold:0},yo:null};
    else if(op==='dm_duel_live_cancel')d={ok:true,cancelled:true};
    return r.fulfill({json:d});
   }
@@ -84,9 +88,10 @@ const papi=questions.map((q,i)=>({c:i%2?q.a:(q.a+1)%q.o.length,ms:1500}));
  await page.waitForSelector('.ld-vs');await page.screenshot({path:out+'/vs.png'});
  await page.waitForSelector('.ld-battle',{timeout:6000});
  await page.waitForTimeout(400);await page.screenshot({path:out+'/battle-q1.png'});
- for(let i=0;i<6;i++){
-  await page.waitForFunction(n=>document.querySelector('[data-round]')?.textContent==='Tur '+n+'/6'&&document.querySelector('.ld-opt-btn:not(:disabled)'),i+1);
-  if(i===3||i===5){await page.waitForTimeout(150);await page.screenshot({path:out+'/battle-q'+(i+1)+'.png'});}
+ for(let i=0;i<10;i++){
+  await page.waitForFunction(n=>document.querySelector('[data-round]')?.textContent==='Tur '+n+'/10'&&document.querySelector('.ld-opt-btn:not(:disabled)'),i+1);
+  if(i===9)assert(await page.evaluate(()=>document.querySelector('.ld-battle').classList.contains('ld-is-final')),'son soru final olmalı');
+  if(i===3||i===9){await page.waitForTimeout(150);await page.screenshot({path:out+'/battle-q'+(i+1)+'.png'});}
   await page.click('.ld-opt-btn[data-i="'+questions[i].a+'"]');
   if(i===0){await page.waitForTimeout(250);await page.screenshot({path:out+'/battle-hit.png'});}
  }
@@ -94,6 +99,7 @@ const papi=questions.map((q,i)=>({c:i%2?q.a:(q.a+1)%q.o.length,ms:1500}));
  await page.waitForTimeout(500);await page.screenshot({path:out+'/result.png'});
  assert.match(await page.textContent('.ld-title'),/ZAFER/);
  assert.match(await page.textContent('.ld-reward'),/\+300 XP/);
+ assert.match(await page.textContent('.ld-result .ld-stats'),/10\/10/);
  const finishBody=await page.evaluate(()=>1);
  await page.click('.ld-result [data-close]');
  assert.equal(await page.locator('.ld-layer').count(),0);

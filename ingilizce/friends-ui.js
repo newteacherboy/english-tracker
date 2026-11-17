@@ -86,7 +86,7 @@
           ${free?`<span class="fr-dz-free"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="9" width="18" height="12" rx="2"/><path d="M3 13h18M12 9v12M12 9c-2-4-6-4-6-1.5S9 9 12 9zM12 9c2-4 6-4 6-1.5S15 9 12 9z"/></svg>${esc(free)}</span>`:''}
           <button type="button" class="fr-dz-mine" data-friend-action="my-duels" aria-label="Düellolarım${pending?', '+pending+' bekleyen davet':''}">Düellolarım${pending?`<span class="fr-dz-badge">${pending}</span>`:''}</button>
         </div>
-        <p class="fr-dz-copy">6 soruluk kelime savaşı. Rakibinin canını ilk sen bitir!</p>
+        <p class="fr-dz-copy">10 soruluk kelime savaşı. Rakibinin canını ilk sen bitir!</p>
         <div class="fr-dz-actions">
           <button type="button" class="fr-dz-live" data-friend-action="live-duel"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg>Canlı Düello</button>
           <button type="button" class="fr-dz-btn" data-friend-action="challenge">Meydan Oku</button>

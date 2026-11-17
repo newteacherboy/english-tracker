@@ -1,4 +1,4 @@
--- Yerel PostgreSQL ile: createdb t; psql -d t -f tests/live-duel-db-stub.sql -f supabase/migrations/20261117200000_live_duel.sql -f tests/live-duel-db.sql
+-- Yerel PostgreSQL ile: createdb t; psql -d t -f tests/live-duel-db-stub.sql -f supabase/migrations/20261117200000_live_duel.sql -f supabase/migrations/20261118010000_league_transition_and_duel_loser.sql -f supabase/migrations/20261118030000_duel_ten_questions.sql -f tests/live-duel-db.sql
 insert into public.students(id,username,class_no) values ('00000000-0000-0000-0000-00000000000a','ali',5),('00000000-0000-0000-0000-00000000000b','ayse',5),('00000000-0000-0000-0000-00000000000c','can',1),('00000000-0000-0000-0000-00000000000d','deniz',5);
 insert into public.extra_data select id,'yo','{"totalXp":1500,"altin":100}'::jsonb,now() from public.students;
 \set A '''00000000-0000-0000-0000-00000000000a'''
@@ -27,7 +27,7 @@ select x->>'outcome', x->'me', x->'them' from (select public.dm_duel_finish(:C,(
 select x->>'outcome', x->'me'->>'xp', x->'me'->>'hp', x->'yo'->>'totalXp', x->'yo'->>'altin' from (select public.dm_duel_result(:A,(select (j->>'id')::uuid from v where k='a')) x) y;
 select run_id, xp, gold from public.dm_game_reward_runs order by run_id;
 \echo == double finish idempotent
-select public.dm_duel_finish(:A,(select (j->>'id')::uuid from v where k='a'),(select jsonb_agg(jsonb_build_object('c',0,'ms',100)) from generate_series(1,6)))->>'outcome';
+select public.dm_duel_finish(:A,(select (j->>'id')::uuid from v where k='a'),(select jsonb_agg(jsonb_build_object('c',0,'ms',100)) from generate_series(1,10)))->>'outcome';
 select count(*) from public.dm_game_reward_runs;
 \echo == rights now
 select public.dm_duel_status(:A)->'live', public.dm_duel_status(:C)->'live';
@@ -37,7 +37,7 @@ select public.dm_duel_live_search(:A)->>'paywall';
 insert into v select 'b', public.dm_duel_live_search(:B);
 update public.dm_live_duels set created_at=now()-interval '16 seconds' where id=(select (j->>'id')::uuid from v where k='b');
 select j->>'status', j->>'vsPapi', j->>'opponent', jsonb_array_length(j->'papi') from (select public.dm_duel_live_poll(:B,(select (j->>'id')::uuid from v where k='b')) j) x;
-select x->>'outcome', x->'me'->>'xp', x->'them'->>'hp' from (select public.dm_duel_finish(:B,(select (j->>'id')::uuid from v where k='b'),(select jsonb_agg(jsonb_build_object('c',-1,'ms',10000)) from generate_series(1,6))) x) y;
+select x->>'outcome', x->'me'->>'xp', x->'them'->>'hp' from (select public.dm_duel_finish(:B,(select (j->>'id')::uuid from v where k='b'),(select jsonb_agg(jsonb_build_object('c',-1,'ms',10000)) from generate_series(1,10))) x) y;
 \echo == D search then cancel -> refund
 insert into v select 'd', public.dm_duel_live_search(:D);
 select public.dm_duel_live_cancel(:D,(select (j->>'id')::uuid from v where k='d'))->>'cancelled', public.dm_duel_status(:D)->'live'->>'remaining';
@@ -59,9 +59,9 @@ update public.students set profile='{"plan":"premium_pro"}' where id=:B;
 insert into v select 'b2', public.dm_duel_live_search(:B);
 insert into v select 'd2', public.dm_duel_live_accept(:D,(select (j->>'id')::uuid from v where k='b2'));
 select j->>'ok', j->>'opponent' from v where k='d2';
-\echo == timeout: only B finishes, matched 151s ago
-update public.dm_live_duels set matched_at=now()-interval '151 seconds' where id=(select (j->>'id')::uuid from v where k='b2');
-select public.dm_duel_finish(:B,(select (j->>'id')::uuid from v where k='b2'),(select jsonb_agg(jsonb_build_object('c',0,'ms',3000)) from generate_series(1,6)))->>'status';
+\echo == timeout: only B finishes, matched 241s ago
+update public.dm_live_duels set matched_at=now()-interval '241 seconds' where id=(select (j->>'id')::uuid from v where k='b2');
+select public.dm_duel_finish(:B,(select (j->>'id')::uuid from v where k='b2'),(select jsonb_agg(jsonb_build_object('c',0,'ms',3000)) from generate_series(1,10)))->>'status';
 select x->>'outcome', x->'me'->>'xp', x->'them'->>'xp' from (select public.dm_duel_result(:B,(select (j->>'id')::uuid from v where k='b2')) x) y;
 \echo == blocked pair cannot accept
 insert into public.student_blocks values (:A,:C);
@@ -70,3 +70,15 @@ insert into v select 'a3', public.dm_duel_live_search(:A);
 select public.dm_duel_live_accept(:C,(select (j->>'id')::uuid from v where k='a3'))->>'message';
 \echo == grants
 select has_function_privilege('anon','public.dm_duel_status(text)','execute'), has_function_privilege('anon','dm_private.duel_rights(uuid)','execute');
+\echo == 10 soru: her sınıfta tam 10, finalde 2 kat, en yüksek hasar ~143
+select g, jsonb_array_length(q) n, (select string_agg(x->>'t',',') from jsonb_array_elements(q) x) types,
+ (select bool_and(jsonb_array_length(x->'o')=case when x->>'t'='tf' then 2 else 4 end and (x->>'a')::int < jsonb_array_length(x->'o') and (select count(distinct v) from jsonb_array_elements_text(x->'o') v)=jsonb_array_length(x->'o')) from jsonb_array_elements(q) x) ok
+from (select g, dm_private.duel_questions(g) q from generate_series(1,8) g) z;
+select dm_private.duel_score(q,(select jsonb_agg(jsonb_build_object('c',(x->>'a')::int,'ms',0)) from jsonb_array_elements(q) x))->>'damage' max_dmg from (select dm_private.duel_questions(5) q) z;
+\echo == eski 6 soruluk düello hâlâ sonuçlanır
+insert into public.dm_live_duels(kind,status,host_id,vs_papi,grade,host_name,questions,papi_answers,matched_at)
+select 'papi','matched',:D,true,5,'deniz',q6,dm_private.duel_papi_answers(q6),now() from (select (select jsonb_agg(x) from (select x from jsonb_array_elements(dm_private.duel_questions(5)) with ordinality t(x,o) where o<=6) y) q6) z;
+select x->>'status', x->'me'->>'total' from (select public.dm_duel_finish(:D,(select id from public.dm_live_duels where host_name='deniz' and jsonb_array_length(questions)=6 limit 1),(select jsonb_agg(jsonb_build_object('c',0,'ms',3000)) from generate_series(1,6))) x) y;
+\echo == 10 soruluk düelloya 6 cevap gönderilemez
+insert into v select 'p10', public.dm_duel_papi_start(:A);
+select public.dm_duel_finish(:A,(select (j->>'id')::uuid from v where k='p10'),(select jsonb_agg(jsonb_build_object('c',0,'ms',3000)) from generate_series(1,6)))->>'message';
