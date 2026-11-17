@@ -21,3 +21,19 @@ html body #tab-meduakis .fr-tiles.fr-tiles-v2 .fr-tile-people{grid-column:1/-1}
 .dm-member-premium-card .uc-member-label{background:linear-gradient(135deg,#c985ff,#6533bf);color:white}
 html[data-dm-theme="night"] .dm-user-card.dm-member-pro-card{background:linear-gradient(150deg,#59451c,var(--uc-bg) 65%)}
 html[data-dm-theme="night"] .dm-user-card.dm-member-premium-card{background:linear-gradient(150deg,#513478,var(--uc-bg) 65%)}
+
+/* Compact Friends league preview: the generic .fr-avatar>span scales with the
+   character and must not scale membership labels. Keep the full league intact. */
+#tab-meduakis .fr-leader .fr-avatar > .dm-member-badge{
+  font-size:clamp(7px,1.1dvh,9px);line-height:1;font-weight:900;
+  left:auto;right:-7px;top:2px;bottom:auto;transform:none;
+  padding:2px 3px;border-radius:5px;letter-spacing:0;
+}
+#tab-meduakis .fr-league-self .fr-avatar > .dm-member-badge{
+  font-size:6px;line-height:1;font-weight:900;
+  left:50%;right:auto;top:auto;bottom:-4px;transform:translateX(-50%);
+  padding:1px 2px;border-radius:4px;letter-spacing:0;
+}
+#tab-meduakis :is(.fr-leader,.fr-league-self) .fr-avatar.dm-member-premium::after{content:none}
+#tab-meduakis .fr-league-self .fr-avatar.dm-member-pro{box-shadow:0 0 0 1px #fff2b0,0 0 0 2px #d5941c}
+#tab-meduakis .fr-league-self .fr-avatar.dm-member-premium{box-shadow:0 0 0 1px #f1c0ff,0 0 0 2px #8950e8}
