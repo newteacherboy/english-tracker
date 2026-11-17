@@ -1,0 +1,55 @@
+/* [17 Kas 2026] Papi'nin Kanadı · üst çubuk tüy düğmesi, kanat paneli ve kanat doldu kutlaması */
+body .dm-daily-streak-button.dm-tuy-button{background:#DDF6F2!important;box-shadow:inset 0 0 0 2px #1FB5A8!important;color:#0E7C73!important}
+body .dm-tuy-button .dm-tuy-icon{width:clamp(18px,5vw,22px);height:clamp(18px,5vw,22px);flex:none;display:block}
+body .dm-tuy-button b{color:#0E7C73!important}
+body .dm-tuy-button.dm-tuy-waiting .dm-tuy-icon{animation:dmTuySway 2.8s ease-in-out infinite;transform-origin:20% 90%}
+@keyframes dmTuySway{0%,100%{transform:rotate(0)}50%{transform:rotate(-12deg)}}
+
+.dm-tuy-layer{position:fixed;inset:0;z-index:2147482000;background:rgba(19,41,75,.42);display:flex;align-items:flex-end;justify-content:center;font-family:Nunito,system-ui,sans-serif;color:#13294B;animation:dmTuyFade .2s ease-out}
+.dm-tuy-sheet{position:relative;box-sizing:border-box;width:min(100%,480px);max-height:min(94vh,820px);overflow:auto;background:#fff;border-radius:28px 28px 0 0;padding:14px 20px calc(22px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:12px;outline:none;animation:dmTuyUp .32s cubic-bezier(.2,.9,.3,1.1)}
+.dm-tuy-grip{width:44px;height:5px;border-radius:3px;background:#D5DEE9;align-self:center}
+.dm-tuy-close{position:absolute;top:10px;right:12px;width:44px;height:44px;border:0;border-radius:50%;background:#F1F5FA;color:#4A5D7A;font:900 24px/1 Nunito,system-ui;cursor:pointer}
+.dm-tuy-sheet header{display:flex;justify-content:space-between;align-items:center;gap:10px;padding-right:48px}
+.dm-tuy-sheet h2{margin:0;font-size:22px;font-weight:900;line-height:1.15}
+.dm-tuy-sheet header p{margin:2px 0 0;font-size:14px;font-weight:700;color:#4A5D7A}
+.dm-tuy-pill{display:inline-flex;align-items:center;gap:3px;background:#FFF4D6;color:#8A5A00;font-weight:900;font-size:14px;padding:8px 12px;border-radius:14px;white-space:nowrap}
+.dm-tuy-pill .dm-tuy-bolt{width:18px;height:18px}
+.dm-tuy-stage{position:relative;height:clamp(250px,40vh,330px);background:#EAF8F6;border-radius:24px;overflow:hidden;flex:none}
+.dm-tuy-fan{position:absolute;left:50%;top:0;width:360px;height:230px;transform:translateX(-50%)}
+.dm-tuy-stage .dm-tuy-papi{position:absolute;left:50%;bottom:6px;width:clamp(170px,48vw,210px);aspect-ratio:400/440;transform:translateX(-50%)}
+.dm-tuy-papi svg,.dm-tuy-papi img{display:block;width:100%;height:100%;object-fit:contain}
+.dm-tuy-count{position:absolute;left:14px;top:14px;background:#fff;border-radius:12px;padding:6px 10px;font-size:13px;font-weight:900;color:#0E7C73}
+.dm-tuy-new{animation:dmTuyGrow 1.4s cubic-bezier(.2,.9,.3,1.3) .35s both;transform-box:fill-box;transform-origin:50% 100%}
+@keyframes dmTuyGrow{0%{opacity:0;transform:scale(.2)}60%{opacity:1;transform:scale(1.12)}100%{opacity:1;transform:scale(1)}}
+.dm-tuy-next{margin:0;text-align:center;font-size:15px;font-weight:800}
+.dm-tuy-next b{color:#8A5A00}
+.dm-tuy-days{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px;text-align:center;font-size:12px;font-weight:800;color:#4A5D7A}
+.dm-tuy-days i{display:block;height:8px;border-radius:5px;background:#EEF2F7;margin-bottom:4px}
+.dm-tuy-days .is-on i{background:#1FB5A8}
+.dm-tuy-days .is-today{color:#0E7C73}
+.dm-tuy-days .is-today:not(.is-on) i{box-shadow:inset 0 0 0 2px #1FB5A8;background:#fff}
+.dm-tuy-status{margin:0;min-height:18px;text-align:center;font-size:13px;font-weight:700;color:#4A5D7A;line-height:1.4}
+.dm-tuy-actions{display:flex;gap:10px}
+.dm-tuy-primary{flex:1;min-height:52px;border:0;border-radius:18px;background:#1FB5A8;color:#fff;font:900 16px Nunito,system-ui;box-shadow:0 4px 0 #13867C;cursor:pointer}
+.dm-tuy-oil{min-height:52px;padding:0 14px;border:0;border-radius:18px;background:#FFF4D6;color:#8A5A00;font:900 14px Nunito,system-ui;box-shadow:0 4px 0 #EBCB7A;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.1}
+.dm-tuy-oil small{font-size:11px;font-weight:800;opacity:.8}
+.dm-tuy-oil:disabled{opacity:.6}
+.dm-tuy-retry{align-self:center;min-height:44px;border:0;background:none;color:#2F80ED;font:900 14px Nunito,system-ui;cursor:pointer}
+.dm-tuy-primary:active,.dm-tuy-oil:active{transform:translateY(2px);box-shadow:none}
+
+.dm-tuy-wing-layer{background:#0F5F68;align-items:center}
+.dm-tuy-sheet.dm-tuy-wing{background:transparent;color:#fff;border-radius:0;max-height:100vh;height:100%;justify-content:center;align-items:center;text-align:center;padding:calc(24px + env(safe-area-inset-top,0px)) 22px calc(26px + env(safe-area-inset-bottom,0px));animation:dmTuyFade .3s ease-out}
+.dm-tuy-wing .dm-tuy-close{background:rgba(255,255,255,.15);color:#fff}
+.dm-tuy-badge{margin:0;background:#FFC93C;color:#13294B;font-weight:900;font-size:13px;padding:6px 14px;border-radius:12px;letter-spacing:.04em}
+.dm-tuy-wing h2{font-size:clamp(24px,7vw,30px);color:#fff}
+.dm-tuy-sub{margin:0;font-size:15px;font-weight:700;opacity:.88}
+.dm-tuy-stage-wing{background:radial-gradient(circle at 50% 55%,rgba(255,201,60,.28),rgba(255,201,60,0) 62%);width:min(100%,360px);height:clamp(260px,42vh,360px)}
+.dm-tuy-stage-wing .dm-tuy-papi{width:clamp(190px,56vw,240px)}
+.dm-tuy-prize{display:inline-flex;align-items:center;gap:8px;background:#fff;color:#13294B;border-radius:22px;padding:12px 22px;font-weight:900;font-size:24px;animation:dmTuyPop .6s cubic-bezier(.2,.9,.3,1.4) .5s both}
+.dm-tuy-prize .dm-tuy-bolt{width:32px;height:32px}
+.dm-tuy-wing .dm-tuy-status{color:#E6FFFB}
+.dm-tuy-gold{flex:none;width:min(100%,420px);background:#FFC93C;color:#13294B;box-shadow:0 5px 0 #D9A21C;font-size:17px}
+@keyframes dmTuyUp{from{transform:translateY(40px);opacity:0}to{transform:none;opacity:1}}
+@keyframes dmTuyFade{from{opacity:0}to{opacity:1}}
+@keyframes dmTuyPop{0%{transform:scale(.4);opacity:0}100%{transform:scale(1);opacity:1}}
+@media(prefers-reduced-motion:reduce){.dm-tuy-layer,.dm-tuy-sheet,.dm-tuy-new,.dm-tuy-prize,.dm-tuy-button .dm-tuy-icon{animation:none!important}}
