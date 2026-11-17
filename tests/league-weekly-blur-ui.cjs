@@ -72,7 +72,7 @@ const papi=questions.map((q,i)=>({c:i%2?q.a:(q.a+1)%q.o.length,ms:1500}));
  await page.waitForSelector('.dm-lig-list');await page.waitForTimeout(600);
  assert.equal(await page.locator('[data-lig-more]').count(),0,'Diğerlerini göster olmamalı');
  assert.equal(await page.locator('.dm-lig-blurred .dm-lig-row').count(),3);
- assert.match(await page.textContent('.dm-lig-idle-note'),/XP kazanmayanlar \(3\)/);
+ assert.equal(await page.locator('.dm-lig-idle-note').count(),0,'Başlık olmamalı');
  await page.locator('.dm-lig-idle').scrollIntoViewIfNeeded();await page.screenshot({path:out+'/lig-blur.png'});
  assert.deepEqual(errors,[],'sayfa hatası olmamalı: '+errors.join(' | '));
  console.log('PASS haftalık lig: XP kazananlar açık, 0 XP olanlar bulanık, Diğerlerini göster yok');
