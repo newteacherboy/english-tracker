@@ -1,0 +1,45 @@
+/* [17 Kas 2026] Parkurda Sürpriz Yumurta (sandığın yerinde) */
+.rt-medal-egg{position:absolute;left:81%;transform:translate(-50%,-45%);display:grid;justify-items:center;gap:4px;min-width:72px;min-height:72px;padding:2px;border:0;background:none;color:#4A5D7A;z-index:3;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.rt-egg-art{position:relative;display:block;width:clamp(76px,22vw,96px);aspect-ratio:1/1.12}
+.rt-egg-ring{position:absolute;left:0;top:0;width:100%;height:auto}
+.rt-egg-shell{position:absolute;left:24%;top:12%;width:52%;height:auto;transform-origin:50% 92%;filter:drop-shadow(0 3px 0 rgba(19,41,75,.12))}
+.rt-egg-nest{position:absolute;left:6%;bottom:0;width:88%;height:auto}
+.rt-egg-label{font:900 12px/1.15 Nunito,system-ui;background:#fff;color:#2F80ED;border-radius:12px;padding:4px 9px;box-shadow:0 3px 0 #CFE0F2;white-space:nowrap}
+.rt-medal-egg.is-close .rt-egg-shell{animation:rtEggWobble 3.2s ease-in-out infinite}
+.rt-medal-egg.is-ready .rt-egg-shell{animation:rtEggWobble 1.6s ease-in-out infinite}
+.rt-medal-egg.is-ready .rt-egg-label{background:#FFC93C;color:#13294B;box-shadow:0 3px 0 #D9A21C}
+.rt-medal-egg.is-ready .rt-egg-art::before{content:"";position:absolute;inset:8% 10% 20%;border-radius:50%;background:radial-gradient(circle,rgba(255,201,60,.55),rgba(255,201,60,0) 70%);animation:rtEggGlow 1.6s ease-in-out infinite}
+.rt-medal-egg.is-pecked .rt-egg-shell{animation:rtEggPeck .28s ease-in-out 3}
+.rt-medal-egg.is-hatching .rt-egg-label{visibility:hidden}
+.rt-egg-cracked{position:absolute;left:4%;top:20%;width:92%;height:auto;overflow:visible}
+.rt-egg-cracked .rt-egg-cap{transform-box:fill-box;transform-origin:50% 100%;animation:rtEggCap .7s cubic-bezier(.2,.8,.3,1) forwards}
+.rt-egg-cracked .rt-egg-left{transform-box:fill-box;transform-origin:100% 100%;animation:rtEggLeft .5s ease-out forwards}
+.rt-egg-cracked .rt-egg-right{transform-box:fill-box;transform-origin:0 100%;animation:rtEggRight .5s ease-out forwards}
+
+.rt-egg-fx{position:absolute;left:81%;width:0;height:0;z-index:7;pointer-events:none}
+.rt-egg-papi{position:absolute;left:-118px;top:-70px;width:78px;aspect-ratio:400/440;animation:rtEggPapiIn .6s cubic-bezier(.2,.9,.3,1.3) both}
+.rt-egg-papi svg{display:block;width:100%;height:100%}
+.rt-egg-fx.is-pecking .rt-egg-papi{animation:rtEggPapiIn .6s cubic-bezier(.2,.9,.3,1.3) both,rtEggPapiPeck .28s ease-in-out .6s 3}
+.rt-egg-burst{position:absolute;left:-60px;top:-80px;width:120px;height:120px;border-radius:50%;background:radial-gradient(circle,rgba(255,201,60,.75),rgba(255,201,60,0) 68%);opacity:0;transform:scale(.3)}
+.rt-egg-fx.is-open .rt-egg-burst{animation:rtEggBurst .9s ease-out forwards}
+.rt-egg-prizes{position:absolute;left:-70px;top:-118px;display:flex;gap:6px;animation:rtEggPrize 2.4s ease-out forwards}
+.rt-egg-prizes span{display:inline-flex;align-items:center;gap:4px;background:#fff;border-radius:14px;padding:6px 10px;font:900 16px/1 Nunito,system-ui;color:#13294B;box-shadow:0 3px 0 #CFE0F2;white-space:nowrap}
+.rt-egg-coin{width:18px;height:18px;border-radius:50%;background:#FFC93C;box-shadow:inset 0 0 0 2px #E0A400}
+.rt-egg-bolt{width:14px;height:18px;background:#FFC93C;clip-path:polygon(60% 0,0 58%,45% 58%,35% 100%,100% 38%,55% 38%)}
+body.dm-egg-hatching .dm-lp-lane{opacity:0;transition:opacity .3s}
+
+.rt-egg-bubble{position:absolute;right:4%;transform:translateY(calc(-100% - 58px));max-width:min(240px,70vw);background:#13294B;color:#fff;border-radius:16px;padding:10px 12px;font:700 13px/1.35 Nunito,system-ui;box-shadow:0 8px 20px rgba(19,41,75,.25);z-index:8;display:grid;gap:2px;animation:dmTuyFade .2s ease-out}
+.rt-egg-bubble b{font-weight:900}
+.rt-egg-bubble small{color:#FFE08A;font-weight:800}
+
+@keyframes rtEggWobble{0%,70%,100%{transform:rotate(0)}76%{transform:rotate(-8deg)}84%{transform:rotate(8deg)}92%{transform:rotate(-4deg)}}
+@keyframes rtEggGlow{0%,100%{opacity:.5;transform:scale(.9)}50%{opacity:1;transform:scale(1.08)}}
+@keyframes rtEggPeck{0%,100%{transform:rotate(0)}50%{transform:rotate(7deg) translateX(2px)}}
+@keyframes rtEggPapiIn{from{transform:translate(-40px,20px) scale(.6);opacity:0}to{transform:none;opacity:1}}
+@keyframes rtEggPapiPeck{0%,100%{transform:none}50%{transform:translateX(14px) rotate(14deg)}}
+@keyframes rtEggCap{to{transform:translate(6px,-34px) rotate(22deg);opacity:.0}}
+@keyframes rtEggLeft{to{transform:rotate(-14deg)}}
+@keyframes rtEggRight{to{transform:rotate(14deg)}}
+@keyframes rtEggBurst{0%{opacity:0;transform:scale(.3)}30%{opacity:1}100%{opacity:0;transform:scale(1.6)}}
+@keyframes rtEggPrize{0%{opacity:0;transform:translateY(16px) scale(.6)}18%{opacity:1;transform:none}80%{opacity:1;transform:translateY(-10px)}100%{opacity:0;transform:translateY(-40px)}}
+@media(prefers-reduced-motion:reduce){.rt-medal-egg .rt-egg-shell,.rt-egg-art::before,.rt-egg-papi,.rt-egg-cracked *,.rt-egg-burst,.rt-egg-prizes{animation:none!important}}
