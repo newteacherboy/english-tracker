@@ -4,7 +4,7 @@ const {chromium}=require('playwright');
 const source=path.resolve(__dirname,'../ingilizce');
 const fixtureName='Fixture';
 const people=['Fixture','Elif','Ege','Zeynep','Cemre'].map((ogrenci,i)=>({ogrenci,sinif:'6',Sinif:'6',durum:'approved',karakter:{cins:i%2?'k':'e',s:{}},totalXp:12000,genelOrtalama:70,rozetListesi:[{emoji:'⭐',rozetAdi:'Yıldız',gerekliPuan:0}],lig:{hafta:'fixture',xp:[938,3034,1162,1140,951][i]}}));
-const league=people.map((p,i)=>({name:p.ogrenci,class:'6',league:'yerel',rank:[5,1,2,3,4][i],xp:p.lig.xp}));
+const league=people.map((p,i)=>({name:p.ogrenci,class:'6',league:'yerel',rank:[5,1,2,3,4][i],xp:p.lig.xp,membership_tier:['premium_pro','premium_pro','pro','free','free'][i]}));
 const lesson='A2 · Present perfect vs past simple (basic) — Present perfect ders konusunu tamamladı!';
 const feed=['Elif','Ege','Zeynep','Cemre','Fixture'].map((ogr,i)=>({k:'event'+i,ogr,ad:ogr,t:Date.now()-i*60000,metin:[
  'Haftalık görevini tamamladı! 75 altın kazandı.',
@@ -66,6 +66,15 @@ const feed=['Elif','Ege','Zeynep','Cemre','Fixture'].map((ogr,i)=>({k:'event'+i,
   });
   await page.evaluate(()=>dmProgression.refresh(true));
   await page.evaluate(()=>meduAkisAc());await page.waitForSelector('.fr-leader-1');
+  await page.waitForSelector('.fr-leader-1 .dm-member-badge');
+  for(const width of [320,390,768]){
+    await page.setViewportSize({width,height:844});
+    const sizes=await page.locator('.fr-leader .dm-member-badge,.fr-league-self .dm-member-badge').evaluateAll(nodes=>nodes.map(n=>({font:parseFloat(getComputedStyle(n).fontSize),width:n.getBoundingClientRect().width,avatar:n.parentElement.getBoundingClientRect().width,self:!!n.closest('.fr-league-self')})));
+    assert(sizes.some(s=>s.self),'own summary badge exists');
+    assert(sizes.some(s=>!s.self),'podium badge exists');
+    for(const s of sizes){assert(s.font<=9,'badge text must stay small');assert(s.width<=s.avatar+2,'badge must not exceed avatar width');}
+  }
+  await page.setViewportSize({width:390,height:844});
   assert.equal(await page.locator('[data-friend-action="vitrin"],#maSegment [data-s="vitrin"]').count(),0);
   await page.evaluate(()=>window.cardFriendsNode=document.querySelector('#maEkran').firstElementChild);
   await page.locator('.fr-leader-1').click();await page.waitForSelector('#dmUserCard .uc-character svg');
