@@ -54,10 +54,10 @@ const out='/tmp/papi-tuy-qa';
   // 4) 3. durak: yumurta görünürken kendiliğinden parkurda çatlar, ödül bir kez alınır.
   await page.evaluate(()=>{srv.egg={...srv.egg,progress:3,ready:true};});
   await page.evaluate(()=>DijiPapiEgg.check({force:true}));
-  await page.waitForSelector('.rt-egg-fx .rt-egg-papi svg.dmp',{timeout:4000});
-  await page.waitForSelector('.rt-egg-prizes',{timeout:5000});await page.screenshot({path:`${out}/catlama-${width}.png`});
-  assert.match(await page.locator('.rt-egg-prizes').textContent(),/\+40.*\+3/);
-  await page.waitForFunction(()=>!document.querySelector('.rt-egg-fx'),null,{timeout:8000});
+  await page.waitForSelector('.egg-stage .egg-stage-papi svg.dmp',{timeout:4000});await page.waitForTimeout(700);await page.screenshot({path:`${out}/catlama-gaga-${width}.png`});
+  await page.waitForSelector('.egg-stage-prizes span',{timeout:5000});await page.waitForTimeout(700);await page.screenshot({path:`${out}/catlama-${width}.png`});
+  assert.match(await page.locator('.egg-stage-prizes').textContent(),/\+40.*\+3/);
+  await page.click('.egg-stage-ok');await page.waitForFunction(()=>!document.querySelector('.egg-stage'),null,{timeout:8000});
   assert.equal(await page.evaluate(()=>srv.calls.filter(c=>c==='yumurta_cat').length),1);
   assert.equal(await page.evaluate(()=>yo.altin),540);assert.equal(await page.evaluate(()=>genelEnerjiKalan),15);
   assert.equal(await page.locator('.rt-egg-label').textContent(),'0/3 durak');

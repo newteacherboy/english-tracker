@@ -167,7 +167,8 @@ function lobbySend(event, payload) {
 async function onSeek(p) {
   if (!p?.id || !p?.name || norm(p.name) === norm(who()) || busyScreen() || banner) return;
   let r = null; try { r = await status(); } catch {}
-  if (!r || !r.social || (!r.unlimited && Number(r.live?.remaining) <= 0)) return;
+  // Hakkı bitmiş olsa da davet görünür; kabul edince reklam / Premium Pro paneli açılır.
+  if (!r || !r.social) return;
   if (busyScreen() || banner) return;
   showBanner(p);
 }
@@ -449,7 +450,7 @@ function result(d, opp, r) {
     <img class="ld-result-papi" src="${PAPI}" alt="">
     <div class="ld-hpline"><span>Sen <b class="ld-g">${Number(me.hp ?? 0)} can</b></span><span>${esc(opp)} <b class="ld-r">${Number(them.hp ?? 0)} can</b></span></div>
     <div class="ld-stats"><div><b>${Number(me.correct || 0)}/6</b><span>doğru</span></div><div><b>${avg}${avg === '-' ? '' : ' sn'}</b><span>ort. süre</span></div><div><b>${Number(me.damage || 0)}</b><span>hasar</span></div></div>
-    <div class="ld-stats ld-reward"><div><b>+${Number(me.xp || 0)} XP</b><span>kazandın</span></div><div><b>+${Number(me.gold || 0)}</b><span>altın</span></div></div>
+    ${Number(me.xp || 0) > 0 ? `<div class="ld-stats ld-reward"><div><b>+${Number(me.xp || 0)} XP</b><span>kazandın</span></div><div><b>+${Number(me.gold || 0)}</b><span>altın</span></div></div>` : `<p class="ld-sub">Bu kez ödül yok. Kazanırsan <b>300 XP + 50 altın</b>!</p>`}
     <button type="button" class="ld-primary" data-again>${d.kind === 'papi' ? 'Papi ile Rövanş' : 'Yeni Canlı Düello'}</button>
     <button type="button" class="ld-ghost" data-close>Kapat</button>`, () => done());
   sfx(win ? 'kombo' : draw ? 'dogru' : 'yanlis');

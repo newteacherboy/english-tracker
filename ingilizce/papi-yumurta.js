@@ -1,6 +1,6 @@
 /* [17 Kas 2026] Parkurda Sürpriz Yumurta: haritadaki sandığın yerinde yuvada bir yumurta durur.
    Her 3 durakta bir çatlar; çatlama parkurun üstünde olur: canlı 3D Papi gelir, yumurtayı gagalar,
-   ödüller (altın + enerji) üst çubuğa uçar. Ayrı ekran açılmaz.
+   ödüller (altın + enerji) üst çubuğa uçar. [18 Kas 2026] Çatlama artık tüm ekranda oynar.
    Sayım ve ödüller sunucuda (papi-rewards → dm_papi_egg). Eski sandıklar Mağaza > Sandıklarım'da durur. */
 (()=>{'use strict';
 const who=()=>typeof aktifOgrenciAdi==='undefined'?'':String(aktifOgrenciAdi||'').trim();
@@ -75,36 +75,60 @@ function tap(b){
  bubble(b,'<b>'+(KIND[state.kind]||KIND.benekli).name+'</b><span>'+left+' durak daha bitir, çatlasın.</span><small>İçinde ne var? Sürpriz!</small>');
 }
 const wait=ms=>new Promise(r=>setTimeout(r,ms));
+// [18 Kas 2026] Çatlama tüm ekranda: yumurta büyür, Papi gagalar, yumurta çatlar, ödüller büyük görünür.
+// Sahne kapanınca ödüller üst çubuğa uçar.
+const esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 async function hatch(b){
  if(busy||!state?.ready)return;busy=true;
  const kind=state.kind,account=who(),reduced=matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+ const name=(KIND[kind]||KIND.benekli).name;
  b.classList.add('is-hatching');b.classList.remove('is-ready');document.body.classList.add('dm-egg-hatching');
- const fx=document.createElement('div');fx.className='rt-egg-fx';fx.style.top=b.offsetTop+'px';fx.setAttribute('aria-hidden','true');
  let mascot='';try{mascot=window.DMPapi?.html?window.DMPapi.html('merhaba','Papi'):'';}catch{}
- fx.innerHTML='<div class="rt-egg-papi">'+mascot+'</div><div class="rt-egg-burst"></div>';
- b.parentElement?.append(fx);
+ const stage=document.createElement('div');stage.className='egg-stage egg-k-'+(KIND[kind]?kind:'benekli');
+ stage.setAttribute('role','dialog');stage.setAttribute('aria-modal','true');stage.setAttribute('aria-label',name+' çatlıyor');
+ stage.innerHTML='<div class="egg-stage-rays" aria-hidden="true"></div><div class="egg-stage-burst" aria-hidden="true"></div>'
+  +'<p class="egg-stage-kicker">SÜRPRİZ YUMURTA</p><h2 class="egg-stage-title">'+esc(name)+'</h2>'
+  +'<div class="egg-stage-scene"><div class="egg-stage-papi" aria-hidden="true">'+mascot+'</div><div class="egg-stage-egg" aria-hidden="true">'+egg(kind)+'</div></div>'
+  +'<div class="egg-stage-prizes" role="status"></div><button type="button" class="egg-stage-ok" hidden>Harika!</button>'
+  +'<i class="egg-stage-spark" aria-hidden="true"></i><i class="egg-stage-spark" aria-hidden="true"></i><i class="egg-stage-spark" aria-hidden="true"></i><i class="egg-stage-spark" aria-hidden="true"></i><i class="egg-stage-spark" aria-hidden="true"></i><i class="egg-stage-spark" aria-hidden="true"></i>';
+ document.body.append(stage);
+ document.documentElement.classList.add('egg-stage-open');
+ requestAnimationFrame(()=>stage.classList.add('is-in'));
  const request=call('yumurta_cat').then(d=>({d}),e=>({e}));
+ let d=null,failed=null;
  try{
-  await wait(reduced?0:650);fx.classList.add('is-pecking');b.classList.add('is-pecked');
-  const {d,e}=await request;
-  if(e||account!==who()){throw e||Error('Hesap değişti.');}
-  await wait(reduced?0:900);
-  const art=b.querySelector('.rt-egg-art');if(art){art.querySelector('.rt-egg-shell')?.remove();art.insertAdjacentHTML('beforeend',cracked(kind));}
-  fx.classList.add('is-open');try{window.DMPapi?.react?.(fx,'sevinc',2400,'mutlu');}catch{}
-  const got=d.opened||{};fx.insertAdjacentHTML('beforeend','<div class="rt-egg-prizes"><span><i class="rt-egg-coin"></i>+'+(got.gold||0)+'</span><span><i class="rt-egg-bolt"></i>+'+(got.energy||0)+'</span></div>');
+  await wait(reduced?0:700);stage.classList.add('is-pecking');window.dmPapiHaptics?.light?.();
+  const res=await request;
+  if(res.e||account!==who()){throw res.e||Error('Hesap değişti.');}
+  d=res.d;
+  await wait(reduced?0:1000);
+  const art=stage.querySelector('.egg-stage-egg');art.querySelector('.rt-egg-shell')?.remove();art.insertAdjacentHTML('beforeend',cracked(kind));
+  const mapArt=b.querySelector('.rt-egg-art');if(mapArt){mapArt.querySelector('.rt-egg-shell')?.remove();mapArt.insertAdjacentHTML('beforeend',cracked(kind));}
+  stage.classList.remove('is-pecking');stage.classList.add('is-open');try{window.DMPapi?.react?.(stage.querySelector('.egg-stage-papi'),'sevinc',2400,'mutlu');}catch{}
+  try{window.genelSesEfektiCal?.('kombo');}catch{}
   window.dmPapiHaptics?.success?.();
-  await wait(reduced?300:1500);
+  const got=d.opened||{};
+  stage.querySelector('.egg-stage-prizes').innerHTML='<span><i class="rt-egg-coin"></i>+'+Number(got.gold||0)+' <small>altın</small></span><span><i class="rt-egg-bolt"></i>+'+Number(got.energy||0)+' <small>enerji</small></span>';
+  const ok=stage.querySelector('.egg-stage-ok');
+  await wait(reduced?200:700);ok.hidden=false;try{ok.focus({preventScroll:true});}catch{}
+  // Dokununca ya da 3,5 sn sonra kendiliğinden kapanır.
+  await new Promise(r=>{const t=setTimeout(r,reduced?2500:3500);ok.onclick=()=>{clearTimeout(t);r();};stage.addEventListener('click',e=>{if(e.target===stage){clearTimeout(t);r();}});});
+ }catch(e){failed=e;}
+ stage.classList.add('is-out');await wait(reduced?0:260);stage.remove();
+ if(!document.querySelector('.egg-stage'))document.documentElement.classList.remove('egg-stage-open');
+ try{
+  if(failed)throw failed;
   // Ödülleri uygula: cüzdan artışı görünce ikonları göstergeye uçurur.
   if(d.yo)window.dmApplyRewardState?.(d.yo,account);else if(typeof yo!=='undefined'&&yo&&typeof d.altin==='number')yo.altin=d.altin;
+  const got=d.opened||{};
   if(typeof d.enerjiKalan==='number'){window.headerEnerjiGoster?.(d.enerjiKalan,d.enerjiMax);try{window.genelEnerjiKalan=d.enerjiKalan;}catch{}if(got.eklenen>0)window.genelEnerjiDegisimGoster?.(got.eklenen);}
   window.DijiMeduPapiWallet?.refresh();
   state={...d,opened:null};
-  await wait(reduced?200:1200);
  }catch(e){
   bubble(b,'<b>Yumurta çatlamadı</b><span>'+String(e?.message||'Tekrar dene.').replace(/[<>&]/g,'')+'</span>',3200);
   void check({force:true});
  }finally{
-  fx.remove();b.classList.remove('is-hatching','is-pecked');delete b.dataset.sig;document.body.classList.remove('dm-egg-hatching');busy=false;paint();
+  b.classList.remove('is-hatching','is-pecked');delete b.dataset.sig;document.body.classList.remove('dm-egg-hatching');busy=false;paint();
  }
 }
 function schedule(){if(queued)return;queued=true;requestAnimationFrame(()=>{queued=false;reset();paint();if(parked())void check();});}

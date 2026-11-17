@@ -52,6 +52,8 @@ const papi=questions.map((q,i)=>({c:i%2?q.a:(q.a+1)%q.o.length,ms:1500}));
  });
  await page.addInitScript(()=>{new MutationObserver(()=>document.querySelector('.kur-perde .kur-x')?.click()).observe(document,{childList:true,subtree:true});});
  await page.goto('https://duel.test/ingilizce/?giris=1',{waitUntil:'load'});
+ // Canlı davetler websocket ister: CSP wss:// adresine izin vermeli (17 Kas'ta engellenmişti).
+ assert.match(await page.getAttribute('meta[http-equiv="Content-Security-Policy"]','content'),/connect-src[^;]*wss:\/\/nxfqlutulxqzqgwewssd\.supabase\.co/);
  await page.evaluate(()=>{
   aktifOgrenciAdi='Fixture';globalDataCache=[{ogrenci:'Fixture',Sinif:'6',Durum:'approved'}];
   yo=yoVarsayilan();yo.totalXp=60000;yo.karakter={cins:'e',s:{}};yo.dmPapiIntro={disabled:true,shown:2,automatic:true,rolloutSeen:true};yo.turlar=['ana','v2:ana','papi:v3'];yo.lig={hafta:yoHaftaKodu(),xp:900};yo.dmParkurMigration={version:1};yoIsim='Fixture';
