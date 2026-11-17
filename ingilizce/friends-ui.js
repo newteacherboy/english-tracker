@@ -56,7 +56,7 @@
       const player=data.top[index];
       if(!player)return '<span aria-hidden="true"></span>';
       return `<button type="button" class="fr-leader fr-leader-${index+1}" data-friend-action="${player.is_virtual?'virtual-duel':'profile'}" data-person="${esc(player.name)}" data-bot-id="${player.is_virtual?esc(player.id):''}" aria-label="${esc(player.displayRank??player.rank)}. sıra, ${esc(player.name)}, ${xp(player.xp)} XP${player.is_virtual?', Sanal Rakip':''}">
-        <span class="fr-podium-portrait">${index===0?crown+laurel+laurel:''}${player.is_virtual?'<span class="fr-avatar fr-papi-leader">'+(window.dmLeagueUI?.virtualAvatar?.(player,64)||'<img src="friends-assets/papi-fencer.webp" alt="Papi">')+'</span>':avatar(player.name,64,player.membership_tier)}
+        <span class="fr-podium-portrait">${index===0?crown+laurel+laurel:''}${player.is_virtual?(window.dmLeagueUI?.virtualMemberAvatar?.(player,64,'friends')||'<span class="fr-avatar fr-papi-leader"><img src="friends-assets/papi-fencer.webp" alt="Papi"></span>'):avatar(player.name,64,player.membership_tier)}
           <span class="fr-leader-cup">${icon('trophy')}<b>${esc(player.displayRank??player.rank)}</b></span>
         </span>
         <span class="fr-podium-step"><strong>${esc(player.name)}</strong><span>${xp(player.xp)} XP${player.is_virtual?' · Sanal Rakip':''}</span></span>

@@ -37,3 +37,11 @@ html[data-dm-theme="night"] .dm-user-card.dm-member-premium-card{background:line
 #tab-meduakis :is(.fr-leader,.fr-league-self) .fr-avatar.dm-member-premium::after{content:none}
 #tab-meduakis .fr-league-self .fr-avatar.dm-member-pro{box-shadow:0 0 0 1px #fff2b0,0 0 0 2px #d5941c}
 #tab-meduakis .fr-league-self .fr-avatar.dm-member-premium{box-shadow:0 0 0 1px #f1c0ff,0 0 0 2px #8950e8}
+
+/* Virtual Papi badges are cosmetic; keep the real member and podium sizing rules. */
+.dm-virtual-member-avatar{display:inline-flex;position:relative;align-items:center;justify-content:center;width:var(--virtual-member-size);height:var(--virtual-member-size);flex:none;border-radius:50%;isolation:isolate}
+.dm-virtual-member-avatar.dm-member-pro{box-shadow:0 0 0 2px #f6d779,0 0 0 4px #d5941c;background:#fff8e3}
+.dm-virtual-member-avatar.dm-member-premium{box-shadow:0 0 0 2px #e7b6ff,0 0 0 4px #8950e8;background:#f3e8ff}
+.dm-native-duel-bot .dm-virtual-member-avatar .dm-member-badge{font-size:6px;padding:1px 2px}
+.dm-native-duel-bot .dm-virtual-member-avatar::after{content:none}
+#tab-meduakis .fr-leader .fr-avatar.dm-member-pro>.dm-member-badge,#tab-meduakis .fr-leader .fr-avatar.dm-member-premium>.dm-member-badge{font-size:clamp(7px,1.1dvh,9px)}

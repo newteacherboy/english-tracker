@@ -44,3 +44,5 @@ test('virtual league rivals use ten different parkur badge characters',()=>{
  assert.equal(new Set(badgeCells).size,10);
  assert.match(cards[9],/school-03.webp/); // Fırtına displays exactly one cell
 });
+
+test('ten virtual Papis have five stable Pro and five Premium Pro cosmetic tiers',()=>{const f=fixture(),ui=f.context.window.dmLeagueUI;const bots=Array.from({length:10},(_,i)=>({id:'virtual-'+(i+1),name:'Papi '+(i+1),is_virtual:true}));assert.equal(bots.filter(b=>ui.virtualTier(b)==='pro').length,5);assert.equal(bots.filter(b=>ui.virtualTier(b)==='premium_pro').length,5);assert.equal(ui.virtualTier({id:'unknown'}),'free');for(const b of bots){for(const kind of ['league','friends','modal']){const html=ui.virtualMemberAvatar(b,64,kind);assert.match(html,/dm-member-badge/);assert.match(html,ui.virtualTier(b)==='pro'?/dm-member-pro/:/dm-member-premium/);assert.match(html,/dm-virtual-papi-img/);}}});
