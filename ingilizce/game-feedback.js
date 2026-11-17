@@ -106,7 +106,17 @@ window.dmShowSavedResult=o=>decorateResult(o,window.dmResultPresentation(o));
 async function saveExtraLeaderboard(o){const run=o.runId,s=o.rewardScope||scope(o.oyunKey);try{const r=await fetch(apiURL,{method:'POST',body:JSON.stringify({islem:o.oyunKey+'LiderlikKaydet',isim:name(),runId:run,sinif:s.classNo+'. Sınıf',unite:s.units.join(','),dogru:o.dogru,yanlis:o.yanlis,puan:o.puan,puanTemel:o.temelPuan,puanSurum:3,suresaniye:o.sureSaniye})});const d=await r.json();if(!r.ok||d.status!=='success')return;const list=await fetch(apiURL+'?islem='+o.oyunKey+'LiderlikTumunuGetir&sinif='+encodeURIComponent(s.classNo+'. Sınıf')+'&donem=hafta&puanSurum=3&_='+Date.now()).then(r=>r.json());if(activeRun===run)window.genelSonucSiralamaCiz?.(Array.isArray(list)?list:list.liste||[],name());}catch{if(activeRun===run){const e=document.getElementById('dmLeaderboardStatus');if(e)e.textContent='Sıralama bağlantısı tamamlanamadı. Sonucun tekrar denenecek.';}}}
 window.genelKomboGoster=function(n){if(!n||n%5!==0)return;document.querySelector('.dm-combo-celebration')?.remove();window.genelSesEfektiCal?.('kombo',n);if(window.dmRewardFx?.combo){window.dmRewardFx.combo(document.body,{streak:n});return;}const e=document.createElement('div');e.className='dm-combo-celebration';e.setAttribute('role','status');e.innerHTML='<div class="dm-combo-orbit"></div><img src="papi-reward-v2.png" alt="Kutlayan Papi"><div><small>HARİKA SERİ!</small><strong>'+n+' KOMBO</strong><span>Papi seninle gurur duyuyor!</span></div>';document.body.append(e);setTimeout(()=>e.remove(),2100);};
 // Start speech in the click handler: deferring speak can lose mobile user activation.
-function listeningStatus(message){
+function listeningStatus(message,utterance){
+ const area=document.querySelector('#bzAlan[data-rq-kind="dinleSec"],#bzAlan[data-rq-kind="patternListen"],.ds-task[data-rq-kind="dinleSec"],.ds-task[data-rq-kind="patternListen"]');
+ const button=area?.querySelector('.rq-listen');
+ if(button){
+  let fallback=area.querySelector('.dm-route-audio-fallback');
+  if(!fallback){fallback=document.createElement('span');fallback.className='dm-route-audio-fallback';fallback.setAttribute('role','status');fallback.lang='en';fallback.style.cssText='display:block;text-align:center;font-weight:800;margin:6px 0;overflow-wrap:anywhere';button.after(fallback);}
+  const word=String(utterance||'').trim();
+  fallback.textContent=message&&word?word:'';
+  fallback.hidden=!fallback.textContent;
+  if(message&&word)return;
+ }
  const target=document.getElementById('bzD1')?.parentElement||document.querySelector('.yo-dikte-dinle');
  if(!target){if(message)window.yoToast?.(message);return;}
  let el=target.parentElement.querySelector('.dm-listening-status');
@@ -151,18 +161,18 @@ if('speechSynthesis'in window&&typeof window.SpeechSynthesisUtterance==='functio
    u.onerror=function(e){
     if(ticket===voiceGeneration&&!['canceled','interrupted'].includes(e.error)){
      clearTimeout(speechTimer);
-     listeningStatus(e.error==='not-allowed'?'Sesi başlatmak için Dinle düğmesine tekrar dokun.':['voice-unavailable','language-unavailable','synthesis-unavailable'].includes(e.error)?'İngilizce okuma sesi bulunamadı. Telefonun metinden sese ayarlarında İngilizce sesini etkinleştirip tekrar dene.':'Ses açılamadı. Telefonun medya sesini kontrol edip Dinle düğmesine tekrar dokun.');
+     listeningStatus(e.error==='not-allowed'?'Sesi başlatmak için Dinle düğmesine tekrar dokun.':['voice-unavailable','language-unavailable','synthesis-unavailable'].includes(e.error)?'İngilizce okuma sesi bulunamadı. Telefonun metinden sese ayarlarında İngilizce sesini etkinleştirip tekrar dene.':'Ses açılamadı. Telefonun medya sesini kontrol edip Dinle düğmesine tekrar dokun.',u.text);
     }
     onerror?.call(this,e);
    };
    window.dmCurrentUtterance=u;listeningStatus('');nativeSpeak(u);
-   if(!started)speechTimer=setTimeout(()=>{if(ticket===voiceGeneration&&!started)listeningStatus('Ses başlamadı. Medya sesini ve telefonun İngilizce metinden sese ayarını kontrol edip Dinle düğmesine tekrar dokun.');},4000);
-  }catch{listeningStatus('Ses açılamadı. Dinle düğmesine tekrar dokun.');}
+   if(!started)speechTimer=setTimeout(()=>{if(ticket===voiceGeneration&&!started)listeningStatus('Ses başlamadı. Medya sesini ve telefonun İngilizce metinden sese ayarını kontrol edip Dinle düğmesine tekrar dokun.',u.text);},4000);
+  }catch{listeningStatus('Ses açılamadı. Dinle düğmesine tekrar dokun.',u.text);}
  };
 }
 window.dmListen=function(text,slow=false){
  const value=String(text||'').trim();if(!value)return;
- if(!('speechSynthesis'in window)||typeof window.SpeechSynthesisUtterance!=='function'){listeningStatus('Bu cihazda sesli okuma desteklenmiyor. Chrome ile açıp tekrar dene.');return;}
+ if(!('speechSynthesis'in window)||typeof window.SpeechSynthesisUtterance!=='function'){listeningStatus('Bu cihazda sesli okuma desteklenmiyor. Chrome ile açıp tekrar dene.',value);return;}
  const u=new window.SpeechSynthesisUtterance(value);u.lang='en-US';u.rate=slow?.35:.85;u.pitch=1;
  window.speechSynthesis.cancel();window.speechSynthesis.speak(u);
 };
