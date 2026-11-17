@@ -343,7 +343,7 @@ function render(){reset();if(mode==='alltime'&&accessLevel()<15)mode='weekly';
   // bu hafta henüz XP kazanmamış olanlar bulanık görünür.
   const earned=rows.filter(p=>Number(p.xp)>0),idle=rows.filter(p=>!(Number(p.xp)>0));
   content=journey(state.rows,me)+(rows.length?(earned.length?podium(earned,false)+'<div class="dm-lig-list">'+earned.slice(3).map(p=>row(p)).join('')+'</div>':'<p class="dm-lig-message">Bu hafta henüz XP kazanan yok. İlk sen ol!</p>')
-   +(idle.length?'<div class="dm-lig-idle"><p class="dm-lig-idle-note">Bu hafta henüz XP kazanmayanlar ('+idle.length+')</p><div class="dm-lig-list dm-lig-blurred" aria-hidden="true" inert>'+idle.map(p=>row(p)).join('')+'</div></div>':'')
+   +(idle.length?'<div class="dm-lig-idle"><div class="dm-lig-list dm-lig-blurred" aria-hidden="true" inert>'+idle.map(p=>row(p)).join('')+'</div></div>':'')
    :'<p class="dm-lig-message">Bu ligde henüz öğrenci yok.</p>');
  }
  else content=(rows.length?podium(rows,true)+'<div class="dm-lig-list">'+rows.slice(3,limit).map(p=>row(p)).join('')+'</div>'+(rows.length>limit?'<button type="button" class="dm-lig-more" data-lig-more>Diğer öğrencileri göster</button>':''):'<p class="dm-lig-message">15. seviyeye ulaşan öğrenciler burada sıralanacak.</p>');
