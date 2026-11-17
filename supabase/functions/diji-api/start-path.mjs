@@ -69,7 +69,8 @@ export function computeStartPath({profile,classNo,placement,choice,lessons,done,
  const startCefr=rank(chosen)>=0&&rank(chosen)<=ceiling?chosen:test&&rank(test)<=ceiling?test:base;
  const startGrade=Math.min(maxGrade,school?cls:cefrToStartGrade(startCefr));
  const learningRoute=school&&!freshTest?'needs-test':'open';
- return {legacy:false,mode,startGrade,maxGrade,startCefr,maxCefr,testLevel:test,learningRoute};
+ // [18 Kas 2026] Lise/üniversite "Okul derslerim için": Öğrenme Yolu'ndan başlar, Okul Yolum'un tüm durakları açık.
+ return {legacy:false,mode,startGrade,maxGrade,startCefr,maxCefr,testLevel:test,learningRoute,schoolOpen:wholeRoute};
 }
 
 export const cefrOpen=(path,code)=>rank(code)>=0&&rank(code)<=rank(path.maxCefr);
@@ -84,6 +85,7 @@ export function schoolStopProblem(path,ctx,stop){
  if(!Number.isInteger(stop)||door<0)return 'Geçerli parkur durağı gerekli.';
  const cls=stopClass(stop);
  if(cls>path.maxGrade)return cls+'. sınıf, '+path.maxGrade+'. sınıfın tüm durakları bitince açılır.';
+ if(path.schoolOpen)return '';
  if(cls<Number(path.startGrade||1))return '';
  const list=ctx.units[door],prev=list[list.indexOf(stop)-1],done=ctx.done||[];
  if(!done.includes(stop)&&prev!==undefined&&stopClass(prev)===cls&&!done.includes(prev))return 'Önce önceki durağı tamamla.';

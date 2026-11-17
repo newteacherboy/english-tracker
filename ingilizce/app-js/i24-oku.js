@@ -96,7 +96,7 @@
   }
   const sinifSiradaki = (b, sn) => { const d = (siraHaritasi()[b] || {})[sn]; return d === undefined ? -1 : d; };
   // Başlangıç sınıfının altındaki sınıflar tamamen serbest; başlangıç sınıfı ve üstünde duraklar sıralı.
-  const durakAcik = (b, d) => { const D = (siraHaritasi(), DURAK[b] && DURAK[b][d]); if (!D || !sinifAcik(D.sinif)) return false; const y = baslangicYolu(); if (y && D.sinif < (y.startGrade || 1)) return true; return tamam.has(D.no) || sinifSiradaki(b, D.sinif) === d; };
+  const durakAcik = (b, d) => { const D = (siraHaritasi(), DURAK[b] && DURAK[b][d]); if (!D || !sinifAcik(D.sinif)) return false; const y = baslangicYolu(); if (y && y.schoolOpen) return true; if (y && D.sinif < (y.startGrade || 1)) return true; return tamam.has(D.no) || sinifSiradaki(b, D.sinif) === d; };
   const sinifSirasi = () => { const y = baslangicYolu(), bas = y ? y.startGrade : 1; return [bas, ...[1, 2, 3, 4, 5, 6, 7, 8].filter(sn => sn > bas), ...[1, 2, 3, 4, 5, 6, 7, 8].filter(sn => sn < bas).reverse()].filter(sinifAcik); };
   const yildiz = no => (yoVar() && yo.baYildiz && (yo.baYildiz[no] || (tamam.has(no)&&yo.baYildiz[Math.floor(no/100)*100+Math.floor((no%100-51)/3)+1]))) || aktarimYildiz[no] || (tamam.has(no) ? 1 : 0);
   const bolumYildiz = b => { let t = 0; for (let d = 0; d < durakSayisi(b); d++) t += yildiz(durakNo(b, d)); return t; };
