@@ -9,6 +9,16 @@ import './progression-catalog.js';
 import items from './progression-shop.json' with {type:'json'};
 const C=(globalThis as any).DijiProgressionCatalog;
 export function progressionAPI(db:any,json:any){
+ async function membershipRows(rows:any[]){
+  const plans=new Map<string,string>();
+  for(let i=0;i<rows.length;i+=100){
+   const ids=rows.slice(i,i+100).map(r=>r.id).filter(Boolean);
+   if(!ids.length)continue;
+   const {data,error}=await db.rpc('dm_member_badge_plans',{p_ids:ids});
+   if(!error)for(const p of data||[])plans.set(p.id,p.tier);
+  }
+  return rows.map(r=>({...r,membership_tier:plans.get(r.id)||'free'}));
+ }
  const value=(body:any,q:URLSearchParams,k:string)=>body[k]??q.get(k)??'';
  async function context(a:any,includeStudy=false){
   const {data,error}=await db.rpc('dm_progress_context',{actor:a.student_id});if(error)throw error;if(!includeStudy)return a.teacher_portal_access_id?{...data,level:40}:data;
@@ -22,7 +32,9 @@ export function progressionAPI(db:any,json:any){
   if(op==='kullaniciBilgiKarti'){
    const safety=socialSafetyAPI({db,json});
    const result=await userCard(db,{viewer:a.student_id,target:value(body,q,'kullanici'),filterStudents:(rows:any[],viewer:string)=>safety.filterStudents(rows,viewer),publicParticipant,level:(xp:number)=>C.level(xp)});
-   const {status=200,...data}=result;return json(data,status);
+   const {status=200,...data}=result;
+   if(data.ok&&data.name){const {data:member}=await db.from('students').select('id').eq('username',data.name).eq('role','student').maybeSingle();if(member?.id){const plan=await db.rpc('dm_plan',{actor:member.id,account_role:'student'});return json({...data,membership_tier:['pro','premium_pro'].includes(plan.data)?plan.data:'free'},status);}}
+   return json(data,status);
   }
   if(op==='haftalikHedefSec'){
     const xp=Number(body.xp);
@@ -96,10 +108,10 @@ export function progressionAPI(db:any,json:any){
     const ctx=await context(a);if(!ctx.levelEarlyAccess&&ctx.level<15)return deny(15);
     const safety=socialSafetyAPI({db,json});
     const liste=await allTimeLeague(db,(rows:any[],viewer:string)=>safety.filterStudents(rows,viewer),a.student_id,(xp:number)=>C.level(xp),publicParticipant);
-    return json({ok:true,kapsam:'alltime',liste});
+    return json({ok:true,kapsam:'alltime',liste:await membershipRows(liste)});
    }
    const {data,error}=await db.rpc('dm_progress_league');if(error)throw error;
-   return json({ok:true,liste:await socialSafetyAPI({db,json}).filterStudents(data||[],a.student_id)});
+   return json({ok:true,liste:await membershipRows(await socialSafetyAPI({db,json}).filterStudents(data||[],a.student_id))});
   }
   if(op==='seviyeSandikAc'){const {data,error}=await db.rpc('dm_progress_chest',{actor:a.student_id,chest:String(body.sandik||'')});if(error)return deny(error.message);return json({ok:true,...data});}
   const item=(items as any[]).find(x=>x.id===String(body.item));if(!item)return json({ok:false,mesaj:'Ürün bulunamadı.'},400);
