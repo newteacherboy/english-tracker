@@ -133,15 +133,8 @@ function paywall(kind, message, retry) {
 /* ---------- Lobi (davetler) ---------- */
 let lobby = null, lobbyOwner = '', lobbyReady = false, inDuel = false, banner = null;
 function busyScreen() {
-  if (inDuel || document.hidden) return true;
-  // Ana sekmeler (Parkur, Arkadaşlar, Oyunlar, Mağaza…) da tam ekran katmandır; onlar engel sayılmaz.
-  const home = new Set(['tab-dunya','tab-aktiviteler','tab-derscalis','tab-meduakis','tab-magaza','tab-profil']);
-  const shown = el => !home.has(el.id) && el.getClientRects().length > 0 && getComputedStyle(el).visibility !== 'hidden';
-  // Oyun, parkur sorusu ya da başka bir pencere açıksa davet gösterilmez.
-  if ([...document.querySelectorAll('.ld-layer,.dc-fullscreen-overlay.active,dialog[open],#genelSonucOverlay,.game-modal-overlay,.dmpo-veil,.dm-lig-duel-overlay,.dm-perde,[role=dialog][aria-modal=true]')].some(shown)) return true;
-  const nav = document.getElementById('bottomNavMobile');
-  if (nav && !nav.getClientRects().length) return true;
-  return false;
+  // Main tabs and learning overlays must not swallow invitations.
+  return inDuel || document.hidden || !!layer;
 }
 function ensureLobby() {
   const sb = window.supabaseClient;
@@ -179,9 +172,10 @@ async function onSeek(p) {
   showBanner(p);
 }
 function showBanner(p) {
-  const until = Date.now() + 13000;
+  const until = Math.min(Date.now() + 13000, (Number(p.at) || Date.now()) + 14000);
+  if (until <= Date.now()) return;
   const el = document.createElement('aside');
-  el.className = 'ld-invite'; el.setAttribute('role', 'alertdialog'); el.setAttribute('aria-label', 'Canlı düello daveti');
+  el.className = 'ld-invite'; el.style.zIndex = '2147483647'; el.setAttribute('role', 'alertdialog'); el.setAttribute('aria-label', 'Canlı düello daveti');
   el.innerHTML = `<div class="ld-invite-top"><span class="ld-avatar ld-av-guest">${esc(p.name.slice(0,1).toLocaleUpperCase('tr-TR'))}<img src="${PAPI_INVITE}" alt=""></span>
     <span class="ld-invite-copy"><small>CANLI DÜELLO</small><b>${esc(p.name)} seninle kapışmak istiyor!</b><span>Sv. ${esc(p.level || 1)} · 6 soruluk savaş</span></span></div>
     <div class="ld-invite-bar"><i></i></div>
@@ -198,7 +192,7 @@ function showBanner(p) {
   banner = {id: p.id, el, tick};
   el.querySelector('.ld-invite-no').onclick = hideBanner;
   el.querySelector('.ld-invite-yes').onclick = async e => {
-    const btn = e.currentTarget; btn.disabled = true;
+    const btn = e.currentTarget; if (busyScreen()) { hideBanner(); return; } btn.disabled = true;
     try {
       const d = await rpc('dm_duel_live_accept', {p_duel: p.id});
       hideBanner();
