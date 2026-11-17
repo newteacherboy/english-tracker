@@ -19,12 +19,14 @@ test('number chips identify finished, current and locked stages without touching
  assert.equal(c.yo.totalXp,12600);
  assert.equal(c.yo.altin,1273);
 });
-test('egg landmark (replaces the chest) stays at the next fifth-stop landmark rather than following every active stop',()=>{
- const first=render(6,25).html,second=render(7,25).html,third=render(10,25).html;
+test('egg (replaces the chest) always sits beside the current stop',()=>{
+ const first=render(6,25),second=render(7,25);
  const position=html=>Number(html.match(/class="rt-medal-egg" data-rt="egg" style="top:([\d.]+)px"/)?.[1]);
- assert.equal(position(first),position(second),'egg should remain next to the same 10th stop');
- assert.notEqual(position(second),position(third),'egg moves when the next milestone changes');
- assert.match(first,/Yumurtam/);assert.doesNotMatch(first,/rt-medal-chest/);
+ const stopY=html=>Number(html.match(/class="rt-medal-row is-current[^"]*" style="--stop-x:[\d.]+%;--stop-y:([\d.]+)px"/)?.[1]);
+ assert.equal(position(first.html),stopY(first.html),'egg is on the current stop row');
+ assert.equal(position(second.html),stopY(second.html),'egg follows the student to the next stop');
+ assert.notEqual(position(first.html),position(second.html));
+ assert.match(first.html,/Yumurtam/);assert.doesNotMatch(first.html,/rt-medal-chest/);
 });
 test('finished stages are differentiated by color and a legible stop number',()=>{
  const css=fs.readFileSync('ingilizce/bilgi-islands.css','utf8');

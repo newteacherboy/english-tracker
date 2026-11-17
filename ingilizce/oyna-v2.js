@@ -195,7 +195,8 @@ function medalRouteMarkup(steps,current,learn){
  // Chests are map landmarks, not a marker that follows the student's current stop.
  // Put the shortcut next to the next 5th stop; it will move only when progress reaches a milestone.
  const ready=chestReady();
- const chestIndex=steps.findIndex((step,i)=>i>=current&&routeNumber(step,i,learn)%5===0);
+ // [17 Kas 2026] Yumurta hep güncel durağın yanında durur (öğrenci 26. duraktaysa 26. durağın sağında).
+ const chestIndex=steps.length?Math.max(0,Math.min(current,steps.length-1)):-1;
  const chestY=chestIndex>=0?map.layout[chestIndex]?.y:null;
  // [17 Kas 2026] Sandığın yerinde Sürpriz Yumurta (papi-yumurta.js boyar ve çatlatır). Eski sandıklar Mağaza > Sandıklarım'da.
  const chest=chestY==null?'':'<button type="button" class="rt-medal-egg" data-rt="egg" style="top:'+chestY+'px" aria-label="Sürpriz yumurta"><span class="rt-egg-art"></span><span class="rt-egg-label">Yumurtam</span></button>';
