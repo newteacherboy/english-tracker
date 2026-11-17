@@ -59,8 +59,10 @@ window.dmOpenPortalSession=function({student,seconds=0,refreshProfile=false,prof
    const member=await memberResult;if(member.error)throw member.error;
    dmSetProgress(82);
    if(turn!==epoch||name()!==owner)return false;
-   // The chosen learning route is always the student's home screen.
-   if(owner.toLowerCase()==='teacher')await window.meduAkisAc?.();else await window.dunyaAc?.();
+   // [18 Kas 2026] Uygulama Arkadaşlar sekmesiyle açılır. Rotasını henüz seçmemiş yeni üye
+   // kayıt adımlarını tamamlayabilsin diye Parkur'dan başlar.
+   const routeChosen=['school','independent'].includes(typeof yo!=='undefined'?yo?.dmLearningPurpose:null);
+   if(owner.toLowerCase()==='teacher'||routeChosen)await window.meduAkisAc?.();else await window.dunyaAc?.();
    if(turn!==epoch||name()!==owner)return false;
    dmEndProgress();$('oturumYuklemeOverlay').style.display='none';
    document.dispatchEvent(new Event('dm:login'));
