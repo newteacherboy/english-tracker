@@ -117,7 +117,7 @@ begin
   select trim(w.english) e from public.word_bank w where w.active
    and w.class_no between greatest(1,g-1) and greatest(2,g)
    and array_length(regexp_split_to_array(trim(w.english),'\s+'),1) between 3 and 9
-   and trim(w.english) ~ '[A-Za-z]{3,}'
+   and trim(w.english) ~ '[A-Za-z]{3,}' and trim(w.english) !~ '(\.\.|…)'
   order by random() limit 6) x;
 
  -- 1) Anlamı ne?
