@@ -110,13 +110,13 @@ function closeDuelModal(){duelSheet?.remove();duelSheet=null;duelBusy=false;duel
 function duelButton(name,variant='primary'){return '<button type="button" class="dm-lig-duel-action dm-lig-duel-'+variant+'">'+name+'</button>';}
 function duelMessage(message){const el=duelSheet?.querySelector('.dm-lig-duel-message');if(el)el.textContent=String(message||'');}
 const accessLevel=()=>window.dmProgression?.earlyAccess?.()?40:level();
+// [18 Kas 2026] Eski arkadaş düellosu kaldırıldı; bu düğme canlı düelloyu başlatır.
 function openRealDuel(){
- if(accessLevel()<20){window.dmProgression?.require?.('duello');const msg='🔒 Gerçek arkadaş düellosu 20. seviyede açılır (şu an '+level()+'. seviyedesin). Papi rakipleriyle pratik yapabilirsin.';if(duelSheet?.querySelector('.dm-lig-duel-message')){duelMessage(msg);const el=duelSheet.querySelector('.dm-lig-duel-message');el.classList.remove('dm-lig-duel-warn');void el.offsetWidth;el.classList.add('dm-lig-duel-warn');}else window.yoToast?.(msg);return;}
- closeDuelModal();window.dmRealDuelAc?.();
+ closeDuelModal();window.dmLiveDuel?.startLive?.();
 }
 function showDuelPlans(message='İki ücretsiz düellonu tamamladın.'){
  const m=duelModal('<div class="dm-lig-duel-hero">'+papiImg+'<h2>Papi ile maceraya devam!</h2><p>'+esc(message)+'</p></div><p>Yeni sanal düellolar için Pro veya Premium planlarını inceleyebilirsin. Satın almak zorunda değilsin; diğer oyunlar açık kalır.</p>'+
- duelButton('Pro ve Premium Paketleri','primary')+duelButton('Arkadaşını Düelloya Davet Et','secondary')+'<p class="dm-lig-duel-message"></p>');
+ duelButton('Pro ve Premium Paketleri','primary')+duelButton('Canlı Düello','secondary')+'<p class="dm-lig-duel-message"></p>');
  m.querySelector('.dm-lig-duel-primary').onclick=()=>{
   if(typeof window.DMSatis?.planlar==='function'){closeDuelModal();window.DMSatis.planlar('sanal-duello');}
   else if(window.dmAndroidBilling?.available&&typeof window.dmAndroidBilling.open==='function'){closeDuelModal();window.dmAndroidBilling.open('sanal-duello');}
@@ -130,7 +130,7 @@ async function openVirtualInfo(bot){
  '<p><b>Merhaba! Ben Papi takımından bir antrenman rakibiyim.</b> Gerçek öğrenci değilim. Buradaki XP puanım gerçek lig dereceni, haftalık ödüllerini veya yükselmeni etkilemez.</p>'+
  '<p>İlk denemende kolay, ikinci denemende daha güçlü bir Papi ile yarışacaksın. Sonucu senin cevapların belirler; kimsenin kazanması önceden ayarlanmaz.</p>'+
  '<p class="dm-lig-duel-free">🎁 İlk 2 sanal düello ücretsiz. Kazanırsan en fazla 120 XP ve 50 altın!</p>'+
- duelButton('Sanal Rakiple Düello','primary')+duelButton('Arkadaşını Düelloya Davet Et','secondary')+'<p class="dm-lig-duel-message" aria-live="polite">Hakların kontrol ediliyor…</p>');
+ duelButton('Sanal Rakiple Düello','primary')+duelButton('Canlı Düello','secondary')+'<p class="dm-lig-duel-message" aria-live="polite">Hakların kontrol ediliyor…</p>');
  m.querySelector('.dm-lig-duel-primary').onclick=()=>openVirtualGames(bot);
  m.querySelector('.dm-lig-duel-secondary').onclick=openRealDuel;
  try{
@@ -280,9 +280,9 @@ async function openVirtualSelection(){
  m.querySelectorAll('[data-bot-select]').forEach(b=>b.onclick=()=>{const p=bots.find(x=>x.id===b.dataset.botSelect);if(p)void openVirtualDirect(p);});
 }
 function openDuelChooser(){
- const m=duelModal('<div class="dm-lig-duel-hero"><img src="friends-assets/papi-fencer.webp" class="dm-lig-duel-papi" alt="Papi"><h2>Düelloya Davet Et</h2><p>Aynı oyunu ayrı ayrı oynayın, puanlarınızı yarıştırın.</p></div>'+
- duelButton(accessLevel()<20?'🔒 Arkadaşını Düelloya Davet Et · Sv. 20':'Arkadaşını Düelloya Davet Et','secondary')+duelButton('Papi Sanal Rakipleriyle Oyna','primary')+
- '<p class="dm-lig-duel-message" aria-live="polite">Papi ile ilk 2 düello ücretsiz. Gerçek arkadaş düellosu 20. seviyede açılır.</p>');
+ const m=duelModal('<div class="dm-lig-duel-hero"><img src="friends-assets/papi-fencer.webp" class="dm-lig-duel-papi" alt="Papi"><h2>Düello</h2><p>Çevrimiçi biriyle canlı kapış ya da Papi rakipleriyle pratik yap.</p></div>'+
+ duelButton('Canlı Düello','secondary')+duelButton('Papi Sanal Rakipleriyle Oyna','primary')+
+ '<p class="dm-lig-duel-message" aria-live="polite">Papi ile ilk 2 düello ücretsiz.</p>');
  m.querySelector('.dm-lig-duel-secondary').onclick=openRealDuel;
  m.querySelector('.dm-lig-duel-primary').onclick=()=>void openVirtualSelection();
 }

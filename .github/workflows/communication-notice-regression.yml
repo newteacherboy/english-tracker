@@ -13,7 +13,6 @@ on:
       - 'tests/notice-surface*'
       - 'tests/automatic-nudges-retired.test.cjs'
       - 'ingilizce/papi-feedback.js'
-      - 'ingilizce/papi-habit.js'
       - 'ingilizce/medupro.js'
       - 'ingilizce/experience-ui.js'
       - 'ingilizce/social-safety.js'
@@ -26,7 +25,6 @@ on:
       - 'supabase/functions/diji-api/announcements-api.mjs'
       - 'tests/announcements-*'
       - 'ingilizce/member-experience.js'
-      - 'ingilizce/league-momentum.js'
       - 'ingilizce/friends-ui.js'
       - 'ingilizce/teacher-workspace.js'
       - 'supabase/functions/diji-api/member-tools-api.ts'
@@ -52,7 +50,6 @@ jobs:
           name: papi-notice-surfaces
           path: /tmp/papi-notice-ui/*.png
       - run: node --check ingilizce/member-experience.js
-      - run: node --check ingilizce/league-momentum.js
       - run: node --check ingilizce/friends-ui.js
       - run: node --check ingilizce/teacher-workspace.js
       - run: node --test tests/notice-mail-center-regression.test.cjs tests/announcements-api.test.mjs tests/announcements-ui.test.cjs tests/teacher-request-policy.test.cjs tests/auto-notice-budget.test.cjs

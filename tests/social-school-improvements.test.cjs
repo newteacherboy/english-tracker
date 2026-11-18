@@ -68,13 +68,9 @@ test('purchase and school event triggers are server-backed, not client-made awar
  assert.match(sql,/delete from public\.feed_events where event_type='route_complete'/);
  assert.doesNotMatch(sql,/delete from public\.level_completions/);
 });
-test('league transitions use daily dedupe and account-specific snapshots',()=>{
- const code=fs.readFileSync('ingilizce/league-momentum.js','utf8');
- assert.match(code,/const KEY='dm\.league\.momentum\.v1:'/);
- assert.match(code,/current\.seen\.includes\(id\)/);
- assert.match(code,/current\.rank<before\.rank/);
- assert.match(code,/snapshot\.pending=null/);
- assert.match(fs.readFileSync('ingilizce/league-momentum.css','utf8'),/prefers-reduced-motion/);
+test('league ranking-change popup is retired (18 Kas 2026)',()=>{
+ assert(!fs.existsSync('ingilizce/league-momentum.js'));
+ assert(!fs.readFileSync('ingilizce/friends-ui.js','utf8').includes('league-momentum'));
 });
 
 test('school launch and quiz styles use separate day/night palettes and changing mascot art',()=>{

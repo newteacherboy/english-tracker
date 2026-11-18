@@ -238,3 +238,7 @@ html body #tab-meduakis .fr-dz-live svg{width:14px;height:14px}
  html body #tab-meduakis .fr-dz-actions{margin-left:0;gap:5px}
  html body #tab-meduakis .fr-dz-actions button,html body #tab-meduakis .fr-dz-actions .fr-dz-live{flex:1 1 0;white-space:normal;padding:0 4px;font-size:clamp(10px,3.3cqw,13px)!important;gap:3px}
 }
+/* [18 Kas 2026] Profil kartı daveti: yanıt gelmezse Papi seçeneği */
+.ld-invite-choices{width:100%;max-width:420px;display:grid;gap:10px}
+.ld-invite-choices[hidden],.ld-count[hidden],.ld-steps[hidden]{display:none!important}
+.ld-radar-idle span{animation:none;opacity:.25}

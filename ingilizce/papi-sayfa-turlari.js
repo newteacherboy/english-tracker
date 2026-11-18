@@ -43,12 +43,10 @@ const TOURS=[
  {id:'arkadaslar',tab:'tab-meduakis',title:'Arkadaşlar',ask:'Bugün sana Arkadaşlar sayfasını göstereyim mi?',steps:()=>[
   {center:true,before:()=>openTab('tab-meduakis','.fr-home'),title:'Arkadaşlar',text:'Arkadaşlarınla birlikte öğrenip yarışacağın yer. Bölümlerine bakalım.',noDots:true,next:'Başlayalım'},
   {target:'.fr-league-board',title:'Yerel Lig',text:'Haftalık ligde o hafta kazandığın XP ile sıralamaya girersin; lig her hafta yenilenir. “Sıralamayı gör” ile tüm listeyi açarsın.',tip:lockTip(5,'Lig')},
-  {target:'.fr-tile-duel',title:'Düello',text:'Canlı Düello ile anında rakip bul, arkadaşına meydan oku ya da Papi\'ye karşı oyna. 10 soruluk savaşta rakibinin canını ilk sen bitir!',tip:'Canlı Düello günde 1, Papi\'ye Karşı günde 2 ücretsiz.'},
+  {target:'.fr-tile-duel',title:'Düello',text:'Canlı Düello ile anında rakip bul ya da Papi\'ye karşı oyna. Bir oyuncunun profilinden de onu düelloya davet edebilirsin. 10 soruluk savaşta rakibinin canını ilk sen bitir!',tip:'Canlı Düello günde 1, Papi\'ye Karşı günde 2 ücretsiz.'},
   {target:'.fr-tile-people',title:'Arkadaşlarım',text:'Takip ettiğin arkadaşların burada. Birine dokunup profilini açabilirsin.'},
   {target:'.fr-tile-showcase',title:'Vitrinim',text:'Vitrininde rozetlerini sergilersin; arkadaşların seni böyle görür.'},
   {target:'.fr-tile-invite',title:'Davet et',text:'Bağlantıyı paylaş, arkadaşın da Diji Medu\'ya katılıp ligde seninle yarışsın.'},
-  {target:'#frInvitation:not(:empty)',title:'Davetler',text:'Sana gelen oyun davetleri burada çıkar; kabul edip hemen oynayabilirsin.'},
-  {target:'.fr-matches',title:'Karşılaşmalarım',text:'Düellolarını ve oyun davetlerinin sonuçlarını buradan takip edersin.',tip:lockTip(20,'Düello')},
   {center:true,img:'papi-kutlama',title:'Birlikte daha eğlenceli!',text:'Arkadaşlarını takip et, haftalık ligde yarış ve birbirinizi tebrik edin.',noDots:true,next:'Tamam',secondary:'Kapat'}
  ]},
  {id:'oyunlar',tab:'tab-aktiviteler',title:'Oyunlar',ask:'Bugün sana Oyunlar sayfasını göstereyim mi?',steps:()=>[
@@ -57,7 +55,6 @@ const TOURS=[
   {target:'.gg-filters',title:'Beceri filtresi',text:'Oyunları becerilere göre süzerek istediğin türü hızlıca bul.'},
   {target:'.gg-next',title:'Sıradaki oyun',text:'Bir sonraki kilitli oyunun hangi seviyede açılacağını ve ne kadar kaldığını gösterir.'},
   {target:'.gg-resume',title:'Son oynadığın',text:'En son oynadığın oyuna tek dokunuşla dönersin.'},
-  {target:'#ggOnlineTab',title:'Online Çift Kişilik',text:'Takip ettiğin bir arkadaşınla aynı anda ya da 24 saat içinde farklı zamanlarda oyna.',tip:lockTip(30,'İki kişilik oyunlar')},
   {target:'#ggFreeTab',title:'Kapışma',text:'Kartlarla öğren, aynı cihazda bir arkadaşınla karşılıklı yarış.'},
   {target:'#ggKonuTab',title:'Konu Oyunları',text:'Ders Çalış’taki konuları oyunla pekiştir. %80 ve üzeri başarıda 70 XP kazanırsın.'},
   {target:'[data-gg-party="break"]',title:'Mola Vakti',text:'Derslerden bağımsız, kısa ve eğlenceli oyunlar. Altın toplarsın; Free planda her oyun için günde 1 hakkın var.'},

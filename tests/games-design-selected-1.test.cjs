@@ -3,17 +3,18 @@ const test=require('node:test'),assert=require('node:assert/strict');
 const fs=require('node:fs');
 const js=fs.readFileSync('ingilizce/activity-ui.js','utf8');
 const css=fs.readFileSync('ingilizce/activity-ui.css','utf8');
-test('approved game design 1 keeps five functioning original tab IDs and category actions',()=>{
- for(const id of ['ggSoloTab','ggOnlineTab','ggFreeTab','ggKonuTab','ggBreakTab']){
+test('two-player Online tab is retired',()=>{assert(!js.includes('ggOnlineTab"'));assert(!js.includes('data-gg-party="duo"'));});
+test('approved game design 1 keeps four functioning original tab IDs (two-player tab retired) and category actions',()=>{
+ for(const id of ['ggSoloTab','ggFreeTab','ggKonuTab','ggBreakTab']){
   assert.match(js,new RegExp('id="'+id+'"'));
  }
  assert.match(js,/role="tab"/);
  assert.match(js,/aria-selected/);
  assert.match(js,/data-gg-party/);
- for(const s of ['solo','duo','free','konu','break'])assert(js.includes("data-gg-party=\""+s+"\""));
+ for(const s of ['solo','free','konu','break'])assert(js.includes("data-gg-party=\""+s+"\""));
 });
-test('all five games categories use distinct handmade 48x48 icon markup',()=>{
- for(const id of ['ggSoloTab','ggOnlineTab','ggFreeTab','ggKonuTab','ggBreakTab']){
+test('all four games categories use distinct handmade 48x48 icon markup',()=>{
+ for(const id of ['ggSoloTab','ggFreeTab','ggKonuTab','ggBreakTab']){
   const tag=js.match(new RegExp('id="'+id+'"[\\s\\S]*?<svg[^>]*viewBox="0 0 48 48"'));
   assert(tag,'missing illustrated '+id);
  }

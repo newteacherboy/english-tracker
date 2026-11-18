@@ -110,11 +110,7 @@
     if (typeof dcTumTamEkranlariKapat === 'function') dcTumTamEkranlariKapat();
     if (typeof f === 'function') f(); else if (typeof aktivitelerTamEkranAc === 'function') aktivitelerTamEkranAc();
   };
-  /* Düello durumunu 2 dakikada bir yokla: rakip oynadıysa sunucu bildirim üretir */
-  setInterval(async () => {
-    if (!girisli() || document.hidden) return;
-    try { let r = await fetch(`${apiURL}?islem=duellolarim&ogrenci=${enc(aktifOgrenciAdi)}`); let d = await r.json(); window._dlSon = (d && d.liste) || []; } catch (e) {}
-  }, 300000);   /* 2 dk → 5 dk */
+  /* [18 Kas 2026] Eski düello durumu artık sunucudan yoklanmaz. */
   /* ===== 7) Keşfet: düellolarım aç/kapa + rozet ===== */
   setInterval(() => {
     document.querySelectorAll('#tab-meduakis .dl-kart').forEach(k => {

@@ -5,7 +5,6 @@ on:
       - 'ingilizce/oyna-v2.js'
       - 'ingilizce/school-journey.*'
       - 'ingilizce/friends-ui.*'
-      - 'ingilizce/league-momentum.*'
       - 'supabase/migrations/20261017162000_feed_school_and_purchases.sql'
       - 'tests/social-school-improvements.test.cjs'
       - 'tests/first-tap-persistence.test.cjs'
@@ -15,7 +14,6 @@ on:
       - 'ingilizce/oyna-v2.js'
       - 'ingilizce/school-journey.*'
       - 'ingilizce/friends-ui.*'
-      - 'ingilizce/league-momentum.*'
       - 'supabase/migrations/20261017162000_feed_school_and_purchases.sql'
       - 'tests/social-school-improvements.test.cjs'
       - 'tests/first-tap-persistence.test.cjs'
@@ -34,7 +32,6 @@ jobs:
           node --check ingilizce/oyna-v2.js
           node --check ingilizce/school-journey.js
           node --check ingilizce/friends-ui.js
-          node --check ingilizce/league-momentum.js
       - name: Test route and social regressions
         run: |
           node --test tests/social-school-improvements.test.cjs tests/dual-route.test.cjs tests/achievement-feed-cache.test.cjs tests/first-tap-persistence.test.cjs

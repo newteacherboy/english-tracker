@@ -1,7 +1,7 @@
-name: Consistent real friend duel entry
+name: Duel invite entry (live)
 on:
   pull_request:
-    paths: ['ingilizce/medupro.js', 'ingilizce/league-ui.js', 'tests/real-duel-entry.test.cjs', 'tests/league-ui.test.cjs', '.github/workflows/real-duel-entry.yml']
+    paths: ['ingilizce/medupro.js', 'ingilizce/league-ui.js', 'tests/duel-invite-entry.test.cjs', 'ingilizce/live-duel.js', 'ingilizce/user-card.js', 'ingilizce/friends-ui.js', 'tests/league-ui.test.cjs', '.github/workflows/real-duel-entry.yml']
   workflow_dispatch:
 permissions:
   contents: read
@@ -15,4 +15,4 @@ jobs:
         with:
           node-version: '24'
       - run: npm install --prefix /tmp/duel-qa --no-audit --no-fund jsdom@26.1.0
-      - run: NODE_PATH=/tmp/duel-qa/node_modules node --test tests/real-duel-entry.test.cjs tests/league-ui.test.cjs tests/medupro-edge.test.cjs tests/medupro-presence.test.cjs
+      - run: NODE_PATH=/tmp/duel-qa/node_modules node --test tests/duel-invite-entry.test.cjs tests/league-ui.test.cjs tests/medupro-edge.test.cjs tests/medupro-presence.test.cjs

@@ -64,7 +64,8 @@ const fs=require('node:fs'),path=require('node:path'),assert=require('node:asser
   assert.equal(await page.evaluate(()=>dmTeacherPortal.beforeGame('test')),true);assert.equal(await page.evaluate(()=>localStorage.getItem('ing_token')),'self-token');assert.equal(await page.getByRole('heading',{name:'Bu oyunu kim oynayacak?'}).count(),0);
  assert.equal(await page.evaluate(()=>dmDayNightTheme.themeFor()),'night');
  console.log('PASS teacher home themes, mobile labels, navigation and game participant changes');
- for(const game of ['ucus','rota']){await page.evaluate(async game=>{window.dmClassroomOnlineOwner='Stale pupil';await dmInviteAc(game);},game);await page.getByText('Alice',{exact:true}).waitFor();assert.equal(await page.getByText('Öğrenci oturumu gerekli.',{exact:true}).count(),0);assert.equal(await page.evaluate(()=>dmClassroomOnlineOwner),null);await page.locator('.dm-perde .dm-x').click();}await page.evaluate(()=>dmArenaAc());await page.getByText('Henüz karşılaşman yok. İlk davetini gönder! 🦜',{exact:true}).waitFor();await page.locator('.dm-perde .dm-x').click();
+ assert.equal(await page.evaluate(()=>typeof window.dmInviteAc),'undefined'); // çevrimiçi iki kişilik oyunlar kaldırıldı
+ await page.evaluate(()=>dmArenaAc());await page.getByText('Henüz karşılaşman yok. İlk davetini gönder! 🦜',{exact:true}).waitFor();await page.locator('.dm-perde .dm-x').click();
  async function playing(){await page.evaluate(async()=>{window.dmGameReopeningSetup=true;try{await trenOyunAc();}finally{window.dmGameReopeningSetup=false;}document.getElementById('trenGirisEkrani').style.display='none';document.getElementById('trenOyunEkrani').style.display='block';dmGameViewport.sync();});await page.waitForTimeout(100);}
  for(let i=0;i<2;i++){
   await playing();await page.locator('#trenOyunOverlay>.dm-game-frame [data-frame="back"]').click();
