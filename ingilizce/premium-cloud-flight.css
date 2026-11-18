@@ -185,3 +185,6 @@
 @media (prefers-reduced-motion: reduce) {
   .dm-flight-crash { animation-name: dm-flight-wrong-fade; }
 }
+/* [18 Kas 2026] Sıradaki kelimenin bulutları arkada görünür; geçilen bulutlar aşağı akar. */
+.dm-flight-next { z-index: 0; pointer-events: none; filter: saturate(.85) brightness(.92); }
+.dm-flight-pass { z-index: 0; pointer-events: none; }

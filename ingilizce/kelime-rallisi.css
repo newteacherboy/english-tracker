@@ -170,3 +170,7 @@
 #rallyGame .rr-race .rr-feedback:empty{display:none}.rr-race .rr-combo{top:32%;font-size:14px}.rr-race .rr-pickups,.rr-race .rr-toast{display:none!important}
 #rallyGame .rr-race .rr-panel{background:#fffdf7;border:1px solid #fff;border-radius:26px;box-shadow:0 16px 70px #072e4c55}.rr-race .rr-route-note{background:#e9f6f4;border-radius:14px;padding:12px;color:#176b68}
 @media(orientation:landscape) and (max-height:600px){#rallyGame .rr-race .rr-mission{top:8px;left:32%;right:24%}#rallyGame .rr-race .rr-hud{right:70%}.rr-race .rr-hud-right{flex-wrap:wrap}.rr-race .rr-level{font-size:9px!important}#rallyGame .rr-race .rr-car{width:20%;bottom:13%}#rallyGame .rr-race .rr-word{font-size:22px}#rallyGame .rr-race .rr-plank{padding:5px}}
+/* [18 Kas 2026] Üst çerçeve (dm-game-framed) çentiği zaten karşılıyor: gösterge ve kelime kartı yukarı alındı. */
+#rallyGame.dm-game-framed .rr-race .rr-hud{top:4px}
+#rallyGame.dm-game-framed .rr-race .rr-hud-right{padding:7px 12px}
+#rallyGame.dm-game-framed .rr-race .rr-mission{top:74px}

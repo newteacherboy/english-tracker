@@ -122,7 +122,7 @@
         style ||= document.createElement('link');
         style.id = 'dm-flight-style';
         style.rel = 'stylesheet';
-        style.href = 'premium-cloud-flight.css?v=3';
+        style.href = 'premium-cloud-flight.css?v=4';
         style.onload = resolve;
         style.onerror = () => { style.remove(); reject(new Error('Oyun görünümü yüklenemedi.')); };
         document.head.append(style);
@@ -149,6 +149,7 @@
         </div>
         <div class="dm-flight-badges"><div class="dm-flight-plan" data-plan></div><div class="dm-flight-lives" data-lives></div></div>
         <div class="dm-flight-word" data-word lang="en"></div>
+        <div class="dm-flight-wave dm-flight-next" aria-hidden="true">${lanes.map(x => `<div class="dm-flight-cloud" style="--lane:${x}%"><span></span></div>`).join('')}</div>
         <div class="dm-flight-wave">${lanes.map(x => `<div class="dm-flight-cloud" style="--lane:${x}%"><span></span></div>`).join('')}</div>
         <div class="dm-flight-hazard" hidden><i aria-hidden="true"></i><span></span></div>
         <div class="dm-flight-plane"><img src="${assets}papi-ucak.webp" alt=""></div>
@@ -161,7 +162,9 @@
     const world = $('.dm-flight-world');
     const overlay = $('.dm-flight-overlay');
     const panel = overlay.querySelector('section');
-    const wave = $('.dm-flight-wave');
+    const wave = $('.dm-flight-wave:not(.dm-flight-next)');
+    const nextWave = $('.dm-flight-next');
+    const nextClouds = [...nextWave.children];
     const plane = $('.dm-flight-plane');
     const hazard = $('.dm-flight-hazard');
     const sound = flightAudio();
@@ -373,6 +376,10 @@
       $('[data-word]').textContent = round.en;
       round.options.forEach((word, index) => { clouds[index].firstChild.textContent = word; });
       const index = game.picks.length;
+      /* [18 Kas 2026] Akıcı uçuş: sıradaki kelimenin bulutları arkada, uzakta beklemeden yaklaşır. */
+      const upcoming = game.rounds[index + 1];
+      nextWave.hidden = !upcoming;
+      if (upcoming) upcoming.options.forEach((word, i) => { nextClouds[i].firstChild.textContent = word; });
       const obstacleIndex = Math.floor(index / 3) + game.level - 1;
       const kind = hazards[obstacleIndex % hazards.length];
       game.obstacle = index % 3 === 2 ? {lane: lanes[(obstacleIndex + index) % lanes.length], kind: kind.kind, passed: false} : null;
@@ -419,6 +426,17 @@
       impact.addEventListener('animationend', () => impact.remove(), {once: true});
       stumble();
     }
+    /* Geçilen bulutlar aniden kaybolmaz: uçağın altından akıp gider. */
+    function passWave(pick) {
+      if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      const trail = wave.cloneNode(true);
+      trail.classList.add('dm-flight-pass');
+      trail.setAttribute('aria-hidden', 'true');
+      if (pick >= 0) trail.children[pick].style.visibility = 'hidden';
+      world.append(trail);
+      trail.animate([{top: '70%', opacity: 1}, {top: '100%', opacity: 0}], {duration: 520, easing: 'ease-in', fill: 'both'})
+        .finished.then(() => trail.remove(), () => trail.remove());
+    }
     function tick(now) {
       if (game.paused) return;
       const dt = game.last === null ? 0 : Math.min(now - game.last, 50);
@@ -431,6 +449,9 @@
       const depth = Math.min(1, game.elapsed / waveMs);
       wave.style.setProperty('--y', `${40 + depth * depth * 30}%`);
       wave.style.setProperty('--scale', 0.85 + depth * 0.15);
+      nextWave.style.setProperty('--y', `${27 + depth * 13}%`);
+      nextWave.style.setProperty('--scale', 0.5 + depth * 0.35);
+      nextWave.style.opacity = String(0.35 + depth * 0.65);
       const obstacle = game.obstacle;
       if (obstacle && !obstacle.passed) {
         const approach = Math.min(1, depth / .65);
@@ -462,6 +483,7 @@
           burst.addEventListener('animationend', () => burst.remove(), {once: true});
         }
         if (pick >= 0) sound.effect(correct ? 'correct' : 'wrong');
+        passWave(pick);
         if (pick >= 0 && !correct) {
           game.wrong++;
           wrongCloud(pick);
@@ -474,6 +496,7 @@
           syncSound();
           if (crashed) {
             wave.hidden = true;
+            nextWave.hidden = true;
             hazard.hidden = true;
             plane.classList.add('dm-flight-crash');
             showFeedback('Uçak düşüyor! −10', false);
