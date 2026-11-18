@@ -138,25 +138,38 @@ const inviteUrl = code => APP_URL + '?davet=' + encodeURIComponent(code);
 const teacherInviteUrl = code => APP_URL + '?kod=' + encodeURIComponent(code) + '&zirveOgretmen=1';
 
 /* =================== ÖĞRENCİ =================== */
-function goalRow(title, count, goal, note, action = '') {
+function goalRow(title, count, goal, note, action = '', extra = '') {
   const n = Math.max(0, Number(count)||0), done = n >= goal;
-  return '<div class="zk-goal'+(done?' done':'')+'"><div class="zk-goal-top"><b>'+esc(title)+'</b><span class="zk-goal-state">'+(done?'✓ Tamamlandı':fmt(goal-n)+' kaldı')+'</span></div><div class="zk-bar" role="progressbar" aria-valuemin="0" aria-valuemax="'+goal+'" aria-valuenow="'+Math.min(n,goal)+'"><i style="width:'+Math.min(100,n/goal*100)+'%"></i></div><div class="zk-goal-foot"><small>'+fmt(Math.min(n,goal))+' / '+fmt(goal)+' · '+esc(note)+'</small>'+(action?'<button type="button" data-zk="'+action+'">Devam et ›</button>':'')+'</div></div>';
+  return '<div class="zk-goal'+(done?' done':'')+'"><div class="zk-goal-top"><b>'+esc(title)+'</b><span class="zk-goal-state">'+(done?'✓ Tamamlandı':fmt(goal-n)+' kaldı')+'</span></div><div class="zk-bar" role="progressbar" aria-valuemin="0" aria-valuemax="'+goal+'" aria-valuenow="'+Math.min(n,goal)+'"><i style="width:'+Math.min(100,n/goal*100)+'%"></i></div><div class="zk-goal-foot"><small>'+fmt(Math.min(n,goal))+' / '+fmt(goal)+' · '+esc(note)+'</small>'+(action?'<button type="button" data-zk="'+action+'">Devam et ›</button>':'')+'</div>'+extra+'</div>';
 }
+function inlineInvite(code, phase) {
+  if (!['soon','live'].includes(phase)) return '';
+  const url=code?inviteUrl(code):'';
+  return '<div class="zk-inline-invite"><b>Kişisel davet bağlantın</b>'+
+    (url?'<div class="zk-inline-url">'+esc(url)+'</div><div class="zk-inline-actions"><button type="button" data-zk="copy-invite">'+I.share+' Linki Kopyala</button><button type="button" data-zk="send-invite">Arkadaşlarına Gönder '+I.go+'</button></div>':'<button type="button" class="zk-btn small" data-zk="retry-invite">Davet bağlantısını oluştur</button>')+
+    '<button type="button" class="zk-link" data-zk="invite">Davet şartlarını ve ilerlemeyi gör</button></div>';
+}
+const inviteShareText = 'Diji Medu’da Öğretmenimle Zirveye yarışmasına katılıyorum! Benim bağlantımla gel, birlikte İngilizce öğrenelim.';
 function studentGoals(s, inviteOnly=false) {
   const inv=s.invite||{}, me=s.me||{}, n=Number(inv.verified)||0, pending=Number(inv.pending)||0;
   const canWin=n>=5, rank=Number(me.rank)||0;
   const rankText=!canWin?'🔒 '+fmt(5-n)+' doğrulanmış davet kaldı':rank&&rank<=20?'✓ Şu an ödül bölgesindesin · '+rank+'. sıra':rank?'İlk 20 için '+fmt(me.toPrize)+' XP kaldı':'Henüz sıralama yok · XP kazan';
   return '<section class="zk-card zk-goals"><h3 class="zk-ribbon">GÖREVLERİM</h3>'+
-    goalRow('🏆 5 arkadaşını davet et',n,5,'Bireysel ödül sıralamasının şartı',inviteOnly?'':'invite')+
+    goalRow('🏆 5 arkadaşını davet et',n,5,'Bireysel ödül sıralamasının şartı','',inviteOnly?'':inlineInvite(inv.code,s.campaign.phase))+
     (pending?'<p class="zk-goal-pending">⏳ '+fmt(pending)+' davet doğrulama bekliyor.</p>':'')+
     (inviteOnly?'':goalRow('⚡ Bugünkü XP hedefi',me.today,s.cap||3500,'Günlük yarışma XP üst sınırı')+
     '<div class="zk-goal"><div class="zk-goal-top"><b>🏅 İlk 20 öğrenci arasına gir</b></div><small>'+esc(rankText)+'</small><div class="zk-goal-foot"><small>Toplam '+fmt(me.xp)+' XP</small><button type="button" data-zk="'+(canWin?'rank':'invite')+'">'+(canWin?'Sıralamayı gör':'Davet et')+' ›</button></div></div>'+
     '<div class="zk-goal"><div class="zk-goal-top"><b>👑 İlk 5 öğrenci arasına gir</b></div><small>'+esc(!canWin?'Önce 5 davet şartını tamamla':rank&&rank<=5?'✓ Şu an Premium Pro ödül bölgesindesin':rank?'İlk 5 için '+fmt(me.toTop5)+' XP kaldı':'XP kazanarak sıralamaya gir')+'</small></div>')+'</section>';
 }
 async function openStudentHub() {
-  const s = await status(studentToken(), true);
-  if (!isOn(s)) { toast('Kampanya şu an açık değil.'); return; }
-  const me = s.me || {}, inv = s.invite || {}, c = s.campaign;
+  const tok=studentToken();
+  const s = await status(tok, true);
+  if (!isOn(s) || tok!==studentToken()) { toast('Kampanya şu an açık değil.'); return; }
+  const me = s.me || {}, inv = s.invite || (s.invite={}), c = s.campaign;
+  if (!s.guest && s.role==='student' && !inv.code && ['soon','live'].includes(c.phase)) {
+    try { const d=await rpc('dm_campaign_invite_code',{p_token:tok}); if(d.ok && d.code) inv.code=d.code; } catch {}
+    if(tok!==studentToken()) return;
+  }
   const rankLine = s.guest ? 'Öğretmen alanında yarışmaya katılım sayılmaz.'
     : (inv.verified||0)<5 ? 'Ödül sıralamasına girmek için '+(5-(inv.verified||0))+' doğrulanmış davet kaldı. XP toplamaya devam et!' 
     : c.phase === 'soon' ? 'Yarışma ' + day(c.startsOn) + ' günü başlıyor. Hazır ol!'
@@ -179,7 +192,14 @@ async function openStudentHub() {
   el => el.addEventListener('click', e => {
     const b = e.target.closest('[data-zk]'); if (!b) return;
     const k = b.dataset.zk;
-    if (k === 'rank') openRanking('students');
+    if(tok!==studentToken()) { closeLayer(); return; }
+    if (k === 'copy-invite' && inv.code) {
+      const url=inviteUrl(inv.code);
+      navigator.clipboard?.writeText ? navigator.clipboard.writeText(url).then(()=>toast('Bağlantı kopyalandı!')).catch(()=>prompt('Bağlantını kopyala:',url)) : prompt('Bağlantını kopyala:',url);
+    }
+    else if (k === 'send-invite' && inv.code) share(inviteShareText,inviteUrl(inv.code));
+    else if (k === 'retry-invite') openStudentHub();
+    else if (k === 'rank') openRanking('students');
     else if (k === 'invite') openInvite();
     else if (k === 'teacher') shareTeacher();
     else if (k === 'rules') openRules();
