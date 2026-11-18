@@ -672,7 +672,7 @@ function announcementAccount(s,role){
     let name='';try{name=JSON.parse(sessionStorage.getItem('dm_tp_session')||'null')?.name||window.dmTeacherPortalSession?.name||'';}catch{}
     return name||s.teacher?.code||'';
   }
-  return s.invite?.code||who()||store.get('ing_aktifOgrenci')||'';
+  return who()||store.get('ing_aktifOgrenci')||s.invite?.code||'';
 }
 function claimAnnouncement(s,role,tok){
   const id=announcementAccount(s,role);if(!id||s.guest)return false;
