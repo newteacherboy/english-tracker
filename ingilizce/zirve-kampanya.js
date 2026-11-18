@@ -570,9 +570,23 @@ function teacherHost() {
   }
   return null;
 }
+function teacherShortcutAnchor(content){
+  return content.querySelector('[data-teacher-parkur-switch]');
+}
 function teacherShortcutHost(content){
   return content.closest('#tpDashboard')?.querySelector('.tp-dash-menu') ||
-    content.querySelector('.dm-midnight-brand,.dm-v2-quick') || content;
+    teacherShortcutAnchor(content)?.parentElement ||
+    content.querySelector('.dm-v2-quick') || content;
+}
+function placeTeacherShortcut(content,target,host){
+  const anchor=teacherShortcutAnchor(content);
+  if(anchor&&anchor.parentElement===target){
+    host.classList.add('zk-teacher-home-shortcut');
+    if(host.nextElementSibling!==anchor)target.insertBefore(host,anchor);
+  }else{
+    host.classList.remove('zk-teacher-home-shortcut');
+    if(host.parentElement!==target)target.append(host);
+  }
 }
 async function mountTeacher() {
   const content = teacherHost(), tok = teacherToken();
@@ -596,8 +610,8 @@ async function mountTeacher() {
       const b=D.createElement('button');b.type='button';b.className='zk-teacher-shortcut';
       b.textContent='🏆 24 Kasım Yarışması';b.onclick=()=>{if(tok===teacherToken())openTeacherHub();};host.append(b);
       if(s.admin){const a=D.createElement('button');a.type='button';a.className='zk-teacher-shortcut';a.textContent='Yarışma Yönetimi';a.onclick=openAdmin;host.append(a);}
-      target.append(host);
-    }
+      placeTeacherShortcut(content,target,host);
+    }else placeTeacherShortcut(content,target,previous);
     if(!blocked()&&claimAnnouncement(s,'teacher',tok))teacherPopup(s);
     teacherRetryAt=Date.now()+2000;
   } finally { teacherBusy=false; }
