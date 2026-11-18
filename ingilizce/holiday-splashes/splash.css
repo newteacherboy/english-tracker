@@ -29,3 +29,23 @@ html.dm-holiday-active .dm-holiday-progress{display:none!important}
 /* Yönetici seçimi sunucudan gelene kadar (en çok 1,5 sn) açılış ekranında başka tasarım görünmesin */
 html.dm-splash-pending :is(#splashEkrani,#dmBootSplash,#oturumYuklemeOverlay)>*{visibility:hidden!important}
 html.dm-papi-intro-bg,html.dm-papi-intro-bg body,html.dm-papi-intro-bg :is(#splashEkrani,#dmBootSplash,#oturumYuklemeOverlay){background:#0A5560!important}
+
+/* 24 Kasım – Öğretmenimle Zirveye: artwork and a real Continue control. */
+html.dm-zirve-intro-active #dmBootSplash{background:#713bac!important;overflow:hidden!important;isolation:isolate}
+html.dm-zirve-intro-active #dmBootSplash > :not(.dm-zirve-opening){visibility:hidden!important}
+html.dm-zirve-intro-active #dmBootSplash .dm-zirve-opening{visibility:visible!important}
+.dm-zirve-opening{position:absolute;inset:0;z-index:10;display:grid;place-items:center;padding:env(safe-area-inset-top,0px) 0 env(safe-area-inset-bottom,0px);box-sizing:border-box;background:radial-gradient(ellipse at 50% 25%,#f6c4ed,#a462df 55%,#713bac);overflow:hidden}
+.dm-zirve-opening-frame{position:relative;width:min(100%,calc((100dvh - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px))*0.6666667));aspect-ratio:2/3;max-height:100%;background:#713bac;isolation:isolate}
+.dm-zirve-opening-art{display:block;width:100%;height:100%;object-fit:contain;animation:dmZirveReveal .55s ease-out}
+.dm-zirve-opening-control{position:absolute;left:0;right:0;bottom:0;min-height:10%;padding:4px 12% 3%;box-sizing:border-box;background:linear-gradient(180deg,#994bc7,#713bac);display:flex;flex-direction:column;justify-content:center;gap:4px}
+.dm-zirve-loading{position:relative;height:clamp(30px,7vw,45px);border:2px solid #fff;border-radius:999px;background:#4f258f;overflow:hidden;color:#fff;font:900 clamp(11px,2.8vw,17px) Nunito,system-ui,sans-serif;box-sizing:border-box}
+.dm-zirve-loading i{position:absolute;inset:0 auto 0 0;background:linear-gradient(90deg,#ffcf35,#ffed99);border-radius:999px;width:8%;transition:width .2s}
+.dm-zirve-loading span{position:absolute;inset:0;display:grid;place-items:center;color:#27115e;text-shadow:0 0 3px #fff,0 0 8px #fff;background:#ffffff55}
+.dm-zirve-continue{width:100%;min-height:clamp(44px,8vw,65px);border:2px solid #ffefb0;border-radius:999px;background:linear-gradient(#ffe65b,#ffba12);box-shadow:0 4px 0 #b77b13,0 4px 15px #ffe49d80;color:#34156b;font:900 clamp(18px,5vw,30px) Nunito,system-ui,sans-serif;cursor:pointer;animation:dmZirveReveal .35s ease-out}
+.dm-zirve-continue:focus-visible{outline:3px solid white;outline-offset:3px}
+.dm-zirve-retry{color:white;background:transparent;border:0;text-decoration:underline;cursor:pointer}
+.dm-zirve-opening [hidden]{display:none!important}
+.dm-zirve-opening-fallback{padding:12%;color:white;text-align:center;font:800 15px/1.4 Nunito,system-ui,sans-serif}
+.dm-zirve-opening-fallback h1,.dm-zirve-opening-fallback h2{color:#fff!important;-webkit-text-fill-color:#fff!important}
+@keyframes dmZirveReveal{from{opacity:.25;transform:translateY(4px)}to{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){.dm-zirve-opening-art,.dm-zirve-continue{animation:none}.dm-zirve-loading i{transition:none}}

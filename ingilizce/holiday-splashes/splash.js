@@ -19,7 +19,7 @@
  const imageNames={'15-temmuz':'15-temmuz-1','ramazan-bayrami':'ramazan-bayrami-1','kurban-bayrami':'kurban-bayrami-2','ramazan-ayi':'ramazan-ayi-2'};
  const end2026='2026-11-02';
  // Manual-only artwork (admin panel → "Seçtiğim özel tasarım"); intentionally not in the automatic calendar.
- const manualOnly=['24-kasim','papi-giris'];
+ const manualOnly=['24-kasim','24-kasim-zirve','papi-giris'];
  function addDays(s,n){const d=new Date(s+'T12:00:00Z');d.setUTCDate(d.getUTCDate()+n);return d.toISOString().slice(0,10);}
  function turkeyDate(now){return new Intl.DateTimeFormat('en-CA',{timeZone:'Europe/Istanbul',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date(now));}
  function periodsFor(cal,rule,year){
@@ -52,6 +52,7 @@ const defaultPreference={mode:'auto',disabled:[],manual:null};
   if(pref?.mode==='manual'){
    const m=pref.manual;
    const map={'23-nisan':['1','2'],'19-mayis':['1','2'],'30-agustos':['1','2'],'29-ekim':['1','2'],'10-kasim':['1','2'],'15-temmuz':['1'],'ramazan-ayi':['2'],'ramazan-bayrami':['1'],'kurban-bayrami':['2'],'24-kasim':['1'],'papi-giris':['1']};
+   if(m?.id==='24-kasim-zirve'&&m.file==='24-kasim-zirve-1.svg')return {id:m.id,file:m.file,year:+turkeyDate(now).slice(0,4),variant:1,priority:200,today:turkeyDate(now)};
    if(!m||!map[m.id]?.some(v=>m.file===m.id+'-'+v+'.jpg'))return null;
    return {id:m.id,file:m.file,year:+turkeyDate(now).slice(0,4),variant:1,priority:200,today:turkeyDate(now)};
   }
@@ -84,7 +85,45 @@ const defaultPreference={mode:'auto',disabled:[],manual:null};
    win.dmSplashPending=false;
    doc.documentElement.classList.remove('dm-splash-pending');
   }
+  // The special contest opening is held only on initial boot, not every loading overlay.
+  let zirveScreen=null,zirveReleased=false,zirveReady=false,zirveTimer=0,zirveFinish=null,zirveObserver=null;
+  const zirveFile='24-kasim-zirve-1.svg';
+  function clearZirve(){
+   clearInterval(zirveTimer);zirveTimer=0;zirveObserver?.disconnect();zirveObserver=null;
+   zirveScreen?.remove();zirveScreen=null;
+   doc.documentElement.classList.remove('dm-zirve-intro-active');
+  }
+  function mountZirve(){
+   if(zirveReleased||chosen?.id!=='24-kasim-zirve')return;
+   const boot=doc.getElementById('dmBootSplash');if(!boot||zirveScreen)return;
+   zirveObserver?.disconnect();zirveObserver=null;
+   doc.documentElement.classList.add('dm-zirve-intro-active');
+   const el=doc.createElement('div');el.className='dm-zirve-opening';el.setAttribute('role','dialog');el.setAttribute('aria-modal','true');el.setAttribute('aria-label','24 Kasım Öğretmenler Günü ve Öğretmenimle Zirveye yarışması');
+   el.innerHTML='<div class="dm-zirve-opening-frame"><img class="dm-zirve-opening-art" alt="24 Kasım Öğretmenler Günü kutlu olsun! Öğretmenimle Zirveye: 20 Kasım – 10 Aralık. 5 doğrulanmış davet ve XP ile ilk 5 öğrenciye 3 ay Premium Pro, 6–20. öğrenciye 3 ay Pro; ilk 2 öğretmene 1 yıl Premium Pro."/><div class="dm-zirve-opening-fallback" hidden><h1>24 Kasım Öğretmenler Günü kutlu olsun!</h1><h2>Öğretmenimle Zirveye!</h2><p>20 Kasım – 10 Aralık</p><p>Öğrenciler: 5 doğrulanmış davet + XP.</p><p>İlk 5: 3 ay Premium Pro · 6–20: 3 ay Pro</p><p>İlk 2 öğretmen: 1 yıl Premium Pro</p></div><div class="dm-zirve-opening-control"><div class="dm-zirve-loading" role="progressbar" aria-label="Uygulama hazırlanıyor" aria-valuemin="0" aria-valuemax="100" aria-valuenow="8"><i></i><span>Hazırlanıyor… %8</span></div><button type="button" class="dm-zirve-continue" hidden>Devam Et ›</button><button type="button" class="dm-zirve-retry" hidden>Tekrar dene</button></div></div>';
+   zirveScreen=el;boot.appendChild(el);
+   const art=el.querySelector('img'),loading=el.querySelector('.dm-zirve-loading'),button=el.querySelector('.dm-zirve-continue'),retry=el.querySelector('.dm-zirve-retry');
+   art.onerror=()=>{art.hidden=true;el.querySelector('.dm-zirve-opening-fallback').hidden=false;};
+   art.src=new URL(zirveFile,base).href;
+   let progress=8;
+   const paint=n=>{progress=Math.max(progress,n);loading.setAttribute('aria-valuenow',String(progress));loading.querySelector('i').style.width=progress+'%';loading.querySelector('span').textContent='Hazırlanıyor… %'+progress;};
+   zirveTimer=setInterval(()=>{const real=parseInt(doc.getElementById('oturumYuklemeOverlay')?.style.getPropertyValue('--dm-papi-progress')||'0',10)||0;if(!zirveReady)paint(Math.min(94,Math.max(real,progress+1)));retry.hidden=!(doc.getElementById('dmBootRetry')?.hidden===false&&!zirveReady);},250);
+   retry.onclick=()=>win.location.reload();
+   button.onclick=()=>{if(!zirveReady||zirveReleased)return;zirveReleased=true;const finish=zirveFinish;clearZirve();finish?.();};
+   el.zirveMarkReady=()=>{paint(100);loading.querySelector('span').textContent='Hazır · %100';retry.hidden=true;setTimeout(()=>{if(zirveScreen!==el)return;loading.hidden=true;button.hidden=false;button.focus?.({preventScroll:true});},300);};
+  }
+  win.dmZirveIntro={holdBoot(finish){
+   if(zirveReleased||chosen?.id!=='24-kasim-zirve')return false;
+   mountZirve();if(!zirveScreen)return false;
+   zirveFinish=finish;if(!zirveReady){zirveReady=true;zirveScreen.zirveMarkReady();}return true;
+  }};
   function updateArtwork(next){
+   if(next?.id==='24-kasim-zirve'&&!zirveReleased){
+    win.dmPapiIntro?.disable();chosen=next;
+    doc.documentElement.classList.remove('dm-holiday-active');doc.documentElement.style.removeProperty('--dm-holiday-art');
+    mountZirve();if(!zirveScreen&&doc.readyState==='loading'&&win.MutationObserver){zirveObserver=new win.MutationObserver(mountZirve);zirveObserver.observe(doc.documentElement,{childList:true,subtree:true});}
+    return;
+   }
+   if(zirveScreen||zirveObserver){const finish=zirveReady?zirveFinish:null;clearZirve();zirveReleased=true;finish?.();}
    // [11 Kas 2026] "Papi 3D Giriş": görsel yerine canlı, sesli animasyon (papi-intro.js).
    if(next&&next.id==='papi-giris'&&win.dmPapiIntro){
     doc.documentElement.classList.remove('dm-holiday-active');
@@ -113,13 +152,13 @@ const defaultPreference={mode:'auto',disabled:[],manual:null};
   function refreshPreferences(){
    if(typeof win.fetch!=='function'){decide(chosen);return;}
    /* [12 Kas 2026] Supabase yükü: seçim cihazda varsa sunucu 10 dakikada bir sorulur (her açılışta değil). */
-   try{const last=Number(win.localStorage.getItem('dm-splash-checked')||0);if(prefs&&Date.now()-last<600000){decide(chosen);return;}}catch(_){}
+   try{const last=Number(win.localStorage.getItem('dm-splash-checked-v2')||0);if(prefs&&Date.now()-last<600000){decide(chosen);return;}}catch(_){}
    win.fetch('https://nxfqlutulxqzqgwewssd.supabase.co/functions/v1/splash-settings',{cache:'no-store'})
     .then(r=>{if(!r.ok)throw Error('settings unavailable');return r.json();})
     .then(data=>{
      if(!data.ok||!data.config){decide(chosen);return;}
      prefs=data.config;
-     try{win.localStorage.setItem('dm-splash-preferences',JSON.stringify(prefs));win.localStorage.setItem('dm-splash-checked',String(Date.now()));}catch(_){}
+     try{win.localStorage.setItem('dm-splash-preferences',JSON.stringify(prefs));win.localStorage.setItem('dm-splash-checked-v2',String(Date.now()));}catch(_){}
      const next=prefResolve(new Date(),calendar,prefs);
      if(!decided){decide(next);return;}
      if(next?.file!==chosen?.file)updateArtwork(next);
