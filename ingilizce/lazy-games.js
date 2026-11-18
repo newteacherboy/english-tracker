@@ -2,7 +2,7 @@
 (()=>{'use strict';
   const premiumFile='premium-word-match.js?v=20261114-flow';
   const introFile='premium-intro.js?v=20261114-daily-one-card';
-  const files=['solo-arcade.js?v=82a3b3891e','harf-bahcesi.js?v=b936541467','papi-cards.js?v=b9d02db518','meteor.js?v=9460b40009','word-wheel.js?v=dc87a710bb','kelime-rallisi.js?v=20261114-flow'];
+  const files=['solo-arcade.js?v=82a3b3891e','harf-bahcesi.js?v=b936541467','papi-cards.js?v=b9d02db518','meteor.js?v=9460b40009','word-wheel.js?v=dc87a710bb','kelime-rallisi.js?v=20261118-curve'];
   const loaded=new Set();let pending=null,readyDone=false;
   function script(src){window.dmLateCss?.();return new Promise((resolve,reject)=>{
     if(loaded.has(src)){resolve();return;}
@@ -41,7 +41,7 @@
   const flightProxy=async ()=>{
     const owner=typeof aktifOgrenciAdi==='undefined'?'':aktifOgrenciAdi;
     try{
-      await (flightLoading??=Promise.all([script(introFile),script('premium-cloud-flight.js?v=20261114-flow')]).catch(error=>{flightLoading=null;throw error;}));
+      await (flightLoading??=Promise.all([script(introFile),script('premium-cloud-flight.js?v=20261118-stream')]).catch(error=>{flightLoading=null;throw error;}));
       if(owner!==(typeof aktifOgrenciAdi==='undefined'?'':aktifOgrenciAdi))return;
       if(window.premiumBulutUcusuAc!==flightProxy)await window.premiumBulutUcusuAc();
     }catch(error){window.yoToast?.(error.message);}
