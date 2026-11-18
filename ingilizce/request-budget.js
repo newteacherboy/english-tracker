@@ -25,6 +25,27 @@
     'memberStatus','ogretmenBilgim','ogretmenSohbetListesi','sohbetGetir','benimIstatistik',
     'akisOlaylariGetir','odevlerim','etkinlikleriGetir','videolariGetir','buyuSeviyeIlerlemeGetir']);
   const liveReads=new Set(['oyunEslesmeDurum','aktifDurum']);
+  // [18 Kas 2026] Supabase yükü: öğretmen panelinde sınıf (katılımcı) oturumunun sunucunun zaten reddettiği
+  // kişisel işlemleri (günde ~1.100 istek, hepsi 403) sunucuya hiç gitmez; cevap sunucununkiyle aynıdır.
+  // Liste sunucudaki portalOperationAllowed (supabase/functions/diji-api/teacher-portal.mjs) ile birebir aynıdır.
+  const portalAlways=new Set(['kelimeCarkiBaslat','kelimeCarkiCevir','kelimeCarkiCevap','kelimeCarkiBitir','kelimeCarkiDurum','kelimeCarkiSiralama','','oturumBilgisi','cikis','sonGirisGuncelle','iletisimDurumu','memberStatus','wordReviewList','wordReviewAnswer','seviyeDurumu','sosyalOgrencilerGetir','kelimeleriGetir','kelimeHavuzuGetir','tumKelimeleriGetir','seviyeOyunOdulu','enerjiDurumuGetir','publicCatalogVersion','kelimelerGetir','kategorileriGetir','dogruYanlisSorulariGetir','etkinlikTanimlariGetir','konusmaEsAnlamlarGetir','companionDialogueOpen','companionDialogueAnswer','enerjiDegistir','okumaHiziKaydet','okumaGecmisGetir','dersKonulariGetir','dersKonuDetayGetir','dersTestSonucKaydet','dersBilmiyordumToggle','companionSummary','companionDialogues','dialogueList','dialogueStart','dialogueAnswer','dialogueComplete','reviewList','reviewAnswer','companionReview','companionDialogue','companionDialogueComplete']);
+  function portalAllowed(op,b){
+    if(portalAlways.has(op))return true;
+    if(op==='ekVeriGetir')return ['yo','seviye','oyun'].includes(b.anahtar);
+    if(op==='ekVeriKaydet')return b.anahtar==='yo';
+    if(op==='ekonomi')return ['durum','odulTalep','oyunGiris','enerjiHarca','jokerKullan'].includes(b.is);
+    return /^(verifiedGame(Start|Answer|Status)|mola(Durum|Baslat|Bitir|Siralama|BolumGec)|konuOyun(Baslat|Cevap|Bitir|Durum|Siralama)|papi(Kart|Cards)|meteor|wheel|papiWheel|papiMeteor|ralli)/.test(op)||/^(kelime|jeopardy|bosluk|hafiza|yagmur|asmaca|kelimebul|eslestirme|tren|dikte|cumle|harfBahcesi|canavar|kule|fener|konusma).*(LiderlikKaydet|LiderlikGetir|LiderlikTumunuGetir|Liderlik)$/.test(op);
+  }
+  function portalDenied(d,input,opt){
+    if(!window.dmTeacherPortalMode||!d.url.pathname.endsWith('/diji-api'))return false;
+    let role='';try{role=window.dmTeacherRequestRole?.(input,opt)||'';}catch{return false;}
+    if(role!=='participant')return false;
+    // GET isteğinde çağıran açıkça başka bir jeton verdiyse sunucu onu kullanır: dokunma.
+    const method=String(opt?.method||'GET').toUpperCase();
+    if(method!=='POST'&&d.args.t&&d.args.t!==d.token)return false;
+    const op=d.op==='KOK'?'':d.op;
+    return !portalAllowed(op,d.args);
+  }
   // Requests that change nothing other cached reads depend on: send them, but keep the cache.
   const passive=new Set(['kaydet','iletisimDurumu','yeniPuanBildirimleriGetir','sonGirisGuncelle']);
   const batchable=new Set(['bildirimlerim','ilerlemeOzet','enerjiDurumuGetir','duyurulariGetir',
@@ -137,10 +158,16 @@
       }catch(e){part.forEach(x=>x.reject(e));}
     }
   }
+  // [18 Kas 2026] Bu fonksiyonlar gövdeyi türüne bakmadan JSON okur: yalnız Content-Type başlığı olan POST'lar düz metin
+  // gönderilir, böylece her çağrıdan önceki ayrı OPTIONS (ön kontrol) çağrısı oluşmaz (günde ~350).
+  const plainBodyFunctions=new Set(['premium-games','thematic-learning','papi-rewards']);
+  function plainBody(input){try{if(typeof input!=='string'||!input.startsWith(endpoint))return false;return plainBodyFunctions.has(new URL(input).pathname.split('/').pop());}catch{return false;}}
   window.fetch=async function(input,opt){
+    if(plainBody(input))return native(input,simple(opt));
     let d;try{d=describe(input,opt);}catch{return native(input,opt);}
     if(!d)return native(input,opt);
     const current=actor();if(current!==identity){identity=current;clear();}
+    if(portalDenied(d,input,opt)){stats.portalSkips=(stats.portalSkips||0)+1;return new Response(JSON.stringify({ok:false,mesaj:'Bu işlem için kişisel hesabına geç.'}),{status:403,headers:{'Content-Type':'application/json'}});}
     if(!d.token&&!window.dmTeacherPortalMode&&personal.has(d.op))return new Response(JSON.stringify({ok:false,mesaj:'Bu işlem için kişisel hesabın gerekli.'}),{status:403,headers:{'Content-Type':'application/json'}});
     if(liveReads.has(d.op)||passive.has(d.op))return native(tagged(input,d),simple(opt));
     if(!reads.has(d.op)&&!content.has(d.op)){

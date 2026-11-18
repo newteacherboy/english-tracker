@@ -38,7 +38,8 @@ function endpoint(){return typeof apiURL==='string'?apiURL.replace(/\/diji-api(?
 function token(){return sessionStorage.getItem('ing_ogr_token')||localStorage.getItem('ing_token')||'';}
 async function call(action){
  const url=endpoint(),t=token();if(!url.endsWith('/papi-rewards')||!t)throw Error('Öğrenci hesabınla giriş yap.');
- const r=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json','x-diji-token':t},body:JSON.stringify({action})});
+ // [18 Kas 2026] Jeton gövdede, düz metin: tarayıcı ayrı ön kontrol (OPTIONS) isteği atmaz (günde ~600 çağrı). Sunucu b.t'yi okur.
+ const r=await fetch(url,{method:'POST',headers:{'Content-Type':'text/plain;charset=UTF-8'},body:JSON.stringify({action,t})});
  const d=await r.json();if(r.ok===false||!d?.ok)throw Object.assign(Error(d?.mesaj||'Bağlantı kurulamadı. Tekrar dene.'),{code:d?.code});return d;
 }
 function reset(){if(owner===who())return;turn++;owner=who();state=null;inflight=null;lastCheck=0;document.querySelectorAll('.rt-medal-egg').forEach(b=>delete b.dataset.sig);paint();}
@@ -131,7 +132,13 @@ async function hatch(b){
   b.classList.remove('is-hatching','is-pecked');delete b.dataset.sig;document.body.classList.remove('dm-egg-hatching');busy=false;paint();
  }
 }
-function schedule(){if(queued)return;queued=true;requestAnimationFrame(()=>{queued=false;reset();paint();if(parked())void check();});}
+/* [18 Kas 2026] Supabase yükü: parkurdaki her sınıf/stil değişiminde (Papi yürürken sürekli) 15 sn'de bir sunucuya
+   soruluyordu. Yumurta durumu yalnız durak bitince (dm:state), girişte ve uygulamaya dönünce değişir; burada
+   yalnız ekrandaki yumurta yeniden çizilir, durum hiç alınmadıysa bir kez sorulur. */
+let stale=false;
+function schedule(){if(queued)return;queued=true;requestAnimationFrame(()=>{queued=false;reset();paint();if(parked()){if(state&&!stale)maybeAuto();else{stale=false;void check({force:true});}}});}
+// Durak bitince sayı değişir: parkura dönüldüğünde (harita yeniden çizilince) durum bir kez yeniden alınır.
+for(const ev of ['dm:school-lesson-completed','dm:lesson-completed','dm:learning-progress'])document.addEventListener(ev,()=>{stale=true;});
 const tab=document.getElementById('tab-dunya');
 if(tab){new MutationObserver(ms=>{if(ms.some(m=>m.type==='attributes'||[...m.addedNodes].some(n=>n.nodeType===1&&(n.matches?.('.rt-medal-egg')||n.querySelector?.('.rt-medal-egg')))))schedule();}).observe(tab,{attributes:true,attributeFilter:['class','style'],childList:true,subtree:true});
  tab.addEventListener('scroll',()=>{if(state?.ready)maybeAuto();},{capture:true,passive:true});}

@@ -21,7 +21,9 @@
  // Manual-only artwork (admin panel → "Seçtiğim özel tasarım"); intentionally not in the automatic calendar.
  const manualOnly=['24-kasim','24-kasim-zirve','papi-giris'];
  function addDays(s,n){const d=new Date(s+'T12:00:00Z');d.setUTCDate(d.getUTCDate()+n);return d.toISOString().slice(0,10);}
- function turkeyDate(now){return new Intl.DateTimeFormat('en-CA',{timeZone:'Europe/Istanbul',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date(now));}
+ // [18 Kas 2026] Hız: tarih biçimleyici bir kez kurulur (her çağrıda yeni Intl nesnesi yavaştı).
+ let trDateFormat=null;
+ function turkeyDate(now){if(!trDateFormat)trDateFormat=new Intl.DateTimeFormat('en-CA',{timeZone:'Europe/Istanbul',year:'numeric',month:'2-digit',day:'2-digit'});return trDateFormat.format(new Date(now));}
  function periodsFor(cal,rule,year){
   if(rule.religious)return cal?.periods?.[rule.religious]||[];
   return [year-1,year,year+1].map(y=>{const date=y+'-'+String(rule.month).padStart(2,'0')+'-'+String(rule.day).padStart(2,'0');return [date,date];});
@@ -63,13 +65,17 @@ const defaultPreference={mode:'auto',disabled:[],manual:null};
   const doc=win.document;
   const src=doc.currentScript?.src||new URL('holiday-splash.js',doc.baseURI).href;
   const base=new URL('.',src);
+  /* [18 Kas 2026] Öğretmen panelinde (?ogretmen=1) window.localStorage sınıf için ayrılmış geçici depoyla
+     değiştiriliyor; açılış tercihi orada bulunamadığından önce boş/eski açılış ekranı, 1,5 sn sonra Papi girişi
+     görünüyordu ("başka bir giriş ekranı" etkisi). Açılış tercihleri her zaman cihazın asıl deposundan okunur. */
+  let store;try{store=(win.dmTeacherDevice&&win.dmTeacherDevice.storage)||win.localStorage;}catch(_){store={getItem:()=>null,setItem(){},removeItem(){}};}
   let calendar=win.DM_HOLIDAY_DATES||{periods:{}};
   try{
-   const saved=JSON.parse(win.localStorage.getItem('dm-holiday-calendar'));
+   const saved=JSON.parse(store.getItem('dm-holiday-calendar'));
    if(saved?.periods&&Number(saved?.verified?.replace(/-/g,''))>Number(calendar.verified?.replace(/-/g,'')))calendar=saved;
   }catch(_){}
   let prefs=defaultPreference;
-  try{const cached=JSON.parse(win.localStorage.getItem('dm-splash-preferences')||'null');if(cached&&['auto','normal','manual'].includes(cached.mode))prefs=cached;}catch(_){}
+  try{const cached=JSON.parse(store.getItem('dm-splash-preferences')||'null');if(cached&&['auto','normal','manual'].includes(cached.mode))prefs=cached;}catch(_){}
   let chosen=prefResolve(new Date(),calendar,prefs);
   /* [11 Kas 2026] Yönetici panelinde seçilen tasarım dışında hiçbir şey görünmesin:
      sunucu cevabı gelene kadar (en çok 1,5 sn) açılış ekranının içi gizli bekler; cevap yoksa kayıtlı seçim kullanılır. */
@@ -152,13 +158,13 @@ const defaultPreference={mode:'auto',disabled:[],manual:null};
   function refreshPreferences(){
    if(typeof win.fetch!=='function'){decide(chosen);return;}
    /* [12 Kas 2026] Supabase yükü: seçim cihazda varsa sunucu 10 dakikada bir sorulur (her açılışta değil). */
-   try{const last=Number(win.localStorage.getItem('dm-splash-checked-v2')||0);if(prefs&&Date.now()-last<600000){decide(chosen);return;}}catch(_){}
+   try{const last=Number(store.getItem('dm-splash-checked-v2')||0);if(prefs&&Date.now()-last<600000){decide(chosen);return;}}catch(_){}
    win.fetch('https://nxfqlutulxqzqgwewssd.supabase.co/functions/v1/splash-settings',{cache:'no-store'})
     .then(r=>{if(!r.ok)throw Error('settings unavailable');return r.json();})
     .then(data=>{
      if(!data.ok||!data.config){decide(chosen);return;}
      prefs=data.config;
-     try{win.localStorage.setItem('dm-splash-preferences',JSON.stringify(prefs));win.localStorage.setItem('dm-splash-checked-v2',String(Date.now()));}catch(_){}
+     try{store.setItem('dm-splash-preferences',JSON.stringify(prefs));store.setItem('dm-splash-checked-v2',String(Date.now()));}catch(_){}
      const next=prefResolve(new Date(),calendar,prefs);
      if(!decided){decide(next);return;}
      if(next?.file!==chosen?.file)updateArtwork(next);
@@ -169,16 +175,16 @@ const defaultPreference={mode:'auto',disabled:[],manual:null};
   const current=win.DM_HOLIDAY_DATES?.verified||'';
   function syncRemote(){
    try{
-    const key='dm-holiday-last-check',last=Number(win.localStorage.getItem(key)||0);
+    const key='dm-holiday-last-check',last=Number(store.getItem(key)||0);
     if(Date.now()-last<24*60*60*1000)return;
-    win.localStorage.setItem(key,String(Date.now()));
+    store.setItem(key,String(Date.now()));
     // Refreshed by a scheduled GitHub Action, independent of GitHub Pages caches.
     const url='https://raw.githubusercontent.com/newteacherboy/english-tracker/main/ingilizce/holiday-splashes/dates.json';
     win.fetch(url,{cache:'no-store',signal:win.AbortSignal?.timeout?.(8000)}).then(r=>{if(!r.ok)throw Error('calendar offline');return r.json();}).then(data=>{
      if(data?.periods&&/^\d{4}-\d{2}-\d{2}$/.test(data.verified)&&data.verified>=current){
-      win.localStorage.setItem('dm-holiday-calendar',JSON.stringify(data));
+      store.setItem('dm-holiday-calendar',JSON.stringify(data));
      }
-    }).catch(()=>{win.localStorage.removeItem(key);});
+    }).catch(()=>{store.removeItem(key);});
    }catch(_){}
   }
 
