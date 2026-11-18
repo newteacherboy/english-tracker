@@ -2293,16 +2293,18 @@ async function handle(req: Request, proxy: any = null) {
     return json({ ok: true });
   }
   /* [v4.0] Bağımsız öğrenci sonradan öğretmen koduyla öğretmenine bağlanabilir */
-  if (op === "ogretmenKoduBagla") {
+  if (op === "ogretmenKoduBagla" || op === "ogretmenDavetOnizle") {
     const name = String(val(body, q, "ogrenci")); const deny = await requireStudent(a, name); if (deny) return deny;
     const s = await hedefOgrenci(a, name); if (!s) return bulunamadi();
-    if (s.teacher_id) return json({ ok: false, mesaj: "Zaten bir öğretmene bağlısın." });
     const kod = String(body.kod || "").trim().toUpperCase().replace(/[^A-Z0-9]/g, "");
-    const { ogretmen: t, sinif: kodSinif } = await kodlaOgretmen(kod, "id,full_name,username,email,active");
-    if (!t || t.active === false) return json({ ok: false, mesaj: "Öğretmen kodu bulunamadı." });
+    const { ogretmen: t, sinif: kodSinif } = await kodlaOgretmen(kod, "id,full_name,username,email,active,frozen_at");
+    if (!t || t.active !== true || t.frozen_at) return json({ ok: false, mesaj: "Öğretmen kodu bulunamadı." });
+    if (s.teacher_id) return json({ ok: false, alreadyLinked: s.teacher_id === t.id, otherTeacher: s.teacher_id !== t.id, mesaj: "Zaten bir öğretmene bağlısın." });
     const sinifKontrol = classCodeCheck(kodSinif, s.class_no);
     if (!sinifKontrol.ok) return json({ ok: false, mesaj: sinifKontrol.mesaj });
-    await supabase.from("students").update(sinifKontrol.branch ? { teacher_id: t.id, branch: sinifKontrol.branch } : { teacher_id: t.id }).eq("id", s.id);
+    if (op === "ogretmenDavetOnizle") return json({ ok: true, ogretmen: t.full_name || t.username });
+    const linked = await supabase.from("students").update(sinifKontrol.branch ? { teacher_id: t.id, branch: sinifKontrol.branch } : { teacher_id: t.id }).eq("id", s.id).is("teacher_id", null).select("id").maybeSingle();
+    if (linked.error || !linked.data) return json({ ok: false, mesaj: "Bağlantı kurulamadı veya artık başka bir öğretmene bağlısın." });
     if (/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(String(t.email || "").trim())) await kuyrugaEkle({ to_email: String(t.email).trim(), kind: "kayit", student_id: s.id, subject: `${s.username} artık senin öğrencin`,
       html: mailKabugu("Yeni Öğrenci", `<p><b>${hk(s.username)}</b> öğretmen kodunu girerek sana bağlandı. Artık onun değerlendirmelerini, mesajlarını ve ödevlerini sen yönetiyorsun.</p>`) });
     return json({ ok: true, ogretmen: t.full_name || t.username });
