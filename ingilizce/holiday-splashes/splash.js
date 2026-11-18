@@ -109,12 +109,12 @@ const defaultPreference={mode:'auto',disabled:[],manual:null};
    zirveTimer=setInterval(()=>{const real=parseInt(doc.getElementById('oturumYuklemeOverlay')?.style.getPropertyValue('--dm-papi-progress')||'0',10)||0;if(!zirveReady)paint(Math.min(94,Math.max(real,progress+1)));retry.hidden=!(doc.getElementById('dmBootRetry')?.hidden===false&&!zirveReady);},250);
    retry.onclick=()=>win.location.reload();
    button.onclick=()=>{if(!zirveReady||zirveReleased)return;zirveReleased=true;const finish=zirveFinish;clearZirve();finish?.();};
-   el.zirveMarkReady=()=>{paint(100);loading.hidden=true;retry.hidden=true;button.hidden=false;button.focus?.({preventScroll:true});};
+   el.zirveMarkReady=()=>{paint(100);loading.querySelector('span').textContent='Hazır · %100';retry.hidden=true;setTimeout(()=>{if(zirveScreen!==el)return;loading.hidden=true;button.hidden=false;button.focus?.({preventScroll:true});},300);};
   }
   win.dmZirveIntro={holdBoot(finish){
    if(zirveReleased||chosen?.id!=='24-kasim-zirve')return false;
    mountZirve();if(!zirveScreen)return false;
-   zirveFinish=finish;zirveReady=true;zirveScreen.zirveMarkReady();return true;
+   zirveFinish=finish;if(!zirveReady){zirveReady=true;zirveScreen.zirveMarkReady();}return true;
   }};
   function updateArtwork(next){
    if(next?.id==='24-kasim-zirve'&&!zirveReleased){
