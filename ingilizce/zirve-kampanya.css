@@ -321,3 +321,8 @@ body .zk-veil .zk-pop h2 em,body .zk-layer .zk-hero h2 em{color:#6B2FE0!importan
 [data-zk-teacher-shortcut] .zk-teacher-shortcut{font:800 12px/1.2 Nunito,system-ui,sans-serif;color:#6040b3;background:#f2eaff;border:1px solid #d9c8f6;border-radius:10px;padding:8px 10px;cursor:pointer;min-height:36px}
 #tpDashboard .tp-dash-menu > [data-zk-teacher-shortcut]{grid-column:1/-1}
 #tpDashboard .tp-dash-menu .zk-teacher-shortcut{flex:1;min-width:0}
+
+/* Campaign entry occupies its own row immediately above the personal Parkur switch. */
+#tpTeacherHome .zk-teacher-home-shortcut{width:100%;min-width:0;box-sizing:border-box;display:flex;gap:6px;flex-wrap:wrap;align-items:stretch}
+#tpTeacherHome .zk-teacher-home-shortcut .zk-teacher-shortcut{flex:1 1 auto;min-height:44px;font-size:14px;line-height:1.2;border-radius:14px;padding:10px 12px;color:#fff;background:linear-gradient(135deg,#9256f0,#6b2fce);border:1px solid #7540ce;box-shadow:0 3px 0 #55259e;text-align:center}
+#tpTeacherHome .zk-teacher-home-shortcut .zk-teacher-shortcut + .zk-teacher-shortcut{flex:0 1 auto;background:#f2eaff;color:#6040b3;border-color:#d9c8f6;box-shadow:none;font-size:12px}
