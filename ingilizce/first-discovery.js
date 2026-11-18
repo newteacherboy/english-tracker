@@ -20,6 +20,9 @@
  let draft={role:'student',purpose:'',ageBand:'',educationStage:'',goal:'daily',startChoice:'new',knownLevel:'A1',first:'',last:'',username:'',grade:'',branch:'',school:'',schoolCity:'',schoolDistrict:'',code:new URLSearchParams(location.search).get('kod')||'',phone:'',email:'',method:'email',consent:false};
  const parse=(storage,key)=>{try{return JSON.parse(storage.getItem(key)||'null');}catch(_){return null;}};
  const saved=parse(ctx.session,DRAFT);if(saved&&Date.now()-saved.savedAt<3600000){draft={...draft,...saved.values,consent:false};if(draft.startChoice==='some')draft.startChoice='new';}else ctx.session.removeItem(DRAFT);
+ const inviteParams=new URLSearchParams(location.search);
+ const incomingTeacher=inviteParams.get('zirveOgretmen')==='1'?(inviteParams.get('kod')||'').trim().toUpperCase():'';
+ if(/^[A-Z0-9]{1,10}$/.test(incomingTeacher)){draft.role='student';draft.code=incomingTeacher;save();}
  const summary=parse(ctx.raw,SUMMARY);demoComplete=!!summary?.completed;
  function save(){ctx.session.setItem(DRAFT,JSON.stringify({savedAt:Date.now(),values:{...draft,consent:false}}));}
  function setSummary(){const value={completed:true,total:6,correct,seconds:Math.max(1,Math.round((Date.now()-startedAt)/1000)),at:new Date().toISOString()};ctx.raw.setItem(SUMMARY,JSON.stringify(value));demoComplete=true;}
