@@ -1906,6 +1906,7 @@ mesajlar.forEach(m => {
                     else if (oyunTuru === 'cumle') cumleAc();
                     else if (oyunTuru === 'okuma') okumaStudyosunuAc();
                     else if (oyunTuru === 'pomodoro') pomodoroAc();
+                    else if (oyunTuru === 'ucus' || oyunTuru === 'rota') { window.dmClassroomOnlineOwner=ogr; window.dmInviteAc?.(oyunTuru); }
                     else if (oyunTuru === 'harfbahcesi') window.harfBahcesiAc?.();
                     else if (oyunTuru === 'papicards') window.dmPapiCards?.open?.();
                     else if (oyunTuru === 'meteor') window.dmMeteor?.open?.();

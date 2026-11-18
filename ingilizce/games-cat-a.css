@@ -1,0 +1,26 @@
+/* [18 Kas 2026] Oyunlar › Ücretsiz Oyunlar: öğrenci için "A · Büyük resimli kartlar".
+   Tek Kişilik (mavi) ve Mola Vakti (mercan) yan yana; resim üstte, ad ve kısa açıklama altta.
+   Öğretmen görünümü (Sınıfta Oyna, Konu Oyunları) bu dosyadan etkilenmez: .gg-cat-a yalnız öğrencide. */
+/* Uygulamanın oyun kartı kuralları bilgiIslands katmanında; aynı katmanda olmazsa !important kuralları kazanamaz. */
+@layer bilgiIslands{
+#tab-aktiviteler .gg-page:not(.gg-cat-a) .gg-tabs>button .gg-category-sub{display:none!important}
+html body #tab-aktiviteler#tab-aktiviteler#tab-aktiviteler .gg-page.gg-cat-a .gg-tabs{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:12px!important}
+html body #tab-aktiviteler#tab-aktiviteler#tab-aktiviteler .gg-page.gg-cat-a .gg-tabs>#ggSoloTab,
+html body #tab-aktiviteler#tab-aktiviteler#tab-aktiviteler .gg-page.gg-cat-a .gg-tabs>#ggBreakTab{display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:flex-start!important;gap:6px!important;min-height:0!important;height:auto!important;padding:14px 10px 12px!important;border-radius:22px!important;border:2.5px solid transparent!important;text-align:center!important;box-shadow:0 4px 0 var(--gg-a-edge)!important;transform:none!important;transition:transform .15s ease,box-shadow .15s ease,border-color .15s ease!important;grid-column:auto!important}
+html body #tab-aktiviteler#tab-aktiviteler#tab-aktiviteler .gg-page.gg-cat-a .gg-tabs>#ggSoloTab{--gg-a-edge:#9DBEF3;--gg-a-ink:#173D84;--gg-a-sub:#2B5FC0;background:#DCEBFF!important}
+html body #tab-aktiviteler#tab-aktiviteler#tab-aktiviteler .gg-page.gg-cat-a .gg-tabs>#ggBreakTab{--gg-a-edge:#F2B8A0;--gg-a-ink:#7A2E14;--gg-a-sub:#C2502A;background:#FFE6DC!important}
+html body #tab-aktiviteler#tab-aktiviteler#tab-aktiviteler .gg-page.gg-cat-a .gg-tabs>#ggSoloTab[aria-pressed=true]{border-color:#3A7BEA!important;box-shadow:0 4px 0 #2B5FC0!important}
+html body #tab-aktiviteler#tab-aktiviteler#tab-aktiviteler .gg-page.gg-cat-a .gg-tabs>#ggBreakTab[aria-pressed=true]{border-color:#E06A3C!important;box-shadow:0 4px 0 #C2502A!important}
+html body #tab-aktiviteler#tab-aktiviteler#tab-aktiviteler .gg-page.gg-cat-a .gg-tabs>#ggSoloTab:active,
+html body #tab-aktiviteler#tab-aktiviteler#tab-aktiviteler .gg-page.gg-cat-a .gg-tabs>#ggBreakTab:active{transform:translateY(3px)!important;box-shadow:0 1px 0 var(--gg-a-edge)!important}
+html body #tab-aktiviteler#tab-aktiviteler#tab-aktiviteler .gg-page.gg-cat-a .gg-tabs>#ggSoloTab .gg-category-art,
+html body #tab-aktiviteler#tab-aktiviteler#tab-aktiviteler .gg-page.gg-cat-a .gg-tabs>#ggBreakTab .gg-category-art{display:block!important;width:88px!important;height:80px!important;flex:0 0 auto!important;margin:0 auto!important;background:transparent!important;border:0!important;border-radius:20px!important;overflow:hidden!important;box-shadow:none!important}
+html body #tab-aktiviteler#tab-aktiviteler#tab-aktiviteler .gg-page.gg-cat-a .gg-tabs>#ggSoloTab .gg-category-copy,
+html body #tab-aktiviteler#tab-aktiviteler#tab-aktiviteler .gg-page.gg-cat-a .gg-tabs>#ggBreakTab .gg-category-copy{display:flex!important;flex-direction:column!important;align-items:center!important;gap:1px!important;min-width:0!important;width:100%!important}
+html body #tab-aktiviteler#tab-aktiviteler#tab-aktiviteler .gg-page.gg-cat-a .gg-tabs>button .gg-category-name{display:block!important;font-size:17px!important;line-height:1.15!important;font-weight:900!important;color:var(--gg-a-ink)!important;white-space:nowrap!important}
+html body #tab-aktiviteler#tab-aktiviteler#tab-aktiviteler .gg-page.gg-cat-a .gg-tabs>button .gg-category-sub{display:block!important;font-size:12.5px!important;line-height:1.2!important;font-weight:700!important;color:var(--gg-a-sub)!important;white-space:nowrap!important}
+html[data-dm-theme="night"] body #tab-aktiviteler#tab-aktiviteler#tab-aktiviteler .gg-page.gg-cat-a .gg-tabs>#ggSoloTab{--gg-a-edge:#0E2C5E;--gg-a-ink:#E6F0FF;--gg-a-sub:#A9C6F5;background:#1B3E78!important}
+html[data-dm-theme="night"] body #tab-aktiviteler#tab-aktiviteler#tab-aktiviteler .gg-page.gg-cat-a .gg-tabs>#ggBreakTab{--gg-a-edge:#4A1D0D;--gg-a-ink:#FFE9DF;--gg-a-sub:#F5B79C;background:#6E2C15!important}
+@media(max-width:355px){html body #tab-aktiviteler#tab-aktiviteler#tab-aktiviteler .gg-page.gg-cat-a .gg-tabs>button .gg-category-art{width:70px!important;height:64px!important}html body #tab-aktiviteler#tab-aktiviteler#tab-aktiviteler .gg-page.gg-cat-a .gg-tabs>button .gg-category-name{font-size:15px!important}}
+@media(prefers-reduced-motion:reduce){html body #tab-aktiviteler#tab-aktiviteler#tab-aktiviteler .gg-page.gg-cat-a .gg-tabs>button{transition:none!important}}
+}

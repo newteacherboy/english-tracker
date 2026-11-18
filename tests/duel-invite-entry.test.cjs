@@ -36,3 +36,15 @@ test('random habit and league popups are no longer loaded',()=>{
  assert(!fs.existsSync('ingilizce/papi-habit.js'));
  assert(!fs.existsSync('ingilizce/league-momentum.js'));
 });
+test('teacher Sınıfta Oyna online games stay',()=>{
+ assert.match(read('ingilizce/app-js/i14-sar.js'),/\['ucus','🪽','Kelime Uçuşu'/);
+ assert.match(read('ingilizce/activity-ui.js'),/window\.dmInviteAc=async function\(game\)/);
+ assert.match(medupro,/window\.dmMatchAc=async function\(id\)/);
+});
+test('student category cards use design A (big picture cards)',()=>{
+ const ui=read('ingilizce/activity-ui.js'),css=read('ingilizce/games-cat-a.css');
+ assert.match(ui,/host\.classList\.toggle\('gg-cat-a',!teacher\)/);
+ assert.match(ui,/categorySubs=\{solo:'Kelime oyunları',break:'Kısa eğlence'\}/);
+ assert.match(css,/@layer bilgiIslands\{/);
+ assert(read('ingilizce/index.html').includes('games-cat-a.css'));
+});

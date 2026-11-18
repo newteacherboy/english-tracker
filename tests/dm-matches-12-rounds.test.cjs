@@ -13,5 +13,8 @@ test('old eight-question sessions still work',()=>{
  assert.match(migration,/for i in 0\.\.jsonb_array_length\(questions\)-1 loop/);
  assert.match(migration,/'total',jsonb_array_length\(m\.questions\)/);
 });
-test('retired two-player match interface is no longer shipped',()=>{const medupro=fs.readFileSync('ingilizce/medupro.js','utf8');assert.doesNotMatch(medupro,/dmMatchAc|oyunEslesme(Durum|Cevap|Hazir|Olustur)\(|addCards/);});
+test('multiplayer interface reads variable session total',()=>{
+ assert.match(ui,/\$\{d\.index\+1\}\/\$\{d\.total\|\|12\} soru/);
+});
+
 test('sentence route and word flight both use word_bank',()=>{assert.doesNotMatch(migration,/from public\.sentence_bank/);assert.match(migration,/from public\.word_bank/);});

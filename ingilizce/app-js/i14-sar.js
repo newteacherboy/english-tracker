@@ -189,7 +189,8 @@
     ['PARKURLAR', [['ba', '🧙', 'Büyü Akademisi', '#a78bfa,#6d28d9'], ['kp', '🔤', 'Kelime Modu', '#fdba74,#ec4899'], ['yolculuk', '🃏', 'Kelime Kartları', '#7dd3fc,#1d4ed8']]],
     ['MİNİ OYUNLAR', [['ky', '🔬', 'Kelime Laboratuvarı', '#e879f9,#a21caf'], ['jp', '🎈', 'Risk Balonları', '#fb7185,#be123c'], ['bosluk', '✏️', 'Eksik Harf', '#4ade80,#15803d'],
       ['hafiza', '🃏', 'Hafıza Sandığı', '#22d3ee,#0e7490'], ['yagmur', '🌪️', 'Hız Fırtınası', '#60a5fa,#1d4ed8'], ['kelimebul', '🔐', 'Şifre Kırıcı', '#a3e635,#4d7c0f'], ['eslestirme','🔗','Eş Bul','#14b8a6,#0f766e'], ['tren','🚂','Kelime Treni','#60a5fa,#1d4ed8'], ['dikte','🎧','Kulak Dedektifi','#818cf8,#4338ca'], ['cumle','🧱','Cümle Ustası','#fb923c,#c2410c'], ['harfbahcesi','🌼','Harf Bahçesi','#22c55e,#15803d'], ['okuma','📖','Okuma Stüdyosu','#2dd4bf,#0f766e'], ['pomodoro','🍅','Pomodoro','#fb923c,#c2410c']]],
-    ['KAPIŞMA OYUNLARI', [['papicards','🃏','Papi Kartları','#a78bfa,#6d28d9'],['meteor','☄️','Meteor Düellosu','#f472b6,#be185d'],['wheel','🎡',"Papi’nin Kelime Çarkı",'#fbbf24,#b45309']]]
+    ['KAPIŞMA OYUNLARI', [['papicards','🃏','Papi Kartları','#a78bfa,#6d28d9'],['meteor','☄️','Meteor Düellosu','#f472b6,#be185d'],['wheel','🎡',"Papi’nin Kelime Çarkı",'#fbbf24,#b45309']]],
+    ['ÇEVRİMİÇİ İKİ KİŞİLİK', [['ucus','🪽','Kelime Uçuşu','#38bdf8,#0369a1'],['rota','🧭','Cümle Rotası','#34d399,#047857']]]
   ];
   function soKur() {
     let ilk = document.querySelector('#siniftaOyunModal .siniftaOyunBtn');
