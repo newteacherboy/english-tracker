@@ -302,7 +302,7 @@ async function acceptTeacherInvite() {
   try {
     const r = await fetch('https://nxfqlutulxqzqgwewssd.supabase.co/functions/v1/diji-api', {
       method: 'POST', headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({islem: 'ogretmenKoduBagla', ogrenci: name, kod: pending.code, t: tok, davetOnizleme: true})
+      body: JSON.stringify({islem: 'ogretmenDavetOnizle', ogrenci: name, kod: pending.code, t: tok})
     });
     const d = await r.json();
     if (tok !== studentToken() || name !== who()) return;
