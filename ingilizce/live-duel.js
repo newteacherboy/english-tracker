@@ -80,35 +80,108 @@ function adAvailable() {
   const enabled = window.dmAndroidPlacements?.rewardEnabled?.() !== false;
   return typeof window.dmAndroidAds?.show === 'function' && enabled && !window.dmAndroidIsTeacher?.() && window.dmAndroidPlacements?.rewardAllowed?.('energy') !== false;
 }
-function paywall(kind, message, retry) {
+const HOLD_WAIT_S = 45; // Reklam izleyen rakip için en fazla bekleme (sunucudaki dm_duel_live_hold ile aynı)
+function paywall(kind, message, retry, hold) {
   const owner = token();
   const live = kind === 'live';
+  // hold = {duel, host, leftMs}: davet kabul edildi ama hak yok; düello bu oyuncuya ayrıldı.
+  let held = hold?.duel ? {duel: hold.duel, host: String(hold.host || 'Rakibin'), until: Date.now() + (Number(hold.leftMs) || 20000), started: false} : null;
   const el = openLayer('ld-sheet-layer', `
     <div class="ld-sheet" role="document">
       <span class="ld-grab" aria-hidden="true"></span>
       <img class="ld-sheet-papi" src="${PAPI}" alt="" width="120" height="130">
       <h2>Kılıcını kınına koyma!</h2>
-      <p>${esc(message || (live ? 'Bugünkü ücretsiz Canlı Düello hakkını kullandın.' : "Bugünkü 2 ücretsiz Papi düellonu kullandın."))} Yeni bir düello için:</p>
-      <button type="button" class="ld-opt ld-opt-ad" data-ad><span class="ld-opt-ic">${ICON.play}</span><span><b>Reklam izle · +1 düello</b><small>Kısa bir video, hemen başla</small></span></button>
+      ${held ? `<span class="ld-hold-chip" data-chip>⏳ <b>${esc(held.host)}</b> seni bekliyor · <span data-hleft>${Math.ceil((held.until - Date.now()) / 1000)}</span> sn</span>` : ''}
+      <p>${esc(message || (live ? 'Bugünkü ücretsiz Canlı Düello hakkını kullandın.' : "Bugünkü 2 ücretsiz Papi düellonu kullandın."))} ${held ? 'Reklamı izle, düello hemen başlasın:' : 'Yeni bir düello için:'}</p>
+      <button type="button" class="ld-opt ld-opt-ad" data-ad><span class="ld-opt-ic">${ICON.play}</span><span><b>Reklam izle · +1 düello</b><small>${held ? 'Bitince ' + esc(held.host) + ' ile kapışırsın' : 'Kısa bir video, hemen başla'}</small></span></button>
       <button type="button" class="ld-opt ld-opt-pro" data-pro><span class="ld-opt-ic">${ICON.crown}</span><span><b>Premium Pro · sınırsız düello</b><small>Paketleri gör</small></span></button>
       <p class="ld-sheet-note" role="status">Yarın yeni ücretsiz hakkın gelir.</p>
       <button type="button" class="ld-text-btn" data-close>Kapat</button>
-    </div>`, () => closeLayer());
-  el.addEventListener('click', e => { if (e.target === el) closeLayer(); });
-  el.querySelector('[data-close]').onclick = () => closeLayer();
+    </div>`, () => closeSheet());
+  const sheet = el.querySelector('.ld-sheet');
+  let holdTick = null;
+  // Ayrılan düelloyu bırak: rakip beklemeyi bırakır (rastgelede Papi, davette seçim ekranı).
+  function release(reason) {
+    if (!held || held.started) return;
+    const h = held; held = null; clearInterval(holdTick);
+    rpc('dm_duel_live_hold', {p_duel: h.duel, p_op: 'release'}, owner).catch(() => {});
+    lobbySend('hold', {id: h.duel, name: who(), end: true, reason: reason || 'cancel'});
+  }
+  function closeSheet() { release('cancel'); closeLayer(); }
+  function paintHold() {
+    if (!held) return;
+    const left = Math.max(0, Math.ceil((held.until - Date.now()) / 1000));
+    const n = el.querySelector('[data-hleft]'); if (n) n.textContent = left;
+    if (left <= 0) holdExpired();
+  }
+  function holdExpired() {
+    if (!held || held.started) return;
+    held = null; clearInterval(holdTick);
+    el.querySelector('[data-chip]')?.remove();
+    retry = live ? startLive : startPapi;
+    note.textContent = 'Davetin süresi doldu. Reklamla kazandığın hakla yeni bir düello başlatabilirsin.';
+  }
+  el.addEventListener('click', e => { if (e.target === el) closeSheet(); });
+  el.querySelector('[data-close]').onclick = closeSheet;
   el.querySelector('[data-pro]').onclick = () => {
-    closeLayer();
+    closeSheet();
     if (window.DMSatis?.planlar) window.DMSatis.planlar(live ? 'canli-duello' : 'papi-duello', 'premium_pro');
     else if (window.dmAndroidBilling?.available) window.dmAndroidBilling.open(live ? 'canli-duello' : 'papi-duello');
     else toast('Paketleri uygulamanın Mağaza bölümünden görebilirsin.');
   };
   const ad = el.querySelector('[data-ad]'), note = el.querySelector('.ld-sheet-note');
-  if (!adAvailable()) { ad.disabled = true; note.textContent = 'Ödüllü reklam şu an kullanılamıyor. Yarın yeni ücretsiz hakkın gelir.'; }
+  if (!adAvailable()) {
+    ad.disabled = true; note.textContent = 'Ödüllü reklam şu an kullanılamıyor. Yarın yeni ücretsiz hakkın gelir.';
+    if (held) { release('noad'); el.querySelector('[data-chip]')?.remove(); }
+  }
+  if (held) { holdTick = setInterval(paintHold, 250); paintHold(); }
+
+  // Reklam bitti, hak geldi: "Şimdi Başla" (5 sn sonra kendiliğinden başlar).
+  function ready() {
+    clearInterval(holdTick);
+    const h = held;
+    sfx('kombo');
+    sheet.classList.add('ld-ready');
+    sheet.innerHTML = `
+      <span class="ld-grab" aria-hidden="true"></span>
+      <img class="ld-sheet-papi" src="${PAPI}" alt="" width="120" height="130">
+      <span class="ld-ready-badge">${ICON.star} +1 DÜELLO</span>
+      <h2>Hakkın geldi!</h2>
+      <p><b>${esc(h.host)}</b> seni bekliyor. Kılıcını çek!</p>
+      <button type="button" class="ld-primary" data-go>Şimdi Başla · <span data-n>5</span></button>
+      <button type="button" class="ld-text-btn" data-close>Vazgeç</button>
+      <p class="ld-sheet-note" role="status" data-rnote></p>`;
+    const n = sheet.querySelector('[data-n]'), go = sheet.querySelector('[data-go]');
+    let left = Math.max(1, Math.min(5, Math.floor((h.until - Date.now()) / 1000) - 2));
+    n.textContent = left;
+    const t = setInterval(() => { left--; if (left > 0) n.textContent = left; else { clearInterval(t); start(); } }, 1000);
+    async function start() {
+      clearInterval(t);
+      if (!held || held.started) return;
+      held.started = true; go.disabled = true; go.textContent = 'Başlıyor…';
+      try {
+        const d = await rpc('dm_duel_live_accept', {p_duel: h.duel}, owner);
+        if (d.ok && d.status === 'matched') { rights = null; held = null; return startMatch(d); }
+        throw Error((d.message || 'Düello başlatılamadı.') + ' Kazandığın düello hakkın duruyor.');
+      } catch (e) { held = null; rights = null; closeLayer(); toast(e.message); }
+    }
+    go.onclick = start;
+    sheet.querySelector('[data-close]').onclick = () => { clearInterval(t); closeSheet(); toast('Kazandığın düello hakkın duruyor.'); };
+  }
+
   let offerId = null, busy = false, recheck = false;
   ad.onclick = async () => {
     if (busy) return; busy = true; ad.disabled = true; note.textContent = recheck ? 'Düello hakkın kontrol ediliyor…' : 'Reklam hazırlanıyor…';
     try {
       if (!recheck) {
+        // Rakibe "reklam izliyor, bekle" uyarısı: bekleme 45 sn'ye çıkar.
+        if (held) {
+          const w = await rpc('dm_duel_live_hold', {p_duel: held.duel, p_op: 'watch'}, owner).catch(() => null);
+          if (w?.ok) {
+            held.until = Date.now() + (Number(w.holdLeftMs) || HOLD_WAIT_S * 1000);
+            lobbySend('hold', {id: held.duel, name: who(), ad: true, leftMs: Number(w.holdLeftMs) || HOLD_WAIT_S * 1000});
+          } else holdExpired();
+        }
         const offer = await rpc('dm_duel_ad', {p_kind: live ? 'live' : 'papi', p_op: 'prepare'}, owner);
         if (!offer.ok) throw Error(offer.message || 'Reklam hazırlanamadı.');
         offerId = offer.offerId;
@@ -123,15 +196,20 @@ function paywall(kind, message, retry) {
       if (!d?.ok) throw Error(d?.message || 'Reklam ödülü doğrulanamadı.');
       if (!d.claimed) { note.textContent = 'Reklam ödülün doğrulanıyor. Birazdan tekrar dene.'; ad.querySelector('b').textContent = 'Düello hakkımı kontrol et'; return; }
       rights = null;
+      if (held && held.until > Date.now()) return ready();
       closeLayer();
       retry?.();
-    } catch (e) { note.textContent = e.message || 'Reklam açılamadı. Tekrar deneyebilirsin.'; }
+    } catch (e) {
+      // Reklam yarıda kaldıysa bekleyen rakibi serbest bırak.
+      if (held && !recheck) { release('ad'); el.querySelector('[data-chip]')?.remove(); retry = live ? startLive : startPapi; }
+      note.textContent = e.message || 'Reklam açılamadı. Tekrar deneyebilirsin.';
+    }
     finally { busy = false; if (ad.isConnected) ad.disabled = false; }
   };
 }
 
 /* ---------- Lobi (davetler) ---------- */
-let lobby = null, lobbyOwner = '', lobbyReady = false, inDuel = false, banner = null;
+let lobby = null, lobbyOwner = '', lobbyReady = false, inDuel = false, banner = null, holdListener = null;
 function busyScreen() {
   // Main tabs and learning overlays must not swallow invitations.
   return inDuel || document.hidden || !!layer;
@@ -146,6 +224,8 @@ function ensureLobby() {
   lobby = sb.channel(LOBBY, {config: {broadcast: {self: false, ack: false}}});
   lobby.on('broadcast', {event: 'seek'}, ({payload}) => onSeek(payload))
        .on('broadcast', {event: 'taken'}, ({payload}) => { if (banner && banner.id === payload?.id) hideBanner(); })
+       // [18 Kas 2026] Kabul eden oyuncu reklam izliyor / vazgeçti — yalnız o düellonun sahibi dinler.
+       .on('broadcast', {event: 'hold'}, ({payload}) => { try { holdListener?.(payload); } catch {} })
        .subscribe(s => { lobbyReady = s === 'SUBSCRIBED'; if (['CHANNEL_ERROR','TIMED_OUT','CLOSED'].includes(s)) lobbyReady = false; });
 }
 function dropLobby() {
@@ -199,7 +279,8 @@ function showBanner(p) {
     try {
       const d = await rpc('dm_duel_live_accept', {p_duel: p.id});
       hideBanner();
-      if (d.paywall) return paywall('live', d.message, null);
+      // Hakkı yoksa düello ona ayrılır: reklam izlerken rakip bekler, bitince "Şimdi Başla".
+      if (d.paywall) return paywall('live', d.message, null, d.hold ? {duel: d.duel || p.id, host: d.host || p.name, leftMs: d.holdLeftMs} : null);
       if (!d.ok) return toast(d.message || 'Bu düelloyu başkası kaptı.');
       rights = null;
       startMatch(d);
@@ -211,6 +292,63 @@ function hideBanner() {
   clearInterval(banner.tick);
   const el = banner.el; banner = null;
   el.classList.remove('ld-in'); setTimeout(() => el.remove(), 260);
+}
+
+/* ---------- Rakip reklam izliyor: davet edenin ekranı [18 Kas 2026] ---------- */
+// Kabul eden oyuncunun hakkı yoksa düello ona ayrılır; reklam süresince (en fazla 45 sn) burada beklenir.
+function hostHoldView(el, count, getClock, setClock) {
+  let warned = false, endedName = '', endedReason = '';
+  function show(h) {
+    if (!el.isConnected) return;
+    const name = String(h.name || 'Rakibin');
+    if (h.end) {
+      el.querySelector('[data-hold]')?.remove();
+      el.classList.remove('ld-holding');
+      endedName = name; endedReason = h.reason || '';
+      if (!h.silent) toast(h.reason === 'ad' ? name + ' reklamı tamamlamadı.' : name + ' düellodan vazgeçti.');
+      return;
+    }
+    let box = el.querySelector('[data-hold]');
+    if (!box) {
+      box = document.createElement('div');
+      box.className = 'ld-hold-card'; box.setAttribute('data-hold', ''); box.setAttribute('role', 'status'); box.setAttribute('aria-live', 'polite');
+      (el.querySelector('.ld-steps') || count).before(box);
+    }
+    el.classList.add('ld-holding');
+    box.innerHTML = `<span class="ld-hold-ic">${ICON.play}</span><span><b>${esc(name)} kabul etti!</b><small>${h.ad
+      ? 'Hakkı bitmişti, şimdi reklam izliyor. Bitince düello hemen başlayacak, lütfen bekle.'
+      : 'Hazırlanıyor, birazdan başlıyor…'}</small></span>`;
+    const h2 = el.querySelector('h2'); if (h2) h2.textContent = h.ad ? name + ' reklam izliyor…' : name + ' kabul etti!';
+    const sub = el.querySelector('.ld-search-sub'); if (sub) sub.textContent = 'Bekle, düello birazdan başlıyor.';
+    const steps = el.querySelector('.ld-steps'); if (steps) steps.hidden = true;
+    if (h.ad && !warned) { warned = true; sfx('kombo'); }
+    const until = Date.now() + Math.max(0, Number(h.leftMs) || 0);
+    clearInterval(getClock());
+    count.hidden = false;
+    const paint = () => { const sec = Math.max(0, Math.ceil((until - Date.now()) / 1000)); count.textContent = '0:' + String(sec).padStart(2, '0'); };
+    paint(); setClock(setInterval(paint, 250));
+  }
+  return {show, ended: () => ({name: endedName, reason: endedReason})};
+}
+// Sunucuyu planlı aralıklarla sorar; rakip reklam izliyorsa 4 sn'de bir (en fazla ~45 sn) sormaya devam eder.
+async function waitMatch(id, owner, schedule, isStop, onHold) {
+  const t0 = Date.now(), hardEnd = t0 + SEARCH_MS + 20000 + HOLD_WAIT_S * 1000 + 15000;
+  let i = 0, holding = false;
+  while (Date.now() < hardEnd) {
+    let wait;
+    if (holding) wait = 4000;
+    else if (i < schedule.length) wait = schedule[i++] - (Date.now() - t0);
+    else return null;
+    if (wait > 0) await sleep(wait);
+    if (isStop()) return null;
+    const p = await rpc('dm_duel_live_poll', {p_duel: id}, owner).catch(() => null);
+    if (isStop()) return null;
+    if (!p?.ok) continue;
+    if (p.hold) { holding = true; onHold(p.hold); continue; }
+    if (holding) onHold({end: true, silent: true});
+    if (p.status === 'matched' || p.expired || p.status === 'cancelled') return p;
+  }
+  return null;
 }
 
 /* ---------- Canlı Düello: rakip arama ---------- */
@@ -231,8 +369,11 @@ async function startLive() {
     <small class="ld-foot">İptal edersen düello hakkın geri gelir.</small>`, () => cancel());
   const count = el.querySelector('.ld-count');
   let stop = false, duel = null, t0 = Date.now(), clock = null;
+  const hv = hostHoldView(el, count, () => clock, c => { clock = c; });
+  let holdTaken = false;
+  const onHold = h => { if (stop) return; if (!h.end && !holdTaken && duel?.id) { holdTaken = true; lobbySend('taken', {id: duel.id}); } hv.show(h); };
   async function cancel() {
-    if (stop) return; stop = true; clearInterval(clock);
+    if (stop) return; stop = true; clearInterval(clock); holdListener = null;
     if (duel?.id) {
       try {
         const d = await rpc('dm_duel_live_cancel', {p_duel: duel.id}, owner);
@@ -252,22 +393,21 @@ async function startLive() {
     duel = d; rights = null;
     if (d.status === 'matched') { searching = null; return startMatch(d); }
     t0 = Date.now();
+    holdListener = h => { if (h?.id === d.id) onHold(h); };
     if (d.broadcast) lobbySend('seek', {id: d.id, name: who(), level: d.level || 1, at: Date.now()});
     clock = setInterval(() => { const s = Math.max(0, Math.ceil((SEARCH_MS - (Date.now() - t0)) / 1000)); count.textContent = '0:' + String(s).padStart(2, '0'); }, 250);
-    for (const at of [3000, 6000, 9000, 12000, SEARCH_MS + 600, SEARCH_MS + 3000]) {
-      const wait = at - (Date.now() - t0); if (wait > 0) await sleep(wait);
-      if (stop) return;
-      const p = await rpc('dm_duel_live_poll', {p_duel: d.id}, owner).catch(() => null);
-      if (stop) return;
-      if (p?.ok && p.status === 'matched') {
-        clearInterval(clock); searching = null;
-        lobbySend('taken', {id: d.id});
-        return startMatch(p);
-      }
+    const p = await waitMatch(d.id, owner, [3000, 6000, 9000, 12000, SEARCH_MS + 600, SEARCH_MS + 3000], () => stop, onHold);
+    if (stop) return;
+    holdListener = null;
+    if (p?.ok && p.status === 'matched') {
+      clearInterval(clock); searching = null;
+      lobbySend('taken', {id: d.id});
+      return startMatch(p);
     }
     throw Error('Bağlantı yavaş. Düello başlatılamadı, hakkın geri yüklendi.');
   } catch (e) {
     if (stop) return;
+    holdListener = null;
     clearInterval(clock); toast(e.message);
     stop = true; searching = null; inDuel = false;
     if (duel?.id) rpc('dm_duel_live_cancel', {p_duel: duel.id}, owner).catch(() => {});
@@ -298,8 +438,10 @@ async function invite(target) {
     <small class="ld-foot" data-foot>İptal edersen düello hakkın geri gelir.</small>`, () => cancel());
   const count = el.querySelector('.ld-count');
   let stop = false, duel = null, t0 = Date.now(), clock = null, expired = false;
+  const hv = hostHoldView(el, count, () => clock, c => { clock = c; });
+  const onHold = h => { if (!stop && !expired) hv.show(h); };
   async function cancel() {
-    if (stop) return; stop = true; clearInterval(clock);
+    if (stop) return; stop = true; clearInterval(clock); holdListener = null;
     if (duel?.id) {
       try {
         const d = await rpc('dm_duel_live_cancel', {p_duel: duel.id}, owner);
@@ -310,10 +452,14 @@ async function invite(target) {
     searching = null; inDuel = false; rights = null; closeLayer();
   }
   function showExpired() {
-    if (stop || expired) return; expired = true; clearInterval(clock);
+    if (stop || expired) return; expired = true; clearInterval(clock); holdListener = null;
     lobbySend('taken', {id: duel.id});
+    el.querySelector('[data-hold]')?.remove(); el.classList.remove('ld-holding');
     el.querySelector('.ld-radar')?.classList.add('ld-radar-idle');
-    el.querySelector('[data-title]').textContent = target + ' yanıt vermedi';
+    const gone = hv.ended();
+    el.querySelector('[data-title]').textContent = gone.name
+      ? (gone.reason === 'ad' ? gone.name + ' reklamı tamamlamadı' : gone.name + ' gelemedi')
+      : target + ' yanıt vermedi';
     el.querySelector('[data-sub]').textContent = 'İstersen aynı sorularla Papi ile kapışabilirsin.';
     count.hidden = true; el.querySelector('.ld-steps').hidden = true;
     el.querySelector('[data-choices]').hidden = false;
@@ -340,23 +486,21 @@ async function invite(target) {
     if (d.paywall) { inDuel = false; searching = null; closeLayer(); return paywall('live', d.message, () => invite(target)); }
     if (!d.ok) throw Error(d.message || 'Davet gönderilemedi.');
     duel = d; rights = null; t0 = Date.now();
+    holdListener = h => { if (h?.id === d.id) onHold(h); };
     lobbySend('seek', {id: d.id, name: who(), level: d.level || 1, at: Date.now(), to: d.target || target});
     clock = setInterval(() => { const s = Math.max(0, Math.ceil((SEARCH_MS - (Date.now() - t0)) / 1000)); count.textContent = '0:' + String(s).padStart(2, '0'); }, 250);
-    for (const at of [4000, 8000, 12000, SEARCH_MS + 600, SEARCH_MS + 3000]) {
-      const wait = at - (Date.now() - t0); if (wait > 0) await sleep(wait);
-      if (stop) return;
-      const p = await rpc('dm_duel_live_poll', {p_duel: d.id}, owner).catch(() => null);
-      if (stop) return;
-      if (p?.ok && p.status === 'matched') {
-        clearInterval(clock); stop = true; searching = null;
-        lobbySend('taken', {id: d.id});
-        return startMatch(p);
-      }
-      if (p?.ok && p.expired) return showExpired();
+    const p = await waitMatch(d.id, owner, [4000, 8000, 12000, SEARCH_MS + 600, SEARCH_MS + 3000], () => stop, onHold);
+    if (stop) return;
+    holdListener = null;
+    if (p?.ok && p.status === 'matched') {
+      clearInterval(clock); stop = true; searching = null;
+      lobbySend('taken', {id: d.id});
+      return startMatch(p);
     }
     showExpired();
   } catch (e) {
     if (stop) return;
+    holdListener = null;
     clearInterval(clock); toast(e.message);
     stop = true; searching = null; inDuel = false;
     if (duel?.id) rpc('dm_duel_live_cancel', {p_duel: duel.id}, owner).catch(() => {});
