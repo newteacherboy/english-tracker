@@ -2870,9 +2870,16 @@ async function handle(req: Request, proxy: any = null) {
       const { data: eski } = await supabase.from("extra_data").select("value").eq("student_id", s.id).eq("key_name", "yo").maybeSingle();
       let e: any = eski?.value || {}; if (typeof e === "string") { try { e = JSON.parse(e); } catch (_) { e = {}; } }
       const taban = num(body._taban, -1);
-      const eskiSurum = taban >= 0 && num(e.guncelleme) > taban;
-      const ligGeri = e.lig && value.lig && e.lig.hafta && e.lig.hafta === value.lig.hafta && num(value.lig.xp) < num(e.lig.xp);
-      const gunGeri = e.xpGun && value.xpGun && e.xpGun.tarih && e.xpGun.tarih === value.xpGun.tarih && num(value.xpGun.xp) < num(e.xpGun.xp);
+      /* [18 Kas 2026] Günde ~60-110 kayıt "veri eski" diye reddediliyor, cihaz sunucu kopyasını yeniden yükleyip
+         kendi son değişikliklerini kaybediyordu. Sebep: ödül/oyun/düello gibi sunucu işlemleri sürümü (guncelleme)
+         ilerletiyor ama cihaz bunu bilmiyor. Artık yalnız BAŞKA BİR CİHAZIN daha yeni kaydı (dmSaveVersion) varsa
+         reddedilir. Öğrenci kaydında XP/lig/ekonomi alanları zaten aşağıda sunucu değerleriyle korunduğu için
+         (protectStudentState + ekonomiKoru) düşük XP içeren kayıt reddedilmeden düzeltilir. */
+      const sonCihazKaydi = num(e.dmSaveVersion, num(e.guncelleme));
+      const eskiSurum = taban >= 0 && num(e.guncelleme) > taban && sonCihazKaydi > taban;
+      const korunur = a.role === "student";
+      const ligGeri = !korunur && e.lig && value.lig && e.lig.hafta && e.lig.hafta === value.lig.hafta && num(value.lig.xp) < num(e.lig.xp);
+      const gunGeri = !korunur && e.xpGun && value.xpGun && e.xpGun.tarih && e.xpGun.tarih === value.xpGun.tarih && num(value.xpGun.xp) < num(e.xpGun.xp);
       if (eskiSurum || ligGeri || gunGeri) {
         await audit(a, "eski_veri_reddedildi", s.username, { eskiSurum, ligGeri, gunGeri, gelenAltin: num(value.altin), kayitliAltin: num(e.altin) });
         return json({ status: "eski", message: "Bu cihazdaki veri eski; sunucudaki yeniden yükleniyor." }, 409);
@@ -2903,6 +2910,7 @@ async function handle(req: Request, proxy: any = null) {
         const { y: e2, satir } = await yoOku(s.id);
         value=protectStudentState(value,e2);
         ekonomiKoru(value, e2);
+        value.dmSaveVersion = num(value.guncelleme); // son cihaz kaydının sürümü (sunucu ödülleri bunu değiştirmez)
         const simdi = new Date(Math.max(Date.now(),(Date.parse(satir?.updated_at||'')||0)+1)).toISOString();
         const w = satir
           ? await supabase.from("extra_data").update({ value, updated_at: simdi }).eq("student_id", s.id).eq("key_name", "yo").eq("updated_at", satir.updated_at).select("student_id")
