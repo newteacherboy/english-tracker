@@ -3,7 +3,9 @@
   const assets = 'premium-assets/bulut-ucusu/';
   const endpoint = (typeof apiURL === 'string' ? apiURL :
     'https://nxfqlutulxqzqgwewssd.supabase.co/functions/v1/diji-api').replace(/diji-api.*$/, 'premium-games');
-  const waveMs = 3250;
+  /* [18 Kas 2026] Hız seviyeye bağlı: Bölüm 1'de 3,25 sn, her bölümde %3 kısalır, en az 1,8 sn.
+     Tur içinde de her kelimede %1 hafif hızlanma (en az 1,6 sn). */
+  const waveFor = (level, index) => Math.max(1600, Math.max(1800, 3250 * Math.pow(0.97, Math.max(0, (Number(level) || 1) - 1))) * Math.pow(0.99, index));
   const mistakeLimit = 5;
   const lanes = [17, 50, 83];
   const owner = () => typeof aktifOgrenciAdi === 'undefined' ? '' : aktifOgrenciAdi;
@@ -446,6 +448,7 @@
       plane.style.setProperty('--bank', `${Math.max(-13, Math.min(13, (game.target - game.x) * .55))}deg`);
       game.x += (game.target - game.x) * (1 - Math.exp(-dt / (game.stumble ? 200 : 80)));
       plane.style.left = `${game.x}%`;
+      const waveMs = waveFor(game.level, game.picks.length);
       const depth = Math.min(1, game.elapsed / waveMs);
       wave.style.setProperty('--y', `${40 + depth * depth * 30}%`);
       wave.style.setProperty('--scale', 0.85 + depth * 0.15);

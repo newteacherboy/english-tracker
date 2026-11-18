@@ -9,8 +9,8 @@ let root=null,stage,canvas,ctx,modal,state=null,owner='',origin,frameId=0,lastFr
 /* Hız sınıf seviyesine göre artar (1. sınıf 6 sn, 8. sınıf 3,2 sn). Yarış içinde yavaşlatılabilir;
    yavaşlatılan sorular daha az puan ve ödül kazandırır (sunucu: dm_rally_answer slowed). */
 const raceClass=()=>Math.min(8,Math.max(1,Number(state?.classNo||chosenClass)||1)),known=()=>Math.max(0,Number(state?.state?.correct)||0),levelFactor=()=>1,
-baseDuration=()=>Math.max(1.8,3.1-(rallyLevel-1)*.008),
-duration=()=>Math.max(1.6,baseDuration()*Math.pow(.985,known()))*(slowMode?1.5:1),speed=()=>180+Math.min(120,rallyLevel*2);
+baseDuration=()=>Math.max(1.6,3.1*Math.pow(.97,Math.max(0,rallyLevel-1))),
+duration=()=>Math.max(1.4,baseDuration()*Math.pow(.985,known()))*(slowMode?1.5:1),speed=()=>180+Math.min(120,rallyLevel*2);
 const bandLabel=()=>rallyLevel<=80?(Math.ceil(rallyLevel/10)+'. sınıf · Temelden ileriye'):['A1','A2','B1','B2'][Math.min(3,Math.floor((rallyLevel-81)/20))];
 const MAX_LEVEL=160;let rallyLevel=1,levelPicked=false;
 function levelKey(){return 'dm_rally_level:'+(owner||who());}
