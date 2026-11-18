@@ -138,9 +138,9 @@ const inviteUrl = code => APP_URL + '?davet=' + encodeURIComponent(code);
 const teacherInviteUrl = code => APP_URL + '?kod=' + encodeURIComponent(code) + '&zirveOgretmen=1';
 
 /* =================== ÖĞRENCİ =================== */
-function goalRow(title, count, goal, note, action = '') {
+function goalRow(title, count, goal, note, action = '', extra = '') {
   const n = Math.max(0, Number(count)||0), done = n >= goal;
-  return '<div class="zk-goal'+(done?' done':'')+'"><div class="zk-goal-top"><b>'+esc(title)+'</b><span class="zk-goal-state">'+(done?'✓ Tamamlandı':fmt(goal-n)+' kaldı')+'</span></div><div class="zk-bar" role="progressbar" aria-valuemin="0" aria-valuemax="'+goal+'" aria-valuenow="'+Math.min(n,goal)+'"><i style="width:'+Math.min(100,n/goal*100)+'%"></i></div><div class="zk-goal-foot"><small>'+fmt(Math.min(n,goal))+' / '+fmt(goal)+' · '+esc(note)+'</small>'+(action?'<button type="button" data-zk="'+action+'">Devam et ›</button>':'')+'</div></div>';
+  return '<div class="zk-goal'+(done?' done':'')+'"><div class="zk-goal-top"><b>'+esc(title)+'</b><span class="zk-goal-state">'+(done?'✓ Tamamlandı':fmt(goal-n)+' kaldı')+'</span></div><div class="zk-bar" role="progressbar" aria-valuemin="0" aria-valuemax="'+goal+'" aria-valuenow="'+Math.min(n,goal)+'"><i style="width:'+Math.min(100,n/goal*100)+'%"></i></div><div class="zk-goal-foot"><small>'+fmt(Math.min(n,goal))+' / '+fmt(goal)+' · '+esc(note)+'</small>'+(action?'<button type="button" data-zk="'+action+'">Devam et ›</button>':'')+'</div>'+extra+'</div>';
 }
 function inlineInvite(code, phase) {
   if (!['soon','live'].includes(phase)) return '';
@@ -155,8 +155,7 @@ function studentGoals(s, inviteOnly=false) {
   const canWin=n>=5, rank=Number(me.rank)||0;
   const rankText=!canWin?'🔒 '+fmt(5-n)+' doğrulanmış davet kaldı':rank&&rank<=20?'✓ Şu an ödül bölgesindesin · '+rank+'. sıra':rank?'İlk 20 için '+fmt(me.toPrize)+' XP kaldı':'Henüz sıralama yok · XP kazan';
   return '<section class="zk-card zk-goals"><h3 class="zk-ribbon">GÖREVLERİM</h3>'+
-    goalRow('🏆 5 arkadaşını davet et',n,5,'Bireysel ödül sıralamasının şartı')+
-    (!inviteOnly?inlineInvite(inv.code,s.campaign.phase):'')+
+    goalRow('🏆 5 arkadaşını davet et',n,5,'Bireysel ödül sıralamasının şartı','',inviteOnly?'':inlineInvite(inv.code,s.campaign.phase))+
     (pending?'<p class="zk-goal-pending">⏳ '+fmt(pending)+' davet doğrulama bekliyor.</p>':'')+
     (inviteOnly?'':goalRow('⚡ Bugünkü XP hedefi',me.today,s.cap||3500,'Günlük yarışma XP üst sınırı')+
     '<div class="zk-goal"><div class="zk-goal-top"><b>🏅 İlk 20 öğrenci arasına gir</b></div><small>'+esc(rankText)+'</small><div class="zk-goal-foot"><small>Toplam '+fmt(me.xp)+' XP</small><button type="button" data-zk="'+(canWin?'rank':'invite')+'">'+(canWin?'Sıralamayı gör':'Davet et')+' ›</button></div></div>'+
