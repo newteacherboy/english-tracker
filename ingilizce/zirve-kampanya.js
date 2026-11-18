@@ -135,6 +135,7 @@ async function share(text, url) {
   catch { prompt('Bu bağlantıyı kopyala:', url); }
 }
 const inviteUrl = code => APP_URL + '?davet=' + encodeURIComponent(code);
+const teacherInviteUrl = code => APP_URL + '?kod=' + encodeURIComponent(code) + '&zirveOgretmen=1';
 
 /* =================== ÖĞRENCİ =================== */
 async function openStudentHub() {
@@ -267,6 +268,64 @@ async function openInvite() {
 }
 
 /* Davet bağlantısıyla gelen: kodu sakla, oturum açılınca kabul et. */
+const teacherInviteKey = 'dm_zk_teacher_invite';
+function captureTeacherInvite() {
+  try {
+    const u = new URL(location.href);
+    const code = (u.searchParams.get('kod') || '').trim().toUpperCase();
+    if (u.searchParams.get('zirveOgretmen') === '1' && /^[A-Z0-9]{1,10}$/.test(code)) {
+      sessionStorage.setItem(teacherInviteKey, JSON.stringify({code, at: Date.now()}));
+    }
+  } catch {}
+}
+function clearTeacherInvite() {
+  try {
+    sessionStorage.removeItem(teacherInviteKey);
+    const u = new URL(location.href);
+    if (u.searchParams.get('zirveOgretmen') === '1') {
+      u.searchParams.delete('zirveOgretmen'); u.searchParams.delete('kod');
+      history.replaceState(history.state, '', u.pathname + u.search + u.hash);
+    }
+  } catch {}
+}
+let teacherInviteBusy = false;
+async function acceptTeacherInvite() {
+  if (teacherInviteBusy || D.hidden || window.dmTeacherPortalMode || teacherToken() || !studentToken() || !who() || store.get('ing_oturumAcik') !== 'true') return;
+  if (D.getElementById('panel-alani')?.style.display !== 'block') return;
+  let pending;
+  try { pending = JSON.parse(sessionStorage.getItem(teacherInviteKey) || 'null'); } catch { return; }
+  if (!pending) return;
+  if (Date.now() - pending.at > 86400000 || !/^[A-Z0-9]{1,10}$/.test(pending.code)) { clearTeacherInvite(); return; }
+  if (blocked()) return;
+  const tok = studentToken(), name = who();
+  teacherInviteBusy = true;
+  try {
+    const r = await fetch('https://nxfqlutulxqzqgwewssd.supabase.co/functions/v1/diji-api', {
+      method: 'POST', headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({islem: 'ogretmenKoduBagla', ogrenci: name, kod: pending.code, t: tok, davetOnizleme: true})
+    });
+    const d = await r.json();
+    if (tok !== studentToken() || name !== who()) return;
+    if (d.alreadyLinked || d.otherTeacher) {
+      clearTeacherInvite();
+      toast(d.alreadyLinked ? 'Bu öğretmene zaten bağlısın.' : 'Zaten bir öğretmene bağlısın. Mevcut öğretmenin değişmedi.');
+      return;
+    }
+    if (!d.ok || !d.ogretmen) { clearTeacherInvite(); toast(d.mesaj || 'Öğretmen daveti doğrulanamadı.'); return; }
+    if (!confirm(d.ogretmen + ' adlı öğretmenin öğrencisi olmak ve yarışma ekibine katılmak ister misin? Öğretmenin öğrenme ilerlemeni görebilecek.')) { clearTeacherInvite(); return; }
+    if (tok !== studentToken() || name !== who()) return;
+    const response = await fetch('https://nxfqlutulxqzqgwewssd.supabase.co/functions/v1/diji-api', {
+      method: 'POST', headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({islem: 'ogretmenKoduBagla', ogrenci: name, kod: pending.code, t: tok})
+    });
+    const result = await response.json();
+    if (tok !== studentToken() || name !== who()) return;
+    clearTeacherInvite();
+    if (result.ok) { cache.delete(tok); toast('Öğretmenine bağlandın! Yarışma ekibine katıldın.'); }
+    else toast(result.mesaj || 'Öğretmene bağlanılamadı.');
+  } catch { clearTeacherInvite(); toast('Davet bağlantısı işlenemedi. Bağlantıyı tekrar açabilirsin.'); }
+  finally { teacherInviteBusy = false; }
+}
 function captureInvite() {
   try {
     const u = new URL(location.href), code = u.searchParams.get('davet');
@@ -390,16 +449,16 @@ async function openTeacherHub() {
 }
 function addStudents(t) {
   const code = t.code || '';
-  const text = 'Sevgili öğrencilerim, Diji Medu\'da "Öğretmenimle Zirveye!" yarışmasına sınıfımızla katılıyoruz! Uygulamaya girip ' + (code ? 'öğretmen kodum ' + code + ' ile ' : '') + 'sınıfımıza katılın, XP toplayın, ilk 20\'ye girene Premium Pro hediye!';
+  const text = 'Sevgili öğrencilerim, Diji Medu\'da "Öğretmenimle Zirveye!" yarışmasına sınıfımızla katılıyoruz! Özel davet bağlantımdan kayıt olun veya mevcut hesabınızla giriş yapıp öğretmen bağlantısını onaylayın. XP toplayın ve birlikte zirveye çıkalım!';
   const v = veil('<button type="button" class="zk-x" data-zk-close aria-label="Kapat">' + I.close + '</button>' +
     '<h3 class="zk-ribbon">ÖĞRENCİ EKLE</h3>' +
-    (code ? '<div class="zk-code"><div><small>Öğretmen kodunuz</small><b style="font-size:24px;letter-spacing:2px">' + esc(code) + '</b></div><button type="button" data-copy>Kopyala</button></div>' : '') +
-    '<ol class="zk-steps"><li><i>1</i>Kodu ve bağlantıyı öğrencilerinize gönderin</li><li><i>2</i>Öğrenciler kayıt olurken ya da profilden kodu yazsın</li><li><i>3</i>10 öğrenciye ulaşınca sıralamaya girersiniz</li></ol>' +
-    '<button type="button" class="zk-btn" data-send>' + I.share + 'Öğrencilere Gönder</button>' +
+    (code ? '<div class="zk-code"><div><small>Öğretmen kodunuz · özel davet bağlantısı</small><b style="font-size:24px;letter-spacing:2px">' + esc(code) + '</b></div><button type="button" data-copy>Linki Kopyala</button></div>' : '') +
+    '<ol class="zk-steps"><li><i>1</i>Özel bağlantınızı öğrencilerinize gönderin</li><li><i>2</i>Yeni öğrenciler kayıtla bağlanır; mevcut öğrenciler onay verir</li><li><i>3</i>10 öğrenciye ulaşınca sıralamaya girersiniz</li></ol>' +
+    '<button type="button" class="zk-btn" data-send ' + (code ? '' : 'disabled') + '>' + I.share + 'Öğrencilere Gönder</button>' +
     (window.dmTeacherClassesOpen ? '<button type="button" class="zk-btn gold small" data-classes>Sınıflarım\'ı Aç</button>' : '') +
     '<button type="button" class="zk-link" data-zk-close>Kapat</button>');
-  v.el.querySelector('[data-send]').onclick = () => share(text, APP_URL);
-  v.el.querySelector('[data-copy]')?.addEventListener('click', async () => { try { await navigator.clipboard.writeText(code); toast('Kod kopyalandı!'); } catch {} });
+  v.el.querySelector('[data-send]').onclick = () => { if (code) share(text, teacherInviteUrl(code)); };
+  v.el.querySelector('[data-copy]')?.addEventListener('click', async () => { try { await navigator.clipboard.writeText(teacherInviteUrl(code)); toast('Özel davet bağlantısı kopyalandı!'); } catch {} });
   v.el.querySelector('[data-classes]')?.addEventListener('click', () => { v.close(); closeLayer(); window.dmTeacherClassesOpen(); });
 }
 function teacherPopup(s) {
@@ -551,6 +610,7 @@ function schedulePopup() {
 }
 function onLogin() { cache.clear(); teacherRetryAt = 0; D.querySelectorAll('[data-zk-teacher-host]').forEach(x => x.remove()); observe(); D.querySelectorAll('[data-zk-banner]').forEach(x => x.remove()); acceptInvite(); schedulePopup(); mountBanner(); }
 
+captureTeacherInvite();
 captureInvite();
 let queued = false;
 const observe = () => { if (queued) return; queued = true; requestAnimationFrame(() => { queued = false; mountBanner(); mountTeacher(); }); };
@@ -560,7 +620,7 @@ function start() {
   D.addEventListener('dm:login', onLogin);
   window.addEventListener('dm:teacher-admin-role-verified', () => { teacherRetryAt = 0; observe(); });
   D.addEventListener('visibilitychange', () => { if (!D.hidden) observe(); });
-  setInterval(() => { if (!D.hidden) mountTeacher(); }, 2000);
+  setInterval(() => { if (!D.hidden) { mountTeacher(); acceptTeacherInvite(); } }, 2000);
   acceptInvite(); schedulePopup(); observe();
 }
 if (D.readyState === 'loading') D.addEventListener('DOMContentLoaded', start); else start();
