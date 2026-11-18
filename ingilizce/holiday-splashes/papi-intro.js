@@ -4,7 +4,7 @@
    Ses Web Audio ile üretilir; cihaz otomatik sesi engellerse ilk dokunuşta çalar. */
 (function(){
  'use strict';
- if(typeof window==='undefined'||window.dmPapiIntro)return;
+ if(typeof window==='undefined'||window.dmPapiSplash)return;
  const IDS=['splashEkrani','dmBootSplash'];
  /* Oturum yükleme katmanı uygulama içinde sonradan açılır: animasyon baştan oynamasın, Papi son hâlinde beklesin. */
  const STATIC_IDS=['oturumYuklemeOverlay'];
@@ -181,7 +181,7 @@ html.dm-papi-intro:not(.dm-papi-booted) #dmBootSplash{z-index:2147483646!importa
   el.insertAdjacentHTML('beforeend',MARKUP);
   if(STATIC_IDS.includes(el.id)){el.querySelector('.pi-wrap').classList.add('pi-static');return;}
   mountWaitGame(el);
-  if(!startedAt){startedAt=performance.now();trySound();}
+  if(!startedAt){startedAt=performance.now();if(fullOpen)trySound();}
  }
  function setMeta(c){try{const m=document.querySelector('meta[name="theme-color"]');if(m){if(!m.dataset.dmOrig)m.dataset.dmOrig=m.content;m.content=c;}}catch(_){}}
  /* Açılış bitince turkuaz zemin uygulamanın arkasında kalmasın */
@@ -203,8 +203,18 @@ html.dm-papi-intro:not(.dm-papi-booted) #dmBootSplash{z-index:2147483646!importa
   observer&&observer.disconnect();observer=null;
  }
  /* Açılış ekranı kapanmadan önce animasyonun bitmesi için kalan süre (ms) */
- function remainingMs(){if(!active)return 0;if(!startedAt)return 3400;return Math.max(0,3400-(performance.now()-startedAt));}
+ /* [18 Kas 2026] Tam animasyon (en az 3,4 sn, sesli) günde bir kez: günün ilk açılışında. Sonraki açılışlarda Papi yine
+    görünür ama sessizdir ve uygulama hazır olur olmaz kapanır. Gün Türkiye saatine göre, cihazın asıl deposunda tutulur. */
+ const FULL_DAY_KEY='dm-papi-intro-full-day';
+ let fullStore=null;try{fullStore=(window.dmTeacherDevice&&window.dmTeacherDevice.storage)||window.localStorage;}catch(_){}
+ const trDay=()=>{try{return new Intl.DateTimeFormat('en-CA',{timeZone:'Europe/Istanbul',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());}catch(_){return new Date().toISOString().slice(0,10);}};
+ const today=trDay();
+ let fullOpen=true;try{fullOpen=!fullStore||fullStore.getItem(FULL_DAY_KEY)!==today;}catch(_){fullOpen=true;}
+ document.addEventListener('dm:boot-ready',()=>{if(active&&fullOpen){try{fullStore&&fullStore.setItem(FULL_DAY_KEY,today);}catch(_){}}},{once:true});
+ function remainingMs(){if(!active||!fullOpen)return 0;if(!startedAt)return 3400;return Math.max(0,3400-(performance.now()-startedAt));}
  let characterSequence=0;
  function characterMarkup(){const suffix='chat'+(++characterSequence);return SVG.replace('class="pi-svg"','class="dm-papi-character-svg"').replace(/id="(pi[a-zA-Z])"/g,'id="$1'+suffix+'"').replace(/url\(#(pi[a-zA-Z])\)/g,'url(#$1'+suffix+')');}
- window.dmPapiIntro={characterMarkup,enable,disable,holdBoot:go=>waitGame?.hold(go)||false,isActive:()=>active,remainingMs,minMs:3400};
+ /* [18 Kas 2026] Ad değişti: window.dmPapiIntro papi-tanitim.js'in tur motorunun adı. Açılış bu adı kullandığı için
+    11 Kasım'dan beri tanıtım ve sayfa turları kendini kapatıyordu. Açılış artık window.dmPapiSplash. */
+ window.dmPapiSplash={characterMarkup,enable,disable,holdBoot:go=>waitGame?.hold(go)||false,isActive:()=>active,isFullOpen:()=>fullOpen,remainingMs,minMs:3400};
 })();
