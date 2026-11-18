@@ -436,6 +436,37 @@ async function mountParkurBadge() {
     if (!old) { b.innerHTML = '<span aria-hidden="true" class="zk-parkur-spark">✦</span>'+I.cup+'<strong>24</strong><small>KASIM</small><span class="zk-parkur-ribbon">YARIŞMA</span>'; b.onclick = () => { layerRole = 'student'; openStudentHub(); }; root.append(b); }
   } finally { parkurBusy = false; }
 }
+let profileInviteBusy = false;
+async function mountProfileInvite() {
+  const host = D.querySelector('#rtProfileBackdrop .pa-body');
+  const anchor = host?.querySelector('.pa-grid');
+  const tok = studentToken();
+  D.querySelectorAll('[data-zk-profile-invite]').forEach(b => {
+    if (!host || b.parentElement !== host || b.zkToken !== tok || !tok || window.dmTeacherPortalMode) b.remove();
+  });
+  if (!anchor || !tok || window.dmTeacherPortalMode || profileInviteBusy || store.get('ing_oturumAcik') !== 'true') return;
+  const old = host.querySelector('[data-zk-profile-invite]');
+  if (old && Date.now()-old.zkCheckedAt<60000) return;
+  if (!old && host.zkInviteCheckedAt && Date.now()-host.zkInviteCheckedAt<15000 && host.zkInviteToken===tok) return;
+  profileInviteBusy=true;
+  try {
+    const s=await status(tok);
+    if (tok!==studentToken() || !host.isConnected || window.dmTeacherPortalMode) return;
+    host.zkInviteCheckedAt=Date.now(); host.zkInviteToken=tok;
+    if (!isOn(s) || s.role!=='student' || s.guest || !['soon','live'].includes(s.campaign.phase)) { old?.remove(); return; }
+    const n=Math.min(5,Math.max(0,Number(s.invite?.verified)||0));
+    const b=old||D.createElement('button');
+    b.type='button'; b.className='zk-profile-invite'; b.dataset.zkProfileInvite='1'; b.zkToken=tok; b.zkCheckedAt=Date.now();
+    b.innerHTML='<span class="zk-pi-art"><img src="'+IMG_KIDS+'" alt=""></span><span class="zk-pi-copy"><b>Arkadaşlarını Davet Et</b><small>24 Kasım · '+(n>=5?'✓ Görev tamamlandı':fmt(5-n)+' arkadaş kaldı')+'</small><span class="zk-pi-progress"><i style="width:'+(n*20)+'%"></i></span></span><span class="zk-pi-count">'+n+'/5'+I.go+'</span>';
+    b.onclick=() => {
+      if (tok!==studentToken() || window.dmTeacherPortalMode) return;
+      // Use existing close control so primary navigation and focus remain consistent.
+      D.querySelector('#rtProfileBackdrop .rt-close')?.click();
+      layerRole='student'; openInvite();
+    };
+    if (!old) anchor.before(b);
+  } finally { profileInviteBusy=false; }
+}
 function bannerHtml(s) {
   const me = s.me || {};
   const sub = s.campaign.phase === 'soon' ? day(s.campaign.startsOn) + '\'da başlıyor · İlk 20\'ye ödül'
@@ -659,14 +690,14 @@ function onLogin() { popupSeen.clear(); parkurRetryAt = 0; cache.clear(); teache
 captureTeacherInvite();
 captureInvite();
 let queued = false;
-const observe = () => { if (queued) return; queued = true; requestAnimationFrame(() => { queued = false; mountBanner(); mountTeacher(); mountParkurBadge(); }); };
+const observe = () => { if (queued) return; queued = true; requestAnimationFrame(() => { queued = false; mountBanner(); mountTeacher(); mountParkurBadge(); mountProfileInvite(); }); };
 function start() {
   new MutationObserver(muts => { for (const m of muts) for (const n of m.addedNodes) if (n.nodeType === 1 && !n.closest?.('.zk-layer,.zk-veil,[data-zk-banner],[data-zk-tcard]')) { observe(); return; } })
     .observe(D.body, {childList: true, subtree: true});
   D.addEventListener('dm:login', onLogin);
   window.addEventListener('dm:teacher-admin-role-verified', () => { teacherRetryAt = 0; observe(); });
   D.addEventListener('visibilitychange', () => { if (!D.hidden) observe(); });
-  setInterval(() => { if (!D.hidden) { mountTeacher(); mountParkurBadge(); acceptTeacherInvite(); } }, 2000);
+  setInterval(() => { if (!D.hidden) { mountTeacher(); mountParkurBadge(); mountProfileInvite(); acceptTeacherInvite(); } }, 2000);
   acceptInvite(); schedulePopup(); observe();
 }
 if (D.readyState === 'loading') D.addEventListener('DOMContentLoaded', start); else start();
