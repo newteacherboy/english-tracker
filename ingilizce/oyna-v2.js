@@ -187,7 +187,7 @@ function medalRouteMarkup(steps,current,learn){
  map.layout=medalLayout(steps,current,learn,map.top,map.row);
  map.badges=window.dmRouteBadges?.milestones(steps,learn?'learning':'school');
  if(completed>=0&&map.badges){
-  map.freshBadge=[...map.badges].find(([end,badge])=>badge.earned&&completed>=badge.first&&completed<=end)?.[1];
+  map.freshBadge=[...map.badges].find(([end,badge])=>badge.earned&&completed>=badge.first&&completed<=end&&!([...previous.badges?.values()||[]].some(old=>old.id===badge.id&&old.earned)))?.[1];
   if(map.freshBadge)window.dmRouteBadges.celebrate(map.freshBadge);
  }
  map.height=(map.layout.at(-1)?.y??map.top)+map.row+55;

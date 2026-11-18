@@ -80,7 +80,22 @@
   sprite:{src:badge.art.src,x:badge.art.col*(badge.art.cell||CELL),y:badge.art.row*(badge.art.cell||CELL),size:badge.art.cell||CELL}});
  const visible=el=>el.getClientRects().length>0&&getComputedStyle(el).visibility!=='hidden';
  const blockers='[role="dialog"],#genelSonucOverlay,#dmLevelUp,.ml-overlay,.bz-perde,.gso-overlay';
- let pending=[],shown=new Set(),timer=0,dialog=null;
+ let pending=[],shown=new Set(),timer=0,dialog=null,sessionOwner='';
+ // Keep the notification receipt separate from earned badges and rewards.
+ // Account and route milestone scope prevent collisions on shared devices.
+ const receiptKey=(owner,id)=>'dm_route_badge_seen_v1:'+encodeURIComponent(owner)+':'+encodeURIComponent(id);
+ function wasShown(owner,id){
+  const key=receiptKey(owner,id);
+  if(shown.has(key))return true;
+  try{if(root.localStorage.getItem(key)==='1'){shown.add(key);return true;}}catch{}
+  return false;
+ }
+ function markShown(owner,id){
+  const key=receiptKey(owner,id);
+  shown.add(key);
+  try{root.localStorage.setItem(key,'1');}catch{}
+ }
+
  function schedule(){
   if(timer||!pending.length)return;
   timer=setTimeout(flush,250);
@@ -88,13 +103,18 @@
  function flush(){
   timer=0;
   if(!pending.length)return;
-  if(!member()||account()!==pending[0].owner){pending=[];return;}
+  if(!member()){pending=[];return;}
+  pending=pending.filter(x=>x.owner===account()&&!wasShown(x.owner,x.badge.id));
+  if(!pending.length)return;
   if(document.hidden||!document.querySelector('#tab-dunya.active'))return;
   if(dialog||[...document.querySelectorAll(blockers)].some(visible)){schedule();return;}
-  showBadge(pending.shift().badge,true);
+  const next=pending.shift();
+  showBadge(next.badge,true);
  }
  function showBadge(badge,celebration=false){
   if(!badge||dialog)return;
+  const owner=account();
+  if(celebration&&(!member()||!badge.earned||wasShown(owner,badge.id)))return;
   const previous=document.activeElement,overlay=document.createElement('div');
   const confetti=celebration?'<div class="dm-route-badge-confetti" aria-hidden="true">'+
    Array.from({length:12},(_,i)=>'<i style="--i:'+i+'"></i>').join('')+'</div>':'';
@@ -113,15 +133,16 @@
    previous?.focus?.({preventScroll:true});schedule();
   };
   dialog=overlay;const parent=root.dmViewHistory?.capture();document.body.append(overlay);
+  if(celebration)markShown(owner,badge.id);
   root.dmViewHistory?.track(overlay,{parent,close});
   const button=overlay.querySelector('button');button.onclick=close;button.focus();
   overlay.onkeydown=e=>{if(e.key==='Escape'){e.preventDefault();e.stopPropagation();close();}else if(e.key==='Tab'){e.preventDefault();button.focus();}};
  }
  function celebrate(badge){
   if(!member()||!badge?.earned)return;
-  const owner=account(),key=owner+':'+badge.id;
-  if(shown.has(key))return;
-  shown.add(key);pending.push({owner,badge});schedule();
+  const owner=account();
+  if(wasShown(owner,badge.id)||pending.some(x=>x.owner===owner&&x.badge.id===badge.id))return;
+  sessionOwner=owner;pending.push({owner,badge});schedule();
  }
  function collection(host){
   if(!host||!member())return;
@@ -155,7 +176,9 @@
   void fill('learning',async()=>(await root.dmStoryPath.overview()).chapters);
  }
  document.addEventListener('dm:login',()=>{
-  pending=[];shown.clear();clearTimeout(timer);timer=0;
+  const owner=account();
+  if(owner===sessionOwner&&member()){schedule();return;}
+  sessionOwner=owner;pending=[];clearTimeout(timer);timer=0;
   if(dialog){root.dmViewHistory?.leave(dialog);dialog.remove();dialog=null;}
   document.querySelectorAll('.dm-route-badge-collection').forEach(el=>el.remove());
  });

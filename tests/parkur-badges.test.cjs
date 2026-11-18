@@ -66,3 +66,28 @@ test('three repaired Papi badges use complete standalone art and preserve all ot
  assert.equal(school[5].src,'parkur-badges/v2/school-02.webp');
  assert.equal(learning[0].src,'parkur-badges/v2/papi-01.webp');
 });
+
+test('automatic badge celebration is shown once per account and milestone, also after reload',()=>{
+ const vm=require('node:vm'), receipts=new Map();
+ const source=fs.readFileSync(path.join(__dirname,'../ingilizce/parkur-badges.js'),'utf8');
+ const earned=milestones(steps(10),'school');
+ function fixture(owner){
+  const timers=new Map(),events={},dialogs=[];let serial=0;
+  const doc={hidden:false,activeElement:null,querySelector:()=>({}),querySelectorAll:()=>[],
+   addEventListener:(name,fn)=>{events[name]=fn;},
+   createElement:()=>{const button={focus(){}};return {querySelector:()=>button,remove(){},button};},
+   body:{append:el=>dialogs.push(el)}};
+  const c={aktifOgrenciAdi:owner,document:doc,localStorage:{getItem:k=>receipts.get(k)||null,setItem:(k,v)=>receipts.set(k,v)},
+   setTimeout:fn=>{timers.set(++serial,fn);return serial;},clearTimeout:id=>timers.delete(id)};
+  vm.createContext(c);vm.runInContext(source,c);
+  return {c,events,dialogs,flush(){const work=[...timers.values()];timers.clear();work.forEach(fn=>fn());}};
+ }
+ const badge=earned.get(4),next=earned.get(9),a=fixture('Ada');
+ a.c.dmRouteBadges.celebrate(badge);a.c.dmRouteBadges.celebrate(badge);a.flush();
+ assert.equal(a.dialogs.length,1);assert.match(a.dialogs[0].innerHTML,/Rozet kazandın!/);
+ a.dialogs[0].button.onclick();a.events['dm:login']();a.c.dmRouteBadges.celebrate(badge);a.flush();assert.equal(a.dialogs.length,1);
+ const reload=fixture('Ada');reload.c.dmRouteBadges.celebrate(badge);reload.flush();assert.equal(reload.dialogs.length,0);
+ reload.c.dmRouteBadges.inspect(badge);assert.equal(reload.dialogs.length,1);assert.match(reload.dialogs[0].innerHTML,/Kazanılan rozet/);
+ reload.dialogs[0].button.onclick();reload.c.dmRouteBadges.celebrate(next);reload.flush();assert.equal(reload.dialogs.length,2);
+ const other=fixture('Ece');other.c.dmRouteBadges.celebrate(badge);other.flush();assert.equal(other.dialogs.length,1);
+});
