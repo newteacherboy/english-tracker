@@ -560,67 +560,48 @@ function teacherPopup(s) {
     '<button type="button" class="zk-link" data-zk-close>Daha Sonra</button>');
   v.el.querySelector('[data-join]').onclick = () => { v.close(); openTeacherHub(); };
 }
-function teacherCardHtml(s) {
-  const t = s.teacher || {};
-  const line = !t.eligible ? fmt(t.students) + '/10 öğrenci · ' + t.need + ' öğrenci daha ekle' : t.rank ? 'Sıralamadasın: ' + t.rank + '. sıra · ' + fmt(t.avg) + ' ort. XP' : fmt(t.students) + ' öğrenci · sıralamaya hazırsın';
-  return '<button type="button" class="zk-tcard" data-zk-tcard>' + papi('merhaba') +
-    '<span style="flex:1"><b>Öğretmenimle Zirveye!</b><small>' + esc(line) + '</small><span class="zk-chip gold zk-mini">İlk 2 öğretmene 1 yıl Premium Pro</span></span>' +
-    '<span class="zk-go" style="width:34px;height:34px;border-radius:50%;background:#fff;display:grid;place-items:center;color:#6B2FE0;flex:none">' + I.go + '</span></button>';
-}
 let teacherBusy = false;
 let teacherRetryAt = 0;
 function teacherHost() {
-  const selectors = ['#tpTeacherHome #dmTeacherDesignV2', '#ogretmenMenuModal .dm-v2-content', '#tpDashboard.is-visible .tp-real-tools', '#tpTeacherHome.is-visible'];
+  const selectors = ['#tpDashboard.is-visible .tp-real-tools','#tpTeacherHome #dmTeacherDesignV2','#ogretmenMenuModal .dm-v2-content','#tpTeacherHome.is-visible'];
   for (const selector of selectors) {
     const el = D.querySelector(selector);
     if (el && el.getClientRects().length && getComputedStyle(el).visibility !== 'hidden') return el;
   }
   return null;
 }
+function teacherShortcutHost(content){
+  return content.closest('#tpDashboard')?.querySelector('.tp-dash-menu') ||
+    content.querySelector('.dm-midnight-brand,.dm-v2-quick') || content;
+}
 async function mountTeacher() {
-  const content = teacherHost();
-  const tok = teacherToken();
-  D.querySelectorAll('[data-zk-teacher-host]').forEach(el => {
-    if (!tok || el.zkToken !== tok || el.parentElement !== content) el.remove();
+  const content = teacherHost(), tok = teacherToken();
+  const target=content&&teacherShortcutHost(content);
+  // Remove the old oversized banner, including nodes left by an older cached script.
+  D.querySelectorAll('[data-zk-teacher-host],[data-zk-tcard]').forEach(el=>el.remove());
+  D.querySelectorAll('[data-zk-teacher-shortcut]').forEach(el=>{
+    if(!tok||el.zkToken!==tok||el.parentElement!==target)el.remove();
   });
-  if (!content || !tok || teacherBusy || Date.now() < teacherRetryAt) return;
-  const previous = content.querySelector(':scope > [data-zk-teacher-host]');
-  if (previous && Date.now() - (previous.zkCheckedAt || 0) < 60000) return;
+  if (!content || !target || !tok || teacherBusy || Date.now() < teacherRetryAt) return;
   teacherBusy = true;
   try {
     const s = await status(tok);
     if (tok !== teacherToken() || content !== teacherHost() || !content.isConnected) return;
+    const previous=target.querySelector(':scope > [data-zk-teacher-shortcut]');
     if (!isOn(s) || s.role !== 'teacher') {
-      previous?.remove();
-      teacherRetryAt = Date.now() + (s ? 60000 : 5000);
-      return;
+      previous?.remove(); teacherRetryAt=Date.now()+(s?60000:5000); return;
     }
-    const host = previous || D.createElement('div');
-    host.dataset.zkTeacherHost = '1';
-    host.zkToken = tok;
-    host.zkCheckedAt = Date.now();
-    host.style.gridColumn = '1 / -1';
-    if (!previous) {
-      host.innerHTML = teacherCardHtml(s);
-      if (s.admin) {
-        const b = D.createElement('button');
-        b.type = 'button'; b.className = 'zk-btn small';
-        b.dataset.zkAdmin = '1';
-        b.textContent = '🏆 Zirve Kampanyası · Yönetim';
-        b.onclick = openAdmin;
-        host.append(b);
-      }
-      const banner = content.querySelector(':scope > .dm-midnight-hero, :scope > .dm-v2-banner');
-      if (banner) banner.after(host); else content.prepend(host);
+    if(!previous){
+      const host=D.createElement('div');host.dataset.zkTeacherShortcut='1';host.zkToken=tok;
+      const b=D.createElement('button');b.type='button';b.className='zk-teacher-shortcut';
+      b.textContent='🏆 24 Kasım Yarışması';b.onclick=()=>{if(tok===teacherToken())openTeacherHub();};host.append(b);
+      if(s.admin){const a=D.createElement('button');a.type='button';a.className='zk-teacher-shortcut';a.textContent='Yarışma Yönetimi';a.onclick=openAdmin;host.append(a);}
+      target.append(host);
     }
-    const key = 'teacher:' + tok;
-    if (!popupSeen.has(key) && s.campaign.phase !== 'results' && s.campaign.phase !== 'ended' && !D.hidden && !D.querySelector('.zk-veil,.zk-layer')) {
-      popupSeen.add(key);
-      teacherPopup(s);
-    }
-  } finally { teacherBusy = false; }
+    if(!blocked()&&claimAnnouncement(s,'teacher',tok))teacherPopup(s);
+    teacherRetryAt=Date.now()+2000;
+  } finally { teacherBusy=false; }
 }
-D.addEventListener('click', e => { if (e.target.closest('[data-zk-tcard]')) openTeacherHub(); });
 
 /* =================== YÖNETİCİ =================== */
 async function openAdmin() {
@@ -669,20 +650,47 @@ async function openAdmin() {
 
 /* =================== Başlatma =================== */
 function blocked() {
-  if (D.hidden || D.querySelector('.zk-veil,.zk-layer')) return true;
+  if (D.hidden || D.querySelector('.zk-veil,.zk-layer,#dmBootSplash:not(.dm-ready)')) return true;
   try { if (window.dmPapiIntro?.active?.()) return true; } catch {}
   for (const el of D.querySelectorAll('[aria-modal="true"],.yo-perde,.dm-perde,.cog-perde,.sm-overlay,.dm-member-overlay,.game-modal-overlay,.ld-layer,.dmg-veil'))
     if (el.getClientRects().length && getComputedStyle(el).visibility !== 'hidden' && getComputedStyle(el).display !== 'none') return true;
   return false;
 }
 const popupSeen = new Set();
+// The first two distinct app/login sessions are eligible. Then only one display
+// per Istanbul calendar day in the final three days (8–10 December for 2026).
+function announcementWindow(c,record,now){
+  if(!c||!['soon','live'].includes(c.phase)||!/^\d{4}-\d{2}-\d{2}$/.test(c.endsOn||''))return false;
+  const end=Date.parse(c.endsOn+'T00:00:00Z'),current=Date.parse(now+'T00:00:00Z');
+  if(!Number.isFinite(end)||!Number.isFinite(current)||current>end)return false;
+  const finalThree=current>=end-2*86400000;
+  if(finalThree)return record.last!==now;
+  return (Number(record.count)||0)<2;
+}
+function announcementAccount(s,role){
+  if(role==='teacher'){
+    let name='';try{name=JSON.parse(sessionStorage.getItem('dm_tp_session')||'null')?.name||window.dmTeacherPortalSession?.name||'';}catch{}
+    return name||s.teacher?.code||'';
+  }
+  return who()||store.get('ing_aktifOgrenci')||s.invite?.code||'';
+}
+function claimAnnouncement(s,role,tok){
+  const id=announcementAccount(s,role);if(!id||s.guest)return false;
+  const session=role+':'+tok;if(popupSeen.has(session))return false;
+  const key='zk_announcement_v2:'+String(s.campaign.key||'ogretmenimle-zirveye-2026')+':'+role+':'+encodeURIComponent(id);
+  let record={count:0,last:''};try{record=JSON.parse(store.get(key)||'null')||record;}catch{}
+  const now=today();if(!announcementWindow(s.campaign,record,now))return false;
+  popupSeen.add(session);
+  store.set(key,JSON.stringify({count:Math.min(2,(Number(record.count)||0)+1),last:now}));
+  return true;
+}
 let popupTimer = 0;
 function schedulePopup() {
   clearTimeout(popupTimer);
   let tries = 0;
   const tick = async () => {
     const tok = studentToken();
-    if (!tok || window.dmTeacherPortalMode) return;
+    if (!tok || window.dmTeacherPortalMode || store.get('ing_oturumAcik')!=='true') return;
     const key = 'student:' + tok;
     if (popupSeen.has(key)) return;
     if (blocked()) { if (++tries < 40) popupTimer = setTimeout(tick, 3000); return; }
@@ -690,11 +698,11 @@ function schedulePopup() {
     if (!isOn(s) || s.role !== 'student' || s.campaign.phase === 'results' || s.campaign.phase === 'ended') return;
     if (blocked()) { if (++tries < 40) popupTimer = setTimeout(tick, 3000); return; }
     if (tok !== studentToken() || popupSeen.has(key)) return;
-    popupSeen.add(key); studentPopup(s);
+    if(claimAnnouncement(s,'student',tok)) studentPopup(s);
   };
   popupTimer = setTimeout(tick, 6000);
 }
-function onLogin() { popupSeen.clear(); parkurRetryAt = 0; cache.clear(); teacherRetryAt = 0; D.querySelectorAll('[data-zk-teacher-host]').forEach(x => x.remove()); observe(); D.querySelectorAll('[data-zk-banner]').forEach(x => x.remove()); acceptInvite(); schedulePopup(); mountBanner(); }
+function onLogin() { parkurRetryAt = 0; cache.clear(); teacherRetryAt = 0; D.querySelectorAll('[data-zk-teacher-host],[data-zk-teacher-shortcut]').forEach(x => x.remove()); observe(); D.querySelectorAll('[data-zk-banner]').forEach(x => x.remove()); acceptInvite(); schedulePopup(); mountBanner(); }
 
 captureTeacherInvite();
 captureInvite();
