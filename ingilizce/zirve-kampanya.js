@@ -169,7 +169,7 @@ function goalRow(title, count, goal, note, action = '', extra = '') {
 function inlineInvite(code, phase) {
   if (!['soon','live'].includes(phase)) return '';
   const url=code?inviteUrl(code):'';
-  return '<div class="zk-inline-invite"><b>Kişisel davet bağlantın</b>'+
+  return '<div class="zk-inline-invite"><button type="button" class="zk-invite-detail" data-zk="invite" aria-label="Kişisel davet bağlantın: davet şartlarını ve ilerlemeyi aç">Kişisel davet bağlantın <span aria-hidden="true">ⓘ</span></button>'+
     (url?'<div class="zk-inline-url">'+esc(url)+'</div><div class="zk-inline-actions"><button type="button" data-zk="copy-invite">'+I.share+' Linki Kopyala</button><button type="button" data-zk="send-invite">Arkadaşlarına Gönder '+I.go+'</button></div>':'<button type="button" class="zk-btn small" data-zk="retry-invite">Davet bağlantısını oluştur</button>')+
     '</div>';
 }
@@ -190,6 +190,7 @@ async function openStudentHub() {
   const tok=studentToken();
   const s = await status(tok, true);
   if (!isOn(s) || tok!==studentToken()) { toast('Kampanya şu an açık değil.'); return; }
+  layerRole = 'student';
   const me = s.me || {}, inv = s.invite || (s.invite={}), c = s.campaign;
   if (!s.guest && s.role==='student' && !inv.code && ['soon','live'].includes(c.phase)) {
     try { const d=await rpc('dm_campaign_invite_code',{p_token:tok}); if(d.ok && d.code) inv.code=d.code; } catch {}
