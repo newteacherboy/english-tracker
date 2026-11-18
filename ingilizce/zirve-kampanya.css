@@ -179,3 +179,5 @@ body #tab-dunya:not(.active) .zk-parkur,body.dm-play-session #tab-dunya .zk-park
 @keyframes zkMedalSpark{50%{transform:scale(1.35) rotate(20deg);opacity:.7}}
 @media(max-width:355px){body #tab-dunya .rt-medal-route > .zk-parkur{right:8px;width:66px;height:66px;top:calc(52% - 83px)}}
 @media(prefers-reduced-motion:reduce){.zk-parkur-spark{animation:none}}
+
+.zk-goals{display:grid;gap:12px}.zk-goal{display:grid;gap:8px;background:#f6f2ff;border:1px solid #e2d7fa;border-radius:16px;padding:12px;color:#38246d}.zk-goal.done{background:#edf9e7;border-color:#b6dfa6}.zk-goal-top,.zk-goal-foot{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}.zk-goal-state{font-size:12px;font-weight:900;color:#7342b7}.zk-goal.done .zk-goal-state{color:#267344}.zk-goal-foot button{border:0;border-radius:10px;background:#6b2fe0;color:white;padding:8px 12px;font-weight:800;cursor:pointer}.zk-goal-pending{font-weight:700;color:#785720;font-size:13px;margin:0}.zk-goal small{font-size:12px;font-weight:700}.zk-goal.done .zk-bar i{background:#58b852}
