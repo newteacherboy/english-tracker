@@ -3,9 +3,9 @@
         <head>
 <script src="teacher-portal-boot.js?v=20261115-live-guard-1"></script>
 <script src="holiday-splashes/dates.js?v=20261023-2"></script>
-<script src="holiday-splashes/papi-intro.js?v=eab062f621"></script><script src="holiday-splashes/splash.js?v=20261112-yuk"></script>
+<script src="holiday-splashes/papi-intro.js?v=eab062f621"></script><script src="holiday-splashes/splash.js?v=20261118-zirve"></script>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@800&amp;display=swap">
-<link rel="stylesheet" href="holiday-splashes/splash.css?v=20261111-pending-3">
+<link rel="stylesheet" href="holiday-splashes/splash.css?v=20261118-zirve">
 
 <meta charset="UTF-8">
 <script src="native-app.js?v=20261113-notification-card"></script>
@@ -122,8 +122,8 @@ window.supabaseClient=supabaseClient;
 <link rel="preload" as="script" href="teacher-portal-boot.js?v=20261115-live-guard-1">
 <link rel="preload" as="script" href="holiday-splashes/dates.js?v=20261023-2">
 <link rel="preload" as="script" href="holiday-splashes/papi-intro.js?v=eab062f621">
-<link rel="preload" as="script" href="holiday-splashes/splash.js?v=20261112-yuk">
-<link rel="preload" as="style" href="holiday-splashes/splash.css?v=20261111-pending-3">
+<link rel="preload" as="script" href="holiday-splashes/splash.js?v=20261118-zirve">
+<link rel="preload" as="style" href="holiday-splashes/splash.css?v=20261118-zirve">
 <link rel="preload" as="script" href="native-app.js?v=20261113-notification-card">
 <link rel="preload" as="script" href="odullu-reklam.js?v=20261112-secim">
 <link rel="preload" as="script" href="friends-feed-model.js?v=20261024-club-1">
@@ -362,7 +362,7 @@ window.supabaseClient=supabaseClient;
 <link rel="preload" as="script" href="admin-ads.js?v=20261115-role-1">
 <link rel="preload" as="script" href="admin-push.js?v=20261115-role-1">
 <link rel="preload" as="style" href="teacher-splash-control.css?v=20261030-1">
-<link rel="preload" as="script" href="teacher-splash-control.js?v=20261111-papi-giris-1">
+<link rel="preload" as="script" href="teacher-splash-control.js?v=20261118-zirve">
 <link rel="preload" as="script" href="announcements.js?v=20261028-kota-1">
 <link rel="preload" as="script" href="teacher-message-notices.js?v=20261027-kota-2">
 <link rel="preload" as="script" href="kelime-golu.js?v=20261114-premium-profile">
@@ -470,7 +470,7 @@ window.dmLateCss=go;document.addEventListener('dm:boot-ready',go,{once:true});ad
 <script>(function(){
 const splash=document.getElementById('dmBootSplash');let timer,done=false,loaded=false,finishTimer=0;const splashStartedAt=Date.now(),minSplashMs=(window.dmPapiIntro&&window.dmPapiIntro.isActive())?3400:0;
 function visible(el){return !!el&&el.getClientRects().length>0&&getComputedStyle(el).display!=='none';}
-function finish(){if(done)return;splash.style.setProperty("--dm-papi-progress","100%");const remaining=Math.max(minSplashMs-(Date.now()-splashStartedAt),window.dmSplashPending?300:0,(window.dmPapiIntro&&window.dmPapiIntro.remainingMs)?window.dmPapiIntro.remainingMs():0);if(remaining>0){if(!finishTimer)finishTimer=setTimeout(()=>{finishTimer=0;finish();},remaining);return;}if(window.dmPapiIntro?.holdBoot?.(finish))return;done=true;clearInterval(timer);clearTimeout(deadline);document.removeEventListener('dm:login',check);document.removeEventListener('dm:state',check);splash.classList.add('dm-ready');setTimeout(()=>{splash.remove();document.dispatchEvent(new Event('dm:boot-ready'));},250);}
+function finish(){if(done)return;splash.style.setProperty("--dm-papi-progress","100%");const remaining=Math.max(minSplashMs-(Date.now()-splashStartedAt),window.dmSplashPending?300:0,(window.dmPapiIntro&&window.dmPapiIntro.remainingMs)?window.dmPapiIntro.remainingMs():0);if(remaining>0){if(!finishTimer)finishTimer=setTimeout(()=>{finishTimer=0;finish();},remaining);return;}if(window.dmZirveIntro?.holdBoot?.(finish)||window.dmPapiIntro?.holdBoot?.(finish))return;done=true;clearInterval(timer);clearTimeout(deadline);document.removeEventListener('dm:login',check);document.removeEventListener('dm:state',check);splash.classList.add('dm-ready');setTimeout(()=>{splash.remove();document.dispatchEvent(new Event('dm:boot-ready'));},250);}
 function check(){if(!loaded)return;if(navigator.onLine===false&&window.dmPapiIntro?.isActive())return;const login=document.getElementById('login-container'),panel=document.getElementById('panel-alani');
 const loading=document.getElementById('oturumYuklemeOverlay');if(visible(loading))return;
 let restoring=false;try{restoring=localStorage.getItem('ing_oturumAcik')==='true'&&!!localStorage.getItem('ing_aktifOgrenci');}catch(e){}
@@ -7542,7 +7542,7 @@ window.dmClassicGameAudio={
 </script>
 <link rel="stylesheet" href="eight-game-fullscreen.css?v=20261020-fit-v1" media="print" data-dm-later>
 <script defer src="eight-game-fullscreen.js?v=20261025-close-1"></script>
-<link rel="stylesheet" href="teacher-portal.css?v=20261115-bulk-compact-1"><script defer src="teacher-school-locations.js?v=20261106"></script><script defer src="teacher-portal.js?v=20261115-admin-actions-fix-2"></script><script defer src="teacher-classes.js?v=20261115-single-tile-1"></script><script defer src="teacher-league.js?v=20261115-design-one-1"></script><script defer src="teacher-reports.js?v=20261115-single-tile-1"></script><script defer src="teacher-plan-notice.js?v=20261110-1"></script><script defer src="admin-gift.js?v=20261115-role-1"></script><script defer src="admin-ads.js?v=20261115-role-1"></script><script defer src="admin-push.js?v=20261115-role-1"></script><link rel="stylesheet" href="teacher-splash-control.css?v=20261030-1"><script defer src="teacher-splash-control.js?v=20261111-papi-giris-1"></script>
+<link rel="stylesheet" href="teacher-portal.css?v=20261115-bulk-compact-1"><script defer src="teacher-school-locations.js?v=20261106"></script><script defer src="teacher-portal.js?v=20261115-admin-actions-fix-2"></script><script defer src="teacher-classes.js?v=20261115-single-tile-1"></script><script defer src="teacher-league.js?v=20261115-design-one-1"></script><script defer src="teacher-reports.js?v=20261115-single-tile-1"></script><script defer src="teacher-plan-notice.js?v=20261110-1"></script><script defer src="admin-gift.js?v=20261115-role-1"></script><script defer src="admin-ads.js?v=20261115-role-1"></script><script defer src="admin-push.js?v=20261115-role-1"></script><link rel="stylesheet" href="teacher-splash-control.css?v=20261030-1"><script defer src="teacher-splash-control.js?v=20261118-zirve"></script>
 <script defer src="announcements.js?v=20261028-kota-1"></script>
 <script defer src="teacher-message-notices.js?v=20261027-kota-2"></script>
 <link rel="stylesheet" href="kelime-golu.css?v=20261029-1" media="print" data-dm-later>
