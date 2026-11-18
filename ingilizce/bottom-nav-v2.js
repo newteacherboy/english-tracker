@@ -20,7 +20,7 @@
  let avatarLayer=null,avatarKey=null;
  function currentAvatarKey(){
   const owner=typeof aktifOgrenciAdi!=='undefined'?String(aktifOgrenciAdi||''):'';
-  try{return JSON.stringify([owner,typeof yo!=='undefined'?yo?.karakter:null,typeof window.karakterSvg]);}catch{return owner;}
+  try{return JSON.stringify([owner,typeof yo!=='undefined'?yo?.karakter:null,typeof window.karakterSvg,typeof yoVar==='function'?yoVar():null]);}catch{return owner;}
  }
  function paint(){
   const nav=document.getElementById('bottomNavMobile');
@@ -43,7 +43,7 @@
   const nav=document.getElementById('bottomNavMobile');
   if(nav)new MutationObserver(muts=>{if(muts.some(m=>[...m.addedNodes,...m.removedNodes].some(n=>n.nodeType===1&&!n.classList?.contains('dm-nv2')&&!n.classList?.contains('dm-nv2-dot')&&!n.closest?.('.dm-nv2'))))schedule();}).observe(nav,{childList:true,subtree:true});
   const header=document.getElementById('userAvatarLetter');
-  if(header)new MutationObserver(schedule).observe(header,{childList:true,subtree:true,characterData:true});
+  if(header)new MutationObserver(()=>{avatarKey=null;schedule();}).observe(header,{childList:true,subtree:true,characterData:true});
   for(const event of ['dm:login','dm:logout','dm:avatar-change'])document.addEventListener(event,()=>{avatarKey=null;schedule();});
   window.addEventListener('pageshow',schedule);
   document.addEventListener('visibilitychange',()=>{if(!document.hidden)schedule();});
