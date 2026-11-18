@@ -2,7 +2,7 @@
    Kurallar ve puanlar sunucuda (supabase/migrations/20261118030000_ogretmenimle_zirveye_kampanya.sql):
    - Yalnız kampanya tarihlerinde kazanılan XP sayılır, günde en fazla 3.500.
    - Öğrenci sıralaması bireysel (sınıfı olan/olmayan aynı liste); öğretmen sıralaması ≥10 öğrenci, öğrenci başı ortalama.
-   - Davet: e-posta doğrulama + ilk 3 durak + bir günde 300 XP. 10 davet = 2 gün Pro (otomatik).
+   - Davet: e-posta doğrulama + ilk 3 durak + bir günde 300 XP. 10 davet = 1 ay Pro (otomatik).
    - Önce yalnız yönetici görür; yönetici panelinden herkese açılır. Final ödüllerini yönetici onaylar.
    Sunucu yükü: durum 60 sn önbellekte; sıralama 15 dk'da bir toplu hesaplanır. Maskot: canlı 3D Papi (DMPapi). */
 (() => {
@@ -152,12 +152,12 @@ async function openStudentHub() {
     '<div class="zk-me"><div class="zk-me-row"><span class="r">' + (me.rank ? me.rank + '.' : '—') + '</span><span class="n">Sen</span><span class="x">' + fmt(me.xp) + ' XP</span></div><small>' + esc(rankLine) + '</small></div>' +
     (c.phase === 'live' && !s.guest ? '<div class="zk-card"><div class="zk-split"><span>Bugün sayılan XP</span><span>' + fmt(me.today) + ' / ' + fmt(s.cap) + '</span></div><div class="zk-bar"><i style="width:' + Math.min(100, (me.today || 0) / s.cap * 100) + '%"></i></div></div>' : '') +
     '<button type="button" class="zk-way v1" data-zk="rank"><span class="zk-art">' + I.game + '</span><span><b>XP Topla, Zirveye Çık</b><small>Oyna, puan topla, ilk 20\'ye gir</small></span><span class="zk-go">' + I.go + '</span></button>' +
-    '<button type="button" class="zk-way v2" data-zk="invite"><span class="zk-badge">' + fmt(inv.verified) + '/10</span><span class="zk-art"><img src="' + IMG_KIDS + '" alt=""></span><span><b>10 Arkadaşını Getir</b><small>10 arkadaş = 2 gün Pro hediye</small></span><span class="zk-go">' + I.go + '</span></button>' +
+    '<button type="button" class="zk-way v2" data-zk="invite"><span class="zk-badge">' + fmt(inv.verified) + '/10</span><span class="zk-art"><img src="' + IMG_KIDS + '" alt=""></span><span><b>10 Arkadaşını Getir</b><small>10 arkadaş = 1 ay Pro hediye</small></span><span class="zk-go">' + I.go + '</span></button>' +
     '<button type="button" class="zk-way v3" data-zk="teacher"><span class="zk-art">' + I.board + '</span><span><b>Öğretmenini Getir</b><small>' + (s.hasTeacher ? 'Öğretmenin de zirveye oynasın' : 'Sınıf kursun, birlikte yarışın') + '</small></span><span class="zk-go">' + I.go + '</span></button>' +
     '<div class="zk-card"><h3 class="zk-ribbon">ÖDÜLLER</h3><div class="zk-prizes">' +
       '<div class="zk-prize p1">' + I.cup + '<b>1–5. sıra</b><span>3 ay Premium Pro</span></div>' +
       '<div class="zk-prize p2">' + I.crown + '<b>6–20. sıra</b><span>3 ay Pro</span></div>' +
-      '<div class="zk-prize p3"><img src="' + IMG_GIFT + '" alt=""><b>10 davet</b><span>2 gün Pro</span></div></div></div>' +
+      '<div class="zk-prize p3"><img src="' + IMG_GIFT + '" alt=""><b>10 davet</b><span>1 ay Pro</span></div></div></div>' +
     '<button type="button" class="zk-btn gold" data-zk="rank">Canlı Sıralamayı Gör</button>' +
     '<button type="button" class="zk-link" data-zk="rules">Kurallar</button>',
   el => el.addEventListener('click', e => {
@@ -213,6 +213,10 @@ async function openRanking(kind = 'students') {
   paint(kind);
 }
 let layerRole = 'student';
+function demoRanking(k) {
+  const sample = k === 'teachers' ? [['Kaptan Papi', 820], ['Bilge Papi', 540], ['Renkli Papi', 280]] : k === 'invites' ? [['Gezgin Papi', 4], ['Neşeli Papi', 2], ['Meraklı Papi', 1]] : [['Yıldız Papi', 1250], ['Pilot Papi', 790], ['Çalışkan Papi', 460]];
+  return '<div class="zk-card"><b>🌟 Papi antrenman rakipleri</b><p class="zk-note">Sanal örnekler · Gerçek sıralamayı ve ödülleri etkilemez.</p><ul class="zk-list">' + sample.map(([name, score]) => '<li><span class="nm">' + esc(name) + '<small>Sanal örnek</small></span><span>' + fmt(score) + (k === 'invites' ? ' davet' : k === 'teachers' ? ' ort. XP' : ' XP') + '</span></li>').join('') + '</ul></div>';
+}
 function boardHtml(k, d, s) {
   const rows = d.rows || [];
   const val = r => k === 'teachers' ? fmt(r.avg) + ' ort. XP' : k === 'invites' ? fmt(r.count) + ' davet' : fmt(r.xp) + ' XP';
@@ -221,7 +225,8 @@ function boardHtml(k, d, s) {
     ? '<div class="zk-card" style="font-size:13.5px;font-weight:800">Sıralama, sınıftaki <b>tüm öğrencilerin ortalama XP\'sine</b> göre. En az 10 öğrencisi olan öğretmenler yarışır. <b>İlk 2 öğretmene 1 yıl Premium Pro!</b></div>'
     : k === 'invites' ? '<div class="zk-card" style="font-size:13.5px;font-weight:800">En çok arkadaş getirenler. Bu liste gösteri amaçlıdır; ödülü 10 davet sayacı verir.</div>'
     : '<h3 class="zk-ribbon">ZİRVE SENİ BEKLİYOR</h3>';
-  if (!rows.length) return head + '<div class="zk-card zk-empty">' + (s.campaign.phase === 'soon' ? 'Yarışma ' + day(s.campaign.startsOn) + ' günü başlıyor. İlk sıra seni bekliyor!' : 'Henüz sıralamada kimse yok. İlk sen ol!') + '</div>';
+  const examples = s.campaign.phase === 'soon' || s.campaign.phase === 'live' ? demoRanking(k) : '';
+  if (!rows.length) return head + examples + '<div class="zk-card zk-empty">' + (s.campaign.phase === 'soon' ? 'Yarışma ' + day(s.campaign.startsOn) + ' günü başlıyor. İlk sıra seni bekliyor!' : 'Henüz sıralamada kimse yok. İlk sen ol!') + '</div>';
   const pod = rows.slice(0, 3);
   const podium = '<div class="zk-card"><div class="zk-podium">' + [1, 0, 2].filter(i => pod[i]).map(i => {
     const r = pod[i];
@@ -231,7 +236,7 @@ function boardHtml(k, d, s) {
   const list = rows.slice(3).map(r => '<li class="' + (r.me ? 'me ' : '') + (r.rank <= prizeCut ? 'prize' : '') + '"><span class="rk">' + r.rank + '.</span><span class="nm">' + esc(r.name) + (sub(r) ? '<small>' + esc(sub(r)) + '</small>' : '') + '</span><span>' + esc(val(r)) + '</span></li>').join('');
   const mine = d.mine && !rows.some(r => r.me)
     ? '<div class="zk-me"><div class="zk-me-row"><span class="r">' + d.mine.rank + '.</span><span class="n">Sen</span><span class="x">' + esc(val(d.mine)) + '</span></div></div>' : '';
-  return head + podium + (list ? '<div class="zk-card"><ul class="zk-list">' + list + '</ul></div>' : '') +
+  return head + podium + examples + (list ? '<div class="zk-card"><ul class="zk-list">' + list + '</ul></div>' : '') +
     (prizeCut ? '<span class="zk-zone">ÖDÜL BÖLGESİ: 1–' + prizeCut + '. sıra</span>' : '') + mine +
     '<p class="zk-note">Sıralama 15 dakikada bir güncellenir.</p>';
 }
@@ -252,9 +257,9 @@ async function openInvite() {
   for (let i = 1; i <= 10; i++) slots += i <= ver ? '<span class="zk-slot on">' + I.check + '</span>' : i <= ver + wait ? '<span class="zk-slot wait" title="Bekliyor">' + I.clock + '</span>' : '<span class="zk-slot">' + i + '</span>';
   const left = Math.max(0, 10 - ver);
   const el = openLayer(top(s, 'Arkadaşını<span>Getir!</span>') +
-    '<div class="zk-card" style="background:linear-gradient(180deg,#E8F8DA,#CFF0C0);display:flex;align-items:center;gap:10px"><img src="' + IMG_KIDS + '" alt="" style="width:92px;height:92px;object-fit:contain;flex:none"><div><b style="font:900 23px/1.05 Nunito,system-ui,sans-serif;display:block">10 ARKADAŞ GETİR,<br><span style="color:#6B2FE0">2 GÜN PRO KAP!</span></b></div></div>' +
+    '<div class="zk-card" style="background:linear-gradient(180deg,#E8F8DA,#CFF0C0);display:flex;align-items:center;gap:10px"><img src="' + IMG_KIDS + '" alt="" style="width:92px;height:92px;object-fit:contain;flex:none"><div><b style="font:900 23px/1.05 Nunito,system-ui,sans-serif;display:block">10 ARKADAŞ GETİR,<br><span style="color:#6B2FE0">1 AY PRO KAP!</span></b></div></div>' +
     '<div class="zk-card" style="display:flex;flex-direction:column;align-items:center;gap:10px"><div class="zk-count">' + ver + ' <span>/ 10</span></div><div class="zk-slots">' + slots + '</div>' +
-      '<span class="zk-zone">' + (inv.rewarded ? '2 gün Pro hesabına tanımlandı!' : 'Ödüle ' + left + ' arkadaş kaldı!') + '</span>' +
+      '<span class="zk-zone">' + (inv.rewarded ? '1 ay Pro hesabına tanımlandı!' : 'Ödüle ' + left + ' arkadaş kaldı!') + '</span>' +
       (wait ? '<small style="color:#9A6A00;font-weight:800">' + wait + ' arkadaşın şartları tamamlamayı bekliyor.</small>' : '') + '</div>' +
     '<div class="zk-card"><b>Davet nasıl sayılır?</b><ol class="zk-steps">' +
       ['Arkadaşın bağlantınla girer (yeni ya da eski hesap)', 'E-postasını doğrular', 'İlk 3 parkur durağını bitirir', 'Bir günde 300 XP kazanır: davet sayıldı!'].map((t, i) => '<li><i>' + (i + 1) + '</i>' + esc(t) + '</li>').join('') + '</ol></div>' +
@@ -357,7 +362,7 @@ function studentPopup(s) {
     '<h2>Hadi zirveye çık! XP topla, arkadaşlarını getir, <em>ilk 20\'ye</em> gir!</h2>' +
     '<div class="zk-rows">' +
       '<div class="zk-row v1"><span class="zk-art">' + I.game + '</span>Oyna, XP topla, sıralamada yüksel</div>' +
-      '<div class="zk-row v2"><span class="zk-art"><img src="' + IMG_KIDS + '" alt=""></span>10 arkadaşını getir, 2 gün Pro kap</div>' +
+      '<div class="zk-row v2"><span class="zk-art"><img src="' + IMG_KIDS + '" alt=""></span>10 arkadaşını getir, 1 ay Pro kap</div>' +
       '<div class="zk-row v3"><span class="zk-art">' + I.board + '</span>Öğretmenini getir, sınıfınla yarış</div></div>' +
     '<div class="zk-goldbar">İlk 5 öğrenciye 3 AY PREMİUM PRO!</div>' +
     '<button type="button" class="zk-btn" data-join>' + (c.phase === 'soon' ? 'Yarışmayı Keşfet' : 'Yarışmaya Katıl') + ' ' + I.go + '</button>' +
@@ -393,6 +398,27 @@ D.addEventListener('dm:reward-result', async e => {
 });
 
 /* ---------- Arkadaşlar sekmesi giriş kartı ---------- */
+let parkurBusy = false;
+let parkurRetryAt = 0;
+async function mountParkurBadge() {
+  const root = D.querySelector('#tab-dunya.active .rt-medal-route');
+  const anchor = root?.querySelector(':scope > .dm-papi-chat-shortcut');
+  const tok = studentToken();
+  D.querySelectorAll('[data-zk-parkur]').forEach(b => { if (b.parentElement !== root || !tok || b.zkToken !== tok || window.dmTeacherPortalMode) b.remove(); });
+  if (!anchor || !tok || window.dmTeacherPortalMode || parkurBusy || Date.now() < parkurRetryAt) return;
+  const old = root.querySelector('[data-zk-parkur]');
+  if (old && Date.now() - old.zkCheckedAt < 60000) return;
+  parkurBusy = true;
+  try {
+    const s = await status(tok);
+    if (tok !== studentToken() || !root.isConnected || window.dmTeacherPortalMode) return;
+    if (!isOn(s) || s.role !== 'student' || s.guest || !['soon','live'].includes(s.campaign.phase)) { old?.remove(); parkurRetryAt = Date.now()+30000; return; }
+    const b = old || D.createElement('button');
+    b.type = 'button'; b.className = 'zk-parkur'; b.dataset.zkParkur = '1'; b.zkToken = tok; b.zkCheckedAt = Date.now();
+    b.setAttribute('aria-label', '24 Kasım Öğretmenimle Zirveye kampanyasını aç');
+    if (!old) { b.innerHTML = '<span aria-hidden="true" class="zk-parkur-spark">✦</span>'+I.cup+'<strong>24</strong><small>KASIM</small><span class="zk-parkur-ribbon">YARIŞMA</span>'; b.onclick = () => { layerRole = 'student'; openStudentHub(); }; root.append(b); }
+  } finally { parkurBusy = false; }
+}
 function bannerHtml(s) {
   const me = s.me || {};
   const sub = s.campaign.phase === 'soon' ? day(s.campaign.startsOn) + '\'da başlıyor · İlk 20\'ye ödül'
@@ -529,9 +555,9 @@ async function mountTeacher() {
       const banner = content.querySelector(':scope > .dm-midnight-hero, :scope > .dm-v2-banner');
       if (banner) banner.after(host); else content.prepend(host);
     }
-    const key = 'zk_tpop_' + tok.slice(-12) + '_' + today();
-    if (!store.get(key) && !store.get('zk_tjoined_' + tok.slice(-12)) && s.campaign.phase !== 'results' && s.campaign.phase !== 'ended' && !D.querySelector('.zk-veil,.zk-layer')) {
-      store.set(key, '1');
+    const key = 'teacher:' + tok;
+    if (!popupSeen.has(key) && s.campaign.phase !== 'results' && s.campaign.phase !== 'ended' && !D.hidden && !D.querySelector('.zk-veil,.zk-layer')) {
+      popupSeen.add(key);
       teacherPopup(s);
     }
   } finally { teacherBusy = false; }
@@ -591,6 +617,7 @@ function blocked() {
     if (el.getClientRects().length && getComputedStyle(el).visibility !== 'hidden' && getComputedStyle(el).display !== 'none') return true;
   return false;
 }
+const popupSeen = new Set();
 let popupTimer = 0;
 function schedulePopup() {
   clearTimeout(popupTimer);
@@ -598,29 +625,30 @@ function schedulePopup() {
   const tick = async () => {
     const tok = studentToken();
     if (!tok || window.dmTeacherPortalMode) return;
-    const owner = who(), key = 'zk_pop_' + owner + '_' + today();
-    if (store.get(key) || store.get('zk_joined_' + owner)) return;
+    const key = 'student:' + tok;
+    if (popupSeen.has(key)) return;
     if (blocked()) { if (++tries < 40) popupTimer = setTimeout(tick, 3000); return; }
     const s = await status(tok);
     if (!isOn(s) || s.role !== 'student' || s.campaign.phase === 'results' || s.campaign.phase === 'ended') return;
     if (blocked()) { if (++tries < 40) popupTimer = setTimeout(tick, 3000); return; }
-    store.set(key, '1'); studentPopup(s);
+    if (tok !== studentToken() || popupSeen.has(key)) return;
+    popupSeen.add(key); studentPopup(s);
   };
   popupTimer = setTimeout(tick, 6000);
 }
-function onLogin() { cache.clear(); teacherRetryAt = 0; D.querySelectorAll('[data-zk-teacher-host]').forEach(x => x.remove()); observe(); D.querySelectorAll('[data-zk-banner]').forEach(x => x.remove()); acceptInvite(); schedulePopup(); mountBanner(); }
+function onLogin() { popupSeen.clear(); parkurRetryAt = 0; cache.clear(); teacherRetryAt = 0; D.querySelectorAll('[data-zk-teacher-host]').forEach(x => x.remove()); observe(); D.querySelectorAll('[data-zk-banner]').forEach(x => x.remove()); acceptInvite(); schedulePopup(); mountBanner(); }
 
 captureTeacherInvite();
 captureInvite();
 let queued = false;
-const observe = () => { if (queued) return; queued = true; requestAnimationFrame(() => { queued = false; mountBanner(); mountTeacher(); }); };
+const observe = () => { if (queued) return; queued = true; requestAnimationFrame(() => { queued = false; mountBanner(); mountTeacher(); mountParkurBadge(); }); };
 function start() {
   new MutationObserver(muts => { for (const m of muts) for (const n of m.addedNodes) if (n.nodeType === 1 && !n.closest?.('.zk-layer,.zk-veil,[data-zk-banner],[data-zk-tcard]')) { observe(); return; } })
     .observe(D.body, {childList: true, subtree: true});
   D.addEventListener('dm:login', onLogin);
   window.addEventListener('dm:teacher-admin-role-verified', () => { teacherRetryAt = 0; observe(); });
   D.addEventListener('visibilitychange', () => { if (!D.hidden) observe(); });
-  setInterval(() => { if (!D.hidden) { mountTeacher(); acceptTeacherInvite(); } }, 2000);
+  setInterval(() => { if (!D.hidden) { mountTeacher(); mountParkurBadge(); acceptTeacherInvite(); } }, 2000);
   acceptInvite(); schedulePopup(); observe();
 }
 if (D.readyState === 'loading') D.addEventListener('DOMContentLoaded', start); else start();
