@@ -278,7 +278,7 @@ async function openInvite() {
     '<div class="zk-card" style="display:flex;flex-direction:column;align-items:center;gap:10px"><div class="zk-count">' + ver + ' <span>/ 5</span></div><div class="zk-slots">' + slots + '</div>' +
       '<span class="zk-zone">' + (ver>=5 ? '✓ Davet görevi tamamlandı!' : 'Sıralamaya katılmak için ' + left + ' arkadaş kaldı!') + '</span>' +
       (wait ? '<small style="color:#9A6A00;font-weight:800">' + wait + ' arkadaşın şartları tamamlamayı bekliyor.</small>' : '') + '</div>' +
-    studentGoals(s,true) + '<div class="zk-card"><b>Davet nasıl sayılır?</b><ol class="zk-steps">' +
+    '<div class="zk-card"><b>Davet nasıl sayılır?</b><ol class="zk-steps">' +
       ['Arkadaşın bağlantınla girer (yeni ya da eski hesap)', 'E-postasını doğrular', 'İlk 3 parkur durağını bitirir', 'Bir günde 300 XP kazanır: davet sayıldı!'].map((t, i) => '<li><i>' + (i + 1) + '</i>' + esc(t) + '</li>').join('') + '</ol></div>' +
     (code ? '<div class="zk-code"><div><small>Kişisel davet bağlantın</small><b>' + esc(inviteUrl(code).replace('https://', '')) + '</b></div><button type="button" data-copy>Kopyala</button></div>' : '<p class="zk-empty">Davet bağlantısı alınamadı. Tekrar dene.</p>') +
     '<button type="button" class="zk-btn" data-send ' + (code ? '' : 'disabled') + '>' + I.share + 'Arkadaşlarına Gönder</button>' +
@@ -481,6 +481,7 @@ async function openTeacherHub() {
       '<div class="zk-split" style="margin-top:6px;font-size:12.5px;color:#5B4B9A"><span>0</span><span style="color:#B87900">10 = sıralamaya giriş</span><span>20</span></div>' +
       '<span class="zk-zone" style="display:block;text-align:center;margin-top:6px">' + esc(rankLine) + '</span>' +
       '<div class="zk-stats" style="margin-top:10px"><div><b>' + fmt(t.avg) + '</b><small>Öğrenci başı ort. XP</small></div><div><b>' + (t.rank ? t.rank + '.' : '—') + '</b><small>Sıran</small></div><div><b>' + (t.rank && t.rank > 1 ? fmt(t.toFirst) : '—') + '</b><small>1. sıraya fark</small></div></div></div>' +
+    '<section class="zk-card zk-goals"><h3 class="zk-ribbon">GÖREVLERİM</h3>'+goalRow('👥 En az 10 öğrenciye ulaş',t.students,10,'Öğretmen sıralamasına katılım şartı')+'<div class="zk-goal"><div class="zk-goal-top"><b>🏆 İlk 2 öğretmen arasına gir</b></div><small>'+esc(!t.eligible?fmt(t.need)+' öğrenci kaldı':t.rank&&t.rank<=2?'✓ Şu an ödül bölgesindesin':t.rank?fmt(t.toPrize)+' ort. XP fark kaldı':'Sıralaman henüz oluşmadı')+'</small></div></section>' +
     '<button type="button" class="zk-btn" data-add>' + I.plus + 'Öğrenci Ekle</button>' +
     '<button type="button" class="zk-btn gold" data-rank>Öğretmenler Sıralaması</button>' +
     '<div class="zk-card" style="display:flex;gap:10px;align-items:center"><span style="width:52px;height:52px;flex:none">' + I.crown + '</span><span style="font-size:14px;font-weight:800">Ortalama, sınıftaki <b>tüm öğrencilerinize</b> göre hesaplanır. Öğrencileriniz Diji Medu\'da çalıştıkça puanınız yükselir.</span></div>' +
@@ -604,7 +605,7 @@ async function openAdmin() {
         '<button type="button" class="zk-btn small" data-save style="margin-top:8px">Kaydet</button></div>' +
       '<div class="zk-card"><h3>Durum · ' + esc({soon: 'Başlamadı', live: 'Sürüyor', ended: 'Bitti, onay bekliyor', results: 'Ödüller verildi'}[c.phase] || c.phase) + '</h3><div class="zk-stats">' +
         '<div><b>' + fmt(n.participants) + '</b><small>Yarışan öğrenci</small></div><div><b>' + fmt(n.teachers) + '</b><small>Sıralamada öğretmen</small></div><div><b>' + fmt(n.verifiedInvites) + '/' + fmt(n.invites) + '</b><small>Doğrulanan davet</small></div></div>' +
-        '<p class="zk-note">Son hesap: ' + (c.refreshedAt ? new Date(c.refreshedAt).toLocaleString('tr-TR') : '—') + ' · 10 davet ödülü: ' + fmt(n.inviteRewards) + '</p>' +
+        '<p class="zk-note">Son hesap: ' + (c.refreshedAt ? new Date(c.refreshedAt).toLocaleString('tr-TR') : '—') + '</p>' +
         '<button type="button" class="zk-btn small gold" data-refresh>Şimdi Yeniden Hesapla</button></div>' +
       '<div class="zk-card"><h3>Final ödül listesi (öneri)</h3><b>Öğretmenler</b><ul class="zk-list">' + (p.teachers.map(x => row(x, 'teacher')).join('') || '<li class="zk-empty">Henüz yok</li>') + '</ul>' +
         '<b>Öğrenciler</b><ul class="zk-list">' + (p.students.map(x => row(x, 'student')).join('') || '<li class="zk-empty">Henüz yok</li>') + '</ul>' +
