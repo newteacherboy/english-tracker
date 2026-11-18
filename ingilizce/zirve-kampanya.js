@@ -2,7 +2,7 @@
    Kurallar ve puanlar sunucuda (supabase/migrations/20261118030000_ogretmenimle_zirveye_kampanya.sql):
    - Yalnız kampanya tarihlerinde kazanılan XP sayılır, günde en fazla 3.500.
    - Öğrenci sıralaması bireysel (sınıfı olan/olmayan aynı liste); öğretmen sıralaması ≥10 öğrenci, öğrenci başı ortalama.
-   - Davet: e-posta doğrulama + ilk 3 durak + bir günde 300 XP. 10 davet = 1 ay Pro (otomatik).
+   - Davet: e-posta doğrulama + ilk 3 durak + bir günde 300 XP. 5 davet = bireysel ödül sıralaması şartı.
    - Önce yalnız yönetici görür; yönetici panelinden herkese açılır. Final ödüllerini yönetici onaylar.
    Sunucu yükü: durum 60 sn önbellekte; sıralama 15 dk'da bir toplu hesaplanır. Maskot: canlı 3D Papi (DMPapi). */
 (() => {
@@ -138,26 +138,42 @@ const inviteUrl = code => APP_URL + '?davet=' + encodeURIComponent(code);
 const teacherInviteUrl = code => APP_URL + '?kod=' + encodeURIComponent(code) + '&zirveOgretmen=1';
 
 /* =================== ÖĞRENCİ =================== */
+function goalRow(title, count, goal, note, action = '') {
+  const n = Math.max(0, Number(count)||0), done = n >= goal;
+  return '<div class="zk-goal'+(done?' done':'')+'"><div class="zk-goal-top"><b>'+esc(title)+'</b><span class="zk-goal-state">'+(done?'✓ Tamamlandı':fmt(goal-n)+' kaldı')+'</span></div><div class="zk-bar" role="progressbar" aria-valuemin="0" aria-valuemax="'+goal+'" aria-valuenow="'+Math.min(n,goal)+'"><i style="width:'+Math.min(100,n/goal*100)+'%"></i></div><div class="zk-goal-foot"><small>'+fmt(Math.min(n,goal))+' / '+fmt(goal)+' · '+esc(note)+'</small>'+(action?'<button type="button" data-zk="'+action+'">Devam et ›</button>':'')+'</div></div>';
+}
+function studentGoals(s, inviteOnly=false) {
+  const inv=s.invite||{}, me=s.me||{}, n=Number(inv.verified)||0, pending=Number(inv.pending)||0;
+  const canWin=n>=5, rank=Number(me.rank)||0;
+  const rankText=!canWin?'🔒 '+fmt(5-n)+' doğrulanmış davet kaldı':rank&&rank<=20?'✓ Şu an ödül bölgesindesin · '+rank+'. sıra':rank?'İlk 20 için '+fmt(me.toPrize)+' XP kaldı':'Henüz sıralama yok · XP kazan';
+  return '<section class="zk-card zk-goals"><h3 class="zk-ribbon">GÖREVLERİM</h3>'+
+    goalRow('🏆 5 arkadaşını davet et',n,5,'Bireysel ödül sıralamasının şartı',inviteOnly?'':'invite')+
+    (pending?'<p class="zk-goal-pending">⏳ '+fmt(pending)+' davet doğrulama bekliyor.</p>':'')+
+    (inviteOnly?'':goalRow('⚡ Bugünkü XP hedefi',me.today,s.cap||3500,'Günlük yarışma XP üst sınırı')+
+    '<div class="zk-goal"><div class="zk-goal-top"><b>🏅 İlk 20 öğrenci arasına gir</b></div><small>'+esc(rankText)+'</small><div class="zk-goal-foot"><small>Toplam '+fmt(me.xp)+' XP</small><button type="button" data-zk="'+(canWin?'rank':'invite')+'">'+(canWin?'Sıralamayı gör':'Davet et')+' ›</button></div></div>'+
+    '<div class="zk-goal"><div class="zk-goal-top"><b>👑 İlk 5 öğrenci arasına gir</b></div><small>'+esc(!canWin?'Önce 5 davet şartını tamamla':rank&&rank<=5?'✓ Şu an Premium Pro ödül bölgesindesin':rank?'İlk 5 için '+fmt(me.toTop5)+' XP kaldı':'XP kazanarak sıralamaya gir')+'</small></div>')+'</section>';
+}
 async function openStudentHub() {
   const s = await status(studentToken(), true);
   if (!isOn(s)) { toast('Kampanya şu an açık değil.'); return; }
   const me = s.me || {}, inv = s.invite || {}, c = s.campaign;
   const rankLine = s.guest ? 'Öğretmen alanında yarışmaya katılım sayılmaz.'
+    : (inv.verified||0)<5 ? 'Ödül sıralamasına girmek için '+(5-(inv.verified||0))+' doğrulanmış davet kaldı. XP toplamaya devam et!' 
     : c.phase === 'soon' ? 'Yarışma ' + day(c.startsOn) + ' günü başlıyor. Hazır ol!'
     : me.rank ? (me.rank <= 20 ? 'Ödül bölgesindesin! Yerini koru.' : 'Ödül bölgesine ' + fmt(me.toPrize) + ' XP kaldı. Birkaç oyun yeter!')
     : 'İlk XP\'ni kazan, sıralamaya gir!';
   openLayer(top(s) +
     '<div class="zk-card zk-hero">' + confetti() + papi('cosku') +
-      '<div><h2>Öğrenciler için<br><em>3 AY PREMİUM PRO!</em></h2><p>Oyna, öğren, XP topla. İlk 20 öğrenci ödül kazanıyor.</p><span class="zk-chip gold">' + esc(range(c)) + '</span></div></div>' +
+      '<div><h2>Öğrenciler için<br><em>3 AY PREMİUM PRO!</em></h2><p>5 arkadaşını getir, XP topla. Şartı tamamlayan ilk 20 öğrenci ödül kazanıyor.</p><span class="zk-chip gold">' + esc(range(c)) + '</span></div></div>' +
     '<div class="zk-me"><div class="zk-me-row"><span class="r">' + (me.rank ? me.rank + '.' : '—') + '</span><span class="n">Sen</span><span class="x">' + fmt(me.xp) + ' XP</span></div><small>' + esc(rankLine) + '</small></div>' +
     (c.phase === 'live' && !s.guest ? '<div class="zk-card"><div class="zk-split"><span>Bugün sayılan XP</span><span>' + fmt(me.today) + ' / ' + fmt(s.cap) + '</span></div><div class="zk-bar"><i style="width:' + Math.min(100, (me.today || 0) / s.cap * 100) + '%"></i></div></div>' : '') +
-    '<button type="button" class="zk-way v1" data-zk="rank"><span class="zk-art">' + I.game + '</span><span><b>XP Topla, Zirveye Çık</b><small>Oyna, puan topla, ilk 20\'ye gir</small></span><span class="zk-go">' + I.go + '</span></button>' +
-    '<button type="button" class="zk-way v2" data-zk="invite"><span class="zk-badge">' + fmt(inv.verified) + '/10</span><span class="zk-art"><img src="' + IMG_KIDS + '" alt=""></span><span><b>10 Arkadaşını Getir</b><small>10 arkadaş = 1 ay Pro hediye</small></span><span class="zk-go">' + I.go + '</span></button>' +
+    (!s.guest ? studentGoals(s) : '') +
+    '<button type="button" class="zk-way v1" data-zk="rank"><span class="zk-art">' + I.game + '</span><span><b>XP Topla, Zirveye Çık</b><small>5 doğrulanmış davet + XP sıralaması</small></span><span class="zk-go">' + I.go + '</span></button>' +
+    '<button type="button" class="zk-way v2" data-zk="invite"><span class="zk-badge">' + fmt(Math.min(5,inv.verified||0)) + '/5</span><span class="zk-art"><img src="' + IMG_KIDS + '" alt=""></span><span><b>5 Arkadaşını Getir</b><small>Ödül sıralamasını aç</small></span><span class="zk-go">' + I.go + '</span></button>' +
     '<button type="button" class="zk-way v3" data-zk="teacher"><span class="zk-art">' + I.board + '</span><span><b>Öğretmenini Getir</b><small>' + (s.hasTeacher ? 'Öğretmenin de zirveye oynasın' : 'Sınıf kursun, birlikte yarışın') + '</small></span><span class="zk-go">' + I.go + '</span></button>' +
     '<div class="zk-card"><h3 class="zk-ribbon">ÖDÜLLER</h3><div class="zk-prizes">' +
       '<div class="zk-prize p1">' + I.cup + '<b>1–5. sıra</b><span>3 ay Premium Pro</span></div>' +
-      '<div class="zk-prize p2">' + I.crown + '<b>6–20. sıra</b><span>3 ay Pro</span></div>' +
-      '<div class="zk-prize p3"><img src="' + IMG_GIFT + '" alt=""><b>10 davet</b><span>1 ay Pro</span></div></div></div>' +
+      '<div class="zk-prize p2">' + I.crown + '<b>6–20. sıra</b><span>3 ay Pro</span></div></div></div>' +
     '<button type="button" class="zk-btn gold" data-zk="rank">Canlı Sıralamayı Gör</button>' +
     '<button type="button" class="zk-link" data-zk="rules">Kurallar</button>',
   el => el.addEventListener('click', e => {
@@ -182,6 +198,7 @@ function openRules() {
     ['Yalnız 20 Kasım – 10 Aralık arasında kazandığın XP sayılır. Herkes sıfırdan başlar.',
      'Günde en fazla 3.500 XP sayılır. Sınıra ulaşınca yarın devam edersin.',
      'Öğrenci sıralaması bireyseldir; sınıfın olsa da olmasa da aynı listede yarışırsın.',
+     'İlk 20 ödülüne hak kazanmak için kişisel bağlantınla en az 5 doğrulanmış arkadaş davet et. Bu sırada XP toplamaya devam edebilirsin.',
      'Öğretmenler en az 10 öğrenciyle yarışır; sınıftaki tüm öğrencilerin ortalama XP\'si sayılır.',
      'Davet sayılması için arkadaşın: e-postasını doğrular, ilk 3 durağı bitirir, bir günde 300 XP kazanır.',
      'Hile veya kural dışı hesaplar yarışmadan çıkarılır. Ödüller 11 Aralık\'ta hesaplara tanımlanır.']
@@ -223,8 +240,8 @@ function boardHtml(k, d, s) {
   const sub = r => k === 'teachers' ? fmt(r.students) + ' öğrenci' : '';
   const head = k === 'teachers'
     ? '<div class="zk-card" style="font-size:13.5px;font-weight:800">Sıralama, sınıftaki <b>tüm öğrencilerin ortalama XP\'sine</b> göre. En az 10 öğrencisi olan öğretmenler yarışır. <b>İlk 2 öğretmene 1 yıl Premium Pro!</b></div>'
-    : k === 'invites' ? '<div class="zk-card" style="font-size:13.5px;font-weight:800">En çok arkadaş getirenler. Bu liste gösteri amaçlıdır; ödülü 10 davet sayacı verir.</div>'
-    : '<h3 class="zk-ribbon">ZİRVE SENİ BEKLİYOR</h3>';
+    : k === 'invites' ? '<div class="zk-card" style="font-size:13.5px;font-weight:800">En çok arkadaş getirenler. Bireysel ödül sıralaması için en az 5 doğrulanmış davet gerekir.</div>'
+    : '<h3 class="zk-ribbon">ZİRVE SENİ BEKLİYOR</h3><div class="zk-card">Yalnız en az 5 doğrulanmış daveti olan öğrenciler ödül sıralamasında yer alır.</div>';
   const examples = s.campaign.phase === 'soon' || s.campaign.phase === 'live' ? demoRanking(k) : '';
   if (!rows.length) return head + examples + '<div class="zk-card zk-empty">' + (s.campaign.phase === 'soon' ? 'Yarışma ' + day(s.campaign.startsOn) + ' günü başlıyor. İlk sıra seni bekliyor!' : 'Henüz sıralamada kimse yok. İlk sen ol!') + '</div>';
   const pod = rows.slice(0, 3);
@@ -252,21 +269,21 @@ async function openInvite() {
     try { const d = await rpc('dm_campaign_invite_code', {p_token: tok}); code = d.code; } catch {}
     cache.delete(tok);
   }
-  const inv = s.invite || {}, ver = Math.min(10, inv.verified || 0), wait = Math.min(10 - ver, inv.pending || 0);
+  const inv = s.invite || {}, ver = Math.min(5, inv.verified || 0), wait = Math.min(5 - ver, inv.pending || 0);
   let slots = '';
-  for (let i = 1; i <= 10; i++) slots += i <= ver ? '<span class="zk-slot on">' + I.check + '</span>' : i <= ver + wait ? '<span class="zk-slot wait" title="Bekliyor">' + I.clock + '</span>' : '<span class="zk-slot">' + i + '</span>';
-  const left = Math.max(0, 10 - ver);
+  for (let i = 1; i <= 5; i++) slots += i <= ver ? '<span class="zk-slot on">' + I.check + '</span>' : i <= ver + wait ? '<span class="zk-slot wait" title="Bekliyor">' + I.clock + '</span>' : '<span class="zk-slot">' + i + '</span>';
+  const left = Math.max(0, 5 - ver);
   const el = openLayer(top(s, 'Arkadaşını<span>Getir!</span>') +
-    '<div class="zk-card" style="background:linear-gradient(180deg,#E8F8DA,#CFF0C0);display:flex;align-items:center;gap:10px"><img src="' + IMG_KIDS + '" alt="" style="width:92px;height:92px;object-fit:contain;flex:none"><div><b style="font:900 23px/1.05 Nunito,system-ui,sans-serif;display:block">10 ARKADAŞ GETİR,<br><span style="color:#6B2FE0">1 AY PRO KAP!</span></b></div></div>' +
-    '<div class="zk-card" style="display:flex;flex-direction:column;align-items:center;gap:10px"><div class="zk-count">' + ver + ' <span>/ 10</span></div><div class="zk-slots">' + slots + '</div>' +
-      '<span class="zk-zone">' + (inv.rewarded ? '1 ay Pro hesabına tanımlandı!' : 'Ödüle ' + left + ' arkadaş kaldı!') + '</span>' +
+    '<div class="zk-card" style="background:linear-gradient(180deg,#E8F8DA,#CFF0C0);display:flex;align-items:center;gap:10px"><img src="' + IMG_KIDS + '" alt="" style="width:92px;height:92px;object-fit:contain;flex:none"><div><b style="font:900 23px/1.05 Nunito,system-ui,sans-serif;display:block">5 ARKADAŞ GETİR,<br><span style="color:#6B2FE0">ZİRVEYE KATIL!</span></b></div></div>' +
+    '<div class="zk-card" style="display:flex;flex-direction:column;align-items:center;gap:10px"><div class="zk-count">' + ver + ' <span>/ 5</span></div><div class="zk-slots">' + slots + '</div>' +
+      '<span class="zk-zone">' + (ver>=5 ? '✓ Davet görevi tamamlandı!' : 'Sıralamaya katılmak için ' + left + ' arkadaş kaldı!') + '</span>' +
       (wait ? '<small style="color:#9A6A00;font-weight:800">' + wait + ' arkadaşın şartları tamamlamayı bekliyor.</small>' : '') + '</div>' +
     '<div class="zk-card"><b>Davet nasıl sayılır?</b><ol class="zk-steps">' +
       ['Arkadaşın bağlantınla girer (yeni ya da eski hesap)', 'E-postasını doğrular', 'İlk 3 parkur durağını bitirir', 'Bir günde 300 XP kazanır: davet sayıldı!'].map((t, i) => '<li><i>' + (i + 1) + '</i>' + esc(t) + '</li>').join('') + '</ol></div>' +
     (code ? '<div class="zk-code"><div><small>Kişisel davet bağlantın</small><b>' + esc(inviteUrl(code).replace('https://', '')) + '</b></div><button type="button" data-copy>Kopyala</button></div>' : '<p class="zk-empty">Davet bağlantısı alınamadı. Tekrar dene.</p>') +
     '<button type="button" class="zk-btn" data-send ' + (code ? '' : 'disabled') + '>' + I.share + 'Arkadaşlarına Gönder</button>' +
     '<button type="button" class="zk-link" data-champs>Davet Şampiyonlarını gör</button>');
-  const text = 'Diji Medu\'da "Öğretmenimle Zirveye!" yarışması başladı! Benim bağlantımla gel, birlikte İngilizce öğrenip zirveye çıkalım. İlk 20\'ye Premium Pro hediye!';
+  const text = 'Diji Medu\'da "Öğretmenimle Zirveye!" yarışması başladı! Benim bağlantımla gel, birlikte İngilizce öğrenip zirveye çıkalım. 5 doğrulanmış davetle ödül yarışına katıl; ilk 5\'e Premium Pro, sonraki 15\'e Pro hediye!';
   el.querySelector('[data-send]')?.addEventListener('click', () => share(text, inviteUrl(code)));
   el.querySelector('[data-copy]')?.addEventListener('click', async () => { try { await navigator.clipboard.writeText(inviteUrl(code)); toast('Bağlantı kopyalandı!'); } catch { prompt('Bağlantını kopyala:', inviteUrl(code)); } });
   el.querySelector('[data-champs]')?.addEventListener('click', () => openRanking('invites'));
@@ -362,9 +379,9 @@ function studentPopup(s) {
     '<h2>Hadi zirveye çık! XP topla, arkadaşlarını getir, <em>ilk 20\'ye</em> gir!</h2>' +
     '<div class="zk-rows">' +
       '<div class="zk-row v1"><span class="zk-art">' + I.game + '</span>Oyna, XP topla, sıralamada yüksel</div>' +
-      '<div class="zk-row v2"><span class="zk-art"><img src="' + IMG_KIDS + '" alt=""></span>10 arkadaşını getir, 1 ay Pro kap</div>' +
+      '<div class="zk-row v2"><span class="zk-art"><img src="' + IMG_KIDS + '" alt=""></span>5 arkadaşını getir, ödül sıralamasını aç</div>' +
       '<div class="zk-row v3"><span class="zk-art">' + I.board + '</span>Öğretmenini getir, sınıfınla yarış</div></div>' +
-    '<div class="zk-goldbar">İlk 5 öğrenciye 3 AY PREMİUM PRO!</div>' +
+    '<div class="zk-goldbar">5 davet + XP ile ilk 5 öğrenciye 3 AY PREMİUM PRO!</div>' +
     '<button type="button" class="zk-btn" data-join>' + (c.phase === 'soon' ? 'Yarışmayı Keşfet' : 'Yarışmaya Katıl') + ' ' + I.go + '</button>' +
     '<button type="button" class="zk-link" data-zk-close>Daha Sonra</button>');
   v.el.querySelector('[data-join]').onclick = () => { v.close(); layerRole = 'student'; openStudentHub(); };
@@ -464,6 +481,7 @@ async function openTeacherHub() {
       '<div class="zk-split" style="margin-top:6px;font-size:12.5px;color:#5B4B9A"><span>0</span><span style="color:#B87900">10 = sıralamaya giriş</span><span>20</span></div>' +
       '<span class="zk-zone" style="display:block;text-align:center;margin-top:6px">' + esc(rankLine) + '</span>' +
       '<div class="zk-stats" style="margin-top:10px"><div><b>' + fmt(t.avg) + '</b><small>Öğrenci başı ort. XP</small></div><div><b>' + (t.rank ? t.rank + '.' : '—') + '</b><small>Sıran</small></div><div><b>' + (t.rank && t.rank > 1 ? fmt(t.toFirst) : '—') + '</b><small>1. sıraya fark</small></div></div></div>' +
+    '<section class="zk-card zk-goals"><h3 class="zk-ribbon">GÖREVLERİM</h3>'+goalRow('👥 En az 10 öğrenciye ulaş',t.students,10,'Öğretmen sıralamasına katılım şartı')+'<div class="zk-goal"><div class="zk-goal-top"><b>🏆 İlk 2 öğretmen arasına gir</b></div><small>'+esc(!t.eligible?fmt(t.need)+' öğrenci kaldı':t.rank&&t.rank<=2?'✓ Şu an ödül bölgesindesin':t.rank?fmt(t.toPrize)+' ort. XP fark kaldı':'Sıralaman henüz oluşmadı')+'</small></div></section>' +
     '<button type="button" class="zk-btn" data-add>' + I.plus + 'Öğrenci Ekle</button>' +
     '<button type="button" class="zk-btn gold" data-rank>Öğretmenler Sıralaması</button>' +
     '<div class="zk-card" style="display:flex;gap:10px;align-items:center"><span style="width:52px;height:52px;flex:none">' + I.crown + '</span><span style="font-size:14px;font-weight:800">Ortalama, sınıftaki <b>tüm öğrencilerinize</b> göre hesaplanır. Öğrencileriniz Diji Medu\'da çalıştıkça puanınız yükselir.</span></div>' +
@@ -587,7 +605,7 @@ async function openAdmin() {
         '<button type="button" class="zk-btn small" data-save style="margin-top:8px">Kaydet</button></div>' +
       '<div class="zk-card"><h3>Durum · ' + esc({soon: 'Başlamadı', live: 'Sürüyor', ended: 'Bitti, onay bekliyor', results: 'Ödüller verildi'}[c.phase] || c.phase) + '</h3><div class="zk-stats">' +
         '<div><b>' + fmt(n.participants) + '</b><small>Yarışan öğrenci</small></div><div><b>' + fmt(n.teachers) + '</b><small>Sıralamada öğretmen</small></div><div><b>' + fmt(n.verifiedInvites) + '/' + fmt(n.invites) + '</b><small>Doğrulanan davet</small></div></div>' +
-        '<p class="zk-note">Son hesap: ' + (c.refreshedAt ? new Date(c.refreshedAt).toLocaleString('tr-TR') : '—') + ' · 10 davet ödülü: ' + fmt(n.inviteRewards) + '</p>' +
+        '<p class="zk-note">Son hesap: ' + (c.refreshedAt ? new Date(c.refreshedAt).toLocaleString('tr-TR') : '—') + '</p>' +
         '<button type="button" class="zk-btn small gold" data-refresh>Şimdi Yeniden Hesapla</button></div>' +
       '<div class="zk-card"><h3>Final ödül listesi (öneri)</h3><b>Öğretmenler</b><ul class="zk-list">' + (p.teachers.map(x => row(x, 'teacher')).join('') || '<li class="zk-empty">Henüz yok</li>') + '</ul>' +
         '<b>Öğrenciler</b><ul class="zk-list">' + (p.students.map(x => row(x, 'student')).join('') || '<li class="zk-empty">Henüz yok</li>') + '</ul>' +
