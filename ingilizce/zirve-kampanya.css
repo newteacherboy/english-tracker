@@ -312,3 +312,5 @@ body .zk-veil .zk-pop h2 em,body .zk-layer .zk-hero h2 em{color:#6B2FE0!importan
  .zk-one-screen .zk-teacher-info{padding:6px 9px;font-size:11.5px}
 }
 @media(max-width:350px){.zk-one-screen .zk-top{grid-template-columns:40px minmax(0,1fr) minmax(84px,100px);gap:5px}.zk-one-screen .zk-back{width:40px;height:40px}.zk-one-screen .zk-days{padding:4px}.zk-one-screen .zk-hero h2{font-size:15px}}
+
+.zk-one-screen .zk-invite-detail{border:0;background:transparent;color:#38246d;font:900 13px Nunito,system-ui,sans-serif;display:flex;justify-content:space-between;align-items:center;text-align:left;padding:0;cursor:pointer;min-height:20px}.zk-one-screen .zk-invite-detail span{color:#7342b7}.zk-one-screen .zk-invite-detail:focus-visible{outline:2px solid #6b2fe0;outline-offset:2px}
