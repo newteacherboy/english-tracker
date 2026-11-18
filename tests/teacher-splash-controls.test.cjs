@@ -41,3 +41,36 @@ test('24 Kasım artwork is manual-only: selectable, never automatic',()=>{
  const b=fs.readFileSync('supabase/functions/splash-settings/index.ts','utf8');
  assert(b.includes("'24-kasim':['24-kasim-1.jpg']"));
 });
+
+test('Zirve intro is a distinct manual option with approved local artwork and strict validation',()=>{
+ const manual={id:'24-kasim-zirve',file:'24-kasim-zirve-1.svg'};
+ assert.equal(mod.prefResolve(date,calendar,{mode:'manual',manual}).file,manual.file);
+ assert.equal(mod.prefResolve(date,calendar,{mode:'manual',manual:{...manual,file:'other.svg'}}),null);
+ assert.notEqual(mod.prefResolve('2026-11-24T12:00:00+03:00',calendar,{mode:'auto'})?.id,manual.id);
+ assert.ok(fs.existsSync('ingilizce/holiday-splashes/'+manual.file));
+ const server=fs.readFileSync('supabase/functions/splash-settings/index.ts','utf8');
+ assert.ok(server.includes("'24-kasim-zirve':['24-kasim-zirve-1.svg']"));
+ const admin=fs.readFileSync('ingilizce/teacher-splash-control.js','utf8');
+ assert.ok(admin.includes("'24-kasim-zirve':[1]"));
+ assert.ok(admin.includes('(?:jpg|svg)'));
+});
+test('Zirve opening defers boot completion until Continue is explicitly pressed',()=>{
+ const vm=require('node:vm'),timers=[],make=()=>({style:{},hidden:true,setAttribute(){},focus(){}});
+ const art=make(),button=make(),retry=make(),loading=make(),fill=make(),caption=make(),fallback=make();
+ loading.hidden=false;loading.querySelector=s=>s==='i'?fill:caption;
+ const controls={img:art,'.dm-zirve-loading':loading,'.dm-zirve-continue':button,'.dm-zirve-retry':retry,'.dm-zirve-opening-fallback':fallback};
+ const screen={setAttribute(){},querySelector:s=>controls[s],remove(){this.removed=true;}};
+ const boot={appendChild(el){this.child=el;}};
+ const win={document:{baseURI:'https://app.dijimedu.com/ingilizce/',currentScript:{src:'https://app.dijimedu.com/ingilizce/holiday-splashes/splash.js'},documentElement:{classList:{add(){},remove(){},toggle(){}},style:{removeProperty(){}},dataset:{}},getElementById:id=>id==='dmBootSplash'?boot:null,createElement:()=>screen},localStorage:{getItem:k=>k==='dm-splash-preferences'?JSON.stringify({mode:'manual',manual:{id:'24-kasim-zirve',file:'24-kasim-zirve-1.svg'}}):null},requestIdleCallback(){}};
+ const scope={module:{exports:{}},URL,setTimeout:(fn,ms)=>{timers.push({fn,ms});return timers.length;},setInterval:()=>1,clearInterval(){}};
+ vm.runInNewContext(fs.readFileSync('ingilizce/holiday-splashes/splash.js','utf8'),scope);
+ scope.module.exports.install(win);
+ let done=0;
+ assert.equal(boot.child,screen);assert.equal(button.hidden,true);
+ assert.equal(win.dmZirveIntro.holdBoot(()=>done++),true);
+ assert.equal(button.hidden,true);assert.equal(done,0);
+ timers.filter(x=>x.ms===300).forEach(x=>x.fn());
+ assert.equal(button.hidden,false);assert.equal(loading.hidden,true);assert.equal(done,0);
+ button.onclick();assert.equal(done,1);assert.equal(screen.removed,true);
+ assert.equal(win.dmZirveIntro.holdBoot(()=>done++),false);
+});
