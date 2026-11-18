@@ -181,3 +181,17 @@ body #tab-dunya:not(.active) .zk-parkur,body.dm-play-session #tab-dunya .zk-park
 @media(prefers-reduced-motion:reduce){.zk-parkur-spark{animation:none}}
 
 .zk-goals{display:grid;gap:12px}.zk-goal{display:grid;gap:8px;background:#f6f2ff;border:1px solid #e2d7fa;border-radius:16px;padding:12px;color:#38246d}.zk-goal.done{background:#edf9e7;border-color:#b6dfa6}.zk-goal-top,.zk-goal-foot{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}.zk-goal-state{font-size:12px;font-weight:900;color:#7342b7}.zk-goal.done .zk-goal-state{color:#267344}.zk-goal-foot button{border:0;border-radius:10px;background:#6b2fe0;color:white;padding:8px 12px;font-weight:800;cursor:pointer}.zk-goal-pending{font-weight:700;color:#785720;font-size:13px;margin:0}.zk-goal small{font-size:12px;font-weight:700}.zk-goal.done .zk-bar i{background:#58b852}
+
+/* Student's personal campaign invitation in Benim Merkezim */
+#rtProfileBackdrop .pa-body > .zk-profile-invite{box-sizing:border-box;width:100%;min-width:0;display:flex;align-items:center;gap:10px;margin:10px 0 14px;padding:12px;border:2px solid #e5b94e;border-radius:19px;background:linear-gradient(115deg,#fff4cc,#f1e6ff 66%,#e5d5ff);box-shadow:0 4px 0 #d9b5ec;color:#482080;text-align:left;cursor:pointer;font-family:Nunito,system-ui,sans-serif}
+#rtProfileBackdrop .zk-pi-art{display:flex;align-items:center;justify-content:center;flex:0 0 56px;height:56px;border-radius:16px;background:#fff9e8;overflow:hidden}
+#rtProfileBackdrop .zk-pi-art img{width:100%;height:100%;object-fit:contain}
+#rtProfileBackdrop .zk-pi-copy{flex:1;min-width:0;display:grid;gap:5px}
+#rtProfileBackdrop .zk-pi-copy b{font-size:15px;line-height:1.2;color:#482080}
+#rtProfileBackdrop .zk-pi-copy small{font-size:12px;color:#684b91;line-height:1.2;font-weight:800}
+#rtProfileBackdrop .zk-pi-progress{height:7px;border-radius:99px;background:#d9c7ee;overflow:hidden}
+#rtProfileBackdrop .zk-pi-progress i{display:block;height:100%;background:#8650e9;border-radius:99px}
+#rtProfileBackdrop .zk-pi-count{display:flex;align-items:center;gap:3px;flex-shrink:0;border-radius:12px;padding:6px;background:#6c36c4;color:#fff;font-weight:900;font-size:14px}
+#rtProfileBackdrop .zk-pi-count svg{width:15px;height:15px}
+#rtProfileBackdrop .zk-profile-invite:focus-visible{outline:3px solid #8050df;outline-offset:3px}
+@media(max-width:355px){#rtProfileBackdrop .pa-body > .zk-profile-invite{gap:7px;padding:8px}#rtProfileBackdrop .zk-pi-art{flex-basis:42px;height:42px}#rtProfileBackdrop .zk-pi-copy b{font-size:13px}}
