@@ -94,10 +94,10 @@ function phaseText(c) {
 
 /* ---------- Katmanlar ---------- */
 let layer = null;
-function openLayer(html, onReady) {
+function openLayer(html, onReady, pageClass = '') {
   closeLayer();
   const el = D.createElement('section');
-  el.className = 'zk-layer'; el.setAttribute('role', 'dialog'); el.setAttribute('aria-modal', 'true');
+  el.className = 'zk-layer' + (pageClass ? ' ' + pageClass : ''); el.setAttribute('role', 'dialog'); el.setAttribute('aria-modal', 'true');
   el.innerHTML = '<div class="zk-wrap">' + html + '</div>';
   D.body.append(el); D.documentElement.classList.add('zk-open'); layer = el;
   try { window.dmViewHistory?.track?.(el, {close: closeLayer}); } catch {}
@@ -111,9 +111,9 @@ function closeLayer() {
   el.remove();
   if (!D.querySelector('.zk-layer,.zk-veil')) D.documentElement.classList.remove('zk-open');
 }
-function veil(html, sheet = false, onClose) {
+function veil(html, sheet = false, onClose, pageClass = '') {
   const v = D.createElement('div');
-  v.className = 'zk-veil' + (sheet ? ' sheet' : '');
+  v.className = 'zk-veil' + (sheet ? ' sheet' : '') + (pageClass ? ' ' + pageClass : '');
   v.innerHTML = '<div class="zk-pop" role="dialog" aria-modal="true">' + html + '</div>';
   D.body.append(v); D.documentElement.classList.add('zk-open');
   const close = () => { try { window.dmViewHistory?.leave?.(v); } catch {} v.remove(); if (!D.querySelector('.zk-layer,.zk-veil')) D.documentElement.classList.remove('zk-open'); onClose?.(); };
@@ -150,16 +150,15 @@ function inlineInvite(code, phase) {
     '<button type="button" class="zk-link" data-zk="invite">Davet şartlarını ve ilerlemeyi gör</button></div>';
 }
 const inviteShareText = 'Diji Medu’da Öğretmenimle Zirveye yarışmasına katılıyorum! Benim bağlantımla gel, birlikte İngilizce öğrenelim.';
-function studentGoals(s, inviteOnly=false) {
+function studentGoals(s) {
   const inv=s.invite||{}, me=s.me||{}, n=Number(inv.verified)||0, pending=Number(inv.pending)||0;
   const canWin=n>=5, rank=Number(me.rank)||0;
-  const rankText=!canWin?'🔒 '+fmt(5-n)+' doğrulanmış davet kaldı':rank&&rank<=20?'✓ Şu an ödül bölgesindesin · '+rank+'. sıra':rank?'İlk 20 için '+fmt(me.toPrize)+' XP kaldı':'Henüz sıralama yok · XP kazan';
+  const rankNote=(pos, gap)=>!canWin?'🔒 '+fmt(5-n)+' davet kaldı':rank&&rank<=pos?'✓ Şu an ödül bölgesindesin':rank?fmt(gap)+' XP kaldı':'XP kazan, sıralamaya gir';
   return '<section class="zk-card zk-goals"><h3 class="zk-ribbon">GÖREVLERİM</h3>'+
-    goalRow('🏆 5 arkadaşını davet et',n,5,'Bireysel ödül sıralamasının şartı','',inviteOnly?'':inlineInvite(inv.code,s.campaign.phase))+
-    (pending?'<p class="zk-goal-pending">⏳ '+fmt(pending)+' davet doğrulama bekliyor.</p>':'')+
-    (inviteOnly?'':goalRow('⚡ Bugünkü XP hedefi',me.today,s.cap||3500,'Günlük yarışma XP üst sınırı')+
-    '<div class="zk-goal"><div class="zk-goal-top"><b>🏅 İlk 20 öğrenci arasına gir</b></div><small>'+esc(rankText)+'</small><div class="zk-goal-foot"><small>Toplam '+fmt(me.xp)+' XP</small><button type="button" data-zk="'+(canWin?'rank':'invite')+'">'+(canWin?'Sıralamayı gör':'Davet et')+' ›</button></div></div>'+
-    '<div class="zk-goal"><div class="zk-goal-top"><b>👑 İlk 5 öğrenci arasına gir</b></div><small>'+esc(!canWin?'Önce 5 davet şartını tamamla':rank&&rank<=5?'✓ Şu an Premium Pro ödül bölgesindesin':rank?'İlk 5 için '+fmt(me.toTop5)+' XP kaldı':'XP kazanarak sıralamaya gir')+'</small></div>')+'</section>';
+    goalRow('👥 5 arkadaşını davet et',n,5,pending?fmt(pending)+' davet onay bekliyor':'Ödül sıralamasının şartı','',inlineInvite(inv.code,s.campaign.phase))+
+    goalRow('⚡ Bugünkü XP hedefi',me.today,s.cap||3500,'Günlük XP sınırı')+
+    '<div class="zk-rank-goals"><div class="zk-goal"><b>🏅 İlk 20</b><small>'+esc(rankNote(20,me.toPrize))+'</small><small>6–20: 3 ay Pro</small></div>'+
+    '<div class="zk-goal"><b>👑 İlk 5</b><small>'+esc(rankNote(5,me.toTop5))+'</small><small>3 ay Premium Pro</small></div></div></section>';
 }
 async function openStudentHub() {
   const tok=studentToken();
@@ -177,18 +176,12 @@ async function openStudentHub() {
     : 'İlk XP\'ni kazan, sıralamaya gir!';
   openLayer(top(s) +
     '<div class="zk-card zk-hero">' + confetti() + papi('cosku') +
-      '<div><h2>Öğrenciler için<br><em>3 AY PREMİUM PRO!</em></h2><p>5 arkadaşını getir, XP topla. Şartı tamamlayan ilk 20 öğrenci ödül kazanıyor.</p><span class="zk-chip gold">' + esc(range(c)) + '</span></div></div>' +
+      '<div><h2>Öğrenciler için<br><em>3 AY PREMİUM PRO!</em></h2><p>5 doğrulanmış davet + XP ile ilk 20\'ye gir.</p><span class="zk-chip gold">' + esc(range(c)) + '</span></div></div>' +
     '<div class="zk-me"><div class="zk-me-row"><span class="r">' + (me.rank ? me.rank + '.' : '—') + '</span><span class="n">Sen</span><span class="x">' + fmt(me.xp) + ' XP</span></div><small>' + esc(rankLine) + '</small></div>' +
-    (c.phase === 'live' && !s.guest ? '<div class="zk-card"><div class="zk-split"><span>Bugün sayılan XP</span><span>' + fmt(me.today) + ' / ' + fmt(s.cap) + '</span></div><div class="zk-bar"><i style="width:' + Math.min(100, (me.today || 0) / s.cap * 100) + '%"></i></div></div>' : '') +
     (!s.guest ? studentGoals(s) : '') +
-    '<button type="button" class="zk-way v1" data-zk="rank"><span class="zk-art">' + I.game + '</span><span><b>XP Topla, Zirveye Çık</b><small>5 doğrulanmış davet + XP sıralaması</small></span><span class="zk-go">' + I.go + '</span></button>' +
-    '<button type="button" class="zk-way v2" data-zk="invite"><span class="zk-badge">' + fmt(Math.min(5,inv.verified||0)) + '/5</span><span class="zk-art"><img src="' + IMG_KIDS + '" alt=""></span><span><b>5 Arkadaşını Getir</b><small>Ödül sıralamasını aç</small></span><span class="zk-go">' + I.go + '</span></button>' +
-    '<button type="button" class="zk-way v3" data-zk="teacher"><span class="zk-art">' + I.board + '</span><span><b>Öğretmenini Getir</b><small>' + (s.hasTeacher ? 'Öğretmenin de zirveye oynasın' : 'Sınıf kursun, birlikte yarışın') + '</small></span><span class="zk-go">' + I.go + '</span></button>' +
-    '<div class="zk-card"><h3 class="zk-ribbon">ÖDÜLLER</h3><div class="zk-prizes">' +
-      '<div class="zk-prize p1">' + I.cup + '<b>1–5. sıra</b><span>3 ay Premium Pro</span></div>' +
-      '<div class="zk-prize p2">' + I.crown + '<b>6–20. sıra</b><span>3 ay Pro</span></div></div></div>' +
-    '<button type="button" class="zk-btn gold" data-zk="rank">Canlı Sıralamayı Gör</button>' +
-    '<button type="button" class="zk-link" data-zk="rules">Kurallar</button>',
+    '<div class="zk-hub-actions"><button type="button" class="zk-btn gold" data-zk="rank">Canlı Sıralamayı Gör</button>'+
+    '<div class="zk-hub-links"><button type="button" class="zk-link" data-zk="teacher">Öğretmenini Davet Et</button>'+
+    '<button type="button" class="zk-link" data-zk="rules">Kurallar</button></div></div>',
   el => el.addEventListener('click', e => {
     const b = e.target.closest('[data-zk]'); if (!b) return;
     const k = b.dataset.zk;
@@ -203,7 +196,7 @@ async function openStudentHub() {
     else if (k === 'invite') openInvite();
     else if (k === 'teacher') shareTeacher();
     else if (k === 'rules') openRules();
-  }));
+  }), 'zk-student-hub');
   store.set('zk_joined_' + who(), '1');
 }
 
@@ -396,14 +389,14 @@ function studentPopup(s) {
     '<div class="zk-pop-hero">' + confetti() + papi('cosku') + '<span class="zk-cup">' + I.cup + '</span></div>' +
     '<h3 class="zk-ribbon">ÖĞRETMENİMLE ZİRVEYE!</h3>' +
     '<div style="text-align:center"><span class="zk-chip">' + esc(range(c)) + '</span></div>' +
-    '<h2>Hadi zirveye çık! XP topla, arkadaşlarını getir, <em>ilk 20\'ye</em> gir!</h2>' +
+    '<h2>Hadi zirveye çık! 5 arkadaşını getir, XP topla ve <em>ilk 20\'ye</em> gir!</h2>' +
     '<div class="zk-rows">' +
       '<div class="zk-row v1"><span class="zk-art">' + I.game + '</span>Oyna, XP topla, sıralamada yüksel</div>' +
       '<div class="zk-row v2"><span class="zk-art"><img src="' + IMG_KIDS + '" alt=""></span>5 arkadaşını getir, ödül sıralamasını aç</div>' +
       '<div class="zk-row v3"><span class="zk-art">' + I.board + '</span>Öğretmenini getir, sınıfınla yarış</div></div>' +
     '<div class="zk-goldbar">5 davet + XP ile ilk 5 öğrenciye 3 AY PREMİUM PRO!</div>' +
     '<button type="button" class="zk-btn" data-join>' + (c.phase === 'soon' ? 'Yarışmayı Keşfet' : 'Yarışmaya Katıl') + ' ' + I.go + '</button>' +
-    '<button type="button" class="zk-link" data-zk-close>Daha Sonra</button>');
+    '<button type="button" class="zk-link" data-zk-close>Daha Sonra</button>', false, undefined, 'zk-announcement');
   v.el.querySelector('[data-join]').onclick = () => { v.close(); layerRole = 'student'; openStudentHub(); };
 }
 
