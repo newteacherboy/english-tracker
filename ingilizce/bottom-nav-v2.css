@@ -39,3 +39,8 @@ html[data-dm-theme="night"] #bottomNavMobile .bn-item[data-ekran="tab-aktivitele
  #bottomNavMobile .dm-nv2-oyna-disc{left:-31px;top:-60px;width:62px;height:62px}
  #bottomNavMobile .dm-nv2-oyna-disc img{width:38px;height:38px}
 }
+
+/* Profile dock uses the student's own wardrobe avatar; retain the existing tile footprint. */
+#bottomNavMobile .dm-nv2-own-avatar{--t:#E3F0FF;--te:#BFD7F2;overflow:hidden}
+html[data-dm-theme="night"] #bottomNavMobile .dm-nv2-own-avatar{--t:#25466e;--te:#163050}
+#bottomNavMobile .dm-nv2-own-avatar>svg{width:100%;height:100%;display:block;flex:none}
