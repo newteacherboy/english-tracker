@@ -2,13 +2,11 @@ const test=require('node:test');
 const assert=require('node:assert/strict');
 const fs=require('node:fs');
 const read=p=>fs.readFileSync(p,'utf8');
-test('league refreshes when Friends opens, without login polling',()=>{
- const league=read('ingilizce/league-momentum.js');
+test('league ranking popup is retired and Friends no longer loads it',()=>{
  const friends=read('ingilizce/friends-ui.js');
- assert(league.includes("addEventListener('dm:friends-open'"));
+ assert(!fs.existsSync('ingilizce/league-momentum.js'));
+ assert(!friends.includes('league-momentum.js'));
  assert(friends.includes("new Event('dm:friends-open')"));
- assert(!league.includes("setInterval(()=>{displayPending();void check(false);},90000)"));
- assert(!league.includes("setTimeout(()=>check(true),3500)"));
 });
 test('verification reminder belongs to Games and uses safe visible modal checks',()=>{
  const member=read('ingilizce/member-experience.js');
@@ -33,13 +31,11 @@ test('teacher hub exposes inventory without claiming live writable settings',()=
  assert(code.includes("api('communicationRulesList')"));
 });
 
-test('central notice policy is fetched for students and checked before league or email popup',()=>{
+test('central notice policy is fetched for students and checked before the email popup',()=>{
  const backend=read('supabase/functions/diji-api/member-tools-api.ts');
- const league=read('ingilizce/league-momentum.js');
  const member=read('ingilizce/member-experience.js');
  assert(backend.includes("op==='communicationNoticePolicy'"));
  assert(backend.includes("a.role!=='student'"));
- assert(league.includes('dmCommunicationNoticeRules?.league_momentum?.enabled===false'));
  assert(member.includes("api('communicationNoticePolicy')"));
  assert(member.includes('dmCommunicationNoticeRules?.email_verification?.enabled===false'));
 });

@@ -34,7 +34,7 @@ assert.equal(await page.locator('.gg-tabs button:visible').count(),0);
 await page.locator('[data-gg-main=free]').click();
 assert.equal(await page.locator('.gg-tabs').evaluate(el=>getComputedStyle(el).gridTemplateColumns.split(' ').length),2);
 assert.equal(await page.locator('.gg-filters:visible').count(),1);
-assert.equal(await page.locator('#ggOnlineTab .gg-category-copy').evaluate(el=>getComputedStyle(el).color),'rgb(22, 46, 83)');
+assert.equal(await page.locator('#ggOnlineTab').count(),0); // iki kişilik sekme kaldırıldı (18 Kas 2026)
 assert.equal(await page.locator('.gg-brand [data-pw]:visible').count(),4);
 assert(compact.bannerHeight <= 210,'Games header not compact: '+JSON.stringify(compact));
 
@@ -58,10 +58,7 @@ const fitted=await page.locator('[data-gg-source=papiCardsActivity] .gg-cover').
  return Math.abs(frame.width-frame.height)<=1&&Math.abs(art.width-frame.width)<=1&&!cover.querySelector('.gg-cover-backdrop');
 });
 assert(fitted,'Atlas artwork fills the square thumbnail');
-const challenge=await page.locator('.gg-matches>div').evaluate(el=>({color:getComputedStyle(el.querySelector('span')).color,bg:getComputedStyle(el).backgroundImage}));
-assert.equal(challenge.color,'rgb(244, 247, 255)');
-assert.match(challenge.bg,/rgb\(51, 73, 111\)/);
-if(width===390&&process.env.GAMES_SCREENSHOT)await page.screenshot({path:process.env.GAMES_SCREENSHOT+'.challenge.png'});
+assert.equal(await page.locator('.gg-matches').count(),0);
 await page.locator('#ggBreakTab').click();
 assert.deepEqual(await shelfIds(),['mola-kosu','mola-zipla','mola-patlat']);
 const coverFit=await page.locator('.gg-cover').evaluateAll(covers=>covers.every(cover=>{
@@ -86,7 +83,7 @@ await page.evaluate(games=>{
 },premiumGames);
 assert(await page.locator('.gg-list-view.gg-teacher-list').isVisible());
 assert.equal(await page.locator('.gg-search input').count(),0);
-assert(await page.locator('#ggOnlineTab').isHidden());
+assert.equal(await page.locator('#ggOnlineTab').count(),0);
 assert(await page.locator('#ggBreakTab').isHidden());
 assert.equal(await page.locator('#ggFreeTab .gg-category-name').textContent(),'Sınıfta Oyna');
 assert(await page.locator('.gg-list-row:visible').count()>0);

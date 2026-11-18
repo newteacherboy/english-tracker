@@ -91,7 +91,7 @@
   if(feature&&window.dmProgression?.require&&!window.dmProgression.require(feature)){notice(v,'Bu işlem şu an hesabın için açık değil.');return;}
   if(action==='message'){close(false);return window.dmMessageAc?.(id);}
   if(action==='gift'){close(false);return window.dmGiftAc?.(id);}
-  if(action==='duel'){close(false);return window.dmDuelAc?.(id);}
+  if(action==='duel'){close(false);return window.dmLiveDuel?.invite?.(id);}
   if(action==='report'){close(false);return window.dmSocialSafety?.report('user',id);}
   b.dataset.busy='true';b.setAttribute('aria-busy','true');paintActions(v);
   try{

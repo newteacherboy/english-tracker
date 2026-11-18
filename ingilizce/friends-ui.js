@@ -73,7 +73,6 @@
     </section>`;
   }
   function tilesHtml() {
-    const pending = invites.filter(x=>x.durum==='bekliyor'&&norm(x.alici)===norm(who())).length;
     // Arkadaş listesi başlıktaki simgeden açılır; burada yalnız iki ana işlem kalır.
     // [17 Kas 2026] Tek büyük, ışıltılı Düello kartı + ince Davet et şeridi (çevrimiçi sayısı gösterilmez).
     const star='<svg class="fr-dz-spark" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0c.8 6.4 4.6 10.9 12 12-7.4 1.1-11.2 5.6-12 12-.8-6.4-4.6-10.9-12-12C7.4 10.9 11.2 6.4 12 0z"/></svg>';
@@ -85,12 +84,10 @@
         <div class="fr-dz-head">
           <h2>Düello</h2>
           ${free?`<span class="fr-dz-free"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="9" width="18" height="12" rx="2"/><path d="M3 13h18M12 9v12M12 9c-2-4-6-4-6-1.5S9 9 12 9zM12 9c2-4 6-4 6-1.5S15 9 12 9z"/></svg>${esc(free)}</span>`:''}
-          <button type="button" class="fr-dz-mine" data-friend-action="my-duels" aria-label="Düellolarım${pending?', '+pending+' bekleyen davet':''}">Düellolarım${pending?`<span class="fr-dz-badge">${pending}</span>`:''}</button>
         </div>
         <p class="fr-dz-copy">10 soruluk kelime savaşı. Rakibinin canını ilk sen bitir!</p>
         <div class="fr-dz-actions">
           <button type="button" class="fr-dz-live" data-friend-action="live-duel"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg>Canlı Düello</button>
-          <button type="button" class="fr-dz-btn" data-friend-action="challenge">Meydan Oku</button>
           <button type="button" class="fr-dz-btn fr-dz-soft" data-friend-action="papi-duel">Papi'ye Karşı</button>
         </div>
       </section>
@@ -219,12 +216,11 @@
       Promise.resolve().then(()=>window.maTumGetir?.()),
       Promise.resolve().then(()=>window.maOlaylariYukle?.()),
       Promise.resolve().then(()=>window.dmProgression?.refresh?.()),
-      permitted('takip')?window.dmMeduPro?.api?.('takipDavetListesi'):Promise.resolve(null),
-      permitted('duello')?window.dmMeduPro?.api?.('duellolarim'):Promise.resolve(null)
+      permitted('takip')?window.dmMeduPro?.api?.('takipDavetListesi'):Promise.resolve(null)
+      // [18 Kas 2026] Eski düello davetleri (duellolarim) artık yüklenmez.
     ]);
     if(owner!==who()||ticket!==epoch)return;
     if(results[3].status==='fulfilled'&&Array.isArray(results[3].value?.liste))followed=results[3].value.liste;
-    if(results[4].status==='fulfilled'&&Array.isArray(results[4].value?.liste))invites=results[4].value.liste;
     busy=false;lastLoad=Date.now();renderHome();
     if(permitted('lig'))void window.dmLeagueUI?.refreshWeekly?.();
     void loadQuota();
@@ -284,7 +280,7 @@
     window.dmUserCard?.close();
     if(s==='parkur'||s==='kesfet'||s==='hub'||s==='akis'){
       ++maCizNo;maSekme='hub';maProfilId=null;viewHeader();renderHome();void loadHome();$('maEkran').scrollTop=0;
-      if(s==='kesfet')void openMatches();return;
+      return;
     }
     if(s==='vitrin')return window.maSekmeSec('hub');
     if(s==='lig'&&!requireFeature(s))return;
@@ -388,39 +384,6 @@
     const sheet=window.dmMeduPro?.sheet?.('Davet et','Bu bağlantıyı arkadaşınla paylaş.');
     if(sheet)sheet.body.innerHTML=`<a href="${url}">${url}</a>`;
   }
-  function openMatches() {
-    if(!requireFeature('duello'))return;
-    if(!invitationHtml())return window.dmArenaAc?.();
-    const sheet=window.dmMeduPro?.sheet?.('Düello','Gelen davetler ve kapışmalar.');
-    if(!sheet)return;
-    sheet.p.classList.add('fr-duel-sheet');
-    sheet.body.innerHTML=`<div>${invitationHtml()}</div><button type="button" class="fr-duel-arena">Kapışmalarım</button>`;
-    sheet.body.querySelector('.fr-duel-arena').onclick=()=>{sheet.close();window.dmArenaAc?.();};
-    sheet.body.addEventListener('click',event=>{
-      const button=event.target.closest('[data-invite-id]');
-      if(!button)return;
-      if(button.dataset.friendAction==='accept')void acceptInvite(button.dataset.inviteId,button).then(ok=>{if(ok)sheet.close();});
-      else {invites=invites.filter(x=>String(x.id)!==button.dataset.inviteId);button.closest('.fr-invitation').remove();renderHome();}
-    });
-  }
-  function openInvite(id,game){
-    if(!requireFeature('duello'))return;
-    return window.dmDuelAc?.(id,game);
-  }
-  async function acceptInvite(id,btn){
-    if(!requireFeature('duello'))return;
-    const d=invites.find(x=>String(x.id)===String(id));if(!d)return;
-    btn.disabled=true;
-    try{
-      const r=await window.dmMeduPro.api('duelloYanit',{id:d.id,kabul:true});
-      if(r?.hata)throw Error(r.mesaj||'Davet kabul edilemedi.');
-      invites=invites.filter(x=>x!==d);
-      if($('frInvitation'))$('frInvitation').innerHTML=invitationHtml();
-      renderHome();
-      window.duelloOyununuAc?.(d.oyun);
-      return true;
-    }catch(e){window.maToast?.(e.message||'Davet kabul edilemedi.');btn.disabled=false;}
-  }
   root.addEventListener('click',e=>{
     const link=e.target.closest('[data-club-open]');if(link){const event=maAkisVeri.find(x=>String(x.k)===link.dataset.clubOpen),meta=event&&window.DMFriendsFeed.classify(event);if(!meta)return;if(meta.kind==='game'){if(!requireFeature(meta.game[2]))return;const fn=window[meta.game[1]]||(meta.game[1]==='kelimebulOyunAc'?window.kelimeBulOyunAc:null);if(typeof fn==='function')fn();else window.aktivitelerTamEkranAc?.();}else if(meta.kind==='route')window.dmLearningRoute?.continue?.();else if(meta.kind==='story'){if(/hikâye|hikaye/i.test(event.metin))window.dmLearningCompanion?.nextStory?.();else window.dmLearningCompanion?.nextDialogue?.();}else if(meta.kind==='mission')window.dmLearningCompanion?.openMissions?.(/hafta/i.test(event.metin)?'weekly':'daily');else if(meta.kind==='league')window.maSekmeSec('lig');else if(meta.kind==='badge')window.dmBasarilarimAc?.();else if(meta.kind==='streak')window.dmLearningCompanion?.report?.();else window.dmIlerlememAc?.();return;}
 
@@ -444,19 +407,16 @@
     if(action==='congratulate'){window.maTebrikEt('akis-'+b.dataset.event,b);paintCongratulation(b);return;}
     if(action==='virtual-duel'){const id=b.dataset.botId;const bot=window.dmLeagueUI?.weeklyPreview?.().top?.find(p=>p.id===id&&p.is_virtual);if(bot)void window.dmLeagueUI?.openVirtualDirect?.(bot);return;}
     if(action==='profile'){window.maAkisKisiAc?.(b.dataset.person);return;}
-    if(action==='invite')return openInvite(b.dataset.person,b.dataset.game);
-    if(action==='matches'){if(window.dmLeagueUI?.openDuelChooser)return window.dmLeagueUI.openDuelChooser();return openMatches();}
+    if(action==='invite')return void window.dmLiveDuel?.invite?.(b.dataset.person);
+    if(action==='matches'){if(window.dmLeagueUI?.openDuelChooser)return window.dmLeagueUI.openDuelChooser();return;}
     if(action==='live-duel')return void window.dmLiveDuel?.startLive();
     if(action==='papi-duel')return void window.dmLiveDuel?.startPapi();
-    if(action==='challenge')return void window.dmRealDuelAc?.();
-    if(action==='my-duels')return openMatches();
     if(action==='filter'){
       maFiltre=b.dataset.filter;
       root.querySelectorAll('[data-filter]').forEach(x=>{x.classList.toggle('aktif',x.dataset.filter===maFiltre);x.setAttribute('aria-pressed',String(x.dataset.filter===maFiltre));});
       const draw=()=>{if($('maAkisListe'))$('maAkisListe').innerHTML=window.maAkisListeHtml();paintLocks();};
       draw();if(maFiltre==='online')Promise.resolve(window.dmSocialPresence?.refresh?.(true)).then(draw);return;
     }
-    if(action==='accept')return void acceptInvite(b.dataset.inviteId,b);
     if(action==='dismiss'){invites=invites.filter(x=>String(x.id)!==b.dataset.inviteId);$('frInvitation').innerHTML=invitationHtml();}
   });
   root.addEventListener('change',e=>{
@@ -492,9 +452,4 @@
   window.visualViewport?.addEventListener('scroll',dockSpace,{passive:true});
   const dock=document.getElementById('bottomNavMobile');if(dock&&window.ResizeObserver)new ResizeObserver(dockSpace).observe(dock,{box:'border-box'});
   dockSpace();viewHeader();
-  // League movement is account-bound and deduplicated across reloads.
-  if (!document.querySelector('script[data-dm-league-momentum]')) {
-    const boost = document.createElement('script'); boost.src = 'league-momentum.js?v=20261028-2gun-1'; boost.defer = true;
-    boost.dataset.dmLeagueMomentum = '1'; document.head.append(boost);
-  }
 })();
