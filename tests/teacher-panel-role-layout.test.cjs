@@ -81,7 +81,7 @@ test('account screen uses the compact layout and preserves code/invite handlers'
 
 test('administrator scripts never create controls from stale sessionStorage in regular teacher accounts',async()=>{
  for(const [file,attr] of [
-  ['admin-gift.js','dmg'],['admin-ads.js','dma'],['admin-push.js','dmn']
+  ['admin-gift.js','dmg'],['admin-ads.js','dma'],['admin-push.js','dmn'],['admin-online.js','dmo']
  ]){
   const script=fs.readFileSync('ingilizce/'+file,'utf8');
   const dom=new JSDOM('<!doctype html><html><body><main id="tpDashboard"><div class="tp-real-tools"></div></main></body></html>',

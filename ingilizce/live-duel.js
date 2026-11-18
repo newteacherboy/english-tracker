@@ -214,6 +214,20 @@ function busyScreen() {
   // Main tabs and learning overlays must not swallow invitations.
   return inDuel || document.hidden || !!layer;
 }
+let rollAt = 0;
+function answerRoll(p) {
+  const roll = String(p?.roll || '');
+  if (!/^[0-9a-f-]{36}$/i.test(roll) || document.hidden) return;
+  const now = Date.now();
+  if (now - rollAt < 20000) return; // sahte/yoğun yayınlara karşı en fazla 20 sn'de bir cevap
+  rollAt = now;
+  const owner = token();
+  if (!owner) return;
+  const tab = document.querySelector('#bottomNavMobile .bn-item.active, #bottomNavMobile .bn-item[aria-current="page"]')?.getAttribute('aria-label') || '';
+  // Cevaplar aynı anda yığılmasın diye 0–2 sn arası dağıtılır.
+  setTimeout(() => rpc('dm_online_here', {p_roll: roll, p_screen: inDuel ? 'Düello' : tab, p_duel: !!inDuel}, owner).catch(() => {}), Math.random() * 2000);
+}
+
 function ensureLobby() {
   const sb = window.supabaseClient;
   const owner = token();
@@ -226,6 +240,8 @@ function ensureLobby() {
        .on('broadcast', {event: 'taken'}, ({payload}) => { if (banner && banner.id === payload?.id) hideBanner(); })
        // [18 Kas 2026] Kabul eden oyuncu reklam izliyor / vazgeçti — yalnız o düellonun sahibi dinler.
        .on('broadcast', {event: 'hold'}, ({payload}) => { try { holdListener?.(payload); } catch {} })
+       // [18 Kas 2026] Yönetici "Çevrimiçi" yoklaması: önde açıksa bir kez cevap ver (yoklama sunucuda doğrulanır).
+       .on('broadcast', {event: 'who'}, ({payload}) => answerRoll(payload))
        .subscribe(s => { lobbyReady = s === 'SUBSCRIBED'; if (['CHANNEL_ERROR','TIMED_OUT','CLOSED'].includes(s)) lobbyReady = false; });
 }
 function dropLobby() {
