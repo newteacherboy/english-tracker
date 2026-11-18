@@ -124,19 +124,19 @@ const defaultPreference={mode:'auto',disabled:[],manual:null};
   }};
   function updateArtwork(next){
    if(next?.id==='24-kasim-zirve'&&!zirveReleased){
-    win.dmPapiIntro?.disable();chosen=next;
+    win.dmPapiSplash?.disable();chosen=next;
     doc.documentElement.classList.remove('dm-holiday-active');doc.documentElement.style.removeProperty('--dm-holiday-art');
     mountZirve();if(!zirveScreen&&doc.readyState==='loading'&&win.MutationObserver){zirveObserver=new win.MutationObserver(mountZirve);zirveObserver.observe(doc.documentElement,{childList:true,subtree:true});}
     return;
    }
    if(zirveScreen||zirveObserver){const finish=zirveReady?zirveFinish:null;clearZirve();zirveReleased=true;finish?.();}
    // [11 Kas 2026] "Papi 3D Giriş": görsel yerine canlı, sesli animasyon (papi-intro.js).
-   if(next&&next.id==='papi-giris'&&win.dmPapiIntro){
+   if(next&&next.id==='papi-giris'&&win.dmPapiSplash){
     doc.documentElement.classList.remove('dm-holiday-active');
     doc.documentElement.style.removeProperty('--dm-holiday-art');
-    win.dmPapiIntro.enable();chosen=next;return;
+    win.dmPapiSplash.enable();chosen=next;return;
    }
-   win.dmPapiIntro?.disable();
+   win.dmPapiSplash?.disable();
    const root=doc.documentElement,active=!!next;
    root.classList.toggle('dm-holiday-active',active);
    if(active){

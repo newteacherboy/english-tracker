@@ -598,7 +598,7 @@ function ysNoktalar(x1, x2) {
   return '<div class="ys-noktalar">' + [0.25, 0.5, 0.75].map(t => `<i style="left:${x1 + (x2 - x1) * t}%; top:${t * 100}%"></i>`).join('') + '</div>';
 }
 
-function ysPapiMarkup(){return window.dmPapiIntro?.characterMarkup?.() || window.dmLivePapi?.markup?.() || '<img src="daily-gift-assets/papi-streak-3d.webp" alt="Papi" width="60" height="66">';}
+function ysPapiMarkup(){return window.dmPapiSplash?.characterMarkup?.() || window.dmLivePapi?.markup?.() || '<img src="daily-gift-assets/papi-streak-3d.webp" alt="Papi" width="60" height="66">';}
 let ysEmotionIndex=0,ysSpeech=null,ysSpeechTimer=null;
 function ysCallState(state,message){const root=document.querySelector('.ys-call');if(!root)return;root.dataset.voice=state;const status=document.getElementById('ysVoiceStatus');if(status)status.textContent=message;const mic=document.getElementById('yoSMik');if(mic){mic.classList.toggle('dinliyor',state==='listening');mic.setAttribute('aria-pressed',String(state==='listening'));mic.querySelector('span').textContent=state==='listening'?'Dinliyorum…':'Konuşmak için dokun';}}
 function ysPapiSpeak(text){
