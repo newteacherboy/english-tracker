@@ -1,10 +1,12 @@
 <!DOCTYPE html>
         <html lang="tr">
         <head>
-<script src="teacher-portal-boot.js?v=20261115-live-guard-1"></script>
+<script src="teacher-portal-boot.js?v=20261118-hiz"></script>
 <script src="holiday-splashes/dates.js?v=20261023-2"></script>
-<script src="holiday-splashes/papi-intro.js?v=eab062f621"></script><script src="holiday-splashes/splash.js?v=20261118-fit3"></script>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@800&amp;display=swap">
+<script src="holiday-splashes/papi-intro.js?v=eab062f621"></script><script src="holiday-splashes/splash.js?v=20261118-hiz"></script>
+<!-- [18 Kas 2026] Hız: Papi giriş yazısının yazı tipi ilk boyamayı bekletmez (okul ağında Google engelliyse açılış donmasın). -->
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@800&amp;display=swap" media="print" onload="this.media='all'">
 <link rel="stylesheet" href="holiday-splashes/splash.css?v=20261118-fit3">
 
 <meta charset="UTF-8">
@@ -42,18 +44,16 @@
 <link rel="stylesheet" href="first-discovery.css?v=20261020-member-flows-1">
 <script src="first-discovery-state.js?v=20261019-apple-1"></script>
 <link rel="preconnect" href="https://nxfqlutulxqzqgwewssd.supabase.co">
-<script src="vendor/supabase-2.118.0.js" integrity="sha384-UagCvVPT5XXA0Hx+nJYUAGBFseHT9zBgpJMSebsAxl9lciTwbT+39j5VfRjdP5Tp" crossorigin="anonymous"></script>
+<!-- [18 Kas 2026] Hız: 218 KB Supabase kitaplığı ilk boyamayı bekletmez (defer). Yalnız Google/Apple girişi ve canlı düello kullanır; ikisi de defer ve daha sonra çalışır. -->
+<script defer src="vendor/supabase-2.118.0.js" integrity="sha384-UagCvVPT5XXA0Hx+nJYUAGBFseHT9zBgpJMSebsAxl9lciTwbT+39j5VfRjdP5Tp" crossorigin="anonymous"></script>
+<script defer src="supabase-init.js?v=20261118-hiz"></script>
           <script>
 const SUPABASE_URL = "https://nxfqlutulxqzqgwewssd.supabase.co";
 
 const SUPABASE_ANON_KEY = "sb_publishable_K9h4CnyaL8xb8B98o8aaFw_s9cMikuF";
 
-const supabaseClient = window.supabase?.createClient?.(
-  SUPABASE_URL,
-  SUPABASE_ANON_KEY,
-  { auth: { storageKey: 'diji-ingilizce-google-auth', storage: window.dmDiscoveryContext?.raw || window.localStorage } }
-) || null;
-window.supabaseClient=supabaseClient;
+/* İstemci supabase-init.js'te (defer) kurulur; o zamana kadar null. */
+var supabaseClient = null;
 </script>
 <script>
 (function () {
@@ -114,15 +114,15 @@ window.supabaseClient=supabaseClient;
 </script>
 <script src="public-catalog.js?v=20261027-1"></script>
 <script src="rpc-read-transforms.js?v=20261027-kota-4"></script>
-<script src="request-budget.js?v=20261112-yuk"></script>
+<script src="request-budget.js?v=20261118-hiz"></script>
 <script src="incremental-reads.js?v=20261027-1"></script>
 
             <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <!-- dm-preload:start (scripts/build-preloads.py üretir; elle düzenleme) -->
-<link rel="preload" as="script" href="teacher-portal-boot.js?v=20261115-live-guard-1">
+<link rel="preload" as="script" href="teacher-portal-boot.js?v=20261118-hiz">
 <link rel="preload" as="script" href="holiday-splashes/dates.js?v=20261023-2">
 <link rel="preload" as="script" href="holiday-splashes/papi-intro.js?v=eab062f621">
-<link rel="preload" as="script" href="holiday-splashes/splash.js?v=20261118-fit3">
+<link rel="preload" as="script" href="holiday-splashes/splash.js?v=20261118-hiz">
 <link rel="preload" as="style" href="holiday-splashes/splash.css?v=20261118-fit3">
 <link rel="preload" as="script" href="native-app.js?v=20261113-notification-card">
 <link rel="preload" as="script" href="odullu-reklam.js?v=20261112-secim">
@@ -142,9 +142,10 @@ window.supabaseClient=supabaseClient;
 <link rel="preload" as="style" href="first-discovery.css?v=20261020-member-flows-1">
 <link rel="preload" as="script" href="first-discovery-state.js?v=20261019-apple-1">
 <link rel="preload" as="script" href="vendor/supabase-2.118.0.js" integrity="sha384-UagCvVPT5XXA0Hx+nJYUAGBFseHT9zBgpJMSebsAxl9lciTwbT+39j5VfRjdP5Tp" crossorigin="anonymous">
+<link rel="preload" as="script" href="supabase-init.js?v=20261118-hiz">
 <link rel="preload" as="script" href="public-catalog.js?v=20261027-1">
 <link rel="preload" as="script" href="rpc-read-transforms.js?v=20261027-kota-4">
-<link rel="preload" as="script" href="request-budget.js?v=20261112-yuk">
+<link rel="preload" as="script" href="request-budget.js?v=20261118-hiz">
 <link rel="preload" as="script" href="incremental-reads.js?v=20261027-1">
 <link rel="preload" as="style" href="portal-base-extracted.css?v=20261015-perf1">
 <link rel="preload" as="style" href="friends-overflow-fix.css?v=20261015-fix1">
@@ -157,7 +158,7 @@ window.supabaseClient=supabaseClient;
 <link rel="preload" as="script" href="app-js/i02-jokerturubaslat.js?v=41524e631a">
 <link rel="preload" as="script" href="papi-dialogues.js?v=d1fab2766e">
 <link rel="preload" as="script" href="app-js/i03-veriler.js?v=45bed1ffc0">
-<link rel="preload" as="script" href="app-js/i04-meduakisac.js?v=16c9af410e">
+<link rel="preload" as="script" href="app-js/i04-meduakisac.js?v=f255781b2d">
 <link rel="preload" as="script" href="app-js/i05-hedefyuzu.js?v=0358fb1ba8">
 <link rel="preload" as="script" href="app-js/i06-renk-yardimcilari.js?v=c9adbca8db">
 <link rel="preload" as="script" href="app-js/i07-gonder.js?v=1ce2b7055b">
@@ -203,7 +204,7 @@ window.supabaseClient=supabaseClient;
 <link rel="preload" as="script" href="papi-mascot.js?v=20261111-2">
 <link rel="preload" as="script" href="baby-papi-webgl.js?v=20261115-3d-1">
 <link rel="preload" as="script" href="route-papi-walk-feedback.js?v=20261115-3d-1">
-<link rel="preload" as="script" href="thematic-learning.js?v=20261116-numbered-art-rootpath-2">
+<link rel="preload" as="script" href="thematic-learning.js?v=20261118-hiz">
 <link rel="preload" as="script" href="school-curriculum.js?v=20261025-1">
 <link rel="preload" as="script" href="school-word-art.js?v=20261025-soft-1">
 <link rel="preload" as="script" href="school-lesson.js?v=20261029-claim-1">
@@ -215,7 +216,7 @@ window.supabaseClient=supabaseClient;
 <link rel="preload" as="style" href="activity-ui.css?v=20261114-quota-papi">
 <link rel="preload" as="style" href="premium-play-offer.css?v=20261115-1">
 <link rel="preload" as="script" href="premium-play-offer.js?v=20261115-1">
-<link rel="preload" as="script" href="activity-ui.js?v=20261118-kart-a">
+<link rel="preload" as="script" href="activity-ui.js?v=20261118-hiz">
 <link rel="preload" as="script" href="cumle-yarisi.js?v=20261111-papi">
 <link rel="preload" as="style" href="mola-vakti.css?v=20261112-a">
 <link rel="preload" as="script" href="mola-chapters.js?v=20261106-mola-15">
@@ -241,7 +242,7 @@ window.supabaseClient=supabaseClient;
 <link rel="preload" as="script" href="account-settings.js?v=20261114-plans">
 <link rel="preload" as="script" href="kisisel-bilgiler.js?v=20261111-ders-ogretmen">
 <link rel="preload" as="script" href="student-management.js?v=20261021-contacts-2">
-<link rel="preload" as="script" href="contact-policy.js?v=20261025-contact-exit-1">
+<link rel="preload" as="script" href="contact-policy.js?v=20261118-hiz">
 <link rel="preload" as="script" href="sifre-islem.js?v=20261027-password-6">
 <link rel="preload" as="script" href="ekonomi.js?v=20261113-no-jokers">
 <link rel="preload" as="style" href="goal-announcements.css?v=1">
@@ -276,7 +277,7 @@ window.supabaseClient=supabaseClient;
 <link rel="preload" as="script" href="notification-actions.js?v=20261025-actions-1">
 <link rel="preload" as="style" href="live-duel.css?v=20261118-davet">
 <link rel="preload" as="script" href="live-duel.js?v=20261118-davet">
-<link rel="preload" as="script" href="friends-ui.js?v=20261118-davet">
+<link rel="preload" as="script" href="friends-ui.js?v=20261118-hiz">
 <link rel="preload" as="style" href="league-ui.css?v=20261118-blur-no-heading">
 <link rel="preload" as="script" href="league-ui.js?v=20261118-davet">
 <link rel="preload" as="style" href="study-ui.css?v=20261019-learn-play-1">
@@ -302,7 +303,7 @@ window.supabaseClient=supabaseClient;
 <link rel="preload" as="style" href="soru-paneli-c.css?v=20261112-4">
 <link rel="preload" as="style" href="member-experience.css?v=20261019-chat-compact-1">
 <link rel="preload" as="script" href="placement-bank.js?v=20261013-1">
-<link rel="preload" as="script" href="member-experience.js?v=20261111-ders-ogretmen">
+<link rel="preload" as="script" href="member-experience.js?v=20261118-hiz">
 <link rel="preload" as="style" href="papi-tanitim.css?v=20261022-2">
 <link rel="preload" as="script" href="papi-tanitim.js?v=20261113-no-jokers">
 <link rel="preload" as="script" href="papi-sayfa-turlari.js?v=20261118-davet">
@@ -337,7 +338,7 @@ window.supabaseClient=supabaseClient;
 <link rel="preload" as="style" href="email-guide.css?v=20261018-compact-2">
 <link rel="preload" as="style" href="panel-fixes.css?v=20261018-1">
 <link rel="preload" as="style" href="social-safety.css?v=20261018-readable-study-1">
-<link rel="preload" as="script" href="social-safety.js?v=a9d00a35a7">
+<link rel="preload" as="script" href="social-safety.js?v=20261118-hiz">
 <link rel="preload" as="style" href="user-card.css?v=20261118-virtual-member-badges">
 <link rel="preload" as="script" href="user-card.js?v=20261118-davet">
 <link rel="preload" as="script" href="apple-login.js?v=20261028-ios-1">
@@ -370,9 +371,9 @@ window.supabaseClient=supabaseClient;
 <link rel="preload" as="script" href="kelime-golu.js?v=20261114-premium-profile">
 <link rel="preload" as="style" href="daily-gift.css?v=20261114-compact-selected-2">
 <link rel="preload" as="style" href="papi-tuy.css?v=20261117-1">
-<link rel="preload" as="script" href="papi-tuy.js?v=20261117-1">
+<link rel="preload" as="script" href="papi-tuy.js?v=20261118-hiz">
 <link rel="preload" as="style" href="papi-yumurta.css?v=20261118-tam-ekran">
-<link rel="preload" as="script" href="papi-yumurta.js?v=20261118-tam-ekran">
+<link rel="preload" as="script" href="papi-yumurta.js?v=20261118-hiz">
 <link rel="preload" as="style" href="zirve-kampanya.css?v=20261118-teacher-position">
 <link rel="preload" as="script" href="zirve-kampanya.js?v=20261118-teacher-position">
 <link rel="preload" as="style" href="premium-skill-games.css?v=20261115-papi-intro-results">
@@ -3277,7 +3278,7 @@ document.getElementById('dmBootRetry').onclick=()=>location.reload();
 </div>
 </div>
 <div class="ma-toast" id="maToast"></div>
-<script src="app-js/i04-meduakisac.js?v=16c9af410e"></script>
+<script src="app-js/i04-meduakisac.js?v=f255781b2d"></script>
 <style>
 /* Tüm alt sekmeler gömülü ve tam ekran (ayrı panel görünümü yok) */
 #tab-meduakis.dc-fullscreen-overlay, #tab-sanaozel.dc-fullscreen-overlay, #tab-aktiviteler.dc-fullscreen-overlay,
@@ -7345,14 +7346,14 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <link rel="stylesheet" href="parkur-map-theme-v1.css?v=20261010-levelbadge-fix">
 <script defer src="parkur-map-theme-v1.js?v=3"></script>
 <link rel="stylesheet" href="papi-feedback.css?v=1"><script defer src="papi-feedback.js?v=20261113-energy-350-600-850"></script><script defer src="papi-haptics.js?v=1"></script><script defer src="papi-wallet.js?v=20261117-tuy"></script>
-<link rel="stylesheet" href="story-path.css?v=3" media="print" data-dm-later><!-- story-curriculum.js (189 KB) açılışta yüklenmez: yalnız eski story-path yedeği kullanır, o da gerekirse kendisi yükler. --><link rel="stylesheet" href="thematic-learning.css?v=20261116-numbered-art-visible-2" media="print" data-dm-later><link rel="stylesheet" href="learning-question-v1.css?v=65b98d6235" media="print" data-dm-later><script defer src="learning-core.js?v=decf68eb87"></script><link rel="stylesheet" href="route-practice-flight.css?v=20261113-spotlight-flip-1"><script defer src="route-practice-flight.js?v=20261113-combo-next-2"></script><script defer src="papi-mascot.js?v=20261111-2"></script><script defer src="baby-papi-webgl.js?v=20261115-3d-1"></script><script defer src="route-papi-walk-feedback.js?v=20261115-3d-1"></script><script defer src="thematic-learning.js?v=20261116-numbered-art-rootpath-2"></script><script defer src="school-curriculum.js?v=20261025-1"></script><script defer src="school-word-art.js?v=20261025-soft-1"></script><script defer src="school-lesson.js?v=20261029-claim-1"></script><link rel="stylesheet" href="school-soft-cards.css?v=20261116-color-art-fix"><script defer src="story-path.js?v=20261112-hafif"></script>
+<link rel="stylesheet" href="story-path.css?v=3" media="print" data-dm-later><!-- story-curriculum.js (189 KB) açılışta yüklenmez: yalnız eski story-path yedeği kullanır, o da gerekirse kendisi yükler. --><link rel="stylesheet" href="thematic-learning.css?v=20261116-numbered-art-visible-2" media="print" data-dm-later><link rel="stylesheet" href="learning-question-v1.css?v=65b98d6235" media="print" data-dm-later><script defer src="learning-core.js?v=decf68eb87"></script><link rel="stylesheet" href="route-practice-flight.css?v=20261113-spotlight-flip-1"><script defer src="route-practice-flight.js?v=20261113-combo-next-2"></script><script defer src="papi-mascot.js?v=20261111-2"></script><script defer src="baby-papi-webgl.js?v=20261115-3d-1"></script><script defer src="route-papi-walk-feedback.js?v=20261115-3d-1"></script><script defer src="thematic-learning.js?v=20261118-hiz"></script><script defer src="school-curriculum.js?v=20261025-1"></script><script defer src="school-word-art.js?v=20261025-soft-1"></script><script defer src="school-lesson.js?v=20261029-claim-1"></script><link rel="stylesheet" href="school-soft-cards.css?v=20261116-color-art-fix"><script defer src="story-path.js?v=20261112-hafif"></script>
 <link rel="stylesheet" href="medupro.css?v=20261011-hud">
 <script defer src="medupro.js?v=20261118-sinif"></script>
 <link rel="stylesheet" href="konu-oyunlari.css?v=20261021-konu-a2-1" media="print" data-dm-later>
 <script defer src="konu-oyunlari.js?v=20261114-daily-trial"></script>
 <link rel="stylesheet" href="activity-ui.css?v=20261114-quota-papi">
 <link rel="stylesheet" href="premium-play-offer.css?v=20261115-1"><script defer src="premium-play-offer.js?v=20261115-1"></script>
-<script defer src="activity-ui.js?v=20261118-kart-a"></script>
+<script defer src="activity-ui.js?v=20261118-hiz"></script>
 <link rel="stylesheet" href="cumle-yarisi.css?v=20261026-mobile3" media="print" data-dm-later>
 <script defer src="cumle-yarisi.js?v=20261111-papi"></script>
 <link rel="stylesheet" href="mola-vakti.css?v=20261112-a">
@@ -7427,7 +7428,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 @media(min-width:750px){#bzPerde:has(> .bz-oyun.dm-question-panel)>#bzAlan{width:min(90%,700px)!important;max-width:700px!important}}
 @media(max-height:680px){#bzPerde:has(> .bz-oyun.dm-question-panel) #bzAlan .bz-kart2{height:clamp(44px,9vh,65px)!important}#bzPerde:has(> .bz-oyun.dm-question-panel) #bzAlan .bz-ipucu{margin:2px 0 5px!important}#bzPerde:has(> .bz-oyun.dm-question-panel)>#bzJokerler .bz-jk{padding:2px!important}}
 </style>
-<link rel="stylesheet" href="account-settings.css?v=20261025-energy-menu-1"><script defer src="account-settings.js?v=20261114-plans"></script><script defer src="kisisel-bilgiler.js?v=20261111-ders-ogretmen"></script><script defer src="student-management.js?v=20261021-contacts-2"></script><script defer src="contact-policy.js?v=20261025-contact-exit-1"></script><script defer src="sifre-islem.js?v=20261027-password-6"></script><script defer src="ekonomi.js?v=20261113-no-jokers"></script>
+<link rel="stylesheet" href="account-settings.css?v=20261025-energy-menu-1"><script defer src="account-settings.js?v=20261114-plans"></script><script defer src="kisisel-bilgiler.js?v=20261111-ders-ogretmen"></script><script defer src="student-management.js?v=20261021-contacts-2"></script><script defer src="contact-policy.js?v=20261118-hiz"></script><script defer src="sifre-islem.js?v=20261027-password-6"></script><script defer src="ekonomi.js?v=20261113-no-jokers"></script>
 <link rel="stylesheet" href="goal-announcements.css?v=1"><script defer src="goal-announcements.js?v=3"></script>
 <link rel="stylesheet" href="progress-ui.css?v=1">
 <link rel="stylesheet" href="progression-ui.css?v=b3ed9af867"><script defer src="progression-ui.js?v=20261114-premium-profile"></script>
@@ -7458,7 +7459,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <link rel="stylesheet" href="friends-ui.css?v=20261113-header-friends">
 <script defer src="notification-actions.js?v=20261025-actions-1"></script>
 <link rel="stylesheet" href="live-duel.css?v=20261118-davet"><script defer src="live-duel.js?v=20261118-davet"></script>
-<script defer src="friends-ui.js?v=20261118-davet"></script>
+<script defer src="friends-ui.js?v=20261118-hiz"></script>
 <link rel="stylesheet" href="league-ui.css?v=20261118-blur-no-heading">
 <script defer src="league-ui.js?v=20261118-davet"></script>
 <link rel="stylesheet" href="study-ui.css?v=20261019-learn-play-1">
@@ -7482,7 +7483,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <link rel="stylesheet" href="sonuc-a.css?v=20261112-1" media="print" data-dm-later>
 <link rel="stylesheet" href="member-experience.css?v=20261019-chat-compact-1">
 <script src="placement-bank.js?v=20261013-1"></script>
-<script src="member-experience.js?v=20261111-ders-ogretmen"></script><link rel="stylesheet" href="papi-tanitim.css?v=20261022-2"><script defer src="papi-tanitim.js?v=20261113-no-jokers"></script><script defer src="papi-sayfa-turlari.js?v=20261118-davet"></script><link rel="stylesheet" href="odul-animasyon.css?v=20261022-1"><script defer src="odul-animasyon.js?v=20261022-1"></script>
+<script src="member-experience.js?v=20261118-hiz"></script><link rel="stylesheet" href="papi-tanitim.css?v=20261022-2"><script defer src="papi-tanitim.js?v=20261113-no-jokers"></script><script defer src="papi-sayfa-turlari.js?v=20261118-davet"></script><link rel="stylesheet" href="odul-animasyon.css?v=20261022-1"><script defer src="odul-animasyon.js?v=20261022-1"></script>
 <link rel="stylesheet" href="start-placement.css?v=20261020-start-test-2">
 <script src="start-placement-bank.js?v=20261018-1"></script>
 <script src="start-placement.js?v=20261111-ders-ogretmen"></script>
@@ -7512,7 +7513,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <link rel="stylesheet" href="email-guide.css?v=20261018-compact-2">
 <link rel="stylesheet" href="panel-fixes.css?v=20261018-1">
 <link rel="stylesheet" href="social-safety.css?v=20261018-readable-study-1">
-<script defer src="social-safety.js?v=a9d00a35a7"></script>
+<script defer src="social-safety.js?v=20261118-hiz"></script>
 <link rel="stylesheet" href="user-card.css?v=20261118-virtual-member-badges">
 <script defer src="user-card.js?v=20261118-davet"></script>
 <script defer src="apple-login.js?v=20261028-ios-1"></script>
@@ -7553,9 +7554,9 @@ window.dmClassicGameAudio={
 <script defer src="kelime-golu.js?v=20261114-premium-profile"></script>
 <link rel="stylesheet" href="daily-gift.css?v=20261114-compact-selected-2">
 <link rel="stylesheet" href="papi-tuy.css?v=20261117-1">
-<script defer src="papi-tuy.js?v=20261117-1"></script>
+<script defer src="papi-tuy.js?v=20261118-hiz"></script>
 <link rel="stylesheet" href="papi-yumurta.css?v=20261118-tam-ekran">
-<script defer src="papi-yumurta.js?v=20261118-tam-ekran"></script>
+<script defer src="papi-yumurta.js?v=20261118-hiz"></script>
 <link rel="stylesheet" href="zirve-kampanya.css?v=20261118-teacher-position">
 <script defer src="zirve-kampanya.js?v=20261118-teacher-position"></script>
 <link rel="stylesheet" href="premium-skill-games.css?v=20261115-papi-intro-results">

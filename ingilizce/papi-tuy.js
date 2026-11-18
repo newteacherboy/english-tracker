@@ -56,7 +56,8 @@ function apply(d){
 }
 async function request(){
  const url=endpoint(),t=token();if(!url.endsWith('/papi-rewards')||!t)throw Error('Öğrenci hesabınla giriş yap.');
- const response=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json','x-diji-token':t},body:JSON.stringify({action:'tuy'})});
+ // [18 Kas 2026] Jeton gövdede, düz metin: ayrı ön kontrol (OPTIONS) isteği oluşmaz. Sunucu b.t'yi okur.
+ const response=await fetch(url,{method:'POST',headers:{'Content-Type':'text/plain;charset=UTF-8'},body:JSON.stringify({action:'tuy',t})});
  const d=await response.json();if(response.ok===false||!d?.ok)throw Error(d?.mesaj||'Bağlantı kurulamadı. Tekrar dene.');return d;
 }
 async function check({force=false,auto=true}={}){

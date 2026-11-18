@@ -38,11 +38,21 @@
   };
   let checked='',checking=false;
   const token=()=>storage.getItem('ing_token')||'';
+  /* [18 Kas 2026] Supabase yükü: öğretmen onay durumu her pencere odağında (günde ~700 kez) soruluyordu.
+     Sonuç bu cihazda hesaba özel saklanır: onaylıysa 6 saat, değilse 1 saat yeniden sorulmaz.
+     Jetonun kendisi değil yalnız kısa özeti saklanır. */
+  const STATUS_KEY='dm_tp_status_v1';
+  const tokenTag=t=>{let h=2166136261;for(let i=0;i<t.length;i++){h^=t.charCodeAt(i);h=Math.imul(h,16777619);}return (h>>>0).toString(36)+':'+t.length;};
+  const cachedStatus=t=>{try{const c=JSON.parse(storage.getItem(STATUS_KEY)||'null');if(!c||c.tag!==tokenTag(t))return null;const age=Date.now()-Number(c.at||0);return age>=0&&age<(c.state==='approved'?6:1)*3600000?c.state:null;}catch{return null;}};
+  const saveStatus=(t,state)=>{try{storage.setItem(STATUS_KEY,JSON.stringify({tag:tokenTag(t),state:String(state||'none'),at:Date.now()}));}catch{}};
+  const showSwitch=()=>{button.hidden=false;document.dispatchEvent(new CustomEvent('dm:teacher-switch-ready'));};
   const refresh=async()=>{
    const t=token();if(t===checked||checking)return;
-   checked=t;button.hidden=true;if(!t)return;checking=true;
+   checked=t;button.hidden=true;if(!t)return;
+   const known=cachedStatus(t);if(known){if(known==='approved')showSwitch();return;}
+   checking=true;
    try{const result=await api('teacherPortalStatus',t,{offerOnly:true});
-    if(t===token()&&result.state==='approved'){button.hidden=false;document.dispatchEvent(new CustomEvent('dm:teacher-switch-ready'));}
+    if(t===token()){saveStatus(t,result.state);if(result.state==='approved')showSwitch();}
    }catch{}finally{checking=false;}
   };
   button.onclick=async()=>{
@@ -78,6 +88,7 @@
    };
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mount,{once:true});else mount();
   document.addEventListener('dm:login',()=>{checked='';void refresh();});
+  // Odak dönüşünde yalnız kayıt süresi dolduysa sunucuya gidilir (cachedStatus).
   window.addEventListener('focus',()=>{checked='';void refresh();});
   setInterval(()=>{if(token()!==checked)void refresh();},2000);
  }

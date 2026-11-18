@@ -210,7 +210,7 @@
     window.dmProgression?.paint?.();
   }
   async function loadHome(force=false) {
-    resetAccount();if(busy||!force&&Date.now()-lastLoad<30000)return;
+    resetAccount();/* [18 Kas 2026] Supabase yükü: sekmeye her dönüşte değil, 90 sn'de bir (zorunlu yenilemeler aynen). */if(busy||!force&&Date.now()-lastLoad<90000)return;
     busy=true;const owner=account, ticket=epoch;
     const results=await Promise.allSettled([
       Promise.resolve().then(()=>window.maTumGetir?.()),

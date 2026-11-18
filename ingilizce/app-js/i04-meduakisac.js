@@ -18,10 +18,16 @@ function meduAkisKapat() {
 
 let maSekme = 'akis', maProfilId = null, maFiltre = 'herkes', maArama = '', maSinifListeSon = [], maSinifCache = null;
 let maTakip = new Set(), maBegeni = new Set(), maTebrik = new Set();
-async function maOlaylariYukle() {
+/* [18 Kas 2026] Supabase yükü: takip/beğeni listesi Arkadaşlar sekmesinin her açılışında soruluyordu (Medu Akış
+   kaldırıldıktan sonra da). Aynı hesap için 5 dakika içinde tekrar sorulmaz; takip/beğeni değişiklikleri zaten
+   yerel listeye anında işleniyor. */
+let maOlayYuklemeZamani = 0, maOlayYuklemeSahibi = '';
+async function maOlaylariYukle(zorla) {
+    if (!zorla && maOlayYuklemeSahibi === aktifOgrenciAdi && Date.now() - maOlayYuklemeZamani < 300000) return;
     try {
         let r = await fetch(`${apiURL}?islem=akisOlaylariGetir&ogrenci=${encodeURIComponent(aktifOgrenciAdi)}`);
         let d = await r.json();
+        if (r.ok && d && d.ok !== false) { maOlayYuklemeSahibi = aktifOgrenciAdi; maOlayYuklemeZamani = Date.now(); }
         maTakip = new Set(d.takip || []);
         maBegeni = new Set(d.begeni || []);
         maTebrik = new Set(d.tebrik || []);

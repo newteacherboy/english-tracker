@@ -49,21 +49,26 @@
     p.querySelector('p').textContent=`Telefon ve e-postanı hesap bilgilerinden tamamla. ${s.kalanGun} günün kaldı; süre bitince uygulamaya devam etmek için bu bilgiler gerekli.`;
     p.querySelector('.cp-open').onclick=()=>{p.remove();window.kisiselBilgilerAc?.();};p.querySelector('.cp-dismiss').onclick=()=>p.remove();document.body.appendChild(p);
   }
-  async function check(){
+  /* [18 Kas 2026] Supabase yükü: iletişim durumu her uygulamaya dönüşte ve her depolama olayında soruluyordu
+     (günde ~530 istek). Bilgileri tamam olan hesap 6 saatte bir, eksik olan en çok 2 dakikada bir sorulur;
+     giriş ve bilgi güncellemesinden sonra her zaman sorulur. Sunucu kısıtı (dm:contact-block) aynen geçerli. */
+  let lastToken='',lastAt=0,lastComplete=false;
+  async function check(force){
     const t=studentToken();
-    if(!t){token='';return clear();}
+    if(!t){token='';lastToken='';return clear();}
     if(checking)return;
     if(token!==t){clear();token=t;}
+    if(force!==true&&lastToken===t&&Date.now()-lastAt<(lastComplete?21600000:120000))return;
     checking=true;
     try{
       const r=await fetch(API,{method:'POST',body:JSON.stringify({islem:'iletisimDurumu',t})});const s=await r.json();
-      if(studentToken()===t&&s.ok)show(s);
+      if(studentToken()===t&&s.ok){lastToken=t;lastAt=Date.now();lastComplete=!s.eksik;show(s);}
     }catch{}finally{checking=false;}
   }
   document.addEventListener('dm:contact-block',e=>{if(studentToken())show(e.detail);});
-  document.addEventListener('dm:login',check);
-  document.addEventListener('dm:kisisel-bilgiler',()=>{clear();check();});
+  document.addEventListener('dm:login',()=>check(true));
+  document.addEventListener('dm:kisisel-bilgiler',()=>{clear();check(true);});
   document.addEventListener('visibilitychange',()=>{if(!document.hidden)check();});
-  window.addEventListener('storage',check);
-  setInterval(()=>{if(!document.hidden)check();},600000);setTimeout(check,500);
+  window.addEventListener('storage',()=>check());
+  setInterval(()=>{if(!document.hidden)check();},600000);setTimeout(()=>check(),500);
 })();

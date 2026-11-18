@@ -14,14 +14,14 @@
  async function refresh(force=false){
   if(!logged()||document.hidden||fetching||window.dmFeatureEnabled?.('cevrimici')===false)return;
   const owner=who(),names=[...new Set([...document.querySelectorAll('[data-online-person]')].map(b=>b.dataset.onlinePerson))].slice(0,120);
-  if(!force&&Date.now()-lastRefresh<30000&&names.every(p=>stamp.has(p)))return;
+  /* [18 Kas 2026] Supabase yükü: çevrimiçi rozetleri 30 sn yerine 2 dk'da bir yenilenir (çevrimiçi sayılma eşiği zaten 5 dk). */if(!force&&Date.now()-lastRefresh<120000&&names.every(p=>stamp.has(p)))return;
   if(Date.now()<retryAt)return;
   fetching=true;try{const d=await m.api('aktifDurum',{isimler:names});if(owner!==who())return;skew=Date.parse(d.serverNow)-Date.now();for(const p of names)stamp.set(p,{online:false});for(const p of d.liste)stamp.set(p.ad,p);lastRefresh=Date.now();failCount=0;paint();}catch(e){/* [Kota 29 Eki 2026] Hatada sayfa değiştikçe tekrar tekrar sorulmaz: artan bekleme (1 → 30 dk). */failCount++;retryAt=Date.now()+Math.min(1800000,60000*2**(failCount-1));}finally{fetching=false;}
  }
  function queue(){clearTimeout(scheduled);scheduled=setTimeout(()=>{attach();refresh();},200);}
  attach();
  const profile=document.getElementById('tab-meduakis');if(profile)new MutationObserver(queue).observe(profile,{childList:true,subtree:true});
- document.addEventListener('visibilitychange',()=>{if(!document.hidden){lastRefresh=0;refresh(true);}});
+ document.addEventListener('visibilitychange',()=>{if(!document.hidden&&Date.now()-lastRefresh>60000)refresh(true);});
  setInterval(()=>{if(currentAccount!==who()){currentAccount=who();stamp.clear();lastRefresh=0;failCount=0;retryAt=0;}attach();refresh();},60000);setTimeout(()=>refresh(true),2000);
  window.dmSocialPresence={isOnline,refresh};
  // [18 Kas 2026] Öğrencilerin iki kişilik kategorisi kaldırıldı; dmInviteAc yalnız öğretmenin Sınıfta Oyna çevrimiçi oyunları için kalır.
