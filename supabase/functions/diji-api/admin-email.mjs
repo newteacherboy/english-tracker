@@ -19,7 +19,22 @@ export function adminEmailAPI({db,json,welcome,publicParticipant,queue}){
    if(r.error)throw r.error;
    rows.push(...(r.data||[]).filter(publicParticipant));if((r.data||[]).length<500)break;
   }
-  const filtered=rows.filter(s=>valid(email(s.email))&&(!search||s.username.toLocaleLowerCase('tr').includes(search)||email(s.email).includes(search))&&(verification==='all'||!!s.email_verified_at===(verification==='yes')));
+  const role=String(b.role||'all');
+  if(!['all','student','teacher'].includes(role))throw Error('Geçersiz hesap türü.');
+  const teacherIds=new Map();
+  {
+   for(let i=0;i<rows.length;i+=100){
+    const g=await db.from('teacher_portal_access').select('student_id,teacher_id').eq('state','approved').in('student_id',rows.slice(i,i+100).map(x=>x.id));
+    if(g.error)throw g.error;
+    const ids=[...new Set((g.data||[]).map(x=>x.teacher_id).filter(Boolean))];
+    if(!ids.length)continue;
+    const t=await db.from('teachers').select('id').eq('active',true).is('frozen_at',null).in('id',ids);
+    if(t.error)throw t.error;
+    const active=new Set((t.data||[]).map(x=>x.id));
+    for(const x of g.data||[])if(active.has(x.teacher_id))teacherIds.set(x.student_id,x.teacher_id);
+   }
+  }
+  const filtered=rows.filter(s=>(role==='all'||(role==='teacher')===teacherIds.has(s.id))&&valid(email(s.email))&&(!search||s.username.toLocaleLowerCase('tr').includes(search)||email(s.email).includes(search))&&(verification==='all'||!!s.email_verified_at===(verification==='yes')));
   const result=[];
   for(let i=0;i<filtered.length;i+=100){
    const chunk=filtered.slice(i,i+100),ids=chunk.map(s=>s.id);
@@ -27,11 +42,13 @@ export function adminEmailAPI({db,json,welcome,publicParticipant,queue}){
    if(p.error||m.error)throw p.error||m.error;
    const plans=new Map((m.data||[]).map(x=>[x.id,x.tier]));
    for(const s of chunk){
-    const tier=plans.get(s.id)||'free';if(plan!=='all'&&tier!==plan)continue;
+    let tier=plans.get(s.id)||'free';
+    if(teacherIds.has(s.id)){const t=await db.rpc('dm_plan',{actor:teacherIds.get(s.id),account_role:'teacher'});if(t.error)throw t.error;tier=String(t.data||'free').replace(/^teacher_/,'');}
+    if(plan!=='all'&&tier!==plan)continue;
     const prefs=(p.data||[]).filter(x=>x.student_id===s.id&&email(x.email)===email(s.email));
     const pref=prefs.find(x=>x.opted_in_at&&!x.unsubscribed_at&&String(x.consent_source||'').startsWith('registration_checkbox'));
     const eligible=mode==='verify'?!s.email_verified_at:!!s.email_verified_at&&!!pref&&!prefs.some(x=>x.unsubscribed_at);
-    result.push({id:s.id,username:s.username,email:email(s.email),verified:!!s.email_verified_at,plan:tier,eligible,recipientKind:pref?.recipient_kind||'student'});
+    result.push({id:s.id,username:s.username,email:email(s.email),verified:!!s.email_verified_at,plan:tier,role:teacherIds.has(s.id)?'teacher':'student',eligible,recipientKind:pref?.recipient_kind||'student'});
    }
   }
   return result;
