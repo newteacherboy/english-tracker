@@ -42,7 +42,7 @@
   ];
   if(chapter.themeFinal&&chapter.themeReview?.length===6){
    const r=chapter.themeReview,opts=(i,field)=>[r[i][field],...r.filter((_,j)=>j!==i).slice(0,2).map(c=>c[field])];
-   tasks[4]={kind:'match',label:'Temadan üç ifadeyi eşleştir',prompt:'Farklı konularda öğrendiklerini eşleştir.',pairs:[r[0],r[2],r[4]],explanation:'Temanın farklı konularını hatırladın.'};
+   tasks[4]={kind:'match',label:'Eşleştir',prompt:'Bu durakta öğrendiğin ifadeleri eşleştir.',pairs:cards,explanation:'Bu durağın ifadelerini eşleştirdin.'};
    tasks[5]=choose('Temadan hatırla',r[1].en,r[1].tr,opts(1,'tr'),{audio:r[1].en,language:'en',explanation:r[1].en+' = '+r[1].tr});
    tasks[6]=choose('Temada İngilizcesini bul',r[3].tr,r[3].en,opts(3,'en'),{promptAudio:r[3].tr,explanation:r[3].en+' = '+r[3].tr});
    tasks[8]=choose('Tema finali · Son konuyu hatırla',r[5].en,r[5].tr,opts(5,'tr'),{audio:r[5].en,language:'en',explanation:r[5].en+' = '+r[5].tr});
@@ -59,6 +59,9 @@
    const other=cards.find(y=>norm(y.tr)!==norm(x.tr));
    return {en:x.en,tr:x.tr,options:rotate([x.tr,other.tr],(chapter.number+i)%2)};
   }),explanation:'Bölümün tüm kelimelerini tekrar ettin.'});
+  // Sixth graded question; teaching cards do not count as a question.
+  const matchIndex=tasks.findIndex(t=>t.kind==='match');
+  if(matchIndex>=0){const [match]=tasks.splice(matchIndex,1);tasks.splice(6,0,match);}
   return tasks;
  }
  function grade(task,answer){

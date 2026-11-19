@@ -864,3 +864,16 @@
 #dmStoryLesson .ml-art.ml-art-pilot{display:flex;align-items:center;justify-content:center;overflow:hidden;background:#fff;min-width:34px;min-height:34px}
 #dmStoryLesson .ml-art.ml-art-pilot>img{display:block!important;width:100%!important;height:100%!important;object-fit:contain!important;opacity:1!important;visibility:visible!important}
 #dmStoryLesson .ml-art.ml-art-load-failed{font-size:10px;line-height:1.15;color:#a52a2a;text-align:center;padding:3px}
+
+/* Shared route matching: reserve a separate gutter for connections. */
+#dmStoryLesson .ml-matches.ml-linked-match{position:relative;grid-template-columns:minmax(0,1fr) minmax(0,1fr);column-gap:clamp(34px,12vw,88px);row-gap:8px;isolation:isolate}
+#dmStoryLesson .ml-linked-match>div{position:relative;z-index:1}
+#dmStoryLesson .ml-linked-match button{width:100%;flex:1;min-width:0}
+#dmStoryLesson .ml-linked-match button.is-selected{outline:2px solid #49baff;outline-offset:1px}
+#dmStoryLesson .ml-linked-match .ml-match-lines{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none;z-index:0}
+#dmStoryLesson .ml-match-lines path{fill:none;stroke-width:3.5;stroke-linecap:round;animation:ml-link-in .22s ease-out}
+#dmStoryLesson .ml-link-good{stroke:#28c96e;filter:drop-shadow(0 0 3px #54f89b)}
+#dmStoryLesson .ml-link-bad{stroke:#ff525c;filter:drop-shadow(0 0 3px #ff7777)}
+#dmStoryLesson .ml-match-count{grid-column:1/-1;text-align:center;font-weight:800;margin:2px 0;color:inherit}
+@keyframes ml-link-in{from{opacity:0}to{opacity:1}}
+@media(prefers-reduced-motion:reduce){#dmStoryLesson .ml-match-lines path{animation:none}}
