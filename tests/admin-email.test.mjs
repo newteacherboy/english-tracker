@@ -1,0 +1,15 @@
+import {test} from 'node:test';
+import assert from 'node:assert/strict';
+import {adminEmailAPI} from '../supabase/functions/diji-api/admin-email.mjs';
+const admin={role:'teacher',yonetici:true,ogretmenKullanici:'teacher',teacher_id:'owner'};
+function fixture(){
+ const writes=[],students=[{id:'a',username:'Ada',email:'ada@example.test',email_verified_at:'2026-01-01'},{id:'b',username:'Bora',email:'bora@example.test',email_verified_at:null},{id:'c',username:'Cem',email:'cem@example.test',email_verified_at:'2026-01-01'}];
+ const prefs=[{student_id:'a',email:'ada@example.test',recipient_kind:'parent',opted_in_at:'2026-01-01',consent_source:'registration_checkbox'},{student_id:'c',email:'cem@example.test',recipient_kind:'parent',opted_in_at:'2026-01-01',unsubscribed_at:'2026-02-01',consent_source:'registration_checkbox'}];
+ const db={from(table){const q={select(){return q},eq(){return q},is(){return q},order(){return q},range(){return Promise.resolve({data:students})},in(){return Promise.resolve({data:prefs})},insert(value){writes.push({table,value});return Promise.resolve({error:null})}};return q;},rpc:async()=>({data:[{id:'a',tier:'pro'},{id:'b',tier:'free'},{id:'c',tier:'free'}]})};
+ const api=adminEmailAPI({db,json:(data,status=200)=>({data,status}),welcome:async s=>writes.push({table:'verify',value:s}),publicParticipant:()=>true});
+ return {writes,call:(op,body={},a=admin)=>api.handle(op,body,a,'POST')};
+}
+test('only owner admin can preview or submit',async()=>{const f=fixture();for(const op of ['adminEmailPreview','adminEmailQueue','adminEmailHistory'])assert.equal((await f.call(op,{}, {...admin,yonetici:false})).status,403);assert.equal(f.writes.length,0)});
+test('news filters plans and requires verified current consent',async()=>{const f=fixture();const p=await f.call('adminEmailPreview',{mode:'news'});assert.deepEqual(p.data.items.map(x=>[x.id,x.eligible]),[['a',true],['b',false],['c',false]]);assert.equal((await f.call('adminEmailPreview',{plan:'pro'})).data.total,1);assert.equal((await f.call('adminEmailQueue',{ids:['c'],confirm:true,subject:'x',message:'x'})).status,409);assert.equal(f.writes.length,0)});
+test('explicit confirmation queues one escaped personalized mail with unsubscribe link',async()=>{const f=fixture();const b={ids:['a'],subject:'News',message:'<script>{{username}}</script>'};assert.equal((await f.call('adminEmailQueue',b)).status,400);assert.equal((await f.call('adminEmailQueue',{...b,confirm:true})).data.queued,1);const m=f.writes.find(x=>x.table==='dm_papi_progress_outbox').value;assert.match(m.html,/&lt;script&gt;Ada/);assert.match(m.html,/papi-progress-unsubscribe\?token=/);});
+test('verification cannot carry arbitrary marketing text or target verified users',async()=>{const f=fixture();const b={mode:'verify',confirm:true,subject:'ad',message:'ad'};assert.equal((await f.call('adminEmailQueue',{...b,ids:['a']})).status,409);assert.equal((await f.call('adminEmailQueue',{...b,ids:['b']})).data.queued,1);assert.equal(f.writes.filter(x=>x.table==='verify').length,1);assert.equal(f.writes.filter(x=>x.table==='dm_papi_progress_outbox').length,0)});
