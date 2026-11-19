@@ -50,8 +50,8 @@ async function dmWordImageDecorate(button,en,tr,mode){
    if(old)old.replaceWith(wrap);else button.prepend(wrap);
   }else{
    img.style.cssText='display:block;object-fit:contain;width:52px;height:52px;flex:0 0 52px;border-radius:9px;background:white;';
-   const label=button.querySelector('span:first-child');if(label)label.style.flex='1 1 0';
-   button.prepend(img);
+   const label=button.querySelector('span:first-child');if(label){label.style.flex='1 1 0';label.style.minWidth='0';label.style.overflowWrap='anywhere';}
+   img.style.order='-1';button.append(img);
   }
  },{once:true});
  // Keep existing text/art untouched if the CDN image cannot be loaded.
