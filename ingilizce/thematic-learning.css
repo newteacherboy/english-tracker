@@ -893,3 +893,8 @@
 #dmStoryLesson .ml-linked-match>div{display:grid;grid-auto-rows:76px;gap:14px;align-content:start}
 #dmStoryLesson .ml-linked-match button,#dmStoryLesson[data-fit] .ml-linked-match button{box-sizing:border-box;height:76px;min-height:0;max-height:76px;padding:6px 9px;white-space:normal;overflow-wrap:anywhere;line-height:1.18;font-size:clamp(12px,3.4vw,16px);overflow:hidden}
 @media(max-height:680px){#dmStoryLesson .ml-linked-match>div{grid-auto-rows:64px;gap:10px}#dmStoryLesson .ml-linked-match button,#dmStoryLesson[data-fit] .ml-linked-match button{height:64px;max-height:64px}#dmStoryLesson .ml-task>.ml-matches.ml-linked-match{margin-top:16px}}
+
+#dmStoryLesson .ml-three-choices.ml-image-choices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
+#dmStoryLesson .ml-three-choices.ml-image-choices>button:last-child{grid-column:1/-1;width:calc((100% - 10px)/2);justify-self:center}
+#dmStoryLesson .ml-choices button.is-selected{outline:2px solid #438cf5;outline-offset:1px;background-color:rgba(67,140,245,.13)}
+#dmStoryLesson .ml-actions button:disabled{opacity:.45;cursor:default}
