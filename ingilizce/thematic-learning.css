@@ -887,3 +887,9 @@
 #dmStoryLesson .ml-linked-match .is-correct .ml-wave{color:#16a34a}
 @keyframes ml-wave-pulse{to{transform:scaleY(.4)}}
 @media(prefers-reduced-motion:reduce){#dmStoryLesson .is-playing .ml-wave i{animation:none}}
+
+/* Equal-size matching tiles, consistent spacing and contained translations. */
+#dmStoryLesson .ml-task>.ml-matches.ml-linked-match{margin-top:clamp(20px,5vh,48px);margin-bottom:12px}
+#dmStoryLesson .ml-linked-match>div{display:grid;grid-auto-rows:76px;gap:14px;align-content:start}
+#dmStoryLesson .ml-linked-match button,#dmStoryLesson[data-fit] .ml-linked-match button{box-sizing:border-box;height:76px;min-height:0;max-height:76px;padding:6px 9px;white-space:normal;overflow-wrap:anywhere;line-height:1.18;font-size:clamp(12px,3.4vw,16px);overflow:hidden}
+@media(max-height:680px){#dmStoryLesson .ml-linked-match>div{grid-auto-rows:64px;gap:10px}#dmStoryLesson .ml-linked-match button,#dmStoryLesson[data-fit] .ml-linked-match button{height:64px;max-height:64px}#dmStoryLesson .ml-task>.ml-matches.ml-linked-match{margin-top:16px}}
