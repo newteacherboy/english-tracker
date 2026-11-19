@@ -253,15 +253,17 @@ async function submit(answer,clicked,{guided=false}={}){
  if(busy||accepted||!modal)return;
  window.dmRoutePracticeFlight?.prepare();
  const submitEpoch=epoch;
+ const initialCursor=session.cursor;
  const spokenTask=taskDeck(chapter,data?.chapters.find(c=>c.id===chapter.previousId),session.deckVersion)[session.cursor];
  const spokenAnswer=typeof answer==='string'&&!guided&&(spokenTask.kind==='letters'||spokenTask.kind==='order'||(spokenTask.kind==='choice'&&spokenTask.language!=='en'))?answer:'';
 
- try{await comboBreakPromise;}catch{breakCombo();try{await comboBreakPromise;}catch{return;}}
- if(submitEpoch!==epoch||busy||accepted||!modal)return;
+ const answerAudio=spokenAnswer?new Promise(resolve=>speech(spokenAnswer.split(' → ')[0],'en-US',resolve)):Promise.resolve();
+ busy=true;
+ try{await comboBreakPromise;}catch{breakCombo();try{await comboBreakPromise;}catch{if(submitEpoch===epoch)busy=false;return;}}
+ if(submitEpoch!==epoch||accepted||!modal||session.cursor!==initialCursor){if(submitEpoch===epoch)busy=false;return;}
  const ticket=epoch,at=identity(),answeredCursor=session.cursor;
  const task=taskDeck(chapter,data?.chapters.find(c=>c.id===chapter.previousId),session.deckVersion)[session.cursor];
  busy=true;modal.setAttribute('aria-busy','true');
- const answerAudio=spokenAnswer?new Promise(resolve=>speech(spokenAnswer,'en-US',resolve)):Promise.resolve();
  modal.querySelectorAll('.ml-task button,.ml-actions button').forEach(b=>b.disabled=true);
  feedback('Kontrol ediliyor…');
  try{
@@ -431,21 +433,21 @@ function render(){if(!modal)return;accepted=false;if(session?.needsRecovery&&!se
  if(task.kind==='match'){
   let selected=null,matched=[],wrong=null,wrongTimer;const done=new Set(),pairs=task.pairs;
   const wrap=document.createElement('div');wrap.className='ml-matches ml-linked-match';
-  wrap.innerHTML='<div>'+optionOrder('match-left',pairs).map(i=>'<button type="button" data-left="'+i+'" lang="en">🔊 '+esc(pairs[i].en)+'</button>').join('')+'</div><div>'+optionOrder('match-right',pairs).map(i=>'<button type="button" data-right="'+i+'" lang="tr">'+esc(pairs[i].tr)+'</button>').join('')+'</div><svg class="ml-match-lines" aria-hidden="true"></svg><p class="ml-match-count" role="status"></p>';
-  area.append(wrap);
+  wrap.innerHTML='<div>'+optionOrder('match-left',pairs).map(i=>'<button type="button" data-left="'+i+'" lang="en" aria-label="Listen '+(i+1)+'"><span class="ml-wave" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span></button>').join('')+'</div><div>'+optionOrder('match-right',pairs).map(i=>'<button type="button" data-right="'+i+'" lang="tr">'+esc(pairs[i].tr)+'</button>').join('')+'</div><svg class="ml-match-lines" aria-hidden="true"></svg><p class="ml-match-count" role="status"></p>';
+  area.append(wrap);wrap.style.setProperty('position','relative','important');wrap.style.setProperty('display','grid','important');wrap.style.setProperty('grid-template-columns','minmax(0,1fr) minmax(0,1fr)','important');wrap.style.setProperty('column-gap','clamp(44px,12vw,100px)','important');
   const svg=wrap.querySelector('svg'),count=wrap.querySelector('.ml-match-count');
   actions.innerHTML='<button type="button" class="ml-primary" disabled>Devam et →</button>';
   const next=actions.querySelector('button'),left=i=>wrap.querySelector('[data-left="'+i+'"]'),right=i=>wrap.querySelector('[data-right="'+i+'"]');
   function draw(){
    if(!wrap.isConnected)return;
-   const bounds=wrap.getBoundingClientRect();svg.setAttribute('viewBox','0 0 '+bounds.width+' '+bounds.height);svg.replaceChildren();
-   const line=(a,b,bad)=>{const l=left(a).getBoundingClientRect(),r=right(b).getBoundingClientRect(),x=l.right-bounds.left,y=l.top+l.height/2-bounds.top,X=r.left-bounds.left,Y=r.top+r.height/2-bounds.top,m=(x+X)/2;const p=document.createElementNS('http://www.w3.org/2000/svg','path');p.setAttribute('d','M '+x+' '+y+' C '+m+' '+y+' '+m+' '+Y+' '+X+' '+Y);p.setAttribute('class',bad?'ml-link-bad':'ml-link-good');svg.append(p);};
+   const bounds=wrap.getBoundingClientRect();svg.setAttribute('viewBox','0 0 '+bounds.width+' '+bounds.height);svg.style.cssText='position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:2;overflow:visible;';svg.replaceChildren();
+   const line=(a,b,bad)=>{const l=left(a).getBoundingClientRect(),r=right(b).getBoundingClientRect(),x=l.right-bounds.left,y=l.top+l.height/2-bounds.top,X=r.left-bounds.left,Y=r.top+r.height/2-bounds.top,m=(x+X)/2;const p=document.createElementNS('http://www.w3.org/2000/svg','path');p.setAttribute('d','M '+x+' '+y+' C '+m+' '+y+' '+m+' '+Y+' '+X+' '+Y);p.setAttribute('class',bad?'ml-link-bad':'ml-link-good');p.setAttribute('fill','none');p.setAttribute('stroke',bad?'#ef4444':'#22c55e');p.setAttribute('stroke-width','4');p.setAttribute('stroke-linecap','round');svg.append(p);};
    done.forEach(i=>line(i,i,false));if(wrong)line(wrong[0],wrong[1],true);
-   count.textContent=done.size+' / '+pairs.length+' eşleştirme tamamlandı';next.disabled=done.size!==pairs.length;
+   count.textContent=done.size+' / '+pairs.length+' eşleştirme tamamlandı';next.disabled=done.size!==pairs.length;next.style.opacity=next.disabled?'.45':'';
   }
   const observer=typeof ResizeObserver==='function'?new ResizeObserver(draw):null;observer?.observe(wrap);
   const cleanup=new MutationObserver(()=>{if(!wrap.isConnected){observer?.disconnect();cleanup.disconnect();clearTimeout(wrongTimer);}});cleanup.observe(modal,{childList:true,subtree:true});
-  wrap.querySelectorAll('[data-left]').forEach(b=>b.onclick=()=>{if(busy||accepted)return;const i=+b.dataset.left;speech(pairs[i].en);if(done.has(i))return;selected=i;wrap.querySelectorAll('[data-left]').forEach(x=>x.classList.toggle('is-selected',x===b));});
+  wrap.querySelectorAll('[data-left]').forEach(b=>b.onclick=()=>{if(busy||accepted)return;const i=+b.dataset.left;wrap.querySelectorAll('[data-left]').forEach(x=>x.classList.remove('is-playing'));b.classList.add('is-playing');speech(pairs[i].en,'en-US',()=>b.classList.remove('is-playing'));if(done.has(i))return;selected=i;wrap.querySelectorAll('[data-left]').forEach(x=>x.classList.toggle('is-selected',x===b));});
   wrap.querySelectorAll('[data-right]').forEach(b=>b.onclick=()=>{if(busy||accepted||selected===null)return;const i=+b.dataset.right;if(done.has(i))return;clearTimeout(wrongTimer);wrong=null;if(i!==selected){wrong=[selected,i];breakCombo();window.dmAnswerFeedback?.(false);left(selected).classList.remove('is-selected');selected=null;draw();wrongTimer=setTimeout(()=>{wrong=null;draw();},650);return;}done.add(i);matched.push(pairs[i]);left(i).classList.remove('is-selected');left(i).classList.add('is-correct');b.classList.add('is-correct');b.disabled=true;selected=null;window.dmAnswerFeedback?.(true,'match');draw();});
   next.onclick=()=>{if(done.size===pairs.length)submit(matched);};draw();
  }
