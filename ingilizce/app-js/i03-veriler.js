@@ -846,15 +846,25 @@ function sohbetMik() {
  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
  const fallback=message=>{ysCallState('idle',message);yoToast(message);document.getElementById('yoSInput')?.focus();};
  if(!SR){fallback('Mikrofon bu cihazda desteklenmiyor. Cevabını yazabilirsin.');return;}
- ysSpeechStop();const step=o.i,r=new SR();yoSR=r;r.lang='en-US';r.interimResults=false;r.maxAlternatives=1;
+ ysSpeechStop();const step=o.i,r=new SR();yoSR=r;r.lang='en-US';r.interimResults=true;r.continuous=false;r.maxAlternatives=1;
  const current=()=>yoSR===r&&sh===o&&o.i===step&&!o.kilit;
+ let heard='';
  r.onstart=()=>{if(current())ysCallState('listening','Seni dinliyorum…');};
- r.onresult=e=>{if(!current())return;const t=e.results?.[0]?.[0]?.transcript||'';sohbetMikDur();if(t.trim())void sohbetGonder(t);};
- r.onerror=e=>{if(!current())return;sohbetMikDur();fallback(e.error==='not-allowed'||e.error==='service-not-allowed'?'Mikrofon izni verilmedi. Cevabını yazabilirsin.':e.error==='no-speech'?'Ses duyamadım. Tekrar dene veya cevabını yaz.':'Mikrofon çalışmadı. Tekrar dene veya cevabını yaz.');};
- r.onend=()=>{if(yoSR!==r)return;yoSR=null;ysCallState('idle','Sıra sende');};
+ r.onaudiostart=()=>{if(current())ysCallState('listening','Seni dinliyorum…');};
+ r.onspeechstart=()=>{if(current())ysCallState('listening','Sesini duyuyorum…');};
+ r.onresult=e=>{
+  if(!current())return;
+  const parts=Array.from(e.results||[]).filter(x=>x?.[0]?.transcript?.trim());
+  if(!parts.length)return;
+  heard=parts.map(x=>x[0].transcript.trim()).join(' ');
+  if(parts.some(x=>x.isFinal===false)){ysCallState('listening',heard);return;}
+  const t=heard;sohbetMikDur();void sohbetGonder(t);
+ };
+ r.onerror=e=>{if(!current())return;sohbetMikDur();if(heard){const input=document.getElementById('yoSInput');if(input)input.value=heard;}fallback(e.error==='not-allowed'||e.error==='service-not-allowed'?'Mikrofon izni verilmedi. Cevabını yazabilirsin.':e.error==='no-speech'?'Ses duyamadım. Tekrar dene veya cevabını yaz.':'Mikrofon çalışmadı. Tekrar dene veya cevabını yaz.');};
+ r.onend=()=>{if(!current())return;yoSR=null;if(heard){const input=document.getElementById('yoSInput');if(input)input.value=heard;ysCallState('idle','Algılanan cevabı kontrol edip gönderebilirsin.');}else ysCallState('idle','Sıra sende');};
  try{ysCallState('listening','Mikrofon açılıyor…');r.start();}catch{sohbetMikDur();fallback('Mikrofon açılamadı. Cevabını yazabilirsin.');}
 }
-function sohbetMikDur(){const r=yoSR;yoSR=null;if(r){r.onstart=r.onresult=r.onerror=r.onend=null;try{if(r.abort)r.abort();else r.stop();}catch{}}document.getElementById('yoSMik')?.classList.remove('dinliyor');}
+function sohbetMikDur(){const r=yoSR;yoSR=null;if(r){r.onstart=r.onaudiostart=r.onspeechstart=r.onresult=r.onerror=r.onend=null;try{if(r.abort)r.abort();else r.stop();}catch{}}document.getElementById('yoSMik')?.classList.remove('dinliyor');}
 
         /* ========== 10-11) ÖĞRETMEN RAPORLARI ========== */
         let yoRaporTip = 'zayif';
