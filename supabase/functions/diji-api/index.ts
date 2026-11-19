@@ -1486,7 +1486,7 @@ async function handle(req: Request, proxy: any = null) {
   const safetyResponse=await socialSafety.handle(op,body,a,req.method);if(safetyResponse)return safetyResponse;
   const safetyDeny=await socialSafety.guard(op,body,q,a);if(safetyDeny)return safetyDeny;
   const chat=teacherChatAPI({db:supabase,json,memberStudents,clean:temizMetin,queue:kuyrugaEkle,mailShell:mailKabugu,html:metniHtmlYap,escape:hk});
-  const adminMailResponse=await adminEmailAPI({db:supabase,json,welcome:onboarding.welcome,publicParticipant,queue:kuyrugaEkle}).handle(op,body,a,req.method);if(adminMailResponse)return adminMailResponse;
+  const adminMailResponse=await adminEmailAPI({db:supabase,json,welcome:onboarding.welcome,publicParticipant,queue:kuyrugaEkle,brevoKey:Deno.env.get('BREVO_API_KEY')}).handle(op,body,a,req.method);if(adminMailResponse)return adminMailResponse;
   const memberResponse=await memberToolsAPI({db:supabase,json,chat,welcome:onboarding.welcome,hash:sha256,teacherScope:kapsamda,useStreakShield:(sid:string)=>ekonomiGuncelle(sid,(y:any)=>{const d=Math.max(0,Math.floor(num(y.dondurucu)));if(d<1)return {hata:'Seri kalkanı yok.'};y.dondurucu=d-1;return {kalan:d-1};})}).handle(op,body,q,a,req.method);if(memberResponse)return memberResponse;
   if(op==='iletisimDurumu' && !a)return json({ok:false,hata:'oturum',mesaj:'Öğrenci oturumu gerekli.'},401);
   if(op==='iletisimDurumu' && a.role!=='student')return json({ok:true,uygulanmaz:true,eksik:false,donuk:false,uyari:false});
