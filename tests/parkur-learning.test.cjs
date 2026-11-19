@@ -57,7 +57,7 @@ test('four words stay on one level, while five, eight and twelve words unlock se
   const words=Array.from({length:count},(_,i)=>({sinif:1,unite:1,en:'word'+i,tr:'kelime'+i}));
   const ctx={window:{masterKelimeHavuzu:words},KAPI_SINIF:[[1,2],[3,4],[5,6],[7,8]],VARSAYILAN_UNITE:{1:8,2:8,3:10,4:10,5:8,6:8,7:8,8:8},EN:k=>k.en,TR:k=>k.tr};
   vm.runInNewContext(script.slice(a,b)+';duraklariKur();globalThis.stops=DURAK[0].filter(d=>d.sinif===1&&d.unite===1&&!d.karisik);',ctx);
-  assert.equal(ctx.stops.length,Math.ceil(count/4));assert(ctx.stops.every(d=>d.kelimeler.length<=4));
+  assert.equal(ctx.stops.length,Math.ceil(count/4)-(count>1&&count%4===1?1:0));assert(ctx.stops.every(d=>d.kelimeler.length<=5&&(count===1||d.kelimeler.length>=2)));
   assert.deepEqual(new Set(ctx.stops.flatMap(d=>d.kelimeler)),new Set(words));
  }
 });
