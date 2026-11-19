@@ -79,10 +79,22 @@ function scoreV3(body:any, seconds:any) {
 }
 
 async function dmExtension(op:string,body:any,q:URLSearchParams,a:any){
- const social=new Set(['sosyalDurum','ogrenciEngelle','ogrenciEngelKaldir','hazirMesajGonder','aksesuarHediye','aksesuarKatalog','oyunEslesmeOlustur','oyunEslesmeDurum','oyunEslesmeHazir','oyunEslesmeCevap','oyunEslesmelerim','duelloSonucKaydet']);
+ const social=new Set(['engellenenlerim','sosyalDurum','ogrenciEngelle','ogrenciEngelKaldir','hazirMesajGonder','aksesuarHediye','aksesuarKatalog','oyunEslesmeOlustur','oyunEslesmeDurum','oyunEslesmeHazir','oyunEslesmeCevap','oyunEslesmelerim','duelloSonucKaydet']);
  if(!social.has(op))return null;
  if(!a||a.role!=='student'||!a.student_id)return json({ok:false,mesaj:'Öğrenci oturumu gerekli.'},401);
  const actor=a.student_id;
+ if(op==='engellenenlerim'){
+  const {data,error}=await supabase.from('student_blocks').select('blocked_id').eq('blocker_id',actor);
+  if(error)throw error;
+  const ids=(data||[]).map((row:any)=>row.blocked_id);
+  const liste:any[]=[];
+  for(let i=0;i<ids.length;i+=100){
+   const {data:students,error:lookupError}=await supabase.from('students').select('id,username').in('id',ids.slice(i,i+100));
+   if(lookupError)throw lookupError;
+   for(const student of students||[])liste.push({ad:student.username});
+  }
+  return json({ok:true,liste});
+ }
  if(op==='aksesuarKatalog'){const {data,error}=await supabase.from('dm_accessory_catalog').select('*').order('price');if(error)throw error;return json({ok:true,liste:Array.isArray(data)?data.filter(publicParticipant):data});}
  if(op==='oyunEslesmelerim'){
   const {data,error}=await supabase.from('dm_matches').select('id,game,mode,status,player_a,player_b,created_at,expires_at,result_a,result_b,a:students!dm_matches_player_a_fkey(username),b:students!dm_matches_player_b_fkey(username)').or('player_a.eq.'+actor+',player_b.eq.'+actor).order('created_at',{ascending:false}).limit(30);if(error)throw error;
@@ -128,7 +140,7 @@ Deno.serve(async(req:Request)=>{
  }
  if(a.student_id===DEMO_ID&&['duelloGonder','duelloYanit','hazirMesajGonder','aksesuarHediye','oyunEslesmeOlustur','ogrenciEngelle','ogrenciEngelKaldir'].includes(op))return json({ok:false,mesaj:'Tanıtım hesabında diğer öğrencilere istek gönderilmez.'},403);
  const safetyDeny=await socialSafety.guard(op,body,q,a);if(safetyDeny)return safetyDeny;
- const protective=['sosyalDurum','ogrenciEngelle','ogrenciEngelKaldir'].includes(op);
+ const protective=['engellenenlerim','sosyalDurum','ogrenciEngelle','ogrenciEngelKaldir'].includes(op);
  const contactDeny=protective?null:await contacts.guard(op,a);if(contactDeny)return contactDeny;
  const levelDeny=protective||a.classroomTeacher?null:await progression.guard(op,body,q,a);if(levelDeny)return levelDeny;
  const denied=protective?null:await release.guard(op,body,q,a);if(denied)return denied;
