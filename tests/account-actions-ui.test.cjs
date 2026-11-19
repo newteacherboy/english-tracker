@@ -25,3 +25,5 @@ test('fresh account-action OAuth returns are routed before portal login; expired
   assert.equal(targets.length,expected?1:0);if(expected)assert.equal(targets[0],'hesap-dondur.html?oauth=google#access_token=synthetic');
  }
 });
+
+test('account settings provides direct access to blocked accounts',()=>{const dom=new JSDOM('<body></body>',{url:'https://app.dijimedu.com/ingilizce/',runScripts:'outside-only'});const w=dom.window;let opened=0;w.dmSocialSafety={blocked:()=>opened++};w.eval(fs.readFileSync('ingilizce/account-settings.js','utf8'));w.dmHesapAyarlariAc();w.document.querySelector('[data-is="engellenenler"]').click();assert.equal(opened,1);assert(w.document.getElementById('dmAccountSettings'));w.close();});

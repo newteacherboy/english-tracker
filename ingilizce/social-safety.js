@@ -38,6 +38,7 @@
    }
   }catch(e){if(alive(v)){host.textContent='Liste alınamadı. ';const b=document.createElement('button');b.textContent='Tekrar dene';b.onclick=()=>loadBlocked(v);host.append(b);}}
  }
+ function blocked(){const v=sheet('Engellenenler');body(v).innerHTML='<p>Engellediğin kullanıcıları buradan yönetebilirsin.</p><div data-blocked-list>Yükleniyor…</div>';void loadBlocked(v);}
  function help(){const v=sheet('Güvenlik ve bildirimler');body(v).innerHTML='<p>Rahatsız olduğunda arkadaş profilindeki veya akış paylaşımındaki <b>⋯</b> menüsünden bildirebilir ya da kişiyi engelleyebilirsin.</p><p>Bildiren kişinin kimliği karşı tarafa gösterilmez. Bildirimler yönetici tarafından incelenir; şikâyet sayısı tek başına hesap kapatma gerekçesi değildir.</p><p class="dm-safety-note">Gerçek adını, telefonunu, okulunu, adresini veya parolanı paylaşma. Yardım gerektiğinde güvendiğin bir yetişkine haber ver.</p><h3>Engellenen kullanıcılar</h3><div data-blocked-list>Yükleniyor…</div><div data-my-reports>Bildirimlerin yükleniyor…</div>';loadBlocked(v);api('safetyMyReports').then(d=>{if(!alive(v))return;v.el.querySelector('[data-my-reports]').innerHTML=d.reports?.length?'<h3>Bildirimlerim</h3>'+d.reports.map(r=>'<p>'+esc(reasons[r.reason]||'Bildirim')+' · '+esc(statusLabel(r.status))+'</p>').join(''):'<p>Henüz bir bildirimin yok.</p>';}).catch(e=>message(v,e.message,true));}
  function report(kind,target,itemId,returnTo){const v=sheet(kind==='user'?'Kullanıcıyı bildir':kind==='message'?'Mesajı bildir':'İçeriği bildir'),requestId=crypto.randomUUID();v.returnTo=returnTo;
   body(v).innerHTML='<p>'+esc(target||'Seçtiğin içerik')+' için bildirim gönderiyorsun.</p><label for="dmReportReason">Bildirim nedeni</label><select id="dmReportReason">'+Object.entries(reasons).map(([k,t])=>'<option value="'+k+'">'+t+'</option>').join('')+'</select><label for="dmReportNote">Açıklama <small>(isteğe bağlı)</small></label><textarea id="dmReportNote" maxlength="500" placeholder="Kısaca anlat. Telefon, adres veya parola ekleme."></textarea><p class="dm-safety-note">Kimliğin bildirilen kişiye gösterilmez. Acil bir tehlike varsa güvendiğin bir yetişkinden yardım iste.</p><div class="dm-safety-actions"><button class="dm-safety-primary" data-send data-action-button>Bildirimi gönder</button></div>';
@@ -127,6 +128,6 @@
    }catch(e){message(v,e.message,true);}finally{pin='';busy(v,false);}
   };
  }
- window.dmSocialSafety={parent,help,report,admin,refresh,close};
+ window.dmSocialSafety={parent,help,blocked,report,admin,refresh,close};
  if(page)guardianPage();else install();
 })();
