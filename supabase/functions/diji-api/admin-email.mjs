@@ -3,8 +3,12 @@ const email=x=>String(x||'').trim().toLowerCase();
 const valid=x=>/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(x);
 const esc=x=>String(x).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const day=()=>new Date(Date.now()+10800000).toISOString().slice(0,10);
-export function adminEmailAPI({db,json,welcome,publicParticipant}){
+export function adminEmailAPI({db,json,welcome,publicParticipant,queue}){
  const fail=(mesaj,status=400)=>json({ok:false,mesaj},status);
+ const safeUrl=(v)=>{if(!v)return '';try{const u=new URL(String(v));if(u.protocol==='https:'&&!u.username&&!u.password&&['app.dijimedu.com','dijimedu.com'].includes(u.hostname))return u.href;}catch{}return null;};
+ function template(subject,body,link,image,unsubscribe=''){
+  return '<div style="font-family:Arial;max-width:620px;margin:auto"><h2 style="color:#087c78">Diji-Medu İngilizce</h2><h3>'+esc(subject)+'</h3>'+(image?'<img alt="Diji-Medu" style="width:100%;max-width:620px" src="'+esc(image)+'">':'')+'<p>'+esc(body).replaceAll('\n','<br>')+'</p><p><a href="'+esc(link||'https://app.dijimedu.com/ingilizce/')+'">Diji-Medu’yu aç</a></p>'+(unsubscribe?'<small><a href="'+esc(unsubscribe)+'">E-posta aboneliğinden çık</a></small>':'')+'</div>';
+ }
  async function audience(b){
   const rows=[];
   const mode=b.mode==='verify'?'verify':'news';
@@ -33,12 +37,23 @@ export function adminEmailAPI({db,json,welcome,publicParticipant}){
   return result;
  }
  return {async handle(op,b,a,method){
-  if(!['adminEmailPreview','adminEmailQueue','adminEmailHistory'].includes(op))return null;
+  if(!['adminEmailPreview','adminEmailQueue','adminEmailHistory','adminEmailTest'].includes(op))return null;
   if(method!=='POST')return fail('POST gerekli.',405);
   if(a?.role!=='teacher'||a.yonetici!==true||a.ogretmenKullanici!=='teacher')return fail('Yönetici oturumu gerekli.',403);
   if(op==='adminEmailHistory'){
    const r=await db.from('dm_papi_progress_outbox').select('id,subject,to_email,created_at,send_after,sent_at,attempts,error').eq('kind','admin_news').order('id',{ascending:false}).limit(100);
    if(r.error)throw r.error;return json({ok:true,items:r.data||[]});
+  }
+  const subject=String(b.subject||'').trim(),message=String(b.message||'').trim();
+  const link=safeUrl(b.link),image=safeUrl(b.image);
+  if(link===null||image===null)return fail('Görsel ve bağlantı yalnızca Diji-Medu HTTPS adreslerinden eklenebilir.');
+  const validText=subject&&subject.length<=120&&!/[\r\n]/.test(subject)&&message&&message.length<=5000;
+  if(op==='adminEmailTest'){
+   if(b.confirm!==true||!validText||!queue)return fail('Test maili için konu, mesaj ve onay gerekli.');
+   const t=await db.from('teachers').select('email').eq('id',a.teacher_id).eq('active',true).eq('is_admin',true).is('frozen_at',null).maybeSingle();
+   if(t.error||!valid(email(t.data?.email)))return fail('Yönetici e-posta adresi bulunamadı.',409);
+   const sent=await queue({to_email:email(t.data.email),kind:'admin_test',subject:'[TEST] '+subject,html:template(subject,message.replaceAll('{{username}}','Yönetici'),link,image),text_body:message,priority:0});
+   return sent?json({ok:true}):fail('Test maili kuyruğa alınamadı.',503);
   }
   const rows=await audience(b);
   if(op==='adminEmailPreview')return json({ok:true,items:rows.slice(0,500),total:rows.length,eligible:rows.filter(x=>x.eligible).length,truncated:rows.length>500});
@@ -46,8 +61,11 @@ export function adminEmailAPI({db,json,welcome,publicParticipant}){
   if(!ids.length||ids.length>200||b.confirm!==true)return fail('1–200 alıcı seç ve gönderimi onayla.');
   const chosen=rows.filter(x=>ids.includes(x.id)&&x.eligible);
   if(chosen.length!==ids.length)return fail('Alıcı veya izin bilgisi değişti. Önizlemeyi yenile.',409);
-  const mode=b.mode==='verify'?'verify':'news',subject=String(b.subject||'').trim(),message=String(b.message||'').trim();
+  const mode=b.mode==='verify'?'verify':'news';
   if(mode==='news'&&(!subject||subject.length>120||/[\r\n]/.test(subject)||!message||message.length>5000))return fail('Konu ve mesajı kontrol et.');
+  const scheduled=b.sendAfter?Date.parse(b.sendAfter):Date.now();
+  if(!Number.isFinite(scheduled)||scheduled>Date.now()+30*86400000||b.sendAfter&&scheduled<Date.now()-60000||mode==='verify'&&b.sendAfter)return fail('Geçersiz gönderim zamanı. Haberler en fazla 30 gün ileri planlanabilir.');
+  const sendAfter=new Date(scheduled).toISOString();
   const seen=new Set();let queued=0,skipped=0,failed=0;
   for(const r of chosen){
    if(seen.has(r.email)){skipped++;continue;}seen.add(r.email);
@@ -57,8 +75,8 @@ export function adminEmailAPI({db,json,welcome,publicParticipant}){
     const url='https://nxfqlutulxqzqgwewssd.supabase.co/functions/v1/papi-progress-unsubscribe?token='+token;
     const t=await db.from('dm_papi_unsubscribe_tokens').insert({token_hash:createHash('md5').update(token).digest('hex'),student_id:r.id,email:r.email});if(t.error)throw t.error;
     const body=message.replaceAll('{{username}}',r.username);
-    const html='<div style="font-family:Arial;max-width:620px;margin:auto"><h2 style="color:#087c78">Diji-Medu İngilizce</h2><h3>'+esc(subject)+'</h3><p>'+esc(body).replaceAll('\n','<br>')+'</p><p><a href="https://app.dijimedu.com/ingilizce/">Diji-Medu’yu aç</a></p><small><a href="'+url+'">E-posta aboneliğinden çık</a></small></div>';
-    const out=await db.from('dm_papi_progress_outbox').insert({student_id:r.id,recipient_kind:r.recipientKind,to_email:r.email,subject,html,text_body:body+'\nAbonelikten çık: '+url,kind:'admin_news',report_date:day(),send_after:new Date().toISOString()});if(out.error){if(out.error.code==='23505'){skipped++;continue;}throw out.error;}queued++;
+    const html=template(subject,body,link,image,url);
+    const out=await db.from('dm_papi_progress_outbox').insert({student_id:r.id,recipient_kind:r.recipientKind,to_email:r.email,subject,html,text_body:body+'\nAbonelikten çık: '+url,kind:'admin_news',report_date:day(),send_after:sendAfter});if(out.error){if(out.error.code==='23505'){skipped++;continue;}throw out.error;}queued++;
    }catch{failed++;}
   }
   await db.from('audit_logs').insert({actor_role:'teacher',actor_id:a.teacher_id,operation:'adminEmailQueue',target:mode,payload:{queued,skipped,failed}});
