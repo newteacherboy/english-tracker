@@ -249,7 +249,7 @@ function pauseForCorrection(task,continueAction){
  scheduleLessonFit();
  btn.focus({preventScroll:true});
 }
-async function submit(answer,clicked,{guided=false}={}){
+async function submit(answer,clicked,{guided=false,alreadySpoken=false}={}){
  if(busy||accepted||!modal)return;
  window.dmRoutePracticeFlight?.prepare();
  const submitEpoch=epoch;
@@ -257,7 +257,7 @@ async function submit(answer,clicked,{guided=false}={}){
  const spokenTask=taskDeck(chapter,data?.chapters.find(c=>c.id===chapter.previousId),session.deckVersion)[session.cursor];
  const spokenAnswer=typeof answer==='string'&&!guided&&(spokenTask.kind==='letters'||spokenTask.kind==='order'||(spokenTask.kind==='choice'&&spokenTask.language!=='en'))?answer:'';
 
- const answerAudio=spokenAnswer?new Promise(resolve=>speech(spokenAnswer.split(' → ')[0],'en-US',resolve)):Promise.resolve();
+ const answerAudio=spokenAnswer&&!alreadySpoken?new Promise(resolve=>speech(spokenAnswer.split(' → ')[0],'en-US',resolve)):Promise.resolve();
  busy=true;
  try{await comboBreakPromise;}catch{breakCombo();try{await comboBreakPromise;}catch{if(submitEpoch===epoch)busy=false;return;}}
  if(submitEpoch!==epoch||accepted||!modal||session.cursor!==initialCursor){if(submitEpoch===epoch)busy=false;return;}
@@ -347,10 +347,10 @@ function openReference(cards,label){
  sheet.innerHTML='<div class="ml-reference-panel"><header><h2>'+esc(label)+'</h2><button type="button" data-reference-close aria-label="Kapat">×</button></header><div class="ml-reference-list">'+cards.map((c,i)=>'<button type="button" data-reference="'+i+'"><b lang="en">'+esc(c.en)+'</b><span>'+esc(c.tr)+'</span><small>🔊 Dinle</small></button>').join('')+'</div></div>';
  if(shell)shell.inert=true;const dismiss=()=>{sheet.remove();if(shell)shell.inert=false;previous?.focus?.({preventScroll:true});};sheet.querySelector('[data-reference-close]').onclick=dismiss;sheet.addEventListener('click',e=>{if(e.target===sheet)dismiss();});sheet.querySelectorAll('[data-reference]').forEach(b=>b.onclick=()=>speech(cards[+b.dataset.reference].en));dialogKeys(sheet,dismiss);modal.append(sheet);sheet.querySelector('[data-reference-close]').focus({preventScroll:true});
 }
-async function submitRecovery(answer){
+async function submitRecovery(answer,alreadySpoken=false){
  if(busy||!modal||!session?.needsRecovery)return;
  const ticket=epoch,at=identity(),step=session.recovery?.step;
- const answerAudio=new Promise(resolve=>speech(answer,'en-US',resolve));
+ const answerAudio=alreadySpoken?Promise.resolve():new Promise(resolve=>speech(answer,'en-US',resolve));
  busy=true;modal.setAttribute('aria-busy','true');
  modal.querySelectorAll('.ml-task button,.ml-actions button').forEach(b=>b.disabled=true);
  feedback('Kontrol ediliyor…');
@@ -376,8 +376,8 @@ function renderRecovery(){
  '<p class="ml-question-instruction">Pekiştirme '+(Number(q.step)+1)+' / 3</p>'+
  '<div class="ml-choices ml-recovery-choices">'+optionOrder('recovery:'+q.step,q.options).map(i=>'<button type="button" data-recovery-choice="'+i+'" lang="en">'+esc(q.options[i])+'</button>').join('')+'</div>';
  bindMascotFallback(area);
- area.querySelectorAll('[data-recovery-choice]').forEach(b=>b.onclick=()=>submitRecovery(q.options[+b.dataset.recoveryChoice]));
- actions.innerHTML='<button type="button" data-reference-recovery>Öğrenme kartlarını gör</button>';
+ let chosen=null;const buttons=[...area.querySelectorAll('[data-recovery-choice]')];buttons.forEach(b=>b.onclick=()=>{if(busy)return;chosen=b;buttons.forEach(x=>x.classList.toggle('is-selected',x===b));actions.querySelector('[data-recovery-check]').disabled=false;speech(q.options[+b.dataset.recoveryChoice]);});
+ actions.innerHTML='<button type="button" data-reference-recovery>Öğrenme kartlarını gör</button><button type="button" class="ml-primary" data-recovery-check disabled>Kontrol et →</button>';actions.querySelector('[data-recovery-check]').onclick=()=>{if(chosen)submitRecovery(q.options[+chosen.dataset.recoveryChoice],true);};
  actions.querySelector('button').onclick=()=>openReference(chapter.cards,'Pekiştirme için öğrenme kartları');
  scheduleLessonFit();
 }
@@ -396,7 +396,7 @@ function render(){if(!modal)return;accepted=false;if(session?.needsRecovery&&!se
 
  if(task.kind!=='review')area.innerHTML+=arenaHero('<h2 '+(task.language==='en'?'lang="en"':'')+'>'+esc(task.prompt)+'</h2>'+(task.support?'<p class="ml-support">'+esc(task.support)+'</p>':'')+(task.picture?art(task.picture):''));if(task.kind!=='review')bindMascotFallback(area);
  const audioArea=area.querySelector('.ml-speech')||area;
- if(task.audio){audioArea.append(speaker(task.audio));speech(task.audio);if(task.images){const hint=document.createElement('button');hint.type='button';hint.className='ml-speaker';hint.textContent='Yazılı ipucu';hint.onclick=()=>{hint.textContent=task.audio;hint.lang='en';};audioArea.append(hint);}if(!voice)audioArea.insertAdjacentHTML('beforeend','<p class="ml-hint" lang="en">'+esc(task.audio)+'</p>');}
+ if(task.audio){audioArea.append(speaker(task.audio));speech(task.audio);if(!voice)audioArea.insertAdjacentHTML('beforeend','<p class="ml-hint" lang="en">'+esc(task.audio)+'</p>');}
  if(task.label==='Cümleyi tamamla'&&task.prompt.includes('____'))audioArea.append(speaker(task.prompt.replace('____',task.answer),'en-US','Cümleyi dinle'));
  // Cümleyi tamamla: yalnız İngilizce cümleyi okuyan buton kalır (Türkçe ikinci buton kaldırıldı).
  if(task.promptAudio&&!(task.label==='Cümleyi tamamla'&&task.prompt.includes('____')))audioArea.append(speaker(task.promptAudio,'tr-TR','Türkçe anlamını dinle'));
@@ -407,7 +407,7 @@ function render(){if(!modal)return;accepted=false;if(session?.needsRecovery&&!se
   const box=document.createElement('section');box.className='ml-final-review';area.append(box);
   const paint=()=>{if(index>=task.cards.length){box.innerHTML=arenaHero('<h2>Yanıtların hazır!</h2><p>Sonucunu görmek için cevaplarını kaydet.</p>')+'<p class="ml-review-count">'+task.cards.length+' / '+task.cards.length+' kart yanıtlandı</p>';actions.innerHTML='<button type="button" class="ml-primary" data-review-retry>Sonucu göster →</button>';actions.querySelector('button').onclick=()=>submit(answers);bindMascotFallback(box);return;}const card=task.cards[index];box.innerHTML='<p class="ml-review-count">Kart '+(index+1)+' / '+task.cards.length+'</p><div class="ml-review-track" aria-hidden="true">'+task.cards.map((_,i)=>'<span class="'+(i<index?'is-done':i===index?'is-current':'')+'">'+(i<index?'★':'✦')+'</span>').join('')+'</div>'+arenaHero('<small>İNGİLİZCE</small><h2 lang="en">'+esc(card.en)+'</h2>','ml-review-hero',index)+'<p class="ml-question-instruction">Türkçe karşılığını seç.</p><div class="ml-choices">'+optionOrder('review:'+index,card.options).map(i=>'<button type="button" data-review-choice="'+i+'">'+esc(card.options[i])+'</button>').join('')+'</div><p class="ml-review-note" role="status" aria-live="polite"></p>';
    bindMascotFallback(box);box.querySelector('.ml-speech').append(speaker(card.en));speech(card.en);modal.scrollTop=0;
-   box.querySelectorAll('[data-review-choice]').forEach(b=>b.onclick=()=>{if(locked||busy)return;locked=true;const answer=card.options[+b.dataset.reviewChoice],correct=answer===card.tr;answers.push(answer);
+   let chosen=null;actions.innerHTML='<button type="button" class="ml-primary" disabled>Kontrol et →</button>';const check=actions.querySelector('button');box.querySelectorAll('[data-review-choice]').forEach(b=>b.onclick=()=>{if(locked||busy)return;chosen=b;box.querySelectorAll('[data-review-choice]').forEach(x=>x.classList.toggle('is-selected',x===b));check.disabled=false;});check.onclick=()=>{if(locked||busy||!chosen)return;const b=chosen;locked=true;check.disabled=true;const answer=card.options[+b.dataset.reviewChoice],correct=answer===card.tr;answers.push(answer);
     box.querySelectorAll('[data-review-choice]').forEach(x=>{x.disabled=true;if(card.options[+x.dataset.reviewChoice]===card.tr)x.classList.add('is-correct');else if(x===b&&!correct)x.classList.add('is-wrong');});
     if(!correct)breakCombo(true);window.dmAnswerFeedback?.(correct);
     box.querySelector('.ml-review-note').textContent=correct?'✓ Doğru! Sonraki karta geçiliyor…':'Yanlış cevap. Doğrusu: '+card.en+' — '+card.tr;
@@ -415,7 +415,7 @@ function render(){if(!modal)return;accepted=false;if(session?.needsRecovery&&!se
     if(correct)setTimeout(advanceCard,650);
     else{actions.innerHTML='<button type="button" class="ml-primary" data-review-continue>Devam Et →</button>';const next=actions.querySelector('[data-review-continue]');next.onclick=()=>{next.disabled=true;advanceCard();};next.focus({preventScroll:true});scheduleLessonFit();}
 
-   });
+   };
   };paint();return;
  }
  if(task.kind==='letters'){
@@ -429,7 +429,7 @@ function render(){if(!modal)return;accepted=false;if(session?.needsRecovery&&!se
   wrap.querySelectorAll('[data-letter-slot]').forEach(b=>b.onclick=()=>{if(busy||accepted)return;selected[+b.dataset.letterSlot]=null;sync();});
   actions.querySelector('[data-letter-clear]').onclick=()=>{selected.fill(null);sync();};actions.querySelector('[data-letter-check]').onclick=()=>{if(selected.some(x=>x===null))return;const value=[...task.en];task.missing.forEach((p,i)=>value[p]=task.tokens[selected[i]]);submit(value.join(''));};
  }
- if(task.kind==='choice'){const choices=document.createElement('div');choices.className='ml-choices'+(task.images?' ml-image-choices':'');choices.innerHTML=optionOrder('choice',task.options).map(i=>{const s=task.options[i],c=task.images?.find(x=>x.en===s);return '<button type="button" data-answer="'+i+'" '+(c?'aria-label="'+esc(c.tr)+'"':'')+'>'+ (c?art(c,true):esc(s))+'</button>';}).join('');area.append(choices);choices.querySelectorAll('button').forEach(b=>b.onclick=()=>submit(task.options[+b.dataset.answer],b));}
+ if(task.kind==='choice'){const choices=document.createElement('div');choices.className='ml-choices'+(task.images?' ml-image-choices':'');choices.innerHTML=optionOrder('choice',task.options).map(i=>{const s=task.options[i],c=task.images?.find(x=>x.en===s);return '<button type="button" data-answer="'+i+'" '+(c?'aria-label="'+esc(c.tr)+'"':'')+'>'+ (c?art(c,true):esc(s))+'</button>';}).join('');area.append(choices);let chosen=null;const buttons=[...choices.querySelectorAll('button')];if(buttons.length===3)choices.classList.add('ml-three-choices');actions.innerHTML='<button type="button" class="ml-primary" disabled>Kontrol et →</button>';const check=actions.querySelector('button');buttons.forEach(b=>b.onclick=()=>{if(busy||accepted)return;chosen=b;buttons.forEach(x=>{x.classList.toggle('is-selected',x===b);x.setAttribute('aria-pressed',String(x===b));});check.disabled=false;if(task.language!=='en')speech(task.options[+b.dataset.answer]);});check.onclick=()=>{if(chosen)submit(task.options[+chosen.dataset.answer],chosen,{alreadySpoken:true});};}
  if(task.kind==='match'){
   let selected=null,matched=[],wrong=null,wrongTimer;const done=new Set(),pairs=task.pairs;
   const wrap=document.createElement('div');wrap.className='ml-matches ml-linked-match';
