@@ -10,7 +10,7 @@ export function createRewardClient(win, endpoint) {
   if(!r.ok)throw Error(result.error||'Ödül doğrulanamadı.');return result;
  }
  return {
-  async create(kind){const token=win.localStorage.getItem('ing_token');const intent=await request({action:'create',kind,requestKey:crypto.randomUUID()},token);sessions.set(intent.id,token);return intent;},
+  async create(kind,offerId){const token=win.localStorage.getItem('ing_token');const intent=await request({action:'create',kind,requestKey:kind==='play'?offerId:crypto.randomUUID()},token);sessions.set(intent.id,token);return intent;},
   async cancel(id){return request({action:'cancel',id},sessions.get(id));},
   async settle(id){
    for(let n=0;n<12;n++) {
