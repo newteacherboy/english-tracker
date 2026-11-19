@@ -59,6 +59,9 @@
    const other=cards.find(y=>norm(y.tr)!==norm(x.tr));
    return {en:x.en,tr:x.tr,options:rotate([x.tr,other.tr],(chapter.number+i)%2)};
   }),explanation:'Bölümün tüm kelimelerini tekrar ettin.'});
+  // Sixth graded question; teaching cards do not count as a question.
+  const matchIndex=tasks.findIndex(t=>t.kind==='match');
+  if(matchIndex>=0){const [match]=tasks.splice(matchIndex,1);tasks.splice(6,0,match);}
   return tasks;
  }
  function grade(task,answer){
