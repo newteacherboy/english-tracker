@@ -253,6 +253,9 @@ async function submit(answer,clicked,{guided=false}={}){
  if(busy||accepted||!modal)return;
  window.dmRoutePracticeFlight?.prepare();
  const submitEpoch=epoch;
+ const spokenTask=taskDeck(chapter,data?.chapters.find(c=>c.id===chapter.previousId),session.deckVersion)[session.cursor];
+ const spokenAnswer=typeof answer==='string'&&!guided&&(spokenTask.kind==='letters'||spokenTask.kind==='order'||(spokenTask.kind==='choice'&&spokenTask.language!=='en'))?answer:'';
+ const answerAudio=spokenAnswer?new Promise(resolve=>speech(spokenAnswer,'en-US',resolve)):Promise.resolve();
  try{await comboBreakPromise;}catch{breakCombo();try{await comboBreakPromise;}catch{return;}}
  if(submitEpoch!==epoch||busy||accepted||!modal)return;
  const ticket=epoch,at=identity(),answeredCursor=session.cursor;
@@ -263,6 +266,9 @@ async function submit(answer,clicked,{guided=false}={}){
  try{
   const r=await api('advance',{chapter:chapter.id,cursor:session.cursor,version:session.version,answer});
   if(ticket!==epoch||!modal||identity()!==at)return;
+  await answerAudio;
+  if(ticket!==epoch||!modal||identity()!==at)return;
+  if(r.accepted&&r.correct!==false&&spokenAnswer&&spokenTask.kind==='choice'&&/_{2,}/.test(spokenTask.prompt||'')){await new Promise(resolve=>speech(spokenTask.prompt.replace(/_{2,}/g,spokenAnswer),'en-US',resolve));if(ticket!==epoch||!modal||identity()!==at)return;}
   session=r;busy=false;modal.removeAttribute('aria-busy');remember(r);wallet(r);
   if(r.stale){render();feedback('Diğer ekranındaki ilerlemen yüklendi.');return;}
   if(r.needsRecovery){
@@ -341,12 +347,14 @@ function openReference(cards,label){
 async function submitRecovery(answer){
  if(busy||!modal||!session?.needsRecovery)return;
  const ticket=epoch,at=identity(),step=session.recovery?.step;
+ const answerAudio=new Promise(resolve=>speech(answer,'en-US',resolve));
  busy=true;modal.setAttribute('aria-busy','true');
  modal.querySelectorAll('.ml-task button,.ml-actions button').forEach(b=>b.disabled=true);
  feedback('Kontrol ediliyor…');
  try{
   const r=await api('recover',{chapter:chapter.id,version:session.version,step,answer});
   if(ticket!==epoch||!modal||identity()!==at)return;
+  await answerAudio;if(ticket!==epoch||!modal||identity()!==at)return;
   session=r;busy=false;modal.removeAttribute('aria-busy');
   remember(r);wallet(r);render();
   if(r.stale){feedback('Kaldığın pekiştirme sorusu yüklendi.');return;}
@@ -419,13 +427,13 @@ function render(){if(!modal)return;accepted=false;if(session?.needsRecovery&&!se
   actions.querySelector('[data-letter-clear]').onclick=()=>{selected.fill(null);sync();};actions.querySelector('[data-letter-check]').onclick=()=>{if(selected.some(x=>x===null))return;const value=[...task.en];task.missing.forEach((p,i)=>value[p]=task.tokens[selected[i]]);submit(value.join(''));};
  }
  if(task.kind==='choice'){const choices=document.createElement('div');choices.className='ml-choices'+(task.images?' ml-image-choices':'');choices.innerHTML=optionOrder('choice',task.options).map(i=>{const s=task.options[i],c=task.images?.find(x=>x.en===s);return '<button type="button" data-answer="'+i+'" '+(c?'aria-label="'+esc(c.tr)+'"':'')+'>'+ (c?art(c,true):esc(s))+'</button>';}).join('');area.append(choices);choices.querySelectorAll('button').forEach(b=>b.onclick=()=>submit(task.options[+b.dataset.answer],b));}
- if(task.kind==='match'){let selected=null,matched=[],locked=false;const wrap=document.createElement('div');wrap.className='ml-matches';wrap.innerHTML='<div>'+optionOrder('match-left',task.pairs).map(i=>'<button type="button" data-left="'+i+'">'+esc(task.pairs[i].en)+'</button>').join('')+'</div><div>'+optionOrder('match-right',task.pairs).map(i=>'<button type="button" data-right="'+i+'">'+(task.pairs.every(c=>c.image)?art(task.pairs[i]):esc(task.pairs[i].tr))+'</button>').join('')+'</div>';area.append(wrap);wrap.querySelectorAll('[data-left]').forEach(b=>b.onclick=()=>{if(locked)return;selected=+b.dataset.left;wrap.querySelectorAll('[data-left]').forEach(x=>x.classList.toggle('is-selected',x===b));});wrap.querySelectorAll('[data-right]').forEach(b=>b.onclick=()=>{if(locked||selected===null)return;const i=+b.dataset.right;if(i!==selected){
+ if(task.kind==='match'){let selected=null,matched=[],locked=false;const wrap=document.createElement('div');wrap.className='ml-matches';wrap.innerHTML='<div>'+optionOrder('match-left',task.pairs).map(i=>'<button type="button" data-left="'+i+'">'+esc(task.pairs[i].en)+'</button>').join('')+'</div><div>'+optionOrder('match-right',task.pairs).map(i=>'<button type="button" data-right="'+i+'">'+(task.pairs.every(c=>c.image)?art(task.pairs[i]):esc(task.pairs[i].tr))+'</button>').join('')+'</div>';area.append(wrap);wrap.querySelectorAll('[data-left]').forEach(b=>b.onclick=()=>{if(locked)return;selected=+b.dataset.left;speech(task.pairs[selected].en);wrap.querySelectorAll('[data-left]').forEach(x=>x.classList.toggle('is-selected',x===b));});wrap.querySelectorAll('[data-right]').forEach(b=>b.onclick=()=>{if(locked||selected===null)return;const i=+b.dataset.right;if(i!==selected){
  locked=true;breakCombo();window.dmAnswerFeedback?.(false);
  wrap.querySelectorAll('button').forEach(button=>button.disabled=true);
  pauseForCorrection({kind:'match',pairs:[task.pairs[selected]]},()=>{accepted=false;void submit(correctResponse(task),null,{guided:true});});
  return;
 }const left=wrap.querySelector('[data-left="'+i+'"]');left.disabled=b.disabled=true;left.classList.remove('is-selected');left.classList.add('is-correct');b.classList.add('is-correct');window.dmAnswerFeedback?.(true,'match');matched.push(task.pairs[i]);selected=null;if(matched.length===task.pairs.length){locked=true;submit(matched);}});}
- if(task.kind==='order'){let parts=[];area.insertAdjacentHTML('beforeend','<div class="ml-sentence" aria-live="polite">Cümlen burada oluşacak.</div><div class="ml-tokens">'+optionOrder('tokens',task.tokens).map(i=>({s:task.tokens[i],i})).map(x=>'<button type="button" data-token="'+x.i+'">'+esc(x.s)+'</button>').join('')+'</div>');const sentence=area.querySelector('.ml-sentence');const sync=()=>{sentence.innerHTML=parts.length?parts.map((token,slot)=>{const correct=core.norm(task.tokens[token])===core.norm(task.tokens[slot]);return '<button type="button" class="ml-sentence-token '+(correct?'ml-live-correct':'ml-live-wrong')+'" data-placed-token="'+slot+'" aria-label="'+esc((correct?'Doğru yerde: ':'Yanlış yerde: ')+task.tokens[token]+'. Geri almak için dokun')+'">'+esc(task.tokens[token])+'</button>';}).join(' '):'Cümlen burada oluşacak.';area.querySelectorAll('[data-token]').forEach(b=>b.disabled=parts.includes(+b.dataset.token));sentence.querySelectorAll('[data-placed-token]').forEach(b=>b.onclick=()=>{if(busy||accepted)return;parts.splice(+b.dataset.placedToken,1);sync();});};area.querySelectorAll('[data-token]').forEach(b=>b.onclick=()=>{if(busy||accepted||parts.includes(+b.dataset.token))return;parts.push(+b.dataset.token);const good=core.norm(task.tokens[parts.at(-1)])===core.norm(task.tokens[parts.length-1]);if(!good)breakCombo();window.dmAnswerFeedback?.(good,'letter');sync();});actions.innerHTML='<button type="button" data-clear>Yeniden sırala</button><button type="button" class="ml-primary" data-check>Kontrol et</button>';actions.querySelector('[data-clear]').onclick=render;actions.querySelector('[data-check]').onclick=()=>submit(parts.map(i=>task.tokens[i]).join(task.join??' '));}
+ if(task.kind==='order'){let parts=[];area.insertAdjacentHTML('beforeend','<div class="ml-sentence" aria-live="polite">Cümlen burada oluşacak.</div><div class="ml-tokens">'+optionOrder('tokens',task.tokens).map(i=>({s:task.tokens[i],i})).map(x=>'<button type="button" data-token="'+x.i+'">'+esc(x.s)+'</button>').join('')+'</div>');const sentence=area.querySelector('.ml-sentence');const sync=()=>{sentence.innerHTML=parts.length?parts.map((token,slot)=>{const correct=core.norm(task.tokens[token])===core.norm(task.tokens[slot]);return '<button type="button" class="ml-sentence-token '+(correct?'ml-live-correct':'ml-live-wrong')+'" data-placed-token="'+slot+'" aria-label="'+esc((correct?'Doğru yerde: ':'Yanlış yerde: ')+task.tokens[token]+'. Geri almak için dokun')+'">'+esc(task.tokens[token])+'</button>';}).join(' '):'Cümlen burada oluşacak.';area.querySelectorAll('[data-token]').forEach(b=>b.disabled=parts.includes(+b.dataset.token));sentence.querySelectorAll('[data-placed-token]').forEach(b=>b.onclick=()=>{if(busy||accepted)return;if(task.join!=='')speech(task.tokens[parts[+b.dataset.placedToken]]);parts.splice(+b.dataset.placedToken,1);sync();});};area.querySelectorAll('[data-token]').forEach(b=>b.onclick=()=>{if(busy||accepted||parts.includes(+b.dataset.token))return;parts.push(+b.dataset.token);if(task.join!=='')speech(task.tokens[parts.at(-1)]);const good=core.norm(task.tokens[parts.at(-1)])===core.norm(task.tokens[parts.length-1]);if(!good)breakCombo();window.dmAnswerFeedback?.(good,'letter');sync();});actions.innerHTML='<button type="button" data-clear>Yeniden sırala</button><button type="button" class="ml-primary" data-check>Kontrol et</button>';actions.querySelector('[data-clear]').onclick=render;actions.querySelector('[data-check]').onclick=()=>submit(parts.map(i=>task.tokens[i]).join(task.join??' '));}
  reference(area,[...chapter.cards,...chapter.examples,...(chapter.reference||[])].filter((c,i,a)=>a.findIndex(x=>x.en===c.en)===i));
 }
 function finish(){
