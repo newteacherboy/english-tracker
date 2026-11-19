@@ -255,12 +255,13 @@ async function submit(answer,clicked,{guided=false}={}){
  const submitEpoch=epoch;
  const spokenTask=taskDeck(chapter,data?.chapters.find(c=>c.id===chapter.previousId),session.deckVersion)[session.cursor];
  const spokenAnswer=typeof answer==='string'&&!guided&&(spokenTask.kind==='letters'||spokenTask.kind==='order'||(spokenTask.kind==='choice'&&spokenTask.language!=='en'))?answer:'';
- const answerAudio=spokenAnswer?new Promise(resolve=>speech(spokenAnswer,'en-US',resolve)):Promise.resolve();
+
  try{await comboBreakPromise;}catch{breakCombo();try{await comboBreakPromise;}catch{return;}}
  if(submitEpoch!==epoch||busy||accepted||!modal)return;
  const ticket=epoch,at=identity(),answeredCursor=session.cursor;
  const task=taskDeck(chapter,data?.chapters.find(c=>c.id===chapter.previousId),session.deckVersion)[session.cursor];
  busy=true;modal.setAttribute('aria-busy','true');
+ const answerAudio=spokenAnswer?new Promise(resolve=>speech(spokenAnswer,'en-US',resolve)):Promise.resolve();
  modal.querySelectorAll('.ml-task button,.ml-actions button').forEach(b=>b.disabled=true);
  feedback('Kontrol ediliyor…');
  try{
