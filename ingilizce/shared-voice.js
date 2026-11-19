@@ -13,7 +13,22 @@ function createSharedVoice(win,ids){
   for(const c of lang+"|"+normalized)hash=BigInt.asUintN(64,(hash^BigInt(c.codePointAt(0)))*1099511628211n);
   return lang+"-"+hash.toString(16).padStart(16,"0");
  }
- function urlFor(text,lang){const id=audioId(text,lang);return known.has(id)?base+(id.startsWith("tr-")?"Turkish/":"English/")+id+".mp3":null;}
+ function urlFor(text,lang){
+  const id=audioId(text,lang);
+  if(known.has(id))return base+(id.startsWith("tr-")?"Turkish/":"English/")+id+".mp3";
+  if(!id?.startsWith("tr-"))return null;
+  // Only equivalent Turkish text: initial dotted-I capitalization and optional terminal punctuation.
+  const value=text.normalize("NFC").trim();
+  const forms=new Set([value,value.replace(/^i/,"İ"),value.replace(/^İ/,"i")]);
+  const matches=new Set();
+  for(const form of forms){
+   const variants=[form];
+   if(!/[.!?]$/.test(form))variants.push(form+".",form+"!",form+"?");
+   else if(/[.!]$/.test(form))variants.push(form.slice(0,-1));
+   for(const variant of variants){const candidate=audioId(variant,lang);if(known.has(candidate))matches.add(candidate);}
+  }
+  return matches.size===1?base+"Turkish/"+[...matches][0]+".mp3":null;
+ }
  function dispose(state){try{state.audio.onplaying=state.audio.onended=state.audio.onerror=null;state.audio.pause();state.audio.removeAttribute("src");state.audio.load();}catch{}}
  function cancel(){const state=active;active=null;if(state)dispose(state);}
  function emit(state,type,error){const fn=state.u["on"+type];if(typeof fn==="function")fn.call(state.u,{type,error,utterance:state.u,charIndex:0});}
@@ -31,8 +46,8 @@ function createSharedVoice(win,ids){
   audio.onerror=()=>finish("audio-unavailable");
   try{
    audio.crossOrigin="anonymous";audio.preload="auto";
-   // Turkish recordings use a fixed, natural test tempo; English keeps the requested teaching speed.
-   audio.playbackRate=/^tr(?:[-_]|$)/i.test(u.lang||'')?1.10:Math.min(2,Math.max(.5,Number(u.rate)||1));
+   // Turkish recordings play exactly as produced; English keeps the requested teaching speed.
+   audio.playbackRate=/^tr(?:[-_]|$)/i.test(u.lang||'')?1:Math.min(2,Math.max(.5,Number(u.rate)||1));
    audio.volume=Math.min(1,Math.max(0,Number.isFinite(u.volume)?u.volume:1));audio.preservesPitch=true;
    audio.src=url;
    const promise=audio.play();if(promise&&typeof promise.catch==="function")promise.catch(e=>finish(e?.name==="NotAllowedError"?"not-allowed":"audio-unavailable"));
