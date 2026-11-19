@@ -6,7 +6,7 @@ function fixture(handler){
  const storage={getItem:k=>store.get(k)||null,setItem:(k,v)=>store.set(k,String(v)),removeItem:k=>store.delete(k),key:i=>[...store.keys()][i],get length(){return store.size;}};
  const listeners={},document={hidden:false,addEventListener:(k,f)=>(listeners[k]??=[]).push(f),removeEventListener:(k,f)=>listeners[k]=listeners[k].filter(x=>x!==f)};
  const calls=[],window={fetch:async(u,o)=>{calls.push({u,o});return handler?handler(u,o,calls):new Response(JSON.stringify({ok:true,value:calls.length}));},addEventListener(){}};
- const ctx={window,document,localStorage:storage,sessionStorage:{getItem:()=>null},location:{href:'https://panel.test/ingilizce/'},Date:Clock,Headers,Response,URL,Map,Set,Object,Promise,JSON,setTimeout,console};
+ const ctx={window,document,localStorage:storage,sessionStorage:{getItem:()=>null},location:{href:'https://panel.test/ingilizce/'},Date:Clock,Headers,Response,URL,Map,Set,Object,Promise,JSON,setTimeout,clearTimeout,console};
  vm.runInNewContext(fs.readFileSync('ingilizce/request-budget.js','utf8'),ctx);
  return {window,calls,storage,advance:n=>now+=n,document,visible:()=>{document.hidden=false;(listeners.visibilitychange||[]).slice().forEach(f=>f());},get:op=>window.fetch(API+'?islem='+op+'&ogrenci=First'),post:(op,args={})=>window.fetch(API,{method:'POST',body:JSON.stringify({islem:op,ogrenci:'First',t:store.get('ing_token'),...args})})};
 }
