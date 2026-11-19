@@ -7,7 +7,7 @@
    - Supabase istekleri: bu dosya karışmaz (sayfadaki katman yönetir)
    Sayfayı güncellediğinizde SURUM değerini artırın (v2, v3…).
    ===================================================================== */
-const SURUM = 'diji-v484-league-cap-toast-20261119';
+const SURUM = 'diji-v485-shared-voice-20261119';
 const SAYFA = 'sayfa-' + SURUM, KAYNAK = 'kaynak-' + SURUM;
 // Cached on first use; never download the A2 catalog at startup.
 const LAZY_TOPIC_FILES = new Set(['konu-oyunlari-a1.js','konu-oyunlari-a2.js','topic-games-core.mjs']);
@@ -18,7 +18,7 @@ const AYRI_SAYFA = /\/(?:veli-kontrolu|hesap-sil|hesap-dondur|hesap-ac|gizlilik|
 
 self.addEventListener('install', e => {
   // Keep the complete lightweight opening (including the inline SVG game) available offline.
-  const opening=['papi-loading.css?v=20261112-ust','papi-loading.webp','holiday-splashes/papi-intro.js?v=20261118-gunde1','holiday-splashes/splash.js?v=20261118-gunde1','holiday-splashes/dates.js?v=20261023-2','holiday-splashes/splash.css?v=20261118-fit3'];
+  const opening=['shared-voice.js?v=20261119-1','papi-loading.css?v=20261112-ust','papi-loading.webp','holiday-splashes/papi-intro.js?v=20261118-gunde1','holiday-splashes/splash.js?v=20261118-gunde1','holiday-splashes/dates.js?v=20261023-2','holiday-splashes/splash.css?v=20261118-fit3'];
   e.waitUntil(Promise.all([
     caches.open(SAYFA).then(c => c.addAll(['./'])),
     caches.open(KAYNAK).then(c => c.addAll(opening))
@@ -31,6 +31,12 @@ self.addEventListener('fetch', e => {
   const r = e.request;
   if (r.method !== 'GET') return;
   const url = new URL(r.url);
+  // Only immutable, public educational speech files; never cache Supabase API/auth responses.
+  if (url.origin === 'https://nxfqlutulxqzqgwewssd.supabase.co' &&
+      !url.search && /^\/storage\/v1\/object\/public\/ses\/v1\/(?:English\/en|Turkish\/tr)-[0-9a-f]{16}\.mp3$/.test(url.pathname) &&
+      r.mode === 'cors') {
+    e.respondWith(sharedVoiceResponse(r)); return;
+  }
   if (url.hostname.endsWith('supabase.co')) return;                 /* API: dokunma */
   // Teacher account transition must not run an older cached authorization/UI script.
   if (url.pathname.endsWith('/teacher-portal-boot.js')) {
@@ -133,3 +139,41 @@ async function boundedNetwork(event, request, bucket, key, budget) {
 }
 
 
+
+// Shared audio: full object cache with byte-range support for mobile media playback.
+function voiceRange(value,size){
+ if(!value)return null;
+ const m=/^bytes=(\d*)-(\d*)$/i.exec(value.trim());
+ if(!m||(!m[1]&&!m[2])||size<1)return false;
+ let start,end;
+ if(!m[1]){const suffix=Number(m[2]);if(!Number.isSafeInteger(suffix)||suffix<=0)return false;start=Math.max(0,size-suffix);end=size-1;}
+ else{start=Number(m[1]);end=m[2]?Number(m[2]):size-1;}
+ if(!Number.isSafeInteger(start)||!Number.isSafeInteger(end)||start<0||start>=size||end<start)return false;
+ return [start,Math.min(size-1,end)];
+}
+async function sharedVoiceResponse(request){
+ try{
+  // Versioned independently of app shell, so already downloaded speech survives app updates.
+  const cache=await caches.open('dm-shared-voice-v1');
+  const key=new Request(request.url,{mode:'cors',credentials:'omit'});
+  let response=await cache.match(key);
+  if(!response){
+   response=await fetch(key);
+   if(response.status!==200||!/^audio\/mpeg\b/i.test(response.headers.get('content-type')||''))return fetch(request);
+   const length=Number(response.headers.get('content-length'));
+   if(length>1048576)return fetch(request);
+   // Await cache writes before replying, rather than scheduling untracked worker work.
+   await cache.put(key,response.clone()).catch(()=>{});
+  }
+  const range=request.headers.get('range');
+  if(!range)return response;
+  const bytes=await response.arrayBuffer(),size=bytes.byteLength;
+  const selected=voiceRange(range,size);
+  if(!selected)return new Response(null,{status:416,headers:{'Content-Range':'bytes */'+size}});
+  const [start,end]=selected;
+  return new Response(bytes.slice(start,end+1),{status:206,headers:{
+   'Content-Type':'audio/mpeg','Content-Length':String(end-start+1),'Accept-Ranges':'bytes',
+   'Content-Range':'bytes '+start+'-'+end+'/'+size
+  }});
+ }catch{return fetch(request);}
+}

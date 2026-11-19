@@ -2786,6 +2786,13 @@
       "source": "docs/media-generation-record.json"
     },
     {
+      "path": "ingilizce/teacher-assets/approved-teacher-2.webp",
+      "sha256": "4e95ca3a8610e77348f7671189c71ad23d80f78665284ec26f03c90e5e66edb9",
+      "bytes": 338880,
+      "status": "repository-existing-provenance-incomplete",
+      "source": "Existing WebP atlas introduced by user-selected Teacher Tools Design 2 PR #508 (merge f0b46acfa02d9583944c01285c362d35d4d0ac8f). Git blob verified identical. Original generation and licensing details not recorded; this is a provenance record, not license clearance."
+    },
+    {
       "path": "ingilizce/teacher-dashboard-assets/arrow-right.svg",
       "sha256": "5cbb8cb8f29fa9994860ac85599451b619b8e040891c18eb79abc75c633f3a73",
       "bytes": 829,

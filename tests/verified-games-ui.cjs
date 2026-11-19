@@ -37,8 +37,8 @@ const {chromium}=require('playwright');
   },game);
   const latest=evidence.filter(x=>x.islem==='verifiedGameStart').at(-1);assert.equal(latest.game,game);assert(evidence.some(x=>x.islem==='verifiedGameAnswer'&&x.runId===latest.runId));console.log('PASS native evidence:',game);
  }
- await page.evaluate(async()=>{document.querySelectorAll('.game-modal-overlay').forEach(e=>e.style.display='none');yoModalKapat();await dmLazyGames.ready();harfBahcesiAc();});
- await page.locator('#hbClasses [data-class="3"]').click();await page.locator('#harfBahcesiOverlay [data-start]').click();
+ await page.evaluate(async()=>{document.querySelectorAll('.game-modal-overlay').forEach(e=>e.style.display='none');yoModalKapat();await dmLazyGames.ready();window.dmSoloLevels.scope=key=>key==='harfbahcesi'?{classNo:3,units:[1]}:null;harfBahcesiAc();});
+ assert.equal(await page.locator('#hbClasses').count(),0,'Student game uses the selected level scope');await page.locator('#harfBahcesiOverlay [data-start]').click();
  await page.waitForSelector('.hb-grid button');
  await page.evaluate(async()=>{const grid=[...document.querySelectorAll('.hb-grid button')].map(b=>b.textContent.toLowerCase()),meaning=document.querySelector('.hb-hints>div>span').textContent,target=masterKelimeHavuzu.find(w=>w.turkce===meaning).ingilizce.toLowerCase();function search(pos,at,path){if(grid[pos]!==target[at]||path.includes(pos))return null;const next=[...path,pos];if(at===target.length-1)return next;for(let i=0;i<grid.length;i++)if(i!==pos&&Math.abs(i%6-pos%6)<=1&&Math.abs(Math.floor(i/6)-Math.floor(pos/6))<=1){const result=search(i,at+1,next);if(result)return result;}return null;}let path;for(let i=0;i<grid.length&&!path;i++)path=search(i,0,[]);if(!path)throw Error('No board path');for(const i of path)document.querySelector('[data-cell="'+i+'"]').click();await dmVerifiedGames.flush(OC.aktif.runId);});
  const hb=evidence.filter(x=>x.islem==='verifiedGameStart').at(-1);assert.equal(hb.game,'harfbahcesi');assert(evidence.some(x=>x.islem==='verifiedGameAnswer'&&x.runId===hb.runId));console.log('PASS native evidence: harfbahcesi');

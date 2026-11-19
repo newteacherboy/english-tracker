@@ -4,11 +4,17 @@ on:
     paths:
       - 'ingilizce/sw.js'
       - 'tests/sw-versioned-cache.test.cjs'
+      - 'ingilizce/shared-voice.js'
+      - 'ingilizce/game-feedback.js'
+      - 'tests/shared-voice.test.cjs'
       - '.github/workflows/sw-performance-cache.yml'
   push:
     paths:
       - 'ingilizce/sw.js'
       - 'tests/sw-versioned-cache.test.cjs'
+      - 'ingilizce/shared-voice.js'
+      - 'ingilizce/game-feedback.js'
+      - 'tests/shared-voice.test.cjs'
       - '.github/workflows/sw-performance-cache.yml'
 permissions:
   contents: read
@@ -20,5 +26,5 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - run: node --check ingilizce/sw.js
-      - run: node --test tests/sw-versioned-cache.test.cjs tests/account-deletion-sw.test.cjs
+      - run: node --check ingilizce/sw.js && node --check ingilizce/shared-voice.js && node --check ingilizce/game-feedback.js
+      - run: node --test tests/sw-versioned-cache.test.cjs tests/account-deletion-sw.test.cjs tests/shared-voice.test.cjs

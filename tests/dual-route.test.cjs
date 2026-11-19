@@ -9,7 +9,7 @@ test('onboarding preview does not save selection before finishing',async()=>{con
 test('late learning overview is discarded after account changes',async()=>{const c=fixture();c.yo.dmLearningPurpose='independent';let resolve; c.dmStoryPath={overview:()=>new Promise(r=>resolve=r)};const area={outerHTML:''},root={isConnected:true,querySelectorAll:()=>[],querySelector:()=>area,insertAdjacentHTML:()=>{throw Error('late response painted');}};c.dmParkurMapMount({dataset:{rtBound:'1'},querySelector:()=>root});c.aktifOgrenciAdi='bob';resolve({title:'Test',cefr:'A1',chapters:[{id:0,current:true,available:true}]});await new Promise(r=>setImmediate(r));assert.equal(area.outerHTML,'');});
 test('learning route reads canonical chapters and marks the current lesson',async()=>{const c=fixture();c.yo.dmLearningPurpose='independent';c.dmStoryPath={overview:async()=>({title:'Selamlaşma',cefr:'A1',chapters:[{id:0,title:'Merhaba',cefr:'A1',done:true,available:true},{id:1,title:'Selamlaşma',cefr:'A1',current:true,available:true},{id:2,title:'Aile',cefr:'A1',available:false}]})};const area={outerHTML:''},root={isConnected:true,html:'',querySelectorAll:()=>[],querySelector:()=>area,insertAdjacentHTML(_,h){this.html+=h;}};c.dmParkurMapMount({dataset:{rtBound:'1'},querySelector:()=>root});await new Promise(r=>setImmediate(r));assert.match(root.html,/Selamlaşma/);assert.match(root.html,/data-chapter="1"[^]*aria-current="step"/);assert.match(root.html,/data-rt="continue"/);});
 test('failed route save restores selection and does not open another route',async()=>{const c=fixture();c.yoHemenKaydet=async()=>{throw Error('offline');};assert.equal(await c.dmLearningRoute.set('independent'),false);assert.equal(c.yo.dmLearningPurpose,'school');assert.equal(c.opened,0);});
-test('route picker opens saved route without reloading and legacy chest polling grants nothing',()=>{const html=fs.readFileSync('ingilizce/index.html','utf8'),picker=fs.readFileSync('ingilizce/member-experience.js','utf8');assert(!picker.includes('location.reload()'));const poll=html.split('function kontrolEt() {')[1].split('setInterval(kontrolEt')[0];assert(!poll.includes('sandikTorenAc('));assert(poll.includes('yoHazirMi'));const save=html.split('async function hemenKaydet(bekle) {')[1].split('window.yoHemenKaydet')[0];assert(save.includes("d.status !== 'success'"));assert(!save.includes('Promise.race'));});
+test('route picker opens saved route without reloading and legacy chest polling grants nothing',()=>{const html=fs.readFileSync('ingilizce/index.html','utf8'),picker=fs.readFileSync('ingilizce/member-experience.js','utf8');assert(!picker.includes('location.reload()'));assert(!html.includes('setInterval(kontrolEt'),'Retired chest polling must not return');const save=html.split('async function hemenKaydet(bekle) {')[1].split('window.yoHemenKaydet')[0];assert(save.includes("d.status !== 'success'"));assert(!save.includes('Promise.race'));});
 
 test('first route selection waits for server profile readiness before changing local state',async()=>{
  const c=fixture();let finish;let checks=0;
@@ -56,11 +56,11 @@ test('green learning route uses real chapter identities, a single active mascot 
   const root={isConnected:true,html:'',querySelectorAll:()=>[],querySelector:()=>({outerHTML:''}),insertAdjacentHTML(_,h){this.html+=h;}};
   c.dmParkurMapMount({dataset:{rtBound:'1'},querySelector:()=>root});await new Promise(r=>setImmediate(r));
   assert.match(root.html,/bi-scene rt-medal-route/);assert.match(root.html,/Öğrenme Yolum/);
-  assert.equal((root.html.match(/class="rt-medal-stop/g)||[]).length,Math.min(80,focus+9)-Math.max(0,focus-5));assert.equal((root.html.match(/class="rt-medal-papi"/g)||[]).length,1);
+  assert.equal((root.html.match(/class="rt-medal-stop(?=[ " ])/g)||[]).length,Math.min(80,focus+9)-Math.max(0,focus-5));assert.equal((root.html.match(/class="rt-medal-papi"/g)||[]).length,1);
   assert.match(root.html,new RegExp('data-chapter="'+(1001+focus)+'"[^>]*aria-current="step"'));
   assert.match(root.html,/rt-medal-unit[^]*data-rt="switch-route"/);
-  assert.match(root.html,/rt-medal-scroll[^]*rt-medal-chest[^]*data-rt="chests"/);
-  if(focus<79)assert.match(root.html,new RegExp('data-chapter="'+(1002+focus)+'" disabled'));
+  assert.match(root.html,/rt-medal-scroll[^]*rt-medal-egg[^]*data-rt="egg"/);
+  if(focus<79)assert.match(root.html,new RegExp('data-chapter="'+(1002+focus)+'"[^>]*aria-disabled="true"'));
   assert(!root.html.includes('data-rt="school-stop"'));
  }
 });
