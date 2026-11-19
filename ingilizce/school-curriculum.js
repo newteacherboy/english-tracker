@@ -17,7 +17,7 @@
   const last=pieces.at(-1),stem=pieces.slice(0,-1).join(' ');
   const fill=multi?{kind:'choice',label:'Cümleyi tamamla',prompt:stem+' ____',support:phrase.tr,answer:last,options:[last,...unique(bank,'en').map(w=>w.en.split(/\s+/).at(-1)).filter(w=>w!==last)].filter((x,i,a)=>a.indexOf(x)===i).slice(0,3),explanation:phrase.en+' — '+phrase.tr}
    :choice('İfadeyi tamamla',at(1),'en',at(1).tr,{promptAudio:at(1).tr});
-  const pairBank=unique(unique([...cards,...bank],'tr'),'en').slice(0,3);
+  const pairBank=unique(cards,'tr');
   const review=cards.map((w,i)=>{const other=bank.find(x=>norm(x.tr)!==norm(w.tr));const values=other?[w.tr,other.tr]:[w.tr];return {en:w.en,tr:w.tr,options:(number+i)%2?values.reverse():values};});
   const tasks=[
    {kind:'teach',label:'Dinle ve Öğren',cards},
