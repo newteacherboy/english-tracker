@@ -74,7 +74,7 @@ test('approved art uses its illustrated bar and hides any cached overlay',()=>{
  assert.match(style,/background-size:contain/);
  assert.match(style,/html\.dm-holiday-active \.dm-holiday-progress\{display:none!important\}/);
  assert.doesNotMatch(style,/dm-holiday-progress-fill/);
- for(const [file,expectedLink] of [['portal/index.html','ingilizce/holiday-splashes/splash.css?v=20261111-pending-3'],['ingilizce/index.html','holiday-splashes/splash.css?v=20261111-pending-3']]){
+ for(const [file,expectedLink] of [['portal/index.html','ingilizce/holiday-splashes/splash.css?v=20261111-pending-3'],['ingilizce/index.html','holiday-splashes/splash.css?v=20261118-fit3']]){
   assert(fs.readFileSync(file,'utf8').includes(expectedLink));
  }
 });
