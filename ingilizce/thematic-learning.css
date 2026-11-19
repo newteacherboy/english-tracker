@@ -877,3 +877,13 @@
 #dmStoryLesson .ml-match-count{grid-column:1/-1;text-align:center;font-weight:800;margin:2px 0;color:inherit}
 @keyframes ml-link-in{from{opacity:0}to{opacity:1}}
 @media(prefers-reduced-motion:reduce){#dmStoryLesson .ml-match-lines path{animation:none}}
+
+#dmStoryLesson .ml-linked-match .ml-wave{display:inline-flex;align-items:center;justify-content:center;gap:5px;height:36px;color:#6574ef}
+#dmStoryLesson .ml-wave i{display:block;width:5px;height:13px;border-radius:5px;background:currentColor}
+#dmStoryLesson .ml-wave i:nth-child(2),#dmStoryLesson .ml-wave i:nth-child(4){height:24px}
+#dmStoryLesson .ml-wave i:nth-child(3){height:34px}
+#dmStoryLesson .is-playing .ml-wave i{animation:ml-wave-pulse .45s alternate infinite}
+#dmStoryLesson .is-playing .ml-wave i:nth-child(even){animation-delay:.16s}
+#dmStoryLesson .ml-linked-match .is-correct .ml-wave{color:#16a34a}
+@keyframes ml-wave-pulse{to{transform:scaleY(.4)}}
+@media(prefers-reduced-motion:reduce){#dmStoryLesson .is-playing .ml-wave i{animation:none}}
