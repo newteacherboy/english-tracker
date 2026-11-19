@@ -407,7 +407,7 @@ function render(){if(!modal)return;accepted=false;if(session?.needsRecovery&&!se
 
  if(task.kind!=='review')area.innerHTML+=arenaHero('<h2 '+(task.language==='en'?'lang="en"':'')+'>'+esc(task.prompt)+'</h2>'+(task.support?'<p class="ml-support">'+esc(task.support)+'</p>':'')+(task.picture?art(task.picture):''));if(task.kind!=='review')bindMascotFallback(area);
  const audioArea=area.querySelector('.ml-speech')||area;
- if(task.audio&&!/_{2,}/.test(task.prompt||'')){const audioButton=speaker(task.audio);audioArea.append(audioButton);audioButton.playVoice();if(!voice)audioArea.insertAdjacentHTML('beforeend','<p class="ml-hint" lang="en">'+esc(task.audio)+'</p>');}
+ if(task.audio&&!/_{2,}/.test(task.prompt||'')){const audioButton=speaker(task.audio);audioArea.append(audioButton);if(task.label!=='Dinle ve bul')audioButton.playVoice();if(!voice)audioArea.insertAdjacentHTML('beforeend','<p class="ml-hint" lang="en">'+esc(task.audio)+'</p>');}
 
  // Cümleyi tamamla: yalnız İngilizce cümleyi okuyan buton kalır (Türkçe ikinci buton kaldırıldı).
  if(task.promptAudio&&!(task.label==='Cümleyi tamamla'&&task.prompt.includes('____')))audioArea.append(speaker(task.promptAudio,'tr-TR','Türkçe anlamını dinle'));
