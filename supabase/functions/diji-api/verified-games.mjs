@@ -114,7 +114,7 @@ export function verifiedGamesAPI(db,json){
     if(door<0||classNo!==Math.floor((stop-200000)/10000)||units.length!==1||units[0]!==unit||part<0||part>48)return fail('Geçersiz parkur durağı.',403);
     const problem=schoolStopProblem(await loadStartPath(db,a.student_id,ctx.data),ctx.data,stop);if(problem)return fail(problem,403);
     const baseWords=[...new Map(available.map(w=>[key(w.en),w])).values()].sort((a,b)=>a.en.localeCompare(b.en,'en')),baseCount=Math.ceil(baseWords.length/4);
-    if(part<baseCount)words=baseWords.slice(part*4,part*4+4);
+    if(part<baseCount)words=baseWords.slice(part*4,part*4+4+(baseWords.length%4===1&&part===baseCount-2?1:0));
     else if([1,3,7,8].includes(classNo)&&part<baseCount*2){
       const all=await db.from('word_bank').select('english,turkish,unit_no').eq('active',true).eq('class_no',classNo).order('unit_no').limit(5000);
       if(all.error)return fail('Karışık kelimeler yüklenemedi.',503);

@@ -69,7 +69,12 @@
           });
         }
       });
-      return l;
+      // Retain original IDs, including mixed stops. Merge only the trailing singleton.
+      return l.filter((D,i)=>{
+        if(D.karisik||D.kelimeler.length!==1||D.parca<=1)return true;
+        const prev=l[i-1];if(!prev||prev.karisik||prev.sinif!==D.sinif||prev.unite!==D.unite)return true;
+        prev.kelimeler=prev.kelimeler.concat(D.kelimeler);return false;
+      });
     });
   }
   const durakSayisi = b => { duraklariKur(); return DURAK[b].length; };
