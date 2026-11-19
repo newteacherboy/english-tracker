@@ -3,7 +3,7 @@ const email=x=>String(x||'').trim().toLowerCase();
 const valid=x=>/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(x);
 const esc=x=>String(x).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const day=()=>new Date(Date.now()+10800000).toISOString().slice(0,10);
-export function adminEmailAPI({db,json,welcome,publicParticipant,queue}){
+export function adminEmailAPI({db,json,welcome,publicParticipant,queue,brevoKey}){
  const fail=(mesaj,status=400)=>json({ok:false,mesaj},status);
  const safeUrl=(v)=>{if(!v)return '';try{const u=new URL(String(v));if(u.protocol==='https:'&&!u.username&&!u.password&&['app.dijimedu.com','dijimedu.com'].includes(u.hostname))return u.href;}catch{}return null;};
  function template(subject,body,link,image,unsubscribe=''){
@@ -54,9 +54,26 @@ export function adminEmailAPI({db,json,welcome,publicParticipant,queue}){
   return result;
  }
  return {async handle(op,b,a,method){
-  if(!['adminEmailPreview','adminEmailQueue','adminEmailHistory','adminEmailTest'].includes(op))return null;
+  if(!['adminEmailPreview','adminEmailQueue','adminEmailHistory','adminEmailTest','adminEmailStats'].includes(op))return null;
   if(method!=='POST')return fail('POST gerekli.',405);
   if(a?.role!=='teacher'||a.yonetici!==true||a.ogretmenKullanici!=='teacher')return fail('Yönetici oturumu gerekli.',403);
+  if(op==='adminEmailStats'){
+   const utc=new Date().toISOString().slice(0,10);
+   const budget=await db.from('dm_mail_budget').select('attempts').eq('day',utc).maybeSingle();
+   if(budget.error)throw budget.error;
+   const result={ok:true,attemptsToday:budget.data?.attempts||0,provider:null};
+   if(!brevoKey)return json({...result,providerError:'Brevo bağlantısı tanımlı değil.'});
+   try{
+    const end=new Date(),start=new Date(end.getTime()-6*86400000);
+    const params=new URLSearchParams({startDate:start.toISOString().slice(0,10),endDate:end.toISOString().slice(0,10)});
+    const headers={'api-key':brevoKey,accept:'application/json'};
+    const [a,r]=await Promise.all([fetch('https://api.brevo.com/v3/account',{headers,signal:AbortSignal.timeout(8000)}),fetch('https://api.brevo.com/v3/smtp/statistics/aggregatedReport?'+params,{headers,signal:AbortSignal.timeout(8000)})]);
+    if(!a.ok||!r.ok)throw Error('Brevo raporu okunamadı.');
+    const account=await a.json(), stats=await r.json();
+    result.provider={period:'Son 7 gün · Brevo hesabının tüm işlem mailleri',plans:(account.plan||[]).map(x=>({type:x.type,credits:x.credits,creditsType:x.creditsType})),requests:stats.requests,delivered:stats.delivered,opens:stats.opens,uniqueOpens:stats.uniqueOpens,clicks:stats.clicks,uniqueClicks:stats.uniqueClicks,hardBounces:stats.hardBounces,softBounces:stats.softBounces};
+    return json(result);
+   }catch{return json({...result,providerError:'Brevo raporu şu anda okunamadı.'});}
+  }
   if(op==='adminEmailHistory'){
    const r=await db.from('dm_papi_progress_outbox').select('id,subject,to_email,created_at,send_after,sent_at,attempts,error').eq('kind','admin_news').order('id',{ascending:false}).limit(100);
    if(r.error)throw r.error;return json({ok:true,items:r.data||[]});
