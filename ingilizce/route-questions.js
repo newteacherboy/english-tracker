@@ -12,14 +12,16 @@ function dmWordImageKey(en,tr){
  const e=dmWordImageText(en),t=dmWordImageText(tr);
  return e&&t?JSON.stringify([e,t]):null;
 }
+const dmWordImageRelaxedKey=(en,tr)=>dmWordImageKey(dmWordImageText(en).replace(/[.!?…]+$/u,'').trim(),dmWordImageText(tr).replace(/[.!?…]+$/u,'').trim());
 function dmWordImageIndex(manifest){
- const index=new Map(),ambiguous=new Set();
+ const index=new Map(),ambiguous=new Set(),relaxed=new Map(),ambiguousRelaxed=new Set();
+ index.relaxed=relaxed;
  if(!manifest||typeof manifest!=='object'||Array.isArray(manifest))return index;
+ const add=(map,blocked,key,code)=>{if(!key||blocked.has(key))return;if(map.has(key)){map.delete(key);blocked.add(key);return;}map.set(key,code);};
  for(const [code,entry] of Object.entries(manifest)){
   if(!/^\d{4}$/.test(code)||!entry||entry.path!=='512/'+code+'.webp'||entry.small_path!=='256/'+code+'.webp')continue;
-  const key=dmWordImageKey(entry.en,entry.tr);if(!key||ambiguous.has(key))continue;
-  if(index.has(key)){index.delete(key);ambiguous.add(key);continue;}
-  index.set(key,code);
+  add(index,ambiguous,dmWordImageKey(entry.en,entry.tr),code);
+  add(relaxed,ambiguousRelaxed,dmWordImageRelaxedKey(entry.en,entry.tr),code);
  }
  return index;
 }
@@ -32,14 +34,8 @@ function dmWordImageLoad(){
 }
 async function dmWordImageResolve(en,tr,size=512){
  const key=dmWordImageKey(en,tr);if(!key)return null;
- const index=await dmWordImageLoad();let code=index.get(key);
- // Only terminal punctuation may vary. Both languages must match, and only one candidate is allowed.
- if(!code){
-  const trimEnd=v=>dmWordImageText(v).replace(/[.!?…]+$/u,'').trim();
-  const target=JSON.stringify([trimEnd(en),trimEnd(tr)]);let candidate=null,conflict=false;
-  for(const [k,id] of index){const [e,t]=JSON.parse(k);if(JSON.stringify([trimEnd(e),trimEnd(t)])!==target)continue;if(candidate&&candidate!==id){conflict=true;break;}candidate=id;}
-  if(!conflict)code=candidate;
- }
+ const index=await dmWordImageLoad();
+ const code=index.get(key)||index.relaxed?.get(dmWordImageRelaxedKey(en,tr));
  return code?dmWordImageBase+(size===256?'256':'512')+'/'+code+'.webp':null;
 }
 async function dmWordImageDecorate(button,en,tr,mode){
