@@ -74,7 +74,9 @@ const fs=require('node:fs'),path=require('node:path'),assert=require('node:asser
   window.OC.basla('cumle');const modal=document.getElementById('yoModal');modal.dataset.dmSelectedGame='cumle';
   document.getElementById('yoGovde').innerHTML='<div class="yo-soru"><small>Bu cümleyi İngilizce kur</small><b>Kalede fotoğraflar çekeriz.</b></div><div class="yo-cevap-alan"></div><div class="yo-havuz"><button class="yo-chip">castle</button></div>';
  });
- await page.waitForSelector('#yoModal .fg-sentence-banner',{state:'attached',timeout:5000});
+ await page.waitForSelector('#yoModal .yo-soru',{state:'visible',timeout:5000});
+  assert.equal(await page.locator('#yoModal .fg-sentence-banner').count(),0,'Retired redundant sentence banner must not return');
+  assert(await page.locator('#yoModal .yo-havuz button').isVisible());
  assert.equal(await page.locator('#yoModal .yo-soru img').count(),0);
  assert.deepEqual(errors,[],'No browser JS errors');
  await browser.close();
