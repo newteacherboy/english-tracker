@@ -85,3 +85,53 @@ export function installSpeech(win, recognition, tts) {
     synth.onvoiceschanged?.(new Event('voiceschanged'));
   }).catch(() => {});
 }
+
+ // Dedicated Papi bridge: events carry a session ID so an old callback cannot grade a new turn.
+export function papiRecognitionClass(plugin) {
+  let sequence = 0, current = null;
+  return class PapiRecognition {
+    lang = 'en-US'; interimResults = true; active = false;
+    start() {
+      if (current) throw Error('Mikrofon zaten kullanılıyor.');
+      this.active = true; current = this;
+      this.session = Date.now() + '-' + (++sequence);
+      void this.run();
+    }
+    async run() {
+      try {
+        const handle = await plugin.addListener('speech', e => {
+          if (!this.active || e.session !== this.session) return;
+          if (e.kind === 'ready') this.onstart?.();
+          else if (e.kind === 'speechstart') this.onspeechstart?.();
+          else if (e.kind === 'partial' || e.kind === 'final') {
+            const result = [{ transcript: e.value, confidence: 0 }];
+            result.isFinal = e.kind === 'final';
+            this.onresult?.({ results: [result], resultIndex: 0 });
+            if (result.isFinal) this.finish();
+          } else if (e.kind === 'error') {
+            this.onerror?.({ error: e.value }); this.finish();
+          }
+        });
+        if (!this.active) { await handle.remove(); return; }
+        this.handle = handle;
+        await plugin.start({ session: this.session, language: this.lang });
+        if (!this.active) await plugin.abort({ session: this.session });
+      } catch (error) {
+        if (this.active) { this.onerror?.({ error: error.code || 'audio-capture' }); this.finish(); }
+      }
+    }
+    finish() {
+      if (!this.active) return;
+      this.active = false;
+      if (current === this) current = null;
+      if (this.handle) void Promise.resolve(this.handle.remove()).catch(() => {});
+      this.onend?.();
+    }
+    abort() {
+      if (!this.active) return;
+      this.finish();
+      void plugin.abort({ session: this.session }).catch(() => {});
+    }
+    stop() { this.abort(); }
+  };
+}
