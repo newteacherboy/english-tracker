@@ -13,6 +13,8 @@ function dmWordImageKey(en,tr){
  return e&&t?JSON.stringify([e,t]):null;
 }
 const dmWordImageRelaxedKey=(en,tr)=>dmWordImageKey(dmWordImageText(en).replace(/[.!?…]+$/u,'').trim(),dmWordImageText(tr).replace(/[.!?…]+$/u,'').trim());
+// Reviewed alternate translations; each is pinned to its original bilingual manifest entry.
+const dmWordImageAliases=[["0041","classroom","sınıf","classroom","derslik; sınıf"],["0196","socks","çoraplar","socks","çorap"],["0001","bye","hoşça kal","bye","güle güle"],["0059","What is this?","Bu nedir?","What is this?","Bu ne?"],["0261","coat","mont","coat","mont, palto"],["0133","has got","sahip olmak","has got","sahip olmak; var"],["0040","eat","yemek","eat","yemek yemek"],["0408","waiter","erkek garson","waiter","garson (erkek)"],["0113","aunt","teyze, hala","aunt","hala / teyze"],["0126","uncle","amca, dayı","uncle","amca / dayı"],["0251","boots","bot","boots","botlar"],["0992","tall","uzun","tall","uzun boylu"],["0212","wash face","yüzü yıkamak","wash face","yüzünü yıkamak"],["1152","What is your job?","Senin mesleğin ne?","What is your job?","İşin ne?"],["0481","pencil case","kalemlik","pencil case","kalem kutusu"],["0240","brush teeth","dişleri fırçalamak","brush teeth","dişlerini fırçalamak"],["0105","shoes","ayakkabı","shoes","ayakkabılar"],["0578","quiet","sakin","quiet","sessiz"],["0313","I am from Türkiye.","Türkiye'denim.","I am from Türkiye.","Ben Türkiyeliyim."],["0830","costume","kostüm","costume","geleneksel kıyafet"],["0707","bright","aydınlık","bright","parlak"],["0947","camping","kamp yapma","camping","kampçılık"],["0373","bowl","kâse","bowl","kase"],["0083","body","vücut","body","vücut / gövde"],["0956","delicious","çok lezzetli","delicious","lezzetli"],["0951","cycling","bisiklet sürme","cycling","bisiklete binme"],["0225","Can I see the menu, please?","Menüyü görebilir miyim, lütfen?","Can I see the menu, please?","Menüyü görebilir miyim?"],["0460","organise","organize etmek","organise","düzenlemek"],["1179","hope","umut etmek","hope","ummak"],["0393","businessman","iş insanı","businessman","iş adamı"],["0451","assistant","asistan","assistant","yardımcı"],["0959","destroy","yok etmek","destroy","yıkmak"],["0512","straight","dümdüz","straight","düz"],["0804","audience","seyirci","audience","seyirci topluluğu"],["1257","misunderstanding","yanlış anlama","misunderstanding","yanlış anlaşılma"],["0397","fire station","itfaiye merkezi","fire station","itfaiye istasyonu"],["1238","custom","âdet","custom","gelenek"],["1139","take a break","ara vermek","take a break","mola vermek"],["1117","turn left","sola dönmek","Turn left.","Sola dön."],["0855","hang out","birlikte vakit geçirmek","hang out","takılmak"],["0723","be keen on","meraklı olmak","be keen on","çok ilgi duymak"],["0387","stir","karıştırmak","stir","karıştırmak (sıvı)"],["0266","dislike","hoşlanmamak","dislike","sevmemek"]];
 function dmWordImageIndex(manifest){
  const index=new Map(),ambiguous=new Set(),relaxed=new Map(),ambiguousRelaxed=new Set();
  index.relaxed=relaxed;
@@ -22,6 +24,12 @@ function dmWordImageIndex(manifest){
   if(!/^\d{4}$/.test(code)||!entry||entry.path!=='512/'+code+'.webp'||entry.small_path!=='256/'+code+'.webp')continue;
   add(index,ambiguous,dmWordImageKey(entry.en,entry.tr),code);
   add(relaxed,ambiguousRelaxed,dmWordImageRelaxedKey(entry.en,entry.tr),code);
+ }
+ index.aliases=new Map();
+ for(const [id,en,tr,sourceEn,sourceTr] of dmWordImageAliases){
+  if(index.get(dmWordImageKey(sourceEn,sourceTr))!==id)continue;
+  const key=dmWordImageRelaxedKey(en,tr);
+  if(!ambiguousRelaxed.has(key)&&!relaxed.has(key))index.aliases.set(key,id);
  }
  return index;
 }
@@ -35,7 +43,7 @@ function dmWordImageLoad(){
 async function dmWordImageResolve(en,tr,size=512){
  const key=dmWordImageKey(en,tr);if(!key)return null;
  const index=await dmWordImageLoad();
- const code=index.get(key)||index.relaxed?.get(dmWordImageRelaxedKey(en,tr));
+ const code=index.get(key)||index.relaxed?.get(dmWordImageRelaxedKey(en,tr))||index.aliases?.get(dmWordImageRelaxedKey(en,tr));
  return code?dmWordImageBase+(size===256?'256':'512')+'/'+code+'.webp':null;
 }
 async function dmWordImageDecorate(button,en,tr,mode){
