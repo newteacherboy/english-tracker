@@ -162,17 +162,17 @@ if('speechSynthesis'in window&&typeof window.SpeechSynthesisUtterance==='functio
    u.onerror=function(e){
     if(ticket===voiceGeneration&&!['canceled','interrupted'].includes(e.error)){
      clearTimeout(speechTimer);
-     listeningStatus(e.error==='not-allowed'?'Sesi başlatmak için Dinle düğmesine tekrar dokun.':['voice-unavailable','language-unavailable','synthesis-unavailable'].includes(e.error)?'İngilizce okuma sesi bulunamadı. Telefonun metinden sese ayarlarında İngilizce sesini etkinleştirip tekrar dene.':'Ses açılamadı. Telefonun medya sesini kontrol edip Dinle düğmesine tekrar dokun.',u.text);
+     listeningStatus(e.error==='turkish-recording-missing'?'Bu Türkçe ses kaydı henüz hazır değil.':e.error==='not-allowed'?'Sesi başlatmak için Dinle düğmesine tekrar dokun.':['voice-unavailable','language-unavailable','synthesis-unavailable'].includes(e.error)?'İngilizce okuma sesi bulunamadı. Telefonun metinden sese ayarlarında İngilizce sesini etkinleştirip tekrar dene.':'Ses açılamadı. Telefonun medya sesini kontrol edip Dinle düğmesine tekrar dokun.',u.text);
     }
     onerror?.call(this,e);
    };
    window.dmCurrentUtterance=u;listeningStatus('');
-   // Keep the current native path only for unverified/missing text during staged rollout.
-   const shared=window.dmSharedVoice;
+   // Never silently switch Turkish learning audio to a different device voice.
+   const shared=window.dmSharedVoice,turkish=/^tr(?:[-_]|$)/i.test(u.lang||'');
    if(shared?.urlFor(String(u.text||''),u.lang)){
     nativeCancel();
-    if(!shared.play(u)){shared.cancel();nativeSpeak(u);}
-   }else{shared?.cancel();nativeSpeak(u);}
+    if(!shared.play(u)){shared.cancel();if(turkish){u.onerror?.({error:'audio-unavailable'});return;}nativeSpeak(u);}
+   }else{shared?.cancel();if(turkish){nativeCancel();u.onerror?.({error:'turkish-recording-missing'});return;}nativeSpeak(u);}
    if(!started)speechTimer=setTimeout(()=>{if(ticket===voiceGeneration&&!started)listeningStatus('Ses başlamadı. Bağlantını ve medya sesini kontrol edip Dinle düğmesine tekrar dokun.',u.text);},4000);
   }catch{listeningStatus('Ses açılamadı. Dinle düğmesine tekrar dokun.',u.text);}
  };
