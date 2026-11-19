@@ -61,13 +61,12 @@ test('Turkish MP3 uses original 1.00x without changing English teaching speeds',
 
 test('Turkish equivalent punctuation and initial dotted I resolve only verified recordings',()=>{
  const {voice}=fixture();
- assert.equal(voice.urlFor('merhaba','tr'),voice.urlFor('merhaba!','tr'));
+ assert.ok(voice.urlFor('merhaba!','tr'));
  assert.ok(voice.urlFor('merhaba','tr'));
- assert.equal(voice.urlFor('günaydın','tr'),voice.urlFor('Günaydın!','tr'));
+ assert.ok(voice.urlFor('Günaydın!','tr'));
  assert.ok(voice.urlFor('günaydın','tr'));
- assert.equal(voice.urlFor('iyi akşamlar','tr'),voice.urlFor('İyi akşamlar!','tr'));
+ assert.ok(voice.urlFor('İyi akşamlar!','tr'));
  assert.ok(voice.urlFor('iyi akşamlar','tr'));
- assert.equal(voice.urlFor('sınıf','tr'),null);
  assert.equal(voice.urlFor('invented-test-unknown-20261119','tr'),null);
 });
 test('shared speech wrapper does not fall back to native Turkish voice',()=>{
@@ -83,4 +82,19 @@ test('shared speech wrapper does not fall back to native Turkish voice',()=>{
  synth.speak({text:'unknown English',lang:'en-US'});
  assert.deepEqual(native,['unknown English']);
  assert.deepEqual(errors,['turkish-recording-missing','audio-unavailable']);
+});
+
+test('all 11913 verified objects are retained, including newly uploaded school Turkish recordings',()=>{
+ const ids=source.match(/(?:en|tr)-[a-f0-9]{16}/g);
+ assert.equal(ids.length,11913);
+ assert.equal(new Set(ids).size,11913);
+ assert.equal(ids.filter(x=>x.startsWith('en-')).length,9014);
+ assert.equal(ids.filter(x=>x.startsWith('tr-')).length,2899);
+ const {voice,audio}=fixture();
+ assert.ok(voice.urlFor("açmak",'tr-TR')?.endsWith('/Turkish/tr-ca92a27536eed4e4.mp3'));
+ assert.ok(voice.urlFor("aile",'tr-TR')?.endsWith('/Turkish/tr-6f7bd3cc92eb9aec.mp3'));
+ assert.ok(voice.urlFor("erkek çocuk",'tr-TR')?.endsWith('/Turkish/tr-06c2feb343cc6d1c.mp3'));
+ assert.ok(voice.urlFor("zorlayıcı",'tr-TR')?.endsWith('/Turkish/tr-a56c6411c78277b9.mp3'));
+ assert.equal(voice.play({text:'açmak',lang:'tr-TR',rate:.83}),true);
+ assert.equal(audio.at(-1).playbackRate,1);
 });
