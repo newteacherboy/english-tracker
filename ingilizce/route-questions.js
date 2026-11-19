@@ -26,23 +26,31 @@ function dmWordImageIndex(manifest){
 let dmWordImageRequest;
 function dmWordImageLoad(){
  if(!dmWordImageRequest){
-  dmWordImageRequest=Promise.resolve().then(()=>root.fetch(dmWordImageBase+'manifest.json',{cache:'default',credentials:'omit'})).then(r=>{if(!r.ok)throw Error('manifest');return r.json()}).then(dmWordImageIndex).catch(()=>{dmWordImageRequest=null;return new Map()});
+  dmWordImageRequest=Promise.resolve().then(()=>root.fetch('parkur-word-pool-v1.json',{cache:'default',credentials:'same-origin'})).then(r=>{if(!r.ok)throw Error('manifest');return r.json()}).then(dmWordImageIndex).catch(()=>{dmWordImageRequest=null;return new Map()});
  }
  return dmWordImageRequest;
 }
 async function dmWordImageResolve(en,tr,size=512){
  const key=dmWordImageKey(en,tr);if(!key)return null;
- const code=(await dmWordImageLoad()).get(key);
+ const index=await dmWordImageLoad();let code=index.get(key);
+ // Only terminal punctuation may vary. Both languages must match, and only one candidate is allowed.
+ if(!code){
+  const trimEnd=v=>dmWordImageText(v).replace(/[.!?…]+$/u,'').trim();
+  const target=JSON.stringify([trimEnd(en),trimEnd(tr)]);let candidate=null,conflict=false;
+  for(const [k,id] of index){const [e,t]=JSON.parse(k);if(JSON.stringify([trimEnd(e),trimEnd(t)])!==target)continue;if(candidate&&candidate!==id){conflict=true;break;}candidate=id;}
+  if(!conflict)code=candidate;
+ }
  return code?dmWordImageBase+(size===256?'256':'512')+'/'+code+'.webp':null;
 }
 async function dmWordImageDecorate(button,en,tr,mode){
  const url=await dmWordImageResolve(en,tr);
  if(!url||!button?.isConnected)return;
+ if(button.querySelector('.dm-pool-teach-image'))return;
  const img=document.createElement('img');img.alt='';img.decoding='async';img.loading='eager';
  img.className='dm-pool-teach-image';
  img.width=52;img.height=52;
  img.style.cssText='display:block;object-fit:contain;max-width:100%;width:100%;height:100%;border-radius:8px;';
- img.addEventListener('load',()=>{
+ const attach=()=>{
   if(!button.isConnected)return;
   if(mode==='learning'){
    const old=button.querySelector('.ml-art');
@@ -53,7 +61,9 @@ async function dmWordImageDecorate(button,en,tr,mode){
    const label=button.querySelector('span:first-child');if(label){label.style.flex='1 1 0';label.style.minWidth='0';label.style.overflowWrap='anywhere';}
    img.style.order='-1';button.append(img);
   }
- },{once:true});
+ };
+ img.addEventListener('load',attach,{once:true});
+ img.addEventListener('error',()=>{if(img.src.includes('/512/'))img.src=url.replace('/512/','/256/');},{once:true});
  // Keep existing text/art untouched if the CDN image cannot be loaded.
  img.src=url;
 }
