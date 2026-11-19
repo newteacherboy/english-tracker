@@ -144,7 +144,8 @@ window.dmGameVoiceBlocked=function(){
 };
 // All existing cards, games and lessons use this shared native speech path.
 if('speechSynthesis'in window&&typeof window.SpeechSynthesisUtterance==='function'){
- const synth=window.speechSynthesis,nativeSpeak=window.dmNativeSpeechSpeak||synth.speak.bind(synth);
+ const synth=window.speechSynthesis,nativeSpeak=window.dmNativeSpeechSpeak||synth.speak.bind(synth),nativeCancel=synth.cancel.bind(synth);
+ synth.cancel=function(){voiceGeneration++;clearTimeout(speechTimer);window.dmSharedVoice?.cancel();return nativeCancel();};
  synth.speak=function(u){
   if(!u||!String(u.text||'').trim())return;
   if(window.dmGameVoiceBlocked())return;
@@ -165,8 +166,14 @@ if('speechSynthesis'in window&&typeof window.SpeechSynthesisUtterance==='functio
     }
     onerror?.call(this,e);
    };
-   window.dmCurrentUtterance=u;listeningStatus('');nativeSpeak(u);
-   if(!started)speechTimer=setTimeout(()=>{if(ticket===voiceGeneration&&!started)listeningStatus('Ses başlamadı. Medya sesini ve telefonun İngilizce metinden sese ayarını kontrol edip Dinle düğmesine tekrar dokun.',u.text);},4000);
+   window.dmCurrentUtterance=u;listeningStatus('');
+   // Keep the current native path only for unverified/missing text during staged rollout.
+   const shared=window.dmSharedVoice;
+   if(shared?.urlFor(String(u.text||''),u.lang)){
+    nativeCancel();
+    if(!shared.play(u)){shared.cancel();nativeSpeak(u);}
+   }else{shared?.cancel();nativeSpeak(u);}
+   if(!started)speechTimer=setTimeout(()=>{if(ticket===voiceGeneration&&!started)listeningStatus('Ses başlamadı. Bağlantını ve medya sesini kontrol edip Dinle düğmesine tekrar dokun.',u.text);},4000);
   }catch{listeningStatus('Ses açılamadı. Dinle düğmesine tekrar dokun.',u.text);}
  };
 }
