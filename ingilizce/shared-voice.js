@@ -31,7 +31,8 @@ function createSharedVoice(win,ids){
   audio.onerror=()=>finish("audio-unavailable");
   try{
    audio.crossOrigin="anonymous";audio.preload="auto";
-   audio.playbackRate=Math.min(2,Math.max(.5,Number(u.rate)||1));
+   // Turkish recordings use a fixed, natural test tempo; English keeps the requested teaching speed.
+   audio.playbackRate=/^tr(?:[-_]|$)/i.test(u.lang||'')?1.10:Math.min(2,Math.max(.5,Number(u.rate)||1));
    audio.volume=Math.min(1,Math.max(0,Number.isFinite(u.volume)?u.volume:1));audio.preservesPitch=true;
    audio.src=url;
    const promise=audio.play();if(promise&&typeof promise.catch==="function")promise.catch(e=>finish(e?.name==="NotAllowedError"?"not-allowed":"audio-unavailable"));

@@ -51,3 +51,10 @@ test('worker handles full, open-ended, suffix and invalid byte ranges',()=>{
  const ranges=[['bytes=0-9',[0,9]],['bytes=90-',[90,99]],['bytes=-8',[92,99]],['bytes=90-999',[90,99]],['bytes=100-',false],['bytes=1-0',false],['bytes=-0',false]];
  for(const [range,want] of ranges)assert.equal(JSON.stringify(ctx.voiceRange(range,100)),JSON.stringify(want));
 });
+
+test('Turkish MP3 uses 1.10x without changing English teaching speeds',()=>{
+ const {voice,audio}=fixture();
+ for(const rate of [.93,1]){assert.equal(voice.play({text:'aç',lang:'tr-TR',rate}),true);assert.equal(audio.at(-1).playbackRate,1.10);assert.equal(audio.at(-1).preservesPitch,true);}
+ assert.equal(voice.play({text:'apple',lang:'en-US',rate:.85}),true);assert.equal(audio.at(-1).playbackRate,.85);
+ assert.equal(voice.play({text:'apple',lang:'en-US',rate:.35}),true);assert.equal(audio.at(-1).playbackRate,.5);
+});
