@@ -145,8 +145,8 @@ function openNoticeMailCenter(){
   get('history').onclick=async()=>{const host=get('history-list');host.textContent='Yükleniyor…';try{const d=await api('adminEmailHistory');if(!host.isConnected)return;host.replaceChildren(table(['Konu','Alıcı','Durum'],(d.items||[]).map(x=>[x.subject,x.to_email,x.sent_at?'Gönderildi':x.attempts>=5?'Başarısız':'Kuyrukta'])));}catch(e){host.textContent=e.message;}};
  }
  const pages={
- 'E-posta Gönder':emailCenter,
  'Merkezi Ayarlar':editRemoteRules,
+ 'E-posta Gönder':emailCenter,
  'Genel Bakış':async()=>{content.innerHTML='<h3>Genel Bakış</h3><p>5 duyuru kuralı · 4 mail kuralı</p><p role="status">Mail kuyruğu ve günlük kullanım yükleniyor…</p>';const el=content.querySelector('[role="status"]');try{const d=await api('communicationStats');if(!el.isConnected)return;const s=d.summary;el.textContent='Bugün gönderilen: '+s.sentToday+' · Gönderim denemesi: '+s.attemptsToday+' · Kuyrukta: '+s.queued+' · Hata kaydı bulunan bekleyen: '+s.failedPending;}catch(e){el.textContent='Canlı sayılar henüz okunamıyor: '+e.message;}},
  'Duyurular':()=>{content.innerHTML='<h3>Uygulama içi duyurular</h3>';content.append(table(['Duyuru','Öncelik','Hedef','Gösterim kuralı'],rules));},
  'Mailler':()=>{content.innerHTML='<h3>Otomatik e-postalar</h3><p>Mail teslim raporları ve kota kullanımının sunucudan okunması henüz gerekli.</p>';content.append(table(['Görev','Planlanan zaman','Kontrol'],mails));},
