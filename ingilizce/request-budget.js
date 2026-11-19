@@ -109,7 +109,7 @@
   const rpcReads={
     bildirimlerim:{fn:'dm_read_bildirimler',body:a=>({p_ogrenci:String(a.ogrenci??''),p_tumu:String(a.tumu??'')==='1'})},
     duyurulariGetir:{fn:'dm_read_duyuru',body:a=>({p_ogrenci:String(a.ogrenci??'')})},
-    seviyeLigListesi:{fn:'dm_read_lig',body:a=>({p_kapsam:String(a.kapsam??'')})},
+    // League standings must use the authoritative public ranking endpoint, not the legacy block-filtering RPC.
     ekVeriGetir:{fn:'dm_read_ekveri',body:a=>({p_ogrenci:String(a.ogrenci??''),p_anahtar:String(a.anahtar??'')}),
       out:(x,a)=>window.dmRpcReadTransforms?.ekVeri?window.dmRpcReadTransforms.ekVeri(x,String(a.anahtar??''),String(a.anahtar??'')==='yo'&&String(a.tanitim??'')==='1'):undefined}
   };
