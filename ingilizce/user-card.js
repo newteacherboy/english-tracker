@@ -8,6 +8,7 @@
  const icons={message:'<rect x="3" y="4" width="18" height="14" rx="4"/><path d="m7 18-3 3v-5M8 9h8M8 13h5"/>',gift:'<rect x="4" y="10" width="16" height="11" rx="2"/><path d="M3 6h18v4H3zM12 6v15M12 6C5 7 4 0 8 2c3 0 4 4 4 4Zm0 0c7 1 8-6 4-4-3 0-4 4-4 4Z"/>',duel:'<path d="m4 3 17 17M20 3 3 20M3 3l2 6 4-4-6-2Zm18 0-2 6-4-4 6-2ZM3 17l4 4M17 21l4-4"/>',follow:'<circle cx="9" cy="7" r="4"/><path d="M2 21v-3a7 7 0 0 1 14 0v3M20 8v8M16 12h8"/>',block:'<circle cx="12" cy="12" r="9"/><path d="m6 6 12 12"/>',report:'<path d="M5 22V3c6-5 8 5 15 0v12c-7 5-9-5-15 0"/>'};
  const icon=k=>'<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">'+icons[k]+'</svg>';
  let view=null,lastAnchor=null,cacheOwner='',cache=new Map();
+ function setBlock(v,state){v.blocked=!!state.blocked;v.mine=!!state.mine;v.el.querySelector('[data-user-action="block"] span').textContent=v.mine?'Engeli Kaldır':'Engelle';paintActions(v);}
  function close(restore=true){if(!view)return;const v=view;view=null;v.controller.abort();v.el.remove();v.anchorEl?.removeAttribute('aria-expanded');if(restore&&v.origin?.isConnected)v.origin.focus?.({preventScroll:true});}
  function alive(v){return view===v&&v.owner===who()&&v.token===token()&&v.el.isConnected;}
  function place(v){
@@ -40,6 +41,8 @@
   if(!v.data)return 'Kullanıcı bilgileri yükleniyor. Biraz sonra tekrar dene.';
   const action=b.dataset.userAction;
   if(norm(v.id)===norm(v.owner))return ownReasons[action];
+  if(v.blocked&&actionFeatures[action])return 'Engel kaldırılana kadar bu işlem kapalı.';
+  if(action==='block'&&v.blocked&&!v.mine)return 'Bu engeli yalnızca engelleyen kişi kaldırabilir.';
   const feature=actionFeatures[action];
   if(feature&&window.dmFeatureEnabled?.(feature)===false)return 'Bu özellik şu anda kullanıma kapalı.';
   if(feature&&window.dmProgression?.allowed?.(feature)===false){
@@ -68,7 +71,11 @@
   try{
    let data=cache.get(id);if(!data||Date.now()-data.at>30000){
     const response=await fetch(apiURL,{method:'POST',headers:{'Content-Type':'application/json'},cache:'no-store',signal:v.controller.signal,body:JSON.stringify({islem:'kullaniciBilgiKarti',kullanici:id,t:v.token})});
-    data=await response.json();if(!response.ok||data.ok===false)throw Error(data.mesaj||'Kullanıcı bilgisi alınamadı.');
+    data=await response.json();if(!response.ok||data.ok===false){
+     const state=await window.dmMeduPro.api('sosyalDurum',{alici:id}).catch(()=>null);if(!alive(v))return;
+     if(state?.mine){v.data={name:id};el.querySelector('.uc-stats').textContent='Engellediğin kullanıcı';setBlock(v,state);place(v);return;}
+     throw Error(data.mesaj||'Kullanıcı bilgisi alınamadı.');
+    }
     if(!alive(v))return;data={...data,at:Date.now()};cache.set(id,data);if(cache.size>30)cache.delete(cache.keys().next().value);
    }
    if(!alive(v))return;v.data=data;v.id=data.name;
@@ -80,7 +87,7 @@
     el.querySelector('h2').after(label);
    }
    el.querySelector('.uc-stats').innerHTML='<span><i aria-hidden="true">🏆</i>'+esc(leagues[data.league]||'Lig henüz açılmadı')+'</span><span><i aria-hidden="true">🔥</i>'+Math.max(0,Number(data.streak)||0)+' gün seri</span><span><i aria-hidden="true">▥</i>'+Math.max(1,Number(data.level)||1)+'. seviye</span>';
-   const own=norm(v.id)===norm(v.owner);paintActions(v);
+   const own=norm(v.id)===norm(v.owner);setBlock(v,{});
    const following=typeof maTakip!=='undefined'&&maTakip.has(v.id);el.querySelector('[data-user-action="follow"] span').textContent=following?'Takip Ediliyor':'Takip Et';
    if(own){const n=el.querySelector('.uc-notice');n.hidden=false;n.textContent='Bu senin bilgi kartın.';}place(v);
   }catch(e){if(!alive(v)||e.name==='AbortError')return;v.error=e.message;el.querySelector('.uc-stats').textContent=e.message;paintActions(v);place(v);}
@@ -99,8 +106,12 @@
     await window.maTakipDegistir(id);
     if(alive(v)){const t=typeof maTakip!=='undefined'&&maTakip.has(id);b.innerHTML=icon('follow')+'<span>'+(t?'Takip Ediliyor':'Takip Et')+'</span>';}
    }else if(action==='block'){
-    await window.dmMeduPro.api('ogrenciEngelle',{alici:id});if(!alive(v))return;
-    if(typeof maTakip!=='undefined')maTakip.delete(id);cache.delete(id);close();window.maCiz?.();window.maToast?.('Kullanıcı engellendi.');
+    const removing=v.mine;
+    await window.dmMeduPro.api(removing?'ogrenciEngelKaldir':'ogrenciEngelle',{alici:id});if(!alive(v))return;
+    if(!removing&&typeof maTakip!=='undefined')maTakip.delete(id);cache.clear();
+    if(removing){close(false);window.maTumGetir?.();window.maToast?.('Engel kaldırıldı.');return;}
+    setBlock(v,{blocked:true,mine:true});v.el.querySelector('.uc-stats').textContent='Engellediğin kullanıcı';v.el.querySelector('.uc-character').replaceChildren();v.el.querySelector('.uc-member-label')?.remove();v.el.classList.remove('dm-member-pro-card','dm-member-premium-card');
+    v.el.querySelector('[data-user-action="follow"] span').textContent='Takip Et';window.maCiz?.();notice(v,'Kullanıcı engellendi.');
    }
   }catch(e){notice(v,e.message);}
   finally{if(alive(v)){delete b.dataset.busy;b.removeAttribute('aria-busy');paintActions(v);}}
@@ -116,5 +127,5 @@
  document.addEventListener('dm:login',()=>{close(false);cache.clear();});
  document.addEventListener('dm:state',()=>{cache.clear();if(view&&(!alive(view)||!document.getElementById('tab-meduakis')?.classList.contains('active')))close(false);});
  const root=document.getElementById('tab-meduakis');if(root)new MutationObserver(()=>{if(view&&!root.classList.contains('active'))close(false);}).observe(root,{attributes:true,attributeFilter:['class']});
- window.dmUserCard={open,close};
+ window.dmUserCard={open,close,invalidate:()=>{cache.clear();close(false);}};
 })();
