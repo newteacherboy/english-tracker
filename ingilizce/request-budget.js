@@ -162,8 +162,41 @@
   // gönderilir, böylece her çağrıdan önceki ayrı OPTIONS (ön kontrol) çağrısı oluşmaz (günde ~350).
   const plainBodyFunctions=new Set(['premium-games','thematic-learning','papi-rewards']);
   function plainBody(input){try{if(typeof input!=='string'||!input.startsWith(endpoint))return false;return plainBodyFunctions.has(new URL(input).pathname.split('/').pop());}catch{return false;}}
+  // A cosmetic notice based exclusively on authenticated server league XP.
+  let leagueTimer=0,leagueBusy=false,leagueQueued=false,leagueSeen='';
+  function leagueDay(){return new Intl.DateTimeFormat('sv-SE',{timeZone:'Europe/Istanbul',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());}
+  function leagueNotice(d){
+    if(document.hidden||!document.body||window.dmTeacherPortalMode||d.day!==leagueDay())return;
+    const key='dm_league_cap_notice:'+d.account;
+    try{if(localStorage.getItem(key)===d.day)return;}catch{}
+    if(leagueSeen===key+':'+d.day)return;
+    leagueSeen=key+':'+d.day;
+    try{localStorage.setItem(key,d.day);}catch{}
+    const el=document.createElement('aside');el.setAttribute('role','status');
+    el.style.cssText='position:fixed;z-index:2147483000;top:calc(env(safe-area-inset-top, 0px) + 10px);left:50%;width:min(92vw,450px);box-sizing:border-box;background:#302344;color:#fff;border:1px solid #e9b94f;border-radius:18px;padding:14px 36px 14px 16px;box-shadow:0 6px 24px #0004;font:inherit;transform:translate(-50%,-150%);transition:transform .25s ease;line-height:1.4';
+    const title=document.createElement('strong');title.textContent='🏆 Günlük XP sınırına ulaştın! 🎉';
+    const msg=document.createElement('div');msg.style.cssText='font-size:13px;margin-top:5px';msg.textContent="Bugün haftalık ligde 3.500 XP'ye ulaştın. Kazandığın XP'ler genel sıralamana eklenmeye devam edecek. Yarın haftalık lig için yeniden XP toplamaya başlayabilirsin!";
+    const close=document.createElement('button');close.type='button';close.textContent='×';close.setAttribute('aria-label','Bildirimi kapat');close.style.cssText='position:absolute;right:8px;top:8px;background:transparent;border:0;color:inherit;font-size:24px;cursor:pointer';
+    close.onclick=()=>el.remove();el.append(title,msg,close);document.body.append(el);
+    requestAnimationFrame(()=>{el.style.transform='translate(-50%,0)';});setTimeout(()=>el.remove(),6000);
+  }
+  function scheduleLeague(){
+    if(window.dmTeacherPortalMode||document.hidden||!actor().split('|')[0])return;
+    clearTimeout(leagueTimer);leagueTimer=setTimeout(checkLeague,1200);
+  }
+  async function checkLeague(){
+    if(leagueBusy){leagueQueued=true;return;}
+    const id=actor(),token=id.split('|')[0];if(!token||document.hidden||window.dmTeacherPortalMode)return;
+    let key='';try{key=typeof SUPABASE_ANON_KEY!=='undefined'?SUPABASE_ANON_KEY:'';}catch{}
+    if(!key)return;
+    leagueBusy=true;
+    try{
+      const r=await native(endpoint.replace('/functions/v1/','/rest/v1/rpc/')+'dm_daily_league_notice',{method:'POST',headers:{'Content-Type':'application/json',apikey:key},body:JSON.stringify({p_t:token})});
+      if(r.ok&&id===actor()){const d=await r.json();if(d?.reached===true&&typeof d.account==='string'&&id===actor())leagueNotice(d);}
+    }catch{}finally{leagueBusy=false;if(leagueQueued){leagueQueued=false;scheduleLeague();}}
+  }
   window.fetch=async function(input,opt){
-    if(plainBody(input))return native(input,simple(opt));
+    if(plainBody(input)){const r=await native(input,simple(opt));if(r.ok)scheduleLeague();return r;}
     let d;try{d=describe(input,opt);}catch{return native(input,opt);}
     if(!d)return native(input,opt);
     const current=actor();if(current!==identity){identity=current;clear();}
@@ -173,7 +206,7 @@
     if(!reads.has(d.op)&&!content.has(d.op)){
       // All writes, rewards, login and live match/presence requests go straight
       // through. Invalidate before AND after to avoid a read/write race.
-      clear();try{return await native(tagged(input,d),simple(opt));}finally{clear();}
+      clear();try{const r=await native(tagged(input,d),simple(opt));if(r.ok)scheduleLeague();return r;}finally{clear();}
     }
     if(d.bypass)return native(tagged(input,d),simple(opt));
     if(d.opt?.signal?.aborted)throw d.opt.signal.reason||new Error('Request aborted');
@@ -201,6 +234,6 @@
   // Debug counters contain no user names, tokens, payloads or balances.
   window.dmRequestBudget={stats,clear};
   // Fresh TTLs remain useful after returning to a tab; identity changes still clear private data.
-  document.addEventListener('visibilitychange',()=>{if(!document.hidden)failures.clear();});
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden){failures.clear();scheduleLeague();}});
   window.addEventListener('storage',()=>{if(actor()!==identity){identity=actor();clear();}});
 })();
