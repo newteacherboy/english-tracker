@@ -4,6 +4,61 @@ if(typeof document!=='undefined'&&!document.getElementById('rq-forest-reference-
 if(typeof document!=='undefined'&&!document.getElementById('dm-route-feedback-profile-style')){const link=document.createElement('link');link.id='dm-route-feedback-profile-style';link.rel='stylesheet';link.href='route-feedback-profile.css?v=20261014-1';document.head.append(link);}
 const esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const norm=x=>String(x??'').normalize('NFKC').toLowerCase().replace(/[^\p{L}\p{N}]+/gu,' ').trim();
+
+/* Shared, on-demand teaching image pool. Never guess from English alone or stop order. */
+const dmWordImageBase='https://nxfqlutulxqzqgwewssd.supabase.co/storage/v1/object/public/word-images/';
+const dmWordImageText=value=>typeof value==='string'?value.normalize('NFC').trim().replace(/\s+/gu,' ').toLowerCase().normalize('NFC'):'';
+function dmWordImageKey(en,tr){
+ const e=dmWordImageText(en),t=dmWordImageText(tr);
+ return e&&t?JSON.stringify([e,t]):null;
+}
+function dmWordImageIndex(manifest){
+ const index=new Map(),ambiguous=new Set();
+ if(!manifest||typeof manifest!=='object'||Array.isArray(manifest))return index;
+ for(const [code,entry] of Object.entries(manifest)){
+  if(!/^\d{4}$/.test(code)||!entry||entry.path!=='512/'+code+'.webp'||entry.small_path!=='256/'+code+'.webp')continue;
+  const key=dmWordImageKey(entry.en,entry.tr);if(!key||ambiguous.has(key))continue;
+  if(index.has(key)){index.delete(key);ambiguous.add(key);continue;}
+  index.set(key,code);
+ }
+ return index;
+}
+let dmWordImageRequest;
+function dmWordImageLoad(){
+ if(!dmWordImageRequest){
+  dmWordImageRequest=Promise.resolve().then(()=>root.fetch(dmWordImageBase+'manifest.json',{cache:'default',credentials:'omit'})).then(r=>{if(!r.ok)throw Error('manifest');return r.json()}).then(dmWordImageIndex).catch(()=>{dmWordImageRequest=null;return new Map()});
+ }
+ return dmWordImageRequest;
+}
+async function dmWordImageResolve(en,tr,size=512){
+ const key=dmWordImageKey(en,tr);if(!key)return null;
+ const code=(await dmWordImageLoad()).get(key);
+ return code?dmWordImageBase+(size===256?'256':'512')+'/'+code+'.webp':null;
+}
+async function dmWordImageDecorate(button,en,tr,mode){
+ const url=await dmWordImageResolve(en,tr);
+ if(!url||!button?.isConnected)return;
+ const img=document.createElement('img');img.alt='';img.decoding='async';img.loading='eager';
+ img.className='dm-pool-teach-image';
+ img.width=52;img.height=52;
+ img.style.cssText='display:block;object-fit:contain;max-width:100%;width:100%;height:100%;border-radius:8px;';
+ img.addEventListener('load',()=>{
+  if(!button.isConnected)return;
+  if(mode==='learning'){
+   const old=button.querySelector('.ml-art');
+   const wrap=document.createElement('span');wrap.className='ml-art ml-art-pilot dm-pool-teach-art';wrap.setAttribute('aria-hidden','true');wrap.append(img);
+   if(old)old.replaceWith(wrap);else button.prepend(wrap);
+  }else{
+   img.style.cssText='display:block;object-fit:contain;width:52px;height:52px;flex:0 0 52px;border-radius:9px;background:white;';
+   const label=button.querySelector('span:first-child');if(label)label.style.flex='1 1 0';
+   button.prepend(img);
+  }
+ },{once:true});
+ // Keep existing text/art untouched if the CDN image cannot be loaded.
+ img.src=url;
+}
+root.DMWordImagePool={key:dmWordImageKey,index:dmWordImageIndex,resolve:dmWordImageResolve,decorate:dmWordImageDecorate};
+
 const TYPES=['teach','hatirla','soyle','dinleSec','eslestir','eksik','lab','wordOrder','patternOrder','patternComplete','patternListen','patternTranslate'];
 const titles={teach:'Dinle ve öğren',hatirla:'İngilizcesini seç',soyle:'Dinle ve söyle',dinleSec:'Dinle ve seç',eslestir:'Anlamları eşleştir',eksik:'Eksik harfi tamamla',lab:'Türkçesini seç',wordOrder:'Kelimeleri sıraya koy',patternOrder:'İfadeyi sıraya koy',patternComplete:'Eksik kelimeyi tamamla',patternListen:'İfadeyi dinle ve seç',patternTranslate:'Anlamından bul',sesliFinal:'Kelime kartları'};
 let recognition=null,recognitionTimer=null;
@@ -60,7 +115,7 @@ function renderTask(s,area,c){
   // Audio only plays when a learner touches a word.
   put('<div class="dm-school-words" aria-label="Bu duraktaki kelimeler">'+words.map((word,n)=>
    '<button type="button" class="dm-school-word" data-rq-word="'+n+'" aria-label="'+esc(en(word))+' - '+esc(tr(word))+', dinle"><span><strong lang="en">'+esc(en(word))+'</strong><small>'+esc(tr(word))+'</small></span><span class="dm-school-word-listen">🔊 Dinle</span></button>').join('')+'</div>');
-  area.querySelectorAll('[data-rq-word]').forEach(b=>b.onclick=()=>{if(current())speak(en(words[Number(b.dataset.rqWord)]));});
+  area.querySelectorAll('[data-rq-word]').forEach(b=>{const word=words[Number(b.dataset.rqWord)];b.onclick=()=>{if(current())speak(en(word));};void root.DMWordImagePool.decorate(b,en(word),tr(word),'school');});
   let submitted=false;
   const go=button('Sorulara geç →',()=>{if(submitted)return;submitted=true;go.remove();area.querySelector('.dm-school-words')?.remove();answer(true,'Kelimeleri öğrendin',true);},'bz-btn mor dm-school-start-questions');
   area.append(go);
