@@ -12,14 +12,14 @@ begin
   s:=replace(s,'if not found then
    select count(*) into used', 'if not found then
    if p_kind=''energy'' then
-    select id,game into offer,purpose from dm_ad_rewards.premium_offers where student_id=p_actor and ad_id is null and expires_at>clock_timestamp() and (not explicit_play or id=p_request) order by created_at desc limit 1;
+    select id,game into offer,purpose from dm_ad_rewards.premium_offers where student_id=p_actor and ad_id is null and expires_at>clock_timestamp() and (not explicit_play or id=p_id) order by created_at desc limit 1;
     if explicit_play and offer is null then raise exception ''Geçersiz oyun reklamı teklifi''; end if;
    end if;
    select count(*) into used');
   s:=replace(s,'and kind=p_kind and reward_day=', 'and kind=p_kind and (case when offer is null then play_offer_id is null else play_offer_id in (select id from dm_ad_rewards.premium_offers where game=purpose) end) and reward_day=');
   s:=replace(s,'and not exists(select 1 from dm_ad_rewards.premium_offers where student_id=p_actor and ad_id is null and expires_at>clock_timestamp()) /* premium-ad-plays-v1 */','and offer is null');
   s:=replace(s,'insert into dm_ad_rewards.intents(student_id,kind,request_key) values(p_actor,p_kind,p_request)','insert into dm_ad_rewards.intents(student_id,kind,request_key,play_offer_id) values(p_actor,p_kind,p_request,offer)');
-  if position('explicit_play' in s)=0 or position('values(p_actor,p_kind,p_request,offer)' in s)=0 or position('offer is null' in s)=0 then raise exception 'Unexpected intent definition'; end if;
+  if position('select id,game into offer,purpose' in s)=0 or position('explicit_play' in s)=0 or position('values(p_actor,p_kind,p_request,offer)' in s)=0 or position('offer is null' in s)=0 then raise exception 'Unexpected intent definition'; end if;
   execute s;
  end if;
  s:=pg_get_functiondef('public.dm_ad_claim(uuid,text,text,integer,timestamptz)'::regprocedure);
@@ -27,6 +27,7 @@ begin
   s:=replace(s,'and kind=i.kind and reward_day=i.reward_day','and kind=i.kind and (case when i.play_offer_id is null then play_offer_id is null else play_offer_id in (select id from dm_ad_rewards.premium_offers where game=(select game from dm_ad_rewards.premium_offers where id=i.play_offer_id)) end) and reward_day=i.reward_day');
   s:=replace(s,'if i.kind=''energy'' then
   delta:=','if i.play_offer_id is not null then
+  if i.canceled_at is not null then return jsonb_build_object(''credited'',false,''reason'',''canceled''); end if;
   delta:=0;
  elsif i.kind=''energy'' then
   delta:=');
