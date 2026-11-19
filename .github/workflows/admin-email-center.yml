@@ -1,0 +1,21 @@
+name: Admin email center
+on:
+  pull_request:
+    paths:
+      - 'supabase/functions/diji-api/admin-email.mjs'
+      - 'supabase/functions/diji-api/index.ts'
+      - 'ingilizce/teacher-workspace.js'
+      - 'tests/admin-email.test.mjs'
+      - '.github/workflows/admin-email-center.yml'
+permissions:
+  contents: read
+jobs:
+  email:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node --check ingilizce/teacher-workspace.js
+      - run: node --test tests/admin-email.test.mjs
