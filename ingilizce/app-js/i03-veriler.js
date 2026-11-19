@@ -843,7 +843,7 @@ async function sohbetBitir() {
 function sohbetMik() {
  const o=sh;if(!o||o.kilit||o.finishing)return;
  if(yoSR){sohbetDurdur();return;}
- const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+ const SR=window.dmPapiSpeechRecognition||window.SpeechRecognition||window.webkitSpeechRecognition;
  const fallback=message=>{ysCallState('idle',message);yoToast(message);document.getElementById('yoSInput')?.focus();};
  if(!SR){fallback('Mikrofon bu cihazda desteklenmiyor. Cevabını yazabilirsin.');return;}
  ysSpeechStop();const step=o.i,r=new SR();yoSR=r;r.lang='en-US';r.interimResults=true;r.continuous=false;r.maxAlternatives=1;
