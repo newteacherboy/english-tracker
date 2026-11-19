@@ -887,3 +887,11 @@
 #dmStoryLesson .ml-linked-match .is-correct .ml-wave{color:#16a34a}
 @keyframes ml-wave-pulse{to{transform:scaleY(.4)}}
 @media(prefers-reduced-motion:reduce){#dmStoryLesson .is-playing .ml-wave i{animation:none}}
+
+/* Comfortable matching rows, including long Turkish phrases. */
+#dmStoryLesson .ml-task>.ml-matches.ml-linked-match{margin-top:clamp(20px,5vh,54px);margin-bottom:12px;align-items:stretch;row-gap:16px}
+#dmStoryLesson .ml-linked-match>div{display:grid;grid-auto-rows:1fr;gap:clamp(12px,2vh,22px);align-content:stretch}
+#dmStoryLesson .ml-linked-match button[data-left],#dmStoryLesson .ml-linked-match button[data-right]{box-sizing:border-box;height:auto;max-height:none;min-height:64px;padding:12px 10px;white-space:normal;overflow-wrap:anywhere;word-break:normal;line-height:1.3;text-align:center;font-size:clamp(13px,3.5vw,17px);flex:none}
+#dmStoryLesson .ml-linked-match button[data-right]{display:flex;align-items:center;justify-content:center}
+#dmStoryLesson .ml-linked-match .ml-match-count{grid-column:1/-1}
+@media(max-height:650px){#dmStoryLesson .ml-task>.ml-matches.ml-linked-match{margin-top:12px;row-gap:8px}#dmStoryLesson .ml-linked-match>div{gap:9px}#dmStoryLesson .ml-linked-match button[data-left],#dmStoryLesson .ml-linked-match button[data-right]{min-height:48px;padding:8px}}
