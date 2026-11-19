@@ -1,6 +1,12 @@
 // Web Speech-compatible facade for the existing games; permissions only on a mic tap.
 export function recognitionClass(plugin, EventTargetClass = EventTarget) {
-  let current = null;
+  let current = null, knownAvailable = false;
+  const availability = async () => {
+    if (knownAvailable) return true;
+    const { available } = await plugin.available();
+    if (available) knownAvailable = true;
+    return available;
+  };
   return class NativeRecognition extends EventTargetClass {
     lang = 'en-US'; continuous = false; interimResults = false; maxAlternatives = 3;
     active = false; cancelled = false; blocked = false;
@@ -12,9 +18,10 @@ export function recognitionClass(plugin, EventTargetClass = EventTarget) {
     }
     async run() {
       try {
-        const { available } = await plugin.available();
+        const available = await availability();
         if (!available) throw new Error('Konuşma tanıma bu cihazda bulunmuyor.');
         let p = await plugin.checkPermissions();
+        if (this.cancelled) return;
         if (p.speechRecognition !== 'granted') p = await plugin.requestPermissions();
         if (p.speechRecognition !== 'granted') throw new Error('Mikrofon izni verilmedi.');
         if (this.cancelled) return;
@@ -43,7 +50,7 @@ export function recognitionClass(plugin, EventTargetClass = EventTarget) {
       if (current === this) current = null;
       this.emit('end');
     }
-    stop() { this.cancelled = true; void plugin.stop().catch(() => {}).finally(() => this.finish()); }
+    stop() { if (!this.active || this.cancelled) return; this.cancelled = true; void plugin.stop().catch(() => {}).finally(() => this.finish()); }
     abort() { this.stop(); }
   };
 }
