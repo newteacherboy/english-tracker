@@ -321,9 +321,12 @@ async function submit(answer,clicked,{guided=false,alreadySpoken=false}={}){
   saveAnsweredSnapshot(answeredCursor);
   const nextCursor=session.cursor;
   const renderNext=()=>{if(ticket===epoch&&modal&&identity()===at&&session.cursor===nextCursor)render();};
-  // A combo already provides feedback time: advance in the same promise turn it ends.
-  if(r.comboGain>0&&!r.alreadyCompleted&&!r.replay){try{await comboRewardPromise;}catch{}renderNext();}
-  else setTimeout(renderNext,guided?160:180);
+  const nextActions=modal.querySelector('.ml-actions');
+  nextActions.innerHTML='<button type="button" class="ml-primary" disabled>Devam et →</button>';
+  const nextButton=nextActions.querySelector('button');
+  nextButton.onclick=()=>{nextButton.disabled=true;renderNext();};
+  if(r.comboGain>0&&!r.alreadyCompleted&&!r.replay){try{await comboRewardPromise;}catch{}}
+  if(ticket===epoch&&modal&&identity()===at){nextButton.disabled=false;scheduleLessonFit();}
  }catch(e){
   if(e.energyEmpty){busy=false;modal?.removeAttribute('aria-busy');wallet(e);render();feedback(e.message);window.DijiMeduPapiFeedback?.energy();}
   else await reconcileLesson(ticket,at,e);
@@ -423,8 +426,7 @@ function render(){if(!modal)return;accepted=false;if(session?.needsRecovery&&!se
     if(!correct)breakCombo(true);window.dmAnswerFeedback?.(correct);
     box.querySelector('.ml-review-note').textContent=correct?'✓ Doğru! Sonraki karta geçiliyor…':'Yanlış cevap. Doğrusu: '+card.en+' — '+card.tr;
     const advanceCard=()=>{if(ticket!==epoch||!modal||session.cursor!==atCursor)return;index++;locked=false;if(index<task.cards.length){actions.innerHTML='';paint();box.querySelector('[data-review-choice]')?.focus();}else{actions.innerHTML='';void submit(answers);}};
-    if(correct)setTimeout(advanceCard,650);
-    else{actions.innerHTML='<button type="button" class="ml-primary" data-review-continue>Devam Et →</button>';const next=actions.querySelector('[data-review-continue]');next.onclick=()=>{next.disabled=true;advanceCard();};next.focus({preventScroll:true});scheduleLessonFit();}
+    {actions.innerHTML='<button type="button" class="ml-primary" data-review-continue>Devam Et →</button>';const next=actions.querySelector('[data-review-continue]');next.onclick=()=>{next.disabled=true;advanceCard();};next.focus({preventScroll:true});scheduleLessonFit();}
 
    };
   };paint();return;
@@ -449,7 +451,7 @@ function render(){if(!modal)return;accepted=false;if(session?.needsRecovery&&!se
   const svg=wrap.querySelector('svg'),count=wrap.querySelector('.ml-match-count');
   function fitTranslations(){wrap.querySelectorAll('[data-right]').forEach(b=>{b.style.fontSize='';let size=parseFloat(getComputedStyle(b).fontSize);while(b.scrollHeight>b.clientHeight&&size>10){size-=.5;b.style.fontSize=size+'px';}});}
   fitTranslations();
-  actions.innerHTML='<button type="button" class="ml-primary" disabled>Devam et →</button>';
+  actions.innerHTML='<button type="button" class="ml-primary" disabled>Kontrol et →</button>';
   const next=actions.querySelector('button'),left=i=>wrap.querySelector('[data-left="'+i+'"]'),right=i=>wrap.querySelector('[data-right="'+i+'"]');
   function draw(){
    if(!wrap.isConnected)return;
@@ -464,7 +466,7 @@ function render(){if(!modal)return;accepted=false;if(session?.needsRecovery&&!se
   wrap.querySelectorAll('[data-right]').forEach(b=>b.onclick=()=>{if(busy||accepted||selected===null)return;const i=+b.dataset.right;if(done.has(i))return;clearTimeout(wrongTimer);wrong=null;if(i!==selected){wrong=[selected,i];breakCombo();window.dmAnswerFeedback?.(false);left(selected).classList.remove('is-selected');selected=null;draw();wrongTimer=setTimeout(()=>{wrong=null;draw();},650);return;}done.add(i);matched.push(pairs[i]);left(i).classList.remove('is-selected');left(i).classList.add('is-correct');b.classList.add('is-correct');b.disabled=true;selected=null;window.dmAnswerFeedback?.(true,'match');draw();});
   next.onclick=()=>{if(done.size===pairs.length)submit(matched);};draw();
  }
- if(task.kind==='order'){let parts=[];area.insertAdjacentHTML('beforeend','<div class="ml-sentence" aria-live="polite">Cümlen burada oluşacak.</div><div class="ml-tokens">'+optionOrder('tokens',task.tokens).map(i=>({s:task.tokens[i],i})).map(x=>'<button type="button" data-token="'+x.i+'">'+esc(x.s)+'</button>').join('')+'</div>');const sentence=area.querySelector('.ml-sentence');const sync=()=>{sentence.innerHTML=parts.length?parts.map((token,slot)=>{const correct=core.norm(task.tokens[token])===core.norm(task.tokens[slot]);return '<button type="button" class="ml-sentence-token '+(correct?'ml-live-correct':'ml-live-wrong')+'" data-placed-token="'+slot+'" aria-label="'+esc((correct?'Doğru yerde: ':'Yanlış yerde: ')+task.tokens[token]+'. Geri almak için dokun')+'">'+esc(task.tokens[token])+'</button>';}).join(' '):'Cümlen burada oluşacak.';area.querySelectorAll('[data-token]').forEach(b=>b.disabled=parts.includes(+b.dataset.token));sentence.querySelectorAll('[data-placed-token]').forEach(b=>b.onclick=()=>{if(busy||accepted)return;if(task.join!=='')speech(task.tokens[parts[+b.dataset.placedToken]]);parts.splice(+b.dataset.placedToken,1);sync();});};area.querySelectorAll('[data-token]').forEach(b=>b.onclick=()=>{if(busy||accepted||parts.includes(+b.dataset.token))return;parts.push(+b.dataset.token);const good=core.norm(task.tokens[parts.at(-1)])===core.norm(task.tokens[parts.length-1]);if(!good)breakCombo();sync();if(task.join!=='')speech(task.tokens[parts.at(-1)]);else window.dmAnswerFeedback?.(good,'letter');});actions.innerHTML='<button type="button" data-clear>Yeniden sırala</button><button type="button" class="ml-primary" data-check>Kontrol et</button>';actions.querySelector('[data-clear]').onclick=render;actions.querySelector('[data-check]').onclick=()=>submit(parts.map(i=>task.tokens[i]).join(task.join??' '));}
+ if(task.kind==='order'){let parts=[];area.insertAdjacentHTML('beforeend','<div class="ml-sentence" aria-live="polite">Cümlen burada oluşacak.</div><div class="ml-tokens">'+optionOrder('tokens',task.tokens).map(i=>({s:task.tokens[i],i})).map(x=>'<button type="button" data-token="'+x.i+'">'+esc(x.s)+'</button>').join('')+'</div>');const sentence=area.querySelector('.ml-sentence');const sync=()=>{sentence.innerHTML=parts.length?parts.map((token,slot)=>{const correct=core.norm(task.tokens[token])===core.norm(task.tokens[slot]);return '<button type="button" class="ml-sentence-token '+(correct?'ml-live-correct':'ml-live-wrong')+'" data-placed-token="'+slot+'" aria-label="'+esc((correct?'Doğru yerde: ':'Yanlış yerde: ')+task.tokens[token]+'. Geri almak için dokun')+'">'+esc(task.tokens[token])+'</button>';}).join(' '):'Cümlen burada oluşacak.';area.querySelectorAll('[data-token]').forEach(b=>b.disabled=parts.includes(+b.dataset.token));const check=actions.querySelector('[data-check]');if(check)check.disabled=parts.length!==task.tokens.length;sentence.querySelectorAll('[data-placed-token]').forEach(b=>b.onclick=()=>{if(busy||accepted)return;if(task.join!=='')speech(task.tokens[parts[+b.dataset.placedToken]]);parts.splice(+b.dataset.placedToken,1);sync();});};area.querySelectorAll('[data-token]').forEach(b=>b.onclick=()=>{if(busy||accepted||parts.includes(+b.dataset.token))return;parts.push(+b.dataset.token);const good=core.norm(task.tokens[parts.at(-1)])===core.norm(task.tokens[parts.length-1]);if(!good)breakCombo();sync();if(task.join!=='')speech(task.tokens[parts.at(-1)]);else window.dmAnswerFeedback?.(good,'letter');});actions.innerHTML='<button type="button" data-clear>Yeniden sırala</button><button type="button" class="ml-primary" data-check disabled>Kontrol et</button>';actions.querySelector('[data-clear]').onclick=render;actions.querySelector('[data-check]').onclick=()=>{if(parts.length===task.tokens.length)submit(parts.map(i=>task.tokens[i]).join(task.join??' '));};}
  reference(area,[...chapter.cards,...chapter.examples,...(chapter.reference||[])].filter((c,i,a)=>a.findIndex(x=>x.en===c.en)===i));
 }
 function finish(){
