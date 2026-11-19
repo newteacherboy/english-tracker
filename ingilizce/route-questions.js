@@ -12,37 +12,41 @@ function dmWordImageKey(en,tr){
  const e=dmWordImageText(en),t=dmWordImageText(tr);
  return e&&t?JSON.stringify([e,t]):null;
 }
+const dmWordImageRelaxedKey=(en,tr)=>dmWordImageKey(dmWordImageText(en).replace(/[.!?…]+$/u,'').trim(),dmWordImageText(tr).replace(/[.!?…]+$/u,'').trim());
 function dmWordImageIndex(manifest){
- const index=new Map(),ambiguous=new Set();
+ const index=new Map(),ambiguous=new Set(),relaxed=new Map(),ambiguousRelaxed=new Set();
+ index.relaxed=relaxed;
  if(!manifest||typeof manifest!=='object'||Array.isArray(manifest))return index;
+ const add=(map,blocked,key,code)=>{if(!key||blocked.has(key))return;if(map.has(key)){map.delete(key);blocked.add(key);return;}map.set(key,code);};
  for(const [code,entry] of Object.entries(manifest)){
   if(!/^\d{4}$/.test(code)||!entry||entry.path!=='512/'+code+'.webp'||entry.small_path!=='256/'+code+'.webp')continue;
-  const key=dmWordImageKey(entry.en,entry.tr);if(!key||ambiguous.has(key))continue;
-  if(index.has(key)){index.delete(key);ambiguous.add(key);continue;}
-  index.set(key,code);
+  add(index,ambiguous,dmWordImageKey(entry.en,entry.tr),code);
+  add(relaxed,ambiguousRelaxed,dmWordImageRelaxedKey(entry.en,entry.tr),code);
  }
  return index;
 }
 let dmWordImageRequest;
 function dmWordImageLoad(){
  if(!dmWordImageRequest){
-  dmWordImageRequest=Promise.resolve().then(()=>root.fetch(dmWordImageBase+'manifest.json',{cache:'default',credentials:'omit'})).then(r=>{if(!r.ok)throw Error('manifest');return r.json()}).then(dmWordImageIndex).catch(()=>{dmWordImageRequest=null;return new Map()});
+  dmWordImageRequest=Promise.resolve().then(()=>root.fetch('parkur-word-pool-v1.json',{cache:'default',credentials:'same-origin'})).then(r=>{if(!r.ok)throw Error('manifest');return r.json()}).then(dmWordImageIndex).catch(()=>{dmWordImageRequest=null;return new Map()});
  }
  return dmWordImageRequest;
 }
 async function dmWordImageResolve(en,tr,size=512){
  const key=dmWordImageKey(en,tr);if(!key)return null;
- const code=(await dmWordImageLoad()).get(key);
+ const index=await dmWordImageLoad();
+ const code=index.get(key)||index.relaxed?.get(dmWordImageRelaxedKey(en,tr));
  return code?dmWordImageBase+(size===256?'256':'512')+'/'+code+'.webp':null;
 }
 async function dmWordImageDecorate(button,en,tr,mode){
  const url=await dmWordImageResolve(en,tr);
  if(!url||!button?.isConnected)return;
+ if(button.querySelector('.dm-pool-teach-image'))return;
  const img=document.createElement('img');img.alt='';img.decoding='async';img.loading='eager';
  img.className='dm-pool-teach-image';
  img.width=52;img.height=52;
  img.style.cssText='display:block;object-fit:contain;max-width:100%;width:100%;height:100%;border-radius:8px;';
- img.addEventListener('load',()=>{
+ const attach=()=>{
   if(!button.isConnected)return;
   if(mode==='learning'){
    const old=button.querySelector('.ml-art');
@@ -53,7 +57,9 @@ async function dmWordImageDecorate(button,en,tr,mode){
    const label=button.querySelector('span:first-child');if(label){label.style.flex='1 1 0';label.style.minWidth='0';label.style.overflowWrap='anywhere';}
    img.style.order='-1';button.append(img);
   }
- },{once:true});
+ };
+ img.addEventListener('load',attach,{once:true});
+ img.addEventListener('error',()=>{if(img.src.includes('/512/'))img.src=url.replace('/512/','/256/');},{once:true});
  // Keep existing text/art untouched if the CDN image cannot be loaded.
  img.src=url;
 }
