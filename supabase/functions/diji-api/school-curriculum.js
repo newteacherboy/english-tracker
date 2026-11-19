@@ -33,6 +33,9 @@
    {kind:'letters',label:'Harfleri tamamla',prompt:'Eksik harfleri tamamla.',support:phrase.tr,en:phrase.en,tr:phrase.tr,missing,tokens,answer:phrase.en,explanation:phrase.en+' — '+phrase.tr},
    {kind:'review',label:'Son tekrar',prompt:'Bu bölümde öğrendiklerin',cards:review,explanation:'Bölümün kelimelerini tekrar ettin.'}
   ];
+  // Sixth graded question; teaching cards do not count as a question.
+  const matchIndex=tasks.findIndex(t=>t.kind==='match');
+  if(matchIndex>=0){const [match]=tasks.splice(matchIndex,1);tasks.splice(7,0,match);}
   return tasks.map(t=>({...t,schoolVersion:9}));
  }
  function grade(task,answer){
