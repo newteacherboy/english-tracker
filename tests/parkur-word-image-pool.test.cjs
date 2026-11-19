@@ -31,3 +31,5 @@ test('Punctuation fallback rejects ambiguous bilingual candidates',async()=>{
  const p=setup(async()=>({ok:true,json:async()=>({'0001':entry('0001','Please.','Lütfen.'),'0002':entry('0002','Please!','Lütfen!')})}));
  assert.equal(await p.resolve('please','lütfen'),null);
 });
+
+test('Reviewed alternate translations do not leak across word senses',async()=>{const m=JSON.parse(fs.readFileSync(path.join(__dirname,'../ingilizce/parkur-word-pool-v1.json'),'utf8'));const p=setup(async()=>({ok:true,json:async()=>m}));for(const [en,tr,id] of [['classroom','sınıf','0041'],['socks','çoraplar','0196'],['bye','hoşça kal','0001'],['dislike','hoşlanmamak','0266']])assert.ok((await p.resolve(en,tr)).endsWith(id+'.webp'));for(const [en,tr] of [['orange','turuncu'],['book','rezervasyon yapmak'],['cool','serin'],['medicine','tıp']])assert.equal(await p.resolve(en,tr),null);});
