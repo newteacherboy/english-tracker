@@ -436,6 +436,8 @@ function render(){if(!modal)return;accepted=false;if(session?.needsRecovery&&!se
   wrap.innerHTML='<div>'+optionOrder('match-left',pairs).map(i=>'<button type="button" data-left="'+i+'" lang="en" aria-label="Listen '+(i+1)+'"><span class="ml-wave" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span></button>').join('')+'</div><div>'+optionOrder('match-right',pairs).map(i=>'<button type="button" data-right="'+i+'" lang="tr">'+esc(pairs[i].tr)+'</button>').join('')+'</div><svg class="ml-match-lines" aria-hidden="true"></svg><p class="ml-match-count" role="status"></p>';
   area.append(wrap);wrap.style.setProperty('position','relative','important');wrap.style.setProperty('display','grid','important');wrap.style.setProperty('grid-template-columns','minmax(0,1fr) minmax(0,1fr)','important');wrap.style.setProperty('column-gap','clamp(44px,12vw,100px)','important');
   const svg=wrap.querySelector('svg'),count=wrap.querySelector('.ml-match-count');
+  function fitTranslations(){wrap.querySelectorAll('[data-right]').forEach(b=>{b.style.fontSize='';let size=parseFloat(getComputedStyle(b).fontSize);while(b.scrollHeight>b.clientHeight&&size>10){size-=.5;b.style.fontSize=size+'px';}});}
+  fitTranslations();
   actions.innerHTML='<button type="button" class="ml-primary" disabled>Devam et →</button>';
   const next=actions.querySelector('button'),left=i=>wrap.querySelector('[data-left="'+i+'"]'),right=i=>wrap.querySelector('[data-right="'+i+'"]');
   function draw(){
@@ -445,7 +447,7 @@ function render(){if(!modal)return;accepted=false;if(session?.needsRecovery&&!se
    done.forEach(i=>line(i,i,false));if(wrong)line(wrong[0],wrong[1],true);
    count.textContent=done.size+' / '+pairs.length+' eşleştirme tamamlandı';next.disabled=done.size!==pairs.length;next.style.opacity=next.disabled?'.45':'';
   }
-  const observer=typeof ResizeObserver==='function'?new ResizeObserver(draw):null;observer?.observe(wrap);
+  const observer=typeof ResizeObserver==='function'?new ResizeObserver(()=>{fitTranslations();draw();}):null;observer?.observe(wrap);
   const cleanup=new MutationObserver(()=>{if(!wrap.isConnected){observer?.disconnect();cleanup.disconnect();clearTimeout(wrongTimer);}});cleanup.observe(modal,{childList:true,subtree:true});
   wrap.querySelectorAll('[data-left]').forEach(b=>b.onclick=()=>{if(busy||accepted)return;const i=+b.dataset.left;wrap.querySelectorAll('[data-left]').forEach(x=>x.classList.remove('is-playing'));b.classList.add('is-playing');speech(pairs[i].en,'en-US',()=>b.classList.remove('is-playing'));if(done.has(i))return;selected=i;wrap.querySelectorAll('[data-left]').forEach(x=>x.classList.toggle('is-selected',x===b));});
   wrap.querySelectorAll('[data-right]').forEach(b=>b.onclick=()=>{if(busy||accepted||selected===null)return;const i=+b.dataset.right;if(done.has(i))return;clearTimeout(wrongTimer);wrong=null;if(i!==selected){wrong=[selected,i];breakCombo();window.dmAnswerFeedback?.(false);left(selected).classList.remove('is-selected');selected=null;draw();wrongTimer=setTimeout(()=>{wrong=null;draw();},650);return;}done.add(i);matched.push(pairs[i]);left(i).classList.remove('is-selected');left(i).classList.add('is-correct');b.classList.add('is-correct');b.disabled=true;selected=null;window.dmAnswerFeedback?.(true,'match');draw();});
