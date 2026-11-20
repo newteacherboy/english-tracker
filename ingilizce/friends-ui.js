@@ -86,6 +86,16 @@
     }catch(e){duelLeadersError=true;duelLeadersAt=Date.now();console.warn('Düello ligi yüklenemedi',e);}
     finally{duelLeadersBusy=false;}
   }
+  window.dmDuelRankingOpen=function(){
+    const old=document.getElementById('dmDuelRanking');old?.remove();
+    const layer=document.createElement('div');layer.id='dmDuelRanking';layer.className='fr-duel-ranking-layer';
+    layer.innerHTML='<section class="fr-duel-ranking-panel" role="dialog" aria-modal="true" aria-label="Düello Şampiyonları"><header><h2>⚔️ Düello Şampiyonları</h2><button type="button" aria-label="Kapat">×</button></header><div class="fr-duel-ranking-content"></div></section>';
+    layer.onclick=e=>{if(e.target===layer||e.target.closest("header button"))layer.remove();};
+    const box=layer.querySelector(".fr-duel-ranking-content");
+    const list=duelLeaders.map((p,i)=>'<div class="fr-duel-ranking-row"><b>'+(i+1)+'. '+esc(p.player_name)+'</b><span>'+xp(p.wins)+' G · '+xp(p.losses)+' M</span><strong>'+xp(p.duel_xp)+' XP</strong></div>').join('');
+    box.innerHTML=list||'<p>Henüz tamamlanmış düello yok.</p>';
+    document.body.append(layer);layer.querySelector("header button").focus();
+  };
   function duelLeagueHtml(){
     const podium=[1,0,2].map(index=>{
       const p=duelLeaders[index];if(!p)return '<span class="fr-duel-empty-slot" aria-hidden="true"></span>';
