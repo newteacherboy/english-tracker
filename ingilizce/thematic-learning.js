@@ -235,7 +235,9 @@ async function reconcileLesson(ticket,at,error){
  }catch{
   if(ticket!==epoch||!modal||identity()!==at)return;
   busy=false;modal.removeAttribute('aria-busy');render();
-  feedback('Bağlantı kurulamadı. İlerlemen sunucuda saklanıyor; aynı bölümden tekrar devam edebilirsin. '+error.message);
+  feedback('Bağlantı kurulamadı. Sorunu kapatmadan tekrar deneyebilirsin.');
+  const actions=modal.querySelector('.ml-actions');
+  if(actions){const retry=document.createElement('button');retry.type='button';retry.className='ml-primary';retry.textContent='Bağlantıyı yeniden kur';retry.onclick=()=>{if(busy||ticket!==epoch||identity()!==at)return;busy=true;retry.disabled=true;modal.setAttribute('aria-busy','true');void reconcileLesson(ticket,at,error);};actions.appendChild(retry);}
  }
 }
 function correctResponse(task){
