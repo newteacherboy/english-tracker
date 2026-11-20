@@ -1,6 +1,12 @@
 // Web Speech-compatible facade for the existing games; permissions only on a mic tap.
 export function recognitionClass(plugin, EventTargetClass = EventTarget) {
-  let current = null;
+  let current = null, knownAvailable = false;
+  const availability = async () => {
+    if (knownAvailable) return true;
+    const { available } = await plugin.available();
+    if (available) knownAvailable = true;
+    return available;
+  };
   return class NativeRecognition extends EventTargetClass {
     lang = 'en-US'; continuous = false; interimResults = false; maxAlternatives = 3;
     active = false; cancelled = false; blocked = false;
@@ -12,9 +18,10 @@ export function recognitionClass(plugin, EventTargetClass = EventTarget) {
     }
     async run() {
       try {
-        const { available } = await plugin.available();
+        const available = await availability();
         if (!available) throw new Error('Konuşma tanıma bu cihazda bulunmuyor.');
         let p = await plugin.checkPermissions();
+        if (this.cancelled) return;
         if (p.speechRecognition !== 'granted') p = await plugin.requestPermissions();
         if (p.speechRecognition !== 'granted') throw new Error('Mikrofon izni verilmedi.');
         if (this.cancelled) return;
@@ -43,7 +50,7 @@ export function recognitionClass(plugin, EventTargetClass = EventTarget) {
       if (current === this) current = null;
       this.emit('end');
     }
-    stop() { this.cancelled = true; void plugin.stop().catch(() => {}).finally(() => this.finish()); }
+    stop() { if (!this.active || this.cancelled) return; this.cancelled = true; void plugin.stop().catch(() => {}).finally(() => this.finish()); }
     abort() { this.stop(); }
   };
 }
@@ -77,4 +84,54 @@ export function installSpeech(win, recognition, tts) {
     voices = (result.voices || []).map(v => ({ ...v, name: v.name, lang: v.lang, localService: true, default: false, voiceURI: v.voiceURI || v.name }));
     synth.onvoiceschanged?.(new Event('voiceschanged'));
   }).catch(() => {});
+}
+
+ // Dedicated Papi bridge: events carry a session ID so an old callback cannot grade a new turn.
+export function papiRecognitionClass(plugin) {
+  let sequence = 0, current = null;
+  return class PapiRecognition {
+    lang = 'en-US'; interimResults = true; active = false;
+    start() {
+      if (current) throw Error('Mikrofon zaten kullanılıyor.');
+      this.active = true; current = this;
+      this.session = Date.now() + '-' + (++sequence);
+      void this.run();
+    }
+    async run() {
+      try {
+        const handle = await plugin.addListener('speech', e => {
+          if (!this.active || e.session !== this.session) return;
+          if (e.kind === 'ready') this.onstart?.();
+          else if (e.kind === 'speechstart') this.onspeechstart?.();
+          else if (e.kind === 'partial' || e.kind === 'final') {
+            const result = [{ transcript: e.value, confidence: 0 }];
+            result.isFinal = e.kind === 'final';
+            this.onresult?.({ results: [result], resultIndex: 0 });
+            if (result.isFinal) this.finish();
+          } else if (e.kind === 'error') {
+            this.onerror?.({ error: e.value }); this.finish();
+          }
+        });
+        if (!this.active) { await handle.remove(); return; }
+        this.handle = handle;
+        await plugin.start({ session: this.session, language: this.lang });
+        if (!this.active) await plugin.abort({ session: this.session });
+      } catch (error) {
+        if (this.active) { this.onerror?.({ error: error.code || 'audio-capture' }); this.finish(); }
+      }
+    }
+    finish() {
+      if (!this.active) return;
+      this.active = false;
+      if (current === this) current = null;
+      if (this.handle) void Promise.resolve(this.handle.remove()).catch(() => {});
+      this.onend?.();
+    }
+    abort() {
+      if (!this.active) return;
+      this.finish();
+      void plugin.abort({ session: this.session }).catch(() => {});
+    }
+    stop() { this.abort(); }
+  };
 }

@@ -10,7 +10,7 @@ import { SpeechRecognition } from '@capacitor-community/speech-recognition';
 import { TextToSpeech } from '@capacitor-community/text-to-speech';
 import { PushNotifications } from '@capacitor/push-notifications';
 import { AdMob, RewardAdPluginEvents, InterstitialAdPluginEvents, BannerAdPluginEvents } from '@capacitor-community/admob';
-import { installSpeech } from './speech.js';
+import { installSpeech, papiRecognitionClass } from './speech.js';
 import { createTestAds, teacherMode } from './ads.js';
 import { createPlacements } from './ad-placements.js';
 import { createAdRemote } from './ad-remote.js';
@@ -36,7 +36,7 @@ if (!(Capacitor.isNativePlatform() && (platform === 'android' || (ios && Capacit
   window.dmAndroidStudentName = () => { try { return typeof aktifOgrenciAdi === 'undefined' ? '' : String(aktifOgrenciAdi || ''); } catch { return ''; } };
   window.dmAndroidGoldBalance = () => { try { return typeof yo !== 'undefined' && yo ? Number(yo.altin) : NaN; } catch { return NaN; } };
   // iOS'ta titreşim, ağ ve konuşma web tarafındaki native-app.js ile çalışır.
-  if (!ios) { window.dmNativeServices = { App, Browser, Haptics, Network }; installSpeech(window, SpeechRecognition, TextToSpeech); }
+  if (!ios) { window.dmNativeServices = { App, Browser, Haptics, Network }; installSpeech(window, SpeechRecognition, TextToSpeech); if (Capacitor.isPluginAvailable('DmPapiSpeech')) window.dmPapiSpeechRecognition = papiRecognitionClass(registerPlugin('DmPapiSpeech')); }
   const ads = createTestAds(AdMob, window, RewardAdPluginEvents,{production:live,units,testUnits:ios?adConfig.ios.testUnits:null,rewardClient:createRewardClient(window,adConfig.ssvCallbackUrl.replace(/\/ssv$/, ''))});
   window.dmAndroidAds = ads;
   const adRemote = createAdRemote({ win: window, endpoint: adConfig.ssvCallbackUrl.replace(/\/ssv$/, '') });

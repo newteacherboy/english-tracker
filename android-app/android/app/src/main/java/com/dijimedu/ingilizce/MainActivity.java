@@ -8,6 +8,7 @@ public class MainActivity extends BridgeActivity {
     public void onCreate(Bundle savedInstanceState) {
         registerPlugin(DmBillingPlugin.class);
         registerPlugin(DmRuntimePlugin.class);
+        registerPlugin(DmPapiSpeechPlugin.class);
         super.onCreate(savedInstanceState);
     }
 }
