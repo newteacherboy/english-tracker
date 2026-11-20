@@ -811,3 +811,13 @@ html[data-dm-theme="night"] .fr-people-close,html[data-dm-theme="night"] .fr-peo
 
 
 html[data-dm-theme="night"] .fr-people-name small{color:#b9c9e0}
+
+/* Compact two-league friends dashboard */
+.fr-invite-top{border:1px solid #6adf92;border-radius:13px;padding:8px 10px;background:linear-gradient(135deg,#d4ffde,#85e9ad);color:#126b37;font:900 12px/1.1 system-ui;white-space:nowrap;box-shadow:0 3px 8px #21b95a30;cursor:pointer}
+.fr-duel-league{margin:8px 10px;padding:12px;border:1px solid #d6c2ff;border-radius:19px;background:linear-gradient(145deg,#f5efff,#e9e0ff);color:#4b288a}
+.fr-duel-league header{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.fr-duel-league h3{font-size:17px;margin:0;font-weight:900}
+.fr-duel-league small{font-size:11px;white-space:nowrap}
+.fr-duel-league-table{font-size:12px;margin-top:10px;padding:12px;background:#ffffffb5;border-radius:12px}
+.fr-home-view .fr-league-board{margin-bottom:8px}
+@media(max-width:370px){.fr-duel-league{padding:9px;margin:6px}.fr-duel-league h3{font-size:15px}.fr-invite-top{font-size:11px;padding:7px}}
