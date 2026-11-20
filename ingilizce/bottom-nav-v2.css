@@ -49,22 +49,12 @@ html[data-dm-theme="night"] #bottomNavMobile .dm-nv2-own-avatar{--t:#25466e;--te
 #bottomNavMobile#bottomNavMobile.dm-nv2-on .bn-item{flex:1 1 0!important;min-width:0!important}
 #bottomNavMobile .dm-nv2-oyna-disc{left:-27px;top:-39px;width:54px;height:54px;border-width:3px;background:linear-gradient(145deg,#a176ff,#602cda 65%,#4d20a8)}
 #bottomNavMobile .dm-nv2-spark{display:none}
-.dm-profile-shop-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0}
-.dm-profile-shop-row button,.dm-duel-hero button{border:0;border-radius:16px;padding:12px;font:inherit;font-weight:800;background:#f3d9ff;color:#49218d}
-.dm-profile-shop-row button:first-child{background:#ffdcea;color:#85265b}
-.dm-duel-home{padding:18px!important}
-.dm-duel-hero{display:grid;gap:12px;background:linear-gradient(145deg,#7949f0,#45249f);color:white;padding:20px;border-radius:24px}
-.dm-duel-hero strong{font-size:24px}
-.dm-duel-hero button{background:#ffd12a;color:#362300}
-@media(max-width:360px){#bottomNavMobile .dm-nv2-oyna-disc{left:-23px;top:-34px;width:46px;height:46px}}
+#bottomNavMobile .dm-nv2-own-avatar{overflow:hidden;border:2px solid var(--dm-tier-ring,#bac7d9);box-shadow:0 2px 0 var(--dm-tier-base,#8294aa)}
+#bottomNavMobile .dm-nv2-tier-pro{--dm-tier-ring:#5898ff;--dm-tier-base:#2959ac}
+#bottomNavMobile .dm-nv2-tier-premium_pro{--dm-tier-ring:#ffd54d;--dm-tier-base:#b87920}
+#bottomNavMobile [data-ekran="tab-duel-home"] .dm-nv2-oyna-disc{border-color:#ffe189;box-shadow:0 0 3px 2px #fff5c2,0 0 15px #ffcf52,0 6px 0 #4e25a8}
 
+@media(max-width:360px){#bottomNavMobile .dm-nv2-oyna-disc{left:-23px;top:-34px;width:46px;height:46px}}
 #bottomNavMobile.dm-nv2-on{display:flex!important;flex-wrap:nowrap!important;overflow:visible!important}
 #bottomNavMobile.dm-nv2-on .bn-item[data-ekran]{width:20%!important;max-width:20%!important;flex:1 1 20%!important;overflow:visible!important;white-space:nowrap!important;padding-inline:0!important}
 #bottomNavMobile.dm-nv2-on .bn-label{font-size:clamp(9px,2.7vw,12px)!important;overflow:visible!important}
-#bottomNavMobile .dm-nv2-own-avatar.dm-nv2-tier-pro{box-shadow:0 0 0 2px #4297ff,0 3px 0 #2a5fae}
-#bottomNavMobile .dm-nv2-own-avatar.dm-nv2-tier-premium_pro{box-shadow:0 0 0 2px #ffd443,0 3px 0 #b87516}
-#bottomNavMobile .dm-nv2-tier-tag{position:absolute;right:-8px;bottom:-5px;padding:2px 3px;background:#1747ac;color:white;border-radius:5px;font:900 8px/1 system-ui}
-#bottomNavMobile .dm-nv2-tier-premium_pro .dm-nv2-tier-tag{background:#a46b09;color:#fff8d5}
-.dm-duel-personal{padding:12px;margin-top:12px;border-radius:15px;background:#f1ebff;color:#482483;font-weight:800;text-align:center}
-.dm-duel-hero button:last-child{background:#f5eaff;color:#4b288a}
-@media(max-height:670px){.dm-duel-home{max-height:calc(100dvh - 32px);overflow:auto}.dm-duel-hero{gap:6px;padding:12px}.dm-duel-hero button{padding:8px}}

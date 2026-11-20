@@ -60,6 +60,10 @@ const feed=['Elif','Ege','Zeynep','Cemre','Fixture'].map((ogr,i)=>({k:'event'+i,
     window.dmPapiNotices={blocked:()=>true,defer:()=>true};
     window.reportedToasts=[];window.yoToast=m=>reportedToasts.push(m);
     window.dmFeatureEnabled=()=>true;
+    window.supabaseClient={rpc:async name=>({
+      data:name==='dm_duel_champions_v1'?['Fixture','Elif','Ege'].map((player_name,i)=>({player_name,wins:10-i,losses:2,duel_xp:200-i,membership_tier:'free'})):[],
+      error:null
+    })};
     window.genelEnerjiKalan=30;window.dmPreviewFixtures=true;
     document.getElementById('panel-alani').style.display='block';
     document.getElementById('login-container').style.display='none';
@@ -73,6 +77,22 @@ const feed=['Elif','Ege','Zeynep','Cemre','Fixture'].map((ogr,i)=>({k:'event'+i,
   await toggle.waitFor();await page.waitForSelector('.fr-invite-top');
   assert.equal(await page.locator('.fr-unified-actions .fr-notifications-top').count(),0,'old duplicate bell must not exist');
   const [a,b]=await Promise.all([page.locator('.fr-invite-top').boundingBox(),toggle.boundingBox()]);assert(a.x+a.width<=b.x,'invite left of friends list');assert(b.width>=36&&b.height>=38);
+  await page.waitForSelector('.fr-duel-champion');
+  await page.evaluate(()=>{
+    const podium=document.querySelector('.fr-league-board');
+    if(!document.querySelector('.zk-banner'))podium.insertAdjacentHTML('beforebegin',
+      '<button class="zk-banner"><svg class="zk-papi" viewBox="0 0 10 10"><circle cx="5" cy="5" r="5"/></svg><span><b>Öğretmenimle Zirveye!</b><small>Sıran: 4 · 824 XP</small><span class="zk-chip gold">20 gün kaldı</span></span><span class="zk-go">›</span></button>');
+  });
+  for(const [width,height] of [[320,568],[375,667],[390,844],[844,390]]){
+    await page.setViewportSize({width,height});
+    await page.waitForFunction(()=>{
+      const screen=document.getElementById('maEkran'),dock=document.getElementById('bottomNavMobile');
+      const edge=Math.min(screen.getBoundingClientRect().bottom,dock.getBoundingClientRect().top);
+      const podiums=[...screen.querySelectorAll('.fr-league-board')];
+      return podiums.length===2&&podiums.every(p=>p.getBoundingClientRect().bottom<=edge+1)&&screen.scrollHeight-screen.clientHeight<=1;
+    });
+  }
+  await page.setViewportSize({width:390,height:844});
   await page.screenshot({path:'/tmp/friends-dropdown-qa/closed.png'});
   for(const width of [320,390,768])for(const theme of ['day','night']){
     await page.setViewportSize({width,height:844});await page.evaluate(theme=>document.documentElement.dataset.dmTheme=theme,theme);
