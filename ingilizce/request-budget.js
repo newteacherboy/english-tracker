@@ -164,6 +164,7 @@
   function plainBody(input){try{if(typeof input!=='string'||!input.startsWith(endpoint))return false;return plainBodyFunctions.has(new URL(input).pathname.split('/').pop());}catch{return false;}}
   // A cosmetic notice based exclusively on authenticated server league XP.
   let leagueTimer=0,leagueBusy=false,leagueQueued=false,leagueSeen='';
+  let leagueCheckedAt=0,leagueCheckedActor='';
   function leagueDay(){return new Intl.DateTimeFormat('sv-SE',{timeZone:'Europe/Istanbul',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());}
   function leagueNotice(d){
     if(document.hidden||!document.body||window.dmTeacherPortalMode||d.day!==leagueDay())return;
@@ -182,6 +183,7 @@
   }
   function scheduleLeague(){
     if(window.dmTeacherPortalMode||document.hidden||!actor().split('|')[0])return;
+    if(leagueCheckedActor===actor()&&Date.now()-leagueCheckedAt<60000)return;
     clearTimeout(leagueTimer);leagueTimer=setTimeout(checkLeague,1200);
   }
   async function checkLeague(){
@@ -189,7 +191,7 @@
     const id=actor(),token=id.split('|')[0];if(!token||document.hidden||window.dmTeacherPortalMode)return;
     let key='';try{key=typeof SUPABASE_ANON_KEY!=='undefined'?SUPABASE_ANON_KEY:'';}catch{}
     if(!key)return;
-    leagueBusy=true;
+    leagueBusy=true;leagueCheckedActor=id;leagueCheckedAt=Date.now();
     try{
       const r=await native(endpoint.replace('/functions/v1/','/rest/v1/rpc/')+'dm_daily_league_notice',{method:'POST',headers:{'Content-Type':'application/json',apikey:key},body:JSON.stringify({p_t:token})});
       if(r.ok&&id===actor()){const d=await r.json();if(d?.reached===true&&typeof d.account==='string'&&id===actor())leagueNotice(d);}
