@@ -63,7 +63,7 @@
   let generation=0,identity='',batchDisabled=false;
   const storagePrefix='dm_content_budget_v2:';
   function actor(){try{return (sessionStorage.getItem('ing_ogr_token')||localStorage.getItem('ing_token')||'')+'|'+(localStorage.getItem('ing_aktifOgrenci')||'');}catch{return '';}}
-  function clear(){generation++;for(const [key,s] of memory)if(!s.publicContent)memory.delete(key);pending.clear();failures.clear();}
+  function clear(preserveBackoff=false){generation++;for(const [key,s] of memory)if(!s.publicContent)memory.delete(key);pending.clear();if(!preserveBackoff)failures.clear();else for(const [key,f] of failures)if(f.snapshot&&f.snapshot.status<429)failures.delete(key);}
   function snapshot(r,text){return {text,status:r.status,headers:Array.from(r.headers.entries()),at:Date.now()};}
   function response(s){return new Response(s.text,{status:s.status,headers:s.headers});}
   function good(s){if(s.status!==200)return false;try{const d=JSON.parse(s.text);return !d||Array.isArray(d)||(d.ok!==false&&d.status!=='error'&&!d.hata);}catch{return false;}}
@@ -149,6 +149,11 @@
         const headers=new Headers(base.opt?.headers||{});headers.set('Content-Type',Array.from(headers.keys()).every(n=>n==='content-type')?'text/plain;charset=UTF-8':'application/json');
         const items=part.map(({d})=>Object.fromEntries(Object.entries(d.args).filter(([k])=>!['t','_','_contentVersion'].includes(k))));
         const r=await native(u.href,{method:'POST',headers,body:JSON.stringify({islem:'okumaGrubu',t:base.token,istekler:items})});
+        // Do not multiply a failed batch into eight requests during server overload.
+        if(r.status===429||r.status>=500){
+          const snap={text:JSON.stringify({ok:false,mesaj:'Sunucu geçici olarak yoğun. Tekrar dene.'}),status:r.status,headers:[['Content-Type','application/json']],at:Date.now()};
+          part.forEach(x=>x.resolve(snap));continue;
+        }
         const envelope=await r.json();
         if(!r.ok||!Array.isArray(envelope.results)||envelope.results.length!==part.length){
           // Compatibility fallback if a stale server does not know the bundle.
@@ -208,7 +213,7 @@
     if(!reads.has(d.op)&&!content.has(d.op)){
       // All writes, rewards, login and live match/presence requests go straight
       // through. Invalidate before AND after to avoid a read/write race.
-      clear();try{const r=await native(tagged(input,d),simple(opt));if(r.ok)scheduleLeague();return r;}finally{clear();}
+      clear(true);try{const r=await native(tagged(input,d),simple(opt));if(r.ok)scheduleLeague();return r;}finally{clear(true);}
     }
     if(d.bypass)return native(tagged(input,d),simple(opt));
     if(d.opt?.signal?.aborted)throw d.opt.signal.reason||new Error('Request aborted');
