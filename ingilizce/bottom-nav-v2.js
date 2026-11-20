@@ -16,7 +16,7 @@
    let avatar='';try{if(name)avatar=window.karakterSvg?.(name,38)||'';}catch{}
    const rawPlan=String(window.dmAndroidPlan?.plan||window.dmSubscription?.plan||window.dmMembership?.plan||'').toLowerCase().replace(/[- ]/g,'_');
    const plan=rawPlan||((Number(window.genelEnerjiMax)||0)>=60?'premium_pro':(Number(window.genelEnerjiMax)||0)>=40?'pro':'free');
-   const tier=plan==='premium_pro'?'premium_pro':plan==='pro'?'pro':'free';
+   const tier=/premium/.test(plan)?'premium_pro':plan==='pro'?'pro':'free';
    return '<span class="dm-nv2-tile dm-nv2-own-avatar dm-nv2-tier-'+tier+'">'+(avatar||'<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4" fill="#53759b"/><path d="M4 21v-2a8 8 0 0 1 16 0v2z" fill="#53759b"/></svg>')+'<b class="dm-nv2-tier-tag">'+(tier==='pro'?'PRO':tier==='premium_pro'?'PREMIUM':'FREE')+'</b>'+'</span>';
   }
   return '';
