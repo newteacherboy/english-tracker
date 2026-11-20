@@ -47,12 +47,28 @@ fs.mkdirSync('/tmp/compact-wallet',{recursive:true});await page.locator('#tab-du
 // Real notification UI with a mocked, account-bound RPC transport.
 await page.evaluate(()=>{window.SUPABASE_URL='https://wallet.test';window.SUPABASE_ANON_KEY='fixture';sessionStorage.setItem('ing_ogr_token','fixture-session');window.DijiPapiWing=window.DijiDailyGift={open:()=>window.opened='feather',decorateButton:b=>b.querySelector('[data-daily-count]').textContent='4/7',onParkurVisible:()=>{}};window.fixtureUnread=5;window.dmBasarilarimAc=()=>window.opened='badge';window.fetch=async(u,o)=>{const x=JSON.parse(o.body);if(x.p_token!=='fixture-session')throw Error('session');if(x.p_action==='read_all')fixtureUnread=0;if(x.p_action==='read')fixtureUnread=Math.max(0,fixtureUnread-1);return {ok:true,json:async()=>({ok:true,unread:fixtureUnread,items:[{sat:'fixture-id',tur:'rozet',title:'Yeni rozet',metin:'Rozet kazandın',tarih:new Date().toISOString(),okundu:fixtureUnread<5}]})}};});
 await page.addScriptTag({url:'/notification-center.js'});
+await page.evaluate(()=>{window.dmZirve={openStudentHub:()=>window.opened='campaign'};window.fetch=async(u,o)=>{const x=JSON.parse(o.body);if(x.p_action==='read_all')fixtureUnread=0;else if(x.p_action==='read')fixtureUnread=Math.max(0,fixtureUnread-1);return {ok:true,json:async()=>({ok:true,unread:fixtureUnread,items:[{sat:'fixture-id',tur:'rozet',title:'Yeni rozet',metin:'Rozet kazandın',tarih:new Date().toISOString(),okundu:fixtureUnread<5},{sat:'fixture-campaign',tur:'duyuru',title:'24 Kasım Yarışması',metin:'Öğretmenimle Zirveye yarışmasında sıralamanı gör.',routeTab:'campaign',tarih:new Date().toISOString(),okundu:false},{sat:'fixture-long',tur:'duyuru',title:'Yeni bir yarışma duyurusu',metin:'Bu uzun bir açıklamadır. Bildirim metni uzasa bile satırlar en fazla iki satırda kalmalı ve kart boyutu sabit olmalıdır.',tarih:new Date().toISOString(),okundu:false}]})}};});
 await page.evaluate(()=>DijiMeduPapiWallet.refresh());
 await page.waitForFunction(()=>document.querySelector('.dm-center-count')?.textContent==='+5');
 assert.equal(await page.locator('.dm-unified-wallet > button').count(),5);
 assert.equal(await page.locator('.dm-unified-wallet > button').last().getAttribute('class'),'dm-center-bell');
-await page.locator('.dm-center-bell').click();await page.locator('.dm-center-row').click();
+for(const width of [320,390,768]){
+ await page.setViewportSize({width,height:844});
+ await page.evaluate(()=>{for(const e of document.querySelectorAll('.fixture')){e.hidden=e.id!=='tab-meduakis';e.classList.toggle('active',!e.hidden);}DijiMeduPapiWallet.refresh();});
+ const metrics=await page.locator('.dm-unified-wallet').evaluate(h=>{const r=h.getBoundingClientRect(),buttons=[...h.querySelectorAll(':scope>button')];return{wallet:[r.left,r.right],buttons:buttons.map(x=>{const z=x.getBoundingClientRect();return[z.left,z.right,z.top,z.bottom]})};});
+ assert.equal(metrics.buttons.length,5,'five HUD indicators including bell');
+ assert(metrics.buttons.every((x,i)=>x[0]>=metrics.wallet[0]-2&&x[1]<=metrics.wallet[1]+2&&(!i||x[0]>=metrics.buttons[i-1][1]-2)),'Friends HUD no overlap: '+JSON.stringify({width,metrics}));
+ }
+await page.setViewportSize({width:390,height:844});await page.evaluate(()=>{for(const e of document.querySelectorAll('.fixture')){e.hidden=e.id!=='tab-dunya';e.classList.toggle('active',!e.hidden);}DijiMeduPapiWallet.refresh();});
+const bellMetrics=await page.locator('.dm-center-bell').evaluate(b=>{const x=b.getBoundingClientRect(),n=b.querySelector('.dm-center-count').getBoundingClientRect(),v=b.querySelector('svg').getBoundingClientRect();return {button:[x.left,x.top,x.right,x.bottom],count:[n.left,n.top,n.right,n.bottom],icon:v.width};});
+assert(bellMetrics.icon<=20,'bell icon matches compact controls');
+assert(bellMetrics.count[0]>=bellMetrics.button[0]&&bellMetrics.count[2]<=bellMetrics.button[2]+3&&bellMetrics.count[1]>=bellMetrics.button[1]-5&&bellMetrics.count[3]<=bellMetrics.button[3]+2,'red count anchored to bell: '+JSON.stringify(bellMetrics));
+await page.locator('.dm-center-bell').click();
+const panelBox=await page.locator('.dm-center-panel').boundingBox();assert(panelBox.width<=322&&panelBox.height<=366,'compact popover: '+JSON.stringify(panelBox));
+const heights=await page.locator('.dm-center-item').evaluateAll(list=>list.map(x=>Math.round(x.getBoundingClientRect().height)));assert(heights.length===3&&Math.max(...heights)-Math.min(...heights)<=3,'consistent notification card heights: '+heights);
+await page.locator('.dm-center-row').first().click();
 await page.waitForFunction(()=>window.opened==='badge');assert.equal(await page.locator('.dm-center-count').textContent(),'+4');
+await page.locator('.dm-center-bell').click();await page.locator('.dm-center-row').nth(1).click();await page.waitForFunction(()=>window.opened==='campaign');
 await page.locator('.dm-center-layer').waitFor({state:'detached'});await page.locator('.dm-center-bell').click();await page.locator('.dm-center-controls button').click();await page.waitForFunction(()=>document.querySelector('.dm-center-count').hidden);
 await page.keyboard.press('Escape');assert.equal(await page.locator('.dm-center-layer').count(),0);
 await page.locator('[data-dm-daily-streak]').click();assert.equal(await page.evaluate(()=>opened),'feather');
