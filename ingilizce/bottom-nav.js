@@ -103,7 +103,7 @@ window.dmDuelHomeAc=function(){
   document.body.append(el);
  }
  el.hidden=false;
- const dock=document.getElementById('bottomNavMobile');if(dock)el.style.setProperty('--dm-duel-bottom',Math.max(68,window.innerHeight-dock.getBoundingClientRect().top)+'px');
+ const dock=document.getElementById('bottomNavMobile');if(dock){if(!dock.dataset.duelPreviousZ)dock.dataset.duelPreviousZ=dock.style.zIndex||'auto';dock.style.setProperty('z-index','100000020','important');el.style.setProperty('--dm-duel-bottom',Math.max(68,window.innerHeight-dock.getBoundingClientRect().top)+'px');}
  document.querySelectorAll('#bottomNavMobile .bn-item').forEach(b=>{const yes=b.dataset.ekran==='tab-duel-home';b.classList.toggle('active',yes);if(yes)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');});
  const owner=typeof aktifOgrenciAdi!=='undefined'?String(aktifOgrenciAdi||''):'';
  window.supabaseClient?.rpc?.('dm_duel_champions_v1',{p_limit:50}).then(({data,error})=>{
@@ -113,7 +113,7 @@ window.dmDuelHomeAc=function(){
   if(target)target.innerHTML=me?'<span>🏆 <b>'+Number(me.wins||0).toLocaleString('tr-TR')+'</b><small>Galibiyet</small></span><span>🛡️ <b>'+Number(me.losses||0).toLocaleString('tr-TR')+'</b><small>Mağlubiyet</small></span><span>⭐ <b>'+Number(me.duel_xp||0).toLocaleString('tr-TR')+'</b><small>Düello XP</small></span>':'<span>🏆 <b>0</b><small>Galibiyet</small></span><span>🛡️ <b>0</b><small>Mağlubiyet</small></span><span>⭐ <b>0</b><small>Düello XP</small></span>';
  }).catch(()=>{const t=el.querySelector('.dm-duel-personal');if(t)t.textContent='İstatistikler şu anda yüklenemedi.';});
 };
-window.dmDuelHomeClose=function(){const el=document.getElementById('dmDuelHome');if(el)el.hidden=true;};
+window.dmDuelHomeClose=function(){const el=document.getElementById('dmDuelHome');if(el)el.hidden=true;const dock=document.getElementById('bottomNavMobile');if(dock&&dock.dataset.duelPreviousZ){const z=dock.dataset.duelPreviousZ;dock.style.zIndex=z==='auto'?'':z;delete dock.dataset.duelPreviousZ;}};
 document.addEventListener('click',e=>{const tab=e.target.closest('#bottomNavMobile [data-ekran]');if(tab&&tab.dataset.ekran!=='tab-duel-home')window.dmDuelHomeClose();},true);
 window.dmOpenGamesHome=function(){
  const btn=document.querySelector('#bottomNavMobile [data-ekran="tab-aktiviteler"]');if(btn){btn.click();return true;}return false;
