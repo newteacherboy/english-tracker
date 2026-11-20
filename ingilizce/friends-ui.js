@@ -311,6 +311,11 @@
     if(!header.querySelector('.fr-invite-top')){
       const invite=document.createElement('button');invite.type='button';invite.className='fr-invite-top';invite.dataset.friendAction='share';invite.textContent='✉ Davet et';invite.setAttribute('aria-label','Arkadaşlarını Diji-Medu’ya davet et');header.append(invite);
     }
+    if(!header.querySelector('.fr-notifications-top')){
+      const bell=document.createElement('button');bell.type='button';bell.className='fr-notifications-top';bell.dataset.friendAction='notifications';bell.setAttribute('aria-label','Bildirimler');bell.innerHTML='🔔<span class="fr-notifications-count" hidden></span>';header.append(bell);
+    }
+    const counter=header.querySelector('.fr-notifications-count');
+    if(counter){const count=window.dmNotificationCenter?.getUnread?.()||0;counter.hidden=!count;counter.textContent=count?'+'+count:'';}
     button.setAttribute('aria-label','Arkadaşlarım, '+people().length+' arkadaş');
     button.setAttribute('aria-expanded',String(!!peopleView));
   }
@@ -368,6 +373,7 @@
   document.addEventListener('keydown',e=>{if(e.key==='Escape'&&peopleView){e.preventDefault();closePeople();}});
   document.addEventListener('pointerdown',e=>{if(peopleView&&!peopleView.host.contains(e.target)&&!peopleView.anchor.contains(e.target))closePeople(false);},true);
   document.addEventListener('dm:login',()=>{closePeople(false);resetAccount();mountPeopleButton();});
+  document.addEventListener('dm:notifications-updated',e=>{const b=root.querySelector('.fr-notifications-count');if(b){const n=Math.max(0,Number(e.detail?.unread)||0);b.hidden=!n;b.textContent=n?'+'+n:'';}});
   document.addEventListener('focusin',e=>{if(peopleView&&!peopleView.host.contains(e.target)&&!peopleView.anchor.contains(e.target))closePeople(false);});
   window.addEventListener('resize',positionPeople,{passive:true});
   window.visualViewport?.addEventListener('resize',positionPeople,{passive:true});
@@ -389,6 +395,7 @@
     if(action==='lig'&&window.dmLeagueUI?.openWeekly)return window.dmLeagueUI.openWeekly();
     if(['home','akis','vitrin','lig'].includes(action)){window.maSekmeSec(action==='home'?'hub':action);return;}
     if(action==='share')return void shareInvite();
+    if(action==='notifications')return void window.dmNotificationCenter?.open?.();
     if(action==='status-go'){
       const go=b.dataset.go;
       if(go==='energy'){if(window.DMSatis?.enerji)return window.DMSatis.enerji('arkadaslar-durum');return window.dijiEnerjiPaneliAc?.();}
