@@ -329,12 +329,9 @@
     if(!header.querySelector('.fr-invite-top')){
       const invite=document.createElement('button');invite.type='button';invite.className='fr-invite-top';invite.dataset.friendAction='share';invite.textContent='✉ Davet et';invite.setAttribute('aria-label','Arkadaşlarını Diji-Medu’ya davet et');actions.append(invite);
     }
-    if(!header.querySelector('.fr-notifications-top')){
-      const bell=document.createElement('button');bell.type='button';bell.className='fr-notifications-top';bell.dataset.friendAction='notifications';bell.setAttribute('aria-label','Bildirimler');bell.innerHTML='🔔<span class="fr-notifications-count" hidden></span>';actions.append(bell);
-    }
-    for(const node of [header.querySelector('.fr-invite-top'),button,header.querySelector('.fr-notifications-top')])if(node&&node.parentElement!==actions)actions.append(node);
-    const counter=header.querySelector('.fr-notifications-count');
-    if(counter){const count=window.dmNotificationCenter?.getUnread?.()||0;counter.hidden=!count;counter.textContent=count?'+'+count:'';}
+    // Single notification entry lives in the shared HUD. Do not duplicate it in Friends actions.
+    header.querySelectorAll('.fr-notifications-top').forEach(old=>old.remove());
+    for(const node of [header.querySelector('.fr-invite-top'),button])if(node&&node.parentElement!==actions)actions.append(node);
     button.setAttribute('aria-label','Arkadaşlarım, '+people().length+' arkadaş');
     button.setAttribute('aria-expanded',String(!!peopleView));
   }
