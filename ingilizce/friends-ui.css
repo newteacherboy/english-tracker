@@ -811,3 +811,24 @@ html[data-dm-theme="night"] .fr-people-close,html[data-dm-theme="night"] .fr-peo
 
 
 html[data-dm-theme="night"] .fr-people-name small{color:#b9c9e0}
+
+/* Compact two-league friends dashboard */
+.fr-invite-top{border:1px solid #6adf92;border-radius:13px;padding:8px 10px;background:linear-gradient(135deg,#d4ffde,#85e9ad);color:#126b37;font:900 12px/1.1 system-ui;white-space:nowrap;box-shadow:0 3px 8px #21b95a30;cursor:pointer}
+.fr-duel-league{margin:8px 10px;padding:12px;border:1px solid #d6c2ff;border-radius:19px;background:linear-gradient(145deg,#f5efff,#e9e0ff);color:#4b288a}
+.fr-duel-league header{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.fr-duel-league h3{font-size:17px;margin:0;font-weight:900}
+.fr-duel-league small{font-size:11px;white-space:nowrap}
+.fr-duel-league-table{font-size:12px;margin-top:10px;padding:12px;background:#ffffffb5;border-radius:12px}
+.fr-home-view .fr-league-board{margin-bottom:8px}
+@media(max-width:370px){.fr-duel-league{padding:9px;margin:6px}.fr-duel-league h3{font-size:15px}.fr-invite-top{font-size:11px;padding:7px}}
+
+.fr-duel-league-table table{width:100%;border-collapse:collapse;table-layout:fixed;font:800 11px/1.35 system-ui}
+.fr-duel-league-table th{text-align:right;color:#7657a8;padding:4px 2px;border-bottom:1px solid #d8c9f2}
+.fr-duel-league-table td{text-align:right;padding:6px 2px;border-bottom:1px solid #e9def9;font-variant-numeric:tabular-nums}
+.fr-duel-league-table td:first-child,.fr-duel-league-table th:first-child{text-align:left;width:43%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fr-duel-league-table td:last-child{color:#6936be}
+.fr-duel-league-table tr:last-child td{border-bottom:0}
+
+.fr-notifications-top{position:relative;display:grid;place-items:center;flex:none;width:37px;height:37px;border:1px solid #d2b9ff;border-radius:13px;background:#f1e5ff;font-size:21px;cursor:pointer}
+.fr-notifications-count{position:absolute;right:-7px;top:-7px;min-width:21px;height:19px;padding:1px 4px;border-radius:12px;background:#f04452;color:white;font:900 10px/17px system-ui;text-align:center}
+.fr-notifications-count[hidden]{display:none}
