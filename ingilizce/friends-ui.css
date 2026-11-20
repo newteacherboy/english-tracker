@@ -828,3 +828,7 @@ html[data-dm-theme="night"] .fr-people-name small{color:#b9c9e0}
 .fr-duel-league-table td:first-child,.fr-duel-league-table th:first-child{text-align:left;width:43%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .fr-duel-league-table td:last-child{color:#6936be}
 .fr-duel-league-table tr:last-child td{border-bottom:0}
+
+.fr-notifications-top{position:relative;display:grid;place-items:center;flex:none;width:37px;height:37px;border:1px solid #d2b9ff;border-radius:13px;background:#f1e5ff;font-size:21px;cursor:pointer}
+.fr-notifications-count{position:absolute;right:-7px;top:-7px;min-width:21px;height:19px;padding:1px 4px;border-radius:12px;background:#f04452;color:white;font:900 10px/17px system-ui;text-align:center}
+.fr-notifications-count[hidden]{display:none}
