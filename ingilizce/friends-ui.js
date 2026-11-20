@@ -74,7 +74,7 @@
   }
   function tilesHtml(){return '';}
   function duelLeagueHtml(){
-    return '<section class="fr-duel-league" aria-label="Tüm zamanlar düello ligi"><header><h3>⚔️ Düello Şampiyonları</h3><small>Tüm zamanlar</small></header><div class="fr-duel-league-table" role="status">Galibiyet · Mağlubiyet · Düello XP sıralaması yükleniyor…</div></section>';
+    return '<section class="fr-duel-league" aria-label="Tüm zamanlar düello ligi"><header><h3>⚔️ Düello Şampiyonları</h3><small>Tüm zamanlar</small></header><div class="fr-duel-league-table" role="status">Galibiyet · Mağlubiyet · Düello XP sıralaması hazırlanıyor</div></section>';
   }
   /* Bugünkü Durumun: planın sınırlı hakları. Mola ve Premium oyun hakları 10 dakikada en fazla bir kez sorulur. */
   const CROWN = '<svg class="fr-crown" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 18 5 7l4.5 4L12 5l2.5 6L19 7l2 11z" fill="currentColor"/></svg>';
