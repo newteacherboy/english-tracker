@@ -267,19 +267,35 @@ async function lobbySend(event, payload) {
   } while (Date.now() < until);
   return false;
 }
+let inboxBusy = false, inboxAfter = 0;
+const seenOffers = new Map();
+async function checkInbox() {
+  const owner = token();
+  if (!owner || busyScreen() || banner || inboxBusy || Date.now() < inboxAfter) return;
+  inboxBusy = true;
+  inboxAfter = Date.now() + 6000;
+  try {
+    const r = await rpc('dm_duel_inbox', {}, owner);
+    if (r?.ok && r.offer && token() === owner && !busyScreen() && !banner) {
+      const p = r.offer;
+      if (!seenOffers.has(p.id) && p.leftMs > 500) showBanner({...p, at:Date.now(), deadline:Date.now()+p.leftMs});
+    }
+  } catch { inboxAfter = Date.now()+15000; }
+  finally { inboxBusy = false; }
+}
 async function onSeek(p) {
   if (!p?.id || !p?.name || norm(p.name) === norm(who()) || busyScreen() || banner) return;
   // [18 Kas 2026] Profil kartından gelen davet yalnız seçilen oyuncuda görünür.
   if (p.to && norm(p.to) !== norm(who())) return;
-  let r = null; try { r = await status(); } catch {}
-  // Hakkı bitmiş olsa da davet görünür; kabul edince reklam / Premium Pro paneli açılır.
-  if (!r || !r.social) return;
-  if (busyScreen() || banner) return;
-  showBanner(p);
+  if (seenOffers.has(p.id)) return;
+  inboxAfter = 0;
+  await checkInbox();
 }
 function showBanner(p) {
-  const until = Math.min(Date.now() + 13000, (Number(p.at) || Date.now()) + 14000);
-  if (until <= Date.now()) return;
+  const until = Math.min(Date.now() + 13000, p.deadline || ((Number(p.at) || Date.now()) + 14000));
+  if (until <= Date.now() || seenOffers.has(p.id)) return;
+  for (const [id, expiry] of seenOffers) if (expiry < Date.now()) seenOffers.delete(id);
+  seenOffers.set(p.id, Date.now()+60000);
   const el = document.createElement('aside');
   el.className = 'ld-invite'; el.style.zIndex = '2147483647'; el.setAttribute('role', 'alertdialog'); el.setAttribute('aria-label', 'Canlı düello daveti');
   el.innerHTML = `<div class="ld-invite-top"><span class="ld-avatar ld-av-guest">${esc(p.name.slice(0,1).toLocaleUpperCase('tr-TR'))}<img src="${PAPI_INVITE}" alt=""></span>
@@ -722,14 +738,14 @@ function result(d, opp, r) {
     <button type="button" class="ld-primary" data-again>${d.kind === 'papi' ? 'Papi ile Rövanş' : 'Yeni Canlı Düello'}</button>
     <button type="button" class="ld-ghost" data-close>Kapat</button>`, () => done());
   sfx(win ? 'kombo' : draw ? 'dogru' : 'yanlis');
-  function done() { inDuel = false; closeLayer(); }
+  function done() { inDuel = false; closeLayer(); inboxAfter = 0; void checkInbox(); }
   el.querySelector('[data-close]').onclick = done;
   el.querySelector('[data-again]').onclick = () => { inDuel = false; closeLayer(); (d.kind === 'papi' ? startPapi : startLive)(); };
 }
 
 /* ---------- Başlatma ---------- */
 function boot() {
-  if (token()) ensureLobby();
+  if (token()) { ensureLobby(); void checkInbox(); }
 }
 document.addEventListener('visibilitychange', () => { if (document.hidden) { dropLobby(); hideBanner(); } else boot(); });
 document.addEventListener('dm:login', () => { rights = null; dropLobby(); setTimeout(boot, 1500); });
