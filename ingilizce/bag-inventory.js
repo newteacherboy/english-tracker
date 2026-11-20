@@ -151,12 +151,13 @@ function openBag(){
  const b=$('bottomNavMobile');priorNavZ=b?.style.zIndex||'';
  if(b)b.style.setProperty('z-index','100000020','important');
  const el=document.createElement('div');el.id='dmBagPage';el.setAttribute('role','region');el.setAttribute('aria-label','Çantam: satın alınan ve kazanılan ürünler');
- el.style.setProperty('--dm-bag-bottom',Math.max(70,b?.getBoundingClientRect()?.height||74)+'px');
+ el.style.setProperty('--dm-bag-bottom',Math.max(70,window.innerHeight-(b?.getBoundingClientRect()?.top||window.innerHeight-74))+'px');
+ el.style.setProperty('--dm-bag-top','calc(env(safe-area-inset-top, 0px) + 62px)');
  document.body.appendChild(el);active=true;render();el.querySelector('[data-bag-back]')?.focus({preventScroll:true});
  const owner=typeof aktifOgrenciAdi==='undefined'?'':String(aktifOgrenciAdi||'');
  Promise.resolve().then(()=>window.dmProgression?.refresh?.(true)).then(()=>{if(active&&String(typeof aktifOgrenciAdi==='undefined'?'':aktifOgrenciAdi||'')===owner)render();}).catch(()=>{});
 }
-function loadStyle(){if($('dmBagStyle'))return;const link=document.createElement('link');link.id='dmBagStyle';link.rel='stylesheet';link.href=asset('bag-inventory.css?v=20261019-compact-3');document.head.appendChild(link);}
+function loadStyle(){if($('dmBagStyle'))return;const link=document.createElement('link');link.id='dmBagStyle';link.rel='stylesheet';link.href=asset('bag-inventory.css?v=20261121-redesign');document.head.appendChild(link);}
 loadStyle();
 document.addEventListener('click',e=>{
  const store=e.target?.closest?.('#bottomNavMobile [data-ekran="tab-magaza"]');

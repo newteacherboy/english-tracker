@@ -835,3 +835,49 @@ html[data-dm-theme="night"] .fr-people-name small{color:#b9c9e0}
 
 /* Bildirimler ortak üst şeritte: Arkadaşlar başlığındaki ikinci eski zil gizlenir. */
 #tab-meduakis.fr-home-view .fr-notifications-top{display:none!important}
+
+/* Approved shared header actions */
+#tab-meduakis.fr-home-view .fr-header-actions{display:flex!important;align-items:center;gap:6px!important}
+#tab-meduakis.fr-home-view .fr-invite-top,#tab-meduakis.fr-home-view .fr-people-toggle,#tab-meduakis.fr-home-view .fr-notifications-top{position:relative!important;top:auto!important;right:auto!important;transform:none!important;display:flex!important;align-items:center!important;justify-content:center!important;height:42px!important;min-height:42px!important;border-radius:14px!important;border:2px solid #ffffffb8!important;border-bottom:4px solid #6c8cb5!important;box-shadow:0 3px 7px #294b8b24!important;flex:0 0 auto!important;margin:0!important;padding:0 9px!important}
+#tab-meduakis.fr-home-view .fr-invite-top{background:linear-gradient(#32dc91,#009b5a)!important;color:#fff!important;font-size:11px!important}
+#tab-meduakis.fr-home-view .fr-people-toggle{width:42px!important;background:linear-gradient(#38b7ff,#1179d6)!important}
+#tab-meduakis.fr-home-view .fr-notifications-top{width:42px!important;background:linear-gradient(#fff,#e6eeff)!important;color:#385aa3!important}
+#tab-meduakis.fr-home-view .fr-notifications-count{top:-7px;right:-6px}
+#tab-meduakis.fr-home-view .fr-duel-league{padding:0!important;margin:10px 0!important;border:2px solid #b69aff!important;border-radius:24px!important;background:linear-gradient(#8c3be5,#5520bc)!important;overflow:hidden;box-shadow:0 5px 0 #a39ee077!important}
+#tab-meduakis.fr-home-view .fr-duel-league>.fr-section-head{display:flex;justify-content:space-between;align-items:center;padding:12px 14px 9px!important;color:white!important}
+#tab-meduakis.fr-home-view .fr-duel-league>.fr-section-head h3{color:white!important;margin:0;font-size:19px!important}
+#tab-meduakis.fr-home-view .fr-duel-league>.fr-section-head small{font-size:10px;color:#efe2ff}
+#tab-meduakis.fr-home-view .fr-duel-champions{display:grid;grid-template-columns:1fr 1.15fr 1fr;align-items:end;gap:4px;padding:23px 8px 0;background:linear-gradient(180deg,#eee8ff,#fff 85%);border-radius:20px 20px 0 0}
+#tab-meduakis.fr-home-view .fr-duel-champion{min-width:0;display:flex;flex-direction:column;align-items:center;position:relative}
+#tab-meduakis.fr-home-view .fr-duel-champion-portrait{position:relative;z-index:1;width:clamp(57px,18vw,83px);height:clamp(57px,18vw,83px);border:3px solid #c9d5ff;border-radius:50%;background:#d6f0ff;box-shadow:0 3px 7px #0002;display:grid;place-items:center}
+#tab-meduakis.fr-home-view .fr-duel-champion-1 .fr-duel-champion-portrait{width:clamp(69px,21vw,96px);height:clamp(69px,21vw,96px);border-color:#ffd44c;background:#fff1af}
+#tab-meduakis.fr-home-view .fr-duel-champion-3 .fr-duel-champion-portrait{border-color:#ff9c7b}
+#tab-meduakis.fr-home-view .fr-duel-champion-portrait .fr-avatar{max-width:100%;max-height:100%}
+#tab-meduakis.fr-home-view .fr-duel-champion-medal{position:absolute;bottom:-11px;left:50%;transform:translateX(-50%);display:grid;place-items:center;width:28px;height:28px;border:2px solid #fff;border-radius:50%;background:#c3d4eb;color:#25375d;font-weight:1000;z-index:2}
+#tab-meduakis.fr-home-view .fr-duel-champion-1 .fr-duel-champion-medal{background:#ffcc22;color:#683e00}
+#tab-meduakis.fr-home-view .fr-duel-champion-3 .fr-duel-champion-medal{background:#f6a17c}
+#tab-meduakis.fr-home-view .fr-duel-champion-step{width:100%;min-height:92px;margin-top:9px;padding:16px 2px 8px;border-radius:13px 13px 0 0;background:linear-gradient(#80b5e7,#3974b6);display:flex;flex-direction:column;align-items:center;justify-content:center;color:white;text-align:center;overflow:hidden}
+#tab-meduakis.fr-home-view .fr-duel-champion-1 .fr-duel-champion-step{min-height:111px;background:linear-gradient(#ffe75a,#f8a900);color:#673a00}
+#tab-meduakis.fr-home-view .fr-duel-champion-3 .fr-duel-champion-step{background:linear-gradient(#ffba9c,#b86a50)}
+#tab-meduakis.fr-home-view .fr-duel-champion-step strong{max-width:100%;font:900 13px Nunito,system-ui;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#tab-meduakis.fr-home-view .fr-duel-champion-step small{font:800 10px Nunito,system-ui}
+#tab-meduakis.fr-home-view .fr-duel-champion-step b{font:1000 13px Nunito,system-ui}
+#tab-meduakis.fr-home-view .fr-duel-league>.fr-podium-footer{background:linear-gradient(#d8f5ff,#b9eaff)!important;color:#204b78!important;display:flex;align-items:center;justify-content:space-between;padding:9px!important}
+#tab-meduakis.fr-home-view .fr-duel-league .fr-link{border:1px solid #76baff;border-radius:20px;background:#fff;color:#184c83;font-weight:900;font-size:11px;padding:8px}
+#tab-meduakis.fr-home-view .fr-duel-footnote{font-size:10px;font-weight:800}
+
+#tab-meduakis.fr-home-view .akis-baslik{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:7px!important}
+#tab-meduakis.fr-home-view .fr-unified-actions{display:flex!important;align-items:center!important;gap:6px!important;margin-left:auto!important;flex-shrink:0!important}
+#tab-meduakis.fr-home-view .fr-unified-actions .fr-invite-top{order:0}
+#tab-meduakis.fr-home-view .fr-unified-actions .fr-people-toggle{order:1}
+#tab-meduakis.fr-home-view .fr-unified-actions .fr-notifications-top{order:2}
+@media(max-width:370px){#tab-meduakis.fr-home-view .fr-unified-actions{gap:3px!important}#tab-meduakis.fr-home-view .fr-unified-actions .fr-invite-top{padding:0 5px!important;font-size:10px!important}#tab-meduakis.fr-home-view .fr-unified-actions .fr-people-toggle,#tab-meduakis.fr-home-view .fr-unified-actions .fr-notifications-top{width:36px!important;height:38px!important;min-height:38px!important}}
+
+.fr-duel-ranking-layer{position:fixed;inset:0;z-index:2147483000;background:#21134e99;display:flex;align-items:center;justify-content:center;padding:16px;font-family:Nunito,system-ui}
+.fr-duel-ranking-panel{width:min(100%,480px);max-height:80dvh;display:flex;flex-direction:column;overflow:hidden;border:3px solid #b7a0ff;border-radius:25px;background:linear-gradient(#f2ecff,#fff);box-shadow:0 20px 40px #130d4080}
+.fr-duel-ranking-panel header{display:flex;align-items:center;justify-content:space-between;padding:14px;background:linear-gradient(#8e4ce9,#6027c3);color:white}
+.fr-duel-ranking-panel h2{font:900 19px Nunito,system-ui;margin:0}
+.fr-duel-ranking-panel header button{border:0;border-radius:12px;background:#fff;color:#5e2ab5;font-size:25px;width:37px;height:37px}
+.fr-duel-ranking-content{overflow:auto;padding:12px}
+.fr-duel-ranking-row{display:grid;grid-template-columns:1.4fr 1fr auto;align-items:center;gap:6px;padding:12px 8px;border-bottom:1px solid #ddd1f6;color:#38205d;font-size:12px}
+.fr-duel-ranking-row strong{color:#7437cf}

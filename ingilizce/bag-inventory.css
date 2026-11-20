@@ -103,3 +103,16 @@
 #dmBagPage button:focus-visible{outline:3px solid #7652b9;outline-offset:2px}
 @media(max-width:359px){#dmBagPage .dm-bag-inner{padding-left:8px;padding-right:8px}#dmBagPage .dm-bag-shelf{padding:6px 8px;gap:4px}#dmBagPage .dm-bag-mini{width:41px;height:45px}#dmBagPage .dm-bag-shelf h2{font-size:13px}}
 #dmBagPage .dm-bag-quick-open{border:0;border-radius:15px;background:#ff881e;color:#fff;font:800 12px system-ui;min-height:38px;padding:6px 15px;cursor:pointer}
+
+/* Approved Çantam: keep top HUD visible and place bag below it. */
+#dmBagPage{top:var(--dm-bag-top,64px)!important;bottom:var(--dm-bag-bottom,76px)!important;inset-inline:0!important;overflow-y:auto!important;background:linear-gradient(#eef0ff,#e7f6ff)!important;scroll-padding-top:12px}
+#dmBagPage .dm-bag-inner{padding:10px 12px 32px!important;max-width:540px}
+#dmBagPage .dm-bag-header{position:sticky;top:-10px;z-index:3;background:linear-gradient(#eef0ff 80%,#eef0ff00);min-height:60px!important;margin-bottom:10px!important}
+#dmBagPage .dm-bag-header h1{color:#241351!important;font-size:26px!important}
+#dmBagPage .dm-bag-tabs{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important;overflow:visible!important;padding:4px 0 12px!important}
+#dmBagPage .dm-bag-tabs button{min-width:0!important;min-height:49px!important;flex-direction:row!important;border-radius:20px!important;background:#fff!important;border:2px solid #d9cafa!important;color:#492a8d!important;font-weight:900!important}
+#dmBagPage .dm-bag-tabs button[aria-pressed="true"]{background:linear-gradient(#9a65f7,#5c22c6)!important;color:#fff!important}
+#dmBagPage .dm-bag-shelf,#dmBagPage .dm-bag-section{border:2px solid #d6dafa!important;border-radius:23px!important;padding:12px!important;background:#fff!important;box-shadow:0 4px 0 #b6c7ed70!important;margin-bottom:13px!important}
+#dmBagPage .dm-bag-shelf-label h2,#dmBagPage .dm-bag-section h2{color:#40248a!important}
+#dmBagPage .dm-bag-mini,#dmBagPage .dm-bag-card{border-radius:17px!important;background:linear-gradient(#f5eaff,#fff)!important;border:1px solid #e4d2ff!important}
+@media(max-height:660px){#dmBagPage .dm-bag-header{min-height:49px!important}#dmBagPage .dm-bag-tabs button{min-height:42px!important}}
