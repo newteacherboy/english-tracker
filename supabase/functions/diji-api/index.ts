@@ -1485,6 +1485,27 @@ async function handle(req: Request, proxy: any = null) {
   const graduationResponse=await routeGraduationsAPI(supabase,json,graduationCatalog).handle(op,body,a,req.method);if(graduationResponse)return graduationResponse;
   const safetyResponse=await socialSafety.handle(op,body,a,req.method);if(safetyResponse)return safetyResponse;
   const safetyDeny=await socialSafety.guard(op,body,q,a);if(safetyDeny)return safetyDeny;
+  if(['questionReport','questionReportList','questionReportStatus'].includes(op)){
+    if(req.method!=='POST')return json({ok:false,mesaj:'POST gerekli.'},405);
+    if(op==='questionReport'){
+      if(a?.role!=='student'||!a.student_id||a.teacherProxy)return json({ok:false,mesaj:'Geçerli oturum gerekli.'},403);
+      const denied=await rate('question-report',a.student_id,20,86400);if(denied)return denied;
+      const snap=body.snapshot,allowed=['audio_missing','audio_wrong','image_wrong','image_missing','grading','translation','spelling','other'];
+      const reasons=[...new Set(Array.isArray(body.reasons)?body.reasons.filter((x:any)=>allowed.includes(x)):[])];
+      if(!snap||!['school','learning'].includes(snap.route)||!snap.task||JSON.stringify(snap).length>16000||!reasons.length)return json({ok:false,mesaj:'Bildirim geçersiz.'},400);
+      const fingerprint=await sha256(JSON.stringify([snap.route,snap.chapter,snap.cursor,snap.task.kind,snap.task.prompt,snap.task.expected]));
+      const {error}=await supabase.from('dm_question_reports').upsert({student_id:a.student_id,fingerprint,reasons,note:String(body.note||'').slice(0,500),snapshot:snap},{onConflict:'student_id,fingerprint',ignoreDuplicates:true});
+      return json(error?{ok:false,mesaj:'Bildirim kaydedilemedi.'}:{ok:true},error?500:200);
+    }
+    if(a?.role!=='teacher'||a.yonetici!==true||a.ogretmenKullanici!=='teacher')return json({ok:false,mesaj:'Yönetici oturumu gerekli.'},403);
+    if(op==='questionReportStatus'){
+      if(!['pending','reviewing','resolved'].includes(body.status)||!/^[a-f0-9]{64}$/.test(String(body.fingerprint)))return json({ok:false,mesaj:'Geçersiz durum.'},400);
+      const {error}=await supabase.from('dm_question_reports').update({status:body.status}).eq('fingerprint',body.fingerprint);
+      return json({ok:!error},error?500:200);
+    }
+    const {data,error}=await supabase.from('dm_question_reports').select('id,fingerprint,reasons,note,snapshot,status,created_at,student_id').order('created_at',{ascending:false}).limit(500);
+    return json(error?{ok:false,mesaj:'Raporlar okunamadı.'}:{ok:true,reports:data},error?500:200);
+  }
   const chat=teacherChatAPI({db:supabase,json,memberStudents,clean:temizMetin,queue:kuyrugaEkle,mailShell:mailKabugu,html:metniHtmlYap,escape:hk});
   const adminMailResponse=await adminEmailAPI({db:supabase,json,welcome:onboarding.welcome,publicParticipant,queue:kuyrugaEkle,brevoKey:Deno.env.get('BREVO_API_KEY')}).handle(op,body,a,req.method);if(adminMailResponse)return adminMailResponse;
   const memberResponse=await memberToolsAPI({db:supabase,json,chat,welcome:onboarding.welcome,hash:sha256,teacherScope:kapsamda,useStreakShield:(sid:string)=>ekonomiGuncelle(sid,(y:any)=>{const d=Math.max(0,Math.floor(num(y.dondurucu)));if(d<1)return {hata:'Seri kalkanı yok.'};y.dondurucu=d-1;return {kalan:d-1};})}).handle(op,body,q,a,req.method);if(memberResponse)return memberResponse;
