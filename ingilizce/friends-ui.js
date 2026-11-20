@@ -72,29 +72,23 @@
       </div>
     </section>`;
   }
-  function tilesHtml() {
-    // Arkadaş listesi başlıktaki simgeden açılır; burada yalnız iki ana işlem kalır.
-    // [17 Kas 2026] Tek büyük, ışıltılı Düello kartı + ince Davet et şeridi (çevrimiçi sayısı gösterilmez).
-    const star='<svg class="fr-dz-spark" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0c.8 6.4 4.6 10.9 12 12-7.4 1.1-11.2 5.6-12 12-.8-6.4-4.6-10.9-12-12C7.4 10.9 11.2 6.4 12 0z"/></svg>';
-    const free=liveFree;
-    return `<div class="fr-tiles fr-tiles-v3">
-      <section class="fr-duel-card fr-tile-duel" aria-label="Düello">
-        <span class="fr-dz-shine" aria-hidden="true"></span>${star}${star}${star}${star}${star}
-        <img class="fr-dz-papi" src="friends-assets/papi-fencer.webp" alt="" decoding="async">
-        <div class="fr-dz-head">
-          <h2>Düello</h2>
-          ${free?`<span class="fr-dz-free"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="9" width="18" height="12" rx="2"/><path d="M3 13h18M12 9v12M12 9c-2-4-6-4-6-1.5S9 9 12 9zM12 9c2-4 6-4 6-1.5S15 9 12 9z"/></svg>${esc(free)}</span>`:''}
-        </div>
-        <p class="fr-dz-copy">10 soruluk kelime savaşı. Rakibinin canını ilk sen bitir!</p>
-        <div class="fr-dz-actions">
-          <button type="button" class="fr-dz-live" data-friend-action="live-duel"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg>Canlı Düello</button>
-          <button type="button" class="fr-dz-btn fr-dz-soft" data-friend-action="papi-duel">Papi'ye Karşı</button>
-        </div>
-      </section>
-      <button type="button" class="fr-invite-strip" data-friend-action="share">
-        <img src="friends-assets/papi-invite.webp" alt="" decoding="async"><span><b>Davet et</b><small>Arkadaşlarını getir, birlikte öğrenin</small></span><span class="fr-invite-go">Gönder</span>
-      </button>
-    </div>`;
+  function tilesHtml(){return '';}
+  let duelLeaders=[],duelLeadersAt=0,duelLeadersBusy=false,duelLeadersError=false;
+  async function loadDuelLeaders(){
+    if(duelLeadersBusy||Date.now()-duelLeadersAt<120000)return;
+    const sb=window.supabaseClient;if(!sb?.rpc)return;
+    duelLeadersBusy=true;
+    try{
+      const {data,error}=await sb.rpc('dm_duel_champions_v1',{p_limit:10});
+      if(error)throw error;
+      duelLeaders=Array.isArray(data)?data:[];duelLeadersError=false;duelLeadersAt=Date.now();
+      if(maSekme==='hub'&&!maProfilId){const panel=root.querySelector('.fr-duel-league');if(panel)panel.outerHTML=duelLeagueHtml();}
+    }catch(e){duelLeadersError=true;duelLeadersAt=Date.now();console.warn('Düello ligi yüklenemedi',e);}
+    finally{duelLeadersBusy=false;}
+  }
+  function duelLeagueHtml(){
+    const rows=duelLeaders.map((p,i)=>'<tr><td>'+(i+1)+'. '+esc(p.player_name)+'</td><td>'+xp(p.wins)+'</td><td>'+xp(p.losses)+'</td><td>'+xp(p.duel_xp)+'</td></tr>').join('');
+    return '<section class="fr-duel-league" aria-label="Tüm zamanlar düello ligi"><header><h3>⚔️ Düello Şampiyonları</h3><small>Tüm zamanlar</small></header><div class="fr-duel-league-table">'+(rows?'<table><thead><tr><th>Oyuncu</th><th>G</th><th>M</th><th>XP</th></tr></thead><tbody>'+rows+'</tbody></table>':duelLeadersError?'Düello ligi şu anda alınamadı.':duelLeadersAt?'Henüz tamamlanmış düello yok.':'Sıralama yükleniyor…')+'</div></section>';
   }
   /* Bugünkü Durumun: planın sınırlı hakları. Mola ve Premium oyun hakları 10 dakikada en fazla bir kez sorulur. */
   const CROWN = '<svg class="fr-crown" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 18 5 7l4.5 4L12 5l2.5 6L19 7l2 11z" fill="currentColor"/></svg>';
@@ -166,9 +160,9 @@
     // Medu Akış kaldırıldı (Kasım 2026): ana ekran lig + dört kart; akış verisi artık yüklenmez.
     return `<div class="fr-home fr-compact fr-tiles-home">
       ${leagueHtml()}
+      ${duelLeagueHtml()}
       <div id="frInvitation">${invitationHtml()}</div>
       ${tilesHtml()}
-      ${statusHtml()}
     </div>`;
   }
   function fullFeedHtml() {
@@ -199,7 +193,7 @@
     const scroll = screen.scrollTop;
     screen.innerHTML=homeHtml();
     viewHeader();paintLocks();dockSpace();screen.scrollTop=scroll;
-    refreshDuelLabel();
+    void loadDuelLeaders();
   }
   function paintLocks() {
     root.querySelectorAll('[data-friends-gate]').forEach(b=>{
@@ -313,6 +307,9 @@
       button.setAttribute('aria-controls','frPeopleDropdown');
       button.innerHTML='<svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="12" cy="11" r="5" fill="white"/><circle cx="23" cy="12" r="4" fill="#c9e5ff"/><path d="M2 28v-3a10 10 0 0 1 20 0v3z" fill="white"/><path d="M22 18a8 8 0 0 1 9 8v2h-7v-3a12 12 0 0 0-2-7" fill="#c9e5ff"/></svg>';
       header.append(button);
+    }
+    if(!header.querySelector('.fr-invite-top')){
+      const invite=document.createElement('button');invite.type='button';invite.className='fr-invite-top';invite.dataset.friendAction='share';invite.textContent='✉ Davet et';invite.setAttribute('aria-label','Arkadaşlarını Diji-Medu’ya davet et');header.append(invite);
     }
     button.setAttribute('aria-label','Arkadaşlarım, '+people().length+' arkadaş');
     button.setAttribute('aria-expanded',String(!!peopleView));
