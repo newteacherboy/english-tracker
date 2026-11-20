@@ -22,3 +22,71 @@ html[data-dm-theme=night] .dm-center-panel{background:#242e44;color:#edf2ff;bord
 html[data-dm-theme=night] .dm-center-item{background:#303c54;border-color:#526079}
 html[data-dm-theme=night] .dm-center-item.is-new{background:#50442e;border-color:#8a784b}
 html[data-dm-theme=night] .dm-center-copy b,html[data-dm-theme=night] .dm-center-copy small{color:inherit}
+
+
+/* 21 Kasım: tek boyutlu, düzgün hizalanmış küçük bildirim düğmesi. */
+body .dm-unified-wallet.dm-papi-wallet>button.dm-center-bell,
+body #tab-dunya#tab-dunya .dm-unified-wallet.dm-papi-wallet>button.dm-center-bell,
+body #tab-meduakis.fr-home-view .fr-wallet-host .dm-unified-wallet.dm-papi-wallet>button.dm-center-bell{
+  position:relative!important;box-sizing:border-box!important;display:grid!important;
+  place-items:center!important;flex-direction:initial!important;
+  padding:0!important;gap:0!important;min-width:0!important;max-width:100%!important;
+  overflow:visible!important;color:#176b88!important;-webkit-text-fill-color:#176b88!important;
+  background:linear-gradient(145deg,#eff9ff,#e0f3ff)!important;border:1px solid #c5e2f8!important;
+  border-radius:13px!important;box-shadow:0 1px 0 #d5e9f2!important;
+  isolation:isolate!important;
+}
+body .dm-unified-wallet.dm-papi-wallet>button.dm-center-bell svg,
+body #tab-dunya#tab-dunya .dm-unified-wallet.dm-papi-wallet>button.dm-center-bell svg,
+body #tab-meduakis.fr-home-view .fr-wallet-host .dm-unified-wallet.dm-papi-wallet>button.dm-center-bell svg{
+  display:block!important;width:19px!important;height:19px!important;min-width:19px!important;max-height:19px!important;
+  overflow:visible!important;stroke:#176b88!important;fill:none!important;
+}
+body .dm-unified-wallet.dm-papi-wallet>button.dm-center-bell .dm-center-count,
+body #tab-dunya#tab-dunya .dm-unified-wallet.dm-papi-wallet>button.dm-center-bell .dm-center-count,
+body #tab-meduakis.fr-home-view .fr-wallet-host .dm-unified-wallet.dm-papi-wallet>button.dm-center-bell .dm-center-count{
+  position:absolute!important;top:1px!important;right:1px!important;left:auto!important;bottom:auto!important;
+  transform:translate(10%,-18%)!important;min-width:18px!important;height:18px!important;
+  display:flex!important;align-items:center!important;justify-content:center!important;
+  box-sizing:border-box!important;padding:0 3px!important;border:2px solid #fff!important;border-radius:999px!important;
+  background:#ec3452!important;color:white!important;-webkit-text-fill-color:white!important;
+  font:900 9px/14px Nunito,system-ui,sans-serif!important;z-index:6!important;pointer-events:none!important;
+}
+body .dm-unified-wallet.dm-papi-wallet>button.dm-center-bell .dm-center-count[hidden]{display:none!important}
+/* Parkur dışındaki sekmelerde de aynı beş eşit gösterge. */
+body #tab-meduakis.fr-home-view .fr-wallet-host>.dm-unified-wallet.dm-papi-wallet.dm-has-center,
+body #tab-meduakis.fr-home-view .fr-wallet-host>.dm-unified-wallet.dm-papi-wallet.dm-has-center:has(.dm-theme-toggle){
+  display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr))!important;gap:3px!important;
+  width:100%!important;min-width:0!important;max-width:100%!important;overflow:visible!important;
+}
+body #tab-meduakis.fr-home-view .fr-wallet-host .dm-unified-wallet.dm-papi-wallet.dm-has-center>.dm-pw-papi{display:none!important}
+body #tab-meduakis.fr-home-view .fr-wallet-host .dm-unified-wallet.dm-papi-wallet.dm-has-center>button{min-width:0!important;width:100%!important;max-width:100%!important}
+body #tab-meduakis.fr-home-view .fr-wallet-host .dm-unified-wallet.dm-papi-wallet.dm-has-center [data-pw-value]{font-size:clamp(10px,2.8vw,13px)!important;letter-spacing:-.25px!important}
+/* Bildirim merkezi yukarıdan, zili referans alan küçük bir menü olarak açılır. */
+.dm-center-layer{position:fixed!important;inset:0!important;background:rgba(21,38,63,.07)!important;z-index:2147482100!important}
+.dm-center-panel{
+  box-sizing:border-box!important;width:min(320px,calc(100vw - 16px))!important;
+  max-height:min(365px,calc(100dvh - 110px))!important;overflow-y:auto!important;
+  padding:10px!important;border-radius:17px!important;gap:6px!important;
+  box-shadow:0 9px 29px rgba(25,43,66,.19)!important;
+}
+.dm-center-top{flex:none!important;min-height:32px!important}
+.dm-center-top h2{font-size:17px!important;line-height:1.2!important}
+.dm-center-controls{flex:none!important;min-height:30px!important}
+.dm-center-controls button{font-size:10px!important;white-space:nowrap!important}
+.dm-center-item{box-sizing:border-box!important;min-height:72px!important;flex:none!important;overflow:hidden!important}
+.dm-center-item .dm-center-row{width:100%!important;min-height:72px!important;box-sizing:border-box!important;
+  display:grid!important;grid-template-columns:33px minmax(0,1fr) 8px!important;align-items:center!important;
+  gap:7px!important;padding:7px 8px!important;text-align:left!important}
+.dm-center-item .dm-center-icon{width:32px!important;height:32px!important;font-size:17px!important}
+.dm-center-copy{display:flex!important;flex-direction:column!important;gap:2px!important;min-width:0!important}
+.dm-center-copy b{font-size:12px!important;line-height:1.2!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
+.dm-center-copy>span{font-size:11px!important;line-height:1.3!important;display:-webkit-box!important;-webkit-box-orient:vertical!important;-webkit-line-clamp:2!important;overflow:hidden!important;word-break:break-word!important}
+.dm-center-copy small{font-size:10px!important}
+.dm-center-item .dm-center-dot{width:7px!important;height:7px!important}
+.dm-center-detail-layer{position:fixed;inset:0;z-index:2147482200;display:grid;place-items:center;padding:15px;box-sizing:border-box;background:#13294b70}
+.dm-center-detail{width:min(320px,100%);max-height:65dvh;overflow:auto;background:#fff;color:#253458;border-radius:18px;padding:17px;box-shadow:0 12px 34px #162b3f40}
+.dm-center-detail h3{margin:0 0 8px;font-size:17px}.dm-center-detail p{font-size:13px;line-height:1.5}
+.dm-center-detail button{display:block;width:100%;min-height:40px;border:0;border-radius:11px;background:#d8edff;color:#164a80;font-weight:900}
+html[data-dm-theme=night] body .dm-unified-wallet.dm-papi-wallet>button.dm-center-bell{background:#243e54!important;border-color:#536f86!important}
+html[data-dm-theme=night] .dm-center-detail{background:#242e44;color:#edf2ff}
