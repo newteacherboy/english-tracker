@@ -76,10 +76,10 @@
   let duelLeaders=[],duelLeadersAt=0,duelLeadersBusy=false,duelLeadersError=false;
   async function loadDuelLeaders(){
     if(duelLeadersBusy||Date.now()-duelLeadersAt<120000)return;
-    const sb=window.supabaseClient;if(!sb?.rpc)return;
+    const sb=window.supabaseClient;
     duelLeadersBusy=true;
     try{
-      const {data,error}=await sb.rpc('dm_duel_champions_v1',{p_limit:10});
+      const {data,error}=sb?.rpc?await sb.rpc('dm_duel_champions_v1',{p_limit:10}):await (async()=>{const response=await fetch(SUPABASE_URL+'/rest/v1/rpc/dm_duel_champions_v1',{method:'POST',headers:{apikey:SUPABASE_ANON_KEY,'Content-Type':'application/json'},body:JSON.stringify({p_limit:10})});return {data:response.ok?await response.json():null,error:response.ok?null:new Error('Sıralama sunucusu yanıt vermedi')};})();
       if(error)throw error;
       duelLeaders=Array.isArray(data)?data:[];duelLeadersError=false;duelLeadersAt=Date.now();
       if(maSekme==='hub'&&!maProfilId){const panel=root.querySelector('.fr-duel-league');if(panel)panel.outerHTML=duelLeagueHtml();}
