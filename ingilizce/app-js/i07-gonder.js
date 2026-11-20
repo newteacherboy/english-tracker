@@ -70,7 +70,7 @@
   const turIkon = b => (TUR[b.tur] || ['🔔'])[0];
 
   async function unreadCount(list,owner){
-    return list.length;   /* [27 Eki 2026] eski duyuru sayımı kaldırıldı */
+    return list.filter(item=>!item.okundu).length;
   }
   /* ---- Oturum açıldığında okunmamış bildirimleri yükle ---- */
   let girisBakildi = '';
@@ -105,7 +105,7 @@
     b.setAttribute('aria-label','Bildirimler · '+zilSayi+' okunmamış');
     if(b.dataset.unread!==String(zilSayi)){
       b.dataset.unread=String(zilSayi);
-      b.innerHTML='🔔'+(zilSayi?'<span class="zl-rozet" aria-hidden="true"></span>':'');
+      b.innerHTML='🔔'+(zilSayi?'<span class="zl-rozet" aria-hidden="true">+'+(zilSayi>99?'99+':zilSayi)+'</span>':'');
     }
   }
   setInterval(zilCiz, 1500);
