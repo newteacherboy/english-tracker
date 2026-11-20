@@ -865,3 +865,10 @@ html[data-dm-theme="night"] .fr-people-name small{color:#b9c9e0}
 #tab-meduakis.fr-home-view .fr-duel-league>.fr-podium-footer{background:linear-gradient(#d8f5ff,#b9eaff)!important;color:#204b78!important;display:flex;align-items:center;justify-content:space-between;padding:9px!important}
 #tab-meduakis.fr-home-view .fr-duel-league .fr-link{border:1px solid #76baff;border-radius:20px;background:#fff;color:#184c83;font-weight:900;font-size:11px;padding:8px}
 #tab-meduakis.fr-home-view .fr-duel-footnote{font-size:10px;font-weight:800}
+
+#tab-meduakis.fr-home-view .akis-baslik{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:7px!important}
+#tab-meduakis.fr-home-view .fr-unified-actions{display:flex!important;align-items:center!important;gap:6px!important;margin-left:auto!important;flex-shrink:0!important}
+#tab-meduakis.fr-home-view .fr-unified-actions .fr-invite-top{order:0}
+#tab-meduakis.fr-home-view .fr-unified-actions .fr-people-toggle{order:1}
+#tab-meduakis.fr-home-view .fr-unified-actions .fr-notifications-top{order:2}
+@media(max-width:370px){#tab-meduakis.fr-home-view .fr-unified-actions{gap:3px!important}#tab-meduakis.fr-home-view .fr-unified-actions .fr-invite-top{padding:0 5px!important;font-size:10px!important}#tab-meduakis.fr-home-view .fr-unified-actions .fr-people-toggle,#tab-meduakis.fr-home-view .fr-unified-actions .fr-notifications-top{width:36px!important;height:38px!important;min-height:38px!important}}
