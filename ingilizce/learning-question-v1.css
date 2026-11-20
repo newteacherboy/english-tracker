@@ -460,3 +460,9 @@ html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson
 html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson .ml-speaker.is-playing .ml-live-wave i{animation:dm-live-wave .48s ease-in-out infinite alternate;animation-delay:var(--wave-delay);}
 @keyframes dm-live-wave{from{transform:scaleY(.35)}to{transform:scaleY(1)}}
 @media(prefers-reduced-motion:reduce){html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson .ml-speaker.is-playing .ml-live-wave i{animation:none;}}
+
+/* Teaching wave stays visible in both idle and playing states. */
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson .ml-teach [data-learn] small .ml-live-wave{display:flex!important;gap:3px;justify-content:center;align-items:center;width:100%;height:32px}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson .ml-teach [data-learn] small .ml-live-wave i{display:block!important;width:4px;height:calc(var(--wave-h) * .65);background:linear-gradient(#8edbff,#287eea)}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson .ml-teach [data-learn] small .ml-live-wave i:nth-child(n+5):nth-child(-n+9){background:linear-gradient(#e3a5ff,#7938df)}
+@media(prefers-reduced-motion:no-preference){html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson .ml-teach [data-learn].is-playing .ml-live-wave i{animation:dm-live-wave .48s ease-in-out infinite alternate!important;animation-delay:var(--wave-delay)!important}}
