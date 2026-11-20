@@ -73,8 +73,22 @@
     </section>`;
   }
   function tilesHtml(){return '';}
+  let duelLeaders=[],duelLeadersAt=0,duelLeadersBusy=false,duelLeadersError=false;
+  async function loadDuelLeaders(){
+    if(duelLeadersBusy||Date.now()-duelLeadersAt<120000)return;
+    const sb=window.supabaseClient;if(!sb?.rpc)return;
+    duelLeadersBusy=true;
+    try{
+      const {data,error}=await sb.rpc('dm_duel_champions_v1',{p_limit:10});
+      if(error)throw error;
+      duelLeaders=Array.isArray(data)?data:[];duelLeadersError=false;duelLeadersAt=Date.now();
+      if(maSekme==='hub'&&!maProfilId){const panel=root.querySelector('.fr-duel-league');if(panel)panel.outerHTML=duelLeagueHtml();}
+    }catch(e){duelLeadersError=true;duelLeadersAt=Date.now();console.warn('Düello ligi yüklenemedi',e);}
+    finally{duelLeadersBusy=false;}
+  }
   function duelLeagueHtml(){
-    return '<section class="fr-duel-league" aria-label="Tüm zamanlar düello ligi"><header><h3>⚔️ Düello Şampiyonları</h3><small>Tüm zamanlar</small></header><div class="fr-duel-league-table" role="status">Galibiyet · Mağlubiyet · Düello XP sıralaması hazırlanıyor</div></section>';
+    const rows=duelLeaders.map((p,i)=>'<tr><td>'+(i+1)+'. '+esc(p.player_name)+'</td><td>'+xp(p.wins)+'</td><td>'+xp(p.losses)+'</td><td>'+xp(p.duel_xp)+'</td></tr>').join('');
+    return '<section class="fr-duel-league" aria-label="Tüm zamanlar düello ligi"><header><h3>⚔️ Düello Şampiyonları</h3><small>Tüm zamanlar</small></header><div class="fr-duel-league-table">'+(rows?'<table><thead><tr><th>Oyuncu</th><th>G</th><th>M</th><th>XP</th></tr></thead><tbody>'+rows+'</tbody></table>':duelLeadersError?'Düello ligi şu anda alınamadı.':duelLeadersAt?'Henüz tamamlanmış düello yok.':'Sıralama yükleniyor…')+'</div></section>';
   }
   /* Bugünkü Durumun: planın sınırlı hakları. Mola ve Premium oyun hakları 10 dakikada en fazla bir kez sorulur. */
   const CROWN = '<svg class="fr-crown" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 18 5 7l4.5 4L12 5l2.5 6L19 7l2 11z" fill="currentColor"/></svg>';
@@ -179,7 +193,7 @@
     const scroll = screen.scrollTop;
     screen.innerHTML=homeHtml();
     viewHeader();paintLocks();dockSpace();screen.scrollTop=scroll;
-    refreshDuelLabel();
+    void loadDuelLeaders();
   }
   function paintLocks() {
     root.querySelectorAll('[data-friends-gate]').forEach(b=>{
