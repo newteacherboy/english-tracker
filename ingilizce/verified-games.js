@@ -31,7 +31,7 @@ async function start(game,runId,scope,words){
  const cls=Number(scope?.classNo||resolved[0]?.sinif||resolved[0]?.class_no||resolved[0]?.[3]);
  const scopedUnits=scope?.units?.map(Number).filter(u=>u>=1)||[];
  const units=[...new Set((scopedUnits.length?scopedUnits:resolved.map(w=>Number(w.unite??w.unit_no??w[4]))).map(Number))].sort((a,b)=>a-b);
- const state={owner:who(),runId,game,events:[...pending(who(),runId),...(early.get(runId)||[])],acked:0,slots:[],last:{},payload:{runId,game,classNo:cls,units,...(window.dmSoloLevels?.scope(game)?.soloLevel?{soloLevel:window.dmSoloLevels.scope(game).soloLevel,soloVariant:window.dmSoloLevels.scope(game).soloVariant}:{}),stopNo:scope?.stopNo||0,schoolVersion:scope?.schoolVersion,...(level?{level}:{}),words:words.map(w=>({en:en(w),tr:tr(w)}))}};
+ const state={owner:who(),runId,game,events:[...new Map([...pending(who(),runId),...(early.get(runId)||[])].map(e=>[e.eventId,e])).values()],acked:0,slots:[],last:{},payload:{runId,game,classNo:cls,units,...(window.dmSoloLevels?.scope(game)?.soloLevel?{soloLevel:window.dmSoloLevels.scope(game).soloLevel,soloVariant:window.dmSoloLevels.scope(game).soloVariant}:{}),stopNo:scope?.stopNo||0,schoolVersion:scope?.schoolVersion,...(level?{level}:{}),words:words.map(w=>({en:en(w),tr:tr(w)}))}};
  runs.set(runId,state);
  if(window.OC?.aktif?.runId===runId)window.OC.aktif.rewardScope={classNo:cls,units,stopNo:scope?.stopNo||0};
  early.delete(runId);const carried=state.events.length;
@@ -86,7 +86,7 @@ function record(target,answer,runId){
  const event={eventId:crypto.randomUUID(),...(Number.isInteger(target)?{slot:target}:{target:typeof target==='string'?target:en(target)}),answer:structuredClone(answer??null)};
  const s=runs.get(runId);
  // Oturum başlamadan gelen cevap kaybolmasın: başlayınca kuyruğa eklenir.
- if(!s){const list=early.get(runId)||[];list.push(event);early.set(runId,list);return;}
+ if(!s){const owner=who(),list=early.get(runId)||pending(owner,runId);list.push(event);early.set(runId,list);persist({owner,runId,events:list,acked:0});return;}
  s.events.push(event);persist(s);
  // Eski parkur motoru (okul sürümü 9 değil) enerjiyi soru soru ayrı istekle düşer ve sunucu bir önceki cevabı görmeden
  // sonraki adımı kabul etmez: orada her cevap hemen gönderilir.
