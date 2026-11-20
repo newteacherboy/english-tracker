@@ -235,30 +235,37 @@ function ensureLobby() {
   if (lobby && lobbyOwner === owner) return;
   dropLobby();
   lobbyOwner = owner;
-  lobby = sb.channel(LOBBY, {config: {broadcast: {self: false, ack: false}}});
+  lobby = sb.channel(LOBBY, {config: {broadcast: {self: false, ack: true}}});
+  const channel = lobby;
   lobby.on('broadcast', {event: 'seek'}, ({payload}) => onSeek(payload))
        .on('broadcast', {event: 'taken'}, ({payload}) => { if (banner && banner.id === payload?.id) hideBanner(); })
        // [18 Kas 2026] Kabul eden oyuncu reklam izliyor / vazgeçti — yalnız o düellonun sahibi dinler.
        .on('broadcast', {event: 'hold'}, ({payload}) => { try { holdListener?.(payload); } catch {} })
        // [18 Kas 2026] Yönetici "Çevrimiçi" yoklaması: önde açıksa bir kez cevap ver (yoklama sunucuda doğrulanır).
        .on('broadcast', {event: 'who'}, ({payload}) => answerRoll(payload))
-       .subscribe(s => { lobbyReady = s === 'SUBSCRIBED'; if (['CHANNEL_ERROR','TIMED_OUT','CLOSED'].includes(s)) lobbyReady = false; });
+       .subscribe(s => {
+         if (lobby !== channel) return;
+         lobbyReady = s === 'SUBSCRIBED';
+         if (['CHANNEL_ERROR','TIMED_OUT','CLOSED'].includes(s)) {
+           setTimeout(() => { if (lobby === channel && !lobbyReady) { dropLobby(); ensureLobby(); } }, 1000);
+         }
+       });
 }
 function dropLobby() {
   if (lobby) { try { window.supabaseClient?.removeChannel(lobby); } catch {} }
   lobby = null; lobbyReady = false; lobbyOwner = '';
 }
-function lobbySend(event, payload) {
-  ensureLobby();
-  if (!lobby) return;
-  const go = () => lobby?.send({type: 'broadcast', event, payload}).catch(() => {});
-  if (lobbyReady) go(); else {
-    const channel = lobby, started = Date.now();
-    const wait = setInterval(() => {
-      if (lobby !== channel || Date.now() - started > 5000) { clearInterval(wait); return; }
-      if (lobbyReady) { clearInterval(wait); go(); }
-    }, 200);
-  }
+async function lobbySend(event, payload) {
+  const owner = token(), until = Date.now() + 5000;
+  do {
+    if (!owner || token() !== owner || document.hidden) return false;
+    ensureLobby();
+    if (lobbyReady && lobby) {
+      try { if (await lobby.send({type:'broadcast', event, payload}) === 'ok') return true; } catch {}
+    }
+    await sleep(350);
+  } while (Date.now() < until);
+  return false;
 }
 async function onSeek(p) {
   if (!p?.id || !p?.name || norm(p.name) === norm(who()) || busyScreen() || banner) return;
@@ -444,7 +451,7 @@ async function invite(target) {
     <div class="ld-search-top"><span class="ld-kicker">DÜELLO DAVETİ</span></div>
     <div class="ld-radar" aria-hidden="true"><span></span><span></span><span></span><img src="${PAPI}" alt=""></div>
     <h2 data-title>${esc(target)} bekleniyor…</h2>
-    <p class="ld-search-sub" data-sub>Davetin ${esc(target)} adlı oyuncuya gitti.</p>
+    <p class="ld-search-sub" data-sub>${esc(target)} adlı oyuncuya davet gönderiliyor…</p>
     <div class="ld-count" aria-live="off">0:15</div>
     <ul class="ld-steps"><li class="ld-done">10 soruluk canlı kelime savaşı</li><li>15 sn içinde yanıt gelmezse istersen Papi ile oynarsın</li></ul>
     <div class="ld-invite-choices" data-choices hidden>
@@ -503,7 +510,15 @@ async function invite(target) {
     if (!d.ok) throw Error(d.message || 'Davet gönderilemedi.');
     duel = d; rights = null; t0 = Date.now();
     holdListener = h => { if (h?.id === d.id) onHold(h); };
-    lobbySend('seek', {id: d.id, name: who(), level: d.level || 1, at: Date.now(), to: d.target || target});
+    const offer = {id: d.id, name: who(), level: d.level || 1, at: Date.now(), to: d.target || target};
+    const announce = async () => {
+      const sent = await lobbySend('seek', offer);
+      if (!stop && !expired && el.isConnected && !hv.ended().name && !el.querySelector('[data-hold]')) {
+        el.querySelector('[data-sub]').textContent = sent ? 'Davet yayınlandı; rakibin yanıtı bekleniyor.' : 'Canlı bağlantı bekleniyor…';
+      }
+    };
+    void announce();
+    for (const delay of [3500, 7500]) setTimeout(() => { if (!stop && !expired && searching && el.isConnected) void announce(); }, delay);
     clock = setInterval(() => { const s = Math.max(0, Math.ceil((SEARCH_MS - (Date.now() - t0)) / 1000)); count.textContent = '0:' + String(s).padStart(2, '0'); }, 250);
     const p = await waitMatch(d.id, owner, [4000, 8000, 12000, SEARCH_MS + 600, SEARCH_MS + 3000], () => stop, onHold);
     if (stop) return;
