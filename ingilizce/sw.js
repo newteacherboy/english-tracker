@@ -7,7 +7,7 @@
    - Supabase istekleri: bu dosya karışmaz (sayfadaki katman yönetir)
    Sayfayı güncellediğinizde SURUM değerini artırın (v2, v3…).
    ===================================================================== */
-const SURUM = 'diji-v510-unified-notification-20261120';
+const SURUM = 'diji-v511-duel-dock-20261121';
 const SAYFA = 'sayfa-' + SURUM, KAYNAK = 'kaynak-' + SURUM;
 // Cached on first use; never download the A2 catalog at startup.
 const LAZY_TOPIC_FILES = new Set(['konu-oyunlari-a1.js','konu-oyunlari-a2.js','topic-games-core.mjs']);
@@ -78,6 +78,18 @@ self.addEventListener('fetch', e => {
   if (AYRI_SAYFA.test(url.pathname)) return;                        /* Ayrı sayfalar ana sayfa önbelleğine karışmasın */
   if (url.searchParams.get('misafir') === '1') return;              /* Deneme oturumu ana sayfanın çevrimdışı kopyası değildir. */
 
+  // Force fresh navigation shell and dock resources when online; retain offline fallback.
+  const criticalDock = /\/(?:bottom-nav(?:-v2)?\.(?:js|css)|friends-ui\.(?:js|css)|notification-center\.(?:js|css)|app-js\/i07-gonder\.js)$/;
+  if (url.origin === self.location.origin && (criticalDock.test(url.pathname) || (r.mode === 'navigate' && /\/ingilizce\/?$/.test(url.pathname)))) {
+    const page = r.mode === 'navigate';
+    const bucket = page ? SAYFA : KAYNAK;
+    const key = page ? './' : r;
+    e.respondWith(fetch(r,{cache:'no-store'}).then(async response => {
+      if(response && response.ok) await caches.open(bucket).then(cache=>cache.put(key,response.clone())).catch(()=>{});
+      return response;
+    }).catch(async()=>await caches.open(bucket).then(cache=>cache.match(key))||Response.error()));
+    return;
+  }
   /* Prefer fresh responses, but an existing installation must not wait for a
      slow network. Refresh the cached copy in the background; never reload a tab. */
   if (r.mode === 'navigate') {
