@@ -45,7 +45,7 @@ async function refresh(force=false){
   }
   lastRefresh=Date.now();window.dmStudyUI?.refresh();
   document.dispatchEvent(new CustomEvent('dm:progression-status',{detail:{owner,startPath:d.startPath||null}}));
-  if(d.level>=5){try{leagueData=(await api('seviyeLigListesi')).liste||[];}catch{}}
+  if(d.level>=5){try{leagueData=(await api('seviyeLigListesi',{kapsam:'weekly'})).liste||[];}catch{}}
   paint();
  }catch(e){}finally{busy=false;if(refreshAgain){refreshAgain=false;refresh(true);}}
 }
@@ -270,7 +270,6 @@ window.addEventListener('dm:plan',()=>{status=null;accessOwner='';paint();refres
 window.dmProgression={paint,allowed,require:requireFeature,level,earlyAccess,levelLock,itemAllowed,refresh,chests,status:()=>status,parkur:()=>true,quota:()=>0,sync,previewAnimation:()=>celebrate(Math.max(0,level()-1),level(),true)};
 window.dolapSandikAc=window.bcSandikAc=window.sandikTorenAc=chests;
 /* Uygulamanın kendiliğinden açtığı Medu Akış: kilitliyse uyarı göstermeden Parkur'da kal */
-document.addEventListener('dm:starting-placement-complete',()=>refresh(true));
 window.dmOtomatikAkisAc=function(parkuraDon){if(!student()||allowed('akis'))return window.meduAkisAc?.();if(!status)refresh(true);if(parkuraDon)window.dunyaAc?.();};
 const progressOpen=()=>{const b=document.getElementById('dmLevelBadge');if(b)b.onclick=panel;window.dmProgressPanel=Object.assign(window.dmProgressPanel||{},{open:panel});};
 const originalFetch=window.fetch;window.fetch=async function(url,opt){const owner=who(),r=await originalFetch.apply(this,arguments);if(opt?.body&&typeof opt.body==='string'&&opt.body.includes('"dersTestSonucKaydet"')&&r.ok){r.clone().json().then(d=>{if(owner!==who())return;if(d.eklenenEnerji>0){window.headerEnerjiGoster?.(d.enerjiKalan,d.enerjiMax);toast('📘 İlk başarılı ders: +'+d.eklenenEnerji+' enerji');}refresh(true);}).catch(()=>{});}return r;};
