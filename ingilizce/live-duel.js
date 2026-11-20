@@ -247,7 +247,7 @@ function ensureLobby() {
          if (lobby !== channel) return;
          lobbyReady = s === 'SUBSCRIBED';
          if (['CHANNEL_ERROR','TIMED_OUT','CLOSED'].includes(s)) {
-           setTimeout(() => { if (lobby === channel && !lobbyReady) { dropLobby(); ensureLobby(); } }, 1000);
+           setTimeout(() => { if (lobby === channel && !lobbyReady) { dropLobby(); ensureLobby(); } }, 8000);
          }
        });
 }
@@ -360,11 +360,11 @@ async function waitMatch(id, owner, schedule, isStop, onHold) {
   while (Date.now() < hardEnd) {
     let wait;
     if (holding) wait = 4000;
-    else if (i < schedule.length) wait = schedule[i++] - (Date.now() - t0);
+    else if (i < schedule.length && Date.now() - t0 < SEARCH_MS + 3000) wait = schedule[i++] - (Date.now() - t0);
     else return null;
     if (wait > 0) await sleep(wait);
     if (isStop()) return null;
-    const p = await rpc('dm_duel_live_poll', {p_duel: id}, owner).catch(() => null);
+    const p = await Promise.race([rpc('dm_duel_live_poll', {p_duel: id}, owner).catch(() => null), sleep(3500).then(() => null)]);
     if (isStop()) return null;
     if (!p?.ok) continue;
     if (p.hold) { holding = true; onHold(p.hold); continue; }
@@ -518,7 +518,7 @@ async function invite(target) {
       }
     };
     void announce();
-    for (const delay of [3500, 7500]) setTimeout(() => { if (!stop && !expired && searching && el.isConnected) void announce(); }, delay);
+    for (const delay of [5000]) setTimeout(() => { if (!stop && !expired && searching && el.isConnected) void announce(); }, delay);
     clock = setInterval(() => { const s = Math.max(0, Math.ceil((SEARCH_MS - (Date.now() - t0)) / 1000)); count.textContent = '0:' + String(s).padStart(2, '0'); }, 250);
     const p = await waitMatch(d.id, owner, [4000, 8000, 12000, SEARCH_MS + 600, SEARCH_MS + 3000], () => stop, onHold);
     if (stop) return;
@@ -686,7 +686,7 @@ function battle(d, opp) {
     try {
       for (let i = 0; i < 4 && !r; i++) { r = await rpc('dm_duel_finish', {p_duel: d.id, p_answers: answers}, owner).catch(() => null); if (!r) await sleep(1500); }
       if (!r?.ok) throw Error(r?.message || 'Sonuç kaydedilemedi.');
-      const until = Date.now() + 260000;
+      const until = Date.now() + 20000;
       while (r.status !== 'finished' && Date.now() < until) {
         await sleep(4000);
         if (!wait.isConnected) break;
