@@ -103,6 +103,7 @@ window.dmDuelHomeAc=function(){
   document.body.append(el);
  }
  el.hidden=false;
+ const dock=document.getElementById('bottomNavMobile');if(dock)el.style.setProperty('--dm-duel-bottom',Math.max(68,window.innerHeight-dock.getBoundingClientRect().top)+'px');
  document.querySelectorAll('#bottomNavMobile .bn-item').forEach(b=>{const yes=b.dataset.ekran==='tab-duel-home';b.classList.toggle('active',yes);if(yes)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');});
  const owner=typeof aktifOgrenciAdi!=='undefined'?String(aktifOgrenciAdi||''):'';
  window.supabaseClient?.rpc?.('dm_duel_champions_v1',{p_limit:50}).then(({data,error})=>{
