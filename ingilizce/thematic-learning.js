@@ -172,6 +172,11 @@ function shell(){const q=Math.max(0,Math.min(stepsFor(),session.cursor));modal.i
 
 function scheduleLessonFit(){if(!modal)return;if(fitFrame)cancelAnimationFrame(fitFrame);fitFrame=requestAnimationFrame(fitLesson);}
 function fitLesson(){
+ if(modal)modal.querySelectorAll('.ml-wave-word h2').forEach(h=>{
+  h.style.removeProperty('font-size'); h.style.setProperty('overflow-wrap','normal','important');h.style.setProperty('word-break','normal','important');
+  if(!/\s/.test(h.textContent.trim())){h.style.setProperty('white-space','nowrap','important');let size=parseFloat(getComputedStyle(h).fontSize);while(h.clientWidth>0&&h.scrollWidth>h.clientWidth+1&&size>12){size-=1;h.style.setProperty('font-size',size+'px','important');}}
+ });
+
  fitFrame=0;if(!modal||modal.classList.contains('ml-entry'))return;
  const stage=modal.querySelector('.ml-stage'),board=modal.querySelector('.ml-board');if(!stage||!board)return;
  const viewport=window.visualViewport,height=viewport?.height||window.innerHeight;
