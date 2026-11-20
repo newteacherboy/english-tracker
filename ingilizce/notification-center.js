@@ -2,7 +2,7 @@
 (()=>{'use strict';
 const who=()=>typeof aktifOgrenciAdi==='undefined'?'':String(aktifOgrenciAdi||'').trim();
 const token=()=>sessionStorage.getItem('ing_ogr_token')||localStorage.getItem('ing_token')||'';
-const eligible=()=>!!who()&&!['teacher','dijimedu_demo'].includes(who().toLowerCase())&&!window.dmGuestMode&&!window.dmTeacherPortalMode;
+const eligible=()=>!!who()&&!['teacher','dijimedu_demo'].includes(who().toLowerCase())&&!window.dmGuestMode&&!window.dmTeacherPortalMode&&!window.siniftaOynananOgrenci;
 const bell=document.createElement('button');bell.type='button';bell.className='dm-center-bell';bell.setAttribute('aria-label','Bildirimler');bell.setAttribute('aria-haspopup','dialog');bell.innerHTML='<svg viewBox="0 0 40 40" aria-hidden="true"><path d="M20 5c-7 0-11 5-11 12v6l-4 5h30l-4-5v-6C31 10 27 5 20 5Z" fill="#FFC93C" stroke="#D89419" stroke-width="2.5" stroke-linejoin="round"/><path d="M16 31a4 4 0 0 0 8 0" fill="#D89419"/><path d="M13 16a8 8 0 0 1 4-7" stroke="#fff3ae" stroke-width="3" stroke-linecap="round"/></svg><span class="dm-center-count" hidden></span>';
 const badge=bell.querySelector('span');let owner='',session='',items=[],unread=0,layer=null,all=false,last=0,pending=null,serial=0,failed=false;
 function reset(){const next=eligible()?who():'',t=next?token():'';if(next===owner&&t===session)return;serial++;close();owner=next;session=t;items=[];unread=0;last=0;pending=null;failed=false;paintBadge();}
@@ -30,7 +30,7 @@ if(window.DMNotificationActions&&items.some(n=>n.tur==='duello'||n.tur==='oyunDa
 locate();}
 async function mark(action,id=null){const at=serial;try{if(pending)await pending;if(at!==serial)return;const d=await rpc(action,id);if(at===serial)apply(d);}catch{if(at===serial){failed=true;render();}}}
 function detail(n){const text=document.createElement('p');text.textContent=n.metin||'';return window.dmMemberUI?.sheet(n.title||'Bildirim',text.outerHTML);}
-function navigateTab(tab){const f={parkur:window.dunyaTamEkranAc,oyunlar:window.aktivitelerTamEkranAc,derscalis:window.dersCalisTamEkranAc,magaza:window.magazaAc,arkadaslar:window.meduAkisAc,profil:window.dmProfileMenuAc}[tab];if(typeof f!=='function')return false;f();return true;}
+function navigateTab(tab){const f={parkur:window.dunyaAc,oyunlar:window.aktivitelerTamEkranAc,derscalis:window.dersCalisTamEkranAc,magaza:window.magazaAc,arkadaslar:window.meduAkisAc,profil:window.dmProfileMenuAc}[tab];if(typeof f!=='function')return false;f();return true;}
 function friends(tab){window.dmFriends?.open?.();if(tab)window.dmFriends?.detail?.(tab);}
 async function choose(n){const at=serial;const item={...n};if(!item.okundu)await mark('read',item.sat);if(at!==serial)return;close();switch(item.tur){
  case 'canliDuelloDavet':return window.dmLiveDuel?.openInvite?.(item.duelId,item.opponent);
@@ -47,7 +47,7 @@ async function choose(n){const at=serial;const item={...n};if(!item.okundu)await
  case 'lig':return friends('lig');
  case 'duyuru':if(/öğretmenimle zirveye|24 kasım/i.test(item.title||'')&&window.dmZirve?.openStudentHub)return window.dmZirve.openStudentHub();if(item.routeTab&&navigateTab(item.routeTab))return;return detail(item);
  case 'ogretmen':return detail(item);
- case 'gorev':return detail(item);
+ case 'gorev':return typeof window.sanaOzelTamEkranAc==='function'?window.sanaOzelTamEkranAc():detail(item);
  case 'uyelik':return window.magazaAc?.();
  default:return friends('akis');
  }}
@@ -55,6 +55,6 @@ function open(){reset();if(!owner)return;if(layer){close();return;}all=false;lay
 bell.onclick=open;document.addEventListener('keydown',e=>{if(e.key==='Escape'&&layer)close();});window.addEventListener('resize',locate);
 function mount(hud){reset();if(!eligible())return;if(bell.parentElement!==hud){hud.append(bell);void refresh();}}
 function detach(){close();bell.remove();}
-document.addEventListener('dm:login',()=>{reset();void refresh(true);});document.addEventListener('visibilitychange',()=>{if(!document.hidden)void refresh();});setInterval(()=>{if(bell.isConnected)void refresh();},120000);
+document.addEventListener('dm:login',()=>{reset();void refresh(true);});document.addEventListener('dm:logout',()=>{serial++;close();owner='';session='';items=[];unread=0;pending=null;last=0;paintBadge();bell.remove();});document.addEventListener('visibilitychange',()=>{if(!document.hidden)void refresh();});setInterval(()=>{if(bell.isConnected)void refresh();},120000);
 window.dmNotificationCenter={mount,detach,refresh,close};
 })();

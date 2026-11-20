@@ -735,7 +735,7 @@ function result(d, opp, r) {
     <div class="ld-hpline"><span>Sen <b class="ld-g">${Number(me.hp ?? 0)} can</b></span><span>${esc(opp)} <b class="ld-r">${Number(them.hp ?? 0)} can</b></span></div>
     <div class="ld-stats"><div><b>${Number(me.correct || 0)}/${total}</b><span>doğru</span></div><div><b>${avg}${avg === '-' ? '' : ' sn'}</b><span>ort. süre</span></div><div><b>${Number(me.damage || 0)}</b><span>hasar</span></div></div>
     ${Number(me.xp || 0) > 0 ? `<div class="ld-stats ld-reward"><div><b>+${Number(me.xp || 0)} XP</b><span>kazandın</span></div><div><b>+${Number(me.gold || 0)}</b><span>altın</span></div></div>` : `<p class="ld-sub">Bu kez ödül yok. Kazanırsan <b>300 XP + 50 altın</b>!</p>`}
-    <button type="button" class="ld-primary" data-again>${d.kind === 'papi' ? 'Papi ile Rövanş' : 'Yeni Canlı Düello'}</button>
+    <button type="button" class="ld-primary" data-again>${d.kind === 'papi' ? 'Papi ile Rövanş' : 'Rövanş yap'}</button>
     <button type="button" class="ld-ghost" data-close>Kapat</button>`, () => done());
   sfx(win ? 'kombo' : draw ? 'dogru' : 'yanlis');
   function done() { inDuel = false; closeLayer(); inboxAfter = 0; void checkInbox(); }
@@ -754,5 +754,6 @@ setTimeout(boot, 4000);
 
 async function openResult(id){if(inDuel)return;try{const r=await rpc('dm_duel_result',{p_duel:id});if(!r.ok||r.status!=='finished')return toast(r.message||'Sonuç henüz hazır değil.');result(r,r.opponent||'Rakibin',r);}catch(e){toast(e.message);}}
 async function openInvite(id,opponent){if(inDuel)return;try{const r=await rpc('dm_duel_inbox');if(r?.ok&&r.offer?.id===id&&r.offer.leftMs>500){seenOffers.delete(id);hideBanner();showBanner({...r.offer,at:Date.now(),deadline:Date.now()+r.offer.leftMs});}else toast('Bu davetin süresi dolmuş. İstersen yeniden düello daveti gönderebilirsin.');}catch(e){toast(e.message);}}
-window.dmLiveDuel = {startLive, startPapi, invite, status, paywall, openResult,openInvite};
+window.dmLiveDuel = {startLive, startPapi, invite, status, paywall};
+Object.assign(window.dmLiveDuel,{openResult,openInvite});
 })();

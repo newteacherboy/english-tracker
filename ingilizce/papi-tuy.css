@@ -55,7 +55,10 @@ body .dm-tuy-button.dm-tuy-waiting .dm-tuy-icon{animation:dmTuySway 2.8s ease-in
 @media(prefers-reduced-motion:reduce){.dm-tuy-layer,.dm-tuy-sheet,.dm-tuy-new,.dm-tuy-prize,.dm-tuy-button .dm-tuy-icon{animation:none!important}}
 
 /* Compact combined daily streak and activity panel. */
-body .dm-has-wallet>.dm-unified-wallet.dm-papi-wallet.dm-has-daily-streak{grid-template-columns:clamp(25px,8vw,44px) repeat(3,minmax(0,1fr)) minmax(0,.85fr) minmax(38px,.6fr)!important;gap:4px!important}
+body #tab-dunya#tab-dunya .dm-unified-wallet.dm-papi-wallet.dm-has-center,body .dm-has-wallet>.dm-unified-wallet.dm-papi-wallet.dm-has-center{grid-template-columns:repeat(3,minmax(0,1fr)) minmax(44px,.85fr) minmax(44px,.65fr)!important;gap:4px!important}
+body .dm-unified-wallet.dm-papi-wallet.dm-has-center>.dm-pw-papi{display:none!important}
+body .dm-has-wallet>.dm-unified-wallet.dm-papi-wallet.dm-has-daily-streak:not(.dm-has-center){grid-template-columns:repeat(4,minmax(0,1fr))!important}
+body .dm-unified-wallet.dm-papi-wallet.dm-has-daily-streak:not(.dm-has-center)>.dm-pw-papi{display:none!important}
 body .dm-unified-wallet.dm-papi-wallet:not(.dm-has-daily-streak){grid-template-columns:clamp(30px,9vw,50px) repeat(3,minmax(0,1fr))!important}
 body .dm-unified-wallet.dm-papi-wallet .dm-tuy-button{position:relative;flex-direction:column!important;gap:2px!important;-webkit-text-fill-color:#0e7c73!important}
 body .dm-unified-wallet.dm-papi-wallet .dm-tuy-button small{display:none}

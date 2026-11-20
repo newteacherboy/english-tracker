@@ -29,7 +29,7 @@ function onTop(){
  return Object.values(buttons).every(e=>{const r=e.getBoundingClientRect(),x=r.left+r.width/2,y=r.top+r.height/2;
   if(x<0||y<0||x>innerWidth||y>innerHeight)return false;return !coveredBy(document.elementFromPoint(x,y));});
 }
-function detach(){hud.parentElement?.classList.remove('dm-has-wallet');hud.remove();}
+function detach(){window.dmNotificationCenter?.detach();hud.parentElement?.classList.remove('dm-has-wallet');hud.remove();}
 function run(){
  if(typeof aktifOgrenciAdi==='undefined'||!aktifOgrenciAdi){detach();return;}
  if([...document.querySelectorAll(activity)].some(visible)){detach();return;}
@@ -37,8 +37,8 @@ function run(){
  const host=visible(friends)?friends.querySelector('.fr-wallet-host'):selectors.flatMap(s=>[...document.querySelectorAll(s)]).find(visible);
  if(visible(friends)&&!friends.classList.contains('fr-home-view')){detach();return;}if(!host){detach();return;}
  if(hud.parentElement!==host){detach();host.prepend(hud);host.classList.add('dm-has-wallet');window.dispatchEvent(new Event('resize'));}
- const dailyVisible=!!window.DijiDailyGift&&!window.dmGuestMode&&!['teacher','dijimedu_demo'].includes(String(aktifOgrenciAdi).toLowerCase())&&!window.dmTeacherPortalMode;
- if(dailyVisible){daily.hidden=false;if(daily.parentElement!==hud)hud.append(daily);window.dmNotificationCenter?.mount(hud);}else{daily.remove();window.dmNotificationCenter?.detach();}hud.classList.toggle('dm-has-daily-streak',dailyVisible);window.DijiDailyGift?.decorateButton(daily);if(dailyVisible)window.DijiDailyGift?.onParkurVisible();
+ const dailyVisible=!!window.DijiDailyGift&&!window.dmGuestMode&&!['teacher','dijimedu_demo'].includes(String(aktifOgrenciAdi).toLowerCase())&&!window.dmTeacherPortalMode&&(!window.siniftaOynananOgrenci)&&(!!window.DijiPapiWing||!!host.closest('#tab-dunya'));
+ if(dailyVisible){daily.hidden=false;if(daily.parentElement!==hud)hud.append(daily);window.dmNotificationCenter?.mount(hud);}else{daily.remove();window.dmNotificationCenter?.detach();}hud.classList.toggle('dm-has-daily-streak',dailyVisible);hud.classList.toggle('dm-has-center',dailyVisible&&!!window.dmNotificationCenter);window.DijiDailyGift?.decorateButton(daily);if(dailyVisible)window.DijiDailyGift?.onParkurVisible();
  const y=typeof yo==='undefined'?{}:yo||{},time=window.dmActiveTime?.summary()||{stars:0,seconds:0},level=window.dmProgression?.level?.()||1;
  const energy=window.genelEnerjiKalan,values={energy:energy==null?'—':format(energy),gold:compact(y.altin),xp:compact(y.totalXp),};
  const labels={energy:'Enerji paketleri · '+values.energy,gold:'Altınlarım ve mağaza · '+format(y.altin)+' altın',xp:'XP ve ilerlemem · '+format(y.totalXp)+' XP · Seviye '+level};
