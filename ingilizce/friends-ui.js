@@ -306,20 +306,23 @@
   let peopleView=null;
   function mountPeopleButton(){
     const header=root.querySelector('.akis-baslik');if(!header)return;
+    let actions=header.querySelector('.fr-unified-actions');
+    if(!actions){actions=document.createElement('div');actions.className='fr-unified-actions';header.append(actions);}
     let button=header.querySelector('.fr-people-toggle');
     if(!button){
       button=document.createElement('button');button.type='button';button.className='fr-people-toggle';
       button.dataset.friendAction='people';button.setAttribute('aria-haspopup','dialog');
       button.setAttribute('aria-controls','frPeopleDropdown');
       button.innerHTML='<svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="12" cy="11" r="5" fill="white"/><circle cx="23" cy="12" r="4" fill="#c9e5ff"/><path d="M2 28v-3a10 10 0 0 1 20 0v3z" fill="white"/><path d="M22 18a8 8 0 0 1 9 8v2h-7v-3a12 12 0 0 0-2-7" fill="#c9e5ff"/></svg>';
-      header.append(button);
+      actions.append(button);
     }
     if(!header.querySelector('.fr-invite-top')){
-      const invite=document.createElement('button');invite.type='button';invite.className='fr-invite-top';invite.dataset.friendAction='share';invite.textContent='✉ Davet et';invite.setAttribute('aria-label','Arkadaşlarını Diji-Medu’ya davet et');header.append(invite);
+      const invite=document.createElement('button');invite.type='button';invite.className='fr-invite-top';invite.dataset.friendAction='share';invite.textContent='✉ Davet et';invite.setAttribute('aria-label','Arkadaşlarını Diji-Medu’ya davet et');actions.append(invite);
     }
     if(!header.querySelector('.fr-notifications-top')){
-      const bell=document.createElement('button');bell.type='button';bell.className='fr-notifications-top';bell.dataset.friendAction='notifications';bell.setAttribute('aria-label','Bildirimler');bell.innerHTML='🔔<span class="fr-notifications-count" hidden></span>';header.append(bell);
+      const bell=document.createElement('button');bell.type='button';bell.className='fr-notifications-top';bell.dataset.friendAction='notifications';bell.setAttribute('aria-label','Bildirimler');bell.innerHTML='🔔<span class="fr-notifications-count" hidden></span>';actions.append(bell);
     }
+    for(const node of [header.querySelector('.fr-invite-top'),button,header.querySelector('.fr-notifications-top')])if(node&&node.parentElement!==actions)actions.append(node);
     const counter=header.querySelector('.fr-notifications-count');
     if(counter){const count=window.dmNotificationCenter?.getUnread?.()||0;counter.hidden=!count;counter.textContent=count?'+'+count:'';}
     button.setAttribute('aria-label','Arkadaşlarım, '+people().length+' arkadaş');
