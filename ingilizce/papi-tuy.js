@@ -92,7 +92,7 @@ function notice(){
 function strip(){
  const done=new Set(state?.days||[]),out=[];const base=new Date(today()+'T12:00:00Z');
  for(let i=6;i>=0;i--){const d=new Date(base.getTime()-i*86400000),stamp=d.toISOString().slice(0,10),name=i===0?'Bugün':new Intl.DateTimeFormat('tr-TR',{weekday:'short',timeZone:'UTC'}).format(d).replace('.','');
-  out.push('<li class="'+(done.has(stamp)?'is-on':'')+(i===0?' is-today':'')+'"><i></i>'+esc(name)+'</li>');}
+  out.push('<li class="'+(done.has(stamp)?'is-on':'')+(i===0?' is-today':'')+'" aria-label="'+esc(name)+(done.has(stamp)?', tüy alındı':', tüy alınmadı')+'">'+ICON+'<span>'+esc(name)+'</span></li>');}
  return '<ol class="dm-tuy-days" aria-label="Son 7 gün">'+out.join('')+'</ol>';
 }
 function shieldInfo(){const y=typeof yo==='undefined'?{}:yo||{},price=typeof YO_DONDURUCU_FIYAT==='number'?YO_DONDURUCU_FIYAT:150;return {owned:Math.max(0,Math.floor(Number(y.dondurucu)||0)),price};}
@@ -108,11 +108,13 @@ function render(){
   layer.classList.remove('dm-tuy-wing-layer');
   sheet.className='dm-tuy-sheet';
   const n=state?count(state.feathers):0,left=NEED-n,{owned,price}=shieldInfo();
-  sheet.innerHTML=x+'<span class="dm-tuy-grip" aria-hidden="true"></span><header><div><h2 id="dmTuyTitle">Kuş Tüyü Serisi</h2><p>Kanat seviyesi '+esc(state?.level||1)+(state?.todayDone?' · bugün tüyünü aldın':'')+'</p></div><span class="dm-tuy-pill">'+BOLT+'+'+REWARD+'</span></header>'+
-   '<div class="dm-tuy-stage">'+fan(n,fresh)+papi(state?.todayDone?'mutlu':'merhaba')+'<span class="dm-tuy-count">'+n+' / '+NEED+' tüy</span></div>'+
-   '<p class="dm-tuy-next">'+(state?(left>0?left+' tüy daha → kanat açılır, <b>+'+REWARD+' enerji</b>':'Kanat doldu!'):'Kanadın yükleniyor…')+'</p>'+strip()+
-   '<div class="dm-tuy-rewards"><div>⚡ <b>+1 enerji</b><small>Her gün girişte</small></div><div>🎁 <b>+7 enerji</b><small>7 tüyü tamamla</small></div></div><p class="dm-tuy-status" role="status">'+esc(notice())+'</p><div class="dm-tuy-time" data-wing-time></div>'+
-   '<div class="dm-tuy-actions"><button type="button" class="dm-tuy-primary" data-tuy-close>'+(state?.todayDone?'Harika!':'Parkura dön')+'</button><button type="button" class="dm-tuy-oil" data-tuy-oil '+(buying?'disabled':'')+' aria-label="Tüy Yağı al, '+price+' altın. Elinde '+owned+' / 2">Tüy Yağı · '+price+'<small>'+owned+'/2</small></button></div>'+
+  sheet.innerHTML=x+'<span class="dm-tuy-grip" aria-hidden="true"></span><header><h2 id="dmTuyTitle">'+ICON+' Kuş Tüyü Serisi</h2></header>'+
+   '<div class="dm-tuy-stage"><div class="dm-tuy-summary"><strong>'+n+' / '+NEED+' tüy</strong><small>'+esc(state?.todayDone?'Bugünkü tüyünü aldın':state?'Kanat seviyesi '+state.level:'Kanadın yükleniyor…')+'</small></div><div class="dm-tuy-art">'+fan(n,fresh)+papi(state?.todayDone?'mutlu':'merhaba')+'</div></div>'+
+   strip()+'<p class="dm-tuy-next">'+(state?(left>0?left+' tüy daha · <b>+'+REWARD+' enerji</b>':'Kanat doldu!'):'')+'</p>'+
+   '<div class="dm-tuy-rewards"><div>⚡ Günlük ödül · <b>+1 enerji</b></div></div>'+
+   (state?.bekleyenEnerji>0||state?.atRisk>0||message?'<p class="dm-tuy-status" role="status">'+esc(notice())+'</p>':'')+
+   '<div class="dm-tuy-time" data-wing-time></div>'+
+   '<div class="dm-tuy-actions"><button type="button" class="dm-tuy-oil" data-tuy-oil '+(buying?'disabled':'')+' aria-label="Tüy Yağı al, '+price+' altın. Elinde '+owned+' / 2">Tüy Yağı · '+price+'<small>'+owned+'/2</small></button></div>'+
    (message?'<button type="button" class="dm-tuy-retry" data-tuy-retry>Tekrar dene</button>':'');
  }
  paintTime();sheet.querySelectorAll('[data-tuy-close]').forEach(b=>b.onclick=close);
@@ -120,7 +122,20 @@ function render(){
  sheet.querySelector('[data-tuy-collect]')?.addEventListener('click',collect);
  sheet.querySelector('[data-tuy-oil]')?.addEventListener('click',buyOil);
 }
-function paintTime(){const box=layer?.querySelector('[data-wing-time]');if(!box)return;const s=window.dmActiveTime?.summary?.()||{},secs=Math.max(0,Math.floor(Number(s.seconds)||0)),remaining=6000-secs%6000,star=Math.floor(secs/600),time=Math.floor(secs/3600)+' sa '+Math.floor(secs%3600/60)+' dk',chests=window.dmActiveTime?.unclaimed?.()||[];const key=JSON.stringify([Math.floor(secs/60),star,chests]);if(box.dataset.key===key)return;box.dataset.key=key;box.innerHTML='<div><b>⭐ '+star+' yıldız</b><b>⏱ '+time+'</b></div><small>10 dk = 1 yıldız · 100 dk = 1 sandık</small><progress max="6000" value="'+secs%6000+'" aria-label="Sandık ilerlemesi"></progress><small>🎁 Sıradaki sandık: '+Math.ceil(remaining/60)+' dk</small><button type="button" data-wing-detail>'+(chests.length?'🎁 '+chests.length+' sandık hazır!':'Süre ve sandıklar')+'</button>';box.querySelector('button').onclick=()=>{close();if(chests.length)window.dmActiveTime?.openChest?.(chests[0]);else window.dmActiveTime?.panel?.();};}document.addEventListener('dm:time',paintTime);const timeTimer=setInterval(paintTime,15000);
+function paintTime(){
+ const box=layer?.querySelector('[data-wing-time]');if(!box)return;
+ const value=window.dmActiveTime?.summary?.();
+ if(!value){box.textContent='Aktif süre yükleniyor…';return;}
+ const seconds=Math.max(0,Math.floor(Number(value.seconds)||0));
+ const elapsed=seconds%6000,minutes=Math.floor(elapsed/60);
+ const totalMinutes=Math.floor(seconds/60),hours=Math.floor(totalMinutes/60);
+ if(box.dataset.minute===String(totalMinutes))return;
+ box.dataset.minute=String(totalMinutes);
+ const total=(hours?hours+' sa ':'')+totalMinutes%60+' dk';
+ box.innerHTML='<div><b>Aktif süre · '+total+'</b><small>'+minutes+' / 100 dk</small></div><progress max="100" value="'+minutes+'" aria-label="100 dakikalık aktif süre ilerlemesi"></progress>';
+}
+document.addEventListener('dm:time',paintTime);
+setInterval(paintTime,15000);
 function collect(){
  const d=state;close();
  // Kanat doldu: yeni kanat 0 tüyle başlar (sunucuda da öyle kaydedildi).

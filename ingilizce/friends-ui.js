@@ -99,8 +99,8 @@
   function duelLeagueHtml(){
     const podium=[1,0,2].map(index=>{
       const p=duelLeaders[index];if(!p)return '<span class="fr-duel-empty-slot" aria-hidden="true"></span>';
-      const name=esc(p.player_name),tier=esc(p.membership_tier||'free');
-      return '<div class="fr-duel-champion fr-duel-champion-'+(index+1)+'"><div class="fr-duel-champion-portrait"><span class="fr-duel-champion-medal">'+(index+1)+'</span>'+avatar(p.player_name,62,tier)+'</div><div class="fr-duel-champion-step"><strong>'+name+'</strong><small>'+xp(p.wins)+' G / '+xp(p.losses)+' M</small><b>'+xp(p.duel_xp)+' XP</b></div></div>';
+      const name=esc(p.player_name),tier=p.membership_tier||'free';
+      return '<div class="fr-duel-champion fr-duel-champion-'+(index+1)+'"><div class="fr-duel-champion-portrait"><span class="fr-duel-champion-medal">'+(index+1)+'</span>'+avatar(p.player_name,45,tier)+'</div><div class="fr-duel-champion-step"><strong>'+name+'</strong><small>'+xp(p.wins)+' G / '+xp(p.losses)+' M</small><b>'+xp(p.duel_xp)+' XP</b></div></div>';
     }).join('');
     const mine=duelLeaders.find(p=>norm(p.player_name)===norm(who()));
     const status=duelLeadersError?'Düello ligi şu anda alınamadı.':duelLeadersAt?'Henüz tamamlanmış düello yok.':'Sıralama yükleniyor…';
@@ -314,6 +314,7 @@
   }
   // Başlığa bağlı, arama yapılabilen arkadaş listesi; mevcut profil ve takip akışlarını kullanır.
   let peopleView=null;
+  document.addEventListener('dm:duel-home-close',()=>{if(peopleView?.duel)closePeople(false);});
   function mountPeopleButton(){
     const header=root.querySelector('.akis-baslik');if(!header)return;
     let actions=header.querySelector('.fr-unified-actions');
@@ -323,11 +324,11 @@
       button=document.createElement('button');button.type='button';button.className='fr-people-toggle';
       button.dataset.friendAction='people';button.setAttribute('aria-haspopup','dialog');
       button.setAttribute('aria-controls','frPeopleDropdown');
-      button.innerHTML='<svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="12" cy="11" r="5" fill="white"/><circle cx="23" cy="12" r="4" fill="#c9e5ff"/><path d="M2 28v-3a10 10 0 0 1 20 0v3z" fill="white"/><path d="M22 18a8 8 0 0 1 9 8v2h-7v-3a12 12 0 0 0-2-7" fill="#c9e5ff"/></svg>';
+      button.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><circle cx="8" cy="7" r="3.5"/><circle cx="17" cy="8" r="2.9" opacity=".65"/><path d="M1 20v-2a7 7 0 0 1 14 0v2z"/><path d="M17 20v-2a9 9 0 0 0-1.6-5.1A6 6 0 0 1 23 19v1z" opacity=".65"/></svg>';
       actions.append(button);
     }
     if(!header.querySelector('.fr-invite-top')){
-      const invite=document.createElement('button');invite.type='button';invite.className='fr-invite-top';invite.dataset.friendAction='share';invite.textContent='✉ Davet et';invite.setAttribute('aria-label','Arkadaşlarını Diji-Medu’ya davet et');actions.append(invite);
+      const invite=document.createElement('button');invite.type='button';invite.className='fr-invite-top';invite.dataset.friendAction='share';invite.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><circle cx="9" cy="7" r="3.8"/><path d="M1 21v-2a8 8 0 0 1 16 0v2z"/><path d="M19 6v8m-4-4h8" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>';invite.setAttribute('aria-label','Arkadaşlarını Diji-Medu’ya davet et');actions.append(invite);
     }
     // Single notification entry lives in the shared HUD. Do not duplicate it in Friends actions.
     header.querySelectorAll('.fr-notifications-top').forEach(old=>old.remove());
@@ -339,11 +340,11 @@
     if(!peopleView)return;
     const v=peopleView;peopleView=null;v.host.remove();
     v.anchor.setAttribute('aria-expanded','false');
-    if(focus&&v.anchor.isConnected&&root.classList.contains('active'))v.anchor.focus({preventScroll:true});
+    if(focus&&v.anchor.isConnected&&(v.duel||root.classList.contains('active')))v.anchor.focus({preventScroll:true});
   }
   function positionPeople(){
     const v=peopleView;if(!v)return;
-    if(v.owner!==who()||!root.classList.contains('active')||!root.classList.contains('fr-home-view')){closePeople(false);return;}
+    if(v.owner!==who()||(v.duel?v.anchor.closest('[hidden]'):!root.classList.contains('active')||!root.classList.contains('fr-home-view'))){closePeople(false);return;}
     const viewport=window.visualViewport,r=v.anchor.getBoundingClientRect();
     const left=viewport?.offsetLeft||0,top=viewport?.offsetTop||0,w=viewport?.width||innerWidth,h=viewport?.height||innerHeight;
     const width=Math.min(316,w-24),x=Math.max(left+12,Math.min(r.right-width,left+w-width-12)),y=Math.max(top+8,r.bottom+12);
@@ -357,7 +358,7 @@
     const ids=v.add?[...new Set(known.map(p=>p.id||p.ad).filter(Boolean))].filter(id=>norm(id)!==norm(who())&&!friends.some(f=>norm(f)===norm(id))):friends;
     const list=ids.filter(id=>norm(id).includes(query));
     v.panel.querySelector('.fr-people-count').textContent=String(friends.length);
-    v.panel.querySelector('h3').textContent=v.add?'Arkadaş ekle':'Arkadaşlarım';
+    v.panel.querySelector('h3').textContent=v.duel?'Düello rakibini seç':v.add?'Arkadaş ekle':'Arkadaşlarım';
     v.panel.querySelector('.fr-people-add').textContent=v.add?'‹ Arkadaşlarıma dön':'+ Arkadaş ekle';
     v.input.placeholder=v.add?'Öğrenci ara…':'Arkadaş ara…';
     v.list.innerHTML=list.map(id=>{
@@ -367,14 +368,14 @@
     }).join('')||'<p class="fr-people-empty" role="status">'+(query?'Bu isimde bir arkadaş bulunamadı.':v.add?'Ekleyebileceğin bir öğrenci bulunamadı.':'Henüz takip ettiğin bir arkadaş yok. Arkadaş ekle ile başlayabilirsin.')+'</p>';
     positionPeople();
   }
-  function openPeople(){
+  function openPeople(duelAnchor=null){
     if(peopleView){closePeople();return;}
     mountPeopleButton();
-    const anchor=root.querySelector('.fr-people-toggle');if(!anchor)return;
+    const anchor=duelAnchor||root.querySelector('.fr-people-toggle');if(!anchor)return;
     const host=document.createElement('div');host.className='fr-people-layer';
     host.innerHTML='<div class="fr-people-shade" aria-hidden="true"></div><section id="frPeopleDropdown" class="fr-people-dropdown" role="dialog" aria-modal="false" aria-labelledby="frPeopleTitle"><header><h3 id="frPeopleTitle">Arkadaşlarım</h3><span class="fr-people-count"></span><button type="button" class="fr-people-close" aria-label="Arkadaş listesini kapat">×</button></header><label class="fr-people-search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10" cy="10" r="6"/><path d="m15 15 6 6"/></svg><input type="search" aria-label="Arkadaş ara" placeholder="Arkadaş ara…" autocomplete="off"></label><div class="fr-people-list" role="region" aria-label="Arkadaşlar"></div><button type="button" class="fr-people-add">+ Arkadaş ekle</button></section>';
     const panel=host.querySelector('section');
-    peopleView={host,panel,anchor,owner:who(),input:host.querySelector('input'),list:host.querySelector('.fr-people-list'),add:false};
+    peopleView={host,panel,anchor,owner:who(),input:host.querySelector('input'),list:host.querySelector('.fr-people-list'),add:false,duel:!!duelAnchor};
     document.body.append(host);anchor.setAttribute('aria-expanded','true');
     host.querySelector('.fr-people-shade').onclick=()=>closePeople();
     host.querySelector('.fr-people-close').onclick=()=>closePeople();
@@ -382,14 +383,14 @@
     host.querySelector('.fr-people-add').onclick=()=>{const v=peopleView;v.add=!v.add;v.input.value='';drawPeople();v.input.focus({preventScroll:true});};
     panel.addEventListener('click',e=>{
       const row=e.target.closest('[data-person]');if(!row)return;
-      const id=row.dataset.person,rect=row.getBoundingClientRect();closePeople(false);window.maAkisKisiAc?.(id,rect);
+      const id=row.dataset.person,rect=row.getBoundingClientRect();closePeople(false);if(duelAnchor)void window.dmLiveDuel?.invite?.(id);else window.maAkisKisiAc?.(id,rect);
     });
     drawPeople();panel.querySelector('.fr-people-close').focus({preventScroll:true});
   }
   document.addEventListener('keydown',e=>{if(e.key==='Escape'&&peopleView){e.preventDefault();closePeople();}});
   document.addEventListener('pointerdown',e=>{if(peopleView&&!peopleView.host.contains(e.target)&&!peopleView.anchor.contains(e.target))closePeople(false);},true);
   document.addEventListener('dm:login',()=>{closePeople(false);resetAccount();mountPeopleButton();});
-  document.addEventListener('dm:notifications-updated',e=>{const b=root.querySelector('.fr-notifications-count');if(b){const n=Math.max(0,Number(e.detail?.unread)||0);b.hidden=!n;b.textContent=n?'+'+n:'';}});
+
   document.addEventListener('focusin',e=>{if(peopleView&&!peopleView.host.contains(e.target)&&!peopleView.anchor.contains(e.target))closePeople(false);});
   window.addEventListener('resize',positionPeople,{passive:true});
   window.visualViewport?.addEventListener('resize',positionPeople,{passive:true});
@@ -452,7 +453,7 @@
   // Only observe structure. Badge text/attribute updates must not cause a render loop.
   observer.observe($('maEkran'),{childList:true,subtree:true});
   setInterval(()=>{if(root.classList.contains('active')&&!document.hidden){resetAccount();paintLocks();if(maSekme==='hub'&&!maProfilId)void loadHome();}},180000);
-  window.dmFriends={open:()=>window.meduAkisAc(),home:()=>window.maSekmeSec('hub'),detail:s=>window.maSekmeSec(s),refresh:()=>loadHome(true)};
+  window.dmFriends={open:()=>window.meduAkisAc(),home:()=>window.maSekmeSec('hub'),detail:s=>window.maSekmeSec(s),chooseDuelFriend:anchor=>{if(anchor&&requireFeature('duello')){openPeople(anchor);void loadHome().then(()=>{if(peopleView?.duel)drawPeople();});}},refresh:()=>loadHome(true)};
   function dockSpace(){
     const dock=$('bottomNavMobile');
     if(!dock)return;
