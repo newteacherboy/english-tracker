@@ -114,7 +114,7 @@ var supabaseClient = null;
 </script>
 <script src="public-catalog.js?v=20261027-1"></script>
 <script src="rpc-read-transforms.js?v=20261027-kota-4"></script>
-<script src="request-budget.js?v=20261120-budget"></script>
+<script src="request-budget.js?v=20261120-backoff2"></script>
 <script src="incremental-reads.js?v=20261027-1"></script>
 
             <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -145,7 +145,7 @@ var supabaseClient = null;
 <link rel="preload" as="script" href="supabase-init.js?v=20261118-hiz">
 <link rel="preload" as="script" href="public-catalog.js?v=20261027-1">
 <link rel="preload" as="script" href="rpc-read-transforms.js?v=20261027-kota-4">
-<link rel="preload" as="script" href="request-budget.js?v=20261120-budget">
+<link rel="preload" as="script" href="request-budget.js?v=20261120-backoff2">
 <link rel="preload" as="script" href="incremental-reads.js?v=20261027-1">
 <link rel="preload" as="style" href="portal-base-extracted.css?v=20261015-perf1">
 <link rel="preload" as="style" href="friends-overflow-fix.css?v=20261015-fix1">
@@ -164,7 +164,7 @@ var supabaseClient = null;
 <link rel="preload" as="script" href="app-js/i07-gonder.js?v=1ce2b7055b">
 <link rel="preload" as="script" href="app-js/i08-rgb.js?v=1607b2c4f7">
 <link rel="preload" as="style" href="portal-world-extracted.css?v=20261015-1">
-<link rel="preload" as="script" href="app-js/i09-1-alt-menu-arkadaslar-dunya-.js?v=57ab7b342c">
+<link rel="preload" as="script" href="app-js/i09-1-alt-menu-arkadaslar-dunya-.js?v=20261120-dom2">
 <link rel="preload" as="script" href="app-js/i10-1-oyun-ust-bari.js?v=629087881e">
 <link rel="preload" as="script" href="app-js/i11-2-joker-magazasi-30-joker.js?v=4001ef2a87">
 <link rel="preload" as="script" href="app-js/i12-1-ekonomi.js?v=166b93368d">
@@ -4205,7 +4205,7 @@ const seriCarpani = () => seri() >= 7 ? 2 : (seri() >= 3 ? 1.5 : 1);
 <div id="tab-dunya" class="dc-fullscreen-overlay"><div id="dunyaAlan"></div></div>
 <script src="app-js/i08-rgb.js?v=1607b2c4f7"></script>
 <link rel="stylesheet" href="portal-world-extracted.css?v=20261015-1">
-<script src="app-js/i09-1-alt-menu-arkadaslar-dunya-.js?v=57ab7b342c"></script>
+<script src="app-js/i09-1-alt-menu-arkadaslar-dunya-.js?v=20261120-dom2"></script>
 <style>
 /* Soru ekranı dünya temasında: iç kutular da temaya uysun */
 #tab-buyuakademisi.bc-tema .ba-shell, #tab-buyuakademisi.bc-tema .ba-shell > div:not(.ba-levelup-overlay):not(.bc-amb-kat) { background:transparent !important; }
