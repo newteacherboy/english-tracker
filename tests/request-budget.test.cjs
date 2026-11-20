@@ -8,8 +8,36 @@ function fixture(handler){
  const calls=[],window={fetch:async(u,o)=>{calls.push({u,o});return handler?handler(u,o,calls):new Response(JSON.stringify({ok:true,value:calls.length}));},addEventListener(){}};
  const ctx={window,document,localStorage:storage,sessionStorage:{getItem:()=>null},location:{href:'https://panel.test/ingilizce/'},Date:Clock,Headers,Response,URL,Map,Set,Object,Promise,JSON,setTimeout,clearTimeout,console};
  vm.runInNewContext(fs.readFileSync('ingilizce/request-budget.js','utf8'),ctx);
- return {window,calls,storage,advance:n=>now+=n,document,visible:()=>{document.hidden=false;(listeners.visibilitychange||[]).slice().forEach(f=>f());},get:op=>window.fetch(API+'?islem='+op+'&ogrenci=First'),post:(op,args={})=>window.fetch(API,{method:'POST',body:JSON.stringify({islem:op,ogrenci:'First',t:store.get('ing_token'),...args})})};
+ return {window,calls,storage,advance:n=>now+=n,document,visible:()=>{document.hidden=false;(listeners.visibilitychange||[]).slice().forEach(f=>f());},get:op=>window.fetch(API+'?islem='+op+'&ogrenci=First'),post:(op,args={})=>window.fetch(API,{method:'POST',body:JSON.stringify({islem:op,ogrenci:'First',t:store.get('ing_token'),...args})}),
+  loadProgression(){
+   Object.assign(document,{getElementById:()=>null,querySelectorAll:()=>[],dispatchEvent:event=>{
+    for(const listener of listeners[event.type]||[])listener(event);
+   }});
+   window.DijiProgressionCatalog={features:[],functions:{}};
+   vm.runInNewContext(fs.readFileSync('ingilizce/progression-ui.js','utf8'),{
+    window,document,localStorage:storage,apiURL:API,aktifOgrenciAdi:'First',fetch:(...args)=>window.fetch(...args),
+    yo:{},yoHazirMi:()=>true,setInterval:()=>{},CustomEvent:class {constructor(type){this.type=type;}}
+   });
+  }};
 }
+test('completing placement refreshes progression exactly once',async()=>{
+ const f=fixture(()=>new Response('{"ok":true,"level":1}'));
+ f.loadProgression();
+ f.document.dispatchEvent({type:'dm:starting-placement-complete'});
+ await new Promise(setImmediate);
+ assert.equal(f.calls.filter(({o})=>JSON.parse(o.body).islem==='seviyeDurumu').length,1);
+});
+test('progression and the weekly league screen join the same pending read',async()=>{
+ const f=fixture((u,o)=>{
+  const body=JSON.parse(o.body);
+  if(body.islem==='seviyeDurumu')return new Response('{"ok":true,"level":5}');
+  if(body.islem==='okumaGrubu')return new Response(JSON.stringify({ok:true,results:body.istekler.map(()=>({status:200,body:'{"ok":true,"liste":[]}'}))}));
+  return new Response('{"ok":true,"liste":[]}');
+ });
+ f.loadProgression();
+ await Promise.all([f.window.dmProgression.refresh(true),f.post('seviyeLigListesi',{kapsam:'weekly'})]);
+ assert.equal(f.window.dmRequestBudget.stats.joined,1);
+});
 test('concurrent GET/POST reads share one request and independently consumable responses',async()=>{
  const f=fixture();const [a,b]=await Promise.all([f.get('bildirimlerim'),f.post('bildirimlerim')]);assert.deepEqual(await a.json(),await b.json());assert.equal(f.calls.length,1);assert.equal(f.window.dmRequestBudget.stats.joined,1);
 });
