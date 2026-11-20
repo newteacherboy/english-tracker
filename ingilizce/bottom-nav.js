@@ -96,10 +96,17 @@ function decorate(){const nav=document.getElementById('bottomNavMobile');if(!nav
 window.dmDuelHomeAc=function(){
  document.getElementById('dmDuelHome')?.remove();
  const el=document.createElement('div');el.id='dmDuelHome';el.className='rt-profile-backdrop au-centre-backdrop';
- el.innerHTML='<section class="rt-profile au-centre dm-duel-home" role="dialog" aria-modal="true"><button type="button" class="rt-close" aria-label="Kapat">×</button><h2>Düello</h2><div class="dm-duel-hero"><strong>⚔️ Kelime Arenası</strong><p>10 soruluk kelime savaşı!</p><button data-duel="live">⚡ Hızlı eşleş</button><button data-duel="papi">🦜 Papi’ye karşı oyna</button></div></section>';
+ el.innerHTML='<section class="rt-profile au-centre dm-duel-home" role="dialog" aria-modal="true" aria-labelledby="dmDuelTitle"><button type="button" class="rt-close" aria-label="Kapat">×</button><h2 id="dmDuelTitle">⚔️ Düello</h2><div class="dm-duel-hero"><strong>Kelime Arenası</strong><p>10 soruluk kelime savaşı!</p><button data-duel="live">⚡ Hızlı eşleş</button><button data-duel="papi">🦜 Papi’ye karşı oyna</button><button data-duel="friend">👥 Arkadaşına meydan oku</button></div><div class="dm-duel-personal" role="status">Düello istatistikleri yükleniyor…</div></section>';
  const dismiss=()=>{el.remove();window.dcBottomNavSenkronize?.();};
- el.onclick=e=>{if(e.target===el||e.target.closest('.rt-close'))return dismiss();const b=e.target.closest('[data-duel]');if(!b)return;dismiss();if(b.dataset.duel==='live')window.dmLiveDuel?.startLive();else window.dmLiveDuel?.startPapi();};
+ el.onclick=e=>{if(e.target===el||e.target.closest('.rt-close'))return dismiss();const b=e.target.closest('[data-duel]');if(!b)return;dismiss();if(b.dataset.duel==='live')window.dmLiveDuel?.startLive();else if(b.dataset.duel==='papi')window.dmLiveDuel?.startPapi();else window.meduAkisAc?.();};
  el.onkeydown=e=>{if(e.key==='Escape')dismiss();};document.body.append(el);el.querySelector('.rt-close').focus();
+ const owner=typeof aktifOgrenciAdi!=='undefined'?String(aktifOgrenciAdi||''):'';
+ window.supabaseClient?.rpc?.('dm_duel_champions_v1',{p_limit:50}).then(({data,error})=>{
+   if(error||!el.isConnected)return;
+   const me=(data||[]).find(p=>String(p.player_name).toLocaleLowerCase('tr')===owner.toLocaleLowerCase('tr'));
+   const target=el.querySelector('.dm-duel-personal');
+   if(target)target.textContent=me?'🏆 Galibiyet: '+me.wins+'  ·  Yenilgi: '+me.losses+'  ·  Düello XP: '+Number(me.duel_xp||0).toLocaleString('tr-TR'):'🏆 Düello Şampiyonları sıralamasını Arkadaşlar bölümünden görebilirsin.';
+ }).catch(()=>{const t=el.querySelector('.dm-duel-personal');if(t)t.textContent='İstatistikler şu anda yüklenemedi.';});
 };
 window.dmOpenGamesHome=function(){
  const btn=document.querySelector('#bottomNavMobile [data-ekran="tab-aktiviteler"]');if(btn){btn.click();return true;}return false;
