@@ -752,5 +752,6 @@ document.addEventListener('dm:login', () => { rights = null; dropLobby(); setTim
 setInterval(() => { if (lobbyOwner && lobbyOwner !== token()) { dropLobby(); rights = null; } boot(); }, 3000);
 setTimeout(boot, 4000);
 
-window.dmLiveDuel = {startLive, startPapi, invite, status, paywall};
+async function openResult(id){if(inDuel)return;try{const r=await rpc('dm_duel_result',{p_duel:id});if(!r.ok||r.status!=='finished')return toast(r.message||'Sonuç henüz hazır değil.');result(r,r.opponent||'Rakibin',r);}catch(e){toast(e.message);}}
+window.dmLiveDuel = {startLive, startPapi, invite, status, paywall, openResult};
 })();

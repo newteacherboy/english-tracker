@@ -10,7 +10,7 @@ function paintBadge(){badge.hidden=!unread;badge.textContent=unread?'+'+unread:'
 async function rpc(action='list',id=null){
  if(!session)throw Error('Öğrenci oturumu gerekli.');
  const ctrl=new AbortController(),timer=setTimeout(()=>ctrl.abort(),9000);
- try{const r=await fetch(SUPABASE_URL+'/rest/v1/rpc/dm_notification_center',{method:'POST',headers:{apikey:SUPABASE_ANON_KEY,Authorization:'Bearer '+SUPABASE_ANON_KEY,'Content-Type':'application/json'},body:JSON.stringify({p_token:session,p_action:action,p_id:id}),signal:ctrl.signal});const d=await r.json();if(!r.ok||!d.ok)throw Error(d.message||'Bildirimler yüklenemedi.');return d;}finally{clearTimeout(timer);}
+ try{const r=await fetch(SUPABASE_URL+'/rest/v1/rpc/dm_notification_center',{method:'POST',headers:{apikey:SUPABASE_ANON_KEY,'Content-Type':'application/json'},body:JSON.stringify({p_token:session,p_action:action,p_id:id}),signal:ctrl.signal});const d=await r.json();if(!r.ok||!d.ok)throw Error(d.message||'Bildirimler yüklenemedi.');return d;}finally{clearTimeout(timer);}
 }
 function apply(d){items=Array.isArray(d.items)?d.items:[];unread=Math.max(0,Number(d.unread)||0);last=Date.now();failed=false;paintBadge();render();}
 async function refresh(force=false){reset();if(!owner||!session||document.hidden||(!force&&!bell.isConnected))return;if(pending)return pending;if(!force&&Date.now()-last<120000)return;const at=serial;const task=(async()=>{try{const d=await rpc();if(at===serial)apply(d);}catch(e){if(at===serial){failed=true;last=Date.now();render();}}})();pending=task;try{await task;}finally{if(pending===task)pending=null;}}
@@ -31,17 +31,17 @@ locate();}
 async function mark(action,id=null){const at=serial;try{if(pending)await pending;if(at!==serial)return;const d=await rpc(action,id);if(at===serial)apply(d);}catch{if(at===serial){failed=true;render();}}}
 function friends(tab){window.dmFriends?.open?.();if(tab)window.dmFriends?.detail?.(tab);}
 async function choose(n){const at=serial;const item={...n};if(!item.okundu)await mark('read',item.sat);if(at!==serial)return;close();switch(item.tur){
- case 'canliDuelloSonuc':if(item.duelId&&window.dmLiveDuel?.openResult)return window.dmLiveDuel.openResult(item.duelId);return window.dmLiveDuel?.status?.();
- case 'sanalDuelloSonuc':if(item.virtualBot&&window.dmLeagueUI?.openVirtualDirect)return window.dmLeagueUI.openVirtualDirect(Number(item.virtualBot));return window.dmLiveDuel?.status?.();
- case 'duello':case 'duelloSonuc':case 'duelloYanit':return window.dmLiveDuel?.status?.();
+ case 'canliDuelloSonuc':if(item.duelId&&window.dmLiveDuel?.openResult)return window.dmLiveDuel.openResult(item.duelId);return window.dmLeagueUI?.openDuelChooser?.();
+ case 'sanalDuelloSonuc':if(item.virtualBot&&window.dmLeagueUI?.openVirtualDirect)return window.dmLeagueUI.openVirtualById?.(item.virtualBot);return window.dmLeagueUI?.openDuelChooser?.();
+ case 'duello':case 'duelloSonuc':case 'duelloYanit':return window.dmLeagueUI?.openDuelChooser?.();
  case 'oyunDavet':return item.matchId?window.dmMatchAc?.(item.matchId):window.dmArenaAc?.();
  case 'mesaj':return window.dmMessageAc?.(item.gonderen);
  case 'takip':case 'tebrik':case 'hediye':case 'enerji':return item.gonderen?window.maProfilAc?.(item.gonderen):window.dmIlerlememAc?.();
  case 'tuy':return window.DijiDailyGift?.open?.();
- case 'rozet':return window.dmBasarilarimAc?.()||window.dmProfileMenuAc?.();
+ case 'rozet':return typeof window.dmBasarilarimAc==='function'?window.dmBasarilarimAc():window.dmProfileMenuAc?.();
  case 'odul':return window.dmIlerlememAc?.();
  case 'lig':return friends('lig');
- case 'duyuru':if(item.duyuruId&&window.dmZirve?.openStudentHub)return window.dmZirve.openStudentHub();return friends('akis');
+ case 'duyuru':if(item.tur==='duyuru'&&item.title==='Öğretmenimle Zirveye!'&&window.dmZirve?.openStudentHub)return window.dmZirve.openStudentHub();return friends('akis');
  case 'gorev':return window.dmIlerlememAc?.();
  case 'uyelik':return window.magazaAc?.();
  default:return friends('akis');
