@@ -740,7 +740,7 @@ function result(d, opp, r) {
   sfx(win ? 'kombo' : draw ? 'dogru' : 'yanlis');
   function done() { inDuel = false; closeLayer(); inboxAfter = 0; void checkInbox(); }
   el.querySelector('[data-close]').onclick = done;
-  el.querySelector('[data-again]').onclick = () => { inDuel = false; closeLayer(); (d.kind === 'papi' ? startPapi : startLive)(); };
+  el.querySelector('[data-again]').onclick = () => { inDuel = false; closeLayer(); d.kind==='papi'?startPapi():opp&&opp!=='Rakibin'?invite(opp):startLive(); };
 }
 
 /* ---------- Başlatma ---------- */
@@ -753,5 +753,6 @@ setInterval(() => { if (lobbyOwner && lobbyOwner !== token()) { dropLobby(); rig
 setTimeout(boot, 4000);
 
 async function openResult(id){if(inDuel)return;try{const r=await rpc('dm_duel_result',{p_duel:id});if(!r.ok||r.status!=='finished')return toast(r.message||'Sonuç henüz hazır değil.');result(r,r.opponent||'Rakibin',r);}catch(e){toast(e.message);}}
-window.dmLiveDuel = {startLive, startPapi, invite, status, paywall, openResult};
+async function openInvite(id,opponent){if(inDuel)return;try{const r=await rpc('dm_duel_inbox');if(r?.ok&&r.offer?.id===id&&r.offer.leftMs>500){seenOffers.delete(id);hideBanner();showBanner({...r.offer,at:Date.now(),deadline:Date.now()+r.offer.leftMs});}else toast('Bu davetin süresi dolmuş. İstersen yeniden düello daveti gönderebilirsin.');}catch(e){toast(e.message);}}
+window.dmLiveDuel = {startLive, startPapi, invite, status, paywall, openResult,openInvite};
 })();

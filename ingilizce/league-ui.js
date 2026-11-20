@@ -457,6 +457,6 @@ document.addEventListener('dm:state',()=>{for(const state of Object.values(state
 document.addEventListener('visibilitychange',()=>{if(document.hidden)clearRise();else if(onScreen()){animatePendingRise();void load();}});
 if(typeof MutationObserver==='function')new MutationObserver(()=>{if(!onScreen())clearRise();}).observe(root,{attributes:true,attributeFilter:['class'],childList:true});
 setInterval(()=>{if(!document.hidden&&onScreen())void load();},180000); // [Kota] 1 dk -> 3 dk
-async function openVirtualById(id){const find=()=>states.weekly.visualRows.find(p=>p.is_virtual&&String(p.bot_id??p.id).replace(/^bot[-_:]/,'')===String(id));let bot=find();if(!bot){await load(true,'weekly');bot=find();}if(bot)return openVirtualDirect(bot);return openDuelChooser();}
+async function openVirtualById(id){const find=()=>states.weekly.visualRows.find(p=>p.is_virtual&&String(p.bot_id??p.id).replace(/^(?:bot|virtual)[-_:]/,'')===String(id));let bot=find();if(!bot){await load(true,'weekly');bot=find();}if(bot)return openVirtualDirect(bot);return openDuelChooser();}
 window.dmLeagueUI={openVirtualById,refresh:()=>load(true),render,weeklyPreview,openVirtualDirect,openVirtualSelection,openDuelChooser,virtualAvatar,virtualTier,virtualMemberAvatar,refreshWeekly:()=>load(false,'weekly'),openWeekly:()=>{mode='weekly';selected=null;limit=30;window.maSekmeSec?.('lig');}};
 })();

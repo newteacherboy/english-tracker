@@ -14,7 +14,7 @@ async function rpc(action='list',id=null){
 }
 function apply(d){items=Array.isArray(d.items)?d.items:[];unread=Math.max(0,Number(d.unread)||0);last=Date.now();failed=false;paintBadge();render();}
 async function refresh(force=false){reset();if(!owner||!session||document.hidden||(!force&&!bell.isConnected))return;if(pending)return pending;if(!force&&Date.now()-last<120000)return;const at=serial;const task=(async()=>{try{const d=await rpc();if(at===serial)apply(d);}catch(e){if(at===serial){failed=true;last=Date.now();render();}}})();pending=task;try{await task;}finally{if(pending===task)pending=null;}}
-const styles={canliDuelloSonuc:['⚔️','Düello sonucu'],sanalDuelloSonuc:['⚔️','Düello sonucu'],duello:['⚔️','Düello daveti'],duelloSonuc:['⚔️','Düello sonucu'],duelloYanit:['⚔️','Düello yanıtı'],oyunDavet:['🎮','Oyun daveti'],rozet:['🏅','Yeni rozet'],odul:['🎁','Ödül'],tuy:['🪶','Kuş tüyü'],mesaj:['💬','Yeni mesaj'],takip:['👥','Yeni takipçi'],hediye:['🎁','Hediye'],enerji:['⚡','Enerji hediyesi'],duyuru:['📢','Duyuru'],lig:['🏆','Lig'],gorev:['📋','Görev'],uyelik:['👑','Üyelik']};
+const styles={canliDuelloDavet:['⚔️','Canlı düello daveti'],sureSandik:['🎁','Öğrenme sandığı'],ogretmen:['👨‍🏫','Öğretmen bildirimi'],canliDuelloSonuc:['⚔️','Düello sonucu'],sanalDuelloSonuc:['⚔️','Düello sonucu'],duello:['⚔️','Düello daveti'],duelloSonuc:['⚔️','Düello sonucu'],duelloYanit:['⚔️','Düello yanıtı'],oyunDavet:['🎮','Oyun daveti'],rozet:['🏅','Yeni rozet'],odul:['🎁','Ödül'],tuy:['🪶','Kuş tüyü'],mesaj:['💬','Yeni mesaj'],takip:['👥','Yeni takipçi'],hediye:['🎁','Hediye'],enerji:['⚡','Enerji hediyesi'],duyuru:['📢','Duyuru'],lig:['🏆','Lig'],gorev:['📋','Görev'],uyelik:['👑','Üyelik']};
 function date(x){try{return new Intl.DateTimeFormat('tr-TR',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}).format(new Date(x));}catch{return '';}}
 function close(){if(!layer)return;layer.remove();layer=null;bell.setAttribute('aria-expanded','false');if(bell.isConnected)bell.focus({preventScroll:true});}
 function locate(){if(!layer)return;const r=bell.getBoundingClientRect(),panel=layer.firstElementChild;panel.style.top=Math.max(8,r.bottom+8)+'px';panel.style.right=Math.max(8,innerWidth-r.right)+'px';panel.style.maxHeight=Math.max(160,innerHeight-r.bottom-18)+'px';}
@@ -29,8 +29,12 @@ if(items.length>4)panel.append(button(all?'Daha az göster':'Tümünü gör',()=
 if(window.DMNotificationActions&&items.some(n=>n.tur==='duello'||n.tur==='oyunDavet'))window.DMNotificationActions.mount(panel,all?items:items.slice(0,4),{owner,currentOwner:who,onNavigate:close}).catch(()=>{});
 locate();}
 async function mark(action,id=null){const at=serial;try{if(pending)await pending;if(at!==serial)return;const d=await rpc(action,id);if(at===serial)apply(d);}catch{if(at===serial){failed=true;render();}}}
+function detail(n){const text=document.createElement('p');text.textContent=n.metin||'';return window.dmMemberUI?.sheet(n.title||'Bildirim',text.outerHTML);}
+function navigateTab(tab){const f={parkur:window.dunyaTamEkranAc,oyunlar:window.aktivitelerTamEkranAc,derscalis:window.dersCalisTamEkranAc,magaza:window.magazaAc,arkadaslar:window.meduAkisAc,profil:window.dmProfileMenuAc}[tab];if(typeof f!=='function')return false;f();return true;}
 function friends(tab){window.dmFriends?.open?.();if(tab)window.dmFriends?.detail?.(tab);}
 async function choose(n){const at=serial;const item={...n};if(!item.okundu)await mark('read',item.sat);if(at!==serial)return;close();switch(item.tur){
+ case 'canliDuelloDavet':return window.dmLiveDuel?.openInvite?.(item.duelId,item.opponent);
+ case 'sureSandik':{let chest=Number(item.chestIndex);if(window.dmActiveTime?.unclaimed?.().includes(chest))return window.dmActiveTime.openChest(chest);return window.DijiDailyGift?.open?.();}
  case 'canliDuelloSonuc':if(item.duelId&&window.dmLiveDuel?.openResult)return window.dmLiveDuel.openResult(item.duelId);return window.dmLeagueUI?.openDuelChooser?.();
  case 'sanalDuelloSonuc':if(item.virtualBot&&window.dmLeagueUI?.openVirtualDirect)return window.dmLeagueUI.openVirtualById?.(item.virtualBot);return window.dmLeagueUI?.openDuelChooser?.();
  case 'duello':case 'duelloSonuc':case 'duelloYanit':return window.dmLeagueUI?.openDuelChooser?.();
@@ -41,8 +45,9 @@ async function choose(n){const at=serial;const item={...n};if(!item.okundu)await
  case 'rozet':return typeof window.dmBasarilarimAc==='function'?window.dmBasarilarimAc():window.dmProfileMenuAc?.();
  case 'odul':return window.dmIlerlememAc?.();
  case 'lig':return friends('lig');
- case 'duyuru':if(item.tur==='duyuru'&&item.title==='Öğretmenimle Zirveye!'&&window.dmZirve?.openStudentHub)return window.dmZirve.openStudentHub();return friends('akis');
- case 'gorev':return window.dmIlerlememAc?.();
+ case 'duyuru':if(/öğretmenimle zirveye|24 kasım/i.test(item.title||'')&&window.dmZirve?.openStudentHub)return window.dmZirve.openStudentHub();if(item.routeTab&&navigateTab(item.routeTab))return;return detail(item);
+ case 'ogretmen':return detail(item);
+ case 'gorev':return detail(item);
  case 'uyelik':return window.magazaAc?.();
  default:return friends('akis');
  }}
