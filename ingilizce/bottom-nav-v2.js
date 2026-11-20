@@ -14,7 +14,9 @@
   if(id==='tab-profile-menu'){
    const name=typeof aktifOgrenciAdi!=='undefined'?String(aktifOgrenciAdi||''):'';
    let avatar='';try{if(name)avatar=window.karakterSvg?.(name,38)||'';}catch{}
-   return '<span class="dm-nv2-tile dm-nv2-own-avatar">'+(avatar||'<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4" fill="#53759b"/><path d="M4 21v-2a8 8 0 0 1 16 0v2z" fill="#53759b"/></svg>')+'</span>';
+   const plan=window.dmAndroidPlan?.plan||((Number(window.genelEnerjiMax)||0)>=60?'premium_pro':(Number(window.genelEnerjiMax)||0)>=40?'pro':'free');
+   const tier=plan==='premium_pro'?'premium_pro':plan==='pro'?'pro':'free';
+   return '<span class="dm-nv2-tile dm-nv2-own-avatar dm-nv2-tier-'+tier+'">'+(avatar||'<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4" fill="#53759b"/><path d="M4 21v-2a8 8 0 0 1 16 0v2z" fill="#53759b"/></svg>')+(tier!=='free'?'<b class="dm-nv2-tier-tag">'+(tier==='pro'?'PRO':'PRO+')+'</b>':'')+'</span>';
   }
   return '';
  }
