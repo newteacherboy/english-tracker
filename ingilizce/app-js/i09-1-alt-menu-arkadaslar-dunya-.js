@@ -8,8 +8,8 @@
   const oyunda = () => (typeof odulOyunda === 'function' && odulOyunda()) || !!document.querySelector('.bc-perde, .bs-perde, .dv-perde, .kr-perde');
 
   /* ===== 1) Alt menü: Arkadaşlar → Dünya Parkuru ===== */
-  setInterval(() => {
-    let b = document.querySelector('#bottomNavMobile [data-ekran="tab-meduakis"]');
+  function polishMenus() {
+    if(document.hidden)return;
 
     let hud = document.querySelector('#dunyaAlan .bc-hud');
     if (hud && !hud.querySelector('.bc-akis-btn')) {
@@ -21,7 +21,14 @@
     document.querySelectorAll('#yoSanaOzelGrid [onclick="yoLigAc()"]').forEach(x => x.remove());
     /* Aktivite: Büyü Akademisi kartı kalksın */
     document.querySelectorAll('#tab-aktiviteler [onclick*="baModuAc"], #tab-aktiviteler [onclick*="baFabTikla"]').forEach(x => { let k = x.closest('.az-gcard') || x; k.style.display = 'none'; });
-  }, 800);
+  }
+  let polishFrame=0;
+  function schedulePolish(){if(polishFrame||document.hidden)return;polishFrame=requestAnimationFrame(()=>{polishFrame=0;polishMenus();});}
+  const menuObserver=new MutationObserver(schedulePolish);
+  function observeMenus(){for(const id of ['dunyaAlan','yoSanaOzelGrid','tab-aktiviteler']){const el=$(id);if(el)menuObserver.observe(el,{childList:true,subtree:true});}schedulePolish();}
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',observeMenus,{once:true});else observeMenus();
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden)observeMenus();});
+  document.addEventListener('dm:state',observeMenus);
 
   /* ===== 2) Dünya haritası: fareyle sürükleyerek kaydır ===== */
   let sr = null;
@@ -113,6 +120,7 @@
   /* [18 Kas 2026] Eski düello durumu artık sunucudan yoklanmaz. */
   /* ===== 7) Keşfet: düellolarım aç/kapa + rozet ===== */
   setInterval(() => {
+    if(document.hidden)return;
     document.querySelectorAll('#tab-meduakis .dl-kart').forEach(k => {
       let h = k.querySelector('h4');
       if (!h || !/Düellolarım/.test(h.innerText)) return;
@@ -126,7 +134,7 @@
       }
       let rz = h.querySelector('.dl-rozet');
       if (aktif && !rz) h.insertAdjacentHTML('beforeend', `<span class="dl-rozet">${aktif} aktif</span>`);
-      else if (rz) { if (aktif) rz.innerText = aktif + ' aktif'; else rz.remove(); }
+      else if (rz) { if (aktif) {if(rz.textContent!==aktif+' aktif')rz.textContent=aktif+' aktif';} else rz.remove(); }
       k.querySelectorAll('.dl-satir').forEach(s => {
         if (s.dataset.oyna || !/Bugün oyna|🔥/.test(s.innerText)) return;
         s.dataset.oyna = '1';
