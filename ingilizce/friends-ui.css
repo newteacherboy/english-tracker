@@ -771,7 +771,7 @@ html[data-dm-theme="night"] #tab-meduakis .fr-status.fr-plan-free .fr-status-pla
 #tab-meduakis .fr-status-head>.fr-status-plan{width:auto;height:auto;border-radius:999px}
 
 /* Arkadaşlarım: zilin solundaki simge ve ona bağlı açılır liste. */
-#tab-meduakis.fr-home-view .akis-baslik{padding-right:112px}
+#tab-meduakis.fr-home-view .akis-baslik{padding-right:8px}
 #tab-meduakis .fr-people-toggle{display:none}
 #tab-meduakis.fr-home-view .fr-people-toggle{display:grid;place-items:center;position:absolute;right:60px;top:50%;transform:translateY(-50%);width:44px;height:44px;padding:7px;border:1px solid #5da7ff;border-bottom:4px solid #155ac4;border-radius:14px;background:linear-gradient(155deg,#439dff,#0873ee);box-shadow:0 3px 8px #216bce33;cursor:pointer;touch-action:manipulation}
 #tab-meduakis .fr-people-toggle svg{display:block;width:29px;height:29px}
@@ -838,7 +838,7 @@ html[data-dm-theme="night"] .fr-people-name small{color:#b9c9e0}
 
 /* Approved shared header actions */
 #tab-meduakis.fr-home-view .fr-header-actions{display:flex!important;align-items:center;gap:6px!important}
-#tab-meduakis.fr-home-view .fr-invite-top,#tab-meduakis.fr-home-view .fr-people-toggle,#tab-meduakis.fr-home-view .fr-notifications-top{position:relative!important;top:auto!important;right:auto!important;transform:none!important;display:flex!important;align-items:center!important;justify-content:center!important;height:42px!important;min-height:42px!important;border-radius:14px!important;border:2px solid #ffffffb8!important;border-bottom:4px solid #6c8cb5!important;box-shadow:0 3px 7px #294b8b24!important;flex:0 0 auto!important;margin:0!important;padding:0 9px!important}
+#tab-meduakis.fr-home-view .fr-invite-top,#tab-meduakis.fr-home-view .fr-people-toggle{position:relative!important;top:auto!important;right:auto!important;transform:none!important;display:flex!important;align-items:center!important;justify-content:center!important;height:42px!important;min-height:42px!important;border-radius:14px!important;border:2px solid #ffffffb8!important;border-bottom:4px solid #6c8cb5!important;box-shadow:0 3px 7px #294b8b24!important;flex:0 0 auto!important;margin:0!important;padding:0 9px!important}
 #tab-meduakis.fr-home-view .fr-invite-top{background:linear-gradient(#32dc91,#009b5a)!important;color:#fff!important;font-size:11px!important}
 #tab-meduakis.fr-home-view .fr-people-toggle{width:42px!important;background:linear-gradient(#38b7ff,#1179d6)!important}
 #tab-meduakis.fr-home-view .fr-notifications-top{width:42px!important;background:linear-gradient(#fff,#e6eeff)!important;color:#385aa3!important}
@@ -870,7 +870,6 @@ html[data-dm-theme="night"] .fr-people-name small{color:#b9c9e0}
 #tab-meduakis.fr-home-view .fr-unified-actions{display:flex!important;align-items:center!important;gap:6px!important;margin-left:auto!important;flex-shrink:0!important}
 #tab-meduakis.fr-home-view .fr-unified-actions .fr-invite-top{order:0}
 #tab-meduakis.fr-home-view .fr-unified-actions .fr-people-toggle{order:1}
-#tab-meduakis.fr-home-view .fr-unified-actions .fr-notifications-top{order:2}
 @media(max-width:370px){#tab-meduakis.fr-home-view .fr-unified-actions{gap:3px!important}#tab-meduakis.fr-home-view .fr-unified-actions .fr-invite-top{padding:0 5px!important;font-size:10px!important}#tab-meduakis.fr-home-view .fr-unified-actions .fr-people-toggle,#tab-meduakis.fr-home-view .fr-unified-actions .fr-notifications-top{width:36px!important;height:38px!important;min-height:38px!important}}
 
 .fr-duel-ranking-layer{position:fixed;inset:0;z-index:2147483000;background:#21134e99;display:flex;align-items:center;justify-content:center;padding:16px;font-family:Nunito,system-ui}
@@ -881,3 +880,9 @@ html[data-dm-theme="night"] .fr-people-name small{color:#b9c9e0}
 .fr-duel-ranking-content{overflow:auto;padding:12px}
 .fr-duel-ranking-row{display:grid;grid-template-columns:1.4fr 1fr auto;align-items:center;gap:6px;padding:12px 8px;border-bottom:1px solid #ddd1f6;color:#38205d;font-size:12px}
 .fr-duel-ranking-row strong{color:#7437cf}
+
+/* Arkadaşlar başlığında yalnızca Davet Et + Arkadaşlarım; zil üst göstergede. */
+#tab-meduakis.fr-home-view .fr-unified-actions>.fr-notifications-top{display:none!important}
+#tab-meduakis.fr-home-view .akis-baslik{min-width:0!important;padding-right:8px!important;box-sizing:border-box!important}
+#tab-meduakis.fr-home-view .akis-baslik>h2{min-width:0!important;flex:1 1 auto!important;overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important}
+#tab-meduakis.fr-home-view .fr-unified-actions{flex:0 0 auto!important;max-width:68%!important;min-width:0!important;gap:clamp(3px,1vw,6px)!important}

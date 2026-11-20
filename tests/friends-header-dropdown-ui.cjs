@@ -70,8 +70,9 @@ const feed=['Elif','Ege','Zeynep','Cemre','Fixture'].map((ogr,i)=>({k:'event'+i,
   fs.mkdirSync('/tmp/friends-dropdown-qa',{recursive:true});
   assert.equal(await page.locator('.fr-tile-people').count(),0,'old wide row removed');
   const toggle=page.locator('.fr-people-toggle');
-  await toggle.waitFor();await page.waitForSelector('#zlBtn');
-  const [a,b]=await Promise.all([toggle.boundingBox(),page.locator('#zlBtn').boundingBox()]);assert(a.x+a.width<=b.x,'friends icon left of bell');assert(a.width>=44&&a.height>=44);
+  await toggle.waitFor();await page.waitForSelector('.fr-invite-top');
+  assert.equal(await page.locator('.fr-unified-actions .fr-notifications-top').count(),0,'old duplicate bell must not exist');
+  const [a,b]=await Promise.all([page.locator('.fr-invite-top').boundingBox(),toggle.boundingBox()]);assert(a.x+a.width<=b.x,'invite left of friends list');assert(b.width>=36&&b.height>=38);
   await page.screenshot({path:'/tmp/friends-dropdown-qa/closed.png'});
   for(const width of [320,390,768])for(const theme of ['day','night']){
     await page.setViewportSize({width,height:844});await page.evaluate(theme=>document.documentElement.dataset.dmTheme=theme,theme);
