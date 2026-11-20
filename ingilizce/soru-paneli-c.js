@@ -13,9 +13,9 @@
   let s=modal.querySelector(':scope>.qc-sheet');
   if(!s){
    s=document.createElement('div');s.className='qc-sheet';s.setAttribute('role','status');s.setAttribute('aria-live','polite');
-   s.innerHTML=papi('qc-papi')+'<div class="qc-copy"><div class="qc-head"></div><div class="qc-sub"></div></div><button type="button" class="qc-btn">ANLADIM</button>';
+   s.innerHTML=papi('qc-papi')+'<div class="qc-copy"><div class="qc-head"></div><div class="qc-sub"></div></div><button type="button" class="qc-report" aria-label="Sorun bildir">⚠ Sorun bildir</button><button type="button" class="qc-btn">DEVAM ET</button>';
    s.querySelector('.qc-btn').addEventListener('click',()=>{buzz(12);modal.querySelector('.ml-actions [data-next]')?.click();});
-   modal.append(s);
+   s.querySelector('.qc-report').onclick=()=>window.dmQuestionReports?.report(modal.dmQuestionReport);modal.append(s);
   }
   return s;
  }
@@ -30,7 +30,7 @@
   const s=(ok||no)?sheetFor(modal):modal.querySelector(':scope>.qc-sheet');if(!s)return;
   if(!ok&&!no){s.classList.remove('is-on');return;}
   const text=fb.textContent.trim();
-  s.classList.toggle('is-ok',ok);s.classList.toggle('is-no',no);
+  s.querySelector('.qc-report').hidden=!modal.dmQuestionReport;s.classList.toggle('is-ok',ok);s.classList.toggle('is-no',no);
   s.querySelector('.qc-head').textContent=ok?'✓ Harika!':'✕ Olmadı';
   s.querySelector('.qc-sub').textContent=ok?(/^✓/.test(text)?'Böyle devam! 🔥':text):text.replace(/^Yanlış cevap\.\s*/,'');
   if(no&&lastPick?.isConnected&&modal.contains(lastPick)&&!lastPick.classList.contains('is-correct'))lastPick.classList.add('is-wrong');
