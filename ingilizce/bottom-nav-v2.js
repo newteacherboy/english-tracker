@@ -9,18 +9,21 @@
  };
  function art(id){
   if(G[id]){const [t,te,p]=G[id];return '<span class="dm-nv2-tile" style="--t:'+t+';--te:'+te+'"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">'+p+'</svg></span>';}
-  if(id==='tab-aktiviteler')return '<span class="dm-nv2-oyna-disc"><img src="route-assets/bilgi-icons/games.webp" alt="" decoding="async"></span><i class="dm-nv2-spark" style="left:-44px;top:-62px">✦</i><i class="dm-nv2-spark" style="left:34px;top:-44px;font-size:10px;animation-delay:.7s">✦</i>';
+  if(id==='tab-aktiviteler')return '<span class="dm-nv2-tile" style="--t:#ed548c;--te:#bd3566"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7h10a5 5 0 0 1 4.8 4l1.1 6.2a2.8 2.8 0 0 1-4.6 2.6l-2.8-2.5h-7l-2.8 2.5a2.8 2.8 0 0 1-4.6-2.6L2.2 11A5 5 0 0 1 7 7z" fill="white"/><path d="M7 10v5M4.5 12.5h5" stroke="#ed548c" stroke-width="1.8"/><circle cx="17" cy="11" r="1.2" fill="#ed548c"/><circle cx="19" cy="14" r="1.2" fill="#ed548c"/></svg></span>';
+  if(id==='tab-duel-home')return '<span class="dm-nv2-oyna-disc"><svg viewBox="0 0 48 48" width="35" height="35" aria-hidden="true"><path d="M7 5l10 3 24 25-8 8L8 17z" fill="#fff2b2" stroke="#d99b18" stroke-width="2"/><path d="M41 5l-10 3L7 33l8 8 25-24z" fill="#fff" stroke="#d99b18" stroke-width="2"/><path d="M6 29l13 13M29 42l13-13" stroke="#ffcc42" stroke-width="5" stroke-linecap="round"/></svg></span><i class="dm-nv2-spark" style="left:-44px;top:-62px">✦</i><i class="dm-nv2-spark" style="left:34px;top:-44px;font-size:10px;animation-delay:.7s">✦</i>';
   if(id==='tab-profile-menu'){
    const name=typeof aktifOgrenciAdi!=='undefined'?String(aktifOgrenciAdi||''):'';
    let avatar='';try{if(name)avatar=window.karakterSvg?.(name,38)||'';}catch{}
-   return '<span class="dm-nv2-tile dm-nv2-own-avatar">'+(avatar||'<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4" fill="#53759b"/><path d="M4 21v-2a8 8 0 0 1 16 0v2z" fill="#53759b"/></svg>')+'</span>';
+   const plan=window.dmAndroidPlan?.plan||((Number(window.genelEnerjiMax)||0)>=60?'premium_pro':(Number(window.genelEnerjiMax)||0)>=40?'pro':'free');
+   const tier=plan==='premium_pro'?'premium_pro':plan==='pro'?'pro':'free';
+   return '<span class="dm-nv2-tile dm-nv2-own-avatar dm-nv2-tier-'+tier+'">'+(avatar||'<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4" fill="#53759b"/><path d="M4 21v-2a8 8 0 0 1 16 0v2z" fill="#53759b"/></svg>')+(tier!=='free'?'<b class="dm-nv2-tier-tag">'+(tier==='pro'?'PRO':'PRO+')+'</b>':'')+'</span>';
   }
   return '';
  }
  let avatarLayer=null,avatarKey=null;
  function currentAvatarKey(){
   const owner=typeof aktifOgrenciAdi!=='undefined'?String(aktifOgrenciAdi||''):'';
-  try{return JSON.stringify([owner,typeof yo!=='undefined'?yo?.karakter:null,typeof window.karakterSvg,typeof yoVar==='function'?yoVar():null]);}catch{return owner;}
+  try{return JSON.stringify([owner,typeof yo!=='undefined'?yo?.karakter:null,typeof window.karakterSvg,typeof yoVar==='function'?yoVar():null,window.dmAndroidPlan?.plan,window.genelEnerjiMax]);}catch{return owner;}
  }
  function paint(){
   const nav=document.getElementById('bottomNavMobile');
@@ -31,7 +34,7 @@
    const id=b.dataset.ekran;let layer=icon.querySelector(':scope>.dm-nv2');
    if(!layer||layer.dataset.for!==id){
     const html=art(id);if(!html)return;
-    layer?.remove();layer=document.createElement('span');layer.className='dm-nv2'+(id==='tab-aktiviteler'?' dm-nv2-oyna':'');layer.dataset.for=id;layer.setAttribute('aria-hidden','true');layer.innerHTML=html;icon.append(layer);
+    layer?.remove();layer=document.createElement('span');layer.className='dm-nv2'+(id==='tab-duel-home'?' dm-nv2-oyna':'');layer.dataset.for=id;layer.setAttribute('aria-hidden','true');layer.innerHTML=html;icon.append(layer);
    }
    if(id==='tab-profile-menu'){const key=currentAvatarKey();if(avatarLayer!==layer||avatarKey!==key){avatarLayer=layer;avatarKey=key;layer.innerHTML=art(id);}}
    if(!b.querySelector(':scope>.dm-nv2-dot')){const d=document.createElement('span');d.className='dm-nv2-dot';d.setAttribute('aria-hidden','true');b.append(d);}
