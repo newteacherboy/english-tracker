@@ -83,6 +83,7 @@
   /* ---- Arkadaşlar: 🔔 bildirim merkezi ---- */
   let zilSayi = 0, zilFiltre = 'hepsi';
   function zilCiz() {
+    if(window.dmNotificationCenter){document.getElementById('zlBtn')?.remove();return;}
     const nav=document.querySelector('#bottomNavMobile [data-ekran="tab-meduakis"]');
     if(nav){
       let dot=nav.querySelector('.dm-friends-unread');
