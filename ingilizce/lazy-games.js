@@ -3,14 +3,13 @@
   const premiumFile='premium-word-match.js?v=20261114-flow';
   const introFile='premium-intro.js?v=20261114-daily-one-card';
   const files=['solo-arcade.js?v=82a3b3891e','harf-bahcesi.js?v=b936541467','papi-cards.js?v=b9d02db518','meteor.js?v=9460b40009','word-wheel.js?v=dc87a710bb','kelime-rallisi.js?v=20261118-hiz'];
-  const loaded=new Set();let pending=null,readyDone=false;
-  function script(src){window.dmLateCss?.();return new Promise((resolve,reject)=>{
-    if(loaded.has(src)){resolve();return;}
+  const loaded=new Set(),loading=new Map();let pending=null,readyDone=false;
+  function script(src){window.dmLateCss?.();if(loaded.has(src))return Promise.resolve();if(loading.has(src))return loading.get(src);const task=new Promise((resolve,reject)=>{
     const el=document.createElement('script');el.src=src;el.async=false;
     el.onload=()=>{loaded.add(src);resolve();};
     el.onerror=()=>{el.remove();reject(Error('Oyun dosyası yüklenemedi. Bağlantını kontrol edip tekrar dene.'));};
     document.head.append(el);
-  });}
+  }).finally(()=>loading.delete(src));loading.set(src,task);return task;}
   function ready(){if(pending)return pending;pending=(async()=>{
     // Start all independent downloads together; async=false retains execution order.
     await Promise.all(files.map(script));
