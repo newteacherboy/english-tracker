@@ -87,8 +87,14 @@
     finally{duelLeadersBusy=false;}
   }
   function duelLeagueHtml(){
-    const rows=duelLeaders.map((p,i)=>'<tr><td>'+(i+1)+'. '+esc(p.player_name)+'</td><td>'+xp(p.wins)+'</td><td>'+xp(p.losses)+'</td><td>'+xp(p.duel_xp)+'</td></tr>').join('');
-    return '<section class="fr-duel-league" aria-label="Tüm zamanlar düello ligi"><header><h3>⚔️ Düello Şampiyonları</h3><small>Tüm zamanlar</small></header><div class="fr-duel-league-table">'+(rows?'<table><thead><tr><th>Oyuncu</th><th>G</th><th>M</th><th>XP</th></tr></thead><tbody>'+rows+'</tbody></table>':duelLeadersError?'Düello ligi şu anda alınamadı.':duelLeadersAt?'Henüz tamamlanmış düello yok.':'Sıralama yükleniyor…')+'</div></section>';
+    const podium=[1,0,2].map(index=>{
+      const p=duelLeaders[index];if(!p)return '<span class="fr-duel-empty-slot" aria-hidden="true"></span>';
+      const name=esc(p.player_name),tier=esc(p.membership_tier||'free');
+      return '<div class="fr-duel-champion fr-duel-champion-'+(index+1)+'"><div class="fr-duel-champion-portrait"><span class="fr-duel-champion-medal">'+(index+1)+'</span>'+avatar(p.player_name,62,tier)+'</div><div class="fr-duel-champion-step"><strong>'+name+'</strong><small>'+xp(p.wins)+' G / '+xp(p.losses)+' M</small><b>'+xp(p.duel_xp)+' XP</b></div></div>';
+    }).join('');
+    const mine=duelLeaders.find(p=>norm(p.player_name)===norm(who()));
+    const status=duelLeadersError?'Düello ligi şu anda alınamadı.':duelLeadersAt?'Henüz tamamlanmış düello yok.':'Sıralama yükleniyor…';
+    return '<section class="fr-duel-league fr-league-board" aria-label="Düello Şampiyonları"><div class="fr-section-head"><h3>⚔️ Düello Şampiyonları</h3><small>Tüm zamanlar · Düello Ligi</small></div>'+(duelLeaders.length?'<div class="fr-duel-champions">'+podium+'</div>':'<p class="fr-league-status" role="status">'+status+'</p>')+'<div class="fr-podium-footer">'+(mine?'<div class="fr-league-self">'+avatar(who(),27,mine.membership_tier)+'<b>Sen · '+xp(mine.wins)+' G / '+xp(mine.losses)+' M · '+xp(mine.duel_xp)+' XP</b></div>':'<span class="fr-duel-footnote">Galibiyet · Mağlubiyet · XP</span>')+'<button type="button" class="fr-link" data-friend-action="duel-rank">Sıralamayı gör ›</button></div></section>';
   }
   /* Bugünkü Durumun: planın sınırlı hakları. Mola ve Premium oyun hakları 10 dakikada en fazla bir kez sorulur. */
   const CROWN = '<svg class="fr-crown" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 18 5 7l4.5 4L12 5l2.5 6L19 7l2 11z" fill="currentColor"/></svg>';
@@ -395,6 +401,7 @@
     if(action==='lig'&&window.dmLeagueUI?.openWeekly)return window.dmLeagueUI.openWeekly();
     if(['home','akis','vitrin','lig'].includes(action)){window.maSekmeSec(action==='home'?'hub':action);return;}
     if(action==='share')return void shareInvite();
+    if(action==='duel-rank')return void window.dmDuelRankingOpen?.();
     if(action==='notifications')return void window.dmNotificationCenter?.open?.();
     if(action==='status-go'){
       const go=b.dataset.go;
