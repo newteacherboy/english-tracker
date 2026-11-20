@@ -23,7 +23,7 @@
  let avatarLayer=null,avatarKey=null;
  function currentAvatarKey(){
   const owner=typeof aktifOgrenciAdi!=='undefined'?String(aktifOgrenciAdi||''):'';
-  try{return JSON.stringify([owner,typeof yo!=='undefined'?yo?.karakter:null,typeof window.karakterSvg,typeof yoVar==='function'?yoVar():null]);}catch{return owner;}
+  try{return JSON.stringify([owner,typeof yo!=='undefined'?yo?.karakter:null,typeof window.karakterSvg,typeof yoVar==='function'?yoVar():null,window.dmAndroidPlan?.plan,window.genelEnerjiMax]);}catch{return owner;}
  }
  function paint(){
   const nav=document.getElementById('bottomNavMobile');
