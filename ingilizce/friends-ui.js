@@ -294,6 +294,9 @@
       button.innerHTML='<svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="12" cy="11" r="5" fill="white"/><circle cx="23" cy="12" r="4" fill="#c9e5ff"/><path d="M2 28v-3a10 10 0 0 1 20 0v3z" fill="white"/><path d="M22 18a8 8 0 0 1 9 8v2h-7v-3a12 12 0 0 0-2-7" fill="#c9e5ff"/></svg>';
       header.append(button);
     }
+    if(!header.querySelector('.fr-invite-top')){
+      const invite=document.createElement('button');invite.type='button';invite.className='fr-invite-top';invite.dataset.friendAction='share';invite.textContent='✉ Davet et';invite.setAttribute('aria-label','Arkadaşlarını Diji-Medu’ya davet et');header.append(invite);
+    }
     button.setAttribute('aria-label','Arkadaşlarım, '+people().length+' arkadaş');
     button.setAttribute('aria-expanded',String(!!peopleView));
   }
