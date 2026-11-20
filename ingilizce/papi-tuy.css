@@ -53,3 +53,23 @@ body .dm-tuy-button.dm-tuy-waiting .dm-tuy-icon{animation:dmTuySway 2.8s ease-in
 @keyframes dmTuyFade{from{opacity:0}to{opacity:1}}
 @keyframes dmTuyPop{0%{transform:scale(.4);opacity:0}100%{transform:scale(1);opacity:1}}
 @media(prefers-reduced-motion:reduce){.dm-tuy-layer,.dm-tuy-sheet,.dm-tuy-new,.dm-tuy-prize,.dm-tuy-button .dm-tuy-icon{animation:none!important}}
+
+/* Compact combined daily streak and activity panel. */
+body .dm-has-wallet>.dm-unified-wallet.dm-papi-wallet.dm-has-daily-streak{grid-template-columns:clamp(25px,8vw,44px) repeat(3,minmax(0,1fr)) minmax(0,.85fr) minmax(38px,.6fr)!important;gap:4px!important}
+body .dm-unified-wallet.dm-papi-wallet:not(.dm-has-daily-streak){grid-template-columns:clamp(30px,9vw,50px) repeat(3,minmax(0,1fr))!important}
+body .dm-unified-wallet.dm-papi-wallet .dm-tuy-button{position:relative;flex-direction:column!important;gap:2px!important;-webkit-text-fill-color:#0e7c73!important}
+body .dm-unified-wallet.dm-papi-wallet .dm-tuy-button small{display:none}
+.dm-tuy-sheet:not(.dm-tuy-wing){gap:9px;padding:16px 16px calc(18px + env(safe-area-inset-bottom,0px));max-height:min(90dvh,720px)}
+.dm-tuy-sheet:not(.dm-tuy-wing) .dm-tuy-stage{height:clamp(142px,23dvh,195px)}
+.dm-tuy-sheet:not(.dm-tuy-wing) .dm-tuy-fan{width:260px;height:166px}
+.dm-tuy-sheet:not(.dm-tuy-wing) .dm-tuy-papi{width:clamp(104px,31vw,145px)}
+.dm-tuy-rewards{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.dm-tuy-rewards>div{background:#fff6dc;border:1px solid #f3d689;border-radius:15px;padding:9px;color:#805400;text-align:center;font-size:15px;font-weight:900}
+.dm-tuy-rewards>div+div{background:#e5f8ee;color:#127554;border-color:#b9e5ce}
+.dm-tuy-rewards small{display:block;font-size:11px;font-weight:700;margin-top:3px}
+.dm-tuy-time{background:#f1f7ff;border:1px solid #dce8fa;border-radius:15px;padding:10px;display:grid;gap:5px;color:#234365;font-size:12px}
+.dm-tuy-time>div{display:flex;justify-content:space-between;gap:6px}
+.dm-tuy-time progress{width:100%;height:9px;accent-color:#e9b338}
+.dm-tuy-time button{border:0;border-radius:10px;background:#fff;color:#214b80;font-weight:800;min-height:34px}
+html[data-dm-theme=night] .dm-tuy-sheet:not(.dm-tuy-wing){background:#202b3e;color:#f1f5ff}
+html[data-dm-theme=night] .dm-tuy-sheet:not(.dm-tuy-wing) .dm-tuy-status,html[data-dm-theme=night] .dm-tuy-sheet header p{color:#c2d2e7}
