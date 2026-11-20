@@ -57,3 +57,14 @@ html[data-dm-theme="night"] #bottomNavMobile .dm-nv2-own-avatar{--t:#25466e;--te
 .dm-duel-hero strong{font-size:24px}
 .dm-duel-hero button{background:#ffd12a;color:#362300}
 @media(max-width:360px){#bottomNavMobile .dm-nv2-oyna-disc{left:-23px;top:-34px;width:46px;height:46px}}
+
+#bottomNavMobile.dm-nv2-on{display:flex!important;flex-wrap:nowrap!important;overflow:visible!important}
+#bottomNavMobile.dm-nv2-on .bn-item[data-ekran]{width:20%!important;max-width:20%!important;flex:1 1 20%!important;overflow:visible!important;white-space:nowrap!important;padding-inline:0!important}
+#bottomNavMobile.dm-nv2-on .bn-label{font-size:clamp(9px,2.7vw,12px)!important;overflow:visible!important}
+#bottomNavMobile .dm-nv2-own-avatar.dm-nv2-tier-pro{box-shadow:0 0 0 2px #4297ff,0 3px 0 #2a5fae}
+#bottomNavMobile .dm-nv2-own-avatar.dm-nv2-tier-premium_pro{box-shadow:0 0 0 2px #ffd443,0 3px 0 #b87516}
+#bottomNavMobile .dm-nv2-tier-tag{position:absolute;right:-8px;bottom:-5px;padding:2px 3px;background:#1747ac;color:white;border-radius:5px;font:900 8px/1 system-ui}
+#bottomNavMobile .dm-nv2-tier-premium_pro .dm-nv2-tier-tag{background:#a46b09;color:#fff8d5}
+.dm-duel-personal{padding:12px;margin-top:12px;border-radius:15px;background:#f1ebff;color:#482483;font-weight:800;text-align:center}
+.dm-duel-hero button:last-child{background:#f5eaff;color:#4b288a}
+@media(max-height:670px){.dm-duel-home{max-height:calc(100dvh - 32px);overflow:auto}.dm-duel-hero{gap:6px;padding:12px}.dm-duel-hero button{padding:8px}}
