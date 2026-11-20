@@ -245,6 +245,8 @@ function correctionText(task){
  const detail=String(task.explanation||'').trim();
  return (answer?answer:'Doğru eşleştirme')+(detail&&detail!==answer?' · '+detail:'');
 }
+function reportSnapshot(task,answer,cursor){if(modal)modal.dmQuestionReport={route:schoolBridge?'school':'learning',chapter:String(chapter.id),cursor,task:{kind:task.kind,label:task.label,prompt:task.prompt,audio:task.audio,options:task.options,tokens:task.tokens,pairs:task.pairs,expected:correctResponse(task)},answer};}
+function manualNext(fn){const actions=modal.querySelector('.ml-actions');actions.innerHTML='<button type="button" class="ml-primary" data-next>Devam et →</button>';actions.querySelector('button').onclick=()=>{if(busy)return;actions.querySelector('button').disabled=true;fn();};scheduleLessonFit();}
 function pauseForCorrection(task,continueAction){
  accepted=true;
  feedback('Yanlış cevap. Doğrusu: '+correctionText(task));
@@ -283,7 +285,7 @@ async function submit(answer,clicked,{guided=false,alreadySpoken=false}={}){
   if(spokenTask.kind==='order'||(spokenTask.kind==='choice'&&/_{2,}/.test(spokenTask.prompt||'')))await answerAudio;
   if(ticket!==epoch||!modal||identity()!==at)return;
   if(r.accepted&&r.correct!==false&&spokenAnswer&&spokenTask.kind==='choice'&&/_{2,}/.test(spokenTask.prompt||'')){await new Promise(resolve=>speech(spokenTask.prompt.replace(/_{2,}/g,spokenAnswer),'en-US',resolve));if(ticket!==epoch||!modal||identity()!==at)return;}
-  session=r;busy=false;modal.removeAttribute('aria-busy');remember(r);wallet(r);
+  reportSnapshot(task,answer,answeredCursor);session=r;busy=false;modal.removeAttribute('aria-busy');remember(r);wallet(r);
   if(r.stale){render();feedback('Diğer ekranındaki ilerlemen yüklendi.');return;}
   if(r.needsRecovery){
    if(r.correct===false&&task.kind!=='teach'){
@@ -322,8 +324,7 @@ async function submit(answer,clicked,{guided=false,alreadySpoken=false}={}){
   const nextCursor=session.cursor;
   const renderNext=()=>{if(ticket===epoch&&modal&&identity()===at&&session.cursor===nextCursor)render();};
   // A combo already provides feedback time: advance in the same promise turn it ends.
-  if(r.comboGain>0&&!r.alreadyCompleted&&!r.replay){try{await comboRewardPromise;}catch{}renderNext();}
-  else setTimeout(renderNext,guided?160:180);
+  manualNext(async()=>{if(r.comboGain>0&&!r.alreadyCompleted&&!r.replay){try{await comboRewardPromise;}catch{}}renderNext();});
  }catch(e){
   if(e.energyEmpty){busy=false;modal?.removeAttribute('aria-busy');wallet(e);render();feedback(e.message);window.DijiMeduPapiFeedback?.energy();}
   else await reconcileLesson(ticket,at,e);
@@ -360,7 +361,7 @@ function openReference(cards,label){
 }
 async function submitRecovery(answer,alreadySpoken=false){
  if(busy||!modal||!session?.needsRecovery)return;
- const ticket=epoch,at=identity(),step=session.recovery?.step;
+ const ticket=epoch,at=identity(),step=session.recovery?.step;reportSnapshot({...session.recovery,kind:'recovery',label:'Pekiştirme'},answer,session.cursor);
  const answerAudio=alreadySpoken?Promise.resolve():new Promise(resolve=>speech(answer,'en-US',resolve));
  busy=true;modal.setAttribute('aria-busy','true');
  modal.querySelectorAll('.ml-task button,.ml-actions button').forEach(b=>b.disabled=true);
@@ -370,11 +371,10 @@ async function submitRecovery(answer,alreadySpoken=false){
   if(ticket!==epoch||!modal||identity()!==at)return;
   await answerAudio;if(ticket!==epoch||!modal||identity()!==at)return;
   session=r;busy=false;modal.removeAttribute('aria-busy');
-  remember(r);wallet(r);render();
-  if(r.stale){feedback('Kaldığın pekiştirme sorusu yüklendi.');return;}
-  if(r.finished){window.dmAnswerFeedback?.(true);return;}
+  remember(r);wallet(r);
+  if(r.stale){render();feedback('Kaldığın pekiştirme sorusu yüklendi.');return;}
   window.dmAnswerFeedback?.(!!r.accepted);
-  feedback(r.accepted?'Harika! Bir adım daha ilerledin.':'Birlikte yeniden deneyelim. Kartlara tekrar bakabilirsin.',!!r.accepted);
+  feedback(r.accepted?'Harika! Bir adım daha ilerledin.':'Birlikte yeniden deneyelim.',!!r.accepted);if(!r.accepted)modal.querySelector('.ml-feedback').classList.add('is-answer-wrong');manualNext(render);
  }catch(e){await reconcileLesson(ticket,at,e);}
 }
 function renderRecovery(){
@@ -423,8 +423,7 @@ function render(){if(!modal)return;accepted=false;if(session?.needsRecovery&&!se
     if(!correct)breakCombo(true);window.dmAnswerFeedback?.(correct);
     box.querySelector('.ml-review-note').textContent=correct?'✓ Doğru! Sonraki karta geçiliyor…':'Yanlış cevap. Doğrusu: '+card.en+' — '+card.tr;
     const advanceCard=()=>{if(ticket!==epoch||!modal||session.cursor!==atCursor)return;index++;locked=false;if(index<task.cards.length){actions.innerHTML='';paint();box.querySelector('[data-review-choice]')?.focus();}else{actions.innerHTML='';void submit(answers);}};
-    if(correct)setTimeout(advanceCard,650);
-    else{actions.innerHTML='<button type="button" class="ml-primary" data-review-continue>Devam Et →</button>';const next=actions.querySelector('[data-review-continue]');next.onclick=()=>{next.disabled=true;advanceCard();};next.focus({preventScroll:true});scheduleLessonFit();}
+    reportSnapshot({kind:'review',label:'Genel tekrar',prompt:card.en,options:card.options,answer:card.tr},answer,atCursor);feedback(correct?'✓ Doğru!':'Yanlış cevap. Doğrusu: '+card.tr,correct);if(!correct)modal.querySelector('.ml-feedback').classList.add('is-answer-wrong');manualNext(()=>{modal.querySelector('.ml-feedback').classList.remove('is-answer-wrong');feedback('');advanceCard();});
 
    };
   };paint();return;
