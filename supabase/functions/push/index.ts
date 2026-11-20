@@ -143,7 +143,7 @@ Deno.serve(async req => {
     let result;
     try { result = await sendAll(tokens, { title, body: text, tab }); }
     catch (e) { return reply({ ok: false, mesaj: String((e as Error).message) === 'fcm_not_configured' ? 'Firebase anahtarı (FCM_SERVICE_ACCOUNT) henüz eklenmedi.' : String((e as Error).message) === 'apns_not_configured' ? 'Apple bildirim anahtarı (APNS_KEY_P8) henüz eklenmedi.' : 'Bildirim servisi şu an yanıt vermiyor.' }, 503); }
-    await db.from('dm_push_log').insert({ sent_by: admin.username, target, title, body: text, ...result });
+    await db.from('dm_push_log').insert({ sent_by: admin.username, target, title, body: text, route_tab:tab, ...result });
     return reply({ ok: true, ...result });
   }
   return reply({ ok: false, mesaj: 'Geçersiz işlem.' }, 400);

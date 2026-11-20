@@ -8,7 +8,7 @@ const eligible=()=>!!who()&&!['teacher','dijimedu_demo'].includes(who().toLowerC
 const today=()=>new Intl.DateTimeFormat('en-CA',{timeZone:'Europe/Istanbul',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());
 const parked=()=>!!$('tab-dunya')?.classList.contains('active')&&!document.hidden&&!document.body.classList.contains('dm-play-session');
 const key=owner=>'dm_papi_wing_v1:'+owner.toLocaleLowerCase('tr');
-const NEED=7,REWARD=10;
+const NEED=7,REWARD=7;
 let owner='',state=null,inflight=null,layer=null,origin=null,message='',turn=0,lastCheck=0,celebrate=null,fresh=-1,queued=false,buying=false;
 
 const FEATHER='M0 0C13-38 17-92 0-150C-17-92-13-38 0 0z';
@@ -37,7 +37,7 @@ function decorateButton(button){
  const n=shown(),ready=!!state&&!state.todayDone;
  button.classList.toggle('dm-daily-ready',false);button.classList.toggle('dm-tuy-waiting',ready);
  const text=button.querySelector('[data-daily-count]'),value=n==null?'·':n+'/'+NEED;if(text&&text.textContent!==value)text.textContent=value;
- const label="Papi'nin Kanadı"+(n==null?'':' · '+n+'/'+NEED+' tüy')+(ready?' · Bugün 1 durak bitir, tüyünü al':'');if(button.getAttribute('aria-label')!==label)button.setAttribute('aria-label',label);
+ const label="Papi'nin Kanadı"+(n==null?'':' · '+n+'/'+NEED+' tüy')+(ready?' · Bugün giriş yap, tüyünü al':'');if(button.getAttribute('aria-label')!==label)button.setAttribute('aria-label',label);
 }
 function decorateAll(){if(!window.document)return;document.querySelectorAll('[data-dm-daily-streak]').forEach(decorateButton);}
 function endpoint(){return typeof apiURL==='string'?apiURL.replace(/\/diji-api(?:\?.*)?$/,'/papi-rewards'):'';}
@@ -68,7 +68,7 @@ async function check({force=false,auto=true}={}){
  const account=owner,ticket=turn;lastCheck=Date.now();
  const task=(async()=>{try{const d=await request();if(account!==who()||ticket!==turn)return null;apply(d);message='';
    if(d.justEarned){celebrate=d.wingDone?'wing':'feather';fresh=d.wingDone?6:count(d.feathers)-1;}
-   if(d.eklenen>0&&!d.wingDone){setEnergy(d);window.genelEnerjiDegisimGoster?.(d.eklenen);}
+   if(d.eklenen>0&&!d.wingDone){setEnergy(d);window.genelEnerjiDegisimGoster?.(d.eklenen);}if(d.justEarned)window.dmNotificationCenter?.refresh?.(true);
    if(layer)render();if(auto)maybeAuto();return state;}
   catch(e){if(account===who()&&ticket===turn){message=e.message;if(layer)render();}return null;}})();
  inflight=task;try{return await task;}finally{if(inflight===task)inflight=null;}
@@ -84,8 +84,8 @@ function notice(){
  if(state.shieldUsed>0)return 'Tüy Yağı kanadını korudu: kaçan '+state.shieldUsed+' günde tüy düşmedi.';
  if(state.justEarned&&state.lost>0)return state.lost+' tüy düşmüştü; bugünkü tüyünle kanadın yeniden doluyor.';
  if(state.justEarned)return 'Bugünün tüyü kanadına eklendi!';
- if(!state.todayDone&&state.atRisk>0)return 'Ara verdin: bugün 1 durak bitirmezsen '+state.atRisk+' tüy düşecek.';
- if(!state.todayDone)return 'Bugün 1 durak bitir, tüyün Papi’nin kanadına eklensin.';
+ if(!state.todayDone&&state.atRisk>0)return 'Ara verdin: bugün giriş yapmazsan '+state.atRisk+' tüy düşecek.';
+ if(!state.todayDone)return 'Her gün giriş yap, bir tüy ve 1 enerji kazan.';
  if(state.bekleyenEnerji>0)return 'Enerjin dolu. +'+state.bekleyenEnerji+' enerji, enerjin azalınca eklenecek.';
  return 'Bugünün tüyünü aldın. Yarın yine gel!';
 }
@@ -103,23 +103,24 @@ function render(){
  if(layer.dataset.kind==='wing'){
   layer.classList.add('dm-tuy-wing-layer');
   sheet.className='dm-tuy-sheet dm-tuy-wing';
-  sheet.innerHTML=x+'<p class="dm-tuy-badge">KANAT SEVİYESİ '+esc(state?.level||1)+'</p><h2 id="dmTuyTitle">Papi’nin kanadı doldu!</h2><p class="dm-tuy-sub">7 gün boyunca durak bitirdin.</p><div class="dm-tuy-stage dm-tuy-stage-wing">'+fan(NEED,6)+papi('cosku')+'</div><div class="dm-tuy-prize">'+BOLT+'+'+REWARD+' enerji</div><p class="dm-tuy-status" role="status">'+esc(state?.bekleyenEnerji>0?'Enerjin dolu. Kalan +'+state.bekleyenEnerji+' enerji, enerjin azalınca eklenecek.':'')+'</p><button type="button" class="dm-tuy-primary dm-tuy-gold" data-tuy-collect>Topla</button>';
+  sheet.innerHTML=x+'<p class="dm-tuy-badge">KANAT SEVİYESİ '+esc(state?.level||1)+'</p><h2 id="dmTuyTitle">Papi’nin kanadı doldu!</h2><p class="dm-tuy-sub">7 gün boyunca giriş yaptın.</p><div class="dm-tuy-stage dm-tuy-stage-wing">'+fan(NEED,6)+papi('cosku')+'</div><div class="dm-tuy-prize">'+BOLT+'+'+REWARD+' enerji</div><p class="dm-tuy-status" role="status">'+esc(state?.bekleyenEnerji>0?'Enerjin dolu. Kalan +'+state.bekleyenEnerji+' enerji, enerjin azalınca eklenecek.':'')+'</p><button type="button" class="dm-tuy-primary dm-tuy-gold" data-tuy-collect>Topla</button>';
  }else{
   layer.classList.remove('dm-tuy-wing-layer');
   sheet.className='dm-tuy-sheet';
   const n=state?count(state.feathers):0,left=NEED-n,{owned,price}=shieldInfo();
-  sheet.innerHTML=x+'<span class="dm-tuy-grip" aria-hidden="true"></span><header><div><h2 id="dmTuyTitle">Papi’nin Kanadı</h2><p>Kanat seviyesi '+esc(state?.level||1)+(state?.todayDone?' · bugün tüyünü aldın':'')+'</p></div><span class="dm-tuy-pill">'+BOLT+'+'+REWARD+'</span></header>'+
+  sheet.innerHTML=x+'<span class="dm-tuy-grip" aria-hidden="true"></span><header><div><h2 id="dmTuyTitle">Kuş Tüyü Serisi</h2><p>Kanat seviyesi '+esc(state?.level||1)+(state?.todayDone?' · bugün tüyünü aldın':'')+'</p></div><span class="dm-tuy-pill">'+BOLT+'+'+REWARD+'</span></header>'+
    '<div class="dm-tuy-stage">'+fan(n,fresh)+papi(state?.todayDone?'mutlu':'merhaba')+'<span class="dm-tuy-count">'+n+' / '+NEED+' tüy</span></div>'+
    '<p class="dm-tuy-next">'+(state?(left>0?left+' tüy daha → kanat açılır, <b>+'+REWARD+' enerji</b>':'Kanat doldu!'):'Kanadın yükleniyor…')+'</p>'+strip()+
-   '<p class="dm-tuy-status" role="status">'+esc(notice())+'</p>'+
+   '<div class="dm-tuy-rewards"><div>⚡ <b>+1 enerji</b><small>Her gün girişte</small></div><div>🎁 <b>+7 enerji</b><small>7 tüyü tamamla</small></div></div><p class="dm-tuy-status" role="status">'+esc(notice())+'</p><div class="dm-tuy-time" data-wing-time></div>'+
    '<div class="dm-tuy-actions"><button type="button" class="dm-tuy-primary" data-tuy-close>'+(state?.todayDone?'Harika!':'Parkura dön')+'</button><button type="button" class="dm-tuy-oil" data-tuy-oil '+(buying?'disabled':'')+' aria-label="Tüy Yağı al, '+price+' altın. Elinde '+owned+' / 2">Tüy Yağı · '+price+'<small>'+owned+'/2</small></button></div>'+
    (message?'<button type="button" class="dm-tuy-retry" data-tuy-retry>Tekrar dene</button>':'');
  }
- sheet.querySelectorAll('[data-tuy-close]').forEach(b=>b.onclick=close);
+ paintTime();sheet.querySelectorAll('[data-tuy-close]').forEach(b=>b.onclick=close);
  sheet.querySelector('[data-tuy-retry]')?.addEventListener('click',()=>{message='';render();void check({force:true,auto:false});});
  sheet.querySelector('[data-tuy-collect]')?.addEventListener('click',collect);
  sheet.querySelector('[data-tuy-oil]')?.addEventListener('click',buyOil);
 }
+function paintTime(){const box=layer?.querySelector('[data-wing-time]');if(!box)return;const s=window.dmActiveTime?.summary?.()||{},secs=Math.max(0,Math.floor(Number(s.seconds)||0)),remaining=6000-secs%6000,star=Math.floor(secs/600),time=Math.floor(secs/3600)+' sa '+Math.floor(secs%3600/60)+' dk',chests=window.dmActiveTime?.unclaimed?.()||[];const key=JSON.stringify([Math.floor(secs/60),star,chests]);if(box.dataset.key===key)return;box.dataset.key=key;box.innerHTML='<div><b>⭐ '+star+' yıldız</b><b>⏱ '+time+'</b></div><small>10 dk = 1 yıldız · 100 dk = 1 sandık</small><progress max="6000" value="'+secs%6000+'" aria-label="Sandık ilerlemesi"></progress><small>🎁 Sıradaki sandık: '+Math.ceil(remaining/60)+' dk</small><button type="button" data-wing-detail>'+(chests.length?'🎁 '+chests.length+' sandık hazır!':'Süre ve sandıklar')+'</button>';box.querySelector('button').onclick=()=>{close();if(chests.length)window.dmActiveTime?.openChest?.(chests[0]);else window.dmActiveTime?.panel?.();};}document.addEventListener('dm:time',paintTime);const timeTimer=setInterval(paintTime,15000);
 function collect(){
  const d=state;close();
  // Kanat doldu: yeni kanat 0 tüyle başlar (sunucuda da öyle kaydedildi).
@@ -150,7 +151,7 @@ document.addEventListener('keydown',e=>{
  if(!layer)return;if(e.key==='Escape'){e.preventDefault();(layer.dataset.kind==='wing'?collect:close)();return;}
  if(e.key==='Tab'){const controls=[...layer.querySelectorAll('button:not(:disabled)')];if(!controls.length)return;const first=controls[0],last=controls.at(-1);if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}}
 });
-function schedule(){if(queued)return;queued=true;requestAnimationFrame(()=>{queued=false;if(!window.document)return;reset();if(layer&&layer.dataset.kind!=='wing'&&(!parked()||!eligible()))close();if(parked())void check();});}
+function schedule(){if(queued)return;queued=true;requestAnimationFrame(()=>{queued=false;if(!window.document)return;reset();if(layer&&layer.dataset.kind!=='wing'&&!eligible())close();if(parked())void check();});}
 const park=$('tab-dunya');if(park)new MutationObserver(schedule).observe(park,{attributes:true,attributeFilter:['class','style']});
 document.addEventListener('dm:login',()=>{turn++;owner='';reset();void check();});
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)void check();});
