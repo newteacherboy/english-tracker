@@ -278,3 +278,22 @@ body #tab-dunya .rt-medal-route>.dm-papi-chat-shortcut{position:absolute;right:1
 body #tab-dunya:not(.active) .dm-papi-chat-shortcut,body.dm-play-session #tab-dunya .dm-papi-chat-shortcut{display:none!important}
 html[data-dm-theme=night] .dm-papi-chat-label{background:#3b2a5b;border-color:#8060ba;color:#f5edff}
 @media(max-width:355px){body #tab-dunya .rt-medal-route>.dm-papi-chat-shortcut{right:8px;font-size:11px}.dm-papi-chat-label{padding-left:8px;padding-right:11px}.dm-papi-chat-avatar{width:48px;height:48px}}
+
+/* Parkur agenda and Papi call */
+#tab-dunya .rt-agenda summary{box-sizing:border-box;display:grid;justify-items:center;gap:3px;cursor:pointer;pointer-events:auto;background:linear-gradient(#12d5cc,#058c9c);color:white;padding:6px;border:2px solid #99fff2;border-radius:16px;box-shadow:0 3px 0 #046e79;font:900 12px Nunito,system-ui}
+.rt-agenda summary::-webkit-details-marker{display:none}
+.rt-agenda summary svg{width:30px;height:30px;color:#fff6c7}
+.rt-agenda:not([open])>.rt-agenda-panel{display:none}
+.rt-agenda[open]{z-index:25}
+.rt-agenda-panel{pointer-events:auto;position:absolute;left:calc(100% + 6px);top:0;width:min(216px,calc(100vw - 98px));box-sizing:border-box;padding:12px;border-radius:18px;background:#fff6e4;color:#492c1e;box-shadow:0 5px 22px #301c2955;text-align:left}
+.rt-agenda-panel strong{font:900 20px Nunito,system-ui}
+#tab-dunya .rt-agenda-panel button{display:flex;align-items:center;gap:8px;width:100%;border:1px solid #e9d6b3;border-radius:12px;padding:9px;margin-top:6px;background:#fffcf4;color:#492c1e;text-align:left;font:800 14px Nunito,system-ui;cursor:pointer}
+#tab-dunya .rt-agenda-panel button::before{display:none!important}
+#tab-dunya .rt-agenda-panel button[data-rt=agenda-close]{position:absolute;right:9px;top:5px;width:30px;height:30px;justify-content:center}
+.rt-agenda-panel svg{width:26px;height:26px;color:#357aba}.rt-agenda-panel span{flex:1}.rt-agenda-panel small{display:block;font-size:11px}.rt-agenda-panel [data-agenda-progress]:not(:empty)::after{content:"";display:block;margin-top:3px;height:4px;border-radius:5px;background:linear-gradient(90deg,#efad22 var(--filled),#dfd3bd var(--filled))}
+body #tab-dunya .rt-medal-route>.dm-papi-chat-shortcut{height:auto;min-height:48px;gap:3px;flex-direction:row-reverse;padding:3px 6px 3px 3px;border:2px solid #9effff;border-radius:28px;background:linear-gradient(115deg,#007f97,#5634ac 75%,#802db8);box-shadow:0 0 9px #53edf6,0 0 14px #ad72ff;animation:rtCallGlow 3s ease-in-out infinite alternate}
+#tab-dunya .dm-papi-chat-label{display:block;padding:0;border:0;background:none;box-shadow:none;color:white;text-align:center;font:900 11px/1.06 Nunito,system-ui}
+.dm-papi-chat-label svg{display:block;margin:0 auto 2px}
+#tab-dunya .dm-papi-chat-avatar{margin:0;width:38px;height:38px}
+@keyframes rtCallGlow{to{box-shadow:0 0 4px #53edf6,0 0 7px #ad72ff}}
+@media(prefers-reduced-motion:reduce){body #tab-dunya .rt-medal-route>.dm-papi-chat-shortcut{animation:none}}
