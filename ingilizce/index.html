@@ -273,11 +273,11 @@ var supabaseClient = null;
 <link rel="preload" as="script" href="sonuc-a.js?v=6bb780912d">
 <link rel="preload" as="script" href="bottom-nav-v2.js?v=20261121-student-ui">
 <link rel="preload" as="script" href="games-v2.js?v=20261112-ios-paket">
-<link rel="preload" as="style" href="friends-ui.css?v=20261121-compact-inbox">
+<link rel="preload" as="style" href="friends-ui.css?v=20261121-arena-leader">
 <link rel="preload" as="script" href="notification-actions.js?v=20261025-actions-1">
 <link rel="preload" as="style" href="live-duel.css?v=20261118-reklambekle">
 <link rel="preload" as="script" href="live-duel.js?v=20261120-center-4">
-<link rel="preload" as="script" href="friends-ui.js?v=20261121-compact-inbox">
+<link rel="preload" as="script" href="friends-ui.js?v=20261121-arena-leader">
 <link rel="preload" as="style" href="league-ui.css?v=20261118-blur-no-heading">
 <link rel="preload" as="script" href="league-ui.js?v=20261120-center-3">
 <link rel="preload" as="style" href="study-ui.css?v=20261019-learn-play-1">
@@ -3259,7 +3259,7 @@ document.getElementById('dmBootRetry').onclick=()=>location.reload();
 #tab-meduakis .onizleme-bant { display:flex; align-items:center; gap:8px; background:#fff7d1; color:#7a5200; border-radius:12px; padding:9px 12px; font-size:12.5px; font-weight:800; margin:12px 16px 0; }
 .ma-parca { position:fixed; z-index:100000050; pointer-events:none; font-size:17px; animation:maParca .9s ease-out forwards; }
 @keyframes maParca { from { opacity:1; transform:translate(0,0) scale(.6); } to { opacity:0; transform:translate(var(--tx),var(--ty)) rotate(var(--tr)) scale(1.05); } }
-.ma-toast { position:fixed; left:50%; bottom:90px; transform:translate(-50%,20px); opacity:0; background:#3b2c66; color:#fff; padding:10px 16px; border-radius:14px; font:800 13px 'Nunito',sans-serif; transition:all .3s; z-index:100000051; max-width:90vw; text-align:center; }
+.ma-toast { pointer-events:none; position:fixed; left:50%; bottom:90px; transform:translate(-50%,20px); opacity:0; background:#3b2c66; color:#fff; padding:10px 16px; border-radius:14px; font:800 13px 'Nunito',sans-serif; transition:all .3s; z-index:100000051; max-width:90vw; text-align:center; }
 .ma-toast.gor { opacity:1; transform:translate(-50%,0); }
 @media (prefers-reduced-motion: reduce) { #tab-meduakis *, .ma-parca, .ma-toast { animation-duration:.01ms !important; } }
 </style>
@@ -7457,10 +7457,10 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <script defer src="sonuc-a.js?v=6bb780912d"></script>
 <script defer src="bottom-nav-v2.js?v=20261121-student-ui"></script>
 <script defer src="games-v2.js?v=20261112-ios-paket"></script>
-<link rel="stylesheet" href="friends-ui.css?v=20261121-compact-inbox">
+<link rel="stylesheet" href="friends-ui.css?v=20261121-arena-leader">
 <script defer src="notification-actions.js?v=20261025-actions-1"></script>
 <link rel="stylesheet" href="live-duel.css?v=20261118-reklambekle"><script defer src="live-duel.js?v=20261120-center-4"></script>
-<script defer src="friends-ui.js?v=20261121-compact-inbox"></script>
+<script defer src="friends-ui.js?v=20261121-arena-leader"></script>
 <link rel="stylesheet" href="league-ui.css?v=20261118-blur-no-heading">
 <script defer src="league-ui.js?v=20261120-center-3"></script>
 <link rel="stylesheet" href="study-ui.css?v=20261019-learn-play-1">
