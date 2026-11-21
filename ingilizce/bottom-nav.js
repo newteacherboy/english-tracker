@@ -2,7 +2,7 @@
 (()=>{'use strict';
 const layout=window.dmTeacherPortalMode?[['tab-aktiviteler','Oyunlar','game'],['tab-derscalis','Ders Çalış','book'],['tab-profile-menu','Profilim','profile'],['tab-teacher-portal','Öğretmen Paneli','teacher']]:[['tab-dunya','Parkur','path'],['tab-meduakis','Arkadaşlar','friends'],['tab-duel-home','Düello','duel'],['tab-aktiviteler','Oyunlar','game'],['tab-profile-menu','Profil','profile']];
 // A profile dialog always has a real primary destination beneath it.
-let primaryId=window.dmTeacherPortalMode?'tab-aktiviteler':'tab-meduakis';
+let primaryId=window.dmTeacherPortalMode?'tab-aktiviteler':'tab-dunya';
 function rememberPrimary(){const id=layout.slice(0,-1).map(x=>x[0]).find(id=>document.getElementById(id)?.classList.contains('active'));if(id)primaryId=id;}
 function restorePrimary(){
  rememberPrimary();
@@ -159,7 +159,7 @@ window.dmOpenGamesHome=function(){
 document.addEventListener('click',e=>{const b=e.target.closest('#bottomNavMobile [data-ekran]');if(!b||b.disabled||b.classList.contains('active')||b.getAttribute('aria-disabled')==='true')return;try{navigator.vibrate?.(20);}catch{}},true);
 decorate();const nav=document.getElementById('bottomNavMobile');if(nav){if(window.ResizeObserver)new ResizeObserver(syncProfileDock).observe(nav);window.addEventListener('resize',syncProfileDock);new MutationObserver(decorate).observe(nav,{childList:true,subtree:true,attributes:true,attributeFilter:['class','data-ekran']});nav.addEventListener('click',e=>{const b=e.target.closest('[data-ekran]');if(b&&b.dataset.ekran!=='tab-profile-menu'){window.dmProfileReturnPending=false;close();}});}
 document.addEventListener('dm:logout',()=>window.dmDuelHomeClose());
-document.addEventListener('dm:login',()=>{window.dmDuelHomeClose();window.dmProfileReturnPending=false;primaryId=window.dmTeacherPortalMode?'tab-aktiviteler':'tab-meduakis';close(false);});
+document.addEventListener('dm:login',()=>{window.dmDuelHomeClose();window.dmProfileReturnPending=false;primaryId=window.dmTeacherPortalMode?'tab-aktiviteler':'tab-dunya';close(false);});
 document.addEventListener('click',e=>{
  if(!window.dmProfileReturnPending||e.target.closest('#rtProfileBackdrop,.dm-teacher-child,#dmWordReview,#dmPlacementExam'))return;
  const button=e.target.closest('button');if(!button||!button.matches('.kb-x,.cog-x,.dm-account-close,.dm-switch-close,#dmSwitchClose,.game-close-btn,.dc-exit-btn,.dm-profile-back,.yo-kapat,[aria-label*="kapat" i],[aria-label="Kapat"]'))return;
