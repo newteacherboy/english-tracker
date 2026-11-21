@@ -67,12 +67,12 @@ const feed=['Elif','Ege','Zeynep','Cemre','Fixture'].map((ogr,i)=>({k:'event'+i,
   await page.evaluate(()=>meduAkisAc());await page.waitForSelector('.fr-home .fr-event');await page.waitForTimeout(800);
   assert.equal(await page.locator('.fr-event .fr-congrats').first().innerText(),'Tebrik et');
   assert.equal(await page.locator('.fr-home').count(),1);
-  await page.waitForSelector('.fr-leader-3');
-  assert.deepEqual(await page.locator('.fr-leader strong').allTextContents(),['Ege','Elif','Zeynep']);
-  assert.deepEqual(await page.locator('.fr-leader-cup b').allTextContents(),['2','1','3']);
-  const steps=await page.locator('.fr-podium-step').evaluateAll(nodes=>nodes.map(node=>node.getBoundingClientRect().top));
-  assert(steps[1]<steps[0]&&steps[1]<steps[2],'the center winner has the highest step');
-  assert.equal(await page.locator('.fr-leader-1 .fr-podium-crown').count(),1);
+  await page.locator('.fr-race-player').nth(2).waitFor();
+  assert.deepEqual(await page.locator('.fr-race-score strong').allTextContents(),['Elif','Ege','Zeynep']);
+  const shares=await page.locator('.fr-race-bar i').evaluateAll(nodes=>nodes.map(node=>parseFloat(node.style.width)));
+  assert.equal(shares[0],100);
+  assert(shares[0]>shares[1]&&shares[1]>shares[2]);
+  assert.equal(await page.locator('.fr-race-first .fr-podium-crown').count(),1);
   assert.match(await page.locator('.fr-league-self').innerText(),/Sen · 5\. sıra · 938 XP/);
   assert.equal((await page.locator('.fr-feed h3').innerText()).trim(),'Medu Akış');
   assert.equal((await page.locator('.fr-all-feed').innerText()).trim(),'Tüm akışı gör');

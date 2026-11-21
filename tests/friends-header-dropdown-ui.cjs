@@ -69,7 +69,7 @@ const feed=['Elif','Ege','Zeynep','Cemre','Fixture'].map((ogr,i)=>({k:'event'+i,
     document.getElementById('login-container').style.display='none';
   });
   await page.evaluate(()=>dmProgression.refresh(true));
-  await page.evaluate(()=>meduAkisAc());await page.waitForSelector('.fr-leader-1');
+  await page.evaluate(()=>meduAkisAc());await page.waitForSelector('.fr-race-first');
   await page.evaluate(()=>{window.dropdownPresenceCalls=0;if(window.dmSocialPresence)window.dmSocialPresence.refresh=async()=>{dropdownPresenceCalls++}});
   fs.mkdirSync('/tmp/friends-dropdown-qa',{recursive:true});
   assert.equal(await page.locator('.fr-tile-people').count(),0,'old wide row removed');
