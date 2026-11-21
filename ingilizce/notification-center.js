@@ -53,11 +53,11 @@ function locate(){
  if(!layer||!trigger?.isConnected)return;
  const r=trigger.getBoundingClientRect(),panel=layer.firstElementChild,vp=window.visualViewport;
  const width=vp?.width||innerWidth,height=vp?.height||innerHeight,left=vp?.offsetLeft||0,top0=vp?.offsetTop||0;
- const w=Math.min(420,width-16);
- const top=history?top0+Math.max(12,height*.16):Math.max(top0+8,Math.min(r.bottom+10,top0+height-112));
+ const w=Math.min(440,width-24);
+ const top=history?top0+Math.max(12,height*.12):Math.max(top0+12,Math.min(r.bottom+10,top0+height*.25));
  const right=history?innerWidth-left-(width+w)/2:Math.max(innerWidth-left-width+8,Math.min(innerWidth-r.right,innerWidth-left-w-8));
  panel.style.width=w+'px';panel.style.top=top+'px';panel.style.right=right+'px';
- panel.style.maxHeight=Math.max(80,Math.min(380,top0+height-top-10))+'px';
+ panel.style.maxHeight=Math.max(80,Math.min(height*.72,top0+height-top-12))+'px';
 }
 function el(tag,cls,txt){const n=document.createElement(tag);if(cls)n.className=cls;if(txt!=null)n.textContent=txt;return n;}
 function button(txt,fn){const b=el('button','',txt);b.type='button';b.onclick=fn;return b;}
@@ -68,8 +68,9 @@ function render(){
  const top=el('header','dm-center-top'),x=button('×',()=>close());
  x.className='dm-center-close';x.setAttribute('aria-label','Kapat');
  top.append(el('h2','',history?'Geçmiş Düellolar':'Bildirimler'));
+ const summary=el('p','dm-center-summary',history?'Son 30 gün · Bildirimlerdeki düello sonuçların':(unread?unread+' okunmamış bildirim':'Tüm bildirimlerin okundu'));
  if(!history&&unread){const markAll=button('Tümünü okundu işaretle',()=>mark('read_all'));markAll.className='dm-center-mark';top.append(markAll);}
- top.append(x);panel.append(top);
+ top.append(x);panel.append(top,summary);
  const list=el('div','dm-center-list');panel.append(list);
  const rows=history?items.filter(n=>resultTypes.has(n.tur)):items;
  if(failed){list.append(el('p','dm-center-empty','Bağlantı kurulamadı.'),button('Tekrar dene',()=>refresh(true)));}
@@ -79,8 +80,11 @@ function render(){
   const b=el('button','dm-center-row'),icon=el('span','dm-center-icon',style[0]),copy=el('span','dm-center-copy');
   b.type='button';icon.setAttribute('aria-hidden','true');
   const label=headline(n);copy.append(el('b','',label));b.title=label;
-  if(n.metin&&label!==n.metin&&n.tur!=='mesaj')copy.append(el('span','',n.metin));
-  b.append(icon,copy,el('small','dm-center-date',date(n.tarih)));
+  copy.append(el('small','dm-center-kind',style[1]+(n.okundu?'':' · Yeni')));
+  if(n.metin&&label!==n.metin)copy.append(el('span','',n.metin));
+  const timestamp=el('time','dm-center-date',date(n.tarih));
+  if(n.tarih&&!Number.isNaN(Date.parse(n.tarih)))timestamp.dateTime=new Date(n.tarih).toISOString();
+  copy.append(timestamp);b.append(icon,copy);
   if(!n.okundu)b.append(el('i','dm-center-dot'));
   b.onclick=()=>choose(n);row.append(b);list.append(row);
  }
@@ -89,9 +93,8 @@ function render(){
 async function mark(action,id=null){const at=serial;try{if(pending)await pending;if(at!==serial)return;const d=await rpc(action,id);if(at===serial)apply(d);}catch{if(at===serial){failed=true;render();}}}
 function detail(n){
  const title=String(n.title||'Diji-Medu bildirimi'),description=String(n.metin||'Bildirimini görüntüledin.');
- if(typeof window.dmMemberUI?.sheet==='function'){const p=document.createElement('p');p.textContent=description;return window.dmMemberUI.sheet(title,p.outerHTML);}
  const host=el('div','dm-center-detail-layer'),box=el('section','dm-center-detail');box.setAttribute('role','dialog');box.setAttribute('aria-modal','true');box.setAttribute('aria-label',title);
- box.append(el('h3','',title),el('p','',description),button('Tamam',()=>host.remove()));host.append(box);host.onclick=e=>{if(e.target===host)host.remove();};document.body.append(host);box.querySelector('button').focus();return host;
+ box.append(el('h3','',title),el('small','dm-center-kind',styles[n.tur]?.[1]||'Bildirim'),el('p','',description),el('time','dm-center-date',date(n.tarih)),button('Tamam',()=>host.remove()));host.append(box);host.onclick=e=>{if(e.target===host)host.remove();};document.body.append(host);box.querySelector('button').focus();return host;
 }
 function campaign(){const fn=window.dmZirve?.openStudentHub;if(typeof fn==='function'){fn();return true;}return false;}
 function navigateTab(tab){
@@ -103,7 +106,7 @@ function navigateTab(tab){
  if(typeof f!=='function')return false;f();return true;
 }
 function friends(tab){window.dmFriends?.open?.();if(tab)window.dmFriends?.detail?.(tab);}
-async function choose(n){const at=serial;const item={...n};const fromHistory=history,opened=layer;if(!item.okundu)await mark('read',item.sat);if(at!==serial||layer!==opened)return;close();if(fromHistory&&item.tur!=='canliDuelloSonuc')return detail({...item,title:headline(item)});switch(item.tur){
+async function choose(n){const at=serial;const item={...n};const fromHistory=history,opened=layer;if(!item.okundu)await mark('read',item.sat);if(at!==serial||layer!==opened)return;close();if(fromHistory){if(item.tur==='canliDuelloSonuc'&&item.duelId&&window.dmLiveDuel?.openResult)return window.dmLiveDuel.openResult(item.duelId);return detail({...item,title:headline(item)});}switch(item.tur){
  case 'canliDuelloDavet':return typeof window.dmLiveDuel?.openInvite==='function'?window.dmLiveDuel.openInvite(item.duelId,item.opponent):window.dmLeagueUI?.openDuelChooser?.();
  case 'sureSandik':{let chest=Number(item.chestIndex);if(window.dmActiveTime?.unclaimed?.().includes(chest))return window.dmActiveTime.openChest(chest);return window.DijiDailyGift?.open?.();}
  case 'canliDuelloSonuc':if(item.duelId&&window.dmLiveDuel?.openResult)return window.dmLiveDuel.openResult(item.duelId);return window.dmLeagueUI?.openDuelChooser?.();
@@ -128,7 +131,7 @@ function open(anchor=bell,duelHistory=false){
  if(layer)close(false);
  trigger=anchor;history=duelHistory;
  layer=el('div','dm-center-layer');const panel=el('section','dm-center-panel');
- panel.setAttribute('role','dialog');panel.setAttribute('aria-label',history?'Geçmiş Düellolar':'Bildirimler');
+ panel.setAttribute('role','dialog');panel.setAttribute('aria-modal','true');panel.setAttribute('aria-label',history?'Geçmiş Düellolar':'Bildirimler');
  layer.append(panel);layer.addEventListener('pointerdown',e=>{if(e.target===layer)close();});
  document.body.append(layer);anchor.setAttribute('aria-expanded','true');render();panel.querySelector('.dm-center-close')?.focus({preventScroll:true});
  if(Date.now()-last>15000)void refresh(true);
@@ -146,7 +149,17 @@ function mountSecondary(host){
 }
 function closeSecondary(){if(trigger===secondary||history)close(false);}
 document.addEventListener('pointerdown',e=>{if(layer&&!layer.contains(e.target)&&!trigger?.contains(e.target)&&!bell.contains(e.target)&&!secondary?.contains(e.target))close(false);},true);
-document.addEventListener('keydown',e=>{if(e.key==='Escape'&&layer)close();});
+document.addEventListener('keydown',e=>{
+ const dialog=document.querySelector('.dm-center-detail-layer')||layer;
+ if(!dialog)return;
+ if(e.key==='Escape'){if(dialog!==layer)dialog.remove();else close();}
+ if(e.key==='Tab'){
+  const controls=[...dialog.querySelectorAll('button:not([disabled])')];
+  const first=controls[0],last=controls.at(-1);
+  if(e.shiftKey&&document.activeElement===first){e.preventDefault();last?.focus();}
+  else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first?.focus();}
+ }
+});
 window.addEventListener('resize',locate);
 window.visualViewport?.addEventListener('resize',locate);
 function mount(hud){reset();if(!eligible())return;if(bell.parentElement!==hud){hud.append(bell);void refresh();}if(layer)requestAnimationFrame(locate);}
