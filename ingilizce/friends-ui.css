@@ -1153,24 +1153,24 @@ html[data-dm-theme=night] body #dmDuelRanking :is(.fr-duel-ranking-scope,.fr-due
 #tab-meduakis .fr-arena-footer button:focus-visible {outline:2px solid #ffda69;outline-offset:2px}
 
 /* Weekly XP race */
-#tab-meduakis .fr-weekly-race .fr-race-head,
-#tab-meduakis .fr-weekly-race .fr-race-first {background-color:#075c46;color:white}
-#tab-meduakis .fr-race-head h3 {margin:0;padding:8px;text-align:center;color:white!important;font-size:clamp(16px,4vw,24px)}
-.fr-race-head .fr-icon {color:#ffcb39;vertical-align:middle}
-.fr-race-player {display:flex;align-items:center;gap:10px;width:100%;padding:8px 14px;border:0;border-bottom:1px solid #dedacc;background:#fff9ed;color:#182447;text-align:left;font:inherit;cursor:pointer;box-sizing:border-box}
-.fr-race-player:focus-visible {outline:3px solid #318bfd;outline-offset:-3px}
-.fr-race-face {position:relative;flex:none;display:inline-flex}
-.fr-race-face .fr-podium-crown {position:absolute;top:-8px;left:50%;transform:translateX(-50%);width:29px;height:20px}
-.fr-race-details {flex:1;min-width:0}
-.fr-race-score {display:flex;align-items:baseline;justify-content:space-between;gap:6px}
-.fr-race-score strong {overflow-wrap:anywhere}
-.fr-race-score b {white-space:nowrap}
-.fr-race-bar {display:block;height:6px;margin-top:5px;background:#deddd4;border-radius:8px;overflow:hidden}
-.fr-race-bar i {display:block;height:100%;border-radius:inherit;background:#64aa20}
-.fr-race-first {position:relative;justify-content:center;text-align:center;padding:10px 12% 20px;background-image:url(friends-assets/weekly-track.webp),linear-gradient(110deg,#08654e,#024337);background-position:left center,center;background-size:auto 100%,cover;background-repeat:no-repeat}
-.fr-race-first .fr-race-details {flex:0 1 auto}
-.fr-race-first .fr-race-score {display:grid;justify-content:center;gap:0;font-size:1.15em}
-.fr-race-first .fr-race-details>small:first-child {background:#ffcf42;border-radius:9px;padding:1px 9px;color:#263020;font-weight:900}
-.fr-race-first .fr-race-bar {position:absolute;bottom:9px;left:8%;right:8%;height:4px}
-.fr-race-first .fr-race-bar i {background:#ffcb22}
-.fr-race-flag {position:absolute;right:7%;bottom:7px}
+#tab-meduakis .fr-weekly-race {overflow:hidden}
+#tab-meduakis .fr-weekly-race .fr-race-head {background:#075c46;color:#fff}
+#tab-meduakis .fr-race-head h3 {margin:0;padding:8px;text-align:center;color:#fff!important;font:900 clamp(16px,3.5vw,22px)/1.2 Nunito,system-ui}
+.fr-race-head .fr-icon {width:20px;height:20px;color:#ffcb39;vertical-align:middle}
+#tab-meduakis .fr-race-player {display:flex;align-items:center;gap:10px;width:100%;padding:12px;border:0;border-bottom:1px solid #dfe7e3;background:#fff;color:#182447;text-align:left;font:800 14px/1.3 Nunito,system-ui;cursor:pointer;box-sizing:border-box}
+#tab-meduakis .fr-race-player:focus-visible {outline:3px solid #318bfd;outline-offset:-3px}
+#tab-meduakis .fr-race-face {position:relative;flex:none;display:inline-flex;padding-bottom:4px}
+#tab-meduakis .fr-race-face .fr-avatar {--avatar-size:36px!important;width:36px;height:36px;flex:none}
+#tab-meduakis .fr-race-first .fr-avatar {--avatar-size:54px!important;width:54px;height:54px}
+#tab-meduakis .fr-race-face .fr-avatar>.dm-member-badge {font:900 6px/1 Nunito,system-ui!important;letter-spacing:0;padding:1px 2px;border-radius:4px;left:50%;right:auto;top:auto;bottom:-3px;transform:translateX(-50%);max-width:32px;box-sizing:border-box}
+#tab-meduakis .fr-race-face .fr-podium-crown {position:absolute;top:-9px;left:50%;transform:translateX(-50%);width:23px;height:16px}
+#tab-meduakis .fr-race-details {flex:1;min-width:0}
+#tab-meduakis .fr-race-score {display:flex;align-items:baseline;justify-content:space-between;gap:8px;font:800 14px/1.3 Nunito,system-ui}
+#tab-meduakis .fr-race-score strong {overflow-wrap:anywhere;min-width:0}
+#tab-meduakis .fr-race-score b {white-space:nowrap;font-size:13px}
+#tab-meduakis .fr-race-bar {display:block;height:5px;margin-top:7px;background:#e3eae5;border-radius:8px;overflow:hidden}
+#tab-meduakis .fr-race-bar i {display:block;height:100%;border-radius:inherit;background:#42a372}
+#tab-meduakis .fr-race-first {padding:18px 16px 12px;background:#edf6f1;gap:16px}
+#tab-meduakis .fr-race-first .fr-race-details>small:first-child {display:block;margin-bottom:3px;color:#376653;font:800 11px/1.3 Nunito,system-ui;background:none;padding:0}
+#tab-meduakis .fr-race-first .fr-race-score strong {font-size:18px}
+#tab-meduakis .fr-race-first .fr-race-bar i {background:#d8ad35}
