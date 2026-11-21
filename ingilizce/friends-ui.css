@@ -1031,7 +1031,7 @@ html[data-dm-theme="night"] .fr-people-name small{color:#b9c9e0}
 #tab-meduakis.fr-home-view .fr-tiles-home .zk-banner .zk-go {display:none}
 #tab-meduakis.fr-home-view .fr-tiles-home .zk-banner .zk-chip.gold {grid-column:3;grid-row:1/3;margin:0;border-radius:8px;background:#ffd336;color:#342300}
 #tab-meduakis.fr-home-view .fr-unified-actions :is(.fr-invite-top,.fr-people-toggle) {
-  background:#18ac7b!important; color:#fff!important; border-color:#18ac7b!important;
+  background:#0f966e!important; color:#fff!important; border-color:#0f966e!important;
   border-bottom-color:#0c805f!important; box-shadow:none!important;
 }
 html[data-dm-theme=night] #tab-meduakis.fr-home-view .fr-tiles-home .fr-league-board {
@@ -1044,4 +1044,17 @@ html[data-dm-theme=night] #tab-meduakis.fr-home-view .fr-tiles-home .fr-podium-f
   #tab-meduakis.fr-home-view .fr-tiles-home :is(.fr-leaders,.fr-duel-champions) {padding-top:4px}
   #tab-meduakis.fr-home-view .fr-tiles-home :is(.fr-leader-1,.fr-duel-champion-1) :is(.fr-leader-cup,.fr-duel-champion-medal) {min-height:20px}
   #tab-meduakis.fr-home-view .fr-tiles-home .fr-league-board>.fr-podium-footer {padding-block:2px!important}
+}
+@container (min-height:461px) and (max-height:540px) {
+  #tab-meduakis.fr-home-view .fr-tiles-home .fr-league-board>.fr-section-head {padding-block:5px!important}
+  #tab-meduakis.fr-home-view .fr-tiles-home :is(.fr-leaders,.fr-duel-champions) {padding-top:5px}
+  #tab-meduakis.fr-home-view .fr-tiles-home :is(.fr-leader,.fr-duel-champion) .fr-avatar {
+    --avatar-size:clamp(33px,9cqh,48px)!important;
+  }
+  #tab-meduakis.fr-home-view .fr-tiles-home :is(.fr-leader-1,.fr-duel-champion-1) .fr-avatar {
+    --avatar-size:clamp(39px,10cqh,53px)!important;
+  }
+  #tab-meduakis.fr-home-view .fr-tiles-home :is(.fr-leader-1,.fr-duel-champion-1) :is(.fr-leader-cup,.fr-duel-champion-medal) {
+    min-height:clamp(28px,6cqh,35px);
+  }
 }
