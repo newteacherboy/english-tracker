@@ -49,7 +49,12 @@
   return best;
  }
 const defaultPreference={mode:'auto',disabled:[],manual:null};
+ // One-time opening artwork; keep the administrator's saved selection for the next launch after expiry.
  function prefResolve(now,cal,pref){
+  const today=turkeyDate(now);
+  if(today>='2026-11-21'&&today<='2026-11-26'){
+   return {id:'24-kasim',year:2026,variant:1,priority:200,file:'24-kasim-karanfil-2026.webp',today,temporary:true};
+  }
   if(pref?.mode==='normal')return null;
   if(pref?.mode==='manual'){
    const m=pref.manual;
@@ -152,7 +157,7 @@ const defaultPreference={mode:'auto',disabled:[],manual:null};
    chosen=next;
   }
   // Kayıtlı seçim Papi girişiyse beklemeden başla (animasyon ilk kareden oynasın); değilse sunucu cevabını bekle.
-  if(chosen&&chosen.id==='papi-giris')decide(chosen);
+  if(chosen?.temporary||chosen?.id==='papi-giris')decide(chosen);
   setTimeout(()=>decide(chosen),1500);
   // Server-managed global selection: read asynchronously after immediate cached first paint.
   function refreshPreferences(){
@@ -192,6 +197,8 @@ const defaultPreference={mode:'auto',disabled:[],manual:null};
   // In long-running single-page sessions, re-evaluate at local midnight.
   if(typeof win.setInterval==='function')win.setInterval(()=>{
    const next=prefResolve(new Date(),calendar,prefs);
+   // Switch this artwork on the next opening without interrupting an active session.
+   if(chosen?.temporary||next?.temporary)return;
    if((next?.file||'')!==(chosen?.file||''))win.location.reload();
   },60*60*1000);
  }
