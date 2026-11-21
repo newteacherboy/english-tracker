@@ -3,6 +3,7 @@
   "date": "2026-10-04",
   "notice": "Source records do not establish exclusivity or eliminate infringement risk.",
   "assets": [
+    {"path":"ingilizce/holiday-splashes/24-kasim-karanfil-2026.webp","sha256":"c2b840ae98b0095f2a7d4d7b98720c0967cb5b2e479aeada64584ecb2535e84f","bytes":167006,"status":"ai-generated","source":"OpenAI ImageGen; user-approved Diji-Medu Teachers’ Day opening artwork, based on the 3D Papi mascot."},
     {"path":"ingilizce/friends-assets/centre-reference.webp","sha256":"03edaef28ddde487b98c930e0efe429a27bec3bd2d694ed8644001f8387319e8","bytes":103982,"status":"ai-generated","source":"OpenAI ImageGen, user-approved Diji-Medu Benim Merkezim design. Illustrations reused through clipped SVG viewports."},
 {
   "path": "ingilizce/games-assets/approved-games-sheet.webp",

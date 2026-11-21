@@ -32,14 +32,25 @@ test('backend requires server-validated teacher owner and restricts allowed art'
  assert(s.includes('!Array.isArray(verified.items)'));
  assert(s.includes('variants[manual.id].includes(manual.file)'));
 });
-test('24 Kasım artwork is manual-only: selectable, never automatic',()=>{
+test('legacy 24 Kasım artwork stays manually selectable',()=>{
  const r=mod.prefResolve(date,calendar,{mode:'manual',disabled:[],manual:{id:'24-kasim',file:'24-kasim-1.jpg'}});
  assert.equal(r.file,'24-kasim-1.jpg');
  assert.ok(fs.existsSync('ingilizce/holiday-splashes/24-kasim-1.jpg'));
  assert.ok(!mod.holidays.some(h=>h.id==='24-kasim'));
- for(const d of ['2026-11-21','2026-11-24','2026-11-27','2027-11-24'])assert.notEqual(mod.prefResolve(d+'T12:00:00+03:00',calendar,{mode:'auto',disabled:[]})?.id,'24-kasim');
  const b=fs.readFileSync('supabase/functions/splash-settings/index.ts','utf8');
  assert(b.includes("'24-kasim':['24-kasim-1.jpg']"));
+});
+
+test('Karanfil opens through 26 November in Istanbul and restores the Papi intro at midnight',()=>{
+ const pref={mode:'manual',manual:{id:'papi-giris',file:'papi-giris-1.jpg'}};
+ for(const [time,file] of [
+  ['2026-11-20T20:59:59Z','papi-giris-1.jpg'],
+  ['2026-11-20T21:00:00Z','24-kasim-karanfil-2026.webp'],
+  ['2026-11-26T20:59:59Z','24-kasim-karanfil-2026.webp'],
+  ['2026-11-26T21:00:00Z','papi-giris-1.jpg'],
+  ['2027-11-24T12:00:00+03:00','papi-giris-1.jpg']
+ ])assert.equal(mod.prefResolve(time,calendar,pref).file,file,time);
+ assert.ok(fs.existsSync('ingilizce/holiday-splashes/24-kasim-karanfil-2026.webp'));
 });
 
 test('Zirve intro is a distinct manual option with approved local artwork and strict validation',()=>{
@@ -62,7 +73,8 @@ test('Zirve opening defers boot completion until Continue is explicitly pressed'
  const screen={setAttribute(){},querySelector:s=>controls[s],remove(){this.removed=true;}};
  const boot={appendChild(el){this.child=el;}};
  const win={document:{baseURI:'https://app.dijimedu.com/ingilizce/',currentScript:{src:'https://app.dijimedu.com/ingilizce/holiday-splashes/splash.js'},documentElement:{classList:{add(){},remove(){},toggle(){}},style:{removeProperty(){}},dataset:{}},getElementById:id=>id==='dmBootSplash'?boot:null,createElement:()=>screen},localStorage:{getItem:k=>k==='dm-splash-preferences'?JSON.stringify({mode:'manual',manual:{id:'24-kasim-zirve',file:'24-kasim-zirve-1.svg'}}):null},requestIdleCallback(){}};
- const scope={module:{exports:{}},URL,setTimeout:(fn,ms)=>{timers.push({fn,ms});return timers.length;},setInterval:()=>1,clearInterval(){}};
+ const FixedDate=class extends Date{constructor(value='2026-11-19T12:00:00+03:00'){super(value);}};
+ const scope={module:{exports:{}},URL,Date:FixedDate,setTimeout:(fn,ms)=>{timers.push({fn,ms});return timers.length;},setInterval:()=>1,clearInterval(){}};
  vm.runInNewContext(fs.readFileSync('ingilizce/holiday-splashes/splash.js','utf8'),scope);
  scope.module.exports.install(win);
  let done=0;
