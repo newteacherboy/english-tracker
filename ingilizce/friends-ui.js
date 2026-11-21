@@ -88,17 +88,17 @@
   function renderDuelRanking(){
     const box=document.querySelector('#dmDuelRanking .fr-duel-ranking-content');if(!box)return;
     const note=document.querySelector('#dmDuelRanking .fr-duel-ranking-note');
-    note.textContent='Tüm zamanlar · '+(duelLeaders.length===50?'İlk 50 oyuncu':duelLeaders.length+' oyuncu');
+    note.textContent='G = Galibiyet · M = Mağlubiyet';
     box.innerHTML=duelLeaders.map((p,i)=>{
       const self=norm(p.player_name)===norm(who());
-      return '<div class="fr-duel-ranking-row'+(self?' is-self':'')+'"><span class="fr-duel-rank">'+(i+1)+'</span>'+avatar(p.player_name,36,p.membership_tier)+'<div class="fr-duel-rank-copy"><b>'+esc(p.player_name)+(self?' · Sen':'')+'</b><span>'+xp(p.wins)+' galibiyet · '+xp(p.losses)+' mağlubiyet</span></div><strong>'+xp(p.duel_xp)+'<small>Düello XP</small></strong></div>';
+      return '<div class="fr-duel-ranking-row'+(self?' is-self':'')+'"><span class="fr-duel-rank">'+(i+1)+'</span>'+avatar(p.player_name,36,p.membership_tier)+'<div class="fr-duel-rank-copy"><b>'+esc(p.player_name)+(self?' · Sen':'')+'</b></div><span class="fr-duel-rank-record">'+xp(p.wins)+' / '+xp(p.losses)+'</span><strong>'+xp(p.duel_xp)+'</strong></div>';
     }).join('')||'<p class="fr-duel-ranking-status" role="status">'+(duelLeadersBusy?'Sıralama yükleniyor…':duelLeadersError?'Sıralama alınamadı. Yenile düğmesiyle tekrar deneyebilirsin.':'Henüz tamamlanmış düello yok.')+'</p>';
   }
   window.dmDuelRankingOpen=function(){
     document.getElementById('dmDuelRanking')?.remove();
     const previous=document.activeElement;
     const layer=document.createElement('div');layer.id='dmDuelRanking';layer.className='fr-duel-ranking-layer';
-    layer.innerHTML='<section class="fr-duel-ranking-panel" role="dialog" aria-modal="true" aria-label="Düello Şampiyonları"><header><h2>Düello Şampiyonları</h2><button type="button" aria-label="Kapat">×</button></header><div class="fr-duel-ranking-tools"><p class="fr-duel-ranking-note"></p><button type="button" data-rank-refresh>Yenile</button></div><div class="fr-duel-ranking-content"></div></section>';
+    layer.innerHTML='<section class="fr-duel-ranking-panel" role="dialog" aria-modal="true" aria-label="Düello Şampiyonları"><header><h2>Düello Şampiyonları</h2><button type="button" aria-label="Kapat">×</button></header><p class="fr-duel-ranking-scope">Tüm zamanlar · İlk 50 oyuncu</p><div class="fr-duel-ranking-labels"><span>Sıra / Oyuncu</span><span>G / M</span><span>XP</span></div><div class="fr-duel-ranking-content"></div><div class="fr-duel-ranking-tools"><p class="fr-duel-ranking-note"></p><button type="button" data-rank-refresh>Yenile</button></div></section>';
     const close=()=>{document.removeEventListener('keydown',keys);layer.remove();if(previous?.isConnected)previous.focus({preventScroll:true});};
     const keys=e=>{
       if(e.key==='Escape')close();
