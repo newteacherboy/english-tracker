@@ -102,3 +102,50 @@ html body #rtProfileBackdrop .au-centre:not(.au-account)>.au-account-entry{flex:
 #rtProfileBackdrop .dm-profile-shop-row button+button{background:linear-gradient(#f4e1ff,#e3baff);color:#56148a;box-shadow:0 4px 0 #aa7bd076}
 #rtProfileBackdrop .dm-profile-shop-row img{display:block;width:auto;height:clamp(50px,9.8dvh,93px);max-width:100%;object-fit:contain;border-radius:13px;mix-blend-mode:multiply}
 #rtProfileBackdrop .dm-profile-shop-row i{position:absolute;right:6px;bottom:5px;background:#fff;color:#6630a6;border-radius:50%;width:20px;height:20px;font-style:normal;font-size:18px;line-height:19px}
+
+@layer bilgiIslands {
+html body #rtProfileBackdrop .rt-profile.au-centre.pa-reference {
+ --pa-ink:#131e41;--centre-paper:#fff;--centre-line:#c6ccda;
+ background:var(--centre-paper)!important;gap:3px!important;
+}
+html body #rtProfileBackdrop .pa-reference .pa-hero {
+ display:flex!important;flex-direction:row-reverse!important;justify-content:flex-end!important;
+ align-items:center!important;gap:10px!important;padding:0!important;
+ background:transparent!important;box-shadow:none!important;margin-bottom:12px!important;
+}
+html body #rtProfileBackdrop .pa-reference .pa-hero-papi {position:static!important;width:58px!important;height:44px!important;flex:none!important}
+html body #rtProfileBackdrop .pa-reference .pa-user {
+ background:var(--centre-paper)!important;border:1px solid var(--centre-line)!important;
+ box-shadow:none!important;margin-bottom:14px!important;
+}
+html body #rtProfileBackdrop .pa-reference .pa-grid {gap:8px!important}
+html body #rtProfileBackdrop .pa-reference .pa-grid button {min-width:0!important;padding:0!important}
+html body #rtProfileBackdrop .pa-reference .pa-grid b {font-size:clamp(10px,3.2vw,14px)!important;color:var(--pa-ink)!important}
+html body #rtProfileBackdrop .pa-reference-art {display:block;width:100%;height:100%;overflow:hidden}
+html body #rtProfileBackdrop .pa-reference .pa-grid .pa-reference-art {
+ width:min(100%,88px)!important;height:auto!important;aspect-ratio:1.08;
+ border-radius:18%;flex:none!important;
+}
+html body #rtProfileBackdrop .pa-reference .dm-profile-shop-row button,
+html body #rtProfileBackdrop .au-centre.pa-reference .au-account-entry {
+ display:flex!important;align-items:center!important;justify-content:flex-start!important;gap:8px!important;
+ min-height:49px!important;padding:7px 9px!important;border:1px solid var(--centre-line)!important;
+ border-radius:13px!important;box-shadow:none!important;color:var(--pa-ink)!important;
+ font:900 clamp(14px,4vw,18px)/1.2 Nunito,system-ui!important;background:#fff7e7!important;
+}
+html body #rtProfileBackdrop .pa-reference .dm-profile-shop-row button+button {background:#f2ecfb!important}
+html body #rtProfileBackdrop .pa-reference .dm-profile-shop-row i {display:none!important}
+html body #rtProfileBackdrop .pa-reference .dm-profile-shop-row .pa-reference-art {width:40px;height:38px;flex:none}
+html body #rtProfileBackdrop .au-centre.pa-reference .au-account-entry {
+ background:var(--centre-paper)!important;width:100%!important;
+}
+html body #rtProfileBackdrop .pa-reference .au-account-entry .pa-reference-art {width:30px;height:30px;flex:none}
+html body #rtProfileBackdrop .pa-reference .au-account-entry b {color:var(--pa-ink)!important}
+html body #rtProfileBackdrop .pa-reference .au-account-entry em {margin-inline-start:auto}
+html[data-dm-theme=night] body #rtProfileBackdrop .rt-profile.au-centre.pa-reference {--pa-ink:#f1f4ff;--centre-paper:#202b41;--centre-line:#51617a}
+html[data-dm-theme=night] body #rtProfileBackdrop .pa-reference .dm-profile-shop-row button {background:#343049!important}
+@media(max-height:720px) {
+ html body #rtProfileBackdrop .pa-reference .pa-grid .pa-reference-art {width:min(100%,60px)!important}
+ html body #rtProfileBackdrop .pa-reference .pa-hero,html body #rtProfileBackdrop .pa-reference .pa-user {margin-bottom:7px!important}
+}
+}
