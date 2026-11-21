@@ -36,9 +36,9 @@ test('profile and member state start together and neither can reveal an unfinish
  assert(!f.calls.includes('route'));assert.equal(f.nodes.get('oturumYuklemeOverlay').style.display,'flex');
  memberDone(true);assert.equal(await task,true);assert.equal(f.calls.filter(x=>x==='route').length,1);
 });
-test('student with a chosen route opens on Friends; a new member still starts on Parkur',async()=>{
+test('students with a chosen route and new members both start on Parkur',async()=>{
  const f=fixture();let opened='';f.c.dunyaAc=async()=>{opened='parkur'};f.c.meduAkisAc=async()=>{opened='arkadaslar'};f.c.yo={dmLearningPurpose:'school'};
- assert.notEqual(await f.c.dmOpenPortalSession({student:'Student'}),false);assert.equal(opened,'arkadaslar');
+ assert.notEqual(await f.c.dmOpenPortalSession({student:'Student'}),false);assert.equal(opened,'parkur');
  const g=fixture();let first='';g.c.dunyaAc=async()=>{first='parkur'};g.c.meduAkisAc=async()=>{first='arkadaslar'};
  assert.notEqual(await g.c.dmOpenPortalSession({student:'Student'}),false);assert.equal(first,'parkur');
 });
