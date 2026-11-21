@@ -3,8 +3,8 @@ const test=require('node:test'),assert=require('node:assert/strict'),vm=require(
 test('account switch is grouped under Account and Support and still dispatches the existing action',()=>{
  let nav=null,menu,opened=0;
  const last={setAttribute(){},focus(){}};
- const slot={textContent:'',innerHTML:'',classList:{add(){}},focus(){}};
- const element={querySelector:()=>slot,remove(){}};
+ const slot={textContent:'',innerHTML:'',classList:{add(){}},focus(){},before(){}};
+ const element={querySelector:()=>slot,append(){},remove(){}};
  const document={getElementById:id=>id==='bottomNavMobile'?nav:null,querySelector:()=>null,addEventListener(){},createElement:()=>element,body:{append(el){menu=el;}}};
  const window={dmHesapDegistirAc(){opened++;}};
  vm.runInNewContext(fs.readFileSync('ingilizce/bottom-nav.js','utf8'),{window,document,navigator:{},console});

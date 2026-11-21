@@ -11,6 +11,12 @@ function restorePrimary(){
  if(base){base.classList.add('active');const nav=document.getElementById('bottomNavMobile');nav?.querySelectorAll('[data-ekran]').forEach(b=>b.classList.toggle('active',b.dataset.ekran===base.id));}
  else if(typeof window.dunyaAc==='function')window.dunyaAc();
 }
+function syncProfileDock(){
+ const panel=document.getElementById('rtProfileBackdrop'),dock=document.getElementById('bottomNavMobile');
+ if(!panel||!dock)return;
+ const top=dock.getBoundingClientRect().top;
+ if(top>0)panel.style.setProperty('--dm-profile-dock-space',Math.ceil(window.innerHeight-top+12)+'px');
+}
 function close(restore=true){const panel=document.getElementById('rtProfileBackdrop');if(!panel)return;if(restore)restorePrimary();panel.remove();document.getElementById('bottomNavMobile')?.querySelector('[data-ekran="tab-profile-menu"]')?.setAttribute('aria-expanded','false');window.dcBottomNavSenkronize?.();}
 let profileReturnPane='main';
 const centreItems=[['İlerlemem','Gelişimimi keşfet','progress',0],['Başarılarım','Rozetlerimi gör','badges',1],['Karnelerim','Notlarımı incele','certificates',2],['Ödevlerim','Görevlerimi tamamla','daily',3],['Kelime Tekrarı','Kelimeleri pekiştir','repeat',5],['Parkur Değiştir','Yeni maceralara geç','route',6],['Veli Kontrolü','Ayarlar ve raporlar','guardian',7],['Öğretmen Paneli','Sınıfıma geç','teacherPanel',5,'account-icons']];
@@ -41,7 +47,7 @@ window.dmProfileMenuAc=function(initial='main'){
  }
  el.onclick=e=>{if(e.target===el||e.target.closest('.rt-close')){close();last.focus();return;}const local=e.target.closest('[data-centre]');if(local){pane=local.dataset.centre==='account'?'account':'main';paint();return;}const b=e.target.closest('[data-profile]');if(!b)return;profileReturnPane=pane;close();window.dmProfileReturnPending=b.dataset.profile!=='logout';({shop:()=>window.magazaAc?.(),bag:()=>window.dmBagInventory?.open?.(),certificates:()=>window.dmGraduations?.openLibrary(),profile:()=>window.kisiselBilgilerAc?.(),daily:()=>window.sanaOzelTamEkranAc?.(),progress:()=>window.dmIlerlememAc?.(),badges:()=>window.dmBasarilarimAc?.(),teacher:()=>{if(!window.dmTeacherPortalMode&&name.toLowerCase()!=='teacher'){window.dmTeacherPortal?.openLogin();return;}if(typeof window.ogretmenPaneliAc==='function')window.ogretmenPaneliAc();else window.yoToast?.('Öğretmen paneli yüklenemedi.');},exam:()=>{if(typeof window.seviyeTestAc==='function')window.seviyeTestAc();else window.sanaOzelTamEkranAc?.();},repeat:()=>{if(typeof window.yoZkAc==='function')window.yoZkAc();else window.sanaOzelTamEkranAc?.();},coach:()=>window.dmTeacherChatOpen(),route:()=>window.dmMemberExperience?.chooseRoute(true),guardian:()=>window.dmSocialSafety?.parent(),safety:()=>window.dmSocialSafety?.help(),settings:()=>window.dmHesapAyarlariAc?.(),help:()=>window.yardimAc?.(),switchAccount:()=>window.dmHesapDegistirAc?.(),logout:()=>{if(window.confirm('Çıkış yapmak istiyor musun?'))window.cikisYap?.();},pro:()=>window.DMSatis?.planlar?.('profil'),teacherPanel:()=>{if(window.dmTeacherSwitch?.available?.())return window.dmTeacherSwitch.open();if(typeof window.ogretmenPaneliAc==='function'&&name.toLowerCase()==='teacher')return window.ogretmenPaneliAc();window.dmTeacherPortal?.openLogin?.();}})[b.dataset.profile]?.();};
  el.onkeydown=e=>{if(e.key==='Escape'){e.preventDefault();if(pane==='account'){pane='main';paint();}else{close();last.focus();}}if(e.key==='Tab'){const buttons=[...el.querySelectorAll('button')].filter(b=>b.getClientRects().length),i=buttons.indexOf(document.activeElement);e.preventDefault();buttons[(i+(e.shiftKey?-1:1)+buttons.length)%buttons.length].focus();}};
- document.body.append(el);paint();nav.querySelectorAll('.bn-item').forEach(b=>b.classList.toggle('active',b===last));last.setAttribute('aria-expanded','true');
+ document.body.append(el);paint();nav.querySelectorAll('.bn-item').forEach(b=>b.classList.toggle('active',b===last));last.setAttribute('aria-expanded','true');syncProfileDock();
 };
 
 
@@ -103,7 +109,7 @@ window.dmDuelHomeAc=function(){
    <div class="dm-duel-arena">
     <img class="dm-duel-papi" src="friends-assets/papi-duel-arena.webp" alt="Düello arenasındaki savaşçı Papi" width="780" height="567" decoding="async">
     <button type="button" class="dm-duel-quick" data-duel="live"><b><span aria-hidden="true">⚡</span> Canlı Düello</b></button>
-    <div class="dm-duel-options"><button type="button" data-duel="friend"><span aria-hidden="true">👥</span><span>Arkadaşına<br>Meydan Oku</span></button><button type="button" data-duel="papi"><span aria-hidden="true">🦜</span><span>Papi’ye<br>Karşı Oyna</span></button></div>
+    <div class="dm-duel-options"><button type="button" data-duel="friend"><span class="dm-duel-option-icon" aria-hidden="true"><svg focusable="false"><use href="friends-assets/icons.svg#people"></use></svg></span><span>Arkadaşına<br>Meydan Oku</span></button><button type="button" data-duel="papi"><span class="dm-duel-option-icon" aria-hidden="true"><img src="friends-assets/papi-fencer.webp" alt="" width="40" height="40"></span><span>Papi’ye<br>Karşı Oyna</span></button></div>
    </div>
    <div class="dm-duel-personal" role="status">Düello istatistikleri yükleniyor…</div>
    <button type="button" class="dm-duel-history" data-duel="history"><span aria-hidden="true">◷</span> Geçmiş Düellolar <small aria-hidden="true">›</small></button>
@@ -144,7 +150,7 @@ window.dmOpenGamesHome=function(){
 };
 
 document.addEventListener('click',e=>{const b=e.target.closest('#bottomNavMobile [data-ekran]');if(!b||b.disabled||b.classList.contains('active')||b.getAttribute('aria-disabled')==='true')return;try{navigator.vibrate?.(20);}catch{}},true);
-decorate();const nav=document.getElementById('bottomNavMobile');if(nav){new MutationObserver(decorate).observe(nav,{childList:true,subtree:true,attributes:true,attributeFilter:['class','data-ekran']});nav.addEventListener('click',e=>{const b=e.target.closest('[data-ekran]');if(b&&b.dataset.ekran!=='tab-profile-menu'){window.dmProfileReturnPending=false;close();}});}
+decorate();const nav=document.getElementById('bottomNavMobile');if(nav){if(window.ResizeObserver)new ResizeObserver(syncProfileDock).observe(nav);window.addEventListener('resize',syncProfileDock);new MutationObserver(decorate).observe(nav,{childList:true,subtree:true,attributes:true,attributeFilter:['class','data-ekran']});nav.addEventListener('click',e=>{const b=e.target.closest('[data-ekran]');if(b&&b.dataset.ekran!=='tab-profile-menu'){window.dmProfileReturnPending=false;close();}});}
 document.addEventListener('dm:logout',()=>window.dmDuelHomeClose());
 document.addEventListener('dm:login',()=>{window.dmDuelHomeClose();window.dmProfileReturnPending=false;primaryId=window.dmTeacherPortalMode?'tab-aktiviteler':'tab-meduakis';close(false);});
 document.addEventListener('click',e=>{
