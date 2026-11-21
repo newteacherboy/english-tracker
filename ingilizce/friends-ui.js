@@ -78,22 +78,44 @@
     const sb=window.supabaseClient;
     duelLeadersBusy=true;
     try{
-      const {data,error}=sb?.rpc?await sb.rpc('dm_duel_champions_v1',{p_limit:10}):await (async()=>{const response=await fetch(SUPABASE_URL+'/rest/v1/rpc/dm_duel_champions_v1',{method:'POST',headers:{apikey:SUPABASE_ANON_KEY,'Content-Type':'application/json'},body:JSON.stringify({p_limit:10})});return {data:response.ok?await response.json():null,error:response.ok?null:new Error('Sıralama sunucusu yanıt vermedi')};})();
+      const {data,error}=sb?.rpc?await sb.rpc('dm_duel_champions_v1',{p_limit:50}):await (async()=>{const response=await fetch(SUPABASE_URL+'/rest/v1/rpc/dm_duel_champions_v1',{method:'POST',headers:{apikey:SUPABASE_ANON_KEY,'Content-Type':'application/json'},body:JSON.stringify({p_limit:50})});return {data:response.ok?await response.json():null,error:response.ok?null:new Error('Sıralama sunucusu yanıt vermedi')};})();
       if(error)throw error;
       duelLeaders=Array.isArray(data)?data:[];duelLeadersError=false;duelLeadersAt=Date.now();
       if(maSekme==='hub'&&!maProfilId){const panel=root.querySelector('.fr-duel-league');if(panel)panel.outerHTML=duelLeagueHtml();}
     }catch(e){duelLeadersError=true;duelLeadersAt=Date.now();console.warn('Düello ligi yüklenemedi',e);}
-    finally{duelLeadersBusy=false;}
+    finally{duelLeadersBusy=false;renderDuelRanking();}
+  }
+  function renderDuelRanking(){
+    const box=document.querySelector('#dmDuelRanking .fr-duel-ranking-content');if(!box)return;
+    const note=document.querySelector('#dmDuelRanking .fr-duel-ranking-note');
+    note.textContent='Tüm zamanlar · '+(duelLeaders.length===50?'İlk 50 oyuncu':duelLeaders.length+' oyuncu');
+    box.innerHTML=duelLeaders.map((p,i)=>{
+      const self=norm(p.player_name)===norm(who());
+      return '<div class="fr-duel-ranking-row'+(self?' is-self':'')+'"><span class="fr-duel-rank">'+(i+1)+'</span>'+avatar(p.player_name,36,p.membership_tier)+'<div class="fr-duel-rank-copy"><b>'+esc(p.player_name)+(self?' · Sen':'')+'</b><span>'+xp(p.wins)+' galibiyet · '+xp(p.losses)+' mağlubiyet</span></div><strong>'+xp(p.duel_xp)+'<small>Düello XP</small></strong></div>';
+    }).join('')||'<p class="fr-duel-ranking-status" role="status">'+(duelLeadersBusy?'Sıralama yükleniyor…':duelLeadersError?'Sıralama alınamadı. Yenile düğmesiyle tekrar deneyebilirsin.':'Henüz tamamlanmış düello yok.')+'</p>';
   }
   window.dmDuelRankingOpen=function(){
-    const old=document.getElementById('dmDuelRanking');old?.remove();
+    document.getElementById('dmDuelRanking')?.remove();
+    const previous=document.activeElement;
     const layer=document.createElement('div');layer.id='dmDuelRanking';layer.className='fr-duel-ranking-layer';
-    layer.innerHTML='<section class="fr-duel-ranking-panel" role="dialog" aria-modal="true" aria-label="Düello Şampiyonları"><header><h2>⚔️ Düello Şampiyonları</h2><button type="button" aria-label="Kapat">×</button></header><div class="fr-duel-ranking-content"></div></section>';
-    layer.onclick=e=>{if(e.target===layer||e.target.closest("header button"))layer.remove();};
-    const box=layer.querySelector(".fr-duel-ranking-content");
-    const list=duelLeaders.map((p,i)=>'<div class="fr-duel-ranking-row"><b>'+(i+1)+'. '+esc(p.player_name)+'</b><span>'+xp(p.wins)+' G · '+xp(p.losses)+' M</span><strong>'+xp(p.duel_xp)+' XP</strong></div>').join('');
-    box.innerHTML=list||'<p>Henüz tamamlanmış düello yok.</p>';
-    document.body.append(layer);layer.querySelector("header button").focus();
+    layer.innerHTML='<section class="fr-duel-ranking-panel" role="dialog" aria-modal="true" aria-label="Düello Şampiyonları"><header><h2>Düello Şampiyonları</h2><button type="button" aria-label="Kapat">×</button></header><div class="fr-duel-ranking-tools"><p class="fr-duel-ranking-note"></p><button type="button" data-rank-refresh>Yenile</button></div><div class="fr-duel-ranking-content"></div></section>';
+    const close=()=>{document.removeEventListener('keydown',keys);layer.remove();if(previous?.isConnected)previous.focus({preventScroll:true});};
+    const keys=e=>{
+      if(e.key==='Escape')close();
+      if(e.key==='Tab'){
+        const controls=[...layer.querySelectorAll('button')],first=controls[0],last=controls.at(-1);
+        if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}
+        else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}
+      }
+    };
+    layer.onclick=e=>{if(e.target===layer||e.target.closest('header button'))close();};
+    layer.querySelector('[data-rank-refresh]').onclick=async e=>{
+      if(duelLeadersBusy)return;
+      const button=e.currentTarget;button.disabled=true;
+      duelLeadersAt=0;await loadDuelLeaders();button.disabled=false;
+    };
+    document.body.append(layer);document.addEventListener('keydown',keys);
+    void loadDuelLeaders();renderDuelRanking();layer.querySelector('header button').focus();
   };
   function duelLeagueHtml(){
     const podium=[1,0,2].map(index=>{
