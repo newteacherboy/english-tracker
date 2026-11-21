@@ -1,6 +1,9 @@
 /* [11 Kas 2026] Durak başlatma · tasarım A ("mavi baloncuk"). Konum: durak-baslat.js.
    Kart sıradaki durakla aynı mavide; canlı 3D Papi köşeden bakıyor; beyaz parlayan BAŞLA + "XP + altın". */
 html body #dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-entry.ml-pop{background:rgba(9,24,52,.30)!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-entry.ml-pop{
+ padding-bottom:calc(12px + max(var(--dm-stop-dock-space,0px),env(safe-area-inset-bottom,0px)))!important
+}
 html body #dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-entry.ml-pop.ml-pop-anchored{display:block!important;padding:0!important}
 
 html body #dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-entry.ml-pop .ml-entry-card{

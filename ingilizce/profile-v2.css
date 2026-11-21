@@ -73,7 +73,6 @@ html body #rtProfileBackdrop .pa-grid{row-gap:8px!important;margin:0 0 10px!impo
 html body #rtProfileBackdrop .pa-grid>button>.au-art{width:50px!important;height:50px!important}
 html body #rtProfileBackdrop .pa-grid b{font-size:12.5px!important}
 html body #rtProfileBackdrop .pa-grid small{font-size:10.5px!important;margin-top:1px!important;display:-webkit-box!important;-webkit-line-clamp:2!important;-webkit-box-orient:vertical!important;overflow:hidden!important}
-html body #rtProfileBackdrop .rt-profile.au-centre{padding-bottom:calc(112px + env(safe-area-inset-bottom,0px))!important}
 html body #rtProfileBackdrop .au-centre .au-account-entry{min-height:64px!important;margin-top:6px!important;padding:7px 12px!important;gap:10px!important}
 html body #rtProfileBackdrop .au-centre .au-account-entry>.au-art{width:52px!important;height:52px!important}
 html body #rtProfileBackdrop .au-centre .au-account-entry b{font-size:17px!important}
@@ -81,13 +80,13 @@ html body #rtProfileBackdrop .au-centre .au-account-entry small{font-size:12px!i
 html body #rtProfileBackdrop .au-centre .pa-hero h2{font-size:23px!important;margin:0!important}
 }
 
-/* [12 Kas 2026] Benim Merkezim içerikleri dikeyde ortalanır: üstte toplanıp altta boşluk bırakmıyor.
-   Bölüm bir ızgara: satırlar bütün olarak ortalanır; ekran küçükse 'safe' sayesinde üstten taşmaz. */
+/* The centre content scrolls between the toolbar and the account shortcut. */
 @layer bilgiIslands{
-html body #rtProfileBackdrop .rt-profile.au-centre:not(.au-account){display:flex!important;flex-direction:column!important;justify-content:flex-start!important;gap:12px!important;padding:12px 12px 16px!important}
 html body #rtProfileBackdrop .pa-toolbar{display:flex!important;align-items:center!important;justify-content:flex-end!important;gap:8px!important;min-height:44px!important;flex:none!important}
 html body #rtProfileBackdrop .pa-toolbar :is(.rt-close,.dm-theme-toggle){position:static!important;inset:auto!important;transform:none!important;width:42px!important;height:42px!important;min-height:42px!important;margin:0!important;flex:none!important}
-html body #rtProfileBackdrop .pa-body{flex:none!important;width:100%!important;min-width:0!important}
+html body #rtProfileBackdrop.au-centre-backdrop{padding-bottom:var(--dm-profile-dock-space,calc(102px + env(safe-area-inset-bottom,0px)))!important}
+html body #rtProfileBackdrop .rt-profile.au-centre:not(.au-account){display:flex!important;flex-direction:column!important;justify-content:flex-start!important;gap:12px!important;padding:12px 12px 16px!important}
+html body #rtProfileBackdrop .pa-body{flex:0 1 auto!important;min-height:0!important;width:100%!important;min-width:0!important;overflow-y:auto;overscroll-behavior:contain}
 html body #rtProfileBackdrop .pa-hero{padding:12px 14px!important}
 html body #rtProfileBackdrop .pa-hero-papi{margin:0!important}
 html body #rtProfileBackdrop .au-centre:not(.au-account)>.au-account-entry{flex:none!important;margin-top:auto!important}

@@ -47,7 +47,7 @@
  let frame=0,recheck=0;
  function sync(){
   frame=0;let any=false;
-  for(const root of document.querySelectorAll(surfaces)){if(!shown(root))continue;any=true;decorate(root);}
+  for(const root of document.querySelectorAll(surfaces)){if(root.matches('#dmStoryLesson.ml-entry.ml-pop')||!shown(root))continue;any=true;decorate(root);}
   document.body.classList.toggle('dm-play-session',any);
   // CSS exits and transition-only closures may not mutate the DOM. Recheck until
   // the last live game closes, then restore the normal six-tab navigation.

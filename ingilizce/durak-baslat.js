@@ -19,8 +19,13 @@
   return document.scrollingElement||document.documentElement;
  }
 
- function bottomLimit(){
-  return innerHeight-12;
+ function reserveDockSpace(modal){
+  const dock=document.getElementById('bottomNavMobile');
+  const bounds=dock?.getBoundingClientRect();
+  const badge=dock?.querySelector('.dm-nv2-oyna-disc')?.getBoundingClientRect();
+  const top=bounds?.height?Math.min(bounds.top,badge?.height?badge.top:bounds.top):innerHeight;
+  modal.style.setProperty('--dm-stop-dock-space',Math.ceil(Math.max(0,innerHeight-top))+'px');
+  return top-12;
  }
 
  function position(modal){
@@ -29,8 +34,8 @@
   const a=modal._popAnchor?.isConnected?modal._popAnchor:null;
   const disc=a?(a.querySelector('.rt-medal-disc')||a):null;
   modal.classList.remove('ml-pop-anchored','ml-pop-left');card.style.removeProperty('top');card.style.removeProperty('--pop-caret');
+  const gap=18,limit=reserveDockSpace(modal);
   if(!disc)return;
-  const gap=18,limit=bottomLimit();
   modal.classList.add('ml-pop-anchored');
   const ch=card.offsetHeight;
   const box=()=>{const d=disc.getBoundingClientRect(),w=(a.querySelector('.rt-medal-start-label')||a).getBoundingClientRect();return {top:d.top,left:d.left,width:d.width,height:Math.max(d.bottom,w.bottom)-d.top,bottom:Math.max(d.bottom,w.bottom)};};
@@ -60,6 +65,7 @@
     if(modal.classList.contains('ml-entry')&&!e.target.closest('.ml-entry-card'))modal.querySelector('.ml-entry-card [data-back]')?.click();
    });
   }
+  window.dmPlayNavigation?.sync();
   position(modal);
   requestAnimationFrame(()=>{if(modal.isConnected&&modal.classList.contains('ml-entry'))position(modal);});
  }
