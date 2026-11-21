@@ -1110,3 +1110,44 @@ html[data-dm-theme=night] body #dmDuelRanking :is(.fr-duel-ranking-scope,.fr-due
  body #dmDuelRanking .fr-duel-ranking-labels {grid-template-columns:minmax(0,1fr) 50px 50px}
 }
 }
+
+/* The duel arena sits alongside the weekly podium in the Friends tab. */
+#tab-meduakis.fr-home-view .fr-tiles-home .fr-arena-league {
+  color:#f5fcff; margin:0!important; padding:clamp(8px,2vw,15px)!important;
+  border:1px solid #117990!important; border-radius:19px!important;
+  background:radial-gradient(ellipse at 70% 0%,#146b80,#064258 65%,#06384c)!important;
+  box-shadow:0 3px 0 #062c3e!important;
+  font-family:Nunito,system-ui,sans-serif; min-width:0;
+}
+#tab-meduakis .fr-arena-title {
+  display:flex; align-items:center; gap:8px; color:#f5fcff!important;
+  -webkit-text-fill-color:#f5fcff!important; margin:0 0 4px;
+  font:1000 clamp(16px,4.2vw,25px)/1.18 Nunito,system-ui,sans-serif;
+}
+#tab-meduakis .fr-arena-title .fr-icon {width:1.25em;height:1.25em;padding:3px;background:#073548;border:1px solid #7bd9eb;border-radius:7px;flex:none}
+#tab-meduakis .fr-arena-player {
+  display:grid;grid-template-columns:25px auto minmax(0,1fr);gap:8px;align-items:center;
+  padding:2px 4px;position:relative;border-top:1px solid #92dced66;
+}
+#tab-meduakis .fr-arena-player-1 {
+  grid-template-columns:30px auto minmax(0,1fr);border:0;padding-block:5px;
+  background:radial-gradient(ellipse at 50% 105%,transparent 56%,#7bd9eb55 57%,transparent 59%);
+}
+#tab-meduakis .fr-arena-player .fr-avatar {--avatar-size:clamp(23px,6.2cqh,34px)!important;flex:none}
+#tab-meduakis .fr-arena-player-1 .fr-avatar {--avatar-size:clamp(43px,11cqh,77px)!important;border:2px solid #ffde7b}
+#tab-meduakis .fr-arena-rank {text-align:center;color:#cae4ed;font-weight:1000;font-size:17px}
+#tab-meduakis .fr-arena-player-1 .fr-arena-rank {color:#ffda69;font-size:clamp(22px,7vw,36px)}
+#tab-meduakis .fr-arena-player-3 .fr-arena-rank {color:#ffc28c}
+#tab-meduakis .fr-arena-player-data {display:flex;align-items:center;justify-content:space-between;gap:4px;min-width:0}
+#tab-meduakis .fr-arena-player-1 .fr-arena-player-data {display:grid;justify-items:start;padding-inline-start:8px;border-inline-start:1px solid #a0e7f4a0}
+#tab-meduakis .fr-arena-player-data strong {max-width:100%;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#fff;font:950 clamp(12px,3.7vw,20px)/1.15 Nunito,system-ui}
+#tab-meduakis .fr-arena-player-data b {white-space:nowrap;border-radius:999px;background:#a7eaf6;color:#09394e;padding:2px 7px;font:950 clamp(10px,2.8vw,14px)/1.15 Nunito,system-ui}
+#tab-meduakis .fr-arena-player-1 .fr-arena-player-data b {font-size:clamp(12px,4vw,19px)}
+#tab-meduakis .fr-arena-player-data small,#tab-meduakis .fr-arena-footer small,#tab-meduakis .fr-arena-status {color:#e1f7ff;font:800 11px/1.25 Nunito,system-ui}
+#tab-meduakis .fr-arena-footer {display:grid;gap:4px;margin-top:4px;text-align:center}
+#tab-meduakis .fr-arena-footer button {
+  display:flex;align-items:center;justify-content:center;gap:5px;width:100%;min-height:30px;
+  border:0;border-radius:11px;background:#98e4f0;color:#07374a;font:950 12px Nunito,system-ui;cursor:pointer;
+}
+#tab-meduakis .fr-arena-footer button .fr-icon {width:14px;height:14px}
+#tab-meduakis .fr-arena-footer button:focus-visible {outline:2px solid #ffda69;outline-offset:2px}

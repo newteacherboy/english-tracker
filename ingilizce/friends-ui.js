@@ -118,14 +118,19 @@
     void loadDuelLeaders();renderDuelRanking();layer.querySelector('header button').focus();
   };
   function duelLeagueHtml(){
-    const podium=[1,0,2].map(index=>{
-      const p=duelLeaders[index];if(!p)return '<span class="fr-duel-empty-slot" aria-hidden="true"></span>';
-      const name=esc(p.player_name),tier=p.membership_tier||'free';
-      return '<div class="fr-duel-champion fr-duel-champion-'+(index+1)+'"><div class="fr-duel-champion-portrait">'+avatar(p.player_name,45,tier)+'</div><span class="fr-duel-champion-medal">'+(index+1)+'</span><div class="fr-duel-champion-step"><strong>'+name+'</strong><small>'+xp(p.wins)+' G / '+xp(p.losses)+' M</small><b>'+xp(p.duel_xp)+' XP</b></div></div>';
+    const leaders=duelLeaders.slice(0,3).map((player,index)=>{
+      const rank=index+1, name=esc(player.player_name);
+      const record=index===0?'<small aria-label="'+xp(player.wins)+' galibiyet, '+xp(player.losses)+' mağlubiyet">'+xp(player.wins)+' G / '+xp(player.losses)+' M</small>':'';
+      return '<div class="fr-arena-player fr-arena-player-'+rank+'"><span class="fr-arena-rank" aria-label="'+rank+'. sıra">'+rank+'</span>'+
+        avatar(player.player_name,index===0?64:28,player.membership_tier)+'<div class="fr-arena-player-data"><strong title="'+name+'">'+name+
+        '</strong><b>'+xp(player.duel_xp)+' XP</b>'+record+'</div></div>';
     }).join('');
     const mine=duelLeaders.find(p=>norm(p.player_name)===norm(who()));
     const status=duelLeadersError?'Düello ligi şu anda alınamadı.':duelLeadersAt?'Henüz tamamlanmış düello yok.':'Sıralama yükleniyor…';
-    return '<section class="fr-duel-league fr-league-board" aria-label="Düello Şampiyonları"><div class="fr-section-head"><h3>'+icon('swords')+' Düello Şampiyonları</h3><small>Tüm zamanlar · Düello Ligi</small></div>'+(duelLeaders.length?'<div class="fr-duel-champions">'+podium+'</div>':'<p class="fr-league-status" role="status">'+status+'</p>')+'<div class="fr-podium-footer">'+(mine?'<div class="fr-league-self">'+avatar(who(),27,mine.membership_tier)+'<b>Sen · '+xp(mine.wins)+' G / '+xp(mine.losses)+' M · '+xp(mine.duel_xp)+' XP</b></div>':'<span class="fr-duel-footnote">Galibiyet · Mağlubiyet · XP</span>')+'<button type="button" class="fr-link" data-friend-action="duel-rank">Sıralamayı gör ›</button></div></section>';
+    return '<section class="fr-duel-league fr-arena-league" aria-label="Düello Şampiyonları"><h3 class="fr-arena-title">'+icon('swords')+
+      ' Düello Şampiyonları</h3>'+(leaders?'<div class="fr-arena-leaders">'+leaders+'</div>':'<p class="fr-arena-status" role="status">'+status+'</p>')+
+      '<div class="fr-arena-footer">'+(mine?'<small>Sen · '+xp(mine.wins)+' G / '+xp(mine.losses)+' M · '+xp(mine.duel_xp)+' XP</small>':'')+
+      '<button type="button" data-friend-action="duel-rank">Sıralamayı gör '+icon('chevron')+'</button></div></section>';
   }
   /* Bugünkü Durumun: planın sınırlı hakları. Mola ve Premium oyun hakları 10 dakikada en fazla bir kez sorulur. */
   const CROWN = '<svg class="fr-crown" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 18 5 7l4.5 4L12 5l2.5 6L19 7l2 11z" fill="currentColor"/></svg>';
