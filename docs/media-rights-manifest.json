@@ -528,6 +528,13 @@
       "source": "Repository-authored Friends interface SVG; source retained in Git"
     },
     {
+      "path": "ingilizce/friends-assets/papi-duel-petrol.webp",
+      "sha256": "b280db01fba181d7e3dd84d94e37f17bfcde082bb5a41368578d6bfaf39a5c26",
+      "bytes": 23440,
+      "status": "ai-generated",
+      "source": "OpenAI ImageGen, 2026-11-21; petrol-blue Papi arena artwork adapted from the user-approved Diji-Medu Duel mockup"
+    },
+    {
       "path": "ingilizce/friends-assets/papi-fencer.webp",
       "sha256": "33f07ef895603906ea94a5b80bd178da43bfe36fcf7a5a14a9c17eca8e1343b5",
       "bytes": 20222,
