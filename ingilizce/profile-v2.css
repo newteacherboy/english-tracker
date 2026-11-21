@@ -149,3 +149,15 @@ html[data-dm-theme=night] body #rtProfileBackdrop .pa-reference .dm-profile-shop
  html body #rtProfileBackdrop .pa-reference .pa-hero,html body #rtProfileBackdrop .pa-reference .pa-user {margin-bottom:7px!important}
 }
 }
+
+@layer bilgiIslands {
+html body #rtProfileBackdrop .pa-reference svg.pa-reference-art {
+ overflow:hidden!important;clip-path:inset(0);
+}
+html body #rtProfileBackdrop .rt-profile.au-centre.pa-reference > :is(.pa-body,.pa-toolbar,.au-account-entry) {
+ width:100%!important;max-width:620px!important;align-self:center!important;
+}
+html body #rtProfileBackdrop .rt-profile.au-centre.pa-reference > .au-account-entry {
+ margin:6px auto 0!important;
+}
+}

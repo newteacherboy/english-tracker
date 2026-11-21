@@ -24,7 +24,14 @@ const centreItems=[['İlerlemem','Gelişimimi keşfet','progress',0],['Başarıl
 const accountItems=[['Profilim','Kişisel bilgilerimi düzenle','profile',0],['Ayarlar','Uygulama tercihlerini yönet','settings',1],['Hesap Değiştir','Farklı bir hesapla devam et','switchAccount',2],['Yardım ve Destek','Sık sorulan sorular ve iletişim','help',3],['Güvenlik ve Bildirimlerim','Hesap güvenliği ve bildirim ayarları','safety',4],['Öğretmen Paneli','Öğretmen araçlarına erişim','teacher',5],['Öğretmene Mesaj Gönder','Sorularını ilet','coach',6],['Çıkış Yap','Güvenli bir şekilde çıkış yap','logout',7]];
 const centreArt=(name,cell)=>'<i class="au-art au-'+name+'" style="--au-x:'+(cell%3*50)+'%;--au-y:'+Math.floor(cell/3)*50+'%" aria-hidden="true"></i>';
 const centreIcons=['26 668 192 178','245 668 191 178','463 668 191 178','682 668 192 178','26 937 192 175','245 937 191 175','463 937 191 175','682 937 192 175','56 1273 135 117','500 1266 122 125','46 1469 96 77','16 174 162 121'];
-const centreIcon=index=>'<svg class="pa-reference-art" aria-hidden="true" viewBox="'+centreIcons[index]+'"><image href="friends-assets/centre-reference.webp" width="900" height="1748"/></svg>';
+const centreIcon=index=>{
+ const [x,y,width,height]=centreIcons[index].split(' ');
+ const clip='pa-icon-clip-'+index;
+ return `<svg class="pa-reference-art" aria-hidden="true" viewBox="${centreIcons[index]}">
+  <defs><clipPath id="${clip}" clipPathUnits="userSpaceOnUse"><rect x="${x}" y="${y}" width="${width}" height="${height}"/></clipPath></defs>
+  <g clip-path="url(#${clip})"><image href="friends-assets/centre-reference.webp" width="900" height="1748"/></g>
+ </svg>`;
+};
 window.dmProfileMenuAc=function(initial='main'){
  if(window.dmTeacherPortalMode)return window.dmTeacherPortal?.openProfile();
  if(document.getElementById('rtProfileBackdrop')){close();return;}
