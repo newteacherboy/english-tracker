@@ -72,3 +72,42 @@ html[data-dm-theme=night] #dmDuelHome {background:#262044; color:#f2ebff}
 html[data-dm-theme=night] #dmDuelHome .dm-duel-brand small {color:#412800}
 html[data-dm-theme=night] #dmDuelHome .dm-duel-personal small {color:#e0d3f4}
 html[data-dm-theme=night] #dmDuelHome .dm-duel-history .dm-duel-chevron {color:#cdb4ff}
+
+/* Petrol arena glow stays inside the card and preserves its measured size. */
+#dmDuelHome .dm-duel-arena {
+  position:relative;
+  isolation:isolate;
+  box-shadow:0 0 0 2px #37dfd8,0 0 15px #16bfbf55;
+}
+#dmDuelHome .dm-duel-arena::after {
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:2;
+  border-radius:inherit;
+  box-shadow:inset 0 0 0 2px #88fff1,inset 0 0 22px #27dedb65;
+  opacity:.35;
+  pointer-events:none;
+  animation:dm-duel-arena-glow 3s ease-in-out infinite;
+}
+#dmDuelHome .dm-duel-quick {
+  background:linear-gradient(115deg,#ffdf26,#ffca00 65%,#ffe454);
+  box-shadow:0 0 13px #ffd00080;
+}
+#dmDuelHome .dm-duel-quick::after {
+  z-index:1;
+  width:32%;
+  background:linear-gradient(105deg,transparent,#fffbd7b3,transparent);
+  animation-duration:3.6s;
+}
+#dmDuelHome[hidden] :is(.dm-duel-arena,.dm-duel-quick)::after {
+  animation-play-state:paused;
+}
+@keyframes dm-duel-arena-glow {
+  0%,100% {opacity:.3}
+  50% {opacity:.95}
+}
+@media(prefers-reduced-motion:reduce) {
+  #dmDuelHome :is(.dm-duel-arena,.dm-duel-quick)::after {animation:none}
+  #dmDuelHome .dm-duel-arena::after {opacity:.55}
+}
