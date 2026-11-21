@@ -1151,3 +1151,26 @@ html[data-dm-theme=night] body #dmDuelRanking :is(.fr-duel-ranking-scope,.fr-due
 }
 #tab-meduakis .fr-arena-footer button .fr-icon {width:14px;height:14px}
 #tab-meduakis .fr-arena-footer button:focus-visible {outline:2px solid #ffda69;outline-offset:2px}
+
+/* Weekly XP race */
+#tab-meduakis .fr-weekly-race .fr-race-head,
+#tab-meduakis .fr-weekly-race .fr-race-first {background-color:#075c46;color:white}
+#tab-meduakis .fr-race-head h3 {margin:0;padding:8px;text-align:center;color:white!important;font-size:clamp(16px,4vw,24px)}
+.fr-race-head .fr-icon {color:#ffcb39;vertical-align:middle}
+.fr-race-player {display:flex;align-items:center;gap:10px;width:100%;padding:8px 14px;border:0;border-bottom:1px solid #dedacc;background:#fff9ed;color:#182447;text-align:left;font:inherit;cursor:pointer;box-sizing:border-box}
+.fr-race-player:focus-visible {outline:3px solid #318bfd;outline-offset:-3px}
+.fr-race-face {position:relative;flex:none;display:inline-flex}
+.fr-race-face .fr-podium-crown {position:absolute;top:-8px;left:50%;transform:translateX(-50%);width:29px;height:20px}
+.fr-race-details {flex:1;min-width:0}
+.fr-race-score {display:flex;align-items:baseline;justify-content:space-between;gap:6px}
+.fr-race-score strong {overflow-wrap:anywhere}
+.fr-race-score b {white-space:nowrap}
+.fr-race-bar {display:block;height:6px;margin-top:5px;background:#deddd4;border-radius:8px;overflow:hidden}
+.fr-race-bar i {display:block;height:100%;border-radius:inherit;background:#64aa20}
+.fr-race-first {position:relative;justify-content:center;text-align:center;padding:10px 12% 20px;background-image:url(friends-assets/weekly-track.webp),linear-gradient(110deg,#08654e,#024337);background-position:left center,center;background-size:auto 100%,cover;background-repeat:no-repeat}
+.fr-race-first .fr-race-details {flex:0 1 auto}
+.fr-race-first .fr-race-score {display:grid;justify-content:center;gap:0;font-size:1.15em}
+.fr-race-first .fr-race-details>small:first-child {background:#ffcf42;border-radius:9px;padding:1px 9px;color:#263020;font-weight:900}
+.fr-race-first .fr-race-bar {position:absolute;bottom:9px;left:8%;right:8%;height:4px}
+.fr-race-first .fr-race-bar i {background:#ffcb22}
+.fr-race-flag {position:absolute;right:7%;bottom:7px}

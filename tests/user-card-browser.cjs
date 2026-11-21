@@ -65,8 +65,8 @@ const feed=['Elif','Ege','Zeynep','Cemre','Fixture'].map((ogr,i)=>({k:'event'+i,
     document.getElementById('login-container').style.display='none';
   });
   await page.evaluate(()=>dmProgression.refresh(true));
-  await page.evaluate(()=>meduAkisAc());await page.waitForSelector('.fr-leader-1');
-  await page.waitForSelector('.fr-leader-1 .dm-member-badge');
+  await page.evaluate(()=>meduAkisAc());await page.waitForSelector('.fr-race-first');
+  await page.waitForSelector('.fr-race-first .dm-member-badge');
   for(const width of [320,390,768]){
     await page.setViewportSize({width,height:844});
     const sizes=await page.locator('.fr-leader .dm-member-badge,.fr-league-self .dm-member-badge').evaluateAll(nodes=>nodes.map(n=>({font:parseFloat(getComputedStyle(n).fontSize),width:n.getBoundingClientRect().width,avatar:n.parentElement.getBoundingClientRect().width,self:!!n.closest('.fr-league-self')})));
@@ -77,13 +77,13 @@ const feed=['Elif','Ege','Zeynep','Cemre','Fixture'].map((ogr,i)=>({k:'event'+i,
   await page.setViewportSize({width:390,height:844});
   assert.equal(await page.locator('[data-friend-action="vitrin"],#maSegment [data-s="vitrin"]').count(),0);
   await page.evaluate(()=>window.cardFriendsNode=document.querySelector('#maEkran').firstElementChild);
-  await page.locator('.fr-leader-1').click();await page.waitForSelector('#dmUserCard .uc-character svg');
+  await page.locator('.fr-race-first').click();await page.waitForSelector('#dmUserCard .uc-character svg');
   assert(await page.evaluate(()=>document.querySelector('#maEkran').firstElementChild===window.cardFriendsNode),'opening a user keeps the same Friends content node');
   assert.equal(await page.locator('#dmUserCard [data-user-action]').count(),6);
   assert.match(await page.locator('#dmUserCard .uc-stats').innerText(),/Süper Lig[\s\S]*12 gün seri[\s\S]*18. seviye/);
   assert.equal(await page.locator('#dmUserCard .uc-character svg').getAttribute('viewBox'),'0 0 200 390');
   for(const width of [390,320,768]){
-   await page.setViewportSize({width,height:844});await page.evaluate(()=>dmUserCard.open('Elif',document.querySelector('.fr-leader-1')));await page.waitForSelector('#dmUserCard .uc-character svg');
+   await page.setViewportSize({width,height:844});await page.evaluate(()=>dmUserCard.open('Elif',document.querySelector('.fr-race-first')));await page.waitForSelector('#dmUserCard .uc-character svg');
    const box=await page.locator('#dmUserCard').boundingBox();assert(box.x>=0&&box.x+box.width<=width&&box.y>=0&&box.y+box.height<=844,'card stays inside '+width+'px viewport');assert(box.width<=288&&box.height<340,'card is compact');
    await page.screenshot({animations:'disabled',path:'/tmp/user-card-'+width+'.png'});
   }
@@ -92,13 +92,13 @@ const feed=['Elif','Ege','Zeynep','Cemre','Fixture'].map((ogr,i)=>({k:'event'+i,
   await page.locator('[data-user-action="message"]').click();
   try{await page.waitForSelector('.dm-message-grid');}catch(e){console.log('MESSAGE DIAGNOSTIC',await page.evaluate(()=>({calls:window.cardMessageCalls,who:aktifOgrenciAdi,toasts:reportedToasts,card:!!document.querySelector('#dmUserCard'),sheets:[...document.querySelectorAll('.dm-perde')].map(x=>({text:x.textContent,display:getComputedStyle(x).display})),functions:typeof dmMessageAc})));await page.screenshot({animations:'disabled',path:'/tmp/user-card-failure.png'});throw e;}
 await page.locator('.dm-perde .dm-x').last().click();
-  await page.locator('.fr-leader-1').click();await page.locator('[data-user-action="gift"]:enabled').click();await page.waitForSelector('.dm-energy');await page.locator('.dm-perde .dm-x').last().click();
-  await page.evaluate(()=>{window.cardDuelCalls=[];window.dmLiveDuel={...window.dmLiveDuel,invite:id=>window.cardDuelCalls.push(id)};});await page.locator('.fr-leader-1').click();await page.locator('[data-user-action="duel"]:enabled').click();assert.equal(await page.evaluate(()=>window.cardDuelCalls.length),1);assert.equal(await page.locator('#dmUserCard').count(),0);
-  await page.locator('.fr-leader-1').click();await page.locator('[data-user-action="report"]:enabled').click();await page.waitForSelector('#dmReportReason');await page.locator('.dm-safety-close').click();
+  await page.locator('.fr-race-first').click();await page.locator('[data-user-action="gift"]:enabled').click();await page.waitForSelector('.dm-energy');await page.locator('.dm-perde .dm-x').last().click();
+  await page.evaluate(()=>{window.cardDuelCalls=[];window.dmLiveDuel={...window.dmLiveDuel,invite:id=>window.cardDuelCalls.push(id)};});await page.locator('.fr-race-first').click();await page.locator('[data-user-action="duel"]:enabled').click();assert.equal(await page.evaluate(()=>window.cardDuelCalls.length),1);assert.equal(await page.locator('#dmUserCard').count(),0);
+  await page.locator('.fr-race-first').click();await page.locator('[data-user-action="report"]:enabled').click();await page.waitForSelector('#dmReportReason');await page.locator('.dm-safety-close').click();
   await page.locator('[data-friend-action="people"]').click();await page.waitForSelector('.fr-search-person');await page.locator('.fr-search-person .fr-avatar').first().click();await page.waitForSelector('#dmUserCard .uc-character svg');
   await page.evaluate(()=>document.documentElement.dataset.dmTheme='night');await page.screenshot({animations:'disabled',path:'/tmp/user-card-night.png'});
   await page.keyboard.press('Escape');assert.equal(await page.locator('#dmUserCard').count(),0);
-  await page.evaluate(()=>dmUserCard.open('Fixture',document.querySelector('.fr-leader-1')));await page.waitForSelector('#dmUserCard .uc-character svg');await page.locator('[data-user-action="message"]').click({force:true});assert.match(await page.locator('.uc-notice').innerText(),/Kendine mesaj gönderemezsin/);assert(await page.locator('#dmUserCard').isVisible());await page.screenshot({animations:'disabled',path:'/tmp/user-card-self.png'});
+  await page.evaluate(()=>dmUserCard.open('Fixture',document.querySelector('.fr-race-first')));await page.waitForSelector('#dmUserCard .uc-character svg');await page.locator('[data-user-action="message"]').click({force:true});assert.match(await page.locator('.uc-notice').innerText(),/Kendine mesaj gönderemezsin/);assert(await page.locator('#dmUserCard').isVisible());await page.screenshot({animations:'disabled',path:'/tmp/user-card-self.png'});
   assert.deepEqual(errors.filter(x=>!x.includes('Chart')&&!x.includes('pdf')),[]);
   console.log('PASS compact card, real body renderer, all six actions, list avatar tap, 320/390/768 px bounds, night mode');await browser.close();
 })().catch(e=>{console.error(e);process.exit(1);});
