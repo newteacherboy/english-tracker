@@ -142,6 +142,7 @@ const defaultPreference={mode:'auto',disabled:[],manual:null};
   function updateArtwork(next){
    if(usesOpeningControls(next)&&!zirveReleased){
     win.dmPapiSplash?.disable();chosen=next;
+    doc.documentElement.classList.add('dm-zirve-intro-active');
     doc.documentElement.classList.remove('dm-holiday-active');doc.documentElement.style.removeProperty('--dm-holiday-art');
     mountZirve();if(!zirveScreen&&doc.readyState==='loading'&&win.MutationObserver){zirveObserver=new win.MutationObserver(mountZirve);zirveObserver.observe(doc.documentElement,{childList:true,subtree:true});}
     return;

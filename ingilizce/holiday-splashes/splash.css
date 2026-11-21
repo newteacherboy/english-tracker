@@ -79,7 +79,7 @@ html.dm-zirve-intro-active #dmBootSplash .dm-karanfil-opening{
  position:relative; display:block; max-width:none; background:#402418;
 }
 .dm-karanfil-opening .dm-zirve-opening-art{
- position:absolute; inset:0; height:100%!important; object-fit:contain!important;
+ position:absolute; inset:0; height:100%!important; object-fit:cover!important;
 }
 .dm-karanfil-opening .dm-zirve-opening-control{
  position:absolute; inset:auto 0 max(14px,calc(env(safe-area-inset-bottom,0px) + 8px));
@@ -90,3 +90,17 @@ html.dm-zirve-intro-active #dmBootSplash .dm-karanfil-opening{
 .dm-karanfil-opening .dm-zirve-loading i{width:48%;animation:dmKaranfilLoading 1.35s ease-in-out infinite}
 @keyframes dmKaranfilLoading{from{transform:translateX(-110%)}to{transform:translateX(220%)}}
 @media(prefers-reduced-motion:reduce){.dm-karanfil-opening .dm-zirve-loading i{animation:none}}
+
+/* Keep the opening above session loading until Continue releases the boot screen. */
+html.dm-zirve-intro-active #dmBootSplash{
+ z-index:2147483647!important;
+}
+html.dm-zirve-intro-active #oturumYuklemeOverlay .dm-papi-loading{
+ visibility:hidden!important;
+}
+html.dm-zirve-intro-active #dmBootSplash .dm-karanfil-opening{
+ width:100%;height:100%;min-height:100dvh;
+}
+.dm-karanfil-opening .dm-zirve-opening-art{
+ object-position:center center!important;
+}
