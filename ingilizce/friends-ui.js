@@ -59,7 +59,7 @@
         ${first?'':'<b>'+esc(player.displayRank??player.rank)+'.</b>'}<span class="fr-race-face">${portrait}${first?crown:''}</span>
         <span class="fr-race-details">${first?'<small>Haftanın lideri</small>':''}<span class="fr-race-score"><strong>${esc(player.name)}</strong><b>${xp(player.xp)} XP</b></span>
         ${player.is_virtual?'<small>Sanal Rakip</small>':''}<span class="fr-race-bar" aria-hidden="true"><i style="width:${share}%"></i></span></span>
-        ${first?'<span class="fr-race-flag" aria-hidden="true">🏁</span>':''}</button>`;
+        </button>`;
     }).join('');
     const status=!allowed?'Lig 5. seviyede açılır.':data?.error&&!data.loaded?'Sıralama şu anda alınamadı.':data?.loaded?'Bu ligde henüz sıralama yok.':'Sıralama yükleniyor…';
     return `<section class="fr-league-board fr-weekly-race" aria-label="Haftalık lig">
