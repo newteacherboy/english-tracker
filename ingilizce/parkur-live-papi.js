@@ -42,8 +42,8 @@
   route.querySelectorAll('.dm-lp-lane').forEach(el=>el.remove());
   if(route.querySelector(':scope>.dm-papi-chat-shortcut'))return;
   const button=document.createElement('button');button.type='button';button.className='dm-papi-chat-shortcut';
-  button.setAttribute('aria-label','Papi ile canlı sohbet');
-  button.innerHTML='<span class="dm-papi-chat-label">Sohbet et <span aria-hidden="true">›</span></span><span class="dm-papi-chat-avatar dm-lp" aria-hidden="true">'+papi().replace('viewBox="0 0 400 440"','viewBox="80 35 240 275"')+'<span class="dm-papi-chat-badge">•••</span></span>';
+  button.setAttribute('aria-label','Papi ile görüntülü konuş');
+  button.innerHTML='<span class="dm-papi-chat-label"><svg aria-hidden="true" width="17" height="13" viewBox="0 0 20 14" fill="currentColor"><rect width="13" height="14" rx="3"/><path d="m14 5 6-4v12l-6-4z"/></svg>Papi ile<br>görüntülü konuş</span><span class="dm-papi-chat-avatar dm-lp" aria-hidden="true">'+papi().replace('viewBox="0 0 400 440"','viewBox="80 35 240 275"')+'</span>';
   button.onclick=()=>{if(window.dmPapiChat?.open)window.dmPapiChat.open();else window.yoToast?.('Sohbet hazırlanıyor. Birazdan tekrar dene.');};
   route.append(button);
  }
