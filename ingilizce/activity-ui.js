@@ -97,8 +97,22 @@ const categoryIcons={solo:0,free:2,konu:3,break:4,premium:5};
   }catch(error){window.alert(error.message||'Haklar kontrol edilemedi. Tekrar dene.');}
   finally{clearTimeout(timeout);delete card.dataset.accessPending;}
  }
+ const approvedGameArt={
+  kelimeGoluSolo:'29 553 388 241',
+  papizzleActivity:'436 553 387 241',
+  towerActivity:'29 923 388 211',
+  premiumWordMatchActivity:'436 923 387 211',
+  premiumCloudFlightActivity:'29 1278 388 220',
+  premiumWordBlocksActivity:'436 1278 387 220'
+ };
  function coverArt(card,compact=false){
   const art=document.createElement('span');art.className='gg-cover';art.setAttribute('aria-hidden','true');
+  const crop=!window.dmTeacherPortalMode&&approvedGameArt[card.id];
+  if(crop){
+   art.classList.add('gg-approved-cover');
+   art.innerHTML='<svg viewBox="'+crop+'" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><image href="games-assets/approved-games-sheet.webp" width="852" height="1846"/></svg>';
+   return art;
+  }
   const cover=gameCovers[card.id];
   if(card.id==='dmUcusteKart'){
    art.classList.add('gg-flight-cover');
@@ -149,6 +163,10 @@ const categoryIcons={solo:0,free:2,konu:3,break:4,premium:5};
    const subtitle=open?categories[category]:categories[category]+' · '+(window.DijiProgressionCatalog?.gates[gate]||30)+'. seviyede açılır';
    row.innerHTML='<span class="gg-row-copy"><strong>'+esc(title)+'</strong><small>'+esc(subtitle)+'</small></span>'+
     '<span class="gg-row-action" aria-hidden="true">'+(open?'<svg viewBox="0 0 24 24"><path fill="currentColor" d="M8 5a1 1 0 0 1 1.5-.86l11 7a1 1 0 0 1 0 1.72l-11 7A1 1 0 0 1 8 19z"/></svg>':icon('lock'))+'</span>';
+   if(!window.dmTeacherPortalMode){
+    row.classList.add('gg-approved-card');
+    if(open)row.querySelector('.gg-row-copy small').hidden=true;
+   }
    row.prepend(coverArt(card,true));row.onclick=()=>premiumEntry(card);
    return row;
   }));
@@ -172,7 +190,7 @@ const categoryIcons={solo:0,free:2,konu:3,break:4,premium:5};
   bottom.insertAdjacentHTML('afterend','<div class="gg-shortcuts"><button type="button">Çalışma Araçları ›</button></div>');
   host.querySelector('.gg-shortcuts button').onclick=()=>changeCategory(host,grid,party==='tools'?'solo':'tools');
   const groups=document.createElement('div');groups.className='gg-main-categories';
-  groups.innerHTML='<button type="button" data-gg-main="premium">👑 Premium Oyunlar</button><button type="button" data-gg-main="free" aria-controls="ggFreeCategories">🎮 Ücretsiz Oyunlar</button>';
+  groups.innerHTML='<button type="button" data-gg-main="premium">'+('<svg class="gg-icon" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="m2 5 5 5 5-8 5 8 5-5-3 16H5z"/></svg>')+' Premium Oyunlar</button><button type="button" data-gg-main="free" aria-controls="ggFreeCategories">'+('<svg class="gg-icon" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M6 5h12c3 0 5 13 3 14-2 1-4-4-6-4H9c-2 0-4 5-6 4C1 18 3 5 6 5Z"/><path d="M7 8v6m-3-3h6" stroke="white" stroke-width="2"/><circle cx="17" cy="9" r="1.5" fill="white"/><circle cx="19" cy="12" r="1.5" fill="white"/></svg>')+' Ücretsiz Oyunlar</button>';
   filters.before(groups);filters.id='ggFreeCategories';
   filters.querySelector('[data-gg-party="premium"]').hidden=true;
   groups.querySelector('[data-gg-main="premium"]').onclick=()=>changeCategory(host,grid,'premium');

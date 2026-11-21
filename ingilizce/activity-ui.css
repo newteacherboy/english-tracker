@@ -721,3 +721,70 @@ html:not([data-dm-theme=night]) #tab-aktiviteler#tab-aktiviteler .gg-page.gg-sel
 /* Quota dialog: protect heading contrast from global game styles. */
 #ggExhausted #ggExhaustedTitle{color:#38205c!important;-webkit-text-fill-color:#38205c!important;background:none!important;text-shadow:none!important;font-weight:900}
 #ggExhausted .gg-exhausted-papi{display:block;width:128px;height:128px;object-fit:contain;margin:0 auto 12px;filter:drop-shadow(0 5px 8px #6b3fa523)}
+
+@layer bilgiIslands {
+/* Approved illustrated student game cards. Keep the original game entry buttons. */
+html[data-dm-theme] body #tab-aktiviteler#tab-aktiviteler .gg-page.gg-redesign.gg-list-view.au-games.gg-selected-cards:not(.gg-teacher-list) .gg-brand,
+html[data-dm-theme] body #tab-aktiviteler#tab-aktiviteler .gg-page.gg-redesign.gg-list-view.au-games.gg-selected-cards:not(.gg-teacher-list) .dm-unified-wallet {
+  display:none!important;
+}
+html[data-dm-theme] body #tab-aktiviteler#tab-aktiviteler .gg-page.gg-redesign.gg-list-view.au-games.gg-selected-cards:not(.gg-teacher-list) .gg-overview {
+  display:grid!important; grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  gap:14px 10px!important; border:0!important; padding:0 0 12px!important;
+}
+html[data-dm-theme] body #tab-aktiviteler#tab-aktiviteler .gg-page.gg-redesign.gg-list-view.au-games.gg-selected-cards:not(.gg-teacher-list) .gg-overview[hidden] {display:none!important}
+html[data-dm-theme] body #tab-aktiviteler#tab-aktiviteler .gg-page.gg-redesign.gg-list-view.au-games.gg-selected-cards:not(.gg-teacher-list) .gg-overview .gg-approved-card {
+  display:grid!important; grid-template-columns:minmax(0,1fr) auto!important;
+  grid-template-rows:auto minmax(48px,auto)!important; align-items:center!important;
+  gap:0!important; min-width:0!important; min-height:0!important; margin:0!important;
+  padding:0!important; overflow:hidden!important; border:0!important; border-bottom:5px solid #a275ec!important;
+  border-radius:22px!important; background:#fff!important; color:#14294c!important; box-shadow:none!important;
+}
+html[data-dm-theme] body #tab-aktiviteler#tab-aktiviteler .gg-page.gg-redesign.gg-list-view.au-games.gg-selected-cards:not(.gg-teacher-list) .gg-approved-card .gg-cover {
+  grid-column:1/-1!important; width:100%!important; height:auto!important; aspect-ratio:1.65!important;
+  margin:0!important; border:0!important; border-radius:0!important; overflow:hidden!important;
+}
+html[data-dm-theme] body #tab-aktiviteler#tab-aktiviteler .gg-page.gg-redesign.gg-list-view.au-games.gg-selected-cards:not(.gg-teacher-list) .gg-approved-cover svg {
+  display:block!important; position:static!important; width:100%!important; height:100%!important;
+  max-width:none!important; max-height:none!important; transform:none!important;
+}
+html[data-dm-theme] body #tab-aktiviteler#tab-aktiviteler .gg-page.gg-redesign.gg-list-view.au-games.gg-selected-cards:not(.gg-teacher-list) .gg-approved-card .gg-row-copy {
+  grid-column:1; min-width:0; padding:8px 2px 8px 11px!important;
+}
+html[data-dm-theme] body #tab-aktiviteler#tab-aktiviteler .gg-page.gg-redesign.gg-list-view.au-games.gg-selected-cards:not(.gg-teacher-list) .gg-approved-card .gg-row-copy strong {
+  color:#14294c!important; -webkit-text-fill-color:#14294c!important;
+  font:950 clamp(13px,3.7vw,18px)/1.12 Nunito,system-ui,sans-serif!important;
+  overflow-wrap:normal!important; word-break:normal!important;
+}
+html[data-dm-theme] body #tab-aktiviteler#tab-aktiviteler .gg-page.gg-redesign.gg-list-view.au-games.gg-selected-cards:not(.gg-teacher-list) .gg-approved-card .gg-row-copy small[hidden] {display:none!important}
+html[data-dm-theme] body #tab-aktiviteler#tab-aktiviteler .gg-page.gg-redesign.gg-list-view.au-games.gg-selected-cards:not(.gg-teacher-list) .gg-approved-card .gg-row-action {
+  grid-column:2; width:32px!important; height:32px!important; margin:6px 9px 6px 3px!important;
+  border:0!important; border-bottom:4px solid #c39500!important; border-radius:50%!important;
+  background:#ffd008!important; color:#3a2b00!important; box-shadow:none!important;
+}
+html[data-dm-theme] body #tab-aktiviteler#tab-aktiviteler .gg-page.gg-redesign.gg-list-view.au-games.gg-selected-cards:not(.gg-teacher-list) .gg-approved-card[aria-disabled=true] .gg-row-action {
+  background:#e3dcef!important; border-bottom-color:#aaa0bd!important; color:#62567b!important;
+}
+html[data-dm-theme] body #tab-aktiviteler#tab-aktiviteler .gg-page.gg-redesign.gg-list-view.au-games.gg-selected-cards:not(.gg-teacher-list) .gg-approved-card .gg-row-action svg {width:16px!important;height:16px!important}
+html[data-dm-theme] body #tab-aktiviteler#tab-aktiviteler .gg-page.gg-redesign.gg-list-view.au-games.gg-selected-cards:not(.gg-teacher-list) .gg-main-categories button {
+  display:flex; align-items:center; justify-content:center; gap:6px;
+  font-size:clamp(11px,3.1vw,16px)!important; min-height:52px!important;
+}
+html[data-dm-theme] body #tab-aktiviteler#tab-aktiviteler .gg-page.gg-redesign.gg-list-view.au-games.gg-selected-cards:not(.gg-teacher-list) .gg-main-categories .gg-icon {width:22px;height:22px;flex:none}
+html[data-dm-theme] body #tab-aktiviteler#tab-aktiviteler .gg-page.gg-redesign.gg-list-view.au-games.gg-selected-cards:not(.gg-teacher-list) .gg-title h1 {margin:4px 0 16px!important}
+html[data-dm-theme] body #tab-aktiviteler#tab-aktiviteler .gg-page.gg-redesign.gg-list-view.au-games.gg-selected-cards:not(.gg-teacher-list) .gg-approved-card:focus-visible {outline:3px solid #7743dc!important;outline-offset:3px}
+@media(min-width:700px) {
+  html[data-dm-theme] body #tab-aktiviteler#tab-aktiviteler .gg-page.gg-redesign.gg-list-view.au-games.gg-selected-cards:not(.gg-teacher-list) .gg-overview {grid-template-columns:repeat(3,minmax(0,1fr))!important}
+}
+@media(max-width:350px) {
+  html[data-dm-theme] body #tab-aktiviteler#tab-aktiviteler .gg-page.gg-redesign.gg-list-view.au-games.gg-selected-cards:not(.gg-teacher-list) .gg-approved-card .gg-row-action {width:28px!important;height:28px!important;margin-right:6px!important}
+  html[data-dm-theme] body #tab-aktiviteler#tab-aktiviteler .gg-page.gg-redesign.gg-list-view.au-games.gg-selected-cards:not(.gg-teacher-list) .gg-approved-card .gg-row-copy {padding-left:8px!important}
+}
+
+html[data-dm-theme] body #tab-aktiviteler#tab-aktiviteler .gg-page.gg-redesign.gg-list-view.au-games.gg-selected-cards:not(.gg-teacher-list) .gg-v2-pro {display:none!important}
+
+html[data-dm-theme] body #tab-aktiviteler#tab-aktiviteler .gg-page.gg-redesign.gg-list-view.au-games.gg-selected-cards:not(.gg-teacher-list) .gg-approved-card .gg-row-action {animation:none!important}
+
+html[data-dm-theme] body #tab-aktiviteler#tab-aktiviteler .gg-page.gg-redesign.gg-list-view.au-games.gg-selected-cards:not(.gg-teacher-list) .gg-approved-card .gg-row-action::after {display:none!important}
+
+}

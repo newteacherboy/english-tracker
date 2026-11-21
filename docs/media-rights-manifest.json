@@ -3,6 +3,13 @@
   "date": "2026-10-04",
   "notice": "Source records do not establish exclusivity or eliminate infringement risk.",
   "assets": [
+{
+  "path": "ingilizce/games-assets/approved-games-sheet.webp",
+  "sha256": "11a533cd8492613bc21edf98cc1951bf25ecd64ce882d9d86e31bf08264ebe90",
+  "bytes": 1124446,
+  "status": "ai-generated",
+  "source": "OpenAI ImageGen, 2026-11-21; user-approved Diji-Medu Games screen. Lossless format conversion of original image. Card art is displayed through SVG viewports."
+},
     {
       "path": "ingilizce/activity-icons-v2.webp",
       "sha256": "7a5a0161444d95ba09c754e6edd1f0a9b45e3be42c53fd72f8914831d2592b81",
