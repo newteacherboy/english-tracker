@@ -104,31 +104,43 @@ const defaultPreference={mode:'auto',disabled:[],manual:null};
    zirveScreen?.remove();zirveScreen=null;
    doc.documentElement.classList.remove('dm-zirve-intro-active');
   }
+  const usesOpeningControls=selection=>selection?.temporary||selection?.id==='24-kasim-zirve';
   function mountZirve(){
-   if(zirveReleased||chosen?.id!=='24-kasim-zirve')return;
+   if(zirveReleased||!usesOpeningControls(chosen))return;
+   const karanfil=chosen.temporary===true;
    const boot=doc.getElementById('dmBootSplash');if(!boot||zirveScreen)return;
    zirveObserver?.disconnect();zirveObserver=null;
    doc.documentElement.classList.add('dm-zirve-intro-active');
-   const el=doc.createElement('div');el.className='dm-zirve-opening';el.setAttribute('role','dialog');el.setAttribute('aria-modal','true');el.setAttribute('aria-label','24 Kasım Öğretmenler Günü ve Öğretmenimle Zirveye yarışması');
-   el.innerHTML='<div class="dm-zirve-opening-frame"><img class="dm-zirve-opening-art" alt="24 Kasım Öğretmenler Günü kutlu olsun! Öğretmenimle Zirveye: 20 Kasım – 10 Aralık. 5 doğrulanmış davet ve XP ile ilk 5 öğrenciye 3 ay Premium Pro, 6–20. öğrenciye 3 ay Pro; ilk 2 öğretmene 1 yıl Premium Pro."/><div class="dm-zirve-opening-fallback" hidden><h1>24 Kasım Öğretmenler Günü kutlu olsun!</h1><h2>Öğretmenimle Zirveye!</h2><p>20 Kasım – 10 Aralık</p><p>Öğrenciler: 5 doğrulanmış davet + XP.</p><p>İlk 5: 3 ay Premium Pro · 6–20: 3 ay Pro</p><p>İlk 2 öğretmen: 1 yıl Premium Pro</p></div><div class="dm-zirve-opening-info"><p class="dm-zirve-date">20 Kasım – 10 Aralık</p><div class="dm-zirve-info-grid"><section><h3>Nasıl Katılırım?</h3><ol><li>Ücretsiz hesabınla katıl.</li><li>Öğren, oyna ve XP topla.</li><li>5 doğrulanmış arkadaş davet et.</li></ol><small>Öğretmene bağlı olmak şart değil.</small></section><section><h3>Ödüller</h3><p><b>İlk 5 öğrenci</b>3 ay Premium Pro</p><p><b>6–20. öğrenci</b>3 ay Pro</p><p><b>İlk 2 öğretmen</b>1 yıl Premium Pro</p></section></div></div><div class="dm-zirve-opening-control"><div class="dm-zirve-loading" role="progressbar" aria-label="Uygulama hazırlanıyor" aria-valuemin="0" aria-valuemax="100" aria-valuenow="8"><i></i><span>Hazırlanıyor… %8</span></div><button type="button" class="dm-zirve-continue" hidden>Devam Et ›</button><button type="button" class="dm-zirve-retry" hidden>Tekrar dene</button></div></div>';
+   const el=doc.createElement('div');el.className=karanfil?'dm-zirve-opening dm-karanfil-opening':'dm-zirve-opening';el.setAttribute('role','dialog');el.setAttribute('aria-modal','true');el.setAttribute('aria-label',karanfil?'24 Kasım Öğretmenler Günü':'24 Kasım Öğretmenler Günü ve Öğretmenimle Zirveye yarışması');
+   const scene=karanfil?'<div class="dm-zirve-opening-frame"><img class="dm-zirve-opening-art" alt="Papi öğretmenine kırmızı bir karanfil uzatıyor."/><div class="dm-zirve-opening-fallback" hidden><h1>24 Kasım Öğretmenler Günü</h1></div>':'<div class="dm-zirve-opening-frame"><img class="dm-zirve-opening-art" alt="24 Kasım Öğretmenler Günü kutlu olsun! Öğretmenimle Zirveye: 20 Kasım – 10 Aralık. 5 doğrulanmış davet ve XP ile ilk 5 öğrenciye 3 ay Premium Pro, 6–20. öğrenciye 3 ay Pro; ilk 2 öğretmene 1 yıl Premium Pro."/><div class="dm-zirve-opening-fallback" hidden><h1>24 Kasım Öğretmenler Günü kutlu olsun!</h1><h2>Öğretmenimle Zirveye!</h2><p>20 Kasım – 10 Aralık</p><p>Öğrenciler: 5 doğrulanmış davet + XP.</p><p>İlk 5: 3 ay Premium Pro · 6–20: 3 ay Pro</p><p>İlk 2 öğretmen: 1 yıl Premium Pro</p></div><div class="dm-zirve-opening-info"><p class="dm-zirve-date">20 Kasım – 10 Aralık</p><div class="dm-zirve-info-grid"><section><h3>Nasıl Katılırım?</h3><ol><li>Ücretsiz hesabınla katıl.</li><li>Öğren, oyna ve XP topla.</li><li>5 doğrulanmış arkadaş davet et.</li></ol><small>Öğretmene bağlı olmak şart değil.</small></section><section><h3>Ödüller</h3><p><b>İlk 5 öğrenci</b>3 ay Premium Pro</p><p><b>6–20. öğrenci</b>3 ay Pro</p><p><b>İlk 2 öğretmen</b>1 yıl Premium Pro</p></section></div></div>';
+   el.innerHTML=scene+'<div class="dm-zirve-opening-control"><div class="dm-zirve-loading" role="progressbar" aria-label="Uygulama hazırlanıyor" aria-valuemin="0" aria-valuemax="100" aria-valuenow="8"><i></i><span>Hazırlanıyor… %8</span></div><button type="button" class="dm-zirve-continue" hidden>Devam Et ›</button><button type="button" class="dm-zirve-retry" hidden>Tekrar dene</button></div></div>';
    zirveScreen=el;boot.appendChild(el);
    const art=el.querySelector('img'),loading=el.querySelector('.dm-zirve-loading'),button=el.querySelector('.dm-zirve-continue'),retry=el.querySelector('.dm-zirve-retry');
    art.onerror=()=>{art.hidden=true;el.querySelector('.dm-zirve-opening-fallback').hidden=false;};
-   art.src=new URL(zirveFile,base).href;
+   art.src=new URL(karanfil?chosen.file:zirveFile,base).href;
+   if(karanfil){
+    loading.removeAttribute('aria-valuenow');
+    loading.querySelector('span').textContent='Yükleniyor…';
+   }
    let progress=8;
    const paint=n=>{progress=Math.max(progress,n);loading.setAttribute('aria-valuenow',String(progress));loading.querySelector('i').style.width=progress+'%';loading.querySelector('span').textContent='Hazırlanıyor… %'+progress;};
-   zirveTimer=setInterval(()=>{const real=parseInt(doc.getElementById('oturumYuklemeOverlay')?.style.getPropertyValue('--dm-papi-progress')||'0',10)||0;if(!zirveReady)paint(Math.min(94,Math.max(real,progress+1)));retry.hidden=!(doc.getElementById('dmBootRetry')?.hidden===false&&!zirveReady);},250);
+   zirveTimer=setInterval(()=>{const real=parseInt(doc.getElementById('oturumYuklemeOverlay')?.style.getPropertyValue('--dm-papi-progress')||'0',10)||0;if(!karanfil&&!zirveReady)paint(Math.min(94,Math.max(real,progress+1)));retry.hidden=!(doc.getElementById('dmBootRetry')?.hidden===false&&!zirveReady);},250);
    retry.onclick=()=>win.location.reload();
    button.onclick=()=>{if(!zirveReady||zirveReleased)return;zirveReleased=true;const finish=zirveFinish;clearZirve();finish?.();};
-   el.zirveMarkReady=()=>{paint(100);loading.querySelector('span').textContent='Hazır · %100';retry.hidden=true;setTimeout(()=>{if(zirveScreen!==el)return;loading.hidden=true;button.hidden=false;button.focus?.({preventScroll:true});},300);};
+   el.zirveMarkReady=()=>{
+    const showContinue=()=>{if(zirveScreen!==el)return;loading.hidden=true;button.hidden=false;button.focus?.({preventScroll:true});};
+    retry.hidden=true;
+    if(karanfil){showContinue();return;}
+    paint(100);loading.querySelector('span').textContent='Hazır · %100';setTimeout(showContinue,300);
+   };
   }
   win.dmZirveIntro={holdBoot(finish){
-   if(zirveReleased||chosen?.id!=='24-kasim-zirve')return false;
+   if(zirveReleased||!usesOpeningControls(chosen))return false;
    mountZirve();if(!zirveScreen)return false;
    zirveFinish=finish;if(!zirveReady){zirveReady=true;zirveScreen.zirveMarkReady();}return true;
   }};
   function updateArtwork(next){
-   if(next?.id==='24-kasim-zirve'&&!zirveReleased){
+   if(usesOpeningControls(next)&&!zirveReleased){
     win.dmPapiSplash?.disable();chosen=next;
     doc.documentElement.classList.remove('dm-holiday-active');doc.documentElement.style.removeProperty('--dm-holiday-art');
     mountZirve();if(!zirveScreen&&doc.readyState==='loading'&&win.MutationObserver){zirveObserver=new win.MutationObserver(mountZirve);zirveObserver.observe(doc.documentElement,{childList:true,subtree:true});}

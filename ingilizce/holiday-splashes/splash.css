@@ -70,3 +70,23 @@ html.dm-zirve-intro-active #dmBootSplash .dm-zirve-opening{position:absolute;ins
 .dm-zirve-opening .dm-zirve-continue{height:clamp(44px,6.5dvh,58px);min-height:44px;max-width:100%;margin:0;opacity:1}
 .dm-zirve-opening .dm-zirve-opening-fallback{flex:1;min-height:0;overflow:auto;padding:5px}
 @media(max-height:540px) and (orientation:landscape){.dm-zirve-opening .dm-zirve-opening-frame{max-width:100%;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-rows:1fr auto;gap:4px}.dm-zirve-opening .dm-zirve-opening-art{height:100%!important;grid-row:1 / 3}.dm-zirve-opening-info{align-self:center}.dm-zirve-opening .dm-zirve-opening-control{grid-column:2}}
+
+/* Teachers' Day artwork fills the opening frame with controls over its lower edge. */
+html.dm-zirve-intro-active #dmBootSplash .dm-karanfil-opening{
+ padding:0; background:#402418;
+}
+.dm-karanfil-opening .dm-zirve-opening-frame{
+ position:relative; display:block; max-width:none; background:#402418;
+}
+.dm-karanfil-opening .dm-zirve-opening-art{
+ position:absolute; inset:0; height:100%!important; object-fit:contain!important;
+}
+.dm-karanfil-opening .dm-zirve-opening-control{
+ position:absolute; inset:auto 0 max(14px,calc(env(safe-area-inset-bottom,0px) + 8px));
+ width:min(82%,360px); margin-inline:auto; padding:0;
+}
+.dm-karanfil-opening .dm-zirve-loading{background:#4d291e;border-color:#ffe0aa}
+.dm-karanfil-opening .dm-zirve-loading span{color:#fff7e9;text-shadow:0 1px 4px #32150f;background:#32150f55}
+.dm-karanfil-opening .dm-zirve-loading i{width:48%;animation:dmKaranfilLoading 1.35s ease-in-out infinite}
+@keyframes dmKaranfilLoading{from{transform:translateX(-110%)}to{transform:translateX(220%)}}
+@media(prefers-reduced-motion:reduce){.dm-karanfil-opening .dm-zirve-loading i{animation:none}}

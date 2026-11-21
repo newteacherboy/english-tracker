@@ -86,3 +86,26 @@ test('Zirve opening defers boot completion until Continue is explicitly pressed'
  button.onclick();assert.equal(done,1);assert.equal(screen.removed,true);
  assert.equal(win.dmZirveIntro.holdBoot(()=>done++),false);
 });
+
+test('Karanfil shows loading and waits for Continue when the app is ready',()=>{
+ const vm=require('node:vm'),timers=[],make=()=>({style:{},hidden:true,setAttribute(){},removeAttribute(){},focus(){}});
+ const art=make(),button=make(),retry=make(),loading=make(),fill=make(),caption=make(),fallback=make();
+ loading.hidden=false;loading.querySelector=s=>s==='i'?fill:caption;
+ const controls={img:art,'.dm-zirve-loading':loading,'.dm-zirve-continue':button,'.dm-zirve-retry':retry,'.dm-zirve-opening-fallback':fallback};
+ const screen={setAttribute(){},querySelector:s=>controls[s],remove(){this.removed=true;}};
+ const boot={appendChild(el){this.child=el;}};
+ const win={document:{baseURI:'https://app.dijimedu.com/ingilizce/',currentScript:{src:'https://app.dijimedu.com/ingilizce/holiday-splashes/splash.js'},documentElement:{classList:{add(){},remove(){},toggle(){}},style:{removeProperty(){}},dataset:{}},getElementById:id=>id==='dmBootSplash'?boot:null,createElement:()=>screen},localStorage:{getItem:k=>k==='dm-splash-preferences'?JSON.stringify({mode:'manual',manual:{id:'24-kasim-zirve',file:'24-kasim-zirve-1.svg'}}):null},requestIdleCallback(){}};
+ const FixedDate=class extends Date{constructor(value='2026-11-24T12:00:00+03:00'){super(value);}};
+ const scope={module:{exports:{}},URL,Date:FixedDate,setTimeout:(fn,ms)=>{timers.push({fn,ms});return timers.length;},setInterval:()=>1,clearInterval(){}};
+ vm.runInNewContext(fs.readFileSync('ingilizce/holiday-splashes/splash.js','utf8'),scope);
+ scope.module.exports.install(win);
+ let done=0;
+ assert.equal(boot.child,screen);assert.equal(button.hidden,true);
+ assert.equal(caption.textContent,'Yükleniyor…');
+ assert.match(art.src,/24-kasim-karanfil-2026\.webp$/);
+ assert.equal(win.dmZirveIntro.holdBoot(()=>done++),true);
+ assert.equal(done,0);
+ assert.equal(button.hidden,false);assert.equal(loading.hidden,true);assert.equal(done,0);
+ button.onclick();assert.equal(done,1);assert.equal(screen.removed,true);
+ assert.equal(win.dmZirveIntro.holdBoot(()=>done++),false);
+});
