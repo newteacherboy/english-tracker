@@ -99,6 +99,10 @@ function decorate(){const nav=document.getElementById('bottomNavMobile');if(!nav
  const current=[...nav.querySelectorAll('.bn-item[data-ekran]')].map(b=>b.dataset.ekran);if(current.join('|')!==layout.map(x=>x[0]).filter(id=>current.includes(id)).join('|')){for(const [id] of layout){const b=nav.querySelector('[data-ekran="'+id+'"]');if(b)nav.append(b);}}
 
  nav.querySelectorAll('[data-bc="profil"]').forEach(b=>b.remove());for(const [id,label,icon] of layout){const b=nav.querySelector('[data-ekran="'+id+'"]');if(!b)continue;if(id!=='tab-profile-menu'||!b.dataset.membershipLabel)b.setAttribute('aria-label',label);const l=b.querySelector('.bn-label');if(l&&l.textContent!==label)l.textContent=label;const slot=b.querySelector('.bn-icon');const cell=layout.findIndex(x=>x[0]===id);if(slot&&!slot.querySelector('.dm-nav-art,.tp-nav-image'))slot.innerHTML='<span class="dm-nav-art" aria-hidden="true" style="background-position:'+(cell%3*50)+'% '+(cell<3?0:100)+'%"></span>';b.title=b.dataset.membershipLabel||label;if(id==='tab-duel-home'){b.removeAttribute('onclick');b.onclick=window.dmDuelHomeAc;}if(id==='tab-profile-menu'){b.removeAttribute('onclick');b.onclick=window.dmProfileMenuAc;b.setAttribute('aria-haspopup','dialog');if(!b.hasAttribute('aria-expanded'))b.setAttribute('aria-expanded','false');}if(b.classList.contains('active'))b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');}}
+const duelArtIcon = name => `<svg class="dm-duel-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="friends-assets/icons.svg#${name}"></use></svg>`;
+const duelChevron = duelArtIcon('chevron').replace('dm-duel-icon','dm-duel-chevron');
+const duelShield = '<svg class="dm-duel-icon" viewBox="0 0 24 24" aria-hidden="true"><path fill="#e74475" d="M12 1 2 5v6c0 6 4 10 10 12 6-2 10-6 10-12V5z"/><path fill="#ffb2c9" d="M12 4 5 7v4c0 4 2.6 7 7 9 4.4-2 7-5 7-9V7z"/></svg>';
+const duelXp = '<svg class="dm-duel-icon" viewBox="0 0 24 24" aria-hidden="true"><path fill="#742ee4" d="m12 1 10 5.5v11L12 23 2 17.5v-11z"/><path d="m6 9 4 6m0-6-4 6m7 0V9h3a1.5 1.5 0 0 1 0 3h-3" fill="none" stroke="white" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 window.dmDuelHomeAc=function(){
  if(window.dmTeacherPortalMode)return;
  let el=document.getElementById('dmDuelHome');
@@ -107,12 +111,15 @@ window.dmDuelHomeAc=function(){
   el.innerHTML=`<div class="dm-duel-page-inner">
    <header class="dm-duel-page-head"><div class="dm-duel-brand">Diji-Medu <small>English</small></div><h1>Düello</h1><span data-duel-inbox></span></header>
    <div class="dm-duel-arena">
-    <img class="dm-duel-papi" src="friends-assets/papi-duel-arena.webp" alt="Düello arenasındaki savaşçı Papi" width="780" height="567" decoding="async">
-    <button type="button" class="dm-duel-quick" data-duel="live"><b><span aria-hidden="true">⚡</span> Canlı Düello</b></button>
-    <div class="dm-duel-options"><button type="button" data-duel="friend"><span class="dm-duel-option-icon" aria-hidden="true"><svg focusable="false"><use href="friends-assets/icons.svg#people"></use></svg></span><span>Arkadaşına<br>Meydan Oku</span></button><button type="button" data-duel="papi"><span class="dm-duel-option-icon" aria-hidden="true"><img src="friends-assets/papi-fencer.webp" alt="" width="40" height="40"></span><span>Papi’ye<br>Karşı Oyna</span></button></div>
+    <img class="dm-duel-papi" src="friends-assets/papi-duel-petrol.webp" alt="Düello arenasındaki savaşçı Papi" width="800" height="400" decoding="async">
+    <button type="button" class="dm-duel-quick" data-duel="live">${duelArtIcon('bolt')} Canlı Düello</button>
    </div>
    <div class="dm-duel-personal" role="status">Düello istatistikleri yükleniyor…</div>
-   <button type="button" class="dm-duel-history" data-duel="history"><span aria-hidden="true">◷</span> Geçmiş Düellolar <small aria-hidden="true">›</small></button>
+   <div class="dm-duel-options">
+    <button type="button" data-duel="friend"><span class="dm-duel-option-icon" aria-hidden="true">${duelArtIcon('people')}</span><span>Arkadaşına Meydan Oku</span>${duelChevron}</button>
+    <button type="button" data-duel="papi"><span class="dm-duel-option-icon dm-duel-face" aria-hidden="true"></span><span>Papi’ye Karşı Oyna</span>${duelChevron}</button>
+   </div>
+   <button type="button" class="dm-duel-history" data-duel="history">Geçmiş Düellolar ${duelChevron}</button>
   </div>`;
   el.addEventListener('click',e=>{
    const action=e.target.closest('[data-duel]')?.dataset.duel;
@@ -139,7 +146,7 @@ window.dmDuelHomeAc=function(){
   if(!current())return;
   const me=(data||[]).find(p=>String(p.player_name).toLocaleLowerCase('tr')===owner.toLocaleLowerCase('tr'));
   if(!me){target.textContent='Düello istatistiklerin burada görünecek.';return;}
-  target.innerHTML=[['🏆','Galibiyet',me.wins],['🛡️','Mağlubiyet',me.losses],['⭐','Düello XP',me.duel_xp]].map(([icon,label,value])=>'<span>'+icon+' <b>'+Number(value||0).toLocaleString('tr-TR')+'</b><small>'+label+'</small></span>').join('');
+  target.innerHTML=[[duelArtIcon('trophy'),'Galibiyet',me.wins],[duelShield,'Mağlubiyet',me.losses],[duelXp,'Düello XP',me.duel_xp]].map(([icon,label,value])=>'<span>'+icon+'<b>'+Number(value||0).toLocaleString('tr-TR')+'</b><small>'+label+'</small></span>').join('');
  }).catch(fail);
 
 };

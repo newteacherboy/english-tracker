@@ -888,7 +888,7 @@ html[data-dm-theme="night"] .fr-people-name small{color:#b9c9e0}
 #tab-meduakis.fr-home-view .fr-unified-actions{flex:0 0 auto!important;max-width:68%!important;min-width:0!important;gap:clamp(3px,1vw,6px)!important}
 
 /* Keep the Friends landing page above the dock. Full rankings open separately. */
-#tab-meduakis.fr-home-view .ma-ekran{container-type:size;overflow:hidden}
+#tab-meduakis.fr-home-view .ma-ekran{container-type:size;overflow:auto}
 #tab-meduakis.fr-home-view .fr-tiles-home{grid-template-rows:auto;grid-auto-rows:max-content;align-content:start;gap:clamp(5px,2cqh,10px);padding-bottom:4px}
 #tab-meduakis.fr-home-view #frInvitation:empty{display:none}
 #tab-meduakis.fr-home-view .fr-tiles-home .zk-banner{margin:0;gap:6px;min-height:0;padding:3px 8px 3px 3px;border-radius:17px}
@@ -940,4 +940,108 @@ html[data-dm-theme="night"] .fr-people-name small{color:#b9c9e0}
  #tab-meduakis.fr-home-view .fr-tiles-home .fr-duel-champion-1 .fr-duel-champion-step{min-height:36px}
  #tab-meduakis.fr-home-view .fr-tiles-home .fr-duel-league>.fr-section-head{padding-block:3px!important}
  #tab-meduakis.fr-home-view .fr-tiles-home .zk-banner .zk-papi{height:clamp(31px,10cqh,44px)}
+}
+
+/* Both podiums use the same rank block, portrait, score and footer. */
+#tab-meduakis.fr-home-view .fr-tiles-home .fr-league-board {
+  --fr-board-accent:#087c5e; --fr-board-action:#c2f4df; --fr-board-surface:#fffaf0;
+  --fr-board-ink:#241b41;
+  display:grid; grid-template-columns:minmax(0,1fr); gap:0; padding:0!important;
+  border:1px solid #e8decd!important; border-radius:17px!important; overflow:hidden;
+  background:var(--fr-board-surface)!important; box-shadow:none!important;
+}
+#tab-meduakis.fr-home-view .fr-tiles-home .fr-duel-league {
+  --fr-board-accent:#6638bd; --fr-board-action:#e8d9ff;
+}
+#tab-meduakis.fr-home-view .fr-tiles-home .fr-league-board>.fr-section-head {
+  min-height:0; margin:0; padding:clamp(4px,1.55cqh,9px) 9px!important; background:var(--fr-board-accent);
+}
+#tab-meduakis.fr-home-view .fr-tiles-home .fr-league-board>.fr-section-head h3 {
+  display:flex; align-items:center; gap:6px; color:#fff!important; text-shadow:none;
+}
+#tab-meduakis.fr-home-view .fr-tiles-home .fr-league-board>.fr-section-head .fr-icon {width:1em;height:1em}
+#tab-meduakis.fr-home-view .fr-tiles-home :is(.fr-leaders,.fr-duel-champions) {
+  display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); align-items:end;
+  gap:0; min-height:0; padding:clamp(4px,2cqh,12px) 10px 0;
+  background:none; border-radius:0;
+}
+#tab-meduakis.fr-home-view .fr-tiles-home :is(.fr-leader,.fr-duel-champion) {
+  --fr-rank:#b5b4d1; --fr-rank-edge:#9290b2; --fr-rank-ink:#272044;
+  display:grid; grid-template-columns:minmax(0,1fr); justify-items:center;
+  min-width:0; color:var(--fr-board-ink); text-align:center;
+}
+#tab-meduakis.fr-home-view .fr-tiles-home :is(.fr-leader-1,.fr-duel-champion-1) {
+  --fr-rank:#ffca0a; --fr-rank-edge:#d99900; --fr-rank-ink:#392400;
+}
+#tab-meduakis.fr-home-view .fr-tiles-home :is(.fr-leader-3,.fr-duel-champion-3) {
+  --fr-rank:#eb9961; --fr-rank-edge:#be6437; --fr-rank-ink:#442318;
+}
+#tab-meduakis.fr-home-view .fr-tiles-home :is(.fr-podium-portrait,.fr-duel-champion-portrait) {
+  position:relative; display:grid; place-items:center; min-height:0; margin:0 0 2px;
+  width:auto; height:auto; border:0; border-radius:50%; background:#ffde63; box-shadow:none;
+}
+#tab-meduakis.fr-home-view .fr-tiles-home :is(.fr-leader,.fr-duel-champion) .fr-avatar {
+  --avatar-size:clamp(27px,10.2cqh,61px)!important;
+  border:2px solid #ffde63; box-shadow:none; flex:none;
+}
+#tab-meduakis.fr-home-view .fr-tiles-home :is(.fr-leader-1,.fr-duel-champion-1) .fr-avatar {
+  --avatar-size:clamp(29px,11.3cqh,70px)!important;
+}
+#tab-meduakis.fr-home-view .fr-tiles-home .fr-podium-crown {width:30%; transform:translate(-50%,-27%); filter:none}
+#tab-meduakis.fr-home-view .fr-tiles-home :is(.fr-leader-cup,.fr-duel-champion-medal) {
+  position:static; display:grid; place-items:center; width:100%; height:auto; min-height:clamp(16px,4.5cqh,35px);
+  transform:none; filter:none; border:0; border-bottom:4px solid var(--fr-rank-edge);
+  border-radius:8px 8px 0 0; background:var(--fr-rank); color:var(--fr-rank-ink);
+  font:1000 clamp(12px,4vw,20px)/1 Nunito,system-ui,sans-serif;
+}
+#tab-meduakis.fr-home-view .fr-tiles-home :is(.fr-leader-1,.fr-duel-champion-1) :is(.fr-leader-cup,.fr-duel-champion-medal) {
+  min-height:clamp(23px,7cqh,46px);
+}
+#tab-meduakis.fr-home-view .fr-tiles-home .fr-leader-cup b {
+  position:static; width:auto; transform:none; background:none; color:inherit; font:inherit;
+}
+#tab-meduakis.fr-home-view .fr-tiles-home :is(.fr-leader,.fr-duel-champion) :is(.fr-podium-step,.fr-duel-champion-step) {
+  display:grid; place-items:center; gap:1px; min-height:0; margin:0; padding:3px 2px;
+  border:0; border-radius:0; background:none; box-shadow:none; color:var(--fr-board-ink);
+  font:900 clamp(10px,3.4vw,15px)/1.1 Nunito,system-ui,sans-serif;
+}
+#tab-meduakis.fr-home-view .fr-tiles-home :is(.fr-podium-step,.fr-duel-champion-step) strong {max-width:100%;font:inherit}
+#tab-meduakis.fr-home-view .fr-tiles-home :is(.fr-podium-step>span,.fr-duel-champion-step>b) {
+  max-width:100%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+  border-radius:999px; padding:1px 4px; background:#f8eacc; color:#2f2041; font:inherit;
+}
+#tab-meduakis.fr-home-view .fr-tiles-home .fr-league-board>.fr-podium-footer {
+  padding:4px 7px!important; border-color:#e9decd; background:none!important; color:var(--fr-board-ink)!important;
+}
+#tab-meduakis.fr-home-view .fr-tiles-home .fr-league-board .fr-league-self {color:var(--fr-board-ink)}
+#tab-meduakis.fr-home-view .fr-tiles-home .fr-league-board .fr-link {
+  border:0; background:var(--fr-board-action); box-shadow:none; color:#2f2041;
+}
+#tab-meduakis.fr-home-view .fr-tiles-home :is(.fr-league-status,.fr-duel-footnote) {color:var(--fr-board-ink)}
+#tab-meduakis.fr-home-view .fr-tiles-home .zk-banner {
+  display:grid; grid-template-columns:auto minmax(0,1fr) auto; grid-template-rows:1fr 1fr;
+  column-gap:8px; row-gap:3px; align-items:center;
+  border:0; border-bottom:5px solid #392477; background:#5237a5; box-shadow:none;
+}
+#tab-meduakis.fr-home-view .fr-tiles-home .zk-banner::after {display:none}
+#tab-meduakis.fr-home-view .fr-tiles-home .zk-banner .zk-papi {grid-column:1;grid-row:1/3}
+#tab-meduakis.fr-home-view .fr-tiles-home .zk-banner>span:nth-child(2) {display:contents}
+#tab-meduakis.fr-home-view .fr-tiles-home .zk-banner b {grid-column:2;grid-row:1;align-self:end;text-shadow:none}
+#tab-meduakis.fr-home-view .fr-tiles-home .zk-banner small {grid-column:2;grid-row:2;align-self:start;margin:0}
+#tab-meduakis.fr-home-view .fr-tiles-home .zk-banner .zk-go {display:none}
+#tab-meduakis.fr-home-view .fr-tiles-home .zk-banner .zk-chip.gold {grid-column:3;grid-row:1/3;margin:0;border-radius:8px;background:#ffd336;color:#342300}
+#tab-meduakis.fr-home-view .fr-unified-actions :is(.fr-invite-top,.fr-people-toggle) {
+  background:#18ac7b!important; color:#fff!important; border-color:#18ac7b!important;
+  border-bottom-color:#0c805f!important; box-shadow:none!important;
+}
+html[data-dm-theme=night] #tab-meduakis.fr-home-view .fr-tiles-home .fr-league-board {
+  --fr-board-surface:#2e244b; --fr-board-ink:#f5ecff;
+  border-color:#534570!important;
+}
+html[data-dm-theme=night] #tab-meduakis.fr-home-view .fr-tiles-home .fr-podium-footer {border-color:#534570}
+@container (max-height:460px) {
+  #tab-meduakis.fr-home-view .fr-tiles-home .fr-league-board>.fr-section-head {padding-block:3px!important}
+  #tab-meduakis.fr-home-view .fr-tiles-home :is(.fr-leaders,.fr-duel-champions) {padding-top:4px}
+  #tab-meduakis.fr-home-view .fr-tiles-home :is(.fr-leader-1,.fr-duel-champion-1) :is(.fr-leader-cup,.fr-duel-champion-medal) {min-height:20px}
+  #tab-meduakis.fr-home-view .fr-tiles-home .fr-league-board>.fr-podium-footer {padding-block:2px!important}
 }
