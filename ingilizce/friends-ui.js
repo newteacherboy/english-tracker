@@ -51,14 +51,13 @@
     const allowed=permitted('lig');
     const data=allowed?window.dmLeagueUI?.weeklyPreview?.():null;
     const crown='<svg class="fr-podium-crown" viewBox="0 0 40 26" aria-hidden="true"><path d="m4 7 9 7 7-11 7 11 9-7-4 16H8z" fill="#ffda64" stroke="#ffefaa" stroke-width="1.5" stroke-linejoin="round"/><g fill="#fff0a6"><circle cx="4" cy="7" r="3"/><circle cx="20" cy="3" r="3"/><circle cx="36" cy="7" r="3"/></g></svg>';
-    const laurel='<svg class="fr-podium-laurel" viewBox="0 0 26 44" aria-hidden="true"><path d="M24 41C11 38 6 25 9 8" fill="none" stroke="#edbc43" stroke-width="1.7"/><path d="M9 14C3 12 4 5 10 1c4 5 4 11-1 13ZM8 23C2 21 0 16 2 12c6 2 9 6 6 11Zm4 10C5 33 1 29 1 24c7 0 12 4 11 9Zm8 7c-7 3-13 1-15-4 7-3 13-1 15 4Zm-9-16c-3-6 0-10 6-11 1 6-1 10-6 11Zm4 10c-2-6 1-10 7-10 1 6-2 10-7 10Z" fill="#ffce55"/></svg>';
     const leaders=data?.top.length?[1,0,2].map(index=>{
       const player=data.top[index];
       if(!player)return '<span aria-hidden="true"></span>';
       return `<button type="button" class="fr-leader fr-leader-${index+1}" data-friend-action="${player.is_virtual?'virtual-duel':'profile'}" data-person="${esc(player.name)}" data-bot-id="${player.is_virtual?esc(player.id):''}" aria-label="${esc(player.displayRank??player.rank)}. sıra, ${esc(player.name)}, ${xp(player.xp)} XP${player.is_virtual?', Sanal Rakip':''}">
-        <span class="fr-podium-portrait">${index===0?crown+laurel+laurel:''}${player.is_virtual?(window.dmLeagueUI?.virtualMemberAvatar?.(player,64,'friends')||'<span class="fr-avatar fr-papi-leader"><img src="friends-assets/papi-fencer.webp" alt="Papi"></span>'):avatar(player.name,64,player.membership_tier)}
-          <span class="fr-leader-cup">${icon('trophy')}<b>${esc(player.displayRank??player.rank)}</b></span>
-        </span>
+        <span class="fr-podium-portrait">${index===0?crown:''}${player.is_virtual?(window.dmLeagueUI?.virtualMemberAvatar?.(player,64,'friends')||'<span class="fr-avatar fr-papi-leader"><img src="friends-assets/papi-fencer.webp" alt="Papi"></span>'):avatar(player.name,64,player.membership_tier)}
+          </span>
+        <span class="fr-leader-cup"><b>${esc(player.displayRank??player.rank)}</b></span>
         <span class="fr-podium-step"><strong>${esc(player.name)}</strong><span>${xp(player.xp)} XP${player.is_virtual?' · Sanal Rakip':''}</span></span>
       </button>`;
     }).join(''):'';
@@ -100,11 +99,11 @@
     const podium=[1,0,2].map(index=>{
       const p=duelLeaders[index];if(!p)return '<span class="fr-duel-empty-slot" aria-hidden="true"></span>';
       const name=esc(p.player_name),tier=p.membership_tier||'free';
-      return '<div class="fr-duel-champion fr-duel-champion-'+(index+1)+'"><div class="fr-duel-champion-portrait"><span class="fr-duel-champion-medal">'+(index+1)+'</span>'+avatar(p.player_name,45,tier)+'</div><div class="fr-duel-champion-step"><strong>'+name+'</strong><small>'+xp(p.wins)+' G / '+xp(p.losses)+' M</small><b>'+xp(p.duel_xp)+' XP</b></div></div>';
+      return '<div class="fr-duel-champion fr-duel-champion-'+(index+1)+'"><div class="fr-duel-champion-portrait">'+avatar(p.player_name,45,tier)+'</div><span class="fr-duel-champion-medal">'+(index+1)+'</span><div class="fr-duel-champion-step"><strong>'+name+'</strong><small>'+xp(p.wins)+' G / '+xp(p.losses)+' M</small><b>'+xp(p.duel_xp)+' XP</b></div></div>';
     }).join('');
     const mine=duelLeaders.find(p=>norm(p.player_name)===norm(who()));
     const status=duelLeadersError?'Düello ligi şu anda alınamadı.':duelLeadersAt?'Henüz tamamlanmış düello yok.':'Sıralama yükleniyor…';
-    return '<section class="fr-duel-league fr-league-board" aria-label="Düello Şampiyonları"><div class="fr-section-head"><h3>⚔️ Düello Şampiyonları</h3><small>Tüm zamanlar · Düello Ligi</small></div>'+(duelLeaders.length?'<div class="fr-duel-champions">'+podium+'</div>':'<p class="fr-league-status" role="status">'+status+'</p>')+'<div class="fr-podium-footer">'+(mine?'<div class="fr-league-self">'+avatar(who(),27,mine.membership_tier)+'<b>Sen · '+xp(mine.wins)+' G / '+xp(mine.losses)+' M · '+xp(mine.duel_xp)+' XP</b></div>':'<span class="fr-duel-footnote">Galibiyet · Mağlubiyet · XP</span>')+'<button type="button" class="fr-link" data-friend-action="duel-rank">Sıralamayı gör ›</button></div></section>';
+    return '<section class="fr-duel-league fr-league-board" aria-label="Düello Şampiyonları"><div class="fr-section-head"><h3>'+icon('swords')+' Düello Şampiyonları</h3><small>Tüm zamanlar · Düello Ligi</small></div>'+(duelLeaders.length?'<div class="fr-duel-champions">'+podium+'</div>':'<p class="fr-league-status" role="status">'+status+'</p>')+'<div class="fr-podium-footer">'+(mine?'<div class="fr-league-self">'+avatar(who(),27,mine.membership_tier)+'<b>Sen · '+xp(mine.wins)+' G / '+xp(mine.losses)+' M · '+xp(mine.duel_xp)+' XP</b></div>':'<span class="fr-duel-footnote">Galibiyet · Mağlubiyet · XP</span>')+'<button type="button" class="fr-link" data-friend-action="duel-rank">Sıralamayı gör ›</button></div></section>';
   }
   /* Bugünkü Durumun: planın sınırlı hakları. Mola ve Premium oyun hakları 10 dakikada en fazla bir kez sorulur. */
   const CROWN = '<svg class="fr-crown" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 18 5 7l4.5 4L12 5l2.5 6L19 7l2 11z" fill="currentColor"/></svg>';
