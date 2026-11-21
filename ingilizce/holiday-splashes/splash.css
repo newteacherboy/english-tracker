@@ -77,13 +77,19 @@ html.dm-zirve-intro-active #dmBootSplash .dm-karanfil-opening{
 }
 .dm-karanfil-opening .dm-zirve-opening-frame{
  position:relative; display:block; max-width:none; background:#402418;
+ isolation:isolate;
+}
+.dm-karanfil-opening .dm-zirve-opening-frame::before{
+ content:""; position:absolute; inset:0; z-index:0; pointer-events:none;
+ background:url('24-kasim-karanfil-2026.webp') center/cover no-repeat;
+ filter:blur(22px) brightness(.85); transform:scale(1.08);
 }
 .dm-karanfil-opening .dm-zirve-opening-art{
- position:absolute; inset:0; height:100%!important; object-fit:cover!important;
+ position:absolute; inset:0; height:100%!important; object-fit:contain!important; z-index:1;
 }
 .dm-karanfil-opening .dm-zirve-opening-control{
  position:absolute; inset:auto 0 max(14px,calc(env(safe-area-inset-bottom,0px) + 8px));
- width:min(82%,360px); margin-inline:auto; padding:0;
+ width:min(82%,360px); margin-inline:auto; padding:0; z-index:2;
 }
 .dm-karanfil-opening .dm-zirve-loading{background:#4d291e;border-color:#ffe0aa}
 .dm-karanfil-opening .dm-zirve-loading span{color:#fff7e9;text-shadow:0 1px 4px #32150f;background:#32150f55}
