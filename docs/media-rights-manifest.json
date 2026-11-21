@@ -3,6 +3,7 @@
   "date": "2026-10-04",
   "notice": "Source records do not establish exclusivity or eliminate infringement risk.",
   "assets": [
+    {"path":"ingilizce/friends-assets/centre-reference.webp","sha256":"03edaef28ddde487b98c930e0efe429a27bec3bd2d694ed8644001f8387319e8","bytes":103982,"status":"ai-generated","source":"OpenAI ImageGen, user-approved Diji-Medu Benim Merkezim design. Illustrations reused through clipped SVG viewports."},
 {
   "path": "ingilizce/games-assets/approved-games-sheet.webp",
   "sha256": "11a533cd8492613bc21edf98cc1951bf25ecd64ce882d9d86e31bf08264ebe90",
