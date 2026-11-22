@@ -297,8 +297,9 @@ html[data-dm-theme="night"] .rt-agenda-panel{
 .rt-agenda-heading{display:flex;align-items:center;justify-content:space-between;gap:6px;padding-left:4px}
 .rt-agenda-heading strong{font:900 18px/1.15 Nunito,system-ui,sans-serif}
 body #tab-dunya .rt-agenda-heading button{
- display:grid;place-items:center;flex:none;width:44px;height:44px;padding:0;border:0;
- border-radius:12px;background:transparent;color:var(--agenda-accent);font:800 24px/1 system-ui;cursor:pointer;
+ display:grid;place-items:center;flex:none;width:44px;height:44px;min-height:44px;padding:0!important;border:0;
+ border-radius:12px;background:transparent;box-shadow:none!important;color:var(--agenda-accent);
+ font:800 24px/1 system-ui;font-size:24px!important;cursor:pointer;
 }
 body #tab-dunya .rt-agenda-panel .rt-agenda-row{
  position:relative;display:grid;grid-template-columns:22px minmax(0,1fr) 12px;align-items:center;
@@ -315,6 +316,9 @@ body #tab-dunya .rt-agenda-panel .rt-agenda-row{
 }
 .rt-agenda-row .rt-tool-badge{position:absolute;top:5px;right:4px;width:7px;height:7px;border-radius:50%;background:#e5484d;pointer-events:none}
 .rt-agenda :is(summary,button):focus-visible{outline:2px solid #2674cf;outline-offset:2px}
+@media(max-height:500px) and (orientation:landscape){
+ .rt-agenda-panel{top:-62px;max-height:calc(100dvh - 152px);overflow:auto}
+}
 
 /* Papi görüşme madalyonu */
 body #tab-dunya .rt-medal-route>.dm-papi-chat-shortcut{
