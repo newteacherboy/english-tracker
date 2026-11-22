@@ -23,29 +23,25 @@ test('opening controls stay interactive until the welcome screen takes focus',as
  }finally{w.close();}
 });
 test('welcome separates registration and sign-in by role',async()=>{
- const f=await fixture(),{w}=f,d=w.document;
+ const f=await fixture(),{w}=f,d=w.document,navigated=[];
+ w.dmDiscoveryContext.navigate=url=>navigated.push(url);
  try{
   f.click('back');
   const labels=()=>[...d.querySelectorAll('.fd-choice')].map(button=>button.textContent.trim());
   assert.deepEqual([...d.querySelectorAll('.fd-actions button')].map(button=>button.textContent.trim()),['Üye Ol','Hesabım Var']);
   f.click('login-roles');
   assert.deepEqual(labels(),['Öğrenci Girişi','Veli Girişi','Öğretmen Girişi']);
-  f.click('parent-login');
-  assert.equal(w.dmFirstDiscovery.screen(),'parent-login');
-  f.click('back');
-  f.click('back');
-  f.click('begin');
+  f.click('parent-login');assert.equal(navigated.at(-1),'veli-paneli.html');
+  f.click('back');f.click('begin');
   assert.deepEqual(labels(),['Öğrenciyim','Veliyim','Kendim İçin','Öğretmenim']);
-  d.querySelector('[data-role="parent"]').click();
-  assert.equal(w.dmFirstDiscovery.screen(),'parent-register');
-  assert(!d.querySelector('[data-field="ageBand"]'));
-  f.click('back');
+  d.querySelector('[data-role="parent"]').click();assert.equal(navigated.at(-1),'veli-paneli.html?kayit=1');
   d.querySelector('[data-role="school"]').click();
   assert(d.querySelector('[data-field="ageBand"]'));
   assert(!d.querySelector('[data-field="parentAccount"]'));
   assert.equal(f.requests.length,0);
  }finally{w.close();}
 });
+
 async function fixture(options={}){const dom=new JSDOM('<div id="login-container"><form id="loginForm"></form></div>',{url:'https://app.test/ingilizce/',runScripts:'outside-only',pretendToBeVisual:true}),w=dom.window,requests=[];w.HTMLElement.prototype.scrollIntoView=()=>{};w.dmDiscoveryContext={raw:w.localStorage,session:w.sessionStorage,welcome:true,member:false,guest:false,request:async b=>{requests.push(b);return b.islem==='kayitOl'?{status:'success',token:'session',ogrenci:b.ogrenciAdi,...(options.teacherCode?{teacherAccount:true,teacherCode:options.teacherCode}:{})}:{ok:true}}};w.eval(read('first-discovery.js'));await flush();w.dmFirstDiscovery.showHome();const field=(key,value)=>{const n=w.document.querySelector('[data-field="'+key+'"]');assert(n,key);n.value=value;n.dispatchEvent(new w.Event('input',{bubbles:true}));n.dispatchEvent(new w.Event('change',{bubbles:true}));};const click=a=>{const b=w.document.querySelector('[data-action="'+a+'"]');assert(b,a);b.click();};return {w,requests,field,click};}
 for(const c of [{purpose:'independent',age:'adult'},{purpose:'school',age:'teen',stage:'high',grade:'11'},{purpose:'school',age:'adult',stage:'university'},{purpose:'school',age:'under13',stage:'primary',grade:'3'}])test('registration reaches a valid account request: '+JSON.stringify(c),async()=>{const f=await fixture(),{w}=f;try{w.document.querySelector('[data-role="'+c.purpose+'"]').click();if(c.purpose==='school'){f.field('ageBand',c.age);f.click('next');}else assert(!w.document.querySelector('[data-field="ageBand"]'));for(const [k,v]of Object.entries({first:'Deniz',last:'Yılmaz',username:'deniz_123'}))f.field(k,v);f.click('next');if(c.stage){f.field('educationStage',c.stage);if(c.grade)f.field('grade',c.grade);if(c.stage!=='university')f.field('branch','a');}else assert(!w.document.querySelector('[data-field="grade"]'));f.click('next');f.field('email','deniz@example.test');f.click('next');w.document.querySelector('#fdPassword').value='Complex-test-123!';f.click('next');const consent=w.document.querySelector('[data-field="consent"]');consent.checked=true;f.click('submit');await flush();const b=f.requests.find(x=>x.islem==='kayitOl');assert(b,w.document.querySelector('.fd-error').textContent);assert.equal(b.learnerProfile.purpose,c.purpose);assert.equal(b.learnerProfile.ageBand,c.purpose==='school'?c.age:'');assert.equal(b.learnerProfile.startChoice,'new');assert.equal(b.telefon,'');assert.equal(b.sube,c.stage&&c.stage!=='university'?'A':'');assert.equal(b.sinif,c.grade||'');assert.equal(w.dmFirstDiscovery.screen(),'verification');f.click('success');if(c.purpose==='school')assert(!w.document.querySelector('[data-action="placement"]'),'school students should enter their class parkur without signup placement prompt');else assert(w.document.querySelector('[data-action="placement"]'));}finally{w.close();}});
 function member(){const dom=new JSDOM('<div id="panel-alani" style="display:block"></div>',{url:'https://app.test/',runScripts:'outside-only',pretendToBeVisual:true}),w=dom.window,requests=[];w.eval("var aktifOgrenciAdi='Deniz',yo={},apiURL='/api';");w.localStorage.setItem('ing_token','token');w.yoHazirMi=()=>true;w.fetch=async(_u,o)=>{const b=JSON.parse(o.body);requests.push(b);let d={ok:true,emailVerified:true,hasPlacement:true};if(b.islem==='startPlacementSave')d={ok:true,result:{...w.DMStartPlacementBank.evaluate(b.records)}};return {ok:true,json:async()=>d}};for(const f of ['placement-bank.js','member-experience.js','start-placement-bank.js','start-placement.js'])w.eval(read(f));return {w,requests};}

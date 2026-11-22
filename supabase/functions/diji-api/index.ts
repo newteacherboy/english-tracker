@@ -1,3 +1,4 @@
+import {parentCenterAPI} from './parent-center.mjs';
 import {adminEmailAPI} from './admin-email.mjs';
 import {iosAdRewards} from './ios-ad-rewards.mjs';
 import iosAdItems from './progression-shop.json' with {type:'json'};
@@ -1216,7 +1217,8 @@ async function iceAktar(body: any) {
 }
 
 const teacherPortal=teacherPortalAPI({db:supabase,json,hash:sha256,hashPassword,verifyPassword,issueSession,mailShell:mailKabugu,escape:hk,queue:kuyrugaEkle,codeKey:adminKey});
-const onboarding = onboardingAPI({db:supabase,json,hash:sha256,studentByName,verifyPassword,attempts:denemeSay,audit:denemeYaz,sendQueued:kuyrukSatiriGonder,mailShell:mailKabugu,escape:hk,issueSession,afterVerified:(sid:string)=>teacherPortal.ensureCode(sid)});
+const parentCenter=parentCenterAPI({db:supabase,json,hash:sha256,hashPassword,verifyPassword,queue:kuyrugaEkle,escape:hk,mailShell:mailKabugu,auth,issueSession,secret:adminKey});
+const onboarding = onboardingAPI({db:supabase,json,hash:sha256,studentByName,verifyPassword,attempts:denemeSay,audit:denemeYaz,sendQueued:kuyrukSatiriGonder,mailShell:mailKabugu,escape:hk,issueSession,afterVerified:async(sid:string)=>{await teacherPortal.ensureCode(sid);const result=await supabase.from('students').select('id,email,status,email_verified_at').eq('id',sid).single();if(result.data)await parentCenter.codes(result.data);}});
 
 /* [20 Eki 2026, kullanıcı onaylı] "teacher" hesabı panelde her şeye erişir: yalnızca öğrenci
    hesabıyla çalışan bir özellik öğretmeni "öğrenci oturumu/hesabı gerekli" diye reddederse, aynı
@@ -1272,6 +1274,8 @@ async function handle(req: Request, proxy: any = null) {
     const denied=await rate('teacher-portal:'+op,istemciIp(req)+'|'+await sha256(key),op==='teacherPortalLogin'?4:op==='teacherPortalResetRequest'?3:60,900);if(denied)return denied;
     if(['teacherPortalLogin','teacherPortalResetRequest','teacherPortalReset'].includes(op)){const ipDeny=await rate('teacher-portal-ip:'+op,istemciIp(req),op==='teacherPortalLogin'?6:20,900);if(ipDeny)return ipDeny;}
   }
+  const parentResponse=await parentCenter.handle(req,op,body,rate,istemciIp(req));
+  if(parentResponse)return parentResponse;
   if(op === "okumaGrubu") return readBatch(req,body,handle,json);
 
   const onboardingResponse = await onboarding.handle(req,op,body);

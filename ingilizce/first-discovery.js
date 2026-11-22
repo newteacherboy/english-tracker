@@ -68,10 +68,7 @@
   screen='login-roles';
   show('<h1>Hesabım Var</h1>'+roleCard('Öğrenci Girişi','login','school')+roleCard('Veli Girişi','parent-login','parent')+roleCard('Öğretmen Girişi','teacher-login','teacher'),'',0,'fd-role-screen');
  }
- function parentEntry(signup){
-  screen=signup?'parent-register':'parent-login';
-  show('<h1>'+(signup?'Veli Kaydı':'Veli Girişi')+'</h1><p class="fd-note">Veli hesabı açıldığında çocuğunun ilerlemesini buradan takip edebileceksin. Veli kaydı ve girişi henüz kullanıma açık değil.</p>',button('Geri dön','back','secondary'));
- }
+ function parentEntry(signup){navigate('veli-paneli.html'+(signup?'?kayit=1':''));}
  const navigate=url=>ctx.navigate?ctx.navigate(url):location.assign(url);
  function login(){
   hide();document.documentElement.classList.remove('dm-first-entry');
@@ -165,7 +162,9 @@
   const select=(label,key,items)=>`<label class="fd-field">${label}<select data-field="${key}" required>${option('','Seçiniz',draft[key])}${items.map(item=>option(escape(item),escape(item),escape(draft[key]))).join('')}</select></label>`;
   return select('İl','schoolCity',Object.keys(locations))+select('İlçe','schoolDistrict',locations[draft.schoolCity]||[])+field('Okul Adı','school',{placeholder:'Okul adını yazın'});
  }
- function renderRegistration(){screen='register';save();let body='',actions=button('Devam Et');
+ function renderRegistration(){
+  if(!draft.email){try{const parent=JSON.parse(ctx.session.getItem('dm_parent_child_signup')||'null');if(parent&&Date.now()-parent.at<3600000)draft.email=parent.email;}catch{}}
+  screen='register';save();let body='',actions=button('Devam Et');
   if(step===0){
    body='<h1>Üye Ol</h1>'+Object.entries(roles).map(([key,label])=>roleCard(label,'role',key)).join('');
    actions='';
