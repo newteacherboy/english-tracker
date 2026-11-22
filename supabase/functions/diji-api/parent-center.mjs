@@ -241,7 +241,9 @@ export function parentCenterAPI(d){
     if(norm(parent.email)!==norm(s.email))return fail('Bu geçiş aynı e-posta adresine bağlı hesaplarda kullanılabilir.');
     const code=asList(await db.from('dm_parent_codes').select('pin_hash').eq('student_id',s.id).limit(1))[0];
     if(!/^\d{6}$/.test(b.pin)||!code||code.pin_hash!==await digest('student:'+s.id+':'+b.pin))return fail('Öğrenci geçiş kodunu kontrol et.',403);
-    return json({ok:true,token:await issueSession('student',s.id),username:s.username});
+    const studentToken=await issueSession('student',s.id);
+    asList(await db.from('dm_parent_sessions').delete().eq('token_hash',await hash(b.parentToken)));
+    return json({ok:true,token:studentToken,username:s.username});
    }
    if(op==='parentGoal'){
     const days=Number(b.days),minutes=Number(b.minutes);if(![2,3,4,5,6,7].includes(days)||![5,10,15].includes(minutes))return fail('Hedef seçeneklerini kontrol et.');
@@ -284,14 +286,14 @@ export function parentCenterAPI(d){
     const old=asList(await db.from('dm_home_practice').select('*').eq('id',b.id).eq('student_id',s.id).eq('parent_id',parent.id).limit(1))[0];
     if(old)return json({ok:true,practice:publicPractice(old)});
     const feature=kind==='plan'?(b.feature==='weekly'?'weekly':'daily'):kind==='summary'?'papi':'',amount=[5,10,15].includes(Number(settings.count))?Number(settings.count):5;
-    const types=Array.isArray(settings.types)?settings.types.filter(t=>['image','choice','listen','match','order','speak'].includes(t)):['choice'];
+    const types=Array.isArray(settings.types)?settings.types.filter(t=>['image','choice','listen','match','order','speak','memory'].includes(t)):['choice'];
     if(!types.length)return fail('En az bir soru türü seç.');
     const words=await pool(s,{...settings,types},plan);
     if(words.length<amount)return fail('Seçimlerine uygun '+words.length+' kelime var. Soru sayısını azalt veya kaynağı değiştir.');
     const selected=shuffle(words).slice(0,amount),deck=selected.map((w,i)=>{
      const type=types[i%types.length],order=type==='order',pieces=w.en.split(/\s+/),join=pieces.length>1?' ':'';
      const options=shuffle([w.en,...shuffle(words.filter(x=>norm(x.en)!==norm(w.en))).slice(0,3).map(x=>x.en)]);
-     return {...w,type:order?'order':type,answer:w.en,options,tokens:order?shuffle(pieces.length>1?pieces:Array.from(w.en)):undefined,join};
+     return {...w,pairs:type==='memory'?[w,...shuffle(words.filter(x=>norm(x.en)!==norm(w.en)&&norm(x.tr)!==norm(w.tr))).slice(0,2)].map(x=>({en:x.en,tr:x.tr})):undefined,type:order?'order':type,answer:w.en,options,tokens:order?shuffle(pieces.length>1?pieces:Array.from(w.en)):undefined,join};
     });
     const r=await db.rpc('dm_home_start',{p_id:b.id,p_parent:parent.id,p_student:s.id,p_kind:kind,p_feature:feature,p_deck:deck,p_settings:{source:settings.source,count:amount,content:settings.content,types,...(['plan','summary'].includes(kind)?{words:selected.map(w=>({en:w.en,tr:w.tr})),summary:s.username+' için tamamlanan duraklardan '+words.length+' kelime ve ifade tekrar edilebilir. Bu çalışmada '+selected.filter(w=>w.weak).length+' tekrar kelimesi bulunuyor.'}:{})}});
     if(r.error)throw r.error;if(r.data.ok===false)return json(r.data,403);

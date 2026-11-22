@@ -11,11 +11,19 @@
  const row=(label,action,detail='',extra='')=>'<button class="pc-row" type="button" data-action="'+action+'" '+extra+'><span>'+esc(label)+(detail?'<small>'+esc(detail)+'</small>':'')+'</span><span aria-hidden="true" style="flex:0">›</span></button>';
  const badge=plan=>'<span class="pc-badge '+(plan==='free'?'free':'')+'">'+({premium_pro:'Premium Pro',pro:'Pro',free:'Free'}[plan]||'Free')+'</span>';
  const studentMode=new URLSearchParams(location.search).get('ogrenci')==='1';
- let token=localStorage.getItem(KEY)||'',me=null,childId=localStorage.getItem(CHILD)||'',dashboard=null,tab='home',screen='',busy=false,practice=null,selection='',words=[],cardIndex=0,cardBack=false,lastSetup={source:'last',count:5,content:'all',types:['choice']},pendingAnswer=null,pendingStart=null;
+ let networkCount=0;
+ function networkBusy(active){
+  networkCount=Math.max(0,networkCount+(active?1:-1));
+  let state=document.getElementById('pcNetwork');
+  if(networkCount&&!state){state=document.createElement('div');state.id='pcNetwork';state.setAttribute('role','status');state.textContent='Veriler yükleniyor…';state.style.cssText='position:fixed;top:0;left:50%;transform:translateX(-50%);width:min(100%,490px);z-index:40;padding:8px 16px;text-align:center;background:#e4f3ed;color:#154237;font:600 12px system-ui';document.body.append(state);}
+  if(!networkCount)state?.remove();
+ }
+ let token=localStorage.getItem(KEY)||'',me=null,childId=localStorage.getItem(CHILD)||'',dashboard=null,tab='home',screen='',busy=false,practice=null,selection='',words=[],cardIndex=0,cardBack=false,lastSetup={source:'last',count:5,content:'all',types:['choice']},pendingAnswer=null,pendingStart=null,memoryPicked=null,memoryMatches=0,memoryMistake=false;
  const pendingKey=()=> 'dm_home_pending:'+childId;
  function persistPending(){if(pendingAnswer)localStorage.setItem(pendingKey(),JSON.stringify(pendingAnswer));else localStorage.removeItem(pendingKey());}
  async function api(islem,data={}){
   if(studentMode)islem=({parentResume:'parentStudentResume',parentAnswer:'parentStudentAnswer'})[islem]||islem;
+  networkBusy(true);
   const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),20000);
   try{
    const response=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},signal:controller.signal,body:JSON.stringify({islem,parentToken:token,studentId:childId,...(studentMode?{t:localStorage.getItem('ing_token')||''}:{}),...data})});
@@ -23,7 +31,7 @@
    if(!response.ok||result.ok===false){const error=Error(result.mesaj||result.message||'İşlem tamamlanamadı.');error.premium=result.premium;error.status=response.status;throw error;}
    return result;
   }catch(e){if(e.name==='AbortError')throw Error('Bağlantı bekleniyor. Kaydedilmiş çalışmanı yeniden açabilirsin.');throw e;}
-  finally{clearTimeout(timer);}
+  finally{clearTimeout(timer);networkBusy(false);}
  }
  function error(message){const el=document.getElementById('pcError');if(el){el.textContent=message;el.scrollIntoView({block:'nearest'});}}
  function saveToken(value){token=value;localStorage.setItem(KEY,value);}
@@ -73,17 +81,19 @@
   render('Bana Özel Test Hazırla','<p>'+esc(dashboard.student.name)+(dashboard.student.classNo?' · '+dashboard.student.classNo+'. sınıf':'')+'</p><form data-form="setup" data-kind="'+kind+'"><label class="pc-field">Kelime kaynağı<select name="source">'+[['all','Çalıştığı tüm konular'],['last','Son çalıştığı ünite'],['weak','Zorlandığı kelimeler']].map(([v,l])=>'<option value="'+v+'" '+(settings.source===v?'selected':'')+'>'+l+'</option>').join('')+'</select></label><label class="pc-field">Soru sayısı<select name="count">'+[5,10,15].map(n=>'<option '+(Number(settings.count)===n?'selected':'')+'>'+n+'</option>').join('')+'</select></label><label class="pc-field">İçerik<select name="content">'+[['all','Kelime + dil yapıları'],['words','Yalnızca kelimeler'],['patterns','Yalnızca dil yapıları']].map(([v,l])=>'<option value="'+v+'" '+(settings.content===v?'selected':'')+'>'+l+'</option>').join('')+'</select></label><h2>Soru türleri</h2><div class="pc-grid">'+[['image','Görsel'],['choice','Çoktan seçmeli'],['listen','Dinleme'],['match','Eşleştirme'],['order','Cümle kurma'],['speak','Dinle ve söyle']].map(([v,l])=>'<label><input type="checkbox" name="types" value="'+v+'" '+(settings.types.includes(v)?'checked':'')+'>'+l+'</label>').join('')+'</div><div class="pc-note" id="pcPool">Seçimlerine uygun kelime sayısını kontrol et.</div><button type="button" data-action="pool" class="pc-secondary">Uygun Kelimeleri Kontrol Et</button><button type="submit" class="pc-primary">'+(kind==='game'?'Oyunu Başlat':'Testi Başlat')+'</button></form><p>Görsel seçilirse yalnızca sınıfına uygun ve görseli yüklenebilen kelimeler kullanılır.</p>',{back:true,screen:'setup'});
  }
  function formSettings(form){const data=new FormData(form);return {source:data.get('source'),count:Number(data.get('count')),content:data.get('content'),types:data.getAll('types')};}
- function premium(message){render('Premium Pro','<h1>Daha fazla birlikte öğrenin</h1><div class="pc-note">'+esc(message)+'</div><p>Özellikler seçili çocuğun üyeliğine göre açılır. Geçmiş sonuçlar kayıtlı kalır.</p><a class="pc-primary" href="./?parentMembership=1">Öğrenci Hesabında Üyeliği İncele</a>'+btn('Evde Pratiğe Dön','practice','secondary'),{back:true});}
+ function premium(message){render('Premium Pro','<h1>Daha fazla birlikte öğrenin</h1><div class="pc-note">'+esc(message)+'</div><p>Özellikler seçili çocuğun üyeliğine göre açılır. Geçmiş sonuçlar kayıtlı kalır.</p><p>Üyeliği çocuğunun öğrenci hesabındaki Mağaza bölümünden yükseltebilirsin.</p><a class="pc-primary" href="./?giris=1">Öğrenci Girişini Aç</a>'+btn('Evde Pratiğe Dön','practice','secondary'),{back:true});}
  async function start(kind='test',settings=lastSetup){
   if(!pendingStart||pendingStart.kind!==kind||JSON.stringify(pendingStart.settings)!==JSON.stringify(settings))pendingStart={id:crypto.randomUUID(),kind,settings};
   const result=await api('parentStart',pendingStart);pendingStart=null;practice=result.practice;showQuestion();
  }
  function showQuestion(feedback=null){
-  selection='';
+  selection='';memoryPicked=null;memoryMatches=0;memoryMistake=false;
   if(practice.completedAt){results();return;}
   const q=practice.question,order=q.type==='order',listen=['listen','speak'].includes(q.type);
   const prompt=q.type==='image'?'Görseldeki kelimenin İngilizcesi hangisi?':listen?'Dinle ve doğru İngilizce ifadeyi seç.':order?q.tr:q.type==='match'?'Bu anlamın İngilizcesini eşleştir.':q.tr;
-  const options=order?'<div class="pc-built" id="pcBuilt"></div><div>'+q.tokens.map((t,i)=>'<button class="pc-token" data-action="word" data-index="'+i+'">'+esc(t)+'</button>').join('')+'</div>'+btn('Baştan Diz','reset-order','link'):q.options.map(o=>'<button type="button" class="pc-choice" data-action="answer-choice" data-value="'+esc(o)+'" aria-pressed="false">'+esc(o)+'</button>').join('');
+  const memory=q.type==='memory';
+  const cards=memory?(q.pairs||[]).flatMap((pair,index)=>[{pair:index,text:pair.en},{pair:index,text:pair.tr}]).sort(()=>Math.random()-.5):[];
+  const options=memory?'<div class="pc-grid">'+cards.map(c=>'<button class="pc-choice" data-action="memory-card" data-pair="'+c.pair+'" data-text="'+esc(c.text)+'" aria-label="Hafıza kartı">?</button>').join('')+'</div>':order?'<div class="pc-built" id="pcBuilt"></div><div>'+q.tokens.map((t,i)=>'<button class="pc-token" data-action="word" data-index="'+i+'">'+esc(t)+'</button>').join('')+'</div>'+btn('Baştan Diz','reset-order','link'):q.options.map(o=>'<button type="button" class="pc-choice" data-action="answer-choice" data-value="'+esc(o)+'" aria-pressed="false">'+esc(o)+'</button>').join('');
   render('Evde Pratik','<p>Soru '+(practice.cursor+1)+' / '+practice.total+'</p><div class="pc-progress"><i style="width:'+practice.cursor/practice.total*100+'%"></i></div>'+(q.type==='image'?'<img id="pcQuestionImage" class="pc-image" alt="Kelime görseli" src="'+esc(q.image)+'">':'')+(listen?btn('Kelimeyi Dinle','speak','secondary'):'')+'<h2>'+esc(prompt)+'</h2>'+options+(q.type==='speak'?btn('Mikrofona Söyle','mic','secondary'):'')+btn('Cevabı Kontrol Et','check')+'<p id="pcSaveStatus" class="pc-saved">İlerlemen sunucuya kaydedilir.</p>'+btn('Sonra Tamamla','practice','link'),{back:true,screen:'question'});
   document.getElementById('pcQuestionImage')?.addEventListener('error',()=>{error('Görsel şu anda yüklenemedi. Bağlantını kontrol edip kaydedilmiş çalışmayı yeniden açabilirsin.');const b=app.querySelector('[data-action="check"]');b.disabled=true;});
  }
@@ -145,8 +155,8 @@
   if(name==='practice'){tab='practice';if(childId)dashboard=await api('parentDashboard');showTab();return;}
   if(name==='growth'){tab='growth';showTab();return;}
   if(name==='setup'){setup();return;}
-  if(name==='games'){render('Papi ile Oyna','<h1>Kelime oyunları</h1>'+row('Eşleştirme','game-match','Türkçe anlamı İngilizce kelimeyle eşleştir')+row('Doğru Kelimeyi Bul','game-choice','Çalıştığı kelimeleri tekrar et')+row('Kelime Avı','game-order','Harf ve kelimeleri sıraya koy'),{back:true});return;}
-  if(name.startsWith('game-')){setup({source:'all',count:5,content:'all',types:[name==='game-match'?'match':name==='game-order'?'order':'choice']},'game');return;}
+  if(name==='games'){render('Papi ile Oyna','<h1>Kelime oyunları</h1>'+row('Eşleştirme','game-match','Türkçe anlamı İngilizce kelimeyle eşleştir')+row('Hafıza Oyunu','game-memory','İngilizce kelimeleri anlamlarıyla hatırla')+row('Doğru Kelimeyi Bul','game-choice','Çalıştığı kelimeleri tekrar et')+row('Kelime Avı','game-order','Harf ve kelimeleri sıraya koy'),{back:true});return;}
+  if(name.startsWith('game-')){setup({source:'all',count:5,content:'all',types:[name==='game-memory'?'memory':name==='game-match'?'match':name==='game-order'?'order':'choice']},'game');return;}
   if(name==='patterns'){setup({source:'all',count:5,content:'patterns',types:['order']});return;}
   if(name==='speaking'){setup({source:'all',count:5,content:'all',types:['speak']});return;}
   if(name==='weak'){setup({source:'weak',count:5,content:'all',types:['choice']});return;}
@@ -154,6 +164,15 @@
   if(name==='answer-choice'){selection=el.dataset.value;app.querySelectorAll('.pc-choice').forEach(b=>b.setAttribute('aria-pressed',String(b===el)));return;}
   if(name==='word'){selection+=(selection?(practice.question.join??' '):'')+practice.question.tokens[Number(el.dataset.index)];el.disabled=true;document.getElementById('pcBuilt').textContent=selection;return;}
   if(name==='reset-order'){selection='';document.getElementById('pcBuilt').textContent='';app.querySelectorAll('[data-action="word"]').forEach(b=>b.disabled=false);return;}
+  if(name==='memory-card'){
+   if(el.dataset.matched||el===memoryPicked||el.dataset.open)return;
+   el.textContent=el.dataset.text;el.dataset.open='1';
+   if(!memoryPicked){memoryPicked=el;return;}
+   const first=memoryPicked;memoryPicked=null;
+   if(first.dataset.pair===el.dataset.pair){first.dataset.matched='1';el.dataset.matched='1';memoryMatches++;if(memoryMatches===practice.question.pairs.length)selection=memoryMistake?'__memory_mistake__':practice.question.en;}
+   else{memoryMistake=true;setTimeout(()=>{if(!first.isConnected||!el.isConnected)return;first.textContent='?';el.textContent='?';delete first.dataset.open;delete el.dataset.open;},800);}
+   return;
+  }
   if(name==='check'){await answer();return;}if(name==='next-question'){showQuestion();return;}
   if(name==='speak'){speak(practice.question.en);return;}
   if(name==='mic'){
@@ -210,7 +229,7 @@
    else if(type==='setup'){lastSetup=formSettings(form);if(!lastSetup.types.length)throw Error('En az bir soru türü seç.');await start(form.dataset.kind,lastSetup);}
    else if(type==='goal'){await api('parentGoal',{days:Number(data.get('days')),minutes:Number(data.get('minutes'))});dashboard=await api('parentDashboard');showTab();}
    else if(type==='settings'){await api('parentSettings',{teacherNotices:data.get('teacherNotices')==='on',practiceReminders:data.get('practiceReminders')==='on'});await load();}
-   else if(type==='switch'){const r=await api('parentSwitchStudent',{pin:data.get('pin')});sessionStorage.setItem('dm_session_handoff_v1',JSON.stringify({token:r.token,name:r.username,role:'ogrenci',google:false,previous:localStorage.getItem('ing_token')||'',at:Date.now()}));localStorage.setItem('dm_last_account_v1',JSON.stringify({kind:'personal'}));location.assign('./?hesap=1');}
+   else if(type==='switch'){const r=await api('parentSwitchStudent',{pin:data.get('pin')});localStorage.removeItem(KEY);token='';sessionStorage.setItem('dm_session_handoff_v1',JSON.stringify({token:r.token,name:r.username,role:'ogrenci',google:false,previous:localStorage.getItem('ing_token')||'',at:Date.now()}));localStorage.setItem('dm_last_account_v1',JSON.stringify({kind:'personal'}));location.assign('./?hesap=1');}
   }catch(e){if(e.premium)premium(e.message);else error(e.message);}
   finally{busy=false;buttons.forEach(b=>b.disabled=false);}
  });
@@ -229,6 +248,7 @@
    authForm(new URLSearchParams(location.search).get('kayit')==='1');
   }catch(e){authForm();error(e.message);}
  }
+ window.addEventListener('pageshow',event=>{if(event.persisted&&token!==localStorage.getItem(KEY))location.reload();});
  window.addEventListener('online',async()=>{if(pendingAnswer&&!busy){busy=true;try{await sendPending();}catch(e){error(e.message);}finally{busy=false;}}});
  init();
 })();
