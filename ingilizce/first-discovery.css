@@ -215,7 +215,33 @@ body.dm-profile-open #tab-profil #dmForestActions .header-btn{font-size:clamp(10
 #dmDiscovery .fd-welcome .fd-art { height: clamp(110px, 31dvh, 244px); max-width: 240px; animation: none; }
 #dmDiscovery h1.fd-wordmark { transform: none; margin: 0; font-size: clamp(31px, 8vw, 40px); }
 #dmDiscovery .fd-welcome .fd-actions { padding-bottom: clamp(0px, 5dvh, 38px); }
-#dmDiscovery label.fd-field { color: var(--fd-ink); font-size: 14px; margin-bottom: 17px; }
+#dmDiscovery label.fd-field {
+  color: var(--fd-ink);
+  font-size: 14px;
+  margin-bottom: 17px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+#dmDiscovery .fd-content > :is(.fd-note, p:not(.fd-password-rules)) {
+  background: transparent;
+  border: 0;
+  padding: 0;
+  box-shadow: none;
+  color: var(--fd-copy);
+}
+#dmDiscovery .fd-content > :is(.fd-consent, .fd-password-rules) {
+  background: var(--fd-glass);
+  border-color: rgba(255, 255, 255, .95);
+  box-shadow: none;
+}
+#dmDiscovery .fd-actions .fd-link[data-action="success"] {
+  background: var(--fd-teal);
+  border: 1px solid var(--fd-teal);
+  border-radius: 15px;
+  box-shadow: none;
+}
 #dmDiscovery :is(input:not([type=checkbox]), select),
 body.dm-discovery-login #login-container #loginForm input {
   color: var(--fd-ink) !important;
