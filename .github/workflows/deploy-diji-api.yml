@@ -34,7 +34,8 @@ jobs:
           node --test tests/delta-reads.test.mjs tests/incremental-client.test.cjs tests/public-catalog.test.cjs tests/request-budget.test.cjs tests/word-payload.test.mjs tests/release-read-cache.test.cjs tests/teacher-chat-routing.test.mjs tests/announcements-api.test.mjs tests/member-tools.test.cjs tests/api-security-guards.test.cjs tests/daily-mission-claim.test.cjs tests/onboarding-registration.test.cjs tests/server-reward-ledger.test.cjs supabase/functions/diji-api/class-code.test.mjs tests/google-signup.test.cjs
       - uses: supabase/setup-cli@v1
         with:
-          version: latest
+          version: 2.54.11
+          github-token: ${{ github.token }}
       - name: Configure student level rewards
         run: node scripts/deploy-solo-rewards.mjs
       - name: Deploy
