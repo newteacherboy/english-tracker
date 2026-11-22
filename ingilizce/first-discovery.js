@@ -27,16 +27,20 @@
  function save(){ctx.session.setItem(DRAFT,JSON.stringify({savedAt:Date.now(),values:{...draft,consent:false}}));}
  function setSummary(){const value={completed:true,total:6,correct,seconds:Math.max(1,Math.round((Date.now()-startedAt)/1000)),at:new Date().toISOString()};ctx.raw.setItem(SUMMARY,JSON.stringify(value));demoComplete=true;}
  function mount(){if(root)return;root=document.createElement('div');root.id='dmDiscovery';root.hidden=true;root.setAttribute('role','dialog');root.setAttribute('aria-modal','true');root.setAttribute('aria-label','Papi ile ilk keşif');document.body.append(root);
+  document.addEventListener('dm:boot-ready',()=>{root.inert=false;if(!root.hidden)focusScreen();},{once:true});
   root.addEventListener('click',onClick);root.addEventListener('submit',e=>{e.preventDefault();next();});root.addEventListener('input',e=>{const k=e.target.dataset.field;if(k){draft[k]=e.target.type==='checkbox'?e.target.checked:e.target.value;save();}});
   root.addEventListener('change',e=>{if(e.target.dataset.field==='parentAccount'){draft.role=e.target.checked?'parent':'student';if(e.target.checked)draft.ageBand='under13';save();renderRegistration();}else if(['educationStage','startChoice','knownLevel','grade'].includes(e.target.dataset.field)){collect();if(e.target.dataset.field==='educationStage')draft.grade='';renderRegistration();}});
   root.addEventListener('input',e=>{if(e.target?.dataset?.field!=='branch')return;const input=e.target,start=input.selectionStart,end=input.selectionEnd;input.value=input.value.toLocaleUpperCase('tr-TR');try{input.setSelectionRange(start,end);}catch(_){}});
   root.addEventListener('keydown',e=>{if(e.key==='Escape'&&!busy){if(screen==='home')welcome();else if(screen==='question'){welcome();}else if(screen==='register'&&step>0){step=adjacentRegistrationStep(-1);renderRegistration();}}if(e.key==='Tab'){const nodes=[...root.querySelectorAll('button:not(:disabled),a[href],input,select')].filter(n=>!n.hidden);if(!nodes.length)return;const first=nodes[0],last=nodes.at(-1);if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}}});
  }
  let focusBefore=null;const inerted=new Map();
+ function focusScreen(){const target=root.querySelector('h1')||root.querySelector('section');target.tabIndex=-1;target.focus({preventScroll:true});}
  function show(content,actions,progress=0,cls='',back=true){mount();if(root.hidden)focusBefore=document.activeElement;
-  for(const node of document.body.children)if(node!==root&&!['SCRIPT','LINK','STYLE'].includes(node.tagName)&&!inerted.has(node)){inerted.set(node,node.inert);node.inert=true;}
+  const bootSplash=$('dmBootSplash');
+  for(const node of document.body.children)if(node!==root&&node!==bootSplash&&!['SCRIPT','LINK','STYLE'].includes(node.tagName)&&!inerted.has(node)){inerted.set(node,node.inert);node.inert=true;}
+  if(bootSplash)root.inert=true;
   root.hidden=false;document.body.classList.add('dm-discovery-open');root.innerHTML=`<section class="fd-screen ${cls}"><header class="fd-top">${['welcome','teacher-code'].includes(screen)?'':"<button type=\"button\" class=\"fd-back\" data-action=\"back\" aria-label=\"Geri\">←</button>"}${progress?`<div class="fd-progress"><i style="width:${progress}%"></i></div>`:''}${screen==='question'?`<span class="fd-step">${question+1} / 6</span><button type="button" class="fd-skip-signup" data-action="register">Üye Ol</button>`:''}${['welcome','teacher-code'].includes(screen)?'':"<button type=\"button\" class=\"fd-header-login\" data-action=\"login\">Öğrenci Girişi</button>"}</header><form class="fd-content" novalidate>${content}<div class="fd-error" role="status" aria-live="polite"></div></form><footer class="fd-actions">${actions}</footer></section>`;
-  root.querySelector('h1')?.setAttribute('tabindex','-1');if(!root.querySelector('h1')){const section=root.querySelector('section');section.tabIndex=-1;section.focus({preventScroll:true});}else root.querySelector('h1').focus({preventScroll:true});
+  if(!root.inert)focusScreen();
  }
  function hide(){if(!root)return;root.hidden=true;document.body.classList.remove('dm-discovery-open');for(const [node,value]of inerted){if(node.isConnected)node.inert=value;}inerted.clear();focusBefore?.isConnected&&focusBefore.focus?.({preventScroll:true});}
  const button=(text,action='next',kind='primary')=>`<button type="button" class="fd-${kind}" data-action="${action}">${text}</button>`;
