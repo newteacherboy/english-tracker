@@ -1,6 +1,27 @@
 'use strict';
 const {test}=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),{JSDOM}=require('jsdom');
 const read=name=>fs.readFileSync('ingilizce/'+name,'utf8'),flush=()=>new Promise(r=>setImmediate(r));
+test('opening controls stay interactive until the welcome screen takes focus',async()=>{
+ const dom=new JSDOM('<div id="dmBootSplash"><button>Devam Et</button></div><main></main>',{url:'https://app.test/ingilizce/',runScripts:'outside-only'});
+ const {window:w}=dom,{document:d}=w;
+ try{
+  w.dmDiscoveryContext={raw:w.localStorage,session:w.sessionStorage,welcome:true};
+  w.eval(read('first-discovery.js'));
+  await flush();
+  const splash=d.getElementById('dmBootSplash'),welcome=d.getElementById('dmDiscovery');
+  assert(!splash.inert);
+  assert(welcome.inert);
+  assert(d.querySelector('main').inert);
+  const proceed=splash.querySelector('button');
+  proceed.focus();
+  assert.equal(d.activeElement,proceed);
+  proceed.addEventListener('click',()=>{splash.remove();d.dispatchEvent(new w.Event('dm:boot-ready'));});
+  proceed.click();
+  assert(!welcome.inert);
+  assert.equal(d.activeElement,welcome.querySelector('section'));
+  assert.equal(welcome.querySelector('[data-action="begin"]').textContent,'Üye Ol');
+ }finally{w.close();}
+});
 async function fixture(options={}){const dom=new JSDOM('<div id="login-container"><form id="loginForm"></form></div>',{url:'https://app.test/ingilizce/',runScripts:'outside-only',pretendToBeVisual:true}),w=dom.window,requests=[];w.HTMLElement.prototype.scrollIntoView=()=>{};w.dmDiscoveryContext={raw:w.localStorage,session:w.sessionStorage,welcome:true,member:false,guest:false,request:async b=>{requests.push(b);return b.islem==='kayitOl'?{status:'success',token:'session',ogrenci:b.ogrenciAdi,...(options.teacherCode?{teacherAccount:true,teacherCode:options.teacherCode}:{})}:{ok:true}}};w.eval(read('first-discovery.js'));await flush();w.dmFirstDiscovery.showHome();const field=(key,value)=>{const n=w.document.querySelector('[data-field="'+key+'"]');assert(n,key);n.value=value;n.dispatchEvent(new w.Event('input',{bubbles:true}));n.dispatchEvent(new w.Event('change',{bubbles:true}));};const click=a=>{const b=w.document.querySelector('[data-action="'+a+'"]');assert(b,a);b.click();};return {w,requests,field,click};}
 for(const c of [{purpose:'independent',age:'adult'},{purpose:'school',age:'teen',stage:'high',grade:'11'},{purpose:'school',age:'adult',stage:'university'},{purpose:'school',age:'under13',stage:'primary',grade:'3'}])test('registration reaches a valid account request: '+JSON.stringify(c),async()=>{const f=await fixture(),{w}=f;try{w.document.querySelector('[data-role="'+c.purpose+'"]').click();f.click('next');f.field('ageBand',c.age);f.field('startChoice','test');f.click('next');for(const [k,v]of Object.entries({first:'Deniz',last:'Yılmaz',username:'deniz_123'}))f.field(k,v);f.click('next');if(c.stage){f.field('educationStage',c.stage);if(c.grade)f.field('grade',c.grade);if(c.stage!=='university')f.field('branch','a');}else assert(!w.document.querySelector('[data-field="grade"]'));f.click('next');f.field('email','deniz@example.test');f.click('next');w.document.querySelector('#fdPassword').value='Complex-test-123!';f.click('next');const consent=w.document.querySelector('[data-field="consent"]');consent.checked=true;f.click('submit');await flush();const b=f.requests.find(x=>x.islem==='kayitOl');assert(b,w.document.querySelector('.fd-error').textContent);assert.equal(b.learnerProfile.purpose,c.purpose);assert.equal(b.learnerProfile.ageBand,c.age);assert.equal(b.learnerProfile.startChoice,'test');assert.equal(b.telefon,'');assert.equal(b.sube,c.stage&&c.stage!=='university'?'A':'');assert.equal(b.sinif,c.grade||'');assert.equal(w.dmFirstDiscovery.screen(),'verification');f.click('success');if(c.purpose==='school')assert(!w.document.querySelector('[data-action="placement"]'),'school students should enter their class parkur without signup placement prompt');else assert(w.document.querySelector('[data-action="placement"]'));}finally{w.close();}});
 function member(){const dom=new JSDOM('<div id="panel-alani" style="display:block"></div>',{url:'https://app.test/',runScripts:'outside-only',pretendToBeVisual:true}),w=dom.window,requests=[];w.eval("var aktifOgrenciAdi='Deniz',yo={},apiURL='/api';");w.localStorage.setItem('ing_token','token');w.yoHazirMi=()=>true;w.fetch=async(_u,o)=>{const b=JSON.parse(o.body);requests.push(b);let d={ok:true,emailVerified:true,hasPlacement:true};if(b.islem==='startPlacementSave')d={ok:true,result:{...w.DMStartPlacementBank.evaluate(b.records)}};return {ok:true,json:async()=>d}};for(const f of ['placement-bank.js','member-experience.js','start-placement-bank.js','start-placement.js'])w.eval(read(f));return {w,requests};}
