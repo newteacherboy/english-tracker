@@ -11,11 +11,19 @@
  const row=(label,action,detail='',extra='')=>'<button class="pc-row" type="button" data-action="'+action+'" '+extra+'><span>'+esc(label)+(detail?'<small>'+esc(detail)+'</small>':'')+'</span><span aria-hidden="true" style="flex:0">›</span></button>';
  const badge=plan=>'<span class="pc-badge '+(plan==='free'?'free':'')+'">'+({premium_pro:'Premium Pro',pro:'Pro',free:'Free'}[plan]||'Free')+'</span>';
  const studentMode=new URLSearchParams(location.search).get('ogrenci')==='1';
+ let networkCount=0;
+ function networkBusy(active){
+  networkCount=Math.max(0,networkCount+(active?1:-1));
+  let state=document.getElementById('pcNetwork');
+  if(networkCount&&!state){state=document.createElement('div');state.id='pcNetwork';state.setAttribute('role','status');state.textContent='Veriler yükleniyor…';state.style.cssText='position:fixed;top:0;left:50%;transform:translateX(-50%);width:min(100%,490px);z-index:40;padding:8px 16px;text-align:center;background:#e4f3ed;color:#154237;font:600 12px system-ui';document.body.append(state);}
+  if(!networkCount)state?.remove();
+ }
  let token=localStorage.getItem(KEY)||'',me=null,childId=localStorage.getItem(CHILD)||'',dashboard=null,tab='home',screen='',busy=false,practice=null,selection='',words=[],cardIndex=0,cardBack=false,lastSetup={source:'last',count:5,content:'all',types:['choice']},pendingAnswer=null,pendingStart=null,memoryPicked=null,memoryMatches=0,memoryMistake=false;
  const pendingKey=()=> 'dm_home_pending:'+childId;
  function persistPending(){if(pendingAnswer)localStorage.setItem(pendingKey(),JSON.stringify(pendingAnswer));else localStorage.removeItem(pendingKey());}
  async function api(islem,data={}){
   if(studentMode)islem=({parentResume:'parentStudentResume',parentAnswer:'parentStudentAnswer'})[islem]||islem;
+  networkBusy(true);
   const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),20000);
   try{
    const response=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},signal:controller.signal,body:JSON.stringify({islem,parentToken:token,studentId:childId,...(studentMode?{t:localStorage.getItem('ing_token')||''}:{}),...data})});
@@ -23,7 +31,7 @@
    if(!response.ok||result.ok===false){const error=Error(result.mesaj||result.message||'İşlem tamamlanamadı.');error.premium=result.premium;error.status=response.status;throw error;}
    return result;
   }catch(e){if(e.name==='AbortError')throw Error('Bağlantı bekleniyor. Kaydedilmiş çalışmanı yeniden açabilirsin.');throw e;}
-  finally{clearTimeout(timer);}
+  finally{clearTimeout(timer);networkBusy(false);}
  }
  function error(message){const el=document.getElementById('pcError');if(el){el.textContent=message;el.scrollIntoView({block:'nearest'});}}
  function saveToken(value){token=value;localStorage.setItem(KEY,value);}
