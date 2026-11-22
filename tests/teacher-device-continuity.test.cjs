@@ -20,8 +20,19 @@ test('logout removes the current code session and does not resume it on the next
  const native=storage({ing_token:'personal-token'}),first=page(native);first.w.dmTeacherDevice.remember(portal);const opened=page(native);opened.w.dmTeacherPortalExit();assert.equal(opened.w.dmTeacherDevice.list().length,0);assert.equal(opened.session.getItem('dm_tp_session'),null);assert.equal(native.getItem('ing_token'),'personal-token');assert.equal(page(native).w.dmTeacherPortalMode,undefined);
 });
 test('explicit personal/login entry bypasses auto-resume and a server-expired teacher token is removed',async()=>{
- const native=storage(),first=page(native);first.w.dmTeacherDevice.remember(portal);assert.equal(page(native,storage(),'?hesap=1').w.dmTeacherPortalMode,undefined);
- const expired=page(native,storage(),'',{status:401,ok:false,data:{ok:false}});await new Promise(r=>setImmediate(r));assert.equal(expired.w.dmTeacherDevice.list().length,0);assert(expired.calls.some(c=>c[0]==='replace'&&c[1]==='./?ogretmenGiris=1'));
+ const native=storage(),first=page(native);first.w.dmTeacherDevice.remember(portal);
+ for(const query of ['?hesap=1','?giris=1','?kayit=1','?kesifKayit=google','?ogretmenGiris=1']){
+  const opened=page(native,storage(),query);
+  assert.equal(opened.w.dmTeacherPortalMode,undefined,query);
+  assert.equal(opened.location.search,query);
+ }
+ const expired=page(native,storage(),'',{status:401,ok:false,data:{ok:false}});await new Promise(r=>setImmediate(r));assert.equal(expired.w.dmTeacherDevice.list().length,0);assert(expired.calls.some(c=>c[0]==='replace'&&c[1]==='./?baslangic=1'));
+});
+test('a rejected explicit teacher session returns to teacher sign-in',async()=>{
+ const session=storage({dm_tp_session:JSON.stringify(portal)});
+ const expired=page(storage(),session,'?ogretmen=1',{status:401,ok:false,data:{ok:false}});
+ await new Promise(r=>setImmediate(r));
+ assert.deepEqual(expired.calls.at(-1),['replace','./?ogretmenGiris=1']);
 });
 test('selecting a saved code teacher validates its own token and keeps personal storage unchanged',async()=>{
  const native=storage({ing_token:'personal-token',ing_aktifOgrenci:'Ada'}),opened=page(native,storage(),'?hesap=1');opened.w.dmTeacherDevice.remember(portal,false);opened.installSaved();await opened.w.dmSavedSessions.activate(opened.w.dmSavedSessions.list().find(x=>x.role==='ogretmen-kod'));assert.equal(native.getItem('ing_token'),'personal-token');assert.equal(JSON.parse(opened.session.getItem('dm_tp_session')).teacherToken,'owner-token');assert.deepEqual(opened.calls.at(-1),['assign','./?ogretmen=1']);

@@ -19,11 +19,13 @@
  }
  function activate(s){if(!valid(s))throw Error('Öğretmen oturumu bulunamadı. Kodunla tekrar giriş yap.');remember(s);ss.setItem('dm_tp_session',JSON.stringify(s));location.assign('./?ogretmen=1');}
  const params=new URLSearchParams(location.search);
- let last;try{last=JSON.parse(storage.getItem(ACTIVE)||'null');}catch{}
- if(params.get('ogretmen')!=='1'&&!params.has('ogretmenGiris')&&!params.has('baslangic')&&!params.has('hesap')&&!params.has('oauth')&&!params.has('code')&&!location.hash&&last?.kind==='teacher'){
-  const saved=read().find(x=>x.teacherToken===last.token);if(saved){ss.setItem('dm_tp_session',JSON.stringify(saved));params.set('ogretmen','1');history.replaceState(null,'',location.pathname+'?'+params.toString());}
+ const explicitEntry=['giris','kayit','ogretmenGiris','baslangic','hesap','oauth','code','kesifKayit','google_return'].some(key=>params.has(key));
+ let last,autoResumed=false;try{last=JSON.parse(storage.getItem(ACTIVE)||'null');}catch{}
+ if(params.get('ogretmen')!=='1'&&!explicitEntry&&!location.hash&&last?.kind==='teacher'){
+  const saved=read().find(x=>x.teacherToken===last.token);
+  if(saved){ss.setItem('dm_tp_session',JSON.stringify(saved));params.set('ogretmen','1');history.replaceState(null,'',location.pathname+'?'+params.toString());autoResumed=true;}
  }
- window.dmTeacherDevice={storage,list:read,remember,forget,personal,leave,activate};
+ window.dmTeacherDevice={storage,list:read,remember,forget,personal,leave,activate,autoResumed};
 
  // Verify teacher approval using the current personal learner token, not saved device sessions.
  if(params.get('ogretmen')!=='1'){
@@ -222,7 +224,7 @@
  window.addEventListener('pagehide',()=>{try{const current=JSON.parse(ss.getItem('dm_tp_session')||'null');if(current)window.dmTeacherDevice.remember(current,false);}catch{}});
  const verify=async()=>{const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),10000);try{
   const response=await fetch('https://nxfqlutulxqzqgwewssd.supabase.co/functions/v1/diji-api',{method:'POST',headers:{'Content-Type':'application/json'},signal:controller.signal,body:JSON.stringify({islem:'oturumBilgisi',t:state.teacherToken})});
-  if([401,403].includes(response.status)){window.dmTeacherDevice.forget(state.teacherToken);window.dmTeacherDevice.leave();location.replace('./?ogretmenGiris=1');}
+  if([401,403].includes(response.status)){window.dmTeacherDevice.forget(state.teacherToken);window.dmTeacherDevice.leave();location.replace(window.dmTeacherDevice.autoResumed?'./?baslangic=1':'./?ogretmenGiris=1');}
  }catch{}finally{clearTimeout(timer);}};void verify();
  window.dmTeacherRequestRole=(url,opt)=>{
   let args={};try{args=Object.fromEntries(new URL(url,location.href).searchParams);if(typeof opt?.body==='string')args={...args,...JSON.parse(opt.body)};}catch{}
