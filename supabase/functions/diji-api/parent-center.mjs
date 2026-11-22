@@ -78,6 +78,8 @@ export function parentCenterAPI(d){
   const lastSchool=done.find(r=>r.class_no===grade),lastLearning=[...finished].sort((a,b)=>b-a)[0];
   return {words:[...map.values()].map(w=>({...w,weak:weak.has(norm(w.en))})),lastUnit:lastSchool?'school:'+grade+':'+lastSchool.unit_no:lastLearning?'learning:'+lastLearning:'',yo:extra.yo};
  }
+ const imageChecks=new Map();
+ const dashboards=new Map();
  let manifestCache;
  async function images(){
   if(manifestCache&&Date.now()-manifestCache.at<3600e3)return manifestCache.rows;
@@ -105,7 +107,7 @@ export function parentCenterAPI(d){
    const checked=[];
    // Confirm the CDN object exists before including it in a visual-only pool.
    for(let i=0;i<words.length;i+=12){
-    await Promise.all(words.slice(i,i+12).map(async w=>{try{const r=await fetch(w.image,{method:'HEAD',signal:AbortSignal.timeout(5000)});if(r.ok&&r.headers.get('content-type')?.startsWith('image/'))checked.push(w);}catch{}}));
+    await Promise.all(words.slice(i,i+12).map(async w=>{try{const saved=imageChecks.get(w.image);if(saved&&Date.now()-saved.at<3600e3){if(saved.ok)checked.push(w);return;}const r=await fetch(w.image,{method:'HEAD',signal:AbortSignal.timeout(5000)});const ok=r.ok&&r.headers.get('content-type')?.startsWith('image/');imageChecks.set(w.image,{at:Date.now(),ok});if(ok)checked.push(w);}catch{}}));
     if(checked.length>=60)break;
    }
    words=checked;
@@ -191,6 +193,7 @@ export function parentCenterAPI(d){
     const a=await auth(req,b,new URLSearchParams());if(a?.role!=='student'||a.teacher_portal_access_id)return fail('Öğrenci oturumu gerekli.',401);
     const row=asList(await db.from('dm_home_practice').select('*').eq('id',b.id).eq('student_id',a.student_id).limit(1))[0];if(!row)return fail('Çalışma bulunamadı.',404);
     if(op==='parentStudentResume')return json({ok:true,practice:publicPractice(row)});
+    for(const key of dashboards.keys())if(key.includes('|'+a.student_id+'|'))dashboards.delete(key);
     const r=await db.rpc('dm_home_answer',{p_id:row.id,p_student:a.student_id,p_cursor:Number(b.cursor),p_answer:String(b.answer||'').slice(0,400)});if(r.error)throw r.error;
     return json({ok:true,practice:publicPractice(r.data)});
    }
@@ -220,6 +223,7 @@ export function parentCenterAPI(d){
     return json(r.data);
    }
    if(op==='parentSettings'){
+    for(const key of dashboards.keys())if(key.startsWith(parent.id+'|'))dashboards.delete(key);
     const settings={...parent.settings,teacherNotices:b.teacherNotices!==false,practiceReminders:b.practiceReminders!==false};
     asList(await db.from('dm_parents').update({settings}).eq('id',parent.id));return json({ok:true});
    }
@@ -228,6 +232,7 @@ export function parentCenterAPI(d){
     return json({ok:true,mailed:await mail(parent.email,'Diji-Medu · Veli geçiş kodun','<p>Yeni veli geçiş kodun <b>'+pin+'</b>.</p>')});
    }
    const s=await child(parent,b.studentId),plan=await tier(s.id);
+   if(['parentStart','parentAnswer','parentGoal','parentUnlink'].includes(op))for(const key of dashboards.keys())if(key.includes('|'+s.id+'|'))dashboards.delete(key);
    if(op==='parentUnlink'){
     asList(await db.from('dm_parents').update({settings:{...parent.settings,unlinkedIds:[...new Set([...(parent.settings?.unlinkedIds||[]),s.id])]}}).eq('id',parent.id));
     asList(await db.from('dm_parent_links').delete().eq('parent_id',parent.id).eq('student_id',s.id));return json({ok:true});
@@ -243,6 +248,8 @@ export function parentCenterAPI(d){
     asList(await db.from('dm_parent_goals').upsert({parent_id:parent.id,student_id:s.id,days,minutes}));return json({ok:true});
    }
    if(op==='parentDashboard'){
+    const cacheKey=parent.id+'|'+s.id+'|'+plan+'|'+!!b.previous+'|'+!!b.monthly;
+    const cached=dashboards.get(cacheKey);if(cached&&Date.now()-cached.at<20000)return json(cached.body);
     if((b.previous||b.monthly)&&plan!=='premium_pro')return fail('Geçmiş haftalar için Premium Pro gerekir.',403,{premium:true});
     const offset=b.previous?7:0,end=new Date(Date.now()-offset*864e5),start=new Date(end.getTime()-(b.monthly?30:7)*864e5);
     const [games,stops,lessons,history,goals,teacher,vocab,notices,events]=await Promise.all([
@@ -263,11 +270,12 @@ export function parentCenterAPI(d){
      const date=new Intl.DateTimeFormat('en-CA',{timeZone:'Europe/Istanbul'}).format(new Date(row.at));if(date in activity)activity[date]++;
     }
     const today=day(),practiceToday=h.filter(r=>new Intl.DateTimeFormat('en-CA',{timeZone:'Europe/Istanbul'}).format(new Date(r.created_at))===today);
-    return json({ok:true,plan,student:{id:s.id,name:s.full_name||s.username,username:s.username,classNo:s.class_no,streak:s.streak,sameEmail:norm(s.email)===norm(parent.email)},activity,
+    const body={ok:true,plan,student:{id:s.id,name:s.full_name||s.username,username:s.username,classNo:s.class_no,streak:s.streak,sameEmail:norm(s.email)===norm(parent.email)},activity,
      totalStops:allStops.length,lastStop:allStops[0]||null,goal,teacher:asList(teacher)[0]||null,notices:[...asList(notices),...asList(events)].sort((a,b)=>Date.parse(b.created_at)-Date.parse(a.created_at)).slice(0,30),
      gameSeconds:g.reduce((n,r)=>n+Number(r.duration_seconds||0),0),correct:g.reduce((n,r)=>n+Number(r.correct_count||0),0),wrong:g.reduce((n,r)=>n+Number(r.wrong_count||0),0),
      words:vocab.words,history:h.map(publicPractice),usage:{tests:practiceToday.filter(r=>r.kind==='test').length,games:practiceToday.filter(r=>r.kind==='game').length},
-     summary:activity[today]?s.username+' bugün '+activity[today]+' kayıtlı etkinlik tamamladı.':s.username+' için bugün henüz tamamlanan etkinlik kaydı yok.'});
+     summary:activity[today]?s.username+' bugün '+activity[today]+' kayıtlı etkinlik tamamladı.':s.username+' için bugün henüz tamamlanan etkinlik kaydı yok.'};
+    if(dashboards.size>1000)dashboards.clear();dashboards.set(cacheKey,{at:Date.now(),body});return json(body);
    }
    if(op==='parentPool')return json({ok:true,words:await pool(s,b.settings||{},plan)});
    if(op==='parentStart'){
