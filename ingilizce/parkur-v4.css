@@ -269,6 +269,18 @@ body #tab-dunya .rt-route-explorer:hover .rt-route-name{text-decoration:underlin
 @media(prefers-reduced-motion:reduce){.dm-lp-say.dm-lp-chat-invite{animation:none;opacity:1;visibility:visible;transform:none}}
 
 /* Ajandam */
+body #tab-dunya .rt-medal-route .rt-agenda{
+ position:absolute;top:calc(100% + 12px);left:0;width:62px;pointer-events:none;
+}
+body #tab-dunya .rt-medal-route .rt-agenda>.rt-agenda-actions{
+ position:static!important;margin-top:16px!important;
+}
+body #tab-dunya .rt-medal-route .rt-agenda:not([open])>.rt-agenda-actions{display:none!important}
+@media(max-height:480px) and (orientation:landscape){
+ body #tab-dunya .rt-medal-route .rt-agenda>.rt-agenda-actions{
+  position:absolute!important;top:-48px;left:calc(100% + 12px);margin-top:0!important;
+ }
+}
 body #tab-dunya .rt-medal-route .rt-medal-header:has(.rt-agenda[open]){z-index:8}
 body #tab-dunya .rt-medal-route .rt-agenda summary{
  box-sizing:border-box;display:grid;justify-items:center;width:62px;min-height:66px;
@@ -280,45 +292,8 @@ body #tab-dunya .rt-medal-route .rt-agenda summary{
  white-space:nowrap;list-style:none;
 }
 .rt-agenda summary::-webkit-details-marker{display:none}
-body #tab-dunya .rt-medal-route .rt-agenda summary svg{width:30px;height:30px;color:#fff;filter:drop-shadow(0 2px 1px #004b60)}
-.rt-agenda:not([open])>.rt-agenda-panel{display:none}
-.rt-agenda-panel{
- --agenda-surface:#fff7e2;--agenda-row:#fffdf6;--agenda-ink:#352751;
- --agenda-muted:#66587b;--agenda-accent:#5b398d;--agenda-border:#e5d7b8;
- position:absolute;left:calc(100% + 8px);top:0;box-sizing:border-box;
- width:min(254px,calc(100vw - 96px));display:grid;gap:7px;padding:9px;
- border:1px solid var(--agenda-border);border-radius:17px;background:var(--agenda-surface);
- color:var(--agenda-ink);box-shadow:0 8px 22px #1c163b40;text-align:left;pointer-events:auto;
-}
-html[data-dm-theme="night"] .rt-agenda-panel{
- --agenda-surface:#261d3c;--agenda-row:#372a50;--agenda-ink:#fff7e8;
- --agenda-muted:#e0d0f6;--agenda-accent:#dfc3ff;--agenda-border:#65537f;
-}
-.rt-agenda-heading{display:flex;align-items:center;justify-content:space-between;gap:6px;padding-left:4px}
-.rt-agenda-heading strong{font:900 18px/1.15 Nunito,system-ui,sans-serif}
-body #tab-dunya .rt-agenda-heading button{
- display:grid;place-items:center;flex:none;width:44px;height:44px;min-height:44px;padding:0!important;border:0;
- border-radius:12px;background:transparent;box-shadow:none!important;color:var(--agenda-accent);
- font:800 24px/1 system-ui;font-size:24px!important;cursor:pointer;
-}
-body #tab-dunya .rt-agenda-panel .rt-agenda-row{
- position:relative;display:grid;grid-template-columns:22px minmax(0,1fr) 12px;align-items:center;
- gap:8px;min-height:51px;padding:7px;width:100%;margin:0;box-sizing:border-box;
- border:1px solid var(--agenda-border);border-radius:12px;background:var(--agenda-row);
- color:var(--agenda-ink);text-align:left;font:900 13px/1.15 Nunito,system-ui,sans-serif;cursor:pointer;
-}
-.rt-agenda-row svg,.rt-agenda-chevron{color:var(--agenda-accent)}
-.rt-agenda-chevron{font-size:19px;text-align:center}
-.rt-agenda-row small{display:block;margin-top:2px;color:var(--agenda-muted);font-size:11px}
-.rt-agenda-row [data-agenda-progress]:not(:empty)::after{
- content:"";display:block;margin-top:4px;height:4px;border-radius:5px;
- background:linear-gradient(90deg,#e4a52b var(--filled,0%),var(--agenda-border) var(--filled,0%));
-}
-.rt-agenda-row .rt-tool-badge{position:absolute;top:5px;right:4px;width:7px;height:7px;border-radius:50%;background:#e5484d;pointer-events:none}
+body #tab-dunya .rt-medal-route .rt-agenda summary svg{width:30px;height:30px;color:#fff;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 2px 1px #004b60)}
 .rt-agenda :is(summary,button):focus-visible{outline:2px solid #2674cf;outline-offset:2px}
-@media(max-height:500px) and (orientation:landscape){
- .rt-agenda-panel{top:-62px;max-height:calc(100dvh - 152px);overflow:auto}
-}
 
 /* Papi görüşme madalyonu */
 body #tab-dunya .rt-medal-route>.dm-papi-chat-shortcut{
