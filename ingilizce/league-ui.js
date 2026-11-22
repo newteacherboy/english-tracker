@@ -60,7 +60,7 @@ function journey(rows,me){
 async function dmVirtualLeagueRows(real){
  const uri='https://nxfqlutulxqzqgwewssd.supabase.co/rest/v1/rpc/dm_virtual_league_entries';
  try{
-  const response=await fetch(uri,{method:'POST',headers:{'Content-Type':'application/json',apikey:'sb_publishable_K9h4CnyaL8xb8B98o8aaFw_s9cMikuF'},body:'{}'});
+  const response=await fetch(uri,{method:'POST',headers:{'Content-Type':'application/json',apikey:'sb_publishable_K9h4CnyaL8xb8B98o8aaFw_s9cMikuF'},body:'{}',signal:globalThis.AbortSignal?.timeout?.(5000)});
   if(!response.ok)throw Error('virtual league unavailable');
   const data=await response.json();
   const bots=Array.isArray(data)?data.filter(x=>x?.is_virtual===true&&Number.isInteger(x.bot_id)&&x.bot_id>0&&x.bot_id<=10&&leagues[x.league]&&typeof x.name==='string'&&x.name.length<=60&&Number.isFinite(Number(x.xp))).map(x=>({id:'virtual-'+x.bot_id,name:x.name,league:x.league,xp:Math.max(0,Math.trunc(Number(x.xp))),rank:0,is_virtual:true})):[];
@@ -434,10 +434,19 @@ function animatePendingRise(){if(pendingRise&&showRankRise(pendingRise))pendingR
 function draw(){if(!onScreen()){clearRise();return;}const old=root.querySelector('.dm-lig');if(old)old.outerHTML=render();if(pendingRise)requestAnimationFrame(animatePendingRise);}
 async function load(force=false,scope=mode){reset();const state=states[scope];if(state.busy||!force&&Date.now()-state.at<60000)return;
  if(scope==='alltime'&&accessLevel()<15)return;const ticket=epoch,account=who();state.busy=true;state.error='';draw();
- try{const result=await fetch(apiURL,{method:'POST',body:JSON.stringify({islem:'seviyeLigListesi',kapsam:scope,ogrenci:account,t:localStorage.getItem('ing_token')||'',...(force?{_:Date.now()}:{})})});const d=await result.json();
+ try{const result=await fetch(apiURL,{method:'POST',signal:globalThis.AbortSignal?.timeout?.(15000),body:JSON.stringify({islem:'seviyeLigListesi',kapsam:scope,ogrenci:account,t:localStorage.getItem('ing_token')||'',...(force?{_:Date.now()}:{})})});const d=await result.json();
   if(!result.ok||d.ok===false||!Array.isArray(d.liste)||scope==='alltime'&&d.kapsam!=='alltime')throw Error('Lig verisi alınamadı.');
   if(account!==who()||ticket!==epoch)return;
-  state.rows=d.liste;state.visualRows=scope==='weekly'?await dmVirtualLeagueRows(d.liste):[];if(account!==who()||ticket!==epoch)return;state.loaded=true;state.at=Date.now();if(scope==='weekly')captureRankRise(account);
+  state.rows=d.liste;state.visualRows=[];state.loaded=true;state.at=Date.now();
+  // Publish the ranking as soon as it arrives. Practice rivals enrich it afterwards.
+  draw();
+  if(scope==='weekly'){
+   root.dispatchEvent(new Event('dm:weekly-league'));
+   const visualRows=await dmVirtualLeagueRows(d.liste);
+   if(account!==who()||ticket!==epoch)return;
+   state.visualRows=visualRows;
+   captureRankRise(account);
+  }
  }catch(e){if(account===who()&&ticket===epoch)state.error=String(e.message||'Güncellenemedi');}
  finally{if(account===who()&&ticket===epoch){state.busy=false;draw();if(scope==='weekly')root.dispatchEvent(new Event('dm:weekly-league'));}}
 }
