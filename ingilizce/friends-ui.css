@@ -1152,25 +1152,81 @@ html[data-dm-theme=night] body #dmDuelRanking :is(.fr-duel-ranking-scope,.fr-due
 #tab-meduakis .fr-arena-footer button .fr-icon {width:14px;height:14px}
 #tab-meduakis .fr-arena-footer button:focus-visible {outline:2px solid #ffda69;outline-offset:2px}
 
-/* Weekly XP race */
-#tab-meduakis .fr-weekly-race {overflow:hidden}
-#tab-meduakis .fr-weekly-race .fr-race-head {background:#075c46;color:#fff}
-#tab-meduakis .fr-race-head h3 {margin:0;padding:8px;text-align:center;color:#fff!important;font:900 clamp(16px,3.5vw,22px)/1.2 Nunito,system-ui}
-.fr-race-head .fr-icon {width:20px;height:20px;color:#ffcb39;vertical-align:middle}
-#tab-meduakis .fr-race-player {display:flex;align-items:center;gap:10px;width:100%;padding:12px;border:0;border-bottom:1px solid #dfe7e3;background:#fff;color:#182447;text-align:left;font:800 14px/1.3 Nunito,system-ui;cursor:pointer;box-sizing:border-box}
-#tab-meduakis .fr-race-player:focus-visible {outline:3px solid #318bfd;outline-offset:-3px}
-#tab-meduakis .fr-race-face {position:relative;flex:none;display:inline-flex;padding-bottom:4px}
-#tab-meduakis .fr-race-face .fr-avatar {--avatar-size:36px!important;width:36px;height:36px;flex:none}
-#tab-meduakis .fr-race-first .fr-avatar {--avatar-size:54px!important;width:54px;height:54px}
-#tab-meduakis .fr-race-face .fr-avatar>.dm-member-badge {font:900 6px/1 Nunito,system-ui!important;letter-spacing:0;padding:1px 2px;border-radius:4px;left:50%;right:auto;top:auto;bottom:-3px;transform:translateX(-50%);max-width:32px;box-sizing:border-box}
-#tab-meduakis .fr-race-face .fr-podium-crown {position:absolute;top:-9px;left:50%;transform:translateX(-50%);width:23px;height:16px}
-#tab-meduakis .fr-race-details {flex:1;min-width:0}
-#tab-meduakis .fr-race-score {display:flex;align-items:baseline;justify-content:space-between;gap:8px;font:800 14px/1.3 Nunito,system-ui}
-#tab-meduakis .fr-race-score strong {overflow-wrap:anywhere;min-width:0}
-#tab-meduakis .fr-race-score b {white-space:nowrap;font-size:13px}
-#tab-meduakis .fr-race-bar {display:block;height:5px;margin-top:7px;background:#e3eae5;border-radius:8px;overflow:hidden}
-#tab-meduakis .fr-race-bar i {display:block;height:100%;border-radius:inherit;background:#42a372}
-#tab-meduakis .fr-race-first {padding:18px 16px 12px;background:#edf6f1;gap:16px}
-#tab-meduakis .fr-race-first .fr-race-details>small:first-child {display:block;margin-bottom:3px;color:#376653;font:800 11px/1.3 Nunito,system-ui;background:none;padding:0}
-#tab-meduakis .fr-race-first .fr-race-score strong {font-size:18px}
-#tab-meduakis .fr-race-first .fr-race-bar i {background:#d8ad35}
+/* Weekly podium */
+#tab-meduakis.fr-home-view .fr-tiles-home .fr-weekly-podium{
+ overflow:hidden;padding:0!important;display:flex;flex-direction:column;gap:0;
+ background:linear-gradient(#eaf4ff,#badbff)!important;border:1px solid #b9cdea;
+ border-radius:20px;box-shadow:0 4px 0 #c6d8ec;
+}
+#tab-meduakis .fr-podium-heading{
+ background:linear-gradient(135deg,#243d77,#111e49);border-radius:16px;
+ margin:7px 7px 0;padding:13px 8px;box-shadow:inset 0 1px 1px #ffffff35,0 3px 5px #18326920;
+}
+#tab-meduakis .fr-podium-heading h3{
+ display:flex;justify-content:center;align-items:center;gap:10px;margin:0;
+ color:#fff!important;-webkit-text-fill-color:#fff!important;
+ font:900 clamp(19px,5vw,27px)/1.2 Nunito,system-ui,sans-serif;
+}
+#tab-meduakis .fr-podium-heading .fr-icon{width:29px;height:29px;color:#ffd255;flex:none}
+#tab-meduakis .fr-podium-stage{
+ display:grid;grid-template-columns:repeat(3,minmax(0,1fr));align-items:end;
+ gap:4px;padding:20px 10px 0;min-width:0;
+}
+#tab-meduakis .fr-podium-player{
+ display:flex;flex-direction:column;align-items:center;justify-content:flex-end;
+ position:relative;grid-row:1;min-width:0;width:100%;margin:0;padding:0;border:0;background:none;
+ color:#142958;text-align:center;cursor:pointer;font-family:Nunito,system-ui,sans-serif;
+}
+#tab-meduakis .fr-podium-place-1{grid-column:2}
+#tab-meduakis .fr-podium-place-2{grid-column:1}
+#tab-meduakis .fr-podium-place-3{grid-column:3}
+#tab-meduakis .fr-podium-copy{
+ display:grid;gap:3px;align-content:center;width:100%;min-height:44px;box-sizing:border-box;
+ padding:5px 3px;border:1px solid #c9ddff;border-radius:13px;background:#ffffffed;
+ box-shadow:0 2px 4px #4568a522;font:900 clamp(10px,2.8vw,14px)/1.15 Nunito,system-ui;
+}
+#tab-meduakis .fr-podium-copy strong{overflow-wrap:anywhere;min-width:0}
+#tab-meduakis .fr-podium-copy b{white-space:nowrap;font-size:clamp(10px,2.8vw,13px)}
+#tab-meduakis .fr-podium-face{
+ position:relative;display:flex;align-items:flex-end;justify-content:center;
+ width:100%;height:76px;padding-top:10px;box-sizing:border-box;
+}
+#tab-meduakis .fr-podium-place-1 .fr-podium-face{height:92px}
+#tab-meduakis .fr-podium-face .fr-avatar{
+ --avatar-size:60px!important;width:60px!important;height:60px!important;flex:none;
+}
+#tab-meduakis .fr-podium-place-1 .fr-avatar{--avatar-size:74px!important;width:74px!important;height:74px!important}
+#tab-meduakis .fr-podium-face img{max-width:100%;max-height:100%;object-fit:contain}
+#tab-meduakis .fr-podium-face .fr-podium-crown{
+ position:absolute;top:0;left:50%;transform:translateX(-50%);width:25px;height:18px;
+}
+#tab-meduakis .fr-podium-face .dm-member-badge{
+ position:absolute!important;top:auto!important;bottom:-2px!important;left:50%!important;
+ right:auto!important;transform:translateX(-50%);width:auto!important;max-width:38px;
+ padding:2px 3px!important;border-radius:5px;font:900 7px/1 Nunito,system-ui!important;
+}
+#tab-meduakis .fr-podium-block{
+ display:grid;place-items:center;width:100%;height:51px;box-sizing:border-box;
+ border:1px solid #9cacc5;border-radius:9px 9px 0 0;background:linear-gradient(110deg,#f4f7ff,#aab9d2);
+ box-shadow:inset 0 3px 1px #ffffffa0;color:#435371;font:900 31px/1 Nunito,system-ui;
+}
+#tab-meduakis .fr-podium-place-1 .fr-podium-block{
+ height:74px;background:linear-gradient(110deg,#ffe783,#ffc734 55%,#e9ab1d);
+ border-color:#d8a32a;color:#83540c;font-size:40px;
+}
+#tab-meduakis .fr-podium-place-3 .fr-podium-block{
+ height:42px;background:linear-gradient(110deg,#ffd8b9,#dba475);border-color:#cb9169;color:#814d2c;
+}
+#tab-meduakis .fr-podium-virtual{position:absolute;bottom:2px;font-size:8px;line-height:10px}
+#tab-meduakis .fr-podium-player:has(.fr-podium-virtual){padding-bottom:0}
+#tab-meduakis.fr-home-view .fr-tiles-home .fr-weekly-podium>.fr-podium-footer{
+ display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;
+ margin:0;padding:10px!important;background:#e5f0ff!important;color:#142958!important;
+}
+#tab-meduakis.fr-home-view .fr-tiles-home .fr-weekly-podium .fr-league-self{color:#142958!important;min-width:0;font-size:11px}
+#tab-meduakis.fr-home-view .fr-tiles-home .fr-weekly-podium .fr-podium-footer .fr-link{
+ display:flex;align-items:center;justify-content:center;gap:4px;min-height:36px;
+ padding:6px 10px;border:1px solid #3269ed;border-radius:12px;background:linear-gradient(#548dff,#1d58de)!important;
+ color:#fff!important;font:900 11px/1.15 Nunito,system-ui;box-shadow:0 2px 0 #2048aa;
+}
+#tab-meduakis .fr-podium-player:focus-visible{outline:3px solid #276bdf;outline-offset:2px;border-radius:12px}

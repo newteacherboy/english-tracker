@@ -52,19 +52,19 @@
     const data=allowed?window.dmLeagueUI?.weeklyPreview?.():null;
     const crown='<svg class="fr-podium-crown" viewBox="0 0 40 26" aria-hidden="true"><path d="m4 7 9 7 7-11 7 11 9-7-4 16H8z" fill="#ffda64" stroke="#ffefaa" stroke-width="1.5" stroke-linejoin="round"/><g fill="#fff0a6"><circle cx="4" cy="7" r="3"/><circle cx="20" cy="3" r="3"/><circle cx="36" cy="7" r="3"/></g></svg>';
     const leaders=(data?.top || []).slice(0,3).map((player,index)=>{
-      const first=index===0, size=first?66:36;
-      const share=data.top[0].xp>0?Math.min(100,Math.max(0,100*player.xp/data.top[0].xp)):0;
-      const portrait=player.is_virtual?(window.dmLeagueUI?.virtualMemberAvatar?.(player,size,'friends')||'<img width="36" src="friends-assets/papi-fencer.webp" alt="Papi">'):avatar(player.name,size,player.membership_tier);
-      return `<button type="button" class="fr-race-player ${first?'fr-race-first':''}" data-friend-action="${player.is_virtual?'virtual-duel':'profile'}" data-person="${esc(player.name)}" data-bot-id="${player.is_virtual?esc(player.id):''}">
-        ${first?'':'<b>'+esc(player.displayRank??player.rank)+'.</b>'}<span class="fr-race-face">${portrait}${first?crown:''}</span>
-        <span class="fr-race-details">${first?'<small>Haftanın lideri</small>':''}<span class="fr-race-score"><strong>${esc(player.name)}</strong><b>${xp(player.xp)} XP</b></span>
-        ${player.is_virtual?'<small>Sanal Rakip</small>':''}<span class="fr-race-bar" aria-hidden="true"><i style="width:${share}%"></i></span></span>
-        </button>`;
+      const rank=index+1,size=rank===1?74:60;
+      const portrait=player.is_virtual?(window.dmLeagueUI?.virtualMemberAvatar?.(player,size,'friends')||'<img width="60" src="friends-assets/papi-fencer.webp" alt="Papi">'):avatar(player.name,size,player.membership_tier);
+      return `<button type="button" class="fr-podium-player fr-podium-place-${rank}" data-friend-action="${player.is_virtual?'virtual-duel':'profile'}" data-person="${esc(player.name)}" data-bot-id="${player.is_virtual?esc(player.id):''}">
+        <span class="fr-podium-copy"><strong>${esc(player.name)}</strong><b>${xp(player.xp)} XP</b></span>
+        <span class="fr-podium-face">${portrait}${rank===1?crown:''}</span>
+        <span class="fr-podium-block" aria-label="${esc(player.displayRank??player.rank??rank)}. sıra">${esc(player.displayRank??player.rank??rank)}</span>
+        ${player.is_virtual?'<small class="fr-podium-virtual">Sanal Rakip</small>':''}
+      </button>`;
     }).join('');
     const status=!allowed?'Lig 5. seviyede açılır.':data?.error&&!data.loaded?'Sıralama şu anda alınamadı.':data?.loaded?'Bu ligde henüz sıralama yok.':'Sıralama yükleniyor…';
-    return `<section class="fr-league-board fr-weekly-race" aria-label="Haftalık lig">
-      <div class="fr-race-head"><h3>${icon('trophy')} ${esc(data?.title||'Yerel Lig')}</h3></div>
-      ${leaders?'<div class="fr-race-list">'+leaders+'</div>':'<p class="fr-league-status" role="status">'+status+'</p>'}
+    return `<section class="fr-league-board fr-weekly-podium" aria-label="Haftalık lig">
+      <div class="fr-podium-heading"><h3>${icon('trophy')} ${esc(data?.title||'Yerel Lig')}</h3></div>
+      ${leaders?'<div class="fr-podium-stage">'+leaders+'</div>':'<p class="fr-league-status" role="status">'+status+'</p>'}
       <div class="fr-podium-footer">
         ${data?.me?`<div class="fr-league-self">${avatar(who(),27,data.me.membership_tier)}<b>Sen · ${esc(data.me.rank)}. sıra · ${xp(data.me.xp)} XP</b></div>`:''}
         <button type="button" class="fr-link" data-friend-action="lig" data-friends-gate="lig">Sıralamayı gör ${icon('chevron')}</button>
