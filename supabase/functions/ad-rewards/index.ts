@@ -34,8 +34,8 @@ Deno.serve(async req=>{
   if(error)return reply({error:'Ayarlar şu an okunamadı'},503);
   return reply(data);
  }
- if(!['create','status','cancel'].includes(body.action)||(body.action==='create'? !['energy','gold'].includes(body.kind)||!uuid(body.requestKey):!uuid(body.id)))return reply({error:'Invalid action'},400);
- const {data,error}=await db.rpc('dm_ad_intent',{p_actor:s.student_id,p_action:body.action,p_kind:body.kind||null,p_id:body.id||null,p_request:body.requestKey||null});
+ if(!['create','status','cancel'].includes(body.action)||(body.action==='create'? !['energy','gold','play'].includes(body.kind)||!uuid(body.requestKey)||(body.kind==='play'&&!uuid(body.offerId)):!uuid(body.id)))return reply({error:'Invalid action'},400);
+ const {data,error}=await db.rpc('dm_ad_intent',{p_actor:s.student_id,p_action:body.action,p_kind:body.kind||null,p_id:body.action==='create'&&body.kind==='play'?body.offerId:body.id||null,p_request:body.requestKey||null});
  if(error)return reply({error:error.code==='P0001'?error.message:'İşlem şu an tamamlanamadı'},error.code==='P0001'?409:503);
  return reply(data);
 });

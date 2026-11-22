@@ -48,6 +48,7 @@ export function createAdPolicy({ now = Date.now, storage, owner = 'preview', set
       day();
       const c = cfg();
       if (!c.enabled || !c.rewarded) return false;
+      if(kind==='play')return true; // Server enforces the specific offer quota.
       return ['energy','gold'].includes(kind) && state[kind] < (kind==='energy'?c.dailyEnergy:c.dailyGold);
     },
     rewardClosed(kind, completed) { day();state.lastFullscreen=now();if(completed&&['energy','gold'].includes(kind))state[kind]++;save(); },

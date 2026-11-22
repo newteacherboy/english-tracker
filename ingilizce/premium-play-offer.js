@@ -34,12 +34,12 @@
   const enabled=window.dmAndroidPlacements?.rewardEnabled?.()!==false;
   const available=typeof window.dmAndroidAds?.show==='function'&&enabled&&!window.dmAndroidIsTeacher?.();
   if(!available){video.disabled=true;msg.textContent='Ödüllü reklam şu anda kullanılamıyor. Reklam destekli uygulamada tekrar deneyebilirsin.';}
-  else if(window.dmAndroidPlacements?.rewardAllowed?.('energy')===false){video.disabled=true;msg.textContent='Bugünkü reklam hakkın da doldu. Yarın tekrar oynayabilirsin.';}
+  else if(window.dmAndroidPlacements?.rewardAllowed?.(window.dmAndroidAds?.supportsPlayPurpose?'play':'energy')===false){video.disabled=true;msg.textContent='Bugünkü reklam hakkın da doldu. Yarın tekrar oynayabilirsin.';}
   video.onclick=async()=>{
    if(busy||!alive())return;busy=true;veil.querySelectorAll('button').forEach(b=>b.disabled=true);msg.textContent=recheck?'Oyun hakkın kontrol ediliyor…':'Reklam hazırlanıyor…';
    try{
     if(!recheck){const offer=await request('ad-prepare',game,{},owner);offerId=offer.offerId;if(!alive())return;
-     const result=await window.dmAndroidAds.show('energy');if(!alive())return;
+     const result=window.dmAndroidAds.supportsPlayPurpose ? await window.dmAndroidAds.show('play',offerId) : await window.dmAndroidAds.show('energy');if(!alive())return;
      if(result.test)throw Error('Test reklamları gerçek oyun hakkı kazandırmaz.');
      if(!result.completed)throw Error('Reklamı tamamladığında 1 oyun hakkı kazanabilirsin.');
      recheck=true;

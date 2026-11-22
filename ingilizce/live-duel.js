@@ -78,7 +78,7 @@ function closeLayer(silent) {
 /* ---------- Hak bitti paneli ---------- */
 function adAvailable() {
   const enabled = window.dmAndroidPlacements?.rewardEnabled?.() !== false;
-  return typeof window.dmAndroidAds?.show === 'function' && enabled && !window.dmAndroidIsTeacher?.() && window.dmAndroidPlacements?.rewardAllowed?.('energy') !== false;
+  return typeof window.dmAndroidAds?.show === 'function' && enabled && !window.dmAndroidIsTeacher?.() && window.dmAndroidPlacements?.rewardAllowed?.(window.dmAndroidAds?.supportsPlayPurpose?'play':'energy') !== false;
 }
 const HOLD_WAIT_S = 45; // Reklam izleyen rakip için en fazla bekleme (sunucudaki dm_duel_live_hold ile aynı)
 function paywall(kind, message, retry, hold) {
@@ -185,7 +185,7 @@ function paywall(kind, message, retry, hold) {
         const offer = await rpc('dm_duel_ad', {p_kind: live ? 'live' : 'papi', p_op: 'prepare'}, owner);
         if (!offer.ok) throw Error(offer.message || 'Reklam hazırlanamadı.');
         offerId = offer.offerId;
-        const result = await window.dmAndroidAds.show('energy');
+        const result = window.dmAndroidAds.supportsPlayPurpose ? await window.dmAndroidAds.show('play',offerId) : await window.dmAndroidAds.show('energy');
         if (result?.test) throw Error('Test reklamları gerçek düello hakkı kazandırmaz.');
         if (!result?.completed) throw Error('Reklamı tamamladığında 1 düello hakkı kazanırsın.');
         if (typeof result.energy === 'number') { window.genelEnerjiKalan = result.energy; window.headerEnerjiGoster?.(result.energy, window.genelEnerjiMax || 25); }

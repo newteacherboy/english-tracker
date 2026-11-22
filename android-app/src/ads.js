@@ -25,9 +25,10 @@ export function createTestAds(admob, win, events, options = {}) {
     units: production ? options.units : null,
     testUnits: options.testUnits || null,
     ensureInitialized,
+    supportsPlayPurpose: true,
     get busy() { return busy; },
-    async show(kind = 'energy') {
-      if (!['energy', 'gold'].includes(kind)) throw new Error('Geçersiz reklam ödülü.');
+    async show(kind = 'energy', offerId = null) {
+      if (!['energy', 'gold', 'play'].includes(kind) || (kind==='play' && !offerId)) throw new Error('Geçersiz reklam ödülü.');
       if (teacherMode(win)) throw new Error('Öğretmen modunda reklam gösterilmez.');
       if (busy || win.dmAndroidFullscreenBusy) throw new Error('Reklam zaten hazırlanıyor.');
       if (win.dmAndroidPlacements?.rewardAllowed(kind) === false) throw new Error('Bugünkü reklam hakkın tamamlandı.');
@@ -43,8 +44,8 @@ export function createTestAds(admob, win, events, options = {}) {
         listeners.push(await admob.addListener(events.Rewarded, () => { reward = true; }));
         listeners.push(await admob.addListener(events.Dismissed, () => finish.resolve()));
         listeners.push(await admob.addListener(events.FailedToShow, () => finish.reject(new Error('Reklam gösterilemedi.'))));
-        if(production)intent=await rewardClient.create(kind);
-        await admob.prepareRewardVideoAd({ adId: production ? options.units[kind] : (options.testUnits?.reward || 'ca-app-pub-3940256099942544/5224354917'), isTesting: !production, npa:true, ...(intent ? {ssv:{customData:intent.id}} : {}) });
+        if(production)intent=await rewardClient.create(kind,offerId);
+        await admob.prepareRewardVideoAd({ adId: production ? options.units[kind==='play'?'energy':kind] : (options.testUnits?.reward || 'ca-app-pub-3940256099942544/5224354917'), isTesting: !production, npa:true, ...(intent ? {ssv:{customData:intent.id}} : {}) });
         if (teacherMode(win)) throw new Error('Öğretmen modunda reklam gösterilmez.');
         timer = setTimeout(() => finish.reject(new Error('Reklam yanıt vermedi. Yeniden deneyebilirsin.')), 180000);
         await Promise.race([admob.showRewardVideoAd(), closed]);
