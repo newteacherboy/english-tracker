@@ -53,12 +53,12 @@ html[data-dm-theme="day"] body #tab-dunya .rt-medal-route .rt-medal-unit button{
 /* Kütüphane / Plan / Görevler: renkli ikon karoları */
 html[data-dm-theme="day"] body #tab-dunya .rt-medal-route .rt-medal-tools{gap:10px!important}
 /* Claude Design F: kartsız, arka plana oturan yuvarlak ikonlar */
-html[data-dm-theme="day"] body #tab-dunya .rt-medal-route .rt-medal-tools button{min-height:86px!important;gap:6px!important;padding:2px 2px 4px!important;border:0!important;border-radius:16px!important;background:none!important;box-shadow:none!important;color:#0F2747!important;font-weight:900!important;font-size:14px!important;white-space:nowrap}
-html[data-dm-theme="day"] body #tab-dunya .rt-medal-route .rt-medal-tools button>svg{display:none!important}
-html[data-dm-theme="day"] body #tab-dunya .rt-medal-route .rt-medal-tools button::before{content:"";width:62px;height:62px;border-radius:50%;background:url('route-assets/bilgi-icons/study.webp') 50% 50%/46px no-repeat,radial-gradient(circle,#fff 0 55%,#fff0 72%);flex:none}
-html[data-dm-theme="day"] body #tab-dunya .rt-medal-route .rt-medal-tools button[data-rt=plan]::before{background:url('route-assets/bilgi-icons/calendar.webp') 50% 50%/46px no-repeat,radial-gradient(circle,#fff 0 55%,#fff0 72%)}
-html[data-dm-theme="day"] body #tab-dunya .rt-medal-route .rt-medal-tools button[data-rt=missions]::before{background:url('route-assets/bilgi-icons/tasks.webp') 50% 50%/46px no-repeat,radial-gradient(circle,#fff 0 55%,#fff0 72%)}
-html[data-dm-theme="day"] body #tab-dunya .rt-medal-route .rt-medal-tools button:active::before{transform:scale(.94)}
+html[data-dm-theme="day"] body #tab-dunya .rt-medal-route .rt-medal-tools>button{min-height:86px!important;gap:6px!important;padding:2px 2px 4px!important;border:0!important;border-radius:16px!important;background:none!important;box-shadow:none!important;color:#0F2747!important;font-weight:900!important;font-size:14px!important;white-space:nowrap}
+html[data-dm-theme="day"] body #tab-dunya .rt-medal-route .rt-medal-tools>button>svg{display:none!important}
+html[data-dm-theme="day"] body #tab-dunya .rt-medal-route .rt-medal-tools>button::before{content:"";width:62px;height:62px;border-radius:50%;background:url('route-assets/bilgi-icons/study.webp') 50% 50%/46px no-repeat,radial-gradient(circle,#fff 0 55%,#fff0 72%);flex:none}
+html[data-dm-theme="day"] body #tab-dunya .rt-medal-route .rt-medal-tools>button[data-rt=plan]::before{background:url('route-assets/bilgi-icons/calendar.webp') 50% 50%/46px no-repeat,radial-gradient(circle,#fff 0 55%,#fff0 72%)}
+html[data-dm-theme="day"] body #tab-dunya .rt-medal-route .rt-medal-tools>button[data-rt=missions]::before{background:url('route-assets/bilgi-icons/tasks.webp') 50% 50%/46px no-repeat,radial-gradient(circle,#fff 0 55%,#fff0 72%)}
+html[data-dm-theme="day"] body #tab-dunya .rt-medal-route .rt-medal-tools>button:active::before{transform:scale(.94)}
 /* kırmızı bildirim noktası ikonun köşesinde */
 html[data-dm-theme="day"] body #tab-dunya .rt-medal-route .rt-medal-tools .rt-tool-badge{top:4px!important;right:calc(50% - 30px)!important;left:auto!important}
 html[data-dm-theme="day"] body #tab-dunya .rt-medal-route .rt-medal-divider{color:#5D7A9C!important}
@@ -268,71 +268,90 @@ body #tab-dunya .rt-route-explorer:hover .rt-route-name{text-decoration:underlin
 @keyframes dmLpChatInvite{0%,2%,34%,49%,82%,100%{opacity:0;visibility:hidden;transform:translateX(8px) scale(.94)}5%,30%,53%,78%{opacity:1;visibility:visible;transform:none}}
 @media(prefers-reduced-motion:reduce){.dm-lp-say.dm-lp-chat-invite{animation:none;opacity:1;visibility:visible;transform:none}}
 
-/* Selected compact Papi chat head. The route stays visible behind this edge control. */
-body #tab-dunya .rt-medal-route>.dm-papi-chat-shortcut{position:absolute;right:12px;top:52%;z-index:7;display:flex;align-items:center;justify-content:flex-end;max-width:140px;height:54px;min-height:44px;margin:0;padding:0;border:0;background:none;box-shadow:none;color:#572aaf;cursor:pointer;touch-action:manipulation;font:900 12px/18px Nunito,system-ui,sans-serif}
-.dm-papi-chat-label{display:flex;align-items:center;gap:4px;white-space:nowrap;padding:9px 15px 9px 11px;border:1px solid #c5b0fa;border-radius:22px 0 0 22px;background:linear-gradient(120deg,#f1eaff,#e3d4ff);box-shadow:0 3px 10px #643bb522}
-.dm-papi-chat-avatar{position:relative;display:block;flex:none;width:52px;height:52px;box-sizing:border-box;margin-left:-7px;border:3px solid #fff;border-radius:50%;background:linear-gradient(#eafefa,#c8f3e7);box-shadow:0 0 0 2px #c3adff,0 4px 12px #54359d33}
-.dm-papi-chat-avatar>svg{display:block;width:100%;height:100%;border-radius:50%;overflow:hidden}
-.dm-papi-chat-badge{position:absolute;top:-7px;right:-5px;display:grid;place-items:center;width:23px;height:16px;border:2px solid #fff;border-radius:12px;background:#8649ee;color:#fff;font:900 11px/1 system-ui;letter-spacing:1px}
-.dm-papi-chat-shortcut:focus-visible{outline:3px solid #8b54dc;outline-offset:5px;border-radius:30px}
-body #tab-dunya:not(.active) .dm-papi-chat-shortcut,body.dm-play-session #tab-dunya .dm-papi-chat-shortcut{display:none!important}
-html[data-dm-theme=night] .dm-papi-chat-label{background:#3b2a5b;border-color:#8060ba;color:#f5edff}
-@media(max-width:355px){body #tab-dunya .rt-medal-route>.dm-papi-chat-shortcut{right:8px;font-size:11px}.dm-papi-chat-label{padding-left:8px;padding-right:11px}.dm-papi-chat-avatar{width:48px;height:48px}}
-
-/* Parkur agenda and Papi call */
-#tab-dunya .rt-agenda summary{box-sizing:border-box;display:grid;justify-items:center;gap:3px;cursor:pointer;pointer-events:auto;background:linear-gradient(#12d5cc,#058c9c);color:white;padding:6px;border:2px solid #99fff2;border-radius:16px;box-shadow:0 3px 0 #046e79;font:900 12px Nunito,system-ui}
-.rt-agenda summary::-webkit-details-marker{display:none}
-.rt-agenda summary svg{width:30px;height:30px;color:#fff6c7}
-.rt-agenda:not([open])>.rt-agenda-panel{display:none}
-.rt-agenda[open]{z-index:25}
-.rt-agenda-panel{pointer-events:auto;position:absolute;left:calc(100% + 6px);top:0;width:min(216px,calc(100vw - 98px));box-sizing:border-box;padding:12px;border-radius:18px;background:#fff6e4;color:#492c1e;box-shadow:0 5px 22px #301c2955;text-align:left}
-.rt-agenda-panel strong{font:900 20px Nunito,system-ui}
-#tab-dunya .rt-agenda-panel button{display:flex;align-items:center;gap:8px;width:100%;border:1px solid #e9d6b3;border-radius:12px;padding:9px;margin-top:6px;background:#fffcf4;color:#492c1e;text-align:left;font:800 14px Nunito,system-ui;cursor:pointer}
-#tab-dunya .rt-agenda-panel button::before{display:none!important}
-#tab-dunya .rt-agenda-panel button[data-rt=agenda-close]{position:absolute;right:9px;top:5px;width:30px;height:30px;justify-content:center}
-.rt-agenda-panel svg{width:26px;height:26px;color:#357aba}.rt-agenda-panel span{flex:1}.rt-agenda-panel small{display:block;font-size:11px}.rt-agenda-panel [data-agenda-progress]:not(:empty)::after{content:"";display:block;margin-top:3px;height:4px;border-radius:5px;background:linear-gradient(90deg,#efad22 var(--filled),#dfd3bd var(--filled))}
-body #tab-dunya .rt-medal-route>.dm-papi-chat-shortcut{height:auto;min-height:48px;gap:3px;flex-direction:row-reverse;padding:3px 6px 3px 3px;border:2px solid #9effff;border-radius:28px;background:linear-gradient(115deg,#007f97,#5634ac 75%,#802db8);box-shadow:0 0 9px #53edf6,0 0 14px #ad72ff;animation:rtCallGlow 3s ease-in-out infinite alternate}
-#tab-dunya .dm-papi-chat-label{display:block;padding:0;border:0;background:none;box-shadow:none;color:white;text-align:center;font:900 11px/1.06 Nunito,system-ui}
-.dm-papi-chat-label svg{display:block;margin:0 auto 2px}
-#tab-dunya .dm-papi-chat-avatar{margin:0;width:38px;height:38px}
-@keyframes rtCallGlow{to{box-shadow:0 0 4px #53edf6,0 0 7px #ad72ff}}
-@media(prefers-reduced-motion:reduce){body #tab-dunya .rt-medal-route>.dm-papi-chat-shortcut{animation:none}}
-
-/* Compact reference-inspired controls; keep the route and existing actions intact. */
+/* Ajandam */
+body #tab-dunya .rt-medal-route .rt-medal-header:has(.rt-agenda[open]){z-index:8}
 body #tab-dunya .rt-medal-route .rt-agenda summary{
- width:62px;min-height:66px;padding:7px 2px 6px;gap:4px;
- border:2px solid #8afffa;border-radius:17px;
+ box-sizing:border-box;display:grid;justify-items:center;width:62px;min-height:66px;
+ padding:7px 2px 6px;gap:4px;border:2px solid #8afffa;border-radius:17px;
+ cursor:pointer;pointer-events:auto;color:#fff;
  background:linear-gradient(155deg,#17dfdf 0%,#079cae 43%,#005468 100%);
  box-shadow:inset 0 2px 3px #b4ffffa0,inset 0 -3px 4px #003d6870,0 4px 0 #004c60,0 5px 9px #006a8150;
  font:900 11px/1.15 Nunito,system-ui,sans-serif;text-shadow:0 2px 2px #003849;
  white-space:nowrap;list-style:none;
 }
+.rt-agenda summary::-webkit-details-marker{display:none}
 body #tab-dunya .rt-medal-route .rt-agenda summary svg{width:30px;height:30px;color:#fff;filter:drop-shadow(0 2px 1px #004b60)}
+.rt-agenda:not([open])>.rt-agenda-panel{display:none}
+.rt-agenda-panel{
+ --agenda-surface:#fff7e2;--agenda-row:#fffdf6;--agenda-ink:#352751;
+ --agenda-muted:#66587b;--agenda-accent:#5b398d;--agenda-border:#e5d7b8;
+ position:absolute;left:calc(100% + 8px);top:0;box-sizing:border-box;
+ width:min(254px,calc(100vw - 96px));display:grid;gap:7px;padding:9px;
+ border:1px solid var(--agenda-border);border-radius:17px;background:var(--agenda-surface);
+ color:var(--agenda-ink);box-shadow:0 8px 22px #1c163b40;text-align:left;pointer-events:auto;
+}
+html[data-dm-theme="night"] .rt-agenda-panel{
+ --agenda-surface:#261d3c;--agenda-row:#372a50;--agenda-ink:#fff7e8;
+ --agenda-muted:#e0d0f6;--agenda-accent:#dfc3ff;--agenda-border:#65537f;
+}
+.rt-agenda-heading{display:flex;align-items:center;justify-content:space-between;gap:6px;padding-left:4px}
+.rt-agenda-heading strong{font:900 18px/1.15 Nunito,system-ui,sans-serif}
+body #tab-dunya .rt-agenda-heading button{
+ display:grid;place-items:center;flex:none;width:44px;height:44px;padding:0;border:0;
+ border-radius:12px;background:transparent;color:var(--agenda-accent);font:800 24px/1 system-ui;cursor:pointer;
+}
+body #tab-dunya .rt-agenda-panel .rt-agenda-row{
+ position:relative;display:grid;grid-template-columns:22px minmax(0,1fr) 12px;align-items:center;
+ gap:8px;min-height:51px;padding:7px;width:100%;margin:0;box-sizing:border-box;
+ border:1px solid var(--agenda-border);border-radius:12px;background:var(--agenda-row);
+ color:var(--agenda-ink);text-align:left;font:900 13px/1.15 Nunito,system-ui,sans-serif;cursor:pointer;
+}
+.rt-agenda-row svg,.rt-agenda-chevron{color:var(--agenda-accent)}
+.rt-agenda-chevron{font-size:19px;text-align:center}
+.rt-agenda-row small{display:block;margin-top:2px;color:var(--agenda-muted);font-size:11px}
+.rt-agenda-row [data-agenda-progress]:not(:empty)::after{
+ content:"";display:block;margin-top:4px;height:4px;border-radius:5px;
+ background:linear-gradient(90deg,#e4a52b var(--filled,0%),var(--agenda-border) var(--filled,0%));
+}
+.rt-agenda-row .rt-tool-badge{position:absolute;top:5px;right:4px;width:7px;height:7px;border-radius:50%;background:#e5484d;pointer-events:none}
+.rt-agenda :is(summary,button):focus-visible{outline:2px solid #2674cf;outline-offset:2px}
+
+/* Papi görüşme madalyonu */
 body #tab-dunya .rt-medal-route>.dm-papi-chat-shortcut{
- box-sizing:border-box;width:clamp(116px,35vw,142px);max-width:calc(100% - 12px);
- min-height:53px;height:auto;right:4px;gap:3px;padding:4px 5px 4px 3px;
- display:grid;grid-template-columns:36px minmax(0,1fr);align-items:center;
- border:2px solid transparent;border-radius:26px;overflow:visible;
- background:linear-gradient(120deg,#006e9a,#1b2b81 50%,#6205a5) padding-box,linear-gradient(110deg,#7dffff,#00dfff 45%,#f4a0ff 90%) border-box;
- box-shadow:0 0 5px #00eaff,0 0 9px #bf60ff80,inset 0 2px 5px #ffffff55;
+ position:absolute;right:12px;top:52%;z-index:7;display:block;box-sizing:border-box;
+ width:52px;height:52px;min-height:0;margin:0;padding:0;border:3px solid transparent;border-radius:50%;
+ background:radial-gradient(circle at 35% 23%,#00bdc9,#192c7d 62%,#511ba5) padding-box,
+  linear-gradient(120deg,#aaffff,#08dce8 43%,#e48aff) border-box;
+ box-shadow:0 0 0 1px #3f79ef,0 4px 0 #29126d,0 0 10px #34d8ec;
+ color:white;cursor:pointer;touch-action:manipulation;overflow:visible;
  animation:rtCallGlow 3s ease-in-out infinite alternate;
 }
-body #tab-dunya .rt-medal-route .dm-papi-chat-label{
- grid-column:2;grid-row:1;min-width:0;width:100%;box-sizing:border-box;
- padding:0!important;white-space:normal!important;overflow-wrap:normal;
- font:900 clamp(9px,2.65vw,11px)/1.15 Nunito,system-ui,sans-serif;
- text-shadow:0 1px 2px #130b55;letter-spacing:0;
+.dm-papi-chat-avatar{position:absolute;inset:0;display:grid;place-items:center;border-radius:50%;overflow:hidden}
+.dm-papi-chat-avatar img{
+ display:block;width:100%;height:100%;max-width:none;object-fit:contain;transform:translateY(-3px) scale(2.45);
 }
-body #tab-dunya .rt-medal-route .dm-papi-chat-label svg{width:14px;height:11px;margin:0 auto 2px}
-body #tab-dunya .rt-medal-route .dm-papi-chat-avatar{
- grid-column:1;grid-row:1;width:36px;height:36px;margin:0;border:2px solid #80ffff;
- background:radial-gradient(circle at 40% 30%,#21c8db,#004b77);
- box-shadow:0 0 5px #00f6ff;overflow:visible;
+.dm-papi-chat-camera{
+ position:absolute;right:-4px;top:-3px;box-sizing:content-box;padding:3px;
+ color:white;background:#4e28a9;border:1px solid #c8a8ff;border-radius:8px;
 }
-body #tab-dunya .rt-medal-route .dm-papi-chat-avatar img{display:block;width:100%;height:100%;object-fit:contain;transform:scale(1.16);pointer-events:none}
-body #tab-dunya .rt-medal-route>.dm-papi-chat-shortcut::after{
- content:"";position:absolute;right:5px;top:-4px;width:12px;height:12px;background:#fff;
- clip-path:polygon(50% 0,62% 38%,100% 50%,62% 62%,50% 100%,38% 62%,0 50%,38% 38%);
- pointer-events:none;
+.dm-papi-chat-label{
+ position:absolute;bottom:-6px;left:50%;transform:translateX(-50%);padding:2px 4px;
+ border:1px solid #78ddff;border-radius:5px;background:#322179;color:white;
+ font:900 7px/1.05 Nunito,system-ui,sans-serif;text-align:center;white-space:nowrap;
 }
-@media(prefers-reduced-motion:reduce){body #tab-dunya .rt-medal-route>.dm-papi-chat-shortcut{animation:none}}
+.dm-papi-chat-hello{
+ position:absolute;right:calc(100% + 6px);top:-5px;padding:4px 6px;
+ border:1px solid #b4dcff;border-radius:10px 10px 2px 10px;background:#fff;color:#352179;
+ font:900 10px/1 Nunito,system-ui,sans-serif;pointer-events:none;opacity:0;
+ animation:rtCallHello 14s ease-in-out infinite;
+}
+.dm-papi-chat-shortcut:focus-visible{outline:3px solid #7953e0;outline-offset:5px}
+body #tab-dunya:not(.active) .dm-papi-chat-shortcut,body.dm-play-session #tab-dunya .dm-papi-chat-shortcut{display:none!important}
+@keyframes rtCallGlow{to{box-shadow:0 0 0 1px #6ea6ff,0 4px 0 #29126d,0 0 7px #34d8ec,0 0 12px #c369ff}}
+@keyframes rtCallHello{0%,60%,90%,100%{opacity:0}65%,84%{opacity:1}}
+@media(max-width:355px){
+ body #tab-dunya .rt-medal-route>.dm-papi-chat-shortcut{right:8px;width:48px;height:48px}
+}
+@media(prefers-reduced-motion:reduce){
+ body #tab-dunya .rt-medal-route>.dm-papi-chat-shortcut,.dm-papi-chat-hello{animation:none}
+}
