@@ -37,13 +37,16 @@
   svg.style.top=top+'px';svg.style.height=h+'px';svg.setAttribute('height',h);svg.setAttribute('viewBox','0 0 '+w+' '+h);
   const [p1,p2]=svg.querySelectorAll('path');p1.setAttribute('d',all);p2.setAttribute('d',done);
  }
- /* Selected design 2: a compact chat head at the edge of the visible route. */
  function shortcut(route){
   route.querySelectorAll('.dm-lp-lane').forEach(el=>el.remove());
   if(route.querySelector(':scope>.dm-papi-chat-shortcut'))return;
   const button=document.createElement('button');button.type='button';button.className='dm-papi-chat-shortcut';
   button.setAttribute('aria-label','Papi ile görüntülü konuş');
-  button.innerHTML='<span class="dm-papi-chat-label"><svg aria-hidden="true" width="17" height="13" viewBox="0 0 20 14" fill="currentColor"><rect width="13" height="14" rx="3"/><path d="m14 5 6-4v12l-6-4z"/></svg>Papi ile<br>görüntülü konuş</span><span class="dm-papi-chat-avatar" aria-hidden="true"><img src="papi-welcome-v2.png" alt="" width="36" height="36" decoding="async"></span>';
+  button.innerHTML=`
+   <span class="dm-papi-chat-avatar" aria-hidden="true"><img src="oyna-assets/oyna-papi-cta.png" alt="" decoding="async"></span>
+   <svg class="dm-papi-chat-camera" aria-hidden="true" width="12" height="9" viewBox="0 0 20 14" fill="currentColor"><rect width="13" height="14" rx="3"/><path d="m14 5 6-4v12l-6-4z"/></svg>
+   <span class="dm-papi-chat-label" aria-hidden="true">Papi ile<br>görüntülü konuş</span>
+   <span class="dm-papi-chat-hello" aria-hidden="true" lang="en">Hello!</span>`;
   button.onclick=()=>{if(window.dmPapiChat?.open)window.dmPapiChat.open();else window.yoToast?.('Sohbet hazırlanıyor. Birazdan tekrar dene.');};
   route.append(button);
  }
