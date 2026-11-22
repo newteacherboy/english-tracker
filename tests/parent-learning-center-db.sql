@@ -1,0 +1,32 @@
+begin;
+do $$
+declare p uuid; other_parent uuid; s uuid; s2 uuid; s3 uuid; run uuid:=gen_random_uuid(); r jsonb; wallet jsonb;
+begin
+ insert into dm_parents(email,name,password_hash,pin_hash,verified_at) values(gen_random_uuid()||'@example.invalid','Test Veli','test','test',now()) returning id into p;
+ insert into dm_parents(email,name,password_hash,pin_hash,verified_at) values(gen_random_uuid()||'@example.invalid','Diğer Veli','test','test',now()) returning id into other_parent;
+ insert into students(username,password_hash,status,role,email_verified_at) values('parent_test_'||gen_random_uuid(),'test','approved','student',now()) returning id into s;
+ insert into students(username,password_hash,status,role,email_verified_at) values('parent_test_'||gen_random_uuid(),'test','approved','student',now()) returning id into s2;
+ insert into students(username,password_hash,status,role,email_verified_at) values('parent_test_'||gen_random_uuid(),'test','approved','student',now()) returning id into s3;
+ if dm_parent_link(p,s)->>'ok'<>'true' then raise exception 'first link failed';end if;
+ if dm_parent_link(p,s2)->>'ok'<>'true' then raise exception 'sibling link failed';end if;
+ if dm_parent_link(p,s3)->>'premium'<>'true' then raise exception 'third child gate failed';end if;
+ select jsonb_build_array(xp,gold,energy,points) into wallet from students where id=s;
+ r:=dm_home_start(run,p,s,'test','','[{"en":"apple","tr":"elma","answer":"apple"},{"en":"book","tr":"kitap","answer":"book"}]','{}');
+ if r->>'cursor'<>'0' then raise exception 'start failed';end if;
+ r:=dm_home_start(run,p,s,'test','','[{"answer":"wrong"}]','{}');
+ if jsonb_array_length(r->'deck')<>2 then raise exception 'retry replaced deck';end if;
+ r:=dm_home_start(gen_random_uuid(),p,s,'test','','[{"answer":"book"}]','{}');
+ if r->>'premium'<>'true' then raise exception 'free test quota failed';end if;
+ r:=dm_home_answer(run,s,0,'apple');
+ if r->>'cursor'<>'1' or r->>'correct'<>'1' then raise exception 'answer failed';end if;
+ r:=dm_home_answer(run,s,0,'apple');
+ if r->>'cursor'<>'1' or r->>'correct'<>'1' then raise exception 'duplicate answer counted';end if;
+ r:=dm_home_answer(run,s,1,'pencil');
+ if r->>'cursor'<>'2' or r->>'correct'<>'1' or r->>'completed_at' is null then raise exception 'completion failed';end if;
+ if not exists(select 1 from dm_home_word_errors where student_id=s and en='book' and mistakes=1) then raise exception 'mistake not saved';end if;
+ if (select jsonb_build_array(xp,gold,energy,points) from students where id=s)<>wallet then raise exception 'student wallet changed';end if;
+ if (select count(*) from level_completions where student_id=s)<>0 then raise exception 'route progress changed';end if;
+ if has_table_privilege('anon','dm_parents','select') or has_table_privilege('authenticated','dm_home_practice','select') then raise exception 'public table access';end if;
+ if has_function_privilege('anon','dm_home_answer(uuid,uuid,integer,text)','execute') then raise exception 'public answer RPC';end if;
+end $$;
+rollback;
