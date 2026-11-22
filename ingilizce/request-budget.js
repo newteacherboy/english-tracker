@@ -109,7 +109,8 @@
   const rpcReads={
     bildirimlerim:{fn:'dm_read_bildirimler',body:a=>({p_ogrenci:String(a.ogrenci??''),p_tumu:String(a.tumu??'')==='1'})},
     duyurulariGetir:{fn:'dm_read_duyuru',body:a=>({p_ogrenci:String(a.ogrenci??'')})},
-    // League standings must use the authoritative public ranking endpoint, not the legacy block-filtering RPC.
+    // Match the authoritative weekly endpoint's global profile visibility.
+    seviyeLigListesi:{fn:'dm_read_public_weekly_league',body:()=>({})},
     ekVeriGetir:{fn:'dm_read_ekveri',body:a=>({p_ogrenci:String(a.ogrenci??''),p_anahtar:String(a.anahtar??'')}),
       out:(x,a)=>window.dmRpcReadTransforms?.ekVeri?window.dmRpcReadTransforms.ekVeri(x,String(a.anahtar??''),String(a.anahtar??'')==='yo'&&String(a.tanitim??'')==='1'):undefined}
   };
@@ -117,6 +118,7 @@
   async function viaRpc(d){
     const spec=rpcReads[d.op];
     if(!spec||rpcDisabled||window.dmTeacherPortalMode||!d.url.pathname.endsWith('/diji-api')||!d.token)return null;
+    if(d.op==='seviyeLigListesi'&&d.args.kapsam&&d.args.kapsam!=='weekly')return null;
     if(spec.out&&!window.dmRpcReadTransforms)return null;
     let key='';try{key=typeof SUPABASE_ANON_KEY!=='undefined'?SUPABASE_ANON_KEY:'';}catch{}
     if(!key)return null;

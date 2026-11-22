@@ -1,12 +1,12 @@
 const {test}=require('node:test'),assert=require('node:assert/strict'),vm=require('node:vm'),fs=require('node:fs'),{stripTypeScriptTypes}=require('node:module');
 const API='https://nxfqlutulxqzqgwewssd.supabase.co/functions/v1/diji-api';
-function fixture(handler){
+function fixture(handler,{rpc=false}={}){
  let now=1000000;class Clock extends Date{static now(){return now;}}
  const store=new Map([['ing_token','first-token'],['ing_aktifOgrenci','First']]);
  const storage={getItem:k=>store.get(k)||null,setItem:(k,v)=>store.set(k,String(v)),removeItem:k=>store.delete(k),key:i=>[...store.keys()][i],get length(){return store.size;}};
  const listeners={},document={hidden:false,addEventListener:(k,f)=>(listeners[k]??=[]).push(f),removeEventListener:(k,f)=>listeners[k]=listeners[k].filter(x=>x!==f)};
  const calls=[],window={fetch:async(u,o)=>{calls.push({u,o});return handler?handler(u,o,calls):new Response(JSON.stringify({ok:true,value:calls.length}));},addEventListener(){}};
- const ctx={window,document,localStorage:storage,sessionStorage:{getItem:()=>null},location:{href:'https://panel.test/ingilizce/'},Date:Clock,Headers,Response,URL,Map,Set,Object,Promise,JSON,setTimeout,clearTimeout,console};
+ const ctx={...(rpc?{SUPABASE_ANON_KEY:"test-publishable-key"}:{}),window,document,localStorage:storage,sessionStorage:{getItem:()=>null},location:{href:'https://panel.test/ingilizce/'},Date:Clock,Headers,Response,URL,Map,Set,Object,Promise,JSON,setTimeout,clearTimeout,console};
  vm.runInNewContext(fs.readFileSync('ingilizce/request-budget.js','utf8'),ctx);
  return {window,calls,storage,advance:n=>now+=n,document,visible:()=>{document.hidden=false;(listeners.visibilitychange||[]).slice().forEach(f=>f());},get:op=>window.fetch(API+'?islem='+op+'&ogrenci=First'),post:(op,args={})=>window.fetch(API,{method:'POST',body:JSON.stringify({islem:op,ogrenci:'First',t:store.get('ing_token'),...args})}),
   loadProgression(){
@@ -120,4 +120,35 @@ test('server maps legacy root label before authentication and operation dispatch
  for(const [input,expected] of [['KOK',''],['',''],['ogretmenBilgim','ogretmenBilgim'],['unknown','unknown']]){
  const context={body:{islem:input},q:new URLSearchParams(),String};vm.runInNewContext(match[0]+';globalThis.actual=op;',context);assert.equal(context.actual,expected);
  }
+});
+
+
+test('weekly league uses the public ranking RPC and joins concurrent reads',async()=>{
+ const rows=[{name:'Ada',xp:100,rank:1,league:'yerel'}];
+ const f=fixture((url,options)=>{
+  assert(url.endsWith('/rest/v1/rpc/dm_read_public_weekly_league'));
+  assert.equal(JSON.parse(options.body).p_t,'first-token');
+  return new Response(JSON.stringify({data:{ok:true,liste:rows}}));
+ },{rpc:true});
+ const [a,b]=await Promise.all([f.post('seviyeLigListesi',{kapsam:'weekly'}),f.post('seviyeLigListesi',{kapsam:'weekly'})]);
+ assert.deepEqual(await a.json(),{ok:true,liste:rows});
+ assert.deepEqual(await b.json(),{ok:true,liste:rows});
+ assert.equal(f.calls.length,1);
+ assert.equal(f.window.dmRequestBudget.stats.joined,1);
+});
+
+test('weekly RPC fallback keeps the existing endpoint and all-time skips the weekly RPC',async()=>{
+ const f=fixture(url=>new Response(JSON.stringify(url.includes('/rpc/')?{fallback:true}:{ok:true,liste:[]})),{rpc:true});
+ assert.equal((await (await f.post('seviyeLigListesi',{kapsam:'weekly'})).json()).ok,true);
+ assert.equal(f.calls.filter(x=>x.u.includes('/rpc/')).length,1);
+ await f.post('seviyeLigListesi',{kapsam:'alltime'});
+ assert.equal(f.calls.filter(x=>x.u.includes('/rpc/')).length,1);
+});
+
+test('weekly ranking RPC is skipped for teacher portal sessions',async()=>{
+ const f=fixture(()=>new Response('{"ok":true,"liste":[]}'),{rpc:true});
+ f.window.dmTeacherPortalMode=true;
+ f.window.dmTeacherRequestRole=()=> 'teacher';
+ await f.post('seviyeLigListesi',{kapsam:'weekly'});
+ assert.equal(f.calls.some(x=>x.u.includes('/rpc/')),false);
 });
