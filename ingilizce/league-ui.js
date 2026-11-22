@@ -434,7 +434,7 @@ function animatePendingRise(){if(pendingRise&&showRankRise(pendingRise))pendingR
 function draw(){if(!onScreen()){clearRise();return;}const old=root.querySelector('.dm-lig');if(old)old.outerHTML=render();if(pendingRise)requestAnimationFrame(animatePendingRise);}
 async function load(force=false,scope=mode){reset();const state=states[scope];if(state.busy||!force&&Date.now()-state.at<60000)return;
  if(scope==='alltime'&&accessLevel()<15)return;const ticket=epoch,account=who();state.busy=true;state.error='';draw();
- try{const result=await fetch(apiURL,{method:'POST',signal:globalThis.AbortSignal?.timeout?.(15000),body:JSON.stringify({islem:'seviyeLigListesi',kapsam:scope,ogrenci:account,t:localStorage.getItem('ing_token')||'',...(force?{_:Date.now()}:{})})});const d=await result.json();
+ try{const result=await fetch(apiURL,{method:'POST',body:JSON.stringify({islem:'seviyeLigListesi',kapsam:scope,ogrenci:account,t:localStorage.getItem('ing_token')||'',...(force?{_:Date.now()}:{})})});const d=await result.json();
   if(!result.ok||d.ok===false||!Array.isArray(d.liste)||scope==='alltime'&&d.kapsam!=='alltime')throw Error('Lig verisi alınamadı.');
   if(account!==who()||ticket!==epoch)return;
   state.rows=d.liste;state.visualRows=[];state.loaded=true;state.at=Date.now();
