@@ -81,3 +81,33 @@ test('teacher Parkur shortcut never opens another personal account when server r
  assert.equal(native.getItem('ing_token'),'other-personal-token');
  assert(!opened.calls.some(c=>c[0]==='assign'&&c[1]==='./'));
 });
+
+test('native restart at the persisted teacher URL rehydrates local teacher session before redirecting',()=>{
+ const native=storage({ing_token:'personal-token',ing_aktifOgrenci:'Ada'}),first=page(native);
+ first.w.dmTeacherDevice.remember(portal);
+ const opened=page(native,storage(),'?ogretmen=1');
+ assert.equal(opened.w.dmTeacherPortalMode,true);
+ assert.equal(opened.location.search,'?ogretmen=1');
+ assert.equal(JSON.parse(opened.session.getItem('dm_tp_session')).teacherToken,'owner-token');
+ assert(!opened.calls.some(c=>c[0]==='replace'),'must not request the teacher code again');
+ assert.equal(native.getItem('ing_token'),'personal-token');
+});
+test('stale native teacher route with no usable saved session returns to account selection',()=>{
+ const native=storage({ing_token:'personal-token',dm_last_account_v1:JSON.stringify({kind:'teacher',token:'missing'})});
+ const opened=page(native,storage(),'?ogretmen=1');
+ assert.equal(opened.w.dmTeacherPortalMode,undefined);
+ assert.deepEqual(opened.calls.at(-1),['replace','./?hesap=1']);
+ assert.equal(native.getItem('ing_token'),'personal-token');
+});
+test('expired resumed teacher uses account picker instead of another teacher-code request',async()=>{
+ const native=storage({ing_token:'personal-token'}),first=page(native);
+ first.w.dmTeacherDevice.remember(portal);
+ const opened=page(native,storage(),'',{status:401,ok:false,data:{ok:false}});
+ await new Promise(r=>setImmediate(r));
+ assert(opened.calls.some(c=>c[0]==='replace'&&c[1]==='./?hesap=1'));
+ assert.equal(opened.w.dmTeacherDevice.list().length,0);
+});
+test('explicit teacher deep link still asks for code if no teacher session was selected',()=>{
+ const opened=page(storage(),storage(),'?ogretmen=1');
+ assert.deepEqual(opened.calls.at(-1),['replace','./?ogretmenGiris=1']);
+});
