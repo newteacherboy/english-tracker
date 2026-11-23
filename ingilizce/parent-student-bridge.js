@@ -10,22 +10,24 @@
  function close(){dialog?.remove();dialog=null;}
  function open(){
   close();dialog=document.createElement('dialog');dialog.className='dm-parent-dialog';
-  dialog.innerHTML='<form method="dialog"><button class="dm-parent-close" aria-label="Kapat">×</button></form><h2>Veli Hesabına Geç</h2><p data-parent-help>Veli hesabı kontrol ediliyor…</p><form data-parent-switch hidden><label>Veli geçiş kodu<input name="pin" type="password" inputmode="numeric" pattern="[0-9]{6}" minlength="6" maxlength="6" required autocomplete="off"></label><button type="submit">Veli Hesabına Geç</button></form><button type="button" data-parent-code>Veli Bağlantı Kodu Al</button><p>Velin bu kodu kendi hesabında Ailem → Mevcut Öğrenciyi Kodla Bağla bölümüne girer.</p><p><a href="veli-paneli.html">Veli girişi veya kayıt</a></p><a href="veli-paneli.html?ogrenci=1">Evde Pratik Çalışmalarım</a><p class="dm-parent-message" role="status"></p>';
+  dialog.innerHTML='<form method="dialog"><button class="dm-parent-close" aria-label="Kapat">×</button></form><h2>Veli Hesabına Geç</h2><p data-parent-help>Veli hesabı kontrol ediliyor…</p><form data-parent-switch hidden><label>Veli geçiş kodu<input name="pin" type="password" inputmode="numeric" pattern="[0-9]{6}" minlength="6" maxlength="6" required autocomplete="off"></label><button type="submit">Veli Hesabına Geç</button></form><section data-invite hidden><p>Velin kendi hesabına giriş yaptıktan sonra Ailem → Mevcut Öğrenciyi Kodla Bağla bölümünü açmalı.</p><button type="button" data-parent-code>Velime bağlantı kodu oluştur</button></section><p><a href="veli-paneli.html">Veli girişi veya kayıt</a></p><a href="veli-paneli.html?ogrenci=1">Evde Pratik Çalışmalarım</a><p class="dm-parent-message" role="status"></p>';
   document.body.append(dialog);dialog.showModal();
   const panel=dialog;
   const message=text=>{panel.querySelector('.dm-parent-message').textContent=text;};
   const help=panel.querySelector('[data-parent-help]');
   call('parentSwitchStatus').then(({available})=>{
    panel.querySelector('[data-parent-switch]').hidden=!available;
-   help.textContent=available?'Veli hesabına geçmek için velinin Ailem bölümünde bu çocuk için gördüğü veya belirlediği kodu gir.':'Bu e-postada bu öğrenciye bağlı, doğrulanmış bir veli hesabı bulunamadı. Velin hesap oluşturabilir veya mevcut hesabına giriş yapabilir.';
-  }).catch(()=>{help.textContent='Veli hesabı kontrol edilemedi. Veli geçiş kodun varsa aşağıya girebilirsin.';panel.querySelector('[data-parent-switch]').hidden=false;});
+   panel.querySelector('[data-invite]').hidden=available;
+   if(!available)panel.querySelector('h2').textContent='Velini hesabına bağla';
+   help.textContent=available?'Velin kendi panelinde Ailem → adın → Çocuğun Geçiş Kodu bölümünü açsın. Buraya o sabit kodu gir.':'Bu e-postada bu öğrenciye bağlı, doğrulanmış bir veli hesabı bulunamadı. Velin hesap oluşturabilir veya mevcut hesabına giriş yapabilir.';
+  }).catch(()=>{help.textContent='Bağlantı kontrol edilemedi. Pencereyi kapatıp tekrar açabilir veya veli hesabına giriş yapabilirsin.';});
   dialog.querySelector('[data-parent-switch]').onsubmit=async event=>{
    event.preventDefault();const button=event.target.querySelector('button');button.disabled=true;
    try{const pin=new FormData(event.target).get('pin');const result=await call('parentSwitch',{pin});localStorage.setItem('dm_parent_session_v1',result.token);location.assign('veli-paneli.html');}catch(e){message(e.message);}finally{button.disabled=false;}
   };
   dialog.querySelector('[data-parent-code]').onclick=async event=>{
    const button=event.currentTarget;button.disabled=true;
-   try{const result=await call('parentStudentCode');message('Veli bağlama kodun '+result.code+'. Velin bu kodu Ailem → Mevcut Öğrenciyi Kodla Bağla bölümüne girmeli. Kod 24 saat geçerli.');}catch(e){message(e.message);}finally{button.disabled=false;}
+   try{const result=await call('parentStudentCode');button.hidden=true;message('Veli bağlama kodun '+result.code+'. Velin bu kodu Ailem → Mevcut Öğrenciyi Kodla Bağla bölümüne girmeli. Kod 24 saat geçerli.');}catch(e){message(e.message);}finally{button.disabled=false;}
   };
  }
  function mount(){
