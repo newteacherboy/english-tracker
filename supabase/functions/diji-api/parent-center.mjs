@@ -114,14 +114,16 @@ export function parentCenterAPI(d){
    question:question?Object.fromEntries(Object.entries(question).filter(([k])=>k!=='answer')):null};
  }
  async function codes(student,force=false){
-  const existing=asList(await db.from('dm_parent_codes').select('expires_at').eq('student_id',student.id).limit(1))[0];
+  const existing=asList(await db.from('dm_parent_codes').select('expires_at,pin_hash').eq('student_id',student.id).limit(1))[0];
   if(existing&&!force&&Date.parse(existing.expires_at)>Date.now())return {ok:true,mailed:false};
   if(!student.email_verified_at||student.status!=='approved')throw Error('Önce öğrenci e-posta adresini doğrula.');
   for(let n=0;n<4;n++){
    const code=digits(),pin=digits();
-   const r=await db.from('dm_parent_codes').upsert({student_id:student.id,code_hash:await digest('link:'+code),pin_hash:await digest('student:'+student.id+':'+pin),expires_at:new Date(Date.now()+864e5).toISOString()});
+   const r=await db.from('dm_parent_codes').upsert({student_id:student.id,code_hash:await digest('link:'+code),pin_hash:existing?.pin_hash||await digest('student:'+student.id+':'+pin),expires_at:new Date(Date.now()+864e5).toISOString()});
    if(r.error?.code==='23505')continue;if(r.error)throw r.error;
-   const sent=await mail(student.email,'Diji-Medu · Veli bağlantı ve öğrenci geçiş kodların','<p>Veli bağlama kodu <b>'+code+'</b>. 24 saat geçerlidir. Bu kodu yalnızca velinle paylaş.</p><p>Öğrenci hesabına geçiş kodun <b>'+pin+'</b>.</p>',student.id);
+   const invite='<p>Veli bağlantı kodu: <b>'+code+'</b> (24 saat geçerli).</p><p>Velin kendi veli hesabına giriş yaptıktan sonra Ailem → Mevcut Öğrenciyi Kodla Bağla bölümüne bu kodu yazmalı.</p>';
+   const includePin=!force&&!existing?.pin_hash;
+   const sent=await mail(student.email,includePin?'Diji-Medu · Öğrenci hesabın onaylandı':'Diji-Medu · Veli bağlantı kodun',invite+(includePin?'<p>Veliden öğrenci hesabına dönerken kullanılacak öğrenci geçiş kodu: <b>'+pin+'</b>.</p>':''),student.id);
    return {ok:true,code,mailed:sent,expiresHours:24};
   }
   throw Error('Kod oluşturulamadı. Tekrar dene.');
@@ -129,7 +131,7 @@ export function parentCenterAPI(d){
  async function handle(req,op,b,rate,ip){
   if(!op.startsWith('parent'))return null;
   if(req.method!=='POST')return fail('POST gerekli.',405);
-  const limited=await rate('parent-ip:'+op,ip,['parentStudentCode'].includes(op)?2:['parentSignup','parentLogin','parentResetRequest','parentSwitch'].includes(op)?8:120,900);if(limited)return limited;
+  const limited=await rate('parent-ip:'+op,ip,['parentStudentCode','parentStudentPinMail'].includes(op)?2:['parentSignup','parentLogin','parentResetRequest','parentSwitch'].includes(op)?8:120,900);if(limited)return limited;
   try{
    if(op==='parentSignup'){
     const email=String(b.email||'').trim().toLowerCase(),name=String(b.name||'').trim().slice(0,80);
@@ -168,17 +170,25 @@ export function parentCenterAPI(d){
     const parent=asList(await db.from('dm_parents').select('*').eq('id',rows[0].parent_id).limit(1))[0];
     await autoLink(parent);return json({ok:true,token:await session(parent),verified:!!parent.verified_at});
    }
-   if(['parentStudentCode','parentStudentPractice','parentSwitch'].includes(op)){
+   if(['parentSwitchStatus','parentStudentPinMail','parentStudentCode','parentStudentPractice','parentSwitch'].includes(op)){
     const a=await auth(req,b,new URLSearchParams());
     if(a?.role!=='student'||a.teacher_portal_access_id)return fail('Kişisel öğrenci hesabına giriş yap.',401);
     const s=asList(await db.from('students').select('id,username,email,status,email_verified_at').eq('id',a.student_id).limit(1))[0];
+    if(op==='parentStudentPinMail'){
+     if(!s.email_verified_at||s.status!=='approved')return fail('Önce öğrenci e-postasını doğrula.',403);
+     const pin=digits();
+     const rows=asList(await db.from('dm_parent_codes').update({pin_hash:await digest('student:'+s.id+':'+pin)}).eq('student_id',s.id).select('student_id'));
+     if(!rows.length)return fail('Önce veli bağlantı kodu oluştur.');
+     return json({ok:true,mailed:await mail(s.email,'Diji-Medu · Öğrenci hesabına dönüş kodun','<p>Veli panelinden öğrenci hesabına dönerken kullanacağın kod: <b>'+pin+'</b>.</p>',s.id)});
+    }
     if(op==='parentStudentCode')return json(await codes(s,true));
     if(op==='parentStudentPractice'){
      const practice=asList(await db.from('dm_home_practice').select('id,kind,cursor,correct,deck,answers,settings,completed_at,created_at').eq('student_id',s.id).in('kind',['test','game']).order('created_at',{ascending:false}).limit(30));
      return json({ok:true,practices:practice.map(publicPractice)});
     }
-    if(!s.email_verified_at)return fail('Öğrenci e-postasını doğrula.',403);
+    if(!s.email_verified_at)return op==='parentSwitchStatus'?json({ok:true,available:false}):fail('Öğrenci e-postasını doğrula.',403);
     const parent=asList(await db.from('dm_parents').select('*').eq('email',s.email?.toLowerCase()||'').not('verified_at','is',null).limit(1))[0];
+    if(op==='parentSwitchStatus')return json({ok:true,available:!!parent});
     if(!parent||!/^\d{6}$/.test(b.pin)||parent.pin_hash!==await digest('parent:'+parent.id+':'+b.pin))return fail('Veli geçiş kodunu kontrol et.',403);
     const r=await db.rpc('dm_parent_link',{p_parent:parent.id,p_student:s.id});if(r.error)throw r.error;
     return json({ok:true,token:await session(parent)});
