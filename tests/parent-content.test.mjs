@@ -1,6 +1,6 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import {normalizeStop,voiceURL,schoolWords} from '../supabase/functions/diji-api/parent-content.mjs';
+import {normalizeStop,voiceURL,schoolWords,studyWordScope,practiceCount} from '../supabase/functions/diji-api/parent-content.mjs';
 import fs from 'node:fs';
 import vm from 'node:vm';
 test('school codes recover the actual class and unit from zero-valued historical rows',()=>{
@@ -24,4 +24,12 @@ test('parent recordings resolve to the exact existing shared English recording, 
  for(const word of ['apple','Goodbye!','My sister is seven.','book'])assert.equal(voiceURL(word),window.dmSharedVoice.urlFor(word,'en-US'));
  assert.equal(voiceURL('never_uploaded_fixture_123456'),null);
  assert(!fs.readFileSync('ingilizce/parent-center.js','utf8').includes('speechSynthesis'));
+});
+
+test('a flashcard test is restricted to studied words that the server already knows',()=>{
+ const learned=[{en:'apple',tr:'elma'},{en:'book',tr:'kitap'}];
+ assert.deepEqual(studyWordScope(learned,['apple|elma','unlearned|öğrenilmedi']),[learned[0]]);
+ assert.deepEqual(studyWordScope(learned,['APPLE|elma.']),[learned[0]]);
+ assert.equal(practiceCount({count:1,wordKeys:['apple|elma']}),1);
+ assert.equal(practiceCount({count:1}),5);assert.equal(practiceCount({count:50,wordKeys:[]}),5);
 });

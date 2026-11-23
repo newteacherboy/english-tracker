@@ -30,3 +30,11 @@ export function schoolWords(bank,stops,grade){
  const done=new Set(stops.filter(s=>Number(s.class_no)===grade).map(s=>Number(s.level_no)));
  return filtered.filter(s=>done.has(s.no)||(s.legacy&&done.has(s.legacy))).flatMap(s=>s.words.map(w=>({en:w.english.trim(),tr:w.turkish.trim(),unit:'school:'+grade+':'+s.unit,grade})));
 }
+
+export function studyWordScope(words,keys){
+ if(!Array.isArray(keys))return words;
+ const normalize=x=>String(x??'').normalize('NFKC').toLowerCase().replace(/[.!?…]+$/u,'').replace(/\s+/g,' ').trim();
+ const allowed=new Set(keys.slice(0,2000).map(key=>String(key).split('|').map(normalize).join('|')));
+ return words.filter(w=>allowed.has(normalize(w.en)+'|'+normalize(w.tr)));
+}
+export function practiceCount(settings){const n=Number(settings.count);return (Array.isArray(settings.wordKeys)?Number.isInteger(n)&&n>=1&&n<=15:[5,10,15].includes(n))?n:5;}

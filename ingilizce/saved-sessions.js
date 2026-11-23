@@ -30,6 +30,7 @@
   finally{clearTimeout(timeout);signal?.removeEventListener('abort',cancel);}
  }
  async function activate(entry,{signal}={}){
+  if(entry.role==='veli')return window.dmSavedParents.activate(entry,{signal});
   if(entry.role==='ogretmen-kod'){const {response,data:d}=await request({islem:'oturumBilgisi',t:entry.token},signal);if(signal?.aborted)throw Object.assign(Error('Hesap geçişi iptal edildi.'),{cancelled:true});if(!response.ok||!d.ok||d.rol!=='ogretmen'){if([401,403].includes(response.status))window.dmTeacherDevice?.forget(entry.token);throw Object.assign(Error('Öğretmen oturumu sona ermiş. Kodla tekrar giriş yap.'),{expired:[401,403].includes(response.status),teacher:true});}window.dmTeacherDevice.activate(entry.portal);return;}
   const before=storage.getItem('ing_token')||'';
   const {response,data:d}=await request({islem:'oturumBilgisi',t:entry.token},signal);
@@ -39,11 +40,12 @@
   queue({name:d.ogrenci,token:entry.token,role:d.rol,google:entry.google},before);
  }
  async function remove(entry){
+  if(entry.role==='veli')return window.dmSavedParents.remove(entry);
   // Explicit removal means sign out this saved session; other device sessions are untouched.
   const {response:r,data}=await request({islem:'cikis',t:entry.token});
   if(!r.ok||data.ok===false)throw Error('Hesap kaldırılamadı. Bağlantını kontrol et.');
   if(entry.role==='ogretmen-kod'){window.dmTeacherDevice?.forget(entry.token);return;}forget(entry.token);
  }
- window.dmSavedSessions={remember,current,forget,list:()=>[...read(),...(window.dmTeacherDevice?.list()||[]).map(portal=>({name:portal.name,token:portal.teacherToken,role:'ogretmen-kod',portal}))],activate,remove,queue,verifyLogin:(body,signal)=>request({islem:'giris',...body},signal)};
+ window.dmSavedSessions={remember,current,forget,list:()=>[...read(),...(window.dmSavedParents?.list()||[]),...(window.dmTeacherDevice?.list()||[]).map(portal=>({name:portal.name,token:portal.teacherToken,role:'ogretmen-kod',portal}))],activate,remove,queue,verifyLogin:(body,signal)=>request({islem:'giris',...body},signal)};
  remember();document.addEventListener('dm:login',()=>remember());
 })();

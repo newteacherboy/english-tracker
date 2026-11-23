@@ -19,6 +19,7 @@ function playAnswer(correct,kind,options={}){
 window.dmAnswerAudio={enabled:effectEnabled,play:playAnswer};
 window.dmAnswerFeedback=function(correct,kind,options={}){if(typeof correct!=='boolean')return;window.dmLastAnswerCorrect=correct;try{navigator.vibrate?.(correct?[90,40,100]:[150,65,180]);}catch{}const el=document.createElement('div');el.className='dm-answer-flash'+(correct?'':' wrong');el.setAttribute('aria-hidden','true');document.body.append(el);setTimeout(()=>el.remove(),600);playAnswer(correct,kind,options);};
 window.dmLetterFeedback=kind=>window.dmAnswerFeedback(kind!=='wrong',kind);
+if(window.dmParentWorkspace)return;
 // Games with their own confirmed-answer callback (Meteor/Wheel) own their sound.
 // The two-player match has no local sound layer, so use its authoritative API result.
 const transport=window.fetch;window.fetch=function(url,opt){let body;try{body=JSON.parse(opt?.body||'null');}catch{}const task=transport.apply(this,arguments);if(body?.islem==='oyunEslesmeCevap')task.then(r=>r.ok===false?null:r.clone().json()).then(d=>{if(d?.ok===false)return;const choice=d?.question?.choices?.[body.choice];const correct=typeof d?.last?.correct==='boolean'?d.last.correct:d?.answered===true&&d.index===body.index&&typeof choice==='string'&&typeof d.feedback==='string'?choice===d.feedback:null;if(typeof correct==='boolean')window.dmAnswerFeedback(correct,undefined,{eventId:'match:'+body.id+':'+body.index});}).catch(()=>{});return task;};
@@ -32,6 +33,7 @@ coins(document.body);new MutationObserver(ms=>{for(const m of ms){if(m.type==='c
 
 /* Weekly goal counts all earned XP; view checkpoints contain no credentials. */
 (()=>{'use strict';
+if(window.dmParentWorkspace)return;
 const who=()=>typeof aktifOgrenciAdi==='undefined'?'':String(aktifOgrenciAdi||'');
 window.dmWeeklyXp=(state,now=Date.now())=>{const d=new Date(now+10800000);d.setUTCDate(d.getUTCDate()-(d.getUTCDay()+6)%7);const first=d.toISOString().slice(0,10);d.setUTCDate(d.getUTCDate()+7);const last=d.toISOString().slice(0,10);let xp=0;for(const [day,n] of Object.entries(state?.log||{}))if(day>=first&&day<last&&Number.isFinite(Number(n)))xp+=Math.max(0,Number(n));return Math.max(xp,Number(state?.lig?.xp)||0);};
 const key='dm_view_checkpoint';let saved=null,restored=false;try{saved=JSON.parse(localStorage.getItem(key)||'null')}catch{}

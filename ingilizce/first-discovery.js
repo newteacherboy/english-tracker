@@ -23,6 +23,9 @@
  const inviteParams=new URLSearchParams(location.search);
  const incomingTeacher=inviteParams.get('zirveOgretmen')==='1'?(inviteParams.get('kod')||'').trim().toUpperCase():'';
  if(/^[A-Z0-9]{1,10}$/.test(incomingTeacher)){draft.role='student';draft.code=incomingTeacher;save();}
+ const parentSignup=new URLSearchParams(location.search).get('veliCocuk')==='1'&&!!ctx.raw.getItem('dm_parent_session_v1')&&Date.now()-(parse(ctx.session,'dm_parent_child_signup')?.at||0)<3600000;
+ if(parentSignup){const parentEmail=parse(ctx.session,'dm_parent_child_signup')?.email||'';if(draft.parentSignupOwner!==parentEmail)draft={...draft,parentSignupOwner:parentEmail,role:'student',purpose:'',ageBand:'',educationStage:'',grade:'',first:'',last:'',username:'',email:parentEmail,phone:'',consent:false};}
+ let welcomeMood=0;
  const summary=parse(ctx.raw,SUMMARY);demoComplete=!!summary?.completed;
  function save(){ctx.session.setItem(DRAFT,JSON.stringify({savedAt:Date.now(),values:{...draft,consent:false}}));}
  function setSummary(){const value={completed:true,total:6,correct,seconds:Math.max(1,Math.round((Date.now()-startedAt)/1000)),at:new Date().toISOString()};ctx.raw.setItem(SUMMARY,JSON.stringify(value));demoComplete=true;}
@@ -43,7 +46,7 @@
  }
  let focusBefore=null;const inerted=new Map();
  function focusScreen(){const target=root.querySelector('h1')||root.querySelector('section');target.tabIndex=-1;target.focus({preventScroll:true});}
- function show(content,actions,progress=0,cls='',back=true){mount();if(root.hidden)focusBefore=document.activeElement;
+ function show(content,actions,progress=0,cls='',back=true){mount();if(parentSignup&&screen==='register')actions+=button('Veli Paneline Dön · Kaydı İptal Et','parent-cancel','link');if(root.hidden)focusBefore=document.activeElement;
   const bootSplash=$('dmBootSplash');
   for(const node of document.body.children)if(node!==root&&node!==bootSplash&&!['SCRIPT','LINK','STYLE'].includes(node.tagName)&&!inerted.has(node)){inerted.set(node,node.inert);node.inert=true;}
   if(bootSplash)root.inert=true;
@@ -63,7 +66,7 @@
  function roleCard(label,action,key){
   return `<button type="button" class="fd-choice" data-action="${action}" data-role="${key}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="${roleIcons[key]}"/></svg><strong>${label}</strong></button>`;
  }
- function welcome(){screen='welcome';show('<h1 class="fd-wordmark">Diji-Medu</h1>'+image('papi-merhaba'),button('Üye Ol','begin')+button('Hesabım Var','login-roles','secondary'),0,'fd-welcome',false);}
+ function welcome(){screen='welcome';const markup=window.dmPapiSplash?.characterMarkup?.();const mascot=markup?'<button type="button" class="fd-welcome-papi" data-action="papi-react" aria-label="Papi’ye dokun, duygusunu değiştir">'+markup.replace('class="dm-papi-character-svg"','class="dm-papi-character-svg dmp m-merhaba"')+'<span class="fd-papi-speech" role="status">Merhaba!</span></button>':window.DMPapi?'<button type="button" class="fd-welcome-papi" data-action="papi-react" aria-label="Papi’ye dokun, duygusunu değiştir">'+window.DMPapi.html('merhaba')+'<span class="fd-papi-speech" role="status">Merhaba!</span></button>':image('papi-merhaba');show('<h1 class="fd-wordmark">Diji-Medu</h1>'+mascot,button('Üye Ol','begin')+button('Hesabım Var','login-roles','secondary'),0,'fd-welcome',false);}
  function loginRoles(){
   screen='login-roles';
   show('<h1>Hesabım Var</h1>'+roleCard('Öğrenci Girişi','login','school')+roleCard('Veli Girişi','parent-login','parent')+roleCard('Öğretmen Girişi','teacher-login','teacher'),'',0,'fd-role-screen');
@@ -229,7 +232,7 @@
  async function receiveGoogle(force=false){if(!ctx.oauth&&!force)return;googleReady=true;step=5;renderRegistration();lock(true);try{const {data,error:e}=await window.supabaseClient.auth.getSession();if(e||!data.session)throw Error('Google oturumu alınamadı. E-posta ile devam edebilirsin.');googleSession=data.session;const r=await ctx.request({islem:oauthProvider==='apple'?'appleGiris':'googleGiris'},googleSession.access_token);if(r.ok&&r.token){registered=r;verified=true;success();return;}if(r.baglantiGerekli){draft.method='google';step=draft.username&&draft.first&&draft.last&&(!asksAge()||draft.ageBand)&&draft.purpose&&draft.email?6:0;renderRegistration();return;}throw Error(r.mesaj||'Google bağlantısı tamamlanamadı.');}catch(e){googleSession=null;step=5;renderRegistration();error(e.message);}finally{lock(false);history.replaceState(null,'',location.pathname);}}
  async function readiness(){if(window.dmAndroidUygulama||!window.supabaseClient?.auth)return;try{const r={hazir:true};/* [Kota] googleDurum her açılışta sorulmaz */googleReady=!!r.hazir&&await ctx.googleAvailable(typeof SUPABASE_ANON_KEY!=='undefined'?SUPABASE_ANON_KEY:'');}catch(_){googleReady=false;}}
  function onClick(e){const el=e.target.closest('[data-action]');if(!el||busy)return;const a=el.dataset.action;
-  if(a==='begin'){step=0;renderRegistration();}else if(a==='demo-intro')demoIntro();
+  if(a==='parent-cancel'){ctx.session.removeItem(DRAFT);ctx.session.removeItem('dm_parent_child_signup');password='';navigate('veli-paneli.html');return;}else if(a==='papi-react'){const moods=['sevinc','saskin','teselli','cosku','havali','merhaba'];const labels=['Birlikte öğrenelim!','Vay canına!','Yanındayım!','Harikasın!','Hazırım!','Merhaba!'];const i=welcomeMood++%moods.length;window.DMPapi?.react(el,moods[i],0);const bubble=el.querySelector('.fd-papi-speech');if(bubble)bubble.textContent=labels[i];return;}else if(a==='begin'){step=0;renderRegistration();}else if(a==='demo-intro')demoIntro();
   else if(a==='login-roles')loginRoles();else if(a==='login')login();else if(a==='parent-login')parentEntry(false);else if(a==='demo')demo();else if(a==='audio')speak();else if(a==='answer')choose(el.dataset.word);
   else if(a==='question-next'){selected='';question++;if(question===6){setSummary();demoResult();}else renderQuestion();}
   else if(a==='register'){step=0;renderRegistration();}else if(a==='role'){
@@ -249,13 +252,14 @@
   else if(a==='teacher-code-next'){if(googleSession){verified=true;success();}else verification();}
   else if(a==='teacher-done'){ctx.session.removeItem(DRAFT);login();}
   else if(a==='tab')openTab(Number(el.dataset.tab));else if(a==='explore')invite();
-  else if(a==='back'){if(screen==='parent-login'){loginRoles();return;}if(screen==='parent-register'){showHome();return;}if(screen==='register'){collect();if(step>0){if(step===5&&!googleSession)password=$('fdPassword')?.value||password;step=adjacentRegistrationStep(-1);renderRegistration();}else if(demoComplete)demoResult();else welcome();}else if(screen==='question')demoIntro();else if(screen==='intro')welcome();else if(screen==='mini-result')demoIntro();else if(screen==='invite')welcome();else if(screen==='welcome')login();else if(screen==='verification')renderRegistration();else if(screen==='success')login();else welcome();}
+  else if(a==='back'){if(parentSignup&&screen==='register'&&step===0){ctx.session.removeItem(DRAFT);ctx.session.removeItem('dm_parent_child_signup');navigate('veli-paneli.html');return;}if(screen==='parent-login'){loginRoles();return;}if(screen==='parent-register'){showHome();return;}if(screen==='register'){collect();if(step>0){if(step===5&&!googleSession)password=$('fdPassword')?.value||password;step=adjacentRegistrationStep(-1);renderRegistration();}else if(demoComplete)demoResult();else welcome();}else if(screen==='question')demoIntro();else if(screen==='intro')welcome();else if(screen==='mini-result')demoIntro();else if(screen==='invite')welcome();else if(screen==='welcome')login();else if(screen==='verification')renderRegistration();else if(screen==='success')login();else welcome();}
  }
  function activityOpen(){if(screen==='question'||screen==='register'||screen==='verification'||screen==='success')return true;if(typeof OC!=='undefined'&&OC?.aktif)return true;
   return !![...document.querySelectorAll('#genelSonucOverlay.acik,#dmResultOverlay,.bz-oyun,.kp-oyun,.bs-perde,.hb-overlay,.gs-perde')].find(el=>el.getClientRects().length&&getComputedStyle(el).display!=='none');}
  function tick(){const now=performance.now();if(!document.hidden)activeMs+=Math.min(2000,now-lastTick);lastTick=now;if(!ctx.guest)return;if((inviteDue||(visited.size>=3&&activeMs>=120000))&&Date.now()-lastInvite>=120000&&!activityOpen()&&(!root||root.hidden||screen==='home'))invite();}
  function initialize(){if(window.dmGuestMode&&!ctx.guest)return;mount();if(!ctx.guest)document.body.classList.add('dm-discovery-login');readiness();window.dmFirstDiscovery={openRegistration:showHome,openDemo:demoIntro,openGoogleRegistration:()=>receiveGoogle(true),showHome,invite,questions,activityOpen,notifyActivityComplete:()=>{inviteDue=true;},expire:()=>{inviteDue=true;if(!activityOpen())invite(true);},screen:()=>screen,hasPendingAccount:()=>!!registered,openLogin:login};
   window.kayitOlAc=function(){step=0;renderRegistration();};
+  if(parentSignup){step=0;renderRegistration();return;}
   if(ctx.member){document.addEventListener('dm:login',()=>{const tab=ctx.raw.getItem('dm_discovery_return_tab');ctx.raw.removeItem('dm_discovery_return_tab');if(tab==='0'){setTimeout(()=>{if(!window.dmTeacherPortalMode&&document.getElementById('panel-alani')?.style.display==='block')window.dunyaAc?.();},300);}else if(tab){const fns=['dunyaAc','aktivitelerTamEkranAc','sanaOzelTamEkranAc','profilAc'];window[fns[Number(tab)]]?.();}},{once:true});return;}
   const pending=parse(ctx.session,'dm_discovery_new_session');if(pending?.token&&Date.now()-pending.at<3600000&&!ctx.member){registered={token:pending.token,ogrenci:pending.student,status:pending.created?'success':undefined};success();}else if(ctx.welcome){welcome();}else if(ctx.oauth){receiveGoogle();}else if(new URLSearchParams(location.search).get('giris')==='1'){login();}else if(new URLSearchParams(location.search).get('kayit')==='1'&&!ctx.member){step=0;renderRegistration();}
 

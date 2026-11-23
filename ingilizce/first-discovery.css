@@ -289,3 +289,6 @@ body.dm-discovery-login #login-container .fd-login-back { background: var(--fd-g
   #dmDiscovery .fd-welcome .fd-actions { padding-bottom: 0; }
   #dmDiscovery .fd-role-screen h1 { margin-bottom: 20px; }
 }
+
+/* The welcome uses the same live Papi markup as the normal intro. */
+.fd-welcome-papi{position:relative;display:block;width:clamp(190px,52vw,290px);height:clamp(210px,32dvh,310px);margin:0 auto;border:0;background:none;padding:0;cursor:pointer;touch-action:manipulation}.fd-welcome-papi svg{width:100%;height:100%;overflow:visible;filter:drop-shadow(0 12px 14px #1a706b20)}.fd-papi-speech{position:absolute;right:-12px;top:24px;max-width:155px;padding:9px 13px;border:1px solid #d9eae1;background:#fffffff2;border-radius:16px 16px 16px 3px;font:750 12px system-ui;color:#145b52;box-shadow:0 5px 15px #18524212}.fd-welcome-papi:focus-visible{outline:3px solid #0a887a;outline-offset:5px;border-radius:24px}@media(max-height:650px){.fd-welcome-papi{height:180px;width:190px}.fd-papi-speech{top:12px;font-size:11px}}
