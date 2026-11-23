@@ -30,7 +30,7 @@ test('parent child registration opens even with a personal session and cancel sa
 });
 test('welcome renders the actual intro mascot and taps change its existing mood',async()=>{
  const dom=new JSDOM('<div id="login-container"><form id="loginForm"></form></div>',{url:'https://app.test/ingilizce/',runScripts:'outside-only'}),w=dom.window;try{
- const moods=[];w.HTMLElement.prototype.scrollIntoView=()=>{};w.dmPapiSplash={characterMarkup:()=>'<svg class="dm-papi-character-svg"><path/></svg>'};w.DMPapi={react:(_el,m)=>moods.push(m)};w.dmDiscoveryContext={raw:w.localStorage,session:w.sessionStorage,member:false,welcome:true,guest:false,request:async()=>({})};w.eval(read('first-discovery.js'));await flush();
- const papi=w.document.querySelector('[data-action="papi-react"]');assert(papi.querySelector('svg.dmp'));papi.click();papi.click();assert.deepEqual(moods,['sevinc','saskin']);assert.equal(papi.querySelector('[role="status"]').textContent,'Vay canına!');
+ let markupCalls=0;const moods=[];w.HTMLElement.prototype.scrollIntoView=()=>{};w.dmPapiSplash={characterMarkup:()=>'<svg class="dm-papi-character-svg"><path/></svg>'};w.DMPapi={html:()=>{markupCalls++;return '<svg class="dmp"></svg>';},react:(_el,m)=>moods.push(m)};w.dmDiscoveryContext={raw:w.localStorage,session:w.sessionStorage,member:false,welcome:true,guest:false,request:async()=>({})};w.eval(read('first-discovery.js'));await flush();
+ const papi=w.document.querySelector('[data-action="papi-react"]');assert(papi.querySelector('svg.dmp'));assert.equal(markupCalls,1);papi.click();papi.click();assert.deepEqual(moods,['sevinc','saskin']);assert.equal(papi.querySelector('[role="status"]').textContent,'Vay canına!');
  }finally{w.close();}
 });
