@@ -118,7 +118,7 @@
  }
  function results(){
   const wrong=practice.answers.filter(a=>!a.correct);
-  render('Evde Pratik Tamamlandı','<div class="pc-complete"><img src="discovery-assets/papi-kutlama.webp" alt="Papi"><h1>Güzel bir tekrar oldu!</h1><span>'+practice.correct+' / '+practice.total+' doğru</span></div>'+(wrong.length?'<h2>Tekrar edilecek kelimeler</h2>'+wrong.map(a=>'<div class="pc-row"><span>'+esc(a.en)+'<small>'+esc(a.tr)+'</small></span></div>').join(''):'<p>Bu çalışmadaki tüm soruları doğru cevapladın.</p>')+btn('Evde Pratiğe Dön','practice')+'<p>Sonuç gelişim raporuna kaydedildi.</p><p class="pc-saved">Parkur puanları değişmez.</p>',{back:true});
+  render('Evde Pratik Tamamlandı','<div class="pc-complete"><img src="discovery-assets/papi-kutlama.webp" alt="Papi"><h1>Güzel bir tekrar oldu!</h1><span>'+practice.correct+' / '+practice.total+' doğru</span></div>'+(wrong.length?'<h2>Tekrar edilecek kelimeler</h2>'+wrong.map(a=>'<div class="pc-row"><span>'+esc(a.en)+'<small>'+esc(a.tr)+'</small></span></div>').join(''):'<p>Bu çalışmadaki tüm soruları doğru cevapladın.</p>')+(wrong.length?btn('Birlikte tekrar et','review-result'):'')+btn('Evde Pratiğe Dön','practice','secondary')+'<p>Sonuç gelişim raporuna kaydedildi.</p><p class="pc-saved">Parkur puanları değişmez.</p>',{back:true});
  }
  function practiceHistory(){
   render('Evde Pratik Sonuçları','<h1>Kaydedilmiş çalışmalar</h1>'+(dashboard.history.length?dashboard.history.map(h=>row(({test:'Kelime testi',game:'Papi ile oyun',plan:'Çalışma planı',summary:'Papi özeti'})[h.kind]||'Pratik','resume',new Date(h.createdAt).toLocaleDateString('tr-TR')+' · '+(h.completedAt?h.correct+' / '+h.total:h.cursor+' / '+h.total+' soru kaydedildi'),'data-id="'+h.id+'"')).join(''):'<p>İlk çalışmanızdan sonra sonuçlar burada görünecek.</p>'),{back:true});
@@ -182,7 +182,7 @@
   if(name==='pool'){const form=app.querySelector('[data-form="setup"]');lastSetup=formSettings(form);if(!lastSetup.types.length){error('En az bir soru türü seç.');return;}const r=await api('parentPool',{settings:lastSetup});const enough=r.words.length>=lastSetup.count;document.getElementById('pcPool').innerHTML=r.words.length?'<strong>'+r.words.length+' kelime hazır.</strong><br>'+(enough?'Testin hazır. Birlikte başlayabilirsiniz.':'Daha az soru veya başka bir kaynak seçebilirsin.'):'<strong>Bu seçim için içerik henüz hazır değil.</strong><br>Kelime sorularıyla devam edebilir veya farklı bir kaynak seçebilirsin.'+(lastSetup.types.includes('image')?btn('Kelime sorularına geç','text-test','secondary'):'');form.querySelector('[data-start]').disabled=!enough;return;}
   if(name==='answer-choice'){selection=el.dataset.value;app.querySelector('[data-action="check"]').disabled=false;app.querySelectorAll('.pc-choice').forEach(b=>b.setAttribute('aria-pressed',String(b===el)));return;}
   if(name==='word'){selection+=(selection?(practice.question.join??' '):'')+practice.question.tokens[Number(el.dataset.index)];el.disabled=true;document.getElementById('pcBuilt').textContent=selection;app.querySelector('[data-action="check"]').disabled=false;return;}
-  if(name==='reset-order'){selection='';document.getElementById('pcBuilt').textContent='';app.querySelectorAll('[data-action="word"]').forEach(b=>b.disabled=false);return;}
+  if(name==='reset-order'){app.querySelector('[data-action="check"]').disabled=true;selection='';document.getElementById('pcBuilt').textContent='';app.querySelectorAll('[data-action="word"]').forEach(b=>b.disabled=false);return;}
   if(name==='memory-card'){
    if(el.dataset.matched||el===memoryPicked||el.dataset.open)return;
    el.textContent=el.dataset.text;el.dataset.open='1';
@@ -201,6 +201,7 @@
   }
   if(name==='history'){dashboard=await api('parentDashboard');practiceHistory();return;}
   if(name==='resume'){await resume(el.dataset.id);return;}
+  if(name==='review-result'){words=practice.answers.filter(a=>!a.correct).map(a=>({en:a.en,tr:a.tr}));cardIndex=0;cardBack=false;cardView();return;}
   if(name==='cards'){words=dashboard.words;cardIndex=0;cardBack=false;cardView();return;}
   if(name==='plan-cards'){words=practice.settings.words;cardIndex=0;cardBack=false;cardView();return;}
   if(name==='flip'){cardBack=!cardBack;cardView();return;}

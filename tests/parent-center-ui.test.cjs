@@ -58,3 +58,8 @@ test('matching question shows the missing Turkish prompt and hides unrelated nav
 test('zero visual pool prevents starting and offers a clear usable text fallback',async()=>{
  const {w}=fixture(false,'choice',0);try{await flush();w.document.querySelector('[data-tab="practice"]').click();await flush();w.document.querySelector('[data-action="setup"]').click();await flush();const image=w.document.querySelector('[name="types"][value="image"]');image.checked=true;w.document.querySelector('[data-action="pool"]').click();await flush();assert(w.document.querySelector('[data-start]').disabled);assert(w.document.querySelector('[data-action="text-test"]'));assert(!w.document.getElementById('pcPool').textContent.includes('Soru sayısını azalt'));}finally{w.close();}
 });
+
+test('parent handoff opens the existing account picker without adding a duplicate switching system',async()=>{
+ const dom=new JSDOM('<div id="login-container"><form id="loginForm"><input id="ogrenci"><input id="sifre"><button id="girisBtn">Giriş</button><p id="mesaj"></p></form></div>',{url:'https://app.test/ingilizce/',runScripts:'outside-only'}),w=dom.window;
+ try{let login=0;w.sessionStorage.setItem('dm_open_account_picker','1');w.dmFirstDiscovery={openLogin:()=>login++};w.dmSavedSessions={remember(){},list:()=>[],current:()=>null};w.eval(fs.readFileSync('ingilizce/account-switch.js','utf8'));await flush();assert.equal(login,1);assert(w.document.getElementById('dmSwitchDialog'));assert.equal(w.sessionStorage.getItem('dm_open_account_picker'),null);assert(w.document.getElementById('dmSwitchAdd'));}finally{w.close();}
+});
