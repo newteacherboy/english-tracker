@@ -1,3 +1,4 @@
+import {normalizeStop,voiceURL,schoolWords} from './parent-content.mjs';
 import chapters from './parent-learning-chapters.json' with {type:'json'};
 
 const ROOT='https://app.dijimedu.com/ingilizce/';
@@ -59,18 +60,10 @@ export function parentCenterAPI(d){
    db.from('papi_story_progress').select('chapter').eq('actor_key','s:'+student.id).eq('completed',true).gte('chapter',1000).limit(500),
    extras(student.id)
   ]);
-  const done=asList(completion).map(r=>{const n=Number(r.level_no);return n>=1000&&n<2000?{...r,level_no:200000+Math.floor((n-1000)/100)*10000+((n-1000)%100)*100+51}:r;}),finished=new Set(asList(story).map(r=>r.chapter));
+  const done=asList(completion).map(normalizeStop),finished=new Set(asList(story).map(r=>r.chapter));
   const grade=Number(student.class_no)||0,units=[...new Set(done.filter(r=>r.class_no===grade).map(r=>r.unit_no))];
-  const bank=grade&&units.length?asList(await db.from('word_bank').select('english,turkish,unit_no').eq('active',true).eq('class_no',grade).in('unit_no',units).limit(5000)):[];
-  const words=[];
-  for(const unit of units){
-   const list=[...new Map(bank.filter(w=>w.unit_no===unit&&w.english?.trim()&&w.turkish?.trim()).map(w=>[norm(w.english),{en:w.english.trim(),tr:w.turkish.trim(),unit:'school:'+grade+':'+unit,grade}])).values()].sort((a,b)=>a.en.localeCompare(b.en,'en'));
-   const n=Math.ceil(list.length/4);
-   for(const stop of done.filter(r=>r.class_no===grade&&r.unit_no===unit)){
-    const part=stop.level_no%100-51;
-    if(part>=0&&part<n)words.push(...list.slice(part*4,part*4+4+(list.length%4===1&&part===n-2?1:0)));
-   }
-  }
+  const bank=grade&&units.length?asList(await db.from('word_bank').select('english,turkish,unit_no').eq('active',true).eq('class_no',grade).limit(5000)):[];
+  const words=schoolWords(bank,done,grade);
   for(const chapter of chapters.filter(c=>finished.has(c.id)))for(const w of chapter.cards||[])words.push({en:w.en,tr:w.tr,unit:'learning:'+chapter.id,grade:0});
   const map=new Map(words.map(w=>[norm(w.en)+'|'+norm(w.tr),w]));
   const wrong=asList(await db.from('dm_home_word_errors').select('en,tr,mistakes').eq('student_id',student.id).order('updated_at',{ascending:false}).limit(500));
@@ -86,7 +79,7 @@ export function parentCenterAPI(d){
   const r=await fetch(ROOT+'parkur-word-pool-v1.json');if(!r.ok)throw Error('Görsel listesi alınamadı.');
   const raw=await r.json(),rows=new Map();
   for(const [code,w] of Object.entries(raw))if(/^\d{4}$/.test(code)&&w.path==='512/'+code+'.webp'){
-   const key=norm(w.en)+'|'+norm(w.tr);rows.set(key,rows.has(key)?null:IMAGE_ROOT+code+'.webp');
+   const key=norm(w.en)+'|'+norm(w.tr);if(!rows.has(key))rows.set(key,IMAGE_ROOT+code+'.webp');
   }
   manifestCache={at:Date.now(),rows};return rows;
  }
@@ -101,7 +94,8 @@ export function parentCenterAPI(d){
   if(settings.content==='patterns')words=words.filter(w=>w.en.trim().split(/\s+/).length>=3);
   if(settings.content==='words')words=words.filter(w=>w.en.trim().split(/\s+/).length<3);
   const map=await images();
-  words=words.map(w=>({...w,image:map.get(norm(w.en)+'|'+norm(w.tr))||null}));
+  words=words.map(w=>({...w,image:map.get(norm(w.en)+'|'+norm(w.tr))||null,audio:voiceURL(w.en)}));
+  if(settings.types?.some(t=>['listen','speak'].includes(t)))words=words.filter(w=>w.audio);
   if(settings.types?.includes('image')){
    words=words.filter(w=>w.grade===Number(student.class_no)&&w.image);
    const checked=[];
@@ -265,7 +259,7 @@ export function parentCenterAPI(d){
      parent.settings?.teacherNotices===false?Promise.resolve({data:[]}):db.from('dm_teacher_student_notices').select('id,message,created_at').eq('student_id',s.id).order('created_at',{ascending:false}).limit(20),
      parent.settings?.teacherNotices===false?Promise.resolve({data:[]}):db.from('notifications').select('id,title,message,created_at').eq('recipient_student_id',s.id).in('type',['duyuru','gorev']).order('created_at',{ascending:false}).limit(20)
     ]);
-    const g=asList(games),allStops=asList(stops),l=asList(lessons),h=asList(history),goal=asList(goals)[0]||{days:4,minutes:10};
+    const g=asList(games),allStops=asList(stops).map(normalizeStop),l=asList(lessons),h=asList(history),goal=asList(goals)[0]||{days:4,minutes:10};
     const activity={};
     for(let n=b.monthly?29:6;n>=0;n--){const date=new Intl.DateTimeFormat('en-CA',{timeZone:'Europe/Istanbul'}).format(new Date(end.getTime()-n*864e5));activity[date]=0;}
     for(const row of [...g.map(r=>({at:r.created_at})),...allStops.map(r=>({at:r.completed_at})),...l.map(r=>({at:r.completed_at})),...h.filter(r=>r.completed_at).map(r=>({at:r.completed_at}))]){
@@ -285,11 +279,12 @@ export function parentCenterAPI(d){
     const settings=b.settings||{},kind=['test','game','plan','summary'].includes(b.kind)?b.kind:'test';
     const old=asList(await db.from('dm_home_practice').select('*').eq('id',b.id).eq('student_id',s.id).eq('parent_id',parent.id).limit(1))[0];
     if(old)return json({ok:true,practice:publicPractice(old)});
-    const feature=kind==='plan'?(b.feature==='weekly'?'weekly':'daily'):kind==='summary'?'papi':'',amount=[5,10,15].includes(Number(settings.count))?Number(settings.count):5;
+    const feature=kind==='plan'?(b.feature==='weekly'?'weekly':'daily'):kind==='summary'?'papi':'';let amount=[5,10,15].includes(Number(settings.count))?Number(settings.count):5;
     const types=Array.isArray(settings.types)?settings.types.filter(t=>['image','choice','listen','match','order','speak','memory'].includes(t)):['choice'];
     if(!types.length)return fail('En az bir soru türü seç.');
     const words=await pool(s,{...settings,types},plan);
-    if(words.length<amount)return fail('Seçimlerine uygun '+words.length+' kelime var. Soru sayısını azalt veya kaynağı değiştir.');
+    if(['plan','summary'].includes(kind)&&words.length)amount=Math.min(amount,words.length);
+    if(words.length<amount)return fail(words.length===0?(types.includes('image')?'Bu seçimde görseli hazır kelime bulunamadı. Kelime sorularına geçebilir veya başka bir kaynak seçebilirsin.':types.some(t=>['listen','speak'].includes(t))?'Bu seçimde kayıtlı sesi hazır kelime bulunamadı. Kelime sorularına geçebilirsin.':'Bu kaynakta henüz çalışılmış kelime bulunamadı. Önce bir Parkur durağını tamamlayabilirsin.'):'Bu seçimde '+words.length+' kelime hazır. Daha az soru veya farklı bir kaynak seçebilirsin.');
     const selected=shuffle(words).slice(0,amount),deck=selected.map((w,i)=>{
      const type=types[i%types.length],order=type==='order',pieces=w.en.split(/\s+/),join=pieces.length>1?' ':'';
      const options=shuffle([w.en,...shuffle(words.filter(x=>norm(x.en)!==norm(w.en))).slice(0,3).map(x=>x.en)]);

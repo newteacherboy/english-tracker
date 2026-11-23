@@ -96,5 +96,5 @@
  }
  function install(){if($('dmAccountSwitchButton'))return;const exit=document.querySelector('.header-btn.btn-cikis');if(!exit)return;const button=document.createElement('button');button.id='dmAccountSwitchButton';button.type='button';button.className=exit.className;button.textContent='⇄ Hesap Değiştir';button.onclick=open;exit.before(button);}
  window.dmHesapDegistirAc=open;
- document.addEventListener('DOMContentLoaded',()=>{install();if(sessionStorage.getItem('dm_add_personal_account')==='1'){sessionStorage.removeItem('dm_add_personal_account');open();addAccount();}});if(document.readyState!=='loading')install();
+ document.addEventListener('DOMContentLoaded',()=>{install();if(sessionStorage.getItem('dm_open_account_picker')==='1'){sessionStorage.removeItem('dm_open_account_picker');window.dmFirstDiscovery?.openLogin();open();}if(sessionStorage.getItem('dm_add_personal_account')==='1'){sessionStorage.removeItem('dm_add_personal_account');open();addAccount();}});if(document.readyState!=='loading')install();
 })();
