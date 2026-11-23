@@ -20,8 +20,8 @@ test('legacy demo stays available through its API while welcome offers direct si
   assert.equal(w.document.querySelectorAll('.fd-answer img').length,4);assert(w.document.querySelector('[data-action=register]'));assert(!w.document.querySelector('.fd-word-prompt'));assert(!w.document.querySelector('[data-role]'));
   w.document.querySelector('[data-word="'+words[i]+'"]').click();w.document.querySelector('[data-action=question-next]').click();
  }
- assert.equal(w.dmFirstDiscovery.screen(),'mini-result');assert.match(w.document.querySelector('.fd-mini-score').textContent,/6.*6 doğru/);w.document.querySelector('[data-action=register]').click();assert.equal(w.dmFirstDiscovery.screen(),'register');assert.equal(w.document.querySelectorAll('[data-role]').length,3);assert(JSON.parse(w.localStorage.getItem('dm_discovery_summary_v1')).completed);
- w.document.querySelector('[data-action=login]').click();assert(w.document.getElementById('dmDiscovery').hidden);assert(w.document.getElementById('dmDiscoveryGoogleFallback'));
+ assert.equal(w.dmFirstDiscovery.screen(),'mini-result');assert.match(w.document.querySelector('.fd-mini-score').textContent,/6.*6 doğru/);w.document.querySelector('[data-action=register]').click();assert.equal(w.dmFirstDiscovery.screen(),'register');assert.deepEqual(Array.from(w.document.querySelectorAll('[data-role]'),el=>el.dataset.role),['school','parent','independent','teacher']);assert(JSON.parse(w.localStorage.getItem('dm_discovery_summary_v1')).completed);
+ for(let i=0;i<3;i++)w.document.querySelector('[data-action=back]').click();w.document.querySelector('[data-action=login-roles]').click();assert.equal(w.dmFirstDiscovery.screen(),'login-roles');w.document.querySelector('[data-action=login]').click();assert(w.document.getElementById('dmDiscovery').hidden);assert(w.document.getElementById('dmDiscoveryGoogleFallback'));
  w.close();
 });
 test('account picker exposes illustrated Google login and restores password form on close',async()=>{
