@@ -58,7 +58,7 @@
   if(childId)dashboard=await api('parentDashboard');else dashboard=null;
   showTab();
  }
- function verifyView(){render('E-posta Onayı','<h1>Son bir adım</h1><p>Doğrulama bağlantısı ve 6 haneli veli geçiş kodun e-posta adresine gönderildi.</p><p>'+esc(me.parent.email)+'</p>'+btn('Doğrulamayı Kontrol Et','refresh')+btn('E-postayı Tekrar Gönder','resend','secondary')+btn('Çıkış Yap','logout','link'),{noNav:true,screen:'verify'});}
+ function verifyView(){render('E-posta Onayı','<h1>Son bir adım</h1><p>Doğrulama bağlantısı e-posta adresine gönderildi.</p><p>'+esc(me.parent.email)+'</p>'+btn('Doğrulamayı Kontrol Et','refresh')+btn('E-postayı Tekrar Gönder','resend','secondary')+btn('Çıkış Yap','logout','link'),{noNav:true,screen:'verify'});}
  function childTop(){const child=dashboard.student;return '<div class="pc-top"><button class="pc-child-picker" data-action="children" aria-label="Öğrenci seç veya ekle" aria-haspopup="dialog"><span class="pc-avatar">'+esc(child.name.trim().slice(0,1).toLocaleUpperCase('tr'))+'</span><span><strong>'+esc(child.name)+'</strong><small>'+(child.classNo?child.classNo+'. sınıf':'Öğrenci hesabı')+'</small></span><span class="pc-chevron">⌄</span></button>'+badge(dashboard.plan)+'<button class="pc-icon pc-count" data-action="notices" aria-label="Öğretmen bildirimleri">'+icon('bell')+(dashboard.notices.length?'<b>'+Math.min(9,dashboard.notices.length)+(dashboard.notices.length>9?'+':'')+'</b>':'')+'</button></div>';}
  function childrenView(){render('Öğrencilerim','<h1>Birlikte kiminle çalışalım?</h1>'+me.children.map(c=>row(c.full_name||c.username,'select-child',({premium_pro:'Premium Pro',pro:'Pro',free:'Free'})[c.plan],'data-id="'+c.id+'"')).join('')+btn('＋ Öğrenci ekle','link')+btn('Mevcut Öğrenciyi Kodla Bağla','link-code','link')+'<p class="pc-saved">İlk çocuk ve bir kardeş ücretsiz.</p>',{back:true});}
  function empty(){return '<h1>Çocuğum</h1><div class="pc-empty"><h2>İlk çocuğunu ekle</h2><p>Mevcut öğrenci hesabını kodla bağlayabilir veya çocuğun için hesap oluşturabilirsin.</p></div>'+btn('Öğrenci Ekle','create-child')+btn('Mevcut Öğrenciyi Kodla Bağla','link-code','secondary');}
@@ -242,13 +242,17 @@
   if(name==='teacher'){const t=dashboard.teacher;render('Öğretmen Bilgileri',t?'<h1>'+esc(t.full_name||t.display_name)+'</h1><p>'+esc(t.school)+'</p>':'<p>Bu hesaba bağlı öğretmen bulunmuyor.</p>',{back:true});return;}
   if(name==='child'){
    childId=el.dataset.id;localStorage.setItem(CHILD,childId);dashboard=await api('parentDashboard');
-   render('Çocuk Hesabı','<h1>'+esc(dashboard.student.name)+'</h1>'+badge(dashboard.plan)+row('Öğretmeni','teacher')+row('Üyelik Durumu','membership')+(dashboard.student.sameEmail?row('Çocuğumun Hesabına Geç','switch-student'):'')+'<p>Özellikler seçili çocuğun üyeliğine göre açılır.</p>'+btn('Veli bağlantısını kaldır','unlink','link'),{back:true});return;
+   render('Çocuk Hesabı','<h1>'+esc(dashboard.student.name)+'</h1>'+badge(dashboard.plan)+row('Öğretmeni','teacher')+row('Üyelik Durumu','membership')+row('Çocuğumun Hesabına Geç','switch-student')+row('Çocuğun Geçiş Kodu','child-code')+'<p>Özellikler seçili çocuğun üyeliğine göre açılır.</p>'+btn('Veli bağlantısını kaldır','unlink','link'),{back:true});return;
   }
   if(name==='unlink'){if(confirm('Bu çocuğun veli bağlantısı kaldırılsın mı?')){await api('parentUnlink');await load();}return;}
   if(name==='membership'){premium('Seçili çocuğun üyeliği '+({free:'Free',pro:'Pro',premium_pro:'Premium Pro'})[dashboard.plan]+'.');return;}
-  if(name==='account'){render('Hesap Ayarları','<h1>'+esc(me.parent.name)+'</h1><p>'+esc(me.parent.email)+'</p>'+btn('⇄ Hesap Değiştir','switch-account')+btn('Veli Geçiş Kodunu Yenile','pin-mail','secondary')+btn('Çıkış Yap','logout','secondary'),{back:true});return;}
+  if(name==='account'){render('Hesap Ayarları','<h1>'+esc(me.parent.name)+'</h1><p>'+esc(me.parent.email)+'</p>'+btn('⇄ Hesap Değiştir','switch-account')+btn('Çıkış Yap','logout','secondary'),{back:true});return;}
   if(name==='pin-mail'){const r=await api('parentPinResend');error(r.mailed?'Yeni geçiş kodun e-postaya gönderildi.':'E-posta gönderimi tamamlanamadı.');return;}
-  if(name==='switch-student'){render('Öğrenci Hesabına Geç','<form data-form="switch">'+field('6 haneli öğrenci geçiş kodu','pin','password','','required inputmode="numeric" pattern="[0-9]{6}" minlength="6" maxlength="6" autocomplete="off"')+'<button class="pc-primary">Öğrenci Hesabına Geç</button></form>',{back:true});return;}
+  if(name==='switch-student'){const r=await api('parentSwitchStudent');window.dmSavedParents?.forget(token);localStorage.removeItem(KEY);token='';sessionStorage.setItem('dm_session_handoff_v1',JSON.stringify({token:r.token,name:r.username,role:'ogrenci',google:false,previous:localStorage.getItem('ing_token')||'',at:Date.now()}));localStorage.setItem('dm_last_account_v1',JSON.stringify({kind:'personal'}));location.assign('./?hesap=1');return;}
+  if(name==='child-code'){
+   const r=await api('parentChildCode');
+   render('Çocuğun Geçiş Kodu','<h1>'+esc(dashboard.student.name)+'</h1><p>'+(r.code?'Geçiş kodu: <strong>'+esc(r.code)+'</strong>':'Bu çocuk için kendi kodunu belirledin.')+'</p><p>Öğrenci hesabına geçerken kod gerekmez.</p><form data-form="child-code">'+field('Yeni geçiş kodu','pin','password','','required inputmode="numeric" minlength="6" maxlength="6" pattern="[0-9]{6}" autocomplete="off"')+'<button class="pc-primary">Kodu Kaydet</button></form>',{back:true});return;
+  }
   if(name==='weekly'){await personal('plan','weekly');return;}
   if(name==='daily'||name==='summary'){await personal(name==='daily'?'plan':'summary');return;}
   if(name==='monthly'){
@@ -278,7 +282,7 @@
    else if(type==='program-days'){await api('parentGoal',{days:Number(data.get('days')),minutes:dashboard.goal.minutes});dashboard=await api('parentDashboard');planView();}
    else if(type==='goal'){await api('parentGoal',{days:Number(data.get('days')),minutes:Number(data.get('minutes'))});dashboard=await api('parentDashboard');showTab();}
    else if(type==='settings'){await api('parentSettings',{teacherNotices:data.get('teacherNotices')==='on',practiceReminders:data.get('practiceReminders')==='on'});await load();}
-   else if(type==='switch'){const r=await api('parentSwitchStudent',{pin:data.get('pin')});window.dmSavedParents?.forget(token);localStorage.removeItem(KEY);token='';sessionStorage.setItem('dm_session_handoff_v1',JSON.stringify({token:r.token,name:r.username,role:'ogrenci',google:false,previous:localStorage.getItem('ing_token')||'',at:Date.now()}));localStorage.setItem('dm_last_account_v1',JSON.stringify({kind:'personal'}));location.assign('./?hesap=1');}
+   else if(type==='child-code'){await api('parentSetChildCode',{pin:data.get('pin')});await action('child-code');error('Yeni geçiş kodu kaydedildi.');}
   }catch(e){if(e.premium)premium(e.message);else error(e.message);}
   finally{busy=false;buttons.forEach(b=>b.disabled=false);}
  });

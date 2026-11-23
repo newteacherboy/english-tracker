@@ -10,19 +10,15 @@
  function close(){dialog?.remove();dialog=null;}
  function open(){
   close();dialog=document.createElement('dialog');dialog.className='dm-parent-dialog';
-  dialog.innerHTML='<form method="dialog"><button class="dm-parent-close" aria-label="Kapat">×</button></form><h2>Veli Hesabına Geç</h2><p data-parent-help>Veli hesabı kontrol ediliyor…</p><form data-parent-switch hidden><label>Veli geçiş kodu<input name="pin" type="password" inputmode="numeric" pattern="[0-9]{6}" minlength="6" maxlength="6" required autocomplete="off"></label><button type="submit">Veli Hesabına Geç</button></form><button type="button" data-parent-code>Veli Bağlantı Kodu Al</button><p>Velin bu kodu kendi hesabında Ailem → Mevcut Öğrenciyi Kodla Bağla bölümüne girer.</p><p><a href="veli-paneli.html">Veli girişi veya kayıt</a></p><details><summary>Öğrenci hesabına dönüş kodu</summary><p>Veliden kendi hesabına dönerken kullanılır.</p><button type="button" data-student-pin>Dönüş kodunu e-postama gönder</button></details><a href="veli-paneli.html?ogrenci=1">Evde Pratik Çalışmalarım</a><p class="dm-parent-message" role="status"></p>';
+  dialog.innerHTML='<form method="dialog"><button class="dm-parent-close" aria-label="Kapat">×</button></form><h2>Veli Hesabına Geç</h2><p data-parent-help>Veli hesabı kontrol ediliyor…</p><form data-parent-switch hidden><label>Veli geçiş kodu<input name="pin" type="password" inputmode="numeric" pattern="[0-9]{6}" minlength="6" maxlength="6" required autocomplete="off"></label><button type="submit">Veli Hesabına Geç</button></form><button type="button" data-parent-code>Veli Bağlantı Kodu Al</button><p>Velin bu kodu kendi hesabında Ailem → Mevcut Öğrenciyi Kodla Bağla bölümüne girer.</p><p><a href="veli-paneli.html">Veli girişi veya kayıt</a></p><a href="veli-paneli.html?ogrenci=1">Evde Pratik Çalışmalarım</a><p class="dm-parent-message" role="status"></p>';
   document.body.append(dialog);dialog.showModal();
   const panel=dialog;
   const message=text=>{panel.querySelector('.dm-parent-message').textContent=text;};
   const help=panel.querySelector('[data-parent-help]');
   call('parentSwitchStatus').then(({available})=>{
    panel.querySelector('[data-parent-switch]').hidden=!available;
-   help.textContent=available?'Veli hesabına geçmek için velinin e-postasına gönderilen veli geçiş kodunu gir.':'Bu e-postada doğrulanmış bir veli hesabı yok. Velin hesap oluşturabilir veya mevcut hesabına giriş yapabilir.';
+   help.textContent=available?'Veli hesabına geçmek için velinin Ailem bölümünde bu çocuk için gördüğü veya belirlediği kodu gir.':'Bu e-postada bu öğrenciye bağlı, doğrulanmış bir veli hesabı bulunamadı. Velin hesap oluşturabilir veya mevcut hesabına giriş yapabilir.';
   }).catch(()=>{help.textContent='Veli hesabı kontrol edilemedi. Veli geçiş kodun varsa aşağıya girebilirsin.';panel.querySelector('[data-parent-switch]').hidden=false;});
-  panel.querySelector('[data-student-pin]').onclick=async event=>{
-   const button=event.currentTarget;button.disabled=true;
-   try{const r=await call('parentStudentPinMail');message(r.mailed?'Dönüş kodu öğrenci e-postana gönderilmek üzere alındı.':'E-posta gönderilemedi. Tekrar dene.');}catch(e){message(e.message);}finally{button.disabled=false;}
-  };
   dialog.querySelector('[data-parent-switch]').onsubmit=async event=>{
    event.preventDefault();const button=event.target.querySelector('button');button.disabled=true;
    try{const pin=new FormData(event.target).get('pin');const result=await call('parentSwitch',{pin});localStorage.setItem('dm_parent_session_v1',result.token);location.assign('veli-paneli.html');}catch(e){message(e.message);}finally{button.disabled=false;}
