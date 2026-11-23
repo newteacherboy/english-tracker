@@ -4,10 +4,11 @@ const fs = require('node:fs');
 const vm = require('node:vm');
 const currentVersion = fs.readFileSync(require('node:path').join(__dirname, '../ingilizce/sw.js'), 'utf8').match(/const SURUM = '([^']+)'/)[1];
 const source = fs.readFileSync(require('node:path').join(__dirname, '../ingilizce/sw.js'), 'utf8');
-function fixture() {
+function fixture(extra={}) {
   const listeners = {}, removed = [];
   vm.runInNewContext(source, {
     URL,
+    fetch: async (request,options)=>{extra.requests?.push({request,options});return "fresh parent shell";},
     self: { addEventListener: (name, fn) => { listeners[name] = fn; }, clients: { claim: async () => {} } },
     caches: { keys: async () => ['sayfa-diji-v11', 'kaynak-diji-v11', 'sayfa-diji-v12', 'sayfa-diji-v13', 'kaynak-diji-v13', 'sayfa-'+currentVersion, 'kaynak-'+currentVersion, 'kocluk-cache'], delete: async key => { removed.push(key); } }
   });
@@ -33,3 +34,9 @@ test('guest and email confirmation navigation preserve the main offline page',()
 });
 
 test('guest query route never replaces the offline member home page',()=>{const {listeners}=fixture();let intercepted=false;listeners.fetch({request:{method:'GET',url:'https://app.dijimedu.com/ingilizce/?misafir=1',mode:'navigate'},respondWith:()=>intercepted=true});assert.equal(intercepted,false);});
+
+test('parent shell refresh bypasses stale HTML and never opens the member page cache',async()=>{
+ const requests=[],{listeners}=fixture({requests});let work;
+ listeners.fetch({request:{method:'GET',url:'https://app.dijimedu.com/ingilizce/veli-paneli.html',mode:'navigate'},respondWith:value=>work=value});
+ assert.equal(await work,'fresh parent shell');assert.equal(requests[0].options.cache,'no-store');
+});

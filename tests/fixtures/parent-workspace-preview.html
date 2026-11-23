@@ -24,6 +24,6 @@ const stub=()=>{
   return {ok:true,status:200,json:async()=>JSON.parse(JSON.stringify(data))};
  };
 };
-(async()=>{const html=await(await fetch('/ingilizce/veli-paneli.html')).text();document.getElementById('preview').srcdoc=html.replace('<head>','<head><base href="/ingilizce/"><script>('+stub.toString()+')();<\/script>');})();
+(async()=>{const html=await(await fetch('/ingilizce/veli-paneli.html',{cache:'no-store'})).text();document.getElementById('preview').srcdoc=html.replace('<head>','<head><base href="/ingilizce/"><script>('+stub.toString()+')();<\/script>');})();
 document.getElementById('device').onchange=event=>{const [w,h]=event.target.value.split(',');const frame=document.getElementById('preview');frame.width=w;frame.height=h;};
 </script></body></html>
