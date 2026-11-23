@@ -7,7 +7,7 @@
    - Supabase istekleri: bu dosya karışmaz (sayfadaki katman yönetir)
    Sayfayı güncellediğinizde SURUM değerini artırın (v2, v3…).
    ===================================================================== */
-const SURUM = 'diji-v536-parent-family-20261123';
+const SURUM = 'diji-v537-karanfil-safearea-20261123';
 const SAYFA = 'sayfa-' + SURUM, KAYNAK = 'kaynak-' + SURUM;
 // Cached on first use; never download the A2 catalog at startup.
 const LAZY_TOPIC_FILES = new Set(['konu-oyunlari-a1.js','konu-oyunlari-a2.js','topic-games-core.mjs']);
@@ -18,7 +18,7 @@ const AYRI_SAYFA = /\/(?:veli-paneli|veli-kontrolu|hesap-sil|hesap-dondur|hesap-
 
 self.addEventListener('install', e => {
   // Keep the complete lightweight opening (including the inline SVG game) available offline.
-  const opening=['shared-voice.js?v=20261120-tr-school','papi-loading.css?v=20261112-ust','papi-loading.webp','holiday-splashes/papi-intro.js?v=20261118-gunde1','holiday-splashes/splash.js?v=20261121-karanfil-fullscreen','holiday-splashes/dates.js?v=20261023-2','holiday-splashes/splash.css?v=20261121-karanfil-fullscreen'];
+  const opening=['shared-voice.js?v=20261120-tr-school','papi-loading.css?v=20261112-ust','papi-loading.webp','holiday-splashes/papi-intro.js?v=20261118-gunde1','holiday-splashes/splash.js?v=20261121-karanfil-fullscreen','holiday-splashes/dates.js?v=20261023-2','holiday-splashes/splash.css?v=20261123-karanfil-safearea'];
   e.waitUntil(Promise.all([
     caches.open(SAYFA).then(c => c.addAll(['./'])),
     caches.open(KAYNAK).then(c => c.addAll(opening))
