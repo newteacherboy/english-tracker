@@ -110,3 +110,45 @@ html.dm-zirve-intro-active #dmBootSplash .dm-karanfil-opening{
 .dm-karanfil-opening .dm-zirve-opening-art{
  object-position:center center!important;
 }
+
+
+/* 24 Kasim 2026: edge-to-edge mobile splash. Preserve original art and lettering.
+   Extend the artwork behind native safe areas; blur-fill only the spare canvas. */
+html.dm-zirve-intro-active #dmBootSplash,
+html.dm-zirve-intro-active #dmBootSplash .dm-karanfil-opening {
+  position:fixed!important;
+  inset:0!important;
+  width:100vw!important;
+  height:100dvh!important;
+  min-height:100dvh!important;
+  max-height:none!important;
+  margin:0!important;
+  padding:0!important;
+  overflow:hidden!important;
+}
+.dm-karanfil-opening .dm-zirve-opening-frame {
+  position:absolute!important;
+  inset:0!important;
+  width:100%!important;
+  height:100%!important;
+  max-width:none!important;
+  max-height:none!important;
+  margin:0!important;
+  overflow:hidden!important;
+}
+.dm-karanfil-opening .dm-zirve-opening-frame::before {
+  inset:-28px!important;
+  background-position:center center!important;
+  background-size:cover!important;
+}
+.dm-karanfil-opening .dm-zirve-opening-art {
+  position:absolute!important;
+  inset:0!important;
+  width:100%!important;
+  height:100%!important;
+  object-fit:contain!important;
+  object-position:center center!important;
+}
+.dm-karanfil-opening .dm-zirve-opening-control {
+  bottom:max(14px, calc(env(safe-area-inset-bottom, 0px) + 8px))!important;
+}
