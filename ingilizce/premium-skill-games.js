@@ -17,8 +17,10 @@
   const s=state,controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),15000);
   try{
    const url=(typeof apiURL==='string'?apiURL:'https://nxfqlutulxqzqgwewssd.supabase.co/functions/v1/diji-api').replace(/diji-api.*$/,'premium-games');
+   if(op==='start'&&s.team)data={...data,teamTicket:await window.dmTeam.premiumTicket(data.runId)};
    const response=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({game:s.key,op,t:s.token,...data}),signal:controller.signal});
    const result=await response.json();if(!response.ok||result.ok===false){const e=Error(result.mesaj||'Oyun yüklenemedi. Tekrar dene.');e.code=result.hata;throw e;}
+   if(result.teamPoints)window.dmTeam?.credited(result.teamPoints);
    return result;
   }catch(e){if(e.name==='AbortError')throw Error('Bağlantı gecikti. Aynı oyunu tekrar deneyebilirsin.');throw e;}finally{clearTimeout(timeout);}
  }
@@ -28,10 +30,10 @@
   const body=root.querySelector('.psg-body');body.innerHTML='<div class="psg-panel"><h2>'+esc(title)+'</h2><p>'+esc(copy)+'</p><p data-status role="status"></p><div class="psg-actions"></div></div>';
   actions.forEach(([label,fn])=>{const b=document.createElement('button');b.type='button';b.textContent=label;b.onclick=fn;body.querySelector('.psg-actions').append(b);});
  }
- async function open(key){
+ async function open(key,options){
   if(!games[key])return;close();origin=document.activeElement;
   if(!who()||!token()){window.yoToast?.('Önce hesabına giriş yap.');return;}
-  const s=state={key,owner:who(),token:token(),picks:[],phase:'loading',busy:false,sound:true};
+  const s=state={key,owner:who(),token:token(),picks:[],phase:'loading',busy:false,sound:true,team:options?.team===true};
   root=document.createElement('section');root.id='premiumSkillGame';root.className='psg-overlay game-modal-overlay psg-'+key;root.setAttribute('role','dialog');root.setAttribute('aria-modal','true');root.setAttribute('aria-labelledby','psgTitle');
   root.innerHTML='<div class="psg-shell"><header class="psg-header"><button type="button" data-back aria-label="Geri dön">‹</button><h2 id="psgTitle">'+games[key].title+'</h2><button type="button" data-sound aria-label="Sesi kapat" aria-pressed="true">♫</button><button type="button" data-pause aria-label="Duraklat" hidden>Ⅱ</button><button type="button" data-close aria-label="Kapat">×</button></header><main class="psg-body"></main></div>';
   root.querySelector('[data-back]').onclick=()=>s.phase==='setup'||s.phase==='loading'?close():open(s.key);root.querySelectorAll('[data-close]').forEach(b=>b.onclick=close);root.querySelector('[data-pause]').onclick=togglePause;

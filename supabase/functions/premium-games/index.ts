@@ -50,15 +50,28 @@ Deno.serve(async(req:Request)=>{
     if(op==='ad-redeem'&&!UUID.test(String(b.offerId||'')))return reply(req,{ok:false,mesaj:'Geçersiz reklam teklifi.'},400);
     return reply(req,await db('rpc/dm_premium_ad_offer',{actor,game_key:game,op:op==='ad-prepare'?'prepare':'redeem',offer_key:b.offerId||null}));
   }
+  async function trackStart(data:Record<string,unknown>) {
+    if (!teacherGame && data.ok !== false && !data.result && UUID.test(String(b.teamTicket || ''))) {
+      await db('rpc/dm_team_premium_bind',{actor,ticket:b.teamTicket,game_key:game,run_key:b.runId})
+        .catch(() => console.error('Team game start could not be registered'));
+    }
+    return data;
+  }
+  async function trackFinish(data:Record<string,unknown>) {
+    if (teacherGame || data.ok===false || game==='word-match') return data;
+    const teamPoints=await db('rpc/dm_team_premium_points',{actor,game_key:game,run_key:b.runId})
+      .catch(() => 0);
+    return {...data,teamPoints};
+  }
   if(op==='access')return reply(req,{ok:true,...await db('rpc/dm_game_access',{actor,game_key:game})});
   if(game==='tower'||game==='word-goal'){
     if(s.role==='student'&&s.teacher_portal_access_id)return reply(req,{ok:false,mesaj:'Premium oyun için kişisel hesabına giriş yap.'},403);
     const rpc=game==='tower'?'dm_tower':'dm_goal';
     if(op==='status')return reply(req,await db('rpc/'+rpc+'_status',{actor}));
     if(!UUID.test(String(b.runId||'')))return reply(req,{ok:false,mesaj:'Geçersiz oyun.'},400);
-    if(op==='start')return reply(req,await db('rpc/'+rpc+'_start',{actor,run_key:b.runId}));
+    if(op==='start')return reply(req,await trackStart(await db('rpc/'+rpc+'_start',{actor,run_key:b.runId})));
     if(op==='finish'&&Array.isArray(b.selections)&&b.selections.length>=4&&b.selections.length<=12&&b.selections.every((pick:unknown)=>typeof pick==='number'&&Number.isInteger(pick)&&pick>=-1&&pick<=3)){
-      return reply(req,await db('rpc/'+rpc+'_finish',{actor,run_key:b.runId,selections:b.selections}));
+      return reply(req,await trackFinish(await db('rpc/'+rpc+'_finish',{actor,run_key:b.runId,selections:b.selections})));
     }
     return reply(req,{ok:false,mesaj:'Geçersiz oyun sonucu.'},400);
   }
@@ -84,7 +97,7 @@ Deno.serve(async(req:Request)=>{
       if(teacherGame)await db('rpc/dm_teacher_premium_release',{p_actor:actor,p_game:game,p_run:b.runId}).catch(()=>{});
       throw error;
     }
-    return await gameReply(result);
+    return await gameReply(await trackStart(result));
   }
   // Await the dispatch helpers here so rejected RPCs reach the HTTP error handler.
   if(b.game==='papizzle'){
@@ -94,7 +107,7 @@ Deno.serve(async(req:Request)=>{
    if(op==='start')return await startGame('rpc/dm_papizzle_start',{actor,run_key:b.runId});
    if(op==='finish'&&Array.isArray(b.selections)&&b.selections.length>=1&&b.selections.length<=256
       &&b.selections.every((pick:unknown)=>typeof pick==='number'&&Number.isInteger(pick)&&pick>=0&&pick<16)){
-    return await gameReply(await db('rpc/dm_papizzle_finish',{actor,run_key:b.runId,selections:b.selections}));
+    return await gameReply(await trackFinish(await db('rpc/dm_papizzle_finish',{actor,run_key:b.runId,selections:b.selections})));
    }
    return reply(req,{ok:false,mesaj:'Geçersiz oyun sonucu.'},400);
   }
@@ -106,7 +119,7 @@ Deno.serve(async(req:Request)=>{
    if(op==='start')return await startGame('rpc/'+rpc+'_start',{actor,run_key:b.runId});
    if(op==='finish'&&Array.isArray(b.selections)&&b.selections.length<=20
       &&b.selections.every((pick:unknown)=>typeof pick==='number'&&Number.isInteger(pick)&&pick>=(b.game==='word-blocks'?0:-1)&&pick<=(b.game==='word-blocks'?5:2))){
-    return await gameReply(await db('rpc/'+rpc+'_finish',{actor,run_key:b.runId,selections:b.selections}));
+    return await gameReply(await trackFinish(await db('rpc/'+rpc+'_finish',{actor,run_key:b.runId,selections:b.selections})));
    }
    return reply(req,{ok:false,mesaj:'Geçersiz oyun sonucu.'},400);
   }

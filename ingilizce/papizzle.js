@@ -46,14 +46,14 @@
     });
   }
 
-  window.papizzleAc = async () => {
+  window.papizzleAc = async (options) => {
     if (opening || document.querySelector('.papizzle')) return;
     const name = account();
     const token = (window.dmTeacherPortalMode ? sessionStorage.getItem('ing_ogr_token') : '') || localStorage.getItem('ing_token') || '';
     opening = true;
     try {
       const [state] = await Promise.all([request(token, 'status'), loadStyle()]);
-      if (name === account() && token === ((window.dmTeacherPortalMode ? sessionStorage.getItem('ing_ogr_token') : '') || localStorage.getItem('ing_token') || '')) mount(name, token, state);
+      if (name === account() && token === ((window.dmTeacherPortalMode ? sessionStorage.getItem('ing_ogr_token') : '') || localStorage.getItem('ing_token') || '')) mount(name, token, state, options?.team===true);
     } catch (error) {
       window.yoToast?.(error.message);
     } finally {
@@ -61,7 +61,7 @@
     }
   };
 
-  function mount(name, token, state) {
+  function mount(name, token, state, team) {
     const screen = document.createElement('dialog');
     screen.className = 'papizzle';
     screen.setAttribute('aria-label', 'Papizzle');
@@ -213,7 +213,7 @@
       runId ??= crypto.randomUUID();
       showPanel('Bloklar hazırlanıyor…', [], []);
       try {
-        const data = await request(token, 'start', {runId});
+        const data = await request(token, 'start', {runId, ...(team?{teamTicket:await window.dmTeam.premiumTicket(runId)}:{})});
         if (!screen.isConnected || !sameAccount()) return;
         apply(data);
         tiles = data.tiles;
@@ -295,6 +295,7 @@
       showPanel('Sonuç kaydediliyor…', [], []);
       try {
         const result = await request(token, 'finish', {runId, selections});
+        if(result.teamPoints)window.dmTeam?.credited(result.teamPoints);
         if (!screen.isConnected || !sameAccount()) return;
         apply(result);
         runId = undefined;

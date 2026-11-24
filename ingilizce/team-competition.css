@@ -1,0 +1,149 @@
+.dm-arena-home {
+  --team-ink:#350947;
+  --team-line:#e5d6f2;
+  --team-surface:#fbf5ff;
+}
+#tab-meduakis.fr-home-view {background:#f4ebfb}
+.dm-team-card,.dm-team-info {
+  min-width:0;
+  padding:12px;
+  border:1px solid #e5d6f2;
+  border-radius:16px;
+  background:#fbf5ff;
+  box-shadow:0 2px 5px #451d551a;
+  color:#350947;
+}
+.dm-team-summary {
+  display:grid;
+  grid-template-columns:minmax(74px,32%) minmax(0,1fr) auto;
+  gap:8px;
+  align-items:center;
+}
+.dm-team-crest {display:block;width:100%;aspect-ratio:1;object-fit:contain;border-radius:12px}
+.dm-team-summary h2 {margin:0;font-size:clamp(18px,5vw,28px);line-height:1.12;overflow-wrap:anywhere}
+.dm-team-summary p,.dm-team-summary small {display:block;margin:4px 0;font-size:12px}
+.dm-team-summary strong {display:block;margin-top:6px;font-size:clamp(17px,4.6vw,25px)}
+.dm-team-buttons {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.dm-arena-home [data-team-action],.dm-team-sheet button {
+  min-width:0;
+  min-height:42px;
+  padding:6px 9px;
+  border:1px solid #d8b5ef;
+  border-radius:12px;
+  background:#fbf5ff;
+  color:#350947;
+  font:900 clamp(11px,3.2vw,15px)/1.15 Nunito,system-ui,sans-serif;
+  overflow-wrap:anywhere;
+  cursor:pointer;
+}
+.dm-arena-home [data-team-action="premium"],.dm-arena-home [data-team-action="create"],
+.dm-team-sheet button[type="submit"] {
+  background:linear-gradient(#ffe866,#ffc520);
+  border-color:#ecaf10;
+}
+.dm-team-tasks h3 {margin:0 0 6px;font-size:16px}
+.dm-team-task {
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  gap:4px 8px;
+  padding:7px 0;
+  border-top:1px solid #ebdef5;
+  font-size:13px;
+  font-weight:850;
+}
+.dm-team-task progress {grid-column:1/-1;width:100%;height:8px;accent-color:#7b22ca}
+.dm-team-task progress:indeterminate {accent-color:#b48dd2}
+.dm-team-sheet {
+  width:min(calc(100% - 24px),520px);
+  max-height:min(85dvh,680px);
+  border:1px solid #e5d6f2;
+  border-radius:20px;
+  padding:14px;
+  background:#fbf5ff;
+  color:#350947;
+  overflow:auto;
+  font-family:Nunito,system-ui,sans-serif;
+}
+.dm-team-sheet::backdrop {background:#280c4290}
+.dm-team-sheet header {display:flex;justify-content:space-between;align-items:center;gap:10px}
+.dm-team-sheet h2 {font-size:20px;margin:0}
+.dm-team-sheet-body,.dm-team-sheet form {display:grid;gap:10px}
+.dm-team-sheet input:not([type="radio"]) {box-sizing:border-box;width:100%;min-height:40px;padding:8px;border:1px solid #d8b5ef;border-radius:9px}
+.dm-team-sheet fieldset {min-width:0;border:1px solid #e5d6f2;border-radius:12px}
+.dm-team-crests {display:grid;gap:4px;grid-template-columns:repeat(5,minmax(0,1fr))}
+.dm-team-crests label {display:grid;justify-items:center}
+.dm-team-crests input {accent-color:#7b22ca;margin:4px}
+.dm-team-list-row {
+  display:flex;
+  align-items:center;
+  gap:7px;
+  padding:7px 0;
+  border-bottom:1px solid #e5d6f2;
+}
+.dm-team-list-row img {width:38px;flex:none}
+.dm-team-list-row b {overflow-wrap:anywhere}
+.dm-team-list-row strong,.dm-team-list-row button {margin-inline-start:auto}
+.dm-team-error {font-weight:800;color:#9b2451}
+.dm-team-info p {margin:4px 0}
+
+#tab-meduakis .dm-arena-home .fr-weekly-podium {
+  background:#fbf5ff;
+  border:1px solid #e5d6f2;
+  border-radius:18px;
+}
+#tab-meduakis .dm-arena-home .fr-podium-heading {background:none;box-shadow:none;color:#350947}
+#tab-meduakis .dm-arena-home .fr-podium-heading h3 {color:#350947!important;-webkit-text-fill-color:#350947!important}
+#tab-meduakis .dm-arena-home .fr-podium-footer {padding:8px}
+#tab-meduakis .dm-arena-home .fr-league-self {background:#ffe264;color:#350947;border-radius:12px;padding:6px}
+.dm-arena-rank-list {margin:8px;border:1px solid #ecdff5;border-radius:12px;overflow:hidden}
+.dm-arena-rank-row {
+  display:grid;
+  grid-template-columns:22px 32px minmax(0,1fr) auto;
+  align-items:center;
+  gap:6px;
+  min-width:0;
+  border-bottom:1px solid #ecdff5;
+  padding:5px;
+  color:#350947;
+  font-size:clamp(11px,3.5vw,15px);
+}
+.dm-arena-rank-row:last-child {border-bottom:0}
+.dm-arena-rank-row>span {min-width:0;overflow-wrap:anywhere}
+.dm-arena-rank-row.is-self {background:#fff1ae}
+
+body #tab-meduakis.fr-home-view {background:#f4ebfb!important}
+body #tab-meduakis.fr-home-view .dm-team-summary h2 {color:#350947!important;-webkit-text-fill-color:#350947!important}
+body #tab-meduakis.fr-home-view .dm-arena-home .fr-weekly-podium {
+  background:#fbf5ff!important;
+  border-color:#e5d6f2!important;
+  box-shadow:0 2px 5px #451d551a!important;
+}
+#tab-meduakis .dm-arena-home .fr-podium-copy {order:2;min-height:35px;background:#fff9fc;border-color:#eeddf3}
+#tab-meduakis .dm-arena-home .fr-podium-block {order:3}
+#tab-meduakis .dm-arena-home .fr-podium-stage {padding-top:4px}
+#dmDuelHome .dm-duel-page-inner {justify-content:flex-start;gap:12px}
+#dmDuelHome .dm-duel-page-head {grid-template-columns:minmax(0,1fr) auto}
+#dmDuelHome .dm-duel-hero-stage {
+  background:linear-gradient(90deg,#3d0928,#27061a);
+  isolation:isolate;
+}
+#dmDuelHome .dm-duel-hero-stage::before {
+  content:"";
+  position:absolute;
+  inset:0 0 0 44%;
+  z-index:-1;
+  background:url("friends-assets/papi-duel-bordeaux.webp") right center / cover no-repeat;
+  mask-image:linear-gradient(90deg,transparent,#000 17%);
+}
+#dmDuelHome .dm-duel-hero-copy h2 {font-size:clamp(19px,5.8vw,32px)}
+.dm-team-portraits {display:flex;flex-wrap:wrap;gap:2px;margin-top:4px}
+.dm-team-portraits>span {
+  display:grid;
+  place-items:center;
+  width:24px;
+  height:24px;
+  border-radius:50%;
+  background:#e6d4f5;
+  overflow:hidden;
+  font-weight:900;
+}

@@ -2,7 +2,7 @@
 (()=>{'use strict';
   const premiumFile='premium-word-match.js?v=20261114-flow';
   const introFile='premium-intro.js?v=20261114-daily-one-card';
-  const files=['solo-arcade.js?v=82a3b3891e','harf-bahcesi.js?v=b936541467','papi-cards.js?v=b9d02db518','meteor.js?v=9460b40009','word-wheel.js?v=dc87a710bb','kelime-rallisi.js?v=20261118-hiz'];
+  const files=['solo-arcade.js?v=82a3b3891e','harf-bahcesi.js?v=b936541467','papi-cards.js?v=b9d02db518','meteor.js?v=9460b40009','word-wheel.js?v=dc87a710bb','kelime-rallisi.js?v=20261125-team-1'];
   const loaded=new Set(),loading=new Map();let pending=null,readyDone=false;
   function script(src){window.dmLateCss?.();if(loaded.has(src))return Promise.resolve();if(loading.has(src))return loading.get(src);const task=new Promise((resolve,reject)=>{
     const el=document.createElement('script');el.src=src;el.async=false;
@@ -37,30 +37,30 @@
   };
   window.premiumKelimeEslestirmeAc=premiumProxy;
   let flightLoading;
-  const flightProxy=async ()=>{
+  const flightProxy=async options=>{
     const owner=typeof aktifOgrenciAdi==='undefined'?'':aktifOgrenciAdi;
     try{
-      await (flightLoading??=Promise.all([script(introFile),script('premium-cloud-flight.js?v=20261118-hiz')]).catch(error=>{flightLoading=null;throw error;}));
+      await (flightLoading??=Promise.all([script(introFile),script('premium-cloud-flight.js?v=20261125-team-1')]).catch(error=>{flightLoading=null;throw error;}));
       if(owner!==(typeof aktifOgrenciAdi==='undefined'?'':aktifOgrenciAdi))return;
-      if(window.premiumBulutUcusuAc!==flightProxy)await window.premiumBulutUcusuAc();
+      if(window.premiumBulutUcusuAc!==flightProxy)await window.premiumBulutUcusuAc(options);
     }catch(error){window.yoToast?.(error.message);}
   };
   window.premiumBulutUcusuAc=flightProxy;
   let blocksLoading;
-  const blocksProxy=async ()=>{
+  const blocksProxy=async options=>{
     const owner=typeof aktifOgrenciAdi==='undefined'?'':aktifOgrenciAdi;
     try{
-      await (blocksLoading??=Promise.all([script(introFile),script('premium-word-blocks.js?v=20261114-flow')]).catch(error=>{blocksLoading=null;throw error;}));
-      if(owner===(typeof aktifOgrenciAdi==='undefined'?'':aktifOgrenciAdi)&&window.premiumKelimeBloklariAc!==blocksProxy)await window.premiumKelimeBloklariAc();
+      await (blocksLoading??=Promise.all([script(introFile),script('premium-word-blocks.js?v=20261125-team-1')]).catch(error=>{blocksLoading=null;throw error;}));
+      if(owner===(typeof aktifOgrenciAdi==='undefined'?'':aktifOgrenciAdi)&&window.premiumKelimeBloklariAc!==blocksProxy)await window.premiumKelimeBloklariAc(options);
     }catch(error){window.yoToast?.(error.message);}
   };
   window.premiumKelimeBloklariAc=blocksProxy;
   let papizzleLoading;
-  const papizzleProxy=async ()=>{
+  const papizzleProxy=async options=>{
     const owner=typeof aktifOgrenciAdi==='undefined'?'':aktifOgrenciAdi;
     try{
-      await (papizzleLoading??=Promise.all([script(introFile),script('papizzle.js?v=c74c21cb87')]).catch(error=>{papizzleLoading=null;throw error;}));
-      if(owner===(typeof aktifOgrenciAdi==='undefined'?'':aktifOgrenciAdi)&&window.papizzleAc!==papizzleProxy)await window.papizzleAc();
+      await (papizzleLoading??=Promise.all([script(introFile),script('papizzle.js?v=20261125-team-1')]).catch(error=>{papizzleLoading=null;throw error;}));
+      if(owner===(typeof aktifOgrenciAdi==='undefined'?'':aktifOgrenciAdi)&&window.papizzleAc!==papizzleProxy)await window.papizzleAc(options);
     }catch(error){window.yoToast?.(error.message);}
   };
   window.papizzleAc=papizzleProxy;

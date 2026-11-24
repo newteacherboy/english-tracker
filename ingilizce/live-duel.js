@@ -37,6 +37,11 @@ async function rpc(op, args = {}, expected = token()) {
   return d || {};
 }
 
+async function startRpc(kind, owner, target) {
+  const p_ticket=await window.dmTeam.ticket('duel');
+  return rpc('dm_team_duel_start',{p_kind:kind,p_ticket,p_target:target||null},owner);
+}
+
 /* ---------- Haklar (60 sn önbellek) ---------- */
 let rights = null, rightsAt = 0, rightsOwner = '';
 async function status(force = false) {
@@ -392,7 +397,7 @@ async function waitMatch(id, owner, schedule, isStop, onHold) {
 
 /* ---------- Canlı Düello: rakip arama ---------- */
 let searching = null;
-async function startLive() {
+async function startLive(options) {
   if (inDuel) return;
   if (!token()) return toast('Düello için öğrenci hesabına giriş yapmalısın.');
   inDuel = true;
@@ -425,9 +430,9 @@ async function startLive() {
   el.querySelector('[data-cancel]').onclick = cancel;
   searching = {cancel};
   try {
-    const d = await rpc('dm_duel_live_search', {}, owner);
+    const d = options?.team ? await startRpc('live',owner) : await rpc('dm_duel_live_search', {}, owner);
     if (stop) return;
-    if (d.paywall) { inDuel = false; searching = null; closeLayer(); return paywall('live', d.message, startLive); }
+    if (d.paywall) { inDuel = false; searching = null; closeLayer(); return paywall('live', d.message, () => startLive(options)); }
     if (!d.ok) throw Error(d.message || 'Düello başlatılamadı.');
     duel = d; rights = null;
     if (d.status === 'matched') { searching = null; return startMatch(d); }
@@ -456,7 +461,7 @@ async function startLive() {
 
 /* ---------- Profil kartı: belirli bir oyuncuya canlı düello daveti [18 Kas 2026] ----------
    Davet yalnız o oyuncuya gider. 15 sn içinde kabul edilmezse oyuncu isterse Papi ile oynar. */
-async function invite(target) {
+async function invite(target, options) {
   target = String(target || '').trim();
   if (inDuel || !target) return;
   if (!token()) return toast('Düello için öğrenci hesabına giriş yapmalısın.');
@@ -520,7 +525,7 @@ async function invite(target) {
   };
   searching = {cancel};
   try {
-    const d = await rpc('dm_duel_live_invite', {p_target: target}, owner);
+    const d = options?.team ? await startRpc('invite',owner,target) : await rpc('dm_duel_live_invite', {p_target: target}, owner);
     if (stop) return;
     if (d.paywall) { inDuel = false; searching = null; closeLayer(); return paywall('live', d.message, () => invite(target)); }
     if (!d.ok) throw Error(d.message || 'Davet gönderilemedi.');
@@ -556,13 +561,13 @@ async function invite(target) {
 }
 
 /* ---------- Papi'ye Karşı ---------- */
-async function startPapi() {
+async function startPapi(options) {
   if (inDuel) return;
   if (!token()) return toast('Düello için öğrenci hesabına giriş yapmalısın.');
   inDuel = true;
   try {
-    const d = await rpc('dm_duel_papi_start');
-    if (d.paywall) { inDuel = false; return paywall('papi', d.message, startPapi); }
+    const d = options?.team ? await startRpc('papi',token()) : await rpc('dm_duel_papi_start');
+    if (d.paywall) { inDuel = false; return paywall('papi', d.message, () => startPapi(options)); }
     if (!d.ok) throw Error(d.message || 'Düello başlatılamadı.');
     rights = null;
     startMatch(d);
@@ -720,6 +725,7 @@ function battle(d, opp) {
 
 /* ---------- Sonuç ---------- */
 function result(d, opp, r) {
+  let enrolled = false;
   const win = r.outcome === 'win', draw = r.outcome === 'draw';
   const me = r.me || {}, them = r.them || {};
   const title = win ? 'ZAFER!' : draw ? 'BERABERE!' : 'YENİLGİ';
@@ -735,12 +741,20 @@ function result(d, opp, r) {
     <div class="ld-hpline"><span>Sen <b class="ld-g">${Number(me.hp ?? 0)} can</b></span><span>${esc(opp)} <b class="ld-r">${Number(them.hp ?? 0)} can</b></span></div>
     <div class="ld-stats"><div><b>${Number(me.correct || 0)}/${total}</b><span>doğru</span></div><div><b>${avg}${avg === '-' ? '' : ' sn'}</b><span>ort. süre</span></div><div><b>${Number(me.damage || 0)}</b><span>hasar</span></div></div>
     ${Number(me.xp || 0) > 0 ? `<div class="ld-stats ld-reward"><div><b>+${Number(me.xp || 0)} XP</b><span>kazandın</span></div><div><b>+${Number(me.gold || 0)}</b><span>altın</span></div></div>` : `<p class="ld-sub">Bu kez ödül yok. Kazanırsan <b>300 XP + 50 altın</b>!</p>`}
+    <p class="ld-sub" data-team-credit hidden></p>
     <button type="button" class="ld-primary" data-again>${d.kind === 'papi' ? 'Papi ile Rövanş' : 'Rövanş yap'}</button>
     <button type="button" class="ld-ghost" data-close>Kapat</button>`, () => done());
+  if(window.dmTeam)void rpc('dm_team_duel_credit',{p_duel:d.id}).then(credit=>{
+    enrolled=credit.enrolled===true;
+    if(!credit.points||!el.isConnected)return;
+    const message=el.querySelector('[data-team-credit]');
+    message.hidden=false;message.textContent='Takımına +'+credit.points+' puan';
+    void window.dmTeam.load(true);
+  }).catch(()=>{});
   sfx(win ? 'kombo' : draw ? 'dogru' : 'yanlis');
   function done() { inDuel = false; closeLayer(); inboxAfter = 0; void checkInbox(); }
   el.querySelector('[data-close]').onclick = done;
-  el.querySelector('[data-again]').onclick = () => { inDuel = false; closeLayer(); d.kind==='papi'?startPapi():opp&&opp!=='Rakibin'?invite(opp):startLive(); };
+  el.querySelector('[data-again]').onclick = () => { inDuel = false; closeLayer(); const options={team:enrolled};d.kind==='papi'?startPapi(options):opp&&opp!=='Rakibin'?invite(opp,options):startLive(options); };
 }
 
 /* ---------- Başlatma ---------- */

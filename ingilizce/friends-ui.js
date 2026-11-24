@@ -61,10 +61,16 @@
         ${player.is_virtual?'<small class="fr-podium-virtual">Sanal Rakip</small>':''}
       </button>`;
     }).join('');
+    const list=(data?.rows||[]).slice(0,12).map(player=>{
+      const self=norm(player.name)===norm(who())&&!player.is_virtual;
+      const face=player.is_virtual?window.dmLeagueUI?.virtualMemberAvatar?.(player,32,'friends'):avatar(player.name,32,player.membership_tier);
+      return `<div class="dm-arena-rank-row${self?' is-self':''}"><b>${esc(player.displayRank??player.rank)}.</b>${face||''}<span>${esc(player.name)}</span><strong>${xp(player.xp)} XP</strong></div>`;
+    }).join('');
     const status=!allowed?'Lig 5. seviyede açılır.':data?.error&&!data.loaded?'Sıralama şu anda alınamadı.':data?.loaded?'Bu ligde henüz sıralama yok.':'Sıralama yükleniyor…';
     return `<section class="fr-league-board fr-weekly-podium" aria-label="Haftalık lig">
       <div class="fr-podium-heading"><h3>${icon('trophy')} ${esc(data?.title||'Yerel Lig')}</h3></div>
       ${leaders?'<div class="fr-podium-stage">'+leaders+'</div>':'<p class="fr-league-status" role="status">'+status+'</p>'}
+      ${list?'<div class="dm-arena-rank-list">'+list+'</div>':''}
       <div class="fr-podium-footer">
         ${data?.me?`<div class="fr-league-self">${avatar(who(),27,data.me.membership_tier)}<b>Sen · ${esc(data.me.rank)}. sıra · ${xp(data.me.xp)} XP</b></div>`:''}
         <button type="button" class="fr-link" data-friend-action="lig" data-friends-gate="lig">Sıralamayı gör ${icon('chevron')}</button>
@@ -118,7 +124,7 @@
     void loadDuelLeaders();renderDuelRanking();layer.querySelector('header button').focus();
   };
   function duelLeagueHtml(){
-    const leaders=duelLeaders.slice(0,3).map((player,index)=>{
+    const leaders=duelLeaders.slice(0,12).map((player,index)=>{
       const rank=index+1, name=esc(player.player_name);
       const record=index===0?'<small aria-label="'+xp(player.wins)+' galibiyet, '+xp(player.losses)+' mağlubiyet">'+xp(player.wins)+' G / '+xp(player.losses)+' M</small>':'';
       return '<div class="fr-arena-player fr-arena-player-'+rank+'"><span class="fr-arena-rank" aria-label="'+rank+'. sıra">'+rank+'</span>'+
@@ -209,10 +215,7 @@
       ${ranking ? `<nav class="dm-arena-tabs dm-arena-ranks" aria-label="Sıralama türü">
         <button type="button" data-rank-view="weekly" aria-pressed="${rankView==='weekly'}">Haftalık Lig</button>
         <button type="button" data-rank-view="duel" aria-pressed="${rankView==='duel'}">Düello Şampiyonları</button>
-      </nav>${rankView==='weekly'?leagueHtml():duelLeagueHtml()}` : `<section class="dm-arena-card">
-        <h2>Takımım</h2><p>Arkadaşlarına meydan oku veya sıralamanı gör.</p>
-        <div class="dm-arena-tabs"><button type="button" data-arena-view="duel">Düello</button><button type="button" data-arena-view="ranking">Sıralamam</button></div>
-      </section>`}
+      </nav>${rankView==='weekly'?leagueHtml():duelLeagueHtml()}` : (window.dmTeam?.html() || '')}
       <div id="frInvitation">${invitationHtml()}</div>
     </div>`;
   }
@@ -244,6 +247,11 @@
     root.classList.toggle('fr-home-view',home);
     root.classList.toggle('fr-club-view',maSekme==='akis'&&!maProfilId);
     root.dataset.friendsView = maProfilId ? 'profile' : maSekme;
+    if(home){
+      const title=root.querySelector('.akis-baslik h2');
+      const label=arenaView==='ranking'?'Sıralamam':'Takımım';
+      if(title&&title.textContent!==label)title.textContent=label;
+    }
     const back = root.querySelector('.fr-back'); if(back) back.hidden=home;
     mountPeopleButton();
     if(!home)closePeople(false);
@@ -255,6 +263,7 @@
     const scroll = screen.scrollTop;
     screen.innerHTML=homeHtml();
     viewHeader();paintLocks();dockSpace();screen.scrollTop=scroll;
+    if(arenaView==='team')void window.dmTeam?.load();
   }
   function paintLocks() {
     root.querySelectorAll('[data-friends-gate]').forEach(b=>{
@@ -453,6 +462,8 @@
     if(sheet)sheet.body.innerHTML=`<a href="${url}">${url}</a>`;
   }
   root.addEventListener('click',e=>{
+    const team=e.target.closest('[data-team-action]');
+    if(team){void window.dmTeam?.act(team);return;}
     const arena=e.target.closest('[data-arena-view]');
     if(arena){showArena(arena.dataset.arenaView);return;}
     const rank=e.target.closest('[data-rank-view]');
@@ -511,7 +522,7 @@
   // Only observe structure. Badge text/attribute updates must not cause a render loop.
   observer.observe($('maEkran'),{childList:true,subtree:true});
   setInterval(()=>{if(root.classList.contains('active')&&!document.hidden){resetAccount();paintLocks();if(maSekme==='hub'&&!maProfilId)void loadHome();}},180000);
-  window.dmFriends={showArena,open:()=>window.meduAkisAc(),home:()=>window.maSekmeSec('hub'),detail:s=>window.maSekmeSec(s),chooseDuelFriend:anchor=>{if(anchor&&requireFeature('duello')){openPeople(anchor);void loadHome().then(()=>{if(peopleView?.duel)drawPeople();});}},refresh:()=>loadHome(true)};
+  window.dmFriends={showArena,redrawArena:()=>{if(arenaView==='team')renderHome();},open:()=>window.meduAkisAc(),home:()=>window.maSekmeSec('hub'),detail:s=>window.maSekmeSec(s),chooseDuelFriend:anchor=>{if(anchor&&requireFeature('duello')){openPeople(anchor);void loadHome().then(()=>{if(peopleView?.duel)drawPeople();});}},refresh:()=>loadHome(true)};
   function dockSpace(){
     const dock=$('bottomNavMobile');
     if(!dock)return;

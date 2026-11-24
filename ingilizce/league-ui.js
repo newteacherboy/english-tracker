@@ -332,8 +332,8 @@ function weeklyPreview(){
  reset();
  const state=states.weekly,me=(state.visualRows.length?state.visualRows:state.rows).find(p=>norm(p.name)===norm(who()));
  const code=me?.league||'yerel';
- return {title:leagues[code]?.name||leagues.yerel.name,me,
-  top:(state.visualRows.length?state.visualRows:state.rows).filter(p=>p.league===code).sort((a,b)=>(a.displayRank??a.rank)-(b.displayRank??b.rank)).slice(0,3),
+ const rows=(state.visualRows.length?state.visualRows:state.rows).filter(p=>p.league===code).sort((a,b)=>(a.displayRank??a.rank)-(b.displayRank??b.rank));
+ return {title:leagues[code]?.name||leagues.yerel.name,me,top:rows.slice(0,3),rows,
   loaded:state.loaded,error:state.error};
 }
 function render(){reset();if(mode==='alltime'&&accessLevel()<15)mode='weekly';

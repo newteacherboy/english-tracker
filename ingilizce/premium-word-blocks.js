@@ -61,7 +61,7 @@
     return data;
   }
 
-  window.premiumKelimeBloklariAc = async () => {
+  window.premiumKelimeBloklariAc = async (options) => {
     if (opening || document.querySelector('.dm-blocks')) return;
     opening = true;
     const account = player(), token = (window.dmTeacherPortalMode ? sessionStorage.getItem('ing_ogr_token') : '') || localStorage.getItem('ing_token') || '';
@@ -76,7 +76,7 @@
         document.head.append(link);
       });
       const state = await call(token, 'status');
-      if (account === player()) mount(account, token, state);
+      if (account === player()) mount(account, token, state, options?.team===true);
     } catch (error) {
       window.yoToast?.(error.message);
     } finally {
@@ -84,7 +84,7 @@
     }
   };
 
-  function mount(account, token, initial) {
+  function mount(account, token, initial, team) {
     const dialog = document.createElement('dialog');
     dialog.className = 'dm-blocks';
     dialog.setAttribute('aria-label', 'Block Papi');
@@ -200,7 +200,7 @@
       runId ||= crypto.randomUUID();
       show('Atölye hazırlanıyor…', [], []);
       try {
-        const data = await call(token, 'start', {runId});
+        const data = await call(token, 'start', {runId, ...(team?{teamTicket:await window.dmTeam.premiumTicket(runId)}:{})});
         if (!dialog.isConnected) return;
         update(data);
         game = {rounds: data.rounds, level: data.playedLevel, picks: [], grid: Array(rows).fill(0), cells: Array.from({length: rows}, () => []),
