@@ -19,13 +19,14 @@ test('Manifest network failure does not break teaching and allows retry',async()
 
 test('Full bundled manifest resolves reported 8th grade cards and Please punctuation',async()=>{
  const manifest=JSON.parse(fs.readFileSync(path.join(__dirname,'../ingilizce/parkur-word-pool-v1.json'),'utf8'));
- assert.equal(Object.keys(manifest).length,1309);
+ assert.equal(Object.keys(manifest).length,2997);
  const p=setup(async url=>{assert.equal(url,'parkur-word-pool-v1.json');return {ok:true,json:async()=>manifest}});
  for(const id of ['0869','0946','0953','0963','0978']){
   const v=manifest[id];assert.ok((await p.resolve(v.en.replace(/\\.$/,''),v.tr.replace(/\\.$/,''))).endsWith(id+'.webp'));
  }
  assert.ok((await p.resolve('please','lütfen')).endsWith('0978.webp'));
- assert.equal(await p.resolve('four','dört'),null);
+ assert.ok((await p.resolve('four','dört')).endsWith('1694.webp'));
+ assert.ok((await p.resolve('zucchini','kabak')).endsWith('3028.webp'));
 });
 test('Punctuation fallback rejects ambiguous bilingual candidates',async()=>{
  const p=setup(async()=>({ok:true,json:async()=>({'0001':entry('0001','Please.','Lütfen.'),'0002':entry('0002','Please!','Lütfen!')})}));
