@@ -70,6 +70,9 @@ async function dmWordImageDecorate(button,en,tr,mode){
    const old=button.querySelector('.ml-art');
    const wrap=document.createElement('span');wrap.className='ml-art ml-art-pilot dm-pool-teach-art';wrap.setAttribute('aria-hidden','true');wrap.append(img);
    if(old)old.replaceWith(wrap);else button.prepend(wrap);
+  }else if(mode==='match'){
+   img.style.cssText='display:block;object-fit:contain;width:40px;height:40px;max-width:100%;border-radius:10px;background:white;';
+   button.append(img);button.classList.add('dm-ml-match-visual');
   }else{
    img.style.cssText='display:block;object-fit:contain;width:52px;height:52px;flex:0 0 52px;border-radius:9px;background:white;';
    const label=button.querySelector('span:first-child');if(label){label.style.flex='1 1 0';label.style.minWidth='0';label.style.overflowWrap='anywhere';}
