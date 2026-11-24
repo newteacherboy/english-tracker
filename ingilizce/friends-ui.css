@@ -1230,3 +1230,20 @@ html[data-dm-theme=night] body #dmDuelRanking :is(.fr-duel-ranking-scope,.fr-due
  color:#fff!important;font:900 11px/1.15 Nunito,system-ui;box-shadow:0 2px 0 #2048aa;
 }
 #tab-meduakis .fr-podium-player:focus-visible{outline:3px solid #276bdf;outline-offset:2px;border-radius:12px}
+
+#tab-meduakis.fr-home-view .dm-arena-home {
+  display:grid;
+  gap:10px;
+  max-width:580px;
+  margin:auto;
+  padding:4px 10px 12px;
+  color:#350947;
+}
+#tab-meduakis .dm-arena-card {
+  padding:16px;
+  border-radius:18px;
+  background:#faf5ff;
+  box-shadow:0 2px 6px #4c1f5b22;
+}
+#tab-meduakis .dm-arena-card h2 {margin:0}
+#tab-meduakis .dm-arena-ranks {background:#faf5ff}

@@ -83,7 +83,7 @@
       duelLeaders=Array.isArray(data)?data:[];duelLeadersError=false;duelLeadersAt=Date.now();
       if(maSekme==='hub'&&!maProfilId){const panel=root.querySelector('.fr-duel-league');if(panel)panel.outerHTML=duelLeagueHtml();}
     }catch(e){duelLeadersError=true;duelLeadersAt=Date.now();console.warn('Düello ligi yüklenemedi',e);}
-    finally{duelLeadersBusy=false;renderDuelRanking();}
+    finally{duelLeadersBusy=false;renderDuelRanking();if(arenaView==='ranking'&&rankView==='duel')renderHome();}
   }
   function renderDuelRanking(){
     const box=document.querySelector('#dmDuelRanking .fr-duel-ranking-content');if(!box)return;
@@ -198,13 +198,34 @@
     return `<aside class="fr-invitation" role="status">${avatar(d.gonderen,36)}<span><b>${esc(d.gonderen)}</b> seni oyuna davet ediyor<small>${esc(window.dmMeduPro?.games?.[d.oyun]?.[0]||d.oyun)}</small></span><button data-friend-action="accept" data-invite-id="${esc(d.id)}" data-friends-gate="duello">Kabul et</button><button data-friend-action="dismiss" data-invite-id="${esc(d.id)}" aria-label="Daveti şimdilik gizle">×</button></aside>`;
   }
   function clubHeader(){return `<header class="club-hero"><button type="button" class="club-back" data-friend-action="home" aria-label="Arkadaşlar ana ekranına dön">‹</button><h2>Medu Akış</h2><button type="button" data-friend-action="share" aria-label="Davet et">＋</button></header>`;}
+  let arenaView = 'team';
+  let rankView = 'weekly';
+  window.dmArenaTabs = active => `<nav class="dm-arena-tabs" aria-label="Takımım bölümleri">${[['team','Takımım'],['duel','Düello'],['ranking','Sıralamam']].map(([value,label])=>`<button type="button" data-arena-view="${value}" aria-pressed="${value===active}">${label}</button>`).join('')}</nav>`;
+
   function homeHtml() {
-    // Medu Akış kaldırıldı (Kasım 2026); Düello Şampiyonları Düello sekmesine taşındı.
-    return `<div class="fr-home fr-compact fr-tiles-home">
-      ${leagueHtml()}
+    const ranking = arenaView === 'ranking';
+    return `<div class="fr-home dm-arena-home">
+      ${window.dmArenaTabs(arenaView)}
+      ${ranking ? `<nav class="dm-arena-tabs dm-arena-ranks" aria-label="Sıralama türü">
+        <button type="button" data-rank-view="weekly" aria-pressed="${rankView==='weekly'}">Haftalık Lig</button>
+        <button type="button" data-rank-view="duel" aria-pressed="${rankView==='duel'}">Düello Şampiyonları</button>
+      </nav>${rankView==='weekly'?leagueHtml():duelLeagueHtml()}` : `<section class="dm-arena-card">
+        <h2>Takımım</h2><p>Arkadaşlarına meydan oku veya sıralamanı gör.</p>
+        <div class="dm-arena-tabs"><button type="button" data-arena-view="duel">Düello</button><button type="button" data-arena-view="ranking">Sıralamam</button></div>
+      </section>`}
       <div id="frInvitation">${invitationHtml()}</div>
-      ${tilesHtml()}
     </div>`;
+  }
+  function showArena(view) {
+    if (view==='duel') return window.dmDuelHomeAc?.();
+    window.dmDuelHomeClose?.();
+    arenaView=view;
+    if(!root.classList.contains('active')) {
+      maSekme='hub';maProfilId=null;
+      originalOpen.call(window);
+    }
+    window.maSekmeSec('hub');
+    if(view==='ranking'&&rankView==='duel')void loadDuelLeaders();
   }
   function fullFeedHtml() {
     return `<div class="fr-home">${clubHeader()}${filters()}<section class="fr-feed" aria-label="Medu Akış"><div id="maAkisListe">${window.maAkisListeHtml()}</div></section><div id="frInvitation">${invitationHtml()}</div></div>`;
@@ -323,6 +344,7 @@
     return originalSelect.apply(this,arguments);
   };
   window.meduAkisAc=function(){
+    arenaView='team';
     if(maSekme==='magaza')return originalOpen.apply(this,arguments);
     maSekme='hub';maProfilId=null;
     const result=originalOpen.apply(this,arguments);
@@ -431,6 +453,16 @@
     if(sheet)sheet.body.innerHTML=`<a href="${url}">${url}</a>`;
   }
   root.addEventListener('click',e=>{
+    const arena=e.target.closest('[data-arena-view]');
+    if(arena){showArena(arena.dataset.arenaView);return;}
+    const rank=e.target.closest('[data-rank-view]');
+    if(rank){
+      rankView=rank.dataset.rankView;
+      renderHome();
+      root.querySelector('[data-rank-view="'+rankView+'"]')?.focus();
+      if(rankView==='duel')void loadDuelLeaders();
+      return;
+    }
     const link=e.target.closest('[data-club-open]');if(link){const event=maAkisVeri.find(x=>String(x.k)===link.dataset.clubOpen),meta=event&&window.DMFriendsFeed.classify(event);if(!meta)return;if(meta.kind==='game'){if(!requireFeature(meta.game[2]))return;const fn=window[meta.game[1]]||(meta.game[1]==='kelimebulOyunAc'?window.kelimeBulOyunAc:null);if(typeof fn==='function')fn();else window.aktivitelerTamEkranAc?.();}else if(meta.kind==='route')window.dmLearningRoute?.continue?.();else if(meta.kind==='story'){if(/hikâye|hikaye/i.test(event.metin))window.dmLearningCompanion?.nextStory?.();else window.dmLearningCompanion?.nextDialogue?.();}else if(meta.kind==='mission')window.dmLearningCompanion?.openMissions?.(/hafta/i.test(event.metin)?'weekly':'daily');else if(meta.kind==='league')window.maSekmeSec('lig');else if(meta.kind==='badge')window.dmBasarilarimAc?.();else if(meta.kind==='streak')window.dmLearningCompanion?.report?.();else window.dmIlerlememAc?.();return;}
 
     const b=e.target.closest('[data-friend-action]');if(!b)return;
@@ -479,7 +511,7 @@
   // Only observe structure. Badge text/attribute updates must not cause a render loop.
   observer.observe($('maEkran'),{childList:true,subtree:true});
   setInterval(()=>{if(root.classList.contains('active')&&!document.hidden){resetAccount();paintLocks();if(maSekme==='hub'&&!maProfilId)void loadHome();}},180000);
-  window.dmFriends={open:()=>window.meduAkisAc(),home:()=>window.maSekmeSec('hub'),detail:s=>window.maSekmeSec(s),chooseDuelFriend:anchor=>{if(anchor&&requireFeature('duello')){openPeople(anchor);void loadHome().then(()=>{if(peopleView?.duel)drawPeople();});}},refresh:()=>loadHome(true)};
+  window.dmFriends={showArena,open:()=>window.meduAkisAc(),home:()=>window.maSekmeSec('hub'),detail:s=>window.maSekmeSec(s),chooseDuelFriend:anchor=>{if(anchor&&requireFeature('duello')){openPeople(anchor);void loadHome().then(()=>{if(peopleView?.duel)drawPeople();});}},refresh:()=>loadHome(true)};
   function dockSpace(){
     const dock=$('bottomNavMobile');
     if(!dock)return;
