@@ -660,12 +660,15 @@
       let bulunmamis = [...new Set(kartlar.map(k => k.i))].filter(i => !alan.querySelector(`.bz-kart2.tamam[data-ci="${i}"]`));
       if (!bulunmamis.length || kilit) return false;
       let ci = bulunmamis[0]; acik = [];
-      kartlar.forEach((k, j) => { let e = alan.querySelector(`[data-j="${j}"]`); if (k.i === ci) { e.classList.add('acik', 'tamam'); e.textContent = k.t; e.dataset.ci = ci; } else if (!e.classList.contains('tamam')) { e.classList.remove('acik'); e.textContent = '✨'; } });
+      kartlar.forEach((k, j) => { let e = alan.querySelector(`[data-j="${j}"]`); if (k.i === ci) { e.classList.add('acik', 'tamam'); e.textContent = k.t; e.dataset.ci = ci;
+          const card=s.l[k.i];if(card&&k.t===EN(card))window.DMWordImagePool?.decorateOption(e,EN(card),TR(card)); } else if (!e.classList.contains('tamam')) { e.classList.remove('acik'); e.textContent = '✨'; } });
       if (++bulunan === 3) cevap(hata <= 2, hata <= 2 ? '' : `${hata} hata yaptın`);
     };
     alan.querySelectorAll('.bz-kart2').forEach(b => b.onclick = () => {
       let j = +b.dataset.j; if (kilit || acik.includes(j) || b.classList.contains('tamam')) return;
-      b.classList.add('acik'); b.textContent = kartlar[j].t; acik.push(j);
+      b.classList.add('acik'); b.textContent = kartlar[j].t;
+      const flipped=s.l[kartlar[j].i];if(flipped&&kartlar[j].t===EN(flipped))window.DMWordImagePool?.decorateOption(b,EN(flipped),TR(flipped));
+      acik.push(j);
       if (acik.length < 2) return;
       let [a, c] = acik; acik = [];
       if (kartlar[a].i === kartlar[c].i) { [a, c].forEach(x => { let e = alan.querySelector(`[data-j="${x}"]`); e.classList.add('tamam'); e.dataset.ci = kartlar[x].i; }); ses('dogru'); if (++bulunan === 3) cevap(hata <= 2, hata <= 2 ? '' : `${hata} hata yaptın`); }
