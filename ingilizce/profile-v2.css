@@ -99,7 +99,7 @@ html body #rtProfileBackdrop .au-centre:not(.au-account)>.au-account-entry{flex:
  overflow:hidden;border:2px solid #fff9;border-radius:20px;background:linear-gradient(#ffe5d6,#ffc89e);
  color:#802219;font:1000 clamp(17px,5vw,24px)/1.05 Nunito,system-ui;box-shadow:0 4px 0 #ba866a77;cursor:pointer;padding:4px 22px 8px;
 }
-#rtProfileBackdrop .dm-profile-shop-row button+button{background:linear-gradient(#f4e1ff,#e3baff);color:#56148a;box-shadow:0 4px 0 #aa7bd076}
+#rtProfileBackdrop .dm-profile-shop-row button+button{background:linear-gradient(#e3faf2,#b8ecd9);color:#0f4f47;box-shadow:0 4px 0 #5aa89676}
 #rtProfileBackdrop .dm-profile-shop-row img{display:block;width:auto;height:clamp(50px,9.8dvh,93px);max-width:100%;object-fit:contain;border-radius:13px;mix-blend-mode:multiply}
 #rtProfileBackdrop .dm-profile-shop-row i{position:absolute;right:6px;bottom:5px;background:#fff;color:#6630a6;border-radius:50%;width:20px;height:20px;font-style:normal;font-size:18px;line-height:19px}
 
@@ -133,7 +133,7 @@ html body #rtProfileBackdrop .au-centre.pa-reference .au-account-entry {
  border-radius:13px!important;box-shadow:none!important;color:var(--pa-ink)!important;
  font:900 clamp(14px,4vw,18px)/1.2 Nunito,system-ui!important;background:#fff7e7!important;
 }
-html body #rtProfileBackdrop .pa-reference .dm-profile-shop-row button+button {background:#f2ecfb!important}
+html body #rtProfileBackdrop .pa-reference .dm-profile-shop-row button+button {background:#e8f8f3!important;border-color:#9dd6c5!important;color:#103e3a!important;font-size:clamp(12px,3.2vw,15px)!important;line-height:1.15!important;text-align:left!important}
 html body #rtProfileBackdrop .pa-reference .dm-profile-shop-row i {display:none!important}
 html body #rtProfileBackdrop .pa-reference .dm-profile-shop-row .pa-reference-art {width:40px;height:38px;flex:none}
 html body #rtProfileBackdrop .au-centre.pa-reference .au-account-entry {
@@ -144,6 +144,7 @@ html body #rtProfileBackdrop .pa-reference .au-account-entry b {color:var(--pa-i
 html body #rtProfileBackdrop .pa-reference .au-account-entry em {margin-inline-start:auto}
 html[data-dm-theme=night] body #rtProfileBackdrop .rt-profile.au-centre.pa-reference {--pa-ink:#f1f4ff;--centre-paper:#202b41;--centre-line:#51617a}
 html[data-dm-theme=night] body #rtProfileBackdrop .pa-reference .dm-profile-shop-row button {background:#343049!important}
+html[data-dm-theme=night] body #rtProfileBackdrop .pa-reference .dm-profile-shop-row button[data-profile="parentSwitch"] {background:#1e3a3c!important;border-color:#447678!important;color:#e6fbf7!important}
 @media(max-height:720px) {
  html body #rtProfileBackdrop .pa-reference .pa-grid .pa-reference-art {width:min(100%,60px)!important}
  html body #rtProfileBackdrop .pa-reference .pa-hero,html body #rtProfileBackdrop .pa-reference .pa-user {margin-bottom:7px!important}

@@ -1,7 +1,24 @@
-require('./_index-source.cjs');
-const {test}=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),{JSDOM}=require('jsdom');
-function fixture(){const dom=new JSDOM('<section id="tab-magaza"></section><div id="bottomNavMobile"><button data-ekran="tab-magaza">Mağaza</button><button data-ekran="tab-dunya">Parkur</button></div>',{url:'https://app.test/ingilizce/',runScripts:'outside-only'});const w=dom.window;const frames=new Map();let seq=0;w.requestAnimationFrame=f=>{frames.set(++seq,f);return seq};w.cancelAnimationFrame=id=>frames.delete(id);w.eval(fs.readFileSync('ingilizce/bag-inventory.js','utf8'));return {w,shop:w.document.querySelector('[data-ekran="tab-magaza"]'),panel:w.document.getElementById('tab-magaza'),flush(){const run=[...frames.values()];frames.clear();run.forEach(f=>f());},popup:()=>w.document.getElementById('dmBagPopup')};}
-const tick=()=>new Promise(setImmediate);
-test('first shop tap shows the shortcut, automatic opening scroll never dismisses it',()=>{const f=fixture();try{f.shop.onclick=()=>{f.panel.classList.add('active');f.panel.dispatchEvent(new f.w.Event('scroll'));};f.shop.click();f.flush();assert(f.popup());f.panel.dispatchEvent(new f.w.Event('scroll'));assert(f.popup());f.w.dispatchEvent(new f.w.Event('resize'));f.flush();assert(f.popup());f.panel.dispatchEvent(new f.w.Event('touchmove',{bubbles:true}));assert(!f.popup());f.shop.click();f.flush();assert(f.popup());f.panel.dispatchEvent(new f.w.Event('wheel',{bubbles:true}));assert(!f.popup());}finally{f.w.close();}});
-test('one tap is retained until delayed store activation, then cancelled by actual browsing',async()=>{const f=fixture();try{f.shop.click();f.flush();assert(!f.popup());f.panel.classList.add('active');await tick();f.flush();assert(f.popup());f.panel.dispatchEvent(new f.w.Event('pointerdown',{bubbles:true}));assert(!f.popup());f.shop.click();f.flush();assert(f.popup());f.w.document.querySelector('[data-ekran="tab-dunya"]').click();assert(!f.popup());f.flush();assert(!f.popup());}finally{f.w.close();}});
-test('the bag module is preloaded before the storefront instead of missing the initial click',()=>{const html=fs.readFileSync('ingilizce/index.html','utf8');const bag=html.indexOf('<script defer src="bag-inventory.js?');assert(bag>0);assert(bag<html.indexOf('<script defer src="storefront.js?'));});
+const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs');
+test('Çantam bag module and assets are completely removed',()=>{
+ const html=fs.readFileSync('ingilizce/index.html','utf8');
+ const store=fs.readFileSync('ingilizce/storefront.js','utf8');
+ const nav=fs.readFileSync('ingilizce/bottom-nav.js','utf8');
+ assert.equal(fs.existsSync('ingilizce/bag-inventory.js'),false);
+ assert.equal(fs.existsSync('ingilizce/bag-inventory.css'),false);
+ assert.doesNotMatch(html,/bag-inventory/);
+ assert.doesNotMatch(store,/bag-inventory|dmBagInventory/);
+ assert.doesNotMatch(nav,/data-profile="bag"|Çantam|dmBagInventory/);
+});
+test('Profile replaces Çantam with Veli Hesabına Geç in the Mağaza button row',()=>{
+ const nav=fs.readFileSync('ingilizce/bottom-nav.js','utf8');
+ assert.match(nav,/data-profile="shop"[\s\S]*data-profile="parentSwitch"[\s\S]*Veli Hesabına Geç/);
+ assert.match(nav,/parentSwitch:\(\)=>\{if\(typeof window\.dmParentBridge\?\.open==='function'\)/);
+});
+test('Emoji sticker products are removed from client and server shop catalogs',()=>{
+ const shopJs=fs.readFileSync('ingilizce/app-js/i20-fiyatlar.js','utf8');
+ assert.doesNotMatch(shopJs,/id:\s*'c:'|\['cik',\s*'🏷️ Çıkartma'\]/);
+ for(const p of ['supabase/functions/diji-api/progression-shop.json','supabase/functions/medupro-api/progression-shop.json']){
+  const items=JSON.parse(fs.readFileSync(p,'utf8'));
+  assert.equal(items.filter(x=>x.kat==='cik'||String(x.id).startsWith('c:')).length,0,p);
+ }
+});
