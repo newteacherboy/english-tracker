@@ -35,7 +35,6 @@ const TOURS=[
    {target:'.rt-medal-start',title:'Devam et',text:'Kaldığın duraktan başlar. Her durakta önce yeni kelimeleri dinleyip öğrenir, sonra soruları çözersin.',tip:'İlk soru ücretsiz, sonraki her soru 1 enerji.'},
    {target:'[data-rt="plan"]',title:'Planım',text:'Bugün çalışman önerilen dersleri gösterir. Ne yapacağını bilmiyorsan buradan başla.'},
    {target:'[data-rt="missions"]',title:'Görevler',text:'Günlük ve haftalık görevlerin burada. Tamamladıkça ödül kazanırsın.'},
-   {target:'.rt-medal-egg',title:'Sürpriz Yumurta',text:'Her 3 durakta bir yumurta çatlar. Papi gelip gagalar, içinden sürpriz bir ödül çıkar. Eski sandıkların Mağaza > Sandıklarım\'da.'},
    {target:'.rt-medal-unit [data-rt="switch-route"]',title:'Parkur değiştir',text:school?'Buradan Öğrenme Yolu’na geçebilirsin. Öğrenme Yolu sınıf yerine İngilizce seviyene (A1, A2…) göre ilerler. İki yoldaki ilerlemen de korunur.':'Buradan Macera Haritası’na geçebilirsin. Macera Haritası okuldaki sınıf ve ünite sırasını izler. İki yoldaki ilerlemen de korunur.',tip:school&&klass?'Öğrenme Yolu’na geçmeden önce seviye testini çözmen gerekir.':''},
    {center:true,img:'papi-mektup',title:'Seviye testi',text:'Profil › Seviye Testi’nden İngilizce seviyeni ölçebilirsin. Okuma, dinleme ve dil kullanımı soruları var; yaklaşık 20–25 dakika sürer ve enerji harcamaz. Sonuca göre sana uygun başlangıç önerilir.',noDots:true,next:'Anladım',secondary:'Kapat'}
   ];

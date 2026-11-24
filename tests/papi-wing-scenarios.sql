@@ -1,4 +1,4 @@
--- [17 Kas 2026] dm_papi_feather / dm_papi_egg senaryoları. Boş bir test veritabanında (öğrenci, extra_data, energy_transactions,
+-- [17 Kas 2026] dm_papi_feather senaryoları. Boş bir test veritabanında (öğrenci, extra_data, energy_transactions,
 -- dm_game_reward_runs, papi_story_progress tabloları) migration'dan sonra psql -f ile çalıştırılır; çıktı satırları beklenen değerleri gösterir.
 \set ON_ERROR_STOP 1
 \pset format unaligned
@@ -29,17 +29,5 @@ select '5b one covered: f='||(r->>'feathers')||' lost='||(r->>'lost') from (sele
 -- reset after 4 missed
 update extra_data set value=jsonb_build_object('feathers',5,'level',3,'lastDay',((now() at time zone 'Europe/Istanbul')::date-6)::text) where key_name='papi_wing_v1';
 select '6 reset: f='||(r->>'feathers')||' lvl='||(r->>'level')||' lost='||(r->>'lost') from (select dm_papi_feather('00000000-0000-0000-0000-000000000001') r) x;
--- EGG
-select '7 egg init: '||(r->>'progress')||'/'||(r->>'need')||' kind='||(r->>'kind') from (select dm_papi_egg('00000000-0000-0000-0000-000000000001') r) x;
-update extra_data set value=jsonb_set(value,'{since}',to_jsonb(now()-interval '1 hour')) where key_name='papi_egg_v1';
-select '7b progress after 1 run: '||(r->>'progress') from (select dm_papi_egg('00000000-0000-0000-0000-000000000001') r) x;
-select '7c early hatch: '||r::text from (select dm_papi_egg('00000000-0000-0000-0000-000000000001',true) r) x;
-insert into dm_game_reward_runs(student_id,run_id,game_key,xp,created_at) values ('00000000-0000-0000-0000-000000000001','r2','ba',0,now()),('00000000-0000-0000-0000-000000000001','r3','ky',50,now()),('00000000-0000-0000-0000-000000000001','r4','ba',60,now());
-insert into papi_story_progress values ('00000000-0000-0000-0000-000000000001',1000,true,true,jsonb_build_object('yo',jsonb_build_object('guncelleme',(extract(epoch from now())*1000)::bigint)),now());
-select '8 ready: '||(r->>'progress')||' ready='||(r->>'ready') from (select dm_papi_egg('00000000-0000-0000-0000-000000000001') r) x;
-update students set energy=10, energy_updated_at=now();
-select '8b hatch: opened='||(r->'opened')::text||' altin='||(r->>'altin')||' energy='||(r->>'enerjiKalan')||' next='||(r->>'kind')||' '||(r->>'progress') from (select dm_papi_egg('00000000-0000-0000-0000-000000000001',true) r) x;
-select '8c students.gold='||gold from students;
-select '8d again: '||(r->>'code') from (select dm_papi_egg('00000000-0000-0000-0000-000000000001',true) r) x;
-select '9 kinds: '||string_agg(case when n%5=0 then 'altin' when n%3=0 then 'gumus' else 'benekli' end,',') from generate_series(1,10) n;
+-- [24 Kas 2026] Sürpriz Yumurta (dm_papi_egg) kaldırıldı; yalnız kanat senaryoları kalır.
 select '10 tx: '||string_agg(reason||':'||change_amount,',') from energy_transactions;

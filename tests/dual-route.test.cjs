@@ -59,7 +59,7 @@ test('green learning route uses real chapter identities, a single active mascot 
   assert.equal((root.html.match(/class="rt-medal-stop(?=[ " ])/g)||[]).length,Math.min(80,focus+9)-Math.max(0,focus-5));assert.equal((root.html.match(/class="rt-medal-papi"/g)||[]).length,1);
   assert.match(root.html,new RegExp('data-chapter="'+(1001+focus)+'"[^>]*aria-current="step"'));
   assert.match(root.html,/rt-medal-unit[^]*data-rt="switch-route"/);
-  assert.match(root.html,/rt-medal-scroll[^]*rt-medal-egg[^]*data-rt="egg"/);
+  assert.doesNotMatch(root.html,/rt-medal-egg|data-rt="egg"/);
   if(focus<79)assert.match(root.html,new RegExp('data-chapter="'+(1002+focus)+'"[^>]*aria-disabled="true"'));
   assert(!root.html.includes('data-rt="school-stop"'));
  }
