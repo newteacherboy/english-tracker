@@ -199,10 +199,9 @@
   }
   function clubHeader(){return `<header class="club-hero"><button type="button" class="club-back" data-friend-action="home" aria-label="Arkadaşlar ana ekranına dön">‹</button><h2>Medu Akış</h2><button type="button" data-friend-action="share" aria-label="Davet et">＋</button></header>`;}
   function homeHtml() {
-    // Medu Akış kaldırıldı (Kasım 2026): ana ekran lig + dört kart; akış verisi artık yüklenmez.
+    // Medu Akış kaldırıldı (Kasım 2026); Düello Şampiyonları Düello sekmesine taşındı.
     return `<div class="fr-home fr-compact fr-tiles-home">
       ${leagueHtml()}
-      ${duelLeagueHtml()}
       <div id="frInvitation">${invitationHtml()}</div>
       ${tilesHtml()}
     </div>`;
@@ -235,7 +234,6 @@
     const scroll = screen.scrollTop;
     screen.innerHTML=homeHtml();
     viewHeader();paintLocks();dockSpace();screen.scrollTop=scroll;
-    void loadDuelLeaders();
   }
   function paintLocks() {
     root.querySelectorAll('[data-friends-gate]').forEach(b=>{

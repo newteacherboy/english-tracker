@@ -20,13 +20,19 @@ test('duel actions call existing live and Papi implementations',()=>{
  assert.match(src,/dmParentBridge\?\.open/);
  assert.doesNotMatch(src,/dmBagInventory|Çantam/);
 });
-test('friends renders both leagues and live duel ranking',()=>{
- const src=read('friends-ui.js');
- assert.match(src,/\$\{leagueHtml\(\)\}/);
- assert.match(src,/\$\{duelLeagueHtml\(\)\}/);
- assert.match(src,/dm_duel_champions_v1/);
- assert.match(src,/fr-invite-top/);
- assert.doesNotMatch(src,/\$\{statusHtml\(\)\}/);
+test('friends renders local league only and duel tab hosts champions with live Papi',()=>{
+ const friends=read('friends-ui.js');
+ const nav=read('bottom-nav.js');
+ assert.match(friends,/\$\{leagueHtml\(\)\}/);
+ assert.doesNotMatch(friends,/\$\{duelLeagueHtml\(\)\}/);
+ assert.match(friends,/dmDuelRankingOpen/);
+ assert.match(friends,/fr-invite-top/);
+ assert.doesNotMatch(friends,/\$\{statusHtml\(\)\}/);
+ assert.match(nav,/Düello Şampiyonları/);
+ assert.match(nav,/dm-duel-champions/);
+ assert.match(nav,/dmDuelRankingOpen/);
+ assert.match(nav,/DMPapi\?\.html/);
+ assert.match(nav,/dm_duel_champions_v1/);
 });
 test('notification badge counts unread items and displays count',()=>{
  const src=read('app-js/i07-gonder.js');
