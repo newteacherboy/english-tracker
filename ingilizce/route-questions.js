@@ -121,8 +121,9 @@ function dmWordImageInto(slot,en,tr,kind='question'){
 function dmWordImagePanel(area,task,read){
  dmWordPanelObserver?.disconnect();dmWordPanelObserver=null;
  if(!area||!task||!read)return;
+ let ownObserver=null;
  const paint=()=>{
-  if(!area.isConnected){dmWordPanelObserver?.disconnect();return;}
+  if(!area.isConnected){ownObserver?.disconnect();return;}
   if(task.tip==='teach'&&area.querySelector('.dm-school-word')){
    area.querySelectorAll('[data-rq-word]').forEach(b=>{const k=(task.l||[task.k])[Number(b.dataset.rqWord)];if(k&&b.dataset.dmPoolRequested!=='1'){b.dataset.dmPoolRequested='1';void dmWordImageDecorate(b,read.en(k),read.tr(k),'school');}});return;
   }
@@ -134,7 +135,11 @@ function dmWordImagePanel(area,task,read){
   }
   if(task.tip==='sesliFinal'){
    const active=area.querySelector('.dm-final-current strong');
-   if(active)dmWordImageInto(active,area.dataset.rqEn,area.dataset.rqTr,'question');return;
+   if(active){
+    const matching=(task.l||[]).filter(k=>read.en(k)===active.textContent.trim());
+    const pair=matching.length===1?matching[0]:null;
+    dmWordImageInto(active,area.dataset.rqEn||(pair&&read.en(pair)),area.dataset.rqTr||(pair&&read.tr(pair)),'question');
+   }return;
   }
   let k=task.k;
   if(task.tip==='teach'&&Array.isArray(task.l)){
@@ -152,7 +157,7 @@ function dmWordImagePanel(area,task,read){
   const observer=new MutationObserver(()=>{
    if(queued)return;queued=true;
    Promise.resolve().then(()=>{queued=false;if(area.isConnected)paint();else observer.disconnect();});
-  });observer.observe(area,{childList:true,subtree:true});dmWordPanelObserver=observer;
+  });observer.observe(area,{childList:true,subtree:true});ownObserver=observer;dmWordPanelObserver=observer;
  }
  paint();
 }
