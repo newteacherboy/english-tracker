@@ -20,7 +20,7 @@ test('Manifest network failure does not break teaching and allows retry',async()
 test('Full bundled manifest resolves reported 8th grade cards and Please punctuation',async()=>{
  const manifest=JSON.parse(fs.readFileSync(path.join(__dirname,'../ingilizce/parkur-word-pool-v1.json'),'utf8'));
  assert.equal(Object.keys(manifest).length,2997);
- const p=setup(async url=>{assert.equal(url,'parkur-word-pool-v1.json');return {ok:true,json:async()=>manifest}});
+ const p=setup(async url=>{assert.equal(url,'parkur-word-pool-v1.json?v=20261125-2997');return {ok:true,json:async()=>manifest}});
  for(const id of ['0869','0946','0953','0963','0978']){
   const v=manifest[id];assert.ok((await p.resolve(v.en.replace(/\\.$/,''),v.tr.replace(/\\.$/,''))).endsWith(id+'.webp'));
  }
