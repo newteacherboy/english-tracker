@@ -19,13 +19,14 @@ test('Manifest network failure does not break teaching and allows retry',async()
 
 test('Full bundled manifest resolves reported 8th grade cards and Please punctuation',async()=>{
  const manifest=JSON.parse(fs.readFileSync(path.join(__dirname,'../ingilizce/parkur-word-pool-v1.json'),'utf8'));
- assert.equal(Object.keys(manifest).length,1309);
- const p=setup(async url=>{assert.equal(url,'parkur-word-pool-v1.json');return {ok:true,json:async()=>manifest}});
+ assert.equal(Object.keys(manifest).length,2997);
+ const p=setup(async url=>{assert.equal(url,'parkur-word-pool-v1.json?v=20261125-2997');return {ok:true,json:async()=>manifest}});
  for(const id of ['0869','0946','0953','0963','0978']){
   const v=manifest[id];assert.ok((await p.resolve(v.en.replace(/\\.$/,''),v.tr.replace(/\\.$/,''))).endsWith(id+'.webp'));
  }
  assert.ok((await p.resolve('please','lütfen')).endsWith('0978.webp'));
- assert.equal(await p.resolve('four','dört'),null);
+ assert.ok((await p.resolve('four','dört')).endsWith('1694.webp'));
+ assert.ok((await p.resolve('zucchini','kabak')).endsWith('3028.webp'));
 });
 test('Punctuation fallback rejects ambiguous bilingual candidates',async()=>{
  const p=setup(async()=>({ok:true,json:async()=>({'0001':entry('0001','Please.','Lütfen.'),'0002':entry('0002','Please!','Lütfen!')})}));
@@ -35,3 +36,32 @@ test('Punctuation fallback rejects ambiguous bilingual candidates',async()=>{
 test('Reviewed alternate translations do not leak across word senses',async()=>{const m=JSON.parse(fs.readFileSync(path.join(__dirname,'../ingilizce/parkur-word-pool-v1.json'),'utf8'));const p=setup(async()=>({ok:true,json:async()=>m}));for(const [en,tr,id] of [['classroom','sınıf','0041'],['socks','çoraplar','0196'],['bye','hoşça kal','0001'],['dislike','hoşlanmamak','0266']])assert.ok((await p.resolve(en,tr)).endsWith(id+'.webp'));for(const [en,tr] of [['orange','turuncu'],['book','rezervasyon yapmak'],['cool','serin'],['medicine','tıp']])assert.equal(await p.resolve(en,tr),null);});
 
 test('Second audit: reviewed variants resolve and different senses remain blocked',async()=>{const m=JSON.parse(fs.readFileSync(path.join(__dirname,'../ingilizce/parkur-word-pool-v1.json'),'utf8'));const p=setup(async()=>({ok:true,json:async()=>m}));for(const [en,tr,id] of [['Good night!','İyi geceler!','0033'],['hat','şapka / bere','0415'],['desk','çalışma masası','0014'],['take','almak','1082'],['any','herhangi','0223'],['volunteer','gönüllü olmak','1244']])assert.ok((await p.resolve(en,tr)).endsWith(id+'.webp'));for(const [en,tr] of [['orange','turuncu'],['book','rezervasyon yapmak'],['connect','bağlamak'],['plant','dikmek'],['medicine','tıp']])assert.equal(await p.resolve(en,tr),null);});
+
+
+test('All 2997 stored pairs resolve to their own case-correct bilingual artwork',async()=>{
+ const manifest=JSON.parse(fs.readFileSync(path.join(__dirname,'../ingilizce/parkur-word-pool-v1.json'),'utf8'));
+ assert.equal(Object.keys(manifest).length,2997);
+ const pool=setup(async()=>({ok:true,json:async()=>manifest}));
+ const failures=[];
+ for(const [id,word] of Object.entries(manifest)){
+  const url=await pool.resolve(word.en,word.tr,512);
+  if(!url?.endsWith('/512/'+id+'.webp'))failures.push([id,url]);
+ }
+ assert.deepEqual(failures,[]);
+ for(const [en,tr,id] of [['there are','var (çoğul)','2682'],['There are','var (çoğul)','2683'],['there is','var (tekil)','2690'],['There is','var (tekil)','2691']]){
+  assert.ok((await pool.resolve(en,tr,256)).endsWith('/256/'+id+'.webp'));
+ }
+ assert.equal(await pool.resolve('there are','var (tekil)'),null);
+ assert.equal(await pool.resolve('There is','var (çoğul)'),null);
+});
+test('School and Learning Path call the verified image decorator for every question family',()=>{
+ const school=fs.readFileSync(path.join(__dirname,'../ingilizce/app-js/i24-oku.js'),'utf8');
+ const learning=fs.readFileSync(path.join(__dirname,'../ingilizce/thematic-learning.js'),'utf8');
+ const route=fs.readFileSync(path.join(__dirname,'../ingilizce/route-questions.js'),'utf8');
+ assert.match(school,/DMWordImagePool\?\.decoratePanel\(alan,s/);
+ assert.match(school,/dm-final-current/);
+ assert.match(learning,/dmLearningShowPicture\(task,area\)/);
+ assert.match(learning,/DMWordImagePool\?\.decorate\(b,p\.en,p\.tr,'match'\)/);
+ for(const type of ['eslestir','es','sesliFinal','teach'])assert.ok(route.includes("task.tip==='"+type+"'"));
+ assert.match(route,/dmWordImageCaseKey/);
+});

@@ -405,6 +405,9 @@
       try { window.dmCalmQuestion?.(p); } catch(layoutError) { console.warn('[Parkur] görünüm',layoutError); }
       if(!alan.textContent.trim())throw new Error('Soru görünümü boşaltıldı');
       window.DMRouteQuestions?.mountSchool(p,O.i+1,O.sorular.length,O.kombo||0);
+      // Attach the exact bilingual illustration after all renderers and visual wrappers.
+      // Image availability must never block a question, scoring, or navigation.
+      try{window.DMWordImagePool?.decoratePanel(alan,s,{en:EN,tr:TR});}catch(imageError){console.warn('[Parkur] Görsel paneli',imageError);}
     } catch(err) {
       console.error('[DijiMedu parkur] Soru çizimi başarısız:',s.tip,err);
       alan.innerHTML='<div class="bz-etiket">🦜 Papi yardım ediyor</div><div class="bz-soru">Bu soruyu gösteremedik.</div><p class="bz-ipucu">İlerlemen korunuyor. Soruyu yeniden yükleyebilir veya haritaya dönebilirsin.</p><button type="button" class="bz-btn" id="bzRetryQuestion">↻ Soruyu yeniden dene</button><button type="button" class="bz-btn" id="bzReturnMap">🏰 Haritaya dön</button>';
@@ -599,6 +602,8 @@
       if(!remaining.length){cevap(true,'Tüm kelime kartları tamamlandı');return;}
       const word=list[remaining[0]],wrong=list.find(w=>norm(w.en)!==norm(word.en)&&norm(w.tr)!==norm(word.tr))?.tr||celdirici(s.l[remaining[0]],TR,1)[0]||'Bilmiyorum';
       const options=karistir([word.tr,wrong]);locked=false;
+      // This card changes in place; the image observer must follow the active pair.
+      alan.dataset.rqEn=word.en;alan.dataset.rqTr=word.tr;
       const progress=alan.querySelector('.rq-progress');
       alan.innerHTML='<div class="bz-etiket">🃏 13. Görev · Kelime kartları</div><div class="dm-final-card dm-final-current"><span class="dm-final-card-label">'+(list.length-remaining.length+1)+' / '+list.length+'</span><strong>'+kac(word.en)+'</strong><small>Türkçe anlamını seç</small></div><div class="bz-secenekler">'+options.map((v,i)=>'<button class="bz-sec" type="button" data-final="'+i+'">'+kac(v)+'</button>').join('')+'</div><p id="bzCardStatus" role="status"></p>';
       if(progress)alan.prepend(progress);
@@ -655,12 +660,15 @@
       let bulunmamis = [...new Set(kartlar.map(k => k.i))].filter(i => !alan.querySelector(`.bz-kart2.tamam[data-ci="${i}"]`));
       if (!bulunmamis.length || kilit) return false;
       let ci = bulunmamis[0]; acik = [];
-      kartlar.forEach((k, j) => { let e = alan.querySelector(`[data-j="${j}"]`); if (k.i === ci) { e.classList.add('acik', 'tamam'); e.textContent = k.t; e.dataset.ci = ci; } else if (!e.classList.contains('tamam')) { e.classList.remove('acik'); e.textContent = '✨'; } });
+      kartlar.forEach((k, j) => { let e = alan.querySelector(`[data-j="${j}"]`); if (k.i === ci) { e.classList.add('acik', 'tamam'); e.textContent = k.t; e.dataset.ci = ci;
+          const card=s.l[k.i];if(card&&k.t===EN(card))window.DMWordImagePool?.decorateOption(e,EN(card),TR(card)); } else if (!e.classList.contains('tamam')) { e.classList.remove('acik'); e.textContent = '✨'; } });
       if (++bulunan === 3) cevap(hata <= 2, hata <= 2 ? '' : `${hata} hata yaptın`);
     };
     alan.querySelectorAll('.bz-kart2').forEach(b => b.onclick = () => {
       let j = +b.dataset.j; if (kilit || acik.includes(j) || b.classList.contains('tamam')) return;
-      b.classList.add('acik'); b.textContent = kartlar[j].t; acik.push(j);
+      b.classList.add('acik'); b.textContent = kartlar[j].t;
+      const flipped=s.l[kartlar[j].i];if(flipped&&kartlar[j].t===EN(flipped))window.DMWordImagePool?.decorateOption(b,EN(flipped),TR(flipped));
+      acik.push(j);
       if (acik.length < 2) return;
       let [a, c] = acik; acik = [];
       if (kartlar[a].i === kartlar[c].i) { [a, c].forEach(x => { let e = alan.querySelector(`[data-j="${x}"]`); e.classList.add('tamam'); e.dataset.ci = kartlar[x].i; }); ses('dogru'); if (++bulunan === 3) cevap(hata <= 2, hata <= 2 ? '' : `${hata} hata yaptın`); }

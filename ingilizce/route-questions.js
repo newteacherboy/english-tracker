@@ -12,16 +12,21 @@ function dmWordImageKey(en,tr){
  const e=dmWordImageText(en),t=dmWordImageText(tr);
  return e&&t?JSON.stringify([e,t]):null;
 }
+const dmWordImageCaseKey=(en,tr)=>{
+ const clean=x=>typeof x==='string'?x.normalize('NFC').trim().replace(/\s+/gu,' '):'';
+ const e=clean(en),t=clean(tr);return e&&t?JSON.stringify([e,t]):null;
+};
 const dmWordImageRelaxedKey=(en,tr)=>dmWordImageKey(dmWordImageText(en).replace(/[.!?…]+$/u,'').trim(),dmWordImageText(tr).replace(/[.!?…]+$/u,'').trim());
 // Reviewed alternate translations; each is pinned to its original bilingual manifest entry.
 const dmWordImageAliases=[["0041","classroom","sınıf","classroom","derslik; sınıf"],["0196","socks","çoraplar","socks","çorap"],["0001","bye","hoşça kal","bye","güle güle"],["0059","What is this?","Bu nedir?","What is this?","Bu ne?"],["0261","coat","mont","coat","mont, palto"],["0133","has got","sahip olmak","has got","sahip olmak; var"],["0040","eat","yemek","eat","yemek yemek"],["0408","waiter","erkek garson","waiter","garson (erkek)"],["0113","aunt","teyze, hala","aunt","hala / teyze"],["0126","uncle","amca, dayı","uncle","amca / dayı"],["0251","boots","bot","boots","botlar"],["0992","tall","uzun","tall","uzun boylu"],["0212","wash face","yüzü yıkamak","wash face","yüzünü yıkamak"],["1152","What is your job?","Senin mesleğin ne?","What is your job?","İşin ne?"],["0481","pencil case","kalemlik","pencil case","kalem kutusu"],["0240","brush teeth","dişleri fırçalamak","brush teeth","dişlerini fırçalamak"],["0105","shoes","ayakkabı","shoes","ayakkabılar"],["0578","quiet","sakin","quiet","sessiz"],["0313","I am from Türkiye.","Türkiye'denim.","I am from Türkiye.","Ben Türkiyeliyim."],["0830","costume","kostüm","costume","geleneksel kıyafet"],["0707","bright","aydınlık","bright","parlak"],["0947","camping","kamp yapma","camping","kampçılık"],["0373","bowl","kâse","bowl","kase"],["0083","body","vücut","body","vücut / gövde"],["0956","delicious","çok lezzetli","delicious","lezzetli"],["0951","cycling","bisiklet sürme","cycling","bisiklete binme"],["0225","Can I see the menu, please?","Menüyü görebilir miyim, lütfen?","Can I see the menu, please?","Menüyü görebilir miyim?"],["0460","organise","organize etmek","organise","düzenlemek"],["1179","hope","umut etmek","hope","ummak"],["0393","businessman","iş insanı","businessman","iş adamı"],["0451","assistant","asistan","assistant","yardımcı"],["0959","destroy","yok etmek","destroy","yıkmak"],["0512","straight","dümdüz","straight","düz"],["0804","audience","seyirci","audience","seyirci topluluğu"],["1257","misunderstanding","yanlış anlama","misunderstanding","yanlış anlaşılma"],["0397","fire station","itfaiye merkezi","fire station","itfaiye istasyonu"],["1238","custom","âdet","custom","gelenek"],["1139","take a break","ara vermek","take a break","mola vermek"],["1117","turn left","sola dönmek","Turn left.","Sola dön."],["0855","hang out","birlikte vakit geçirmek","hang out","takılmak"],["0723","be keen on","meraklı olmak","be keen on","çok ilgi duymak"],["0387","stir","karıştırmak","stir","karıştırmak (sıvı)"],["0266","dislike","hoşlanmamak","dislike","sevmemek"],["0033","Good night!","İyi geceler!","good night","iyi geceler"],["0415","hat","şapka / bere","hat","şapka"],["0014","desk","çalışma masası","desk","sıra"],["1082","take","almak","take","al"],["0223","any","herhangi","any","hiç, herhangi"],["1244","volunteer","gönüllü olmak","volunteer","gönüllü"]];
 function dmWordImageIndex(manifest){
- const index=new Map(),ambiguous=new Set(),relaxed=new Map(),ambiguousRelaxed=new Set();
- index.relaxed=relaxed;
+ const index=new Map(),ambiguous=new Set(),relaxed=new Map(),ambiguousRelaxed=new Set(),exactCase=new Map(),ambiguousCase=new Set();
+ index.relaxed=relaxed;index.exactCase=exactCase;
  if(!manifest||typeof manifest!=='object'||Array.isArray(manifest))return index;
  const add=(map,blocked,key,code)=>{if(!key||blocked.has(key))return;if(map.has(key)){map.delete(key);blocked.add(key);return;}map.set(key,code);};
  for(const [code,entry] of Object.entries(manifest)){
   if(!/^\d{4}$/.test(code)||!entry||entry.path!=='512/'+code+'.webp'||entry.small_path!=='256/'+code+'.webp')continue;
+  add(exactCase,ambiguousCase,dmWordImageCaseKey(entry.en,entry.tr),code);
   add(index,ambiguous,dmWordImageKey(entry.en,entry.tr),code);
   add(relaxed,ambiguousRelaxed,dmWordImageRelaxedKey(entry.en,entry.tr),code);
  }
@@ -36,30 +41,38 @@ function dmWordImageIndex(manifest){
 let dmWordImageRequest;
 function dmWordImageLoad(){
  if(!dmWordImageRequest){
-  dmWordImageRequest=Promise.resolve().then(()=>root.fetch('parkur-word-pool-v1.json',{cache:'default',credentials:'same-origin'})).then(r=>{if(!r.ok)throw Error('manifest');return r.json()}).then(dmWordImageIndex).catch(()=>{dmWordImageRequest=null;return new Map()});
+  dmWordImageRequest=Promise.resolve().then(()=>root.fetch('parkur-word-pool-v1.json?v=20261125-2997',{cache:'no-cache',credentials:'same-origin'})).then(r=>{if(!r.ok)throw Error('manifest');return r.json()}).then(dmWordImageIndex).catch(()=>{dmWordImageRequest=null;return new Map()});
  }
  return dmWordImageRequest;
 }
 async function dmWordImageResolve(en,tr,size=512){
  const key=dmWordImageKey(en,tr);if(!key)return null;
  const index=await dmWordImageLoad();
- const code=index.get(key)||index.relaxed?.get(dmWordImageRelaxedKey(en,tr))||index.aliases?.get(dmWordImageRelaxedKey(en,tr));
+ const code=index.exactCase?.get(dmWordImageCaseKey(en,tr))||index.get(key)||index.relaxed?.get(dmWordImageRelaxedKey(en,tr))||index.aliases?.get(dmWordImageRelaxedKey(en,tr));
  return code?dmWordImageBase+(size===256?'256':'512')+'/'+code+'.webp':null;
 }
 async function dmWordImageDecorate(button,en,tr,mode){
+ if(!button||!button.isConnected)return;
+ const marker=dmWordImageCaseKey(en,tr);
+ if(button.dataset.dmPoolPending===marker||button.dataset.dmPoolDone===marker)return;
+ button.dataset.dmPoolPending=marker;
  const url=await dmWordImageResolve(en,tr);
- if(!url||!button?.isConnected)return;
- if(button.querySelector('.dm-pool-teach-image'))return;
+ if(!url||!button.isConnected||button.dataset.dmPoolPending!==marker){delete button.dataset.dmPoolPending;return;}
+ if(button.querySelector('.dm-pool-teach-image')){delete button.dataset.dmPoolPending;return;}
  const img=document.createElement('img');img.alt='';img.decoding='async';img.loading='eager';
  img.className='dm-pool-teach-image';
  img.width=52;img.height=52;
  img.style.cssText='display:block;object-fit:contain;max-width:100%;width:100%;height:100%;border-radius:8px;';
  const attach=()=>{
-  if(!button.isConnected)return;
+  if(!button.isConnected||button.dataset.dmPoolPending!==marker)return;
+  delete button.dataset.dmPoolPending;button.dataset.dmPoolDone=marker;
   if(mode==='learning'){
    const old=button.querySelector('.ml-art');
    const wrap=document.createElement('span');wrap.className='ml-art ml-art-pilot dm-pool-teach-art';wrap.setAttribute('aria-hidden','true');wrap.append(img);
    if(old)old.replaceWith(wrap);else button.prepend(wrap);
+  }else if(mode==='match'){
+   img.style.cssText='display:block;object-fit:contain;width:40px;height:40px;max-width:100%;border-radius:10px;background:white;';
+   button.append(img);button.classList.add('dm-ml-match-visual');
   }else{
    img.style.cssText='display:block;object-fit:contain;width:52px;height:52px;flex:0 0 52px;border-radius:9px;background:white;';
    const label=button.querySelector('span:first-child');if(label){label.style.flex='1 1 0';label.style.minWidth='0';label.style.overflowWrap='anywhere';}
@@ -67,11 +80,88 @@ async function dmWordImageDecorate(button,en,tr,mode){
   }
  };
  img.addEventListener('load',attach,{once:true});
- img.addEventListener('error',()=>{if(img.src.includes('/512/'))img.src=url.replace('/512/','/256/');},{once:true});
+ img.onerror=()=>{if(img.src.includes('/512/'))img.src=url.replace('/512/','/256/');else delete button.dataset.dmPoolPending;};
  // Keep existing text/art untouched if the CDN image cannot be loaded.
  img.src=url;
 }
-root.DMWordImagePool={key:dmWordImageKey,index:dmWordImageIndex,resolve:dmWordImageResolve,decorate:dmWordImageDecorate};
+/* The full question panel uses the same strict bilingual mapping as teaching cards.
+   Never infer images from English-only labels or DOM option order. */
+let dmWordPanelObserver=null;
+function dmWordImageInto(slot,en,tr,kind='question'){
+ if(!slot||!en||!tr||!slot.isConnected)return;
+ const marker=dmWordImageCaseKey(en,tr);
+ const hasImage=kind==='question'
+  ?!!slot.parentNode?.querySelector('.dm-route-question-img')
+  :!!slot.querySelector('.dm-route-option-img');
+ if(!marker||(slot.dataset.dmWordPicture===marker&&hasImage)||slot.dataset.dmWordPending===marker||slot.dataset.dmWordFailed===marker)return;
+ slot.dataset.dmWordPending=marker;
+ void dmWordImageResolve(en,tr,256).then(url=>{
+  if(!url||!slot.isConnected||slot.dataset.dmWordPending!==marker){delete slot.dataset.dmWordPending;return;}
+  const img=document.createElement('img');img.alt='';img.decoding='async';img.loading='eager';
+  img.width=kind==='question'?76:42;img.height=kind==='question'?76:42;
+  img.className=kind==='question'?'dm-route-question-img':'dm-route-option-img';
+  const apply=()=>{
+   if(!slot.isConnected||slot.dataset.dmWordPending!==marker)return;
+   if(kind==='question'&&slot.classList.contains('bz-soru')){
+    const wrap=document.createElement('div');wrap.className='dm-route-illustrated-prompt';
+    slot.parentNode.insertBefore(wrap,slot);wrap.append(img,slot);
+   }else if(kind==='question'&&slot.matches('.dm-final-current strong')){
+    slot.parentNode.insertBefore(img,slot);slot.parentNode.classList.add('dm-route-final-illustrated');
+   }else if(kind==='question'&&slot.classList.contains('bz-ipucu')){
+    const wrap=document.createElement('div');wrap.className='dm-route-illustrated-prompt dm-route-hint-art';
+    slot.parentNode.insertBefore(wrap,slot);wrap.append(img,slot);
+   }else{slot.prepend(img);slot.classList.add('dm-route-has-option-art');}
+   delete slot.dataset.dmWordPending;slot.dataset.dmWordPicture=marker;
+  };
+  img.onload=apply;
+  img.onerror=()=>{if(img.src.includes('/256/'))img.src=url.replace('/256/','/512/');else{delete slot.dataset.dmWordPending;slot.dataset.dmWordFailed=marker;}};
+  img.src=url;
+ }).catch(()=>{delete slot.dataset.dmWordPending;});
+}
+function dmWordImagePanel(area,task,read){
+ dmWordPanelObserver?.disconnect();dmWordPanelObserver=null;
+ if(!area||!task||!read)return;
+ let ownObserver=null;
+ const paint=()=>{
+  if(!area.isConnected){ownObserver?.disconnect();return;}
+  if(task.tip==='teach'&&area.querySelector('.dm-school-word')){
+   area.querySelectorAll('[data-rq-word]').forEach(b=>{const k=(task.l||[task.k])[Number(b.dataset.rqWord)];if(k&&b.dataset.dmPoolRequested!=='1'){b.dataset.dmPoolRequested='1';void dmWordImageDecorate(b,read.en(k),read.tr(k),'school');}});return;
+  }
+  if(task.tip==='eslestir'){
+   area.querySelectorAll('#bzMatchEn [data-key]').forEach(b=>{const k=task.matchItems?.[Number(b.dataset.key)];if(k)dmWordImageInto(b,read.en(k),read.tr(k),'option');});return;
+  }
+  if(task.tip==='es'){
+   area.querySelectorAll('#bzSol .bz-cip2').forEach(b=>{if(b._k)dmWordImageInto(b,read.en(b._k),read.tr(b._k),'option');});return;
+  }
+  if(task.tip==='sesliFinal'){
+   const active=area.querySelector('.dm-final-current strong');
+   if(active){
+    const matching=(task.l||[]).filter(k=>read.en(k)===active.textContent.trim());
+    const pair=matching.length===1?matching[0]:null;
+    dmWordImageInto(active,area.dataset.rqEn||(pair&&read.en(pair)),area.dataset.rqTr||(pair&&read.tr(pair)),'question');
+   }return;
+  }
+  let k=task.k;
+  if(task.tip==='teach'&&Array.isArray(task.l)){
+   const position=Number((area.querySelector('.rq-teach-progress')?.textContent||'1').split('/')[0]);
+   k=task.l[Math.max(0,position-1)]||k;
+  }
+  if(!k)return;
+  const en=task.tip==='teach'?read.en(k):(area.dataset.rqEn||read.en(k));
+  const tr=task.tip==='teach'?read.tr(k):(area.dataset.rqTr||read.tr(k));
+  const slot=area.querySelector('.bz-soru')||area.querySelector('.bz-ipucu');
+  if(slot)dmWordImageInto(slot,en,tr,'question');
+ };
+ let queued=false;
+ if(typeof MutationObserver==='function'){
+  const observer=new MutationObserver(()=>{
+   if(queued)return;queued=true;
+   Promise.resolve().then(()=>{queued=false;if(area.isConnected)paint();else observer.disconnect();});
+  });observer.observe(area,{childList:true,subtree:true});ownObserver=observer;dmWordPanelObserver=observer;
+ }
+ paint();
+}
+root.DMWordImagePool={key:dmWordImageKey,index:dmWordImageIndex,resolve:dmWordImageResolve,decorate:dmWordImageDecorate,decoratePanel:dmWordImagePanel,decorateOption:(b,en,tr)=>dmWordImageInto(b,en,tr,'option')};
 
 const TYPES=['teach','hatirla','soyle','dinleSec','eslestir','eksik','lab','wordOrder','patternOrder','patternComplete','patternListen','patternTranslate'];
 const titles={teach:'Dinle ve öğren',hatirla:'İngilizcesini seç',soyle:'Dinle ve söyle',dinleSec:'Dinle ve seç',eslestir:'Anlamları eşleştir',eksik:'Eksik harfi tamamla',lab:'Türkçesini seç',wordOrder:'Kelimeleri sıraya koy',patternOrder:'İfadeyi sıraya koy',patternComplete:'Eksik kelimeyi tamamla',patternListen:'İfadeyi dinle ve seç',patternTranslate:'Anlamından bul',sesliFinal:'Kelime kartları'};

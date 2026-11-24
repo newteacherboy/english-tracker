@@ -898,3 +898,32 @@
 #dmStoryLesson .ml-three-choices.ml-image-choices>button:last-child{grid-column:1/-1;width:calc((100% - 10px)/2);justify-self:center}
 #dmStoryLesson .ml-choices button.is-selected{outline:2px solid #438cf5;outline-offset:1px;background-color:rgba(67,140,245,.13)}
 #dmStoryLesson .ml-actions button:disabled{opacity:.45;cursor:default}
+
+/* Verified bilingual Learning Path pictures. Keep text and listening controls
+   clickable and preserve the approved question layout at mobile sizes. */
+#dmStoryLesson .ml-arena-hero .ml-speech>.ml-art.ml-art-pilot,
+#dmStoryLesson .ml-review-hero .ml-speech>.ml-art.ml-art-pilot{
+ display:flex;float:left;align-items:center;justify-content:center;
+ width:clamp(52px,13vw,76px);height:clamp(52px,13vw,76px);
+ min-width:0;min-height:0;margin:0 10px 3px 0;
+ border-radius:13px;box-shadow:0 1px 5px #15274518;
+}
+#dmStoryLesson .ml-matches [data-left].dm-ml-match-visual{
+ display:flex;flex-direction:column;align-items:center;justify-content:center;
+ gap:3px;padding:6px!important;
+}
+#dmStoryLesson .ml-matches [data-left].dm-ml-match-visual img.dm-pool-teach-image{
+ max-width:45px;max-height:45px;flex:0 0 auto;
+}
+#dmStoryLesson .ml-image-choices img.dm-pool-teach-image{
+ display:block;max-width:100%;object-fit:contain;
+}
+@media(max-width:370px){
+ #dmStoryLesson .ml-arena-hero .ml-speech>.ml-art.ml-art-pilot,
+ #dmStoryLesson .ml-review-hero .ml-speech>.ml-art.ml-art-pilot{
+  width:46px;height:46px;margin-right:6px;
+ }
+ #dmStoryLesson .ml-matches [data-left].dm-ml-match-visual img.dm-pool-teach-image{
+  max-width:34px;max-height:34px;
+ }
+}
