@@ -17,7 +17,8 @@ test('duel actions call existing live and Papi implementations',()=>{
  const src=read('bottom-nav.js');
  assert.match(src,/dmLiveDuel\?\.startLive/);
  assert.match(src,/dmLiveDuel\?\.startPapi/);
- assert.match(src,/dmBagInventory\?\.open/);
+ assert.match(src,/dmParentBridge\?\.open/);
+ assert.doesNotMatch(src,/dmBagInventory|Çantam/);
 });
 test('friends renders both leagues and live duel ranking',()=>{
  const src=read('friends-ui.js');

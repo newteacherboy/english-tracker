@@ -93,7 +93,6 @@
       if (btn.dataset.ds === 'builder') { window.dmCharacterBuilder?.open(); return; }
       if (btn.dataset.ds === 'energy') { $('dsEnergy')?.scrollIntoView({block:'center',behavior:'smooth'}); return; }
       if (btn.dataset.ds === 'chests') { window.dmProgression?.chests(); return; }
-      if (btn.dataset.ds === 'bag') { window.dmBagInventory?.open(); return; }
       if (btn.dataset.ds === 'plans') { window.DMSatis?.planlar?.('magaza'); return; }
       showDetail(btn.dataset.ds);
     });
@@ -131,11 +130,4 @@
     }
   }, 1500);
   observe();
-  // Independent Çantam is loaded after the unchanged storefront initialization.
-  if (!window.dmBagInventory && !document.querySelector('script[data-dm-bag-module]')) {
-    const module = document.createElement('script');
-    module.dataset.dmBagModule = '1';
-    module.src = new URL('bag-inventory.js?v=20261113-no-jokers', document.currentScript?.src || location.href).href;
-    document.head.appendChild(module);
-  }
 })();

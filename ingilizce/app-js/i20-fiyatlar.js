@@ -10,7 +10,6 @@
   /* ================= FİYATLAR ================= */
   const FIYAT = { temel: 850, ozel: 3000, efsane: 5500 };
   const KOMBIN_FIYAT = { ozel: 9000, efsane: 13500 };
-  const CIK_FIYAT = { temel: 400, ozel: 3000, efsane: 5500 };
   const SANDIK = [
     { ad: 'Bronz Sandık', ikon: '🧰', f: 200, adet: 1, sans: [85, 15, 0], alt: '1 öğe · %85 temel, %15 özel', renk: '#fdf2e9' },
     { ad: 'Gümüş Sandık', ikon: '🗃️', f: 450, adet: 2, sans: [65, 30, 5], garanti: 'ozel', alt: '2 öğe · en az 1 özel · %5 efsane', renk: '#f1f5f9' },
@@ -24,7 +23,7 @@
     turuncu: ['#fb923c', 'Turuncu'], kirmizi: ['#ef4444', 'Kırmızı'], turkuaz: ['#22d3ee', 'Turkuaz'], kahve: ['#92400e', 'Kahve'], gri: ['#94a3b8', 'Gri'], mor: ['#7c3aed', 'Mor'] };
   const KAT = {
     bas: { ad: 'Baş', ikon: '🧕' }, ust: { ad: 'Üst', ikon: '👕' }, alt: { ad: 'Alt', ikon: '👖' }, tek: { ad: 'Tek parça', ikon: '👗' },
-    dis: { ad: 'Dış giyim', ikon: '🧥' }, ayak: { ad: 'Ayakkabı', ikon: '👟' }, aks: { ad: 'Aksesuar', ikon: '🎒' }, cik: { ad: 'Çıkartma', ikon: '🏷️' }
+    dis: { ad: 'Dış giyim', ikon: '🧥' }, ayak: { ad: 'Ayakkabı', ikon: '👟' }, aks: { ad: 'Aksesuar', ikon: '🎒' }
   };
   const OGE = [];
   function ekle(kat, tip, adTip, renkler, seviye, desen) {
@@ -86,10 +85,7 @@
   ekle('aks', 'saat', 'kol saati', ['siyah', 'sari'], 'ozel');
   ekle('aks', 'rozet', 'yıldız rozeti', ['sari'], 'ozel');
   ekle('aks', 'rozet', 'kalp rozeti', ['pembe'], 'ozel');
-  /* Çıkartmalar (karakterin köşesinde görünür) */
-  [['⭐', 'Yıldız', 'temel'], ['🌈', 'Gökkuşağı', 'temel'], ['🦜', 'Papi', 'temel'], ['📚', 'Kitap kurdu', 'temel'], ['🎧', 'Müzik', 'temel'],
-   ['⚽', 'Futbol', 'temel'], ['🌸', 'Çiçek', 'temel'], ['🚀', 'Roket', 'ozel'], ['🧠', 'Beyin', 'ozel'], ['🏆', 'Kupa', 'ozel'], ['🦄', 'Unicorn', 'ozel'],
-   ['🐉', 'Ejderha', 'efsane'], ['👑', 'Taç', 'efsane'], ['💎', 'Elmas', 'efsane'], ['🔥', 'Seri ateşi', 'efsane']].forEach(([e, ad, sv]) => OGE.push({ id: 'c:' + e, kat: 'cik', tip: 'cik', emoji: e, ad, sv }));
+  /* [24 Kas 2026] Emoji çıkartma ürünleri mağazadan kaldırıldı. */
   OGE.push(...[{"id":"u:kahraman:#14b8a6:kanat","kat":"ust","tip":"kahraman","renk":"#14b8a6","desen":"kanat","ad":"Işık Kanadı kahraman üstü","sv":"efsane","c":"e","f":5500},{"id":"u:kahraman:#8b5cf6:kanat","kat":"ust","tip":"kahraman","renk":"#8b5cf6","desen":"kanat","ad":"Işık Kanadı kahraman üstü","sv":"efsane","c":"k","f":5500},{"id":"u:kahraman:#8b5cf6:kristal","kat":"ust","tip":"kahraman","renk":"#8b5cf6","desen":"kristal","ad":"Kristal Gaga kahraman üstü","sv":"efsane","c":"e","f":5500},{"id":"u:kahraman:#22d3ee:kristal","kat":"ust","tip":"kahraman","renk":"#22d3ee","desen":"kristal","ad":"Kristal Gaga kahraman üstü","sv":"efsane","c":"k","f":5500},{"id":"u:kahraman:#2563eb:firtina","kat":"ust","tip":"kahraman","renk":"#2563eb","desen":"firtina","ad":"Fırtına Tüyü kahraman üstü","sv":"efsane","c":"e","f":5500},{"id":"u:kahraman:#f59e0b:firtina","kat":"ust","tip":"kahraman","renk":"#f59e0b","desen":"firtina","ad":"Fırtına Tüyü kahraman üstü","sv":"efsane","c":"k","f":5500}]);
   /* Prestige sets share the server catalog and require level 40. */
   OGE.push(...[{"id":"u:kahraman:#ef4444:anka","kat":"ust","tip":"kahraman","renk":"#ef4444","desen":"anka","ad":"Anka Hükümdarı pelerinli üst","sv":"efsane","legendary":true,"f":20000},{"id":"a:pantolon:#ef4444:yildiz","kat":"alt","tip":"pantolon","renk":"#ef4444","desen":"yildiz","ad":"Anka Hükümdarı pantolon","sv":"efsane","legendary":true,"f":12000},{"id":"a:bot:#fbbf24:yildiz","kat":"ayak","tip":"bot","renk":"#fbbf24","desen":"yildiz","ad":"Anka Hükümdarı bot","sv":"efsane","legendary":true,"f":8000},{"id":"u:kahraman:#6366f1:galaksi","kat":"ust","tip":"kahraman","renk":"#6366f1","desen":"galaksi","ad":"Galaksi Koruyucusu pelerinli üst","sv":"efsane","legendary":true,"f":24000},{"id":"a:pantolon:#6366f1:yildiz","kat":"alt","tip":"pantolon","renk":"#6366f1","desen":"yildiz","ad":"Galaksi Koruyucusu pantolon","sv":"efsane","legendary":true,"f":16000},{"id":"a:bot:#22d3ee:yildiz","kat":"ayak","tip":"bot","renk":"#22d3ee","desen":"yildiz","ad":"Galaksi Koruyucusu bot","sv":"efsane","legendary":true,"f":8000},{"id":"u:kahraman:#059669:ejderha","kat":"ust","tip":"kahraman","renk":"#059669","desen":"ejderha","ad":"Zümrüt Ejderha pelerinli üst","sv":"efsane","legendary":true,"f":28000},{"id":"a:pantolon:#059669:yildiz","kat":"alt","tip":"pantolon","renk":"#059669","desen":"yildiz","ad":"Zümrüt Ejderha pantolon","sv":"efsane","legendary":true,"f":20000},{"id":"a:bot:#a3e635:yildiz","kat":"ayak","tip":"bot","renk":"#a3e635","desen":"yildiz","ad":"Zümrüt Ejderha bot","sv":"efsane","legendary":true,"f":8000}]);
@@ -402,11 +398,10 @@
   }
   function onizle() { $('dlOnizleme').innerHTML = dolapTamBoySVG(D.deneme, kk().cins, 300); $('dlAltin').innerText = `🪙 ${yo.altin || 0}`; }
   const SEKMELER = [['vitrin', '⭐ Vitrin'], ['efsane40', '👑 Efsane Vitrini'], ['sac', '💇 Saç'], ['bas', '🧕 Başörtüsü'], ['ust', '👕 Üst'], ['alt', '👖 Alt'], ['tek', '👗 Tek parça'], ['dis', '🧥 Dış'], ['ayak', '👟 Ayak'],
-    ['sapka', '🎩 Şapka · gözlük'], ['aks', '🎒 Aksesuar'], ['yuz', '🙂 Yüz'], ['dost', '🐾 Dost · arka plan'], ['kombin', '🧥 Kombinler'], ['cik', '🏷️ Çıkartma'], ['sandik', '🎁 Sandıklar']];
+    ['sapka', '🎩 Şapka · gözlük'], ['aks', '🎒 Aksesuar'], ['yuz', '🙂 Yüz'], ['dost', '🐾 Dost · arka plan'], ['kombin', '🧥 Kombinler'], ['sandik', '🎁 Sandıklar']];
   function ikonHtml(o) {
     const art = window.dmBoutiqueArt?.(o); if(art) return art;
     if (o.parca) return window.dmStoreWardrobe.preview(o.id,150);
-    if (o.kat === 'cik') return `<span style="font-size:28px;line-height:1.2">${o.emoji}</span>`;
     if (o.atolye) { try { let V = window.KA_VARSAYILAN[kk().cins], s = Object.assign({}, V, D.deneme, { [o.kat]: o.itemId, bas: '' }); if (o.kat === 'kiyafet') { s.ust = ''; s.tek = ''; } return `<span class="mini">${window.avatarSVG(s, 'c', 100, kk().cins)}</span>`; } catch (e) { return '<span class="mini">🎨</span>'; } }
     return window.dmStoreWardrobe.preview(o.id,88);
   }
@@ -443,7 +438,7 @@
     else if (S === 'sandik') html += '<div class="dl-not">Sandıklar parkur ilerlemenle kazanılır. Altın harcanmaz.</div><button class="dl-oge" data-sandik="0">🧰 Sandıklarımı gör</button>';
     else {
       if (S === 'bas') html += `<button type="button" class="dl-oge${!D.deneme.bas ? ' giyili' : ''}" data-cikar="bas"><span style="font-size:28px">💇</span><span class="ad">Başörtüsü yok · saçım görünsün</span><span class="fiyat sahip">Bedava</span></button><div class="dl-not">Saç modelini "💇 Saç" sekmesinden seçebilirsin. Başörtüsü takınca saç görünmez.</div>`;
-      else if (['dis', 'aks', 'cik', 'tek'].includes(S)) html += `<button type="button" class="dl-oge" data-cikar="${S}"><span style="font-size:28px">🚫</span><span class="ad">Çıkar</span><span class="fiyat sahip">Bedava</span></button>`;
+      else if (['dis', 'aks', 'tek'].includes(S)) html += `<button type="button" class="dl-oge" data-cikar="${S}"><span style="font-size:28px">🚫</span><span class="ad">Çıkar</span><span class="fiyat sahip">Bedava</span></button>`;
       if (S === 'ust') html += `<div class="dl-not">👕 Karakterin hiçbir zaman kıyafetsiz kalmaz: üst çıkarılınca klasik kıyafete döner.</div>`;
       if (S === 'alt') html += `<div class="dl-not">👖 Alt çıkarılınca okul pantolonuna döner.</div><button type="button" class="dl-oge" data-cikar="alt"><span style="font-size:28px">🏫</span><span class="ad">Okul pantolonu</span><span class="fiyat sahip">Bedava</span></button>`;
       html += OGE.filter(o => o.kat === S&&uygun(o)).sort((a,b)=>DijiProgressionCatalog.itemLevel(a)-DijiProgressionCatalog.itemLevel(b)).map(ogeKart).join('');
