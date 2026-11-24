@@ -90,7 +90,8 @@ let dmWordPanelObserver=null;
 function dmWordImageInto(slot,en,tr,kind='question'){
  if(!slot||!en||!tr||!slot.isConnected)return;
  const marker=dmWordImageCaseKey(en,tr);
- if(!marker||slot.dataset.dmWordPicture===marker||slot.dataset.dmWordPending===marker||slot.dataset.dmWordFailed===marker)return;
+ const hasImage=kind==='question'&&slot.classList.contains('bz-soru')?!!slot.parentNode?.querySelector('.dm-route-question-img'):!!slot.querySelector('.dm-route-question-img,.dm-route-option-img');
+ if(!marker||(slot.dataset.dmWordPicture===marker&&hasImage)||slot.dataset.dmWordPending===marker||slot.dataset.dmWordFailed===marker)return;
  slot.dataset.dmWordPending=marker;
  void dmWordImageResolve(en,tr,256).then(url=>{
   if(!url||!slot.isConnected||slot.dataset.dmWordPending!==marker){delete slot.dataset.dmWordPending;return;}
@@ -153,7 +154,7 @@ function dmWordImagePanel(area,task,read){
  }
  paint();
 }
-root.DMWordImagePool={key:dmWordImageKey,index:dmWordImageIndex,resolve:dmWordImageResolve,decorate:dmWordImageDecorate,decoratePanel:dmWordImagePanel};
+root.DMWordImagePool={key:dmWordImageKey,index:dmWordImageIndex,resolve:dmWordImageResolve,decorate:dmWordImageDecorate,decoratePanel:dmWordImagePanel,decorateOption:(b,en,tr)=>dmWordImageInto(b,en,tr,'option')};
 
 const TYPES=['teach','hatirla','soyle','dinleSec','eslestir','eksik','lab','wordOrder','patternOrder','patternComplete','patternListen','patternTranslate'];
 const titles={teach:'Dinle ve öğren',hatirla:'İngilizcesini seç',soyle:'Dinle ve söyle',dinleSec:'Dinle ve seç',eslestir:'Anlamları eşleştir',eksik:'Eksik harfi tamamla',lab:'Türkçesini seç',wordOrder:'Kelimeleri sıraya koy',patternOrder:'İfadeyi sıraya koy',patternComplete:'Eksik kelimeyi tamamla',patternListen:'İfadeyi dinle ve seç',patternTranslate:'Anlamından bul',sesliFinal:'Kelime kartları'};
