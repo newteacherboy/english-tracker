@@ -90,7 +90,9 @@ let dmWordPanelObserver=null;
 function dmWordImageInto(slot,en,tr,kind='question'){
  if(!slot||!en||!tr||!slot.isConnected)return;
  const marker=dmWordImageCaseKey(en,tr);
- const hasImage=kind==='question'&&slot.classList.contains('bz-soru')?!!slot.parentNode?.querySelector('.dm-route-question-img'):!!slot.querySelector('.dm-route-question-img,.dm-route-option-img');
+ const hasImage=kind==='question'
+  ?!!slot.parentNode?.querySelector('.dm-route-question-img')
+  :!!slot.querySelector('.dm-route-option-img');
  if(!marker||(slot.dataset.dmWordPicture===marker&&hasImage)||slot.dataset.dmWordPending===marker||slot.dataset.dmWordFailed===marker)return;
  slot.dataset.dmWordPending=marker;
  void dmWordImageResolve(en,tr,256).then(url=>{
