@@ -52,15 +52,20 @@ async function dmWordImageResolve(en,tr,size=512){
  return code?dmWordImageBase+(size===256?'256':'512')+'/'+code+'.webp':null;
 }
 async function dmWordImageDecorate(button,en,tr,mode){
+ if(!button||!button.isConnected)return;
+ const marker=dmWordImageCaseKey(en,tr);
+ if(button.dataset.dmPoolPending===marker||button.dataset.dmPoolDone===marker)return;
+ button.dataset.dmPoolPending=marker;
  const url=await dmWordImageResolve(en,tr);
- if(!url||!button?.isConnected)return;
- if(button.querySelector('.dm-pool-teach-image'))return;
+ if(!url||!button.isConnected||button.dataset.dmPoolPending!==marker){delete button.dataset.dmPoolPending;return;}
+ if(button.querySelector('.dm-pool-teach-image')){delete button.dataset.dmPoolPending;return;}
  const img=document.createElement('img');img.alt='';img.decoding='async';img.loading='eager';
  img.className='dm-pool-teach-image';
  img.width=52;img.height=52;
  img.style.cssText='display:block;object-fit:contain;max-width:100%;width:100%;height:100%;border-radius:8px;';
  const attach=()=>{
-  if(!button.isConnected)return;
+  if(!button.isConnected||button.dataset.dmPoolPending!==marker)return;
+  delete button.dataset.dmPoolPending;button.dataset.dmPoolDone=marker;
   if(mode==='learning'){
    const old=button.querySelector('.ml-art');
    const wrap=document.createElement('span');wrap.className='ml-art ml-art-pilot dm-pool-teach-art';wrap.setAttribute('aria-hidden','true');wrap.append(img);
@@ -72,7 +77,7 @@ async function dmWordImageDecorate(button,en,tr,mode){
   }
  };
  img.addEventListener('load',attach,{once:true});
- img.addEventListener('error',()=>{if(img.src.includes('/512/'))img.src=url.replace('/512/','/256/');},{once:true});
+ img.onerror=()=>{if(img.src.includes('/512/'))img.src=url.replace('/512/','/256/');else delete button.dataset.dmPoolPending;};
  // Keep existing text/art untouched if the CDN image cannot be loaded.
  img.src=url;
 }
