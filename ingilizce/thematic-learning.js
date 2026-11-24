@@ -171,7 +171,8 @@ function dmLearningImagePair(task){
  if(task?.picture?.en&&task.picture.tr)return task.picture;
  if(task?.en&&task.tr)return task;
  if(!task||task.kind==='match'||task.kind==='review'||task.kind==='teach'||task.images)return null;
- const source=[...(chapter?.cards||[]),...(chapter?.examples||[]),...(chapter?.themeReview||[])];
+ const previous=data?.chapters?.find(c=>c.id===chapter?.previousId);
+ const source=[...(chapter?.cards||[]),...(chapter?.examples||[]),...(chapter?.themeReview||[]),...(previous?.cards||[])];
  const seen=new Set(),pairs=source.filter(p=>{if(!p?.en||!p?.tr)return false;const k=JSON.stringify([p.en,p.tr]);if(seen.has(k))return false;seen.add(k);return true;});
  const matches=pairs.filter(p=>{
   const explanation=String(task.explanation||'');
@@ -415,6 +416,7 @@ function renderRecovery(){
  '<p class="ml-question-instruction">Pekiştirme '+(Number(q.step)+1)+' / 3</p>'+
  '<div class="ml-choices ml-recovery-choices">'+optionOrder('recovery:'+q.step,q.options).map(i=>'<button type="button" data-recovery-choice="'+i+'" lang="en">'+esc(q.options[i])+'</button>').join('')+'</div>';
  bindMascotFallback(area);
+ dmLearningShowPicture(q,area);
  let chosen=null;const buttons=[...area.querySelectorAll('[data-recovery-choice]')];buttons.forEach(b=>b.onclick=()=>{if(busy)return;chosen=b;buttons.forEach(x=>x.classList.toggle('is-selected',x===b));actions.querySelector('[data-recovery-check]').disabled=false;speech(q.options[+b.dataset.recoveryChoice]);});
  actions.innerHTML='<button type="button" data-reference-recovery>Öğrenme kartlarını gör</button><button type="button" class="ml-primary" data-recovery-check disabled>Kontrol et →</button>';actions.querySelector('[data-recovery-check]').onclick=()=>{if(chosen)submitRecovery(q.options[+chosen.dataset.recoveryChoice],true);};
  actions.querySelector('button').onclick=()=>openReference(chapter.cards,'Pekiştirme için öğrenme kartları');
@@ -472,7 +474,7 @@ function render(){if(!modal)return;accepted=false;if(session?.needsRecovery&&!se
   wrap.querySelectorAll('[data-letter-slot]').forEach(b=>b.onclick=()=>{if(busy||accepted)return;selected[+b.dataset.letterSlot]=null;sync();});
   actions.querySelector('[data-letter-clear]').onclick=()=>{selected.fill(null);sync();};actions.querySelector('[data-letter-check]').onclick=()=>{if(selected.some(x=>x===null))return;const value=[...task.en];task.missing.forEach((p,i)=>value[p]=task.tokens[selected[i]]);submit(value.join(''));};
  }
- if(task.kind==='choice'){const choices=document.createElement('div');choices.className='ml-choices'+(task.images?' ml-image-choices':'');choices.innerHTML=optionOrder('choice',task.options).map(i=>{const s=task.options[i],c=task.images?.find(x=>x.en===s);return '<button type="button" data-answer="'+i+'" '+(c?'aria-label="'+esc(c.tr)+'"':'')+'>'+ (c?art(c,true):esc(s))+'</button>';}).join('');area.append(choices);if(task.images)choices.querySelectorAll('[data-answer]').forEach(b=>{const card=task.images.find(c=>c.en===task.options[+b.dataset.answer]);if(card?.en&&card.tr)void window.DMWordImagePool?.decorate(b,card.en,card.tr,'learning');});let chosen=null;const buttons=[...choices.querySelectorAll('button')];if(buttons.length===3)choices.classList.add('ml-three-choices');actions.innerHTML='<button type="button" class="ml-primary" disabled>Kontrol et →</button>';const check=actions.querySelector('button');buttons.forEach(b=>b.onclick=()=>{if(busy||accepted)return;chosen=b;buttons.forEach(x=>{x.classList.toggle('is-selected',x===b);x.setAttribute('aria-pressed',String(x===b));});check.disabled=false;if(task.language!=='en')speech(task.options[+b.dataset.answer]);});check.onclick=()=>{if(chosen)submit(task.options[+chosen.dataset.answer],chosen,{alreadySpoken:true});};}
+ if(task.kind==='choice'){const choices=document.createElement('div');choices.className='ml-choices'+(task.images?' ml-image-choices':'');choices.innerHTML=optionOrder('choice',task.options).map(i=>{const s=task.options[i],c=task.images?.find(x=>x.en===s);return '<button type="button" data-answer="'+i+'" '+(c?'aria-label="'+esc(c.tr)+'"':'')+'>'+ (c?art(c,true):esc(s))+'</button>';}).join('');area.append(choices);if(task.images)choices.querySelectorAll('[data-answer]').forEach(b=>{const matches=task.images.filter(c=>c.en===task.options[+b.dataset.answer]);if(matches.length===1&&matches[0]?.tr)void window.DMWordImagePool?.decorate(b,matches[0].en,matches[0].tr,'learning');});let chosen=null;const buttons=[...choices.querySelectorAll('button')];if(buttons.length===3)choices.classList.add('ml-three-choices');actions.innerHTML='<button type="button" class="ml-primary" disabled>Kontrol et →</button>';const check=actions.querySelector('button');buttons.forEach(b=>b.onclick=()=>{if(busy||accepted)return;chosen=b;buttons.forEach(x=>{x.classList.toggle('is-selected',x===b);x.setAttribute('aria-pressed',String(x===b));});check.disabled=false;if(task.language!=='en')speech(task.options[+b.dataset.answer]);});check.onclick=()=>{if(chosen)submit(task.options[+chosen.dataset.answer],chosen,{alreadySpoken:true});};}
  if(task.kind==='match'){
   let selected=null,matched=[],wrong=null,wrongTimer;const done=new Set(),pairs=task.pairs;
   const wrap=document.createElement('div');wrap.className='ml-matches ml-linked-match';
