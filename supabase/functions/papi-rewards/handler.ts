@@ -1,11 +1,13 @@
-// [17 Kas 2026] Papi'nin Kanadı (tüy) ve parkurdaki Sürpriz Yumurta.
+// [17 Kas 2026] Papi'nin Kanadı (tüy).
+// [24 Kas 2026] Parkurdaki Sürpriz Yumurta kaldırıldı: 'yumurta' / 'yumurta_cat' eylemleri artık kabul edilmez,
+// veritabanına hiç gidilmeden 400 döner (dm_papi_egg fonksiyonu da silindi).
 // Öğrenci yalnız eylemi seçer; sayımlar, tarih ve bütün altın/enerji yazımları veritabanı fonksiyonlarındadır.
 type Db={from:(t:string)=>any,rpc:(name:string,args:Record<string,unknown>)=>Promise<{data:any,error:any}>};
 const cors={'Access-Control-Allow-Origin':'*','Access-Control-Allow-Headers':'content-type,x-diji-token','Access-Control-Allow-Methods':'POST,OPTIONS','Cache-Control':'no-store'};
 const json=(value:unknown,status=200)=>new Response(JSON.stringify(value),{status,headers:{...cors,'Content-Type':'application/json'}});
-const fail=(code:string,status:number)=>json({ok:false,code,mesaj:({auth:'Öğrenci hesabınla giriş yap.',demo:'Bu özellik kişisel öğrenci hesabında açılır.',invalid:'Geçersiz istek.',not_ready:'Yumurta henüz çatlamaya hazır değil.',busy:'Bağlantı yoğun. Biraz sonra tekrar dene.'} as Record<string,string>)[code]||'Şu an yüklenemedi. Tekrar dene.'},status);
+const fail=(code:string,status:number)=>json({ok:false,code,mesaj:({auth:'Öğrenci hesabınla giriş yap.',demo:'Bu özellik kişisel öğrenci hesabında açılır.',invalid:'Geçersiz istek.',busy:'Bağlantı yoğun. Biraz sonra tekrar dene.'} as Record<string,string>)[code]||'Şu an yüklenemedi. Tekrar dene.'},status);
 const hash=async(s:string)=>Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s)))).map(x=>x.toString(16).padStart(2,'0')).join('');
-export const ACTIONS=['tuy','yumurta','yumurta_cat'] as const;
+export const ACTIONS=['tuy'] as const;
 export function papiRewardsHandler(db:Db){
  return async(req:Request)=>{
   if(req.method==='OPTIONS')return new Response('ok',{headers:cors});
@@ -22,9 +24,9 @@ export function papiRewardsHandler(db:Db){
    const account=await db.from('students').select('id,username,role,status,frozen_at').eq('id',actor).maybeSingle();
    if(account.error||!account.data||account.data.role!=='student'||account.data.status!=='approved'||account.data.frozen_at)return fail('auth',403);
    if(['teacher','dijimedu_demo'].includes(String(account.data.username||'').toLowerCase()))return fail('demo',403);
-   const r=action==='tuy'?await db.rpc('dm_papi_feather',{actor}):await db.rpc('dm_papi_egg',{actor,hatch:action==='yumurta_cat'});
+   const r=await db.rpc('dm_papi_feather',{actor});
    if(r.error){console.error('papi-rewards',action,r.error);return fail('provider',503);}
-   if(!r.data?.ok)return fail(String(r.data?.code||'provider'),r.data?.code==='not_ready'?409:403);
+   if(!r.data?.ok)return fail(String(r.data?.code||'provider'),403);
    return json(r.data);
   }catch(e){console.error('papi-rewards',e);return fail('provider',503);}
  };

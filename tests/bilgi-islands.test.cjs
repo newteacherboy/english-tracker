@@ -19,12 +19,13 @@ test('number chips identify finished, current and locked stages without touching
  assert.equal(c.yo.totalXp,12600);
  assert.equal(c.yo.altin,1273);
 });
-test('egg landmark (replaces the chest) stays at the next fifth-stop landmark rather than following every active stop',()=>{
- const first=render(6,25).html,second=render(7,25).html,third=render(10,25).html;
- const position=html=>Number(html.match(/class="rt-medal-egg" data-rt="egg" style="top:([\d.]+)px"/)?.[1]);
- assert.equal(position(first),position(second),'egg should remain next to the same 10th stop');
- assert.notEqual(position(second),position(third),'egg moves when the next milestone changes');
- assert.match(first,/Yumurtam/);assert.doesNotMatch(first,/rt-medal-chest/);
+test('surprise egg landmark is removed from the route map (no egg button, no server polling hook)',()=>{
+ for(const [done,total] of [[6,25],[7,25],[10,25]]){
+  const html=render(done,total).html;
+  assert.doesNotMatch(html,/rt-medal-egg|data-rt="egg"|Yumurtam/);assert.doesNotMatch(html,/rt-medal-chest/);
+ }
+ assert.equal(fs.existsSync('ingilizce/papi-yumurta.js'),false);
+ assert.doesNotMatch(fs.readFileSync('ingilizce/index.html','utf8'),/papi-yumurta/);
 });
 test('finished stages are differentiated by color and a legible stop number',()=>{
  const css=fs.readFileSync('ingilizce/bilgi-islands.css','utf8');
