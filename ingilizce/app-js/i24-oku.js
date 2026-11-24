@@ -405,6 +405,9 @@
       try { window.dmCalmQuestion?.(p); } catch(layoutError) { console.warn('[Parkur] görünüm',layoutError); }
       if(!alan.textContent.trim())throw new Error('Soru görünümü boşaltıldı');
       window.DMRouteQuestions?.mountSchool(p,O.i+1,O.sorular.length,O.kombo||0);
+      // Attach the exact bilingual illustration after all renderers and visual wrappers.
+      // Image availability must never block a question, scoring, or navigation.
+      try{window.DMWordImagePool?.decoratePanel(alan,s,{en:EN,tr:TR});}catch(imageError){console.warn('[Parkur] Görsel paneli',imageError);}
     } catch(err) {
       console.error('[DijiMedu parkur] Soru çizimi başarısız:',s.tip,err);
       alan.innerHTML='<div class="bz-etiket">🦜 Papi yardım ediyor</div><div class="bz-soru">Bu soruyu gösteremedik.</div><p class="bz-ipucu">İlerlemen korunuyor. Soruyu yeniden yükleyebilir veya haritaya dönebilirsin.</p><button type="button" class="bz-btn" id="bzRetryQuestion">↻ Soruyu yeniden dene</button><button type="button" class="bz-btn" id="bzReturnMap">🏰 Haritaya dön</button>';
@@ -599,6 +602,8 @@
       if(!remaining.length){cevap(true,'Tüm kelime kartları tamamlandı');return;}
       const word=list[remaining[0]],wrong=list.find(w=>norm(w.en)!==norm(word.en)&&norm(w.tr)!==norm(word.tr))?.tr||celdirici(s.l[remaining[0]],TR,1)[0]||'Bilmiyorum';
       const options=karistir([word.tr,wrong]);locked=false;
+      // This card changes in place; the image observer must follow the active pair.
+      alan.dataset.rqEn=word.en;alan.dataset.rqTr=word.tr;
       const progress=alan.querySelector('.rq-progress');
       alan.innerHTML='<div class="bz-etiket">🃏 13. Görev · Kelime kartları</div><div class="dm-final-card dm-final-current"><span class="dm-final-card-label">'+(list.length-remaining.length+1)+' / '+list.length+'</span><strong>'+kac(word.en)+'</strong><small>Türkçe anlamını seç</small></div><div class="bz-secenekler">'+options.map((v,i)=>'<button class="bz-sec" type="button" data-final="'+i+'">'+kac(v)+'</button>').join('')+'</div><p id="bzCardStatus" role="status"></p>';
       if(progress)alan.prepend(progress);
