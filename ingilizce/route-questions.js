@@ -41,7 +41,7 @@ function dmWordImageIndex(manifest){
 let dmWordImageRequest;
 function dmWordImageLoad(){
  if(!dmWordImageRequest){
-  dmWordImageRequest=Promise.resolve().then(()=>root.fetch('parkur-word-pool-v1.json',{cache:'default',credentials:'same-origin'})).then(r=>{if(!r.ok)throw Error('manifest');return r.json()}).then(dmWordImageIndex).catch(()=>{dmWordImageRequest=null;return new Map()});
+  dmWordImageRequest=Promise.resolve().then(()=>root.fetch('parkur-word-pool-v1.json?v=20261125-2997',{cache:'no-cache',credentials:'same-origin'})).then(r=>{if(!r.ok)throw Error('manifest');return r.json()}).then(dmWordImageIndex).catch(()=>{dmWordImageRequest=null;return new Map()});
  }
  return dmWordImageRequest;
 }
