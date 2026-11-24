@@ -80,3 +80,37 @@ body #bzPerde#bzPerde.rq-approved #bzAlan[style*="display:none"],body #bzPerde#b
  @media(prefers-reduced-motion:reduce){body #bzPerde.rq-approved #bzAlan .dm-wrong{animation:none!important}}
 }
 @keyframes rq-letter-shake{0%,100%{transform:translateX(0)}25%,75%{transform:translateX(-5px)}50%{transform:translateX(5px)}}
+
+/* Strict bilingual visual pool: visuals accompany the word without replacing
+   its text, interactive answer handlers, or the existing 3D Papi mascot. */
+#bzPerde #bzAlan .dm-route-illustrated-prompt{
+ display:flex;flex-direction:row;align-items:center;gap:clamp(8px,2.4vw,14px);
+ min-width:0;width:100%;max-width:100%;
+}
+#bzPerde #bzAlan .dm-route-illustrated-prompt>.bz-soru,
+#bzPerde #bzAlan .dm-route-illustrated-prompt>.bz-ipucu{
+ flex:1 1 0;min-width:0;overflow-wrap:anywhere;text-align:left;
+}
+#bzPerde #bzAlan .dm-route-question-img{
+ flex:0 0 clamp(55px,15vw,78px);width:clamp(55px,15vw,78px);
+ height:clamp(55px,15vw,78px);max-width:28%;object-fit:contain;
+ border-radius:14px;background:rgba(255,255,255,.82);
+ border:1px solid rgba(74,132,159,.14);
+}
+#bzPerde #bzAlan .dm-route-option-img{
+ display:block;flex:0 0 38px;width:38px;height:38px;object-fit:contain;
+ border-radius:10px;background:rgba(255,255,255,.85);
+}
+#bzPerde #bzAlan .dm-route-has-option-art{
+ display:flex;align-items:center;justify-content:flex-start;gap:8px;
+ min-width:0;white-space:normal;overflow-wrap:anywhere;text-align:left;
+}
+#bzPerde #bzAlan .dm-route-final-illustrated{
+ display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;
+}
+#bzPerde #bzAlan .dm-route-hint-art{margin:6px 0;}
+@media(max-width:380px){
+ #bzPerde #bzAlan .dm-route-option-img{width:31px;height:31px;flex-basis:31px;}
+ #bzPerde #bzAlan .dm-route-illustrated-prompt{gap:7px;}
+ #bzPerde #bzAlan .dm-route-question-img{width:52px;height:52px;flex-basis:52px;}
+}
