@@ -165,6 +165,27 @@ function mascotAt(cursor){return LEARNING_MASCOTS[(Math.max(1,Number(cursor)||1)
 function bindMascotFallback(root){root.querySelectorAll('img[data-ml-character]').forEach(img=>img.addEventListener('error',()=>{if(img.dataset.mlFallback)return;img.dataset.mlFallback='1';img.src='learning-assets/papi-arena-guide.webp';},{once:true}));}
 const SCHOOL_PARROTS=['papi-welcome-v2.png','study-assets/papi-explain.png','study-assets/papi-read.png','study-assets/papi-celebrate.png','route-assets/papi-school.webp','route-assets/papi-english.webp','profile-assets/papi-selam.png','papi-help-v2.png','discovery-assets/papi-merhaba.webp','papi-reward-v2.png'];
 function arenaHero(content,extra='',variation=0){if(schoolBridge){const src=SCHOOL_PARROTS[(Math.max(0,(Number(session?.cursor)||0)-1)+variation)%SCHOOL_PARROTS.length],img='<img class="ml-arena-papi" data-ml-character="school-parrot" src="'+src+'" alt="Papi" width="160" height="180" decoding="async">';const teach=modal?.dataset.taskKind==='teach',label=modal?.querySelector('.ml-eyebrow')?.textContent||'',instruction=['Anlamı keşfet','Bu dersten hatırla','Son tekrar'].includes(label)?'Türkçe karşılığını seç.':label==='İngilizcesini bul'?'İngilizce karşılığını seç.':label||'Türkçe karşılığını seç.';return '<div class="ml-arena-hero '+extra+'">'+(teach?img:'<div class="ml-school-question-head"><small class="ml-school-count">'+Math.max(1,(Number(session?.cursor)||0)-1)+' / 10</small>'+img+'<p class="ml-school-instruction">'+esc(instruction)+'</p></div>')+'<div class="ml-speech">'+content+'</div></div>';}const name=mascotAt(session?.cursor);return '<div class="ml-arena-hero '+extra+'"><img class="ml-arena-papi" data-ml-character="'+name+'" src="learning-assets/characters/'+name+'.webp" alt="" aria-hidden="true" width="240" height="300" decoding="async"><div class="ml-speech">'+content+'</div></div>';}
+/* Images in Learning Path are resolved only from the exact two-language card.
+   Never infer the correct asset from an English choice/distractor alone. */
+function dmLearningImagePair(task){
+ if(task?.picture?.en&&task.picture.tr)return task.picture;
+ if(task?.en&&task.tr)return task;
+ if(!task||task.kind==='match'||task.kind==='review'||task.kind==='teach'||task.images)return null;
+ const source=[...(chapter?.cards||[]),...(chapter?.examples||[]),...(chapter?.themeReview||[])];
+ const seen=new Set(),pairs=source.filter(p=>{if(!p?.en||!p?.tr)return false;const k=JSON.stringify([p.en,p.tr]);if(seen.has(k))return false;seen.add(k);return true;});
+ const matches=pairs.filter(p=>{
+  const explanation=String(task.explanation||'');
+  if(explanation===p.en+' = '+p.tr||explanation===p.en+' — '+p.tr)return true;
+  if(task.answer===p.en+' → '+p.tr)return true;
+  const exactContext=task.audio===p.en||task.prompt===p.en||task.prompt===p.tr||task.promptAudio===p.tr;
+  return exactContext&&(task.answer===p.en||task.answer===p.tr);
+ });
+ return matches.length===1?matches[0]:null;
+}
+function dmLearningShowPicture(task,area){
+ const pair=dmLearningImagePair(task),slot=area?.querySelector('.ml-arena-hero .ml-speech');
+ if(pair&&slot)void window.DMWordImagePool?.decorate(slot,pair.en,pair.tr,'learning');
+}
 function lessonTheme(){return window.dmDayNightTheme?.themeFor()||document.documentElement.dataset.dmTheme||'day';}
 function applyLessonTheme(value){if(modal)modal.dataset.appearance=value;}
 document.addEventListener('dm:theme',()=>applyLessonTheme(lessonTheme()));
@@ -413,6 +434,7 @@ function render(){if(!modal)return;accepted=false;if(session?.needsRecovery&&!se
  }
 
  if(task.kind!=='review')area.innerHTML+=arenaHero('<h2 '+(task.language==='en'?'lang="en"':'')+'>'+esc(task.prompt)+'</h2>'+(task.support?'<p class="ml-support">'+esc(task.support)+'</p>':'')+(task.picture?art(task.picture):''));if(task.kind!=='review')bindMascotFallback(area);
+ if(task.kind!=='review'&&!task.images)dmLearningShowPicture(task,area);
  const audioArea=area.querySelector('.ml-speech')||area;
  if(task.audio&&!/_{2,}/.test(task.prompt||'')){const audioButton=speaker(task.audio);audioArea.prepend(audioButton);if(task.language==='en'&&task.prompt===task.audio)audioArea.classList.add('ml-wave-word');if(task.label!=='Dinle ve bul')audioButton.playVoice();if(!voice)audioArea.insertAdjacentHTML('beforeend','<p class="ml-hint" lang="en">'+esc(task.audio)+'</p>');}
 
@@ -424,7 +446,11 @@ function render(){if(!modal)return;accepted=false;if(session?.needsRecovery&&!se
   const answers=finalReviewDraft.answers;let index=answers.length,locked=false;const ticket=epoch,atCursor=session.cursor;
   const box=document.createElement('section');box.className='ml-final-review';area.append(box);
   const paint=()=>{if(index>=task.cards.length){box.innerHTML=arenaHero('<h2>Yanıtların hazır!</h2><p>Sonucunu görmek için cevaplarını kaydet.</p>')+'<p class="ml-review-count">'+task.cards.length+' / '+task.cards.length+' kart yanıtlandı</p>';actions.innerHTML='<button type="button" class="ml-primary" data-review-retry>Sonucu göster →</button>';actions.querySelector('button').onclick=()=>submit(answers);bindMascotFallback(box);return;}const card=task.cards[index];box.innerHTML='<p class="ml-review-count">Kart '+(index+1)+' / '+task.cards.length+'</p><div class="ml-review-track" aria-hidden="true">'+task.cards.map((_,i)=>'<span class="'+(i<index?'is-done':i===index?'is-current':'')+'">'+(i<index?'★':'✦')+'</span>').join('')+'</div>'+arenaHero('<h2 lang="en">'+esc(card.en)+'</h2>','ml-review-hero',index)+'<p class="ml-question-instruction">Türkçe karşılığını seç.</p><div class="ml-choices">'+optionOrder('review:'+index,card.options).map(i=>'<button type="button" data-review-choice="'+i+'">'+esc(card.options[i])+'</button>').join('')+'</div><p class="ml-review-note" role="status" aria-live="polite"></p>';
-   bindMascotFallback(box);const audioButton=speaker(card.en);box.querySelector('.ml-speech').prepend(audioButton);box.querySelector('.ml-speech').classList.add('ml-wave-word');audioButton.playVoice();scheduleLessonFit();modal.scrollTop=0;
+   bindMascotFallback(box);
+   // Review cards change in place: always use the active English+Turkish pair.
+   const reviewSpeech=box.querySelector('.ml-review-hero .ml-speech');
+   if(reviewSpeech)void window.DMWordImagePool?.decorate(reviewSpeech,card.en,card.tr,'learning');
+   const audioButton=speaker(card.en);box.querySelector('.ml-speech').prepend(audioButton);box.querySelector('.ml-speech').classList.add('ml-wave-word');audioButton.playVoice();scheduleLessonFit();modal.scrollTop=0;
    let chosen=null;actions.innerHTML='<button type="button" class="ml-primary" disabled>Kontrol et →</button>';const check=actions.querySelector('button');box.querySelectorAll('[data-review-choice]').forEach(b=>b.onclick=()=>{if(locked||busy)return;chosen=b;box.querySelectorAll('[data-review-choice]').forEach(x=>x.classList.toggle('is-selected',x===b));check.disabled=false;});check.onclick=()=>{if(locked||busy||!chosen)return;const b=chosen;locked=true;check.disabled=true;const answer=card.options[+b.dataset.reviewChoice],correct=answer===card.tr;answers.push(answer);
     box.querySelectorAll('[data-review-choice]').forEach(x=>{x.disabled=true;if(card.options[+x.dataset.reviewChoice]===card.tr)x.classList.add('is-correct');else if(x===b&&!correct)x.classList.add('is-wrong');});
     if(!correct)breakCombo(true);window.dmAnswerFeedback?.(correct);
@@ -446,12 +472,15 @@ function render(){if(!modal)return;accepted=false;if(session?.needsRecovery&&!se
   wrap.querySelectorAll('[data-letter-slot]').forEach(b=>b.onclick=()=>{if(busy||accepted)return;selected[+b.dataset.letterSlot]=null;sync();});
   actions.querySelector('[data-letter-clear]').onclick=()=>{selected.fill(null);sync();};actions.querySelector('[data-letter-check]').onclick=()=>{if(selected.some(x=>x===null))return;const value=[...task.en];task.missing.forEach((p,i)=>value[p]=task.tokens[selected[i]]);submit(value.join(''));};
  }
- if(task.kind==='choice'){const choices=document.createElement('div');choices.className='ml-choices'+(task.images?' ml-image-choices':'');choices.innerHTML=optionOrder('choice',task.options).map(i=>{const s=task.options[i],c=task.images?.find(x=>x.en===s);return '<button type="button" data-answer="'+i+'" '+(c?'aria-label="'+esc(c.tr)+'"':'')+'>'+ (c?art(c,true):esc(s))+'</button>';}).join('');area.append(choices);let chosen=null;const buttons=[...choices.querySelectorAll('button')];if(buttons.length===3)choices.classList.add('ml-three-choices');actions.innerHTML='<button type="button" class="ml-primary" disabled>Kontrol et →</button>';const check=actions.querySelector('button');buttons.forEach(b=>b.onclick=()=>{if(busy||accepted)return;chosen=b;buttons.forEach(x=>{x.classList.toggle('is-selected',x===b);x.setAttribute('aria-pressed',String(x===b));});check.disabled=false;if(task.language!=='en')speech(task.options[+b.dataset.answer]);});check.onclick=()=>{if(chosen)submit(task.options[+chosen.dataset.answer],chosen,{alreadySpoken:true});};}
+ if(task.kind==='choice'){const choices=document.createElement('div');choices.className='ml-choices'+(task.images?' ml-image-choices':'');choices.innerHTML=optionOrder('choice',task.options).map(i=>{const s=task.options[i],c=task.images?.find(x=>x.en===s);return '<button type="button" data-answer="'+i+'" '+(c?'aria-label="'+esc(c.tr)+'"':'')+'>'+ (c?art(c,true):esc(s))+'</button>';}).join('');area.append(choices);if(task.images)choices.querySelectorAll('[data-answer]').forEach(b=>{const card=task.images.find(c=>c.en===task.options[+b.dataset.answer]);if(card?.en&&card.tr)void window.DMWordImagePool?.decorate(b,card.en,card.tr,'learning');});let chosen=null;const buttons=[...choices.querySelectorAll('button')];if(buttons.length===3)choices.classList.add('ml-three-choices');actions.innerHTML='<button type="button" class="ml-primary" disabled>Kontrol et →</button>';const check=actions.querySelector('button');buttons.forEach(b=>b.onclick=()=>{if(busy||accepted)return;chosen=b;buttons.forEach(x=>{x.classList.toggle('is-selected',x===b);x.setAttribute('aria-pressed',String(x===b));});check.disabled=false;if(task.language!=='en')speech(task.options[+b.dataset.answer]);});check.onclick=()=>{if(chosen)submit(task.options[+chosen.dataset.answer],chosen,{alreadySpoken:true});};}
  if(task.kind==='match'){
   let selected=null,matched=[],wrong=null,wrongTimer;const done=new Set(),pairs=task.pairs;
   const wrap=document.createElement('div');wrap.className='ml-matches ml-linked-match';
   wrap.innerHTML='<div>'+optionOrder('match-left',pairs).map(i=>'<button type="button" data-left="'+i+'" lang="en" aria-label="Listen '+(i+1)+'"><span class="ml-wave" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span></button>').join('')+'</div><div>'+optionOrder('match-right',pairs).map(i=>'<button type="button" data-right="'+i+'" lang="tr">'+esc(pairs[i].tr)+'</button>').join('')+'</div><svg class="ml-match-lines" aria-hidden="true"></svg>';
-  area.append(wrap);wrap.style.setProperty('position','relative','important');wrap.style.setProperty('display','grid','important');wrap.style.setProperty('grid-template-columns','minmax(0,1fr) minmax(0,1fr)','important');wrap.style.setProperty('column-gap','clamp(44px,12vw,100px)','important');
+  area.append(wrap);
+  // Give each audio-matching card its own verified bilingual illustration.
+  wrap.querySelectorAll('[data-left]').forEach(b=>{const p=pairs[Number(b.dataset.left)];if(p?.en&&p.tr)void window.DMWordImagePool?.decorate(b,p.en,p.tr,'match');});
+  wrap.style.setProperty('position','relative','important');wrap.style.setProperty('display','grid','important');wrap.style.setProperty('grid-template-columns','minmax(0,1fr) minmax(0,1fr)','important');wrap.style.setProperty('column-gap','clamp(44px,12vw,100px)','important');
   const svg=wrap.querySelector('svg');wrap.style.setProperty('--match-rows',String(pairs.length));
   function fitTranslations(){wrap.querySelectorAll('[data-right]').forEach(b=>{b.style.removeProperty('font-size');let size=parseFloat(getComputedStyle(b).fontSize);while(b.scrollHeight>b.clientHeight&&size>10){size-=.5;b.style.setProperty('font-size',size+'px','important');}});}
   fitTranslations();
