@@ -213,7 +213,10 @@ html.dm-papi-intro:not(.dm-papi-booted) #dmBootSplash{z-index:2147483646!importa
  document.addEventListener('dm:boot-ready',()=>{if(active&&fullOpen){try{fullStore&&fullStore.setItem(FULL_DAY_KEY,today);}catch(_){}}},{once:true});
  function remainingMs(){if(!active||!fullOpen)return 0;if(!startedAt)return 3400;return Math.max(0,3400-(performance.now()-startedAt));}
  let characterSequence=0;
- function characterMarkup(){const suffix='chat'+(++characterSequence);return SVG.replace('class="pi-svg"','class="dm-papi-character-svg"').replace(/id="(pi[a-zA-Z])"/g,'id="$1'+suffix+'"').replace(/url\(#(pi[a-zA-Z])\)/g,'url(#$1'+suffix+')');}
+ function characterMarkup({intro=false}={}){
+  const suffix='chat'+(++characterSequence);
+  if(intro)css();
+  return SVG.replace('class="pi-svg"',intro?'class="pi-svg"':'class="dm-papi-character-svg"').replace(/id="(pi[a-zA-Z])"/g,'id="$1'+suffix+'"').replace(/url\(#(pi[a-zA-Z])\)/g,'url(#$1'+suffix+')');}
  /* [18 Kas 2026] Ad değişti: window.dmPapiIntro papi-tanitim.js'in tur motorunun adı. Açılış bu adı kullandığı için
     11 Kasım'dan beri tanıtım ve sayfa turları kendini kapatıyordu. Açılış artık window.dmPapiSplash. */
  window.dmPapiSplash={characterMarkup,enable,disable,holdBoot:go=>waitGame?.hold(go)||false,isActive:()=>active,isFullOpen:()=>fullOpen,remainingMs,minMs:3400};

@@ -116,7 +116,7 @@ function decorate(){const nav=document.getElementById('bottomNavMobile');if(!nav
  nav.querySelectorAll('.bn-item[data-ekran]').forEach(b=>{if(!expected.has(b.dataset.ekran))b.remove();});
  const current=[...nav.querySelectorAll('.bn-item[data-ekran]')].map(b=>b.dataset.ekran);if(current.join('|')!==layout.map(x=>x[0]).filter(id=>current.includes(id)).join('|')){for(const [id] of layout){const b=nav.querySelector('[data-ekran="'+id+'"]');if(b)nav.append(b);}}
 
- nav.querySelectorAll('[data-bc="profil"]').forEach(b=>b.remove());for(const [id,label,icon] of layout){const b=nav.querySelector('[data-ekran="'+id+'"]');if(!b)continue;if(id!=='tab-profile-menu'||!b.dataset.membershipLabel)b.setAttribute('aria-label',label);const l=b.querySelector('.bn-label');if(l&&l.textContent!==label)l.textContent=label;const slot=b.querySelector('.bn-icon');const cell=layout.findIndex(x=>x[0]===id);if(slot&&!slot.querySelector('.dm-nav-art,.tp-nav-image'))slot.innerHTML='<span class="dm-nav-art" aria-hidden="true" style="background-position:'+(cell%3*50)+'% '+(cell<3?0:100)+'%"></span>';b.title=b.dataset.membershipLabel||label;if(id==='tab-duel-home'){b.removeAttribute('onclick');b.onclick=window.dmDuelHomeAc;}if(id==='tab-rankings'){b.onclick=()=>window.dmFriends?.showArena('ranking');}if(id==='tab-profile-menu'){b.removeAttribute('onclick');b.onclick=window.dmProfileMenuAc;b.setAttribute('aria-haspopup','dialog');if(!b.hasAttribute('aria-expanded'))b.setAttribute('aria-expanded','false');}if(b.classList.contains('active'))b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');}}
+ nav.querySelectorAll('[data-bc="profil"]').forEach(b=>b.remove());for(const [id,label,icon] of layout){const b=nav.querySelector('[data-ekran="'+id+'"]');if(!b)continue;if(id!=='tab-profile-menu'||!b.dataset.membershipLabel)b.setAttribute('aria-label',label);const l=b.querySelector('.bn-label');if(l&&l.textContent!==label)l.textContent=label;const slot=b.querySelector('.bn-icon');const cell=layout.findIndex(x=>x[0]===id);if(slot&&!slot.querySelector('.dm-nav-art,.tp-nav-image'))slot.innerHTML='<span class="dm-nav-art" aria-hidden="true" style="background-position:'+(cell%3*50)+'% '+(cell<3?0:100)+'%"></span>';b.title=b.dataset.membershipLabel||label;if(id==='tab-duel-home'){b.removeAttribute('onclick');b.onclick=window.dmDuelHomeAc;}if(id==='tab-rankings'){b.onclick=()=>window.dmFriends?.showArena('ranking');}if(id==='tab-profile-menu'){b.removeAttribute('onclick');b.onclick=()=>{if(!document.getElementById('rtProfileBackdrop'))window.dmProfileMenuAc();};b.setAttribute('aria-haspopup','dialog');if(!b.hasAttribute('aria-expanded'))b.setAttribute('aria-expanded','false');}if(b.classList.contains('active'))b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');}}
 const duelArtIcon = name => `<svg class="dm-duel-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="friends-assets/icons.svg#${name}"></use></svg>`;
 const duelChevron = duelArtIcon('chevron').replace('dm-duel-icon','dm-duel-chevron');
 const duelShield = '<svg class="dm-duel-icon" viewBox="0 0 24 24" aria-hidden="true"><path fill="#e74475" d="M12 1 2 5v6c0 6 4 10 10 12 6-2 10-6 10-12V5z"/><path fill="#ffb2c9" d="M12 4 5 7v4c0 4 2.6 7 7 9 4.4-2 7-5 7-9V7z"/></svg>';
@@ -137,7 +137,7 @@ window.dmDuelHomeAc=function(){
  if(!el){
   el=document.createElement('section');el.id='dmDuelHome';el.className='dm-duel-page';el.setAttribute('aria-label','Düello arenası');
   el.innerHTML=`<div class="dm-duel-page-inner">
-   <header class="dm-duel-page-head"><img class="dm-duel-mascot" src="papi-loading.webp" alt="" width="48" height="48"><h1>Düello</h1></header>
+   <header class="dm-duel-page-head"><span class="dm-duel-mascot pi-wrap pi-static" aria-hidden="true"></span><h1>Düello</h1></header>
    <div class="dm-duel-arena">
     <div class="dm-duel-hero-stage">
      <div class="dm-duel-hero-copy">
@@ -170,6 +170,10 @@ window.dmDuelHomeAc=function(){
    if(action==='history')window.dmNotificationCenter?.openDuelHistory?.(e.target.closest('button'));
   });
   document.body.append(el);
+ }
+ const reopening = el.hidden || !el.querySelector('.dm-duel-mascot').firstElementChild;
+ if (reopening) {
+  el.querySelector('.dm-duel-mascot').innerHTML = window.dmPapiSplash?.characterMarkup?.({intro:true}) || '';
  }
  el.hidden=false;
  if (!duelEntryAudio) {

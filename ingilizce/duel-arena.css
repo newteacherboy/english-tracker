@@ -326,41 +326,45 @@ html[data-dm-theme=night] .dm-duel-personal small {color:#cbbce8}
   background: #fff5ed;
   color: #211638;
 }
-#dmDuelHome .dm-duel-page-inner {
-  justify-content: flex-start;
-  gap: 11px;
-  padding: 5px 12px 12px;
+#dmDuelHome.dm-duel-page .dm-duel-page-inner {
+  justify-content: space-between;
+  gap: clamp(10px, 2dvh, 19px);
+  padding: 5px 12px 16px;
 }
-#dmDuelHome .dm-duel-page-head {
+#dmDuelHome.dm-duel-page .dm-duel-page-head {
   min-height: 50px;
 }
-#dmDuelHome .dm-duel-page-head h1 {
+#dmDuelHome.dm-duel-page .dm-duel-page-head h1 {
   font-size: clamp(24px, 7vw, 34px);
 }
-#dmDuelHome .dm-duel-mascot {
+#dmDuelHome.dm-duel-page .dm-duel-mascot {
   display: block;
-  width: 46px;
-  height: 46px;
-  object-fit: contain;
+  position: relative;
+  width: 54px;
+  height: 54px;
+  margin: 0;
+  padding: 0;
+  box-shadow: none;
+  background: transparent;
 }
-#dmDuelHome .dm-duel-arena {
+#dmDuelHome.dm-duel-page .dm-duel-arena {
   padding: 0 9px 11px;
   gap: 0;
-  border: 0;
+  border: 2px solid #f2b88e;
   border-radius: 24px;
   background: #ffd3af;
-  box-shadow: none;
+  box-shadow: 0 5px 0 #e9a77e, inset 0 2px 0 #fff0dc;
 }
-#dmDuelHome .dm-duel-arena::after { display: none; }
-#dmDuelHome .dm-duel-hero-stage {
+#dmDuelHome.dm-duel-page .dm-duel-arena::after { display: none; }
+#dmDuelHome.dm-duel-page .dm-duel-hero-stage {
   display: flex;
   align-items: center;
-  min-height: clamp(182px, min(37dvh, 64vw), 330px);
+  min-height: clamp(185px, min(37dvh, 69vw), 345px);
   padding: 14px 44% 14px 6px;
   isolation: isolate;
   background: linear-gradient(155deg, #ffdfc1 25%, #ffceaa 88%);
 }
-#dmDuelHome .dm-duel-hero-stage::before {
+#dmDuelHome.dm-duel-page .dm-duel-hero-stage::before {
   content: "";
   position: absolute;
   z-index: -1;
@@ -369,7 +373,7 @@ html[data-dm-theme=night] .dm-duel-personal small {color:#cbbce8}
   mask-image: linear-gradient(90deg, transparent, #000 10%);
   pointer-events: none;
 }
-#dmDuelHome .dm-duel-live-pill {
+#dmDuelHome.dm-duel-page .dm-duel-live-pill {
   padding: 4px 8px;
   margin-bottom: 9px;
   background: #ffe59e;
@@ -377,18 +381,26 @@ html[data-dm-theme=night] .dm-duel-personal small {color:#cbbce8}
   color: #302246;
   white-space: nowrap;
 }
-#dmDuelHome .dm-duel-live-dot { background: #3dab5c; box-shadow: none; }
-#dmDuelHome .dm-duel-hero-copy h2 {
+#dmDuelHome.dm-duel-page .dm-duel-live-dot { background: #3dab5c; box-shadow: none; }
+#dmDuelHome.dm-duel-page .dm-duel-hero-copy {
+  position: relative;
+  z-index: 1;
+  padding: 10px 7px;
+  border-radius: 14px;
+  background: #ffe1c6;
+  box-shadow: 0 2px 0 #e9b78e;
+}
+#dmDuelHome.dm-duel-page .dm-duel-hero-copy h2 {
   font-size: clamp(21px, 5.6vw, 36px);
   line-height: 1.08;
   color: #211638;
   font-style: italic;
   letter-spacing: -.03em;
 }
-#dmDuelHome .dm-duel-quick {
+#dmDuelHome.dm-duel-page .dm-duel-quick {
   width: 100%;
   margin: 0;
-  min-height: 49px;
+  min-height: clamp(50px, 8dvh, 65px);
   border: 1px solid #ffab93;
   border-bottom: 4px solid #a52d3c;
   border-radius: 18px;
@@ -397,45 +409,49 @@ html[data-dm-theme=night] .dm-duel-personal small {color:#cbbce8}
   text-shadow: 0 1px 1px #802d32;
   box-shadow: 0 3px 9px #b9503f54;
 }
-#dmDuelHome .dm-duel-quick::after {
+#dmDuelHome.dm-duel-page .dm-duel-quick::after {
   width: 38%;
-  background: linear-gradient(105deg, transparent, #fff3d57a, transparent);
+  display: block;
+  background: linear-gradient(105deg, transparent, #fff8dcaf, transparent);
+  animation: dm-duel-shine 2.4s ease-in-out infinite;
 }
-#dmDuelHome .dm-duel-quick:focus-visible {
+#dmDuelHome.dm-duel-page .dm-duel-quick:focus-visible {
   outline: 3px solid #582e66;
   outline-offset: 2px;
 }
-#dmDuelHome .dm-duel-options button {
+#dmDuelHome.dm-duel-page .dm-duel-options button {
   min-width: 0;
+  min-height: clamp(57px, 9dvh, 78px);
   border: 1px solid #ddc3d5;
   background: #f6e7f0;
   color: #211638;
   box-shadow: 0 2px 0 #e7d6e1;
 }
-#dmDuelHome .dm-duel-options button[data-duel="papi"] {
+#dmDuelHome.dm-duel-page .dm-duel-options button[data-duel="papi"] {
   border-color: #cfd1bb;
   background: #eeeee0;
   box-shadow: 0 2px 0 #dcdece;
 }
-#dmDuelHome .dm-duel-option-icon:not(.dm-duel-face) {
+#dmDuelHome.dm-duel-page .dm-duel-option-icon:not(.dm-duel-face) {
   background: #e9c6da;
   border-bottom-color: #cda9c0;
   color: #6e519b;
 }
-#dmDuelHome .dm-duel-stats-card {
-  padding: 11px 12px 13px;
+#dmDuelHome.dm-duel-page .dm-duel-stats-card {
+  padding: clamp(12px, 2dvh, 22px);
   border-color: #e2c9c1;
   background: #fff4ec;
 }
-#dmDuelHome .dm-duel-personal b { color: #211638; }
-#dmDuelHome .dm-duel-personal span { border-inline-end-color: #e9d7d2; }
-#dmDuelHome .dm-duel-personal span:last-child { border: 0; }
+#dmDuelHome.dm-duel-page .dm-duel-personal { min-height: clamp(49px, 9dvh, 78px); }
+#dmDuelHome.dm-duel-page .dm-duel-personal b { color: #211638; }
+#dmDuelHome.dm-duel-page .dm-duel-personal span { border-inline-end-color: #e9d7d2; }
+#dmDuelHome.dm-duel-page .dm-duel-personal span:last-child { border: 0; }
 html[data-dm-theme="night"] #dmDuelHome.dm-duel-page { background: #252036; color: #fff3ed; }
-html[data-dm-theme="night"] #dmDuelHome .dm-duel-stats-card { background: #342b43; border-color: #64536a; }
-html[data-dm-theme="night"] #dmDuelHome .dm-duel-personal,
-html[data-dm-theme="night"] #dmDuelHome .dm-duel-personal b { color: #fff3ed; }
-html[data-dm-theme="night"] #dmDuelHome .dm-duel-personal span { border-inline-end-color: #64536a; }
+html[data-dm-theme="night"] #dmDuelHome.dm-duel-page .dm-duel-stats-card { background: #342b43; border-color: #64536a; }
+html[data-dm-theme="night"] #dmDuelHome.dm-duel-page .dm-duel-personal,
+html[data-dm-theme="night"] #dmDuelHome.dm-duel-page .dm-duel-personal b { color: #fff3ed; }
+html[data-dm-theme="night"] #dmDuelHome.dm-duel-page .dm-duel-personal span { border-inline-end-color: #64536a; }
 
 @media (prefers-reduced-motion: reduce) {
-  #dmDuelHome .dm-duel-quick::after { display: none; }
+  #dmDuelHome.dm-duel-page .dm-duel-quick::after { display: none; }
 }
