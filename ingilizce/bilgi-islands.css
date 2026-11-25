@@ -420,3 +420,6 @@ body #tab-dunya .bz-ic:has(.rt-medal-route) .dm-unified-wallet.dm-papi-wallet :i
  .dm-route-badge-map.is-new .dm-route-badge-art,.dm-route-badge-dialog .dm-route-badge-art{animation:none}
  .dm-route-badge-confetti{display:none}
 }
+
+/* Milestones continue awarding and announcing badges through parkur-badges.js. */
+.dm-route-badge-map {display:none!important}

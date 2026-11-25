@@ -211,7 +211,6 @@
   function homeHtml() {
     const ranking = arenaView === 'ranking';
     return `<div class="fr-home dm-arena-home">
-      ${window.dmArenaTabs(arenaView)}
       ${ranking ? `<nav class="dm-arena-tabs dm-arena-ranks" aria-label="Sıralama türü">
         <button type="button" data-rank-view="individual" aria-pressed="${rankView==='individual'}">Bireysel Lig</button>
         <button type="button" data-rank-view="duel" aria-pressed="${rankView==='duel'}">Düello Şampiyonları</button>
@@ -248,6 +247,13 @@
     root.classList.toggle('fr-home-view',home);
     root.classList.toggle('fr-club-view',maSekme==='akis'&&!maProfilId);
     root.dataset.friendsView = maProfilId ? 'profile' : maSekme;
+    if(root.classList.contains('active') && document.getElementById('dmDuelHome')?.hidden!==false){
+      document.querySelectorAll('#bottomNavMobile .bn-item').forEach(button=>{
+        const active=button.dataset.ekran===(arenaView==='ranking'?'tab-rankings':'tab-meduakis');
+        if(button.classList.contains('active')!==active)button.classList.toggle('active',active);
+        if(active)button.setAttribute('aria-current','page');else button.removeAttribute('aria-current');
+      });
+    }
     if(home){
       const title=root.querySelector('.akis-baslik h2');
       const label=arenaView==='ranking'?'Sıralamam':'Takımım';

@@ -8,6 +8,11 @@
   'tab-magaza':['#FF5C8A','#D63A69','<path d="M4.5 10h15v9.5a1.5 1.5 0 0 1-1.5 1.5H6a1.5 1.5 0 0 1-1.5-1.5z" fill="#fff" opacity=".7"/><path d="M4.6 3.5h14.8L21.5 9a2.4 2.4 0 0 1-4.6 1 2.4 2.4 0 0 1-4.9 0 2.4 2.4 0 0 1-4.9 0A2.4 2.4 0 0 1 2.5 9z" fill="#fff"/><rect x="10" y="14" width="4" height="7" rx="1" fill="#fff"/>']
  };
  function art(id){
+  const sprite={'tab-duel-home':0,'tab-dunya':1,'tab-aktiviteler':2,'tab-meduakis':3,'tab-rankings':4};
+  if(Object.hasOwn(sprite,id)){
+   const cells=[[46,150,390,390],[470,150,392,390],[890,150,390,390],[1300,150,416,390],[1735,150,392,390]];
+   return '<span class="dm-nav-approved dm-nav-approved-'+sprite[id]+'"><svg viewBox="'+cells[sprite[id]].join(' ')+'" aria-hidden="true"><image href="bottom-nav-approved-20261125.webp" width="2172" height="724"/></svg></span>';
+  }
   if(G[id]){const [t,te,p]=G[id];return '<span class="dm-nv2-tile" style="--t:'+t+';--te:'+te+'"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">'+p+'</svg></span>';}
   if(id==='tab-aktiviteler')return '<span class="dm-nv2-tile" style="--t:#ed548c;--te:#bd3566"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7h10a5 5 0 0 1 4.8 4l1.1 6.2a2.8 2.8 0 0 1-4.6 2.6l-2.8-2.5h-7l-2.8 2.5a2.8 2.8 0 0 1-4.6-2.6L2.2 11A5 5 0 0 1 7 7z" fill="white"/><path d="M7 10v5M4.5 12.5h5" stroke="#ed548c" stroke-width="1.8"/><circle cx="17" cy="11" r="1.2" fill="#ed548c"/><circle cx="19" cy="14" r="1.2" fill="#ed548c"/></svg></span>';
   if(id==='tab-duel-home')return '<span class="dm-nv2-oyna-disc"><svg viewBox="0 0 48 48" width="35" height="35" aria-hidden="true"><path d="M7 5l10 3 24 25-8 8L8 17z" fill="#fff2b2" stroke="#d99b18" stroke-width="2"/><path d="M41 5l-10 3L7 33l8 8 25-24z" fill="#fff" stroke="#d99b18" stroke-width="2"/><path d="M6 29l13 13M29 42l13-13" stroke="#ffcc42" stroke-width="5" stroke-linecap="round"/></svg></span><i class="dm-nv2-spark" style="left:-44px;top:-62px">✦</i><i class="dm-nv2-spark" style="left:34px;top:-44px;font-size:10px;animation-delay:.7s">✦</i>';

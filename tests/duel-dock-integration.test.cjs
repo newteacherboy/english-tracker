@@ -4,7 +4,7 @@ const fs=require('node:fs');
 const path=require('node:path');
 const read=name=>fs.readFileSync(path.join(__dirname,'..','ingilizce',name),'utf8');
 
-test('student dock shows Düello next to Takımım',()=>{
+test('student dock has standalone rankings before profile',()=>{
  const src=read('bottom-nav.js');
  assert.match(src,/\['tab-dunya','Parkur','path'\]/);
  assert.match(src,/\['tab-meduakis','Takımım','friends'\]/);
@@ -20,11 +20,12 @@ test('duel actions call existing live and Papi implementations',()=>{
  assert.match(src,/dmParentBridge\?\.open/);
  assert.doesNotMatch(src,/dmBagInventory|Çantam/);
 });
-test('Sıralamam remains under Takımım and Düello has its own screen',()=>{
+test('Rankings and Duel have separate dock entries',()=>{
  const friends=read('friends-ui.js');
  const nav=read('bottom-nav.js');
  const css=read('duel-arena.css');
- assert.match(friends,/\['team','Takımım'\],\['ranking','Sıralamam'\]/);
+ assert.match(nav,/\['tab-rankings','Sıralamam','ranking'\]/);
+ assert.doesNotMatch(friends,/\$\{window.dmArenaTabs\(arenaView\)\}/);
  assert.match(friends,/data-embedded-league/);
  assert.match(friends,/setPeriod\('alltime'\)/);
  assert.match(friends,/dmDuelRankingOpen/);
