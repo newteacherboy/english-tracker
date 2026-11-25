@@ -441,3 +441,59 @@ body:has(#tab-meduakis.active.fr-ranking-view) #bottomNavMobile [data-ekran="tab
   flex: 0 0 16px;
   fill: currentColor;
 }
+
+/* Fit the first seven and the expand control above the measured student dock. */
+#tab-meduakis.fr-ranking-view .dm-arena-home:has(.dm-open-ranking) {
+  gap: clamp(3px, 1cqh, 8px);
+  padding-bottom: 3px;
+}
+#tab-meduakis.fr-ranking-view .dm-arena-ranks button,
+#tab-meduakis.fr-ranking-view .dm-open-filters button,
+#tab-meduakis.fr-ranking-view .dm-open-more {
+  min-height: clamp(32px, 7cqh, 43px);
+}
+#tab-meduakis.fr-ranking-view .dm-open-ranking { padding-bottom: 4px; }
+#tab-meduakis.fr-ranking-view .dm-open-podium { margin: 7px 0 4px; }
+#tab-meduakis.fr-ranking-view .dm-open-place { gap: 3px; }
+#tab-meduakis.fr-ranking-view .dm-open-crown { font-size: clamp(15px, 3.5cqh, 24px); }
+#tab-meduakis.fr-ranking-view .dm-open-place .dm-lig-avatar {
+  width: clamp(32px, min(14vw, 10cqh), 67px);
+}
+#tab-meduakis.fr-ranking-view .dm-open-place-1 .dm-lig-avatar {
+  width: clamp(39px, min(17vw, 13cqh), 83px);
+}
+#tab-meduakis.fr-ranking-view .dm-open-step { height: clamp(26px, 8cqh, 58px); }
+#tab-meduakis.fr-ranking-view .dm-open-place-1 .dm-open-step { height: clamp(35px, 10cqh, 80px); }
+#tab-meduakis.fr-ranking-view .dm-open-place-3 .dm-open-step { height: clamp(22px, 7cqh, 49px); }
+#tab-meduakis.fr-ranking-view .dm-open-progress { margin: 7px 0 4px; }
+#tab-meduakis.fr-ranking-view .dm-open-ranking .dm-lig-list { gap: 4px; margin-top: 6px; }
+#tab-meduakis.fr-ranking-view .dm-open-ranking .dm-lig-row {
+  min-height: clamp(32px, 7cqh, 49px);
+  padding: 3px 8px;
+}
+#tab-meduakis.fr-ranking-view .dm-open-ranking .dm-lig-row .dm-lig-avatar {
+  --size: clamp(24px, 5.5cqh, 38px) !important;
+}
+#tab-meduakis.fr-ranking-view .dm-open-ranking .dm-lig-row .dm-lig-person > small { margin-top: 1px; }
+#tab-meduakis.fr-ranking-view .dm-open-more {
+  position: sticky;
+  bottom: 3px;
+  z-index: 3;
+  margin-top: 7px;
+}
+@container (max-height: 490px) {
+  #tab-meduakis.fr-ranking-view .dm-open-place .dm-lig-avatar { margin-bottom: 4px; }
+  #tab-meduakis.fr-ranking-view .dm-open-podium { margin-block: 4px; }
+}
+@container (max-height: 505px) {
+  #tab-meduakis.fr-ranking-view .dm-open-place .dm-lig-avatar { width: 32px; }
+  #tab-meduakis.fr-ranking-view .dm-open-place-1 .dm-lig-avatar { width: 39px; }
+  #tab-meduakis.fr-ranking-view .dm-open-place-1 .dm-open-step { height: 34px; }
+  #tab-meduakis.fr-ranking-view .dm-open-step { height: 27px; }
+  #tab-meduakis.fr-ranking-view .dm-open-place-3 .dm-open-step { height: 23px; }
+  #tab-meduakis.fr-ranking-view .dm-open-podium { margin: 3px 0; }
+  #tab-meduakis.fr-ranking-view .dm-open-place { gap: 2px; }
+  #tab-meduakis.fr-ranking-view .dm-open-progress { margin: 4px 0; }
+  #tab-meduakis.fr-ranking-view .dm-open-ranking .dm-lig-row { padding-block: 2px; min-height: 28px; }
+  #tab-meduakis.fr-ranking-view .dm-open-ranking .dm-lig-rank { height: 23px; }
+}
