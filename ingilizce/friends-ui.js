@@ -212,9 +212,9 @@
     const ranking = arenaView === 'ranking';
     return `<div class="fr-home dm-arena-home">
       ${ranking ? `<nav class="dm-arena-tabs dm-arena-ranks" aria-label="Sıralama türü">
-        <button type="button" data-rank-view="individual" aria-pressed="${rankView==='individual'}">Bireysel Lig</button>
-        <button type="button" data-rank-view="duel" aria-pressed="${rankView==='duel'}">Düello Şampiyonları</button>
-        <button type="button" data-rank-view="teams" aria-pressed="${rankView==='teams'}">Takım Sıralaması</button>
+        <button type="button" data-rank-view="individual" aria-pressed="${rankView==='individual'}">${icon('trophy')} <span>Ligler</span></button>
+        <button type="button" data-rank-view="duel" aria-pressed="${rankView==='duel'}">${icon('swords')} <span>Düello</span></button>
+        <button type="button" data-rank-view="teams" aria-pressed="${rankView==='teams'}">${icon('people')} <span>Takımlar</span></button>
       </nav>${rankView==='individual'?'<div data-embedded-league>'+ (window.dmLeagueUI?.embedded()||'')+'</div>':rankView==='duel'?duelLeagueHtml():'<section class="dm-team-card dm-team-buttons"><button type="button" data-team-action="weekly">Haftalık Takım Sıralaması</button><button type="button" data-team-action="all">Tüm Zamanlar</button></section>'}` : (window.dmTeam?.html() || '')}
       <div id="frInvitation">${invitationHtml()}</div>
     </div>`;
@@ -222,7 +222,7 @@
   function showArena(view) {
     window.dmDuelHomeClose?.();
     arenaView=view;
-    if(view==='ranking'){rankView='individual';window.dmLeagueUI?.setPeriod('alltime');}
+    if(view==='ranking'){rankView='individual';window.dmLeagueUI?.setPeriod('weekly');}
     if(!root.classList.contains('active')) {
       maSekme='hub';maProfilId=null;
       originalOpen.call(window);
@@ -245,6 +245,7 @@
   function viewHeader() {
     const home = maSekme === 'hub' && !maProfilId;
     root.classList.toggle('fr-home-view',home);
+    root.classList.toggle('fr-ranking-view',home && arenaView==='ranking');
     root.classList.toggle('fr-club-view',maSekme==='akis'&&!maProfilId);
     root.dataset.friendsView = maProfilId ? 'profile' : maSekme;
     if(root.classList.contains('active') && document.getElementById('dmDuelHome')?.hidden!==false){

@@ -261,3 +261,183 @@
 #tab-meduakis .dm-lig-weekly .dm-lig-medal {font-size:17px;line-height:20px;top:-10px}
 #tab-meduakis .dm-lig-weekly .dm-lig-winner b {font-size:10px}
 #tab-meduakis .dm-lig-weekly .dm-lig-winner strong {font-size:10px}
+
+/* Open podium on the standalone student ranking tab. */
+body #tab-meduakis.fr-ranking-view {
+  --rank-ink: #491429;
+  --rank-line: #cbb8be;
+  background: #fff !important;
+  box-shadow: 0 0 0 100vmax #fff;
+}
+body #tab-meduakis.fr-ranking-view :is(.ma-wrap,.akis-baslik,.dm-arena-home) {
+  background: #fff !important;
+  color: var(--rank-ink);
+}
+body #tab-meduakis.fr-ranking-view.fr-home-view :is(.fr-wallet-host,.fr-unified-actions) { display: none !important; }
+body #tab-meduakis.fr-ranking-view .akis-baslik > h2 {
+  color: var(--rank-ink) !important;
+  font-size: clamp(27px, 7vw, 36px) !important;
+}
+#tab-meduakis.fr-ranking-view :is(.dm-arena-ranks,.dm-open-filters) {
+  display: grid;
+  grid-template-columns: repeat(3,minmax(0,1fr));
+  padding: 0;
+  gap: 6px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+}
+#tab-meduakis.fr-ranking-view .dm-open-filters { grid-template-columns: repeat(4,minmax(0,1fr)); }
+#tab-meduakis.fr-ranking-view :is(.dm-arena-ranks,.dm-open-filters) button,
+#tab-meduakis.fr-ranking-view .dm-open-more {
+  position: relative;
+  min-width: 0;
+  min-height: 43px;
+  padding: 5px 3px;
+  border: 1px solid var(--rank-line);
+  border-radius: 13px;
+  background: #fff;
+  color: var(--rank-ink);
+  box-shadow: 0 2px 0 #e7dde1;
+  font: 800 clamp(11px, 3.4vw, 15px)/1.16 Nunito,system-ui,sans-serif;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+#tab-meduakis.fr-ranking-view .dm-open-filters button { font-size: clamp(10px, 2.9vw, 13px); }
+#tab-meduakis.fr-ranking-view .dm-open-filters small { display: block; font-size: 9px; margin-top: 2px; }
+#tab-meduakis.fr-ranking-view :is(.dm-arena-ranks,.dm-open-filters) button[aria-pressed="true"] {
+  border-color: #ef6b63;
+  background: linear-gradient(133deg,transparent 12%,#ffbfac60 13%,transparent 23%),linear-gradient(#e94e57,#bd2639);
+  color: #fff;
+  box-shadow: 0 2px 0 #a82d3e;
+}
+body:has(#tab-meduakis.active.fr-ranking-view) #bottomNavMobile [data-ekran="tab-rankings"][data-menu-selected] .dm-nv2 {
+  background: linear-gradient(#ef4e58,#cc283f);
+  box-shadow: 0 2px 0 #9c2936;
+}
+@layer bilgiIslands {
+  body:has(#tab-meduakis.active.fr-ranking-view) #bottomNavMobile#bottomNavMobile.dm-nv2-on [data-ekran="tab-rankings"][data-menu-selected] {
+    --menu-label: #ad263e;
+  }
+}
+#tab-meduakis.fr-ranking-view .dm-open-ranking {
+  color: var(--rank-ink);
+  padding-block: 2px 12px;
+}
+#tab-meduakis.fr-ranking-view .dm-open-podium {
+  gap: 3px;
+  align-items: end;
+  margin: 13px 0 9px;
+  padding-top: 2px;
+}
+#tab-meduakis.fr-ranking-view .dm-open-place {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 0;
+  width: 100%;
+  gap: 5px;
+  padding: 0;
+  background: none;
+  border: 0;
+  color: var(--rank-ink);
+}
+#tab-meduakis.fr-ranking-view .dm-open-crown { font-size: 24px; line-height: 1; }
+#tab-meduakis.fr-ranking-view .dm-open-name {
+  max-width: 100%;
+  padding-inline: 1px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: clamp(11px,3vw,15px);
+  font-weight: 850;
+}
+#tab-meduakis.fr-ranking-view .dm-open-xp {
+  max-width: 100%;
+  padding: 2px 7px;
+  background: #ffe8e1;
+  border-radius: 999px;
+  font-size: clamp(10px,2.9vw,13px);
+  overflow-wrap: anywhere;
+}
+#tab-meduakis.fr-ranking-view .dm-open-place .dm-lig-avatar {
+  position: relative;
+  overflow: visible;
+  width: clamp(43px,14vw,67px);
+  height: auto;
+  aspect-ratio: 1;
+  background: #ffe1d6;
+  margin-bottom: 9px;
+}
+#tab-meduakis.fr-ranking-view .dm-open-place-1 .dm-lig-avatar {
+  width: clamp(55px,17vw,83px);
+  background: #ffdf83;
+}
+#tab-meduakis.fr-ranking-view .dm-open-ranking .dm-member-badge {
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+  padding: 1px 3px;
+  font-size: clamp(7px,2vw,9px);
+  line-height: 1.2;
+  white-space: nowrap;
+}
+#tab-meduakis.fr-ranking-view .dm-open-step {
+  width: 100%;
+  display: grid;
+  place-items: center;
+  height: clamp(41px,12vw,66px);
+  border-radius: 15px 15px 9px 9px;
+  border: 1px solid #cdc3c2;
+  background: linear-gradient(#f7f4f3,#d3ccca);
+  box-shadow: inset 0 3px 0 #ffffffb0, 0 3px 0 #ab9e9b;
+  font: 850 clamp(21px,6vw,34px)/1 Nunito,system-ui,sans-serif;
+}
+#tab-meduakis.fr-ranking-view .dm-open-place-1 .dm-open-step {
+  height: clamp(57px,18vw,94px);
+  background: linear-gradient(#ffdc7e,#ffbf3e);
+  border-color: #efb44a;
+  box-shadow: inset 0 3px 0 #fff0bd, 0 3px 0 #cf8a19;
+}
+#tab-meduakis.fr-ranking-view .dm-open-place-3 .dm-open-step {
+  height: clamp(34px,10vw,55px);
+  background: linear-gradient(#ffd7c3,#efad8d);
+  border-color: #eeb293;
+  box-shadow: inset 0 3px 0 #ffebdf, 0 3px 0 #c78d73;
+}
+#tab-meduakis.fr-ranking-view .dm-open-progress { margin: 13px 0 8px; text-align: center; font-size: 12px; }
+#tab-meduakis.fr-ranking-view .dm-open-ranking .dm-lig-row { border-color: #eadde1; color: var(--rank-ink); }
+#tab-meduakis.fr-ranking-view .dm-open-ranking .dm-lig-rank { background: #ffe8e1; color: var(--rank-ink); }
+#tab-meduakis.fr-ranking-view .dm-open-more { width: 100%; margin-top: 10px; }
+
+
+#tab-meduakis.fr-ranking-view .dm-open-place .dm-lig-avatar > :is(img,svg,.dm-virtual-papi-img) {
+  max-width: 100%;
+  max-height: 100%;
+  border-radius: inherit;
+}
+#tab-meduakis.fr-ranking-view .dm-open-place .dm-member-badge {
+  position: absolute;
+  inset: auto auto -6px 50%;
+  transform: translateX(-50%);
+  width: max-content;
+}
+#tab-meduakis.fr-ranking-view .dm-open-ranking .dm-lig-row > strong {
+  flex: 0 0 auto;
+  max-width: 40%;
+  white-space: normal;
+  text-align: end;
+  overflow-wrap: anywhere;
+}
+#tab-meduakis.fr-ranking-view .dm-arena-ranks button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+#tab-meduakis.fr-ranking-view .dm-arena-ranks .fr-icon {
+  width: 16px;
+  height: 16px;
+  flex: 0 0 16px;
+  fill: currentColor;
+}
