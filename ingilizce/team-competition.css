@@ -193,3 +193,29 @@ body > dialog.dm-team-sheet h2 {
   padding:5px;
   color:#ffe39a;background:#5d2c9c;border-color:#ac7ce6;
 }
+
+/* Embedded league content must shrink inside the shared grid. */
+#tab-meduakis.fr-home-view .dm-arena-home {
+  width:100%;
+  min-width:0;
+  box-sizing:border-box;
+  grid-template-columns:minmax(0,1fr);
+}
+#tab-meduakis .dm-arena-home > *,
+#tab-meduakis [data-embedded-league],
+#tab-meduakis [data-embedded-league] .dm-lig {
+  min-width:0;
+  max-width:100%;
+  box-sizing:border-box;
+}
+#tab-meduakis [data-embedded-league] .dm-lig {width:100%;padding-inline:0}
+#tab-meduakis [data-embedded-league] .dm-lig-period {grid-template-columns:repeat(2,minmax(0,1fr))}
+#tab-meduakis [data-embedded-league] .dm-lig-caption {flex-wrap:wrap}
+#tab-meduakis [data-embedded-league] :is(.dm-lig-period,.dm-lig-choices) button {
+  min-width:0;
+  white-space:normal;
+  overflow-wrap:anywhere;
+}
+#tab-meduakis [data-embedded-league] .dm-lig-journey h3 {overflow-wrap:anywhere}
+#tab-meduakis [data-embedded-league] .dm-lig-row {min-width:0}
+#tab-meduakis [data-embedded-league] .dm-lig-header h2 {min-width:0;overflow-wrap:anywhere}
