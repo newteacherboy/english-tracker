@@ -48,13 +48,14 @@ const profileIcons={
 function profileIcon(action){
  return '<svg class="pa-card-icon" viewBox="0 0 36 36" aria-hidden="true" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'+profileIcons[action]+'</svg>';
 }
-function paintProfileCards(level,xp,progress){
+function paintProfileCards(level,xp,progress,closeButton){
  const levelXp=Math.max(0,xp-(progress?.start||0)).toLocaleString('tr-TR');
  const goalXp=Math.max(1,(progress?.next||40)-(progress?.start||0)).toLocaleString('tr-TR');
  const progressLabel=progress?.next===null?'En yüksek seviye':levelXp+' / '+goalXp+' XP';
  return `<header class="pa-hero">
    <span class="pa-hero-papi" aria-hidden="true"><svg viewBox="16 174 162 121" aria-hidden="true"><image href="friends-assets/centre-reference.webp" width="900" height="1748"/></svg></span>
    <div class="pa-hero-copy"><span class="pa-wordmark">Diji-Medu</span><h2 id="rtProfileTitle">Benim Merkezim</h2></div>
+   <div class="pa-toolbar">${closeButton}</div>
   </header>
   <div class="pa-body">
    <div class="pa-user">
@@ -82,7 +83,7 @@ window.dmProfileMenuAc=function(initial='main'){
  const xp=Number(typeof yo!=='undefined'?yo?.totalXp:0)||0,progress=window.DijiProgressRules?.progress?.(xp);
  function paint(){
   const account=pane==='account';
-  el.classList.toggle('pa-cards-backdrop',!account);
+  el.className='rt-profile-backdrop au-centre-backdrop'+(account?'':' pa-cards-backdrop');
   const closeButton='<button type="button" class="rt-close" aria-label="Profil menüsünü kapat">×</button>';
   const accountPane='<button class="au-back" type="button" data-centre="back">‹ Benim Merkezim</button>'+
    '<header class="au-account-head">'+centreArt('center-icons',8)+'<h2 id="rtProfileTitle">Hesap ve Destek</h2><p>Tüm hesap işlemlerin ve destek seçeneklerin burada!</p></header>'+
@@ -90,18 +91,10 @@ window.dmProfileMenuAc=function(initial='main'){
     '<button type="button" data-profile="'+action+'">'+centreArt('account-icons',cell)+'<span><b>'+label+'</b><small>'+note+'</small></span><em aria-hidden="true">›</em></button>'
    ).join('')+'</div>';
   el.innerHTML='<section class="rt-profile au-centre '+(account?'au-account':'pa-reference pa-cards')+
-   '" role="dialog" aria-modal="true" aria-labelledby="rtProfileTitle">'+closeButton+
-   (account?accountPane:paintProfileCards(level,xp,progress))+'</section>';
+   '" role="dialog" aria-modal="true" aria-labelledby="rtProfileTitle">'+
+   (account?closeButton+accountPane:paintProfileCards(level,xp,progress,closeButton))+'</section>';
   const themeButton=window.dmDayNightTheme?.createButton();
-  if(account){
-   if(themeButton)el.querySelector('.rt-profile').prepend(themeButton);
-  }else{
-   const toolbar=document.createElement('div');
-   toolbar.className='pa-toolbar';
-   if(themeButton)toolbar.append(themeButton);
-   toolbar.append(el.querySelector('.rt-close'));
-   el.querySelector('.pa-hero').append(toolbar);
-  }
+  if(themeButton)el.querySelector(account?'.rt-profile':'.pa-toolbar').prepend(themeButton);
   if(!account){el.querySelector('.pa-user strong').textContent=name;const avatar=el.querySelector('.pa-avatar');const art=window.karakterSvg?.(name,88);if(art)avatar.innerHTML=art;else avatar.innerHTML='<img src="route-assets/papi-profile.png" alt="">';}
   window.dmTeacherWorkspace?.paintBadge();el.querySelector(account?'.au-back':'.rt-close').focus();
  }
