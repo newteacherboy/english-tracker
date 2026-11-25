@@ -154,8 +154,8 @@ window.dmDuelHomeAc=function(){
     <button type="button" class="dm-duel-quick" data-duel="live"><span>${duelArtIcon('bolt')} Canlı Düello</span></button>
    </div>
    <div class="dm-duel-options">
-    <button type="button" data-duel="friend"><span class="dm-duel-option-icon" aria-hidden="true">${duelArtIcon('people')}</span><span>Arkadaşına Meydan Oku</span>${duelChevron}</button>
-    <button type="button" data-duel="papi"><span class="dm-duel-option-icon dm-duel-face" aria-hidden="true"></span><span>Papi’ye Karşı Oyna</span>${duelChevron}</button>
+    <button type="button" data-duel="friend"><span class="dm-duel-option-icon" aria-hidden="true">${duelArtIcon('people')}</span><span class="dm-duel-option-copy"><b>Arkadaşına<br>Meydan Oku</b><small>Davet gönder</small></span></button>
+    <button type="button" data-duel="papi"><span class="dm-duel-option-icon dm-duel-face" aria-hidden="true"></span><span class="dm-duel-option-copy"><b>Papi’ye<br>Karşı Oyna</b><small>Hızlı antrenman</small></span></button>
    </div>
    <div class="dm-duel-stats-card">
     <div class="dm-duel-stats-head">
