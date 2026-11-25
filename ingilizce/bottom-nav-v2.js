@@ -1,67 +1,73 @@
-/* [11 Kas 2026] Öğrenci alt menüsünün görsel katmanı (bottom-nav-v2.css). Sekmeler, sıraları, tıklama hedefleri ve
-   seçili sekme mantığı bottom-nav.js'te aynen kalır; burada yalnızca her sekmenin ikon alanına görsel eklenir. */
-(()=>{'use strict';
- if(typeof document==='undefined')return;
- const G={
-  'tab-dunya':['#2DB66B','#1E8B4F','<path d="M3 6.5 9 4l6 2.5L21 4v13.5L15 20l-6-2.5L3 20z" fill="#fff" opacity=".7"/><path d="M9 4v13.5L3 20V6.5zM21 4v13.5L15 20V6.5z" fill="#fff"/><circle cx="12" cy="10.5" r="2.2" fill="#2DB66B"/>'],
-  'tab-meduakis':['#FF9F1C','#D97E00','<circle cx="16.5" cy="8.5" r="2.9" fill="#fff" opacity=".7"/><path d="M13.6 13.2c4-1 8 1.3 8 5.3v.5h-6.2z" fill="#fff" opacity=".7"/><circle cx="9" cy="8" r="3.6" fill="#fff"/><path d="M2.4 19.5c0-3.8 2.9-6.3 6.6-6.3s6.6 2.5 6.6 6.3v.5H2.4z" fill="#fff"/>'],
-  'tab-magaza':['#FF5C8A','#D63A69','<path d="M4.5 10h15v9.5a1.5 1.5 0 0 1-1.5 1.5H6a1.5 1.5 0 0 1-1.5-1.5z" fill="#fff" opacity=".7"/><path d="M4.6 3.5h14.8L21.5 9a2.4 2.4 0 0 1-4.6 1 2.4 2.4 0 0 1-4.9 0 2.4 2.4 0 0 1-4.9 0A2.4 2.4 0 0 1 2.5 9z" fill="#fff"/><rect x="10" y="14" width="4" height="7" rx="1" fill="#fff"/>']
- };
- function art(id){
-  const sprite={'tab-duel-home':0,'tab-dunya':1,'tab-aktiviteler':2,'tab-meduakis':3,'tab-rankings':4};
-  if(Object.hasOwn(sprite,id)){
-   const cells=[[46,150,390,390],[470,150,392,390],[890,150,390,390],[1300,150,416,390],[1735,150,392,390]];
-   return '<span class="dm-nav-approved dm-nav-approved-'+sprite[id]+'"><svg viewBox="'+cells[sprite[id]].join(' ')+'" aria-hidden="true"><image href="bottom-nav-approved-20261125.webp" width="2172" height="724"/></svg></span>';
+/* Presentation only. bottom-nav.js owns navigation, order and selection. */
+(() => {
+  'use strict';
+
+  const glyphs = {
+    'tab-duel-home': '<path d="M13.5 2 4 13h6.7l-1.2 9L20 10.6h-7L13.5 2Z"/>',
+    'tab-dunya': '<circle cx="4.7" cy="19" r="2.5"/><ellipse cx="9" cy="13.2" rx="2.6" ry="1.65" transform="rotate(-31 9 13.2)"/><ellipse cx="14.7" cy="11" rx="2.6" ry="1.65" transform="rotate(-31 14.7 11)"/><circle cx="19.2" cy="5" r="2.7"/>',
+    'tab-aktiviteler': '<path fill-rule="evenodd" d="M7.1 5.5h9.8c2.5 0 4.2 1.3 4.8 3.7l1.1 5.5c.7 3.7-2 5.4-4.5 3.1l-2.1-2H7.8l-2.1 2c-2.5 2.3-5.2.6-4.5-3.1l1.1-5.5C3 6.8 4.6 5.5 7.1 5.5Zm.1 2.3v2H5.3v1.7h1.9v2H9v-2h1.9V9.8H9v-2H7.2Zm9.4.3a1.2 1.2 0 1 0 0 2.4 1.2 1.2 0 0 0 0-2.4Zm2.4 2.6a1.2 1.2 0 1 0 0 2.4 1.2 1.2 0 0 0 0-2.4Z"/>',
+    'tab-meduakis': '<circle cx="12" cy="6.5" r="3.7"/><circle cx="4.5" cy="9" r="2.5"/><circle cx="19.5" cy="9" r="2.5"/><path d="M5.5 20v-1.5a6.5 6.5 0 1 1 13 0V20c0 .6-.5 1-1 1h-11a1 1 0 0 1-1-1ZM1 18a4.6 4.6 0 0 1 5.1-4.6A8 8 0 0 0 4 19H2a1 1 0 0 1-1-1Zm22 0a1 1 0 0 1-1 1h-2a8 8 0 0 0-2.1-5.6A4.6 4.6 0 0 1 23 18Z"/>',
+    'tab-rankings': '<rect x="3" y="13.5" width="4.5" height="7" rx="1.2"/><rect x="9.7" y="8.5" width="4.5" height="12" rx="1.2"/><rect x="16.4" y="3" width="4.5" height="17.5" rx="1.2"/>',
+    'tab-profile-menu': '<circle cx="12" cy="7" r="4"/><path d="M5 19c0-3.7 3.2-6.3 7-6.3s7 2.6 7 6.3c0 1.1-.8 1.8-1.9 1.8H6.9C5.8 20.8 5 20.1 5 19Z"/>'
+  };
+
+  function paint() {
+    const nav = document.getElementById('bottomNavMobile');
+    if (!nav || window.dmTeacherPortalMode || document.documentElement.classList.contains('dm-teacher-portal')) {
+      nav?.classList.remove('dm-nv2-on');
+      return;
+    }
+
+    for (const button of nav.querySelectorAll('.bn-item[data-ekran]')) {
+      const target = button.dataset.ekran;
+      const icon = button.querySelector('.bn-icon');
+      if (!icon || !Object.hasOwn(glyphs, target)) continue;
+
+      if (!icon.querySelector('.dm-nv2')) {
+        icon.insertAdjacentHTML('beforeend', '<span class="dm-nv2" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false">' + glyphs[target] + '</svg></span>');
+      }
+      if (target === 'tab-profile-menu') {
+        const plan = String(window.dmAndroidPlan?.plan || window.dmSubscription?.plan || window.dmMembership?.plan || '').toLowerCase();
+        const label = 'Profil · ' + (/premium/.test(plan) ? 'Premium Pro' : plan === 'pro' ? 'Pro' : 'Free');
+        if (button.dataset.membershipLabel !== label) {
+          button.dataset.membershipLabel = label;
+          button.setAttribute('aria-label', label);
+          button.title = label;
+        }
+      }
+    }
+    nav.classList.add('dm-nv2-on');
   }
-  if(G[id]){const [t,te,p]=G[id];return '<span class="dm-nv2-tile" style="--t:'+t+';--te:'+te+'"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">'+p+'</svg></span>';}
-  if(id==='tab-aktiviteler')return '<span class="dm-nv2-tile" style="--t:#ed548c;--te:#bd3566"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7h10a5 5 0 0 1 4.8 4l1.1 6.2a2.8 2.8 0 0 1-4.6 2.6l-2.8-2.5h-7l-2.8 2.5a2.8 2.8 0 0 1-4.6-2.6L2.2 11A5 5 0 0 1 7 7z" fill="white"/><path d="M7 10v5M4.5 12.5h5" stroke="#ed548c" stroke-width="1.8"/><circle cx="17" cy="11" r="1.2" fill="#ed548c"/><circle cx="19" cy="14" r="1.2" fill="#ed548c"/></svg></span>';
-  if(id==='tab-duel-home')return '<span class="dm-nv2-oyna-disc"><svg viewBox="0 0 48 48" width="35" height="35" aria-hidden="true"><path d="M7 5l10 3 24 25-8 8L8 17z" fill="#fff2b2" stroke="#d99b18" stroke-width="2"/><path d="M41 5l-10 3L7 33l8 8 25-24z" fill="#fff" stroke="#d99b18" stroke-width="2"/><path d="M6 29l13 13M29 42l13-13" stroke="#ffcc42" stroke-width="5" stroke-linecap="round"/></svg></span><i class="dm-nv2-spark" style="left:-44px;top:-62px">✦</i><i class="dm-nv2-spark" style="left:34px;top:-44px;font-size:10px;animation-delay:.7s">✦</i>';
-  if(id==='tab-profile-menu'){
-   const name=typeof aktifOgrenciAdi!=='undefined'?String(aktifOgrenciAdi||''):'';
-   let avatar='';try{if(name)avatar=window.karakterSvg?.(name,38)||'';}catch{}
-   const tier=profileTier();
-   return '<span class="dm-nv2-tile dm-nv2-own-avatar dm-nv2-tier-'+tier+'">'+(avatar||'<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4" fill="#53759b"/><path d="M4 21v-2a8 8 0 0 1 16 0v2z" fill="#53759b"/></svg>')+'</span>';
+
+  let pending = false;
+  function schedule() {
+    if (pending) return;
+    pending = true;
+    requestAnimationFrame(() => {
+      pending = false;
+      paint();
+    });
   }
-  return '';
- }
- function profileTier(){
-  const plan=String(window.dmAndroidPlan?.plan||window.dmSubscription?.plan||window.dmMembership?.plan||'').toLowerCase().replace(/[- ]/g,'_');
-  return /premium/.test(plan)?'premium_pro':plan==='pro'?'pro':'free';
- }
- const labels={free:'Free',pro:'Pro',premium_pro:'Premium Pro'};
- let avatarLayer=null,avatarKey=null;
- function currentAvatarKey(){
-  const owner=typeof aktifOgrenciAdi!=='undefined'?String(aktifOgrenciAdi||''):'';
-  try{return JSON.stringify([owner,typeof yo!=='undefined'?yo?.karakter:null,typeof window.karakterSvg,typeof yoVar==='function'?yoVar():null,window.dmAndroidPlan?.plan,window.dmSubscription?.plan,window.dmMembership?.plan,window.genelEnerjiMax]);}catch{return owner;}
- }
- function paint(){
-  const nav=document.getElementById('bottomNavMobile');
-  if(!nav||window.dmTeacherPortalMode||document.documentElement.classList.contains('dm-teacher-portal')){nav?.classList.remove('dm-nv2-on');return;}
-  nav.classList.add('dm-nv2-on');
-  nav.querySelectorAll('.bn-item[data-ekran]').forEach(b=>{
-   const icon=b.querySelector('.bn-icon');if(!icon)return;
-   const id=b.dataset.ekran;let layer=icon.querySelector(':scope>.dm-nv2');
-   if(!layer||layer.dataset.for!==id){
-    const html=art(id);if(!html)return;
-    layer?.remove();layer=document.createElement('span');layer.className='dm-nv2'+(id==='tab-duel-home'?' dm-nv2-oyna':'');layer.dataset.for=id;layer.setAttribute('aria-hidden','true');layer.innerHTML=html;icon.append(layer);
-   }
-   if(id==='tab-profile-menu'){const key=currentAvatarKey();if(avatarLayer!==layer||avatarKey!==key){avatarLayer=layer;avatarKey=key;layer.innerHTML=art(id);const label='Profil · '+labels[profileTier()];b.dataset.membershipLabel=label;b.setAttribute('aria-label',label);b.title=label;}}
-   if(!b.querySelector(':scope>.dm-nv2-dot')){const d=document.createElement('span');d.className='dm-nv2-dot';d.setAttribute('aria-hidden','true');b.append(d);}
-  });
- }
- let queued=false;const schedule=()=>{if(!queued){queued=true;requestAnimationFrame(()=>{queued=false;paint();});}};
- function start(){
-  paint();
-  const nav=document.getElementById('bottomNavMobile');
-  if(nav)new MutationObserver(muts=>{if(muts.some(m=>[...m.addedNodes,...m.removedNodes].some(n=>n.nodeType===1&&!n.classList?.contains('dm-nv2')&&!n.classList?.contains('dm-nv2-dot')&&!n.closest?.('.dm-nv2'))))schedule();}).observe(nav,{childList:true,subtree:true});
-  const header=document.getElementById('userAvatarLetter');
-  if(header)new MutationObserver(()=>{avatarKey=null;schedule();}).observe(header,{childList:true,subtree:true,characterData:true});
-  for(const event of ['dm:login','dm:logout','dm:avatar-change'])document.addEventListener(event,()=>{avatarKey=null;schedule();});
-  window.addEventListener('dm:plan',schedule);
-  window.addEventListener('pageshow',schedule);
-  document.addEventListener('visibilitychange',()=>{if(!document.hidden)schedule();});
-  setTimeout(paint,1500);
- }
- window.dmBottomNavV2={paint};
- if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
+
+  function start() {
+    paint();
+    const nav = document.getElementById('bottomNavMobile');
+    if (nav) {
+      new MutationObserver(records => {
+        const navigationChanged = records.some(record =>
+          [...record.addedNodes, ...record.removedNodes].some(node =>
+            node.nodeType === 1 && !node.classList.contains('dm-nv2')));
+        if (navigationChanged) schedule();
+      }).observe(nav, { childList: true, subtree: true });
+    }
+    for (const event of ['dm:login', 'dm:logout', 'dm:avatar-change', 'visibilitychange']) {
+      document.addEventListener(event, schedule);
+    }
+    window.addEventListener('dm:plan', schedule);
+    window.addEventListener('pageshow', schedule);
+  }
+
+  window.dmBottomNavV2 = { paint };
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start, { once: true });
+  else start();
 })();
