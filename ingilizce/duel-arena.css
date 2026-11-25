@@ -283,3 +283,82 @@ html[data-dm-theme=night] .dm-duel-history {color:#d8c2ff}
 html[data-dm-theme=night] .dm-duel-personal span {border-inline-end-color:#4b3e82}
 html[data-dm-theme=night] .dm-duel-personal b {color:#fff}
 html[data-dm-theme=night] .dm-duel-personal small {color:#cbbce8}
+
+/* Takımım navigation is shared by the arena and both ranking views. */
+.dm-arena-tabs {
+  display:grid;
+  grid-auto-flow:column;
+  grid-auto-columns:minmax(0,1fr);
+  gap:3px;
+  padding:3px;
+  border:2px solid #e5d7f4;
+  border-radius:16px;
+  background:#f0e6fa;
+}
+.dm-arena-tabs button {
+  min-width:0;
+  min-height:42px;
+  padding:4px;
+  background:transparent;
+  color:#350947;
+  border:0;
+  border-radius:12px;
+  font:900 clamp(11px,3.4vw,16px)/1.15 Nunito,system-ui,sans-serif;
+  cursor:pointer;
+}
+.dm-arena-tabs button[aria-pressed="true"] {
+  background:linear-gradient(110deg,#ffe75e,#ffc51c);
+  box-shadow:inset 0 0 0 1px #f5b624;
+}
+.dm-arena-tabs button:focus-visible {
+  outline:2px solid #6d25ad;
+  outline-offset:-2px;
+}
+.dm-arena-visually-hidden {
+  position:absolute;
+  width:1px;
+  height:1px;
+  overflow:hidden;
+  clip-path:inset(50%);
+  white-space:nowrap;
+}
+#dmDuelHome.dm-duel-page {
+  background:#f4ebfb;
+  color:#350947;
+}
+#dmDuelHome .dm-duel-arena {
+  overflow:hidden;
+  border:0;
+  border-radius:20px;
+  background:#350c2c;
+  box-shadow:0 3px 6px #4c1f5b22;
+  padding:0;
+  gap:0;
+}
+#dmDuelHome .dm-duel-arena::after,
+#dmDuelHome .dm-duel-quick::after {display:none}
+#dmDuelHome .dm-duel-hero-stage {
+  display:flex;
+  align-items:center;
+  min-height:clamp(155px,64vw,320px);
+  padding:16px 50% 16px 14px;
+  background:
+    linear-gradient(90deg,#380b2b 8%,#380b2b 44%,transparent 65%),
+    url("friends-assets/papi-duel-bordeaux.webp") right center / auto 100% no-repeat,
+    #380b2b;
+}
+#dmDuelHome .dm-duel-hero-copy h2 {
+  font-size:clamp(18px,5.3vw,30px);
+  font-style:italic;
+  line-height:1.1;
+}
+#dmDuelHome .dm-duel-quick {
+  width:calc(100% - 16px);
+  margin:0 8px 8px;
+}
+#dmDuelHome .dm-duel-options button,
+#dmDuelHome .dm-duel-stats-card {
+  background:#faf5ff;
+  color:#350947;
+  border:1px solid #dfc4f5;
+}

@@ -117,6 +117,10 @@ export function raceHandler(db:DB){
     const previous=await db.select('dm_rally_runs',{select:'deck',student_id:'eq.'+student.id,class_no:'eq.'+cls,order:'created_at.desc',limit:'50'});
     const lv=await levelRow();let level=1;if(lv){level=Math.min(lv.unlocked,Math.max(1,Math.floor(Number(b.level)||1)));}
     const started=await view(await db.rpc(a.teacher_portal_access_id?'dm_teacher_rally_start':'dm_rally_start',{...(a.teacher_portal_access_id?{grant_id:a.teacher_portal_access_id}:{}),actor:student.id,run_key:b.runId,class_id:cls,unit_ids:units,question_deck:buildRaceDeck(rows,previous,b.twelveWords===true?12:15),pace:difficulty}));
+    if (!a.teacher_portal_access_id && started?.ok && typeof b.teamTicket==='string' &&
+      /^[0-9a-f-]{36}$/i.test(b.teamTicket)) {
+      await db.rpc('dm_team_premium_bind',{actor:student.id,ticket:b.teamTicket,game_key:'rally',run_key:b.runId}).catch(()=>{});
+    }
     if(b.curriculum===true)level=course.level;
     if(lv&&started?.runId){lv.runs[String(started.runId)]=level;try{await saveLevel(lv);}catch{}}
     return json({...started,level,course:b.curriculum===true?course:null});
@@ -127,10 +131,19 @@ export function raceHandler(db:DB){
     let lane=b.lane;if(b.twoChoices){if(lane>1)return json({ok:false,mesaj:'İki kapıdan birini seç.'},400);const rows=await db.select('dm_rally_runs',{select:'*',id:'eq.'+b.runId,student_id:'eq.'+student.id,limit:'1'});if(!rows[0]?.deck[b.round])return json({ok:false,mesaj:'Yarış bulunamadı.'},404);lane=twoChoiceLanes(rows[0].deck[b.round])[lane];}
     // slow: the learner slowed the road for this question; the database pays less for it.
     const answered=await view(await db.rpc('dm_rally_answer',{actor:student.id,run_key:b.runId,round_no:b.round,lane,...(b.slow===true?{slowed:true}:{})}));
+    if(answered?.finished && !a.teacher_portal_access_id) {
+      answered.teamPoints=await db.rpc('dm_team_premium_points',{actor:student.id,game_key:'rally',run_key:b.runId}).catch(()=>0);
+    }
     if(answered?.finished){const lv=await levelRow();const level=lv?Number(lv.runs[String(b.runId)]||0):0;if(lv&&level){const passed=rallyPassed(answered),before=lv.unlocked;if(passed&&level>=before&&before<RALLY_MAX_LEVEL)lv.unlocked=before+1;delete lv.runs[String(b.runId)];try{await saveLevel(lv);}catch{}return json({...answered,level:{played:level,passed,unlocked:lv.unlocked,max:RALLY_MAX_LEVEL,opened:lv.unlocked>before}});}}
     return json(answered);
    }
-   if(op==='finish')return json(await db.rpc(a.teacher_portal_access_id?'dm_teacher_rally_finish':'dm_rally_finish',{actor:student.id,run_key:b.runId}));
+   if(op==='finish'){
+    const result=await db.rpc(a.teacher_portal_access_id?'dm_teacher_rally_finish':'dm_rally_finish',{actor:student.id,run_key:b.runId});
+    if(!a.teacher_portal_access_id && result?.finished) {
+     result.teamPoints=await db.rpc('dm_team_premium_points',{actor:student.id,game_key:'rally',run_key:b.runId}).catch(()=>0);
+    }
+    return json(result);
+   }
    return json({ok:false,mesaj:'Geçersiz yarış işlemi.'},400);
   }catch(e){const message=String((e as any)?.message||'');const known=/enerji|seviyede|hakkın|premium|kelime|ünite|kapısına|yarış.*bulunamadı|kısa bir süre|hesap bilgileri/i.test(message);return json({ok:false,mesaj:known?message:'Yarış bağlantısı tamamlanamadı. Tekrar dene.'},known?400:503);}
  };

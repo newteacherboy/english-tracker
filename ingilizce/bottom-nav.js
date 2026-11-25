@@ -1,6 +1,6 @@
 /* Five icon-only student destinations (Ders Çalış only in the teacher panel, 11 Kas 2026) and the approved profile popover. */
 (()=>{'use strict';
-const layout=window.dmTeacherPortalMode?[['tab-aktiviteler','Oyunlar','game'],['tab-derscalis','Ders Çalış','book'],['tab-profile-menu','Profilim','profile'],['tab-teacher-portal','Öğretmen Paneli','teacher']]:[['tab-dunya','Parkur','path'],['tab-meduakis','Arkadaşlar','friends'],['tab-duel-home','Düello','duel'],['tab-aktiviteler','Oyunlar','game'],['tab-profile-menu','Profil','profile']];
+const layout=window.dmTeacherPortalMode?[['tab-aktiviteler','Oyunlar','game'],['tab-derscalis','Ders Çalış','book'],['tab-profile-menu','Profilim','profile'],['tab-teacher-portal','Öğretmen Paneli','teacher']]:[['tab-dunya','Parkur','path'],['tab-aktiviteler','Oyunlar','game'],['tab-meduakis','Takımım','friends'],['tab-profile-menu','Profil','profile']];
 // A profile dialog always has a real primary destination beneath it.
 let primaryId=window.dmTeacherPortalMode?'tab-aktiviteler':'tab-dunya';
 function rememberPrimary(){const id=layout.slice(0,-1).map(x=>x[0]).find(id=>document.getElementById(id)?.classList.contains('active'));if(id)primaryId=id;}
@@ -102,7 +102,6 @@ function decorate(){const nav=document.getElementById('bottomNavMobile');if(!nav
  if(!profile){profile=nav.querySelector('[data-ekran="tab-profil"]');if(profile)profile.dataset.ekran='tab-profile-menu';}
  if(!profile){profile=document.createElement('button');profile.type='button';profile.className='bn-item';profile.dataset.ekran='tab-profile-menu';profile.innerHTML='<span class="bn-icon"></span><span class="bn-label">Profil</span>';nav.append(profile);}
  if(window.dmTeacherPortalMode&&!nav.querySelector('[data-ekran="tab-teacher-portal"]')){const b=document.createElement('button');b.type='button';b.className='bn-item';b.dataset.ekran='tab-teacher-portal';b.innerHTML='<span class="bn-icon"><img class="tp-nav-image" src="route-assets/teacher.svg" alt=""></span><span class="bn-label">Öğretmen Paneli</span>';b.addEventListener('click',e=>{e.preventDefault();e.stopImmediatePropagation();window.ogretmenPaneliAc?.();},true);nav.append(b);}
- if(!window.dmTeacherPortalMode&&!nav.querySelector('[data-ekran="tab-duel-home"]')){const b=document.createElement('button');b.type='button';b.className='bn-item';b.dataset.ekran='tab-duel-home';b.innerHTML='<span class="bn-icon"></span><span class="bn-label">Düello</span>';b.onclick=()=>window.dmDuelHomeAc();nav.append(b);}
  const expected=new Set(layout.map(x=>x[0]));
  nav.querySelectorAll('.bn-item[data-ekran]').forEach(b=>{if(!expected.has(b.dataset.ekran))b.remove();});
  const current=[...nav.querySelectorAll('.bn-item[data-ekran]')].map(b=>b.dataset.ekran);if(current.join('|')!==layout.map(x=>x[0]).filter(id=>current.includes(id)).join('|')){for(const [id] of layout){const b=nav.querySelector('[data-ekran="'+id+'"]');if(b)nav.append(b);}}
@@ -112,42 +111,19 @@ const duelArtIcon = name => `<svg class="dm-duel-icon" viewBox="0 0 24 24" aria-
 const duelChevron = duelArtIcon('chevron').replace('dm-duel-icon','dm-duel-chevron');
 const duelShield = '<svg class="dm-duel-icon" viewBox="0 0 24 24" aria-hidden="true"><path fill="#e74475" d="M12 1 2 5v6c0 6 4 10 10 12 6-2 10-6 10-12V5z"/><path fill="#ffb2c9" d="M12 4 5 7v4c0 4 2.6 7 7 9 4.4-2 7-5 7-9V7z"/></svg>';
 const duelXp = '<svg class="dm-duel-icon" viewBox="0 0 24 24" aria-hidden="true"><path fill="#742ee4" d="m12 1 10 5.5v11L12 23 2 17.5v-11z"/><path d="m6 9 4 6m0-6-4 6m7 0V9h3a1.5 1.5 0 0 1 0 3h-3" fill="none" stroke="white" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-const duelEsc = x => String(x ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const duelAvatar = (name, size, tier = 'free') => {
- let svg = typeof window.karakterSvg === 'function' ? window.karakterSvg(name, size) : '';
- if (!svg) svg = `<span>${typeof window.ogrenciMaskotSec === 'function' ? window.ogrenciMaskotSec(name) : '🦜'}</span>`;
- const cls = tier === 'pro' ? ' dm-member-pro' : tier === 'premium_pro' ? ' dm-member-premium' : '';
- return `<span class="dm-duel-champ-avatar${cls}" style="--avatar-size:${size}px">${svg}</span>`;
-};
-const duelMountPapi = slot => {
- if (!slot) return;
- if (window.DMPapi?.html) {
-  if (!slot.querySelector('svg.dmp')) {
-   slot.innerHTML = window.DMPapi.html('merhaba', 'Canlı düello maskotu Papi', { ms: 2400, then: 'mutlu', tap: true });
-  } else {
-   window.DMPapi.react?.(slot, 'merhaba', 2000, 'mutlu');
-  }
- } else if (!slot.querySelector('img')) {
-  slot.innerHTML = '<img class="dm-duel-papi-fallback" src="friends-assets/papi-duel-petrol.webp" alt="Düello maskotu Papi" width="120" height="120" decoding="async">';
- }
-};
 window.dmDuelHomeAc=function(){
  if(window.dmTeacherPortalMode)return;
  let el=document.getElementById('dmDuelHome');
  if(!el){
   el=document.createElement('section');el.id='dmDuelHome';el.className='dm-duel-page';el.setAttribute('aria-label','Düello arenası');
   el.innerHTML=`<div class="dm-duel-page-inner">
-   <header class="dm-duel-page-head"><div class="dm-duel-brand">Diji-Medu <small>English</small></div><h1>Düello</h1><span data-duel-inbox></span></header>
+   <header class="dm-duel-page-head"><div class="dm-duel-brand">Diji-Medu <small>English</small></div><h1 class="dm-arena-visually-hidden">Düello</h1><span data-duel-inbox></span></header>
+   ${window.dmArenaTabs?.("duel") || ""}
    <div class="dm-duel-arena">
     <div class="dm-duel-hero-stage">
-     <div class="dm-duel-papi-slot" aria-label="Canlı düello maskotu Papi"></div>
      <div class="dm-duel-hero-copy">
       <span class="dm-duel-live-pill"><span class="dm-duel-live-dot" aria-hidden="true"></span>Anlık Eşleşme</span>
       <h2>Rakibini Bul,<br>XP Kazan!</h2>
-     </div>
-     <div class="dm-duel-vs-cluster" aria-hidden="true">
-      <svg class="dm-duel-vs-bolt" viewBox="0 0 24 24"><path fill="currentColor" d="M13 2 4 14h6l-1 8 9-12h-6l1-8z"/></svg>
-      <span class="dm-duel-vs-badge">VS</span>
      </div>
     </div>
     <button type="button" class="dm-duel-quick" data-duel="live">${duelArtIcon('bolt')} Canlı Düello</button>
@@ -163,14 +139,6 @@ window.dmDuelHomeAc=function(){
     </div>
     <div class="dm-duel-personal" role="status">Düello istatistikleri yükleniyor…</div>
    </div>
-   <section class="dm-duel-champions" aria-label="Düello Şampiyonları">
-    <div class="dm-duel-champ-head">
-     <h3><span class="dm-duel-champ-icon" aria-hidden="true">${duelArtIcon('swords')}</span> Düello Şampiyonları</h3>
-     <span class="dm-duel-champ-rank-pill" hidden></span>
-    </div>
-    <div class="dm-duel-champ-list" role="status">Sıralama yükleniyor…</div>
-    <button type="button" class="dm-duel-champ-more" data-duel="ranking">Sıralamayı gör ${duelChevron}</button>
-   </section>
   </div>`;
   el.addEventListener('click',e=>{
    const action=e.target.closest('[data-duel]')?.dataset.duel;
@@ -178,23 +146,21 @@ window.dmDuelHomeAc=function(){
    if(action==='papi')window.dmLiveDuel?.startPapi?.();
    if(action==='friend')window.dmFriends?.chooseDuelFriend?.(e.target.closest('button'));
    if(action==='history')window.dmNotificationCenter?.openDuelHistory?.(e.target.closest('button'));
-   if(action==='ranking')window.dmDuelRankingOpen?.();
+   const view=e.target.closest('[data-arena-view]')?.dataset.arenaView;
+   if(view&&view!=='duel')window.dmFriends?.showArena?.(view);
   });
   document.body.append(el);
  }
  el.hidden=false;
- duelMountPapi(el.querySelector('.dm-duel-papi-slot'));
  window.dmNotificationCenter?.mountSecondary?.(el.querySelector('[data-duel-inbox]'));
  const dock=document.getElementById('bottomNavMobile');if(dock){if(!dock.dataset.duelPreviousZ)dock.dataset.duelPreviousZ=dock.style.zIndex||'auto';dock.style.setProperty('z-index','100000020','important');el.style.setProperty('--dm-duel-bottom',Math.max(68,window.innerHeight-dock.getBoundingClientRect().top)+'px');}
- document.querySelectorAll('#bottomNavMobile .bn-item').forEach(b=>{const yes=b.dataset.ekran==='tab-duel-home';b.classList.toggle('active',yes);if(yes)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');});
+ document.querySelectorAll('#bottomNavMobile .bn-item').forEach(b=>{const yes=b.dataset.ekran==='tab-meduakis';b.classList.toggle('active',yes);if(yes)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');});
  const owner=typeof aktifOgrenciAdi!=='undefined'?String(aktifOgrenciAdi||''):'';
  const target=el.querySelector('.dm-duel-personal');
- const champList=el.querySelector('.dm-duel-champ-list');
- const rankPill=el.querySelector('.dm-duel-champ-rank-pill');
- if(target.dataset.owner!==owner){target.dataset.owner=owner;target.textContent='Düello istatistikleri yükleniyor…';if(champList)champList.textContent='Sıralama yükleniyor…';if(rankPill)rankPill.hidden=true;}
+ if(target.dataset.owner!==owner){target.dataset.owner=owner;target.textContent='Düello istatistikleri yükleniyor…';}
  const request=window.supabaseClient?.rpc?.('dm_duel_champions_v1',{p_limit:50});
  const current=()=>el.isConnected&&!el.hidden&&target.dataset.owner===owner&&String(typeof aktifOgrenciAdi==='undefined'?'':aktifOgrenciAdi||'')===owner;
- const fail=()=>{if(current()){target.textContent='İstatistikler şu anda yüklenemedi.';if(champList)champList.textContent='Düello ligi şu anda alınamadı.';}};
+ const fail=()=>{if(current()){target.textContent='İstatistikler şu anda yüklenemedi.';}};
  if(!request){fail();return;}
  request.then(({data,error})=>{
   if(error){fail();return;}
@@ -207,28 +173,6 @@ window.dmDuelHomeAc=function(){
    target.textContent='Düello istatistiklerin burada görünecek.';
   }else{
    target.innerHTML=[[duelArtIcon('trophy'),'Galibiyet',me.wins],[duelShield,'Mağlubiyet',me.losses],[duelXp,'Düello XP',me.duel_xp]].map(([icon,label,value])=>'<span>'+icon+'<b>'+Number(value||0).toLocaleString('tr-TR')+'</b><small>'+label+'</small></span>').join('');
-  }
-  if(rankPill){
-   if(myIndex>=0){rankPill.textContent=(myIndex+1)+'. Sıradasın';rankPill.hidden=false;}
-   else{rankPill.hidden=true;}
-  }
-  if(champList){
-   if(!rows.length){
-    champList.innerHTML='<p class="dm-duel-champ-empty">Henüz tamamlanmış düello yok.</p>';
-   }else{
-    champList.innerHTML=rows.slice(0,3).map((player,index)=>{
-     const rank=index+1;
-     const name=duelEsc(player.player_name);
-     const isSelf=String(player.player_name||'').trim().toLocaleLowerCase('tr')===normOwner;
-     const selfBadge=isSelf?'<span class="dm-duel-self-tag">SEN</span>':'';
-     const xpText=Number(player.duel_xp||0).toLocaleString('tr-TR')+' XP';
-     if(rank===1){
-      const rec=Number(player.wins||0).toLocaleString('tr-TR')+' G / '+Number(player.losses||0).toLocaleString('tr-TR')+' M';
-      return `<div class="dm-duel-champ-row is-first"><span class="dm-duel-champ-num" aria-label="1. sıra">1</span>${duelAvatar(player.player_name,48,player.membership_tier)}<div class="dm-duel-champ-info"><div class="dm-duel-champ-name"><strong title="${name}">${name}</strong>${selfBadge}</div><div class="dm-duel-champ-meta"><span class="dm-duel-xp-pill">${xpText}</span><small>${rec}</small></div></div></div>`;
-     }
-     return `<div class="dm-duel-champ-row"><span class="dm-duel-champ-num" aria-label="${rank}. sıra">${rank}</span>${duelAvatar(player.player_name,30,player.membership_tier)}<div class="dm-duel-champ-name"><strong title="${name}">${name}</strong>${selfBadge}</div><span class="dm-duel-xp-pill">${xpText}</span></div>`;
-    }).join('');
-   }
   }
  }).catch(fail);
 

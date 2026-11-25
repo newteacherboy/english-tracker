@@ -1,0 +1,250 @@
+(() => {
+  'use strict';
+
+  const escaped = value => String(value ?? '').replace(/[&<>"']/g, char =>
+    ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[char]);
+  const token = () => localStorage.getItem('ing_token') || '';
+  const number = value => (Number(value) || 0).toLocaleString('tr-TR');
+  const image = emblem => '<img class="dm-team-crest" alt="" src="friends-assets/team-crests/' +
+    Math.min(20, Math.max(1, Number(emblem) || 1)) + '.webp">';
+  const button = (action, label, data = '') => '<button type="button" data-team-action="' + action + '"' +
+    (data ? ' data-team-id="' + escaped(data) + '"' : '') + '>' + label + '</button>';
+  const games = {
+    'word-goal': ['Kelime Golü', () => window.dmPremiumSkillGames.open('word-goal', {team:true})],
+    'papizzle': ['Papizzle', () => window.papizzleAc({team:true})],
+    'tower': ['Dengesiz Kule', () => window.dmPremiumSkillGames.open('tower', {team:true})],
+    'cloud-flight': ['Kaptan Pilot Papi', () => window.premiumBulutUcusuAc({team:true})],
+    'word-blocks': ['Block Papi', () => window.premiumKelimeBloklariAc({team:true})],
+    rally: ['Kelime Rallisi', () => window.ralliOyunAc({team:true})]
+  };
+
+  let owner = '';
+  let snapshot = null;
+  let awards = [];
+  let bonus = 0;
+  let error = '';
+  let loadedAt = 0;
+  let loading = false;
+  let working = false;
+  let dialog = null;
+  const premiumTickets = new Map();
+
+  async function rpc(method, args = {}) {
+    const identity = token();
+    if (!identity) throw Error('Takımım için öğrenci hesabınla giriş yap.');
+    const client = window.supabaseClient;
+    let result;
+    if (client?.rpc) {
+      const {data, error:failure} = await client.rpc(method, {p_token:identity, ...args});
+      if (failure) throw Error('Takım servisine ulaşılamadı. Tekrar dene.');
+      result = data;
+    } else {
+      const res = await fetch(SUPABASE_URL + '/rest/v1/rpc/' + method, {
+        method:'POST', headers:{apikey:SUPABASE_ANON_KEY,'Content-Type':'application/json'},
+        body:JSON.stringify({p_token:identity, ...args}), signal:AbortSignal.timeout(12000)
+      });
+      if (!res.ok) throw Error('Takım servisine ulaşılamadı. Tekrar dene.');
+      result = await res.json();
+    }
+    if (identity !== token()) throw Error('Öğrenci oturumu değişti.');
+    if (!result?.ok) throw Error(result?.message || 'Takım işlemi tamamlanamadı.');
+    return result;
+  }
+
+  const manage = (action, data = {}) => rpc('dm_team_manage', {p_action:action,p_data:data});
+  const refreshHome = () => window.dmFriends?.redrawArena?.();
+
+  async function load(force = false) {
+    const current = token();
+    if (current !== owner) {
+      owner = current; snapshot = null; awards = []; bonus = 0; loadedAt = 0; error = ''; loading = false;
+      dialog?.close();premiumTickets.clear();
+    }
+    if (loading || (!force && Date.now()-loadedAt<30000)) return;
+    loading = true;
+    try {
+      const [state, rewards] = await Promise.all([manage('state'),rpc('dm_team_rewards')]);
+      if (current !== token()) return;
+      snapshot = state; awards = rewards.awards; bonus = rewards.bonusEnergy; error = '';
+    } catch (failure) {
+      if (current === token()) error = failure.message;
+    } finally {
+      if (current === token()) {
+        loadedAt = Date.now(); loading = false; refreshHome();
+      }
+    }
+  }
+
+  function tasks() {
+    const items = [
+      ['Premium Turu',snapshot.tasks.premium,3],
+      ['Düello Günü',snapshot.tasks.duel,3],
+      ['Birlikte Oyna',snapshot.tasks.people,2]
+    ];
+    return '<section class="dm-team-card dm-team-tasks"><h3>Günlük Görevler</h3>' + items.map(([label, done, goal]) =>
+      '<div class="dm-team-task"><span>'+label+'</span><b>'+Math.min(done,goal)+'/'+goal+
+      '</b><progress max="'+goal+'" value="'+Math.min(done,goal)+'" aria-label="'+label+'"></progress></div>').join('') +
+      (items.every(([,done,goal])=>done>=goal)?'<small>Görevler tamamlandı. Puan toplamaya devam edebilirsin.</small>':'')+'</section>';
+  }
+
+  function requests() {
+    return snapshot.requests.map(item => {
+      const message = item.kind==='invite' ? item.name+' seni takıma davet etti.' :
+        item.kind==='transfer' ? item.name+' kaptanlığı sana devretmek istiyor.' : item.person+' takıma katılmak istiyor.';
+      return '<div class="dm-team-info"><p>'+escaped(message)+'</p><div class="dm-team-buttons">'+
+        button('accept','Kabul Et',item.id)+button('reject','Reddet',item.id)+'</div></div>';
+    }).join('');
+  }
+
+  function rewardRows() {
+    return awards.map((award,index)=>'<div class="dm-team-info"><strong>'+escaped(award.name)+' · '+escaped(award.week)+'</strong><p>'+
+      (award.claimed?'':number(award.gold)+' altın · '+number(award.xp)+' XP · ')+
+      number(award.energy)+' enerji</p>'+button('claim',award.claimed?'Enerjiyi Al':'Sandığını Aç',String(index))+'</div>').join('');
+  }
+
+  function html() {
+    if (owner!==token() || !snapshot) return '<section class="dm-team-card" role="status">'+
+      (error?escaped(error)+button('refresh','Tekrar Dene'):'Takım yükleniyor…')+'</section>';
+    const team=snapshot.team;
+    const portraits=snapshot.members.map(person=>'<span title="'+escaped(person.name)+'">'+
+      (window.karakterSvg?.(person.name,24)||escaped(person.name.slice(0,1)))+'</span>').join('');
+    const reward = rewardRows();
+    const shared = '<section class="dm-team-card dm-team-buttons">'+
+      button('weekly','Haftalık Takım Sıralaması')+button('all','Tüm Zamanlar')+'</section>';
+    if (!team) return '<section class="dm-team-card dm-team-summary">'+image(1)+
+      '<div><h2>Takımını Kur</h2><p>Arkadaşlarınla birlikte yarış.</p></div></section>'+
+      '<div class="dm-team-buttons">'+button('create','Takım Oluştur')+button('search','Takıma Katıl')+'</div>'+
+      requests()+reward+shared;
+    return '<section class="dm-team-card dm-team-summary">'+image(team.crest)+
+      '<div><h2>'+escaped(team.name)+'</h2><div class="dm-team-portraits">'+portraits+'</div><p>'+snapshot.members.length+'/6 üye</p><strong>'+
+      number(snapshot.points)+' puan</strong><small>Ödül eşiği 150</small></div>'+
+      button('settings','<span aria-hidden="true">⚙</span><span class="dm-arena-visually-hidden">Takım ayarları</span>')+'</section>'+
+      '<div class="dm-team-buttons">'+button('premium','Premium Oyna')+button('duel','Düello Başlat')+'</div>'+
+      tasks()+shared+(snapshot.latest?'<p class="dm-team-info">'+escaped(snapshot.latest.name)+' takıma +10 puan kazandırdı.</p>':'')+requests()+reward+
+      (bonus?'<p class="dm-team-info">Takım ödülünden kullanılabilir +'+number(bonus)+' enerji</p>':'');
+  }
+
+  function sheet(title, content) {
+    dialog?.close();
+    const panel = document.createElement('dialog');
+    panel.className='dm-team-sheet';
+    panel.innerHTML='<header><h2>'+escaped(title)+'</h2>'+button('close','Kapat')+
+      '</header><p class="dm-team-error" role="status"></p><div class="dm-team-sheet-body">'+content+'</div>';
+    panel.addEventListener('click', event => {
+      const control=event.target.closest('[data-team-action]');
+      if(control) void act(control);
+    });
+    panel.addEventListener('submit', event => {
+      event.preventDefault();
+      const data=Object.fromEntries(new FormData(event.target));
+      void submit(event.target.dataset.form,data);
+    });
+    panel.addEventListener('close',()=>{panel.remove();if(dialog===panel)dialog=null;});
+    document.body.append(panel); dialog=panel; panel.showModal();
+  }
+
+  function teamForm(team) {
+    const crests=Array.from({length:20},(_,i) => '<label><input type="radio" required name="crest" value="'+(i+1)+'"'+
+      ((team?.crest || 1)===i+1?' checked':'')+' aria-label="Papi arması '+(i+1)+'">'+image(i+1)+'</label>').join('');
+    return '<form data-form="'+(team?'edit':'create')+'"><label>Takım adı<input name="name" required minlength="3" maxlength="30" value="'+
+      escaped(team?.name)+'"></label><fieldset><legend>Takım logosu</legend><div class="dm-team-crests">'+crests+
+      '</div></fieldset><button type="submit">'+(team?'Değişiklikleri Kaydet':'Takım Oluştur')+'</button></form>';
+  }
+
+  function settings() {
+    const {team, me, members}=snapshot;
+    const captain=team.captain===me;
+    const roster=members.map(member=>'<div class="dm-team-info"><strong>'+escaped(member.name)+
+      (member.id===team.captain?' · Kaptan':'')+'</strong><p>'+number(member.points)+' haftalık katkı</p>'+
+      (captain&&member.id!==me?'<div class="dm-team-buttons">'+button('remove','Üye Çıkar',member.id)+
+      button('transfer','Kaptanlığı Devret',member.id)+'</div>':'')+'</div>').join('');
+    const pending=(snapshot.outgoing||[]).map(item=>'<div class="dm-team-info"><strong>'+escaped(item.person)+'</strong><p>'+
+      (item.kind==='transfer'?'Kaptanlık teklifi bekliyor':'Takım daveti bekliyor')+'</p>'+button('withdraw','Geri Çek',item.id)+'</div>').join('');
+    sheet('Takım Ayarları',roster+pending+(captain ?
+      button('edit','Takım Adı veya Logosunu Değiştir')+button('invite','Üye Davet Et')+button('leave','Takımdan Ayrıl')+button('delete','Takımı Sil') :
+      button('leave','Takımdan Ayrıl')));
+  }
+
+  async function submit(action, data) {
+    if (action==='duel-invite') { dialog?.close();return window.dmLiveDuel?.invite(data.name,{team:true}); }
+    if (working) return;
+    working=true;
+    try {
+      if (action==='search') {
+        const result=await manage('search',data);
+        dialog.querySelector('[data-team-results]').innerHTML=result.rows.map(row=>'<div class="dm-team-list-row">'+
+          image(row.crest)+'<b>'+escaped(row.name)+'</b>'+button('join','İstek Gönder',row.id)+'</div>').join('')||'<p>Takım bulunamadı.</p>';
+        return;
+      }
+      snapshot=await manage(action,data);
+      dialog?.close();refreshHome();
+      if (action==='join') window.yoToast?.('Katılma isteğin gönderildi.');
+      if (action==='invite') window.yoToast?.('Takım daveti gönderildi.');
+      if (action==='transfer') window.yoToast?.('Kaptanlık teklifi gönderildi.');
+    } catch (failure) {
+      const status=dialog?.querySelector('.dm-team-error');
+      if (status) status.textContent=failure.message;
+      else window.yoToast?.(failure.message);
+    } finally { working=false; }
+  }
+
+  async function teamRanks(action) {
+    const result=await manage('ranking',{period:action});
+    sheet(action==='all'?'Tüm Zamanlar':'Haftalık Takım Sıralaması',
+      result.rows.map((row,i)=>'<div class="dm-team-list-row"><b>'+(i+1)+'.</b>'+image(row.crest)+
+      '<b>'+escaped(row.name)+'</b><strong>'+number(row.points)+' puan</strong></div>').join('')||
+      '<p>Henüz sıralamaya giren takım yok.</p>');
+  }
+
+  async function act(control) {
+    const {teamAction:action,teamId:id}=control.dataset;
+    try {
+      switch(action) {
+        case 'refresh': return load(true);
+        case 'close': return dialog?.close();
+        case 'create': return sheet('Takım Oluştur',teamForm(null));
+        case 'edit': return sheet('Takım Adı ve Logosu',teamForm(snapshot.team));
+        case 'settings': return settings();
+        case 'invite': return sheet('Üye Davet Et','<form data-form="invite"><label>Arkadaşının kullanıcı adı<input name="name" required maxlength="80"></label><button type="submit">Davet Gönder</button></form>');
+        case 'search': return sheet('Takıma Katıl','<form data-form="search"><label>Takım adı<input name="name" required maxlength="30"></label><button type="submit">Ara</button></form><div data-team-results></div>');
+        case 'weekly': case 'all': return await teamRanks(action);
+        case 'premium': return sheet('Takım için Premium Oyna',Object.entries(games).map(([key,[name]])=>button('game',name,key)).join(''));
+        case 'game': dialog?.close(); return await games[id]?.[1]();
+        case 'duel': return sheet('Takım için Düello Başlat',button('live','Canlı Düello')+button('papi','Papi’ye Karşı Oyna')+
+          '<form data-form="duel-invite"><label>Arkadaşının kullanıcı adı<input name="name" maxlength="80" required></label><button type="submit">Meydan Oku</button></form>');
+        case 'live': case 'papi': dialog?.close();return window.dmLiveDuel?.[action==='live'?'startLive':'startPapi']({team:true});
+        case 'delete': case 'leave': case 'remove':
+          if (!window.confirm(control.textContent+' işlemini onaylıyor musun?')) return;
+          return submit(action,{id});
+        case 'accept': case 'reject': case 'join': case 'transfer': case 'withdraw': return submit(action,{id});
+        case 'claim': {
+          if (working) return;
+          const award=awards[Number(id)]; if (!award) return;
+          working=true;
+          try {
+            const result=await rpc('dm_team_rewards',{p_week:award.week,p_team:award.team});
+            if(result.yo) window.dmApplyRewardState?.(result.yo,typeof aktifOgrenciAdi!=='undefined'?aktifOgrenciAdi:'');
+            awards=result.awards;bonus=result.bonusEnergy;refreshHome();
+            window.dmProgression?.refresh?.(true);
+          } finally {working=false;}
+          return;
+        }
+      }
+    } catch (failure) { window.yoToast?.(failure.message); }
+  }
+
+  window.dmTeam={
+    html, load, act, settings,
+    ticket:async kind=>(await manage('ticket',{kind})).ticket,
+    premiumTicket(runId) {
+      const identity=token();
+      for(const [key,value] of premiumTickets)if(value.owner!==identity||value.until<Date.now())premiumTickets.delete(key);
+      if(!premiumTickets.has(runId)){
+        const request=manage('ticket',{kind:'premium'}).then(data=>data.ticket).catch(error=>{premiumTickets.delete(runId);throw error;});
+        premiumTickets.set(runId,{owner:identity,until:Date.now()+14*60000,request});
+      }
+      return premiumTickets.get(runId).request;
+    },
+    credited:points=>{window.yoToast?.('Takımına +'+points+' puan');void load(true);}
+  };
+})();

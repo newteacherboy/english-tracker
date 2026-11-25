@@ -112,7 +112,7 @@
     return result;
   }
 
-  window.premiumBulutUcusuAc = async function () {
+  window.premiumBulutUcusuAc = async function (options) {
     if (opening || document.querySelector('.dm-flight')) return;
     const account = owner();
     const token = (window.dmTeacherPortalMode ? sessionStorage.getItem('ing_ogr_token') : '') || localStorage.getItem('ing_token') || '';
@@ -130,7 +130,7 @@
         document.head.append(style);
       });
       const status = await request(token, 'status');
-      if (owner() === account) mount(account, token, status);
+      if (owner() === account) mount(account, token, status, options?.team===true);
     } catch (error) {
       window.yoToast?.(error.message);
     } finally {
@@ -138,7 +138,7 @@
     }
   };
 
-  function mount(account, token, initial) {
+  function mount(account, token, initial, team) {
     const screen = document.createElement('dialog');
     screen.className = 'dm-flight';
     screen.setAttribute('aria-label', 'Kaptan Pilot Papi');
@@ -345,7 +345,7 @@
       runId ||= crypto.randomUUID();
       openPanel('Uçuş hazırlanıyor…', [], []);
       try {
-        const data = await request(token, 'start', {runId});
+        const data = await request(token, 'start', {runId, ...(team?{teamTicket:await window.dmTeam.premiumTicket(runId)}:{})});
         if (!screen.isConnected) return;
         apply(data);
         game = {rounds: data.rounds, level: data.playedLevel, picks: [], score: 0, wrong: 0,
@@ -518,6 +518,7 @@
       openPanel('Sonuç hesaplanıyor…', [], []);
       try {
         const result = await request(token, 'finish', {runId, selections: game.picks});
+        if(result.teamPoints)window.dmTeam?.credited(result.teamPoints);
         if (!screen.isConnected) return;
         apply(result);
         runId = undefined;
