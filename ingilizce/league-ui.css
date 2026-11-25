@@ -262,18 +262,22 @@
 #tab-meduakis .dm-lig-weekly .dm-lig-winner b {font-size:10px}
 #tab-meduakis .dm-lig-weekly .dm-lig-winner strong {font-size:10px}
 
-/* Open podium on the standalone student ranking tab. */
+/* Open podium on the standalone student ranking tab (Palet 1: Safir Mavisi & Madalya Tonları). */
 html:has(#tab-meduakis.active.fr-ranking-view),
 html[data-dm-theme]:has(#tab-meduakis.active.fr-ranking-view),
-body:has(#tab-meduakis.active.fr-ranking-view) {
-  --fr-surface: #fff;
+body:has(#tab-meduakis.active.fr-ranking-view),
+body:has(#tab-meduakis.active.fr-ranking-view) #panel-alani {
+  --fr-surface: #fff !important;
   background: #fff !important;
 }
 body #tab-meduakis.fr-ranking-view {
-  --rank-ink: #491429;
-  --rank-line: #cbb8be;
+  --rank-ink: #14244b;
+  --rank-line: #cfd6e8;
   background: #fff !important;
   box-shadow: 0 0 0 100vmax #fff;
+}
+body #tab-meduakis.dc-fullscreen-overlay.active.fr-ranking-view {
+  background: #fff !important;
 }
 body #tab-meduakis.fr-ranking-view :is(.ma-wrap,.akis-baslik,.dm-arena-home) {
   background: #fff !important;
@@ -304,7 +308,7 @@ body #tab-meduakis.fr-ranking-view .akis-baslik > h2 {
   border-radius: 13px;
   background: #fff;
   color: var(--rank-ink);
-  box-shadow: 0 2px 0 #e7dde1;
+  box-shadow: 0 2px 0 #e3e8f4;
   font: 800 clamp(11px, 3.4vw, 15px)/1.16 Nunito,system-ui,sans-serif;
   white-space: normal;
   overflow-wrap: anywhere;
@@ -395,11 +399,23 @@ body #tab-meduakis.fr-ranking-view .akis-baslik > h2 {
 }
 #tab-meduakis.fr-ranking-view .dm-open-xp {
   max-width: 100%;
-  padding: 2px 7px;
-  background: #ffe8e1;
+  padding: 2px 8px;
+  background: #eef2fa;
+  border: 1px solid #c6d2ea;
+  color: #283b66;
   border-radius: 999px;
   font-size: clamp(10px,2.9vw,13px);
   overflow-wrap: anywhere;
+}
+#tab-meduakis.fr-ranking-view .dm-open-place-1 .dm-open-xp {
+  background: #fff3c4;
+  border-color: #f2c249;
+  color: #854d0e;
+}
+#tab-meduakis.fr-ranking-view .dm-open-place-3 .dm-open-xp {
+  background: #fcece1;
+  border-color: #ebc1a5;
+  color: #7a3e1d;
 }
 #tab-meduakis.fr-ranking-view .dm-open-place .dm-lig-avatar {
   position: relative;
@@ -407,12 +423,15 @@ body #tab-meduakis.fr-ranking-view .akis-baslik > h2 {
   width: clamp(43px,14vw,67px);
   height: auto;
   aspect-ratio: 1;
-  background: #ffe1d6;
+  background: #eef2fa;
   margin-bottom: 9px;
 }
 #tab-meduakis.fr-ranking-view .dm-open-place-1 .dm-lig-avatar {
   width: clamp(55px,17vw,83px);
-  background: #ffdf83;
+  background: #fff3c4;
+}
+#tab-meduakis.fr-ranking-view .dm-open-place-3 .dm-lig-avatar {
+  background: #fcece1;
 }
 #tab-meduakis.fr-ranking-view .dm-open-ranking .dm-member-badge {
   min-width: 0;
@@ -446,9 +465,11 @@ body #tab-meduakis.fr-ranking-view .akis-baslik > h2 {
   border-color: #eeb293;
   box-shadow: inset 0 3px 0 #ffebdf, 0 3px 0 #c78d73;
 }
-#tab-meduakis.fr-ranking-view .dm-open-progress { margin: 13px 0 8px; text-align: center; font-size: 12px; }
-#tab-meduakis.fr-ranking-view .dm-open-ranking .dm-lig-row { border-color: #eadde1; color: var(--rank-ink); }
-#tab-meduakis.fr-ranking-view .dm-open-ranking .dm-lig-rank { background: #ffe8e1; color: var(--rank-ink); }
+#tab-meduakis.fr-ranking-view .dm-open-progress { margin: 13px 0 8px; text-align: center; font-size: 12px; color: #465678; }
+#tab-meduakis.fr-ranking-view .dm-open-progress strong { color: #14244b; }
+#tab-meduakis.fr-ranking-view .dm-open-ranking .dm-lig-row { border-color: #dce2f0; color: var(--rank-ink); }
+#tab-meduakis.fr-ranking-view .dm-open-ranking .dm-lig-rank { background: #eaf0ff; border: 1px solid #c5d5ff; color: #2940b8; }
+#tab-meduakis.fr-ranking-view .dm-open-ranking .dm-lig-row > strong { color: #2940b8; }
 #tab-meduakis.fr-ranking-view .dm-open-more { width: 100%; margin-top: 10px; }
 
 

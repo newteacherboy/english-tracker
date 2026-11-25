@@ -450,7 +450,7 @@ body #tab-meduakis.fr-team-view .dm-team-summary h2 {
   text-overflow: ellipsis;
 }
 .dm-team-invite-meta small { font-size: 11px; color: #6b6782; font-weight: 700; }
-.dm-team-sheet .dm-team-invite-btn {
+dialog.dm-team-sheet button.dm-team-invite-btn {
   flex: none;
   min-height: 34px;
   padding: 5px 11px;
@@ -459,6 +459,7 @@ body #tab-meduakis.fr-team-view .dm-team-summary h2 {
   border-radius: 10px;
   background: linear-gradient(180deg, #4b63ff, #3547e8);
   color: #fff;
+  -webkit-text-fill-color: #fff;
   font-size: 12px;
   font-weight: 900;
 }
@@ -489,7 +490,7 @@ body #tab-meduakis.fr-team-view .dm-team-summary h2 {
   font-size: 12.5px;
   font-weight: 800;
 }
-.dm-team-sheet .dm-team-duel-card {
+dialog.dm-team-sheet button.dm-team-duel-card {
   position: relative;
   overflow: hidden;
   display: flex;
@@ -502,15 +503,16 @@ body #tab-meduakis.fr-team-view .dm-team-summary h2 {
   border-radius: 18px;
   text-align: left;
   color: #fff;
+  -webkit-text-fill-color: #fff;
   transition: transform .12s ease;
 }
-.dm-team-sheet .dm-team-duel-card:active { transform: translateY(2px); }
-.dm-team-sheet .dm-team-duel-card.is-live {
+dialog.dm-team-sheet button.dm-team-duel-card:active { transform: translateY(2px); }
+dialog.dm-team-sheet button.dm-team-duel-card.is-live {
   background: linear-gradient(135deg, #f44d57 0%, #c8213a 100%);
   border-bottom: 4px solid #911327;
   box-shadow: 0 8px 20px rgba(200, 33, 58, .28);
 }
-.dm-team-sheet .dm-team-duel-card.is-papi {
+dialog.dm-team-sheet button.dm-team-duel-card.is-papi {
   background: linear-gradient(135deg, #0f6f83 0%, #073e4d 100%);
   border-bottom: 4px solid #042833;
   box-shadow: 0 8px 20px rgba(7, 62, 77, .26);
