@@ -582,7 +582,7 @@ html[data-dm-theme="night"] #dmDuelHome.dm-duel-page {
 /* Remove excess gap below top wallet and fit Duel B in one viewport with no scroll. */
 #dmDuelHome.dm-duel-page .dm-duel-page-inner {
   gap: clamp(5px, 1.05dvh, 11px);
-  padding: 0 15px 6px;
+  padding: 0 15px clamp(18px, 3dvh, 28px);
   justify-content: space-between;
 }
 #dmDuelHome.dm-duel-page .dm-duel-wallet-host { margin-bottom: 0; }
