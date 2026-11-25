@@ -557,3 +557,167 @@ body #tab-meduakis.fr-team-view .dm-team-summary h2 {
 @media (prefers-reduced-motion: reduce) {
   #tab-meduakis.fr-team-view .dm-arena-home [data-team-action]::after { animation: none; }
 }
+
+/* Top Overlapping Crest + Centered Team Summary Card (Approved Design 1) */
+.dm-team-hero-wrap {
+  position: relative;
+  padding-top: clamp(46px, 8dvh, 58px);
+}
+.dm-team-crest-stage {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
+  width: clamp(94px, 16dvh, 118px);
+  height: clamp(94px, 16dvh, 118px);
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+}
+.dm-team-crest-halo {
+  position: absolute;
+  inset: -10px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 212, 82, .45) 0%, rgba(255, 212, 82, 0) 70%);
+}
+.dm-team-crest-stage .dm-team-crest {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 0;
+  filter: drop-shadow(0 8px 14px rgba(45, 20, 60, .22));
+}
+#tab-meduakis.fr-team-view .dm-team-summary.dm-team-summary-v2 {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: clamp(54px, 8.6dvh, 66px) 14px 13px;
+  text-align: center;
+}
+.dm-team-settings-pin {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+#tab-meduakis.fr-team-view .dm-team-settings-pin button {
+  min-height: 36px;
+  width: 36px;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  border-radius: 11px;
+  font-size: 16px;
+}
+#tab-meduakis.fr-team-view .dm-team-summary-v2 h2 {
+  margin: 0;
+  font-size: clamp(18px, 5vw, 23px);
+  font-weight: 1000;
+  line-height: 1.15;
+}
+.dm-team-members-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.dm-team-summary-v2 .dm-team-portraits {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 0;
+}
+.dm-team-summary-v2 .dm-team-portraits > span:not(.dm-team-slot-empty) {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  background: #ece8ff;
+  border: 1.5px solid #c9c2f0;
+}
+#tab-meduakis.fr-team-view .dm-team-slot-empty {
+  width: 30px;
+  height: 30px;
+  min-height: 30px;
+  padding: 0;
+  border-radius: 50%;
+  border: 1.5px dashed #cbc6dc;
+  background: #faf9fd;
+  color: #8b85a3;
+  box-shadow: none;
+  display: grid;
+  place-items: center;
+  font-size: 15px;
+  font-weight: 900;
+  line-height: 1;
+}
+.dm-team-member-count {
+  font-size: 12.5px;
+  font-weight: 800;
+  color: #625c7a;
+}
+.dm-team-score-bar {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding-top: 10px;
+  margin-top: 2px;
+  border-top: 1px solid #eceaf3;
+  text-align: left;
+}
+.dm-team-score-progress {
+  flex: 1;
+  min-width: 0;
+  display: grid;
+  gap: 5px;
+}
+.dm-team-score-nums {
+  display: flex;
+  align-items: baseline;
+  gap: 5px;
+  flex-wrap: wrap;
+}
+#tab-meduakis.fr-team-view .dm-team-score-nums strong {
+  margin: 0;
+  font-size: clamp(16px, 4.4vw, 20px);
+  font-weight: 1000;
+  line-height: 1;
+  color: #211a35;
+}
+#tab-meduakis.fr-team-view .dm-team-score-nums small {
+  margin: 0;
+  font-size: 11.5px;
+  font-weight: 800;
+  color: #78718f;
+}
+.dm-team-threshold-bar {
+  width: 100%;
+  height: 8px;
+  border-radius: 999px;
+  background: #efecf5;
+  overflow: hidden;
+}
+.dm-team-threshold-bar i {
+  display: block;
+  height: 100%;
+  min-width: 6px;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #ffcc33, #f04856);
+  transition: width .35s ease;
+}
+#tab-meduakis.fr-team-view .dm-team-invite-cta button {
+  min-height: 36px;
+  padding: 6px 12px;
+  border-radius: 12px;
+  font-size: 12.5px;
+  font-weight: 900;
+  white-space: nowrap;
+}

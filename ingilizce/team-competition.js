@@ -141,11 +141,32 @@
       button('create','<i class="dm-team-entry-art" aria-hidden="true"></i><span><b>Takım Oluştur</b></span><em aria-hidden="true">›</em>')+
       button('search','<i class="dm-team-entry-art" aria-hidden="true"></i><span><b>Takıma Katıl</b><small>Var olan bir takıma katılarak hemen yarışa başla.</small></span><em aria-hidden="true">›</em>')+'</div>'+
       requests()+reward;
-    return '<section class="dm-team-card dm-team-summary">'+image(team.crest)+
-      '<div><h2>'+escaped(team.name)+'</h2><div class="dm-team-portraits">'+portraits+'</div><p>'+snapshot.members.length+'/3 üye</p><strong>'+
-      number(snapshot.points)+' puan</strong><small>Ödül eşiği 150</small></div>'+
-      '<div class="dm-team-summary-actions">'+button('settings','<span aria-hidden="true">⚙</span><span class="dm-arena-visually-hidden">Takım ayarları</span>')+
-      (team.captain===snapshot.me?button('invite','Üye Davet Et'):'')+'</div></section>'+
+    const emptySlots = Math.max(0, 3 - snapshot.members.length);
+    const isCaptain = team.captain === snapshot.me;
+    const emptySlotHtml = Array.from({ length: emptySlots }, () =>
+      isCaptain
+        ? '<button type="button" class="dm-team-slot-empty" data-team-action="invite" aria-label="Boş üye yuvası, üye davet et">+</button>'
+        : '<span class="dm-team-slot-empty" aria-hidden="true">+</span>'
+    ).join('');
+    const pointsVal = Number(snapshot.points) || 0;
+    const thresholdPct = Math.min(100, Math.round((pointsVal / 150) * 100));
+    return '<div class="dm-team-hero-wrap">' +
+      '<div class="dm-team-crest-stage" aria-hidden="true"><span class="dm-team-crest-halo"></span>' + image(team.crest) + '</div>' +
+      '<section class="dm-team-card dm-team-summary dm-team-summary-v2">' +
+        '<div class="dm-team-settings-pin">' + button('settings', '<span aria-hidden="true">⚙</span><span class="dm-arena-visually-hidden">Takım ayarları</span>') + '</div>' +
+        '<h2>' + escaped(team.name) + '</h2>' +
+        '<div class="dm-team-members-row">' +
+          '<div class="dm-team-portraits">' + portraits + emptySlotHtml + '</div>' +
+          '<span class="dm-team-member-count">' + snapshot.members.length + '/3 üye</span>' +
+        '</div>' +
+        '<div class="dm-team-score-bar">' +
+          '<div class="dm-team-score-progress">' +
+            '<div class="dm-team-score-nums"><strong>' + number(pointsVal) + ' puan</strong><small>/ 150 eşik</small></div>' +
+            '<div class="dm-team-threshold-bar" role="progressbar" aria-label="Ödül eşiği" aria-valuenow="' + Math.min(pointsVal, 150) + '" aria-valuemin="0" aria-valuemax="150"><i style="width:' + thresholdPct + '%"></i></div>' +
+          '</div>' +
+          (isCaptain ? '<div class="dm-team-invite-cta">' + button('invite', '+ Üye Davet Et') + '</div>' : '') +
+        '</div>' +
+      '</section></div>' +
       '<div class="dm-team-buttons">'+button('premium','<img class="dm-team-action-icon" src="premium-assets/kelime-eslestirme/icon-crown.webp" alt=""><span>Premium Oyna</span>')+button('duel','<span class="dm-team-action-icon" aria-hidden="true">⚔</span><span>Düello Başlat</span>')+'</div>'+
       tasks()+(snapshot.latest?'<p class="dm-team-info">'+escaped(snapshot.latest.name)+' takıma +10 puan kazandırdı.</p>':'')+requests()+reward+
       (bonus?'<p class="dm-team-info">Takım ödülünden kullanılabilir +'+number(bonus)+' enerji</p>':'');
