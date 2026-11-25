@@ -801,3 +801,7 @@ html[data-dm-theme] body #tab-aktiviteler#tab-aktiviteler .gg-page.gg-redesign.g
   transform:none!important;
   background-size:400% 400%!important;
 }
+
+html[data-dm-theme] body #tab-aktiviteler#tab-aktiviteler .gg-page.gg-redesign.gg-list-view.au-games.gg-selected-cards:not(.gg-teacher-list) .gg-approved-card .gg-cover.gg-wide-art {
+ aspect-ratio:2!important;background:#f5edff!important;
+}

@@ -114,7 +114,7 @@
       '<div class="dm-team-buttons">'+button('create','Takım Oluştur')+button('search','Takıma Katıl')+'</div>'+
       requests()+reward;
     return '<section class="dm-team-card dm-team-summary">'+image(team.crest)+
-      '<div><h2>'+escaped(team.name)+'</h2><div class="dm-team-portraits">'+portraits+'</div><p>'+snapshot.members.length+'/6 üye</p><strong>'+
+      '<div><h2>'+escaped(team.name)+'</h2><div class="dm-team-portraits">'+portraits+'</div><p>'+snapshot.members.length+'/3 üye</p><strong>'+
       number(snapshot.points)+' puan</strong><small>Ödül eşiği 150</small></div>'+
       button('settings','<span aria-hidden="true">⚙</span><span class="dm-arena-visually-hidden">Takım ayarları</span>')+'</section>'+
       '<div class="dm-team-buttons">'+button('premium','Premium Oyna')+button('duel','Düello Başlat')+'</div>'+

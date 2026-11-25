@@ -202,3 +202,21 @@
 #tab-meduakis .dm-lig-idle{margin-top:0}
 #tab-meduakis .dm-lig-idle-note{display:none!important}
 #tab-meduakis .dm-lig-blurred{filter:blur(5px);opacity:.75;pointer-events:none;user-select:none}
+
+/* Compact lifetime winners, sized for mobile ranking content. */
+#tab-meduakis .dm-lig-alltime .dm-lig-podium-large {
+ min-height:0;max-width:420px;padding:6px 0 0;margin:8px auto 10px;gap:4px;background:none;
+}
+#tab-meduakis .dm-lig-alltime .dm-lig-podium-large::before {display:none}
+#tab-meduakis .dm-lig-alltime .dm-lig-podium-large .dm-lig-avatar {
+ width:56px;height:56px;--size:56px!important;margin:0 auto 4px;border-radius:50%;
+}
+#tab-meduakis .dm-lig-alltime .dm-lig-podium-large .dm-lig-place-1 .dm-lig-avatar {
+ width:66px;height:66px;--size:66px!important;
+}
+#tab-meduakis .dm-lig-alltime .dm-lig-step {height:32px;border-radius:8px 8px 0 0}
+#tab-meduakis .dm-lig-alltime .dm-lig-place-1 .dm-lig-step {height:42px}
+#tab-meduakis .dm-lig-alltime .dm-lig-step b {width:25px;height:25px;font-size:17px;border-width:1px}
+#tab-meduakis .dm-lig-alltime .dm-lig-podium-large .dm-lig-winner {min-height:43px;padding:5px 2px;box-shadow:none}
+#tab-meduakis .dm-lig-alltime .dm-lig-winner b {font-size:11px}
+#tab-meduakis .dm-lig-alltime .dm-lig-winner strong {font-size:10px}
