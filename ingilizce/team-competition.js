@@ -27,7 +27,32 @@
   let loading = false;
   let working = false;
   let dialog = null;
+  let premiumSessionOwner = '';
   const premiumTickets = new Map();
+  const cardToGame = {
+    kelimeGoluSolo: 'word-goal',
+    papizzleActivity: 'papizzle',
+    towerActivity: 'tower',
+    premiumCloudFlightActivity: 'cloud-flight',
+    premiumWordBlocksActivity: 'word-blocks'
+  };
+  const norm = value => String(value || '').trim().toLocaleLowerCase('tr');
+  const armPremiumSession = () => { premiumSessionOwner = token(); };
+  const clearPremiumSession = () => { premiumSessionOwner = ''; };
+  const isPremiumSession = () => Boolean(premiumSessionOwner && premiumSessionOwner === token() && snapshot?.team);
+  function launchPremiumCard(card) {
+    if (!isPremiumSession() || !card) return false;
+    let key = cardToGame[card.id];
+    if (!key && /ralliOyunAc/i.test(String(card.getAttribute?.('onclick') || ''))) key = 'rally';
+    if (!key || !games[key]) return false;
+    void games[key][1]();
+    return true;
+  }
+  document.addEventListener('click', event => {
+    const tab = event.target?.closest?.('#bottomNavMobile [data-ekran]');
+    if (tab && tab.dataset.ekran !== 'tab-aktiviteler') clearPremiumSession();
+  }, true);
+  document.addEventListener('dm:logout', clearPremiumSession);
 
   async function rpc(method, args = {}) {
     const identity = token();
@@ -58,7 +83,7 @@
     const current = token();
     if (current !== owner) {
       owner = current; snapshot = null; awards = []; bonus = 0; loadedAt = 0; error = ''; loading = false;
-      dialog?.close();premiumTickets.clear();
+      clearPremiumSession(); dialog?.close(); premiumTickets.clear();
     }
     if (loading || (!force && Date.now()-loadedAt<30000)) return;
     loading = true;
@@ -199,6 +224,73 @@
       '<p>Henüz sıralamaya giren takım yok.</p>');
   }
 
+  async function openInviteSheet() {
+    sheet('Üye Davet Et',
+      '<form data-form="invite"><label>Arkadaşının kullanıcı adı<input name="name" required maxlength="80" placeholder="Kullanıcı adı yaz…"></label><button type="submit">Davet Gönder</button></form>' +
+      '<div class="dm-team-invite-section"><div class="dm-team-invite-head"><strong>Ligde Aktif Öğrenciler</strong><small>Son 30</small></div>' +
+      '<div class="dm-team-invite-list" data-team-active-list role="status"><p class="dm-team-invite-empty">Aktif öğrenciler yükleniyor…</p></div></div>');
+    const host = dialog?.querySelector('[data-team-active-list]');
+    if (!host) return;
+    try {
+      let students = [];
+      if (typeof window.dmLeagueUI?.activeStudents === 'function') {
+        students = await window.dmLeagueUI.activeStudents(30);
+      } else if (typeof apiURL === 'string' && apiURL) {
+        const res = await fetch(apiURL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ islem: 'seviyeLigListesi', t: token() }),
+          signal: AbortSignal.timeout(10000)
+        });
+        const data = res.ok ? await res.json() : null;
+        students = (Array.isArray(data?.liste) ? data.liste : [])
+          .filter(p => !p.is_virtual && p.name && Number(p.xp) > 0)
+          .slice(0, 30)
+          .map(p => ({ name: p.name, xp: Number(p.xp) || 0, league: p.league === 'sampiyon' ? 'Şampiyonlar' : p.league === 'super' ? 'Süper Lig' : 'Yerel Lig' }));
+      }
+      if (!host.isConnected) return;
+      const myName = norm(typeof aktifOgrenciAdi !== 'undefined' ? aktifOgrenciAdi : '');
+      const memberSet = new Set((snapshot?.members || []).map(m => norm(m.name)));
+      const invitedSet = new Set((snapshot?.outgoing || []).filter(o => o.kind === 'invite').map(o => norm(o.person)));
+      const list = students.filter(s => {
+        const key = norm(s.name);
+        return key && key !== myName && !memberSet.has(key);
+      }).slice(0, 30);
+      if (!list.length) {
+        host.innerHTML = '<p class="dm-team-invite-empty">Şu an davet edilebilecek aktif öğrenci bulunamadı.</p>';
+        return;
+      }
+      host.innerHTML = list.map(student => {
+        const already = invitedSet.has(norm(student.name));
+        const face = window.karakterSvg?.(student.name, 34) || '<span>' + escaped(student.name.slice(0, 1)) + '</span>';
+        return '<div class="dm-team-invite-row"><span class="dm-team-invite-avatar">' + face + '</span>' +
+          '<div class="dm-team-invite-meta"><b>' + escaped(student.name) + '</b><small>' + escaped(student.league) + ' · ' + number(student.xp) + ' XP</small></div>' +
+          (already
+            ? '<span class="dm-team-invite-sent">Davet edildi ✓</span>'
+            : '<button type="button" class="dm-team-invite-btn" data-team-action="invite-direct" data-team-id="' + escaped(student.name) + '">Davet Et</button>') +
+          '</div>';
+      }).join('');
+    } catch {
+      if (host.isConnected) host.innerHTML = '<p class="dm-team-invite-empty">Aktif öğrenci listesi şu anda yüklenemedi.</p>';
+    }
+  }
+
+  function duelSheetHtml() {
+    return '<div class="dm-team-duel-panel">' +
+      '<div class="dm-team-duel-badge"><span aria-hidden="true">⚔️</span> Tamamlanan her düello takımına <strong>+10 puan</strong> kazandırır!</div>' +
+      '<button type="button" class="dm-team-duel-card is-live" data-team-action="live">' +
+        '<span class="dm-team-duel-art" aria-hidden="true">⚡</span>' +
+        '<span class="dm-team-duel-copy"><span class="dm-team-duel-tag">Anlık Eşleşme</span><b>Canlı Düello</b><small>Gerçek bir rakibe karşı yarış, takımını zirveye taşı</small></span>' +
+        '<em class="dm-team-duel-go" aria-hidden="true">›</em>' +
+      '</button>' +
+      '<button type="button" class="dm-team-duel-card is-papi" data-team-action="papi">' +
+        '<span class="dm-team-duel-art is-papi-art" aria-hidden="true"></span>' +
+        '<span class="dm-team-duel-copy"><span class="dm-team-duel-tag">Hızlı Maç</span><b>Papi’ye Karşı Oyna</b><small>Beklemeden Papi ile yarışıp takım görevini tamamla</small></span>' +
+        '<em class="dm-team-duel-go" aria-hidden="true">›</em>' +
+      '</button>' +
+    '</div>';
+  }
+
   async function act(control) {
     const {teamAction:action,teamId:id}=control.dataset;
     try {
@@ -208,13 +300,38 @@
         case 'create': return sheet('Takım Oluştur',teamForm(null));
         case 'edit': return sheet('Takım Adı ve Logosu',teamForm(snapshot.team));
         case 'settings': return settings();
-        case 'invite': return sheet('Üye Davet Et','<form data-form="invite"><label>Arkadaşının kullanıcı adı<input name="name" required maxlength="80"></label><button type="submit">Davet Gönder</button></form>');
+        case 'invite': return void openInviteSheet();
+        case 'invite-direct': {
+          if (working || !id) return;
+          working = true;
+          control.disabled = true;
+          control.textContent = 'Gönderiliyor…';
+          try {
+            snapshot = await manage('invite', { name: id });
+            refreshHome();
+            control.outerHTML = '<span class="dm-team-invite-sent">Davet edildi ✓</span>';
+            window.yoToast?.(id + ' için takım daveti gönderildi.');
+          } catch (failure) {
+            control.disabled = false;
+            control.textContent = 'Davet Et';
+            const status = dialog?.querySelector('.dm-team-error');
+            if (status) status.textContent = failure.message;
+            else window.yoToast?.(failure.message);
+          } finally { working = false; }
+          return;
+        }
         case 'search': return sheet('Takıma Katıl','<form data-form="search"><label>Takım adı<input name="name" required maxlength="30"></label><button type="submit">Ara</button></form><div data-team-results></div>');
         case 'weekly': case 'all': return await teamRanks(action);
-        case 'premium': return sheet('Takım için Premium Oyna',Object.entries(games).map(([key,[name]])=>button('game',name,key)).join(''));
+        case 'premium': {
+          armPremiumSession();
+          dialog?.close();
+          window.dmOpenGamesHome?.();
+          window.dmGamesUI?.enter?.();
+          window.yoToast?.('Takım katkısı aktif! Buradan oynadığın Premium oyunlar takımına +10 puan kazandırır.');
+          return;
+        }
         case 'game': dialog?.close(); return await games[id]?.[1]();
-        case 'duel': return sheet('Takım için Düello Başlat',button('live','Canlı Düello')+button('papi','Papi’ye Karşı Oyna')+
-          '<form data-form="duel-invite"><label>Arkadaşının kullanıcı adı<input name="name" maxlength="80" required></label><button type="submit">Meydan Oku</button></form>');
+        case 'duel': return sheet('Takım için Düello Başlat', duelSheetHtml());
         case 'live': case 'papi': dialog?.close();return window.dmLiveDuel?.[action==='live'?'startLive':'startPapi']({team:true});
         case 'delete': case 'leave': case 'remove':
           return sheet(control.textContent,'<p>Bu işlemi onaylıyor musun?</p><div class="dm-team-buttons">'+
@@ -240,6 +357,7 @@
 
   window.dmTeam={
     html, load, act, settings,
+    isPremiumSession, launchPremiumCard, clearPremiumSession,
     ticket:async kind=>(await manage('ticket',{kind})).ticket,
     premiumTicket(runId) {
       const identity=token();

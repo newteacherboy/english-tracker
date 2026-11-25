@@ -44,6 +44,7 @@
 }
 
 /* Use a real SVG child. Legacy dock styles suppress icon pseudo-elements. */
+#bottomNavMobile .nav-akis-rozet { display: none !important; }
 #bottomNavMobile .dm-nv2 { display: none; }
 #bottomNavMobile.dm-nv2-on .bn-icon:has(> .dm-nv2) { position: relative; }
 #bottomNavMobile.dm-nv2-on .bn-icon:has(> .dm-nv2) > .dm-nav-art { visibility: hidden; }

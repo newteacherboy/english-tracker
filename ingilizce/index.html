@@ -216,7 +216,7 @@ var supabaseClient = null;
 <link rel="preload" as="style" href="activity-ui.css?v=20261125-compact-crops">
 <link rel="preload" as="style" href="premium-play-offer.css?v=20261115-1">
 <link rel="preload" as="script" href="premium-play-offer.js?v=20261115-1">
-<link rel="preload" as="script" href="activity-ui.js?v=20261125-compact-crops">
+<link rel="preload" as="script" href="activity-ui.js?v=20261125-team-premium">
 <link rel="preload" as="script" href="cumle-yarisi.js?v=20261111-papi">
 <link rel="preload" as="style" href="mola-vakti.css?v=20261112-a">
 <link rel="preload" as="script" href="mola-chapters.js?v=20261106-mola-15">
@@ -279,7 +279,7 @@ var supabaseClient = null;
 <link rel="preload" as="script" href="live-duel.js?v=20261125-team-1">
 <link rel="preload" as="script" href="friends-ui.js?v=20261125-team-white">
 <link rel="preload" as="style" href="league-ui.css?v=20261125-rank-polish">
-<link rel="preload" as="script" href="league-ui.js?v=20261125-rank-polish">
+<link rel="preload" as="script" href="league-ui.js?v=20261125-team-invite">
 <link rel="preload" as="style" href="study-ui.css?v=20261019-learn-play-1">
 <link rel="preload" as="script" href="study-ui.js?v=20261026-reward-priority-1">
 <link rel="preload" as="script" href="ders-odev-modu.js?v=20261111-1">
@@ -293,7 +293,7 @@ var supabaseClient = null;
 <link rel="preload" as="script" href="start-spotlight.js?v=20261026-energy-entry-1">
 <link rel="preload" as="style" href="day-night-theme.css?v=20261106-profile-right">
 <link rel="preload" as="style" href="parkur-v4.css?v=20261122-agenda-buttons">
-<link rel="preload" as="style" href="bottom-nav-v2.css?v=20261125-duel-polish">
+<link rel="preload" as="style" href="bottom-nav-v2.css?v=20261125-no-dot">
 <link rel="preload" as="style" href="profile-v2.css?v=20261124-shop-clean">
 <link rel="preload" as="style" href="games-v2.css?v=20261111-1">
 <link rel="preload" as="style" href="games-cat-a.css?v=20261118-b">
@@ -5251,21 +5251,9 @@ body.duyuru-acik .t2-perde, body.duyuru-acik .bk-kart { visibility:hidden !impor
   const $ = id => document.getElementById(id);
   let okunmamisAkisSayisi = 0;
 
-  // Alt menüdeki Arkadaşlar butonuna rozet ekleme / güncelleme
+  // Alt menüdeki Takımım butonunda eski kırmızı rozet gösterilmez
   function navAkisRozetCiz() {
-    let btn = document.querySelector('#bottomNavMobile [data-ekran="tab-meduakis"]');
-    if (!btn) return;
-    let rozet = btn.querySelector('.nav-akis-rozet');
-    if (okunmamisAkisSayisi > 0) {
-      if (!rozet) {
-        rozet = document.createElement('span');
-        rozet.className = 'nav-akis-rozet';
-        btn.appendChild(rozet);
-      }
-      rozet.innerText = okunmamisAkisSayisi > 9 ? '9+' : okunmamisAkisSayisi;
-    } else if (rozet) {
-      rozet.remove();
-    }
+    document.querySelector('#bottomNavMobile [data-ekran="tab-meduakis"] .nav-akis-rozet')?.remove();
   }
 
   // Periyodik olarak yeni akış olaylarını veya etkileşimleri kontrol et
@@ -7351,7 +7339,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <script defer src="konu-oyunlari.js?v=20261114-daily-trial"></script>
 <link rel="stylesheet" href="activity-ui.css?v=20261125-compact-crops">
 <link rel="stylesheet" href="premium-play-offer.css?v=20261115-1"><script defer src="premium-play-offer.js?v=20261115-1"></script>
-<script defer src="activity-ui.js?v=20261125-compact-crops"></script>
+<script defer src="activity-ui.js?v=20261125-team-premium"></script>
 <link rel="stylesheet" href="cumle-yarisi.css?v=20261026-mobile3" media="print" data-dm-later>
 <script defer src="cumle-yarisi.js?v=20261111-papi"></script>
 <link rel="stylesheet" href="mola-vakti.css?v=20261112-a">
@@ -7458,12 +7446,12 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <link rel="stylesheet" href="friends-ui.css?v=20261125-arena-v1">
 <script defer src="notification-actions.js?v=20261025-actions-1"></script>
 <link rel="stylesheet" href="live-duel.css?v=20261118-reklambekle"><script defer src="live-duel.js?v=20261125-team-1"></script>
-<link rel="stylesheet" href="team-competition.css?v=20261125-team-white">
-<script defer src="team-competition.js?v=20261125-team-white"></script>
+<link rel="stylesheet" href="team-competition.css?v=20261125-team-invite">
+<script defer src="team-competition.js?v=20261125-team-invite"></script>
 <script defer src="friends-ui.js?v=20261125-team-white"></script>
 <link rel="stylesheet" href="league-ui.css?v=20261125-rank-polish">
 <link rel="stylesheet" href="selected-shine.css?v=1">
-<script defer src="league-ui.js?v=20261125-rank-polish"></script>
+<script defer src="league-ui.js?v=20261125-team-invite"></script>
 <link rel="stylesheet" href="study-ui.css?v=20261019-learn-play-1">
 <script defer src="study-ui.js?v=20261026-reward-priority-1"></script>
 <script defer src="ders-odev-modu.js?v=20261111-1"></script>
@@ -7473,7 +7461,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <link rel="stylesheet" href="selected-play.css?v=20261011-simple-resume"><script defer src="selected-play.js?v=20261019-step-back-1"></script><script defer src="start-spotlight.js?v=20261026-energy-entry-1"></script>
 <link rel="stylesheet" href="day-night-theme.css?v=20261106-profile-right">
 <link rel="stylesheet" href="parkur-v4.css?v=20261122-agenda-buttons">
-<link rel="stylesheet" href="bottom-nav-v2.css?v=20261125-duel-polish">
+<link rel="stylesheet" href="bottom-nav-v2.css?v=20261125-no-dot">
 <link rel="stylesheet" href="profile-v2.css?v=20261124-shop-clean">
 <link rel="stylesheet" href="games-v2.css?v=20261111-1">
 <link rel="stylesheet" href="games-cat-a.css?v=20261118-b">

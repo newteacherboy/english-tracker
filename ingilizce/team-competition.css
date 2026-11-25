@@ -378,6 +378,182 @@ body #tab-meduakis.fr-team-view .dm-team-summary h2 {
 .dm-team-sheet { background: #fff; border-color: #bbbcc6; color: #211a35; }
 .dm-team-sheet :is(button, fieldset, input:not([type="radio"])) { border-color: #bbbcc6; background: #fff; }
 .dm-team-sheet button[type="submit"] { background: #b91f39; border-color: #a41c34; color: #fff; }
+
+/* Active 30 league students in Invite sheet */
+.dm-team-invite-section {
+  display: grid;
+  gap: 8px;
+  padding-top: 8px;
+  border-top: 1px solid #e7e5ee;
+}
+.dm-team-invite-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.dm-team-invite-head strong { font-size: 14px; color: #211a35; }
+.dm-team-invite-head small {
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: #eef1ff;
+  color: #3547e8;
+  font-size: 11px;
+  font-weight: 900;
+}
+.dm-team-invite-list {
+  display: grid;
+  gap: 6px;
+  max-height: min(40dvh, 270px);
+  overflow-y: auto;
+  padding-right: 2px;
+}
+.dm-team-invite-empty {
+  margin: 4px 0;
+  text-align: center;
+  font-size: 13px;
+  color: #6b6782;
+}
+.dm-team-invite-row {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 7px 9px;
+  border: 1px solid #e7e5ee;
+  border-radius: 13px;
+  background: #faf9fd;
+}
+.dm-team-invite-avatar {
+  width: 34px;
+  height: 34px;
+  flex: none;
+  border-radius: 50%;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  background: #ece8ff;
+  font-weight: 900;
+  color: #3547e8;
+}
+.dm-team-invite-avatar svg { width: 100%; height: 100%; display: block; }
+.dm-team-invite-meta {
+  flex: 1;
+  min-width: 0;
+  display: grid;
+  gap: 1px;
+}
+.dm-team-invite-meta b {
+  font-size: 13.5px;
+  color: #211a35;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.dm-team-invite-meta small { font-size: 11px; color: #6b6782; font-weight: 700; }
+.dm-team-sheet .dm-team-invite-btn {
+  flex: none;
+  min-height: 34px;
+  padding: 5px 11px;
+  border: 0;
+  border-bottom: 2.5px solid #2433b5;
+  border-radius: 10px;
+  background: linear-gradient(180deg, #4b63ff, #3547e8);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 900;
+}
+.dm-team-invite-sent {
+  flex: none;
+  padding: 5px 9px;
+  border-radius: 9px;
+  background: #e6f8ee;
+  color: #16794c;
+  font-size: 11.5px;
+  font-weight: 900;
+}
+
+/* Redesigned Team Duel Launch Panel */
+.dm-team-duel-panel {
+  display: grid;
+  gap: 10px;
+}
+.dm-team-duel-badge {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 12px;
+  border-radius: 13px;
+  background: linear-gradient(90deg, #fff4d6, #ffe8ec);
+  border: 1px solid #f7cf92;
+  color: #491429;
+  font-size: 12.5px;
+  font-weight: 800;
+}
+.dm-team-sheet .dm-team-duel-card {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  min-height: 76px;
+  padding: 12px 14px;
+  border: 0;
+  border-radius: 18px;
+  text-align: left;
+  color: #fff;
+  transition: transform .12s ease;
+}
+.dm-team-sheet .dm-team-duel-card:active { transform: translateY(2px); }
+.dm-team-sheet .dm-team-duel-card.is-live {
+  background: linear-gradient(135deg, #f44d57 0%, #c8213a 100%);
+  border-bottom: 4px solid #911327;
+  box-shadow: 0 8px 20px rgba(200, 33, 58, .28);
+}
+.dm-team-sheet .dm-team-duel-card.is-papi {
+  background: linear-gradient(135deg, #0f6f83 0%, #073e4d 100%);
+  border-bottom: 4px solid #042833;
+  box-shadow: 0 8px 20px rgba(7, 62, 77, .26);
+}
+.dm-team-duel-art {
+  width: 48px;
+  height: 48px;
+  flex: none;
+  border-radius: 14px;
+  display: grid;
+  place-items: center;
+  font-size: 24px;
+  background: rgba(255, 255, 255, .18);
+  border: 1.5px solid rgba(255, 255, 255, .32);
+}
+.dm-team-duel-art.is-papi-art {
+  background: #0a4253 url("friends-assets/papi-duel-petrol.webp") no-repeat 28% 12% / 365% auto;
+}
+.dm-team-duel-copy {
+  flex: 1;
+  min-width: 0;
+  display: grid;
+  gap: 2px;
+}
+.dm-team-duel-tag {
+  width: max-content;
+  padding: 1.5px 7px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, .2);
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: .02em;
+}
+.dm-team-duel-copy b { font-size: 16px; font-weight: 1000; line-height: 1.15; }
+.dm-team-duel-copy small { font-size: 11.5px; font-weight: 700; color: rgba(255, 255, 255, .86); line-height: 1.25; }
+.dm-team-duel-go {
+  flex: none;
+  font-style: normal;
+  font-size: 24px;
+  font-weight: 900;
+  opacity: .85;
+}
+
 @media (prefers-reduced-motion: reduce) {
   #tab-meduakis.fr-team-view .dm-arena-home [data-team-action]::after { animation: none; }
 }

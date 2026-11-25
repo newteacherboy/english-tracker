@@ -79,8 +79,12 @@ const categoryIcons={solo:0,free:2,konu:3,break:4,premium:5};
   document.body.append(overlay);document.addEventListener('keydown',keys);overlay.querySelector('[data-plans]').focus();
  }
  async function premiumEntry(card){
+  const launch=()=>{
+   if(window.dmTeam?.isPremiumSession?.()&&window.dmTeam.launchPremiumCard?.(card))return;
+   card.click();
+  };
   // These games check quota in their own status/start flow and can resume a paid run at zero remaining.
-  if(['towerActivity','kelimeGoluSolo'].includes(card.id)){card.click();return;}
+  if(['towerActivity','kelimeGoluSolo'].includes(card.id)){launch();return;}
   if(card.dataset.ggCategory!=='premium'||window.dmTeacherPortalMode){card.click();return;}
   if(card.dataset.accessPending)return;
   card.dataset.accessPending='1';
@@ -92,8 +96,8 @@ const categoryIcons={solo:0,free:2,konu:3,break:4,premium:5};
    const response=await fetch((typeof apiURL==='string'?apiURL:'https://nxfqlutulxqzqgwewssd.supabase.co/functions/v1/diji-api').replace(/diji-api.*$/,'premium-games'),{method:'POST',signal:controller.signal,headers:{'Content-Type':'application/json'},body:JSON.stringify({op:'access',game,t:token})});
    const access=await response.json();
    if(!response.ok||access.ok===false)throw Error(access.mesaj||'Haklar kontrol edilemedi.');
-   if(access.remaining<=0){exhaustedCard(access,{game,onReady:()=>card.click()});return;}
-   card.click();
+   if(access.remaining<=0){exhaustedCard(access,{game,onReady:()=>launch()});return;}
+   launch();
   }catch(error){window.alert(error.message||'Haklar kontrol edilemedi. Tekrar dene.');}
   finally{clearTimeout(timeout);delete card.dataset.accessPending;}
  }
