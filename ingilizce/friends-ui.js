@@ -205,7 +205,7 @@
   }
   function clubHeader(){return `<header class="club-hero"><button type="button" class="club-back" data-friend-action="home" aria-label="Arkadaşlar ana ekranına dön">‹</button><h2>Medu Akış</h2><button type="button" data-friend-action="share" aria-label="Davet et">＋</button></header>`;}
   let arenaView = 'team';
-  let rankView = 'weekly';
+  let rankView = 'individual';
   window.dmArenaTabs = active => `<nav class="dm-arena-tabs" aria-label="Takımım bölümleri">${[['team','Takımım'],['ranking','Sıralamam']].map(([value,label])=>`<button type="button" data-arena-view="${value}" aria-pressed="${value===active}">${label}</button>`).join('')}</nav>`;
 
   function homeHtml() {
@@ -213,15 +213,17 @@
     return `<div class="fr-home dm-arena-home">
       ${window.dmArenaTabs(arenaView)}
       ${ranking ? `<nav class="dm-arena-tabs dm-arena-ranks" aria-label="Sıralama türü">
-        <button type="button" data-rank-view="weekly" aria-pressed="${rankView==='weekly'}">Haftalık Lig</button>
+        <button type="button" data-rank-view="individual" aria-pressed="${rankView==='individual'}">Bireysel Lig</button>
         <button type="button" data-rank-view="duel" aria-pressed="${rankView==='duel'}">Düello Şampiyonları</button>
-      </nav>${rankView==='weekly'?leagueHtml():duelLeagueHtml()}` : (window.dmTeam?.html() || '')}
+        <button type="button" data-rank-view="teams" aria-pressed="${rankView==='teams'}">Takım Sıralaması</button>
+      </nav>${rankView==='individual'?'<div data-embedded-league>'+ (window.dmLeagueUI?.embedded()||'')+'</div>':rankView==='duel'?duelLeagueHtml():'<section class="dm-team-card dm-team-buttons"><button type="button" data-team-action="weekly">Haftalık Takım Sıralaması</button><button type="button" data-team-action="all">Tüm Zamanlar</button></section>'}` : (window.dmTeam?.html() || '')}
       <div id="frInvitation">${invitationHtml()}</div>
     </div>`;
   }
   function showArena(view) {
     window.dmDuelHomeClose?.();
     arenaView=view;
+    if(view==='ranking'){rankView='individual';window.dmLeagueUI?.setPeriod('alltime');}
     if(!root.classList.contains('active')) {
       maSekme='hub';maProfilId=null;
       originalOpen.call(window);

@@ -12,7 +12,7 @@ let mode='weekly',selected=null,limit=30,epoch=0,owner=who();
 const empty=()=>({rows:[],visualRows:[],loaded:false,busy:false,error:'',at:0});
 let states={weekly:empty(),alltime:empty()};
 function reset(){if(owner===who())return;clearRise();pendingRise=null;lastRise=null;owner=who();epoch++;mode='weekly';selected=null;limit=30;states={weekly:empty(),alltime:empty()};}
-function onScreen(){return typeof maSekme!=='undefined'&&maSekme==='lig'&&!(typeof maProfilId!=='undefined'&&maProfilId)&&root.classList.contains('active');}
+function onScreen(){return typeof maSekme!=='undefined'&&(maSekme==='lig'||!!root.querySelector('[data-embedded-league]'))&&!(typeof maProfilId!=='undefined'&&maProfilId)&&root.classList.contains('active');}
 /* One individual Papi character per bot, cropped from the same parkur badge artwork. */
 const virtualAvatarAssets={
  1:{src:'parkur-badges/v2/school-03.webp',col:4,row:0,cols:5,rows:4}, // Şimşek
@@ -342,7 +342,7 @@ function render(){reset();if(mode==='alltime'&&accessLevel()<15)mode='weekly';
  const rows=mode==='alltime'?state.rows:[...(state.visualRows.length?state.visualRows:state.rows)].filter(p=>p.league===code).sort((a,b)=>(a.displayRank??a.rank)-(b.displayRank??b.rank));
  const title=mode==='alltime'?'Efsaneler Ligi':leagues[code].name;
  const tabs='<nav class="dm-lig-period" aria-label="Sıralama dönemi"><button type="button" data-lig-mode="weekly" aria-pressed="'+(mode==='weekly')+'">Haftalık</button><button type="button" data-lig-mode="alltime" aria-pressed="'+(mode==='alltime')+'" aria-disabled="'+(accessLevel()<15)+'" data-dm-league-level="15">'+(accessLevel()<15?'🔒 ':'')+'Tüm Zamanlar'+(accessLevel()<15?'<small>15. seviye</small>':'')+'</button></nav>';
- const choices=mode==='weekly'?'<nav class="dm-lig-choices" aria-label="Haftalık ligler">'+Object.entries(leagues).map(([k,l])=>'<button type="button" data-lig-code="'+k+'" data-dm-league-level="'+l.level+'" aria-disabled="'+(accessLevel()<l.level)+'" aria-pressed="'+(k===code)+'">'+l.icon+' '+l.short+(accessLevel()<l.level?'<small>🔒 '+l.level+'. seviye</small>':'')+'</button>').join('')+'</nav>':'';
+ const choices=mode==='weekly'?'<nav class="dm-lig-choices" aria-label="Haftalık ligler">'+Object.entries(leagues).reverse().map(([k,l])=>'<button type="button" data-lig-code="'+k+'" data-dm-league-level="'+l.level+'" aria-disabled="'+(accessLevel()<l.level)+'" aria-pressed="'+(k===code)+'">'+l.icon+' '+l.short+(accessLevel()<l.level?'<small>🔒 '+l.level+'. seviye</small>':'')+'</button>').join('')+'</nav>':'';
  let content='';
  if(!state.loaded&&state.busy)content='<p class="dm-lig-message" role="status">Sıralama yükleniyor…</p>';
  else if(state.error&&!state.loaded)content='<p class="dm-lig-message" role="alert">Sıralama yüklenemedi. <button type="button" data-lig-retry>Yeniden dene</button></p>';
@@ -467,5 +467,5 @@ document.addEventListener('visibilitychange',()=>{if(document.hidden)clearRise()
 if(typeof MutationObserver==='function')new MutationObserver(()=>{if(!onScreen())clearRise();}).observe(root,{attributes:true,attributeFilter:['class'],childList:true});
 setInterval(()=>{if(!document.hidden&&onScreen())void load();},180000); // [Kota] 1 dk -> 3 dk
 async function openVirtualById(id){const find=()=>states.weekly.visualRows.find(p=>p.is_virtual&&String(p.bot_id??p.id).replace(/^(?:bot|virtual)[-_:]/,'')===String(id));let bot=find();if(!bot){await load(true,'weekly');bot=find();}if(bot)return openVirtualDirect(bot);return openDuelChooser();}
-window.dmLeagueUI={openVirtualById,refresh:()=>load(true),render,weeklyPreview,openVirtualDirect,openVirtualSelection,openDuelChooser,virtualAvatar,virtualTier,virtualMemberAvatar,refreshWeekly:()=>load(false,'weekly'),openWeekly:()=>{mode='weekly';selected=null;limit=30;window.maSekmeSec?.('lig');}};
+window.dmLeagueUI={embedded:()=>window.maLigHtml(),setPeriod:period=>{reset();mode=period;selected=null;limit=30;},openVirtualById,refresh:()=>load(true),render,weeklyPreview,openVirtualDirect,openVirtualSelection,openDuelChooser,virtualAvatar,virtualTier,virtualMemberAvatar,refreshWeekly:()=>load(false,'weekly'),openWeekly:()=>{mode='weekly';selected=null;limit=30;window.maSekmeSec?.('lig');}};
 })();

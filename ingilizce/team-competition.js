@@ -109,18 +109,16 @@
     const portraits=snapshot.members.map(person=>'<span title="'+escaped(person.name)+'">'+
       (window.karakterSvg?.(person.name,24)||escaped(person.name.slice(0,1)))+'</span>').join('');
     const reward = rewardRows();
-    const shared = '<section class="dm-team-card dm-team-buttons">'+
-      button('weekly','Haftalık Takım Sıralaması')+button('all','Tüm Zamanlar')+'</section>';
     if (!team) return '<section class="dm-team-card dm-team-summary">'+image(1)+
       '<div><h2>Takımını Kur</h2><p>Arkadaşlarınla birlikte yarış.</p></div></section>'+
       '<div class="dm-team-buttons">'+button('create','Takım Oluştur')+button('search','Takıma Katıl')+'</div>'+
-      requests()+reward+shared;
+      requests()+reward;
     return '<section class="dm-team-card dm-team-summary">'+image(team.crest)+
       '<div><h2>'+escaped(team.name)+'</h2><div class="dm-team-portraits">'+portraits+'</div><p>'+snapshot.members.length+'/6 üye</p><strong>'+
       number(snapshot.points)+' puan</strong><small>Ödül eşiği 150</small></div>'+
       button('settings','<span aria-hidden="true">⚙</span><span class="dm-arena-visually-hidden">Takım ayarları</span>')+'</section>'+
       '<div class="dm-team-buttons">'+button('premium','Premium Oyna')+button('duel','Düello Başlat')+'</div>'+
-      tasks()+shared+(snapshot.latest?'<p class="dm-team-info">'+escaped(snapshot.latest.name)+' takıma +10 puan kazandırdı.</p>':'')+requests()+reward+
+      tasks()+(snapshot.latest?'<p class="dm-team-info">'+escaped(snapshot.latest.name)+' takıma +10 puan kazandırdı.</p>':'')+requests()+reward+
       (bonus?'<p class="dm-team-info">Takım ödülünden kullanılabilir +'+number(bonus)+' enerji</p>':'');
   }
 

@@ -52,9 +52,6 @@ const defaultPreference={mode:'auto',disabled:[],manual:null};
  // One-time opening artwork; keep the administrator's saved selection for the next launch after expiry.
  function prefResolve(now,cal,pref){
   const today=turkeyDate(now);
-  if(today>='2026-11-21'&&today<='2026-11-26'){
-   return {id:'24-kasim',year:2026,variant:1,priority:200,file:'24-kasim-karanfil-2026.webp',today,temporary:true};
-  }
   if(pref?.mode==='normal')return null;
   if(pref?.mode==='manual'){
    const m=pref.manual;
@@ -62,6 +59,9 @@ const defaultPreference={mode:'auto',disabled:[],manual:null};
    if(m?.id==='24-kasim-zirve'&&m.file==='24-kasim-zirve-1.svg')return {id:m.id,file:m.file,year:+turkeyDate(now).slice(0,4),variant:1,priority:200,today:turkeyDate(now)};
    if(!m||!map[m.id]?.some(v=>m.file===m.id+'-'+v+'.jpg'))return null;
    return {id:m.id,file:m.file,year:+turkeyDate(now).slice(0,4),variant:1,priority:200,today:turkeyDate(now)};
+  }
+  if(today>='2026-11-21'&&today<='2026-11-26'){
+   return {id:'24-kasim',year:2026,variant:1,priority:200,file:'24-kasim-karanfil-2026.webp',today,temporary:true};
   }
   const result=resolve(now,cal);
   return result&&Array.isArray(pref?.disabled)&&pref.disabled.includes(result.id)?null:result;
@@ -176,7 +176,6 @@ const defaultPreference={mode:'auto',disabled:[],manual:null};
   function refreshPreferences(){
    if(typeof win.fetch!=='function'){decide(chosen);return;}
    /* [12 Kas 2026] Supabase yükü: seçim cihazda varsa sunucu 10 dakikada bir sorulur (her açılışta değil). */
-   try{const last=Number(store.getItem('dm-splash-checked-v2')||0);if(prefs&&Date.now()-last<600000){decide(chosen);return;}}catch(_){}
    win.fetch('https://nxfqlutulxqzqgwewssd.supabase.co/functions/v1/splash-settings',{cache:'no-store'})
     .then(r=>{if(!r.ok)throw Error('settings unavailable');return r.json();})
     .then(data=>{
