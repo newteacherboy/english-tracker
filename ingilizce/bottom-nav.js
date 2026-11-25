@@ -11,6 +11,12 @@ function restorePrimary(){
  if(base){base.classList.add('active');const nav=document.getElementById('bottomNavMobile');nav?.querySelectorAll('[data-ekran]').forEach(b=>b.classList.toggle('active',b.dataset.ekran===base.id));}
  else if(typeof window.dunyaAc==='function')window.dunyaAc();
 }
+function syncDuelDock(){
+ const page=document.getElementById('dmDuelHome'),dock=document.getElementById('bottomNavMobile');
+ if(!page||page.hidden||!dock)return;
+ const top=dock.getBoundingClientRect().top;
+ if(top>0)page.style.setProperty('--dm-duel-bottom',Math.max(0,window.innerHeight-top)+'px');
+}
 function syncProfileDock(){
  const panel=document.getElementById('rtProfileBackdrop'),dock=document.getElementById('bottomNavMobile');
  if(!panel||!dock)return;
@@ -136,7 +142,6 @@ window.dmDuelHomeAc=function(){
  if(!el){
   el=document.createElement('section');el.id='dmDuelHome';el.className='dm-duel-page';el.setAttribute('aria-label','Düello arenası');
   el.innerHTML=`<div class="dm-duel-page-inner">
-   <header class="dm-duel-page-head"><span class="dm-duel-mascot pi-wrap pi-static" aria-hidden="true"></span><h1>Düello</h1></header>
    <div class="dm-duel-arena">
     <div class="dm-duel-hero-stage">
      <div class="dm-duel-hero-copy">
@@ -171,10 +176,6 @@ window.dmDuelHomeAc=function(){
   });
   document.body.append(el);
  }
- const reopening = el.hidden || !el.querySelector('.dm-duel-mascot').firstElementChild;
- if (reopening) {
-  el.querySelector('.dm-duel-mascot').innerHTML = window.dmPapiSplash?.characterMarkup?.({intro:true}) || '';
- }
  el.hidden=false;
  if (!duelEntryAudio) {
   try {
@@ -182,7 +183,7 @@ window.dmDuelHomeAc=function(){
    duelEntryAudio.preload = 'auto';
   } catch {}
  }
- const dock=document.getElementById('bottomNavMobile');if(dock){if(!dock.dataset.duelPreviousZ)dock.dataset.duelPreviousZ=dock.style.zIndex||'auto';dock.style.setProperty('z-index','100000020','important');el.style.setProperty('--dm-duel-bottom',Math.max(68,window.innerHeight-dock.getBoundingClientRect().top)+'px');}
+ const dock=document.getElementById('bottomNavMobile');if(dock){if(!dock.dataset.duelPreviousZ)dock.dataset.duelPreviousZ=dock.style.zIndex||'auto';dock.style.setProperty('z-index','100000020','important');syncDuelDock();}
  document.querySelectorAll('#bottomNavMobile .bn-item').forEach(b=>{const yes=b.dataset.ekran==='tab-duel-home';b.classList.toggle('active',yes);if(yes)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');});
  const owner=typeof aktifOgrenciAdi!=='undefined'?String(aktifOgrenciAdi||''):'';
  const target=el.querySelector('.dm-duel-personal');
@@ -213,7 +214,7 @@ window.dmOpenGamesHome=function(){
 };
 
 document.addEventListener('click',e=>{const b=e.target.closest('#bottomNavMobile [data-ekran]');if(!b||b.disabled||b.classList.contains('active')||b.getAttribute('aria-disabled')==='true')return;try{navigator.vibrate?.(20);}catch{}},true);
-decorate();const nav=document.getElementById('bottomNavMobile');if(nav){if(window.ResizeObserver)new ResizeObserver(syncProfileDock).observe(nav);window.addEventListener('resize',syncProfileDock);new MutationObserver(decorate).observe(nav,{childList:true,subtree:true,attributes:true,attributeFilter:['class','data-ekran']});nav.addEventListener('click',e=>{const b=e.target.closest('[data-ekran]');if(b&&b.dataset.ekran!=='tab-profile-menu'){window.dmProfileReturnPending=false;close();}});}
+decorate();const nav=document.getElementById('bottomNavMobile');if(nav){const syncDock=()=>{syncProfileDock();syncDuelDock();};if(window.ResizeObserver)new ResizeObserver(syncDock).observe(nav);window.addEventListener('resize',syncDock);new MutationObserver(decorate).observe(nav,{childList:true,subtree:true,attributes:true,attributeFilter:['class','data-ekran']});nav.addEventListener('click',e=>{const b=e.target.closest('[data-ekran]');if(b&&b.dataset.ekran!=='tab-profile-menu'){window.dmProfileReturnPending=false;close();}});}
 document.addEventListener('dm:logout',()=>window.dmDuelHomeClose());
 document.addEventListener('dm:login',()=>{window.dmDuelHomeClose();window.dmProfileReturnPending=false;primaryId=window.dmTeacherPortalMode?'tab-aktiviteler':'tab-dunya';close(false);});
 document.addEventListener('click',e=>{
