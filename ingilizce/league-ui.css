@@ -263,6 +263,12 @@
 #tab-meduakis .dm-lig-weekly .dm-lig-winner strong {font-size:10px}
 
 /* Open podium on the standalone student ranking tab. */
+html:has(#tab-meduakis.active.fr-ranking-view),
+html[data-dm-theme]:has(#tab-meduakis.active.fr-ranking-view),
+body:has(#tab-meduakis.active.fr-ranking-view) {
+  --fr-surface: #fff;
+  background: #fff !important;
+}
 body #tab-meduakis.fr-ranking-view {
   --rank-ink: #491429;
   --rank-line: #cbb8be;
@@ -306,19 +312,54 @@ body #tab-meduakis.fr-ranking-view .akis-baslik > h2 {
 #tab-meduakis.fr-ranking-view .dm-open-filters button { font-size: clamp(10px, 2.9vw, 13px); }
 #tab-meduakis.fr-ranking-view .dm-open-filters small { display: block; font-size: 9px; margin-top: 2px; }
 #tab-meduakis.fr-ranking-view :is(.dm-arena-ranks,.dm-open-filters) button[aria-pressed="true"] {
-  border-color: #ef6b63;
-  background: linear-gradient(133deg,transparent 12%,#ffbfac60 13%,transparent 23%),linear-gradient(#e94e57,#bd2639);
+  overflow: hidden;
+  isolation: isolate;
   color: #fff;
-  box-shadow: 0 2px 0 #a82d3e;
 }
-body:has(#tab-meduakis.active.fr-ranking-view) #bottomNavMobile [data-ekran="tab-rankings"][data-menu-selected] .dm-nv2 {
-  background: linear-gradient(#ef4e58,#cc283f);
-  box-shadow: 0 2px 0 #9c2936;
+#tab-meduakis.fr-ranking-view .dm-arena-ranks button[aria-pressed="true"] {
+  border-color: #ef6b63;
+  background: linear-gradient(180deg,#f2555f,#c5263c);
+  box-shadow: 0 2px 0 #a12335, 0 0 14px rgba(233,78,87,.42);
 }
-@layer bilgiIslands {
-  body:has(#tab-meduakis.active.fr-ranking-view) #bottomNavMobile#bottomNavMobile.dm-nv2-on [data-ekran="tab-rankings"][data-menu-selected] {
-    --menu-label: #ad263e;
+#tab-meduakis.fr-ranking-view .dm-open-filters button[aria-pressed="true"] {
+  border-color: #4f67ff;
+  background: linear-gradient(180deg,#4b63ff,#2c41d8);
+  box-shadow: 0 2px 0 #1e2ea8, 0 0 14px rgba(59,82,240,.4);
+}
+#tab-meduakis.fr-ranking-view :is(.dm-arena-ranks,.dm-open-filters) button[aria-pressed="true"]::after {
+  content: "";
+  position: absolute;
+  inset: -20% auto -20% -55%;
+  width: 44%;
+  background: linear-gradient(105deg,transparent,rgba(255,255,255,.55) 48%,transparent);
+  transform: skewX(-24deg);
+  pointer-events: none;
+  z-index: 1;
+}
+@media (prefers-reduced-motion: no-preference) {
+  #tab-meduakis.fr-ranking-view :is(.dm-arena-ranks,.dm-open-filters) button[aria-pressed="true"]::after {
+    animation: dm-rank-btn-sheen 2.9s ease-in-out infinite;
   }
+  #tab-meduakis.fr-ranking-view .dm-arena-ranks button[aria-pressed="true"] {
+    animation: dm-rank-glow-coral 2.9s ease-in-out infinite !important;
+  }
+  #tab-meduakis.fr-ranking-view .dm-open-filters button[aria-pressed="true"] {
+    animation: dm-rank-glow-blue 2.9s ease-in-out infinite !important;
+  }
+}
+@keyframes dm-rank-btn-sheen {
+  0%, 30% { left: -55%; opacity: 0; }
+  38% { opacity: 1; }
+  72% { left: 130%; opacity: 1; }
+  78%, 100% { left: 130%; opacity: 0; }
+}
+@keyframes dm-rank-glow-coral {
+  0%, 100% { box-shadow: 0 2px 0 #a12335, 0 0 10px rgba(233,78,87,.32); filter: brightness(1); }
+  50% { box-shadow: 0 2px 0 #a12335, 0 0 20px rgba(242,85,95,.68); filter: brightness(1.08); }
+}
+@keyframes dm-rank-glow-blue {
+  0%, 100% { box-shadow: 0 2px 0 #1e2ea8, 0 0 10px rgba(59,82,240,.32); filter: brightness(1); }
+  50% { box-shadow: 0 2px 0 #1e2ea8, 0 0 20px rgba(75,99,255,.68); filter: brightness(1.08); }
 }
 #tab-meduakis.fr-ranking-view .dm-open-ranking {
   color: var(--rank-ink);
@@ -442,44 +483,54 @@ body:has(#tab-meduakis.active.fr-ranking-view) #bottomNavMobile [data-ekran="tab
   fill: currentColor;
 }
 
-/* Fit the first seven and the expand control above the measured student dock. */
+/* Fit the first eight and pin the expand control right above the student dock. */
 #tab-meduakis.fr-ranking-view .dm-arena-home:has(.dm-open-ranking) {
-  gap: clamp(3px, 1cqh, 8px);
-  padding-bottom: 3px;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(3px, .9cqh, 7px);
+  padding-bottom: 2px;
 }
 #tab-meduakis.fr-ranking-view .dm-arena-ranks button,
 #tab-meduakis.fr-ranking-view .dm-open-filters button,
 #tab-meduakis.fr-ranking-view .dm-open-more {
-  min-height: clamp(32px, 7cqh, 43px);
+  min-height: clamp(32px, 6.4cqh, 42px);
 }
-#tab-meduakis.fr-ranking-view .dm-open-ranking { padding-bottom: 4px; }
-#tab-meduakis.fr-ranking-view .dm-open-podium { margin: 7px 0 4px; }
+#tab-meduakis.fr-ranking-view .dm-open-ranking {
+  flex: 1 0 auto;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 2px;
+}
+#tab-meduakis.fr-ranking-view .dm-open-podium { margin: 5px 0 3px; }
 #tab-meduakis.fr-ranking-view .dm-open-place { gap: 3px; }
-#tab-meduakis.fr-ranking-view .dm-open-crown { font-size: clamp(15px, 3.5cqh, 24px); }
+#tab-meduakis.fr-ranking-view .dm-open-crown { font-size: clamp(15px, 3.2cqh, 22px); }
 #tab-meduakis.fr-ranking-view .dm-open-place .dm-lig-avatar {
-  width: clamp(32px, min(14vw, 10cqh), 67px);
+  width: clamp(32px, min(13.5vw, 9.5cqh), 64px);
 }
 #tab-meduakis.fr-ranking-view .dm-open-place-1 .dm-lig-avatar {
-  width: clamp(39px, min(17vw, 13cqh), 83px);
+  width: clamp(39px, min(16.5vw, 12.2cqh), 78px);
 }
-#tab-meduakis.fr-ranking-view .dm-open-step { height: clamp(26px, 8cqh, 58px); }
-#tab-meduakis.fr-ranking-view .dm-open-place-1 .dm-open-step { height: clamp(35px, 10cqh, 80px); }
-#tab-meduakis.fr-ranking-view .dm-open-place-3 .dm-open-step { height: clamp(22px, 7cqh, 49px); }
-#tab-meduakis.fr-ranking-view .dm-open-progress { margin: 7px 0 4px; }
-#tab-meduakis.fr-ranking-view .dm-open-ranking .dm-lig-list { gap: 4px; margin-top: 6px; }
+#tab-meduakis.fr-ranking-view .dm-open-step { height: clamp(25px, 7.2cqh, 52px); }
+#tab-meduakis.fr-ranking-view .dm-open-place-1 .dm-open-step { height: clamp(34px, 9.2cqh, 72px); }
+#tab-meduakis.fr-ranking-view .dm-open-place-3 .dm-open-step { height: clamp(21px, 6.2cqh, 44px); }
+#tab-meduakis.fr-ranking-view .dm-open-progress { margin: 5px 0 3px; }
+#tab-meduakis.fr-ranking-view .dm-open-ranking .dm-lig-list { gap: 4px; margin: 4px 0 6px; }
 #tab-meduakis.fr-ranking-view .dm-open-ranking .dm-lig-row {
-  min-height: clamp(32px, 7cqh, 49px);
-  padding: 3px 8px;
+  min-height: clamp(29px, 6.1cqh, 43px);
+  padding: 2.5px 8px;
 }
 #tab-meduakis.fr-ranking-view .dm-open-ranking .dm-lig-row .dm-lig-avatar {
-  --size: clamp(24px, 5.5cqh, 38px) !important;
+  --size: clamp(23px, 5cqh, 35px) !important;
 }
 #tab-meduakis.fr-ranking-view .dm-open-ranking .dm-lig-row .dm-lig-person > small { margin-top: 1px; }
 #tab-meduakis.fr-ranking-view .dm-open-more {
   position: sticky;
-  bottom: 3px;
+  bottom: 2px;
   z-index: 3;
-  margin-top: 7px;
+  margin-top: auto;
+  padding-top: 5px;
+  padding-bottom: 5px;
 }
 @container (max-height: 490px) {
   #tab-meduakis.fr-ranking-view .dm-open-place .dm-lig-avatar { margin-bottom: 4px; }

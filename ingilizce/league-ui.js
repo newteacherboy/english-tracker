@@ -79,8 +79,8 @@ function openRankingContent(rows, state, me) {
  const weekly = mode==='weekly';
  const players = weekly?rows.filter(p=>Number(p.xp)>0):rows;
  const idle = weekly?rows.filter(p=>!(Number(p.xp)>0)):[];
- const visible = showRankingAll?players:players.slice(0,7);
- const more = !showRankingAll&&(players.length>7||idle.length>0);
+ const visible = showRankingAll?players:players.slice(0,8);
+ const more = !showRankingAll&&(players.length>8||idle.length>0);
  let list = openPodium(visible);
  if (weekly && state.loaded) {
   const higher=me&&state.rows.filter(p=>p.league===me.league&&p.rank<me.rank).sort((a,b)=>b.rank-a.rank)[0];
