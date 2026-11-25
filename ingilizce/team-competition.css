@@ -238,3 +238,146 @@ body > dialog.dm-team-sheet h2 {
 @keyframes dmTeamActionShine {0%,55%{left:-65%}85%,100%{left:140%}}
 @media(prefers-reduced-motion:reduce){.dm-team-buttons>[data-team-action]::after {animation:none}}
 img.dm-team-action-icon {width:28px;height:28px;object-fit:contain;flex:none}
+
+/* The two Team states are white surfaces with neutral borders. */
+html body #tab-meduakis.dc-fullscreen-overlay.fr-home-view.fr-team-view,
+body #tab-meduakis.fr-team-view .ma-wrap,
+body #tab-meduakis.fr-team-view #maEkran {
+  background: #fff !important;
+}
+body:has(#tab-meduakis.active.fr-team-view) { background: #fff !important; }
+#tab-meduakis.fr-team-view { --fr-ink: #211a35; --fr-surface: #fff; }
+body #tab-meduakis.fr-team-view .akis-baslik h2 {
+  color: #211a35 !important;
+  -webkit-text-fill-color: #211a35 !important;
+}
+#tab-meduakis.fr-team-view .dm-arena-home {
+  --team-ink: #211a35;
+  --team-line: #bbbcc6;
+  --team-lip: #dddde4;
+  color: var(--team-ink);
+  gap: clamp(10px, 2dvh, 20px);
+}
+#tab-meduakis.fr-team-view .dm-arena-home :is(.dm-team-card,.dm-team-info),
+#tab-meduakis.fr-team-view .dm-arena-home [data-team-action] {
+  background: #fff;
+  color: var(--team-ink);
+  border: 1px solid var(--team-line);
+  box-shadow: 0 2px 0 var(--team-lip);
+}
+body #tab-meduakis.fr-team-view .dm-team-summary h2 {
+  color: #211a35 !important;
+  -webkit-text-fill-color: #211a35 !important;
+}
+#tab-meduakis.fr-team-view .dm-team-summary-actions [data-team-action="invite"] {
+  padding: 5px 7px;
+  font-size: clamp(10px, 2.8vw, 13px);
+}
+#tab-meduakis.fr-team-view .dm-team-summary .dm-team-crest { border-radius: 0; }
+#tab-meduakis.fr-team-view .dm-team-intro {
+  display: grid;
+  gap: 8px;
+  text-align: center;
+}
+#tab-meduakis.fr-team-view .dm-team-intro .dm-team-crest {
+  margin-inline: auto;
+  width: clamp(120px, min(46vw, 29dvh), 225px);
+  border-radius: 0;
+}
+#tab-meduakis.fr-team-view .dm-team-intro h2 {
+  color: var(--team-ink) !important;
+  -webkit-text-fill-color: var(--team-ink) !important;
+  font: 950 clamp(22px, 6.8vw, 38px)/1.12 Nunito, system-ui, sans-serif;
+  margin: 0 0 4px;
+}
+#tab-meduakis.fr-team-view .dm-team-intro p { margin: 0; font-size: clamp(13px, 4vw, 18px); }
+#tab-meduakis.fr-team-view .dm-team-entry { display: grid; gap: 12px; }
+#tab-meduakis.fr-team-view .dm-team-entry > button {
+  display: grid;
+  grid-template-columns: clamp(64px, 24%, 126px) minmax(0, 1fr) auto;
+  align-items: center;
+  gap: clamp(5px, 2vw, 13px);
+  padding: 4px clamp(8px, 3vw, 18px);
+  min-height: clamp(63px, 11dvh, 104px);
+  text-align: start;
+  font-size: clamp(16px, 5vw, 26px);
+  border-radius: 17px;
+}
+#tab-meduakis.fr-team-view .dm-team-entry small {
+  display: block;
+  font-size: clamp(11px, 3.1vw, 15px);
+  font-weight: 650;
+  line-height: 1.25;
+  margin-top: 4px;
+}
+#tab-meduakis.fr-team-view .dm-team-entry em { font-style: normal; font-size: 1.45em; }
+#tab-meduakis.fr-team-view .dm-team-entry [data-team-action="search"] em { color: #b5263f; }
+.dm-team-entry-art {
+  display: block;
+  width: 100%;
+  height: clamp(48px, 9.5dvh, 84px);
+  background: center / contain no-repeat;
+}
+.dm-team-entry [data-team-action="create"] .dm-team-entry-art { background-image: url("friends-assets/team-create-papi.webp"); }
+.dm-team-entry [data-team-action="search"] .dm-team-entry-art { background-image: url("friends-assets/team-join-papi.webp"); }
+#tab-meduakis.fr-team-view .dm-arena-home :is([data-team-action="create"],[data-team-action="duel"]) {
+  background: linear-gradient(165deg, #e43b50, #b91f39) !important;
+  color: #fff;
+  border-color: #a41c34;
+  box-shadow: inset 0 2px 0 #ffc4ba9c, 0 3px 0 #93122b;
+}
+#tab-meduakis.fr-team-view .dm-arena-home [data-team-action="premium"] { background: #fff !important; }
+#tab-meduakis.fr-team-view .dm-arena-home :is([data-team-action="create"],[data-team-action="premium"],[data-team-action="duel"]) {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+#tab-meduakis.fr-team-view .dm-arena-home :is([data-team-action="create"],[data-team-action="premium"],[data-team-action="duel"])::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(112deg, transparent 43%, #fff8 50%, transparent 56%);
+  transform: translateX(-100%);
+  animation: dm-team-glint 4.5s ease-in-out infinite;
+}
+#tab-meduakis.fr-team-view .dm-arena-home [data-team-action="premium"]::after {
+  background: linear-gradient(112deg, transparent 43%, #ffcf6466 50%, transparent 58%);
+  animation-delay: .8s;
+}
+#tab-meduakis.fr-team-view .dm-arena-home [data-team-action="duel"]::after { animation-delay: 1.6s; }
+@keyframes dm-team-glint {
+  0%, 66% { transform: translateX(-100%); opacity: 0; }
+  74% { opacity: 1; }
+  90%, 100% { transform: translateX(100%); opacity: 0; }
+}
+#tab-meduakis.fr-team-view .dm-team-tasks { display: grid; gap: 8px; }
+#tab-meduakis.fr-team-view .dm-team-tasks h3 { margin: 0; }
+#tab-meduakis.fr-team-view .dm-team-task {
+  grid-template-columns: 28px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 3px 8px;
+  padding: 7px 8px;
+  border: 1px solid var(--team-line);
+  border-radius: 10px;
+  box-shadow: 0 1px 0 var(--team-lip);
+}
+.dm-team-task-art {
+  grid-row: span 2;
+  display: grid;
+  place-items: center;
+  color: #bd263e;
+  font: 800 22px/1 system-ui;
+}
+.dm-team-task-art :is(img,svg) { width: 23px; height: 23px; object-fit: contain; }
+#tab-meduakis.fr-team-view .dm-team-task progress {
+  grid-column: 2 / -1;
+  accent-color: #ce2d47;
+  margin: 0;
+}
+.dm-team-sheet { background: #fff; border-color: #bbbcc6; color: #211a35; }
+.dm-team-sheet :is(button, fieldset, input:not([type="radio"])) { border-color: #bbbcc6; background: #fff; }
+.dm-team-sheet button[type="submit"] { background: #b91f39; border-color: #a41c34; color: #fff; }
+@media (prefers-reduced-motion: reduce) {
+  #tab-meduakis.fr-team-view .dm-arena-home [data-team-action]::after { animation: none; }
+}

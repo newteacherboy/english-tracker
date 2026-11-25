@@ -45,3 +45,37 @@ body :is(#bzPerde,#dmStoryLesson,.game-modal-overlay,#meteorGame,#wordWheel,#pap
  body .dm-unified-wallet [data-pw-value]{font-variant-numeric:tabular-nums;line-height:14px!important;letter-spacing:-.4px!important}
  body .dm-unified-wallet [data-pw-minutes]{font-size:8px!important;line-height:9px!important}
 }
+
+/* Team and Duel share the live counters with the rest of the app. */
+html body :is(#tab-meduakis,#dmDuelHome) .dm-has-wallet > .dm-unified-wallet.dm-wallet-energy-xp {
+  display: flex !important;
+  flex-wrap: nowrap;
+  justify-content: center;
+  gap: clamp(17px, 6vw, 32px) !important;
+  margin: 0 !important;
+}
+html body :is(#tab-meduakis,#dmDuelHome) .dm-has-wallet > .dm-wallet-energy-xp > :not([data-pw="energy"],[data-pw="xp"]) {
+  display: none !important;
+}
+html body :is(#tab-meduakis,#dmDuelHome) .dm-has-wallet > .dm-wallet-energy-xp.dm-papi-wallet > :is([data-pw="energy"],[data-pw="xp"]) {
+  display: flex !important;
+  flex-direction: row !important;
+  gap: 5px !important;
+  height: 44px !important;
+  min-height: 44px !important;
+  padding: 0 6px !important;
+  background: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  color: #211a35 !important;
+  -webkit-text-fill-color: #211a35 !important;
+  font-size: clamp(13px, 3.6vw, 17px) !important;
+}
+html body .dm-wallet-energy-xp.dm-papi-wallet .dm-pw-art:not(.dm-pw-papi) {
+  width: 24px !important;
+  height: 24px !important;
+}
+html[data-dm-theme="night"] body #dmDuelHome .dm-wallet-energy-xp.dm-papi-wallet > :is([data-pw="energy"],[data-pw="xp"]) {
+  color: #f3f8ff !important;
+  -webkit-text-fill-color: #f3f8ff !important;
+}

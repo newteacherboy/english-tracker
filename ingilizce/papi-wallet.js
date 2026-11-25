@@ -26,7 +26,7 @@ function coveredBy(hit){
 }
 function onTop(){
  if(!visible(hud))return false;
- return Object.values(buttons).every(e=>{const r=e.getBoundingClientRect(),x=r.left+r.width/2,y=r.top+r.height/2;
+ return Object.values(buttons).filter(visible).every(e=>{const r=e.getBoundingClientRect(),x=r.left+r.width/2,y=r.top+r.height/2;
   if(x<0||y<0||x>innerWidth||y>innerHeight)return false;return !coveredBy(document.elementFromPoint(x,y));});
 }
 function detach(){window.dmNotificationCenter?.detach();hud.parentElement?.classList.remove('dm-has-wallet');hud.remove();}
@@ -34,10 +34,17 @@ function run(){
  if(typeof aktifOgrenciAdi==='undefined'||!aktifOgrenciAdi){detach();return;}
  if([...document.querySelectorAll(activity)].some(visible)){detach();return;}
  const friends=document.getElementById('tab-meduakis');
- const host=visible(friends)?friends.querySelector('.fr-wallet-host'):selectors.flatMap(s=>[...document.querySelectorAll(s)]).find(visible);
- if(visible(friends)&&!friends.classList.contains('fr-home-view')){detach();return;}if(!host){detach();return;}
+ const duel=document.getElementById('dmDuelHome');
+ const duelOpen=visible(duel);
+ const friendsOpen=visible(friends);
+ const host=duelOpen?duel.querySelector('.dm-duel-wallet-host'):friendsOpen?friends.querySelector('.fr-wallet-host'):selectors.flatMap(s=>[...document.querySelectorAll(s)]).find(visible);
+ if(!host||(!duelOpen&&friendsOpen&&!friends.classList.contains('fr-home-view'))){detach();return;}
+ const compactHud=duelOpen || (friendsOpen&&friends.classList.contains('fr-team-view'));
+ hud.classList.toggle('dm-wallet-energy-xp',compactHud);
+ hud.setAttribute('aria-label',compactHud?'Enerji ve XP':'Enerji, altın, XP, kuş tüyü ve bildirimler');
+ buttons.gold.hidden=compactHud;
  if(hud.parentElement!==host){detach();host.prepend(hud);host.classList.add('dm-has-wallet');window.dispatchEvent(new Event('resize'));}
- const dailyVisible=!!window.DijiDailyGift&&!window.dmGuestMode&&!['teacher','dijimedu_demo'].includes(String(aktifOgrenciAdi).toLowerCase())&&!window.dmTeacherPortalMode&&(!window.siniftaOynananOgrenci)&&(!!window.DijiPapiWing||!!host.closest('#tab-dunya'));
+ const dailyVisible=!compactHud&&!!window.DijiDailyGift&&!window.dmGuestMode&&!['teacher','dijimedu_demo'].includes(String(aktifOgrenciAdi).toLowerCase())&&!window.dmTeacherPortalMode&&(!window.siniftaOynananOgrenci)&&(!!window.DijiPapiWing||!!host.closest('#tab-dunya'));
  if(dailyVisible){daily.hidden=false;if(daily.parentElement!==hud)hud.append(daily);window.dmNotificationCenter?.mount(hud);}else{daily.remove();window.dmNotificationCenter?.detach();}hud.classList.toggle('dm-has-daily-streak',dailyVisible);hud.classList.toggle('dm-has-center',dailyVisible&&!!window.dmNotificationCenter);window.DijiDailyGift?.decorateButton(daily);if(dailyVisible)window.DijiDailyGift?.onParkurVisible();
  const y=typeof yo==='undefined'?{}:yo||{},time=window.dmActiveTime?.summary()||{stars:0,seconds:0},level=window.dmProgression?.level?.()||1;
  const energy=window.genelEnerjiKalan,values={energy:energy==null?'—':format(energy),gold:compact(y.altin),xp:compact(y.totalXp),};
@@ -52,14 +59,14 @@ function run(){
  for(const key of ['energy','gold','xp']){const before=seen[key],now=raw[key];if(now==null)continue;
   if(before!=null&&now>before&&!settled){shown[key]=before;continue;} // göstergede eski değer kalsın, artış sonra uçarak gelsin
   seen[key]=now;
-  if(before!=null&&now>before&&window.dmRewardFx){const e=buttons[key],text=e.querySelector('[data-pw-value]');window.dmRewardFx.fly({kind:key,amount:now-before,target:e,counter:text,fromValue:before,toValue:now,format:key==='energy'?format:compact});}}
+  if(visible(buttons[key])&&before!=null&&now>before&&window.dmRewardFx){const e=buttons[key],text=e.querySelector('[data-pw-value]');window.dmRewardFx.fly({kind:key,amount:now-before,target:e,counter:text,fromValue:before,toValue:now,format:key==='energy'?format:compact});}}
  for(const [key,value0] of Object.entries(values)){const e=buttons[key],text=e.querySelector('[data-pw-value]');if(text.dataset.dmCounting)continue;const value=key in shown?(key==='energy'?format:compact)(shown[key]):value0;if(text.textContent!==value)text.textContent=value;if(e.getAttribute('aria-label')!==labels[key]){e.setAttribute('aria-label',labels[key]);e.title=labels[key];}}
 
 }
 function refresh(){run();if(typeof aktifOgrenciAdi!=='undefined'&&aktifOgrenciAdi)window.dmDayNightTheme?.updateHint();}
 let queued=false;function schedule(){if(queued||document.hidden)return;queued=true;requestAnimationFrame(()=>{queued=false;refresh();});}
 // Destination changes update in the next frame; value-only changes retain the icon DOM.
-const relevant=selectors.join(',')+','+activity+',.dc-fullscreen-overlay,#panel-alani';
+const relevant=selectors.join(',')+','+activity+',.dc-fullscreen-overlay,#panel-alani,#dmDuelHome';
 new MutationObserver(ms=>{if(ms.some(m=>{
  if(hud.contains(m.target)||m.target===hud)return false;
  if(m.type==='attributes')return m.target.matches?.(relevant);
@@ -67,7 +74,7 @@ new MutationObserver(ms=>{if(ms.some(m=>{
  return nodes.some(n=>n.matches(relevant)||n.querySelector(relevant))||nodes.length>0&&m.target.matches?.(relevant);
 } ))schedule();}).observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['class','style','hidden']});
 setInterval(()=>{if(!document.hidden)refresh();},1000);
-for(const name of ['dm:time','dm:login','dm:state','dm:view-restored'])document.addEventListener(name,schedule);
+for(const name of ['dm:time','dm:login','dm:state','dm:view-restored','dm:duel-home-close'])document.addEventListener(name,schedule);
 document.addEventListener('visibilitychange',schedule);
 window.DijiMeduPapiWallet={refresh};refresh();
 })();

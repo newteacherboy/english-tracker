@@ -81,8 +81,9 @@
       ['Düello Günü',snapshot.tasks.duel,3],
       ['Birlikte Oyna',snapshot.tasks.people,2]
     ];
-    return '<section class="dm-team-card dm-team-tasks"><h3>Günlük Görevler</h3>' + items.map(([label, done, goal]) =>
-      '<div class="dm-team-task"><span>'+label+'</span><b>'+Math.min(done,goal)+'/'+goal+
+    const icons=['<img src="premium-assets/kelime-eslestirme/icon-crown.webp" alt="">','<span aria-hidden="true">⚔</span>','<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="9" cy="7" r="3"/><circle cx="17" cy="8" r="2.5"/><path d="M1 20v-2a7 7 0 0 1 14 0v2zm16 0v-2a9 9 0 0 0-1.8-5.4A5.5 5.5 0 0 1 23 18v2z"/></svg>'];
+    return '<section class="dm-team-card dm-team-tasks"><h3>Günlük Görevler</h3>' + items.map(([label, done, goal],index) =>
+      '<div class="dm-team-task"><i class="dm-team-task-art">'+icons[index]+'</i><span>'+label+'</span><b>'+Math.min(done,goal)+'/'+goal+
       '</b><progress max="'+goal+'" value="'+Math.min(done,goal)+'" aria-label="'+label+'"></progress></div>').join('') +
       (items.every(([,done,goal])=>done>=goal)?'<small>Görevler tamamlandı. Puan toplamaya devam edebilirsin.</small>':'')+'</section>';
   }
@@ -109,9 +110,11 @@
     const portraits=snapshot.members.map(person=>'<span title="'+escaped(person.name)+'">'+
       (window.karakterSvg?.(person.name,24)||escaped(person.name.slice(0,1)))+'</span>').join('');
     const reward = rewardRows();
-    if (!team) return '<section class="dm-team-card dm-team-summary">'+image(1)+
+    if (!team) return '<section class="dm-team-intro">'+image(1)+
       '<div><h2>Takımını Kur</h2><p>Arkadaşlarınla birlikte yarış.</p></div></section>'+
-      '<div class="dm-team-buttons">'+button('create','Takım Oluştur')+button('search','Takıma Katıl')+'</div>'+
+      '<div class="dm-team-entry">'+
+      button('create','<i class="dm-team-entry-art" aria-hidden="true"></i><span><b>Takım Oluştur</b></span><em aria-hidden="true">›</em>')+
+      button('search','<i class="dm-team-entry-art" aria-hidden="true"></i><span><b>Takıma Katıl</b><small>Var olan bir takıma katılarak hemen yarışa başla.</small></span><em aria-hidden="true">›</em>')+'</div>'+
       requests()+reward;
     return '<section class="dm-team-card dm-team-summary">'+image(team.crest)+
       '<div><h2>'+escaped(team.name)+'</h2><div class="dm-team-portraits">'+portraits+'</div><p>'+snapshot.members.length+'/3 üye</p><strong>'+

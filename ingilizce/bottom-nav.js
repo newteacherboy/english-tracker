@@ -142,6 +142,7 @@ window.dmDuelHomeAc=function(){
  if(!el){
   el=document.createElement('section');el.id='dmDuelHome';el.className='dm-duel-page';el.setAttribute('aria-label','Düello arenası');
   el.innerHTML=`<div class="dm-duel-page-inner">
+   <div class="dm-duel-wallet-host"></div>
    <div class="dm-duel-arena">
     <div class="dm-duel-hero-stage">
      <div class="dm-duel-hero-copy">

@@ -246,6 +246,7 @@
     const home = maSekme === 'hub' && !maProfilId;
     root.classList.toggle('fr-home-view',home);
     root.classList.toggle('fr-ranking-view',home && arenaView==='ranking');
+    root.classList.toggle('fr-team-view',home && arenaView==='team');
     root.classList.toggle('fr-club-view',maSekme==='akis'&&!maProfilId);
     root.dataset.friendsView = maProfilId ? 'profile' : maSekme;
     if(root.classList.contains('active') && document.getElementById('dmDuelHome')?.hidden!==false){
@@ -383,6 +384,11 @@
   function mountPeopleButton(){
     const header=root.querySelector('.akis-baslik');if(!header)return;
     let actions=header.querySelector('.fr-unified-actions');
+    if(root.classList.contains('fr-team-view')){
+      if(peopleView && !peopleView.duel)closePeople(false);
+      actions?.remove();
+      return;
+    }
     if(!actions){actions=document.createElement('div');actions.className='fr-unified-actions';header.append(actions);}
     let button=header.querySelector('.fr-people-toggle');
     if(!button){

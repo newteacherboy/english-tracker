@@ -552,3 +552,29 @@ html[data-dm-theme="night"] #dmDuelHome.dm-duel-page {
   #dmDuelHome.dm-duel-page .dm-duel-options { gap: 8px; }
   #dmDuelHome.dm-duel-page .dm-duel-personal { gap: 2px; }
 }
+
+#dmDuelHome .dm-duel-wallet-host:empty { display: none; }
+#dmDuelHome .dm-duel-wallet-host { flex: 0 0 auto; }
+#dmDuelHome.dm-duel-page .dm-duel-page-inner { padding-top: 0; }
+@media (orientation: landscape) and (max-height: 520px) {
+  #dmDuelHome.dm-duel-page .dm-duel-page-inner { grid-template-rows: auto auto 1fr; }
+  #dmDuelHome .dm-duel-wallet-host { grid-area: 1 / 1 / 2 / -1; }
+  #dmDuelHome.dm-duel-page .dm-duel-arena { grid-area: 2 / 1 / 4 / 2; }
+  #dmDuelHome .dm-duel-options { grid-area: 2 / 2; }
+  #dmDuelHome .dm-duel-stats-card { grid-area: 3 / 2; }
+}
+
+@media (max-height: 600px) {
+  #dmDuelHome.dm-duel-page .dm-duel-page-inner { gap: 6px; padding-bottom: 5px; }
+}
+@media (orientation: portrait) and (min-height: 601px) and (max-height: 760px) {
+  #dmDuelHome.dm-duel-page .dm-duel-hero-stage { height: clamp(160px, min(53vw, 30dvh), 230px); }
+  #dmDuelHome.dm-duel-page .dm-duel-stats-card { margin-top: 0; }
+}
+@media (orientation: landscape) and (max-height: 520px) {
+  #dmDuelHome.dm-duel-page .dm-duel-page-inner { align-content: start; }
+  #dmDuelHome.dm-duel-page .dm-duel-options button { min-height: 44px; font-size: 14px; }
+  #dmDuelHome.dm-duel-page .dm-duel-stats-title { font-size: 14px; }
+  #dmDuelHome.dm-duel-page .dm-duel-personal b { font-size: 21px; }
+  #dmDuelHome.dm-duel-page .dm-duel-personal small { font-size: 11px; }
+}
