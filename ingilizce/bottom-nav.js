@@ -1,6 +1,6 @@
 /* Five icon-only student destinations (Ders Çalış only in the teacher panel, 11 Kas 2026) and the approved profile popover. */
 (()=>{'use strict';
-const layout=window.dmTeacherPortalMode?[['tab-aktiviteler','Oyunlar','game'],['tab-derscalis','Ders Çalış','book'],['tab-profile-menu','Profilim','profile'],['tab-teacher-portal','Öğretmen Paneli','teacher']]:[['tab-dunya','Parkur','path'],['tab-aktiviteler','Oyunlar','game'],['tab-duel-home','Düello','duel'],['tab-meduakis','Takımım','friends'],['tab-profile-menu','Profil','profile']];
+const layout=window.dmTeacherPortalMode?[['tab-aktiviteler','Oyunlar','game'],['tab-derscalis','Ders Çalış','book'],['tab-profile-menu','Profilim','profile'],['tab-teacher-portal','Öğretmen Paneli','teacher']]:[['tab-duel-home','Düello','duel'],['tab-dunya','Parkur','path'],['tab-aktiviteler','Oyunlar','game'],['tab-meduakis','Takımım','friends'],['tab-rankings','Sıralamam','ranking'],['tab-profile-menu','Profil','profile']];
 // A profile dialog always has a real primary destination beneath it.
 let primaryId=window.dmTeacherPortalMode?'tab-aktiviteler':'tab-dunya';
 function rememberPrimary(){const id=layout.slice(0,-1).map(x=>x[0]).find(id=>document.getElementById(id)?.classList.contains('active'));if(id)primaryId=id;}
@@ -108,11 +108,15 @@ function decorate(){const nav=document.getElementById('bottomNavMobile');if(!nav
   button.innerHTML='<span class="bn-icon"></span><span class="bn-label">Düello</span>';
   nav.append(button);
  }
+ if(!window.dmTeacherPortalMode&&!nav.querySelector('[data-ekran="tab-rankings"]')){
+  const button=document.createElement('button');button.type='button';button.className='bn-item';
+  button.dataset.ekran='tab-rankings';button.innerHTML='<span class="bn-icon"></span><span class="bn-label">Sıralamam</span>';nav.append(button);
+ }
  const expected=new Set(layout.map(x=>x[0]));
  nav.querySelectorAll('.bn-item[data-ekran]').forEach(b=>{if(!expected.has(b.dataset.ekran))b.remove();});
  const current=[...nav.querySelectorAll('.bn-item[data-ekran]')].map(b=>b.dataset.ekran);if(current.join('|')!==layout.map(x=>x[0]).filter(id=>current.includes(id)).join('|')){for(const [id] of layout){const b=nav.querySelector('[data-ekran="'+id+'"]');if(b)nav.append(b);}}
 
- nav.querySelectorAll('[data-bc="profil"]').forEach(b=>b.remove());for(const [id,label,icon] of layout){const b=nav.querySelector('[data-ekran="'+id+'"]');if(!b)continue;if(id!=='tab-profile-menu'||!b.dataset.membershipLabel)b.setAttribute('aria-label',label);const l=b.querySelector('.bn-label');if(l&&l.textContent!==label)l.textContent=label;const slot=b.querySelector('.bn-icon');const cell=layout.findIndex(x=>x[0]===id);if(slot&&!slot.querySelector('.dm-nav-art,.tp-nav-image'))slot.innerHTML='<span class="dm-nav-art" aria-hidden="true" style="background-position:'+(cell%3*50)+'% '+(cell<3?0:100)+'%"></span>';b.title=b.dataset.membershipLabel||label;if(id==='tab-duel-home'){b.removeAttribute('onclick');b.onclick=window.dmDuelHomeAc;}if(id==='tab-profile-menu'){b.removeAttribute('onclick');b.onclick=window.dmProfileMenuAc;b.setAttribute('aria-haspopup','dialog');if(!b.hasAttribute('aria-expanded'))b.setAttribute('aria-expanded','false');}if(b.classList.contains('active'))b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');}}
+ nav.querySelectorAll('[data-bc="profil"]').forEach(b=>b.remove());for(const [id,label,icon] of layout){const b=nav.querySelector('[data-ekran="'+id+'"]');if(!b)continue;if(id!=='tab-profile-menu'||!b.dataset.membershipLabel)b.setAttribute('aria-label',label);const l=b.querySelector('.bn-label');if(l&&l.textContent!==label)l.textContent=label;const slot=b.querySelector('.bn-icon');const cell=layout.findIndex(x=>x[0]===id);if(slot&&!slot.querySelector('.dm-nav-art,.tp-nav-image'))slot.innerHTML='<span class="dm-nav-art" aria-hidden="true" style="background-position:'+(cell%3*50)+'% '+(cell<3?0:100)+'%"></span>';b.title=b.dataset.membershipLabel||label;if(id==='tab-duel-home'){b.removeAttribute('onclick');b.onclick=window.dmDuelHomeAc;}if(id==='tab-rankings'){b.onclick=()=>window.dmFriends?.showArena('ranking');}if(id==='tab-profile-menu'){b.removeAttribute('onclick');b.onclick=window.dmProfileMenuAc;b.setAttribute('aria-haspopup','dialog');if(!b.hasAttribute('aria-expanded'))b.setAttribute('aria-expanded','false');}if(b.classList.contains('active'))b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');}}
 const duelArtIcon = name => `<svg class="dm-duel-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="friends-assets/icons.svg#${name}"></use></svg>`;
 const duelChevron = duelArtIcon('chevron').replace('dm-duel-icon','dm-duel-chevron');
 const duelShield = '<svg class="dm-duel-icon" viewBox="0 0 24 24" aria-hidden="true"><path fill="#e74475" d="M12 1 2 5v6c0 6 4 10 10 12 6-2 10-6 10-12V5z"/><path fill="#ffb2c9" d="M12 4 5 7v4c0 4 2.6 7 7 9 4.4-2 7-5 7-9V7z"/></svg>';

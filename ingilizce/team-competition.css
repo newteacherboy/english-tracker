@@ -219,3 +219,22 @@ body > dialog.dm-team-sheet h2 {
 #tab-meduakis [data-embedded-league] .dm-lig-journey h3 {overflow-wrap:anywhere}
 #tab-meduakis [data-embedded-league] .dm-lig-row {min-width:0}
 #tab-meduakis [data-embedded-league] .dm-lig-header h2 {min-width:0;overflow-wrap:anywhere}
+.dm-team-summary-actions {display:grid;gap:6px;justify-items:stretch;max-width:82px}
+.dm-team-summary-actions [data-team-action="invite"] {
+ min-height:36px;padding:5px;font-size:10px;background:linear-gradient(#22c8a4,#078b80);color:#fff;border-color:#07978a;
+}
+.dm-team-summary-actions [data-team-action="settings"] {justify-self:end}
+.dm-team-buttons>[data-team-action="premium"],.dm-team-buttons>[data-team-action="duel"] {
+ display:flex;align-items:center;justify-content:center;gap:7px;position:relative;isolation:isolate;overflow:hidden;min-height:60px;
+ box-shadow:0 4px 0 #d8aa31,0 0 12px #ffd54c55;
+}
+.dm-team-buttons>[data-team-action="premium"] {background:linear-gradient(135deg,#fff09b,#ffcf28)!important;color:#5a3000}
+.dm-team-buttons>[data-team-action="duel"] {background:linear-gradient(135deg,#8736c3,#4c1469)!important;color:#fff;border-color:#d399f0;box-shadow:0 4px 0 #380f52,0 0 12px #c76bff55}
+.dm-team-action-icon {font-size:27px;line-height:1;color:inherit}
+.dm-team-buttons>[data-team-action="premium"]::after,.dm-team-buttons>[data-team-action="duel"]::after {
+ content:"";position:absolute;inset:-30% auto -30% -65%;width:40%;background:linear-gradient(110deg,transparent,#fff8,transparent);
+ transform:skewX(-15deg);animation:dmTeamActionShine 4s ease-in-out infinite;pointer-events:none;
+}
+@keyframes dmTeamActionShine {0%,55%{left:-65%}85%,100%{left:140%}}
+@media(prefers-reduced-motion:reduce){.dm-team-buttons>[data-team-action]::after {animation:none}}
+img.dm-team-action-icon {width:28px;height:28px;object-fit:contain;flex:none}
