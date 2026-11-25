@@ -220,3 +220,44 @@
 #tab-meduakis .dm-lig-alltime .dm-lig-podium-large .dm-lig-winner {min-height:43px;padding:5px 2px;box-shadow:none}
 #tab-meduakis .dm-lig-alltime .dm-lig-winner b {font-size:11px}
 #tab-meduakis .dm-lig-alltime .dm-lig-winner strong {font-size:10px}
+
+/* Compact weekly journey and podium leave room for the ranking list. */
+#tab-meduakis .dm-lig-weekly .dm-lig-journey {
+ min-height:112px;
+ padding:11px 12px;
+ margin-bottom:10px;
+}
+#tab-meduakis .dm-lig-weekly .dm-lig-journey h3 {
+ max-width:calc(100% - 58px);
+ font-size:16px;
+ line-height:1.15;
+ letter-spacing:0;
+}
+#tab-meduakis .dm-lig-weekly .dm-lig-journey>p {
+ max-width:calc(100% - 58px);
+ font-size:10px;
+ margin-top:3px;
+}
+#tab-meduakis .dm-lig-weekly .dm-lig-gap {
+ gap:5px;
+ margin-top:10px;
+ padding:6px 8px;
+ max-width:calc(100% - 76px);
+ border-radius:10px;
+}
+#tab-meduakis .dm-lig-weekly .dm-lig-gap small {font-size:9px}
+#tab-meduakis .dm-lig-weekly .dm-lig-gap b {font-size:17px}
+#tab-meduakis .dm-lig-weekly .dm-lig-journey>.dm-lig-avatar {
+ --size:66px!important;
+ right:10px;
+ bottom:-7px;
+}
+#tab-meduakis .dm-lig-weekly .dm-lig-podium-cards {gap:5px;margin:10px 0}
+#tab-meduakis .dm-lig-weekly .dm-lig-podium-cards .dm-lig-place {
+ padding:8px 3px 6px;
+ border-radius:12px;
+}
+#tab-meduakis .dm-lig-weekly .dm-lig-podium-cards .dm-lig-avatar {--size:38px!important}
+#tab-meduakis .dm-lig-weekly .dm-lig-medal {font-size:17px;line-height:20px;top:-10px}
+#tab-meduakis .dm-lig-weekly .dm-lig-winner b {font-size:10px}
+#tab-meduakis .dm-lig-weekly .dm-lig-winner strong {font-size:10px}
