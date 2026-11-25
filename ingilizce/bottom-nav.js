@@ -48,10 +48,11 @@ const profileIcons={
 function profileIcon(action){
  return '<svg class="pa-card-icon" viewBox="0 0 36 36" aria-hidden="true" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'+profileIcons[action]+'</svg>';
 }
-function paintProfileCards(level,xp,progress,closeButton){
+function paintProfileCards(level,xp,progress,closeButton,hasTeacher){
  const levelXp=Math.max(0,xp-(progress?.start||0)).toLocaleString('tr-TR');
  const goalXp=Math.max(1,(progress?.next||40)-(progress?.start||0)).toLocaleString('tr-TR');
  const progressLabel=progress?.next===null?'En yüksek seviye':levelXp+' / '+goalXp+' XP';
+ const teacherAttrs=hasTeacher?'':' disabled aria-disabled="true" title="Öğretmen hesabı bağlı değil"';
  return `<header class="pa-hero">
    <span class="pa-hero-papi" aria-hidden="true"><svg viewBox="16 174 162 121" aria-hidden="true"><image href="friends-assets/centre-reference.webp" width="900" height="1748"/></svg></span>
    <div class="pa-hero-copy"><span class="pa-wordmark">Diji-Medu</span><h2 id="rtProfileTitle">Benim Merkezim</h2></div>
@@ -70,6 +71,7 @@ function paintProfileCards(level,xp,progress,closeButton){
    <div class="dm-profile-shop-row">
     <button type="button" data-profile="shop">${profileIcon('shop')}<b>Mağaza</b><em aria-hidden="true">›</em></button>
     <button type="button" data-profile="parentSwitch">${profileIcon('parentSwitch')}<b>Veli Hesabına Geç</b><em aria-hidden="true">›</em></button>
+    <button type="button" data-profile="teacherSwitch"${teacherAttrs}>${profileIcon('teacherPanel')}<b>Öğretmen Hesabına Geç</b><em aria-hidden="true">›</em></button>
     <button type="button" class="au-account-entry" data-centre="account">${profileIcon('support')}<b>Hesap ve Destek</b><em aria-hidden="true">›</em></button>
    </div>
   </div>`;
@@ -90,15 +92,16 @@ window.dmProfileMenuAc=function(initial='main'){
    '<div class="rt-profile-grid au-centre-grid">'+accountItems.map(([label,note,action,cell])=>
     '<button type="button" data-profile="'+action+'">'+centreArt('account-icons',cell)+'<span><b>'+label+'</b><small>'+note+'</small></span><em aria-hidden="true">›</em></button>'
    ).join('')+'</div>';
+  const hasTeacher=Boolean(window.dmTeacherSwitch?.available?.()||window.dmTeacherPortalMode||name.toLowerCase()==='teacher');
   el.innerHTML='<section class="rt-profile au-centre '+(account?'au-account':'pa-reference pa-cards')+
    '" role="dialog" aria-modal="true" aria-labelledby="rtProfileTitle">'+
-   (account?closeButton+accountPane:paintProfileCards(level,xp,progress,closeButton))+'</section>';
+   (account?closeButton+accountPane:paintProfileCards(level,xp,progress,closeButton,hasTeacher))+'</section>';
   const themeButton=window.dmDayNightTheme?.createButton();
   if(themeButton)el.querySelector(account?'.rt-profile':'.pa-toolbar').prepend(themeButton);
   if(!account){el.querySelector('.pa-user strong').textContent=name;const avatar=el.querySelector('.pa-avatar');const art=window.karakterSvg?.(name,88);if(art)avatar.innerHTML=art;else avatar.innerHTML='<img src="route-assets/papi-profile.png" alt="">';}
   window.dmTeacherWorkspace?.paintBadge();el.querySelector(account?'.au-back':'.rt-close').focus();
  }
- el.onclick=e=>{if(e.target===el||e.target.closest('.rt-close')){close();last.focus();return;}const local=e.target.closest('[data-centre]');if(local){pane=local.dataset.centre==='account'?'account':'main';paint();return;}const b=e.target.closest('[data-profile]');if(!b)return;profileReturnPane=pane;close();window.dmProfileReturnPending=b.dataset.profile!=='logout';({shop:()=>window.magazaAc?.(),parentSwitch:()=>{if(typeof window.dmParentBridge?.open==='function')window.dmParentBridge.open();else location.assign('veli-paneli.html');},certificates:()=>window.dmGraduations?.openLibrary(),profile:()=>window.kisiselBilgilerAc?.(),daily:()=>window.sanaOzelTamEkranAc?.(),progress:()=>window.dmIlerlememAc?.(),badges:()=>window.dmBasarilarimAc?.(),teacher:()=>{if(!window.dmTeacherPortalMode&&name.toLowerCase()!=='teacher'){window.dmTeacherPortal?.openLogin();return;}if(typeof window.ogretmenPaneliAc==='function')window.ogretmenPaneliAc();else window.yoToast?.('Öğretmen paneli yüklenemedi.');},exam:()=>{if(typeof window.seviyeTestAc==='function')window.seviyeTestAc();else window.sanaOzelTamEkranAc?.();},repeat:()=>{if(typeof window.yoZkAc==='function')window.yoZkAc();else window.sanaOzelTamEkranAc?.();},coach:()=>window.dmTeacherChatOpen(),route:()=>window.dmMemberExperience?.chooseRoute(true),guardian:()=>window.dmSocialSafety?.parent(),safety:()=>window.dmSocialSafety?.help(),settings:()=>window.dmHesapAyarlariAc?.(),help:()=>window.yardimAc?.(),switchAccount:()=>window.dmHesapDegistirAc?.(),logout:()=>{if(window.confirm('Çıkış yapmak istiyor musun?'))window.cikisYap?.();},pro:()=>window.DMSatis?.planlar?.('profil'),teacherPanel:()=>{if(window.dmTeacherSwitch?.available?.())return window.dmTeacherSwitch.open();if(typeof window.ogretmenPaneliAc==='function'&&name.toLowerCase()==='teacher')return window.ogretmenPaneliAc();window.dmTeacherPortal?.openLogin?.();}})[b.dataset.profile]?.();};
+ el.onclick=e=>{if(e.target===el||e.target.closest('.rt-close')){close();last.focus();return;}const local=e.target.closest('[data-centre]');if(local){pane=local.dataset.centre==='account'?'account':'main';paint();return;}const b=e.target.closest('[data-profile]');if(!b||b.disabled||b.getAttribute('aria-disabled')==='true')return;profileReturnPane=pane;close();window.dmProfileReturnPending=b.dataset.profile!=='logout';({shop:()=>window.magazaAc?.(),parentSwitch:()=>{if(typeof window.dmParentBridge?.open==='function')window.dmParentBridge.open();else location.assign('veli-paneli.html');},teacherSwitch:()=>{if(window.dmTeacherSwitch?.available?.())return window.dmTeacherSwitch.open();if(typeof window.ogretmenPaneliAc==='function'&&name.toLowerCase()==='teacher')return window.ogretmenPaneliAc();},certificates:()=>window.dmGraduations?.openLibrary(),profile:()=>window.kisiselBilgilerAc?.(),daily:()=>window.sanaOzelTamEkranAc?.(),progress:()=>window.dmIlerlememAc?.(),badges:()=>window.dmBasarilarimAc?.(),teacher:()=>{if(!window.dmTeacherPortalMode&&name.toLowerCase()!=='teacher'){window.dmTeacherPortal?.openLogin();return;}if(typeof window.ogretmenPaneliAc==='function')window.ogretmenPaneliAc();else window.yoToast?.('Öğretmen paneli yüklenemedi.');},exam:()=>{if(typeof window.seviyeTestAc==='function')window.seviyeTestAc();else window.sanaOzelTamEkranAc?.();},repeat:()=>{if(typeof window.yoZkAc==='function')window.yoZkAc();else window.sanaOzelTamEkranAc?.();},coach:()=>window.dmTeacherChatOpen(),route:()=>window.dmMemberExperience?.chooseRoute(true),guardian:()=>window.dmSocialSafety?.parent(),safety:()=>window.dmSocialSafety?.help(),settings:()=>window.dmHesapAyarlariAc?.(),help:()=>window.yardimAc?.(),switchAccount:()=>window.dmHesapDegistirAc?.(),logout:()=>{if(window.confirm('Çıkış yapmak istiyor musun?'))window.cikisYap?.();},pro:()=>window.DMSatis?.planlar?.('profil'),teacherPanel:()=>{if(window.dmTeacherSwitch?.available?.())return window.dmTeacherSwitch.open();if(typeof window.ogretmenPaneliAc==='function'&&name.toLowerCase()==='teacher')return window.ogretmenPaneliAc();window.dmTeacherPortal?.openLogin?.();}})[b.dataset.profile]?.();};
  el.onkeydown=e=>{if(e.key==='Escape'){e.preventDefault();if(pane==='account'){pane='main';paint();}else{close();last.focus();}}if(e.key==='Tab'){const buttons=[...el.querySelectorAll('button')].filter(b=>b.getClientRects().length),i=buttons.indexOf(document.activeElement);e.preventDefault();buttons[(i+(e.shiftKey?-1:1)+buttons.length)%buttons.length].focus();}};
  document.body.append(el);paint();nav.querySelectorAll('.bn-item').forEach(b=>b.classList.toggle('active',b===last));last.setAttribute('aria-expanded','true');syncProfileDock();
 };

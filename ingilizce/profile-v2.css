@@ -112,24 +112,28 @@
   }
 
   #rtProfileBackdrop .pa-cards .pa-body {
-    flex: 0 1 auto;
+    flex: 1 1 auto;
     min-height: 0;
-    overflow-y: auto;
-    overscroll-behavior: contain;
-    padding: 2px 2px 6px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: clamp(10px, 1.7dvh, 16px);
+    overflow: hidden;
+    padding: 4px 2px clamp(8px, 1.4dvh, 14px);
+  }
+  @media (max-height: 560px) {
+    #rtProfileBackdrop .pa-cards .pa-body { overflow-y: auto; overscroll-behavior: contain; }
   }
 
   #rtProfileBackdrop .pa-cards :is(.pa-user, .pa-grid, .dm-profile-shop-row) {
-    margin: 0 0 clamp(8px, 1.7dvh, 17px);
+    margin: 0 !important;
   }
-
-  #rtProfileBackdrop .pa-cards .dm-profile-shop-row { margin-bottom: 0; }
 
   #rtProfileBackdrop .pa-cards .pa-user {
     display: flex;
     align-items: center;
     gap: clamp(7px, 2vw, 12px);
-    padding: clamp(7px, 1.3dvh, 14px);
+    padding: clamp(6px, 1.05dvh, 11px) 10px;
     min-width: 0;
     border: 1px solid var(--centre-line);
     border-radius: 17px;
@@ -140,7 +144,7 @@
   #rtProfileBackdrop .pa-cards .pa-avatar {
     display: grid;
     place-items: center;
-    width: clamp(44px, 13.5vw, 76px);
+    width: clamp(40px, 6.2dvh, 58px);
     aspect-ratio: 1;
     flex: none;
     overflow: hidden;
@@ -198,38 +202,46 @@
   #rtProfileBackdrop .pa-grid {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: clamp(7px, 1.6dvh, 13px) clamp(7px, 2.4vw, 14px);
+    gap: clamp(6px, 1.05dvh, 10px) clamp(7px, 2.2vw, 12px);
   }
 
   #rtProfileBackdrop .dm-profile-shop-row {
     display: grid;
-    gap: clamp(7px, 1.4dvh, 11px);
+    gap: clamp(6px, 1.05dvh, 10px);
   }
 
   html body #rtProfileBackdrop .pa-cards :is(.pa-grid, .dm-profile-shop-row)>button {
     display: flex !important;
     align-items: center !important;
     justify-content: flex-start !important;
-    gap: clamp(5px, 2vw, 15px) !important;
+    gap: clamp(6px, 2vw, 13px) !important;
     min-width: 0;
     height: auto !important;
-    min-height: clamp(48px, 8.6dvh, 79px) !important;
+    min-height: clamp(40px, 6.2dvh, 56px) !important;
     margin: 0 !important;
-    padding: 5px clamp(6px, 2.2vw, 16px) !important;
+    padding: 4px clamp(8px, 2.2vw, 14px) !important;
     border: 1px solid var(--centre-line) !important;
     border-radius: 14px !important;
     background: var(--centre-paper) !important;
     box-shadow: 0 2px 0 var(--pa-lip) !important;
     color: var(--pa-ink) !important;
     -webkit-text-fill-color: var(--pa-ink) !important;
-    font: 900 clamp(12px, 3.9vw, 21px)/1.16 Nunito, system-ui, sans-serif !important;
+    font: 900 clamp(12px, 3.6vw, 16.5px)/1.14 Nunito, system-ui, sans-serif !important;
     text-align: start !important;
     white-space: normal !important;
     cursor: pointer;
   }
 
   html body #rtProfileBackdrop .pa-cards .dm-profile-shop-row>button {
-    min-height: clamp(44px, 6.4dvh, 59px) !important;
+    min-height: clamp(38px, 5.4dvh, 47px) !important;
+  }
+
+  html body #rtProfileBackdrop .pa-cards .dm-profile-shop-row>button:disabled,
+  html body #rtProfileBackdrop .pa-cards .dm-profile-shop-row>button[aria-disabled="true"] {
+    opacity: .46 !important;
+    filter: grayscale(.85);
+    cursor: not-allowed !important;
+    box-shadow: none !important;
   }
 
   html body #rtProfileBackdrop .pa-cards :is(.pa-grid, .dm-profile-shop-row)>button b {
@@ -240,13 +252,13 @@
   }
 
   #rtProfileBackdrop .pa-card-icon {
-    width: clamp(26px, 9.5vw, 52px);
-    height: clamp(26px, 9.5vw, 52px);
+    width: clamp(24px, 4.1dvh, 34px);
+    height: clamp(24px, 4.1dvh, 34px);
     flex: none;
     display: block;
   }
 
-  #rtProfileBackdrop .dm-profile-shop-row .pa-card-icon { width: 29px; height: 29px; }
+  #rtProfileBackdrop .dm-profile-shop-row .pa-card-icon { width: clamp(22px, 3.3dvh, 27px); height: clamp(22px, 3.3dvh, 27px); }
 
   #rtProfileBackdrop .dm-profile-shop-row em {
     display: block !important;
