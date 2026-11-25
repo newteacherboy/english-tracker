@@ -72,7 +72,7 @@
       ${leaders?'<div class="fr-podium-stage">'+leaders+'</div>':'<p class="fr-league-status" role="status">'+status+'</p>'}
       ${list?'<div class="dm-arena-rank-list">'+list+'</div>':''}
       <div class="fr-podium-footer">
-        ${data?.me?`<div class="fr-league-self">${avatar(who(),27,data.me.membership_tier)}<b>Sen · ${esc(data.me.rank)}. sıra · ${xp(data.me.xp)} XP</b></div>`:''}
+        ${data?.me?`<div class="fr-league-self">${avatar(who(),27,data.me.membership_tier)}<b>Sen · ${esc(data.me.displayRank??data.me.rank)}. sıra · ${xp(data.me.xp)} XP</b></div>`:''}
         <button type="button" class="fr-link" data-friend-action="lig" data-friends-gate="lig">Sıralamayı gör ${icon('chevron')}</button>
       </div>
     </section>`;
@@ -206,7 +206,7 @@
   function clubHeader(){return `<header class="club-hero"><button type="button" class="club-back" data-friend-action="home" aria-label="Arkadaşlar ana ekranına dön">‹</button><h2>Medu Akış</h2><button type="button" data-friend-action="share" aria-label="Davet et">＋</button></header>`;}
   let arenaView = 'team';
   let rankView = 'weekly';
-  window.dmArenaTabs = active => `<nav class="dm-arena-tabs" aria-label="Takımım bölümleri">${[['team','Takımım'],['duel','Düello'],['ranking','Sıralamam']].map(([value,label])=>`<button type="button" data-arena-view="${value}" aria-pressed="${value===active}">${label}</button>`).join('')}</nav>`;
+  window.dmArenaTabs = active => `<nav class="dm-arena-tabs" aria-label="Takımım bölümleri">${[['team','Takımım'],['ranking','Sıralamam']].map(([value,label])=>`<button type="button" data-arena-view="${value}" aria-pressed="${value===active}">${label}</button>`).join('')}</nav>`;
 
   function homeHtml() {
     const ranking = arenaView === 'ranking';
@@ -220,7 +220,6 @@
     </div>`;
   }
   function showArena(view) {
-    if (view==='duel') return window.dmDuelHomeAc?.();
     window.dmDuelHomeClose?.();
     arenaView=view;
     if(!root.classList.contains('active')) {

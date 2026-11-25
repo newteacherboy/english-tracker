@@ -122,7 +122,7 @@ body #tab-meduakis.fr-home-view .dm-arena-home .fr-weekly-podium {
 #tab-meduakis .dm-arena-home .fr-podium-block {order:3}
 #tab-meduakis .dm-arena-home .fr-podium-stage {padding-top:4px}
 #dmDuelHome .dm-duel-page-inner {justify-content:flex-start;gap:12px}
-#dmDuelHome .dm-duel-page-head {grid-template-columns:minmax(0,1fr) auto}
+#dmDuelHome .dm-duel-page-head {grid-template-columns:minmax(0,1fr) auto minmax(0,1fr)}
 #dmDuelHome .dm-duel-hero-stage {
   background:linear-gradient(90deg,#3d0928,#27061a);
   isolation:isolate;
@@ -146,4 +146,50 @@ body #tab-meduakis.fr-home-view .dm-arena-home .fr-weekly-podium {
   background:#e6d4f5;
   overflow:hidden;
   font-weight:900;
+}
+
+body > dialog.dm-team-sheet[open] {
+  position:fixed!important;
+  inset:0!important;
+  margin:auto!important;
+  box-sizing:border-box;
+  height:fit-content;
+  max-height:min(78vh,680px);
+  max-height:min(78dvh,680px);
+  padding:16px;
+  box-shadow:0 20px 60px #250b4760;
+  overscroll-behavior:contain;
+}
+body > dialog.dm-team-sheet header {
+  padding:0 0 10px;
+  border-bottom:1px solid #e5d6f2;
+}
+body > dialog.dm-team-sheet h2 {
+  color:#350947!important;
+  -webkit-text-fill-color:#350947!important;
+  line-height:1.2;
+  overflow-wrap:anywhere;
+}
+.dm-team-sheet .dm-team-error:empty {display:none}
+.dm-team-sheet .dm-team-sheet-body {padding-top:10px}
+.dm-team-sheet :is(input,button):focus-visible {outline:2px solid #8244ca;outline-offset:2px}
+
+#tab-meduakis .dm-arena-home :is(.dm-arena-rank-row,.fr-arena-player,.fr-podium-face,.fr-league-self) .dm-member-badge {
+  font:900 7px/1 Nunito,system-ui,sans-serif!important;
+  padding:1px 2px!important;
+  border-radius:4px;
+  bottom:-2px;
+}
+#tab-meduakis .dm-arena-home :is(.dm-arena-rank-row,.fr-arena-player) .dm-member-premium::after {content:none}
+#tab-meduakis .dm-arena-home .fr-arena-title {
+  padding:10px 12px;
+  margin:0 0 4px;
+  border-radius:14px 14px 0 0;
+  background:#411c78;
+  box-sizing:border-box;
+}
+#tab-meduakis .dm-arena-home .fr-arena-title .fr-icon {
+  width:28px;height:28px;box-sizing:border-box;
+  padding:5px;
+  color:#ffe39a;background:#5d2c9c;border-color:#ac7ce6;
 }

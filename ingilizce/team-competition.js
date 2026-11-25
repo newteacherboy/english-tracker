@@ -128,7 +128,8 @@
     dialog?.close();
     const panel = document.createElement('dialog');
     panel.className='dm-team-sheet';
-    panel.innerHTML='<header><h2>'+escaped(title)+'</h2>'+button('close','Kapat')+
+    panel.setAttribute('aria-labelledby','dmTeamSheetTitle');
+    panel.innerHTML='<header><h2 id="dmTeamSheetTitle">'+escaped(title)+'</h2>'+button('close','Kapat')+
       '</header><p class="dm-team-error" role="status"></p><div class="dm-team-sheet-body">'+content+'</div>';
     panel.addEventListener('click', event => {
       const control=event.target.closest('[data-team-action]');
@@ -214,8 +215,10 @@
           '<form data-form="duel-invite"><label>Arkadaşının kullanıcı adı<input name="name" maxlength="80" required></label><button type="submit">Meydan Oku</button></form>');
         case 'live': case 'papi': dialog?.close();return window.dmLiveDuel?.[action==='live'?'startLive':'startPapi']({team:true});
         case 'delete': case 'leave': case 'remove':
-          if (!window.confirm(control.textContent+' işlemini onaylıyor musun?')) return;
-          return submit(action,{id});
+          return sheet(control.textContent,'<p>Bu işlemi onaylıyor musun?</p><div class="dm-team-buttons">'+
+            button('close','Vazgeç')+button('confirm-'+action,'Onayla',id)+'</div>');
+        case 'confirm-delete': case 'confirm-leave': case 'confirm-remove':
+          return submit(action.slice('confirm-'.length),{id});
         case 'accept': case 'reject': case 'join': case 'transfer': case 'withdraw': return submit(action,{id});
         case 'claim': {
           if (working) return;
