@@ -14,39 +14,28 @@
   return SVG.replace(/id="(pi[a-zA-Z])"/g,'id="$1'+n+'"').replace(/url\(#(pi[a-zA-Z])\)/g,'url(#$1'+n+')').replace('<svg ','<svg aria-hidden="true" focusable="false" '+(extra||'')+' ');
  }
  const NS='http://www.w3.org/2000/svg';
- function road(world){
-  const points=[...world.querySelectorAll('.rt-medal-row')].map(row=>({
-   x:parseFloat(row.style.getPropertyValue('--stop-x')),
-   y:parseFloat(row.style.getPropertyValue('--stop-y'))
-  })).filter(point=>Number.isFinite(point.x)&&Number.isFinite(point.y)).sort((a,b)=>a.y-b.y);
+ /* 11 Kas 2026: duraklar arası yol çizgisi kaldırıldı (kullanıcı isteği). */
+ function road(world){world.querySelector(':scope>.dm-v4-road')?.remove();return;}
+ function roadOld(world){
+  const rows=[...world.querySelectorAll('.rt-medal-row')];
   let svg=world.querySelector(':scope>.dm-v4-road');
-  if(points.length<2||!world.clientWidth){svg?.remove();return;}
-  const top=points[0].y;
-  const width=world.clientWidth;
-  const height=Math.ceil(points.at(-1).y-top+1);
-  const position=point=>[point.x/100*width,point.y-top];
-  const commands=['M '+position(points[0]).join(' ')];
-  for(let i=1;i<points.length;i++){
-   const [x1,y1]=position(points[i-1]);
-   const [x2,y2]=position(points[i]);
-   const mid=(y1+y2)/2;
-   commands.push('C '+x1+' '+mid+', '+x2+' '+mid+', '+x2+' '+y2);
-  }
-  const path=commands.join(' ');
-  const key=[top,width,height,path].join('|');
-  if(svg?.dataset.key===key)return;
-  if(!svg){
-   svg=document.createElementNS(NS,'svg');
-   svg.setAttribute('class','dm-v4-road');
-   svg.setAttribute('aria-hidden','true');
-   svg.innerHTML='<path fill="none" stroke="#b4a7d6" stroke-width="4" stroke-linecap="round" stroke-dasharray="1 11"/>';
-   world.prepend(svg);
-  }
+  const w=world.clientWidth||1;
+  const pts=rows.map(r=>({x:parseFloat(r.style.getPropertyValue('--stop-x'))/100*w,y:parseFloat(r.style.getPropertyValue('--stop-y')),cur:r.classList.contains('is-current')})).filter(p=>Number.isFinite(p.x)&&Number.isFinite(p.y)).sort((a,b)=>a.y-b.y);
+  if(pts.length<2){svg?.remove();return;}
+  /* Yol yalnızca ekrana çizilmiş duraklar kadar uzun: tüm dünya boyunda (on binlerce px) bir SVG iOS'ta kaydırmayı bozuyordu. */
+  const top=Math.max(0,Math.floor(pts[0].y-20)),h=Math.ceil(pts.at(-1).y-top+20);
+  const P=p=>p.x.toFixed(1)+' '+(p.y-top).toFixed(1);
+  const seg=(a,b)=>{const m=(b.y-a.y)/2;return ' C '+a.x.toFixed(1)+' '+(a.y+m-top).toFixed(1)+', '+b.x.toFixed(1)+' '+(b.y-m-top).toFixed(1)+', '+P(b);};
+  let all='M '+P(pts[0]),done='';
+  const ci=pts.findIndex(p=>p.cur);
+  for(let i=1;i<pts.length;i++){const s=seg(pts[i-1],pts[i]);all+=s;if(i<=ci)done+=s;}
+  done=done?'M '+P(pts[0])+done:'M0 0';
+  const key=w+'|'+top+'|'+h+'|'+all+'|'+done;
+  if(svg&&svg.dataset.key===key)return;
+  if(!svg){svg=document.createElementNS(NS,'svg');svg.setAttribute('class','dm-v4-road');svg.setAttribute('aria-hidden','true');svg.innerHTML='<path fill="none" stroke="var(--v4-road)" stroke-width="18" stroke-linecap="round"/><path fill="none" stroke="var(--v4-road-done)" stroke-width="18" stroke-linecap="round"/>';world.prepend(svg);}
   svg.dataset.key=key;
-  svg.style.top=top+'px';
-  svg.style.height=height+'px';
-  svg.setAttribute('viewBox','0 0 '+width+' '+height);
-  svg.firstElementChild.setAttribute('d',path);
+  svg.style.top=top+'px';svg.style.height=h+'px';svg.setAttribute('height',h);svg.setAttribute('viewBox','0 0 '+w+' '+h);
+  const [p1,p2]=svg.querySelectorAll('path');p1.setAttribute('d',all);p2.setAttribute('d',done);
  }
  function shortcut(route){
   route.querySelectorAll('.dm-lp-lane').forEach(el=>el.remove());
@@ -54,7 +43,7 @@
   const button=document.createElement('button');button.type='button';button.className='dm-papi-chat-shortcut';
   button.setAttribute('aria-label','Papi ile görüntülü konuş');
   button.innerHTML=`
-   <span class="dm-papi-chat-avatar" aria-hidden="true"><img src="papi-loading.webp" alt="" decoding="async"></span>
+   <span class="dm-papi-chat-avatar" aria-hidden="true"><img src="oyna-assets/oyna-papi-cta.png" alt="" decoding="async"></span>
    <svg class="dm-papi-chat-camera" aria-hidden="true" width="12" height="9" viewBox="0 0 20 14" fill="currentColor"><rect width="13" height="14" rx="3"/><path d="m14 5 6-4v12l-6-4z"/></svg>
    <span class="dm-papi-chat-label" aria-hidden="true">Papi ile<br>görüntülü konuş</span>
    <span class="dm-papi-chat-hello" aria-hidden="true" lang="en">Hello!</span>`;
