@@ -355,7 +355,7 @@ html[data-dm-theme=night] .dm-duel-personal small {color:#cbbce8}
 #dmDuelHome .dm-duel-hero-stage {
   display: flex;
   align-items: center;
-  min-height: clamp(188px, 37dvh, 360px);
+  min-height: clamp(182px, min(37dvh, 64vw), 330px);
   padding: 14px 44% 14px 6px;
   isolation: isolate;
   background: linear-gradient(155deg, #ffdfc1 25%, #ffceaa 88%);
@@ -364,9 +364,9 @@ html[data-dm-theme=night] .dm-duel-personal small {color:#cbbce8}
   content: "";
   position: absolute;
   z-index: -1;
-  inset: 0 0 0 40%;
-  background: url("friends-assets/duel-arena-a.webp") right bottom / auto 100% no-repeat;
-  mask-image: linear-gradient(90deg, transparent, #000 24%);
+  inset: 0 0 0 39%;
+  background: url("friends-assets/duel-arena-a.webp") right bottom / 100% auto no-repeat;
+  mask-image: linear-gradient(90deg, transparent, #000 10%);
   pointer-events: none;
 }
 #dmDuelHome .dm-duel-live-pill {
