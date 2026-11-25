@@ -121,13 +121,23 @@ const duelArtIcon = name => `<svg class="dm-duel-icon" viewBox="0 0 24 24" aria-
 const duelChevron = duelArtIcon('chevron').replace('dm-duel-icon','dm-duel-chevron');
 const duelShield = '<svg class="dm-duel-icon" viewBox="0 0 24 24" aria-hidden="true"><path fill="#e74475" d="M12 1 2 5v6c0 6 4 10 10 12 6-2 10-6 10-12V5z"/><path fill="#ffb2c9" d="M12 4 5 7v4c0 4 2.6 7 7 9 4.4-2 7-5 7-9V7z"/></svg>';
 const duelXp = '<svg class="dm-duel-icon" viewBox="0 0 24 24" aria-hidden="true"><path fill="#742ee4" d="m12 1 10 5.5v11L12 23 2 17.5v-11z"/><path d="m6 9 4 6m0-6-4 6m7 0V9h3a1.5 1.5 0 0 1 0 3h-3" fill="none" stroke="white" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+let duelEntryAudio;
+function playDuelEntry() {
+ try {
+  duelEntryAudio ||= new Audio('friends-assets/duel-entry.wav');
+  duelEntryAudio.currentTime = 0;
+  duelEntryAudio.play()?.catch(() => {});
+ } catch {
+  // Audio is optional. Matchmaking starts even if playback is unavailable.
+ }
+}
 window.dmDuelHomeAc=function(){
  if(window.dmTeacherPortalMode)return;
  let el=document.getElementById('dmDuelHome');
  if(!el){
   el=document.createElement('section');el.id='dmDuelHome';el.className='dm-duel-page';el.setAttribute('aria-label','Düello arenası');
   el.innerHTML=`<div class="dm-duel-page-inner">
-   <header class="dm-duel-page-head"><div class="dm-duel-brand">Diji-Medu <small>English</small></div><h1>Düello</h1><span data-duel-inbox></span></header>
+   <header class="dm-duel-page-head"><img class="dm-duel-mascot" src="papi-loading.webp" alt="" width="48" height="48"><h1>Düello</h1></header>
    <div class="dm-duel-arena">
     <div class="dm-duel-hero-stage">
      <div class="dm-duel-hero-copy">
@@ -151,7 +161,10 @@ window.dmDuelHomeAc=function(){
   </div>`;
   el.addEventListener('click',e=>{
    const action=e.target.closest('[data-duel]')?.dataset.duel;
-   if(action==='live')window.dmLiveDuel?.startLive?.();
+   if(action==='live'){
+    playDuelEntry();
+    window.dmLiveDuel?.startLive?.();
+   }
    if(action==='papi')window.dmLiveDuel?.startPapi?.();
    if(action==='friend')window.dmFriends?.chooseDuelFriend?.(e.target.closest('button'));
    if(action==='history')window.dmNotificationCenter?.openDuelHistory?.(e.target.closest('button'));
@@ -159,7 +172,12 @@ window.dmDuelHomeAc=function(){
   document.body.append(el);
  }
  el.hidden=false;
- window.dmNotificationCenter?.mountSecondary?.(el.querySelector('[data-duel-inbox]'));
+ if (!duelEntryAudio) {
+  try {
+   duelEntryAudio = new Audio('friends-assets/duel-entry.wav');
+   duelEntryAudio.preload = 'auto';
+  } catch {}
+ }
  const dock=document.getElementById('bottomNavMobile');if(dock){if(!dock.dataset.duelPreviousZ)dock.dataset.duelPreviousZ=dock.style.zIndex||'auto';dock.style.setProperty('z-index','100000020','important');el.style.setProperty('--dm-duel-bottom',Math.max(68,window.innerHeight-dock.getBoundingClientRect().top)+'px');}
  document.querySelectorAll('#bottomNavMobile .bn-item').forEach(b=>{const yes=b.dataset.ekran==='tab-duel-home';b.classList.toggle('active',yes);if(yes)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');});
  const owner=typeof aktifOgrenciAdi!=='undefined'?String(aktifOgrenciAdi||''):'';
