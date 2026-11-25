@@ -25,7 +25,8 @@ test('Sıralamam remains under Takımım and Düello has its own screen',()=>{
  const nav=read('bottom-nav.js');
  const css=read('duel-arena.css');
  assert.match(friends,/\['team','Takımım'\],\['ranking','Sıralamam'\]/);
- assert.match(friends,/rankView==='weekly'\?leagueHtml\(\):duelLeagueHtml\(\)/);
+ assert.match(friends,/data-embedded-league/);
+ assert.match(friends,/setPeriod\('alltime'\)/);
  assert.match(friends,/dmDuelRankingOpen/);
  assert.match(friends,/fr-invite-top/);
  assert.doesNotMatch(nav,/dm-duel-champions/);
