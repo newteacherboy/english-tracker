@@ -6,7 +6,7 @@
   const token = () => localStorage.getItem('ing_token') || '';
   const number = value => (Number(value) || 0).toLocaleString('tr-TR');
   const image = emblem => '<img class="dm-team-crest" alt="" src="friends-assets/team-crests/' +
-    Math.min(20, Math.max(1, Number(emblem) || 1)) + '.webp">';
+    Math.min(20, Math.max(1, Number(emblem) || 1)) + '.webp?v=2">';
   const button = (action, label, data = '') => '<button type="button" data-team-action="' + action + '"' +
     (data ? ' data-team-id="' + escaped(data) + '"' : '') + '>' + label + '</button>';
   const games = {
