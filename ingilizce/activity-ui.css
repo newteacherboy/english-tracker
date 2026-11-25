@@ -787,4 +787,17 @@ html[data-dm-theme] body #tab-aktiviteler#tab-aktiviteler .gg-page.gg-redesign.g
 
 html[data-dm-theme] body #tab-aktiviteler#tab-aktiviteler .gg-page.gg-redesign.gg-list-view.au-games.gg-selected-cards:not(.gg-teacher-list) .gg-approved-card .gg-row-action::after {display:none!important}
 
+
+/* Atlas cells are square. Keep the artwork canvas square in the two-column shelf. */
+html[data-dm-theme] body #tab-aktiviteler#tab-aktiviteler .gg-page.gg-redesign.gg-list-view.au-games.gg-selected-cards:not(.gg-teacher-list) .gg-approved-card .gg-cover {
+  aspect-ratio:1!important;
+}
+html[data-dm-theme] body #tab-aktiviteler#tab-aktiviteler .gg-page.gg-redesign.gg-list-view.au-games.gg-selected-cards:not(.gg-teacher-list) .gg-approved-card .gg-cover > .gg-art[style*="--gx"] {
+  width:100%!important;
+  height:auto!important;
+  aspect-ratio:1!important;
+  max-height:none!important;
+  inset:0!important;
+  transform:none!important;
+  background-size:400% 400%!important;
 }
