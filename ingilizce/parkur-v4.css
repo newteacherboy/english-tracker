@@ -15,14 +15,16 @@ body #tab-dunya .rt-medal-route .rt-medal-disc{border-radius:50%!important;borde
 body #tab-dunya .rt-medal-route .rt-medal-stop.is-locked{filter:none!important}
 body #tab-dunya .rt-medal-route .rt-medal-stop.is-done .rt-medal-disc{padding-top:0!important;background:var(--v4-done)!important;border-color:var(--v4-done-edge)!important;box-shadow:0 0 0 6px var(--v4-done-ring)!important}
 body #tab-dunya .rt-medal-route .rt-medal-stop.is-done .rt-medal-parrot{color:#fff!important}
-body #tab-dunya .rt-medal-route .rt-medal-start .rt-medal-disc{background:var(--v4-current)!important;border-color:var(--v4-current-edge)!important;box-shadow:0 0 0 7px var(--v4-current-ring)!important}
+body #tab-dunya .rt-medal-route .rt-medal-start .rt-medal-disc{background:#fff!important;border:3px solid #bfc7da!important;border-bottom:5px solid #9faac4!important;box-shadow:0 0 0 6px rgba(244,77,87,.12)!important;color:#475569!important}
+html[data-dm-theme="night"] body #tab-dunya .rt-medal-route .rt-medal-start .rt-medal-disc{background:#1b2644!important;border-color:#64748b!important;border-bottom-color:#475569!important;color:#cbd5e1!important}
 body #tab-dunya .rt-medal-route .rt-medal-start .rt-medal-disc::after{content:none!important}
-body #tab-dunya .rt-medal-route .rt-medal-start .rt-medal-parrot{width:50px!important;height:50px!important}
+body #tab-dunya .rt-medal-route .rt-medal-start .rt-medal-parrot{width:50px!important;height:50px!important;color:#475569!important}
+html[data-dm-theme="night"] body #tab-dunya .rt-medal-route .rt-medal-start .rt-medal-parrot{color:#cbd5e1!important}
 /* numara rozeti: diskin sağ altında yuvarlak */
 body #tab-dunya .rt-medal-route .rt-medal-disc .rt-medal-stop-number{right:-6px!important;bottom:-4px!important;min-width:26px!important;height:26px!important;border-radius:50%!important;border-width:3px!important;background:#fff!important;font-size:12px!important}
 body #tab-dunya .rt-medal-route .rt-medal-stop.is-done .rt-medal-stop-number{color:#1E8B4F!important;border-color:var(--v4-done-edge)!important}
 body #tab-dunya .rt-medal-route .rt-medal-stop.is-locked .rt-medal-stop-number{color:#4A5A70!important;border-color:var(--v4-lock-edge)!important}
-body #tab-dunya .rt-medal-route .rt-medal-start .rt-medal-stop-number{color:#0F2747!important;background:#FFF6D6!important;border-color:#FFC531!important;min-width:30px!important;height:30px!important;font-size:14px!important}
+body #tab-dunya .rt-medal-route .rt-medal-start .rt-medal-stop-number{color:#cb273a!important;background:#fff!important;border-color:#f44d57!important;min-width:30px!important;height:30px!important;font-size:14px!important}
 /* yıldızlar diskin üstünde */
 body #tab-dunya .rt-medal-route .rt-medal-stop .rt-v3-stars{top:-24px!important;gap:1px!important;align-items:flex-end}
 body #tab-dunya .rt-medal-route .rt-medal-stop .rt-v3-stars i{font:900 17px/1 system-ui!important;color:#c9d8ea!important;text-shadow:0 1px 0 #fff}
@@ -293,16 +295,17 @@ body #tab-dunya .rt-medal-route .rt-agenda:not([open])>.rt-agenda-actions{displa
 }
 body #tab-dunya .rt-medal-route .rt-medal-header:has(.rt-agenda[open]){z-index:8}
 body #tab-dunya .rt-medal-route .rt-agenda summary{
- box-sizing:border-box;display:grid;justify-items:center;width:62px;min-height:66px;
- padding:7px 2px 6px;gap:4px;border:2px solid #8afffa;border-radius:17px;
- cursor:pointer;pointer-events:auto;color:#fff;
- background:linear-gradient(155deg,#17dfdf 0%,#079cae 43%,#005468 100%);
- box-shadow:inset 0 2px 3px #b4ffffa0,inset 0 -3px 4px #003d6870,0 4px 0 #004c60,0 5px 9px #006a8150;
- font:900 11px/1.15 Nunito,system-ui,sans-serif;text-shadow:0 2px 2px #003849;
+ box-sizing:border-box;display:grid;justify-items:center;width:62px;min-height:60px;
+ padding:6px 2px 4px;gap:4px;border:0!important;border-radius:14px;
+ cursor:pointer;pointer-events:auto;color:#7c879d!important;
+ background:transparent!important;
+ box-shadow:none!important;
+ font:900 11px/1.15 Nunito,system-ui,sans-serif;text-shadow:none!important;
  white-space:nowrap;list-style:none;
 }
+html[data-dm-theme="night"] body #tab-dunya .rt-medal-route .rt-agenda summary{color:#a6b4cc!important}
 .rt-agenda summary::-webkit-details-marker{display:none}
-body #tab-dunya .rt-medal-route .rt-agenda summary svg{width:30px;height:30px;color:#fff;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 2px 1px #004b60)}
+body #tab-dunya .rt-medal-route .rt-agenda summary svg{width:28px;height:28px;color:currentColor!important;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;filter:none!important}
 .rt-agenda :is(summary,button):focus-visible{outline:2px solid #2674cf;outline-offset:2px}
 
 /* Papi görüşme madalyonu */
