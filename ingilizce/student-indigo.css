@@ -1,0 +1,445 @@
+/* Diji-Medu student surfaces. Keep the existing navigation and dialog controllers. */
+html:not(.dm-teacher-portal) {
+  --dm-studio-bg: #fcfaf9;
+  --dm-studio-paper: #fffefd;
+  --dm-studio-ink: #252647;
+  --dm-studio-muted: #5c5a76;
+  --dm-studio-border: #d9d1ee;
+  --dm-studio-accent: #4942a1;
+  --dm-studio-tint: #eee9fa;
+  --dm-studio-gold: #a26b15;
+}
+
+html[data-dm-theme="night"]:not(.dm-teacher-portal) {
+  --dm-studio-bg: #201e32;
+  --dm-studio-paper: #2a273d;
+  --dm-studio-ink: #f7f3ff;
+  --dm-studio-muted: #cbc2dd;
+  --dm-studio-border: #514968;
+  --dm-studio-accent: #5950b0;
+  --dm-studio-tint: #352e52;
+  --dm-studio-gold: #f0c36c;
+}
+
+html:not(.dm-teacher-portal) body #bottomNavMobile.dm-nv2-on .bn-item .bn-icon {
+  color: var(--dm-studio-muted);
+}
+
+html:not(.dm-teacher-portal) body #bottomNavMobile.dm-nv2-on .bn-item.active .bn-icon {
+  background: var(--dm-studio-tint);
+  border-radius: 12px;
+  color: var(--dm-studio-ink);
+}
+
+html:not(.dm-teacher-portal) body #bottomNavMobile.dm-nv2-on .dm-nav-approved {
+  filter: saturate(.72);
+}
+
+html:not(.dm-teacher-portal) body #tab-dunya .rt-medal-route {
+  --medal-bg: var(--dm-studio-bg);
+  --medal-bg-dark: var(--dm-studio-bg);
+  --medal-ink: var(--dm-studio-ink);
+  --medal-muted: var(--dm-studio-muted);
+  --v4-current: #4942a1;
+  --v4-current-edge: #38337e;
+  --v4-current-ring: var(--dm-studio-tint);
+  --v4-done: #52816c;
+  --v4-done-edge: #426b59;
+  --v4-done-ring: #81a59030;
+  --v4-lock: #dcdbe3;
+  --v4-lock-edge: #c5c3ce;
+}
+
+html[data-dm-theme]:not(.dm-teacher-portal) body #tab-dunya .rt-medal-route .rt-medal-unit::before {
+  content: none;
+}
+
+html:not(.dm-teacher-portal) body #tab-dunya .rt-medal-route .rt-agenda summary svg {
+  color: var(--dm-studio-ink);
+  filter: none;
+}
+
+html:not(.dm-teacher-portal) body #dmDuelHome .dm-duel-arena {
+  padding: 12px;
+  gap: 10px;
+  background: var(--dm-studio-tint);
+  border: 1px solid var(--dm-studio-border);
+  box-shadow: none;
+}
+
+html:not(.dm-teacher-portal) body #dmDuelHome .dm-duel-hero-stage {
+  min-height: clamp(155px, 49vw, 235px);
+  padding: 12px 45% 12px 8px;
+  background: url("papi-loading.webp") right center / 43% auto no-repeat;
+}
+
+html:not(.dm-teacher-portal) body #dmDuelHome .dm-duel-hero-copy h2 {
+  color: var(--dm-studio-ink);
+  font-style: normal;
+  font-weight: 800;
+}
+
+html:not(.dm-teacher-portal) body #dmDuelHome .dm-duel-live-pill {
+  background: var(--dm-studio-paper);
+  border-color: var(--dm-studio-border);
+  color: var(--dm-studio-ink);
+}
+
+html:not(.dm-teacher-portal) body #dmDuelHome .dm-duel-quick {
+  width: 100%;
+  margin: 0;
+  background: var(--dm-studio-accent);
+  color: white;
+  border-bottom-color: #38337e;
+  box-shadow: none;
+}
+
+html:not(.dm-teacher-portal) body #tab-meduakis .dm-team-buttons > [data-team-action]::after {
+  content: none;
+}
+
+html:not(.dm-teacher-portal) body #tab-meduakis .dm-lig-podium-cards {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+}
+
+html:not(.dm-teacher-portal) body #tab-meduakis .dm-lig-podium-cards:has(.dm-lig-place-3) .dm-lig-place-1 {
+  order: 1;
+}
+
+html:not(.dm-teacher-portal) body #tab-meduakis .dm-lig-podium-cards:has(.dm-lig-place-3) .dm-lig-place-3 {
+  order: 2;
+}
+
+html:not(.dm-teacher-portal) body #tab-aktiviteler .gg-list-empty {
+  grid-column: 1 / -1;
+}
+
+/* Shared text styling on top of the existing section-specific components. */
+html:not(.dm-teacher-portal) body :is(#dmDuelHome, #tab-meduakis.fr-home-view, #rtProfileBackdrop) :is(
+  .dm-duel-stats-title, .dm-duel-history, .dm-duel-personal b, .dm-duel-personal small,
+  .dm-team-summary h2, .dm-lig-winner b, .dm-lig-winner strong, .pa-reference .pa-hero
+) {
+  color: var(--dm-studio-ink) !important;
+  -webkit-text-fill-color: currentColor !important;
+}
+
+html:not(.dm-teacher-portal) body #tab-dunya .rt-medal-route .rt-medal-road {
+  stroke: #b8addb;
+}
+
+html:not(.dm-teacher-portal) body #tab-meduakis .dm-team-task progress {
+  accent-color: var(--dm-studio-accent);
+}
+
+html:not(.dm-teacher-portal) body dialog.dm-team-sheet button[type="submit"] {
+  background: var(--dm-studio-accent);
+  color: white;
+}
+
+/* Each dock item keeps its original button, label, and accessible state. */
+html:not(.dm-teacher-portal) body #bottomNavMobile.dm-nv2-on .bn-icon > .dm-nv2 {
+  display: none;
+}
+
+html:not(.dm-teacher-portal) body #bottomNavMobile.dm-nv2-on .bn-icon {
+  display: grid;
+  place-items: center;
+}
+
+html:not(.dm-teacher-portal) body #bottomNavMobile.dm-nv2-on .bn-icon::after {
+  content: "";
+  width: 23px;
+  height: 23px;
+  background: currentColor;
+  mask: var(--dm-studio-icon) center / contain no-repeat;
+}
+
+#bottomNavMobile [data-ekran="tab-duel-home"] {
+  --dm-studio-icon: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cpath%20d%3D%22m13%202-9%2012h7l-1%208%2010-12h-7z%22%20fill%3D%22none%22%20stroke%3D%22black%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22/%3E%3C/svg%3E");
+}
+
+#bottomNavMobile [data-ekran="tab-dunya"] {
+  --dm-studio-icon: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cpath%20d%3D%22M5%2019h3a4%204%200%200%200%200-8H7a3%203%200%200%201%200-6h10%20M15%202l4%203-4%203%22%20fill%3D%22none%22%20stroke%3D%22black%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22/%3E%3C/svg%3E");
+}
+
+#bottomNavMobile [data-ekran="tab-aktiviteler"] {
+  --dm-studio-icon: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cpath%20d%3D%22M7%207h10a4%204%200%200%201%204%204l1%204a3%203%200%200%201-5%203l-2-2H9l-2%202a3%203%200%200%201-5-3l1-4a4%204%200%200%201%204-4z%20M7%2010v4m-2-2h4m6%200h.1m3%201h.1%22%20fill%3D%22none%22%20stroke%3D%22black%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22/%3E%3C/svg%3E");
+}
+
+#bottomNavMobile [data-ekran="tab-meduakis"] {
+  --dm-studio-icon: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cpath%20d%3D%22M16%2021v-2a4%204%200%200%200-4-4H6a4%204%200%200%200-4%204v2M22%2021v-2a4%204%200%200%200-3-4M13%207a4%204%200%201%201-8%200%204%204%200%200%201%208%200zm3-4a4%204%200%200%201%200%208%22%20fill%3D%22none%22%20stroke%3D%22black%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22/%3E%3C/svg%3E");
+}
+
+#bottomNavMobile [data-ekran="tab-rankings"] {
+  --dm-studio-icon: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cpath%20d%3D%22M3%2012h4v9H3zm7-5h4v14h-4zm7-4h4v18h-4z%22%20fill%3D%22none%22%20stroke%3D%22black%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22/%3E%3C/svg%3E");
+}
+
+#bottomNavMobile [data-ekran="tab-profile-menu"] {
+  --dm-studio-icon: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cpath%20d%3D%22M20%2021v-2a4%204%200%200%200-4-4H8a4%204%200%200%200-4%204v2zM16%207a4%204%200%201%201-8%200%204%204%200%200%201%208%200z%22%20fill%3D%22none%22%20stroke%3D%22black%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22/%3E%3C/svg%3E");
+}
+
+html:not(.dm-teacher-portal) body #dmDuelHome .dm-duel-face {
+  background: var(--dm-studio-tint) url("papi-loading.webp") center / contain no-repeat;
+}
+
+html:not(.dm-teacher-portal) body #tab-dunya .dm-papi-chat-avatar img {
+  content: url("papi-loading.webp");
+  object-fit: contain;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html:not(.dm-teacher-portal) body #tab-dunya .rt-medal-route > .dm-papi-chat-shortcut {
+    animation: none !important;
+  }
+}
+
+@layer dmStudentIndigo {
+  html:not(.dm-teacher-portal) body :is(#dmDuelHome.dm-duel-page, #tab-aktiviteler, #tab-meduakis, #bzParkur) {
+    background: var(--dm-studio-bg) !important;
+    color: var(--dm-studio-ink);
+  }
+
+  html:not(.dm-teacher-portal) body #bottomNavMobile.dm-nv2-on {
+    background: var(--dm-studio-paper) !important;
+    border: 1px solid var(--dm-studio-border) !important;
+    box-shadow: 0 -4px 24px #2720460c !important;
+  }
+
+  html:not(.dm-teacher-portal) body #bottomNavMobile.dm-nv2-on .bn-label {
+    color: var(--dm-studio-muted) !important;
+    font-weight: 750 !important;
+  }
+
+  html:not(.dm-teacher-portal) body #bottomNavMobile.dm-nv2-on .bn-item.active .bn-label {
+    color: var(--dm-studio-ink) !important;
+  }
+
+  html[data-dm-theme]:not(.dm-teacher-portal) body #tab-dunya .rt-medal-route .rt-medal-unit {
+    background: var(--dm-studio-tint) !important;
+    border: 1px solid var(--dm-studio-border) !important;
+    box-shadow: none !important;
+  }
+
+  html[data-dm-theme]:not(.dm-teacher-portal) body #tab-dunya .rt-medal-route .rt-medal-unit :is(h1,p,button) {
+    color: var(--dm-studio-ink) !important;
+    -webkit-text-fill-color: currentColor !important;
+  }
+
+  html[data-dm-theme]:not(.dm-teacher-portal) body #tab-dunya .rt-medal-route .rt-medal-unit button[data-rt="switch-route"] {
+    background: var(--dm-studio-paper) !important;
+    border: 1px solid var(--dm-studio-border) !important;
+    box-shadow: none !important;
+  }
+
+  html:not(.dm-teacher-portal) body #tab-dunya .rt-medal-route .rt-medal-start-label {
+    background: var(--dm-studio-accent) !important;
+    color: white !important;
+    border-color: #38337e !important;
+    box-shadow: none !important;
+  }
+
+  html:not(.dm-teacher-portal) body #tab-dunya .rt-medal-route :is(.rt-agenda summary,.dm-papi-chat-shortcut,.dm-papi-chat-label) {
+    background: var(--dm-studio-paper) !important;
+    border-color: var(--dm-studio-border) !important;
+    box-shadow: none !important;
+    color: var(--dm-studio-ink) !important;
+  }
+
+  html:not(.dm-teacher-portal) body :is(
+    #dmDuelHome .dm-duel-options button,
+    #dmDuelHome .dm-duel-stats-card,
+    #tab-meduakis .dm-team-card,
+    #tab-meduakis .dm-team-info,
+    #tab-meduakis .dm-lig-row,
+    #tab-meduakis .dm-lig-place,
+    #rtProfileBackdrop .pa-reference .pa-user,
+    #rtProfileBackdrop .pa-reference .pa-grid button,
+    #rtProfileBackdrop .pa-reference .dm-profile-shop-row button,
+    #rtProfileBackdrop .pa-reference .au-account-entry
+  ) {
+    background: var(--dm-studio-paper) !important;
+    border: 1px solid var(--dm-studio-border) !important;
+    box-shadow: none !important;
+    color: var(--dm-studio-ink) !important;
+  }
+
+  html:not(.dm-teacher-portal) body :is(
+    #tab-meduakis .dm-arena-tabs button[aria-pressed="true"],
+    #tab-meduakis .dm-team-buttons > [data-team-action="premium"],
+    #tab-meduakis .dm-team-buttons > [data-team-action="duel"],
+    #tab-meduakis .dm-lig-period button[aria-pressed="true"]
+  ) {
+    background: var(--dm-studio-accent) !important;
+    border-color: var(--dm-studio-accent) !important;
+    color: white !important;
+    box-shadow: none !important;
+  }
+
+  html:not(.dm-teacher-portal) body #tab-meduakis .dm-lig-podium-cards .dm-lig-place-1 {
+    border-color: var(--dm-studio-gold) !important;
+    background: var(--dm-studio-tint) !important;
+  }
+
+  html:not(.dm-teacher-portal) body #tab-aktiviteler#tab-aktiviteler .gg-list-view .gg-overview:not([hidden]) {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 10px !important;
+  }
+
+  html:not(.dm-teacher-portal) body #tab-aktiviteler#tab-aktiviteler .gg-list-view .gg-list-row {
+    position: relative;
+    display: grid !important;
+    grid-template-columns: minmax(0,1fr) auto;
+    gap: 6px;
+    padding: 0 0 6px !important;
+    overflow: hidden;
+    background: var(--dm-studio-paper) !important;
+    border: 1px solid var(--dm-studio-border) !important;
+    color: var(--dm-studio-ink) !important;
+    box-shadow: none !important;
+  }
+
+  html:not(.dm-teacher-portal) body #tab-aktiviteler#tab-aktiviteler .gg-list-view .gg-list-row .gg-cover {
+    grid-column: 1 / -1;
+    width: 100% !important;
+    margin: 0 !important;
+    height: auto !important;
+    aspect-ratio: 4 / 3;
+    filter: saturate(.77);
+  }
+
+  html:not(.dm-teacher-portal) body #tab-aktiviteler#tab-aktiviteler .gg-list-view .gg-list-row strong {
+    white-space: normal;
+    color: var(--dm-studio-ink) !important;
+    -webkit-text-fill-color: currentColor !important;
+  }
+
+  html:not(.dm-teacher-portal) body #rtProfileBackdrop .rt-profile.au-centre.pa-reference {
+    background: var(--dm-studio-bg) !important;
+    color: var(--dm-studio-ink) !important;
+  }
+
+  html:not(.dm-teacher-portal) body #rtProfileBackdrop .pa-reference .pa-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 8px !important;
+  }
+
+  html:not(.dm-teacher-portal) body #rtProfileBackdrop .pa-reference .pa-grid button:not([hidden]) {
+    display: flex !important;
+    align-items: center;
+    justify-content: start;
+    flex-direction: row !important;
+    text-align: start;
+    padding: 6px 8px !important;
+    min-height: 52px;
+  }
+
+  html:not(.dm-teacher-portal) body #rtProfileBackdrop .pa-reference .pa-grid .pa-reference-art {
+    width: 35px !important;
+    height: 35px !important;
+    flex: 0 0 35px;
+  }
+
+  html:not(.dm-teacher-portal) body #rtProfileBackdrop .pa-reference .pa-grid b {
+    color: var(--dm-studio-ink) !important;
+    white-space: normal;
+  }
+
+  html:not(.dm-teacher-portal) body :is(
+    dialog.dm-team-sheet[open],
+    .ld-sheet,
+    .fr-duel-ranking-panel,
+    .dm-lig-duel-dialog,
+    .dm-center-panel
+  ) {
+    background: var(--dm-studio-paper) !important;
+    color: var(--dm-studio-ink) !important;
+    border: 1px solid var(--dm-studio-border) !important;
+    border-radius: 20px;
+  }
+
+  html:not(.dm-teacher-portal) body #dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-entry.ml-pop .ml-entry-card {
+    background: var(--dm-studio-accent) !important;
+    box-shadow: 0 12px 30px #22174750 !important;
+  }
+
+  html:not(.dm-teacher-portal) body #dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-entry.ml-pop .ml-entry-start {
+    color: #37317f !important;
+    -webkit-text-fill-color: #37317f !important;
+    box-shadow: none !important;
+  }
+
+  html:not(.dm-teacher-portal) body #tab-dunya .rt-medal-unit .rt-route-explorer :is(.rt-route-name,.rt-route-subtitle) {
+    color: var(--dm-studio-ink) !important;
+    -webkit-text-fill-color: currentColor !important;
+  }
+
+  html:not(.dm-teacher-portal) body .ld-sheet :is(h2,.ld-sheet-note,.ld-sheet-note strong) {
+    color: var(--dm-studio-ink) !important;
+  }
+
+  html:not(.dm-teacher-portal) body .ld-sheet > p {
+    color: var(--dm-studio-muted) !important;
+  }
+
+  html:not(.dm-teacher-portal) body #bottomNavMobile .bn-label {
+    -webkit-text-fill-color: currentColor !important;
+  }
+
+  html:not(.dm-teacher-portal) body #tab-aktiviteler .gg-list-row[aria-disabled="false"] .gg-row-action {
+    background: var(--dm-studio-accent) !important;
+    border-color: transparent !important;
+    color: #fff !important;
+  }
+
+  html:not(.dm-teacher-portal) body #tab-aktiviteler .gg-main-categories button[aria-pressed="true"] {
+    background: var(--dm-studio-accent) !important;
+    color: #fff !important;
+  }
+
+  html:not(.dm-teacher-portal) body #tab-aktiviteler .gg-main-categories button[aria-pressed="false"] {
+    background: var(--dm-studio-paper) !important;
+    color: var(--dm-studio-ink) !important;
+    border-color: var(--dm-studio-border) !important;
+  }
+}
+
+@layer dmStudentIndigo {
+  html:not(.dm-teacher-portal) body #rtDialog .rt-dialog {
+    background: var(--dm-studio-paper) !important;
+    border: 1px solid var(--dm-studio-border) !important;
+    color: var(--dm-studio-ink) !important;
+  }
+
+  html:not(.dm-teacher-portal) body #rtDialog .rt-dialog :is(h2,h3,p) {
+    color: var(--dm-studio-ink) !important;
+    -webkit-text-fill-color: currentColor !important;
+  }
+
+  html:not(.dm-teacher-portal) body #rtDialog .rt-choices button {
+    background: var(--dm-studio-tint) !important;
+    border-color: var(--dm-studio-border) !important;
+    color: var(--dm-studio-ink) !important;
+  }
+
+  html:not(.dm-teacher-portal) body .ld-sheet .ld-primary {
+    background: var(--dm-studio-accent) !important;
+    color: white !important;
+  }
+
+  html:not(.dm-teacher-portal) body .ld-sheet-papi,
+  html:not(.dm-teacher-portal) body #rtDialog .dm-goal-papi {
+    content: url("papi-loading.webp");
+    object-fit: contain;
+  }
+
+  html:not(.dm-teacher-portal) body #tab-dunya .rt-medal-route .rt-medal-row.is-current .rt-medal-papi {
+    display: block !important;
+    content: url("papi-loading.webp");
+    width: clamp(50px, 14vw, 78px) !important;
+    height: auto !important;
+    object-fit: contain;
+    pointer-events: none;
+  }
+}
