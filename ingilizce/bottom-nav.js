@@ -25,37 +25,82 @@ function syncProfileDock(){
 }
 function close(restore=true){const panel=document.getElementById('rtProfileBackdrop');if(!panel)return;if(restore)restorePrimary();panel.remove();document.getElementById('bottomNavMobile')?.querySelector('[data-ekran="tab-profile-menu"]')?.setAttribute('aria-expanded','false');window.dcBottomNavSenkronize?.();}
 let profileReturnPane='main';
-const centreItems=[['İlerlemem','Gelişimimi keşfet','progress',0],['Başarılarım','Rozetlerimi gör','badges',1],['Karnelerim','Notlarımı incele','certificates',2],['Ödevlerim','Görevlerimi tamamla','daily',3],['Kelime Tekrarı','Kelimeleri pekiştir','repeat',5],['Parkur Değiştir','Yeni maceralara geç','route',6],['Veli Kontrolü','Ayarlar ve raporlar','guardian',7],['Öğretmen Paneli','Sınıfıma geç','teacherPanel',5,'account-icons']];
+const centreItems=[
+ ['İlerlemem','progress'],['Başarılarım','badges'],['Karnelerim','certificates'],['Ödevlerim','daily'],
+ ['Kelime Tekrarı','repeat'],['Parkur Değiştir','route'],['Veli Kontrolü','guardian'],['Öğretmen Paneli','teacherPanel']
+];
 // 11 Kas 2026 · Benim Merkezim (Claude Design Profil A): Seviye Testi yalnızca Parkur Değiştir'den; Veli Kontrolü'nün yanında Öğretmen Paneli.
 const accountItems=[['Profilim','Kişisel bilgilerimi düzenle','profile',0],['Ayarlar','Uygulama tercihlerini yönet','settings',1],['Hesap Değiştir','Farklı bir hesapla devam et','switchAccount',2],['Yardım ve Destek','Sık sorulan sorular ve iletişim','help',3],['Güvenlik ve Bildirimlerim','Hesap güvenliği ve bildirim ayarları','safety',4],['Öğretmen Paneli','Öğretmen araçlarına erişim','teacher',5],['Öğretmene Mesaj Gönder','Sorularını ilet','coach',6],['Çıkış Yap','Güvenli bir şekilde çıkış yap','logout',7]];
 const centreArt=(name,cell)=>'<i class="au-art au-'+name+'" style="--au-x:'+(cell%3*50)+'%;--au-y:'+Math.floor(cell/3)*50+'%" aria-hidden="true"></i>';
-const centreIcons=['26 668 192 178','245 668 191 178','463 668 191 178','682 668 192 178','26 937 192 175','245 937 191 175','463 937 191 175','682 937 192 175','56 1273 135 117','500 1266 122 125','46 1469 96 77','16 174 162 121'];
-const centreIcon=index=>{
- const [x,y,width,height]=centreIcons[index].split(' ');
- const clip='pa-icon-clip-'+index;
- return `<svg class="pa-reference-art" aria-hidden="true" viewBox="${centreIcons[index]}">
-  <defs><clipPath id="${clip}" clipPathUnits="userSpaceOnUse"><rect x="${x}" y="${y}" width="${width}" height="${height}"/></clipPath></defs>
-  <g clip-path="url(#${clip})"><image href="friends-assets/centre-reference.webp" width="900" height="1748"/></g>
- </svg>`;
+const profileIcons={
+ progress:'<path fill="var(--pa-coral)" d="M3 26h7v7H3zm11-7h7v14h-7zm11-7h7v21h-7z"/><path d="M4 19c11 0 19-6 25-15m-6 1 6-1 1 6" stroke="var(--pa-coral)"/>',
+ badges:'<path fill="#e74450" d="m10 22-3 13 7-3 4 4 2-12m4-3 5 14-7-3-4 4-2-12"/><circle cx="18" cy="15" r="12" fill="#ffcf55" stroke="#d38a12"/><path fill="#b87108" d="m18 7 2.4 5 5.6.8-4 4 .9 5.5-4.9-2.6-4.9 2.6.9-5.5-4-4 5.6-.8z"/>',
+ certificates:'<rect x="7" y="2" width="22" height="32" rx="3" stroke="var(--pa-icon-ink)"/><path d="m11 16 4-9 4 9m-6.5-3h5m7-4v7m-3.5-3.5h7" stroke="var(--pa-coral)"/><path d="M12 22h12m-12 5h9" stroke="var(--pa-icon-muted)"/>',
+ daily:'<rect x="5" y="6" width="26" height="28" rx="4" stroke="var(--pa-icon-ink)"/><path d="M14 6a4 4 0 0 1 8 0h3v5H11V6z" fill="var(--pa-icon-muted)" stroke="var(--pa-icon-ink)"/><path d="m10 18 2 2 4-5m-6 12 2 2 4-5" stroke="var(--pa-coral)"/><path d="M20 18h6m-6 9h6" stroke="var(--pa-icon-muted)"/>',
+ repeat:'<rect x="12" y="11" width="20" height="21" rx="4" fill="var(--pa-soft)" stroke="var(--pa-icon-ink)" transform="rotate(12 22 20)"/><rect x="3" y="6" width="23" height="21" rx="4" fill="var(--centre-paper)" stroke="var(--pa-icon-ink)" transform="rotate(-10 14 16)"/><path d="m8 21 3-9 5 8m-7-2h5m7 1c-4 2-5-3-2-4h2l1 4" stroke="var(--pa-icon-ink)" stroke-width="1.8"/><circle cx="30" cy="6" r="3" fill="#e74450"/>',
+ route:'<path d="M9 28c4 7 12 1 10-4s3-7 7-6" stroke="var(--pa-icon-ink)" stroke-dasharray="2 3"/><path fill="var(--pa-coral)" d="M16 20c0 5-6 10-6 10s-6-5-6-10a6 6 0 0 1 12 0Zm17-12c0 4-6 10-6 10s-6-6-6-10a6 6 0 0 1 12 0Z"/><circle cx="10" cy="20" r="2" fill="#fff"/><circle cx="27" cy="8" r="2" fill="#fff"/>',
+ guardian:'<path d="M2 33v-3a9 9 0 0 1 18 0v3" fill="#52749a"/><path d="M16 33v-2a9 9 0 0 1 18 0v2" fill="var(--pa-coral)"/><circle cx="11" cy="14" r="8" fill="#56382e"/><circle cx="25" cy="18" r="8" fill="#694338"/><path d="M5 15a6 6 0 0 0 12 0v-3l-5 1-3-3zM19 19a6 6 0 0 0 12 0v-2l-6-3-2 3z" fill="#ffcc9e"/>',
+ teacherPanel:'<rect x="11" y="4" width="23" height="21" rx="2" stroke="var(--pa-icon-ink)"/><path d="M17 10h11m-11 5h8" stroke="var(--pa-icon-muted)"/><circle cx="10" cy="18" r="7" fill="#56382e"/><path d="M5 18a5 5 0 0 0 10 0v-3l-4 1-3-3z" fill="#ffcc9e"/><path d="M2 34v-3c0-7 12-8 15-3l5-7 3 2-6 11z" fill="var(--pa-coral)"/>',
+ shop:'<path d="M5 14v17h26V14M13 31v-9h10v9M6 4h24l4 9c-1 5-6 5-8 2-2 3-6 3-8 0-2 3-6 3-8 0-2 3-7 3-8-2zM12 4l-2 11m8-11v11m6-11 2 11" stroke="currentColor"/>',
+ parentSwitch:'<circle cx="13" cy="11" r="6" fill="var(--pa-coral)"/><circle cx="27" cy="13" r="4.5" fill="var(--pa-coral)"/><path d="M2 31v-3a11 10 0 0 1 22 0v3Zm24 0v-3a13 13 0 0 0-3-8 8 8 0 0 1 11 7v4z" fill="var(--pa-coral)"/>',
+ support:'<path d="M5 19v-3a13 13 0 0 1 26 0v4m-2 7c0 5-5 6-9 6" stroke="var(--pa-coral)"/><rect x="3" y="16" width="7" height="12" rx="3" stroke="var(--pa-coral)"/><rect x="26" y="16" width="7" height="12" rx="3" stroke="var(--pa-coral)"/><circle cx="19" cy="33" r="2" fill="var(--pa-coral)"/>'
 };
-const parentSwitchIcon='<svg class="pa-reference-art pa-parent-art" viewBox="0 0 40 38" aria-hidden="true"><rect x="2" y="2" width="36" height="34" rx="10" fill="#dff7f0" stroke="#7ecbb8" stroke-width="1.5"/><circle cx="15.5" cy="13.5" r="4.4" fill="#136a60"/><path d="M8.5 27.5c0-4.2 3.1-6.8 7-6.8s7 2.6 7 6.8" fill="#136a60"/><circle cx="26.2" cy="17.2" r="3.2" fill="#209e89"/><path d="M21 27.5c.3-3 2.4-4.9 5.2-4.9s4.9 1.9 5.2 4.9" fill="#209e89"/><circle cx="31.5" cy="9.5" r="5.5" fill="#f59e0b" stroke="#fff" stroke-width="1.5"/><path d="M29.4 9.5h4.2m-1.5-1.7 1.7 1.7-1.7 1.7" fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+function profileIcon(action){
+ return '<svg class="pa-card-icon" viewBox="0 0 36 36" aria-hidden="true" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'+profileIcons[action]+'</svg>';
+}
+function paintProfileCards(level,xp,progress){
+ const levelXp=Math.max(0,xp-(progress?.start||0)).toLocaleString('tr-TR');
+ const goalXp=Math.max(1,(progress?.next||40)-(progress?.start||0)).toLocaleString('tr-TR');
+ const progressLabel=progress?.next===null?'En yüksek seviye':levelXp+' / '+goalXp+' XP';
+ return `<header class="pa-hero">
+   <span class="pa-hero-papi" aria-hidden="true"><svg viewBox="16 174 162 121" aria-hidden="true"><image href="friends-assets/centre-reference.webp" width="900" height="1748"/></svg></span>
+   <div class="pa-hero-copy"><span class="pa-wordmark">Diji-Medu</span><h2 id="rtProfileTitle">Benim Merkezim</h2></div>
+  </header>
+  <div class="pa-body">
+   <div class="pa-user">
+    <span class="pa-avatar" aria-hidden="true"></span>
+    <div class="pa-user-copy"><div class="pa-name-row"><strong></strong><small class="pa-level">Seviye ${level}</small></div>
+     <progress value="${progress?.ratio||0}" max="1" aria-label="Seviye ilerlemen"></progress>
+     <div class="pa-xp-row">${progressLabel}</div>
+    </div>
+    <button type="button" class="pa-edit" data-profile="profile" aria-label="Profilimi düzenle">✎</button>
+   </div>
+   <div class="pa-grid">${centreItems.map(([label,action])=>`<button type="button" data-profile="${action}">${profileIcon(action)}<span><b>${label}</b></span></button>`).join('')}</div>
+   <div class="dm-profile-shop-row">
+    <button type="button" data-profile="shop">${profileIcon('shop')}<b>Mağaza</b><em aria-hidden="true">›</em></button>
+    <button type="button" data-profile="parentSwitch">${profileIcon('parentSwitch')}<b>Veli Hesabına Geç</b><em aria-hidden="true">›</em></button>
+    <button type="button" class="au-account-entry" data-centre="account">${profileIcon('support')}<b>Hesap ve Destek</b><em aria-hidden="true">›</em></button>
+   </div>
+  </div>`;
+}
 window.dmProfileMenuAc=function(initial='main'){
  if(window.dmTeacherPortalMode)return window.dmTeacherPortal?.openProfile();
  if(document.getElementById('rtProfileBackdrop')){close();return;}
  rememberPrimary();restorePrimary();const nav=document.getElementById('bottomNavMobile'),last=nav?.querySelector('[data-ekran="tab-profile-menu"]');if(!last)return;
  const el=document.createElement('div');el.id='rtProfileBackdrop';el.className='rt-profile-backdrop au-centre-backdrop';let pane=initial==='account'?'account':'main';
  const name=typeof aktifOgrenciAdi!=='undefined'?String(aktifOgrenciAdi||'Profilim'):'Profilim',level=window.dmProgression?.level?.()||1;
- const xp=Number(typeof yo!=='undefined'?yo?.totalXp:0)||0,progress=window.DijiProgressRules?.progress?.(xp),ratio=progress?.ratio||0;
+ const xp=Number(typeof yo!=='undefined'?yo?.totalXp:0)||0,progress=window.DijiProgressRules?.progress?.(xp);
  function paint(){
-  const account=pane==='account',items=account?accountItems:centreItems;
-  el.innerHTML='<section class="rt-profile au-centre '+(account?'au-account':'pa-reference')+'" role="dialog" aria-modal="true" aria-labelledby="rtProfileTitle"><button type="button" class="rt-close" aria-label="Profil menüsünü kapat">×</button>'+(account?'<button class="au-back" type="button" data-centre="back">‹ Benim Merkezim</button><header class="au-account-head">'+centreArt('center-icons',8)+'<h2 id="rtProfileTitle">Hesap ve Destek</h2><p>Tüm hesap işlemlerin ve destek seçeneklerin burada!</p></header>':'<div class="pa-body"><div class="pa-hero"><div class="pa-hero-copy"><span class="pa-wordmark">Diji-Medu</span><h2 id="rtProfileTitle" style="color:var(--pa-ink)!important;-webkit-text-fill-color:var(--pa-ink)!important">Benim Merkezim</h2></div><span class="pa-hero-papi dm-lp dm-lp-mini" aria-hidden="true">'+centreIcon(11)+'</span></div><div class="pa-user"><span class="pa-avatar"></span><div class="pa-user-copy"><div class="pa-name-row"><strong></strong><small class="pa-level">Seviye '+level+'</small></div><progress value="'+ratio+'" max="1" aria-label="Seviye ilerlemen"></progress><div class="pa-xp-row"><span class="au-xp">'+(progress?.next===null?'En yüksek seviye':Math.max(0,xp-(progress?.start||0)).toLocaleString('tr-TR')+' / '+Math.max(1,(progress?.next||40)-(progress?.start||0)).toLocaleString('tr-TR')+' XP')+'</span></div></div><button type="button" class="pa-edit" data-profile="profile" aria-label="Profilimi düzenle">✎</button></div>')+'<div class="'+(account?'rt-profile-grid au-centre-grid':'pa-grid')+'">'+items.map(([label,note,action,cell,sheet],index)=>'<button type="button" data-profile="'+action+'">'+(account?centreArt(sheet||'account-icons',cell):centreIcon(index))+'<span><b>'+label+'</b>'+(account?'<small>'+note+'</small>':'')+'</span><em aria-hidden="true">›</em></button>').join('')+ '</div>'+(!account?'<div class="dm-profile-shop-row"><button type="button" data-profile="shop">'+centreIcon(8)+'<span>Mağaza</span><i aria-hidden="true">›</i></button><button type="button" data-profile="parentSwitch">'+parentSwitchIcon+'<span>Veli Hesabına Geç</span><i aria-hidden="true">›</i></button></div>':'')+(account?'':'</div>')+(!account?'<button type="button" class="au-account-entry" data-centre="account">'+centreIcon(10)+'<span><b>Hesap ve Destek</b></span><em aria-hidden="true">›</em></button>':'')+'</section>';
+  const account=pane==='account';
+  el.classList.toggle('pa-cards-backdrop',!account);
+  const closeButton='<button type="button" class="rt-close" aria-label="Profil menüsünü kapat">×</button>';
+  const accountPane='<button class="au-back" type="button" data-centre="back">‹ Benim Merkezim</button>'+
+   '<header class="au-account-head">'+centreArt('center-icons',8)+'<h2 id="rtProfileTitle">Hesap ve Destek</h2><p>Tüm hesap işlemlerin ve destek seçeneklerin burada!</p></header>'+
+   '<div class="rt-profile-grid au-centre-grid">'+accountItems.map(([label,note,action,cell])=>
+    '<button type="button" data-profile="'+action+'">'+centreArt('account-icons',cell)+'<span><b>'+label+'</b><small>'+note+'</small></span><em aria-hidden="true">›</em></button>'
+   ).join('')+'</div>';
+  el.innerHTML='<section class="rt-profile au-centre '+(account?'au-account':'pa-reference pa-cards')+
+   '" role="dialog" aria-modal="true" aria-labelledby="rtProfileTitle">'+closeButton+
+   (account?accountPane:paintProfileCards(level,xp,progress))+'</section>';
   const themeButton=window.dmDayNightTheme?.createButton();
-  if(themeButton)el.querySelector('.rt-profile').prepend(themeButton);
-  if(!account){
-   const toolbar=document.createElement('div');toolbar.className='pa-toolbar';
+  if(account){
+   if(themeButton)el.querySelector('.rt-profile').prepend(themeButton);
+  }else{
+   const toolbar=document.createElement('div');
+   toolbar.className='pa-toolbar';
    if(themeButton)toolbar.append(themeButton);
    toolbar.append(el.querySelector('.rt-close'));
-   el.querySelector('.pa-body').before(toolbar);
+   el.querySelector('.pa-hero').append(toolbar);
   }
   if(!account){el.querySelector('.pa-user strong').textContent=name;const avatar=el.querySelector('.pa-avatar');const art=window.karakterSvg?.(name,88);if(art)avatar.innerHTML=art;else avatar.innerHTML='<img src="route-assets/papi-profile.png" alt="">';}
   window.dmTeacherWorkspace?.paintBadge();el.querySelector(account?'.au-back':'.rt-close').focus();

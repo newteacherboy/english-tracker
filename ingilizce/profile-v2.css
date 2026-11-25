@@ -1,164 +1,275 @@
-/* [11 Kas 2026] Benim Merkezim · Claude Design "Profil A": robot yerine canlı 3D Papi, kartsız ikon ızgarası,
-   parlayan Pro bandı, Veli Kontrolü'nün yanında Öğretmen Paneli. Hesap ve Destek bölmesi (au-account) aynen kalır. */
-#rtProfileBackdrop .pa-hero{position:relative;display:flex;align-items:center;justify-content:space-between;gap:8px;margin:0 0 12px;padding:14px 62px 14px 16px;border-radius:24px;background:#D7ECFF;box-shadow:0 4px 0 #BCD8F3;overflow:visible}
-#rtProfileBackdrop{--pa-ink:#0F2747}
-html[data-dm-theme="night"] #rtProfileBackdrop{--pa-ink:#F1F6FF}
-#rtProfileBackdrop .pa-wordmark{display:block;margin:0 0 2px;font:900 15px/1.1 Nunito,system-ui,sans-serif;color:#7252cb}
-#rtProfileBackdrop .pa-hero h2{margin:0;font:900 26px/1.05 Nunito,system-ui,sans-serif;color:#0F2747}
-#rtProfileBackdrop .pa-hero p{margin:4px 0 0;font:800 13px/1.3 Nunito,system-ui,sans-serif;color:#24476E}
-#rtProfileBackdrop .pa-hero-papi{display:block;flex:none;width:84px;height:92px;margin:-26px 6px -14px 0}
-#rtProfileBackdrop .pa-hero-papi svg{width:100%;height:100%;overflow:visible;display:block}
-#rtProfileBackdrop .pa-user{display:flex;align-items:center;gap:12px;margin:0 0 12px;padding:12px;border-radius:22px;background:#fff;box-shadow:0 4px 0 #C9DDF2}
-#rtProfileBackdrop .pa-avatar{width:68px;height:68px;flex:none;border-radius:50%;background:#DDF4EE;box-shadow:0 0 0 4px #2DB66B33;display:grid;place-items:center;overflow:hidden}
-#rtProfileBackdrop .pa-avatar :is(svg,img){width:100%;height:100%;object-fit:contain}
-#rtProfileBackdrop .pa-user-copy{flex:1;min-width:0}
-#rtProfileBackdrop .pa-name-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-#rtProfileBackdrop .pa-name-row strong{font:900 22px/1.1 Nunito,system-ui,sans-serif;color:#0F2747}
-#rtProfileBackdrop .pa-level{padding:3px 9px;border-radius:10px;background:#E3F6F4;color:#138A5C;font:900 13px/1.2 Nunito,system-ui,sans-serif}
-#rtProfileBackdrop .pa-user progress{display:block;width:100%;height:12px;margin:8px 0 0;border:0;border-radius:6px;background:#E3ECF6;overflow:hidden;-webkit-appearance:none;appearance:none}
-#rtProfileBackdrop .pa-user progress::-webkit-progress-bar{background:#E3ECF6;border-radius:6px}
-#rtProfileBackdrop .pa-user progress::-webkit-progress-value{background:#2DB66B;border-radius:6px}
-#rtProfileBackdrop .pa-user progress::-moz-progress-bar{background:#2DB66B;border-radius:6px}
-#rtProfileBackdrop .pa-xp-row{display:flex;justify-content:space-between;gap:8px;margin-top:5px;white-space:nowrap;font:800 11px/1.2 Nunito,system-ui,sans-serif;color:#5D7A9C}
-#rtProfileBackdrop .pa-xp-row .au-xp{white-space:nowrap}
-#rtProfileBackdrop .pa-edit{align-self:flex-start;width:40px;height:40px;flex:none;border:0;border-radius:50%;background:#EEF4FB;color:#5D7A9C;font-size:17px}
-/* Pro bandı */
-#rtProfileBackdrop .pa-pro{position:relative;overflow:hidden;display:flex;align-items:center;gap:12px;width:100%;margin:0 0 14px;padding:12px 12px 12px 14px;border:0;border-radius:22px;background:#6C3BEA;color:#fff;text-align:left;animation:paPulse 2s ease-in-out infinite}
-#rtProfileBackdrop .pa-pro::after{content:"";position:absolute;top:-30%;left:-60%;width:38%;height:160%;background:linear-gradient(100deg,#fff0,#fffb,#fff0);transform:rotate(16deg);animation:paShine 2.8s ease-in-out infinite;pointer-events:none}
-#rtProfileBackdrop .pa-pro-crown{width:44px;height:44px;flex:none;background:url('premium-assets/kelime-eslestirme/icon-crown.webp') center/contain no-repeat;animation:paWiggle 2.6s ease-in-out infinite}
-#rtProfileBackdrop .pa-pro-copy{flex:1;min-width:0}
-#rtProfileBackdrop .pa-pro-copy b{display:block;font:900 17px/1.15 Nunito,system-ui,sans-serif}
-#rtProfileBackdrop .pa-pro-copy small{display:block;font:700 12px/1.3 Nunito,system-ui,sans-serif;color:#EDE6FF}
-#rtProfileBackdrop .pa-pro-go{flex:none;padding:10px 14px;border-radius:14px;background:#FFC531;color:#3A2400;font:900 14px/1 Nunito,system-ui,sans-serif;box-shadow:0 4px 0 #D99A00;position:relative;z-index:1}
-#rtProfileBackdrop .pa-spark{position:absolute;left:54px;top:6px;font-style:normal;color:#FFC531;animation:paTwinkle 1.8s ease-in-out infinite}
-/* kartsız ikon ızgarası */
-#rtProfileBackdrop .pa-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));row-gap:14px;column-gap:2px;margin:0 0 14px}
-#rtProfileBackdrop .pa-grid>button{display:flex;flex-direction:column;align-items:center;gap:4px;padding:2px;border:0;background:none;box-shadow:none;text-align:center;position:relative}
-#rtProfileBackdrop .pa-grid>button>.au-art{width:62px;height:62px;border-radius:50%;background-color:transparent;background-size:300% 300%;filter:drop-shadow(0 3px 4px #18344620)}
-#rtProfileBackdrop .pa-grid>button>.au-art::before{content:none}
-#rtProfileBackdrop .pa-grid b{display:block;font:900 13px/1.15 Nunito,system-ui,sans-serif;color:#0F2747}
-#rtProfileBackdrop .pa-grid small{display:block;margin-top:2px;font:700 11px/1.25 Nunito,system-ui,sans-serif;color:#5D7A9C}
-#rtProfileBackdrop .pa-grid em{display:none}
-html[data-dm-theme="night"] #rtProfileBackdrop .pa-hero{background:#1d3157;box-shadow:0 4px 0 #0f1f3b}
-html[data-dm-theme="night"] #rtProfileBackdrop .pa-hero h2,html[data-dm-theme="night"] #rtProfileBackdrop .pa-name-row strong,html[data-dm-theme="night"] #rtProfileBackdrop .pa-grid b{color:#F1F6FF}
-html[data-dm-theme="night"] #rtProfileBackdrop .pa-hero p,html[data-dm-theme="night"] #rtProfileBackdrop .pa-grid small,html[data-dm-theme="night"] #rtProfileBackdrop .pa-xp-row{color:#C3D3EA}
-html[data-dm-theme="night"] #rtProfileBackdrop .pa-user{background:#1d3157;box-shadow:0 4px 0 #0f1f3b}
-@keyframes paShine{0%,45%{left:-60%}80%,100%{left:130%}}
-@keyframes paPulse{0%,100%{box-shadow:0 5px 0 #5133C9,0 0 0 0 #7B4DFF99}50%{box-shadow:0 5px 0 #5133C9,0 0 22px 6px #7B4DFF55}}
-@keyframes paWiggle{0%,70%,100%{transform:rotate(0)}76%{transform:rotate(-8deg)}84%{transform:rotate(7deg)}92%{transform:rotate(-3deg)}}
-@keyframes paTwinkle{0%,100%{opacity:0;transform:scale(.4)}50%{opacity:1;transform:scale(1)}}
-@media (prefers-reduced-motion:reduce){#rtProfileBackdrop :is(.pa-pro,.pa-pro::after,.pa-pro-crown,.pa-spark){animation:none}}
-#rtProfileBackdrop .pa-body{display:block;align-self:start;min-width:0}
-#rtProfileBackdrop :is(.pa-hero,.pa-user,.pa-pro,.pa-grid){align-self:start}
-/* [12 Kas 2026] Kısaltma: Hesap ve Destek alt menünün arkasında kalmasın diye kutular küçültüldü.
-   Eski kurallar bilgiIslands katmanında !important olduğu için aynı katmanda daha güçlü seçicilerle yazıldı. */
-@layer bilgiIslands{
-html body #rtProfileBackdrop .pa-hero{margin:0 0 10px!important;padding:10px 62px 10px 14px!important;border-radius:22px!important}
-html body #rtProfileBackdrop .pa-wordmark{font-size:13px!important}
-html body #rtProfileBackdrop .pa-hero h2{font-size:23px!important;line-height:1.05!important}
-html body #rtProfileBackdrop .pa-hero p{font-size:12px!important;margin-top:3px!important}
-html body #rtProfileBackdrop .pa-hero-papi{width:66px!important;height:72px!important;margin:-14px 2px -10px 0!important}
-html body #rtProfileBackdrop .pa-user{margin:0 0 10px!important;padding:9px 10px!important;gap:10px!important;border-radius:20px!important}
-html body #rtProfileBackdrop .pa-avatar{width:54px!important;height:54px!important}
-html body #rtProfileBackdrop .pa-name-row strong{font-size:19px!important}
-html body #rtProfileBackdrop .pa-user progress{height:10px!important;margin-top:6px!important}
-html body #rtProfileBackdrop .pa-edit{width:34px!important;height:34px!important;font-size:15px!important}
-html body #rtProfileBackdrop .pa-pro{margin:0 0 10px!important;padding:9px 10px 9px 12px!important;gap:10px!important;border-radius:20px!important}
-html body #rtProfileBackdrop .pa-pro-crown{width:34px!important;height:34px!important}
-html body #rtProfileBackdrop .pa-pro-copy b{font-size:15px!important}
-html body #rtProfileBackdrop .pa-pro-copy small{font-size:11px!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
-html body #rtProfileBackdrop .pa-pro-go{padding:8px 12px!important;font-size:13px!important}
-html body #rtProfileBackdrop .pa-spark{left:42px!important;top:2px!important}
-html body #rtProfileBackdrop .pa-grid{row-gap:8px!important;margin:0 0 10px!important}
-html body #rtProfileBackdrop .pa-grid>button>.au-art{width:50px!important;height:50px!important}
-html body #rtProfileBackdrop .pa-grid b{font-size:12.5px!important}
-html body #rtProfileBackdrop .pa-grid small{font-size:10.5px!important;margin-top:1px!important;display:-webkit-box!important;-webkit-line-clamp:2!important;-webkit-box-orient:vertical!important;overflow:hidden!important}
-html body #rtProfileBackdrop .au-centre .au-account-entry{min-height:64px!important;margin-top:6px!important;padding:7px 12px!important;gap:10px!important}
-html body #rtProfileBackdrop .au-centre .au-account-entry>.au-art{width:52px!important;height:52px!important}
-html body #rtProfileBackdrop .au-centre .au-account-entry b{font-size:17px!important}
-html body #rtProfileBackdrop .au-centre .au-account-entry small{font-size:12px!important;display:-webkit-box!important;-webkit-line-clamp:1!important;-webkit-box-orient:vertical!important;overflow:hidden!important}
-html body #rtProfileBackdrop .au-centre .pa-hero h2{font-size:23px!important;margin:0!important}
-}
-
-/* The centre content scrolls between the toolbar and the account shortcut. */
-@layer bilgiIslands{
-html body #rtProfileBackdrop .pa-toolbar{display:flex!important;align-items:center!important;justify-content:flex-end!important;gap:8px!important;min-height:44px!important;flex:none!important}
-html body #rtProfileBackdrop .pa-toolbar :is(.rt-close,.dm-theme-toggle){position:static!important;inset:auto!important;transform:none!important;width:42px!important;height:42px!important;min-height:42px!important;margin:0!important;flex:none!important}
-html body #rtProfileBackdrop.au-centre-backdrop{padding-bottom:var(--dm-profile-dock-space,calc(102px + env(safe-area-inset-bottom,0px)))!important}
-html body #rtProfileBackdrop .rt-profile.au-centre:not(.au-account){display:flex!important;flex-direction:column!important;justify-content:flex-start!important;gap:12px!important;padding:12px 12px 16px!important}
-html body #rtProfileBackdrop .pa-body{flex:0 1 auto!important;min-height:0!important;width:100%!important;min-width:0!important;overflow-y:auto;overscroll-behavior:contain}
-html body #rtProfileBackdrop .pa-hero{padding:12px 14px!important}
-html body #rtProfileBackdrop .pa-hero-papi{margin:0!important}
-html body #rtProfileBackdrop .au-centre:not(.au-account)>.au-account-entry{flex:none!important;margin-top:auto!important}
-}
-
-/* Illustrated shortcuts in Benim Merkezim. */
-#rtProfileBackdrop .dm-profile-shop-row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin:4px 0 7px}
-#rtProfileBackdrop .dm-profile-shop-row button{
- position:relative;display:grid;justify-items:center;align-content:center;gap:3px;min-height:clamp(89px,15dvh,140px);
- overflow:hidden;border:2px solid #fff9;border-radius:20px;background:linear-gradient(#ffe5d6,#ffc89e);
- color:#802219;font:1000 clamp(17px,5vw,24px)/1.05 Nunito,system-ui;box-shadow:0 4px 0 #ba866a77;cursor:pointer;padding:4px 22px 8px;
-}
-#rtProfileBackdrop .dm-profile-shop-row button+button{background:linear-gradient(#e3faf2,#b8ecd9);color:#0f4f47;box-shadow:0 4px 0 #5aa89676}
-#rtProfileBackdrop .dm-profile-shop-row img{display:block;width:auto;height:clamp(50px,9.8dvh,93px);max-width:100%;object-fit:contain;border-radius:13px;mix-blend-mode:multiply}
-#rtProfileBackdrop .dm-profile-shop-row i{position:absolute;right:6px;bottom:5px;background:#fff;color:#6630a6;border-radius:50%;width:20px;height:20px;font-style:normal;font-size:18px;line-height:19px}
-
 @layer bilgiIslands {
-html body #rtProfileBackdrop .rt-profile.au-centre.pa-reference {
- --pa-ink:#131e41;--centre-paper:#fff;--centre-line:#c6ccda;
- background:var(--centre-paper)!important;gap:3px!important;
-}
-html body #rtProfileBackdrop .pa-reference .pa-hero {
- display:flex!important;flex-direction:row-reverse!important;justify-content:flex-end!important;
- align-items:center!important;gap:10px!important;padding:0!important;
- background:transparent!important;box-shadow:none!important;margin-bottom:12px!important;
-}
-html body #rtProfileBackdrop .pa-reference .pa-hero-papi {position:static!important;width:58px!important;height:44px!important;flex:none!important}
-html body #rtProfileBackdrop .pa-reference .pa-user {
- background:var(--centre-paper)!important;border:1px solid var(--centre-line)!important;
- box-shadow:none!important;margin-bottom:14px!important;
-}
-html body #rtProfileBackdrop .pa-reference .pa-grid {gap:8px!important}
-html body #rtProfileBackdrop .pa-reference .pa-grid button {min-width:0!important;padding:0!important}
-html body #rtProfileBackdrop .pa-reference .pa-grid b {font-size:clamp(10px,3.2vw,14px)!important;color:var(--pa-ink)!important}
-html body #rtProfileBackdrop .pa-reference-art {display:block;width:100%;height:100%;overflow:hidden}
-html body #rtProfileBackdrop .pa-reference .pa-grid .pa-reference-art {
- width:min(100%,88px)!important;height:auto!important;aspect-ratio:1.08;
- border-radius:18%;flex:none!important;
-}
-html body #rtProfileBackdrop .pa-reference .dm-profile-shop-row button,
-html body #rtProfileBackdrop .au-centre.pa-reference .au-account-entry {
- display:flex!important;align-items:center!important;justify-content:flex-start!important;gap:8px!important;
- min-height:49px!important;padding:7px 9px!important;border:1px solid var(--centre-line)!important;
- border-radius:13px!important;box-shadow:none!important;color:var(--pa-ink)!important;
- font:900 clamp(14px,4vw,18px)/1.2 Nunito,system-ui!important;background:#fff7e7!important;
-}
-html body #rtProfileBackdrop .pa-reference .dm-profile-shop-row button+button {background:#e8f8f3!important;border-color:#9dd6c5!important;color:#103e3a!important;font-size:clamp(12px,3.2vw,15px)!important;line-height:1.15!important;text-align:left!important}
-html body #rtProfileBackdrop .pa-reference .dm-profile-shop-row i {display:none!important}
-html body #rtProfileBackdrop .pa-reference .dm-profile-shop-row .pa-reference-art {width:40px;height:38px;flex:none}
-html body #rtProfileBackdrop .au-centre.pa-reference .au-account-entry {
- background:var(--centre-paper)!important;width:100%!important;
-}
-html body #rtProfileBackdrop .pa-reference .au-account-entry .pa-reference-art {width:30px;height:30px;flex:none}
-html body #rtProfileBackdrop .pa-reference .au-account-entry b {color:var(--pa-ink)!important}
-html body #rtProfileBackdrop .pa-reference .au-account-entry em {margin-inline-start:auto}
-html[data-dm-theme=night] body #rtProfileBackdrop .rt-profile.au-centre.pa-reference {--pa-ink:#f1f4ff;--centre-paper:#202b41;--centre-line:#51617a}
-html[data-dm-theme=night] body #rtProfileBackdrop .pa-reference .dm-profile-shop-row button {background:#343049!important}
-html[data-dm-theme=night] body #rtProfileBackdrop .pa-reference .dm-profile-shop-row button[data-profile="parentSwitch"] {background:#1e3a3c!important;border-color:#447678!important;color:#e6fbf7!important}
-@media(max-height:720px) {
- html body #rtProfileBackdrop .pa-reference .pa-grid .pa-reference-art {width:min(100%,60px)!important}
- html body #rtProfileBackdrop .pa-reference .pa-hero,html body #rtProfileBackdrop .pa-reference .pa-user {margin-bottom:7px!important}
-}
-}
+  html body #rtProfileBackdrop.au-centre-backdrop {
+    padding-bottom: var(--dm-profile-dock-space, calc(102px + env(safe-area-inset-bottom, 0px))) !important;
+  }
 
-@layer bilgiIslands {
-html body #rtProfileBackdrop .pa-reference svg.pa-reference-art {
- overflow:hidden!important;clip-path:inset(0);
-}
-html body #rtProfileBackdrop .rt-profile.au-centre.pa-reference > :is(.pa-body,.pa-toolbar,.au-account-entry) {
- width:100%!important;max-width:620px!important;align-self:center!important;
-}
-html body #rtProfileBackdrop .rt-profile.au-centre.pa-reference > .au-account-entry {
- margin:6px auto 0!important;
-}
+  html body #rtProfileBackdrop.au-centre-backdrop.pa-cards-backdrop {
+    position: fixed !important;
+  }
+
+  html body #rtProfileBackdrop.au-centre-backdrop.pa-cards-backdrop,
+  html body #rtProfileBackdrop .rt-profile.au-centre.pa-cards {
+    --centre-paper: #fff;
+    --centre-line: #bdc0ca;
+    --pa-lip: #e5e5eb;
+    --pa-ink: #191629;
+    --pa-icon-ink: #374054;
+    --pa-icon-muted: #868c9a;
+    --pa-soft: #fde5e7;
+    --pa-coral: #c82b41;
+    background: var(--centre-paper) !important;
+  }
+
+  html[data-dm-theme="night"] body #rtProfileBackdrop.pa-cards-backdrop,
+  html[data-dm-theme="night"] body #rtProfileBackdrop .rt-profile.au-centre.pa-cards {
+    --centre-paper: #20283c;
+    --centre-line: #67718a;
+    --pa-lip: #131b2d;
+    --pa-ink: #f3f3fc;
+    --pa-icon-ink: #daddec;
+    --pa-icon-muted: #a9adc0;
+    --pa-soft: #563045;
+    --pa-coral: #ff8491;
+  }
+
+  html body #rtProfileBackdrop .rt-profile.au-centre.pa-cards {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center;
+    gap: clamp(8px, 2dvh, 18px) !important;
+    padding: max(8px, env(safe-area-inset-top, 0px)) 12px 4px !important;
+    color: var(--pa-ink);
+  }
+
+  #rtProfileBackdrop .pa-cards,
+  #rtProfileBackdrop .pa-cards * {
+    box-sizing: border-box;
+  }
+
+  #rtProfileBackdrop .pa-cards :is(.pa-hero, .pa-body) {
+    width: 100%;
+    max-width: 620px;
+    min-width: 0;
+  }
+
+  html body #rtProfileBackdrop .pa-cards .pa-hero {
+    display: grid !important;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    gap: clamp(4px, 1.6vw, 12px) !important;
+    align-items: center;
+    flex: none;
+  }
+
+  #rtProfileBackdrop .pa-hero-papi {
+    display: block;
+    width: clamp(33px, 10vw, 62px);
+  }
+
+  #rtProfileBackdrop .pa-hero-papi svg {
+    display: block;
+    width: 100%;
+    overflow: hidden;
+  }
+
+  #rtProfileBackdrop .pa-wordmark {
+    display: block;
+    color: var(--pa-coral);
+    font: 850 clamp(11px, 3vw, 16px)/1.2 Nunito, system-ui, sans-serif;
+  }
+
+  html body #rtProfileBackdrop .pa-cards .pa-hero h2 {
+    margin: 0 !important;
+    color: var(--pa-ink) !important;
+    -webkit-text-fill-color: var(--pa-ink) !important;
+    font: 950 clamp(15px, 4.65vw, 31px)/1.1 Nunito, system-ui, sans-serif !important;
+  }
+
+  #rtProfileBackdrop .pa-toolbar {
+    display: flex;
+    align-items: center;
+    gap: clamp(4px, 1.4vw, 8px);
+  }
+
+  html body #rtProfileBackdrop .pa-cards .pa-toolbar :is(.rt-close, .dm-theme-toggle),
+  #rtProfileBackdrop .pa-cards .pa-edit {
+    display: grid !important;
+    place-items: center;
+    position: static !important;
+    inset: auto !important;
+    transform: none !important;
+    flex: none;
+    width: 44px !important;
+    height: 44px !important;
+    min-height: 44px !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border: 1px solid var(--centre-line) !important;
+    border-radius: 13px !important;
+    background: var(--centre-paper) !important;
+    box-shadow: 0 2px 0 var(--pa-lip) !important;
+    color: var(--pa-ink) !important;
+    -webkit-text-fill-color: var(--pa-ink) !important;
+  }
+
+  #rtProfileBackdrop .pa-cards .pa-body {
+    flex: 0 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: 2px 2px 6px;
+  }
+
+  #rtProfileBackdrop .pa-cards :is(.pa-user, .pa-grid, .dm-profile-shop-row) {
+    margin: 0 0 clamp(8px, 1.7dvh, 17px);
+  }
+
+  #rtProfileBackdrop .pa-cards .dm-profile-shop-row { margin-bottom: 0; }
+
+  #rtProfileBackdrop .pa-cards .pa-user {
+    display: flex;
+    align-items: center;
+    gap: clamp(7px, 2vw, 12px);
+    padding: clamp(7px, 1.3dvh, 14px);
+    min-width: 0;
+    border: 1px solid var(--centre-line);
+    border-radius: 17px;
+    background: var(--centre-paper);
+    box-shadow: 0 2px 0 var(--pa-lip);
+  }
+
+  #rtProfileBackdrop .pa-cards .pa-avatar {
+    display: grid;
+    place-items: center;
+    width: clamp(44px, 13.5vw, 76px);
+    aspect-ratio: 1;
+    flex: none;
+    overflow: hidden;
+    border: 1px solid var(--centre-line);
+    border-radius: 50%;
+    background: var(--pa-soft);
+    box-shadow: inset 0 0 0 3px var(--centre-paper);
+  }
+
+  #rtProfileBackdrop .pa-avatar :is(svg, img) { width: 100%; height: 100%; object-fit: contain; }
+  #rtProfileBackdrop .pa-user-copy { flex: 1; min-width: 0; }
+
+  #rtProfileBackdrop .pa-name-row {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 3px 8px;
+  }
+
+  #rtProfileBackdrop .pa-name-row strong {
+    min-width: 0;
+    overflow-wrap: anywhere;
+    color: var(--pa-ink);
+    font: 950 clamp(15px, 4.4vw, 25px)/1.15 Nunito, system-ui, sans-serif;
+  }
+
+  #rtProfileBackdrop .pa-level {
+    border-radius: 999px;
+    padding: 2px 8px;
+    background: var(--pa-soft);
+    color: var(--pa-coral);
+    font: 850 clamp(10px, 3vw, 15px)/1.25 Nunito, system-ui, sans-serif;
+  }
+
+  #rtProfileBackdrop .pa-user progress {
+    display: block;
+    width: 100%;
+    height: clamp(7px, 1.4dvh, 13px);
+    margin: 5px 0 0;
+    appearance: none;
+    border: 0;
+    border-radius: 999px;
+    background: var(--pa-lip);
+  }
+
+  #rtProfileBackdrop .pa-user progress::-webkit-progress-bar { background: var(--pa-lip); border-radius: 999px; }
+  #rtProfileBackdrop .pa-user progress::-webkit-progress-value { background: var(--pa-coral); border-radius: 999px; }
+  #rtProfileBackdrop .pa-user progress::-moz-progress-bar { background: var(--pa-coral); border-radius: 999px; }
+
+  #rtProfileBackdrop .pa-xp-row {
+    margin-top: 3px;
+    font: 820 clamp(10px, 3vw, 14px)/1.2 Nunito, system-ui, sans-serif;
+  }
+
+  #rtProfileBackdrop .pa-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: clamp(7px, 1.6dvh, 13px) clamp(7px, 2.4vw, 14px);
+  }
+
+  #rtProfileBackdrop .dm-profile-shop-row {
+    display: grid;
+    gap: clamp(7px, 1.4dvh, 11px);
+  }
+
+  html body #rtProfileBackdrop .pa-cards :is(.pa-grid, .dm-profile-shop-row)>button {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    gap: clamp(5px, 2vw, 15px) !important;
+    min-width: 0;
+    height: auto !important;
+    min-height: clamp(48px, 8.6dvh, 79px) !important;
+    margin: 0 !important;
+    padding: 5px clamp(6px, 2.2vw, 16px) !important;
+    border: 1px solid var(--centre-line) !important;
+    border-radius: 14px !important;
+    background: var(--centre-paper) !important;
+    box-shadow: 0 2px 0 var(--pa-lip) !important;
+    color: var(--pa-ink) !important;
+    -webkit-text-fill-color: var(--pa-ink) !important;
+    font: 900 clamp(12px, 3.9vw, 21px)/1.16 Nunito, system-ui, sans-serif !important;
+    text-align: start !important;
+    white-space: normal !important;
+    cursor: pointer;
+  }
+
+  html body #rtProfileBackdrop .pa-cards .dm-profile-shop-row>button {
+    min-height: clamp(44px, 6.4dvh, 59px) !important;
+  }
+
+  html body #rtProfileBackdrop .pa-cards :is(.pa-grid, .dm-profile-shop-row)>button b {
+    color: inherit !important;
+    -webkit-text-fill-color: inherit !important;
+    font: inherit !important;
+    overflow-wrap: anywhere;
+  }
+
+  #rtProfileBackdrop .pa-card-icon {
+    width: clamp(26px, 9.5vw, 52px);
+    height: clamp(26px, 9.5vw, 52px);
+    flex: none;
+    display: block;
+  }
+
+  #rtProfileBackdrop .dm-profile-shop-row .pa-card-icon { width: 29px; height: 29px; }
+
+  #rtProfileBackdrop .dm-profile-shop-row em {
+    display: block !important;
+    margin-inline-start: auto;
+    font-size: 24px;
+    font-style: normal;
+    line-height: 1;
+    width: auto;
+    height: auto;
+    flex: none;
+    background: none;
+    color: var(--pa-coral);
+    -webkit-text-fill-color: currentColor;
+  }
+
+  html body #rtProfileBackdrop .pa-cards .dm-profile-shop-row>[data-profile="shop"] {
+    background: linear-gradient(#d13248, #b32238) !important;
+    border-color: #aa2036 !important;
+    box-shadow: inset 0 1px 0 #ff9b9c, 0 2px 0 #8f1529 !important;
+    color: #fff !important;
+    -webkit-text-fill-color: #fff !important;
+  }
+
+  #rtProfileBackdrop .dm-profile-shop-row [data-profile="shop"] em { color: #fff; }
+  #rtProfileBackdrop .pa-cards button:focus-visible { outline: 2px solid var(--pa-coral); outline-offset: -3px; }
 }
