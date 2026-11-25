@@ -39,7 +39,7 @@
     -webkit-text-fill-color: currentColor !important;
   }
 
-  #bottomNavMobile.dm-nv2-on .bn-item.active { --menu-label: var(--menu-active); }
+  #bottomNavMobile.dm-nv2-on .bn-item[data-menu-selected] { --menu-label: var(--menu-active); }
   #bottomNavMobile.dm-nv2-on .bn-item[data-ekran="tab-profile-menu"] { --menu-label: var(--menu-muted); }
   #bottomNavMobile.dm-nv2-on .bn-item[data-ekran="tab-duel-home"] { --menu-label: var(--menu-duel-label); }
 }
@@ -64,8 +64,8 @@
 }
 
 #bottomNavMobile.dm-nv2-on .dm-nv2 svg { display: block; width: 22px; height: 22px; fill: currentColor; }
-#bottomNavMobile.dm-nv2-on .bn-item.active .dm-nv2 { background: #3547e8; color: white; box-shadow: 0 2px 0 #2836b0; }
-#bottomNavMobile.dm-nv2-on [data-ekran="tab-profile-menu"].active .dm-nv2 {
+#bottomNavMobile.dm-nv2-on .bn-item[data-menu-selected] .dm-nv2 { background: #3547e8; color: white; box-shadow: 0 2px 0 #2836b0; }
+#bottomNavMobile.dm-nv2-on [data-ekran="tab-profile-menu"][data-menu-selected] .dm-nv2 {
   background: color-mix(in srgb, var(--menu-muted) 13%, transparent);
   color: var(--menu-muted);
   box-shadow: none;

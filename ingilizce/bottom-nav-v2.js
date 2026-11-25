@@ -11,6 +11,30 @@
     'tab-profile-menu': '<circle cx="12" cy="7" r="4"/><path d="M5 19c0-3.7 3.2-6.3 7-6.3s7 2.6 7 6.3c0 1.1-.8 1.8-1.9 1.8H6.9C5.8 20.8 5 20.1 5 19Z"/>'
   };
 
+  const panelIds = ['tab-dunya', 'tab-aktiviteler', 'tab-meduakis', 'dmDuelHome', 'rtProfileBackdrop'];
+
+  function syncSelection(nav) {
+    const profile = document.getElementById('rtProfileBackdrop');
+    const duel = document.getElementById('dmDuelHome');
+    let target = '';
+
+    if (profile && !profile.hidden) {
+      target = 'tab-profile-menu';
+    } else if (duel && !duel.hidden) {
+      target = 'tab-duel-home';
+    } else {
+      const screen = document.querySelector('.dc-fullscreen-overlay.active:not([hidden])');
+      target = screen?.id || '';
+      if (target === 'tab-meduakis' && screen.querySelector('.dm-arena-ranks')) {
+        target = 'tab-rankings';
+      }
+    }
+
+    for (const button of nav.querySelectorAll('.bn-item[data-ekran]')) {
+      button.toggleAttribute('data-menu-selected', button.dataset.ekran === target);
+    }
+  }
+
   function paint() {
     const nav = document.getElementById('bottomNavMobile');
     if (!nav || window.dmTeacherPortalMode || document.documentElement.classList.contains('dm-teacher-portal')) {
@@ -37,6 +61,7 @@
       }
     }
     nav.classList.add('dm-nv2-on');
+    syncSelection(nav);
   }
 
   let pending = false;
@@ -49,7 +74,31 @@
     });
   }
 
+  const tracked = new WeakSet();
+  const panelObserver = new MutationObserver(schedule);
+
+  function watchPanels() {
+    for (const id of panelIds) {
+      const panel = document.getElementById(id);
+      if (!panel || tracked.has(panel)) continue;
+      tracked.add(panel);
+      panelObserver.observe(panel, { attributes: true, attributeFilter: ['class', 'hidden'] });
+      if (id === 'tab-meduakis') {
+        panelObserver.observe(panel.querySelector('#maEkran') || panel, { childList: true });
+      }
+    }
+  }
+
   function start() {
+    watchPanels();
+    new MutationObserver(records => {
+      const panelChanged = records.some(record => [...record.addedNodes, ...record.removedNodes]
+        .some(node => panelIds.includes(node.id)));
+      if (!panelChanged) return;
+      watchPanels();
+      schedule();
+    }).observe(document.body, { childList: true });
+
     paint();
     const nav = document.getElementById('bottomNavMobile');
     if (nav) {
@@ -60,7 +109,7 @@
         if (navigationChanged) schedule();
       }).observe(nav, { childList: true, subtree: true });
     }
-    for (const event of ['dm:login', 'dm:logout', 'dm:avatar-change', 'visibilitychange']) {
+    for (const event of ['dm:login', 'dm:logout', 'dm:avatar-change', 'dm:duel-home-close', 'visibilitychange']) {
       document.addEventListener(event, schedule);
     }
     window.addEventListener('dm:plan', schedule);
