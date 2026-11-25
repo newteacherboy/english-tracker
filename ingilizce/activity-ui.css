@@ -812,3 +812,51 @@ html[data-dm-theme] body #tab-aktiviteler#tab-aktiviteler .gg-page.gg-redesign.g
 html[data-dm-theme] body #tab-aktiviteler#tab-aktiviteler .gg-page.gg-redesign.gg-list-view.au-games.gg-selected-cards:not(.gg-teacher-list) .gg-approved-card .gg-cover.gg-wide-art {
  aspect-ratio:2!important;background:#f5edff!important;
 }
+
+/* Approved Free Games clean white interior + prominent borders & glossy coral filter pills. */
+html[data-dm-theme] body #tab-aktiviteler#tab-aktiviteler .gg-page.gg-redesign.gg-list-view.au-games.gg-selected-cards:not(.gg-teacher-list) .gg-tabs > :is(#ggSoloTab,#ggBreakTab) {
+  background:#fff!important;
+  border:2px solid #bfc5d8!important;
+  box-shadow:0 4px 0 #d5dae8!important;
+}
+html[data-dm-theme] body #tab-aktiviteler#tab-aktiviteler .gg-page.gg-redesign.gg-list-view.au-games.gg-selected-cards:not(.gg-teacher-list) .gg-tabs > :is(#ggSoloTab,#ggBreakTab)[aria-pressed="true"],
+html[data-dm-theme] body #tab-aktiviteler#tab-aktiviteler .gg-page.gg-redesign.gg-list-view.au-games.gg-selected-cards:not(.gg-teacher-list) .gg-tabs > :is(#ggSoloTab,#ggBreakTab)[aria-selected="true"] {
+  background:#fff!important;
+  border:2.5px solid #2b7bff!important;
+  box-shadow:0 4px 0 #1b5fd6,0 8px 18px rgba(43,123,255,.16)!important;
+}
+html[data-dm-theme] body #tab-aktiviteler#tab-aktiviteler .gg-page.gg-redesign.gg-list-view.au-games.gg-selected-cards:not(.gg-teacher-list) .gg-filters button {
+  position:relative!important;
+  overflow:hidden!important;
+  isolation:isolate!important;
+  background:#fff!important;
+  color:#1a2b4c!important;
+  -webkit-text-fill-color:#1a2b4c!important;
+  border:2px solid #bfc5d8!important;
+  box-shadow:0 3px 0 #d5dae8!important;
+}
+html[data-dm-theme] body #tab-aktiviteler#tab-aktiviteler .gg-page.gg-redesign.gg-list-view.au-games.gg-selected-cards:not(.gg-teacher-list) .gg-filters button[aria-pressed="true"] {
+  background:linear-gradient(180deg,#f44d57,#cb273a)!important;
+  color:#fff!important;
+  -webkit-text-fill-color:#fff!important;
+  border:2px solid #ff7a72!important;
+  box-shadow:0 3px 0 #9f1f30,0 0 14px rgba(244,77,87,.45)!important;
+}
+html[data-dm-theme] body #tab-aktiviteler#tab-aktiviteler .gg-page.gg-redesign.gg-list-view.au-games.gg-selected-cards:not(.gg-teacher-list) .gg-filters button[aria-pressed="true"]::after {
+  content:"";
+  position:absolute;
+  inset:-20% auto -20% -55%;
+  width:44%;
+  background:linear-gradient(105deg,transparent,rgba(255,255,255,.55) 48%,transparent);
+  transform:skewX(-24deg);
+  pointer-events:none;
+  z-index:1;
+}
+@media (prefers-reduced-motion: no-preference) {
+  html[data-dm-theme] body #tab-aktiviteler#tab-aktiviteler .gg-page.gg-redesign.gg-list-view.au-games.gg-selected-cards:not(.gg-teacher-list) .gg-filters button[aria-pressed="true"]::after {
+    animation:gg-coral-sheen 2.9s ease-in-out infinite!important;
+  }
+  html[data-dm-theme] body #tab-aktiviteler#tab-aktiviteler .gg-page.gg-redesign.gg-list-view.au-games.gg-selected-cards:not(.gg-teacher-list) .gg-filters button[aria-pressed="true"] {
+    animation:gg-coral-glow 2.9s ease-in-out infinite!important;
+  }
+}
