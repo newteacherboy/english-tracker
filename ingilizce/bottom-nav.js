@@ -119,8 +119,7 @@ function decorate(){const nav=document.getElementById('bottomNavMobile');if(!nav
  nav.querySelectorAll('[data-bc="profil"]').forEach(b=>b.remove());for(const [id,label,icon] of layout){const b=nav.querySelector('[data-ekran="'+id+'"]');if(!b)continue;if(id!=='tab-profile-menu'||!b.dataset.membershipLabel)b.setAttribute('aria-label',label);const l=b.querySelector('.bn-label');if(l&&l.textContent!==label)l.textContent=label;const slot=b.querySelector('.bn-icon');const cell=layout.findIndex(x=>x[0]===id);if(slot&&!slot.querySelector('.dm-nav-art,.tp-nav-image'))slot.innerHTML='<span class="dm-nav-art" aria-hidden="true" style="background-position:'+(cell%3*50)+'% '+(cell<3?0:100)+'%"></span>';b.title=b.dataset.membershipLabel||label;if(id==='tab-duel-home'){b.removeAttribute('onclick');b.onclick=window.dmDuelHomeAc;}if(id==='tab-rankings'){b.onclick=()=>window.dmFriends?.showArena('ranking');}if(id==='tab-profile-menu'){b.removeAttribute('onclick');b.onclick=()=>{if(!document.getElementById('rtProfileBackdrop'))window.dmProfileMenuAc();};b.setAttribute('aria-haspopup','dialog');if(!b.hasAttribute('aria-expanded'))b.setAttribute('aria-expanded','false');}if(b.classList.contains('active'))b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');}}
 const duelArtIcon = name => `<svg class="dm-duel-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="friends-assets/icons.svg#${name}"></use></svg>`;
 const duelChevron = duelArtIcon('chevron').replace('dm-duel-icon','dm-duel-chevron');
-const duelShield = '<svg class="dm-duel-icon" viewBox="0 0 24 24" aria-hidden="true"><path fill="#e74475" d="M12 1 2 5v6c0 6 4 10 10 12 6-2 10-6 10-12V5z"/><path fill="#ffb2c9" d="M12 4 5 7v4c0 4 2.6 7 7 9 4.4-2 7-5 7-9V7z"/></svg>';
-const duelXp = '<svg class="dm-duel-icon" viewBox="0 0 24 24" aria-hidden="true"><path fill="#742ee4" d="m12 1 10 5.5v11L12 23 2 17.5v-11z"/><path d="m6 9 4 6m0-6-4 6m7 0V9h3a1.5 1.5 0 0 1 0 3h-3" fill="none" stroke="white" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const duelStatIcon = name => '<span class="dm-duel-stat-icon dm-duel-stat-'+name+'" aria-hidden="true"></span>';
 let duelEntryAudio;
 function playDuelEntry() {
  try {
@@ -144,12 +143,13 @@ window.dmDuelHomeAc=function(){
       <span class="dm-duel-live-pill"><span class="dm-duel-live-dot" aria-hidden="true"></span>Anlık Eşleşme</span>
       <h2>Rakibini Bul,<br>XP Kazan!</h2>
      </div>
+     <img class="dm-duel-hero-papi" src="friends-assets/duel-b-papi.webp" width="400" height="430" alt="">
     </div>
-    <button type="button" class="dm-duel-quick" data-duel="live">${duelArtIcon('bolt')} Canlı Düello</button>
+    <button type="button" class="dm-duel-quick" data-duel="live"><span>${duelArtIcon('bolt')} Canlı Düello</span></button>
    </div>
    <div class="dm-duel-options">
-    <button type="button" data-duel="friend"><span class="dm-duel-option-icon" aria-hidden="true">${duelArtIcon('people')}</span><span>Arkadaşına<br>Meydan Oku</span></button>
-    <button type="button" data-duel="papi"><span class="dm-duel-option-icon dm-duel-face" aria-hidden="true"></span><span>Papi’ye<br>Karşı Oyna</span></button>
+    <button type="button" data-duel="friend"><span class="dm-duel-option-icon" aria-hidden="true">${duelArtIcon('people')}</span><span>Arkadaşına Meydan Oku</span>${duelChevron}</button>
+    <button type="button" data-duel="papi"><span class="dm-duel-option-icon dm-duel-face" aria-hidden="true"></span><span>Papi’ye Karşı Oyna</span>${duelChevron}</button>
    </div>
    <div class="dm-duel-stats-card">
     <div class="dm-duel-stats-head">
@@ -201,7 +201,7 @@ window.dmDuelHomeAc=function(){
   if(!me){
    target.textContent='Düello istatistiklerin burada görünecek.';
   }else{
-   target.innerHTML=[[duelArtIcon('trophy'),'Galibiyet',me.wins],[duelShield,'Mağlubiyet',me.losses],[duelXp,'Düello XP',me.duel_xp]].map(([icon,label,value])=>'<span>'+icon+'<b>'+Number(value||0).toLocaleString('tr-TR')+'</b><small>'+label+'</small></span>').join('');
+   target.innerHTML=[['win','Galibiyet',me.wins],['loss','Mağlubiyet',me.losses],['xp','Düello XP',me.duel_xp]].map(([icon,label,value])=>'<span class="dm-duel-stat">'+duelStatIcon(icon)+'<b>'+Number(value||0).toLocaleString('tr-TR')+'</b><small>'+label+'</small></span>').join('');
   }
  }).catch(fail);
 
