@@ -443,27 +443,65 @@ body #tab-meduakis.fr-ranking-view .akis-baslik > h2 {
   white-space: nowrap;
 }
 #tab-meduakis.fr-ranking-view .dm-open-step {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
   width: 100%;
   display: grid;
   place-items: center;
   height: clamp(41px,12vw,66px);
   border-radius: 15px 15px 9px 9px;
-  border: 1px solid #cdc3c2;
-  background: linear-gradient(#f7f4f3,#d3ccca);
-  box-shadow: inset 0 3px 0 #ffffffb0, 0 3px 0 #ab9e9b;
-  font: 850 clamp(21px,6vw,34px)/1 Nunito,system-ui,sans-serif;
+  border: 1.5px solid #b8c9e6;
+  background: linear-gradient(180deg,#f3f7ff 0%,#c8d7f0 58%,#9fb5d9 100%);
+  box-shadow: inset 0 3px 0 #ffffff, 0 4px 0 #7b93ba, 0 0 14px rgba(159,181,217,.45);
+  color: #1b2d52;
+  font: 900 clamp(21px,6vw,34px)/1 Nunito,system-ui,sans-serif;
+  text-shadow: 0 1px 0 rgba(255,255,255,.55);
 }
 #tab-meduakis.fr-ranking-view .dm-open-place-1 .dm-open-step {
   height: clamp(57px,18vw,94px);
-  background: linear-gradient(#ffdc7e,#ffbf3e);
-  border-color: #efb44a;
-  box-shadow: inset 0 3px 0 #fff0bd, 0 3px 0 #cf8a19;
+  background: linear-gradient(180deg,#ffe95c 0%,#ffc414 55%,#f59e0b 100%);
+  border-color: #ffd84d;
+  box-shadow: inset 0 3px 0 #fff7b8, 0 4px 0 #c97a00, 0 0 20px rgba(255,196,20,.52);
+  color: #5c2d00;
 }
 #tab-meduakis.fr-ranking-view .dm-open-place-3 .dm-open-step {
   height: clamp(34px,10vw,55px);
-  background: linear-gradient(#ffd7c3,#efad8d);
-  border-color: #eeb293;
-  box-shadow: inset 0 3px 0 #ffebdf, 0 3px 0 #c78d73;
+  background: linear-gradient(180deg,#ffbe8f 0%,#f0894a 58%,#d4652a 100%);
+  border-color: #ffa76b;
+  box-shadow: inset 0 3px 0 #ffe3cc, 0 4px 0 #a34718, 0 0 15px rgba(240,137,74,.44);
+  color: #4d1c05;
+}
+#tab-meduakis.fr-ranking-view .dm-open-step::after {
+  content: "";
+  position: absolute;
+  inset: -25% auto -25% -60%;
+  width: 48%;
+  background: linear-gradient(105deg,transparent,rgba(255,255,255,.72) 50%,transparent);
+  transform: skewX(-24deg);
+  pointer-events: none;
+  z-index: 1;
+}
+@media (prefers-reduced-motion: no-preference) {
+  #tab-meduakis.fr-ranking-view .dm-open-step::after {
+    animation: dm-podium-sheen 3.2s ease-in-out infinite;
+  }
+  #tab-meduakis.fr-ranking-view .dm-open-place-1 .dm-open-step::after { animation-delay: 0s; }
+  #tab-meduakis.fr-ranking-view .dm-open-place-2 .dm-open-step::after { animation-delay: .45s; }
+  #tab-meduakis.fr-ranking-view .dm-open-place-3 .dm-open-step::after { animation-delay: .9s; }
+  #tab-meduakis.fr-ranking-view .dm-open-place-1 .dm-open-step {
+    animation: dm-podium-gold-glow 3.2s ease-in-out infinite;
+  }
+}
+@keyframes dm-podium-sheen {
+  0%, 28% { left: -60%; opacity: 0; }
+  36% { opacity: 1; }
+  70% { left: 135%; opacity: 1; }
+  78%, 100% { left: 135%; opacity: 0; }
+}
+@keyframes dm-podium-gold-glow {
+  0%, 100% { box-shadow: inset 0 3px 0 #fff7b8, 0 4px 0 #c97a00, 0 0 14px rgba(255,196,20,.4); filter: brightness(1); }
+  50% { box-shadow: inset 0 3px 0 #fff7b8, 0 4px 0 #c97a00, 0 0 26px rgba(255,210,40,.8); filter: brightness(1.08); }
 }
 #tab-meduakis.fr-ranking-view .dm-open-progress { margin: 13px 0 8px; text-align: center; font-size: 12px; color: #465678; }
 #tab-meduakis.fr-ranking-view .dm-open-progress strong { color: #14244b; }
