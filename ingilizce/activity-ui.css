@@ -686,14 +686,21 @@ html[data-dm-theme] #tab-aktiviteler#tab-aktiviteler .gg-redesign.gg-list-view .
 }
 
 /* Two primary categories; free subcategories expand below. */
-.gg-main-categories{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:12px 0}.gg-main-categories button{min-height:58px;border:2px solid #dfd5ff;border-radius:18px;background:#fff;color:#5133c9;font:inherit;font-weight:800;padding:10px;cursor:pointer}.gg-main-categories button[aria-pressed="true"]{background:#7145ef;color:#fff;border-color:#7145ef;box-shadow:0 4px 0 #5030b5}.gg-tabs [data-gg-party="premium"]{display:none!important}.gg-redesign .gg-tabs{grid-template-columns:repeat(3,minmax(0,1fr))}.gg-main-categories+ .gg-tabs[hidden],.gg-overview[hidden],.kg-hub[hidden]{display:none!important}
+.gg-main-categories{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:12px 0}.gg-main-categories button{position:relative;overflow:hidden;min-height:58px;border:2px solid #dfd5ff;border-radius:18px;background:#fff;color:#5133c9;font:inherit;font-weight:800;padding:10px;cursor:pointer}.gg-main-categories button[aria-pressed="true"]{background:linear-gradient(180deg,#f44d57,#cb273a);color:#fff;border-color:#ff7a72;box-shadow:0 4px 0 #9f1f30}.gg-tabs [data-gg-party="premium"]{display:none!important}.gg-redesign .gg-tabs{grid-template-columns:repeat(3,minmax(0,1fr))}.gg-main-categories+ .gg-tabs[hidden],.gg-overview[hidden],.kg-hub[hidden]{display:none!important}
 
 /* Selected Oyunlar 1: two pastel cards per row and a full-width break card. */
 @layer bilgiIslands {
 #tab-aktiviteler#tab-aktiviteler .gg-page.gg-redesign.gg-selected-cards .gg-title h1{position:relative;min-height:38px;margin-bottom:8px!important;overflow:visible}
 #tab-aktiviteler#tab-aktiviteler .gg-selected-cards .gg-main-categories{gap:9px;margin:8px 0 12px}
-#tab-aktiviteler#tab-aktiviteler .gg-selected-cards .gg-main-categories button{min-height:46px;padding:8px 4px;border-radius:19px;border:2px solid #e1d5ff;background:#fff;color:#5a30c4;font:950 clamp(10px,2.8vw,14px)/1.2 Nunito,system-ui;box-shadow:0 3px 0 #d7c6fa}
-#tab-aktiviteler#tab-aktiviteler .gg-selected-cards .gg-main-categories button[aria-pressed=true]{background:linear-gradient(135deg,#9951fa,#6728dc);color:#fff;border-color:#8c47f1;box-shadow:0 4px 0 #4e21aa}
+#tab-aktiviteler#tab-aktiviteler .gg-selected-cards .gg-main-categories button{position:relative;overflow:hidden;isolation:isolate;min-height:46px;padding:8px 4px;border-radius:19px;border:2px solid #e1d5ff;background:#fff;color:#5a30c4;font:950 clamp(10px,2.8vw,14px)/1.2 Nunito,system-ui;box-shadow:0 3px 0 #d7c6fa}
+#tab-aktiviteler#tab-aktiviteler .gg-selected-cards .gg-main-categories button[aria-pressed=true]{background:linear-gradient(180deg,#f44d57,#cb273a);color:#fff;border-color:#ff7a72;box-shadow:0 4px 0 #9f1f30,0 0 14px rgba(244,77,87,.42)}
+#tab-aktiviteler#tab-aktiviteler .gg-selected-cards .gg-main-categories button[aria-pressed=true]::after{content:"";position:absolute;inset:-20% auto -20% -55%;width:44%;background:linear-gradient(105deg,transparent,rgba(255,255,255,.55) 48%,transparent);transform:skewX(-24deg);pointer-events:none;z-index:1}
+@media (prefers-reduced-motion: no-preference){
+  #tab-aktiviteler#tab-aktiviteler .gg-selected-cards .gg-main-categories button[aria-pressed=true]::after{animation:gg-coral-sheen 2.9s ease-in-out infinite}
+  #tab-aktiviteler#tab-aktiviteler .gg-selected-cards .gg-main-categories button[aria-pressed=true]{animation:gg-coral-glow 2.9s ease-in-out infinite!important}
+}
+@keyframes gg-coral-sheen{0%,30%{left:-55%;opacity:0}38%{opacity:1}72%{left:130%;opacity:1}78%,100%{left:130%;opacity:0}}
+@keyframes gg-coral-glow{0%,100%{box-shadow:0 4px 0 #9f1f30,0 0 10px rgba(244,77,87,.32);filter:brightness(1)}50%{box-shadow:0 4px 0 #9f1f30,0 0 22px rgba(244,77,87,.7);filter:brightness(1.08)}}
 #tab-aktiviteler#tab-aktiviteler .gg-page.gg-selected-cards .gg-category-question{font:950 clamp(16px,4.3vw,20px)/1.2 Nunito,system-ui;margin:15px 0 12px;color:var(--gg-shelf-ink)!important}
 #tab-aktiviteler#tab-aktiviteler .gg-selected-cards .gg-category-question[hidden]{display:none!important}
 #tab-aktiviteler#tab-aktiviteler .gg-page.gg-redesign.gg-selected-cards .gg-tabs:has(#ggPremiumTab){grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important;padding:0 0 5px!important;margin:0!important;background:none!important;border:0!important;box-shadow:none!important}
