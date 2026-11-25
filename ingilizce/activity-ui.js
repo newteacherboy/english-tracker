@@ -113,6 +113,24 @@ const categoryIcons={solo:0,free:2,konu:3,break:4,premium:5};
    art.innerHTML='<svg viewBox="'+crop+'" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><image href="games-assets/approved-games-sheet.webp" width="852" height="1846"/></svg>';
    return art;
   }
+  const thumbnail=card.style.getPropertyValue('--au-thumb');
+  const index=Number(card.dataset.ggIndex);
+  if(thumbnail!=='' || (Number.isInteger(index)&&index>=0&&index<16&&!gameCovers[card.id])){
+   let file='games-assets/game-atlas-v1.webp',width=1254,height=1254,box;
+   if(thumbnail!==''){
+    const n=Number(thumbnail);width=1774;height=887;
+    const x=n%2*887,y=Math.floor(n/2)*443.5;
+    box=[x+1,y+1,885,441.5];
+    file='route-assets/approved/game-thumbs.webp';
+    art.classList.add('gg-wide-art');
+   }else{
+    const rows=[0,303,610,913,1254],cols=[0,313,627,940,1254],col=index%4,row=Math.floor(index/4);
+    box=[cols[col]+1,rows[row]+1,cols[col+1]-cols[col]-2,rows[row+1]-rows[row]-2];
+   }
+   art.classList.add('gg-approved-cover');
+   art.innerHTML='<svg viewBox="'+box.join(' ')+'" preserveAspectRatio="xMidYMid meet" aria-hidden="true"><image href="'+file+'" width="'+width+'" height="'+height+'"/></svg>';
+   return art;
+  }
   const cover=gameCovers[card.id];
   if(card.id==='dmUcusteKart'){
    art.classList.add('gg-flight-cover');
