@@ -52,6 +52,8 @@ async function dmWordImageResolve(en,tr,size=512){
  return code?dmWordImageBase+(size===256?'256':'512')+'/'+code+'.webp':null;
 }
 async function dmWordImageDecorate(button,en,tr,mode){
+ // Matching is an audio/word exercise: never request or attach vocabulary art.
+ if(mode==='match')return;
  if(!button||!button.isConnected)return;
  const marker=dmWordImageCaseKey(en,tr);
  if(button.dataset.dmPoolPending===marker||button.dataset.dmPoolDone===marker)return;
@@ -70,9 +72,6 @@ async function dmWordImageDecorate(button,en,tr,mode){
    const old=button.querySelector('.ml-art');
    const wrap=document.createElement('span');wrap.className='ml-art ml-art-pilot dm-pool-teach-art';wrap.setAttribute('aria-hidden','true');wrap.append(img);
    if(old)old.replaceWith(wrap);else button.prepend(wrap);
-  }else if(mode==='match'){
-   img.style.cssText='display:block;object-fit:contain;width:40px;height:40px;max-width:100%;border-radius:10px;background:white;';
-   button.append(img);button.classList.add('dm-ml-match-visual');
   }else{
    img.style.cssText='display:block;object-fit:contain;width:52px;height:52px;flex:0 0 52px;border-radius:9px;background:white;';
    const label=button.querySelector('span:first-child');if(label){label.style.flex='1 1 0';label.style.minWidth='0';label.style.overflowWrap='anywhere';}
@@ -121,17 +120,13 @@ function dmWordImageInto(slot,en,tr,kind='question'){
 function dmWordImagePanel(area,task,read){
  dmWordPanelObserver?.disconnect();dmWordPanelObserver=null;
  if(!area||!task||!read)return;
+ // Keep matching pairs text/audio-only across the school and learning routes.
+ if(task.tip==='eslestir'||task.tip==='es')return;
  let ownObserver=null;
  const paint=()=>{
   if(!area.isConnected){ownObserver?.disconnect();return;}
   if(task.tip==='teach'&&area.querySelector('.dm-school-word')){
    area.querySelectorAll('[data-rq-word]').forEach(b=>{const k=(task.l||[task.k])[Number(b.dataset.rqWord)];if(k&&b.dataset.dmPoolRequested!=='1'){b.dataset.dmPoolRequested='1';void dmWordImageDecorate(b,read.en(k),read.tr(k),'school');}});return;
-  }
-  if(task.tip==='eslestir'){
-   area.querySelectorAll('#bzMatchEn [data-key]').forEach(b=>{const k=task.matchItems?.[Number(b.dataset.key)];if(k)dmWordImageInto(b,read.en(k),read.tr(k),'option');});return;
-  }
-  if(task.tip==='es'){
-   area.querySelectorAll('#bzSol .bz-cip2').forEach(b=>{if(b._k)dmWordImageInto(b,read.en(b._k),read.tr(b._k),'option');});return;
   }
   if(task.tip==='sesliFinal'){
    const active=area.querySelector('.dm-final-current strong');
