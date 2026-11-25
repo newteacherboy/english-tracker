@@ -1,6 +1,6 @@
 /* Shared day/night colors. Layout and game correctness states keep their own rules. */
 :root {
-  --dm-page:#e3f3ff;--dm-surface:#fff;--dm-soft:#eaf7ff;--dm-input:#fff;
+  --dm-page:#fff;--dm-surface:#fff;--dm-soft:#f7f9fc;--dm-input:#fff;
   --dm-text:#14294b;--dm-muted:#3a5677;--dm-line:#a9cdeb;
   --dm-accent:#007e88;--dm-on-accent:#fff;--dm-link:#007780;
   --dm-placeholder:#617988;--dm-shadow:0 15px 45px #093b4b14;
@@ -185,8 +185,8 @@ html[data-dm-theme] body .dm-unified-wallet.dm-papi-wallet>button.dm-theme-toggl
     color:var(--dm-text)!important;-webkit-text-fill-color:var(--dm-text)!important;
   }
   html[data-dm-theme="day"] .rt-medal-route{
-    --medal-surface:#cfebfc;--medal-border:#9ecdf1;--medal-ink:#14294b;
-    --medal-bg:#e8f6ff;--medal-bg-dark:#d5edff;--medal-secondary:#f5fbff;--medal-route-button:#f5fbff;
+    --medal-surface:#fff;--medal-border:#c5cce0;--medal-ink:#14244b;
+    --medal-bg:#fff;--medal-bg-dark:#fff;--medal-secondary:#fff;--medal-route-button:#fff;
     --medal-muted:#345681;--medal-disc-light:#c0d5ef;--medal-disc:#7497c1;--medal-disc-edge:#607ea3;
     --medal-active:#55c4ff;--medal-active-light:#9be8ff;--medal-active-edge:#138ed2;--medal-active-ink:#082649;
   }

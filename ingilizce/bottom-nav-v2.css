@@ -56,27 +56,31 @@
   translate: -50% -50%;
   display: grid;
   place-items: center;
-  width: clamp(28px, 9.5vw, 44px);
-  height: 28px;
+  width: clamp(32px, 10.5vw, 48px);
+  height: 32px;
   border-radius: 999px;
   color: var(--menu-muted);
   pointer-events: none;
 }
 
-#bottomNavMobile.dm-nv2-on .dm-nv2 svg { display: block; width: 22px; height: 22px; fill: currentColor; }
+#bottomNavMobile.dm-nv2-on .dm-nv2 svg { display: block; width: 25px; height: 25px; fill: currentColor; }
 #bottomNavMobile.dm-nv2-on .bn-item[data-menu-selected] .dm-nv2 { background: #3547e8; color: white; box-shadow: 0 2px 0 #2836b0; }
 
 
 #bottomNavMobile.dm-nv2-on .bn-item[data-ekran="tab-duel-home"] .dm-nv2 {
-  translate: -50% calc(-50% - 8px);
+  translate: -50% calc(-50% - 11px);
   box-sizing: border-box;
-  width: 38px;
-  height: 38px;
-  border: 2px solid #ffd462;
-  border-radius: 11px;
+  width: 46px;
+  height: 46px;
+  border: 2.5px solid #ffd462;
+  border-radius: 14px;
   color: white;
   background: linear-gradient(135deg, transparent 23%, #ffffff35 24% 36%, transparent 37%), #f44d57;
-  box-shadow: inset 0 -3px 0 #cb273a, 0 0 12px #ffc755a8;
+  box-shadow: inset 0 -3.5px 0 #cb273a, 0 0 15px #ffc755c2;
+}
+#bottomNavMobile.dm-nv2-on .bn-item[data-ekran="tab-duel-home"] .dm-nv2 svg {
+  width: 27px;
+  height: 27px;
 }
 
 #bottomNavMobile.dm-nv2-on .bn-item[data-ekran="tab-duel-home"] .dm-nv2::after {

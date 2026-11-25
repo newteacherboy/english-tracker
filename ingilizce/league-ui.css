@@ -536,7 +536,7 @@ body #tab-meduakis.fr-ranking-view .akis-baslik > h2 {
 #tab-meduakis.fr-ranking-view .dm-open-place-1 .dm-open-step { height: clamp(34px, 9.2cqh, 72px); }
 #tab-meduakis.fr-ranking-view .dm-open-place-3 .dm-open-step { height: clamp(21px, 6.2cqh, 44px); }
 #tab-meduakis.fr-ranking-view .dm-open-progress { margin: 5px 0 3px; }
-#tab-meduakis.fr-ranking-view .dm-open-ranking .dm-lig-list { gap: 4px; margin: 4px 0 6px; }
+#tab-meduakis.fr-ranking-view .dm-open-ranking .dm-lig-list { display: grid; gap: 7px; margin: 6px 0 8px; }
 #tab-meduakis.fr-ranking-view .dm-open-ranking .dm-lig-row {
   min-height: clamp(29px, 6.1cqh, 43px);
   padding: 2.5px 8px;

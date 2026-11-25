@@ -48,9 +48,9 @@ html[data-dm-theme="day"]:has(#tab-dunya.active .rt-medal-route),
 html[data-dm-theme="day"] body:has(#tab-dunya.active .rt-medal-route),
 html[data-dm-theme="day"] body:has(#tab-dunya.active .rt-medal-route) #bzParkur{background:#fff!important}
 html[data-dm-theme="day"] body #tab-dunya .rt-medal-route{--medal-bg:#fff;--medal-bg-dark:#fff;--medal-ink:#14244b;--medal-muted:#556382}
-/* cüzdan: beyaz kapsül + belirgin kenarlık */
-html[data-dm-theme="day"] body #tab-dunya .bz-ic:has(.rt-medal-route) .dm-unified-wallet.dm-papi-wallet{position:relative;isolation:isolate}
-html[data-dm-theme="day"] body #tab-dunya .bz-ic:has(.rt-medal-route) .dm-unified-wallet.dm-papi-wallet::before{content:"";position:absolute;inset:0;z-index:-1;border-radius:26px;background:#fff;border:1.5px solid #d5dceb;box-shadow:0 3px 0 #e3e8f4;pointer-events:none}
+/* cüzdan: doğrudan beyaz arka plan üzerinde (kapsül çerçevesi yok) */
+html[data-dm-theme="day"] body #tab-dunya .bz-ic:has(.rt-medal-route) .dm-unified-wallet.dm-papi-wallet{position:relative;isolation:isolate;background:transparent!important;border:0!important;box-shadow:none!important}
+html[data-dm-theme="day"] body #tab-dunya .bz-ic:has(.rt-medal-route) .dm-unified-wallet.dm-papi-wallet::before{display:none!important}
 body #tab-dunya .bz-ic:has(.rt-medal-route) .dm-unified-wallet [data-pw-value]{white-space:nowrap!important}
 /* Okul Yolum kartı: saydam zemin + belirgin çerçeve + koyu okunaklı yazılar */
 html[data-dm-theme="day"] body #tab-dunya .rt-medal-route .rt-medal-unit{--medal-muted:#556382;--medal-ink:#14244b;position:relative;overflow:hidden;min-height:74px!important;padding:12px 14px 12px 16px!important;border:2px solid #c5cce0!important;border-bottom:4px solid #b5bed6!important;border-radius:22px!important;background:transparent!important;box-shadow:0 3px 10px rgba(20,36,75,.05)!important}

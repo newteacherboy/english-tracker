@@ -3,7 +3,7 @@
   'use strict';
 
   const glyphs = {
-    'tab-duel-home': '<path d="M13.5 2 4 13h6.7l-1.2 9L20 10.6h-7L13.5 2Z"/>',
+    'tab-duel-home': '<path d="M14.5 17.5 3 6V3h3l11.5 11.5M13 19l6-6M16 16l4 4M19 21l2-2M9.5 17.5 21 6V3h-3L6.5 14.5M11 19l-6-6M8 16l-4 4M5 21l-2-2" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/>',
     'tab-dunya': '<circle cx="4.7" cy="19" r="2.5"/><ellipse cx="9" cy="13.2" rx="2.6" ry="1.65" transform="rotate(-31 9 13.2)"/><ellipse cx="14.7" cy="11" rx="2.6" ry="1.65" transform="rotate(-31 14.7 11)"/><circle cx="19.2" cy="5" r="2.7"/>',
     'tab-aktiviteler': '<path fill-rule="evenodd" d="M7.1 5.5h9.8c2.5 0 4.2 1.3 4.8 3.7l1.1 5.5c.7 3.7-2 5.4-4.5 3.1l-2.1-2H7.8l-2.1 2c-2.5 2.3-5.2.6-4.5-3.1l1.1-5.5C3 6.8 4.6 5.5 7.1 5.5Zm.1 2.3v2H5.3v1.7h1.9v2H9v-2h1.9V9.8H9v-2H7.2Zm9.4.3a1.2 1.2 0 1 0 0 2.4 1.2 1.2 0 0 0 0-2.4Zm2.4 2.6a1.2 1.2 0 1 0 0 2.4 1.2 1.2 0 0 0 0-2.4Z"/>',
     'tab-meduakis': '<circle cx="12" cy="6.5" r="3.7"/><circle cx="4.5" cy="9" r="2.5"/><circle cx="19.5" cy="9" r="2.5"/><path d="M5.5 20v-1.5a6.5 6.5 0 1 1 13 0V20c0 .6-.5 1-1 1h-11a1 1 0 0 1-1-1ZM1 18a4.6 4.6 0 0 1 5.1-4.6A8 8 0 0 0 4 19H2a1 1 0 0 1-1-1Zm22 0a1 1 0 0 1-1 1h-2a8 8 0 0 0-2.1-5.6A4.6 4.6 0 0 1 23 18Z"/>',
