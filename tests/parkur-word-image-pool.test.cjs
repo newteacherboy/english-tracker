@@ -61,7 +61,23 @@ test('School and Learning Path call the verified image decorator for every quest
  assert.match(school,/DMWordImagePool\?\.decoratePanel\(alan,s/);
  assert.match(school,/dm-final-current/);
  assert.match(learning,/dmLearningShowPicture\(task,area\)/);
- assert.match(learning,/DMWordImagePool\?\.decorate\(b,p\.en,p\.tr,'match'\)/);
+ assert.doesNotMatch(learning,/DMWordImagePool\?\.decorate\(b,p\.en,p\.tr,'match'\)/);
+ assert.match(route,/if\(mode==='match'\)return;/);
+ assert.match(route,/if\(task.tip==='eslestir'\|\|task.tip==='es'\)return;/);
  for(const type of ['eslestir','es','sesliFinal','teach'])assert.ok(route.includes("task.tip==='"+type+"'"));
  assert.match(route,/dmWordImageCaseKey/);
+});
+
+// Audio matching must never fetch or attach images, including in older route renderers.
+test('Matching cards remain audio-only and do not request artwork',async()=>{
+ let calls=0;
+ const pool=setup(async()=>{calls++;return {ok:true,json:async()=>({'0147':entry('0147','apple','elma')})};});
+ const button={isConnected:true,dataset:{},querySelector:()=>null};
+ await pool.decorate(button,'apple','elma','match');
+ assert.equal(calls,0);
+ assert.equal(button.dataset.dmPoolPending,undefined);
+ const panel={isConnected:true,querySelectorAll:()=>{throw Error('matching must not be decorated');}};
+ pool.decoratePanel(panel,{tip:'eslestir',matchItems:[{en:'apple',tr:'elma'}]},{en:w=>w.en,tr:w=>w.tr});
+ pool.decoratePanel(panel,{tip:'es',matchItems:[{en:'apple',tr:'elma'}]},{en:w=>w.en,tr:w=>w.tr});
+ assert.equal(calls,0);
 });

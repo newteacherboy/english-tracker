@@ -480,8 +480,7 @@ function render(){if(!modal)return;accepted=false;if(session?.needsRecovery&&!se
   const wrap=document.createElement('div');wrap.className='ml-matches ml-linked-match';
   wrap.innerHTML='<div>'+optionOrder('match-left',pairs).map(i=>'<button type="button" data-left="'+i+'" lang="en" aria-label="Listen '+(i+1)+'"><span class="ml-wave" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span></button>').join('')+'</div><div>'+optionOrder('match-right',pairs).map(i=>'<button type="button" data-right="'+i+'" lang="tr">'+esc(pairs[i].tr)+'</button>').join('')+'</div><svg class="ml-match-lines" aria-hidden="true"></svg>';
   area.append(wrap);
-  // Give each audio-matching card its own verified bilingual illustration.
-  wrap.querySelectorAll('[data-left]').forEach(b=>{const p=pairs[Number(b.dataset.left)];if(p?.en&&p.tr)void window.DMWordImagePool?.decorate(b,p.en,p.tr,'match');});
+  // The left cards intentionally stay audio-only; word images belong in other tasks.
   wrap.style.setProperty('position','relative','important');wrap.style.setProperty('display','grid','important');wrap.style.setProperty('grid-template-columns','minmax(0,1fr) minmax(0,1fr)','important');wrap.style.setProperty('column-gap','clamp(44px,12vw,100px)','important');
   const svg=wrap.querySelector('svg');wrap.style.setProperty('--match-rows',String(pairs.length));
   function fitTranslations(){wrap.querySelectorAll('[data-right]').forEach(b=>{b.style.removeProperty('font-size');let size=parseFloat(getComputedStyle(b).fontSize);while(b.scrollHeight>b.clientHeight&&size>10){size-=.5;b.style.setProperty('font-size',size+'px','important');}});}
