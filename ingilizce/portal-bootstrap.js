@@ -36,9 +36,10 @@ window.dmOpenPortalSession=function({student,seconds=0,refreshProfile=false,prof
   $('login-container').style.display='none';$('oturumYuklemeOverlay').style.display='flex';dmStartProgress();
   try{
    // Start the authoritative member read while the independent profile is loading.
-   const memberReady=Promise.resolve(window.dmPrepareMemberState?.());
+   let memberReady;
+   try{memberReady=Promise.resolve(window.dmPrepareMemberState?.());}catch(e){memberReady=Promise.reject(e);}
    const memberResult=memberReady.then(value=>({value}),error=>({error}));
-   if(profileReady)await profileReady;
+   if(profileReady)try{await profileReady;}catch(e){console.warn('Başlangıç profil bilgisi yenilenemedi',e);}
    if(refreshProfile){
     const controller=new AbortController(),deadline=setTimeout(()=>controller.abort(),12000);
     try{const r=window.dmIncrementalReads?new Response(JSON.stringify(await window.dmIncrementalReads.profile({signal:controller.signal}))):await fetch(apiURL,{cache:'no-store',signal:controller.signal}),rows=await r.json();if(r.ok&&Array.isArray(rows)&&turn===epoch&&name()===owner){globalDataCache=rows;safe(window.dijiGlobalCacheYaz,rows);}}catch(e){console.warn('Giriş profil bilgileri yenilenemedi',e);}finally{clearTimeout(deadline);}
@@ -56,11 +57,17 @@ window.dmOpenPortalSession=function({student,seconds=0,refreshProfile=false,prof
    $('panel-alani').style.display='block';
    safe(window.girisSerisiGuncelleVeGetir);safe(window.baslatSayac);safe(window.arkaPlanVeriYenilemeBaslat);
    dmSetProgress(70);
-   const member=await memberResult;if(member.error)throw member.error;
+   const member=await memberResult;if(member.error)console.warn('Üye verileri geçici olarak alınamadı',member.error);
    dmSetProgress(82);
    if(turn!==epoch||name()!==owner)return false;
    // Every student session starts on the selected learning path.
-   if(owner.toLowerCase()==='teacher')await window.meduAkisAc?.();else await window.dunyaAc?.();
+   const openRoute=owner.toLowerCase()==='teacher'?window.meduAkisAc:window.dunyaAc;
+   if(typeof openRoute!=='function')throw Error('Başlangıç ekranı hazır değil.');
+   try{await openRoute.call(window);}catch(first){
+    if(turn!==epoch||name()!==owner)return false;
+    console.warn('Başlangıç ekranı yeniden açılıyor',first);
+    await openRoute.call(window);
+   }
    if(turn!==epoch||name()!==owner)return false;
    dmEndProgress();$('oturumYuklemeOverlay').style.display='none';
    document.dispatchEvent(new Event('dm:login'));
