@@ -79,3 +79,21 @@ html[data-dm-theme="night"] body #dmDuelHome .dm-wallet-energy-xp.dm-papi-wallet
   color: #f3f8ff !important;
   -webkit-text-fill-color: #f3f8ff !important;
 }
+
+/* Store and progress destinations show only their own centered pair. */
+html body .dm-has-wallet > .dm-unified-wallet.dm-papi-wallet:is([data-wallet-mode="shop"],[data-wallet-mode="progress"]){
+ display:flex!important;flex-wrap:nowrap!important;justify-content:center!important;align-items:center!important;gap:clamp(12px,5vw,28px)!important;
+ width:100%!important;max-width:100%!important;padding:0 4px!important;margin:0 0 8px!important;box-sizing:border-box!important;
+}
+html body .dm-unified-wallet.dm-papi-wallet > button[hidden],
+html body .dm-unified-wallet[data-wallet-mode="shop"] > :not([data-pw="gold"],[data-pw="energy"]),
+html body .dm-unified-wallet[data-wallet-mode="progress"] > :not([data-pw="xp"],[data-dm-daily-streak]){
+ display:none!important;
+}
+html body .dm-has-wallet > .dm-unified-wallet.dm-papi-wallet:is([data-wallet-mode="shop"],[data-wallet-mode="progress"]) > button:not([hidden]){
+ flex:0 1 112px!important;min-width:64px!important;max-width:112px!important;min-height:44px!important;height:48px!important;
+ flex-direction:row!important;justify-content:center!important;align-items:center!important;gap:5px!important;font-size:clamp(13px,3.5vw,17px)!important;
+}
+html body .dm-unified-wallet[data-wallet-mode="shop"] > [data-pw="gold"]{order:-1!important}
+html body .dm-unified-wallet[data-wallet-mode="progress"] > [data-pw="xp"]{order:-1!important}
+html body .dm-wallet-slot{display:block!important;width:100%;min-width:0;box-sizing:border-box;flex:0 0 100%;grid-column:1/-1}
