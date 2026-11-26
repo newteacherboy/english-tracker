@@ -197,7 +197,7 @@ window.dmDuelHomeAc=function(){
     <div class="dm-duel-hero-stage">
      <div class="dm-duel-hero-copy">
       <span class="dm-duel-live-pill"><span class="dm-duel-live-dot" aria-hidden="true"></span>Anlık Eşleşme</span>
-      <h2>Rakibini Bul,<br>XP Kazan!</h2>
+      <h2>Rakibini Bul,<br><span class="dm-duel-xp-accent">XP Kazan!</span></h2>
      </div>
      <img class="dm-duel-hero-papi" src="friends-assets/duel-b-papi.webp" width="400" height="430" alt="">
     </div>
