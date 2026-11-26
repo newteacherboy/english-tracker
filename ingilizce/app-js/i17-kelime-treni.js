@@ -15,6 +15,7 @@ function trKonus(metin, hiz) { try { let u = new SpeechSynthesisUtterance(metin)
 function trParcala(en) { return String(en).replace(/[.,!?;:"]/g, ' ').trim().split(/\s+/).filter(Boolean); }
 
 function trenOyunAc() {
+ if(!(window.dmTeacherPortalMode||typeof aktifOgrenciAdi!=='undefined'&&String(aktifOgrenciAdi).toLowerCase()==='teacher'||typeof siniftaOynananOgrenci!=='undefined'&&!!siniftaOynananOgrenci))return window.yoToast?.('Bu oyun artık öğrenci hesabında sunulmuyor.');
  if(window.dmSoloLevels?.needs('tren'))return window.dmSoloLevels.open('tren',()=>trenOyunAc());
   if (typeof genelOyunGirisEngelliMi === 'function' && genelOyunGirisEngelliMi()) return;
   let modal = trEl('trenOyunOverlay');
@@ -55,6 +56,7 @@ function trCeldiriciler(s, adet) {
 }
 
 async function trenOyunuBaslat() {
+ if(!(window.dmTeacherPortalMode||typeof aktifOgrenciAdi!=='undefined'&&String(aktifOgrenciAdi).toLowerCase()==='teacher'||typeof siniftaOynananOgrenci!=='undefined'&&!!siniftaOynananOgrenci))return window.yoToast?.('Bu oyun artık öğrenci hesabında sunulmuyor.');
   ({sinif: trenAktifSinif, uniteler: trenSecilenUniteler} = oyunKurulumSeciminiOku('tren', trenAktifSinif, trenSecilenUniteler));
   if (typeof genelOyunGirisEngelliMi === 'function' && genelOyunGirisEngelliMi()) return;
   let isim = trEl('trenIsimInput').value.trim();

@@ -39,11 +39,11 @@ test('Wheel and Meteor use grade 7 units 9/10 in one- and two-player classroom g
 test('classic classroom verification accepts the exact new unit questions and remains ranking-only',async()=>{
  const rows=teacher().masterKelimeHavuzu.filter(x=>x.sinif===7).map(x=>({class_no:7,unit_no:x.unite,english:x.ingilizce,turkish:x.turkce,active:true}));
  const reads=[],calls=[];const db={from(table){reads.push(table);let predicates=[];const q={select(){return q},eq(k,v){predicates.push(r=>r[k]===v);return q},in(k,v){predicates.push(r=>v.includes(r[k]));return q},limit(){return Promise.resolve({data:table==='teacher_grade7_word_bank'?rows.filter(r=>predicates.every(f=>f(r))):[],error:null});}};return q},rpc:async(name,body)=>{calls.push({name,body});return {data:name==='dm_progress_context'?{level:1}:{rankingOnly:true},error:null};}};
- const ctx={Set,Map,Math,Date,JSON,DijiProgressionCatalog:{gates:new Proxy({},{get:()=>1})}};vm.createContext(ctx);
+ const {retiredForActor}=await import('../supabase/functions/diji-api/student-game-retirement.mjs');const ctx={Set,Map,Math,Date,JSON,retiredForActor,DijiProgressionCatalog:{gates:new Proxy({},{get:()=>1})}};vm.createContext(ctx);
  const src=fs.readFileSync('supabase/functions/diji-api/verified-games.mjs','utf8').replaceAll('export ','').replace(/import[^;]+;/g,'');
  vm.runInContext(src+';globalThis.create=verifiedGamesAPI;',ctx);
  const api=ctx.create(db,(d,status=200)=>({d,status})),a={role:'student',student_id:'classroom',teacher_portal_access_id:'verified'};
- for(const game of ['ky','jp','hafiza','yagmur','eslestirme','tren','cumle','dikte','kelimebul','harfbahcesi','bosluk','canavar','kule','fener']){
+ for(const game of ['ky','jp','hafiza','yagmur','eslestirme','tren','cumle','dikte','kelimebul','harfbahcesi','bosluk','canavar','fener']){
   const unit=10;let eligible=rows.filter(r=>r.unit_no===unit);
   if(['tren','cumle'].includes(game))eligible=eligible.filter(r=>r.english.split(/\s+/).length>=3&&r.english.split(/\s+/).length<=9);
   if(game==='dikte')eligible=eligible.filter(r=>/^[a-zA-Z]{3,10}$/.test(r.english));

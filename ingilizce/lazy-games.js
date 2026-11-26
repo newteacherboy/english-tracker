@@ -2,7 +2,7 @@
 (()=>{'use strict';
   const premiumFile='premium-word-match.js?v=20261114-flow';
   const introFile='premium-intro.js?v=20261114-daily-one-card';
-  const files=['solo-arcade.js?v=20261126-premium-retirement','harf-bahcesi.js?v=b936541467','papi-cards.js?v=b9d02db518','meteor.js?v=9460b40009','word-wheel.js?v=dc87a710bb','kelime-rallisi.js?v=20261125-team-1'];
+  const files=['solo-arcade.js?v=20261126-premium-retirement','papi-cards.js?v=b9d02db518','meteor.js?v=9460b40009','word-wheel.js?v=dc87a710bb','kelime-rallisi.js?v=20261125-team-1'];
   const loaded=new Set(),loading=new Map();let pending=null,readyDone=false;
   function script(src){window.dmLateCss?.();if(loaded.has(src))return Promise.resolve();if(loading.has(src))return loading.get(src);const task=new Promise((resolve,reject)=>{
     const el=document.createElement('script');el.src=src;el.async=false;
@@ -12,7 +12,8 @@
   }).finally(()=>loading.delete(src));loading.set(src,task);return task;}
   function ready(){if(pending)return pending;pending=(async()=>{
     // Start all independent downloads together; async=false retains execution order.
-    const selected=window.dmTeacherPortalMode?[...files,'mola-chapters.js?v=20261106-mola-15','mola-core.js?v=20261021-chapters-1','mola-vakti.js?v=20261126-teacher-only']:files;
+    const classroom=window.dmTeacherPortalMode||typeof aktifOgrenciAdi!=='undefined'&&String(aktifOgrenciAdi).toLowerCase()==='teacher'||typeof siniftaOynananOgrenci!=='undefined'&&!!siniftaOynananOgrenci;
+    const selected=[...files,...(classroom?['harf-bahcesi.js?v=20261126-teacher-only']:[]),...(window.dmTeacherPortalMode?['mola-chapters.js?v=20261106-mola-15','mola-core.js?v=20261021-chapters-1','mola-vakti.js?v=20261126-teacher-only']:[])];
     if(window.dmTeacherPortalMode&&!document.querySelector('link[data-teacher-mola]')){const css=document.createElement('link');css.rel='stylesheet';css.href='mola-vakti.css?v=20261112-a';css.dataset.teacherMola='1';document.head.append(css);}
     await Promise.all(selected.map(script));
     readyDone=true;
@@ -62,7 +63,8 @@
   const monsterProxy=opener(()=>window.canavarAvcisiAc);
   window.canavarAvcisiAc=(...args)=>window.dmTeacherPortalMode||typeof aktifOgrenciAdi!=='undefined'&&String(aktifOgrenciAdi).toLowerCase()==='teacher'||typeof siniftaOynananOgrenci!=='undefined'&&siniftaOynananOgrenci?monsterProxy(...args):window.yoToast?.('Bu oyun artık öğrenci hesabında sunulmuyor.');
   window.dengesizKuleAc=()=>window.yoToast?.('Bu oyun yayından kaldırıldı.');
-  window.harfBahcesiAc=opener(()=>window.harfBahcesiAc);
+  const gardenProxy=opener(()=>window.harfBahcesiAc);
+  window.harfBahcesiAc=(...args)=>(window.dmTeacherPortalMode||typeof aktifOgrenciAdi!=='undefined'&&String(aktifOgrenciAdi).toLowerCase()==='teacher'||typeof siniftaOynananOgrenci!=='undefined'&&!!siniftaOynananOgrenci)?gardenProxy(...args):window.yoToast?.('Bu oyun artık öğrenci hesabında sunulmuyor.');
   window.ralliOyunAc=opener(()=>window.ralliOyunAc);
   for(const name of ['dmPapiCards','dmMeteor','dmWordWheel'])window[name]={open:opener(()=>window[name].open),close(){}};
   const tab=document.getElementById('tab-aktiviteler');

@@ -1,0 +1,18 @@
+name: Free games clean list
+on:
+  push:
+    paths: ['ingilizce/activity-ui.js','ingilizce/lazy-games.js','tests/free-games-clean-ui.cjs','.github/workflows/free-games-clean.yml']
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: node --test tests/student-game-retirement.test.cjs tests/lazy-games-parallel.test.cjs
+      - run: npm install --no-save --package-lock=false --ignore-scripts playwright@1.58.2
+      - run: npx playwright install --with-deps chromium
+      - run: node tests/free-games-clean-ui.cjs
