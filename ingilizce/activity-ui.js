@@ -42,16 +42,17 @@
    draw();s.body.querySelector('input').oninput=e=>draw(e.target.value);s.body.querySelector('.dm-open-matches').onclick=()=>{s.close();window.dmArenaAc();};
   }catch(e){if(stopped)return;s.body.textContent=e.message;}
  };
- const defs=[['papiFeneriAc',27,'Kelime','oyun_fener'],['canavarAvcisiAc',20,'Kelime','oyun_canavar'],['dengesizKuleAc',21,'Kelime','oyun_kule'],
+ const defs=[['papiFeneriAc',27,'Kelime','oyun_fener'],['canavarAvcisiAc',20,'Kelime','oyun_canavar'],
  ['pomodoroAc',2,'Odaklanma','pomodoro'],['kelimeYarismasiAc',0,'Kelime','oyun_kelime'],['hafizaOyunAc',1,'Hafıza','oyun_hafiza'],['okumaStudyosunuAc',2,'Okuma','okuma_hizi'],['boslukOyunAc',3,'Kelime','oyun_bosluk'],['asmacaOyunAc',4,'Kelime','oyun_asmaca'],['jpOyunAc',5,'Kelime','oyun_jeopardy'],['yagmurOyunAc',6,'Kelime','oyun_yagmur'],['kelimebulOyunAc',7,'Kelime','oyun_kelimebul'],['esOyunAc',8,'Kelime','oyun_eslestirme'],['trenOyunAc',9,'Cümle','oyun_tren'],['dikteAc',10,'Dinleme','oyun_dikte'],['cumleAc',11,'Cümle','oyun_cumle'],['harfBahcesiAc',15,'Kelime','oyun_harfbahcesi'],['ralliOyunAc',16,'Kelime','oyun_ralli'],['kelimeGoluAc',18,'Kelime','oyun_kelime']];
  const free={kelimeGoluDuo:[19,'İki kale, dört köşe; doğru anlamı seç ve golünü at. Enerji harcanmaz.','Maçı Başlat'],papiCardsActivity:[12,'Kelime kartlarını dinle ve öğren.','Kartları Aç'],meteorActivity:[13,'Aynı cihazda kelimeleri yakala, rakibini geç.','Oyunu Aç'],wordWheelActivity:[14,'Çarkı çevir, doğru kelimeyi bul.','Çarkı Aç'],sentenceRaceActivity:[17,'İki takım · farklı sorular · 12 tur · süre bonusu.','Yarışı Başlat']};
  const icon=name=>'<svg class="gg-icon" aria-hidden="true"><use href="games-assets/ui-icons.svg#'+name+'"></use></svg>';
  let party='premium',skill='Tümü',lastAccount='',friendsLoaded=false,knownGrid=null,key='';
- const retiredGates=new Set(['oyun_jeopardy','oyun_kelimebul','oyun_dikte','oyun_canavar']);
- const retiredCard=b=>!window.dmTeacherPortalMode&&(b.dataset.ggCategory==='break'||retiredGates.has(b.dataset.ggGate)||retiredGates.has(game(b)[3]));
+ const retiredGates=new Set(['oyun_jeopardy','oyun_kelimebul','oyun_dikte','oyun_canavar','oyun_harfbahcesi','oyun_tren','oyun_cumle']);
+ const retiredPremiumCard=b=>['towerActivity','premiumWordBlocksActivity'].includes(b.id)||/\b(dengesizKuleAc|premiumKelimeBloklariAc)\s*\(/.test(b.getAttribute('onclick')||'');
+ const retiredCard=b=>retiredPremiumCard(b)||!window.dmTeacherPortalMode&&(b.dataset.ggCategory==='break'||retiredGates.has(b.dataset.ggGate)||retiredGates.has(game(b)[3]));
  const categories={solo:'Tek Kişilik',free:'Sınıfta Oyna',konu:'Konu Oyunları',break:'Mola Vakti',premium:'Premium Oyunlar'};
- const premiumOrder=['papiDalgaSorfuPremium','kelimeGoluSolo','papizzleActivity','towerActivity','premiumWordMatchActivity','premiumCloudFlightActivity','premiumWordBlocksActivity','rallyActivity'];
- const listOrder=['papiDalgaSorfuPremium','papiDalgaSorfuFree','game-jpOyunAc()','game-kelimeYarismasiAc()','kelimeGoluSolo','mola-kosu','premiumWordBlocksActivity','papizzleActivity'];
+ const premiumOrder=['papiDalgaSorfuPremium','kelimeGoluSolo','papizzleActivity','premiumWordMatchActivity','premiumCloudFlightActivity','rallyActivity'];
+ const listOrder=['papiDalgaSorfuPremium','papiDalgaSorfuFree','game-jpOyunAc()','game-kelimeYarismasiAc()','kelimeGoluSolo','mola-kosu','papizzleActivity'];
  const listRank=id=>{const i=listOrder.indexOf(id);return i<0?listOrder.length:i;};
  const categorySubs={solo:'Kelime oyunları',break:'Kısa eğlence'};
 const categoryIcons={solo:0,free:2,konu:3,break:4,premium:5};
@@ -89,12 +90,12 @@ const categoryIcons={solo:0,free:2,konu:3,break:4,premium:5};
    card.click();
   };
   // These games check quota in their own status/start flow and can resume a paid run at zero remaining.
-  if(['papiDalgaSorfuPremium','towerActivity','kelimeGoluSolo'].includes(card.id)){launch();return;}
+  if(['papiDalgaSorfuPremium','kelimeGoluSolo'].includes(card.id)){launch();return;}
   if(card.dataset.ggCategory!=='premium'||window.dmTeacherPortalMode){card.click();return;}
   if(card.dataset.accessPending)return;
   card.dataset.accessPending='1';
   const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),12000);
-  const games={premiumWordMatchActivity:'word-match',premiumCloudFlightActivity:'cloud-flight',premiumWordBlocksActivity:'word-blocks',papizzleActivity:'papizzle',towerActivity:'tower',kelimeGoluSolo:'word-goal'};
+  const games={premiumWordMatchActivity:'word-match',premiumCloudFlightActivity:'cloud-flight',papizzleActivity:'papizzle',kelimeGoluSolo:'word-goal'};
   const game=games[card.id]||'rally';
   try{
    const token=localStorage.getItem('ing_token')||'';
@@ -109,10 +110,8 @@ const categoryIcons={solo:0,free:2,konu:3,break:4,premium:5};
  const approvedGameArt={
   kelimeGoluSolo:'29 553 388 241',
   papizzleActivity:'436 553 387 241',
-  towerActivity:'29 923 388 211',
   premiumWordMatchActivity:'436 923 387 211',
-  premiumCloudFlightActivity:'29 1278 388 220',
-  premiumWordBlocksActivity:'436 1278 387 220'
+  premiumCloudFlightActivity:'29 1278 388 220'
  };
  function coverArt(card,compact=false){
   const art=document.createElement('span');art.className='gg-cover';art.setAttribute('aria-hidden','true');
@@ -238,7 +237,7 @@ const categoryIcons={solo:0,free:2,konu:3,break:4,premium:5};
  function game(b){const rule=defs.find(d=>(b.getAttribute('onclick')||'').includes(d[0]))||defs.find(d=>b.id===d[0]||b.id==='yoDikteKart'&&d[0]==='dikteAc');return rule||[null,8,'Kelime',b.dataset.dmLevelLock||window.DijiProgressionCatalog?.functions[(b.getAttribute('onclick')||'').match(/([A-Za-z_$][\w$]*)\s*\(/)?.[1]]||''];}
  function lastGame(){try{return localStorage.getItem('dm_last_game:'+account())||'';}catch{return '';}}
  function remember(b){try{localStorage.setItem('dm_last_game:'+account(),b.dataset.ggId);}catch{}}
- function prepare(b,i){if(b.dataset.ggReady)return;b.dataset.ggReady='1';b.dataset.ggId=b.id||'game-'+(b.getAttribute('onclick')||i);const d=game(b),f=free[b.id];b.dataset.ggGameSkill=d[2];b.dataset.ggGate=d[3];b.dataset.ggCategory=f?'free':b.classList.contains('dm-live-card')||['dmUcusteKart','dmRotaKart'].includes(b.id)?'duo':'solo';if(b.dataset.ggCategory==='duo')b.dataset.ggGate='iki_kisilik';b.dataset.ggIndex=f?f[0]:d[1];b.style.order=String(f?f[0]:defs.includes(d)?d[1]:50);if(b.id==='papiDalgaSorfuFree'){b.dataset.ggCategory='solo';b.dataset.ggGate='';b.dataset.ggGameSkill='Kelime';b.style.order='-10';b.dataset.ggIndex='28';}if(['papiDalgaSorfuPremium','premiumWordMatchActivity','premiumCloudFlightActivity','premiumWordBlocksActivity','papizzleActivity','rallyActivity','towerActivity','kelimeGoluSolo'].includes(b.id)){b.dataset.ggCategory='premium';b.dataset.ggGate='';b.style.order=String(premiumOrder.indexOf(b.id));b.dataset.ggIndex=b.id==='papiDalgaSorfuPremium'?'28':b.id==='towerActivity'?'21':b.id==='kelimeGoluSolo'?'18':b.id==='rallyActivity'?'16':b.id==='papizzleActivity'?'26':b.id==='premiumWordBlocksActivity'?'24':b.id==='premiumCloudFlightActivity'?'23':'22';}
+ function prepare(b,i){if(b.dataset.ggReady)return;b.dataset.ggReady='1';b.dataset.ggId=b.id||'game-'+(b.getAttribute('onclick')||i);const d=game(b),f=free[b.id];b.dataset.ggGameSkill=d[2];b.dataset.ggGate=d[3];b.dataset.ggCategory=f?'free':b.classList.contains('dm-live-card')||['dmUcusteKart','dmRotaKart'].includes(b.id)?'duo':'solo';if(b.dataset.ggCategory==='duo')b.dataset.ggGate='iki_kisilik';b.dataset.ggIndex=f?f[0]:d[1];b.style.order=String(f?f[0]:defs.includes(d)?d[1]:50);if(b.id==='papiDalgaSorfuFree'){b.dataset.ggCategory='solo';b.dataset.ggGate='';b.dataset.ggGameSkill='Kelime';b.style.order='-10';b.dataset.ggIndex='28';}if(['papiDalgaSorfuPremium','premiumWordMatchActivity','premiumCloudFlightActivity','papizzleActivity','rallyActivity','kelimeGoluSolo'].includes(b.id)){b.dataset.ggCategory='premium';b.dataset.ggGate='';b.style.order=String(premiumOrder.indexOf(b.id));b.dataset.ggIndex=b.id==='papiDalgaSorfuPremium'?'28':b.id==='kelimeGoluSolo'?'18':b.id==='rallyActivity'?'16':b.id==='papizzleActivity'?'26':b.id==='premiumCloudFlightActivity'?'23':'22';}
   b.classList.add('gg-game');b.classList.remove('dm-toy-card','dm-showcase-card');
   const title=b.querySelector('.az-gcard-title')?.textContent.trim()||b.textContent.trim();b.dataset.ggTitle=title;
   const tool=d[0]==='pomodoroAc'||d[0]==='okumaStudyosunuAc';if(tool)b.dataset.ggCategory='tools';
@@ -260,12 +259,12 @@ const categoryIcons={solo:0,free:2,konu:3,break:4,premium:5};
   if(!teacher&&['free','konu','break'].includes(party))party='solo';
   host.querySelectorAll('[data-gg-party="free"],[data-gg-party="konu"]').forEach(b=>{b.hidden=!teacher;b.style.setProperty('display',teacher?'':'none','important');});
   const freeGroup=party!=='premium';
-  const tabs=host.querySelector('.gg-tabs');tabs.hidden=!freeGroup;
+  const tabs=host.querySelector('.gg-tabs');tabs.hidden=!teacher||!freeGroup;
   tabs.style.setProperty('grid-template-columns',teacher?'repeat(2,minmax(0,1fr))':'1fr','important');
-  host.querySelector('.gg-category-question').hidden=!freeGroup;
+  const question=host.querySelector('.gg-category-question');question.hidden=!teacher||!freeGroup;question.style.setProperty('display',teacher&&freeGroup?'':'none','important');
   host.classList.toggle('gg-cat-a',!teacher); // [18 Kas 2026] Öğrenci: A tasarımı büyük resimli kartlar
   tabs.querySelectorAll('button').forEach(b=>{b.style.setProperty('grid-column',teacher&&b.dataset.ggParty==='konu'?'1/-1':'auto','important');if(b.dataset.ggParty==='premium')b.style.setProperty('display','none','important');});
-  tabs.style.setProperty('display',freeGroup?'grid':'none','important');
+  tabs.style.setProperty('display',teacher&&freeGroup?'grid':'none','important');
   host.querySelectorAll('[data-gg-main]').forEach(b=>{const on=(b.dataset.ggMain==='free')===freeGroup;b.setAttribute('aria-pressed',String(on));if(b.dataset.ggMain==='free')b.setAttribute('aria-expanded',String(on));});
 
   host.classList.toggle('gg-teacher-list',teacher);
@@ -276,13 +275,13 @@ const categoryIcons={solo:0,free:2,konu:3,break:4,premium:5};
    else button.style.removeProperty('display');
   });
   const listen=host.querySelector('[data-gg-skill="Dinleme"]');if(listen){listen.hidden=!teacher;listen.style.setProperty('display',teacher?'':'none','important');}
-  if(!teacher&&skill==='Dinleme')skill='Tümü';
+  if(!teacher)skill='Tümü';
   if(teacher&&party==='duo')party='solo';delete host.dataset.dmParty;host.dataset.ggParty=party;const active=party;
   host.querySelectorAll('[data-gg-party]').forEach(b=>{const on=b.dataset.ggParty===active;b.setAttribute(redesigned?'aria-pressed':'aria-selected',String(on));b.tabIndex=redesigned||on?0:-1;});
   host.querySelectorAll('.gg-filters [data-gg-skill]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.ggSkill===skill)));
   host.querySelector('.gg-banner')?.remove();
   host.classList.add('au-games');host.querySelectorAll('[data-gg-party]').forEach(b=>{const index=categoryIcons[b.dataset.ggParty];if(index===undefined)return;if(!b.querySelector('.au-game-icon,.gg-category-art')){b.querySelector('svg')?.remove();const art=document.createElement('i');art.className='au-game-icon';art.setAttribute('aria-hidden','true');if(index===5){art.classList.add('gg-premium-icon');}else art.style.backgroundPosition=(index*25)+'% 50%';b.prepend(art);}const label=b.querySelector('.gg-category-name')||b.querySelector('span');if(label)label.textContent=categories[b.dataset.ggParty];});
-  host.querySelector('.gg-filters').hidden=party!=='solo';host.querySelector('.gg-social').hidden=!!window.dmTeacherPortalMode||party==='solo'||party==='break'||party==='konu'||party==='premium';host.querySelector('.gg-heading').textContent=party==='premium'?'👑 Premium Oyunlar':party==='konu'?'Konu Başlıkları':party==='break'?'Mola Oyunları':party==='solo'?'Tek Kişilik Oyunlar':party==='free'?'Sınıfta Oyna':'İki Kişilik Oyna';
+  const skillFilters=host.querySelector('.gg-filters');skillFilters.hidden=!teacher||party!=='solo';skillFilters.style.setProperty('display',teacher&&party==='solo'?'':'none','important');host.querySelector('.gg-social').hidden=!!window.dmTeacherPortalMode||party==='solo'||party==='break'||party==='konu'||party==='premium';host.querySelector('.gg-heading').textContent=party==='premium'?'👑 Premium Oyunlar':party==='konu'?'Konu Başlıkları':party==='break'?'Mola Oyunları':party==='solo'?'Tek Kişilik Oyunlar':party==='free'?'Sınıfta Oyna':'İki Kişilik Oyna';
   if(!redesigned)grid.setAttribute('aria-labelledby',party==='premium'?'ggPremiumTab':party==='break'?'ggBreakTab':party==='solo'?'ggSoloTab':party==='duo'?'ggOnlineTab':'ggFreeTab');
   const surfFreeOk=window.dmDalgaSorfu?.hasFreeQuota?.()!==false;
   let count=0;all.forEach(b=>{const tool=b.dataset.ggCategory==='tools',open=allowed(b.dataset.ggGate),hideSurf=b.id==='papiDalgaSorfuFree'&&!surfFreeOk,show=!hideSurf&&((tool&&party===(redesigned?'tools':'solo'))||b.dataset.ggCategory===party&&(party!=='solo'||(skill==='Tümü'||b.dataset.ggGameSkill===skill||skill==='Kelime'&&b.dataset.ggGameSkill==='Hafıza')));b.classList.toggle('gg-locked',!open);b.setAttribute('aria-disabled',String(!open));const play=b.querySelector('.gg-play');if(play)play.textContent=!open?(window.DijiProgressionCatalog?.gates[b.dataset.ggGate]||30)+'. seviyede açılır':free[b.id]?free[b.id][2]+' ›':tool?(b.dataset.ggIndex==='2'&&/pomodoroAc/.test(b.getAttribute('onclick')||'')?'Başlat ›':'Aç ›'):b.dataset.ggCategory==='duo'?'Davet Et ›':'Oyna ›';b.hidden=!show;b.style.setProperty('display',show?'grid':'none','important');if(redesigned&&!tool){
@@ -303,7 +302,7 @@ const categoryIcons={solo:0,free:2,konu:3,break:4,premium:5};
    host.querySelector('.gg-overview').style.setProperty('display',showTools||showTopics?'none':'grid','important');
    host.querySelector('.gg-heading').hidden=true;
    host.querySelector('.gg-empty').hidden=true;
-   host.querySelector('.gg-shortcuts button').textContent=showTools?'Tek Kişilik Oyunlara Dön ›':'Çalışma Araçları ›';
+   host.querySelector('.gg-shortcuts button').textContent=showTools?(teacher?'Tek Kişilik Oyunlara Dön ›':'Ücretsiz Oyunlara Dön ›'):'Çalışma Araçları ›';
    host.querySelector('.gg-social').hidden=true;
    grid.hidden=true;
    if(!showTools&&!showTopics)renderList(host,all);
@@ -324,10 +323,6 @@ const categoryIcons={solo:0,free:2,konu:3,break:4,premium:5};
   if(!grid.querySelector('#premiumCloudFlightActivity')){
    const card=document.createElement('button');card.type='button';card.id='premiumCloudFlightActivity';card.className='az-gcard';
    card.setAttribute('onclick','premiumBulutUcusuAc()');card.innerHTML='<div class="az-gcard-title">Kaptan Pilot Papi</div>';grid.append(card);
-  }
-  if(!grid.querySelector('#premiumWordBlocksActivity')){
-   const card=document.createElement('button');card.type='button';card.id='premiumWordBlocksActivity';card.className='az-gcard';
-   card.setAttribute('onclick','premiumKelimeBloklariAc()');card.innerHTML='<div class="az-gcard-title">Block Papi</div>';grid.append(card);
   }
   if(!grid.querySelector('#papizzleActivity')){
    const card=document.createElement('button');card.type='button';card.id='papizzleActivity';card.className='az-gcard';

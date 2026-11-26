@@ -455,6 +455,7 @@ const YO_SOHBET = window.DMPapiDialogueCatalog;
         /* ========== 7) CÜMLE KURMA ========== */
         let cml = null;
         function cumleAc() {
+          if(!(window.dmTeacherPortalMode||typeof aktifOgrenciAdi!=='undefined'&&String(aktifOgrenciAdi).toLowerCase()==='teacher'||typeof siniftaOynananOgrenci!=='undefined'&&!!siniftaOynananOgrenci))return window.yoToast?.('Bu oyun artık öğrenci hesabında sunulmuyor.');
           if (!yoHazirMi()) return;
           let s = window.dmSoloLevels?.scope('cumle')?.classNo || (window.dmSelectedIntro?.key === 'cumle' ? window.dmSelectedIntro.classNo : Number(yoSinif(yoIsim)) || 0);
           let seviyeler = !s ? ['A1','A2','B1'] : s <= 4 ? ['A1'] : s <= 6 ? ['A1','A2'] : ['A2','B1'];

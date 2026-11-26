@@ -6019,8 +6019,8 @@ setTimeout(() => {
         }
         function headerEnerjiGoster(kalan, max) {
             // Plan kapasitesi sunucudan gelir: Free 25, Pro 40, Premium Pro 60 (sınırsız).
-            max = [25,40,60].includes(Number(max)) ? Number(max) : 25; kalan = Math.max(0, Math.min(max, Number(kalan) || 0));
-            let pct = max > 0 ? Math.round((kalan / max) * 100) : 0;
+            max = [25,40,60].includes(Number(max)) ? Number(max) : 25; kalan = Math.max(0, Number(kalan) || 0);
+            let pct = max > 0 ? Math.min(100, Math.round((kalan / max) * 100)) : 0;
             let bar = document.getElementById('headerEnerjiBar');
             let onceki = window.genelEnerjiKalan;
             if (bar) {
@@ -9009,7 +9009,7 @@ function ozellikSecDoldur() {
         }
         async function kpEnerjiDegistir(fark) {
             let isim = siniftaOynananOgrenci || aktifOgrenciAdi;
-            kpEnerjiKalan = Math.max(0, Math.min(kpEnerjiMax, kpEnerjiKalan + fark));
+            kpEnerjiKalan = Math.max(0, fark>0?Math.max(kpEnerjiKalan,Math.min(kpEnerjiMax,kpEnerjiKalan+fark)):kpEnerjiKalan+fark);
             kpEnerjiSatiriniGuncelle();
             headerEnerjiGoster(kpEnerjiKalan, kpEnerjiMax);
             try {

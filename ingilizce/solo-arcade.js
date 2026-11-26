@@ -1,6 +1,6 @@
 /* Word Bank arcade games. Scores, answer evidence and payouts use the shared engines. */
 (()=>{'use strict';
-const games={fener:{title:'Papi’nin Feneri',level:11,open:'papiFeneriAc',card:'flashlightActivity',op:'fener',hint:'Feneri gezdir, doğru anlamın üzerinde bırak.'},canavar:{title:'Canavar Avcısı',level:20,open:'canavarAvcisiAc',card:'monsterActivity',op:'canavar',hint:'Doğru kelimeyi taşıyan canavarı yakala!'},kule:{title:'Dengesiz Kule',level:35,open:'dengesizKuleAc',card:'towerActivity',op:'kule',hint:'Doğru cevabı seç, kuleyi sağlam tut!'}};
+const games={fener:{title:'Papi’nin Feneri',level:11,open:'papiFeneriAc',card:'flashlightActivity',op:'fener',hint:'Feneri gezdir, doğru anlamın üzerinde bırak.'},canavar:{title:'Canavar Avcısı',level:20,open:'canavarAvcisiAc',card:'monsterActivity',op:'canavar',hint:'Doğru kelimeyi taşıyan canavarı yakala!'}};
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const en=w=>String(w.ingilizce??w.en??'').trim(),tr=w=>String(w.turkce??w.tr??'').trim();
 const norm=v=>String(v??'').normalize('NFKC').toLocaleLowerCase('en').replace(/[’‘`]/g,"'").replace(/[^\p{L}\p{N}]+/gu,' ').trim();
@@ -22,7 +22,7 @@ function monster(i){return `<span class="sa-monster sa-monster-${i}" aria-hidden
 function floor(i,offset=0){return `<img class="sa-floor" src="arcade-assets/floor.webp" alt="" style="--i:${i};--offset:${offset}px;--hue:${i%4*48}deg">`;}
 function open(key){
  if(key==='canavar'&&!practice()&&!window.dmTeacherPortalMode){window.yoToast?.('Bu oyun artık öğrenci hesabında sunulmuyor.');return;}
- if(key==='kule'&&window.dmPremiumSkillGames)return window.dmPremiumSkillGames.open('tower');
+ if(key==='kule'){window.yoToast?.('Bu oyun yayından kaldırıldı.');return;}
  if(window.dmSoloLevels?.needs(key))return window.dmSoloLevels.open(key,()=>open(key));
  if(!games[key]||window.dmFeatureEnabled?.('oyun_'+key)===false||window.dmProgression?.require('oyun_'+key)===false)return;
  close();prior=document.activeElement;const parent=window.dmViewHistory?.capture();
@@ -165,6 +165,7 @@ async function finish(){
 }
 function addCards(){const grid=document.querySelector('#tab-aktiviteler .az-grid2x2');if(!grid)return;for(const [key,g] of Object.entries(games)){if(document.getElementById(g.card))continue;const b=document.createElement('button');b.type='button';b.id=g.card;b.className='az-gcard';b.dataset.dmParty='solo';b.setAttribute('onclick',g.open+'()');b.innerHTML='<div class="az-gcard-title">'+g.title+'</div>';grid.append(b);}window.dmGamesUI?.refresh();window.dmProgression?.paint();}
 for(const [key,g] of Object.entries(games))window[g.open]=()=>open(key);
+window.dengesizKuleAc=()=>window.yoToast?.('Bu oyun yayından kaldırıldı.');
 window.dmSoloArcade={close,scope:key=>s?.key===key?{classNo:s.classNo,units:s.units.slice()}:null};
 document.addEventListener('visibilitychange',()=>{if(document.hidden&&s?.phase==='play'&&!s.locked&&!s.paused)togglePause();});document.addEventListener('dm:login',close);addCards();
 })();

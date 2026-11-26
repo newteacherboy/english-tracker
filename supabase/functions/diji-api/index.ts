@@ -1472,13 +1472,7 @@ async function handle(req: Request, proxy: any = null) {
   if(isDemo(a)&&op==='iletisimDurumu')return json({ok:true,eksik:false,donuk:false,uyari:false});
   if(isDemo(a)&&op==='memberStatus')return json({ok:true,emailVerified:true,email:'',hasPlacement:true,teacherLinked:false,demo:true});
 
-  if(op==='activeTime'){
-    if(req.method!=='POST')return json({ok:false,mesaj:'POST gerekli.'},405);
-    if(a?.role!=='student'||!a.student_id)return json({ok:false,mesaj:'Öğrenci oturumu gerekli.'},401);
-    const {data,error}=await supabase.rpc('dm_active_time_tick',{actor:a.student_id,run_key:String(body.runId||''),seq:Number(body.seq),active_seconds:Number(body.seconds||0),claim_index:Number(body.claimIndex||0)});
-    if(error)return json({ok:false,mesaj:'Süre veya sandık kaydedilemedi.'},400);
-    return json(data);
-  }
+  if(op==='activeTime')return json({ok:true,retired:true,seconds:0,stars:0,baseChest:0,chestCount:0,claimed:[],gold:0});
 
   if(op==='purchaseStatus'){
     if(!a)return json({ok:false,mesaj:'Giriş yapmalısın.'},401);
@@ -2089,7 +2083,7 @@ async function handle(req: Request, proxy: any = null) {
     if (gs.id === as.id) return json({ ok: false, mesaj: "Kendine enerji gönderemezsin. 😄" });
     const { count } = await supabase.from("feed_events").select("id", { count: "exact", head: true }).eq("student_id", gs.id).eq("event_type", "energy_send").gte("created_at", bugunBasi());
     if ((count || 0) >= (bool(val(body, q, "ekstra")) ? 3 : 1)) return json({ ok: false, mesaj: "Bugünkü enerji hediyeni zaten gönderdin." });
-    const next = Math.min(as.energy_max, as.energy + 2);
+    const next = Math.max(as.energy, Math.min(as.energy_max, as.energy + 2));
     await supabase.from("students").update({ energy: next }).eq("id", as.id);
     await supabase.from("energy_transactions").insert({ student_id: as.id, change_amount: next - as.energy, balance_after: next, reason: "öğrenci hediyesi" });
     await supabase.from("feed_events").insert({ student_id: gs.id, target_student_id: as.id, event_type: "energy_send", payload: { amount: 2, student_name: gs.username, target_name: as.username, icon: "⚡" } });

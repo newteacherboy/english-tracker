@@ -32,6 +32,7 @@
     genericSinifGuncelle(n,'hbUnits',u=>state.units=u);
   }
   window.harfBahcesiAc=function() {
+    if(!(window.dmTeacherPortalMode||typeof aktifOgrenciAdi!=='undefined'&&String(aktifOgrenciAdi).toLowerCase()==='teacher'||typeof siniftaOynananOgrenci!=='undefined'&&!!siniftaOynananOgrenci))return window.yoToast?.('Bu oyun artık öğrenci hesabında sunulmuyor.');
     if(window.dmSoloLevels?.needs(KEY))return window.dmSoloLevels.open(KEY,()=>window.harfBahcesiAc());
     if(window.dmFeatureEnabled?.('oyun_harfbahcesi')===false || genelOyunGirisEngelliMi())return;
     close();owner=who();previous=document.activeElement;
@@ -47,6 +48,7 @@
     overlay.querySelector('[data-start]').onclick=start;overlay.querySelector('[data-close]').focus();
   };
   async function start() {
+    if(!(window.dmTeacherPortalMode||typeof aktifOgrenciAdi!=='undefined'&&String(aktifOgrenciAdi).toLowerCase()==='teacher'||typeof siniftaOynananOgrenci!=='undefined'&&!!siniftaOynananOgrenci))return window.yoToast?.('Bu oyun artık öğrenci hesabında sunulmuyor.');
     if(starting||!state||state.ended||!overlay)return;
     if(window.dmFeatureEnabled?.('oyun_harfbahcesi')===false)return message('Bu oyun şu anda kapalı.');
     const available=pool(oyunHavuzGetir(state.classNo,state.units));

@@ -39,16 +39,24 @@
  }
  function shortcut(route){
   route.querySelectorAll('.dm-lp-lane').forEach(el=>el.remove());
-  if(route.querySelector(':scope>.dm-papi-chat-shortcut'))return;
-  const button=document.createElement('button');button.type='button';button.className='dm-papi-chat-shortcut';
+  const header=route.querySelector('.rt-medal-header');
+  if(!header)return;
+  let row=header.querySelector(':scope>.rt-quick-actions');
+  if(!row){row=document.createElement('div');row.className='rt-quick-actions';row.setAttribute('role','group');row.setAttribute('aria-label','Parkur hızlı işlemler');header.append(row);}
+  const agenda=header.querySelector('.rt-agenda');
+  if(agenda&&agenda.parentElement!==row)row.prepend(agenda);
+  let button=route.querySelector('.dm-papi-chat-shortcut');
+  if(button){if(button.parentElement!==row)row.append(button);return;}
+  button=document.createElement('button');button.type='button';button.className='dm-papi-chat-shortcut';
   button.setAttribute('aria-label','Papi ile görüntülü konuş');
   button.innerHTML=`
-   <span class="dm-papi-chat-avatar" aria-hidden="true"><img src="oyna-assets/oyna-papi-cta.png" alt="" decoding="async"></span>
-   <svg class="dm-papi-chat-camera" aria-hidden="true" width="12" height="9" viewBox="0 0 20 14" fill="currentColor"><rect width="13" height="14" rx="3"/><path d="m14 5 6-4v12l-6-4z"/></svg>
-   <span class="dm-papi-chat-label" aria-hidden="true">Papi ile<br>görüntülü konuş</span>
-   <span class="dm-papi-chat-hello" aria-hidden="true" lang="en">Hello!</span>`;
+   <span class="rt-quick-icon rt-call-icon" aria-hidden="true">
+    <span class="dm-papi-chat-avatar"><img src="oyna-assets/oyna-papi-cta.png" alt="" decoding="async"></span>
+    <svg class="dm-papi-chat-camera" width="12" height="9" viewBox="0 0 20 14" fill="currentColor"><rect width="13" height="14" rx="3"/><path d="m14 5 6-4v12l-6-4z"/></svg>
+    <i class="rt-quick-spark"></i><i class="rt-quick-spark rt-quick-spark-second"></i>
+   </span><span class="rt-quick-label">Papi ile Konuş</span>`;
   button.onclick=()=>{if(window.dmPapiChat?.open)window.dmPapiChat.open();else window.yoToast?.('Sohbet hazırlanıyor. Birazdan tekrar dene.');};
-  route.append(button);
+  row.append(button);
  }
  function wallet(){
   document.querySelectorAll('.dm-unified-wallet .dm-pw-papi:not(.dm-lp)').forEach(el=>{el.classList.add('dm-lp','dm-lp-mini');el.innerHTML=papi();});

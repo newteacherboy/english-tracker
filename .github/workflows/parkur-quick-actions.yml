@@ -1,0 +1,20 @@
+name: Parkur quick action row
+on:
+  push:
+    paths: ['ingilizce/parkur-live-papi.js','ingilizce/parkur-v4.css','ingilizce/zirve-kampanya.js','tests/parkur-quick-actions-ui.cjs','.github/workflows/parkur-quick-actions.yml']
+  pull_request:
+    paths: ['ingilizce/parkur-live-papi.js','ingilizce/parkur-v4.css','ingilizce/zirve-kampanya.js','tests/parkur-quick-actions-ui.cjs']
+permissions:
+  contents: read
+jobs:
+  layout:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: npm install --no-save --package-lock=false --ignore-scripts playwright@1.58.2
+      - run: npx playwright install --with-deps chromium
+      - run: node tests/parkur-quick-actions-ui.cjs

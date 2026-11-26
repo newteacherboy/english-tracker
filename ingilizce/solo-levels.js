@@ -20,13 +20,13 @@ fener:{scene:'detective',symbol:'🔦',props:['🔦','🌟','🔍'],subtitle:'Fe
 canavar:{scene:'carnival',symbol:'👾',props:['👾','🎯','⚡'],subtitle:'Doğru kelimeyi bul, canavarları yakala!'}
 };
 const starters={ky:'kelimeYarismasiBaslat',jp:'jeopardyOyunuBaslat',bosluk:'boslukOyunuBaslat',hafiza:'hafizaOyunuBaslat',yagmur:'yagmurOyunuBaslat',kelimebul:'kelimebulOyunuBaslat',eslestirme:'esOyunuBaslat',tren:'trenOyunuBaslat'};
-const reopen={golu:'kelimeGoluAc',ky:'kelimeYarismasiAc',jp:'jpOyunAc',bosluk:'boslukOyunAc',hafiza:'hafizaOyunAc',yagmur:'yagmurOyunAc',kelimebul:'kelimebulOyunAc',eslestirme:'esOyunAc',tren:'trenOyunAc',dikte:'dikteAc',cumle:'cumleAc',harfbahcesi:'harfBahcesiAc',fener:'papiFeneriAc',canavar:'canavarAvcisiAc',kule:'dengesizKuleAc'};
+const reopen={golu:'kelimeGoluAc',ky:'kelimeYarismasiAc',jp:'jpOyunAc',bosluk:'boslukOyunAc',hafiza:'hafizaOyunAc',yagmur:'yagmurOyunAc',kelimebul:'kelimebulOyunAc',eslestirme:'esOyunAc',tren:'trenOyunAc',dikte:'dikteAc',cumle:'cumleAc',harfbahcesi:'harfBahcesiAc',fener:'papiFeneriAc',canavar:'canavarAvcisiAc'};
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 async function api(islem,body){const owner=who(),r=await fetch(apiURL,{method:'POST',body:JSON.stringify({islem,ogrenci:owner,...body})}),d=await r.json();if(owner!==who())throw Error('Hesap değişti.');if(!r.ok||!d.ok)throw Error(d.mesaj||'Seviye yüklenemedi. Tekrar dene.');return d;}
 function scope(game){return student()&&(active?.game===game||active?.game==='golu'&&game==='ky')&&active.owner===who()?{classNo:active.classNo,units:active.units.slice(),soloLevel:active.number,...(active.game==='golu'?{soloVariant:'golu'}:{})}:null;}
 function bank(game){return scope(game)?active.words.map(w=>({ingilizce:w.en,turkce:w.tr,en:w.en,tr:w.tr,sinif:active.classNo,unite:w.unit||1})):null;}
 async function open(game,native){
- if(student()&&['jp','kelimebul','dikte','canavar'].includes(game)){window.yoToast?.('Bu oyun artık öğrenci hesabında sunulmuyor.');return;}
+ if(game==='kule'||student()&&['jp','kelimebul','dikte','canavar','harfbahcesi','tren','cumle'].includes(game)){window.yoToast?.('Bu oyun artık öğrenci hesabında sunulmuyor.');return;}
  if(!student())return native();const turn=++epoch,owner=who();active=null;
  document.getElementById('dmSoloLevelIntro')?.remove();
 

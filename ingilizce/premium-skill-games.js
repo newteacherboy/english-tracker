@@ -1,7 +1,7 @@
 /* Independent server-validated Premium routes for Tower and solo Word Goal. */
 (() => {
  'use strict';
- const games={tower:{title:'Dengesiz Kule',image:'arcade-assets/city.webp',hint:'Doğru cevabı seç, bloğu yerleştir!'},'word-goal':{title:'Kelime Golü',image:'games-assets/kelime-golu-stadium-v1.webp',hint:'Doğru anlamın olduğu köşeye dokun!'}};
+ const games={'word-goal':{title:'Kelime Golü',image:'games-assets/kelime-golu-stadium-v1.webp',hint:'Doğru anlamın olduğu köşeye dokun!'}};
  const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
  const who=()=>typeof aktifOgrenciAdi==='undefined'?'':String(aktifOgrenciAdi||'');
  const token=()=>window.dmTeacherPortalMode?sessionStorage.getItem('ing_ogr_token')||'':localStorage.getItem('ing_token')||'';
@@ -31,6 +31,7 @@
   actions.forEach(([label,fn])=>{const b=document.createElement('button');b.type='button';b.textContent=label;b.onclick=fn;body.querySelector('.psg-actions').append(b);});
  }
  async function open(key,options){
+  if(key==='tower'){window.yoToast?.('Bu oyun yayından kaldırıldı.');return;}
   if(!games[key])return;close();origin=document.activeElement;
   if(!who()||!token()){window.yoToast?.('Önce hesabına giriş yap.');return;}
   const s=state={key,owner:who(),token:token(),picks:[],phase:'loading',busy:false,sound:true,team:options?.team===true};
