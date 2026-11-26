@@ -89,13 +89,13 @@ export function raceHandler(db:DB){
    };
    if(op==='setup'){
     if(b.curriculum===true)return json({ok:true,classNo:cls,units:[{id:course.unit}],course,access:await rallyAccess(),level:courseProgress?{unlocked:courseProgress.unlocked,max:RALLY_MAX_LEVEL}:null});
-    const rows=await db.select('word_bank',{select:'unit_no,english,turkish',active:'eq.true',class_no:'eq.'+cls,limit:'6000'}),counts=new Map<number,Set<string>>();
+    const rows=await db.select(a.teacher_portal_access_id&&cls===7?'teacher_grade7_word_bank':'word_bank',{select:'unit_no,english,turkish',active:'eq.true',class_no:'eq.'+cls,limit:'6000'}),counts=new Map<number,Set<string>>();
     for(const w of rows){if(!w.english||!w.turkish)continue;const n=Number(w.unit_no);if(!counts.has(n))counts.set(n,new Set());counts.get(n)!.add(String(w.english).toLowerCase());}
     const lv=await levelRow();return json({ok:true,classNo:cls,access:await rallyAccess(),level:lv?{unlocked:lv.unlocked,max:RALLY_MAX_LEVEL}:null,units:[...counts].sort(([a],[b])=>a-b).map(([id,set])=>({id,count:set.size}))});
    }
    if(op==='practice'){
     const flags=await db.select('dm_release_flags',{select:'code,enabled',code:'in.(aktiviteler,tek_kisilik,oyun_ralli)'});if(flags.some(f=>f.enabled===false))return json({ok:false,mesaj:'Kelime Rallisi şu anda kapalı.'},403);
-    const rows=b.curriculum===true?await courseWords():await db.select('word_bank',{select:'english,turkish',active:'eq.true',class_no:'eq.'+cls,unit_no:'in.('+units.join(',')+')',limit:'6000'});
+    const rows=b.curriculum===true?await courseWords():await db.select(a.teacher_portal_access_id&&cls===7?'teacher_grade7_word_bank':'word_bank',{select:'english,turkish',active:'eq.true',class_no:'eq.'+cls,unit_no:'in.('+units.join(',')+')',limit:'6000'});
     const deck=buildRaceDeck(rows,[],b.twelveWords===true?12:15).map(q=>{if(!b.twoChoices)return q;const lanes=twoChoiceLanes(q);return {...q,options:lanes.map(i=>q.options[i]),answer:lanes.indexOf(q.answer)};});return json({ok:true,practice:true,deck,classNo:cls,units,difficulty:['easy','normal','hard'].includes(b.difficulty)?b.difficulty:'normal'});
    }
    if(op==='ranking'){
@@ -113,7 +113,7 @@ export function raceHandler(db:DB){
     const access=await rallyAccess();
     if(access.remaining<=0)return json({ok:false,premiumRequired:true,access,mesaj:access.plan==='pro'?'Bugünkü 5 Kelime Rallisi hakkın bitti. Premium Pro ile sınırsız oynayabilirsin.':'Ücretsiz oyun hakkın bitti. Daha fazla oynamak için Pro ol.'},402);
     const difficulty=['easy','normal','hard'].includes(b.difficulty)?b.difficulty:'normal';
-    const rows=b.curriculum===true?await courseWords():await db.select('word_bank',{select:'english,turkish',active:'eq.true',class_no:'eq.'+cls,unit_no:'in.('+units.join(',')+')',limit:'6000'});
+    const rows=b.curriculum===true?await courseWords():await db.select(a.teacher_portal_access_id&&cls===7?'teacher_grade7_word_bank':'word_bank',{select:'english,turkish',active:'eq.true',class_no:'eq.'+cls,unit_no:'in.('+units.join(',')+')',limit:'6000'});
     const previous=await db.select('dm_rally_runs',{select:'deck',student_id:'eq.'+student.id,class_no:'eq.'+cls,order:'created_at.desc',limit:'50'});
     const lv=await levelRow();let level=1;if(lv){level=Math.min(lv.unlocked,Math.max(1,Math.floor(Number(b.level)||1)));}
     const started=await view(await db.rpc(a.teacher_portal_access_id?'dm_teacher_rally_start':'dm_rally_start',{...(a.teacher_portal_access_id?{grant_id:a.teacher_portal_access_id}:{}),actor:student.id,run_key:b.runId,class_id:cls,unit_ids:units,question_deck:buildRaceDeck(rows,previous,b.twelveWords===true?12:15),pace:difficulty}));

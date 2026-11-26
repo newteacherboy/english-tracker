@@ -102,7 +102,7 @@ export function verifiedGamesAPI(db,json){
    if(soloStage)available=soloStage.words;
    else if(level){available=levelPool(level);if(available.length<4)return fail('Seviye kelimeleri yüklenemedi.',503);}
    else{
-     let bankQuery=db.from('word_bank').select('english,turkish,class_no,unit_no').eq('active',true);
+     let bankQuery=db.from(a.teacher_portal_access_id&&classNo===7&&game!=='ba'&&game!=='kp'?'teacher_grade7_word_bank':'word_bank').select('english,turkish,class_no,unit_no').eq('active',true);
      bankQuery=game==='kp'?bankQuery.in('class_no',[1,2,3,4,5,6,7,8]):bankQuery.eq('class_no',classNo);
      const bank=await bankQuery.in('unit_no',units).limit(5000);
      if(bank.error)return fail('Kelime havuzu yüklenemedi.',503);
