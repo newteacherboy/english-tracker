@@ -149,15 +149,14 @@ function raporlarimKapat() {
             // Sınıfa ait üniteleri masterKelimeHavuzu'ndan veya global veriden bulalım
             let havuz = window.masterKelimeHavuzu || [];
             let sinifKelimeleri = havuz.filter(k => Number(k.sinif) === Number(sinif));
-            let uniteler = [...new Set(sinifKelimeleri.map(k => Number(k.unite)))].sort((a, b) => a - b);
+            let uniteler = [...new Set(sinifKelimeleri.map(k => Number(k.unite)).filter(u => Number.isInteger(u) && u > 0))].sort((a,b) => a-b);
 
-            if (uniteler.length === 0) {
-                uniteler = [1, 2, 3, 4, 5]; // Varsayılan
-            }
+            if (uniteler.length === 0 && !window.dmTeacherPortalMode) uniteler = (Number(sinif)===3||Number(sinif)===4)?Array.from({length:10},(_,i)=>i+1):Array.from({length:8},(_,i)=>i+1);
 
             let uniteBox = document.getElementById('kyUniteBox');
             uniteBox.innerHTML = "";
             kySecilenUniteler = [];
+            if (!uniteler.length) uniteBox.textContent = 'Bu sınıfın kelimeleri henüz yüklenmedi. Tekrar sınıf seç.';
 
             uniteler.forEach((u, idx) => {
                 let chip = document.createElement('button');
@@ -2008,11 +2007,12 @@ mesajlar.forEach(m => {
  if(window.dmSoloLevels?.active){const units=window.dmSoloLevels.active.units;const box=document.getElementById(uniteBoxId);box.innerHTML=units.map(u=>'<button class="unite-chip selected">'+u+'.Ü</button>').join('');secilenUnitelerSetFn(units.slice());return;}
                     let havuz = window.masterKelimeHavuzu || [];
                     let sinifKelimeleri = havuz.filter(k => Number(k.sinif) === Number(sinif));
-                    let uniteler = [...new Set(sinifKelimeleri.map(k => Number(k.unite)))].sort((a,b) => a-b);
-                    if (uniteler.length === 0) uniteler = (Number(sinif)===3||Number(sinif)===4)?Array.from({length:10},(_,i)=>i+1):Array.from({length:8},(_,i)=>i+1);
+                    let uniteler = [...new Set(sinifKelimeleri.map(k => Number(k.unite)).filter(u => Number.isInteger(u) && u > 0))].sort((a,b) => a-b);
+                    if (uniteler.length === 0 && !window.dmTeacherPortalMode) uniteler = (Number(sinif)===3||Number(sinif)===4)?Array.from({length:10},(_,i)=>i+1):Array.from({length:8},(_,i)=>i+1);
                     let box = document.getElementById(uniteBoxId);
                     box.innerHTML = "";
                     let secilen = [];
+                    if (!uniteler.length) box.textContent = "Bu sınıfın kelimeleri henüz yüklenmedi. Tekrar sınıf seç.";
                     uniteler.forEach((u, idx) => {
                         let chip = document.createElement('button');
                         chip.type = 'button';
@@ -6167,13 +6167,14 @@ setTimeout(() => {
  if(window.dmSoloLevels?.scope('jp')){jpAktifSinif=sinif;jpSecilenUniteler=window.dmSoloLevels.active.units.slice();return;}
             let havuz = window.masterKelimeHavuzu || [];
             let sinifKelimeleri = havuz.filter(k => Number(k.sinif) === Number(sinif));
-            let uniteler = [...new Set(sinifKelimeleri.map(k => Number(k.unite)))].sort((a, b) => a - b);
+            let uniteler = [...new Set(sinifKelimeleri.map(k => Number(k.unite)).filter(u => Number.isInteger(u) && u > 0))].sort((a,b) => a-b);
 
-            if (uniteler.length === 0) uniteler = (Number(sinif)===3||Number(sinif)===4)?Array.from({length:10},(_,i)=>i+1):Array.from({length:8},(_,i)=>i+1);
+            if (uniteler.length === 0 && !window.dmTeacherPortalMode) uniteler = (Number(sinif)===3||Number(sinif)===4)?Array.from({length:10},(_,i)=>i+1):Array.from({length:8},(_,i)=>i+1);
 
             let uniteBox = document.getElementById('jpUniteBox');
             uniteBox.innerHTML = "";
             jpSecilenUniteler = [];
+            if (!uniteler.length) uniteBox.textContent = 'Bu sınıfın kelimeleri henüz yüklenmedi. Tekrar sınıf seç.';
 
             uniteler.forEach((u, idx) => {
                 let chip = document.createElement('button');
@@ -6543,13 +6544,14 @@ setTimeout(() => {
  if(window.dmSoloLevels?.scope('bosluk')){boslukAktifSinif=sinif;boslukSecilenUniteler=window.dmSoloLevels.active.units.slice();return;}
             let havuz = window.masterKelimeHavuzu || [];
             let sinifKelimeleri = havuz.filter(k => Number(k.sinif) === Number(sinif));
-            let uniteler = [...new Set(sinifKelimeleri.map(k => Number(k.unite)))].sort((a, b) => a - b);
+            let uniteler = [...new Set(sinifKelimeleri.map(k => Number(k.unite)).filter(u => Number.isInteger(u) && u > 0))].sort((a,b) => a-b);
 
-            if (uniteler.length === 0) uniteler = (Number(sinif)===3||Number(sinif)===4)?Array.from({length:10},(_,i)=>i+1):Array.from({length:8},(_,i)=>i+1);
+            if (uniteler.length === 0 && !window.dmTeacherPortalMode) uniteler = (Number(sinif)===3||Number(sinif)===4)?Array.from({length:10},(_,i)=>i+1):Array.from({length:8},(_,i)=>i+1);
 
             let uniteBox = document.getElementById('boslukUniteBox');
             uniteBox.innerHTML = "";
             boslukSecilenUniteler = [];
+            if (!uniteler.length) uniteBox.textContent = 'Bu sınıfın kelimeleri henüz yüklenmedi. Tekrar sınıf seç.';
 
             uniteler.forEach((u, idx) => {
                 let chip = document.createElement('button');
