@@ -48,3 +48,17 @@ html body #bzPerde#bzPerde#bzPerde#bzPerde.rq-approved #bzAlan:has(.rq-teach-car
 }
 @media(max-height:630px){.rq-teach-card{gap:5px!important;padding:3px 0!important}.rq-teach-card .rq-teach-picture{width:min(72vw,245px,32dvh)!important;margin-top:3px!important}.rq-teach-label strong{font-size:26px}.rq-teach-label span{font-size:17px}}
 @media(prefers-reduced-motion:reduce){.rq-teach-tap svg,.rq-teach-tap::before,.rq-teach-tap::after{animation:none}}
+
+/* The learning engine and school bridge share the same teaching card. */
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson[data-task-kind="teach"]:not(.ml-entry) .ml-task:has(.rq-teach-card) {
+ display:flex!important;flex-direction:column!important;justify-content:center!important;
+}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson[data-task-kind="teach"]:not(.ml-entry) .rq-teach-card {
+ flex:1 1 auto!important;justify-content:center!important;
+}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson[data-task-kind="teach"] .ml-actions .rq-teach-start:disabled {
+ background:#b7c0cc!important;box-shadow:0 4px 0 #98a6b7!important;color:#fff!important;opacity:1!important;
+}
+html body #dmStoryLesson#dmStoryLesson#dmStoryLesson#dmStoryLesson.ml-lesson[data-task-kind="teach"] .ml-actions .rq-teach-start:not(:disabled) {
+ background:#29b15f!important;box-shadow:0 4px 0 #198547!important;color:#fff!important;
+}
