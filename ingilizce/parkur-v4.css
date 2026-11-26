@@ -387,30 +387,61 @@ body #tab-dunya .rt-medal-route .rt-quick-actions .rt-quick-icon{
 }
 .rt-quick-actions .rt-quick-trophy{width:36px;height:36px;color:var(--rt-quick-ink);filter:drop-shadow(0 2px 2px #8b98ae40)}
 .rt-quick-actions .rt-call-icon .dm-papi-chat-avatar{
- inset:0;border-radius:50%;background:radial-gradient(circle,#fff 30%,#edf1f5 75%,transparent 100%);
- box-shadow:0 0 0 1px #cbd5df;overflow:hidden;
+ position:absolute;inset:0;display:block;border:0!important;border-radius:0!important;
+ background:none!important;box-shadow:none!important;overflow:visible!important;
 }
-.rt-quick-actions .dm-papi-chat-avatar img{filter:saturate(.58);transform:translateY(-2px) scale(2.35)}
+/* Original 1024px PNG has a centered 400x306px alpha bounds.
+   Render its entire artwork, including both wings; never put it in a crop/mask. */
+.rt-quick-actions .dm-papi-chat-avatar img{
+ position:absolute;display:block;left:50%;top:50%;width:126px!important;height:126px!important;
+ max-width:none!important;max-height:none!important;object-fit:contain;transform:translate(-50%,-50%);pointer-events:none;
+ filter:saturate(.84);border:0!important;border-radius:0!important;clip-path:none!important;
+ background:none!important;box-shadow:none!important;
+}
 .rt-quick-actions .dm-papi-chat-camera{
- right:-5px;top:-2px;padding:3px;background:#8995a7;color:#fff;border:1px solid #fff;border-radius:7px;
+ right:-9px;top:-1px;padding:3px;background:#8995a7;color:#fff;border:1px solid #fff;border-radius:7px;
 }
 .rt-quick-actions .rt-quick-spark{
- position:absolute;top:0;right:-7px;width:10px;height:10px;pointer-events:none;z-index:2;
- background:radial-gradient(circle,#fff 18%,#f8f6eb 62%,#d4dbe6);clip-path:polygon(50% 0,60% 38%,100% 50%,60% 62%,50% 100%,40% 62%,0 50%,40% 38%);
- filter:drop-shadow(0 0 3px #a5a9b8);opacity:.85;
+ position:absolute;top:-3px;right:-12px;width:14px;height:14px;pointer-events:none;z-index:3;
+ display:grid;place-items:center;background:none!important;clip-path:none!important;
+ filter:none;opacity:.9;font-style:normal;
 }
-.rt-quick-actions .rt-quick-spark-second{top:auto;right:auto;bottom:2px;left:-5px;width:7px;height:7px}
-.rt-quick-actions .rt-quick-icon::before{
- content:"";position:absolute;inset:-8px;z-index:-1;border-radius:50%;pointer-events:none;
- background:radial-gradient(circle,#fff8 25%,#d8dfe840 50%,transparent 74%);opacity:.65;
+.rt-quick-actions .rt-quick-spark::before{
+ content:"✦";display:block;font:900 16px/1 system-ui,sans-serif;color:#fff;
+ -webkit-text-stroke:.65px #9da8ba;
+ text-shadow:0 0 2px #8795ad,0 0 6px #c7bda4,0 0 10px #fff3d6;
 }
-@keyframes rtQuickTwinkle{0%,100%{opacity:.35;transform:scale(.72)}50%{opacity:1;transform:scale(1.12)}}
-@keyframes rtQuickHalo{0%,100%{opacity:.35}50%{opacity:.85}}
+.rt-quick-actions .rt-quick-spark-second{top:auto;right:auto;bottom:1px;left:-10px;width:10px;height:10px}
+.rt-quick-actions .rt-quick-spark-second::before{font-size:11px}
+.rt-quick-actions .rt-quick-icon::before{content:none!important}
+@keyframes rtQuickTwinkle{0%,100%{opacity:.68;transform:scale(.75)}45%,55%{opacity:1;transform:scale(1.28)}}
 @media(prefers-reduced-motion:no-preference){
- #tab-dunya.active .rt-quick-actions .rt-quick-spark{animation:rtQuickTwinkle 3.8s ease-in-out infinite}
- #tab-dunya.active .rt-quick-actions .rt-quick-spark-second{animation-delay:-1.7s}
- #tab-dunya.active .rt-quick-actions .rt-quick-icon::before{animation:rtQuickHalo 3.8s ease-in-out infinite}
+ #tab-dunya.active .rt-quick-actions .rt-quick-spark{animation:rtQuickTwinkle 2.6s ease-in-out infinite!important}
+ #tab-dunya.active .rt-quick-actions .rt-quick-spark-second{animation-delay:-1.3s!important}
+ #tab-dunya.active .rt-quick-actions .rt-call-icon .rt-quick-spark{animation-delay:-.6s!important}
+ #tab-dunya.active .rt-quick-actions .rt-call-icon .rt-quick-spark-second{animation-delay:-1.9s!important}
 }
-@media(prefers-reduced-motion:reduce){.rt-quick-actions .rt-quick-spark,.rt-quick-actions .rt-quick-icon::before{animation:none!important}}
+@media(prefers-reduced-motion:reduce){.rt-quick-actions .rt-quick-spark{animation:none!important;opacity:.9}}
+/* The row is not a card. Neutralize shared panel rules without changing the route card or agenda menu. */
+html body #tab-dunya .rt-medal-route .rt-medal-header,
+html body #tab-dunya .rt-medal-route .rt-medal-header>.rt-quick-actions{
+ background:none!important;background-color:transparent!important;border:0!important;
+ border-radius:0!important;box-shadow:none!important;outline:0!important;
+ backdrop-filter:none!important;-webkit-backdrop-filter:none!important;overflow:visible!important;
+}
+html body #tab-dunya .rt-medal-route .rt-medal-header>.rt-quick-actions::before,
+html body #tab-dunya .rt-medal-route .rt-medal-header>.rt-quick-actions::after,
+html body #tab-dunya .rt-medal-route .rt-medal-header::before,
+html body #tab-dunya .rt-medal-route .rt-medal-header::after{content:none!important}
+html body #tab-dunya .rt-medal-route .rt-quick-actions>:is(.rt-agenda,.zk-parkur,.dm-papi-chat-shortcut),
+html body #tab-dunya .rt-medal-route .rt-quick-actions>.rt-agenda>summary{
+ background:none!important;background-color:transparent!important;box-shadow:none!important;
+ border:0!important;overflow:visible!important;
+}
+html body #tab-dunya .rt-medal-route .rt-quick-actions>:is(.zk-parkur,.dm-papi-chat-shortcut)::before,
+html body #tab-dunya .rt-medal-route .rt-quick-actions>:is(.zk-parkur,.dm-papi-chat-shortcut)::after{content:none!important}
+body #tab-dunya .rt-medal-route .rt-quick-actions .rt-quick-icon{width:44px;height:42px;overflow:visible!important}
+body #tab-dunya .rt-medal-route .rt-quick-actions .rt-quick-trophy{width:42px;height:42px}
+body #tab-dunya .rt-medal-route .rt-quick-actions>.rt-agenda>summary>svg{width:44px;height:42px;padding:4px 6px}
 body.dm-play-session #tab-dunya .rt-quick-actions{display:none!important}
 body #tab-dunya .rt-medal-route .rt-quick-actions>:is(.zk-parkur,.dm-papi-chat-shortcut):focus-visible{outline:2px solid #8294ad;outline-offset:2px}
