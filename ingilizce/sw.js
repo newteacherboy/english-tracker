@@ -81,7 +81,7 @@ self.addEventListener('fetch', e => {
   if (url.searchParams.get('misafir') === '1') return;              /* Deneme oturumu ana sayfanın çevrimdışı kopyası değildir. */
 
   // Force fresh navigation shell and dock resources when online; retain offline fallback.
-  const criticalDock = /\/(?:bottom-nav(?:-v2)?\.(?:js|css)|friends-ui\.(?:js|css)|notification-center\.(?:js|css)|app-js\/i07-gonder\.js)$/;
+  const criticalDock = /\/(?:bottom-nav(?:-v2)?\.(?:js|css)|friends-ui\.(?:js|css)|notification-center\.(?:js|css)|papi-wallet\.(?:js|css)|papi-dalga-sorfu\.(?:js|css)|odullu-reklam\.js|activity-ui\.js|lazy-games\.js|app-js\/i07-gonder\.js)$/;
   if (url.origin === self.location.origin && (criticalDock.test(url.pathname) || (r.mode === 'navigate' && /\/ingilizce\/?$/.test(url.pathname)))) {
     const page = r.mode === 'navigate';
     const bucket = page ? SAYFA : KAYNAK;
