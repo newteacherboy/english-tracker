@@ -16,7 +16,7 @@
    const verified=practice?null:await window.dmVerifiedGames.start('ba',state.runId,{classNo:D.sinif,units:[D.unite],stopNo:D.no,schoolVersion:9},D.kelimeler);state.justStarted=true;
    if(!current())return;
    const words=verified?.words||D.kelimeler.map(w=>({en:w.en||w.ingilizce,tr:w.tr||w.turkce}));
-   const tasks=verified?.tasks||window.DMSchoolCurriculum.build(words,pool.map(w=>({en:w.en||w.ingilizce,tr:w.tr||w.turkce})),D.no);
+   const tasks=verified?.tasks||window.DMSchoolCurriculum.build(words,pool.map(w=>({en:w.en||w.ingilizce,tr:w.tr||w.turkce})),D.no,true);
    if(tasks.length!==12||tasks[0].schoolVersion!==9)throw Error('Okul Yolum güncellenemedi. Uygulamayı yenileyip tekrar dene.');
    state.answers=verified?.answers||{};if(window.OC)for(const [i,a] of Object.entries(state.answers)){if(Number(i)<2||!a.complete)continue;if(a.firstCorrect)OC.dogru(1);else OC.yanlis(false);}
    while(state.answers[state.cursor]?.complete&&state.cursor<tasks.length)state.cursor++;

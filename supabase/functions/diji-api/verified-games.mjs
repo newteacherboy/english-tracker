@@ -140,7 +140,17 @@ export function verifiedGamesAPI(db,json){
     const seen=new Set();for(const requested of body.words){const w=eligible.find(w=>key(w.en)===key(requested.en)&&norm(w.tr)===norm(requested.tr));if(!w||seen.has(key(w.en)))return fail('Sorular etkin kelime havuzuyla uyuşmuyor.',400);seen.add(key(w.en));words.push(w);}
    }
    if(!words.length)return fail('Bu bölümde soru bulunamadı.',400);
-   const deck=game==='ba'&&body.schoolVersion===9?globalThis.DMSchoolCurriculum.build(words,available,stop):compile(game,words);
+   // A resumed school session must always use the deck already stored for its run.
+   if(game==='ba'&&body.schoolVersion===9){
+    const saved=await db.from('dm_verified_runs').select('game,class_no,units,stop_no,deck,answers,expires_at').eq('student_id',a.student_id).eq('run_id',run).maybeSingle();
+    if(saved.error)return fail('Oyun oturumu yüklenemedi.',503);
+    const old=saved.data;
+    if(old){
+     if(old.game!==game||Number(old.class_no)!==classNo||Number(old.stop_no)!==stop||JSON.stringify(old.units)!==JSON.stringify(units)||old.deck?.[0]?.schoolVersion!==9||Date.parse(old.expires_at)<Date.now())return fail('Oyun oturumu sona erdi veya kapsamı değişti.',409);
+     return json({ok:true,answersInClaim:true,total:old.deck.length,words:old.deck[0].cards,tasks:old.deck,answers:old.answers,slots:old.deck.map((t,slot)=>({slot,en:t.en,kind:t.kind,pairs:t.pairs}))});
+    }
+   }
+   const deck=game==='ba'&&body.schoolVersion===9?globalThis.DMSchoolCurriculum.build(words,available,stop,body.routeVisualQuestions===true):compile(game,words);
    if(soloStage){if(deck.length!==12)return fail('Seviye 12 soru içermeli.',400);for(const t of deck){t.soloLevel=soloStage.number;if(soloKey!==game)t.soloVariant=soloKey;}}
    const r=await db.rpc(a.teacher_portal_access_id?'dm_teacher_verified_start':['canavar','kule','fener'].includes(game)?'dm_arcade_verified_start':'dm_verified_start',{actor:a.student_id,run_key:run,game_code:game,cls:classNo,unit_ids:units,stop_id:stop,tasks:deck});
    if(r.error)return fail(['canavar','kule','fener'].includes(game)?r.error.message:'Oyun oturumu kaydedilemedi.',409);

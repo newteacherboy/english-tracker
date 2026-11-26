@@ -30,7 +30,7 @@
   const s=(ok||no)?sheetFor(modal):modal.querySelector(':scope>.qc-sheet');if(!s)return;
   if(!ok&&!no){s.classList.remove('is-on');return;}
   const text=fb.textContent.trim();
-  s.querySelector('.qc-report').hidden=!modal.dmQuestionReport;s.classList.toggle('is-ok',ok);s.classList.toggle('is-no',no);
+  s.querySelector('.qc-btn').textContent=modal.dataset.taskKind==='review'&&no?'ÖĞRENDİM':'DEVAM ET';s.querySelector('.qc-btn').hidden=modal.dataset.taskKind==='review'&&ok;s.querySelector('.qc-report').hidden=!modal.dmQuestionReport;s.classList.toggle('is-ok',ok);s.classList.toggle('is-no',no);
   s.querySelector('.qc-head').textContent=ok?'✓ Harika!':'✕ Olmadı';
   s.querySelector('.qc-sub').textContent=ok?(/^✓/.test(text)?'Böyle devam! 🔥':text):text.replace(/^Yanlış cevap\.\s*/,'');
   if(no&&lastPick?.isConnected&&modal.contains(lastPick)&&!lastPick.classList.contains('is-correct'))lastPick.classList.add('is-wrong');

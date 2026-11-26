@@ -6,7 +6,7 @@
  const seedFor=(text,number)=>{let s=(number+1)>>>0;for(const ch of text)s=(Math.imul(s,31)+ch.charCodeAt(0))>>>0;return s;};
  const letterPuzzle=(word,number)=>{const positions=[...word].map((ch,i)=>/[a-z]/i.test(ch)?i:-1).filter(i=>i>=0);const count=Math.min(positions.length,positions.length>=13?4:positions.length>=5?3:Math.max(1,positions.length-1));const seed=seedFor(word,number);const missing=shuffled(positions,seed).slice(0,count).sort((a,b)=>a-b);const answer=missing.map(i=>word[i]);const extras=[...'aeiostrn'].filter(ch=>!answer.some(a=>a.toLowerCase()===ch)).slice(0,2);let tokens=shuffled([...answer,...extras],seed^0x9e3779b9);if(tokens.slice(0,answer.length).every((ch,i)=>ch===answer[i]))tokens=[...tokens.slice(answer.length),...tokens.slice(0,answer.length)];return {missing,tokens};};
  const unique=(a,field)=>a.filter((x,i)=>a.findIndex(y=>norm(y[field])===norm(x[field]))===i);
- function build(words,pool=words,number=0){
+ function build(words,pool=words,number=0,visualQuestions=false){
   const cards=unique(words.filter(w=>w.en&&w.tr),'en');if(!cards.length)throw Error('Bu durakta kelime bulunamadı.');
   const bank=unique([...cards,...pool.filter(w=>w.en&&w.tr)],'en'),at=i=>cards[i%cards.length];
   const options=(word,field)=>{const other=unique([word,...bank.filter(w=>norm(w[field])!==norm(word[field]))],field).slice(0,3).map(w=>w[field]);return other.map((_,i)=>other[(i+number)%other.length]);};
@@ -17,7 +17,14 @@
   const last=pieces.at(-1),stem=pieces.slice(0,-1).join(' ');
   const fill=multi?{kind:'choice',label:'Cümleyi tamamla',prompt:stem+' ____',support:phrase.tr,answer:last,options:[last,...unique(bank,'en').map(w=>w.en.split(/\s+/).at(-1)).filter(w=>w!==last)].filter((x,i,a)=>a.indexOf(x)===i).slice(0,3),explanation:phrase.en+' — '+phrase.tr}
    :choice('İfadeyi tamamla',at(1),'en',at(1).tr,{promptAudio:at(1).tr});
+  if(visualQuestions){
+   const extra=multi?bank.map(w=>w.en.trim().split(/\s+/).at(-1)):bank.map(w=>w.en);
+   const fallback=['apple','book','school','water','friend','home'];
+   fill.options=[fill.answer,...fill.options,...extra,...fallback].filter((x,i,a)=>x&&a.findIndex(y=>norm(y)===norm(x))===i).slice(0,4);
+   const target=multi?phrase:at(1);fill.picture={en:target.en,tr:target.tr};fill.visualFill=true;
+  }
   const pairBank=unique(cards,'tr');
+  const visualPairs=unique(unique([...cards,...bank],'en'),'tr').slice(0,4);
   const review=cards.map((w,i)=>{const other=bank.find(x=>norm(x.tr)!==norm(w.tr));const values=other?[w.tr,other.tr]:[w.tr];return {en:w.en,tr:w.tr,options:(number+i)%2?values.reverse():values};});
   const tasks=[
    {kind:'teach',label:'Dinle ve Öğren',cards},
@@ -26,7 +33,7 @@
    choice('Dinle ve bul',at(1),'en','Dinle, duyduğun ifadeyi seç.',{audio:at(1).en}),
    choice('İngilizcesini bul',at(2),'en',at(2).tr,{promptAudio:at(2).tr}),
    {kind:'match',label:'Eşleştir',prompt:'Önce kelimeye, sonra karşılığına dokun.',pairs:pairBank,explanation:'İfadeleri eşleştirdin.'},
-   choice('Günlük hayatta kullan',at(0),'en','“'+at(0).tr+'” demek için hangisini seçersin?',{promptAudio:at(0).tr}),
+   visualQuestions?{kind:'match',label:'Görselleri eşleştir',prompt:'Görselleri İngilizce karşılıklarıyla eşleştir.',pairs:visualPairs,visualMatch:true,explanation:'Görselleri doğru ifadelerle eşleştirdin.'}:choice('Günlük hayatta kullan',at(0),'en','“'+at(0).tr+'” demek için hangisini seçersin?',{promptAudio:at(0).tr}),
    fill,
    {kind:'order',label:multi?'Cümleyi kur':'Kelimeyi kur',prompt:phrase.tr,promptAudio:phrase.tr,tokens:multi?pieces:[...phrase.en],join:multi?' ':'',answer:phrase.en,explanation:phrase.en+' — '+phrase.tr},
    choice('Bu dersten hatırla',at(3),'tr',at(3).en,{audio:at(3).en,language:'en'}),
@@ -34,7 +41,7 @@
    {kind:'review',label:'Son tekrar',prompt:'Bu bölümde öğrendiklerin',cards:review,explanation:'Bölümün kelimelerini tekrar ettin.'}
   ];
   // Sixth graded question; teaching cards do not count as a question.
-  const matchIndex=tasks.findIndex(t=>t.kind==='match');
+  const matchIndex=tasks.findIndex(t=>t.kind==='match'&&!t.visualMatch);
   if(matchIndex>=0){const [match]=tasks.splice(matchIndex,1);tasks.splice(7,0,match);}
   return tasks.map(t=>({...t,schoolVersion:9}));
  }
