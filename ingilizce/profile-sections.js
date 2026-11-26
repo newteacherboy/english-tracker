@@ -289,12 +289,6 @@
     const n=Math.max(0,Number(total)||0),d=Math.max(0,Math.min(n,Number(correct)||0));
     return `<div class="bd-skill"><span aria-hidden="true">${icon}</span><b>${label}</b><span class="bd-skill-result">${n?sayi(d)+' / '+sayi(n)+' doğru':'Henüz ölçüm yok'}</span>${n?`<progress max="${n}" value="${d}" aria-label="${label} alıştırma doğruluğu"></progress>`:''}</div>`;
   }
-  function sureCiz(){
-    const state=window.dmActiveTime?.summary?.(),seconds=state?Math.max(0,Math.floor(Number(state.seconds)||0)):null;
-    const text=seconds===null?'Yükleniyor…':Math.floor(seconds/3600)+' sa '+Math.floor(seconds%3600/60)+' dk';
-    const node=$('bdActiveTime');if(node)node.textContent=text;
-    const stars=$('bdTimeStars');if(stars)stars.textContent=seconds===null?'—':sayi(Math.floor(seconds/600))+' yıldız';
-  }
   function istatCiz() {
     const alan = $('bdIstat');if(!alan)return;
     const t=toplamlar(istat&&istat.gunler,aralikBas()),cevap=t.dogru+t.yanlis,c=cubuklar(),en=Math.max(1,...c.map(x=>x.o+x.l+x.p));
@@ -308,12 +302,10 @@
       <button type="button" class="bd-story-start">Bir hikâye ile başla →</button></section>
       <section class="bd-activity-summary"><b>${labels[aralik]} etkinlikler</b><div>${[['🎮','Oyun',t.oyun],['📖','Ders',t.ders],['🧭','Parkur',t.parkur]].map(([icon,label,n])=>`<span><i aria-hidden="true">${icon}</i><small>${label}</small><strong>${istat?sayi(n):'—'}</strong></span>`).join('')}</div><small>Oyun doğruluğu: ${istat&&cevap?'%'+Math.round(t.dogru*100/cevap)+' · '+sayi(t.dogru)+' / '+sayi(cevap)+' doğru':istat?'Henüz cevap kaydı yok':'Veri bekleniyor'}</small></section>
       <section class="bd-kutu bd-grafik"><div class="bd-grafik-bas"><h3>${aralik==='tum'?'Aylık':'Günlük'} etkinlik sayısı</h3><div class="bd-lejant"><span class="o">Oyun</span><span class="l">Ders</span><span class="p">Parkur</span></div></div><div class="bd-cubuklar${aralik==='ay'?' ince':''}">${c.map(x=>{const top=x.o+x.l+x.p;return `<div class="bd-cubuk" aria-label="${kac(x.ad)}: ${top} etkinlik" title="${top} etkinlik"><b>${top||''}</b><div class="bd-yigin">${['p','l','o'].map(k=>`<span class="${k}" style="height:${x[k]*100/en}%"></span>`).join('')}</div><small>${kac(x.ad)}</small></div>`;}).join('')}</div></section>
-      <div class="bd-time-row"><button type="button" data-time-detail><span>⏱ Toplam aktif süre</span><b id="bdActiveTime"></b><small>Tüm dönemler</small></button><button type="button" data-time-detail><b id="bdTimeStars"></b><small>Tüm dönemler · 10 dk = 1 yıldız</small></button></div>`;
-    sureCiz();
+`;
     alan.querySelectorAll('[data-aralik]').forEach(b=>b.onclick=()=>{aralik=b.dataset.aralik;istatCiz();});
     alan.querySelector('.bd-skill-retry')?.addEventListener('click',()=>{beceriZaman=0;beceriGetir();});
     alan.querySelector('.bd-story-start').onclick=()=>window.dmLearningCompanion?.dialogues?.();
-    alan.querySelectorAll('[data-time-detail]').forEach(b=>b.onclick=()=>window.dmActiveTime?.panel?.());
     alan.querySelector('[data-progress-help]').onclick=()=>window.dmMemberUI?.sheet('İlerlemem nasıl hesaplanır?','<p>Okuma, dinleme ve yazma sonuçları son 100 hikâye/diyalog çalışmasından; kelime sonuçları kişisel tekrarlarından gelir. Bunlar alıştırma sonuçlarıdır, resmî dil seviyesi ölçümü değildir.</p><p>Dönem filtresi oyun, başarılı ders, parkur tamamlama ve aktif gün sayılarına uygulanır. Aktif gün, bu etkinliklerden en az birinin kaydedildiği gündür. Oyun doğruluğu yalnızca oyun cevaplarından hesaplanır.</p><p>Toplam aktif süre ve yıldızlar tüm dönemleri kapsar. Öğretmen değerlendirmeleri ayrı bir bölümde gösterilir.</p>','bdProgressHelp');
     /* Öğretmenin gördüğü gelişim grafikleri (deneme, gelişim, kriter) eski profilden buraya taşınır */
     const oz = $('tab-ozet');
@@ -326,7 +318,6 @@
     if (tc) tasi(tc, $('bdGelisim'));
   }
 
-  document.addEventListener('dm:time',sureCiz);
   document.addEventListener('dm:login',()=>{if(sekme==='istatistik'&&activePanel()?.classList.contains('active')){rozetOturumu();istatCiz();istatGetir();beceriGetir();}});
   /* ------------------------------------------------------------------ Rozetler */
   function rozetHtml(r, kazanildi) {

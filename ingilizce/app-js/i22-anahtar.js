@@ -51,7 +51,7 @@
     let l = kuyrukOku(); l.push({ url: String(url), body: opt.body, z: Date.now() }); kuyrukYaz(l);
     seritGoster();
     if (govde.islem === 'enerjiDegistir') {
-      let m = window.genelEnerjiMax || 30, k = Math.max(0, Math.min(m, (window.genelEnerjiKalan || 0) + (Number(govde.fark) || 0)));
+      let m=window.genelEnerjiMax||25, current=window.genelEnerjiKalan||0,delta=Number(govde.fark)||0,k=Math.max(0,delta>0?Math.max(current,Math.min(m,current+delta)):current+delta);
       return jsonYanit({ ok: true, status: 'success', kuyrukta: true, enerjiKalan: k, enerjiMax: m, eklenen: 0 });
     }
     return jsonYanit({ ok: true, status: 'success', kuyrukta: true });

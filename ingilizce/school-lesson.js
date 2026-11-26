@@ -21,15 +21,15 @@
    state.answers=verified?.answers||{};if(window.OC)for(const [i,a] of Object.entries(state.answers)){if(Number(i)<2||!a.complete)continue;if(a.firstCorrect)OC.dogru(1);else OC.yanlis(false);}
    while(state.answers[state.cursor]?.complete&&state.cursor<tasks.length)state.cursor++;
    const combo=()=>{let n=0;for(let i=Math.min(state.cursor,tasks.length-1);i>=2;i--){const a=state.answers[i];if(!a)continue;if(!a.complete||!a.firstCorrect||a.misses>0)break;n++;}return n;};
-   const view=(extra={})=>({ok:true,chapter:D.no,deckVersion:9,cursor:state.cursor,version:state.version,finished:state.cursor>=tasks.length,replay:false,wallet:{energy:window.genelEnerjiKalan??25,energyMax:25,gold:typeof yo!=='undefined'?yo.altin||0:0,combo:combo()},...extra});
+   const view=(extra={})=>({ok:true,chapter:D.no,deckVersion:9,cursor:state.cursor,version:state.version,finished:state.cursor>=tasks.length,replay:false,wallet:{energy:window.genelEnerjiKalan??25,energyMax:window.genelEnerjiMax||25,gold:typeof yo!=='undefined'?yo.altin||0:0,combo:combo()},...extra});
    /* [Kota 28 Eki 2026] Enerji ayrı istekle düşülmez: sunucu cevap paketini kaydederken soru başına enerjiyi kendisi düşer
       (ilk 2 öğretme adımı ücretsiz). Telefon enerjiyi yerelde takip eder; bitince önce bekleyen cevapları gönderir,
       sunucu da enerji yok derse bugünkü enerji kartı gösterilir. */
    const energyLeft=()=>Number.isFinite(Number(window.genelEnerjiKalan))?Number(window.genelEnerjiKalan):25;
-   const setEnergy=n=>{window.genelEnerjiKalan=Math.max(0,Math.min(25,n));window.headerEnerjiGoster?.(window.genelEnerjiKalan,25);};
+   const setEnergy=n=>{window.genelEnerjiKalan=Math.max(0,n);window.headerEnerjiGoster?.(window.genelEnerjiKalan,window.genelEnerjiMax||25);};
    const charge=async()=>{if(practice||state.cursor<2)return;
     if(energyLeft()<1){try{await window.dmVerifiedGames.flush(state.runId);}catch(e){if(!e.energyEmpty)throw e;}}
-    if(energyLeft()<1)throw Object.assign(Error('Enerji yetersiz'),{energyEmpty:true,enerjiKalan:0,enerjiMax:25});};
+    if(energyLeft()<1)throw Object.assign(Error('Enerji yetersiz'),{energyEmpty:true,enerjiKalan:0,enerjiMax:window.genelEnerjiMax||25});};
    const bridge={
     entryMeta:{title:entryMeta.title||'Okul Yolum',completed:!!entryMeta.completed,part:D.parca,total:D.parcaToplam},
     chapter:{id:D.no,number:D.no,routeNumber:d+1,cefr:D.sinif+'. Sınıf',theme:D.unite+'. Ünite',topicTitle:'Okul Yolum',title:'Okul Yolum',part:1,cards:words.map(w=>({...w,image:window.DMSchoolWordArt?.[w.en.toLowerCase()]})),examples:[],schoolTasks:tasks},session:view(),

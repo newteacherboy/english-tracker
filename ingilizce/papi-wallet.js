@@ -1,10 +1,10 @@
 /* One compact status strip, reused across the six destinations. No economy writes. */
 (()=>{'use strict';
 const visible=e=>!!e&&e.getClientRects().length>0&&getComputedStyle(e).visibility!=='hidden';
-const hud=document.createElement('div');hud.className='dm-papi-wallet dm-unified-wallet';hud.setAttribute('aria-label','Enerji, altın, XP, kuş tüyü ve bildirimler');
-hud.innerHTML='<i class="dm-pw-art dm-pw-papi" aria-hidden="true"></i>'+['energy','gold','xp'].map(key=>'<button type="button" data-pw="'+key+'"><i class="dm-pw-art dm-pw-'+key+'" aria-hidden="true"></i><span class="dm-pw-copy"><b data-pw-value></b>'+(key==='time'?'<small data-pw-minutes></small>':'')+'</span></button>').join('');
+const hud=document.createElement('div');hud.className='dm-papi-wallet dm-unified-wallet';hud.setAttribute('aria-label','Enerji, altın, XP, günlük enerji hediyesi ve bildirimler');
+hud.innerHTML='<i class="dm-pw-art dm-pw-papi" aria-hidden="true"></i>'+['energy','gold','xp'].map(key=>'<button type="button" data-pw="'+key+'"><i class="dm-pw-art dm-pw-'+key+'" aria-hidden="true"></i><span class="dm-pw-copy"><b data-pw-value></b>'+'</span></button>').join('');
 const daily=document.createElement('button');daily.type='button';daily.className='dm-daily-streak-button';daily.dataset.dmDailyStreak='';daily.hidden=true;
-daily.className+=' dm-tuy-button';daily.innerHTML='<svg class="dm-tuy-icon" viewBox="0 0 40 40" aria-hidden="true"><path d="M33 4C20 6 10 16 8 30l-3 6 3-1c14-2 24-12 25-31z" fill="#1FB5A8"/><path d="M33 4C22 12 14 22 6 36" stroke="#0E7C73" stroke-width="2.4" fill="none" stroke-linecap="round"/></svg><b data-daily-count>·</b><small>Tüy</small>';daily.setAttribute('aria-label',"Papi'nin Kanadı");daily.onclick=()=>window.DijiDailyGift?.open();
+daily.classList.add('dm-dg-button');daily.setAttribute('aria-label','Günlük enerji hediyesi');daily.onclick=()=>window.DijiDailyGift?.open();
 const buttons=Object.fromEntries([...hud.querySelectorAll('[data-pw]')].map(e=>[e.dataset.pw,e]));
 buttons.energy.onclick=()=>window.dijiEnerjiPaneliAc?.();buttons.gold.onclick=()=>window.magazaAc?.();buttons.xp.onclick=()=>window.dmIlerlememAc?.();
 const activity='#dmStoryLesson,#bzPerde #bzAlan,.game-modal-overlay,#meteorGame,#wordWheel,#papiCards,#harfBahcesiOverlay,#baOyunEkrani,#kpKelimeOyunEkrani,#kmPanel .km-sec,#seviyeDisLinkOverlay';
@@ -41,12 +41,12 @@ function run(){
  if(!host||(!duelOpen&&friendsOpen&&!friends.classList.contains('fr-home-view'))){detach();return;}
  const compactHud=duelOpen || (friendsOpen&&friends.classList.contains('fr-team-view'));
  hud.classList.toggle('dm-wallet-energy-xp',compactHud);
- hud.setAttribute('aria-label',compactHud?'Enerji ve XP':'Enerji, altın, XP, kuş tüyü ve bildirimler');
+ hud.setAttribute('aria-label',compactHud?'Enerji ve XP':'Enerji, altın, XP, günlük enerji hediyesi ve bildirimler');
  buttons.gold.hidden=compactHud;
  if(hud.parentElement!==host){detach();host.prepend(hud);host.classList.add('dm-has-wallet');window.dispatchEvent(new Event('resize'));}
- const dailyVisible=!compactHud&&!!window.DijiDailyGift&&!window.dmGuestMode&&!['teacher','dijimedu_demo'].includes(String(aktifOgrenciAdi).toLowerCase())&&!window.dmTeacherPortalMode&&(!window.siniftaOynananOgrenci)&&(!!window.DijiPapiWing||!!host.closest('#tab-dunya'));
+ const dailyVisible=!compactHud&&!!window.DijiDailyGift&&!window.dmGuestMode&&!['teacher','dijimedu_demo'].includes(String(aktifOgrenciAdi).toLowerCase())&&!window.dmTeacherPortalMode&&(!window.siniftaOynananOgrenci);
  if(dailyVisible){daily.hidden=false;if(daily.parentElement!==hud)hud.append(daily);window.dmNotificationCenter?.mount(hud);}else{daily.remove();window.dmNotificationCenter?.detach();}hud.classList.toggle('dm-has-daily-streak',dailyVisible);hud.classList.toggle('dm-has-center',dailyVisible&&!!window.dmNotificationCenter);window.DijiDailyGift?.decorateButton(daily);if(dailyVisible)window.DijiDailyGift?.onParkurVisible();
- const y=typeof yo==='undefined'?{}:yo||{},time=window.dmActiveTime?.summary()||{stars:0,seconds:0},level=window.dmProgression?.level?.()||1;
+ const y=typeof yo==='undefined'?{}:yo||{},level=window.dmProgression?.level?.()||1;
  const energy=window.genelEnerjiKalan,values={energy:energy==null?'—':format(energy),gold:compact(y.altin),xp:compact(y.totalXp),};
  const labels={energy:'Enerji paketleri · '+values.energy,gold:'Altınlarım ve mağaza · '+format(y.altin)+' altın',xp:'XP ve ilerlemem · '+format(y.totalXp)+' XP · Seviye '+level};
  const owner=String(aktifOgrenciAdi),raw={energy:energy==null?null:finite(energy),gold:finite(y.altin),xp:finite(y.totalXp)};
@@ -74,7 +74,7 @@ new MutationObserver(ms=>{if(ms.some(m=>{
  return nodes.some(n=>n.matches(relevant)||n.querySelector(relevant))||nodes.length>0&&m.target.matches?.(relevant);
 } ))schedule();}).observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['class','style','hidden']});
 setInterval(()=>{if(!document.hidden)refresh();},1000);
-for(const name of ['dm:time','dm:login','dm:state','dm:view-restored','dm:duel-home-close'])document.addEventListener(name,schedule);
+for(const name of ['dm:login','dm:state','dm:view-restored','dm:duel-home-close'])document.addEventListener(name,schedule);
 document.addEventListener('visibilitychange',schedule);
 window.DijiMeduPapiWallet={refresh};refresh();
 })();
