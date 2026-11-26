@@ -11,7 +11,41 @@ const leagues={sampiyon:{name:'Şampiyonlar Ligi',short:'Şampiyonlar',icon:'�
 let mode='weekly',selected=null,limit=30,epoch=0,owner=who();
 const empty=()=>({rows:[],visualRows:[],loaded:false,busy:false,error:'',at:0});
 let states={weekly:empty(),alltime:empty()};
-function reset(){if(owner===who())return;clearRise();pendingRise=null;lastRise=null;owner=who();epoch++;showRankingAll=false;mode='weekly';selected=null;limit=30;states={weekly:empty(),alltime:empty()};}
+const swrPrefix='dm.swr.league.v1:';
+const swrTtlMs=600000;
+function swrCanStore(){try{return typeof localStorage==='object'&&localStorage!==null&&typeof localStorage.getItem==='function'&&typeof localStorage.setItem==='function';}catch{return false;}}
+function swrKey(account,scope){const a=norm(account);if(!a)return '';return swrPrefix+encodeURIComponent(a)+':'+scope+':'+(scope==='weekly'?weekStamp():'all');}
+function swrRead(account,scope){
+ if(!swrCanStore())return null;
+ const key=swrKey(account,scope);if(!key)return null;
+ try{
+  const raw=localStorage.getItem(key);if(!raw)return null;
+  const data=JSON.parse(raw);
+  if(!data||data.v!==1||!Array.isArray(data.rows)||!data.rows.length||Date.now()-Number(data.at||0)>swrTtlMs)return null;
+  return data;
+ }catch{return null;}
+}
+function swrWrite(account,scope,rows,visualRows){
+ if(!swrCanStore()||!Array.isArray(rows)||!rows.length)return;
+ const key=swrKey(account,scope);if(!key)return;
+ try{localStorage.setItem(key,JSON.stringify({v:1,at:Date.now(),rows,visualRows:Array.isArray(visualRows)?visualRows:[]}));}catch{}
+}
+function swrPurge(){
+ if(!swrCanStore()||typeof localStorage.removeItem!=='function')return;
+ try{for(let i=localStorage.length-1;i>=0;i--){const k=localStorage.key(i);if(k&&k.startsWith(swrPrefix))localStorage.removeItem(k);}}catch{}
+}
+function hydrateFromSwr(account){
+ for(const scope of ['weekly','alltime']){
+  const cached=swrRead(account,scope);
+  if(cached){
+   states[scope].rows=cached.rows;
+   states[scope].visualRows=cached.visualRows||[];
+   states[scope].loaded=true;
+   states[scope].at=0; // Keep at=0 so background revalidation runs immediately
+  }
+ }
+}
+function reset(){if(owner===who())return;clearRise();pendingRise=null;lastRise=null;owner=who();epoch++;showRankingAll=false;mode='weekly';selected=null;limit=30;states={weekly:empty(),alltime:empty()};hydrateFromSwr(owner);}
 function onScreen(){return typeof maSekme!=='undefined'&&(maSekme==='lig'||!!root.querySelector('[data-embedded-league]'))&&!(typeof maProfilId!=='undefined'&&maProfilId)&&root.classList.contains('active');}
 /* One individual Papi character per bot, cropped from the same parkur badge artwork. */
 const virtualAvatarAssets={
@@ -488,7 +522,7 @@ function draw(){
  const old=root.querySelector('.dm-lig');
  if(old){
   const focus=document.activeElement?.closest('.dm-open-filters button');
-  old.outerHTML=render(old.classList.contains('dm-open-ranking'));
+  old.outerHTML=render(Boolean(old.classList?.contains('dm-open-ranking')));
   if(focus)root.querySelector('.dm-open-filters button[aria-pressed="true"]')?.focus({preventScroll:true});
  }
  if(pendingRise)requestAnimationFrame(animatePendingRise);
@@ -499,6 +533,7 @@ async function load(force=false,scope=mode){reset();const state=states[scope];if
   if(!result.ok||d.ok===false||!Array.isArray(d.liste)||scope==='alltime'&&d.kapsam!=='alltime')throw Error('Lig verisi alınamadı.');
   if(account!==who()||ticket!==epoch)return;
   state.rows=d.liste;state.visualRows=[];state.loaded=true;state.at=Date.now();
+  swrWrite(account,scope,d.liste,[]);
   // Publish the ranking as soon as it arrives. Practice rivals enrich it afterwards.
   draw();
   if(scope==='weekly'){
@@ -506,6 +541,7 @@ async function load(force=false,scope=mode){reset();const state=states[scope];if
    const visualRows=await dmVirtualLeagueRows(d.liste);
    if(account!==who()||ticket!==epoch)return;
    state.visualRows=visualRows;
+   swrWrite(account,scope,d.liste,visualRows);
    captureRankRise(account);
   }
  }catch(e){if(account===who()&&ticket===epoch)state.error=String(e.message||'Güncellenemedi');}
@@ -528,6 +564,8 @@ root.addEventListener('click',e=>{
  if(b.hasAttribute('data-lig-retry'))void load(true);
 });
 document.addEventListener('dm:login',()=>{clearRise();pendingRise=null;lastRise=null;owner='';reset();});
+document.addEventListener('dm:logout',()=>{swrPurge();clearRise();pendingRise=null;lastRise=null;owner='';states={weekly:empty(),alltime:empty()};});
+hydrateFromSwr(owner);
 document.addEventListener('dm:progression-status',()=>{if(onScreen())draw();});
 document.addEventListener('dm:state',()=>{for(const state of Object.values(states))state.at=0;if(onScreen())void load();});
 document.addEventListener('visibilitychange',()=>{if(document.hidden)clearRise();else if(onScreen()){animatePendingRise();void load();}});

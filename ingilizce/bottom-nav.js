@@ -228,24 +228,40 @@ window.dmDuelHomeAc=function(){
  const dock=document.getElementById('bottomNavMobile');if(dock){if(!dock.dataset.duelPreviousZ)dock.dataset.duelPreviousZ=dock.style.zIndex||'auto';dock.style.setProperty('z-index','100000020','important');syncDuelDock();}
  document.querySelectorAll('#bottomNavMobile .bn-item').forEach(b=>{const yes=b.dataset.ekran==='tab-duel-home';b.classList.toggle('active',yes);if(yes)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');});
  const owner=typeof aktifOgrenciAdi!=='undefined'?String(aktifOgrenciAdi||''):'';
+ const normOwner=owner.trim().toLocaleLowerCase('tr');
  const target=el.querySelector('.dm-duel-personal');
- if(target.dataset.owner!==owner){target.dataset.owner=owner;target.textContent='Düello istatistikleri yükleniyor…';}
+ const renderDuelStats=me=>{
+  if(!me){target.textContent='Düello istatistiklerin burada görünecek.';}
+  else{target.innerHTML=[['win','Galibiyet',me.wins],['loss','Mağlubiyet',me.losses],['xp','Düello XP',me.duel_xp]].map(([icon,label,value])=>'<span class="dm-duel-stat">'+duelStatIcon(icon)+'<b>'+Number(value||0).toLocaleString('tr-TR')+'</b><small>'+label+'</small></span>').join('');}
+ };
+ const swrKey=normOwner?'dm.swr.duel-stats.v1:'+encodeURIComponent(normOwner):'';
+ let hydrated=false;
+ if(target.dataset.owner!==owner){
+  target.dataset.owner=owner;
+  try{
+   const cached=swrKey&&typeof localStorage?.getItem==='function'?JSON.parse(localStorage.getItem(swrKey)||'null'):null;
+   if(cached&&cached.v===1&&Date.now()-Number(cached.at||0)<600000){renderDuelStats(cached.me);hydrated=true;}
+  }catch{}
+  if(!hydrated)target.textContent='Düello istatistikleri yükleniyor…';
+ }else{
+  hydrated=Boolean(target.querySelector('.dm-duel-stat'));
+ }
+ const now=Date.now();
+ if(hydrated&&window._dmDuelStatsCacheOwner===normOwner&&now-Number(window._dmDuelStatsCacheAt||0)<30000)return;
  const request=window.supabaseClient?.rpc?.('dm_duel_champions_v1',{p_limit:50});
  const current=()=>el.isConnected&&!el.hidden&&target.dataset.owner===owner&&String(typeof aktifOgrenciAdi==='undefined'?'':aktifOgrenciAdi||'')===owner;
- const fail=()=>{if(current()){target.textContent='İstatistikler şu anda yüklenemedi.';}};
+ const fail=()=>{if(current()&&!hydrated){target.textContent='İstatistikler şu anda yüklenemedi.';}};
  if(!request){fail();return;}
  request.then(({data,error})=>{
   if(error){fail();return;}
   if(!current())return;
   const rows=Array.isArray(data)?data:[];
-  const normOwner=owner.trim().toLocaleLowerCase('tr');
   const myIndex=rows.findIndex(p=>String(p.player_name||'').trim().toLocaleLowerCase('tr')===normOwner);
   const me=myIndex>=0?rows[myIndex]:null;
-  if(!me){
-   target.textContent='Düello istatistiklerin burada görünecek.';
-  }else{
-   target.innerHTML=[['win','Galibiyet',me.wins],['loss','Mağlubiyet',me.losses],['xp','Düello XP',me.duel_xp]].map(([icon,label,value])=>'<span class="dm-duel-stat">'+duelStatIcon(icon)+'<b>'+Number(value||0).toLocaleString('tr-TR')+'</b><small>'+label+'</small></span>').join('');
-  }
+  window._dmDuelStatsCacheOwner=normOwner;
+  window._dmDuelStatsCacheAt=Date.now();
+  try{if(swrKey&&typeof localStorage?.setItem==='function')localStorage.setItem(swrKey,JSON.stringify({v:1,at:Date.now(),me}));}catch{}
+  renderDuelStats(me);
  }).catch(fail);
 
 };
@@ -257,7 +273,7 @@ window.dmOpenGamesHome=function(){
 
 document.addEventListener('click',e=>{const b=e.target.closest('#bottomNavMobile [data-ekran]');if(!b||b.disabled||b.classList.contains('active')||b.getAttribute('aria-disabled')==='true')return;try{navigator.vibrate?.(20);}catch{}},true);
 decorate();const nav=document.getElementById('bottomNavMobile');if(nav){const syncDock=()=>{syncProfileDock();syncDuelDock();};if(window.ResizeObserver)new ResizeObserver(syncDock).observe(nav);window.addEventListener('resize',syncDock);new MutationObserver(decorate).observe(nav,{childList:true,subtree:true,attributes:true,attributeFilter:['class','data-ekran']});nav.addEventListener('click',e=>{const b=e.target.closest('[data-ekran]');if(b&&b.dataset.ekran!=='tab-profile-menu'){window.dmProfileReturnPending=false;close();}});}
-document.addEventListener('dm:logout',()=>window.dmDuelHomeClose());
+document.addEventListener('dm:logout',()=>{window.dmDuelHomeClose();window._dmDuelStatsCacheOwner='';window._dmDuelStatsCacheAt=0;try{for(let i=localStorage.length-1;i>=0;i--){const k=localStorage.key(i);if(k&&k.startsWith('dm.swr.duel-stats.v1:'))localStorage.removeItem(k);}}catch{}});
 document.addEventListener('dm:login',()=>{window.dmDuelHomeClose();window.dmProfileReturnPending=false;primaryId=window.dmTeacherPortalMode?'tab-aktiviteler':'tab-dunya';close(false);});
 document.addEventListener('click',e=>{
  if(!window.dmProfileReturnPending||e.target.closest('#rtProfileBackdrop,.dm-teacher-child,#dmWordReview,#dmPlacementExam'))return;

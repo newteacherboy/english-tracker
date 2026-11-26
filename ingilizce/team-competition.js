@@ -52,7 +52,39 @@
     const tab = event.target?.closest?.('#bottomNavMobile [data-ekran]');
     if (tab && tab.dataset.ekran !== 'tab-aktiviteler') clearPremiumSession();
   }, true);
-  document.addEventListener('dm:logout', clearPremiumSession);
+  document.addEventListener('dm:logout', () => { clearPremiumSession(); teamSwrPurge(); });
+
+  const teamSwrPrefix = 'dm.swr.team.v1:';
+  const teamSwrTtlMs = 600000;
+  function teamSwrKey(tok) {
+    const s = String(tok || '');
+    return s ? teamSwrPrefix + encodeURIComponent(s.slice(-16)) : '';
+  }
+  function teamSwrRead(tok) {
+    try {
+      const k = teamSwrKey(tok);
+      if (!k || typeof localStorage?.getItem !== 'function') return null;
+      const d = JSON.parse(localStorage.getItem(k) || 'null');
+      if (!d || d.v !== 1 || !d.snapshot || Date.now() - Number(d.at || 0) > teamSwrTtlMs) return null;
+      return d;
+    } catch { return null; }
+  }
+  function teamSwrWrite(tok, st, aw, bn) {
+    try {
+      const k = teamSwrKey(tok);
+      if (!k || !st || typeof localStorage?.setItem !== 'function') return;
+      localStorage.setItem(k, JSON.stringify({ v: 1, at: Date.now(), snapshot: st, awards: aw || [], bonus: Number(bn) || 0 }));
+    } catch {}
+  }
+  function teamSwrPurge() {
+    try {
+      if (typeof localStorage?.removeItem !== 'function') return;
+      for (let i = localStorage.length - 1; i >= 0; i--) {
+        const k = localStorage.key(i);
+        if (k && k.startsWith(teamSwrPrefix)) localStorage.removeItem(k);
+      }
+    } catch {}
+  }
 
   async function rpc(method, args = {}) {
     const identity = token();
@@ -84,6 +116,11 @@
     if (current !== owner) {
       owner = current; snapshot = null; awards = []; bonus = 0; loadedAt = 0; error = ''; loading = false;
       clearPremiumSession(); dialog?.close(); premiumTickets.clear();
+      const cached = teamSwrRead(current);
+      if (cached) {
+        snapshot = cached.snapshot; awards = cached.awards; bonus = cached.bonus;
+        refreshHome();
+      }
     }
     if (loading || (!force && Date.now()-loadedAt<30000)) return;
     loading = true;
@@ -91,6 +128,7 @@
       const [state, rewards] = await Promise.all([manage('state'),rpc('dm_team_rewards')]);
       if (current !== token()) return;
       snapshot = state; awards = rewards.awards; bonus = rewards.bonusEnergy; error = '';
+      teamSwrWrite(current, snapshot, awards, bonus);
     } catch (failure) {
       if (current === token()) error = failure.message;
     } finally {
