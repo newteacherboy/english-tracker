@@ -490,17 +490,16 @@ function render(){if(!modal)return;accepted=false;if(session?.needsRecovery&&!se
   if(visual){
    wrap.querySelectorAll('[data-left]').forEach(b=>{
     const pair=pairs[+b.dataset.left],slot=b.querySelector('.ml-visual-art');
-    b.style.setProperty('min-height','64px','important');
     // Never show an unrelated picture: an unavailable asset keeps its Turkish fallback.
     if(!slot.querySelector('.ml-art'))void window.DMWordImagePool?.resolve(pair.en,pair.tr,256).then(url=>{
      if(!url||!slot.isConnected)return;
-     const img=document.createElement('img');img.alt=pair.tr;img.loading='eager';img.decoding='async';img.style.cssText='max-height:60px;width:100%;height:100%;object-fit:contain;pointer-events:none';
+     const img=document.createElement('img');img.alt=pair.tr;img.loading='eager';img.decoding='async';img.className='ml-visual-picture';img.style.cssText='width:100%;height:100%;object-fit:contain;pointer-events:none';
      img.onload=()=>{if(slot.isConnected){slot.replaceChildren(img);scheduleLessonFit();}};img.src=url;
     }).catch(()=>{});
    });
   }
   // Ordinary listening matches remain audio-only.
-  wrap.style.setProperty('position','relative','important');wrap.style.setProperty('display','grid','important');wrap.style.setProperty('grid-template-columns','minmax(0,1fr) minmax(0,1fr)','important');wrap.style.setProperty('column-gap','clamp(44px,12vw,100px)','important');
+  wrap.style.setProperty('position','relative','important');wrap.style.setProperty('display','grid','important');wrap.style.setProperty('grid-template-columns','minmax(0,1fr) minmax(0,1fr)','important');wrap.style.setProperty('column-gap',visual?'clamp(20px,6vw,42px)':'clamp(44px,12vw,100px)','important');
   const svg=wrap.querySelector('svg');wrap.style.setProperty('--match-rows',String(pairs.length));
   function fitTranslations(){wrap.querySelectorAll('[data-right]').forEach(b=>{b.style.removeProperty('font-size');let size=parseFloat(getComputedStyle(b).fontSize);while(b.scrollHeight>b.clientHeight&&size>10){size-=.5;b.style.setProperty('font-size',size+'px','important');}});}
   fitTranslations();
