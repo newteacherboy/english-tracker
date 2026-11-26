@@ -1,7 +1,7 @@
 /* Approved 13 Nov 2026: spotlight fly-by and joyful combo flip (+1s hold).
    Presentation only. Rewards, answers and wallet values remain server-owned. */
 (()=>{'use strict';
-const PRACTICE_MS=3600,COMBO_MS=3800;
+const PRACTICE_MS=3600,COMBO_MS=3800,MAGIC_MS=2400;
 let run=null,audio=null,serial=0;
 const muted=()=>{try{return window.dmSoundEnabled===false||window.dmSesAcik===false||localStorage.getItem('dm_sound_muted')==='1';}catch{return false;}};
 const reduced=()=>window.matchMedia?.('(prefers-reduced-motion: reduce)').matches===true;
@@ -14,28 +14,57 @@ function tone(state,freq,offset,duration=.23,endFreq=null,volume=.045){
 }
 function entrySound(state){if(state.combo){[523.25,659.25,783.99,1046.5].forEach((f,k)=>tone(state,f,.45+k*.075));tone(state,350,.35,.65,1300,.025);}else{tone(state,450,0,.32,1800,.035);[880,1174.66,1567.98].forEach((f,k)=>tone(state,f,.62+k*.085));}}
 function cancel(){run?.finish(false);}
-function play({isCurrent=()=>true,onExit=()=>{},sound=true,mode='practice',gain=1,streak=5,host=null}={}){
+// Route-only celebration: use the same exact bilingual image pool as the teaching carousel.
+function magicWords(root,words){
+ const stage=root.querySelector('.rf-stage');
+ const heading=document.createElement('div');heading.className='rf-magic-heading';
+ heading.innerHTML='<div class="rf-magic-brand">Diji-Medu</div><div class="rf-magic-ribbon">✦ Sihirli Kelimeler ✦</div><div class="rf-magic-learned"><strong></strong> öğrendin!</div><div class="rf-magic-ready">Haydi,<br><b>pratik zamanı!</b></div>';
+ heading.querySelector('.rf-magic-learned strong').textContent=words.length+' yeni kelime';
+ heading.setAttribute('aria-hidden','true');stage.append(heading);
+ const orbit=document.createElement('div');orbit.className='rf-magic-orbit';orbit.setAttribute('aria-hidden','true');stage.append(orbit);
+ const cards=document.createElement('div');cards.className='rf-magic-cards';cards.setAttribute('aria-hidden','true');
+ cards.style.setProperty('--rf-card-count',String(words.length));
+ words.forEach((word,i)=>{
+  const tile=document.createElement('div');tile.className='rf-magic-card';tile.style.setProperty('--i',String(i));
+  const visual=document.createElement('span');visual.className='rf-magic-picture';visual.textContent='Aa';
+  const label=document.createElement('b');label.lang='en';label.textContent=word.en;tile.append(visual,label);cards.append(tile);
+  // Non-blocking: the teaching carousel has already warmed these 512px images.
+  try{Promise.resolve(window.DMWordImagePool?.resolve(word.en,word.tr,512)).then(url=>{
+   if(!url||!root.isConnected)return;
+   const img=document.createElement('img');img.alt='';img.decoding='async';img.draggable=false;
+   img.onload=()=>{if(root.isConnected)visual.replaceChildren(img);};
+   img.onerror=()=>{if(img.src.includes('/512/'))img.src=url.replace('/512/','/256/');};
+   img.src=url;
+  }).catch(()=>{});}catch{}
+ });
+ stage.append(cards);
+ const stars=document.createElement('div');stars.className='rf-magic-stars';stars.setAttribute('aria-hidden','true');
+ for(let i=0;i<8;i++){const star=document.createElement('i');star.textContent='✦';star.style.setProperty('--i',String(i));stars.append(star);}
+ stage.append(stars);
+ const footer=document.createElement('div');footer.className='rf-magic-footer';footer.textContent='Sorular hazırlanıyor…';footer.setAttribute('aria-hidden','true');stage.append(footer);
+}
+function play({isCurrent=()=>true,onExit=()=>{},sound=true,mode='practice',gain=1,streak=5,host=null,words=null}={}){
  if(run)return run.promise;if(!isCurrent())return Promise.resolve(false);
- const combo=mode==='combo',isReduced=reduced(),duration=isReduced?1000:combo?COMBO_MS:PRACTICE_MS;prepare();if(!combo)try{window.speechSynthesis?.cancel();}catch{}
- const root=document.createElement('div');root.id='dmRoutePracticeFlight';root.className='dm-route-flight dm-route-flight-v2'+(combo?' dm-route-flight-combo':'')+(isReduced?' is-reduced':'');root.setAttribute('role','status');root.setAttribute('aria-live','polite');root.setAttribute('aria-atomic','true');
+ const combo=mode==='combo',isReduced=reduced(),learned=!combo&&Array.isArray(words)?words.filter(w=>typeof w?.en==='string'&&w.en.trim()).slice(0,4):[],magic=learned.length>0,duration=isReduced?1000:combo?COMBO_MS:magic?MAGIC_MS:PRACTICE_MS;prepare();if(!combo)try{window.speechSynthesis?.cancel();}catch{}
+ const root=document.createElement('div');root.id='dmRoutePracticeFlight';root.className='dm-route-flight dm-route-flight-v2'+(combo?' dm-route-flight-combo':magic?' dm-route-flight-magic':'')+(isReduced?' is-reduced':'');root.setAttribute('role','status');root.setAttribute('aria-live','polite');root.setAttribute('aria-atomic','true');
  const count=Number.isSafeInteger(streak)&&streak>0?streak:5;
- root.setAttribute('aria-label',combo?count+' doğru üst üste! Kombo, artı '+gain+' enerji.':'Haydi pratik zamanı!');
+ root.setAttribute('aria-label',combo?count+' doğru üst üste! Kombo, artı '+gain+' enerji.':magic?learned.length+' yeni kelime öğrendin! Haydi pratik zamanı!':'Haydi pratik zamanı!');
  root.innerHTML='<div class="rf-shade" aria-hidden="true"></div><div class="rf-stage"><div class="rf-light" aria-hidden="true"></div><div class="rf-pool" aria-hidden="true"></div><div class="rf-actor" aria-hidden="true">'+markup()+'</div>'+(combo?'<div class="rf-particles" aria-hidden="true">'+[[-96,-74,-25],[83,-60,15],[-116,7,-9],[109,23,23],[-64,-113,12],[49,-121,-20]].map(([x,y,r])=>'<b style="--x:'+x+'px;--y:'+y+'px;--r:'+r+'deg">✦</b>').join('')+'</div><div class="rf-label" aria-hidden="true"><div class="rf-combo-word">KOMBO!</div><div class="rf-message">'+count+' doğru üst üste!</div><div class="rf-reward">+'+gain+' enerji</div></div>':'<div class="rf-speech" aria-hidden="true">Haydi pratik zamanı!</div>')+'</div>';
- document.body.append(root);host?.classList.add('qc-combo');
+ document.body.append(root);if(magic)magicWords(root,learned);host?.classList.add('qc-combo');
  let resolve;const promise=new Promise(r=>resolve=r),state={promise,root,combo,sound,voices:new Set(),frame:0,elapsed:0,last:performance.now(),exited:false,finish(complete){if(run!==state)return;cancelAnimationFrame(state.frame);root.removeEventListener('animationend',animationEnd);document.removeEventListener('visibilitychange',visibility);document.removeEventListener('keydown',key);for(const voice of state.voices)try{voice.stop();}catch{}state.voices.clear();root.remove();host?.classList.remove('qc-combo');run=null;resolve(complete);}};run=state;
  const key=e=>{if(e.key==='Escape'){e.preventDefault();e.stopPropagation();state.finish(false);onExit();}};
  const visibility=()=>{root.classList.toggle('is-paused',document.hidden);state.last=performance.now();if(!isCurrent())state.finish(false);};
  // The visible actor's CSS completion is authoritative, including on slow devices.
  const actor=root.querySelector('.rf-actor');
- const animationEnd=e=>{if(e.target!==actor||!['rf-flip','rf-arc','rf-reduced'].includes(e.animationName)||document.hidden)return;state.finish(isCurrent());};
+ const animationEnd=e=>{if(e.target!==actor||!['rf-flip','rf-arc','rf-magic-actor','rf-reduced'].includes(e.animationName)||document.hidden)return;state.finish(isCurrent());};
  root.addEventListener('animationend',animationEnd);
  document.addEventListener('keydown',key);document.addEventListener('visibilitychange',visibility);visibility();
  // Starting the CSS animation after mounting prevents a blank first frame on WebKit.
  void root.offsetWidth;root.classList.add('is-playing');entrySound(state);
  function tick(now){if(run!==state)return;if(!isCurrent()){state.finish(false);return;}const delta=Math.max(0,now-state.last);state.last=now;if(!document.hidden)state.elapsed+=delta;if(muted())for(const voice of state.voices)try{voice.stop();}catch{}
-  if(!combo&&!state.exited&&state.elapsed>=2700){state.exited=true;tone(state,1700,0,.32,350,.035);}
+  if(!combo&&!state.exited&&state.elapsed>=(magic?1900:2700)){state.exited=true;tone(state,1700,0,.32,350,.035);}
   // Let a real CSS animation deliver its end event before the clock fallback.
-  if(state.elapsed>=duration){const cssAnimation=actor.getAnimations?.().some(a=>['rf-flip','rf-arc','rf-reduced'].includes(a.animationName));if(!cssAnimation||state.elapsed>=duration+150){state.finish(true);return;}}state.frame=requestAnimationFrame(tick);
+  if(state.elapsed>=duration){const cssAnimation=actor.getAnimations?.().some(a=>['rf-flip','rf-arc','rf-magic-actor','rf-reduced'].includes(a.animationName));if(!cssAnimation||state.elapsed>=duration+150){state.finish(true);return;}}state.frame=requestAnimationFrame(tick);
  }
  state.frame=requestAnimationFrame(tick);return promise;
 }
