@@ -1,0 +1,50 @@
+
+/* The shared route teaching stage uses a single, consistently sized word card. */
+.rq-teach-card {
+  box-sizing:border-box;display:flex!important;flex-direction:column!important;
+  align-items:center!important;justify-content:center!important;gap:8px!important;
+  flex:1 0 auto!important;width:100%!important;margin:0 auto!important;
+  padding:8px 0!important;text-align:center;color:#102746;
+}
+.rq-teach-label {display:grid;gap:2px;width:100%;overflow-wrap:anywhere;}
+.rq-teach-label strong {font:900 clamp(26px,8vw,44px)/1.12 Nunito,system-ui,sans-serif;color:#102746;}
+.rq-teach-label span {font:800 clamp(17px,5vw,25px)/1.2 Nunito,system-ui,sans-serif;color:#607d9e;}
+.rq-teach-card .rq-teach-picture {
+  position:relative;display:grid!important;place-items:center;box-sizing:border-box;
+  width:min(76vw,280px,38dvh)!important;aspect-ratio:1;flex:none!important;
+  padding:14px!important;margin:8px auto 0!important;overflow:hidden;
+  background:#fff!important;border:3px solid #d5deea!important;border-radius:22px!important;
+  box-shadow:0 4px 0 #d5deea!important;touch-action:pan-y;user-select:none;
+}
+.rq-teach-picture img {display:block;width:100%;height:100%;object-fit:contain;pointer-events:none;}
+.rq-teach-image-fallback {font:900 52px/1 Nunito,system-ui,sans-serif;color:#b8c8dc;}
+.rq-teach-tap {position:absolute;bottom:12px;right:12px;width:43px;height:43px;color:#748ba5;pointer-events:none;}
+.rq-teach-tap svg {position:absolute;inset:8px 0 0 8px;width:35px;height:35px;z-index:1;filter:drop-shadow(0 1px 2px white);animation:rq-teach-tapping 1.8s ease-in-out infinite;}
+.rq-teach-tap::before,.rq-teach-tap::after {content:"";position:absolute;inset:0;border:3px solid #9fb5cd;border-radius:50%;animation:rq-teach-ripple 1.8s ease-out infinite;}
+.rq-teach-tap::after {animation-delay:.4s;}
+@keyframes rq-teach-ripple {0%{transform:scale(.45);opacity:.8}75%,100%{transform:scale(1.15);opacity:0}}
+@keyframes rq-teach-tapping {0%,100%{transform:translate(3px,3px)}45%{transform:translate(-2px,-2px)}}
+.rq-teach-card :is(.rq-teach-hint,.rq-teach-swipe) {margin:0!important;color:#7189a5;font:800 13px/1.3 Nunito,system-ui,sans-serif;text-align:center;}
+.rq-teach-navigation {display:flex;justify-content:center;align-items:center;gap:20px;width:100%;}
+.rq-teach-navigation>button {display:grid;place-items:center;width:40px;height:40px;border:1px solid #d5deea;border-radius:12px;background:white;color:#56748f;font:900 27px/1 Nunito,system-ui,sans-serif;}
+.rq-teach-navigation>button:disabled {opacity:.3;}
+.rq-teach-card .rq-teach-progress {color:#7189a5!important;font:800 14px/1.3 Nunito,system-ui,sans-serif!important;margin:0!important;text-align:center!important;}
+.rq-teach-dots {display:flex;flex-wrap:wrap;justify-content:center;gap:6px;margin-top:5px;}
+.rq-teach-dots span {width:9px;height:9px;border-radius:50%;background:#c5d1df;}
+.rq-teach-dots span.visited {background:#94d8a9;}
+.rq-teach-dots span.active {background:#28ad59;box-shadow:0 0 0 2px #d9f3e2;}
+html body #bzPerde#bzPerde#bzPerde#bzPerde.rq-approved #bzAlan:has(.rq-teach-card) .sp-question-board {
+ display:none!important;
+}
+html body #bzPerde#bzPerde#bzPerde#bzPerde.rq-approved #bzAlan:has(.rq-teach-card) .bz-etiket:not(.sp-question-board .bz-etiket) {
+ text-align:center!important;align-self:center!important;
+}
+.rq-teach-start,html body #bzPerde#bzPerde#bzPerde#bzPerde.rq-approved #bzAlan .rq-teach-start {
+  background:#29b15f!important;color:white!important;-webkit-text-fill-color:white!important;
+  box-shadow:0 4px 0 #198547!important;border:0!important;margin-top:auto!important;
+}
+.rq-teach-start:disabled,html body #bzPerde#bzPerde#bzPerde#bzPerde.rq-approved #bzAlan .rq-teach-start:disabled {
+ background:#b7c0cc!important;box-shadow:0 4px 0 #98a6b7!important;opacity:1!important;
+}
+@media(max-height:630px){.rq-teach-card{gap:5px!important;padding:3px 0!important}.rq-teach-card .rq-teach-picture{width:min(72vw,245px,32dvh)!important;margin-top:3px!important}.rq-teach-label strong{font-size:26px}.rq-teach-label span{font-size:17px}}
+@media(prefers-reduced-motion:reduce){.rq-teach-tap svg,.rq-teach-tap::before,.rq-teach-tap::after{animation:none}}
