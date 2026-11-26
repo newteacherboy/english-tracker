@@ -261,3 +261,6 @@ html body #tab-meduakis .fr-dz-live svg{width:14px;height:14px}
 @keyframes ldHoldPulse{0%,100%{box-shadow:0 0 0 0 rgba(255,212,92,.0)}50%{box-shadow:0 0 0 6px rgba(255,212,92,.18)}}
 @keyframes ldReadyHop{from{transform:translateY(0)}to{transform:translateY(-6px)}}
 @media (prefers-reduced-motion:reduce){.ld-hold-card,.ld-sheet.ld-ready .ld-sheet-papi{animation:none}}
+
+/* Papi VS: cancel is available only before the first question. */
+.ld-vs-cancel{position:absolute;z-index:2;top:calc(env(safe-area-inset-top,0px) + 14px);left:calc(env(safe-area-inset-left,0px) + 14px);display:inline-flex;align-items:center;gap:7px;padding:9px 13px;min-height:44px;border:1px solid #ffffff65;border-radius:15px;background:#ffffff14;color:#fff;font:800 14px/1 Nunito,system-ui,sans-serif;cursor:pointer}.ld-vs-cancel svg{width:20px;height:20px}.ld-vs-cancel:disabled{opacity:.55;cursor:wait}
