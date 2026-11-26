@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>Papi Hazine Avı — Diji-Medu 3D İngilizce Macera</title>
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+  <canvas id="game-canvas" aria-label="Papi Hazine Avı 3D Oyun Sahnesi"></canvas>
+
+  <!-- 1. LOADING SCREEN -->
+  <section class="overlay-screen dim active" data-screen="loading">
+    <div class="load-card">
+      <div class="load-logo">🦜</div>
+      <h1>Papi Hazine Avı</h1>
+      <div class="load-bar"><div id="load-bar-fill"></div></div>
+      <div id="load-status">3D Modeller Hazırlanıyor...</div>
+    </div>
+  </section>
+
+  <!-- 2. CINEMATIC TITLE SCREEN -->
+  <section class="overlay-screen" data-screen="title">
+    <div class="title-wrap">
+      <div class="title-badge">✨ DİJİ-MEDU 3D İNGİLİZCE MACERA · PROTOTİP v1</div>
+      <h1 class="title-hero">Papi Hazine Avı</h1>
+      <p class="title-sub">
+        İngilizce yönergeleri dinle, Papağan Adası'nı 3D keşfet, nesneleri bul ve gizli hazine sandıklarını aç!
+      </p>
+      <div class="title-actions">
+        <button id="btn-quick-play" class="btn-primary">▶ 1. Bölümü Hemen Oyna</button>
+        <button id="btn-start-adventure" class="btn-secondary">🗺️ Ada Haritası</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. ISLAND SELECTION MAP (6 ISLANDS / 100 LEVELS ROADMAP) -->
+  <section class="overlay-screen dim" data-screen="islands">
+    <div class="panel-card">
+      <div class="panel-header">
+        <h2>🗺️ Keşif Adaları (6 Ada · 100 Bölüm)</h2>
+        <button id="btn-back-title" class="btn-ghost">← Giriş</button>
+      </div>
+      <div class="explorer-bar">
+        <div class="explorer-bar-top">
+          <span id="explorer-xp-label">Papi Kaşif Sv. 1/50 · 0/20 XP</span>
+          <span>⭐ <b data-bind="total-stars">0</b> Yıldız</span>
+        </div>
+        <div class="xp-track"><div id="explorer-xp-fill"></div></div>
+      </div>
+      <div id="islands-grid"></div>
+    </div>
+  </section>
+
+  <!-- 4. LEVEL SELECTION SCREEN (PARROT ISLAND) -->
+  <section class="overlay-screen dim" data-screen="levels">
+    <div class="panel-card">
+      <div class="panel-header">
+        <h2>🦜 Papağan Adası — Bölümler</h2>
+        <button id="btn-back-islands" class="btn-ghost">← Adalar</button>
+      </div>
+      <p style="margin:0 0 12px;font-size:13px;font-weight:700;color:#5a6a85">
+        İlk 3 bölüm yüksek kaliteli, tamamen oynanabilir olarak hazırlandı. Bölüm 4–10 sonraki aşamalarda açılacak.
+      </p>
+      <div id="levels-grid"></div>
+    </div>
+  </section>
+
+  <!-- 5. IN-GAME HUD -->
+  <div id="game-hud">
+    <div class="hud-top">
+      <div class="hud-row">
+        <div class="hud-pills">
+          <div class="hud-pill">⭐ <span id="hud-stars">0</span></div>
+          <div class="hud-pill" id="hud-level-badge">Bölüm 1</div>
+          <div class="hud-pill" id="fps-pill" hidden>60 FPS</div>
+        </div>
+        <div class="hud-pills">
+          <button id="btn-backpack" class="hud-icon-btn" title="Keşif Çantası">🎒</button>
+          <button id="btn-pause" class="hud-icon-btn" title="Duraklat & Ayarlar">⏸</button>
+        </div>
+      </div>
+
+      <!-- English Voice Mission Banner -->
+      <div class="mission-banner">
+        <button id="btn-hint" class="mission-btn" title="Türkçe İpucu">💡</button>
+        <div class="mission-copy">
+          <div id="hud-mission-step">GÖREV 1 / 5</div>
+          <div id="hud-mission-text">Find the blue key.</div>
+        </div>
+        <button id="btn-replay-audio" class="mission-btn" title="İngilizce Tekrar Dinle">🔊</button>
+      </div>
+    </div>
+
+    <div id="hud-toast" class="hud-toast" role="status" aria-live="polite"></div>
+
+    <div class="hud-controls">
+      <div id="joystick-zone" aria-label="Hareket Joystick">
+        <div id="joystick-knob"></div>
+      </div>
+      <div class="action-pad">
+        <button id="btn-jump" class="act-btn" aria-label="Zıpla ve Kanat Çırp">
+          <b>🪽</b>
+          <span>Zıpla</span>
+        </button>
+        <button id="btn-interact" class="act-btn" aria-label="Etkileşim">
+          <b>✋</b>
+          <span>Etkileşim</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="kbd-hint">WASD / Oklar: Yürü · Space: Zıpla / Kanat Çırp · E: Etkileşim · Sürükle: Kamerayı Döndür</div>
+  </div>
+
+  <!-- 6. TREASURE CHEST OPENING CINEMATIC OVERLAY -->
+  <section class="overlay-screen dim" data-screen="chest">
+    <div class="panel-card chest-card">
+      <div class="title-badge" style="margin-bottom:8px">✨ HAZİNE SANDIĞI AÇILDI!</div>
+      <div id="chest-item-icon" class="chest-glow-icon">🧭</div>
+      <h2 id="chest-item-name" style="margin:4px 0 2px;font-size:24px;font-weight:900">Altın Pusula</h2>
+      <div id="chest-item-en" style="font-size:13px;font-weight:800;color:#46329e;margin-bottom:8px">Golden Compass</div>
+      <p id="chest-item-desc" style="font-size:14px;color:#5a6a85;font-weight:700;margin:0 0 18px"></p>
+      <button id="btn-chest-continue" class="btn-primary" style="width:100%">Çantaya Ekle ve Devam Et →</button>
+    </div>
+  </section>
+
+  <!-- 7. LEVEL RESULT SCREEN -->
+  <section class="overlay-screen dim" data-screen="result">
+    <div class="panel-card result-card">
+      <div style="font-size:48px">🏆</div>
+      <h2 id="res-title" style="margin:6px 0 4px;font-size:24px;font-weight:900;color:#2f1f73">Bölüm Tamamlandı!</h2>
+      <p id="res-breakdown" style="margin:0;font-size:13px;font-weight:700;color:#5a6a85"></p>
+      <div class="result-stats">
+        <div class="stat-box">
+          <small>KEŞİF YILDIZI</small>
+          <strong id="res-stars">5 / 5</strong>
+        </div>
+        <div class="stat-box">
+          <small>KAZANILAN XP</small>
+          <strong id="res-xp">+15 XP</strong>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <button id="btn-next-level" class="btn-primary" style="width:100%">Sonraki Bölüme Geç →</button>
+        <div style="display:flex;gap:10px">
+          <button id="btn-result-replay" class="btn-secondary" style="flex:1">↻ Tekrar Oyna</button>
+          <button id="btn-result-map" class="btn-ghost" style="flex:1">🗺️ Bölümler</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 8. PAUSE & SETTINGS SCREEN -->
+  <section class="overlay-screen dim" data-screen="paused">
+    <div class="panel-card" style="width:min(380px,92vw)">
+      <div class="panel-header">
+        <h2>⚙️ Duraklat & Ayarlar</h2>
+      </div>
+      <label class="setting-row">
+        <span>🎵 Macera Müziği</span>
+        <input id="set-music" type="checkbox" checked />
+      </label>
+      <label class="setting-row">
+        <span>🔊 Ses Efektleri & İngilizce Ses</span>
+        <input id="set-sfx" type="checkbox" checked />
+      </label>
+      <label class="setting-row">
+        <span>✨ Grafik Kalitesi</span>
+        <select id="set-quality">
+          <option value="low">Düşük (Pil Dostu)</option>
+          <option value="medium">Orta (Dengeli)</option>
+          <option value="high" selected>Yüksek (60 FPS)</option>
+        </select>
+      </label>
+      <label class="setting-row">
+        <span>📊 FPS Göstergesi</span>
+        <input id="set-fps" type="checkbox" />
+      </label>
+      <div style="display:flex;flex-direction:column;gap:10px;margin-top:18px">
+        <button id="btn-resume" class="btn-primary" style="width:100%">▶ Oyuna Devam Et</button>
+        <button id="btn-restart" class="btn-secondary" style="width:100%">↻ Bölümü Yeniden Başlat</button>
+        <button id="btn-exit-levels" class="btn-ghost" style="width:100%">🗺️ Bölüm Seçimine Dön</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 9. EXPLORER BACKPACK MODAL -->
+  <div id="backpack-modal" class="modal-backdrop">
+    <div class="panel-card" style="width:min(420px,92vw)">
+      <div class="panel-header">
+        <h2>🎒 Keşif Çantası</h2>
+        <button id="btn-close-backpack" class="btn-ghost">✕</button>
+      </div>
+      <div id="backpack-list"></div>
+    </div>
+  </div>
+
+  <!-- Optional Diji-Medu shared-voice integration when hosted inside Diji-Medu -->
+  <script src="../shared-voice.js" defer></script>
+  <script type="module" src="./src/game-main.mjs"></script>
+</body>
+</html>
