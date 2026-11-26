@@ -128,3 +128,6 @@ html[data-dm-theme=night] body .dm-center-layer :is(.dm-center-item,.dm-center-f
 html[data-dm-theme=night] body .dm-center-layer .dm-center-footer button {color:#d0b3fa}
 html[data-dm-theme=night] body .dm-center-layer .dm-center-period {color:#c5bcdb}
 }
+
+/* 26 Kasım: rozeti geniş cüzdan hücresinin değil, ortadaki zilin köşesine bağla. */
+html body .dm-unified-wallet.dm-papi-wallet.dm-has-center>button.dm-center-bell .dm-center-count,html body #tab-dunya#tab-dunya .dm-unified-wallet.dm-papi-wallet.dm-has-center>button.dm-center-bell .dm-center-count,html body #tab-meduakis.fr-home-view .fr-wallet-host .dm-unified-wallet.dm-papi-wallet.dm-has-center>button.dm-center-bell .dm-center-count{top:calc(50% - 18px)!important;left:calc(50% + 3px)!important;right:auto!important;bottom:auto!important;transform:none!important}

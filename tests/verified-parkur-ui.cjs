@@ -13,11 +13,13 @@ const fs=require('node:fs'),path=require('node:path'),assert=require('node:asser
   if(i)await page.evaluate(i=>vfixture.draw(i),i);
   const task=deck[i];await page.waitForTimeout(80);const spokenBefore=await page.evaluate(()=>schoolAudioCalls.length);if(['soyle','dinleSec','lab','patternListen','patternComplete'].includes(task.kind))assert.equal(await page.evaluate(()=>schoolAudioCalls.at(-1)),task.kind==='patternComplete'?await page.locator('.bz-soru').innerText().then(t=>t.replace(/_{2,}/g,'…')):task.en,'English prompt is read on display');
   if(task.kind==='teach'){
-   assert.equal(await page.locator('#bzAlan .dm-school-word').count(),words.length,'all vocabulary words visible together');
-   assert.equal(await page.locator('#bzAlan .dm-school-start-questions').count(),1,'single continue to verified questions');
-   assert.equal(await page.evaluate(()=>window.schoolAudioCalls.length),0,'no automatic audio at teaching start');
-   await page.locator('#bzAlan [data-rq-word="0"]').click();
-   assert.equal(await page.evaluate(()=>window.schoolAudioCalls.length),1,'learner-controlled vocabulary listening');
+   assert.equal(await page.locator('#bzAlan .rq-teach-picture').count(),1,'one large vocabulary card');
+   assert.equal(await page.locator('#bzAlan .dm-school-start-questions').isDisabled(),words.length>1);
+   assert.equal(await page.evaluate(()=>window.schoolAudioCalls.length),1,'automatic first word audio');
+   await page.locator('#bzAlan .rq-teach-picture').click();
+   assert.equal(await page.evaluate(()=>window.schoolAudioCalls.length),2,'tap repeats pronunciation');
+   for(let card=1;card<words.length;card++)await page.locator('#bzAlan [data-teach-next]').click();
+   assert.equal(await page.locator('#bzAlan .dm-school-start-questions').isEnabled(),true);
    await page.locator('#bzAlan .dm-school-start-questions').click();
    assert((await page.locator('#bzAlan .bz-btn.mor').innerText()).includes('Tebrikler'));
    await page.waitForFunction(()=>vfixture.state().i===1);

@@ -131,6 +131,7 @@ Deno.serve(async(req:Request)=>{
  if(req.method!=='GET'){const parsed=await readJsonBounded(req);if(!parsed.ok)return json({ok:false,mesaj:'Geçersiz istek.'},parsed.status);body=parsed.data;}
  const a=await session(req,body,q);if(!a)return json({ok:false,mesaj:"Öğrenci oturumu gerekli."},401);
  const op=String(val(body,q,"islem"));
+ if(!a.teacher_portal_access_id&&["duelloGonder","duelloSonucKaydet"].includes(op)&&/^(Jeopardy|KelimeBul|Dikte|Canavar)_Liderlik$/i.test(String(val(body,q,"oyun"))))return json({ok:false,mesaj:"Bu oyun artık öğrenci hesabında sunulmuyor."},410);
  for(const plan of authenticatedBudgets(op,a.student_id,body)){
   const digest=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(plan.scope+'|'+plan.value));
   const key='shield:'+Array.from(new Uint8Array(digest)).map(x=>x.toString(16).padStart(2,'0')).join('');

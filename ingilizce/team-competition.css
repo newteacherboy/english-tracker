@@ -725,3 +725,79 @@ dialog.dm-team-sheet button.dm-team-duel-card.is-papi {
   font-weight: 900;
   white-space: nowrap;
 }
+
+
+/* Team invitation and application cards */
+.dm-team-request-card {
+  position:relative;
+  isolation:isolate;
+  overflow:hidden;
+  display:grid;
+  justify-items:center;
+  gap:10px;
+  text-align:center;
+  padding:20px 14px 18px;
+  border:1px solid #f2d1b5;
+  border-radius:22px;
+  background:linear-gradient(180deg,#fff7e6 0%,#fff 58%);
+  box-shadow:0 5px 18px #9f5a2714;
+  color:#29203c;
+}
+.dm-team-request-art {
+  position:relative;
+  width:142px;
+  height:122px;
+  display:grid;
+  place-items:center;
+  background:radial-gradient(ellipse,#ffe7a5 0%,#fff4d8 48%,transparent 72%);
+}
+.dm-team-request-art .dm-team-crest {
+  width:106px;
+  height:106px;
+  object-fit:contain;
+  filter:drop-shadow(0 6px 8px #b46a3545);
+}
+.dm-team-request-fallback {font-size:64px;color:#d89c22;}
+.dm-team-request-star {
+  position:absolute;
+  color:#d99a22;
+  font-size:24px;
+  text-shadow:0 0 12px #ffd278;
+  animation:dm-team-request-twinkle 2.6s ease-in-out infinite alternate;
+}
+.dm-team-request-star.star-left {left:0;top:20px;}
+.dm-team-request-star.star-right {right:0;bottom:22px;animation-delay:.9s;}
+.dm-team-request-card h3 {margin:0;color:#30203e;font-size:clamp(21px,5.5vw,27px);overflow-wrap:anywhere;max-width:100%;}
+.dm-team-request-card p {margin:0;color:#5f5368;font-weight:700;overflow-wrap:anywhere;}
+.dm-team-request-time {
+  display:block;padding:6px 11px;border-radius:99px;
+  color:#795519;background:#fff2cb;font-size:12px;font-weight:800;
+}
+.dm-team-request-card .dm-team-buttons {width:100%;margin-top:8px;gap:10px;}
+.dm-team-request-card .dm-team-buttons button {
+  position:relative;overflow:hidden;min-height:48px;border-radius:15px;
+  font-weight:900;padding:10px 6px;
+}
+dialog.dm-team-request-sheet .dm-team-request-card button[data-team-action="accept"] {
+  background:linear-gradient(160deg,#ff8476,#ed4d5b 75%);
+  color:white;border:1px solid #d63b49;
+  box-shadow:0 4px 0 #be3445,0 7px 15px #ed4d5b38;
+}
+dialog.dm-team-request-sheet .dm-team-request-card button[data-team-action="reject"] {
+  background:linear-gradient(155deg,#fff9fa,#ffe0e3);
+  color:#a32c42;border:1px solid #f0b7bf;
+  box-shadow:0 4px 0 #e4a7b2;
+}
+.dm-team-request-card button::after {
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(110deg,transparent 25%,#ffffff85 48%,transparent 70%);
+  transform:translateX(-125%);animation:dm-team-request-shine 3.8s ease-in-out infinite;
+}
+.dm-team-request-card button:active {transform:translateY(2px);}
+.dm-team-request-card button:disabled {opacity:.5;box-shadow:none!important;}
+.dm-team-request-card button:disabled::after {animation:none;}
+@keyframes dm-team-request-shine {0%,55%{transform:translateX(-125%)}85%,100%{transform:translateX(125%)}}
+@keyframes dm-team-request-twinkle {from{opacity:.6;transform:scale(.85)}to{opacity:1;transform:scale(1.1)}}
+@media(prefers-reduced-motion:reduce) {
+  .dm-team-request-star,.dm-team-request-card button::after {animation:none;}
+}

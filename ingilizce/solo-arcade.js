@@ -21,6 +21,7 @@ function sound(kind){if(window.dmSoundEnabled===false||window.dmSesAcik===false)
 function monster(i){return `<span class="sa-monster sa-monster-${i}" aria-hidden="true"></span>`;}
 function floor(i,offset=0){return `<img class="sa-floor" src="arcade-assets/floor.webp" alt="" style="--i:${i};--offset:${offset}px;--hue:${i%4*48}deg">`;}
 function open(key){
+ if(key==='canavar'&&!practice()&&!window.dmTeacherPortalMode){window.yoToast?.('Bu oyun artık öğrenci hesabında sunulmuyor.');return;}
  if(key==='kule'&&window.dmPremiumSkillGames)return window.dmPremiumSkillGames.open('tower');
  if(window.dmSoloLevels?.needs(key))return window.dmSoloLevels.open(key,()=>open(key));
  if(!games[key]||window.dmFeatureEnabled?.('oyun_'+key)===false||window.dmProgression?.require('oyun_'+key)===false)return;

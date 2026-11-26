@@ -1,6 +1,6 @@
 (()=>{'use strict';
  const endpoint='https://nxfqlutulxqzqgwewssd.supabase.co/functions/v1/diji-api',mode=!!window.dmTeacherPortalMode;
- function saveState(s){sessionStorage.setItem('dm_tp_session',JSON.stringify(s));window.dmTeacherDevice?.remember(s);}
+ function saveState(s){sessionStorage.setItem('dm_tp_session',JSON.stringify(s));if(mode)window.dmTeacherGrade7Games=s.route==='games';window.dmTeacherDevice?.remember(s);}
  function rememberRoute(route){const s=state();if(s){s.route=route;saveState(s);}}
  const state=()=>{try{return JSON.parse(sessionStorage.getItem('dm_tp_session')||'null');}catch{return null;}};
  // Direct calls keep owner, participant and personal tokens explicit.
@@ -144,7 +144,7 @@
 
  const paths={'mola':['dmMola','open'],'topic':['dmTopicGames','openTopic'],'meteor':['dmMeteor','open'],'wheel':['dmWordWheel','open'],'cards':['dmPapiCards','open']};
  async function runPending(){const raw=sessionStorage.getItem('dm_tp_pending');if(!raw)return;sessionStorage.removeItem('dm_tp_pending');try{const next=JSON.parse(raw),path=paths[next.target];await window.dmLazyGames?.ready();wrapGames();replay=true;const object=path?window[path[0]]:window,fn=path?object?.[path[1]]:object[next.target];if(typeof fn!=='function')throw Error('Oyun henüz yüklenemedi. Yeniden aç.');await fn.apply(object,next.args||[]);}catch(e){window.yoToast?.(e.message);}finally{replay=false;}}
- const gameFunctions=['kelimeGoluAc','kelimeYarismasiAc','jpOyunAc','boslukOyunAc','hafizaOyunAc','yagmurOyunAc','asmacaOyunAc','kelimebulOyunAc','esOyunAc','trenOyunAc','dikteAc','cumleAc','harfBahcesiAc','ralliOyunAc','dmArenaAc','dmMatchAc','dmInviteAc'];
+ const gameFunctions=['kelimeGoluAc','kelimeYarismasiAc','jpOyunAc','boslukOyunAc','hafizaOyunAc','yagmurOyunAc','asmacaOyunAc','kelimebulOyunAc','esOyunAc','trenOyunAc','dikteAc','cumleAc','harfBahcesiAc','canavarAvcisiAc','ralliOyunAc','dmArenaAc','dmMatchAc','dmInviteAc'];
  function wrapGames(){if(!mode)return;for(const name of gameFunctions){const old=window[name];if(typeof old!=='function'||old.__tp)continue;const fn=async function(...args){if(await beforeGame(name,args))return old.apply(this,args);};Object.assign(fn,old);fn.__tp=true;window[name]=fn;}}
  const applicationTitle='Öğretmen kodunla sınıfına özel paneli aç!';
  const applicationBenefits=[
@@ -992,7 +992,7 @@
 
  window.dmTeacherPortal={openMessages:()=>teacherDashboardAction('messages'),openLogin,openProfile,beforeGame,management,prepareTools:prepareTeacherTools,returnToGames:()=>{if(!mode||state()?.route!=='games')return;window.dmViewHistory?.clear?.();teacherDestination('games');}};
  if(document.body.dataset.teacherReset==='1'){resetPage();return;}
- if(mode){document.body.classList.add('dm-teacher-portal');document.documentElement.classList.add('dm-teacher-portal');document.documentElement.classList.add('tp-home-starting');window.cikisYap=window.dmTeacherPortalExit;window.siniftaOyunModuAc=()=>{document.getElementById('ogretmenMenuModal')?.style.setProperty('display','none');window.aktivitelerTamEkranAc?.();};}
+ if(mode){document.body.classList.add('dm-teacher-portal');document.documentElement.classList.add('dm-teacher-portal');document.documentElement.classList.add('tp-home-starting');window.cikisYap=window.dmTeacherPortalExit;window.siniftaOyunModuAc=()=>{document.getElementById('ogretmenMenuModal')?.style.setProperty('display','none');teacherDestination('games');};}
  let scheduled=false;const observe=()=>{if(scheduled)return;scheduled=true;requestAnimationFrame(()=>{scheduled=false;decorate();if(mode){suppressPreviewPrompts();hideTeacherHeader();const n=document.getElementById('bottomNavMobile');n?.querySelectorAll('.bn-item').forEach(i=>{if((i.dataset.ekran==='tab-profil'||/^(profil|profilim)$/i.test((i.textContent||'').trim())))i.remove();});}});};new MutationObserver(observe).observe(document.body,{childList:true,subtree:true});decorate();wrapGames();
  document.addEventListener('dm:state',wrapGames);document.addEventListener('dm:login',wrapGames);if(mode)document.addEventListener('click',()=>{if(window.tpHomeInitialized){teacherHome();suppressPreviewPrompts();}}, {capture:false});
  // First paint must be the private teacher home even if the learner route fails.

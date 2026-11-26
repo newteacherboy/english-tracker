@@ -33,17 +33,17 @@ const centreItems=[
 const accountItems=[['Profilim','Kişisel bilgilerimi düzenle','profile',0],['Ayarlar','Uygulama tercihlerini yönet','settings',1],['Hesap Değiştir','Farklı bir hesapla devam et','switchAccount',2],['Yardım ve Destek','Sık sorulan sorular ve iletişim','help',3],['Güvenlik ve Bildirimlerim','Hesap güvenliği ve bildirim ayarları','safety',4],['Öğretmen Paneli','Öğretmen araçlarına erişim','teacher',5],['Öğretmene Mesaj Gönder','Sorularını ilet','coach',6],['Çıkış Yap','Güvenli bir şekilde çıkış yap','logout',7]];
 const centreArt=(name,cell)=>'<i class="au-art au-'+name+'" style="--au-x:'+(cell%3*50)+'%;--au-y:'+Math.floor(cell/3)*50+'%" aria-hidden="true"></i>';
 const profileIcons={
- progress:'<path fill="var(--pa-coral)" d="M3 26h7v7H3zm11-7h7v14h-7zm11-7h7v21h-7z"/><path d="M4 19c11 0 19-6 25-15m-6 1 6-1 1 6" stroke="var(--pa-coral)"/>',
- badges:'<path fill="#e74450" d="m10 22-3 13 7-3 4 4 2-12m4-3 5 14-7-3-4 4-2-12"/><circle cx="18" cy="15" r="12" fill="#ffcf55" stroke="#d38a12"/><path fill="#b87108" d="m18 7 2.4 5 5.6.8-4 4 .9 5.5-4.9-2.6-4.9 2.6.9-5.5-4-4 5.6-.8z"/>',
- certificates:'<rect x="7" y="2" width="22" height="32" rx="3" stroke="var(--pa-icon-ink)"/><path d="m11 16 4-9 4 9m-6.5-3h5m7-4v7m-3.5-3.5h7" stroke="var(--pa-coral)"/><path d="M12 22h12m-12 5h9" stroke="var(--pa-icon-muted)"/>',
- daily:'<rect x="5" y="6" width="26" height="28" rx="4" stroke="var(--pa-icon-ink)"/><path d="M14 6a4 4 0 0 1 8 0h3v5H11V6z" fill="var(--pa-icon-muted)" stroke="var(--pa-icon-ink)"/><path d="m10 18 2 2 4-5m-6 12 2 2 4-5" stroke="var(--pa-coral)"/><path d="M20 18h6m-6 9h6" stroke="var(--pa-icon-muted)"/>',
+ progress:'<path fill="#607c9e" d="M3 26h7v7H3zm11-7h7v14h-7zm11-7h7v21h-7z"/><path d="M4 19c11 0 19-6 25-15m-6 1 6-1 1 6" stroke="#d99b20"/>',
+ badges:'<path fill="#6b84ac" d="m10 22-3 13 7-3 4 4 2-12m4-3 5 14-7-3-4 4-2-12"/><circle cx="18" cy="15" r="12" fill="#ffcf55" stroke="#d38a12"/><path fill="#b87108" d="m18 7 2.4 5 5.6.8-4 4 .9 5.5-4.9-2.6-4.9 2.6.9-5.5-4-4 5.6-.8z"/>',
+ certificates:'<rect x="7" y="2" width="22" height="32" rx="3" stroke="var(--pa-icon-ink)"/><path d="m11 16 4-9 4 9m-6.5-3h5m7-4v7m-3.5-3.5h7" stroke="var(--pa-icon-ink)"/><path d="M12 22h12m-12 5h9" stroke="var(--pa-icon-muted)"/>',
+ daily:'<rect x="5" y="6" width="26" height="28" rx="4" stroke="var(--pa-icon-ink)"/><path d="M14 6a4 4 0 0 1 8 0h3v5H11V6z" fill="var(--pa-icon-muted)" stroke="var(--pa-icon-ink)"/><path d="m10 18 2 2 4-5m-6 12 2 2 4-5" stroke="#329f9c"/><path d="M20 18h6m-6 9h6" stroke="var(--pa-icon-muted)"/>',
  repeat:'<rect x="12" y="11" width="20" height="21" rx="4" fill="var(--pa-soft)" stroke="var(--pa-icon-ink)" transform="rotate(12 22 20)"/><rect x="3" y="6" width="23" height="21" rx="4" fill="var(--centre-paper)" stroke="var(--pa-icon-ink)" transform="rotate(-10 14 16)"/><path d="m8 21 3-9 5 8m-7-2h5m7 1c-4 2-5-3-2-4h2l1 4" stroke="var(--pa-icon-ink)" stroke-width="1.8"/><circle cx="30" cy="6" r="3" fill="#e74450"/>',
- route:'<path d="M9 28c4 7 12 1 10-4s3-7 7-6" stroke="var(--pa-icon-ink)" stroke-dasharray="2 3"/><path fill="var(--pa-coral)" d="M16 20c0 5-6 10-6 10s-6-5-6-10a6 6 0 0 1 12 0Zm17-12c0 4-6 10-6 10s-6-6-6-10a6 6 0 0 1 12 0Z"/><circle cx="10" cy="20" r="2" fill="#fff"/><circle cx="27" cy="8" r="2" fill="#fff"/>',
- guardian:'<path d="M2 33v-3a9 9 0 0 1 18 0v3" fill="#52749a"/><path d="M16 33v-2a9 9 0 0 1 18 0v2" fill="var(--pa-coral)"/><circle cx="11" cy="14" r="8" fill="#56382e"/><circle cx="25" cy="18" r="8" fill="#694338"/><path d="M5 15a6 6 0 0 0 12 0v-3l-5 1-3-3zM19 19a6 6 0 0 0 12 0v-2l-6-3-2 3z" fill="#ffcc9e"/>',
- teacherPanel:'<rect x="11" y="4" width="23" height="21" rx="2" stroke="var(--pa-icon-ink)"/><path d="M17 10h11m-11 5h8" stroke="var(--pa-icon-muted)"/><circle cx="10" cy="18" r="7" fill="#56382e"/><path d="M5 18a5 5 0 0 0 10 0v-3l-4 1-3-3z" fill="#ffcc9e"/><path d="M2 34v-3c0-7 12-8 15-3l5-7 3 2-6 11z" fill="var(--pa-coral)"/>',
+ route:'<path d="M9 28c4 7 12 1 10-4s3-7 7-6" stroke="var(--pa-icon-ink)" stroke-dasharray="2 3"/><path fill="#329f9c" d="M16 20c0 5-6 10-6 10s-6-5-6-10a6 6 0 0 1 12 0Zm17-12c0 4-6 10-6 10s-6-6-6-10a6 6 0 0 1 12 0Z"/><circle cx="10" cy="20" r="2" fill="#fff"/><circle cx="27" cy="8" r="2" fill="#fff"/>',
+ guardian:'<path d="M2 33v-3a9 9 0 0 1 18 0v3" fill="#52749a"/><path d="M16 33v-2a9 9 0 0 1 18 0v2" fill="#329f9c"/><circle cx="11" cy="14" r="8" fill="#56382e"/><circle cx="25" cy="18" r="8" fill="#694338"/><path d="M5 15a6 6 0 0 0 12 0v-3l-5 1-3-3zM19 19a6 6 0 0 0 12 0v-2l-6-3-2 3z" fill="#ffcc9e"/>',
+ teacherPanel:'<rect x="11" y="4" width="23" height="21" rx="2" stroke="var(--pa-icon-ink)"/><path d="M17 10h11m-11 5h8" stroke="var(--pa-icon-muted)"/><circle cx="10" cy="18" r="7" fill="#56382e"/><path d="M5 18a5 5 0 0 0 10 0v-3l-4 1-3-3z" fill="#ffcc9e"/><path d="M2 34v-3c0-7 12-8 15-3l5-7 3 2-6 11z" fill="#329f9c"/>',
  shop:'<path d="M5 14v17h26V14M13 31v-9h10v9M6 4h24l4 9c-1 5-6 5-8 2-2 3-6 3-8 0-2 3-6 3-8 0-2 3-7 3-8-2zM12 4l-2 11m8-11v11m6-11 2 11" stroke="currentColor"/>',
- parentSwitch:'<circle cx="13" cy="11" r="6" fill="var(--pa-coral)"/><circle cx="27" cy="13" r="4.5" fill="var(--pa-coral)"/><path d="M2 31v-3a11 10 0 0 1 22 0v3Zm24 0v-3a13 13 0 0 0-3-8 8 8 0 0 1 11 7v4z" fill="var(--pa-coral)"/>',
- support:'<path d="M5 19v-3a13 13 0 0 1 26 0v4m-2 7c0 5-5 6-9 6" stroke="var(--pa-coral)"/><rect x="3" y="16" width="7" height="12" rx="3" stroke="var(--pa-coral)"/><rect x="26" y="16" width="7" height="12" rx="3" stroke="var(--pa-coral)"/><circle cx="19" cy="33" r="2" fill="var(--pa-coral)"/>'
+ parentSwitch:'<circle cx="13" cy="11" r="6" fill="var(--pa-icon-ink)"/><circle cx="27" cy="13" r="4.5" fill="var(--pa-icon-ink)"/><path d="M2 31v-3a11 10 0 0 1 22 0v3Zm24 0v-3a13 13 0 0 0-3-8 8 8 0 0 1 11 7v4z" fill="var(--pa-icon-ink)"/>',
+ support:'<path d="M5 19v-3a13 13 0 0 1 26 0v4m-2 7c0 5-5 6-9 6" stroke="var(--pa-icon-ink)"/><rect x="3" y="16" width="7" height="12" rx="3" stroke="var(--pa-icon-ink)"/><rect x="26" y="16" width="7" height="12" rx="3" stroke="var(--pa-icon-ink)"/><circle cx="19" cy="33" r="2" fill="var(--pa-icon-ink)"/>'
 };
 function profileIcon(action){
  return '<svg class="pa-card-icon" viewBox="0 0 36 36" aria-hidden="true" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'+profileIcons[action]+'</svg>';
@@ -52,6 +52,7 @@ function paintProfileCards(level,xp,progress,closeButton,hasTeacher){
  const levelXp=Math.max(0,xp-(progress?.start||0)).toLocaleString('tr-TR');
  const goalXp=Math.max(1,(progress?.next||40)-(progress?.start||0)).toLocaleString('tr-TR');
  const progressLabel=progress?.next===null?'En yüksek seviye':levelXp+' / '+goalXp+' XP';
+ const ratio=Math.max(0,Math.min(1,Number(progress?.ratio)||0));
  const teacherAttrs=hasTeacher?'':' disabled aria-disabled="true" title="Öğretmen hesabı bağlı değil"';
  return `<header class="pa-hero">
    <span class="pa-hero-papi" aria-hidden="true"><svg viewBox="16 174 162 121" aria-hidden="true"><image href="friends-assets/centre-reference.webp" width="900" height="1748"/></svg></span>
@@ -60,20 +61,28 @@ function paintProfileCards(level,xp,progress,closeButton,hasTeacher){
   </header>
   <div class="pa-body">
    <div class="pa-user">
-    <span class="pa-avatar" aria-hidden="true"></span>
-    <div class="pa-user-copy"><div class="pa-name-row"><strong></strong><small class="pa-level">Seviye ${level}</small></div>
-     <progress value="${progress?.ratio||0}" max="1" aria-label="Seviye ilerlemen"></progress>
-     <div class="pa-xp-row">${progressLabel}</div>
+    <div class="pa-portrait">
+     <span class="pa-laurel" aria-hidden="true"><svg viewBox="0 0 48 70" aria-hidden="true"><path d="M42 67Q8 47 13 5" fill="none" stroke="#cb9231" stroke-width="2.5" stroke-linecap="round"/><g fill="#edc16a" stroke="#c99540" stroke-width=".7"><ellipse cx="12" cy="12" rx="5" ry="10" transform="rotate(-20 12 12)"/><ellipse cx="20" cy="23" rx="5" ry="10" transform="rotate(40 20 23)"/><ellipse cx="8" cy="29" rx="5" ry="10" transform="rotate(-39 8 29)"/><ellipse cx="25" cy="39" rx="5" ry="10" transform="rotate(43 25 39)"/><ellipse cx="15" cy="46" rx="5" ry="10" transform="rotate(-52 15 46)"/><ellipse cx="34" cy="55" rx="5" ry="10" transform="rotate(50 34 55)"/></g></svg></span>
+     <div class="pa-avatar-frame">
+      <span class="pa-avatar" aria-hidden="true"></span>
+      <button type="button" class="pa-edit" data-profile="profile" aria-label="Profilimi düzenle">✎</button>
+     </div>
+     <span class="pa-laurel pa-laurel-right" aria-hidden="true"><svg viewBox="0 0 48 70" aria-hidden="true"><path d="M42 67Q8 47 13 5" fill="none" stroke="#cb9231" stroke-width="2.5" stroke-linecap="round"/><g fill="#edc16a" stroke="#c99540" stroke-width=".7"><ellipse cx="12" cy="12" rx="5" ry="10" transform="rotate(-20 12 12)"/><ellipse cx="20" cy="23" rx="5" ry="10" transform="rotate(40 20 23)"/><ellipse cx="8" cy="29" rx="5" ry="10" transform="rotate(-39 8 29)"/><ellipse cx="25" cy="39" rx="5" ry="10" transform="rotate(43 25 39)"/><ellipse cx="15" cy="46" rx="5" ry="10" transform="rotate(-52 15 46)"/><ellipse cx="34" cy="55" rx="5" ry="10" transform="rotate(50 34 55)"/></g></svg></span>
     </div>
-    <button type="button" class="pa-edit" data-profile="profile" aria-label="Profilimi düzenle">✎</button>
+    <div class="pa-user-copy"><div class="pa-name-row"><strong></strong><small class="pa-level"><span aria-hidden="true">★</span> Seviye ${level}</small></div>
+     <div class="pa-xp-row">${progressLabel}</div>
+     <div class="pa-xp-track" role="progressbar" aria-label="Seviye ilerlemen" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${Math.round(ratio*100)}" style="--pa-progress:${ratio*100}%"><span class="pa-xp-fill"></span></div>
+    </div>
    </div>
    <div class="pa-grid">${centreItems.map(([label,action])=>`<button type="button" data-profile="${action}">${profileIcon(action)}<span><b>${label}</b></span></button>`).join('')}</div>
    <div class="dm-profile-shop-row">
     <button type="button" data-profile="shop">${profileIcon('shop')}<b>Mağaza</b><em aria-hidden="true">›</em></button>
     <button type="button" data-profile="parentSwitch">${profileIcon('parentSwitch')}<b>Veli Hesabına Geç</b><em aria-hidden="true">›</em></button>
     <button type="button" data-profile="teacherSwitch"${teacherAttrs}>${profileIcon('teacherPanel')}<b>Öğretmen Hesabına Geç</b><em aria-hidden="true">›</em></button>
-    <button type="button" class="au-account-entry" data-centre="account">${profileIcon('support')}<b>Hesap ve Destek</b><em aria-hidden="true">›</em></button>
    </div>
+  </div>
+  <div class="dm-profile-shop-row pa-support-row">
+   <button type="button" class="au-account-entry" data-centre="account">${profileIcon('support')}<b>Hesap ve Destek</b><em aria-hidden="true">›</em></button>
   </div>`;
 }
 window.dmProfileMenuAc=function(initial='main'){
@@ -102,7 +111,7 @@ window.dmProfileMenuAc=function(initial='main'){
   window.dmTeacherWorkspace?.paintBadge();el.querySelector(account?'.au-back':'.rt-close').focus();
  }
  el.onclick=e=>{if(e.target===el||e.target.closest('.rt-close')){close();last.focus();return;}const local=e.target.closest('[data-centre]');if(local){pane=local.dataset.centre==='account'?'account':'main';paint();return;}const b=e.target.closest('[data-profile]');if(!b||b.disabled||b.getAttribute('aria-disabled')==='true')return;profileReturnPane=pane;close();window.dmProfileReturnPending=b.dataset.profile!=='logout';({shop:()=>window.magazaAc?.(),parentSwitch:()=>{if(typeof window.dmParentBridge?.open==='function')window.dmParentBridge.open();else location.assign('veli-paneli.html');},teacherSwitch:()=>{if(window.dmTeacherSwitch?.available?.())return window.dmTeacherSwitch.open();if(typeof window.ogretmenPaneliAc==='function'&&name.toLowerCase()==='teacher')return window.ogretmenPaneliAc();},certificates:()=>window.dmGraduations?.openLibrary(),profile:()=>window.kisiselBilgilerAc?.(),daily:()=>window.sanaOzelTamEkranAc?.(),progress:()=>window.dmIlerlememAc?.(),badges:()=>window.dmBasarilarimAc?.(),teacher:()=>{if(!window.dmTeacherPortalMode&&name.toLowerCase()!=='teacher'){window.dmTeacherPortal?.openLogin();return;}if(typeof window.ogretmenPaneliAc==='function')window.ogretmenPaneliAc();else window.yoToast?.('Öğretmen paneli yüklenemedi.');},exam:()=>{if(typeof window.seviyeTestAc==='function')window.seviyeTestAc();else window.sanaOzelTamEkranAc?.();},repeat:()=>{if(typeof window.yoZkAc==='function')window.yoZkAc();else window.sanaOzelTamEkranAc?.();},coach:()=>window.dmTeacherChatOpen(),route:()=>window.dmMemberExperience?.chooseRoute(true),guardian:()=>window.dmSocialSafety?.parent(),safety:()=>window.dmSocialSafety?.help(),settings:()=>window.dmHesapAyarlariAc?.(),help:()=>window.yardimAc?.(),switchAccount:()=>window.dmHesapDegistirAc?.(),logout:()=>{if(window.confirm('Çıkış yapmak istiyor musun?'))window.cikisYap?.();},pro:()=>window.DMSatis?.planlar?.('profil'),teacherPanel:()=>{if(window.dmTeacherSwitch?.available?.())return window.dmTeacherSwitch.open();if(typeof window.ogretmenPaneliAc==='function'&&name.toLowerCase()==='teacher')return window.ogretmenPaneliAc();window.dmTeacherPortal?.openLogin?.();}})[b.dataset.profile]?.();};
- el.onkeydown=e=>{if(e.key==='Escape'){e.preventDefault();if(pane==='account'){pane='main';paint();}else{close();last.focus();}}if(e.key==='Tab'){const buttons=[...el.querySelectorAll('button')].filter(b=>b.getClientRects().length),i=buttons.indexOf(document.activeElement);e.preventDefault();buttons[(i+(e.shiftKey?-1:1)+buttons.length)%buttons.length].focus();}};
+ el.onkeydown=e=>{if(e.key==='Escape'){e.preventDefault();if(pane==='account'){pane='main';paint();}else{close();last.focus();}}if(e.key==='Tab'){const buttons=[...el.querySelectorAll('button')].filter(b=>!b.disabled&&b.getClientRects().length),i=buttons.indexOf(document.activeElement);e.preventDefault();buttons[(i+(e.shiftKey?-1:1)+buttons.length)%buttons.length].focus();}};
  document.body.append(el);paint();nav.querySelectorAll('.bn-item').forEach(b=>b.classList.toggle('active',b===last));last.setAttribute('aria-expanded','true');syncProfileDock();
 };
 
@@ -188,7 +197,7 @@ window.dmDuelHomeAc=function(){
     <div class="dm-duel-hero-stage">
      <div class="dm-duel-hero-copy">
       <span class="dm-duel-live-pill"><span class="dm-duel-live-dot" aria-hidden="true"></span>Anlık Eşleşme</span>
-      <h2>Rakibini Bul,<br>XP Kazan!</h2>
+      <h2>Rakibini Bul,<br><span class="dm-duel-xp-accent">XP Kazan!</span></h2>
      </div>
      <img class="dm-duel-hero-papi" src="friends-assets/duel-b-papi.webp" width="400" height="430" alt="">
     </div>

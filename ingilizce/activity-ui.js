@@ -47,6 +47,8 @@
  const free={kelimeGoluDuo:[19,'İki kale, dört köşe; doğru anlamı seç ve golünü at. Enerji harcanmaz.','Maçı Başlat'],papiCardsActivity:[12,'Kelime kartlarını dinle ve öğren.','Kartları Aç'],meteorActivity:[13,'Aynı cihazda kelimeleri yakala, rakibini geç.','Oyunu Aç'],wordWheelActivity:[14,'Çarkı çevir, doğru kelimeyi bul.','Çarkı Aç'],sentenceRaceActivity:[17,'İki takım · farklı sorular · 12 tur · süre bonusu.','Yarışı Başlat']};
  const icon=name=>'<svg class="gg-icon" aria-hidden="true"><use href="games-assets/ui-icons.svg#'+name+'"></use></svg>';
  let party='premium',skill='Tümü',lastAccount='',friendsLoaded=false,knownGrid=null,key='';
+ const retiredGates=new Set(['oyun_jeopardy','oyun_kelimebul','oyun_dikte','oyun_canavar']);
+ const retiredCard=b=>!window.dmTeacherPortalMode&&(b.dataset.ggCategory==='break'||retiredGates.has(b.dataset.ggGate)||retiredGates.has(game(b)[3]));
  const categories={solo:'Tek Kişilik',free:'Sınıfta Oyna',konu:'Konu Oyunları',break:'Mola Vakti',premium:'Premium Oyunlar'};
  const premiumOrder=['kelimeGoluSolo','papizzleActivity','towerActivity','premiumWordMatchActivity','premiumCloudFlightActivity','premiumWordBlocksActivity','rallyActivity'];
  const listOrder=['game-jpOyunAc()','game-kelimeYarismasiAc()','kelimeGoluSolo','mola-kosu','premiumWordBlocksActivity','papizzleActivity'];
@@ -61,7 +63,7 @@ const categoryIcons={solo:0,free:2,konu:3,break:4,premium:5};
   dmRotaKart:'games-assets/cumle-rotasi-cover.svg'
  };
  function changeCategory(host,grid,category,topicCategory){
-  if(!window.dmTeacherPortalMode&&['free','konu'].includes(category))category='solo';
+  if(!window.dmTeacherPortalMode&&['free','konu','break'].includes(category))category='solo';
   party=category;skill='Tümü';render(host,grid,topicCategory);
   host.closest('#tab-aktiviteler').scrollTop=0;
   host.querySelector('[data-gg-party="'+(category==='tools'?'all':category)+'"]')?.focus({preventScroll:true});
@@ -79,6 +81,7 @@ const categoryIcons={solo:0,free:2,konu:3,break:4,premium:5};
   document.body.append(overlay);document.addEventListener('keydown',keys);overlay.querySelector('[data-plans]').focus();
  }
  async function premiumEntry(card){
+  if(retiredCard(card))return;
   const launch=()=>{
    if(window.dmTeam?.isPremiumSession?.()&&window.dmTeam.launchPremiumCard?.(card))return;
    card.click();
@@ -169,7 +172,7 @@ const categoryIcons={solo:0,free:2,konu:3,break:4,premium:5};
   const list=host.querySelector('.gg-overview');
   const cards=all.filter(card=>{
    const {ggCategory:category,ggTitle:title,ggGameSkill:gameSkill}=card.dataset;
-   return categories[category]&&(!window.dmTeacherPortalMode||!['duo','break'].includes(category))&&(party==='all'||party===category)&&
+   return categories[category]&&(!window.dmTeacherPortalMode||category!=='duo')&&(party==='all'||party===category)&&
     (party!=='solo'||skill==='Tümü'||gameSkill===skill||skill==='Kelime'&&gameSkill==='Hafıza');
   });
   cards.sort((a,b)=>(party==='all'?listRank(a.dataset.ggId)-listRank(b.dataset.ggId):0)||Number(a.style.order)-Number(b.style.order));
@@ -245,14 +248,16 @@ const categoryIcons={solo:0,free:2,konu:3,break:4,premium:5};
  function render(host,grid,topicCategory){
   const routeCard=b=>/asmacaOyunAc/.test(b.getAttribute('onclick')||'')||/yolculuguAc|baModuAc|baFabTikla|buyuAkademisiYeniAc/.test(b.getAttribute('onclick')||'');
   grid.querySelectorAll('.az-gcard').forEach(b=>{if(routeCard(b)){b.hidden=true;b.style.setProperty('display','none','important');}});
-  const all=[...grid.querySelectorAll('.az-gcard'),...host.querySelectorAll('.gg-tools .az-gcard')].filter(b=>!routeCard(b));all.forEach(prepare);
+  const candidates=[...grid.querySelectorAll('.az-gcard'),...host.querySelectorAll('.gg-tools .az-gcard')];
+  for(const b of candidates)if(retiredCard(b)){b.hidden=true;b.style.setProperty('display','none','important');}
+  const all=candidates.filter(b=>!routeCard(b)&&!retiredCard(b));all.forEach(prepare);
   let tools=host.querySelector('.gg-tools');if(!tools){tools=document.createElement('section');tools.className='gg-tools';tools.setAttribute('aria-labelledby','ggToolsTitle');tools.innerHTML='<h2 id="ggToolsTitle">Çalışma Araçları</h2><p>Odaklanmak ve okuma becerini geliştirmek için yardımcı araçlar.</p><div class="gg-tools-grid"></div>';grid.after(tools);}all.filter(b=>b.dataset.ggCategory==='tools').forEach(b=>{if(b.parentElement!==tools.querySelector('.gg-tools-grid'))tools.querySelector('.gg-tools-grid').append(b);});const redesigned=host.classList.contains('gg-redesign');tools.hidden=party!==(redesigned?'tools':'solo');
   const teacher=!!window.dmTeacherPortalMode;
-  if(!teacher&&['free','konu'].includes(party))party='solo';
+  if(!teacher&&['free','konu','break'].includes(party))party='solo';
   host.querySelectorAll('[data-gg-party="free"],[data-gg-party="konu"]').forEach(b=>{b.hidden=!teacher;b.style.setProperty('display',teacher?'':'none','important');});
   const freeGroup=party!=='premium';
   const tabs=host.querySelector('.gg-tabs');tabs.hidden=!freeGroup;
-  tabs.style.setProperty('grid-template-columns','repeat(2,minmax(0,1fr))','important');
+  tabs.style.setProperty('grid-template-columns',teacher?'repeat(2,minmax(0,1fr))':'1fr','important');
   host.querySelector('.gg-category-question').hidden=!freeGroup;
   host.classList.toggle('gg-cat-a',!teacher); // [18 Kas 2026] Öğrenci: A tasarımı büyük resimli kartlar
   tabs.querySelectorAll('button').forEach(b=>{b.style.setProperty('grid-column',teacher&&b.dataset.ggParty==='konu'?'1/-1':'auto','important');if(b.dataset.ggParty==='premium')b.style.setProperty('display','none','important');});
@@ -261,11 +266,14 @@ const categoryIcons={solo:0,free:2,konu:3,break:4,premium:5};
 
   host.classList.toggle('gg-teacher-list',teacher);
   host.querySelectorAll('#ggOnlineTab,#ggBreakTab').forEach(button=>{
-   if(button.hidden!==teacher)button.hidden=teacher;
-   if(teacher)button.style.setProperty('display','none','important');
+   const hidden=button.id==='ggBreakTab'?!teacher:teacher;
+   button.hidden=hidden;
+   if(hidden)button.style.setProperty('display','none','important');
    else button.style.removeProperty('display');
   });
-  if(teacher&&['duo','break'].includes(party))party='solo';delete host.dataset.dmParty;host.dataset.ggParty=party;const active=party;
+  const listen=host.querySelector('[data-gg-skill="Dinleme"]');if(listen){listen.hidden=!teacher;listen.style.setProperty('display',teacher?'':'none','important');}
+  if(!teacher&&skill==='Dinleme')skill='Tümü';
+  if(teacher&&party==='duo')party='solo';delete host.dataset.dmParty;host.dataset.ggParty=party;const active=party;
   host.querySelectorAll('[data-gg-party]').forEach(b=>{const on=b.dataset.ggParty===active;b.setAttribute(redesigned?'aria-pressed':'aria-selected',String(on));b.tabIndex=redesigned||on?0:-1;});
   host.querySelectorAll('.gg-filters [data-gg-skill]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.ggSkill===skill)));
   host.querySelector('.gg-banner')?.remove();

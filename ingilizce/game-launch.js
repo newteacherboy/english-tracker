@@ -145,7 +145,7 @@
   entry.querySelectorAll('.unite-chip').forEach((c,i)=>{
    if(c.dataset.glTone!==String(i%4))c.dataset.glTone=String(i%4);
    const on=String(c.classList.contains('selected'));if(c.getAttribute('aria-pressed')!==on)c.setAttribute('aria-pressed',on);
-   if(!c.dataset.unitNumber){const n=Number((c.textContent.match(/\d+/)||[])[0]);if(n){for(const node of [...c.childNodes]){if(node.nodeType===3&&node.textContent.trim()){const sp=document.createElement('span');node.before(sp);sp.append(node);}}c.dataset.unitNumber=String(n);const t=unitTitle(grade,n);c.dataset.unitTitle=t||(n+'. Ünite');c.setAttribute('aria-label',n+'. Ünite'+(t?' · '+t:''));}}
+   wrapUnitChip(c,grade);
   });
   const mine=myLevel();
   entry.querySelectorAll('.gl-level').forEach(b=>{const has=!!b.querySelector('.gl-mine');if((b.dataset.level===mine)!==has){if(has)b.querySelector('.gl-mine').remove();else b.insertAdjacentHTML('afterbegin','<span class="gl-mine">Senin seviyen</span>');}});
@@ -158,10 +158,12 @@
  ];
  const hbState={};
  function wrapUnitChip(c,grade){
-  if(c.dataset.unitNumber)return;
-  const n=Number(c.dataset.unit||c.querySelector('input')?.value||(c.textContent.match(/\d+/)||[])[0]);if(!n)return;
+  const n=Number(c.dataset.unit||c.dataset.unitNumber||c.querySelector('input')?.value||(c.textContent.match(/\d+/)||[])[0]);if(!n)return;
   for(const node of [...c.childNodes]){if(node.nodeType===3&&node.textContent.trim()){const sp=document.createElement('span');node.before(sp);sp.append(node);}}
-  c.dataset.unitNumber=String(n);const t=unitTitle(grade,n);c.dataset.unitTitle=t||(n+'. Ünite');c.setAttribute('aria-label',n+'. Ünite'+(t?' · '+t:''));
+  const t=unitTitle(grade,n),title=t||(n+'. Ünite'),label=n+'. Ünite'+(t?' · '+t:'');
+  if(c.dataset.unitNumber!==String(n))c.dataset.unitNumber=String(n);
+  if(c.dataset.unitTitle!==title)c.dataset.unitTitle=title;
+  if(c.getAttribute('aria-label')!==label)c.setAttribute('aria-label',label);
  }
  function decorateHb(cfg){
   if(window.dmSoloLevels?.active)return;

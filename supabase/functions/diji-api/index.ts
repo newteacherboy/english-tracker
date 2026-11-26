@@ -19,6 +19,7 @@ import {socialSafetyAPI} from './social-safety.mjs';
 import {normalizeLearnerProfile,learnerClass,saveLearnerProfile,seedLearningRoute} from './learner-profile.mjs';
 import {requireSafePassword,PasswordPolicyError} from './password-security.mjs';
 import {verifiedGamesAPI} from './verified-games.mjs';
+import {retiredStudentOperation} from './student-game-retirement.mjs';
 import {soloLevelsAPI} from './solo-levels.mjs';
 import {validateRegistrationEmail} from './registration-email.mjs';
 import {gradeStudyQuiz,studyTier,recoveryQuestions} from './fair-study.mjs';
@@ -1429,6 +1430,7 @@ async function handle(req: Request, proxy: any = null) {
     return iceAktar(body);
   }
   const a = proxy || await auth(req, body, q);
+  if(retiredStudentOperation(op,body,q,a))return json({ok:false,hata:'oyun_kaldirildi',mesaj:'Bu oyun artık öğrenci hesabında sunulmuyor.'},410);
   const portalResponse=await teacherPortal.handle(op,body,a,req.method);if(portalResponse)return portalResponse;
   if(a?.teacher_portal_access_id&&a.role==="student"&&!portalOperationAllowed(op,{...Object.fromEntries(q),...body}))return json({ok:false,mesaj:"Bu işlem için kişisel hesabına geç."},403);
   authSeen.set(req, a);
@@ -3208,7 +3210,7 @@ function papiCardsAPI(db:any,json:any){
   const prior=await db.from('papi_card_results').select('display_name,score').eq('owner_key',owner).eq('run_id',run).limit(1);
   if(prior.error)return json({ok:false,mesaj:'Kayıt doğrulanamadı.'},503);
   if(prior.data?.length)return json({ok:true,isim:prior.data[0].display_name,puan:prior.data[0].score});
-  const bank=await db.from('word_bank').select('english,turkish').eq('active',true).eq('class_no',cls).eq('unit_no',unit).limit(2001);
+  const bank=await db.from(a?.teacher_portal_access_id&&cls===7?'teacher_grade7_word_bank':'word_bank').select('english,turkish').eq('active',true).eq('class_no',cls).eq('unit_no',unit).limit(2001);
   if(bank.error)return json({ok:false,mesaj:'Kelime destesi doğrulanamadı.'},503);
   const count=new Set((bank.data||[]).filter((r:any)=>String(r.english||'').trim()&&String(r.turkish||'').trim()).map((r:any)=>String(r.english).trim().toLocaleLowerCase('en'))).size;
   // Older clients still submit the full unit. New clients explicitly submit a capped round.

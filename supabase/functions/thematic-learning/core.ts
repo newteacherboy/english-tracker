@@ -116,7 +116,7 @@ export function thematicHandler(db:DB){
     else if(record.cursor>=stepCount(record.deck_version)){await db.update('papi_story_progress',{...filters,version:'eq.'+record.version},{cursor:0,deck_version:requestedVersion,replay:true,questions_seen:0,charged_cursor:-1,mistakes:0,last_reward:{},route_combo:0,version:record.version+1,updated_at:new Date().toISOString()});record=await read();}
     // Preserve the meaning of a partially answered deck. Upgrade only before its first step.
     if(record&&record.cursor===0&&requestedVersion>=6&&requestedVersion>(record.deck_version||5)){await db.update('papi_story_progress',{...filters,version:'eq.'+record.version},{deck_version:requestedVersion,version:record.version+1});record=await read();}
-    return record?json({...await withRecovery(record),wallet:await balance(record)}):json({ok:false,mesaj:'Bölüm açılamadı. Yeniden dene.'},503);
+    return record?json({...await withRecovery(record),routeVisualQuestions:record.deck_version===8?(b.routeVisualQuestions===2?2:b.routeVisualQuestions===true):false,wallet:await balance(record)}):json({ok:false,mesaj:'Bölüm açılamadı. Yeniden dene.'},503);
    }
    if(!record)return json({ok:false,mesaj:'Önce bölümü aç.'},409);
    if((record.deck_version||5)!==requestedVersion)return json({ok:false,mesaj:'Öğrenme yolunu güncellemek için uygulamayı yenile.'},409);
@@ -144,7 +144,7 @@ export function thematicHandler(db:DB){
    }
    const recovery=await recoveryStatus();
    if(recovery&&!recovery.completed&&!record.completed&&!record.replay)return json({...await withRecovery(record),stale:true,wallet:await balance(record)});
-   const tasks=requestedVersion===8?V8.build(C,chapters.find(c=>c.id===C.previousId)):CORE.deck(C,chapters.find(c=>c.id===C.previousId),requestedVersion),task=tasks[record.cursor],grade=CORE.grade(task,b.answer);
+   const tasks=requestedVersion===8?V8.build(C,chapters.find(c=>c.id===C.previousId),b.routeVisualQuestions===2?2:b.routeVisualQuestions===true,chapters):CORE.deck(C,chapters.find(c=>c.id===C.previousId),requestedVersion),task=tasks[record.cursor],grade=CORE.grade(task,b.answer);
    if(!grade.valid)return json({ok:false,mesaj:'Bu etkinlik için bir cevap seç.'},400);
    // The first-answer migration is installed and verified. This records only
    // the original graded attempt; old reward and progress transactions are unchanged.

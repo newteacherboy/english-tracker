@@ -162,7 +162,12 @@ async function choose(n){
   :()=>navigate(item);
  return detail({...item,title:headline(item)},action);
 }
-function navigate(item){switch(item.tur){
+function navigate(item){
+ if(item.routeTab==='team-requests'||(item.tur==='gorev'&&/Takıma katılma isteği|Takım daveti|Kaptanlık teklifi/i.test(item.title||''))){
+  const kind=/katılma isteği/i.test(item.title||'')?'join':/takım daveti/i.test(item.title||'')?'invite':'transfer';
+  return window.dmTeam?.navigateRequests?.(kind);
+ }
+ switch(item.tur){
  case 'canliDuelloDavet':return typeof window.dmLiveDuel?.openInvite==='function'?window.dmLiveDuel.openInvite(item.duelId,item.opponent):window.dmLeagueUI?.openDuelChooser?.();
  case 'sureSandik':{let chest=Number(item.chestIndex);if(window.dmActiveTime?.unclaimed?.().includes(chest))return window.dmActiveTime.openChest(chest);return window.DijiDailyGift?.open?.();}
  case 'canliDuelloSonuc':if(item.duelId&&window.dmLiveDuel?.openResult)return window.dmLiveDuel.openResult(item.duelId);return window.dmLeagueUI?.openDuelChooser?.();

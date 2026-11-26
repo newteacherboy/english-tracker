@@ -39,3 +39,46 @@
 #dmStoryLesson .ml-teach [data-learn].is-listened small{font-weight:800!important}
 #dmStoryLesson .ml-teach [data-learn].is-listened small{font-size:18px!important;display:grid!important;place-items:center!important} #dmStoryLesson .ml-teach [data-learn].is-listened small::after{display:none!important}
 }
+
+/* 26 Kasım · Sihirli Kelimeler: white, full-screen route transition. Original Papi SVG. */
+.dm-route-flight-magic{background:#fff;color:#182748;--rf-time:2.4s}
+.dm-route-flight-magic .rf-stage{width:min(100%,360px);height:min(100%,530px)}
+.dm-route-flight-magic :is(.rf-shade,.rf-light,.rf-pool,.rf-speech){display:none}
+.dm-route-flight-magic .rf-magic-heading{position:absolute;inset:3% 10px auto;text-align:center;z-index:3}
+.dm-route-flight-magic .rf-magic-brand{color:#5521b8;font:950 clamp(19px,5.7vw,25px)/1.1 Nunito,ui-rounded,system-ui,sans-serif;letter-spacing:-.6px}
+.dm-route-flight-magic .rf-magic-ribbon{display:inline-block;margin-top:7px;padding:5px 13px;border-radius:14px;background:#7628dc;color:#fff;font:900 12px/1.15 Nunito,system-ui,sans-serif}
+.dm-route-flight-magic .rf-magic-learned,.dm-route-flight-magic .rf-magic-ready{position:absolute;left:0;right:0;top:calc(100% + 13px);font:950 clamp(22px,7vw,31px)/1.05 Nunito,ui-rounded,system-ui,sans-serif;letter-spacing:-.7px;color:#49228f;opacity:0}
+.dm-route-flight-magic .rf-magic-learned strong,.dm-route-flight-magic .rf-magic-ready b{color:#aa7400}
+.dm-route-flight-magic .rf-actor{width:132px;height:145px;left:calc(50% - 66px);top:calc(54% - 72px);z-index:3;filter:drop-shadow(0 5px 8px #21b8b82e)}
+.dm-route-flight-magic .rf-magic-orbit{position:absolute;top:29%;left:9%;width:82%;height:48%;box-sizing:border-box;border:2px solid #efc12b;border-left-color:#20cbbb;border-right-color:#a879f7;border-radius:50%;transform:rotate(-14deg);box-shadow:0 0 12px #ffdc7838;opacity:0}
+.dm-route-flight-magic .rf-magic-cards{position:absolute;inset:27% 8% 17%;z-index:2;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:repeat(2,minmax(0,1fr));align-items:center;justify-items:start;gap:6px 30px}
+.dm-route-flight-magic .rf-magic-card{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;box-sizing:border-box;width:min(100%,102px);height:min(100%,105px);min-height:0;padding:4px;border:1px solid #f3d46c;border-radius:17px;background:#fff;box-shadow:0 2px 10px #ffd95153;opacity:0}
+.dm-route-flight-magic .rf-magic-card:nth-child(even){justify-self:end}
+.dm-route-flight-magic .rf-magic-picture{display:grid;place-items:center;width:100%;min-height:0;flex:1;color:#17a99e;font:900 24px/1 Nunito,system-ui,sans-serif;overflow:hidden;border-radius:10px}
+.dm-route-flight-magic .rf-magic-picture img{width:100%;height:100%;min-height:0;object-fit:contain;display:block}
+.dm-route-flight-magic .rf-magic-card b{font:900 clamp(10px,3.4vw,13px)/1.1 Nunito,ui-rounded,system-ui,sans-serif;color:#3d247e;text-align:center;overflow-wrap:anywhere;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;overflow:hidden}
+.dm-route-flight-magic .rf-magic-stars{position:absolute;inset:22% 4% 13%;z-index:1;pointer-events:none}
+.dm-route-flight-magic .rf-magic-stars i{position:absolute;top:8%;left:3%;color:#eab92b;font:900 21px/1 system-ui;opacity:0}
+.dm-route-flight-magic .rf-magic-stars i:nth-child(2n){left:auto;right:3%;color:#24c6bf}
+.dm-route-flight-magic .rf-magic-stars i:nth-child(3n){color:#a26bf1}
+.dm-route-flight-magic .rf-magic-stars i:nth-child(1),.dm-route-flight-magic .rf-magic-stars i:nth-child(2){top:10%}
+.dm-route-flight-magic .rf-magic-stars i:nth-child(3),.dm-route-flight-magic .rf-magic-stars i:nth-child(4){top:34%}
+.dm-route-flight-magic .rf-magic-stars i:nth-child(5),.dm-route-flight-magic .rf-magic-stars i:nth-child(6){top:66%}
+.dm-route-flight-magic .rf-magic-stars i:nth-child(7),.dm-route-flight-magic .rf-magic-stars i:nth-child(8){top:88%}
+.dm-route-flight-magic .rf-magic-footer{position:absolute;bottom:4%;left:50%;transform:translateX(-50%);white-space:nowrap;padding:8px 14px;border-radius:18px;background:#fff9df;color:#53268f;font:850 13px/1.2 Nunito,system-ui,sans-serif;box-shadow:0 1px 8px #f5cf5944;opacity:0}
+.dm-route-flight-magic.is-playing .rf-actor{animation:rf-magic-actor var(--rf-time) both}
+.dm-route-flight-magic.is-playing .rf-magic-learned{animation:rf-magic-learned var(--rf-time) both}
+.dm-route-flight-magic.is-playing .rf-magic-ready,.dm-route-flight-magic.is-playing .rf-magic-footer{animation:rf-magic-ready var(--rf-time) both}
+.dm-route-flight-magic.is-playing .rf-magic-card{animation:rf-magic-card calc(var(--rf-time) - var(--i)*75ms) both;animation-delay:calc(var(--i)*75ms)}
+.dm-route-flight-magic.is-playing .rf-magic-orbit{animation:rf-magic-orbit var(--rf-time) both}
+.dm-route-flight-magic.is-playing .rf-magic-stars i{animation:rf-magic-star .95s ease-in-out infinite alternate;animation-delay:calc(var(--i)*90ms)}
+@keyframes rf-magic-actor{0%{opacity:0;transform:translate(-38vw,30px) rotate(-16deg) scale(.75)}23%{opacity:1;transform:translateY(-5px) rotate(4deg)}50%{opacity:1;transform:translateY(3px)}80%{opacity:1;transform:translateY(-5px) scale(1.06)}100%{opacity:1;transform:none}}
+@keyframes rf-magic-learned{0%,19%{opacity:0;transform:translateY(5px) scale(.9)}28%,57%{opacity:1;transform:none}66%,100%{opacity:0}}
+@keyframes rf-magic-ready{0%,57%{opacity:0}69%,100%{opacity:1}}
+@keyframes rf-magic-card{0%,8%{opacity:0;transform:translateY(13px) scale(.75)}26%,58%{opacity:1;transform:none}78%,100%{opacity:1;transform:translateY(-3px) rotate(-3deg)}}
+@keyframes rf-magic-orbit{0%,16%{opacity:0;transform:rotate(-40deg) scale(.85)}43%,100%{opacity:1;transform:rotate(-14deg) scale(1)}}
+@keyframes rf-magic-star{from{opacity:.3;transform:scale(.7)}to{opacity:1;transform:scale(1.05)}}
+.dm-route-flight-magic.is-reduced.is-playing :is(.rf-magic-card,.rf-magic-orbit,.rf-magic-stars i,.rf-magic-ready,.rf-magic-footer){animation:none!important;opacity:1;transform:none}
+.dm-route-flight-magic.is-reduced.is-playing .rf-magic-footer{transform:translateX(-50%)}
+.dm-route-flight-magic.is-reduced.is-playing .rf-magic-learned{display:none}
+@media(max-height:450px) and (orientation:landscape){.dm-route-flight-magic .rf-stage{width:min(100%,460px)}.dm-route-flight-magic .rf-magic-heading{top:1%}.dm-route-flight-magic .rf-magic-ribbon{margin-top:2px}.dm-route-flight-magic .rf-magic-ready,.dm-route-flight-magic .rf-magic-learned{font-size:19px;top:calc(100% + 3px)}.dm-route-flight-magic .rf-actor{width:84px;height:92px;left:calc(50% - 42px);top:46%}.dm-route-flight-magic .rf-magic-cards{inset:31% 9% 14%}.dm-route-flight-magic .rf-magic-card{height:100%;width:82px}.dm-route-flight-magic .rf-magic-footer{bottom:1%;padding:4px 9px}}

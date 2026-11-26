@@ -1,3 +1,4 @@
+import {retiredGame,personalStudent} from './student-game-retirement.mjs';
 import './school-curriculum.js';
 import {soloGames,progressKey,loadCatalog} from './solo-levels.mjs';
 import './konu-oyunlari-a1.js';
@@ -55,6 +56,7 @@ export function verifiedGamesAPI(db,json){
     düşer). İlk hatada durur; o ana kadar işlenenler results içinde döner. */
  async function applyAnswers(a,run,data,list){
   const results=[],stop=(mesaj,status,extra={})=>({ok:false,mesaj,status,results,processed:results.length,...extra});
+  if(personalStudent(a)&&retiredGame(data.game))return stop('Bu oyun artık öğrenci hesabında sunulmuyor.',410);
   if(!Array.isArray(list)||!list.length||list.length>64)return stop('Geçersiz cevap paketi.',400);
   for(const item of list){
    const slot=Number(item?.slot),task=data.deck[slot];if(!Number.isInteger(slot)||!task)return stop('Geçersiz soru.',400);
@@ -85,6 +87,7 @@ export function verifiedGamesAPI(db,json){
   const run=String(body.runId||'');if(!/^[a-zA-Z0-9_-]{16,100}$/.test(run))return fail('Geçersiz oyun oturumu.',400);
   if(op==='verifiedGameStart'){
    const game=String(body.game||''),classNo=Number(body.classNo),units=Array.isArray(body.units)?[...new Set(body.units.map(Number))].sort((a,b)=>a-b):[];
+   if(personalStudent(a)&&retiredGame(game))return fail('Bu oyun artık öğrenci hesabında sunulmuyor.',410);
    if(!games.has(game)||!Number.isInteger(classNo)||classNo<1||classNo>8||!units.length||units.length>20||units.some(u=>!Number.isInteger(u)||u<1||u>100))return fail('Geçersiz oyun kapsamı.',400);
    const code=({ky:'oyun_kelime',jp:'oyun_jeopardy',kp:'kelime_modu',ba:'parkur'})[game]||'oyun_'+game;
    const ctx=await db.rpc('dm_progress_context',{actor:a.student_id});if(ctx.error)return fail('Seviye doğrulanamadı.',503);
@@ -102,7 +105,7 @@ export function verifiedGamesAPI(db,json){
    if(soloStage)available=soloStage.words;
    else if(level){available=levelPool(level);if(available.length<4)return fail('Seviye kelimeleri yüklenemedi.',503);}
    else{
-     let bankQuery=db.from('word_bank').select('english,turkish,class_no,unit_no').eq('active',true);
+     let bankQuery=db.from(a.teacher_portal_access_id&&classNo===7&&game!=='ba'&&game!=='kp'?'teacher_grade7_word_bank':'word_bank').select('english,turkish,class_no,unit_no').eq('active',true);
      bankQuery=game==='kp'?bankQuery.in('class_no',[1,2,3,4,5,6,7,8]):bankQuery.eq('class_no',classNo);
      const bank=await bankQuery.in('unit_no',units).limit(5000);
      if(bank.error)return fail('Kelime havuzu yüklenemedi.',503);
@@ -140,7 +143,17 @@ export function verifiedGamesAPI(db,json){
     const seen=new Set();for(const requested of body.words){const w=eligible.find(w=>key(w.en)===key(requested.en)&&norm(w.tr)===norm(requested.tr));if(!w||seen.has(key(w.en)))return fail('Sorular etkin kelime havuzuyla uyuşmuyor.',400);seen.add(key(w.en));words.push(w);}
    }
    if(!words.length)return fail('Bu bölümde soru bulunamadı.',400);
-   const deck=game==='ba'&&body.schoolVersion===9?globalThis.DMSchoolCurriculum.build(words,available,stop):compile(game,words);
+   // A resumed school session must always use the deck already stored for its run.
+   if(game==='ba'&&body.schoolVersion===9){
+    const saved=await db.from('dm_verified_runs').select('game,class_no,units,stop_no,deck,answers,expires_at').eq('student_id',a.student_id).eq('run_id',run).maybeSingle();
+    if(saved.error)return fail('Oyun oturumu yüklenemedi.',503);
+    const old=saved.data;
+    if(old){
+     if(old.game!==game||Number(old.class_no)!==classNo||Number(old.stop_no)!==stop||JSON.stringify(old.units)!==JSON.stringify(units)||old.deck?.[0]?.schoolVersion!==9||Date.parse(old.expires_at)<Date.now())return fail('Oyun oturumu sona erdi veya kapsamı değişti.',409);
+     return json({ok:true,answersInClaim:true,total:old.deck.length,words:old.deck[0].cards,tasks:old.deck,answers:old.answers,slots:old.deck.map((t,slot)=>({slot,en:t.en,kind:t.kind,pairs:t.pairs}))});
+    }
+   }
+   const deck=game==='ba'&&body.schoolVersion===9?globalThis.DMSchoolCurriculum.build(words,available,stop,body.routeVisualQuestions===true):compile(game,words);
    if(soloStage){if(deck.length!==12)return fail('Seviye 12 soru içermeli.',400);for(const t of deck){t.soloLevel=soloStage.number;if(soloKey!==game)t.soloVariant=soloKey;}}
    const r=await db.rpc(a.teacher_portal_access_id?'dm_teacher_verified_start':['canavar','kule','fener'].includes(game)?'dm_arcade_verified_start':'dm_verified_start',{actor:a.student_id,run_key:run,game_code:game,cls:classNo,unit_ids:units,stop_id:stop,tasks:deck});
    if(r.error)return fail(['canavar','kule','fener'].includes(game)?r.error.message:'Oyun oturumu kaydedilemedi.',409);
@@ -148,6 +161,7 @@ export function verifiedGamesAPI(db,json){
   }
   const r=await db.from('dm_verified_runs').select('game,class_no,units,stop_no,deck,answers,expires_at').eq('student_id',a.student_id).eq('run_id',run).maybeSingle();
   if(r.error)return fail('Cevap doğrulanamadı.',503);if(!r.data||Date.parse(r.data.expires_at)<Date.now())return fail('Oyun oturumu sona erdi. Yeniden başlat.');
+  if(personalStudent(a)&&retiredGame(r.data.game))return fail('Bu oyun artık öğrenci hesabında sunulmuyor.',410);
   if(op==='verifiedGameStatus')return json({ok:true,answersInClaim:true,...(r.data.deck[0]?.schoolVersion===9?{tasks:r.data.deck,words:r.data.deck[0].cards,answers:r.data.answers}:{}),game:r.data.game,classNo:r.data.class_no,units:r.data.units,stopNo:r.data.stop_no,slots:r.data.deck.map((t,slot)=>({slot,en:t.en,kind:t.kind,pairs:t.pairs}))});
   /* [Kota 28 Eki 2026] Toplu cevap: tek istekte sıralı birden çok cevap. Her cevap tek cevaptaki gibi sunucuda
      puanlanır ve dm_verified_answer ile kaydedilir (parkurda enerji de orada düşer). İlk hatada durur; o ana kadar

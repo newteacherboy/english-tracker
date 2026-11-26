@@ -3,7 +3,7 @@
 export const PLAN_FEATURES = Object.freeze({
   student: {
     free: ['Tüm parkurlar, Ders Çalış ve oyunlar', 'Günde 25 enerji', 'Premium Oyunlarda 3 deneme', 'Reklamlı'],
-    diji_pro: ['Reklamsız (banner ve geçiş reklamı yok)', 'Günde 40 enerji', 'Her gün +30 altın', 'Ayda 2 seri kalkanı', 'Mola Vakti: her oyun günde 3 kez', 'Premium Oyunlar: günde 5 bölüm'],
+    diji_pro: ['Reklamsız (banner ve geçiş reklamı yok)', 'Günde 40 enerji', 'Her gün +30 altın', 'Ayda 2 seri kalkanı', 'Premium Oyunlar: günde 5 bölüm'],
     diji_premium_pro: ['Pro\'daki her şey', 'Sınırsız enerji', 'Sınırsız Premium Oyunlar', 'Her gün +75 altın', 'Ayda 5 seri kalkanı', 'Mola Vakti: her oyun günde 5 kez'],
   },
   teacher: {

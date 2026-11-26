@@ -820,7 +820,9 @@
     if(window.dmTeacherPortalMode)return;
     if (eskiGorunum()) { let r = orgDunya && orgDunya.apply(this, arguments); setTimeout(yeniDonDugmesi, 300); return r; }
     parkurAlani();   /* DÜZELTME: bz-yeni sınıfını en başta ekle; eski Gökyüzü Kulesi tasarımı hiç görünmesin */
-    if (!parkurAcikTut && typeof orgDunya === 'function') orgDunya.apply(this, arguments);   /* sekmeyi açar, alt menüyü günceller */
+    if (!parkurAcikTut && typeof orgDunya === 'function') {
+      try { Promise.resolve(orgDunya.apply(this, arguments)).catch(e=>console.warn('Eski parkur verisi yenilenemedi',e)); } catch(e) { console.warn('Parkur sekmesi hazırlanamadı',e); }
+    }   /* sekmeyi açar, alt menüyü günceller */
     parkurAcikTut = false;
     if (!yuklendi) {
       const parkurYuklemeZamani = null;

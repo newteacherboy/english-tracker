@@ -31,7 +31,7 @@ async function start(game,runId,scope,words){
  const cls=Number(scope?.classNo||resolved[0]?.sinif||resolved[0]?.class_no||resolved[0]?.[3]);
  const scopedUnits=scope?.units?.map(Number).filter(u=>u>=1)||[];
  const units=[...new Set((scopedUnits.length?scopedUnits:resolved.map(w=>Number(w.unite??w.unit_no??w[4]))).map(Number))].sort((a,b)=>a-b);
- const state={owner:who(),runId,game,events:[...new Map([...pending(who(),runId),...(early.get(runId)||[])].map(e=>[e.eventId,e])).values()],acked:0,slots:[],last:{},payload:{runId,game,classNo:cls,units,...(window.dmSoloLevels?.scope(game)?.soloLevel?{soloLevel:window.dmSoloLevels.scope(game).soloLevel,soloVariant:window.dmSoloLevels.scope(game).soloVariant}:{}),stopNo:scope?.stopNo||0,schoolVersion:scope?.schoolVersion,...(level?{level}:{}),words:words.map(w=>({en:en(w),tr:tr(w)}))}};
+ const state={owner:who(),runId,game,events:[...new Map([...pending(who(),runId),...(early.get(runId)||[])].map(e=>[e.eventId,e])).values()],acked:0,slots:[],last:{},payload:{runId,game,classNo:cls,units,...(window.dmSoloLevels?.scope(game)?.soloLevel?{soloLevel:window.dmSoloLevels.scope(game).soloLevel,soloVariant:window.dmSoloLevels.scope(game).soloVariant}:{}),stopNo:scope?.stopNo||0,schoolVersion:scope?.schoolVersion,...(scope?.schoolVersion===9?{routeVisualQuestions:true}:{}),...(level?{level}:{}),words:words.map(w=>({en:en(w),tr:tr(w)}))}};
  runs.set(runId,state);
  if(window.OC?.aktif?.runId===runId)window.OC.aktif.rewardScope={classNo:cls,units,stopNo:scope?.stopNo||0};
  early.delete(runId);const carried=state.events.length;
