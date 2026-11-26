@@ -39,7 +39,26 @@
    const ensureStrips=()=>{if(!strips?.classList.contains('dm-profile-role-strips')){strips=document.createElement('div');strips.className='dm-profile-role-strips';account.before(strips);}return strips;};
    const add=(key,label,handler)=>{const host=ensureStrips();let b=host.querySelector('[data-role-strip="'+key+'"]');if(!b){b=document.createElement('button');b.type='button';b.dataset.roleStrip=key;b.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16v12H4zM9 20h6M12 16v4M8 8h8M8 12h5"/></svg><span>'+label+'</span><b aria-hidden="true">›</b>';b.onclick=()=>{document.querySelector('#rtProfileBackdrop .rt-close')?.click();handler();};host.append(b);}return b;};
    const parent=hasPrimaryParent?(strips?.querySelector?.('[data-role-strip="parent"]')?.remove(),null):add('parent','Veli Hesabına Geç',open);
-   if(window.dmTeacherSwitch?.available?.()){const teacher=add('teacher','Öğretmen Hesabına Geç',()=>window.dmTeacherSwitch.open());if(parent&&teacher.nextElementSibling!==parent)strips.insertBefore(teacher,parent);}else strips?.querySelector?.('[data-role-strip="teacher"]')?.remove();
+   const primaryTeacher=document.querySelector('#rtProfileBackdrop [data-profile="teacherSwitch"]');
+   const teacherAvailable=!!window.dmTeacherSwitch?.available?.();
+   if(primaryTeacher){
+    const legacyTeacher=typeof aktifOgrenciAdi!=='undefined'&&String(aktifOgrenciAdi).toLowerCase()==='teacher';
+    const enabled=teacherAvailable||legacyTeacher;
+    if(primaryTeacher.disabled===enabled){
+     primaryTeacher.disabled=!enabled;
+     if(enabled){
+      primaryTeacher.removeAttribute('aria-disabled');
+      primaryTeacher.removeAttribute('title');
+     }else{
+      primaryTeacher.setAttribute('aria-disabled','true');
+      primaryTeacher.title='Öğretmen hesabı bağlı değil';
+     }
+    }
+    strips?.querySelector?.('[data-role-strip="teacher"]')?.remove();
+   }else if(teacherAvailable){
+    const teacher=add('teacher','Öğretmen Hesabına Geç',()=>window.dmTeacherSwitch.open());
+    if(parent&&teacher.nextElementSibling!==parent)strips.insertBefore(teacher,parent);
+   }else strips?.querySelector?.('[data-role-strip="teacher"]')?.remove();
    if(strips?.classList.contains('dm-profile-role-strips')&&!strips.children.length)strips.remove();
   }
  }

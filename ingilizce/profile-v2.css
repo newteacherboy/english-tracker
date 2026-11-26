@@ -36,7 +36,7 @@
     display: flex !important;
     flex-direction: column !important;
     align-items: center;
-    gap: clamp(8px, 2dvh, 18px) !important;
+    gap: clamp(6px, 1.25dvh, 12px) !important;
     padding: max(8px, env(safe-area-inset-top, 0px)) 12px 4px !important;
     color: var(--pa-ink);
   }
@@ -116,13 +116,25 @@
     min-height: 0;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    gap: clamp(10px, 1.7dvh, 16px);
-    overflow: hidden;
-    padding: 4px 2px clamp(8px, 1.4dvh, 14px);
+    justify-content: flex-start;
+    gap: clamp(8px, 1.35dvh, 13px);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: 2px 2px 4px;
   }
-  @media (max-height: 560px) {
-    #rtProfileBackdrop .pa-cards .pa-body { overflow-y: auto; overscroll-behavior: contain; }
+
+  #rtProfileBackdrop .pa-cards .pa-body > * { flex-shrink: 0; }
+
+  #rtProfileBackdrop .pa-cards > .pa-support-row {
+    width: 100%;
+    max-width: 620px;
+    padding: 0 2px 4px;
+    flex: 0 0 auto;
+  }
+
+  /* Native iOS already reserves the status bar using an inline border. */
+  html.dm-native-ios body #rtProfileBackdrop .rt-profile.au-centre.pa-cards[data-dm-ios-safe] {
+    padding-top: 8px !important;
   }
 
   #rtProfileBackdrop .pa-cards :is(.pa-user, .pa-grid, .dm-profile-shop-row) {
