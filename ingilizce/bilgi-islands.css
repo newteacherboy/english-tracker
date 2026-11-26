@@ -423,3 +423,26 @@ body #tab-dunya .bz-ic:has(.rt-medal-route) .dm-unified-wallet.dm-papi-wallet :i
 
 /* Milestones continue awarding and announcing badges through parkur-badges.js. */
 .dm-route-badge-map {display:none!important}
+
+@layer bilgiIslands {
+/* Seamless shortcuts: no framed strip or bottom seam, including the scroll viewport. */
+html[data-dm-theme] body #tab-dunya#tab-dunya .rt-medal-route .rt-medal-header,
+html[data-dm-theme] body #tab-dunya#tab-dunya .rt-medal-route .rt-medal-header>.rt-quick-actions,
+html[data-dm-theme] body #tab-dunya#tab-dunya .rt-medal-route .rt-quick-actions>:is(.rt-agenda,.zk-parkur,.dm-papi-chat-shortcut),
+html[data-dm-theme] body #tab-dunya#tab-dunya .rt-medal-route .rt-quick-actions>.rt-agenda>summary{
+ background:transparent!important;background-image:none!important;
+ border:0!important;border-image:none!important;border-radius:0!important;
+ box-shadow:none!important;filter:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;
+}
+html[data-dm-theme] body #tab-dunya#tab-dunya .rt-medal-route .rt-medal-header>.rt-quick-actions{padding-bottom:8px!important}
+html[data-dm-theme] body #tab-dunya#tab-dunya .rt-medal-route:has(.rt-quick-actions)>.rt-medal-scroll{
+ background:transparent!important;border:0!important;box-shadow:none!important;outline:0!important;border-radius:0!important;
+ /* A scrolled stop fades at the top instead of exposing a hard horizontal clipping seam. */
+ -webkit-mask-image:linear-gradient(to bottom,transparent 0,#000 14px,#000 100%);
+ mask-image:linear-gradient(to bottom,transparent 0,#000 14px,#000 100%);
+}
+html[data-dm-theme] body #tab-dunya#tab-dunya .rt-medal-route:has(.rt-quick-actions)>.rt-medal-scroll:focus-visible{
+ outline:2px solid #8294ad!important;outline-offset:-2px!important;
+}
+
+}
