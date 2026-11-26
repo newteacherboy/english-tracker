@@ -7,7 +7,7 @@ test('optional game downloads launch together and remain idempotent',async()=>{
  assert.equal(scripts.length,4,'network fetches should begin together');
  assert.ok(scripts.some(s=>s.src.startsWith('solo-arcade.js?')),'arcade module must be loaded');
  assert.ok(!scripts.some(s=>s.src.startsWith('harf-bahcesi.js?')),'retired garden must not load for students');
- assert.ok(!scripts.some(s=>s.src.includes('rally')),'retired rally must not load for students');
+ assert.ok(!scripts.some(s=>s.src.includes('kelime-rallisi')),'retired rally must not load for students');
  assert.ok(scripts.every(s=>s.async===false),'evaluation order must remain stable');
  scripts.forEach(s=>s.onload());
  await first;
@@ -18,5 +18,5 @@ test('optional game downloads launch together and remain idempotent',async()=>{
 test('teacher still downloads Harf Bahçesi and Mola; personal browser never does',async()=>{
  const scripts=[],ctx={window:{dmTeacherPortalMode:true},document:{getElementById:()=>null,querySelector:()=>null,head:{append(el){if(el.src)scripts.push(el)}},createElement:()=>({dataset:{},remove(){}}),dispatchEvent:()=>{}},Event,Set,Promise};
  vm.runInNewContext(fs.readFileSync(path.join(__dirname,'../ingilizce/lazy-games.js'),'utf8'),ctx);
- const task=ctx.window.dmLazyGames.ready();assert(scripts.some(s=>s.src.startsWith('harf-bahcesi.js?')));assert(scripts.some(s=>s.src.startsWith('mola-vakti.js?')));scripts.forEach(s=>s.onload());await task;
+ const task=ctx.window.dmLazyGames.ready();assert(scripts.some(s=>s.src.startsWith('harf-bahcesi.js?')));assert(scripts.some(s=>s.src.startsWith('mola-vakti.js?')));assert(scripts.some(s=>s.src.startsWith('kelime-rallisi.js?')));scripts.forEach(s=>s.onload());await task;
 });
