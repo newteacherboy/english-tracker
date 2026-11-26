@@ -355,3 +355,62 @@ body #tab-dunya .rt-medal-route .rt-medal-unit button[data-rt="switch-route"] :i
 body #tab-dunya .rt-medal-route .rt-agenda summary{position:relative}
 body #tab-dunya .rt-medal-route .rt-agenda summary::after{content:"";position:absolute;top:3px;left:calc(50% + 9px);width:10px;height:10px;box-sizing:border-box;border:1.5px solid #fff;border-radius:50%;background:#ef3450;z-index:2;pointer-events:none}
 html[data-dm-theme="night"] body #tab-dunya .rt-medal-route .rt-agenda summary::after{border-color:#18233b}
+
+/* 26 Kasım · Parkurda üç eşit, çerçevesiz hızlı işlem. Normal akış, harita üzerine binmez. */
+body #tab-dunya .rt-medal-route .rt-medal-header>.rt-quick-actions{
+ --rt-quick-ink:#7c879d;display:flex;align-items:flex-start;justify-content:space-around;
+ gap:6px;width:100%;box-sizing:border-box;padding:8px 0 5px;margin:0;position:relative;
+}
+html[data-dm-theme="night"] body #tab-dunya .rt-medal-route .rt-medal-header>.rt-quick-actions{--rt-quick-ink:#a6b4cc}
+body #tab-dunya .rt-medal-route .rt-quick-actions>:is(.rt-agenda,.zk-parkur,.dm-papi-chat-shortcut){
+ position:relative!important;inset:auto!important;flex:1 1 0;width:0!important;min-width:0;max-width:none;
+ min-height:64px;height:auto;box-sizing:border-box;margin:0!important;padding:0!important;
+ border:0!important;background:transparent!important;box-shadow:none!important;filter:none;
+ color:var(--rt-quick-ink)!important;-webkit-text-fill-color:currentColor!important;
+ border-radius:12px!important;text-shadow:none!important;animation:none!important;
+}
+body #tab-dunya .rt-medal-route .rt-quick-actions>:is(.zk-parkur,.dm-papi-chat-shortcut),
+body #tab-dunya .rt-medal-route .rt-quick-actions>.rt-agenda>summary{
+ display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;
+ width:100%;min-height:64px;box-sizing:border-box;padding:4px 1px!important;
+ font:900 11px/1.15 Nunito,system-ui,sans-serif!important;white-space:nowrap;cursor:pointer;
+}
+body #tab-dunya .rt-medal-route .rt-quick-actions>.rt-agenda>summary{width:100%!important}
+body #tab-dunya .rt-medal-route .rt-quick-actions>.rt-agenda>summary>svg{width:36px;height:36px;padding:3px;box-sizing:border-box}
+body #tab-dunya .rt-medal-route .rt-quick-actions>.rt-agenda>summary::after{top:5px;left:calc(50% + 11px)}
+body #tab-dunya .rt-medal-route .rt-quick-actions>.rt-agenda>.rt-agenda-actions{
+ position:absolute!important;left:0;top:100%;margin:0!important;width:62px;z-index:9;
+}
+body #tab-dunya .rt-medal-route .rt-quick-actions .rt-quick-label{display:block;color:inherit;font:inherit}
+body #tab-dunya .rt-medal-route .rt-quick-actions .rt-quick-icon{
+ position:relative;display:grid;place-items:center;width:36px;height:36px;flex:none;isolation:isolate;
+}
+.rt-quick-actions .rt-quick-trophy{width:36px;height:36px;color:var(--rt-quick-ink);filter:drop-shadow(0 2px 2px #8b98ae40)}
+.rt-quick-actions .rt-call-icon .dm-papi-chat-avatar{
+ inset:0;border-radius:50%;background:radial-gradient(circle,#fff 30%,#edf1f5 75%,transparent 100%);
+ box-shadow:0 0 0 1px #cbd5df;overflow:hidden;
+}
+.rt-quick-actions .dm-papi-chat-avatar img{filter:saturate(.58);transform:translateY(-2px) scale(2.35)}
+.rt-quick-actions .dm-papi-chat-camera{
+ right:-5px;top:-2px;padding:3px;background:#8995a7;color:#fff;border:1px solid #fff;border-radius:7px;
+}
+.rt-quick-actions .rt-quick-spark{
+ position:absolute;top:0;right:-7px;width:10px;height:10px;pointer-events:none;z-index:2;
+ background:radial-gradient(circle,#fff 18%,#f8f6eb 62%,#d4dbe6);clip-path:polygon(50% 0,60% 38%,100% 50%,60% 62%,50% 100%,40% 62%,0 50%,40% 38%);
+ filter:drop-shadow(0 0 3px #a5a9b8);opacity:.85;
+}
+.rt-quick-actions .rt-quick-spark-second{top:auto;right:auto;bottom:2px;left:-5px;width:7px;height:7px}
+.rt-quick-actions .rt-quick-icon::before{
+ content:"";position:absolute;inset:-8px;z-index:-1;border-radius:50%;pointer-events:none;
+ background:radial-gradient(circle,#fff8 25%,#d8dfe840 50%,transparent 74%);opacity:.65;
+}
+@keyframes rtQuickTwinkle{0%,100%{opacity:.35;transform:scale(.72)}50%{opacity:1;transform:scale(1.12)}}
+@keyframes rtQuickHalo{0%,100%{opacity:.35}50%{opacity:.85}}
+@media(prefers-reduced-motion:no-preference){
+ #tab-dunya.active .rt-quick-actions .rt-quick-spark{animation:rtQuickTwinkle 3.8s ease-in-out infinite}
+ #tab-dunya.active .rt-quick-actions .rt-quick-spark-second{animation-delay:-1.7s}
+ #tab-dunya.active .rt-quick-actions .rt-quick-icon::before{animation:rtQuickHalo 3.8s ease-in-out infinite}
+}
+@media(prefers-reduced-motion:reduce){.rt-quick-actions .rt-quick-spark,.rt-quick-actions .rt-quick-icon::before{animation:none!important}}
+body.dm-play-session #tab-dunya .rt-quick-actions{display:none!important}
+body #tab-dunya .rt-medal-route .rt-quick-actions>:is(.zk-parkur,.dm-papi-chat-shortcut):focus-visible{outline:2px solid #8294ad;outline-offset:2px}

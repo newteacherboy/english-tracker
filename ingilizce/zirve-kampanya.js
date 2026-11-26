@@ -460,21 +460,22 @@ let parkurBusy = false;
 let parkurRetryAt = 0;
 async function mountParkurBadge() {
   const root = D.querySelector('#tab-dunya.active .rt-medal-route');
-  const anchor = root?.querySelector(':scope > .dm-papi-chat-shortcut');
+  const row = root?.querySelector('.rt-medal-header > .rt-quick-actions');
+  const anchor = row?.querySelector(':scope > .dm-papi-chat-shortcut');
   const tok = studentToken();
-  D.querySelectorAll('[data-zk-parkur]').forEach(b => { if (b.parentElement !== root || !tok || b.zkToken !== tok || window.dmTeacherPortalMode) b.remove(); });
+  D.querySelectorAll('[data-zk-parkur]').forEach(b => { if (b.parentElement !== row || !tok || b.zkToken !== tok || window.dmTeacherPortalMode) b.remove(); });
   if (!anchor || !tok || window.dmTeacherPortalMode || parkurBusy || Date.now() < parkurRetryAt) return;
-  const old = root.querySelector('[data-zk-parkur]');
+  const old = row.querySelector('[data-zk-parkur]');
   if (old && Date.now() - old.zkCheckedAt < 60000) return;
   parkurBusy = true;
   try {
     const s = await status(tok);
-    if (tok !== studentToken() || !root.isConnected || window.dmTeacherPortalMode) return;
+    if (tok !== studentToken() || !root.isConnected || !row.isConnected || window.dmTeacherPortalMode) return;
     if (!isOn(s) || s.role !== 'student' || s.guest || !['soon','live'].includes(s.campaign.phase)) { old?.remove(); parkurRetryAt = Date.now()+30000; return; }
     const b = old || D.createElement('button');
     b.type = 'button'; b.className = 'zk-parkur'; b.dataset.zkParkur = '1'; b.zkToken = tok; b.zkCheckedAt = Date.now();
     b.setAttribute('aria-label', '24 Kasım Öğretmenimle Zirveye kampanyasını aç');
-    if (!old) { b.innerHTML = '<span aria-hidden="true" class="zk-parkur-spark">✦</span>'+I.cup+'<strong>24</strong><small>KASIM</small><span class="zk-parkur-ribbon">YARIŞMA</span>'; b.onclick = () => { layerRole = 'student'; openStudentHub(); }; root.append(b); }
+    if (!old) { b.innerHTML = '<span class="rt-quick-icon rt-contest-icon" aria-hidden="true"><svg class="rt-quick-trophy" viewBox="0 0 48 48" fill="none"><path d="M13 18H6v4c0 7 6 12 14 12m15-16h7v4c0 7-6 12-14 12" fill="#dfe4eb" stroke="currentColor" stroke-width="2"/><path d="M12 9h24v17c0 7-5 12-12 12s-12-5-12-12z" fill="#e9edf2" stroke="currentColor" stroke-width="2"/><rect x="13" y="7" width="22" height="24" rx="4" fill="#f8fafc" stroke="currentColor" stroke-width="2"/><path d="M13 14h22M18 5v5m12-5v5M24 38v5m-9 1h18" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><text x="24" y="24" text-anchor="middle" font-size="11" font-weight="900" fill="currentColor">24</text><text x="24" y="29" text-anchor="middle" font-size="4.5" font-weight="900" fill="currentColor">KASIM</text></svg><i class="rt-quick-spark"></i><i class="rt-quick-spark rt-quick-spark-second"></i></span><span class="rt-quick-label">Yarışma</span>'; b.onclick = () => { layerRole = 'student'; openStudentHub(); }; row.insertBefore(b,anchor); }
   } finally { parkurBusy = false; }
 }
 function bannerHtml(s) {
