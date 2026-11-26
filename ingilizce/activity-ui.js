@@ -327,7 +327,9 @@ const categoryIcons={solo:0,free:2,konu:3,break:4,premium:5};
  }
  // Page tabs must never inherit the viewport lock used by a playing overlay.
  document.querySelectorAll('.dc-fullscreen-overlay[id^="tab-"]').forEach(el=>el.classList.remove('dm-solo-fullstage'));
- install();setInterval(install,1500);
+ install();setInterval(install,4000);
+ document.addEventListener('dm:state',()=>install());
+ document.addEventListener('dm:login',()=>install());
  window.dmGamesUI={
   exhaustedCard,
   refresh:()=>{key='';install(true);},

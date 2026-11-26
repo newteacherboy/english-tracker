@@ -89,7 +89,8 @@
   // Every shared-core game, including those without an old timer, shows elapsed seconds.
   const badge=document.createElement('div');badge.id='dmGameClock';badge.className='dm-game-clock';badge.hidden=true;document.body.append(badge);
   function updateClock(){
-    const d=window.OC?.aktif;if(!d||d.bitti){badge.hidden=true;return;}
+    if(document.hidden)return;
+    const d=window.OC?.aktif;if(!d||d.bitti){if(!badge.hidden)badge.hidden=true;return;}
     const visible=[...document.querySelectorAll('.game-modal-overlay,.yo-modal,.hb-overlay,.bc-perde,.bz-perde,#kpKelimeOyunEkrani')].some(x=>x.getClientRects().length&&getComputedStyle(x).visibility!=='hidden');
     const intro=[...document.querySelectorAll('#dmGameIntro,.dm-entry-open')].some(el=>el.getClientRects().length>0);
     const root=[...document.querySelectorAll('.game-modal-content,#baOyunEkrani,#kpKelimeOyunEkrani,.oyun-modal')].find(el=>el.getClientRects().length>0&&getComputedStyle(el).visibility!=='hidden');

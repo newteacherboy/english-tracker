@@ -4906,7 +4906,7 @@ body.duyuru-acik .t2-perde, body.duyuru-acik .bk-kart { visibility:hidden !impor
     b.onclick = () => { let y = document.querySelector('.yardim-modal-overlay'); if (y) y.style.display = 'none'; duyuruGecmisiniAc(); };
     govde.prepend(b);
   }
-  setInterval(() => { let y = document.querySelector('.yardim-modal-overlay'); if (y && gor(y)) yardimaEkle(); }, 600);
+  let _yardimTimer = setInterval(() => { if (document.hidden) return; if (document.querySelector('.dy-yardim-btn')) { clearInterval(_yardimTimer); return; } let y = document.querySelector('.yardim-modal-overlay'); if (y && gor(y)) { yardimaEkle(); if (document.querySelector('.dy-yardim-btn')) clearInterval(_yardimTimer); } }, 1200);
 })();
 </script>
 <style>

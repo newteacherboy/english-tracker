@@ -23,9 +23,16 @@
       game.append(footer);
     }
     const close=content.querySelector('.game-close-btn');close.textContent='‹';close.setAttribute('aria-label','Oyundan çık');
+    let tickTimer=0;
+    const syncTimer=playing=>{
+      if(playing&&!tickTimer){tickTimer=setInterval(update,200);}
+      else if(!playing&&tickTimer){clearInterval(tickTimer);tickTimer=0;}
+    };
     const update=()=>{
-      const playing=game.style.display!=='none';root.classList.toggle('ab-playing',playing);
-      if(!playing||!root.getClientRects().length)return;
+      const playing=game.style.display!=='none';
+      if(root.classList.contains('ab-playing')!==playing)root.classList.toggle('ab-playing',playing);
+      syncTimer(playing);
+      if(!playing||document.hidden||!root.getClientRects().length)return;
       const current=window.OC?.aktif;
       const seconds=current&&!current.bitti?OC.sure():0;
       hud.querySelector('[data-ab-time]').textContent=seconds.toFixed(1)+' sn';
@@ -33,6 +40,6 @@
       hud.querySelector('[data-ab-progress]').textContent=key==='hafiza'?document.getElementById('hafizaKalanInfo').textContent:document.getElementById('boslukSayacInfo').textContent.replace(' · Tek kelimelik tur','');
     };
     new MutationObserver(update).observe(game,{attributes:true,attributeFilter:['style']});
-    setInterval(update,200);update();
+    update();
   }
 })();
