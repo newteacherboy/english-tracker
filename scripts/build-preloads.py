@@ -28,7 +28,7 @@ def build(html):
                 continue
             url, kind = (re.search(r'href="([^"]+)"', tag) or [None, None])[1], 'style'
         else:
-            if re.search(r'\b(async|nomodule)\b|type="module"', tag):
+            if re.search(r'\b(async|defer|nomodule)\b|type="module"', tag):
                 continue
             url, kind = (re.search(r'src="([^"]+)"', tag) or [None, None])[1], 'script'
         if not local(url) or url in seen:
