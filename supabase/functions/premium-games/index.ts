@@ -34,6 +34,7 @@ Deno.serve(async(req:Request)=>{
   if(token.length<20||token.length>400)return reply(req,{ok:false,mesaj:'Oyun için hesabına giriş yap.'},401);
   const s=(await db('portal_sessions?token_hash=eq.'+await sha256(token)+'&select=student_id,teacher_id,role,expires_at,teacher_portal_access_id,teacher_portal_version&limit=1'))?.[0];
   if(!s||!['student','teacher'].includes(s.role)||Date.parse(s.expires_at)<=Date.now())return reply(req,{ok:false,mesaj:'Oturumun sona erdi. Tekrar giriş yap.'},401);
+  if(game==='cloud-flight'&&s.role==='student'&&!s.teacher_portal_access_id)return reply(req,{ok:false,hata:'oyun_kaldirildi',mesaj:'Bu oyun artık öğrenci hesabında sunulmuyor.'},410);
   const op=String(b.op||'status');
   if(game==='runners-papi')return reply(req,{ok:false,mesaj:'Runners Papi yayından kaldırıldı.'},410);
   const teacherGame=s.role==='teacher';
