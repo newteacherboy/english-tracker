@@ -122,12 +122,18 @@
 
   function requestRows(items) {
     return items.map(item => {
-      const message = item.kind==='invite' ? item.name+' seni takıma davet etti.' :
-        item.kind==='transfer' ? item.name+' kaptanlığı sana devretmek istiyor.' : item.person+' takıma katılmak istiyor.';
-      return '<div class="dm-team-info"><p>'+escaped(message)+'</p>'+
-        (item.expiresAt?'<small data-team-expires="'+escaped(item.expiresAt)+'"></small>':'')+
+      const displayName=item.kind==='join'?item.person:item.name;
+      const message=item.kind==='invite'?'Seni takımına davet ediyor!':
+        item.kind==='transfer'?'Kaptanlığı sana devretmek istiyor.':'Takımına katılmak istiyor!';
+      const crest=item.crest ?? snapshot?.team?.crest;
+      const emblem=crest?image(crest):'<span class="dm-team-request-fallback" aria-hidden="true">★</span>';
+      return '<article class="dm-team-request-card">'+
+        '<div class="dm-team-request-art"><span aria-hidden="true" class="dm-team-request-star star-left">✦</span>'+
+        emblem+'<span aria-hidden="true" class="dm-team-request-star star-right">✧</span></div>'+
+        '<h3>'+escaped(displayName)+'</h3><p>'+escaped(message)+'</p>'+
+        (item.expiresAt?'<small class="dm-team-request-time" data-team-expires="'+escaped(item.expiresAt)+'"></small>':'')+
         '<div class="dm-team-buttons">'+
-        button('accept','Kabul Et',item.id)+button('reject','Reddet',item.id)+'</div></div>';
+        button('accept','✓ Kabul Et',item.id)+button('reject','Reddet',item.id)+'</div></article>';
     }).join('');
   }
 
@@ -142,6 +148,7 @@
     const title=kind==='invite'?'Davetler':kind==='join'?'Başvurular':'Takım İstekleri';
     sheet(title,requestRows(rows)||'<p>Bekleyen istek bulunmuyor.</p>');
     dialog.dataset.requestKind=kind || '';
+    dialog.classList.add('dm-team-request-sheet');
     for (const item of rows) announcedRequests.add(item.id);
     paintExpiry();
   }
@@ -316,7 +323,10 @@
       }
       if (dialog===panel) {
         if (panel && Object.hasOwn(panel.dataset,'requestKind') && (action==='accept'||action==='reject')) {
-          openRequests(panel.dataset.requestKind);
+          if (action==='accept') {
+            panel.close();
+            window.dmFriends?.showArena?.('team');
+          } else openRequests(panel.dataset.requestKind);
           window.yoToast?.(action==='accept'?'İstek kabul edildi.':'İstek reddedildi.');
         } else dialog?.close();
       }
