@@ -368,6 +368,7 @@ async function startQuestions(){
  modal.querySelectorAll('.ml-task button,.ml-actions button').forEach(b=>b.disabled=true);feedback('Sorular hazırlanıyor…');
  try{
   const tasks=taskDeck(chapter,data?.chapters.find(c=>c.id===chapter.previousId),session.deckVersion);
+  const learnedWords=tasks[session.cursor]?.kind==='teach'?teachingCards(tasks[session.cursor]).slice(0,4):[];
   for(let i=0;i<tasks.length&&tasks[session.cursor]?.kind==='teach';i++){
    const cursor=session.cursor,r=await api('advance',{chapter:chapter.id,cursor,version:session.version,answer:true});
    if(ticket!==epoch||!modal||identity()!==at)return;
@@ -375,7 +376,7 @@ async function startQuestions(){
    if(r.stale||!r.accepted||r.cursor<=cursor){busy=false;modal.removeAttribute('aria-busy');render();feedback(r.stale?'Diğer ekranındaki ilerlemen yüklendi. Hazır olduğunda devam edebilirsin.':'Öğrenme aşaması kaydedilemedi. Tekrar deneyebilirsin.');return;}
    saveAnsweredSnapshot(cursor);
   }
-  if(!flightShown&&window.dmRoutePracticeFlight){flightShown=true;const complete=await window.dmRoutePracticeFlight.play({isCurrent:()=>ticket===epoch&&!!modal&&identity()===at,onExit:()=>close(true),sound:voice});if(!complete||ticket!==epoch||!modal||identity()!==at)return;}
+  if(!flightShown&&window.dmRoutePracticeFlight){flightShown=true;const complete=await window.dmRoutePracticeFlight.play({isCurrent:()=>ticket===epoch&&!!modal&&identity()===at,onExit:()=>close(true),sound:voice,words:learnedWords});if(!complete||ticket!==epoch||!modal||identity()!==at)return;}
   busy=false;modal.removeAttribute('aria-busy');render();
  }catch(e){await reconcileLesson(ticket,at,e);}
 }
