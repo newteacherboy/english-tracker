@@ -325,7 +325,7 @@
   let touchStartX = 0, touchStartY = 0, touchMoved = false;
 
   const state = {
-    running: false, paused: false, xp: 0, streak: 0, bestStreak: 0,
+    running: false, paused: false, xp: 0, wordsCaught: 0, streak: 0, bestStreak: 0,
     timeLeft: ROUND_SECONDS, elapsed: 0, speed: BASE_SPEED, distance: 0, slope: 0,
     lane: 0, laneX: 0, tilt: 0, jumpY: 0, jumpVy: 0, rampSoar: false, spinAngle: 0, landSquash: 0,
     shieldTime: 0, shakeTime: 0, currentWord: FALLBACK_OWN[0],
@@ -369,7 +369,7 @@
               <div class="ds-rule-ico" style="background:#fef3c7;color:#d97706">
                 <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l7.1-1.01L12 2z"/></svg>
               </div>
-              <div><b>Rampalardan uç, +1 XP kazan</b><small>Akıntı sakin başlar, zamanla hızlanır.</small></div>
+              <div><b>Rampalardan uç, +5 XP kazan</b><small>Her doğru kelime +5 XP kazandırır!</small></div>
             </div>
           </div>
           <div class="ds-foot">
@@ -408,7 +408,7 @@
             </div>
             <div class="ds-hud-pill ds-shield" id="dsShieldPill">
               <svg viewBox="0 0 24 24" fill="#06b6d4"><path d="M12 2 4 5v6c0 5.5 3.4 10.6 8 12 4.6-1.4 8-6.5 8-12V5l-8-3z"/></svg>
-              <div><div class="ds-hud-val" id="dsShieldTime">12 sn</div><div class="ds-hud-lbl">KALKAN</div></div>
+              <div><div class="ds-hud-val" id="dsShieldTime">12s</div><div class="ds-hud-lbl">KALKAN</div></div>
             </div>
             <div class="ds-spacer"></div>
             <button type="button" class="ds-icon-btn" id="dsMuteBtn" aria-label="Sesi aç/kapat">
@@ -570,35 +570,46 @@
     }
   }
 
+  let adBusy = false;
   async function watchRewardedAdThenPlay() {
-    // Try native Capacitor/AdMob rewarded ad first if available
+    if (adBusy) return;
+    adBusy = true;
+    const sTxt = root?.querySelector('#dsStartText');
+    const rTxt = root?.querySelector('#dsReplayText');
+    if (sTxt) sTxt.textContent = 'Reklam hazırlanıyor…';
+    if (rTxt) rTxt.textContent = 'Reklam hazırlanıyor…';
     try {
-      if (typeof window.DijiReklam?.odulluIzle === 'function') {
-        const ok = await window.DijiReklam.odulluIzle('dalga-sorfu');
-        if (ok) {
-          const q = readQuota(); q.adGranted = true; writeQuota(q);
-          startGame(); return;
+      // 1. Primary Diji-Medu Android & iOS 1.1+ AdMob Rewarded Bridge (same as premium-play-offer.js)
+      if (typeof window.dmAndroidAds?.show === 'function' && window.dmAndroidPlacements?.rewardEnabled?.() !== false && !window.dmAndroidIsTeacher?.()) {
+        const result = await window.dmAndroidAds.show('energy');
+        if (result?.test) throw Error('Test reklamları oyun hakkı kazandırmaz.');
+        if (!result?.completed) throw Error('Reklamı tamamladığında +1 sörf hakkı kazanırsın.');
+        if (typeof result.energy === 'number') {
+          window.genelEnerjiKalan = result.energy;
+          window.headerEnerjiGoster?.(result.energy, window.genelEnerjiMax || 25);
         }
-      }
-    } catch {}
-    // Graceful web/fallback 3-second rewarded ad modal
-    const modal = root.querySelector('#dsAdModal');
-    const fill = root.querySelector('#dsAdFill');
-    const cd = root.querySelector('#dsAdCd');
-    modal.classList.add('open');
-    fill.style.width = '0%';
-    let ms = 0;
-    const iv = setInterval(() => {
-      ms += 100;
-      fill.style.width = Math.min(100, (ms / 3000) * 100) + '%';
-      cd.textContent = Math.max(0, Math.ceil((3000 - ms) / 1000)) + ' sn kaldı';
-      if (ms >= 3000) {
-        clearInterval(iv);
-        modal.classList.remove('open');
         const q = readQuota(); q.adGranted = true; writeQuota(q);
         startGame();
+        return;
       }
-    }, 100);
+      // 2. Legacy iOS AdMob Rewarded Bridge (odullu-reklam.js)
+      if (typeof window.DijiReklam?.odulluIzle === 'function' && window.DijiReklam.reklamGosterilsinMi?.()) {
+        const res = await window.DijiReklam.odulluIzle('enerji');
+        if (res && res.ok !== false) {
+          const q = readQuota(); q.adGranted = true; writeQuota(q);
+          startGame();
+          return;
+        }
+        throw Error('Reklam tamamlanamadı. Tekrar deneyebilirsin.');
+      }
+      // 3. Web browser (AdMob native SDK unavailable)
+      window.yoToast?.('Ödüllü reklamlar mobil uygulamada açılır. Sınırsız oynamak için Premium paketlere göz atabilirsin.');
+    } catch (e) {
+      window.yoToast?.(e?.message || 'Reklam şu anda açılamadı. Tekrar deneyebilirsin.');
+    } finally {
+      adBusy = false;
+      syncButtons();
+    }
   }
 
   function handlePlayClick() {
@@ -699,13 +710,13 @@
   }
 
   function project(lanePos, z, w, h) {
-    const horizonY = h * 0.31 - state.slope * h * 0.045;
+    const horizonY = h * 0.36 - state.slope * h * 0.028;
     const bottomY = h * 0.99;
     const persp = Math.pow(1 - z, 1.82);
     const riverHalfBottom = Math.min(w * 0.48, 220);
     const riverHalfTop = Math.min(w * 0.085, 42);
     const riverHalf = riverHalfTop + (riverHalfBottom - riverHalfTop) * persp;
-    const pitchY = -state.slope * Math.sin(z * Math.PI) * h * 0.036;
+    const pitchY = -state.slope * Math.sin(z * Math.PI) * h * 0.032;
     const y = horizonY + (bottomY - horizonY) * persp + pitchY;
     const x = w * 0.5 + lanePos * (riverHalf * 0.63);
     const scale = 0.17 + 0.94 * persp;
@@ -985,7 +996,7 @@
     c.imageSmoothingEnabled = true; c.imageSmoothingQuality = 'high';
     c.save();
     if (state.shakeTime > 0) c.translate((Math.random() - 0.5) * state.shakeTime * 20, (Math.random() - 0.5) * state.shakeTime * 20);
-    const horizonY = h * 0.31 - state.slope * h * 0.045;
+    const horizonY = h * 0.36 - state.slope * h * 0.028;
 
     const sky = c.createLinearGradient(0, 0, 0, horizonY);
     sky.addColorStop(0, '#0284c7'); sky.addColorStop(0.55, '#67d4ff'); sky.addColorStop(1, '#fef3c7');
@@ -1003,9 +1014,9 @@
     }
 
     c.fillStyle = '#22c55e';
-    c.beginPath(); c.moveTo(0, horizonY + 8);
-    c.quadraticCurveTo(w * 0.18, horizonY - 40, w * 0.42, horizonY - 4);
-    c.quadraticCurveTo(w * 0.72, horizonY - 44, w, horizonY + 4);
+    c.beginPath(); c.moveTo(0, horizonY + 6);
+    c.quadraticCurveTo(w * 0.22, horizonY - 18, w * 0.48, horizonY - 2);
+    c.quadraticCurveTo(w * 0.76, horizonY - 20, w, horizonY + 4);
     c.lineTo(w, h); c.lineTo(0, h); c.closePath(); c.fill();
 
     const bankGrad = c.createLinearGradient(0, horizonY, 0, h);
@@ -1076,8 +1087,12 @@
 
     const sortedPalms = state.palms.slice().sort((a, b) => b.z - a.z);
     for (const pm of sortedPalms) {
+      if (pm.z > 0.86) continue;
       const p = project(0, pm.z, w, h);
+      c.save();
+      c.globalAlpha = Math.min(1, (0.86 - pm.z) * 6);
       drawPalm(c, w * 0.5 + pm.side * (p.riverHalf * (1.20 + pm.offset)), p.y, p.scale * pm.scale, pm.side);
+      c.restore();
     }
 
     const visible = state.objects.filter(o => !o.hit && o.z >= -0.05 && o.z <= 1.06).sort((a, b) => b.z - a.z);
@@ -1151,7 +1166,7 @@
       const targetSlope = computeTargetSlope(state.elapsed);
       state.slope += (targetSlope - state.slope) * Math.min(1, dt * 0.9);
       const dropBoost = state.slope < -0.3 ? 0.035 : 0;
-      const targetSpeed = Math.min(MAX_SPEED, BASE_SPEED + state.xp * 0.014 + state.elapsed * 0.0011 + dropBoost);
+      const targetSpeed = Math.min(MAX_SPEED, BASE_SPEED + state.wordsCaught * 0.014 + state.elapsed * 0.0011 + dropBoost);
       state.speed += (targetSpeed - state.speed) * Math.min(1, dt * 2.2);
       root.querySelector('#dsSpeed').textContent = (state.speed / BASE_SPEED).toFixed(1) + '×';
 
@@ -1161,7 +1176,7 @@
       if (state.shieldTime > 0) {
         state.shieldTime = Math.max(0, state.shieldTime - dt);
         root.querySelector('#dsShieldPill').classList.toggle('active', state.shieldTime > 0);
-        root.querySelector('#dsShieldTime').textContent = Math.ceil(state.shieldTime) + ' sn';
+        root.querySelector('#dsShieldTime').textContent = Math.ceil(state.shieldTime) + 's';
       }
       if (state.shakeTime > 0) state.shakeTime = Math.max(0, state.shakeTime - dt);
       if (state.landSquash > 0) state.landSquash = Math.max(0, state.landSquash - dt * 5);
@@ -1209,7 +1224,7 @@
           } else if (obj.type === 'shield') {
             obj.hit = true; state.shieldTime = 12;
             root.querySelector('#dsShieldPill').classList.add('active');
-            root.querySelector('#dsShieldTime').textContent = '12 sn';
+            root.querySelector('#dsShieldTime').textContent = '12s';
             sfx.shieldUp(); spawnBurst(playerP.x, playerP.y - 30, '#67e8f9', 18);
             showToast('Baloncuk kalkanı hazır! (12 sn)', 'shield');
           } else if (obj.type === 'log') {
@@ -1224,13 +1239,13 @@
             if (state.jumpY > 42) continue;
             obj.hit = true;
             if (obj.correct) {
-              state.xp++; state.streak++; state.bestStreak = Math.max(state.bestStreak, state.streak);
+              state.wordsCaught++; state.xp += 5; state.streak++; state.bestStreak = Math.max(state.bestStreak, state.streak);
               root.querySelector('#dsXp').textContent = state.xp;
               root.querySelector('#dsStreak').textContent = state.streak;
               sfx.good(); spawnBurst(playerP.x, playerP.y - 35, '#ffe066', 18);
               emitBoardSpray(playerP.x, playerP.y, playerP.scale, 2.2, 0);
-              state.floats.push({ x: playerP.x, y: playerP.y - 72, text: '+1 XP', life: 0.95 });
-              showToast('+1 XP · Harika sörf!', 'good');
+              state.floats.push({ x: playerP.x, y: playerP.y - 72, text: '+5 XP', life: 0.95 });
+              showToast('+5 XP · Harika sörf!', 'good');
               nextWord(true);
             } else {
               if (state.shieldTime > 0) {
@@ -1292,7 +1307,7 @@
     }
     syncButtons();
     state.running = true; state.paused = false;
-    state.xp = 0; state.streak = 0; state.bestStreak = 0;
+    state.xp = 0; state.wordsCaught = 0; state.streak = 0; state.bestStreak = 0;
     state.elapsed = 0; state.distance = 0; state.slope = 0; state.speed = BASE_SPEED;
     state.lane = 0; state.laneX = 0; state.tilt = 0;
     state.jumpY = 0; state.jumpVy = 0; state.rampSoar = false; state.spinAngle = 0; state.landSquash = 0;
@@ -1329,10 +1344,10 @@
     stopMusic();
     try { window.speechSynthesis?.cancel(); } catch {}
 
-    root.querySelector('#dsEndTitle').textContent = state.xp >= 5 ? 'Harika sörf yaptın!' : 'Tatlı bir denemeydi!';
-    root.querySelector('#dsEndSub').textContent = `${reason} · ${state.xp} kelime yakaladın!`;
-    root.querySelector('#dsEndScore').textContent = `+${state.xp} XP · ${state.xp} PUAN`;
-    root.querySelector('#dsEndWords').textContent = state.xp;
+    root.querySelector('#dsEndTitle').textContent = state.wordsCaught >= 5 ? 'Harika sörf yaptın!' : 'Tatlı bir denemeydi!';
+    root.querySelector('#dsEndSub').textContent = `${reason} · ${state.wordsCaught} kelime yakaladın!`;
+    root.querySelector('#dsEndScore').textContent = `+${state.xp} XP · ${state.wordsCaught} KELİME`;
+    root.querySelector('#dsEndWords').textContent = state.wordsCaught;
     root.querySelector('#dsEndDur').textContent = Math.max(1, Math.round(state.elapsed)) + ' sn';
     root.querySelector('#dsEndStreak').textContent = state.bestStreak;
     syncButtons();
