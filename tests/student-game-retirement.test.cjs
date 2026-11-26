@@ -2,7 +2,7 @@ const {test}=require('node:test'),assert=require('node:assert/strict'),fs=requir
 test('retired student operations short-circuit before game database access, teacher scopes remain',async()=>{
  const {retiredStudentOperation,retiredGame,personalStudent}=await import('../supabase/functions/diji-api/student-game-retirement.mjs');
  const personal={role:'student',student_id:'p'},teacher={...personal,teacher_portal_access_id:'granted'},legacy={...personal,teacherProxy:true},q=new URLSearchParams();
- for(const game of ['jp','jeopardy','kelimebul','dikte','canavar','harfbahcesi','tren','cumle']){
+ for(const game of ['jp','jeopardy','kelimebul','dikte','canavar','harfbahcesi','tren','cumle','ky','kelime','bosluk','yagmur','eslestirme','es','ralli','rally','cloud-flight']){
   assert(retiredGame(game));for(const op of ['verifiedGameStart','soloLevelStatus','soloLevelComplete','seviyeOyunOdulu']){
    assert(retiredStudentOperation(op,{game},q,personal));assert(!retiredStudentOperation(op,{game},q,teacher));assert(!retiredStudentOperation(op,{game},q,legacy));
   }
@@ -10,7 +10,8 @@ test('retired student operations short-circuit before game database access, teac
  for(const op of ['molaDurum','molaBaslat','molaBitir','molaSiralama','molaBolumGec','jeopardyLiderlikKaydet','kelimebulLiderlikTumunuGetir','dikteLiderlikKaydet','canavarLiderlikKaydet','harfBahcesiLiderlikKaydet','trenLiderlikTumunuGetir','cumleLiderlikKaydet']){
   assert(retiredStudentOperation(op,{},q,personal));assert(!retiredStudentOperation(op,{},q,teacher));
  }
- for(const game of ['ky','ba','hafiza','fener'])assert(!retiredStudentOperation('verifiedGameStart',{game},q,personal));
+ for(const game of ['ba','hafiza','fener'])assert(!retiredStudentOperation('verifiedGameStart',{game},q,personal));
+ assert(!retiredStudentOperation('verifiedGameStart',{game:'ky',soloVariant:'golu',soloLevel:1},q,personal));
  assert(!personalStudent(teacher));assert(!personalStudent(legacy));
 });
 test('student Mola script does not mount, schedule, register or request anything',()=>{
