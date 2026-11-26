@@ -120,6 +120,7 @@
  // Classroom game checks use a virtual allowance; the real wallet is never changed.
  Object.defineProperty(window,'genelEnerjiKalan',{configurable:true,get:()=>25,set:()=>{}});
  window.dmTeacherPortalMode=true;window.dmTeacherPortalSession=state;
+ window.dmTeacherGrade7Games=state.route==='games';
  // [Teacher-only standard grade 7 curriculum, 2026-2027.] Never persist this overlay in the personal word cache.
  // BEGIN TEACHER GRADE 7 BANK
  const grade7Titles=["Appearance and Personality","Sports","Biographies","Wild Animals","Television","Celebrations","Dreams","Public Buildings","Environment","Planets"];
@@ -130,7 +131,7 @@
  // The legacy loader writes fresh/cache arrays asynchronously. Keep those arrays untouched.
  // Only this teacher document sees the replacement, including later loader refreshes.
  Object.defineProperty(window,'masterKelimeHavuzu',{configurable:true,enumerable:previousBank?.enumerable??true,
-  get(){if(!window.dmTeacherPortalMode||!Array.isArray(rawBank)||!rawBank.length)return rawBank;
+  get(){if(!window.dmTeacherPortalMode||!window.dmTeacherGrade7Games||!Array.isArray(rawBank)||!rawBank.length)return rawBank;
    if(mergedSource!==rawBank){mergedSource=rawBank;mergedBank=[...rawBank.filter(w=>Number(w.sinif??w.class_no)!==7),...grade7Rows];}
    return mergedBank;
   },set(value){if(value===mergedBank)return;rawBank=value;mergedSource=null;mergedBank=null;}

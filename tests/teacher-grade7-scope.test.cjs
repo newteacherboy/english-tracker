@@ -2,7 +2,7 @@ const {test}=require('node:test'),assert=require('node:assert/strict'),fs=requir
 const root='ingilizce/teacher-portal-boot.js';
 const section=fs.readFileSync(root,'utf8').split('// BEGIN TEACHER GRADE 7 BANK')[1].split('// END TEACHER GRADE 7 BANK')[0];
 const original=[{sinif:2,unite:1,ingilizce:'hello',turkce:'merhaba'},{sinif:7,unite:1,ingilizce:'old',unit_name:'School Life & Education'},{sinif:8,unite:10,ingilizce:'test'}];
-function teacher(){const ctx={dmTeacherPortalMode:true,masterKelimeHavuzu:original};ctx.window=ctx;vm.createContext(ctx);vm.runInContext(section,ctx);return ctx;}
+function teacher(){const ctx={dmTeacherPortalMode:true,dmTeacherGrade7Games:true,masterKelimeHavuzu:original};ctx.window=ctx;vm.createContext(ctx);vm.runInContext(section,ctx);return ctx;}
 test('teacher view exposes all ten grade 7 units, correct titles and full rounds, preserves other grades and raw cache',()=>{
  const w=teacher(),bank=w.masterKelimeHavuzu,rows=bank.filter(x=>x.sinif===7);
  assert.equal(rows.length,490);assert.equal(bank.filter(x=>x.sinif!==7).length,2);assert.equal(original.length,3);assert.equal(original[1].ingilizce,'old');
@@ -54,3 +54,5 @@ test('classic classroom verification accepts the exact new unit questions and re
   const result=await api.handle('verifiedGameStart',body,a,'POST');assert.equal(result.status,200,game+' '+JSON.stringify(result.d));assert.equal(calls.at(-1).name,'dm_teacher_verified_start');assert.equal(reads.at(-1),'teacher_grade7_word_bank');
  }
 });
+
+test('teacher home, homework and non-game views retain the original student bank',()=>{const w=teacher();w.dmTeacherGrade7Games=false;assert.equal(w.masterKelimeHavuzu,original);w.dmTeacherGrade7Games=true;assert.equal(w.masterKelimeHavuzu.filter(x=>x.sinif===7).length,490);w.dmTeacherGrade7Games=false;assert.equal(w.masterKelimeHavuzu,original);});
