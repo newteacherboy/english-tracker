@@ -2,7 +2,7 @@
 (function(root){'use strict';
 if(typeof document!=='undefined'&&!document.getElementById('rq-forest-reference-style')){const link=document.createElement('link');link.id='rq-forest-reference-style';link.rel='stylesheet';link.href='route-forest-reference.css?v=20261014-1';document.head.append(link);}
 if(typeof document!=='undefined'&&!document.getElementById('dm-route-feedback-profile-style')){const link=document.createElement('link');link.id='dm-route-feedback-profile-style';link.rel='stylesheet';link.href='route-feedback-profile.css?v=20261014-1';document.head.append(link);}
-if(typeof document!=='undefined'&&!document.getElementById('rq-teach-card-style')){const link=document.createElement('link');link.id='rq-teach-card-style';link.rel='stylesheet';link.href='route-teach-card.css?v=20261126-1';document.head.append(link);}
+if(typeof document!=='undefined'&&!document.getElementById('rq-teach-card-style')){const link=document.createElement('link');link.id='rq-teach-card-style';link.rel='stylesheet';link.href='route-teach-card.css?v=20261126-2';document.head.append(link);}
 const esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const norm=x=>String(x??'').normalize('NFKC').toLowerCase().replace(/[^\p{L}\p{N}]+/gu,' ').trim();
 
