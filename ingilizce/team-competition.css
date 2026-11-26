@@ -801,3 +801,32 @@ dialog.dm-team-request-sheet .dm-team-request-card button[data-team-action="reje
 @media(prefers-reduced-motion:reduce) {
   .dm-team-request-star,.dm-team-request-card button::after {animation:none;}
 }
+
+/* Direct team leaderboard: actual team crests, one highlighted first place. */
+#tab-meduakis .dm-team-ranking{width:100%;min-width:0;color:#142746}
+#tab-meduakis .dm-team-ranking-list{list-style:none;display:grid;gap:8px;padding:0;margin:2px 0 14px}
+#tab-meduakis .dm-team-ranking-row{
+ display:grid;grid-template-columns:27px 44px minmax(0,1fr) minmax(56px,auto);
+ align-items:center;gap:9px;min-width:0;min-height:64px;padding:8px 10px;box-sizing:border-box;
+ background:#fff;border:1px solid #d5e0ed;border-radius:15px;color:#142746;box-shadow:0 2px 5px #18375908;
+}
+#tab-meduakis .dm-team-ranking-row>.dm-team-crest{width:100%;max-width:100%;height:auto;aspect-ratio:1;object-fit:contain;margin:0;border-radius:0}
+#tab-meduakis .dm-team-rank-number{display:grid;place-items:center;gap:1px;border-inline-end:1px solid #dbe3ed;padding-inline-end:5px;font:900 19px/1.15 Nunito,system-ui,sans-serif;color:#142746;font-variant-numeric:tabular-nums}
+#tab-meduakis .dm-team-ranking-row[data-place="2"] .dm-team-rank-number{color:#73859b}
+#tab-meduakis .dm-team-ranking-row[data-place="3"] .dm-team-rank-number{color:#b9652e}
+#tab-meduakis .dm-team-rank-name{display:flex;flex-direction:column;align-items:flex-start;gap:4px;min-width:0;text-align:left}
+#tab-meduakis .dm-team-rank-name>b{font:900 clamp(13px,3.8vw,17px)/1.18 Nunito,system-ui,sans-serif;color:#142746;overflow-wrap:anywhere}
+#tab-meduakis .dm-team-rank-points{display:grid;justify-items:end;gap:3px;min-width:0;text-align:right;font-variant-numeric:tabular-nums}
+#tab-meduakis .dm-team-rank-points>strong{font:900 clamp(13px,3.9vw,18px)/1.1 Nunito,system-ui,sans-serif;color:#142746;overflow-wrap:anywhere}
+#tab-meduakis .dm-team-rank-points>small{font:700 11px/1 Nunito,system-ui,sans-serif;color:#607790}
+#tab-meduakis .dm-team-ranking-row.is-own-team{background:#fff1ed;border-color:#ffb9aa}
+#tab-meduakis .dm-team-rank-self{display:inline-block;padding:3px 7px;border:1px solid #ffc1b5;border-radius:999px;background:#fff6f3;color:#ba4b37;font:800 10px/1.15 Nunito,system-ui,sans-serif}
+#tab-meduakis .dm-team-ranking-row.is-leader{grid-template-columns:32px 64px minmax(0,1fr) minmax(60px,auto);min-height:106px;padding:12px 10px;gap:10px;border:2px solid #e8b53c;background:linear-gradient(125deg,#fff6d8,#fffdf6 64%,#fff4cb);box-shadow:0 4px 0 #edcf7f,0 6px 14px #b7801b17;margin-bottom:5px;border-radius:19px}
+#tab-meduakis .dm-team-ranking-row.is-leader .dm-team-rank-number{border-color:#e9ce80;color:#b7770d;font-size:26px}
+#tab-meduakis .dm-team-rank-crown{font-size:21px;line-height:1;color:#c18b18}
+#tab-meduakis .dm-team-rank-leader-label{font:900 10px/1.15 Nunito,system-ui,sans-serif;letter-spacing:.06em;color:#9d6713}
+#tab-meduakis .dm-team-ranking-row.is-leader .dm-team-rank-name>b{font-size:clamp(15px,4.3vw,19px)}
+#tab-meduakis .dm-team-ranking-row.is-leader .dm-team-rank-points>strong{font-size:clamp(15px,4.5vw,21px)}
+#tab-meduakis .dm-team-ranking-row.is-leader.is-own-team{outline:2px solid #ffb6a3;outline-offset:2px}
+#tab-meduakis .dm-team-ranking-state{padding:16px 12px;margin:8px 0;border:1px solid #d5e0ed;border-radius:14px;background:#fff;color:#607790;text-align:center;font:800 14px/1.4 Nunito,system-ui,sans-serif}
+@media(max-width:355px){#tab-meduakis .dm-team-ranking-row{grid-template-columns:22px 36px minmax(0,1fr) minmax(49px,auto);gap:6px;padding:8px}#tab-meduakis .dm-team-ranking-row.is-leader{grid-template-columns:25px 48px minmax(0,1fr) minmax(54px,auto);gap:7px;padding:10px 7px;min-height:90px}}

@@ -19,6 +19,7 @@
   };
 
   let owner = '';
+  let rankingOwner = '', rankingRows = null, rankingError = '', rankingTime = 0, rankingRequest = null;
   let snapshot = null;
   let awards = [];
   let bonus = 0;
@@ -111,7 +112,7 @@
   }
 
   const manage = (action, data = {}) => rpc('dm_team_manage', {p_action:action,p_data:data});
-  const refreshHome = () => window.dmFriends?.redrawArena?.();
+  const refreshHome = () => { window.dmFriends?.redrawArena?.(); paintRanking(); };
 
   async function load(force = false) {
     const current = token();
@@ -378,12 +379,52 @@
     } finally { working=false; }
   }
 
-  async function teamRanks(action) {
-    const result=await manage('ranking',{period:action});
-    sheet(action==='all'?'Tüm Zamanlar':'Haftalık Takım Sıralaması',
-      result.rows.map((row,i)=>'<div class="dm-team-list-row"><b>'+(i+1)+'.</b>'+image(row.crest)+
-      '<b>'+escaped(row.name)+'</b><strong>'+number(row.points)+' puan</strong></div>').join('')||
-      '<p>Henüz sıralamaya giren takım yok.</p>');
+  // The ranking tab is a single all-time list; weekly team rewards stay independent.
+  function resetRanking(identity=token()) {
+    if(rankingOwner===identity)return;
+    rankingOwner=identity;rankingRows=null;rankingError='';rankingTime=0;rankingRequest=null;
+  }
+  function rankingMarkup() {
+    resetRanking();
+    if(!token())return '<p class="dm-team-ranking-state">Takım sıralamasını görmek için giriş yap.</p>';
+    if(rankingRows===null){
+      return rankingError?'<p class="dm-team-ranking-state">'+escaped(rankingError)+'</p>'+button('ranking-refresh','Tekrar Dene'):'<p class="dm-team-ranking-state" role="status">Takımlar yükleniyor…</p>';
+    }
+    if(!rankingRows.length)return '<p class="dm-team-ranking-state">Henüz sıralamaya giren takım yok.</p>';
+    const myTeam=owner===token()?snapshot?.team?.id:null;
+    return (rankingError?'<p class="dm-team-ranking-state" role="status">'+escaped(rankingError)+'</p>'+button('ranking-refresh','Tekrar Dene'):'')+
+      '<ol class="dm-team-ranking-list">'+rankingRows.map((row,i)=>{
+        const self=myTeam!=null&&String(row.id)===String(myTeam);
+        return '<li class="dm-team-ranking-row'+(i===0?' is-leader':'')+(self?' is-own-team':'')+'" data-place="'+(i+1)+'">'+
+          '<span class="dm-team-rank-number">'+(i===0?'<span class="dm-team-rank-crown" aria-hidden="true">♛</span>':'')+'<b>'+(i+1)+'</b></span>'+
+          image(row.crest)+
+          '<div class="dm-team-rank-name">'+(i===0?'<span class="dm-team-rank-leader-label">LİDER TAKIM</span>':'')+'<b>'+escaped(row.name)+'</b>'+(self?'<small class="dm-team-rank-self">Takımın</small>':'')+'</div>'+
+          '<span class="dm-team-rank-points"><strong>'+number(row.points)+'</strong><small>puan</small></span></li>';
+      }).join('')+'</ol>';
+  }
+  function paintRanking() {
+    const host=document.querySelector('#tab-meduakis [data-team-ranking]');
+    if(host)host.innerHTML=rankingMarkup();
+  }
+  function rankingHtml() {
+    return '<section class="dm-team-ranking" data-team-ranking aria-label="Takım sıralaması">'+rankingMarkup()+'</section>';
+  }
+  async function loadRanking(force=false) {
+    const identity=token();resetRanking(identity);
+    if(!identity)return;
+    if(rankingRequest)return;
+    if(!force&&rankingTime&&Date.now()-rankingTime<60000)return;
+    const request=Promise.resolve().then(()=>manage('ranking',{period:'all'}));
+    rankingRequest=request;rankingError='';paintRanking();
+    try{
+      const result=await request;
+      if(rankingOwner!==identity||token()!==identity||rankingRequest!==request)return;
+      rankingRows=Array.isArray(result.rows)?result.rows:[];rankingTime=Date.now();
+    }catch(failure){
+      if(rankingOwner===identity&&token()===identity&&rankingRequest===request){rankingError=failure.message;rankingTime=Date.now();}
+    }finally{
+      if(rankingOwner===identity&&token()===identity&&rankingRequest===request){rankingRequest=null;paintRanking();}
+    }
   }
 
   async function openInviteSheet() {
@@ -496,7 +537,7 @@
           }
           return;
         }
-        case 'weekly': case 'all': return await teamRanks(action);
+        case 'ranking-refresh': return await loadRanking(true);
         case 'premium': {
           armPremiumSession();
           dialog?.close();
@@ -531,13 +572,13 @@
   }
 
   document.addEventListener('dm:login',()=>void load(true));
-  document.addEventListener('dm:logout',()=>{owner='';snapshot=null;announcedRequests.clear();dialog?.close();});
+  document.addEventListener('dm:logout',()=>{owner='';snapshot=null;resetRanking('');announcedRequests.clear();dialog?.close();});
   document.addEventListener('visibilitychange',()=>{if(!document.hidden&&token())void load(true);});
   setInterval(()=>{if(token()&&!document.hidden){paintExpiry();maybeOpenRequest();void load();}},30000);
   setTimeout(()=>{if(token()&&!document.hidden)void load();},1500);
   window.dmTeam={
     navigateRequests,
-    html, load, act, settings,
+    html, load, act, settings, rankingHtml, loadRanking,
     isPremiumSession, launchPremiumCard, clearPremiumSession,
     ticket:async kind=>(await manage('ticket',{kind})).ticket,
     premiumTicket(runId) {
