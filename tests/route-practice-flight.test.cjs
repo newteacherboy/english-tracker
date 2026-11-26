@@ -9,3 +9,23 @@ test('invalid gain never starts a combo; reduced motion and sound off still comp
 test('each replay gets unique SVG gradient identifiers and no stale overlay',async()=>{const f=fixture();try{let p=f.w.dmRoutePracticeFlight.play();const first=f.w.document.querySelector('svg [id]').id;f.w.dmRoutePracticeFlight.cancel();assert.equal(await p,false);p=f.w.dmRoutePracticeFlight.play();const second=f.w.document.querySelector('svg [id]').id;assert.notEqual(first,second);assert.equal(f.w.document.querySelectorAll('#dmRoutePracticeFlight').length,1);f.w.dmRoutePracticeFlight.cancel();assert.equal(await p,false);}finally{f.close();}});
 test('slow frames use real elapsed time rather than extending a completed combo',async()=>{const f=fixture();try{const p=f.w.dmRoutePracticeFlight.playCombo();for(let i=0;i<19;i++)f.step(200);assert(!f.w.dmRoutePracticeFlight.active(),'3.8s at 5fps must still finish in 3.8s');assert.equal(await p,true);}finally{f.close();}});
 test('actor animation end resolves immediately; wing animation ends do not advance',async()=>{const f=fixture();try{const p=f.w.dmRoutePracticeFlight.playCombo();const root=f.w.document.getElementById('dmRoutePracticeFlight');function end(target,name){const e=new f.w.Event('animationend',{bubbles:true});Object.defineProperty(e,'animationName',{value:name});target.dispatchEvent(e);}end(root.querySelector('.p-wingL'),'rf-wing-l');assert(f.w.dmRoutePracticeFlight.active());end(root.querySelector('.rf-actor'),'rf-flip');assert(!root.isConnected,'remove the finished effect without another frame');assert.equal(await p,true);}finally{f.close();}});
+
+test('magic practice uses exactly the learned cards and completes without waiting for images',async()=>{
+ const f=fixture();try{
+  const requested=[];f.w.DMWordImagePool={resolve(en,tr,size){requested.push([en,tr,size]);return new Promise(()=>{});}};
+  const words=[{en:'apple',tr:'elma'},{en:'book',tr:'kitap'},{en:'pencil',tr:'kalem'},{en:'school bag',tr:'okul çantası'}];
+  const p=f.w.dmRoutePracticeFlight.play({words}),root=f.w.document.querySelector('.dm-route-flight-magic');
+  assert(root);assert.equal(root.getAttribute('aria-label'),'4 yeni kelime öğrendin! Haydi pratik zamanı!');
+  assert.deepEqual([...root.querySelectorAll('.rf-magic-card b')].map(b=>b.textContent),words.map(w=>w.en));
+  assert.deepEqual(requested,words.map(w=>[w.en,w.tr,512]));assert(root.querySelector('svg.rf-svg .p-wingL'));
+  f.advance(2350);assert(f.w.dmRoutePracticeFlight.active());f.advance(50);assert.equal(await p,true);assert(!root.isConnected);
+ }finally{f.close();}
+});
+test('magic cards do not affect combo or the old portal; reduced motion exits in 1s',async()=>{
+ const f=fixture(true);try{
+  const words=[{en:'hello',tr:'merhaba'}];
+  let p=f.w.dmRoutePracticeFlight.play({words});assert(f.w.document.querySelector('.dm-route-flight-magic'));f.advance(1000);assert.equal(await p,true);
+  p=f.w.dmRoutePracticeFlight.playCombo({words,gain:2});assert(!f.w.document.querySelector('.rf-magic-card'));assert(f.w.document.querySelector('.rf-reward'));f.advance(1000);assert.equal(await p,true);
+  p=f.w.dmRoutePracticeFlight.play();assert(!f.w.document.querySelector('.dm-route-flight-magic'));f.advance(1000);assert.equal(await p,true);
+ }finally{f.close();}
+});
