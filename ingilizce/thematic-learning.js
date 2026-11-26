@@ -425,14 +425,18 @@ function renderRecovery(){
 function render(){if(!modal)return;accepted=false;if(session?.needsRecovery&&!session.finished){renderRecovery();return;}shell();if(session.finished||session.cursor>=taskDeck(chapter,data?.chapters.find(c=>c.id===chapter.previousId),session.deckVersion).length){finish();return;}const tasks=taskDeck(chapter,data?.chapters.find(c=>c.id===chapter.previousId),session.deckVersion),task=tasks[session.cursor],area=modal.querySelector('.ml-task'),actions=modal.querySelector('.ml-actions');modal.dataset.taskKind=task.kind;modal.dataset.schoolShort=String((task.prompt||'').length<=16);area.innerHTML='<p class="ml-eyebrow">'+esc(task.label)+'</p>';
  const speaker=(text,lang='en-US',label='Dinle')=>{const b=document.createElement('button');b.type='button';b.className='ml-speaker';b.setAttribute('aria-label',label);b.innerHTML='<span class="ml-wave-play" aria-hidden="true">▶</span><span class="ml-live-wave" aria-hidden="true">'+[8,15,25,12,36,44,23,34,16,27,12,8].map((h,i)=>'<i style="--wave-h:'+h+'px;--wave-delay:'+i*45+'ms"></i>').join('')+'</span>';b.playVoice=()=>{speech(text,lang,()=>b.classList.remove('is-playing'));if(voice&&activeLessonSpeech)b.classList.add('is-playing');};b.onclick=b.playVoice;return b;};
  if(task.kind==='teach'){
-  const cards=teachingCards(task);
-  area.querySelector('.ml-eyebrow').textContent='Dinle ve Öğren · '+cards.length+' yeni ifade';
-  area.innerHTML+=arenaHero(schoolBridge?'<h2>Okul Yolum</h2><p class="ml-school-scope">'+esc(chapter.cefr+' · '+chapter.theme)+'</p><p class="ml-school-instruction">Dinle ve öğren.</p>':'<h2>'+esc(chapter.part===1?'Yeni ifadelerle tanış':'İfadeleri cümlede kullan')+'</h2><p>'+esc(chapter.objective)+'</p>')+
-   '<div class="ml-teach ml-teach-collection">'+cards.map((c,i)=>'<button type="button" data-learn="'+i+'">'+art(c,false,true)+'<b lang="en">'+esc(c.en)+'</b><span>'+esc(c.tr)+'</span><small>🔊 Dinle</small></button>').join('')+'</div><div class="ml-learning-note"><img src="papi-welcome-v2.png" alt="Papi"><p class="ml-hint">Kartlara dokunarak dinle. Hazır olduğunda '+questionsFor()+' soruya geç.</p></div>';
-  area.querySelectorAll('[data-learn]').forEach(b=>{const c=cards[+b.dataset.learn],key=core.norm(c.en);void window.DMWordImagePool?.decorate(b,c.en,c.tr,'learning');const paint=()=>{const heard=teachingHeard.has(key);b.classList.toggle('is-listened',heard);b.setAttribute('aria-pressed',String(heard));b.querySelector('small').innerHTML='<span class="ml-live-wave" aria-hidden="true">'+[8,15,25,12,36,44,23,34,16,27,12,8].map((h,i)=>'<i style="--wave-h:'+h+'px;--wave-delay:'+i*45+'ms"></i>').join('')+'</span>';b.setAttribute('aria-label',c.en+(heard?' · Dinlendi, tekrar dinle':' · Dinle'));};paint();b.onclick=()=>{window.dmRoutePracticeFlight?.prepare();teachingHeard.add(key);paint();const turn=++teachingSpeech,ticket=epoch,at=identity();speech(c.en,'en-US',()=>{b.classList.remove('is-playing');if(turn===teachingSpeech&&ticket===epoch&&modal&&identity()===at&&cards.every(c=>teachingHeard.has(core.norm(c.en))))void startQuestions();});if(voice&&activeLessonSpeech)b.classList.add('is-playing');};});
-  if(chapter.examples?.length)reference(area,chapter.examples,'Bu ifadeleri cümlede gör');if(chapter.reference)reference(area,chapter.reference,'Konu sözlüğü · Dinle ve öğren');
-  actions.innerHTML='<button type="button" class="ml-primary">'+(schoolBridge?'Sorulara başla':questionsFor()+' soruya başla')+' →</button>';
-  actions.querySelector('button').onclick=startQuestions;bindMascotFallback(area);return;
+  const cards=teachingCards(task),ticket=epoch,at=identity(),cursor=session.cursor;
+  const current=()=>ticket===epoch&&identity()===at&&!!modal&&session.cursor===cursor&&!busy&&area.isConnected;
+  const rendered=window.DMRouteQuestions?.renderTask({tip:'teach',k:cards[0],l:cards},area,{
+   en:c=>c?.en||'',tr:c=>c?.tr||'',pool:cards,shuffle:values=>values,
+   speak:english=>{if(current()){window.dmRoutePracticeFlight?.prepare();speech(english,'en-US');}},
+   answer:()=>{if(current())void startQuestions();},current
+  });
+  if(!rendered){area.innerHTML='<p class="ml-hint">Kelime kartları yüklenemedi. Tekrar dene.</p>';actions.innerHTML='<button type="button" class="ml-primary">Tekrar dene</button>';actions.querySelector('button').onclick=render;return;}
+  area.querySelector('.bz-etiket')?.remove();
+  const start=area.querySelector('.rq-teach-start');start.classList.add('ml-primary');actions.replaceChildren(start);
+  scheduleLessonFit();
+  return;
  }
 
  if(task.kind!=='review')area.innerHTML+=arenaHero('<h2 '+(task.language==='en'?'lang="en"':'')+'>'+esc(task.prompt)+'</h2>'+(task.support?'<p class="ml-support">'+esc(task.support)+'</p>':'')+(task.picture?art(task.picture):''));if(task.kind!=='review')bindMascotFallback(area);
