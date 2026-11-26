@@ -2,6 +2,7 @@
 (function(root){'use strict';
 if(typeof document!=='undefined'&&!document.getElementById('rq-forest-reference-style')){const link=document.createElement('link');link.id='rq-forest-reference-style';link.rel='stylesheet';link.href='route-forest-reference.css?v=20261014-1';document.head.append(link);}
 if(typeof document!=='undefined'&&!document.getElementById('dm-route-feedback-profile-style')){const link=document.createElement('link');link.id='dm-route-feedback-profile-style';link.rel='stylesheet';link.href='route-feedback-profile.css?v=20261014-1';document.head.append(link);}
+if(typeof document!=='undefined'&&!document.getElementById('rq-teach-card-style')){const link=document.createElement('link');link.id='rq-teach-card-style';link.rel='stylesheet';link.href='route-teach-card.css?v=20261126-1';document.head.append(link);}
 const esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const norm=x=>String(x??'').normalize('NFKC').toLowerCase().replace(/[^\p{L}\p{N}]+/gu,' ').trim();
 
@@ -125,6 +126,7 @@ function dmWordImagePanel(area,task,read){
  let ownObserver=null;
  const paint=()=>{
   if(!area.isConnected){ownObserver?.disconnect();return;}
+  if(task.tip==='teach'&&area.querySelector('.rq-teach-card'))return;
   if(task.tip==='teach'&&area.querySelector('.dm-school-word')){
    area.querySelectorAll('[data-rq-word]').forEach(b=>{const k=(task.l||[task.k])[Number(b.dataset.rqWord)];if(k&&b.dataset.dmPoolRequested!=='1'){b.dataset.dmPoolRequested='1';void dmWordImageDecorate(b,read.en(k),read.tr(k),'school');}});return;
   }
@@ -205,20 +207,52 @@ function renderTask(s,area,c){
  const audio=value=>{const b=button('Tekrar dinle',()=>speak(value),'bz-ses rq-listen');b.innerHTML='<span aria-hidden="true" class="rq-speaker-disc"></span><small>Tekrar dinle</small>';b.setAttribute('aria-label','Tekrar dinle');return b;};
  const select=(values,expected)=>{const box=document.createElement('div');box.className='bz-secenekler';for(const value of values){const b=button(value,()=>{const good=norm(value)===norm(expected);box.querySelectorAll('button').forEach(x=>{x.disabled=true;if(norm(x.textContent)===norm(expected))x.classList.add('dogru')});if(!good)b.classList.add('yanlis');if(s.tip==='patternComplete')speak(area.querySelector('.bz-soru').textContent.replace(/_{2,}/g,value));answer(good,expected,value)},'bz-sec');box.append(b)}area.append(box)};
  if(s.tip==='teach'){
-  const words=s.l||[s.k];let i=0;
-  // Preserve legacy renderer in older game fixtures; new cards are school-route only.
-  if(!root.dmSchoolJourney?.theme||root.dmLearningRoute?.purpose?.()!=='school'){
-   const draw=()=>{if(!current())return;const w=words[i];put('<div class="rq-teach-progress">'+(i+1)+' / '+words.length+'</div><div class="bz-soru" lang="en">'+esc(en(w))+'</div><div class="bz-tr-anlam">'+esc(tr(w))+'</div>');area.append(audio(en(w)),button(i+1<words.length?'Sonraki kelime →':'Öğrendim, devam et →',()=>{if(++i<words.length)draw();else answer(true,'Kelimeleri öğrendin',true)}));speak(en(w))};draw();return true;
-  }
-  // Teach remains one verified question: cards are a preview, not four forced steps.
-  // Audio only plays when a learner touches a word.
-  put('<div class="dm-school-words" aria-label="Bu duraktaki kelimeler">'+words.map((word,n)=>
-   '<button type="button" class="dm-school-word" data-rq-word="'+n+'" aria-label="'+esc(en(word))+' - '+esc(tr(word))+', dinle"><span><strong lang="en">'+esc(en(word))+'</strong><small>'+esc(tr(word))+'</small></span><span class="dm-school-word-listen">🔊 Dinle</span></button>').join('')+'</div>');
-  area.querySelectorAll('[data-rq-word]').forEach(b=>{const word=words[Number(b.dataset.rqWord)];b.onclick=()=>{if(current())speak(en(word));};void root.DMWordImagePool.decorate(b,en(word),tr(word),'school');});
-  let submitted=false;
-  const go=button('Sorulara geç →',()=>{if(submitted)return;submitted=true;go.remove();area.querySelector('.dm-school-words')?.remove();answer(true,'Kelimeleri öğrendin',true);},'bz-btn mor dm-school-start-questions');
+  const words=(s.l?.length?s.l:[s.k]);
+  let i=0,submitted=false;
+  const seen=new Set();
+  put('<section class="rq-teach-card" aria-label="Dinle ve öğren"><div class="rq-teach-label" aria-live="polite"></div><button type="button" class="rq-teach-picture" aria-label="Tekrar dinle"></button><p class="rq-teach-hint">Tekrar dinlemek için görsele dokun</p><div class="rq-teach-navigation"><button type="button" data-teach-prev aria-label="Önceki kelime">‹</button><div><div class="rq-teach-progress"></div><div class="rq-teach-dots"></div></div><button type="button" data-teach-next aria-label="Sonraki kelime">›</button></div><p class="rq-teach-swipe">← Sonraki kelime için sola kaydır</p></section>');
+  const card=area.querySelector('.rq-teach-card'),picture=card.querySelector('.rq-teach-picture');
+  const label=card.querySelector('.rq-teach-label'),progress=card.querySelector('.rq-teach-progress'),dots=card.querySelector('.rq-teach-dots');
+  const prev=card.querySelector('[data-teach-prev]'),next=card.querySelector('[data-teach-next]');
+  const go=button('Sorulara Başla →',()=>{if(submitted||seen.size!==words.length)return;submitted=true;go.remove();card.remove();answer(true,'Kelimeleri öğrendin',true);},'bz-btn mor dm-school-start-questions rq-teach-start');
   area.append(go);
-  return true
+  const tapIcon='<span class="rq-teach-tap" aria-hidden="true"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 26 13 12a4 4 0 0 1 7-4l10 17-2-5a3 3 0 0 1 5-3l4 6a4 4 0 0 1 6 1l3 7c2 7-2 13-9 15-7 2-12-1-17-5l-9-8a4 4 0 0 1 5-6l5 3"/></svg></span>';
+  const images=words.map(w=>dmWordImageResolve(en(w),tr(w),512).catch(()=>null));
+  function draw(){
+   if(!current()||submitted)return;
+   const index=i,w=words[index],english=en(w),turkish=tr(w);
+   seen.add(index);
+   label.innerHTML='<strong lang="en">'+esc(english)+'</strong><span>'+esc(turkish)+'</span>';
+   picture.innerHTML='<span class="rq-teach-image-fallback" aria-hidden="true">Aa</span>'+tapIcon;
+   picture.setAttribute('aria-label',english+', tekrar dinle');
+   progress.textContent=(index+1)+' / '+words.length;
+   dots.innerHTML=words.map((_,n)=>'<span class="'+(n===index?'active':seen.has(n)?'visited':'')+'"></span>').join('');
+   prev.disabled=index===0;next.disabled=index===words.length-1;
+   go.disabled=seen.size!==words.length;
+   card.querySelector('.rq-teach-swipe').textContent=index===words.length-1?'Tüm kelimeleri gördün.':'← Sonraki kelime için sola kaydır';
+   void images[index].then(url=>{
+    if(!url||!current()||i!==index||!picture.isConnected||submitted)return;
+    const img=document.createElement('img');img.alt='';img.decoding='async';img.draggable=false;
+    img.onload=()=>{if(current()&&i===index&&picture.isConnected&&!submitted){picture.querySelector('.rq-teach-image-fallback')?.replaceWith(img);}};
+    img.onerror=()=>{if(img.src.includes('/512/'))img.src=url.replace('/512/','/256/');};
+    img.src=url;
+   });
+   if(index+1<words.length)void images[index+1].then(url=>{if(url){const preload=new Image();preload.src=url;}});
+   speak(english);
+  }
+  function move(delta){const target=i+delta;if(!current()||target<0||target>=words.length||submitted)return;i=target;draw();}
+  prev.onclick=()=>move(-1);next.onclick=()=>move(1);
+  let origin=null,suppressClickUntil=0;
+  picture.addEventListener('pointerdown',event=>{if(event.isPrimary){origin={x:event.clientX,y:event.clientY,id:event.pointerId};picture.setPointerCapture?.(event.pointerId);}});
+  picture.addEventListener('pointercancel',()=>{origin=null;});
+  picture.addEventListener('pointerup',event=>{
+   if(!origin||event.pointerId!==origin.id)return;
+   const dx=event.clientX-origin.x,dy=event.clientY-origin.y;origin=null;
+   if(Math.abs(dx)>40&&Math.abs(dx)>Math.abs(dy)){suppressClickUntil=Date.now()+400;move(dx<0?1:-1);}
+  });
+  picture.onclick=()=>{if(current()&&!submitted&&Date.now()>=suppressClickUntil)speak(en(words[i]));};
+  card.addEventListener('keydown',event=>{if(event.key==='ArrowLeft'||event.key==='ArrowRight'){event.preventDefault();move(event.key==='ArrowLeft'?-1:1);}});
+  draw();return true;
  }
  if(s.tip==='soyle'){
   put('<div class="bz-soru" lang="en">'+esc(text)+'</div><div class="bz-tr-anlam">'+esc(meaning)+'</div>');area.append(audio(text));
