@@ -347,3 +347,11 @@ body #tab-dunya:not(.active) .dm-papi-chat-shortcut,body.dm-play-session #tab-du
 @media(prefers-reduced-motion:reduce){
  body #tab-dunya .rt-medal-route>.dm-papi-chat-shortcut,.dm-papi-chat-hello{animation:none}
 }
+
+/* 26 Kasım: nötr rota düğmesi ve Ajandam işaretçisi. */
+html[data-dm-theme="day"] body #tab-dunya .rt-medal-route .rt-medal-unit button[data-rt="switch-route"]{border-color:#c4cad7!important;border-bottom-color:#a2aabd!important;background:#f5f6f8!important;color:#586479!important;-webkit-text-fill-color:#586479!important;box-shadow:0 3px 8px #64748b1a!important}
+html[data-dm-theme="night"] body #tab-dunya .rt-medal-route .rt-medal-unit button[data-rt="switch-route"]{border-color:#64748b!important;border-bottom-color:#475569!important;background:#27334b!important;color:#d2d9e5!important;-webkit-text-fill-color:#d2d9e5!important;box-shadow:none!important}
+body #tab-dunya .rt-medal-route .rt-medal-unit button[data-rt="switch-route"] :is(svg,span){color:inherit!important;-webkit-text-fill-color:inherit!important}
+body #tab-dunya .rt-medal-route .rt-agenda summary{position:relative}
+body #tab-dunya .rt-medal-route .rt-agenda summary::after{content:"";position:absolute;top:3px;left:calc(50% + 9px);width:10px;height:10px;box-sizing:border-box;border:1.5px solid #fff;border-radius:50%;background:#ef3450;z-index:2;pointer-events:none}
+html[data-dm-theme="night"] body #tab-dunya .rt-medal-route .rt-agenda summary::after{border-color:#18233b}
