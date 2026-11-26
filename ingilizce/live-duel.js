@@ -109,7 +109,7 @@ function paywall(kind, message, retry, hold) {
       <button type="button" class="ld-text-btn" data-close>Kapat</button>
     </div>`, () => closeSheet());
   const sheet = el.querySelector('.ld-sheet');
-  let holdTick = null, offerId = null, busy = false, recheck = false;
+  let holdTick = null, offerId = null, busy = false, recheck = false, joining = false;
   // Ayrılan düelloyu bırak: rakip beklemeyi bırakır (rastgelede Papi, davette seçim ekranı).
   function release(reason) {
     if (!held || held.started) return;
@@ -117,7 +117,7 @@ function paywall(kind, message, retry, hold) {
     rpc('dm_duel_live_hold', {p_duel: h.duel, p_op: 'release'}, owner).catch(() => {});
     lobbySend('hold', {id: h.duel, name: who(), end: true, reason: reason || 'cancel'});
   }
-  function closeSheet() { release('cancel'); closeLayer(); }
+  function closeSheet() { if(joining){toast('Düello eşleşiyor, bir an bekle.');return false;}release('cancel');closeLayer();return true; }
   function paintHold() {
     if (!held) return;
     const left = Math.max(0, Math.ceil((held.until - Date.now()) / 1000));
@@ -136,7 +136,7 @@ function paywall(kind, message, retry, hold) {
   el.addEventListener('click', e => { if (e.target === el) closeSheet(); });
   el.querySelector('[data-close]').onclick = closeSheet;
   el.querySelector('[data-pro]').onclick = () => {
-    closeSheet();
+    if(!closeSheet())return;
     if (window.DMSatis?.planlar) window.DMSatis.planlar(live ? 'canli-duello' : 'papi-duello', 'premium_pro');
     else if (window.dmAndroidBilling?.available) window.dmAndroidBilling.open(live ? 'canli-duello' : 'papi-duello');
     else toast('Paketleri uygulamanın Mağaza bölümünden görebilirsin.');
@@ -183,8 +183,9 @@ function paywall(kind, message, retry, hold) {
       do {
         if(token()!==owner)return;
         const h=active()?held:null;
-        d=h?await rpc('dm_duel_ad_accept',{p_offer:offerId,p_duel:h.duel},owner).catch(()=>null)
-          :await rpc('dm_duel_ad',{p_kind:live?'live':'papi',p_op:'redeem',p_offer:offerId},owner).catch(()=>null);
+        joining=!!h;
+        try{d=h?await rpc('dm_duel_ad_accept',{p_offer:offerId,p_duel:h.duel},owner).catch(()=>null)
+          :await rpc('dm_duel_ad',{p_kind:live?'live':'papi',p_op:'redeem',p_offer:offerId},owner).catch(()=>null);}finally{joining=false;}
         if(d&&(d.claimed||!d.ok))break;
         if(Date.now()>=until)break;
         await sleep(2000);
