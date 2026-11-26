@@ -56,7 +56,6 @@ const TOURS=[
   {target:'.gg-resume',title:'Son oynadığın',text:'En son oynadığın oyuna tek dokunuşla dönersin.'},
   {target:'#ggFreeTab',title:'Kapışma',text:'Kartlarla öğren, aynı cihazda bir arkadaşınla karşılıklı yarış.'},
   {target:'#ggKonuTab',title:'Konu Oyunları',text:'Ders Çalış’taki konuları oyunla pekiştir. %80 ve üzeri başarıda 70 XP kazanırsın.'},
-  {target:'[data-gg-party="break"]',title:'Mola Vakti',text:'Derslerden bağımsız, kısa ve eğlenceli oyunlar. Altın toplarsın; Free planda her oyun için günde 1 hakkın var.'},
   {center:true,img:'papi-kutlama',title:'İyi eğlenceler!',text:'Her oyun turu ödül kazandırır. Sonuç ekranında kazandığın XP’yi ve altını görürsün.',noDots:true,next:'Tamam',secondary:'Kapat'}
  ]},
  {id:'magaza',tab:'tab-magaza',title:'Mağaza ve Çantam',ask:'Bugün sana Mağaza’yı ve Çantam’ı göstereyim mi?',steps:()=>[

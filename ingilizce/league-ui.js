@@ -131,7 +131,6 @@ const duelGames=[
  {key:'hafiza',title:'Hafıza Sandığı',gate:'oyun_hafiza',min:6,icon:'🧠'},
  {key:'bosluk',title:'Eksik Harf',gate:'oyun_bosluk',min:11,icon:'🔡'},
  {key:'asmaca',title:'Harf Avı',gate:'oyun_asmaca',min:14,icon:'🔍'},
- {key:'jeopardy',title:'Risk Balonları',gate:'oyun_jeopardy',min:22,icon:'🎈'},
  {key:'yagmur',title:'Hız Fırtınası',gate:'oyun_yagmur',min:28,icon:'🌪️'}
 ];
 const papiImg='<img src="friends-assets/papi-fencer.webp" alt="Diji Medu maskotu Papi" class="dm-lig-duel-papi">';

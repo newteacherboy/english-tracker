@@ -5,6 +5,7 @@ export function breakGamesAPI(db:any,json:any){
  return {async handle(op:string,b:any,q:URLSearchParams,a:any,method:string){
   if(!['molaDurum','molaBaslat','molaBitir','molaSiralama','molaBolumGec'].includes(op))return null;
   if(a?.role!=='student'||!a.student_id)return json({ok:false,mesaj:'Öğrenci oturumu gerekli.'},401);
+  if(!a.teacher_portal_access_id&&!a.teacherProxy)return json({ok:false,hata:'oyun_kaldirildi',mesaj:'Mola Vakti öğrenci hesabından kaldırıldı.'},410);
   if(method!=='POST')return json({ok:false,mesaj:'POST gerekli.'},405);
   const args:any={actor:a.student_id};let fn='dm_break_status';
   if(op==='molaBaslat'||op==='molaSiralama'){

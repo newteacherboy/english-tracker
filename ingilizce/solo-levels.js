@@ -26,6 +26,7 @@ async function api(islem,body){const owner=who(),r=await fetch(apiURL,{method:'P
 function scope(game){return student()&&(active?.game===game||active?.game==='golu'&&game==='ky')&&active.owner===who()?{classNo:active.classNo,units:active.units.slice(),soloLevel:active.number,...(active.game==='golu'?{soloVariant:'golu'}:{})}:null;}
 function bank(game){return scope(game)?active.words.map(w=>({ingilizce:w.en,turkce:w.tr,en:w.en,tr:w.tr,sinif:active.classNo,unite:w.unit||1})):null;}
 async function open(game,native){
+ if(student()&&['jp','kelimebul','dikte','canavar'].includes(game)){window.yoToast?.('Bu oyun artık öğrenci hesabında sunulmuyor.');return;}
  if(!student())return native();const turn=++epoch,owner=who();active=null;
  document.getElementById('dmSoloLevelIntro')?.remove();
 

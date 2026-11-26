@@ -138,14 +138,14 @@
       '<div class="fr-arena-footer">'+(mine?'<small>Sen · '+xp(mine.wins)+' G / '+xp(mine.losses)+' M · '+xp(mine.duel_xp)+' XP</small>':'')+
       '<button type="button" data-friend-action="duel-rank">Sıralamayı gör '+icon('chevron')+'</button></div></section>';
   }
-  /* Bugünkü Durumun: planın sınırlı hakları. Mola ve Premium oyun hakları 10 dakikada en fazla bir kez sorulur. */
+  /* Bugünkü Durumun: Premium oyun hakları 10 dakikada en fazla bir kez sorulur. */
   const CROWN = '<svg class="fr-crown" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 18 5 7l4.5 4L12 5l2.5 6L19 7l2 11z" fill="currentColor"/></svg>';
   const PLAN = {
-    free:{name:'Free plan',mola:2,pwm:3,shields:null,gold:null,ads:true},
-    pro:{name:'Pro',mola:3,pwm:5,shields:'2/ay',gold:'+30',ads:false},
-    premium_pro:{name:'Premium Pro',mola:5,pwm:null,shields:'5/ay',gold:'+75',ads:false}
+    free:{name:'Free plan',pwm:3,shields:null,gold:null,ads:true},
+    pro:{name:'Pro',pwm:5,shields:'2/ay',gold:'+30',ads:false},
+    premium_pro:{name:'Premium Pro',pwm:null,shields:'5/ay',gold:'+75',ads:false}
   };
-  let quota = {owner:'',at:0,mola:null,pwm:null}, quotaBusy = false;
+  let quota = {owner:'',at:0,pwm:null}, quotaBusy = false;
   function planId() {
     const p = window.dmAndroidPlan?.plan;
     if (PLAN[p]) return p;
@@ -158,15 +158,12 @@
     quotaBusy=true;
     const token=(window.dmTeacherPortalMode?sessionStorage.getItem('ing_ogr_token'):'')||localStorage.getItem('ing_token')||'';
     const base=(typeof apiURL!=='undefined'?apiURL:'https://nxfqlutulxqzqgwewssd.supabase.co/functions/v1/diji-api');
-    const [mola,pwm]=await Promise.allSettled([
-      Promise.resolve().then(()=>window.dmMola?.refresh?.()),
+    const [pwm]=await Promise.allSettled([
       planId()==='premium_pro'?Promise.resolve(null):fetch(base.replace(/diji-api.*$/,'premium-games'),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({op:'status',t:token}),cache:'no-store'}).then(r=>r.ok?r.json():null)
     ]);
     quotaBusy=false;
     if(owner!==who())return;
-    const games=mola.status==='fulfilled'?mola.value?.games:null;
-    const left=games?Object.values(games).map(g=>Number(g?.remaining)).filter(Number.isFinite):[];
-    quota={owner,at:Date.now(),mola:left.length?Math.max(...left):null,pwm:pwm.status==='fulfilled'&&Number.isFinite(Number(pwm.value?.remaining))?Number(pwm.value.remaining):null};
+    quota={owner,at:Date.now(),pwm:pwm.status==='fulfilled'&&Number.isFinite(Number(pwm.value?.remaining))?Number(pwm.value.remaining):null};
     const box=root.querySelector('.fr-status');if(box)box.outerHTML=statusHtml();
   }
   function statusHtml() {
@@ -180,7 +177,6 @@
     const locked='plans';
     const rows=[
       ['bolt','Enerji',id==='premium_pro'?pill('Sınırsız','fr-status-free'):count(energyLeft,energyMax),'energy'],
-      ['break','Mola Vakti',count(own?quota.mola:null,p.mola),'mola'],
       ['game','Premium oyun',p.pwm===null?pill('Sınırsız','fr-status-free'):count(own?quota.pwm:null,p.pwm),'premium'],
       ['shield','Seri kalkanı',p.shields?pill(p.shields,'fr-status-free'):pro,p.shields?'streak':locked],
       ['coin','Günlük altın',p.gold?pill(p.gold,'fr-status-free'):pro,p.gold?'shop':locked],
@@ -488,7 +484,7 @@
       if(rankView==='duel')void loadDuelLeaders();
       return;
     }
-    const link=e.target.closest('[data-club-open]');if(link){const event=maAkisVeri.find(x=>String(x.k)===link.dataset.clubOpen),meta=event&&window.DMFriendsFeed.classify(event);if(!meta)return;if(meta.kind==='game'){if(!requireFeature(meta.game[2]))return;const fn=window[meta.game[1]]||(meta.game[1]==='kelimebulOyunAc'?window.kelimeBulOyunAc:null);if(typeof fn==='function')fn();else window.aktivitelerTamEkranAc?.();}else if(meta.kind==='route')window.dmLearningRoute?.continue?.();else if(meta.kind==='story'){if(/hikâye|hikaye/i.test(event.metin))window.dmLearningCompanion?.nextStory?.();else window.dmLearningCompanion?.nextDialogue?.();}else if(meta.kind==='mission')window.dmLearningCompanion?.openMissions?.(/hafta/i.test(event.metin)?'weekly':'daily');else if(meta.kind==='league')window.maSekmeSec('lig');else if(meta.kind==='badge')window.dmBasarilarimAc?.();else if(meta.kind==='streak')window.dmLearningCompanion?.report?.();else window.dmIlerlememAc?.();return;}
+    const link=e.target.closest('[data-club-open]');if(link){const event=maAkisVeri.find(x=>String(x.k)===link.dataset.clubOpen),meta=event&&window.DMFriendsFeed.classify(event);if(!meta)return;if(meta.kind==='game'){if(!window.dmTeacherPortalMode&&['oyun_jeopardy','oyun_kelimebul','oyun_dikte','oyun_canavar'].includes(meta.game[2]))return;if(!requireFeature(meta.game[2]))return;const fn=window[meta.game[1]]||(meta.game[1]==='kelimebulOyunAc'?window.kelimeBulOyunAc:null);if(typeof fn==='function')fn();else window.aktivitelerTamEkranAc?.();}else if(meta.kind==='route')window.dmLearningRoute?.continue?.();else if(meta.kind==='story'){if(/hikâye|hikaye/i.test(event.metin))window.dmLearningCompanion?.nextStory?.();else window.dmLearningCompanion?.nextDialogue?.();}else if(meta.kind==='mission')window.dmLearningCompanion?.openMissions?.(/hafta/i.test(event.metin)?'weekly':'daily');else if(meta.kind==='league')window.maSekmeSec('lig');else if(meta.kind==='badge')window.dmBasarilarimAc?.();else if(meta.kind==='streak')window.dmLearningCompanion?.report?.();else window.dmIlerlememAc?.();return;}
 
     const b=e.target.closest('[data-friend-action]');if(!b)return;
     const action=b.dataset.friendAction;
@@ -500,7 +496,6 @@
     if(action==='status-go'){
       const go=b.dataset.go;
       if(go==='energy'){if(window.DMSatis?.enerji)return window.DMSatis.enerji('arkadaslar-durum');return window.dijiEnerjiPaneliAc?.();}
-      if(go==='mola'){window.aktivitelerTamEkranAc?.();let tries=0;const pick=()=>{const cat=document.querySelector('#tab-aktiviteler [data-gg-party="break"]');if(cat)cat.click();else if(++tries<12)setTimeout(pick,150);};setTimeout(pick,200);return;}
       if(go==='premium')return window.aktivitelerTamEkranAc?.();
       if(go==='streak'){if(typeof window.dmIlerlememAc==='function')return window.dmIlerlememAc();return window.maSekmeSec?.('profil');}
       if(go==='shop'){if(typeof window.magazaAc==='function')return window.magazaAc();return window.maSekmeSec?.('magaza');}

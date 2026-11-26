@@ -19,6 +19,7 @@ import {socialSafetyAPI} from './social-safety.mjs';
 import {normalizeLearnerProfile,learnerClass,saveLearnerProfile,seedLearningRoute} from './learner-profile.mjs';
 import {requireSafePassword,PasswordPolicyError} from './password-security.mjs';
 import {verifiedGamesAPI} from './verified-games.mjs';
+import {retiredStudentOperation} from './student-game-retirement.mjs';
 import {soloLevelsAPI} from './solo-levels.mjs';
 import {validateRegistrationEmail} from './registration-email.mjs';
 import {gradeStudyQuiz,studyTier,recoveryQuestions} from './fair-study.mjs';
@@ -1429,6 +1430,7 @@ async function handle(req: Request, proxy: any = null) {
     return iceAktar(body);
   }
   const a = proxy || await auth(req, body, q);
+  if(retiredStudentOperation(op,body,q,a))return json({ok:false,hata:'oyun_kaldirildi',mesaj:'Bu oyun artık öğrenci hesabında sunulmuyor.'},410);
   const portalResponse=await teacherPortal.handle(op,body,a,req.method);if(portalResponse)return portalResponse;
   if(a?.teacher_portal_access_id&&a.role==="student"&&!portalOperationAllowed(op,{...Object.fromEntries(q),...body}))return json({ok:false,mesaj:"Bu işlem için kişisel hesabına geç."},403);
   authSeen.set(req, a);

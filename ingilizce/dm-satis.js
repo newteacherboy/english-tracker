@@ -308,7 +308,7 @@
         chips: ['⚡ Sınırsız enerji', '🚫 Reklamsız', '🪙 Her gün +75 altın', '🎮 Sınırsız Premium oyun', '🔓 Seviye kilitlerine erken erişim', '💬 Papi ile canlı sohbet'] },
     ],
     table: [['⚡ Enerji', '25', '40', 'Sınırsız'], ['🚫 Reklam', 'Var', 'Yok', 'Yok'], ['🪙 Altın/gün', '—', '+30', '+75'], ['🎮 Premium oyun', 'İlk 3 gün, her oyunda 1/gün', 'Her oyunda 5/gün', 'Sınırsız'],
-      ['🔓 Seviyeyle açılan özellikler', 'Seviyene göre', 'Seviyene göre', 'Hemen açık'], ['💬 Papi ile canlı sohbet', '1 ücretsiz sohbet', '1 ücretsiz sohbet', 'Sınırsız'], ['🛡️ Seri kalkanı', '—', '2/ay', '5/ay'], ['🏝️ Mola Vakti', 'Her oyunda 1/gün', 'Her oyunda 3/gün', 'Her oyunda 5/gün']],
+      ['🔓 Seviyeyle açılan özellikler', 'Seviyene göre', 'Seviyene göre', 'Hemen açık'], ['💬 Papi ile canlı sohbet', '1 ücretsiz sohbet', '1 ücretsiz sohbet', 'Sınırsız'], ['🛡️ Seri kalkanı', '—', '2/ay', '5/ay']],
   };
   const TEACHER = {
     hero: { title: 'Öğretmen paketleri', text: 'Daha çok sınıf, sınırsız ödev ve detaylı raporlarla öğrencilerinin İngilizcesini adım adım takip et.' },
