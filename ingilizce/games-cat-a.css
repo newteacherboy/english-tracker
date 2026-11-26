@@ -24,3 +24,10 @@ html[data-dm-theme="night"] body #tab-aktiviteler#tab-aktiviteler#tab-aktivitele
 @media(max-width:355px){html body #tab-aktiviteler#tab-aktiviteler#tab-aktiviteler .gg-page.gg-cat-a .gg-tabs>button .gg-category-art{width:70px!important;height:64px!important}html body #tab-aktiviteler#tab-aktiviteler#tab-aktiviteler .gg-page.gg-cat-a .gg-tabs>button .gg-category-name{font-size:15px!important}}
 @media(prefers-reduced-motion:reduce){html body #tab-aktiviteler#tab-aktiviteler#tab-aktiviteler .gg-page.gg-cat-a .gg-tabs>button{transition:none!important}}
 }
+
+/* 26 Kasım: öğrenci Ücretsiz Oyunlar seçimleri, çerçevesiz ve doğrudan sayfa zemini üzerinde. */
+@layer bilgiIslands{
+html[data-dm-theme] body #tab-aktiviteler#tab-aktiviteler#tab-aktiviteler .gg-page.gg-redesign.gg-list-view.au-games.gg-cat-a:not(.gg-teacher-list) .gg-tabs>:is(#ggSoloTab,#ggBreakTab)[aria-pressed],
+html[data-dm-theme] body #tab-aktiviteler#tab-aktiviteler#tab-aktiviteler .gg-page.gg-redesign.gg-list-view.au-games.gg-cat-a:not(.gg-teacher-list) .gg-tabs>:is(#ggSoloTab,#ggBreakTab)[aria-pressed]:active{background:transparent!important;border:0!important;box-shadow:none!important;filter:none!important;transform:none!important}
+html[data-dm-theme] body #tab-aktiviteler#tab-aktiviteler#tab-aktiviteler .gg-page.gg-redesign.gg-list-view.au-games.gg-cat-a:not(.gg-teacher-list) .gg-tabs>:is(#ggSoloTab,#ggBreakTab)[aria-pressed] .gg-category-art{background:transparent!important;border:0!important;box-shadow:none!important;padding:0!important;transform:none!important}
+}
