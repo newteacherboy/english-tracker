@@ -27,6 +27,8 @@
   let loading = false;
   let working = false;
   let dialog = null;
+  const submittedTeams = new Set();
+  let searchVersion = 0;
   let premiumSessionOwner = '';
   const premiumTickets = new Map();
   const cardToGame = {
@@ -83,7 +85,7 @@
     const current = token();
     if (current !== owner) {
       owner = current; snapshot = null; awards = []; bonus = 0; loadedAt = 0; error = ''; loading = false;
-      clearPremiumSession(); dialog?.close(); premiumTickets.clear();
+      clearPremiumSession(); dialog?.close(); premiumTickets.clear(); submittedTeams.clear();
     }
     if (loading || (!force && Date.now()-loadedAt<30000)) return;
     loading = true;
@@ -214,20 +216,61 @@
       button('leave','Takımdan Ayrıl')));
   }
 
+  function openTeamSearch() {
+    sheet('Takıma Katıl',
+      '<form data-form="search"><label>Takım ara<input name="name" maxlength="30" placeholder="Takım adı yaz…" autocomplete="off"></label><button type="submit">Ara</button></form>'+
+      '<h3 style="margin:4px 0">Mevcut Takımlar</h3><div data-team-results aria-live="polite"></div>');
+    return searchTeams('');
+  }
+
+  async function searchTeams(name) {
+    const panel=dialog;
+    const host=panel?.querySelector('[data-team-results]');
+    if (!host) return;
+    const version=++searchVersion;
+    const identity=token();
+    host.innerHTML='<p>Takımlar yükleniyor…</p>';
+    panel.querySelector('.dm-team-error').textContent='';
+    try {
+      const result=await manage('search',{name:String(name || '').trim()});
+      if (panel!==dialog || version!==searchVersion || identity!==token()) return;
+      const rows=Array.isArray(result.rows)?result.rows:[];
+      host.innerHTML=rows.map(row=>'<div class="dm-team-list-row">'+image(row.crest)+
+        '<b>'+escaped(row.name)+'</b>'+
+        (submittedTeams.has(row.id)?
+          '<span class="dm-team-invite-sent">Başvuruldu ✓</span>':
+          button('join','Başvur',row.id))+'</div>').join('')||
+        '<p>Takım bulunamadı.</p>';
+      if (rows.length===30) host.insertAdjacentHTML('beforeend','<p><small>İlk 30 takım gösteriliyor. Diğer takımları adlarıyla arayabilirsin.</small></p>');
+    } catch (failure) {
+      if (panel===dialog && version===searchVersion && identity===token())
+        host.innerHTML='<p>'+escaped(failure.message)+'</p>'+button('retry-search','Tekrar Dene');
+    }
+  }
+
   async function submit(action, data) {
     if (action==='duel-invite') { dialog?.close();return window.dmLiveDuel?.invite(data.name,{team:true}); }
+    if (action==='search') return searchTeams(data.name);
     if (working) return;
+    const panel=dialog;
     working=true;
     try {
-      if (action==='search') {
-        const result=await manage('search',data);
-        dialog.querySelector('[data-team-results]').innerHTML=result.rows.map(row=>'<div class="dm-team-list-row">'+
-          image(row.crest)+'<b>'+escaped(row.name)+'</b>'+button('join','İstek Gönder',row.id)+'</div>').join('')||'<p>Takım bulunamadı.</p>';
+      snapshot=await manage(action,data);
+      if (action==='join') {
+        submittedTeams.add(data.id);
+        if (panel===dialog && panel?.querySelector('[data-team-results]')) {
+          panel.querySelector('.dm-team-error').textContent='';
+          for (const control of panel.querySelectorAll('[data-team-action="join"]')) {
+            if (control.dataset.teamId===data.id)
+              control.outerHTML='<span class="dm-team-invite-sent">Başvuruldu ✓</span>';
+          }
+        }
+        refreshHome();
+        window.yoToast?.('Katılma isteğin gönderildi.');
         return;
       }
-      snapshot=await manage(action,data);
-      dialog?.close();refreshHome();
-      if (action==='join') window.yoToast?.('Katılma isteğin gönderildi.');
+      if (dialog===panel) dialog?.close();
+      refreshHome();
       if (action==='invite') window.yoToast?.('Takım daveti gönderildi.');
       if (action==='transfer') window.yoToast?.('Kaptanlık teklifi gönderildi.');
     } catch (failure) {
@@ -341,7 +384,19 @@
           } finally { working = false; }
           return;
         }
-        case 'search': return sheet('Takıma Katıl','<form data-form="search"><label>Takım adı<input name="name" required maxlength="30"></label><button type="submit">Ara</button></form><div data-team-results></div>');
+        case 'search': return openTeamSearch();
+        case 'retry-search': return searchTeams(dialog?.querySelector('input[name="name"]')?.value);
+        case 'join': {
+          if (working || !id || submittedTeams.has(id)) return;
+          control.disabled=true;
+          control.textContent='Gönderiliyor…';
+          await submit('join',{id});
+          if (control.isConnected) {
+            control.disabled=false;
+            control.textContent='Başvur';
+          }
+          return;
+        }
         case 'weekly': case 'all': return await teamRanks(action);
         case 'premium': {
           armPremiumSession();
@@ -359,7 +414,7 @@
             button('close','Vazgeç')+button('confirm-'+action,'Onayla',id)+'</div>');
         case 'confirm-delete': case 'confirm-leave': case 'confirm-remove':
           return submit(action.slice('confirm-'.length),{id});
-        case 'accept': case 'reject': case 'join': case 'transfer': case 'withdraw': return submit(action,{id});
+        case 'accept': case 'reject': case 'transfer': case 'withdraw': return submit(action,{id});
         case 'claim': {
           if (working) return;
           const award=awards[Number(id)]; if (!award) return;
