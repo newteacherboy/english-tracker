@@ -358,12 +358,12 @@ html[data-dm-theme="night"] body #tab-dunya .rt-medal-route .rt-agenda summary::
 
 /* 26 Kasım · Parkurda üç eşit, çerçevesiz hızlı işlem. Normal akış, harita üzerine binmez. */
 body #tab-dunya .rt-medal-route .rt-medal-header>.rt-quick-actions{
- --rt-quick-ink:#7c879d;display:flex;align-items:flex-start;justify-content:space-around;
+ --rt-quick-ink:#7c879d;display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);align-items:start;
  gap:6px;width:100%;box-sizing:border-box;padding:8px 0 5px;margin:0;position:relative;
 }
 html[data-dm-theme="night"] body #tab-dunya .rt-medal-route .rt-medal-header>.rt-quick-actions{--rt-quick-ink:#a6b4cc}
 body #tab-dunya .rt-medal-route .rt-quick-actions>:is(.rt-agenda,.zk-parkur,.dm-papi-chat-shortcut){
- position:relative!important;inset:auto!important;flex:1 1 0;width:0!important;min-width:0;max-width:none;
+ position:relative!important;inset:auto!important;width:100%!important;min-width:0;max-width:none;
  min-height:64px;height:auto;box-sizing:border-box;margin:0!important;padding:0!important;
  border:0!important;background:transparent!important;box-shadow:none!important;filter:none;
  color:var(--rt-quick-ink)!important;-webkit-text-fill-color:currentColor!important;

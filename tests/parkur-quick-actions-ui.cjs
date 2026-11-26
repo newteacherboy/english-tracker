@@ -14,7 +14,7 @@ const badge=campaign.slice(campaign.indexOf('let parkurBusy = false;'),campaign.
   await page.addScriptTag({content:"window.D=document;let layerRole='';window.dmPapiChat={open:()=>window.papiClicked=true};window.phase='live';const studentToken=()=> 'test-classroom-token';const status=async()=>({role:'student',guest:false,campaign:{phase:window.phase}});const isOn=()=>true;const openStudentHub=()=>window.contestClicked=true;"+badge+";window.mountParkurBadge=mountParkurBadge;"});
   await page.evaluate(()=>window.mountParkurBadge());
   const boxes=await page.locator('.rt-quick-actions').evaluate(el=>[...el.children].map(x=>{const b=x.getBoundingClientRect();return {x:b.x,y:b.y,w:b.width,h:b.height,cl:x.className}}));
-  assert.equal(boxes.length,3);assert(boxes.every(b=>Math.abs(b.y-boxes[0].y)<2&&Math.abs(b.w-boxes[0].w)<2&&b.w>90&&b.h>=44));assert(boxes[0].x<boxes[1].x&&boxes[1].x<boxes[2].x);
+  assert.equal(boxes.length,3);assert(boxes.every(b=>Math.abs(b.y-boxes[0].y)<2&&Math.abs(b.w-boxes[0].w)<2&&b.w>90&&b.h>=44),JSON.stringify({width,boxes}));assert(boxes[0].x<boxes[1].x&&boxes[1].x<boxes[2].x);
   assert.equal(await page.locator('.rt-medal-route > .dm-papi-chat-shortcut,.rt-medal-route > .zk-parkur').count(),0);
   await page.locator('.rt-agenda summary').click();assert(await page.locator('.rt-agenda-actions').isVisible());await page.locator('.rt-agenda summary').click();
   await page.locator('.zk-parkur').click();await page.locator('.dm-papi-chat-shortcut').click();assert(await page.evaluate(()=>window.contestClicked&&window.papiClicked));
