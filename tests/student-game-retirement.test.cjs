@@ -4,7 +4,7 @@ test('retired student operations short-circuit before game database access, teac
  const personal={role:'student',student_id:'p'},teacher={...personal,teacher_portal_access_id:'granted'},legacy={...personal,teacherProxy:true},q=new URLSearchParams();
  for(const game of ['jp','jeopardy','kelimebul','dikte','canavar','harfbahcesi','tren','cumle','ky','kelime','bosluk','yagmur','eslestirme','es','ralli','rally','cloud-flight']){
   assert(retiredGame(game));for(const op of ['verifiedGameStart','soloLevelStatus','soloLevelComplete','seviyeOyunOdulu']){
-   assert(retiredStudentOperation(op,{game},q,personal));assert(!retiredStudentOperation(op,{game},q,teacher));assert(!retiredStudentOperation(op,{game},q,legacy));
+   assert.equal(retiredStudentOperation(op,{game},q,personal),!(game==='ky'&&op==='seviyeOyunOdulu'));assert(!retiredStudentOperation(op,{game},q,teacher));assert(!retiredStudentOperation(op,{game},q,legacy));
   }
  }
  for(const op of ['molaDurum','molaBaslat','molaBitir','molaSiralama','molaBolumGec','jeopardyLiderlikKaydet','kelimebulLiderlikTumunuGetir','dikteLiderlikKaydet','canavarLiderlikKaydet','harfBahcesiLiderlikKaydet','trenLiderlikTumunuGetir','cumleLiderlikKaydet']){
