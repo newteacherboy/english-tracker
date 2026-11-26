@@ -12,9 +12,7 @@
   const games = {
     'word-goal': ['Kelime Golü', () => window.dmPremiumSkillGames.open('word-goal', {team:true})],
     'papizzle': ['Papizzle', () => window.papizzleAc({team:true})],
-    'tower': ['Dengesiz Kule', () => window.dmPremiumSkillGames.open('tower', {team:true})],
     'cloud-flight': ['Kaptan Pilot Papi', () => window.premiumBulutUcusuAc({team:true})],
-    'word-blocks': ['Block Papi', () => window.premiumKelimeBloklariAc({team:true})],
     rally: ['Kelime Rallisi', () => window.ralliOyunAc({team:true})]
   };
 
@@ -35,9 +33,7 @@
   const cardToGame = {
     kelimeGoluSolo: 'word-goal',
     papizzleActivity: 'papizzle',
-    towerActivity: 'tower',
-    premiumCloudFlightActivity: 'cloud-flight',
-    premiumWordBlocksActivity: 'word-blocks'
+    premiumCloudFlightActivity: 'cloud-flight'
   };
   const norm = value => String(value || '').trim().toLocaleLowerCase('tr');
   const armPremiumSession = () => { premiumSessionOwner = token(); };

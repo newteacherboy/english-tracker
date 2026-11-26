@@ -2,7 +2,7 @@
 (()=>{'use strict';
   const premiumFile='premium-word-match.js?v=20261114-flow';
   const introFile='premium-intro.js?v=20261114-daily-one-card';
-  const files=['solo-arcade.js?v=20261126-student-retirement','harf-bahcesi.js?v=b936541467','papi-cards.js?v=b9d02db518','meteor.js?v=9460b40009','word-wheel.js?v=dc87a710bb','kelime-rallisi.js?v=20261125-team-1'];
+  const files=['solo-arcade.js?v=20261126-premium-retirement','harf-bahcesi.js?v=b936541467','papi-cards.js?v=b9d02db518','meteor.js?v=9460b40009','word-wheel.js?v=dc87a710bb','kelime-rallisi.js?v=20261125-team-1'];
   const loaded=new Set(),loading=new Map();let pending=null,readyDone=false;
   function script(src){window.dmLateCss?.();if(loaded.has(src))return Promise.resolve();if(loading.has(src))return loading.get(src);const task=new Promise((resolve,reject)=>{
     const el=document.createElement('script');el.src=src;el.async=false;
@@ -48,15 +48,7 @@
     }catch(error){window.yoToast?.(error.message);}
   };
   window.premiumBulutUcusuAc=flightProxy;
-  let blocksLoading;
-  const blocksProxy=async options=>{
-    const owner=typeof aktifOgrenciAdi==='undefined'?'':aktifOgrenciAdi;
-    try{
-      await (blocksLoading??=Promise.all([script(introFile),script('premium-word-blocks.js?v=20261125-team-1')]).catch(error=>{blocksLoading=null;throw error;}));
-      if(owner===(typeof aktifOgrenciAdi==='undefined'?'':aktifOgrenciAdi)&&window.premiumKelimeBloklariAc!==blocksProxy)await window.premiumKelimeBloklariAc(options);
-    }catch(error){window.yoToast?.(error.message);}
-  };
-  window.premiumKelimeBloklariAc=blocksProxy;
+  window.premiumKelimeBloklariAc=()=>window.yoToast?.('Bu oyun yayından kaldırıldı.');
   let papizzleLoading;
   const papizzleProxy=async options=>{
     const owner=typeof aktifOgrenciAdi==='undefined'?'':aktifOgrenciAdi;
@@ -69,7 +61,7 @@
   window.papiFeneriAc=opener(()=>window.papiFeneriAc);
   const monsterProxy=opener(()=>window.canavarAvcisiAc);
   window.canavarAvcisiAc=(...args)=>window.dmTeacherPortalMode||typeof aktifOgrenciAdi!=='undefined'&&String(aktifOgrenciAdi).toLowerCase()==='teacher'||typeof siniftaOynananOgrenci!=='undefined'&&siniftaOynananOgrenci?monsterProxy(...args):window.yoToast?.('Bu oyun artık öğrenci hesabında sunulmuyor.');
-  window.dengesizKuleAc=opener(()=>window.dengesizKuleAc);
+  window.dengesizKuleAc=()=>window.yoToast?.('Bu oyun yayından kaldırıldı.');
   window.harfBahcesiAc=opener(()=>window.harfBahcesiAc);
   window.ralliOyunAc=opener(()=>window.ralliOyunAc);
   for(const name of ['dmPapiCards','dmMeteor','dmWordWheel'])window[name]={open:opener(()=>window[name].open),close(){}};

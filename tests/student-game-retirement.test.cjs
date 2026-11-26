@@ -10,7 +10,7 @@ test('retired student operations short-circuit before game database access, teac
  for(const op of ['molaDurum','molaBaslat','molaBitir','molaSiralama','molaBolumGec','jeopardyLiderlikKaydet','kelimebulLiderlikTumunuGetir','dikteLiderlikKaydet','canavarLiderlikKaydet']){
   assert(retiredStudentOperation(op,{},q,personal));assert(!retiredStudentOperation(op,{},q,teacher));
  }
- for(const game of ['ky','ba','hafiza','fener','cumle','kule'])assert(!retiredStudentOperation('verifiedGameStart',{game},q,personal));
+ for(const game of ['ky','ba','hafiza','fener','cumle'])assert(!retiredStudentOperation('verifiedGameStart',{game},q,personal));
  assert(!personalStudent(teacher));assert(!personalStudent(legacy));
 });
 test('student Mola script does not mount, schedule, register or request anything',()=>{

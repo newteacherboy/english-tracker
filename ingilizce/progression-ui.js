@@ -8,9 +8,9 @@ const level=()=>ready()?R.progress(R.migrate(yo)).level:1;
 const toast=m=>window.yoToast?.(m);
 const retiredCodes=new Set(['oyun_jeopardy','oyun_kelimebul','oyun_dikte','oyun_canavar']);
 const classroom=()=>!!window.dmTeacherPortalMode||who().toLowerCase()==='teacher'||(typeof siniftaOynananOgrenci!=='undefined'&&!!siniftaOynananOgrenci);
-const retired=code=>!classroom()&&retiredCodes.has(code);
+const retired=code=>code==='oyun_kule'||!classroom()&&retiredCodes.has(code);
 const retiredBenefits=new Set(['Risk Balonları','Şifre Kırıcı','Dikte','Kulak Dedektifi','Canavar Avcısı']);
-const benefits=level=>(level?.benefits||[]).filter(b=>classroom()||!retiredBenefits.has(b));
+const benefits=level=>(level?.benefits||[]).filter(b=>b!=='Dengesiz Kule'&&(classroom()||!retiredBenefits.has(b)));
 let accessOwner='';
 const earlyAccess=()=>ready()&&accessOwner===who()&&status?.levelEarlyAccess===true;
 function levelLock(message){
@@ -26,7 +26,7 @@ function levelLock(message){
 function allowed(code){if(retired(code))return false;/* Chat access is checked by its server, independently of earned level. */if(code==='papi_sohbet'||code==='oyun_kule')return true;if(window.dmTeacherPortalMode)return true;if(['parkur','ders','aktiviteler','akis','magaza','medupro'].includes(code))return true;if(code==='magaza'||code==='karakter'&&C.gates.karakter===1)return true;if(window.dmPapiTour?.preview())return true;if(!student())return true;if(!ready())return code==='gunluk_gorev'||code==='haftalik_hedef';if(earlyAccess())return true;if(code==='akis')return !!status?.feed;return level()>=(C.gates[code]||1);}
 function need(code){return code==='akis'?'Ana parkurda 3. durağa ulaşınca açılır.':(C.gates[code]||1)+'. seviyede açılır.';}
 const odevAcilisi=()=>Date.now()<(window.__odevAcilisBitis||0);
-function requireFeature(code){if(retired(code)){toast('Bu oyun artık öğrenci hesabında sunulmuyor.');return false;}if(allowed(code)||odevAcilisi())return true;levelLock('Bu özellik '+need(code));return false;}
+function requireFeature(code){if(retired(code)){toast('Bu oyun artık bu hesapta sunulmuyor.');return false;}if(allowed(code)||odevAcilisi())return true;levelLock('Bu özellik '+need(code));return false;}
 function itemAllowed(o,quiet=false){const owns=ready()?new Set(yo.karakter?.sahip||[]):new Set(),has=(o.parca||[o]).every(x=>owns.has(x.atolye?x.kat+':'+x.itemId:'d:'+x.id));const ok=!student()||ready()&&(has||earlyAccess()||level()>=C.itemLevel(o));if(!ok&&!quiet)levelLock('Bu ürün '+C.itemLevel(o)+'. seviyede açılır.');return ok;}
 async function api(op,data={},force=false){const r=await fetch(apiURL,{method:'POST',...(force?{cache:'reload'}:{}),body:JSON.stringify({islem:op,ogrenci:who(),t:localStorage.getItem('ing_token')||'',...data})});const d=await r.json();if(!r.ok||d.ok===false)throw Error(d.mesaj||d.message||'İşlem tamamlanamadı');return d;}
 async function sync(){const owner=who();if(!ready())throw Error('Öğrenci verisi henüz yüklenmedi.');if(typeof window.dmMemberSaveReady==='function')await window.dmMemberSaveReady(owner);if(owner!==who()||!ready())throw Error('Hesap değişti. İşlemi yeniden aç.');R.migrate(yo);const d=await api('ekVeriKaydet',{anahtar:'yo',deger:JSON.stringify(yo)});if(d.status==='bekliyor')throw Error('Verilerin sunucudan yüklenemedi. Lütfen tekrar dene.');return d;}

@@ -42,16 +42,17 @@
    draw();s.body.querySelector('input').oninput=e=>draw(e.target.value);s.body.querySelector('.dm-open-matches').onclick=()=>{s.close();window.dmArenaAc();};
   }catch(e){if(stopped)return;s.body.textContent=e.message;}
  };
- const defs=[['papiFeneriAc',27,'Kelime','oyun_fener'],['canavarAvcisiAc',20,'Kelime','oyun_canavar'],['dengesizKuleAc',21,'Kelime','oyun_kule'],
+ const defs=[['papiFeneriAc',27,'Kelime','oyun_fener'],['canavarAvcisiAc',20,'Kelime','oyun_canavar'],
  ['pomodoroAc',2,'Odaklanma','pomodoro'],['kelimeYarismasiAc',0,'Kelime','oyun_kelime'],['hafizaOyunAc',1,'Hafıza','oyun_hafiza'],['okumaStudyosunuAc',2,'Okuma','okuma_hizi'],['boslukOyunAc',3,'Kelime','oyun_bosluk'],['asmacaOyunAc',4,'Kelime','oyun_asmaca'],['jpOyunAc',5,'Kelime','oyun_jeopardy'],['yagmurOyunAc',6,'Kelime','oyun_yagmur'],['kelimebulOyunAc',7,'Kelime','oyun_kelimebul'],['esOyunAc',8,'Kelime','oyun_eslestirme'],['trenOyunAc',9,'Cümle','oyun_tren'],['dikteAc',10,'Dinleme','oyun_dikte'],['cumleAc',11,'Cümle','oyun_cumle'],['harfBahcesiAc',15,'Kelime','oyun_harfbahcesi'],['ralliOyunAc',16,'Kelime','oyun_ralli'],['kelimeGoluAc',18,'Kelime','oyun_kelime']];
  const free={kelimeGoluDuo:[19,'İki kale, dört köşe; doğru anlamı seç ve golünü at. Enerji harcanmaz.','Maçı Başlat'],papiCardsActivity:[12,'Kelime kartlarını dinle ve öğren.','Kartları Aç'],meteorActivity:[13,'Aynı cihazda kelimeleri yakala, rakibini geç.','Oyunu Aç'],wordWheelActivity:[14,'Çarkı çevir, doğru kelimeyi bul.','Çarkı Aç'],sentenceRaceActivity:[17,'İki takım · farklı sorular · 12 tur · süre bonusu.','Yarışı Başlat']};
  const icon=name=>'<svg class="gg-icon" aria-hidden="true"><use href="games-assets/ui-icons.svg#'+name+'"></use></svg>';
  let party='premium',skill='Tümü',lastAccount='',friendsLoaded=false,knownGrid=null,key='';
  const retiredGates=new Set(['oyun_jeopardy','oyun_kelimebul','oyun_dikte','oyun_canavar']);
- const retiredCard=b=>!window.dmTeacherPortalMode&&(b.dataset.ggCategory==='break'||retiredGates.has(b.dataset.ggGate)||retiredGates.has(game(b)[3]));
+ const retiredPremiumCard=b=>['towerActivity','premiumWordBlocksActivity'].includes(b.id)||/\b(dengesizKuleAc|premiumKelimeBloklariAc)\s*\(/.test(b.getAttribute('onclick')||'');
+ const retiredCard=b=>retiredPremiumCard(b)||!window.dmTeacherPortalMode&&(b.dataset.ggCategory==='break'||retiredGates.has(b.dataset.ggGate)||retiredGates.has(game(b)[3]));
  const categories={solo:'Tek Kişilik',free:'Sınıfta Oyna',konu:'Konu Oyunları',break:'Mola Vakti',premium:'Premium Oyunlar'};
- const premiumOrder=['kelimeGoluSolo','papizzleActivity','towerActivity','premiumWordMatchActivity','premiumCloudFlightActivity','premiumWordBlocksActivity','rallyActivity'];
- const listOrder=['game-jpOyunAc()','game-kelimeYarismasiAc()','kelimeGoluSolo','mola-kosu','premiumWordBlocksActivity','papizzleActivity'];
+ const premiumOrder=['kelimeGoluSolo','papizzleActivity','premiumWordMatchActivity','premiumCloudFlightActivity','rallyActivity'];
+ const listOrder=['game-jpOyunAc()','game-kelimeYarismasiAc()','kelimeGoluSolo','mola-kosu','papizzleActivity'];
  const listRank=id=>{const i=listOrder.indexOf(id);return i<0?listOrder.length:i;};
  const categorySubs={solo:'Kelime oyunları',break:'Kısa eğlence'};
 const categoryIcons={solo:0,free:2,konu:3,break:4,premium:5};
@@ -87,12 +88,12 @@ const categoryIcons={solo:0,free:2,konu:3,break:4,premium:5};
    card.click();
   };
   // These games check quota in their own status/start flow and can resume a paid run at zero remaining.
-  if(['towerActivity','kelimeGoluSolo'].includes(card.id)){launch();return;}
+  if(card.id==='kelimeGoluSolo'){launch();return;}
   if(card.dataset.ggCategory!=='premium'||window.dmTeacherPortalMode){card.click();return;}
   if(card.dataset.accessPending)return;
   card.dataset.accessPending='1';
   const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),12000);
-  const games={premiumWordMatchActivity:'word-match',premiumCloudFlightActivity:'cloud-flight',premiumWordBlocksActivity:'word-blocks',papizzleActivity:'papizzle',towerActivity:'tower',kelimeGoluSolo:'word-goal'};
+  const games={premiumWordMatchActivity:'word-match',premiumCloudFlightActivity:'cloud-flight',papizzleActivity:'papizzle',kelimeGoluSolo:'word-goal'};
   const game=games[card.id]||'rally';
   try{
    const token=localStorage.getItem('ing_token')||'';
@@ -107,10 +108,8 @@ const categoryIcons={solo:0,free:2,konu:3,break:4,premium:5};
  const approvedGameArt={
   kelimeGoluSolo:'29 553 388 241',
   papizzleActivity:'436 553 387 241',
-  towerActivity:'29 923 388 211',
   premiumWordMatchActivity:'436 923 387 211',
-  premiumCloudFlightActivity:'29 1278 388 220',
-  premiumWordBlocksActivity:'436 1278 387 220'
+  premiumCloudFlightActivity:'29 1278 388 220'
  };
  function coverArt(card,compact=false){
   const art=document.createElement('span');art.className='gg-cover';art.setAttribute('aria-hidden','true');
@@ -234,7 +233,7 @@ const categoryIcons={solo:0,free:2,konu:3,break:4,premium:5};
  function game(b){const rule=defs.find(d=>(b.getAttribute('onclick')||'').includes(d[0]))||defs.find(d=>b.id===d[0]||b.id==='yoDikteKart'&&d[0]==='dikteAc');return rule||[null,8,'Kelime',b.dataset.dmLevelLock||window.DijiProgressionCatalog?.functions[(b.getAttribute('onclick')||'').match(/([A-Za-z_$][\w$]*)\s*\(/)?.[1]]||''];}
  function lastGame(){try{return localStorage.getItem('dm_last_game:'+account())||'';}catch{return '';}}
  function remember(b){try{localStorage.setItem('dm_last_game:'+account(),b.dataset.ggId);}catch{}}
- function prepare(b,i){if(b.dataset.ggReady)return;b.dataset.ggReady='1';b.dataset.ggId=b.id||'game-'+(b.getAttribute('onclick')||i);const d=game(b),f=free[b.id];b.dataset.ggGameSkill=d[2];b.dataset.ggGate=d[3];b.dataset.ggCategory=f?'free':b.classList.contains('dm-live-card')||['dmUcusteKart','dmRotaKart'].includes(b.id)?'duo':'solo';if(b.dataset.ggCategory==='duo')b.dataset.ggGate='iki_kisilik';b.dataset.ggIndex=f?f[0]:d[1];b.style.order=String(f?f[0]:defs.includes(d)?d[1]:50);if(['premiumWordMatchActivity','premiumCloudFlightActivity','premiumWordBlocksActivity','papizzleActivity','rallyActivity','towerActivity','kelimeGoluSolo'].includes(b.id)){b.dataset.ggCategory='premium';b.dataset.ggGate='';b.style.order=String(premiumOrder.indexOf(b.id));b.dataset.ggIndex=b.id==='towerActivity'?'21':b.id==='kelimeGoluSolo'?'18':b.id==='rallyActivity'?'16':b.id==='papizzleActivity'?'26':b.id==='premiumWordBlocksActivity'?'24':b.id==='premiumCloudFlightActivity'?'23':'22';}
+ function prepare(b,i){if(b.dataset.ggReady)return;b.dataset.ggReady='1';b.dataset.ggId=b.id||'game-'+(b.getAttribute('onclick')||i);const d=game(b),f=free[b.id];b.dataset.ggGameSkill=d[2];b.dataset.ggGate=d[3];b.dataset.ggCategory=f?'free':b.classList.contains('dm-live-card')||['dmUcusteKart','dmRotaKart'].includes(b.id)?'duo':'solo';if(b.dataset.ggCategory==='duo')b.dataset.ggGate='iki_kisilik';b.dataset.ggIndex=f?f[0]:d[1];b.style.order=String(f?f[0]:defs.includes(d)?d[1]:50);if(['premiumWordMatchActivity','premiumCloudFlightActivity','papizzleActivity','rallyActivity','kelimeGoluSolo'].includes(b.id)){b.dataset.ggCategory='premium';b.dataset.ggGate='';b.style.order=String(premiumOrder.indexOf(b.id));b.dataset.ggIndex=b.id==='kelimeGoluSolo'?'18':b.id==='rallyActivity'?'16':b.id==='papizzleActivity'?'26':b.id==='premiumCloudFlightActivity'?'23':'22';}
   b.classList.add('gg-game');b.classList.remove('dm-toy-card','dm-showcase-card');
   const title=b.querySelector('.az-gcard-title')?.textContent.trim()||b.textContent.trim();b.dataset.ggTitle=title;
   const tool=d[0]==='pomodoroAc'||d[0]==='okumaStudyosunuAc';if(tool)b.dataset.ggCategory='tools';
@@ -311,10 +310,6 @@ const categoryIcons={solo:0,free:2,konu:3,break:4,premium:5};
   if(!grid.querySelector('#premiumCloudFlightActivity')){
    const card=document.createElement('button');card.type='button';card.id='premiumCloudFlightActivity';card.className='az-gcard';
    card.setAttribute('onclick','premiumBulutUcusuAc()');card.innerHTML='<div class="az-gcard-title">Kaptan Pilot Papi</div>';grid.append(card);
-  }
-  if(!grid.querySelector('#premiumWordBlocksActivity')){
-   const card=document.createElement('button');card.type='button';card.id='premiumWordBlocksActivity';card.className='az-gcard';
-   card.setAttribute('onclick','premiumKelimeBloklariAc()');card.innerHTML='<div class="az-gcard-title">Block Papi</div>';grid.append(card);
   }
   if(!grid.querySelector('#papizzleActivity')){
    const card=document.createElement('button');card.type='button';card.id='papizzleActivity';card.className='az-gcard';
