@@ -76,9 +76,12 @@
   function readQuota() {
     try {
       const d = JSON.parse(localStorage.getItem(quotaKey()) || 'null');
-      if (d && Number.isFinite(d.used)) return { used: Math.max(0, d.used), adGranted: !!d.adGranted };
+      if (d && Number.isFinite(d.used)) {
+        const adGrants = Number.isFinite(d.adGrants) ? Math.max(0, d.adGrants) : (d.adGranted ? 1 : 0);
+        return { used: Math.max(0, d.used), adGrants };
+      }
     } catch {}
-    return { used: 0, adGranted: false };
+    return { used: 0, adGrants: 0 };
   }
   function writeQuota(q) {
     try { localStorage.setItem(quotaKey(), JSON.stringify(q)); } catch {}
@@ -86,17 +89,15 @@
   }
   function freeRemaining() {
     const q = readQuota();
-    const totalAllowed = FREE_DAILY_LIMIT + (q.adGranted ? 1 : 0);
+    const totalAllowed = FREE_DAILY_LIMIT + (q.adGrants || 0);
     return Math.max(0, totalAllowed - q.used);
   }
   function canWatchAd() {
-    const q = readQuota();
-    return !isPremium() && freeRemaining() === 0 && !q.adGranted;
+    return !isPremium() && freeRemaining() === 0;
   }
   function hasFreeQuota() {
     if (isPremium()) return true;
-    const q = readQuota();
-    return freeRemaining() > 0 || !q.adGranted;
+    return freeRemaining() > 0;
   }
 
   /* ===== LIVE WORD BANK BUILDER (2:1 STUDENT LEVEL PRIORITY + NO REPEAT) ===== */
@@ -557,16 +558,11 @@
       qVal.textContent = `${rem} / ${FREE_DAILY_LIMIT}`;
       sBtn.classList.remove('ds-ad-mode'); sTxt.textContent = 'Sörfe Başla';
       rBtn.classList.remove('ds-ad-mode'); rTxt.textContent = 'Tekrar Sörf Yap';
-    } else if (adOk) {
-      qLbl.textContent = 'Bugünkü ücretsiz hak';
-      qVal.textContent = `0 / ${FREE_DAILY_LIMIT}`;
-      sBtn.classList.add('ds-ad-mode'); sTxt.textContent = 'Reklam İzle ve Oyna';
-      rBtn.classList.add('ds-ad-mode'); rTxt.textContent = 'Reklam İzle ve Oyna';
     } else {
       qLbl.textContent = 'Bugünkü ücretsiz hak';
       qVal.textContent = `0 / ${FREE_DAILY_LIMIT}`;
-      sBtn.classList.remove('ds-ad-mode'); sTxt.textContent = 'Premium Paketleri Gör';
-      rBtn.classList.remove('ds-ad-mode'); rTxt.textContent = 'Premium Paketleri Gör';
+      sBtn.classList.add('ds-ad-mode'); sTxt.textContent = 'Ücretsiz Reklam İzle · +1 Hak Kazan';
+      rBtn.classList.add('ds-ad-mode'); rTxt.textContent = 'Ücretsiz Reklam İzle · +1 Hak Kazan';
     }
   }
 
@@ -588,7 +584,7 @@
           window.genelEnerjiKalan = result.energy;
           window.headerEnerjiGoster?.(result.energy, window.genelEnerjiMax || 25);
         }
-        const q = readQuota(); q.adGranted = true; writeQuota(q);
+        const q = readQuota(); q.adGrants = (q.adGrants || 0) + 1; writeQuota(q);
         startGame();
         return;
       }
@@ -596,7 +592,7 @@
       if (typeof window.DijiReklam?.odulluIzle === 'function' && window.DijiReklam.reklamGosterilsinMi?.()) {
         const res = await window.DijiReklam.odulluIzle('enerji');
         if (res && res.ok !== false) {
-          const q = readQuota(); q.adGranted = true; writeQuota(q);
+          const q = readQuota(); q.adGrants = (q.adGrants || 0) + 1; writeQuota(q);
           startGame();
           return;
         }
@@ -614,12 +610,7 @@
 
   function handlePlayClick() {
     if (isPremium() || freeRemaining() > 0) startGame();
-    else if (canWatchAd()) void watchRewardedAdThenPlay();
-    else {
-      close();
-      if (window.DMSatis?.planlar) window.DMSatis.planlar('premium-oyunlar', 'premium_pro');
-      else if (window.dmAndroidBilling?.open) window.dmAndroidBilling.open('premium-oyunlar');
-    }
+    else void watchRewardedAdThenPlay();
   }
 
   function showToast(msg, kind = 'good') {
