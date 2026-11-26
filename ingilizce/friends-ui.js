@@ -211,7 +211,7 @@
         <button type="button" data-rank-view="individual" aria-pressed="${rankView==='individual'}">${icon('trophy')} <span>Ligler</span></button>
         <button type="button" data-rank-view="duel" aria-pressed="${rankView==='duel'}">${icon('swords')} <span>Düello</span></button>
         <button type="button" data-rank-view="teams" aria-pressed="${rankView==='teams'}">${icon('people')} <span>Takımlar</span></button>
-      </nav>${rankView==='individual'?'<div data-embedded-league>'+ (window.dmLeagueUI?.embedded()||'')+'</div>':rankView==='duel'?duelLeagueHtml():'<section class="dm-team-card dm-team-buttons"><button type="button" data-team-action="weekly">Haftalık Takım Sıralaması</button><button type="button" data-team-action="all">Tüm Zamanlar</button></section>'}` : (window.dmTeam?.html() || '')}
+      </nav>${rankView==='individual'?'<div data-embedded-league>'+ (window.dmLeagueUI?.embedded()||'')+'</div>':rankView==='duel'?duelLeagueHtml(): (window.dmTeam?.rankingHtml()||'<p role="status">Takımlar yükleniyor…</p>')}` : (window.dmTeam?.html() || '')}
       <div id="frInvitation">${invitationHtml()}</div>
     </div>`;
   }
@@ -269,6 +269,7 @@
     screen.innerHTML=homeHtml();
     viewHeader();paintLocks();dockSpace();screen.scrollTop=scroll;
     if(arenaView==='team')void window.dmTeam?.load();
+    else if(arenaView==='ranking'&&rankView==='teams'){void window.dmTeam?.loadRanking();void window.dmTeam?.load();}
   }
   function paintLocks() {
     root.querySelectorAll('[data-friends-gate]').forEach(b=>{
