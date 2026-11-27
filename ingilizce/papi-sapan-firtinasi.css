@@ -235,6 +235,19 @@
   color: #0369a1;
 }
 .sf-quota-row strong { font-weight: 900; color: #0c4a6e; }
+.sf-ad-status {
+  margin: 0;
+  padding: 7px 11px;
+  border-radius: 11px;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #991b1b;
+  font-size: 12px;
+  font-weight: 800;
+  text-align: center;
+  line-height: 1.35;
+}
+.sf-ad-status[hidden] { display: none !important; }
 
 /* ===== LAUNCH COUNTDOWN SCREEN ===== */
 .sf-launch-box {
