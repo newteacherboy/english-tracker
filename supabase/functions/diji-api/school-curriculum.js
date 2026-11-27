@@ -31,6 +31,8 @@
    fill.options=[fill.answer,...fill.options,...extra,...fallback].filter((x,i,a)=>x&&a.findIndex(y=>norm(y)===norm(x))===i).slice(0,4);
    fill.picture={en:target.en,tr:target.tr};fill.visualFill=true;
   }
+  const target=at(0),detectivePool=unique([target,...bank.filter(w=>norm(w.tr)!==norm(target.tr)),...[{en:'apple',tr:'elma'},{en:'book',tr:'kitap'},{en:'school',tr:'okul'},{en:'water',tr:'su'},{en:'friend',tr:'arkadaş'},{en:'home',tr:'ev'}].filter(w=>norm(w.tr)!==norm(target.tr))],'en');
+  const detective={kind:'choice',label:'Kelime Dedektifi',prompt:target.tr,support:'Türkçe ipucunun İngilizcesini bul.',answer:target.en,options:shuffled(detectivePool.slice(0,4).map(w=>w.en),seedFor(target.en,number)),explanation:target.en+' — '+target.tr};
   const pairBank=unique(cards,'tr');
   const visualPairs=unique(unique([...cards.filter(hasImage),...bank.filter(hasImage),...cards,...bank],'en'),'tr').slice(0,4);
   const review=cards.map((w,i)=>{const other=bank.find(x=>norm(x.tr)!==norm(w.tr));const values=other?[w.tr,other.tr]:[w.tr];return {en:w.en,tr:w.tr,options:(number+i)%2?values.reverse():values};});
@@ -41,7 +43,7 @@
    choice('Dinle ve bul',at(1),'en','Dinle, duyduğun ifadeyi seç.',{audio:at(1).en}),
    choice('İngilizcesini bul',at(2),'en',at(2).tr,{promptAudio:at(2).tr}),
    {kind:'match',label:'Eşleştir',prompt:'Önce kelimeye, sonra karşılığına dokun.',pairs:pairBank,explanation:'İfadeleri eşleştirdin.'},
-   visualQuestions?{kind:'match',label:'Görselleri eşleştir',prompt:'Görselleri İngilizce karşılıklarıyla eşleştir.',pairs:visualPairs,visualMatch:true,explanation:'Görselleri doğru ifadelerle eşleştirdin.'}:choice('Günlük hayatta kullan',at(0),'en','“'+at(0).tr+'” demek için hangisini seçersin?',{promptAudio:at(0).tr}),
+   visualQuestions===3?detective:visualQuestions?{kind:'match',label:'Görselleri eşleştir',prompt:'Görselleri İngilizce karşılıklarıyla eşleştir.',pairs:visualPairs,visualMatch:true,explanation:'Görselleri doğru ifadelerle eşleştirdin.'}:choice('Günlük hayatta kullan',at(0),'en','“'+at(0).tr+'” demek için hangisini seçersin?',{promptAudio:at(0).tr}),
    fill,
    {kind:'order',label:multi?'Cümleyi kur':'Kelimeyi kur',prompt:phrase.tr,promptAudio:phrase.tr,tokens:multi?pieces:[...phrase.en],join:multi?' ':'',answer:phrase.en,explanation:phrase.en+' — '+phrase.tr},
    choice('Bu dersten hatırla',at(3),'tr',at(3).en,{audio:at(3).en,language:'en'}),
