@@ -15,7 +15,7 @@
   close();const owner=token(),account=who(),origin=document.activeElement,root=document.createElement('section'),frame=document.createElement('iframe');
   root.id='dmWordGoal3D';root.setAttribute('role','dialog');root.setAttribute('aria-modal','true');root.setAttribute('aria-label','Kelime Golü 3D');
   root.style.cssText='position:fixed;inset:0;z-index:2147483000;background:#102b36;display:flex;flex-direction:column;overflow:hidden';
-  frame.title='Kelime Golü 3D';frame.allow='autoplay';frame.style.cssText='width:100%;height:100%;border:0;flex:1;min-height:0';frame.src='word-goal-3d/index.html?v=20261127-1';root.append(frame);document.body.append(root);
+  frame.title='Kelime Golü 3D';frame.allow='autoplay';frame.style.cssText='width:100%;height:100%;border:0;flex:1;min-height:0';frame.src='word-goal-3d/index.html?v=20261127-2';root.append(frame);document.body.append(root);
   const g=goal3d={root,frame,owner,account,origin,overflow:document.body.style.overflow,busy:false};document.body.style.overflow='hidden';
   const same=()=>goal3d===g&&token()===owner&&who()===account&&!window.dmTeacherPortalMode;
   const send=(type,extra={})=>{if(same())frame.contentWindow?.postMessage({channel:'dm-word-goal-3d',type,...extra},location.origin)};
