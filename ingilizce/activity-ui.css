@@ -861,3 +861,10 @@ html[data-dm-theme] body #tab-aktiviteler#tab-aktiviteler .gg-page.gg-redesign.g
   }
 }
 }
+
+/* Papi Farm: launch appears once at the head of each student game list. */
+.papi-farm-launch{position:relative!important;display:block!important;grid-column:1/-1!important;width:100%!important;min-height:183px;padding:0!important;overflow:hidden;border:0!important;border-radius:20px!important;background:#304b34!important;color:white!important;text-align:left;isolation:isolate;box-shadow:0 5px 0 #1e462e;margin:5px 0 14px;cursor:pointer}
+.papi-farm-launch:disabled{opacity:1!important;cursor:default}
+.papi-farm-launch>img,.farm-launch-shade{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:-1}.farm-launch-shade{background:linear-gradient(90deg,rgba(17,48,35,.96),rgba(17,48,35,.69) 44%,rgba(17,48,35,.05))}
+.farm-launch-copy{display:flex;flex-direction:column;align-items:flex-start;gap:5px;padding:16px 20px;font-family:inherit}.farm-launch-tag{border-radius:100px;background:#d5ef91;color:#254323;padding:4px 10px;font-size:10px;font-weight:900;letter-spacing:.12em}.farm-launch-copy>strong{font-size:28px;font-weight:900;line-height:1.08;color:#fff}.farm-launch-caption{font-size:12px;font-weight:700;color:#e6f5e5}.farm-launch-time{font-size:25px;line-height:1.1;font-variant-numeric:tabular-nums;color:#fff;letter-spacing:.04em}.farm-launch-copy small{font-size:11px;font-weight:600;color:#e8f6db}
+.papi-farm-overlay{position:fixed;inset:0;z-index:2147483000;background:#eff8e9;display:flex;flex-direction:column;padding-top:max(36px,env(safe-area-inset-top));box-sizing:border-box}.papi-farm-overlay iframe{width:100%;height:100%;border:0;flex:1;min-height:0}.papi-farm-close{position:absolute;top:max(2px,env(safe-area-inset-top));left:12px;border:0;border-radius:10px;background:#fff;color:#234b37;min-width:34px;height:34px;font-size:26px;font-weight:700;line-height:1}

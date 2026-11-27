@@ -170,6 +170,40 @@ const categoryIcons={solo:0,free:2,konu:3,break:4,premium:5};
   }
   return art;
  }
+ const farmLaunchAt=Date.parse('2026-11-28T15:11:10Z');
+ let farmClockOffset=0,farmLaunchTimer=null,farmOverlay=null,farmLaunchChecked=false,farmToken='';
+ function updateFarmLaunch(){
+  if(farmOverlay&&(localStorage.getItem('ing_token')!==farmToken||window.dmTeacherPortalMode))closeFarm();
+  const remaining=Math.max(0,Math.ceil((farmLaunchAt-Date.now()-farmClockOffset)/1000));
+  const time=[Math.floor(remaining/3600),Math.floor(remaining%3600/60),remaining%60].map(n=>String(n).padStart(2,'0')).join(':');
+  document.querySelectorAll('[data-papi-farm-launch]').forEach(card=>{
+   card.querySelector('.farm-launch-time').textContent=remaining?time:'Oyna';
+   card.querySelector('.farm-launch-tag').textContent=remaining?'YAKINDA':'YENİ OYUN';
+   card.querySelector('.farm-launch-caption').textContent=remaining?'Açılışa kalan süre':'Çiftliğini kur ve keşfet';
+   card.disabled=remaining>0;
+  });
+ }
+ function closeFarm(){
+  if(!farmOverlay)return;const el=farmOverlay;farmOverlay=null;el.remove();document.body.style.overflow=el.dataset.previousOverflow||'';document.removeEventListener('keydown',farmEscape);
+  document.querySelector('[data-papi-farm-launch]')?.focus();
+ }
+ function farmEscape(e){if(e.key==='Escape')closeFarm()}
+ function openFarm(){
+  if(Date.now()+farmClockOffset<farmLaunchAt||farmOverlay||window.dmTeacherPortalMode)return;
+  farmToken=localStorage.getItem('ing_token')||'';if(!farmToken)return;
+  const el=document.createElement('section');el.className='papi-farm-overlay';el.setAttribute('role','dialog');el.setAttribute('aria-modal','true');el.setAttribute('aria-label','Papi Farm');
+  el.dataset.previousOverflow=document.body.style.overflow;
+  const close=document.createElement('button');close.className='papi-farm-close';close.textContent='×';close.setAttribute('aria-label','Çiftliği kapat');close.onclick=closeFarm;
+  const frame=document.createElement('iframe');frame.title='Papi Farm';frame.src='papi-farm/index.html?v=1';frame.allow='autoplay';el.append(frame,close);document.body.append(el);document.body.style.overflow='hidden';farmOverlay=el;close.focus();document.addEventListener('keydown',farmEscape);
+ }
+ function farmLaunchCard(){
+  const card=document.createElement('button');card.type='button';card.className='papi-farm-launch';card.dataset.papiFarmLaunch='1';card.dataset.ggSource='papi-farm';
+  card.innerHTML='<img alt="" src="papi-farm/assets/farm-landscape-wide.webp" loading="lazy"><span class="farm-launch-shade"></span><span class="farm-launch-copy"><span class="farm-launch-tag">YAKINDA</span><strong>Papi Farm</strong><span class="farm-launch-caption">Açılışa kalan süre</span><b class="farm-launch-time">24:00:00</b><small>Ücretsiz çiftlik · Premium Pro ek bölgeler</small></span>';
+  card.onclick=openFarm;queueMicrotask(updateFarmLaunch);
+  if(!farmLaunchTimer)farmLaunchTimer=setInterval(()=>{if(!document.querySelector('[data-papi-farm-launch]')){clearInterval(farmLaunchTimer);farmLaunchTimer=null;return}updateFarmLaunch()},1000);
+  if(!farmLaunchChecked){farmLaunchChecked=true;fetch('https://nxfqlutulxqzqgwewssd.supabase.co/functions/v1/papi-farm',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({op:'launch'})}).then(r=>r.json()).then(d=>{if(d.ok&&Number.isFinite(d.now)){farmClockOffset=d.now-Date.now();updateFarmLaunch()}}).catch(()=>{farmLaunchChecked=false})}
+  return card;
+ }
  function renderList(host,all){
   const list=host.querySelector('.gg-overview');
   const surfFreeOk=window.dmDalgaSorfu?.hasFreeQuota?.()!==false;
@@ -199,7 +233,9 @@ const categoryIcons={solo:0,free:2,konu:3,break:4,premium:5};
    row.prepend(coverArt(card,true));row.onclick=()=>premiumEntry(card);
    return row;
   }));
-  if(!cards.length){
+  const showFarm=!window.dmTeacherPortalMode&&['solo','premium','all'].includes(party);
+  if(showFarm)list.prepend(farmLaunchCard());
+  if(!cards.length&&!showFarm){
    const empty=document.createElement('p');empty.className='gg-list-empty';empty.setAttribute('role','status');
    empty.textContent='Bu filtrede oyun bulunamadı.';list.append(empty);
   }

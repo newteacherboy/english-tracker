@@ -7,7 +7,7 @@
    - Supabase istekleri: bu dosya karışmaz (sayfadaki katman yönetir)
    Sayfayı güncellediğinizde SURUM değerini artırın (v2, v3…).
    ===================================================================== */
-const SURUM = 'diji-v576-surf-membership-20261127';
+const SURUM = 'diji-v577-farm-launch-20261127';
 const SAYFA = 'sayfa-' + SURUM, KAYNAK = 'kaynak-' + SURUM;
 // Cached on first use; never download the A2 catalog at startup.
 const LAZY_TOPIC_FILES = new Set(['konu-oyunlari-a1.js','konu-oyunlari-a2.js','topic-games-core.mjs']);
@@ -37,6 +37,7 @@ self.addEventListener('fetch', e => {
       r.mode === 'cors') {
     e.respondWith(sharedVoiceResponse(r)); return;
   }
+  if (url.origin===self.location.origin && url.pathname.includes('/papi-farm/')) return; // Farm is lazy-loaded, never cache as the portal page.
   if (url.hostname.endsWith('supabase.co')) return;                 /* API: dokunma */
   // Teacher account transition must not run an older cached authorization/UI script.
   if (url.pathname.endsWith('/teacher-portal-boot.js')) {
