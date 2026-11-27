@@ -132,6 +132,43 @@
       await closed;
     }finally{clearTimeout(timer);await Promise.allSettled(handles.map(h=>h.remove()));}
   }
+  // Explicit game-play intent, separate from the energy wallet and its full-energy check.
+  async function oyunReklamiIzle(offerId) {
+    if(busy||!reklamGosterilsinMi())throw Error('Ödüllü reklam şu anda kullanılamıyor.');
+    const owner=who(), token=read('ing_token');
+    const active=()=>owner===who()&&token===read('ing_token')&&reklamGosterilsinMi();
+    const endpoint=typeof apiURL==='string'&&/diji-api/.test(apiURL)
+      ?apiURL.replace(/diji-api.*$/,'ad-rewards')
+      :'https://nxfqlutulxqzqgwewssd.supabase.co/functions/v1/ad-rewards';
+    async function request(body){
+      if(!active())throw Error('Öğrenci oturumu değişti.');
+      const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),15000);
+      try {
+        const r=await fetch(endpoint,{method:'POST',headers:{'Content-Type':'application/json','x-diji-token':token},body:JSON.stringify(body),signal:controller.signal});
+        const data=await r.json();
+        if(!r.ok||data.ok===false)throw Error(data.error||data.mesaj||'Reklam isteği doğrulanamadı.');
+        return data;
+      }finally{clearTimeout(timer);}
+    }
+    busy=true;let intent,earned=false;
+    try {
+      await setBanner(false);
+      await initialize();
+      if(!active())throw Error('Öğrenci oturumu değişti.');
+      intent=await request({action:'create',kind:'play',offerId,requestKey:crypto.randomUUID()});
+      if(!intent?.id)throw Error('Reklam isteği oluşturulamadı.');
+      await A.prepareRewardVideoAd({...options(IDS.odullu),ssv:{customData:intent.id}});
+      if(!active())throw Error('Öğrenci oturumu değişti.');
+      await fullscreen('reward',()=>{earned=true;});
+      return {completed:earned,test:false};
+    }catch(e){
+      if(earned&&active())return {completed:true,test:false,pending:true};
+      throw e;
+    }finally{
+      if(intent?.id&&!earned&&active())await request({action:'cancel',id:intent.id}).catch(()=>{});
+      busy=false;sync();
+    }
+  }
   async function odulluIzle(tur,urun) {
     if(!['enerji','altin'].includes(tur)||busy||!reklamGosterilsinMi())return;
     busy=true;const owner=who(),token=read('ing_token');let earned=false,result;
@@ -214,7 +251,7 @@
       if(!poor)h.querySelectorAll('[data-ios-ad="altin"]').forEach(e=>e.remove());
     }
   }
-  window.DijiReklam={odulluIzle,reklamGosterilsinMi,teklif,altinEksik,sonucHazir,sonucKapandi,rakipliBasladi(){rival=true;}};
+  window.DijiReklam={odulluIzle,oyunReklamiIzle,reklamGosterilsinMi,teklif,altinEksik,sonucHazir,sonucKapandi,rakipliBasladi(){rival=true;}};
   const style=document.createElement('style');
   style.textContent=`.dm-ios-ad-offer{padding:12px;margin:10px 0;border-radius:14px;background:#eefafa;color:#07535b}.dm-ios-ad-offer button{width:100%;min-height:44px;border:1px solid #09858c;border-radius:10px;padding:10px;font-weight:700}.dm-ios-ad-offer small{display:block;text-align:center;margin-top:5px}.dm-ios-gold-dialog{position:fixed;inset:0;background:#0006;z-index:2147483000;display:grid;place-items:center}.dm-ios-gold-dialog section{background:white;border-radius:20px;padding:24px;max-width:340px}@layer dmNoticeSurface{html.dm-ios-banner #bottomNavMobile{bottom:calc(var(--dm-ios-ad-height) + 16px + env(safe-area-inset-bottom,0px))!important}html.dm-ios-banner #tab-magaza,html.dm-ios-banner #tab-aktiviteler{padding-bottom:calc(var(--dm-ios-ad-height) + 150px)!important;max-height:calc(100dvh - var(--dm-ios-ad-height) - 16px)!important;bottom:calc(var(--dm-ios-ad-height) + 110px)!important;height:auto!important;box-sizing:border-box;overflow-y:auto!important}}`;
   document.head.append(style);

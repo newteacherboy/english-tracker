@@ -8,6 +8,14 @@ daily.classList.add('dm-dg-button');daily.setAttribute('aria-label','Günlük en
 const buttons=Object.fromEntries([...hud.querySelectorAll('[data-pw]')].map(e=>[e.dataset.pw,e]));
 buttons.energy.onclick=()=>window.dijiEnerjiPaneliAc?.();buttons.gold.onclick=()=>window.magazaAc?.();buttons.xp.onclick=()=>window.dmIlerlememAc?.();
 const activity='#dmStoryLesson,#bzPerde #bzAlan,.game-modal-overlay,#meteorGame,#wordWheel,#papiCards,#harfBahcesiOverlay,#baOyunEkrani,#kpKelimeOyunEkrani,#kmPanel .km-sec,#seviyeDisLinkOverlay';
+const progressScreens='#tab-ilerlemem.active,#tab-basarilarim.active,#tab-sanaozel.active,.dg-library,#dmWordReview';
+const eligibleHost=e=>visible(e)&&!e.closest('[inert],[aria-hidden="true"],[data-dm-nav-suspended]');
+function specialHost(screen,selector){
+ const container=screen?.querySelector(selector);if(!container)return null;
+ let slot=container.querySelector(':scope > .dm-wallet-slot');
+ if(!slot){slot=document.createElement('div');slot.className='dm-wallet-slot';container.prepend(slot);}
+ return slot;
+}
 const selectors=['#tab-dunya .rt-medal-header','#tab-dunya .rt-top','#tab-aktiviteler .gg-brand','#tab-meduakis.active.fr-home-view .fr-wallet-host','#tab-derscalis .su-levels-heading','#tab-magaza .ds-header','.dc-fullscreen-overlay.active header'];
 const finite=n=>Number.isFinite(Number(n))?Math.max(0,Math.floor(Number(n))):0;
 const format=n=>finite(n).toLocaleString('tr-TR');
@@ -37,15 +45,26 @@ function run(){
  const duel=document.getElementById('dmDuelHome');
  const duelOpen=visible(duel);
  const friendsOpen=visible(friends);
- const host=duelOpen?duel.querySelector('.dm-duel-wallet-host'):friendsOpen?friends.querySelector('.fr-wallet-host'):selectors.flatMap(s=>[...document.querySelectorAll(s)]).find(visible);
- if(!host||(!duelOpen&&friendsOpen&&!friends.classList.contains('fr-home-view'))){detach();return;}
- const compactHud=duelOpen || (friendsOpen&&friends.classList.contains('fr-team-view'));
+ const progress=[...document.querySelectorAll(progressScreens)].filter(eligibleHost).sort((a,b)=>Number(b.matches('.dg-library,#dmWordReview'))-Number(a.matches('.dg-library,#dmWordReview')))[0];
+ const shop=document.querySelector('#tab-magaza.active');
+ const shopOpen=eligibleHost(shop);
+ const progressHost=progress&&(progress.matches('#tab-ilerlemem,#tab-basarilarim')?progress.querySelector('header'):specialHost(progress,progress.matches('.dg-library')?'.dg-library-panel':progress.matches('#dmWordReview')?'.dm-member-sheet':'.dc-focus-card'));
+ const host=progressHost||(shopOpen?shop.querySelector('.ds-header'):duelOpen?duel.querySelector('.dm-duel-wallet-host'):friendsOpen?friends.querySelector('.fr-wallet-host'):selectors.flatMap(s=>[...document.querySelectorAll(s)]).find(eligibleHost));
+ if(!host||(!progressHost&&!shopOpen&&!duelOpen&&friendsOpen&&!friends.classList.contains('fr-home-view'))){detach();return;}
+ const mode=progressHost?'progress':shopOpen?'shop':duelOpen||(friendsOpen&&friends.classList.contains('fr-team-view'))?'compact':'full';
+ const compactHud=mode==='compact';
+ hud.dataset.walletMode=mode;
  hud.classList.toggle('dm-wallet-energy-xp',compactHud);
- hud.setAttribute('aria-label',compactHud?'Enerji ve XP':'Enerji, altın, XP, günlük enerji hediyesi ve bildirimler');
- buttons.gold.hidden=compactHud;
+ hud.setAttribute('aria-label',({shop:'Altın ve enerji',progress:'XP ve günlük enerji hediyesi',compact:'Enerji ve XP',full:'Enerji, altın, XP, günlük enerji hediyesi ve bildirimler'})[mode]);
+ buttons.energy.hidden=mode==='progress';
+ buttons.gold.hidden=mode==='progress'||compactHud;
+ buttons.xp.hidden=mode==='shop';
  if(hud.parentElement!==host){detach();host.prepend(hud);host.classList.add('dm-has-wallet');window.dispatchEvent(new Event('resize'));}
- const dailyVisible=!compactHud&&!!window.DijiDailyGift&&!window.dmGuestMode&&!['teacher','dijimedu_demo'].includes(String(aktifOgrenciAdi).toLowerCase())&&!window.dmTeacherPortalMode&&(!window.siniftaOynananOgrenci);
- if(dailyVisible){daily.hidden=false;if(daily.parentElement!==hud)hud.append(daily);window.dmNotificationCenter?.mount(hud);}else{daily.remove();window.dmNotificationCenter?.detach();}hud.classList.toggle('dm-has-daily-streak',dailyVisible);hud.classList.toggle('dm-has-center',dailyVisible&&!!window.dmNotificationCenter);window.DijiDailyGift?.decorateButton(daily);if(dailyVisible)window.DijiDailyGift?.onParkurVisible();
+ const dailyVisible=(mode==='full'||mode==='progress')&&!!window.DijiDailyGift&&!window.dmGuestMode&&!['teacher','dijimedu_demo'].includes(String(aktifOgrenciAdi).toLowerCase())&&!window.dmTeacherPortalMode&&(!window.siniftaOynananOgrenci);
+ if(dailyVisible){daily.hidden=false;if(daily.parentElement!==hud)hud.append(daily);}else{daily.remove();}
+ const bellVisible=mode==='full'&&dailyVisible&&!!window.dmNotificationCenter;
+ if(bellVisible)window.dmNotificationCenter.mount(hud);else window.dmNotificationCenter?.detach();
+ hud.classList.toggle('dm-has-daily-streak',dailyVisible);hud.classList.toggle('dm-has-center',bellVisible);window.DijiDailyGift?.decorateButton(daily);if(dailyVisible)window.DijiDailyGift?.onParkurVisible();
  const y=typeof yo==='undefined'?{}:yo||{},level=window.dmProgression?.level?.()||1;
  const energy=window.genelEnerjiKalan,values={energy:energy==null?'—':format(energy),gold:compact(y.altin),xp:compact(y.totalXp),};
  const labels={energy:'Enerji paketleri · '+values.energy,gold:'Altınlarım ve mağaza · '+format(y.altin)+' altın',xp:'XP ve ilerlemem · '+format(y.totalXp)+' XP · Seviye '+level};
@@ -66,7 +85,7 @@ function run(){
 function refresh(){run();if(typeof aktifOgrenciAdi!=='undefined'&&aktifOgrenciAdi)window.dmDayNightTheme?.updateHint();}
 let queued=false;function schedule(){if(queued||document.hidden)return;queued=true;requestAnimationFrame(()=>{queued=false;refresh();});}
 // Destination changes update in the next frame; value-only changes retain the icon DOM.
-const relevant=selectors.join(',')+','+activity+',.dc-fullscreen-overlay,#panel-alani,#dmDuelHome';
+const relevant=selectors.join(',')+','+activity+','+progressScreens+',.dc-fullscreen-overlay,#panel-alani,#dmDuelHome';
 new MutationObserver(ms=>{if(ms.some(m=>{
  if(hud.contains(m.target)||m.target===hud)return false;
  if(m.type==='attributes')return m.target.matches?.(relevant);

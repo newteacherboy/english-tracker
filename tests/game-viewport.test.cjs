@@ -92,3 +92,17 @@ test('student back returns to level entry instead of native class/unit chooser',
  assert.equal(reopened,0);
  f.dom.window.close();
 });
+
+test('teacher dock is independent of learner viewport lock on teacher main pages and hides only during a game',()=>{
+ const {dom,w}=shell('<nav id="tpTeacherDock"></nav><div id="trenOyunOverlay" class="game-modal-overlay" style="display:flex"><button class="game-close-btn"></button></div>');
+ try{
+  w.dmTeacherPortalMode=true;
+  w.document.documentElement.classList.add('dm-teacher-portal');
+  w.document.body.classList.add('tp-dash-active');w.dmGameViewport.sync();
+  assert.equal(w.document.body.hasAttribute('data-tp-game-open'),false);
+  w.document.body.classList.remove('tp-dash-active');w.dmGameViewport.sync();
+  assert.equal(w.document.body.hasAttribute('data-tp-game-open'),true);
+  w.document.getElementById('trenOyunOverlay').style.display='none';w.dmGameViewport.sync();
+  assert.equal(w.document.body.hasAttribute('data-tp-game-open'),false);
+ }finally{dom.window.close();}
+});

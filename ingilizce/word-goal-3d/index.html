@@ -1,0 +1,12 @@
+<!doctype html><html lang="tr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#0d2635"><title>Papi • Word Goal 3D</title><link rel="stylesheet" href="style.css?v=4"></head><body>
+<main id="game">
+<div id="scene" aria-label="3D futbol stadyumu"></div><div class="vignette"></div>
+<header class="hud"><div class="brand"><span class="logo">⚽</span><div><small>DIJI-MEDU ARENA</small><b>KELİME GOLÜ <i>3D</i></b></div></div><button id="exit-game" aria-label="Oyundan çık">×</button><button id="sound" aria-label="Sesi aç veya kapat">◖))</button></header>
+<div class="scoreboard"><div><small>LEVEL</small><b id="level">01</b></div><div class="score"><small>GOL</small><b id="goals">0</b></div><div><small>HAK</small><b id="rights">—</b></div></div>
+<div class="question" id="question"><div class="question-top"><span><i></i> TÜRKÇE ANLAMINI BUL</span><button id="listen" aria-label="Kelimeyi dinle">◖))</button></div><strong id="word">hello</strong><div class="progress"><span id="level-progress"></span></div></div>
+<div id="targets" aria-label="Kale içindeki iki cevap"></div>
+<div id="feedback" role="status"></div>
+<div class="bottom"><div class="ball-label" id="ball-label"><span class="dot"></span><b id="hint">Kaledeki doğru anlamı seç</b></div><div class="level-caption" id="caption">5 gol = 1 seviye • Bir yanlışta tur biter</div></div>
+<section id="overlay" class="overlay"><div class="modal"><div class="badge" id="badge">⚽</div><div id="eyebrow">WORD GOAL • STADIUM</div><h1 id="title">Papi ile<br>gole koş!</h1><p id="desc">Kale içindeki doğru anlamı seç. Papi koşsun, şut çeksin ve kaleciyi geçsin!</p><div class="stats"><div><small>GÜNLÜK HAK</small><b id="modal-rights">—</b></div><div><small>EN İYİ SERİ</small><b id="best">0</b></div></div><button id="start" class="primary" disabled>HAZIRLANIYOR…</button><div id="offers" hidden><button id="ad-play" class="offer-button" hidden>▶ Reklam izle · +1 hak</button><button id="plan-info" class="offer-button plan">∞ Premium Pro · Sınırsız oyun</button><p id="ad-status" role="status"></p><small>Reklam ve üyelik seçenekleri isteğe bağlıdır. Yarın ücretsiz oynayabilirsin.</small></div><p class="minor" id="minor">Her 5 golde bir seviye. Yanlış cevapta tur sona erer.</p></div></section>
+<div id="loading" class="loading">Stadyum hazırlanıyor…</div>
+</main><script type="module" src="game.js?v=4"></script></body></html>

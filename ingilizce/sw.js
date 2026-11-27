@@ -7,7 +7,7 @@
    - Supabase istekleri: bu dosya karışmaz (sayfadaki katman yönetir)
    Sayfayı güncellediğinizde SURUM değerini artırın (v2, v3…).
    ===================================================================== */
-const SURUM = 'diji-v575-papi-sapan-firtinasi-lansman-20261127';
+const SURUM = 'diji-v582-papi-sapan-firtinasi-lansman-20261127';
 const SAYFA = 'sayfa-' + SURUM, KAYNAK = 'kaynak-' + SURUM;
 // Cached on first use; never download the A2 catalog at startup.
 const LAZY_TOPIC_FILES = new Set(['konu-oyunlari-a1.js','konu-oyunlari-a2.js','topic-games-core.mjs']);
@@ -37,6 +37,7 @@ self.addEventListener('fetch', e => {
       r.mode === 'cors') {
     e.respondWith(sharedVoiceResponse(r)); return;
   }
+  if (url.origin===self.location.origin && (url.pathname.includes('/papi-farm/')||url.pathname.includes('/word-goal-3d/'))) return; // Farm is lazy-loaded, never cache as the portal page.
   if (url.hostname.endsWith('supabase.co')) return;                 /* API: dokunma */
   // Teacher account transition must not run an older cached authorization/UI script.
   if (url.pathname.endsWith('/teacher-portal-boot.js')) {
@@ -81,7 +82,7 @@ self.addEventListener('fetch', e => {
   if (url.searchParams.get('misafir') === '1') return;              /* Deneme oturumu ana sayfanın çevrimdışı kopyası değildir. */
 
   // Force fresh navigation shell and dock resources when online; retain offline fallback.
-  const criticalDock = /\/(?:bottom-nav(?:-v2)?\.(?:js|css)|friends-ui\.(?:js|css)|notification-center\.(?:js|css)|app-js\/i07-gonder\.js)$/;
+  const criticalDock = /\/(?:bottom-nav(?:-v2)?\.(?:js|css)|friends-ui\.(?:js|css)|notification-center\.(?:js|css)|papi-wallet\.(?:js|css)|papi-dalga-sorfu\.(?:js|css)|odullu-reklam\.js|activity-ui\.js|lazy-games\.js|app-js\/i07-gonder\.js)$/;
   if (url.origin === self.location.origin && (criticalDock.test(url.pathname) || (r.mode === 'navigate' && /\/ingilizce\/?$/.test(url.pathname)))) {
     const page = r.mode === 'navigate';
     const bucket = page ? SAYFA : KAYNAK;

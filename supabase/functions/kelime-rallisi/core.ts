@@ -40,6 +40,7 @@ export function raceHandler(db:DB){
    const hash=Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(token)))).map(x=>x.toString(16).padStart(2,'0')).join('');
    const sessions=await db.select('portal_sessions',{select:'student_id,teacher_id,role,expires_at,teacher_portal_access_id,teacher_portal_version',token_hash:'eq.'+hash,limit:'1'}),a=sessions[0];
    if(!a||!['student','teacher'].includes(a.role)||!Number.isFinite(Date.parse(a.expires_at))||Date.parse(a.expires_at)<=Date.now())return json({ok:false,mesaj:'Geçerli oturum gerekli.'},401);
+   if(a.role==='student'&&!a.teacher_portal_access_id)return json({ok:false,hata:'oyun_kaldirildi',mesaj:'Bu oyun artık öğrenci hesabında sunulmuyor.'},410);
    if(a.teacher_portal_access_id){
     const [g]=await db.select('teacher_portal_access',{select:'teacher_id,state,version,student_id',id:'eq.'+a.teacher_portal_access_id,limit:'1'});
     const [pupil]=await db.select('students',{select:'teacher_id,status,frozen_at',id:'eq.'+a.student_id,limit:'1'});

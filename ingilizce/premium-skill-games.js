@@ -6,12 +6,55 @@
  const who=()=>typeof aktifOgrenciAdi==='undefined'?'':String(aktifOgrenciAdi||'');
  const token=()=>window.dmTeacherPortalMode?sessionStorage.getItem('ing_ogr_token')||'':localStorage.getItem('ing_token')||'';
  let root=null,state=null,epoch=0,ticker=null,transition=null,origin=null;
- (window.dmNativeAnswerScopes||=[]).push(()=>!!root?.isConnected);
+ let goal3d=null;
+ function closeGoal3d(){
+  if(!goal3d)return;const g=goal3d;goal3d=null;window.removeEventListener('message',g.listener);clearInterval(g.guard);g.root.remove();document.body.style.overflow=g.overflow;window.dmViewHistory?.leave?.(g.root);g.origin?.focus?.({preventScroll:true});
+ }
+ function openGoal3d(){
+  if(!who()||!token()||window.dmGuestMode){window.yoToast?.('Önce hesabına giriş yap.');return}
+  close();const owner=token(),account=who(),origin=document.activeElement,root=document.createElement('section'),frame=document.createElement('iframe');
+  root.id='dmWordGoal3D';root.setAttribute('role','dialog');root.setAttribute('aria-modal','true');root.setAttribute('aria-label','Kelime Golü 3D');
+  root.style.cssText='position:fixed;inset:0;z-index:2147483000;background:#102b36;display:flex;flex-direction:column;overflow:hidden';
+  frame.title='Kelime Golü 3D';frame.allow='autoplay';frame.style.cssText='width:100%;height:100%;border:0;flex:1;min-height:0';frame.src='word-goal-3d/index.html?v=20261127-2';root.append(frame);document.body.append(root);
+  const g=goal3d={root,frame,owner,account,origin,overflow:document.body.style.overflow,busy:false};document.body.style.overflow='hidden';
+  const same=()=>goal3d===g&&token()===owner&&who()===account&&!window.dmTeacherPortalMode;
+  const send=(type,extra={})=>{if(same())frame.contentWindow?.postMessage({channel:'dm-word-goal-3d',type,...extra},location.origin)};
+  const native=()=>typeof window.dmAndroidAds?.show==='function'&&window.dmAndroidPlacements?.rewardEnabled?.()!==false&&window.dmAndroidPlacements?.rewardAllowed?.('energy')!==false;
+  const legacy=()=>typeof window.DijiReklam?.oyunReklamiIzle==='function'&&window.DijiReklam?.reklamGosterilsinMi?.()===true;
+  const eligible=()=>same()&&!window.dmAdsDisabled&&!window.dmGuestMode&&!window.dmAndroidIsTeacher?.()&&account.toLowerCase()!=='dijimedu_demo'&&(native()||legacy());
+  const key='dm-goal3d-ad:'+account;
+  function pending(){try{const p=JSON.parse(localStorage.getItem(key)||'null');return p?.id&&p.expiresAt>Date.now()?p:null}catch{return null}}
+  function persist(p){try{if(p)localStorage.setItem(key,JSON.stringify(p));else localStorage.removeItem(key)}catch{}}
+  async function ad(){
+   if(g.busy||!same())return;let offer=pending();if(!offer&&!eligible()){send('ad-state',{busy:false,message:'Ödüllü reklam şu anda kullanılamıyor.'});return;}
+   g.busy=true;send('ad-state',{busy:true,message:'Reklam hakkı kontrol ediliyor…'});
+   try{
+    if(!offer){
+     const prepared=await window.dmPremiumPlayOffer.request('ad-prepare','word-goal',{},owner);if(!same())return;
+     offer={id:prepared.offerId,expiresAt:Date.now()+15*60000};if(!offer.id)throw Error('Reklam hazırlanamadı.');
+     const result=legacy()?await window.DijiReklam.oyunReklamiIzle(offer.id):await window.dmAndroidAds.show('energy');
+     if(!same())return;if(result?.test||!result?.completed)throw Error('Reklam tamamlanmadı. Oyun hakkı değişmedi.');persist(offer);
+    }
+    const d=await window.dmPremiumPlayOffer.request('ad-redeem','word-goal',{offerId:offer.id},owner);if(!same())return;
+    if(!d.claimed){send('ad-state',{busy:false,message:'Ödül doğrulanıyor. Birazdan tekrar kontrol edebilirsin.'});return;}
+    persist(null);send('ad-state',{busy:false,ready:true,message:'Bir oyun hakkı eklendi.'});
+   }catch(e){send('ad-state',{busy:false,message:e?.message||'Reklam şu anda kullanılamıyor.'})}finally{g.busy=false;send('capabilities',{ads:eligible()||!!pending()})}
+  }
+  g.listener=e=>{if(e.origin!==location.origin||e.source!==frame.contentWindow||!same()||e.data?.channel!=='dm-word-goal-3d')return;
+   if(e.data.type==='ready')send('capabilities',{ads:eligible()||!!pending()});
+   else if(e.data.type==='close'&&!g.busy)closeGoal3d();
+   else if(e.data.type==='ad')ad();
+   else if(e.data.type==='plans'&&!g.busy){closeGoal3d();if(window.DMSatis?.planlar)window.DMSatis.planlar('premium-oyunlar','premium_pro');else window.yoToast?.('Üyelik bilgilerini Mağaza bölümünden inceleyebilirsin.');}
+  };
+  window.addEventListener('message',g.listener);g.guard=setInterval(()=>{if(!same())closeGoal3d()},1000);window.dmViewHistory?.track?.(root,{close:()=>{if(!g.busy)closeGoal3d()}});
+ }
+
+ (window.dmNativeAnswerScopes||=[]).push(()=>!!root?.isConnected||!!goal3d?.root?.isConnected);
  function alive(s){return s===state&&s.owner===who()&&s.token===token()&&!!root?.isConnected;}
  const savedKey=s=>'dm-premium-skill:'+s.key+':'+s.owner;
  function save(){try{localStorage.setItem(savedKey(state),JSON.stringify({runId:state.runId,picks:state.picks}));}catch{}}
  function saved(s){try{return JSON.parse(localStorage.getItem(savedKey(s))||'null');}catch{return null;}}
- function close(){epoch++;clearInterval(ticker);clearTimeout(transition);const old=root;root=null;state=null;old?.remove();window.speechSynthesis?.cancel();window.dmViewHistory?.leave?.(old);window.dmGameViewport?.sync?.();origin?.focus?.();}
+ function close(){closeGoal3d();epoch++;clearInterval(ticker);clearTimeout(transition);const old=root;root=null;state=null;old?.remove();window.speechSynthesis?.cancel();window.dmViewHistory?.leave?.(old);window.dmGameViewport?.sync?.();origin?.focus?.();}
  function plans(){window.dmPremiumIntro?.plans('premium-oyunlar')?.();}
  async function api(op,data={}){
   const s=state,controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),15000);
@@ -31,6 +74,7 @@
   actions.forEach(([label,fn])=>{const b=document.createElement('button');b.type='button';b.textContent=label;b.onclick=fn;body.querySelector('.psg-actions').append(b);});
  }
  async function open(key,options){
+  if(key==='word-goal'&&!options?.team&&!window.dmTeacherPortalMode&&!(typeof siniftaOynananOgrenci!=='undefined'&&siniftaOynananOgrenci)&&who().toLowerCase()!=='teacher')return openGoal3d();
   if(key==='tower'){window.yoToast?.('Bu oyun yayından kaldırıldı.');return;}
   if(!games[key])return;close();origin=document.activeElement;
   if(!who()||!token()){window.yoToast?.('Önce hesabına giriş yap.');return;}

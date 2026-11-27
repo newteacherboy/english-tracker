@@ -66,9 +66,9 @@
   function isPremium() {
     if (window.dmTeacherPortalMode) return true;
     try {
-      if (typeof yo !== 'undefined' && yo?.premium) return true;
-      const tier = window.dmProgression?.status?.()?.membership_tier || window.dmMembershipTier || '';
-      if (tier === 'pro' || tier === 'premium_pro') return true;
+      const tier = String(window.dmAndroidPlan?.plan || window.dmSubscription?.plan || window.dmMembership?.plan || window.dmProgression?.status?.()?.membership_tier || window.dmMembershipTier || '').trim().toLowerCase();
+      if (tier) return ['pro','premium_pro','premium','diji_premium_pro','diji_pro'].includes(tier);
+      if (typeof yo !== 'undefined' && yo?.premium === true) return true;
     } catch {}
     return false;
   }
@@ -78,10 +78,12 @@
       const d = JSON.parse(localStorage.getItem(quotaKey()) || 'null');
       if (d && Number.isFinite(d.used)) {
         const adGrants = Number.isFinite(d.adGrants) ? Math.max(0, d.adGrants) : (d.adGranted ? 1 : 0);
-        return { used: Math.max(0, d.used), adGrants };
+        return { used: Math.max(0, d.used), adGrants,
+          redeemedOffers: Array.isArray(d.redeemedOffers) ? d.redeemedOffers.slice(-20) : [],
+          pendingOffer: d.pendingOffer?.id && d.pendingOffer.expiresAt > Date.now() ? d.pendingOffer : null };
       }
     } catch {}
-    return { used: 0, adGrants: 0 };
+    return { used: 0, adGrants: 0, redeemedOffers: [], pendingOffer: null };
   }
   function writeQuota(q) {
     try { localStorage.setItem(quotaKey(), JSON.stringify(q)); } catch {}
@@ -501,6 +503,11 @@
     root.querySelectorAll('[data-ds-close]').forEach(b => b.onclick = close);
     root.querySelector('#dsStartBtn').onclick = handlePlayClick;
     root.querySelector('#dsReplayBtn').onclick = handlePlayClick;
+    for (const id of ['dsStartBtn','dsReplayBtn']) {
+      const status = document.createElement('p');
+      status.className = 'ds-ad-status'; status.setAttribute('role','status'); status.setAttribute('aria-live','polite');
+      status.hidden = true; root.querySelector('#'+id).after(status);
+    }
     const openPlans = () => {
       close();
       if (window.DMSatis?.planlar) window.DMSatis.planlar('premium-oyunlar', 'premium_pro');
@@ -537,7 +544,7 @@
     if (!root) return;
     const prem = isPremium();
     const rem = freeRemaining();
-    const adOk = canWatchAd();
+    const pending = readQuota().pendingOffer;
     const qLbl = root.querySelector('#dsQuotaLabel');
     const qVal = root.querySelector('#dsQuotaValue');
     const sBtn = root.querySelector('#dsStartBtn');
@@ -545,6 +552,7 @@
     const rBtn = root.querySelector('#dsReplayBtn');
     const rTxt = root.querySelector('#dsReplayText');
 
+    sBtn.disabled = rBtn.disabled = adBusy;
     root.querySelector('#dsIntroPremBtn').hidden = prem;
     root.querySelector('#dsEndPremBtn').hidden = prem;
 
@@ -561,55 +569,77 @@
     } else {
       qLbl.textContent = 'Bugünkü ücretsiz hak';
       qVal.textContent = `0 / ${FREE_DAILY_LIMIT}`;
-      sBtn.classList.add('ds-ad-mode'); sTxt.textContent = 'Ücretsiz Reklam İzle · +1 Hak Kazan';
-      rBtn.classList.add('ds-ad-mode'); rTxt.textContent = 'Ücretsiz Reklam İzle · +1 Hak Kazan';
+      sBtn.classList.add('ds-ad-mode'); sTxt.textContent = pending ? 'Oyun hakkını kontrol et' : 'Reklam İzle · +1 Hak';
+      rBtn.classList.add('ds-ad-mode'); rTxt.textContent = pending ? 'Oyun hakkını kontrol et' : 'Reklam İzle · +1 Hak';
     }
   }
 
-  let adBusy = false;
-  async function watchRewardedAdThenPlay() {
-    if (adBusy) return;
-    adBusy = true;
-    const sTxt = root?.querySelector('#dsStartText');
-    const rTxt = root?.querySelector('#dsReplayText');
-    if (sTxt) sTxt.textContent = 'Reklam hazırlanıyor…';
-    if (rTxt) rTxt.textContent = 'Reklam hazırlanıyor…';
+  let adBusy = false, viewEpoch = 0;
+  const surfToken = () => localStorage.getItem('ing_token') || '';
+  function adStatus(message='') {
+    root?.querySelectorAll('.ds-ad-status').forEach(el => { el.textContent=message; el.hidden=!message; });
+  }
+  async function surfOffer(op, owner, offerId) {
+    if (!owner || surfToken() !== owner) throw Error('Öğrenci oturumun değişti. Yeniden giriş yap.');
+    const url = typeof apiURL === 'string' && /diji-api/.test(apiURL)
+      ? apiURL.replace(/diji-api.*$/,'premium-games')
+      : 'https://nxfqlutulxqzqgwewssd.supabase.co/functions/v1/premium-games';
+    const controller = new AbortController(), timer = setTimeout(()=>controller.abort(),15000);
     try {
-      // 1. Primary Diji-Medu Android & iOS 1.1+ AdMob Rewarded Bridge (same as premium-play-offer.js)
-      if (typeof window.dmAndroidAds?.show === 'function' && window.dmAndroidPlacements?.rewardEnabled?.() !== false && !window.dmAndroidIsTeacher?.()) {
-        const result = await window.dmAndroidAds.show('energy');
-        if (result?.test) throw Error('Test reklamları oyun hakkı kazandırmaz.');
-        if (!result?.completed) throw Error('Reklamı tamamladığında +1 sörf hakkı kazanırsın.');
-        if (typeof result.energy === 'number') {
-          window.genelEnerjiKalan = result.energy;
-          window.headerEnerjiGoster?.(result.energy, window.genelEnerjiMax || 25);
-        }
-        const q = readQuota(); q.adGrants = (q.adGrants || 0) + 1; writeQuota(q);
-        startGame();
-        return;
+      const r = await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({t:owner,game:'dalga-sorfu',op,...(offerId?{offerId}:{})}),signal:controller.signal});
+      const d = await r.json();
+      if (surfToken()!==owner) throw Error('Öğrenci oturumun değişti.');
+      if (!r.ok || d.ok===false) throw Error(d.mesaj||'Sörf hakkı doğrulanamadı.');
+      return d;
+    } finally { clearTimeout(timer); }
+  }
+  async function watchRewardedAdThenPlay() {
+    if (adBusy || !root || root.hidden || isPremium()) return;
+    const owner=surfToken(), key=quotaKey(), epoch=viewEpoch;
+    const sameAccount=()=>surfToken()===owner&&quotaKey()===key;
+    const active=()=>sameAccount()&&viewEpoch===epoch&&!root.hidden;
+    if (!owner||window.dmGuestMode||window.dmAndroidIsTeacher?.()) { adStatus('Ödüllü reklam için öğrenci hesabına giriş yap.'); return; }
+    adBusy=true;
+    syncButtons();
+    let offer=readQuota().pendingOffer, completed=!!offer;
+    const status=message=>{if(active())adStatus(message);};
+    try {
+      if (!offer) {
+        const native=typeof window.dmAndroidAds?.show==='function';
+        const legacy=typeof window.DijiReklam?.oyunReklamiIzle==='function'&&window.DijiReklam.reklamGosterilsinMi?.();
+        if (!native&&!legacy) throw Error('Ödüllü reklam destekli mobil uygulamada kullanılabilir.');
+        if (native&&(window.dmAndroidPlacements?.rewardEnabled?.()===false||window.dmAndroidPlacements?.rewardAllowed?.('energy')===false)) throw Error('Ödüllü reklam şu anda kullanılamıyor veya günlük reklam hakkın doldu.');
+        status('Reklam hazırlanıyor…');
+        const prepared=await surfOffer('ad-prepare',owner);
+        if(!active())return;
+        if(!prepared.offerId)throw Error('Reklam teklifi oluşturulamadı.');
+        offer={id:prepared.offerId,expiresAt:Date.now()+15*60*1000};
+        // The server-side offer authorizes a play ad even when energy is full.
+        const result=native?await window.dmAndroidAds.show('energy'):await window.DijiReklam.oyunReklamiIzle(offer.id);
+        if(!sameAccount())return;
+        if(result?.test)throw Error('Test reklamları oyun hakkı kazandırmaz.');
+        if(!result?.completed)throw Error('Reklam tamamlanmadı. Tekrar deneyebilirsin.');
+        completed=true;
+        const q=readQuota();q.pendingOffer=offer;writeQuota(q);
+        if(typeof result.energy==='number'){window.genelEnerjiKalan=result.energy;window.headerEnerjiGoster?.(result.energy,window.genelEnerjiMax||25);}
       }
-      // 2. Legacy iOS AdMob Rewarded Bridge (odullu-reklam.js)
-      if (typeof window.DijiReklam?.odulluIzle === 'function' && window.DijiReklam.reklamGosterilsinMi?.()) {
-        const res = await window.DijiReklam.odulluIzle('enerji');
-        if (res && res.ok !== false) {
-          const q = readQuota(); q.adGrants = (q.adGrants || 0) + 1; writeQuota(q);
-          startGame();
-          return;
-        }
-        throw Error('Reklam tamamlanamadı. Tekrar deneyebilirsin.');
-      }
-      // 3. Web browser (AdMob native SDK unavailable)
-      window.yoToast?.('Ödüllü reklamlar mobil uygulamada açılır. Sınırsız oynamak için Premium paketlere göz atabilirsin.');
-    } catch (e) {
-      window.yoToast?.(e?.message || 'Reklam şu anda açılamadı. Tekrar deneyebilirsin.');
-    } finally {
-      adBusy = false;
-      syncButtons();
-    }
+      status('Reklam ödülü doğrulanıyor…');
+      const d=await surfOffer('ad-redeem',owner,offer.id);
+      if(!sameAccount())return;
+      if(!d.claimed){status('Ödül henüz doğrulanmadı. Oyun hakkını tekrar kontrol edebilirsin.');return;}
+      const q=readQuota();
+      if(!q.redeemedOffers.includes(offer.id)){q.redeemedOffers.push(offer.id);q.adGrants++; }
+      q.pendingOffer=null;writeQuota(q);
+      if(active()){adStatus();if(freeRemaining()>0)startGame();}
+    }catch(e){
+      if(completed&&offer&&sameAccount()){const q=readQuota();q.pendingOffer=offer;writeQuota(q);}
+      status(e?.message||'Reklam şu anda açılamadı. Tekrar deneyebilirsin.');
+    }finally{adBusy=false;syncButtons();}
   }
 
   function handlePlayClick() {
-    if (isPremium() || freeRemaining() > 0) startGame();
+    if(adBusy || state.running) return;
+    if (isPremium() || freeRemaining() > 0) {adStatus();startGame();}
     else void watchRewardedAdThenPlay();
   }
 
@@ -1290,6 +1320,7 @@
   window.addEventListener('keydown', onKeyDown);
 
   function startGame() {
+    if(!root || root.hidden || state.running || (!isPremium() && freeRemaining()<=0))return;
     ensureAudio();
     if (!isPremium()) {
       const q = readQuota();
@@ -1349,7 +1380,7 @@
   }
 
   function open() {
-    ensureOverlay();
+    viewEpoch++; ensureOverlay(); adStatus();
     state.running = false; state.paused = false;
     stopMusic();
     syncButtons();
@@ -1361,6 +1392,7 @@
   }
 
   function close() {
+    viewEpoch++;
     state.running = false; state.paused = false;
     cancelAnimationFrame(rafId);
     stopMusic();
@@ -1374,6 +1406,9 @@
     window.dmGamesUI?.refresh?.();
   }
 
+  const refreshMembership = () => { if (root && !root.hidden) { if (isPremium()) adStatus(); syncButtons(); } };
+  window.addEventListener('dm:plan', refreshMembership);
+  document.addEventListener('dm:state', refreshMembership);
   document.addEventListener('dm:logout', () => { sessionUsedEn.clear(); close(); });
 
   window.dmDalgaSorfu = { open, close, hasFreeQuota, isPremium };
