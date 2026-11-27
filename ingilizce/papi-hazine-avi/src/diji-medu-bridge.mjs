@@ -167,10 +167,6 @@ export class DijiMeduBridge {
         return true;
       }
     } catch (_) {}
-    if (window.history.length > 1) {
-      window.history.back();
-      return true;
-    }
     window.location.href = '../index.html';
     return true;
   }
