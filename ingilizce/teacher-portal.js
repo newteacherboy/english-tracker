@@ -385,6 +385,8 @@
  }
  function teacherDock(){
   if(!mode)return;
+  // The teacher dock must not wait for the learner's idle stylesheet loader.
+  const sheet=document.querySelector('link[rel="stylesheet"][href*="teacher-portal.css"]');if(sheet&&sheet.media==='print')sheet.media='all';
   const native=document.getElementById('bottomNavMobile');
   if(native)native.style.setProperty('display','none','important');
   let dock=document.getElementById('tpTeacherDock');
@@ -394,6 +396,9 @@
    document.body.append(dock);
    dock.addEventListener('click',e=>{const b=e.target.closest('[data-route]');if(!b)return;e.preventDefault();e.stopPropagation();const route=b.dataset.route;if(route==='league'){if(window.dmTeacherLeagueOpen)window.dmTeacherLeagueOpen();else window.yoToast?.('Sınıfım yüklenemedi. Sayfayı yenile.');return;}window.dmTeacherLeagueClose?.();if(route==='home')teacherHomeShow();else if(route==='panel')teacherDashboardShow();else teacherDestination(route);});
   }
+  dock.hidden=false;
+  for(const name of ['display','visibility','opacity'])if(dock.style.getPropertyValue(name))dock.style.removeProperty(name);
+  window.dmGameViewport?.sync?.();
   const route=document.body.classList.contains('tp-league-active')?'league':document.body.classList.contains('tp-dash-active')?'panel':document.body.classList.contains('tp-home-active')?'home':state()?.route;
   dock.querySelectorAll('[data-route]').forEach(b=>{
    const selected=b.dataset.route===route;

@@ -720,3 +720,8 @@ html.dm-teacher-portal .tp-bulk-card{width:min(100%,560px)!important;max-height:
 .tp-bulk-card .tp-bulk-save{position:sticky;bottom:-16px;background:linear-gradient(180deg,#f8fcffb0,#f8fcff 24%);padding:6px 0 2px;z-index:2}
 .tp-bulk-card .tp-bulk-save .tp-primary{min-height:43px!important;margin:0!important;border-radius:12px!important;background:linear-gradient(110deg,#0865aa,#003d79)!important;font-size:15px!important}
 @media(max-width:360px){.tp-bulk-card .tp-pupil-row{grid-template-columns:16px minmax(0,1fr) minmax(0,1fr) 26px!important;gap:3px!important;padding:5px!important}.tp-bulk-card .tp-pupil-row input{font-size:11px!important}.tp-bulk-card .tp-pupil-actions button{font-size:10px!important}}
+
+/* Restore the independent teacher dock after opening a teacher destination. */
+html.dm-teacher-portal body:not([data-tp-game-open]) #tpTeacherDock#tpTeacherDock{display:grid!important;visibility:visible!important;opacity:1!important;pointer-events:auto!important;position:fixed!important;bottom:0!important;left:0!important;right:0!important;transform:none!important;z-index:2147483640!important}
+html.dm-teacher-portal body.tp-legacy-child-open:not([data-tp-game-open]) #tpTeacherDock#tpTeacherDock{pointer-events:none!important}
+html.dm-teacher-portal body[data-tp-game-open] #tpTeacherDock#tpTeacherDock{display:none!important;visibility:hidden!important;pointer-events:none!important}

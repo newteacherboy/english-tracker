@@ -95,6 +95,11 @@
    decorate(root);classicPause(root);active=active||root.classList.contains('dm-vp-root');
   }
   document.body.classList.toggle('dm-game-viewport',active);
+  // Teacher pages are independent foreground surfaces. Do not inherit a learner
+  // game lock from a Parkur/setup node left mounted behind the teacher dashboard.
+  const teacherMode=window.dmTeacherPortalMode||document.documentElement.classList.contains('dm-teacher-portal');
+  const teacherPage=document.body.classList.contains('tp-home-active')||document.body.classList.contains('tp-dash-active')||document.body.classList.contains('tp-league-active');
+  document.body.toggleAttribute('data-tp-game-open',!!(teacherMode&&active&&!teacherPage));
   // A third-party close animation may not mutate the DOM when it finishes.
   if(recheck){clearTimeout(recheck);recheck=0;}
   if(active)recheck=setTimeout(schedule,1200);
