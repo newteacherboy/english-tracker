@@ -15,7 +15,7 @@
   close();const owner=token(),account=who(),origin=document.activeElement,root=document.createElement('section'),frame=document.createElement('iframe');
   root.id='dmWordGoal3D';root.setAttribute('role','dialog');root.setAttribute('aria-modal','true');root.setAttribute('aria-label','Kelime Golü 3D');
   root.style.cssText='position:fixed;inset:0;z-index:2147483000;background:#102b36;display:flex;flex-direction:column;overflow:hidden';
-  frame.title='Kelime Golü 3D';frame.allow='autoplay';frame.style.cssText='width:100%;height:100%;border:0;flex:1;min-height:0';frame.src='word-goal-3d/index.html?v=20261127-2';root.append(frame);document.body.append(root);
+  frame.title='Kelime Golü 3D';frame.allow='autoplay';frame.style.cssText='width:100%;height:100%;border:0;flex:1;min-height:0';frame.src='word-goal-3d/index.html?v=20261128-crest-xp';root.append(frame);document.body.append(root);
   const g=goal3d={root,frame,owner,account,origin,overflow:document.body.style.overflow,busy:false};document.body.style.overflow='hidden';
   const same=()=>goal3d===g&&token()===owner&&who()===account&&!window.dmTeacherPortalMode;
   const send=(type,extra={})=>{if(same())frame.contentWindow?.postMessage({channel:'dm-word-goal-3d',type,...extra},location.origin)};
@@ -42,6 +42,7 @@
   }
   g.listener=e=>{if(e.origin!==location.origin||e.source!==frame.contentWindow||!same()||e.data?.channel!=='dm-word-goal-3d')return;
    if(e.data.type==='ready')send('capabilities',{ads:eligible()||!!pending()});
+   else if(e.data.type==='reward-state'&&e.data.yo&&typeof e.data.yo==='object'){window.dmApplyRewardState?.(e.data.yo,account);}
    else if(e.data.type==='close'&&!g.busy)closeGoal3d();
    else if(e.data.type==='ad')ad();
    else if(e.data.type==='plans'&&!g.busy){closeGoal3d();if(window.DMSatis?.planlar)window.DMSatis.planlar('premium-oyunlar','premium_pro');else window.yoToast?.('Üyelik bilgilerini Mağaza bölümünden inceleyebilirsin.');}
