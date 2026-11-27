@@ -153,7 +153,7 @@ export function verifiedGamesAPI(db,json){
      return json({ok:true,answersInClaim:true,total:old.deck.length,words:old.deck[0].cards,tasks:old.deck,answers:old.answers,slots:old.deck.map((t,slot)=>({slot,en:t.en,kind:t.kind,pairs:t.pairs}))});
     }
    }
-   const deck=game==='ba'&&body.schoolVersion===9?globalThis.DMSchoolCurriculum.build(words,available,stop,body.routeVisualQuestions===true):compile(game,words);
+   const deck=game==='ba'&&body.schoolVersion===9?globalThis.DMSchoolCurriculum.build(words,available,stop,body.routeVisualQuestions===3?3:body.routeVisualQuestions===true):compile(game,words);
    if(soloStage){if(deck.length!==12)return fail('Seviye 12 soru içermeli.',400);for(const t of deck){t.soloLevel=soloStage.number;if(soloKey!==game)t.soloVariant=soloKey;}}
    const r=await db.rpc(a.teacher_portal_access_id?'dm_teacher_verified_start':['canavar','kule','fener'].includes(game)?'dm_arcade_verified_start':'dm_verified_start',{actor:a.student_id,run_key:run,game_code:game,cls:classNo,unit_ids:units,stop_id:stop,tasks:deck});
    if(r.error)return fail(['canavar','kule','fener'].includes(game)?r.error.message:'Oyun oturumu kaydedilemedi.',409);
