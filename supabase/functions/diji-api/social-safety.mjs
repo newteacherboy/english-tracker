@@ -36,6 +36,8 @@ export function socialSafetyAPI({db,json,hash,hashPassword,verifyPassword,queue}
 const frozen=await db.from('students').select('id').in('id',unique).not('frozen_at','is',null);if(frozen.error)throw Error('Hesap durumu kontrol edilemedi.');const r=await db.from('dm_social_controls').select('student_id,social_enabled,profile_visible,messages_enabled,duels_enabled,gifts_enabled,suspended_until').in('student_id',unique);if(r.error)throw Error('Sosyal izinler kontrol edilemedi.');let blocked=new Set();if(viewer){const b=await db.from('student_blocks').select('blocker_id,blocked_id').or('blocker_id.eq.'+viewer+',blocked_id.eq.'+viewer);if(b.error)throw Error('Engel bilgileri alınamadı.');blocked=new Set((b.data||[]).map(x=>x.blocker_id===viewer?x.blocked_id:x.blocker_id));}return {controls:new Map([...(r.data||[]).map(c=>[c.student_id,c]),...(frozen.data||[]).map(s=>[s.id,{social_enabled:false}])]),blocked};}
  return {
  async guard(op,b,q,a){
+  const retiredType=String(b?.tur??q?.get('tur')??'').trim().toLowerCase();
+  if(['hazirMesajGonder','enerjiGonder','aksesuarHediye'].includes(op)||(op==='bildirimGonder'&&['mesaj','hediye','enerji'].includes(retiredType)))return json({ok:false,status:'error',hata:'feature_retired',mesaj:'Öğrenciler arası mesaj ve hediye gönderimi kaldırıldı.'},410);
   let f=socialFeature(op);if(op==='bildirimGonder')f=b.tur==='mesaj'?'messages':['hediye','enerji'].includes(b.tur)?'gifts':f;
   if(!f||a?.role!=='student'||!a.student_id)return null;
   const c=await control(a.student_id);if(!allowed(c,f))return json({ok:false,hata:'social_disabled',mesaj:'Bu sosyal özellik veli veya yönetici ayarlarıyla kapalı.'},403);
