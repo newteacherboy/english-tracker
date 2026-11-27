@@ -39,8 +39,8 @@
   ];
 
   const FREE_DAILY_LIMIT = 2;
-  const BASE_SPEED = 0.21;
-  const MAX_SPEED = 0.44;
+  const BASE_SPEED = 0.27;
+  const MAX_SPEED = 0.43;
   const ROUND_SECONDS = 14;
 
   const sprites = {};
@@ -152,7 +152,7 @@
   }
 
   /* ===== SURF-POP AUDIO ENGINE + VOICE DUCKING ===== */
-  let audioCtx = null, muted = false, musicGain = null, musicTimer = null, beatStep = 0;
+  let audioCtx = null, muted = false, musicGain = null, musicTimer = null, beatStep = 0, voiceTimer = null, voiceSerial = 0;
 
   function ensureAudio() {
     if (!audioCtx) {
@@ -160,7 +160,7 @@
       if (!Ctx) return null;
       audioCtx = new Ctx();
       musicGain = audioCtx.createGain();
-      musicGain.gain.value = muted ? 0 : 0.13;
+      musicGain.gain.value = muted ? 0 : 0.24;
       musicGain.connect(audioCtx.destination);
     }
     if (audioCtx.state === 'suspended') audioCtx.resume().catch(() => {});
@@ -229,9 +229,9 @@
     src.connect(hp); hp.connect(g); g.connect(musicGain);
     src.start();
   }
-  function playWarmPluck(freq, dur, vol) {
+  function playWarmPluck(freq, dur, vol, delay = 0) {
     if (muted || !audioCtx || !musicGain) return;
-    const t = audioCtx.currentTime;
+    const t = audioCtx.currentTime + delay;
     const osc = audioCtx.createOscillator();
     const lp = audioCtx.createBiquadFilter();
     const g = audioCtx.createGain();
@@ -250,25 +250,29 @@
     stopMusic();
     ensureAudio();
     beatStep = 0;
-    musicTimer = setInterval(() => {
-      if (muted || !state.running || state.paused || document.hidden) return;
+    if (musicGain && audioCtx) { musicGain.gain.cancelScheduledValues(audioCtx.currentTime); musicGain.gain.setTargetAtTime(muted ? 0 : .24,audioCtx.currentTime,.04); }
+    const tick = () => {
+      if (muted || !state.running || state.paused || document.hidden || !audioCtx || !musicGain) return;
       const bar = Math.floor(beatStep / 8) % SURF_CHORDS.length;
       const stepInBar = beatStep % 8;
       const ch = SURF_CHORDS[bar];
       if (stepInBar === 0 || stepInBar === 3 || stepInBar === 5) playWarmPluck(ch.bass, 0.28, 0.42);
-      if (stepInBar === 2 || stepInBar === 6) ch.notes.forEach((f, idx) => setTimeout(() => playWarmPluck(f, 0.26, 0.14), idx * 14));
+      if (stepInBar === 2 || stepInBar === 6) ch.notes.forEach((f, idx) => playWarmPluck(f, 0.26, 0.17, idx * 0.018));
       if (stepInBar === 0) playWarmPluck(ch.notes[2] * 2, 0.24, 0.11);
       if (stepInBar === 4) playWarmPluck(ch.notes[3] * 2, 0.20, 0.09);
       playSoftShaker(stepInBar % 2 === 1 ? 0.14 : 0.06);
       beatStep++;
-    }, 185);
+    };
+    tick(); musicTimer = setInterval(tick, 205);
   }
   function stopMusic() {
     if (musicTimer) { clearInterval(musicTimer); musicTimer = null; }
+    if (musicGain && audioCtx) { musicGain.gain.cancelScheduledValues(audioCtx.currentTime); musicGain.gain.setTargetAtTime(0,audioCtx.currentTime,.045); }
   }
   function duckMusic(ducked) {
     if (!audioCtx || !musicGain || muted) return;
-    musicGain.gain.setTargetAtTime(ducked ? 0.04 : 0.13, audioCtx.currentTime, 0.08);
+    musicGain.gain.cancelScheduledValues(audioCtx.currentTime);
+    musicGain.gain.setTargetAtTime(ducked ? 0.055 : (state.paused ? 0 : 0.24), audioCtx.currentTime, 0.08);
   }
 
   const sfx = {
@@ -299,16 +303,25 @@
       playTone(640, 0.18, 'sine', 0.20, null, 0.07);
     },
     hit: () => {
-      playWaterSplash(0.24, 0.25);
-      playTone(185, 0.18, 'sawtooth', 0.18, null, 0);
-      playTone(125, 0.28, 'triangle', 0.22, null, 0.09);
+      playWaterSplash(0.25, 0.27);
+      playTone(175, 0.16, 'triangle', 0.24);
+      playTone(95, 0.24, 'sine', 0.20, null, 0.07);
+    },
+    wrong: () => {
+      playWaterSplash(0.12, 0.16);
+      playTone(392, 0.15, 'triangle', 0.22);
+      playTone(294, 0.18, 'triangle', 0.22, null, 0.12);
+      playTone(196, 0.24, 'sine', 0.18, null, 0.24);
     }
   };
 
   function speakWord(text) {
     if (muted || !text) return;
+    const serial = ++voiceSerial;
+    clearTimeout(voiceTimer);
+    const restore = () => { if (serial === voiceSerial && state.running && !state.paused) duckMusic(false); };
     duckMusic(true);
-    setTimeout(() => duckMusic(false), 1200);
+    voiceTimer = setTimeout(restore, Math.max(1800, Math.min(4400, text.length * 105)));
     try {
       if (typeof window.sharedVoiceSpeak === 'function') { window.sharedVoiceSpeak(text, 'en-US'); return; }
       if (typeof window.sesliOku === 'function') { window.sesliOku(text); return; }
@@ -316,8 +329,8 @@
         window.speechSynthesis.cancel();
         const u = new SpeechSynthesisUtterance(text);
         u.lang = 'en-US'; u.rate = 0.94;
-        u.onend = () => duckMusic(false);
-        u.onerror = () => duckMusic(false);
+        u.onend = restore;
+        u.onerror = restore;
         window.speechSynthesis.speak(u);
       }
     } catch {}
@@ -360,13 +373,13 @@
               <div class="ds-rule-ico" style="background:#e0f2fe;color:#0284c7">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
               </div>
-              <div><b>Tek tek gelen kelimeleri yakala</b><small>Yanlış kelimeler engeldir — yana kay ya da zıpla!</small></div>
+              <div><b>Tek tek gelen kelimeleri yakala</b><small>Yanlış kelimeye çarparsan oyun biter — yana kay ya da zıpla!</small></div>
             </div>
             <div class="ds-rule">
               <div class="ds-rule-ico" style="background:#dcfce7;color:#15803d">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 2 4 5v6c0 5.5 3.4 10.6 8 12 4.6-1.4 8-6.5 8-12V5l-8-3z"/></svg>
               </div>
-              <div><b>Baloncuk Koruma Kalkanı Topla</b><small>Suda beliren kalkan seni 1 hatadan korur.</small></div>
+              <div><b>Baloncuk Koruma Kalkanı Topla</b><small>Kalkan seni bir kütük çarpışmasından korur. Yanlış kelime oyunu bitirir.</small></div>
             </div>
             <div class="ds-rule">
               <div class="ds-rule-ico" style="background:#fef3c7;color:#d97706">
@@ -522,7 +535,10 @@
     root.querySelector('#dsSpeakBtn').onclick = () => speakWord(state.currentWord.en);
     root.querySelector('#dsMuteBtn').onclick = () => {
       muted = !muted;
-      if (musicGain && audioCtx) musicGain.gain.value = muted ? 0 : 0.13;
+      if (muted) {
+        if (musicGain && audioCtx) { musicGain.gain.cancelScheduledValues(audioCtx.currentTime); musicGain.gain.setTargetAtTime(0,audioCtx.currentTime,0.04); }
+        try { window.speechSynthesis?.cancel(); } catch {}
+      } else { ensureAudio(); duckMusic(false); if (state.running && !state.paused) speakWord(state.currentWord.en); }
       root.querySelector('#dsMuteIco').style.opacity = muted ? '0.4' : '1';
     };
 
@@ -536,7 +552,15 @@
         else if (dy < -24) triggerJump();
       }
     });
-    canvas.addEventListener('pointerup', () => { touchStartX = 0; });
+    canvas.addEventListener('pointerup', e => {
+      if (!touchMoved && touchStartX && state.running && !state.paused) {
+        const r = canvas.getBoundingClientRect(), x = (e.clientX-r.left)/r.width;
+        const target = x < 1/3 ? -1 : x > 2/3 ? 1 : 0;
+        if (target !== state.lane) moveLane(target-state.lane);
+      }
+      touchStartX = 0;
+    });
+    canvas.addEventListener('pointercancel', () => { touchStartX = 0; touchMoved = false; });
     return root;
   }
 
@@ -639,6 +663,7 @@
 
   function handlePlayClick() {
     if(adBusy || state.running) return;
+    if (!muted) ensureAudio(); // unlock audio from the actual Play gesture before an async ad
     if (isPremium() || freeRemaining() > 0) {adStatus();startGame();}
     else void watchRewardedAdThenPlay();
   }
@@ -731,13 +756,13 @@
   }
 
   function project(lanePos, z, w, h) {
-    const horizonY = h * 0.36 - state.slope * h * 0.028;
+    const horizonY = h * 0.36;
     const bottomY = h * 0.99;
-    const persp = Math.pow(1 - z, 1.82);
+    const persp = Math.pow(Math.max(0, Math.min(1, 1 - z)), 1.62);
     const riverHalfBottom = Math.min(w * 0.48, 220);
     const riverHalfTop = Math.min(w * 0.085, 42);
     const riverHalf = riverHalfTop + (riverHalfBottom - riverHalfTop) * persp;
-    const pitchY = -state.slope * Math.sin(z * Math.PI) * h * 0.032;
+    const pitchY = 0;
     const y = horizonY + (bottomY - horizonY) * persp + pitchY;
     const x = w * 0.5 + lanePos * (riverHalf * 0.63);
     const scale = 0.17 + 0.94 * persp;
@@ -753,7 +778,8 @@
 
   function emitBoardSpray(px, py, scale, intensity = 1, carveDir = 0) {
     const speedRatio = state.speed / BASE_SPEED;
-    const count = Math.round((3 + speedRatio * 2.4) * intensity);
+    const count = Math.round((2 + speedRatio * 1.6) * intensity);
+    if (state.spray.length > 170 && intensity <= 1) return;
     for (let i = 0; i < count; i++) {
       const side = carveDir !== 0 ? -carveDir : (Math.random() < 0.5 ? -1 : 1);
       const isDroplet = Math.random() < 0.54;
@@ -788,7 +814,7 @@
       const wakeAlpha = Math.max(0, 1 - jumpY / 10);
       const speedBoost = 0.8 + (state.speed / BASE_SPEED) * 0.45;
       const wOff = Math.sin(phase * 3.2) * 3.2 * scale;
-      c.save(); c.globalAlpha = 0.68 * wakeAlpha;
+      c.save(); c.globalAlpha = 0.42 * wakeAlpha;
       const wg = c.createLinearGradient(x, y, x, y + 66 * scale);
       wg.addColorStop(0, 'rgba(255,255,255,0.94)'); wg.addColorStop(0.55, 'rgba(186,230,253,0.45)'); wg.addColorStop(1, 'rgba(186,230,253,0)');
       c.fillStyle = wg;
@@ -796,7 +822,7 @@
       c.moveTo(x - 16 * scale, y + 6 * scale); c.lineTo(x + 16 * scale, y + 6 * scale);
       c.lineTo(x + (54 * speedBoost) * scale - wOff, y + 66 * scale); c.lineTo(x - (54 * speedBoost) * scale + wOff, y + 66 * scale);
       c.closePath(); c.fill();
-      c.strokeStyle = 'rgba(255,255,255,0.92)'; c.lineWidth = 4.2 * scale; c.lineCap = 'round';
+      c.strokeStyle = 'rgba(237,253,248,0.64)'; c.lineWidth = 2.7 * scale; c.lineCap = 'round';
       c.beginPath();
       c.moveTo(x - 14 * scale, y + 8 * scale); c.quadraticCurveTo(x - 32 * scale, y + 32 * scale, x - 52 * scale + wOff, y + 58 * scale);
       c.moveTo(x + 14 * scale, y + 8 * scale); c.quadraticCurveTo(x + 32 * scale, y + 32 * scale, x + 52 * scale - wOff, y + 58 * scale);
@@ -920,7 +946,7 @@
 
     c.fillStyle = '#92400e'; c.fillRect(-10, -14, 20, 18);
 
-    const bw = 132, bh = 58, bx = -bw / 2, by = -bh - 10;
+    const bw = 148, bh = 65, bx = -bw / 2, by = -bh - 10;
     c.fillStyle = '#78350f'; roundRect(c, bx, by + 5, bw, bh, 15); c.fill();
     const woodG = c.createLinearGradient(0, by, 0, by + bh);
     woodG.addColorStop(0, '#f59e0b'); woodG.addColorStop(0.5, '#d97706'); woodG.addColorStop(1, '#92400e');
@@ -943,11 +969,11 @@
     const maxW = bw - 22, words = text.split(' ');
     if (text.length > 12 && words.length > 1) {
       const mid = Math.ceil(words.length / 2);
-      c.font = '900 15px Nunito, sans-serif';
-      c.fillText(words.slice(0, mid).join(' '), 0, by + bh / 2 - 8.5, maxW);
-      c.fillText(words.slice(mid).join(' '), 0, by + bh / 2 + 9.5, maxW);
+      c.font = '900 19px Nunito, sans-serif';
+      c.fillText(words.slice(0, mid).join(' '), 0, by + bh / 2 - 10.5, maxW);
+      c.fillText(words.slice(mid).join(' '), 0, by + bh / 2 + 11, maxW);
     } else {
-      c.font = '900 17.5px Nunito, sans-serif';
+      c.font = '900 22px Nunito, sans-serif';
       c.fillText(text, 0, by + bh / 2 + 1, maxW);
     }
     c.restore();
@@ -1016,32 +1042,32 @@
   function renderScene(c, w, h, dt) {
     c.imageSmoothingEnabled = true; c.imageSmoothingQuality = 'high';
     c.save();
-    if (state.shakeTime > 0) c.translate((Math.random() - 0.5) * state.shakeTime * 20, (Math.random() - 0.5) * state.shakeTime * 20);
-    const horizonY = h * 0.36 - state.slope * h * 0.028;
+    // Fixed camera: impact sound and spray communicate collisions without screen shaking.
+    const horizonY = h * 0.36;
 
     const sky = c.createLinearGradient(0, 0, 0, horizonY);
-    sky.addColorStop(0, '#0284c7'); sky.addColorStop(0.55, '#67d4ff'); sky.addColorStop(1, '#fef3c7');
+    sky.addColorStop(0, '#599fc2'); sky.addColorStop(0.55, '#a4dce3'); sky.addColorStop(1, '#e6edcf');
     c.fillStyle = sky; c.fillRect(0, 0, w, horizonY + 18);
 
     const sunG = c.createRadialGradient(w * 0.78, horizonY * 0.52, 8, w * 0.78, horizonY * 0.52, 72);
     sunG.addColorStop(0, 'rgba(255,251,214,0.95)'); sunG.addColorStop(0.45, 'rgba(254,240,138,0.45)'); sunG.addColorStop(1, 'rgba(254,240,138,0)');
     c.fillStyle = sunG; c.beginPath(); c.arc(w * 0.78, horizonY * 0.52, 72, 0, Math.PI * 2); c.fill();
 
-    const cloudDrift = (performance.now() * 0.008) % (w + 140);
-    c.fillStyle = 'rgba(255,255,255,0.84)';
+    const cloudDrift = (state.elapsed * 2) % (w + 140);
+    c.fillStyle = 'rgba(250,255,255,0.62)';
     for (const [cx0, cy, cs] of [[0, horizonY * 0.34, 1.0], [w * 0.48, horizonY * 0.24, 0.8], [w * 0.86, horizonY * 0.42, 0.72]]) {
       const cx = ((cx0 + cloudDrift) % (w + 140)) - 70;
       c.beginPath(); c.arc(cx, cy, 18 * cs, 0, Math.PI * 2); c.arc(cx + 18 * cs, cy - 5 * cs, 22 * cs, 0, Math.PI * 2); c.arc(cx + 38 * cs, cy, 16 * cs, 0, Math.PI * 2); c.fill();
     }
 
-    c.fillStyle = '#22c55e';
+    c.fillStyle = '#62ad7f';
     c.beginPath(); c.moveTo(0, horizonY + 6);
     c.quadraticCurveTo(w * 0.22, horizonY - 18, w * 0.48, horizonY - 2);
     c.quadraticCurveTo(w * 0.76, horizonY - 20, w, horizonY + 4);
     c.lineTo(w, h); c.lineTo(0, h); c.closePath(); c.fill();
 
     const bankGrad = c.createLinearGradient(0, horizonY, 0, h);
-    bankGrad.addColorStop(0, '#4ade80'); bankGrad.addColorStop(0.5, '#22c55e'); bankGrad.addColorStop(1, '#15803d');
+    bankGrad.addColorStop(0, '#9ccf92'); bankGrad.addColorStop(0.5, '#80bd86'); bankGrad.addColorStop(1, '#5aa67b');
     c.fillStyle = bankGrad; c.fillRect(0, horizonY, w, h - horizonY);
 
     const segs = 36, pts = [];
@@ -1058,39 +1084,39 @@
     };
 
     const sandG = c.createLinearGradient(0, horizonY, 0, h);
-    sandG.addColorStop(0, '#fef08a'); sandG.addColorStop(0.5, '#fde047'); sandG.addColorStop(1, '#f59e0b');
+    sandG.addColorStop(0, '#f1deb2'); sandG.addColorStop(0.5, '#e5c595'); sandG.addColorStop(1, '#cbb18a');
     fillRibbon(1.22, 1.22, sandG);
-    fillRibbon(1.07, 1.07, 'rgba(217,119,6,0.25)');
+    fillRibbon(1.07, 1.07, 'rgba(170,136,95,0.10)');
 
     const waterG = c.createLinearGradient(0, horizonY, 0, h);
-    waterG.addColorStop(0, '#38bdf8'); waterG.addColorStop(0.35, '#06b6d4'); waterG.addColorStop(0.75, '#0284c7'); waterG.addColorStop(1, '#0369a1');
+    waterG.addColorStop(0, '#a6d6d6'); waterG.addColorStop(0.35, '#76c1c0'); waterG.addColorStop(0.75, '#519eaa'); waterG.addColorStop(1, '#3b8d9e');
     fillRibbon(1.0, 1.0, waterG);
 
     const shimG = c.createLinearGradient(0, horizonY, 0, h);
-    shimG.addColorStop(0, 'rgba(224,242,254,0.55)'); shimG.addColorStop(0.5, 'rgba(103,232,249,0.22)'); shimG.addColorStop(1, 'rgba(56,189,248,0.05)');
+    shimG.addColorStop(0, 'rgba(224,242,238,0.12)'); shimG.addColorStop(0.5, 'rgba(194,231,222,0.07)'); shimG.addColorStop(1, 'rgba(194,231,222,0.025)');
     fillRibbon(0.45, 0.45, shimG);
 
-    c.strokeStyle = 'rgba(255,255,255,0.78)'; c.lineCap = 'round'; c.lineWidth = 4.5;
+    c.strokeStyle = 'rgba(235,250,242,0.62)'; c.lineCap = 'round'; c.lineWidth = 2.2;
     for (const side of [-1, 1]) {
       c.beginPath();
       for (let i = 0; i <= segs; i++) {
-        const rx = pts[i].cx + side * pts[i].rh * 0.99 + Math.sin(pts[i].z * 26 + state.distance * 18 + side) * 2.0 * pts[i].scale;
+        const rx = pts[i].cx + side * pts[i].rh * 0.99 + Math.sin(pts[i].z * 12 + side) * 0.7 * pts[i].scale;
         if (i === 0) c.moveTo(rx, pts[i].y); else c.lineTo(rx, pts[i].y);
       }
       c.stroke();
     }
 
-    for (let k = 0; k < 14; k++) {
-      const z = ((k / 14) - (state.distance * 1.1) % (1 / 14) + 1) % 1;
+    for (let k = 0; k < 21; k++) {
+      const z = ((k / 21) - (state.distance * 0.85) % (1 / 21) + 1) % 1;
       const p = project(0, z, w, h);
       const wx = w * 0.5 + (((k * 37) % 100) / 100 - 0.5) * 1.3 * p.riverHalf;
       const ww = (22 + (k % 3) * 10) * p.scale;
-      c.strokeStyle = `rgba(224,242,254,${0.42 * (1 - z * 0.6)})`;
-      c.lineWidth = Math.max(1.2, 2.8 * p.scale);
+      c.strokeStyle = `rgba(224,242,254,${0.18 * (1 - z * 0.75)})`;
+      c.lineWidth = Math.max(0.6, 1.5 * p.scale);
       c.beginPath(); c.moveTo(wx - ww, p.y); c.quadraticCurveTo(wx, p.y - 4 * p.scale, wx + ww, p.y); c.stroke();
     }
 
-    c.strokeStyle = 'rgba(255,255,255,0.22)'; c.lineWidth = 2; c.setLineDash([12, 16]); c.lineDashOffset = state.distance * 260;
+    c.strokeStyle = 'rgba(255,255,255,0.07)'; c.lineWidth = 1; c.setLineDash([]); c.lineDashOffset = 0;
     for (const div of [-0.33, 0.33]) {
       c.beginPath();
       for (let i = 0; i <= segs; i++) { const lx = pts[i].cx + div * pts[i].rh; if (i === 0) c.moveTo(lx, pts[i].y); else c.lineTo(lx, pts[i].y); }
@@ -1112,7 +1138,22 @@
       const p = project(0, pm.z, w, h);
       c.save();
       c.globalAlpha = Math.min(1, (0.86 - pm.z) * 6);
-      drawPalm(c, w * 0.5 + pm.side * (p.riverHalf * (1.20 + pm.offset)), p.y, p.scale * pm.scale, pm.side);
+      const bankX = w * 0.5 + pm.side * (p.riverHalf * (1.20 + pm.offset));
+      const ps = p.scale * pm.scale;
+      c.fillStyle = 'rgba(42,91,65,.15)'; c.beginPath(); c.ellipse(bankX,p.y+4*ps,31*ps,8*ps,0,0,Math.PI*2); c.fill();
+      for(let j=0;j<4;j++){
+        const bx=bankX+pm.side*(12+j*9)*ps, by=p.y+(j%2)*5*ps;
+        const shrub=c.createRadialGradient(bx-3*ps,by-7*ps,1,bx,by,12*ps);
+        shrub.addColorStop(0,'#b2d48f'); shrub.addColorStop(1,'#498d65'); c.fillStyle=shrub;
+        c.beginPath(); c.ellipse(bx,by-4*ps,(10+j%2*3)*ps,7*ps,0,0,Math.PI*2); c.fill();
+      }
+      if(pm.offset>.36){
+        const bx=bankX-pm.side*21*ps;
+        c.fillStyle='#90a99a'; c.beginPath();c.ellipse(bx,p.y+3*ps,11*ps,6*ps,0,0,Math.PI*2);c.fill();
+        c.fillStyle='#c0cec0'; c.beginPath();c.ellipse(bx-2*ps,p.y+1*ps,6*ps,3*ps,0,0,Math.PI*2);c.fill();
+      }
+      if(pm.offset>.43 && pm.z>.22) drawPalm(c,bankX+pm.side*52*ps,p.y-8*ps,ps*.76,pm.side);
+      drawPalm(c, bankX, p.y, ps, pm.side);
       c.restore();
     }
 
@@ -1120,7 +1161,7 @@
     for (const obj of visible) {
       if (obj.z > 0.14) {
         const p = project(obj.lane, obj.z, w, h);
-        if (obj.type === 'buoy') drawLevelWordBuoy(c, p.x, p.y, p.scale, obj.text);
+        if (obj.type === 'buoy') drawLevelWordBuoy(c, p.x, p.y, Math.max(0.45, p.scale), obj.text);
         else if (obj.type === 'ramp') drawWaterRamp(c, p.x, p.y, p.scale);
         else if (obj.type === 'log') drawRiverLog(c, p.x, p.y, p.scale);
         else if (obj.type === 'shield') drawBubblePickup(c, p.x, p.y, p.scale);
@@ -1141,7 +1182,7 @@
     for (const obj of visible) {
       if (obj.z <= 0.14) {
         const p = project(obj.lane, obj.z, w, h);
-        if (obj.type === 'buoy') drawLevelWordBuoy(c, p.x, p.y, p.scale, obj.text);
+        if (obj.type === 'buoy') drawLevelWordBuoy(c, p.x, p.y, Math.max(0.45, p.scale), obj.text);
         else if (obj.type === 'ramp') drawWaterRamp(c, p.x, p.y, p.scale);
         else if (obj.type === 'log') drawRiverLog(c, p.x, p.y, p.scale);
         else if (obj.type === 'shield') drawBubblePickup(c, p.x, p.y, p.scale);
@@ -1184,9 +1225,8 @@
 
     if (!state.paused && !document.hidden) {
       state.elapsed += dt;
-      const targetSlope = computeTargetSlope(state.elapsed);
-      state.slope += (targetSlope - state.slope) * Math.min(1, dt * 0.9);
-      const dropBoost = state.slope < -0.3 ? 0.035 : 0;
+      state.slope = 0;
+      const dropBoost = 0;
       const targetSpeed = Math.min(MAX_SPEED, BASE_SPEED + state.wordsCaught * 0.014 + state.elapsed * 0.0011 + dropBoost);
       state.speed += (targetSpeed - state.speed) * Math.min(1, dt * 2.2);
       root.querySelector('#dsSpeed').textContent = (state.speed / BASE_SPEED).toFixed(1) + '×';
@@ -1267,13 +1307,11 @@
               emitBoardSpray(playerP.x, playerP.y, playerP.scale, 2.2, 0);
               state.floats.push({ x: playerP.x, y: playerP.y - 72, text: '+5 XP', life: 0.95 });
               showToast('+5 XP · Harika sörf!', 'good');
+              // Remove prior-question buoys so no old translation can cause a false collision.
+              for (const pending of state.objects) if (pending.type === 'buoy') pending.hit = true;
               nextWord(true);
             } else {
-              if (state.shieldTime > 0) {
-                state.shieldTime = 0; root.querySelector('#dsShieldPill').classList.remove('active');
-                state.shakeTime = 0.18; sfx.shieldSave(); spawnBurst(playerP.x, playerP.y - 26, '#67e8f9', 18);
-                showToast('Baloncuk kalkanı seni korudu!', 'shield');
-              } else { state.shakeTime = 0.28; sfx.hit(); endGame('Doğrusu: ' + state.currentWord.tr); return; }
+              sfx.wrong(); endGame('Yanlış kelime! Doğrusu: ' + state.currentWord.tr); return;
             }
           }
         }
@@ -1318,6 +1356,7 @@
     if (e.key === 'ArrowUp' || e.key === 'w' || e.key === 'W' || e.key === ' ') { e.preventDefault(); triggerJump(); }
   }
   window.addEventListener('keydown', onKeyDown);
+  document.addEventListener('visibilitychange', () => { if(document.hidden && state.running && !state.paused) togglePause(); });
 
   function startGame() {
     if(!root || root.hidden || state.running || (!isPremium() && freeRemaining()<=0))return;
@@ -1335,7 +1374,7 @@
     state.jumpY = 0; state.jumpVy = 0; state.rampSoar = false; state.spinAngle = 0; state.landSquash = 0;
     state.shieldTime = 0; state.shakeTime = 0;
     state.objects = []; state.spray = []; state.particles = []; state.floats = []; state.ripples = [];
-    state.spawnTimer = 0.25; state.wrongSinceTarget = 0; state.spawnsSinceShield = 2;
+    state.spawnTimer = 0.12; state.wrongSinceTarget = 1; state.spawnsSinceShield = 3;
     initPalms();
 
     root.querySelector('#dsXp').textContent = '0';
@@ -1349,8 +1388,8 @@
     root.querySelector('#dsEndScreen').classList.add('ds-hidden');
     root.querySelector('#dsGameScreen').classList.remove('ds-hidden');
 
-    nextWord(true);
     startMusic();
+    nextWord(true);
     state.lastFrame = performance.now();
     rafId = requestAnimationFrame(step);
   }
@@ -1358,12 +1397,16 @@
   function togglePause() {
     state.paused = !state.paused;
     root?.querySelector('#dsPauseModal')?.classList.toggle('open', state.paused);
+    if (state.paused) {
+      clearTimeout(voiceTimer); ++voiceSerial; try { window.speechSynthesis?.cancel(); } catch {}
+      if (musicGain && audioCtx) { musicGain.gain.cancelScheduledValues(audioCtx.currentTime); musicGain.gain.setTargetAtTime(0,audioCtx.currentTime,.04); }
+    } else if (!muted) { ensureAudio(); duckMusic(false); speakWord(state.currentWord.en); }
   }
 
   function endGame(reason) {
     state.running = false;
     cancelAnimationFrame(rafId);
-    stopMusic();
+    stopMusic(); clearTimeout(voiceTimer); ++voiceSerial;
     try { window.speechSynthesis?.cancel(); } catch {}
 
     root.querySelector('#dsEndTitle').textContent = state.wordsCaught >= 5 ? 'Harika sörf yaptın!' : 'Tatlı bir denemeydi!';
@@ -1395,7 +1438,7 @@
     viewEpoch++;
     state.running = false; state.paused = false;
     cancelAnimationFrame(rafId);
-    stopMusic();
+    stopMusic(); clearTimeout(voiceTimer); ++voiceSerial;
     try { window.speechSynthesis?.cancel(); } catch {}
     if (root) {
       root.hidden = true;
@@ -1414,3 +1457,4 @@
   window.dmDalgaSorfu = { open, close, hasFreeQuota, isPremium };
   window.papiDalgaSorfuAc = open;
 })();
+
