@@ -174,7 +174,7 @@ function navigate(item){
  case 'sanalDuelloSonuc':if(item.virtualBot&&typeof window.dmLeagueUI?.openVirtualById==='function')return window.dmLeagueUI.openVirtualById(item.virtualBot);return window.dmLeagueUI?.openDuelChooser?.();
  case 'duello':case 'duelloSonuc':case 'duelloYanit':return window.dmLeagueUI?.openDuelChooser?.();
  case 'oyunDavet':return item.matchId?window.dmMatchAc?.(item.matchId):window.dmArenaAc?.();
- case 'mesaj':return item.gonderen&&typeof window.dmMessageAc==='function'?window.dmMessageAc(item.gonderen):detail(item);
+ case 'mesaj':return detail(item);
  case 'takip':case 'tebrik':case 'hediye':case 'enerji':return item.gonderen?window.maProfilAc?.(item.gonderen):window.dmIlerlememAc?.();
  case 'tuy':return window.DijiDailyGift?.open?.();
  case 'rozet':return typeof window.dmBasarilarimAc==='function'?window.dmBasarilarimAc():window.dmProfileMenuAc?.();
