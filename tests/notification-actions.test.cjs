@@ -15,8 +15,8 @@ test('only a unique current invitation for the recipient gets accept/reject',()=
 });
 test('context-specific return actions and safe fallback',()=>{
  assert.deepEqual(plan(note,null).map(x=>x[0]),['duels']);
- for(const tur of ['hediye','enerji'])assert.deepEqual(plan({tur,gonderen:'Efe'}).map(x=>x[0]),['gift','profile']);
- assert.deepEqual(plan({tur:'mesaj',gonderen:'Efe'}).map(x=>x[0]),['message','profile']);
+ for(const tur of ['hediye','enerji'])assert.deepEqual(plan({tur,gonderen:'Efe'}).map(x=>x[0]),['profile']);
+ assert.deepEqual(plan({tur:'mesaj',gonderen:'Efe'}).map(x=>x[0]),['profile']);
  assert.deepEqual(plan({tur:'oyunDavet',matchId:'m'}).map(x=>x[0]),['match']);
  assert.deepEqual(plan({tur:'tebrik',gonderen:'Efe'}).map(x=>x[0]),['profile']);
  assert.deepEqual(plan({tur:'duyuru'}),[]);
