@@ -39,6 +39,7 @@
   ];
 
   const FREE_DAILY_LIMIT = 2;
+  let rewardSession=null,rewardAccess=null,startBusy=false;
   const BASE_SPEED = 0.27;
   const MAX_SPEED = 0.43;
   const ROUND_SECONDS = 14;
@@ -65,6 +66,7 @@
   }
   function isPremium() {
     if (window.dmTeacherPortalMode) return true;
+    if (rewardAccess && rewardAccess.token===surfToken() && rewardAccess.owner===who()) return rewardAccess.premium===true;
     try {
       const tier = String(window.dmAndroidPlan?.plan || window.dmSubscription?.plan || window.dmMembership?.plan || window.dmProgression?.status?.()?.membership_tier || window.dmMembershipTier || '').trim().toLowerCase();
       if (tier) return ['pro','premium_pro','premium','diji_premium_pro','diji_pro'].includes(tier);
@@ -92,7 +94,8 @@
   function freeRemaining() {
     const q = readQuota();
     const totalAllowed = FREE_DAILY_LIMIT + (q.adGrants || 0);
-    return Math.max(0, totalAllowed - q.used);
+    const local=Math.max(0,totalAllowed-q.used);
+    return rewardAccess&&rewardAccess.token===surfToken()&&rewardAccess.owner===who()&&!rewardAccess.premium?Math.min(local,Math.max(0,rewardAccess.remaining)):local;
   }
   function canWatchAd() {
     return !isPremium() && freeRemaining() === 0;
@@ -576,7 +579,7 @@
     const rBtn = root.querySelector('#dsReplayBtn');
     const rTxt = root.querySelector('#dsReplayText');
 
-    sBtn.disabled = rBtn.disabled = adBusy;
+    sBtn.disabled = rBtn.disabled = adBusy || startBusy;
     root.querySelector('#dsIntroPremBtn').hidden = prem;
     root.querySelector('#dsEndPremBtn').hidden = prem;
 
@@ -600,6 +603,66 @@
 
   let adBusy = false, viewEpoch = 0;
   const surfToken = () => localStorage.getItem('ing_token') || '';
+  const practiceOnly=()=>window.dmTeacherPortalMode||window.dmGuestMode||window.dmAndroidIsTeacher?.()||['teacher','dijimedu_demo'].includes(who().toLowerCase())||typeof siniftaOynananOgrenci!=='undefined'&&!!siniftaOynananOgrenci;
+  const rewardURL='https://nxfqlutulxqzqgwewssd.supabase.co/functions/v1/papi-surf-rewards';
+  async function rewardCall(op,token,payload={},attempts=1){
+    let error;
+    for(let i=0;i<attempts;i++){
+      const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),8000);
+      try{
+        const r=await fetch(rewardURL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({t:token,op,...payload}),signal:controller.signal});
+        const d=await r.json();
+        if(!r.ok){if(r.status<500)return d;throw Error(d.message||'Sunucu yanıt vermedi.');}
+        return d;
+      }catch(e){error=e}finally{clearTimeout(timer)}
+    }
+    throw error||Error('Bağlantı sorunu.');
+  }
+  function updateRewardAccess(d,token,owner,syncLocal=true){
+    if(surfToken()!==token||who()!==owner||!d||typeof d.premium!=='boolean')return;
+    rewardAccess={token,owner,premium:d.premium,remaining:Number(d.remaining)||0};
+    if(syncLocal&&!d.premium){const q=readQuota();q.used=Math.max(q.used,Number(d.used)||0);q.adGrants=Math.max(q.adGrants,Number(d.adGrants)||0);writeQuota(q);}
+  }
+  async function refreshRewardAccess(){
+    if(practiceOnly()||!surfToken())return;
+    const token=surfToken(),owner=who();
+    try{const d=await rewardCall('status',token);if(d.ok&&surfToken()===token&&who()===owner){updateRewardAccess(d,token,owner);syncButtons()}}catch{}
+  }
+  function finishRewardSession(){
+    const ses=rewardSession;rewardSession=null;
+    if(!ses)return;
+    ses.closed=true;
+    if(!ses.pending)void rewardCall('finish',ses.token,{runId:ses.runId}).catch(()=>{});
+  }
+  async function verifyCatch(obj){
+    const ses=rewardSession;if(!ses||ses.pending||!ses.question)return;
+    ses.pending=true;obj.hit=true;
+    const questionId=ses.question.id;
+    try{
+      const d=await rewardCall('answer',ses.token,{runId:ses.runId,questionId,pick:obj.pick},2);
+      const same=surfToken()===ses.token&&who()===ses.owner;
+      if(same&&d.ok&&d.yo){try{window.dmApplyRewardState?.(d.yo,ses.owner)}catch{}}
+      if(!same||ses.closed||rewardSession!==ses||!state.running)return;
+      if(!d.ok){endGame(d.message||'Cevap doğrulanamadı.');return;}
+      state.xp=Number(d.runXp)||0;state.wordsCaught=Number(d.words)||0;
+      root.querySelector('#dsXp').textContent=state.xp;
+      if(d.correct===true){
+        state.streak++;state.bestStreak=Math.max(state.bestStreak,state.streak);
+        root.querySelector('#dsStreak').textContent=state.streak;
+        const rect=canvas.getBoundingClientRect(),p=project(state.laneX,.12,rect.width,rect.height);
+        sfx.good();spawnBurst(p.x,p.y-35,'#ffe066',18);emitBoardSpray(p.x,p.y,p.scale,2.2,0);
+        state.floats.push({x:p.x,y:p.y-72,text:'+5 XP',life:.95});showToast('+5 XP · Hesabına eklendi!','good');
+        for(const pending of state.objects)if(pending.type==='buoy')pending.hit=true;
+        if(!d.question?.id||!Array.isArray(d.question.options)){endGame('Kelime turu tamamlandı.');return;}
+        ses.question=d.question;nextWord(true);
+      }else{sfx.wrong();endGame('Yanlış kelime! Doğrusu: '+(d.answer||''));}
+    }catch{
+      if(rewardSession===ses&&state.running&&!ses.closed)endGame('Bağlantı kesildi. XP hesabın yeniden eşitlenecek.');
+    }finally{
+      ses.pending=false;
+      if(ses.closed)void rewardCall('finish',ses.token,{runId:ses.runId}).catch(()=>{});
+    }
+  }
   function adStatus(message='') {
     root?.querySelectorAll('.ds-ad-status').forEach(el => { el.textContent=message; el.hidden=!message; });
   }
@@ -654,7 +717,7 @@
       const q=readQuota();
       if(!q.redeemedOffers.includes(offer.id)){q.redeemedOffers.push(offer.id);q.adGrants++; }
       q.pendingOffer=null;writeQuota(q);
-      if(active()){adStatus();if(freeRemaining()>0)startGame();}
+      if(active()){await refreshRewardAccess();if(active()){adStatus();if(freeRemaining()>0)void startGame();}}
     }catch(e){
       if(completed&&offer&&sameAccount()){const q=readQuota();q.pendingOffer=offer;writeQuota(q);}
       status(e?.message||'Reklam şu anda açılamadı. Tekrar deneyebilirsin.');
@@ -662,7 +725,7 @@
   }
 
   function handlePlayClick() {
-    if(adBusy || state.running) return;
+    if(adBusy || startBusy || state.running) return;
     if (!muted) ensureAudio(); // unlock audio from the actual Play gesture before an async ad
     if (isPremium() || freeRemaining() > 0) {adStatus();startGame();}
     else void watchRewardedAdThenPlay();
@@ -678,6 +741,16 @@
   }
 
   function nextWord(announce = true) {
+    if(rewardSession?.question){
+      const q=rewardSession.question;state.currentWord={en:q.en,tr:''};state.timeLeft=ROUND_SECONDS;
+      rewardSession.options=q.options.map((text,pick)=>({text,pick}));
+      rewardSession.nextOption=0;rewardSession.spawnCount=0;
+      state.spawnTimer=Math.min(state.spawnTimer,.18);
+      root.querySelector('#dsWord').textContent=q.en;
+      root.querySelector('#dsWordSub').textContent='DOĞRU NİLÜFERİ YAKALA';
+      if(announce)speakWord(q.en);
+      return;
+    }
     const pools = buildPools();
     const useOwn = (levelCycleIndex % 3) < 2;
     levelCycleIndex++;
@@ -709,6 +782,17 @@
   function spawnNextSingle() {
     const lane = pickVariedLane();
     state.spawnsSinceShield++;
+    if(rewardSession?.question){
+      const ses=rewardSession, n=ses.spawnCount++;
+      // Words arrive individually. Interleave only non-word obstacles; all server choices appear promptly.
+      if(n%2===0||ses.nextOption>=ses.options.length&&n%3===0){
+        const o=ses.options[ses.nextOption++%ses.options.length];
+        state.objects.push({type:'buoy',lane,z:1.05,text:o.text,pick:o.pick,hit:false});return;
+      }
+      if(state.shieldTime<=0&&state.spawnsSinceShield>=4){state.spawnsSinceShield=0;state.objects.push({type:'shield',lane,z:1.04,hit:false});}
+      else state.objects.push({type:Math.random()<.55?'ramp':'log',lane,z:1.04,hit:false});
+      return;
+    }
     const targetActive = state.objects.some(o => o.type === 'buoy' && o.correct && !o.hit && o.z > 0.25);
 
     if (!targetActive && (state.wrongSinceTarget >= 2 || (state.wrongSinceTarget >= 1 && Math.random() < 0.52))) {
@@ -1223,7 +1307,7 @@
     }
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-    if (!state.paused && !document.hidden) {
+    if (!state.paused && !document.hidden && !rewardSession?.pending) {
       state.elapsed += dt;
       state.slope = 0;
       const dropBoost = 0;
@@ -1299,6 +1383,7 @@
           } else if (obj.type === 'buoy') {
             if (state.jumpY > 42) continue;
             obj.hit = true;
+            if(rewardSession){void verifyCatch(obj);break;}
             if (obj.correct) {
               state.wordsCaught++; state.xp += 5; state.streak++; state.bestStreak = Math.max(state.bestStreak, state.streak);
               root.querySelector('#dsXp').textContent = state.xp;
@@ -1317,11 +1402,11 @@
         }
       }
     }
-    renderScene(ctx, rect.width, rect.height, dt);
+    renderScene(ctx, rect.width, rect.height, state.paused||rewardSession?.pending?0:dt);
   }
 
   function moveLane(dir) {
-    if (!state.running || state.paused) return;
+    if (!state.running || state.paused || rewardSession?.pending) return;
     const next = Math.max(-1, Math.min(1, state.lane + dir));
     if (next !== state.lane) {
       state.lane = next; sfx.carve();
@@ -1332,7 +1417,7 @@
     }
   }
   function triggerJump() {
-    if (!state.running || state.paused) return;
+    if (!state.running || state.paused || rewardSession?.pending) return;
     if (state.jumpY <= 1) {
       state.jumpVy = 435; sfx.jump();
       root?.querySelector('#dsHint')?.classList.add('fade');
@@ -1358,14 +1443,35 @@
   window.addEventListener('keydown', onKeyDown);
   document.addEventListener('visibilitychange', () => { if(document.hidden && state.running && !state.paused) togglePause(); });
 
-  function startGame() {
-    if(!root || root.hidden || state.running || (!isPremium() && freeRemaining()<=0))return;
+  async function startGame() {
+    if(!root||root.hidden||state.running||startBusy||(!isPremium()&&freeRemaining()<=0))return;
+    const epoch=viewEpoch,token=surfToken(),owner=who();
+    if(practiceOnly()){finishRewardSession();beginLocalGame();return;}
+    if(!token){adStatus('XP kazanmak için öğrenci hesabına giriş yap.');return;}
+    startBusy=true;
+    adStatus('Kelime turu hazırlanıyor…');
+    let runId;
+    try{
+      runId=crypto.randomUUID();
+      const d=await rewardCall('start',token,{runId},2);
+      if(surfToken()!==token||who()!==owner||viewEpoch!==epoch||root.hidden){
+        if(d.ok)void rewardCall('finish',token,{runId}).catch(()=>{});return;
+      }
+      if(!d.ok||!d.question?.id||!Array.isArray(d.question.options)){
+        updateRewardAccess(d,token,owner);adStatus(d.message||'Kelime turu başlatılamadı.');syncButtons();return;
+      }
+      finishRewardSession();
+      rewardSession={token,owner,runId,question:d.question,pending:false,closed:false};
+      if(!d.premium){const q=readQuota();q.used=Math.max(q.used+1,Number(d.used)||0);q.adGrants=Math.max(q.adGrants,Number(d.adGrants)||0);writeQuota(q);}
+      updateRewardAccess(d,token,owner,false);
+      adStatus();beginLocalGame(true);
+    }catch{if(viewEpoch===epoch&&!root.hidden)adStatus('Bağlantı sorunu. Tekrar deneyebilirsin.');}
+    finally{startBusy=false;syncButtons();}
+  }
+  function beginLocalGame(verified=false) {
+    if(!root||root.hidden||state.running)return;
     ensureAudio();
-    if (!isPremium()) {
-      const q = readQuota();
-      q.used++;
-      writeQuota(q);
-    }
+    if (!verified&&!isPremium()) {const q=readQuota();q.used++;writeQuota(q);}
     syncButtons();
     state.running = true; state.paused = false;
     state.xp = 0; state.wordsCaught = 0; state.streak = 0; state.bestStreak = 0;
@@ -1405,6 +1511,7 @@
 
   function endGame(reason) {
     state.running = false;
+    finishRewardSession();
     cancelAnimationFrame(rafId);
     stopMusic(); clearTimeout(voiceTimer); ++voiceSerial;
     try { window.speechSynthesis?.cancel(); } catch {}
@@ -1432,10 +1539,12 @@
     root.querySelector('#dsIntroScreen').classList.remove('ds-hidden');
     root.hidden = false;
     document.body.classList.add('dm-play-session');
+    void refreshRewardAccess();
   }
 
   function close() {
     viewEpoch++;
+    finishRewardSession();
     state.running = false; state.paused = false;
     cancelAnimationFrame(rafId);
     stopMusic(); clearTimeout(voiceTimer); ++voiceSerial;
@@ -1452,9 +1561,10 @@
   const refreshMembership = () => { if (root && !root.hidden) { if (isPremium()) adStatus(); syncButtons(); } };
   window.addEventListener('dm:plan', refreshMembership);
   document.addEventListener('dm:state', refreshMembership);
-  document.addEventListener('dm:logout', () => { sessionUsedEn.clear(); close(); });
+  document.addEventListener('dm:logout', () => { rewardAccess=null; sessionUsedEn.clear(); close(); });
 
   window.dmDalgaSorfu = { open, close, hasFreeQuota, isPremium };
   window.papiDalgaSorfuAc = open;
 })();
+
 
