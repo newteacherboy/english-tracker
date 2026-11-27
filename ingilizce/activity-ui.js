@@ -60,8 +60,8 @@ const categoryIcons={solo:0,free:2,konu:3,break:4,premium:5};
  const gameCovers={
   papiSapanFirtinasiPremium:'premium-assets/sapan-firtinasi/cover.webp',
   papiSapanFirtinasiFree:'premium-assets/sapan-firtinasi/cover.webp',
-  papiDortnalaPremium:'premium-assets/dortnala/cover.jpg',
-  papiDortnalaFree:'premium-assets/dortnala/cover.jpg',
+  papiDortnalaPremium:'premium-assets/dortnala/cover.svg',
+  papiDortnalaFree:'premium-assets/dortnala/cover.svg',
   papiDalgaSorfuPremium:'premium-assets/dalga-sorfu/cover.webp',
   papiDalgaSorfuFree:'premium-assets/dalga-sorfu/cover.webp',
   dmUcusteKart:'ozgun/ucus-panosi.svg',
@@ -240,6 +240,28 @@ const categoryIcons={solo:0,free:2,konu:3,break:4,premium:5};
   if(!sapanLaunchTimer)sapanLaunchTimer=setInterval(()=>{if(!document.querySelector('[data-papi-sapan-launch]')){clearInterval(sapanLaunchTimer);sapanLaunchTimer=null;return}updateSapanLaunch()},1000);
   return card;
  }
+ let dortnalaLaunchTimer=null;
+ function updateDortnalaLaunch(){
+  const api=window.dmDortnala;
+  const ready=typeof api?.launchLabel==='function'&&typeof window.papiDortnalaAc==='function';
+  const label=ready?String(api.launchLabel()||''):'';
+  document.querySelectorAll('[data-papi-dortnala-launch]').forEach(card=>{
+   card.querySelector('.farm-launch-tag').textContent=!ready||label?'YAKINDA':'YENİ OYUN';
+   card.querySelector('.farm-launch-caption').textContent=!ready?'Lansman bilgisi hazırlanıyor':label?'Açılışa kalan süre':'Papi ile dörtnala maceraya';
+   const time=card.querySelector('.farm-launch-time');
+   time.textContent=!ready?'Çok yakında':label?label.replace(/^Lansman:\s*/i,''):'Oyna';
+   time.style.fontSize=label.length>18?'clamp(13px, 4vw, 19px)':'';
+   card.disabled=!ready||!!label;
+  });
+ }
+ function dortnalaLaunchCard(){
+  const card=document.createElement('button');card.type='button';card.className='papi-farm-launch papi-sapan-launch papi-dortnala-launch';card.dataset.papiDortnalaLaunch='1';card.dataset.ggSource='papi-dortnala';card.disabled=true;
+  card.innerHTML='<img alt="" src="premium-assets/dortnala/cover.svg" loading="lazy" decoding="async"><span class="farm-launch-shade" style="background:linear-gradient(90deg,rgba(62,34,18,.97),rgba(87,48,23,.73) 45%,rgba(87,48,23,.03) 80%)"></span><span class="farm-launch-copy"><span class="farm-launch-tag">YAKINDA</span><strong>Papi Dörtnala</strong><span class="farm-launch-caption">Lansman bilgisi hazırlanıyor</span><b class="farm-launch-time">Çok yakında</b><small>Papi ile yeni bir kelime macerası</small></span>';
+  card.onclick=()=>{if(!card.disabled)window.papiDortnalaAc?.();};
+  queueMicrotask(updateDortnalaLaunch);
+  if(!dortnalaLaunchTimer)dortnalaLaunchTimer=setInterval(()=>{if(!document.querySelector('[data-papi-dortnala-launch]')){clearInterval(dortnalaLaunchTimer);dortnalaLaunchTimer=null;return}updateDortnalaLaunch()},1000);
+  return card;
+ }
  function renderList(host,all){
   const list=host.querySelector('.gg-overview');
   const surfFreeOk=window.dmDalgaSorfu?.hasFreeQuota?.()!==false;
@@ -248,11 +270,13 @@ const categoryIcons={solo:0,free:2,konu:3,break:4,premium:5};
   const dortnalaFreeOk=window.dmDortnala?.hasFreeQuota?.()!==false;
   const dortnalaLaunch=window.dmDortnala?.launchLabel?.()||'';
   const showSapanBanner=!window.dmTeacherPortalMode&&['solo','premium','all'].includes(party)&&(party!=='solo'||sapanFreeOk);
+  const showDortnalaBanner=!window.dmTeacherPortalMode&&['solo','premium','all'].includes(party)&&(party!=='solo'||dortnalaFreeOk);
   const cards=all.filter(card=>{
    if(card.id==='papiDalgaSorfuFree'&&!surfFreeOk)return false;
    if(card.id==='papiSapanFirtinasiFree'&&(!sapanFreeOk||showSapanBanner))return false;
    if(card.id==='papiSapanFirtinasiPremium'&&showSapanBanner)return false;
-   if(card.id==='papiDortnalaFree'&&!dortnalaFreeOk)return false;
+   if(card.id==='papiDortnalaFree'&&(!dortnalaFreeOk||showDortnalaBanner))return false;
+   if(card.id==='papiDortnalaPremium'&&showDortnalaBanner)return false;
    const {ggCategory:category,ggTitle:title,ggGameSkill:gameSkill}=card.dataset;
    return categories[category]&&(!window.dmTeacherPortalMode||category!=='duo')&&(party==='all'||party===category)&&
     (party!=='solo'||skill==='Tümü'||gameSkill===skill||skill==='Kelime'&&gameSkill==='Hafıza');
@@ -281,9 +305,10 @@ const categoryIcons={solo:0,free:2,konu:3,break:4,premium:5};
    return row;
   }));
   const showFarm=!window.dmTeacherPortalMode&&['solo','premium','all'].includes(party);
+  if(showDortnalaBanner)list.prepend(dortnalaLaunchCard());
   if(showSapanBanner)list.prepend(sapanLaunchCard());
   if(showFarm)list.prepend(farmLaunchCard());
-  if(!cards.length&&!showFarm&&!showSapanBanner){
+  if(!cards.length&&!showFarm&&!showSapanBanner&&!showDortnalaBanner){
    const empty=document.createElement('p');empty.className='gg-list-empty';empty.setAttribute('role','status');
    empty.textContent='Bu filtrede oyun bulunamadı.';list.append(empty);
   }
@@ -318,7 +343,7 @@ const categoryIcons={solo:0,free:2,konu:3,break:4,premium:5};
  const account=()=>String(who()||'guest');
  const level=()=>window.dmProgression?.level?.()||1;
  const allowed=code=>!code||!window.dmProgression||window.dmProgression.allowed(code);
- const img=(i,cls='')=>i===30?'<span class="gg-art gg-premium-art" aria-hidden="true"><img src="premium-assets/dortnala/cover.jpg" alt="" loading="lazy" decoding="async"></span>':i===29?'<span class="gg-art gg-premium-art" aria-hidden="true"><img src="premium-assets/sapan-firtinasi/cover.webp" alt="" loading="lazy" decoding="async"></span>':i===28?'<span class="gg-art gg-premium-art" aria-hidden="true"><img src="premium-assets/dalga-sorfu/cover.webp" alt="" loading="lazy" decoding="async"></span>':i===27?'<span class="gg-art sa-hub-fener" aria-hidden="true"></span>':i===26?'<span class="gg-art gg-premium-art" aria-hidden="true"><img src="premium-assets/papizzle-cover.webp" alt="" loading="lazy" decoding="async"></span>':i===24?'<span class="gg-art gg-premium-art" aria-hidden="true"><img src="premium-assets/kelime-bloklari/kapak.webp" alt="" loading="lazy" decoding="async"></span>':i===23?'<span class="gg-art gg-premium-art" aria-hidden="true"><img src="premium-assets/bulut-ucusu/kapak.webp" alt="" loading="lazy" decoding="async"></span>':i===22?'<span class="gg-art gg-premium-art" aria-hidden="true"><img src="premium-assets/kelime-eslestirme/card-cover.webp" alt="" loading="lazy" decoding="async"></span>':i===20?'<span class="gg-art sa-hub-monster"><span class="sa-monster sa-monster-0"></span></span>':i===21?'<span class="gg-art sa-hub-tower"><img src="arcade-assets/floor.webp" alt=""></span>':[18,19].includes(i)?'<span class="gg-art kg-hub-art '+cls+'" aria-hidden="true"></span>':i===17?'<span class="gg-art dm-sr-hub-art '+cls+'" aria-hidden="true"></span>':i===16?'<span class="gg-art rr-hub-art '+cls+'" aria-hidden="true"><img src="rally-assets/car.webp" alt=""></span>':'<span class="gg-art '+cls+'" style="--gx:'+(i%4)*100/3+'%;--gy:'+Math.floor(i/4)*100/3+'%" aria-hidden="true"></span>';
+ const img=(i,cls='')=>i===30?'<span class="gg-art gg-premium-art" aria-hidden="true"><img src="premium-assets/dortnala/cover.svg" alt="" loading="lazy" decoding="async"></span>':i===29?'<span class="gg-art gg-premium-art" aria-hidden="true"><img src="premium-assets/sapan-firtinasi/cover.webp" alt="" loading="lazy" decoding="async"></span>':i===28?'<span class="gg-art gg-premium-art" aria-hidden="true"><img src="premium-assets/dalga-sorfu/cover.webp" alt="" loading="lazy" decoding="async"></span>':i===27?'<span class="gg-art sa-hub-fener" aria-hidden="true"></span>':i===26?'<span class="gg-art gg-premium-art" aria-hidden="true"><img src="premium-assets/papizzle-cover.webp" alt="" loading="lazy" decoding="async"></span>':i===24?'<span class="gg-art gg-premium-art" aria-hidden="true"><img src="premium-assets/kelime-bloklari/kapak.webp" alt="" loading="lazy" decoding="async"></span>':i===23?'<span class="gg-art gg-premium-art" aria-hidden="true"><img src="premium-assets/bulut-ucusu/kapak.webp" alt="" loading="lazy" decoding="async"></span>':i===22?'<span class="gg-art gg-premium-art" aria-hidden="true"><img src="premium-assets/kelime-eslestirme/card-cover.webp" alt="" loading="lazy" decoding="async"></span>':i===20?'<span class="gg-art sa-hub-monster"><span class="sa-monster sa-monster-0"></span></span>':i===21?'<span class="gg-art sa-hub-tower"><img src="arcade-assets/floor.webp" alt=""></span>':[18,19].includes(i)?'<span class="gg-art kg-hub-art '+cls+'" aria-hidden="true"></span>':i===17?'<span class="gg-art dm-sr-hub-art '+cls+'" aria-hidden="true"></span>':i===16?'<span class="gg-art rr-hub-art '+cls+'" aria-hidden="true"><img src="rally-assets/car.webp" alt=""></span>':'<span class="gg-art '+cls+'" style="--gx:'+(i%4)*100/3+'%;--gy:'+Math.floor(i/4)*100/3+'%" aria-hidden="true"></span>';
  function game(b){const rule=defs.find(d=>(b.getAttribute('onclick')||'').includes(d[0]))||defs.find(d=>b.id===d[0]||b.id==='yoDikteKart'&&d[0]==='dikteAc');return rule||[null,8,'Kelime',b.dataset.dmLevelLock||window.DijiProgressionCatalog?.functions[(b.getAttribute('onclick')||'').match(/([A-Za-z_$][\w$]*)\s*\(/)?.[1]]||''];}
  function lastGame(){try{return localStorage.getItem('dm_last_game:'+account())||'';}catch{return '';}}
  function remember(b){try{localStorage.setItem('dm_last_game:'+account(),b.dataset.ggId);}catch{}}
