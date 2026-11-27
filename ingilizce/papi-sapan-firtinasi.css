@@ -453,7 +453,42 @@
 }
 .sf-hint.fade { opacity: 0; }
 
-/* Pause Modal */
+/* Pause & Rotate-to-Landscape Modals */
+@keyframes sfRotatePhone {
+  0%, 20% { transform: rotate(0deg); }
+  50%, 80% { transform: rotate(-90deg); }
+  100% { transform: rotate(0deg); }
+}
+.sf-rotate-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 30;
+  background: linear-gradient(160deg, #082f49 0%, #0c4a6e 55%, #0369a1 100%);
+  color: #ffffff;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 28px;
+  gap: 14px;
+}
+.sf-rotate-overlay.show { display: flex; }
+.sf-rotate-icon {
+  width: 78px;
+  height: 78px;
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.14);
+  border: 2px solid rgba(255, 224, 102, 0.65);
+  display: grid;
+  place-items: center;
+  color: #ffe066;
+  animation: sfRotatePhone 2.4s ease-in-out infinite;
+}
+.sf-rotate-icon svg { width: 42px; height: 42px; }
+.sf-rotate-overlay h3 { font-size: 22px; font-weight: 900; margin: 0; }
+.sf-rotate-overlay p { font-size: 14px; font-weight: 700; color: #bae6fd; max-width: 300px; margin: 0; line-height: 1.45; }
+
 .sf-modal {
   position: absolute;
   inset: 0;

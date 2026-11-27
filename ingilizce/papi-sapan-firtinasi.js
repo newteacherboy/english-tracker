@@ -234,18 +234,19 @@
     } catch {}
   }
 
-  /* ===== WORLD & PHYSICS CONFIG ===== */
-  const WORLD_W = 1320;
-  const WORLD_H = 720;
-  const GROUND_Y = 630;
-  const SLING_X = 220;
-  const SLING_Y = GROUND_Y - 124;
-  const MAX_PULL = 128;
-  const GRAVITY = 960;
-  const LAUNCH_POWER = 8.6;
+  /* ===== WORLD & PHYSICS CONFIG (SINGLE-SCREEN LANDSCAPE VIEW) ===== */
+  const WORLD_W = 1160;
+  const WORLD_H = 660;
+  const GROUND_Y = 592;
+  const SLING_X = 185;
+  const SLING_Y = GROUND_Y - 122;
+  const MAX_PULL = 124;
+  const GRAVITY = 940;
+  const LAUNCH_POWER = 8.4;
 
   let root = null, canvas = null, ctx = null, rafId = 0, toastTimer = 0, cdInterval = 0;
-  let viewW = 800, viewH = 600, dpr = 1, scale = 1, camX = 0, targetCamX = 0, camOffsetY = 0;
+  let viewW = 800, viewH = 600, dpr = 1, scale = 1, camX = 0, baseCamX = 0, targetCamX = 0, camOffsetY = 0;
+  let portraitBlocked = false;
 
   const state = {
     active: false, paused: false, stage: 0, xp: 0, wordsCorrect: 0, blocksSmashed: 0,
@@ -254,9 +255,16 @@
     currentWord: FALLBACK_WORDS[0], diffLabel: 'TEMEL SEVİYE',
     bird: { x: SLING_X, y: SLING_Y, vx: 0, vy: 0, r: 28, angle: 0, phase: 'ready', turboUsed: false, settleTimer: 0, trail: [], squash: 0 },
     pullTick: 0, blocks: [], targets: [], particles: [], floats: [],
-    clouds: Array.from({ length: 7 }, (_, i) => ({ x: i * 230 + Math.random() * 70, y: 74 + (i % 3) * 58, s: 0.72 + (i % 3) * 0.24, v: 9 + (i % 4) * 3.5 })),
-    motes: Array.from({ length: 24 }, () => ({ x: Math.random() * WORLD_W, y: 120 + Math.random() * 440, r: 1.8 + Math.random() * 2.4, ph: Math.random() * Math.PI * 2 }))
+    clouds: Array.from({ length: 7 }, (_, i) => ({ x: i * 210 + Math.random() * 60, y: 68 + (i % 3) * 52, s: 0.72 + (i % 3) * 0.22, v: 9 + (i % 4) * 3.5 })),
+    motes: Array.from({ length: 22 }, () => ({ x: Math.random() * WORLD_W, y: 110 + Math.random() * 420, r: 1.8 + Math.random() * 2.4, ph: Math.random() * Math.PI * 2 }))
   };
+
+  function checkOrientation() {
+    if (!root) return;
+    const isPortrait = window.innerHeight > window.innerWidth;
+    portraitBlocked = state.active && isPortrait;
+    root.querySelector('#sfRotateOverlay')?.classList.toggle('show', portraitBlocked);
+  }
 
   function resize() {
     if (!canvas) return;
@@ -265,11 +273,13 @@
     dpr = Math.min(window.devicePixelRatio || 1, 2);
     canvas.width = Math.round(viewW * dpr);
     canvas.height = Math.round(viewH * dpr);
-    const fitH = viewH / WORLD_H;
-    const fitW = viewW / WORLD_W;
-    scale = Math.max(fitH, Math.min(fitW * 1.38, viewH / 560));
-    if (viewW >= 920) scale = Math.min(viewW / WORLD_W, viewH / WORLD_H);
-    camOffsetY = viewH - GROUND_Y * scale - Math.max(20, viewH * 0.045);
+    // Fit BOTH slingshot (left) AND full tower + answer labels (right) on ONE screen
+    scale = Math.min(viewW / WORLD_W, viewH / WORLD_H);
+    baseCamX = -(viewW / scale - WORLD_W) / 2;
+    camX = baseCamX;
+    targetCamX = baseCamX;
+    camOffsetY = viewH - GROUND_Y * scale - Math.max(14, viewH * 0.035);
+    checkOrientation();
   }
 
   function screenToWorld(sx, sy) {
@@ -417,6 +427,17 @@
             </div>
           </div>
         </div>
+        <div class="sf-rotate-overlay" id="sfRotateOverlay" role="alert">
+          <div class="sf-rotate-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="6" y="2" width="12" height="20" rx="2.5"/>
+              <line x1="12" y1="18" x2="12.01" y2="18"/>
+            </svg>
+          </div>
+          <h3>Telefonunu Yatay Çevir</h3>
+          <p>Sapanı ve kuledeki Türkçe cevapları tek ekranda net görebilmek için ekranını yatay konuma çevir.</p>
+          <button type="button" class="sf-btn-secondary" style="max-width:210px" data-sf-close>Oyundan Çık</button>
+        </div>
       </section>
 
       <!-- SONUÇ A -->
@@ -472,7 +493,7 @@
     root.querySelector('#sfResumeBtn').onclick = togglePause;
     root.querySelector('#sfQuitBtn').onclick = close;
     root.querySelector('#sfSpeakBtn').onclick = () => speakWord(state.currentWord.en);
-    root.querySelector('#sfCamBtn').onclick = () => { targetCamX = 0; };
+    root.querySelector('#sfCamBtn').onclick = () => { targetCamX = baseCamX; };
     root.querySelector('#sfMuteBtn').onclick = () => {
       muted = !muted;
       root.querySelector('#sfMuteIco').style.opacity = muted ? '0.35' : '1';
@@ -480,6 +501,7 @@
 
     bindCanvasInput();
     window.addEventListener('resize', resize);
+    window.addEventListener('orientationchange', () => setTimeout(resize, 120));
     return root;
   }
 
@@ -610,7 +632,7 @@
     state.currentWord = correct;
     state.diffLabel = diffLabel;
 
-    const base = 865;
+    const base = 850;
     const G = GROUND_Y;
     const addB = (dx, botOffset, w, h, mat) => state.blocks.push(makeBlock(base + dx, G - botOffset - h / 2, w, h, mat));
     const addT = (dx, botOffset, optIdx) => {
@@ -713,7 +735,7 @@
     b.x = SLING_X; b.y = SLING_Y; b.vx = 0; b.vy = 0;
     b.angle = 0; b.phase = 'ready';
     b.turboUsed = false; b.settleTimer = 0; b.trail = []; b.squash = 0;
-    targetCamX = 0;
+    targetCamX = baseCamX;
   }
 
   /* ===== PARTICLES & COMBAT ===== */
@@ -900,8 +922,7 @@
         b.trail.push({ x: b.x, y: b.y, r: b.turboUsed ? 6.5 : 4.2, turbo: b.turboUsed });
         if (b.trail.length > 34) b.trail.shift();
       }
-      const maxCam = Math.max(0, WORLD_W - viewW / scale);
-      targetCamX = Math.max(0, Math.min(maxCam, b.x - (viewW / scale) * 0.36));
+      targetCamX = baseCamX;
 
       if (b.y + b.r > GROUND_Y) {
         b.y = GROUND_Y - b.r;
@@ -1318,7 +1339,7 @@
   function loop(ts) {
     if (!state.active) return;
     rafId = requestAnimationFrame(loop);
-    if (state.paused) { lastTs = ts; return; }
+    if (state.paused || portraitBlocked) { lastTs = ts; return; }
     const dt = Math.min(0.032, (ts - (lastTs || ts)) / 1000);
     lastTs = ts;
     stepPhysics(dt);
@@ -1385,6 +1406,7 @@
     root.querySelector('#sfPauseModal')?.classList.remove('open');
     root.querySelector('#sfHint')?.classList.remove('fade');
     showScreen('sfGameScreen');
+    try { screen.orientation?.lock?.('landscape')?.catch?.(() => {}); } catch {}
     resize();
     buildStage(0);
     lastTs = 0;
@@ -1424,11 +1446,14 @@
   function close() {
     state.active = false;
     state.paused = false;
+    portraitBlocked = false;
     cancelAnimationFrame(rafId);
     clearInterval(cdInterval);
+    try { screen.orientation?.unlock?.(); } catch {}
     if (root) {
       root.hidden = true;
       root.querySelector('#sfPauseModal')?.classList.remove('open');
+      root.querySelector('#sfRotateOverlay')?.classList.remove('show');
     }
     document.body.classList.remove('dm-solo-fullstage');
     window.dmGamesUI?.refresh?.();
