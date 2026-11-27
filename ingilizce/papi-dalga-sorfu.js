@@ -66,9 +66,9 @@
   function isPremium() {
     if (window.dmTeacherPortalMode) return true;
     try {
-      if (typeof yo !== 'undefined' && yo?.premium) return true;
-      const tier = window.dmProgression?.status?.()?.membership_tier || window.dmMembershipTier || '';
-      if (tier === 'pro' || tier === 'premium_pro') return true;
+      const tier = String(window.dmAndroidPlan?.plan || window.dmSubscription?.plan || window.dmMembership?.plan || window.dmProgression?.status?.()?.membership_tier || window.dmMembershipTier || '').trim().toLowerCase();
+      if (tier) return ['pro','premium_pro','premium','diji_premium_pro','diji_pro'].includes(tier);
+      if (typeof yo !== 'undefined' && yo?.premium === true) return true;
     } catch {}
     return false;
   }
@@ -594,7 +594,7 @@
     } finally { clearTimeout(timer); }
   }
   async function watchRewardedAdThenPlay() {
-    if (adBusy || !root || root.hidden) return;
+    if (adBusy || !root || root.hidden || isPremium()) return;
     const owner=surfToken(), key=quotaKey(), epoch=viewEpoch;
     const sameAccount=()=>surfToken()===owner&&quotaKey()===key;
     const active=()=>sameAccount()&&viewEpoch===epoch&&!root.hidden;
@@ -1406,6 +1406,9 @@
     window.dmGamesUI?.refresh?.();
   }
 
+  const refreshMembership = () => { if (root && !root.hidden) { if (isPremium()) adStatus(); syncButtons(); } };
+  window.addEventListener('dm:plan', refreshMembership);
+  document.addEventListener('dm:state', refreshMembership);
   document.addEventListener('dm:logout', () => { sessionUsedEn.clear(); close(); });
 
   window.dmDalgaSorfu = { open, close, hasFreeQuota, isPremium };
