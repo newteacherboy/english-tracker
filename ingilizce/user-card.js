@@ -64,7 +64,7 @@
   close(false);
   const account=who()+'|'+token();if(cacheOwner!==account){cache.clear();cacheOwner=account;}
   const el=document.createElement('section');el.id='dmUserCard';el.className='dm-user-card';el.setAttribute('role','dialog');el.setAttribute('aria-modal','false');el.setAttribute('aria-labelledby','dmUserCardName');
-  el.innerHTML='<button type="button" class="uc-close" aria-label="Bilgi kartını kapat">×</button><div class="uc-identity"><div class="uc-character" aria-label="Boydan karakter"></div><div class="uc-details"><h2 id="dmUserCardName">'+esc(id)+'</h2><div class="uc-stats" aria-live="polite">Yükleniyor…</div></div></div><div class="uc-actions">'+button('message','Mesaj Gönder','uc-primary')+button('gift','Hediye Gönder')+button('duel','Düelloya Davet Et')+button('follow','Takip Et','uc-follow')+'</div><footer>'+button('block','Engelle')+button('report','Kullanıcıyı Bildir')+'</footer><p class="uc-notice" role="status" hidden></p>';
+  el.innerHTML='<button type="button" class="uc-close" aria-label="Bilgi kartını kapat">×</button><div class="uc-identity"><div class="uc-character" aria-label="Boydan karakter"></div><div class="uc-details"><h2 id="dmUserCardName">'+esc(id)+'</h2><div class="uc-stats" aria-live="polite">Yükleniyor…</div></div></div><div class="uc-actions">'+button('duel','Düelloya Davet Et','uc-primary')+button('follow','Takip Et','uc-follow')+'</div><footer>'+button('block','Engelle')+button('report','Kullanıcıyı Bildir')+'</footer><p class="uc-notice" role="status" hidden></p>';
   const v={el,anchorEl,rect,origin,owner:who(),token:token(),id,controller:new AbortController(),data:null,error:''};view=v;document.body.append(el);anchorEl?.setAttribute('aria-expanded','true');
   el.querySelector('.uc-close').onclick=()=>close();el.addEventListener('click',e=>{e.stopPropagation();const b=e.target.closest('[data-user-action]');if(b)void act(v,b);});
   paintActions(v);place(v);el.querySelector('.uc-close').focus({preventScroll:true});
@@ -96,8 +96,6 @@
   if(!alive(v))return;const reason=unavailable(v,b);if(reason){const feature={message:'hazir_mesaj',gift:'enerji_hediye',duel:'duello',follow:'takip'}[b.dataset.userAction];if(feature&&window.dmProgression?.allowed?.(feature)===false&&norm(v.id)!==norm(who())&&!v.blocked)window.dmProgression.require(feature);notice(v,reason);return;}
   const action=b.dataset.userAction,id=v.id,feature=actionFeatures[action];
   if(feature&&window.dmProgression?.require&&!window.dmProgression.require(feature)){notice(v,'Bu işlem şu an hesabın için açık değil.');return;}
-  if(action==='message'){close(false);return window.dmMessageAc?.(id);}
-  if(action==='gift'){close(false);return window.dmGiftAc?.(id);}
   if(action==='duel'){close(false);return window.dmLiveDuel?.invite?.(id);}
   if(action==='report'){close(false);return window.dmSocialSafety?.report('user',id);}
   b.dataset.busy='true';b.setAttribute('aria-busy','true');paintActions(v);
