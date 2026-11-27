@@ -277,12 +277,13 @@ const categoryIcons={solo:0,free:2,konu:3,break:4,premium:5};
   const showDortnalaBanner=!window.dmTeacherPortalMode&&['solo','premium','all'].includes(party)&&(party!=='solo'||dortnalaFreeOk);
   const unified=!window.dmTeacherPortalMode&&party==='all';
   const cards=all.filter(card=>{
-   if(unified)return !duplicateStudentCards.has(card.id)&&['solo','premium'].includes(card.dataset.ggCategory);
    if(card.id==='papiDalgaSorfuFree'&&!surfFreeOk)return false;
    if(card.id==='papiSapanFirtinasiFree'&&(!sapanFreeOk||showSapanBanner))return false;
    if(card.id==='papiSapanFirtinasiPremium'&&showSapanBanner)return false;
    if(card.id==='papiDortnalaFree'&&(!dortnalaFreeOk||showDortnalaBanner))return false;
    if(card.id==='papiDortnalaPremium'&&showDortnalaBanner)return false;
+   // Launch banners already provide entry; do not repeat their games in the student shelf.
+   if(unified)return !duplicateStudentCards.has(card.id)&&['solo','premium'].includes(card.dataset.ggCategory);
    const {ggCategory:category,ggTitle:title,ggGameSkill:gameSkill}=card.dataset;
    return categories[category]&&(!window.dmTeacherPortalMode||category!=='duo')&&(party==='all'||party===category)&&
     (party!=='solo'||skill==='Tümü'||gameSkill===skill||skill==='Kelime'&&gameSkill==='Hafıza');
