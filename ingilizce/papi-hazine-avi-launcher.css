@@ -1,0 +1,141 @@
+/* Papi Hazine Avı — Diji-Medu Host Overlay & Launch Sheet */
+.pha-host-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 2147483000;
+  background: #0d2f52;
+  display: flex;
+  flex-direction: column;
+}
+.pha-host-overlay[hidden] {
+  display: none !important;
+}
+.pha-host-frame {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  flex: 1;
+  min-height: 0;
+  display: block;
+}
+
+.pha-launch-veil {
+  position: fixed;
+  inset: 0;
+  z-index: 2147483005;
+  background: rgba(9, 22, 46, 0.72);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+}
+.pha-launch-veil[hidden] {
+  display: none !important;
+}
+.pha-launch-modal {
+  width: min(420px, 94vw);
+  background: #ffffff;
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: 0 18px 44px rgba(8, 20, 44, 0.36);
+  font-family: inherit;
+  color: #1a243b;
+}
+.pha-launch-hero {
+  position: relative;
+  height: 168px;
+  background: #0c3b5e;
+}
+.pha-launch-hero img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.pha-launch-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 36px;
+  height: 36px;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(15, 28, 52, 0.68);
+  color: #ffffff;
+  font-size: 20px;
+  font-weight: 800;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+}
+.pha-launch-body {
+  padding: 20px 20px 22px;
+  text-align: center;
+}
+.pha-launch-pill {
+  display: inline-block;
+  background: linear-gradient(135deg, #f59e0b, #ea580c);
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  padding: 5px 13px;
+  border-radius: 999px;
+  margin-bottom: 8px;
+}
+.pha-launch-body h2 {
+  margin: 0 0 6px;
+  font-size: 22px;
+  font-weight: 900;
+  color: #261863;
+}
+.pha-launch-body p {
+  margin: 0 0 16px;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #52627c;
+  line-height: 1.45;
+}
+.pha-cd-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin-bottom: 18px;
+}
+.pha-cd-unit {
+  background: linear-gradient(180deg, #3e2b94, #281a69);
+  color: #ffffff;
+  border-radius: 15px;
+  padding: 11px 6px;
+}
+.pha-cd-unit b {
+  display: block;
+  font-size: 22px;
+  font-weight: 900;
+  color: #ffd84d;
+  font-variant-numeric: tabular-nums;
+}
+.pha-cd-unit small {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  opacity: 0.9;
+}
+.pha-launch-cta {
+  width: 100%;
+  border: 0;
+  border-radius: 999px;
+  padding: 14px 20px;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 900;
+  background: linear-gradient(180deg, #ffd74a, #f5a616);
+  color: #3a2000;
+  box-shadow: 0 4px 0 #b86f00;
+  cursor: pointer;
+}
+.pha-launch-cta:active {
+  transform: translateY(2px);
+  box-shadow: 0 2px 0 #b86f00;
+}

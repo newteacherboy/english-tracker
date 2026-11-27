@@ -1363,6 +1363,268 @@ function buildPropsPackGLB() {
   }
 }
 
+// ═════════════════════════════════════════════════════════════════════════════
+// 9. BIOME LANDMARKS FOR ISLANDS 2–6 (Emerald Forest, Coral Bay, Lost City, Crystal Mountains, Ancient Temple)
+// ═════════════════════════════════════════════════════════════════════════════
+function buildAllIslandBiomeGLBs() {
+  // ── Map 2: Emerald Forest — Giant Jungle Tree, Glowing Mushroom, Jungle Totem ──
+  {
+    const b = new GLBBuilder('JungleTree');
+    const mBark = b.addMaterial('JungleBark', '#4a311e', { roughness: 0.9, textureTag: 'bark' });
+    const mCanopy1 = b.addMaterial('JungleLeafDeep', '#147a3d', { roughness: 0.62, textureTag: 'foliage', windSway: 0.08 });
+    const mCanopy2 = b.addMaterial('JungleLeafBright', '#29b856', { roughness: 0.58, textureTag: 'foliage', windSway: 0.11 });
+    const mVine = b.addMaterial('JungleVine', '#3d9e35', { roughness: 0.72, windSway: 0.16 });
+
+    const trunk = makeCurvedTube([[0, 0, 0], [0.15, 2.2, 0.08], [-0.12, 4.6, -0.05], [0, 6.4, 0]], [0.72, 0.48, 0.38, 0.25], 12);
+    for (let r = 0; r < 4; r++) {
+      const a = (r / 4) * Math.PI * 2;
+      trunk.merge(makeCurvedTube([[Math.cos(a) * 1.15, 0, Math.sin(a) * 1.15], [Math.cos(a) * 0.42, 1.4, Math.sin(a) * 0.42]], [0.22, 0.14], 8));
+    }
+    const deform = (x, y, z, u, v) => {
+      const w = 1 + 0.12 * Math.sin(u * Math.PI * 8) * Math.cos(v * Math.PI * 5);
+      return [x * w, y * (y < 0 ? 0.6 : 1.0) * w, z * w];
+    };
+    const c1 = makeSculptedSphere(2.4, 1.1, 2.3, 16, 12, deform).translate(0, 6.5, 0)
+      .merge(makeSculptedSphere(1.65, 0.9, 1.6, 14, 10, deform).translate(-1.5, 5.4, 0.6));
+    const c2 = makeSculptedSphere(1.75, 0.95, 1.7, 14, 10, deform).translate(1.45, 5.6, -0.5)
+      .merge(makeSculptedSphere(1.5, 0.85, 1.45, 14, 10, deform).translate(0, 7.35, 0));
+    const vines = new Geo();
+    for (let v = 0; v < 5; v++) {
+      const a = (v / 5) * Math.PI * 2;
+      const vx = Math.cos(a) * 1.45, vz = Math.sin(a) * 1.45;
+      vines.merge(makeCurvedTube([[vx, 5.6, vz], [vx * 1.05, 3.8, vz * 1.05], [vx * 0.98, 2.4, vz]], [0.045, 0.038, 0.025], 6));
+    }
+    const mesh = b.addMesh('JungleTreeMesh', [
+      { geo: trunk, material: mBark },
+      { geo: c1, material: mCanopy1 },
+      { geo: c2, material: mCanopy2 },
+      { geo: vines, material: mVine }
+    ]);
+    b.addNode({ name: 'JungleTree', mesh });
+    b.write(path.join(OUT_DIR, 'jungle_tree.glb'));
+  }
+
+  {
+    const b = new GLBBuilder('GlowingMushroom');
+    const mStem = b.addMaterial('MushStem', '#f2ead8', { roughness: 0.78 });
+    const mCap = b.addMaterial('MushCap', '#1de09b', { roughness: 0.35, emissive: '#089e68', emissiveIntensity: 0.75 });
+    const mSpot = b.addMaterial('MushSpot', '#bdffea', { roughness: 0.25, emissive: '#75ffd2', emissiveIntensity: 0.9 });
+    const stem1 = makeCurvedTube([[0, 0, 0], [0.08, 0.65, 0.04], [0, 1.25, 0]], [0.18, 0.14, 0.12], 10);
+    const cap1 = makeLathe([[0.12, 1.18], [0.78, 1.22], [0.72, 1.42], [0.38, 1.65], [0.001, 1.74]], 18);
+    const stem2 = makeCurvedTube([[-0.45, 0, 0.25], [-0.52, 0.62, 0.28]], [0.11, 0.08], 8);
+    const cap2 = makeLathe([[0.08, 0.58], [0.44, 0.62], [0.22, 0.86], [0.001, 0.92]], 14).translate(-0.52, 0, 0.28);
+    const spots = new Geo();
+    for (let i = 0; i < 6; i++) {
+      const a = (i / 6) * Math.PI * 2;
+      spots.merge(makeSculptedSphere(0.09, 0.04, 0.09, 8, 6).translate(Math.cos(a) * 0.44, 1.50, Math.sin(a) * 0.44));
+    }
+    const mesh = b.addMesh('MushroomMesh', [
+      { geo: stem1.merge(stem2), material: mStem },
+      { geo: cap1.merge(cap2), material: mCap },
+      { geo: spots, material: mSpot }
+    ]);
+    b.addNode({ name: 'GlowingMushroom', mesh });
+    b.write(path.join(OUT_DIR, 'mushroom.glb'));
+  }
+
+  {
+    const b = new GLBBuilder('JungleTotem');
+    const mWood = b.addMaterial('TotemWood', '#704423', { roughness: 0.80, textureTag: 'wood' });
+    const mGold = b.addMaterial('TotemTrim', '#e6ad2e', { roughness: 0.30, metallic: 0.8 });
+    const mGem = b.addMaterial('TotemGem', '#2eff9d', { roughness: 0.15, emissive: '#00cc6a', emissiveIntensity: 0.95 });
+    const pillar = makeBeveledBox(0.95, 3.4, 0.85, 0.08).translate(0, 1.7, 0);
+    const wings = makeBeveledBox(2.8, 0.48, 0.22, 0.04).translate(0, 2.75, 0);
+    const beak = makeCurvedTube([[0, 2.25, 0.42], [0, 2.05, 0.82]], [0.20, 0.04], 8);
+    const eyes = makeSculptedSphere(0.12, 0.12, 0.08, 10, 8).translate(-0.24, 2.55, 0.44)
+      .merge(makeSculptedSphere(0.12, 0.12, 0.08, 10, 8).translate(0.24, 2.55, 0.44));
+    const mesh = b.addMesh('TotemMesh', [
+      { geo: pillar.merge(wings), material: mWood },
+      { geo: beak, material: mGold },
+      { geo: eyes, material: mGem }
+    ]);
+    b.addNode({ name: 'JungleTotem', mesh });
+    b.write(path.join(OUT_DIR, 'totem.glb'));
+  }
+
+  // ── Map 3: Coral Bay — Coastal Lighthouse & Branching Coral Reef ──
+  {
+    const b = new GLBBuilder('Lighthouse');
+    const mStone = b.addMaterial('LightBase', '#8c9299', { roughness: 0.88, textureTag: 'stone' });
+    const mWhite = b.addMaterial('LightWhite', '#f7f9fc', { roughness: 0.72, textureTag: 'plaster' });
+    const mRed = b.addMaterial('LightRed', '#e03a3a', { roughness: 0.68, textureTag: 'plaster' });
+    const mBeacon = b.addMaterial('LightBeacon', '#fff394', { roughness: 0.12, emissive: '#ffcf33', emissiveIntensity: 1.0 });
+    const mDark = b.addMaterial('LightRoof', '#283245', { roughness: 0.55, metallic: 0.5 });
+
+    const base = makeLathe([[1.85, 0], [1.72, 1.1], [1.45, 1.2]], 18);
+    const s1 = makeLathe([[1.42, 1.2], [1.26, 2.8]], 18, false);
+    const s2 = makeLathe([[1.26, 2.8], [1.10, 4.4]], 18, false);
+    const s3 = makeLathe([[1.10, 4.4], [0.96, 5.9]], 18, false);
+    const gallery = makeLathe([[0.96, 5.9], [1.32, 6.05], [1.32, 6.25], [0.85, 6.25]], 18);
+    const lantern = makeLathe([[0.78, 6.25], [0.78, 7.15]], 16, false);
+    const dome = makeLathe([[0.92, 7.15], [0.65, 7.65], [0.001, 7.95]], 18);
+    const door = makeBeveledBox(0.75, 1.35, 0.25, 0.03).translate(0, 0.68, 1.68);
+
+    const mesh = b.addMesh('LighthouseMesh', [
+      { geo: base, material: mStone },
+      { geo: s1.merge(s3), material: mWhite },
+      { geo: s2, material: mRed },
+      { geo: gallery.merge(dome).merge(door), material: mDark },
+      { geo: lantern, material: mBeacon }
+    ]);
+    b.addNode({ name: 'Lighthouse', mesh });
+    b.write(path.join(OUT_DIR, 'lighthouse.glb'));
+  }
+
+  {
+    const b = new GLBBuilder('CoralReef');
+    const mPink = b.addMaterial('CoralPink', '#ff5c8a', { roughness: 0.52, emissive: '#591228', emissiveIntensity: 0.25 });
+    const mOrange = b.addMaterial('CoralOrange', '#ff9436', { roughness: 0.55 });
+    const mCyan = b.addMaterial('CoralCyan', '#29e3d8', { roughness: 0.48, emissive: '#0b5e58', emissiveIntensity: 0.25 });
+
+    const branches = new Geo();
+    for (let i = 0; i < 6; i++) {
+      const a = (i / 6) * Math.PI * 2;
+      branches.merge(makeCurvedTube(
+        [[0, 0, 0], [Math.cos(a) * 0.45, 0.65, Math.sin(a) * 0.45], [Math.cos(a) * 0.72, 1.35, Math.sin(a) * 0.72]],
+        [0.16, 0.12, 0.07], 8
+      ));
+    }
+    const brain = makeSculptedSphere(0.68, 0.45, 0.62, 16, 12, (x, y, z, u) => {
+      const r = 1 + 0.1 * Math.sin(u * Math.PI * 14);
+      return [x * r, Math.max(0, y * r), z * r];
+    }).translate(0.55, 0.05, 0.35);
+    const tubes = new Geo();
+    for (let i = 0; i < 4; i++) {
+      const a = i * 1.5;
+      tubes.merge(makeLathe([[0.16, 0], [0.22, 0.85], [0.18, 0.88]], 10, false).translate(-0.55 + Math.cos(a) * 0.25, 0, -0.25 + Math.sin(a) * 0.25));
+    }
+    const mesh = b.addMesh('CoralMesh', [
+      { geo: branches, material: mPink },
+      { geo: brain, material: mOrange },
+      { geo: tubes, material: mCyan }
+    ]);
+    b.addNode({ name: 'CoralReef', mesh });
+    b.write(path.join(OUT_DIR, 'coral_reef.glb'));
+  }
+
+  // ── Map 4: Lost City — Stepped Sandstone Pyramid & Hieroglyph Obelisk ──
+  {
+    const b = new GLBBuilder('PyramidRuin');
+    const mSandstone = b.addMaterial('Sandstone', '#cfa467', { roughness: 0.86, textureTag: 'stone' });
+    const mTrim = b.addMaterial('SandstoneDark', '#9e743c', { roughness: 0.88, textureTag: 'stone' });
+    const mSunGold = b.addMaterial('PyramidGold', '#ffcc33', { roughness: 0.22, metallic: 0.88, emissive: '#cc8800', emissiveIntensity: 0.4 });
+
+    const tiers = new Geo();
+    tiers.merge(makeBeveledBox(7.2, 1.1, 7.2, 0.08).translate(0, 0.55, 0));
+    tiers.merge(makeBeveledBox(5.4, 1.1, 5.4, 0.08).translate(0, 1.65, 0));
+    tiers.merge(makeBeveledBox(3.6, 1.1, 3.6, 0.08).translate(0, 2.75, 0));
+    tiers.merge(makeBeveledBox(2.1, 1.2, 2.1, 0.06).translate(0, 3.90, 0));
+
+    const stairs = new Geo();
+    for (let s = 0; s < 9; s++) {
+      stairs.merge(makeBeveledBox(1.5, 0.38, 0.55, 0.02).translate(0, 0.19 + s * 0.38, 3.85 - s * 0.34));
+    }
+    const sunCrest = makeTorus(0.55, 0.12, 18, 8).translate(0, 5.1, 0)
+      .merge(makeSculptedSphere(0.32, 0.32, 0.14, 12, 8).translate(0, 5.1, 0));
+
+    const mesh = b.addMesh('PyramidMesh', [
+      { geo: tiers, material: mSandstone },
+      { geo: stairs, material: mTrim },
+      { geo: sunCrest, material: mSunGold }
+    ]);
+    b.addNode({ name: 'PyramidRuin', mesh });
+    b.write(path.join(OUT_DIR, 'pyramid_ruin.glb'));
+  }
+
+  {
+    const b = new GLBBuilder('Obelisk');
+    const mStone = b.addMaterial('ObeliskStone', '#c99c61', { roughness: 0.85, textureTag: 'stone' });
+    const mGlyph = b.addMaterial('ObeliskGlyph', '#38f2ff', { roughness: 0.2, emissive: '#00b8d4', emissiveIntensity: 0.9 });
+    const ped = makeBeveledBox(1.3, 0.55, 1.3, 0.06).translate(0, 0.275, 0);
+    const shaft = makeLathe([[0.58, 0.55], [0.40, 4.2], [0.001, 4.95]], 4).rotateY(Math.PI / 4);
+    const glyphs = makeBeveledBox(0.18, 2.4, 0.64, 0.02).translate(0, 2.35, 0)
+      .merge(makeBeveledBox(0.64, 2.4, 0.18, 0.02).translate(0, 2.35, 0));
+    const mesh = b.addMesh('ObeliskMesh', [
+      { geo: ped.merge(shaft), material: mStone },
+      { geo: glyphs, material: mGlyph }
+    ]);
+    b.addNode({ name: 'Obelisk', mesh });
+    b.write(path.join(OUT_DIR, 'obelisk.glb'));
+  }
+
+  // ── Map 5: Crystal Mountains — Giant Amethyst Spire & Snow Alpine Pine ──
+  {
+    const b = new GLBBuilder('GiantCrystal');
+    const mAmethyst = b.addMaterial('AmethystMat', '#9e5cff', { roughness: 0.12, metallic: 0.28, emissive: '#5d19cc', emissiveIntensity: 0.72 });
+    const mCyan = b.addMaterial('QuartzCyan', '#5ceeff', { roughness: 0.10, metallic: 0.25, emissive: '#1488cc', emissiveIntensity: 0.68 });
+    const spireMain = makeLathe([[0.55, 0], [0.64, 2.2], [0.001, 3.85]], 6);
+    const spireL = makeLathe([[0.38, 0], [0.42, 1.45], [0.001, 2.45]], 6).rotateZ(0.34).translate(-0.48, 0, 0.2);
+    const spireR = makeLathe([[0.34, 0], [0.38, 1.30], [0.001, 2.15]], 6).rotateZ(-0.38).rotateX(0.22).translate(0.52, 0, -0.15);
+    const mesh = b.addMesh('GiantCrystalMesh', [
+      { geo: spireMain, material: mAmethyst },
+      { geo: spireL.merge(spireR), material: mCyan }
+    ]);
+    b.addNode({ name: 'GiantCrystal', mesh });
+    b.write(path.join(OUT_DIR, 'giant_crystal.glb'));
+  }
+
+  {
+    const b = new GLBBuilder('SnowPine');
+    const mTrunk = b.addMaterial('PineBark', '#543824', { roughness: 0.88, textureTag: 'bark' });
+    const mPine = b.addMaterial('PineNeedles', '#1f6e58', { roughness: 0.72, windSway: 0.06 });
+    const mSnow = b.addMaterial('PineSnow', '#eef7ff', { roughness: 0.65, windSway: 0.06 });
+    const trunk = makeCurvedTube([[0, 0, 0], [0, 4.2, 0]], [0.32, 0.12], 8);
+    const needles = new Geo();
+    const snow = new Geo();
+    for (let i = 0; i < 4; i++) {
+      const y = 1.1 + i * 0.95;
+      const r = 1.65 - i * 0.32;
+      needles.merge(makeLathe([[r, y], [r * 0.22, y + 1.25], [0.001, y + 1.32]], 10));
+      snow.merge(makeLathe([[r * 0.82, y + 0.35], [r * 0.20, y + 1.28], [0.001, y + 1.35]], 10));
+    }
+    const mesh = b.addMesh('SnowPineMesh', [
+      { geo: trunk, material: mTrunk },
+      { geo: needles, material: mPine },
+      { geo: snow, material: mSnow }
+    ]);
+    b.addNode({ name: 'SnowPine', mesh });
+    b.write(path.join(OUT_DIR, 'pine_snow.glb'));
+  }
+
+  // ── Map 6: Ancient Temple — Grand Golden Obsidian Sanctuary ──
+  {
+    const b = new GLBBuilder('GrandTemple');
+    const mObsidian = b.addMaterial('TempleObsidian', '#2d3142', { roughness: 0.42, metallic: 0.35, textureTag: 'stone' });
+    const mMarble = b.addMaterial('TempleMarble', '#ede6d6', { roughness: 0.55, textureTag: 'stone' });
+    const mGold = b.addMaterial('TempleGold', '#f5bf38', { roughness: 0.20, metallic: 0.92, emissive: '#8f5e00', emissiveIntensity: 0.3 });
+    const mSacred = b.addMaterial('SacredFlame', '#ffcf40', { roughness: 0.1, emissive: '#ff9900', emissiveIntensity: 1.0 });
+
+    const base = makeBeveledBox(8.4, 0.65, 6.4, 0.08).translate(0, 0.325, 0)
+      .merge(makeBeveledBox(7.2, 0.45, 5.4, 0.06).translate(0, 0.85, 0));
+    const cols = new Geo();
+    const goldCaps = new Geo();
+    for (const cx of [-2.8, -1.0, 1.0, 2.8]) {
+      for (const cz of [-1.9, 1.9]) {
+        cols.merge(makeLathe([[0.38, 1.05], [0.34, 4.45]], 12).translate(cx, 0, cz));
+        goldCaps.merge(makeBeveledBox(0.92, 0.28, 0.92, 0.04).translate(cx, 4.58, cz));
+      }
+    }
+    const roof = makeBeveledBox(7.8, 0.55, 5.8, 0.06).translate(0, 4.98, 0);
+    const pediment = makeLathe([[3.6, 5.25], [0.001, 6.65]], 4).rotateY(Math.PI / 4).scale(1.1, 1, 0.8);
+    const emblem = makeTorus(0.65, 0.14, 18, 8).translate(0, 6.85, 0);
+    const altarGlow = makeSculptedSphere(0.55, 0.85, 0.55, 14, 10).translate(0, 1.85, 0);
+
+    const mesh = b.addMesh('GrandTempleMesh', [
+      { geo: base.merge(pediment), material: mObsidian },
+      { geo: cols.merge(roof), material: mMarble },
+      { geo: goldCaps.merge(emblem), material: mGold },
+      { geo: altarGlow, material: mSacred }
+    ]);
+    b.addNode({ name: 'GrandTemple', mesh });
+    b.write(path.join(OUT_DIR, 'grand_temple.glb'));
+  }
+}
+
 console.log('Generating v2 High-Detail GLB 2.0 3D models for Papi Hazine Avi...');
 buildPapiGLB();
 buildPalmTreeGLB();
@@ -1376,4 +1638,5 @@ buildWoodenBridgeGLB();
 buildAncientArchGLB();
 buildRabbitGLB();
 buildPropsPackGLB();
-console.log('All 22 high-detail GLB models generated successfully!');
+buildAllIslandBiomeGLBs();
+console.log('All 33 high-detail GLB models generated successfully!');

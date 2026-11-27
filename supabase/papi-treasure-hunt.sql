@@ -1,5 +1,5 @@
--- Papi Hazine Avı (Papi Treasure Hunt) — Isolated Progress & Anti-Farm Reward Schema
--- Non-intrusive: does not modify existing Diji-Medu games or teacher panels.
+-- Papi Hazine Avı (Papi Treasure Hunt) — 6-Island 100-Level Progress & Anti-Farm Reward Schema
+-- Launch: 2026-12-10 19:00+03:00 (Islands 1–3 Free, Islands 4–6 Premium Pro).
 
 create table if not exists public.papi_treasure_progress (
   user_id uuid primary key references auth.users(id) on delete cascade,
@@ -20,8 +20,6 @@ create policy "papi_treasure_select_own"
   to authenticated
   using (auth.uid() = user_id);
 
--- Server-side idempotent, one-time XP & deterministic collectible claim RPC
--- Prevents infinite XP farming on replayed levels!
 create or replace function public.claim_papi_treasure_level(
   p_level_id text,
   p_stars integer,
@@ -37,6 +35,9 @@ declare
   v_uid uuid := auth.uid();
   v_row public.papi_treasure_progress;
   v_prev jsonb;
+  v_island_no integer;
+  v_level_no integer;
+  v_max_levels integer;
   v_first_claimed boolean := false;
   v_perfect_claimed boolean := false;
   v_prev_stars integer := 0;
@@ -49,10 +50,23 @@ begin
     raise exception 'Authentication required';
   end if;
 
-  -- Validate allowed level IDs and cap stars strictly
-  if p_level_id not in ('island1_level1', 'island1_level2', 'island1_level3') then
-    raise exception 'Unsupported level id: %', p_level_id;
+  if p_level_id !~ '^island[1-6]_level[0-9]{1,2}$' then
+    raise exception 'Invalid level id format: %', p_level_id;
   end if;
+
+  v_island_no := substring(p_level_id from 'island([1-6])_')::integer;
+  v_level_no  := substring(p_level_id from '_level([0-9]{1,2})$')::integer;
+  v_max_levels := case v_island_no
+    when 1 then 10
+    when 2 then 15
+    when 3 then 15
+    else 20
+  end;
+
+  if v_level_no < 1 or v_level_no > v_max_levels then
+    raise exception 'Out of range level number for island %: %', v_island_no, v_level_no;
+  end if;
+
   p_stars := greatest(0, least(p_stars, 8));
 
   insert into public.papi_treasure_progress (user_id)
@@ -91,7 +105,7 @@ begin
   );
 
   v_new_collectibles := v_row.collectibles;
-  if p_collectible_id is not null and not (p_collectible_id = any(v_new_collectibles)) then
+  if p_collectible_id is not null and length(p_collectible_id) <= 48 and not (p_collectible_id = any(v_new_collectibles)) then
     v_new_collectibles := array_append(v_new_collectibles, p_collectible_id);
   end if;
 

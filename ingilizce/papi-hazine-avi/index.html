@@ -19,26 +19,47 @@
     </div>
   </section>
 
+  <!-- 1B. LAUNCH COUNTDOWN SCREEN (10 Aralık 19:00 öncesi — Irmak hariç) -->
+  <section class="overlay-screen dim" data-screen="launch">
+    <div class="panel-card launch-card">
+      <span class="launch-pill">🚀 BÜYÜK LANSMAN · 10 ARALIK 19:00</span>
+      <div style="font-size:52px;margin:4px 0">🦜🗺️</div>
+      <h2 style="margin:4px 0 6px;font-size:23px;font-weight:900;color:#2f1f73">Papi Hazine Avı Başlıyor!</h2>
+      <p style="margin:0;font-size:13.5px;font-weight:700;color:#5a6a85;line-height:1.45">
+        6 farklı 3D ada ve 100 bölümlük İngilizce hazine macerası <strong>10 Aralık saat 19:00'da</strong> tüm öğrenciler için canlı yayında açılıyor!
+      </p>
+      <div class="cd-grid">
+        <div class="cd-box"><b id="cd-days">00</b><small>GÜN</small></div>
+        <div class="cd-box"><b id="cd-hours">00</b><small>SAAT</small></div>
+        <div class="cd-box"><b id="cd-mins">00</b><small>DAKİKA</small></div>
+        <div class="cd-box"><b id="cd-secs">00</b><small>SANİYE</small></div>
+      </div>
+      <button type="button" class="btn-primary" style="width:100%" data-exit-hub>← Oyunlara Dön</button>
+    </div>
+  </section>
+
   <!-- 2. CINEMATIC TITLE SCREEN -->
   <section class="overlay-screen" data-screen="title">
+    <button type="button" class="btn-ghost screen-top-exit" data-exit-hub>← Oyunlar</button>
     <div class="title-wrap">
-      <div class="title-badge">✨ DİJİ-MEDU 3D MACERA · GENİŞLETİLMİŞ ADA v2</div>
+      <div id="vip-irmak-badge" class="vip-badge" hidden>✨ Erken Erişim · Irmak</div>
+      <div class="title-badge">🦜 6 ADA · 100 BÖLÜM · 3D İNGİLİZCE MACERA</div>
       <h1 class="title-hero">Papi Hazine Avı</h1>
       <p class="title-sub">
-        İngilizce yönergeleri dinle; liman iskelesi, meyve bahçesi, nehir köprüsü, şelale ve sihirli antik geçidi 3D keşfet!
+        İngilizce yönergeleri dinle, 6 farklı 3D adayı keşfet, gizli görevleri tamamla ve hazine sandıklarını aç!
       </p>
       <div class="title-actions">
-        <button id="btn-quick-play" class="btn-primary">▶ 1. Bölümü Hemen Oyna</button>
-        <button id="btn-start-adventure" class="btn-secondary">🗺️ Ada Haritası</button>
+        <button id="btn-quick-play" class="btn-primary">▶ Maceraya Başla</button>
+        <button id="btn-start-adventure" class="btn-secondary">🗺️ 6 Ada Haritası</button>
       </div>
     </div>
   </section>
 
-  <!-- 3. ISLAND SELECTION MAP (6 ISLANDS / 100 LEVELS ROADMAP) -->
+  <!-- 3. ISLAND SELECTION MAP (Maps 1–3 Free, Maps 4–6 Premium Pro) -->
   <section class="overlay-screen dim" data-screen="islands">
     <div class="panel-card">
       <div class="panel-header">
-        <h2>🗺️ Keşif Adaları (6 Ada · 100 Bölüm)</h2>
+        <h2>🗺️ Keşif Adaları (6 Harita · 100 Bölüm)</h2>
         <button id="btn-back-title" class="btn-ghost">← Giriş</button>
       </div>
       <div class="explorer-bar">
@@ -48,22 +69,23 @@
         </div>
         <div class="xp-track"><div id="explorer-xp-fill"></div></div>
       </div>
+      <p style="margin:0 0 10px;font-size:12px;font-weight:800;color:#46329e;flex-shrink:0">
+        ✨ İlk 3 Harita (40 Bölüm) Ücretsiz · 4, 5 ve 6. Haritalar (60 Bölüm) Premium Pro
+      </p>
       <div class="panel-scroll">
         <div id="islands-grid"></div>
       </div>
     </div>
   </section>
 
-  <!-- 4. LEVEL SELECTION SCREEN (PARROT ISLAND) -->
+  <!-- 4. LEVEL SELECTION SCREEN -->
   <section class="overlay-screen dim" data-screen="levels">
     <div class="panel-card">
       <div class="panel-header">
-        <h2>🦜 Papağan Adası — Bölümler</h2>
+        <h2 id="levels-island-title">🦜 1. Papağan Adası</h2>
         <button id="btn-back-islands" class="btn-ghost">← Adalar</button>
       </div>
-      <p style="margin:0 0 12px;font-size:12.5px;font-weight:700;color:#5a6a85;flex-shrink:0">
-        İlk 3 bölüm sabah, öğle ve gün batımı atmosferleriyle tamamen oynanabilir. Bölüm 4–10 sonraki aşamada açılacak.
-      </p>
+      <p id="levels-island-sub" style="margin:0 0 12px;font-size:12.5px;font-weight:700;color:#5a6a85;flex-shrink:0"></p>
       <div class="panel-scroll">
         <div id="levels-grid"></div>
       </div>
@@ -75,6 +97,7 @@
     <div class="hud-top">
       <div class="hud-row">
         <div class="hud-pills">
+          <button type="button" class="hud-icon-btn" id="btn-hud-exit" data-exit-hub title="Oyunlara Dön" aria-label="Oyunlara Dön">←</button>
           <div class="hud-pill">⭐ <span id="hud-stars">0</span></div>
           <div class="hud-pill" id="hud-level-badge">Bölüm 1</div>
           <div class="hud-pill compass-pill" title="Hedef Pusulası">
@@ -84,39 +107,36 @@
           <div class="hud-pill" id="fps-pill" hidden>60 FPS</div>
         </div>
         <div class="hud-pills">
-          <button id="btn-backpack" class="hud-icon-btn" title="Keşif Çantası">🎒</button>
-          <button id="btn-pause" class="hud-icon-btn" title="Duraklat & Ayarlar">⏸</button>
+          <button id="btn-backpack" class="hud-icon-btn" title="Keşif Çantası" aria-label="Keşif Çantası">🎒</button>
+          <button id="btn-pause" class="hud-icon-btn" title="Duraklat & Ayarlar" aria-label="Duraklat">⏸</button>
         </div>
       </div>
 
       <!-- English Voice Mission Banner -->
       <div class="mission-banner">
-        <button id="btn-hint" class="mission-btn" title="Türkçe İpucu">💡</button>
+        <button id="btn-hint" class="mission-btn" title="Türkçe İpucu" aria-label="Türkçe İpucu">💡</button>
         <div class="mission-copy">
           <div id="hud-mission-step">GÖREV 1 / 6</div>
           <div id="hud-mission-text">Read the wooden signpost.</div>
         </div>
-        <button id="btn-replay-audio" class="mission-btn" title="İngilizce Tekrar Dinle">🔊</button>
+        <button id="btn-replay-audio" class="mission-btn" title="İngilizce Tekrar Dinle" aria-label="Tekrar Dinle">🔊</button>
       </div>
     </div>
 
     <div id="hud-toast" class="hud-toast" role="status" aria-live="polite"></div>
 
-    <div class="hud-controls">
-      <div id="joystick-zone" aria-label="Hareket Joystick">
-        <div id="joystick-knob"></div>
-      </div>
-      <div class="action-pad">
-        <button id="btn-jump" class="act-btn" aria-label="Zıpla ve Kanat Çırp">
-          <b>🪽</b>
-          <span>Zıpla</span>
-        </button>
-        <button id="btn-interact" class="act-btn" aria-label="Etkileşim">
-          <b>✋</b>
-          <span>Etkileşim</span>
-        </button>
-      </div>
+    <!-- Ergonomic Safe-Area Touch Controls -->
+    <div id="joystick-zone" aria-label="Hareket Joystick">
+      <div id="joystick-knob"></div>
     </div>
+    <button id="btn-jump" class="act-btn" aria-label="Zıpla ve Kanat Çırp">
+      <b>🪽</b>
+      <span>Zıpla</span>
+    </button>
+    <button id="btn-interact" class="act-btn" aria-label="Etkileşim">
+      <b>✋</b>
+      <span>Etkileşim</span>
+    </button>
 
     <div class="kbd-hint">WASD / Oklar: Yürü · Space: Zıpla / Kanat Çırp · E: Etkileşim · Sürükle: Kamerayı Döndür</div>
   </div>
@@ -176,8 +196,8 @@
       <label class="setting-row">
         <span>✨ Grafik Kalitesi</span>
         <select id="set-quality">
-          <option value="auto" selected>Otomatik (Cihaza Göre)</option>
-          <option value="low">Düşük (Pil Dostu)</option>
+          <option value="auto" selected>Otomatik (Cihaza Dost)</option>
+          <option value="low">Düşük (Pil Tasarrufu)</option>
           <option value="medium">Orta (Dengeli)</option>
           <option value="high">Yüksek (Maksimum Detay)</option>
         </select>
@@ -190,6 +210,7 @@
         <button id="btn-resume" class="btn-primary" style="width:100%">▶ Oyuna Devam Et</button>
         <button id="btn-restart" class="btn-secondary" style="width:100%">↻ Bölümü Yeniden Başlat</button>
         <button id="btn-exit-levels" class="btn-ghost" style="width:100%">🗺️ Bölüm Seçimine Dön</button>
+        <button type="button" class="btn-ghost" style="width:100%" data-exit-hub>← Diji-Medu Oyunlara Çık</button>
       </div>
     </div>
   </section>
@@ -203,6 +224,27 @@
       </div>
       <div class="panel-scroll">
         <div id="backpack-list"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 10. PREMIUM PRO LOCK MODAL (For Islands 4, 5, 6) -->
+  <div id="pro-lock-modal" class="modal-backdrop">
+    <div class="panel-card" style="width:min(410px,92vw);text-align:center">
+      <div style="font-size:48px;margin-bottom:4px">👑</div>
+      <h2 style="margin:0 0 6px;font-size:21px;font-weight:900;color:#2f1f73">Premium Pro Haritası</h2>
+      <p style="margin:0;font-size:13.5px;font-weight:700;color:#5a6a85;line-height:1.45">
+        <strong id="pro-lock-island-name">4. Kayıp Şehir</strong> ve sonraki ileri seviye 3D adalar <strong>Premium Pro</strong> üyelik paketine dahildir. İlk 3 harita (40 Bölüm) tamamen ücretsizdir!
+      </p>
+      <div class="pro-perks">
+        <div class="pro-perk">🏛️ 4. Kayıp Şehir (20 Bl.)</div>
+        <div class="pro-perk">💎 5. Kristal Dağları (20 Bl.)</div>
+        <div class="pro-perk">👑 6. Antik Tapınak (20 Bl.)</div>
+        <div class="pro-perk">⚡ Sınırsız Enerji & Oyun</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:9px">
+        <button id="btn-upgrade-pro" class="btn-primary" style="width:100%">👑 Premium Pro Paketini İncele</button>
+        <button id="btn-close-pro-modal" class="btn-ghost" style="width:100%">Ücretsiz Haritalarla Devam Et</button>
       </div>
     </div>
   </div>
