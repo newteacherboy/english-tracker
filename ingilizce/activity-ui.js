@@ -171,14 +171,17 @@ const categoryIcons={solo:0,free:2,konu:3,break:4,premium:5};
   return art;
  }
  const farmLaunchAt=Date.parse('2026-11-28T15:11:10Z');
- let farmClockOffset=0,farmLaunchTimer=null,farmOverlay=null,farmLaunchChecked=false,farmToken='';
+ let farmClockOffset=0,farmLaunchTimer=null,farmOverlay=null,farmLaunchChecked=false,farmToken='',farmCheckedToken=null,farmEarly=false;
  function updateFarmLaunch(){
   if(farmOverlay&&(localStorage.getItem('ing_token')!==farmToken||window.dmTeacherPortalMode))closeFarm();
-  const remaining=Math.max(0,Math.ceil((farmLaunchAt-Date.now()-farmClockOffset)/1000));
+  const currentToken=localStorage.getItem('ing_token')||'';
+  if(currentToken!==farmCheckedToken){farmEarly=false;farmLaunchChecked=false;checkFarmLaunch(currentToken)}
+  const early=farmEarly&&currentToken===farmCheckedToken&&Date.now()+farmClockOffset<farmLaunchAt;
+  const remaining=early?0:Math.max(0,Math.ceil((farmLaunchAt-Date.now()-farmClockOffset)/1000));
   const time=[Math.floor(remaining/3600),Math.floor(remaining%3600/60),remaining%60].map(n=>String(n).padStart(2,'0')).join(':');
   document.querySelectorAll('[data-papi-farm-launch]').forEach(card=>{
    card.querySelector('.farm-launch-time').textContent=remaining?time:'Oyna';
-   card.querySelector('.farm-launch-tag').textContent=remaining?'YAKINDA':'YENİ OYUN';
+   card.querySelector('.farm-launch-tag').textContent=remaining?'YAKINDA':early?'ERKEN ERİŞİM':'YENİ OYUN';
    card.querySelector('.farm-launch-caption').textContent=remaining?'Açılışa kalan süre':'Çiftliğini kur ve keşfet';
    card.disabled=remaining>0;
   });
@@ -189,19 +192,24 @@ const categoryIcons={solo:0,free:2,konu:3,break:4,premium:5};
  }
  function farmEscape(e){if(e.key==='Escape')closeFarm()}
  function openFarm(){
-  if(Date.now()+farmClockOffset<farmLaunchAt||farmOverlay||window.dmTeacherPortalMode)return;
+  if((Date.now()+farmClockOffset<farmLaunchAt&&!(farmEarly&&farmCheckedToken===(localStorage.getItem('ing_token')||'')))||farmOverlay||window.dmTeacherPortalMode)return;
   farmToken=localStorage.getItem('ing_token')||'';if(!farmToken)return;
   const el=document.createElement('section');el.className='papi-farm-overlay';el.setAttribute('role','dialog');el.setAttribute('aria-modal','true');el.setAttribute('aria-label','Papi Farm');
   el.dataset.previousOverflow=document.body.style.overflow;
   const close=document.createElement('button');close.className='papi-farm-close';close.textContent='×';close.setAttribute('aria-label','Çiftliği kapat');close.onclick=closeFarm;
   const frame=document.createElement('iframe');frame.title='Papi Farm';frame.src='papi-farm/index.html?v=1';frame.allow='autoplay';el.append(frame,close);document.body.append(el);document.body.style.overflow='hidden';farmOverlay=el;close.focus();document.addEventListener('keydown',farmEscape);
  }
+ function checkFarmLaunch(token){
+  if(farmCheckedToken===token&&farmLaunchChecked)return;
+  farmCheckedToken=token;farmLaunchChecked=true;farmEarly=false;
+  fetch('https://nxfqlutulxqzqgwewssd.supabase.co/functions/v1/papi-farm',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({op:'launch',t:token})}).then(r=>r.json()).then(d=>{if(farmCheckedToken!==token||(localStorage.getItem('ing_token')||'')!==token)return;if(d.ok&&Number.isFinite(d.now)){farmClockOffset=d.now-Date.now();farmEarly=d.early===true;updateFarmLaunch()}else farmLaunchChecked=false}).catch(()=>{if(farmCheckedToken===token)farmLaunchChecked=false});
+ }
  function farmLaunchCard(){
   const card=document.createElement('button');card.type='button';card.className='papi-farm-launch';card.dataset.papiFarmLaunch='1';card.dataset.ggSource='papi-farm';
   card.innerHTML='<img alt="" src="papi-farm/assets/farm-landscape-wide.webp" loading="lazy"><span class="farm-launch-shade"></span><span class="farm-launch-copy"><span class="farm-launch-tag">YAKINDA</span><strong>Papi Farm</strong><span class="farm-launch-caption">Açılışa kalan süre</span><b class="farm-launch-time">24:00:00</b><small>Ücretsiz çiftlik · Premium Pro ek bölgeler</small></span>';
   card.onclick=openFarm;queueMicrotask(updateFarmLaunch);
   if(!farmLaunchTimer)farmLaunchTimer=setInterval(()=>{if(!document.querySelector('[data-papi-farm-launch]')){clearInterval(farmLaunchTimer);farmLaunchTimer=null;return}updateFarmLaunch()},1000);
-  if(!farmLaunchChecked){farmLaunchChecked=true;fetch('https://nxfqlutulxqzqgwewssd.supabase.co/functions/v1/papi-farm',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({op:'launch'})}).then(r=>r.json()).then(d=>{if(d.ok&&Number.isFinite(d.now)){farmClockOffset=d.now-Date.now();updateFarmLaunch()}}).catch(()=>{farmLaunchChecked=false})}
+  checkFarmLaunch(localStorage.getItem('ing_token')||'');
   return card;
  }
  function renderList(host,all){

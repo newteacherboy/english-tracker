@@ -20,8 +20,8 @@ Deno.serve(async(req)=>{
  try{
   const raw=await req.text();if(raw.length>4096)return out({ok:false,message:'Invalid request.'},400);
   const b=JSON.parse(raw);const now=Date.now();
-  if(b.op==='launch')return out({ok:true,launchAt:LAUNCH,now,open:now>=LAUNCH});
-  if(now<LAUNCH)return out({ok:false,message:'The farm is opening soon.',launchAt:LAUNCH,now},423);
+  const launch=b.op==='launch';
+  if(launch&&(now>=LAUNCH||!b.t))return out({ok:true,launchAt:LAUNCH,now,open:now>=LAUNCH});
   if(!URL||!KEY)return out({ok:false,message:'Farm service unavailable.'},503);
   if(typeof b.t!=='string'||b.t.length<20||b.t.length>400)return out({ok:false,message:'Sign in to play.'},401);
   const session=(await db('portal_sessions?token_hash=eq.'+await hash(b.t)+'&select=student_id,role,expires_at,teacher_portal_access_id&limit=1'))?.[0];
@@ -29,6 +29,9 @@ Deno.serve(async(req)=>{
   const actor=session.student_id;
   const student=(await db('students?id=eq.'+actor+'&select=id,frozen_at&limit=1'))?.[0];
   if(!student||student.frozen_at)return out({ok:false,message:'Account unavailable.'},403);
+  const early=now<LAUNCH&&((await db('dm_papi_farm_early_access?student_id=eq.'+actor+'&expires_at=gt.'+encodeURIComponent(new Date(now).toISOString())+'&select=student_id&limit=1'))?.length===1);
+  if(launch)return out({ok:true,launchAt:LAUNCH,now,open:now>=LAUNCH||early,early});
+  if(now<LAUNCH&&!early)return out({ok:false,message:'The farm is opening soon.',launchAt:LAUNCH,now},423);
   const premium=(await db('rpc/dm_plan',{actor,account_role:'student'}))==='premium_pro';
   const row=(await db('dm_papi_farms?student_id=eq.'+actor+'&select=state,revision,last_action&limit=1'))?.[0];
   const state=row?F.validate(row.state,now):F.fresh(now), revision=row?.revision||0;
