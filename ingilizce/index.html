@@ -155,7 +155,7 @@ var supabaseClient = null;
 <link rel="preload" as="script" href="app-js/i05-hedefyuzu.js?v=0358fb1ba8">
 <link rel="preload" as="script" href="app-js/i06-renk-yardimcilari.js?v=c9adbca8db">
 <link rel="preload" as="script" href="app-js/i07-gonder.js?v=20261121-duel">
-<link rel="preload" as="script" href="app-js/i08-rgb.js?v=1607b2c4f7">
+<link rel="preload" as="script" href="app-js/i08-rgb.js?v=20261128-peer-retired">
 <link rel="preload" as="style" href="portal-world-extracted.css?v=20261015-1">
 <link rel="preload" as="script" href="app-js/i09-1-alt-menu-arkadaslar-dunya-.js?v=20261120-dom2">
 <link rel="preload" as="script" href="app-js/i10-1-oyun-ust-bari.js?v=629087881e">
@@ -3659,17 +3659,6 @@ setInterval(async () => {
     return r;
   };
 
-  /* Takip ettiğin arkadaşa günde 1 kez 2 enerji */
-  window.enerjiGonder = async function (alici, btn) {
-    if (btn) { btn.disabled = true; btn.innerText = 'Gönderiliyor...'; }
-    try {
-      let r = await fetch(`${apiURL}?islem=enerjiGonder&gonderen=${encodeURIComponent(aktifOgrenciAdi)}&alici=${encodeURIComponent(alici)}`);
-      let d = await r.json();
-      if (d.ok) { localStorage.setItem('ing_enerji_gonder', yoBugun()); if (btn) btn.innerText = 'Gönderildi ✓'; if (typeof yoToast === 'function') yoToast('⚡ 2 enerji gönderildi! Arkadaşın girişte görecek.'); }
-      else { if (btn) btn.innerText = d.mesaj || 'Gönderilemedi'; if (d.mesaj) localStorage.setItem('ing_enerji_gonder', yoBugun()); }
-    } catch (e) { if (btn) { btn.disabled = false; btn.innerText = 'Tekrar dene'; } }
-  };
-
   /* ================= GRUP 5 ================= */
 
   /* Enerji 0 iken Konuşma butonuna basınca da ekran çıksın */
@@ -4036,7 +4025,7 @@ const seriCarpani = () => seri() >= 7 ? 2 : (seri() >= 3 ? 1.5 : 1);
 @media (prefers-reduced-motion: reduce) { .bc-perde *, .bc-perde, #tab-dunya *, .bc-krk svg, .bc-mini { animation:none !important; } .bc-parca { display:none; } }
 </style>
 <div id="tab-dunya" class="dc-fullscreen-overlay"><div id="dunyaAlan"></div></div>
-<script src="app-js/i08-rgb.js?v=1607b2c4f7"></script>
+<script src="app-js/i08-rgb.js?v=20261128-peer-retired"></script>
 <link rel="stylesheet" href="portal-world-extracted.css?v=20261015-1">
 <script src="app-js/i09-1-alt-menu-arkadaslar-dunya-.js?v=20261120-dom2"></script>
 <style>
@@ -7169,7 +7158,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <link rel="stylesheet" href="papi-feedback.css?v=1"><script defer src="papi-feedback.js?v=20261113-energy-350-600-850"></script><script defer src="papi-haptics.js?v=1"></script><script defer src="papi-wallet.js?v=20261127-wallet-surf5"></script>
 <link rel="stylesheet" href="story-path.css?v=3" media="print" data-dm-later><!-- story-curriculum.js (189 KB) açılışta yüklenmez: yalnız eski story-path yedeği kullanır, o da gerekirse kendisi yükler. --><link rel="stylesheet" href="thematic-learning.css?v=20261125-matching-audio-only" media="print" data-dm-later><link rel="stylesheet" href="learning-question-v1.css?v=20261120-question-report" media="print" data-dm-later><script defer src="learning-core.js?v=20261120-match-links"></script><link rel="stylesheet" href="route-practice-flight.css?v=20261126-magic-words"><script defer src="route-practice-flight.js?v=20261126-magic-words"></script><script defer src="papi-mascot.js?v=20261111-2"></script><script defer src="baby-papi-webgl.js?v=20261115-3d-1"></script><script defer src="route-papi-walk-feedback.js?v=20261115-3d-1"></script><script defer src="thematic-learning.js?v=20261126-large-visual-match"></script><script defer src="school-curriculum.js?v=20261126-visual-questions-3"></script><script defer src="school-word-art.js?v=20261025-soft-1"></script><script defer src="school-lesson.js?v=20261126-daily-gift15"></script><link rel="stylesheet" href="school-soft-cards.css?v=20261116-color-art-fix"><script defer src="story-path.js?v=20261112-hafif"></script>
 <link rel="stylesheet" href="medupro.css?v=20261011-hud" media="print" data-dm-later>
-<script defer src="medupro.js?v=20261118-sinif"></script>
+<script defer src="medupro.js?v=20261128-peer-retired"></script>
 <link rel="stylesheet" href="konu-oyunlari.css?v=20261021-konu-a2-1" media="print" data-dm-later>
 <script defer src="konu-oyunlari.js?v=20261114-daily-trial"></script>
 <link rel="stylesheet" href="activity-ui.css?v=20261127-hazine-avi2" media="print" data-dm-later>
@@ -7275,7 +7264,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <script defer src="bottom-nav-v2.js?v=20261126-swords-big"></script>
 <script defer src="games-v2.js?v=20261112-ios-paket"></script>
 <link rel="stylesheet" href="friends-ui.css?v=20261125-arena-v1" media="print" data-dm-later>
-<script defer src="notification-actions.js?v=20261025-actions-1"></script>
+<script defer src="notification-actions.js?v=20261128-peer-retired"></script>
 <link rel="stylesheet" href="live-duel.css?v=20261126-auto-match" media="print" data-dm-later><script defer src="live-duel.js?v=20261126-auto-match"></script>
 <link rel="stylesheet" href="team-competition.css?v=20261126-team-ranking-list" media="print" data-dm-later>
 <script defer src="team-competition.js?v=20261128-retire-papizzle-candy"></script>
@@ -7336,7 +7325,7 @@ body.dc-ada #tab-derscalis .km-baslangic .i::after{font-size:34px}
 <link rel="stylesheet" href="social-safety.css?v=20261018-readable-study-1" media="print" data-dm-later>
 <script defer src="social-safety.js?v=20261118-hiz"></script>
 <link rel="stylesheet" href="user-card.css?v=20261118-virtual-member-badges" media="print" data-dm-later>
-<script defer src="user-card.js?v=20261118-davet"></script>
+<script defer src="user-card.js?v=20261128-peer-retired"></script>
 <script defer src="apple-login.js?v=20261028-ios-1"></script>
 <link rel="stylesheet" href="learning-companion.css?v=20261112-sade" media="print" data-dm-later>
 <script defer src="learning-dialogues.js?v=20261019-1"></script>
@@ -7376,7 +7365,7 @@ window.dmClassicGameAudio={
 <link rel="stylesheet" href="daily-gift.css?v=20261126-frameless">
 <link rel="stylesheet" href="papi-tuy.css?v=20261126-daily-gift15">
 <script defer src="papi-tuy.js?v=20261126-daily-gift15"></script>
-<link rel="stylesheet" href="notification-center.css?v=20261126-daily-gift15" media="print" data-dm-later><script defer src="notification-center.js?v=20261126-team-requests"></script>
+<link rel="stylesheet" href="notification-center.css?v=20261126-daily-gift15" media="print" data-dm-later><script defer src="notification-center.js?v=20261128-peer-retired"></script>
 <link rel="stylesheet" href="zirve-kampanya.css?v=20261118-teacher-position" media="print" data-dm-later>
 <script defer src="zirve-kampanya.js?v=20261126-quick-row-1"></script>
 <link rel="stylesheet" href="premium-skill-games.css?v=20261115-papi-intro-results" media="print" data-dm-later>
