@@ -22,6 +22,12 @@
    const all=[...cards,...chapter.examples];
    const distinct=(list,field)=>{const seen=new Set();return list.filter(x=>{if(!x?.[field])return false;const k=core.norm(x[field]);if(seen.has(k))return false;seen.add(k);return true;});};
    const pairCandidates=[...all,...(previous?.cards||[]),...(previous?.examples||[])];
+   if(visualQuestions===3){
+    const target=cards[chapter.number%cards.length]||cards[0];
+    const choices=distinct([target,...pairCandidates.filter(w=>norm(w.tr)!==norm(target.tr)),...[{en:'apple',tr:'elma'},{en:'book',tr:'kitap'},{en:'school',tr:'okul'},{en:'water',tr:'su'},{en:'friend',tr:'arkadaş'},{en:'home',tr:'ev'}].filter(w=>norm(w.tr)!==norm(target.tr))],'en').slice(0,4).map(w=>w.en);
+    const shift=(Number(chapter.number)||0)%choices.length;
+    questions[3]={kind:'choice',label:'Kelime Dedektifi',prompt:target.tr,support:'Türkçe ipucunun İngilizcesini bul.',answer:target.en,options:[...choices.slice(shift),...choices.slice(0,shift)],explanation:target.en+' — '+target.tr};
+   }else{
    const legacyDistinct=(list,field)=>[...new Map(list.filter(x=>x?.[field]).map(x=>[core.norm(x[field]),x])).values()];
    const uniq=visualQuestions===2?distinct:legacyDistinct;
    const select=list=>uniq(uniq(list,'en'),'tr').slice(0,4);
@@ -33,8 +39,9 @@
     if(pairs.length<4)pairs=select([...available,...pairCandidates]);
    }
    if(pairs.length>=2)questions[3]={kind:'match',label:'Görselleri eşleştir',prompt:'Görselleri İngilizce karşılıklarıyla eşleştir.',pairs,visualMatch:true,explanation:'Görselleri doğru ifadelerle eşleştirdin.'};
+   }
    let fill=questions[4],target=chapter.examples[1];
-   if(visualQuestions===2){
+   if(visualQuestions===2||visualQuestions===3){
     target=hasImage(target)?target:all.find(hasImage)||target;
     const bits=target.en.trim().split(/\s+/),multi=bits.length>1;
     fill={kind:'choice',label:multi?'Cümleyi tamamla':'İfadeyi tamamla',prompt:multi?bits.slice(0,-1).join(' ')+' ____':'Görsele uygun İngilizce ifadeyi seç.',support:target.tr,answer:multi?bits.at(-1):target.en,options:[multi?bits.at(-1):target.en],explanation:target.en+' — '+target.tr};
@@ -54,5 +61,5 @@
   ];
   return Object.freeze([...lessons,...questions]);
  }
- return Object.freeze({build,visualQuestions:true,visualRevision:2});
+ return Object.freeze({build,visualQuestions:true,visualRevision:3});
 });
