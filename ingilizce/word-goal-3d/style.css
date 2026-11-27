@@ -15,3 +15,6 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 
 /* Subtle celebratory animation on the result badge, not the purchase/ad control. */
 @keyframes resultShine{0%,100%{box-shadow:0 5px 0 #a5c976,0 0 0 #d9ff99}50%{box-shadow:0 5px 0 #a5c976,0 0 15px #d9ff99aa}}.modal:has(#offers:not([hidden])) .badge{animation:resultShine 2.2s ease-in-out 2}@media(prefers-reduced-motion:reduce){.modal:has(#offers:not([hidden])) .badge{animation:none}}
+
+/* Keep the exit available above menus and loading/error screens. */
+.hud{z-index:13;pointer-events:none}.hud button{pointer-events:auto}#exit-game:focus-visible,#sound:focus-visible{outline:3px solid #d5f59c;outline-offset:2px}.overlay{padding-top:max(64px,calc(env(safe-area-inset-top) + 60px))}.modal{max-height:100%;overscroll-behavior:contain}.loading{padding:72px 20px 20px;text-align:center}
