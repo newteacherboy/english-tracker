@@ -11,7 +11,6 @@
     (data ? ' data-team-id="' + escaped(data) + '"' : '') + '>' + label + '</button>';
   const games = {
     'word-goal': ['Kelime Golü', () => window.dmPremiumSkillGames.open('word-goal', {team:true})],
-    'papizzle': ['Papizzle', () => window.papizzleAc({team:true})],
     'cloud-flight': ['Kaptan Pilot Papi', () => window.premiumBulutUcusuAc({team:true})],
     rally: ['Kelime Rallisi', () => window.ralliOyunAc({team:true})]
   };
@@ -32,7 +31,6 @@
   const premiumTickets = new Map();
   const cardToGame = {
     kelimeGoluSolo: 'word-goal',
-    papizzleActivity: 'papizzle',
     premiumCloudFlightActivity: 'cloud-flight'
   };
   const norm = value => String(value || '').trim().toLocaleLowerCase('tr');

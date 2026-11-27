@@ -1,6 +1,5 @@
 /* Optional games initialize once, when their tab or public opener is used. */
 (()=>{'use strict';
-  const premiumFile='premium-word-match.js?v=20261114-flow';
   const introFile='premium-intro.js?v=20261114-daily-one-card';
   const files=['solo-arcade.js?v=20261126-premium-retirement','papi-cards.js?v=b9d02db518','meteor.js?v=9460b40009','word-wheel.js?v=dc87a710bb'];
   const loaded=new Set(),loading=new Map(),pending=new Map(),readyDone=new Set();
@@ -27,19 +26,7 @@
       const fn=read();if(fn===proxy||typeof fn!=='function')throw Error('Oyun açılamadı. Tekrar dene.');return fn(...args);
     }catch(e){window.yoToast?.(e.message);}
   };return proxy;}
-  // Premium's own module loads on demand. Never wait for unrelated games to parse.
-  // This reduces peak CPU/memory usage when opening the candy board on iOS.
-  const premiumProxy=async (...args)=>{
-    const owner=typeof aktifOgrenciAdi==='undefined'?'':aktifOgrenciAdi;
-    try{
-      await Promise.all([script(introFile),script(premiumFile)]);
-      if(owner!==(typeof aktifOgrenciAdi==='undefined'?'':aktifOgrenciAdi))return;
-      const fn=window.premiumKelimeEslestirmeAc;
-      if(fn===premiumProxy||typeof fn!=='function')throw Error('Candy Papiş açılamadı.');
-      return fn(...args);
-    }catch(e){window.yoToast?.(e.message||'Oyun yüklenemedi.');}
-  };
-  window.premiumKelimeEslestirmeAc=premiumProxy;
+  window.premiumKelimeEslestirmeAc=()=>window.yoToast?.('Bu oyun yayından kaldırıldı.');
   let flightLoading;
   const flightProxy=async options=>{
     if(!classroom())return window.yoToast?.('Bu oyun artık öğrenci hesabında sunulmuyor.');
@@ -52,15 +39,7 @@
   };
   window.premiumBulutUcusuAc=flightProxy;
   window.premiumKelimeBloklariAc=()=>window.yoToast?.('Bu oyun yayından kaldırıldı.');
-  let papizzleLoading;
-  const papizzleProxy=async options=>{
-    const owner=typeof aktifOgrenciAdi==='undefined'?'':aktifOgrenciAdi;
-    try{
-      await (papizzleLoading??=Promise.all([script(introFile),script('papizzle.js?v=20261125-team-1')]).catch(error=>{papizzleLoading=null;throw error;}));
-      if(owner===(typeof aktifOgrenciAdi==='undefined'?'':aktifOgrenciAdi)&&window.papizzleAc!==papizzleProxy)await window.papizzleAc(options);
-    }catch(error){window.yoToast?.(error.message);}
-  };
-  window.papizzleAc=papizzleProxy;
+  window.papizzleAc=()=>window.yoToast?.('Bu oyun yayından kaldırıldı.');
   const lanternProxy=opener(()=>window.papiFeneriAc);
   window.papiFeneriAc=(...args)=>classroom()?lanternProxy(...args):window.yoToast?.('Bu oyun artık öğrenci hesabında sunulmuyor.');
   const monsterProxy=opener(()=>window.canavarAvcisiAc);

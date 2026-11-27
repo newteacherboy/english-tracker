@@ -201,9 +201,7 @@ function dmVerifyAdminRole(){
  }).finally(()=>{if(dmAdminRolePendingToken===current)dmAdminRolePendingToken='';});
 }
 const dmTeacherPremiumGames=[
- ['Candy Papiş','🍬','premiumKelimeEslestirmeAc'],
- ['Kaptan Pilot Papi','✈️','premiumBulutUcusuAc'],
- ['Papizzle','💎','papizzleAc']
+ ['Kaptan Pilot Papi','✈️','premiumBulutUcusuAc']
 ];
 function dmOpenTeacherPremium(fn){
  if(!token()){window.yoToast?.('Öğretmen oturumu gerekli.');return;}

@@ -29,7 +29,7 @@ Deno.serve(async(req:Request)=>{
   const b=await req.json().catch(()=>({}));
   const game=String(b.game||'word-match');
   // Retired for every role. Reject before authentication or any database/RPC call.
-  if(['tower','word-blocks','kule','premiumtower','premiumblok'].includes(game.toLowerCase()))return reply(req,{ok:false,hata:'oyun_kaldirildi',mesaj:'Bu oyun yayından kaldırıldı.'},410);
+  if(['tower','word-blocks','kule','premiumtower','premiumblok','papizzle','word-match','word_match','candypapi','candy-papi','candy-papis','pwm'].includes(game.toLowerCase()))return reply(req,{ok:false,hata:'oyun_kaldirildi',mesaj:'Bu oyun yayından kaldırıldı.'},410);
   const token=String(b.t||'');
   if(token.length<20||token.length>400)return reply(req,{ok:false,mesaj:'Oyun için hesabına giriş yap.'},401);
   const s=(await db('portal_sessions?token_hash=eq.'+await sha256(token)+'&select=student_id,teacher_id,role,expires_at,teacher_portal_access_id,teacher_portal_version&limit=1'))?.[0];
@@ -103,17 +103,6 @@ Deno.serve(async(req:Request)=>{
     return await gameReply(await trackStart(result));
   }
   // Await the dispatch helpers here so rejected RPCs reach the HTTP error handler.
-  if(b.game==='papizzle'){
-   if(s.role==='student'&&s.teacher_portal_access_id)return reply(req,{ok:false,mesaj:'Papizzle için öğrenci hesabına giriş yap.'},403);
-   if(op==='status')return await gameReply(await db('rpc/dm_papizzle_status',{actor}));
-   if(!UUID.test(String(b.runId||'')))return reply(req,{ok:false,mesaj:'Geçersiz oyun.'},400);
-   if(op==='start')return await startGame('rpc/dm_papizzle_start',{actor,run_key:b.runId});
-   if(op==='finish'&&Array.isArray(b.selections)&&b.selections.length>=1&&b.selections.length<=256
-      &&b.selections.every((pick:unknown)=>typeof pick==='number'&&Number.isInteger(pick)&&pick>=0&&pick<16)){
-    return await gameReply(await trackFinish(await db('rpc/dm_papizzle_finish',{actor,run_key:b.runId,selections:b.selections})));
-   }
-   return reply(req,{ok:false,mesaj:'Geçersiz oyun sonucu.'},400);
-  }
   if(b.game==='cloud-flight'){
    const rpc='dm_cloud';
    if(s.role==='student'&&s.teacher_portal_access_id)return reply(req,{ok:false,mesaj:'Bu oyun için öğrenci hesabına giriş yap.'},403);
@@ -125,20 +114,6 @@ Deno.serve(async(req:Request)=>{
     return await gameReply(await trackFinish(await db('rpc/'+rpc+'_finish',{actor,run_key:b.runId,selections:b.selections})));
    }
    return reply(req,{ok:false,mesaj:'Geçersiz oyun sonucu.'},400);
-  }
-  // A pupil's classroom token must never grant unlimited premium game access.
-  // Teacher personal access uses a separately verified teacher session and profile.
-  if(s.role==='student'&&s.teacher_portal_access_id)
-    return reply(req,{ok:false,mesaj:'Premium oyun için öğretmen veya kişisel hesabınla giriş yap.'},403);
-  if(op==='status')return await gameReply(await db('rpc/dm_pwm_status',{actor}));
-  if(op==='start'){
-   const level=Number(b.level);
-   if(!UUID.test(String(b.runId||''))||!Number.isInteger(level)||level<1||level>100)return reply(req,{ok:false,mesaj:'Geçersiz bölüm.'},400);
-   return await startGame('rpc/dm_pwm_start',{actor,run_key:b.runId,p_level:level});
-  }
-  if(op==='finish'){
-   if(!UUID.test(String(b.runId||''))||![b.score,b.moves,b.seconds].every(v=>Number.isSafeInteger(v)&&v>=0)||typeof b.won!=='boolean')return reply(req,{ok:false,mesaj:'Geçersiz oyun sonucu.'},400);
-   return await gameReply(await db('rpc/dm_pwm_finish',{actor,run_key:b.runId,p_score:b.score,p_won:b.won,p_moves:b.moves,p_seconds:b.seconds}));
   }
   return reply(req,{ok:false,mesaj:'Geçersiz işlem.'},400);
  }catch(err){

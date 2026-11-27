@@ -1,7 +1,7 @@
 /* A verified rewarded video unlocks one play in the selected game. */
 (() => {
  'use strict';
- const games=new Set(['word-match','papizzle','cloud-flight','word-goal','rally']);
+ const games=new Set(['cloud-flight','word-goal','rally']);
  const base=new URL('.',document.currentScript?.src||location.href).href;
  const token=()=>localStorage.getItem('ing_token')||'';
  let current=null;

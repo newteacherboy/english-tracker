@@ -214,7 +214,7 @@ const categoryIcons={solo:0,free:2,konu:3,break:4,premium:5};
  }
  function farmLaunchCard(){
   const card=document.createElement('button');card.type='button';card.className='papi-farm-launch';card.dataset.papiFarmLaunch='1';card.dataset.ggSource='papi-farm';
-  card.innerHTML='<img alt="" src="papi-farm/assets/farm-landscape-wide.webp" loading="lazy"><span class="farm-launch-shade"></span><span class="farm-launch-copy"><span class="farm-launch-tag">YAKINDA</span><strong>Papi Farm</strong><span class="farm-launch-caption">Açılışa kalan süre</span><b class="farm-launch-time">24:00:00</b><small>Ücretsiz çiftlik · Premium Pro ek bölgeler</small></span>';
+  card.innerHTML='<img alt="" src="papi-farm/assets/farm-landscape-wide.webp" loading="lazy"><span class="farm-launch-shade"></span><span class="farm-launch-copy"><span class="farm-launch-tag">YAKINDA</span><strong>Papi Farm</strong><span class="farm-launch-caption">Açılışa kalan süre</span><b class="farm-launch-time">24:00:00</b><small>Papi ile kendi çiftliğini kur ve büyüt</small></span>';
   card.onclick=openFarm;queueMicrotask(updateFarmLaunch);
   if(!farmLaunchTimer)farmLaunchTimer=setInterval(()=>{if(!document.querySelector('[data-papi-farm-launch]')){clearInterval(farmLaunchTimer);farmLaunchTimer=null;return}updateFarmLaunch()},1000);
   checkFarmLaunch(localStorage.getItem('ing_token')||'');
@@ -238,7 +238,7 @@ const categoryIcons={solo:0,free:2,konu:3,break:4,premium:5};
  }
  function sapanLaunchCard(){
   const card=document.createElement('button');card.type='button';card.className='papi-farm-launch papi-sapan-launch';card.dataset.papiSapanLaunch='1';card.dataset.ggSource='papi-sapan';
-  card.innerHTML='<img alt="" src="premium-assets/sapan-firtinasi/cover.webp" loading="lazy"><span class="farm-launch-shade"></span><span class="farm-launch-copy"><span class="farm-launch-tag">YAKINDA</span><strong>Papi Sapan Fırtınası</strong><span class="farm-launch-caption">Açılışa kalan süre · 30 Kasım 17:00</span><b class="farm-launch-time">00:00:00</b><small>Günlük 2 ücretsiz hak · Reklam +1 · Premium Pro sınırsız</small></span>';
+  card.innerHTML='<img alt="" src="premium-assets/sapan-firtinasi/cover.webp" loading="lazy"><span class="farm-launch-shade"></span><span class="farm-launch-copy"><span class="farm-launch-tag">YAKINDA</span><strong>Papi Sapan Fırtınası</strong><span class="farm-launch-caption">Açılışa kalan süre · 30 Kasım 17:00</span><b class="farm-launch-time">00:00:00</b><small>Sapanı ger, kelime kulelerini yık</small></span>';
   card.onclick=()=>{if(!card.disabled)window.papiSapanFirtinasiAc?.();};
   queueMicrotask(updateSapanLaunch);
   if(!sapanLaunchTimer)sapanLaunchTimer=setInterval(()=>{if(!document.querySelector('[data-papi-sapan-launch]')){clearInterval(sapanLaunchTimer);sapanLaunchTimer=null;return}updateSapanLaunch()},1000);
@@ -285,7 +285,7 @@ const categoryIcons={solo:0,free:2,konu:3,break:4,premium:5};
  }
  function hazineLaunchCard(){
   const card=document.createElement('button');card.type='button';card.className='papi-farm-launch papi-hazine-launch';card.dataset.papiHazineLaunch='1';card.dataset.ggSource='papi-hazine-avi';
-  card.innerHTML='<img alt="" src="premium-assets/hazine-avi/cover.webp" loading="lazy"><span class="farm-launch-shade"></span><span class="farm-launch-copy"><span class="farm-launch-tag">YAKINDA</span><strong>Papi Hazine Avı</strong><span class="farm-launch-caption">Açılışa kalan süre · 10 Aralık 19:00</span><b class="farm-launch-time">00:00:00</b><small>İlk 3 harita (40 Bölüm) ücretsiz · 4–6. haritalar Premium Pro</small></span>';
+  card.innerHTML='<img alt="" src="premium-assets/hazine-avi/cover.webp?v=2" loading="lazy"><span class="farm-launch-shade"></span><span class="farm-launch-copy"><span class="farm-launch-tag">YAKINDA</span><strong>Papi Hazine Avı</strong><span class="farm-launch-caption">Açılışa kalan süre · 10 Aralık 19:00</span><b class="farm-launch-time">00:00:00</b><small>6 3D ada, 100 bölüm İngilizce hazine macerası</small></span>';
   card.onclick=()=>{if(!card.disabled)window.papiHazineAviAc?.();};
   queueMicrotask(updateHazineLaunch);
   if(!hazineLaunchTimer)hazineLaunchTimer=setInterval(()=>{if(!document.querySelector('[data-papi-hazine-launch]')){clearInterval(hazineLaunchTimer);hazineLaunchTimer=null;return}updateHazineLaunch()},1000);
@@ -485,14 +485,9 @@ const categoryIcons={solo:0,free:2,konu:3,break:4,premium:5};
    const card=document.createElement('button');card.type='button';card.id='papiDalgaSorfuFree';card.className='az-gcard';
    card.setAttribute('onclick','papiDalgaSorfuAc()');card.innerHTML='<div class="az-gcard-title">Papi Dalga Sörfü</div>';grid.prepend(card);
   }
-  if(!grid.querySelector('#premiumWordMatchActivity')){const card=document.createElement('button');card.type='button';card.id='premiumWordMatchActivity';card.className='az-gcard';card.setAttribute('onclick','premiumKelimeEslestirmeAc()');card.innerHTML='<div class="az-gcard-title">Candy Papiş</div>';grid.append(card);}
   if(window.dmTeacherPortalMode&&!grid.querySelector('#premiumCloudFlightActivity')){
    const card=document.createElement('button');card.type='button';card.id='premiumCloudFlightActivity';card.className='az-gcard';
    card.setAttribute('onclick','premiumBulutUcusuAc()');card.innerHTML='<div class="az-gcard-title">Kaptan Pilot Papi</div>';grid.append(card);
-  }
-  if(!grid.querySelector('#papizzleActivity')){
-   const card=document.createElement('button');card.type='button';card.id='papizzleActivity';card.className='az-gcard';
-   card.setAttribute('onclick','papizzleAc()');card.innerHTML='<div class="az-gcard-title">Papizzle</div>';grid.append(card);
   }
   if(!grid.querySelector('#sentenceRaceActivity')){const card=document.createElement('button');card.id='sentenceRaceActivity';card.type='button';card.className='az-gcard';card.setAttribute('onclick','window.dmSentenceRace.open()');card.innerHTML='<div class="az-gcard-title">Cümle Yarışı</div>';grid.append(card);}
   if(typeof window.okumaStudyosunuAc==='function'&&!host.querySelector('[onclick*="okumaStudyosunuAc"]')){const b=document.createElement('button');b.type='button';b.className='az-gcard';b.setAttribute('onclick','okumaStudyosunuAc()');b.innerHTML='<div class="az-gcard-title">Okuma Stüdyosu</div>';grid.append(b);}
