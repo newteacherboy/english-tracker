@@ -16,8 +16,7 @@
     if(note.tur==='oyunDavet')return [['match','Karşılaşmayı aç']];
     if(['duelloYanit','duelloOyun','duelloSonuc'].includes(note.tur))return [['duels','Karşılaşmalarımı gör']];
     if(!sender)return [];
-    if(['hediye','enerji'].includes(note.tur))return [['gift','🎁 Sen de gönder'],['profile','Profili gör']];
-    if(note.tur==='mesaj')return [['message','💬 Yanıtla'],['profile','Profili gör']];
+    if(['hediye','enerji','mesaj'].includes(note.tur))return [['profile','Profili gör']];
     if(['takip','tebrik'].includes(note.tur))return [['profile','Profili gör']];
     return [];
   }
@@ -61,8 +60,6 @@
         }
         onNavigate();
         if(action==='play')global.duelloOyununuAc?.(duel.oyun);
-        else if(action==='gift')global.dmGiftAc?.(note.gonderen);
-        else if(action==='message')global.dmMessageAc?.(note.gonderen);
         else if(action==='profile')global.maProfilAc?.(note.gonderen);
         else if(action==='match'){
           const id=note.matchId||unread.find(n=>String(n.sat)===String(note.sat))?.matchId;
