@@ -59,11 +59,24 @@
 
   function isPremiumPro() {
     if (window.dmTeacherPortalMode) return true;
+    const norm = (raw) => {
+      const t = String(raw || '').trim().toLowerCase();
+      if (['premium_pro', 'diji_premium_pro', 'teacher_premium_pro', 'premium', 'premium_plus', 'premium_max', 'diji_premium', 'diji_premium_plus', 'diji_premium_max'].includes(t)) return 'premium_pro';
+      if (['pro', 'diji_pro', 'teacher_pro'].includes(t)) return 'pro';
+      return '';
+    };
     try {
-      if (window.dmAndroidPlan?.plan === 'premium_pro') return true;
-      const tier = window.dmProgression?.status?.()?.membership_tier || window.dmMembershipTier || '';
-      if (tier === 'premium_pro') return true;
-      if (typeof yo !== 'undefined' && (yo?.plan === 'premium_pro' || yo?.membership_tier === 'premium_pro' || yo?.premiumPro === true)) {
+      const explicit = norm(
+        window.dmAndroidPlan?.plan ||
+        window.dmSubscription?.plan ||
+        window.dmMembership?.plan ||
+        document.documentElement?.dataset?.dmPlan ||
+        window.dmProgression?.status?.()?.membership_tier ||
+        window.dmMembershipTier
+      );
+      if (explicit) return explicit === 'premium_pro';
+      if (window.dmProgression?.earlyAccess?.() === true) return true;
+      if (typeof yo !== 'undefined' && (norm(yo?.plan || yo?.membership_tier) === 'premium_pro' || yo?.premiumPro === true || yo?.premium === true)) {
         return true;
       }
     } catch (_) {}

@@ -266,6 +266,31 @@ const categoryIcons={solo:0,free:2,konu:3,break:4,premium:5};
   if(!dortnalaLaunchTimer)dortnalaLaunchTimer=setInterval(()=>{if(!document.querySelector('[data-papi-dortnala-launch]')){clearInterval(dortnalaLaunchTimer);dortnalaLaunchTimer=null;return}updateDortnalaLaunch()},1000);
   return card;
  }
+ const hazineLaunchAt=Date.parse('2026-12-10T19:00:00+03:00');
+ let hazineLaunchTimer=null;
+ function updateHazineLaunch(){
+  const isIrmak=window.dmHazineAvi?.isIrmakAccount?.()===true;
+  const early=isIrmak&&Date.now()<hazineLaunchAt;
+  const remaining=early?0:Math.max(0,Math.ceil((hazineLaunchAt-Date.now())/1000));
+  const days=Math.floor(remaining/86400);
+  const remDay=remaining%86400;
+  const hms=[Math.floor(remDay/3600),Math.floor(remDay%3600/60),remDay%60].map(n=>String(n).padStart(2,'0')).join(':');
+  const time=days>0?days+'g '+hms:hms;
+  document.querySelectorAll('[data-papi-hazine-launch]').forEach(card=>{
+   card.querySelector('.farm-launch-time').textContent=remaining?time:'Oyna';
+   card.querySelector('.farm-launch-tag').textContent=remaining?'YAKINDA':early?'ERKEN ERİŞİM':'YENİ 3D OYUN';
+   card.querySelector('.farm-launch-caption').textContent=remaining?'Açılışa kalan süre · 10 Aralık 19:00':'6 3D Ada · 100 Bölüm İngilizce Macera';
+   card.disabled=remaining>0;
+  });
+ }
+ function hazineLaunchCard(){
+  const card=document.createElement('button');card.type='button';card.className='papi-farm-launch papi-hazine-launch';card.dataset.papiHazineLaunch='1';card.dataset.ggSource='papi-hazine-avi';
+  card.innerHTML='<img alt="" src="premium-assets/hazine-avi/cover.webp" loading="lazy"><span class="farm-launch-shade"></span><span class="farm-launch-copy"><span class="farm-launch-tag">YAKINDA</span><strong>Papi Hazine Avı</strong><span class="farm-launch-caption">Açılışa kalan süre · 10 Aralık 19:00</span><b class="farm-launch-time">00:00:00</b><small>İlk 3 harita (40 Bölüm) ücretsiz · 4–6. haritalar Premium Pro</small></span>';
+  card.onclick=()=>{if(!card.disabled)window.papiHazineAviAc?.();};
+  queueMicrotask(updateHazineLaunch);
+  if(!hazineLaunchTimer)hazineLaunchTimer=setInterval(()=>{if(!document.querySelector('[data-papi-hazine-launch]')){clearInterval(hazineLaunchTimer);hazineLaunchTimer=null;return}updateHazineLaunch()},1000);
+  return card;
+ }
  function renderList(host,all){
   const list=host.querySelector('.gg-overview');
   const surfFreeOk=window.dmDalgaSorfu?.hasFreeQuota?.()!==false;
@@ -289,7 +314,7 @@ const categoryIcons={solo:0,free:2,konu:3,break:4,premium:5};
     (party!=='solo'||skill==='Tümü'||gameSkill===skill||skill==='Kelime'&&gameSkill==='Hafıza');
   });
   cards.sort((a,b)=>unified?(unifiedRank(a)-unifiedRank(b)||Number(b.dataset.ggIndex)-Number(a.dataset.ggIndex)):(party==='all'?listRank(a.dataset.ggId)-listRank(b.dataset.ggId):0)||Number(a.style.order)-Number(b.style.order));
-  const signature=[account(),!!window.dmTeacherPortalMode,party,skill,surfFreeOk,sapanFreeOk,sapanLaunch,dortnalaFreeOk,dortnalaLaunch,typeof window.dmDortnala?.launchLabel,typeof window.papiDortnalaAc,...cards.map(card=>card.dataset.ggId+':'+allowed(card.dataset.ggGate))].join('|');
+  const signature=[account(),!!window.dmTeacherPortalMode,party,skill,surfFreeOk,sapanFreeOk,sapanLaunch,dortnalaFreeOk,dortnalaLaunch,typeof window.dmDortnala?.launchLabel,typeof window.papiDortnalaAc,typeof window.papiHazineAviAc,...cards.map(card=>card.dataset.ggId+':'+allowed(card.dataset.ggGate))].join('|');
   if(list.dataset.signature===signature)return;
   list.dataset.signature=signature;
   const focused=document.activeElement?.closest('.gg-shelf-card')?.dataset.ggSource;
@@ -313,10 +338,12 @@ const categoryIcons={solo:0,free:2,konu:3,break:4,premium:5};
    return row;
   }));
   const showFarm=!window.dmTeacherPortalMode&&['solo','premium','all'].includes(party);
+  const showHazineBanner=!window.dmTeacherPortalMode&&typeof window.papiHazineAviAc==='function'&&['solo','premium','all'].includes(party);
+  if(showHazineBanner)list.prepend(hazineLaunchCard());
   if(showDortnalaBanner)list.prepend(dortnalaLaunchCard());
   if(showSapanBanner)list.prepend(sapanLaunchCard());
   if(showFarm)list.prepend(farmLaunchCard());
-  if(!cards.length&&!showFarm&&!showSapanBanner&&!showDortnalaBanner){
+  if(!cards.length&&!showFarm&&!showSapanBanner&&!showDortnalaBanner&&!showHazineBanner){
    const empty=document.createElement('p');empty.className='gg-list-empty';empty.setAttribute('role','status');
    empty.textContent='Bu filtrede oyun bulunamadı.';list.append(empty);
   }

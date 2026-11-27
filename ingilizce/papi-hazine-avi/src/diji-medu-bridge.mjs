@@ -112,14 +112,27 @@ export class DijiMeduBridge {
 
   isPremiumPro() {
     const host = getHostWindow();
+    const norm = (raw) => {
+      const t = String(raw || '').trim().toLowerCase();
+      if (['premium_pro', 'diji_premium_pro', 'teacher_premium_pro', 'premium', 'premium_plus', 'premium_max', 'diji_premium', 'diji_premium_plus', 'diji_premium_max'].includes(t)) return 'premium_pro';
+      if (['pro', 'diji_pro', 'teacher_pro'].includes(t)) return 'pro';
+      return '';
+    };
     try {
       if (host.dmTeacherPortalMode || window.dmTeacherPortalMode) return true;
       if (this.verifiedProTier === 'premium_pro') return true;
-      if (host.dmAndroidPlan?.plan === 'premium_pro') return true;
-      const progTier = host.dmProgression?.status?.()?.membership_tier || host.dmMembershipTier || '';
-      if (progTier === 'premium_pro') return true;
+      const explicit = norm(
+        host.dmAndroidPlan?.plan ||
+        host.dmSubscription?.plan ||
+        host.dmMembership?.plan ||
+        host.document?.documentElement?.dataset?.dmPlan ||
+        host.dmProgression?.status?.()?.membership_tier ||
+        host.dmMembershipTier
+      );
+      if (explicit) return explicit === 'premium_pro';
+      if (host.dmProgression?.earlyAccess?.() === true) return true;
       const yoObj = host.yo || window.yo;
-      if (yoObj && (yoObj.plan === 'premium_pro' || yoObj.membership_tier === 'premium_pro' || yoObj.premiumPro === true)) {
+      if (yoObj && (norm(yoObj.plan || yoObj.membership_tier) === 'premium_pro' || yoObj.premiumPro === true || yoObj.premium === true)) {
         return true;
       }
     } catch (_) {}
@@ -165,17 +178,18 @@ export class DijiMeduBridge {
   async initSession() {
     const host = getHostWindow();
     try {
-      // Verify server-side membership tier once on startup if token exists (zero per-step requests!)
+      // Verify server-side billing membership tier once on startup if token exists (zero per-step requests!)
       const token = localStorage.getItem('ing_token') || '';
-      if (token && !this.isPremiumPro()) {
-        const apiBase = (typeof host.apiURL === 'string' ? host.apiURL : 'https://nxfqlutulxqzqgwewssd.supabase.co/functions/v1/diji-api')
-          .replace(/diji-api.*$/, 'premium-games');
-        fetch(apiBase, {
+      if (token.length >= 16 && !this.isPremiumPro()) {
+        fetch('https://nxfqlutulxqzqgwewssd.supabase.co/functions/v1/diji-billing', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ op: 'access', game: 'word-match', t: token })
-        }).then((r) => r.json()).then((d) => {
-          if (d?.plan === 'premium_pro') this.verifiedProTier = 'premium_pro';
+          headers: { 'Content-Type': 'application/json', 'x-diji-token': token },
+          body: JSON.stringify({ action: 'status' })
+        }).then((r) => (r && r.ok ? r.json() : null)).then((d) => {
+          const t = String(d?.plan || '').trim().toLowerCase();
+          if (['premium_pro', 'diji_premium_pro', 'teacher_premium_pro', 'premium', 'premium_plus', 'premium_max', 'diji_premium', 'diji_premium_plus', 'diji_premium_max'].includes(t)) {
+            this.verifiedProTier = 'premium_pro';
+          }
         }).catch(() => {});
       }
 
