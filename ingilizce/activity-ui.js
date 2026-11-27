@@ -216,31 +216,61 @@ const categoryIcons={solo:0,free:2,konu:3,break:4,premium:5};
   checkFarmLaunch(localStorage.getItem('ing_token')||'');
   return card;
  }
+ const sapanLaunchAt=Date.parse('2026-11-30T17:00:00+03:00');
+ let sapanLaunchTimer=null;
+ function updateSapanLaunch(){
+  const early=window.dmSapanFirtinasi?.isIrmakAccount?.()===true&&Date.now()<sapanLaunchAt;
+  const remaining=early?0:Math.max(0,Math.ceil((sapanLaunchAt-Date.now())/1000));
+  const days=Math.floor(remaining/86400);
+  const remDay=remaining%86400;
+  const hms=[Math.floor(remDay/3600),Math.floor(remDay%3600/60),remDay%60].map(n=>String(n).padStart(2,'0')).join(':');
+  const time=days>0?days+'g '+hms:hms;
+  document.querySelectorAll('[data-papi-sapan-launch]').forEach(card=>{
+   card.querySelector('.farm-launch-time').textContent=remaining?time:'Oyna';
+   card.querySelector('.farm-launch-tag').textContent=remaining?'YAKINDA':early?'ERKEN ERİŞİM':'YENİ OYUN';
+   card.querySelector('.farm-launch-caption').textContent=remaining?'Açılışa kalan süre · 30 Kasım 17:00':'Sapanı ger, kelime kulelerini yık';
+   card.disabled=remaining>0;
+  });
+ }
+ function sapanLaunchCard(){
+  const card=document.createElement('button');card.type='button';card.className='papi-farm-launch papi-sapan-launch';card.dataset.papiSapanLaunch='1';card.dataset.ggSource='papi-sapan';
+  card.innerHTML='<img alt="" src="premium-assets/sapan-firtinasi/cover.webp" loading="lazy"><span class="farm-launch-shade"></span><span class="farm-launch-copy"><span class="farm-launch-tag">YAKINDA</span><strong>Papi Sapan Fırtınası</strong><span class="farm-launch-caption">Açılışa kalan süre · 30 Kasım 17:00</span><b class="farm-launch-time">00:00:00</b><small>Günlük 2 ücretsiz hak · Reklam +1 · Premium Pro sınırsız</small></span>';
+  card.onclick=()=>{if(!card.disabled)window.papiSapanFirtinasiAc?.();};
+  queueMicrotask(updateSapanLaunch);
+  if(!sapanLaunchTimer)sapanLaunchTimer=setInterval(()=>{if(!document.querySelector('[data-papi-sapan-launch]')){clearInterval(sapanLaunchTimer);sapanLaunchTimer=null;return}updateSapanLaunch()},1000);
+  return card;
+ }
  function renderList(host,all){
   const list=host.querySelector('.gg-overview');
   const surfFreeOk=window.dmDalgaSorfu?.hasFreeQuota?.()!==false;
   const sapanFreeOk=window.dmSapanFirtinasi?.hasFreeQuota?.()!==false;
   const sapanLaunch=window.dmSapanFirtinasi?.launchLabel?.()||'';
+  const dortnalaFreeOk=window.dmDortnala?.hasFreeQuota?.()!==false;
+  const dortnalaLaunch=window.dmDortnala?.launchLabel?.()||'';
+  const showSapanBanner=!window.dmTeacherPortalMode&&['solo','premium','all'].includes(party)&&(party!=='solo'||sapanFreeOk);
   const cards=all.filter(card=>{
    if(card.id==='papiDalgaSorfuFree'&&!surfFreeOk)return false;
-   if(card.id==='papiSapanFirtinasiFree'&&!sapanFreeOk)return false;
+   if(card.id==='papiSapanFirtinasiFree'&&(!sapanFreeOk||showSapanBanner))return false;
+   if(card.id==='papiSapanFirtinasiPremium'&&showSapanBanner)return false;
+   if(card.id==='papiDortnalaFree'&&!dortnalaFreeOk)return false;
    const {ggCategory:category,ggTitle:title,ggGameSkill:gameSkill}=card.dataset;
    return categories[category]&&(!window.dmTeacherPortalMode||category!=='duo')&&(party==='all'||party===category)&&
     (party!=='solo'||skill==='Tümü'||gameSkill===skill||skill==='Kelime'&&gameSkill==='Hafıza');
   });
   cards.sort((a,b)=>(party==='all'?listRank(a.dataset.ggId)-listRank(b.dataset.ggId):0)||Number(a.style.order)-Number(b.style.order));
-  const signature=[account(),!!window.dmTeacherPortalMode,party,skill,surfFreeOk,sapanFreeOk,sapanLaunch,...cards.map(card=>card.dataset.ggId+':'+allowed(card.dataset.ggGate))].join('|');
+  const signature=[account(),!!window.dmTeacherPortalMode,party,skill,surfFreeOk,sapanFreeOk,sapanLaunch,dortnalaFreeOk,dortnalaLaunch,...cards.map(card=>card.dataset.ggId+':'+allowed(card.dataset.ggGate))].join('|');
   if(list.dataset.signature===signature)return;
   list.dataset.signature=signature;
   const focused=document.activeElement?.closest('.gg-shelf-card')?.dataset.ggSource;
   list.replaceChildren(...cards.map(card=>{
    const {ggId:id,ggTitle:title,ggCategory:category,ggGate:gate}=card.dataset;
    const isSapan=card.id==='papiSapanFirtinasiPremium'||card.id==='papiSapanFirtinasiFree';
+   const isDortnala=card.id==='papiDortnalaPremium'||card.id==='papiDortnalaFree';
    const open=allowed(gate);
    const row=document.createElement('button');row.type='button';row.className='gg-shelf-card gg-list-row';
    row.dataset.ggSource=id;row.setAttribute('aria-disabled',String(!open));
    const subtitle=open?categories[category]:categories[category]+' · '+(window.DijiProgressionCatalog?.gates[gate]||30)+'. seviyede açılır';
-   const launchPill=isSapan&&sapanLaunch?'<span class="gg-sapan-launch-pill">'+esc(sapanLaunch)+'</span>':'';
+   const launchPill=isSapan&&sapanLaunch?'<span class="gg-sapan-launch-pill">'+esc(sapanLaunch)+'</span>':isDortnala&&dortnalaLaunch?'<span class="gg-dortnala-launch-badge">'+esc(dortnalaLaunch)+'</span>':'';
    row.innerHTML='<span class="gg-row-copy"><strong>'+esc(title)+'</strong><small>'+esc(subtitle)+'</small>'+launchPill+'</span>'+
     '<span class="gg-row-action" aria-hidden="true">'+(open?'<svg viewBox="0 0 24 24"><path fill="currentColor" d="M8 5a1 1 0 0 1 1.5-.86l11 7a1 1 0 0 1 0 1.72l-11 7A1 1 0 0 1 8 19z"/></svg>':icon('lock'))+'</span>';
    if(!window.dmTeacherPortalMode){
@@ -251,8 +281,9 @@ const categoryIcons={solo:0,free:2,konu:3,break:4,premium:5};
    return row;
   }));
   const showFarm=!window.dmTeacherPortalMode&&['solo','premium','all'].includes(party);
+  if(showSapanBanner)list.prepend(sapanLaunchCard());
   if(showFarm)list.prepend(farmLaunchCard());
-  if(!cards.length&&!showFarm){
+  if(!cards.length&&!showFarm&&!showSapanBanner){
    const empty=document.createElement('p');empty.className='gg-list-empty';empty.setAttribute('role','status');
    empty.textContent='Bu filtrede oyun bulunamadı.';list.append(empty);
   }
@@ -287,11 +318,11 @@ const categoryIcons={solo:0,free:2,konu:3,break:4,premium:5};
  const account=()=>String(who()||'guest');
  const level=()=>window.dmProgression?.level?.()||1;
  const allowed=code=>!code||!window.dmProgression||window.dmProgression.allowed(code);
- const img=(i,cls='')=>i===29?'<span class="gg-art gg-premium-art" aria-hidden="true"><img src="premium-assets/sapan-firtinasi/cover.webp" alt="" loading="lazy" decoding="async"></span>':i===28?'<span class="gg-art gg-premium-art" aria-hidden="true"><img src="premium-assets/dalga-sorfu/cover.webp" alt="" loading="lazy" decoding="async"></span>':i===27?'<span class="gg-art sa-hub-fener" aria-hidden="true"></span>':i===26?'<span class="gg-art gg-premium-art" aria-hidden="true"><img src="premium-assets/papizzle-cover.webp" alt="" loading="lazy" decoding="async"></span>':i===24?'<span class="gg-art gg-premium-art" aria-hidden="true"><img src="premium-assets/kelime-bloklari/kapak.webp" alt="" loading="lazy" decoding="async"></span>':i===23?'<span class="gg-art gg-premium-art" aria-hidden="true"><img src="premium-assets/bulut-ucusu/kapak.webp" alt="" loading="lazy" decoding="async"></span>':i===22?'<span class="gg-art gg-premium-art" aria-hidden="true"><img src="premium-assets/kelime-eslestirme/card-cover.webp" alt="" loading="lazy" decoding="async"></span>':i===20?'<span class="gg-art sa-hub-monster"><span class="sa-monster sa-monster-0"></span></span>':i===21?'<span class="gg-art sa-hub-tower"><img src="arcade-assets/floor.webp" alt=""></span>':[18,19].includes(i)?'<span class="gg-art kg-hub-art '+cls+'" aria-hidden="true"></span>':i===17?'<span class="gg-art dm-sr-hub-art '+cls+'" aria-hidden="true"></span>':i===16?'<span class="gg-art rr-hub-art '+cls+'" aria-hidden="true"><img src="rally-assets/car.webp" alt=""></span>':'<span class="gg-art '+cls+'" style="--gx:'+(i%4)*100/3+'%;--gy:'+Math.floor(i/4)*100/3+'%" aria-hidden="true"></span>';
+ const img=(i,cls='')=>i===30?'<span class="gg-art gg-premium-art" aria-hidden="true"><img src="premium-assets/dortnala/cover.jpg" alt="" loading="lazy" decoding="async"></span>':i===29?'<span class="gg-art gg-premium-art" aria-hidden="true"><img src="premium-assets/sapan-firtinasi/cover.webp" alt="" loading="lazy" decoding="async"></span>':i===28?'<span class="gg-art gg-premium-art" aria-hidden="true"><img src="premium-assets/dalga-sorfu/cover.webp" alt="" loading="lazy" decoding="async"></span>':i===27?'<span class="gg-art sa-hub-fener" aria-hidden="true"></span>':i===26?'<span class="gg-art gg-premium-art" aria-hidden="true"><img src="premium-assets/papizzle-cover.webp" alt="" loading="lazy" decoding="async"></span>':i===24?'<span class="gg-art gg-premium-art" aria-hidden="true"><img src="premium-assets/kelime-bloklari/kapak.webp" alt="" loading="lazy" decoding="async"></span>':i===23?'<span class="gg-art gg-premium-art" aria-hidden="true"><img src="premium-assets/bulut-ucusu/kapak.webp" alt="" loading="lazy" decoding="async"></span>':i===22?'<span class="gg-art gg-premium-art" aria-hidden="true"><img src="premium-assets/kelime-eslestirme/card-cover.webp" alt="" loading="lazy" decoding="async"></span>':i===20?'<span class="gg-art sa-hub-monster"><span class="sa-monster sa-monster-0"></span></span>':i===21?'<span class="gg-art sa-hub-tower"><img src="arcade-assets/floor.webp" alt=""></span>':[18,19].includes(i)?'<span class="gg-art kg-hub-art '+cls+'" aria-hidden="true"></span>':i===17?'<span class="gg-art dm-sr-hub-art '+cls+'" aria-hidden="true"></span>':i===16?'<span class="gg-art rr-hub-art '+cls+'" aria-hidden="true"><img src="rally-assets/car.webp" alt=""></span>':'<span class="gg-art '+cls+'" style="--gx:'+(i%4)*100/3+'%;--gy:'+Math.floor(i/4)*100/3+'%" aria-hidden="true"></span>';
  function game(b){const rule=defs.find(d=>(b.getAttribute('onclick')||'').includes(d[0]))||defs.find(d=>b.id===d[0]||b.id==='yoDikteKart'&&d[0]==='dikteAc');return rule||[null,8,'Kelime',b.dataset.dmLevelLock||window.DijiProgressionCatalog?.functions[(b.getAttribute('onclick')||'').match(/([A-Za-z_$][\w$]*)\s*\(/)?.[1]]||''];}
  function lastGame(){try{return localStorage.getItem('dm_last_game:'+account())||'';}catch{return '';}}
  function remember(b){try{localStorage.setItem('dm_last_game:'+account(),b.dataset.ggId);}catch{}}
- function prepare(b,i){if(b.dataset.ggReady)return;b.dataset.ggReady='1';b.dataset.ggId=b.id||'game-'+(b.getAttribute('onclick')||i);const d=game(b),f=free[b.id];b.dataset.ggGameSkill=d[2];b.dataset.ggGate=d[3];b.dataset.ggCategory=f?'free':b.classList.contains('dm-live-card')||['dmUcusteKart','dmRotaKart'].includes(b.id)?'duo':'solo';if(b.dataset.ggCategory==='duo')b.dataset.ggGate='iki_kisilik';b.dataset.ggIndex=f?f[0]:d[1];b.style.order=String(f?f[0]:defs.includes(d)?d[1]:50);if(b.id==='papiSapanFirtinasiFree'){b.dataset.ggCategory='solo';b.dataset.ggGate='';b.dataset.ggGameSkill='Kelime';b.style.order='-11';b.dataset.ggIndex='29';}if(b.id==='papiDalgaSorfuFree'){b.dataset.ggCategory='solo';b.dataset.ggGate='';b.dataset.ggGameSkill='Kelime';b.style.order='-10';b.dataset.ggIndex='28';}if(['papiSapanFirtinasiPremium','papiDalgaSorfuPremium','premiumWordMatchActivity','premiumCloudFlightActivity','papizzleActivity','rallyActivity','kelimeGoluSolo'].includes(b.id)){b.dataset.ggCategory='premium';b.dataset.ggGate='';b.style.order=String(premiumOrder.indexOf(b.id));b.dataset.ggIndex=b.id==='papiSapanFirtinasiPremium'?'29':b.id==='papiDalgaSorfuPremium'?'28':b.id==='kelimeGoluSolo'?'18':b.id==='rallyActivity'?'16':b.id==='papizzleActivity'?'26':b.id==='premiumCloudFlightActivity'?'23':'22';}
+ function prepare(b,i){if(b.dataset.ggReady)return;b.dataset.ggReady='1';b.dataset.ggId=b.id||'game-'+(b.getAttribute('onclick')||i);const d=game(b),f=free[b.id];b.dataset.ggGameSkill=d[2];b.dataset.ggGate=d[3];b.dataset.ggCategory=f?'free':b.classList.contains('dm-live-card')||['dmUcusteKart','dmRotaKart'].includes(b.id)?'duo':'solo';if(b.dataset.ggCategory==='duo')b.dataset.ggGate='iki_kisilik';b.dataset.ggIndex=f?f[0]:d[1];b.style.order=String(f?f[0]:defs.includes(d)?d[1]:50);if(b.id==='papiDortnalaFree'){b.dataset.ggCategory='solo';b.dataset.ggGate='';b.dataset.ggGameSkill='Kelime';b.style.order='-12';b.dataset.ggIndex='30';}if(b.id==='papiSapanFirtinasiFree'){b.dataset.ggCategory='solo';b.dataset.ggGate='';b.dataset.ggGameSkill='Kelime';b.style.order='-11';b.dataset.ggIndex='29';}if(b.id==='papiDalgaSorfuFree'){b.dataset.ggCategory='solo';b.dataset.ggGate='';b.dataset.ggGameSkill='Kelime';b.style.order='-10';b.dataset.ggIndex='28';}if(['papiDortnalaPremium','papiSapanFirtinasiPremium','papiDalgaSorfuPremium','premiumWordMatchActivity','premiumCloudFlightActivity','papizzleActivity','rallyActivity','kelimeGoluSolo'].includes(b.id)){b.dataset.ggCategory='premium';b.dataset.ggGate='';b.style.order=String(premiumOrder.indexOf(b.id));b.dataset.ggIndex=b.id==='papiDortnalaPremium'?'30':b.id==='papiSapanFirtinasiPremium'?'29':b.id==='papiDalgaSorfuPremium'?'28':b.id==='kelimeGoluSolo'?'18':b.id==='rallyActivity'?'16':b.id==='papizzleActivity'?'26':b.id==='premiumCloudFlightActivity'?'23':'22';}
   b.classList.add('gg-game');b.classList.remove('dm-toy-card','dm-showcase-card');
   const title=b.querySelector('.az-gcard-title')?.textContent.trim()||b.textContent.trim();b.dataset.ggTitle=title;
   const tool=d[0]==='pomodoroAc'||d[0]==='okumaStudyosunuAc';if(tool)b.dataset.ggCategory='tools';
@@ -339,7 +370,8 @@ const categoryIcons={solo:0,free:2,konu:3,break:4,premium:5};
   if(!redesigned)grid.setAttribute('aria-labelledby',party==='premium'?'ggPremiumTab':party==='break'?'ggBreakTab':party==='solo'?'ggSoloTab':party==='duo'?'ggOnlineTab':'ggFreeTab');
   const surfFreeOk=window.dmDalgaSorfu?.hasFreeQuota?.()!==false;
   const sapanFreeOk=window.dmSapanFirtinasi?.hasFreeQuota?.()!==false;
-  let count=0;all.forEach(b=>{const tool=b.dataset.ggCategory==='tools',open=allowed(b.dataset.ggGate),hideSurf=b.id==='papiDalgaSorfuFree'&&!surfFreeOk,hideSapan=b.id==='papiSapanFirtinasiFree'&&!sapanFreeOk,show=!hideSurf&&!hideSapan&&((tool&&party===(redesigned?'tools':'solo'))||b.dataset.ggCategory===party&&(party!=='solo'||(skill==='Tümü'||b.dataset.ggGameSkill===skill||skill==='Kelime'&&b.dataset.ggGameSkill==='Hafıza')));b.classList.toggle('gg-locked',!open);b.setAttribute('aria-disabled',String(!open));const play=b.querySelector('.gg-play');if(play)play.textContent=!open?(window.DijiProgressionCatalog?.gates[b.dataset.ggGate]||30)+'. seviyede açılır':free[b.id]?free[b.id][2]+' ›':tool?(b.dataset.ggIndex==='2'&&/pomodoroAc/.test(b.getAttribute('onclick')||'')?'Başlat ›':'Aç ›'):b.dataset.ggCategory==='duo'?'Davet Et ›':'Oyna ›';b.hidden=!show;b.style.setProperty('display',show?'grid':'none','important');if(redesigned&&!tool){
+  const dortnalaFreeOk=window.dmDortnala?.hasFreeQuota?.()!==false;
+  let count=0;all.forEach(b=>{const tool=b.dataset.ggCategory==='tools',open=allowed(b.dataset.ggGate),hideSurf=b.id==='papiDalgaSorfuFree'&&!surfFreeOk,hideSapan=b.id==='papiSapanFirtinasiFree'&&!sapanFreeOk,hideDortnala=b.id==='papiDortnalaFree'&&!dortnalaFreeOk,show=!hideSurf&&!hideSapan&&!hideDortnala&&((tool&&party===(redesigned?'tools':'solo'))||b.dataset.ggCategory===party&&(party!=='solo'||(skill==='Tümü'||b.dataset.ggGameSkill===skill||skill==='Kelime'&&b.dataset.ggGameSkill==='Hafıza')));b.classList.toggle('gg-locked',!open);b.setAttribute('aria-disabled',String(!open));const play=b.querySelector('.gg-play');if(play)play.textContent=!open?(window.DijiProgressionCatalog?.gates[b.dataset.ggGate]||30)+'. seviyede açılır':free[b.id]?free[b.id][2]+' ›':tool?(b.dataset.ggIndex==='2'&&/pomodoroAc/.test(b.getAttribute('onclick')||'')?'Başlat ›':'Aç ›'):b.dataset.ggCategory==='duo'?'Davet Et ›':'Oyna ›';b.hidden=!show;b.style.setProperty('display',show?'grid':'none','important');if(redesigned&&!tool){
     const originalOrder=b.dataset.ggOrder??=b.style.order||'50';
     b.style.order=String(Number(originalOrder)+(open?0:100));
    }
@@ -366,6 +398,14 @@ const categoryIcons={solo:0,free:2,konu:3,break:4,premium:5};
  }
  async function loadFriends(host){if(friendsLoaded)return;if(!allowed('takip')){host.querySelector('.gg-friends').textContent='Arkadaşlar '+(window.DijiProgressionCatalog?.gates.takip||15)+'. seviyede açılır.';return;}if(!logged()){host.querySelector('.gg-friends').textContent='Arkadaşlarını görmek için giriş yap.';return;}friendsLoaded=true;const row=host.querySelector('.gg-friends');row.innerHTML='<span role="status">Arkadaşların yükleniyor…</span>';const owner=account();try{const d=await m.api('takipDavetListesi');if(account()!==owner)return;skew=Date.parse(d.serverNow)-Date.now();d.liste.forEach(p=>stamp.set(p.ad,p));row.innerHTML=d.liste.length?d.liste.slice(0,5).map(p=>'<button type="button" data-gg-person="'+esc(p.ad)+'" title="'+esc(p.ad)+'"><span class="gg-avatar">'+(window.karakterSvg?.(p.ad,38)||esc(p.ad.slice(0,1).toLocaleUpperCase('tr')))+'</span><small>'+esc(p.ad)+'</small><i class="'+(isOnline(p.ad)?'online':'')+'" aria-label="'+(isOnline(p.ad)?'Çevrimiçi':'Çevrimdışı')+'"></i></button>').join(''):'<span>Henüz takip ettiğin arkadaş yok.</span>';row.querySelectorAll('button').forEach(b=>b.onclick=async()=>{await window.meduAkisAc?.();window.maProfilAc?.(b.dataset.ggPerson);});}catch{row.innerHTML='<button type="button">Arkadaşlar yüklenemedi · Tekrar dene</button>';row.querySelector('button').onclick=()=>{friendsLoaded=false;loadFriends(host);};}}
  function install(force=false){if(document.hidden&&!force)return;const tab=document.getElementById('tab-aktiviteler');if(!force&&knownGrid&&!tab?.classList.contains('active'))return;const host=document.querySelector('#tab-aktiviteler .dc-focus-card'),grid=host?.querySelector('.az-grid2x2');if(!grid)return;
+  if(!grid.querySelector('#papiDortnalaPremium')){
+   const card=document.createElement('button');card.type='button';card.id='papiDortnalaPremium';card.className='az-gcard';
+   card.setAttribute('onclick','papiDortnalaAc()');card.innerHTML='<div class="az-gcard-title">Papi Dörtnala</div>';grid.prepend(card);
+  }
+  if(!grid.querySelector('#papiDortnalaFree')){
+   const card=document.createElement('button');card.type='button';card.id='papiDortnalaFree';card.className='az-gcard';
+   card.setAttribute('onclick','papiDortnalaAc()');card.innerHTML='<div class="az-gcard-title">Papi Dörtnala</div>';grid.prepend(card);
+  }
   if(!grid.querySelector('#papiSapanFirtinasiPremium')){
    const card=document.createElement('button');card.type='button';card.id='papiSapanFirtinasiPremium';card.className='az-gcard';
    card.setAttribute('onclick','papiSapanFirtinasiAc()');card.innerHTML='<div class="az-gcard-title">Papi Sapan Fırtınası</div>';grid.prepend(card);
@@ -402,7 +442,7 @@ const categoryIcons={solo:0,free:2,konu:3,break:4,premium:5};
    new MutationObserver(()=>{key='';install();}).observe(grid,{childList:true});
   }
   if(lastAccount!==account()){lastAccount=account();friendsLoaded=false;party='premium';skill='Tümü';key='';}
-  const nextKey=[!!window.dmTeacherPortalMode,party,skill,level(),!!window.dmProgression?.earlyAccess?.(),window.dmDalgaSorfu?.hasFreeQuota?.()!==false,window.dmSapanFirtinasi?.hasFreeQuota?.()!==false,window.dmSapanFirtinasi?.launchLabel?.()||'',host.querySelectorAll('.az-gcard').length,lastGame(),typeof yo!=='undefined'?yo?.altin:0,typeof genelEnerjiKalan==='number'?genelEnerjiKalan:typeof genelEnerjiKalan==='function'?genelEnerjiKalan():0].join('|');if(knownGrid!==grid||key!==nextKey){knownGrid=grid;key=nextKey;render(host,grid);}
+  const nextKey=[!!window.dmTeacherPortalMode,party,skill,level(),!!window.dmProgression?.earlyAccess?.(),window.dmDalgaSorfu?.hasFreeQuota?.()!==false,window.dmSapanFirtinasi?.hasFreeQuota?.()!==false,window.dmSapanFirtinasi?.launchLabel?.()||'',window.dmDortnala?.hasFreeQuota?.()!==false,window.dmDortnala?.launchLabel?.()||'',host.querySelectorAll('.az-gcard').length,lastGame(),typeof yo!=='undefined'?yo?.altin:0,typeof genelEnerjiKalan==='number'?genelEnerjiKalan:typeof genelEnerjiKalan==='function'?genelEnerjiKalan():0].join('|');if(knownGrid!==grid||key!==nextKey){knownGrid=grid;key=nextKey;render(host,grid);}
  }
  // Page tabs must never inherit the viewport lock used by a playing overlay.
  document.querySelectorAll('.dc-fullscreen-overlay[id^="tab-"]').forEach(el=>el.classList.remove('dm-solo-fullstage'));
