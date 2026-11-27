@@ -15,17 +15,17 @@
       <div class="load-logo">🦜</div>
       <h1>Papi Hazine Avı</h1>
       <div class="load-bar"><div id="load-bar-fill"></div></div>
-      <div id="load-status">3D Modeller Hazırlanıyor...</div>
+      <div id="load-status">3D Ada Dünyası Hazırlanıyor...</div>
     </div>
   </section>
 
   <!-- 2. CINEMATIC TITLE SCREEN -->
   <section class="overlay-screen" data-screen="title">
     <div class="title-wrap">
-      <div class="title-badge">✨ DİJİ-MEDU 3D İNGİLİZCE MACERA · PROTOTİP v1</div>
+      <div class="title-badge">✨ DİJİ-MEDU 3D MACERA · GENİŞLETİLMİŞ ADA v2</div>
       <h1 class="title-hero">Papi Hazine Avı</h1>
       <p class="title-sub">
-        İngilizce yönergeleri dinle, Papağan Adası'nı 3D keşfet, nesneleri bul ve gizli hazine sandıklarını aç!
+        İngilizce yönergeleri dinle; liman iskelesi, meyve bahçesi, nehir köprüsü, şelale ve sihirli antik geçidi 3D keşfet!
       </p>
       <div class="title-actions">
         <button id="btn-quick-play" class="btn-primary">▶ 1. Bölümü Hemen Oyna</button>
@@ -48,7 +48,9 @@
         </div>
         <div class="xp-track"><div id="explorer-xp-fill"></div></div>
       </div>
-      <div id="islands-grid"></div>
+      <div class="panel-scroll">
+        <div id="islands-grid"></div>
+      </div>
     </div>
   </section>
 
@@ -59,10 +61,12 @@
         <h2>🦜 Papağan Adası — Bölümler</h2>
         <button id="btn-back-islands" class="btn-ghost">← Adalar</button>
       </div>
-      <p style="margin:0 0 12px;font-size:13px;font-weight:700;color:#5a6a85">
-        İlk 3 bölüm yüksek kaliteli, tamamen oynanabilir olarak hazırlandı. Bölüm 4–10 sonraki aşamalarda açılacak.
+      <p style="margin:0 0 12px;font-size:12.5px;font-weight:700;color:#5a6a85;flex-shrink:0">
+        İlk 3 bölüm sabah, öğle ve gün batımı atmosferleriyle tamamen oynanabilir. Bölüm 4–10 sonraki aşamada açılacak.
       </p>
-      <div id="levels-grid"></div>
+      <div class="panel-scroll">
+        <div id="levels-grid"></div>
+      </div>
     </div>
   </section>
 
@@ -73,6 +77,10 @@
         <div class="hud-pills">
           <div class="hud-pill">⭐ <span id="hud-stars">0</span></div>
           <div class="hud-pill" id="hud-level-badge">Bölüm 1</div>
+          <div class="hud-pill compass-pill" title="Hedef Pusulası">
+            <span id="compass-arrow">⬆</span>
+            <span id="compass-dist">12m</span>
+          </div>
           <div class="hud-pill" id="fps-pill" hidden>60 FPS</div>
         </div>
         <div class="hud-pills">
@@ -85,8 +93,8 @@
       <div class="mission-banner">
         <button id="btn-hint" class="mission-btn" title="Türkçe İpucu">💡</button>
         <div class="mission-copy">
-          <div id="hud-mission-step">GÖREV 1 / 5</div>
-          <div id="hud-mission-text">Find the blue key.</div>
+          <div id="hud-mission-step">GÖREV 1 / 6</div>
+          <div id="hud-mission-text">Read the wooden signpost.</div>
         </div>
         <button id="btn-replay-audio" class="mission-btn" title="İngilizce Tekrar Dinle">🔊</button>
       </div>
@@ -116,7 +124,7 @@
   <!-- 6. TREASURE CHEST OPENING CINEMATIC OVERLAY -->
   <section class="overlay-screen dim" data-screen="chest">
     <div class="panel-card chest-card">
-      <div class="title-badge" style="margin-bottom:8px">✨ HAZİNE SANDIĞI AÇILDI!</div>
+      <div class="title-badge" style="margin:0 auto 8px">✨ HAZİNE SANDIĞI AÇILDI!</div>
       <div id="chest-item-icon" class="chest-glow-icon">🧭</div>
       <h2 id="chest-item-name" style="margin:4px 0 2px;font-size:24px;font-weight:900">Altın Pusula</h2>
       <div id="chest-item-en" style="font-size:13px;font-weight:800;color:#46329e;margin-bottom:8px">Golden Compass</div>
@@ -134,7 +142,7 @@
       <div class="result-stats">
         <div class="stat-box">
           <small>KEŞİF YILDIZI</small>
-          <strong id="res-stars">5 / 5</strong>
+          <strong id="res-stars">6 / 6</strong>
         </div>
         <div class="stat-box">
           <small>KAZANILAN XP</small>
@@ -153,7 +161,7 @@
 
   <!-- 8. PAUSE & SETTINGS SCREEN -->
   <section class="overlay-screen dim" data-screen="paused">
-    <div class="panel-card" style="width:min(380px,92vw)">
+    <div class="panel-card" style="width:min(390px,92vw)">
       <div class="panel-header">
         <h2>⚙️ Duraklat & Ayarlar</h2>
       </div>
@@ -168,9 +176,10 @@
       <label class="setting-row">
         <span>✨ Grafik Kalitesi</span>
         <select id="set-quality">
+          <option value="auto" selected>Otomatik (Cihaza Göre)</option>
           <option value="low">Düşük (Pil Dostu)</option>
           <option value="medium">Orta (Dengeli)</option>
-          <option value="high" selected>Yüksek (60 FPS)</option>
+          <option value="high">Yüksek (Maksimum Detay)</option>
         </select>
       </label>
       <label class="setting-row">
@@ -192,11 +201,12 @@
         <h2>🎒 Keşif Çantası</h2>
         <button id="btn-close-backpack" class="btn-ghost">✕</button>
       </div>
-      <div id="backpack-list"></div>
+      <div class="panel-scroll">
+        <div id="backpack-list"></div>
+      </div>
     </div>
   </div>
 
-  <!-- Optional Diji-Medu shared-voice integration when hosted inside Diji-Medu -->
   <script src="../shared-voice.js" defer></script>
   <script type="module" src="./src/game-main.mjs"></script>
 </body>

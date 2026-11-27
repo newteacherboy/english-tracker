@@ -1,9 +1,9 @@
 import * as THREE from '../../vendor/three-0.180.0/three.module.min.js';
 
 /**
- * Papi 3D Character Controller & 10-State Smooth Skeletal Animation Rig
- * States:
- *   idle | walk | run | jump | swim | flap | collect | openDoor | openChest | celebrate
+ * Papi 3D Character Controller & 10-State Smooth Skeletal Animation Rig (v2)
+ * Includes tactile ground-contact shadow blob (for crisp platforming on stepping stones)
+ * and animated water ripple rings when swimming/wading!
  */
 
 function damp(current, target, lambda, dt) {
@@ -22,7 +22,6 @@ export class PapiController {
     this.world = world;
     this.audio = audio;
 
-    // Locate articulated rig nodes from papi.glb
     this.bones = {
       torso: papiModel.getObjectByName('Torso'),
       head: papiModel.getObjectByName('Head'),
@@ -35,10 +34,27 @@ export class PapiController {
       carrySocket: papiModel.getObjectByName('CarrySocket')
     };
 
+    // Tactile Ground Contact Shadow + Water Swim Ripple Ring
+    const blobGeo = new THREE.CircleGeometry(0.46, 20);
+    blobGeo.rotateX(-Math.PI / 2);
+    const blobMat = new THREE.MeshBasicMaterial({
+      color: '#091a24', transparent: true, opacity: 0.34, depthWrite: false
+    });
+    this.shadowBlob = new THREE.Mesh(blobGeo, blobMat);
+    this.world.scene.add(this.shadowBlob);
+
+    const ripGeo = new THREE.RingGeometry(0.42, 0.56, 24);
+    ripGeo.rotateX(-Math.PI / 2);
+    const ripMat = new THREE.MeshBasicMaterial({
+      color: '#d9fbff', transparent: true, opacity: 0.0, side: THREE.DoubleSide, depthWrite: false
+    });
+    this.waterRipple = new THREE.Mesh(ripGeo, ripMat);
+    this.world.scene.add(this.waterRipple);
+
     // Physics & Movement State
-    this.position = new THREE.Vector3(0, 1.0, 12);
+    this.position = new THREE.Vector3(2.0, 1.0, 28.5);
     this.velocity = new THREE.Vector3();
-    this.facing = Math.PI; // Facing -Z (into the island)
+    this.facing = Math.PI;
     this.radius = 0.52;
     this.grounded = true;
     this.inWater = false;
@@ -47,18 +63,17 @@ export class PapiController {
 
     // Animation State Machine
     this.state = 'idle';
-    this.actionState = null;     // One-shot override: collect | openDoor | openChest | celebrate
+    this.actionState = null;
     this.actionTimer = 0;
     this.animTime = 0;
     this.stepAccum = 0;
     this.carriedMesh = null;
     this.carriedId = null;
 
-    // Smoothed pose values for seamless zero-snap transitions
     this.pose = {
       torsoY: 0.72, torsoPitch: 0, torsoRoll: 0,
       headPitch: 0, headYaw: 0, jawOpen: 0,
-      wingLZ: 0, wingRZ: 0, wingLY: 0, wingRY: 0,
+      wingLZ: -0.05, wingRZ: 0.05, wingLY: 0, wingRY: 0,
       legLX: 0, legRX: 0, tailX: 0
     };
 
@@ -67,12 +82,12 @@ export class PapiController {
   }
 
   setPosition(x, z, facing = Math.PI) {
-    const y = Math.max(this.world.getTerrainHeight(x, z), this.world.WATER_LEVEL - 0.15);
+    const y = Math.max(this.world.getWalkableHeight(x, z), this.world.WATER_LEVEL - 0.16);
     this.position.set(x, y, z);
     this.velocity.set(0, 0, 0);
     this.facing = facing;
     this.grounded = true;
-    this.inWater = y <= this.world.WATER_LEVEL + 0.05;
+    this.inWater = (this.world.getWalkableHeight(x, z) < this.world.WATER_LEVEL - 0.14);
     this.actionState = null;
     this.actionTimer = 0;
     this.root.position.copy(this.position);
@@ -87,24 +102,23 @@ export class PapiController {
 
   jumpOrFlap() {
     if (this.inWater) {
-      this.velocity.y = 6.2;
+      this.velocity.y = 6.8;
       this.inWater = false;
       this.grounded = false;
       this.flapping = true;
-      this.flapTimer = 0.45;
+      this.flapTimer = 0.5;
       this.audio?.playFlap();
       return;
     }
     if (this.grounded) {
-      this.velocity.y = 7.8;
+      this.velocity.y = 8.2;
       this.grounded = false;
       this.flapping = false;
       this.audio?.playJump();
     } else if (!this.flapping) {
-      // Mid-air wing flap boost!
-      this.velocity.y = Math.max(this.velocity.y, 4.6);
+      this.velocity.y = Math.max(this.velocity.y, 5.0);
       this.flapping = true;
-      this.flapTimer = 0.55;
+      this.flapTimer = 0.6;
       this.audio?.playFlap();
     }
   }
@@ -115,7 +129,7 @@ export class PapiController {
     const clone = mesh.clone(true);
     clone.position.set(0, 0, 0);
     clone.rotation.set(0, 0, 0);
-    clone.scale.setScalar(0.58);
+    clone.scale.setScalar(0.56);
     this.bones.carrySocket.add(clone);
     this.carriedMesh = clone;
     this.carriedId = itemId;
@@ -142,12 +156,10 @@ export class PapiController {
       if (this.flapTimer <= 0) this.flapping = false;
     }
 
-    // ─── Movement & Physics ────────────────────────────────────────────────
     const mag = isLocked ? 0 : Math.min(1, Math.hypot(inputVec.x, inputVec.y));
-    const maxSpeed = this.inWater ? 3.8 : 6.4;
+    const maxSpeed = this.inWater ? 4.4 : 7.2;
 
     if (mag > 0.05) {
-      // Camera-relative world movement direction
       const sinY = Math.sin(cameraYaw);
       const cosY = Math.cos(cameraYaw);
       const forwardX = -sinY, forwardZ = -cosY;
@@ -170,28 +182,23 @@ export class PapiController {
       this.velocity.z = damp(this.velocity.z, 0, 12, clampedDt);
     }
 
-    // Gravity (gentler while flapping wings!)
-    const gravity = this.flapping ? -9.5 : (this.inWater ? -4.0 : -20.5);
+    const gravity = this.flapping ? -9.2 : (this.inWater ? -4.0 : -21.0);
     this.velocity.y += gravity * clampedDt;
 
-    // Integrate candidate position
     let nextX = this.position.x + this.velocity.x * clampedDt;
     let nextZ = this.position.z + this.velocity.z * clampedDt;
 
-    // Keep within island + shallow lagoon playable boundary
+    const maxPlayRadius = this.world.PLAY_RADIUS || 37.5;
     const distFromCenter = Math.hypot(nextX, nextZ);
-    const maxPlayRadius = 29.5;
     if (distFromCenter > maxPlayRadius) {
       nextX = (nextX / distFromCenter) * maxPlayRadius;
       nextZ = (nextZ / distFromCenter) * maxPlayRadius;
     }
 
-    // Resolve circle/box obstacle collisions smoothly (slide along walls!)
     const resolved = this.world.resolveCollisions(nextX, nextZ, this.radius);
     this.position.x = resolved.x;
     this.position.z = resolved.z;
 
-    // Ground & Water height sampling
     const groundY = this.world.getWalkableHeight(this.position.x, this.position.z);
     const swimSurfaceY = this.world.WATER_LEVEL - 0.18;
     const floorY = Math.max(groundY, swimSurfaceY);
@@ -208,7 +215,22 @@ export class PapiController {
 
     this.inWater = (groundY < this.world.WATER_LEVEL - 0.16) && (this.position.y <= swimSurfaceY + 0.12);
 
-    // ─── Determine Current Animation State ─────────────────────────────────
+    // Update tactile ground shadow & swim ripple ring
+    const airHeight = Math.max(0, this.position.y - floorY);
+    this.shadowBlob.position.set(this.position.x, Math.max(groundY, this.world.WATER_LEVEL) + 0.03, this.position.z);
+    const shadowScale = Math.max(0.45, 1.0 - airHeight * 0.14);
+    this.shadowBlob.scale.setScalar(shadowScale);
+    this.shadowBlob.material.opacity = this.inWater ? 0.12 : 0.34 * shadowScale;
+
+    if (this.inWater) {
+      const pulse = (this.animTime * 1.4) % 1;
+      this.waterRipple.position.set(this.position.x, this.world.WATER_LEVEL + 0.04, this.position.z);
+      this.waterRipple.scale.setScalar(0.85 + pulse * 1.35);
+      this.waterRipple.material.opacity = (1 - pulse) * 0.65;
+    } else {
+      this.waterRipple.material.opacity = 0;
+    }
+
     const horizSpeed = Math.hypot(this.velocity.x, this.velocity.z);
     if (this.actionState) {
       this.state = this.actionState;
@@ -216,7 +238,7 @@ export class PapiController {
       this.state = 'swim';
     } else if (!this.grounded) {
       this.state = this.flapping ? 'flap' : 'jump';
-    } else if (horizSpeed > 4.2) {
+    } else if (horizSpeed > 4.4) {
       this.state = 'run';
     } else if (horizSpeed > 0.35) {
       this.state = 'walk';
@@ -224,12 +246,11 @@ export class PapiController {
       this.state = 'idle';
     }
 
-    // Footstep & splash audio sync
     if ((this.state === 'walk' || this.state === 'run') && this.grounded) {
       this.stepAccum += horizSpeed * clampedDt;
-      if (this.stepAccum > 1.85) {
+      if (this.stepAccum > 1.95) {
         this.stepAccum = 0;
-        this.audio?.playFootstep(groundY < 0.7 ? 'sand' : 'grass');
+        this.audio?.playFootstep(groundY < 0.85 ? 'sand' : 'grass');
       }
     } else if (this.state === 'swim' && horizSpeed > 0.6) {
       this.stepAccum += horizSpeed * clampedDt;
@@ -239,20 +260,19 @@ export class PapiController {
       }
     }
 
-    // ─── Compute Target Skeletal Pose for All 10 Animations ────────────────
     const t = this.animTime;
     let torsoY = 0.72, torsoPitch = 0, torsoRoll = 0;
     let headPitch = 0, headYaw = 0, jawOpen = 0;
-    let wingLZ = -0.14, wingRZ = 0.14, wingLY = 0, wingRY = 0;
+    let wingLZ = -0.06, wingRZ = 0.06, wingLY = 0, wingRY = 0;
     let legLX = 0, legRX = 0, tailX = 0;
 
     switch (this.state) {
       case 'idle': {
-        torsoY = 0.72 + Math.sin(t * 2.4) * 0.028;
+        torsoY = 0.72 + Math.sin(t * 2.4) * 0.026;
         headYaw = Math.sin(t * 0.85) * 0.22;
         headPitch = Math.sin(t * 1.3) * 0.06;
-        wingLZ = -0.14 - Math.sin(t * 2.4) * 0.04;
-        wingRZ = 0.14 + Math.sin(t * 2.4) * 0.04;
+        wingLZ = -0.06 - Math.sin(t * 2.4) * 0.035;
+        wingRZ = 0.06 + Math.sin(t * 2.4) * 0.035;
         tailX = Math.sin(t * 2.4) * 0.08;
         break;
       }
@@ -260,11 +280,11 @@ export class PapiController {
         const w = t * 9.5;
         torsoY = 0.72 + Math.abs(Math.sin(w)) * 0.075;
         torsoPitch = 0.08;
-        torsoRoll = Math.sin(w) * 0.09;
+        torsoRoll = Math.sin(w) * 0.085;
         legLX = Math.sin(w) * 0.58;
         legRX = -Math.sin(w) * 0.58;
-        wingLZ = -0.22 + Math.sin(w) * 0.18;
-        wingRZ = 0.22 + Math.sin(w) * 0.18;
+        wingLZ = -0.14 + Math.sin(w) * 0.14;
+        wingRZ = 0.14 + Math.sin(w) * 0.14;
         headPitch = -0.05 + Math.abs(Math.sin(w)) * 0.04;
         tailX = Math.sin(w) * 0.14;
         break;
@@ -272,12 +292,12 @@ export class PapiController {
       case 'run': {
         const r = t * 14.5;
         torsoY = 0.70 + Math.abs(Math.sin(r)) * 0.11;
-        torsoPitch = 0.22;
-        torsoRoll = Math.sin(r) * 0.12;
+        torsoPitch = 0.21;
+        torsoRoll = Math.sin(r) * 0.11;
         legLX = Math.sin(r) * 0.85;
         legRX = -Math.sin(r) * 0.85;
-        wingLZ = -0.58 + Math.sin(r) * 0.28;
-        wingRZ = 0.58 - Math.sin(r) * 0.28;
+        wingLZ = -0.46 + Math.sin(r) * 0.25;
+        wingRZ = 0.46 - Math.sin(r) * 0.25;
         headPitch = -0.14;
         tailX = 0.18 + Math.sin(r) * 0.16;
         break;
@@ -296,8 +316,8 @@ export class PapiController {
         const f = t * 22.0;
         torsoY = 0.78 + Math.sin(f) * 0.06;
         torsoPitch = 0.12;
-        wingLZ = -0.75 + Math.sin(f) * 0.72;
-        wingRZ = 0.75 - Math.sin(f) * 0.72;
+        wingLZ = -0.82 + Math.sin(f) * 0.72;
+        wingRZ = 0.82 - Math.sin(f) * 0.72;
         legLX = 0.5;
         legRX = 0.5;
         jawOpen = 0.18;
@@ -307,14 +327,14 @@ export class PapiController {
       case 'swim': {
         const s = t * 7.5;
         torsoY = 0.56 + Math.sin(s * 0.6) * 0.05;
-        torsoPitch = 0.42;
-        wingLZ = -0.65 + Math.sin(s) * 0.35;
-        wingRZ = 0.65 - Math.sin(s) * 0.35;
+        torsoPitch = 0.40;
+        wingLZ = -0.62 + Math.sin(s) * 0.35;
+        wingRZ = 0.62 - Math.sin(s) * 0.35;
         wingLY = Math.cos(s) * 0.28;
         wingRY = -Math.cos(s) * 0.28;
         legLX = Math.sin(s * 1.4) * 0.65;
         legRX = -Math.sin(s * 1.4) * 0.65;
-        headPitch = -0.35;
+        headPitch = -0.34;
         tailX = 0.35;
         break;
       }
@@ -322,8 +342,8 @@ export class PapiController {
         const c = Math.sin(Math.min(1, t * 2.2) * Math.PI);
         torsoY = 0.72 + c * 0.18;
         torsoPitch = c * 0.28;
-        wingLZ = -0.35 - c * 0.75;
-        wingRZ = 0.35 + c * 0.75;
+        wingLZ = -0.28 - c * 0.75;
+        wingRZ = 0.28 + c * 0.75;
         jawOpen = c * 0.35;
         headPitch = -c * 0.15;
         break;
@@ -331,7 +351,7 @@ export class PapiController {
       case 'openDoor': {
         const d = Math.sin(Math.min(1, t * 1.8) * Math.PI);
         torsoPitch = d * 0.18;
-        wingRZ = 0.45 + d * 0.65;
+        wingRZ = 0.38 + d * 0.65;
         wingRY = d * 0.55;
         headYaw = -d * 0.2;
         break;
@@ -340,8 +360,8 @@ export class PapiController {
         const o = Math.sin(Math.min(1, t * 1.4) * Math.PI);
         torsoY = 0.72 + o * 0.14;
         torsoPitch = 0.25 - o * 0.35;
-        wingLZ = -0.4 - o * 0.9;
-        wingRZ = 0.4 + o * 0.9;
+        wingLZ = -0.35 - o * 0.9;
+        wingRZ = 0.35 + o * 0.9;
         jawOpen = o * 0.48;
         break;
       }
@@ -359,7 +379,6 @@ export class PapiController {
       }
     }
 
-    // Smooth cross-fade damping (zero harsh snaps!)
     const blend = 14;
     this.pose.torsoY     = damp(this.pose.torsoY, torsoY, blend, clampedDt);
     this.pose.torsoPitch = damp(this.pose.torsoPitch, torsoPitch, blend, clampedDt);
@@ -375,7 +394,6 @@ export class PapiController {
     this.pose.legRX      = damp(this.pose.legRX, legRX, blend, clampedDt);
     this.pose.tailX      = damp(this.pose.tailX, tailX, blend, clampedDt);
 
-    // Apply pose to articulated bones
     if (this.bones.torso) {
       this.bones.torso.position.y = this.pose.torsoY;
       this.bones.torso.rotation.x = this.pose.torsoPitch;
@@ -385,9 +403,7 @@ export class PapiController {
       this.bones.head.rotation.x = this.pose.headPitch;
       this.bones.head.rotation.y = this.pose.headYaw;
     }
-    if (this.bones.jaw) {
-      this.bones.jaw.rotation.x = this.pose.jawOpen;
-    }
+    if (this.bones.jaw) this.bones.jaw.rotation.x = this.pose.jawOpen;
     if (this.bones.wingL) {
       this.bones.wingL.rotation.z = this.pose.wingLZ;
       this.bones.wingL.rotation.y = this.pose.wingLY;

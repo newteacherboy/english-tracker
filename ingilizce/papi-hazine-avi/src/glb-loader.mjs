@@ -2,12 +2,35 @@ import * as THREE from '../../vendor/three-0.180.0/three.module.min.js';
 import { getPBRMaps } from './pbr-textures.mjs';
 
 /**
- * Lightweight Standards-Compliant GLB 2.0 Loader for Three.js r180
- * Zero CDN dependencies — parses real .glb binary files with PBR materials,
- * node hierarchy, and caches parsed templates for fast cloning & GPU instancing.
+ * Standards-Compliant GLB 2.0 Loader for Three.js r180 (v2)
+ * - Supports PBR roughness/metalness, translucent BLEND materials, and GPU wind-sway vertex shaders!
  */
 
 const modelCache = new Map();
+export const globalWindTime = { value: 0 };
+
+function applyWindShader(mat, strength) {
+  mat.onBeforeCompile = (shader) => {
+    shader.uniforms.uWindTime = globalWindTime;
+    shader.uniforms.uWindStrength = { value: strength };
+    shader.vertexShader = `uniform float uWindTime;\nuniform float uWindStrength;\n` + shader.vertexShader;
+    shader.vertexShader = shader.vertexShader.replace(
+      '#include <begin_vertex>',
+      `
+      #include <begin_vertex>
+      vec4 wPos = modelMatrix * vec4(transformed, 1.0);
+      #ifdef USE_INSTANCING
+        wPos = modelMatrix * instanceMatrix * vec4(transformed, 1.0);
+      #endif
+      float heightFactor = clamp(transformed.y * 0.65 + 0.15, 0.0, 1.6);
+      float gust = sin(uWindTime * 2.1 + wPos.x * 0.45 + wPos.z * 0.35) * uWindStrength * heightFactor;
+      transformed.x += gust;
+      transformed.z += gust * 0.55;
+      `
+    );
+  };
+  mat.customProgramCacheKey = () => `wind_${strength}`;
+}
 
 function readAccessor(gltf, binBuffer, accIndex) {
   const acc = gltf.accessors[accIndex];
@@ -40,10 +63,10 @@ function parseGLB(arrayBuffer) {
     const chunkLen = view.getUint32(offset, true);
     const chunkType = view.getUint32(offset + 4, true);
     const chunkStart = offset + 8;
-    if (chunkType === 0x4E4F534A) { // JSON
+    if (chunkType === 0x4E4F534A) {
       const text = new TextDecoder('utf-8').decode(new Uint8Array(arrayBuffer, chunkStart, chunkLen));
       gltf = JSON.parse(text);
-    } else if (chunkType === 0x004E4942) { // BIN
+    } else if (chunkType === 0x004E4942) {
       binBuffer = arrayBuffer.slice(chunkStart, chunkStart + chunkLen);
     }
     offset = chunkStart + chunkLen;
@@ -51,16 +74,19 @@ function parseGLB(arrayBuffer) {
 
   if (!gltf || !binBuffer) throw new Error('Incomplete GLB chunks');
 
-  // Build Three.js PBR Materials
   const materials = (gltf.materials || []).map((m) => {
     const pbr = m.pbrMetallicRoughness || {};
     const c = pbr.baseColorFactor || [1, 1, 1, 1];
+    const isBlend = m.alphaMode === 'BLEND' || (c[3] !== undefined && c[3] < 1);
     const mat = new THREE.MeshStandardMaterial({
       name: m.name || 'Mat',
       color: new THREE.Color().setRGB(c[0], c[1], c[2], THREE.LinearSRGBColorSpace),
       roughness: pbr.roughnessFactor ?? 0.65,
       metalness: pbr.metallicFactor ?? 0.0,
-      side: m.doubleSided ? THREE.DoubleSide : THREE.FrontSide
+      transparent: isBlend,
+      opacity: c[3] ?? 1.0,
+      depthWrite: !isBlend,
+      side: (m.doubleSided || m.extras?.doubleSided) ? THREE.DoubleSide : THREE.FrontSide
     });
     if (m.emissiveFactor) {
       mat.emissive = new THREE.Color().setRGB(
@@ -76,10 +102,12 @@ function parseGLB(arrayBuffer) {
         mat.bumpScale = maps.bumpScale;
       }
     }
+    if (m.extras?.windSway > 0) {
+      applyWindShader(mat, m.extras.windSway);
+    }
     return mat;
   });
 
-  // Build Three.js Geometries per Mesh
   const meshDefs = (gltf.meshes || []).map((meshDef) => {
     const prims = meshDef.primitives.map((prim) => {
       const geo = new THREE.BufferGeometry();
@@ -105,7 +133,6 @@ function parseGLB(arrayBuffer) {
     return { name: meshDef.name || 'Mesh', prims };
   });
 
-  // Construct Scene Graph
   function buildNode(nodeIndex) {
     const def = gltf.nodes[nodeIndex];
     const obj = new THREE.Group();
@@ -118,7 +145,7 @@ function parseGLB(arrayBuffer) {
       const mDef = meshDefs[def.mesh];
       for (const prim of mDef.prims) {
         const mesh = new THREE.Mesh(prim.geo, prim.material);
-        mesh.castShadow = true;
+        mesh.castShadow = !prim.material.transparent;
         mesh.receiveShadow = true;
         obj.add(mesh);
       }
@@ -150,6 +177,10 @@ export async function loadGLB(url) {
     modelCache.set(url, parsed);
   }
   return modelCache.get(url).clone(true);
+}
+
+export function getCachedTemplate(url) {
+  return modelCache.get(url) || null;
 }
 
 export async function preloadGLBs(urls, onProgress = null) {

@@ -16,7 +16,7 @@ const DEFAULT_STATE = {
   settings: {
     music: true,
     sfx: true,
-    quality: 'high',   // 'low' | 'medium' | 'high'
+    quality: 'auto',   // 'auto' | 'low' | 'medium' | 'high'
     showFps: false
   }
 };

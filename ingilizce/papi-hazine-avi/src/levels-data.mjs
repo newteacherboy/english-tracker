@@ -1,7 +1,5 @@
 /**
- * Papi Hazine Avı — 6-Island 100-Level Roadmap & Parrot Island Levels 1–3
- * Deterministic rewards (no RNG!), interactive English comprehension tasks,
- * and helpful educational feedback on distractors.
+ * Papi Hazine Avı — Expanded 6-Island Roadmap & Functional Multi-Region Levels 1–3 (v2)
  */
 
 export const ISLANDS = [
@@ -10,7 +8,7 @@ export const ISLANDS = [
     index: 1,
     name: 'Papağan Adası',
     enName: 'Parrot Island',
-    subtitle: 'Altın sahiller, şelale ve ilk keşifler',
+    subtitle: 'Liman iskelesi, köy bahçesi, nehir köprüsü, şelale ve antik avlu',
     levelCount: 10,
     playableCount: 3,
     unlocked: true,
@@ -23,7 +21,7 @@ export const ISLANDS = [
     index: 2,
     name: 'Zümrüt Ormanı',
     enName: 'Emerald Forest',
-    subtitle: 'Dev ağaçlar, asma köprüler ve doğa kelimeleri',
+    subtitle: 'Dev yağmur ormanı ağaçları, asma köprüler ve doğa kelimeleri',
     levelCount: 15,
     playableCount: 0,
     unlocked: false,
@@ -36,7 +34,7 @@ export const ISLANDS = [
     index: 3,
     name: 'Mercan Körfezi',
     enName: 'Coral Bay',
-    subtitle: 'Turkuaz lagün, deniz canlıları ve yüzme görevleri',
+    subtitle: 'Turkuaz mercan resifleri, deniz canlıları ve yüzme görevleri',
     levelCount: 15,
     playableCount: 0,
     unlocked: false,
@@ -49,7 +47,7 @@ export const ISLANDS = [
     index: 4,
     name: 'Kayıp Şehir',
     enName: 'Lost City',
-    subtitle: 'Taş sokaklar, gizli geçitler ve yön tarifleri',
+    subtitle: 'Antik taş meydanlar, gizli geçitler ve yön tarifleri',
     levelCount: 20,
     playableCount: 0,
     unlocked: false,
@@ -62,7 +60,7 @@ export const ISLANDS = [
     index: 5,
     name: 'Kristal Dağları',
     enName: 'Crystal Mountains',
-    subtitle: 'Işıltılı mağaralar, yankılı bulmacalar',
+    subtitle: 'Işıltılı mağaralar, yüksek geçitler ve bulmacalar',
     levelCount: 20,
     playableCount: 0,
     unlocked: false,
@@ -75,7 +73,7 @@ export const ISLANDS = [
     index: 6,
     name: 'Antik Tapınak',
     enName: 'Ancient Temple',
-    subtitle: 'Büyük hazine ve usta kaşif sınavı',
+    subtitle: 'Büyük hazine tapınağı ve usta kaşif sınavı',
     levelCount: 20,
     playableCount: 0,
     unlocked: false,
@@ -85,9 +83,7 @@ export const ISLANDS = [
   }
 ];
 
-/** 50-Level Independent Papi Explorer Level Progression */
 export function computeExplorerLevel(totalXp) {
-  // Smooth curve: Level 1 at 0 XP up to Level 50
   let level = 1;
   let needed = 20;
   let rem = Math.max(0, totalXp);
@@ -99,20 +95,17 @@ export function computeExplorerLevel(totalXp) {
   return { level, currentXp: rem, nextLevelXp: needed, totalXp };
 }
 
-/**
- * Parrot Island — First 3 Complete, Handcrafted, Playable Levels
- * Every prop uses a real GLB model from ./assets/models/
- */
 export const PARROT_ISLAND_LEVELS = [
   {
     id: 'island1_level1',
     islandId: 'papagan-adasi',
     number: 1,
-    title: 'Sahil Keşfi',
-    enTitle: 'Sunny Beach Discovery',
-    unitTag: 'Renkler, Nesneler & Doğa (A1)',
-    spawn: { x: 0, z: 11.5, facing: Math.PI },
-    chestPos: { x: 2.5, z: -10.5 },
+    title: 'Liman ve Köy Keşfi',
+    enTitle: 'Sunny Harbor & Village',
+    mood: 'morning',
+    unitTag: 'Renkler, Tabela & Doğa (A1)',
+    spawn: { x: 2.0, z: 29.5, facing: Math.PI }, // Starts right on the Wooden Harbor Pier!
+    chestPos: { x: 6.5, z: -13.5 },
     rewardCollectible: {
       id: 'golden_compass',
       name: 'Altın Pusula',
@@ -121,21 +114,29 @@ export const PARROT_ISLAND_LEVELS = [
       description: 'Papağan Adası 1. Bölüm hazinesi — yönünü asla şaşırma!'
     },
     props: [
-      // Blue Key (target) + Red & Yellow Keys (educational distractors!)
-      { id: 'blue_key',   model: 'key', color: '#2196ff', emissive: '#0c4fa8', x: -3.2, z: 5.5,  label: 'Blue Key',   tr: 'mavi anahtar' },
-      { id: 'red_key',    model: 'key', color: '#ff3b3b', emissive: '#991212', x: 3.8,  z: 7.2,  label: 'Red Key',    tr: 'kırmızı anahtar' },
-      { id: 'yellow_key', model: 'key', color: '#ffd426', emissive: '#9c7800', x: -1.5, z: -0.5, label: 'Yellow Key', tr: 'sarı anahtar' },
-      // Three Tropical Flowers
-      { id: 'flower_1',   model: 'flower', color: '#ff5ea0', x: 2.8,  z: 4.0,  label: 'Pink Flower',   tr: 'pembe çiçek' },
-      { id: 'flower_2',   model: 'flower', color: '#ff9633', x: -2.2, z: -3.8, label: 'Orange Flower', tr: 'turuncu çiçek' },
-      { id: 'flower_3',   model: 'flower', color: '#a866ff', x: 6.0,  z: 5.6,  label: 'Purple Flower', tr: 'mor çiçek' }
+      { id: 'blue_key',   model: 'key', color: '#2196ff', emissive: '#0c4fa8', x: -3.5, z: 8.5,  label: 'Blue Key',   tr: 'mavi anahtar' },
+      { id: 'red_key',    model: 'key', color: '#ff3b3b', emissive: '#991212', x: 6.2,  z: 12.2, label: 'Red Key',    tr: 'kırmızı anahtar' },
+      { id: 'yellow_key', model: 'key', color: '#ffd426', emissive: '#9c7800', x: -1.8, z: -1.5, label: 'Yellow Key', tr: 'sarı anahtar' },
+      { id: 'flower_1',   model: 'flower', color: '#ff5ea0', x: 5.5,  z: 6.2,  label: 'Pink Flower',   tr: 'pembe çiçek' },
+      { id: 'flower_2',   model: 'flower', color: '#ff9633', x: -2.8, z: -5.2, label: 'Orange Flower', tr: 'turuncu çiçek' },
+      { id: 'flower_3',   model: 'flower', color: '#a866ff', x: 11.2, z: 4.5,  label: 'Purple Flower', tr: 'mor çiçek' }
     ],
     missions: [
+      {
+        id: 'm1_signpost',
+        type: 'interact_landmark',
+        landmark: 'signpost',
+        prompt: 'Read the wooden signpost.',
+        hintTr: 'İskeleden sahil patikası boyunca ilerle ve yol tabelasını (wooden signpost) incele.',
+        pos: { x: 1.6, z: 5.2 },
+        radius: 2.8,
+        actionAnim: 'collect'
+      },
       {
         id: 'm1_key',
         type: 'collect',
         prompt: 'Find the blue key.',
-        hintTr: 'Mavi anahtarı (blue key) bul ve al.',
+        hintTr: 'Mavi anahtarı (blue key) bul ve al (kırmızı ve sarı anahtarlara dikkat!).',
         targetIds: ['blue_key'],
         distractorIds: ['red_key', 'yellow_key'],
         carryOnCollect: true,
@@ -146,9 +147,9 @@ export const PARROT_ISLAND_LEVELS = [
         type: 'interact_landmark',
         landmark: 'door',
         prompt: 'Open the wooden door.',
-        hintTr: 'Kulübenin ahşap kapısına (wooden door) git ve aç.',
-        pos: { x: 7.2, z: -1.3 },
-        radius: 2.5,
+        hintTr: 'Doğudaki kulübenin ahşap kapısına (wooden door) git ve aç.',
+        pos: { x: 11.2, z: -0.6 },
+        radius: 3.0,
         actionAnim: 'openDoor'
       },
       {
@@ -156,7 +157,7 @@ export const PARROT_ISLAND_LEVELS = [
         type: 'collect_count',
         count: 3,
         prompt: 'Collect three flowers.',
-        hintTr: 'Adadaki üç çiçeği (three flowers) topla.',
+        hintTr: 'Çayırdaki üç çiçeği (three flowers) topla.',
         targetIds: ['flower_1', 'flower_2', 'flower_3'],
         actionAnim: 'collect'
       },
@@ -164,10 +165,10 @@ export const PARROT_ISLAND_LEVELS = [
         id: 'm1_rabbit',
         type: 'interact_landmark',
         landmark: 'rabbit',
-        prompt: 'Find the rabbit.',
-        hintTr: 'Zıplayan beyaz tavşanı (rabbit) bul ve yanına git.',
-        pos: { x: 4.5, z: -9.2 },
-        radius: 2.4,
+        prompt: 'Find the white rabbit.',
+        hintTr: 'Zıplayan beyaz tavşanı (white rabbit) bul ve yanına git.',
+        pos: { x: 8.8, z: -11.5 },
+        radius: 2.8,
         actionAnim: 'collect'
       },
       {
@@ -175,8 +176,8 @@ export const PARROT_ISLAND_LEVELS = [
         type: 'open_chest',
         prompt: 'Open the treasure chest.',
         hintTr: 'Hazine sandığını (treasure chest) aç!',
-        pos: { x: 2.5, z: -10.5 },
-        radius: 2.5,
+        pos: { x: 6.5, z: -13.5 },
+        radius: 2.8,
         actionAnim: 'openChest'
       }
     ]
@@ -186,45 +187,44 @@ export const PARROT_ISLAND_LEVELS = [
     id: 'island1_level2',
     islandId: 'papagan-adasi',
     number: 2,
-    title: 'Şelale Köprüsü',
-    enTitle: 'Waterfall Bridge Trail',
-    unitTag: 'Yönler, Meyveler & Günlük Nesneler (A1)',
-    spawn: { x: 1.5, z: 9.5, facing: Math.PI },
-    chestPos: { x: -12.8, z: -3.2 },
+    title: 'Nehir Köprüsü ve Bahçe',
+    enTitle: 'River Bridge & Orchard',
+    mood: 'noon',
+    unitTag: 'Yönler, Meyveler & Eşyalar (A1)',
+    spawn: { x: 2.0, z: 14.5, facing: Math.PI },
+    chestPos: { x: -17.5, z: -6.5 },
     rewardCollectible: {
       id: 'emerald_feather',
       name: 'Zümrüt Tüy',
       enName: 'Emerald Feather',
       icon: '🪶',
-      description: 'Şelale Köprüsü kaşif ödülü — rüzgarla süzül!'
+      description: 'Nehir Köprüsü kaşif ödülü — rüzgarla süzül!'
     },
     props: [
-      // Red apple (target) + green apple (distractor!)
-      { id: 'red_apple',   model: 'apple', color: '#e82525', x: -12.4, z: 4.8,  label: 'Red Apple',   tr: 'kırmızı elma' },
-      { id: 'green_apple', model: 'apple', color: '#68cf34', x: -11.5, z: -0.6, label: 'Green Apple', tr: 'yeşil elma' },
-      // English Book
-      { id: 'blue_book',   model: 'book',  color: '#256ae0', x: -1.8,  z: 3.5,  label: 'Blue Book',   tr: 'mavi kitap' },
-      // Three Seashells along the shallow turquoise shoreline
-      { id: 'shell_1',     model: 'seashell', color: '#ffc9a6', x: -10.2, z: 9.8, label: 'Seashell', tr: 'deniz kabuğu' },
-      { id: 'shell_2',     model: 'seashell', color: '#ffd9b8', x: -4.2,  z: 14.5, label: 'Seashell', tr: 'deniz kabuğu' },
-      { id: 'shell_3',     model: 'seashell', color: '#ffbfa0', x: 5.2,   z: 13.8, label: 'Seashell', tr: 'deniz kabuğu' }
+      { id: 'red_apple',    model: 'apple', color: '#e82525', x: -17.8, z: 6.2,  label: 'Red Apple',    tr: 'kırmızı elma' },
+      { id: 'green_apple',  model: 'apple', color: '#68cf34', x: -16.5, z: -1.5, label: 'Green Apple',  tr: 'yeşil elma' },
+      { id: 'yellow_apple', model: 'apple', color: '#f5cb24', x: 16.5,  z: 3.5,  label: 'Yellow Apple', tr: 'sarı elma' },
+      { id: 'blue_book',    model: 'book',  color: '#256ae0', x: 0.5,   z: 18.2, label: 'Blue Book',    tr: 'mavi kitap' },
+      { id: 'shell_1',      model: 'seashell', color: '#ffc9a6', x: -12.5, z: 18.5, label: 'Seashell', tr: 'deniz kabuğu' },
+      { id: 'shell_2',      model: 'seashell', color: '#ffd9b8', x: -3.5,  z: 24.5, label: 'Seashell', tr: 'deniz kabuğu' },
+      { id: 'shell_3',      model: 'seashell', color: '#ffbfa0', x: 8.8,   z: 22.8, label: 'Seashell', tr: 'deniz kabuğu' }
     ],
     missions: [
       {
         id: 'm2_bridge',
         type: 'reach_zone',
         prompt: 'Turn left at the bridge.',
-        hintTr: 'Ahşap köprüden geç ve sola (left) dönerek patikaya ilerle.',
-        pos: { x: -12.2, z: 3.2 },
-        radius: 2.8
+        hintTr: 'Batıdaki kemerli ahşap köprüden geç ve sola (left) dön.',
+        pos: { x: -16.8, z: 4.5 },
+        radius: 3.2
       },
       {
         id: 'm2_apple',
         type: 'collect',
         prompt: 'Find the red apple.',
-        hintTr: 'Kırmızı elmayı (red apple) bul ve al.',
+        hintTr: 'Meyve ağacının altındaki kırmızı elmayı (red apple) bul.',
         targetIds: ['red_apple'],
-        distractorIds: ['green_apple'],
+        distractorIds: ['green_apple', 'yellow_apple'],
         carryOnCollect: true,
         actionAnim: 'collect'
       },
@@ -233,16 +233,16 @@ export const PARROT_ISLAND_LEVELS = [
         type: 'deliver_landmark',
         landmark: 'cottage',
         prompt: 'Bring the apple to the house.',
-        hintTr: 'Elmayı kulübeye (house) götür.',
-        pos: { x: 7.2, z: -1.3 },
-        radius: 2.8,
+        hintTr: 'Elmayı doğudaki kulübeye (house) götür.',
+        pos: { x: 11.2, z: -0.6 },
+        radius: 3.2,
         actionAnim: 'openDoor'
       },
       {
         id: 'm2_book_take',
         type: 'collect',
-        prompt: 'Pick up the book.',
-        hintTr: 'Mavi kitabı (book) yerden al.',
+        prompt: 'Pick up the blue book.',
+        hintTr: 'Sahil yakınındaki mavi kitabı (blue book) al.',
         targetIds: ['blue_book'],
         carryOnCollect: true,
         actionAnim: 'collect'
@@ -252,9 +252,10 @@ export const PARROT_ISLAND_LEVELS = [
         type: 'deliver_landmark',
         landmark: 'table',
         prompt: 'Put the book on the table.',
-        hintTr: 'Kitabı ahşap masanın (table) üzerine koy.',
-        pos: { x: 4.2, z: 2.2 },
-        radius: 2.4,
+        hintTr: 'Kitabı piknik masasının (table) üzerine bırak.',
+        pos: { x: 7.8, z: 3.6 },
+        radius: 2.8,
+        placePropOnTable: true,
         actionAnim: 'collect'
       },
       {
@@ -262,7 +263,7 @@ export const PARROT_ISLAND_LEVELS = [
         type: 'collect_count',
         count: 3,
         prompt: 'Collect three seashells.',
-        hintTr: 'Sahil boyunca üç deniz kabuğu (three seashells) topla.',
+        hintTr: 'Güney kumsalı boyunca üç deniz kabuğu (three seashells) topla.',
         targetIds: ['shell_1', 'shell_2', 'shell_3'],
         actionAnim: 'collect'
       },
@@ -270,9 +271,9 @@ export const PARROT_ISLAND_LEVELS = [
         id: 'm2_chest',
         type: 'open_chest',
         prompt: 'Open the treasure chest.',
-        hintTr: 'Köprünün ötesindeki hazine sandığını aç!',
-        pos: { x: -12.8, z: -3.2 },
-        radius: 2.5,
+        hintTr: 'Köprünün karşı kıyısındaki hazine sandığını aç!',
+        pos: { x: -17.5, z: -6.5 },
+        radius: 2.8,
         actionAnim: 'openChest'
       }
     ]
@@ -282,11 +283,12 @@ export const PARROT_ISLAND_LEVELS = [
     id: 'island1_level3',
     islandId: 'papagan-adasi',
     number: 3,
-    title: 'Antik Kemer ve Şelale',
-    enTitle: 'Ancient Arch & Waterfall',
-    unitTag: 'Keşif, Doğa & Hazine Avı (A1+)',
-    spawn: { x: -1.0, z: 10.5, facing: Math.PI },
-    chestPos: { x: 2.5, z: -14.8 },
+    title: 'Gün Batımı Şelalesi ve Sihirli Kapı',
+    enTitle: 'Sunset Waterfall & Magic Gate',
+    mood: 'sunset',
+    unitTag: 'Doğa, Zıplama Taşları & Antik Hazine (A1+)',
+    spawn: { x: 1.5, z: 12.0, facing: Math.PI },
+    chestPos: { x: 6.5, z: -22.2 },
     rewardCollectible: {
       id: 'parrot_island_map',
       name: 'Papağan Adası Haritası',
@@ -295,19 +297,19 @@ export const PARROT_ISLAND_LEVELS = [
       description: 'İlk 3 bölümü tamamlayan gerçek kaşiflerin efsanevi ada haritası!'
     },
     props: [
-      { id: 'gold_lantern', model: 'lantern', color: '#f5b832', x: 5.5,  z: 3.2,   label: 'Golden Lantern', tr: 'altın fener' },
-      { id: 'yellow_key3',  model: 'key',     color: '#ffd82b', emissive: '#997500', x: -4.2, z: -7.5,  label: 'Yellow Key', tr: 'sarı anahtar' },
-      { id: 'blue_key3',    model: 'key',     color: '#2196ff', emissive: '#0c4fa8', x: -10.5, z: -5.8, label: 'Blue Key',   tr: 'mavi anahtar' },
-      { id: 'crystal_1',    model: 'crystal', color: '#42f2ff', x: -0.5, z: -11.5, label: 'Blue Crystal',   tr: 'mavi kristal' },
-      { id: 'crystal_2',    model: 'crystal', color: '#64ffda', x: 6.2,  z: -11.2, label: 'Cyan Crystal',   tr: 'turkuaz kristal' },
-      { id: 'crystal_3',    model: 'crystal', color: '#a878ff', x: 2.2,  z: -6.2,  label: 'Purple Crystal', tr: 'mor kristal' }
+      { id: 'gold_lantern', model: 'lantern', color: '#f5b832', x: 5.8,   z: 1.5,   label: 'Golden Lantern', tr: 'altın fener' },
+      { id: 'yellow_key3',  model: 'key',     color: '#ffd82b', emissive: '#997500', x: -15.5, z: -10.5, label: 'Yellow Key', tr: 'sarı anahtar' },
+      { id: 'blue_key3',    model: 'key',     color: '#2196ff', emissive: '#0c4fa8', x: -3.2,  z: -11.2, label: 'Blue Key',   tr: 'mavi anahtar' },
+      { id: 'crystal_1',    model: 'crystal', color: '#42f2ff', x: 3.5,   z: -20.2, label: 'Blue Crystal',   tr: 'mavi kristal' },
+      { id: 'crystal_2',    model: 'crystal', color: '#64ffda', x: 9.5,   z: -20.0, label: 'Cyan Crystal',   tr: 'turkuaz kristal' },
+      { id: 'crystal_3',    model: 'crystal', color: '#a878ff', x: 6.5,   z: -15.5, label: 'Purple Crystal', tr: 'mor kristal' }
     ],
     missions: [
       {
         id: 'm3_lantern',
         type: 'collect',
         prompt: 'Find the golden lantern.',
-        hintTr: 'Altın feneri (golden lantern) bul ve al.',
+        hintTr: 'Gün batımında parlayan altın feneri (golden lantern) bul ve al.',
         targetIds: ['gold_lantern'],
         carryOnCollect: true,
         actionAnim: 'collect'
@@ -316,15 +318,15 @@ export const PARROT_ISLAND_LEVELS = [
         id: 'm3_waterfall',
         type: 'reach_zone',
         prompt: 'Go to the waterfall.',
-        hintTr: 'Kuzeydeki akan şelalenin (waterfall) önüne git.',
-        pos: { x: -7.6, z: -7.2 },
-        radius: 3.2
+        hintTr: 'Nehirdeki zıplama taşlarından veya köprüden geçip şelalenin (waterfall) önüne git.',
+        pos: { x: -10.8, z: -11.2 },
+        radius: 3.6
       },
       {
         id: 'm3_key',
         type: 'collect',
         prompt: 'Find the yellow key.',
-        hintTr: 'Sarı anahtarı (yellow key) bul (mavi olana dikkat!).',
+        hintTr: 'Şelale kıyısındaki sarı anahtarı (yellow key) bul.',
         targetIds: ['yellow_key3'],
         distractorIds: ['blue_key3'],
         carryOnCollect: true,
@@ -333,11 +335,11 @@ export const PARROT_ISLAND_LEVELS = [
       {
         id: 'm3_arch',
         type: 'deliver_landmark',
-        landmark: 'arch',
-        prompt: 'Bring the key to the ancient gate.',
-        hintTr: 'Anahtarı antik taş kemere (ancient gate) götür.',
-        pos: { x: 2.5, z: -12.6 },
-        radius: 2.8,
+        landmark: 'magic_gate',
+        prompt: 'Open the ancient magic gate.',
+        hintTr: 'Sarı anahtarı meşaleli antik taş kemere (magic gate) götür ve geçidi aç!',
+        pos: { x: 6.5, z: -17.2 },
+        radius: 3.2,
         actionAnim: 'openDoor'
       },
       {
@@ -345,7 +347,7 @@ export const PARROT_ISLAND_LEVELS = [
         type: 'collect_count',
         count: 3,
         prompt: 'Collect three crystals.',
-        hintTr: 'Antik kemer çevresindeki üç kristali (three crystals) topla.',
+        hintTr: 'Açılan antik avludaki üç kristali (three crystals) topla.',
         targetIds: ['crystal_1', 'crystal_2', 'crystal_3'],
         actionAnim: 'collect'
       },
@@ -354,8 +356,8 @@ export const PARROT_ISLAND_LEVELS = [
         type: 'open_chest',
         prompt: 'Open the ancient treasure chest.',
         hintTr: 'Antik kemerin arkasındaki büyük hazine sandığını aç!',
-        pos: { x: 2.5, z: -14.8 },
-        radius: 2.6,
+        pos: { x: 6.5, z: -22.2 },
+        radius: 2.8,
         actionAnim: 'openChest'
       }
     ]

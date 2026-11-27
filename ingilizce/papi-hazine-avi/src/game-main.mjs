@@ -9,10 +9,11 @@ import { DijiMeduBridge } from './diji-medu-bridge.mjs';
 
 const MODEL_BASE = './assets/models/';
 const ALL_MODELS = [
-  'papi.glb', 'palm_tree.glb', 'cottage.glb', 'treasure_chest.glb',
-  'wooden_bridge.glb', 'ancient_arch.glb', 'rabbit.glb', 'table.glb',
-  'key.glb', 'apple.glb', 'flower.glb', 'book.glb', 'lantern.glb',
-  'crystal.glb', 'seashell.glb'
+  'papi.glb', 'palm_tree.glb', 'fruit_tree.glb', 'grass_tuft.glb', 'fern_bush.glb',
+  'cottage.glb', 'pier.glb', 'sailboat.glb', 'signpost.glb', 'stepping_stone.glb',
+  'brazier.glb', 'treasure_chest.glb', 'wooden_bridge.glb', 'ancient_arch.glb',
+  'rabbit.glb', 'table.glb', 'key.glb', 'apple.glb', 'flower.glb', 'book.glb',
+  'lantern.glb', 'crystal.glb', 'seashell.glb'
 ].map((f) => MODEL_BASE + f);
 
 class PapiTreasureGame {
@@ -21,36 +22,47 @@ class PapiTreasureGame {
     this.audio = new AudioEngine();
     this.bridge = new DijiMeduBridge();
 
-    this.mode = 'loading'; // loading | title | islands | levels | playing | paused | chest | result
+    this.mode = 'loading';
     this.currentLevel = null;
     this.missionIdx = 0;
     this.missionProgress = 0;
     this.mistakes = 0;
     this.starsEarned = 0;
-    this.activeProps = [];   // { def, mesh, collected }
+    this.activeProps = [];
     this.nearestTarget = null;
 
-    // Input State
     this.keys = new Set();
     this.joyVec = { x: 0, y: 0 };
     this.joyPointerId = null;
     this.joyOrigin = { x: 0, y: 0 };
 
-    // Camera State
+    // Portrait-Adaptive Third-Person Camera State
     this.camYaw = 0;
-    this.camPitch = 0.42;
-    this.camDist = 7.4;
-    this.camPos = new THREE.Vector3(0, 8, 22);
-    this.camLook = new THREE.Vector3(0, 1.5, 8);
+    this.camPitch = 0.40;
+    this.baseCamDist = 7.8;
+    this.camDist = 7.8;
+    this.camPos = new THREE.Vector3(2, 9, 36);
+    this.camLook = new THREE.Vector3(2, 1.5, 20);
     this.orbitDrag = { active: false, pointerId: null, lastX: 0, lastY: 0 };
     this.cinematicTime = 0;
 
-    // Performance & FPS tracking
+    // Performance & Mobile Auto-DRS (Dynamic Resolution Scaling)
+    this.isMobileDevice = (navigator.maxTouchPoints > 0) || window.innerWidth < 820;
+    this.currentDprCap = 1.6;
+    this.drsFloor = 0.85;
     this.clock = new THREE.Clock();
     this.fpsAccum = 0;
     this.fpsFrames = 0;
     this.fpsValue = 60;
+    this.drsCooldown = 0;
     this.rafId = 0;
+  }
+
+  _resolveEffectiveQuality(setting) {
+    if (setting && setting !== 'auto') return setting;
+    const cores = navigator.hardwareConcurrency || 4;
+    if (this.isMobileDevice) return cores <= 4 ? 'low' : 'medium';
+    return 'high';
   }
 
   async init() {
@@ -59,44 +71,42 @@ class PapiTreasureGame {
     this.audio.setMusicEnabled(settings.music);
     this.audio.setSfxEnabled(settings.sfx);
 
-    // Setup Three.js WebGLRenderer
+    const effQuality = this._resolveEffectiveQuality(settings.quality);
+
     this.renderer = new THREE.WebGLRenderer({
       canvas: this.canvas,
-      antialias: settings.quality !== 'low',
+      antialias: effQuality !== 'low',
       powerPreference: 'high-performance'
     });
     this.renderer.shadowMap.enabled = true;
     this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     this.renderer.outputColorSpace = THREE.SRGBColorSpace;
     this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    this.renderer.toneMappingExposure = 1.12;
-    this._applyQuality(settings.quality);
+    this.renderer.toneMappingExposure = 1.10;
 
     this.scene = new THREE.Scene();
-    this.camera = new THREE.PerspectiveCamera(54, window.innerWidth / window.innerHeight, 0.15, 220);
+    this.camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.15, 280);
+    this._applyQuality(settings.quality);
+    this._syncViewportCamera();
 
-    // Preload all real GLB 3D models with live progress bar
     const bar = document.getElementById('load-bar-fill');
     const txt = document.getElementById('load-status');
     await preloadGLBs(ALL_MODELS, (ratio) => {
       if (bar) bar.style.width = `${Math.round(ratio * 100)}%`;
-      if (txt) txt.textContent = `3D Modeller Yükleniyor... %${Math.round(ratio * 100)}`;
+      if (txt) txt.textContent = `3D Ada Dünyası Yükleniyor... %${Math.round(ratio * 100)}`;
     });
 
-    // Build 3D Parrot Island World
-    this.world = new IslandWorld(this.scene);
-    await this.world.build(settings.quality);
+    this.world = new IslandWorld(this.scene, this.renderer);
+    await this.world.build(effQuality);
 
-    // Create glowing waypoint beacon ring for active objectives
     this.beacon = this._createBeacon();
     this.beacon.visible = false;
     this.scene.add(this.beacon);
 
-    // Spawn Rigged 3D Papi Character
     const papiModel = await loadGLB(`${MODEL_BASE}papi.glb`);
     this.papi = new PapiController(papiModel, this.world, this.audio);
     this.scene.add(papiModel);
-    this.papi.setPosition(0, 11.5, 0); // Facing camera for title screen wave
+    this.papi.setPosition(2.0, 26.5, 0);
 
     this._bindEvents();
     this._renderExplorerStats();
@@ -108,26 +118,47 @@ class PapiTreasureGame {
 
   _createBeacon() {
     const g = new THREE.Group();
-    const ringGeo = new THREE.RingGeometry(0.95, 1.25, 32);
+    const ringGeo = new THREE.RingGeometry(1.05, 1.40, 32);
     ringGeo.rotateX(-Math.PI / 2);
     const ringMat = new THREE.MeshBasicMaterial({
-      color: '#ffe04d', transparent: true, opacity: 0.78, side: THREE.DoubleSide
+      color: '#ffe04d', transparent: true, opacity: 0.82, side: THREE.DoubleSide
     });
     const ring = new THREE.Mesh(ringGeo, ringMat);
     ring.position.y = 0.08;
-    const beamGeo = new THREE.CylinderGeometry(0.18, 0.72, 3.2, 16, 1, true);
+    const beamGeo = new THREE.CylinderGeometry(0.22, 0.85, 3.8, 16, 1, true);
     const beamMat = new THREE.MeshBasicMaterial({
-      color: '#ffe875', transparent: true, opacity: 0.18, side: THREE.DoubleSide, depthWrite: false
+      color: '#ffe875', transparent: true, opacity: 0.20, side: THREE.DoubleSide, depthWrite: false
     });
     const beam = new THREE.Mesh(beamGeo, beamMat);
-    beam.position.y = 1.65;
+    beam.position.y = 1.95;
     g.add(ring, beam);
     return g;
   }
 
-  _applyQuality(q) {
-    const dprCap = q === 'low' ? 1.0 : q === 'medium' ? 1.45 : 2.0;
-    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, dprCap));
+  /** Automatically widens vertical FOV & pull-back distance on Portrait Mobile screens! */
+  _syncViewportCamera() {
+    const w = Math.max(1, window.innerWidth);
+    const h = Math.max(1, window.innerHeight);
+    const aspect = w / h;
+    this.camera.aspect = aspect;
+
+    if (aspect < 1.0) {
+      // Portrait phone (e.g. 390x844 -> aspect ~0.46): widen FOV & step camera back so left/right world stays visible!
+      const portraitT = THREE.MathUtils.clamp((1.0 - aspect) / 0.55, 0, 1);
+      this.camera.fov = THREE.MathUtils.lerp(55, 69, portraitT);
+      this.camDist = THREE.MathUtils.lerp(this.baseCamDist, 9.6, portraitT);
+    } else {
+      this.camera.fov = 54;
+      this.camDist = this.baseCamDist;
+    }
+    this.camera.updateProjectionMatrix();
+    this.renderer.setSize(w, h, false);
+  }
+
+  _applyQuality(setting) {
+    const q = this._resolveEffectiveQuality(setting);
+    this.currentDprCap = q === 'low' ? 1.0 : q === 'medium' ? 1.45 : 1.85;
+    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, this.currentDprCap));
     this.renderer.setSize(window.innerWidth, window.innerHeight, false);
     if (this.world?.sunLight) {
       const s = q === 'low' ? 1024 : q === 'medium' ? 1536 : 2048;
@@ -135,6 +166,14 @@ class PapiTreasureGame {
       this.world.sunLight.shadow.map?.dispose();
       this.world.sunLight.shadow.map = null;
     }
+  }
+
+  _stepDownDynamicResolution() {
+    if (this.bridge.state.settings.quality !== 'auto') return;
+    if (this.currentDprCap <= this.drsFloor) return;
+    this.currentDprCap = Math.max(this.drsFloor, +(this.currentDprCap - 0.25).toFixed(2));
+    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, this.currentDprCap));
+    this.renderer.setSize(window.innerWidth, window.innerHeight, false);
   }
 
   // ─── Screen Navigation & UI Rendering ──────────────────────────────────────
@@ -211,9 +250,13 @@ class PapiTreasureGame {
         const rec = this.bridge.state.completedLevels[def.id];
         const stars = rec ? rec.bestStars : 0;
         const maxStars = def.missions.length;
+        const moodIcon = def.mood === 'sunset' ? '🌅' : def.mood === 'noon' ? '☀️' : '🌤️';
         cards.push(`
           <button class="level-card ${unlocked ? 'unlocked' : 'locked'} ${rec ? 'done' : ''}" data-level="${def.id}" ${unlocked ? '' : 'disabled'}>
-            <div class="lvl-num">${num}</div>
+            <div class="lvl-top-row">
+              <div class="lvl-num">${num}</div>
+              <span class="lvl-mood">${moodIcon}</span>
+            </div>
             <div class="lvl-title">${def.title}</div>
             <div class="lvl-sub">${def.enTitle}</div>
             <div class="lvl-stars">${rec ? `⭐ ${stars}/${maxStars}` : (unlocked ? '▶ Oynanabilir' : '🔒 Önceki Bölümü Bitir')}</div>
@@ -222,7 +265,9 @@ class PapiTreasureGame {
       } else {
         cards.push(`
           <div class="level-card upcoming">
-            <div class="lvl-num">${num}</div>
+            <div class="lvl-top-row">
+              <div class="lvl-num">${num}</div>
+            </div>
             <div class="lvl-title">Yakında</div>
             <div class="lvl-sub">Geliştirme Aşamasında</div>
             <div class="lvl-stars">🏝️ Ada 1</div>
@@ -269,30 +314,30 @@ class PapiTreasureGame {
     this.starsEarned = 0;
     this.nearestTarget = null;
 
-    // Clear previous mission props
+    // Apply per-level lighting mood (Morning / Noon / Golden Sunset!)
+    this.world.setAtmosphere(def.mood || 'morning');
+
     while (this.world.missionPropsGroup.children.length > 0) {
       this.world.missionPropsGroup.remove(this.world.missionPropsGroup.children[0]);
     }
     this.activeProps = [];
 
-    // Reset world landmarks
     this.world.setDoorOpen(false);
     this.world.setChestOpen(false);
+    this.world.setMagicGateOpen(def.number !== 3); // Level 3 locks the Ancient Magic Gate!
     if (this.world.landmarks.chest) {
       const cy = this.world.getTerrainHeight(def.chestPos.x, def.chestPos.z);
       this.world.landmarks.chest.position.set(def.chestPos.x, cy, def.chestPos.z);
     }
 
-    // Spawn real GLB props for this level
     for (const pDef of def.props) {
       const mesh = await loadGLB(`${MODEL_BASE}${pDef.model}.glb`);
-      // Apply unique color tint if specified (e.g. blue/red/yellow keys, red/green apples, flower petals)
       if (pDef.color) {
         mesh.traverse((child) => {
           if (child.isMesh && child.material) {
             const name = child.material.name || '';
             const shouldTint = name.includes('Key') || name.includes('AppleSkin') ||
-              name.includes('Petal') || name.includes('Crystal') || name.includes('Seashell');
+              name.includes('Petal') || name.includes('Crystal') || name.includes('Seashell') || name.includes('BookCover');
             if (shouldTint) {
               child.material = child.material.clone();
               child.material.color.set(pDef.color);
@@ -301,19 +346,18 @@ class PapiTreasureGame {
           }
         });
       }
-      const py = Math.max(this.world.getTerrainHeight(pDef.x, pDef.z), this.world.WATER_LEVEL + 0.05);
-      mesh.position.set(pDef.x, py + 0.15, pDef.z);
-      mesh.userData = { baseY: py + 0.15, phase: pDef.x * 0.7 + pDef.z * 0.4 };
+      const py = Math.max(this.world.getWalkableHeight(pDef.x, pDef.z), this.world.WATER_LEVEL + 0.06);
+      mesh.position.set(pDef.x, py + 0.14, pDef.z);
+      mesh.userData = { baseY: py + 0.14, phase: pDef.x * 0.7 + pDef.z * 0.4, placedStatic: false };
       this.world.missionPropsGroup.add(mesh);
       this.activeProps.push({ def: pDef, mesh, collected: false });
     }
 
-    // Position Papi & Camera smoothly behind Papi
     this.papi.clearCarriedItem();
     this.papi.setPosition(def.spawn.x, def.spawn.z, def.spawn.facing);
     this.camYaw = 0;
-    this.camPos.set(def.spawn.x, this.papi.position.y + 4.8, def.spawn.z + 7.2);
-    this.camLook.set(def.spawn.x, this.papi.position.y + 1.2, def.spawn.z);
+    this.camPos.set(def.spawn.x, this.papi.position.y + 5.2, def.spawn.z + this.camDist);
+    this.camLook.set(def.spawn.x, this.papi.position.y + 1.35, def.spawn.z);
 
     this._setScreen('playing');
     this._updateHudMission(true);
@@ -339,9 +383,8 @@ class PapiTreasureGame {
     if (promptEl) promptEl.textContent = m.prompt + suffix;
     if (stepEl) stepEl.textContent = `GÖREV ${this.missionIdx + 1} / ${total}`;
     if (starEl) starEl.textContent = `${this.starsEarned}`;
-    if (lvlBadge) lvlBadge.textContent = `Bölüm ${this.currentLevel.number} · ${this.currentLevel.title}`;
+    if (lvlBadge) lvlBadge.textContent = `Bölüm ${this.currentLevel.number}`;
 
-    // Position golden beacon ring on landmark/zone missions (not on color-choice puzzles so student reads & chooses!)
     if (m.pos) {
       const by = this.world.getWalkableHeight(m.pos.x, m.pos.z);
       this.beacon.position.set(m.pos.x, Math.max(by, 0.05), m.pos.z);
@@ -355,13 +398,55 @@ class PapiTreasureGame {
     }
   }
 
+  /** Updates the Live Explorer Compass Pill (points toward objective zone without spoiling color choices!) */
+  _updateCompass() {
+    const arrowEl = document.getElementById('compass-arrow');
+    const distEl = document.getElementById('compass-dist');
+    const m = this._getCurrentMission();
+    if (!arrowEl || !distEl || !m) return;
+
+    let tx = null, tz = null;
+    if (m.pos) {
+      tx = m.pos.x;
+      tz = m.pos.z;
+    } else if (Array.isArray(m.targetIds)) {
+      // Average position of remaining candidate items (includes distractors so compass guides to the clearing without spoiling which color is right!)
+      const poolIds = [...m.targetIds, ...(m.distractorIds || [])];
+      const candidates = this.activeProps.filter((p) => !p.collected && poolIds.includes(p.def.id));
+      if (candidates.length > 0) {
+        // Point to nearest uncollected target if no distractors, else centroid of puzzle group
+        if (!m.distractorIds || m.distractorIds.length === 0) {
+          let bestD = Infinity;
+          for (const c of candidates) {
+            const d = Math.hypot(c.mesh.position.x - this.papi.position.x, c.mesh.position.z - this.papi.position.z);
+            if (d < bestD) { bestD = d; tx = c.mesh.position.x; tz = c.mesh.position.z; }
+          }
+        } else {
+          tx = candidates.reduce((s, c) => s + c.mesh.position.x, 0) / candidates.length;
+          tz = candidates.reduce((s, c) => s + c.mesh.position.z, 0) / candidates.length;
+        }
+      }
+    }
+
+    if (tx === null) return;
+    const dx = tx - this.papi.position.x;
+    const dz = tz - this.papi.position.z;
+    const dist = Math.round(Math.hypot(dx, dz));
+
+    // Relative angle to camera view so arrow points accurately on screen!
+    const worldAngle = Math.atan2(dx, -dz);
+    const relAngle = worldAngle + this.camYaw;
+    arrowEl.style.transform = `rotate(${relAngle}rad)`;
+    distEl.textContent = `${dist}m`;
+  }
+
   _showToast(message, type = 'good') {
     const toast = document.getElementById('hud-toast');
     if (!toast) return;
     toast.textContent = message;
     toast.className = `hud-toast show ${type}`;
     clearTimeout(this._toastTimer);
-    this._toastTimer = setTimeout(() => toast.classList.remove('show'), 2900);
+    this._toastTimer = setTimeout(() => toast.classList.remove('show'), 3200);
   }
 
   _advanceMission() {
@@ -382,7 +467,7 @@ class PapiTreasureGame {
     this.papi.triggerAction('celebrate', 4.0);
     this.audio.playChestFanfare();
     if (this.world.landmarks.chest) {
-      this.world.spawnBurst(this.world.landmarks.chest.position, 22);
+      this.world.spawnBurst(this.world.landmarks.chest.position, 24);
     }
 
     const reward = this.currentLevel.rewardCollectible;
@@ -393,7 +478,6 @@ class PapiTreasureGame {
       collectibleId: reward.id
     });
 
-    // Show Treasure Chest Cinematic Overlay first
     this._setScreen('chest');
     document.getElementById('chest-item-icon').textContent = reward.icon;
     document.getElementById('chest-item-name').textContent = reward.name;
@@ -434,22 +518,20 @@ class PapiTreasureGame {
     const px = this.papi.position.x;
     const pz = this.papi.position.z;
 
-    // 1. Auto-complete reach_zone missions when Papi enters the target zone
     if (m.type === 'reach_zone' && m.pos) {
       const d = Math.hypot(px - m.pos.x, pz - m.pos.z);
-      if (d <= (m.radius || 2.6)) {
+      if (d <= (m.radius || 3.0)) {
         this.audio.playCollect();
-        this.world.spawnBurst(this.papi.position, 14);
+        this.world.spawnBurst(this.papi.position, 16);
         this.papi.triggerAction('collect', 0.7);
-        this._showToast('⭐ Harika! Doğru yöne gittin! (+1 Keşif Yıldızı)', 'good');
+        this._showToast('⭐ Harika! Doğru bölgeye ulaştın! (+1 Keşif Yıldızı)', 'good');
         this._advanceMission();
         return;
       }
     }
 
-    // 2. Find nearest interactive prop or landmark
     let best = null;
-    let bestDist = 2.65;
+    let bestDist = 2.85;
 
     for (const p of this.activeProps) {
       if (p.collected) continue;
@@ -462,11 +544,19 @@ class PapiTreasureGame {
 
     if (m.pos && (m.type === 'interact_landmark' || m.type === 'deliver_landmark' || m.type === 'open_chest')) {
       const d = Math.hypot(px - m.pos.x, pz - m.pos.z);
-      if (d < (m.radius || 2.5)) {
+      if (d < (m.radius || 2.8)) {
+        const labels = {
+          signpost: 'Tabelayı Oku',
+          door: 'Kapıyı Aç',
+          cottage: 'Eve Teslim Et',
+          table: 'Masaya Koy',
+          rabbit: 'Tavşanı Sev',
+          magic_gate: 'Geçidi Aç'
+        };
         best = {
           kind: 'landmark',
           mission: m,
-          label: m.type === 'open_chest' ? 'Sandığı Aç' : m.landmark === 'door' ? 'Kapıyı Aç' : 'Etkileşim'
+          label: m.type === 'open_chest' ? 'Sandığı Aç' : (labels[m.landmark] || 'Etkileşim')
         };
       }
     }
@@ -479,14 +569,14 @@ class PapiTreasureGame {
     }
   }
 
-  handleInteract() {
+  async handleInteract() {
     if (this.mode !== 'playing') return;
     this.audio.unlock();
     const m = this._getCurrentMission();
     if (!m) return;
 
     if (!this.nearestTarget) {
-      this._showToast(`İpucu: ${m.hintTr}`, 'info');
+      this._showToast(`💡 İpucu: ${m.hintTr}`, 'info');
       return;
     }
 
@@ -494,13 +584,12 @@ class PapiTreasureGame {
       const { prop } = this.nearestTarget;
       const id = prop.def.id;
 
-      // Check if this prop is a target for the current mission
       const isTarget = Array.isArray(m.targetIds) && m.targetIds.includes(id);
       if (isTarget) {
         prop.collected = true;
         prop.mesh.visible = false;
         this.audio.playCollect();
-        this.world.spawnBurst(prop.mesh.position, 14);
+        this.world.spawnBurst(prop.mesh.position, 16);
         this.papi.triggerAction(m.actionAnim || 'collect', 0.75);
         if (m.carryOnCollect) this.papi.carryItem(prop.mesh, id);
 
@@ -518,7 +607,6 @@ class PapiTreasureGame {
           this._advanceMission();
         }
       } else {
-        // Educational feedback on wrong object — no lockout, encourage retry!
         this.mistakes++;
         this.audio.playWrong();
         this._showToast(`Bu "${prop.def.label}" (${prop.def.tr}). Görev: "${m.prompt}" — Tekrar dene!`, 'warn');
@@ -528,26 +616,57 @@ class PapiTreasureGame {
     }
 
     if (this.nearestTarget.kind === 'landmark') {
-      if (m.landmark === 'door') {
+      if (m.landmark === 'signpost') {
+        this.audio.playCollect();
+        this.papi.triggerAction('collect', 0.8);
+        this.world.spawnBurst(this.world.landmarks.signpost.position, 14);
+        this._showToast('🪧 Signpost: House → East · Bridge ← West · Waterfall & Ruins ↑ North!', 'good');
+        this._advanceMission();
+      } else if (m.landmark === 'door') {
         this.world.setDoorOpen(true);
         this.audio.playDoorOpen();
         this.papi.clearCarriedItem();
         this.papi.triggerAction('openDoor', 0.85);
-        this.world.spawnBurst(this.papi.position, 14);
-        this._showToast('⭐ Ahşap kapı açıldı! (+1 Keşif Yıldızı)', 'good');
+        this.world.spawnBurst(this.papi.position, 16);
+        this._showToast('⭐ Ahşap kulübe kapısı açıldı! İçerisi sıcacık! (+1 Yıldız)', 'good');
         this._advanceMission();
-      } else if (m.landmark === 'cottage' || m.landmark === 'table' || m.landmark === 'arch') {
+      } else if (m.landmark === 'magic_gate') {
+        this.world.setMagicGateOpen(true);
+        this.audio.playDoorOpen();
+        this.papi.clearCarriedItem();
+        this.papi.triggerAction('openDoor', 0.9);
+        this.world.spawnBurst(this.world.landmarks.arch.position, 22);
+        this._showToast('✨ Sihirli Antik Geçit açıldı! (+1 Keşif Yıldızı)', 'good');
+        this._advanceMission();
+      } else if (m.landmark === 'table') {
+        // Place the book visibly onto the wooden picnic table!
+        if (m.placePropOnTable && this.world.landmarks.table) {
+          const placedBook = await loadGLB(`${MODEL_BASE}book.glb`);
+          const tPos = this.world.landmarks.table.position;
+          placedBook.position.set(tPos.x, tPos.y + 0.98, tPos.z);
+          placedBook.rotation.y = 0.4;
+          placedBook.userData = { baseY: tPos.y + 0.98, phase: 0, placedStatic: true };
+          this.world.missionPropsGroup.add(placedBook);
+        }
         this.audio.playCollect();
         this.papi.clearCarriedItem();
-        this.papi.triggerAction(m.actionAnim || 'collect', 0.8);
-        this.world.spawnBurst(this.papi.position, 14);
-        this._showToast('⭐ Görev tamamlandı! (+1 Keşif Yıldızı)', 'good');
+        this.papi.triggerAction('collect', 0.8);
+        this.world.spawnBurst(this.world.landmarks.table.position, 16);
+        this._showToast('⭐ Kitap masanın üzerine konuldu! (+1 Keşif Yıldızı)', 'good');
+        this._advanceMission();
+      } else if (m.landmark === 'cottage') {
+        this.world.setDoorOpen(true);
+        this.audio.playCollect();
+        this.papi.clearCarriedItem();
+        this.papi.triggerAction('openDoor', 0.8);
+        this.world.spawnBurst(this.papi.position, 16);
+        this._showToast('⭐ Elma kulübeye teslim edildi! (+1 Keşif Yıldızı)', 'good');
         this._advanceMission();
       } else if (m.landmark === 'rabbit') {
         this.audio.playCollect();
         this.papi.triggerAction('collect', 0.8);
-        this.world.spawnBurst(this.world.landmarks.rabbit.position, 14);
-        this._showToast('⭐ Tavşanı buldun! (Rabbit) (+1 Keşif Yıldızı)', 'good');
+        this.world.spawnBurst(this.world.landmarks.rabbit.position, 16);
+        this._showToast('⭐ Beyaz tavşanı buldun! (White Rabbit) (+1 Yıldız)', 'good');
         this._advanceMission();
       } else if (m.type === 'open_chest') {
         this.papi.triggerAction('openChest', 1.1);
@@ -558,13 +677,9 @@ class PapiTreasureGame {
 
   // ─── Input & UI Event Bindings ─────────────────────────────────────────────
   _bindEvents() {
-    window.addEventListener('resize', () => {
-      this.camera.aspect = window.innerWidth / window.innerHeight;
-      this.camera.updateProjectionMatrix();
-      this.renderer.setSize(window.innerWidth, window.innerHeight, false);
-    });
+    window.addEventListener('resize', () => this._syncViewportCamera());
+    window.addEventListener('orientationchange', () => setTimeout(() => this._syncViewportCamera(), 120));
 
-    // Keyboard Controls
     window.addEventListener('keydown', (e) => {
       const code = e.code;
       this.keys.add(code);
@@ -578,10 +693,9 @@ class PapiTreasureGame {
     });
     window.addEventListener('keyup', (e) => this.keys.delete(e.code));
 
-    // Touch / Pointer Virtual Joystick (Bottom-Left)
     const joyZone = document.getElementById('joystick-zone');
     const joyKnob = document.getElementById('joystick-knob');
-    const maxR = 44;
+    const maxR = 42;
 
     joyZone?.addEventListener('pointerdown', (e) => {
       this.audio.unlock();
@@ -604,7 +718,6 @@ class PapiTreasureGame {
     joyZone?.addEventListener('pointerup', endJoy);
     joyZone?.addEventListener('pointercancel', endJoy);
 
-    // Drag-to-orbit camera on canvas
     this.canvas.addEventListener('pointerdown', (e) => {
       if (this.mode !== 'playing') return;
       this.audio.unlock();
@@ -623,7 +736,6 @@ class PapiTreasureGame {
       if (e.pointerId === this.orbitDrag.pointerId) this.orbitDrag.active = false;
     });
 
-    // HUD & Screen Buttons
     document.getElementById('btn-start-adventure')?.addEventListener('click', () => {
       this.audio.unlock();
       this._setScreen('islands');
@@ -675,7 +787,6 @@ class PapiTreasureGame {
     });
     document.getElementById('btn-result-map')?.addEventListener('click', () => this._setScreen('levels'));
 
-    // Settings Toggles
     const musicToggle = document.getElementById('set-music');
     const sfxToggle = document.getElementById('set-sfx');
     const qualSelect = document.getElementById('set-quality');
@@ -695,7 +806,7 @@ class PapiTreasureGame {
       });
     }
     if (qualSelect) {
-      qualSelect.value = this.bridge.state.settings.quality;
+      qualSelect.value = this.bridge.state.settings.quality || 'auto';
       qualSelect.addEventListener('change', () => {
         this._applyQuality(qualSelect.value);
         this.bridge.updateSettings({ quality: qualSelect.value });
@@ -738,15 +849,14 @@ class PapiTreasureGame {
     return { x, y };
   }
 
-  // ─── Third-Person Camera with Smooth Damping & Collision Protection ────────
   _updateCamera(dt) {
     const t = this.cinematicTime;
     if (this.mode === 'title' || this.mode === 'islands' || this.mode === 'levels') {
-      // Scenic cinematic orbit over sunlit Parrot Island
-      const angle = t * 0.16;
-      const targetPos = new THREE.Vector3(Math.sin(angle) * 21, 9.5 + Math.sin(t * 0.4) * 1.1, Math.cos(angle) * 21);
+      const angle = t * 0.14;
+      const r = this.camera.aspect < 1 ? 33 : 28;
+      const targetPos = new THREE.Vector3(Math.sin(angle) * r, 11.5 + Math.sin(t * 0.4) * 1.3, Math.cos(angle) * r);
       this.camPos.lerp(targetPos, 1 - Math.exp(-2.5 * dt));
-      this.camLook.lerp(new THREE.Vector3(0, 1.8, -1.0), 1 - Math.exp(-3 * dt));
+      this.camLook.lerp(new THREE.Vector3(0, 2.2, 0), 1 - Math.exp(-3 * dt));
       this.camera.position.copy(this.camPos);
       this.camera.lookAt(this.camLook);
       return;
@@ -754,7 +864,7 @@ class PapiTreasureGame {
 
     if (this.mode === 'chest' && this.world.landmarks.chest) {
       const cp = this.world.landmarks.chest.position;
-      const desired = new THREE.Vector3(cp.x + 2.4, cp.y + 2.6, cp.z + 3.8);
+      const desired = new THREE.Vector3(cp.x + 2.6, cp.y + 2.8, cp.z + 4.4);
       this.camPos.lerp(desired, 1 - Math.exp(-4.5 * dt));
       this.camLook.lerp(new THREE.Vector3(cp.x, cp.y + 0.9, cp.z), 1 - Math.exp(-5 * dt));
       this.camera.position.copy(this.camPos);
@@ -762,31 +872,30 @@ class PapiTreasureGame {
       return;
     }
 
-    // Smooth Third-Person Follow Camera behind & slightly above Papi
     const target = this.papi.position;
     const horizDist = Math.cos(this.camPitch) * this.camDist;
-    const vertDist = Math.sin(this.camPitch) * this.camDist + 1.4;
+    const vertDist = Math.sin(this.camPitch) * this.camDist + 1.5;
 
     let desiredX = target.x + Math.sin(this.camYaw) * horizDist;
     let desiredZ = target.z + Math.cos(this.camYaw) * horizDist;
     let desiredY = target.y + vertDist;
 
-    // Camera collision protection against terrain & buildings (never clips underground or into walls!)
-    const terrainAtCam = this.world.getTerrainHeight(desiredX, desiredZ);
-    desiredY = Math.max(desiredY, terrainAtCam + 1.15, this.world.WATER_LEVEL + 1.1);
+    const terrainAtCam = this.world.getWalkableHeight(desiredX, desiredZ);
+    desiredY = Math.max(desiredY, terrainAtCam + 1.25, this.world.WATER_LEVEL + 1.2);
 
-    // Pull camera forward if colliding with cottage volume
-    const cotDx = desiredX - 8.5, cotDz = desiredZ - (-3.5);
+    // Camera wall-push around Cottage (13.0, -3.0)
+    const cotDx = desiredX - 13.0, cotDz = desiredZ - (-3.0);
     const cotDist = Math.hypot(cotDx, cotDz);
-    if (cotDist < 3.2) {
-      const push = 3.2 / Math.max(0.1, cotDist);
-      desiredX = 8.5 + cotDx * push;
-      desiredZ = -3.5 + cotDz * push;
+    if (cotDist < 3.6) {
+      const push = 3.6 / Math.max(0.1, cotDist);
+      desiredX = 13.0 + cotDx * push;
+      desiredZ = -3.0 + cotDz * push;
     }
 
     const smooth = 1 - Math.exp(-7.5 * dt);
     this.camPos.lerp(new THREE.Vector3(desiredX, desiredY, desiredZ), smooth);
-    this.camLook.lerp(new THREE.Vector3(target.x, target.y + 1.25, target.z), smooth * 1.2);
+    const lookYOffset = this.camera.aspect < 1 ? 1.55 : 1.3;
+    this.camLook.lerp(new THREE.Vector3(target.x, target.y + lookYOffset, target.z), smooth * 1.2);
     this.camera.position.copy(this.camPos);
     this.camera.lookAt(this.camLook);
   }
@@ -796,13 +905,18 @@ class PapiTreasureGame {
     const dt = Math.min(this.clock.getDelta(), 0.05);
     this.cinematicTime += dt;
 
-    // Update FPS readout
+    // FPS Readout & Automatic Mobile Dynamic Resolution Governor
     this.fpsAccum += dt;
     this.fpsFrames++;
-    if (this.fpsAccum >= 0.5) {
+    if (this.drsCooldown > 0) this.drsCooldown -= dt;
+    if (this.fpsAccum >= 1.0) {
       this.fpsValue = Math.round(this.fpsFrames / this.fpsAccum);
       const fpsEl = document.getElementById('fps-pill');
       if (fpsEl && !fpsEl.hidden) fpsEl.textContent = `${this.fpsValue} FPS`;
+      if (this.mode === 'playing' && this.fpsValue < 46 && this.drsCooldown <= 0) {
+        this._stepDownDynamicResolution();
+        this.drsCooldown = 3.0;
+      }
       this.fpsAccum = 0;
       this.fpsFrames = 0;
     }
@@ -810,16 +924,14 @@ class PapiTreasureGame {
     if (this.mode !== 'paused') {
       this.world.update(dt);
 
-      // Gentle bobbing & rotation on uncollected mission props
       for (const p of this.activeProps) {
-        if (p.collected) continue;
+        if (p.collected || p.mesh.userData.placedStatic) continue;
         p.mesh.position.y = p.mesh.userData.baseY + Math.sin(this.cinematicTime * 2.6 + p.mesh.userData.phase) * 0.14;
         if (p.def.model !== 'flower' && p.def.model !== 'seashell') {
           p.mesh.rotation.y += dt * 1.15;
         }
       }
 
-      // Pulse beacon ring
       if (this.beacon.visible) {
         const s = 1 + Math.sin(this.cinematicTime * 4.5) * 0.12;
         this.beacon.scale.set(s, 1, s);
@@ -827,7 +939,10 @@ class PapiTreasureGame {
 
       const input = this.mode === 'playing' ? this._getInputVector() : { x: 0, y: 0 };
       this.papi.update(dt, input, this.camYaw, this.mode !== 'playing');
-      if (this.mode === 'playing') this._evaluateProximity();
+      if (this.mode === 'playing') {
+        this._evaluateProximity();
+        this._updateCompass();
+      }
     }
 
     this._updateCamera(dt);
@@ -837,6 +952,7 @@ class PapiTreasureGame {
   dispose() {
     cancelAnimationFrame(this.rafId);
     this.audio.dispose();
+    this.world?.envRT?.dispose();
     disposeGLBCache();
     disposePBRMaps();
     this.renderer?.dispose();
