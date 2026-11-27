@@ -61,7 +61,8 @@
     }catch(error){window.yoToast?.(error.message);}
   };
   window.papizzleAc=papizzleProxy;
-  window.papiFeneriAc=opener(()=>window.papiFeneriAc);
+  const lanternProxy=opener(()=>window.papiFeneriAc);
+  window.papiFeneriAc=(...args)=>classroom()?lanternProxy(...args):window.yoToast?.('Bu oyun artık öğrenci hesabında sunulmuyor.');
   const monsterProxy=opener(()=>window.canavarAvcisiAc);
   window.canavarAvcisiAc=(...args)=>window.dmTeacherPortalMode||typeof aktifOgrenciAdi!=='undefined'&&String(aktifOgrenciAdi).toLowerCase()==='teacher'||typeof siniftaOynananOgrenci!=='undefined'&&siniftaOynananOgrenci?monsterProxy(...args):window.yoToast?.('Bu oyun artık öğrenci hesabında sunulmuyor.');
   window.dengesizKuleAc=()=>window.yoToast?.('Bu oyun yayından kaldırıldı.');
