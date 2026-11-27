@@ -197,7 +197,7 @@ const categoryIcons={solo:0,free:2,konu:3,break:4,premium:5};
   const el=document.createElement('section');el.className='papi-farm-overlay';el.setAttribute('role','dialog');el.setAttribute('aria-modal','true');el.setAttribute('aria-label','Papi Farm');
   el.dataset.previousOverflow=document.body.style.overflow;
   const close=document.createElement('button');close.className='papi-farm-close';close.textContent='×';close.setAttribute('aria-label','Çiftliği kapat');close.onclick=closeFarm;
-  const frame=document.createElement('iframe');frame.title='Papi Farm';frame.src='papi-farm/index.html?v=20261127-guide2&embedded=1';frame.allow='autoplay';el.style.paddingTop='env(safe-area-inset-top, 0px)';close.style.cssText='top:calc(env(safe-area-inset-top, 0px) + 12px);left:8px;width:40px;height:40px;z-index:1;display:grid;place-items:center;padding:0';el.append(frame,close);document.body.append(el);document.body.style.overflow='hidden';farmOverlay=el;close.focus();document.addEventListener('keydown',farmEscape);
+  const frame=document.createElement('iframe');frame.title='Papi Farm';frame.src='papi-farm/index.html?v=20261127-guide3&embedded=1';frame.allow='autoplay';el.style.paddingTop='env(safe-area-inset-top, 0px)';close.style.cssText='top:calc(env(safe-area-inset-top, 0px) + 12px);left:8px;width:40px;height:40px;z-index:1;display:grid;place-items:center;padding:0';el.append(frame,close);document.body.append(el);document.body.style.overflow='hidden';farmOverlay=el;close.focus();document.addEventListener('keydown',farmEscape);
  }
  function checkFarmLaunch(token){
   if(farmCheckedToken===token&&farmLaunchChecked)return;
