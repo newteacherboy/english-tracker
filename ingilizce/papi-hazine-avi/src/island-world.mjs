@@ -449,17 +449,18 @@ export class IslandWorld {
     ocean.position.y = this.WATER_LEVEL;
     this.scene.add(ocean);
 
-    // Distant volcanic island silhouettes on the horizon (representing the other 5 islands!)
-    const stackGeo = new THREE.ConeGeometry(1, 1, 9);
-    const stackMat = new THREE.MeshStandardMaterial({ color: '#3b7d8c', roughness: 0.92 });
+    // Distant organic volcanic island silhouettes on the horizon (representing the other 5 islands!)
+    const stackGeo = new THREE.DodecahedronGeometry(1, 2);
+    const stackMat = new THREE.MeshStandardMaterial({ color: '#458899', roughness: 0.92 });
     const distantIslands = [
-      [-85, -75, 16, 18], [92, -68, 19, 22], [105, 45, 14, 15],
-      [-98, 58, 17, 16],  [12, -112, 22, 26]
+      [-92, -82, 20, 13], [98, -74, 24, 15], [112, 48, 17, 11],
+      [-104, 62, 21, 12], [18, -125, 28, 16]
     ];
     for (const [ix, iz, r, h] of distantIslands) {
       const m = new THREE.Mesh(stackGeo, stackMat);
-      m.position.set(ix, h * 0.38, iz);
-      m.scale.set(r, h, r * 0.85);
+      m.position.set(ix, h * 0.25, iz);
+      m.scale.set(r, h * 0.65, r * 0.78);
+      m.rotation.y = ix * 0.1;
       this.scene.add(m);
     }
   }
@@ -631,7 +632,7 @@ export class IslandWorld {
       [21.2, 14.2, 1.10, 4.1],  [23.8, 1.5, 1.02, 5.2],  [20.4, -12.5, 1.18, 0.9],
       [11.5, 21.5, 1.04, 2.1],  [-6.8, 22.8, 1.08, 3.7], [14.5, -19.2, 1.12, 1.2],
       [-2.5, -23.5, 0.96, 4.8], [-18.5, -18.5, 1.08, 0.5],[17.5, 16.8, 0.94, 3.1],
-      [-14.2, 21.2, 1.0, 1.5],  [24.5, -6.5, 0.95, 2.8]
+      [-21.2, 20.2, 1.0, 1.5],  [24.5, -6.5, 0.95, 2.8]
     ];
     for (const [px, pz, scale, rotY] of palmSpots) {
       const palm = await loadGLB(`${MODEL_BASE}palm_tree.glb`);
