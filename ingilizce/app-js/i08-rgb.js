@@ -178,7 +178,6 @@ function odulUret(k, o) {
   r.push({ e:'⭐', m:rnd(...T.xp), t:'XP', tur:'xp' });
   r.push({ e:'🪙', m:rnd(...T.al), t:'altın', tur:'altin' });
   if (sans(T.en[0])) r.push({ e:'⚡', m:T.en[1], t:'enerji', tur:'enerji' });
-  if (sans(T.hd)) r.push({ e:'🎁', m:1, t:'hediye gönderme hakkı', tur:'hediye', nadir:true });
   if (sans(T.kar)) r.push({ e:'👕', m:1, t:'nadir kıyafet parçası', tur:'kar', nadir:true });
   return r;
 }
@@ -265,7 +264,6 @@ function odulUret(k, o) {
       let xp = 0, al = 0, en = 0;
       oduller.forEach(x => {
         if (x.tur === 'xp') xp += x.m; else if (x.tur === 'altin') al += x.m; else if (x.tur === 'enerji') en += x.m;
-        else if (x.tur === 'hediye') yo.hediyeHak = (yo.hediyeHak || 0) + x.m;
         else if (x.tur === 'kar') {
           let aday = yo.karakter ? NADIR_KIYAFET.filter(id => !(yo.karakter.sahip || []).includes(id)) : [];
           if (aday.length) { let sec = aday[rnd(0, aday.length - 1)]; yo.karakter.sahip = yo.karakter.sahip || []; yo.karakter.sahip.push(sec); if (typeof yoToast === 'function') setTimeout(() => yoToast('👕 Nadir parça Mağaza\'da seni bekliyor!'), 800); }
@@ -299,20 +297,6 @@ function odulUret(k, o) {
   };
 
   /* ================= EKSTRA JOKER ================= */
-  /* ================= EKSTRA HEDİYE HAKKI ================= */
-  let orgEg = window.enerjiGonder;
-  if (typeof orgEg === 'function') window.enerjiGonder = async function (alici, btn) {
-    if (localStorage.getItem('ing_enerji_gonder') === yoBugun() && yoVar() && (yo.hediyeHak || 0) > 0) {
-      if (btn) { btn.disabled = true; btn.innerText = 'Gönderiliyor...'; }
-      try {
-        let r = await fetch(`${apiURL}?islem=enerjiGonder&ekstra=1&gonderen=${enc(aktifOgrenciAdi)}&alici=${enc(alici)}`);
-        let d = await r.json();
-        if (d.ok) { yo.hediyeHak--; yoKaydet(); if (btn) btn.innerText = 'Gönderildi ✓'; if (typeof yoToast === 'function') yoToast(`🎁 Ekstra hakla gönderildi! Kalan hak: ${yo.hediyeHak}`); }
-      } catch (e) { if (btn) { btn.disabled = false; btn.innerText = 'Tekrar dene'; } }
-      return;
-    }
-    return orgEg.apply(this, arguments);
-  };
   /* ================= MAĞAZA SEKMELERİ: ATÖLYE / KOLEKSİYON / SANDIKLAR ================= */
   let mgSekme = 'atolye';
   function mgBarCiz() {
@@ -340,7 +324,7 @@ function odulUret(k, o) {
     return `<div class="bc-kutu"><h3>🎁 Kayıp Hazineler</h3><p>Her oyunda her 3 seviyede bir sandık kazanırsın. Kademeler sırayla yükselir: Bronz → Gümüş → Altın → Efsane. Her sandığın %15 "yükselme" şansı var.</p>
       ${['ba', 'kp', 'sh', 'kk'].map(g => { let n = ilerleme[g] || 0, sonraki = 3 - (n % 3), o = SOYUN[SK[g]], acilan = s[g] || 0, k = acilan % 4;
         return `<div class="bc-satir"><span class="bc-mini">${sandikSVG(o, k, 54)}</span><span><b>${OYUN_AD[g]}</b><small>${n} seviye · ${acilan} sandık açtın · sonraki (${KADEME[k].ad}) ${sonraki} seviye sonra</small></span></div>`; }).join('')}
-      <div class="bc-envanter"><span>🎁 Hediye hakkı: <b>${(yoVar() && yo.hediyeHak) || 0}</b><small>Arkadaşına günde 1'den fazla enerji yollar</small></span></div></div>`;
+      </div>`;
   }
            window.bcMgCiz = mgCiz;
   window.bcSandikAc = sandikTorenAc;
