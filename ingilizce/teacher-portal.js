@@ -19,7 +19,7 @@
  async function resetPage(){const token=new URLSearchParams(location.hash.slice(1)).get('token');history.replaceState(null,'',location.pathname);const v=sheet('Yeni Öğretmen Giriş Kodu',codeField('code','Yeni 6 veya 8 haneli kod')+codeField('confirm','Yeni kodu tekrar yaz')+'<button class="tp-primary">Kodumu Yenile</button>');v.shade.querySelector('.tp-close').onclick=()=>location.assign('./?ogretmenGiris=1');submit(v,async f=>{if(f.get('code')!==f.get('confirm'))throw Error('Kodlar eşleşmiyor.');const r=await api('teacherPortalReset',{resetToken:token,code:f.get('code')},'');v.form.replaceChildren();const message=document.createElement('p');message.textContent=r.mesaj;const link=document.createElement('a');link.href='./?ogretmenGiris=1';link.textContent='Öğretmen girişine dön';v.form.append(message,link);});}
 
  const adminEsc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
- const adminStatus=x=>({pending:'Bekliyor',approved:'Onaylı',rejected:'Reddedildi',revoked:'Kaldırıldı'}[x]||x||'Bekliyor');
+ const adminStatus=x=>({pending:'Bekliyor',approved:'Onaylı',rejected:'Reddedildi',revoked:'Kaldırıldı',legacy:'Eski hesap · İnceleme gerekli'}[x]||x||'Bekliyor');
  const adminStyle=String.raw`
  .tp-shade:has(.tp-admin-v1) .tp-card{width:min(96vw,680px);max-height:calc(100dvh - 90px);overflow:auto;background:#f8f6ff;border-radius:24px;padding:18px 16px 26px;color:#211943;box-sizing:border-box}
  .tp-shade:has(.tp-admin-v1) .tp-card>h1{font-size:24px;color:#23194d;margin:5px 44px 13px 0}
@@ -116,15 +116,19 @@
      const summary=document.createElement('summary');summary.textContent=(s.full_name||s.username||'Öğretmen')+' · '+adminStatus(row.state);
      const details=document.createElement('p');details.textContent=[s.username,s.email,'E-posta: '+(s.email_verified_at?'Doğrulandı':'Bekliyor'),'Okul: '+(s.school||'Eklenmemiş'),'Telefon: '+(s.phone||'Eklenmemiş'),'Öğretmen kodu: '+(row.codeReady?'Oluşturuldu':'Bekliyor'),'Branş: '+({pending:'Bekliyor',english:'İngilizce',other:'Farklı branş'}[row.branch_status]||'Bekliyor'),'Beyan tarihi: '+(row.branch_declared_at?new Date(row.branch_declared_at).toLocaleString('tr-TR'):'—'),'Yönetici incelemesi: '+(row.branch_review_required?'Gerekli':'Gerekli değil')].join('\n');
      const actions=document.createElement('div');actions.className='ta-actions';
+     if(row.legacyOnly){details.textContent+='\nBağlı kişisel hesap kaydı bulunamadı. Kimlik eşleştirmesi yönetici incelemesi gerektirir; otomatik hesap oluşturulmaz.';article.append(summary,details);holder.append(article);continue;}
      for(const [decision,label,cls] of [['approved','✓ Onayla','yes'],['rejected','✕ Reddet','no'],['revoked','Erişimi Kaldır','']]){
       if(row.state===decision)continue;const button=document.createElement('button');button.type='button';button.className=cls;button.textContent=label;button.onclick=()=>decide(row,decision);actions.append(button);
      }
      if(row.state==='approved'){const button=document.createElement('button');button.type='button';button.textContent=row.codeReady||row.code_sent_at?'🔑 Yeni kod oluştur ve e-postala':'🔑 Kod oluştur ve e-postala';button.disabled=!s.email_verified_at;button.onclick=()=>issue(row);actions.append(button);}
+     const branchEdit=document.createElement('select');branchEdit.setAttribute('aria-label','Yeni branş beyanı');
+     for(const [value,label] of [['pending','Branş onayı bekliyor'],['english','İngilizce öğretmeni'],['other','Farklı branş']]){const option=document.createElement('option');option.value=value;option.textContent=label;branchEdit.append(option);}
+     branchEdit.value=row.branch_status||'pending';
      const edit=document.createElement('button');edit.type='button';edit.textContent='Branş beyanını düzelt';edit.onclick=async()=>{
-      if(busy)return;const choice=prompt('Branş durumunu yaz: english (İngilizce), other (farklı), pending (bekliyor)',row.branch_status);
-      if(!['english','other','pending'].includes(choice)||!confirm('Branş beyanı değiştirilsin mi? Kişisel hesap korunacak.'))return;
+      if(busy)return;const choice=branchEdit.value;
+      if(!['english','other','pending'].includes(choice)||choice===row.branch_status||!confirm('Branş beyanı değiştirilsin mi? Kişisel hesap korunacak.'))return;
       busy=true;try{await api('teacherPortalBranchCorrect',{id:row.id,choice});await reload();}catch(e){notify(e.message);}finally{busy=false;}
-     };actions.append(edit);
+     };actions.append(branchEdit,edit);
      article.append(summary,details,actions);holder.append(article);
     }
    }
@@ -858,6 +862,7 @@
  function handoffPersonal(r){
   if(!r.token||!r.name||r.role!=='ogrenci')throw Error('Kişisel oturum alınamadı.');
   const real=window.dmTeacherDevice?.storage||localStorage;
+  if(r.branchStatus==='pending')sessionStorage.setItem('dm_teacher_branch_intent',JSON.stringify({name:r.name,at:Date.now()}));
   sessionStorage.setItem('dm_session_handoff_v1',JSON.stringify({token:r.token,name:r.name,role:'ogrenci',google:false,previous:real.getItem('ing_token')||'',at:Date.now()}));
   const old=state()?.teacherToken;if(old)window.dmTeacherDevice?.forget(old);
   window.dmTeacherDevice?.leave();location.assign('./');
@@ -884,13 +889,16 @@
      const result=await api('teacherPortalBranchDeclare',{choice},token);
      if(token!==teacherToken())return;
      teacherAccount={...teacherAccount,...result};noticeToken='';noticeResult=null;branchDeferredToken='';clearBranchDialog();publishTeacherAccount();
+     let intent=null;try{intent=JSON.parse(sessionStorage.getItem('dm_teacher_branch_intent')||'null');}catch{}
+     sessionStorage.removeItem('dm_teacher_branch_intent');
      if(choice==='other'){document.getElementById('dmTeacherPreview')?.remove();document.getElementById('rtProfileBackdrop')?.remove();}
-     else scheduleTeacherEmailReminder(token);
+     else {scheduleTeacherEmailReminder(token);if(intent?.name===localStorage.getItem('ing_aktifOgrenci')&&Date.now()-intent.at<300000&&result.state==='approved')void openPersonalTeacherPanel();}
+
     }catch(e){if(dialog.isConnected)dialog.querySelector('[data-error]').textContent=e.message||'Seçim kaydedilemedi. Tekrar dene.';}
     finally{buttons.forEach(b=>b.disabled=false);}
    };
    if(confirmOther){add('Kişisel hesabımla devam et',()=>submitChoice('other'),true);add('Geri dön',()=>render(false));}
-   else{add('İngilizce öğretmeniyim',()=>submitChoice('english'),true);add('Farklı bir branştayım',()=>render(true));add('Daha sonra',()=>{branchDeferredToken=token;clearBranchDialog();});}
+   else{add('İngilizce öğretmeniyim',()=>submitChoice('english'),true);add('Farklı bir branştayım',()=>render(true));add('Daha sonra',()=>{branchDeferredToken=token;sessionStorage.removeItem('dm_teacher_branch_intent');clearBranchDialog();});}
   };
   render(false);dialog.showModal();
  }
@@ -950,6 +958,7 @@
   if(mode||window.dmGuestMode||sessionStorage.getItem('ing_ogr_token'))return;
   const token=teacherToken();
   if(!token){teacherAccount=null;teacherAccountToken='';clearBranchDialog();publishTeacherAccount();return;}
+  if(teacherAccountToken!==token&&branchDialog)clearBranchDialog();
   if(teacherStatusLoading||!force&&teacherAccountToken===token)return;
   if(teacherAccountToken!==token){teacherAccount=null;clearBranchDialog();branchDeferredToken='';}
   teacherAccountToken=token;teacherStatusLoading=true;

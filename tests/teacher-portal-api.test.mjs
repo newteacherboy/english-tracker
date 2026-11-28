@@ -3,7 +3,7 @@ import {teacherPortalAPI,portalOperationAllowed,ownerTeacher} from '../supabase/
 import {DEMO_ID,DEMO_TEACHER_ID} from '../supabase/functions/diji-api/demo-account.ts';
 const hash=async s=>Buffer.from(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s))).toString('hex');
 async function fixture(){const digest=await hash('server-secret|teacher-portal|123456'),calls=[];
- const tables={teacher_portal_access:[{id:'grant',student_id:'personal',teacher_id:'teacher-one',state:'approved',branch_status:'english',version:3,code_digest:digest}],teachers:[{id:'teacher-one',username:'TeacherOne',active:true}],students:[{id:'personal',username:'TeacherOne',email:'one@example.test',email_verified_at:'2026-10-24',status:'approved'},{id:'alice',username:'Alice',teacher_id:'teacher-one',status:'approved'},{id:'bob',username:'Bob',teacher_id:'teacher-two',status:'approved'}],teacher_portal_guests:[],extra_data:[]};
+ const tables={teacher_portal_access:[{id:'grant',student_id:'personal',teacher_id:'teacher-one',state:'approved',branch_status:'english',version:3,code_digest:digest}],teachers:[{id:'teacher-one',username:'TeacherOne',active:true}],students:[{id:'personal',username:'TeacherOne',email:'one@example.test',email_verified_at:'2026-10-24',status:'approved'},{id:'alice',username:'Alice',teacher_id:'teacher-one',status:'approved'},{id:'bob',username:'Bob',teacher_id:'teacher-two',status:'approved'}],teacher_portal_guests:[],teacher_branch_resume_sessions:[],extra_data:[]};
  const db={from(table){const filters=[];let changes;const result=single=>({data:single?(tables[table]||[]).find(x=>filters.every(f=>f(x)))||null:(tables[table]||[]).filter(x=>filters.every(f=>f(x)))});const q={select(){return this},update(values){changes=values;return this},upsert(values,options){
  const keys=options.onConflict.split(','),row=tables[table].find(x=>keys.every(k=>x[k]===values[k]));
  if(!row)tables[table].push({...values,...(table==='teacher_portal_access'?{id:'new-grant',state:'pending',version:1}:{})});else if(!options.ignoreDuplicates)Object.assign(row,values);
@@ -177,4 +177,11 @@ test('pending admin approval remains pending after English declaration; normal l
  assert.equal((await f.run('teacherPortalBranchDeclare',{choice:'english'},actor)).data.state,'pending');
  assert.equal((await f.run('teacherPortalEnter',{},actor)).status,403);
  assert.equal((await f.run('teacherPortalStatus',{}, {role:'student',student_id:'alice'})).data.teacherAccount,false);
+});
+
+test('saved teacher session resumes the exact linked personal identity without issuing teacher authority',async()=>{
+ const f=await fixture(),g=f.tables.teacher_portal_access[0];
+ g.branch_status='pending';f.tables.teacher_branch_resume_sessions.push({token_hash:await hash('saved-teacher-session'),access_id:g.id,version:g.version,expires_at:'2099-01-01'});
+ const r=await f.run('teacherPortalBranchResume',{t:'saved-teacher-session'});
+ assert.equal(r.data.personal,true);assert.equal(r.data.branchStatus,'pending');assert.deepEqual(f.calls.at(-1).session,['student','personal']);
 });

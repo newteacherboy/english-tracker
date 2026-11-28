@@ -10,7 +10,7 @@ const fs=require('node:fs');
    await page.route('https://branch.test/**',r=>r.fulfill({contentType:'text/html',body:'<!doctype html><body><div class="rt-medal-route">Parkur</div><div id="tab-dunya"><div class="rt-medal-unit"></div></div></body>'}));
    await page.route('https://*.supabase.co/**',async r=>{
     const b=r.request().postDataJSON();let data={ok:true};let status=200;
-    if(b.islem==='teacherPortalStatus'){statusCalls++;data={ok:true,teacherAccount:branch!=='other',branchStatus:branch,state,codeReady:true};}
+    if(b.islem==='teacherPortalStatus'){statusCalls++;data=b.t==='normal-student-token'?{ok:true,teacherAccount:false,state:'none'}:{ok:true,teacherAccount:branch!=='other',branchStatus:branch,state,codeReady:true};}
     if(b.islem==='teacherPortalBranchDeclare'){if(err){status=503;data={ok:false,mesaj:'Bağlantı kesildi'};}else{branch=b.choice;data={ok:true,teacherAccount:branch!=='other',branchStatus:branch,state};}}
     if(b.islem==='memberStatus')data={ok:true,emailVerified:true};
     await r.fulfill({status,contentType:'application/json',headers:{'access-control-allow-origin':'*'},body:JSON.stringify(data)});
@@ -36,6 +36,17 @@ const fs=require('node:fs');
    assert.equal(await page.evaluate(()=>window.dmTeacherSwitch.available()),false);
    assert.equal(await page.evaluate(()=>localStorage.getItem('ing_token')),'synthetic-personal-token');
    assert.equal(statusCalls,1);
+   // Another device loads the persisted server declaration, not localStorage.
+   await page.reload();await page.evaluate(()=>localStorage.setItem('ing_token','synthetic-personal-token'));
+   await page.addScriptTag({content:fs.readFileSync('ingilizce/teacher-portal-boot.js','utf8')});await page.addScriptTag({content:fs.readFileSync('ingilizce/teacher-portal.js','utf8')});
+   await page.waitForTimeout(3000);assert.equal(await dialog.count(),0);assert.equal(await page.evaluate(()=>window.dmTeacherSwitch.available()),false);
+   // Independent student does not inherit a previous teacher's status.
+   await page.evaluate(()=>{localStorage.setItem('ing_token','normal-student-token');document.dispatchEvent(new Event('dm:login'));});
+   await page.waitForTimeout(3000);assert.equal(await dialog.count(),0);assert.equal(await page.evaluate(()=>window.dmTeacherSwitch.available()),false);
+   // An unconfirmed English teacher keeps both shortcuts after declaring.
+   branch='pending';state='pending';await page.evaluate(()=>{localStorage.setItem('ing_token','another-synthetic-teacher-token');document.dispatchEvent(new Event('dm:login'));});
+   await dialog.waitFor();await dialog.getByRole('button',{name:'İngilizce öğretmeniyim'}).click();
+   await dialog.waitFor({state:'detached'});assert.equal(branch,'english');assert.equal(await page.evaluate(()=>window.dmTeacherSwitch.available()),true);assert.equal(await page.locator('#dmTeacherParkurSwitch').count(),1);
    await page.close();console.log('PASS branch dialog, lossless personal switch, offline and profile availability',width,height);
   }
  }finally{await browser.close();}

@@ -4,7 +4,7 @@ const storage=(values={})=>{const s={getItem:k=>Object.hasOwn(s,k)?s[k]:null,set
 const portal={teacherToken:'owner-token',name:'teacher',participant:{token:'preview-token',name:'Önizleme'},route:'panel'};
 function page(native=storage(),session=storage(),search='',reply={status:200,ok:true,data:{ok:true,rol:'ogretmen',ogrenci:'teacher'}}){
  const events={},calls=[],location={search,pathname:'/ingilizce/',href:'https://app.test/ingilizce/'+search,hash:'',assign:u=>calls.push(['assign',u]),replace:u=>calls.push(['replace',u]),reload:()=>calls.push(['reload'])};
- const w={localStorage:native,sessionStorage:session,location,addEventListener:(n,f)=>(events[n]||=[]).push(f)};const ctx={window:w,sessionStorage:session,localStorage:native,location,URL,URLSearchParams,Object,Date,JSON,AbortController,console,history:{replaceState(_a,_b,url){location.search=new URL(url,'https://app.test').search;}},document:{readyState:'loading',createElement:()=>({setAttribute(){}}),documentElement:{classList:{add(){}}},addEventListener:(n,f)=>(events[n]||=[]).push(f)},apiURL:'https://app.test/api',fetch:async(_u,opt)=>{calls.push(['request',JSON.parse(opt.body)]);return {status:reply.status,ok:reply.ok,json:async()=>reply.data};},setTimeout:()=>1,setInterval:()=>1,clearTimeout(){}};w.fetch=ctx.fetch;vm.createContext(ctx);vm.runInContext(boot,ctx);ctx.localStorage=w.localStorage;return {w,ctx,native,session,location,calls,events,installSaved(){vm.runInContext(saved,ctx);}};
+ const w={localStorage:native,sessionStorage:session,location,addEventListener:(n,f)=>(events[n]||=[]).push(f)};const ctx={window:w,sessionStorage:session,localStorage:native,location,URL,URLSearchParams,Object,Date,JSON,AbortController,console,history:{replaceState(_a,_b,url){location.search=new URL(url,'https://app.test').search;}},document:{readyState:'loading',createElement:()=>({setAttribute(){}}),documentElement:{classList:{add(){}}},addEventListener:(n,f)=>(events[n]||=[]).push(f)},apiURL:'https://app.test/api',fetch:async(_u,opt)=>{const body=JSON.parse(opt.body);calls.push(['request',body]);const response=typeof reply==='function'?reply(body):reply;return {status:response.status,ok:response.ok,json:async()=>response.data};},setTimeout:()=>1,setInterval:()=>1,clearTimeout(){}};w.fetch=ctx.fetch;vm.createContext(ctx);vm.runInContext(boot,ctx);ctx.localStorage=w.localStorage;return {w,ctx,native,session,location,calls,events,installSaved(){vm.runInContext(saved,ctx);}};
 }
 test('reopening after the teacher was last used restores the code session and route without touching personal data',()=>{
  const native=storage({ing_token:'personal-token',ing_aktifOgrenci:'Ada'}),first=page(native);first.w.dmTeacherDevice.remember(portal);
@@ -110,4 +110,14 @@ test('expired resumed teacher uses account picker instead of another teacher-cod
 test('explicit teacher deep link still asks for code if no teacher session was selected',()=>{
  const opened=page(storage(),storage(),'?ogretmen=1');
  assert.deepEqual(opened.calls.at(-1),['replace','./?ogretmenGiris=1']);
+});
+
+test('a previously signed-in teacher whose branch is pending resumes only the linked personal account',async()=>{
+ const native=storage({ing_token:'other-device-personal',ing_aktifOgrenci:'Other'});page(native).w.dmTeacherDevice.remember(portal);
+ const reopened=page(native,storage(),'',body=>body.islem==='teacherPortalBranchResume'?{status:200,ok:true,data:{ok:true,personal:true,token:'linked-personal-token',name:'TeacherPersonal',role:'ogrenci',branchStatus:'pending'}}:{status:401,ok:false,data:{ok:false}});
+ await new Promise(r=>setImmediate(r));
+ const handoff=JSON.parse(reopened.session.getItem('dm_session_handoff_v1'));
+ assert.equal(handoff.token,'linked-personal-token');assert.equal(handoff.previous,'other-device-personal');
+ assert.equal(reopened.w.dmTeacherDevice.list().length,0);assert.equal(reopened.session.getItem('dm_tp_session'),null);
+ assert.deepEqual(reopened.calls.at(-1),['replace','./']);
 });

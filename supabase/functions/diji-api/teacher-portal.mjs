@@ -192,7 +192,11 @@ export function teacherPortalAPI(d){
     const code=randomCode(),queued=await codeMail(r.data,code);
     return queued?json({ok:true,issuedCode:code,mailQueued:true}):fail('Kod oluşturulamadı; tekrar deneyebilirsin.',409);
    }
-   const r=await db.from('teacher_portal_access').select('id,state,branch_status,branch_declared_at,branch_review_required,requested_at,code_sent_at,code_digest,student_id,students!student_id(username,full_name,email,email_verified_at,school,phone)').not('student_id','is',null).order('requested_at',{ascending:false});if(r.error)throw r.error;return json({ok:true,items:(r.data||[]).map(({code_digest,...row})=>({...row,codeReady:!!code_digest}))});
+   const r=await db.from('teacher_portal_access').select('id,teacher_id,state,branch_status,branch_declared_at,branch_review_required,requested_at,code_sent_at,code_digest,student_id,students!student_id(username,full_name,email,email_verified_at,school,phone)').not('student_id','is',null).order('requested_at',{ascending:false});if(r.error)throw r.error;
+   const legacy=await db.from('teachers').select('id,username,full_name,email,school,phone,active').eq('is_admin',false);if(legacy.error)throw legacy.error;
+   const teacherIds=new Set((r.data||[]).map(row=>row.teacher_id).filter(Boolean));
+   const missing=(legacy.data||[]).filter(t=>!teacherIds.has(t.id)).map(({id,active,...students})=>({id,state:'legacy',branch_status:'pending',branch_review_required:true,legacyOnly:true,students,codeReady:false}));
+   return json({ok:true,items:[...(r.data||[]).map(({code_digest,...row})=>({...row,codeReady:!!code_digest})),...missing]});
   }
   if(op==='teacherPortalApply'||op==='teacherPortalStatus'){
    if(a?.role!=='student'||!a.student_id||a.teacher_portal_access_id)return fail('Kişisel hesabına giriş yap.',401);

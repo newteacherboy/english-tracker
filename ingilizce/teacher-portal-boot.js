@@ -35,6 +35,7 @@
  }
  function resumePersonal(result,oldToken){
   if(!result?.personal||!result.token||!result.name||result.role!=='ogrenci')return false;
+  if(result.branchStatus==='pending')ss.setItem('dm_teacher_branch_intent',JSON.stringify({name:result.name,at:Date.now()}));
   ss.setItem('dm_session_handoff_v1',JSON.stringify({token:result.token,name:result.name,role:'ogrenci',google:false,previous:storage.getItem('ing_token')||'',at:Date.now()}));
   if(oldToken)forget(oldToken);leave();location.replace('./');return true;
  }

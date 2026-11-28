@@ -1,4 +1,6 @@
 begin;
+-- Freeze session insertion while old access tokens are recorded and restricted.
+lock table public.portal_sessions in share row exclusive mode;
 -- Account-level declaration; the administrator approval state and private code stay independent.
 alter table public.teacher_portal_access
  add column branch_status text not null default 'pending' check (branch_status in ('pending','english','other')),
