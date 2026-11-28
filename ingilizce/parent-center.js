@@ -11,6 +11,8 @@
  const row=(label,action,detail='',extra='')=>'<button class="pc-row" type="button" data-action="'+action+'" '+extra+'>'+icon(({teacher:'family',settings:'bell',goal:'growth',history:'growth',weekly:'book',cards:'book',account:'family',membership:'growth'})[action]||'book')+'<span>'+esc(label)+(detail?'<small>'+esc(detail)+'</small>':'')+'</span><span aria-hidden="true" style="flex:0">›</span></button>';
  const badge=plan=>'<span class="pc-badge '+(plan==='free'?'free':'')+'">'+({premium_pro:'Premium Pro',pro:'Pro',free:'Free'}[plan]||'Free')+'</span>';
  const studentMode=new URLSearchParams(location.search).get('ogrenci')==='1';
+ const embeddedAuth=window.parent!==window&&new URLSearchParams(location.search).get('dijiEmbed')==='1'&&!studentMode;
+ const initialSignup=new URLSearchParams(location.search).get('kayit')==='1';
  let networkCount=0;
  function networkBusy(active){
   networkCount=Math.max(0,networkCount+(active?1:-1));
@@ -47,11 +49,12 @@
  function field(label,name,type='text',value='',extra=''){return '<label class="pc-field">'+esc(label)+'<input name="'+name+'" type="'+type+'" value="'+esc(value)+'" '+extra+'></label>';}
  function authForm(signup=false){
   const title=signup?'Veli Kaydı':'Veli Girişi';
-  render(title,'<form id="pcAuth" class="pc-auth pc-auth-v2" data-form="auth">'+(signup?field('İsim Soyisim','name','text','','required minlength="2" maxlength="80" autocomplete="name"'):'')+field('E-posta adresi','email','email','','required maxlength="120" autocomplete="email"')+field('Şifre','password','password','','required minlength="6" maxlength="64" autocomplete="'+(signup?'new-password':'current-password')+'"')+(signup?'<label class="pc-check"><input type="checkbox" name="consent" required><span><a href="gizlilik.html" target="_blank" rel="noopener">Gizlilik bilgilendirmesini</a> okudum, <a href="kullanim-kosullari.html" target="_blank" rel="noopener">kullanım koşullarını</a> kabul ediyorum.</span></label><label class="pc-check"><input type="checkbox" name="progressMail"><span>Gelişim özetleri ve Papi haberlerini e-postayla almak istiyorum. (İsteğe bağlı)</span></label>':'')+'<button class="pc-primary" type="submit">'+(signup?'Hesabımı Oluştur':'Giriş Yap')+'</button></form>'+btn(signup?'Hesabım Var':'Veli Hesabı Oluştur',signup?'login':'signup','secondary')+(!signup?btn('Şifremi Unuttum','forgot','link'):'')+'<a class="pc-row" href="./?baslangic=1">Giriş seçeneklerine dön</a>',{noNav:true,screen:signup?'signup':'login'});
+  render(title,'<form id="pcAuth" class="pc-auth pc-auth-v2" data-form="auth">'+(signup?field('İsim Soyisim','name','text','','required minlength="2" maxlength="80" autocomplete="name"'):'')+field('E-posta adresi','email','email','','required maxlength="120" autocomplete="email"')+field('Şifre','password','password','','required minlength="6" maxlength="64" autocomplete="'+(signup?'new-password':'current-password')+'"')+(signup?'<label class="pc-check"><input type="checkbox" name="consent" required><span><a href="gizlilik.html" target="_blank" rel="noopener">Gizlilik bilgilendirmesini</a> okudum, <a href="kullanim-kosullari.html" target="_blank" rel="noopener">kullanım koşullarını</a> kabul ediyorum.</span></label><label class="pc-check"><input type="checkbox" name="progressMail"><span>Gelişim özetleri ve Papi haberlerini e-postayla almak istiyorum. (İsteğe bağlı)</span></label>':'')+'<button class="pc-primary" type="submit">'+(signup?'Hesabımı Oluştur':'Giriş Yap')+'</button></form>'+btn(signup?'Hesabım Var':'Veli Hesabı Oluştur',signup?'login':'signup','secondary')+(!signup?btn('Şifremi Unuttum','forgot','link'):'')+btn('← Giriş seçeneklerine dön','auth-back','secondary'),{noNav:true,screen:signup?'signup':'login'});
  }
  async function load(){
   const result=await api('parentMe');me=result;
   window.dmSavedParents?.remember(me.parent,token);
+  if(embeddedAuth){window.parent.postMessage('dm-parent-auth-ready',location.origin);return;}
   if(!me.parent.verified){verifyView();return;}
   if(!me.children.some(c=>c.id===childId))childId=me.children[0]?.id||'';
   localStorage.setItem(CHILD,childId);
@@ -182,6 +185,11 @@
  }
  async function action(name,el){
   if(studentMode&&['back','practice'].includes(name)){await studentHome();return;}
+  if(name==='auth-back'){
+   if(embeddedAuth){window.parent.postMessage('dm-parent-auth-back',location.origin);return;}
+   try{const previous=new URL(document.referrer);if(previous.origin===location.origin&&['/ingilizce/','/ingilizce/index.html','/ingilizce'].includes(previous.pathname)&&history.length>1){history.back();return;}}catch{}
+   location.assign(initialSignup?'./?kayit=1&rolSec=1':'./?girisSecenekleri=1');return;
+  }
   if(name==='signup'){authForm(true);return;}if(name==='login'){authForm();return;}
   if(name==='logout'){await api('parentLogout');window.dmSavedParents?.forget(token);localStorage.removeItem(KEY);token='';me=null;authForm();return;}
   if(name==='refresh'){await load();return;}if(name==='resend'){const r=await api('parentResend');error(r.mailed?'Doğrulama e-postası kuyruğa alındı.':'E-posta şu an gönderilemedi. Biraz sonra tekrar dene.');return;}

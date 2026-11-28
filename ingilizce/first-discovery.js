@@ -87,7 +87,16 @@
   screen='login-roles';
   show('<h1>Hesabım Var</h1>'+roleCard('Öğrenci Girişi','login','school')+roleCard('Veli Girişi','parent-login','parent')+roleCard('Öğretmen Girişi','teacher-login','teacher'),'',0,'fd-role-screen');
  }
- function parentEntry(signup){navigate('veli-paneli.html'+(signup?'?kayit=1':''));}
+ function parentEntry(signup){
+  screen=signup?'parent-register':'parent-login';
+  show('<iframe class="fd-parent-frame" title="'+(signup?'Veli Kaydı':'Veli Girişi')+'" src="veli-paneli.html?dijiEmbed=1'+(signup?'&amp;kayit=1':'')+'"></iframe>','',0,'fd-parent-embedded');
+ }
+ window.addEventListener('message',event=>{
+  if(event.origin!==location.origin||!['parent-register','parent-login'].includes(screen))return;
+  const frame=root?.querySelector('.fd-parent-frame');if(!frame||event.source!==frame.contentWindow)return;
+  if(event.data==='dm-parent-auth-back'){if(screen==='parent-register')showHome();else loginRoles();}
+  else if(event.data==='dm-parent-auth-ready')navigate('veli-paneli.html');
+ });
  const navigate=url=>ctx.navigate?ctx.navigate(url):location.assign(url);
  function login(){
   hide();document.documentElement.classList.remove('dm-first-entry');
@@ -278,14 +287,14 @@
   else if(a==='tab')openTab(Number(el.dataset.tab));else if(a==='explore')invite();
   else if(a==='back'){if(parentSignup&&screen==='register'&&step===0){ctx.session.removeItem(DRAFT);ctx.session.removeItem('dm_parent_child_signup');navigate('veli-paneli.html');return;}if(screen==='parent-login'){loginRoles();return;}if(screen==='parent-register'){showHome();return;}if(screen==='register'){collect();if(step>0){if(!googleSession)password=$('fdPassword')?.value||password;step=adjacentRegistrationStep(-1);renderRegistration();}else if(demoComplete)demoResult();else welcome();}else if(screen==='question')demoIntro();else if(screen==='intro')welcome();else if(screen==='mini-result')demoIntro();else if(screen==='invite')welcome();else if(screen==='welcome')login();else if(screen==='verification')renderRegistration();else if(screen==='success')login();else welcome();}
  }
- function activityOpen(){if(screen==='question'||screen==='register'||screen==='verification'||screen==='success')return true;if(typeof OC!=='undefined'&&OC?.aktif)return true;
+ function activityOpen(){if(['question','register','verification','success','parent-register','parent-login'].includes(screen))return true;if(typeof OC!=='undefined'&&OC?.aktif)return true;
   return !![...document.querySelectorAll('#genelSonucOverlay.acik,#dmResultOverlay,.bz-oyun,.kp-oyun,.bs-perde,.hb-overlay,.gs-perde')].find(el=>el.getClientRects().length&&getComputedStyle(el).display!=='none');}
  function tick(){const now=performance.now();if(!document.hidden)activeMs+=Math.min(2000,now-lastTick);lastTick=now;if(!ctx.guest)return;if((inviteDue||(visited.size>=3&&activeMs>=120000))&&Date.now()-lastInvite>=120000&&!activityOpen()&&(!root||root.hidden||screen==='home'))invite();}
  function initialize(){if(window.dmGuestMode&&!ctx.guest)return;mount();if(!ctx.guest)document.body.classList.add('dm-discovery-login');readiness();window.dmFirstDiscovery={openRegistration:showHome,openDemo:demoIntro,openGoogleRegistration:()=>receiveGoogle(true),showHome,invite,questions,activityOpen,notifyActivityComplete:()=>{inviteDue=true;},expire:()=>{inviteDue=true;if(!activityOpen())invite(true);},screen:()=>screen,hasPendingAccount:()=>!!registered,openLogin:login};
   window.kayitOlAc=function(){step=0;renderRegistration();};
   if(parentSignup){step=0;renderRegistration();return;}
   if(ctx.member){document.addEventListener('dm:login',()=>{const tab=ctx.raw.getItem('dm_discovery_return_tab');ctx.raw.removeItem('dm_discovery_return_tab');if(tab==='0'){setTimeout(()=>{if(!window.dmTeacherPortalMode&&document.getElementById('panel-alani')?.style.display==='block')window.dunyaAc?.();},300);}else if(tab){const fns=['dunyaAc','aktivitelerTamEkranAc','sanaOzelTamEkranAc','profilAc'];window[fns[Number(tab)]]?.();}},{once:true});return;}
-  const pending=parse(ctx.session,'dm_discovery_new_session');if(pending?.token&&Date.now()-pending.at<3600000&&!ctx.member){registered={token:pending.token,ogrenci:pending.student,status:pending.created?'success':undefined};success();}else if(ctx.welcome){welcome();}else if(ctx.oauth){receiveGoogle();}else if(new URLSearchParams(location.search).get('giris')==='1'){login();}else if(new URLSearchParams(location.search).get('kayit')==='1'&&!ctx.member){step=0;renderRegistration();}
+  const pending=parse(ctx.session,'dm_discovery_new_session');if(pending?.token&&Date.now()-pending.at<3600000&&!ctx.member){registered={token:pending.token,ogrenci:pending.student,status:pending.created?'success':undefined};success();}else if(new URLSearchParams(location.search).get('rolSec')==='1'){showHome();}else if(new URLSearchParams(location.search).get('girisSecenekleri')==='1'){loginRoles();}else if(ctx.welcome){welcome();}else if(ctx.oauth){receiveGoogle();}else if(new URLSearchParams(location.search).get('giris')==='1'){login();}else if(new URLSearchParams(location.search).get('kayit')==='1'&&!ctx.member){step=0;renderRegistration();}
 
  }
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',initialize,{once:true});else initialize();

@@ -31,10 +31,10 @@ test('welcome separates registration and sign-in by role',async()=>{
   assert.deepEqual([...d.querySelectorAll('.fd-actions button')].map(button=>button.textContent.trim()),['Üye Ol','Hesabım Var']);
   f.click('login-roles');
   assert.deepEqual(labels(),['Öğrenci Girişi','Veli Girişi','Öğretmen Girişi']);
-  f.click('parent-login');assert.equal(navigated.at(-1),'veli-paneli.html');
+  f.click('parent-login');assert.equal(w.dmFirstDiscovery.screen(),'parent-login');let frame=d.querySelector('.fd-parent-frame');assert.match(frame.getAttribute('src'),/dijiEmbed=1/);w.dispatchEvent(new w.MessageEvent('message',{origin:w.location.origin,source:frame.contentWindow,data:'dm-parent-auth-back'}));assert.equal(w.dmFirstDiscovery.screen(),'login-roles');assert.equal(navigated.length,0);
   f.click('back');f.click('begin');
   assert.deepEqual(labels(),['Öğrenciyim','Öğretmenim','Veliyim','Kendim için']);
-  d.querySelector('[data-role="parent"]').click();assert.equal(navigated.at(-1),'veli-paneli.html?kayit=1');
+  d.querySelector('[data-role="parent"]').click();assert.equal(w.dmFirstDiscovery.screen(),'parent-register');frame=d.querySelector('.fd-parent-frame');assert.match(frame.getAttribute('src'),/kayit=1/);w.dispatchEvent(new w.MessageEvent('message',{origin:'https://example.test',source:frame.contentWindow,data:'dm-parent-auth-back'}));assert.equal(w.dmFirstDiscovery.screen(),'parent-register');w.dispatchEvent(new w.MessageEvent('message',{origin:w.location.origin,source:frame.contentWindow,data:'dm-parent-auth-back'}));assert.equal(w.dmFirstDiscovery.screen(),'register');assert.equal(navigated.length,0);
   d.querySelector('[data-role="school"]').click();
   assert(d.querySelector('[data-field="ageBand"]'));
   assert(!d.querySelector('[data-field="parentAccount"]'));
@@ -80,5 +80,13 @@ test('teacher collects school details once and confirms the registration code be
   f.click('teacher-code-next');
   assert.equal(w.dmFirstDiscovery.screen(),'verification');
   assert(!w.document.querySelector('[data-field="schoolCity"]'),'no second school form');
+ }finally{w.close();}
+});
+
+test('parent auth back is a real button and posts only the fixed same-origin navigation event',async()=>{
+ const dom=new JSDOM('<iframe src="https://app.test/ingilizce/veli-paneli.html?dijiEmbed=1&kayit=1"></iframe>',{url:'https://app.test/ingilizce/',runScripts:'outside-only'});
+ const w=dom.window,child=w.document.querySelector('iframe').contentWindow,events=[];try{
+  child.document.open();child.document.write('<!doctype html><html><body><main id="parentApp"></main></body></html>');child.document.close();w.postMessage=(data,origin)=>events.push({data,origin});child.eval(read('parent-center.js'));await flush();
+  const b=child.document.querySelector('[data-action="auth-back"]');assert(b);assert.equal(b.tagName,'BUTTON');assert.equal(b.type,'button');assert.match(b.textContent,/Giriş seçeneklerine dön/);b.click();await flush();assert.deepEqual(events,[{data:'dm-parent-auth-back',origin:'https://app.test'}]);
  }finally{w.close();}
 });

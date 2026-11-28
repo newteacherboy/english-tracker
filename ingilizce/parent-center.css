@@ -6,3 +6,6 @@
 body{overflow:hidden}#parentApp{height:100%;display:flow-root}
 
 .pc-auth-v2 .pc-primary{background:linear-gradient(170deg,#ff7279,#ef424e);color:white;border:0}.pc-auth-v2 input[type=checkbox]{accent-color:#bf2533}.pc-auth-v2 .pc-check a{color:#ba303c}.pc-auth-v2{background:#fff}
+
+.pc-content>[data-action="auth-back"]{display:block;width:100%;min-height:48px;margin-top:10px;justify-content:center;text-align:center;font-weight:750;border:1.5px solid #d2d8dd;border-radius:14px;background:#fff;color:#17283b}
+.pc-content>[data-action="auth-back"]:active{background:#f4f5f7}
