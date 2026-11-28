@@ -21,7 +21,7 @@
   const reads=new Set(['bildirimlerim','ilerlemeOzet','enerjiDurumuGetir','duyurulariGetir',
     'sosyalOgrencilerGetir','ekVeriGetir','seviyeDurumu','seviyeLigListesi',
     'yayinOzellikleri','dersKonulariGetir','akisTumu','duellolarim','sosyalDurum',
-    'aksesuarKatalog','oyunEslesmelerim','takipDavetListesi','kategorileriGetir','KOK','announcementInbox','teacherNotificationSummary','safetyStatus',
+    'oyunEslesmelerim','takipDavetListesi','kategorileriGetir','KOK','announcementInbox','teacherNotificationSummary','safetyStatus',
     'memberStatus','ogretmenBilgim','ogretmenSohbetListesi','sohbetGetir','benimIstatistik',
     'akisOlaylariGetir','odevlerim','etkinlikleriGetir','videolariGetir','buyuSeviyeIlerlemeGetir']);
   const liveReads=new Set(['oyunEslesmeDurum','aktifDurum']);
@@ -54,7 +54,7 @@
   const ttl={bildirimlerim:110000,ilerlemeOzet:30000,enerjiDurumuGetir:15000,
     duyurulariGetir:300000,sosyalOgrencilerGetir:60000,seviyeDurumu:30000,
     seviyeLigListesi:60000,yayinOzellikleri:300000,akisTumu:15000,KOK:20000,
-    sosyalDurum:30000,takipDavetListesi:30000,oyunEslesmelerim:10000,aksesuarKatalog:300000,announcementInbox:300000,teacherNotificationSummary:110000,
+    sosyalDurum:30000,takipDavetListesi:30000,oyunEslesmelerim:10000,announcementInbox:300000,teacherNotificationSummary:110000,
     safetyStatus:300000,memberStatus:30000,ogretmenBilgim:60000,ogretmenSohbetListesi:15000,
     sohbetGetir:10000,benimIstatistik:60000,akisOlaylariGetir:60000,odevlerim:60000,
     etkinlikleriGetir:60000,videolariGetir:60000,buyuSeviyeIlerlemeGetir:30000};
