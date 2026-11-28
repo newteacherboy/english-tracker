@@ -273,8 +273,8 @@ async function auth(req: Request, body: any, q: URLSearchParams) {
     return null;
   }
   if(data.teacher_portal_access_id){
-    const grant=await supabase.from('teacher_portal_access').select('id,teacher_id,state,version,student_id').eq('id',data.teacher_portal_access_id).maybeSingle();
-    if(grant.error||grant.data?.state!=='approved'||grant.data.version!==data.teacher_portal_version)return null;
+    const grant=await supabase.from('teacher_portal_access').select('id,teacher_id,state,version,student_id,branch_status').eq('id',data.teacher_portal_access_id).maybeSingle();
+    if(grant.error||grant.data?.state!=='approved'||grant.data.version!==data.teacher_portal_version||(grant.data.student_id&&grant.data.branch_status!=='english'&&!isDemoTeacherGrant(grant.data)))return null;
     const teacher=await supabase.from('teachers').select('active,frozen_at,username,is_admin').eq('id',grant.data.teacher_id).maybeSingle();
     if(!teacher.data?.active||teacher.data.frozen_at)return null;
     if(grant.data.student_id){
@@ -1342,6 +1342,7 @@ async function handle(req: Request, proxy: any = null) {
       const email = String(body.email || "").trim();
     {const mailCheck=await validateRegistrationEmail(email);if(!mailCheck.ok)return json({ok:false,status:"error",message:mailCheck.message,mesaj:mailCheck.message},mailCheck.temporary?503:400);}
       const teacherApplication = body.requestTeacherAccess===true;
+      if(teacherApplication&&body.englishTeacher!==true)return json({ok:false,status:'error',mesaj:'İngilizce öğretmeni olduğunu onayla.'},400);
       const school=temizMetin(body.okul||"",120).replace(/\s+/g,' ').trim();
       const city=teacherApplication?temizMetin(body.okulIl||"",40).replace(/\s+/g,' ').trim():"";
       const district=teacherApplication?temizMetin(body.okulIlce||"",60).replace(/\s+/g,' ').trim():"";
@@ -2263,35 +2264,7 @@ async function handle(req: Request, proxy: any = null) {
   /* [v4.0] Öğretmen kaydı: kendine özel öğretmen kodu verilir, yöneticiye e-posta gider.
      [v5.0] Hesap yönetici onaylayana kadar pasif kalır (herkesin öğretmen yetkisi alamaması için). */
   if (op === "ogretmenKayitOl") {
-    const kullanici = String(body.kullaniciAdi || "").trim().replace(/\s+/g, " ");
-    const adSoyad = temizMetin(body.adSoyad, 80), eposta = String(body.email || "").trim(), kurum = temizMetin(body.kurum, 120), sifre = String(body.sifre || "");
-    {const mailCheck=await validateRegistrationEmail(eposta);if(!mailCheck.ok)return json({ok:false,status:"error",message:mailCheck.message,mesaj:mailCheck.message},mailCheck.temporary?503:400);}
-    if (!/^[A-Za-zÇĞİÖŞÜçğıöşü0-9 ._-]{3,40}$/.test(kullanici)) return json({ ok: false, mesaj: "Kullanıcı adı 3-40 karakter olmalı (harf, rakam, boşluk, . _ -)." });
-    if (!adSoyad || adSoyad.length < 3) return json({ ok: false, mesaj: "Adını ve soyadını yaz." });
-    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(eposta)) return json({ ok: false, mesaj: "Geçerli bir e-posta adresi yaz. Öğrenci bildirimleri bu adrese gelecek." });
-    if (sifre.length < 6 || sifre.length > 64) return json({ ok: false, mesaj: "Öğretmen şifresi en az 6 karakter olmalı." });
-    const otHam = String(body.telefon || "").replace(/\D/g, "");
-    const oTel = otHam.length === 10 && otHam[0] === "5" ? "0" + otHam : otHam.length === 11 && otHam.startsWith("05") ? otHam : otHam.length === 12 && otHam.startsWith("905") ? "0" + otHam.slice(2) : "";
-    if (!oTel) return json({ ok: false, mesaj: "Geçerli bir cep telefonu yaz (05XX XXX XX XX)." });
-    if (await denemeSay("ogretmen_kayit", "genel", 60) >= 10) return json({ ok: false, mesaj: "Çok fazla kayıt denemesi. Bir saat sonra tekrar dene." });
-    await denemeYaz("ogretmen_kayit", "genel", { ad: kullanici });
-    const [{ data: t1 }, s1] = await Promise.all([supabase.from("teachers").select("id").ilike("username", likeKacir(kullanici)).limit(1), studentByNameGenel(kullanici)]);
-    if ((t1 && t1.length) || s1) return json({ ok: false, mesaj: "Bu kullanıcı adı alınmış. Başka bir kullanıcı adı dene." });
-    const HARF = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
-    let kod = "";
-    for (let i = 0; i < 10 && !kod; i++) {
-      const aday = Array.from(crypto.getRandomValues(new Uint8Array(6))).map(b => HARF[b % HARF.length]).join("");
-      const { data: var_ } = await supabase.from("teachers").select("id").ilike("invite_code", aday).limit(1);
-      if (!var_ || !var_.length) kod = aday;
-    }
-    const ek = await supabase.from("teachers").insert({ username: kullanici, full_name: adSoyad, email: eposta, phone: oTel, school: kurum || null, password_hash: await hashPassword(sifre), invite_code: kod, is_admin: false, active: false }).select("id").single();
-    if (ek.error) { console.error("ogretmenKayitOl", ek.error); return json({ ok: false, mesaj: "Kayıt yapılamadı. Biraz sonra tekrar dene." }, 500); }
-    _yoneticiler.t = 0;
-    for (const e of (await yoneticiler()).epostalar) await kuyrugaEkle({ to_email: e, kind: "ogretmen_kayit", subject: `Yeni öğretmen kaydı – ${adSoyad}`,
-      html: mailKabugu("Yeni Öğretmen Kaydı", `<p><b>${hk(adSoyad)}</b> (${hk(kullanici)}) öğretmen olarak kayıt oldu.</p><p>Kurum: <b>${hk(kurum || "-")}</b><br>E-posta: ${hk(eposta)}<br>Öğretmen kodu: <b>${kod}</b></p><p><b>Hesap onay bekliyor.</b> Onaylamak için Öğretmen Paneli → Öğretmenler bölümünde bu öğretmenin yanındaki <b>Aktif yap</b> düğmesine bas. Onaylanana kadar giriş yapamaz ve kodu öğrenci kaydında çalışmaz.</p>`) });
-    await kuyrugaEkle({ to_email: eposta, kind: "ogretmen_kayit", subject: "Diji-Medu İngilizce öğretmen başvurunuz alındı",
-      html: mailKabugu("Hoş geldiniz", `<p>Merhaba ${hk(adSoyad)},</p><p>Öğretmen hesabınız oluşturuldu ve <b>yönetici onayı bekliyor</b>. Onaylandığında ayrıca e-posta alacaksınız. Kullanıcı adınız: <b>${hk(kullanici)}</b></p><p style="font-size:18px">Öğretmen kodunuz: <b style="letter-spacing:3px">${kod}</b></p><p>Öğrencileriniz kayıt olurken bu kodu yazarsa size bağlanır. Onların değerlendirmelerini, mesajlarını, ödevlerini sadece siz görürsünüz; öğrenciler diğer tüm öğrencilerle lig ve yarışmalarda birlikte yarışmaya devam eder.</p>`) });
-    return json({ ok: true, kod, kullanici, onayBekliyor: true });
+    return json({ok:false,mesaj:"İngilizce öğretmeni kaydı için güncel üyelik ekranını kullan."},410);
   }
   /* [v4.0] Öğretmenin kendi bilgileri (kodunu panelde görmek için) ve yöneticinin öğretmen listesi */
   if (op === "ogretmenBilgim") {
@@ -2343,6 +2316,7 @@ async function handle(req: Request, proxy: any = null) {
     const username = String(body.ogrenciAdi || "").trim().replace(/\s+/g, " ");
     const password = String(body.sifre || "");
     const teacherApplication = body.requestTeacherAccess === true;
+      if(teacherApplication&&body.englishTeacher!==true)return json({ok:false,status:'error',mesaj:'İngilizce öğretmeni olduğunu onayla.'},400);
     /* [v4.7] Kullanıcı adı artık takma ad: herkese görünür, gerçek ad olmamalı. Gerçek ad ayrı alanda, sadece öğretmen görür. */
     if (!/^[A-Za-zÇĞİÖŞÜçğıöşü0-9._-]{3,20}$/.test(username)) return json({ status: "error", message: "Kullanıcı adı 3-20 karakter olmalı; harf, rakam, nokta, alt çizgi ya da tire kullanabilirsin. Boşluk olmaz." });
     const adSoyad = String(body.adSoyad || "").trim().replace(/\s+/g, " ");

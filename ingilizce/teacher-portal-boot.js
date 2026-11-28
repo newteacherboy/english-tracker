@@ -33,55 +33,32 @@
    autoResumed=true;
   }
  }
- window.dmTeacherDevice={storage,list:read,remember,forget,personal,leave,activate,autoResumed};
+ function resumePersonal(result,oldToken){
+  if(!result?.personal||!result.token||!result.name||result.role!=='ogrenci')return false;
+  ss.setItem('dm_session_handoff_v1',JSON.stringify({token:result.token,name:result.name,role:'ogrenci',google:false,previous:storage.getItem('ing_token')||'',at:Date.now()}));
+  if(oldToken)forget(oldToken);leave();location.replace('./');return true;
+ }
+ window.dmTeacherDevice={storage,list:read,remember,forget,personal,leave,activate,autoResumed,resumePersonal};
 
  // Verify teacher approval using the current personal learner token, not saved device sessions.
  if(params.get('ogretmen')!=='1'){
   const button=document.createElement('button');
   button.id='dmPersonalToTeacher';button.type='button';button.className='dm-teacher-switch';button.hidden=true;
   const LABEL='<span class="dm-ts-icon" aria-hidden="true"></span><span class="dm-ts-copy"><b>Öğretmen Paneli</b><small>Sınıfını ve öğrencilerini yönet</small></span><span class="dm-ts-go">Geç <span aria-hidden="true">›</span></span>';button.innerHTML=LABEL;button.setAttribute('aria-label','Öğretmen Paneline Geç');
-  const api=async(islem,t,data={})=>{
-   const response=await fetch('https://nxfqlutulxqzqgwewssd.supabase.co/functions/v1/diji-api',{method:'POST',headers:{'Content-Type':'application/json'},cache:'no-store',body:JSON.stringify({islem,t,...data})});
-   const result=await response.json();
-   if(!response.ok||!result.ok)throw Error(result.mesaj||'Öğretmen hesabı doğrulanamadı.');
-   return result;
+  const sync=()=>{
+   const available=!!window.dmTeacherPortal?.teacherAvailable?.();
+   const changed=button.hidden===available;button.hidden=!available;
+   if(changed&&available)document.dispatchEvent(new CustomEvent('dm:teacher-switch-ready'));
   };
-  let checked='',checking=false;
-  const token=()=>storage.getItem('ing_token')||'';
-  /* [18 Kas 2026] Supabase yükü: öğretmen onay durumu her pencere odağında (günde ~700 kez) soruluyordu.
-     Sonuç bu cihazda hesaba özel saklanır: onaylıysa 6 saat, değilse 1 saat yeniden sorulmaz.
-     Jetonun kendisi değil yalnız kısa özeti saklanır. */
-  const STATUS_KEY='dm_tp_status_v1';
-  const tokenTag=t=>{let h=2166136261;for(let i=0;i<t.length;i++){h^=t.charCodeAt(i);h=Math.imul(h,16777619);}return (h>>>0).toString(36)+':'+t.length;};
-  const cachedStatus=t=>{try{const c=JSON.parse(storage.getItem(STATUS_KEY)||'null');if(!c||c.tag!==tokenTag(t))return null;const age=Date.now()-Number(c.at||0);return age>=0&&age<(c.state==='approved'?6:1)*3600000?c.state:null;}catch{return null;}};
-  const saveStatus=(t,state)=>{try{storage.setItem(STATUS_KEY,JSON.stringify({tag:tokenTag(t),state:String(state||'none'),at:Date.now()}));}catch{}};
-  const showSwitch=()=>{button.hidden=false;document.dispatchEvent(new CustomEvent('dm:teacher-switch-ready'));};
-  const refresh=async()=>{
-   const t=token();if(t===checked||checking)return;
-   checked=t;button.hidden=true;if(!t)return;
-   const known=cachedStatus(t);if(known){if(known==='approved')showSwitch();return;}
-   checking=true;
-   try{const result=await api('teacherPortalStatus',t,{offerOnly:true});
-    if(t===token()){saveStatus(t,result.state);if(result.state==='approved')showSwitch();}
-   }catch{}finally{checking=false;}
-  };
-  button.onclick=async()=>{
-   const t=token();if(!t)return;
-   button.disabled=true;button.querySelector('.dm-ts-copy small').textContent='Öğretmen paneli açılıyor…';
-   try{
-    const entry=await api('teacherPortalEnter',t);
-    const participant=await api('teacherPortalParticipant',entry.token,{self:true});
-    if(t!==token())throw Error('Hesap değişti. Tekrar dene.');
-    activate({teacherToken:entry.token,name:entry.name,participant,playAsSelf:true,route:'home'});
-   }catch(error){alert(error.message||'Öğretmen paneline geçilemedi.');button.disabled=false;button.innerHTML=LABEL;}
-  };
+  button.onclick=()=>window.dmTeacherPortal?.openPersonalTeacherPanel?.();
+  document.addEventListener('dm:teacher-account-status',sync);
   // 11 Kas 2026: Okul Yolum kartının içine sıkışmasın; kartın hemen altında tam genişlik şerit.
   const placeBesideRoute=()=>{
     const unit=document.querySelector('#tab-dunya .rt-medal-unit');
     if(!unit||!unit.parentElement)return;
     if(unit.nextElementSibling!==button)unit.after(button);
    };
-  window.dmTeacherSwitch={available:()=>!button.hidden,open:()=>button.click()};
+  window.dmTeacherSwitch={available:()=>!!window.dmTeacherPortal?.teacherAvailable?.(),open:()=>window.dmTeacherPortal?.openPersonalTeacherPanel?.()};
    const mount=()=>{
     // The route selector is rebuilt on grade/path changes: stay in the same toolbar.
     document.body.append(button);
@@ -94,13 +71,13 @@
       requestAnimationFrame(()=>{queued=false;placeBesideRoute();});
      }).observe(root,{subtree:true,childList:true});
     }
-    void refresh();
+    sync();
    };
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mount,{once:true});else mount();
-  document.addEventListener('dm:login',()=>{checked='';void refresh();});
-  // Odak dönüşünde yalnız kayıt süresi dolduysa sunucuya gidilir (cachedStatus).
-  window.addEventListener('focus',()=>{checked='';void refresh();});
-  setInterval(()=>{if(token()!==checked)void refresh();},2000);
+  document.addEventListener('dm:login',sync);
+  // Shared account status is owned by teacher-portal.js; do not cache old approvals.
+  document.addEventListener('dm:logout',sync);
+
  }
 
 })();
@@ -257,7 +234,11 @@
  window.addEventListener('pagehide',()=>{try{const current=JSON.parse(ss.getItem('dm_tp_session')||'null');if(current)window.dmTeacherDevice.remember(current,false);}catch{}});
  const verify=async()=>{const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),10000);try{
   const response=await fetch('https://nxfqlutulxqzqgwewssd.supabase.co/functions/v1/diji-api',{method:'POST',headers:{'Content-Type':'application/json'},signal:controller.signal,body:JSON.stringify({islem:'oturumBilgisi',t:state.teacherToken})});
-  if([401,403].includes(response.status)){window.dmTeacherDevice.forget(state.teacherToken);window.dmTeacherDevice.leave();location.replace(window.dmTeacherDevice.autoResumed?(window.dmTeacherDevice.storage.getItem('ing_token')?'./?hesap=1':'./?baslangic=1'):'./?ogretmenGiris=1');}
+  if([401,403].includes(response.status)){
+   const retry=await fetch('https://nxfqlutulxqzqgwewssd.supabase.co/functions/v1/diji-api',{method:'POST',headers:{'Content-Type':'application/json'},signal:controller.signal,body:JSON.stringify({islem:'teacherPortalBranchResume',t:state.teacherToken})});
+   if(retry.ok&&window.dmTeacherDevice.resumePersonal(await retry.json(),state.teacherToken))return;
+   if(![401,403].includes(retry.status))return;
+   window.dmTeacherDevice.forget(state.teacherToken);window.dmTeacherDevice.leave();location.replace(window.dmTeacherDevice.autoResumed?(window.dmTeacherDevice.storage.getItem('ing_token')?'./?hesap=1':'./?baslangic=1'):'./?ogretmenGiris=1');}
  }catch{}finally{clearTimeout(timer);}};void verify();
  window.dmTeacherRequestRole=(url,opt)=>{
   let args={};try{args=Object.fromEntries(new URL(url,location.href).searchParams);if(typeof opt?.body==='string')args={...args,...JSON.parse(opt.body)};}catch{}

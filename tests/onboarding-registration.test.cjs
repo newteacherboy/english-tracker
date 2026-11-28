@@ -44,7 +44,7 @@ test('class code joins the teacher and branch only when the chosen grade matches
 });
 
 test('teacher signup saves the school location and phone before offering the application',async()=>{
- const body={...valid,requestTeacherAccess:true,okulIl:' Amasya ',okulIlce:' Merkez ',okul:'Atatürk   Ortaokulu',
+ const body={...valid,requestTeacherAccess:true,englishTeacher:true,okulIl:' Amasya ',okulIlce:' Merkez ',okul:'Atatürk   Ortaokulu',
   learnerProfile:{version:1,purpose:'independent',ageBand:''},sinif:null,sube:''};
  const f=fixture(),r=await f.call(body);
  assert.equal(r.data.status,'success',JSON.stringify(r));
@@ -52,6 +52,7 @@ test('teacher signup saves the school location and phone before offering the app
  assert.equal(f.writes[0].phone,valid.telefon);
  assert.equal(f.upserts.find(row=>row.key_name==='learner_profile_v1').value.ageBand,'');
  assert.deepEqual(f.applications,['new']);
+ const noDeclaration=fixture();assert.equal((await noDeclaration.call({...body,englishTeacher:false})).data.status,'error');assert.equal(noDeclaration.writes.length,0);
  for(const key of ['okulIl','okulIlce','okul','telefon']){
   const missing=fixture();
   assert.equal((await missing.call({...body,[key]:''})).data.status,'error');

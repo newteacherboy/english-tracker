@@ -14,7 +14,7 @@
  function sheet(title,html){document.querySelector('.tp-shade')?.remove();const shade=document.createElement('div');shade.className='tp-shade';shade.innerHTML='<section class="tp-card" role="dialog" aria-modal="true" tabindex="-1"><button class="tp-close" aria-label="Kapat">×</button><h1></h1><form>'+html+'<p class="tp-error" role="status" aria-live="polite"></p></form></section>';shade.querySelector('h1').textContent=title;const before=document.activeElement;const close=()=>{shade.remove();before?.focus?.();};shade.querySelector('.tp-close').onclick=close;shade.addEventListener('keydown',e=>{if(e.key==='Escape'){e.preventDefault();close();}if(e.key==='Tab'){const items=[...shade.querySelectorAll('input,select,button,a[href]')].filter(x=>!x.disabled&&x.type!=='hidden'&&!x.closest('[hidden]')),first=items[0],last=items.at(-1);if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}}});document.body.append(shade);shade.querySelector('input,select,button').focus();return {shade,close,form:shade.querySelector('form'),error:m=>shade.querySelector('.tp-error').textContent=m};}
  const codeField=(name,label)=>'<label>'+label+'<input name="'+name+'" type="password" inputmode="numeric" pattern="[0-9]{6}|[0-9]{8}" minlength="6" maxlength="8" autocomplete="off" required></label>';
  function submit(v,fn,validate){v.form.onsubmit=async e=>{e.preventDefault();if(!v.form.reportValidity()||validate?.()===false)return;const buttons=[...v.form.querySelectorAll('button:not(:disabled)')];buttons.forEach(b=>b.disabled=true);v.error('');try{await fn(new FormData(v.form));}catch(e){v.error(e.message);}finally{buttons.forEach(b=>b.disabled=false);}};}
- function openLogin(){const v=sheet('Öğretmen Girişi','<p>E-postana gönderilen 6 veya 8 haneli öğretmen kodunu gir.</p>'+codeField('code','Öğretmen giriş kodun')+'<button class="tp-primary">Giriş Yap</button><button type="button" data-reset>Kodumu Unuttum</button><small>E-posta doğrulaması ve öğretmen hesabı onayı gerekir.</small>');v.shade.classList.add('tp-glass-login');v.shade.querySelector('[data-reset]').onclick=resetRequest;submit(v,async f=>{const r=await api('teacherPortalLogin',{code:f.get('code')},'');const preview=await api('teacherPortalParticipant',{self:true},r.token);saveState({teacherToken:r.token,name:r.name,participant:preview,playAsSelf:true,route:'home'});location.assign('./?ogretmen=1');});}
+ function openLogin(){const v=sheet('İngilizce Öğretmeni Girişi','<p>E-postana gönderilen 6 veya 8 haneli öğretmen kodunu gir.</p>'+codeField('code','Öğretmen giriş kodun')+'<button class="tp-primary">Giriş Yap</button><button type="button" data-reset>Kodumu Unuttum</button><small>E-posta doğrulaması ve öğretmen hesabı onayı gerekir.</small>');v.shade.classList.add('tp-glass-login');v.shade.querySelector('[data-reset]').onclick=resetRequest;submit(v,async f=>{const r=await api('teacherPortalLogin',{code:f.get('code')},'');if(r.personal){handoffPersonal(r);return;}const preview=await api('teacherPortalParticipant',{self:true},r.token);saveState({teacherToken:r.token,name:r.name,participant:preview,playAsSelf:true,route:'home'});location.assign('./?ogretmen=1');});}
  function resetRequest(){const v=sheet('Öğretmen Kodumu Unuttum','<label>Kişisel kullanıcı adın<input name="username" required maxlength="40" autocomplete="username"></label><label>Kayıtlı e-posta adresin<input name="email" required type="email" autocomplete="email"></label><button class="tp-primary">Yenileme bağlantısı gönder</button>');submit(v,async f=>{const r=await api('teacherPortalResetRequest',Object.fromEntries(f),'');v.error(r.mesaj);});}
  async function resetPage(){const token=new URLSearchParams(location.hash.slice(1)).get('token');history.replaceState(null,'',location.pathname);const v=sheet('Yeni Öğretmen Giriş Kodu',codeField('code','Yeni 6 veya 8 haneli kod')+codeField('confirm','Yeni kodu tekrar yaz')+'<button class="tp-primary">Kodumu Yenile</button>');v.shade.querySelector('.tp-close').onclick=()=>location.assign('./?ogretmenGiris=1');submit(v,async f=>{if(f.get('code')!==f.get('confirm'))throw Error('Kodlar eşleşmiyor.');const r=await api('teacherPortalReset',{resetToken:token,code:f.get('code')},'');v.form.replaceChildren();const message=document.createElement('p');message.textContent=r.mesaj;const link=document.createElement('a');link.href='./?ogretmenGiris=1';link.textContent='Öğretmen girişine dön';v.form.append(message,link);});}
 
@@ -66,11 +66,11 @@
  async function management(initialTab='requests'){
   ensureAdminStyle();
   const v=sheet('👥 Erişim Başvuruları ve Özel Panel Kodları','<p>Başvurular yükleniyor…</p>');
-  let rows=[],tab=initialTab,search='',filter='all',busy=false;
+  let rows=[],tab=initialTab,search='',filter='all',branchFilter='all',busy=false;
   // render() replaces form contents. Keep a live status node so action handlers never throw before the API call.
   const status=document.createElement('p');status.className='tp-error';status.setAttribute('role','status');status.setAttribute('aria-live','polite');
   const notify=message=>{status.textContent=message||'';if(!status.isConnected)v.form.append(status);};
-  const getRows=()=>rows.filter(r=>{const s=r.students||{};const term=(s.full_name+' '+s.username+' '+s.email+' '+s.school).toLocaleLowerCase('tr-TR');return (!search||term.includes(search))&&(filter==='all'||r.state===filter);});
+  const getRows=()=>rows.filter(r=>{const s=r.students||{};const term=(s.full_name+' '+s.username+' '+s.email+' '+s.school).toLocaleLowerCase('tr-TR');return (!search||term.includes(search))&&(filter==='all'||r.state===filter)&&(branchFilter==='all'||(branchFilter==='review'?r.branch_review_required:r.branch_status===branchFilter));});
   async function reload(){try{const result=await api('teacherPortalList');rows=result.items||[];render();}catch(e){notify(e.message);}}
   async function decide(row,decision){
    if(busy)return;
@@ -94,6 +94,9 @@
    const list=getRows().filter(r=>tab==='codes'?r.state==='approved':true);
    v.form.innerHTML='<div class="tp-admin-v1">'+head+intro+'<div class="ta-search"><input type="search" data-search placeholder="Öğretmen ara (ad, e-posta, okul...)" aria-label="Öğretmen ara"><select data-filter aria-label="Durum filtresi"><option value="all">Tümü</option><option value="pending">Bekleyen</option><option value="approved">Onaylı</option><option value="rejected">Reddedilen</option><option value="revoked">Kaldırılan</option></select></div>'+form+'<h2 class="ta-title">'+(tab==='requests'?'Öğretmen Başvuruları':'Onaylı Öğretmen Kodları')+' · '+list.length+'</h2><div class="ta-list"></div></div>';
    v.form.append(status);
+   const bf=document.createElement('select');bf.setAttribute('aria-label','Branş filtresi');
+   for(const [value,label] of [['all','Tüm öğretmenler'],['pending','Branş onayı bekleyenler'],['english','İngilizce öğretmeni olduğunu beyan edenler'],['other','Farklı branşta olduğunu beyan edenler'],['review','Yönetici incelemesi gerekenler']]){const o=document.createElement('option');o.value=value;o.textContent=label;bf.append(o);}
+   bf.value=branchFilter;v.form.querySelector('.ta-search').after(bf);bf.onchange=()=>{branchFilter=bf.value;fillList();};
    v.form.querySelector('[data-search]').value=search;v.form.querySelector('[data-filter]').value=filter;
    v.form.querySelectorAll('[data-tab]').forEach(btn=>btn.onclick=()=>{tab=btn.dataset.tab;render();});
    v.form.querySelector('[data-search]').oninput=e=>{search=e.target.value.toLocaleLowerCase('tr-TR').trim();fillList();};
@@ -111,12 +114,17 @@
     for(const row of list){
      const s=row.students||{},article=document.createElement('details');article.className='ta-details';
      const summary=document.createElement('summary');summary.textContent=(s.full_name||s.username||'Öğretmen')+' · '+adminStatus(row.state);
-     const details=document.createElement('p');details.textContent=[s.username,s.email,'E-posta: '+(s.email_verified_at?'Doğrulandı':'Bekliyor'),'Okul: '+(s.school||'Eklenmemiş'),'Telefon: '+(s.phone||'Eklenmemiş'),'Öğretmen kodu: '+(row.codeReady?'Oluşturuldu':'Bekliyor')].join('\n');
+     const details=document.createElement('p');details.textContent=[s.username,s.email,'E-posta: '+(s.email_verified_at?'Doğrulandı':'Bekliyor'),'Okul: '+(s.school||'Eklenmemiş'),'Telefon: '+(s.phone||'Eklenmemiş'),'Öğretmen kodu: '+(row.codeReady?'Oluşturuldu':'Bekliyor'),'Branş: '+({pending:'Bekliyor',english:'İngilizce',other:'Farklı branş'}[row.branch_status]||'Bekliyor'),'Beyan tarihi: '+(row.branch_declared_at?new Date(row.branch_declared_at).toLocaleString('tr-TR'):'—'),'Yönetici incelemesi: '+(row.branch_review_required?'Gerekli':'Gerekli değil')].join('\n');
      const actions=document.createElement('div');actions.className='ta-actions';
      for(const [decision,label,cls] of [['approved','✓ Onayla','yes'],['rejected','✕ Reddet','no'],['revoked','Erişimi Kaldır','']]){
       if(row.state===decision)continue;const button=document.createElement('button');button.type='button';button.className=cls;button.textContent=label;button.onclick=()=>decide(row,decision);actions.append(button);
      }
      if(row.state==='approved'){const button=document.createElement('button');button.type='button';button.textContent=row.codeReady||row.code_sent_at?'🔑 Yeni kod oluştur ve e-postala':'🔑 Kod oluştur ve e-postala';button.disabled=!s.email_verified_at;button.onclick=()=>issue(row);actions.append(button);}
+     const edit=document.createElement('button');edit.type='button';edit.textContent='Branş beyanını düzelt';edit.onclick=async()=>{
+      if(busy)return;const choice=prompt('Branş durumunu yaz: english (İngilizce), other (farklı), pending (bekliyor)',row.branch_status);
+      if(!['english','other','pending'].includes(choice)||!confirm('Branş beyanı değiştirilsin mi? Kişisel hesap korunacak.'))return;
+      busy=true;try{await api('teacherPortalBranchCorrect',{id:row.id,choice});await reload();}catch(e){notify(e.message);}finally{busy=false;}
+     };actions.append(edit);
      article.append(summary,details,actions);holder.append(article);
     }
    }
@@ -199,7 +207,7 @@
     <small class="tp-application-hint">Listeden seçebilir veya yazarak arayabilirsin.</small>
     <label>Okul adı<input name="school" maxlength="120" required placeholder="Okulunun adını yaz"></label>
     ${!r.hasPhone?'<label>Telefon numarası<input name="phone" type="tel" maxlength="20" autocomplete="tel" required placeholder="05XX XXX XX XX"></label>':''}
-    <button class="tp-primary"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="16" cy="8" r="5"/><path d="m12.5 11.5-9 9m3-3 2 2m-4 0 2 2"/></svg> Öğretmen Kodumu İste</button>
+    <label><input type="checkbox" name="englishTeacher" required> İngilizce öğretmeniyim.</label><button class="tp-primary"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="16" cy="8" r="5"/><path d="m12.5 11.5-9 9m3-3 2 2m-4 0 2 2"/></svg> Öğretmen Kodumu İste</button>
     <div class="tp-application-actions">${login}<button type="button" data-later>Daha Sonra</button></div>
     <p class="tp-error" role="status" aria-live="polite"></p>`;
    for(const key of ['city','district','school'])v.form.elements[key].value=r.school?.[key]||'';
@@ -216,7 +224,7 @@
    v.form.querySelector('[data-later]').onclick=v.close;
    submit(v,async form=>{
     if(localStorage.getItem('ing_token')!==token)throw Error('Hesap değişti. Lütfen yeniden giriş yap.');
-    await api('teacherPortalApply',{...Object.fromEntries(form),confirm:true},token);
+    await api('teacherPortalApply',{...Object.fromEntries(form),englishTeacher:form.get('englishTeacher')==='on',confirm:true},token);
     if(v.shade.isConnected){
      renderApplication(v,{state:'pending',offer:false},token);
      v.form.querySelector('[data-panel-login]').focus();
@@ -247,7 +255,7 @@
    e.preventDefault();e.stopPropagation();
    const token=localStorage.getItem('ing_token')||'';
    const v=sheet('Öğretmen Paneli','<p>Durum yükleniyor…</p>');
-   try{const r=await api('teacherPortalStatus',{},token);if(v.shade.isConnected)renderApplication(v,r,token);}catch(e){v.error(e.message);}
+   try{const r=await api('teacherPortalStatus',{},token);if(v.shade.isConnected){if(r.branchStatus==='pending'&&r.teacherAccount){v.close();showBranchDialog(token,true);}else if(r.teacherAccount)renderApplication(v,r,token);else v.close();}}catch(e){v.error(e.message);}
   },true);
  }
 
@@ -267,7 +275,7 @@
   if(noticeToken!==token){
    noticeToken=token;
    noticeResult=null;
-   api('teacherPortalStatus',{offerOnly:true},token).then(r=>{if(noticeToken===token){noticeResult=r;teacherApplicationNotice();}}).catch(()=>{});
+   if(teacherAccountToken===token&&teacherAccount){noticeResult=teacherAccount;teacherApplicationNotice();}else {noticeToken='';void refreshTeacherAccount();}
    return;
   }
   if(!noticeResult?.offer)return;
@@ -846,9 +854,49 @@
   ['📊','Raporlar','Öğrencilerinin güçlü ve gelişecek yönlerini incele.']
  ];
  let teacherAccountToken='',teacherAccount=null,teacherStatusLoading=false,teacherCodeReceipt=null,lastTeacherCodeShown='';
+ let branchDialog=null,branchDeferredToken='';
+ function handoffPersonal(r){
+  if(!r.token||!r.name||r.role!=='ogrenci')throw Error('Kişisel oturum alınamadı.');
+  const real=window.dmTeacherDevice?.storage||localStorage;
+  sessionStorage.setItem('dm_session_handoff_v1',JSON.stringify({token:r.token,name:r.name,role:'ogrenci',google:false,previous:real.getItem('ing_token')||'',at:Date.now()}));
+  const old=state()?.teacherToken;if(old)window.dmTeacherDevice?.forget(old);
+  window.dmTeacherDevice?.leave();location.assign('./');
+ }
+ function clearBranchDialog(){if(branchDialog){branchDialog.remove();branchDialog=null;}}
+ function publishTeacherAccount(){document.dispatchEvent(new CustomEvent('dm:teacher-account-status'));renderTeacherSwitch();}
+ function teacherAvailable(){return !mode&&teacherAccountToken===teacherToken()&&!!teacherAccount?.teacherAccount&&['pending','english'].includes(teacherAccount.branchStatus);}
+ function showBranchDialog(token,explicit=false){
+  if(!token||token!==teacherToken()||!teacherAvailable()||teacherAccount.branchStatus!=='pending'||branchDialog||(!explicit&&branchDeferredToken===token))return;
+  if(!explicit&&[...document.querySelectorAll('#dmDiscovery,.tp-shade,[role="dialog"][aria-modal="true"]')].some(x=>x.getClientRects().length))return;
+  const dialog=document.createElement('dialog');dialog.id='dmTeacherBranchDialog';dialog.setAttribute('aria-modal','true');dialog.setAttribute('aria-labelledby','dmTeacherBranchTitle');
+  dialog.style.cssText='border:0;border-radius:24px;padding:26px;width:min(90vw,420px);max-height:85dvh;overflow:auto;color:#233248;background:#fff;box-shadow:0 16px 64px #1a244551;text-align:center;box-sizing:border-box';
+  document.body.append(dialog);branchDialog=dialog;
+  dialog.addEventListener('cancel',e=>e.preventDefault());
+  const render=confirmOther=>{
+   dialog.innerHTML='<h2 id="dmTeacherBranchTitle" style="font-size:23px;margin:0 0 14px"></h2><p style="line-height:1.6;margin-bottom:16px"></p><div data-actions style="display:grid;gap:10px"></div><small data-note style="display:block;margin-top:15px;color:#53647a;line-height:1.5"></small><p data-error role="status" aria-live="polite" style="color:#b52b37"></p>';
+   dialog.querySelector('h2').textContent=confirmOther?'Kişisel hesabınla devam et':'Öğretmen hesabını doğrula';
+   dialog.querySelector('p').textContent=confirmOther?'Öğretmen panelimiz İngilizce öğretmenlerine özel olduğu için öğretmen paneli erişimin kapatılacaktır. Kişisel öğrenme hesabın, ilerlemen, XP’lerin, altınların ve varsa aboneliğin korunacaktır.':'Diji-Medu öğretmen paneli İngilizce öğretmenlerine özel olarak hazırlanmıştır. Öğretmen hesabını doğru şekilde kullanmaya devam edebilmen için lütfen branşını doğrula.';
+   dialog.querySelector('[data-note]').textContent=confirmOther?'':'Seçimin ne olursa olsun kişisel öğrenme hesabın, ilerlemen ve kazanımların korunacaktır.';
+   const add=(label,action,primary=false)=>{const b=document.createElement('button');b.type='button';b.textContent=label;b.style.cssText='padding:14px;border-radius:15px;font:inherit;font-weight:700;cursor:pointer;border:1px solid '+(primary?'#ed6058':'#dce2e9')+';background:'+(primary?'#ed6058':'#fff')+';color:'+(primary?'white':'#233248');b.onclick=action;dialog.querySelector('[data-actions]').append(b);};
+   const submitChoice=async choice=>{
+    const buttons=[...dialog.querySelectorAll('button')];buttons.forEach(b=>b.disabled=true);
+    try{
+     const result=await api('teacherPortalBranchDeclare',{choice},token);
+     if(token!==teacherToken())return;
+     teacherAccount={...teacherAccount,...result};noticeToken='';noticeResult=null;branchDeferredToken='';clearBranchDialog();publishTeacherAccount();
+     if(choice==='other'){document.getElementById('dmTeacherPreview')?.remove();document.getElementById('rtProfileBackdrop')?.remove();}
+     else scheduleTeacherEmailReminder(token);
+    }catch(e){if(dialog.isConnected)dialog.querySelector('[data-error]').textContent=e.message||'Seçim kaydedilemedi. Tekrar dene.';}
+    finally{buttons.forEach(b=>b.disabled=false);}
+   };
+   if(confirmOther){add('Kişisel hesabımla devam et',()=>submitChoice('other'),true);add('Geri dön',()=>render(false));}
+   else{add('İngilizce öğretmeniyim',()=>submitChoice('english'),true);add('Farklı bir branştayım',()=>render(true));add('Daha sonra',()=>{branchDeferredToken=token;clearBranchDialog();});}
+  };
+  render(false);dialog.showModal();
+ }
  let teacherEmailReminderChecked=false,teacherEmailReminderScheduled=false;
  async function scheduleTeacherEmailReminder(token){
-  if(mode||teacherEmailReminderChecked||teacherEmailReminderScheduled||!teacherAccount?.teacherAccount||!token)return;
+  if(mode||teacherEmailReminderChecked||teacherEmailReminderScheduled||!teacherAccount?.teacherAccount||teacherAccount.branchStatus!=='english'||!token)return;
   teacherEmailReminderScheduled=true;
   try{
    const account=await api('memberStatus',{},token);
@@ -893,7 +941,7 @@
  function renderTeacherSwitch(){
   if(mode)return;
   const route=document.querySelector('.rt-medal-route');
-  const show=!!teacherAccount?.teacherAccount&&!!teacherToken()&&!!route&&route.getClientRects().length>0&&!document.getElementById('dmTeacherPreview');
+  const show=!!teacherAccount?.teacherAccount&&teacherAvailable()&&!!teacherToken()&&!!route&&route.getClientRects().length>0&&!document.getElementById('dmTeacherPreview');
   let button=document.getElementById('dmTeacherParkurSwitch');
   if(!show){button?.remove();return;}
   if(!button){button=document.createElement('button');button.id='dmTeacherParkurSwitch';button.type='button';button.textContent='🎓 Öğretmen Panelim';button.onclick=()=>openPersonalTeacherPanel();document.body.append(button);}
@@ -901,11 +949,12 @@
  async function refreshTeacherAccount(force=false){
   if(mode||window.dmGuestMode||sessionStorage.getItem('ing_ogr_token'))return;
   const token=teacherToken();
-  if(!token){teacherAccount=null;teacherAccountToken='';renderTeacherSwitch();return;}
+  if(!token){teacherAccount=null;teacherAccountToken='';clearBranchDialog();publishTeacherAccount();return;}
   if(teacherStatusLoading||!force&&teacherAccountToken===token)return;
+  if(teacherAccountToken!==token){teacherAccount=null;clearBranchDialog();branchDeferredToken='';}
   teacherAccountToken=token;teacherStatusLoading=true;
-  try{const r=await api('teacherPortalStatus',{offerOnly:true},token);if(token!==teacherToken())return;teacherAccount=r;renderTeacherSwitch();if(r.teacherAccount)scheduleTeacherEmailReminder(token);}
-  catch{if(token===teacherToken())teacherAccount=null;}
+  try{const r=await api('teacherPortalStatus',{offerOnly:true},token);if(token!==teacherToken())return;teacherAccount=r;publishTeacherAccount();if(r.branchStatus==='pending')showBranchDialog(token);else if(r.teacherAccount)scheduleTeacherEmailReminder(token);}
+  catch{if(token===teacherToken()){teacherAccount=null;publishTeacherAccount();}}
   finally{teacherStatusLoading=false;}
  }
  function previewTeacherPanel(status){
@@ -940,10 +989,13 @@
  async function openPersonalTeacherPanel(){
   const token=teacherToken();
   if(!token)return;
+  if(teacherAvailable()&&teacherAccount.branchStatus==='pending'){showBranchDialog(token,true);return;}
   try{
    const status=await api('teacherPortalStatus',{},token);
-   if(!status.teacherAccount){return;}
-   teacherAccount=status;
+   if(token!==teacherToken())return;
+   if(!status.teacherAccount){teacherAccount=status;publishTeacherAccount();return;}
+   teacherAccount=status;teacherAccountToken=token;publishTeacherAccount();
+   if(status.branchStatus==='pending'){showBranchDialog(token,true);return;}
    if(status.state!=='approved'||!status.codeReady){previewTeacherPanel(status);return;}
    try{
     const r=await api('teacherPortalEnter',{},token);
@@ -983,8 +1035,9 @@
    return result;
   };
   document.addEventListener('dm:login',()=>{teacherEmailReminderChecked=false;teacherEmailReminderScheduled=false;refreshTeacherAccount(true);});
-  document.addEventListener('dm:logout',()=>{teacherAccount=null;teacherAccountToken='';teacherEmailReminderChecked=false;teacherEmailReminderScheduled=false;renderTeacherSwitch();});
-  setInterval(()=>{refreshTeacherAccount();renderTeacherSwitch();},2500);
+  document.addEventListener('dm:logout',()=>{teacherAccount=null;teacherAccountToken='';teacherEmailReminderChecked=false;teacherEmailReminderScheduled=false;branchDeferredToken='';clearBranchDialog();publishTeacherAccount();});
+  setInterval(()=>{refreshTeacherAccount();renderTeacherSwitch();if(teacherAccount?.branchStatus==='pending')showBranchDialog(teacherToken());},2500);
+  window.addEventListener('online',()=>refreshTeacherAccount(true));
  }
  if(mode){
   const switchToParkur=()=>{
@@ -995,7 +1048,7 @@
   if(document.body)switchToParkur();else document.addEventListener('DOMContentLoaded',switchToParkur,{once:true});
  }
 
- window.dmTeacherPortal={openMessages:()=>teacherDashboardAction('messages'),openLogin,openProfile,beforeGame,management,prepareTools:prepareTeacherTools,returnToGames:()=>{if(!mode||state()?.route!=='games')return;window.dmViewHistory?.clear?.();teacherDestination('games');}};
+ window.dmTeacherPortal={teacherAvailable,openPersonalTeacherPanel,openMessages:()=>teacherDashboardAction('messages'),openLogin,openProfile,beforeGame,management,prepareTools:prepareTeacherTools,returnToGames:()=>{if(!mode||state()?.route!=='games')return;window.dmViewHistory?.clear?.();teacherDestination('games');}};
  if(document.body.dataset.teacherReset==='1'){resetPage();return;}
  if(mode){document.body.classList.add('dm-teacher-portal');document.documentElement.classList.add('dm-teacher-portal');document.documentElement.classList.add('tp-home-starting');window.cikisYap=window.dmTeacherPortalExit;window.siniftaOyunModuAc=()=>{document.getElementById('ogretmenMenuModal')?.style.setProperty('display','none');teacherDestination('games');};}
  let scheduled=false;const observe=()=>{if(scheduled)return;scheduled=true;requestAnimationFrame(()=>{scheduled=false;decorate();if(mode){suppressPreviewPrompts();hideTeacherHeader();const n=document.getElementById('bottomNavMobile');n?.querySelectorAll('.bn-item').forEach(i=>{if((i.dataset.ekran==='tab-profil'||/^(profil|profilim)$/i.test((i.textContent||'').trim())))i.remove();});}});};new MutationObserver(observe).observe(document.body,{childList:true,subtree:true});decorate();wrapGames();

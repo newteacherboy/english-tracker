@@ -11,5 +11,7 @@ test('V2 teacher home exposes a prominent personal Parkur button with a working 
  assert.match(source,/Kişisel Parkur’a Geç/);
  assert.match(style,/\.dm-midnight-home \.dm-midnight-parkur-switch\s*\{/);
  assert.match(style,/min-height:48px/);
- assert.match(boot,/window\.dmTeacherPortalParkur=\(\)=>\{window\.dmTeacherDevice\.leave\(\);location\.assign\('\.\/'\)/);
+ assert.match(boot,/window\.dmTeacherPortalParkur=async\(\)=>/);
+ assert.match(boot,/teacherPortalPersonalSession/);
+ assert.match(boot,/dm_session_handoff_v1/);
 });
