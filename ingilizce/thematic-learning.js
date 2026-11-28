@@ -274,7 +274,7 @@ function correctionText(task){
  const detail=String(task.explanation||'').trim();
  return (answer?answer:'Doğru eşleştirme')+(detail&&detail!==answer?' · '+detail:'');
 }
-function reportSnapshot(task,answer,cursor){if(modal)modal.dmQuestionReport={route:schoolBridge?'school':'learning',chapter:String(chapter.id),cursor,task:{kind:task.kind,label:task.visualMatch?'Kelime Dedektifi':task.label,prompt:task.visualMatch?'Türkçe ipucunun İngilizce karşılığını bul.':task.prompt,audio:task.audio,options:task.options,tokens:task.tokens,pairs:task.pairs,expected:correctResponse(task)},answer};}
+function reportSnapshot(task,answer,cursor){if(modal)modal.dmQuestionReport={route:schoolBridge?'school':'learning',chapter:String(chapter.id),cursor,task:{kind:task.kind,label:task.visualMatch?"Papi'nin Hatası":task.label,prompt:task.visualMatch?'Görsele bak; Papi doğru mu söylüyor?':task.prompt,audio:task.audio,options:task.options,tokens:task.tokens,pairs:task.pairs,expected:correctResponse(task)},answer};}
 function manualNext(fn){const actions=modal.querySelector('.ml-actions');actions.innerHTML='<button type="button" class="ml-primary" data-next>Devam et →</button>';actions.querySelector('button').onclick=()=>{if(busy)return;actions.querySelector('button').disabled=true;fn();};scheduleLessonFit();}
 function pauseForCorrection(task,continueAction){
  accepted=true;
@@ -441,47 +441,81 @@ function render(){if(!modal)return;accepted=false;if(session?.needsRecovery&&!se
   return;
  }
 
- // Replace only the visual matching presentation with sequential word detective clues.
- // The existing server match contract remains unchanged: one graded task, same pairs,
- // and each incorrect guess resets the combo before the full answer is submitted.
+ // Papi's mistake: one illustrated clue at a time, preserving the graded match slot.
  if(task.kind==='match'&&task.visualMatch===true&&task.pairs?.length){
   modal.dataset.taskKind='choice';modal.dataset.schoolShort='false';
-  area.querySelector('.ml-eyebrow').textContent='Kelime Dedektifi';
+  area.querySelector('.ml-eyebrow').textContent="Papi'nin Hatası";
   const pairs=task.pairs,ticket=epoch,cursor=session.cursor,matched=[];
-  const current=()=>ticket===epoch&&!!modal&&session.cursor===cursor&&area.isConnected&&!busy&&!accepted;
-  const order=optionOrder('detective-clues',pairs);
+  const current=()=>ticket===epoch&&!!modal&&identity()===owner&&session.cursor===cursor&&area.isConnected&&!busy&&!accepted;
+  const order=optionOrder('papi-error-clues',pairs);
+  const firstTrue=optionOrder('papi-error-first',[true,false])[0]===0;
   const bank=[...pairs,...(chapter.cards||[]),...(chapter.examples||[]),...(chapter.reference||[])];
-  const stage=document.createElement('section');stage.className='ml-detective';area.append(stage);
+  const fallback=[{en:'apple',tr:'elma'},{en:'book',tr:'kitap'},{en:'water',tr:'su'},{en:'school',tr:'okul'},{en:'friend',tr:'arkadaş'},{en:'bird',tr:'kuş'}];
+  const stage=document.createElement('section');stage.className='ml-papi-error';area.append(stage);
   let index=0;
   function draw(){
    if(!current())return;
-   const target=pairs[order[index]];
-   const seen=new Set([core.norm(target.en)]);
-   const fallback=[{en:'apple',tr:'elma'},{en:'book',tr:'kitap'},{en:'water',tr:'su'},{en:'school',tr:'okul'},{en:'friend',tr:'arkadaş'},{en:'bird',tr:'kuş'}];
+   const target=pairs[order[index]],seen=new Set([core.norm(target.en)]);
    const distractors=[...bank,...fallback].filter(w=>{
     if(!w?.en||!w?.tr||core.norm(w.tr)===core.norm(target.tr)||seen.has(core.norm(w.en)))return false;
     seen.add(core.norm(w.en));return true;
    }).map(w=>w.en);
-   const values=[target.en,...distractors.slice(0,3)];
+   const alternatives=optionOrder('papi-error-distractors:'+index,distractors).map(i=>distractors[i]);
+   const truth=alternatives.length===0||(index%2===0?firstTrue:!firstTrue);
+   const guess=truth?target.en:alternatives[0];
    stage.innerHTML='<p class="ml-review-count">İpucu '+(index+1)+' / '+pairs.length+'</p>'+
-    '<div class="ml-review-track" aria-hidden="true">'+pairs.map((_,i)=>'<span class="'+(i<index?'is-done':i===index?'is-current':'')+'">'+(i<index?'★':'✦')+'</span>').join('')+'</div>'+
-    arenaHero('<h2>'+esc(target.tr)+'</h2><p class="ml-support">Doğru İngilizce kelimeyi bul.</p>','ml-detective-hero',index)+
-    '<div class="ml-choices">'+optionOrder('detective-options:'+index,values).map(i=>'<button type="button" data-detective-choice="'+i+'" lang="en">'+esc(values[i])+'</button>').join('')+'</div>'+
+    '<div class="ml-papi-error-picture" data-papi-picture role="img" aria-label="'+esc(target.tr)+'"></div>'+
+    arenaHero('<p class="ml-papi-error-intro">Papi diyor ki…</p><h2 lang="en" data-papi-guess>'+esc(guess)+'</h2>','ml-papi-error-hero',index)+
+    '<div class="ml-choices ml-papi-error-vote"><button type="button" data-papi-vote="true">✓ Doğru söylüyor!</button><button type="button" data-papi-vote="false">✕ Papi yanılıyor!</button></div>'+
     '<p class="ml-review-note" role="status" aria-live="polite"></p>';
    bindMascotFallback(stage);
-   const buttons=[...stage.querySelectorAll('[data-detective-choice]')],note=stage.querySelector('.ml-review-note');
-   actions.innerHTML='<button type="button" class="ml-primary" disabled>Sonraki ipucu →</button>';
-   const next=actions.querySelector('button');let solved=false;
-   buttons.forEach(b=>b.onclick=()=>{
-    if(!current()||solved||b.disabled)return;
-    const value=values[+b.dataset.detectiveChoice],good=core.norm(value)===core.norm(target.en);
-    speech(value,'en-US');window.dmAnswerFeedback?.(good);
-    if(!good){b.disabled=true;b.classList.add('is-wrong');breakCombo();note.textContent='Tekrar dene, dedektif!';return;}
-    solved=true;matched.push({en:value,tr:target.tr});buttons.forEach(x=>x.disabled=true);b.classList.add('is-correct');
-    note.textContent='✓ İpucunu çözdün!';next.disabled=false;next.textContent=index+1===pairs.length?'Kontrol et →':'Sonraki ipucu →';
-    next.onclick=()=>{if(!current()||!solved||next.disabled)return;next.disabled=true;if(index+1===pairs.length){void submit(matched);return;}index++;draw();};
+   const picture=stage.querySelector('[data-papi-picture]'),note=stage.querySelector('.ml-review-note');
+   const fallbackText=()=>{if(!picture.isConnected)return;picture.textContent=target.tr;picture.classList.add('is-text-fallback');scheduleLessonFit();};
+   const markup=art(target,true,true);
+   if(markup){
+    picture.innerHTML=markup;const img=picture.querySelector('img');if(img){img.alt='';img.addEventListener('error',fallbackText,{once:true});}
+   }else if(window.DMWordImagePool?.resolve){
+    picture.textContent='Görsel yükleniyor…';
+    const timer=setTimeout(fallbackText,1800);
+    Promise.resolve(window.DMWordImagePool.resolve(target.en,target.tr,512)).then(url=>{
+     if(!picture.isConnected)return;
+     if(!url){clearTimeout(timer);fallbackText();return;}
+     const img=document.createElement('img');img.alt='';img.decoding='async';img.draggable=false;
+     img.onload=()=>{clearTimeout(timer);if(picture.isConnected){picture.classList.remove('is-text-fallback');picture.replaceChildren(img);scheduleLessonFit();}};
+     img.onerror=()=>{clearTimeout(timer);fallbackText();};img.src=url;
+    }).catch(()=>{clearTimeout(timer);fallbackText();});
+   }else fallbackText();
+   const votes=[...stage.querySelectorAll('[data-papi-vote]')];
+   actions.innerHTML='<button type="button" class="ml-primary" disabled>Devam et →</button>';
+   const next=actions.querySelector('button');let phase='vote';
+   const miss=(b,message)=>{b.disabled=true;b.classList.add('is-wrong');breakCombo();window.dmAnswerFeedback?.(false);note.textContent=message;};
+   const solved=()=>{
+    if(phase==='solved')return;phase='solved';matched.push({en:target.en,tr:target.tr});
+    window.dmAnswerFeedback?.(true);note.textContent='✓ Harika! Papi öğrendi.';
+    next.disabled=false;next.textContent=index+1===pairs.length?'Kontrol et →':'Sonraki ipucu →';
+    next.onclick=()=>{if(!current()||phase!=='solved'||next.disabled)return;next.disabled=true;if(index+1===pairs.length){void submit(matched);return;}index++;draw();};
+    scheduleLessonFit();
+   };
+   votes.forEach(b=>b.onclick=()=>{
+    if(!current()||phase!=='vote'||b.disabled)return;
+    if((b.dataset.papiVote==='true')!==truth){miss(b,'Tekrar düşün. Papi doğru mu söylüyor?');return;}
+    votes.forEach(x=>x.disabled=true);b.classList.add('is-correct');
+    if(truth){solved();return;}
+    phase='correct';window.dmAnswerFeedback?.(true);
+    note.textContent='Papi yanıldı! Doğru İngilizce karşılığı seç.';
+    const values=[target.en,...alternatives.slice(0,3)],choices=stage.querySelector('.ml-papi-error-vote');
+    choices.classList.add('ml-papi-error-corrections');
+    choices.innerHTML=optionOrder('papi-error-correct:'+index,values).map(i=>'<button type="button" data-papi-correct="'+i+'" lang="en">'+esc(values[i])+'</button>').join('');
+    const buttons=[...choices.querySelectorAll('button')];
+    buttons.forEach(x=>x.onclick=()=>{
+     if(!current()||phase!=='correct'||x.disabled)return;
+     const value=values[+x.dataset.papiCorrect];speech(value,'en-US');
+     if(core.norm(value)!==core.norm(target.en)){miss(x,'Bir daha dene!');return;}
+     buttons.forEach(y=>y.disabled=true);x.classList.add('is-correct');solved();
+    });scheduleLessonFit();
    });
-   scheduleLessonFit();
+   stage.querySelector('[data-papi-guess]').addEventListener('click',()=>{if(current())speech(guess,'en-US');});
+   speech(guess,'en-US');scheduleLessonFit();
   }
   draw();return;
  }
