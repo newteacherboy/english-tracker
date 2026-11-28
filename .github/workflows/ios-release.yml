@@ -14,7 +14,7 @@ on:
       version:
         description: 'Sürüm (App Store)'
         required: true
-        default: '1.1.1'
+        default: '1.1.2'
       build:
         description: 'Derleme numarası (boşsa 100 + çalışma sayısı)'
         required: false
@@ -34,7 +34,7 @@ jobs:
     timeout-minutes: 60
     env:
       DM_PRODUCTION_ADS: '1'
-      VERSION: ${{ inputs.version || '1.1.1' }}
+      VERSION: ${{ inputs.version || '1.1.2' }}
       HAS_KEY: ${{ secrets.ASC_KEY_P8 != '' && 'yes' || 'no' }}
     steps:
       - uses: actions/checkout@v4
