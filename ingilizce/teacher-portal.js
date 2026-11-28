@@ -891,12 +891,7 @@
  document.head.append(teacherStyle);
  const teacherToken=()=>localStorage.getItem('ing_token')||'';
  function renderTeacherSwitch(){
-  if(mode)return;
-  const route=document.querySelector('.rt-medal-route');
-  const show=!!teacherAccount?.teacherAccount&&!!teacherToken()&&!!route&&route.getClientRects().length>0&&!document.getElementById('dmTeacherPreview');
-  let button=document.getElementById('dmTeacherParkurSwitch');
-  if(!show){button?.remove();return;}
-  if(!button){button=document.createElement('button');button.id='dmTeacherParkurSwitch';button.type='button';button.textContent='🎓 Öğretmen Panelim';button.onclick=()=>openPersonalTeacherPanel();document.body.append(button);}
+  document.getElementById('dmTeacherParkurSwitch')?.remove();
  }
  async function refreshTeacherAccount(force=false){
   if(mode||window.dmGuestMode||sessionStorage.getItem('ing_ogr_token'))return;
