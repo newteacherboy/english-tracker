@@ -46,6 +46,6 @@ test('teacher entry and teacher assets use network-first cache behavior',()=>{
  assert.match(sw,/teacher-portal\.css/);
  assert.match(sw,/teacher-assets\/approved-teacher-2\.webp/);
  assert.match(sw,/url\.searchParams\.get\('ogretmen'\) === '1'/);
- assert.match(index,/teacher-portal-boot\.js\?v=20261118-hiz/);
- assert.match(index,/teacher-portal\.css\?v=20261115-[a-z0-9-]+/);
+ assert.match(index,/teacher-portal-boot\.js\?v=20261128-branch-1/);
+ assert.match(index,/teacher-portal\.css\?v=20261127-teacher-dock-fix/);
 });

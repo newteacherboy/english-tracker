@@ -74,8 +74,8 @@ test('account screen uses the compact layout and preserves code/invite handlers'
  assert.match(css,/\.tp-approved-code>button\{/);
  assert.match(css,/\.tp-account-settings>summary/);
  assert.match(css,/\[data-teacher-identity\] #cogOgretmenKart\[hidden\]/);
- assert.ok(index.includes('teacher-workspace.js?v=20261115-approved-dashboard-1'));
- assert.match(index,/teacher-portal\.css\?v=20261115-[a-z0-9-]+/);
+ assert.ok(index.includes('teacher-workspace.js?v=20261128-retire-papizzle-candy'));
+ assert.match(index,/teacher-portal\.css\?v=20261127-teacher-dock-fix/);
  assert.match(sw,/const SURUM = 'diji-v\d+-[^']+'/);
 });
 
@@ -194,7 +194,7 @@ test('approved Sınıfım design 1 keeps live data, tabs, search, class actions 
  assert.match(source,/dml-board/);
  assert.match(source,/DESIGN_ONE_CSS/);
  assert.match(html,/teacher-league\.js\?v=20261115-design-one-1/);
- assert.match(html,/teacher-portal\.js\?v=20261115-[a-z0-9-]+/);
+ assert.match(html,/teacher-portal\.js\?v=20261128-branch-1/);
  assert.match(fs.readFileSync('ingilizce/sw.js','utf8'),/const SURUM = 'diji-v\d+-[^']+'/);
  assert.match(portal,/window\.dmTeacherBulkStudentsOpen = \(\) => openBulkStudents\(\)/);
 });
@@ -217,6 +217,6 @@ test('approved admin teachers purple design preserves real approval, code, creat
  assert.match(source,/data-filter/);
  assert.match(source,/adminStyle/);
  assert.match(source,/email_verified_at/);
- assert.match(html,/teacher-portal\.js\?v=20261115-[a-z0-9-]+/);
+ assert.match(html,/teacher-portal\.js\?v=20261128-branch-1/);
  assert.match(sw,/const SURUM = 'diji-v\d+-[^']+'/);
 });

@@ -44,7 +44,7 @@ test('approved visual uses 21 separate safe, valid SVG assets, all referenced ar
 
  }
  assert.match(source,/teacher-dashboard-selected\.css\?v=20261115-design1/);
- assert.ok(index.includes('teacher-workspace.js?v=20261115-approved-dashboard-1'));
+ assert.ok(index.includes('teacher-workspace.js?v=20261128-retire-papizzle-candy'));
  assert.match(css,/\.dm-midnight-actions\s*\{\s*display:grid!important;\s*grid-template-columns:repeat\(2,minmax\(0,1fr\)\)!important/);
  assert.match(css,/teacher-dashboard-assets\/trophy\.svg/);
 });
