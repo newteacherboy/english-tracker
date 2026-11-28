@@ -274,7 +274,7 @@ function correctionText(task){
  const detail=String(task.explanation||'').trim();
  return (answer?answer:'Doğru eşleştirme')+(detail&&detail!==answer?' · '+detail:'');
 }
-function reportSnapshot(task,answer,cursor){if(modal)modal.dmQuestionReport={route:schoolBridge?'school':'learning',chapter:String(chapter.id),cursor,task:{kind:task.kind,label:task.label,prompt:task.prompt,audio:task.audio,options:task.options,tokens:task.tokens,pairs:task.pairs,expected:correctResponse(task)},answer};}
+function reportSnapshot(task,answer,cursor){if(modal)modal.dmQuestionReport={route:schoolBridge?'school':'learning',chapter:String(chapter.id),cursor,task:{kind:task.kind,label:task.visualMatch?'Kelime Dedektifi':task.label,prompt:task.visualMatch?'Türkçe ipucunun İngilizce karşılığını bul.':task.prompt,audio:task.audio,options:task.options,tokens:task.tokens,pairs:task.pairs,expected:correctResponse(task)},answer};}
 function manualNext(fn){const actions=modal.querySelector('.ml-actions');actions.innerHTML='<button type="button" class="ml-primary" data-next>Devam et →</button>';actions.querySelector('button').onclick=()=>{if(busy)return;actions.querySelector('button').disabled=true;fn();};scheduleLessonFit();}
 function pauseForCorrection(task,continueAction){
  accepted=true;
@@ -441,6 +441,50 @@ function render(){if(!modal)return;accepted=false;if(session?.needsRecovery&&!se
   return;
  }
 
+ // Replace only the visual matching presentation with sequential word detective clues.
+ // The existing server match contract remains unchanged: one graded task, same pairs,
+ // and each incorrect guess resets the combo before the full answer is submitted.
+ if(task.kind==='match'&&task.visualMatch===true&&task.pairs?.length){
+  modal.dataset.taskKind='choice';modal.dataset.schoolShort='false';
+  area.querySelector('.ml-eyebrow').textContent='Kelime Dedektifi';
+  const pairs=task.pairs,ticket=epoch,cursor=session.cursor,matched=[];
+  const current=()=>ticket===epoch&&!!modal&&session.cursor===cursor&&area.isConnected&&!busy&&!accepted;
+  const order=optionOrder('detective-clues',pairs);
+  const bank=[...pairs,...(chapter.cards||[]),...(chapter.examples||[]),...(chapter.reference||[])];
+  const stage=document.createElement('section');stage.className='ml-detective';area.append(stage);
+  let index=0;
+  function draw(){
+   if(!current())return;
+   const target=pairs[order[index]];
+   const seen=new Set([core.norm(target.en)]);
+   const fallback=[{en:'apple',tr:'elma'},{en:'book',tr:'kitap'},{en:'water',tr:'su'},{en:'school',tr:'okul'},{en:'friend',tr:'arkadaş'},{en:'bird',tr:'kuş'}];
+   const distractors=[...bank,...fallback].filter(w=>{
+    if(!w?.en||!w?.tr||core.norm(w.tr)===core.norm(target.tr)||seen.has(core.norm(w.en)))return false;
+    seen.add(core.norm(w.en));return true;
+   }).map(w=>w.en);
+   const values=[target.en,...distractors.slice(0,3)];
+   stage.innerHTML='<p class="ml-review-count">İpucu '+(index+1)+' / '+pairs.length+'</p>'+
+    '<div class="ml-review-track" aria-hidden="true">'+pairs.map((_,i)=>'<span class="'+(i<index?'is-done':i===index?'is-current':'')+'">'+(i<index?'★':'✦')+'</span>').join('')+'</div>'+
+    arenaHero('<h2>'+esc(target.tr)+'</h2><p class="ml-support">Doğru İngilizce kelimeyi bul.</p>','ml-detective-hero',index)+
+    '<div class="ml-choices">'+optionOrder('detective-options:'+index,values).map(i=>'<button type="button" data-detective-choice="'+i+'" lang="en">'+esc(values[i])+'</button>').join('')+'</div>'+
+    '<p class="ml-review-note" role="status" aria-live="polite"></p>';
+   bindMascotFallback(stage);
+   const buttons=[...stage.querySelectorAll('[data-detective-choice]')],note=stage.querySelector('.ml-review-note');
+   actions.innerHTML='<button type="button" class="ml-primary" disabled>Sonraki ipucu →</button>';
+   const next=actions.querySelector('button');let solved=false;
+   buttons.forEach(b=>b.onclick=()=>{
+    if(!current()||solved||b.disabled)return;
+    const value=values[+b.dataset.detectiveChoice],good=core.norm(value)===core.norm(target.en);
+    speech(value,'en-US');window.dmAnswerFeedback?.(good);
+    if(!good){b.disabled=true;b.classList.add('is-wrong');breakCombo();note.textContent='Tekrar dene, dedektif!';return;}
+    solved=true;matched.push({en:value,tr:target.tr});buttons.forEach(x=>x.disabled=true);b.classList.add('is-correct');
+    note.textContent='✓ İpucunu çözdün!';next.disabled=false;next.textContent=index+1===pairs.length?'Kontrol et →':'Sonraki ipucu →';
+    next.onclick=()=>{if(!current()||!solved||next.disabled)return;next.disabled=true;if(index+1===pairs.length){void submit(matched);return;}index++;draw();};
+   });
+   scheduleLessonFit();
+  }
+  draw();return;
+ }
  const visualTranslation=task.label==='Görselden hatırla'&&task.picture?.tr;
  const fillVisual=task.visualFill===true||['İfadeyi tamamla','Cümleyi tamamla','Duruma uygun söyle'].includes(task.label);
  if(task.kind!=='review')area.innerHTML+=arenaHero('<h2 '+(task.language==='en'?'lang="en"':'')+'>'+esc(visualTranslation||task.prompt)+'</h2>'+(task.support?'<p class="ml-support">'+esc(task.support)+'</p>':''));if(task.kind!=='review')bindMascotFallback(area);
