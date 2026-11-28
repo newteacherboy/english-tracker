@@ -47,4 +47,4 @@ body .dm-teacher-chat-overlay .dm-chat-status:empty{display:none}
 @media (prefers-reduced-motion:reduce){body .dm-teacher-chat-overlay .dm-teacher-chat{animation:none}}
 
 /* Keep the existing in-app verification reminder visible until the server confirms the address. */
-#dmEmailVerifyBanner{position:sticky;top:0;z-index:20;margin:0 8px 8px;background:#fff0f0;border:1px solid #ffb0b4;border-radius:12px;color:#812c34}#dmEmailVerifyBanner .deg-banner-text strong{color:#922b35}
+#dmEmailVerifyBanner{background:#fff0f0;border:1px solid #ffb0b4;border-radius:12px;color:#812c34}#dmEmailVerifyBanner .deg-banner-text strong{color:#922b35}

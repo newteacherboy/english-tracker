@@ -1,5 +1,6 @@
 /* Private learning preferences; never an authorization or age-verification claim. */
 export function normalizeLearnerProfile(value, legacyClass=null, legacyPurpose='',{allowUnknownAge=false,compactRegistration=false}={}) {
+ if(compactRegistration&&(value===undefined||value===null))throw Error('Öğrenme ve yaş bilgilerini tamamla.');
  if(value===undefined||value===null)return {version:0,purpose:legacyPurpose==='school'?'school':legacyPurpose==='independent'?'independent':legacyClass?'school':'independent',ageBand:'',educationStage:legacyClass?Number(legacyClass)<=4?'primary':Number(legacyClass)<=8?'middle':'high':'',goal:'daily',startChoice:'new',knownLevel:'A1'};
  if(!value||typeof value!=='object'||Array.isArray(value))throw Error('Öğrenme bilgilerini kontrol et.');
  const valid=(key,values,fallback)=>{const v=value[key]??fallback;if(!values.includes(v))throw Error('Öğrenme bilgilerini kontrol et: '+key);return v;};
