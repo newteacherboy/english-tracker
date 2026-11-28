@@ -16,16 +16,25 @@ test('randomized matching and letter positions retain correct grading',async()=>
 test('final-review visible order varies without changing the answer array sent to the server',async()=>{const rng=random(),patterns=new Set();for(let attempt=0;attempt<12;attempt++){const f=await fixture(11,rng);try{const positions=[];for(const card of tasks[11].cards){const buttons=[...f.w.document.querySelectorAll('[data-review-choice]')],right=buttons.find(b=>b.textContent===card.tr);positions.push(buttons.indexOf(right));right.click();await settle();}patterns.add(positions.join(''));assert.deepEqual(Array.from(f.calls[0]),tasks[11].cards.map(c=>c.tr));}finally{f.close();}}assert(patterns.size>=5);});
 test('recovery choices use shuffled canonical indices too',async()=>{const rng=random(),orders=new Set();for(let i=0;i<10;i++){const f=await fixture(11,rng,true);try{const buttons=[...f.w.document.querySelectorAll('[data-recovery-choice]')];assert.equal(buttons.length,3);orders.add(buttons.map(b=>b.textContent).join('|'));for(const b of buttons)assert.equal(b.textContent,['book','classroom','Friday'][+b.dataset.recoveryChoice]);}finally{f.close();}}assert(orders.size>=3);});
 
-test('visual matching becomes four-option word detective without changing the server answer contract',async()=>{
+test("Papi's mistake uses one illustrated clue, both vote types and canonical scoring",async()=>{
  const deck=SCHOOL.build(words,words,220151,true),slot=deck.findIndex(t=>t.visualMatch),task=deck[slot],f=await fixture(slot,random(),false,deck);
  try{
-  const d=f.w.document;assert.equal(d.querySelector('.ml-eyebrow').textContent,'Kelime Dedektifi');assert.equal(d.querySelector('.ml-visual-match'),null);
+  const d=f.w.document;assert.equal(d.querySelector('.ml-eyebrow').textContent,"Papi'nin Hatası");assert.equal(d.querySelector('.ml-visual-match'),null);
+  const truths=new Set();
   for(let i=0;i<task.pairs.length;i++){
-   const prompt=d.querySelector('.ml-detective h2').textContent,target=task.pairs.find(p=>p.tr===prompt);
-   const buttons=[...d.querySelectorAll('[data-detective-choice]')];assert.equal(buttons.length,4);assert.equal(new Set(buttons.map(b=>b.textContent)).size,4);
-   if(i===0){const wrong=buttons.find(b=>b.textContent!==target.en);wrong.click();assert(wrong.disabled);assert(d.querySelector('.ml-actions button').disabled);}
-   buttons.find(b=>b.textContent===target.en).click();assert(!d.querySelector('.ml-actions button').disabled);d.querySelector('.ml-actions button').click();await settle();
+   assert.equal(d.querySelectorAll('[data-papi-picture]').length,1);
+   const target=task.pairs.find(p=>p.tr===d.querySelector('[data-papi-picture]').getAttribute('aria-label'));
+   const guess=d.querySelector('[data-papi-guess]').textContent,truth=guess===target.en;
+   truths.add(truth);
+   const wrong=d.querySelector('[data-papi-vote="'+!truth+'"]');if(i===0){wrong.click();assert(wrong.disabled);assert(d.querySelector('.ml-actions button').disabled);}
+   d.querySelector('[data-papi-vote="'+truth+'"]').click();
+   if(!truth){
+    const buttons=[...d.querySelectorAll('[data-papi-correct]')];assert.equal(buttons.length,4);
+    assert(d.querySelector('.ml-actions button').disabled);
+    buttons.find(b=>b.textContent===target.en).click();
+   }
+   const next=d.querySelector('.ml-actions button');assert(!next.disabled);next.click();await settle();
   }
-  assert.equal(f.calls.length,1);assert(SCHOOL.grade(task,f.calls[0]).correct);
+  assert.equal(truths.size,2);assert.equal(f.calls.length,1);assert(SCHOOL.grade(task,f.calls[0]).correct);
  }finally{f.close();}
 });
