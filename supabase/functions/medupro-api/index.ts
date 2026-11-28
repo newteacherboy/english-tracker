@@ -126,7 +126,7 @@ Deno.serve(async(req:Request)=>{
  const op=String(val(body,q,"islem"));
  if(['hazirMesajGonder','aksesuarHediye','aksesuarKatalog','enerjiGonder'].includes(op))return json({ok:false,mesaj:'Öğrenciler arası mesaj ve hediye gönderimi kaldırıldı.'},410);
  const a=await session(req,body,q);if(!a)return json({ok:false,mesaj:"Öğrenci oturumu gerekli."},401);
- if(!a.teacher_portal_access_id&&["duelloGonder","duelloSonucKaydet"].includes(op)&&/^(Jeopardy|KelimeBul|Dikte|Canavar)_Liderlik$/i.test(String(val(body,q,"oyun"))))return json({ok:false,mesaj:"Bu oyun artık öğrenci hesabında sunulmuyor."},410);
+ if(!a.teacher_portal_access_id&&!a.classroomTeacher&&["duelloGonder","duelloSonucKaydet"].includes(op)&&/^(?:(Jeopardy|KelimeBul|Dikte|Canavar|HarfBahcesi|Tren|Cumle|Kelime|Yagmur|Eslesme)_Liderlik|Bosluk_Tablosu)$/i.test(String(val(body,q,"oyun"))))return json({ok:false,mesaj:"Bu oyun artık öğrenci hesabında sunulmuyor."},410);
  for(const plan of authenticatedBudgets(op,a.student_id,body)){
   const digest=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(plan.scope+'|'+plan.value));
   const key='shield:'+Array.from(new Uint8Array(digest)).map(x=>x.toString(16).padStart(2,'0')).join('');
