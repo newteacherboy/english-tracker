@@ -35,12 +35,27 @@
   root.addEventListener('change',e=>{
    const key=e.target.dataset.field;
    if(!['educationStage','schoolCity','ageBand'].includes(key)||screen!=='register'||step===0)return;
-   password=$('fdPassword')?.value||password;collect();
-   if(key==='educationStage')draft.grade='';
-   if(key==='ageBand'){draft.consent=false;draft.progressMail=false;}
-   if(key==='schoolCity')draft.schoolDistrict='';
-   renderRegistration();
-   root.querySelector('[data-field="'+key+'"]')?.focus({preventScroll:true});
+   // Keep the native select and focused element mounted. Replacing/refocusing the
+   // active select reopens the iOS picker and can jump the form scroll position.
+   collect();
+   if(key==='educationStage'){
+    draft.grade='';
+    const host=root.querySelector('[data-fd-grades]');if(host)host.innerHTML=gradeFields();
+   }
+   if(key==='schoolCity'&&e.target.tagName==='SELECT'){
+    draft.schoolDistrict='';
+    const district=root.querySelector('[data-field="schoolDistrict"]');
+    if(district?.tagName==='SELECT')district.innerHTML=option('','Seçiniz','')+(window.dmTeacherSchoolLocations?.[draft.schoolCity]||[]).map(item=>option(escape(item),escape(item),'')).join('');
+   }
+   if(key==='ageBand'){
+    draft.consent=false;draft.progressMail=false;
+    const guardian=usesGuardianContact();
+    const note=root.querySelector('[data-fd-guardian-note]');if(note)note.hidden=!guardian;
+    const declaration=root.querySelector('[data-fd-guardian-declaration]');if(declaration)declaration.hidden=!guardian;
+    const progress=root.querySelector('[data-fd-progress-text]');if(progress)progress.textContent=guardian?'Veli olarak çocuğumun gelişim özetleri ve Papi haberlerini':'Gelişim özetleri ve Papi haberlerini';
+    for(const name of ['consent','progressMail']){const box=root.querySelector('[data-field="'+name+'"]');if(box)box.checked=false;}
+   }
+   save();
   });
   root.addEventListener('input',e=>{if(e.target?.dataset?.field!=='branch')return;const input=e.target,start=input.selectionStart,end=input.selectionEnd;input.value=input.value.toLocaleUpperCase('tr-TR');try{input.setSelectionRange(start,end);}catch(_){}});
   root.addEventListener('keydown',e=>{if(e.key==='Escape'&&!busy){if(screen==='home')welcome();else if(screen==='question'){welcome();}else if(screen==='register'&&step>0){step=adjacentRegistrationStep(-1);renderRegistration();}}if(e.key==='Tab'){const nodes=[...root.querySelectorAll('button:not(:disabled),a[href],input,select')].filter(n=>!n.hidden);if(!nodes.length)return;const first=nodes[0],last=nodes.at(-1);if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}}});
@@ -152,7 +167,8 @@
  const pathNote=()=>`<p class="fd-note fd-path" role="status">🧭 ${escape(startSummary())}</p>`;
  const learnerProfile=()=>({placementPolicy:draft.role!=='teacher'&&draft.purpose==='independent'?'verified-upper':undefined,version:1,purpose:draft.role==='teacher'?'independent':draft.purpose,ageBand:asksAge()?draft.ageBand:'',educationStage:draft.purpose==='school'?draft.educationStage:'',goal:draft.goal,startChoice:draft.startChoice,knownLevel:draft.knownLevel});
  const option=(value,label,selected)=>`<option value="${value}" ${value===selected?'selected':''}>${label}</option>`;
- function educationFields(){const grades={primary:[1,2,3,4],middle:[5,6,7,8],high:[9,10,11,12]}[draft.educationStage]||[];return `<label class="fd-field">Eğitim kademen<select data-field="educationStage" required>${option('','Seçiniz',draft.educationStage)}${[['primary','İlkokul'],['middle','Ortaokul'],['high','Lise'],['university','Üniversite'],['graduate','Mezun']].map(([v,l])=>option(v,l,draft.educationStage)).join('')}</select></label>`+(grades.length?`<label class="fd-field">Sınıf<select data-field="grade" required>${option('','Seçiniz',draft.grade)}${grades.map(n=>option(String(n),n+'. sınıf',String(draft.grade))).join('')}</select></label>`:'');}
+ function gradeFields(){const grades={primary:[1,2,3,4],middle:[5,6,7,8],high:[9,10,11,12]}[draft.educationStage]||[];return grades.length?`<label class="fd-field">Sınıf<select data-field="grade" required>${option('','Seçiniz',draft.grade)}${grades.map(n=>option(String(n),n+'. sınıf',String(draft.grade))).join('')}</select></label>`:'';}
+ function educationFields(){return `<label class="fd-field">Eğitim kademen<select data-field="educationStage" required>${option('','Seçiniz',draft.educationStage)}${[['primary','İlkokul'],['middle','Ortaokul'],['high','Lise'],['university','Üniversite'],['graduate','Mezun']].map(([v,l])=>option(v,l,draft.educationStage)).join('')}</select></label><div data-fd-grades>${gradeFields()}</div>`;}
  const field=(label,key,options={})=>`<label class="fd-field">${label}<input data-field="${key}" value="${escape(draft[key])}" ${options.type?`type="${options.type}"`:'type="text"'} ${options.required===false?'':'required'} maxlength="${options.max||120}" ${options.extra||''} ${options.placeholder?`placeholder="${escape(options.placeholder)}"`:''}></label>`;
  function discoveryCard(){return `<div class="fd-card"><strong>${escape(draft.username||'Keşif kartın')}</strong><small>${draft.role==='teacher'?'Öğretmen':draft.purpose==='independent'?'Kendi hızında İngilizce':draft.grade?escape(draft.grade)+'. sınıf'+(draft.branch?' / '+escape(draft.branch):''):draft.educationStage==='university'?'Üniversite':'Rotan birlikte hazırlanıyor'}</small></div>`;}
  function maskEmail(){const [name,domain]=draft.email.split('@');return escape(name?.slice(0,1)+'***@'+(domain||''));}
@@ -174,16 +190,16 @@
   const teacher=draft.role==='teacher',school=draft.purpose==='school'&&!teacher,guardian=usesGuardianContact();
   let body=formMascot()+'<h1>'+(teacher?'Öğretmen hesabı':school?'Öğrenci hesabı':'Hesabını oluştur')+'</h1>';
   if(asksAge())body+=`<label class="fd-field">Yaş aralığı<select data-field="ageBand" required>${[['','Seçiniz'],['under13','13 yaş altı'],['teen','13–17 yaş'],['adult','18 yaş ve üzeri']].map(([v,l])=>option(v,l,draft.ageBand)).join('')}</select></label>`;
-  if(guardian)body+='<p class="fd-note">Kayıt işlemini velin veya yasal temsilcinle birlikte tamamla.</p>';
+  if(asksAge())body+='<p class="fd-note" data-fd-guardian-note '+(guardian?'':'hidden')+' >Kayıt işlemini velin veya yasal temsilcinle birlikte tamamla. E-posta alanına onun e-posta adresini gir.</p>';
   if(teacher)body+=field('İsim','first',{max:30,extra:'autocomplete="given-name"'})+field('Soyisim','last',{max:30,extra:'autocomplete="family-name"'});
   body+=field('Kullanıcı adı','username',{max:20,extra:'autocomplete="username" autocapitalize="off" spellcheck="false"'})+'<p class="fd-note">Gerçek adından farklı bir takma ad seç.</p>';
   if(school)body+=educationFields();
   if(teacher)body+=schoolLocationFields()+field('Telefon','phone',{type:'tel',max:20,extra:'autocomplete="tel" inputmode="tel"'});
-  body+=field(guardian?'Veli e-posta adresi':'E-posta adresi','email',{type:'email',placeholder:'ornek@eposta.com',extra:'autocomplete="email"'});
+  body+=field('E-posta adresi','email',{type:'email',placeholder:'ornek@eposta.com',extra:'autocomplete="email"'});
   if(googleSession)body+='<div class="fd-private">✓ Kimlik sağlayıcı oturumu doğrulandı.</div>';
   else body+='<label class="fd-field">Şifre<div class="fd-password"><input id="fdPassword" type="password" minlength="6" maxlength="64" autocomplete="new-password" required><button type="button" class="fd-eye" data-action="eye" aria-label="Şifreyi göster">◉</button></div></label>';
-  body+='<label class="fd-consent"><input type="checkbox" data-field="consent" '+(draft.consent?'checked':'')+'><span><a href="gizlilik.html" target="_blank" rel="noopener">Gizlilik bildirimini</a> okudum, <a href="kullanim-kosullari.html" target="_blank" rel="noopener">kullanım koşullarını</a> kabul ediyorum.'+(guardian?' Çocuğun yasal temsilcisi olarak bu kayıt talebini iletiyorum.':'')+'</span></label>';
-  body+='<label class="fd-consent fd-consent-optional"><input type="checkbox" data-field="progressMail" '+(draft.progressMail?'checked':'')+'><span>'+(guardian?'Veli olarak çocuğumun gelişim özetleri ve Papi haberlerini':'Gelişim özetleri ve Papi haberlerini')+' e-postayla almak istiyorum. <small>İsteğe bağlıdır; istediğin zaman abonelikten çıkabilirsin.</small></span></label>';
+  body+='<label class="fd-consent"><input type="checkbox" data-field="consent" '+(draft.consent?'checked':'')+'><span><a href="gizlilik.html" target="_blank" rel="noopener">Gizlilik bildirimini</a> okudum, <a href="kullanim-kosullari.html" target="_blank" rel="noopener">kullanım koşullarını</a> kabul ediyorum.'+'<span data-fd-guardian-declaration '+(guardian?'':'hidden')+'> Çocuğun yasal temsilcisi olarak bu kayıt talebini iletiyorum.</span></span></label>';
+  body+='<label class="fd-consent fd-consent-optional"><input type="checkbox" data-field="progressMail" '+(draft.progressMail?'checked':'')+'><span><span data-fd-progress-text>'+(guardian?'Veli olarak çocuğumun gelişim özetleri ve Papi haberlerini':'Gelişim özetleri ve Papi haberlerini')+'</span> e-postayla almak istiyorum. <small>İsteğe bağlıdır; istediğin zaman abonelikten çıkabilirsin.</small></span></label>';
   if(googleReady&&!googleSession&&!teacher)body+='<button type="button" class="fd-google" data-action="google"><img src="discovery-assets/google-g.svg" alt="">Google ile devam et</button>';
   show(body,button(teacher?'Başvuruyu tamamla':'Hesap oluştur','submit'),65,'fd-register fd-compact');
   if(!googleSession&&$('fdPassword'))$('fdPassword').value=password;
