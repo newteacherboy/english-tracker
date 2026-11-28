@@ -65,6 +65,24 @@ await page.setViewportSize({width:390,height:844});await page.evaluate(()=>{for(
 const bellMetrics=await page.locator('.dm-center-bell').evaluate(b=>{const x=b.getBoundingClientRect(),n=b.querySelector('.dm-center-count').getBoundingClientRect(),v=b.querySelector('svg').getBoundingClientRect();return {button:[x.left,x.top,x.right,x.bottom],count:[n.left,n.top,n.right,n.bottom],icon:v.width};});
 assert(bellMetrics.icon<=20,'bell icon matches compact controls');
 assert(bellMetrics.count[0]>=bellMetrics.button[0]&&bellMetrics.count[2]<=bellMetrics.button[2]+3&&bellMetrics.count[1]>=bellMetrics.button[1]-5&&bellMetrics.count[3]<=bellMetrics.button[3]+2,'red count anchored to bell: '+JSON.stringify(bellMetrics));
+// Concept A: value changes never move the fixed columns, and the badge stays on its icon.
+for(const width of [320,360,390,430,768]){
+ await page.setViewportSize({width,height:844});
+ const read=()=>page.locator('.dm-unified-wallet').evaluate(h=>{
+  const bounds=h.getBoundingClientRect(),buttons=[...h.querySelectorAll(':scope>button')].filter(b=>b.getClientRects().length);
+  const cells=buttons.map(b=>{const r=b.getBoundingClientRect(),v=b.querySelector('[data-pw-value]');return {x:r.x,y:r.y,width:r.width,height:r.height,right:r.right,clipped:!!v&&v.scrollWidth>v.clientWidth+1};});
+  const bell=h.querySelector('.dm-center-bell'),icon=bell.querySelector('svg').getBoundingClientRect(),badge=bell.querySelector('.dm-center-count').getBoundingClientRect();
+  return {left:bounds.left,right:bounds.right,cells,icon: {left:icon.left,right:icon.right,top:icon.top},badge:{left:badge.left,right:badge.right,bottom:badge.bottom}};
+ });
+ await page.evaluate(()=>{yo.altin=3781;yo.totalXp=26200;window.genelEnerjiKalan=60;DijiMeduPapiWallet.refresh();});
+ const before=await read();assert.equal(before.cells.length,5);
+ assert(before.cells.every((r,i)=>!r.clipped&&r.x>=before.left-1&&r.right<=before.right+1&&(!i||r.x>=before.cells[i-1].right-1)&&Math.abs(r.y-before.cells[0].y)<1),'A: aligned, unclipped at '+width+' '+JSON.stringify(before));
+ assert(before.badge.left<before.icon.right+2&&before.badge.bottom>=before.icon.top-2,'badge touches bell icon');
+ await page.evaluate(()=>{yo.altin=999999999;yo.totalXp=999999999;window.genelEnerjiKalan=125;DijiMeduPapiWallet.refresh();});
+ const after=await read();assert.deepEqual(after.cells.map(({x,y,width,height})=>[x,y,width,height]),before.cells.map(({x,y,width,height})=>[x,y,width,height]),'A: stable cells at '+width);
+ assert(after.cells.every(r=>!r.clipped),'A: large values fit at '+width);
+}
+await page.setViewportSize({width:390,height:844});
 await page.locator('.dm-center-bell').click();
 const panelBox=await page.locator('.dm-center-panel').boundingBox();assert(panelBox.width<=322&&panelBox.height<=366,'compact popover: '+JSON.stringify(panelBox));
 const heights=await page.locator('.dm-center-item').evaluateAll(list=>list.map(x=>Math.round(x.getBoundingClientRect().height)));assert(heights.length===3&&Math.max(...heights)-Math.min(...heights)<=3,'consistent notification card heights: '+heights);
