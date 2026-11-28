@@ -231,6 +231,28 @@ function istemciIp(req: Request) {
 async function denemeYaz(operation: string, target: string, payload: any = {}) {
   await supabase.from("audit_logs").insert({ actor_role: "public", operation, target, payload });
 }
+/* Registration quotas: account, email, shared-school network and service capacity.
+   Preserve the global audit ledger and fail closed when the quota store is unavailable. */
+async function registrationQuota(req: Request, username: string, email: string, googleId?: string): Promise<"ok" | "limited" | "unavailable"> {
+  const ip=istemciIp(req);
+  const limits=[
+    {operation:"kayit",target:"genel",limit:120},
+    {operation:"kayit_hesap",target:await sha256(encName(username)),limit:5},
+    {operation:"kayit_eposta",target:await sha256(email.trim().toLowerCase()),limit:8},
+  ];
+  if(ip!=="bilinmiyor")limits.push({operation:"kayit_ag",target:await sha256(ip),limit:60});
+  if(googleId)limits.push({operation:"google_kayit",target:googleId,limit:5});
+  const since=new Date(Date.now()-60*60000).toISOString();
+  const checks=await Promise.all(limits.map(async(l)=>{
+    const result=await supabase.from("audit_logs").select("id",{count:"exact",head:true}).eq("operation",l.operation).eq("target",l.target).gte("created_at",since);
+    return {error:result.error,count:result.count,limit:l.limit};
+  }));
+  if(checks.some(c=>c.error||c.count===null))return "unavailable";
+  if(checks.some(c=>(c.count??0)>=c.limit))return "limited";
+  const result=await supabase.from("audit_logs").insert(limits.map(({operation,target})=>({actor_role:"public",operation,target,payload:{}})));
+  return result.error?"unavailable":"ok";
+}
+
 
 async function auth(req: Request, body: any, q: URLSearchParams) {
   const token = body?.t || q.get("t") || req.headers.get("x-diji-token") || "";
@@ -1333,10 +1355,8 @@ async function handle(req: Request, proxy: any = null) {
       if (!learnerProfile.version && !independentLearner && (!Number.isInteger(sinif) || sinif < 1 || sinif > 8 || !sube))
         return json({ ok: false, mesaj: "Öğrencinin sınıfını ve şubesini belirt." }, 400);
       if (body.kvkkOnay !== true) return json({ ok: false, mesaj: "Veli ve bilgilendirme beyanını işaretlemelisin." }, 400);
-      if (await denemeSay("google_kayit", user.id, 60) >= 5 || await denemeSay("kayit", "genel", 60) >= 20)
-        return json({ ok: false, mesaj: "Çok fazla kayıt denemesi. Bir saat sonra tekrar dene." }, 429);
-      await denemeYaz("google_kayit", user.id);
-      await denemeYaz("kayit", "genel", { ad: username });
+      const quota=await registrationQuota(req,username,email,user.id);
+      if(quota!=="ok")return json({ok:false,mesaj:quota==="limited"?"Çok fazla kayıt denemesi. Daha sonra tekrar dene.":"Kayıt hizmeti geçici olarak yoğun. Biraz sonra tekrar dene."},quota==="limited"?429:503);
       if (await studentByNameGenel(username))
         return json({ ok: false, mesaj: "Bu öğrenci zaten kayıtlı. Mevcut hesabını kullanıcı adı ve şifresiyle bağla." }, 409);
       const { data: ayniOgrt } = await supabase.from("teachers").select("id").ilike("username", likeKacir(username)).limit(1);
@@ -2319,7 +2339,7 @@ async function handle(req: Request, proxy: any = null) {
     return json({ ok: true, ogretmen: t.full_name || t.username });
   }
   if (op === "kayitOl") {
-    // [YAMA 9] doğrulama + saatte 20 kayıt sınırı (zararlı kod ve sahte kayıt koruması)
+    // [YAMA 9] doğrulama + katmanlı kayıt sınırı (zararlı kod ve sahte kayıt koruması)
     const username = String(body.ogrenciAdi || "").trim().replace(/\s+/g, " ");
     const password = String(body.sifre || "");
     const teacherApplication = body.requestTeacherAccess === true;
@@ -2340,8 +2360,8 @@ async function handle(req: Request, proxy: any = null) {
     const city = teacherApplication && typeof body.okulIl === "string" ? temizMetin(body.okulIl,40).replace(/\s+/g," ").trim() : "";
     const district = teacherApplication && typeof body.okulIlce === "string" ? temizMetin(body.okulIlce,60).replace(/\s+/g," ").trim() : "";
     if (teacherApplication && (!city || !district || !school || typeof body.okul !== "string")) return json({ status: "error", message: "Öğretmen başvurusu için il, ilçe ve okul adını yaz." },400);
-    if (await denemeSay("kayit", "genel", 60) >= 20) return json({ status: "error", message: "Çok fazla kayıt denemesi. Bir saat sonra tekrar dene." });
-    await denemeYaz("kayit", "genel", { ad: username });
+    const quota=await registrationQuota(req,username,String(body.email||""));
+    if(quota!=="ok")return json({status:"error",message:quota==="limited"?"Çok fazla kayıt denemesi. Daha sonra tekrar dene.":"Kayıt hizmeti geçici olarak yoğun. Biraz sonra tekrar dene."});
     const existing = await studentByName(username);
     if (existing && existing.status !== "rejected") return json({ status: "error", message: "Bu kullanıcı adı zaten kayıtlı." });
     const { data: ayniOgrt } = await supabase.from("teachers").select("id").ilike("username", likeKacir(username)).limit(1);
