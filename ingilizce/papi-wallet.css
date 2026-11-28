@@ -97,3 +97,61 @@ html body .dm-has-wallet > .dm-unified-wallet.dm-papi-wallet:is([data-wallet-mod
 html body .dm-unified-wallet[data-wallet-mode="shop"] > [data-pw="gold"]{order:-1!important}
 html body .dm-unified-wallet[data-wallet-mode="progress"] > [data-pw="xp"]{order:-1!important}
 html body .dm-wallet-slot{display:block!important;width:100%;min-width:0;box-sizing:border-box;flex:0 0 100%;grid-column:1/-1}
+
+/* Design A (28 Kasım): a single frameless, stable status strip.
+   Fixed tracks reserve space for the numbers and keep the bell badge attached.
+   Use the existing layout layer so older per-screen overrides cannot distort it. */
+@layer bilgiIslands {
+html body :is(#tab-dunya#tab-dunya,#tab-meduakis#tab-meduakis,#tab-aktiviteler#tab-aktiviteler,.dm-has-wallet) .dm-unified-wallet.dm-papi-wallet[data-wallet-mode="full"]{
+  --pw-icon:clamp(17px,5.8vw,26px);
+  --pw-number:clamp(10.5px,3.55vw,16px);
+  --pw-bell-ink:#176b88;
+  --pw-ink:#14294b;
+  container-type:inline-size;
+  grid-template-columns:minmax(0,.8fr) minmax(0,1.1fr) minmax(0,1.2fr)!important;
+  grid-template-rows:48px!important;
+  grid-auto-flow:column!important;
+  align-items:center!important;column-gap:2px!important;row-gap:0!important;
+  width:100%!important;max-width:100%!important;min-width:0!important;
+  box-sizing:border-box!important;padding:0 4px!important;margin:0!important;
+  background:transparent!important;border:0!important;box-shadow:none!important;
+  border-radius:0!important;backdrop-filter:none!important;overflow:visible!important;
+}
+html body :is(#tab-dunya#tab-dunya,#tab-meduakis#tab-meduakis,#tab-aktiviteler#tab-aktiviteler,.dm-has-wallet) .dm-unified-wallet.dm-papi-wallet[data-wallet-mode="full"].dm-has-daily-streak{grid-template-columns:minmax(0,.72fr) minmax(0,1.1fr) minmax(0,1.18fr) minmax(0,.97fr)!important}
+html body :is(#tab-dunya#tab-dunya,#tab-meduakis#tab-meduakis,#tab-aktiviteler#tab-aktiviteler,.dm-has-wallet) .dm-unified-wallet.dm-papi-wallet[data-wallet-mode="full"].dm-has-center{grid-template-columns:minmax(0,.72fr) minmax(0,1.1fr) minmax(0,1.18fr) minmax(0,.97fr) 44px!important}
+html body :is(#tab-dunya#tab-dunya,#tab-meduakis#tab-meduakis,#tab-aktiviteler#tab-aktiviteler,.dm-has-wallet) .dm-unified-wallet.dm-papi-wallet[data-wallet-mode="full"]:not(.dm-has-center):has(>.dm-theme-toggle){grid-template-columns:minmax(0,.8fr) minmax(0,1.1fr) minmax(0,1.2fr) 44px!important}
+html body :is(#tab-dunya#tab-dunya,#tab-meduakis#tab-meduakis,#tab-aktiviteler#tab-aktiviteler,.dm-has-wallet) .dm-unified-wallet.dm-papi-wallet[data-wallet-mode="full"].dm-has-daily-streak:not(.dm-has-center):has(>.dm-theme-toggle){grid-template-columns:minmax(0,.72fr) minmax(0,1.1fr) minmax(0,1.18fr) minmax(0,.97fr) 44px!important}
+html body :is(#tab-dunya#tab-dunya,#tab-meduakis#tab-meduakis,#tab-aktiviteler#tab-aktiviteler,.dm-has-wallet) .dm-unified-wallet.dm-papi-wallet[data-wallet-mode="full"]>.dm-pw-papi,html body :is(#tab-dunya#tab-dunya,#tab-meduakis#tab-meduakis,#tab-aktiviteler#tab-aktiviteler,.dm-has-wallet) .dm-unified-wallet.dm-papi-wallet[data-wallet-mode="full"].dm-has-center>.dm-theme-toggle{display:none!important}
+html body :is(#tab-dunya#tab-dunya,#tab-meduakis#tab-meduakis,#tab-aktiviteler#tab-aktiviteler,.dm-has-wallet) .dm-unified-wallet.dm-papi-wallet[data-wallet-mode="full"]>button:is([data-pw],[data-dm-daily-streak],.dm-center-bell){
+  grid-row:1!important;grid-column:auto!important;min-width:0!important;width:100%!important;max-width:100%!important;
+  height:48px!important;min-height:48px!important;max-height:48px!important;
+  margin:0!important;padding:0 1px!important;box-sizing:border-box!important;
+  border:0!important;border-radius:0!important;background:none!important;box-shadow:none!important;
+  color:var(--pw-ink)!important;-webkit-text-fill-color:var(--pw-ink)!important;
+  display:flex!important;flex-direction:row!important;justify-content:center!important;align-items:center!important;gap:3px!important;
+  font:850 var(--pw-number)/1.2 Nunito,system-ui,sans-serif!important;white-space:nowrap!important;overflow:visible!important;
+}
+html body :is(#tab-dunya#tab-dunya,#tab-meduakis#tab-meduakis,#tab-aktiviteler#tab-aktiviteler,.dm-has-wallet) .dm-unified-wallet.dm-papi-wallet[data-wallet-mode="full"]>[data-pw]{
+  display:grid!important;grid-template-columns:var(--pw-icon) minmax(0,1fr)!important;justify-items:start!important;align-content:center!important;
+  gap:3px!important;
+}
+html body :is(#tab-dunya#tab-dunya,#tab-meduakis#tab-meduakis,#tab-aktiviteler#tab-aktiviteler,.dm-has-wallet) .dm-unified-wallet.dm-papi-wallet[data-wallet-mode="full"]>[data-pw]::after{display:none!important;content:none!important}
+html body :is(#tab-dunya#tab-dunya,#tab-meduakis#tab-meduakis,#tab-aktiviteler#tab-aktiviteler,.dm-has-wallet) .dm-unified-wallet.dm-papi-wallet[data-wallet-mode="full"] .dm-pw-art:not(.dm-pw-papi){width:var(--pw-icon)!important;height:var(--pw-icon)!important;flex:none!important;margin:0!important}
+html body :is(#tab-dunya#tab-dunya,#tab-meduakis#tab-meduakis,#tab-aktiviteler#tab-aktiviteler,.dm-has-wallet) .dm-unified-wallet.dm-papi-wallet[data-wallet-mode="full"] .dm-pw-copy{min-width:0!important;width:100%!important;max-width:100%!important;display:block!important;margin:0!important;padding:0!important;overflow:hidden!important;text-align:left!important}
+html body :is(#tab-dunya#tab-dunya,#tab-meduakis#tab-meduakis,#tab-aktiviteler#tab-aktiviteler,.dm-has-wallet) .dm-unified-wallet.dm-papi-wallet[data-wallet-mode="full"] [data-pw-value]{display:block!important;max-width:100%!important;font:inherit!important;line-height:1.2!important;letter-spacing:-.3px!important;font-variant-numeric:tabular-nums!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
+html body :is(#tab-dunya#tab-dunya,#tab-meduakis#tab-meduakis,#tab-aktiviteler#tab-aktiviteler,.dm-has-wallet) .dm-unified-wallet.dm-papi-wallet[data-wallet-mode="full"]>[data-dm-daily-streak]{gap:3px!important;color:#e34d60!important;-webkit-text-fill-color:#e34d60!important}
+html body :is(#tab-dunya#tab-dunya,#tab-meduakis#tab-meduakis,#tab-aktiviteler#tab-aktiviteler,.dm-has-wallet) .dm-unified-wallet.dm-papi-wallet[data-wallet-mode="full"] .dm-dg-box{width:clamp(22px,7vw,32px)!important;width:clamp(22px,7cqw,32px)!important;height:clamp(22px,7vw,32px)!important;height:clamp(22px,7cqw,32px)!important;flex:none!important}
+html body :is(#tab-dunya#tab-dunya,#tab-meduakis#tab-meduakis,#tab-aktiviteler#tab-aktiviteler,.dm-has-wallet) .dm-unified-wallet.dm-papi-wallet[data-wallet-mode="full"] [data-daily-count]{display:grid!important;place-items:center!important;box-sizing:border-box!important;min-width:0!important;min-height:24px!important;padding:3px 4px!important;border:1px solid #ffd2d5!important;border-radius:9px!important;background:#fff0f1!important;color:#e34d60!important;-webkit-text-fill-color:#e34d60!important;font:850 clamp(10px,3.2vw,14px)/1.1 Nunito,system-ui,sans-serif!important;font:850 clamp(10px,3.2cqw,14px)/1.1 Nunito,system-ui,sans-serif!important;font-variant-numeric:tabular-nums;white-space:nowrap!important}
+html body :is(#tab-dunya#tab-dunya,#tab-meduakis#tab-meduakis,#tab-aktiviteler#tab-aktiviteler,.dm-has-wallet) .dm-unified-wallet.dm-papi-wallet[data-wallet-mode="full"]>.dm-center-bell{position:relative!important;display:grid!important;place-items:center!important;justify-self:center!important;justify-content:center!important;width:44px!important;padding:0!important;isolation:isolate!important;color:var(--pw-bell-ink)!important;-webkit-text-fill-color:var(--pw-bell-ink)!important}
+html body :is(#tab-dunya#tab-dunya,#tab-meduakis#tab-meduakis,#tab-aktiviteler#tab-aktiviteler,.dm-has-wallet) .dm-unified-wallet.dm-papi-wallet[data-wallet-mode="full"]>.dm-center-bell svg{display:block!important;width:20px!important;height:20px!important;min-width:20px!important;min-height:20px!important;stroke:var(--pw-bell-ink)!important;fill:none!important}
+html body :is(#tab-dunya#tab-dunya,#tab-meduakis#tab-meduakis,#tab-aktiviteler#tab-aktiviteler,.dm-has-wallet) .dm-unified-wallet.dm-papi-wallet[data-wallet-mode="full"]>.dm-center-bell .dm-center-count{position:absolute!important;top:3px!important;right:2px!important;left:auto!important;bottom:auto!important;transform:none!important;display:flex!important;align-items:center!important;justify-content:center!important;min-width:17px!important;height:17px!important;padding:0 3px!important;border:1px solid #fff!important;border-radius:999px!important;background:#ef3450!important;color:#fff!important;-webkit-text-fill-color:#fff!important;font:900 9px/1 Nunito,system-ui,sans-serif!important;pointer-events:none!important;z-index:5!important}
+html body :is(#tab-dunya#tab-dunya,#tab-meduakis#tab-meduakis,#tab-aktiviteler#tab-aktiviteler,.dm-has-wallet) .dm-unified-wallet.dm-papi-wallet[data-wallet-mode="full"]>.dm-center-bell .dm-center-count[hidden],html body :is(#tab-dunya#tab-dunya,#tab-meduakis#tab-meduakis,#tab-aktiviteler#tab-aktiviteler,.dm-has-wallet) .dm-unified-wallet.dm-papi-wallet[data-wallet-mode="full"]>button[hidden]{display:none!important}
+html body :is(#tab-dunya#tab-dunya,#tab-meduakis#tab-meduakis,#tab-aktiviteler#tab-aktiviteler,.dm-has-wallet) .dm-unified-wallet.dm-papi-wallet[data-wallet-mode="full"]>button:active{transform:none}
+html[data-dm-theme="night"] body :is(#tab-dunya#tab-dunya,#tab-meduakis#tab-meduakis,#tab-aktiviteler#tab-aktiviteler,.dm-has-wallet) .dm-unified-wallet.dm-papi-wallet[data-wallet-mode="full"]{--pw-ink:#f3f7ff;--pw-bell-ink:#8ccee8}
+@supports (width:1cqw){
+html body :is(#tab-dunya#tab-dunya,#tab-meduakis#tab-meduakis,#tab-aktiviteler#tab-aktiviteler,.dm-has-wallet) .dm-unified-wallet.dm-papi-wallet[data-wallet-mode="full"]{
+ --pw-icon:clamp(17px,5.8cqw,26px);--pw-number:clamp(10.5px,3.55cqw,16px)
+}
+}
+
+}
