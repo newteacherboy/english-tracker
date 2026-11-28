@@ -1250,6 +1250,7 @@ async function handle(req: Request, proxy: any = null) {
   // KOK was an internal cache label accidentally sent by older clients.
   const requestedOp = String(body.islem || q.get("islem") || "").trim();
   const op = requestedOp === "KOK" ? "" : requestedOp;
+  if (["enerjiGonder","hazirMesajGonder","aksesuarHediye","aksesuarKatalog"].includes(op) || (op==="bildirimGonder" && ["mesaj","hediye","enerji"].includes(String(body.tur??q.get("tur")??"").trim().toLowerCase()))) return json({ok:false,status:"error",hata:"feature_retired",mesaj:"Öğrenciler arası mesaj ve hediye gönderimi kaldırıldı."},410);
   if ((op === "ekonomi" && body.is === "karakterAl") || op === "karakterAl" || (["reklamHakki","reklamOdulu"].includes(op) && body.urun?.tip === "karakter")) return json({ok:false,mesaj:"Karakter koleksiyonu kaldırıldı."},410);
   const rate=async(scope:string,value:string,max:number,seconds:number)=>{
     const key="shield:"+await sha256(scope+"|"+value);
@@ -2032,7 +2033,6 @@ async function handle(req: Request, proxy: any = null) {
       const ad = (e as any).students?.username || p.student_name || ""; if (!ad || liste.length >= 150) continue;
       let ikon = p.icon || "✨", metin = p.message || "Yeni bir hareket yaptı";
       if (e.event_type === "game_score") metin = `${OYUN_ADI[p.game_key || p.game_name] || p.game_name || "Bir oyunda"} oyununda ${p.score ?? 0} puan kazandı`;
-      else if (e.event_type === "energy_send") metin = `${p.target_name || "bir arkadaşına"} ${p.amount ?? 2} ⚡ enerji hediye etti`;
       else if (e.event_type === "duel_invite") metin = `${p.target_name || "birini"} ${OYUN_ADI[p.game_name] || p.game_name || ""} düellosuna çağırdı ⚔️`;
       else if (e.event_type === "level_complete") metin = `${p.mode_name || "Parkurda"} ${p.level ?? ""}. seviyeyi geçti`;
       liste.push({ k: e.id, t: Date.parse(e.created_at), ogr: ad, ad, event_type:e.event_type, tur:"arti", ikon, metin, g: false });
@@ -2075,20 +2075,6 @@ async function handle(req: Request, proxy: any = null) {
     if (v && v.length) { await supabase.from("feed_events").delete().eq("id", v[0].id); return json({ status: "success", aktif: false }); }
     await supabase.from("feed_events").insert({ student_id: s.id, event_type: tur, target_student_id: hedefId, payload });
     return json({ status: "success", aktif: true });
-  }
-  if (op === "enerjiGonder") {
-    const g = String(val(body, q, "gonderen")), al = String(val(body, q, "alici")); const deny = await requireStudent(a, g); if (deny) return deny;
-    const gs = await hedefOgrenci(a, g), as = await studentByName(al);
-    if (!gs || !as || !publicParticipant(as)) return json({ ok: false, mesaj: "Öğrenci bulunamadı." });
-    if (gs.id === as.id) return json({ ok: false, mesaj: "Kendine enerji gönderemezsin. 😄" });
-    const { count } = await supabase.from("feed_events").select("id", { count: "exact", head: true }).eq("student_id", gs.id).eq("event_type", "energy_send").gte("created_at", bugunBasi());
-    if ((count || 0) >= (bool(val(body, q, "ekstra")) ? 3 : 1)) return json({ ok: false, mesaj: "Bugünkü enerji hediyeni zaten gönderdin." });
-    const next = Math.max(as.energy, Math.min(as.energy_max, as.energy + 2));
-    await supabase.from("students").update({ energy: next }).eq("id", as.id);
-    await supabase.from("energy_transactions").insert({ student_id: as.id, change_amount: next - as.energy, balance_after: next, reason: "öğrenci hediyesi" });
-    await supabase.from("feed_events").insert({ student_id: gs.id, target_student_id: as.id, event_type: "energy_send", payload: { amount: 2, student_name: gs.username, target_name: as.username, icon: "⚡" } });
-    await supabase.from("notifications").insert({ recipient_student_id: as.id, sender_student_id: gs.id, type: "enerji", message: "sana 2 enerji gönderdi" });
-    return json({ ok: true, status: "success", enerjiKalan: next });
   }
   if (op === "duelloGonder") {
     const g = String(val(body, q, "gonderen")), al = String(val(body, q, "alici")); const deny = await requireStudent(a, g); if (deny) return deny;
@@ -2962,7 +2948,7 @@ async function handle(req: Request, proxy: any = null) {
   if (op === "bildirimlerim") {
     const name = String(val(body, q, "ogrenci")); const deny = await requireStudent(a, name); if (deny) return deny;
     const s = await hedefOgrenci(a, name); if (!s) return json({ liste: [] });
-    let query = supabase.from("notifications").select("*,sender:students!notifications_sender_student_id_fkey(username)").eq("recipient_student_id", s.id).order("created_at", { ascending: false }).limit(200);
+    let query = supabase.from("notifications").select("*,sender:students!notifications_sender_student_id_fkey(username)").eq("recipient_student_id", s.id).or("sender_student_id.is.null,type.not.in.(mesaj,hediye,enerji)").order("created_at", { ascending: false }).limit(200);
     if (q.get("tumu") !== "1" && body.tumu !== "1") query = query.is("read_at", null);
     const { data } = await query;
     // [YAMA 19] gönderen alanında kimlik numarası yerine isim
@@ -2983,7 +2969,7 @@ async function handle(req: Request, proxy: any = null) {
     const sender = await hedefOgrenci(a, gonderen), receiver = await studentByName(alici);
     if (!receiver || !publicParticipant(receiver)) return json({ status: "error" });
     const tur = temizMetin(val(body, q, "tur"), 30);
-    if (!["tebrik", "begeni", "takip", "duello", "duelloYanit", "duelloSonuc", "duelloOyun", "enerji", "hediye"].includes(tur)) return json({ status: "error", message: "Geçersiz bildirim türü." }, 400);
+    if (!["tebrik", "begeni", "takip", "duello", "duelloYanit", "duelloSonuc", "duelloOyun"].includes(tur)) return json({ status: "error", message: "Geçersiz bildirim türü." }, 400);
     if (sender) {
       const { count } = await supabase.from("notifications").select("id", { count: "exact", head: true }).eq("sender_student_id", sender.id).gte("created_at", new Date(Date.now() - 3600000).toISOString());
       if ((count || 0) >= 40) return json({ status: "error", message: "Çok fazla bildirim gönderdin, biraz bekle." });
