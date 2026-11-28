@@ -4,3 +4,5 @@
 .pc-complete{text-align:center;margin:6px 0 18px}.pc-complete img{width:95px;height:95px;object-fit:contain}.pc-complete h1{font-size:23px;margin:10px 0}.pc-complete>span{display:inline-block;border-radius:12px;padding:10px 22px;background:#dff2e3;color:#0d6955;font-weight:800;font-size:22px}
 
 body{overflow:hidden}#parentApp{height:100%;display:flow-root}
+
+.pc-auth-v2 .pc-primary{background:linear-gradient(170deg,#ff7279,#ef424e);color:white;border:0}.pc-auth-v2 input[type=checkbox]{accent-color:#bf2533}.pc-auth-v2 .pc-check a{color:#ba303c}.pc-auth-v2{background:#fff}

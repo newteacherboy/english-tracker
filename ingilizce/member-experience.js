@@ -57,7 +57,7 @@ function banner(){
  let el=$('dmEmailVerifyBanner');if(!el){
   el=document.createElement('aside');el.id='dmEmailVerifyBanner';el.className='dm-email-banner';
   el.setAttribute('aria-label','E-posta doğrulama yardımı');$('panel-alani').prepend(el);
-  el.innerHTML='<img src="papi-welcome-v2.png" alt=""><div class="deg-banner-text"><strong>📨 E-postanı henüz doğrulamadın</strong><small>Gmail veya Outlook’ta mesajını bulmak için Papi sana gösterecek.</small></div><div class="deg-banner-actions"><button type="button" data-eg-quick-help>📖 Nasıl yapılır?</button><button type="button" data-eg-quick-resend>↻ Tekrar gönder</button></div>';
+  el.innerHTML='<img src="papi-welcome-v2.png" alt=""><div class="deg-banner-text"><strong>📨 E-postanı doğrula</strong><small>Gmail veya Outlook’ta mesajını bulmak için Papi sana gösterecek.</small></div><div class="deg-banner-actions"><button type="button" data-eg-quick-help>📖 Nasıl yapılır?</button><button type="button" data-eg-quick-resend>↻ Tekrar gönder</button></div>';
   el.querySelector('[data-eg-quick-help]').onclick=()=>emailPrompt();
   el.querySelector('[data-eg-quick-resend]').onclick=()=>{if(window.dmEmailGuide){window.dmEmailGuide.open('reminder');window.dmEmailGuide.resend();}else emailPrompt();};
  }

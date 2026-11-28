@@ -60,14 +60,14 @@
     const classes = d.classes.map(c => `<div class="dmc-card" data-class="${c.id}">
  <div class="dmc-head"><span class="dmc-badge">${esc(label(c))}</span><span class="dmc-meta"><b>${esc(c.name || label(c) + ' sınıfı')}</b><small>${c.students.length} öğrenci</small><br>
  <span class="dmc-code" data-copy="${esc(c.code)}" title="Kopyala">${esc(c.code)} <span aria-hidden="true">📋</span></span></span></div>
- <div class="dmc-acts"><button class="dmc-b" data-report="${c.id}">📈 Rapor</button><button class="dmc-b" data-toggle="${c.id}">${openId === c.id ? 'Öğrencileri gizle' : 'Öğrenciler'}</button><button class="dmc-b" data-rename="${c.id}">Adlandır</button><button class="dmc-b" data-newcode="${c.id}">Yeni kod</button><button class="dmc-b red" data-archive="${c.id}">Arşivle</button></div>
+ <div class="dmc-acts"><button class="dmc-b" data-invite="${esc(c.code)}">QR ve davet</button><button class="dmc-b" data-report="${c.id}">📈 Rapor</button><button class="dmc-b" data-toggle="${c.id}">${openId === c.id ? 'Öğrencileri gizle' : 'Öğrenciler'}</button><button class="dmc-b" data-rename="${c.id}">Adlandır</button><button class="dmc-b" data-newcode="${c.id}">Yeni kod</button><button class="dmc-b red" data-archive="${c.id}">Arşivle</button></div>
  ${openId === c.id ? `<ul class="dmc-list">${c.students.length ? c.students.map(s => `<li><span>${esc(s.username)}${s.fullName ? ` <small style="color:#7aa3a8">· ${esc(s.fullName)}</small>` : ''}</span>${moveSelect(s, c.id)}</li>`).join('') : '<li class="dmc-empty">Bu sınıfta henüz öğrenci yok. Kodu öğrencilerinle paylaş.</li>'}</ul>` : ''}
 </div>`).join('') || '<p class="dmc-empty">Henüz sınıfın yok. Aşağıdan ilk sınıfını oluştur.</p>';
     const un = d.unassigned || [];
     const unassigned = un.length ? `<div class="dmc-sec">Sınıfı tanımlanmamış öğrenciler (${un.length})</div><div class="dmc-card"><ul class="dmc-list" style="border:0;margin:0">${un.map(s => `<li><span>${esc(s.username)} <small style="color:#7aa3a8">· ${s.classNo ? esc(s.classNo + '. sınıf' + (s.branch ? ' / ' + s.branch : '')) : 'sınıf yok'}</small></span>${moveSelect(s, null)}</li>`).join('')}</ul></div>` : '';
     const full = d.limit !== null && d.limit !== undefined && d.used >= d.limit;
     const grades = Array.from({ length: 12 }, (_, i) => `<option value="${i + 1}"${i + 1 === 5 ? ' selected' : ''}>${i + 1}. sınıf</option>`).join('');
-    veil.querySelector('.dmc-sheet').innerHTML = `<div class="dmc-hero"><button class="dmc-x" data-close aria-label="Kapat">✕</button><h2>🏫 Sınıflarım</h2><p>Her sınıfın kendi kodu var. Öğrenci kayıtta kodu yazınca doğrudan o sınıfa katılır.</p>${quota(d)}</div>
+    veil.querySelector('.dmc-sheet').innerHTML = `<div class="dmc-hero"><button class="dmc-x" data-close aria-label="Kapat">✕</button><h2>🏫 Sınıflarım</h2><p>Her sınıfın kendi kodu var. Öğrenciler QR, bağlantı veya Profil’deki sınıfa katılma alanıyla katılabilir.</p>${quota(d)}</div>
 <div class="dmc-body"><div class="dmc-msg ${bad ? 'bad' : 'good'}" role="status">${esc(msg)}</div>${classes}
 <div class="dmc-sec">Yeni sınıf</div><div class="dmc-card">${full ? limitCard(d.limit) : `<div class="dmc-form"><select data-grade aria-label="Sınıf">${grades}</select><input data-branch maxlength="10" placeholder="Şube (A)" aria-label="Şube"><input data-name maxlength="40" placeholder="Ad (isteğe bağlı)" aria-label="Sınıf adı"><button class="dmc-b main" data-create>Sınıfı oluştur</button></div>`}</div>
 ${unassigned}
@@ -102,6 +102,7 @@ ${unassigned}
   async function onClick(e) {
     const t = e.target.closest('button,[data-copy]'); if (!t && e.target !== veil) return;
     if (e.target === veil || t.matches('[data-close]')) return close();
+    if(t.dataset.invite){window.dmTeacherInvites?.open(t.dataset.invite);return;}
     if (t.dataset.copy) return render((await copy(t.dataset.copy)) ? `${t.dataset.copy} kopyalandı. Öğrencilerinle paylaşabilirsin.` : `Kod: ${t.dataset.copy}`);
     if (t.dataset.report) { const id = t.dataset.report; close(); return window.dmTeacherReportsOpen?.(id); }
     if (t.dataset.toggle) { openId = openId === t.dataset.toggle ? null : t.dataset.toggle; return render(); }

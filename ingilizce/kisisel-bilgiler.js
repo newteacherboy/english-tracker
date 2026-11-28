@@ -102,9 +102,9 @@
         <div class="kb-alan"><label for="kbAge">Yaş aralığım (profilimde paylaşılmaz)</label><select id="kbAge"><option value="">Seç</option><option value="under13">13 yaş altı</option><option value="teen">13–17 yaş</option><option value="adult">18 yaş ve üzeri</option></select></div>
         <div class="kb-alan"><label for="kbGoal">Öğrenme hedefim</label><select id="kbGoal"><option value="daily">Günlük yaşam</option><option value="travel">Seyahat</option><option value="school">Derslerime destek</option><option value="exam">Sınava hazırlık</option></select></div>
       </div>
-      <div class="kb-grup kb-teacher-link"><h4>👩‍🏫 Öğretmenim</h4><p id="kbTeacherStatus" class="kb-ipucu" role="status"></p><p class="kb-ipucu">Öğretmeninin öğrenci davet kodunu gir. Kendi öğretmen paneli giriş şifresini değil, öğrencilere verdiği kodu kullan.</p><div class="kb-alan"><label for="kbTeacherCode">Öğretmen davet kodu</label><input id="kbTeacherCode" maxlength="10" autocapitalize="characters" autocomplete="off" placeholder="Öğretmenimin kodu"></div><button type="button" id="kbTeacherConnect" class="kb-kaydet" style="margin-top:10px;background:#087f73">Öğretmenime bağlan</button></div>
+      <div class="kb-grup kb-teacher-link"><h4>🎒 Sınıfıma katıl</h4><p id="kbTeacherStatus" class="kb-ipucu" role="status"></p><p class="kb-ipucu">Öğretmeninin öğrenci davet kodunu gir veya davet bağlantısını yapıştır. Kendi öğretmen paneli giriş şifresini değil, öğrencilere verdiği kodu kullan.</p><div class="kb-alan"><label for="kbTeacherCode">Öğretmen davet kodu</label><input id="kbTeacherCode" maxlength="200" autocapitalize="characters" autocomplete="off" placeholder="Kod veya davet bağlantısı"></div><label class="kb-alan">QR kod okut<input id="kbInviteQR" type="file" accept="image/*" capture="environment"></label><button type="button" id="kbTeacherConnect" class="kb-kaydet" style="margin-top:10px;background:#087f73">Öğretmenime bağlan</button></div>
       <div class="kb-grup" id="kbEducation"><h4>Eğitim bilgilerim</h4>
-        <div class="kb-alan"><label for="kbStage">Eğitim kademem</label><select id="kbStage"><option value="">Seç</option><option value="primary">İlkokul</option><option value="middle">Ortaokul</option><option value="high">Lise</option><option value="university">Üniversite</option></select></div>
+        <div class="kb-alan"><label for="kbStage">Eğitim kademem</label><select id="kbStage"><option value="">Seç</option><option value="primary">İlkokul</option><option value="middle">Ortaokul</option><option value="high">Lise</option><option value="university">Üniversite</option><option value="graduate">Mezun</option></select></div>
         <div class="kb-alan"><label for="kbOkul">Okul adı <span style="font-weight:600;color:#8a7cb8">(isteğe bağlı)</span></label><input id="kbOkul" maxlength="120"></div>
         <div class="kb-iki">
           <div class="kb-alan"><label for="kbSinif">Sınıf (ilkokul ve ortaokulda zorunlu)</label><select id="kbSinif"><option value="">Belirtmek istemiyorum</option>${Array.from({length:12},(_,i)=>i+1).map(n => `<option value="${n}">${n}. sınıf</option>`).join("")}</select></div>
@@ -163,7 +163,7 @@
       if (x.googleBagli) $("kbSifreIpucu").textContent = "Google ile kayıt olduysan şifren yoktur; öğretmeninden şifre belirlemesini iste.";
       sifreGoster();
     }
-    function education(reset=false){const school=$("kbPurpose").value==='school',stage=$("kbStage").value,bounds={primary:[1,4],middle:[5,8],high:[9,12],university:[0,0]}[stage]||[0,0];$("kbEducation").hidden=!school;for(const o of $("kbSinif").options)o.hidden=!!o.value&&(Number(o.value)<bounds[0]||Number(o.value)>bounds[1]);$("kbSinif").closest('.kb-iki').hidden=!stage||stage==='university';if(reset||$("kbSinif").selectedOptions[0]?.hidden)$("kbSinif").value='';$("kbContactTitle").textContent=$("kbAge").value==='adult'?'İletişim bilgilerim':'Veli iletişim bilgileri';}
+    function education(reset=false){const school=$("kbPurpose").value==='school',stage=$("kbStage").value,bounds={primary:[1,4],middle:[5,8],high:[9,12],university:[0,0]}[stage]||[0,0];$("kbEducation").hidden=!school;for(const o of $("kbSinif").options)o.hidden=!!o.value&&(Number(o.value)<bounds[0]||Number(o.value)>bounds[1]);$("kbSinif").closest('.kb-iki').hidden=!stage||['university','graduate'].includes(stage);if(reset||$("kbSinif").selectedOptions[0]?.hidden)$("kbSinif").value='';$("kbContactTitle").textContent=$("kbAge").value==='adult'?'İletişim bilgilerim':'Veli iletişim bilgileri';}
     for(const id of ['kbPurpose','kbStage','kbAge'])$(id).addEventListener('change',()=>education(id==='kbStage'));
     
     const iletisimDegisti = () => (Boolean(telSade(mevcut.telefon)) && telSade($("kbTel").value) !== telSade(mevcut.telefon)) || (Boolean(String(mevcut.email||'').trim()) && $("kbMail").value.trim().toLowerCase() !== String(mevcut.email || "").trim().toLowerCase());
@@ -184,8 +184,9 @@
     doldur(d);
 
     const mesaj = (t, tur) => { const m = $("kbMesaj"); m.textContent = t || ""; m.className = "kb-mesaj" + (tur ? " " + tur : ""); };
+    $("kbInviteQR").onchange=async e=>{try{if(!window.dmTeacherInvites)throw Error("QR aracı yüklenemedi.");const code=await window.dmTeacherInvites.decode(e.target.files?.[0]);if(perde.isConnected){$("kbTeacherCode").value=code;mesaj("QR kod okundu. Bağlan düğmesine dokun.","tamam");}}catch(err){if(perde.isConnected)mesaj(err.message,"hata");}finally{e.target.value="";}};
     $("kbTeacherConnect").onclick = () => {
-      const code=$("kbTeacherCode").value.trim().toUpperCase();
+      const code=window.dmTeacherInvites?.parse($("kbTeacherCode").value)||$("kbTeacherCode").value.trim().toUpperCase();
       if(!/^[A-Z0-9]{1,10}$/.test(code))return mesaj("Öğretmen davet kodunu kontrol et.", "hata");
       if(mevcut.ogretmenBagli)return mesaj("Zaten bir öğretmene bağlısın. Öğretmen değişikliği için destek al.", "hata");
       $("kbTeacherCode").value=code;
@@ -196,9 +197,9 @@
       const govde = {
         islem: "kisiselBilgiGuncelle",
         adSoyad: $("kbAd").value.trim(), okul: $("kbOkul").value.trim(),
-        ...($("kbPurpose").value==='school'?{sinif:!$("kbStage").value||$("kbStage").value==='university'||!$("kbSinif").value?null:Number($("kbSinif").value),sube:$("kbSube").value.trim().toLocaleUpperCase("tr-TR")}:{}),
+        ...($("kbPurpose").value==='school'?{sinif:!$("kbStage").value||['university','graduate'].includes($("kbStage").value)||!$("kbSinif").value?null:Number($("kbSinif").value),sube:$("kbSube").value.trim().toLocaleUpperCase("tr-TR")}:{}),
         learnerProfile:{version:1,purpose:$("kbPurpose").value,ageBand:$("kbAge").value,educationStage:$("kbPurpose").value==='school'?$("kbStage").value:'',goal:$("kbGoal").value,startChoice:mevcut.learnerProfile?.startChoice||'new',knownLevel:mevcut.learnerProfile?.knownLevel||'A1'},
-        ogretmenKodu: $("kbTeacherCode").value.trim(),telefon: $("kbTel").value.trim(), email: $("kbMail").value.trim()
+        ogretmenKodu: window.dmTeacherInvites?.parse($("kbTeacherCode").value)||$("kbTeacherCode").value.trim(),telefon: $("kbTel").value.trim(), email: $("kbMail").value.trim()
       };
       if (!govde.learnerProfile.ageBand) return mesaj("Yaş aralığını seç.", "hata");
       if (!govde.email) return mesaj("E-posta adresi boş bırakılamaz.", "hata");

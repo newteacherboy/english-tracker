@@ -292,3 +292,23 @@ body.dm-discovery-login #login-container .fd-login-back { background: var(--fd-g
 
 /* The welcome uses the same live Papi markup as the normal intro. */
 .fd-welcome-papi{position:relative;display:block;width:clamp(190px,52vw,290px);height:clamp(210px,32dvh,310px);margin:0 auto;border:0;background:none;padding:0;cursor:pointer;touch-action:manipulation}.fd-welcome-papi svg{width:100%;height:100%;overflow:visible;filter:drop-shadow(0 12px 14px #1a706b20)}.fd-papi-speech{position:absolute;right:-12px;top:24px;max-width:155px;padding:9px 13px;border:1px solid #d9eae1;background:#fffffff2;border-radius:16px 16px 16px 3px;font:750 12px system-ui;color:#145b52;box-shadow:0 5px 15px #18524212}.fd-welcome-papi:focus-visible{outline:3px solid #0a887a;outline-offset:5px;border-radius:24px}@media(max-height:650px){.fd-welcome-papi{height:180px;width:190px}.fd-papi-speech{top:12px;font-size:11px}}
+
+/* Compact enrollment: original animated Papi, white canvas, coral actions. */
+#dmDiscovery:has(.fd-compact){background:#fff}
+#dmDiscovery .fd-screen.fd-compact{background:#fff;border:0;box-shadow:none;backdrop-filter:none;color:#13213a}
+#dmDiscovery .fd-compact .fd-content{gap:0}
+#dmDiscovery .fd-compact h1{font-size:clamp(22px,5.7vw,29px);margin:5px 0 15px}
+#dmDiscovery .fd-form-papi{display:block;width:72px;height:80px;object-fit:contain;margin:0 auto 4px;flex:none}
+#dmDiscovery .fd-form-papi svg{width:100%;height:100%;overflow:visible}
+#dmDiscovery .fd-role-screen.fd-compact .fd-form-papi{width:150px;height:165px;margin:12px auto}
+#dmDiscovery .fd-compact .fd-field{margin:0 0 10px;font-weight:650}
+#dmDiscovery .fd-compact :is(input:not([type=checkbox]),select){background:#f4f5f7!important;border:1px solid #d9dce1!important;color:#13213a!important;min-height:44px}
+#dmDiscovery .fd-compact .fd-consent{background:transparent;border:0;padding:6px 0;margin:6px 0;font-size:13px;align-items:flex-start}
+#dmDiscovery .fd-compact .fd-note{font-size:12px;margin:0 0 8px}
+#dmDiscovery .fd-compact :is(.fd-primary,.fd-choice){background:linear-gradient(170deg,#ff7279,#ef424e)!important;border:1px solid #ed414c!important;color:#fff!important;box-shadow:inset 0 1px 1px #ffffff80,0 3px 8px #d2343c20!important}
+#dmDiscovery .fd-compact .fd-choice svg{color:#fff}
+#dmDiscovery .fd-compact :is(.fd-consent a,.fd-link){color:#ba303c}
+#dmDiscovery .fd-compact input[type=checkbox]{accent-color:#bf2533}
+#dmDiscovery .fd-compact .fd-progress i{background:#ed4653}
+#dmDiscovery .fd-compact :is(input,select):focus{box-shadow:0 0 0 2px #ff9fa5!important}
+#dmDiscovery .fd-compact .fd-actions{background:#fff}

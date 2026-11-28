@@ -172,10 +172,10 @@
     if (!d || !d.ok) { k.innerHTML = '<small>Öğretmen bilgileri alınamadı.</small>'; return; }
     let link = `${PORTAL}?kod=${d.kod}`;
     k.innerHTML = `<b>👩‍🏫 ${kac(d.adSoyad || d.kullanici)}${d.yonetici ? ' · Yönetici' : ''}</b>${d.kurum ? `<small>${kac(d.kurum)}</small>` : ''}
-      <div><span class="kod" aria-label="Öğretmen kodun">${kac(d.kod || '—')}</span><button type="button" id="cogK1">📋 Kodu kopyala</button><button type="button" id="cogK2">🔗 Davet linki</button>${d.yonetici ? '<button type="button" id="cogK3">👥 Öğretmenler</button>' : ''}<button type="button" id="cogCreateStudents">🎒 Öğrenci hesabı ekle</button>${d.ogrenciYonetimi ? '<button type="button" id="cogManageStudents">🔐 Öğrenci hesaplarını yönet</button>' : ''}${d.ogrenciYonetimi ? '<button type="button" id="cogContacts">📇 Üye iletişim listesi</button>' : ''}</div>
+      <div><span class="kod" aria-label="Öğretmen kodun">${kac(d.kod || '—')}</span><button type="button" id="cogK1">📋 Kodu kopyala</button><button type="button" id="cogK2">🔗 QR ve davet</button>${d.yonetici ? '<button type="button" id="cogK3">👥 Öğretmenler</button>' : ''}<button type="button" id="cogCreateStudents">🎒 Öğrenci hesabı ekle</button>${d.ogrenciYonetimi ? '<button type="button" id="cogManageStudents">🔐 Öğrenci hesaplarını yönet</button>' : ''}${d.ogrenciYonetimi ? '<button type="button" id="cogContacts">📇 Üye iletişim listesi</button>' : ''}</div>
       <small>${d.yonetici ? 'Yönetici olarak tüm öğrencileri görüyorsun' : `${d.ogrenciSayisi} öğrencin var · sadece sana kayıtlı öğrencileri görürsün`}${d.email ? ' · bildirimler: ' + kac(d.email) : ''}</small>`;
     $('cogK1').onclick = e => kopyala(d.kod, e.target);
-    $('cogK2').onclick = e => kopyala(link, e.target);
+    $('cogK2').onclick = e => window.dmTeacherInvites?window.dmTeacherInvites.open(d.kod):kopyala(link,e.target);
     if ($('cogK3')) $('cogK3').onclick = () => { $('ogretmenMenuModal').style.display = 'none'; ogretmenListesi(); };
     $('cogCreateStudents').onclick = () => window.dmStudentManagement.openCreate();
     if($('cogManageStudents')) $('cogManageStudents').onclick = () => window.dmStudentManagement.openAdmin();

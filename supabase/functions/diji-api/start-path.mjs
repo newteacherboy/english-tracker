@@ -51,7 +51,7 @@ export function computeStartPath({profile,classNo,placement,choice,lessons,done,
   const start=rank(parse(choice)?.level)>=0&&rank(parse(choice)?.level)<=Math.max(rank(test),0)?parse(choice).level:test||'A1';
   return {legacy:true,mode:'open',startGrade:cls||1,maxGrade:8,startCefr:start,maxCefr:'B2',testLevel:test,learningRoute:cls>0&&!freshTest?'needs-test':'open'};
  }
- const school=p.purpose==='school'&&cls>0,wholeRoute=p.purpose==='school'&&['high','university'].includes(p.educationStage);
+ const school=p.purpose==='school'&&cls>0,wholeRoute=p.purpose==='school'&&['high','university','graduate'].includes(p.educationStage);
  const mode=p.startChoice==='test'?'test':p.startChoice==='known'?'level':school?'grade':'level';
  const verifiedUpper=p.purpose==='independent'&&p.placementPolicy==='verified-upper';
  const base=mode==='test'?(test||'A1'):p.startChoice==='known'&&rank(p.knownLevel)>=0&&(!verifiedUpper||rank(p.knownLevel)===0)?p.knownLevel:school?gradeToCefr(cls):'A1';

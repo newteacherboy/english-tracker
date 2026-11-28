@@ -158,7 +158,7 @@ export function parentCenterAPI(d){
     if(old)return fail('Bu adresle veli hesabı bulunuyor. Giriş yapabilir veya şifreni yenileyebilirsin.',409);
     const pin=digits(),id=crypto.randomUUID();
     const passwordHash=await hashPassword(password);
-    asList(await db.from('dm_parents').insert({id,email,name,password_hash:passwordHash,pin_hash:await digest('parent:'+id+':'+pin)}));
+    asList(await db.from('dm_parents').insert({id,email,name,password_hash:passwordHash,pin_hash:await digest('parent:'+id+':'+pin),...(b.progressMail===true?{settings:{progressMailConsent:{at:new Date().toISOString(),source:'parent_registration_checkbox',email}}}:{})}));
     const mailed=await tokenMail({id,email,name},'verify',pin);
     return json({ok:true,token:await session({id}),verified:false,mailed});
    }
@@ -243,7 +243,7 @@ export function parentCenterAPI(d){
    }
    if(op==='parentSettings'){
     for(const key of dashboards.keys())if(key.startsWith(parent.id+'|'))dashboards.delete(key);
-    const settings={...parent.settings,teacherNotices:b.teacherNotices!==false,practiceReminders:b.practiceReminders!==false};
+    const settings={...parent.settings,teacherNotices:b.teacherNotices!==false,practiceReminders:b.practiceReminders!==false};if(b.progressMail===true&&!settings.progressMailConsent)settings.progressMailConsent={at:new Date().toISOString(),source:'parent_settings_checkbox',email:parent.email};else if(b.progressMail===false)delete settings.progressMailConsent;
     asList(await db.from('dm_parents').update({settings}).eq('id',parent.id));return json({ok:true});
    }
    if(op==='parentPinResend')return fail('Ailem bölümünde çocuğunu seçerek geçiş kodunu belirleyebilirsin.');

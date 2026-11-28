@@ -336,8 +336,8 @@ function captureTeacherInvite() {
   try {
     const u = new URL(location.href);
     const code = (u.searchParams.get('kod') || '').trim().toUpperCase();
-    if (u.searchParams.get('zirveOgretmen') === '1' && /^[A-Z0-9]{1,10}$/.test(code)) {
-      sessionStorage.setItem(teacherInviteKey, JSON.stringify({code, at: Date.now()}));
+    if ((u.searchParams.get('zirveOgretmen') === '1'||u.searchParams.get('sinifaKatil')==='1') && /^[A-Z0-9]{1,10}$/.test(code)) {
+      sessionStorage.setItem(teacherInviteKey, JSON.stringify({code, at: Date.now(),general:u.searchParams.get('sinifaKatil')==='1'}));
     }
   } catch {}
 }
@@ -345,8 +345,8 @@ function clearTeacherInvite() {
   try {
     sessionStorage.removeItem(teacherInviteKey);
     const u = new URL(location.href);
-    if (u.searchParams.get('zirveOgretmen') === '1') {
-      u.searchParams.delete('zirveOgretmen'); u.searchParams.delete('kod');
+    if (u.searchParams.get('zirveOgretmen') === '1'||u.searchParams.get('sinifaKatil')==='1') {
+      u.searchParams.delete('sinifaKatil');u.searchParams.delete('zirveOgretmen'); u.searchParams.delete('kod');
       history.replaceState(history.state, '', u.pathname + u.search + u.hash);
     }
   } catch {}
@@ -375,7 +375,7 @@ async function acceptTeacherInvite() {
       return;
     }
     if (!d.ok || !d.ogretmen) { clearTeacherInvite(); toast(d.mesaj || 'Öğretmen daveti doğrulanamadı.'); return; }
-    if (!confirm(d.ogretmen + ' adlı öğretmenin öğrencisi olmak ve yarışma ekibine katılmak ister misin? Öğretmenin öğrenme ilerlemeni görebilecek.')) { clearTeacherInvite(); return; }
+    if (!confirm(d.ogretmen + (pending.general?' adlı öğretmenin sınıfına bağlanmak ister misin?':' adlı öğretmenin öğrencisi olmak ve yarışma ekibine katılmak ister misin?')+' Öğretmenin öğrenme ilerlemeni görebilecek.')) { clearTeacherInvite(); return; }
     if (tok !== studentToken() || name !== who()) return;
     const response = await fetch('https://nxfqlutulxqzqgwewssd.supabase.co/functions/v1/diji-api', {
       method: 'POST', headers: {'Content-Type': 'application/json'},
@@ -384,9 +384,9 @@ async function acceptTeacherInvite() {
     const result = await response.json();
     if (tok !== studentToken() || name !== who()) return;
     clearTeacherInvite();
-    if (result.ok) { cache.delete(tok); toast('Öğretmenine bağlandın! Yarışma ekibine katıldın.'); }
+    if (result.ok) { cache.delete(tok); toast(pending.general?'Öğretmenine bağlandın!':'Öğretmenine bağlandın! Yarışma ekibine katıldın.'); }
     else toast(result.mesaj || 'Öğretmene bağlanılamadı.');
-  } catch { clearTeacherInvite(); toast('Davet bağlantısı işlenemedi. Bağlantıyı tekrar açabilirsin.'); }
+  } catch { toast('Davet bağlantısı işlenemedi. İnternet bağlantını kontrol edip tekrar deneyebilirsin.'); }
   finally { teacherInviteBusy = false; }
 }
 function captureInvite() {

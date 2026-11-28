@@ -1333,9 +1333,9 @@ async function handle(req: Request, proxy: any = null) {
       if (!TAKMA_AD.test(username))
         return json({ ok: false, mesaj: "Kullanıcı adı 3-20 karakter olmalı; harf, rakam, nokta, alt çizgi ya da tire kullanabilirsin. Boşluk olmaz." }, 400);
       const adSoyad = String(body.adSoyad || "").trim().replace(/\s+/g, " ");
-      if (!AD_SOYAD.test(adSoyad))
+      if ((body.registrationVersion!==2||body.requestTeacherAccess===true||adSoyad)&&!AD_SOYAD.test(adSoyad))
         return json({ ok: false, mesaj: "Öğrencinin adını ve soyadını yaz (sadece harf, 3-60 karakter)." }, 400);
-      if (sadeHarf(username) === sadeHarf(adSoyad))
+      if (adSoyad&&sadeHarf(username) === sadeHarf(adSoyad))
         return json({ ok: false, mesaj: "Kullanıcı adın gerçek adınla aynı olmasın. Herkesin göreceği bir takma ad seç." }, 400);
       const telHam = String(body.telefon || "").replace(/\D/g, "");
       const tel = /^5\d{9}$/.test(telHam) ? "0" + telHam : /^05\d{9}$/.test(telHam) ? telHam : /^905\d{9}$/.test(telHam) ? "0" + telHam.slice(2) : "";
@@ -1346,7 +1346,7 @@ async function handle(req: Request, proxy: any = null) {
       const city=teacherApplication?temizMetin(body.okulIl||"",40).replace(/\s+/g,' ').trim():"";
       const district=teacherApplication?temizMetin(body.okulIlce||"",60).replace(/\s+/g,' ').trim():"";
       if(teacherApplication&&(!city||!district||!school||!tel))return json({ok:false,mesaj:"Öğretmen hesabı için il, ilçe, okul adı ve telefon zorunlu."},400);
-      let learnerProfile, sinif;try{learnerProfile=normalizeLearnerProfile(body.learnerProfile,body.sinif,body.ogrenimTuru||"school",{allowUnknownAge:teacherApplication});sinif=learnerClass(learnerProfile,body.sinif);}catch(e){return json({ok:false,mesaj:e.message},400);}
+      let learnerProfile, sinif;try{learnerProfile=normalizeLearnerProfile(body.learnerProfile,body.sinif,body.ogrenimTuru||"school",{allowUnknownAge:teacherApplication,compactRegistration:body.registrationVersion===2});sinif=learnerClass(learnerProfile,body.sinif,{requireHighGrade:body.registrationVersion===2});}catch(e){return json({ok:false,mesaj:e.message},400);}
       const sube = temizMetin(body.sube, 10).trim();
       if ((telHam||!learnerProfile.version)&&!tel) return json({ ok: false, mesaj: "Geçerli bir telefon numarası yaz (05XX XXX XX XX)." }, 400);
       if (email.length > 120 || !/^[^@\s]+@[^@\s]+\.[^@\s]{2,}$/.test(email))
@@ -1375,7 +1375,7 @@ async function handle(req: Request, proxy: any = null) {
       if (createError || !createdId) return json({ ok: false, mesaj: createError?.code === "23505"
         ? "Bu kullanıcı adı zaten kayıtlı. Başka bir takma ad seç ya da mevcut hesabını bağla."
         : "Kayıt tamamlanamadı. Biraz sonra tekrar dene." }, createError?.code === "23505" ? 409 : 503);
-      const adYaz = await supabase.from("students").update({ full_name: adSoyad, school: teacherApplication?[city,district,school].join(' · '):school || null }).eq("id", createdId);
+      const adYaz = await supabase.from("students").update({ full_name: adSoyad || null, school: teacherApplication?[city,district,school].join(' · '):school || null }).eq("id", createdId);
       if (adYaz.error) console.error("googleKayit full_name", adYaz.error);
       await saveLearnerProfile(supabase,createdId,learnerProfile);
       try{await seedLearningRoute(supabase,createdId,learnerProfile);}catch(err){console.error('googleKayit route',err);}
@@ -2346,10 +2346,10 @@ async function handle(req: Request, proxy: any = null) {
     /* [v4.7] Kullanıcı adı artık takma ad: herkese görünür, gerçek ad olmamalı. Gerçek ad ayrı alanda, sadece öğretmen görür. */
     if (!/^[A-Za-zÇĞİÖŞÜçğıöşü0-9._-]{3,20}$/.test(username)) return json({ status: "error", message: "Kullanıcı adı 3-20 karakter olmalı; harf, rakam, nokta, alt çizgi ya da tire kullanabilirsin. Boşluk olmaz." });
     const adSoyad = String(body.adSoyad || "").trim().replace(/\s+/g, " ");
-    if (!/^[A-Za-zÇĞİÖŞÜçğıöşüÂâÎîÛû .'-]{3,60}$/.test(adSoyad)) return json({ status: "error", message: "Öğrencinin adını ve soyadını yaz (sadece harf, 3-60 karakter)." });
-    if (sadeHarf(username) === sadeHarf(adSoyad)) return json({ status: "error", message: "Kullanıcı adın gerçek adınla aynı olmasın. Herkesin göreceği bir takma ad seç." });
+    if ((body.registrationVersion!==2||teacherApplication||adSoyad)&&!/^[A-Za-zÇĞİÖŞÜçğıöşüÂâÎîÛû .'-]{3,60}$/.test(adSoyad)) return json({ status: "error", message: "Öğrencinin adını ve soyadını yaz (sadece harf, 3-60 karakter)." });
+    if (adSoyad&&sadeHarf(username) === sadeHarf(adSoyad)) return json({ status: "error", message: "Kullanıcı adın gerçek adınla aynı olmasın. Herkesin göreceği bir takma ad seç." });
     if (password.length < OGRENCI_SIFRE_MIN || password.length > 64) return json({ status: "error", message: `Şifre ${OGRENCI_SIFRE_MIN}-64 karakter olmalı.` });
-    let learnerProfile, selectedClass;try{learnerProfile=normalizeLearnerProfile(body.learnerProfile,body.sinif,body.ogrenimTuru||"school",{allowUnknownAge:teacherApplication});selectedClass=learnerClass(learnerProfile,body.sinif);}catch(e){return json({status:"error",message:e.message},400);}
+    let learnerProfile, selectedClass;try{learnerProfile=normalizeLearnerProfile(body.learnerProfile,body.sinif,body.ogrenimTuru||"school",{allowUnknownAge:teacherApplication,compactRegistration:body.registrationVersion===2});selectedClass=learnerClass(learnerProfile,body.sinif,{requireHighGrade:body.registrationVersion===2});}catch(e){return json({status:"error",message:e.message},400);}
     /* [v4.1] Yeni kayıtlarda geçerli veli telefonu ve e-postası zorunlu */
     {const mailCheck=await validateRegistrationEmail(body.email);if(!mailCheck.ok)return json({ok:false,status:"error",message:mailCheck.message,mesaj:mailCheck.message},mailCheck.temporary?503:400);}
     const telHam = String(body.telefon || "").replace(/\D/g, "");
@@ -2378,7 +2378,7 @@ async function handle(req: Request, proxy: any = null) {
     if (!sinifKontrol.ok) return json({ status: "error", message: sinifKontrol.mesaj });
     if (body.kvkkOnay!==true || !body.kvkkOnayTarihi || (!learnerProfile.version&&learnerProfile.purpose!=="independent"&&(!Number.isInteger(Number(body.sinif)) || Number(body.sinif)<1 || Number(body.sinif)>8 || !String(body.sube||"").trim()))) return json({status:"error",message:"Sınıf, şube ve veli bilgilendirme beyanı gerekli."},400);
     const payload = {
-      username, full_name: adSoyad, school: teacherApplication ? [city,district,school].join(" · ") : school || null, password_hash: await hashPassword(password), phone: tel || null,
+      username, full_name: adSoyad || null, school: teacherApplication ? [city,district,school].join(" · ") : school || null, password_hash: await hashPassword(password), phone: tel || null,
       class_no: selectedClass, branch: sinifKontrol.branch || temizMetin(body.sube, 10) || null,
       email: String(body.email || "").trim().slice(0, 120), status: "approved", email_verification_required:true, email_verified_at:null,
       kvkk_approved_at: body.kvkkOnayTarihi || new Date().toISOString()
