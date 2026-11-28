@@ -3,11 +3,11 @@ const CORE=require('../ingilizce/learning-core.js'),SCHOOL=require('../ingilizce
 const words=[{en:'book',tr:'kitap'},{en:'good morning',tr:'günaydın'},{en:'classroom',tr:'derslik'},{en:'Friday',tr:'Cuma'}],tasks=SCHOOL.build(words,words,220151),source=fs.readFileSync('ingilizce/thematic-learning.js','utf8');
 const settle=async()=>{for(let i=0;i<6;i++)await new Promise(r=>setTimeout(r,2));};
 function random(){let n=271828;return ()=>{n^=n<<13;n^=n>>>17;n^=n<<5;return (n>>>0)/4294967296;};}
-async function fixture(slot,rng=random(),recovery=false){
+async function fixture(slot,rng=random(),recovery=false,deck=tasks){
  const dom=new JSDOM('<button>Parkur</button>',{url:'https://route.test/',runScripts:'outside-only',pretendToBeVisual:true}),w=dom.window,calls=[];let cursor=slot,version=0;
  w.requestAnimationFrame=()=>1;w.cancelAnimationFrame=()=>{};w.matchMedia=()=>({matches:false});w.aktifOgrenciAdi='Ada';w.localStorage.setItem('ing_token','fixture');w.DMLearningCore={...CORE,presentation:()=>CORE.presentation(rng)};w.apiURL='/api';w.speechSynthesis={cancel(){},speak(){}};const timeout=w.setTimeout.bind(w);w.setTimeout=(fn,ms,...args)=>timeout(fn,ms===650?0:ms,...args);
  const view=extra=>({ok:true,cursor,version,deckVersion:9,finished:cursor>=12,wallet:{energy:25,energyMax:25,gold:0,combo:0},...(recovery?{needsRecovery:true,recovery:{step:0,prompt:'kitap',options:['book','classroom','Friday']}}:{}),...extra});
- const bridge={chapter:{id:220151,number:220151,routeNumber:1,cefr:'2. Sınıf',theme:'1. Ünite',cards:words,examples:[],schoolTasks:tasks},session:view(),entryMeta:{title:'Okul Yolum'},async request(action,payload){if(action==='advance'){calls.push(payload.answer);const g=SCHOOL.grade(tasks[cursor],payload.answer);assert(g.valid);if(g.correct){cursor++;version++;}return view({accepted:g.correct,correct:g.correct});}return view();},finish(){}};
+ const bridge={chapter:{id:220151,number:220151,routeNumber:1,cefr:'2. Sınıf',theme:'1. Ünite',cards:words,examples:[],schoolTasks:deck},session:view(),entryMeta:{title:'Okul Yolum'},async request(action,payload){if(action==='advance'){calls.push(payload.answer);const g=SCHOOL.grade(deck[cursor],payload.answer);assert(g.valid);if(g.correct){cursor++;version++;}return view({accepted:g.correct,correct:g.correct});}return view();},finish(){}};
  w.eval(source);await w.dmThematicLearning.openSchool(bridge);w.document.querySelector('.ml-entry-start').click();await settle();return {w,calls,close:()=>w.close()};
 }
 test('real choice buttons vary across attempts and still submit canonical answer values',async()=>{const rng=random(),orders=new Set();for(let i=0;i<12;i++){const f=await fixture(2,rng);try{const buttons=[...f.w.document.querySelectorAll('[data-answer]')];assert.equal(buttons.length,tasks[2].options.length);orders.add(buttons.map(b=>b.textContent).join('|'));f.w.document.querySelector('[data-answer="'+tasks[2].options.indexOf(tasks[2].answer)+'"]').click();await settle();assert.equal(f.calls[0],tasks[2].answer);}finally{f.close();}}assert(orders.size>=3);});
@@ -15,3 +15,17 @@ test('order tiles stay stable when redrawn and canonical token indices build the
 test('randomized matching and letter positions retain correct grading',async()=>{for(const slot of [5,10]){const f=await fixture(slot);try{const w=f.w,t=tasks[slot];if(slot===5){for(let i=0;i<t.pairs.length;i++){w.document.querySelector('[data-left="'+i+'"]').click();w.document.querySelector('[data-right="'+i+'"]').click();}}else{const used=new Set();for(const position of t.missing){const i=t.tokens.findIndex((ch,i)=>!used.has(i)&&ch===t.en[position]);used.add(i);w.document.querySelector('[data-letter-token="'+i+'"]').click();}w.document.querySelector('[data-letter-check]').click();}await settle();assert(SCHOOL.grade(t,f.calls[0]).correct);}finally{f.close();}}});
 test('final-review visible order varies without changing the answer array sent to the server',async()=>{const rng=random(),patterns=new Set();for(let attempt=0;attempt<12;attempt++){const f=await fixture(11,rng);try{const positions=[];for(const card of tasks[11].cards){const buttons=[...f.w.document.querySelectorAll('[data-review-choice]')],right=buttons.find(b=>b.textContent===card.tr);positions.push(buttons.indexOf(right));right.click();await settle();}patterns.add(positions.join(''));assert.deepEqual(Array.from(f.calls[0]),tasks[11].cards.map(c=>c.tr));}finally{f.close();}}assert(patterns.size>=5);});
 test('recovery choices use shuffled canonical indices too',async()=>{const rng=random(),orders=new Set();for(let i=0;i<10;i++){const f=await fixture(11,rng,true);try{const buttons=[...f.w.document.querySelectorAll('[data-recovery-choice]')];assert.equal(buttons.length,3);orders.add(buttons.map(b=>b.textContent).join('|'));for(const b of buttons)assert.equal(b.textContent,['book','classroom','Friday'][+b.dataset.recoveryChoice]);}finally{f.close();}}assert(orders.size>=3);});
+
+test('visual matching becomes four-option word detective without changing the server answer contract',async()=>{
+ const deck=SCHOOL.build(words,words,220151,true),slot=deck.findIndex(t=>t.visualMatch),task=deck[slot],f=await fixture(slot,random(),false,deck);
+ try{
+  const d=f.w.document;assert.equal(d.querySelector('.ml-eyebrow').textContent,'Kelime Dedektifi');assert.equal(d.querySelector('.ml-visual-match'),null);
+  for(let i=0;i<task.pairs.length;i++){
+   const prompt=d.querySelector('.ml-detective h2').textContent,target=task.pairs.find(p=>p.tr===prompt);
+   const buttons=[...d.querySelectorAll('[data-detective-choice]')];assert.equal(buttons.length,4);assert.equal(new Set(buttons.map(b=>b.textContent)).size,4);
+   if(i===0){const wrong=buttons.find(b=>b.textContent!==target.en);wrong.click();assert(wrong.disabled);assert(d.querySelector('.ml-actions button').disabled);}
+   buttons.find(b=>b.textContent===target.en).click();assert(!d.querySelector('.ml-actions button').disabled);d.querySelector('.ml-actions button').click();await settle();
+  }
+  assert.equal(f.calls.length,1);assert(SCHOOL.grade(task,f.calls[0]).correct);
+ }finally{f.close();}
+});
