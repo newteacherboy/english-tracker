@@ -85,7 +85,7 @@
  function welcome(){screen='welcome';const live=window.DMPapi?.html?.('merhaba');const markup=window.dmPapiSplash?.characterMarkup?.();const mascot=markup?'<button type="button" class="fd-welcome-papi" data-action="papi-react" aria-label="Papi’ye dokun, duygusunu değiştir">'+markup.replace('class="dm-papi-character-svg"','class="dm-papi-character-svg dmp m-merhaba"')+'<span class="fd-papi-speech" role="status">Merhaba!</span></button>':window.DMPapi?'<button type="button" class="fd-welcome-papi" data-action="papi-react" aria-label="Papi’ye dokun, duygusunu değiştir">'+live+'<span class="fd-papi-speech" role="status">Merhaba!</span></button>':image('papi-merhaba');show('<h1 class="fd-wordmark">Diji-Medu</h1>'+mascot,button('Üye Ol','begin')+button('Hesabım Var','login-roles','secondary'),0,'fd-welcome',false);}
  function loginRoles(){
   screen='login-roles';
-  show('<h1>Hesabım Var</h1>'+roleCard('Öğrenci Girişi','login','school')+roleCard('Veli Girişi','parent-login','parent')+roleCard('Öğretmen Girişi','teacher-login','teacher'),'',0,'fd-role-screen');
+  show('<h1>Hesabım Var</h1>'+roleCard('Öğrenci Girişi','login','school')+roleCard('Veli Girişi','parent-login','parent')+roleCard('İngilizce Öğretmeni Girişi','teacher-login','teacher'),'',0,'fd-role-screen');
  }
  function parentEntry(signup){
   screen=signup?'parent-register':'parent-login';
@@ -158,7 +158,7 @@
  function feedbackSound(good){try{const Audio=window.AudioContext||window.webkitAudioContext;if(!Audio)return;const audio=new Audio();audio.resume();const gain=audio.createGain();gain.connect(audio.destination);gain.gain.setValueAtTime(.12,audio.currentTime);gain.gain.exponentialRampToValueAtTime(.001,audio.currentTime+.35);const tone=audio.createOscillator();tone.type=good?'sine':'triangle';tone.frequency.setValueAtTime(good?660:220,audio.currentTime);tone.frequency.setValueAtTime(good?880:150,audio.currentTime+.12);tone.connect(gain);tone.start();tone.stop(audio.currentTime+.35);tone.onended=()=>audio.close();}catch(_){}}
  function speak(){try{if(!window.speechSynthesis)throw Error();speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(questions[question].word);u.lang='en-US';u.rate=.8;speechSynthesis.speak(u);}catch(_){error('Ses bu cihazda kullanılamıyor. Kelimeyi ekrandan okuyabilirsin.');}}
  function invite(expired=false){if(busy)return;lastInvite=Date.now();inviteDue=false;screen='invite';show(`<h1>${demoComplete?'İlk keşfin<br>tamamlandı!':'Keşfin güzel başladı!'}</h1>${demoComplete?'<p>★ 6 soruyu tamamladın</p>':''}${image('papi-kesif-karti')}<p><strong>Sana özel keşif kartını<br>hazırlayalım mı?</strong></p>${expired?'<p class="fd-note">Deneme süren tamamlandı. Yeni etkinlikler için hesabını oluşturabilirsin.</p>':''}`,button('Keşif kartımı oluştur →','register'),0,'fd-success',false);}
- const roles={school:'Öğrenciyim',teacher:'Öğretmenim',parent:'Veliyim',independent:'Kendim için'};
+ const roles={school:'Öğrenciyim',teacher:'İngilizce Öğretmeniyim',parent:'Veliyim',independent:'Kendim için'};
  const asksAge=()=>draft.role!=='teacher';
  const usesGuardianContact=()=>asksAge()&&draft.ageBand!=='adult';
  /* Seçimlerin sonucunu sunucudaki başlangıç kuralıyla (start-path.mjs) aynı dille anlatır. */
@@ -197,9 +197,10 @@
   screen='register';save();
   if(step===0){show(formMascot()+'<h1>Diji-Medu’ya hoş geldin!</h1>'+Object.entries(roles).map(([key,label])=>roleCard(label,'role',key)).join(''),'',0,'fd-role-screen fd-compact');return;}
   const teacher=draft.role==='teacher',school=draft.purpose==='school'&&!teacher,guardian=usesGuardianContact();
-  let body=formMascot()+'<h1>'+(teacher?'Öğretmen hesabı':school?'Öğrenci hesabı':'Hesabını oluştur')+'</h1>';
+  let body=formMascot()+'<h1>'+(teacher?'İngilizce Öğretmeni Kaydı':school?'Öğrenci hesabı':'Hesabını oluştur')+'</h1>';
   if(asksAge())body+=`<label class="fd-field">Yaş aralığı<select data-field="ageBand" required>${[['','Seçiniz'],['under13','13 yaş altı'],['teen','13–17 yaş'],['adult','18 yaş ve üzeri']].map(([v,l])=>option(v,l,draft.ageBand)).join('')}</select></label>`;
   if(asksAge())body+='<p class="fd-note" data-fd-guardian-note '+(guardian?'':'hidden')+' >Kayıt işlemini velin veya yasal temsilcinle birlikte tamamla. E-posta alanına onun e-posta adresini gir.</p>';
+  if(teacher)body+='<p class="fd-note">Öğretmen panelimiz İngilizce öğretmenlerine özeldir. Farklı bir branştaysanız kişisel öğrenme hesabı oluşturabilirsiniz.</p><label class="fd-consent"><input type="checkbox" data-field="englishTeacher" required '+(draft.englishTeacher?'checked':'')+'><span>İngilizce öğretmeniyim.</span></label><button type="button" class="fd-choice" data-action="other-branch">Farklı bir branştayım</button>';
   if(teacher)body+=field('İsim','first',{max:30,extra:'autocomplete="given-name"'})+field('Soyisim','last',{max:30,extra:'autocomplete="family-name"'});
   body+=field('Kullanıcı adı','username',{max:20,extra:'autocomplete="username" autocapitalize="off" spellcheck="false"'})+'<p class="fd-note">Gerçek adından farklı bir takma ad seç.</p>';
   if(school)body+=educationFields();
@@ -210,7 +211,7 @@
   body+='<label class="fd-consent"><input type="checkbox" data-field="consent" '+(draft.consent?'checked':'')+'><span><a href="gizlilik.html" target="_blank" rel="noopener">Gizlilik bildirimini</a> okudum, <a href="kullanim-kosullari.html" target="_blank" rel="noopener">kullanım koşullarını</a> kabul ediyorum.'+'<span data-fd-guardian-declaration '+(guardian?'':'hidden')+'> Çocuğun yasal temsilcisi olarak bu kayıt talebini iletiyorum.</span></span></label>';
   body+='<label class="fd-consent fd-consent-optional"><input type="checkbox" data-field="progressMail" '+(draft.progressMail?'checked':'')+'><span><span data-fd-progress-text>'+(guardian?'Veli olarak çocuğumun gelişim özetleri ve Papi haberlerini':'Gelişim özetleri ve Papi haberlerini')+'</span> e-postayla almak istiyorum. <small>İsteğe bağlıdır; istediğin zaman abonelikten çıkabilirsin.</small></span></label>';
   if(googleReady&&!googleSession&&!teacher)body+='<button type="button" class="fd-google" data-action="google"><img src="discovery-assets/google-g.svg" alt="">Google ile devam et</button>';
-  show(body,button(teacher?'Başvuruyu tamamla':'Hesap oluştur','submit'),65,'fd-register fd-compact');
+  show(body,button(teacher?'Kayda devam et':'Hesap oluştur','submit'),65,'fd-register fd-compact');
   if(!googleSession&&$('fdPassword'))$('fdPassword').value=password;
  }
  function collect(){root.querySelectorAll('[data-field]').forEach(el=>draft[el.dataset.field]=el.type==='checkbox'?el.checked:el.value.trim());save();}
@@ -220,6 +221,7 @@
   if(asksAge()&&!draft.ageBand){error('Yaş aralığını seç.');return false;}
   if(!/^[A-Za-zÇĞİÖŞÜçğıöşü0-9._-]{3,20}$/.test(draft.username)){error('Kullanıcı adı 3–20 karakter olmalı; boşluk kullanma.');return false;}
   if(draft.role==='teacher'){
+   if(!draft.englishTeacher){error('İngilizce öğretmeni olduğunu onayla.');return false;}
    if(draft.first.length<2||draft.last.length<2||!draft.schoolCity||!draft.schoolDistrict||!draft.school){error('Ad, soyad, il, ilçe ve okul adını tamamla.');return false;}
    if(!/^(05\d{9}|5\d{9}|905\d{9})$/.test(draft.phone.replace(/\D/g,''))){error('Geçerli bir telefon numarası yaz.');return false;}
   }
@@ -268,8 +270,9 @@
   if(a==='parent-cancel'){ctx.session.removeItem(DRAFT);ctx.session.removeItem('dm_parent_child_signup');password='';navigate('veli-paneli.html');return;}else if(a==='papi-react'){const moods=['sevinc','saskin','teselli','cosku','havali','merhaba'];const labels=['Birlikte öğrenelim!','Vay canına!','Yanındayım!','Harikasın!','Hazırım!','Merhaba!'];const i=welcomeMood++%moods.length;window.DMPapi?.react(el,moods[i],0);const bubble=el.querySelector('.fd-papi-speech');if(bubble)bubble.textContent=labels[i];return;}else if(a==='begin'){step=0;renderRegistration();}else if(a==='demo-intro')demoIntro();
   else if(a==='login-roles')loginRoles();else if(a==='login')login();else if(a==='parent-login')parentEntry(false);else if(a==='demo')demo();else if(a==='audio')speak();else if(a==='answer')choose(el.dataset.word);
   else if(a==='question-next'){selected='';question++;if(question===6){setSummary();demoResult();}else renderQuestion();}
-  else if(a==='register'){step=0;renderRegistration();}else if(a==='role'){
-   const role=el.dataset.role;
+  else if(a==='register'){step=0;renderRegistration();}else if(a==='role'||a==='other-branch'){
+   const role=a==='other-branch'?'independent':el.dataset.role;
+   draft.englishTeacher=false;
    if(role==='parent'){parentEntry(true);return;}
    draft.role=role==='teacher'?'teacher':'student';
    draft.purpose=role==='teacher'?'independent':role;
