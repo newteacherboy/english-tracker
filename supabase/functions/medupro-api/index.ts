@@ -66,12 +66,6 @@ async function dmPresence(op:string,body:any,a:any){
  if(students.length&&showOnline){const {data,error}=await supabase.from('portal_sessions').select('student_id,last_seen_at').eq('role','student').in('student_id',students.map(s=>s.id)).gt('expires_at',now.toISOString()).gte('last_seen_at',new Date(now.getTime()-300000).toISOString());if(error)throw error;for(const s of data||[]){const t=online.get(s.student_id);if(!t||s.last_seen_at>t)online.set(s.student_id,s.last_seen_at);}}
  return json({ok:true,serverNow:now.toISOString(),liste:(await socialSafety.filterStudents(students,a.student_id)).filter(publicParticipant).map(s=>({ad:s.username,sinif:s.class_no,online:showOnline&&online.has(s.id),seenAt:showOnline?(online.get(s.id)||null):null})).sort((a,b)=>Number(b.online)-Number(a.online)||a.ad.localeCompare(b.ad,'tr'))});
 }
-async function dmGiftMerge(id:string,value:any){
- let v=value||{};if(typeof v==='string'){try{v=JSON.parse(v);}catch{return value;}}
- const {data,error}=await supabase.from('dm_accessory_gifts').select('item_id').eq('recipient_id',id);if(error)throw error;
- if(data?.length&&v.karakter){v.karakter.sahip=[...new Set([...(v.karakter.sahip||[]),...data.map(x=>'d:'+x.item_id)])];}return v;
-}
-
 function scoreV3(body:any, seconds:any) {
   const correct=Number(body.dogru),wrong=Number(body.yanlis),base=Number(body.puanTemel),time=Number(seconds);
   if (!Number.isInteger(correct)||correct<0||correct>32||!Number.isInteger(wrong)||wrong<0||wrong>10000||!Number.isFinite(base)||base<0||base>correct*200+200||!Number.isFinite(time)||time<0||(correct>0&&time<=0)) return null;
@@ -79,7 +73,8 @@ function scoreV3(body:any, seconds:any) {
 }
 
 async function dmExtension(op:string,body:any,q:URLSearchParams,a:any){
- const social=new Set(['engellenenlerim','sosyalDurum','ogrenciEngelle','ogrenciEngelKaldir','hazirMesajGonder','aksesuarHediye','aksesuarKatalog','oyunEslesmeOlustur','oyunEslesmeDurum','oyunEslesmeHazir','oyunEslesmeCevap','oyunEslesmelerim','duelloSonucKaydet']);
+ if(['hazirMesajGonder','aksesuarHediye','aksesuarKatalog','enerjiGonder'].includes(op))return json({ok:false,mesaj:'Öğrenciler arası mesaj ve hediye gönderimi kaldırıldı.'},410);
+ const social=new Set(['engellenenlerim','sosyalDurum','ogrenciEngelle','ogrenciEngelKaldir','oyunEslesmeOlustur','oyunEslesmeDurum','oyunEslesmeHazir','oyunEslesmeCevap','oyunEslesmelerim','duelloSonucKaydet']);
  if(!social.has(op))return null;
  if(!a||a.role!=='student'||!a.student_id)return json({ok:false,mesaj:'Öğrenci oturumu gerekli.'},401);
  const actor=a.student_id;
@@ -95,7 +90,6 @@ async function dmExtension(op:string,body:any,q:URLSearchParams,a:any){
   }
   return json({ok:true,liste});
  }
- if(op==='aksesuarKatalog'){const {data,error}=await supabase.from('dm_accessory_catalog').select('*').order('price');if(error)throw error;return json({ok:true,liste:Array.isArray(data)?data.filter(publicParticipant):data});}
  if(op==='oyunEslesmelerim'){
   const {data,error}=await supabase.from('dm_matches').select('id,game,mode,status,player_a,player_b,created_at,expires_at,result_a,result_b,a:students!dm_matches_player_a_fkey(username),b:students!dm_matches_player_b_fkey(username)').or('player_a.eq.'+actor+',player_b.eq.'+actor).order('created_at',{ascending:false}).limit(30);if(error)throw error;
   return json({ok:true,liste:(data||[]).filter(publicParticipant).map((m:any)=>({id:m.id,game:m.game,mode:m.mode,status:m.expires_at<new Date().toISOString()&&m.status!=='finished'?'expired':m.status,opponent:m.player_a===actor?m.b?.username:m.a?.username,myResult:m.player_a===actor?m.result_a:m.result_b,opponentResult:m.player_a===actor?m.result_b:m.result_a}))});
@@ -107,7 +101,7 @@ async function dmExtension(op:string,body:any,q:URLSearchParams,a:any){
   const {data,error}=await supabase.rpc(scored?'dm_classic_result_v3':'dm_classic_result',{actor,game,score:scored?scored.puan:Math.min(1000,Math.max(0,num(body.puan))),seconds:Math.max(0,num(body.sure))});if(error)return json({ok:false,mesaj:error.message},400);return json({ok:true,liste:Array.isArray(data)?data.filter(publicParticipant):data});
  }
  let target:any=null;
- if(['sosyalDurum','ogrenciEngelle','ogrenciEngelKaldir','hazirMesajGonder','aksesuarHediye','oyunEslesmeOlustur'].includes(op)){
+ if(['sosyalDurum','ogrenciEngelle','ogrenciEngelKaldir','oyunEslesmeOlustur'].includes(op)){
   target=await studentByNameGenel(String(val(body,q,'alici')));if(!target)return json({ok:false,mesaj:'Öğrenci bulunamadı.'},404);
   if(a.classroomTeacher&&!a.classroomOwner&&target.teacher_id!==a.classroomTeacher)return json({ok:false,mesaj:'Sınıf oyununda yalnızca kendi öğrencilerini seçebilirsin.'},403);
  }
@@ -116,10 +110,10 @@ async function dmExtension(op:string,body:any,q:URLSearchParams,a:any){
   const action={oyunEslesmeOlustur:'create',oyunEslesmeDurum:'state',oyunEslesmeHazir:'ready',oyunEslesmeCevap:'answer'}[op];
   r=await supabase.rpc(a.teacher_portal_access_id?'dm_teacher_match_action':'dm_match_action',{actor,match_id:op==='oyunEslesmeOlustur'?null:String(val(body,q,'id')),action,arg:{target:target?.id,game:val(body,q,'oyun'),mode:val(body,q,'mod'),index:body.index,choice:body.choice}});
  }else{
-  const action={sosyalDurum:'status',ogrenciEngelle:'block',ogrenciEngelKaldir:'unblock',hazirMesajGonder:'message',aksesuarHediye:'gift'}[op];
-  r=await supabase.rpc('dm_social_action',{actor,target:target.id,action,arg:String(val(body,q,op==='hazirMesajGonder'?'mesajId':'item'))});
+  const action={sosyalDurum:'status',ogrenciEngelle:'block',ogrenciEngelKaldir:'unblock'}[op];
+  r=await supabase.rpc('dm_social_action',{actor,target:target.id,action,arg:''});
  }
- if(r.error)return json({ok:false,mesaj:r.error.code==='23505'?'Bu aksesuar arkadaşında zaten var.':r.error.message},400);
+ if(r.error)return json({ok:false,mesaj:r.error.message},400);
  return json(r.data);
 }
 
@@ -129,8 +123,9 @@ Deno.serve(async(req:Request)=>{
  if(!['GET','POST'].includes(req.method))return json({ok:false,mesaj:'Yöntem desteklenmiyor.'},405);
  const q=new URL(req.url).searchParams;let body:any={};
  if(req.method!=='GET'){const parsed=await readJsonBounded(req);if(!parsed.ok)return json({ok:false,mesaj:'Geçersiz istek.'},parsed.status);body=parsed.data;}
- const a=await session(req,body,q);if(!a)return json({ok:false,mesaj:"Öğrenci oturumu gerekli."},401);
  const op=String(val(body,q,"islem"));
+ if(['hazirMesajGonder','aksesuarHediye','aksesuarKatalog','enerjiGonder'].includes(op))return json({ok:false,mesaj:'Öğrenciler arası mesaj ve hediye gönderimi kaldırıldı.'},410);
+ const a=await session(req,body,q);if(!a)return json({ok:false,mesaj:"Öğrenci oturumu gerekli."},401);
  if(!a.teacher_portal_access_id&&["duelloGonder","duelloSonucKaydet"].includes(op)&&/^(Jeopardy|KelimeBul|Dikte|Canavar)_Liderlik$/i.test(String(val(body,q,"oyun"))))return json({ok:false,mesaj:"Bu oyun artık öğrenci hesabında sunulmuyor."},410);
  for(const plan of authenticatedBudgets(op,a.student_id,body)){
   const digest=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(plan.scope+'|'+plan.value));
@@ -139,7 +134,7 @@ Deno.serve(async(req:Request)=>{
   if(error||typeof data?.allowed!=='boolean')return json({ok:false,mesaj:'Güvenlik kontrolü tamamlanamadı.'},503);
   if(!data.allowed){const r=json({ok:false,mesaj:'Çok fazla istek. Biraz sonra tekrar dene.'},429);r.headers.set('Retry-After',String(Math.max(1,Number(data.retryAfter)||60)));return r;}
  }
- if(a.student_id===DEMO_ID&&['duelloGonder','duelloYanit','hazirMesajGonder','aksesuarHediye','oyunEslesmeOlustur','ogrenciEngelle','ogrenciEngelKaldir'].includes(op))return json({ok:false,mesaj:'Tanıtım hesabında diğer öğrencilere istek gönderilmez.'},403);
+ if(a.student_id===DEMO_ID&&['duelloGonder','duelloYanit','oyunEslesmeOlustur','ogrenciEngelle','ogrenciEngelKaldir'].includes(op))return json({ok:false,mesaj:'Tanıtım hesabında diğer öğrencilere istek gönderilmez.'},403);
  const safetyDeny=await socialSafety.guard(op,body,q,a);if(safetyDeny)return safetyDeny;
  const protective=['engellenenlerim','sosyalDurum','ogrenciEngelle','ogrenciEngelKaldir'].includes(op);
  const contactDeny=protective?null:await contacts.guard(op,a);if(contactDeny)return contactDeny;
@@ -153,7 +148,7 @@ Deno.serve(async(req:Request)=>{
   const {data,error}=await supabase.rpc("dm_duel_action",{actor:a.student_id,action,arg});if(error)return json({ok:false,mesaj:error.message},400);if(Array.isArray(data?.liste))data.liste=data.liste.filter(publicParticipant);return json(data);
  }
  if(op==="bildirimlerim"){
-  const {data,error}=await supabase.from("notifications").select("id,sender_student_id,created_at,type,message,payload,read_at,sender:students!notifications_sender_student_id_fkey(username)").eq("recipient_student_id",a.student_id).is("read_at",null).order("created_at",{ascending:false}).limit(100);if(error)throw error;
+  const {data,error}=await supabase.from("notifications").select("id,sender_student_id,created_at,type,message,payload,read_at,sender:students!notifications_sender_student_id_fkey(username)").eq("recipient_student_id",a.student_id).or("sender_student_id.is.null,type.not.in.(mesaj,hediye,enerji)").is("read_at",null).order("created_at",{ascending:false}).limit(100);if(error)throw error;
   return json({ok:true,liste:(await socialSafety.filterNotifications(data||[],a.student_id)).filter(publicParticipant).map((x:any)=>({sat:x.id,tarih:x.created_at,tur:x.type,metin:x.message,gonderen:x.sender?.username||"",matchId:x.payload?.matchId||null,okundu:false}))});
  }
  return await dmExtension(op,body,q,a)||json({ok:false,mesaj:"Bilinmeyen işlem."},404);
